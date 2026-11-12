@@ -103,7 +103,7 @@ versions:
       loi n° 2023-1250, article 15) ; la règle de calcul des pensions n'en change pas
   exemples: aucun trouvé
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-10-16
   a_relire:
   - >-
@@ -120,6 +120,13 @@ sources:
   lectures:
   - type: legifrance
     reference: >-
+      action 184, étape 6, les rédactions en vigueur ou à venir que la fiche n'avait pas
+      lues : loi n° 2003-1312, article 80, rédaction du 1er janvier 2014, dans l'index
+      LEGI du dépôt à jour au 11 novembre 2026 ; le statut de chacune est aux textes de la
+      fiche
+    date: 2026-11-12
+  - type: legifrance
+    reference: >-
       L. 134-3 du code de la sécurité sociale, rédactions du 1er janvier et du 28 février
       2025 ; ordonnance n° 58-1036, articles 1er et 7 ; loi n° 64-1330, articles 1er à
       3 ; décret n° 93-426, article 2 ; loi n° 2003-1312, article 80 ; par l'index LEGI
@@ -133,6 +140,14 @@ sources:
       (chemins de fer algériens) et du décret n° 60-25 (chemins de fer marocains) ;
       loi n° 2004-1485, article 103 ; par l'index JORF du dépôt
     date: 2026-10-16
+textes_sans_effet:
+- id: LEGIARTI000027669382
+  article: loi n° 2003-1312 du 30 décembre 2003, article 80
+  en_vigueur: 2014-01-01
+  motif: >-
+    des « sociétés de financement » ajoutées aux établissements de crédit, au I et au II,
+    et des espaces autour des tirets ; au 23°, « les pensions des anciens agents des »
+    chemins de fer et régies reste, mot pour mot
 historique:
 - >-
   2026-10-16 — née avec l'action 145, étape 2 : la ligne d'inventaire disait les

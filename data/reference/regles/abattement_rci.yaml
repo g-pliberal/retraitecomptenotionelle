@@ -31,9 +31,24 @@ approximations:
 exemples:
 - cnav_2026_07_abattement_rci_1962
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-11-11
   prochaine_relecture: 2027-03-31
   a_relire:
+  - >-
+    À porter pour le 1er janvier 2027 (lu le 11 novembre 2026, action 184, étape 6) :
+    l'article 12 du règlement, dans la rédaction des arrêtés du 6 octobre 2025 (NOR
+    TSSS2527351A) et du 21 septembre 2026 (NOR TRSS2624955A), LEGIARTI000054908824.
+    Une chose change, la retraite progressive : « Lorsque l'assuré bénéficie d'une
+    fraction de pension au titre de la retraite progressive par application de
+    l'article 28 du présent régime, le coefficient d'abattement ne peut excéder le taux
+    prévu à la deuxième ligne du tableau de l'annexe 2 » ; le modèle sert la fraction
+    sous l'abattement entier, jusqu'à 22 %. Quelle ligne est la deuxième, l'index ne le
+    dit pas, qui rend l'annexe 2 à plat, de vingt trimestres (22 %) à un (1 %) : lire
+    le tableau sur Légifrance. Le reste est un renvoi mis à jour : le décompte par
+    l'âge vise « l'âge du taux plein au sens du 1° ou, du 1° bis ou du 6° de l'article
+    L. 351-8 » au lieu du III de l'article 20 de la loi n° 2010-1330, que la loi
+    n° 2025-199 a porté à ce 6° (LEGIARTI000051289852) — le parent d'un enfant
+    handicapé, à soixante-cinq ans (fiche taux_plein_a_soixante_cinq_ans).
   - >-
     Avant 2013 : les règlements du RCO des artisans (arrêté du 15 décembre 1978, et
     son tableau des taux d'abattement de l'arrêté du 30 novembre 1984) et du NRIC
@@ -49,6 +64,13 @@ sources:
       (LEGIARTI000054892591, 2013 ; LEGIARTI000054907665, 26 juin 2024), même table
       aux deux dates, lus dans l'index LEGI du dépôt à jour au 11 octobre 2026
     date: 2026-10-14
+  - type: legifrance
+    reference: >-
+      le même article 12 dans sa rédaction à venir au 1er janvier 2027, l'annexe 2
+      inchangée à cette date, et l'article 28, de la retraite progressive, à la même
+      date, lus dans l'index LEGI du dépôt à jour au 11 novembre 2026 : citations
+      dans `sources.a_relire`
+    date: 2026-11-11
   - type: circulaire_cnav
     reference: >-
       circulaire 2026-07 du 5 mars 2026, point 4.1.2 : un exemple chiffré, et le
@@ -66,6 +88,14 @@ sources:
     date: 2026-10-16
 textes_a_rattacher:
 - reference: arrêté du 9 février 2012, article 12 et annexe 2
+- id: LEGIARTI000054908824
+  article: arrêté du 9 février 2012, règlement, article 12
+  en_vigueur: 2027-01-01
+  change: >-
+    l'abattement de la fraction servie en retraite progressive est plafonné au « taux
+    prévu à la deuxième ligne du tableau de l'annexe 2 », non porté au modèle
+    (`sources.a_relire`) ; le décompte par l'âge vise le « 6° de l'article L. 351-8 »
+    au lieu du III de l'article 20 de la loi n° 2010-1330, renvoi mis à jour
 - reference: L. 635-1 CSS
 code:
   interrupteurs:

@@ -163,7 +163,7 @@ approximations:
     non mesuré ; les commerçants qui ont cotisé avant 2004, quinze ans au moins ou
     mariés, et dont la pension RCI omet ces points
 sources:
-  lu_le: 2026-10-13
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-10-13
   a_relire:
   - >-
@@ -179,11 +179,26 @@ sources:
   lectures:
   - type: legifrance
     reference: >-
+      action 184, étape 6, les rédactions en vigueur ou à venir que la fiche n'avait pas
+      lues : règlement du RCI, annexe 3, rédaction à venir au 1er janvier 2027, dans
+      l'index LEGI du dépôt à jour au 11 novembre 2026 ; le statut de chacune est aux
+      textes de la fiche
+    date: 2026-11-12
+  - type: legifrance
+    reference: >-
       D. 635-32 à D. 635-40 CSS, rédactions de 1985 à 2004 ; règlement du régime
       complémentaire des indépendants, articles 7, 14, 15, 33, 41 et annexes 1 et 3,
       rédactions de 2013 et de 2024 : index LEGI du dépôt, à jour au 12 octobre 2026
     date: 2026-10-13
 reformes: [conjoints_commercants_1973, conjoints_commercants_1998, conjoints_commercants_1999]
+textes_sans_effet:
+- id: LEGIARTI000054908448
+  article: règlement du RCI, annexe 3
+  en_vigueur: 2027-01-01
+  motif: >-
+    seule s'ajoute la note d'entrée en vigueur de l'arrêté du 6 octobre 2025 (NOR
+    TSSS2527351A) ; la « définition de la règle de cumul » que l'index porte est
+    inchangée, mot pour mot
 code:
   python: >-
     droit/acquerir.py : acquerir

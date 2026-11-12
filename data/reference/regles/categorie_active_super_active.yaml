@@ -8,11 +8,18 @@ regimes: [cnracl, fonction_publique_etat, fspoeie]
 etat: transcrite
 effet: Fonctionnaires déclarés en catégorie active ou super-active.
 sources:
-  lu_le: 2026-09-17
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
   a_relire:
   - Chercher un exemple publié (SRE ou CNRACL).
   lectures:
+  - type: legifrance
+    reference: >-
+      action 184, étape 6, les rédactions en vigueur ou à venir que la fiche n'avait pas
+      lues : loi n° 2010-1330, article 35, rédaction du 1er septembre 2023, dans l'index
+      LEGI du dépôt à jour au 11 novembre 2026 ; le statut de chacune est aux textes de la
+      fiche
+    date: 2026-11-12
   - type: legifrance
     reference: >-
       décret n° 2026-344, JORFTEXT000054047709, article 3 D lu alinéa par alinéa
@@ -29,6 +36,16 @@ textes_a_rattacher:
 - reference: L. 24 I 1° CPCMR
 - reference: L. 14 bis CPCMR
 - reference: décret n° 2026-344 du 7 mai 2026, article 3 D
+textes_sans_effet:
+- id: LEGIARTI000047452972
+  article: loi n° 2010-1330, article 35
+  en_vigueur: 2023-09-01
+  motif: >-
+    la loi n° 2023-270 retire du I les renvois aux statuts particuliers — « au 3° de
+    l'article L. 416-1 du code des communes, au premier alinéa de l'article 2 de la loi
+    n° 57-444 », aux lois n° 89-1007 et n° 96-452 — et la note qui l'étendait aux
+    ouvriers de l'État ; les durées restent, « A douze ans lorsque cette durée était
+    fixée antérieurement à dix ans », dix-sept pour quinze, vingt-sept pour vingt-cinq
 reformes:
 - reforme_2023
 - lfss_2026_suspension

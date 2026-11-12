@@ -142,7 +142,7 @@ approximations:
     compte, le droit étant acquis par les années de services.
   effet: non mesuré ; les départs anticipés avant l'âge de la catégorie active
 sources:
-  lu_le: 2026-10-10
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
@@ -186,6 +186,35 @@ sources:
       de la surcote »
     url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-la-pension/supplements-et-accessoires-de-pension
     date: 2025-12-10
+  - type: legifrance
+    reference: >-
+      décret n° 91-613, article 5, ses rédactions du 1er janvier 2026, 2027 et 2028
+      (décret n° 2025-86 du 30 janvier 2025), lues dans l'index LEGI du dépôt à jour au
+      11 novembre 2026 : la retenue supplémentaire de 1,5 % et la contribution
+      supplémentaire de 3,5 % de l'article 37 de la loi n° 2003-1199 y sont inchangées
+    date: 2026-11-11
+# L'article 5 du décret n° 91-613 porte, avec la retenue et la contribution
+# supplémentaires de la prime, le taux de la contribution des employeurs de la CNRACL :
+# c'est lui seul que le décret n° 2025-86 relève, de trois points par an.
+textes_sans_effet:
+- id: LEGIARTI000051100023
+  en_vigueur: 2026-01-01
+  motif: >-
+    seul change le taux de la contribution des employeurs sur les traitements, « fixé à
+    37,65 % » au lieu de 34,65 %, que porte legislation/contribution_employeur_public.csv
+    ; « Le taux de la retenue supplémentaire prévue au I de l'article 37 de la loi
+    n° 2003-1199 [...] est fixé à 1,5 % » et « Le taux de la contribution
+    supplémentaire prévue au I de l'article 37 [...] est fixé à 3,5 % » restent
+- id: LEGIARTI000051100044
+  en_vigueur: 2027-01-01
+  motif: >-
+    de même, la contribution des employeurs « fixé à 40,65 % » au lieu de 37,65 %, pour
+    les périodes d'emploi courant à compter du 1er janvier 2027 ; le reste mot pour mot
+- id: LEGIARTI000051100064
+  en_vigueur: 2028-01-01
+  motif: >-
+    de même, la contribution des employeurs « fixé à 43,65 % » au lieu de 40,65 %, pour
+    les périodes d'emploi courant à compter du 1er janvier 2028 ; le reste mot pour mot
 code:
   python: >-
     donnees/primes.py : PrimesSoumises ; droit/primes.py : prime_de_la_pension ;

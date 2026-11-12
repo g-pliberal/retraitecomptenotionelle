@@ -1509,7 +1509,7 @@ approximations:
     2 janvier), 6 639,52 € : 0 € ou 68,45 € par an de trop (essai du 6 novembre 2026,
     dans les deux moteurs)
 sources:
-  lu_le: 2026-11-06
+  lu_le: 2026-11-12
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
@@ -1619,6 +1619,13 @@ sources:
     laquelle la caisse applique (docs/architecture.md, § 3.3) ; le moteur suit les textes :
     depuis 2024, sa période de `cprn_complementaire` ne porte plus de borne d'âge.
   lectures:
+  - type: legifrance
+    reference: >-
+      action 184, étape 6, les rédactions en vigueur ou à venir que la fiche n'avait pas
+      lues : décret n° 79-262, article 5, rédaction du 1er juillet 2026, dans l'index LEGI
+      du dépôt à jour au 11 novembre 2026 ; le statut de chacune est aux textes de la
+      fiche
+    date: 2026-11-12
   - type: jorf
     reference: >-
       Action 130, E13, 6 novembre 2026, index JORF à jour du 3 novembre 2026 et LEGI du
@@ -2036,6 +2043,17 @@ textes_a_rattacher:
     CARCDSF et CAVAMAC : les textes que rattachent leurs fiches, dont l'article 35 des
     statuts de la CARCDSF dans la rédaction de l'arrêté du 27 décembre 2023
     (JORFTEXT000048880697)
+textes_sans_effet:
+- id: LEGIARTI000054168541
+  article: décret n° 79-262, article 5
+  en_vigueur: 2026-07-01
+  motif: >-
+    le décret n° 2026-418 retire la phrase « Le régime d'assurance vieillesse
+    complémentaire institué par le présent décret est établi par les statuts de la section
+    professionnelle mentionnée à l'article 1er », que cite la version d'avant, et ajoute
+    un « fonds social "retraite" » de secours ; la majoration de la Cipav est depuis ce
+    jour à l'article 5-2, II, que la fiche cite ; restent la garantie « dans la limite
+    des ressources » et les comptes distincts : rien du calcul
 reformes:
 - cavec_report_2025
 exemples:

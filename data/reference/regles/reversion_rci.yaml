@@ -166,7 +166,7 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-10-09
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
   lectures_divergentes:
   - >-
@@ -185,6 +185,13 @@ sources:
     de 2013 à 2018, puis du CPSTI, de 2019 à 2020, qui fixent le plafond ; et les
     règlements d'avant 2013 des régimes complémentaires des artisans et des commerçants.
   lectures:
+  - type: legifrance
+    reference: >-
+      action 184, étape 6, les rédactions en vigueur ou à venir que la fiche n'avait pas
+      lues : règlement du RCI, article 17, rédaction à venir au 1er janvier 2027, dans
+      l'index LEGI du dépôt à jour au 11 novembre 2026 ; le statut de chacune est aux
+      textes de la fiche
+    date: 2026-11-12
   - type: legifrance
     reference: >-
       arrêté du 9 février 2012 portant approbation du règlement du régime complémentaire
@@ -220,6 +227,14 @@ sources:
       chaque mariage étant déterminée de date à date et arrondie au nombre de mois
       inférieur », catégorie de points par catégorie de points
     date: 2026-10-09
+textes_sans_effet:
+- id: LEGIARTI000054908431
+  article: arrêté du 9 février 2012, règlement, article 17
+  en_vigueur: 2027-01-01
+  motif: >-
+    la note d'entrée en vigueur de l'arrêté du 6 octobre 2025 et un mot de grammaire, le
+    plafond de ressources « fixé chaque année par décision de l'instance délibérante »
+    au lieu de « par décision l'instance délibérante » ; le reste mot pour mot
 code:
   python: >-
     droit/reversion.py : reversion, _part_du_survivant, _admis_ailleurs ;

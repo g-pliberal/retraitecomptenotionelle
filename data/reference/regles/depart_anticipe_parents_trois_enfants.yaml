@@ -280,7 +280,7 @@ presomptions:
     la demande présentée avant le 1er janvier 2011, qui garde l'ancien calcul à la
     pension prenant effet au plus tard le 1er juillet 2011
 sources:
-  lu_le: 2026-10-08
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-04-30
   lectures_divergentes:
   - >-
@@ -312,6 +312,13 @@ sources:
     n° 18-16.974) : quand le régime sera lu, dire si la caisse l'applique désormais à
     tout parent de trois enfants qui a ses quinze ans de services avant 2017.
   lectures:
+  - type: legifrance
+    reference: >-
+      action 184, étape 6, les rédactions en vigueur ou à venir que la fiche n'avait pas
+      lues : décret n° 2004-1056, article 21, rédaction du 2 janvier 2025, dans l'index
+      LEGI du dépôt à jour au 11 novembre 2026 ; le statut de chacune est aux textes de la
+      fiche
+    date: 2026-11-12
   - type: autre
     reference: >-
       Cour de justice de l'Union européenne, 17 juillet 2014, Leone, C-173/13 : le départ
@@ -373,6 +380,18 @@ sources:
     date: 2026-01-23
 textes_a_rattacher:
 - reference: loi n° 2003-775 du 21 août 2003, article 5, VI (la durée de l'année des soixante ans)
+- id: LEGIARTI000050941725
+  article: décret n° 2004-1056, article 21
+  en_vigueur: 2025-01-02
+  change: >-
+    rien pour le départ des parents, dont le 3° du I reste, « Lorsque l'intéressé remplit
+    les conditions prévues au 3° ou au 5° du I de l'article L. 24 et celles de l'article
+    R. 37 du code des pensions civiles et militaires de retraite » ; s'ajoute un IV, qui
+    n'est d'aucune fiche : les services d'avant l'affiliation « pris en compte au titre
+    du 3° de l'article 4 [...] sont toujours considérés comme effectués dans un emploi
+    ne comportant pas un risque particulier d'insalubrité ou dans un emploi classé en
+    catégorie active » — à rattacher à la règle des emplois insalubres des ouvriers de
+    l'État (lu le 12 novembre 2026, action 184, étape 6)
 code:
   python: >-
     scenarios/actuel.py : FichesDatees ; droit/ouvrir.py : depart_parent_trois_enfants,

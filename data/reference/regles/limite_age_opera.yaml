@@ -146,7 +146,7 @@ approximations:
     », la saisie ne disant ni le danseur, ni le choriste, ni le musicien
   effet: non mesuré
 sources:
-  lu_le: 2026-10-17
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-10-17
   a_relire:
   - >-
@@ -172,6 +172,15 @@ sources:
       du 14 mars 2002 (LEGIARTI000006765539) et du 1er juillet 2008 (LEGIARTI000018253874) ;
       décret n° 2008-240, article 3 (LEGIARTI000018231999). Lus dans l'index LEGI du dépôt
     date: 2026-10-17
+  - type: legifrance
+    reference: >-
+      décret n° 68-382, article 6, rédaction en vigueur depuis le 26 juin 2014
+      (LEGIARTI000029135150), lue dans l'index LEGI à jour au 11 novembre 2026 (action
+      184, étape 6) : le I, dont l'article 2 du décret n° 2008-240 nomme le 3° et le
+      5°, « 5° A soixante-deux ans pour les autres catégories de personnel », y est ;
+      le décret de 2014 n'y change que le rachat des périodes d'études (IV) ; aucune
+      mise à la retraite, comme depuis le 1er juillet 2008
+    date: 2026-11-12
   - type: jorf
     reference: >-
       décret n° 2002-347 du 12 mars 2002, article 1er et notice (JORFARTI000001620554,

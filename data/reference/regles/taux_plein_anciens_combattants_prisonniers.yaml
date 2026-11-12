@@ -243,7 +243,7 @@ approximations:
     soixante-cinq ans sans leur durée, décotées des trimestres que la réduction leur
     rendait
 sources:
-  lu_le: 2026-11-03
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
@@ -251,6 +251,13 @@ sources:
     garde que les notices et la rédaction de 1975, et les décrets n° 74-427, 74-432 et
     74-433 du 15 mai 1974, aux salariés agricoles, aux artisans et aux commerçants.
   lectures:
+  - type: legifrance
+    reference: >-
+      action 184, étape 6, les rédactions en vigueur ou à venir que la fiche n'avait pas
+      lues : décret n° 74-191, article 1er, rédaction du 21 décembre 1985, dans l'index
+      LEGI du dépôt à jour au 11 novembre 2026 ; le statut de chacune est aux textes de la
+      fiche
+    date: 2026-11-12
   - type: legifrance
     reference: >-
       R. 351-45 CSS, rédaction du 10 mai 1995 (LEGIARTI000006749450), index LEGI à jour au
@@ -301,6 +308,16 @@ sources:
       à compter du 1er août 2024
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2024_29_30102024.pdf
     date: 2024-10-30
+textes_sans_effet:
+- id: LEGIARTI000006762032
+  article: décret n° 74-191, article 1er
+  en_vigueur: 1985-12-21
+  motif: >-
+    le a, le barème des âges selon la durée de captivité, de soixante-quatre ans pour
+    six à dix-sept mois à soixante ans pour cinquante-quatre mois, y est remplacé par
+    « a) ... » le jour même où D. 351-2 du code, que la fiche cite, porte ces paliers
+    (21 décembre 1985) ; le b reste, « Soixante ans si l'entrée en jouissance se situe
+    en 1975 ou postérieurement »
 code:
   python: >-
     droit/categories.py : taux_plein_par_categorie, age_des_anciens_combattants ;

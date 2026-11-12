@@ -51,7 +51,7 @@ effet: >-
   leur taux plein à soixante ans du 1er juillet 1984, et il arrête leur taux au taux
   plein, faute d'avoir lu que l'ajournement y courait au-delà.
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-11-12
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
@@ -227,6 +227,15 @@ sources:
       l'entrée en jouissance intervient à compter du soixantième anniversaire de l'assuré
       […] ». Lu dans l'index LEGI du dépôt
     date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      décret n° 73-937, article 2, rédaction en vigueur depuis le 1er janvier 1990
+      (LEGIARTI000006765814), lue dans l'index LEGI à jour au 11 novembre 2026 (action
+      184, étape 6) : elle ne rend plus applicable l'article 70 du décret de 1945, et
+      ne dit plus rien de l'abattement ; ce qu'elle porte, les conditions de durée
+      d'exercice des avantages d'avant 1973, est à la fiche
+      points_avant_1973_independants
+    date: 2026-11-12
   - type: jorf
     reference: >-
       décret n° 84-560 du 28 juin 1984 (JORFTEXT000000520712, Journal officiel du 5

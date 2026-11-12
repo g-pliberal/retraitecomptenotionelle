@@ -209,7 +209,7 @@ approximations:
     modélisés
   effet: non mesuré
 sources:
-  lu_le: 2026-10-14
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-06-30
   a_relire:
   - >-
@@ -222,6 +222,13 @@ sources:
     Un exemple chiffré de la Cnav ou de la Sécurité sociale des indépendants : une
     pension de droits d'avant 1973, ses points et leur valeur.
   lectures:
+  - type: legifrance
+    reference: >-
+      action 184, étape 6, les rédactions en vigueur ou à venir que la fiche n'avait pas
+      lues : décret n° 64-994, article 5, rédaction du 20 mars 1986 ; décret n° 73-937,
+      article 2, rédaction du 1er janvier 1990, dans l'index LEGI du dépôt à jour au 11
+      novembre 2026 ; le statut de chacune est aux textes de la fiche
+    date: 2026-11-12
   - type: legifrance
     reference: >-
       L. 634-3 et D. 634-8 CSS ; décret n° 73-937 du 2 octobre 1973, articles 1er, 2, 3
@@ -241,6 +248,24 @@ sources:
       barèmes IPP, retraites.independants.pt_organic et pt_cancava, avant 1988
     url: https://baremes.ipp.eu/parameters/regimes-de-retraites/
     date: 2026-10-14
+textes_sans_effet:
+- id: LEGIARTI000006764505
+  article: décret n° 64-994, art. 5
+  en_vigueur: 1986-03-20
+  motif: >-
+    une espace avant un point-virgule, et la « commission de recours gracieux » devenue
+    « commission de recours amiable » ; la classe exigible selon les revenus, mot pour mot
+textes_a_rattacher:
+- id: LEGIARTI000006765814
+  article: décret n° 73-937, art. 2
+  en_vigueur: 1990-01-01
+  change: >-
+    pour les avantages d'avant 1973, « sont supprimées » la condition d'un nombre minimum
+    d'années d'exercice et celle d'un nombre minimum d'années de cotisations (artisans),
+    et la condition d'années d'exercice de l'allocation des commerçants ; les trimestres
+    d'activité artisanale d'avant 1949 de qui a cotisé moins d'un an ouvrent « deux
+    points de retraite par trimestre » : la reconstitution de carrière et les points
+    gratuits, que la fiche ne porte pas (`approximations`)
 code:
   python: >-
     droit/acquerir.py : acquerir ; droit/liquider.py : valeur_du_point,

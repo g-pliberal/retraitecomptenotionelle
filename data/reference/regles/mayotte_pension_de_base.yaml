@@ -99,6 +99,7 @@ versions:
   - {id: LEGIARTI000023019089, article: "décret n° 2003-589 du 1er juillet 2003, article 21", en_vigueur: 2010-11-08}
   - {id: LEGIARTI000026514398, article: "décret n° 2003-589 du 1er juillet 2003, article 21", en_vigueur: 2012-10-21}
   - {id: LEGIARTI000006698330, article: "ordonnance n° 2002-411 du 27 mars 2002, article 19", en_vigueur: 2003-01-01}
+  - {id: LEGIARTI000025022442, article: "ordonnance n° 2002-411 du 27 mars 2002, article 19, qui ne garde que le financement, par « le produit des cotisations et la contribution prévus à l'article 28-2 de l'ordonnance du 20 décembre 1996 », jusqu'au 1er janvier 2028", en_vigueur: 2012-01-01}
   - {id: LEGIARTI000025018554, article: "ordonnance n° 96-1122 du 20 décembre 1996, article 28-1", en_vigueur: 2012-01-01}
   - {id: LEGIARTI000006781028, article: "décret n° 2003-589 du 1er juillet 2003, article 9", en_vigueur: 2003-07-02}
   - {id: LEGIARTI000026514449, article: "décret n° 2003-589 du 1er juillet 2003, article 9", en_vigueur: 2012-10-21}
@@ -316,7 +317,7 @@ approximations:
     non mesuré ; les pensions prenant effet depuis 2028, dont les paramètres de
     convergence ne sont pas encore fixés
 sources:
-  lu_le: 2026-11-02
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
@@ -341,6 +342,13 @@ sources:
     Mayotte à sa prochaine version : celle du 23 décembre 2025 porte pour 2026 le taux de
     la métropole.
   lectures:
+  - type: legifrance
+    reference: >-
+      action 184, étape 6, les rédactions en vigueur ou à venir que la fiche n'avait pas
+      lues : ordonnance n° 2002-411, article 19, rédaction du 1er janvier 2012, dans
+      l'index LEGI du dépôt à jour au 11 novembre 2026 ; le statut de chacune est aux
+      textes de la fiche
+    date: 2026-11-12
   - type: legifrance
     reference: >-
       décret n° 87-175, articles 1er à 19 ; ordonnance n° 2002-411, articles 5 à 14 et

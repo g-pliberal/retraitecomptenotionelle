@@ -235,7 +235,7 @@ approximations:
     la pension, en annuités, n'en dépend pas, mais l'effort contributif comparé dans
     les scénarios, oui
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-04-16
   a_relire:
   - >-
@@ -252,6 +252,13 @@ sources:
   lectures:
   - type: legifrance
     reference: >-
+      action 184, étape 6, les rédactions en vigueur ou à venir que la fiche n'avait pas
+      lues : loi n° 87-563, articles 1er et 9 (25 juillet 2015), 6 (28 décembre 2023) et 3
+      (1er décembre 2024), dans leur rédaction en vigueur, dans l'index LEGI du dépôt à
+      jour au 11 novembre 2026 ; le statut de chacune est aux textes de la fiche
+    date: 2026-11-12
+  - type: legifrance
+    reference: >-
       loi n° 87-563, articles 1er à 16, 20 et 21 dans leur rédaction de 1987, articles 1er
       à 10 dans toutes leurs rédactions depuis 2015 ; décret n° 89-110, articles 1er,
       7 à 18 et 38-3 ; décret n° 96-72, articles 1er à 6 ; décret n° 2017-1000, articles
@@ -264,6 +271,43 @@ sources:
       juillet 1989, du 29 janvier 1996, du 24 septembre 1998 et du 31 août 2006 ;
       décrets n° 2025-157 et n° 2025-159 : index JORF du dépôt
     date: 2026-10-16
+# Les rédactions en vigueur des articles 1er, 3, 6 et 9 de la loi, lues le 16 octobre
+# 2026, reçoivent leur statut le 12 novembre (action 184, étape 6).
+textes_sans_effet:
+- id: LEGIARTI000030930343
+  article: loi n° 87-563 du 17 juillet 1987, article 1er
+  en_vigueur: 2015-07-25
+  motif: >-
+    deux mots : « un régime d'assurance vieillesse et veuvage comportant une assurance
+    vieillesse de base et veuvage » ; le reste mot pour mot
+textes_a_rattacher:
+- id: LEGIARTI000030930348
+  article: loi n° 87-563 du 17 juillet 1987, article 9
+  en_vigueur: 2015-07-25
+  change: >-
+    l'article ne porte plus la majoration de durée d'assurance, que règle désormais le
+    code rendu applicable (article 5, 3°) ; il dit : « Les dispositions de l'article
+    L. 921-1 du code de la sécurité sociale sont applicables aux ressortissants salariés
+    du régime », la retraite complémentaire obligatoire, que le modèle route déjà
+    (legislation/affiliations.yaml, salarie_saint_pierre_et_miquelon)
+- id: LEGIARTI000048697702
+  article: loi n° 87-563 du 17 juillet 1987, article 6
+  en_vigueur: 2023-12-28
+  change: >-
+    l'assurance vieillesse des parents au foyer : « L'article L. 381-1 du code de la
+    sécurité sociale est applicable à Saint-Pierre-et-Miquelon sous réserve des
+    adaptations suivantes », sans le complément familial ni l'allocation de base de la
+    prestation d'accueil du jeune enfant, l'affiliation allant « au régime d'assurance
+    vieillesse applicable à Saint-Pierre-et-Miquelon » (loi n° 2023-1250, article 90) ;
+    la fiche, qui ne dit que la pension de base, ne la porte pas
+- id: LEGIARTI000046454727
+  article: loi n° 87-563 du 17 juillet 1987, article 3
+  en_vigueur: 2024-12-01
+  change: >-
+    un affilié de plus : « Les personnes détenues à Saint-Pierre-et-Miquelon qui exercent
+    une activité de travail dans le cadre d'un contrat d'emploi pénitentiaire sont
+    affiliées au régime d'assurance vieillesse de base et veuvage » (ordonnance
+    n° 2022-1336, article 27) ; le modèle n'a pas ce statut
 reformes: []
 code:
   moteur: >-

@@ -128,6 +128,7 @@ versions:
   - {id: LEGIARTI000006454537, article: "décret n° 85-1148 du 24 octobre 1985, article 7 : le traitement de l'indice 100, celui de l'indice majoré 150 (indice brut 100) à sa rédaction d'origine", en_vigueur: 1985-11-05}
   - {id: LEGIARTI000019111495, article: "même article, rédaction du décret n° 2008-622 du 27 juin 2008, article 2, 3° : « Pour l'application des dispositions législatives et réglementaires se référant au traitement de l'indice 100 ou de l'indice brut 100, ce traitement est constitué par le traitement afférent à l'indice majoré 201 »", en_vigueur: 2008-07-01}
   - {id: LEGIARTI000047751780, article: "même article, rédaction du décret n° 2023-519 du 28 juin 2023, article 2 : « l'indice majoré 208 », en vigueur le 1er janvier 2024", en_vigueur: 2024-01-01}
+  - {id: LEGIARTI000047751772, article: "même décret, article 3, rédaction du décret n° 2023-519 : la valeur annuelle du traitement de l'indice 100 majoré « est fixée à 5 907,34 € à compter du 1er juillet 2023 », le point de 59,0734 € du plafond", en_vigueur: 2023-07-01}
   nee_de: LEGIARTI000006792028
   bornes:
     liquidation.date_effet: [1999-04-09, null]
@@ -367,7 +368,7 @@ effet: >-
   montants de 1995 et de 2006 montrent trop basse ; en projection, la vingtième catégorie
   le passe en 2037.
 sources:
-  lu_le: 2026-11-03
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-11-03
   a_relire:
   - >-
@@ -388,6 +389,13 @@ sources:
     30 juin 1995 (JO n° 164 du 16 juillet 1995, page 10596) dirait de combien le second
     semestre 1995 s'écarte. Au propriétaire de dire s'il faut les chercher.
   lectures:
+  - type: legifrance
+    reference: >-
+      action 184, étape 6, les rédactions en vigueur ou à venir que la fiche n'avait pas
+      lues : décret n° 85-1148, article 3, rédaction du 1er juillet 2023 ; décret n°
+      48-1108, article 1er, rédaction du 1er janvier 2023, dans l'index LEGI du dépôt à
+      jour au 11 novembre 2026 ; le statut de chacune est aux textes de la fiche
+    date: 2026-11-12
   - type: legifrance
     reference: >-
       code des pensions de retraite des marins, R. 11, R. 12 et R. 31, versions
@@ -479,6 +487,14 @@ sources:
       l'incrément du 3 novembre 2026, l'arrêté du 2 août 1995 portant classement des
       officiers des navires transportant des passagers (JORFTEXT000000554960), sans montant
     date: 2026-11-03
+textes_sans_effet:
+- id: LEGIARTI000042562120
+  article: décret n° 48-1108 du 10 juillet 1948, article 1er
+  en_vigueur: 2023-01-01
+  motif: >-
+    le « comité technique » devient le « comité social d'administration » (décret
+    n° 2020-1427), dont l'avis précède les décrets d'échelonnement indiciaire ; le reste
+    mot pour mot
 historique:
 - >-
   2026-11-02 — lue au droit (action 130) : trois versions sur la date d'effet — la loi du

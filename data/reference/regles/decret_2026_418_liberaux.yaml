@@ -23,7 +23,7 @@ effet: >-
   le dit : à la Cipav, une erreur (E9), qui vaut depuis le 1er janvier 2023 (E11) ; à la
   CARMF, deux ; à la CARCDSF, une (E10).
 sources:
-  lu_le: 2026-11-06
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -442,6 +442,23 @@ sources:
       e5034d618178585fdae444ec690247ef83c7e94d7e9ca741682fb98562093790).
     url: https://www.lacipav.fr/sites/default/files/2023-04/Statuts%20CIPAV_1janvier2023.pdf
     date: 2026-11-06
+  - type: legifrance
+    reference: >-
+      les deux rédactions consolidées du 1er juillet 2026 que la fiche n'avait lues
+      qu'au JORF (action 184, étape 6, index LEGI à jour au 11 novembre 2026). Décret
+      n° 49-579, article 4 (LEGIARTI000054168136) : c'est l'article 3 du décret
+      n° 2026-418, mot pour mot — I, la dispense des deux premières années d'exercice
+      avant 40 ans, et II, l'exemption passé le semestre des 75 ans, les deux erreurs
+      déclarées de `sources.a_relire` ; III à VI, dispenses et exonérations sur demande,
+      pour incapacité ou maternité, non portées. Décret n° 50-28, article 2
+      (LEGIARTI000054168195) : la cotisation forfaitaire de six points et la
+      proportionnelle de 0,65 à 5 plafonds y sont inchangées ; les dispenses, que « les
+      statuts » fixaient, passent aux articles 3-1 à 3-5, déjà lus ; s'y ajoutent
+      l'appel, la déclaration des revenus, l'appel d'office « sur un revenu égal à cinq
+      fois le plafond » à défaut de déclaration, et « L'affiliation ou la radiation
+      prend effet au premier jour du trimestre civil suivant le début ou la fin de
+      l'activité professionnelle », que la fiche n'a pas confrontée au modèle.
+    date: 2026-11-11
 textes_sans_effet:
 - id: LEGIARTI000006738107
   article: code de la sécurité sociale, D. 641-6, abrogé par l'article 1er du décret

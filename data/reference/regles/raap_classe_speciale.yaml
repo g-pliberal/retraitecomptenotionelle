@@ -19,7 +19,7 @@ effet: >-
   spéciale ; les montants de 1981 à 1983 et de 1989 sont reportés de la grille voisine
   au rapport des plafonds.
 sources:
-  lu_le: 2026-09-22
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-06-30
   a_relire:
   - >-
@@ -33,6 +33,15 @@ sources:
       décret n° 62-420, article 2, quatre versions de 1981 à 2015, et décrets annuels
       de 1984 à 1988 lus dans l'index LEGI
     date: 2026-09-22
+  - type: legifrance
+    reference: >-
+      décret n° 62-420, article 2, rédaction en vigueur depuis le 1er avril 2020
+      (LEGIARTI000041766050), lue dans l'index LEGI à jour au 11 novembre 2026 (action
+      184, étape 6) : hors de la période de la fiche, close en 2015 ; elle ajoute un IV
+      à la cotisation au taux de 2016, « le producteur [...] prend en charge 25 % de
+      cette cotisation » due sur les droits du contrat de production audiovisuelle, que
+      la fiche raap_taux_amenage_racd_racl, qui cite cette rédaction, a à rattacher
+    date: 2026-11-12
   - type: jorf
     reference: >-
       décrets annuels de 1990 à 2015 lus dans l'index JORF : classe spéciale de

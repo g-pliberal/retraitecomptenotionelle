@@ -251,7 +251,7 @@ approximations:
     lus : le modèle garde, depuis, les règles des décrets
   effet: non mesuré
 sources:
-  lu_le: 2026-10-14
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-10-14
   a_relire:
   - >-
@@ -276,6 +276,13 @@ sources:
     Un exemple chiffré publié de la prestation d'un auxiliaire médical ou d'un
     chirurgien-dentiste : aucun n'a été trouvé.
   lectures:
+  - type: legifrance
+    reference: >-
+      action 184, étape 6, les rédactions en vigueur ou à venir que la fiche n'avait pas
+      lues : décret n° 78-283, article 3, rédaction du 1er juillet 2026, dans l'index LEGI
+      du dépôt à jour au 11 novembre 2026 ; le statut de chacune est aux textes de la
+      fiche
+    date: 2026-11-12
   - type: legifrance
     reference: >-
       décrets n° 75-891, n° 78-283, n° 81-1046 et n° 84-254, dans leurs rédactions de 2012
@@ -307,6 +314,14 @@ sources:
       sages-femmes et des auxiliaires médicaux
       (https://www.cnavpl.fr/wp-content/uploads/2025/07/Guide-2025.pdf)
     date: 2026-10-14
+textes_sans_effet:
+- id: LEGIARTI000054168487
+  article: décret n° 78-283, article 3
+  en_vigueur: 2026-07-01
+  motif: >-
+    un mot : la prestation « supplémentaire » devient « complémentaire » (décret
+    n° 2026-418) ; « ne peut être supérieur à la valeur de 420 points jusqu'à l'exercice
+    2021 » reste
 code:
   python: >-
     droit/acquerir.py : acquerir ; donnees/regimes.py : PeriodeRegime.ajustement_total,
