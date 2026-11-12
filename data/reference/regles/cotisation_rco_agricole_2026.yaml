@@ -1,0 +1,255 @@
+schema_version: 1
+id: cotisation_rco_agricole_2026
+intitule: >-
+  Retraite complémentaire obligatoire du chef d'exploitation agricole depuis 2026 : sa
+  cotisation « est constituée de deux parts », 4 % de l'assiette relevée à 1 820 SMIC et
+  une part sur l'assiette au taux qui croît avec elle, de 0 à 3 % selon ce qu'elle
+  représente du plafond de la sécurité sociale ; les points sont ceux de « la cotisation
+  acquittée », P = C / [(1 820 SMIC × T) / N], si bien que la seconde part en achète ;
+  avant 2026, une seule part et N points par 1 820 SMIC d'assiette, hors de cette fiche.
+domaine: cotisations
+regimes: [msa_rco]
+etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- >-
+  l'année de la cotisation, qui choisit la rédaction des articles D. 732-165 et D. 732-155
+  du code rural, et le plafond de la sécurité sociale de cette année
+- >-
+  l'assiette de la cotisation du chef d'exploitation, avant qu'elle soit relevée au
+  minimum de 1 820 SMIC, que le modèle prend pour le revenu de la ligne
+- >-
+  le statut de la ligne : le collaborateur et l'aide familial, au forfait, n'ont pas de
+  seconde part
+ecrit:
+- >-
+  la seconde part de la cotisation de l'année, que le compte du droit en vigueur reçoit
+  avec la première (`ConstructeurCompte._cotisation_ligne`)
+- >-
+  les points que cette part achète, 133 × la part / (1 820 SMIC × 4 %), que le scénario 1
+  ajoute à ceux de la première (`acquerir`)
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: une_part_jusqu_en_2025
+  statut: lue
+  textes:
+  - id: LEGIARTI000034578860
+    article: code rural et de la pêche maritime, D. 732-155, rédaction du 5 mai 2017 au 6 juillet 2024
+    en_vigueur: 2017-05-05
+    citation: >-
+      « 2° Lorsque l'assiette des cotisations mentionnée au premier alinéa de l'article
+      L. 732-59 est supérieure à l'assiette minimale susmentionnée, le nombre annuel de
+      points porté au compte de l'assuré est calculé selon la formule suivante : P = N x
+      RP/1820 SMIC »
+  bornes:
+    revenu.annee: [null, 2026-01-01]
+  contenu:
+    parametres:
+      existe: false
+    droit: aucun
+    raison: >-
+      jusqu'aux cotisations de 2025, la cotisation du chef n'a qu'une part, à un taux
+      unique sur l'assiette relevée au minimum (D. 732-165, 1°, dans sa rédaction du
+      1er janvier 2020 : « 4 % des revenus professionnels du chef d'exploitation ou
+      d'entreprise ou de l'assiette forfaitaire »), et les points suivent l'assiette, non
+      la cotisation ; le taux, le minimum et le nombre de points de chaque année sont aux
+      périodes de `msa_rco.yaml`, que la fiche `assiette_minimale_agricole` décrit ; cette
+      fiche ne les lit pas
+  exemples: aucun trouvé
+- id: deux_parts_2026
+  statut: lue
+  textes:
+  - id: LEGIARTI000049904700
+    article: code rural et de la pêche maritime, D. 732-165, rédaction du décret n° 2024-688 du 5 juillet 2024
+    en_vigueur: 2024-07-07
+    citation: >-
+      « I.-La cotisation mentionnée à l'article L. 732-59 due par les personnes
+      mentionnées au premier alinéa du I de l'article L. 732-56 est constituée de deux
+      parts déterminées dans les conditions suivantes : 1° Une part assise sur l'assiette
+      déterminée en application des articles L. 731-14, L. 731-15 et L. 731-22, sans que
+      cette assiette puisse être inférieure à 1 820 fois le montant du salaire minimum de
+      croissance en vigueur au 1er janvier de l'année au titre de laquelle la cotisation
+      est due, dont le taux est fixé à 4 % ; 2° Une part assise sur l'assiette déterminée
+      en application des articles L. 731-14, L. 731-15 et L. 731-22, dont le taux est
+      fixé dans les conditions suivantes : a) Lorsque le montant de l'assiette de
+      cotisations est inférieur à 40 % de la valeur annuelle du plafond de la sécurité
+      sociale [...], le taux est déterminé selon la formule suivante : Taux = T1/ (0,4 x
+      PSS) x A Où : T1 est égal à 1 % ; [...] b) Lorsque le montant de l'assiette de
+      cotisations est compris entre à 40 % et 60 % [...] : Taux = (T2-T1)/ (0,2 x PSS) x
+      (A-0,4 x PSS) + T1 Où : T1 est égal à 1 % ; T2 est égal à 1,3 % ; [...] c) Lorsque
+      le montant de l'assiette de cotisations est supérieur à 60 % et inférieur à 100 %
+      [...] : Taux = (T3-T2)/ (0,4 x PSS) x (A-0,6 x PSS) + T2 Où : T2 est égal à 1,3 % ;
+      T3 est égal à 1,8 % ; [...] d) Lorsque le montant de l'assiette de cotisations est
+      compris entre 100 % et 200 % [...] : Taux = (T4-T3)/ PSS x (A-PSS) + T3 Où : T3 est
+      égal à 1,8 % ; T4 est égal à 3 % ; [...] e) Lorsque le montant de l'assiette de
+      cotisations est supérieur à 200 % de la valeur annuelle du plafond de la sécurité
+      sociale [...], le taux est fixé à 3 %. »
+  - id: LEGIARTI000049904715
+    article: code rural et de la pêche maritime, D. 732-155, rédaction du décret n° 2024-688 du 5 juillet 2024
+    en_vigueur: 2024-07-07
+    citation: >-
+      « Le nombre annuel de points de retraite complémentaire obligatoire porté au compte
+      de l'assuré mentionné au I de l'article L. 732-56 est calculé selon la formule
+      suivante : P = C/ [(1820 SMIC x T)/ N] où : P est le nombre de points portés au
+      compte de l'assuré pour l'année considérée ; C est le montant de la cotisation
+      acquittée par l'assuré pour l'année considérée ; T est le taux fixé au 1° du I de
+      l'article D. 732-165 ; N est égal à 133 ; 1820 SMIC est l'assiette minimale prévue
+      en application de l'article L. 732-59. »
+  - id: JORFARTI000049888585
+    article: décret n° 2024-688 du 5 juillet 2024, article 5, 19°
+    publie_le: 2024-07-06
+    citation: >-
+      « 19° L'article D. 732-165 est ainsi modifié : a) Le premier alinéa est remplacé
+      par les dispositions suivantes : « I.-La cotisation mentionnée à l'article L.
+      732-59 due par les personnes mentionnées au premier alinéa du I de l'article L.
+      732-56 est constituée de deux parts déterminées dans les conditions suivantes : »
+  - id: JORFARTI000049888606
+    article: décret n° 2024-688 du 5 juillet 2024, article 6
+    publie_le: 2024-07-06
+    citation: >-
+      « Les dispositions des articles 1er, 2 et 5 s'appliquent au calcul des cotisations
+      et des contributions dues par les travailleurs indépendants agricoles au titre des
+      périodes courant à compter du 1er janvier 2026. »
+  nee_de: JORFARTI000049888585
+  bornes:
+    revenu.annee: [2026-01-01, null]
+  contenu:
+    parametres:
+      existe: true
+      seuils_en_plafonds: [0.4, 0.6, 1.0, 2.0]
+      taux_aux_seuils: [0.01, 0.013, 0.018, 0.03]
+    droit: >-
+      à la première part, 4 % de l'assiette relevée à 1 820 SMIC, s'ajoute une seconde,
+      sur l'assiette non relevée, au taux qui va de zéro à 1 % quand l'assiette va de zéro
+      à 40 % du plafond de la sécurité sociale, de 1 % à 1,3 % jusqu'à 60 %, de 1,3 % à
+      1,8 % jusqu'au plafond, de 1,8 % à 3 % jusqu'à deux plafonds, et reste à 3 %
+      au-delà ; les points de l'année sont la cotisation des deux parts, divisée par ce
+      que coûte un point au minimum, 4 % de 1 820 SMIC pour 133 points
+    conditions: >-
+      être chef d'exploitation ou d'entreprise agricole (premier alinéa du I de L.
+      732-56) ; le préretraité, l'assuré volontaire et l'invalide des alinéas suivants
+      cotisent 4 % de 1 820 SMIC, sans seconde part (D. 732-165, II), le collaborateur et
+      l'aide familial 4 % de 1 200 SMIC (IV)
+  exemples: aucun trouvé
+approximations:
+- version: [deux_parts_2026]
+  textes: code rural et de la pêche maritime, D. 732-155, I et III, rédaction du décret n° 2024-688
+  ecart: >-
+    Le texte ne dit pas comment s'arrondit le nombre de points ; le modèle le garde avec
+    ses décimales, comme avant 2026. La pratique de la MSA n'est pas lue.
+  effet: moins d'un point par année cotisée
+- version: [deux_parts_2026]
+  textes: >-
+    code rural et de la pêche maritime, D. 732-155, I, rédaction du décret n° 2024-688 ;
+    L. 731-10-1 ; R. 731-83
+  ecart: >-
+    Les points étant ceux de « la cotisation acquittée par l'assuré pour l'année
+    considérée », une année cotisée au prorata — celle du décès du chef, celle de R.
+    731-83 — n'en aurait que ses mois ; le modèle en garde au chef les points d'une
+    année, seconde part comprise, comme avant 2026, où le texte les comptait « par an ».
+    La pratique de la MSA n'est pas lue.
+  effet: non mesuré ; la seule année du décès ou du changement de métier, depuis 2026
+- version: [deux_parts_2026]
+  textes: code rural et de la pêche maritime, D. 732-165, II, rédaction du décret n° 2024-688
+  ecart: >-
+    Le modèle ne connaît ni le préretraité, ni l'assuré volontaire, ni le chef titulaire
+    d'une pension d'invalidité ou d'une rente, qui cotisent 4 % de 1 820 SMIC sans
+    seconde part : toute ligne de chef d'exploitation y a les deux parts sur son revenu.
+  effet: non mesuré
+- version: [deux_parts_2026]
+  textes: >-
+    code rural et de la pêche maritime, D. 732-165, I, « l'assiette déterminée en
+    application des articles L. 731-14, L. 731-15 et L. 731-22 »
+  ecart: >-
+    Le modèle prend pour assiette le revenu de la ligne, tel que l'assuré le saisit, et
+    ne refait ni la moyenne triennale ni l'assiette de L. 731-14 dans sa rédaction de
+    2026.
+  effet: non mesuré
+textes_sans_effet: []
+reformes: []
+effet: >-
+  Tous les chefs d'exploitation qui cotisent depuis 2026. Le modèle gardait pour ces
+  années la seule cotisation de 4 % et 133 points par 1 820 SMIC d'assiette ; depuis le
+  12 novembre 2026 (action 192, étape 1), il ajoute la seconde part au compte et ses
+  points au scénario 1. À 12 000 € de revenu en 2026, sous le minimum : 949,96 € de
+  cotisation et non 875,06 €, 144,39 points et non 133. À un plafond de la sécurité
+  sociale, 48 060 € : 2 787,48 € et non 1 922,40 €, 423,67 points et non 292,19. À deux
+  plafonds et demi : 8 410,50 € et non 4 806 €, 1 278,31 points et non 730,47. Les années
+  d'avant 2026, le collaborateur et l'aide familial ne changent pas.
+sources:
+  lu_le: 2026-11-12
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Comment la MSA arrondit les points de l'année, et ce qu'elle porte au compte du chef
+    l'année cotisée au prorata (son décès, R. 731-83) depuis que les points se tirent de
+    la cotisation acquittée : ni le barème de 2026 ni la page « RCO : comment est-elle
+    calculée ? », qui s'en tient aux cent points d'avant 2017, ne le disent.
+  - >-
+    Les taux de cotisation de la RCO peuvent être arrêtés par les ministres sur
+    proposition de la caisse centrale, dans un plan triennal (L. 732-60-1, L. 732-59,
+    dernier alinéa) : à chaque relecture, chercher au Journal officiel un arrêté ou un
+    décret qui changerait ceux de D. 732-165.
+  lectures:
+  - type: legifrance
+    reference: >-
+      code rural et de la pêche maritime, D. 732-165 (LEGIARTI000049904700) et D. 732-155
+      (LEGIARTI000049904715), rédactions du décret n° 2024-688, en vigueur le 12 novembre
+      2026 sans rédaction postérieure ; L. 732-56 (LEGIARTI000051289591), dont le premier
+      alinéa du I nomme le chef d'exploitation et les quatre suivants le préretraité,
+      l'assuré volontaire et les titulaires d'une pension d'invalidité ou d'une rente ;
+      L. 732-59 (LEGIARTI000051289570) : « sans que l'assiette puisse être inférieure à un
+      minimum fixé par décret » ; « L'arrêté mentionné à l'article L. 732-60-1 ou, à
+      défaut, le décret mentionné au dernier alinéa du même article fixe le ou les taux
+      de cotisation » ; L. 732-60-1 (LEGIARTI000051289555). Lus dans l'index LEGI du
+      dépôt, à jour au 11 novembre 2026
+    date: 2026-11-12
+  - type: jorf
+    reference: >-
+      décret n° 2024-688 du 5 juillet 2024 (JORFTEXT000049888566), article 5, 18° et 19°
+      (JORFARTI000049888585), qui récrit D. 732-155 et D. 732-165, et article 6
+      (JORFARTI000049888606), qui l'applique aux « périodes courant à compter du 1er
+      janvier 2026 ». Aucun arrêté ni décret postérieur ne fixe d'autres taux dans
+      l'index JORF du dépôt, à jour au 11 novembre 2026
+    date: 2026-11-12
+  - type: autre
+    reference: >-
+      MSA, « Barème des cotisations et contributions sociales des non-salariés agricoles
+      pour 2026 », lu le 12 novembre 2026 par l'étape 6 de l'action 184 (fiche
+      `assiette_minimale_agricole`) : « COTISATION RCO [...] 4% [...] avec application
+      d'une assiette minimum fixée à 1820 SMIC » ; « COTISATION RCO COMPLEMENTAIRE [...]
+      Montant de l'assiette inférieur à 40% du plafond annuel de la sécurité sociale soit
+      19 224 euros [...] Taux = T1/ (0,4 x PASS) x A [...] T1 = 1% », puis les trois
+      pentes jusqu'à « 96 120 euros pour 2026 » et « 3% » au-delà ; « 1820 SMIC =
+      21 876 € », « SMIC horaire au 01/01/2026 : 12,02€ ». La caisse applique donc les
+      deux parts ; le barème ne dit rien des points
+    url: https://www.msa.fr/lfp/documents/11566/41428048/Bar%C3%A8me+des+cotisations+et+contributions+sociales+des+non+salari%C3%A9s+agricoles+2026
+    date: 2026-11-12
+code:
+  moteur: >-
+    `seconde_part_de_rco` lit la version de l'année de la cotisation et rend la seconde
+    part d'une ligne de chef d'exploitation : le taux, affine par morceaux entre les
+    seuils de la version (`seuils_en_plafonds`, `taux_aux_seuils`), de zéro à l'origine,
+    constant au-delà du dernier, appliqué à l'assiette d'avant le minimum ; le plafond
+    est celui des mois de la ligne. `acquerir` en tire les points, `points_maximum` × la
+    part / (le repère × `taux_cotisation_retraite`), qu'il ajoute à ceux de la première
+    part ; `ConstructeurCompte._cotisation_ligne` l'ajoute à la cotisation que le compte
+    du droit en vigueur reçoit. Le régime fusionné de la proposition, après la bascule,
+    ne la prélève pas.
+  python: >-
+    droit/acquerir.py : seconde_part_de_rco, acquerir ; moteur/compte.py :
+    ConstructeurCompte._cotisation_ligne ; scenarios/actuel.py : FichesDatees
+  javascript: >-
+    moteur/js/droit/acquerir.js : secondePartDeRco, acquerir ; moteur/js/compte.js :
+    ConstructeurCompte._cotisationLigne ; moteur/js/regimes.js : FichesDatees
+  parametres: >-
+    contenu.parametres de chaque version : existe, seuils_en_plafonds, taux_aux_seuils ;
+    regimes/msa_rco.yaml : assiette_repere_smic, points_maximum, taux_cotisation_retraite
+  tests:
+  - >-
+    tests/test_simulateur.py, test_la_cotisation_de_rco_du_chef_a_deux_parts_depuis_2026,
+    cinq revenus posés à la main, un par pente du taux, la cotisation au compte et les
+    points au scénario 1, dans les deux moteurs ;
+    test_la_seconde_part_de_rco_ne_touche_ni_les_annees_d_avant_ni_le_collaborateur

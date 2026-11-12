@@ -180,6 +180,50 @@ export function assietteDuCollaborateur(code, ligne) {
 }
 
 /**
+ * La fiche de la cotisation de retraite complémentaire du chef d'exploitation
+ * agricole, en deux parts depuis 2026.
+ */
+export const FICHE_DE_LA_COTISATION_RCO = "cotisation_rco_agricole_2026";
+
+/**
+ * La SECONDE PART de la cotisation de retraite complémentaire du chef
+ * d'exploitation agricole, en euros, pour les périodes courant depuis le
+ * 1er janvier 2026 (D. 732-165, I, 2°, rédaction du décret n° 2024-688) : une
+ * part sur l'assiette, avant qu'elle soit relevée au minimum, au taux qui
+ * croît avec elle — de zéro à 1 % quand elle va de zéro à 40 % du plafond de
+ * la sécurité sociale, de 1 % à 1,3 % jusqu'à 60 %, de 1,3 % à 1,8 % jusqu'au
+ * plafond, de 1,8 % à 3 % jusqu'à deux plafonds, 3 % au-delà. Les seuils et
+ * les taux sont ceux de la version de la fiche que choisit l'année de la
+ * cotisation ; `plafond` est celui des mois de la ligne. Nulle hors de la
+ * RCO, sans version qui l'ouvre, et pour le collaborateur et l'aide familial,
+ * au forfait (D. 732-165, IV). Voir acquerir.py.
+ */
+export function secondePartDeRco(fichesDatees, code, ligne, assiette, plafond) {
+  if (code !== "msa_rco" || assietteDuCollaborateur(code, ligne) !== null
+      || !(assiette > 0) || !(plafond > 0)) {
+    return 0.0;
+  }
+  const version = fichesDatees.versionAuxDates(FICHE_DE_LA_COTISATION_RCO,
+    { "revenu.annee": `${ligne.annee}-01-01` });
+  if (version === null || !version.parametres.existe) {
+    return 0.0;
+  }
+  const seuils = version.parametres.seuils_en_plafonds;
+  const taux = version.parametres.taux_aux_seuils;
+  let seuilBas = 0.0;
+  let tauxBas = 0.0;
+  for (let i = 0; i < seuils.length; i += 1) {
+    if (assiette < seuils[i] * plafond) {
+      return (tauxBas + (taux[i] - tauxBas) * (assiette - seuilBas * plafond)
+        / ((seuils[i] - seuilBas) * plafond)) * assiette;
+    }
+    seuilBas = seuils[i];
+    tauxBas = taux[i];
+  }
+  return tauxBas * assiette;
+}
+
+/**
  * Points que ce régime attribue sans cotisation à la liquidation, et la
  * fiabilité de la durée requise qui les conditionne : cent points par année
  * de chef d'exploitation d'avant 2003 à la RCO agricole (D. 732-154), dans
@@ -614,6 +658,8 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
         }
         const plafond = borneHaute === null ? base : borneHaute;
         let assiette = Math.max(0.0, Math.min(base, plafond) - borneBasse);
+        // L'assiette d'avant tout minimum, que lit la seconde part de la RCO.
+        const assietteSansMinimum = assiette;
         const repere = periode.repereAssiette(
           pass, moteur.macro.smicHoraireDuForfait(ligne.annee, periode.smic_du_mois),
         ) * (periode.assiette_repere_smic !== null
@@ -782,11 +828,21 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           // 66, 77 et 88 (D. 732-155, II).
           // Les points de la cotisation ANNUELLE au repère : une année
           // incomplète n'en a que la part de ses mois (D. 643-1).
-          const pointsAnnee = forfaitCollaborateur === null
+          let pointsAnnee = forfaitCollaborateur === null
             ? periode.points_maximum * assiette / repere
               * (periode.points_au_prorata_des_cotisations ? part : 1)
             : Math.floor(periode.points_maximum * forfaitCollaborateur
               / periode.assiette_repere_smic + 0.5) * part;
+          // LA SECONDE PART DE LA RCO du chef d'exploitation, depuis 2026 : les
+          // points sont ceux de « la cotisation acquittée », P = C / [(1 820
+          // SMIC × T) / N] (D. 732-155, I), et la seconde part en achète donc,
+          // au prix de ceux du minimum. Voir `secondePartDeRco`.
+          const secondePart = secondePartDeRco(
+            moteur.fichesDatees, code, ligne, assietteSansMinimum, pass);
+          if (secondePart > 0) {
+            pointsAnnee += periode.points_maximum * secondePart
+              / (repere * periode.taux_cotisation_retraite);
+          }
           crediter(code, ligne.annee, pointsAnnee * echelleBareme,
             Boolean(periode.points_abattus_a_l_age));
           fiabilitePoints.set(code, Math.min(

@@ -6663,6 +6663,78 @@ def test_le_compte_porte_la_cotisation_du_collaborateur_sur_son_forfait(simulate
         "msa_non_salaries": 2084.40}
 
 
+def _chef_d_exploitation_jusqu_en_2027(revenu: float, affiliation: str = "exploitant_agricole"):
+    """Née en 1964, partie à 64 ans, ``affiliation`` agricole de 1990 à 2027
+    au même ``revenu`` : sa naissance et ses lignes."""
+    naissance = dict(annee_naissance=1964, sexe="F", jour_naissance=15, age_liquidation=64.0)
+    return naissance, [dict(annee=annee, revenu=revenu, affiliation=affiliation)
+                       for annee in range(1990, 2028)]
+
+
+@pytest.mark.parametrize("revenu,cotisation,points", [
+    (12000.0, 949.96, 144.385039),
+    (25000.0, 1295.07, 196.837839),
+    (48060.0, 2787.48, 423.669845),
+    (72090.0, 4613.76, 701.246640),
+    (120150.0, 8410.50, 1278.314188),
+])
+def test_la_cotisation_de_rco_du_chef_a_deux_parts_depuis_2026(
+        simulateur, revenu, cotisation, points):
+    """Pour les périodes courant depuis le 1er janvier 2026, la cotisation de
+    retraite complémentaire du chef d'exploitation « est constituée de deux
+    parts » (D. 732-165, I, rédaction du décret n° 2024-688,
+    LEGIARTI000049904700) : 4 % de l'assiette relevée à 1 820 SMIC, et une
+    part sur l'assiette, non relevée, au taux qui croît avec elle — 1 % × A /
+    (0,4 plafond) sous 40 % du plafond de la sécurité sociale, de 1 % à 1,3 %
+    jusqu'à 60 %, de 1,3 % à 1,8 % jusqu'au plafond, de 1,8 % à 3 % jusqu'à
+    deux plafonds, 3 % au-delà. Les points sont ceux de « la cotisation
+    acquittée » : P = C / [(1 820 SMIC × T) / N], T valant 4 % et N 133
+    (D. 732-155, I, LEGIARTI000049904715). Posé à la main, au SMIC de 12,02 €
+    (1 820 SMIC, 21 876,40 € ; 875,056 € à 4 %) et au plafond de 48 060 € de
+    2026 :
+
+    - 12 000 € : 875,056 € au minimum, et 0,62422 % (1 % × 12 000 / 19 224)
+      de 12 000 €, 74,906 € ; 949,96 € et 133 × 949,962 / 875,056 points ;
+    - 25 000 € : 1 000 €, et 1 % + 0,3 % × (25 000 − 19 224) / 9 612, soit
+      1,180275 %, 295,07 € ; 1 295,07 € ;
+    - un plafond : 1 922,40 € et 1,8 %, 865,08 € ; 2 787,48 €, 423,67 points
+      et non les 292 des seuls 4 % ;
+    - un plafond et demi : 2 883,60 € et 2,4 %, 1 730,16 € ; 4 613,76 € ;
+    - deux plafonds et demi : 4 806 € et 3 %, 3 604,50 € ; 8 410,50 €.
+
+    Le scénario 1 en sert les points et le compte du droit en vigueur en
+    reçoit la cotisation ; le modèle gardait 4 % et 133 points par 1 820 SMIC.
+    Dans les deux moteurs."""
+    naissance, lignes = _chef_d_exploitation_jusqu_en_2027(revenu)
+    assert _compte_de_l_annee_en_deux_moteurs(
+        simulateur, naissance, lignes, 2026)["msa_rco"] == cotisation
+    assert _annee_agricole_en_deux_moteurs(
+        simulateur, naissance, lignes, 2026)["points"]["msa_rco"] == pytest.approx(
+            points, abs=2e-6)
+
+
+def test_la_seconde_part_de_rco_ne_touche_ni_les_annees_d_avant_ni_le_collaborateur(simulateur):
+    """Le décret n° 2024-688 s'applique « au titre des périodes courant à
+    compter du 1er janvier 2026 » (article 6) : l'année 2025 garde la seule
+    cotisation de 4 % sur 1 820 SMIC au moins (D. 732-165, LEGIARTI000041404706)
+    et P = 133 × RP / 1 820 SMIC (D. 732-155, LEGIARTI000034578860) — à
+    48 060 €, au SMIC de 11,88 €, 1 922,40 € et 133 × 48 060 / 21 621,60,
+    295,63 points. Le collaborateur garde en 2026 les 4 % de son forfait de
+    1 200 SMIC, 576,96 €, et ses 88 points (D. 732-165, IV ; D. 732-155, II).
+    Dans les deux moteurs."""
+    naissance, lignes = _chef_d_exploitation_jusqu_en_2027(48060.0)
+    assert _compte_de_l_annee_en_deux_moteurs(
+        simulateur, naissance, lignes, 2025)["msa_rco"] == 1922.40
+    assert _annee_agricole_en_deux_moteurs(
+        simulateur, naissance, lignes, 2025)["points"]["msa_rco"] == pytest.approx(
+            295.629371, abs=2e-6)
+    naissance, lignes = _chef_d_exploitation_jusqu_en_2027(12000.0, "collaborateur_agricole")
+    assert _compte_de_l_annee_en_deux_moteurs(
+        simulateur, naissance, lignes, 2026)["msa_rco"] == 576.96
+    assert _annee_agricole_en_deux_moteurs(
+        simulateur, naissance, lignes, 2026)["points"]["msa_rco"] == 88.0
+
+
 def test_l_exercice_1952_ne_preleve_que_la_moitie_de_la_cotisation_annuelle(simulateur):
     """« Pour l'exercice 1952, les cotisations professionnelles visées aux
     articles 20 et 21 de la loi du 10 juillet 1952 sont égales à la moitié des

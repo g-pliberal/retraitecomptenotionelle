@@ -32,7 +32,7 @@ from ..donnees.macro import REGIME_DE_MAYOTTE, DonneesMacro
 from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation,
                               ContributionsEmployeurPubliques, CotisationsDesCultes,
                               PartRetraiteSeuleEtat, SalairesForfaitaires)
-from ..droit.acquerir import assiette_du_collaborateur
+from ..droit.acquerir import assiette_du_collaborateur, seconde_part_de_rco
 from .fusion import RegimeFusionne
 from .indexation import Indexation
 from ..somme import somme_ordonnee
@@ -220,8 +220,11 @@ class ConstructeurCompte:
         self.primes = charger_primes_soumises(parametres.racine_donnees)
         # Le prix d'achat du point, que la garantie minimale de points de
         # l'Agirc demande. Import tardif : le scénario 1 importe ce module.
-        from ..scenarios.actuel import ValeursPoint
+        from ..scenarios.actuel import FichesDatees, ValeursPoint
         self.valeurs_point = ValeursPoint(parametres.racine_donnees)
+        # Les fiches dont le compte lit la version de l'année : la seconde
+        # part de la cotisation de RCO du chef d'exploitation agricole.
+        self.fiches_datees = FichesDatees(parametres.racine_donnees)
         # Le barème du régime unique est facultatif ; mal formé, il arrête le
         # simulateur.
         if parametres.bareme_regime_unique is not None:
@@ -885,6 +888,9 @@ class ConstructeurCompte:
                     continue
 
                 assiette = self._assiette(base, annee, borne_basse, borne_haute, part)
+                # L'assiette d'avant tout minimum, que lit la seconde part de
+                # la RCO.
+                assiette_sans_minimum = assiette
                 repere = periode.repere_assiette(
                     self.macro.plafond_securite_sociale(annee),
                     self.macro.smic_horaire_du_forfait(annee, periode.smic_du_mois),
@@ -978,6 +984,17 @@ class ConstructeurCompte:
                 montant = (montant_classe if classe is not None
                            else assiette * taux + forfait)
                 patronale = assiette * taux_employeur
+
+                # LA SECONDE PART DE LA RCO du chef d'exploitation agricole,
+                # depuis 2026 (D. 732-165, I, 2°, rédaction du décret
+                # n° 2024-688) : une part sur l'assiette non relevée, au taux
+                # qui croît avec elle, que le compte reçoit avec la première.
+                # Il ne portait jusqu'au 12 novembre 2026 que les 4 % de la
+                # première (`acquerir.seconde_part_de_rco`).
+                if classe is None:
+                    montant += seconde_part_de_rco(
+                        self.fiches_datees, code, ligne, assiette_sans_minimum,
+                        self.macro.plafond_securite_sociale(annee) * part)
 
                 # LES COTISATIONS DES CULTES DE 1979 À 1997. Le forfait du SMIC
                 # aux taux du régime général ne vaut que depuis 1998 : avant,

@@ -18,12 +18,12 @@ import {
 } from "./carriere.js";
 import {
   ClassesCotisation, ContributionsEmployeurPubliques, PartRetraiteSeuleEtat,
-  CotisationsDesCultes, SalairesForfaitaires, ValeursPoint,
+  CotisationsDesCultes, FichesDatees, SalairesForfaitaires, ValeursPoint,
 } from "./regimes.js";
 import { Fiabilite } from "./serie.js";
 import { REGIME_DE_MAYOTTE } from "./macro.js";
 import { primesSoumises } from "./primes.js";
-import { assietteDuCollaborateur } from "./droit/acquerir.js";
+import { assietteDuCollaborateur, secondePartDeRco } from "./droit/acquerir.js";
 
 /** Le seul régime dont la contribution employeur est un taux d'équilibre. */
 const REGIME_ETAT = "fonction_publique_etat";
@@ -106,6 +106,9 @@ export class ConstructeurCompte {
     this.classes = new ClassesCotisation(macro.paquet);
     this.grilles = new SalairesForfaitaires(macro.paquet);
     this.cotisationsCultes = new CotisationsDesCultes(macro.paquet);
+    // Les fiches dont le compte lit la version de l'année : la seconde part
+    // de la cotisation de RCO du chef d'exploitation agricole.
+    this.fichesDatees = new FichesDatees(macro.paquet);
     // Les primes que la loi assujettit à la retenue pour pension, et les
     // retenues et contributions supplémentaires de leur statut.
     this.primes = primesSoumises(macro.paquet);
@@ -736,6 +739,8 @@ export class ConstructeurCompte {
         }
 
         let assiette = this._assiette(base, annee, borneBasse, borneHaute, part);
+        // L'assiette d'avant tout minimum, que lit la seconde part de la RCO.
+        const assietteSansMinimum = assiette;
         const repere = periode.repereAssiette(
           this.macro.plafond_securite_sociale.valeur(annee),
           this.macro.smicHoraireDuForfait(annee, periode.smic_du_mois),
@@ -818,6 +823,15 @@ export class ConstructeurCompte {
           ? classe[0] * part
           : assiette * taux + forfait;
         let patronale = assiette * tauxEmployeur;
+
+        // LA SECONDE PART DE LA RCO du chef d'exploitation agricole, depuis
+        // 2026 (D. 732-165, I, 2°) : une part sur l'assiette non relevée, au
+        // taux qui croît avec elle, que le compte reçoit avec la première.
+        // Voir `secondePartDeRco` et compte.py.
+        if (classe === null) {
+          montant += secondePartDeRco(this.fichesDatees, code, ligne, assietteSansMinimum,
+            this.macro.plafond_securite_sociale.valeur(annee) * part);
+        }
 
         // LES COTISATIONS DES CULTES DE 1979 À 1997 : deux montants par
         // assuré, fixés chaque année par arrêté, et non le SMIC aux taux du

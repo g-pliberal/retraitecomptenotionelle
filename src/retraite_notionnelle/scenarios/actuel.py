@@ -1262,7 +1262,9 @@ class FichesDatees:
     lit au jour où la limite est atteinte (date ``age_atteint``,
     :data:`~retraite_notionnelle.droit.limite_age.FICHES`), et le minimum de
     pension de la SNCF, que ``liquider.minimum_de_pension_ouvert`` lit, et la
-    retraite progressive, que ``progressive.regle`` lit.
+    retraite progressive, que ``progressive.regle`` lit, et la seconde part de
+    la cotisation de retraite complémentaire du chef d'exploitation agricole,
+    que ``acquerir.seconde_part_de_rco`` lit à l'année de la cotisation.
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
@@ -1296,7 +1298,8 @@ class FichesDatees:
             "limite_age_opera", "limite_age_seita", "limite_age_banque_de_france",
             "limite_age_mines", "apprentissage", "stages_formation_professionnelle",
             "sportifs_haut_niveau", "conge_supplementaire_naissance",
-            "minimum_pension_sncf", "retraite_progressive")
+            "minimum_pension_sncf", "retraite_progressive",
+            "cotisation_rco_agricole_2026")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

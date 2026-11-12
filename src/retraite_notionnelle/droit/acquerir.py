@@ -241,6 +241,41 @@ def assiette_du_collaborateur(code: str, ligne) -> float | None:
     return None
 
 
+#: La fiche de la cotisation de retraite complémentaire du chef d'exploitation
+#: agricole, en deux parts depuis 2026.
+FICHE_DE_LA_COTISATION_RCO = "cotisation_rco_agricole_2026"
+
+
+def seconde_part_de_rco(fiches_datees, code: str, ligne, assiette: float,
+                        plafond: float) -> float:
+    """La SECONDE PART de la cotisation de retraite complémentaire du chef
+    d'exploitation agricole, en euros, pour les périodes courant depuis le
+    1er janvier 2026 (D. 732-165, I, 2°, rédaction du décret n° 2024-688) :
+    une part sur l'assiette, avant qu'elle soit relevée au minimum, au taux
+    qui croît avec elle — « Taux = T1/ (0,4 x PSS) x A » sous 40 % du plafond
+    de la sécurité sociale, T1 valant 1 %, puis de 1 % à 1,3 % jusqu'à 60 %,
+    de 1,3 % à 1,8 % jusqu'au plafond, de 1,8 % à 3 % jusqu'à deux plafonds,
+    3 % au-delà. Les seuils et les taux sont ceux de la version de la fiche
+    que choisit l'année de la cotisation ; ``plafond`` est celui des mois de
+    la ligne. Nulle hors de la RCO, sans version qui l'ouvre, et pour le
+    collaborateur et l'aide familial, au forfait (D. 732-165, IV)."""
+    if (code != "msa_rco" or assiette_du_collaborateur(code, ligne) is not None
+            or not assiette > 0 or not plafond > 0):
+        return 0.0
+    version = fiches_datees.version_aux_dates(
+        FICHE_DE_LA_COTISATION_RCO, {"revenu.annee": f"{ligne.annee}-01-01"})
+    if version is None or not version["parametres"].get("existe"):
+        return 0.0
+    seuil_bas, taux_bas = 0.0, 0.0
+    for seuil, taux in zip(version["parametres"]["seuils_en_plafonds"],
+                           version["parametres"]["taux_aux_seuils"]):
+        if assiette < seuil * plafond:
+            return (taux_bas + (taux - taux_bas) * (assiette - seuil_bas * plafond)
+                    / ((seuil - seuil_bas) * plafond)) * assiette
+        seuil_bas, taux_bas = seuil, taux
+    return taux_bas * assiette
+
+
 def points_gratuits(moteur: ScenarioActuel, periode: PeriodeRegime,
                     carriere: Carriere, assurance: dict[str, dict[int, int]],
                     trimestres: int, age_liquidation: float, au_taux_plein: bool = False
@@ -775,6 +810,9 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     base = max(base, assiette_minimale(moteur, (code,), ligne))
                 plafond = base if borne_haute is None else borne_haute
                 assiette = max(0.0, min(base, plafond) - borne_basse)
+                # L'assiette d'avant tout minimum, que lit la seconde part de
+                # la RCO.
+                assiette_sans_minimum = assiette
                 repere = periode.repere_assiette(
                     pass_annuel,
                     moteur.macro.smic_horaire_du_forfait(ligne.annee, periode.smic_du_mois),
@@ -971,6 +1009,17 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                         points_annee = math.floor(
                             periode.points_maximum * forfait_collaborateur
                             / periode.assiette_repere_smic + 0.5) * part
+                    # LA SECONDE PART DE LA RCO du chef d'exploitation, depuis
+                    # 2026 : les points sont ceux de « la cotisation
+                    # acquittée », P = C / [(1 820 SMIC × T) / N] (D. 732-155,
+                    # I), et la seconde part en achète donc, au prix de ceux
+                    # du minimum. Voir `seconde_part_de_rco`.
+                    seconde_part = seconde_part_de_rco(
+                        moteur.fiches_datees, code, ligne, assiette_sans_minimum,
+                        pass_annuel)
+                    if seconde_part > 0:
+                        points_annee += (periode.points_maximum * seconde_part
+                                         / (repere * periode.taux_cotisation_retraite))
                     crediter(code, ligne.annee, points_annee * echelle,
                              periode.points_abattus_a_l_age)
                     fiabilite_points[code] = min(

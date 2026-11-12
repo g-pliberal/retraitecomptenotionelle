@@ -308,6 +308,15 @@ periodes:
       seule période portait jusque-là 1 820 SMIC, 100 points et 4 % depuis
       2003. Le taux ne déplace pas la pension calculée ici, qui ne dépend
       que du barème en points, mais le flux versé au compte notionnel.
+      DEPUIS LES COTISATIONS DE 2026, la cotisation du chef a une seconde
+      part, de 0 à 3 % de l'assiette selon ce qu'elle représente du plafond
+      de la sécurité sociale (D. 732-165, I, 2°, rédaction du décret
+      n° 2024-688), et les points sont ceux de la cotisation acquittée (D.
+      732-155, I) : la seconde part en achète, au prix de ceux du minimum.
+      Ses seuils et ses taux sont à la fiche `cotisation_rco_agricole_2026`,
+      que le moteur lit à l'année de la cotisation ; cette période garde le
+      minimum, les 133 points et les 4 % de la première part. Écrit le 12
+      novembre 2026 (action 192, étape 1).
       LES POINTS GRATUITS DES CHEFS D'EXPLOITATION SONT SERVIS
       (`points_gratuits`, lus sur Légifrance et sur la page de la MSA le 23
       septembre 2026) : cent par année de chef d'avant 2003, dans la limite

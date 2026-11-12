@@ -52,29 +52,16 @@ effet: >-
   ses mois. Depuis le 22 octobre 2026, ce compte porte la cotisation du collaborateur et
   de l'aide familial sur leur forfait, comme le régime la prélève, et non sur leur revenu
   relevé au plancher du chef : la collaboratrice à 12 000 € par an y verse pour 2023
-  783,04 € à la base et 540,96 € à la RCO, et non 2 084,40 € et 820,46 €.
+  783,04 € à la base et 540,96 € à la RCO, et non 2 084,40 € et 820,46 €. Depuis le
+  12 novembre 2026 (action 192, étape 1), la seconde part que la cotisation de RCO du chef
+  porte depuis 2026, et les points qu'elle achète, sont servis : fiche
+  `cotisation_rco_agricole_2026`, dont la version de 2026 cite D. 732-165 dans sa rédaction
+  du décret n° 2024-688 (LEGIARTI000049904700) ; le minimum de 1 820 SMIC et les 133
+  points qu'il ouvre restent ici.
 sources:
   lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
   a_relire:
-  - >-
-    CE QUI CHANGE UNE RÈGLE, à écrire (action 184, étape 6, lu le 12 novembre 2026).
-    Pour les cotisations des périodes courant depuis le 1er janvier 2026, la cotisation
-    de retraite complémentaire du chef d'exploitation a deux parts (D. 732-165, I,
-    rédaction du décret n° 2024-688, LEGIARTI000049904700) : 4 % de l'assiette relevée à
-    1 820 SMIC, comme avant, et une part sur l'assiette au taux qui croît avec elle —
-    1 % × A / (0,4 plafond) sous 40 % du plafond de la sécurité sociale, de 1 % à 1,3 %
-    jusqu'à 60 %, de 1,3 % à 1,8 % jusqu'au plafond, de 1,8 % à 3 % jusqu'à deux
-    plafonds, 3 % au-delà. D. 732-155 tire les points de « la cotisation acquittée », P
-    = C / [(1 820 SMIC × T) / N], T étant « le taux fixé au 1° du I de l'article D.
-    732-165 », 4 %, et N 133 : la seconde part achète donc des points. Le moteur garde
-    pour les années depuis 2026 la seule cotisation de 4 % et 133 points par 1 820 SMIC
-    de revenu. Posé à la main : à un plafond de revenu en 2026, 48 060 €, la cotisation
-    est de 5,8 %, 2 787,48 €, et non de 1 922,40 € ; les points, 133 × 2 787,48 /
-    (21 876,40 × 4 %), environ 424, et non 292. La MSA applique la seconde part («
-    COTISATION RCO COMPLEMENTAIRE », barème de 2026) ; comment elle arrondit les points
-    et ce qu'elle fait de l'année au prorata restent à lire. Le collaborateur et l'aide
-    familial gardent 4 % de 1 200 SMIC et 88 points (D. 732-165, IV ; D. 732-155, II).
   - >-
     L'année que R. 731-83 fait cotiser au prorata : D. 732-155 écrit un « nombre annuel
     de points », 100 puis 133 « par an » au minimum, P = N × RP / 1 820 SMIC au-delà,
@@ -312,12 +299,6 @@ textes_a_rattacher:
     complémentaire : code rural et de la pêche maritime, D. 732-155 (LEGIARTI000006597591,
     LEGIARTI000006597592, LEGIARTI000006597593, LEGIARTI000023395107,
     LEGIARTI000034578860, LEGIARTI000049904715), et décret n° 2017-716 du 2 mai 2017
-- id: LEGIARTI000049904700
-  en_vigueur: 2024-07-07
-  change: >-
-    D. 732-165, pour les cotisations des périodes courant depuis le 1er janvier 2026 : la
-    cotisation de retraite complémentaire du chef a une seconde part, au taux de 1 % à 3 %
-    selon l'assiette, qui achète des points (D. 732-155) ; le moteur ne l'applique pas
 - reference: >-
     collaborateur et aide familial : code rural et de la pêche maritime, L. 731-42
     (LEGIARTI000023034860, LEGIARTI000051284150), D. 731-121 (LEGIARTI000019506734,
