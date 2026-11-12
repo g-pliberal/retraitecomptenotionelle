@@ -20,7 +20,9 @@ pas : il se lit dans les fiches.
     datée, en l'apportant de l'index après la pose de la liste.
 
 Une fiche cite une rédaction par son identifiant (``id``), ou le nomme dans
-une référence : ``LEGIARTI`` suivi de ses douze chiffres suffit. Le CLIQUET
+une référence : ``LEGIARTI`` suivi de ses douze chiffres suffit. Une
+déclaration « sans effet » ne vaut que pour la rédaction qu'elle déclare, non
+pour celles que son motif nomme. Le CLIQUET
 compte les rédactions sans aucun statut. Il ne peut que décroître, et une loi
 nouvelle ne le fait jamais monter : ses rédactions entrent « à examiner ».
 """
@@ -71,6 +73,18 @@ def _identifiants(textes) -> set[str]:
     return trouves
 
 
+def _declares(textes) -> set[str]:
+    """Les rédactions qu'une liste « sans effet » déclare : l'``id`` de chaque
+    entrée, ou, faute d'``id``, celles que nomme sa référence. Le motif n'est
+    pas lu : il peut nommer une autre rédaction pour la comparer."""
+    declares = []
+    for texte in textes or []:
+        if isinstance(texte, dict):
+            texte = texte.get("id") or texte.get("reference") or ""
+        declares.append(texte)
+    return _identifiants(declares)
+
+
 def citations(fiches: dict[str, dict] | None = None) -> dict[str, dict[str, str]]:
     """Pour chaque rédaction qu'une fiche cite, le statut qu'elle en reçoit,
     fiche par fiche."""
@@ -88,7 +102,7 @@ def citations(fiches: dict[str, dict] | None = None) -> dict[str, dict[str, str]
         for version in fiche.get("versions") or []:
             if isinstance(version, dict):
                 noter(_identifiants(version.get("textes")), "rattachee", nom)
-        noter(_identifiants(fiche.get("textes_sans_effet")), "sans_effet", nom)
+        noter(_declares(fiche.get("textes_sans_effet")), "sans_effet", nom)
         noter(_identifiants(fiche.get("textes_a_rattacher")), "a_rattacher", nom)
         lectures = (fiche.get("sources") or {}).get("lectures") if isinstance(
             fiche.get("sources"), dict) else None

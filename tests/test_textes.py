@@ -65,6 +65,25 @@ def test_deux_fiches_donnent_le_statut_le_plus_etabli(liste):
     assert statuts[A] == "rattachee" and statuts[G] == "sans_effet"
 
 
+def test_un_motif_sans_effet_ne_declare_pas_la_redaction_qu_il_nomme(liste):
+    """Une déclaration « sans effet » ne vaut que pour la rédaction qu'elle
+    déclare : son ``id``, ou, faute d'``id``, celles que nomme sa référence.
+    Son motif peut en nommer une autre pour la comparer : celle-là n'en reçoit
+    aucun statut, et la fiche ne l'a pas lue (action 184, étape 7)."""
+    fiches = {"regle": {
+        "versions": [{"id": "v1", "textes": [{"id": A}]}],
+        "textes_sans_effet": [
+            {"id": B, "reference": f"L. 351-1, version de 2004, qui suit {E}",
+             "motif": f"mêmes mots que la rédaction d'avant ({G}), au renvoi près"},
+            {"reference": f"L. 351-1, versions de 1985 ({C}) et de 1993 ({D})",
+             "motif": "renvois d'alinéa"}]}}
+    statuts = textes.statuts(liste, fiches)
+    assert statuts[B] == statuts[C] == statuts[D] == "sans_effet"
+    assert statuts[G] is None, "nommée dans un motif"
+    assert statuts[E] is None, "nommée dans la référence d'une entrée qui déclare son id"
+    assert G in [r["id"] for r in textes.non_lues(liste, fiches, date(2026, 11, 12))["regle"]]
+
+
 def test_le_cliquet_ne_monte_pas(liste):
     """Une rédaction qui perd son statut fait monter le compte : le contrôle
     le refuse. Une rédaction qui en gagne un le fait baisser : le cliquet doit
