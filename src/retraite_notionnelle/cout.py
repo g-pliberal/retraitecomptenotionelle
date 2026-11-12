@@ -2401,7 +2401,7 @@ def _lignes_du_compte(compte) -> dict:
 
 
 def _simulations_en_python(simulateur: Simulateur, cas: list[dict], scenarios, comptes=(),
-                           ) -> tuple[dict[str, dict], dict[str, str]]:
+                           capitaux=()) -> tuple[dict[str, dict], dict[str, str]]:
     """Les cases de la grille, ``{"cle", "carriere", "propositions"}``,
     simulées par le moteur Python : sous sa clé, ce que le coût lit de
     chacune — la pension de chaque système en euros constants, la proposition
@@ -2410,7 +2410,10 @@ def _simulations_en_python(simulateur: Simulateur, cas: list[dict], scenarios, c
     population de sa mortalité — et la proposition seule sur chaque carrière
     de ``propositions`` ; et, de chaque scénario que ``comptes`` nomme, les
     lignes de son compte (:func:`_lignes_du_compte`), que
-    ``scripts/solde_fusion.py`` lit du scénario 4 (action 161) ; puis les
+    ``scripts/solde_fusion.py`` lit du scénario 4 (action 161), et, de chaque
+    scénario que ``capitaux`` nomme, le capital de son compte et ses droits
+    acquis à la bascule (``pont.CAPITAUX_DU_COMPTE``), que
+    ``scripts/mortalite_population.py`` lit ; puis les
     motifs des cases que la simulation refuse. Le jumeau de
     ``pont.grille_du_cout``."""
     resultats: dict[str, dict] = {}
@@ -2447,24 +2450,29 @@ def _simulations_en_python(simulateur: Simulateur, cas: list[dict], scenarios, c
                              for nom, autre in un["propositions"].items()},
             "comptes": {scenario: _lignes_du_compte(getattr(comparaison, scenario).compte)
                         for scenario in comptes},
+            "capitaux": {scenario: {champ: float(getattr(getattr(comparaison, scenario), champ))
+                                    for champ in pont.CAPITAUX_DU_COMPTE}
+                         for scenario in capitaux},
         }
     return resultats, echecs
 
 
-def _simulations(simulateur: Simulateur, cas: list[dict], comptes=(),
+def _simulations(simulateur: Simulateur, cas: list[dict], comptes=(), capitaux=(),
                  ) -> tuple[dict[str, dict], dict[str, str]]:
     """Les cases de la grille simulées, par le portage ou par le moteur Python
     (``pont.par_le_portage``) : le même contrat des deux côtés
     (:func:`_simulations_en_python`, ``pont.grille_du_cout``), les lignes du
-    compte des scénarios que ``comptes`` nomme comprises. Les variantes
+    compte des scénarios que ``comptes`` nomme et les capitaux de ceux que
+    ``capitaux`` nomme compris. Les variantes
     d'une étude que le simulateur calcule passent au portage dans la demande
     (``Simulateur.univers_de_la_demande``, action 161)."""
     scenarios = [cle for cle, _ in SCENARIOS]
     if pont.par_le_portage(simulateur.parametres):
         return pont.grille_du_cout(cas, scenarios, simulateur.parametres,
                                    pont.paquet_des_donnees(simulateur.parametres.racine_donnees),
-                                   univers=simulateur.univers_de_la_demande, comptes=comptes)
-    return _simulations_en_python(simulateur, cas, scenarios, comptes)
+                                   univers=simulateur.univers_de_la_demande, comptes=comptes,
+                                   capitaux=capitaux)
+    return _simulations_en_python(simulateur, cas, scenarios, comptes, capitaux)
 
 
 #: Les carrières sur lesquelles le coût calcule la proposition seule, hors de la

@@ -30,7 +30,8 @@
  *   sous les paramètres de la projection : ce que le coût lit de la
  *   comparaison, la proposition seule sur chacune des carrières nommées de
  *   `propositions`, et les lignes du compte de chaque scénario que `comptes`
- *   nomme (`lignesDuCompte`).
+ *   nomme (`lignesDuCompte`) ; et, de chaque scénario que `capitaux` nomme,
+ *   le capital de son compte et ses droits acquis (`capitauxDuCompte`).
  *
  * Dans ces deux lectures, `univers` porte les variantes d'une étude, que le
  * paquet ne porte pas — la proposition prospective, à la place du scénario 6
@@ -126,6 +127,7 @@ import { ConstructeurCapitalisation } from "../../moteur/js/capitalisation.js";
 import { valeur as valeurPresumee } from "../../moteur/js/chronologie.js";
 import { ConstructeurCompte } from "../../moteur/js/compte.js";
 import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
+import { niveauRelatif } from "../../moteur/js/conversion.js";
 import { Contexte } from "../../moteur/js/contexte.js";
 import { Echeancier } from "../../moteur/js/echeancier.js";
 import * as garantie from "../../moteur/js/garantie.js";
@@ -410,6 +412,19 @@ function lignesDuCompte(compte) {
   };
 }
 
+// -- ce que l'étude de la mortalité demande (action 161) --------------------------
+
+/** Le capital du compte d'un scénario à la liquidation, et ce qu'en portent
+ *  les droits acquis à la bascule : ce que `scripts/mortalite_population.py`
+ *  lit des scénarios que la demande de la grille nomme sous `capitaux`
+ *  (`CAPITAUX_DU_COMPTE` de `pont.py`). */
+function capitauxDuCompte(resultat) {
+  return {
+    capital_droits_acquis: resultat.capital_droits_acquis,
+    capital_notionnel: resultat.capital_notionnel,
+  };
+}
+
 /**
  * Chaque case de la grille du coût : ce que `cout.py` lit de la comparaison
  * (`_simulations_en_python`, son jumeau Python), la proposition seule sur
@@ -418,7 +433,9 @@ function lignesDuCompte(compte) {
  * comme `calculer_cas_types` ne range parmi les échecs que ce que la
  * simulation refuse.
  */
-function grilleDuCout({ cas, scenarios, parametres, univers = {}, comptes = [] }) {
+function grilleDuCout({
+  cas, scenarios, parametres, univers = {}, comptes = [], capitaux = [],
+}) {
   const simulateur = simulateurSous(parametres, univers);
   const resultats = {};
   const echecs = {};
@@ -455,6 +472,7 @@ function grilleDuCout({ cas, scenarios, parametres, univers = {}, comptes = [] }
         return [nom, voletDuCout(simulateur.proposition(autre), autre)];
       })),
       comptes: parScenario(comptes, (scenario) => lignesDuCompte(comparaison[scenario].compte)),
+      capitaux: parScenario(capitaux, (scenario) => capitauxDuCompte(comparaison[scenario])),
     };
   }
   return { resultats, echecs };
@@ -1123,6 +1141,18 @@ const FONCTIONS_DES_SONDES = {
   },
 };
 Object.assign(FONCTIONS_DU_DROIT, FONCTIONS_DES_SONDES);
+
+/**
+ * La règle que l'étude de la mortalité appelait au moteur Python
+ * (`scripts/mortalite_population.py` ; action 161) : le niveau de salaire
+ * d'une carrière, en multiples du salaire moyen. Ce qu'elle rend se déclare
+ * dans `LECTURES_DE_LA_MORTALITE` de `pont.py`.
+ */
+const FONCTIONS_DE_LA_MORTALITE = {
+  "conversion.niveau_relatif":
+    (simulateur, carriere) => niveauRelatif(carriere, simulateur.macro),
+};
+Object.assign(FONCTIONS_DU_DROIT, FONCTIONS_DE_LA_MORTALITE);
 
 /** Le partage de la restitution sous les paramètres du simulateur
  *  (`part_rendue_aux_salaires`), sur le paquet de la demande. */

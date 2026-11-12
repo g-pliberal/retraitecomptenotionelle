@@ -521,6 +521,20 @@ JUMEAUX_DES_SONDES = {
 }
 JUMEAUX_DU_DROIT.update(JUMEAUX_DES_SONDES)
 
+
+def _niveau_relatif(simulateur: Simulateur, carriere) -> float:
+    from retraite_notionnelle.moteur.conversion import niveau_relatif
+
+    return niveau_relatif(carriere, simulateur.macro)
+
+
+#: Le jumeau Python de la règle que l'étude de la mortalité demande au pont
+#: (:data:`pont.LECTURES_DE_LA_MORTALITE`).
+JUMEAUX_DE_LA_MORTALITE = {
+    "conversion.niveau_relatif": _niveau_relatif,
+}
+JUMEAUX_DU_DROIT.update(JUMEAUX_DE_LA_MORTALITE)
+
 #: Le pont du droit tel quel, que :func:`droit_et_refait` appelle quand une
 #: confrontation la met à sa place.
 DROIT_DU_PORTAGE = pont.droit

@@ -13,12 +13,20 @@ mortalité générale, quand elle fait vivre chaque cas type, depuis le
 17 octobre, au rythme de sa population et à nombre de décès égal
 (`cout._survies`, `_survies_alignees`) ; et il n'en relisait ni la grille
 entière, ni le vingtile (action 138, étape 7, note « la prémisse du déficit »).
+
+Il ne fait plus tourner le moteur Python d'une carrière (action 161) : ses
+carrières se datent, se bâtissent et se simulent au portage, par le pont, qui
+rend pour lui les capitaux d'un compte (``pont.grille_du_cout``, sous
+``capitaux``) et le niveau de salaire d'une carrière
+(``conversion.niveau_relatif``, par ``pont.droit``).
 """
 
 from __future__ import annotations
 
 import inspect
+import shutil
 import sys
+import textwrap
 from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
@@ -27,8 +35,12 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
+import entrees_du_moteur  # noqa: E402
 import mortalite_population as M  # noqa: E402
-from retraite_notionnelle.castypes import GRILLE_DU_COUT, carriere_de_la_grille  # noqa: E402
+from outils_pont import droit_et_refait  # noqa: E402
+from retraite_notionnelle import pont  # noqa: E402
+from retraite_notionnelle.castypes import (GRILLE_DU_COUT, carriere_de_la_grille,  # noqa: E402
+                                           primes_projetees_en_donnees)
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.cout import Pensionne, VoletLiberal, calculer_cout  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
@@ -313,3 +325,94 @@ def test_un_point_de_pib_en_vaut_le_centieme():
               SimpleNamespace(annee=2026, pib=0.0)]
     assert M._point_de_pib(annees) == "Un point de PIB vaut 30 Md€ au PIB de 2025."
     assert M._point_de_pib(annees[1:]) == ""
+
+
+# -- ce que le pont rend pour l'étude (action 161) ----------------------------------
+
+sans_node = pytest.mark.skipif(shutil.which("node") is None,
+                               reason="node absent : le pont ne se vérifie pas ici")
+
+
+def _baties(simulateur, code: str, generations, quoi: str = "carriere") -> dict[int, object]:
+    """Les carrières d'un cas type de la grille, par génération, que le
+    portage date et bâtit sous les paramètres de ``simulateur``
+    (``pont.carrieres_de_la_grille``) ; ou, sous ``quoi``, celles que l'âge
+    légal de la proposition en dérive (``reportee``)."""
+    cas = next(un for un in GRILLE_DU_COUT if un.code == code)
+    lues, refus = pont.carrieres_de_la_grille(
+        [{"cle": str(generation), **cas.pour_le_portage(simulateur, generation),
+          "rendre": "carriere"} for generation in generations],
+        simulateur.parametres, primes_projetees_en_donnees(simulateur), "droit",
+        pont.paquet_des_donnees(simulateur.parametres.racine_donnees))
+    assert refus == {}
+    return {generation: lues[str(generation)][quoi] for generation in generations}
+
+
+@sans_node
+def test_les_capitaux_d_un_compte_passent_le_pont():
+    """Des scénarios que la demande nomme (``capitaux``), la grille du coût
+    rend de plus, de chaque case, le capital du compte à la liquidation et ce
+    qu'en portent les droits acquis à la bascule — ce que le déficit en lit
+    (``_parts_ouvertes``, action 161) —, au bit près du jumeau
+    (``cout._simulations_en_python``). Le salarié au salaire moyen né en 1955
+    part en 2017, avant la bascule de 2026 : les scénarios 3 et 5 lui gardent
+    le droit en vigueur, et tout son capital y est un droit acquis. Né en
+    2005, il entre au travail l'année de la bascule : rien d'acquis avant
+    elle. Né en 1965, parti en 2028, il est entre les deux. Le scénario 2,
+    rétroactif, n'a pas de droits acquis. Sans ``capitaux``, rien."""
+    from retraite_notionnelle import cout
+
+    simulateur = Simulateur(Parametres()).pour_la_projection()
+    cas = [{"cle": str(generation), "carriere": carriere, "propositions": {}}
+           for generation, carriere in _baties(simulateur, "salaire_moyen",
+                                               (1955, 1965, 2005)).items()]
+    scenarios = [cle for cle, _ in cout.SCENARIOS]
+    capitaux = ("notionnel_retroactif", "notionnel_prospectif",
+                "notionnel_prospectif_employeur")
+    paquet = pont.paquet_des_donnees()
+    lus, echecs = pont.grille_du_cout(cas, scenarios, simulateur.parametres, paquet,
+                                      capitaux=capitaux)
+    attendus, refus = cout._simulations_en_python(simulateur, cas, scenarios,
+                                                  capitaux=capitaux)
+    assert not echecs and not refus
+    assert lus == attendus
+    for lu in lus.values():
+        assert set(lu["capitaux"]) == set(capitaux)
+        for capital in lu["capitaux"].values():
+            assert set(capital) == {"capital_droits_acquis", "capital_notionnel"}
+            assert all(type(nombre) is float for nombre in capital.values())
+            assert capital["capital_notionnel"] > 0.0
+    for generation in ("1955", "1965", "2005"):
+        assert lus[generation]["capitaux"]["notionnel_retroactif"]["capital_droits_acquis"] == 0.0
+    for scenario in capitaux[1:]:
+        parti = lus["1955"]["capitaux"][scenario]
+        assert parti["capital_droits_acquis"] == parti["capital_notionnel"]
+        assert lus["2005"]["capitaux"][scenario]["capital_droits_acquis"] == 0.0
+        entre = lus["1965"]["capitaux"][scenario]
+        assert 0.0 < entre["capital_droits_acquis"] < entre["capital_notionnel"]
+    sans, _ = pont.grille_du_cout(cas[:1], scenarios, simulateur.parametres, paquet)
+    assert sans["1955"]["capitaux"] == {}
+
+
+@sans_node
+def test_le_pont_rend_le_niveau_de_salaire_d_une_carriere():
+    """Le niveau de salaire d'une carrière est la somme de ses revenus
+    cotisés rapportée à celle des salaires moyens des mêmes années
+    (``conversion.niveau_relatif``) : pour une carrière d'un seul statut à
+    deux fois le salaire moyen, sans profil, deux ; pour la carrière d'un cas type que le
+    portage a bâtie, passée en données, ce que rend son jumeau, au bit près —
+    le salarié au SMIC est sous le salaire moyen, le cadre au-dessus."""
+    simulateur = Simulateur(Parametres()).pour_la_projection()
+    double = pont.CarriereSimple({
+        "annee_naissance": 1975, "sexe": "F", "affiliation": "salarie_prive_non_cadre",
+        "age_debut": 22, "age_liquidation": 64, "niveau_salaire": 2.0,
+        "profil_carriere": "plat", "jour_naissance": 15})
+    appels = {"double": ("conversion.niveau_relatif", pont.SIMULATEUR, double)}
+    for code in ("smic_carriere_complete", "cadre"):
+        appels[code] = ("conversion.niveau_relatif", pont.SIMULATEUR,
+                        _baties(simulateur, code, (1975,))[1975])
+    lus, refus = droit_et_refait(appels, simulateur.parametres)
+    assert refus == {}
+    assert lus["double"] == pytest.approx(2.0, rel=1e-12)
+    assert 0.0 < lus["smic_carriere_complete"] < 1.0 < lus["cadre"]
+

@@ -686,8 +686,23 @@ def _volet_du_cout(lu: dict) -> dict:
     }
 
 
+# -- ce que l'étude de la mortalité demande (action 161) ---------------------------
+
+#: Ce que la grille du coût rend du compte de chaque scénario que sa demande
+#: nomme sous ``capitaux`` (:func:`grille_du_cout`, ``capitauxDuCompte`` de
+#: ``pont.mjs``) : son capital à la liquidation, et ce qu'en portent les
+#: droits acquis à la bascule. ``scripts/mortalite_population.py`` en tire la
+#: part de chaque pension que porte le compte ouvert à la bascule.
+CAPITAUX_DU_COMPTE = ("capital_droits_acquis", "capital_notionnel")
+
+
+def _capitaux_du_compte(lus: dict) -> dict[str, dict[str, float]]:
+    return {scenario: {champ: _flottant(capitaux[champ]) for champ in CAPITAUX_DU_COMPTE}
+            for scenario, capitaux in lus.items()}
+
+
 def grille_du_cout(cas: list[dict], scenarios, parametres, paquet: bytes | None = None,
-                   univers: dict[str, dict] | None = None, comptes=(),
+                   univers: dict[str, dict] | None = None, comptes=(), capitaux=(),
                    ) -> tuple[dict[str, dict], dict[str, str]]:
     """Chaque case de la grille du coût, ``{"cle", "carriere",
     "propositions"}`` — sa carrière, et celles, nommées, sur lesquelles le coût
@@ -700,12 +715,16 @@ def grille_du_cout(cas: list[dict], scenarios, parametres, paquet: bytes | None 
     action 161). ``comptes`` nomme les scénarios dont chaque case rend de plus
     les lignes du compte, sous ``comptes`` — ce qu'il porte, année par année,
     et sur quels revenus : le compte du scénario 4 sous le barème d'un régime
-    unique, que ``scripts/solde_fusion.py`` lit (action 161)."""
+    unique, que ``scripts/solde_fusion.py`` lit (action 161). ``capitaux``
+    nomme ceux dont chaque case rend, sous ``capitaux``, le capital du compte
+    à la liquidation et ce qu'en portent les droits acquis à la bascule, que
+    ``scripts/mortalite_population.py`` lit (:func:`_capitaux_du_compte`)."""
     reponse = _demander({"grille_du_cout": {
         "parametres": parametres_en_donnees(parametres),
         "univers": dict(univers or {}),
         "scenarios": list(scenarios),
         "comptes": list(comptes),
+        "capitaux": list(capitaux),
         "cas": [{"cle": un["cle"], "carriere": carriere_en_donnees(un["carriere"]),
                  "propositions": {nom: carriere_en_donnees(carriere)
                                   for nom, carriere in un["propositions"].items()}}
@@ -727,6 +746,7 @@ def grille_du_cout(cas: list[dict], scenarios, parametres, paquet: bytes | None 
             "comptes": {scenario: {"cotisations": _serie(compte["cotisations"]),
                                    "revenus": _serie(compte["revenus"])}
                         for scenario, compte in lu["comptes"].items()},
+            "capitaux": _capitaux_du_compte(lu["capitaux"]),
         }
         for cle, lu in reponse["resultats"].items()
     }
@@ -1413,6 +1433,17 @@ LECTURES_DES_SONDES = {
     "capitalisation.construire": pilier_des_donnees,
 }
 LECTURES_DU_DROIT.update(LECTURES_DES_SONDES)
+
+
+#: La règle que l'étude de la mortalité appelait au moteur Python
+#: (``scripts/mortalite_population.py`` ; action 161), sur le simulateur de la
+#: demande et une carrière passée en données : le niveau de salaire de cette
+#: carrière, en multiples du salaire moyen, qui la range dans un vingtile de
+#: niveau de vie (``FONCTIONS_DE_LA_MORTALITE`` de ``pont.mjs``).
+LECTURES_DE_LA_MORTALITE = {
+    "conversion.niveau_relatif": float,
+}
+LECTURES_DU_DROIT.update(LECTURES_DE_LA_MORTALITE)
 
 
 def _argument_du_droit(argument, carrieres: list) -> dict:
