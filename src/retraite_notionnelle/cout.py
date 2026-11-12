@@ -168,7 +168,6 @@ from .donnees.lvt import TaxeTerrain
 from .donnees.tva import AssietteTva, TvaGardee
 from .effet_retour import EffetRetour, EffetRetourAnnuel
 from .donnees.population import CarrieresIncompletes, Population
-from .garantie import CoutGarantie, _verifier_forme
 from .noyau import univers as univers_de_droit
 from .revalorisation import RevalorisationServie
 from .reversion_gardee import StockDeReversion
@@ -3343,6 +3342,26 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
 
 
 @dataclass(frozen=True)
+class CoutGarantie:
+    """Le coût annuel d'un plancher, et qui en bénéficie : ce que le portage
+    rend du barème appliqué à une distribution (``coutGarantie`` de
+    ``moteur/js/garantie.js``), relu par le pont (:func:`~.pont.garantie`)."""
+
+    #: Plancher mensuel appliqué, dans les euros de la distribution.
+    plancher_mensuel: float
+    #: Rapport par lequel toutes les pensions ont été déplacées avant le barème.
+    facteur: float
+    #: Part des retraités dont la pension tombe sous le plancher.
+    part_beneficiaires: float
+    #: Nombre de retraités concernés.
+    beneficiaires: float
+    #: Complément moyen versé à un bénéficiaire, par mois.
+    complement_moyen_mensuel: float
+    #: Coût annuel total, en millions d'euros de la distribution.
+    cout_annuel_meur: float
+
+
+@dataclass(frozen=True)
 class GarantieProjetee:
     """La garantie d'une année, chiffrée sur la distribution des pensions."""
 
@@ -3423,7 +3442,8 @@ class GarantieDistribution:
     ordre de grandeur ; ``limites.md`` disait qu'il fallait la remplacer.
     C'est fait ici : le barème est appliqué à la distribution que l'échantillon
     interrégimes de retraités de la DREES publie par tranches de cent euros —
-    :mod:`garantie` sait le faire pour une année —, et la grille ne sert plus
+    le portage sait le faire pour une année (``moteur/js/garantie.js``, que le
+    pont fait appeler : note de décision 0007) —, et la grille ne sert plus
     qu'à dire de combien cette distribution BOUGE d'une année à l'autre.
 
     DEUX MOUVEMENTS, UN SEUL FACTEUR. Entre l'année de l'enquête et l'année
@@ -3435,9 +3455,9 @@ class GarantieDistribution:
     la pension moyenne que la garantie regarde en ``t`` sur la pension moyenne
     du système actuel l'année de l'enquête, l'une et l'autre par tête et en
     euros constants, l'une et l'autre lues sur la même grille. Le déplacement
-    est proportionnel et uniforme — c'est la convention du module
-    :mod:`garantie`, et elle reste un ordre de grandeur là où l'assiette
-    observée est un calcul.
+    est proportionnel et uniforme — c'est la convention de
+    ``moteur/js/garantie.js``, et elle reste un ordre de grandeur là où
+    l'assiette observée est un calcul.
 
     L'EFFECTIF suit les têtes de la grille : les retraités de la DREES l'année
     de l'enquête, multipliés par le rapport des têtes de soixante-cinq ans et
@@ -3467,8 +3487,9 @@ class GarantieDistribution:
     à 102 du programme) : ``part_retrait_entier`` et ``taux_retrait`` sont
     ceux des paramètres, les mêmes aux deux planchers, et « sous le plancher »
     se lit désormais « sous la sortie », une fois et demie le plancher, où le
-    complément s'éteint (``garantie.complement_garantie``). Sans eux — un et
-    un —, le barème est différentiel.
+    complément s'éteint (``complementGarantie``). Sans eux — un et un —, le
+    barème est différentiel. Une forme qui n'en est pas une, c'est le barème
+    qui la refuse, au premier chiffrage.
     """
 
     def __init__(self, distribution: DistributionPensions, plancher_mensuel: float,
@@ -3484,7 +3505,6 @@ class GarantieDistribution:
                  taux_retrait: float = 1.0) -> None:
         if not 0.0 < taux_recours <= 1.0:
             raise ValueError("le taux de recours est une part, entre zéro exclu et un")
-        _verifier_forme(part_retrait_entier, taux_retrait)
         #: La forme du barème : la part du plancher jusqu'où la pension est
         #: retirée en entier, et ce qu'un euro de plus retire au-delà.
         self.part_retrait_entier = part_retrait_entier

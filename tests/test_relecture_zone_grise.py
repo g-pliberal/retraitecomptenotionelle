@@ -14,6 +14,12 @@ mêmes demandes aux deux jumeaux, ``src/retraite_notionnelle/garantie.py``,
 node, et les veut égaux à l'unité du dernier chiffre ; un refus, de même
 message.
 
+Depuis le 12 novembre 2026, la garantie d'une population ne s'écrit plus
+qu'en JavaScript (note de décision 0007) : sa confrontation est partie avec
+son jumeau, après avoir tenu le pont au bit (``tests/test_pont.py``), et il
+n'en reste ici que le barème d'une personne, ``complement_garantie``, que le
+moteur Python lit encore, et le cas de la tranche sans borne.
+
 Les valeurs que les tests de concordance comparent ne viennent d'aucune
 source : ils disent que les deux jumeaux font le même calcul, non qu'il est
 juste — c'est l'objet de ``tests/test_garantie_degressive.py``,
@@ -36,7 +42,6 @@ import pytest
 from retraite_notionnelle import garantie, impot_revenu, restitution
 from retraite_notionnelle.config import RACINE_PROJET
 from retraite_notionnelle.donnees import impot_revenu as donnees_impot
-from retraite_notionnelle.donnees.distribution import DistributionPensions, Tranche
 
 #: La moitié JavaScript : chaque demande calculée par le portage, sur le
 #: paquet du dépôt. Les chemins se résolvent depuis la racine, où node tourne.
@@ -50,10 +55,6 @@ const demandes = JSON.parse(readFileSync(0, "utf8"));
 const paquet = JSON.parse(readFileSync("moteur/donnees.json", "utf8"));
 const baremes = impot.chargerBaremesImpotRevenu(paquet);
 
-const distribution = (tranches) => ({
-  tranches: tranches.map(([borneInferieure, borneSuperieure, part]) => (
-    { borneInferieure, borneSuperieure, part })),
-});
 const chiffre = (c) => [c.plancherMensuel, c.facteur, c.partBeneficiaires, c.beneficiaires,
   c.complementMoyenMensuel, c.coutAnnuelMeur];
 const foyerDe = (f) => new impot.Foyer({
@@ -68,16 +69,8 @@ const parametresDe = (p) => ({
 
 const CALCULS = {
   complement: ({ arguments: a }) => garantie.complementGarantie(...a),
-  manque: ({ arguments: a }) => garantie.manqueMoyen(...a),
-  moyenne: (d) => garantie.pensionMoyenne(distribution(d.tranches)),
-  facteurs: ({ arguments: a }) => garantie.facteursParSexe(...a),
-  cout: (d) => chiffre(garantie.coutGarantie(distribution(d.tranches), d.effectif, d.plancher,
-    d.facteur, ...d.forme)),
   cout_brut: (d) => chiffre(garantie.coutGarantie({ tranches: d.tranches }, d.effectif,
     d.plancher, d.facteur, ...d.forme)),
-  par_sexe: (d) => chiffre(garantie.coutGarantieParSexe(distribution(d.femmes),
-    distribution(d.hommes), d.part_femmes, d.effectif, d.plancher, d.facteur, d.rapport,
-    d.plancher_majore, d.part_seule, ...d.forme)),
   impot: (d) => impot.impotDuFoyer(foyerDe(d.foyer), d.annee, baremes, {
     unite: d.unite, indexation: d.indexation, croissance: croissanceDe(d.croissance),
   }),
@@ -113,18 +106,6 @@ BAREMES = donnees_impot.charger_baremes_impot_revenu(RACINE_PROJET / "data")
 
 
 # -- la moitié Python --------------------------------------------------------
-
-
-def _distribution(tranches) -> DistributionPensions:
-    """Une distribution de tranches données, sans passer par le fichier."""
-    distribution = object.__new__(DistributionPensions)
-    distribution.tranches = [Tranche(*tranche) for tranche in tranches]
-    return distribution
-
-
-def _chiffre(cout: garantie.CoutGarantie) -> list[float]:
-    return [cout.plancher_mensuel, cout.facteur, cout.part_beneficiaires, cout.beneficiaires,
-            cout.complement_moyen_mensuel, cout.cout_annuel_meur]
 
 
 def _foyer(f: dict) -> impot_revenu.Foyer:
@@ -174,16 +155,6 @@ def _constantes() -> dict:
 
 CALCULS = {
     "complement": lambda d: garantie.complement_garantie(*d["arguments"]),
-    "manque": lambda d: garantie._manque_moyen(*d["arguments"]),
-    "moyenne": lambda d: garantie.pension_moyenne(_distribution(d["tranches"])),
-    "facteurs": lambda d: garantie.facteurs_par_sexe(*d["arguments"]),
-    "cout": lambda d: _chiffre(garantie.cout_garantie(
-        _distribution(d["tranches"]), d["effectif"], d["plancher"], d["facteur"],
-        part_retrait_entier=d["forme"][0], taux_retrait=d["forme"][1])),
-    "par_sexe": lambda d: _chiffre(garantie.cout_garantie_par_sexe(
-        _distribution(d["femmes"]), _distribution(d["hommes"]), d["part_femmes"], d["effectif"],
-        d["plancher"], d["facteur"], d["rapport"], d["plancher_majore"], d["part_seule"],
-        part_retrait_entier=d["forme"][0], taux_retrait=d["forme"][1])),
     "impot": lambda d: _impot(impot_revenu.impot_du_foyer(
         _foyer(d["foyer"]), d["annee"], BAREMES, unite=d["unite"], indexation=d["indexation"],
         croissance=_croissance(d["croissance"]))),
@@ -213,66 +184,19 @@ def _python(demande: dict) -> dict:
 # -- les demandes ------------------------------------------------------------
 
 
-def _tranches(sexe: str) -> list[list]:
-    distribution = DistributionPensions(RACINE_PROJET / "data", sexe)
-    return [[t.borne_inferieure, t.borne_superieure, t.part] for t in distribution.tranches]
-
-
 #: Le barème différentiel, la forme suédoise de la proposition, et deux formes
 #: aux bords : aucun retrait entier, un pivot au tiers sans pente adoucie.
 FORMES = ([1.0, 1.0], [0.5, 0.5], [0.0, 0.25], [0.3, 1.0])
 
 
 def _demandes_de_la_garantie() -> list[dict]:
-    ensemble, femmes, hommes = (_tranches(sexe) for sexe in ("ensemble", "F", "H"))
     demandes: list[dict] = []
     for forme in FORMES:
         for plancher in (800.0, 1050.0):
             for pas in range(0, 81):
                 demandes.append({"quoi": "complement",
                                  "arguments": [plancher, pas * 25.3, *forme]})
-        # Des tranches de part et d'autre du pivot (400 €) et de la sortie
-        # (1 200 €) d'un plancher de 800 €, fermées puis ouvertes.
-        for basse, haute in ((0, 100), (300, 400), (350, 450), (400, 500), (700, 900),
-                             (1150, 1250), (1200, 1300), (1300, 1400), (0, 2000),
-                             (300, None), (799, None), (800, None), (1199, None),
-                             (1200, None), (1300, None)):
-            demandes.append({"quoi": "manque", "arguments": [basse, haute, 800.0, *forme]})
-        for tranches in (ensemble, femmes, hommes):
-            for facteur in (1.0, 0.9, 0.75, 0.6, 1.1):
-                for plancher in (800.0, 1050.0, 916.78, 1200.5):
-                    demandes.append({"quoi": "cout", "tranches": tranches, "effectif": 17.2e6,
-                                     "plancher": plancher, "facteur": facteur, "forme": forme})
-        for rapport in (1.0, 0.95, 0.85):
-            for facteur in (1.0, 0.8):
-                for majore, seule in ((None, None), (1050.0, {"F": 0.55, "H": 0.3}),
-                                      (1050.0, {"F": 1.0, "H": 0.0}), (None, {"F": 0.5, "H": 0.5})):
-                    demandes.append({
-                        "quoi": "par_sexe", "femmes": femmes, "hommes": hommes,
-                        "part_femmes": 0.53, "effectif": 17.2e6, "plancher": 800.0,
-                        "facteur": facteur, "rapport": rapport, "plancher_majore": majore,
-                        "part_seule": seule, "forme": forme})
-    for tranches in (ensemble, femmes, hommes):
-        demandes.append({"quoi": "moyenne", "tranches": tranches})
-    for rapport in (1.0, 0.9, 0.641, 1.2):
-        demandes.append({"quoi": "facteurs", "arguments": [1200.0, 1900.0, 0.53, 0.8, rapport]})
     return demandes
-
-
-def _refus_de_la_garantie() -> list[dict]:
-    tranches = [[0.0, 1000.0, 0.5], [1000.0, None, 0.5]]
-    cout = {"quoi": "cout", "tranches": tranches, "effectif": 1e6, "plancher": 800.0,
-            "facteur": 1.0, "forme": [0.5, 0.5]}
-    return [
-        {**cout, "facteur": 0.0}, {**cout, "facteur": -1.0},
-        {**cout, "forme": [-0.1, 0.5]}, {**cout, "forme": [1.1, 0.5]},
-        {**cout, "forme": [0.5, 0.0]}, {**cout, "forme": [0.5, 1.5]},
-        {"quoi": "facteurs", "arguments": [1200.0, 1900.0, 0.53, 0.8, 0.0]},
-        {"quoi": "facteurs", "arguments": [0.0, 0.0, 0.53, 0.8, 1.0]},
-        {"quoi": "par_sexe", "femmes": tranches, "hommes": tranches, "part_femmes": 0.5,
-         "effectif": 1e6, "plancher": 800.0, "facteur": 1.0, "rapport": -0.5,
-         "plancher_majore": None, "part_seule": None, "forme": [1.0, 1.0]},
-    ]
 
 
 def _montant(alea: random.Random, echelle: float) -> float:
@@ -463,7 +387,7 @@ def les_deux():
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     familles = {
-        "garantie": _demandes_de_la_garantie(), "refus_garantie": _refus_de_la_garantie(),
+        "garantie": _demandes_de_la_garantie(),
         "impot": _demandes_de_l_impot(), "refus_impot": _refus_de_l_impot(),
         "constantes": [{"quoi": "constantes"}], "sans_borne": [SANS_BORNE],
         "restitution": [{"quoi": "restitution", "annee": annee, "part_rendue": part}
@@ -487,40 +411,28 @@ def _differences(famille) -> list[str]:
             for demande, python, portage in famille if python != portage]
 
 
-def test_la_garantie_d_une_population_se_retrouve_en_javascript_au_bit(les_deux):
-    """Le barème d'une personne, le manque moyen d'une tranche, le coût sur
-    la distribution, d'un facteur ou de deux, sous un plancher ou deux, la
-    pension moyenne et les deux facteurs : un millier de demandes, six
-    nombres chacune pour un coût, les mêmes des deux côtés."""
+def test_le_bareme_de_la_garantie_d_une_personne_se_retrouve_en_javascript_au_bit(les_deux):
+    """Le barème d'une personne, le seul que le Python garde, sous quatre
+    formes et deux planchers, de zéro à 2 024 € de ressources : six cents
+    demandes, les mêmes des deux côtés."""
     famille = les_deux["garantie"]
-    assert len(famille) > 1000
+    assert len(famille) > 600
     assert all("valeur" in python for _, python, _ in famille)
     ecarts = _differences(famille)
     assert not ecarts, f"{len(ecarts)} écarts : " + " ; ".join(ecarts[:3])
 
 
 def test_la_confrontation_de_la_garantie_a_un_objet(les_deux):
-    """Elle chiffre des bénéficiaires et un coût sous chaque forme, et le
-    plancher majoré de qui vit seul y déplace le coût."""
-    couts = [(d, python["valeur"]) for d, python, _ in les_deux["garantie"]
-             if d["quoi"] in ("cout", "par_sexe")]
+    """Sous chaque forme, elle sert un complément, que les ressources
+    réduisent, et finit par n'en servir aucun — sauf sous un retrait d'un
+    quart dès le premier euro, qui ne s'éteint qu'à quatre fois le plancher,
+    au-delà des 2 024 € parcourus."""
+    complements = [(d["arguments"], python["valeur"]) for d, python, _ in les_deux["garantie"]]
     for forme in FORMES:
-        assert any(d["forme"] == forme and 0.0 < v[2] < 1.0 and v[5] > 0.0 for d, v in couts)
-    par_sexe = {(tuple(d["forme"]), d["rapport"], d["facteur"], d["plancher_majore"],
-                 json.dumps(d["part_seule"])): v[5] for d, v in couts if d["quoi"] == "par_sexe"}
-    sans = par_sexe[(1.0, 1.0), 0.85, 0.8, None, "null"]
-    assert par_sexe[(1.0, 1.0), 0.85, 0.8, 1050.0, json.dumps({"F": 0.55, "H": 0.3})] > sans
-    # Sans plancher majoré, la part de qui vit seul ne compte pas.
-    assert par_sexe[(1.0, 1.0), 0.85, 0.8, None, json.dumps({"F": 0.5, "H": 0.5})] == sans
-
-
-def test_les_deux_garanties_refusent_les_memes_demandes(les_deux):
-    """Un facteur nul ou négatif, une forme qui n'est pas un barème dégressif,
-    un rapport ou des pensions moyennes qui ne sont pas positifs : le même
-    refus, du même message."""
-    famille = les_deux["refus_garantie"]
-    assert all("refus" in python for _, python, _ in famille), [p for _, p, _ in famille]
-    assert not _differences(famille)
+        servis = [valeur for (_, _, *de_forme), valeur in complements if de_forme == forme]
+        assert servis[0] == 800.0
+        assert len({valeur for valeur in servis if valeur > 0.0}) > 30
+        assert (0.0 in servis) == (forme != [0.0, 0.25])
 
 
 def test_une_tranche_sans_borne_superieure_est_la_tranche_ouverte(les_deux):

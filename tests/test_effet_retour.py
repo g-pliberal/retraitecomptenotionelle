@@ -20,9 +20,10 @@ from retraite_notionnelle.effet_retour import (
     complement_minimum,
     tranche_csg,
 )
-from retraite_notionnelle.garantie import pension_moyenne
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.somme import somme_ordonnee
+
+from outils_garantie import cout_garantie_par_sexe, pension_moyenne
 
 
 @pytest.fixture(scope="module")
@@ -220,9 +221,7 @@ def test_l_aspa_de_l_effet_retour_reste_differentielle():
     retire un euro par euro de pension. La garantie du scénario 6 est dégressive depuis le 9 novembre
     2026, et l'effet retour chiffre l'ASPA des scénarios 2 à 5 sur une copie de
     son calage : il n'en prend ni la forme, ni rien d'autre que la population.
-    L'attendu est refait à la main, par le barème différentiel du module."""
-    from retraite_notionnelle.garantie import cout_garantie_par_sexe
-
+    L'attendu est refait à la main, par le barème différentiel du portage."""
     simulateur = Simulateur(Parametres())
     differentielle = EffetRetour(simulateur, _calage(simulateur, taux_recours=0.5))
     degressive = EffetRetour(simulateur, _calage(
@@ -281,8 +280,6 @@ def test_l_aspa_de_l_effet_retour_garde_le_non_recours_que_la_drees_mesure():
     toujours, et un ayant droit sur deux ne la réclame pas (DREES, dossier
     n° 97, mai 2022). L'effet retour ne lit donc pas le recours de la
     garantie : il a le sien, ``taux_recours_aspa``."""
-    from retraite_notionnelle.garantie import cout_garantie_par_sexe
-
     parametres = Parametres()
     assert parametres.taux_recours_aspa == 0.5
     simulateur = Simulateur(parametres)

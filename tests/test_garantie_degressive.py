@@ -25,13 +25,12 @@ import pytest
 
 from retraite_notionnelle.config import Parametres, SituationFoyer
 from retraite_notionnelle.donnees.distribution import DistributionPensions, Tranche
-from retraite_notionnelle.garantie import (
-    _manque_moyen,
-    complement_garantie,
-    cout_garantie,
-    cout_garantie_par_sexe,
-)
+from retraite_notionnelle import pont
+from retraite_notionnelle.garantie import complement_garantie
 from retraite_notionnelle.simulateur import Simulateur
+
+from outils_garantie import cout_garantie, cout_garantie_par_sexe
+from outils_garantie import manque_moyen as _manque_moyen
 
 #: Les sondes de la prose sont un script.
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
@@ -160,15 +159,21 @@ def test_a_un_et_un_le_manque_moyen_est_celui_d_avant_au_bit_pres():
     """Sur les tranches de cent euros de l'enquête, déplacées des facteurs que
     le coût leur applique, et aux planchers qu'il leur oppose — ceux de 2026
     ramenés aux euros de 2020, 680,80 € et 893,55 €."""
-    for facteur in (1.0, 0.62, 0.805, 0.979, 0.7312345678):
-        for plancher in (680.8, 893.55, 800.0, 1050.0, 0.0, 9000.0):
-            for rang in range(0, 46):
-                inferieure, superieure = 100.0 * rang * facteur, 100.0 * (rang + 1) * facteur
-                for borne in (superieure, None):
-                    attendu = _differentielle(inferieure, borne, plancher)
-                    assert _manque_moyen(inferieure, borne, plancher, 1.0, 1.0) == attendu
-                    # Sans rien dire, le barème d'une tranche reste différentiel.
-                    assert _manque_moyen(inferieure, borne, plancher) == attendu
+    tranches = [
+        (inferieure, borne, plancher)
+        for facteur in (1.0, 0.62, 0.805, 0.979, 0.7312345678)
+        for plancher in (680.8, 893.55, 800.0, 1050.0, 0.0, 9000.0)
+        for rang in range(0, 46)
+        for inferieure, superieure in [(100.0 * rang * facteur, 100.0 * (rang + 1) * facteur)]
+        for borne in (superieure, None)
+    ]
+    # Le barème est celui du portage, demandé d'un seul lot : à un et un, puis
+    # sans rien dire — le barème d'une tranche reste alors différentiel.
+    dits = pont.garantie([("manque_moyen", *tranche, 1.0, 1.0) for tranche in tranches])
+    tus = pont.garantie([("manque_moyen", *tranche) for tranche in tranches])
+    assert len(tranches) == 2760
+    for tranche, dit, tu in zip(tranches, dits, tus, strict=True):
+        assert dit == tu == _differentielle(*tranche), tranche
 
 
 # -- le barème sur une distribution ------------------------------------------
@@ -289,9 +294,11 @@ def test_la_garantie_projetee_applique_la_forme_qu_on_lui_donne():
     differentielle = GarantieDistribution(distribution, 680.8, 1000.0, 1.0, 1.0)
     assert differentielle.chiffrer_distribution(16e6, 0.8) == cout_garantie(
         distribution, 16e6, 680.8, 0.8)
+    # C'est le barème qui la refuse, au premier chiffrage.
+    absurde = GarantieDistribution(distribution, 680.8, 1000.0, 1.0, 1.0,
+                                   part_retrait_entier=0.5, taux_retrait=0.0)
     with pytest.raises(ValueError, match="taux de retrait"):
-        GarantieDistribution(distribution, 680.8, 1000.0, 1.0, 1.0,
-                             part_retrait_entier=0.5, taux_retrait=0.0)
+        absurde.chiffrer_distribution(16e6, 0.8)
 
 
 # -- la prose ----------------------------------------------------------------
@@ -320,3 +327,22 @@ def test_la_garantie_est_servie_d_office():
     parametres = Parametres()
     assert parametres.taux_recours_garantie == 1.0
     assert parametres.taux_recours_aspa == 0.5
+
+
+# -- un seul exemplaire --------------------------------------------------------
+
+
+def test_la_garantie_d_une_population_ne_s_ecrit_qu_en_javascript():
+    """Note de décision 0007 : le barème appliqué à une distribution n'a qu'un
+    exemplaire, ``moteur/js/garantie.js``, que le coût demande au pont. Le
+    Python ne garde que le barème d'une personne, que son moteur lit encore
+    (``scenarios/notionnel.py``, ``revalorisation.py``) et qui partira avec
+    lui."""
+    from retraite_notionnelle import cout, effet_retour, garantie
+
+    fonctions = {nom for nom, valeur in vars(garantie).items()
+                 if getattr(valeur, "__module__", None) == garantie.__name__}
+    assert fonctions == {"complement_garantie"}
+    for module in (cout, effet_retour):
+        assert not {"cout_garantie", "cout_garantie_par_sexe", "_manque_moyen",
+                    "facteurs_par_sexe", "pension_moyenne", "_verifier_forme"} & set(vars(module))

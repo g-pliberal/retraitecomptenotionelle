@@ -510,7 +510,8 @@ def complement_minimum(racine, millesime: int) -> float:
 @dataclass(frozen=True)
 class DistributionDeformee:
     """Une distribution par tranches, telle qu'un scénario sans minimum la
-    sert : ce que :func:`~.garantie.cout_garantie` en lit, ses tranches."""
+    sert : ce que le barème en lit, ses tranches (``coutGarantie`` de
+    ``moteur/js/garantie.js``, par :func:`~.pont.garantie`)."""
 
     tranches: tuple[Tranche, ...]
     millesime: int
@@ -526,7 +527,7 @@ def _deformer(distribution, part_minimum: float, complement: float) -> Distribut
 
     Ses pensions perdent la part que ``complement`` représente de leur
     moyenne ; celles du reste gagnent ce qu'il faut pour que la moyenne ne
-    bouge pas, sous la convention de :func:`~.garantie.pension_moyenne` — le
+    bouge pas, sous la convention de ``pensionMoyenne`` du portage — le
     milieu de chaque tranche, la tranche ouverte à sa borne —, si bien que les
     facteurs des deux sexes de la garantie restent les mêmes. La tranche où
     tombe la frontière est coupée, ses retraités répartis uniformément.

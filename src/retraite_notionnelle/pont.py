@@ -66,6 +66,12 @@ une — l'indexation, la conversion, la fusion, la garantie, le pilier —, se
 demandent au même pont du droit (:data:`LECTURES_DES_SONDES`), sous les
 paramètres de chaque mesure.
 
+La garantie d'une population, de même, que le coût fait et que le site refait
+sur d'autres cas : le barème appliqué à la distribution des pensions ne
+s'écrit qu'en JavaScript (``moteur/js/garantie.js``, note de décision 0007),
+et le coût, l'effet retour et ``scripts/garantie_par_sexe.py`` le demandent
+par lot (:func:`garantie`), leurs distributions passées en données.
+
 Une demande sur le paquet du dépôt, sans paquet, ne lance pas node à chaque
 fois : les tests en font une par carrière, et chacune coûtait trois dixièmes
 de seconde, à lancer node et à relire le paquet. Le pont reste ouvert

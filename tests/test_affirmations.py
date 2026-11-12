@@ -62,10 +62,6 @@ from retraite_notionnelle.cout import (
 from retraite_notionnelle.donnees.bilan import charger_bilan
 from retraite_notionnelle.donnees.chargement import Fiabilite, journal_certification
 from retraite_notionnelle.donnees.distribution import DistributionPensions, part_femmes
-from retraite_notionnelle.garantie import (
-    cout_garantie,
-    cout_garantie_par_sexe,
-)
 from retraite_notionnelle.moteur.indexation import Indexation
 from retraite_notionnelle.moteur.indexation import cumuls as cumuls_indexation
 from retraite_notionnelle.remuneration import AnneeComparee, charger_prelevements
@@ -77,6 +73,7 @@ from retraite_notionnelle.donnees.equilibre import ORGANISMES, POSTES_TRANSFERTS
 from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.web.site import ErreurSite, disponible, module, site
 
+from outils_garantie import cout_garantie, cout_garantie_par_sexe
 from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
 
 #: Le texte du site n'est écrit qu'une fois, en JavaScript : ses constantes et

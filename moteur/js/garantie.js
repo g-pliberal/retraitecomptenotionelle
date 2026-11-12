@@ -1,28 +1,48 @@
 /**
  * Ce que coûte la garantie vieillesse, chiffrée sur la distribution des pensions.
  *
- * Portage de ``src/retraite_notionnelle/garantie.py``. La garantie du scénario 6
- * est une allocation sous condition de ressources, DÉGRESSIVE depuis le 9
- * novembre 2026 (`complementGarantie`, que le moteur d'une carrière applique).
- * Son coût est entièrement celui de la queue basse de la distribution, et c'est
- * précisément ce qu'une grille de treize cas types ne sait pas décrire. Les
- * fonctions de coût de ce module, que seules les pages lisent, portent la même
- * forme que le coût du modèle (`_manque_moyen` de `garantie.py`) ; sans forme
- * donnée, elles rendent le barème différentiel, celui de l'ASPA.
+ * UN SEUL EXEMPLAIRE (note de décision 0007, action 161). Seul le barème
+ * d'une personne, `complementGarantie`, reste le
+ * jumeau de ``src/retraite_notionnelle/garantie.py``, qui ne garde plus que
+ * lui, tant que le moteur Python d'une carrière reste. Les fonctions de coût,
+ * elles, ne s'écrivent qu'ici : les pages les lisent, et le coût du modèle
+ * les demande au pont, par lot (`pont.garantie`, `GarantieDistribution` de
+ * ``cout.py``). Sans forme donnée, elles rendent le barème différentiel, celui
+ * de l'ASPA.
  *
- * TROIS CONVENTIONS
- * 1. Les pensions d'une tranche de cent euros sont supposées réparties
- *    uniformément entre ses bornes.
- * 2. La tranche ouverte du haut est une masse ponctuelle à sa borne inférieure ;
- *    au-dessus du plancher — le cas ordinaire — elle ne coûte rien.
- * 3. La situation de foyer n'est pas connue : les deux planchers sont calculés,
- *    celui de qui vit à deux et celui de qui vit seul, et le coût réel est entre
- *    les deux.
+ * La garantie du scénario 6 est une allocation SOUS CONDITION DE RESSOURCES :
+ * elle porte la pension à un plancher — 800 € par mois, plus 250 €
+ * d'allocation d'isolement pour qui vit seul —, et, depuis le 9 novembre 2026
+ * (décisions 100 à 102 du programme), elle est DÉGRESSIVE (`complementGarantie`,
+ * que le moteur d'une carrière applique). Son coût est entièrement celui de la
+ * queue basse de la distribution des pensions, et c'est précisément ce qu'une
+ * grille de treize cas types ne sait pas décrire. Ce module applique le barème
+ * à la distribution publiée par la DREES. Il ne simule rien : il additionne,
+ * tranche par tranche, ce qui manque à chacune.
  *
- * À ``facteur = 1``, le barème est appliqué aux pensions telles qu'elles sont, et
- * le chiffre ne doit rien au modèle. Un facteur inférieur déplace toute la
- * distribution dans le même rapport, ce que le scénario 6 ne fait pas
- * exactement : ce second chiffre est un ordre de grandeur, le premier un calcul.
+ * TROIS CONVENTIONS, ET CE QU'ELLES VALENT
+ * 1. **Uniformité dans la tranche.** Les pensions d'une tranche de cent euros
+ *    sont supposées réparties uniformément entre ses bornes. L'erreur est
+ *    bornée par la largeur de la tranche et joue dans les deux sens d'une
+ *    tranche à l'autre.
+ * 2. **La tranche ouverte est une masse ponctuelle** à sa borne inférieure.
+ *    Au-dessus du plancher — le cas ordinaire — elle ne coûte rien de toute
+ *    façon.
+ * 3. **La situation de foyer n'est pas connue.** L'enquête dit la pension, pas
+ *    avec qui l'on vit. On ne choisit donc pas : les deux planchers sont
+ *    calculés et affichés, celui de qui vit à deux et celui de qui vit seul.
+ *    Le coût réel est entre les deux, et la source qui dirait où ne serait
+ *    pas celle-ci.
+ *
+ * CE QUE LE FACTEUR FAIT, ET CE QU'IL NE FAIT PAS
+ * À ``facteur = 1``, le barème est appliqué aux pensions TELLES QU'ELLES SONT :
+ * c'est ce que la garantie coûterait aujourd'hui, en remplacement de l'ASPA, et
+ * ce chiffre ne doit rien au modèle. Un facteur inférieur à un déplace toute la
+ * distribution dans le même rapport, pour dire ce que la garantie coûterait une
+ * fois les pensions devenues celles du scénario 6. Cette translation est
+ * proportionnelle et uniforme, alors que le scénario 6 ne déplace pas toutes les
+ * carrières du même rapport : le second chiffre est un ORDRE DE GRANDEUR là où
+ * le premier est un calcul.
  */
 
 /**
@@ -52,11 +72,14 @@ export function complementGarantie(plancher, ressources, partRetraitEntier, taux
  *
  * Le complément moyen est rapporté à la tranche entière et non aux seuls
  * bénéficiaires : c'est lui qu'il faut multiplier par l'effectif de la tranche
- * pour obtenir la dépense. Le barème est celui de `complementGarantie`,
- * linéaire par morceaux : sa moyenne sur une tranche uniforme est exacte,
- * morceau par morceau. Sans forme donnée — un et un —, le pivot et la sortie
- * sont au plancher : c'est le manque moyen de la garantie différentielle, au
- * bit près. Portage de ``garantie._manque_moyen``, ligne pour ligne.
+ * pour obtenir la dépense. Celui d'un bénéficiaire s'en déduit en divisant par
+ * la part concernée, et `coutGarantie` le fait une fois pour toutes. Le barème
+ * est celui de `complementGarantie`, linéaire par morceaux : il rend ce qui
+ * manque jusqu'au pivot, puis décroît de ``tauxRetrait`` jusqu'à la sortie, où
+ * il s'éteint ; sa moyenne sur une tranche uniforme est donc exacte, morceau
+ * par morceau. Sans forme donnée — un et un —, le pivot et la sortie sont au
+ * plancher : c'est le manque moyen de la garantie différentielle, au bit près
+ * de ce que le module rendait avant le 9 novembre 2026.
  */
 export function manqueMoyen(borneInferieure, borneSuperieure, plancher,
                             partRetraitEntier = 1.0, tauxRetrait = 1.0) {
@@ -145,8 +168,7 @@ export function coutGarantie(distribution, effectifTotal, plancherMensuel,
 }
 
 /**
- * Les deux facteurs de déplacement, sous contrainte de masse. Portage de
- * ``garantie.facteurs_par_sexe``.
+ * Les deux facteurs de déplacement, sous contrainte de masse.
  *
  * Le modèle déplace toute la distribution d'un facteur unique, lu sur la
  * grille. Le scénario 6 ne déplace pourtant pas toutes les carrières du même
@@ -157,6 +179,11 @@ export function coutGarantie(distribution, effectifTotal, plancherMensuel,
  * d'ensemble restant déplacée du même facteur :
  *
  *     w·μF·fF + (1−w)·μH·fH = f·(w·μF + (1−w)·μH)
+ *
+ * La contrainte est ce qui fait de l'exercice une RÉPARTITION et non une
+ * hypothèse de plus : la grille garde le dernier mot sur l'agrégat, et il ne
+ * reste à décider que le partage entre les deux sexes. À `rapport = 1`, les
+ * deux facteurs valent `facteur` et l'on retrouve la convention uniforme.
  */
 export function facteursParSexe(moyenneFemmes, moyenneHommes, partFemmes,
                                 facteur, rapport) {
@@ -174,9 +201,14 @@ export function facteursParSexe(moyenneFemmes, moyenneHommes, partFemmes,
 }
 
 /**
- * Pension moyenne de la distribution, dans ses propres euros. Portage de
- * ``garantie.pension_moyenne`` : le milieu de chaque tranche, et la tranche
- * ouverte à sa borne inférieure, comme `coutGarantie`.
+ * Pension moyenne de la distribution, dans ses propres euros.
+ *
+ * Même convention que `coutGarantie` : le milieu de chaque tranche, et la
+ * tranche ouverte à sa borne inférieure. Les deux moyennes en sont
+ * sous-estimées, celle des hommes un peu plus — ils sont plus nombreux dans
+ * la tranche ouverte —, mais seul leur RAPPORT entre dans la contrainte de
+ * `facteursParSexe`, et repousser la tranche ouverte de 4 500 à 6 500 € le
+ * déplace de 0,641 à 0,624.
  */
 export function pensionMoyenne(distribution) {
   let total = 0;
@@ -190,9 +222,29 @@ export function pensionMoyenne(distribution) {
 }
 
 /**
- * Le barème appliqué aux deux sexes à part, chacun de son facteur. Portage de
- * ``garantie.cout_garantie_par_sexe``. À `rapport = 1`, redonne le résultat de
- * `coutGarantie` sur la colonne « ensemble », à l'arrondi de publication près.
+ * Le barème appliqué aux deux sexes à part, chacun de son facteur.
+ *
+ * `rapport` vaut un pour la convention uniforme, et le résultat redonne alors
+ * celui de `coutGarantie` sur la colonne « ensemble » — à l'arrondi de
+ * publication près, la source arrondissant ses parts au centième de point. En
+ * deçà de un, les pensions des femmes tombent davantage, ce qui fait passer
+ * plus de monde sous le plancher : le coût de la convention uniforme est une
+ * borne basse, et c'est ce que cette fonction chiffre.
+ *
+ * DEUX PLANCHERS, ET C'EST UNE POPULATION QU'ON CHIFFRE. La garantie vaut
+ * 800 € par personne, plus 250 € à qui vit seul : le plancher d'un individu
+ * dépend d'un fait, sa situation de foyer, et celui d'une POPULATION dépend
+ * donc de la répartition de ce fait. `plancherMajore` et `partSeule` portent
+ * cette répartition, sexe par sexe — les femmes vivent hors couple bien plus
+ * souvent, et elles sont aussi bien plus souvent sous le plancher, si bien que
+ * les deux se composent et qu'un partage global les manquerait. Sans eux, le
+ * plancher unique s'applique à tout le monde : c'est la convention d'avant le
+ * 21 septembre 2026, qui servait le plancher majoré à la population entière
+ * et surestimait le coût de près d'un quart.
+ *
+ * LA FORME EST LA MÊME AUX DEUX PLANCHERS (décision 102 du programme) :
+ * `partRetraitEntier` et `tauxRetrait` s'appliquent à chacun en entier,
+ * isolement compris, comme dans `coutGarantie`.
  */
 export function coutGarantieParSexe(femmes, hommes, partFemmes, effectifTotal,
                                     plancherMensuel, facteur, rapport,
@@ -208,10 +260,7 @@ export function coutGarantieParSexe(femmes, hommes, partFemmes, effectifTotal,
     ["F", femmes, partFemmes, facteurFemmes],
     ["H", hommes, 1 - partFemmes, facteurHommes],
   ]) {
-    // DEUX PLANCHERS : la garantie vaut 800 € par personne, plus 250 € à qui
-    // vit seul. Le plancher d'un individu dépend d'un fait ; celui d'une
-    // POPULATION dépend de la répartition de ce fait, que le recensement
-    // mesure. Sans `partSeule`, le plancher unique vaut pour tout le monde.
+    // Sans `partSeule`, le plancher unique vaut pour tout le monde.
     const seule = (partSeule === null || plancherMajore === null)
       ? 0 : partSeule[sexe];
     for (const [plancher, poidsPlancher] of [
@@ -231,6 +280,8 @@ export function coutGarantieParSexe(femmes, hommes, partFemmes, effectifTotal,
   }
   return {
     plancherMensuel,
+    // Le facteur rendu est celui de la contrainte, commun aux deux sexes par
+    // construction : c'est lui qui a été tenu, pas ceux qu'il répartit.
     facteur,
     partBeneficiaires: part,
     beneficiaires,

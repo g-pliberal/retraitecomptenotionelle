@@ -112,7 +112,7 @@ sources:
 code:
   python:
     retraite_notionnelle.scenarios.notionnel: [ScenarioNotionnel.liberal, ScenarioNotionnel._garantie_vieillesse, GarantieVieillesse]
-    retraite_notionnelle.garantie: [complement_garantie, cout_garantie]
+    retraite_notionnelle.garantie: [complement_garantie]
     retraite_notionnelle.revalorisation: [pension_aujourd_hui]
   javascript:
     moteur/js/scenario-notionnel.js: [liberal, _garantieVieillesse]

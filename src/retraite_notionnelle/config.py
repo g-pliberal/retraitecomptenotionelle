@@ -953,8 +953,8 @@ class Parametres:
     #: — jusqu'où chaque euro de ressources retire un euro de garantie ; le
     #: second, ce qu'un euro de plus en retire au-delà. À UN ET UN, la garantie
     #: redevient différentielle, celle d'avant le 9 novembre 2026, au bit près.
-    #: Le barème est ``garantie.complement_garantie``, que lisent le moteur
-    #: d'une carrière et le coût.
+    #: Le barème est ``complementGarantie`` (``moteur/js/garantie.js``), que
+    #: lisent le moteur d'une carrière et le coût, celui-ci par le pont.
     part_retrait_entier_garantie: float = 0.5
     taux_retrait_garantie: float = 0.5
 

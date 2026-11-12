@@ -2052,15 +2052,52 @@ def test_le_pont_chiffre_la_garantie_d_une_population():
     # La masse ponctuelle au-dessus du plancher n'est pas servie : sa part
     # revient « 0 », relue flottante.
     assert pont.garantie([("manque_moyen", 1000.0, None, 800.0, 1.0, 1.0)]) == [(0.0, 0.0)]
-    # Un refus du barème est celui du portage, du même message ; une fonction
-    # que le pont ne relit pas est refusée avant node.
-    with pytest.raises(ValueError, match="le facteur de déplacement doit être strictement"):
-        pont.garantie([("cout_garantie", distribution, 1e6, 1500.0, 0.0, 1.0, 1.0)])
-    with pytest.raises(ValueError, match="le taux de retrait est une part"):
-        pont.garantie([("cout_garantie", distribution, 1e6, 1500.0, 1.0, 0.5, 0.0)])
+    assert pont.garantie([]) == []
+
+
+#: Ce que le barème refuse, et son motif : un facteur nul ou négatif, une
+#: forme qui n'est pas un barème dégressif — un pivot hors du plancher, un
+#: retrait nul, qui ne s'éteindrait jamais, ou de plus d'un euro par euro —,
+#: un rapport ou des pensions moyennes qui ne sont pas positifs. Les messages
+#: sont ceux que le jumeau Python opposait, relevés avant son retrait.
+REFUS_DE_LA_GARANTIE = (
+    (("cout_garantie", 1e6, 800.0, 0.0, 0.5, 0.5),
+     "le facteur de déplacement doit être strictement positif"),
+    (("cout_garantie", 1e6, 800.0, -1.0, 0.5, 0.5),
+     "le facteur de déplacement doit être strictement positif"),
+    (("cout_garantie", 1e6, 800.0, 1.0, -0.1, 0.5),
+     "la part du plancher jusqu'où la pension est retirée en entier est entre zéro et un"),
+    (("cout_garantie", 1e6, 800.0, 1.0, 1.1, 0.5),
+     "la part du plancher jusqu'où la pension est retirée en entier est entre zéro et un"),
+    (("cout_garantie", 1e6, 800.0, 1.0, 0.5, 0.0),
+     "le taux de retrait est une part, entre zéro exclu et un"),
+    (("cout_garantie", 1e6, 800.0, 1.0, 0.5, 1.5),
+     "le taux de retrait est une part, entre zéro exclu et un"),
+    (("facteurs_par_sexe", 1200.0, 1900.0, 0.53, 0.8, 0.0),
+     "le rapport des deux facteurs doit être strictement positif"),
+    (("facteurs_par_sexe", 0.0, 0.0, 0.53, 0.8, 1.0),
+     "les pensions moyennes doivent être strictement positives"),
+    (("cout_garantie_par_sexe", 0.5, 1e6, 800.0, 1.0, -0.5, None, None, 1.0, 1.0),
+     "le rapport des deux facteurs doit être strictement positif"),
+)
+
+
+def test_le_pont_rend_les_refus_du_bareme_de_la_garantie():
+    """Un appel que le barème refuse arrête le lot, de son motif, celui du
+    portage, sous ``ValueError`` ; une fonction que le pont ne relit pas est
+    refusée avant node."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    distribution = _distribution_d_essai((0.0, 1000.0, 0.5), (1000.0, None, 0.5))
+    for (fonction, *arguments), motif in REFUS_DE_LA_GARANTIE:
+        distributions = {"cout_garantie": (distribution,), "facteurs_par_sexe": (),
+                         "cout_garantie_par_sexe": (distribution, distribution)}[fonction]
+        with pytest.raises(ValueError) as refus:
+            pont.garantie([("pension_moyenne", distribution),
+                           (fonction, *distributions, *arguments)])
+        assert str(refus.value) == motif, (fonction, arguments)
     with pytest.raises(ValueError, match="garantie_inconnue"):
         pont.garantie([("garantie_inconnue", distribution)])
-    assert pont.garantie([]) == []
 
 
 def test_la_garantie_demandee_au_pont_se_passe_du_paquet(monkeypatch):
@@ -2074,63 +2111,6 @@ def test_la_garantie_demandee_au_pont_se_passe_du_paquet(monkeypatch):
     monkeypatch.setattr(pont.subprocess, "run", None)
     monkeypatch.setattr(pont.subprocess, "Popen", None)
     assert pont.garantie([("pension_moyenne", distribution)]) == [750.0]
-
-
-def test_la_garantie_demandee_au_pont_est_celle_du_jumeau_python_au_bit():
-    """Avant que le coût ne la demande au pont, et que son jumeau ne parte :
-    sur les trois colonnes de l'enquête, sous quatre formes du barème, cinq
-    facteurs et quatre planchers, d'un sexe ou de deux, sous un plancher ou
-    deux, le pont rend ce que ``garantie.py`` calcule — chaque nombre au bit,
-    sous le même type. ``tests/test_relecture_zone_grise.py`` confronte les
-    deux exemplaires sans le pont ; ici, c'est ce que le pont en relit."""
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from retraite_notionnelle import garantie
-    from retraite_notionnelle.donnees.distribution import DistributionPensions
-
-    ensemble, femmes, hommes = (DistributionPensions(RACINE_DONNEES, sexe=sexe)
-                                for sexe in ("ensemble", "F", "H"))
-    appels, attendus = [], []
-    for forme in ((1.0, 1.0), (0.5, 0.5), (0.0, 0.25), (0.3, 1.0)):
-        retrait = dict(part_retrait_entier=forme[0], taux_retrait=forme[1])
-        for basse, haute in ((0.0, 100.0), (350.0, 450.0), (700.0, 900.0), (1150.0, 1250.0),
-                             (1300.0, 1400.0), (300.0, None), (1199.0, None), (1300.0, None)):
-            appels.append(("manque_moyen", basse, haute, 800.0, *forme))
-            attendus.append(garantie._manque_moyen(basse, haute, 800.0, *forme))
-        for distribution in (ensemble, femmes, hommes):
-            for facteur in (1.0, 0.9, 0.75, 0.6, 1.1):
-                for plancher in (800.0, 1050.0, 916.78, 1200.5):
-                    appels.append(("cout_garantie", distribution, 17.2e6, plancher, facteur,
-                                   *forme))
-                    attendus.append(garantie.cout_garantie(distribution, 17.2e6, plancher,
-                                                           facteur, **retrait))
-        for rapport in (1.0, 0.95, 0.85):
-            for facteur in (1.0, 0.8):
-                for majore, seule in ((None, None), (1050.0, {"F": 0.55, "H": 0.3}),
-                                      (1050.0, {"F": 1.0, "H": 0.0}),
-                                      (None, {"F": 0.5, "H": 0.5})):
-                    appels.append(("cout_garantie_par_sexe", femmes, hommes, 0.53, 17.2e6,
-                                   800.0, facteur, rapport, majore, seule, *forme))
-                    attendus.append(garantie.cout_garantie_par_sexe(
-                        femmes, hommes, 0.53, 17.2e6, 800.0, facteur, rapport, majore, seule,
-                        **retrait))
-    for distribution in (ensemble, femmes, hommes):
-        appels.append(("pension_moyenne", distribution))
-        attendus.append(garantie.pension_moyenne(distribution))
-    for rapport in (1.0, 0.9, 0.641, 1.2):
-        appels.append(("facteurs_par_sexe", 1200.0, 1900.0, 0.53, 0.8, rapport))
-        attendus.append(garantie.facteurs_par_sexe(1200.0, 1900.0, 0.53, 0.8, rapport))
-    lus = pont.garantie(appels)
-    assert len(lus) == len(attendus) > 350
-    # ``repr`` distingue les bits qu'une égalité confond, le zéro négatif.
-    ecarts = [(appel[0], lu, attendu) for appel, lu, attendu in zip(appels, lus, attendus)
-              if repr(lu) != repr(attendu)]
-    assert ecarts == []
-    # La confrontation a un objet : des bénéficiaires et un coût sous chaque
-    # forme, et des chiffres que la forme déplace.
-    couts = [lu for appel, lu in zip(appels, lus) if appel[0].startswith("cout_garantie")]
-    assert all(cout.part_beneficiaires > 0.0 and cout.cout_annuel_meur > 0.0 for cout in couts)
-    assert len({cout.cout_annuel_meur for cout in couts}) > 200
 
 
 def test_le_cout_chiffre_sa_garantie_par_le_portage_sans_repli(monkeypatch):

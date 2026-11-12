@@ -1691,7 +1691,7 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
     4,65). Le complément moyen, 36 506,3 M€ / 8 569 731 / 12 = 355 euros par
     mois (414), est au-dessous de celui de l'Aspa, 527.
 
-    À pensions servies, le même barème, par ``garantie.cout_garantie`` aux deux
+    À pensions servies, le même barème, par ``coutGarantie`` du portage aux deux
     planchers de la page (800 euros, 1 050 euros pour qui vit seul — la page en
     mêle les deux, et son chiffre est entre eux, comme au facteur 0,7365),
     donne de 5,14 à 7,17 millions de bénéficiaires, de 6,81 à 9,51 fois les
@@ -1715,7 +1715,7 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
     deux).
 
     LE COÛT DE LA GARANTIE EST BRUT du minimum vieillesse et des autres minima
-    qu'elle remplace (``garantie.py``, ``cout_garantie`` : plancher moins
+    qu'elle remplace (``moteur/js/garantie.js``, ``coutGarantie`` : plancher moins
     pension ; ``cout.py``, ``GarantieDistribution.chiffrer`` : rien n'est
     retranché). La page ne les déduit que dans le tableau « Ce que la garantie
     vieillesse remplace » (``pages.js``, ``remplaces``), qui retire quatre
@@ -1754,7 +1754,7 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
     import mesures_prose
     from retraite_notionnelle import cout as module_cout
     from retraite_notionnelle import memoire
-    from retraite_notionnelle.garantie import cout_garantie
+    from outils_garantie import cout_garantie
     from retraite_notionnelle.noyau import vocabulaire
 
     tableau = temoin["valeurs"]["27_tableau_1"]
