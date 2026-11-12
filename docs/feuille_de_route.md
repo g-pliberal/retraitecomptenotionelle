@@ -5762,17 +5762,16 @@ de statuts et les `manque` de la page Méthode.
 
 **Reprise, au 12 novembre 2026.** L'action réduit ce que coûte un changement
 du modèle, en temps et en jetons, sans rien céder sur les vérifications ;
-l'essentiel est fait, une note par étape. Le contexte de départ d'une session
-est constaté, et le dépôt n'a plus rien à y régler. Sur Fable 5.2, la dépense
-va d'abord à ce qui entre dans le contexte et à ce que le modèle écrit : note
-`2026-11-12-contexte-de-depart-constate.md`. Un chantier reste, pour une
-session neuve : comparer les réponses des agents de recherche, qui démarrent
-sans le `CLAUDE.md` de la racine, à celles relevées avant ; la note
-`2026-11-11-eclaireurs-sans-le-claude-md-racine.md` dit comment. Le
-propriétaire garde Fable 5.2 pour toutes les sessions, pour l'instant. Quatre
-décisions l'attendent : retirer sur claude.ai les skills et connecteurs
-inutiles ici ; garder sur GitHub la mémoire des calculs (`actions/cache`) ;
-essayer Sonnet ; faire passer seul un changement transversal.
+l'essentiel est fait, une note par étape. Deux chantiers restent, chacun pour
+une session neuve. Le premier, que le propriétaire a décidé le 12 novembre,
+raccourcit la course de GitHub, 25 minutes, en y gardant la mémoire des
+calculs d'une course à l'autre (`actions/cache`) : mesurer d'abord ce qu'elle
+rendrait ; la note `2026-11-12-contexte-de-depart-constate.md` donne les
+durées. Le second compare les réponses des agents de recherche, qui démarrent
+sans le `CLAUDE.md` de la racine, à celles relevées avant : note
+`2026-11-11-eclaireurs-sans-le-claude-md-racine.md`. Le propriétaire garde
+Fable 5.2 pour toutes les sessions, pour l'instant. Une décision l'attend :
+faire passer seul un changement transversal.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus

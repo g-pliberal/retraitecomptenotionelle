@@ -256,13 +256,42 @@ def test_les_consignes_git_de_claude_code_cedent_a_celles_du_depot():
     assert REGLAGES.get("includeGitInstructions") is False
 
 
+#: Les skills du compte claude.ai du propriétaire, que la plateforme livre à
+#: chaque session du cloud (`anthropic-skills:…`), et que ce dépôt n'appelle
+#: pas : décision du 12 novembre 2026 (action 135, note « Les skills du compte
+#: masqués pour ce dépôt »). Éteints, ceux qui n'ont pas d'objet ici : les
+#: navigateurs et le poste, les connecteurs refusés, l'artifact coupé, le
+#: brief du matin, l'import de mémoire.
+SKILLS_DU_COMPTE_ETEINTS = (
+    "artifact-emulator", "built-in-browser", "chrome-browser", "computer-use",
+    "docs", "google-workspace", "import-memory", "morning",
+)
+
+#: Ceux que le propriétaire peut encore appeler par leur nom, `/pdf`, sans
+#: que leur description entre dans chaque requête.
+SKILLS_DU_COMPTE_A_LA_DEMANDE = ("deep-research", "docx", "pdf", "skill-creator", "xlsx")
+
+#: Celui qui reste annoncé : les présentations aux adhérents en sortent.
+SKILL_DU_COMPTE_GARDE = "pptx"
+
+
 def test_les_skills_fournis_hors_sujet_ne_s_annoncent_plus():
-    """`skillOverrides` ne vaut que pour les skills fournis avec Claude Code :
-    ceux du compte claude.ai (`anthropic-skills:…`) se règlent sur claude.ai."""
+    """`skillOverrides` masque un skill fourni avec Claude Code, et aussi,
+    sous son nom entier, un skill du compte claude.ai : constaté le
+    12 novembre 2026 sur un sous-agent témoin, contre la lecture du 11."""
+    fournis = (
+        "artifact-capabilities", "artifact-design", "artifact-diagramming", "dataviz",
+        "fewer-permission-prompts", "init", "keybindings-help", "loop", "plugin-authoring", "run",
+    )
     assert REGLAGES.get("skillOverrides") == {
-        nom: "off"
-        for nom in (
-            "artifact-capabilities", "artifact-design", "artifact-diagramming", "dataviz",
-            "fewer-permission-prompts", "init", "keybindings-help", "loop", "plugin-authoring", "run",
-        )
+        **{nom: "off" for nom in fournis},
+        **{f"anthropic-skills:{nom}": "off" for nom in SKILLS_DU_COMPTE_ETEINTS},
+        **{f"anthropic-skills:{nom}": "user-invocable-only"
+           for nom in SKILLS_DU_COMPTE_A_LA_DEMANDE},
     }
+
+
+def test_le_skill_des_presentations_reste_annonce():
+    """`docs/presentation_adherents_*.pptx` : le dépôt s'en sert."""
+    assert list((RACINE / "docs").glob("presentation_adherents_*.pptx"))
+    assert f"anthropic-skills:{SKILL_DU_COMPTE_GARDE}" not in REGLAGES.get("skillOverrides", {})
