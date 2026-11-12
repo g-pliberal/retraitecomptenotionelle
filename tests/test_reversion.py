@@ -22,22 +22,27 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import Carriere, Metier
+from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.chronologie import fait
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit.liquider import maximum_des_pensions
-from retraite_notionnelle.droit.reversion import mois_de_mariage, reversion
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.droit.reversion import mois_de_mariage
 from retraite_notionnelle.web.site import ErreurSite
 
+# Les entrées du moteur passent par la façade des tests (action 161) : le
+# portage les calcule. Un test qui appelle encore une règle du moteur Python
+# le garde, sous la marque ``sur_le_moteur_python`` et sa raison.
+import facade
+from facade import Carriere, Simulateur, reversion
+from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
 
 HAUTE = Fiabilite.HAUTE
 
 
-@pytest.fixture(scope="module")
-def simulateur() -> Simulateur:
-    return Simulateur()
+@pytest.fixture
+def simulateur(request) -> Simulateur:
+    return facade.simulateur_du_test(request)
 
 
 def _carriere(simulateur, naissance: int, depart: float, conjoint: str, deces: str,
@@ -584,6 +589,7 @@ BAREME_DU_MAXIMUM = [
 
 
 @pytest.mark.parametrize("date, montant, unite", BAREME_DU_MAXIMUM)
+@pytest.mark.sur_le_moteur_python("maximum_des_pensions")
 def test_le_maximum_de_la_reversion_est_celui_du_bareme_de_la_cnav(
         simulateur, date, montant, unite):
     """« Le montant maximum de la pension principale de réversion [...] est égal à
@@ -1951,6 +1957,7 @@ def test_avant_le_15_novembre_1990_la_limite_revue_lit_la_reversion_servie(
     assert ligne.reduction_du_cumul == pytest.approx(reduction)
 
 
+@pytest.mark.sur_le_moteur_python("droit.reversion._cumuler")
 def test_l_exemple_de_la_circulaire_105_90():
     """Circulaire Cnav n° 105/90, § 13 : la réversion court depuis le 1er
     janvier 1989, la retraite personnelle, 50 000 F, depuis le 1er août 1990 ;
@@ -3061,6 +3068,7 @@ def _pension(regime: str = "regime_general", maximum: bool = True):
     ("regime_general", "1975-02-01", True, ()),
     ("arrco", "1970-02-01", True, ()),
 ])
+@pytest.mark.sur_le_moteur_python("revalorisation._majorations_de_la_pension lit le moteur")
 def test_les_majorations_forfaitaires_de_1972_a_1982(simulateur, regime, depart, maximum,
                                                      attendues):
     """Lois n° 71-1132, article 8, n° 75-1279, article 3, n° 77-657, article
@@ -3082,6 +3090,7 @@ def test_les_majorations_forfaitaires_de_1972_a_1982(simulateur, regime, depart,
     ("1973-02-01", 0.50 * 136 / 150, 47.82),
     ("1974-02-01", 0.50 * 144 / 150, 48.72),
 ])
+@pytest.mark.sur_le_moteur_python("revalorisation._majorations_de_la_pension lit le moteur")
 def test_les_taux_que_les_circulaires_donnent_a_la_pension_majoree(simulateur, depart, taux,
                                                                    attendu):
     """Le taux de la pension au maximum de sa date, que les majorations
@@ -3412,6 +3421,7 @@ def test_la_duree_s_arrete_au_trimestre_qui_precede_le_deces(saisies, deces, eff
     assert fictive.releve.durees.trimestres_par_regime["regime_general"] == trimestres
 
 
+@pytest.mark.sur_le_moteur_python("droit.liquidation")
 def test_sans_decote_ni_coefficient_d_anticipation(saisies, simulateur):
     """La même carrière, liquidée au même jour d'un assuré vivant, serait
     décotée au régime général et abattue à l'Agirc-Arrco : la pension que le
@@ -3482,6 +3492,7 @@ def _sortie(saisies, requete):
     return saisies.simuler(requete).dictionnaire()["reversion"]
 
 
+@pytest.mark.sur_le_moteur_python("mois_de_mariage")
 def test_la_duree_d_un_mariage_se_compte_en_mois_de_date_a_date():
     """« Cette durée, déterminée de date à date, est arrondie au nombre de mois
     inférieur » (R. 353-4)."""

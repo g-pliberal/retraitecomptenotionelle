@@ -93,6 +93,12 @@ FICHIERS = (
 )
 
 
+#: Les fichiers passés à la façade (``from facade import …``) qui gardent des
+#: tests sur le moteur Python, sous la marque ``sur_le_moteur_python``, et le
+#: nombre de ces tests. Il ne fait que décroître.
+RESTES = {"test_reversion.py": 6, "test_simulateur.py": 121}
+
+
 def _du_moteur(module: str) -> bool:
     return any(module == racine or module.startswith(racine + ".") for racine in MOTEUR_PYTHON)
 
@@ -125,6 +131,53 @@ def entrees_dans_le_moteur(source: str) -> set[str]:
                 if alias.name in ENTREES or (callable(objet) and not type_de_donnees):
                     trouvees.add(f"{origine}.{alias.name}")
     return trouvees
+
+
+def les_tests_marques(source: str) -> set[str]:
+    """Les tests du code ``source`` qui portent la marque
+    ``sur_le_moteur_python``."""
+    return {noeud.name for noeud in ast.parse(source).body
+            if isinstance(noeud, ast.FunctionDef) and noeud.name.startswith("test_")
+            and any("sur_le_moteur_python" in ast.unparse(decorateur)
+                    for decorateur in noeud.decorator_list)}
+
+
+def les_tests_dans_le_moteur(source: str) -> dict[str, str]:
+    """Les tests du code ``source`` qui entrent dans le moteur Python, et par
+    quoi : un import que le test fait lui-même, un nom que le fichier importe
+    du moteur, ou une aide, une fixture du fichier qui y entre. Comme la liste
+    des fichiers, cela se lit dans le code, sans rien lancer : une méthode de
+    règle appelée sur un type de données (``carriere.prolongee``) ne s'y voit
+    pas."""
+    arbre = ast.parse(source)
+    du_fichier = {}
+    for noeud in arbre.body:
+        if isinstance(noeud, (ast.Import, ast.ImportFrom)):
+            for alias in noeud.names:
+                seul = ast.unparse(type(noeud)(**{**vars(noeud), "names": [alias]}))
+                for entree in entrees_dans_le_moteur(seul):
+                    du_fichier[(alias.asname or alias.name).split(".")[0]] = entree
+    fonctions = {noeud.name: noeud for noeud in arbre.body if isinstance(noeud, ast.FunctionDef)}
+    lus = {nom: {n.id for n in ast.walk(fonction) if isinstance(n, ast.Name)}
+           | {argument.arg for argument in fonction.args.args}
+           for nom, fonction in fonctions.items()}
+    par = {}
+    for nom, fonction in fonctions.items():
+        imports = "\n".join(ast.unparse(n) for n in ast.walk(fonction)
+                            if isinstance(n, (ast.Import, ast.ImportFrom)))
+        entrees = sorted(entrees_dans_le_moteur(imports)
+                         | {du_fichier[lu] for lu in lus[nom] if lu in du_fichier})
+        if entrees:
+            par[nom] = entrees[0]
+    avance = True
+    while avance:
+        avance = False
+        for nom in fonctions:
+            aides = sorted(lu for lu in lus[nom] if lu in par and lu != nom)
+            if nom not in par and aides:
+                par[nom] = aides[0]
+                avance = True
+    return {nom: raison for nom, raison in par.items() if nom.startswith("test_")}
 
 
 def test_ce_qui_fait_entrer_dans_le_moteur_python_se_lit_dans_les_imports():
@@ -170,3 +223,57 @@ def test_la_liste_des_fichiers_sur_le_moteur_python_ne_fait_que_decroitre():
     assert not de_moins, (
         f"{', '.join(de_moins)} : n'entre plus dans le moteur Python — le retirer de FICHIERS")
     assert list(FICHIERS) == sorted(set(FICHIERS))
+
+
+# -- les fichiers passés à la façade : leurs tests restés sur le moteur Python ----------
+
+def test_un_test_entre_dans_le_moteur_python_par_ce_qu_il_nomme():
+    """Un test entre dans le moteur Python par un import qu'il fait lui-même,
+    par un nom que son fichier en importe, par une aide ou une fixture qui y
+    entre ; la marque se lit sur lui."""
+    source = (
+        "import pytest\n"
+        "from retraite_notionnelle.droit import liquider\n"
+        "from retraite_notionnelle.carriere import Metier\n"
+        "from facade import Simulateur\n"
+        "@pytest.fixture\n"
+        "def simulateur(): return Simulateur()\n"
+        "@pytest.fixture\n"
+        "def bareme(): return liquider.bareme(2020)\n"
+        "def _aide(moteur): return liquider.decote(moteur)\n"
+        "def test_par_la_facade(simulateur): assert simulateur.simuler(Metier('artisan', 20))\n"
+        "def test_par_un_nom(simulateur): assert liquider.decote(simulateur)\n"
+        "def test_par_une_aide(simulateur): assert _aide(simulateur)\n"
+        "def test_par_une_fixture(bareme): assert bareme\n"
+        "@pytest.mark.sur_le_moteur_python('ouvrir.duree_requise')\n"
+        "def test_par_un_import(simulateur):\n"
+        "    from retraite_notionnelle.droit.ouvrir import duree_requise\n"
+        "    assert duree_requise(simulateur)\n"
+    )
+    assert les_tests_dans_le_moteur(source) == {
+        "test_par_un_nom": "retraite_notionnelle.droit.liquider",
+        "test_par_une_aide": "_aide", "test_par_une_fixture": "bareme",
+        "test_par_un_import": "retraite_notionnelle.droit.ouvrir.duree_requise"}
+    assert les_tests_marques(source) == {"test_par_un_import"}
+
+
+def test_dans_un_fichier_passe_a_la_facade_seuls_les_tests_marques_restent_sur_le_moteur_python():
+    """Un fichier passé à la façade garde, sous la marque
+    ``sur_le_moteur_python``, les tests qu'elle ne sait pas encore servir : leur
+    nombre est tenu ici, et ne fait que décroître. Un test sans marque n'entre
+    pas dans le moteur Python ; un fichier qui n'a plus de test marqué quitte
+    ``RESTES``, et ``FICHIERS`` avec ses derniers imports du moteur."""
+    ici = Path(__file__).parent
+    for fichier, attendus in RESTES.items():
+        source = (ici / fichier).read_text(encoding="utf-8")
+        marques = les_tests_marques(source)
+        sans_marque = sorted(set(les_tests_dans_le_moteur(source)) - marques)
+        assert not sans_marque, (
+            f"{fichier} : {', '.join(sans_marque[:5])} entre(nt) dans le moteur Python sans la "
+            "marque sur_le_moteur_python — le test passe par la façade, ou garde sa marque")
+        assert len(marques) == attendus, (
+            f"{fichier} : {len(marques)} tests marqués sur_le_moteur_python, RESTES en compte "
+            f"{attendus} — le nombre ne fait que décroître, et se tient ici")
+    passes = {fichier.name for fichier in ici.glob("test_*.py")
+              if "entrees_du_test" in fichier.read_text(encoding="utf-8")}
+    assert passes - {"test_facade.py", Path(__file__).name} == set(RESTES)
