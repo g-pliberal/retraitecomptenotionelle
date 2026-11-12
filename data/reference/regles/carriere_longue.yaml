@@ -35,7 +35,7 @@ effet: >-
   entré à seize ans, deux ans sans rien valider, partait à 59 ans en 2009 avec 164
   trimestres quand il lui en fallait 170 (action 138, étape 21 ; tests/test_simulateur.py).
 sources:
-  lu_le: 2026-10-24
+  lu_le: 2026-11-12
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
@@ -45,6 +45,18 @@ sources:
     dernier trimestre n'avait pas, à la porte des dix-huit ans, l'option des quatre
     trimestres, que le modèle lui laisse comme au régime général. Lire comment le RSI
     l'appliquait avant de l'en priver.
+  - >-
+    NON PORTÉ, relevé le 12 novembre 2026 : D. 732-40 du code rural tient pour entré
+    avant la borne le non-salarié agricole qui a « validé au titre » de son régime
+    « quatre trimestres à la fin de l'année » de l'anniversaire, quel que soit son mois de
+    naissance — « soit » cela, « soit » les conditions de D. 351-1-3, dans la rédaction du
+    1er septembre 2023 (LEGIARTI000047634525) ; « par dérogation » à D. 351-1-3 dans
+    celle du 1er janvier 2026 (LEGIARTI000053365409). Le modèle lui demande cinq
+    trimestres, quatre au seul né du dernier trimestre : l'exploitant installé au
+    1er janvier de l'année de ses dix-huit ans, né avant octobre, n'y a pas la porte que
+    le texte lui ouvre. À écrire, le test d'abord, après avoir lu depuis quand la règle
+    vaut (rédactions de 2005, 2011 et 2012), si la rédaction de 2026 ferme au non-salarié
+    agricole la voie des cinq trimestres tous régimes, et comment la MSA l'applique.
   lectures:
   - type: legifrance
     reference: >-
@@ -148,12 +160,43 @@ sources:
       septembre 2026 (LEGIARTI000054059621), lues par le récupérateur dans l'index
       LEGI, I et II
     date: 2026-09-17
+  - type: legifrance
+    reference: >-
+      Les rédactions en vigueur des fonctionnaires, lues dans l'index LEGI du 11 novembre
+      2026. D. 16-1 du code des pensions, version du 1er septembre 2026
+      (LEGIARTI000054059616, décret n° 2026-345) : les quatre âges du I et, au tableau du
+      II, la porte des vingt ans à 60 ans jusqu'aux nés d'août 1963, 60 ans et 3 mois de
+      septembre à décembre 1963, 60 ans et 6 mois en 1964, 60 ans et 9 mois de janvier à
+      novembre 1965, 60 ans et 8 mois en décembre 1965, 60 ans et 9 mois en 1966, 61 ans
+      en 1967, puis un trimestre de plus par génération jusqu'à 61 ans et 9 mois en 1970 —
+      ligne pour ligne les portes de D. 351-1-1 à la même date, que le modèle ouvre aux
+      fonctionnaires. D. 16-3, version du 1er septembre 2023 (LEGIARTI000047634511) :
+      début d'activité avant seize, dix-huit, vingt ou vingt-et-un ans, « une durée
+      d'assurance d'au moins cinq trimestres à la fin de l'année » de l'anniversaire,
+      quatre pour qui est né « au cours du quatrième trimestre », comme D. 351-1-3.
+      L. 25 bis, version du 31 décembre 2025 (LEGIARTI000053280372, loi n° 2025-1403,
+      article 104) : les quatre âges et la durée inchangés ; son 4°, les trimestres pour
+      enfants réputés cotisés, est la règle de la fiche
+      carriere_longue_enfants_reputes_cotises.
+    date: 2026-11-12
+  - type: legifrance
+    reference: >-
+      L'article 3 bis du décret n° 73-937, version en vigueur depuis le 1er novembre 2012
+      (LEGIARTI000026139970), lu dans l'index LEGI du 11 novembre 2026 : il ne porte plus
+      de portes à lui, « Les dispositions des articles D. 351-1-1 à D. 351-1-3 du code de
+      la sécurité sociale sont applicables, dans les conditions prévues au VI de l'article
+      D. 634-1 du même code », aux artisans et aux commerçants — ce VI, dans sa version
+      du même jour, ne retouche que les périodes réputées cotisées de D. 351-1-2. Les
+      portes et le début d'activité sont donc ceux du régime général, que le modèle leur
+      ouvre.
+    date: 2026-11-12
   - type: service_public
     reference: fiche F13845
     date: 2026-09-01
 textes_a_rattacher:
 - reference: L. 351-1-1 CSS
 - reference: D. 351-1-1 CSS (décret n° 2026-345 du 7 mai 2026)
+- {id: LEGIARTI000053365409, article: "D. 732-40 du code rural", en_vigueur: 2026-01-01, change: "pensions prenant effet à compter du 1er janvier 2026 (décret n° 2025-1410) : l'article ne garde que le début d'activité du non-salarié agricole, quatre trimestres validés à son régime à la fin de l'année de l'anniversaire, « par dérogation à l'article D. 351-1-3 » ; l'abaissement de l'âge n'y est plus, L. 732-18-1 étant abrogé le même jour. Voie non portée par le modèle (sources.a_relire)"}
 exemples:
 - cnav_2026_29_racl_1964
 - cnav_2026_29_racl_1965_premier_trimestre

@@ -365,7 +365,7 @@ approximations:
     non mesuré ; léger : la coupe du 14 octobre 2026 le déclare sans le faire
     (action 138, classement du 9 octobre)
 sources:
-  lu_le: 2026-10-08
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
@@ -386,6 +386,15 @@ sources:
       LEGIARTI000053280361) ; L. 13 et L. 14, rédactions de 1964 à 2004
       (LEGIARTI000006362701, LEGIARTI000006362703)
     date: 2025-12-31
+  - type: legifrance
+    reference: >-
+      L. 13 CPCMR, version LEGIARTI000053280906 du 31 décembre 2025 (loi n° 2025-1403,
+      article 105 ; pensions prenant effet à compter du 1er septembre 2026), lue dans
+      l'index LEGI du 11 novembre 2026 et comparée mot à mot à celle du 1er septembre
+      2023 (LEGIARTI000047452824) : seul change, au I, le renvoi de la durée requise, « à
+      l'article L. 161-17-3 » et non plus à son 6° ; le pourcentage maximum reste « fixé
+      à 75 % du traitement ou de la solde ». Sans effet sur la bonification du cinquième.
+    date: 2026-11-12
   - type: jorf
     reference: >-
       loi n° 2003-775 du 21 août 2003, articles 48 et 80 (JORFARTI000001644270,

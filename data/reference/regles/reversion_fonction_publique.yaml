@@ -211,7 +211,7 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-10-09
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -265,6 +265,7 @@ sources:
     date: 2026-10-09
 textes_a_rattacher:
 - {id: LEGIARTI000025076827, article: L. 40, en_vigueur: 2012-01-01, change: "la pension d'orphelin"}
+- {id: LEGIARTI000033814300, article: L. 50, en_vigueur: 2017-01-01, change: "la pension pour décès en service, que le modèle ne porte pas : au II, un 9° pour le militaire tué dans l'exercice de ses fonctions sur le territoire national, ou mort en service et cité à l'ordre de la Nation ou de l'armée ; au 5°, la citation à l'ordre de l'armée vaut celle à l'ordre de la Nation"}
 code:
   python: >-
     droit/reversion.py : reversion, _mariage_suffit, _part_du_survivant,

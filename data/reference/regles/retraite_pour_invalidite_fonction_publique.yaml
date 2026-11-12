@@ -231,7 +231,7 @@ approximations:
     leur pension de réforme, ne sont pas couverts ; la saisie refuse leur radiation
   effet: non mesuré
 sources:
-  lu_le: 2026-09-30
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -300,6 +300,8 @@ textes_sans_effet:
    motif: "la même procédure"}
 - {id: LEGIARTI000042567433, article: "L. 31 CPCMR", en_vigueur: 2022-02-01,
    motif: "le conseil médical remplace la commission de réforme"}
+- {id: LEGIARTI000049428940, article: "décret n° 2003-1306, article 37", en_vigueur: 2024-04-18,
+   motif: "renvoi mis à jour : les articles L. 556-5 à L. 556-7 du code général de la fonction publique remplacent les articles 1er-1 à 1er-3 de la loi du 13 septembre 1984"}
 code:
   python: >-
     droit/invalidite.py : radiation_du_regime, retraite_pour_invalidite,

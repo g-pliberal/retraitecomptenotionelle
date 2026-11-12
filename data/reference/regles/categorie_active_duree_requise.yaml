@@ -28,7 +28,7 @@ effet: >-
   commandant aussi la proratisation dans la fonction publique, le gain porte sur
   le taux et sur le prorata à la fois.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -97,6 +97,19 @@ sources:
       table des « a) », elle n'en est que l'étage du dessous : ce qu'elle donne
       pour la génération qui a soixante ans l'année où le droit de l'agent s'ouvre.
     date: 2026-09-22
+  - type: legifrance
+    reference: >-
+      Les deux rédactions de la loi n° 2025-1403, article 105, pour les pensions prenant
+      effet à compter du 1er septembre 2026, lues dans l'index LEGI du 11 novembre 2026
+      et comparées mot à mot aux précédentes. L. 13 du code des pensions, version
+      LEGIARTI000053280906 : seul change, au I, le renvoi, « à l'article L. 161-17-3 »
+      et non plus à son 6°. L. 161-17-3 CSS, version LEGIARTI000053280903 : 170
+      trimestres des nés du 1er janvier 1963 au 31 mars 1965, 171 jusqu'au 31 décembre
+      1965, 172 à partir de 1966. Sans effet ici : le B du XXIV fixe la durée des emplois
+      classés « par dérogation à l'article L. 13 », ses marches lues dans sa version du
+      même jour (LEGIARTI000053280920), et son a garde aux nés d'avant septembre 1966
+      la durée « applicable avant » la réforme de 2023, la table du 22 janvier 2014.
+    date: 2026-11-12
 textes_a_rattacher:
 - reference: >-
     loi n° 2023-270 du 14 avril 2023, article 10, XXIV, B (fonction publique d'État)
@@ -107,6 +120,9 @@ textes_a_rattacher:
 - reference: >-
     loi n° 2003-775 du 21 août 2003, article 5, VI, version du 11 novembre 2010
 - reference: L. 161-17-3 CSS, version du 22 janvier 2014
+textes_sans_effet:
+- {id: LEGIARTI000033714337, article: "loi n° 2003-775, article 5", en_vigueur: 2017-01-01,
+   motif: "au V, « l'assurance vieillesse des travailleurs indépendants » remplace le renvoi à L. 621-3 et L. 723-1 ; le VI, que la fiche lit, est inchangé"}
 exemples:
 - cdc_2026_tab20_super_active_1965
 - cdc_2026_tab20_super_active_1968

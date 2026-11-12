@@ -146,8 +146,18 @@ approximations:
     ouvriers de l'État suivent la règle du code des pensions, que leurs décrets
     reprennent sans que le modèle les ait relus
   effet: non mesuré
+- version: [regles_communes_2027]
+  ecart: >-
+    pour la première pension prise depuis le 1er janvier 2027, le modèle réduit la
+    pension militaire comme une pension civile, selon l'âge ; le droit la laisse se
+    cumuler entièrement (L. 161-22, III, C, 1° du code de la sécurité sociale), et ne la
+    plafonne, au tiers de la pension et à la moitié du minimum garanti, que devant un
+    employeur public (L. 86 du code des pensions, rédaction du 31 décembre 2025)
+  effet: >-
+    le militaire parti avant l'âge légal à compter de 2027 et qui retravaille dans le
+    privé perd dans le modèle une pension que le droit lui laisse entière ; non mesuré
 sources:
-  lu_le: 2026-09-30
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -156,6 +166,17 @@ sources:
     dans l'index : R. 91 et R. 92 disent la déclaration et les revenus retenus.
     Vérifier que les décrets de la CNRACL et des ouvriers de l'État (décret
     n° 2003-1306, article 64 ; décret n° 2004-1056) suivent la même règle.
+  - >-
+    NON PORTÉ, relevé le 12 novembre 2026 : la version regles_communes_2027 applique à
+    tous les trois régimes selon l'âge, quand L. 84 ne le dit que « sous réserve du
+    présent titre ». L. 86, dans sa rédaction du 31 décembre 2025, garde au titulaire
+    d'une pension militaire payé par un employeur de L. 86-1 le plafond du tiers de sa
+    pension et de la moitié du minimum garanti, « par dérogation au C du III de l'article
+    L. 161-22 » ; et ce C laisse cumuler entièrement les titulaires d'une pension
+    militaire et ceux d'une pension civile ou militaire d'invalidité (L. 161-22-1-2, 4°
+    et 5°). Le portage (`regle2027`, moteur/js/droit/cumul.js) ne regarde pas si la
+    pension est militaire : lu dans le code, non rejoué. À écrire, le test d'abord, en
+    coupant la version ; lire aussi ce que le modèle fait de la pension d'invalidité.
   lectures:
   - type: legifrance
     reference: >-
@@ -164,6 +185,17 @@ sources:
       (LEGIARTI000053279635) ; L. 85 (1964 et 2004) ; L. 86 (1970 et 2004) ; L. 86-1 ;
       R. 91 et R. 92, dans l'index LEGI
     date: 2026-09-30
+  - type: legifrance
+    reference: >-
+      L. 161-22 CSS, III, C (LEGIARTI000053279730) et L. 161-22-1-2, 1° à 5°
+      (LEGIARTI000053279758), rédactions du 31 décembre 2025 de la loi n° 2025-1403,
+      article 102, lus dans l'index LEGI du 11 novembre 2026 pour comprendre la dérogation
+      de L. 86 : « peuvent cumuler entièrement leur pension […] 1° Les assurés mentionnés
+      aux 1° à 5° de l'article L. 161-22-1-2 dont la pension est servie par ces mêmes
+      régimes », dont « 4° Des titulaires d'une pension militaire prévue à l'article L. 6 »
+      et « 5° Des titulaires de pensions civiles et militaires ou d'une solde de réforme
+      allouées pour invalidité »
+    date: 2026-11-12
   - type: service_public
     reference: >-
       fiche F12402, « Cumul emploi-retraite du fonctionnaire », vérifiée le 1er janvier
@@ -171,6 +203,11 @@ sources:
       (pension de 18 000 € ; revenu de 21 623 € ; 7 424,90 € déduits)
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F12402
     date: 2026-09-30
+textes_a_rattacher:
+- {id: LEGIARTI000053279638, article: "L. 86 CPCMR", en_vigueur: 2025-12-31, change: "première pension prise depuis le 1er janvier 2027 (loi n° 2025-1403, article 102, XI) : l'article ne vise plus que la pension militaire, plafonnée au tiers de son montant et à la moitié du minimum garanti devant un employeur de L. 86-1, « par dérogation au C du III de l'article L. 161-22 », sauf le non-officier de moins de vingt-cinq ans de services, la limite d'âge ou de durée de services atteinte, et l'invalidité ; les cumuls entiers des activités artistiques, juridictionnelles et de santé en sortent. À couper de la version regles_communes_2027 (sources.a_relire)"}
+textes_sans_effet:
+- {id: LEGIARTI000053279653, article: "L. 86-1 CPCMR", en_vigueur: 2025-12-31,
+   motif: "la liste des employeurs publics est inchangée ; le renvoi passe du deuxième alinéa de L. 84 au premier de L. 86"}
 code:
   python: >-
     droit/cumul.py : _Calcul._fonctionnaire, _deduction_fonction_publique,

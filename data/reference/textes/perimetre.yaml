@@ -93,4 +93,4 @@ textes_generaux:
 
 cliquet:
   # Les rédactions sans aucun statut. Il ne peut que décroître.
-  redactions_sans_statut: 9283
+  redactions_sans_statut: 9274

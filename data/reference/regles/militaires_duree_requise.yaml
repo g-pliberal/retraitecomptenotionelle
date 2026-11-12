@@ -24,7 +24,7 @@ effet: >-
   le notionnel prospectif, qui lit cet âge, sert de 0,55 à 0,60 % de moins à trois
   d'entre eux.
 sources:
-  lu_le: 2026-10-28
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -87,6 +87,17 @@ sources:
       LEGIARTI000028498258, III : « celle exigée des fonctionnaires atteignant cet
       âge l'année à compter de laquelle la liquidation peut intervenir ».
     date: 2026-10-28
+  - type: legifrance
+    reference: >-
+      L. 13 du code des pensions, version LEGIARTI000053280906 du 31 décembre 2025
+      (loi n° 2025-1403, article 105 ; pensions prenant effet à compter du 1er septembre
+      2026), lue dans l'index LEGI du 11 novembre 2026 et comparée mot à mot à celle
+      du 1er septembre 2023 (LEGIARTI000047452824) : seul change, au I, le renvoi, « celui
+      mentionné à l'article L. 161-17-3 » et non plus « au 6° de l'article L. 161-17-3 » ;
+      les II et III restent abrogés. Sans effet ici : la durée du militaire qui liquide
+      avant soixante ans tient au C du XXIV de l'article 10 de la loi n° 2023-270, lu
+      dans sa version du même jour (LEGIARTI000053280920).
+    date: 2026-11-12
   - type: autre
     reference: >-
       Cour des comptes, « Les retraites des fonctionnaires de l'État », septembre
