@@ -129,3 +129,52 @@ def test_la_grille_ne_suit_pas_la_montee_des_annees_recentes(mesures):
     assert par_annee[2010] > 0
     assert par_annee[max(par_annee)] < par_annee[2010]
     assert par_annee[max(par_annee)] < 0
+
+
+def test_les_departs_de_la_grille_se_datent_au_portage_sans_les_jumeaux(monkeypatch):
+    """Les départs que l'étude lit de la grille — l'année et l'âge de chaque
+    case, les cases que le droit écarte laissées de côté — viennent du portage
+    (``castypes.departs_au_portage``, action 161, lot B) : ceux que le moteur
+    Python rendait par ``calculer_cas_types``, à l'identique, type de l'âge
+    compris, sans qu'il ne date, ne bâtisse ni ne simule rien. Trois cas types
+    sur toutes les générations du coût, dont le militaire, dont le droit
+    écarte trois cases ; et l'artisan entré deux ans plus tôt sur trois
+    générations, comme ``cout_age_depart.py`` rejoue la lecture sur une grille
+    modifiée."""
+    import shutil
+    from dataclasses import replace
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage ne calcule pas ici")
+    from outils_pont import empecher_les_jumeaux_du_cout
+    from retraite_notionnelle.castypes import CAS_TYPES, calculer_cas_types
+    from retraite_notionnelle.cout import generations
+    from retraite_notionnelle.simulateur import Simulateur
+
+    def du_moteur_python(simulateur, cas_types, retenues):
+        grille = calculer_cas_types(simulateur, cas_types, retenues, "droit")
+        departs = {}
+        for (code, _), comparaison in grille.resultats.items():
+            carriere = comparaison.carriere
+            departs.setdefault(code, []).append(
+                (carriere.annee_liquidation, float(carriere.age_liquidation)))
+        return {code: sorted(points) for code, points in departs.items()}, grille.echecs
+
+    simulateur = Simulateur(Parametres())
+    fiches = {cas.code: cas for cas in CAS_TYPES}
+    grilles = (
+        (tuple(fiches[code] for code in ("salaire_moyen", "militaire", "exploitant_agricole")),
+         generations()),
+        ((replace(fiches["artisan"], age_debut=fiches["artisan"].age_debut - 2),),
+         (1950, 1955, 1960)),
+    )
+    attendus = [du_moteur_python(simulateur, cas_types, retenues)
+                for cas_types, retenues in grilles]
+    assert len(attendus[0][1]) == 6, "le droit écarte six cases de la première grille"
+    empecher_les_jumeaux_du_cout(monkeypatch)
+    for (cas_types, retenues), (departs, _) in zip(grilles, attendus):
+        lus = age_conjoncturel.departs_de_la_grille(simulateur, cas_types, retenues)
+        assert lus == departs
+        assert all(type(age) is float for points in lus.values() for _, age in points)
+    assert age_conjoncturel.departs_de_la_grille(simulateur, grilles[1][0]) \
+        .keys() == {"artisan"}

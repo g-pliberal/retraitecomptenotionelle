@@ -67,9 +67,9 @@ RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle.somme import somme_ordonnee
-from retraite_notionnelle import memoire  # noqa: E402
+from retraite_notionnelle import memoire, pont  # noqa: E402
 from retraite_notionnelle.castypes import (  # noqa: E402
-    CAS_TYPES, CasType, calculer_cas_types, poids_effectifs,
+    CAS_TYPES, CasType, departs_au_portage, poids_effectifs,
 )
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.cout import generations  # noqa: E402
@@ -122,19 +122,20 @@ def departs_de_la_grille(
     lecture sur une grille MODIFIÉE ou sur un petit nombre de générations.
     Restreindre les générations ne change aucun point — la grille en donne un
     par génération —, cela n'en calcule que moins.
+
+    Le portage date et bâtit chaque case (``castypes.departs_au_portage``,
+    action 161), sur le paquet des données du jour, et écarte celles que le
+    droit écarte — une liquidation avant l'origine de la répartition, un
+    régime qui n'existait pas encore —, qui n'apportent aucun point.
     """
-    grille = calculer_cas_types(
-        simulateur, cas_types,
-        generations_retenues if generations_retenues is not None else generations(),
-        "droit")
+    retenues = generations_retenues if generations_retenues is not None else generations()
+    lus, _ = departs_au_portage(
+        simulateur, {f"{cas.code}|{generation}": (cas, generation)
+                     for cas in cas_types for generation in retenues},
+        paquet=pont.paquet_des_donnees(simulateur.parametres.racine_donnees))
     departs: dict[str, list[tuple[int, float]]] = {}
-    for (code, _), comparaison in grille.resultats.items():
-        carriere = comparaison.carriere
-        if carriere.age_liquidation is None:
-            continue
-        departs.setdefault(code, []).append(
-            (carriere.annee_liquidation, float(carriere.age_liquidation))
-        )
+    for cle, (age, annee, _) in lus.items():
+        departs.setdefault(cle.partition("|")[0], []).append((annee, float(age)))
     for points in departs.values():
         points.sort()
     return departs
