@@ -1,0 +1,42 @@
+date: "2026-11-12"
+session: "action 192, étape 2 : le début d'activité du non-salarié agricole en carrière longue, quatre trimestres à son régime"
+consulte: >-
+  python scripts/veille_droit.py en ouvrant. L'index LEGI du dépôt, récupéré et
+  à jour au 11 novembre 2026 : code rural, D. 732-40 dans ses cinq rédactions
+  (LEGIARTI000006597425, LEGIARTI000023397791, LEGIARTI000026139992,
+  LEGIARTI000047634525, LEGIARTI000053365409) et leur mot à mot ; le III de
+  l'article 28 ter du décret n° 55-753 (LEGIARTI000006763597) ; D. 351-1-3 du
+  code de la sécurité sociale et D. 732-41 du code rural en vigueur en 2026 ;
+  l'histoire de L. 732-18-1, abrogé au 1er janvier 2026 ; la recherche de
+  « quatre trimestres à la fin de l'année » dans tout l'index. L'index JORF, à
+  jour au même jour : le décret n° 2025-1410 du 30 décembre 2025, sa notice et
+  son article 1er. De la MSA, deux copies servies par des caisses régionales :
+  le guide « La retraite anticipée pour longue carrière » (réf. 11342, janvier
+  2020) et le tableau des conditions par génération de 2026 (additif DR
+  n° 2026-321 à la lettre à toutes les caisses n° 2026-298) ; les pages
+  « retraite » de msa.fr essayées répondent 404. La fiche F13845 de
+  service-public, vérifiée le 1er septembre 2026, qui ne traite que du salarié.
+trouve: >-
+  La voie des quatre trimestres validés au régime agricole à la fin de l'année
+  de l'anniversaire existe depuis la carrière longue du régime, en 2004, à côté
+  des conditions de D. 351-1-3 (« soit… soit ») ; chaque rédaction n'en
+  change que les bornes. Celle du 1er janvier 2026 l'écrit « par dérogation à
+  l'article D. 351-1-3 », l'abaissement de l'âge passant au code de la sécurité
+  sociale. La MSA l'applique : « au moins quatre trimestres si vous étiez
+  non-salarié agricole » (guide de 2020). Aucun autre régime n'a cette voie.
+  La fiche carriere_longue porte ces lectures. La règle est écrite dans les
+  deux moteurs, le test d'abord, trois cas posés à la main sous les rédactions
+  de 2005, 2023 et 2026 ; elle n'est pas publiée : elle avance d'un an le
+  départ du cas type de l'exploitant agricole, que le calcul qui date les cas
+  types fait alors partir, né en 1953, à un âge où le droit n'est pas ouvert,
+  et sept tests du coût se déplacent. Elle est gardée dans
+  docs/mesures/192/2026-11-12-etape-2-la-regle-et-ses-tests.txt.
+reste: >-
+  Corriger le calcul qui date les cas types pour le régime agricole, qui valide
+  l'année entière au 1er janvier, puis publier la règle et remesurer les tests
+  du coût. Lire si la rédaction de 2026 ferme au non-salarié agricole la voie
+  des cinq trimestres tous régimes : aucune publication de la MSA postérieure
+  au décret n° 2025-1410 n'a été trouvée. Lire la lettre à toutes les caisses
+  n° 2026-298 de la caisse centrale. Lire comment les caisses coordonnent
+  l'assuré que le régime agricole tient pour entré tôt et le régime général
+  non. Aucun exemple chiffré publié n'a été trouvé.

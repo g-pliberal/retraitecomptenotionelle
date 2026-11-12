@@ -46,17 +46,35 @@ sources:
     trimestres, que le modèle lui laisse comme au régime général. Lire comment le RSI
     l'appliquait avant de l'en priver.
   - >-
-    NON PORTÉ, relevé le 12 novembre 2026 : D. 732-40 du code rural tient pour entré
-    avant la borne le non-salarié agricole qui a « validé au titre » de son régime
-    « quatre trimestres à la fin de l'année » de l'anniversaire, quel que soit son mois de
-    naissance — « soit » cela, « soit » les conditions de D. 351-1-3, dans la rédaction du
-    1er septembre 2023 (LEGIARTI000047634525) ; « par dérogation » à D. 351-1-3 dans
-    celle du 1er janvier 2026 (LEGIARTI000053365409). Le modèle lui demande cinq
-    trimestres, quatre au seul né du dernier trimestre : l'exploitant installé au
-    1er janvier de l'année de ses dix-huit ans, né avant octobre, n'y a pas la porte que
-    le texte lui ouvre. À écrire, le test d'abord, après avoir lu depuis quand la règle
-    vaut (rédactions de 2005, 2011 et 2012), si la rédaction de 2026 ferme au non-salarié
-    agricole la voie des cinq trimestres tous régimes, et comment la MSA l'applique.
+    NON PORTÉ, lu le 12 novembre 2026 (action 192, étape 2) : le non-salarié agricole
+    est tenu pour entré avant la borne avec quatre trimestres validés à son régime à la
+    fin de l'année de l'anniversaire, quel que soit son mois de naissance — depuis 2004,
+    dans toutes les rédactions (lectures), et la MSA l'applique. Le modèle lui en demande
+    cinq, quatre au seul né du dernier trimestre : l'aide familial entré à dix-sept ans et
+    demi, né avant octobre, n'y a pas la porte des dix-huit ans. La règle et son test sont
+    écrits dans les deux moteurs, et gardés hors de `main`
+    (docs/mesures/192/2026-11-12-etape-2-la-regle-et-ses-tests.txt) : elle avance d'un an
+    le départ du cas type de l'exploitant agricole, installé au 1er janvier de l'année de
+    ses vingt ans, le pilote qui date les cas types le fait alors partir, né en 1953, à
+    un âge où le droit n'est pas ouvert, et sept tests du coût et de sa confrontation à
+    la DREES se déplacent. À publier après le pilote et ces mesures (note de l'étape).
+  - >-
+    D. 732-40 du code rural, rédaction du 1er janvier 2026 (LEGIARTI000053365409) : la
+    voie des quatre trimestres agricoles y vaut « par dérogation à l'article D. 351-1-3 »,
+    et non plus « soit » elle, « soit » les conditions de cet article. Rien de lu ne dit
+    si elle ferme au non-salarié agricole la voie des cinq trimestres tous régimes : le
+    texte tient pour entrés ceux qui ont leurs quatre trimestres agricoles sans dire
+    qu'eux seuls le sont, D. 732-41 renvoie le régime à L. 351-1-1, et le tableau des
+    conditions par génération que la MSA diffuse en 2026 ne donne que la règle générale.
+    Aucune publication de la MSA postérieure au décret n° 2025-1410 n'a été trouvée ; le
+    guide qui dit la voie agricole date de janvier 2020. À lire dans la lettre à toutes
+    les caisses n° 2026-298 de la caisse centrale, que la session n'a pas pu lire.
+  - >-
+    D. 732-40 ne règle que la pension du régime agricole, et le modèle n'a qu'un départ
+    par carrière : l'ancien aide familial devenu salarié, né avant octobre et sans
+    cinquième trimestre, a la porte du régime agricole et non, à la lettre, celle du
+    régime général (D. 351-1-3). Lire comment les caisses coordonnent ce cas avant
+    d'écrire la règle pour une carrière de plusieurs régimes.
   lectures:
   - type: legifrance
     reference: >-
@@ -83,6 +101,51 @@ sources:
       général ; celui de 2012 garde en outre ceux des générations d'avant 1952, sans
       effet sur une pension prise depuis novembre 2012, après soixante ans
     date: 2026-10-24
+  - type: legifrance
+    reference: >-
+      Le début d'activité du non-salarié agricole, lu dans l'index LEGI du 11 novembre
+      2026, de sa première rédaction à la dernière : le III de l'article 28 ter du décret
+      n° 55-753 (LEGIARTI000006763597, du 31 octobre 2003 au 22 avril 2005), puis
+      D. 732-40 du code rural, rédactions du 22 avril 2005 (LEGIARTI000006597425), du
+      1er juillet 2011 (LEGIARTI000023397791), du 1er novembre 2012
+      (LEGIARTI000026139992) et du 1er septembre 2023 (LEGIARTI000047634525) : « sont
+      considérés comme ayant débuté leur activité avant l'âge de » la borne « les assurés
+      justifiant soit des conditions définies à l'article D. 351-1-3 du code de la
+      sécurité sociale, soit ayant validé au titre de l'assurance vieillesse des personnes
+      non salariées des professions agricoles quatre trimestres à la fin de l'année au
+      cours de laquelle est survenu » l'anniversaire — seize ou dix-sept ans, puis
+      dix-huit, vingt, vingt et un au fil des portes. Rédaction du 1er janvier 2026
+      (LEGIARTI000053365409, décret n° 2025-1410, article 1er, pensions prenant effet à
+      compter du 1er janvier 2026) : « et par dérogation à l'article D. 351-1-3 du même
+      code, sont considérés comme ayant débuté leur activité avant l'âge de seize,
+      dix-huit, vingt ou vingt-et-un ans les assurés ayant validé au titre du régime
+      institué par le présent chapitre quatre trimestres à la fin de l'année ». La voie
+      a l'âge de la carrière longue du régime ; aucun autre régime ne l'a (recherche de
+      « quatre trimestres à la fin de l'année » dans l'index).
+    date: 2026-11-12
+  - type: autre
+    reference: >-
+      MSA, guide « La retraite anticipée pour longue carrière » (réf. 11342, janvier 2020,
+      caisse centrale), « Quelles sont les conditions ? » : « vous devez réunir avant la
+      fin de l'année civile de votre 20e anniversaire : au moins quatre trimestres si vous
+      étiez non-salarié agricole ; cinq trimestres si vous étiez salarié (quatre
+      trimestres si vous êtes né au cours du dernier trimestre) », et de même à la fin de
+      l'année du 16e ou du 17e anniversaire pour un départ avant soixante ans ; copie du
+      12 novembre 2026, sha256:848bac9dcf14fe8e4f0d5e293ffda265bb1a3ea8f85e813bc50e4d6ace92b327
+    url: https://bcl.msa.fr/lfp/documents/11566/48455/Guide+-+Retraite+anticip%C3%A9e+pour+carri%C3%A8re+longue
+    date: 2020-01-01
+  - type: autre
+    reference: >-
+      MSA, « Tableau récapitulatif des conditions d'ouverture de droit à remplir par
+      génération pour la retraite anticipée longue carrière », que ses métadonnées
+      rattachent à l'additif DR n° 2026-321 du 22 juin 2026 à la lettre à toutes les
+      caisses n° 2026-298 (article 105 de la loi de financement pour 2026) : à chaque
+      borne, « 5 trimestres avant la fin de l'année civile » de l'anniversaire, « 4
+      trimestres » « pour les assurés nés au cours du dernier trimestre » ; rien du
+      non-salarié agricole ; copie du 12 novembre 2026,
+      sha256:07c161e479b8e8b93ca39727fe211fffe2c180fd975e130fa57c1810a63f31aa
+    url: https://ardechedromeloire.msa.fr/lfp/documents/11566/48455/Bar%C3%A8mes+retraite+anticip%C3%A9e+carri%C3%A8re+longue.pdf
+    date: 2026-06-22
   - type: circulaire_cnav
     reference: >-
       2003-46 du 18 novembre 2003, point 111 : « Les assurés doivent justifier, dans le
@@ -196,7 +259,7 @@ sources:
 textes_a_rattacher:
 - reference: L. 351-1-1 CSS
 - reference: D. 351-1-1 CSS (décret n° 2026-345 du 7 mai 2026)
-- {id: LEGIARTI000053365409, article: "D. 732-40 du code rural", en_vigueur: 2026-01-01, change: "pensions prenant effet à compter du 1er janvier 2026 (décret n° 2025-1410) : l'article ne garde que le début d'activité du non-salarié agricole, quatre trimestres validés à son régime à la fin de l'année de l'anniversaire, « par dérogation à l'article D. 351-1-3 » ; l'abaissement de l'âge n'y est plus, L. 732-18-1 étant abrogé le même jour. Voie non portée par le modèle (sources.a_relire)"}
+- {id: LEGIARTI000053365409, article: "D. 732-40 du code rural", en_vigueur: 2026-01-01, change: "pensions prenant effet à compter du 1er janvier 2026 (décret n° 2025-1410) : l'article ne garde que le début d'activité du non-salarié agricole, quatre trimestres validés à son régime à la fin de l'année de l'anniversaire, « par dérogation à l'article D. 351-1-3 » ; l'abaissement de l'âge n'y est plus, L. 732-18-1 étant abrogé le même jour. Voie lue le 12 novembre 2026, non portée par le modèle (sources.a_relire)"}
 exemples:
 - cnav_2026_29_racl_1964
 - cnav_2026_29_racl_1965_premier_trimestre

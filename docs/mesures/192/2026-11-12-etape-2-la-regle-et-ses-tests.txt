@@ -1,0 +1,465 @@
+Action 192, étape 2 — la règle écrite le 12 novembre 2026, et ses tests, non
+publiés : le correctif, à rejouer par `git apply` sur ce fichier (git passe le
+texte qui précède le premier « diff --git »). Pris sur 7466b44.
+
+Ce qu'il porte : la voie des quatre trimestres validés au régime des
+non-salariés agricoles à la fin de l'année de la borne (D. 732-40 du code
+rural), dans `entreePrecoce` (moteur/js/regimes.js) et son jumeau Python,
+`trimestresAgricoles` (moteur/js/droit/ouvrir.js) passé par les trois appels
+qui datent ou ouvrent un départ ; son test, vu rouge puis vert dans les deux
+moteurs (tests/test_simulateur.py) ; un témoin de plus
+(scripts/construire_temoins.py, puis `python scripts/construire_temoins.py`) ;
+et le premier des tests que la règle déplace, remis à sa valeur
+(tests/test_cycle_de_vie_script.py).
+
+Pourquoi il n'est pas sur `main` : la note de l'étape,
+docs/feuille_de_route/192/2026-11-12-etape-2-carriere-longue-non-salarie-agricole.md.
+Les dates « 12 novembre 2026 » de ses commentaires sont à remettre au jour où
+il s'applique.
+
+diff --git a/moteur/js/droit/departs.js b/moteur/js/droit/departs.js
+index 90ce811..171a27f 100644
+--- a/moteur/js/droit/departs.js
++++ b/moteur/js/droit/departs.js
+@@ -270,7 +270,8 @@ function carriereLongueAcquise(moteur, carriere, periodes) {
+   const anticipe = moteur.carriereLongue.ageDeDepart(
+     carriere, anneeLiquidation, cotises, requis, etrangers.cotises[famille],
+     moteur.carriereLongue.deLaFonctionPublique(periodes.map(([code]) => code)),
+-    ouvrirLeDroit.dureeDAssurance(carriere, majoration, etrangers.trimestres(famille)));
++    ouvrirLeDroit.dureeDAssurance(carriere, majoration, etrangers.trimestres(famille)),
++    ouvrirLeDroit.trimestresAgricoles(moteur, carriere));
+   return anticipe === null ? null : anticipe[0];
+ }
+ 
+diff --git a/moteur/js/droit/ouvrir.js b/moteur/js/droit/ouvrir.js
+index 4d1db87..efe17a8 100644
+--- a/moteur/js/droit/ouvrir.js
++++ b/moteur/js/droit/ouvrir.js
+@@ -260,6 +260,7 @@ export function ouvrir(moteur, releve, regimes = null) {
+       // La durée d'assurance que le taux lit, tous régimes : celle que les
+       // rédactions d'avant novembre 2012 opposent aussi.
+       durees.pourLeTaux(famille),
++      trimestresAgricoles(moteur, carriere),
+     );
+     // Au mois près : la table écrit soixante ans et huit mois 60,67, que
+     // l'âge exact, 60,666…, n'atteindrait jamais.
+@@ -1049,9 +1050,29 @@ export function ageCarriereLongue(moteur, carriere, annuites) {
+     etrangers.cotises[famille],
+     moteur.carriereLongue.deLaFonctionPublique(annuites.map(([code]) => code)),
+     dureeDAssurance(carriere, majoration, etrangers.trimestres(famille)),
++    trimestresAgricoles(moteur, carriere),
+   );
+ }
+ 
++/**
++ * Les trimestres que le régime des non-salariés agricoles valide, année par
++ * année : ceux des lignes qu'il reçoit. Quatre d'entre eux à la fin de l'année
++ * de la borne valent début d'activité (D. 732-40 du code rural,
++ * `CarriereLongue.entreePrecoce`). Voir `trimestres_agricoles` du Python.
++ */
++export function trimestresAgricoles(moteur, carriere) {
++  const parAnnee = new Map();
++  for (const ligne of carriere.lignes) {
++    if (ligne.trimestres_valides > 0 && coordonner.regimesDe(
++      moteur, ligne, ligne.annee,
++      moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee),
++    ).includes(coordonner.REGIME_DES_NON_SALARIES_AGRICOLES)) {
++      parAnnee.set(ligne.annee, (parAnnee.get(ligne.annee) ?? 0) + ligne.trimestres_valides);
++    }
++  }
++  return parAnnee;
++}
++
+ /**
+  * La durée d'assurance tous régimes qu'un départ que l'on date lit, sans
+  * relevé : les trimestres de la carrière jusqu'à l'année de la liquidation,
+diff --git a/moteur/js/regimes.js b/moteur/js/regimes.js
+index c93b0fc..b360481 100644
+--- a/moteur/js/regimes.js
++++ b/moteur/js/regimes.js
+@@ -2062,13 +2062,14 @@ export class CarriereLongue {
+    * Jusqu'en octobre 2012, la porte exige aussi une durée d'assurance, tous
+    * régimes, de huit trimestres au-delà de la durée requise (chapeau de
+    * D. 351-1-1, rédactions de 2003 et de 2010) : `trimestresAssurance` est
+-   * celle que le taux lit ; sans elle, la condition n'est pas lue. Voir le
+-   * Python.
++   * celle que le taux lit ; sans elle, la condition n'est pas lue. `agricoles`
++   * sont les trimestres validés au régime des non-salariés agricoles, année
++   * par année (`entreePrecoce`). Voir le Python.
+    *
+    * @returns {[number, number]|null} âge de départ et fiabilité.
+    */
+   ageDeDepart(carriere, anneeLiquidation, trimestresCotises, requis, etrangers = null,
+-    fonctionPublique = false, trimestresAssurance = null) {
++    fonctionPublique = false, trimestresAssurance = null, agricoles = null) {
+     const portes = this.portes(carriere, fonctionPublique);
+     if (portes === null) {
+       return null;
+@@ -2078,8 +2079,8 @@ export class CarriereLongue {
+     let meilleur = null;
+     for (const [ageMax, trimestresDebut, ageDepart, supplement, fiabilite, assurance]
+       of portes) {
+-      if (!this.entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers)
+-          || trimestresCotises < requis + supplement) {
++      if (!this.entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers,
++        agricoles) || trimestresCotises < requis + supplement) {
+         continue;
+       }
+       if (assurance !== null && trimestresAssurance !== null
+@@ -2109,7 +2110,7 @@ export class CarriereLongue {
+    * où ses durées sont réunies, et la plus précoce l'emporte.
+    */
+   agePropose(carriere, anneeLiquidation, trimestresCotises, requis, ageLiquidation,
+-    etrangers = null, fonctionPublique = false, trimestresAssurance = null) {
++    etrangers = null, fonctionPublique = false, trimestresAssurance = null, agricoles = null) {
+     const portes = this.portes(carriere, fonctionPublique);
+     if (portes === null) {
+       return null;
+@@ -2117,7 +2118,8 @@ export class CarriereLongue {
+     requis = this.requisDe(carriere, requis, fonctionPublique);
+     let meilleur = null;
+     for (const [ageMax, trimestresDebut, ageDepart, supplement, , assurance] of portes) {
+-      if (!this.entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers)) {
++      if (!this.entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers,
++        agricoles)) {
+         continue;
+       }
+       let atteint = ageLiquidation + (requis + supplement - trimestresCotises) / 4.0;
+@@ -2143,8 +2145,16 @@ export class CarriereLongue {
+    * au cours du dernier trimestre de l'année civile (D. 351-1-3, 2°) : le modèle
+    * lit le mois de naissance. `etrangers`, une `Map` de l'année aux trimestres
+    * qu'un accord fait compter hors de France, comptent ici comme en France.
+-   */
+-  entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers = null) {
++   *
++   * Le non-salarié agricole l'est aussi avec QUATRE trimestres validés à son
++   * régime à la fin de la même année, quel que soit son mois de naissance :
++   * « soit » les conditions de D. 351-1-3, « soit » ceux-là (III de l'article
++   * 28 ter du décret n° 55-753 dès 2004, puis D. 732-40 du code rural), « par
++   * dérogation à l'article D. 351-1-3 » dans la rédaction de 2026. `agricoles`
++   * est la `Map` de l'année à ces trimestres ; sans elle, la voie n'est pas lue.
++   */
++  entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers = null,
++    agricoles = null) {
+     // Quatre trimestres au plus par année civile, activités cumulées comprises.
+     // Cotisée ou assimilée, toute ligne qui valide des trimestres compte.
+     const parAnnee = new Map();
+@@ -2165,6 +2175,13 @@ export class CarriereLongue {
+       acquis += Math.min(4, trimestres);
+     }
+     if (acquis >= trimestresDebut) return true;
++    let auRegimeAgricole = 0;
++    for (const [annee, trimestres] of agricoles ?? []) {
++      if (annee <= carriere.annee_naissance + ageMax && annee < anneeLiquidation) {
++        auRegimeAgricole += Math.min(4, trimestres);
++      }
++    }
++    if (auRegimeAgricole >= CarriereLongue.TRIMESTRES_DE_DEBUT_AGRICOLES) return true;
+     if (carriere.mois_naissance < CarriereLongue.MOIS_DERNIER_TRIMESTRE) return false;
+     if (carriere.dateLiquidation.rang < CarriereLongue.QUATRE_TRIMESTRES_A_LA_FIN_DE_L_ANNEE_DEPUIS) {
+       // Avant novembre 2012, dans l'année de l'anniversaire seule.
+@@ -2182,6 +2199,11 @@ CarriereLongue.MOIS_DERNIER_TRIMESTRE = 10;
+  * seule (D. 351-1-3, 2° ; décret n° 2012-847, article 14).
+  */
+ CarriereLongue.QUATRE_TRIMESTRES_A_LA_FIN_DE_L_ANNEE_DEPUIS = new DateMois(2012, 11).rang;
++/**
++ * Les trimestres validés à son régime qui tiennent le non-salarié agricole
++ * pour entré avant la borne (D. 732-40 du code rural, toutes ses rédactions).
++ */
++CarriereLongue.TRIMESTRES_DE_DEBUT_AGRICOLES = 4;
+ /** Rang du mois de septembre 2026 : premières pensions où les enfants comptent. */
+ CarriereLongue.ENFANTS_REPUTES_COTISES_DEPUIS = 2026 * 12 + 8;
+ CarriereLongue.ENFANTS_REPUTES_COTISES_MAXIMUM = 2;
+diff --git a/scripts/construire_temoins.py b/scripts/construire_temoins.py
+index 70e0a02..41014ee 100644
+--- a/scripts/construire_temoins.py
++++ b/scripts/construire_temoins.py
+@@ -1608,6 +1608,17 @@ def _cas() -> list[dict]:
+         "salaire": "0.8", "profil": "plat",
+         "interruptions": "1990:1990:chomage_indemnise, 1995:1997:maternite",
+     }))
++    # Le début d'activité du non-salarié agricole, qu'aucun témoin n'exerçait :
++    # quatre trimestres validés à son régime à la fin de l'année de la borne
++    # lui suffisent, quel que soit son mois de naissance (D. 732-40 du code
++    # rural). Né le 15 juin 1965, entré le 15 décembre 1982, il n'a que les
++    # quatre trimestres de 1983 à la fin de l'année de ses dix-huit ans, et
++    # part le 1er janvier 2026 par la porte des dix-huit ans, 172 trimestres
++    # cotisés pour 172 requis.
++    cas.append(("carriere_longue_non_salarie_agricole", {
++        "naissance": "1965-06-15", "statut": "exploitant_agricole",
++        "debut": "17.5", "liquidation": "60.5", "profil": "plat",
++    }))
+     # La garantie minimale de points de l'Agirc, qu'aucun témoin n'exerçait
+     # dans ses trois règles : une cadre payée sous le plafond, entrée en
+     # juillet, au chômage une année et malade deux. Le plancher se proratise
+diff --git a/src/retraite_notionnelle/droit/departs.py b/src/retraite_notionnelle/droit/departs.py
+index e9515bc..9a74034 100644
+--- a/src/retraite_notionnelle/droit/departs.py
++++ b/src/retraite_notionnelle/droit/departs.py
+@@ -324,7 +324,8 @@ def _carriere_longue_acquise(moteur: ScenarioActuel, carriere: Carriere,
+     anticipe = moteur.carriere_longue.age_de_depart(
+         carriere, annee_liquidation, cotises, requis, etrangers.cotises[famille],
+         moteur.carriere_longue.de_la_fonction_publique(code for code, _ in periodes),
+-        ouvrir.duree_d_assurance(carriere, majoration, etrangers.trimestres(famille)))
++        ouvrir.duree_d_assurance(carriere, majoration, etrangers.trimestres(famille)),
++        ouvrir.trimestres_agricoles(moteur, carriere))
+     return None if anticipe is None else anticipe[0]
+ 
+ 
+diff --git a/src/retraite_notionnelle/droit/ouvrir.py b/src/retraite_notionnelle/droit/ouvrir.py
+index 5ee636d..ddefe8d 100644
+--- a/src/retraite_notionnelle/droit/ouvrir.py
++++ b/src/retraite_notionnelle/droit/ouvrir.py
+@@ -364,6 +364,7 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
+             # La durée d'assurance que le taux lit, tous régimes : celle que
+             # les rédactions d'avant novembre 2012 opposent aussi.
+             durees.pour_le_taux(famille),
++            trimestres_agricoles(moteur, carriere),
+         )
+         # Au mois près : la table écrit soixante ans et huit mois 60,67, que
+         # l'âge exact, 60,666…, n'atteindrait jamais.
+@@ -1261,9 +1262,25 @@ def age_carriere_longue(moteur, carriere: Carriere,
+         etrangers.cotises[famille],
+         moteur.carriere_longue.de_la_fonction_publique(code for code, _ in periodes),
+         duree_d_assurance(carriere, majoration, etrangers.trimestres(famille)),
++        trimestres_agricoles(moteur, carriere),
+     )
+ 
+ 
++def trimestres_agricoles(moteur, carriere: Carriere) -> dict[int, int]:
++    """Les trimestres que le régime des non-salariés agricoles valide, année
++    par année : ceux des lignes qu'il reçoit. Quatre d'entre eux à la fin de
++    l'année de la borne valent début d'activité (D. 732-40 du code rural,
++    :meth:`~retraite_notionnelle.scenarios.actuel.CarriereLongue._entree_precoce`)."""
++    par_annee: dict[int, int] = {}
++    for ligne in carriere.lignes:
++        if ligne.trimestres_valides > 0 and (
++                coordonner.REGIME_DES_NON_SALARIES_AGRICOLES in coordonner.regimes_de(
++                    moteur, ligne, ligne.annee, moteur.affiliations.date_entree(
++                        carriere, ligne.affiliation, ligne.annee))):
++            par_annee[ligne.annee] = par_annee.get(ligne.annee, 0) + ligne.trimestres_valides
++    return par_annee
++
++
+ def duree_d_assurance(carriere: Carriere, majoration, etrangers: int) -> int:
+     """La durée d'assurance tous régimes qu'un départ que l'on date lit, sans
+     relevé : les trimestres de la carrière jusqu'à l'année de la
+diff --git a/src/retraite_notionnelle/scenarios/actuel.py b/src/retraite_notionnelle/scenarios/actuel.py
+index eb8d483..59abfa5 100644
+--- a/src/retraite_notionnelle/scenarios/actuel.py
++++ b/src/retraite_notionnelle/scenarios/actuel.py
+@@ -2150,6 +2150,14 @@ class CarriereLongue:
+     #: point 113).
+     QUATRE_TRIMESTRES_A_LA_FIN_DE_L_ANNEE_DEPUIS = DateMois(2012, 11)
+ 
++    #: Les trimestres validés à son régime qui tiennent le non-salarié
++    #: agricole pour entré avant la borne, « à la fin de l'année » de
++    #: l'anniversaire et quel que soit son mois de naissance : III de l'article
++    #: 28 ter du décret n° 55-753 (LEGIARTI000006763597, 2004), puis D. 732-40
++    #: du code rural, de LEGIARTI000006597425 (2005) à LEGIARTI000053365409
++    #: (2026).
++    TRIMESTRES_DE_DEBUT_AGRICOLES = 4
++
+     #: Génération de la règle générale, celle qui vaut à défaut d'une ligne
+     #: plus précise.
+     GENERATION_GENERALE = 1900.0
+@@ -2325,7 +2333,8 @@ class CarriereLongue:
+ 
+     def _entree_precoce(self, carriere: Carriere, annee_liquidation: int,
+                         age_max: int, trimestres_debut: int,
+-                        etrangers: dict[int, int] | None = None) -> bool:
++                        etrangers: dict[int, int] | None = None,
++                        agricoles: dict[int, int] | None = None) -> bool:
+         """La condition d'entrée précoce est-elle remplie pour cette porte ?
+ 
+         Elle se lit sur la DURÉE D'ASSURANCE validée avant la fin de l'année
+@@ -2352,6 +2361,22 @@ class CarriereLongue:
+         ``etrangers`` sont les trimestres qu'un accord fait compter hors de
+         France, année par année : ils comptent ici comme en France (fiche
+         ``totalisation_des_periodes_etrangeres``).
++
++        **Le non-salarié agricole l'est aussi avec quatre trimestres validés à
++        son régime** à la fin de la même année, quel que soit son mois de
++        naissance : sont considérés comme ayant débuté avant la borne « les
++        assurés justifiant soit des conditions définies à l'article D. 351-1-3
++        du code de la sécurité sociale, soit ayant validé au titre de
++        l'assurance vieillesse des personnes non salariées des professions
++        agricoles quatre trimestres à la fin de l'année au cours de laquelle
++        est survenu » l'anniversaire (:attr:`TRIMESTRES_DE_DEBUT_AGRICOLES`),
++        « par dérogation à l'article D. 351-1-3 » dans la rédaction de 2026 ;
++        la MSA : « au moins quatre trimestres si vous étiez non-salarié
++        agricole » (guide réf. 11342, janvier 2020). Son régime valide l'année
++        entière à qui est présent au 1er janvier, et rien à qui entre après :
++        cinq trimestres lui demanderaient une année de plus. Le modèle lui en
++        demandait cinq jusqu'au 12 novembre 2026. ``agricoles`` sont ces
++        trimestres, année par année ; sans eux, la voie n'est pas lue.
+         """
+         par_annee: dict[int, int] = {}
+         for ligne in carriere.lignes:
+@@ -2368,6 +2393,11 @@ class CarriereLongue:
+         acquis = somme_ordonnee(min(4, trimestres) for trimestres in par_annee.values())
+         if acquis >= trimestres_debut:
+             return True
++        au_regime_agricole = somme_ordonnee(
++            min(4, trimestres) for annee, trimestres in (agricoles or {}).items()
++            if annee <= carriere.annee_naissance + age_max and annee < annee_liquidation)
++        if au_regime_agricole >= self.TRIMESTRES_DE_DEBUT_AGRICOLES:
++            return True
+         if carriere.mois_naissance < self.MOIS_DERNIER_TRIMESTRE:
+             return False
+         if (carriere.date_liquidation.rang
+@@ -2459,7 +2489,8 @@ class CarriereLongue:
+                       trimestres_cotises: int, requis: int,
+                       etrangers: dict[int, int] | None = None,
+                       fonction_publique: bool = False,
+-                      trimestres_assurance: int | None = None
++                      trimestres_assurance: int | None = None,
++                      agricoles: dict[int, int] | None = None
+                       ) -> tuple[float, Fiabilite] | None:
+         """Âge le plus précoce ouvert par le dispositif, ou ``None``.
+ 
+@@ -2470,7 +2501,8 @@ class CarriereLongue:
+         réputés tels — c'est ce qui distingue ce dispositif de la durée
+         d'assurance qui commande la décote. ``trimestres_cotises`` est la durée que
+         :meth:`cotises_reputes` a déjà complétée, ``etrangers`` les trimestres
+-        cotisés hors de France, année par année (:meth:`_entree_precoce`).
++        cotisés hors de France, année par année, ``agricoles`` ceux que valide
++        le régime des non-salariés agricoles (:meth:`_entree_precoce`).
+ 
+         **Et jusqu'en octobre 2012, la durée d'assurance aussi** : les
+         rédactions de 2003 et de 2010 n'ouvrent le dispositif qu'aux assurés
+@@ -2495,7 +2527,8 @@ class CarriereLongue:
+         ouvertures = []
+         for age_max, trimestres_debut, age_depart, supplement, fiabilite, assurance in portes:
+             if not self._entree_precoce(
+-                    carriere, annee_liquidation, age_max, trimestres_debut, etrangers):
++                    carriere, annee_liquidation, age_max, trimestres_debut, etrangers,
++                    agricoles):
+                 continue
+             if trimestres_cotises < requis + supplement:
+                 continue
+@@ -2510,7 +2543,8 @@ class CarriereLongue:
+                     age_liquidation: float,
+                     etrangers: dict[int, int] | None = None,
+                     fonction_publique: bool = False,
+-                    trimestres_assurance: int | None = None) -> float | None:
++                    trimestres_assurance: int | None = None,
++                    agricoles: dict[int, int] | None = None) -> float | None:
+         """Âge le plus précoce que le dispositif ouvrirait à qui continue de
+         cotiser jusqu'à son départ, ou ``None``.
+ 
+@@ -2533,7 +2567,8 @@ class CarriereLongue:
+         candidats = []
+         for age_max, trimestres_debut, age_depart, supplement, _, assurance in portes:
+             if not self._entree_precoce(
+-                    carriere, annee_liquidation, age_max, trimestres_debut, etrangers):
++                    carriere, annee_liquidation, age_max, trimestres_debut, etrangers,
++                    agricoles):
+                 continue
+             atteint = age_liquidation + (requis + supplement - trimestres_cotises) / 4.0
+             if assurance is not None and trimestres_assurance is not None:
+diff --git a/tests/test_cycle_de_vie_script.py b/tests/test_cycle_de_vie_script.py
+index 40bf710..3de1d69 100644
+--- a/tests/test_cycle_de_vie_script.py
++++ b/tests/test_cycle_de_vie_script.py
+@@ -221,7 +221,13 @@ def test_les_ages_d_un_cas_type_ne_tiennent_qu_a_sa_mortalite(portage, simulateu
+     """Le cas type n'entre dans ses âges d'équilibre que par la mortalité de
+     son diviseur, la population où son salaire le range, et par son sexe pour
+     la part de vie : le salarié au SMIC et l'exploitant agricole, du même
+-    vingtile, ont les mêmes âges, à des âges de départ qu'une année sépare. Le
++    vingtile, ont les mêmes âges. Une année séparait leurs départs jusqu'au
++    12 novembre 2026 ; ils partent depuis tous deux à soixante-deux ans, par
++    la porte des vingt ans de la carrière longue : l'exploitant né en janvier
++    2000 et installé à vingt ans a les quatre trimestres de 2020 à son régime
++    à la fin de l'année de ses vingt ans, qui lui suffisent (D. 732-40 du
++    code rural), quand le modèle lui en demandait cinq et ne lui ouvrait que
++    la porte des vingt et un ans, à soixante-trois (action 192, étape 2). Le
+     fonctionnaire de catégorie active le montrait, du vingtile du salarié au
+     salaire moyen et parti cinq ans avant lui, jusqu'à son recalage sur les
+     actifs de la CNRACL (action 159, étape 5), qui le range au onzième. Le
+@@ -235,7 +241,7 @@ def test_les_ages_d_un_cas_type_ne_tiennent_qu_a_sa_mortalite(portage, simulateu
+     moyen, smic, exploitant = (ages[f"{code}|2000"] for code in (
+         "salaire_moyen", "smic_carriere_complete", "exploitant_agricole"))
+     assert smic["population"] == exploitant["population"] == "niveau_de_vie_v04"
+-    assert exploitant["age_de_depart"] - smic["age_de_depart"] == 1.0
++    assert exploitant["age_de_depart"] == smic["age_de_depart"] == 62.0
+     assert ((smic["diviseur"], smic["part_de_vie"])
+             == (exploitant["diviseur"], exploitant["part_de_vie"]))
+     assert moyen["population"] == "niveau_de_vie_v14"
+diff --git a/tests/test_simulateur.py b/tests/test_simulateur.py
+index d949e3c..f8c38ce 100644
+--- a/tests/test_simulateur.py
++++ b/tests/test_simulateur.py
+@@ -8718,6 +8718,72 @@ def test_avant_novembre_2012_le_ne_au_dernier_trimestre_reunit_ses_quatre_trimes
+         "non_ouverte", "carriere_longue"]
+ 
+ 
++def test_le_non_salarie_agricole_debute_avec_quatre_trimestres_a_son_regime(simulateur):
++    """Le non-salarié agricole est tenu pour entré avant la borne avec QUATRE
++    trimestres validés à son régime « à la fin de l'année au cours de laquelle
++    est survenu » l'anniversaire, quel que soit son mois de naissance : le
++    III de l'article 28 ter du décret n° 55-753 dès 2004 (LEGIARTI000006763597),
++    puis l'article D. 732-40 du code rural, de sa rédaction de 2005
++    (LEGIARTI000006597425, « soit des conditions définies à l'article
++    D. 351-1-3 du code de la sécurité sociale, soit ») à celle de 2026
++    (LEGIARTI000053365409, « par dérogation à l'article D. 351-1-3 »). La MSA
++    le dit de même : « au moins quatre trimestres si vous étiez non-salarié
++    agricole ; cinq trimestres si vous étiez salarié (quatre trimestres si
++    vous êtes né au cours du dernier trimestre) » (guide « La retraite
++    anticipée pour longue carrière », réf. 11342, janvier 2020). Le modèle lui
++    en demandait cinq, comme au salarié. Trois aides familiaux devenus chefs
++    d'exploitation, chacun entré le 15 décembre de l'année d'avant celle de
++    la borne, qui ne valide rien au régime, présent au 1er janvier suivant :
++    quatre trimestres à la fin de l'année de l'anniversaire, aucun n'est né
++    au dernier trimestre.
++
++    - Né le 15 juin 1965, quatre trimestres en 1983, l'année de ses dix-huit
++      ans ; il part le 1er janvier 2026, à soixante ans et six mois, avec les
++      172 trimestres cotisés de 1983 à 2025 pour 172 requis : la porte des
++      dix-huit ans, à soixante ans (D. 351-1-1, I), sous la rédaction de 2026.
++    - Né le 15 septembre 1964, quatre trimestres en 1982 ; il part le
++      1er janvier 2025, à soixante ans et trois mois, avec les 172 trimestres
++      de 1982 à 2024 pour 171 requis : la même porte, sous la rédaction de
++      2023 (LEGIARTI000047634525).
++    - Né le 15 juin 1950, quatre trimestres en 1967, l'année de ses dix-sept
++      ans ; il part le 1er janvier 2010, à cinquante-neuf ans et six mois,
++      avec les 172 trimestres de 1967 à 2009, pour 162 requis et 170
++      d'assurance : la porte des dix-sept ans, à cinquante-neuf ans, sous la
++      rédaction de 2005.
++
++    Le salarié du même parcours, quatre trimestres à la fin de l'année de la
++    borne et né avant octobre, n'a pas la porte (D. 351-1-3). Dans les deux
++    moteurs."""
++    from retraite_notionnelle import chronologie
++
++    def construite(annee_naissance, mois_naissance, age_debut, age, agricole=True):
++        metiers = ([Metier("collaborateur_agricole", age_debut, 1.0),
++                    Metier("exploitant_agricole", age_debut + 4.0, 1.0)] if agricole
++                   else [Metier("salarie_prive_non_cadre", age_debut, 1.0)])
++        return chronologie.completer(chronologie.du_parcours(
++            annee_naissance=annee_naissance, sexe="H", mois_naissance=mois_naissance,
++            jour_naissance=15, age_liquidation=age, metiers=metiers))
++
++    cas = [(1965, 6, 17.5, 60.5, "janvier 2026", 1983),
++           (1964, 9, 17.25, 60.25, "janvier 2025", 1982),
++           (1950, 6, 16.5, 59.5, "janvier 2010", 1967)]
++    construites = []
++    for annee_naissance, mois, age_debut, age, effet, annee_de_la_borne in cas:
++        for agricole in (True, False):
++            parcours = construite(annee_naissance, mois, age_debut, age, agricole)
++            carriere = Carriere.depuis_chronologie(parcours, simulateur.macro)
++            assert str(carriere.date_liquidation) == effet
++            # Quatre trimestres à la fin de l'année de la borne, aucun avant.
++            assert sum(l.trimestres_valides for l in carriere.lignes
++                       if l.annee <= annee_de_la_borne) == 4
++            assert sum(carriere.trimestres_retenus(l) for l in carriere.lignes
++                       if l.cotise) == 172
++            construites.append(parcours)
++
++    assert _motifs_d_ouverture_en_deux_moteurs(simulateur, construites) == [
++        "carriere_longue", "non_ouverte"] * 3
++
++
+ def _entre_tot(annee_naissance: int, mois_naissance: int, age_debut: float, age: float,
+                inactif: tuple[int, ...] = (), motif: str = "inactivite",
+                affiliation: str = "salarie_prive_non_cadre") -> dict:
