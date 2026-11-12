@@ -245,6 +245,36 @@ def test_l_aspa_de_l_effet_retour_reste_differentielle():
         attendu.cout_annuel_meur / 12.0 * 0.5)
 
 
+def test_l_aspa_d_une_annee_se_demande_au_portage_d_un_seul_lot(monkeypatch):
+    """Le barème de l'ASPA est celui du portage (``moteur/js/garantie.js``,
+    note de décision 0007), que le pont fait appeler : l'effet retour d'une
+    année le demande d'un seul lot — le système actuel, puis chaque scénario,
+    sa distribution déplacée telle quelle et déformée —, et en tire les mêmes
+    taux que chiffrage par chiffrage."""
+    from retraite_notionnelle import pont
+
+    simulateur = Simulateur(Parametres())
+    effet = EffetRetour(simulateur, _calage(simulateur, taux_recours=0.5))
+    # La pension de référence du calage vaut 1 000 : une tête, et des masses
+    # qui déplacent la distribution de 0,9 à 0,6 selon le scénario.
+    masses = {"actuel": 1000.0, **{scenario: 900.0 - 100.0 * rang
+                                   for rang, scenario in enumerate(SCENARIOS_EFFET_RETOUR)}}
+    lots = []
+    demander = pont.garantie
+    monkeypatch.setattr(pont, "garantie", lambda appels: lots.append(appels) or demander(appels))
+    annuel = effet.chiffrer(2030, masses, 1.0)
+    assert [len(lot) for lot in lots] == [1 + 2 * len(SCENARIOS_EFFET_RETOUR)]
+    actuelle = effet._aspa(2030, 1.0, sans_minimum=False)
+    for scenario in SCENARIOS_EFFET_RETOUR:
+        facteur = masses[scenario] / 1000.0
+        deplacee = effet._aspa(2030, facteur, sans_minimum=False)
+        assert deplacee > actuelle > 0.0
+        assert annuel.aspa[scenario] == (deplacee - actuelle) / (
+            effet._masse(1.0) - effet._masse(facteur))
+        assert annuel.aspa_deformation[scenario] == (
+            effet._aspa(2030, facteur) - deplacee) / effet._masse(facteur)
+
+
 def test_l_aspa_de_l_effet_retour_garde_le_non_recours_que_la_drees_mesure():
     """La garantie du scénario 6 est servie d'office (décision 20 du
     programme : « D'office ») ; l'ASPA des scénarios 2 à 5, elle, se demande

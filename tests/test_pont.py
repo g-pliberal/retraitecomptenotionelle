@@ -2131,3 +2131,34 @@ def test_la_garantie_demandee_au_pont_est_celle_du_jumeau_python_au_bit():
     couts = [lu for appel, lu in zip(appels, lus) if appel[0].startswith("cout_garantie")]
     assert all(cout.part_beneficiaires > 0.0 and cout.cout_annuel_meur > 0.0 for cout in couts)
     assert len({cout.cout_annuel_meur for cout in couts}) > 200
+
+
+def test_le_cout_chiffre_sa_garantie_par_le_portage_sans_repli(monkeypatch):
+    """Le coût demande au portage le barème de sa garantie, chaque année, et
+    les deux facteurs sous lesquels il déplace chaque sexe (action 161, note
+    de décision 0007) : mêmes valeurs posées à la main que
+    :func:`test_le_pont_chiffre_la_garantie_d_une_population` ; sans node, il
+    s'arrête, sans repli sur un barème écrit en Python."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle.cout import CoutGarantie, GarantieDistribution
+
+    distribution = _distribution_d_essai((0.0, 1000.0, 0.5), (1000.0, None, 0.5))
+    calage = GarantieDistribution(distribution, 1500.0, 1000.0, 1.0, 1.0)
+    neuf_milliards = CoutGarantie(
+        plancher_mensuel=1500.0, facteur=1.0, part_beneficiaires=1.0, beneficiaires=1e6,
+        complement_moyen_mensuel=750.0, cout_annuel_meur=9000.0)
+    assert calage.chiffrer_distribution(1e6, 1.0) == neuf_milliards
+    # Deux masses ponctuelles, à 1 000 € pour les femmes et 2 000 € pour les
+    # hommes, à parts égales, sous un rapport d'un demi : 0,6 et 1,2.
+    sexes = {"F": _distribution_d_essai((1000.0, None, 1.0)),
+             "H": _distribution_d_essai((2000.0, None, 1.0))}
+    par_sexe = GarantieDistribution(distribution, 1500.0, 1000.0, 1.0, 1.0,
+                                    distributions_sexe=sexes, part_femmes=0.5,
+                                    rapport_deplacement=0.5)
+    assert par_sexe.facteurs_des_sexes(1.0) == (0.6, 1.2)
+    monkeypatch.setattr(pont.shutil, "which", lambda nom: None)
+    with pytest.raises(pont.PontIndisponible, match="node"):
+        calage.chiffrer_distribution(1e6, 1.0)
+    with pytest.raises(pont.PontIndisponible, match="node"):
+        par_sexe.facteurs_des_sexes(1.0)

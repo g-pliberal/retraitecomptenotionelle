@@ -96,6 +96,7 @@ import csv
 import datetime as dt
 from dataclasses import dataclass, field
 
+from . import pont
 from .donnees.distribution import Tranche
 from .donnees.impot_revenu import FRANC, charger_baremes_impot_revenu, croissance_macro
 from .donnees.prelevements_historiques import charger_prelevements_historiques
@@ -245,26 +246,36 @@ class EffetRetour:
         deux planchers. ``sans_minimum`` déforme la distribution, et ses
         deux sexes, comme un scénario sans minimum de pension la déforme ;
         sinon, celle de l'enquête est déplacée telle quelle, sexes compris."""
+        [aspa] = self._aspas(annee, [(facteur, sans_minimum)])
+        return aspa
+
+    def _aspas(self, annee: int, cas: list[tuple[float, bool]]) -> list[float]:
+        """L'ASPA de l'année (:meth:`_aspa`) sous chaque ``(facteur,
+        sans_minimum)``, le barème demandé au portage d'un seul lot
+        (:func:`~.pont.garantie`, note de décision 0007)."""
         seule = self.minimum_vieillesse.plafond(annee)
         couple = self.minimum_vieillesse.plafond_couple(annee)
         if seule is None or couple is None:
-            return 0.0
+            return [0.0 for _ in cas]
         vers = self.macro.coefficient_prix(annee, self.millesime)
-        bareme = copy.copy(self.garantie)
-        # L'ASPA est différentielle : du calage de la garantie, elle prend la
-        # population et ses mélanges, non la forme dégressive du barème.
-        bareme.part_retrait_entier = bareme.taux_retrait = 1.0
-        bareme.plancher_mensuel = couple[0] / 2.0 / 12.0 * vers
-        if bareme.plancher_majore is not None:
-            bareme.plancher_majore = seule[0] / 12.0 * vers
-        if sans_minimum:
-            bareme.distribution, bareme.distributions_sexe = self.deformees
-        else:
-            bareme.rapport_deplacement = 1.0
-        # Un effectif de un million : le coût, en millions par an, est alors
-        # ce que verse en moyenne une tête, par an.
-        chiffre = bareme.chiffrer_distribution(1e6, facteur)
-        return chiffre.cout_annuel_meur / 12.0 * self.taux_recours_aspa
+        appels = []
+        for facteur, sans_minimum in cas:
+            bareme = copy.copy(self.garantie)
+            # L'ASPA est différentielle : du calage de la garantie, elle prend
+            # la population et ses mélanges, non la forme dégressive du barème.
+            bareme.part_retrait_entier = bareme.taux_retrait = 1.0
+            bareme.plancher_mensuel = couple[0] / 2.0 / 12.0 * vers
+            if bareme.plancher_majore is not None:
+                bareme.plancher_majore = seule[0] / 12.0 * vers
+            if sans_minimum:
+                bareme.distribution, bareme.distributions_sexe = self.deformees
+            else:
+                bareme.rapport_deplacement = 1.0
+            # Un effectif de un million : le coût, en millions par an, est
+            # alors ce que verse en moyenne une tête, par an.
+            appels.append(bareme.appel_du_bareme(1e6, facteur))
+        return [chiffre.cout_annuel_meur / 12.0 * self.taux_recours_aspa
+                for chiffre in pont.garantie(appels)]
 
     def _prelevements(self, annee: int, facteur: float) -> float:
         """Les prélèvements moyens par retraité de la distribution déplacée,
@@ -376,7 +387,13 @@ class EffetRetour:
         if reference <= 0.0:
             return EffetRetourAnnuel(facteurs=facteurs)
         masse_actuelle = self._masse(reference)
-        aspa_actuelle = self._aspa(annee, reference, sans_minimum=False)
+        # L'ASPA de l'année, d'un seul lot : le système actuel, puis chaque
+        # scénario, sa distribution déplacée telle quelle et déformée.
+        cas = [(reference, False)] + [
+            (facteurs[scenario], sans_minimum) for scenario in SCENARIOS_EFFET_RETOUR
+            if facteurs[scenario] > 0.0 for sans_minimum in (False, True)]
+        aspas = dict(zip(cas, self._aspas(annee, cas)))
+        aspa_actuelle = aspas[reference, False]
         preleve_actuel = self._prelevements(annee, reference)
         aspa, prelevements, deformation = {}, {}, {}
         for scenario in SCENARIOS_EFFET_RETOUR:
@@ -384,7 +401,7 @@ class EffetRetour:
             if facteur <= 0.0:
                 aspa[scenario] = prelevements[scenario] = deformation[scenario] = 0.0
                 continue
-            deplacee = self._aspa(annee, facteur, sans_minimum=False)
+            deplacee = aspas[facteur, False]
             # LA DÉFORMATION, à pension moyenne égale, par euro de pension
             # propre : seule la part que le scénario sert à ses propres règles
             # perd le minimum.
@@ -393,7 +410,7 @@ class EffetRetour:
                      else 0.0)
             deformation[scenario] = (
                 part_ouverte * (1.0 - stock)
-                * (self._aspa(annee, facteur) - deplacee) / self._masse(facteur))
+                * (aspas[facteur, True] - deplacee) / self._masse(facteur))
             economie = masse_actuelle - self._masse(facteur)
             if abs(economie) <= _ECART_NEGLIGEABLE * masse_actuelle:
                 aspa[scenario] = prelevements[scenario] = 0.0

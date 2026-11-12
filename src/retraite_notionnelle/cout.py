@@ -168,15 +168,7 @@ from .donnees.lvt import TaxeTerrain
 from .donnees.tva import AssietteTva, TvaGardee
 from .effet_retour import EffetRetour, EffetRetourAnnuel
 from .donnees.population import CarrieresIncompletes, Population
-from .garantie import (
-    CoutGarantie,
-    _manque_moyen,
-    _verifier_forme,
-    cout_garantie,
-    cout_garantie_par_sexe,
-    facteurs_par_sexe,
-    pension_moyenne,
-)
+from .garantie import CoutGarantie, _verifier_forme
 from .noyau import univers as univers_de_droit
 from .revalorisation import RevalorisationServie
 from .reversion_gardee import StockDeReversion
@@ -3556,30 +3548,35 @@ class GarantieDistribution:
         # il faut passer par les sexes — les planchers se mélangent dans une
         # proportion qui DÉPEND du sexe, et la colonne d'ensemble ne le sait
         # pas.
+        [chiffre] = pont.garantie([self.appel_du_bareme(effectif, facteur)])
+        return chiffre
+
+    def appel_du_bareme(self, effectif: float, facteur: float) -> tuple:
+        """L'appel du barème que :meth:`chiffrer_distribution` demande au
+        portage (:func:`pont.garantie`, ``moteur/js/garantie.js``) : qui en
+        chiffre plusieurs les demande d'un seul lot, comme l'effet retour
+        pour l'ASPA d'une année."""
         if self.distributions_sexe is None or (
             self.rapport_deplacement == 1.0 and self.part_seule is None
         ):
-            return cout_garantie(self.distribution, effectif,
-                                 self.plancher_mensuel, facteur,
-                                 part_retrait_entier=self.part_retrait_entier,
-                                 taux_retrait=self.taux_retrait)
-        return cout_garantie_par_sexe(
-            self.distributions_sexe["F"], self.distributions_sexe["H"],
-            self.part_femmes, effectif, self.plancher_mensuel, facteur,
-            self.rapport_deplacement, self.plancher_majore, self.part_seule,
-            part_retrait_entier=self.part_retrait_entier,
-            taux_retrait=self.taux_retrait,
-        )
+            return ("cout_garantie", self.distribution, effectif, self.plancher_mensuel,
+                    facteur, self.part_retrait_entier, self.taux_retrait)
+        return ("cout_garantie_par_sexe",
+                self.distributions_sexe["F"], self.distributions_sexe["H"],
+                self.part_femmes, effectif, self.plancher_mensuel, facteur,
+                self.rapport_deplacement, self.plancher_majore, self.part_seule,
+                self.part_retrait_entier, self.taux_retrait)
 
     def facteurs_des_sexes(self, facteur: float) -> tuple[float, float]:
         """Les deux facteurs sous lesquels ce calage déplace chaque sexe."""
         if self.rapport_deplacement == 1.0 or self.distributions_sexe is None:
             return facteur, facteur
-        return facteurs_par_sexe(
-            pension_moyenne(self.distributions_sexe["F"]),
-            pension_moyenne(self.distributions_sexe["H"]),
-            self.part_femmes, facteur, self.rapport_deplacement,
-        )
+        moyenne_femmes, moyenne_hommes = pont.garantie([
+            ("pension_moyenne", self.distributions_sexe[sexe]) for sexe in ("F", "H")])
+        [facteurs] = pont.garantie([
+            ("facteurs_par_sexe", moyenne_femmes, moyenne_hommes, self.part_femmes, facteur,
+             self.rapport_deplacement)])
+        return facteurs
 
     def chiffrer(self, masses: dict[str, float], tetes: dict[str, float]) -> GarantieProjetee:
         """La garantie d'une année, d'après les masses et les têtes de la grille."""
@@ -3646,14 +3643,17 @@ def _garantie_distribution(simulateur: Simulateur, pensionnes: list[Pensionne],
     if facteur_enquete > 0.0 and mortalite.annee_niveaux_de_vie is not None:
         poids_tranches = 0.0
         somme_pensions = 0.0
-        for tranche in distribution.tranches:
-            superieure = (None if tranche.borne_superieure is None
-                          else tranche.borne_superieure * facteur_enquete)
-            concernee, _ = _manque_moyen(
-                tranche.borne_inferieure * facteur_enquete, superieure,
-                plancher_majore * vers_enquete,
-                parametres.part_retrait_entier_garantie,
-                parametres.taux_retrait_garantie)
+        # Ce que le barème sert de chaque tranche, demandé au portage d'un
+        # seul lot (``pont.garantie``).
+        servies = pont.garantie([
+            ("manque_moyen", tranche.borne_inferieure * facteur_enquete,
+             (None if tranche.borne_superieure is None
+              else tranche.borne_superieure * facteur_enquete),
+             plancher_majore * vers_enquete,
+             parametres.part_retrait_entier_garantie,
+             parametres.taux_retrait_garantie)
+            for tranche in distribution.tranches])
+        for tranche, (concernee, _) in zip(distribution.tranches, servies, strict=True):
             if concernee <= 0.0:
                 continue
             milieu = (tranche.borne_inferieure if tranche.borne_superieure is None
@@ -4466,14 +4466,19 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
             if poids * poids_plancher > 0.0:
                 cas.append((sexe, poids * poids_plancher, facteur_sexe, plancher))
 
+    # Ce que le barème sert de chaque tranche de chaque sorte, demandé au
+    # portage d'un seul lot (``pont.garantie``).
+    servies = iter(pont.garantie([
+        ("manque_moyen", tranche.borne_inferieure * facteur_sexe,
+         (None if tranche.borne_superieure is None
+          else tranche.borne_superieure * facteur_sexe),
+         plancher, calage.part_retrait_entier, calage.taux_retrait)
+        for sexe, _, facteur_sexe, plancher in cas
+        for tranche in par_sexe[sexe].tranches]))
     tranches: list[tuple[float, float, float, float]] = []
     for sexe, poids_cas, facteur_sexe, plancher in cas:
         for tranche in par_sexe[sexe].tranches:
-            superieure = (None if tranche.borne_superieure is None
-                          else tranche.borne_superieure * facteur_sexe)
-            concernee, manque = _manque_moyen(
-                tranche.borne_inferieure * facteur_sexe, superieure, plancher,
-                calage.part_retrait_entier, calage.taux_retrait)
+            concernee, manque = next(servies)
             if concernee <= 0.0:
                 continue
             milieu = (tranche.borne_inferieure if tranche.borne_superieure is None
@@ -4502,16 +4507,25 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
         # courbes de survie donnaient. Peser les femmes par leur espérance de
         # vie à 65 ans revenait à supposer la population stationnaire ET à
         # ignorer que l'enquête publie sa propre composition.
-        for sexe, facteur_sexe in (("F", facteur_f), ("H", facteur_h)):
-            seule = 0.0 if calage.part_seule is None else calage.part_seule[sexe]
+        # Les quatre sortes, que le portage chiffre d'un seul lot.
+        sortes = [
+            (sexe, poids_plancher, plancher, facteur_sexe)
+            for sexe, facteur_sexe in (("F", facteur_f), ("H", facteur_h))
+            for plancher, poids_plancher in (
+                (calage.plancher_mensuel,
+                 1.0 - (0.0 if calage.part_seule is None else calage.part_seule[sexe])),
+                (majore, 0.0 if calage.part_seule is None else calage.part_seule[sexe]))
+            if poids_plancher > 0.0
+        ]
+        chiffres = pont.garantie([
+            ("cout_garantie", par_sexe[sexe], 1.0, plancher, facteur_sexe,
+             calage.part_retrait_entier, calage.taux_retrait)
+            for sexe, _, plancher, facteur_sexe in sortes])
+        for sexe in ("F", "H"):
             sous_plancher[sexe] = somme_ordonnee(
-                poids_plancher * cout_garantie(
-                    par_sexe[sexe], 1.0, plancher, facteur_sexe,
-                    part_retrait_entier=calage.part_retrait_entier,
-                    taux_retrait=calage.taux_retrait).part_beneficiaires
-                for plancher, poids_plancher in (
-                    (calage.plancher_mensuel, 1.0 - seule), (majore, seule))
-                if poids_plancher > 0.0
+                poids_plancher * chiffre.part_beneficiaires
+                for (de_sexe, poids_plancher, _, _), chiffre in zip(sortes, chiffres, strict=True)
+                if de_sexe == sexe
             )
         beneficiaires_f = poids_femmes * sous_plancher["F"]
         beneficiaires_h = (1.0 - poids_femmes) * sous_plancher["H"]
