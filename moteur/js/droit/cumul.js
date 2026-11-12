@@ -17,14 +17,17 @@
  * leur base, le libéral (L. 643-6), et la complémentaire de sa section, que
  * ses statuts règlent — suspendus le nombre de mois que le dépassement de
  * l'année épuise (D. 634-11-5, D. 643-10-2) —, le fonctionnaire (L. 84 à L. 86
- * du code des pensions), l'Agirc-Arrco, l'Ircantec, la RCO agricole. Chaque
- * régime ne réduit que ses pensions, pour l'activité qui relève de lui : voir
- * le Python, qui dit les textes.
+ * du code des pensions), le militaire et l'invalide de la première pension de
+ * 2027 (L. 161-22, III, C, 1° ; L. 86), l'Agirc-Arrco, l'Ircantec, la RCO
+ * agricole. Chaque régime ne réduit que ses pensions, pour l'activité qui
+ * relève de lui : voir le Python, qui dit les textes.
  */
 
 import { DateMois } from "../calendrier.js";
 import { periodeDeLiquidation } from "./commun.js";
 import * as lesDeparts from "./departs.js";
+import * as invalidite from "./invalidite.js";
+import * as limiteDAge from "./limite_age.js";
 import { dureeRequise } from "./ouvrir.js";
 
 /** Ce que le droit fait d'une pension, pour un mois d'activité. */
@@ -141,6 +144,12 @@ export const SEUILS_NON_SALARIES = { independants: 0.5, liberaux: 1.0 };
 export const PART_DE_LA_PENSION = 1.0 / 3.0;
 export const ABATTEMENT_MINIMUM_GARANTI = 0.5;
 export const FRANCHISE_1970 = 0.25;
+/**
+ * L. 86 du code des pensions, rédaction du 31 décembre 2025, 1° : la pension
+ * du non-officier qui rémunère moins d'années de services se cumule
+ * entièrement, même devant un employeur public.
+ */
+export const SERVICES_DU_NON_OFFICIER = 25;
 
 export const FONCTION_PUBLIQUE = new Set(["fonction_publique_etat", "cnracl", "fspoeie",
   "pensions_civiles_1853"]);
@@ -251,6 +260,30 @@ export function fonctionPubliqueQuittee(moteur, carriere) {
     return [affiliations.pensionMilitaire(ligne.affiliation) !== null, limite];
   }
   return [false, LIMITES_D_AGE_1970.aucune];
+}
+
+/**
+ * La pension militaire que l'État sert, pour L. 86 du code des pensions dans
+ * sa rédaction du 31 décembre 2025 : la catégorie du dernier statut de
+ * fonctionnaire avant le départ, quand il est militaire, les années de
+ * services, militaires et civils, que la pension rémunère, et la limite d'âge
+ * que le modèle prête à son grade (`limite_age.js`) ; `null` sinon.
+ */
+export function pensionMilitaireServie(moteur, carriere) {
+  const affiliations = moteur.affiliations;
+  const services = carriere.lignes.filter((ligne) => ligne.annee <= carriere.anneeLiquidation
+    && affiliations.regimes(ligne.affiliation, ligne.annee)
+      .some((code) => FONCTION_PUBLIQUE.has(code)));
+  if (services.length === 0) return null;
+  const derniere = services[services.length - 1];
+  const categorie = affiliations.pensionMilitaire(derniere.affiliation);
+  if (categorie === null) return null;
+  return {
+    categorie,
+    services: carriere.dureeDeService(new Set(services.map((ligne) => ligne.affiliation)),
+      carriere.anneeLiquidation),
+    limite: limiteDAge.limiteDeLaLigne(moteur, carriere, derniere),
+  };
 }
 
 /** La pension la plus touchée : la première de la priorité la plus haute. */
@@ -381,6 +414,10 @@ class Calcul {
     const requis = resultat.trimestres_requis || dureeDuTauxPlein(moteur, carriere);
     this.duree = resultat.trimestres_valides >= requis;
     [this.militaire, this.limiteDAge] = fonctionPubliqueQuittee(moteur, carriere);
+    // La pension militaire de la première pension de 2027 (L. 86 de 2025).
+    this.pensionMilitaire = this.militaire && this.premiere >= PREMIERE_2027
+      ? pensionMilitaireServie(moteur, carriere) : null;
+    this.entieres = new Map();
     this.independant = carriere.lignes.some((ligne) => ligne.annee <= this.declare.annee
       && INDEPENDANTS.has(ligne.affiliation));
     this.dernier = this.dernierSalaire();
@@ -540,7 +577,10 @@ class Calcul {
       + (servies.length ? annee.majoration / 12.0 : 0.0);
     const integral = this.integral(mois);
     const resultats = [];
-    const base2027 = servies.filter(([, , groupe]) => GROUPES_DE_BASE.has(groupe))
+    // Les pensions de base que la règle de 2027 réduit : le C du III de
+    // L. 161-22 en sort la pension militaire et celle de l'invalide.
+    const base2027 = servies.filter(([regime, , groupe]) => GROUPES_DE_BASE.has(groupe)
+      && !this.entiere2027(regime, groupe))
       .reduce((somme, [regime]) => somme + montants[regime], 0.0);
     // Les points du RCI, du RCO et du NRCO font une seule pension.
     const complementaire = servies.filter(([, , groupe]) => groupe === "rci")
@@ -552,7 +592,9 @@ class Calcul {
     for (const [regime, dateEffet, groupe] of servies) {
       const montant = montants[regime];
       let decision;
-      if (this.premiere >= PREMIERE_2027 && GROUPES_DE_BASE.has(groupe)) {
+      if (this.premiere >= PREMIERE_2027 && this.entiere2027(regime, groupe)) {
+        decision = this.horsDesAges2027(mois, regime, dateEffet);
+      } else if (this.premiere >= PREMIERE_2027 && GROUPES_DE_BASE.has(groupe)) {
         decision = this.regle2027(mois, dateEffet, groupe, montant, annee, base2027);
       } else if (this.premiere >= PREMIERE_2027 && GROUPES_COMPLEMENTAIRES_2027.has(groupe)) {
         decision = this.complementaire2027(mois, dateEffet, montant,
@@ -884,14 +926,21 @@ class Calcul {
     return [REDUITE, regle, "depassement", deduction, plafond];
   }
 
-  deductionFonctionPublique(regime, dateEffet, anneeCivile) {
+  /**
+   * L'excédent des revenus de l'année sur le tiers de la pension de l'année et
+   * la moitié du minimum garanti, réparti sur les mois d'activité où la règle
+   * vaut, et ce plafond, par mois ; `entier` dit les mois où la pension se
+   * cumule entièrement, ceux du cumul intégral à défaut.
+   */
+  deductionFonctionPublique(regime, dateEffet, anneeCivile, entier = null) {
     const annee = this.annee(anneeCivile);
     const mois = [];
     for (let r = this.debut.rang; r < this.fin.rang; r += 1) {
       const m = DateMois.depuisRang(r);
       if (m.annee === anneeCivile) mois.push(m);
     }
-    const couverts = mois.filter((m) => !(m.rang >= LOI_2009 && this.integral(m)));
+    const cumuleEntierement = entier ?? ((m) => m.rang >= LOI_2009 && this.integral(m));
+    const couverts = mois.filter((m) => !cumuleEntierement(m));
     const annuelle = annee.pensions[regime] ?? 0.0;
     let servis = 0;
     for (let m = 1; m <= 12; m += 1) {
@@ -907,6 +956,51 @@ class Calcul {
       this.deductions.set(cle, couverts.length ? excedent / couverts.length : 0.0);
     }
     return [this.deductions.get(cle), plafond / 12.0];
+  }
+
+  /**
+   * La pension que le C du III de L. 161-22 sort des trois régimes selon l'âge,
+   * pour la première pension de 2027 : la pension militaire (L. 161-22-1-2, 4°)
+   * et la pension du code des pensions allouée pour invalidité (5°).
+   */
+  entiere2027(regime, groupe) {
+    if (groupe !== "fonction_publique") return false;
+    if (!this.entieres.has(regime)) {
+      this.entieres.set(regime, this.militaire
+        || invalidite.radiationDuRegime(this.moteur, regime, this.carriere) !== null);
+    }
+    return this.entieres.get(regime);
+  }
+
+  /** L'âge de ce mois atteint-il la limite d'âge du grade du militaire ? */
+  limiteDuGradeAtteinte(mois) {
+    const limite = this.pensionMilitaire.limite;
+    return limite !== null && this.age(mois) >= limite - 1e-9;
+  }
+
+  /**
+   * Le cumul de la pension que `entiere2027` désigne : entier pour la pension
+   * d'invalidité (L. 86, 3°, pour le militaire) et pour la pension militaire —
+   * que L. 86 du code des pensions, rédaction du 31 décembre 2025, ne plafonne,
+   * « par dérogation au C », que devant un employeur de L. 86-1 : le tiers de
+   * la pension et la moitié du minimum garanti de l'année, l'excédent déduit,
+   * sauf pour le non-officier de moins de vingt-cinq ans de services et passé
+   * la limite d'âge du grade.
+   */
+  horsDesAges2027(mois, regime, dateEffet) {
+    if (invalidite.radiationDuRegime(this.moteur, regime, this.carriere) !== null) {
+      return [LIBRE, FP_2027, "pension_d_invalidite", 0.0, null];
+    }
+    if (!this.public) return [LIBRE, FP_2027, "employeur_prive", 0.0, null];
+    const { categorie, services } = this.pensionMilitaire;
+    if (categorie === "non_officier" && services < SERVICES_DU_NON_OFFICIER - 1e-9) {
+      return [LIBRE, FP_2027, "moins_de_vingt_cinq_ans_de_services", 0.0, null];
+    }
+    if (this.limiteDuGradeAtteinte(mois)) return [LIBRE, FP_2027, "limite_d_age", 0.0, null];
+    const [deduction, plafond] = this.deductionFonctionPublique(regime, dateEffet, mois.annee,
+      (m) => this.limiteDuGradeAtteinte(m));
+    if (deduction <= 0) return [PLAFONNEE, FP_2027, "sous_le_plafond", 0.0, plafond];
+    return [REDUITE, FP_2027, "depassement", deduction, plafond];
   }
 
   regle2027(mois, dateEffet, groupe, montant, annee, base) {

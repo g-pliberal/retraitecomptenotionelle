@@ -276,6 +276,21 @@ function limiteDe(moteur, carriere, nom, classe) {
   return null;
 }
 
+/**
+ * La limite d'âge, en années, de l'emploi de cette ligne de la carrière, ou
+ * `null` pour un statut sans limite d'âge au modèle : ce que le cumul d'une
+ * pension militaire oppose (`droit/cumul.js`). Voir `limite_de_la_ligne` du
+ * Python.
+ */
+export function limiteDeLaLigne(moteur, carriere, ligne) {
+  const emploi = emploiDeLaLigne(moteur, carriere, ligne);
+  if (emploi === null) {
+    return null;
+  }
+  const lue = limiteDe(moteur, carriere, emploi[0], emploi[1]);
+  return lue === null ? null : lue[0] / MOIS_PAR_AN;
+}
+
 function enfantsACharge(carriere, jour, ageACharge) {
   const seuil = `${String(Number(jour.slice(0, 4)) - Math.trunc(ageACharge)).padStart(4, "0")}`
     + jour.slice(4);

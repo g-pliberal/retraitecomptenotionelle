@@ -1362,6 +1362,110 @@ test("la base des non-salariés n'est suspendue que les mois que le dépassement
 });
 
 /**
+ * La pension militaire et la pension d'invalidité de la première pension de
+ * 2027 : le C du III de L. 161-22 les laisse se cumuler entièrement
+ * (L. 161-22-1-2, 4° et 5°), et L. 86 du code des pensions, rédaction du 31
+ * décembre 2025, ne plafonne la pension militaire — au tiers de son montant et
+ * à la moitié du minimum garanti — que devant un employeur public, sauf le
+ * non-officier de moins de vingt-cinq ans de services et la limite d'âge du
+ * grade atteinte. Rejoue les tests de la pension militaire de 2027
+ * (test_emploi_retraite.py).
+ */
+test("la pension militaire de 2027 se cumule entièrement, plafonnée devant l'employeur public", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const moteur = simulateur.scenarioActuel;
+  const parcours = (naissance, depart, metiers, activite, plus = {}) => simulateur.carriereParcours({
+    annee_naissance: naissance, sexe: "F", jour_naissance: 15, age_liquidation: depart,
+    metiers: metiers.map(([affiliation, age]) => ({ affiliation, age_debut: age,
+      niveau_salaire: 1 })),
+    emploi_retraite: { employeur: "autre", niveau_salaire: 1, ...activite }, ...plus,
+  });
+  const pretee = (naissance, depart, metiers, activite, pensions, revenus) => {
+    const carriere = parcours(naissance, depart, metiers, activite);
+    const copie = Object.assign(Object.create(Object.getPrototypeOf(carriere)), carriere, {
+      lignes_apres_depart: carriere.lignes_apres_depart.map((ligne) => Object.assign(
+        Object.create(Object.getPrototypeOf(ligne)), ligne,
+        { revenu: revenus[ligne.annee] ?? ligne.revenu })),
+    });
+    return leCumul.cumuler(moteur, copie, moteur.calculer(copie), () => [{ ...pensions }, 0.0],
+      simulateur.parametres.annee_courante);
+  };
+  const militaire = (activite, revenus, naissance = 1982, depart = 45) => pretee(naissance,
+    depart, [["militaire", 20]], activite, { fonction_publique_etat: 24000 }, revenus);
+  const pension = (tranche, regime) => tranche.par_regime.find((p) => p.regime === regime);
+  const sorts = (cumul, regime = "fonction_publique_etat") => [...new Set(cumul.tranches.map(
+    (t) => [pension(t, regime).statut, pension(t, regime).regle, pension(t, regime).motif,
+      pension(t, regime).reduction].join("/")))];
+  const proche = (obtenu, attendu) => assert.ok(Math.abs(obtenu - attendu) < 1e-9,
+    `${obtenu} contre ${attendu}`);
+  const prive = { age: 46, fin: 48, affiliation: "salarie_prive_non_cadre" };
+  const publique = { age: 46, fin: 48, affiliation: "contractuel_public" };
+  // Salariée du privé : la pension entière, avant l'âge légal.
+  assert.deepEqual(sorts(militaire(prive, { 2029: 36000 })),
+    [`${leCumul.LIBRE}/${leCumul.FP_2027}/employeur_prive/0`]);
+  // Payée par un employeur public, toute l'année 2029 : le tiers de la pension
+  // et la moitié du minimum garanti, l'excédent déduit.
+  const minimum = moteur.minimumGaranti.reference(2029)[0];
+  for (const [revenu, statut, motif] of [[36000, leCumul.REDUITE, "depassement"],
+    [12000, leCumul.PLAFONNEE, "sous_le_plafond"]]) {
+    const tranches = militaire(publique, { 2029: revenu }).tranches
+      .filter((t) => t.debut.annee === 2029);
+    assert.equal(tranches.length, 1);
+    assert.equal(tranches[0].mois, 12);
+    const servie = pension(tranches[0], "fonction_publique_etat");
+    const plafond = servie.montant * 12 / 3 + minimum / 2;
+    assert.deepEqual([servie.statut, servie.regle, servie.motif],
+      [statut, leCumul.FP_2027, motif]);
+    proche(servie.reduction, Math.max(0, revenu - plafond) / 12);
+    proche(servie.plafond, plafond / 12);
+  }
+  // Vingt-quatre ans de services : le non-officier cumule entièrement.
+  assert.deepEqual(sorts(militaire({ ...publique, age: 45, fin: 47 }, { 2029: 36000 }, 1983, 44)),
+    [`${leCumul.LIBRE}/${leCumul.FP_2027}/moins_de_vingt_cinq_ans_de_services/0`]);
+  // Passé cinquante-neuf ans, la limite d'âge que le modèle prête au non-officier.
+  const fevrier2041 = new DateMois(2041, 2).rang;
+  const agee = militaire({ ...publique, age: 58.5, fin: 60 }, { 2040: 15000, 2041: 36000 });
+  for (const tranche of agee.tranches) {
+    const servie = pension(tranche, "fonction_publique_etat");
+    if (tranche.debut.rang >= fevrier2041) {
+      assert.deepEqual([servie.statut, servie.motif, servie.reduction],
+        [leCumul.LIBRE, "limite_d_age", 0]);
+    } else {
+      assert.ok(tranche.fin.rang <= fevrier2041);
+      assert.ok([leCumul.REDUITE, leCumul.PLAFONNEE].includes(servie.statut), servie.statut);
+    }
+  }
+  // Partie en février 2026 : la règle de 2015, que rien ne déplace.
+  assert.deepEqual(sorts(militaire(prive, { 2028: 36000 }, 1981))
+    .map((sort) => sort.split("/").slice(0, 3).join("/")),
+  [`${leCumul.LIBRE}/${leCumul.FP_2015}/employeur_prive`]);
+  // L'ancienne militaire en carrière longue : la réduction d'avant l'âge légal
+  // va toute à la pension du régime général, 5 000 € par an dont la CSG retient
+  // 98,25 %.
+  const mixte = pretee(1968, 62, [["militaire", 18], ["salarie_prive_non_cadre", 43]],
+    { age: 62.25, fin: 64, affiliation: "salarie_prive_non_cadre" },
+    { fonction_publique_etat: 24000, regime_general: 12000 }, { 2031: 5000 });
+  const reduites = mixte.tranches.filter((t) => t.debut.annee === 2031
+    && pension(t, "regime_general").statut === leCumul.REDUITE);
+  assert.ok(reduites.length > 0);
+  for (const tranche of reduites) {
+    proche(pension(tranche, "regime_general").reduction, 5000 / 12 * 0.9825);
+    const servie = pension(tranche, "fonction_publique_etat");
+    assert.deepEqual([servie.statut, servie.motif, servie.reduction],
+      [leCumul.LIBRE, "employeur_prive", 0]);
+  }
+  // La fonctionnaire radiée pour invalidité en 2030, qui retravaille après 2044.
+  const invalide = simulateur.echeancier(parcours(1980, 64.5,
+    [["fonctionnaire_etat", 22], ["salarie_prive_non_cadre", 50]],
+    { age: 65, fin: 66, affiliation: "salarie_prive_non_cadre" },
+    { invalidite: { radiation: { age: 50, imputable: false, taux: 70 } } })).auDepart.cumul;
+  assert.deepEqual(sorts(invalide),
+    [`${leCumul.LIBRE}/${leCumul.FP_2027}/pension_d_invalidite/0`]);
+  assert.deepEqual([...new Set(invalide.tranches.map(
+    (t) => pension(t, "regime_general").regle))], [leCumul.AGES_2027]);
+});
+
+/**
  * Le plafond des primes du RAFP : « dans la limite de 20 % du traitement
  * indiciaire brut total » (décret n° 2004-569, art. 2). Deux agentes au même
  * traitement, primes au plafond pour l'une, au-delà pour l'autre : même

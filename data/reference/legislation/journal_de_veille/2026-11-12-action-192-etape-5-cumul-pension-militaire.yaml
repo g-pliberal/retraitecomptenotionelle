@@ -1,0 +1,43 @@
+date: "2026-11-12"
+session: "action 192, étape 5 : le cumul d'une pension militaire et d'un emploi, pensions de 2027"
+consulte: >-
+  `veille_droit.py`, puis les index LEGI et JORF du dépôt, récupérés et à jour au 11
+  novembre 2026, par `dila_cherche.py`. Code des pensions civiles et militaires : L. 84,
+  L. 86 et L. 86-1 (rédactions du 31 décembre 2025, loi n° 2025-1403, article 102), L. 6,
+  R. 92 ; L. 85, qui prend fin au 1er janvier 2027. Code de la sécurité sociale : L. 161-22
+  et L. 161-22-1-2 (31 décembre 2025). Décret n° 2003-1306, article 58 ; décret
+  n° 2004-1056, article 48. Les décrets n° 2026-1016 (JORFTEXT000055047286) et
+  n° 2026-1017 (JORFTEXT000055047344) du 2 novembre 2026 relatifs au cumul emploi
+  retraite : leurs articles 1er, les articles 3 et 5 du premier, l'article 3 du second,
+  jusqu'à D. 161-2-13. La page « Les règles de cumul » des militaires du service des
+  retraites de l'État (retraitesdeletat.gouv.fr/actif/militaires/cumul), la fiche F12402
+  de service-public, vérifiée le 1er janvier 2026, et son actualité A18914, mise à jour le
+  10 novembre 2026. La question écrite n° 15471 (Assemblée nationale, 26 mai 2026), sans
+  réponse.
+trouve: >-
+  Pour la première pension de base prise depuis le 1er janvier 2027, le C du III de
+  L. 161-22 sort des trois régimes selon l'âge la pension militaire et la pension civile ou
+  militaire d'invalidité (L. 161-22-1-2, 4° et 5°), et L. 86 ne plafonne la pension
+  militaire, au tiers de son montant et à la moitié du minimum garanti, que devant un
+  employeur de L. 86-1, sauf le non-officier de moins de vingt-cinq ans de services, la
+  limite d'âge du grade ou de durée de services atteinte, et l'invalidité. Le service des
+  retraites de l'État dit de même le droit d'avant 2027, et rien de 2027 ; aucun exemple
+  chiffré. La règle est écrite dans les deux moteurs, le test d'abord, et rattachée à la
+  version regles_communes_2027 de la fiche cumul_emploi_retraite_fonction_publique, qui
+  reste approchee : la saisie ne porte ni le grade ni le lien au service. La sous-officière
+  partie en février 2027 et salariée du privé garde sa pension, que le modèle lui retirait
+  toute, 60 730 € en trente mois. Aucun témoin existant ne bouge ; le cliquet des textes
+  passe de 9 231 à 9 229. Paru depuis la dernière lecture de la fiche du cumul : le décret
+  n° 2026-1017 fixe le seuil de 2027 à sept mille euros (D. 161-2-8) et impute la
+  réduction aux pensions de base par ordre de montants décroissants (D. 161-2-10, II).
+reste: >-
+  Non portés, et inscrits dans `sources.a_relire` des deux fiches du cumul : le seuil de
+  sept mille euros et l'imputation par montants décroissants, quand le modèle dit le seuil
+  non publié et répartit au prorata ; le cumul entier des marins, des artistes du ballet
+  de l'Opéra et des anciens mineurs (L. 161-22-1-2, 1° à 3°) ; avant 2027, le cumul entier
+  de la pension d'invalidité et du non-officier de moins de vingt-cinq ans de services
+  devant un employeur public, que le modèle plafonne. À relire en janvier 2027 : la page
+  du service des retraites de l'État et la fiche F12402, pour un exemple du militaire et
+  pour l'année où la limite d'âge est atteinte. Non consultés : les exposés de la base de
+  la Cnav que `veille_droit.py` signale changés, aucun ne touchant le code des pensions.
+  D. 161-2-14 et suivants du décret n° 2026-1017 n'ont pas été lus.

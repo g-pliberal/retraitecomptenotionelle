@@ -60,6 +60,15 @@ déduit de sa pension (L. 85) ; avant 2004, il ne touchait d'un employeur
 public que l'excédent de sa pension sur sa rémunération, jusqu'à sa limite
 d'âge (L. 86).
 
+Pour la première pension de 2027, le C du III de L. 161-22 sort des trois
+régimes selon l'âge la pension militaire et la pension du code des pensions
+allouée pour invalidité (L. 161-22-1-2, 4° et 5°) : elles se cumulent
+entièrement. L. 86 du code des pensions, rédaction du 31 décembre 2025, ne
+plafonne la pension militaire, « par dérogation » à ce C, que devant un
+employeur de L. 86-1 : le tiers de la pension et la moitié du minimum garanti,
+sauf pour le non-officier de moins de vingt-cinq ans de services, passé la
+limite d'âge du grade, et pour l'invalide.
+
 L'Agirc-Arrco suspend sa retraite complémentaire au-delà de son propre
 plafond, le plus haut de 160 % du SMIC, du dernier salaire revalorisé et du
 salaire moyen revalorisé des dix dernières années.
@@ -99,6 +108,8 @@ from typing import TYPE_CHECKING, Callable
 
 from ..calendrier import DateMois
 from . import departs as _departs
+from . import invalidite as _invalidite
+from . import limite_age as _limite_age
 from . import ouvrir as _ouvrir
 from .commun import periode_de_liquidation
 from ..somme import somme_ordonnee
@@ -245,6 +256,10 @@ SEUILS_NON_SALARIES = {"independants": 0.5, "liberaux": 1.0}
 PART_DE_LA_PENSION = 1.0 / 3.0
 ABATTEMENT_MINIMUM_GARANTI = 0.5
 FRANCHISE_1970 = 0.25
+#: L. 86 du code des pensions, rédaction du 31 décembre 2025, 1° : la pension
+#: du non-officier qui rémunère moins d'années de services se cumule
+#: entièrement, même devant un employeur public.
+SERVICES_DU_NON_OFFICIER = 25
 
 #: Les pensions du code des pensions civiles et militaires, et des régimes
 #: qui le suivent.
@@ -377,6 +392,30 @@ def fonction_publique_quittee(moteur: ScenarioActuel, carriere: Carriere) -> tup
         limite = LIMITES_D_AGE_1970.get(categorie, LIMITES_D_AGE_1970[None])
         return affiliations.pension_militaire(ligne.affiliation) is not None, limite
     return False, LIMITES_D_AGE_1970[None]
+
+
+def pension_militaire_servie(moteur: ScenarioActuel, carriere: Carriere
+                             ) -> tuple[str, float, float | None] | None:
+    """La pension militaire que l'État sert, pour L. 86 du code des pensions
+    dans sa rédaction du 31 décembre 2025 : la catégorie du dernier statut de
+    fonctionnaire avant le départ, quand il est militaire, les années de
+    services, militaires et civils, que la pension rémunère, et la limite d'âge
+    que le modèle prête à son grade (``limite_age.py``) ; ``None`` sinon."""
+    affiliations = moteur.affiliations
+    services = [ligne for ligne in carriere.lignes
+                if ligne.annee <= carriere.annee_liquidation
+                and FONCTION_PUBLIQUE & set(affiliations.regimes(ligne.affiliation,
+                                                                 ligne.annee))]
+    if not services:
+        return None
+    derniere = services[-1]
+    categorie = affiliations.pension_militaire(derniere.affiliation)
+    if categorie is None:
+        return None
+    return (categorie,
+            carriere.duree_de_service({ligne.affiliation for ligne in services},
+                                      carriere.annee_liquidation),
+            _limite_age.limite_de_la_ligne(moteur, carriere, derniere))
 
 
 @dataclass(frozen=True)
@@ -542,6 +581,11 @@ class _Calcul:
         requis = resultat.trimestres_requis or duree_du_taux_plein(moteur, carriere)
         self.duree = resultat.trimestres_valides >= requis
         self.militaire, self.limite_d_age = fonction_publique_quittee(moteur, carriere)
+        #: La pension militaire de la première pension de 2027 (L. 86 de 2025).
+        self.pension_militaire = (pension_militaire_servie(moteur, carriere)
+                                  if self.militaire and self.premiere >= PREMIERE_2027
+                                  else None)
+        self._entieres: dict[str, bool] = {}
         #: L'assuré a-t-il été artisan ou commerçant avant son départ ?
         self.independant = any(ligne.affiliation in INDEPENDANTS
                                for ligne in carriere.lignes
@@ -707,9 +751,11 @@ class _Calcul:
         integral = self.integral(mois)
         resultats: list[PensionEnCumul] = []
         # La règle de 2027 réunit les pensions de base : la réduction des
-        # revenus s'y répartit au prorata.
+        # revenus s'y répartit au prorata. Le C du III de L. 161-22 en sort la
+        # pension militaire et celle de l'invalide.
         base_2027 = somme_ordonnee(montants[regime] for regime, _, groupe in servies
-                        if groupe in GROUPES_DE_BASE)
+                        if groupe in GROUPES_DE_BASE
+                        and not self._entiere_2027(regime, groupe))
         # Les points du RCI, du RCO et du NRCO font une seule pension.
         complementaire = somme_ordonnee(montants[regime] for regime, _, groupe in servies
                                         if groupe == "rci")
@@ -718,7 +764,9 @@ class _Calcul:
                                               if groupe in GROUPES_COMPLEMENTAIRES_2027)
         for regime, date_effet, groupe in servies:
             montant = montants[regime]
-            if self.premiere >= PREMIERE_2027 and groupe in GROUPES_DE_BASE:
+            if self.premiere >= PREMIERE_2027 and self._entiere_2027(regime, groupe):
+                decision = self._hors_des_ages_2027(mois, regime, date_effet)
+            elif self.premiere >= PREMIERE_2027 and groupe in GROUPES_DE_BASE:
                 decision = self._regle_2027(mois, date_effet, groupe, montant, annee,
                                             base_2027)
             elif self.premiere >= PREMIERE_2027 and groupe in GROUPES_COMPLEMENTAIRES_2027:
@@ -1140,14 +1188,21 @@ class _Calcul:
         return REDUITE, regle, "depassement", deduction, plafond
 
     def _deduction_fonction_publique(self, regime: str, date_effet: DateMois,
-                                     annee_civile: int) -> tuple[float, float]:
+                                     annee_civile: int,
+                                     entier: Callable[[DateMois], bool] | None = None
+                                     ) -> tuple[float, float]:
         """L. 85 : l'excédent des revenus de l'année sur le tiers de la pension
         de l'année et la moitié du minimum garanti, réparti sur les mois
-        d'activité où la règle vaut ; et ce plafond, par mois."""
+        d'activité où la règle vaut ; et ce plafond, par mois. ``entier`` dit
+        les mois où la pension se cumule entièrement, ceux du cumul intégral à
+        défaut."""
+        if entier is None:
+            def entier(m: DateMois) -> bool:
+                return m >= LOI_2009 and self.integral(m)
         annee = self.annee(annee_civile)
         mois = [DateMois.depuis_rang(rang) for rang in range(self.debut.rang, self.fin.rang)
                 if DateMois.depuis_rang(rang).annee == annee_civile]
-        couverts = [m for m in mois if not (m >= LOI_2009 and self.integral(m))]
+        couverts = [m for m in mois if not entier(m)]
         annuelle = annee.pensions.get(regime, 0.0)
         servis = somme_ordonnee(1 for m in range(1, 13)
                      if DateMois(annee_civile, m) >= date_effet)
@@ -1160,6 +1215,48 @@ class _Calcul:
             excedent = max(0.0, revenus - plafond)
             self._deductions[cle] = excedent / len(couverts) if couverts else 0.0
         return self._deductions[cle], plafond / 12.0
+
+    def _entiere_2027(self, regime: str, groupe: str) -> bool:
+        """La pension que le C du III de L. 161-22 sort des trois régimes selon
+        l'âge, pour la première pension de 2027 : la pension militaire
+        (L. 161-22-1-2, 4°) et la pension du code des pensions allouée pour
+        invalidité (5°)."""
+        if groupe != "fonction_publique":
+            return False
+        if regime not in self._entieres:
+            self._entieres[regime] = self.militaire or _invalidite.radiation_du_regime(
+                self.moteur, regime, self.carriere) is not None
+        return self._entieres[regime]
+
+    def _limite_du_grade_atteinte(self, mois: DateMois) -> bool:
+        """L'âge de ce mois atteint-il la limite d'âge du grade du militaire ?"""
+        limite = self.pension_militaire[2]
+        return limite is not None and self.age(mois) >= limite - 1e-9
+
+    def _hors_des_ages_2027(self, mois: DateMois, regime: str,
+                            date_effet: DateMois) -> tuple:
+        """Le cumul de la pension que :meth:`_entiere_2027` désigne : entier
+        pour la pension d'invalidité (L. 86, 3°, pour le militaire) et pour la
+        pension militaire — que L. 86 du code des pensions, rédaction du 31
+        décembre 2025, ne plafonne, « par dérogation au C », que devant un
+        employeur de L. 86-1 : le tiers de la pension et la moitié du minimum
+        garanti de l'année, l'excédent déduit, sauf pour le non-officier de
+        moins de vingt-cinq ans de services et passé la limite d'âge du
+        grade."""
+        if _invalidite.radiation_du_regime(self.moteur, regime, self.carriere) is not None:
+            return LIBRE, FP_2027, "pension_d_invalidite", 0.0, None
+        if not self.public:
+            return LIBRE, FP_2027, "employeur_prive", 0.0, None
+        categorie, services, _ = self.pension_militaire
+        if categorie == "non_officier" and services < SERVICES_DU_NON_OFFICIER - 1e-9:
+            return LIBRE, FP_2027, "moins_de_vingt_cinq_ans_de_services", 0.0, None
+        if self._limite_du_grade_atteinte(mois):
+            return LIBRE, FP_2027, "limite_d_age", 0.0, None
+        deduction, plafond = self._deduction_fonction_publique(
+            regime, date_effet, mois.annee, self._limite_du_grade_atteinte)
+        if deduction <= 0:
+            return PLAFONNEE, FP_2027, "sous_le_plafond", 0.0, plafond
+        return REDUITE, FP_2027, "depassement", deduction, plafond
 
     def _regle_2027(self, mois: DateMois, date_effet: DateMois, groupe: str,
                     montant: float, annee: _Annee, base: float) -> tuple:

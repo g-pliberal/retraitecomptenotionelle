@@ -4392,6 +4392,13 @@ function moisDuCumul(debut, fin) {
 }
 
 /**
+ * Les règles du fonctionnaire qui plafonnent au tiers de la pension et à la
+ * moitié du minimum garanti, par le début de leur nom : celles de 2004 à 2015,
+ * et celle de 2027, qui n'y soumet plus que la pension militaire.
+ */
+const AU_TIERS_DE_LA_PENSION = ["tiers", "cumul_integral", "tout_employeur", "regles_communes"];
+
+/**
  * Ce que le droit fait de la pension de base pendant une période du cumul
  * (`droit/cumul.js`), dit au lecteur : une proposition, sans majuscule ni
  * point.
@@ -4426,9 +4433,14 @@ function sortDeLaBase(base, periode, groupe) {
     case "libre/limite_d_age":
       return "passé la limite d'âge de votre emploi, votre pension de fonctionnaire se "
         + "cumule librement";
+    case "libre/moins_de_vingt_cinq_ans_de_services":
+      return "votre pension militaire de non-officier rémunère moins de vingt-cinq ans de "
+        + "services : elle se cumule entièrement, même avec les revenus d'un employeur public";
+    case "libre/pension_d_invalidite":
+      return "une pension de fonctionnaire allouée pour invalidité se cumule entièrement "
+        + "avec les revenus d'une activité";
     case "plafonnee/sous_le_plafond":
-      if (base.regle.startsWith("tiers") || base.regle.startsWith("cumul_integral")
-          || base.regle.startsWith("tout_employeur")) {
+      if (AU_TIERS_DE_LA_PENSION.some((debut) => base.regle.startsWith(debut))) {
         return `vos revenus restent sous le tiers de votre pension et la moitié du minimum `
           + `garanti, ${plafond} : votre pension est servie entière`;
       }
@@ -4472,8 +4484,7 @@ function sortDeLaBase(base, periode, groupe) {
         : `vos revenus dépassent le seuil de votre régime, ${plafond} : votre pension est `
           + "suspendue";
     case "reduite/depassement":
-      if (base.regle.startsWith("tiers") || base.regle.startsWith("cumul_integral")
-          || base.regle.startsWith("tout_employeur")) {
+      if (AU_TIERS_DE_LA_PENSION.some((debut) => base.regle.startsWith(debut))) {
         return `vos revenus dépassent le tiers de votre pension et la moitié du minimum `
           + `garanti, ${plafond} : l'excédent est déduit de votre pension, ${perte} par `
           + "mois en moyenne";

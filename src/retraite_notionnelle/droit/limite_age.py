@@ -391,6 +391,17 @@ def _limite(moteur: ScenarioActuel, carriere: Carriere, nom: str, classe: str
     return None
 
 
+def limite_de_la_ligne(moteur: ScenarioActuel, carriere: Carriere, ligne) -> float | None:
+    """La limite d'âge, en années, de l'emploi de cette ligne de la carrière,
+    ou ``None`` pour un statut sans limite d'âge au modèle : ce que le cumul
+    d'une pension militaire oppose (``droit/cumul.py``)."""
+    emploi = _emploi(moteur, carriere, ligne)
+    if emploi is None:
+        return None
+    lue = _limite(moteur, carriere, emploi[0], emploi[1])
+    return None if lue is None else lue[0] / MOIS_PAR_AN
+
+
 def _enfants_a_charge(carriere: Carriere, jour: str, age_a_charge: float) -> int:
     """Les enfants nés au plus tard ce jour, qui n'ont pas encore l'âge où
     cessent les prestations familiales."""

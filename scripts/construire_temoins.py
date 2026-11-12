@@ -901,6 +901,15 @@ def _cas() -> list[dict]:
         "naissance": "1968", "debut": "17", "liquidation": "60",
         "emploi_retraite": "2029-02", "emploi_retraite_fin": "2032-02",
     }))
+    # La pension militaire de la première pension de 2027, que L. 86 du code
+    # des pensions (rédaction du 31 décembre 2025) plafonne devant un employeur
+    # public, au tiers de la pension et à la moitié du minimum garanti
+    # (fiche cumul_emploi_retraite_fonction_publique ; action 192, étape 5).
+    cas.append(("cumul_militaire_2027", {
+        "naissance": "1982", "statut": "militaire", "debut": "20", "liquidation": "45",
+        "emploi_retraite": "2028-02", "emploi_retraite_fin": "2030-02",
+        "emploi_retraite_statut": "contractuel_public",
+    }))
     # La complémentaire de l'artisan et du commerçant, qui suit leur base
     # (fiche cumul_emploi_retraite_complementaire_des_independants ; action
     # 138, étape 12) : suspendue avec elle pour une première pension de 2013 ;

@@ -408,6 +408,19 @@ sources:
     ne le fixe dans les index JORF et LEGI du dépôt, à jour au 13 octobre 2026 : le
     paramètre reste `non_publie`, et la pension de 2027 entière dans ce cas ; à reprendre
     dès que le décret paraît (action 159, étape 9).
+  - >-
+    NON PORTÉ, relevé le 12 novembre 2026 (action 192, étape 5) en lisant le décret
+    n° 2026-1017 du 2 novembre 2026 (JORFARTI000055047362, article 3), paru depuis. Il
+    fixe le seuil : « Pour l'année 2027, son montant est fixé à sept mille euros »,
+    revalorisé chaque 1er janvier comme le plafond de la sécurité sociale (D. 161-2-8).
+    Il impute la réduction aux pensions de base « par ordre de montants de pension
+    décroissant », puis aux complémentaires (D. 161-2-10, II), quand le modèle la
+    répartit au prorata ; il la plafonne au total des pensions de la période et l'étale
+    sur douze mois, sans ôter plus du tiers des arrérages (D. 161-2-10, I). Et le C du
+    III de L. 161-22 laisse cumuler entièrement, outre le militaire et l'invalide que
+    porte la fiche cumul_emploi_retraite_fonction_publique, les marins, les artistes du
+    ballet de l'Opéra et les anciens mineurs des entreprises fermées (L. 161-22-1-2, 1°
+    à 3°), que le modèle réduit selon l'âge. À écrire, le test d'abord.
   lectures:
   - type: autre
     reference: L'Assurance retraite, mesures de la LFSS 2026

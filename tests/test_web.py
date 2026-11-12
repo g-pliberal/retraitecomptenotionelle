@@ -5783,6 +5783,43 @@ def test_la_complementaire_est_servie_entiere_quand_la_base_absorbe_la_reduction
         "absorbe toute la réduction ;")
 
 
+#: La sous-officière née en 1982, engagée à vingt ans et partie à quarante-cinq
+#: ans, en février 2027, avec vingt-cinq ans de services, payée ensuite par un
+#: employeur public.
+_CUMUL_MILITAIRE_2027 = {
+    "profil": "ascendant", "naissance": "1982", "statut": "militaire", "debut": "20",
+    "liquidation": "45", "emploi_retraite": "2028-02", "emploi_retraite_fin": "2030-02",
+    "emploi_retraite_statut": "contractuel_public",
+}
+
+
+def test_la_page_dit_le_plafond_de_la_pension_militaire_de_2027(page):
+    """L. 86 du code des pensions, rédaction du 31 décembre 2025 : devant un
+    employeur public, la pension militaire se cumule « dans la limite d'un
+    plafond annuel égal à la somme [...] du tiers du montant brut de sa pension
+    et de la moitié du minimum fixé au a de l'article L. 17 ». La page le dit
+    de la première pension de 2027 comme de celle d'avant, et non plus le
+    « seuil de votre régime »."""
+    note, _ = _note_du_cumul(page, _CUMUL_MILITAIRE_2027)
+    assert "dépassent le tiers de votre pension et la moitié du minimum garanti" in note
+    assert "l'excédent est déduit de votre pension" in note
+    assert "seuil de votre régime" not in note and "n'a pas encore lu" not in note
+
+
+def test_la_page_dit_le_cumul_entier_du_non_officier_de_moins_de_vingt_cinq_ans(page):
+    """L. 86, 1° : « Le titulaire d'une pension militaire non officier
+    rémunérant moins de vingt-cinq années de services » cumule entièrement,
+    même payé par un employeur public. Née en 1983 et partie à quarante-quatre
+    ans, la sous-officière en a vingt-quatre : la page le lui dit, au lieu de
+    la règle « pas encore lue »."""
+    note, _ = _note_du_cumul(page, {**_CUMUL_MILITAIRE_2027, "naissance": "1983",
+                                    "liquidation": "44"})
+    assert ("votre pension militaire de non-officier rémunère moins de vingt-cinq ans de "
+            "services : elle se cumule entièrement, même avec les revenus d'un employeur "
+            "public") in note
+    assert "n'a pas encore lu" not in note
+
+
 def test_la_complementaire_du_notaire_liberal_ne_lui_est_pas_servie(page):
     """Les statuts de la CPRN, article 22 (arrêté du 31 mai 2017,
     JORFARTI000034975971), que l'arrêté du 29 novembre 2023 ne touche pas :

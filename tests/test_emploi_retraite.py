@@ -968,6 +968,146 @@ def test_le_liberal_ne_cumule_entierement_qu_avec_la_duree_requise(simulateur, d
         assert statuts == {cumul.REDUITE}
 
 
+# -- la pension militaire et la pension d'invalidité des premières pensions de 2027 --
+
+def _militaire(simulateur: Simulateur, emploi: dict, revenus: dict, naissance: int = 1982,
+               depart: float = 45.0, statut: str = "militaire"):
+    """Le cumul d'une militaire née le 15 janvier, engagée à vingt ans, dont
+    l'État sert une pension de 24 000 € par an : née en 1982 et partie à
+    quarante-cinq ans, en février 2027, elle a vingt-cinq ans de services."""
+    return _cumul_prete(simulateur, naissance, depart, [Metier(statut, 20.0)], emploi,
+                        {"fonction_publique_etat": 24000.0}, revenus)
+
+
+def test_la_pension_militaire_de_2027_se_cumule_entierement_avec_un_emploi_prive(simulateur):
+    """L. 161-22, III, C, 1°, du code de la sécurité sociale, pour la première
+    pension prise depuis le 1er janvier 2027 : « peuvent cumuler entièrement
+    leur pension avec les revenus professionnels » les « titulaires d'une
+    pension militaire » (L. 161-22-1-2, 4°). La sous-officière partie à
+    quarante-cinq ans et salariée du privé, avant l'âge légal, garde sa pension
+    entière ; le service des retraites de l'État le dit de même : « Si vous
+    exercez dans le secteur privé, vous pouvez cumuler ». """
+    resultat = _militaire(simulateur, _emploi(46, 48), {2029: 36000.0})
+    pensions = [_pension(t, "fonction_publique_etat") for t in resultat.tranches]
+    assert {(p.statut, p.regle, p.motif, p.reduction) for p in pensions} == {
+        (cumul.LIBRE, cumul.FP_2027, "employeur_prive", 0.0)}
+    assert resultat.non_servi == 0.0
+
+
+@pytest.mark.parametrize("revenu, statut, motif", [
+    (36000.0, cumul.REDUITE, "depassement"),
+    (12000.0, cumul.PLAFONNEE, "sous_le_plafond"),
+])
+def test_la_pension_militaire_de_2027_est_plafonnee_devant_un_employeur_public(
+        simulateur, revenu, statut, motif):
+    """L. 86 du code des pensions, rédaction du 31 décembre 2025 : payé par un
+    employeur de L. 86-1, le titulaire d'une pension militaire cumule « dans la
+    limite d'un plafond annuel égal à la somme, pour l'année considérée, du
+    tiers du montant brut de sa pension et de la moitié du minimum fixé au a
+    de l'article L. 17. Lorsqu'un excédent est constaté, la pension est réduite
+    à due concurrence ». Toute l'année 2029, 36 000 € dépassent le plafond, et
+    l'excédent est déduit ; 12 000 € restent dessous."""
+    resultat = _militaire(simulateur, _emploi(46, 48, affiliation="contractuel_public"),
+                          {2029: revenu})
+    minimum = simulateur.scenario_actuel.minimum_garanti.reference(2029)[0]
+    (tranche,) = [t for t in resultat.tranches if t.debut.annee == 2029]
+    assert tranche.mois == 12
+    pension = _pension(tranche, "fonction_publique_etat")
+    plafond = pension.montant * 12 / 3 + minimum / 2
+    assert (pension.statut, pension.regle, pension.motif) == (statut, cumul.FP_2027, motif)
+    assert pension.reduction == pytest.approx(max(0.0, revenu - plafond) / 12)
+    assert pension.plafond == pytest.approx(plafond / 12)
+
+
+def test_le_non_officier_de_moins_de_vingt_cinq_ans_de_services_cumule_entierement(
+        simulateur):
+    """L. 86, 1° : cumule entièrement, même payé par un employeur public, « le
+    titulaire d'une pension militaire non officier rémunérant moins de
+    vingt-cinq années de services ». Née en 1983 et partie à quarante-quatre
+    ans, en février 2027, la sous-officière en a vingt-quatre."""
+    resultat = _militaire(simulateur, _emploi(45, 47, affiliation="contractuel_public"),
+                          {2029: 36000.0}, naissance=1983, depart=44.0)
+    pensions = [_pension(t, "fonction_publique_etat") for t in resultat.tranches]
+    assert {(p.statut, p.regle, p.motif, p.reduction) for p in pensions} == {
+        (cumul.LIBRE, cumul.FP_2027, "moins_de_vingt_cinq_ans_de_services", 0.0)}
+
+
+def test_passe_la_limite_d_age_de_son_grade_le_militaire_cumule_entierement(simulateur):
+    """L. 86, 1° : cumule entièrement « le titulaire d'une pension militaire
+    qui atteint la limite d'âge du grade qu'il détenait en activité » — pour le
+    service des retraites de l'État, qui a « atteint la limite d'âge de [son]
+    ancien grade ». Le modèle prête au non-officier la limite des grades les plus
+    élevés, cinquante-neuf ans (L. 4139-16 du code de la défense) : née le 15
+    janvier 1982, elle les a en janvier 2041, et sa pension est libre dès
+    février."""
+    resultat = _militaire(simulateur, _emploi(58.5, 60, affiliation="contractuel_public"),
+                          {2040: 15000.0, 2041: 36000.0})
+    sorts = _mois_par_mois(resultat, "fonction_publique_etat")
+    avant = {sort[:2] for mois, sort in sorts.items() if mois < DateMois(2041, 2)}
+    apres = {sort for mois, sort in sorts.items() if mois >= DateMois(2041, 2)}
+    assert avant and avant <= {(cumul.REDUITE, "depassement"),
+                               (cumul.PLAFONNEE, "sous_le_plafond")}
+    assert apres == {(cumul.LIBRE, "limite_d_age", 0.0)}
+
+
+def test_la_pension_militaire_d_avant_2027_garde_sa_regle(simulateur):
+    """La loi n° 2025-1403, article 102, XI, ne vaut que pour qui entre « en
+    jouissance de [sa] première pension de vieillesse de base à compter du 1er
+    janvier 2027 » : née en 1981 et partie en février 2026, la sous-officière
+    de vingt-cinq ans de services garde la règle de 2015, plafonnée devant un
+    employeur public, libre dans le privé."""
+    for affiliation, sorts in (
+            ("contractuel_public", {(cumul.REDUITE, cumul.FP_2015, "depassement")}),
+            ("salarie_prive_non_cadre", {(cumul.LIBRE, cumul.FP_2015, "employeur_prive")})):
+        resultat = _militaire(simulateur, _emploi(46, 48, affiliation=affiliation),
+                              {2028: 36000.0}, naissance=1981)
+        assert {(p.statut, p.regle, p.motif) for t in resultat.tranches
+                if t.debut.annee == 2028 for p in t.par_regime} == sorts
+
+
+def test_la_pension_militaire_de_2027_ne_prend_aucune_part_de_la_reduction(simulateur):
+    """L. 161-22, III, A, 1° : avant l'âge légal, la pension « est réduite à due
+    concurrence des revenus » ; le C en sort la pension militaire. L'ancienne
+    militaire partie en carrière longue en février 2030 gagne 5 000 € en 2031,
+    dont la CSG retient 98,25 % : sa pension du régime général en perd chaque
+    mois le douzième entier, 409,38 €, et non la part d'une pension sur trois ;
+    sa pension militaire reste entière."""
+    resultat = _cumul_prete(
+        simulateur, 1968, 62.0,
+        [Metier("militaire", 18.0), Metier("salarie_prive_non_cadre", 43.0)],
+        _emploi(62.25, 64), {"fonction_publique_etat": 24000.0, "regime_general": 12000.0},
+        {2031: 5000.0})
+    reduites = [t for t in resultat.tranches if t.debut.annee == 2031
+                and _pension(t, "regime_general").statut == cumul.REDUITE]
+    assert reduites
+    for tranche in reduites:
+        assert _pension(tranche, "regime_general").reduction == pytest.approx(
+            5000.0 / 12 * 0.9825)
+        militaire = _pension(tranche, "fonction_publique_etat")
+        assert (militaire.statut, militaire.motif, militaire.reduction) == (
+            cumul.LIBRE, "employeur_prive", 0.0)
+
+
+def test_la_pension_d_invalidite_de_2027_se_cumule_entierement(simulateur):
+    """L. 161-22, III, C, 1°, et L. 161-22-1-2, 5° : cumulent entièrement les
+    « titulaires de pensions civiles et militaires [...] allouées pour
+    invalidité ». La fonctionnaire radiée pour invalidité à cinquante ans, en
+    2030, puis salariée, qui retravaille après son départ de 2044 : sa pension
+    de l'État n'entre dans aucun des trois régimes selon l'âge."""
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=1980, sexe="F", jour_naissance=15, age_liquidation=64.5,
+        metiers=[Metier("fonctionnaire_etat", 22.0), Metier("salarie_prive_non_cadre", 50.0)],
+        macro=simulateur.macro, emploi_retraite=_emploi(65, 66),
+        invalidite={"radiation": {"age": 50.0, "imputable": False, "taux": 70}})
+    resultat = simulateur.echeancier(carriere).au_depart.cumul
+    pensions = [_pension(t, "fonction_publique_etat") for t in resultat.tranches]
+    assert {(p.statut, p.regle, p.motif, p.reduction) for p in pensions} == {
+        (cumul.LIBRE, cumul.FP_2027, "pension_d_invalidite", 0.0)}
+    # La pension du régime général, elle, suit les trois régimes selon l'âge.
+    assert {_pension(t, "regime_general").regle for t in resultat.tranches} == {
+        cumul.AGES_2027}
+
+
 # -- les droits de l'activité et la nouvelle pension (droit/seconde.py) -------------
 
 from retraite_notionnelle.droit import liquider as _liquider  # noqa: E402

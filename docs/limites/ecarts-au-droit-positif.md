@@ -215,7 +215,12 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   le tiers de la pension du fonctionnaire ; le plafond de l'Agirc-Arrco. Pour
   la première pension de 2027, la pension est réduite de tout le revenu avant
   l'âge légal ; de l'âge légal au taux plein automatique, le seuil qu'un décret
-  doit fixer n'a pas paru, et la pension est servie entière. La page le dit, et
+  doit fixer n'a pas paru, et la pension est servie entière. La pension
+  militaire et la pension d'invalidité du fonctionnaire en sortent : elles se
+  cumulent entièrement, la pension militaire restant plafonnée au tiers devant
+  un employeur public, sauf pour le non-officier de moins de vingt-cinq ans de
+  services et passé la limite d'âge que le modèle prête au grade, faute de
+  grade à la saisie. La page le dit, et
   le montant du système 1 reste celui de la pension entière. Chaque régime ne
   réduit que ses pensions, pour l'activité qui relève de lui : le salarié
   devenu artisan garde sa pension du régime général entière. Ce que l'activité

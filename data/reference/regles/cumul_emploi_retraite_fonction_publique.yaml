@@ -7,7 +7,11 @@ intitule: >-
   plus du tiers de sa pension, majoré de la moitié du minimum garanti, sans que
   l'excédent soit déduit de sa pension, hors cumul intégral au taux plein. Avant 2004,
   le fonctionnaire parti avant sa limite d'âge ne touchait, d'un employeur public, que
-  l'excédent de sa pension sur sa rémunération.
+  l'excédent de sa pension sur sa rémunération. Pour la première pension de 2027, le
+  civil suit les trois régimes selon l'âge du code de la sécurité sociale ; la pension
+  militaire et la pension d'invalidité se cumulent entièrement, la pension militaire
+  restant plafonnée au tiers devant un employeur public, sauf le non-officier de moins
+  de vingt-cinq ans de services et la limite d'âge du grade atteinte.
 domaine: cumul
 regimes: [fonction_publique_etat, cnracl, fspoeie]
 etape: echeancier
@@ -19,6 +23,9 @@ lit:
 - la pension de base du fonctionnaire, et le minimum garanti de l'année
 - le taux plein, et la liquidation de toutes les pensions
 - la limite d'âge de l'emploi quitté, avant 2004
+- pour la première pension de 2027, le caractère militaire de la pension, officier ou
+  non, les années de services qu'elle rémunère, la limite d'âge que le modèle prête au
+  grade, et la radiation des cadres pour invalidité
 ecrit:
 - la pension servie pendant l'activité, réduite de l'excédent des revenus
 dates_qui_decident:
@@ -113,6 +120,12 @@ versions:
   statut: lue
   textes:
   - {id: LEGIARTI000053279635, article: "L. 84 CPCMR", en_vigueur: 2025-12-31}
+  - {id: LEGIARTI000053279638, article: "L. 86 CPCMR", en_vigueur: 2025-12-31}
+  - reference: >-
+      décret n° 2026-1016 du 2 novembre 2026, article 1er (JORFARTI000055047298) : R. 91
+      abrogé, R. 92 renvoyé à L. 86 ; décret n° 2026-1017 du 2 novembre 2026, article 1er
+      (JORFARTI000055047356) : D. 37 et D. 37 bis du code des pensions
+    en_vigueur: 2027-01-01
   bornes:
     liquidation.date_effet: [2004-01-01, null]
     liquidation.premiere_pension_de_base: [2027-01-01, null]
@@ -121,10 +134,30 @@ versions:
     droit: >-
       pour la première pension prise depuis le 1er janvier 2027, « les articles
       L. 161-22 à L. 161-22-1-4 du code de la sécurité sociale s'appliquent à
-      l'ensemble des personnes régies par le présent code » : les trois régimes selon
-      l'âge de la fiche cumul_emploi_retraite_et_retraite_progressive
+      l'ensemble des personnes régies par le présent code », « sous réserve du présent
+      titre » (L. 84) : les trois régimes selon l'âge de la fiche
+      cumul_emploi_retraite_et_retraite_progressive, dont le C du III de L. 161-22 sort
+      ceux qui « peuvent cumuler entièrement leur pension », les titulaires « d'une
+      pension militaire prévue à l'article L. 6 » et « de pensions civiles et militaires
+      ou d'une solde de réforme allouées pour invalidité » (L. 161-22-1-2, 4° et 5°).
+      « Par dérogation au C », le titulaire d'une pension militaire payé par un employeur
+      de L. 86-1 cumule « dans la limite d'un plafond annuel égal à la somme, pour l'année
+      considérée, du tiers du montant brut de sa pension et de la moitié du minimum fixé
+      au a de l'article L. 17. Lorsqu'un excédent est constaté, la pension est réduite à
+      due concurrence » ; cumulent entièrement « le titulaire d'une pension militaire non
+      officier rémunérant moins de vingt-cinq années de services », celui qui atteint « la
+      limite d'âge du grade » ou « la limite de durée de services », et le titulaire
+      « d'une pension militaire ou d'une solde de réforme allouée pour invalidité »
+      (L. 86). Le service des retraites de l'État détecte l'activité et calcule la
+      réduction de ces pensions (D. 37)
     parametres:
       regle: celle_du_code_de_la_securite_sociale
+      pension_militaire:
+        employeur: public
+        part_de_la_pension: 0.333333
+        abattement_en_minimum_garanti: 0.5
+        services_du_non_officier_en_annees: 25
+      pension_d_invalidite: cumul_entier
   exemples: aucun trouvé
 approximations:
 - ecart: >-
@@ -148,14 +181,31 @@ approximations:
   effet: non mesuré
 - version: [regles_communes_2027]
   ecart: >-
-    pour la première pension prise depuis le 1er janvier 2027, le modèle réduit la
-    pension militaire comme une pension civile, selon l'âge ; le droit la laisse se
-    cumuler entièrement (L. 161-22, III, C, 1° du code de la sécurité sociale), et ne la
-    plafonne, au tiers de la pension et à la moitié du minimum garanti, que devant un
-    employeur public (L. 86 du code des pensions, rédaction du 31 décembre 2025)
+    la limite d'âge du grade est celle que le modèle prête à la catégorie, faute de grade
+    à la saisie (fiche limite_age_militaires) : cinquante-neuf ans pour le non-officier,
+    soixante-six pour l'officier, les plus hautes de L. 4139-16 du code de la défense ;
+    la limite de durée de services du militaire sous contrat n'est pas lue
   effet: >-
-    le militaire parti avant l'âge légal à compter de 2027 et qui retravaille dans le
-    privé perd dans le modèle une pension que le droit lui laisse entière ; non mesuré
+    le militaire d'un grade à la limite plus basse — quarante-sept ans pour un sergent,
+    cinquante-neuf pour un officier des armes — reste plafonné devant un employeur
+    public jusqu'à la limite que le modèle lui prête, quand le droit le libère plus
+    tôt ; non mesuré
+- version: [regles_communes_2027]
+  ecart: >-
+    les années de services que la pension rémunère sont celles des statuts de
+    fonctionnaire et de militaire de la carrière, au mois près, bonifications exclues ;
+    l'employeur public est celui du contractuel de la fonction publique, sans
+    distinguer l'établissement industriel et commercial, que L. 86-1 ne nomme pas ;
+    l'année où la limite d'âge est atteinte, l'excédent ne compte que les revenus des
+    mois qui la précèdent, et se répartit entre eux
+  effet: non mesuré
+- version: [regles_communes_2027]
+  ecart: >-
+    la première pension de base est celle du départ déclaré : la pension militaire ou
+    d'invalidité prise avant 2027 par qui déclare un départ en 2027 ou après suit la
+    règle de 2027, comme le XI de l'article 102 l'écrit, mais dès l'activité qui précède
+    l'entrée en jouissance de son autre pension de base
+  effet: non mesuré
 sources:
   lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
@@ -167,16 +217,18 @@ sources:
     Vérifier que les décrets de la CNRACL et des ouvriers de l'État (décret
     n° 2003-1306, article 64 ; décret n° 2004-1056) suivent la même règle.
   - >-
-    NON PORTÉ, relevé le 12 novembre 2026 : la version regles_communes_2027 applique à
-    tous les trois régimes selon l'âge, quand L. 84 ne le dit que « sous réserve du
-    présent titre ». L. 86, dans sa rédaction du 31 décembre 2025, garde au titulaire
-    d'une pension militaire payé par un employeur de L. 86-1 le plafond du tiers de sa
-    pension et de la moitié du minimum garanti, « par dérogation au C du III de l'article
-    L. 161-22 » ; et ce C laisse cumuler entièrement les titulaires d'une pension
-    militaire et ceux d'une pension civile ou militaire d'invalidité (L. 161-22-1-2, 4°
-    et 5°). Le portage (`regle2027`, moteur/js/droit/cumul.js) ne regarde pas si la
-    pension est militaire : lu dans le code, non rejoué. À écrire, le test d'abord, en
-    coupant la version ; lire aussi ce que le modèle fait de la pension d'invalidité.
+    Relevé le 12 novembre 2026, en portant la pension militaire de 2027 : avant 2027, le
+    modèle plafonne devant un employeur public la pension d'invalidité et celle du
+    non-officier de moins de vingt-cinq ans de services, que L. 86, dans ses rédactions
+    de 2004 à 2023, laisse se cumuler entièrement ; depuis que la saisie porte la
+    radiation pour invalidité et que le cumul de 2027 compte les services, les deux se
+    calculent. À écrire, le test d'abord, sur les versions de 2004 à 2015.
+  - >-
+    La page du service des retraites de l'État (« Les règles de cumul », lue le 12
+    novembre 2026) et la fiche F12402 de service-public, vérifiée le 1er janvier 2026,
+    ne disent pas encore la règle de 2027 : la seconde annonce qu'elle « sera mise à
+    jour à cette date ». Les relire en janvier 2027, y chercher un exemple chiffré du
+    militaire, et ce que le service fait de l'année où la limite d'âge est atteinte.
   lectures:
   - type: legifrance
     reference: >-
@@ -203,28 +255,63 @@ sources:
       (pension de 18 000 € ; revenu de 21 623 € ; 7 424,90 € déduits)
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F12402
     date: 2026-09-30
-textes_a_rattacher:
-- {id: LEGIARTI000053279638, article: "L. 86 CPCMR", en_vigueur: 2025-12-31, change: "première pension prise depuis le 1er janvier 2027 (loi n° 2025-1403, article 102, XI) : l'article ne vise plus que la pension militaire, plafonnée au tiers de son montant et à la moitié du minimum garanti devant un employeur de L. 86-1, « par dérogation au C du III de l'article L. 161-22 », sauf le non-officier de moins de vingt-cinq ans de services, la limite d'âge ou de durée de services atteinte, et l'invalidité ; les cumuls entiers des activités artistiques, juridictionnelles et de santé en sortent. À couper de la version regles_communes_2027 (sources.a_relire)"}
+  - type: legifrance
+    reference: >-
+      L. 86 CPCMR, rédaction du 31 décembre 2025 (LEGIARTI000053279638, loi n° 2025-1403,
+      article 102), lue entière dans l'index LEGI du 11 novembre 2026, avec L. 6
+      (LEGIARTI000028498970), L. 86-1 (LEGIARTI000053279653), R. 92
+      (LEGIARTI000006363055), l'article 58 du décret n° 2003-1306
+      (LEGIARTI000006400929) et l'article 48 du décret n° 2004-1056
+      (LEGIARTI000006781527), qui règlent le cumul des pensions de la CNRACL et des
+      ouvriers de l'État « conformément aux dispositions applicables aux fonctionnaires
+      de l'Etat »
+    date: 2026-11-12
+  - type: jorf
+    reference: >-
+      décrets n° 2026-1016 (JORFTEXT000055047286) et n° 2026-1017 (JORFTEXT000055047344)
+      du 2 novembre 2026 relatifs au cumul emploi retraite, Journal officiel du 3
+      novembre 2026, lus dans l'index JORF du 11 novembre 2026 : leurs articles 1er
+      (R. 91, R. 92, D. 37 et D. 37 bis du code des pensions), les articles 3 et 4 du
+      premier (CNRACL, ouvriers de l'État), l'article 3 du second (D. 161-2-5 à
+      D. 161-2-13 du code de la sécurité sociale)
+    date: 2026-11-12
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, « Les règles de cumul » des militaires, page sans
+      date, lue le 12 novembre 2026 : « Si vous exercez dans le secteur privé, vous
+      pouvez cumuler votre pension de l'État et une rémunération d'activité » ; dans le
+      secteur public, cumule le titulaire « d'une pension de non officier rémunérant
+      moins de 25 ans de services (militaires et civils) » et le retraité qui a « atteint
+      la limite d'âge de [son] ancien grade » ou « la limite de durée de service » ; rien
+      sur 2027
+    url: https://retraitesdeletat.gouv.fr/actif/militaires/cumul
+    date: 2026-11-12
 textes_sans_effet:
 - {id: LEGIARTI000053279653, article: "L. 86-1 CPCMR", en_vigueur: 2025-12-31,
    motif: "la liste des employeurs publics est inchangée ; le renvoi passe du deuxième alinéa de L. 84 au premier de L. 86"}
 code:
   python: >-
     droit/cumul.py : _Calcul._fonctionnaire, _deduction_fonction_publique,
-    fonction_publique_quittee, PART_DE_LA_PENSION, ABATTEMENT_MINIMUM_GARANTI,
-    FRANCHISE_1970, LIMITES_D_AGE_1970 ; echeancier.py : Echeancier._cumuler
+    _entiere_2027, _hors_des_ages_2027, fonction_publique_quittee,
+    pension_militaire_servie, PART_DE_LA_PENSION, ABATTEMENT_MINIMUM_GARANTI,
+    SERVICES_DU_NON_OFFICIER, FRANCHISE_1970, LIMITES_D_AGE_1970 ; droit/limite_age.py :
+    limite_de_la_ligne ; echeancier.py : Echeancier._cumuler
   javascript: >-
-    moteur/js/droit/cumul.js : fonctionnaire, deductionFonctionPublique,
-    fonctionPubliqueQuittee, PART_DE_LA_PENSION, ABATTEMENT_MINIMUM_GARANTI,
-    FRANCHISE_1970, LIMITES_D_AGE_1970 ; moteur/js/echeancier.js : Echeancier._cumuler ;
-    moteur/js/pages.js : cumulEmploiRetraite
+    moteur/js/droit/cumul.js : fonctionnaire, deductionFonctionPublique, entiere2027,
+    horsDesAges2027, fonctionPubliqueQuittee, pensionMilitaireServie,
+    PART_DE_LA_PENSION, ABATTEMENT_MINIMUM_GARANTI, SERVICES_DU_NON_OFFICIER,
+    FRANCHISE_1970, LIMITES_D_AGE_1970 ; moteur/js/droit/limite_age.js :
+    limiteDeLaLigne ; moteur/js/echeancier.js : Echeancier._cumuler ;
+    moteur/js/pages.js : cumulEmploiRetraite, sortDeLaBase
   parametres: >-
     contenu.parametres de chaque version : employeur, franchise_en_part_de_pension,
-    part_de_la_pension, abattement_en_minimum_garanti, cumul_integral, regle ;
+    part_de_la_pension, abattement_en_minimum_garanti, cumul_integral, regle,
+    pension_militaire, pension_d_invalidite ;
     legislation/minimum_garanti.csv, legislation/minimum_garanti_montants.csv
   tests: >-
-    tests/test_emploi_retraite.py ; les exemples sp_f12402_* du registre ; les
-    témoins cumul_fonctionnaire_contractuel et simuler_cumul_fonctionnaire
+    tests/test_emploi_retraite.py ; tests/js/moteur.test.js ; tests/test_web.py ; les
+    exemples sp_f12402_* du registre ; les témoins cumul_fonctionnaire_contractuel,
+    cumul_militaire_2027 et simuler_cumul_fonctionnaire
   moteur: >-
     L'abattement se compte en minimum garanti de l'année, que ses deux séries portent ;
     les constantes des deux moteurs redisent les versions.
@@ -235,9 +322,17 @@ historique:
 - >-
   2026-09-30 — calculée, mois par mois de l'activité après le départ, avec le cumul
   du salarié ; l'exemple de la fiche F12402 entre au registre des exemples publiés.
+- >-
+  2026-11-12 — action 192, étape 5 : pour la première pension de 2027, la pension
+  militaire et la pension d'invalidité sortent des trois régimes selon l'âge (L. 161-22,
+  III, C, 1°) ; la pension militaire garde, devant un employeur public, le plafond du
+  tiers de L. 86, avec ses exceptions. L. 86 du 31 décembre 2025 est rattaché à la
+  version regles_communes_2027.
 effet: >-
   Le fonctionnaire retraité qui travaille avant le taux plein : payé par un employeur
   public, ou par tout employeur s'il est civil et parti depuis 2015, il perd l'excédent
   de ses revenus sur le tiers de sa pension et 8 198,10 € en 2026 — 7 424,90 € pour
   une pension de 18 000 € et un revenu de 21 623 €, l'exemple de la fiche F12402, que
-  le modèle reproduit.
+  le modèle reproduit. La sous-officière partie à quarante-cinq ans en février 2027 et
+  salariée du privé d'août 2027 à janvier 2030 garde sa pension entière, quand le
+  modèle la lui retirait toute, 60 730 € en trente mois.
