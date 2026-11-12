@@ -210,14 +210,15 @@ FIN
 fi
 
 # Les gardes gardées (action 163, étape 6) : les workflows de GitHub, les hooks
-# et leurs réglages, ce script et celui qui publie le verdict ne changent
+# et leurs réglages, ce script et ceux qui poussent sur main depuis GitHub — le
+# verdict, et l'inscription des rédactions (action 184) — ne changent
 # qu'avec l'accord du propriétaire, demandé avant ; le commit le déclare par une
 # ligne `Garde-modifiée: <raison>`. Un ralentisseur, non un verrou : la session
 # peut l'écrire seule, mais elle s'arrête, et la trace se liste
 # (`git log --grep='^Garde-modifiée:'`). Le message se lit dans une variable, et
 # non par un tube, que `pipefail` ferait mentir, comme plus haut.
 if [ "$avance" -gt 0 ]; then
-    gardes=".github/workflows .claude/hooks .claude/settings.json scripts/pousser.sh scripts/publier_fabrique.sh"
+    gardes=".github/workflows .claude/hooks .claude/settings.json scripts/pousser.sh scripts/publier_fabrique.sh scripts/publier_inscription.sh"
     declaration=$'(^|\n)Garde-modifiée: *[^[:space:]]'
     sans_accord=""
     # shellcheck disable=SC2086 # les chemins des gardes, un par mot

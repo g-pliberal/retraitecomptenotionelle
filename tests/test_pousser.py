@@ -283,10 +283,13 @@ def test_le_code_part_avec_son_test_ou_sa_declaration(atelier, message, fichiers
     {"scripts/pousser.sh": "# l'envoi\n", "tests/test_envoi.py": "def test_x():\n    pass\n"},
     {"scripts/publier_fabrique.sh": "# le verdict\n",
      "tests/test_envoi.py": "def test_x():\n    pass\n"},
+    {"scripts/publier_inscription.sh": "# l'inscription\n",
+     "tests/test_envoi.py": "def test_x():\n    pass\n"},
 ])
 def test_une_garde_ne_change_qu_avec_sa_declaration(atelier, fichiers):
     """Les gardes du dépôt — les workflows de GitHub, les hooks et leurs
-    réglages, ce script, celui qui publie le verdict — ne changent qu'avec
+    réglages, ce script, ceux qui publient le verdict et l'inscription, qui
+    poussent sur main depuis GitHub (action 184) — ne changent qu'avec
     l'accord du propriétaire, demandé avant (action 163, étape 6). Un commit
     qui en touche une le déclare par une ligne ``Garde-modifiée: <raison>`` ;
     sinon rien ne part, et le refus nomme le commit et la garde."""
