@@ -7329,11 +7329,11 @@ L'impôt, la revalorisation servie et la garantie de population passent en
 JavaScript seul. Les tests du moteur Python passent par une façade. Les
 études restent. L'action se clôt par fonction. Le retrait d'une paire
 n'attend plus sa relecture, gardée pour quatre fichiers peu éprouvés. Déjà
-fait : deux scripts de la fabrique et deux études branchés sur le moteur
+fait : deux scripts de la fabrique et trois études branchés sur le moteur
 JavaScript ; la garantie, l'impôt et la restitution relus. Reste, une étape
 par session : la garantie demandée au moteur JavaScript, par quoi
 commencer ; la façade des tests ; les sondes de `mesures_prose.py` et de
-`mesures_accueil.py` ; l'étude `flux_fonction_publique.py` ; l'impôt, puis
+`mesures_accueil.py` ; les trois autres études à porter ; l'impôt, puis
 la revalorisation servie ; les tests portés ; le retrait.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
