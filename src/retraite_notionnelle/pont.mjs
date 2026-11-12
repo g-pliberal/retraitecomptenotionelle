@@ -157,7 +157,7 @@ import {
 import { BORNES_ASSIETTE, CarriereLongue } from "../../moteur/js/regimes.js";
 import { ficheDepuisBrut } from "../../moteur/js/remuneration.js";
 import { Restitution } from "../../moteur/js/restitution.js";
-import { faireVivre } from "../../moteur/js/revalorisation.js";
+import { faireVivre, RevalorisationServie } from "../../moteur/js/revalorisation.js";
 import { Saisie } from "../../moteur/js/saisie.js";
 import { ScenarioActuel } from "../../moteur/js/scenario-actuel.js";
 import { Simulateur } from "../../moteur/js/simulateur.js";
@@ -1499,12 +1499,105 @@ function impotsDesFoyers({ parametres, derniere, indexation, appels }) {
   });
 }
 
+// -- la revalorisation servie et l'indexation (action 161, note de décision 0007) --
+
+/** Les revalorisations servies déjà bâties, par simulateur, puis par bornes. */
+const REVALORISATIONS_SERVIES = new WeakMap();
+
+/** La revalorisation servie du simulateur, de `premiere` à `derniere`, bâtie une fois. */
+function revalorisationServieDe(simulateur, premiere, derniere) {
+  if (!REVALORISATIONS_SERVIES.has(simulateur)) {
+    REVALORISATIONS_SERVIES.set(simulateur, new Map());
+  }
+  const memoire = REVALORISATIONS_SERVIES.get(simulateur);
+  const cle = `${premiere}:${derniere}`;
+  if (!memoire.has(cle)) {
+    memoire.set(cle, new RevalorisationServie(simulateur, premiere, derniere));
+  }
+  return memoire.get(cle);
+}
+
+/**
+ * Les lectures de la revalorisation servie que le pont fait appeler, sous le
+ * nom que le Python leur donne : celles que sa classe garde, pour les
+ * confronter. Une lecture de plus s'y déclare, et ce qu'elle rend dans
+ * `LECTURES_DE_LA_REVALORISATION_SERVIE` de `pont.py`.
+ */
+const LECTURES_DE_LA_REVALORISATION_SERVIE = {
+  coefficient: (servie, ...valeurs) => servie.coefficient(...valeurs),
+  coefficient_stock: (servie, ...valeurs) => servie.coefficientStock(...valeurs),
+  coefficient_points: (servie, ...valeurs) => servie.coefficientPoints(...valeurs),
+  regime_convenu: (servie, ...valeurs) => servie.regimeConvenu(...valeurs),
+};
+
+/** Les lectures de l'indexation que le pont fait appeler (`LECTURES_DE_L_INDEXATION` de `pont.py`). */
+const LECTURES_DE_L_INDEXATION = {
+  taux: (indexation, annee) => indexation.taux(annee),
+  coefficient: (indexation, depart, arrivee) => indexation.coefficient(depart, arrivee),
+};
+
+/** Arrête la demande qui nomme une lecture que le pont ne porte pas. */
+function lecturesConnues(appels, lectures, quoi) {
+  const inconnues = [...new Set(appels.map(({ methode }) => methode))]
+    .filter((nom) => !Object.hasOwn(lectures, nom));
+  if (inconnues.length > 0) {
+    throw new Error(`lectures ${quoi} que le pont ne fait pas appeler : ${inconnues.join(", ")}`);
+  }
+}
+
+/**
+ * La revalorisation servie d'un jeu de paramètres, de `premiere` à
+ * `derniere` (`RevalorisationServie` de `revalorisation.js`, que le portage
+ * seul calcule). Avec `series`, ce que la classe Python du même nom lit pour
+ * le coût : l'index du compte et la valeur de service convenue de chaque
+ * régime, en euros constants, année par année depuis `premiere`, et le régime
+ * convenu de chaque régime du catalogue. Puis chaque appel, `{cle, methode,
+ * arguments}`, d'une lecture de la classe du portage, pour confronter celles
+ * que le Python garde.
+ */
+function revalorisationServie({ parametres, premiere, derniere, series, appels }) {
+  lecturesConnues(appels, LECTURES_DE_LA_REVALORISATION_SERVIE, "de la revalorisation servie");
+  const simulateur = simulateurSous(parametres);
+  const servie = revalorisationServieDe(simulateur, premiere, derniere);
+  const reponse = parCas(appels, ({ methode, arguments: valeurs }) => (
+    LECTURES_DE_LA_REVALORISATION_SERVIE[methode](servie, ...valeurs)));
+  if (series) {
+    reponse.series = {
+      premiere: servie.premiereAnnee,
+      derniere: servie.derniereAnnee,
+      index: [...servie._index.values()],
+      points: Object.fromEntries([...servie._series()].map(
+        ([regime, serie]) => [regime, [...serie.values()]])),
+      convenus: Object.fromEntries(simulateur.scenarioActuel.catalogue.codes.map(
+        (code) => [code, servie.regimeConvenu(code)])),
+    };
+  }
+  return reponse;
+}
+
+/**
+ * Chaque appel, `{cle, methode, arguments}`, d'une lecture de l'indexation
+ * d'un jeu de paramètres (`Indexation` de `indexation.js`) : le taux d'une
+ * année, tel quel, ou le rendement cumulé d'une cotisation. Le coût le
+ * demande sous une variante démographique (`_sous_la_demographie` de
+ * `cout.py`), d'un lot.
+ */
+function indexationDuCompte({ parametres, appels }) {
+  lecturesConnues(appels, LECTURES_DE_L_INDEXATION, "de l'indexation");
+  const { indexation } = simulateurSous(parametres);
+  return parCas(appels, ({ methode, arguments: valeurs }) => (
+    LECTURES_DE_L_INDEXATION[methode](indexation, ...valeurs)));
+}
+
+// -- la fin de la revalorisation servie et de l'indexation ----------------------
+
 const LECTURES = {
   carrieres, saisies, grille_du_cout: grilleDuCout, carrieres_des_saisies: carrieresDesSaisies,
   simulations, scenario_actuel: scenarioActuel, droit, ages_de_depart: agesDeDepart,
   carrieres_de_la_grille: carrieresDeLaGrille, avantages, departs_des_cas: departsDesCas,
   debuts_de_la_surcote: debutsDeLaSurcote, garantie: garantieDePopulation,
-  impot: impotsDesFoyers,
+  impot: impotsDesFoyers, revalorisation_servie: revalorisationServie,
+  indexation: indexationDuCompte,
 };
 
 // -- la façade des tests (action 161, note de décision 0007) -------------------

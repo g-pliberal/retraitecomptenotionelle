@@ -1652,6 +1652,149 @@ def impot(appels: list[tuple], parametres=None, paquet: bytes | None = None, *,
             for lu in (lus[str(rang)] for rang in range(len(appels)))]
 
 
+# -- la revalorisation servie et l'indexation (action 161, note de décision 0007) --
+
+
+@dataclasses.dataclass(frozen=True)
+class SeriesServies:
+    """Ce que :func:`series_servies` relit de la revalorisation servie d'un
+    jeu de paramètres : l'index du compte et, sous son régime, la valeur de
+    service convenue, en euros constants, de la première année à la dernière ;
+    et, de chaque régime du catalogue, celui qui sert ses points au bout de
+    ses fusions, s'il a une valeur de service convenue."""
+
+    premiere_annee: int
+    derniere_annee: int
+    index: dict[int, float]
+    points: dict[str, dict[int, float]]
+    convenus: dict[str, str | None]
+
+
+def _regime_lu(valeur) -> str | None:
+    if valeur is not None and not isinstance(valeur, str):
+        raise TypeError(f"un régime, ou rien, attendu : {valeur!r}")
+    return valeur
+
+
+#: Ce que rend chaque lecture de la revalorisation servie que le pont fait
+#: appeler (``LECTURES_DE_LA_REVALORISATION_SERVIE`` de ``pont.mjs``) : celles
+#: que la classe Python garde, sous son type. Une lecture qui n'y est pas est
+#: refusée avant node.
+LECTURES_DE_LA_REVALORISATION_SERVIE = {
+    "coefficient": _flottant,
+    "coefficient_stock": _flottant,
+    "coefficient_points": _flottant,
+    "regime_convenu": _regime_lu,
+}
+
+
+def _taux_lu(lu: dict):
+    """Le taux d'une année que le portage a écrit, sous le type du Python."""
+    from .donnees.chargement import Fiabilite
+    from .moteur.indexation import TauxIndexation
+
+    return TauxIndexation(
+        annee=_entier(lu["annee"], "annee"), taux=_flottant(lu["taux"]),
+        terme_retenu=lu["terme_retenu"], inflation=_flottant(lu["inflation"]),
+        salaire_moyen=_flottant(lu["salaire_moyen"]),
+        productivite=_flottant(lu["productivite"]), fiabilite=Fiabilite(lu["fiabilite"]))
+
+
+#: Ce que rend chaque lecture de l'indexation que le pont fait appeler
+#: (``LECTURES_DE_L_INDEXATION`` de ``pont.mjs``).
+LECTURES_DE_L_INDEXATION = {
+    "taux": _taux_lu,
+    "coefficient": _flottant,
+}
+
+
+def _lectures_du_portage(demande: str, corps: dict, appels: list[tuple], lectures: dict,
+                         parametres, paquet: bytes | None) -> tuple[dict, list]:
+    """La réponse du portage à ``demande``, et ce que rend chaque appel,
+    ``(lecture, *arguments)``, dans l'ordre, relu sous son type. Une lecture
+    que le pont ne relit pas est refusée avant node ; un appel que le portage
+    refuse arrête le lot, de son motif."""
+    from .config import Parametres
+
+    inconnues = sorted({lecture for lecture, *_ in appels} - set(lectures))
+    if inconnues:
+        raise ValueError(f"lectures que le pont ne relit pas : {', '.join(inconnues)} "
+                         f"(pont, {demande})")
+    reponse = _demander({demande: {
+        "parametres": parametres_en_donnees(Parametres() if parametres is None else parametres),
+        **corps,
+        "appels": [{"cle": str(rang), "methode": lecture, "arguments": _en_donnees(arguments)}
+                   for rang, (lecture, *arguments) in enumerate(appels)],
+    }}, _paquet_de(parametres, paquet))
+    for motif in reponse["echecs"].values():
+        raise ValueError(motif)
+    lus = reponse["resultats"]
+    return reponse, [lectures[lecture](lus[str(rang)])
+                     for rang, (lecture, *_) in enumerate(appels)]
+
+
+def series_servies(parametres, premiere_annee: int, derniere_annee: int,
+                   paquet: bytes | None = None) -> SeriesServies:
+    """Les séries de la revalorisation servie sous ``parametres``, ceux du
+    simulateur, de ``premiere_annee`` à ``derniere_annee``, que le portage
+    seul calcule (``RevalorisationServie`` de ``moteur/js/revalorisation.js``,
+    note de décision 0007) : une demande par jeu de paramètres, que la classe
+    Python du même nom lit ensuite, coefficient par coefficient, sans rien
+    redemander."""
+    reponse, _ = _lectures_du_portage(
+        "revalorisation_servie",
+        {"premiere": premiere_annee, "derniere": derniere_annee, "series": True},
+        [], LECTURES_DE_LA_REVALORISATION_SERVIE, parametres, paquet)
+    series = reponse["series"]
+    premiere = _entier(series["premiere"], "premiere")
+
+    def serie(valeurs: list) -> dict[int, float]:
+        return {premiere + rang: _flottant(valeur) for rang, valeur in enumerate(valeurs)}
+
+    return SeriesServies(
+        premiere_annee=premiere, derniere_annee=_entier(series["derniere"], "derniere"),
+        index=serie(series["index"]),
+        points={regime: serie(valeurs) for regime, valeurs in series["points"].items()},
+        convenus={regime: _regime_lu(convenu)
+                  for regime, convenu in series["convenus"].items()})
+
+
+def revalorisation_servie(appels: list[tuple], parametres, premiere_annee: int,
+                          derniere_annee: int, paquet: bytes | None = None) -> list:
+    """Chaque appel d'une lecture de la revalorisation servie du portage,
+    bâtie sous ``parametres`` de ``premiere_annee`` à ``derniere_annee`` :
+    ``("coefficient", année de liquidation, année)``, ``("coefficient_stock",
+    année de liquidation, année, réforme prospective ?)``,
+    ``("coefficient_points", régime, année de liquidation, année)``,
+    ``("regime_convenu", régime)``. Ce sont les lectures que la classe Python
+    garde : leur confrontation les demande ainsi au portage lui-même. Le lot
+    part d'une seule demande, et revient dans l'ordre des appels."""
+    if not appels:
+        return []
+    return _lectures_du_portage(
+        "revalorisation_servie",
+        {"premiere": premiere_annee, "derniere": derniere_annee, "series": False},
+        appels, LECTURES_DE_LA_REVALORISATION_SERVIE, parametres, paquet)[1]
+
+
+def indexation(appels: list[tuple], parametres=None, paquet: bytes | None = None) -> list:
+    """Chaque appel d'une lecture de l'indexation, que le portage seul calcule
+    pour le coût (``moteur/js/indexation.js``, note de décision 0007), sous
+    ``parametres``, ceux du simulateur, les réglages de référence sans eux :
+    ``("taux", année)``, le taux retenu et le terme qui l'emporte
+    (``TauxIndexation``) ; ``("coefficient", année de départ, année
+    d'arrivée)``, le rendement cumulé d'une cotisation, revalorisée de l'année
+    qui suit son versement à celle de l'arrivée comprise. Le lot part d'une
+    seule demande, et revient dans l'ordre des appels."""
+    if not appels:
+        return []
+    return _lectures_du_portage("indexation", {}, appels, LECTURES_DE_L_INDEXATION,
+                                parametres, paquet)[1]
+
+
+# -- la fin de la revalorisation servie et de l'indexation ------------------------
+
+
 def simulations(cas: list[dict], paquet: bytes | None = None,
                 ) -> tuple[dict[str, dict], dict[str, str]]:
     """Chaque requête d'un témoin de simulations, ``{"cle", "requete"}``, lue

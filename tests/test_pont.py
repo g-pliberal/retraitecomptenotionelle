@@ -2209,3 +2209,259 @@ def test_le_pont_rend_les_refus_de_l_impot():
     with pytest.raises(ValueError, match="un foyer a un déclarant, ou deux"):
         pont.impot([(2024, _retraites(30000.0)),
                     (2024, _retraites(10000.0, 10000.0, 10000.0))])
+
+
+# -- la revalorisation servie et l'indexation (action 161, note de décision 0007) --
+
+
+def _sans_node():
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+
+
+#: Le simulateur de la page Coût (``Simulateur.pour_la_projection``) : sous
+#: les conventions du COR, la valeur de service de l'Agirc-Arrco est convenue.
+SOUS_LE_COR = dict(conventions_cor=True, minimum_vieillesse_dans_le_scenario_actuel=False)
+
+
+def _regles(**reglages) -> Parametres:
+    """Les paramètres d'un jeu de réglages, la règle d'indexation et celle du
+    stock écrites par leur valeur."""
+    from retraite_notionnelle.config import ModeIndexation, RevalorisationStock
+
+    types_ = {"mode_indexation": ModeIndexation, "revalorisation_stock": RevalorisationStock}
+    return Parametres(**{nom: types_.get(nom, lambda valeur: valeur)(valeur)
+                         for nom, valeur in reglages.items()})
+
+
+def test_le_pont_rend_les_series_de_la_revalorisation_servie():
+    """Le cœur de la revalorisation servie ne s'écrit qu'en JavaScript
+    (``RevalorisationServie`` de ``moteur/js/revalorisation.js``, note de
+    décision 0007) : le coût en demande les séries au pont, une demande par
+    jeu de paramètres (:func:`pont.series_servies`), et sa classe Python ne
+    fait plus que les lire. Les valeurs sont posées à la main.
+
+    L'index du compte, en euros constants, vaut un la première année, et
+    gagne chaque année le taux d'indexation déflaté des prix. En 2023, sous
+    la masse salariale, +5,625 % (``data/reference/macro/masse_salariale.csv``)
+    contre +4,875 % de prix (``ipc_annuel.csv``) : 1,05625 / 1,04875. Un
+    diviseur actualisé à 1,6 % a servi d'avance ce rendement : la pension
+    servie le rend chaque année, soit 1,016 puissance dix de moins en dix
+    ans, la règle suédoise.
+
+    La valeur de service de l'Agirc-Arrco, sous les conventions du COR
+    (``conventions_points`` de ``hypotheses_projection.yaml``) : le salaire
+    moyen moins 1,16 point de 2027 à 2037, moins 0,86 ensuite, quand le
+    scénario de référence porte le salaire à 2,45 % et les prix à 1,75 %.
+    De 2026 à 2040, en euros constants : (1,0129 / 1,0175) puissance onze,
+    fois (1,0159 / 1,0175) puissance trois, soit 0,9469. Elle sert, au bout
+    de leurs fusions, les points de l'Arrco et de l'Agirc ; le régime général
+    n'a pas de valeur de service."""
+    _sans_node()
+    series = pont.series_servies(Parametres(), 2020, 2030)
+    assert (series.premiere_annee, series.derniere_annee) == (2020, 2030)
+    assert list(series.index) == list(range(2020, 2031))
+    assert series.index[2020] == 1.0
+    assert {type(annee) for annee in series.index} == {int}
+    assert {type(valeur) for valeur in series.index.values()} == {float}
+    assert series.index[2023] / series.index[2022] == pytest.approx(
+        1.05625 / 1.04875, rel=1e-12)
+    # Sans les conventions du COR, aucune valeur de service n'est convenue.
+    assert series.points == {}
+    assert series.convenus["arrco"] is None and series.convenus["regime_general"] is None
+
+    prefinancee = pont.series_servies(Parametres(taux_anticipe_conversion=0.016), 2020, 2030)
+    assert prefinancee.index[2030] / series.index[2030] == pytest.approx(
+        1.016 ** -10, rel=1e-12)
+
+    cor = pont.series_servies(Parametres(**SOUS_LE_COR), 2026, 2040)
+    assert list(cor.points) == ["agirc_arrco"]
+    valeur = cor.points["agirc_arrco"]
+    assert list(valeur) == list(range(2026, 2041)) and valeur[2026] == 1.0
+    assert valeur[2040] == pytest.approx(
+        (1.0129 / 1.0175) ** 11 * (1.0159 / 1.0175) ** 3, rel=1e-6)
+    assert (cor.convenus["arrco"], cor.convenus["agirc"], cor.convenus["agirc_arrco"],
+            cor.convenus["regime_general"]) == ("agirc_arrco", "agirc_arrco", "agirc_arrco", None)
+    # Une dernière année d'avant la première : la première seule.
+    assert pont.series_servies(Parametres(), 2030, 2020).index == {2030: 1.0}
+
+
+def test_le_pont_fait_lire_la_revalorisation_servie_au_portage():
+    """Les quatre lectures que la classe Python garde — le coefficient, la
+    règle du stock à la bascule, la valeur de service, le régime convenu —
+    se demandent aussi au portage lui-même (:func:`pont.revalorisation_servie`),
+    pour les confronter. Les valeurs sont posées à la main : le coefficient
+    de 2022 à 2023, 1,05625 / 1,04875 ; un, exactement, tant que la pension
+    n'est pas servie.
+
+    La règle du stock (``revalorisation_stock``), pour une pension liquidée
+    en 2012, lue en 2030, la bascule en 2026. Le stock aux prix : une réforme
+    prospective ne lui donne rien, un ; une rétroactive le gèle à ce qu'il
+    valait à la bascule, le coefficient de 2012 à 2026. Le stock réindexé :
+    la prospective le prend à sa règle le jour de la bascule, le coefficient
+    de 2026 à 2030 ; la rétroactive l'a toujours revalorisé, de 2012 à 2030.
+    Une pension liquidée après la bascule suit la règle du compte dans tous
+    les cas."""
+    _sans_node()
+    lire = lambda appels, **reglages: pont.revalorisation_servie(  # noqa: E731
+        appels, _regles(**reglages), 1941, 2070)
+    an, avant, de_2012_a_2026, de_2012_a_2030, de_2026_a_2030, de_2028_a_2030 = lire([
+        ("coefficient", 2022, 2023), ("coefficient", 2023, 2022), ("coefficient", 2012, 2026),
+        ("coefficient", 2012, 2030), ("coefficient", 2026, 2030), ("coefficient", 2028, 2030)])
+    assert an == pytest.approx(1.05625 / 1.04875, rel=1e-12)
+    assert avant == 1.0 and type(avant) is float
+    stock = [("coefficient_stock", 2012, 2030, True), ("coefficient_stock", 2012, 2030, False),
+             ("coefficient_stock", 2028, 2030, True), ("coefficient_stock", 2028, 2030, False)]
+    assert lire(stock) == [1.0, de_2012_a_2026, de_2028_a_2030, de_2028_a_2030]
+    assert lire(stock, revalorisation_stock="reindexe") == [
+        de_2026_a_2030, de_2012_a_2030, de_2028_a_2030, de_2028_a_2030]
+    assert de_2012_a_2026 != de_2012_a_2030 != de_2026_a_2030
+    # La valeur de service convenue, et le régime qui la sert.
+    points, sans_convention, arrco, general = lire([
+        ("coefficient_points", "agirc_arrco", 2026, 2040),
+        ("coefficient_points", "regime_general", 2026, 2040),
+        ("regime_convenu", "arrco"), ("regime_convenu", "regime_general")], **SOUS_LE_COR)
+    assert points == pytest.approx((1.0129 / 1.0175) ** 11 * (1.0159 / 1.0175) ** 3, rel=1e-6)
+    assert (sans_convention, arrco, general) == (1.0, "agirc_arrco", None)
+    assert pont.revalorisation_servie([], Parametres(), 1941, 2070) == []
+    with pytest.raises(ValueError, match="coefficient_nominal"):
+        lire([("coefficient_nominal", 2020, 2030)])
+
+
+def test_le_pont_rend_les_taux_de_l_indexation():
+    """L'indexation ne s'écrit qu'en JavaScript (``moteur/js/indexation.js``,
+    note de décision 0007) : le coût, qui en lit le rendement d'une
+    cotisation sous une variante démographique, le demande au pont, par lot
+    (:func:`pont.indexation`). Les valeurs sont posées à la main sur 2023 :
+    la masse salariale, +5,625 %, les prix, +4,875 %, le salaire moyen,
+    +4,662 %, la productivité réelle, +1,099 % (``masse_salariale.csv``,
+    ``ipc_annuel.csv``, ``salaire_moyen.csv`` et ``productivite.csv`` de
+    ``data/reference/macro/``), et, en 2022, la masse salariale à +7,838 %.
+
+    Une cotisation de 2021 arrêtée en 2023 a reçu les taux de 2022 et de
+    2023, non celui de l'année de son versement : 1,07838 × 1,05625. Le
+    triple verrou inversé retient le plus petit des trois taux, la
+    productivité ; son plancher, s'il passe au-dessus, le remplace."""
+    _sans_node()
+    from retraite_notionnelle.donnees.chargement import Fiabilite
+    from retraite_notionnelle.moteur.indexation import TauxIndexation
+
+    taux, deux_ans, meme_annee, a_rebours = pont.indexation([
+        ("taux", 2023), ("coefficient", 2021, 2023), ("coefficient", 2023, 2023),
+        ("coefficient", 2023, 2021)])
+    assert taux == TauxIndexation(
+        annee=2023, taux=0.05625, terme_retenu="masse_salariale", inflation=0.04875,
+        salaire_moyen=0.04662, productivite=0.01099, fiabilite=Fiabilite.CERTIFIEE)
+    assert [type(taux.annee), type(taux.taux), type(taux.fiabilite)] == [int, float, Fiabilite]
+    assert deux_ans == (1 + 0.07838) * (1 + 0.05625)
+    assert (meme_annee, a_rebours) == (1.0, 1.0) and type(meme_annee) is float
+    [verrou] = pont.indexation([("taux", 2023)], _regles(mode_indexation="triple_lock_inverse"))
+    assert (verrou.taux, verrou.terme_retenu) == (0.01099, "productivite_reelle")
+    [plancher] = pont.indexation([("taux", 2023)], _regles(
+        mode_indexation="triple_lock_inverse", plancher_indexation=0.02))
+    assert (plancher.taux, plancher.terme_retenu) == (0.02, "plancher")
+    assert pont.indexation([]) == []
+    with pytest.raises(ValueError, match="historique"):
+        pont.indexation([("historique", 2020, 2023)])
+
+
+#: Les jeux de paramètres de la confrontation : chaque réglage que
+#: l'indexation et la revalorisation servie lisent — la règle, son lissage,
+#: son plancher, le préfinancement, la règle du stock et la bascule, le
+#: scénario de projection, la trajectoire de l'emploi —, et le simulateur de
+#: la page Coût.
+JEUX_DE_L_INDEXATION = (
+    {},
+    *({"mode_indexation": mode} for mode in (
+        "triple_lock_inverse", "triple_lock_inverse_nominal", "mediane_trois_taux",
+        "moyenne_trois_taux", "pib_nominal", "revalorisation_portee_au_compte", "prix",
+        "salaires")),
+    {"lissage_indexation": 3}, {"lissage_indexation": 5},
+    {"mode_indexation": "triple_lock_inverse", "lissage_indexation": 5},
+    {"mode_indexation": "triple_lock_inverse", "plancher_indexation": 0.0},
+    {"mode_indexation": "prix", "plancher_indexation": 0.02, "lissage_indexation": 3},
+    {"taux_anticipe_conversion": 0.016},
+    {"revalorisation_stock": "reindexe"}, {"annee_bascule": 2035},
+    {"revalorisation_stock": "reindexe", "annee_bascule": 2019},
+    {"scenario_projection": "cor_productivite_basse"},
+    {"scenario_projection": "cor_productivite_haute"}, {"trajectoire_emploi": "constant"},
+    SOUS_LE_COR,
+    {**SOUS_LE_COR, "revalorisation_stock": "reindexe", "taux_anticipe_conversion": 0.016},
+    {**SOUS_LE_COR, "scenario_projection": "cor_productivite_basse"},
+)
+
+
+def test_l_indexation_du_portage_est_celle_du_jumeau_au_bit():
+    """La confrontation qui tient lieu de relecture de l'indexation (note de
+    décision 0007) : le taux de chaque année de 1941 à 2070 — le taux, le
+    terme retenu, les trois séries, la fiabilité —, et le rendement cumulé
+    d'une grille de cotisations, les mêmes au bit dans les deux exemplaires,
+    sous chaque jeu de :data:`JEUX_DE_L_INDEXATION`. Elle ne dit pas que la
+    règle est juste — :func:`test_le_pont_rend_les_taux_de_l_indexation` et
+    ``tests/test_moteur.py`` le disent —, mais que le jumeau Python, que le
+    moteur d'une carrière lit jusqu'à son retrait, fait le même calcul."""
+    _sans_node()
+    annees = range(1941, 2071)
+    paires = [(depart, arrivee) for depart in range(1938, 2074, 4)
+              for arrivee in range(1940, 2076, 5)]
+    appels = [*(("taux", annee) for annee in annees),
+              *(("coefficient", *paire) for paire in paires)]
+    compares = 0
+    for jeu in JEUX_DE_L_INDEXATION:
+        parametres = _regles(**jeu)
+        jumeau = Simulateur(parametres).indexation
+        lus = pont.indexation(appels, parametres)
+        attendus = [*(jumeau.taux(annee) for annee in annees),
+                    *(jumeau.coefficient(*paire) for paire in paires)]
+        ecarts = [(appel, repr(lu), repr(attendu))
+                  for appel, lu, attendu in zip(appels, lus, attendus, strict=True)
+                  if lu != attendu or type(lu) is not type(attendu)]
+        assert ecarts == [], f"sous {jeu} : {ecarts[:3]}"
+        compares += len(appels)
+    assert compares == len(JEUX_DE_L_INDEXATION) * (130 + len(paires))
+
+
+def test_la_revalorisation_servie_du_portage_est_celle_du_jumeau_au_bit():
+    """La confrontation qui tient lieu de relecture de la revalorisation
+    servie (note de décision 0007), écrite avant que la classe Python cesse
+    de calculer : sous chaque jeu de :data:`JEUX_DE_L_INDEXATION`, l'index du
+    compte et la valeur de service convenue, année par année, de 1941 à
+    2070, et le régime convenu de chaque régime du catalogue, tels que le
+    pont les rend (:func:`pont.series_servies`), sont au bit ceux que le
+    jumeau bâtit ; et les quatre lectures, demandées au portage sur une
+    grille de liquidations et d'années qui déborde la série des deux côtés,
+    sont celles du jumeau."""
+    _sans_node()
+    from retraite_notionnelle.revalorisation import RevalorisationServie
+
+    grille = [(liquidation, annee) for liquidation in range(1935, 2076, 7)
+              for annee in range(1938, 2079, 5)]
+    compares = 0
+    for jeu in JEUX_DE_L_INDEXATION:
+        parametres = _regles(**jeu)
+        simulateur = Simulateur(parametres)
+        jumeau = RevalorisationServie(simulateur, 1941, 2070)
+        series = pont.series_servies(parametres, 1941, 2070)
+        assert series.index == jumeau._index, f"l'index, sous {jeu}"
+        assert list(series.index) == list(jumeau._index)
+        assert series.points == jumeau._points, f"la valeur de service, sous {jeu}"
+        codes = [*simulateur.scenario_actuel.catalogue.codes, "regime_inconnu"]
+        assert series.convenus == {code: jumeau.regime_convenu(code) for code in codes
+                                   if code != "regime_inconnu"}
+        regimes = [*series.points, "regime_general"]
+        appels = [
+            *(("coefficient", *case) for case in grille),
+            *(("coefficient_stock", *case, prospectif)
+              for case in grille for prospectif in (True, False)),
+            *(("coefficient_points", regime, *case) for regime in regimes for case in grille),
+            *(("regime_convenu", code) for code in codes)]
+        lus = pont.revalorisation_servie(appels, parametres, 1941, 2070)
+        attendus = [getattr(jumeau, methode)(*arguments) for methode, *arguments in appels]
+        ecarts = [(appel, repr(lu), repr(attendu))
+                  for appel, lu, attendu in zip(appels, lus, attendus, strict=True)
+                  if lu != attendu or type(lu) is not type(attendu)]
+        assert ecarts == [], f"sous {jeu} : {ecarts[:3]}"
+        compares += len(appels)
+    # La valeur de service n'est convenue que sous les conventions du COR :
+    # trois jeux l'éprouvent.
+    assert compares > 60000
