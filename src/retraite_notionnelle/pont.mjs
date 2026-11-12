@@ -80,6 +80,9 @@
  *   attente, lire}], parametres, primes}` — chaque cas type daté comme
  *   `ages_de_depart` le date, puis, sauf sous `lire: "age"`, ce que
  *   l'échéancier lit à son départ : les mesures de `scripts/grille_large.py`.
+ *   Sous `lire: "liquidation"`, une case de la grille, écartée comme le droit
+ *   l'écarte, avec l'année de son départ et ce que le journal garde de sa
+ *   liquidation : `scripts/flux_fonction_publique.py`.
  * - `debuts_de_la_surcote` : `{cas: [{cle, …, plein, recherche}], parametres,
  *   primes}` — le premier âge d'où le modèle sert une surcote à la pension de
  *   fonctionnaire de chaque cas type, cherché autour de `plein`.
@@ -574,6 +577,28 @@ function ageDuCas(simulateur, cas, primes, variante) {
 }
 
 /**
+ * Ce que le journal de l'échéancier garde de la liquidation d'une carrière
+ * (`Simulateur.echeancier`, docs/architecture.md, § 7.4), pour
+ * `scripts/flux_fonction_publique.py` (action 161, lot B) : l'année du
+ * départ, et, de chaque liquidation inscrite avec son résultat, dans l'ordre
+ * du journal, chaque pension du code des pensions, `[regime, montant,
+ * traitement]` — la pension avant tout complément, et le traitement ou la
+ * solde de l'article L. 15 qui la liquide, que la liquidation garde pour le
+ * plafond de la majoration pour enfants (L. 18).
+ */
+function liquidationAuJournal(carriere, journal) {
+  const liquidation = [];
+  for (const entree of journal) {
+    const pensions = entree.sorte === "liquidation" ? entree.contenu.pensions : undefined;
+    for (const { indice, traitement } of pensions?.plafonds ?? []) {
+      liquidation.push([pensions.regimes[indice].regime, pensions.regimes[indice].montant,
+        traitement]);
+    }
+  }
+  return { annee: carriere.anneeLiquidation, liquidation };
+}
+
+/**
  * Le départ de chaque cas type, `{cle, regle, options, parcours, entree,
  * attente, lire}`, sous `parametres` — ce que lisent les mesures de
  * `scripts/grille_large.py` (`Departs`, étape 7) : l'âge que son pilote fixe
@@ -583,6 +608,9 @@ function ageDuCas(simulateur, cas, primes, variante) {
  * le motif de l'ouverture, chaque avantage appliqué, `[code, montant]`,
  * chaque pension de régime, `[regime, montant, surcote]` —, ou le motif qui
  * le refuse (`refus`), l'âge gardé, comme le Python lit l'âge sans le départ.
+ * Sous `lire: "liquidation"`, le cas est une case de la grille, que le droit
+ * peut écarter (`verifierLaCase`), et son départ porte de plus ce que le
+ * journal garde de sa liquidation (`liquidationAuJournal`).
  */
 function departsDesCas({ parametres, primes, cas }) {
   const simulateur = simulateurSous(parametres);
@@ -592,10 +620,20 @@ function departsDesCas({ parametres, primes, cas }) {
     if (un.lire === "age") {
       return lu;
     }
+    const construire = carriereFinale(simulateur, un.entree ?? null, batir, primes);
+    const duJournal = un.lire === "liquidation";
+    if (duJournal) {
+      verifierLaCase(simulateur, construire(age), un.options.affiliation);
+    }
     let depart;
+    let journal = {};
     try {
-      depart = simulateur.echeancier(
-        carriereFinale(simulateur, un.entree ?? null, batir, primes)(age)).auDepart;
+      const carriere = construire(age);
+      const echeancier = simulateur.echeancier(carriere);
+      depart = echeancier.auDepart;
+      if (duJournal) {
+        journal = liquidationAuJournal(carriere, echeancier.journal);
+      }
     } catch (erreur) {
       if (erreurDuProgramme(erreur)) {
         throw erreur;
@@ -611,6 +649,7 @@ function departsDesCas({ parametres, primes, cas }) {
       avantages_appliques: depart.avantages_appliques.map(({ code, montant }) => [code, montant]),
       pensions_par_regime: depart.pensions_par_regime
         .map(({ regime, montant, surcote }) => [regime, montant, surcote]),
+      ...journal,
     };
   });
 }

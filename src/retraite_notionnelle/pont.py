@@ -786,7 +786,14 @@ def departs_des_cas(cas: list[dict], parametres, primes: dict[int, float] | None
     de l'ouverture, chaque avantage appliqué, ``(code, montant)``, chaque
     pension de régime, ``(regime, montant, surcote)`` —, ou ``None`` et le
     motif qui le refuse (``"refus"``). Puis, sous leur clé, les motifs des cas
-    dont le portage refuse l'âge."""
+    dont le portage refuse l'âge. Sous ``"lire": "liquidation"``, que lit
+    ``scripts/flux_fonction_publique.py`` (action 161, lot B), le cas est une
+    case de la grille, que le droit peut écarter comme
+    ``castypes.carriere_de_la_grille`` l'écarte, sous le même motif ; et son
+    départ porte de plus son année (``"annee"``) et ce que le journal garde de
+    sa liquidation (``"liquidation"``) : chaque pension du code des pensions,
+    ``(regime, montant, traitement)``, la pension avant tout complément et le
+    traitement de l'article L. 15 qui la liquide."""
     reponse = _demander({"departs_des_cas": {
         "parametres": parametres_en_donnees(parametres), "primes": primes, "cas": cas}},
         _paquet_de(parametres, paquet))
@@ -804,6 +811,11 @@ def departs_des_cas(cas: list[dict], parametres, primes: dict[int, float] | None
                 "pensions": tuple((regime, _flottant(montant), _flottant(surcote))
                                   for regime, montant, surcote in lu["pensions_par_regime"]),
             }
+            if "liquidation" in lu:
+                depart["annee"] = _entier(lu["annee"], "annee")
+                depart["liquidation"] = tuple(
+                    (regime, _flottant(montant), _flottant(traitement))
+                    for regime, montant, traitement in lu["liquidation"])
         resultats[cle] = {"age": _flottant(lu["age"]), "attendu": bool(lu.get("attendu")),
                           "depart": depart, "refus": lu.get("refus")}
     return resultats, reponse["echecs"]

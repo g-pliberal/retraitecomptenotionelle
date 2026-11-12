@@ -339,3 +339,83 @@ def test_le_droit_a_revalorise_les_pensions_moins_vite_que_les_prix_depuis_2016(
     assert revalorisation == pytest.approx(1.161, abs=0.001)
     assert prix == pytest.approx(1.207, abs=0.002)
     assert prix / revalorisation - 1 == pytest.approx(0.04, abs=0.005)
+
+
+# -- par le portage (action 161, lot B) ------------------------------------------
+
+def _conventions():
+    """Les deux simulateurs sous lesquels l'étude mesure : celui de la page
+    Cas types, la carrière d'un seul statut, et celui de la page Coût, sous
+    les conventions de projection du COR."""
+    return {"page": Simulateur(Parametres()),
+            "projection": Simulateur(Parametres()).pour_la_projection()}
+
+
+def _statutaires():
+    from retraite_notionnelle.castypes import CAS_TYPES
+
+    return tuple(cas for cas in CAS_TYPES if cas.code in flux.REFERENTS)
+
+
+def test_le_pont_rend_le_journal_de_la_liquidation_au_bit_pres_du_moteur_python():
+    """Ce que l'étude lit d'un cas type qui part, le pont le rend d'une
+    lecture, ``"lire": "liquidation"`` de ``pont.departs_des_cas`` (action
+    161, lot B) : l'année et l'âge du départ, la durée validée, et, du journal
+    de la liquidation, chaque pension du code des pensions avant tout
+    complément avec le traitement de l'article L. 15 qui la liquide. Les trois
+    cas types statutaires, sur les générations du coût et celles que l'étude
+    fait partir en 2025, sous les deux conventions : 182 cases que le moteur
+    Python simulait (``calculer_cas_types``), au bit près, et les dix qu'il
+    écartait, sous le même motif. Les cases y passent toutes : sans pension du
+    code des pensions (les premières générations du sédentaire), avec une,
+    avec deux liquidations au journal."""
+    import shutil
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage ne calcule pas ici")
+    from retraite_notionnelle import pont
+    from retraite_notionnelle.castypes import (age_lu, calculer_cas_types,
+                                              primes_projetees_en_donnees)
+    from retraite_notionnelle.cout import generations
+
+    def du_moteur_python(comparaison):
+        return {
+            "age": comparaison.carriere.age_liquidation,
+            "annee": comparaison.carriere.annee_liquidation,
+            "trimestres_valides": comparaison.actuel.trimestres_valides,
+            "liquidation": tuple(
+                (pensions.regimes[plafond.indice].regime,
+                 pensions.regimes[plafond.indice].montant, plafond.traitement)
+                for entree in comparaison.journal if entree.sorte == "liquidation"
+                for pensions in (entree.contenu.pensions,) for plafond in pensions.plafonds),
+        }
+
+    retenues = tuple(sorted({*generations(), 1961, 1963, 1977}))
+    statutaires = _statutaires()
+    formes = set()
+    for simulateur in _conventions().values():
+        grille = calculer_cas_types(simulateur, statutaires, retenues, "droit")
+        cohortes = {f"{cas.code}|{generation}": (cas, generation)
+                    for cas in statutaires for generation in retenues}
+        lus, refus = pont.departs_des_cas(
+            [{"cle": cle, **cas.pour_le_portage(simulateur, generation), "lire": "liquidation"}
+             for cle, (cas, generation) in cohortes.items()],
+            simulateur.parametres, primes_projetees_en_donnees(simulateur),
+            pont.paquet_des_donnees())
+        assert {(cohortes[cle][0].code, cohortes[cle][1]): motif
+                for cle, motif in refus.items()} == grille.echecs
+        assert len(grille.echecs) == 5 and len(grille.resultats) == 91
+        for cle, (cas, generation) in cohortes.items():
+            if cle in refus:
+                continue
+            attendu = du_moteur_python(grille.resultats[(cas.code, generation)])
+            depart = lus[cle]["depart"]
+            lu = {"age": age_lu(cas, lus[cle]["age"]), "annee": depart["annee"],
+                  "trimestres_valides": depart["trimestres_valides"],
+                  "liquidation": depart["liquidation"]}
+            assert lu == attendu, cle
+            assert type(lu["age"]) is type(attendu["age"]), cle
+            assert all(type(nombre) is float for _, *nombres in lu["liquidation"]
+                       for nombre in nombres), cle
+            formes.add(len(attendu["liquidation"]))
+    assert formes == {0, 1}
