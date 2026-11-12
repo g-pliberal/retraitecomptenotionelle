@@ -94,6 +94,14 @@
  *   travaillées changées (`carriere`), un scénario neutralisé (`scenario`,
  *   `scenariosNeutralises`) —, sauf celle qui n'a rien à perdre. Un appel du
  *   `droit` liquide de même sous un scénario neutralisé (`neutralise`).
+ * - `garantie` : `{distributions, appels: [{cle, fonction, arguments}]}` —
+ *   chaque appel d'une fonction de la garantie d'une population
+ *   (`FONCTIONS_DE_LA_GARANTIE`, `moteur/js/garantie.js`, qui n'a plus de
+ *   jumeau Python : note de décision 0007), que le coût fait par lot ; ses
+ *   distributions de pensions passent une fois, chacune la suite de ses
+ *   tranches, `[borne inférieure, borne supérieure, part]`, et un argument
+ *   les désigne par leur rang. Le barème ne lit que ses arguments : la
+ *   demande se passe du paquet.
  *
  * Il écrit `{resultats, echecs}` : une carrière que le portage refuse en est
  * absente, et son motif est dans `echecs`. Un nombre non fini s'écrit `null`,
@@ -120,6 +128,7 @@ import { ConstructeurCompte } from "../../moteur/js/compte.js";
 import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
 import { Contexte } from "../../moteur/js/contexte.js";
 import { Echeancier } from "../../moteur/js/echeancier.js";
+import * as garantie from "../../moteur/js/garantie.js";
 import {
   FICHE_DE_L_APPRENTISSAGE, FICHE_DES_MILITAIRES, FICHES_DES_EMPLOIS, contrats,
 } from "../../moteur/js/droit/compter.js";
@@ -1358,11 +1367,61 @@ function droit({ parametres, carrieres, appels }) {
     ...valeurs.map((argument) => argumentDuDroit(simulateur, lues, argument))));
 }
 
+/** Le coût d'un plancher, ses champs sous les noms du Python (`CoutGarantie`). */
+function coutEnDonnees(cout) {
+  return {
+    plancher_mensuel: cout.plancherMensuel,
+    facteur: cout.facteur,
+    part_beneficiaires: cout.partBeneficiaires,
+    beneficiaires: cout.beneficiaires,
+    complement_moyen_mensuel: cout.complementMoyenMensuel,
+    cout_annuel_meur: cout.coutAnnuelMeur,
+  };
+}
+
+/**
+ * Les fonctions de la garantie d'une population que le pont fait appeler
+ * (`garantieDePopulation`), sous le nom que le Python leur donnait, leurs
+ * arguments dans l'ordre du portage. Une fonction de plus s'y déclare, et ce
+ * qu'elle rend dans `LECTURES_DE_LA_GARANTIE` de `pont.py`.
+ */
+const FONCTIONS_DE_LA_GARANTIE = {
+  cout_garantie: (...valeurs) => coutEnDonnees(garantie.coutGarantie(...valeurs)),
+  cout_garantie_par_sexe:
+    (...valeurs) => coutEnDonnees(garantie.coutGarantieParSexe(...valeurs)),
+  facteurs_par_sexe: garantie.facteursParSexe,
+  manque_moyen: garantie.manqueMoyen,
+  pension_moyenne: garantie.pensionMoyenne,
+};
+
+/**
+ * Chaque appel d'une fonction de la garantie d'une population, `{cle,
+ * fonction, arguments}` : ce qu'elle rend, ou le motif de son refus. Un
+ * argument est une valeur (`valeur`) ou l'une des distributions de la demande,
+ * par son rang (`distribution`). Une fonction que le pont ne porte pas arrête
+ * la demande, au lieu de se perdre.
+ */
+function garantieDePopulation({ distributions, appels }) {
+  const inconnues = [...new Set(appels.map(({ fonction }) => fonction))]
+    .filter((nom) => !Object.hasOwn(FONCTIONS_DE_LA_GARANTIE, nom));
+  if (inconnues.length > 0) {
+    throw new Error(
+      `fonctions de la garantie que le pont ne fait pas appeler : ${inconnues.join(", ")}`);
+  }
+  const lues = distributions.map((tranches) => ({
+    tranches: tranches.map(([borneInferieure, borneSuperieure, part]) => (
+      { borneInferieure, borneSuperieure, part })),
+  }));
+  return parCas(appels, ({ fonction, arguments: valeurs }) => FONCTIONS_DE_LA_GARANTIE[fonction](
+    ...valeurs.map((argument) => (Object.hasOwn(argument, "distribution")
+      ? lues[argument.distribution] : argument.valeur))));
+}
+
 const LECTURES = {
   carrieres, saisies, grille_du_cout: grilleDuCout, carrieres_des_saisies: carrieresDesSaisies,
   simulations, scenario_actuel: scenarioActuel, droit, ages_de_depart: agesDeDepart,
   carrieres_de_la_grille: carrieresDeLaGrille, avantages, departs_des_cas: departsDesCas,
-  debuts_de_la_surcote: debutsDeLaSurcote,
+  debuts_de_la_surcote: debutsDeLaSurcote, garantie: garantieDePopulation,
 };
 
 /** La réponse à une demande, qui porte une seule des `LECTURES`. */

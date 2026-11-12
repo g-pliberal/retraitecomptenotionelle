@@ -1479,6 +1479,89 @@ def relu_du_droit(fonction: str, valeur):
             else _depuis_donnees(lecture, valeur))
 
 
+
+def cout_garantie_des_donnees(cout: dict):
+    """Le coût d'un plancher que le portage a écrit, sous le type du coût :
+    il ne se charge qu'à la lecture."""
+    from .cout import CoutGarantie
+
+    return _depuis_donnees(CoutGarantie, cout)
+
+
+#: Ce que rend chaque fonction de la garantie d'une population que le pont
+#: fait appeler (``FONCTIONS_DE_LA_GARANTIE`` de ``pont.mjs``), sous le type
+#: que le Python lui donne. Une fonction qui n'y est pas est refusée avant
+#: node.
+LECTURES_DE_LA_GARANTIE = {
+    "cout_garantie": cout_garantie_des_donnees,
+    "cout_garantie_par_sexe": cout_garantie_des_donnees,
+    "facteurs_par_sexe": tuple[float, float],
+    "manque_moyen": tuple[float, float],
+    "pension_moyenne": float,
+}
+
+
+def garantie(appels: list[tuple]) -> list:
+    """Chaque appel d'une fonction de la garantie d'une population, que le
+    portage seul porte (``moteur/js/garantie.js``, note de décision 0007) :
+    ``(fonction, *arguments)``, ses arguments dans l'ordre du portage —
+    ``("cout_garantie", distribution, effectif, plancher, facteur, part du
+    plancher retirée en entier, taux de retrait)``,
+    ``("cout_garantie_par_sexe", femmes, hommes, part des femmes, effectif,
+    plancher, facteur, rapport, plancher majoré, part de qui vit seul, les
+    deux nombres de la forme)``, ``("manque_moyen", borne inférieure, borne
+    supérieure, plancher, les deux nombres de la forme)``,
+    ``("facteurs_par_sexe", moyenne des femmes, moyenne des hommes, part des
+    femmes, facteur, rapport)``, ``("pension_moyenne", distribution)``. Une
+    distribution — tout ce qui porte des ``tranches`` — passe une fois, en
+    données. Le lot part d'une seule demande, et ce que chaque fonction rend
+    revient dans l'ordre des appels, sous le type du Python
+    (:data:`LECTURES_DE_LA_GARANTIE`).
+
+    Un appel que le barème refuse arrête le lot : son motif, celui du portage,
+    lève ``ValueError``. Le barème ne lit que ses arguments : la demande se
+    passe du paquet, et va au pont gardé ouvert, sur les données du dépôt
+    comme sur des données d'ailleurs."""
+    inconnues = sorted({fonction for fonction, *_ in appels} - set(LECTURES_DE_LA_GARANTIE))
+    if inconnues:
+        raise ValueError(f"fonctions de la garantie que le pont ne relit pas : "
+                         f"{', '.join(inconnues)} (pont.LECTURES_DE_LA_GARANTIE)")
+    if not appels:
+        return []
+    distributions: list = []
+
+    def en_donnees(argument) -> dict:
+        if not hasattr(argument, "tranches"):
+            return {"valeur": _en_donnees(argument)}
+        rang = next((rang for rang, connue in enumerate(distributions) if connue is argument),
+                    None)
+        if rang is None:
+            distributions.append(argument)
+            rang = len(distributions) - 1
+        return {"distribution": rang}
+
+    demandes = [{"cle": str(rang), "fonction": fonction,
+                 "arguments": [en_donnees(argument) for argument in arguments]}
+                for rang, (fonction, *arguments) in enumerate(appels)]
+    reponse = _demander({"garantie": {
+        "distributions": [[[tranche.borne_inferieure, tranche.borne_superieure, tranche.part]
+                           for tranche in distribution.tranches]
+                          for distribution in distributions],
+        "appels": demandes,
+    }}, None)
+    for motif in reponse["echecs"].values():
+        raise ValueError(motif)
+    lus = reponse["resultats"]
+    return [_lu_de_la_garantie(fonction, lus[str(rang)])
+            for rang, (fonction, *_) in enumerate(appels)]
+
+
+def _lu_de_la_garantie(fonction: str, valeur):
+    lecture = LECTURES_DE_LA_GARANTIE[fonction]
+    return (lecture(valeur) if isinstance(lecture, types.FunctionType)
+            else _depuis_donnees(lecture, valeur))
+
+
 def simulations(cas: list[dict], paquet: bytes | None = None,
                 ) -> tuple[dict[str, dict], dict[str, str]]:
     """Chaque requête d'un témoin de simulations, ``{"cle", "requete"}``, lue
