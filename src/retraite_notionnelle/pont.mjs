@@ -906,6 +906,10 @@ const FONCTIONS_DU_DROIT = {
     .durees.emplois.map(({ fiche, services }) => [fiche, services]),
   "releve.construire.durees.services_liquidables": (moteur, carriere, membres) => releve
     .construire(moteur, carriere).durees.servicesLiquidables(membres),
+  // Chaque ligne du relevé, `[id, fiche, version]`, `null` sans fiche ou sans
+  // version : ce que le tableau de bord en compte.
+  "releve.construire.lignes.citations": (moteur, carriere) => releve.construire(moteur, carriere)
+    .lignes().map(({ id, fiche = null, version = null }) => [id, fiche, version]),
   // La réversion, ses champs sous les noms du Python (`reversion_des_donnees`
   // de `pont.py`) ; les régimes servis en capital, un ensemble.
   "reversion.reversion": (moteur, pensions, carriere, annee, decesSuppose = null,

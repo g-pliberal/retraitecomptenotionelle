@@ -931,6 +931,45 @@ def test_le_controle_du_droit_voit_un_ulp_deplace_dans_le_jumeau_python(monkeypa
         droit_et_refait(appels)
 
 
+def test_le_pont_rend_ce_que_chaque_ligne_du_releve_cite():
+    """Le tableau de bord compte, sur les relevés des cas types, les lignes
+    qui citent leur fiche et la version qu'elles appliquent (contrat C.5) : le
+    pont rend, de chaque ligne du relevé que le portage construit, son
+    identifiant, sa fiche et sa version (action 161, lot A). Une fonctionnaire
+    de l'État née en 1970, entrée à vingt-deux ans et partie à soixante-quatre,
+    a quarante-deux années de services, de 1992 à 2033 : chacune cite la fiche
+    des services de la fonction publique, sans version, et aucune ligne de
+    durée d'assurance, de points ni de cotisations ne cite de fiche. Une
+    salariée du même âge, mère de deux enfants nés avant 2010, a une ligne de
+    trimestres par enfant, qui cite la majoration de durée d'assurance et sa
+    version d'avant 2010. Le jumeau Python le refait tant qu'il reste."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from outils_pont import droit_et_refait
+
+    options = {"annee_naissance": 1970, "sexe": "F", "age_debut": 22, "age_liquidation": 64}
+    lus, refus = droit_et_refait({
+        "fonctionnaire": ("releve.construire.lignes.citations", pont.MOTEUR, pont.CarriereSimple(
+            {**options, "affiliation": "fonctionnaire_etat"})),
+        "mere": ("releve.construire.lignes.citations", pont.MOTEUR, pont.CarriereSimple(
+            {**options, "affiliation": "salarie_prive_non_cadre", "nombre_enfants": 2})),
+    })
+    assert refus == {}
+    assert type(lus["fonctionnaire"]) is tuple and type(lus["fonctionnaire"][0]) is tuple
+    citations = {ligne: (fiche, version) for ligne, fiche, version in lus["fonctionnaire"]}
+    assert len(citations) == len(lus["fonctionnaire"])
+    assert {ligne: cite for ligne, cite in citations.items() if ligne.startswith("services_")} == {
+        f"services_fonction_publique_etat_{annee}": ("services_et_duree_fonction_publique", None)
+        for annee in range(1992, 2034)}
+    assert {cite for ligne, cite in citations.items()
+            if ligne.startswith(("assurance_", "cotises_", "points_", "cotisations_"))} == {
+        (None, None)}
+    assert {(ligne, fiche, version) for ligne, fiche, version in lus["mere"]
+            if fiche is not None} == {
+        (f"enfants_assurance_regime_general_{rang}", "majoration_duree_assurance_enfants",
+         "mda_2010_nes_avant") for rang in (1, 2)}
+
+
 def test_le_pont_bat_une_carriere_de_ses_options_sans_la_faire_passer():
     """Les exemples officiels cherchent la carrière qui rend leurs trimestres,
     un âge de début après l'autre : chaque essai se liquide sur la carrière

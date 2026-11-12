@@ -369,6 +369,9 @@ JUMEAUX_DU_DROIT = {
         for emploi in releve.construire(moteur, carriere).durees.emplois),
     "releve.construire.durees.services_liquidables": lambda moteur, carriere, membres: (
         releve.construire(moteur, carriere).durees.services_liquidables(tuple(membres))),
+    "releve.construire.lignes.citations": lambda moteur, carriere: tuple(
+        (ligne["id"], ligne.get("fiche"), ligne.get("version"))
+        for ligne in releve.construire(moteur, carriere).lignes()),
     "remuneration.fiche_depuis_brut.lignes_de_retraite": _lignes_de_retraite,
     "reversion.reversion": _reversion,
     "revalorisation.faire_vivre.majorations": lambda simulateur, carriere, annee: [

@@ -1283,6 +1283,10 @@ LECTURES_DU_DROIT = {
     "releve.construire.droits.points": tuple[tuple[str, int, float, float | None], ...],
     "releve.construire.durees.emplois": tuple[tuple[str, int], ...],
     "releve.construire.durees.services_liquidables": int,
+    # Chaque ligne du relevé (contrat C.5), par ce que le tableau de bord en
+    # compte : son identifiant, la fiche qu'elle cite et sa version, ``None``
+    # sans elles.
+    "releve.construire.lignes.citations": tuple[tuple[str, str | None, str | None], ...],
     # La réversion que des pensions ouvrent, et celle que l'échéancier liquide
     # au décès de l'assuré ; le plafond de chaque nouvelle pension que
     # l'activité après le départ constitue, ``(regime, plafond)``, aucune
