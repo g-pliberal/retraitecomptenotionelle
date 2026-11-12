@@ -115,5 +115,5 @@ d'autres fiches citaient déjà.
 
 ## Ce qui reste
 
-Les rédactions passées, que cette passe ne lit pas : 100 pour les huit
+Les rédactions passées, que cette passe ne lit pas : 88 pour les huit
 fiches (`--non-lues <fiche> --toutes`). Aucune rédaction en vigueur.
