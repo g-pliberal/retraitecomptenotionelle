@@ -508,7 +508,7 @@ textes_a_rattacher:
    change: "le contrôle a posteriori"}
 textes_sans_effet:
 - {id: LEGIARTI000047961731, article: "D. 161-2-8 CSS", en_vigueur: 2023-09-01,
-   motif: "texte inchangé, mot pour mot celui de la rédaction du 1er janvier 2015 (LEGIARTI000030060318)"}
+   motif: "texte inchangé, mot pour mot celui de la rédaction du 1er janvier 2015"}
 - {id: LEGIARTI000047961722, article: "D. 161-2-9 CSS", en_vigueur: 2023-09-01,
    motif: "texte inchangé, de même : le plancher de 160 % du Smic sur 1 820 heures"}
 code:
