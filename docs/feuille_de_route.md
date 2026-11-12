@@ -7325,16 +7325,17 @@ de `contribution_etat`.
 **Reprise, au 12 novembre 2026.** Le propriétaire a tranché les cinq
 questions de l'inventaire : la note de décision 0007 les porte, et
 `2026-11-12-les-decisions-du-proprietaire.md` dit l'ordre de la suite.
-L'impôt, la revalorisation servie et la garantie de population passent en
-JavaScript seul. Les tests du moteur Python passent par une façade. Les
-études restent. L'action se clôt par fonction. Le retrait d'une paire
-n'attend plus sa relecture, gardée pour quatre fichiers peu éprouvés.
-Fait : deux scripts de la fabrique, les mesures de la prose et de l'accueil
-et trois études branchés sur le moteur JavaScript ; la garantie de
-population, que le coût lui demande. Reste, une étape par session : la
-façade des tests, par quoi commencer ; d'autres études ; l'impôt, puis
-la revalorisation servie ; les tests portés ; le retrait. Le propriétaire
-doit dire ce que le § 3 du README montrera sans simulateur Python.
+Fait : deux scripts de la fabrique, les mesures de la prose et quatre études
+demandent leurs calculs au moteur JavaScript ; la garantie de population
+aussi. La façade des tests est bâtie (`tests/facade.py`) : elle fait
+calculer au moteur JavaScript les huit entrées du moteur Python que les
+tests appellent. Aucun fichier de tests n'y passe encore. Un test tient la
+liste, décroissante, de ceux qui importent le moteur Python. Reste, une
+étape par session : passer les fichiers de tests à la façade, par quoi
+commencer, en lisant `2026-11-12-la-facade-des-tests.md` ; lui faire servir
+les tables du moteur ; d'autres études ; l'impôt, puis la revalorisation
+servie ; le retrait. Le propriétaire doit dire ce que le § 3 du README
+montrera sans simulateur Python.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
