@@ -1,0 +1,14 @@
+date: "2026-11-12"
+session: "action 161 : la façade sert les tables du moteur, deux fichiers de tests y passent"
+consulte: >-
+  Aucune source de droit : la session fait passer deux fichiers de tests du
+  moteur Python au moteur JavaScript, par la façade des tests, et ne touche
+  à aucune règle du scénario 1. Aucun texte n'a été rouvert dans LEGI.
+trouve: >-
+  Aucune règle n'a changé. Les valeurs que les tests attendent, tirées des
+  textes, sont inchangées : 513 tests les comparent désormais à ce que le
+  moteur JavaScript calcule. Les méthodes de table servies rendent, sur 32
+  appels, ce que le moteur Python rend, au bit près.
+reste: >-
+  178 tests des deux fichiers restent sur le moteur Python, marqués. Le
+  détail dans la note de la feuille de route.

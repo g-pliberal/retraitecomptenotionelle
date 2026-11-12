@@ -7322,20 +7322,19 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 12 novembre 2026.** Le propriétaire a tranché les cinq
-questions de l'inventaire : la note de décision 0007 les porte, et
-`2026-11-12-les-decisions-du-proprietaire.md` dit l'ordre de la suite.
-Fait : deux scripts de la fabrique, les mesures de la prose et quatre études
-demandent leurs calculs au moteur JavaScript ; la garantie de population
-aussi. La façade des tests est bâtie (`tests/facade.py`) : elle fait
-calculer au moteur JavaScript les huit entrées du moteur Python que les
-tests appellent. Aucun fichier de tests n'y passe encore. Un test tient la
-liste, décroissante, de ceux qui importent le moteur Python. Reste, une
-étape par session : passer les fichiers de tests à la façade, par quoi
-commencer, en lisant `2026-11-12-la-facade-des-tests.md` ; lui faire servir
-les tables du moteur ; d'autres études ; l'impôt, puis la revalorisation
-servie ; le retrait. Le propriétaire doit dire ce que le § 3 du README
-montrera sans simulateur Python.
+**Reprise, au 12 novembre 2026.** Les tests du moteur passent du moteur
+Python au moteur JavaScript, par la façade des tests (`tests/facade.py`),
+fichier par fichier. Deux fichiers y sont : `test_simulateur.py` et
+`test_reversion.py`. 513 de leurs 691 tests font calculer le moteur
+JavaScript. Les 178 autres appellent encore une règle Python : ils portent
+la marque `sur_le_moteur_python`, et un test tient leur compte, qui ne fait
+que décroître. La façade sert aussi les tables du moteur. Reste, une étape
+par session : servir par la façade les règles de `droit/` que les tests
+appellent, `liquider` et `ouvrir` d'abord ; passer les autres fichiers ;
+d'autres études ; l'impôt, puis la revalorisation servie ; le retrait.
+Commencer par « Ce qui reste » de
+`2026-11-12-les-tables-et-deux-fichiers-a-la-facade.md`. Le propriétaire
+doit encore dire ce que le § 3 du README montrera sans simulateur Python.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
