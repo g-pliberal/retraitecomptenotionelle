@@ -1642,8 +1642,11 @@ def test_le_cout_date_et_bat_sa_grille_par_le_portage_sans_les_jumeaux(memoire_i
 def test_sous_le_jumeau_le_cout_simule_sa_grille_en_python(memoire_isolee, monkeypatch):
     """Une confrontation qui fait refaire au jumeau ce que le portage calcule
     s'ouvre sous ``pont.par_le_jumeau()`` : la grille s'y simule par le moteur
-    Python, node absent, et rend ce que le portage rend, couple pour couple,
-    chaque nombre au bit près."""
+    Python, sans rien faire dater, bâtir ni simuler au portage, et rend ce
+    que le portage rend, couple pour couple, chaque nombre au bit près. Une
+    seule demande part encore : les séries de la revalorisation servie, que
+    le portage seul calcule et que le jumeau lit comme le coût (note de
+    décision 0007)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     from retraite_notionnelle import cout
@@ -1651,9 +1654,17 @@ def test_sous_le_jumeau_le_cout_simule_sa_grille_en_python(memoire_isolee, monke
     monkeypatch.setattr(cout, "generations", lambda: (1950, 1965, 1975, 2000))
     simulateur = Simulateur(Parametres())
     par_le_portage = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
-    monkeypatch.setattr(pont.shutil, "which", lambda nom: None)
+    demandes = []
+    demander = pont._demander
+
+    def espion(demande, paquet):
+        demandes.extend(demande)
+        return demander(demande, paquet)
+
+    monkeypatch.setattr(pont, "_demander", espion)
     with pont.par_le_jumeau():
         en_python = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
+    assert demandes == ["revalorisation_servie"]
     assert en_python == par_le_portage
     assert _types([vars(p) for p in en_python[0]]) == _types([vars(p) for p in par_le_portage[0]])
     pensionnes = par_le_portage[0]
@@ -2421,16 +2432,18 @@ def test_l_indexation_du_portage_est_celle_du_jumeau_au_bit():
     assert compares == len(JEUX_DE_L_INDEXATION) * (130 + len(paires))
 
 
-def test_la_revalorisation_servie_du_portage_est_celle_du_jumeau_au_bit():
+def test_les_lectures_python_de_la_revalorisation_servie_sont_celles_du_portage():
     """La confrontation qui tient lieu de relecture de la revalorisation
-    servie (note de décision 0007), écrite avant que la classe Python cesse
-    de calculer : sous chaque jeu de :data:`JEUX_DE_L_INDEXATION`, l'index du
-    compte et la valeur de service convenue, année par année, de 1941 à
-    2070, et le régime convenu de chaque régime du catalogue, tels que le
-    pont les rend (:func:`pont.series_servies`), sont au bit ceux que le
-    jumeau bâtit ; et les quatre lectures, demandées au portage sur une
-    grille de liquidations et d'années qui déborde la série des deux côtés,
-    sont celles du jumeau."""
+    servie (note de décision 0007). Avant que la classe Python cesse de
+    calculer, elle a tenu au bit, sous chaque jeu de
+    :data:`JEUX_DE_L_INDEXATION`, l'index du compte et la valeur de service
+    que le pont rend contre ceux que le jumeau bâtissait, de 1941 à 2070 ;
+    le calcul parti, elle tient ce qui reste des deux côtés : les quatre
+    lectures que la classe Python garde — le coefficient, la règle du stock
+    à la bascule, la valeur de service, le régime convenu —, sur les séries
+    qu'elle a relues, contre celles du portage lui-même, demandées par le
+    pont sur une grille de liquidations et d'années qui déborde la série des
+    deux côtés, et sur chaque régime du catalogue."""
     _sans_node()
     from retraite_notionnelle.revalorisation import RevalorisationServie
 
@@ -2440,15 +2453,9 @@ def test_la_revalorisation_servie_du_portage_est_celle_du_jumeau_au_bit():
     for jeu in JEUX_DE_L_INDEXATION:
         parametres = _regles(**jeu)
         simulateur = Simulateur(parametres)
-        jumeau = RevalorisationServie(simulateur, 1941, 2070)
-        series = pont.series_servies(parametres, 1941, 2070)
-        assert series.index == jumeau._index, f"l'index, sous {jeu}"
-        assert list(series.index) == list(jumeau._index)
-        assert series.points == jumeau._points, f"la valeur de service, sous {jeu}"
+        lectrice = RevalorisationServie(simulateur, 1941, 2070)
         codes = [*simulateur.scenario_actuel.catalogue.codes, "regime_inconnu"]
-        assert series.convenus == {code: jumeau.regime_convenu(code) for code in codes
-                                   if code != "regime_inconnu"}
-        regimes = [*series.points, "regime_general"]
+        regimes = [*lectrice._points, "regime_general"]
         appels = [
             *(("coefficient", *case) for case in grille),
             *(("coefficient_stock", *case, prospectif)
@@ -2456,7 +2463,7 @@ def test_la_revalorisation_servie_du_portage_est_celle_du_jumeau_au_bit():
             *(("coefficient_points", regime, *case) for regime in regimes for case in grille),
             *(("regime_convenu", code) for code in codes)]
         lus = pont.revalorisation_servie(appels, parametres, 1941, 2070)
-        attendus = [getattr(jumeau, methode)(*arguments) for methode, *arguments in appels]
+        attendus = [getattr(lectrice, methode)(*arguments) for methode, *arguments in appels]
         ecarts = [(appel, repr(lu), repr(attendu))
                   for appel, lu, attendu in zip(appels, lus, attendus, strict=True)
                   if lu != attendu or type(lu) is not type(attendu)]
@@ -2465,3 +2472,105 @@ def test_la_revalorisation_servie_du_portage_est_celle_du_jumeau_au_bit():
     # La valeur de service n'est convenue que sous les conventions du COR :
     # trois jeux l'éprouvent.
     assert compares > 60000
+
+
+def test_la_classe_python_lit_les_series_du_portage_sans_repli(monkeypatch):
+    """``RevalorisationServie`` ne calcule plus en Python (note de décision
+    0007) : elle demande ses séries au pont, une fois, sous les paramètres de
+    son simulateur, et ses lectures ne sont plus que des rapports de deux
+    valeurs. Sans node, elle s'arrête, sans repli. Les séries sont posées à
+    la main : un index de 1, 2 et 3 de 2020 à 2022, une valeur de service de
+    1, un demi et un quart.
+
+    Le coefficient est le rapport de l'index à ses deux dates, un tant que la
+    pension n'est pas servie, et l'index se lit à ses bornes au-delà. La
+    bascule en 2021, le stock aux prix : la pension de 2020 ne reçoit rien
+    d'une réforme prospective, et garde d'une rétroactive ce qu'elle valait à
+    la bascule, 2."""
+    _sans_node()
+    from retraite_notionnelle.moteur.indexation import Indexation
+    from retraite_notionnelle.revalorisation import RevalorisationServie
+
+    simulateur = Simulateur(Parametres(annee_bascule=2021, **SOUS_LE_COR))
+    with monkeypatch.context() as sans_node:
+        sans_node.setattr(pont.shutil, "which", lambda nom: None)
+        with pytest.raises(pont.PontIndisponible, match="node"):
+            RevalorisationServie(simulateur, 2020, 2022)
+
+    demandes = []
+
+    def series(parametres, premiere_annee, derniere_annee):
+        demandes.append((parametres, premiere_annee, derniere_annee))
+        return pont.SeriesServies(
+            premiere_annee=2020, derniere_annee=2022, index={2020: 1.0, 2021: 2.0, 2022: 3.0},
+            points={"agirc_arrco": {2020: 1.0, 2021: 0.5, 2022: 0.25}},
+            convenus={"arrco": "agirc_arrco", "agirc_arrco": "agirc_arrco",
+                      "regime_general": None})
+
+    def calcule(self, annee):
+        raise AssertionError("la classe Python ne calcule plus l'index du compte")
+
+    monkeypatch.setattr(pont, "series_servies", series)
+    monkeypatch.setattr(Indexation, "taux", calcule)
+    servie = RevalorisationServie(simulateur, 2020, 2022)
+    assert demandes == [(simulateur.parametres, 2020, 2022)]
+    assert (servie.premiere_annee, servie.derniere_annee) == (2020, 2022)
+    assert [servie.coefficient(2020, 2022), servie.coefficient(2021, 2022),
+            servie.coefficient(2022, 2021), servie.coefficient(2010, 2030)] == [
+                3.0, 1.5, 1.0, 3.0]
+    assert [servie.coefficient_points("agirc_arrco", 2020, 2022),
+            servie.coefficient_points("agirc_arrco", 2021, 2022),
+            servie.coefficient_points("regime_general", 2020, 2022)] == [0.25, 0.5, 1.0]
+    assert [servie.regime_convenu("arrco"), servie.regime_convenu("regime_general"),
+            servie.regime_convenu("regime_inconnu")] == ["agirc_arrco", None, None]
+    assert [servie.coefficient_stock(2020, 2022, True),
+            servie.coefficient_stock(2020, 2022, False),
+            servie.coefficient_stock(2021, 2022, True)] == [1.0, 2.0, 1.5]
+    assert demandes == [(simulateur.parametres, 2020, 2022)]
+
+
+def test_le_cout_demande_au_portage_le_rendement_des_cotisations(monkeypatch):
+    """Sous une variante démographique, le coût porte le compte de la
+    proposition à la masse salariale de la variante, cotisation par
+    cotisation, chacune pesant ce que l'indexation lui a rendu jusqu'à la
+    liquidation (``cout._sous_la_demographie``). Ce rendement, il le demande
+    au portage, d'un seul lot pour toute sa grille, chaque couple (année de
+    la cotisation, année de la liquidation) une fois (note de décision 0007).
+
+    Valeurs posées à la main, sous la masse salariale, +7,838 % en 2022 et
+    +5,625 % en 2023 (``data/reference/macro/masse_salariale.csv``) : une
+    cotisation de 2021 liquidée en 2023 a reçu les deux taux, celle de 2022
+    le second seul ; celle de 2024, versée après le départ, ne se demande
+    pas. Sans node, le coût s'arrête, sans repli sur l'indexation du Python."""
+    _sans_node()
+    from retraite_notionnelle import cout
+
+    volet = cout.VoletLiberal(annee_liquidation=2023, annee_ouverture_garantie=2023,
+                              pension=1.0, ressources_garantie=1.0,
+                              cotisations={2021: 100.0, 2022: 100.0, 2024: 50.0, 2020: 0.0})
+    pensionne = cout.Pensionne(code="x", generation=1960, annee_liquidation=2023,
+                               pensions={cle: 1.0 for cle in cout.CLES_CAS_TYPES},
+                               propre=volet)
+    simulateur = Simulateur(Parametres())
+    demandes = []
+    demander = pont._demander
+
+    def espion(demande, paquet):
+        demandes.append(demande)
+        return demander(demande, paquet)
+
+    monkeypatch.setattr(pont, "_demander", espion)
+    rendements = cout._rendements_des_cotisations(simulateur, [pensionne, pensionne])
+    assert rendements == {(2021, 2023): (1 + 0.07838) * (1 + 0.05625),
+                          (2022, 2023): 1 + 0.05625}
+    assert [list(demande) for demande in demandes] == [["indexation"]]
+    assert len(demandes[0]["indexation"]["appels"]) == 2
+    # Le compte gagne la moyenne de f(L) / f(a), pondérée par ces rendements.
+    lourd, leger = rendements[2021, 2023] * 100.0, rendements[2022, 2023] * 100.0
+    capitaux = cout._capitaux_sous_la_variante(
+        pensionne, lambda annee: 1.0 if annee < 2022 else 1.1,
+        lambda annee, liquidation: rendements[annee, liquidation])
+    assert capitaux[2] == pytest.approx((lourd * 1.1 + leger) / (lourd + leger), rel=1e-12)
+    monkeypatch.setattr(pont.shutil, "which", lambda nom: None)
+    with pytest.raises(pont.PontIndisponible, match="node"):
+        cout._rendements_des_cotisations(simulateur, [pensionne])

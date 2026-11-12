@@ -77,6 +77,15 @@ L'impôt sur le revenu, enfin, que le site calcule sur la carrière du lecteur
 coût le demande par lot, une année à la fois (:func:`impot`), ses foyers
 passés en données, au barème que le portage lit au paquet et projette.
 
+La revalorisation servie et l'indexation, de même, que le lecteur du site
+règle (``moteur/js/revalorisation.js`` et ``indexation.js``, note de décision
+0007) : ``RevalorisationServie`` du Python en demande les séries, une fois
+par jeu de paramètres (:func:`series_servies`), et ne fait plus que les
+lire ; le coût demande d'un lot ce que l'indexation rend à ses cotisations
+sous une variante démographique (:func:`indexation`). Les lectures du portage
+se demandent aussi une à une, pour les confronter à celles que le Python
+garde (:func:`revalorisation_servie`).
+
 Une demande sur le paquet du dépôt, sans paquet, ne lance pas node à chaque
 fois : les tests en font une par carrière, et chacune coûtait trois dixièmes
 de seconde, à lancer node et à relire le paquet. Le pont reste ouvert

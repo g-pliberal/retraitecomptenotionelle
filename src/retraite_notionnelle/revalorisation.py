@@ -1599,59 +1599,36 @@ def pension_aujourd_hui(simulateur, comparaison,
 class RevalorisationServie:
     """Ce que devient une pension DÉJÀ LIQUIDÉE, année après année.
 
-    UN SYSTÈME NOTIONNEL A DEUX RÈGLES D'INDEXATION, ET NON UNE. La première
-    fait grossir le compte pendant la carrière ; la seconde revalorise la
-    pension une fois qu'elle est servie. Les pays qui ont fait ce système les
-    règlent séparément : la Suède revalorise le compte sur l'indice des
-    salaires et la pension liquidée sur ce même indice diminué de 1,6 point ;
-    l'Italie revalorise le compte sur le PIB et la pension liquidée sur les
-    prix.
+    UN SEUL EXEMPLAIRE DU CALCUL (note de décision 0007, action 161). La
+    règle que les systèmes notionnels prêtent aux pensions servies — l'index
+    du compte, déflaté des prix et rendu de son préfinancement, et la valeur
+    de service convenue des régimes en points — ne s'écrit qu'en JavaScript :
+    ``RevalorisationServie`` de ``moteur/js/revalorisation.js``, où son
+    raisonnement est écrit en entier, et que le lecteur du site règle. Cette
+    classe en demande les séries au pont, une fois par jeu de paramètres
+    (:func:`~.pont.series_servies`), et ne fait plus que les lire : un
+    coefficient est le rapport de deux valeurs d'une série. Quatre lectures
+    gardent donc le nom de celles du portage — :meth:`coefficient`,
+    :meth:`coefficient_stock`, :meth:`coefficient_points`,
+    :meth:`regime_convenu` —, que
+    ``test_les_lectures_python_de_la_revalorisation_servie_sont_celles_du_portage``
+    (``tests/test_pont.py``) confronte à lui, au bit.
 
-    Le dépôt n'en portait qu'une. Les masses de la page « Coût » figeaient la
-    pension en euros constants pour toute la retraite, ce qui est une
-    indexation sur les PRIX qui ne disait pas son nom — correcte pour le
-    scénario 1, où c'est la loi, fausse pour les cinq autres. Car la seconde
-    règle est déjà écrite ailleurs dans le modèle, et depuis toujours : le
-    diviseur de conversion vaut l'espérance de vie résiduelle parce que
-    ``taux_anticipe_conversion`` est nul, et il ne la vaut QUE si la rente est
-    ensuite revalorisée au taux auquel le compte l'a été. Le modèle promettait
-    donc une rente indexée sur la masse salariale et en servait une indexée sur
-    les prix ; il payait moins que son propre contrat.
-
-    CE QUE REND CETTE CLASSE est le coefficient qui corrige l'écart, en euros
-    CONSTANTS puisque c'est l'unité des masses : le produit des taux
-    d'indexation depuis la liquidation, déflaté des prix de la même période. Il
-    vaut 1 l'année de la liquidation, ×1,15 au bout de vingt ans de projection
-    — 2,45 % contre 1,75 % —, et jusqu'à ×3 pour les vingt années qui suivent
-    une liquidation de 1960, où la masse salariale progressait de cinq points
-    par an au-dessus des prix.
-
-    CE QU'ELLE N'EST PAS. Elle ne choisit pas la règle : elle applique celle
-    que ``mode_indexation`` porte déjà, quelle qu'elle soit. Sous le triple
-    lock inversé, qui passe sous les prix la plupart des années, son
-    coefficient descend en dessous de 1 et la correction joue à la baisse.
-    C'est la conséquence logique de la règle, et non un défaut.
-
-    LE PRÉFINANCEMENT SE REND CHAQUE ANNÉE. Un diviseur actualisé à ν > 0
-    (``taux_anticipe_conversion``) sert d'avance un rendement de ν par an : la
-    pension servie se revalorise alors au taux du compte DIVISÉ par 1 + ν,
-    sans quoi elle dépasserait ce que le compte a financé. C'est la règle
-    suédoise — « l'indice de revenu nouveau sur l'ancien, divisé par 1,016 »,
-    le même nombre que dans le diviseur (Pensionssystemets årsredovisning
-    2025, note 6 ; socialförsäkringsbalken, 62 kap.) —, et celle de la
-    Grèce ; elle vaut pour tout ce que cette classe revalorise, le stock que
-    ``REINDEXE`` reprend compris, comme la Suède l'a donnée à ses anciennes
-    pensions. Le dépôt ne l'appliquait pas jusqu'au 1er octobre 2026 : au
-    défaut, ν = 0, le diviseur est l'espérance de vie et rien ne change.
+    CE QUI NE S'ÉCRIT QU'ICI est ce que le coût seul lit, et que le site n'a
+    pas : ce que le droit a servi jusqu'au dernier barème publié
+    (:meth:`coefficient_historique`), la rente nominale du pilier
+    (:meth:`coefficient_nominal`), la proposition sous une variante
+    démographique (:meth:`pour_la_proposition`), le régime sous lequel le COR
+    compte une pension (:meth:`regime_de_tete`).
     """
 
     def __init__(self, simulateur: Simulateur,
                  premiere_annee: int, derniere_annee: int) -> None:
-        macro = simulateur.macro
-        indexation = simulateur.indexation
+        from . import pont
+
         #: Les prix, pour ce qui n'est revalorisé sur RIEN : voir
         #: :meth:`coefficient_nominal`.
-        self._macro = macro
+        self._macro = simulateur.macro
         #: L'année à partir de laquelle une réforme PROSPECTIVE revalorise ce
         #: qu'elle sert : voir :data:`CLES_PROSPECTIVES`.
         self.annee_bascule = simulateur.parametres.annee_bascule
@@ -1659,44 +1636,20 @@ class RevalorisationServie:
         self.stock_sur_les_prix = (
             simulateur.parametres.revalorisation_stock is RevalorisationStock.PRIX
         )
-        self.premiere_annee = premiere_annee
-        self.derniere_annee = max(derniere_annee, premiere_annee)
-        #: Le rendement que le diviseur a servi d'avance : voir la docstring.
-        prefinancement = 1.0 + simulateur.parametres.taux_anticipe_conversion
-        index = 1.0
-        self._index: dict[int, float] = {self.premiere_annee: index}
-        for annee in range(self.premiere_annee + 1, self.derniere_annee + 1):
-            # Le taux d'indexation est NOMINAL, les masses sont en euros
-            # constants : on le déflate année par année, et non en bloc. Un
-            # produit de taux nominaux divisé par une inflation cumulée serait
-            # la même chose ici, mais cesserait de l'être dès qu'un plancher ou
-            # un lissage s'appliquerait à l'un des deux — et il y en a un.
-            index *= (1.0 + indexation.taux(annee).taux) / prefinancement * (
-                macro.coefficient_prix(annee, annee - 1))
-            self._index[annee] = index
-        #: LE SCÉNARIO 1 N'EST PAS TOUT ENTIER SUR LES PRIX. Sa pension de base
-        #: l'est (L. 161-23-1) ; sa complémentaire suit la valeur de service
-        #: de l'Agirc-Arrco, que le COR projette au salaire moyen moins 1,16
-        #: point de 2027 à 2037, moins 0,86 ensuite (``conventions_points``) :
-        #: un peu sous les prix jusqu'en 2037, un peu au-dessus après. Pour
-        #: chaque régime que la convention couvre, la valeur de service en
-        #: euros constants, 1 jusqu'à son dernier barème publié ; voir
-        #: :meth:`coefficient_points`.
+        #: Ce que le portage a calculé sous ces paramètres : l'index du
+        #: compte, en euros constants ; la valeur de service convenue de
+        #: chaque régime en points, 1 jusqu'à son dernier barème publié
+        #: (:meth:`coefficient_points`) ; et, de chaque régime du catalogue,
+        #: celui qui sert ses points au bout de ses fusions
+        #: (:meth:`regime_convenu`).
+        series = pont.series_servies(simulateur.parametres, premiere_annee, derniere_annee)
+        self.premiere_annee = series.premiere_annee
+        self.derniere_annee = series.derniere_annee
+        self._index: dict[int, float] = series.index
+        self._points: dict[str, dict[int, float]] = series.points
+        self._convenus: dict[str, str | None] = series.convenus
         actuel = simulateur.scenario_actuel
-        valeurs = actuel.valeurs_point
         self._catalogue = actuel.catalogue
-        self._points: dict[str, dict[int, float]] = {}
-        for regime in valeurs.regimes_convenus("valeur_service"):
-            derniere = valeurs.derniere_annee_servie(regime)
-            reelle = 1.0
-            serie = {self.premiere_annee: reelle}
-            for annee in range(self.premiere_annee + 1, self.derniere_annee + 1):
-                if derniere is not None and annee > derniere:
-                    reelle *= valeurs.indice_convenu(
-                        regime, "valeur_service", annee - 1, annee, macro,
-                        ("prix", 1)) * macro.coefficient_prix(annee, annee - 1)
-                serie[annee] = reelle
-            self._points[regime] = serie
         #: Ce que le droit a servi, jusqu'au dernier barème : voir
         #: :meth:`coefficient_historique`. Construit à la demande.
         self._moteur = actuel
@@ -1860,16 +1813,9 @@ class RevalorisationServie:
 
     def regime_convenu(self, regime: str) -> str | None:
         """Le régime qui sert, au bout de ses fusions, les points de
-        ``regime``, s'il a une valeur de service convenue ; ``None`` sinon."""
-        courant = regime
-        for _ in range(len(self._catalogue) + 1):
-            if courant in self._points:
-                return courant
-            fiche = self._catalogue[courant] if courant in self._catalogue else None
-            if fiche is None or not fiche.integre_dans:
-                return None
-            courant = fiche.integre_dans
-        return None
+        ``regime``, s'il a une valeur de service convenue ; ``None`` sinon.
+        Lu dans la table que le portage en a rendue."""
+        return self._convenus.get(regime)
 
     def regime_de_tete(self, regime: str) -> str:
         """Le régime qui sert, au bout de ses fusions, les droits de

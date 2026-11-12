@@ -108,6 +108,17 @@
  *   le coût ne calcule plus en Python : note de décision 0007), au barème de
  *   l'année, lu au paquet puis projeté jusqu'à `derniere` ; l'effet retour du
  *   coût le demande par lot, une année à la fois.
+ * - `revalorisation_servie` : `{parametres, premiere, derniere, series,
+ *   appels: [{cle, methode, arguments}]}` — la revalorisation servie d'un jeu
+ *   de paramètres (`RevalorisationServie` de `revalorisation.js`, que le
+ *   Python ne calcule plus : note de décision 0007) : avec `series`, sous
+ *   `series`, l'index du compte, la valeur de service convenue de chaque
+ *   régime et le régime convenu de chaque régime du catalogue, que la classe
+ *   Python du même nom lit ; puis chaque lecture demandée, pour confronter
+ *   celles que le Python garde.
+ * - `indexation` : `{parametres, appels: [{cle, methode, arguments}]}` — le
+ *   taux d'une année ou le rendement cumulé d'une cotisation (`indexation.js`),
+ *   que le coût demande d'un lot sous une variante démographique.
  *
  * Il écrit `{resultats, echecs}` : une carrière que le portage refuse en est
  * absente, et son motif est dans `echecs`. Un nombre non fini s'écrit `null`,

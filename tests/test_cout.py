@@ -2662,8 +2662,6 @@ def test_la_proposition_s_indexe_sur_la_masse_de_la_variante(population):
     variante change aux 20-64 ans. Une cotisation de ``a`` liquidée en ``L``
     gagne ``f(L) / f(a)``, la pension servie de ``L`` à ``t``, ``f(t) / f(L)`` ;
     le diviseur ne bouge pas, et les autres systèmes non plus."""
-    from types import SimpleNamespace
-
     from retraite_notionnelle.cout import (
         CLES_CAS_TYPES, RESSOURCES_GARANTIE, Pensionne, VoletLiberal,
         _capitaux_sous_la_variante, _masses)
@@ -2679,8 +2677,7 @@ def test_la_proposition_s_indexe_sur_la_masse_de_la_variante(population):
                          cotisations={2020: 100.0, 2040: 100.0, 2051: 50.0})
     pensionne = Pensionne(code="x", generation=1985, annee_liquidation=2050,
                           pensions={cle: 1.0 for cle in CLES_CAS_TYPES}, propre=volet)
-    neutre = SimpleNamespace(indexation=SimpleNamespace(coefficient=lambda a, b: 1.0))
-    capitaux = _capitaux_sous_la_variante(neutre, pensionne, facteur)
+    capitaux = _capitaux_sous_la_variante(pensionne, facteur, lambda annee, liquidation: 1.0)
     assert capitaux[2] == pytest.approx(1.05, rel=1e-12)
     # La cohorte née deux ans plus tôt cotise en 2018 et en 2038, liquide en
     # 2048, et gagne autant.

@@ -1102,14 +1102,66 @@ export function pensionAujourdhui(simulateur, comparaison, actuelServi = null) {
  * Ce que devient une pension DÉJÀ LIQUIDÉE dans un système notionnel, année
  * après année.
  *
- * Portage de `RevalorisationServie` dans `revalorisation.py`, dont le
- * raisonnement est écrit en entier. En deux phrases : un système notionnel a
- * DEUX règles d'indexation — le compte pendant la carrière, la pension une
- * fois servie —, et le dépôt n'en portait qu'une, les masses figeant la
- * pension en euros constants pour toute la retraite. C'était une indexation
- * sur les prix qui ne disait pas son nom, correcte pour le scénario 1 où c'est
- * la loi, fausse pour les cinq autres, dont le diviseur de conversion suppose
- * déjà que la rente suit le taux qui a fait grossir le compte.
+ * UN SEUL EXEMPLAIRE (note de décision 0007, action 161). Cette règle ne
+ * s'écrit qu'ici : le coût du modèle en demande les séries au pont, une fois
+ * par jeu de paramètres (`pont.series_servies`), et `RevalorisationServie` de
+ * ``src/retraite_notionnelle/revalorisation.py`` ne fait plus que les lire —
+ * `coefficient`, `coefficient_stock`, `coefficient_points`, `regime_convenu`,
+ * que ``tests/test_pont.py`` confronte à celles d'ici, au bit. Ce que le coût
+ * seul lit n'est pas porté : ce que le droit a servi jusqu'au dernier barème,
+ * la rente nominale du pilier.
+ *
+ * UN SYSTÈME NOTIONNEL A DEUX RÈGLES D'INDEXATION, ET NON UNE. La première
+ * fait grossir le compte pendant la carrière ; la seconde revalorise la
+ * pension une fois qu'elle est servie. Les pays qui ont fait ce système les
+ * règlent séparément : la Suède revalorise le compte sur l'indice des
+ * salaires et la pension liquidée sur ce même indice diminué de 1,6 point ;
+ * l'Italie revalorise le compte sur le PIB et la pension liquidée sur les
+ * prix.
+ *
+ * Le dépôt n'en portait qu'une. Les masses de la page « Coût » figeaient la
+ * pension en euros constants pour toute la retraite, ce qui est une
+ * indexation sur les PRIX qui ne disait pas son nom — correcte pour le
+ * scénario 1, où c'est la loi, fausse pour les cinq autres. Car la seconde
+ * règle est déjà écrite ailleurs dans le modèle, et depuis toujours : le
+ * diviseur de conversion vaut l'espérance de vie résiduelle parce que
+ * `taux_anticipe_conversion` est nul, et il ne la vaut QUE si la rente est
+ * ensuite revalorisée au taux auquel le compte l'a été. Le modèle promettait
+ * donc une rente indexée sur la masse salariale et en servait une indexée sur
+ * les prix ; il payait moins que son propre contrat.
+ *
+ * CE QUE REND CETTE CLASSE est le coefficient qui corrige l'écart, en euros
+ * CONSTANTS puisque c'est l'unité des masses : le produit des taux
+ * d'indexation depuis la liquidation, déflaté des prix de la même période. Il
+ * vaut 1 l'année de la liquidation, et jusqu'à ×3 pour les vingt années qui
+ * suivent une liquidation de 1960, où la masse salariale progressait de cinq
+ * points par an au-dessus des prix.
+ *
+ * CE QU'ELLE N'EST PAS. Elle ne choisit pas la règle : elle applique celle
+ * que `mode_indexation` porte déjà, quelle qu'elle soit. Sous le triple lock
+ * inversé, qui passe sous les prix la plupart des années, son coefficient
+ * descend en dessous de 1 et la correction joue à la baisse. C'est la
+ * conséquence logique de la règle, et non un défaut.
+ *
+ * LE PRÉFINANCEMENT SE REND CHAQUE ANNÉE. Un diviseur actualisé à ν > 0
+ * (`taux_anticipe_conversion`) sert d'avance un rendement de ν par an : la
+ * pension servie se revalorise alors au taux du compte DIVISÉ par 1 + ν, sans
+ * quoi elle dépasserait ce que le compte a financé. C'est la règle suédoise —
+ * « l'indice de revenu nouveau sur l'ancien, divisé par 1,016 », le même
+ * nombre que dans le diviseur (Pensionssystemets årsredovisning 2025, note 6 ;
+ * socialförsäkringsbalken, 62 kap.) —, et celle de la Grèce ; elle vaut pour
+ * tout ce que cette classe revalorise, le stock que `reindexe` reprend
+ * compris, comme la Suède l'a donnée à ses anciennes pensions. Le dépôt ne
+ * l'appliquait pas jusqu'au 1er octobre 2026 : au défaut, ν = 0, le diviseur
+ * est l'espérance de vie et rien ne change.
+ *
+ * LE SCÉNARIO 1 N'EST PAS TOUT ENTIER SUR LES PRIX (`coefficientPoints`). Sa
+ * pension de base l'est (L. 161-23-1) ; sa complémentaire suit la valeur de
+ * service de l'Agirc-Arrco, que le COR projette au salaire moyen moins 1,16
+ * point de 2027 à 2037, moins 0,86 ensuite (`conventions_points`) : un peu
+ * sous les prix jusqu'en 2037, un peu au-dessus après. Pour chaque régime que
+ * la convention couvre, la valeur de service en euros constants, 1 jusqu'à
+ * son dernier barème publié.
  */
 export class RevalorisationServie {
   constructor(simulateur, premiereAnnee, derniereAnnee) {
@@ -1123,14 +1175,17 @@ export class RevalorisationServie {
     this.premiereAnnee = premiereAnnee;
     this.derniereAnnee = Math.max(derniereAnnee, premiereAnnee);
     // Le rendement que le diviseur a servi d'avance : la pension servie se
-    // revalorise au taux du compte divisé par 1 + ν, comme en Suède. Voir le
-    // Python ; au défaut, ν = 0, rien ne change.
+    // revalorise au taux du compte divisé par 1 + ν, comme en Suède ; au
+    // défaut, ν = 0, rien ne change.
     const prefinancement = 1 + simulateur.parametres.taux_anticipe_conversion;
     let index = 1;
     this._index = new Map([[this.premiereAnnee, index]]);
     for (let annee = this.premiereAnnee + 1; annee <= this.derniereAnnee; annee += 1) {
       // Le taux d'indexation est NOMINAL, les masses sont en euros constants :
-      // on le déflate année par année, et non en bloc.
+      // on le déflate année par année, et non en bloc. Un produit de taux
+      // nominaux divisé par une inflation cumulée serait la même chose ici,
+      // mais cesserait de l'être dès qu'un plancher ou un lissage
+      // s'appliquerait à l'un des deux — et il y en a un.
       index *= (1 + indexation.taux(annee).taux) / prefinancement
         * macro.coefficientPrix(annee, annee - 1);
       this._index.set(annee, index);
@@ -1168,8 +1223,7 @@ export class RevalorisationServie {
 
   /**
    * Le régime qui sert, au bout de ses fusions, les points de `regime`, s'il a
-   * une valeur de service convenue ; `null` sinon — portage de
-   * `regime_convenu`.
+   * une valeur de service convenue ; `null` sinon.
    */
   regimeConvenu(regime) {
     const points = this._series();
@@ -1186,8 +1240,11 @@ export class RevalorisationServie {
 
   /**
    * Ce que vaut en `annee`, en euros constants, un euro de pension servie en
-   * points de `regime` liquidé en `anneeLiquidation` — portage de
-   * `coefficient_points` : 1 sans convention, et jusqu'au dernier barème.
+   * points de `regime` (au bout de ses fusions) liquidé en `anneeLiquidation` :
+   * le rapport de la valeur de service convenue à celle de la liquidation,
+   * déflaté des prix. 1 pour un régime sans convention, et jusqu'au dernier
+   * barème publié, que la projection lit en euros constants comme le reste du
+   * scénario 1.
    */
   coefficientPoints(regime, anneeLiquidation, annee) {
     const serie = this._series().get(regime);
@@ -1204,7 +1261,8 @@ export class RevalorisationServie {
 
   /**
    * Ce que vaut en `annee`, en euros constants, un euro de pension liquidé en
-   * `anneeLiquidation`. Vaut exactement 1 l'année de la liquidation et avant.
+   * `anneeLiquidation`. Vaut exactement 1 l'année de la liquidation et avant
+   * elle : une pension qui n'est pas encore servie ne se revalorise pas.
    */
   coefficient(anneeLiquidation, annee) {
     if (annee <= anneeLiquidation) return 1;
@@ -1213,8 +1271,8 @@ export class RevalorisationServie {
   }
 
   /**
-   * Le même coefficient, avec la règle du STOCK à la bascule — portage de
-   * `coefficient_stock`. Une pension liquidée à compter de la bascule suit la
+   * Le même coefficient, avec la règle du STOCK à la bascule. Une pension
+   * liquidée à compter de la bascule suit la
    * règle du compte depuis sa liquidation. Liquidée avant : sous `prix`, elle
    * garde les prix à compter de la bascule (1 depuis toujours pour une réforme
    * prospective, coefficient gelé à la bascule pour une rétroactive) ; sous

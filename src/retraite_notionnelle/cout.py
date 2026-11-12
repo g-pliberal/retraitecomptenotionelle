@@ -5381,8 +5381,40 @@ def _facteur_emploi(simulateur: Simulateur,
     return population.facteur_actifs
 
 
-def _capitaux_sous_la_variante(simulateur: Simulateur, pensionne: Pensionne,
-                               facteur: Callable[[int], float]) -> tuple[float, ...]:
+def _cotisations_comptees(pensionne: Pensionne, decalage: int,
+                          ) -> tuple[int, list[tuple[int, float]]]:
+    """L'année de liquidation de la cohorte née ``decalage`` ans après la
+    grille, et ce que son compte de la proposition a reçu jusqu'à elle :
+    ``(année, cotisation)``, dans l'ordre des années."""
+    volet = pensionne.volet(decalage)
+    liquidation = volet.annee_liquidation
+    return liquidation, [(annee, cotisation)
+                         for annee, cotisation in sorted(volet.cotisations.items())
+                         if annee <= liquidation and cotisation > 0.0]
+
+
+def _rendements_des_cotisations(simulateur: Simulateur, pensionnes: list[Pensionne],
+                                ) -> dict[tuple[int, int], float]:
+    """Ce que l'indexation rend à une cotisation de chaque année jusqu'à
+    chaque liquidation de la grille : ``{(année, liquidation): coefficient}``.
+
+    L'indexation ne s'écrit qu'en JavaScript (``moteur/js/indexation.js``,
+    note de décision 0007) : le coût la demande au pont, d'un seul lot pour
+    toute sa grille, chaque couple une fois (:func:`~.pont.indexation`)."""
+    from . import pont
+
+    couples = sorted({(annee, liquidation)
+                      for pensionne in pensionnes
+                      for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)
+                      for liquidation, cotisations in [_cotisations_comptees(pensionne, decalage)]
+                      for annee, _ in cotisations})
+    rendus = pont.indexation([("coefficient", *couple) for couple in couples],
+                             simulateur.parametres)
+    return dict(zip(couples, rendus, strict=True))
+
+
+def _capitaux_sous_la_variante(pensionne: Pensionne, facteur: Callable[[int], float],
+                               rendement: Callable[[int, int], float]) -> tuple[float, ...]:
     """Ce que la masse salariale de la variante change au compte de la
     proposition de chaque cohorte, à sa liquidation (action 138, étape 7).
 
@@ -5390,19 +5422,18 @@ def _capitaux_sous_la_variante(simulateur: Simulateur, pensionne: Pensionne,
     gagne sous la variante ``facteur(L) / facteur(a)`` : la masse de la variante
     est celle du central multipliée, chaque année, par ce que la variante
     change à l'emploi. Le compte gagne la moyenne de ce rapport, pondérée par
-    ce que chaque cotisation pèse dans le compte du central. La cohorte née
+    ce que chaque cotisation pèse dans le compte du central :
+    ``rendement(a, L)``, ce que l'indexation lui a rendu
+    (:func:`_rendements_des_cotisations`). La cohorte née
     ``decalage`` ans après la grille cotise et liquide ``decalage`` ans plus
     tard, sur le même profil : son compte est celui de la grille, même quand
     le droit de sa génération la fait partir une autre année (:func:`_departs`).
     Le diviseur ne bouge pas : la variante ne touche pas l'espérance de vie."""
-    indexation = simulateur.indexation
     capitaux = []
     for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-        volet = pensionne.volet(decalage)
-        liquidation = volet.annee_liquidation
-        poids = [(annee, cotisation * indexation.coefficient(annee, liquidation))
-                 for annee, cotisation in sorted(volet.cotisations.items())
-                 if annee <= liquidation and cotisation > 0.0]
+        liquidation, cotisations = _cotisations_comptees(pensionne, decalage)
+        poids = [(annee, cotisation * rendement(annee, liquidation))
+                 for annee, cotisation in cotisations]
         total = somme_ordonnee(p for _, p in poids)
         if total <= 0.0:
             capitaux.append(1.0)
@@ -5443,8 +5474,9 @@ def _sous_la_demographie(simulateur: Simulateur, pensionnes: list[Pensionne],
     facteur = _facteur_emploi(simulateur, population)
     if facteur is None:
         return pensionnes
-    return [replace(pensionne,
-                    capitaux=_capitaux_sous_la_variante(simulateur, pensionne, facteur))
+    rendements = _rendements_des_cotisations(simulateur, pensionnes)
+    return [replace(pensionne, capitaux=_capitaux_sous_la_variante(
+                pensionne, facteur, lambda annee, liquidation: rendements[annee, liquidation]))
             for pensionne in pensionnes]
 
 
