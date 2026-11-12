@@ -92,8 +92,9 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
-from retraite_notionnelle import memoire  # noqa: E402
-from retraite_notionnelle.castypes import CAS_TYPES, CasType, calculer_cas_types  # noqa: E402
+from retraite_notionnelle import memoire, pont  # noqa: E402
+from retraite_notionnelle.castypes import (  # noqa: E402
+    CAS_TYPES, CasType, primes_projetees_en_donnees)
 from retraite_notionnelle.cout import _DEMI_TRANCHE, _pensionnes  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
@@ -210,49 +211,126 @@ def point_annuel(annee: int = ANNEE) -> float:
     raise LookupError(f"pas de valeur du point en {annee} dans {POINT.name}")
 
 
-def depart_en(simulateur: Simulateur, cas: CasType, annee: int = ANNEE):
-    """(génération, comparaison) du cas type que le droit fait partir en
+@dataclass(frozen=True)
+class Depart:
+    """Ce que l'étude lit du départ d'un cas type, au scénario 1 : l'âge et
+    l'année, la durée validée tous régimes, et ce que le journal garde de sa
+    liquidation — chaque pension du code des pensions, ``(régime, montant,
+    traitement)``, la pension annuelle avant tout complément et le traitement
+    ou la solde de L. 15 qui la liquide, en euros de la date d'effet."""
+
+    age: float
+    annee: int
+    trimestres_valides: int
+    liquidation: tuple[tuple[str, float, float], ...]
+
+
+class Departs:
+    """Les départs des cas types sous un simulateur, chacun ``(cas type,
+    génération)``, que le moteur JavaScript date, bâtit et liquide
+    (``pont.departs_des_cas``, sous ``"lire": "liquidation"`` ; action 161)
+    sur le paquet des données du jour, comme le coût bâtit sa grille : ceux
+    qu'on lui annonce (:meth:`annoncer`), d'une demande, et tout autre, d'une
+    demande de plus. Une case que le droit écarte — une liquidation avant
+    l'origine de la répartition, un régime qui n'existait pas encore — ou que
+    le modèle refuse lève ``ValueError``, avec son motif, à sa lecture."""
+
+    def __init__(self, simulateur: Simulateur) -> None:
+        self.simulateur = simulateur
+        self._lus: dict[tuple[str, int], Depart | str] = {}
+
+    def annoncer(self, couples) -> None:
+        """Fait lire au portage, d'une demande, ceux de ces ``(cas type,
+        génération)`` qu'il n'a pas encore lus."""
+        simulateur = self.simulateur
+        cohortes = {f"{cas.code}|{generation}": (cas, generation)
+                    for cas, generation in couples if (cas.code, generation) not in self._lus}
+        if not cohortes:
+            return
+        lus, refus = pont.departs_des_cas(
+            [{"cle": cle, **cas.pour_le_portage(simulateur, generation), "lire": "liquidation"}
+             for cle, (cas, generation) in cohortes.items()],
+            simulateur.parametres, primes_projetees_en_donnees(simulateur),
+            pont.paquet_des_donnees(simulateur.parametres.racine_donnees))
+        for cle, (cas, generation) in cohortes.items():
+            if cle in refus:
+                self._lus[(cas.code, generation)] = refus[cle]
+            elif lus[cle]["depart"] is None:
+                self._lus[(cas.code, generation)] = lus[cle]["refus"]
+            else:
+                depart = lus[cle]["depart"]
+                self._lus[(cas.code, generation)] = Depart(
+                    lus[cle]["age"], depart["annee"], depart["trimestres_valides"],
+                    depart["liquidation"])
+
+    def depart(self, cas: CasType, generation: int) -> Depart:
+        """Le départ de ce cas type, né en ``generation``."""
+        self.annoncer([(cas, generation)])
+        lu = self._lus[(cas.code, generation)]
+        if isinstance(lu, str):
+            raise ValueError(f"{cas.code}, {generation} : {lu}")
+        return lu
+
+
+def premiere_generation(cas: CasType, annee: int) -> int:
+    """La génération d'où l'on cherche celle que le droit fait partir en
+    ``annee`` : l'année moins l'âge de départ du cas type."""
+    return annee - round(cas.age_liquidation)
+
+
+def depart_en(departs: Departs, cas: CasType, annee: int = ANNEE) -> tuple[int, Depart]:
+    """(génération, départ) du cas type que le droit fait partir en
     ``annee`` : on part de l'année moins son âge de départ, et l'on avance ou
     recule d'une génération tant que le départ tombe avant ou après."""
-    generation = annee - round(cas.age_liquidation)
+    generation = premiere_generation(cas, annee)
     vues: set[int] = set()
     while generation not in vues:
         vues.add(generation)
-        grille = calculer_cas_types(simulateur, (cas,), (generation,), "droit")
-        comparaison = grille.resultats.get((cas.code, generation))
-        if comparaison is None:
-            raise ValueError(f"{cas.code}, {generation} : {grille.echecs}")
-        depart = comparaison.carriere.annee_liquidation
-        if depart == annee:
-            return generation, comparaison
-        generation += 1 if depart < annee else -1
+        depart = departs.depart(cas, generation)
+        if depart.annee == annee:
+            return generation, depart
+        generation += 1 if depart.annee < annee else -1
     raise ValueError(f"{cas.code} : aucune génération ne part en {annee}")
 
 
-def pension_et_traitement(comparaison) -> tuple[float, float]:
+def pension_et_traitement(depart: Depart) -> tuple[float, float]:
     """La pension annuelle du régime du code des pensions qui liquide le cas
     type, avant tout complément, et le traitement ou la solde de L. 15 qui la
     liquide, en euros de la date d'effet : ce que la liquidation garde pour
-    le plafond de la majoration pour enfants (L. 18)."""
-    for entree in comparaison.journal:
-        if entree.sorte != "liquidation":
-            continue
-        pensions = entree.contenu.pensions
-        for plafond in pensions.plafonds:
-            return pensions.regimes[plafond.indice].montant, plafond.traitement
+    le plafond de la majoration pour enfants (L. 18), et que son journal
+    inscrit."""
+    for _regime, pension, traitement in depart.liquidation:
+        return pension, traitement
     raise ValueError("aucune pension du code des pensions")
 
 
-def mesures_du_cas(comparaison, point: float) -> dict[str, float]:
+def mesures_du_cas(depart: Depart, point: float) -> dict[str, float]:
     """Les cinq mesures d'un cas type parti en 2025."""
-    pension, traitement = pension_et_traitement(comparaison)
+    pension, traitement = pension_et_traitement(depart)
     return {
-        "age_premiere_mise_en_paiement": float(comparaison.carriere.age_liquidation),
-        "duree_tous_regimes_trimestres": float(comparaison.actuel.trimestres_valides),
+        "age_premiere_mise_en_paiement": float(depart.age),
+        "duree_tous_regimes_trimestres": float(depart.trimestres_valides),
         "taux_liquidation": pension / traitement,
         "indice_liquidation": traitement / point,
         "pension_principale_eur": pension / 12.0,
     }
+
+
+#: Les générations que l'on annonce au portage de part et d'autre de celle
+#: d'où part la recherche (:func:`premiere_generation`) : la marche n'en sort
+#: guère, et une génération de plus se lit d'une demande de plus.
+VOISINES = 2
+
+
+def departs_annonces(simulateur: Simulateur, cas_types, annees) -> Departs:
+    """Les départs de ces cas types, ceux des générations d'où la recherche
+    de chaque année peut passer (:data:`VOISINES`) lus d'une seule demande."""
+    departs = Departs(simulateur)
+    departs.annoncer(sorted(
+        {(cas, premiere_generation(cas, annee) + ecart) for cas in cas_types
+         for annee in annees for ecart in range(-VOISINES, VOISINES + 1)},
+        key=lambda couple: (couple[0].code, couple[1])))
+    return departs
 
 
 def mesurer_le_modele(simulateur: Simulateur) -> dict[str, tuple[int, dict[str, float]]]:
@@ -260,11 +338,12 @@ def mesurer_le_modele(simulateur: Simulateur) -> dict[str, tuple[int, dict[str, 
     génération, et ses cinq mesures."""
     point = point_annuel()
     par_code = {cas.code: cas for cas in CAS_TYPES}
+    departs = departs_annonces(simulateur, [par_code[code] for code in REFERENTS], (ANNEE,))
     modele: dict[str, tuple[int, dict[str, float]]] = {}
     for code in REFERENTS:
-        generation, comparaison = depart_en(simulateur, par_code[code])
+        generation, depart = depart_en(departs, par_code[code])
         modele[code] = (generation, {indicateur: round(valeur, 4) for indicateur, valeur
-                                     in mesures_du_cas(comparaison, point).items()})
+                                     in mesures_du_cas(depart, point).items()})
     return modele
 
 
@@ -327,14 +406,15 @@ def mesurer_les_annees(simulateur: Simulateur, annees: tuple[int, ...] = ANNEES
     le sédentaire de 1960 part en 2023, celui de 1961 en 2025 — n'a pas de
     mesure."""
     par_code = {cas.code: cas for cas in CAS_TYPES}
+    departs = departs_annonces(simulateur, [par_code[code] for code in REFERENTS], annees)
     modele: dict[str, dict[int, tuple[int, dict[str, float]]]] = {}
     for code in REFERENTS:
         for annee in annees:
             try:
-                generation, comparaison = depart_en(simulateur, par_code[code], annee)
+                generation, depart = depart_en(departs, par_code[code], annee)
             except ValueError:
                 continue
-            mesures = mesures_du_cas(comparaison, point_annuel(annee))
+            mesures = mesures_du_cas(depart, point_annuel(annee))
             modele.setdefault(code, {})[annee] = (
                 generation, {indicateur: round(valeur, 4) for indicateur, valeur in mesures.items()})
     return modele

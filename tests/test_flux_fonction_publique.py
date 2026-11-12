@@ -419,3 +419,70 @@ def test_le_pont_rend_le_journal_de_la_liquidation_au_bit_pres_du_moteur_python(
                        for nombre in nombres), cle
             formes.add(len(attendu["liquidation"]))
     assert formes == {0, 1}
+
+
+def test_l_etude_mesure_ses_cas_types_au_portage_sans_le_moteur_python(monkeypatch):
+    """L'étude demande ses liquidations au portage (``flux.Departs``, action
+    161, lot B) : la génération que le droit fait partir chaque année, et les
+    cinq mesures de chaque cas type, sont celles que le moteur Python rendait
+    par ``calculer_cas_types`` — le flux de 2025 sous les deux conventions,
+    puis chaque année de 2016 à 2025 sous celles de la page Coût, les années
+    sans départ comprises —, au bit près, sans qu'il ne date, ne bâtisse ni ne
+    simule rien."""
+    import shutil
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage ne calcule pas ici")
+    from outils_pont import empecher_les_jumeaux_du_cout
+    from retraite_notionnelle.castypes import calculer_cas_types
+
+    def depart_du_moteur_python(simulateur, cas, annee):
+        """La marche de l'étude, telle qu'elle la faisait au moteur Python."""
+        generation = annee - round(cas.age_liquidation)
+        vues = set()
+        while generation not in vues:
+            vues.add(generation)
+            grille = calculer_cas_types(simulateur, (cas,), (generation,), "droit")
+            comparaison = grille.resultats[(cas.code, generation)]
+            depart = comparaison.carriere.annee_liquidation
+            if depart == annee:
+                return generation, comparaison
+            generation += 1 if depart < annee else -1
+        return None
+
+    def mesures_du_moteur_python(simulateur, annees):
+        mesures = {}
+        for cas in _statutaires():
+            for annee in annees:
+                parti = depart_du_moteur_python(simulateur, cas, annee)
+                if parti is None:
+                    continue
+                generation, comparaison = parti
+                pensions = next(entree.contenu.pensions for entree in comparaison.journal
+                                if entree.sorte == "liquidation")
+                plafond = pensions.plafonds[0]
+                pension, traitement = pensions.regimes[plafond.indice].montant, plafond.traitement
+                point = flux.point_annuel(annee)
+                mesures.setdefault(cas.code, {})[annee] = (generation, {
+                    indicateur: round(valeur, 4) for indicateur, valeur in {
+                        "age_premiere_mise_en_paiement": float(
+                            comparaison.carriere.age_liquidation),
+                        "duree_tous_regimes_trimestres": float(
+                            comparaison.actuel.trimestres_valides),
+                        "taux_liquidation": pension / traitement,
+                        "indice_liquidation": traitement / point,
+                        "pension_principale_eur": pension / 12.0,
+                    }.items()})
+        return mesures
+
+    conventions = _conventions()
+    attendus = {nom: mesures_du_moteur_python(simulateur, (flux.ANNEE,))
+                for nom, simulateur in conventions.items()}
+    annuelles = mesures_du_moteur_python(conventions["projection"], flux.ANNEES)
+    assert sum(len(annees) for annees in annuelles.values()) == 27, "trois années sans départ"
+
+    empecher_les_jumeaux_du_cout(monkeypatch)
+    for nom, simulateur in conventions.items():
+        assert flux.mesurer_le_modele(simulateur) == {
+            code: annees[flux.ANNEE] for code, annees in attendus[nom].items()}, nom
+    assert flux.mesurer_les_annees(conventions["projection"]) == annuelles
