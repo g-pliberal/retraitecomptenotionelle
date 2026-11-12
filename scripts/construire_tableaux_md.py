@@ -39,14 +39,12 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
-from retraite_notionnelle import Parametres  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
-from retraite_notionnelle.moteur.indexation import cumuls as cumuls_indexation  # noqa: E402
-from retraite_notionnelle.web.site import module  # noqa: E402
+from retraite_notionnelle import Parametres, pont  # noqa: E402
+from retraite_notionnelle.web.site import module, site  # noqa: E402
 
 #: Les règles que le site compare, et les bornes de leur cumul : le texte du
 #: site les écrit, en JavaScript (``moteur/js/pages.js``), et ce script les y
-#: lit, par node. Le modèle Python, lui, calcule ce qu'elles rendent.
+#: lit, par node, comme ce qu'elles rendent (:func:`cumuls`).
 _SITE = module("pages")
 REGLES_COMPAREES = tuple(tuple(regle) for regle in _SITE.REGLES_COMPAREES)
 ANNEE_VERSEMENT_COMPARE = _SITE.ANNEE_VERSEMENT_COMPARE
@@ -72,6 +70,8 @@ GENERATIONS = (1920, 1930, 1945, 1958, 1990)
 AGE_DEBUT_GENERATIONS = 20
 AGE_LIQUIDATION_GENERATIONS = 62
 REPERE_GENERATIONS = "generations"
+#: Le scénario dont le tableau lit l'écart au système actuel.
+SCENARIO_COMPARE = "notionnel_retroactif"
 
 
 def nombre(valeur: float, decimales: int = 1) -> str:
@@ -84,10 +84,10 @@ def nombre(valeur: float, decimales: int = 1) -> str:
 
 
 def cumuls() -> dict[str, float]:
-    """Le rendement cumulé de chaque règle, tel que le site le calcule."""
-    simulateur = Simulateur(Parametres())
-    return cumuls_indexation(simulateur.macro, simulateur.parametres, REGLES_COMPAREES,
-                             ANNEE_VERSEMENT_COMPARE, ANNEE_ARRIVEE_COMPAREE)
+    """Le rendement cumulé de chaque règle, tel que le site le calcule : par
+    sa propre fonction, ``cumulsIndexation`` de ``moteur/js/pages.js``, sous
+    les réglages de référence (action 161, lot A)."""
+    return dict(_SITE.cumuls_indexation(site().contexte))
 
 
 def tableau(entete: str) -> str:
@@ -120,29 +120,30 @@ def ecarts_par_generation() -> list[tuple[int, float, float]]:
     revalorisation réellement portée au compte. Ce que leur différence
     déplace se lit génération par génération, et change de signe pour les
     carrières entièrement postérieures à 1987.
+
+    Le portage bâtit et simule les cinq carrières sous chaque règle
+    (``pont.carrieres``, action 161, lot A) ; l'écart qu'il rend, la pension
+    du scénario rapportée à celle du système actuel, moins un, se lit ici en
+    points.
     """
     from retraite_notionnelle.config import ModeIndexation
 
-    simulateurs = {}
+    cas = [{"cle": str(generation),
+            "options": {"annee_naissance": generation, "sexe": "H",
+                        "affiliation": "salarie_prive_non_cadre",
+                        "age_debut": AGE_DEBUT_GENERATIONS,
+                        "age_liquidation": AGE_LIQUIDATION_GENERATIONS}}
+           for generation in GENERATIONS]
+    ecarts = []
     for mode in (ModeIndexation.PRIX,
                  ModeIndexation.REVALORISATION_PORTEE_AU_COMPTE):
-        simulateurs[mode] = Simulateur(
-            replace(Parametres(), mode_indexation=mode))
-
-    rendus = []
-    for generation in GENERATIONS:
-        ecarts = []
-        for mode, simulateur in simulateurs.items():
-            carriere = simulateur.carriere_simple(
-                annee_naissance=generation, sexe="H",
-                affiliation="salarie_prive_non_cadre",
-                age_debut=AGE_DEBUT_GENERATIONS,
-                age_liquidation=AGE_LIQUIDATION_GENERATIONS)
-            resultat = simulateur.simuler(carriere)
-            ecarts.append((resultat.notionnel_retroactif.pension_annuelle
-                           / resultat.actuel.pension_annuelle - 1) * 100)
-        rendus.append((generation, ecarts[0], ecarts[1]))
-    return rendus
+        lus, refus = pont.carrieres(cas, [SCENARIO_COMPARE],
+                                    parametres=replace(Parametres(), mode_indexation=mode))
+        if refus:
+            raise SystemExit(
+                f"le portage refuse des carrières du tableau des générations : {refus}")
+        ecarts.append({cle: lu["ecarts"][SCENARIO_COMPARE] * 100 for cle, lu in lus.items()})
+    return [(generation, *(lus[str(generation)] for lus in ecarts)) for generation in GENERATIONS]
 
 
 def tableau_generations() -> str:

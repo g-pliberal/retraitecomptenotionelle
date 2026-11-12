@@ -155,6 +155,10 @@ CONTROLES = {
     "test_dila_index.py", "test_pousser.py", "test_fusionner.py", "test_niveaux.py",
     "test_conservation.py", "test_outillage.py", "test_arbre.py", "test_consommation.py",
     "test_hook_lecture.py", "test_hook_tdd.py", "test_jumeaux.py",
+    # Ce qui entre encore dans le moteur Python depuis la fabrique, relevé en
+    # faisant tourner chacune de ses étapes : plusieurs minutes (action 161,
+    # lot A).
+    "test_entrees_du_moteur.py",
     # La saisie outillée des simulateurs officiels, et la confrontation d'une
     # carrière réelle à « Mon estimation retraite » (docs/architecture.md, § 3.5).
     "test_simulateurs.py", "test_estimation_officielle.py",

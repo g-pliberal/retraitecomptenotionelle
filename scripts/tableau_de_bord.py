@@ -192,27 +192,27 @@ def virgule(x: float, decimales: int = 1) -> str:
 def releves_des_cas_types() -> tuple[int, int, int, int, int]:
     """Les relevés des droits des cas types, à chaque génération : les cas
     types, les relevés, leurs lignes, celles qui citent leur fiche, celles qui
-    citent sa version."""
-    from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS
-    from retraite_notionnelle.droit import releve
+    citent sa version. Le portage date et bâtit chaque carrière, écarte celles
+    que le droit écarte (``pont.carrieres_de_la_grille``), puis construit son
+    relevé (``pont.droit``) : le simulateur Python ne prête ici que ses
+    données (action 161, lot A)."""
+    from retraite_notionnelle import pont
+    from retraite_notionnelle.castypes import (CAS_TYPES, GENERATIONS,
+                                               primes_projetees_en_donnees)
     from retraite_notionnelle.simulateur import Simulateur
 
     simulateur = Simulateur()
-    releves = lignes = citant = versionnees = 0
-    for cas in CAS_TYPES:
-        for generation in GENERATIONS:
-            try:
-                carriere = cas.construire(simulateur, generation, "droit")
-                if carriere.annee_liquidation <= simulateur.parametres.annee_debut_repartition:
-                    continue
-                contenu = releve.construire(simulateur.scenario_actuel, carriere).lignes()
-            except (ValueError, KeyError):
-                continue
-            releves += 1
-            lignes += len(contenu)
-            citant += somme_ordonnee(1 for ligne in contenu if ligne.get("fiche"))
-            versionnees += somme_ordonnee(1 for ligne in contenu if ligne.get("version"))
-    return len(CAS_TYPES), releves, lignes, citant, versionnees
+    baties, _ = pont.carrieres_de_la_grille(
+        [{"cle": f"{cas.code}|{generation}", **cas.pour_le_portage(simulateur, generation),
+          "rendre": "carriere"} for cas in CAS_TYPES for generation in GENERATIONS],
+        simulateur.parametres, primes_projetees_en_donnees(simulateur))
+    releves, _ = pont.droit(
+        {cle: ("releve.construire.lignes.citations", pont.MOTEUR, batie["carriere"])
+         for cle, batie in baties.items()}, simulateur.parametres)
+    citations = [citation for contenu in releves.values() for citation in contenu]
+    return (len(CAS_TYPES), len(releves), len(citations),
+            somme_ordonnee(1 for _, fiche, _ in citations if fiche),
+            somme_ordonnee(1 for _, _, version in citations if version))
 
 
 def page() -> str:
