@@ -1424,6 +1424,101 @@ const LECTURES = {
   debuts_de_la_surcote: debutsDeLaSurcote, garantie: garantieDePopulation,
 };
 
+// -- la façade des tests (action 161, note de décision 0007) -------------------
+
+/**
+ * Un objet du portage écrit tel qu'il est, pour que `pont.py` le relise sous
+ * le type de son jumeau, champ par champ (`lu_strictement`) : chacun de ses
+ * champs publics, sous son nom ; une suite ou un ensemble en liste, une table
+ * (`Map`) en objet ; une carrière comme le pont l'écrit partout
+ * (`carriereEnDonnees`) ; un nombre non fini par son nom, que JSON n'écrit
+ * pas. Les mémoires de l'objet, ses champs privés, ne passent pas, ni une
+ * méthode qu'il tient en champ (`donnees` d'un départ), que le type du Python
+ * porte lui-même : s'il attendait là une donnée, sa lecture s'arrête. Ailleurs,
+ * une fonction arrête le pont, au lieu de se perdre.
+ */
+function telQuel(valeur) {
+  if (valeur === null || valeur === undefined) return null;
+  if (typeof valeur === "number") return Number.isFinite(valeur) ? valeur : String(valeur);
+  if (typeof valeur === "function") {
+    throw new TypeError("une fonction ne passe pas le pont");
+  }
+  if (typeof valeur !== "object") return valeur;
+  if (Array.isArray(valeur)) return valeur.map(telQuel);
+  if (valeur instanceof Set) return [...valeur].map(telQuel);
+  if (valeur instanceof Carriere) return carriereEnDonnees(valeur);
+  const champs = valeur instanceof Map ? [...valeur]
+    : Object.entries(valeur)
+      .filter(([nom, element]) => !nom.startsWith("_") && typeof element !== "function");
+  return Object.fromEntries(champs.map(([nom, element]) => [nom, telQuel(element)]));
+}
+
+/** Les options d'un bâtisseur de carrière que le Python a écrites
+ *  (`optionsDeCarriere`), le département d'outre-mer de chaque année compris,
+ *  une table lui aussi. */
+function optionsDeLaFacade(options) {
+  const { outre_mer: outreMer = null } = options;
+  return {
+    ...optionsDeCarriere(options),
+    ...(outreMer === null ? {} : {
+      outre_mer: new Map(Object.entries(outreMer).map(([annee, lieu]) => [Number(annee), lieu])),
+    }),
+  };
+}
+
+/**
+ * Les entrées du moteur que les tests appellent, sous le nom de leur jumeau
+ * Python (`tests/facade.py`) : les bâtisseurs de carrière, du simulateur — qui
+ * vérifient l'affiliation — et de la carrière, sur les séries du simulateur ;
+ * le scénario 1, son résultat entier ; la réversion. Une entrée de plus s'y
+ * déclare, et ce qu'elle rend dans `LECTURES_DE_LA_FACADE` de `pont.py`.
+ */
+const ENTREES_DE_LA_FACADE = {
+  "simulateur.carriere_simple": (simulateur, options) => carriereEnDonnees(
+    simulateur.carriereSimple(optionsDeLaFacade(options))),
+  "simulateur.carriere_parcours": (simulateur, options) => carriereEnDonnees(
+    simulateur.carriereParcours(optionsDeLaFacade(options))),
+  "simulateur.carriere_releve": (simulateur, options) => carriereEnDonnees(
+    simulateur.carriereReleve(options)),
+  "carriere.depuis_profil": (simulateur, options) => carriereEnDonnees(
+    Carriere.depuisProfil({ ...optionsDeLaFacade(options), macro: simulateur.macro })),
+  "carriere.depuis_parcours": (simulateur, options) => carriereEnDonnees(
+    Carriere.depuisParcours({ ...optionsDeLaFacade(options), macro: simulateur.macro })),
+  // Les drapeaux de `calculer` suivent la carrière, tous, dans l'ordre du jumeau.
+  "scenario_actuel.calculer": (moteur, carriere, ...drapeaux) => telQuel(
+    moteur.calculer(carriere, ...drapeaux)),
+  "reversion.reversion": (...valeurs) => FONCTIONS_DU_DROIT["reversion.reversion"](...valeurs),
+};
+
+/**
+ * Une entrée de la façade, `{entree, arguments}`, sous les paramètres et sur
+ * les carrières de la demande, comme un appel du droit (`droit`) : ce qu'elle
+ * rend (`rendu`), ou, quand le portage la refuse, la classe et le motif de
+ * son erreur (`refus`), que `pont.py` lève sous le type du Python. Une entrée
+ * que la façade ne sert pas arrête la demande.
+ */
+function facade({ parametres, carrieres, entree, arguments: valeurs }) {
+  if (!Object.hasOwn(ENTREES_DE_LA_FACADE, entree)) {
+    throw new Error(`entrée que la façade ne sert pas : ${entree}`);
+  }
+  const simulateur = simulateurSous(parametres);
+  const lues = carrieres.map(carriereDesDonnees);
+  try {
+    return {
+      rendu: ENTREES_DE_LA_FACADE[entree](
+        ...valeurs.map((argument) => argumentDuDroit(simulateur, lues, argument))),
+    };
+  } catch (erreur) {
+    if (erreurDuProgramme(erreur) || !(erreur instanceof Error)) {
+      throw erreur;
+    }
+    return { refus: { classe: erreur.constructor.name, motif: erreur.message } };
+  }
+}
+LECTURES.facade = facade;
+
+// -- la fin de la façade des tests ----------------------------------------------
+
 /** La réponse à une demande, qui porte une seule des `LECTURES`. */
 function repondre(demande) {
   const [lecture] = Object.keys(demande);

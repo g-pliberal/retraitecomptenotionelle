@@ -1583,3 +1583,249 @@ def simulations(cas: list[dict], paquet: bytes | None = None,
                        "appels_liquider": lu["appels_liquider"]}
                  for cle, lu in reponse["resultats"].items()}
     return resultats, reponse["echecs"]
+
+
+# -- la façade des tests (action 161, note de décision 0007) -------------------
+#
+# Les entrées du moteur Python que les tests appellent, servies par le portage
+# sous leurs noms (``tests/facade.py``) : ce bloc en tient la demande
+# (:func:`facade`) et la lecture (:func:`lu_strictement`), à part du reste du
+# pont tant que le jumeau Python vit.
+
+#: Les champs qu'un type du résultat porte et que le portage n'écrit pas quand
+#: ils sont sans objet — la date d'effet d'une pension qui part avec les
+#: autres, la part de chaque régime d'un avantage qui n'en a pas : le Python
+#: les tient alors à leur valeur par défaut. Tout autre champ doit être écrit.
+CHAMPS_SANS_OBJET = {
+    "PensionRegime": frozenset({
+        "date_effet", "montant_a_l_effet", "capital", "conjoint", "ecretement_du_maximum",
+        "surcote", "coefficient_du_maximum", "sur_la_duree_maximum", "planchers",
+        "avant_les_planchers"}),
+    "AvantageApplique": frozenset({"par_regime", "par_regime_sans_anticipation", "a_charge"}),
+    "ResultatActuel": frozenset({"minimum_ecrete"}),
+}
+
+#: Les types dont le portage écrit les champs en casse de chameau.
+CLASSES_EN_CHAMEAU = frozenset({"EligibleAgricole"})
+
+#: Les champs que le portage écrit sous un autre nom que celui du Python, hors
+#: des classes en casse de chameau : ``{type: {champ: nom du portage}}``.
+NOMS_DU_PORTAGE = {
+    "ExploitantAgricole": {"chef_reconstitue": "chefReconstitue"},
+}
+
+#: Le type des champs que le Python annonce ``object``, pour ne pas faire
+#: dépendre un module d'un autre : ``{(type, champ): (module, nom)}``.
+OBJETS_DU_RESULTAT = {
+    ("ChefDExploitation", "eligible"): ("droit.liquider", "EligibleAgricole"),
+    ("ExploitantAgricole", "eligible"): ("droit.liquider", "EligibleAgricole"),
+    ("ExploitantAgricole", "carriere"): ("carriere", "Carriere"),
+}
+
+#: Les nombres que JSON n'écrit pas, et que le portage écrit par leur nom
+#: (``telQuel`` de ``pont.mjs``).
+NON_FINIS = {"NaN": math.nan, "Infinity": math.inf, "-Infinity": -math.inf}
+
+
+def _en_chameau(nom: str) -> str:
+    """Un nom du Python en casse de chameau (``enChameau`` de ``pont.mjs``)."""
+    tete, *suite = nom.split("_")
+    return tete + "".join(mot[:1].upper() + mot[1:] for mot in suite)
+
+
+def _nom_du_portage(type_, champ: str) -> str:
+    """Le nom sous lequel le portage écrit ce champ de ce type."""
+    nom = NOMS_DU_PORTAGE.get(type_.__name__, {}).get(champ)
+    if nom is not None:
+        return nom
+    return _en_chameau(champ) if type_.__name__ in CLASSES_EN_CHAMEAU else champ
+
+
+def _type_du_champ(type_, champ: str):
+    """Le type d'un champ : son annotation, ou, quand elle dit ``object``, le
+    type déclaré dans :data:`OBJETS_DU_RESULTAT`."""
+    import importlib
+
+    declare = OBJETS_DU_RESULTAT.get((type_.__name__, champ))
+    if declare is None:
+        return _indices(type_)[champ]
+    module, nom = declare
+    return getattr(importlib.import_module(f"{__package__}.{module}"), nom)
+
+
+def _dataclass_lu(type_, valeur, chemin: str):
+    """Un dataclass du résultat, de ce que le portage en a écrit : chacun de
+    ses champs sous son type, celui qui est sans objet à son défaut
+    (:data:`CHAMPS_SANS_OBJET`), et rien que le type ne porte — hors de ce que
+    le Python calcule et que le portage tient en champ, une propriété, que le
+    type refait."""
+    if not isinstance(valeur, dict):
+        raise TypeError(f"{chemin} : {type_.__name__} attendu, le portage a écrit {valeur!r}")
+    champs = {_nom_du_portage(type_, champ.name): champ for champ in dataclasses.fields(type_)}
+    en_trop = sorted(nom for nom in valeur if nom not in champs
+                     and not isinstance(getattr(type_, nom, None), property))
+    if en_trop:
+        raise ValueError(f"{chemin} : {type_.__name__} : le portage écrit {', '.join(en_trop)}, "
+                         "que le type ne porte pas")
+    sans_objet = CHAMPS_SANS_OBJET.get(type_.__name__, frozenset())
+    manquent = sorted(champ.name for nom, champ in champs.items()
+                      if nom not in valeur and champ.name not in sans_objet)
+    if manquent:
+        raise ValueError(f"{chemin} : {type_.__name__} : le portage n'écrit pas "
+                         f"{', '.join(manquent)}")
+    return type_(**{champ.name: lu_strictement(_type_du_champ(type_, champ.name), valeur[nom],
+                                               f"{chemin}.{champ.name}")
+                    for nom, champ in champs.items() if nom in valeur})
+
+
+def lu_strictement(type_, valeur, chemin: str = "valeur"):
+    """Ce que le portage a écrit tel qu'il le tient (``telQuel`` de
+    ``pont.mjs``), sous le type que le Python lui donne, sans rien deviner : un
+    nombre où le type attend un nombre — « 2 » relu 2.0, un entier qui doit en
+    être un, un nombre non fini par son nom —, un texte, un booléen, un membre
+    d'énumération de sa valeur ; un dataclass de ses champs
+    (:func:`_dataclass_lu`), une carrière et des paramètres par leur lecture
+    (:func:`carriere_des_donnees`, :func:`parametres_des_donnees`) ; une suite
+    en tuple ou en liste, un dictionnaire clé par clé, une année en entier.
+    Ce qui n'a pas le type attendu, et un type que la lecture ne connaît pas,
+    l'arrêtent."""
+    from .carriere import Carriere
+    from .config import Parametres
+
+    origine = typing.get_origin(type_)
+    if origine in (typing.Union, types.UnionType):
+        membres = [membre for membre in typing.get_args(type_) if membre is not type(None)]
+        if valeur is None and len(membres) < len(typing.get_args(type_)):
+            return None
+        if len(membres) != 1:
+            raise TypeError(f"{chemin} : la lecture ne départage pas {type_}")
+        return lu_strictement(membres[0], valeur, chemin)
+    if type_ is float:
+        if type(valeur) is str and valeur in NON_FINIS:
+            return NON_FINIS[valeur]
+        if type(valeur) not in (int, float):
+            raise TypeError(f"{chemin} : nombre attendu, le portage a écrit {valeur!r}")
+        return float(valeur)
+    for simple, nom in ((int, "entier"), (bool, "booléen"), (str, "texte")):
+        if type_ is simple:
+            if type(valeur) is not simple:
+                raise TypeError(f"{chemin} : {nom} attendu, le portage a écrit {valeur!r}")
+            return valeur
+    if isinstance(type_, type) and issubclass(type_, enum.Enum):
+        try:
+            return type_(valeur)
+        except ValueError:
+            raise ValueError(f"{chemin} : {type_.__name__} attendu, le portage a écrit "
+                             f"{valeur!r}") from None
+    if type_ is Carriere:
+        return carriere_des_donnees(valeur)
+    if type_ is Parametres:
+        return parametres_des_donnees(valeur)
+    if dataclasses.is_dataclass(type_):
+        return _dataclass_lu(type_, valeur, chemin)
+    if origine is dict:
+        type_des_cles, type_des_valeurs = typing.get_args(type_)
+        if not isinstance(valeur, dict):
+            raise TypeError(f"{chemin} : dictionnaire attendu, le portage a écrit {valeur!r}")
+        return {_cle_lue(type_des_cles, cle, chemin):
+                lu_strictement(type_des_valeurs, element, f"{chemin}[{cle}]")
+                for cle, element in valeur.items()}
+    if origine in (tuple, list):
+        if not isinstance(valeur, list):
+            raise TypeError(f"{chemin} : suite attendue, le portage a écrit {valeur!r}")
+        arguments = typing.get_args(type_)
+        if origine is list or (len(arguments) == 2 and arguments[1] is Ellipsis):
+            arguments = (arguments[0],) * len(valeur)
+        elif len(arguments) != len(valeur):
+            raise ValueError(f"{chemin} : {len(arguments)} éléments attendus, le portage "
+                             f"en a écrit {len(valeur)}")
+        return origine(lu_strictement(sous_type, element, f"{chemin}[{rang}]")
+                       for rang, (sous_type, element) in enumerate(zip(arguments, valeur)))
+    raise TypeError(f"{chemin} : la lecture ne connaît pas le type {type_!r}")
+
+
+def _cle_lue(type_, cle: str, chemin: str):
+    """La clé d'un dictionnaire, que JSON écrit en texte : telle quelle, ou
+    l'entier qu'elle écrit — une année."""
+    if type_ is str:
+        return cle
+    if type_ is int and cle.lstrip("-").isdigit():
+        return int(cle)
+    raise TypeError(f"{chemin} : clé {cle!r}, que la lecture ne sait pas rendre en {type_!r}")
+
+
+def resultat_actuel_des_donnees(actuel: dict):
+    """Le résultat entier du scénario 1 que le portage a écrit, sous le type du
+    Python (``ResultatActuel``), lu strictement. Le module du scénario ne se
+    charge qu'à la lecture."""
+    from .scenarios.actuel import ResultatActuel
+
+    return lu_strictement(ResultatActuel, actuel, "ResultatActuel")
+
+
+#: Ce que rend chaque entrée de la façade (``ENTREES_DE_LA_FACADE`` de
+#: ``pont.mjs``), relu sous le type du Python. Une entrée qui n'y est pas est
+#: refusée avant node.
+LECTURES_DE_LA_FACADE = {
+    "simulateur.carriere_simple": carriere_des_donnees,
+    "simulateur.carriere_parcours": carriere_des_donnees,
+    "simulateur.carriere_releve": carriere_des_donnees,
+    "carriere.depuis_profil": carriere_des_donnees,
+    "carriere.depuis_parcours": carriere_des_donnees,
+    "scenario_actuel.calculer": resultat_actuel_des_donnees,
+    "reversion.reversion": reversion_des_donnees,
+}
+
+#: Le type que le Python donne à une erreur du portage, quand ce n'est pas
+#: ``ValueError`` : par le début de son motif, ou par sa fin.
+ERREURS_DU_PORTAGE = (
+    ("affiliation inconnue", "", KeyError),
+    ("présomption inconnue", "", KeyError),
+    ("", "la fiche manque aux fiches datées du moteur", LookupError),
+)
+
+
+def erreur_du_portage(classe: str, motif: str) -> Exception:
+    """L'erreur que le Python lève là où le portage a levé celle-ci : une
+    donnée insuffisante reste ce qu'elle est ; une erreur du moteur est une
+    ``ValueError``, sauf celles que le Python range ailleurs
+    (:data:`ERREURS_DU_PORTAGE`). Une autre classe — une erreur de la saisie,
+    que la façade ne sert pas — n'a pas de type ici."""
+    from .donnees.chargement import DonneeInsuffisante
+
+    if classe == "DonneeInsuffisante":
+        return DonneeInsuffisante(motif)
+    if classe != "Error":
+        return RuntimeError(f"{PROGRAMME.name} : {classe} : {motif}")
+    for debut, fin, type_ in ERREURS_DU_PORTAGE:
+        if motif.startswith(debut) and motif.endswith(fin):
+            return type_(motif)
+    return ValueError(motif)
+
+
+def facade(entree: str, *arguments, parametres=None, paquet: bytes | None = None):
+    """Une entrée du moteur que les tests appellent, servie par le portage
+    (``tests/facade.py``) : ``entree`` au nom de son jumeau Python,
+    ``"scenario_actuel.calculer"``, ses arguments comme ceux d'un appel du
+    droit (:func:`droit`) — :data:`MOTEUR`, :data:`SIMULATEUR`, une carrière,
+    une valeur —, sous ``parametres``, les réglages de référence sans eux. Ce
+    qu'elle rend revient sous le type du Python, lu strictement
+    (:data:`LECTURES_DE_LA_FACADE`) ; ce que le portage refuse lève l'erreur
+    que le Python lève (:func:`erreur_du_portage`), son motif celui du
+    portage."""
+    from .config import Parametres
+
+    if entree not in LECTURES_DE_LA_FACADE:
+        raise ValueError(f"entrée que la façade ne sert pas : {entree} "
+                         "(pont.LECTURES_DE_LA_FACADE)")
+    carrieres: list = []
+    valeurs = [_argument_du_droit(argument, carrieres) for argument in arguments]
+    reponse = _demander({"facade": {
+        "parametres": parametres_en_donnees(Parametres() if parametres is None else parametres),
+        "carrieres": [carriere_en_donnees(carriere) for carriere in carrieres],
+        "entree": entree,
+        "arguments": valeurs,
+    }}, _paquet_de(parametres, paquet))
+    if "refus" in reponse:
+        raise erreur_du_portage(**reponse["refus"])
+    return LECTURES_DE_LA_FACADE[entree](reponse["rendu"])

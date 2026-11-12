@@ -412,6 +412,14 @@ def _active() -> bool:
     return not _MODIFICATIONS and not os.environ.get(SANS_MEMOIRE)
 
 
+def modele_intact() -> bool:
+    """Aucun remplacement d'une fonction du modèle n'est ouvert
+    (:func:`modele_modifie`, que ``monkeypatch`` ouvre dans les tests) : la
+    façade des tests, qui ne sait pas le transmettre au portage, refuse de
+    servir sinon (``tests/facade.py``)."""
+    return not _MODIFICATIONS
+
+
 def _relire(empreinte_: str | None, nom_: str) -> bytes | None:
     if empreinte_ is None:
         return None
