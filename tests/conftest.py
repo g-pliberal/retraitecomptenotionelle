@@ -379,6 +379,9 @@ def pytest_configure(config):
         config.addinivalue_line("markers", f"{nom}: {sens}")
     config.addinivalue_line(
         "markers", "site: le filet du site, après une retouche des pages ou de la saisie")
+    config.addinivalue_line(
+        "markers", "sur_le_moteur_python(raison): dans un fichier passé à la façade des tests, "
+                   "un test resté sur le moteur Python (tests/facade.py)")
     if os.environ.get(PRESOMPTIONS_DECALEES):
         _decaler_les_presomptions()
 

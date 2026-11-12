@@ -2003,3 +2003,93 @@ def facade(entree: str, *arguments, parametres=None, paquet: bytes | None = None
     if "refus" in reponse:
         raise erreur_du_portage(**reponse["refus"])
     return LECTURES_DE_LA_FACADE[entree](reponse["rendu"])
+
+
+# -- les tables du moteur, par la façade (action 161) ----------------------------
+#
+# Un test lit aussi les tables du moteur du scénario 1 —
+# ``simulateur.scenario_actuel.reversions.minimum(2025)``. La façade les sert
+# par leur nom et leur méthode : le portage appelle la méthode de sa table, et
+# ce qu'elle rend revient sous le type que la méthode du jumeau Python annonce,
+# lu strictement. Un bloc à part, comme le reste de la façade.
+
+#: Les méthodes des tables du moteur que la façade sert, sous les noms du
+#: Python : ``{table: méthodes}``. Chacune a les mêmes arguments, dans le même
+#: ordre, dans le portage (``moteur/js/regimes.js``), et un appel confronté au
+#: jumeau (``tests/test_facade_jumeau.py``). Une méthode qui n'y est pas est
+#: refusée avant node.
+TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
+    "carriere_longue": ("cotises_reputes",),
+    "conversions_points": ("echelle", "fusion"),
+    "durees_requises": ("trimestres",),
+    "minimum_contributif": ("regle", "valeurs"),
+    "minimum_garanti": ("montant", "reference"),
+    "minimum_vieillesse": ("plafond",),
+    "revalorisations_pensions": ("generale",),
+    "reversions": ("limite_cumul", "majoration_enfant", "minimum", "plafond_majoration"),
+    "valeurs_point": ("achat", "achat_prolonge", "garantie", "regimes_convenus"),
+}
+
+# Ce que devient un point à une fusion (``conversions_points.fusion``) : le
+# portage en écrit les champs en casse de chameau.
+CLASSES_EN_CHAMEAU |= {"ConversionPoint"}
+
+
+class _Series:
+    """Les séries du simulateur, en argument d'une méthode de table
+    (:func:`table_du_moteur`)."""
+
+    def __repr__(self) -> str:
+        return "pont.SERIES"
+
+
+#: Les séries du simulateur en argument d'une méthode de table : le portage y
+#: met les siennes (``simulateur.macro``), sous les paramètres de la demande.
+SERIES = _Series()
+
+
+@dataclasses.dataclass(frozen=True)
+class PeriodeDuCatalogue:
+    """Une période d'un régime du catalogue, en argument d'une méthode de
+    table : celle de ce rang parmi les périodes du régime, que le portage
+    prend dans son catalogue, et l'année où elle commence, qu'il vérifie.
+    :class:`Periode` ne nomme que la première période d'une année, quand un
+    régime en tient plusieurs à la fois — une par tranche."""
+
+    regime: str
+    rang: int
+    debut: int
+
+
+def table_du_moteur(table: str, methode: str, type_rendu, *arguments, parametres=None,
+                    paquet: bytes | None = None):
+    """Ce que rend la méthode ``methode`` de la table ``table`` du moteur du
+    scénario 1, sous les noms du Python (``"reversions"``, ``"minimum"``),
+    appelée par le portage sur la sienne, sous ``parametres`` : ses arguments
+    comme ceux d'un appel du droit (:func:`droit`) — une carrière, une valeur
+    —, :data:`SERIES`, ou une période du catalogue
+    (:class:`PeriodeDuCatalogue`). Ce qu'elle
+    rend revient sous ``type_rendu``, que la méthode du jumeau annonce, lu
+    strictement. Une méthode que :data:`TABLES_DE_LA_FACADE` ne déclare pas est
+    refusée avant node ; ce que le portage refuse lève l'erreur que le Python
+    lève (:func:`erreur_du_portage`)."""
+    from .config import Parametres
+
+    if methode not in TABLES_DE_LA_FACADE.get(table, ()):
+        raise ValueError(f"méthode de table que la façade ne sert pas : {table}.{methode} "
+                         "(pont.TABLES_DE_LA_FACADE)")
+    carrieres: list = []
+    valeurs = [{"valeur": {"@": "series"}} if argument is SERIES
+               else {"valeur": {"@": "periode", **dataclasses.asdict(argument)}}
+               if isinstance(argument, PeriodeDuCatalogue)
+               else _argument_du_droit(argument, carrieres) for argument in arguments]
+    reponse = _demander({"facade": {
+        "parametres": parametres_en_donnees(Parametres() if parametres is None else parametres),
+        "carrieres": [carriere_en_donnees(carriere) for carriere in carrieres],
+        "entree": "scenario_actuel.table",
+        "arguments": [_argument_du_droit(MOTEUR, carrieres), {"valeur": table},
+                      {"valeur": methode}, *valeurs],
+    }}, _paquet_de(parametres, paquet))
+    if "refus" in reponse:
+        raise erreur_du_portage(**reponse["refus"])
+    return lu_strictement(type_rendu, reponse["rendu"], f"{table}.{methode}")

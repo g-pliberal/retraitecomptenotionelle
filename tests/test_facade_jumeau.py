@@ -11,6 +11,7 @@ fichier est le seul de la façade à exécuter une règle Python.
 from __future__ import annotations
 
 import dataclasses
+import datetime
 import enum
 import json
 import shutil
@@ -22,7 +23,7 @@ from retraite_notionnelle import pont
 from retraite_notionnelle import simulateur as simulateur_python
 from retraite_notionnelle.carriere import Carriere as CarrierePython
 from retraite_notionnelle.carriere import LigneRelevee, Metier
-from retraite_notionnelle.config import RACINE_PROJET
+from retraite_notionnelle.config import RACINE_PROJET, Parametres
 from retraite_notionnelle.journal import Journal
 
 import facade
@@ -214,3 +215,84 @@ def test_le_jumeau_batit_la_carriere_que_la_facade_sert(cas):
         directe = getattr(facade.Carriere, de_carriere[batisseur])(**options, macro=servi.macro)
         assert ecarts_d_ecriture(pont.carriere_en_donnees(directe), attendue,
                                  tolerance=TOLERANCE_DU_MOTEUR_PYTHON) == []
+
+
+# -- les tables du moteur --------------------------------------------------------------
+
+def _mere_partie_tot(simulateur):
+    return simulateur.carriere_simple(
+        annee_naissance=1965, sexe="F", affiliation="salarie_prive_non_cadre", age_debut=18,
+        age_liquidation=62, nombre_enfants=2)
+
+
+def _tranche_b(simulateur, annee: int):
+    (periode,) = [periode for periode in simulateur.catalogue["agirc"].periodes_actives(annee)
+                  if periode.assiette == "tranche_b"]
+    return periode
+
+
+#: Des appels de chaque méthode de table que la façade sert
+#: (``pont.TABLES_DE_LA_FACADE``) : ``(table, méthode, arguments)``, les
+#: arguments bâtis sur le simulateur de chaque côté — sa carrière, ses séries,
+#: une période de son catalogue.
+APPELS_DES_TABLES = [
+    ("carriere_longue", "cotises_reputes", lambda s: (_mere_partie_tot(s), 160, 8)),
+    ("carriere_longue", "cotises_reputes", lambda s: (_mere_partie_tot(s), 160, 0)),
+    ("conversions_points", "echelle", lambda s: ("agirc", 1990, 2026)),
+    ("conversions_points", "echelle", lambda s: ("arrco", 1990, 2026)),
+    ("conversions_points", "fusion", lambda s: ("arrco", "agirc_arrco")),
+    ("conversions_points", "fusion", lambda s: ("regime_general", "agirc_arrco")),
+    ("durees_requises", "trimestres", lambda s: (1955,)),
+    ("durees_requises", "trimestres", lambda s: (1965.75,)),
+    ("minimum_contributif", "regle", lambda s: ("2026-01-01",)),
+    ("minimum_contributif", "regle", lambda s: ("1990-01-01",)),
+    ("minimum_contributif", "valeurs", lambda s: (2024,)),
+    ("minimum_contributif", "valeurs", lambda s: (2023, 9)),
+    ("minimum_garanti", "montant", lambda s: (2024, 120)),
+    ("minimum_garanti", "montant", lambda s: (2024, 160, 168, 7)),
+    ("minimum_garanti", "reference", lambda s: (2024,)),
+    ("minimum_garanti", "reference", lambda s: (2010, 7)),
+    ("minimum_vieillesse", "plafond", lambda s: (2025,)),
+    ("minimum_vieillesse", "plafond", lambda s: (1930,)),
+    ("revalorisations_pensions", "generale",
+     lambda s: (datetime.date(1986, 12, 31), datetime.date(1988, 12, 31), False, None)),
+    ("revalorisations_pensions", "generale",
+     lambda s: (datetime.date(2017, 12, 31), datetime.date(2024, 12, 31), True, 1500.0)),
+    ("reversions", "limite_cumul", lambda s: (2001,)),
+    ("reversions", "majoration_enfant", lambda s: (2010,)),
+    ("reversions", "minimum", lambda s: (2025,)),
+    ("reversions", "minimum", lambda s: (1940,)),
+    ("reversions", "plafond_majoration", lambda s: (2010,)),
+    ("valeurs_point", "achat", lambda s: ("agirc_arrco", 2024)),
+    ("valeurs_point", "achat", lambda s: ("agirc", 1990)),
+    ("valeurs_point", "achat", lambda s: ("agirc_arrco", 2090)),
+    ("valeurs_point", "achat_prolonge", lambda s: ("agirc_arrco", 2046, s.macro)),
+    ("valeurs_point", "garantie", lambda s: ("agirc", _tranche_b(s, 1995), 1995, 1.0, 1.0)),
+    ("valeurs_point", "garantie", lambda s: ("agirc", _tranche_b(s, 2010), 2010, 0.5, 0.8)),
+    ("valeurs_point", "regimes_convenus", lambda s: ("valeur_service",)),
+]
+
+
+def test_chaque_methode_de_table_servie_a_son_appel_confronte():
+    assert {(table, methode) for table, methode, _ in APPELS_DES_TABLES} == {
+        (table, methode) for table, methodes in pont.TABLES_DE_LA_FACADE.items()
+        for methode in methodes}
+
+
+@pytest.mark.parametrize("parametres", [Parametres(), Parametres(conventions_cor=True)],
+                         ids=["reference", "conventions_cor"])
+def test_le_jumeau_rend_ce_que_la_facade_lit_dans_les_tables_du_moteur(parametres):
+    """Chaque méthode de table que la façade sert, appelée par le portage sur
+    sa table et par le jumeau sur la sienne : la même valeur, au bit près, sous
+    les mêmes types."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    servi = facade.Simulateur(parametres)
+    jumeau = simulateur_python.Simulateur(parametres)
+    ecarts = []
+    for table, methode, arguments in APPELS_DES_TABLES:
+        lu = getattr(getattr(servi.scenario_actuel, table), methode)(*arguments(servi))
+        refait = getattr(getattr(jumeau.scenario_actuel, table), methode)(*arguments(jumeau))
+        if lu != refait or (not isinstance(refait, dict) and repr(lu) != repr(refait)):
+            ecarts.append(f"{table}.{methode} : la façade lit {lu!r}, le jumeau rend {refait!r}")
+    assert not ecarts, "\n".join(ecarts)

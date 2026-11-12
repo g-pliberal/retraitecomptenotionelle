@@ -1572,6 +1572,41 @@ function facade({ parametres, carrieres, entree, arguments: valeurs }) {
 }
 LECTURES.facade = facade;
 
+// Les tables du moteur, par la façade : un bloc à part (action 161).
+
+/**
+ * La méthode d'une table du moteur du scénario 1, sous les noms du Python
+ * (`table_du_moteur` de `pont.py`, qui déclare celles que la façade sert) :
+ * ce qu'elle rend sur ces arguments, tel quel (`telQuel`). Deux arguments
+ * passent par leur marque : les séries du simulateur, `{"@": "series"}`, et
+ * une période du catalogue, `{"@": "periode", regime, rang, debut}`, celle de
+ * ce rang parmi les périodes du régime, dont l'année de début est vérifiée.
+ * Une table, une méthode ou une période que le moteur ne tient pas arrête la
+ * demande, au lieu de passer pour un refus du moteur.
+ */
+ENTREES_DE_LA_FACADE["scenario_actuel.table"] = (moteur, table, methode, ...valeurs) => {
+  const tenue = moteur[enChameau(table)];
+  const nom = enChameau(methode);
+  if (tenue === null || typeof tenue !== "object" || typeof tenue[nom] !== "function"
+    || nom.startsWith("_")) {
+    throw new TypeError(`table ou méthode que le moteur ne tient pas : ${table}.${methode}`);
+  }
+  const marque = (valeur) => (valeur !== null && typeof valeur === "object"
+    && !Array.isArray(valeur) ? valeur["@"] : undefined);
+  const lu = (valeur) => {
+    if (marque(valeur) === "series") return moteur.macro;
+    if (marque(valeur) === "periode") {
+      const periode = moteur.catalogue.obtenir(valeur.regime).periodes[valeur.rang];
+      if (periode === undefined || periode.debut !== valeur.debut) {
+        throw new TypeError(`période que le catalogue ne tient pas : ${JSON.stringify(valeur)}`);
+      }
+      return periode;
+    }
+    return valeur;
+  };
+  return telQuel(tenue[nom](...valeurs.map(lu)));
+};
+
 // -- la fin de la façade des tests ----------------------------------------------
 
 /** La réponse à une demande, qui porte une seule des `LECTURES`. */

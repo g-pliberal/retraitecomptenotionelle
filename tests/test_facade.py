@@ -35,6 +35,7 @@ from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Comparaison
 
 import facade
 from facade import Carriere, NonTransmissible, Simulateur, reversion
+from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 HAUTE = Fiabilite.CERTIFIEE
 
@@ -500,12 +501,117 @@ def test_ce_que_la_facade_ne_sert_pas_ne_se_lit_pas_sur_son_simulateur(simulateu
     lieu de faire tourner le moteur Python. Ses données, elles, se lisent."""
     with pytest.raises(NonTransmissible, match="convertisseur"):
         simulateur.convertisseur
-    with pytest.raises(NonTransmissible, match="ages_ouverture"):
-        simulateur.scenario_actuel.ages_ouverture
+    with pytest.raises(NonTransmissible, match="fiches_datees"):
+        simulateur.scenario_actuel.fiches_datees
     assert simulateur.macro.plafond_securite_sociale(2024) == 46368.0
     assert "artisan" in simulateur.affiliations
     assert simulateur.scenario_actuel.macro is simulateur.macro
     assert simulateur.parametres == Parametres()
+
+
+# -- les tables du moteur ------------------------------------------------------------
+
+def test_une_table_du_moteur_se_lit_par_son_nom_et_sa_methode(simulateur):
+    """Les montants que D. 353-1 et D. 353-4 écrivent, et ce que la Cnav sert :
+    le minimum de la réversion, 3 983,29 € en 2025, rien avant sa série ; le
+    plafond de la majoration, 2 421,60 € par trimestre depuis avril 2010. Ce
+    que la méthode rend revient sous le type que son jumeau annonce."""
+    table = simulateur.scenario_actuel.reversions
+    minimum = table.minimum(2025)
+    assert type(minimum) is tuple and minimum[0] == 3983.29
+    assert type(minimum[1]) is Fiabilite
+    assert table.minimum(1940) is None
+    assert table.plafond_majoration(annee=2010)[0] == 2421.60
+    # La loi du 20 janvier 2014 : 166 trimestres pour les générations 1955 à 1957.
+    requis, fiabilite = simulateur.scenario_actuel.durees_requises.trimestres(1955)
+    assert (requis, type(requis), type(fiabilite)) == (166, int, Fiabilite)
+
+
+def test_les_arguments_d_une_methode_se_lient_comme_le_python_les_lie(simulateur):
+    table = simulateur.scenario_actuel.reversions
+    with pytest.raises(TypeError, match="annee"):
+        table.minimum(millesime=2025)
+    with pytest.raises(TypeError):
+        table.minimum(2025, 2026)
+
+
+def test_une_table_se_lit_sous_les_parametres_de_son_simulateur(simulateur):
+    """Les conventions du COR ne valent que pour la page Coût
+    (``Parametres.conventions_cor``) : le simulateur individuel n'en tient
+    aucune pour la valeur de service du point ; sous elles, celle de
+    l'Agirc-Arrco suit la convention."""
+    assert simulateur.scenario_actuel.valeurs_point.regimes_convenus("valeur_service") == ()
+    convenu = Simulateur(Parametres(conventions_cor=True)).scenario_actuel
+    assert "agirc_arrco" in convenu.valeurs_point.regimes_convenus("valeur_service")
+
+
+def test_une_methode_que_la_facade_ne_sert_pas_est_refusee(simulateur):
+    """Une méthode servie se déclare (``pont.TABLES_DE_LA_FACADE``) : une
+    autre, une méthode privée, une table que le moteur ne tient pas sont
+    refusées, au lieu que le type de ce qu'elles rendent se devine."""
+    table = simulateur.scenario_actuel.reversions
+    with pytest.raises(NonTransmissible, match="reversions.fiche_du_regime"):
+        table.fiche_du_regime("regime_general")
+    with pytest.raises(NonTransmissible, match="carriere_longue._portes"):
+        simulateur.scenario_actuel.carriere_longue._portes
+    with pytest.raises(NonTransmissible, match="table_lunaire"):
+        simulateur.scenario_actuel.table_lunaire
+    with pytest.raises(ValueError, match="reversions.fiche_du_regime"):
+        pont.table_du_moteur("reversions", "fiche_du_regime", dict, "regime_general")
+    assert facade.TABLES is pont.TABLES_DE_LA_FACADE
+
+
+def test_une_table_de_la_facade_ne_se_modifie_pas(simulateur, monkeypatch):
+    table = simulateur.scenario_actuel.reversions
+    with pytest.raises(NonTransmissible, match="modifi"):
+        table.minimum = lambda annee: (0.0, HAUTE)
+    with pytest.raises(NonTransmissible, match="modèle modifié"):
+        table.minimum(2025)
+
+
+def test_une_regle_du_moteur_python_ne_lit_pas_une_table_de_la_facade(simulateur):
+    """Une règle du moteur Python à qui un test passe le moteur de la façade
+    tournerait en Python sur les tables du portage : le test verdirait sans
+    éprouver le portage. Elle est refusée ; le test reste sur le moteur
+    Python, ou demande la règle au pont."""
+    from retraite_notionnelle.droit import ouvrir
+
+    carriere = simulateur.carriere_simple(**SALARIE)
+    periode = simulateur.catalogue["regime_general"].periode(2029)
+    with pytest.raises(NonTransmissible, match="règle du moteur Python"):
+        ouvrir.duree_requise(simulateur.scenario_actuel, periode, carriere)
+
+
+# -- un test resté sur le moteur Python ------------------------------------------------
+
+def test_un_test_sans_marque_passe_par_la_facade(request):
+    """Dans un fichier basculé, les entrées sont celles de la façade, et le
+    simulateur du test est le sien, le même d'un test à l'autre."""
+    assert Simulateur is facade.Simulateur and reversion is facade.reversion
+    simulateur = facade.simulateur_du_test(request, Parametres())
+    assert type(simulateur) is facade.Simulateur
+    assert facade.simulateur_du_test(request, Parametres()) is simulateur
+    assert facade.simulateur_du_test(request) is simulateur
+    autre = facade.simulateur_du_test(request, Parametres(annee_courante=2030))
+    assert autre is not simulateur and autre.parametres.annee_courante == 2030
+
+
+@pytest.mark.sur_le_moteur_python("essai de la marque")
+def test_un_test_marque_reste_sur_le_moteur_python(request):
+    """Un test que la façade ne sait pas encore servir garde le moteur Python,
+    tel qu'il était : sous sa marque, les entrées de son fichier sont celles
+    du Python, et son simulateur aussi."""
+    assert Simulateur is simulateur_python.Simulateur
+    assert Carriere is carriere_python.Carriere
+    assert reversion.__module__ == "retraite_notionnelle.droit.reversion"
+    simulateur = facade.simulateur_du_test(request, Parametres())
+    assert type(simulateur) is simulateur_python.Simulateur
+    assert facade.simulateur_du_test(request, Parametres()) is simulateur
+
+
+def test_apres_un_test_marque_les_entrees_sont_de_nouveau_celles_de_la_facade():
+    assert Simulateur is facade.Simulateur and Carriere is facade.Carriere
+    assert reversion is facade.reversion
 
 
 def test_des_variantes_d_univers_sont_refusees():
