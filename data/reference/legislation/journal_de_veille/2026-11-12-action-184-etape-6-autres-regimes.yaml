@@ -1,0 +1,37 @@
+date: "2026-11-12"
+session: "action 184, étape 6, lot « les autres régimes » : les rédactions en vigueur ou à venir que vingt fiches n'avaient pas lues"
+consulte: >-
+  L'index LEGI du dépôt, récupéré le 11 novembre 2026 et à jour de l'incrément
+  de ce jour-là. Vingt-neuf rédactions en vigueur ou à venir, lues une à une
+  avec leur mot à mot et, quand il était bruité, la version entière : décret
+  n° 91-613, article 5 (2026, 2027, 2028) ; décrets n° 49-579, article 4,
+  n° 50-28, article 2, n° 78-283, article 3, et n° 79-262, article 5, dans la
+  rédaction du décret n° 2026-418 ; règlement du régime complémentaire des
+  indépendants, articles 12 (2024 et 2027), 17, 28 et annexes 2 et 3 (2027) ;
+  décret n° 2004-1056, articles 7, 12, 16 et 21 ; loi n° 2010-1330, article
+  35 ; loi n° 87-563, articles 1er, 3, 6 et 9 ; ordonnance n° 2002-411,
+  article 19 ; décrets n° 85-1148, article 3, n° 48-1108, article 1er,
+  n° 73-937, article 2, n° 64-994, article 5, n° 68-382, article 6,
+  n° 62-420, article 2, n° 74-191, article 1er ; loi n° 2003-1312, article
+  80 ; L. 351-8 du code de la sécurité sociale, pour son 6°.
+trouve: >-
+  Une rédaction change ce que le modèle calcule : l'article 12 du règlement
+  du régime complémentaire des indépendants, au 1er janvier 2027, plafonne
+  l'abattement de la fraction servie en retraite progressive au « taux prévu
+  à la deuxième ligne du tableau de l'annexe 2 » ; le modèle sert la fraction
+  sous l'abattement entier. Non portée au modèle : la fiche abattement_rci le
+  dit. Les vingt-huit autres ne changent aucun calcul : quatre sont citées
+  par la version qui les applique, quatorze sont sans effet, dix à rattacher.
+  Le taux des employeurs de la CNRACL de 2026 à 2028 (37,65 %, 40,65 %,
+  43,65 %) est déjà dans contribution_employeur_public.csv. Le cliquet des
+  textes baisse de quatre, à 9 258.
+reste: >-
+  Lire sur Légifrance le tableau de l'annexe 2 du règlement du régime
+  complémentaire des indépendants, pour dire quelle ligne est la deuxième,
+  avant d'écrire la règle de 2027 ; le propriétaire décide de l'étape qui
+  l'écrira. Une question à la fiche limite_age_ouvriers_etat : les services
+  d'après la limite d'âge du maintien et de la prolongation de l'insalubre
+  comptaient-ils du 1er septembre 2023 au 2 janvier 2025 ? Vu en passant,
+  hors du lot et non vérifié au modèle : l'article 28 du même règlement
+  (2027), et les bonifications et majorations de 2026 de l'article 12 du
+  décret n° 2004-1056. Le détail : docs/feuille_de_route/184/2026-11-12-etape-6-autres-regimes.md.
