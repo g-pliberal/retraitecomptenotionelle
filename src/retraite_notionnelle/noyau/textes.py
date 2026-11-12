@@ -22,7 +22,9 @@ pas : il se lit dans les fiches.
 Une fiche cite une rédaction par son identifiant (``id``), ou le nomme dans
 une référence : ``LEGIARTI`` suivi de ses douze chiffres suffit. Une
 déclaration « sans effet » ne vaut que pour la rédaction qu'elle déclare, non
-pour celles que son motif nomme. Le CLIQUET
+pour celles que son motif nomme, et que pour la fiche qui la fait : une autre
+fiche qui cite le même article garde la rédaction à lire, et le statut commun
+est « à rattacher » si une autre fiche la tient pour telle. Le CLIQUET
 compte les rédactions sans aucun statut. Il ne peut que décroître, et une loi
 nouvelle ne le fait jamais monter : ses rédactions entrent « à examiner ».
 """
@@ -42,9 +44,14 @@ TEXTES = RACINE_DONNEES / "reference" / "textes"
 COLONNES = ("id", "texte", "article", "debut", "fin", "inscrite_le")
 LEGIARTI = re.compile(r"LEGIARTI\d{12}")
 
-#: Du plus établi au moins établi : une rédaction que deux fiches citent
-#: prend le statut le plus établi.
+#: Du plus établi au moins établi : une rédaction qu'une fiche nomme deux
+#: fois y prend le statut le plus établi.
 STATUTS = ("rattachee", "sans_effet", "a_rattacher", "a_examiner")
+
+#: Le statut commun, quand deux fiches en donnent chacune un : « sans effet »
+#: ne vaut que pour la fiche qui le déclare, et cède à « à rattacher », qu'une
+#: autre fiche doit encore couper en version.
+COMMUN = ("rattachee", "a_rattacher", "sans_effet", "a_examiner")
 
 
 def perimetre(dossier: Path = TEXTES) -> dict:
@@ -112,15 +119,15 @@ def citations(fiches: dict[str, dict] | None = None) -> dict[str, dict[str, str]
 
 
 def statuts(dossier: Path = TEXTES, fiches: dict[str, dict] | None = None) -> dict[str, str | None]:
-    """Le statut de chaque rédaction de la liste, ou ``None`` : le plus établi
-    que les fiches lui donnent, sinon « à examiner » si le script l'a
-    inscrite."""
+    """Le statut de chaque rédaction de la liste, ou ``None`` : le premier,
+    dans l'ordre de ``COMMUN``, que les fiches lui donnent, sinon « à
+    examiner » si le script l'a inscrite."""
     cite = citations(fiches)
     sortie = {}
     for redaction in redactions(dossier):
         donnes = cite.get(redaction["id"], {}).values()
         if donnes:
-            sortie[redaction["id"]] = min(donnes, key=STATUTS.index)
+            sortie[redaction["id"]] = min(donnes, key=COMMUN.index)
         elif redaction["inscrite_le"]:
             sortie[redaction["id"]] = "a_examiner"
         else:
@@ -148,8 +155,9 @@ def non_lues(dossier: Path = TEXTES, fiches: dict[str, dict] | None = None,
              jour: date | None = None) -> dict[str, list[dict]]:
     """Pour chaque fiche, les rédactions qu'elle n'a pas lues des articles
     qu'elle cite (action 184, étape 2) : celles du même article — même texte,
-    même numéro — sans statut final, ni rattachées ni sans effet, et qu'elle
-    ne nomme pas. En vigueur au ``jour`` dit ou à venir (``vivante``) d'abord,
+    même numéro — qu'aucune fiche ne rattache et qu'elle ne nomme pas. Une
+    rédaction qu'une autre fiche déclare sans effet sur elle y reste : cette
+    déclaration ne vaut que pour la fiche qui la fait (étape 7). En vigueur au ``jour`` dit ou à venir (``vivante``) d'abord,
     puis de la plus récente à la plus ancienne. Un article sans numéro ne se
     suit pas ; deux rédactions du même numéro en vigueur ensemble sont deux
     articles, que rien ne départage dans la liste (``homonyme``)."""
@@ -170,7 +178,7 @@ def non_lues(dossier: Path = TEXTES, fiches: dict[str, dict] | None = None,
                     "vivante": not r["fin"] or r["fin"] > jour_dit,
                     "homonyme": any(_ensemble(r, autre) for autre in groupe if autre is not r)}
                    for r in groupe
-                   if statut[r["id"]] not in ("rattachee", "sans_effet")
+                   if statut[r["id"]] != "rattachee"
                    and nom not in cite.get(r["id"], {})]
             sortie.setdefault(nom, []).extend(vue)
     for nom, vue in sortie.items():

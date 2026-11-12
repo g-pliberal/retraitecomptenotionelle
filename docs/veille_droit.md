@@ -116,7 +116,9 @@ avec.
    Les rédactions en vigueur ou à venir que la fiche n'a pas lues des
    articles qu'elle cite, et leur mot à mot, sont dans `python
    scripts/textes.py --non-lues <fiche>`, les passées avec `--toutes` ;
-   une rédaction « (texte inchangé) » s'y déclare sans effet. La veille
+   une rédaction « (texte inchangé) » s'y déclare sans effet. Celle qu'une
+   autre fiche a déclarée sans effet y reste, marquée `sans_effet` : la
+   déclaration ne vaut que pour la fiche qui la fait. La veille
    compte parmi les fiches à relire celles qui en ont une en vigueur ou à
    venir.
 5. Donner à la donnée le niveau de fiabilité qu'elle mérite (`certifiee` si

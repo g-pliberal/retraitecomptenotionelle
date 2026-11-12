@@ -65,6 +65,26 @@ def test_deux_fiches_donnent_le_statut_le_plus_etabli(liste):
     assert statuts[A] == "rattachee" and statuts[G] == "sans_effet"
 
 
+def test_a_rattacher_pour_une_fiche_l_emporte_sur_sans_effet_pour_une_autre(liste):
+    """Le statut commun d'une rédaction qu'une fiche déclare sans effet sur
+    elle et qu'une autre garde à rattacher est « à rattacher » : une fiche
+    doit encore la couper en version (décision du 12 novembre 2026, action
+    184, étape 7). « À examiner » ne l'emporte pas. Au sein d'une même fiche,
+    la déclaration l'emporte sur la lecture qui nomme la rédaction."""
+    fiches = {
+        "une": {"textes_sans_effet": [{"id": A, "motif": "renvoi d'alinéa"},
+                                      {"id": B, "motif": "renvoi d'alinéa"},
+                                      {"id": C, "motif": "renvoi d'alinéa"}],
+                "sources": {"lectures": [{"type": "legifrance", "reference": f"L. 351-1, {B}"}]}},
+        "autre": {"textes_a_rattacher": [{"id": A}],
+                  "textes_a_relire": [{"id": C, "question": "change-t-il le droit ?"}]},
+    }
+    statuts = textes.statuts(liste, fiches)
+    assert statuts[A] == "a_rattacher", "sans effet pour l'une, à rattacher pour l'autre"
+    assert statuts[B] == "sans_effet", "lue puis déclarée par la même fiche"
+    assert statuts[C] == "sans_effet", "sans effet pour l'une, à examiner pour l'autre"
+
+
 def test_un_motif_sans_effet_ne_declare_pas_la_redaction_qu_il_nomme(liste):
     """Une déclaration « sans effet » ne vaut que pour la rédaction qu'elle
     déclare : son ``id``, ou, faute d'``id``, celles que nomme sa référence.
@@ -153,16 +173,30 @@ def test_une_fiche_voit_les_redactions_des_articles_qu_elle_cite_et_n_a_pas_lues
 
 
 def test_une_redaction_lue_sort_de_la_vue(histoire):
-    """Rattachée ou déclarée sans effet par une autre fiche, une rédaction a
-    son statut final ; nommée par la fiche elle-même, à relire ou à rattacher,
-    elle est lue. Nommée à rattacher par une autre fiche seulement, elle reste
-    à lire."""
+    """Rattachée par une autre fiche, une rédaction a son statut final ;
+    nommée par la fiche elle-même, à relire ou à rattacher, elle est lue.
+    Nommée à rattacher par une autre fiche seulement, elle reste à lire."""
     fiches = {"regle": {**LECTRICE["regle"], "textes_a_relire": [{"id": I}]},
               "autre": {"versions": [{"id": "v1", "textes": [{"id": B}]}],
                         "textes_a_rattacher": [{"id": C}]}}
     vue = textes.non_lues(histoire, fiches, date(2026, 11, 3))
     assert [(r["id"], r["statut"]) for r in vue["regle"]] == [(C, "a_rattacher"), (F, None)]
     assert [r["id"] for r in vue["autre"]] == [I], "la rédaction à venir, que regle seule nomme"
+
+
+def test_sans_effet_ne_vaut_que_pour_la_fiche_qui_le_declare(histoire):
+    """Une fiche déclare une rédaction sans effet sur elle : elle l'a lue, et
+    la rédaction sort de sa liste. Une autre fiche qui cite le même article
+    ne l'a pas lue pour autant : la rédaction reste dans la sienne (décision
+    du 12 novembre 2026, action 184, étape 7)."""
+    fiches = {**LECTRICE, "autre": {"textes_sans_effet": [{"id": B, "motif": "renvoi d'alinéa"}]}}
+    vue = textes.non_lues(histoire, fiches, date(2026, 11, 12))
+    assert [(r["id"], r["statut"]) for r in vue["regle"]] == [
+        (I, "a_examiner"), (C, "a_examiner"), (F, None), (B, "sans_effet")]
+    assert [r["id"] for r in vue["autre"]] == [I, C], "ni la sienne, ni la rattachée"
+    fiches["regle"] = {**LECTRICE["regle"], "textes_sans_effet": [{"id": B, "motif": "renvoi"}]}
+    vue = textes.non_lues(histoire, fiches, date(2026, 11, 12))
+    assert B not in [r["id"] for r in vue["regle"]], "déclarée par la fiche elle-même"
 
 
 def test_la_liste_du_depot_tient_et_son_cliquet_est_juste():
