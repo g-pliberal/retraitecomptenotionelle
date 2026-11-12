@@ -1,0 +1,31 @@
+date: "2026-11-12"
+session: "action 192, étape 1 : la seconde part de la cotisation de retraite complémentaire du chef d'exploitation agricole, depuis 2026"
+consulte: >-
+  python scripts/veille_droit.py en ouvrant. L'index LEGI du dépôt, récupéré et
+  à jour au 11 novembre 2026 : code rural, D. 732-165 (LEGIARTI000049904700) et
+  D. 732-155 (LEGIARTI000049904715) dans leur texte entier, leurs rédactions
+  d'avant (LEGIARTI000041404706, LEGIARTI000034578860), L. 732-56, L. 732-59 et
+  L. 732-60-1 en vigueur en 2026. L'index JORF, à jour au même jour : le décret
+  n° 2024-688 du 5 juillet 2024, articles 5 et 6, et la recherche d'un arrêté
+  ou d'un décret postérieur qui fixerait d'autres taux. Le barème de 2026 de la
+  MSA, par la lecture qu'en a consignée le lot des non-salariés agricoles de
+  l'action 184 le même jour, sans le rouvrir.
+trouve: >-
+  Aucune rédaction de D. 732-165 ni de D. 732-155 postérieure à celles du
+  décret n° 2024-688, et aucun arrêté pris en application de L. 732-60-1 qui
+  en changerait les taux. La seconde part ne vaut que pour le chef du premier
+  alinéa du I de L. 732-56 : le préretraité, l'assuré volontaire et le chef
+  invalide cotisent 4 % de 1 820 SMIC (II), le collaborateur et l'aide
+  familial 4 % de 1 200 SMIC (IV). Le taux de la seconde part est affine par
+  morceaux et continu, de zéro à 3 % à deux plafonds. La règle est écrite dans
+  les deux moteurs, le test d'abord, cinq revenus posés à la main ; la fiche
+  cotisation_rco_agricole_2026 la porte en deux versions, et
+  assiette_minimale_agricole ne déclare plus l'écart. Le cliquet des textes
+  baisse d'un cran, à 9 233.
+reste: >-
+  Lire comment la MSA arrondit les points de l'année, et ce qu'elle porte au
+  compte du chef l'année cotisée au prorata (décès, R. 731-83) depuis que les
+  points se tirent de la cotisation acquittée : le modèle garde les décimales,
+  et les points d'une année. Chercher à chaque relecture un arrêté ou un décret
+  qui changerait les taux de D. 732-165. Aucun exemple chiffré publié n'a été
+  trouvé : la fiche attend le sien.
