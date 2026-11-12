@@ -386,28 +386,42 @@ GENERATIONS = (1975, 1990, 2005)
 
 def pensions_des_cas_types(taux: float) -> dict[tuple[str, int], dict]:
     """La pension du scénario 6, en euros constants de 2026, de quelques cas
-    types, sous ce taux crédité, et leur revenu de 2026."""
-    from retraite_notionnelle.castypes import GRILLE_DU_COUT, carriere_de_la_grille
+    types, sous ce taux crédité, et leur revenu de 2026. Le portage date et
+    bâtit chaque carrière, puis la simule, le taux dans les paramètres de la
+    demande (``pont.carrieres_de_la_grille``, ``pont.grille_du_cout``, action
+    161), sur le paquet des données du jour."""
+    from retraite_notionnelle import pont
+    from retraite_notionnelle.castypes import GRILLE_DU_COUT, primes_projetees_en_donnees
     from retraite_notionnelle.config import Parametres
     from retraite_notionnelle.simulateur import Simulateur
 
     simulateur = Simulateur(Parametres().avec(taux_cotisation_liberal=taux))
-    sortie = {}
-    for code in CAS_TYPES:
-        cas = next(c for c in GRILLE_DU_COUT if c.code == code)
-        for generation in GENERATIONS:
-            carriere = carriere_de_la_grille(simulateur, cas, generation)
-            resultat = simulateur.simuler(carriere)
-            sortie[(code, generation)] = {
-                "libelle": cas.libelle,
-                "pension": resultat.en_euros_constants(
-                    resultat.notionnel_liberal.pension_annuelle, LIBERAL),
-                "actuel": resultat.en_euros_constants(resultat.actuel.pension_annuelle),
-                "depart": resultat.carriere_de(LIBERAL).annee_liquidation,
-                "revenu_2026": next((ligne.revenu for ligne in carriere.lignes
-                                     if ligne.annee == 2026), None),
-            }
-    return sortie
+    parametres = simulateur.parametres
+    paquet = pont.paquet_des_donnees(parametres.racine_donnees)
+    cases = {f"{code}|{generation}": (next(c for c in GRILLE_DU_COUT if c.code == code),
+                                      generation)
+             for code in CAS_TYPES for generation in GENERATIONS}
+    baties, ecartees = pont.carrieres_de_la_grille(
+        [{"cle": cle, **cas.pour_le_portage(simulateur, generation), "rendre": "carriere"}
+         for cle, (cas, generation) in cases.items()],
+        parametres, primes_projetees_en_donnees(simulateur), "droit", paquet)
+    simulees, refusees = pont.grille_du_cout(
+        [{"cle": cle, "carriere": batie["carriere"], "propositions": {}}
+         for cle, batie in baties.items()],
+        ("actuel", LIBERAL), parametres, paquet)
+    if ecartees or refusees:
+        raise ValueError(f"le portage écarte ces cas types : {ecartees | refusees}")
+    return {
+        (cas.code, generation): {
+            "libelle": cas.libelle,
+            "pension": simulees[cle]["pensions"][LIBERAL],
+            "actuel": simulees[cle]["pensions"]["actuel"],
+            "depart": simulees[cle]["liberal"]["annee_liquidation"],
+            "revenu_2026": next((ligne.revenu for ligne in baties[cle]["carriere"].lignes
+                                 if ligne.annee == 2026), None),
+        }
+        for cle, (cas, generation) in cases.items()
+    }
 
 
 # -- l'écriture -----------------------------------------------------------------

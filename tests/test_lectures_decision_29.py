@@ -185,3 +185,54 @@ def test_les_recettes_du_modele_ne_se_comptent_qu_une_fois(convention, en_plus):
     sans = Etude([_annee_avec_recettes(tva_gardee=0.0, lvt=0.0)], depenses, garanties, convention)
     assert (avec.trajectoire(0.20)[0].solde - sans.trajectoire(0.20)[0].solde
             == pytest.approx(en_plus))
+
+
+def test_les_cas_types_passent_par_le_portage_sans_le_moteur_python(monkeypatch):
+    """L'option ``--cas-types`` date, bâtit et simule ses cas types par le
+    portage (``pont.carrieres_de_la_grille``, ``pont.grille_du_cout``, action
+    161, lot B), le taux crédité dans les paramètres de la demande : la
+    pension du scénario 6 et celle de l'étalon en euros constants, l'année du
+    départ et le revenu de 2026, au bit près de ce que le moteur Python en
+    simulait, sous le taux du programme et sous un autre — sans qu'il ne
+    calcule rien."""
+    import shutil
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage ne calcule pas ici")
+    import lectures_decision_29 as L
+    from outils_pont import empecher_les_jumeaux_du_cout
+    from retraite_notionnelle.castypes import GRILLE_DU_COUT, carriere_de_la_grille
+    from retraite_notionnelle.config import Parametres
+    from retraite_notionnelle.simulateur import Simulateur
+
+    def du_moteur_python(taux):
+        simulateur = Simulateur(Parametres().avec(taux_cotisation_liberal=taux))
+        sortie = {}
+        for code in L.CAS_TYPES:
+            cas = next(c for c in GRILLE_DU_COUT if c.code == code)
+            for generation in L.GENERATIONS:
+                carriere = carriere_de_la_grille(simulateur, cas, generation)
+                resultat = simulateur.simuler(carriere)
+                sortie[(code, generation)] = {
+                    "libelle": cas.libelle,
+                    "pension": resultat.en_euros_constants(
+                        resultat.notionnel_liberal.pension_annuelle, L.LIBERAL),
+                    "actuel": resultat.en_euros_constants(resultat.actuel.pension_annuelle),
+                    "depart": resultat.carriere_de(L.LIBERAL).annee_liquidation,
+                    "revenu_2026": next((ligne.revenu for ligne in carriere.lignes
+                                         if ligne.annee == 2026), None),
+                }
+        return sortie
+
+    taux = (L.TAUX_PROGRAMME, 0.1123)
+    attendus = {un: du_moteur_python(un) for un in taux}
+    # Le taux crédité fait la pension du scénario 6, et elle seule.
+    cle = ("salaire_moyen", 1990)
+    assert attendus[0.1123][cle]["pension"] < attendus[L.TAUX_PROGRAMME][cle]["pension"]
+    assert attendus[0.1123][cle]["actuel"] == attendus[L.TAUX_PROGRAMME][cle]["actuel"]
+    empecher_les_jumeaux_du_cout(monkeypatch)
+    for un in taux:
+        lues = L.pensions_des_cas_types(un)
+        assert lues == attendus[un], un
+        assert list(lues) == [(code, generation)
+                              for code in L.CAS_TYPES for generation in L.GENERATIONS]
