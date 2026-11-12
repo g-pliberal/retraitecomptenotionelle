@@ -177,6 +177,8 @@ versions:
   - {id: LEGIARTI000053280367, article: L. 12 bis, en_vigueur: 2025-12-31}
   - {id: LEGITEXT000053265238, article: "loi n° 2025-1403, article 104", en_vigueur: 2025-12-31}
   - {id: LEGITEXT000054586750, article: "décret n° 2026-699 (CNRACL, FSPOEIE)", en_vigueur: 2026-08-01}
+  - {id: LEGIARTI000054590048, article: "décret n° 2004-1056 (ouvriers de l'État), article 12, I, 2° bis", en_vigueur: 2026-08-01}
+  - {id: LEGIARTI000054590077, article: "décret n° 2004-1056 (ouvriers de l'État), article 17, I", en_vigueur: 2026-08-01}
   nee_de: LEGIARTI000053280361
   bornes:
     enfant.naissance: [2004-01-01, null]
@@ -276,6 +278,18 @@ sources:
   - type: legifrance
     reference: L. 12 bis CPCMR, version LEGIARTI000053280367
     date: 2026-09-21
+  - type: legifrance
+    reference: >-
+      décret n° 2004-1056 (ouvriers de l'État), rédactions du 1er août 2026 (décret
+      n° 2026-699, pensions prenant effet à compter du 1er septembre 2026), lues dans
+      l'index LEGI du dépôt le 12 novembre 2026 : article 12, I, 2° bis, « Une
+      bonification d'un trimestre pour chacun de leurs enfants nés depuis le 1er janvier
+      2004, pour les ouvrières ayant accouché postérieurement à leur recrutement » ;
+      article 17, I, la majoration de durée d'assurance « fixée à deux trimestres, dont
+      l'un est pris en compte au titre de la bonification prévue au 2° bis de l'article
+      12 ». C'est, pour l'ouvrière de l'État, la règle du b ter de L. 12 et de L. 12 bis,
+      que la version `l12bter` sert déjà au régime
+    date: 2026-08-01
   - type: service_public
     reference: >-
       fiche F37311, bonification de la fonction publique : quatre trimestres par
@@ -392,6 +406,10 @@ historique:
 - >-
   2026-10-14 — confrontée à OpenFisca-France-Pension (action 153, étape 2) : rien à
   corriger ; trois écarts chez lui.
+- >-
+  2026-11-12 — les articles 12 et 17 du décret des ouvriers de l'État, rédactions du
+  1er août 2026, cités par la version `l12bter`, qui servait déjà leur règle (action 192,
+  étape 7) : rien ne change au calcul.
 effet: >-
   Toute mère fonctionnaire ou agente d'un régime spécial : quatre trimestres par enfant
   né avant 2004, en services, donc au prorata de la pension ; deux par enfant né depuis,

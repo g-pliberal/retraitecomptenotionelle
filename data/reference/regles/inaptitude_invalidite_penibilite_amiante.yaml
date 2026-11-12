@@ -62,6 +62,16 @@ textes_a_rattacher:
   change: >-
     le seuil du III reste 10 % d'incapacité permanente professionnelle, et la durée
     d'exposition dix-sept ans
+- id: LEGIARTI000054060160
+  article: R. 351-37, III, CSS
+  en_vigueur: 2026-11-01
+  change: >-
+    la caisse saisit le service médical pour la victime d'un accident du travail
+    « justifiant d'un taux d'incapacité permanente professionnelle au sens de l'article
+    L. 434-1 A au moins égal au taux mentionné au I de l'article L. 351-1-4 », et non plus
+    d'un taux d'incapacité permanente au sens de L. 434-2 (décret n° 2026-354 du 7 mai
+    2026, article 1er, 3° ; son 1° retouche de même le second alinéa de R. 173-3-1) ; les
+    I et II, la date d'effet de la pension, sont inchangés (fiche date_effet_mois_suivant)
 - id: LEGIARTI000051288442
   article: L. 434-1 A CSS
   en_vigueur: 2026-11-01
@@ -78,3 +88,7 @@ historique:
   « L. 351-8 1° bis et 6° CSS » est retiré : le 1° bis est l'aidant familial à
   soixante-cinq ans, le 6° l'enfant handicapé ; l'inaptitude est au 2°, et L. 351-7 la
   définit (fiche inaptitude_au_travail).
+- >-
+  2026-11-12 — le III de R. 351-37, rédaction du 1er novembre 2026, rattaché ici (action
+  192, étape 7) : la procédure du départ pour incapacité permanente y suit la réforme de
+  la rente. La fiche reste à modéliser.

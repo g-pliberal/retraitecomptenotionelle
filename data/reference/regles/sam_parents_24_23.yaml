@@ -5,14 +5,33 @@ intitule: >-
   au titre d'un enfant, vingt-trois pour deux et plus, pensions prenant effet à
   compter du 1er septembre 2026.
 regimes: [cavimac, msa_non_salaries, msa_salaries, regime_general]
-etat: transcrite
+etat: approchee
 effet: >-
   Mères (par défaut dans le modèle) liquidant depuis septembre 2026 : +1 à +2 %
   de salaire de référence.
+approximations:
+- ecart: >-
+    le modèle retire une ou deux années à toute carrière qui détient des trimestres pour
+    enfants, quel que soit le régime qui les porte ; R. 173-3-2, I, en excepte « les
+    bénéficiaires des bonifications mentionnées aux 1°, 11° et 12° » de R. 351-2-1 : la
+    fonctionnaire de l'État, l'ouvrière de l'État et l'agente de la CNRACL dont la
+    fonction publique porte les enfants, qui reçoivent d'elle le trimestre de
+    bonification du même jour (fiche enfants_fonction_publique)
+  effet: >-
+    rejoué le 12 novembre 2026 : née en 1962, seize ans fonctionnaire puis vingt-sept ans
+    salariée, deux enfants nés en service, partie en février 2027, sa pension du régime
+    général est de 16 052 euros par an sur vingt-trois années, de 15 872 sur vingt-cinq,
+    1,1 % de trop
 sources:
-  lu_le: 2026-09-17
+  lu_le: 2026-11-12
   prochaine_relecture: 2026-12-31
   a_relire:
+  - >-
+    L'exception de R. 173-3-2, I, que le modèle n'applique pas (approximations, action
+    192, étape 7) : à écrire, le test d'abord, sur décision du propriétaire. Reste à lire
+    dans la circulaire si l'exception écarte la personne entière ou seulement ses enfants
+    que la fonction publique porte — la mère dont un enfant, né avant son recrutement,
+    compte au régime général, et l'autre à l'État.
   - >-
     Attendre la circulaire Cnav d'application et son exemple ; vérifier le sort
     des pères qui détiennent la majoration.
@@ -20,6 +39,21 @@ sources:
   - type: legifrance
     reference: décret n° 2026-699, JORFTEXT000054569098
     date: 2026-07-29
+  - type: legifrance
+    reference: >-
+      code de la sécurité sociale, R. 173-3-2, I, rédaction du 1er août 2026
+      (LEGIARTI000054589934, pensions prenant effet à compter du 1er septembre 2026), lue
+      le 12 novembre 2026 dans l'index LEGI du dépôt : « Pour les bénéficiaires de
+      majoration ou de bonification prévues aux articles L. 351-4, L. 351-4-1 et L. 351-5
+      ou mentionnées à l'article R. 351-2-1, à l'exception des bénéficiaires des
+      bonifications mentionnées aux 1°, 11° et 12° de cet article, ce nombre d'années est
+      réduit à : 1° Vingt-quatre lorsqu'ils bénéficient de majoration ou de bonification
+      au titre d'un seul enfant ; 2° Vingt-trois lorsqu'ils bénéficient de majorations ou
+      de bonifications au titre d'au moins deux enfants » ; R. 351-2-1, rédaction du même
+      jour (LEGIARTI000054589948) : le 1° nomme les b et b bis de L. 12, L. 12 bis et
+      L. 12 ter du code des pensions, le 11° le décret n° 2004-1056 des ouvriers de l'État,
+      le 12° le décret n° 2003-1306 de la CNRACL
+    date: 2026-08-01
   - type: autre
     reference: >-
       Cnav, « Parentalité : vos droits à la retraite » : vingt-quatre années pour
@@ -30,7 +64,9 @@ sources:
     url: https://www.lassuranceretraite.fr/portail-info/home/actif/vie-personnelle-retraite/parentalite-droits-retraite.html
     date: 2026-10-14
 textes_a_rattacher:
-- reference: R. 173-3-2 I CSS (décret n° 2026-699 du 29 juillet 2026, article 1er)
+- id: LEGIARTI000054589934
+  reference: R. 173-3-2 I CSS (décret n° 2026-699 du 29 juillet 2026, article 1er)
+  en_vigueur: 2026-08-01
 - reference: loi n° 2025-1403, article 103
 reformes:
 - parents_2026

@@ -186,13 +186,24 @@ sources:
   prochaine_relecture: 2027-10-16
   a_relire:
   - >-
-    Du 1er septembre 2023 au 2 janvier 2025, l'article 7 du décret n° 2004-1056 ne
-    comptait les services d'après la limite d'âge que « dans les conditions prévues par
-    l'article 1er-1 de la loi du 13 septembre 1984 », la prolongation pour carrière
-    incomplète (LEGIARTI000006781476) : ceux du maintien et de la prolongation de
-    l'insalubre, ouverts dès le 1er septembre 2023, comptaient-ils pour la pension avant
-    la rédaction du 2 janvier 2025 ? Ni ce que la caisse en a fait ni ce que le modèle
-    en fait n'ont été vérifiés (action 184, étape 6).
+    Les services du maintien jusqu'à soixante-dix ans, pour une pension du FSPOEIE prenant
+    effet du 1er septembre 2023 au 1er janvier 2025 : le texte ne les comptait pas, le
+    modèle les compte. Lu le 12 novembre 2026 (action 192, étape 7) : l'article 7 du décret
+    n° 2004-1056 ne comptait alors les services d'après la limite que « dans les conditions
+    prévues par l'article 1er-1 de la loi du 13 septembre 1984 », la prolongation pour
+    carrière incomplète, devenue L. 556-5 ; le décret n° 2024-1281, article 4, 1°, y met
+    les trois articles au 2 janvier 2025, sans clause d'application ni effet rétroactif.
+    La prolongation de l'insalubre comptait déjà, par L. 556-7 lui-même, que l'article 1er
+    du décret n° 2004-1057 rend applicable : « Les périodes de prolongation d'activité
+    définies au présent article sont prises en compte dans la constitution et la
+    liquidation des droits à pension ». Les derniers alinéas de L. 556-1, le maintien, ne
+    disent rien de la pension, et le fonctionnaire la tient de L. 10 du code des pensions,
+    que le décret des ouvriers ne reprend pas. Seize mois de services au plus sont en jeu,
+    pour le seul ouvrier non insalubre maintenu après sa limite et parti avant le 2 janvier
+    2025 ; rejoué : né en 1957, carrière complète, parti à soixante-sept ans et demi en
+    août 2024, le modèle lui sert 45 674 euros par an contre 44 723 à soixante-sept ans.
+    Ce que la caisse a fait de ces pensions n'est pas publié (une recherche, le 12
+    novembre 2026) : le demander au FSPOEIE, à la Caisse des dépôts, avant de rien changer.
   - >-
     La limite des ouvriers avant le 7 octobre 2004 : les décrets n° 54-1181 à 54-1184,
     56-870, 56-871, 57-288 et 60-416, et l'article 15 bis du décret n° 47-2097, que le
@@ -205,6 +216,18 @@ sources:
     La prolongation pour carrière incomplète compte les seuls services au FSPOEIE, comme
     celle des fonctionnaires compte les seuls services.
   lectures:
+  - type: jorf
+    reference: >-
+      action 192, étape 7 : décret n° 2024-1281 du 31 décembre 2024 relatif aux pensions
+      des agents publics (JORFTEXT000050935358), article 4, 1° (JORFARTI000050935398), « A
+      l'article 7, les mots : « l'article 1er-1 de la loi du 13 septembre 1984 susvisée »
+      sont remplacés par les mots : « aux articles L. 556-1, L. 556-5 et L. 556-7 du code
+      général de la fonction publique » », et ses articles 7 et 8, qui n'en disent pas
+      l'application ; code général de la fonction publique, articles L. 556-1, L. 556-5 et
+      L. 556-7, rédactions en vigueur le 1er juin 2024 ; code des pensions civiles et
+      militaires de retraite, article L. 10. Lus dans les index JORF et LEGI du dépôt, à
+      jour au 11 novembre 2026
+    date: 2026-11-12
   - type: legifrance
     reference: >-
       action 184, étape 6, les rédactions en vigueur ou à venir que la fiche n'avait pas
@@ -239,6 +262,10 @@ historique:
   saisi passe sa limite est radié à la limite, reculée et prolongée par les exceptions qui
   s'appliquent, et sa pension du FSPOEIE en part, comme la décision du propriétaire du
   14 octobre 2026 le dit du fonctionnaire.
+- >-
+  2026-11-12 — la question de l'article 7 lue au texte (action 192, étape 7) : avant le
+  2 janvier 2025, il ne comptait pas les services du maintien jusqu'à soixante-dix ans,
+  que le modèle compte ; la pratique de la caisse reste à demander, et rien n'est changé.
 effet: >-
   Tout ouvrier de l'État dont le départ saisi passe sa limite — soixante-sept ans pour
   les générations nées depuis 1955, soixante-deux pour l'insalubre, et moins avant — est

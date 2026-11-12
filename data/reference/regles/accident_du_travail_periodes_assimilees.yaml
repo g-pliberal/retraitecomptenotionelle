@@ -1,0 +1,109 @@
+schema_version: 1
+id: accident_du_travail_periodes_assimilees
+intitule: >-
+  L'accident du travail et la maladie professionnelle valident des périodes assimilées
+  au régime général : un trimestre par soixante jours d'indemnités journalières, et
+  chaque trimestre civil où tombe une échéance de la rente servie pour une incapacité
+  permanente d'au moins 66 % — l'incapacité permanente professionnelle, pour les victimes
+  dont l'état est consolidé à compter du 1er novembre 2026.
+domaine: periodes_assimilees
+regimes: [msa_salaries, regime_general]
+etape: compter_les_durees
+face: droit
+etat: approchee
+effet: >-
+  Carrières coupées d'un accident du travail ou d'une maladie professionnelle. Le modèle
+  valide quatre trimestres par année déclarée « accident du travail », sans demander si
+  l'assuré touchait des indemnités journalières ou une rente, ni le taux de cette rente :
+  la règle du 1er novembre 2026 ne déplace aucun de ses résultats.
+approximations:
+- ecart: >-
+    l'année déclarée « accident du travail » valide quatre trimestres, quel que soit le
+    nombre de jours indemnisés, et la rente n'est pas distinguée des indemnités
+    journalières : ni son taux, ni la date de consolidation ne sont saisis, et l'année
+    est présumée remplir la condition de 66 %
+  effet: non mesuré
+sources:
+  lu_le: 2026-11-12
+  prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    Née le 12 novembre 2026 (action 192, étape 7) : aucune fiche ne lisait le 1° de
+    L. 351-3 pour la rente. Seules les deux dernières rédactions de L. 351-3 et de
+    R. 351-12 sont lues ; leur histoire depuis 1930, et le taux de 66 % avant elles, ne
+    le sont pas.
+  - >-
+    La circulaire Cnav qui appliquera la réforme de la rente : quel taux retenir pour une
+    victime consolidée avant le 1er novembre 2026, dont la rente garde son taux global, et
+    si le seuil de 66 % d'incapacité permanente professionnelle écarte des rentiers que
+    l'ancien taux retenait. Aucune n'est parue à l'index au 11 novembre 2026.
+  - >-
+    Si la saisie demande un jour le taux de la rente et la date de consolidation, la
+    condition de 66 % s'écrit, le test d'abord ; d'ici là, le libellé « accident du
+    travail » de la saisie ne dit pas la condition.
+  lectures:
+  - type: legifrance
+    reference: >-
+      code de la sécurité sociale, L. 351-3, 1°, rédaction du 1er novembre 2026
+      (LEGIARTI000051288449, loi n° 2025-199, article 90, I et V, dans sa rédaction de la
+      loi n° 2025-1403, article 95) : sont prises en considération « celles postérieures
+      au 1er juillet 1930 pendant lesquelles les travailleurs salariés ont perçu une rente
+      d'accident du travail prenant effet antérieurement à la date susmentionnée, pour une
+      incapacité permanente professionnelle au moins égale à un taux fixé par le même
+      décret » ; le mot « professionnelle » est le seul ajout, et le I de l'article 90
+      « s'applique aux victimes dont l'état est consolidé à compter de cette date ». Lu
+      mot à mot contre la rédaction du 31 décembre 2025 (LEGIARTI000053279221) dans l'index
+      LEGI du dépôt, à jour au 11 novembre 2026
+    date: 2026-11-01
+  - type: legifrance
+    reference: >-
+      code de la sécurité sociale, R. 351-12, rédaction du 1er novembre 2026
+      (LEGIARTI000054425288, décret n° 2026-354 du 7 mai 2026, article 1er, 2°, et article
+      3) : « 1°) le trimestre civil au cours duquel l'assuré a bénéficié, au titre de
+      l'article L. 321-1, du soixantième jour d'indemnisation, un trimestre étant également
+      décompté pour chaque nouvelle période d'indemnisation de soixante jours » ; « 3°)
+      chaque trimestre civil comportant une échéance du paiement des arrérages de la
+      pension d'invalidité » ; « 5°) pour les bénéficiaires de la législation sur les
+      accidents du travail, les dispositions des 1° ou 3° ci-dessus sont applicables selon
+      que l'assuré a perçu des indemnités journalières au titre de l'incapacité temporaire
+      ou une rente pour une incapacité permanente professionnelle au moins égale à 66 % ».
+      La rédaction du 1er juillet 2026 (LEGIARTI000054167657) disait « une rente pour une
+      incapacité permanente au moins égale à 66 % »
+    date: 2026-11-01
+  - type: jorf
+    reference: >-
+      décret n° 2026-354 du 7 mai 2026 relatif aux modalités d'indemnisation de
+      l'incapacité permanente des victimes d'accidents du travail et de maladies
+      professionnelles (JORFTEXT000054050122), article 1er (JORFARTI000054050132) : « 2° Au
+      5° de l'article R. 351-12, après le mot : « permanente », il est inséré le mot :
+      « professionnelle » ». Lu dans l'index JORF du dépôt, à jour au 11 novembre 2026
+    date: 2026-05-10
+textes_a_rattacher:
+- id: LEGIARTI000051288449
+  article: L. 351-3, 1°, CSS
+  en_vigueur: 2026-11-01
+  change: >-
+    la rente d'accident du travail compte « pour une incapacité permanente
+    professionnelle », pour les victimes dont l'état est consolidé à compter du
+    1er novembre 2026
+- id: LEGIARTI000054425288
+  article: R. 351-12, 5°, CSS
+  en_vigueur: 2026-11-01
+  change: >-
+    le seuil reste 66 %, désormais d'incapacité permanente professionnelle
+- reference: L. 434-1 A CSS, qui sépare l'incapacité permanente professionnelle de la fonctionnelle
+code:
+  python: >-
+    carriere.py : _lignes_du_releve, _lignes_du_parcours ; donnees/chargement.py :
+    charger_periodes_non_travaillees
+  javascript: >-
+    moteur/js/carriere.js : lignesDuReleve, lignesDuParcours
+  parametres: >-
+    legislation/periodes_non_travaillees.csv : accident_travail, trimestres_assimiles
+  tests:
+  - tests/test_simulateur.py, où des années d'accident du travail entrent aux trimestres réputés cotisés
+historique:
+- >-
+  2026-11-12 — née de l'étape 7 de l'action 192, qui lit les rédactions qu'aucune fiche
+  ne suivait : la règle était appliquée par la table des périodes non travaillées, sans
+  fiche. Rien ne change au calcul.
