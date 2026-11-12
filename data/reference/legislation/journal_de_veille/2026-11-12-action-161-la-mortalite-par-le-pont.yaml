@@ -1,0 +1,16 @@
+date: "2026-11-12"
+session: "action 161 : l'étude de la mortalité demande ses calculs au moteur JavaScript par le pont"
+consulte: >-
+  Aucune source de droit : la session fait demander au portage JavaScript,
+  par le pont, les carrières que scripts/mortalite_population.py bâtissait et
+  simulait au moteur Python. Elle ne touche à aucune règle du scénario 1.
+  Lues : la note de décision 0007, la note de la question 3 sur les études à
+  garder. Aucun texte n'a été rouvert dans LEGI.
+trouve: >-
+  Aucune règle n'a changé. Les sorties de l'étude, déficit compris, les onze
+  chiffres ancrés de docs/methodologie.md, le paquet, les agrégats du coût et
+  les témoins refaits sont identiques à l'octet.
+reste: >-
+  CasType.niveau_relatif garde son calcul au moteur Python pour deux
+  appelants, jusqu'au départ de ce moteur. Le détail dans la note de la
+  feuille de route.
