@@ -72,6 +72,11 @@ s'écrit qu'en JavaScript (``moteur/js/garantie.js``, note de décision 0007),
 et le coût, l'effet retour et ``scripts/garantie_par_sexe.py`` le demandent
 par lot (:func:`garantie`), leurs distributions passées en données.
 
+L'impôt sur le revenu, enfin, que le site calcule sur la carrière du lecteur
+(``moteur/js/impot-revenu.js``, note de décision 0007) : l'effet retour du
+coût le demande par lot, une année à la fois (:func:`impot`), ses foyers
+passés en données, au barème que le portage lit au paquet et projette.
+
 Une demande sur le paquet du dépôt, sans paquet, ne lance pas node à chaque
 fois : les tests en font une par carrière, et chacune coûtait trois dixièmes
 de seconde, à lancer node et à relire le paquet. Le pont reste ouvert
@@ -1597,6 +1602,54 @@ def _lu_de_la_garantie(fonction: str, valeur):
     lecture = LECTURES_DE_LA_GARANTIE[fonction]
     return (lecture(valeur) if isinstance(lecture, types.FunctionType)
             else _depuis_donnees(lecture, valeur))
+
+
+# -- l'impôt sur le revenu (action 161, note de décision 0007) ----------------
+
+
+@dataclasses.dataclass(frozen=True)
+class ImpotDemande:
+    """Ce que :func:`impot` relit de l'impôt d'un foyer : son montant, dans la
+    monnaie de l'année, et s'il est mis en recouvrement."""
+
+    impot: float
+    mis_en_recouvrement: bool
+
+
+def impot(appels: list[tuple], parametres=None, paquet: bytes | None = None, *,
+          derniere: int = 2070, indexation: str = "prix") -> list[ImpotDemande | None]:
+    """L'impôt sur le revenu de chaque ``(année des revenus, foyer)``, que le
+    portage seul calcule pour le coût (``moteur/js/impot-revenu.js``, note de
+    décision 0007). Un foyer passe en données, sous les noms du portage :
+    ``{"declarants": [{"pensions": 30000.0, "age": 70}]}``, et ce qu'il ne dit
+    pas vaut ce que ``Foyer`` et ``Declarant`` présument. Les revenus sont dans
+    la monnaie de l'année, l'impôt aussi.
+
+    Le barème de l'année est lu au paquet jusqu'à la dernière loi de finances,
+    projeté ensuite jusqu'à ``derniere`` par ``indexation`` — ``"prix"`` ou
+    ``"salaire_moyen"`` —, sur le scénario de projection de ``parametres``,
+    ceux du simulateur, les réglages de référence sans eux. Le lot part d'une
+    seule demande, et les impôts reviennent dans l'ordre des appels ; ``None``
+    pour une année sans barème, avant le premier lu ou après ``derniere``. Un
+    foyer que l'impôt refuse arrête le lot : son motif, celui du portage, lève
+    ``ValueError``."""
+    from .config import Parametres
+
+    if not appels:
+        return []
+    reponse = _demander({"impot": {
+        "parametres": parametres_en_donnees(Parametres() if parametres is None else parametres),
+        "derniere": derniere,
+        "indexation": indexation,
+        "appels": [{"cle": str(rang), "annee": annee, "foyer": _en_donnees(foyer)}
+                   for rang, (annee, foyer) in enumerate(appels)],
+    }}, _paquet_de(parametres, paquet))
+    for motif in reponse["echecs"].values():
+        raise ValueError(motif)
+    lus = reponse["resultats"]
+    return [None if lu is None else ImpotDemande(
+                impot=_flottant(lu["impot"]), mis_en_recouvrement=lu["mis_en_recouvrement"])
+            for lu in (lus[str(rang)] for rang in range(len(appels)))]
 
 
 def simulations(cas: list[dict], paquet: bytes | None = None,

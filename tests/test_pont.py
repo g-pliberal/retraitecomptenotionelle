@@ -2142,3 +2142,70 @@ def test_le_cout_chiffre_sa_garantie_par_le_portage_sans_repli(monkeypatch):
         calage.chiffrer_distribution(1e6, 1.0)
     with pytest.raises(pont.PontIndisponible, match="node"):
         par_sexe.facteurs_des_sexes(1.0)
+
+
+# -- l'impôt sur le revenu (action 161, note de décision 0007) ----------------
+
+
+def _retraites(*pensions: float) -> dict:
+    """Un foyer de retraités de 70 ans, en données : une pension chacun."""
+    return {"declarants": [{"pensions": pension, "age": 70} for pension in pensions]}
+
+
+def test_le_pont_calcule_l_impot_de_chaque_foyer():
+    """L'impôt sur le revenu ne s'écrit qu'en JavaScript
+    (``moteur/js/impot-revenu.js``, note de décision 0007) : l'effet retour le
+    demande au pont, par lot (:func:`pont.impot`), ses foyers passés en
+    données. Les valeurs sont posées à la main sur le barème des revenus de
+    2024 (CGI, art. 197, I, art. 158, 5, a, et art. 157 bis, dans leur
+    rédaction de la loi n° 2025-127 du 14 février 2025, art. 2).
+
+    Un retraité seul de 70 ans, 30 000 € de pension : l'abattement de 10 %,
+    3 000 €, laisse 27 000 € ; celui des personnes âgées, 1 398 € entre
+    17 510 € et 28 170 €, laisse 25 602 € ; au barème,
+    (25 602 − 11 497) × 11 % = 1 551,55 € ; la décote,
+    889 − 45,25 % × 1 551,55 = 186,92 € ; l'impôt, 1 364,63 €, arrondi à
+    1 365 €. Avec 15 000 € : 13 500 €, moins 2 796 € sous 17 510 €, soit
+    10 704 €, sous la première tranche : aucun impôt, rien en recouvrement.
+    Un couple de 40 000 € et 20 000 € : l'abattement de 10 %, 6 000 €, est
+    plafonné à 4 399 € pour le foyer, soit 55 601 €, au-delà de 28 170 € ;
+    par part, (27 800,50 − 11 497) × 11 % = 1 793,385 €, soit 3 586,77 €
+    pour deux, sans décote (1 470 − 45,25 % × 3 586,77 < 0) : 3 587 €."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    seul, modeste, couple, avant_les_baremes = pont.impot([
+        (2024, _retraites(30000.0)), (2024, _retraites(15000.0)),
+        (2024, _retraites(40000.0, 20000.0)), (1950, _retraites(30000.0))])
+    assert seul == pont.ImpotDemande(impot=1365.0, mis_en_recouvrement=True)
+    assert modeste == pont.ImpotDemande(impot=0.0, mis_en_recouvrement=False)
+    assert couple == pont.ImpotDemande(impot=3587.0, mis_en_recouvrement=True)
+    assert [type(seul.impot), type(modeste.impot), type(seul.mis_en_recouvrement)] == [
+        float, float, bool]
+    # Avant le premier barème lu, 1960, et après la dernière année demandée :
+    # aucun barème, aucun impôt à rendre.
+    assert avant_les_baremes is None
+    assert pont.impot([(2041, _retraites(30000.0))], derniere=2040) == [None]
+    assert pont.impot([]) == []
+
+
+def test_le_bareme_projete_suit_l_indexation_demandee():
+    """Au-delà de la dernière loi de finances lue, le barème se projette sur
+    les prix, ou sur le salaire moyen, qui croît plus vite : la même pension
+    de 2060, en euros de 2060, paie alors moins d'impôt. Sous les paramètres
+    du simulateur, ceux de référence sans eux."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    foyer = _retraites(100000.0)
+    [prix] = pont.impot([(2060, foyer)], Parametres())
+    [salaires] = pont.impot([(2060, foyer)], indexation="salaire_moyen")
+    assert pont.impot([(2060, foyer)]) == [prix]
+    assert 0.0 < salaires.impot < prix.impot and prix.mis_en_recouvrement
+
+
+def test_le_pont_rend_les_refus_de_l_impot():
+    """Un foyer que l'impôt refuse arrête le lot, du message du portage."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    with pytest.raises(ValueError, match="un foyer a un déclarant, ou deux"):
+        pont.impot([(2024, _retraites(30000.0)),
+                    (2024, _retraites(10000.0, 10000.0, 10000.0))])

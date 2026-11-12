@@ -28,7 +28,10 @@ la déplace de son propre facteur. Sur la distribution déplacée, on calcule :
 - les prélèvements de la personne seule qui n'a que sa pension : la tranche
   de CSG que son revenu fiscal présumé lui donne, la CRDS et la CASA qu'elle
   prélève (L. 136-8), et l'impôt sur le revenu de l'année, sur la pension
-  nette de la CSG déductible, au barème lu, puis projeté sur les prix.
+  nette de la CSG déductible, au barème lu, puis projeté sur les prix. Cet
+  impôt est celui du portage (``moteur/js/impot-revenu.js``, note de décision
+  0007), demandé au pont d'un lot par année, et d'un second quand il décide
+  de la tranche de CSG (:meth:`EffetRetour._preleves_historiques`).
 
 Ce qui sort, chaque année et pour chaque scénario, n'est pas un montant mais
 des TAUX. Deux sont rapportés à ce que la distribution perd en masse de
@@ -98,9 +101,8 @@ from dataclasses import dataclass, field
 
 from . import pont
 from .donnees.distribution import Tranche
-from .donnees.impot_revenu import FRANC, charger_baremes_impot_revenu, croissance_macro
+from .donnees.impot_revenu import FRANC, charger_baremes_impot_revenu
 from .donnees.prelevements_historiques import charger_prelevements_historiques
-from .impot_revenu import Declarant, Foyer, impot_aux_parametres
 from .remuneration import charger_prelevements
 from .somme import somme_ordonnee
 
@@ -221,8 +223,13 @@ class EffetRetour:
         self.prelevements = charger_prelevements(racine).pensions
         self.historiques = charger_prelevements_historiques(racine)
         self.seuils_csg = charger_seuils_csg(racine)
-        baremes = charger_baremes_impot_revenu(racine)
-        self.baremes = baremes.chronique(derniere, "prix", croissance_macro(self.macro, "prix"))
+        #: L'impôt sur le revenu se demande au portage (:meth:`_impots_de`),
+        #: sous les paramètres du simulateur : son barème y est lu, puis
+        #: projeté sur les prix jusqu'à ``derniere``. Seule la première année
+        #: lue se lit ici : avant elle, et après ``derniere``, aucun impôt.
+        self.parametres = parametres
+        self.annees_imposees = range(
+            charger_baremes_impot_revenu(racine).premiere_annee, derniere + 1)
         self.points = _points(self.distribution, moyenne_publiee)
         #: Le complément moyen du minimum, en euros mensuels de l'enquête, et
         #: les distributions déformées qu'un scénario sans minimum sert à
@@ -280,12 +287,19 @@ class EffetRetour:
     def _prelevements(self, annee: int, facteur: float) -> float:
         """Les prélèvements moyens par retraité de la distribution déplacée,
         en euros mensuels de l'enquête."""
+        [moyen] = self._prelevements_des(annee, [facteur])
+        return moyen
+
+    def _prelevements_des(self, annee: int, facteurs: list[float]) -> list[float]:
+        """:meth:`_prelevements` sous chaque facteur, toutes leurs pensions
+        prélevées ensemble (:meth:`_preleves`)."""
         vers_bareme = self.macro.coefficient_prix(self.millesime, ANNEE_BAREME_CSG)
-        return somme_ordonnee(
-            part * self._preleve(annee, 12.0 * milieu * facteur * vers_bareme)
-            / vers_bareme / 12.0
-            for milieu, part in self.points
-        )
+        preleves = iter(self._preleves(annee, [
+            12.0 * milieu * facteur * vers_bareme
+            for facteur in facteurs for milieu, _ in self.points]))
+        return [somme_ordonnee(part * next(preleves) / vers_bareme / 12.0
+                               for _, part in self.points)
+                for _ in facteurs]
 
     def _preleve(self, annee: int, pension: float) -> float:
         """Ce que paie une personne seule qui n'a que ``pension``, annuelle et
@@ -293,43 +307,69 @@ class EffetRetour:
         tranche, et l'impôt sur le revenu de l'année ``annee``, sur sa pension
         de l'année nette de la CSG déductible, ramené aux mêmes euros. Avant
         :data:`ANNEE_BAREME_CSG`, la tranche et ses taux sont ceux de
-        l'année (:meth:`_preleve_historique`)."""
-        cle = (annee, round(pension, 2))
-        if cle in self._impots:
-            return self._impots[cle]
-        if annee < ANNEE_BAREME_CSG:
-            total = self._preleve_historique(annee, pension)
-            self._impots[cle] = total
-            return total
+        l'année (:meth:`_preleves_historiques`)."""
+        [total] = self._preleves(annee, [pension])
+        return total
+
+    def _preleves(self, annee: int, pensions: list[float]) -> list[float]:
+        """:meth:`_preleve` de chaque pension, dans l'ordre. Celles que la
+        mémoire n'a pas, au centime près — la première venue y entre —, sont
+        prélevées ensemble : leurs impôts se demandent au portage par lot."""
+        cles = [(annee, round(pension, 2)) for pension in pensions]
+        neuves: dict[tuple[int, float], float] = {}
+        for cle, pension in zip(cles, pensions):
+            if cle not in self._impots:
+                neuves.setdefault(cle, pension)
+        if neuves:
+            prelever = (self._preleves_historiques if annee < ANNEE_BAREME_CSG
+                        else self._preleves_au_bareme)
+            self._impots.update(zip(neuves, prelever(annee, list(neuves.values()))))
+        return [self._impots[cle] for cle in cles]
+
+    def _preleves_au_bareme(self, annee: int, pensions: list[float]) -> list[float]:
+        """:meth:`_preleves` depuis :data:`ANNEE_BAREME_CSG` : la tranche du
+        barème de CSG lu, et l'impôt de l'année, d'un seul lot."""
         p = self.prelevements
-        tranche = p.tranche(p.revenu_fiscal_presume([pension]), 1.0)
-        sociaux = pension * p.taux_de_la_tranche(tranche)
-        cle_deductible = _TAUX_DEDUCTIBLES.get(tranche.libelle)
-        deductible = (0.0 if cle_deductible is None else
-                      self.historiques.csg_deductible_pension(
-                          dt.date(ANNEE_BAREME_CSG, 7, 1), cle_deductible))
-        impot = self._impot(annee, pension, deductible)
-        self._impots[cle] = sociaux + impot
-        return sociaux + impot
+        sociaux, cas = [], []
+        for pension in pensions:
+            tranche = p.tranche(p.revenu_fiscal_presume([pension]), 1.0)
+            sociaux.append(pension * p.taux_de_la_tranche(tranche))
+            cle_deductible = _TAUX_DEDUCTIBLES.get(tranche.libelle)
+            cas.append((pension, 0.0 if cle_deductible is None else
+                        self.historiques.csg_deductible_pension(
+                            dt.date(ANNEE_BAREME_CSG, 7, 1), cle_deductible)))
+        return [social + impot
+                for social, (impot, _) in zip(sociaux, self._impots_de(annee, cas))]
 
     def _impot(self, annee: int, pension: float, deductible: float,
                detail: bool = False):
         """L'impôt sur le revenu de l'année ``annee`` d'une personne seule
         qui n'a que ``pension``, en euros du barème de CSG, sur sa pension
-        nette de la part ``deductible`` ; ``detail`` rend aussi le calcul de
-        l'impôt, dans la monnaie de l'année, ou ``None`` faute de barème."""
-        parametres = self.baremes.get(annee)
-        if parametres is None:
-            return (0.0, None) if detail else 0.0
-        vers_annee = self.macro.coefficient_prix(ANNEE_BAREME_CSG, annee)
-        imposable = pension * (1.0 - deductible) * vers_annee
-        foyer = Foyer(declarants=(Declarant(pensions=imposable, age=AGE_DECLARE),))
-        calcul = impot_aux_parametres(foyer, parametres)
-        impot = calcul.impot / vers_annee
+        nette de la part ``deductible`` ; ``detail`` rend aussi ce que le
+        pont relit de l'impôt, dans la monnaie de l'année
+        (:class:`~.pont.ImpotDemande`), ou ``None`` faute de barème."""
+        [(impot, calcul)] = self._impots_de(annee, [(pension, deductible)])
         return (impot, calcul) if detail else impot
 
-    def _preleve_historique(self, annee: int, pension: float) -> float:
-        """:meth:`_preleve` une année d'avant :data:`ANNEE_BAREME_CSG` : la
+    def _impots_de(self, annee: int, cas: list[tuple[float, float]]) -> list[tuple]:
+        """:meth:`_impot` de chaque ``(pension, part déductible)``, avec son
+        détail, demandés au portage d'un seul lot (:func:`~.pont.impot`,
+        ``moteur/js/impot-revenu.js``, note de décision 0007) : chacun un
+        retraité seul de :data:`AGE_DECLARE` ans, au barème de l'année, lu
+        puis projeté sur les prix."""
+        if annee not in self.annees_imposees:
+            return [(0.0, None) for _ in cas]
+        vers_annee = self.macro.coefficient_prix(ANNEE_BAREME_CSG, annee)
+        calculs = pont.impot(
+            [(annee, {"declarants": [{
+                "pensions": pension * (1.0 - deductible) * vers_annee, "age": AGE_DECLARE}]})
+             for pension, deductible in cas],
+            self.parametres, derniere=self.annees_imposees[-1])
+        return [(0.0, None) if calcul is None else (calcul.impot / vers_annee, calcul)
+                for calcul in calculs]
+
+    def _preleves_historiques(self, annee: int, pensions: list[float]) -> list[float]:
+        """:meth:`_preleves` une année d'avant :data:`ANNEE_BAREME_CSG` : la
         tranche que la règle de l'année donne (:func:`tranche_csg`), au revenu
         fiscal présumé de la pension, abattu de 20 % quand l'avant-dernière
         année l'était, et à l'impôt de l'année ; les taux de la tranche en
@@ -338,30 +378,55 @@ class EffetRetour:
         h = self.historiques
         plein = _moyenne_annuelle(h.pensions["csg_taux_plein"], annee)
         if seuils is None or plein <= 0.0:
-            return self._impot(annee, pension, 0.0)
+            return [impot for impot, _ in self._impots_de(
+                annee, [(pension, 0.0) for pension in pensions])]
         vers_annee = self.macro.coefficient_prix(ANNEE_BAREME_CSG, annee)
-        revenu = self.prelevements.revenu_fiscal_presume([pension]) * vers_annee
-        if annee - DECALAGE_DU_REVENU <= DERNIERS_REVENUS_ABATTUS:
-            revenu *= 1.0 - ABATTEMENT_VINGT_POUR_CENT
+        revenus = []
+        for pension in pensions:
+            revenu = self.prelevements.revenu_fiscal_presume([pension]) * vers_annee
+            if annee - DECALAGE_DU_REVENU <= DERNIERS_REVENUS_ABATTUS:
+                revenu *= 1.0 - ABATTEMENT_VINGT_POUR_CENT
+            revenus.append(revenu)
         deductible = {
             taux: _moyenne_annuelle(h.pensions[f"csg_taux_{taux}"], annee, "deductible")
             for taux in ("plein", "median", "reduit")}
-        # L'impôt décide de la tranche jusqu'en 2014 : il se calcule d'abord
-        # au taux plein, puis à la tranche, dont la part déductible diffère.
-        impot, calcul = self._impot(annee, pension, deductible["plein"], detail=True)
-        recouvre = calcul is not None and calcul.mis_en_recouvrement
-        tranche = tranche_csg(seuils, revenu, recouvre)
-        if tranche != "plein":
-            impot = self._impot(annee, pension, deductible.get(tranche, 0.0))
-        if tranche == "exonere":
-            return impot
-        taux = (_moyenne_annuelle(h.pensions[f"csg_taux_{tranche}"], annee)
-                + _moyenne_annuelle(h.pensions["crds"], annee))
-        # La CASA : au seul taux plein jusqu'en 2018 (L. 137-41, II), au taux
-        # médian aussi depuis.
-        if tranche in ("plein", "median"):
-            taux += _moyenne_annuelle(h.pensions["casa"], annee)
-        return pension * taux + impot
+        # L'impôt décide de la tranche jusqu'en 2014 : là où il la change, il
+        # se calcule d'abord au taux plein, toutes les pensions d'un lot, puis
+        # à la tranche, dont la part déductible diffère, d'un second lot.
+        # Ailleurs, la tranche se lit sans lui, et un lot suffit.
+        tranches = [
+            tranche if tranche == tranche_csg(seuils, revenu, False) else None
+            for revenu in revenus for tranche in (tranche_csg(seuils, revenu, True),)]
+        impots = self._impots_de(annee, [
+            (pension, deductible["plein"] if tranche is None else deductible.get(tranche, 0.0))
+            for pension, tranche in zip(pensions, tranches)])
+        a_refaire = []
+        for rang, (_, calcul) in enumerate(impots):
+            if tranches[rang] is None:
+                recouvre = calcul is not None and calcul.mis_en_recouvrement
+                tranches[rang] = tranche_csg(seuils, revenus[rang], recouvre)
+                if tranches[rang] != "plein":
+                    a_refaire.append(rang)
+        if a_refaire:
+            refaits = self._impots_de(annee, [
+                (pensions[rang], deductible.get(tranches[rang], 0.0)) for rang in a_refaire])
+            for rang, refait in zip(a_refaire, refaits):
+                impots[rang] = refait
+        taux_des_tranches: dict[str, float] = {}
+
+        def taux_de(tranche: str) -> float:
+            if tranche not in taux_des_tranches:
+                taux = (_moyenne_annuelle(h.pensions[f"csg_taux_{tranche}"], annee)
+                        + _moyenne_annuelle(h.pensions["crds"], annee))
+                # La CASA : au seul taux plein jusqu'en 2018 (L. 137-41, II),
+                # au taux médian aussi depuis.
+                if tranche in ("plein", "median"):
+                    taux += _moyenne_annuelle(h.pensions["casa"], annee)
+                taux_des_tranches[tranche] = taux
+            return taux_des_tranches[tranche]
+
+        return [impot if tranche == "exonere" else pension * taux_de(tranche) + impot
+                for pension, tranche, (impot, _) in zip(pensions, tranches, impots)]
 
     # -- l'année -----------------------------------------------------------
 
@@ -394,7 +459,16 @@ class EffetRetour:
             if facteurs[scenario] > 0.0 for sans_minimum in (False, True)]
         aspas = dict(zip(cas, self._aspas(annee, cas)))
         aspa_actuelle = aspas[reference, False]
-        preleve_actuel = self._prelevements(annee, reference)
+        # Les prélèvements de l'année, leurs impôts d'un seul lot : le système
+        # actuel, puis chaque scénario qui déplace la masse.
+        deplaces = [
+            facteurs[scenario] for scenario in SCENARIOS_EFFET_RETOUR
+            if facteurs[scenario] > 0.0
+            and abs(masse_actuelle - self._masse(facteurs[scenario]))
+            > _ECART_NEGLIGEABLE * masse_actuelle]
+        preleves = dict(zip([reference, *deplaces],
+                            self._prelevements_des(annee, [reference, *deplaces])))
+        preleve_actuel = preleves[reference]
         aspa, prelevements, deformation = {}, {}, {}
         for scenario in SCENARIOS_EFFET_RETOUR:
             facteur = facteurs[scenario]
@@ -416,8 +490,7 @@ class EffetRetour:
                 aspa[scenario] = prelevements[scenario] = 0.0
                 continue
             aspa[scenario] = part_ouverte * (deplacee - aspa_actuelle) / economie
-            prelevements[scenario] = (
-                preleve_actuel - self._prelevements(annee, facteur)) / economie
+            prelevements[scenario] = (preleve_actuel - preleves[facteur]) / economie
         return EffetRetourAnnuel(aspa=aspa, prelevements=prelevements,
                                  aspa_deformation=deformation, facteurs=facteurs)
 

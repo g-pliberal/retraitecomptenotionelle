@@ -8,8 +8,11 @@ revenus d'une année, de 1960 à la dernière loi de finances lue, et au-delà
 sur un barème projeté (:mod:`~retraite_notionnelle.donnees.impot_revenu`).
 Les indicateurs de cycle de vie, que seul le portage calcule depuis l'action
 161 (``conventionApresImpot``, ``moteur/js/cycle-de-vie.js``), en prennent le
-jumeau, ``moteur/js/impot-revenu.js`` ; l'effet retour du coût l'appelle ici
-(``EffetRetour._impot``, ``effet_retour.py``).
+jumeau, ``moteur/js/impot-revenu.js`` ; l'effet retour du coût le demande
+au même portage, par le pont (``EffetRetour._impots_de``, ``effet_retour.py`` ;
+:func:`~retraite_notionnelle.pont.impot`, note de décision 0007). Plus rien
+de ce que le dépôt fabrique n'appelle donc ce module : ses tests seuls le
+tiennent, jusqu'à son retrait (action 161).
 
 LE FOYER. Une personne seule — célibataire, divorcée ou veuve — ou un couple
 marié ou pacsé, imposé en commun ; des enfants à charge ou non ; des salaires,

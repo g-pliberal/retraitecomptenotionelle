@@ -103,6 +103,11 @@
  *   tranches, `[borne inférieure, borne supérieure, part]`, et un argument
  *   les désigne par leur rang. Le barème ne lit que ses arguments : la
  *   demande se passe du paquet.
+ * - `impot` : `{parametres, derniere, indexation, appels: [{cle, annee,
+ *   foyer}]}` — l'impôt sur le revenu de chaque foyer (`impot-revenu.js`, que
+ *   le coût ne calcule plus en Python : note de décision 0007), au barème de
+ *   l'année, lu au paquet puis projeté jusqu'à `derniere` ; l'effet retour du
+ *   coût le demande par lot, une année à la fois.
  *
  * Il écrit `{resultats, echecs}` : une carrière que le portage refuse en est
  * absente, et son motif est dans `echecs`. Un nombre non fini s'écrit `null`,
@@ -131,6 +136,7 @@ import { niveauRelatif } from "../../moteur/js/conversion.js";
 import { Contexte } from "../../moteur/js/contexte.js";
 import { Echeancier } from "../../moteur/js/echeancier.js";
 import * as garantie from "../../moteur/js/garantie.js";
+import * as impotRevenu from "../../moteur/js/impot-revenu.js";
 import {
   FICHE_DE_L_APPRENTISSAGE, FICHE_DES_MILITAIRES, FICHES_DES_EMPLOIS, contrats,
 } from "../../moteur/js/droit/compter.js";
@@ -1447,11 +1453,58 @@ function garantieDePopulation({ distributions, appels }) {
       ? lues[argument.distribution] : argument.valeur))));
 }
 
+// -- l'impôt sur le revenu (action 161, note de décision 0007) ------------------
+
+/** Les barèmes de chaque année, par simulateur, puis par indexation et dernière année. */
+const CHRONIQUES_DE_L_IMPOT = new WeakMap();
+
+/**
+ * Les paramètres de l'impôt de chaque année, lus au paquet puis projetés
+ * jusqu'à `derniere` par `indexation`, sur le scénario de projection du
+ * simulateur (`BaremesImpotRevenu.chronique`) : une `Map`, bâtie une fois.
+ */
+function chroniqueDeLImpot(simulateur, indexation, derniere) {
+  if (!CHRONIQUES_DE_L_IMPOT.has(simulateur)) CHRONIQUES_DE_L_IMPOT.set(simulateur, new Map());
+  const memoire = CHRONIQUES_DE_L_IMPOT.get(simulateur);
+  const cle = `${indexation}:${derniere}`;
+  if (!memoire.has(cle)) {
+    const baremes = impotRevenu.chargerBaremesImpotRevenu(simulateur.paquet);
+    if (baremes === null) {
+      throw new Error("le paquet ne porte pas les barèmes de l'impôt sur le revenu "
+        + "(`impot_revenu`) : l'impôt ne se calcule pas");
+    }
+    memoire.set(cle, baremes.chronique(derniere, indexation,
+      impotRevenu.croissanceMacro(simulateur.macro, indexation)));
+  }
+  return memoire.get(cle);
+}
+
+/**
+ * L'impôt sur le revenu de chaque appel, `{cle, annee, foyer}` — le foyer en
+ * données, sous les noms de `Foyer` et de `Declarant` : son montant, dans la
+ * monnaie de l'année, et s'il est mis en recouvrement ; `null` pour une année
+ * sans barème ; ou le motif du refus du foyer. Le coût le demande pour son
+ * effet retour (`EffetRetour._impots` de `effet_retour.py`), un lot par année.
+ */
+function impotsDesFoyers({ parametres, derniere, indexation, appels }) {
+  const chronique = chroniqueDeLImpot(simulateurSous(parametres), indexation, derniere);
+  return parCas(appels, ({ annee, foyer }) => {
+    const bareme = chronique.get(annee);
+    if (bareme === undefined) return null;
+    const calcul = impotRevenu.impotAuxParametres(new impotRevenu.Foyer({
+      ...foyer,
+      declarants: foyer.declarants.map((declarant) => new impotRevenu.Declarant(declarant)),
+    }), bareme);
+    return { impot: calcul.impot, mis_en_recouvrement: calcul.mis_en_recouvrement };
+  });
+}
+
 const LECTURES = {
   carrieres, saisies, grille_du_cout: grilleDuCout, carrieres_des_saisies: carrieresDesSaisies,
   simulations, scenario_actuel: scenarioActuel, droit, ages_de_depart: agesDeDepart,
   carrieres_de_la_grille: carrieresDeLaGrille, avantages, departs_des_cas: departsDesCas,
   debuts_de_la_surcote: debutsDeLaSurcote, garantie: garantieDePopulation,
+  impot: impotsDesFoyers,
 };
 
 // -- la façade des tests (action 161, note de décision 0007) -------------------

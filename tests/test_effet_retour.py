@@ -274,6 +274,70 @@ def test_l_aspa_d_une_annee_se_demande_au_portage_d_un_seul_lot(monkeypatch):
             effet._aspa(2030, facteur) - deplacee) / effet._masse(facteur)
 
 
+def test_l_impot_d_une_annee_se_demande_au_portage_par_lot(monkeypatch):
+    """L'impôt sur le revenu est celui du portage (``moteur/js/impot-revenu.js``,
+    note de décision 0007), que le pont fait calculer : l'effet retour d'une
+    année le demande d'un seul lot, toutes ses pensions ensemble, et d'un
+    second jusqu'en 2014, quand l'impôt mis en recouvrement décide de la
+    tranche de CSG avant d'être recalculé sous sa part déductible. Il en tire
+    les mêmes taux que pension par pension.
+
+    La valeur est posée à la main sur le barème des revenus de 2024, comme
+    ``test_le_pont_calcule_l_impot_de_chaque_foyer`` : un retraité seul de
+    70 ans, 30 000 € de pension de 2024, paie 1 365 €."""
+    from retraite_notionnelle import pont
+    from retraite_notionnelle.effet_retour import ANNEE_BAREME_CSG
+
+    simulateur = Simulateur(Parametres())
+    calage = _calage(simulateur, taux_recours=0.5)
+    effet = EffetRetour(simulateur, calage)
+    vers_2024 = effet.macro.coefficient_prix(ANNEE_BAREME_CSG, 2024)
+    assert effet._impot(2024, 30000.0 / vers_2024, 0.0) == pytest.approx(1365.0 / vers_2024)
+    assert effet._impot(1950, 30000.0, 0.0) == 0.0
+    masses = {"actuel": 1000.0, **{scenario: 900.0 - 100.0 * rang
+                                   for rang, scenario in enumerate(SCENARIOS_EFFET_RETOUR)}}
+    lots = []
+    demander = pont.impot
+    monkeypatch.setattr(pont, "impot", lambda appels, *reglages, **nommes: (
+        lots.append(appels) or demander(appels, *reglages, **nommes)))
+    vers = effet.macro.coefficient_prix(effet.millesime, ANNEE_BAREME_CSG)
+    for annee, nombre in ((2030, 1), (2020, 1), (2010, 2), (1995, 2), (1985, 1)):
+        del lots[:]
+        annuel = effet.chiffrer(annee, masses, 1.0)
+        assert len(lots) == nombre, annee
+        # Le premier lot porte chaque pension de l'année, une fois : celles du
+        # système actuel et de chaque scénario.
+        assert len(lots[0]) == len({(appel_annee, foyer["declarants"][0]["pensions"])
+                                    for appel_annee, foyer in lots[0]})
+        assert len(effet.points) < len(lots[0]) <= (
+            (1 + len(SCENARIOS_EFFET_RETOUR)) * len(effet.points))
+        assert {appel_annee for lot in lots for appel_annee, _ in lot} == {annee}
+        un_par_un = EffetRetour(simulateur, calage)
+
+        def moyen(facteur):
+            return somme_ordonnee(
+                part * un_par_un._preleve(annee, 12.0 * milieu * facteur * vers) / vers / 12.0
+                for milieu, part in un_par_un.points)
+
+        actuel = moyen(1.0)
+        for scenario in SCENARIOS_EFFET_RETOUR:
+            facteur = masses[scenario] / 1000.0
+            attendu = (actuel - moyen(facteur)) / (effet._masse(1.0) - effet._masse(facteur))
+            assert annuel.prelevements[scenario] == attendu > 0.0, (annee, scenario)
+
+
+def test_sans_node_l_effet_retour_ne_calcule_pas_l_impot(monkeypatch):
+    """Sans node, l'impôt ne se calcule pas : aucun repli sur un impôt écrit
+    en Python."""
+    from retraite_notionnelle import pont
+
+    simulateur = Simulateur(Parametres())
+    effet = EffetRetour(simulateur, _calage(simulateur))
+    monkeypatch.setattr(pont.shutil, "which", lambda nom: None)
+    with pytest.raises(pont.PontIndisponible, match="node"):
+        effet._preleve(2030, 30000.0)
+
+
 def test_l_aspa_de_l_effet_retour_garde_le_non_recours_que_la_drees_mesure():
     """La garantie du scénario 6 est servie d'office (décision 20 du
     programme : « D'office ») ; l'ASPA des scénarios 2 à 5, elle, se demande
