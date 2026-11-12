@@ -7329,12 +7329,13 @@ L'impôt, la revalorisation servie et la garantie de population passent en
 JavaScript seul. Les tests du moteur Python passent par une façade. Les
 études restent. L'action se clôt par fonction. Le retrait d'une paire
 n'attend plus sa relecture, gardée pour quatre fichiers peu éprouvés. Déjà
-fait : deux scripts de la fabrique et trois études branchés sur le moteur
-JavaScript ; la garantie, l'impôt et la restitution relus. Reste, une étape
-par session : la garantie demandée au moteur JavaScript, par quoi
-commencer ; la façade des tests ; les sondes de `mesures_prose.py` et de
-`mesures_accueil.py` ; les trois autres études à porter ; l'impôt, puis
-la revalorisation servie ; les tests portés ; le retrait.
+fait : deux scripts de la fabrique, les mesures de la prose et de l'accueil
+et trois études branchés sur le moteur JavaScript ; la garantie, l'impôt et
+la restitution relus. Reste, une étape par session : la garantie demandée
+au moteur JavaScript, par quoi commencer ; la façade des tests ; les trois
+autres études à porter ; l'impôt, puis la revalorisation servie ; les tests
+portés ; le retrait. Le propriétaire doit dire ce que le § 3 du README
+montrera sans simulateur Python.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
