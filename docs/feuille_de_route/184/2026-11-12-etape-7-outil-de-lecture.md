@@ -1,17 +1,5 @@
 # Étape 7 : l'outil de lecture ne déclare que ce qu'une fiche déclare
 
-**Reprise, au 12 novembre 2026.** Le premier défaut est corrigé : dans une
-fiche, une déclaration « sans effet » ne vaut plus que pour la rédaction
-qu'elle déclare, et son motif n'est plus lu. Le second attend le
-propriétaire : aujourd'hui, une rédaction qu'une fiche déclare sans effet sort
-de la liste de toutes les autres fiches. La mesure est faite, plus bas : tenir
-ce statut fiche par fiche ferait revenir 79 lignes dans les listes de 25
-fiches, dont une seule rédaction en vigueur, sans toucher au compte des
-rédactions sans statut. La recommandation est de le tenir fiche par fiche. Si
-le propriétaire la retient : le test d'abord, dans `tests/test_textes.py`,
-puis `non_lues`, dans `noyau/textes.py`. S'il garde le statut commun, l'étape
-est close, et ce bloc s'ôte. Aucune règle du scénario 1 n'est en jeu.
-
 **La demande, le 12 novembre 2026.** Les quatre lots de l'étape 6 ont relevé
 ces défauts (note `2026-11-12-etape-6-bilan-de-la-passe.md`, « Deux défauts de
 l'outil »). La session d'orchestration avait écrit au propriétaire que l'outil
@@ -156,3 +144,43 @@ tableau de bord (143 et 637, au lieu de 152 et 628), sans toucher au cliquet.
 C'est recommandé aussi, et se décide à part.
 
 Aucune entrée au journal de veille : aucun texte n'a été lu.
+
+## La décision du propriétaire, et ce qui en est écrit, le 12 novembre 2026
+
+**La décision.** La session d'orchestration a présenté au propriétaire les
+deux recommandations ci-dessus comme deux décisions. Sa réponse, le 12
+novembre 2026 : « Je prends tes recommandations ». Les deux sont donc
+retenues, telles qu'écrites plus haut, et rien de plus.
+
+**Ce qui est écrit**, dans `src/retraite_notionnelle/noyau/textes.py`, un
+test par comportement, vu rouge d'abord, la valeur attendue posée à la main :
+
+- `test_sans_effet_ne_vaut_que_pour_la_fiche_qui_le_declare` : une rédaction
+  ne sort de la liste d'une fiche que si une version la rattache ou si la
+  fiche elle-même la nomme (`non_lues`). « Rattachée » reste commun ;
+- `test_a_rattacher_pour_une_fiche_l_emporte_sur_sans_effet_pour_une_autre` :
+  le statut commun suit un ordre à lui, `COMMUN`, où « à rattacher » passe
+  avant « sans effet ». Au sein d'une même fiche, l'ordre d'avant demeure : la
+  déclaration l'emporte sur la lecture qui nomme la rédaction. Treize
+  rédactions sont dans ce cas, et auraient bougé à tort sous un ordre unique.
+
+`docs/veille_droit.md` dit, à son point 4, qu'une rédaction déclarée par une
+autre fiche reste dans la liste. L'architecture, § 6.6, disait déjà « sans
+effet sur elle », et ne change pas.
+
+**Ce qui a bougé, mesuré sur `main` au moment de pousser.** Une autre session
+a écrit des fiches entre la mesure et l'envoi : les totaux ont bougé, l'écart
+est celui de la mesure, au chiffre près.
+
+- Listes de rédactions non lues : 2 550 lignes sur 182 fiches, au lieu de
+  2 471 sur 172. 79 lignes de plus, de 22 rédactions, chez 25 fiches.
+- Statuts : 143 sans effet et 636 à rattacher, au lieu de 152 et 627. Les
+  neuf rédactions sont celles nommées plus haut.
+- Le cliquet : 9 234 rédactions sans statut, inchangé.
+- La veille : `taux_plein_a_soixante_cinq_ans` a une rédaction en vigueur non
+  lue, L. 382-25 du code de la sécurité sociale, rédaction du 1er janvier
+  2026 (LEGIARTI000051289014), que `cultes_salaire_annuel_moyen` déclare sans
+  effet sur elle. Cette session ne l'a pas lue et ne la déclare pas : la
+  lecture revient à une autre session, que la session d'orchestration lance.
+
+L'étape est finie, et son bloc « Reprise » ôté.
