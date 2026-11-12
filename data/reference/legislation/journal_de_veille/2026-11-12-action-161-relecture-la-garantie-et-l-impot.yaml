@@ -1,0 +1,21 @@
+date: "2026-11-12"
+session: "action 161 : la relecture de la garantie, de l'impôt sur le revenu et de la restitution"
+consulte: >-
+  Aucune source de droit : la session compare trois modules Python à leurs
+  portages JavaScript (garantie.py, impot_revenu.py, restitution.py) et ne
+  touche à aucune règle du scénario 1. Lues : la fiche de la garantie
+  vieillesse et les décisions 100 et 102 qu'elle cite, les citations que le
+  code de l'impôt porte. Aucun texte n'a été rouvert dans LEGI.
+trouve: >-
+  Aucune règle n'a changé et aucune n'est apparue fausse. Les deux jumeaux de
+  chaque paire rendent les mêmes nombres au bit. Le portage de la garantie
+  rendait NaN sur une tranche sans borne supérieure, que le paquet n'écrit
+  pas : corrigé. Cinq commentaires faux corrigés, dont la part des impôts
+  assis sur une rémunération, 29,2 % en 2020 et non 28,9 % au plus.
+reste: >-
+  La remarque « sans texte lu » que l'impôt attache à la majoration des
+  revenus de 1980, quand sa marche se dit lue à la loi de finances
+  rectificative pour 1981 : à corriger dans une session à part. Les trois
+  citations de l'en-tête de restitution.py (L. 131-8, 1° et 3°, L. 241-3,
+  1°), lues le 20 septembre 2026, à relire à leur prochaine veille. Le détail
+  dans la note de la feuille de route.

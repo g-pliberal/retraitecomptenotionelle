@@ -61,7 +61,7 @@ CE QUI EST RECONDUIT, ET CE QUI NE PEUT PAS L'ÊTRE
 Le POSTE suit le compte du COR, projections comprises. Les deux impôts assis
 sur la rémunération, eux, ne sont publiés que de 2019 à 2025 : reconduire un
 montant en euros courants jusqu'en 2070 ne voudrait rien dire, et c'est leur
-PART DU POSTE qui est reconduite — 27,8 % en 2025, entre 26,6 et 28,9 % depuis
+PART DU POSTE qui est reconduite — 27,8 % en 2025, entre 26,6 et 29,2 % depuis
 2019. Même règle que ``AssietteActivite.annee_de_reference``, et pour la même
 raison.
 """

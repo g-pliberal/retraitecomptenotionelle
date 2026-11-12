@@ -1,15 +1,18 @@
-"""La relecture des paires de la garantie et de l'impôt sur le revenu (action
-161, lot E) : ce que la concordance n'exécutait pas, confronté au bit.
+"""La relecture de la zone grise (action 161, lot E) — la garantie, l'impôt
+sur le revenu, la restitution : ce que la concordance n'exécutait pas,
+confronté au bit.
 
 ``python scripts/jumeaux.py --couverture``, au commit 3944fdc : les tests de
 concordance n'exécutaient que 30 % de ``garantie.py`` — le barème d'une
 personne, jamais la garantie d'une population —, et, de ``impot_revenu.py``,
 ni un refus, ni l'impôt d'un revenu imposable donné, ni la taxe
-complémentaire seule, ni quatre branches rares. Ce fichier fait calculer les
-mêmes demandes aux deux jumeaux, ``src/retraite_notionnelle/garantie.py`` et
-``impot_revenu.py`` d'un côté, ``moteur/js/garantie.js`` et
-``impot-revenu.js`` de l'autre, par un seul appel à node, et les veut égaux
-à l'unité du dernier chiffre ; un refus, de même message.
+complémentaire seule, ni quatre branches rares ; et aucun test ne confrontait
+directement ``restitution.py`` à son portage. Ce fichier fait calculer les
+mêmes demandes aux deux jumeaux, ``src/retraite_notionnelle/garantie.py``,
+``impot_revenu.py`` et ``restitution.py`` d'un côté, ``moteur/js/garantie.js``,
+``impot-revenu.js`` et ``restitution.js`` de l'autre, par un seul appel à
+node, et les veut égaux à l'unité du dernier chiffre ; un refus, de même
+message.
 
 Les valeurs que les tests de concordance comparent ne viennent d'aucune
 source : ils disent que les deux jumeaux font le même calcul, non qu'il est
@@ -30,7 +33,7 @@ import subprocess
 
 import pytest
 
-from retraite_notionnelle import garantie, impot_revenu
+from retraite_notionnelle import garantie, impot_revenu, restitution
 from retraite_notionnelle.config import RACINE_PROJET
 from retraite_notionnelle.donnees import impot_revenu as donnees_impot
 from retraite_notionnelle.donnees.distribution import DistributionPensions, Tranche
@@ -41,6 +44,7 @@ SCRIPT = r"""
 import { readFileSync } from "node:fs";
 import * as garantie from "./moteur/js/garantie.js";
 import * as impot from "./moteur/js/impot-revenu.js";
+import { pointsCsgRendus, Restitution } from "./moteur/js/restitution.js";
 
 const demandes = JSON.parse(readFileSync(0, "utf8"));
 const paquet = JSON.parse(readFileSync("moteur/donnees.json", "utf8"));
@@ -84,6 +88,14 @@ const CALCULS = {
   parametres: (d) => parametresDe(d.par === "chronique"
     ? baremes.chronique(d.annee, d.indexation, croissanceDe(d.croissance)).get(d.annee)
     : baremes.parametres(d.annee, d.indexation, croissanceDe(d.croissance))),
+  restitution: (d) => {
+    const partage = new Restitution(paquet, d.part_rendue);
+    const a = partage.annuelle(d.annee);
+    return [a.annee, a.posteAbandonne, a.rendu, a.supprimeSurLaRemuneration, a.pointsCsg,
+      a.eteintDeDette, a.fiabilite, partage.partDuPoste(d.annee),
+      partage.montantRemuneration(Math.min(d.annee, partage.derniereAnnee)),
+      partage.derniereAnnee, pointsCsgRendus(paquet, d.annee, d.part_rendue)];
+  },
   constantes: () => Object.fromEntries(Object.entries(impot)
     .filter(([nom, valeur]) => nom === nom.toUpperCase() && typeof valeur !== "function")),
 };
@@ -137,6 +149,17 @@ def _parametres(p: donnees_impot.ParametresImpot) -> dict:
             "projete": p.projete}
 
 
+def _restitution(d: dict) -> list:
+    racine = RACINE_PROJET / "data"
+    partage = restitution.Restitution(racine, d["part_rendue"])
+    a = partage.annuelle(d["annee"])
+    return [a.annee, a.poste_abandonne, a.rendu, a.supprime_sur_la_remuneration, a.points_csg,
+            a.eteint_de_dette, int(a.fiabilite), partage.part_du_poste(d["annee"]),
+            partage.montant_remuneration(min(d["annee"], partage.derniere_annee)),
+            partage.derniere_annee,
+            restitution.points_csg_rendus(racine, d["annee"], d["part_rendue"])]
+
+
 def _constantes() -> dict:
     """Les constantes des deux modules Python que le portage réunit, écrites
     comme lui : une plage par ses années, ou par ses deux bornes."""
@@ -173,6 +196,7 @@ CALCULS = {
         BAREMES.chronique(d["annee"], d["indexation"], _croissance(d["croissance"]))[d["annee"]]
         if d["par"] == "chronique"
         else BAREMES.parametres(d["annee"], d["indexation"], _croissance(d["croissance"]))),
+    "restitution": _restitution,
     "constantes": lambda d: _constantes(),
 }
 
@@ -424,6 +448,14 @@ SANS_BORNE = {
 }
 
 
+#: Le partage de la proposition, la moitié, et ses deux bords : tout au
+#: budget, tout aux salaires, où les deux impôts supprimés ne suffisent plus.
+PARTS_RENDUES = (0.5, 0.0, 1.0, 0.2)
+#: Des années où les deux impôts sont publiés (2019 à 2025), puis de celles
+#: où leur part du poste est reconduite.
+ANNEES_DE_LA_RESTITUTION = (*range(2019, 2031), 2040, 2055, 2070)
+
+
 @pytest.fixture(scope="module")
 def les_deux():
     """Chaque famille de demandes, ce que le Python en rend et ce que le
@@ -434,6 +466,8 @@ def les_deux():
         "garantie": _demandes_de_la_garantie(), "refus_garantie": _refus_de_la_garantie(),
         "impot": _demandes_de_l_impot(), "refus_impot": _refus_de_l_impot(),
         "constantes": [{"quoi": "constantes"}], "sans_borne": [SANS_BORNE],
+        "restitution": [{"quoi": "restitution", "annee": annee, "part_rendue": part}
+                        for part in PARTS_RENDUES for annee in ANNEES_DE_LA_RESTITUTION],
     }
     toutes = [demande for famille in familles.values() for demande in famille]
     execution = subprocess.run(
@@ -578,3 +612,26 @@ def test_les_constantes_de_l_impot_sont_les_memes_des_deux_cotes(les_deux):
     assert len(python) > 30
     assert sorted(python) == sorted(portage)
     assert not [nom for nom in python if python[nom] != portage[nom]]
+
+
+def test_la_restitution_se_retrouve_en_javascript_au_bit(les_deux):
+    """Le partage de chaque année — le poste abandonné, la moitié rendue, ce
+    que suppriment la taxe sur les salaires et le forfait social, les points
+    de CSG, la dette éteinte, la fiabilité —, la part du poste, le montant
+    des deux impôts et le raccourci de la fiche de paie."""
+    famille = les_deux["restitution"]
+    assert all("valeur" in python for _, python, _ in famille)
+    ecarts = _differences(famille)
+    assert not ecarts, f"{len(ecarts)} écarts : " + " ; ".join(ecarts[:3])
+
+
+def test_la_confrontation_de_la_restitution_a_un_objet(les_deux):
+    """Elle rend des points de CSG sous la moitié, aucun quand rien n'est
+    rendu, et, sous un cinquième, les deux impôts supprimés épuisent ce qui
+    est rendu : il ne reste rien pour la CSG."""
+    points = {(d["part_rendue"], d["annee"]): python["valeur"][4]
+              for d, python, _ in les_deux["restitution"]}
+    assert all(0.005 < points[0.5, annee] < 0.02 for annee in ANNEES_DE_LA_RESTITUTION)
+    assert all(points[0.0, annee] == 0.0 for annee in ANNEES_DE_LA_RESTITUTION)
+    assert all(points[0.2, annee] == 0.0 for annee in ANNEES_DE_LA_RESTITUTION)
+    assert all(points[1.0, annee] > points[0.5, annee] for annee in ANNEES_DE_LA_RESTITUTION)

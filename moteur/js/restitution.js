@@ -107,14 +107,14 @@ export class Restitution {
   }
 }
 
+const MEMOIRE = new Map();
+
 /**
  * Les points de CSG d'activité que la proposition rend cette année-là — le
  * raccourci de la fiche de paie, qui n'a besoin que de ce nombre. La lecture
  * des trois séries est mémorisée : la fiche de paie d'une carrière la demande
  * une fois par année cotisée.
  */
-const MEMOIRE = new Map();
-
 export function pointsCsgRendus(paquet, annee, partRendue = 0.5) {
   let restitution = MEMOIRE.get(paquet);
   if (!restitution || restitution.partRendue !== partRendue) {
