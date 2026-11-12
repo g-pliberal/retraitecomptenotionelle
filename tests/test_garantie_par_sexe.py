@@ -236,3 +236,25 @@ def test_le_tableau_dit_le_recours_qu_il_chiffre():
     assert "servie d'office" in d_office and "sur 1 " not in d_office
     moitie = garantie_par_sexe.tableau([], replace(Parametres(), taux_recours_garantie=0.5))
     assert "un ayant droit sur 2 réclamant" in moitie
+
+
+def test_le_script_demande_le_bareme_au_portage(monkeypatch):
+    """La garantie d'une population ne s'écrit qu'en JavaScript (note de
+    décision 0007) : la pension moyenne de chaque sexe, les deux facteurs et
+    le coût de chaque plancher se demandent au pont. Une masse ponctuelle à
+    1 000 € et une à 2 000 €, à parts égales : 1 500 € en moyenne. Sans node,
+    le script s'arrête, sans barème écrit en Python."""
+    import shutil
+
+    from retraite_notionnelle import pont
+    from retraite_notionnelle.donnees.distribution import DistributionPensions, Tranche
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    distribution = object.__new__(DistributionPensions)
+    distribution.tranches = [Tranche(1000.0, 1000.0, 0.5), Tranche(2000.0, None, 0.5)]
+    assert garantie_par_sexe._moyenne(distribution) == 1500.0
+    monkeypatch.setattr(pont.shutil, "which", lambda nom: None)
+    with pytest.raises(pont.PontIndisponible, match="node"):
+        garantie_par_sexe._moyenne(distribution)
+    assert not hasattr(garantie_par_sexe, "cout_garantie")

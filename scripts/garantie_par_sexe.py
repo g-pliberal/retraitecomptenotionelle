@@ -100,12 +100,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from retraite_notionnelle.somme import somme_ordonnee
-from retraite_notionnelle import memoire  # noqa: E402
+from retraite_notionnelle import memoire, pont  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.donnees.distribution import (  # noqa: E402
     DistributionPensions,
 )
-from retraite_notionnelle.garantie import cout_garantie  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 
 #: Les rapports parcourus. Un est l'ANCIENNE convention — un facteur unique
@@ -134,20 +133,17 @@ class Lecture:
 def _moyenne(distribution: DistributionPensions) -> float:
     """Pension moyenne de la distribution, dans les euros de l'enquête.
 
-    Même convention que ``garantie.cout_garantie`` : le milieu de chaque
-    tranche, et la tranche ouverte à sa borne inférieure. Elle sous-estime
-    donc les deux moyennes, et celle des hommes un peu plus — ils sont plus
-    nombreux dans la tranche ouverte. Ce que cela déplace est sans effet ici :
-    seul le RAPPORT des deux moyennes entre dans la contrainte, et repousser
-    la tranche ouverte de 4 500 à 6 500 € le fait passer de 0,641 à 0,624.
+    Celle du portage (``pensionMoyenne`` de ``moteur/js/garantie.js``, que
+    le pont fait appeler), sous la convention du coût de la garantie : le
+    milieu de chaque tranche, et la tranche ouverte à sa borne inférieure.
+    Elle sous-estime donc les deux moyennes, et celle des hommes un peu plus —
+    ils sont plus nombreux dans la tranche ouverte. Ce que cela déplace est
+    sans effet ici : seul le RAPPORT des deux moyennes entre dans la
+    contrainte, et repousser la tranche ouverte de 4 500 à 6 500 € le fait
+    passer de 0,641 à 0,624.
     """
-    return somme_ordonnee(
-        tranche.part * (
-            tranche.borne_inferieure if tranche.borne_superieure is None
-            else 0.5 * (tranche.borne_inferieure + tranche.borne_superieure)
-        )
-        for tranche in distribution.tranches
-    )
+    [moyenne] = pont.garantie([("pension_moyenne", distribution)])
+    return moyenne
 
 
 def calculer(parametres: Parametres | None = None,
@@ -185,8 +181,6 @@ def calculer(parametres: Parametres | None = None,
     effectif = (simulateur.effectifs.effectif("tous_regimes", millesime)
                 * simulateur.distribution.part_residents)
     recours = parametres.taux_recours_garantie
-    moyenne_ensemble = (poids_femmes * moyennes["F"]
-                        + (1.0 - poids_femmes) * moyennes["H"])
 
     # QUI VIT SEUL, lu au recensement et pesé sur les années vécues après
     # 65 ans : c'est la proportion dans laquelle les deux planchers se
@@ -210,33 +204,43 @@ def calculer(parametres: Parametres | None = None,
         ("plancher majoré pour tous", majore_mensuel, None),
         ("plancher de base pour tous", base_mensuelle, None),
     )
+    # La contrainte de masse : la moyenne d'ensemble bouge du même facteur
+    # qu'aujourd'hui, quelle que soit la façon dont les deux sexes se
+    # partagent ce déplacement. Les deux facteurs de chaque rapport, puis le
+    # barème de chaque plancher, se demandent au portage, d'un lot chacun
+    # (``facteursParSexe`` et ``coutGarantie`` de ``moteur/js/garantie.js``).
+    facteurs_des_rapports = {
+        rapport: dict(zip(("F", "H"), facteurs))
+        for rapport, facteurs in zip(rapports, pont.garantie([
+            ("facteurs_par_sexe", moyennes["F"], moyennes["H"], poids_femmes, facteur, rapport)
+            for rapport in rapports]))
+    }
+    cas = [
+        (libelle, rapport, poids, poids_niveau, niveau, sexe)
+        for libelle, mensuel, seule in planchers
+        for rapport in rapports
+        for sexe, poids in (("F", poids_femmes), ("H", 1.0 - poids_femmes))
+        for niveau, poids_niveau in (
+            (mensuel * vers_enquete, 1.0 - (0.0 if seule is None else seule[sexe])),
+            (majore_mensuel * vers_enquete, 0.0 if seule is None else seule[sexe]),
+        )
+        if poids_niveau > 0.0
+    ]
+    chiffres = pont.garantie([
+        ("cout_garantie", colonnes[sexe], effectif * poids * poids_niveau, niveau,
+         facteurs_des_rapports[rapport][sexe],
+         parametres.part_retrait_entier_garantie, parametres.taux_retrait_garantie)
+        for _, rapport, poids, poids_niveau, niveau, sexe in cas])
     lectures: list[Lecture] = []
-    for libelle, mensuel, seule in planchers:
-        plancher = mensuel * vers_enquete
+    for libelle, _, _ in planchers:
         reference = None
         for rapport in rapports:
-            # La contrainte de masse : la moyenne d'ensemble bouge du même
-            # facteur qu'aujourd'hui, quelle que soit la façon dont les deux
-            # sexes se partagent ce déplacement.
-            denominateur = (poids_femmes * moyennes["F"] * rapport
-                            + (1.0 - poids_femmes) * moyennes["H"])
-            facteur_h = facteur * moyenne_ensemble / denominateur
-            facteurs = {"F": rapport * facteur_h, "H": facteur_h}
+            facteurs = facteurs_des_rapports[rapport]
             part = 0.0
             cout_meur = 0.0
-            for sexe, poids in (("F", poids_femmes), ("H", 1.0 - poids_femmes)):
-                pour_ce_sexe = 0.0 if seule is None else seule[sexe]
-                for niveau, poids_niveau in (
-                    (plancher, 1.0 - pour_ce_sexe),
-                    (majore_mensuel * vers_enquete, pour_ce_sexe),
-                ):
-                    if poids_niveau <= 0.0:
-                        continue
-                    chiffre = cout_garantie(
-                        colonnes[sexe], effectif * poids * poids_niveau,
-                        niveau, facteurs[sexe],
-                        part_retrait_entier=parametres.part_retrait_entier_garantie,
-                        taux_retrait=parametres.taux_retrait_garantie)
+            for (du_plancher, du_rapport, poids, poids_niveau, _, _), chiffre in zip(
+                    cas, chiffres, strict=True):
+                if (du_plancher, du_rapport) == (libelle, rapport):
                     part += poids * poids_niveau * chiffre.part_beneficiaires
                     cout_meur += chiffre.cout_annuel_meur
             milliards = cout_meur * vers_constants * recours / 1000.0
