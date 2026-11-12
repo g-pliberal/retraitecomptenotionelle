@@ -24,42 +24,24 @@ sys.path.insert(0, str(RACINE / "scripts"))
 import entrees_du_moteur  # noqa: E402
 import regenerer  # noqa: E402
 
-#: Les deux exemples du README, que ``construire_tableaux_md.py`` demande aux
-#: sondes de la prose (``mesures_prose._comparaison_de``) : elles bâtissent et
-#: simulent encore leur carrière en Python, et le titre du second lit l'écart
-#: à l'âge de référence sur ce qu'elles rendent. La ligne suivante du lot A.
+#: Les deux exemples du README : ``construire_tableaux_md.py`` les écrit par
+#: ``Comparaison.tableau()``, une mise en forme qui n'existe qu'en Python, et
+#: bâtit et simule donc encore leur carrière au moteur Python. Ce que le § 3
+#: du README doit montrer quand ce moteur part est une question laissée au
+#: propriétaire (``docs/feuille_de_route/161/2026-11-12-lot-a-les-sondes-par-le-pont.md``).
 EXEMPLES_DU_README = {
     "scripts/construire_tableaux_md.py": (
-        "moteur/age_reference.py:EcartAge.anticipe", "moteur/age_reference.py:EcartAge.ecart"),
-    "scripts/mesures_prose.py": (
         "simulateur.py:Simulateur.carriere_simple", "simulateur.py:Simulateur.simuler"),
 }
 
 #: Ce que les sondes de la prose appellent encore du moteur Python quand
-#: ``verifier_prose.py`` les lance toutes : leurs carrières bâties et simulées,
-#: et les règles qu'elles appellent une à une ; une étude de la mortalité, qui
-#: simule ; les cas types, qui datent et bâtissent leur carrière en Python
-#: pour une sonde. La ligne suivante du lot A.
+#: ``verifier_prose.py`` les lance toutes : plus rien d'elles-mêmes — leurs
+#: carrières se bâtissent et se simulent au portage, leurs règles s'y
+#: appellent une à une (``pont.droit``, ``tests/test_sondes_par_le_pont.py``).
+#: Reste l'étude de la mortalité, dont une sonde lit la mesure : elle simule
+#: en Python un cas type que ``castypes.py`` date et bâtit en Python. Elle se
+#: porte dans sa session (lot B).
 SONDES_DE_LA_PROSE = {
-    "scripts/mesures_prose.py": (
-        "droit/liquider.py:salaire_de_reference",
-        "moteur/age_reference.py:AgeReference.age",
-        "moteur/capitalisation.py:Capitalisation.annees_cotisees",
-        "moteur/capitalisation.py:Capitalisation.rente_mensuelle",
-        "moteur/capitalisation.py:ConstructeurCapitalisation.__init__",
-        "moteur/capitalisation.py:ConstructeurCapitalisation._facteur_encours_rente",
-        "moteur/capitalisation.py:ConstructeurCapitalisation.construire",
-        "moteur/compte.py:ConstructeurCompte.parts_retraite_seule",
-        "moteur/conversion.py:Convertisseur.__init__",
-        "moteur/conversion.py:Convertisseur.coefficient",
-        "moteur/conversion.py:Convertisseur.effet_anticipation",
-        "moteur/fusion.py:_taux_total",
-        "moteur/fusion.py:fusionner",
-        "moteur/indexation.py:Indexation.__init__",
-        "moteur/indexation.py:Indexation.coefficient",
-        "scenarios/notionnel.py:ScenarioNotionnel._garantie_vieillesse",
-        "simulateur.py:Simulateur.carriere_simple",
-        "simulateur.py:Simulateur.simuler"),
     "scripts/mortalite_population.py": ("simulateur.py:Simulateur.simuler",),
     "src/retraite_notionnelle/castypes.py": (
         "moteur/conversion.py:niveau_relatif", "pilote.py:age_de_depart",
@@ -80,9 +62,7 @@ ENTREES_DE_LA_FABRIQUE: dict[str, dict[str, tuple[str, ...]]] = {
     # ``donnees/`` au retrait de son jumeau (note de décision 0006).
     "construire_donnees.py": {
         "scripts/construire_donnees.py": ("moteur/age_reference.py:_charger_ages",)},
-    # Le solde de la fusion des régimes, que l'accueil cite : une étude du
-    # lot B.
-    "mesures_accueil.py": {"scripts/solde_fusion.py": ("moteur/fusion.py:fusionner",)},
+    "mesures_accueil.py": {},
     "construire_temoins.py": {},
     "construire_pages.py": {},
     "chiffrage_plf.py": {},
@@ -141,6 +121,32 @@ def test_la_sonde_nomme_le_module_du_modele_qui_entre_pour_le_script(tmp_path, p
     assert entrees_du_moteur.relever(script, par_trace=par_trace) == {
         "src/retraite_notionnelle/castypes.py": [
             "pilote.py:age_de_depart", "simulateur.py:Simulateur.carriere_simple"]}
+
+
+def test_la_sonde_retient_les_regles_des_fichiers_meles_declarees_portes(tmp_path, par_trace):
+    """Dans un fichier où le moteur se mêle aux chargeurs et aux types, une
+    règle appelée directement ne se relève que déclarée porte : le salaire
+    moyen d'une année, le partage de la restitution et la fiche de paie d'une
+    simulation, que les sondes de la prose appelaient, le sont."""
+    script = tmp_path / "essai.py"
+    script.write_text(textwrap.dedent('''\
+        from retraite_notionnelle.carriere import salaire_moyen_annuel
+        from retraite_notionnelle.restitution import Restitution
+        from retraite_notionnelle.simulateur import Simulateur
+
+        simulateur = Simulateur()
+        salaire_moyen_annuel(simulateur.macro, 2024)
+        Restitution(simulateur.parametres.racine_donnees).part_du_poste(2024)
+        carriere = simulateur.carriere_simple(
+            annee_naissance=1980, sexe="H", affiliation="salarie_prive_non_cadre",
+            age_debut=22, age_liquidation=64)
+        simulateur.simuler(carriere).remuneration.reference.gain_net
+        '''), encoding="utf-8")
+    assert entrees_du_moteur.relever(script, par_trace=par_trace) == {"essai.py": [
+        "carriere.py:salaire_moyen_annuel",
+        "remuneration.py:AnneeComparee.gain_net", "remuneration.py:RemunerationActif.reference",
+        "restitution.py:Restitution.part_du_poste",
+        "simulateur.py:Simulateur.carriere_simple", "simulateur.py:Simulateur.simuler"]}
 
 
 def test_la_sonde_ne_releve_pas_ce_que_fait_un_calcul_garde(tmp_path, par_trace):

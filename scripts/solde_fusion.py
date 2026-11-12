@@ -83,16 +83,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from retraite_notionnelle import cout as C  # noqa: E402
-from retraite_notionnelle import memoire  # noqa: E402
+from retraite_notionnelle import memoire, pont  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
 from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
-from retraite_notionnelle.donnees.regimes import CatalogueRegimes  # noqa: E402
-from retraite_notionnelle.moteur.fusion import (  # noqa: E402
-    CritereTaux, RegleFusion, fusionner,
-)
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 
 #: Les scénarios dont le régime unique fixe le taux après la bascule.
@@ -131,8 +127,12 @@ class Hypothese:
         return self.bareme[0][1] if self.bareme else 0.0
 
 
-def hypotheses(catalogue: CatalogueRegimes, annee: int) -> dict[str, Hypothese]:
-    """Les quatre barèmes, lus dans le catalogue de l'année de bascule."""
+def hypotheses(simulateur: Simulateur, annee: int) -> dict[str, Hypothese]:
+    """Les quatre barèmes, lus dans le catalogue du simulateur, l'année de la
+    bascule. Le régime unique du modèle et la moyenne des régimes sont ce que
+    la fusion rend : le portage la calcule, sous les paramètres du simulateur
+    (``pont.droit``, ``"fusion.fusionner"`` ; action 161, lot A)."""
+    catalogue = simulateur.catalogue
     general = min(catalogue["regime_general"].periodes_actives(annee),
                   key=lambda p: p.bornes_assiette_en_pass()[0])
     tranche_1, tranche_2 = sorted(
@@ -143,12 +143,16 @@ def hypotheses(catalogue: CatalogueRegimes, annee: int) -> dict[str, Hypothese]:
     plafonne_salarie = general.taux_cotisation_salarie
     deplafonne = general.taux_cotisation_deplafonnee
     deplafonne_salarie = deplafonne * general.part_salariale_deplafonnee
-    modele = fusionner(catalogue, annee)
-    moyenne = fusionner(catalogue, annee,
-                        RegleFusion(critere_taux=CritereTaux.MOYENNE_PONDEREE))
+    fusions, refus = pont.droit({
+        "modele": ("fusion.fusionner", pont.SIMULATEUR, annee, None),
+        "moyenne": ("fusion.fusionner", pont.SIMULATEUR, annee, "moyenne_ponderee"),
+    }, simulateur.parametres)
+    if refus:
+        raise ValueError(f"la fusion des régimes en {annee} : {refus}")
+    modele, moyenne = fusions["modele"], fusions["moyenne"]
     return {
         "A": Hypothese(
-            "A", f"le régime unique du modèle : {modele.taux_cotisation_retraite:.2%} déplafonné",
+            "A", f"le régime unique du modèle : {modele['taux_cotisation_retraite']:.2%} déplafonné",
             None,
         ),
         "B": Hypothese(
@@ -167,8 +171,9 @@ def hypotheses(catalogue: CatalogueRegimes, annee: int) -> dict[str, Hypothese]:
             ),
         ),
         "D": Hypothese(
-            "D", f"la moyenne des régimes : {moyenne.taux_cotisation_retraite:.2%} déplafonné",
-            ((None, moyenne.taux_cotisation_retraite, moyenne.taux_cotisation_salarie),),
+            "D", f"la moyenne des régimes : {moyenne['taux_cotisation_retraite']:.2%} déplafonné",
+            ((None, moyenne["taux_cotisation_retraite"],
+              moyenne["taux_cotisation_salarie"]),),
         ),
     }
 
@@ -458,7 +463,7 @@ def main(argv: list[str] | None = None) -> int:
     parametres = Parametres()
     # Les barèmes de la page Coût, sous ses conventions : l'Agirc-Arrco y cotise
     # au taux moyen des entreprises (``Simulateur.pour_la_projection``).
-    toutes = hypotheses(Simulateur(parametres).pour_la_projection().catalogue,
+    toutes = hypotheses(Simulateur(parametres).pour_la_projection(),
                         parametres.annee_bascule)
 
     resultats = []

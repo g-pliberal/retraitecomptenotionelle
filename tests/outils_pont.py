@@ -404,6 +404,123 @@ JUMEAUX_DU_DROIT = {
         simulateur.carriere_simple(**options)),
 }
 
+def _fusionne(simulateur: Simulateur, annee: int, critere: str | None) -> dict:
+    from retraite_notionnelle.moteur.fusion import CritereTaux, RegleFusion, fusionner
+
+    regle = RegleFusion() if critere is None else RegleFusion(critere_taux=CritereTaux(critere))
+    return dataclasses.asdict(fusionner(simulateur.catalogue, annee, regle))
+
+
+def _taux_de_la_tranche_1(simulateur: Simulateur, code: str, annee: int) -> float:
+    from retraite_notionnelle.moteur.fusion import _taux_total
+
+    return _taux_total(min(simulateur.catalogue[code].periodes_actives(annee),
+                           key=lambda periode: periode.bornes_assiette_en_pass()[0]))
+
+
+def _restitution(simulateur: Simulateur):
+    from retraite_notionnelle.restitution import Restitution
+
+    return Restitution(simulateur.parametres.racine_donnees,
+                       simulateur.parametres.part_rendue_aux_salaires)
+
+
+def _salaire_moyen_annuel(simulateur: Simulateur, annee: int) -> float:
+    from retraite_notionnelle.carriere import salaire_moyen_annuel
+
+    return salaire_moyen_annuel(simulateur.macro, annee)
+
+
+def _parts_retraite_seule(simulateur: Simulateur) -> tuple[float, float, float]:
+    parts = simulateur.constructeur_employeur.parts_retraite_seule
+    return parts[False, False], parts[True, True], parts[True, False]
+
+
+def _sans_non_finis(valeur):
+    """Une valeur telle que node l'écrit : « null » pour un nombre non fini
+    (``_fini`` de ``scripts/construire_temoins.py``)."""
+    if isinstance(valeur, float) and not math.isfinite(valeur):
+        return None
+    if isinstance(valeur, dict):
+        return {cle: _sans_non_finis(element) for cle, element in valeur.items()}
+    if isinstance(valeur, (list, tuple)):
+        return [_sans_non_finis(element) for element in valeur]
+    return valeur
+
+
+def _simulee(simulateur: Simulateur, carriere) -> dict:
+    """La carrière simulée au moteur Python, telle que le pont la rend aux
+    sondes (``"simulateur.simuler"`` de ``pont.mjs``)."""
+    comparaison = simulateur.simuler(carriere)
+    resultat = comparaison.dictionnaire()
+    remuneration = comparaison.remuneration
+
+    def fiche(lue) -> dict:
+        return {"brut": lue.brut, "net": lue.net, "retraite_salarie": lue.retraite_salarie,
+                "retraite_employeur": lue.retraite_employeur}
+
+    return _sans_non_finis({
+        "resultat": resultat,
+        "diviseurs": {scenario: getattr(comparaison, scenario).conversion.diviseur
+                      for scenario in resultat["scenarios"] if scenario != "actuel"},
+        "remuneration": None if remuneration is None else {
+            "annee": remuneration.reference.annee,
+            "gain_net": remuneration.reference.gain_net,
+            "droit_en_vigueur": fiche(remuneration.reference.droit_en_vigueur),
+            "proposition": fiche(remuneration.reference.proposition),
+            "indemnite_csg_mensuelle": remuneration.indemnite_csg_mensuelle,
+        },
+    })
+
+
+def _garantie_vieillesse(simulateur: Simulateur, carriere, pension: float) -> dict:
+    garantie = simulateur.scenario_liberal._garantie_vieillesse(carriere, pension)
+    return {"plancher_annuel": garantie.plancher_annuel, "complement": garantie.complement}
+
+
+def _pilier(simulateur: Simulateur, assiettes: dict, annee_naissance: int,
+            age_liquidation: float, annee_liquidation: int, repartitions: dict | None) -> dict:
+    """Le pilier capitalisé d'une suite d'assiettes au moteur Python, sous sa
+    règle d'allocation ou sous celle que la demande décrit, par horizon."""
+    from retraite_notionnelle.moteur.capitalisation import ConstructeurCapitalisation
+
+    modele = simulateur.constructeur_capitalisation
+    constructeur = modele if repartitions is None else ConstructeurCapitalisation(
+        modele.courbe, modele.mortalite, modele.convertisseur, modele.parametres,
+        lambda horizon: tuple(map(tuple, repartitions.get(horizon, ()))))
+    pilier = constructeur.construire(assiettes, annee_naissance, age_liquidation,
+                                     annee_liquidation)
+    return {"capital": pilier.capital, "rente_mensuelle": pilier.rente_mensuelle,
+            "annees_cotisees": pilier.annees_cotisees}
+
+
+#: Le jumeau Python de chaque règle que les sondes de la prose et les mesures
+#: de l'accueil demandent au pont (:data:`pont.LECTURES_DES_SONDES`).
+JUMEAUX_DES_SONDES = {
+    "age_reference.age": lambda simulateur, annee: simulateur.age_reference.age(annee),
+    "conversion.coefficient.esperance_residuelle": lambda simulateur, age, annee: (
+        simulateur.convertisseur.coefficient(age, annee).esperance_residuelle),
+    "conversion.effet_anticipation": lambda simulateur, age, reference, annee: (
+        simulateur.convertisseur.effet_anticipation(age, reference, annee)),
+    "indexation.coefficient": lambda simulateur, depart, arrivee: (
+        simulateur.indexation.coefficient(depart, arrivee)),
+    "capitalisation.facteur_encours_rente": lambda simulateur, frais, age, annee: (
+        simulateur.constructeur_capitalisation._facteur_encours_rente(
+            frais, age, annee, None, None)),
+    "carriere.salaire_moyen_annuel": _salaire_moyen_annuel,
+    "restitution.part_du_poste":
+        lambda simulateur, annee: _restitution(simulateur).part_du_poste(annee),
+    "restitution.annuelle.points_csg":
+        lambda simulateur, annee: _restitution(simulateur).annuelle(annee).points_csg,
+    "compte.parts_retraite_seule": _parts_retraite_seule,
+    "fusion.fusionner": _fusionne,
+    "fusion.taux_total.tranche_1": _taux_de_la_tranche_1,
+    "simulateur.simuler": _simulee,
+    "notionnel.garantie_vieillesse": _garantie_vieillesse,
+    "capitalisation.construire": _pilier,
+}
+JUMEAUX_DU_DROIT.update(JUMEAUX_DES_SONDES)
+
 #: Le pont du droit tel quel, que :func:`droit_et_refait` appelle quand une
 #: confrontation la met à sa place.
 DROIT_DU_PORTAGE = pont.droit

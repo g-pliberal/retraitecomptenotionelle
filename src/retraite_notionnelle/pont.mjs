@@ -113,7 +113,8 @@ import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
 
 import { DateMois, enMois, origineDesAges } from "../../moteur/js/calendrier.js";
-import { AnneeCarriere, Carriere } from "../../moteur/js/carriere.js";
+import { AnneeCarriere, Carriere, salaireMoyenAnnuel } from "../../moteur/js/carriere.js";
+import { ConstructeurCapitalisation } from "../../moteur/js/capitalisation.js";
 import { valeur as valeurPresumee } from "../../moteur/js/chronologie.js";
 import { ConstructeurCompte } from "../../moteur/js/compte.js";
 import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
@@ -133,8 +134,12 @@ import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import * as releve from "../../moteur/js/droit/releve.js";
 import * as reversion from "../../moteur/js/droit/reversion.js";
 import { ageDeDepart } from "../../moteur/js/pilote.js";
+import {
+  CritereTaux, REGLE_FUSION_DEFAUT, fusionner, tauxTotal,
+} from "../../moteur/js/fusion.js";
 import { BORNES_ASSIETTE, CarriereLongue } from "../../moteur/js/regimes.js";
 import { ficheDepuisBrut } from "../../moteur/js/remuneration.js";
+import { Restitution } from "../../moteur/js/restitution.js";
 import { faireVivre } from "../../moteur/js/revalorisation.js";
 import { Saisie } from "../../moteur/js/saisie.js";
 import { ScenarioActuel } from "../../moteur/js/scenario-actuel.js";
@@ -1000,6 +1005,120 @@ function parcourue(simulateur, carriere) {
   const echeancier = new Echeancier(simulateur);
   echeancier.parcourir(carriere);
   return echeancier;
+}
+
+/**
+ * Les règles que les sondes de la prose et les mesures de l'accueil appelaient
+ * une à une au moteur Python (`scripts/mesures_prose.py`,
+ * `scripts/solde_fusion.py` ; action 161, lot A), sous le nom de leur jumeau :
+ * elles s'ajoutent aux fonctions du droit, et `pont.droit` les fait appeler
+ * sur le simulateur de la demande, sous ses paramètres.
+ */
+const FONCTIONS_DES_SONDES = {
+  "age_reference.age": (simulateur, annee) => simulateur.ageReference.age(annee),
+  "conversion.coefficient.esperance_residuelle": (simulateur, age, annee) => simulateur
+    .convertisseur.coefficient(age, annee).esperance_residuelle,
+  "conversion.effet_anticipation": (simulateur, age, reference, annee) => simulateur
+    .convertisseur.effetAnticipation(age, reference, annee),
+  "indexation.coefficient": (simulateur, depart, arrivee) => simulateur.indexation
+    .coefficient(depart, arrivee),
+  "capitalisation.facteur_encours_rente": (simulateur, frais, age, annee) => simulateur
+    .constructeurCapitalisation._facteurEncoursRente(frais, age, annee, null, null),
+  "carriere.salaire_moyen_annuel":
+    (simulateur, annee) => salaireMoyenAnnuel(simulateur.macro, annee),
+  "restitution.part_du_poste": (simulateur, annee) => restitutionDe(simulateur).partDuPoste(annee),
+  "restitution.annuelle.points_csg":
+    (simulateur, annee) => restitutionDe(simulateur).annuelle(annee).pointsCsg,
+  // La part du taux de l'État portée au compte : celle du civil, celle du
+  // militaire, et celle du militaire rapportée au taux civil, d'avant 2006.
+  "compte.parts_retraite_seule": (simulateur) => {
+    const parts = simulateur.constructeurEmployeur.partsRetraiteSeule;
+    return [parts.civil, parts.militaire, parts.militaireSurTauxCivil];
+  },
+  // Le régime unique d'une année, sous la règle de fusion du modèle ou sous
+  // un autre critère de taux ; un critère que la fusion ne connaît pas est
+  // refusé, au lieu de tomber sur la moyenne.
+  "fusion.fusionner": (simulateur, annee, critere) => {
+    if (critere !== null && !Object.values(CritereTaux).includes(critere)) {
+      throw new Error(`critère de taux inconnu « ${critere} »`);
+    }
+    return fusionner(simulateur.catalogue, annee, critere === null ? REGLE_FUSION_DEFAUT
+      : { ...REGLE_FUSION_DEFAUT, critere_taux: critere });
+  },
+  // Ce que la fusion compte d'un régime pivot : le taux de sa tranche 1,
+  // celle qui s'applique à l'ensemble des rémunérations, cotisation
+  // déplafonnée comprise.
+  "fusion.taux_total.tranche_1": (simulateur, code, annee) => {
+    const actives = simulateur.catalogue.obtenir(code).periodesActives(annee);
+    if (actives.length === 0) {
+      throw new Error(`« ${code} » n'a pas de période active en ${annee}`);
+    }
+    return tauxTotal(actives.reduce((retenue, periode) => (
+      periode.bornesAssietteEnPass()[0] < retenue.bornesAssietteEnPass()[0] ? periode : retenue)));
+  },
+  // La carrière simulée, telle que les sondes la lisent : son résultat comme
+  // les témoins l'écrivent, et ce qu'il ne porte pas — le diviseur de chaque
+  // scénario, la fiche de paie de l'année de référence, `null` pour qui ne
+  // cotise plus.
+  "simulateur.simuler": (simulateur, carriere) => {
+    const comparaison = simulateur.simuler(carriere);
+    const resultat = comparaison.dictionnaire();
+    const remuneration = comparaison.remuneration;
+    const fiche = (lue) => ({
+      brut: lue.brut,
+      net: lue.net,
+      retraite_salarie: lue.retraiteSalarie,
+      retraite_employeur: lue.retraiteEmployeur,
+    });
+    return {
+      resultat,
+      diviseurs: parScenario(Object.keys(resultat.scenarios).filter((cle) => cle !== "actuel"),
+        (scenario) => comparaison[scenario].conversion.diviseur),
+      remuneration: remuneration === null ? null : {
+        annee: remuneration.reference.annee,
+        gain_net: remuneration.reference.gainNet,
+        droit_en_vigueur: fiche(remuneration.reference.droitEnVigueur),
+        proposition: fiche(remuneration.reference.proposition),
+        indemnite_csg_mensuelle: remuneration.indemniteCsgMensuelle,
+      },
+    };
+  },
+  // La garantie vieillesse que la proposition sert à une pension annuelle,
+  // sur une carrière et dans la situation de foyer des paramètres : son
+  // plancher et son complément.
+  "notionnel.garantie_vieillesse": (simulateur, carriere, pension) => {
+    const garantie = simulateur.scenarioLiberal._garantieVieillesse(carriere, pension);
+    return { plancher_annuel: garantie.plancher_annuel, complement: garantie.complement };
+  },
+  // Le pilier capitalisé d'une suite d'assiettes, `{année: montant}`, sous la
+  // règle d'allocation du moteur, ou sous une autre, que la demande décrit en
+  // données : par horizon, ses maturités et leurs poids, aucune à l'horizon
+  // qu'elle ne nomme pas.
+  "capitalisation.construire": (simulateur, assiettes, anneeNaissance, ageLiquidation,
+    anneeLiquidation, repartitions) => {
+    const modele = simulateur.constructeurCapitalisation;
+    const constructeur = repartitions === null ? modele : new ConstructeurCapitalisation(
+      modele.courbe, modele.mortalite, modele.convertisseur, modele.parametres,
+      (horizon) => repartitions[horizon] ?? []);
+    const pilier = constructeur.construire({
+      assiettes: new Map(Object.entries(assiettes).map(([annee, montant]) => [Number(annee), montant])),
+      anneeNaissance,
+      ageLiquidation,
+      anneeLiquidation,
+    });
+    return {
+      capital: pilier.capital,
+      rente_mensuelle: pilier.rente_mensuelle,
+      annees_cotisees: pilier.annees_cotisees,
+    };
+  },
+};
+Object.assign(FONCTIONS_DU_DROIT, FONCTIONS_DES_SONDES);
+
+/** Le partage de la restitution sous les paramètres du simulateur
+ *  (`part_rendue_aux_salaires`), sur le paquet de la demande. */
+function restitutionDe(simulateur) {
+  return new Restitution(contexte.paquet, simulateur.parametres.part_rendue_aux_salaires);
 }
 
 /** Un nom du Python en casse de chameau : celui de son jumeau. */

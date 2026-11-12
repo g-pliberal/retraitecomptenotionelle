@@ -99,6 +99,25 @@ def _simulateur(parametres):
     return Simulateur(parametres)
 
 
+def _pont():
+    """Le pont, par où le Python fait calculer le moteur JavaScript."""
+    from retraite_notionnelle import pont
+
+    return pont
+
+
+def _regle(fonction: str, *arguments, parametres=None):
+    """Une règle du moteur d'une carrière, appelée au portage par le pont
+    (``pont.droit``), sous le nom de son jumeau Python et sous ``parametres``,
+    ceux de référence sans eux : ce qu'elle rend. Le moteur n'a qu'un
+    exemplaire, en JavaScript (action 161) ; une règle que le portage refuse
+    d'appeler dit pourquoi."""
+    lus, refus = _pont().droit({"regle": (fonction, *arguments)}, parametres)
+    if refus:
+        raise ValueError(refus["regle"])
+    return lus["regle"]
+
+
 #: L'exemple du §3 du README : une fonctionnaire d'État née en 1975, vingt pour
 #: cent de primes, partie à soixante-quatre ans. ``exemple=fonctionnaire`` le
 #: désigne d'un mot, et ``construire_tableaux_md.py`` en écrit la sortie.
@@ -132,33 +151,58 @@ EXEMPLES = {
 
 
 @lru_cache(maxsize=None)
-def _comparaison(generation: int, indexation: str, lissage: str,
-                 affiliation: str, sexe: str, debut: int, depart: int,
-                 primes: float, profil: str, niveau: float,
-                 contribution_etat: str = ""):
-    simulateur = _simulateur(_parametres(indexation, lissage, contribution_etat))
-    options = {"part_primes": primes} if primes else {}
-    if niveau:
-        options["niveau_salaire"] = niveau
-    if profil:
-        options["profil_carriere"] = profil
-    carriere = simulateur.carriere_simple(
-        annee_naissance=generation, sexe=sexe, affiliation=affiliation,
-        age_debut=debut, age_liquidation=depart, **options)
-    return simulateur.simuler(carriere)
+def _simulation(parametres, options: tuple[tuple[str, object], ...]) -> dict:
+    """La carrière d'un seul statut que le portage bâtit de ces options, celles
+    de ``carriere_simple``, et simule sous ``parametres`` (``pont.droit``,
+    ``"simulateur.simuler"``) : son résultat, tel que les témoins l'écrivent
+    (``resultat``), le diviseur de chaque scénario (``diviseurs``) et la fiche
+    de paie de l'année de référence (``remuneration``). Une fois par
+    processus."""
+    pont = _pont()
+    return _regle("simulateur.simuler", pont.SIMULATEUR, pont.CarriereSimple(dict(options)),
+                  parametres=parametres)
 
 
-def _comparaison_de(reglages: dict[str, str]):
+def _carriere_de(reglages: dict[str, str]):
+    """Les paramètres et les options de ``carriere_simple`` que désignent les
+    réglages d'une mesure : la carrière de référence, celle d'un exemple, ce
+    que les réglages en changent."""
     exemple = reglages.get("exemple")
     if exemple is not None and exemple not in EXEMPLES:
         raise ValueError(f"exemple inconnu « {exemple} » ; il y a {', '.join(EXEMPLES)}")
     voulu = {**CARRIERE, **EXEMPLES.get(exemple, {}), **reglages}
-    return _comparaison(int(voulu["generation"]), voulu.get("indexation", ""),
-                        voulu.get("lissage", ""), voulu["affiliation"],
-                        voulu["sexe"], int(voulu["debut"]), int(voulu["depart"]),
-                        float(voulu.get("primes", 0) or 0), voulu.get("profil", ""),
-                        float(voulu.get("niveau", 0) or 0),
-                        voulu.get("contribution_etat", ""))
+    parametres = _parametres(voulu.get("indexation", ""), voulu.get("lissage", ""),
+                             voulu.get("contribution_etat", ""))
+    options = {"annee_naissance": int(voulu["generation"]), "sexe": voulu["sexe"],
+               "affiliation": voulu["affiliation"], "age_debut": int(voulu["debut"]),
+               "age_liquidation": int(voulu["depart"])}
+    primes, niveau = float(voulu.get("primes", 0) or 0), float(voulu.get("niveau", 0) or 0)
+    if primes:
+        options["part_primes"] = primes
+    if niveau:
+        options["niveau_salaire"] = niveau
+    if voulu.get("profil", ""):
+        options["profil_carriere"] = voulu["profil"]
+    return parametres, options
+
+
+def _simulation_de(reglages: dict[str, str]) -> dict:
+    parametres, options = _carriere_de(reglages)
+    return _simulation(parametres, tuple(options.items()))
+
+
+def _du_scenario(simulation: dict, scenario: str) -> dict:
+    """Ce que le résultat d'une simulation porte d'un scénario."""
+    scenarios = simulation["resultat"]["scenarios"]
+    if scenario not in scenarios:
+        raise ValueError(f"la simulation d'une carrière ne porte pas « {scenario} » ; "
+                         f"il y a {', '.join(scenarios)}")
+    return scenarios[scenario]
+
+
+def _nombre(valeur) -> float:
+    """Un nombre du résultat : le pont rend ``None`` pour un nombre non fini."""
+    return float("nan") if valeur is None else valeur
 
 
 def ecart(**reglages: str) -> float:
@@ -170,8 +214,8 @@ def ecart(**reglages: str) -> float:
     tableau des générations du README ; ``exemple=…`` en désigne une autre
     d'un mot.
     """
-    comparaison = _comparaison_de(reglages)
-    return comparaison.variation(_scenario(reglages["scenario"])) * 100
+    lu = _du_scenario(_simulation_de(reglages), _scenario(reglages["scenario"]))
+    return _nombre(lu["variation_vs_actuel"]) * 100
 
 
 def pension(**reglages: str) -> float:
@@ -182,20 +226,18 @@ def pension(**reglages: str) -> float:
     ``part=capitalisee`` n'en rend que la rente, ``part=obligatoire`` et
     ``part=volontaire`` chacun de ses deux morceaux.
     """
-    comparaison = _comparaison_de(reglages)
-    scenario = _scenario(reglages["scenario"])
+    lu = _du_scenario(_simulation_de(reglages), _scenario(reglages["scenario"]))
     part = reglages.get("part", "repartition")
     if part == "repartition":
-        return getattr(comparaison, scenario).pension_annuelle
+        return lu["pension_annuelle"]
     if part == "totale":
-        return comparaison.pension_totale(scenario)
+        return lu["pension_totale"]
     if part == "capitalisee":
-        return comparaison.rente_capitalisee(scenario)
+        return lu["rente_capitalisation_obligatoire"]
     if part == "obligatoire":
-        return (comparaison.rente_capitalisee(scenario)
-                - comparaison.rente_capitalisee_volontaire(scenario))
+        return lu["rente_capitalisation_obligatoire"] - lu["rente_capitalisation_volontaire"]
     if part == "volontaire":
-        return comparaison.rente_capitalisee_volontaire(scenario)
+        return lu["rente_capitalisation_volontaire"]
     raise ValueError(f"part inconnue « {part} »")
 
 
@@ -207,20 +249,22 @@ def aujourd_hui(**reglages: str) -> float:
     liquidée. ``quoi=coefficient&regime=…`` rend plutôt le coefficient nominal
     que le texte d'un régime a appliqué depuis le départ.
     """
-    comparaison = _comparaison_de(reglages)
-    if comparaison.aujourd_hui is None:
+    resultat = _simulation_de(reglages)["resultat"]
+    servi = resultat["aujourd_hui"]
+    if servi is None:
         raise ValueError("cette carrière n'est pas encore liquidée")
-    actuel = comparaison.aujourd_hui.actuel
+    actuel = servi["actuel"]
     quoi = reglages.get("quoi", "ecart_aux_prix")
     if quoi == "coefficient":
-        return next(r.coefficient for r in actuel.regimes if r.regime == reglages["regime"])
+        return next(r["coefficient"] for r in actuel["par_regime"]
+                    if r["regime"] == reglages["regime"])
     if quoi != "ecart_aux_prix":
         raise ValueError(f"quoi inconnu « {quoi} »")
     macro = _simulateur(_parametres(reglages.get("indexation", ""),
                                     reglages.get("lissage", ""))).macro
-    par_les_prix = comparaison.actuel.pension_annuelle * macro.coefficient_prix(
-        comparaison.carriere.annee_liquidation, comparaison.aujourd_hui.annee)
-    return (actuel.pension_annuelle / par_les_prix - 1) * 100
+    par_les_prix = resultat["scenarios"]["actuel"]["pension_annuelle"] * macro.coefficient_prix(
+        resultat["assure"]["annee_liquidation"], servi["annee"])
+    return (actuel["pension_annuelle"] / par_les_prix - 1) * 100
 
 
 def part_salariale_versee(**reglages: str) -> float:
@@ -230,7 +274,7 @@ def part_salariale_versee(**reglages: str) -> float:
 
 def part_employeur(**reglages: str) -> float:
     """Part de la cotisation totale versée par l'employeur, en %, sur une carrière."""
-    return _comparaison_de(reglages).contribution_employeur.part * 100
+    return _simulation_de(reglages)["resultat"]["contribution_employeur"]["part"] * 100
 
 
 def retraite_seule(**reglages: str) -> float:
@@ -240,14 +284,19 @@ def retraite_seule(**reglages: str) -> float:
     le taux porté au compte cette année-là. ``militaire=1`` pour un militaire,
     dont la proportion se prend sur son propre taux à partir de 2006.
     """
-    constructeur = _simulateur(
-        _parametres(contribution_etat="retraite_seule")).constructeur_employeur
+    parametres = _parametres(contribution_etat="retraite_seule")
+    civil, du_militaire, du_militaire_sur_taux_civil = _regle(
+        "compte.parts_retraite_seule", _pont().SIMULATEUR, parametres=parametres)
     militaire = reglages.get("militaire") == "1"
     if "annee" not in reglages:
-        return constructeur.parts_retraite_seule[militaire, militaire] * 100
-    verse = constructeur.contributions_publiques.taux(
+        return (du_militaire if militaire else civil) * 100
+    from retraite_notionnelle.donnees.regimes import ContributionsEmployeurPubliques
+
+    verse = ContributionsEmployeurPubliques(parametres.racine_donnees).taux(
         "fonction_publique_etat", int(reglages["annee"]), militaire)
-    return verse.taux * constructeur.parts_retraite_seule[militaire, verse.militaire] * 100
+    if not militaire:
+        return verse.taux * civil * 100
+    return verse.taux * (du_militaire if verse.militaire else du_militaire_sur_taux_civil) * 100
 
 
 def cumul_indexation(**reglages: str) -> float:
@@ -256,12 +305,9 @@ def cumul_indexation(**reglages: str) -> float:
     ``regle`` est un mode d'indexation (``pib_nominal``, ``prix``…) ;
     ``lissage`` au besoin. Rend le coefficient, « ×5,44 ».
     """
-    from retraite_notionnelle.moteur.indexation import Indexation
-
     parametres = _parametres(reglages.get("regle", ""), reglages.get("lissage", ""))
-    simulateur = _simulateur(parametres)
-    return Indexation(simulateur.macro, parametres).coefficient(
-        int(reglages["de"]), int(reglages["a"]))
+    return _regle("indexation.coefficient", _pont().SIMULATEUR,
+                  int(reglages["de"]), int(reglages["a"]), parametres=parametres)
 
 
 def conserve(**reglages: str) -> float:
@@ -547,6 +593,12 @@ def emploi_projete(**_: str) -> float:
     return (cumul - 1) * 100
 
 
+def _salaire_moyen_annuel(annee: int) -> float:
+    """Le salaire moyen par tête d'une année, tel que le moteur le prête aux
+    multiples du salaire moyen (``salaireMoyenAnnuel`` du portage)."""
+    return _regle("carriere.salaire_moyen_annuel", _pont().SIMULATEUR, annee)
+
+
 def salaire_moyen(**reglages: str) -> float:
     """Le salaire moyen par tête d'une année, en euros bruts : ``annee=2024``.
 
@@ -554,9 +606,7 @@ def salaire_moyen(**reglages: str) -> float:
     de la série cumulées depuis son niveau certifié de l'année d'ancrage
     (``carriere.ancrage_salaire_moyen``).
     """
-    from retraite_notionnelle.carriere import salaire_moyen_annuel
-
-    return salaire_moyen_annuel(_simulateur(_parametres()).macro, int(reglages["annee"]))
+    return _salaire_moyen_annuel(int(reglages["annee"]))
 
 
 def smic_annuel(**reglages: str) -> float:
@@ -566,12 +616,10 @@ def smic_annuel(**reglages: str) -> float:
     la même année — ce que le cas type au SMIC gagne, rapporté à l'unité des
     autres cas types.
     """
-    from retraite_notionnelle.carriere import salaire_moyen_annuel
-
     macro = _simulateur(_parametres()).macro
     annee = int(reglages["annee"])
     if reglages.get("en") == "multiple":
-        return macro.smic_annuel(annee) / salaire_moyen_annuel(macro, annee)
+        return macro.smic_annuel(annee) / _salaire_moyen_annuel(annee)
     return macro.smic_annuel(annee)
 
 
@@ -693,25 +741,15 @@ def fusion(**reglages: str) -> float:
     à la somme : la tranche 1, cotisation déplafonnée comprise, comme la
     fusion la compte.
     """
-    from retraite_notionnelle.moteur.fusion import (CritereTaux, RegleFusion,
-                                                    _taux_total, fusionner)
-
-    simulateur = _simulateur(_parametres())
-    fusionne = simulateur.regime_fusionne
+    bascule = _parametres().annee_bascule
     if "pivot" in reglages:
-        actives = simulateur.catalogue[reglages["pivot"]].periodes_actives(
-            fusionne.annee_bascule)
-        if not actives:
-            raise ValueError(f"« {reglages['pivot']} » n'a pas de période active")
-        tranche_1 = min(actives, key=lambda p: p.bornes_assiette_en_pass()[0])
-        return _taux_total(tranche_1) * 100
-    if "critere" in reglages:
-        fusionne = fusionner(simulateur.catalogue, fusionne.annee_bascule,
-                             RegleFusion(critere_taux=CritereTaux(reglages["critere"])))
+        return _regle("fusion.taux_total.tranche_1", _pont().SIMULATEUR,
+                      reglages["pivot"], bascule) * 100
+    fusionne = _regle("fusion.fusionner", _pont().SIMULATEUR, bascule, reglages.get("critere"))
     champ = reglages["champ"]
-    if not hasattr(fusionne, champ):
+    if not isinstance(fusionne.get(champ), (int, float)):
         raise ValueError(f"le régime unique n'a pas de champ « {champ} »")
-    valeur = float(getattr(fusionne, champ))
+    valeur = float(fusionne[champ])
     return valeur * 100 if champ.startswith("taux") else valeur
 
 
@@ -823,15 +861,15 @@ def anticipation(**reglages: str) -> float:
     cotisations pèsent plus que les premières. ``quoi=esperance`` rend plutôt
     les années d'espérance de vie que l'anticipation ajoute au diviseur.
     """
-    parametres = _parametres()
-    convertisseur = _simulateur(parametres).convertisseur
-    reference = float(reglages.get("reference", parametres.age_reference_fixe))
+    simulateur = _pont().SIMULATEUR
+    reference = float(reglages.get("reference", _parametres().age_reference_fixe))
     age = reference - float(reglages["avance"])
     annee = int(reglages["annee"])
     if reglages.get("quoi") == "esperance":
-        return (convertisseur.coefficient(age, annee).esperance_residuelle
-                - convertisseur.coefficient(reference, annee).esperance_residuelle)
-    garde = convertisseur.effet_anticipation(age, reference, annee)
+        esperance = "conversion.coefficient.esperance_residuelle"
+        return (_regle(esperance, simulateur, age, annee)
+                - _regle(esperance, simulateur, reference, annee))
+    garde = _regle("conversion.effet_anticipation", simulateur, age, reference, annee)
     if "carriere" in reglages:
         duree = float(reglages["carriere"])
         garde *= (duree - (reference - age)) / duree
@@ -844,24 +882,26 @@ def age_reference(**reglages: str) -> float:
     Avec ``depart=60``, l'anticipation qu'un départ à cet âge représente —
     la grandeur que la méthodologie illustre sur trois métiers.
     """
-    age = _simulateur(_parametres()).age_reference.age(int(reglages["annee"]))
+    age = _regle("age_reference.age", _pont().SIMULATEUR, int(reglages["annee"]))
     return age - float(reglages["depart"]) if "depart" in reglages else age
 
 
 @lru_cache(maxsize=None)
 def _prospectif(conversion: str, generation: int, debut: int, depart: int):
-    """Le scénario 3 d'un salarié du privé, sous une convention de conversion."""
+    """Le scénario 3 d'un salarié du privé, sous une convention de conversion :
+    ce que son résultat en porte, et le diviseur auquel il sert sa pension."""
     from retraite_notionnelle.config import AgeConversionDroitsAcquis
 
     parametres = _parametres()
     if conversion:
         parametres = replace(parametres,
                              age_conversion_droits_acquis=AgeConversionDroitsAcquis(conversion))
-    simulateur = _simulateur(parametres)
-    carriere = simulateur.carriere_simple(
-        annee_naissance=generation, sexe="H", affiliation="salarie_prive_non_cadre",
-        age_debut=debut, age_liquidation=depart)
-    return simulateur.simuler(carriere).notionnel_prospectif
+    simulation = _simulation(parametres, (
+        ("annee_naissance", generation), ("sexe", "H"),
+        ("affiliation", "salarie_prive_non_cadre"), ("age_debut", debut),
+        ("age_liquidation", depart)))
+    return (_du_scenario(simulation, "notionnel_prospectif"),
+            simulation["diviseurs"]["notionnel_prospectif"])
 
 
 def droits_acquis(**reglages: str) -> float:
@@ -874,20 +914,21 @@ def droits_acquis(**reglages: str) -> float:
     liquidation, en €), ``diviseur_conversion`` et ``diviseur_service`` (les
     deux diviseurs, en années), ``age_conversion``.
     """
-    resultat = _prospectif(reglages.get("conversion", ""), int(reglages["generation"]),
-                           int(reglages["debut"]), int(reglages["depart"]))
-    acquis = resultat.droits_acquis
+    resultat, diviseur = _prospectif(
+        reglages.get("conversion", ""), int(reglages["generation"]),
+        int(reglages["debut"]), int(reglages["depart"]))
+    acquis = resultat["droits_acquis"]
     valeurs = {
-        "pot": lambda: acquis.capital_a_la_bascule,
-        "figee": lambda: acquis.pension_figee,
-        "pension": lambda: resultat.pension_annuelle,
-        "capital": lambda: resultat.capital_notionnel,
-        "diviseur_conversion": lambda: acquis.diviseur,
-        "diviseur_service": lambda: resultat.conversion.diviseur,
-        "age_conversion": lambda: acquis.age_conversion,
+        "pot": lambda: acquis["capital_a_la_bascule"],
+        "figee": lambda: acquis["pension_figee"],
+        "pension": lambda: resultat["pension_annuelle"],
+        "capital": lambda: resultat["capital_notionnel"],
+        "diviseur_conversion": lambda: acquis["diviseur"],
+        "diviseur_service": lambda: diviseur,
+        "age_conversion": lambda: acquis["age_conversion"],
         # Ce que la conversion à l'âge de référence retire d'un droit ouvert
         # quand on part avant : le rapport des deux diviseurs, en %.
-        "ecart_diviseurs": lambda: (resultat.conversion.diviseur / acquis.diviseur - 1) * 100,
+        "ecart_diviseurs": lambda: (diviseur / acquis["diviseur"] - 1) * 100,
     }
     quoi = reglages["quoi"]
     if quoi not in valeurs:
@@ -998,15 +1039,9 @@ def taux_statut(**reglages: str) -> float:
     Tranche 1 de chacun, cotisation déplafonnée comprise — la grandeur que la
     fusion additionne pour son statut pivot, mais à l'année qu'on désigne.
     """
-    from retraite_notionnelle.moteur.fusion import _taux_total
-
-    catalogue = _simulateur(_parametres()).catalogue
     annee, total = int(reglages["annee"]), 0.0
     for code in reglages["regimes"].split("|"):
-        actives = catalogue[code].periodes_actives(annee)
-        if not actives:
-            raise ValueError(f"« {code} » n'a pas de période active en {annee}")
-        total += _taux_total(min(actives, key=lambda p: p.bornes_assiette_en_pass()[0]))
+        total += _regle("fusion.taux_total.tranche_1", _pont().SIMULATEUR, code, annee)
     return total * 100
 
 
@@ -1140,13 +1175,18 @@ def fiche_regime(**reglages: str) -> float:
 
 @lru_cache(maxsize=None)
 def _sous_projection(projection: str, generation: int, debut: int, depart: int):
-    """La carrière de référence, sous un scénario de projection du COR."""
+    """La carrière de référence, sous un scénario de projection du COR : le
+    résultat de sa simulation, et la première année qu'elle cotise, celle de
+    son départ sans aucune."""
+    pont = _pont()
     parametres = replace(_parametres(), scenario_projection=projection)
-    simulateur = _simulateur(parametres)
-    carriere = simulateur.carriere_simple(
-        annee_naissance=generation, sexe=CARRIERE["sexe"],
-        affiliation=CARRIERE["affiliation"], age_debut=debut, age_liquidation=depart)
-    return simulateur.simuler(carriere)
+    options = {"annee_naissance": generation, "sexe": CARRIERE["sexe"],
+               "affiliation": CARRIERE["affiliation"], "age_debut": debut,
+               "age_liquidation": depart}
+    resultat = _simulation(parametres, tuple(options.items()))["resultat"]
+    carriere = pont.carriere_des_donnees(_regle(
+        "simulateur.carriere_simple", pont.SIMULATEUR, options, parametres=parametres))
+    return resultat, min(carriere.annees_cotisees, default=carriere.annee_liquidation)
 
 
 def fourchette(**reglages: str) -> float:
@@ -1163,20 +1203,19 @@ def fourchette(**reglages: str) -> float:
     quoi = reglages["quoi"]
 
     def mensuelle(projection: str) -> float:
-        comparaison = _sous_projection(projection, generation, debut, depart)
-        return comparaison.en_euros_constants(
-            comparaison.notionnel_retroactif.pension_annuelle) / 12
+        resultat, _ = _sous_projection(projection, generation, debut, depart)
+        return resultat["scenarios"]["notionnel_retroactif"][
+            "pension_annuelle_euros_constants"] / 12
 
     if quoi in ("basse", "haute"):
         return mensuelle(f"cor_productivite_{quoi}")
     if quoi == "amplitude":
         return (mensuelle("cor_productivite_haute") / mensuelle("cor_productivite_basse") - 1) * 100
-    comparaison = _sous_projection("cor_reference", generation, debut, depart)
-    carriere = comparaison.carriere
+    resultat, premiere = _sous_projection("cor_reference", generation, debut, depart)
+    liquidation = resultat["assure"]["annee_liquidation"]
     derniere = _simulateur(_parametres()).macro.derniere_annee_observee
-    premiere = min(carriere.annees_cotisees, default=carriere.annee_liquidation)
-    annees = carriere.annee_liquidation - premiere + 1
-    projetees = max(0, carriere.annee_liquidation - max(premiere - 1, derniere))
+    annees = liquidation - premiere + 1
+    projetees = max(0, liquidation - max(premiere - 1, derniere))
     valeurs = {"annees": annees, "projetees": projetees, "part": projetees / annees * 100}
     if quoi not in valeurs:
         raise ValueError(f"« {quoi} » n'est pas mesuré")
@@ -1204,11 +1243,7 @@ def millieme_salaire(**_: str) -> float:
     Le pas auquel le site écrit un multiple : c'est lui qui borne ce qu'un
     aller-retour entre euros et multiple peut déplacer.
     """
-    from retraite_notionnelle.carriere import salaire_moyen_annuel
-
-    parametres = _parametres()
-    macro = _simulateur(parametres).macro
-    return salaire_moyen_annuel(macro, parametres.annee_courante) / 12 / 1000
+    return _salaire_moyen_annuel(_parametres().annee_courante) / 12 / 1000
 
 
 @lru_cache(maxsize=None)
@@ -1619,17 +1654,24 @@ def restitution(**reglages: str) -> float:
     rémunération, en % ; ``quoi=points_csg`` : les points de CSG d'activité
     rendus.
     """
-    from retraite_notionnelle.restitution import Restitution
-
-    parametres = _parametres()
-    partage = Restitution(parametres.racine_donnees, parametres.part_rendue_aux_salaires)
     annee = int(reglages["annee"])
     quoi = reglages["quoi"]
     if quoi == "part_du_poste":
-        return partage.part_du_poste(annee) * 100
+        return _regle("restitution.part_du_poste", _pont().SIMULATEUR, annee) * 100
     if quoi == "points_csg":
-        return partage.annuelle(annee).points_csg * 100
+        return _regle("restitution.annuelle.points_csg", _pont().SIMULATEUR, annee) * 100
     raise ValueError(f"quoi inconnu « {quoi} »")
+
+
+def _fiche_de_reference(reglages: dict[str, str]) -> dict:
+    """La fiche de paie de l'année de référence d'une carrière simulée : le
+    gain net, la fiche sous le droit en vigueur et sous la proposition,
+    l'indemnité compensatrice de la CSG."""
+    remuneration = _simulation_de(reglages)["remuneration"]
+    if remuneration is None:
+        raise ValueError("cette carrière ne porte pas de fiche de paie : elle ne cotise plus "
+                         "après la bascule, ou son statut n'en a pas")
+    return remuneration
 
 
 def gain_net(**reglages: str) -> float:
@@ -1639,10 +1681,10 @@ def gain_net(**reglages: str) -> float:
     le nouveau système. Mêmes réglages que ``ecart`` ; ``en=mensuel`` rend le
     gain en euros par mois plutôt qu'en pour-cent du net.
     """
-    reference = _comparaison_de(reglages).remuneration.reference
+    reference = _fiche_de_reference(reglages)
     if reglages.get("en") == "mensuel":
-        return reference.gain_net / 12
-    return reference.gain_net / reference.droit_en_vigueur.net * 100
+        return reference["gain_net"] / 12
+    return reference["gain_net"] / reference["droit_en_vigueur"]["net"] * 100
 
 
 def fiche(**reglages: str) -> float:
@@ -1651,28 +1693,27 @@ def fiche(**reglages: str) -> float:
     L'année de référence ; ``quoi=salarie``, ``employeur`` ou ``total``,
     ``systeme=actuel`` (défaut) ou ``proposition``. Mêmes réglages que ``ecart``.
     """
-    reference = _comparaison_de(reglages).remuneration.reference
-    fiche = (reference.proposition if reglages.get("systeme") == "proposition"
-             else reference.droit_en_vigueur)
+    reference = _fiche_de_reference(reglages)
+    fiche = reference["proposition" if reglages.get("systeme") == "proposition"
+                      else "droit_en_vigueur"]
     quoi = reglages["quoi"]
-    montants = {"salarie": fiche.retraite_salarie, "employeur": fiche.retraite_employeur,
-                "total": fiche.retraite_salarie + fiche.retraite_employeur}
+    montants = {"salarie": fiche["retraite_salarie"], "employeur": fiche["retraite_employeur"],
+                "total": fiche["retraite_salarie"] + fiche["retraite_employeur"]}
     if quoi not in montants:
         raise ValueError(f"quoi inconnu « {quoi} »")
-    return montants[quoi] / fiche.brut * 100
+    return montants[quoi] / fiche["brut"] * 100
 
 
 def indemnite_csg(**reglages: str) -> float:
     """L'indemnité compensatrice de la hausse de la CSG que la fiche de paie
     ajoute au brut d'un agent public, en euros par mois, l'année de
     référence. Mêmes réglages que ``ecart``."""
-    return _comparaison_de(reglages).remuneration.indemnite_csg_mensuelle
+    return _fiche_de_reference(reglages)["indemnite_csg_mensuelle"]
 
 
 def avance(**reglages: str) -> float:
     """Les années d'anticipation d'un départ sur l'âge de référence, sur une carrière."""
-    ecart = _comparaison_de(reglages).notionnel_retroactif.ecart_age
-    return ecart.age_reference - ecart.age_liquidation
+    return _simulation_de(reglages)["resultat"]["age_reference"]["ecart_annees"]
 
 
 def profils_oracle(**_: str) -> float:
@@ -1693,10 +1734,8 @@ def ecart_openfisca(**reglages: str) -> float:
     import json
 
     from retraite_notionnelle.carriere import AnneeCarriere, Carriere
-    from retraite_notionnelle.droit import liquider
 
-    simulateur = _simulateur(_parametres())
-    scenario = simulateur.scenario_actuel
+    pont = _pont()
     temoin = json.loads((RACINE / "tests" / "temoins" / "openfisca_regime_general.json")
                         .read_text(encoding="utf-8"))
     ecarts = []
@@ -1710,10 +1749,10 @@ def ecart_openfisca(**reglages: str) -> float:
                     for annee in range(profil["debut"], profil["liquidation"])],
             age_liquidation=float(profil["liquidation"] - profil["naissance"]),
             identifiant=profil["code"])
-        periode = simulateur.catalogue["regime_general"].periode(profil["liquidation"])
-        nous = liquider.salaire_de_reference(scenario,
-            "regime_general", carriere, periode, profil["liquidation"],
-            True, profil["naissance"], True)
+        nous = _regle("liquider.salaire_de_reference", pont.MOTEUR,
+                      "regime_general", carriere,
+                      pont.Periode("regime_general", profil["liquidation"]),
+                      profil["liquidation"], True, profil["naissance"], True)
         ecarts.append(entree["openfisca"]["salaire_de_reference"] / nous - 1)
     return (min(ecarts) if reglages.get("stat") == "min" else max(ecarts)) * 100
 
@@ -1721,12 +1760,13 @@ def ecart_openfisca(**reglages: str) -> float:
 def garantie_complement(**reglages: str) -> float:
     """Ce que la garantie vieillesse sert, par mois, à qui a ``pension=…`` euros
     et vit en couple : le plancher de base, sous le barème du moteur."""
-    return _garantie_mensuelle(float(reglages["pension"]), "couple").complement / 12
+    return _garantie_mensuelle(float(reglages["pension"]), "couple")["complement"] / 12
 
 
 @lru_cache(maxsize=None)
 def _garantie_mensuelle(pension: float, situation: str):
-    """La garantie que le moteur sert à une pension mensuelle, dans une situation.
+    """La garantie que le moteur sert à une pension mensuelle, dans une
+    situation : son plancher et son complément, par an.
 
     Sur une liquidation de l'année des euros de la garantie, à soixante-six
     ans : ni prix à déflater, ni ouverture à attendre — la carrière de
@@ -1734,12 +1774,13 @@ def _garantie_mensuelle(pension: float, situation: str):
     """
     from retraite_notionnelle.config import SituationFoyer
 
+    pont = _pont()
     parametres = replace(_parametres(), situation_foyer=SituationFoyer(situation))
-    simulateur = _simulateur(parametres)
-    carriere = simulateur.carriere_simple(
-        annee_naissance=parametres.annee_euros_garantie_vieillesse - 66, sexe="H",
-        affiliation="salarie_prive_non_cadre", age_debut=20, age_liquidation=66)
-    return simulateur.scenario_liberal._garantie_vieillesse(carriere, pension * 12.0)
+    carriere = pont.CarriereSimple({
+        "annee_naissance": parametres.annee_euros_garantie_vieillesse - 66, "sexe": "H",
+        "affiliation": "salarie_prive_non_cadre", "age_debut": 20, "age_liquidation": 66})
+    return _regle("notionnel.garantie_vieillesse", pont.SIMULATEUR, carriere, pension * 12.0,
+                  parametres=parametres)
 
 
 def garantie_foyer(**reglages: str) -> float:
@@ -1764,12 +1805,12 @@ def garantie_foyer(**reglages: str) -> float:
         raise ValueError("un foyer compte une ou deux personnes")
     situation = "seul" if len(pensions) == 1 else "couple"
     garanties = [_garantie_mensuelle(p, situation) for p in pensions]
-    plancher = somme_ordonnee(g.plancher_annuel for g in garanties) / 12
+    plancher = somme_ordonnee(g["plancher_annuel"] for g in garanties) / 12
     if reglages.get("quoi") == "plancher":
         return plancher
     if reglages.get("base") == "foyer":
         return max(0.0, plancher - somme_ordonnee(pensions))
-    return somme_ordonnee(g.complement for g in garanties) / 12
+    return somme_ordonnee(g["complement"] for g in garanties) / 12
 
 
 def frais_reserve(**reglages: str) -> float:
@@ -1781,8 +1822,8 @@ def frais_reserve(**reglages: str) -> float:
     """
     parametres = _parametres()
     frais = float(reglages.get("frais", parametres.frais_encours_rente_capitalisation))
-    facteur = _simulateur(parametres).constructeur_capitalisation._facteur_encours_rente(
-        frais, float(reglages["age"]), int(reglages["annee"]), None, None)
+    facteur = _regle("capitalisation.facteur_encours_rente", _pont().SIMULATEUR,
+                     frais, float(reglages["age"]), int(reglages["annee"]))
     return (1 - facteur) * 100
 
 
@@ -1816,29 +1857,23 @@ def _pilier_alloue(regle: str, prime: float):
 
     La carrière de ``test_avec_une_prime_de_terme_l_adossement_domine`` : une
     assiette de 30 000 € par an à partir de 2030, née en 1996, partie à
-    64 ans en 2060. La règle s'échange le temps du calcul, comme le test
-    l'échange : le moteur n'en porte qu'une, l'adossement.
+    64 ans en 2060. Le moteur ne porte qu'une règle, l'adossement ; une autre
+    se décrit en données, par horizon, au pilier que le portage bâtit
+    (``"capitalisation.construire"`` du pont) : son capital, sa rente
+    mensuelle, ses années de versement.
     """
-    from retraite_notionnelle.donnees.taux import CourbeTauxSansRisque
-    from retraite_notionnelle.moteur import capitalisation as module
-    from retraite_notionnelle.moteur.conversion import Convertisseur
-
-    regles = {"adosse": module.repartition, "echelle": _echelle_glissante,
-              "roule": _roulement}
+    regles = {"adosse": None, "echelle": _echelle_glissante, "roule": _roulement}
     if regle not in regles:
         raise ValueError(f"règle inconnue « {regle} » ; il y a {', '.join(regles)}")
-    parametres = replace(_parametres(), prime_terme_trente_ans=prime)
-    mortalite = _simulateur(_parametres()).mortalite
-    constructeur = module.ConstructeurCapitalisation(
-        CourbeTauxSansRisque(parametres.racine_donnees, prime), mortalite,
-        Convertisseur(mortalite, parametres), parametres)
-    ancienne = module.repartition
-    module.repartition = regles[regle]
-    try:
-        return constructeur.construire(
-            {annee: 30_000.0 for annee in range(2030, 2066)}, 1996, 64.0, 2060)
-    finally:
-        module.repartition = ancienne
+    liquidation = 2060
+    assiettes = {annee: 30_000.0 for annee in range(2030, 2066)}
+    autre = regles[regle]
+    repartitions = None if autre is None else {
+        horizon: [list(ligne) for ligne in autre(horizon)]
+        for horizon in range(1, liquidation - min(assiettes) + 1)}
+    return _regle("capitalisation.construire", _pont().SIMULATEUR, assiettes, 1996, 64.0,
+                  liquidation, repartitions,
+                  parametres=replace(_parametres(), prime_terme_trente_ans=prime))
 
 
 def allocation(**reglages: str) -> float:
@@ -1856,12 +1891,12 @@ def allocation(**reglages: str) -> float:
     adosse = _pilier_alloue("adosse", prime)
     quoi = reglages.get("quoi", "capital")
     if quoi == "annees":
-        return adosse.annees_cotisees
+        return adosse["annees_cotisees"]
     autre = _pilier_alloue(reglages["contre"], prime)
     if quoi == "capital":
-        return (adosse.capital / autre.capital - 1) * 100
+        return (adosse["capital"] / autre["capital"] - 1) * 100
     if quoi == "rente":
-        return adosse.rente_mensuelle - autre.rente_mensuelle
+        return adosse["rente_mensuelle"] - autre["rente_mensuelle"]
     raise ValueError(f"quoi inconnu « {quoi} »")
 
 

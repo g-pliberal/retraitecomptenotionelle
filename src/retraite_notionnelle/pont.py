@@ -59,6 +59,13 @@ le droit fonction par fonction, sur des carrières bâties à la main : le pont
 fait appeler chacune au portage (:func:`droit`), et relit ce qu'elle rend
 sous le type de son jumeau (:data:`LECTURES_DU_DROIT`).
 
+Les sondes de la prose et les mesures de l'accueil, enfin
+(``scripts/mesures_prose.py``, ``scripts/solde_fusion.py``) : la carrière
+qu'elles bâtissaient et simulaient, et les règles qu'elles appelaient une à
+une — l'indexation, la conversion, la fusion, la garantie, le pilier —, se
+demandent au même pont du droit (:data:`LECTURES_DES_SONDES`), sous les
+paramètres de chaque mesure.
+
 Une demande sur le paquet du dépôt, sans paquet, ne lance pas node à chaque
 fois : les tests en font une par carrière, et chacune coûtait trois dixièmes
 de seconde, à lancer node et à relire le paquet. Le pont reste ouvert
@@ -1321,6 +1328,85 @@ LECTURES_DU_DROIT = {
     "simulateur.carriere_releve": carriere_relue,
     "simulateur.carriere_simple": carriere_relue,
 }
+
+
+#: Les champs du régime unique que la fusion rend (``RegimeFusionne``), et le
+#: type de chacun.
+CHAMPS_DE_LA_FUSION = {
+    "annee_bascule": int, "age_ouverture": float, "age_taux_plein": float,
+    "duree_requise_trimestres": int, "salaire_reference": str, "assiette": str,
+    "taux_cotisation_retraite": float, "taux_cotisation_salarie": float,
+}
+
+
+def fusion_des_donnees(fusionne: dict) -> dict:
+    """Le régime unique que la fusion rend, par ses champs
+    (:data:`CHAMPS_DE_LA_FUSION`), chacun sous son type, et d'où vient chaque
+    paramètre (``origines``)."""
+    return {**{champ: _depuis_donnees(type_, fusionne[champ])
+               for champ, type_ in CHAMPS_DE_LA_FUSION.items()},
+            "origines": dict(fusionne["origines"])}
+
+
+def _fiche_des_donnees(fiche: dict) -> dict[str, float]:
+    return {champ: _flottant(fiche[champ])
+            for champ in ("brut", "net", "retraite_salarie", "retraite_employeur")}
+
+
+def simulation_des_donnees(simulation: dict) -> dict:
+    """La simulation d'une carrière telle que les sondes de la prose la
+    lisent : son résultat (``Comparaison.dictionnaire()``), relu sous la table
+    des types (:func:`resultat_des_donnees`) ; le diviseur de chaque scénario
+    notionnel ; et la fiche de paie de l'année de référence — le gain net, la
+    fiche sous le droit en vigueur et sous la proposition, l'indemnité
+    compensatrice de la CSG par mois —, ``None`` pour qui ne cotise plus."""
+    remuneration = simulation["remuneration"]
+    return {
+        "resultat": resultat_des_donnees(simulation["resultat"]),
+        "diviseurs": _par_scenario(simulation["diviseurs"]),
+        "remuneration": None if remuneration is None else {
+            "annee": _entier(remuneration["annee"], "remuneration.annee"),
+            "gain_net": _flottant(remuneration["gain_net"]),
+            "droit_en_vigueur": _fiche_des_donnees(remuneration["droit_en_vigueur"]),
+            "proposition": _fiche_des_donnees(remuneration["proposition"]),
+            "indemnite_csg_mensuelle": _flottant(remuneration["indemnite_csg_mensuelle"]),
+        },
+    }
+
+
+def pilier_des_donnees(pilier: dict) -> dict:
+    """Le pilier capitalisé d'une suite d'assiettes, par ce que les sondes en
+    lisent : son capital, sa rente mensuelle, ses années de versement."""
+    return {"capital": _flottant(pilier["capital"]),
+            "rente_mensuelle": _flottant(pilier["rente_mensuelle"]),
+            "annees_cotisees": _entier(pilier["annees_cotisees"], "annees_cotisees")}
+
+
+#: Ce que rendent les règles que les sondes de la prose et les mesures de
+#: l'accueil appelaient une à une au moteur Python (``scripts/mesures_prose.py``,
+#: ``scripts/solde_fusion.py`` ; action 161, lot A), sur le simulateur de la
+#: demande : elles s'ajoutent aux lectures du droit (``FONCTIONS_DES_SONDES``
+#: de ``pont.mjs``).
+LECTURES_DES_SONDES = {
+    "age_reference.age": float,
+    "conversion.coefficient.esperance_residuelle": float,
+    "conversion.effet_anticipation": float,
+    "indexation.coefficient": float,
+    "capitalisation.facteur_encours_rente": float,
+    "carriere.salaire_moyen_annuel": float,
+    "restitution.part_du_poste": float,
+    "restitution.annuelle.points_csg": float,
+    # La part du taux de l'État portée au compte : le civil, le militaire, et
+    # le militaire rapporté au taux civil.
+    "compte.parts_retraite_seule": tuple[float, float, float],
+    "fusion.fusionner": fusion_des_donnees,
+    "fusion.taux_total.tranche_1": float,
+    "simulateur.simuler": simulation_des_donnees,
+    # La garantie vieillesse servie à une pension : son plancher, son complément.
+    "notionnel.garantie_vieillesse": _par_scenario,
+    "capitalisation.construire": pilier_des_donnees,
+}
+LECTURES_DU_DROIT.update(LECTURES_DES_SONDES)
 
 
 def _argument_du_droit(argument, carrieres: list) -> dict:

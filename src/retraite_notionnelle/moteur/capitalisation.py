@@ -409,7 +409,12 @@ class ConstructeurCapitalisation:
     """
 
     def __init__(self, courbe: CourbeTauxSansRisque, mortalite: DonneesMortalite,
-                 convertisseur: Convertisseur, parametres: Parametres) -> None:
+                 convertisseur: Convertisseur, parametres: Parametres,
+                 repartir=None) -> None:
+        # ``repartir`` est une autre allocation que celle du moteur, pour une
+        # étude qui la lui oppose : par horizon, ses maturités et leurs poids.
+        # Sans elle, l'adossement (:func:`repartition`).
+        self._repartir = repartir
         # Le convertisseur reçu est celui du TAUX TECHNIQUE de la rente, qui
         # n'est pas forcément celui de la pension notionnelle : le simulateur
         # le dérive de ``taux_technique_rente_capitalisation``. Au réglage par
@@ -418,6 +423,11 @@ class ConstructeurCapitalisation:
         self.mortalite = mortalite
         self.convertisseur = convertisseur
         self.parametres = parametres
+
+    def repartir(self, horizon: int) -> tuple[tuple[int, float], ...]:
+        """Les maturités et les poids d'un versement placé à ``horizon`` années
+        du départ : l'adossement, ou l'allocation reçue à sa place."""
+        return repartition(horizon) if self._repartir is None else self._repartir(horizon)
 
     # -- placement -----------------------------------------------------------
 
@@ -439,7 +449,7 @@ class ConstructeurCapitalisation:
                                  frais_gestion=frais_gestion))
             return ()
         detail: list[tuple[int, float]] = []
-        for maturite, poids in repartition(horizon):
+        for maturite, poids in self.repartir(horizon):
             part = montant * poids
             if part <= 0:
                 continue
@@ -456,7 +466,7 @@ class ConstructeurCapitalisation:
         """Le plus bas niveau atteint par un taux effectivement employé."""
         niveau = Fiabilite.CERTIFIEE
         for annee in range(annee_ouverture, annee_liquidation):
-            for maturite, _ in repartition(annee_liquidation - annee):
+            for maturite, _ in self.repartir(annee_liquidation - annee):
                 niveau = min(niveau, self.courbe.placement(annee, maturite).fiabilite)
         return niveau
 

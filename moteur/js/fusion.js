@@ -71,7 +71,7 @@ const plusPetit = (a, b) => a < b;
  * que la part plafonnée, et s'y ajoute. La fiche en porte la moyenne de
  * période, 2,41 %, que les taux annuels remplacent année par année.
  */
-function tauxTotal(periode) {
+export function tauxTotal(periode) {
   return periode.taux_cotisation_retraite + periode.taux_cotisation_deplafonnee;
 }
 

@@ -114,9 +114,15 @@ export function tauxInterne(versements, anneeFinale, capital, tolerance = 1e-10)
 
 /** Construit le pilier capitalisé d'une carrière. */
 export class ConstructeurCapitalisation {
-  constructor(courbe, mortalite, convertisseur, parametres) {
+  /**
+   * `repartir` est une autre allocation que celle du moteur, pour une étude
+   * qui la lui oppose : par horizon, ses maturités et leurs poids. Sans elle,
+   * l'adossement ({@link repartition}).
+   */
+  constructor(courbe, mortalite, convertisseur, parametres, repartir = null) {
     this.courbe = courbe;
     this.mortalite = mortalite;
+    this.repartir = repartir ?? repartition;
     // Le convertisseur reçu est celui du TAUX TECHNIQUE de la rente, dérivé
     // par le simulateur ; au réglage par défaut — taux technique nul — il
     // coïncide avec celui de la pension notionnelle, et c'est voulu.
@@ -138,7 +144,7 @@ export class ConstructeurCapitalisation {
       return [];
     }
     const detail = [];
-    for (const [maturite, poids] of repartition(horizon)) {
+    for (const [maturite, poids] of this.repartir(horizon)) {
       const part = montant * poids;
       if (part <= 0) continue;
       const taux = this.courbe.placement(annee, maturite);
@@ -154,7 +160,7 @@ export class ConstructeurCapitalisation {
   _fiabilitePlacements(anneeOuverture, anneeLiquidation) {
     let niveau = Fiabilite.CERTIFIEE;
     for (let annee = anneeOuverture; annee < anneeLiquidation; annee += 1) {
-      for (const [maturite] of repartition(anneeLiquidation - annee)) {
+      for (const [maturite] of this.repartir(anneeLiquidation - annee)) {
         niveau = Math.min(niveau, this.courbe.placement(annee, maturite).fiabilite);
       }
     }

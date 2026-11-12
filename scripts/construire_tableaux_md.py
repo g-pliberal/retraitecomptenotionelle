@@ -187,12 +187,19 @@ TITRE_EXEMPLE = "Fonctionnaire d'État née en 1975, 20 % de primes, partie à 6
 REPERE_SNCF = "exemple_sncf"
 
 
-def _sortie(exemple: str):
+def _sortie(exemple: str) -> list[str]:
+    """Les lignes de ``Comparaison.tableau()`` pour un exemple des sondes de
+    la prose (``mesures_prose.EXEMPLES``). La mise en forme n'existe qu'en
+    Python : la carrière s'y bâtit et s'y simule encore au moteur Python,
+    seule entrée de ce script qui reste (action 161, lot A ; la question du
+    § 3 du README, laissée au propriétaire)."""
     sys.path.insert(0, str(RACINE / "scripts"))
-    from mesures_prose import _comparaison_de
+    from mesures_prose import _carriere_de
+    from retraite_notionnelle.simulateur import Simulateur
 
-    comparaison = _comparaison_de({"exemple": exemple})
-    return comparaison, comparaison.tableau().split("\n")
+    parametres, options = _carriere_de({"exemple": exemple})
+    simulateur = Simulateur(parametres)
+    return simulateur.simuler(simulateur.carriere_simple(**options)).tableau().split("\n")
 
 
 def _bloc(titre: str, corps: list[str]) -> str:
@@ -201,7 +208,7 @@ def _bloc(titre: str, corps: list[str]) -> str:
 
 def sortie_exemple() -> str:
     """Le tableau de l'exemple et la ligne de qui verse quoi, sans le reste."""
-    _, lignes = _sortie("fonctionnaire")
+    lignes = _sortie("fonctionnaire")
     debut = next(i for i, l in enumerate(lignes) if l.startswith("Scénario"))
     fin = next(i for i, l in enumerate(lignes) if l.lstrip().startswith("= total"))
     verse = next(i for i, l in enumerate(lignes) if l.startswith("Qui verse"))
@@ -210,12 +217,16 @@ def sortie_exemple() -> str:
 
 def sortie_sncf() -> str:
     """Les six scénarios de l'agent de conduite, sous le titre qui les situe."""
-    comparaison, lignes = _sortie("sncf")
+    from mesures_prose import _simulation_de
+
+    lignes = _sortie("sncf")
     debut = next(i for i, l in enumerate(lignes) if l.startswith("Scénario"))
     fin = next(i for i, l in enumerate(lignes) if l.startswith("6. "))
-    ecart = comparaison.notionnel_retroactif.ecart_age
-    situation = (f" ({abs(ecart.ecart):g} ans avant l'âge de référence)"
-                 if ecart.anticipe else "")
+    # L'écart à l'âge de référence, que le portage calcule (les sondes de la
+    # prose, par le pont).
+    ecart = _simulation_de({"exemple": "sncf"})["resultat"]["age_reference"]
+    situation = (f" ({abs(ecart['ecart_annees']):g} ans avant l'âge de référence)"
+                 if ecart["anticipe"] else "")
     titre = f"Agent de conduite SNCF né en 1955, parti à 50 ans{situation}"
     return _bloc(titre, lignes[debut:fin + 1])
 
