@@ -1,0 +1,24 @@
+date: "2026-11-12"
+session: "action 161 : les règles de l'histoire du droit demandées au moteur JavaScript par le pont"
+consulte: >-
+  Aucune source de droit rouverte : la session change l'acheminement, non
+  une règle. Ce que le droit a servi aux pensions liquidées
+  (coefficient_historique) reste calculé en Python, au coût, mais demande au
+  portage JavaScript, par le pont et par lot, les cinq règles du scénario 1
+  qu'il appelait au moteur Python : la valeur de service d'un point, le
+  coefficient de l'article L. 161-23-1, les décrets de la fonction publique,
+  le point d'indice, le changement d'unité d'un point. Lues : la note de
+  décision 0007, la note de la question 1, et, pour les valeurs attendues
+  des tests, les barèmes du dépôt (revalorisation_pensions.csv,
+  revalorisation_pensions_fonction_publique.csv,
+  point_indice_fonction_publique.csv, conversions_points.csv,
+  valeurs_service_datees.csv).
+trouve: >-
+  Aucune règle n'a changé. L'histoire du droit est identique au bit avant et
+  après, sur chaque régime du catalogue, chaque année de liquidation et
+  chaque année depuis 1940 ; le coût de référence aussi. Les cinq règles des
+  deux langages concordent au bit sur chaque appel de chaque lot.
+reste: >-
+  La classe qui porte cette histoire est encore dans revalorisation.py, et
+  lit quatre tables sur le moteur Python : l'étape d'après. Le détail dans
+  la note de la feuille de route.
