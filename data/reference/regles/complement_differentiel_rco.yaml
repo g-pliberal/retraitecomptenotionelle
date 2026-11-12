@@ -288,6 +288,18 @@ versions:
     en_vigueur: 2026-01-01
     citation: « CD = (P × 1 820 × SMICnet-PMRmax) x DCE/ DR-(N x vpRCO) »
     lu_le: 2026-10-07
+  - id: LEGIARTI000053365825
+    article: D. 732-166-5 code rural
+    en_vigueur: 2026-01-01
+    citation: >-
+      « Dnsa désigne la durée d'assurance accomplie à titre exclusif ou principal pour
+      les périodes antérieures au 1er janvier 2026 et à titre exclusif, principal ou
+      secondaire pour les périodes à compter de cette même date » ; « DR désigne la durée
+      minimale d'assurance mentionnée [...] pour les pensions prenant effet à compter du
+      1er janvier 2026, au troisième alinéa de l'article L. 351-1 du code de la sécurité
+      sociale dans sa rédaction à la date d'effet de la pension de retraite ; cette durée
+      de référence ne peut être inférieure à 37,5 années »
+    lu_le: 2026-11-12
   bornes:
     liquidation.date_effet: [2026-01-01, null]
   contenu:
@@ -336,7 +348,7 @@ approximations:
     pensions des élus locaux exclues depuis 2026
   effet: non mesuré
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -402,6 +414,10 @@ code:
     ComplementDifferentielRco lit la version de la date d'effet (regle) et le SMIC net
     agricole horaire de chaque année (table).
 historique:
+- >-
+  2026-11-12 — action 184, étape 6 : D. 732-166-5 dans sa rédaction du 1er janvier 2026,
+  le plafond du complément, lu et rattaché à la version de 2026 ; il ne change pas ce que
+  le modèle calcule.
 - >-
   2026-10-16 — étape 138.8 : N, les seuls points de RCO acquis au titre des années de
   chef (D. 732-166-4, rédactions de novembre 2021 et de 2026, relues), au lieu de tous

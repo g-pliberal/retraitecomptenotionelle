@@ -1340,7 +1340,7 @@ presomptions:
     les plans, qui ne refusent les points des conjoints, ne les plafonnent et ne figent
     le minimum A du veuf d'avant 1995 qu'à la réversion du régime que l'assuré déclare
 sources:
-  lu_le: 2026-10-19
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-10-31
   a_relire:
   - >-
@@ -1423,6 +1423,52 @@ sources:
       JORF
     date: 2026-10-19
 textes_a_rattacher: []
+textes_sans_effet:
+- id: LEGIARTI000053365746
+  motif: >-
+    D. 732-115 dans sa rédaction du 1er janvier 2026 (décret n° 2025-1410) : l'article ne
+    porte plus, depuis le 16 février 2009, le minimum de points des plans, mais une
+    condition de la pension majorée de référence — « l'assuré ne peut bénéficier de la
+    majoration de pension avant la date d'entrée en jouissance qu'il a fixée [...] pour
+    l'ensemble des pensions personnelles et de réversion auxquelles il peut prétendre » ;
+    la rédaction de 2026 n'y remplace que « à la date pour laquelle il demande le
+    bénéfice de la majoration de pension, » par « à cette date, »
+- id: LEGIARTI000051289521
+  motif: >-
+    L. 732-54-1 dans sa rédaction du 1er janvier 2026 (loi n° 2025-199, article 87) :
+    seule la note d'application change ; le corps, « Peuvent bénéficier d'une majoration
+    de la pension de retraite servie à titre personnel les personnes dont cette pension
+    a pris effet [...] », est celui du 1er septembre 2023, mot pour mot, et la
+    majoration qu'il ouvre est la pension majorée de référence, qui a remplacé le
+    minimum de points en 2009
+- id: LEGIARTI000051289516
+  motif: >-
+    L. 732-54-2 dans sa rédaction du 1er janvier 2026 : « Le montant minimum est calculé
+    en tenant compte des périodes d'assurance accomplies à titre exclusif ou principal
+    et, à compter du 1er janvier 2026, des périodes d'assurance accomplies à titre
+    secondaire », revalorisé « dans les conditions prévues au dernier alinéa de
+    l'article L. 351-10 du code de la sécurité sociale » : le montant minimum de la
+    pension majorée de référence, que la fiche pension_majoree_reference applique, et
+    non le minimum de points, éteint en 2009
+- id: LEGIARTI000051289509
+  motif: >-
+    L. 732-54-4 dans sa rédaction du 1er janvier 2026 : « Un décret fixe les modalités
+    d'application de la présente sous-section », à la place de « du présent
+    paragraphe », et la note d'application ; le décret d'application de la pension
+    majorée de référence
+- id: LEGIARTI000051289494
+  motif: >-
+    L. 732-41 dans sa rédaction du 1er janvier 2026 (loi n° 2025-199, article 87) : les
+    trois alinéas de la pension de réversion du conjoint survivant — « En cas de décès
+    d'un chef d'exploitation ou d'entreprise agricole, son conjoint survivant a droit à
+    une pension de réversion [...] », « Cette pension de réversion est d'un montant égal
+    à un pourcentage fixé par décret de la pension de retraite forfaitaire et de la
+    pension de retraite proportionnelle » — en sortent ; reste le conjoint survivant «
+    qui continue l'exploitation sans avoir demandé la liquidation de sa pension de
+    réversion », qui ajoute « à ses droits propres ceux qui ont été acquis par le
+    défunt », et non plus ses « annuités ». La fiche ne lisait l'article que pour les
+    réversions des plans de 1997 à 2008 ; le modèle ne connaît de la réversion du régime
+    que celle que l'assuré déclare
 code:
   python: >-
     droit/completer.py : majoration_retraite_proportionnelle, completer ;
@@ -1461,6 +1507,10 @@ historique:
   plafonnés quand elle vient après (L. 732-54-2, II), le minimum figé à 20 et à 26,933
   points du veuf d'avant 1995 (D. 732-113, D. 732-116), un paramètre
   reversion_d_avant_1995 par version, dans les deux moteurs.
+- >-
+  2026-11-12 — action 184, étape 6 : les cinq rédactions du 1er janvier 2026 de D. 732-115,
+  L. 732-54-1, L. 732-54-2, L. 732-54-4 et L. 732-41, lues et déclarées sans effet : la
+  règle est éteinte depuis 2009.
 reformes: []
 exemples: []
 effet: >-

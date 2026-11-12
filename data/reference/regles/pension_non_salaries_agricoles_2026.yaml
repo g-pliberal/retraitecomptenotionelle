@@ -82,7 +82,7 @@ effet: >-
   n° 86-1084 excluait, années et points, et que D. 732-77 ne nomme plus, le moteur ne
   les connaît pas.
 sources:
-  lu_le: 2026-11-03
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -456,7 +456,35 @@ textes_a_rattacher:
     D. 731-121 (LEGIARTI000026140087), D. 731-122 (LEGIARTI000028393435) et D. 731-124
     (LEGIARTI000029924569) : les cotisations de base du chef de 2016 à 2025, dont L.
     732-24, I, 1°, tire le revenu des années où l'AVI était au minimum
+- reference: >-
+    code rural et de la pêche maritime, L. 731-42, rédaction du 28 février 2025
+    (LEGIARTI000051284150), pour les cotisations des périodes courant depuis le 1er
+    janvier 2026 : la cotisation du chef, « calculée pour partie sur l'assiette [...]
+    retenue dans la limite du plafond [...] et pour partie sur la totalité de cette
+    assiette », qui « ne peut être inférieure à un montant fixé par décret », et celle de
+    l'aide familial et du collaborateur, « calculée sur une assiette forfaitaire fixée
+    par décret » : le revenu des années depuis 2026, que le 1° de L. 732-24 moyenne
 textes_sans_effet:
+- id: LEGIARTI000053337682
+  motif: >-
+    R. 732-69 dans sa rédaction du 1er janvier 2026 (décret n° 2025-1409) : le numéro
+    porte un autre article, sur l'inaptitude au travail — « Le troisième alinéa de
+    l'article R. 351-34 du code de la sécurité sociale n'est pas applicable aux demandes
+    de liquidation des pensions du régime des non-salariés des professions agricoles.
+    Pour l'application de l'article R. 351-37 du code de la sécurité sociale [...] » —,
+    sans rapport avec les points. Le barème des points au revenu cadastral, qu'il
+    portait jusqu'au 1er janvier 2026, reste celui des points
+    d'avant 2016, que R. 732-66 prend « en application des articles R. 732-69 à R.
+    732-77 [...] dans leur rédaction antérieure au décret n° 2025-1409 »
+- id: LEGIARTI000006240373
+  motif: >-
+    décret n° 2005-368 du 19 avril 2005, article 3, dans sa rédaction du 20 janvier
+    2007 : elle ne corrige que les intitulés de deux décrets abrogés, aux 23° et 24° — «
+    aux membres bénévoles des organismes sociaux créés au profit des professions
+    agricoles des départements du Haut-Rhin, du Bas-Rhin et de la Moselle » et « aux
+    élèves des établissements d'enseignement technique et de formation professionnelle
+    agricoles », intervertis en 2005 ; les 60°, 65° et 78°, qui abrogent les décrets
+    n° 80-808, n° 81-790 et n° 86-1084, sont ceux de 2005, mot pour mot
 - id: LEGIARTI000049904742
   motif: >-
     D. 731-124 dans sa rédaction du 7 juillet 2024 : le taux de la cotisation du 3°, «

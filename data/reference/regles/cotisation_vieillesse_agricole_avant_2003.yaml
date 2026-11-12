@@ -1528,7 +1528,7 @@ approximations:
     ni le compte de deux exploitants partis en 2026 et en 2030 (note
     2026-11-06-notes-de-msa-non-salaries.md de l'action 131)
 sources:
-  lu_le: 2026-11-03
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -1622,6 +1622,17 @@ sources:
       réponses
     date: 2026-11-06
 textes_sans_effet:
+- id: LEGIARTI000053365517
+  motif: >-
+    D. 732-77 dans sa rédaction du 1er janvier 2026 (décret n° 2025-1410) : le numéro
+    porte un autre article, le barème du versement pour la retraite — « En vue d'assurer
+    la neutralité actuarielle du versement prévue à l'article L. 351-14-1 du code de la
+    sécurité sociale [...], le montant du versement au titre des périodes antérieures à
+    2016 à effectuer au titre de chaque trimestre est égal [...] » —, que le modèle ne
+    connaît pas. La majoration des points de chef de 1952 à 1972, que l'article portait
+    jusqu'au 1er janvier 2026, ne vaut plus pour les pensions
+    prises depuis que par R. 732-67, qui la cite « dans [sa] rédaction antérieure au
+    décret n° 2025-1409 »
 - id: LEGIARTI000006581058
   motif: >-
     l'article 1123 du 31 décembre 1988 au 25 janvier 1990 ajoute seulement que « L'assiette

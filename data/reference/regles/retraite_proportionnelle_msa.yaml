@@ -67,7 +67,7 @@ effet: >-
   D. 732-76 (du 22 avril 2005 au 1er janvier 2026), que la DILA rattache à l'article 2
   du décret n° 81-790, n'est pas appliquée : voir a_relire.
 sources:
-  lu_le: 2026-11-03
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -559,6 +559,55 @@ textes_a_rattacher:
     (LEGIARTI000006597490), du 22 avril 2005 au 1er janvier 2026 ; décret n° 86-1084,
     articles 1er et 2 (LEGIARTI000006769404, LEGIARTI000006769405), du 8 octobre 1986 au
     22 avril 2005, et article 3 (LEGIARTI000006769406)
+- reference: >-
+    code rural et de la pêche maritime, L. 731-42, rédaction du 28 février 2025
+    (LEGIARTI000051284150), pour les cotisations des périodes courant depuis le 1er
+    janvier 2026 : une seule cotisation du chef, sous le plafond et sur la totalité de
+    l'assiette, aux taux de L. 633-1 du code de la sécurité sociale, et, pour l'aide
+    familial et le collaborateur, « une cotisation calculée sur une assiette forfaitaire
+    fixée par décret », le forfait de 600 SMIC que D. 731-123 fixe depuis 2026
+textes_sans_effet:
+- id: LEGIARTI000054059256
+  motif: >-
+    D. 732-76 dans sa rédaction du 9 mai 2026 (décret n° 2026-347), et celle du 1er
+    janvier au 9 mai 2026 (LEGIARTI000053365504, décret n° 2025-1410), qui n'en diffère
+    que par la note d'application : le numéro porte un autre article, sur le versement
+    pour la retraite — « Lorsque le versement prévu à l'article L. 351-14-1 du code de la
+    sécurité sociale est effectué en application des dispositions du 2° de l'article D.
+    351-7 du même code, il est attribué à l'assuré un nombre de points [...] » —, que le
+    modèle ne connaît pas. La majoration de 17 % qu'il portait jusqu'au 1er janvier 2026
+    reste la question posée au propriétaire, sous a_relire
+- id: LEGIARTI000053365517
+  motif: >-
+    D. 732-77 dans sa rédaction du 1er janvier 2026 (décret n° 2025-1410) : le numéro
+    porte un autre article, le barème du versement pour la retraite — « En vue d'assurer
+    la neutralité actuarielle du versement prévue à l'article L. 351-14-1 du code de la
+    sécurité sociale [...], le montant du versement au titre des périodes antérieures à
+    2016 à effectuer au titre de chaque trimestre est égal [...] » —, que le modèle ne
+    connaît pas. La majoration des points de chef de 1952 à 1972, que l'article portait
+    jusqu'au 1er janvier 2026, ne vaut plus pour les pensions
+    prises depuis que par R. 732-67, qui la cite « dans [sa] rédaction antérieure au
+    décret n° 2025-1409 »
+- id: LEGIARTI000053337682
+  motif: >-
+    R. 732-69 dans sa rédaction du 1er janvier 2026 (décret n° 2025-1409) : le numéro
+    porte un autre article, sur l'inaptitude au travail — « Le troisième alinéa de
+    l'article R. 351-34 du code de la sécurité sociale n'est pas applicable aux demandes
+    de liquidation des pensions du régime des non-salariés des professions agricoles.
+    Pour l'application de l'article R. 351-37 du code de la sécurité sociale [...] » —,
+    sans rapport avec les points. Le barème des points au revenu cadastral, qu'il
+    portait jusqu'au 1er janvier 2026, reste celui des points
+    d'avant 2016, que R. 732-66 prend « en application des articles R. 732-69 à R.
+    732-77 [...] dans leur rédaction antérieure au décret n° 2025-1409 »
+- id: LEGIARTI000006240373
+  motif: >-
+    décret n° 2005-368 du 19 avril 2005, article 3, dans sa rédaction du 20 janvier
+    2007 : elle ne corrige que les intitulés de deux décrets abrogés, aux 23° et 24° — «
+    aux membres bénévoles des organismes sociaux créés au profit des professions
+    agricoles des départements du Haut-Rhin, du Bas-Rhin et de la Moselle » et « aux
+    élèves des établissements d'enseignement technique et de formation professionnelle
+    agricoles », intervertis en 2005 ; les 60°, 65° et 78°, qui abrogent les décrets
+    n° 80-808, n° 81-790 et n° 86-1084, sont ceux de 2005, mot pour mot
 code:
   interrupteurs:
     bareme_points: msa_proportionnelle

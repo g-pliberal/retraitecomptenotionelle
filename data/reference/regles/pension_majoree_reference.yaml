@@ -426,9 +426,10 @@ versions:
     article: L. 732-54-2 code rural
     en_vigueur: 2023-09-01
     citation: >-
-      « Le montant minimum est revalorisé dans les conditions prévues au dernier alinéa
-      de l'article L. 351-10 du code de la sécurité sociale »
-    lu_le: 2026-10-07
+      « Le montant minimum est revalorisé, au 1er janvier de chaque année, d'un taux au
+      moins égal à l'évolution, depuis le 1er janvier précédent, du salaire minimum de
+      croissance mentionné à l'article L. 3231-2 du code du travail »
+    lu_le: 2026-11-12
   - id: LEGIARTI000047961228
     article: D. 732-113 code rural
     en_vigueur: 2023-09-01
@@ -477,6 +478,26 @@ versions:
       application du premier alinéa de l'article L. 173-2 du code de la sécurité
       sociale »
     lu_le: 2026-10-07
+  - id: LEGIARTI000051289516
+    article: L. 732-54-2 code rural
+    en_vigueur: 2026-01-01
+    citation: >-
+      « Le montant minimum est calculé en tenant compte des périodes d'assurance
+      accomplies à titre exclusif ou principal et, à compter du 1er janvier 2026, des
+      périodes d'assurance accomplies à titre secondaire » ; « Le montant minimum est
+      revalorisé dans les conditions prévues au dernier alinéa de l'article L. 351-10 du
+      code de la sécurité sociale »
+    lu_le: 2026-11-12
+  - id: LEGIARTI000053365675
+    article: D. 732-109 code rural
+    en_vigueur: 2026-01-01
+    citation: >-
+      « 4° Les personnes dont la pension de retraite servie à titre personnel prend
+      effet à compter du 1er février 2014, qui justifient d'une pension à taux plein
+      dans le régime d'assurance vieillesse des personnes non salariées des professions
+      agricoles » : la condition de L. 732-54-1, 3°, mot pour mot, à la place du renvoi
+      à la durée de R. 732-39 et aux articles L. 732-18-3, L. 732-23 et L. 732-25
+    lu_le: 2026-11-12
   - id: LEGIARTI000053365690
     article: D. 732-110 code rural
     en_vigueur: 2026-01-01
@@ -650,7 +671,7 @@ presomptions:
     la PMR, qui ne retranche, ne compte au plafond et ne sert au 2° de D. 732-110, II,
     que la réversion du régime que l'assuré déclare
 sources:
-  lu_le: 2026-10-19
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -665,6 +686,22 @@ sources:
     (D. 732-110, III) : PMR2, comme le modèle, ou rien, DM2 ne comptant que les
     périodes du 4° du II.
   lectures:
+  - type: legifrance
+    reference: >-
+      Les trois rédactions du 1er janvier 2026 que la fiche n'avait pas lues (action 184,
+      étape 6), mot à mot contre celles qu'elles remplacent, dans l'index LEGI du dépôt à
+      jour au 11 novembre 2026 : L. 732-54-2, qui compte les périodes à titre secondaire
+      depuis 2026 et renvoie la revalorisation du montant minimum au dernier alinéa de
+      L. 351-10 du code de la sécurité sociale — « revalorisés, au 1er janvier de chaque
+      année, d'un taux au moins égal à l'évolution, depuis le 1er janvier précédent, du
+      salaire minimum de croissance » (rédaction du 28 décembre 2023), les mots mêmes que
+      L. 732-54-2 portait de septembre 2023 à 2025 : rien ne change au montant ; D.
+      732-109, dont le 4° prend la condition de la loi, la pension à taux plein, et dont
+      les 2° et 3° datent leurs renvois « dans [leur] rédaction applicable à la date
+      d'effet de la pension de retraite » ; L. 732-54-1, inchangé hors sa note. La
+      citation que la version de septembre 2023 donnait de L. 732-54-2 était celle de la
+      rédaction de 2026 : corrigée
+    date: 2026-11-12
   - type: jorf
     reference: >-
       D. 732-113, alinéa par alinéa, aux décrets qui l'écrivent : n° 2009-173, article 1er
@@ -778,6 +815,17 @@ sources:
 textes_a_rattacher:
 - reference: L. 732-54-1 à L. 732-54-4 code rural
 - reference: D. 732-109 à D. 732-115 code rural
+textes_sans_effet:
+- id: LEGIARTI000051289521
+  motif: >-
+    L. 732-54-1 dans sa rédaction du 1er janvier 2026 (loi n° 2025-199, article 87) :
+    seule la note d'application change, « Conformément au B du VIII de l'article 87 de
+    la loi n° 2025-199 du 28 février 2025 [...] entrent en vigueur le 1er janvier
+    2026 » à la place de « Conformément au III de l'article 25 de la loi n° 2023-270 » ;
+    le corps de l'article, de « Peuvent bénéficier d'une majoration de la pension de
+    retraite servie à titre personnel » à « ainsi qu'auprès des régimes des
+    organisations internationales », est celui du 1er septembre 2023, mot
+    pour mot
 code:
   python: >-
     scenarios/actuel.py : PensionMajoreeReference, PensionMajoreeReference.regle,
@@ -834,6 +882,10 @@ historique:
   D. 732-110, III, reconstitue des points au compte divisés par seize, minorés de quinze
   par année de chef à titre secondaire sans forfait, dans la PMR de 2009 à 2021, dans les
   deux moteurs.
+- >-
+  2026-11-12 — action 184, étape 6 : les rédactions du 1er janvier 2026 de L. 732-54-1,
+  L. 732-54-2 et D. 732-109, lues ; aucune ne change ce que le modèle calcule. La
+  citation de L. 732-54-2 de septembre 2023, corrigée.
 exemples: []
 effet: >-
   Les petites pensions de base des chefs d'exploitation liquidées au taux plein depuis

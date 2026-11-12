@@ -1,0 +1,32 @@
+date: "2026-11-12"
+session: "action 184, étape 6 : la passe de lecture, lot des non-salariés agricoles"
+consulte: >-
+  python scripts/veille_droit.py en ouvrant. L'index LEGI du dépôt, récupéré et
+  à jour au 11 novembre 2026 : les treize rédactions en vigueur ou à venir que
+  sept fiches n'avaient pas lues, chacune dans son texte entier et mot à mot
+  contre celle qu'elle remplace — code rural, L. 731-42, L. 732-41, L. 732-54-1,
+  L. 732-54-2, L. 732-54-4, R. 732-69, D. 732-76, D. 732-77, D. 732-109,
+  D. 732-115, D. 732-165, D. 732-166-5, et l'article 3 du décret n° 2005-368 ;
+  avec elles D. 732-155 dans sa rédaction pour 2026 et le dernier alinéa de
+  L. 351-10 du code de la sécurité sociale. Le barème des cotisations des
+  non-salariés agricoles de la MSA pour 2026.
+trouve: >-
+  Une rédaction change ce que le modèle calcule : D. 732-165, I (décret
+  n° 2024-688), donne à la cotisation de retraite complémentaire du chef
+  d'exploitation, pour les périodes courant depuis le 1er janvier 2026, une
+  seconde part au taux de 1 % à 3 % selon l'assiette, que D. 732-155 convertit
+  en points avec la première ; le moteur garde 4 % et 133 points par 1 820
+  SMIC. La MSA applique cette seconde part (« COTISATION RCO COMPLEMENTAIRE »).
+  Les douze autres ne changent rien au calcul : trois sont citées par la
+  version de 2026 de leur fiche, une est à rattacher, huit sont sans effet,
+  dont trois numéros que les décrets n° 2025-1409 et n° 2025-1410 ont rendus
+  à d'autres articles (R. 732-69, D. 732-76, D. 732-77). La citation de
+  L. 732-54-2 de septembre 2023, qui portait les mots de la rédaction de 2026,
+  est corrigée dans la fiche pension_majoree_reference. Le cliquet des textes
+  baisse de douze, de 9 274 à 9 262.
+reste: >-
+  Écrire la règle de D. 732-165 : la seconde part de la cotisation et les
+  points qu'elle achète, le test d'abord, par l'étape que le propriétaire
+  décidera ; lire avant comment la MSA arrondit ces points et traite l'année
+  cotisée au prorata. Les rédactions passées que ces sept fiches n'ont pas
+  lues, hors de la passe.
