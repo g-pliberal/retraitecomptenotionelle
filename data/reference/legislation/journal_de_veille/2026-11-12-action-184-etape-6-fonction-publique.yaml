@@ -1,0 +1,41 @@
+date: "2026-11-12"
+session: "action 184, étape 6 : la passe de lecture, lot de la fonction publique"
+consulte: >-
+  L'index LEGI du dépôt, récupéré et à jour au 11 novembre 2026, par
+  `textes.py --non-lues` puis `dila_cherche.py legi` : les douze rédactions en
+  vigueur que huit fiches n'avaient pas lues, seize lectures. Code des pensions
+  civiles et militaires : L. 13, L. 25 bis, L. 86 et L. 86-1 (rédactions du 31
+  décembre 2025, loi n° 2025-1403, articles 102, 104 et 105), L. 50 (2017),
+  D. 16-1 (1er septembre 2026, décret n° 2026-345), D. 16-3 (2023). Code de la
+  sécurité sociale : L. 161-17-3, L. 161-22 et L. 161-22-1-2 (31 décembre
+  2025), D. 351-1-1 (1er septembre 2026), D. 634-1 (2012). Code rural :
+  D. 732-40 (1er janvier 2026, décret n° 2025-1410, et sa rédaction de 2023).
+  Loi n° 2003-775, article 5 (2017) ; décret n° 73-937, article 3 bis (2012) ;
+  décret n° 2003-1306, article 37 (2024). Aucune circulaire ni fiche de caisse
+  n'a été relue. Le portage, pour savoir ce qu'il fait : `regle2027`
+  (moteur/js/droit/cumul.js), `entreePrecoce` (moteur/js/regimes.js), et la
+  table legislation/carriere_longue.csv.
+trouve: >-
+  Deux rédactions changent ce que le modèle calcule, et ne sont pas portées.
+  L. 86 du code des pensions (LEGIARTI000053279638), première pension prise
+  depuis le 1er janvier 2027 : la pension militaire se cumule entièrement
+  (L. 161-22, III, C, 1°), plafonnée au tiers de son montant et à la moitié du
+  minimum garanti devant le seul employeur public ; le portage lui applique
+  les trois régimes selon l'âge comme à une pension civile. D. 732-40 du code
+  rural (LEGIARTI000053365409) : le non-salarié agricole entre en carrière
+  longue avec quatre trimestres validés à son régime à la fin de l'année de
+  l'anniversaire, voie que la rédaction de 2023 offrait déjà et que le modèle
+  ne sert pas. L. 50 (2017) ajoute un cas de pension pour décès en service,
+  que la fiche de la réversion déclare non portée. Le reste est sans effet
+  sur les fiches du lot : D. 16-1 de septembre 2026 porte ligne pour ligne
+  les portes de D. 351-1-1, que le modèle ouvre aux fonctionnaires ; L. 13 ne
+  change que son renvoi à L. 161-17-3 ; le 4° de L. 25 bis est déjà la fiche
+  carriere_longue_enfants_reputes_cotises. Le cliquet passe de 9 283 à 9 274.
+reste: >-
+  Au propriétaire : l'étape qui écrira les deux règles, et l'état de la fiche
+  carriere_longue, laissée conforme. Avant d'écrire celle de D. 732-40 : ses
+  rédactions de 2005, 2011 et 2012, le sens de « par dérogation » dans celle
+  de 2026, et la lecture qu'en fait la MSA. Avant celle de L. 86 : ce que le
+  modèle fait de la pension d'invalidité, que L. 161-22-1-2, 5°, laisse aussi
+  cumuler entièrement. Les cent rédactions passées des huit fiches ne sont
+  pas lues. Détail : docs/feuille_de_route/184/2026-11-12-etape-6-fonction-publique.md.
