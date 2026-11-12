@@ -1,0 +1,34 @@
+date: "2026-11-12"
+session: "action 184, étape 6 : la passe de lecture, lot du code de la sécurité sociale"
+consulte: >-
+  L'index LEGI du dépôt, récupéré, à jour au 11 novembre 2026 : les cinquante
+  rédactions en vigueur ou à venir que vingt-quatre fiches n'avaient pas lues,
+  chacune dans son texte entier et celui de la rédaction précédente. L'index
+  du Journal officiel, à la même date : le décret n° 2025-1409 du 30 décembre
+  2025, article 2 (JORFARTI000053227542), en entier, avec son II. Aucune
+  circulaire ni page de caisse n'a été relue : la passe lit et classe des
+  rédactions, elle n'écrit aucune règle.
+trouve: >-
+  Aucune rédaction du lot ne change ce que le modèle calcule. Six sont citées
+  par la version de fiche qui les applique (R. 351-7 et R. 353-13 du 1er
+  janvier 2026, R. 643-7 et L. 381-1 de 2023, L. 351-3 du 1er novembre 2026,
+  L. 6342-3 du code du travail), trente-neuf sont sans effet, dont près de la
+  moitié parce que le numéro d'article porte aujourd'hui une autre règle, cinq
+  sont à rattacher : l'article 12 du règlement du RCI au 1er janvier 2027,
+  R. 815-25 (les biens comptés pour 3 % dans les ressources de la réversion),
+  R. 643-6 (l'entrée en jouissance des libéraux au trimestre civil, au mois
+  pour la Cipav depuis le 5 mars 2023), L. 815-4, R. 173-3-2 du 1er août 2026
+  (vingt-quatre ou vingt-trois années pour les parents, que le moteur
+  applique déjà). Le cliquet des textes passe de 9 258 à 9 236.
+reste: >-
+  Quatre points au propriétaire, dans la note
+  docs/feuille_de_route/184/2026-11-12-etape-6-code-de-la-securite-sociale.md :
+  la date d'effet de la pension de base des libéraux depuis 2004, qu'aucune
+  fiche ne dit ; les biens du survivant dans les ressources de la réversion ;
+  le plafond de l'abattement du RCI en retraite progressive au 1er janvier
+  2027, qui relève de la fiche abattement_rci et que le lot des autres régimes
+  porte aussi ; la rente d'accident du travail
+  de L. 351-3, 1°, comptée pour une incapacité permanente professionnelle
+  depuis le 1er novembre 2026, qu'aucune fiche ne lit. La fiche
+  sam_parents_24_23 ne cite pas R. 173-3-2 par son identifiant. R. 653-2, pour
+  les avocats, renvoie encore à l'article 20 abrogé de la loi n° 2010-1330.
