@@ -3294,14 +3294,14 @@ fabriqués.
 **Reprise, au 13 novembre 2026.** Le propriétaire a décidé, le 13 novembre, de corriger
 dans le modèle chacune des erreurs déclarées des caisses des libéraux, une session par
 erreur. La file est la note `130/2026-11-13-corrections-decidees.md` : trente lignes, les
-plus lourdes d'abord, à cocher une à une. La file se poursuit : la première ligne est
-corrigée (l'inapte de la caisse des officiers ministériels de 2016 à 2024), vingt-neuf
-restent. Une seule session à la fois touche au modèle : une session d'aiguillage ouvre
-chaque correction et attend son compte rendu. Par quoi commencer : la ligne 2, première
-non cochée, avec le test d'abord et la veille du droit. Restent hors de la file : les
-points que le texte ne tranche pas, la caisse des navigants avant cinquante ans, la forme
-de la fiche du décret n° 2026-418. La lecture au droit des fiches restantes reprendra
-après.
+plus lourdes d'abord, à cocher une à une. La file se poursuit : les deux premières lignes
+sont corrigées (l'inapte de la caisse des officiers ministériels), vingt-huit restent.
+Une seule session à la fois touche au modèle : une session d'aiguillage ouvre chaque
+correction et attend son compte rendu. Par quoi
+commencer : la ligne 3, première non cochée (la caisse des notaires en 2024), avec le
+test d'abord et la veille du droit. Restent hors de la file : les points que le texte ne
+tranche pas, la caisse des navigants avant cinquante ans, la forme de la fiche du décret
+n° 2026-418. La lecture au droit des autres fiches reprendra après.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

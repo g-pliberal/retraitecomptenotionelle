@@ -1,0 +1,24 @@
+date: "2026-11-13"
+session: "action 130, file des corrections décidées, ligne 2 : l'inapte de la CAVOM depuis 2025"
+consulte: >-
+  `python scripts/veille_droit.py` ; les index JORF et LEGI récupérés par
+  `dila_index.py --recuperer`, à jour au 11 novembre 2026. Au JORF, rouverts : l'arrêté du 12
+  décembre 2024, annexe, II, 4° (JORFARTI000050823056, article 14 des statuts de la CAVOM
+  récrit au 1er janvier 2025), et l'arrêté du 10 juillet 2026, annexe I, article 1er, I et II
+  (JORFARTI000054435969, le règlement). Dans LEGI : L. 643-4 en vigueur le 1er avril 2027
+  (LEGIARTI000047453026, depuis le 1er septembre 2023) et L. 643-5 (LEGIARTI000006743795).
+trouve: >-
+  Le texte tranche : depuis le 1er janvier 2025, « L'âge d'ouverture des droits à pensions
+  est fixé à : a) 62 ans pour les affiliés relevant du a du 2° de l'article L. 643-4 », les
+  « Reconnus inaptes au travail », quand la génération 1965 ouvre à 62 ans et 6 mois et
+  celle de 1968 à 64 ans ; le coefficient reste « 5 % par année manquante » jusqu'à 67 ans.
+  Le modèle opposait à l'inapte l'âge de sa génération : corrigé dans les deux moteurs
+  (`age_ouverture_de_l_inapte: 62` à la période qui liquide depuis 2025), six mois de
+  pension au cas posé, 8 317,99 € (né le 10 mars 1965, servi le 1er avril 2027 au lieu du
+  1er octobre). La fiche `cavom_ages_minoration` relue ce jour, l'erreur passée à son
+  histoire.
+reste: >-
+  L. 643-5, non opposé : seule l'inaptitude que la carrière déclare compte. La base du même
+  inapte, qui ne s'ouvre pas à 62 ans (déclaré à `liquidation_regime_par_regime`). L'arrondi
+  des années manquantes à un âge non entier, que le texte ne dit pas. Les lignes 3 à 30 de
+  la file (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).

@@ -27,8 +27,11 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   l'inapte est servi sans coefficient dès 62 ans pour une pension de 2016 à 2024, dans les
   deux moteurs (18 085,96 € au lieu de 13 564,47 € au cas posé) ; note
   `2026-11-13-correction-cavom-inapte-2016-2024.md`.
-- [ ] 2. **CAVOM, l'inapte depuis 2025** : le modèle lui refuse 62 ans, le règlement
-  l'ouvre (six mois de pension, 8 317,99 €). Même note.
+- [x] 2. **CAVOM, l'inapte depuis 2025** : le modèle lui refuse 62 ans, le règlement
+  l'ouvre (six mois de pension, 8 317,99 €). Même note. Corrigé le 13 novembre 2026 :
+  l'inapte né depuis 1965 part à 62 ans, avec le coefficient de son âge, pour une pension
+  depuis 2025, dans les deux moteurs (servi le 1er avril 2027 au lieu du 1er octobre au
+  cas posé) ; note `2026-11-13-correction-cavom-inapte-depuis-2025.md`.
 - [ ] 3. **CPRN, le passage de 2024** : né en 1961, parti en 2023, servi en avril 2025
   quand les statuts de 2024 ouvrent au 1er janvier 2024 (16 999,67 €, puis 1 079,34 € de
   trop). Fiches `cprn_ages_decote_enfants` et `liquidation_regime_par_regime` ; note
