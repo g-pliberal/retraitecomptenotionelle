@@ -3291,16 +3291,16 @@ fabriqués.
 
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
-**Reprise, au 13 novembre 2026.** L'architecture est faite. Il reste à lire au droit, une à
-une, les fiches de règles des caisses des libéraux, chacune relue par la session suivante. La
-fiche des points de l'ASV des médecins vient d'être relue : ses deux erreurs sont confirmées,
-et la relecture en ajoute, dont la cotisation d'avant 2012, portée au tiers de ce que disent
-les textes. Par quoi commencer : reprendre ces écarts dans la fiche `asv_medecins_points`,
-sans toucher au modèle, puis lire la fiche suivante. Le propriétaire n'a pas encore répondu
-sur les erreurs déclarées et non corrigées, caisse par caisse, ni sur deux questions de
-forme. La liste, les montants et les recommandations sont dans la note
-`130/2026-11-13-relecture-asv-medecins-points.md`, qui garde aussi l'ancien bloc en entier.
-Aucune correction du modèle ne s'ouvre tant qu'une autre session en retire le moteur Python.
+**Reprise, au 13 novembre 2026.** Le propriétaire a décidé, le 13 novembre, de corriger
+dans le modèle chacune des erreurs déclarées des caisses des libéraux, une session par
+erreur. La file est la note `130/2026-11-13-corrections-decidees.md` : trente lignes, les
+plus lourdes d'abord, à cocher une à une. Une seule session à la fois touche au modèle :
+une session d'aiguillage ouvre chaque correction et attend son compte rendu. Par quoi
+commencer : la première ligne non cochée de la file, avec le test d'abord et la veille du
+droit. Restent hors de la file, sans décision : les points que le texte ne tranche pas, la
+caisse des navigants avant cinquante ans, la forme de la fiche du décret n° 2026-418. La
+lecture au droit des fiches restantes reprendra après ; la relecture de la fiche des points
+de l'ASV est dans la note `130/2026-11-13-relecture-asv-medecins-points.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
