@@ -5760,19 +5760,20 @@ de statuts et les `manque` de la page Méthode.
 
 ### 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats — `en cours`
 
-**Reprise, au 12 novembre 2026.** L'action réduit ce que coûte un changement
+**Reprise, au 13 novembre 2026.** L'action réduit ce que coûte un changement
 du modèle, en temps et en jetons, sans rien céder sur les vérifications ;
-l'essentiel est fait, une note par étape. Depuis le 12 novembre, la course de
-GitHub lancée par un envoi reprend la mémoire des calculs de la dernière
-course verte faite sur le même modèle : mesuré dans une session, dix-neuf
-minutes en deviennent neuf. La durée de la première course ainsi servie reste
-à relever sur GitHub : note `2026-11-12-memoire-des-calculs-sur-github.md`.
-Un chantier reste, pour une session neuve : comparer les réponses des agents
-de recherche, qui démarrent sans le `CLAUDE.md` de la racine, à celles
-relevées avant ; la note `2026-11-11-eclaireurs-sans-le-claude-md-racine.md`
-dit comment. Le propriétaire garde Fable 5.2 pour toutes les sessions, pour
-l'instant. Une décision l'attend : faire passer seul un changement
-transversal.
+l'essentiel est fait, une note par étape. La course que GitHub lance à chaque
+envoi reprend, depuis le 12 novembre, les calculs gardés de la dernière course
+verte faite sur le même modèle : elle dure alors 17 min 37, relevé sur GitHub,
+et 30 minutes quand le modèle a bougé. Le script `reprise.py`, sans numéro,
+n'imprime plus les listes de notes : 73 Ko au lieu de 197, encore trop pour
+que l'outil Bash d'une session les montre en entier. Trois décisions attendent
+le propriétaire : raccourcir cette course, ce que `reprise.py` imprime sans
+numéro, faire passer seul un changement transversal. Un chantier reste :
+comparer les réponses des agents de recherche, qui démarrent sans le
+`CLAUDE.md` de la racine, à celles relevées avant. Notes :
+`2026-11-13-reprise-sans-les-listes-de-notes.md` et
+`2026-11-11-eclaireurs-sans-le-claude-md-racine.md`.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus

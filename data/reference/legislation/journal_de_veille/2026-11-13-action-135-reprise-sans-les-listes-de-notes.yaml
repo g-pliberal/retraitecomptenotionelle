@@ -1,0 +1,15 @@
+date: "2026-11-13"
+session: "action 135 : reprise.py, sans numéro, n'imprime plus les listes de notes"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement à scripts/reprise.py, à son test (tests/test_prose.py), à
+  CLAUDE.md et à la carte du dépôt.
+trouve: >-
+  Aucune règle n'a changé. Sans numéro, le script imprime les blocs
+  « Reprise » et une ligne par action pour ses notes : 73 Ko au lieu de
+  197 Ko, encore au-dessus de ce que l'outil Bash d'une session laisse entrer.
+  La course de GitHub partie mémoire pleine dure 17 min 37.
+reste: >-
+  Au propriétaire : ce que le script imprime sans numéro, un sommaire tenant
+  seul sous le seuil ; raccourcir encore la course de GitHub. Comparer les
+  réponses des agents de recherche à celles relevées avant.
