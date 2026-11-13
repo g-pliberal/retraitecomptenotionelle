@@ -1,0 +1,26 @@
+date: "2026-11-13"
+session: "action 130, file des corrections décidées, ligne 3 : la CPRN ouverte le 1er janvier 2024 au notaire parti avant"
+consulte: >-
+  `python scripts/veille_droit.py` ; les index JORF et LEGI récupérés par
+  `dila_index.py --recuperer`, à jour au 11 novembre 2026. Au JORF, rouverts : l'arrêté du 29
+  novembre 2023, articles 1er et 2 et annexe entière (JORFARTI000048679345,
+  JORFARTI000048679346, JORFARTI000048679350), et l'article 19 des statuts de la CPRN de
+  l'arrêté du 31 mai 2017 (JORFARTI000034975971). Dans LEGI : L. 161-17-2 en vigueur le 1er
+  janvier 2024 (LEGIARTI000047452768) et D. 161-2-1-9 du 1er septembre 2023
+  (LEGIARTI000047634502).
+trouve: >-
+  Le texte tranche : depuis le 1er janvier 2024, « L'âge de l'ouverture du droit à pension de
+  retraite est celui mentionné à l'article L. 161-17-2 », l'arrêté entrant en vigueur ce jour
+  sans disposition transitoire, et le droit « est fixé au premier jour du mois civil qui suit
+  la date de fin d'exercice ou la date souhaitée par l'affilié ». Le modèle lisait l'âge dans
+  les statuts du départ déclaré : corrigé dans les deux moteurs, l'âge d'une pension que sa
+  date sépare du départ déclaré se lisant dans les règles de chaque mois. Né le 10 mars 1961,
+  parti à 62 ans le 1er avril 2023 : la CPRN le 1er janvier 2024 (0,7875, 13 164,74 € par an
+  de 2024) au lieu du 1er avril 2025 (0,85), quinze mois de pension. Les fiches
+  `cprn_ages_decote_enfants`, relue ce jour, et `liquidation_regime_par_regime` mises à jour.
+reste: >-
+  Le notaire qui exerce encore, en cumul, le jour où les statuts ouvrent sa pension, liquidé
+  avant la fin de son exercice (94,05 € par an de moins au témoin `cumul_notaire_cprn_2022`,
+  déclaré dans la fiche). Le trimestre entamé, que le texte ne tranche pas. Un exemple de la
+  caisse, pension liquidée en 2024 par un notaire parti en 2023, à demander à la CPRN. Les
+  lignes 4 à 30 de la file (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).

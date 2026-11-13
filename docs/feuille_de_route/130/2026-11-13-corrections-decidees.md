@@ -32,10 +32,13 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   l'inapte né depuis 1965 part à 62 ans, avec le coefficient de son âge, pour une pension
   depuis 2025, dans les deux moteurs (servi le 1er avril 2027 au lieu du 1er octobre au
   cas posé) ; note `2026-11-13-correction-cavom-inapte-depuis-2025.md`.
-- [ ] 3. **CPRN, le passage de 2024** : né en 1961, parti en 2023, servi en avril 2025
+- [x] 3. **CPRN, le passage de 2024** : né en 1961, parti en 2023, servi en avril 2025
   quand les statuts de 2024 ouvrent au 1er janvier 2024 (16 999,67 €, puis 1 079,34 € de
   trop). Fiches `cprn_ages_decote_enfants` et `liquidation_regime_par_regime` ; note
-  `2026-11-05-carte-des-fiches-cprn-lue-au-droit.md`.
+  `2026-11-05-carte-des-fiches-cprn-lue-au-droit.md`. Corrigé le 13 novembre 2026 : l'âge
+  d'une pension que sa date sépare du départ déclaré se lit dans les règles de chaque
+  mois, dans les deux moteurs (servi le 1er janvier 2024 au lieu du 1er avril 2025 au cas
+  posé, 13 164,74 € par an de 2024) ; note `2026-11-13-correction-cprn-passage-de-2024.md`.
 - [ ] 4. **CARCDSF, la réversion non servie** (4 147,36 € et 5 654,21 €). Fiche
   `carcdsf_minoration_age_seul` ; note `2026-11-05-carte-des-fiches-carcdsf-lue-au-droit.md`.
 - [ ] 5. **CARMF, les deux premières années d'exercice** : dispensées sans points depuis

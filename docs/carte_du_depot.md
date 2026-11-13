@@ -82,7 +82,7 @@ tiennent :
 complètes, que le moteur Python refait au bit près (`tests/test_pont.py`), et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->85<!--/--> pages figées, que
 `node --test` rejoue ;
-<!--chiffre:portage(valeurs)-->175 309<!--/--> nombres comparés, dont
+<!--chiffre:portage(valeurs)-->175 310<!--/--> nombres comparés, dont
 <!--chiffre:portage(identiques)-->100,0<!--/--> % identiques au bit près.
 
 Une exception, voulue : le coût pour toute la population ne se calcule qu'en

@@ -190,7 +190,7 @@ de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Lire une page transfère son
 texte et de quoi l'animer : <!--chiffre:poids_comprime(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->167<!--/--> Ko compressés
 (<!--chiffre:poids(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->541<!--/--> Ko bruts) pour l'accueil. Le premier calcul y ajoute
-le moteur, <!--chiffre:poids_comprime(moteur/js/*.js + moteur/js/droit/*.js - moteur/js/routeur.js - moteur/js/adresses.js - moteur/js/cles.js - moteur/js/gabarit.js - moteur/js/format.js - moteur/js/calendrier.js - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->936<!--/--> Ko compressés, et le paquet
+le moteur, <!--chiffre:poids_comprime(moteur/js/*.js + moteur/js/droit/*.js - moteur/js/routeur.js - moteur/js/adresses.js - moteur/js/cles.js - moteur/js/gabarit.js - moteur/js/format.js - moteur/js/calendrier.js - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->937<!--/--> Ko compressés, et le paquet
 de données, <!--chiffre:poids_comprime(moteur/donnees.json)-->815<!--/--> Ko compressés (<!--chiffre:poids(moteur/donnees.json)-->5 994<!--/--> Ko bruts) ; le tout prend quelques dixièmes
 de seconde, et les chargements suivants sont immédiats.
 
@@ -261,7 +261,7 @@ Il est traité de front : **le JavaScript de `moteur/js/` fait foi**, et
 Le moteur Python, qui garde ses jumeaux jusqu'à leur retrait, refait chaque
 simulation et doit la retrouver au bit près (`tests/test_pont.py`) ;
 `node --test` rejoue les simulations côté JavaScript et les compare valeur par valeur —
-<!--chiffre:portage(valeurs)-->175 309<!--/--> nombres,
+<!--chiffre:portage(valeurs)-->175 310<!--/--> nombres,
 dont <!--chiffre:portage(identiques)-->100,0<!--/--> % identiques
 au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->0,0<!--/--> · 10⁻¹⁵ (un *ulp*, la précision d'un flottant, vaut 2 · 10⁻¹⁶). Les
 deux moteurs ne diffèrent plus d'un *ulp* : le JavaScript calcule
