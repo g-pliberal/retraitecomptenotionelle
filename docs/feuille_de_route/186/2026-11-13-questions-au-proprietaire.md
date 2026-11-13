@@ -295,3 +295,23 @@ aussi écrire sa propre réponse.
   ou 80 % d'incapacité, chacun constaté par un tiers (décision 116).
 - **10, l'allocation aux adultes handicapés** : « L'allocation d'abord ».
   Elle reste intacte, la garantie vient ensuite (décision 117).
+- **11, le fonctionnaire invalide** : « L'assurance commune ». L'employeur
+  public cotise à l'assurance invalidité, au taux du privé (décision 118).
+- **12, la reprise sur la succession d'un invalide** : « Non avant 65 ans » ;
+  à partir de 65 ans, comme pour tous (décision 119).
+- **13, le plancher à la moitié du traitement** : « Oui, pour les nouveaux » :
+  il tombe pour les invalides à venir ; les pensions servies suivent leur
+  règle (décision 120).
+- **14, les rentes de réparation** : « Non », elles ne comptent pas dans les
+  ressources de la garantie (décision 121).
+- **15, quatre points de l'invalidité** : « Oui », écrits comme la suite des
+  règles déjà décidées : la Banque de France garde son plancher tant qu'elle
+  a des réserves ; les petites caisses suivent la règle commune ; le régime
+  d'invalidité des libéraux et des avocats paie pour eux ; l'assureur verse
+  au compte les cotisations des années d'invalidité (décision 122).
+- **16, le supplément de la garantie dégressive** : « La TVA » (décision 123).
+- **17, refuser la garantie servie d'office** : « Oui, par écrit »
+  (décision 124).
+- **18, la LVT du retraité modeste** : « Oui, les trois » : l'exonération des
+  plus de 75 ans modestes, le dégrèvement des 65 à 75 ans, le plafond à 50 %
+  du revenu (décision 125).
