@@ -1,0 +1,14 @@
+date: "2026-11-13"
+session: "action 161 : la façade sert vingt règles de liquider et d'ouvrir, 55 tests de plus éprouvent le moteur JavaScript"
+consulte: >-
+  Aucune source de droit : la session fait passer des tests du moteur Python
+  au moteur JavaScript, par la façade des tests, et ne touche à aucune règle
+  du scénario 1. Aucun texte n'a été rouvert dans LEGI.
+trouve: >-
+  Aucune règle n'a changé. Les valeurs que les tests attendent, tirées des
+  textes, sont inchangées : 55 fonctions de test de plus les comparent à ce
+  que le moteur JavaScript calcule. Les vingt règles servies rendent, sur 47
+  appels, ce que le moteur Python rend, au bit près.
+reste: >-
+  66 fonctions de test de test_simulateur.py restent sur le moteur Python,
+  marquées. Le détail dans la note de la feuille de route.

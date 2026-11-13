@@ -7323,21 +7323,19 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 12 novembre 2026.** Le moteur Python d'une carrière se retire au
+**Reprise, au 13 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
-Le coût y lit la garantie, l'impôt sur le revenu, la revalorisation des
-pensions servies et l'indexation. Ce que le droit a servi aux pensions
-liquidées reste calculé en Python, par la classe `RevalorisationServie`,
-désormais dans un module du coût, `revalorisation_servie.py`. Reste, une
-étape par session. D'abord, servir par la façade des tests
-(`tests/facade.py`) les règles de `droit/`. Puis quatre études :
-`scenarios_meres.py`, `cout_avantages.py --par-carriere`, puis
-`part_minimum_contributif.py` et `partage_taux_unique.py`, non instruites.
-Enfin le retrait. Commencer par « Ce qui reste » de
-`2026-11-12-la-revalorisation-servie-dans-un-module-du-cout.md`. Le
-propriétaire doit dire ce que le § 3 du README montrera sans simulateur
-Python, et si la recherche de la dernière année publiée d'un point, écrite
-en Python et en JavaScript, se demande au pont ou reste des deux côtés.
+Les tests y passent par une façade (`tests/facade.py`), qui sert sous leurs
+noms Python les entrées du moteur, ses tables et, depuis le 13 novembre,
+vingt règles de `droit/liquider` et de `droit/ouvrir`. Reste, une étape par
+session. D'abord les autres règles de `droit/` que les tests appellent, puis
+les autres fichiers de tests. Puis quatre études : `scenarios_meres.py`,
+`cout_avantages.py --par-carriere`, puis `part_minimum_contributif.py` et
+`partage_taux_unique.py`, non instruites. Enfin le retrait. Commencer par
+« Ce qui reste » de `2026-11-13-les-regles-du-droit-a-la-facade.md`. Trois
+questions attendent le propriétaire, posées le 13 novembre : le § 3 du README
+sans simulateur Python, la dernière année publiée d'un point, le défaut du
+relevé. La même note les expose, avec six autres, plus petites.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
