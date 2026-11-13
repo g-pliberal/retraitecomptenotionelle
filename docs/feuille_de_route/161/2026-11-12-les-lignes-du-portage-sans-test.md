@@ -1,6 +1,6 @@
 # Les lignes du portage sans test : la mesure refaite contre la suite entière, quatre fichiers classés, deux fichiers de tests, un défaut du relevé
 
-**Reprise, au 12 novembre 2026.** Les quatre fichiers que l'inventaire
+**Reprise, au 13 novembre 2026.** Les quatre fichiers que l'inventaire
 disait les moins couverts sont classés, ligne par ligne, et n'appellent plus
 rien : deux fichiers de tests neufs tiennent la fusion et le journal, le
 reste est déjà tenu, ou le sera quand les tests du moteur Python passeront
@@ -10,8 +10,9 @@ reste à classer de même les fichiers suivants, dans l'ordre de la table « Ce
 qui reste » : d'abord `compte.js`, dont une branche entière ne tourne dans
 aucun test, puis `droit/completer.js`, `droit/reversion.js`,
 `droit/liquider.js`. Par quoi commencer : refaire la mesure, par la recette
-de la même section, puis lire la table. Un défaut du relevé attend une
-décision du propriétaire, section « Le défaut ».
+de la même section, puis lire la table. Le défaut du relevé, section « Le
+défaut », est tranché (note de décision 0008) : il se corrige après le
+retrait du moteur Python.
 
 **La demande.** Fixer par des tests ce que la concordance n'exécute pas, sur
 les fichiers du portage les moins couverts — `droit/releve.js` (21 %),

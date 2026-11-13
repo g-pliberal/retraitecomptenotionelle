@@ -7327,17 +7327,18 @@ de `contribution_etat`.
 
 **Reprise, au 13 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
-Les tests y passent par une façade (`tests/facade.py`), qui sert sous leurs
-noms Python les entrées du moteur, ses tables et, depuis le 13 novembre,
-vingt règles de `droit/liquider` et de `droit/ouvrir`. Reste, une étape par
-session. D'abord les autres règles de `droit/` que les tests appellent, puis
-les autres fichiers de tests. Puis quatre études : `scenarios_meres.py`,
-`cout_avantages.py --par-carriere`, puis `part_minimum_contributif.py` et
-`partage_taux_unique.py`, non instruites. Enfin le retrait. Commencer par
-« Ce qui reste » de `2026-11-13-les-regles-du-droit-a-la-facade.md`. Trois
-questions attendent le propriétaire, posées le 13 novembre : le § 3 du README
-sans simulateur Python, la dernière année publiée d'un point, le défaut du
-relevé. La même note les expose, avec six autres, plus petites.
+Les tests y passent par une façade (`tests/facade.py`), qui sert les entrées
+du moteur, ses tables et vingt règles de `droit/`. Le propriétaire a tranché
+trois questions le 13 novembre (note de décision 0008). Reste, une étape par
+session, dans cet ordre. La recherche de la dernière année publiée d'un
+point, demandée au pont. Le § 3 du README, son tableau refait de ce que le
+pont rend. Le code mort du portage, retiré. Les autres règles de `droit/` à
+la façade, puis les autres fichiers de tests. Quatre études :
+`scenarios_meres.py`, `cout_avantages.py --par-carriere`,
+`part_minimum_contributif.py`, `partage_taux_unique.py`. La liste des
+fonctions gardées des deux côtés, puis le retrait, puis les lignes du relevé
+des périodes assimilées. Commencer par la table de
+`2026-11-13-les-decisions-du-proprietaire.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
