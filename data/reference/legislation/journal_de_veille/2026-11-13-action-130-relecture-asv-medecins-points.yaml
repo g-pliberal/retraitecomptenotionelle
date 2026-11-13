@@ -1,0 +1,35 @@
+date: "2026-11-13"
+session: "action 130 : relecture, aux sources, de la fiche asv_medecins_points lue au droit le 6 novembre"
+consulte: >-
+  `veille_droit.py` : trois fiches à relire, aucune de l'ASV ; la base de la Cnav, deux
+  exposés à relire (ASPA, réversion), hors de l'étape. Les index JORF et LEGI récupérés, à
+  jour du 11 novembre 2026. Dans LEGI : les 67 identifiants de la fiche, dates et citations
+  comparées par script ; lus en entier, les sept rédactions de l'article 2 du décret
+  n° 72-968, les trois de ses articles 3 et 7, les sept de son article 6, l'article 7 du
+  décret n° 71-542, les articles 1er à 5 du décret n° 2011-1644 (les six rédactions de
+  l'article 4), D. 645-2 et D. 645-3 de 1985 à 2012, L. 645-2 (1985, 2006, 2015) et L. 645-5.
+  Au JORF : les décrets nos 72-968, 81-274 et 85-205 (résumés), 94-564 et 99-237 (articles),
+  les titres des décrets nos 71-544, 72-969, 75-892, 78-282, 93-763 et 95-442. Hors de
+  l'index : le mémento 2012 de la CARMF et Le Quotidien du médecin, pour la cotisation de
+  2011 et de 2012 par secteur (recherche du 13 novembre 2026).
+trouve: >-
+  Conformes : les identifiants et leurs dates, les citations sauf une (« ne peut » pour
+  « qui ne peuvent »), les points, les valeurs de service et les forfaits du décret
+  n° 2011-1644, la durée minimale d'un an depuis le 15 février 1985. Les deux erreurs
+  déclarées le 6 novembre refaites au centime par le portage et le moteur Python (1 967,02 €
+  en moins en 2002, 273,50 € de trop en 2024 ; 367,01 € pour neuf mois d'exercice). Écarts :
+  la cotisation d'avant 2012 est portée au tiers (D. 645-2 fixe la cotisation « des
+  bénéficiaires », D. 645-3 celle des caisses « au double » ; la fiche du régime prend le
+  tout pour le total : 2 400 € par an de moins au compte en 2004, aucun effet sur la
+  pension) ; l'article 6 du décret n° 72-968, le taux d'appel de 1981 à 1993, n'est pas lu ;
+  cinquante-deux fois la consultation valent dès le 1er janvier 1994, non 1995 ; avant le
+  code, la cotisation tenait à un décret (n° 71-544), dont le JORF résume la rédaction de
+  1981 ; D. 645-3 cesse le 2 décembre 2004 ; l'erreur de la valeur de service oublie 2026
+  (12,02685 € servis pour 11,82 € : 242,76 € par an de trop au cas posé).
+reste: >-
+  À l'étape suivante : reprendre ces écarts dans la fiche, puis, le modèle libre, dans la
+  fiche du régime (note `130/2026-11-13-relecture-asv-medecins-points.md`). Non lus : la
+  source de la part des caisses de 2005 à 2011 (convention médicale), le décret n° 71-544 et
+  la rédaction de 1972 de l'article 2, au fac-similé ; les liquidations d'avant 1999, non
+  chiffrées. Au propriétaire : les erreurs déclarées et non corrigées des caisses des
+  libéraux, exposées ce jour, sans réponse encore.
