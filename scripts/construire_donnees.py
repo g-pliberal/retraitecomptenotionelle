@@ -919,7 +919,7 @@ def _regles_des_sections(p) -> dict:
 
     La décote à deux pentes de la CAVP, le taux plein anticipé des mères de la
     CARCDSF, la surcote par années cotisées de la CAVAMAC, l'âge de l'inapte
-    servi sans coefficient de la CAVOM : même raison que
+    servi sans coefficient de la CAVOM et celui où elle l'ouvre : même raison que
     pour les marins, le moteur JavaScript lit leur absence comme leur nullité.
     """
     champs = {
@@ -934,6 +934,8 @@ def _regles_des_sections(p) -> dict:
         "surcote_depuis_la_duree": p.surcote_depuis_la_duree or None,
         # L'inapte de la CAVOM de 2016 à 2024, sans coefficient dès 62 ans.
         "age_sans_coefficient_de_l_inapte": p.age_sans_coefficient_de_l_inapte,
+        # L'inapte de la CAVOM depuis 2025, ouvert à 62 ans.
+        "age_ouverture_de_l_inapte": p.age_ouverture_de_l_inapte,
     }
     return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
 

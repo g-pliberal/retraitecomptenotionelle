@@ -914,6 +914,16 @@ def age_ouverture(moteur, periode: PeriodeRegime, carriere: Carriere,
     inapte = invalidite.age_d_inaptitude(moteur, periode.regime, carriere)
     if inapte is not None:
         age = min(age, inapte)
+    # LA SECTION QUI ÉCRIT L'ÂGE DE SON INAPTE (``age_ouverture_de_l_inapte``).
+    # Statuts de la CAVOM, article 14, 1°, depuis le 1er janvier 2025 (arrêté
+    # du 12 décembre 2024, annexe, II, 4°), et règlement de 2026, article 1er,
+    # I : « L'âge d'ouverture des droits à pensions est fixé à : a) 62 ans pour
+    # les affiliés relevant du a du 2° de l'article L. 643-4 du code de la
+    # sécurité sociale », l'inapte, quand la génération 1965 ouvre à 62 ans et
+    # 6 mois et celle de 1968 à 64 ans. Seule compte l'inaptitude que la
+    # carrière déclare, et le coefficient reste celui de l'âge.
+    if periode.age_ouverture_de_l_inapte is not None and carriere.inaptitude:
+        age = min(age, periode.age_ouverture_de_l_inapte)
     return age
 
 

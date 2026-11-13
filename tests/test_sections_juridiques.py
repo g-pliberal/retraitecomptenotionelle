@@ -247,6 +247,92 @@ def test_l_inapte_de_la_cavom_recoit_un_tiers_de_plus_que_le_valide_de_62_ans(
     assert inapte - valide == pytest.approx(4_521.49, abs=0.005)
 
 
+#: (naissance, âge demandé, inapte) : le jour où la CAVOM sert sa pension, posé
+#: à la main, ou ``None`` quand les statuts de 2025 ne l'ouvrent pas à cet âge.
+OUVERTURE_DE_L_INAPTE_DE_LA_CAVOM = {
+    # Né le 10 mars 1965, inapte : « a) 62 ans pour les affiliés relevant du a
+    # du 2° de l'article L. 643-4 », 62 ans le 10 mars 2027, la pension le
+    # 1er avril 2027, premier jour du mois et du trimestre civil qui suivent.
+    ("1965-03-10", "62", "oui"): "2027-04-01",
+    # Le même, valide : « 62 ans et 6 mois ans pour les affiliés nés en
+    # 1965 », le 10 septembre 2027. À 62 ans, rien ne s'ouvre.
+    ("1965-03-10", "62", "non"): None,
+    # Nés les 10 mars 1966 et 1967, inaptes : 62 ans, et non 63 ans ni 63 ans
+    # et 6 mois ; les 1er avril 2028 et 2029.
+    ("1966-03-10", "62", "oui"): "2028-04-01",
+    ("1967-03-10", "62", "oui"): "2029-04-01",
+    # Né le 10 mars 1968, inapte : 62 ans, et non « 64 ans à compter de la
+    # génération 1968 » ; le 1er avril 2030. Valide, rien avant 64 ans.
+    ("1968-03-10", "62", "oui"): "2030-04-01",
+    ("1968-03-10", "62", "non"): None,
+}
+
+
+@pytest.fixture(scope="module")
+def ouvertures_de_l_inapte_de_la_cavom():
+    """Chaque cas, servi par le portage et refait au bit près par le moteur
+    Python (``servi_et_refait``)."""
+    from outils_pont import servi_et_refait
+
+    cas = [{"cle": "|".join(cle),
+            "requete": {**REQUETE_D_OFFICIER_MINISTERIEL, "naissance": cle[0],
+                        "liquidation": cle[1],
+                        **({"inaptitude": "oui"} if cle[2] == "oui" else {})}}
+           for cle in OUVERTURE_DE_L_INAPTE_DE_LA_CAVOM]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    return {cle: servi["actuel"] for cle, servi in servis.items()}
+
+
+@pytest.mark.parametrize("cle", OUVERTURE_DE_L_INAPTE_DE_LA_CAVOM,
+                         ids=["|".join(cle) for cle in OUVERTURE_DE_L_INAPTE_DE_LA_CAVOM])
+def test_la_cavom_ouvre_l_inapte_a_62_ans_depuis_2025(
+        ouvertures_de_l_inapte_de_la_cavom, cle):
+    """Statuts de la CAVOM, article 14, dans la rédaction de l'arrêté du
+    12 décembre 2024 (annexe, II, 4°, JORFARTI000050823056, en vigueur le
+    1er janvier 2025), et règlement de 2026, article 1er, I
+    (JORFARTI000054435969), mot pour mot : « 1° L'âge d'ouverture des droits à
+    pensions est fixé à : a) 62 ans pour les affiliés relevant du a du 2° de
+    l'article L. 643-4 du code de la sécurité sociale ; b) 64 ans à compter de
+    la génération 1968. Pour les affiliés nés avant le 1er janvier 1968, cet
+    âge est fixé à : […] - 62 ans et 6 mois ans pour les affiliés nés en
+    1965 ; - 63 ans pour les affiliés nés en 1966 ; - 63 ans et 6 mois pour
+    les affiliés nés en 1967 ». L. 643-4, 2°, a (LEGIARTI000047453026) :
+    « Reconnus inaptes au travail dans les conditions prévues à l'article
+    L. 643-5 ». L'inapte n'est pas servi sans coefficient : « 5 % par année
+    manquante » jusqu'à 67 ans, cinq années, 0,75. Jusqu'au 13 novembre 2026,
+    le modèle lui opposait l'âge de sa génération."""
+    actuel = ouvertures_de_l_inapte_de_la_cavom["|".join(cle)]
+    attendue = OUVERTURE_DE_L_INAPTE_DE_LA_CAVOM[cle]
+    if attendue is None:
+        assert not actuel["liquidation_ouverte"]
+        return
+    assert actuel["liquidation_ouverte"], actuel["motif_ouverture"]
+    # La complémentaire au départ demandé ; la base, que l'inaptitude n'ouvre
+    # pas ici à 62 ans (écart déclaré ailleurs), à l'âge de sa génération.
+    assert actuel["departs"][0] == {"date_effet": attendue, "motif": "depart"}
+    assert [d["motif"] for d in actuel["departs"][1:]] == ["ouverture"]
+    pensions = {p["regime"]: p for p in actuel["pensions_par_regime"]}
+    cavom = pensions["cavom_complementaire"]
+    assert cavom["montant"] > 0
+    assert "servie à partir" not in cavom["detail"]
+    assert "servie à partir" in pensions["cnavpl"]["detail"]
+    assert _coefficient(cavom["detail"]) == pytest.approx(0.75)
+
+
+def test_l_inapte_de_la_cavom_ne_en_1965_gagne_six_mois_de_pension(
+        ouvertures_de_l_inapte_de_la_cavom):
+    """Né le 10 mars 1965, inapte : servi le 1er avril 2027 et non le
+    1er octobre, six mois de sa pension de 16 635,98 € par an, 8 317,99 €
+    (euros de 2026)."""
+    actuel = ouvertures_de_l_inapte_de_la_cavom["1965-03-10|62|oui"]
+    assert actuel["liquidation_ouverte"]
+    (cavom,) = [p for p in actuel["pensions_par_regime"]
+                if p["regime"] == "cavom_complementaire"]
+    assert cavom["montant"] == pytest.approx(16_635.98, abs=0.005)
+    assert cavom["montant"] / 2 == pytest.approx(8_317.99, abs=0.005)
+
+
 # -- la CPRN -------------------------------------------------------------------
 
 

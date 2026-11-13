@@ -37,6 +37,10 @@ ecrit:
 - >-
   le coefficient ramené à un pour l'inapte de 62 ans dont la pension prend effet du
   1er janvier 2016 au 31 décembre 2024 (`age_sans_coefficient_de_l_inapte`)
+- >-
+  l'âge d'ouverture ramené à 62 ans pour l'inapte des générations 1965 et suivantes
+  dont la pension prend effet depuis le 1er janvier 2025 (`age_ouverture_de_l_inapte`),
+  que `age_ouverture` rend aux départs
 dates_qui_decident:
 - liquidation.date_effet
 versions:
@@ -66,6 +70,7 @@ versions:
       age_table: cavom
       surcote_par_trimestre: null
       age_sans_coefficient_de_l_inapte: null
+      age_ouverture_de_l_inapte: null
     droit: celui de la version statuts_de_2016, présumé
   exemples: aucun trouvé
 - id: statuts_de_2016
@@ -136,6 +141,7 @@ versions:
       age_table: cavom
       surcote_par_trimestre: null
       age_sans_coefficient_de_l_inapte: 62
+      age_ouverture_de_l_inapte: null
     droit: >-
       ouverture et taux plein à 60 et 65 ans jusqu'à la génération 1955, puis six mois
       de plus par génération jusqu'à 62 et 67 ans depuis celle de 1959 ; avant l'âge du
@@ -210,6 +216,7 @@ versions:
       age_table: cavom
       surcote_par_trimestre: null
       age_sans_coefficient_de_l_inapte: null
+      age_ouverture_de_l_inapte: 62
     droit: >-
       la table de 2016, prolongée : ouverture à 62 ans et 6 mois, 63 ans, 63 ans et 6
       mois pour les générations 1965 à 1967, à 64 ans depuis 1968, taux plein à 67 ans
@@ -262,6 +269,7 @@ versions:
       age_table: cavom
       surcote_par_trimestre: null
       age_sans_coefficient_de_l_inapte: null
+      age_ouverture_de_l_inapte: 62
     droit: celui des statuts de 2025, mot pour mot
     conditions: celles des statuts de 2025
   exemples: aucun trouvé
@@ -338,18 +346,19 @@ approximations:
     d'effet suit : 20 317,08 / 0,90 × 0,05 = 1 128,73 € par an dans le cas essayé ;
     non mesuré dans la population
 - version: [statuts_de_2025, reglement_de_2026]
-  textes: statuts de 2025, article 14, 1°, a ; règlement de 2026, article 1er, I, 1°, a
+  textes: >-
+    statuts de 2025, article 14, 1°, a ; règlement de 2026, article 1er, I, 1°, a ;
+    code de la sécurité sociale, articles L. 643-4, 2°, a, et L. 643-5
   ecart: >-
-    Le modèle n'ouvre pas la pension de l'inapte à 62 ans quand son âge d'ouverture,
-    pour sa génération, est plus tardif (générations 1965 à 1967, puis 64 ans depuis
-    1968) : il refuse la liquidation (`non_ouverte`) et attend l'âge de la table.
-  effet: >-
-    inapte né le 10 mars 1965 : le texte ouvre la pension le 1er avril 2027 à 62 ans,
-    avec le coefficient de cinq années manquantes, 0,75 ; le modèle refuse à 62 ans et
-    sert 0,75 dès le 1er octobre 2027, à 62 ans et 6 mois : six mois de pension, 8 317,99
-    € (16 635,98 € par an, que le modèle calcule à cette date), ne sont pas servis
-    (essai du 5 novembre 2026, dans les deux moteurs) ; jusqu'à deux ans pour la
-    génération 1968, ouverte à 64 ans, non essayé
+    Le modèle ouvre à 62 ans la pension de l'affilié dont la carrière déclare
+    l'inaptitude au travail (la case de l'inaptitude du formulaire), et de lui seul :
+    L. 643-5, qui dit comment elle s'apprécie (« n'est plus en mesure d'exercer […] une
+    activité professionnelle »), n'est pas lu, et le titulaire d'une pension
+    d'invalidité ou d'une incapacité permanente, que le régime général répute inapte,
+    ne l'est pas ici sans cette déclaration. La base du même inapte ne s'ouvre pas à
+    62 ans (écart déclaré à `liquidation_regime_par_regime`) : sa complémentaire part
+    seule, la base à l'âge de sa génération.
+  effet: non mesuré
 - version: [statuts_de_2016, statuts_de_2025, reglement_de_2026]
   textes: >-
     statuts de 2016 et de 2025, article 14, II ; règlement de 2026, article 1er, II
@@ -432,7 +441,7 @@ effet: >-
   en vigueur le 1er janvier 2016 (arrêté du 30 décembre 2015), présumés avant,
   l'article 14 récrit le 1er janvier 2025, le règlement de 2026 ; ni l'inapte de 2016
   à 2024, ni l'ouverture de l'inapte à 62 ans depuis 2025, ni la date d'effet au
-  trimestre civil ne sont servis. Retouchée le même jour, après la relecture R-E3 :
+  trimestre civil n'étaient alors servis. Retouchée le même jour, après la relecture R-E3 :
   deux non-tranchés déclarés (l'âge de l'inapte né avant 1959, l'âge de la demande ou
   de l'effet), la condition de la date d'effet complétée pour l'assuré né le 1er, le
   cumul de 2020 et le 18° de 2016 dits.
@@ -443,8 +452,17 @@ effet: >-
   13 564,47 € par an, au lieu de 1, 18 085,96 €, 4 521,49 € de moins ; né le 10 mars
   1957, le 1er avril 2019, 0,80 au lieu de 1 ; né le 10 mars 1955, le 1er avril 2017,
   0,85 au lieu de 1. Depuis, `age_sans_coefficient_de_l_inapte: 62` aux périodes qui
-  liquident de 2016 à 2024, dans les deux moteurs. Restent non servies l'ouverture de
-  l'inapte à 62 ans depuis 2025 et la date d'effet au trimestre civil.
+  liquident de 2016 à 2024, dans les deux moteurs.
+  Corrigée encore le 13 novembre 2026 (même décision, ligne 2 de la file) : jusque-là,
+  le modèle refusait à l'inapte des générations 1965 et suivantes l'ouverture à 62 ans
+  que l'article 14, 1°, a, des statuts de 2025 et l'article 1er, I, du règlement de
+  2026 lui donnent, et lui opposait l'âge de sa génération — né le 10 mars 1965,
+  inapte : refusé à 62 ans (`non_ouverte`), servi le 1er octobre 2027 à 62 ans et 6
+  mois au lieu du 1er avril, six mois de pension, 8 317,99 € (16 635,98 € par an) ;
+  jusqu'à deux ans pour la génération 1968. Depuis, `age_ouverture_de_l_inapte: 62` à
+  la période qui liquide depuis 2025, dans les deux moteurs : l'inapte y part à 62
+  ans, avec le coefficient de cinq années manquantes, 0,75. Reste non servie la date
+  d'effet au trimestre civil.
 sources:
   lu_le: 2026-11-13
   prochaine_relecture: 2027-03-31
@@ -456,6 +474,15 @@ sources:
     à la CAVOM. Vérifier l'arrondi à l'année d'un âge non entier depuis 2025 sur un
     exemple de la caisse.
   lectures:
+  - type: jorf
+    reference: >-
+      Relus pour la correction de l'ouverture de l'inapte depuis 2025 : arrêté du 12
+      décembre 2024, annexe, II, 4° (JORFARTI000050823056), et arrêté du 10 juillet
+      2026, annexe I, article 1er, I et II (JORFARTI000054435969), dans l'index JORF du
+      dépôt, à jour du 11 novembre 2026 ; code de la sécurité sociale, articles L. 643-4
+      (LEGIARTI000047453026, en vigueur depuis le 1er septembre 2023) et L. 643-5
+      (LEGIARTI000006743795), dans l'index LEGI, à jour du 11 novembre 2026.
+    date: 2026-11-13
   - type: jorf
     reference: >-
       Relus pour la correction de l'inapte de 2016 à 2024 : arrêté du 30 décembre 2015,
@@ -517,7 +544,10 @@ code:
     jusqu'à 25 %). `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule
     pas la minoration. `age_sans_coefficient_de_l_inapte: 62` : le coefficient de
     l'affilié dont la carrière déclare l'inaptitude revient à un dès cet âge, pour une
-    pension que la période liquide.
+    pension que la période liquide. `age_ouverture_de_l_inapte: 62` : l'âge
+    d'ouverture du même affilié est ramené à cet âge quand sa génération ouvre plus
+    tard, pour une pension que la période liquide, et son coefficient reste celui de
+    son âge.
   python: >-
     droit/liquider.py : abattement_points, abattement_ircec, inapte_sans_coefficient,
     trimestres_de_decote,
@@ -530,7 +560,9 @@ code:
     moteur/js/regimes.js : AgesRegimes
   parametres: >-
     contenu.parametres de chaque version : abattement_points, age_table,
-    surcote_par_trimestre, age_sans_coefficient_de_l_inapte ;
+    surcote_par_trimestre, age_sans_coefficient_de_l_inapte,
+    age_ouverture_de_l_inapte ;
     regimes/cavom_complementaire.yaml : age_ouverture, age_taux_plein,
-    age_sans_coefficient_de_l_inapte ; legislation/ages_regimes.csv : cavom
+    age_sans_coefficient_de_l_inapte, age_ouverture_de_l_inapte ;
+    legislation/ages_regimes.csv : cavom
   tests: [tests/test_sections_juridiques.py, tests/test_sections_liberales.py]

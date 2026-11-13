@@ -702,6 +702,17 @@ champs_periode:
       31 décembre 2024). `null` : l'inapte reçoit le coefficient de son âge.
     defaut: null
 
+  age_ouverture_de_l_inapte:
+    description: >-
+      Régimes en points : âge auquel la section ouvre ses droits à l'affilié
+      reconnu inapte au travail, quand sa génération ouvre plus tard, pour
+      une pension que la période liquide — « a) 62 ans pour les affiliés
+      relevant du a du 2° de l'article L. 643-4 » (CAVOM, statuts dans la
+      rédaction de l'arrêté du 12 décembre 2024, article 14, 1°, depuis le
+      1er janvier 2025, et règlement de 2026, article 1er, I). `null` :
+      l'inapte attend l'âge de sa génération.
+    defaut: null
+
   surcote_par_trimestre: "majoration par trimestre supplémentaire (fraction, null si aucune)"
 
   surcote_bareme:

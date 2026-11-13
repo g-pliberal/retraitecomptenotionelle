@@ -802,6 +802,12 @@ class PeriodeRegime:
     #: CAVOM du 1er janvier 2016 au 31 décembre 2024 (article 14, I, 1°).
     #: ``None`` : l'inapte reçoit le coefficient de son âge.
     age_sans_coefficient_de_l_inapte: float | None = None
+    #: L'ÂGE AUQUEL LA SECTION OUVRE SES DROITS À L'INAPTE, quand sa
+    #: génération ouvre plus tard, pour une pension que la période liquide :
+    #: « a) 62 ans pour les affiliés relevant du a du 2° de l'article
+    #: L. 643-4 », écrivent les statuts de la CAVOM depuis le 1er janvier 2025
+    #: (article 14, 1°). ``None`` : l'inapte attend l'âge de sa génération.
+    age_ouverture_de_l_inapte: float | None = None
     #: BORNES EN EUROS, ANNÉE PAR ANNÉE : celle que le régime fixe lui-même
     #: chaque année, et qui ne suit ni le plafond de la Sécurité sociale ni un
     #: montant figé. C'est le plafond propre de la première tranche du RCI de
@@ -2385,6 +2391,10 @@ class CatalogueRegimes:
                 age_sans_coefficient_de_l_inapte=(
                     None if p.get("age_sans_coefficient_de_l_inapte") is None
                     else float(p["age_sans_coefficient_de_l_inapte"])
+                ),
+                age_ouverture_de_l_inapte=(
+                    None if p.get("age_ouverture_de_l_inapte") is None
+                    else float(p["age_ouverture_de_l_inapte"])
                 ),
                 points_de=p.get("points_de"),
                 valeur_point_euros=(

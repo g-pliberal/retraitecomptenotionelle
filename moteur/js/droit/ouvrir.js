@@ -789,6 +789,13 @@ export function ageOuverture(moteur, periode, carriere, invaliditeComprise = tru
   if (inapte !== null) {
     age = Math.min(age, inapte);
   }
+  // La section qui écrit l'âge de son inapte (`age_ouverture_de_l_inapte`) :
+  // « a) 62 ans pour les affiliés relevant du a du 2° de l'article L. 643-4 »,
+  // à la CAVOM depuis le 1er janvier 2025. Voir le Python.
+  const ageDeLInapte = periode.age_ouverture_de_l_inapte ?? null;
+  if (ageDeLInapte !== null && carriere.inaptitude) {
+    age = Math.min(age, ageDeLInapte);
+  }
   return age;
 }
 

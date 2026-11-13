@@ -190574,6 +190574,7 @@ null
 {
 "abattement_points":"cavom",
 "age_ouverture":62.0,
+"age_ouverture_de_l_inapte":62.0,
 "age_ouverture_par_generation":true,
 "age_surcote_regimes_speciaux":false,
 "age_table":"cavom",
@@ -190611,7 +190612,7 @@ null
 "duree_requise_trimestres":null,
 "ecretement_salaire_reference":null,
 "fin":null,
-"notes":"Depuis 2025 : les paramètres de 2020. La période ne s'en sépare que par l'inapte, que les statuts servaient sans coefficient dès 62 ans jusqu'au 31 décembre 2024 (`age_sans_coefficient_de_l_inapte`, à la période de 2016) : l'article 14 récrit au 1er janvier 2025 (arrêté du 12 décembre 2024, 4°) lui ouvre ses droits à 62 ans (1°, a), et ne sert sans coefficient que « les affiliés ayant atteint l'âge de 67 ans » (2°). Voir les périodes de 2016 et de 2020.",
+"notes":"Depuis 2025 : les paramètres de 2020. La période ne s'en sépare que par l'inapte, que les statuts servaient sans coefficient dès 62 ans jusqu'au 31 décembre 2024 (`age_sans_coefficient_de_l_inapte`, à la période de 2016) : l'article 14 récrit au 1er janvier 2025 (arrêté du 12 décembre 2024, 4°) lui ouvre ses droits à 62 ans (1°, a : `age_ouverture_de_l_inapte`), quand sa génération, de 1965 à 1968, ouvre plus tard, et ne sert sans coefficient que « les affiliés ayant atteint l'âge de 67 ans » (2°). Voir les périodes de 2016 et de 2020.",
 "part_au_dela_du_plafond":null,
 "part_salariale":1.0,
 "part_salariale_deplafonnee":0.0,
