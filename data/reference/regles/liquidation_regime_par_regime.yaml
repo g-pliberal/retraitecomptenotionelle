@@ -313,20 +313,6 @@ approximations:
     entre 60 ans et 61 ans et 2 mois n'a rien avant l'âge de sa base, quand les
     statuts de 2005 lui fermaient peut-être la complémentaire jusqu'à 65 ans
 - ecart: >-
-    l'âge où s'ouvre une unité que sa date sépare du départ déclaré se lit dans les
-    règles en vigueur au départ déclaré, non dans celles qui le suivent. La CPRN
-    l'ouvre de 2014 à 2023 à l'âge de L. 161-17-2 « différé de vingt-quatre mois »
-    (statuts, article 15, arrêté du 16 décembre 2013), et depuis le 1er janvier 2024
-    à l'âge de L. 161-17-2 (statuts, article 18, arrêté du 29 novembre 2023) : un
-    notaire né en 1960 ou 1961, parti en 2022 ou 2023, peut la demander dès le
-    1er janvier 2024 ; le modèle la lui sert à 64 ans
-  effet: >-
-    mesuré dans les deux moteurs le 5 novembre 2026 : né le 10 mars 1961, parti à 62
-    ans le 1er avril 2023, le notaire reçoit sa CPRN le 1er avril 2025, quinze mois
-    après le 1er janvier 2024 ; né en mars 1960, trois mois après. Erreur du modèle,
-    non corrigée : elle tient à la façon dont `departs` date chaque unité, commune à
-    tous les régimes
-- ecart: >-
     en carrière longue, la complémentaire de la CAVP et celle de la CARPIMKO sont servies
     avec la base, à l'âge que la durée lui ouvre, quand leurs statuts ne l'ouvraient pas
     avant 2024. La CAVP : l'article 15 de 2011 (arrêté du 23 juin 2011,
@@ -606,6 +592,15 @@ historique:
   par l'adresse : une date plus tardive que la présumée la remplace, une plus précoce
   ne l'avance pas, et la page dit pourquoi ; le départ qu'elle date est un acte de la
   personne, non une présomption.
+- >-
+  2026-11-13 — corrigée (action 130, décision du propriétaire du même jour, ligne 3 de
+  la file) : l'âge où s'ouvre une unité que sa date sépare du départ déclaré se lisait
+  dans les règles en vigueur à ce départ ; il se lit dans celles de chaque mois qui le
+  suit, jusqu'au premier où l'assuré a l'âge qu'elles lui opposent, dans les deux
+  moteurs. Le notaire né le 10 mars 1961, parti à 62 ans le 1er avril 2023, reçoit sa
+  CPRN le 1er janvier 2024, où les statuts de 2024 la lui ouvrent (article 18, arrêté
+  du 29 novembre 2023), et non le 1er avril 2025, à 64 ans ; né en mars 1960, le 1er
+  janvier 2024 et non le 1er avril (fiche `cprn_ages_decote_enfants`).
 effet: >-
   Tout polypensionné dont les régimes n'ouvrent pas au même âge : le fonctionnaire de
   catégorie active ou le militaire qui a aussi travaillé dans le privé, l'agent d'un

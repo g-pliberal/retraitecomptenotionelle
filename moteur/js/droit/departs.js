@@ -196,25 +196,34 @@ function unitesDe(moteur, carriere, bases, routes) {
 }
 
 /**
- * Le premier mois où l'unité peut servir sa pension à cet assuré : l'âge que
- * l'étape « ouvrir le droit » oppose à chacun de ses régimes, ou celui de la
- * carrière longue acquise au départ déclaré. Voir `_ouverture` dans le Python.
+ * Les régimes de l'unité et la période de chacun qui liquide une pension
+ * prenant effet le 1er du mois `date`. Voir `_periodes_de_l_unite`.
  */
-function ouvertureDe(moteur, carriere, unite) {
+function periodesDeLUnite(moteur, unite, date) {
   const periodes = [];
   for (const code of [...unite].sort()) {
     const periode = moteur.catalogue.contient(code)
-      ? periodeDeLiquidation(moteur.catalogue.obtenir(code), carriere.dateLiquidation)
+      ? periodeDeLiquidation(moteur.catalogue.obtenir(code), date)
       : null;
     if (periode !== null) {
       periodes.push([code, periode]);
     }
   }
+  return periodes;
+}
+
+/**
+ * Le premier mois où ces périodes ouvrent la pension à cet assuré, ou `null`
+ * quand aucune n'oppose d'âge : l'âge que l'étape « ouvrir le droit » oppose à
+ * chacun des régimes, ou celui de la carrière longue acquise au départ
+ * déclaré. Voir `_ouverture_sous` dans le Python.
+ */
+function ouvertureSous(moteur, carriere, periodes) {
   const annuites = periodes.filter(([, p]) => p.type_calcul === "annuites");
   const autres = periodes.filter(([, p]) => p.type_calcul !== "annuites");
   const retenues = annuites.length > 0 ? annuites : ouvrirLeDroit.sansAgesPropres(moteur, autres);
   if (retenues.length === 0) {
-    return carriere.dateLiquidation;
+    return null;
   }
   let age = Math.min(...retenues.map(
     ([, periode]) => ouvrirLeDroit.ageOuverture(moteur, periode, carriere)));
@@ -227,6 +236,36 @@ function ouvertureDe(moteur, carriere, unite) {
     }
   }
   return carriere.dateDeLAge(age);
+}
+
+/**
+ * Le premier mois où l'unité peut servir sa pension à cet assuré. L'âge se lit
+ * dans les règles du départ déclaré quand elles l'ouvrent déjà ; sinon dans
+ * celles de chaque mois qui le suit, jusqu'au premier où l'assuré a l'âge que
+ * les règles de ce mois-là lui opposent : la pension prend effet sous la
+ * rédaction de sa date d'effet (fiche `liquidation_regime_par_regime` ; la
+ * CPRN, que ses statuts de 2024 ouvrent le 1er janvier 2024 au notaire parti
+ * en 2023 avant les 64 ans de ceux de 2017). Voir `_ouverture` dans le Python.
+ */
+function ouvertureDe(moteur, carriere, unite) {
+  const declare = carriere.dateLiquidation;
+  let courantes = periodesDeLUnite(moteur, unite, declare);
+  let ouverture = ouvertureSous(moteur, carriere, courantes) ?? declare;
+  if (ouverture.rang <= declare.rang) {
+    return ouverture;
+  }
+  for (let mois = declare.plusMois(1); ouverture.rang > mois.rang; mois = mois.plusMois(1)) {
+    const periodes = periodesDeLUnite(moteur, unite, mois);
+    if (periodes.length !== courantes.length
+        || periodes.some(([, periode], i) => periode !== courantes[i][1])) {
+      courantes = periodes;
+      const sous = ouvertureSous(moteur, carriere, periodes);
+      if (sous !== null) {
+        ouverture = sous.rang > mois.rang ? sous : mois;
+      }
+    }
+  }
+  return ouverture;
 }
 
 /**

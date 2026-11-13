@@ -253,26 +253,33 @@ def _unites(moteur: ScenarioActuel, carriere: Carriere, bases: list[str],
     return unites
 
 
-def _ouverture(moteur: ScenarioActuel, carriere: Carriere,
-               unite: frozenset[str]) -> DateMois:
-    """Le premier mois où l'unité peut servir sa pension à cet assuré.
+def _periodes_de_l_unite(moteur: ScenarioActuel, unite: frozenset[str],
+                         date: DateMois) -> list[tuple[str, PeriodeRegime]]:
+    """Les régimes de l'unité et la période de chacun qui liquide une pension
+    prenant effet le 1er du mois ``date``."""
+    return [(code, periode) for code in sorted(unite)
+            if code in moteur.catalogue
+            and (periode := periode_de_liquidation(
+                moteur.catalogue[code], date)) is not None]
 
-    L'âge que l'étape « ouvrir le droit » oppose à chacun de ses régimes — le
+
+def _ouverture_sous(moteur: ScenarioActuel, carriere: Carriere,
+                    periodes: list[tuple[str, PeriodeRegime]]) -> DateMois | None:
+    """Le premier mois où ces périodes ouvrent la pension à cet assuré, ou
+    ``None`` quand aucune n'oppose d'âge.
+
+    L'âge que l'étape « ouvrir le droit » oppose à chacun des régimes — le
     plus précoce, puisque l'unité liquide d'un tenant —, ou celui de la
     carrière longue, ou du départ des assurés handicapés, quand la durée
     COTISÉE au départ déclaré l'ouvre plus tôt. Après ce départ, l'assuré ne
     cotise plus : ni l'une ni l'autre ne se projette, elles se lisent acquises
     (:meth:`CarriereLongue.age_de_depart`, :func:`~.invalidite.age_du_handicap`).
     """
-    periodes = [(code, periode) for code in sorted(unite)
-                if code in moteur.catalogue
-                and (periode := periode_de_liquidation(
-                    moteur.catalogue[code], carriere.date_liquidation)) is not None]
     annuites = [(c, p) for c, p in periodes if p.type_calcul == "annuites"]
     autres = [(c, p) for c, p in periodes if p.type_calcul != "annuites"]
     retenues = annuites or ouvrir.sans_ages_propres(moteur, autres)
     if not retenues:
-        return carriere.date_liquidation
+        return None
     age = min(ouvrir.age_ouverture(moteur, periode, carriere) for _, periode in retenues)
     opposent = annuites or ouvrir.periodes_opposant_une_duree(autres)
     for anticipe in (_carriere_longue_acquise(moteur, carriere, opposent),
@@ -280,6 +287,37 @@ def _ouverture(moteur: ScenarioActuel, carriere: Carriere,
         if anticipe is not None and anticipe < age:
             age = anticipe
     return carriere.date_de_l_age(age)
+
+
+def _ouverture(moteur: ScenarioActuel, carriere: Carriere,
+               unite: frozenset[str]) -> DateMois:
+    """Le premier mois où l'unité peut servir sa pension à cet assuré.
+
+    L'âge se lit dans les règles du départ déclaré quand elles l'ouvrent
+    déjà ; sinon dans celles de chaque mois qui le suit, jusqu'au premier où
+    l'assuré a l'âge que les règles de ce mois-là lui opposent : la pension
+    prend effet sous la rédaction de sa date d'effet (fiche
+    ``liquidation_regime_par_regime`` ; la CPRN, que ses statuts de 2024
+    ouvrent le 1er janvier 2024 au notaire parti en 2023 avant les 64 ans de
+    ceux de 2017).
+    """
+    declare = carriere.date_liquidation
+    courantes = _periodes_de_l_unite(moteur, unite, declare)
+    sous = _ouverture_sous(moteur, carriere, courantes)
+    ouverture = declare if sous is None else sous
+    if ouverture.rang <= declare.rang:
+        return ouverture
+    mois = declare.plus_mois(1)
+    while ouverture.rang > mois.rang:
+        periodes = _periodes_de_l_unite(moteur, unite, mois)
+        if (len(periodes) != len(courantes)
+                or any(p is not c for (_, p), (_, c) in zip(periodes, courantes))):
+            courantes = periodes
+            sous = _ouverture_sous(moteur, carriere, periodes)
+            if sous is not None:
+                ouverture = sous if sous.rang > mois.rang else mois
+        mois = mois.plus_mois(1)
+    return ouverture
 
 
 def _handicap_acquis(moteur: ScenarioActuel, carriere: Carriere,

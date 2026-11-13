@@ -408,6 +408,22 @@ CPRN_AU_TEXTE = {
     # (1° de L. 351-8) ; parti à 68 ans le 1er avril 2025, 4 trimestres × 1 % =
     # 4 %.
     ("1957-03-10", "68"): (None, "coefficient de majoration 1.0400"),
+    # Le passage de 2024. Arrêté du 29 novembre 2023, annexe, I, 3°
+    # (JORFARTI000048679350) : « L'âge de l'ouverture du droit à pension de
+    # retraite est celui mentionné à l'article L. 161-17-2 », et article 2
+    # (JORFARTI000048679346) : « Les dispositions du présent arrêté entrent en
+    # vigueur le 1er janvier 2024 », sans disposition transitoire. Né le
+    # 10 mars 1961, parti à 62 ans le 1er avril 2023 : les statuts de 2017 lui
+    # opposent 64 ans, ceux de 2024 son âge légal, atteint : la pension le
+    # 1er janvier 2024, à 62 ans, 9 mois et 22 jours, 4 ans, 2 mois et 9 jours
+    # avant 67 ans, 17 trimestres compté le trimestre entamé, 17 × 1,25 % =
+    # 21,25 %. Jusqu'au 13 novembre 2026, le modèle la servait le 1er avril
+    # 2025, à 64 ans.
+    ("1961-03-10", "62"): ("2024-01-01", "coefficient d'anticipation 0.7875"),
+    # Né le 10 mars 1960, parti à 62 ans le 1er avril 2022 : le 1er janvier
+    # 2024 et non le 1er avril, à 63 ans, 9 mois et 22 jours, 3 ans, 2 mois et
+    # 9 jours avant 67 ans, 13 trimestres, 16,25 %.
+    ("1960-03-10", "62"): ("2024-01-01", "coefficient d'anticipation 0.8375"),
 }
 
 

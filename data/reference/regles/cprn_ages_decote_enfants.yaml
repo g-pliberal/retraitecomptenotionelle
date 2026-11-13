@@ -452,31 +452,20 @@ approximations:
     statuts de 2017, articles 18 et 19 ; arrêté du 29 novembre 2023, annexe, I, 3°
     (article 18), et article 2
   ecart: >-
-    Erreur du modèle, déclarée, non corrigée, celle de `liquidation_regime_par_regime`
-    (le passage de 2024), prouvée et chiffrée ici : le modèle lit l'âge de la CPRN dans
-    les règles en vigueur au départ déclaré. Le notaire qui cesse d'exercer en 2023 à
-    l'âge de L. 161-17-2 attend « l'âge [...] différé de vingt-quatre mois » des statuts
-    de 2017 ; mais depuis le 1er janvier 2024, « L'âge de l'ouverture du droit à pension
-    de retraite est celui mentionné à l'article L. 161-17-2 », sans réserve pour qui a
-    cessé avant, et le droit « est fixé au premier jour du mois civil qui suit la date de
-    fin d'exercice ou la date souhaitée par l'affilié ». La lecture contraire — les
-    statuts du jour de la cessation garderaient leur âge — n'est pas tenable : l'arrêté
-    entre en vigueur le 1er janvier 2024 sans disposition transitoire, et la pension
-    prend effet sous la rédaction de sa date d'effet
+    Le modèle sert la CPRN dès le jour où les statuts l'ouvrent, quand le droit « est
+    fixé au premier jour du mois civil qui suit la date de fin d'exercice ou la date
+    souhaitée par l'affilié ». Le notaire parti avant le 1er janvier 2024 sans l'âge des
+    statuts de 2017 est liquidé le 1er janvier 2024, où « L'âge de l'ouverture du droit
+    à pension de retraite est celui mentionné à l'article L. 161-17-2 » : celui qui
+    préfère attendre, pour une décote moindre, le dit par la date de sa demande. Celui
+    qui exerce encore ce jour-là, en cumul, est liquidé ce jour-là aussi, avant la fin de
+    son exercice, et les mois d'exercice ne lui sont pas servis
   effet: >-
-    né le 10 mars 1961, entré à 22 ans, parti à 62 ans le 1er avril 2023 : le modèle sert
-    la CPRN le 1er avril 2025, à 64 ans, 14 679,08 € par an de 2025 (12 trimestres
-    jusqu'à 67 ans, 0,85) ; les statuts la lui ouvrent le 1er janvier 2024, à 62 ans, 9
-    mois et 22 jours, 17 trimestres compté le trimestre entamé, 0,7875 : 14 679,08 / 0,85
-    × 0,7875 = 13 599,74 € par an aux valeurs de 2025, et 13 599,74 × 15 / 12 = 16 999,675,
-    soit 16 999,68 € sur les quinze mois que le modèle ne sert pas (16 999,67 € si l'on
-    n'arrondit pas l'annuel avant de le multiplier) ; puis 1 079,34 € par an de trop, qui
-    compare deux dates de liquidation, le 1er janvier 2024 et le 1er avril 2025, que les
-    statuts permettent toutes deux (« la date souhaitée par l'affilié ») et ne vaut donc
-    que dans la règle du modèle, servir chaque caisse dès son ouverture (16 trimestres,
-    0,80 : 13 815,60 €, 13 815,60 × 15 / 12 = 17 269,50 € sur les quinze mois, 17 269,51 €
-    sans arrondir l'annuel, et 863,48 € par an de trop). Essai du 5 novembre 2026, dans les
-    deux moteurs, requête du formulaire
+    le notaire en cumul du témoin `cumul_notaire_cprn_2022`, né en janvier 1960, qui
+    exerce jusqu'à la fin de janvier 2024 : liquidé le 1er janvier 2024, 13 trimestres
+    avant 67 ans, 0,8375, 6 301,53 € par an de 2024, janvier non servi, quand la fin de
+    son exercice fixe son droit au 1er février 2024, à 64 ans, 12 trimestres, 0,85,
+    6 395,58 € : 94,05 € par an de moins. Essai du 13 novembre 2026, au portage
 - version: [statuts_de_2014, statuts_de_2017, statuts_de_2024, reglement_de_2026]
   textes: >-
     statuts de 2014, article 15 ; de 2017, article 21 ; règlement de 2026, article 7
@@ -570,8 +559,23 @@ effet: >-
   pour cent de trois enfants rendus par le modèle ; une erreur déclarée, le passage de
   2024 ; deux points non tranchés, l'âge d'avant 2014 et le trimestre entamé ; les 30 %
   par enfant à charge non modélisés ; la date d'effet au mois civil, comme le modèle.
+  Corrigée le 13 novembre 2026 (action 130, décision du propriétaire du même jour, ligne
+  3 de la file) : jusque-là, le modèle lisait l'âge de la CPRN dans les statuts en
+  vigueur au départ déclaré, et le notaire parti en 2022 ou 2023 à l'âge de L. 161-17-2
+  attendait les 64 ans des statuts de 2017, quand ceux de 2024 lui ouvrent la pension
+  le 1er janvier 2024, sans disposition transitoire (arrêté du 29 novembre 2023, annexe,
+  I, 3°, et article 2) — né le 10 mars 1961, parti à 62 ans le 1er avril 2023 : servi
+  le 1er avril 2025 à 64 ans, 0,85, 14 679,08 € par an de 2025, au lieu du 1er janvier
+  2024, à 62 ans, 9 mois et 22 jours, 17 trimestres avant 67 ans, 0,7875, 13 164,74 €
+  par an de 2024 : quinze mois de pension en moins, 13 164,74 × 15 / 12 = 16 455,93 € aux
+  valeurs de 2024 (16 999,67 € à celles de 2025, 14 679,08 / 0,85 × 0,7875 × 15 / 12),
+  puis 1 079,34 € par an de trop ; né le 10 mars 1960, parti le 1er avril 2022 : le 1er
+  avril 2024 au lieu du 1er janvier, 0,85 au lieu de 0,8375. Depuis, l'âge où s'ouvre une
+  pension que sa date sépare du départ déclaré se lit dans les règles de chaque mois,
+  jusqu'au premier où elles l'ouvrent, dans les deux moteurs (`ouvertureDe`,
+  `moteur/js/droit/departs.js`, et son jumeau `_ouverture`).
 sources:
-  lu_le: 2026-11-05
+  lu_le: 2026-11-13
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
