@@ -315,3 +315,35 @@ aussi écrire sa propre réponse.
 - **18, la LVT du retraité modeste** : « Oui, les trois » : l'exonération des
   plus de 75 ans modestes, le dégrèvement des 65 à 75 ans, le plafond à 50 %
   du revenu (décision 125).
+- **19, « une moindre baisse »** : « Ce que le calcul montre ». La phrase ne
+  s'écrit pas ; le site dit que la pension nette baisse moins que la brute,
+  que personne ne tombe sous 1 050 €, et que plus d'un quart des retraités,
+  sous ce plancher, ne perdent rien (décision 126, qui corrige la 89).
+- **21, les deux phrases de l'accueil** : « Les retirer », contre la
+  recommandation de les garder avec leur condition (décision 128).
+- **22, la baisse montrée à un retraité** : « Ce qu'il touche en 2026 »
+  (décision 129).
+- **20, le rendement** : il demande d'abord « Pourquoi un écart entre payé
+  par ses cotisations 0,3% et proposé 0,2% ? ». Réponse donnée : le 0,3 %
+  crédite les cotisations d'aujourd'hui à la règle du compte ; le 0,2 % est
+  la proposition, avec son taux plus bas, sa part capitalisée et ses 65 ans,
+  que l'étude n'a pas séparés. Puis : « Ne plus le montrer », contre la
+  recommandation. Le tableau des rendements sort du site (décision 127).
+  Lecture de la session, à lui confirmer : l'argument « net du déficit, la
+  proposition rend plus » tombe avec lui, et la convention reste publiée à
+  la page Méthode, que la décision 84 promet.
+- **23, le gain des actifs** : « Le même taux » pour tous ; pas de mêmes
+  euros (décision 130). Les questions de détail de la note du gain des
+  actifs sur le forfait et la franchise tombent.
+- **24, les questions qui fâchent** : « Je veux les relire d'abord ». Reste
+  ouverte.
+- **25, les pages** : « Une petite passe, puis la refonte » (décision 131).
+- **26, l'apport pour un premier logement** : « On enlève l'apport pour un
+  premier logement. Je ne connaissais pas l'effet de second ordre quand j'ai
+  décidé de cela, ça ne met plaît pas. » La décision 33 est retirée
+  (décision 132).
+- **27, la réserve de 1 %** : ce qui reste au décès va « Aux retraités de sa
+  génération », et leur est rendu quand la crise ne peut plus rien leur
+  coûter (décision 133).
+- **28, le relevé annuel** : « Oui, aux retraités aussi » (décision 134).
+- **30, le gel** : « On ne gèle rien » (décision 135).
