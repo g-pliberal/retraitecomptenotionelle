@@ -268,4 +268,30 @@ pensions qui montent refait sur la grille large.
 
 ## Ce que le propriétaire a répondu
 
-*(à écrire au fil de ses réponses)*
+Le 13 novembre 2026, lot par lot, par des questions à choix où il pouvait
+aussi écrire sa propre réponse.
+
+- **1, le taux** : « 18 % ». Ni 21,2 % ni 15,9 % (décision 108).
+- **2, le rythme** : « Par cinquièmes », pour toutes les pensions, sans autre
+  plafond par an (décision 109).
+- **3, le seuil** : « Pas de seuil ». La garantie seule protège les petites
+  pensions (décision 110).
+- **4, le salarié du privé** : « 18 % dès le premier jour », contre la
+  recommandation. Le régime général baisse dès la bascule pour que le total
+  fasse 18 % ; l'Agirc-Arrco garde ses cotisations jusqu'à son intégration.
+  Près de 50 Md€ de recettes en moins par an d'ici là, à chiffrer au modèle
+  (décision 111, qui corrige la 48).
+- **5, la loi d'équilibre pour l'Agirc-Arrco** : « Non ». La caisse s'épuise,
+  puis est intégrée, comme décidé (décision 112).
+- **6, les libéraux dont la pension monte** : « Oui, par leur caisse »
+  (décision 113).
+- **7, la moitié aux parents** : « De l'économie avant la garantie », contre
+  la recommandation. Les parents reçoivent 0,40 point de PIB par an, le
+  déficit 0,26 (décision 114).
+- **8, la garantie d'invalidité dans le privé** : « Oui, sauf s'il peut
+  travailler ». Elle s'ouvre dès la pension d'invalidité, mais pas pour
+  l'invalide de première catégorie (décision 115, qui précise la 78).
+- **9, le critère** : « L'un ou l'autre » : les deux tiers de capacité perdus,
+  ou 80 % d'incapacité, chacun constaté par un tiers (décision 116).
+- **10, l'allocation aux adultes handicapés** : « L'allocation d'abord ».
+  Elle reste intacte, la garantie vient ensuite (décision 117).
