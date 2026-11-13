@@ -1,15 +1,12 @@
 # La réserve personnelle, non transmise aux héritiers : ce qu'elle paie, et ce qu'elle devient au décès
 
-**Reprise, au 8 novembre 2026.** La réserve personnelle est étudiée et
-chiffrée au modèle, pour le stock (`reserve_en_commun`, dans
-`indexation_programme.py` ; `python scripts/indexation_scenario_6.py
---decidee`, « La réserve personnelle »). Rien n'est décidé ; le défaut du
-scénario 6 n'a pas bougé. Restent au propriétaire quatre questions (« Ce qui
-revient au propriétaire ») : où va ce qui reste au décès ; si la réserve se
-rend de son vivant ; le taux, 1 % ne couvrant pas la crise étudiée ;
-l'assiette. Puis ses réponses en décisions, et une session du modèle en fait
-le défaut du scénario 6 (note `2026-11-08-indexation-voie-1-au-modele.md`,
-« Ce qui reste à faire »), avant la page Coût.
+**Reprise, au 13 novembre 2026.** Le propriétaire a tranché : la prime est de
+1 % (décision 107) ; ce qui reste au décès va aux retraités de sa génération,
+et leur est rendu quand la crise ne peut plus rien leur coûter (décision 133)
+; la réserve porte sur toutes les pensions, celles à venir comprises (décision
+138). Ce dernier point n'est pas chiffré : une session d'étude le chiffre
+d'abord, puis une session du modèle en fait le réglage par défaut de la
+proposition.
 
 *Le 8 novembre 2026, action 186, chantier 5. Le propriétaire veut « une
 faible contribution durable pour amortir un choc passager », « 1 % tout le

@@ -1,12 +1,9 @@
 # Le test auprès de vingt personnes : le protocole, prêt à lancer
 
-**Reprise, au 9 novembre 2026.** Le protocole est écrit, rien n'est lancé :
-une session ne mène pas d'entretien. Au propriétaire, les neuf questions de
-la fin (« Ce que le propriétaire tranche »), d'abord la première : lancer
-tout de suite une première vague de dix entretiens sur ce qui est tranché,
-ou attendre la lecture A ou B et le plafond de baisse par an. Puis le
-parti recrute, mène, dépouille sur la grille ; seule la synthèse, des
-décomptes sans personne, revient au dépôt, dans une note à elle.
+**Reprise, au 13 novembre 2026.** Le protocole est écrit, rien n'est lancé. Le
+propriétaire a tranché le 13 novembre : le test se fait quand le site sera
+refait, pas avant (décision 137). Les autres réglages du protocole gardent les
+pistes de la note, faute de réponse. Rien à faire d'ici la refonte du site.
 
 *Le 9 novembre 2026, action 186, chantier 8. Le propriétaire demande le
 protocole du test que la note `2026-11-07-message-etude.md` annonçait

@@ -1,13 +1,13 @@
 # Le site face au programme : ce qu'il dément, ce que montrera la version publique, et le rendement
 
-**Reprise, au 8 novembre 2026.** Le chantier 9 est étudié, rien n'est
-retouché. Le site dément le programme sur onze sujets, dans une trentaine
-de phrases, dont cinq seulement sont déclarées démenties au catalogue (« 1. ») ;
-l'architecture du 6 novembre tient pour la version publique sans simulateur,
-réordonnée (« 2. ») ; le rendement a quatre façons de se montrer (« 3. »).
-Au propriétaire : les cinq questions de la fin. Puis une session du site,
-quand celle de la réversion aura quitté les pages, fait ce qui ne dépend de
-rien (« 4. ») ; le reste suit A ou B et les portages du modèle.
+**Reprise, au 13 novembre 2026.** Le propriétaire a tranché le 13 novembre
+(décisions 127 à 129 et 131) : le tableau des rendements sort du site ; les
+deux phrases de l'accueil sur le rendement et les 100 % sont retirées ; la
+baisse montrée à un retraité est celle de ce qu'il touche en 2026 ; une petite
+passe d'abord, la refonte ensuite. L'apport pour un logement est retiré du
+programme (décision 132). Reste une session du site, quand ses pages seront
+libres : la petite passe, dont la liste est dans
+`2026-11-13-questions-au-proprietaire.md`.
 
 *Le 7 novembre 2026, le propriétaire demande d'attaquer le chantier 9 de
 l'action 186, « Le site et le simulateur » (« Attaque le chantier 9 »). La

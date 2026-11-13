@@ -1,15 +1,5 @@
 # Un seuil en euros sous lequel aucune pension déjà servie ne baisse : qui il protège, ce qu'il coûte, ce que le droit en dit
 
-**Reprise, au 9 novembre 2026.** L'étude est faite ; rien n'est décidé, ni le
-modèle ni le site ne sont touchés. Quatre seuils (1 050 €, 1 200 €, 1 500 €,
-la médiane à 1 563 €) et trois règles (tranche, plancher, lissage) sont
-chiffrés au modèle, le stock relevé en mémoire (« Les calculs, en entier »).
-La tranche à 1 050 € perd 53 % de la baisse. Au propriétaire, en fin de note
-(« Ce que le propriétaire tranche ») : le principe, la règle, le niveau, qui
-paie, l'assiette, l'articulation avec la garantie, la relecture d'un
-juriste. Puis ses réponses en décisions, et une session du modèle écrit le
-seuil au scénario 6 seul, le test d'abord ; aucune avant.
-
 *Le 9 novembre 2026, action 186, chantier 2. Le propriétaire demande de
 chiffrer une piste : la baisse des pensions servies à la bascule (décisions 2
 et 3) ne toucherait que la part de la pension au-dessus d'un seuil, comme une

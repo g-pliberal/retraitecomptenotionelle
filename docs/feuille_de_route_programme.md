@@ -699,6 +699,109 @@ des adhérents :
      une dette du stock (décision 76). Restent ouverts la réserve, commune ou
      personnelle, et son assiette.
 
+Le 13 novembre 2026, à son retour, aux questions que les notes de l'action
+lui laissaient, rassemblées et posées en choix (note
+`186/2026-11-13-questions-au-proprietaire.md`, qui donne pour chacune ce que
+chaque réponse change) :
+
+108. **Le taux est de 18 %** : « 18 % ». Ni la lecture A de la décision 29
+     (21,2 %), ni la B (15,9 %) : les 18 % tombent entre les deux. La caisse
+     reste en déficit près de trente ans et finit 2070 presque sans dette
+     (chiffres du 8 novembre, chantier 1).
+109. **Toutes les pensions servies baissent par cinquièmes** : « Par
+     cinquièmes », sans autre plafond par an. La règle de la décision 87
+     vaut pour tout le stock ; la page Coût, qui baisse d'un coup, suivra.
+110. **Pas de seuil propre à la baisse** : « Pas de seuil ». La garantie
+     seule protège les petites pensions.
+111. **Le salarié du privé cotise 18 % dès le premier jour** : « 18 % dès le
+     premier jour ». L'Agirc-Arrco garde ses cotisations jusqu'à son
+     intégration (décision 40) ; c'est le régime général qui baisse, pour que
+     le total fasse 18 %. La décision 48 est corrigée sur ce point. Près de
+     50 Md€ de recettes en moins par an d'ici l'intégration (note des
+     complémentaires, à côté) : à chiffrer au modèle.
+112. **Pas de loi d'équilibre pour l'Agirc-Arrco** : « Non ». Elle s'épuise,
+     puis est intégrée (décisions 37 et 39).
+113. **Les pensions des libéraux que le compte relève montent, payées par
+     leur caisse** : « Oui, par leur caisse ». La règle joue dans les deux
+     sens.
+114. **La moitié rendue aux parents se compte avant la garantie** : « De
+     l'économie avant la garantie ». La base du partage de la décision 50
+     est l'économie brute : 0,40 point de PIB par an aux parents, 0,26 au
+     déficit. Ce partage est à part de celui de la décision 29.
+115. **Dans le privé, la garantie s'ouvre dès la pension d'invalidité, sauf
+     pour qui peut travailler** : « Oui, sauf s'il peut travailler ».
+     L'invalide de première catégorie attend la retraite ; la décision 78
+     est précisée.
+116. **Deux portes pour l'invalidité, chacune constatée par un tiers** :
+     « L'un ou l'autre » — les deux tiers de la capacité de travail perdus,
+     ou une incapacité d'au moins 80 %.
+117. **L'allocation aux adultes handicapés passe d'abord, intacte** :
+     « L'allocation d'abord ». La garantie vient ensuite, à la place de
+     l'allocation supplémentaire d'invalidité.
+118. **Pour un fonctionnaire invalide, l'assurance invalidité commune
+     paie** : « L'assurance commune ». L'employeur public y cotise au taux
+     du privé.
+119. **La garantie versée pour invalidité n'est pas reprise avant 65 ans** :
+     « Non avant 65 ans ». À partir de 65 ans, la reprise joue comme pour
+     tous (décisions 30 et 101).
+120. **Le plancher d'invalidité à la moitié du traitement tombe pour les
+     nouveaux invalides** : « Oui, pour les nouveaux ». Ceux qui le touchent
+     suivent la règle des pensions servies (décision 62).
+121. **Les rentes de réparation ne comptent pas dans les ressources de la
+     garantie** : « Non ». La rente d'accident du travail, la rente viagère
+     d'invalidité et la pension militaire d'invalidité s'y ajoutent.
+122. **Quatre points de l'invalidité s'écrivent selon les règles déjà
+     décidées** : « Oui ». La Banque de France garde son plancher
+     d'invalidité tant qu'elle a des réserves (décision 69) ; les caisses que
+     la décision 69 ne nomme pas suivent la décision 37 ; le régime
+     d'invalidité des libéraux et des avocats paie leur garantie ; l'assureur
+     du risque verse au compte les cotisations des années d'invalidité.
+123. **La TVA paie le supplément de la garantie dégressive** : « La TVA ».
+     0,13 point de PIB net, 4,5 Md€ par an.
+124. **La garantie servie d'office peut se refuser par écrit** : « Oui, par
+     écrit ». La décision 20 reste ; qui renonce garde sa succession entière.
+125. **La LVT reprend les protections des retraités modestes** : « Oui, les
+     trois » — l'exonération des plus de 75 ans modestes, le dégrèvement des
+     65 à 75 ans, le plafond à 50 % du revenu. Son abattement reste à plus
+     tard.
+126. **« Une moindre baisse » ne s'écrit pas** : « Ce que le calcul
+     montre ». La décision 89 est corrigée : les petites baisses rendent
+     23 € par an à un retraité. Le site dit que la pension nette baisse moins
+     que la brute, que personne ne tombe sous 1 050 €, et que plus d'un quart
+     des retraités, sous ce plancher, ne perdent rien.
+127. **Le rendement ne se montre plus sur le site** : « Ne plus le
+     montrer », après avoir demandé pourquoi la proposition sert 0,2 % quand
+     les cotisations d'aujourd'hui paieraient 0,3 %. Le tableau des
+     rendements sort du site.
+128. **Les deux phrases de l'accueil sont retirées** : « Les retirer » —
+     « le rendement est le même pour tous » et « 100 % de ce que vous avez
+     cotisé vous revient ».
+129. **La baisse montrée à un retraité est celle de ce qu'il touche en
+     2026** : « Ce qu'il touche en 2026 », et non sa pension au jour du
+     départ.
+130. **Le même taux pour tous les actifs** : « Le même taux ». Le gain croît
+     avec le salaire ; ni forfait ni franchise.
+131. **Le site : une petite passe, puis la refonte** : ce qui ne dépend
+     d'aucun calcul se corrige tout de suite, le reste quand le modèle aura
+     suivi.
+132. **L'apport pour un premier logement est retiré** : « On enlève l'apport
+     pour un premier logement. Je ne connaissais pas l'effet de second ordre
+     quand j'ai décidé de cela, ça ne met plaît pas. » La décision 33 tombe.
+133. **Ce qui reste de la réserve au décès va aux retraités de sa
+     génération** : « Aux retraités de sa génération », et leur est rendu
+     quand la crise assurée ne peut plus rien leur coûter.
+134. **Le relevé de compte annuel entre au programme, pour les actifs et
+     pour les retraités** : « Oui, aux retraités aussi ».
+135. **Rien n'est gelé** : « On ne gèle rien ». Le chantier 10 se clôt sans
+     gel.
+136. **Pas de date** : « Pas de date », ni pour la version publique, ni pour
+     la dernière décision.
+137. **Le test auprès de vingt personnes attend le site refait** : « Quand
+     le site sera refait ».
+138. **La réserve de 1 % porte sur toutes les pensions** : « Toutes les
+     pensions », celles d'aujourd'hui et celles à venir. Non chiffré : à
+     étudier, face à la décision 46.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -2508,6 +2611,12 @@ aucun. Rien n'est gelé.
   la page Coût et le programme ; la mesure de tête, les décisions que le site
   montre ; la date, la version publique le 22 janvier 2027 ; le statut,
   `gelée` ou `à faire`.
+- Le 13 novembre, après les décisions 108 à 138 : relire les dix
+  « questions qui fâchent » (`186/2026-11-09-questions-qui-fachent.md`) ; le
+  détail du relevé annuel et du protocole du test ; la part patronale du
+  pilier au SMIC et le chiffre du message au SMIC ; ce que la garantie
+  regarde, la pension propre ou toutes les pensions de la personne ; la
+  relecture du diaporama. Le reste est tranché.
 
 ## Comment s'en servir
 

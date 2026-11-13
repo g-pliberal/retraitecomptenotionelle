@@ -1,13 +1,11 @@
 # Les cinq questions de la garantie d'invalidité : les faits, les options, ce qu'elles donnent aux gens, et une piste pour chacune
 
-**Reprise, au 7 novembre 2026.** Les cinq questions de la décision 78 sont
-instruites : pour chacune, les faits, deux à quatre options, ce qu'elles
-donnent à six cas types, leur coût, leur droit, les voisins, une piste. Rien
-n'est tranché : le propriétaire y réfléchit, et y répond d'un mot (« Les cinq
-questions, en un mot », en fin de note). Ses réponses s'écrivent en décisions
-sous le chantier 6, après relecture d'`origin/main` pour le numéro. Restent à
-lire, quand la DREES répondra : ses fiches de l'AAH et de l'ASI (édition
-2025). Puis une session du modèle chiffre la piste retenue, au scénario 6.
+**Reprise, au 13 novembre 2026.** Le propriétaire a répondu aux cinq questions
+le 13 novembre (décisions 115 à 119) : la garantie s'ouvre dès la pension
+d'invalidité sauf pour qui peut travailler ; deux critères, l'un ou l'autre ;
+l'allocation aux adultes handicapés d'abord ; l'assurance invalidité commune
+paie pour les fonctionnaires ; pas de reprise sur la succession avant 65 ans.
+Reste une session du modèle, qui chiffre ces règles sur la proposition seule.
 
 *Le 7 novembre 2026, après la décision 78 — la garantie vieillesse ouverte dès l'invalidité, pour tous les invalides, du public comme du privé —, la note des planchers (`186/2026-11-07-planchers-etude.md`, « La garantie pour tous les invalides, et les conflits déjà visibles ») pose cinq questions au propriétaire, qui répond : « pour les cinq questions, ouvre une nouvelle session ; j'ai besoin de réfléchir un peu plus au sujet ». Cette note l'y aide ; elle ne décide rien. La vérification caisse par caisse est menée ailleurs, le même jour (note `…-invalidite-caisses.md`) ; celle-ci ne la refait pas. La session a lu, dans l'index LEGI de la DILA (à jour au 2 novembre 2026, interrogé à la date du 7 novembre 2026) : L. 341-1, R. 341-2, L. 341-4 et L. 341-15, L. 351-1-5, L. 815-13, L. 815-24 et l'ancien L. 815-28, L. 821-1, L. 821-2, L. 821-3, L. 821-5 et D. 821-1 du code de la sécurité sociale ; L. 27, L. 28, L. 29 et L. 31 du code des pensions civiles et militaires ; l'article 5 du décret n° 91-613. Elle a lu la circulaire de la Cnav n° 2026-14 du 17 avril 2026 sur l'ASI ; les fichiers du dépôt tirés du panorama de la DREES de 2026 et du jaune des pensions du PLF 2027. Le site de la DREES a refusé la lecture automatique (503) : ce qui en vient, et des documents parlementaires du PLF 2026, est relevé par le moteur de recherche, sans lecture de la page, et marqué comme tel. Les calculs à côté sont dans la note, avec leur méthode. Les règles de la Suède, de l'Allemagne, des Pays-Bas et de la Belgique ont été lues aux textes officiels (riksdagen.se, gesetze-im-internet.de, wetten.overheid.nl, Försäkringskassan, UWV, INAMI) par un agent de la session ; ce qu'il n'a pu y vérifier est dit comme tel.*
 

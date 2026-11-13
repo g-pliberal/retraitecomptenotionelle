@@ -1,13 +1,11 @@
 # Une garantie vieillesse dégressive, pour que le travail paie toujours : les précédents lus aux sources, et chaque option chiffrée
 
-**Reprise, au 10 novembre 2026.** Tranché (décisions 100 à 102), écrit au
-modèle au scénario 6 seul, servi d'office (décision 20) et dit par le site :
-`2026-11-09-garantie-degressive-au-modele.md`,
-`2026-11-09-garantie-d-office.md`, `2026-11-10-site-garantie-degressive.md`.
-Plus rien à écrire. Restent ouverts, au propriétaire : ce qui paie le
-surcoût, l'export dans l'Union, la CSG du complément ; si la garantie
-d'office peut se refuser ; et la phrase de l'accueil, la forme retenue ne
-payant pas les pensions sous la moitié du plancher.
+**Reprise, au 13 novembre 2026.** Tout est tranché et écrit (décisions 100 à
+102). Le 13 novembre, le propriétaire a ajouté : la TVA paie le supplément
+(décision 123), et la garantie servie d'office peut se refuser par écrit
+(décision 124). Reste une session du modèle pour le refus, qui baisse le
+recours ; et, à lire aux textes avant de publier, la garantie versée à qui vit
+ailleurs dans l'Union et la CSG du complément.
 
 Le propriétaire, le 9 novembre 2026 : la garantie (800 € plus 250 €
 d'isolement) est différentielle ; un salarié au SMIC à carrière complète,

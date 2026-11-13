@@ -1,16 +1,5 @@
 # Tout ce que le programme attend du propriétaire, au 13 novembre : les questions, ce que chaque réponse change, et ses réponses
 
-**Reprise, au 13 novembre 2026.** Les questions que les notes de l'action
-laissaient au propriétaire sont rassemblées ici, en six lots, la plus
-bloquante d'abord : le taux de cotisation, puis le rythme de la baisse, les
-complémentaires, les enfants et l'invalidité, la garantie, le message et le
-site, enfin ce qui peut attendre. Chacune dit ce que chaque réponse change et
-ce que la session recommande. Elles lui sont posées ce jour ; ses réponses
-s'écrivent sous « Ce que le propriétaire a répondu », en fin de note, et en
-décisions dans `docs/feuille_de_route_programme.md`, à partir de la 108. Une
-question sans réponse reste ouverte : la session suivante la repose telle
-quelle.
-
 *Le 13 novembre 2026, action 186. Le propriétaire revient après plusieurs
 jours et veut traiter ce qui l'attend. Cette session ne touche ni au modèle
 ni au site : elle relève les questions restées ouvertes dans les notes du 7
@@ -347,3 +336,59 @@ aussi écrire sa propre réponse.
   coûter (décision 133).
 - **28, le relevé annuel** : « Oui, aux retraités aussi » (décision 134).
 - **30, le gel** : « On ne gèle rien » (décision 135).
+- **30, la date** : « Pas de date », ni pour la version publique ni pour la
+  dernière décision (décision 136).
+- **29, le test auprès de vingt personnes** : « Quand le site sera refait »
+  (décision 137).
+- **27, l'assiette de la réserve** : « Toutes les pensions », contre la
+  recommandation ; non chiffré, à étudier (décision 138).
+
+Quatre réponses s'écartent de ce que la session recommandait sans la
+contredire sur les faits : les 18 % du privé dès le premier jour, la base du
+partage des parents, le rendement retiré du site, la réserve sur toutes les
+pensions. Trois reviennent sur une décision : l'apport pour un logement
+(33), « une moindre baisse » (89), le taux du régime général avant
+l'intégration (48).
+
+## Ce qui reste ouvert
+
+- Les dix « questions qui fâchent » : il veut les relire (question 24).
+- Le détail du relevé annuel (la phrase, l'estimation de pension, le papier
+  ou le courriel) et du protocole du test (quotas, qui mène, données), non
+  posés un à un : les pistes des notes tiennent lieu de défaut.
+- Dans la note du gain des actifs : la part patronale du pilier au SMIC, et
+  le chiffre du message au SMIC (91 € ou 39 €).
+- Ce que la garantie regarde : la pension propre seule, ou toutes les
+  pensions de la personne, réversion comprise.
+- La réserve rendue de son vivant : la décision 133 le dit en passant ; les
+  dates restent à écrire.
+- La relecture du diaporama (question 31).
+- À lui confirmer, lecture de la session : avec le rendement retiré du site
+  (décision 127), l'argument « net du déficit, la proposition rend plus »
+  tombe, et la convention reste publiée à la page Méthode (décision 84).
+
+## Ce que les réponses demandent, pour des sessions neuves
+
+Au modèle, au scénario 6 seul, une étape par session, le test d'abord :
+
+- le régime général à 10,13 % sous le plafond pour le salarié du privé tant
+  que l'Agirc-Arrco n'est pas intégrée, et ce que la caisse y perd
+  (décision 111) ; c'est la suite de l'étape 2 de
+  `2026-11-07-complementaires-au-modele.md` ;
+- la baisse du stock par cinquièmes sur la page Coût (décision 109) ;
+- la hausse des pensions des libéraux, payée par leur section (113) ;
+- la part des parents sur l'économie brute (114) ;
+- la garantie d'invalidité (115 à 122) ;
+- le refus de la garantie (124), qui baisse le recours ; les protections de
+  la LVT (125), qui baissent son produit ;
+- la réserve de 1 % : par génération (133), et son extension aux pensions à
+  venir (138), à étudier d'abord ;
+- l'apport pour un logement : rien à écrire, le modèle ne le connaît pas.
+
+Au site, quand ses pages seront libres : d'abord la petite passe (131) — les
+deux phrases de l'accueil retirées (128), le tableau des rendements retiré
+(127), l'apport pour un logement retiré (132), le message aux retraités
+(126) — ; puis la refonte, avec la baisse mesurée sur 2026 (129), le relevé
+annuel (134) et les 18 % du privé (111). Le test des vingt personnes vient
+après (137). Aucune action n'est gelée et aucune date n'est fixée (135,
+136) : la note du gel n'a plus de suite.

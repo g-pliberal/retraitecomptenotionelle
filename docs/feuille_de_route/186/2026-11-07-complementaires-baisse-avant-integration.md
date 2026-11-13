@@ -1,14 +1,11 @@
 # La baisse des pensions avant l'intégration : les complémentaires que l'État règle, et l'ordre refait
 
-**Reprise, au 7 novembre 2026.** L'étape 1 bis est faite : les complémentaires
-que l'État règle baissent dès la bascule, par cinquièmes, les seules pensions
-déjà servies (décisions 86 et 87), au taux que le coût du scénario 6 donne à
-leur cas type, ou à l'ensemble. L'ordre : complémentaire agricole 2026,
-Agirc-Arrco 2032, CNBF 2049 ; l'Ircantec, le RCI, les libéraux et les navigants
-au-delà de 2070. Restent au propriétaire la hausse des libéraux et le
-calendrier de la page Coût (« Ce qui reste au propriétaire »). La suite, l'étape
-2, le moteur d'une carrière, s'ouvre dans une session neuve ; le plan est dans
-`186/2026-11-07-complementaires-au-modele.md`.
+**Reprise, au 13 novembre 2026.** L'étape est faite, et le propriétaire a
+tranché le 13 novembre ce qui restait. Les pensions des libéraux que le compte
+relève montent, payées par leur caisse (décision 113). Toutes les pensions
+servies baissent par cinquièmes, sur la page Coût aussi (décision 109). Reste
+une session du modèle pour chacune ; le plan est dans
+`2026-11-07-complementaires-au-modele.md`.
 
 *Le 7 novembre 2026, une session du modèle mène l'étape 1 bis du portage des
 décisions du chantier 6 : la baisse que les décisions 2, 3 et 43 imposent dès

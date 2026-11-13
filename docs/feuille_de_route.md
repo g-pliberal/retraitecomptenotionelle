@@ -8080,17 +8080,18 @@ base des conventions collectives ». Trois étapes en naissent ; les étapes 4 e
 
 ### 186. Le programme du parti sur les retraites : chaque grande idée étudiée à fond, aux sources, puis le modèle et le site qui la montrent — `en cours`
 
-**Reprise, au 13 novembre 2026.** Tout ce que l'action attend du propriétaire
-est rassemblé dans une seule note, `186/2026-11-13-questions-au-proprietaire.md` :
-trente et une questions en six lots, chacune avec ce que chaque réponse change
-et une recommandation. La première décide du reste : le taux de cotisation,
-18 %, 21,2 % ou 15,9 %. Elles lui ont été posées le 13 novembre ; ses réponses
-ne sont pas encore écrites. Par quoi commencer : lire la fin de cette note,
-« Ce que le propriétaire a répondu », et lui reposer ce qui y manque. Ensuite
-seulement, des sessions neuves portent ses réponses au modèle puis au site,
-une étape chacune. Ce qui est déjà tranché et attend son portage — la
-réversion, les enfants, les recettes, les complémentaires — est dit en tête
-de chaque note de l'action. Aucune action n'est gelée.
+**Reprise, au 13 novembre 2026.** Le propriétaire a répondu le 13 novembre à
+presque tout ce qui l'attendait : trente et une décisions, de la 108 à la
+138, dans `docs/feuille_de_route_programme.md`. Le taux reste 18 %, pour le
+salarié du privé aussi dès le premier jour. Les pensions servies baissent par
+cinquièmes, sans seuil. L'apport pour un logement est retiré. Le rendement
+et deux phrases sortent du site. Rien n'est gelé, aucune date n'est fixée.
+La note `186/2026-11-13-questions-au-proprietaire.md` dit ce qui reste
+ouvert et ce que ses réponses demandent. Par quoi commencer : une session du
+modèle, sur la proposition seule, écrit les 18 % du privé avant l'entrée de
+sa complémentaire au régime commun, le test d'abord. Puis une session du
+site, quand ses pages seront libres, retire ce que les décisions retirent.
+Il lui reste à relire les dix « questions qui fâchent ».
 
 **D'où elle vient.** Le 6 novembre 2026, le propriétaire demande un bilan :
 les vagues se succèdent, et le chantier semble sans fin. La session mesure

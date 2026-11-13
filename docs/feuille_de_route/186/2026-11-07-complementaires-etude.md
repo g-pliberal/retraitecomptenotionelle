@@ -1,14 +1,13 @@
 # Les complémentaires étudiées aux sources : ce qui n'est pas cotisation, leurs réserves, et la manière de les sauver
 
-**Reprise, au 7 novembre 2026.** Le chantier 6 est tranché (décisions 36 à
-43, 47 et 48). Restent au propriétaire, en fin de note : la promesse des
-18 % (décision 45) face aux 25,83 % du salarié du privé avant l'intégration
-de l'Agirc-Arrco ; la piste d'une loi d'équilibre pour l'Agirc-Arrco. Les
-planchers (décision 42, rouverte) sont confiés à une session neuve. Puis une
-session du modèle porte les décisions 36 à 48 : chaque complémentaire
-projetée jusqu'à l'épuisement de ses réserves, intégrée alors, la CEG et la
-CET retirées dès la bascule, les 18 % pour les seuls affiliés au régime
-général (« Ce que le moteur sait faire »).
+**Reprise, au 13 novembre 2026.** Le propriétaire a tranché le 13 novembre les
+deux questions qui restaient ici. Le salarié du privé cotise 18 % dès le
+premier jour : le régime général baisse pour que le total fasse 18 %,
+l'Agirc-Arrco gardant ses cotisations jusqu'à son intégration (décision 111,
+qui corrige la 48). Il n'y aura pas de loi d'équilibre pour l'Agirc-Arrco
+(décision 112). Reste une session du modèle, qui porte ces décisions à la
+proposition seule : le plan est dans
+`2026-11-07-complementaires-au-modele.md`.
 
 *Le 7 novembre 2026, le propriétaire ouvre le chantier 6 de l'action 186 :
 « Les complémentaires : rien que leurs cotisations, sauvées mais dissoutes »

@@ -1,14 +1,10 @@
 # Le gain des actifs en euros : pourquoi il croît avec le salaire, et trois façons de le rendre
 
-**Reprise, au 9 novembre 2026.** L'étude est faite ; ni le modèle ni le site
-ne sont touchés, et rien n'est décidé. Elle explique les 39 € du SMIC par la
-réduction générale, puis chiffre, sous les lectures A et B, la baisse
-uniforme du taux, le même montant pour chacun et la franchise. Au
-propriétaire, en fin de note (« Ce que le propriétaire tranche ») : le but,
-le même taux ou les mêmes euros ; qui crédite le compte de ce qui n'est pas
-cotisé ; la part patronale du pilier dans la réduction générale ; le chiffre
-que le message montre au SMIC. A ou B reste ouvert. Aucune session du modèle
-avant ses réponses.
+**Reprise, au 13 novembre 2026.** Le propriétaire a tranché le 13 novembre :
+le même taux pour tous, 18 %, et un gain qui croît avec le salaire (décisions
+108 et 130) ; ni forfait ni franchise. Restent deux questions de détail pour
+lui : la part patronale du pilier au SMIC, et le chiffre que le message montre
+au SMIC, 91 € ou 39 €.
 
 *Le 9 novembre 2026, action 186, chantier 1. Le constat du chantier 8 : aux
 taux de la proposition, le salaire net gagne 39 € par mois au SMIC et 417 €

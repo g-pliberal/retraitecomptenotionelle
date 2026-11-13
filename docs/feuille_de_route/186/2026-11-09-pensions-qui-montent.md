@@ -1,14 +1,12 @@
 # Combien de retraités voient leur pension monter : le compte, au modèle tel qu'il est
 
-**Reprise, au 9 novembre 2026.** Le compte est fait, rien n'est changé au
-modèle ni au site. Sur la grille du coût, 1,5 % des retraités de la bascule
-voient leur pension contributive monter, presque tous des libéraux ; 97,7 %
-la voient baisser. Ceux qui touchent plus sont ailleurs : sous le plancher
-de la garantie, que la grille ne décrit pas et que la distribution publiée
-compte par millions. Au propriétaire, les cinq questions de la fin (« Ce que
-le propriétaire tranche »), dont la phrase du site. Puis, s'il le veut, une
-session d'étude refait le compte sur la grille large
-(`scripts/grille_large.py`).
+**Reprise, au 13 novembre 2026.** Le compte est fait. Le propriétaire a
+tranché le 13 novembre deux de ses cinq questions : les pensions des libéraux
+montent, payées par leur caisse (décision 113) ; la baisse montrée à un
+retraité est celle de ce qu'il touche en 2026 (décision 129). Restent pour lui
+la phrase du site, et ce que la garantie regarde : la pension propre seule, ou
+toutes les pensions de la personne. Le compte refait sur la grille large reste
+à faire, s'il le veut.
 
 *Le 9 novembre 2026, action 186, chantier 8, décision 90. Le modèle est celui
 de `main` au commit `1c32439`, réglages de la page Coût, variante

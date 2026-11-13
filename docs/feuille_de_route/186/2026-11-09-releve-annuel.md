@@ -1,13 +1,10 @@
 # Le relevé de compte annuel : ce qu'envoient la Suède et les autres, ce que la France envoie déjà, et la maquette pour trois carrières nées en 1995
 
-**Reprise, au 9 novembre 2026.** Le relevé annuel est étudié aux sources, et
-sa maquette chiffrée au modèle tel qu'il est (commit `1c32439`, rien n'y
-change) pour trois carrières nées en 1995. Rien n'est décidé. Au
-propriétaire, en fin de note (« Ce que le propriétaire tranche ») : si le
-relevé entre au programme et sous quelle phrase ; s'il porte une pension
-estimée, que la Suède a retirée du sien en 2018 ; le papier ou le courriel ;
-à qui il va. Puis, s'il le veut, une session du site en fait un écran de la
-version publique, quand les pages seront libres (chantier 9).
+**Reprise, au 13 novembre 2026.** Le propriétaire a tranché le 13 novembre :
+le relevé annuel entre au programme, pour les actifs et pour les retraités
+(décision 134). Le détail — la phrase, l'estimation de pension, le papier ou
+le courriel — garde les pistes de la note, faute de réponse. Reste une session
+du site, à la refonte, pour en faire un écran de la version publique.
 
 *Le 9 novembre 2026, action 186, chantier 8. Le propriétaire : « un relevé
 de compte annuel, pour rendre l'espoir visible ». La session lit ce

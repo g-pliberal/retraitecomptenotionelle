@@ -1,14 +1,10 @@
 # Le rendement net du déficit : ce que chaque génération paie, et ce que la comparaison devient
 
-**Reprise, au 9 novembre 2026.** Le rendement net est chiffré, rien n'est
-touché au modèle ni au site. La comparaison ne s'inverse pas : net du
-déficit que le COR projette, le droit actuel rend encore plus que la
-proposition à chaque cas type du privé, de la génération 1960 à la
-génération 2010, sous les conventions du site comme sous celles du COR ; la
-caisse de la proposition, telle que le modèle la chiffre, est même plus
-déficitaire que le droit actuel jusqu'en 2054. Au propriétaire : les six
-questions de la fin (« Ce que le propriétaire tranche »). Rien d'autre à
-faire avant ses réponses.
+**Reprise, au 13 novembre 2026.** Le rendement net est chiffré. Le
+propriétaire a tranché le 13 novembre : le rendement ne se montre plus sur le
+site (décision 127). L'argument « net du déficit, la proposition rend plus »,
+faux au modèle, n'a donc plus de place ; c'est la lecture de la session, à lui
+confirmer. Cette note n'a plus rien à faire.
 
 *Le 9 novembre 2026, le propriétaire ouvre la suite du chantier 7 de
 l'action 186 : « le rendement des cotisations, net de ce que chaque

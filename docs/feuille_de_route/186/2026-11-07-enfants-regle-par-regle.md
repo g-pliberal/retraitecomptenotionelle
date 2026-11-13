@@ -1,15 +1,12 @@
 # Les droits familiaux, règle par règle : dix-sept fiches, pour le stock et pour l'avenir
 
-**Reprise, au 7 novembre 2026.** Les dix-sept dispositifs sont évalués et
-tranchés (décisions 50 à 61) : tout est retiré, au stock par la baisse et pour
-l'avenir, sauf l'AVPF, la MDA d'enfant handicapé et la majoration de
-réversion pour enfant à charge ; ce que coûtaient les droits retirés va pour
-moitié à une prestation en argent aux parents d'aujourd'hui, pour moitié au
-déficit. Reste à étudier aux sources cette prestation (forme, montant,
-payeur) et celle des parents d'enfants handicapés ; au propriétaire, la base
-du partage et son lien avec la décision 29. Puis une session du modèle, au
-scénario 6 seul (« Ce qui reste à faire »). Restent au chantier 3 les 49
-autres dispositifs.
+**Reprise, au 13 novembre 2026.** Les dix-sept dispositifs sont tranchés
+(décisions 50 à 61). Le 13 novembre, le propriétaire a fixé la base du partage
+: la moitié de l'économie comptée avant la garantie va aux parents, soit 0,40
+point de PIB par an (décision 114). Reste à étudier aux sources la prestation
+en argent aux parents d'aujourd'hui, et celle des parents d'enfants handicapés
+; puis une session du modèle, sur la proposition seule (« Ce qui reste à faire
+»). Restent au chantier 3 les 49 autres dispositifs.
 
 *Le 7 novembre 2026, à la lecture de l'étude des enfants
 (`2026-11-07-enfants-etude-et-couts.md`), le propriétaire ne retient aucune

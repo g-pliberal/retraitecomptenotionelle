@@ -1,15 +1,13 @@
 # La garantie d'invalidité face aux caisses et aux complémentaires : la vérification caisse par caisse
 
-**Reprise, au 7 novembre 2026.** La vérification est faite, aux textes en
-vigueur (index LEGI) et aux chiffres publiés : seize caisses de base, sept
-complémentaires, les prestations hors retraite, et le tableau des conflits
-(section 4). Pas de double paiement ni de trou pour qui est reconnu invalide
-par sa caisse ; des critères, des planchers et des payeurs qui divergent. Les cinq
-questions de la note des planchers restent à la note `…-invalidite-questions.md` ;
-celle-ci n'en donne que les faits (section 5), et en ajoute six (« Ce qui revient
-au propriétaire »). Par quoi commencer : ces questions, au propriétaire ; puis
-une session du modèle, au seul scénario 6. Chiffres de la DREES et de
-l'Agirc-Arrco seulement relevés : leurs sites ont répondu 503.
+**Reprise, au 13 novembre 2026.** La vérification est faite, et le
+propriétaire a répondu le 13 novembre à ses six questions (décisions 120 à
+122, et 115 pour l'invalide qui peut travailler). Le plancher à la moitié du
+traitement tombe pour les nouveaux invalides ; les rentes de réparation ne
+comptent pas dans les ressources de la garantie ; les quatre autres points
+suivent les règles déjà décidées. Reste une session du modèle, sur la
+proposition seule. Les chiffres de la DREES et de l'Agirc-Arrco restent à
+relire à leur source.
 
 *Le 7 novembre 2026, après la décision 78 — la garantie, 1 050 € seul, 800 € par personne en couple, en euros de 2026, ouverte dès le départ pour invalidité, pour tous les invalides, payée par l'assureur du risque —, le propriétaire demande : « il faut voir s'il n'y a pas de conflit avec les différentes caisses et complémentaires ». La session a lu les textes de chaque caisse dans l'index LEGI de la DILA (à jour au 2 novembre 2026, versions en vigueur le 7 novembre 2026), les fiches du dépôt sur l'invalidité et la série de la DREES que le dépôt certifie. L'origine de chaque chiffre est dite entre parenthèses : **publié** (lu à sa source), **dépôt** (déjà dans le dépôt, certifié ou cité par une fiche), **relevé** (lu dans l'extrait d'un moteur de recherche, le document n'ayant pu être ouvert), **à côté** (calculé par la session).*
 
