@@ -94,9 +94,9 @@ qu'elle dure. D'où sept règles.
   feuille de route s'ouvre, sous son titre, sur un paragraphe
   `**Reprise, au <date>.**` de 150 mots au plus, en lignes de largeur
   ordinaire : où elle en est, ce qui reste, par quoi commencer, et la note à
-  lire pour le détail ; `python scripts/reprise.py`, ou `reprise.py 138` pour
-  une seule action, les imprime avec la liste des notes de chacune. La session
-  qui avance l'action le récrit, daté du jour, au commit de sa note.
+  lire pour le détail ; `python scripts/reprise.py` les imprime tous, sans les
+  notes, et `reprise.py 138` ceux d'une action, avec la liste de ses notes. La
+  session qui avance l'action le récrit, daté du jour, au commit de sa note.
 - **Chercher avant de lire.** L'outil Grep d'abord, qui omet les lignes
   géantes et passe ce que `.ignore` nomme (`grep -n` par Bash, seulement sur
   un fichier sans ligne démesurée), puis la seule fenêtre utile (`Read` avec

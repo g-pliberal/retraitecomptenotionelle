@@ -292,8 +292,8 @@ Quatre endroits, dans cet ordre :
    qui ne va pas encore, la 3 les actions en cours et par quoi commencer.
 3. **Les blocs « Reprise »** : `python scripts/reprise.py` imprime, pour
    chaque action en cours de la feuille de route, où elle en est et par quoi
-   reprendre, avec la liste de ses notes ; `python scripts/reprise.py 138`
-   pour une seule.
+   reprendre, et compte ses notes ; `python scripts/reprise.py 138`, pour
+   une seule, les liste.
 4. **Les notes d'étape**, `docs/feuille_de_route/<action>/` : une par étape,
    datée. Les actions closes passent dans `docs/archives/`.
 

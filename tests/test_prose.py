@@ -1154,6 +1154,66 @@ def test_chaque_action_en_cours_s_ouvre_sur_son_bloc_reprise():
     assert not fautes, fautes
 
 
+def test_sans_numero_reprise_n_imprime_que_les_blocs(tmp_path, capsys):
+    """Sans numéro, `scripts/reprise.py` n'imprime que les blocs « Reprise »,
+    celui de chaque action en cours et ceux de ses étapes inachevées : la
+    liste des notes de chaque action tient en une ligne, qui les compte et dit
+    où elles sont. Le 13 novembre 2026, ces listes faisaient 125 Ko des 197 Ko
+    imprimés, 855 lignes dont 272 pour la seule action 138 (action 135, note
+    de ce jour). Avec un numéro, la liste reste, une note par ligne."""
+    reprise = _script("reprise")
+    feuille = tmp_path / reprise.FEUILLE
+    feuille.parent.mkdir(parents=True)
+    feuille.write_text(
+        "# Feuille de route\n\n"
+        "### 7. Les pensions de réversion — `en cours`\n\n"
+        "**Reprise, au 12 novembre 2026.** Le calcul est fait.\nReste la page.\n\n"
+        "La demande.\n\n"
+        "### 8. Le minimum contributif — `en cours`\n\n"
+        "**Reprise, au 13 novembre 2026.** Rien n'est commencé.\n\n"
+        "### 9. Le rachat de trimestres — `à faire`\n\nPlus tard.\n",
+        encoding="utf-8")
+    dossier = tmp_path / reprise.NOTES / "7"
+    dossier.mkdir(parents=True)
+    (dossier / "2026-11-10-etape-1.md").write_text(
+        "# Le calcul de la réversion\n\nFait.\n", encoding="utf-8")
+    (dossier / "2026-11-11-etape-2.md").write_text(
+        "# Le plafond de ressources\n\nFait.\n", encoding="utf-8")
+    (dossier / "2026-11-12-etape-3.md").write_text(
+        "# La page de la réversion\n\n"
+        "**Reprise, au 12 novembre 2026.** Le gabarit est posé.\n\nLe détail.\n",
+        encoding="utf-8")
+
+    assert reprise.main([], racine=tmp_path) == 0
+    tout = capsys.readouterr().out
+    # Les blocs des deux actions en cours, et celui de l'étape inachevée.
+    assert "### 7. Les pensions de réversion — `en cours`" in tout
+    assert "Le calcul est fait.\nReste la page." in tout
+    assert "### 8. Le minimum contributif — `en cours`" in tout
+    assert "Rien n'est commencé." in tout
+    assert "Le rachat de trimestres" not in tout
+    assert ("Étape en cours, docs/feuille_de_route/7/2026-11-12-etape-3.md :\n"
+            "**Reprise, au 12 novembre 2026.** Le gabarit est posé.") in tout
+    # Aucune note listée : une ligne par action qui en a, et une seule.
+    for titre in ("Le calcul de la réversion", "Le plafond de ressources",
+                  "La page de la réversion", "2026-11-10-etape-1.md"):
+        assert titre not in tout, titre
+    lignes_de_notes = [ligne for ligne in tout.split("\n") if ligne.startswith("Notes")]
+    assert lignes_de_notes == [
+        "Notes : 3, dans docs/feuille_de_route/7/ ; "
+        "`python scripts/reprise.py 7` les liste."]
+
+    # Avec un numéro, comme avant : l'action seule, et ses notes une à une.
+    assert reprise.main(["7"], racine=tmp_path) == 0
+    une = capsys.readouterr().out
+    assert "### 8." not in une
+    assert ("Notes, dans docs/feuille_de_route/7/ :\n"
+            "  2026-11-10-etape-1.md — Le calcul de la réversion\n"
+            "  2026-11-11-etape-2.md — Le plafond de ressources\n"
+            "  2026-11-12-etape-3.md — La page de la réversion\n") in une
+    assert "**Reprise, au 12 novembre 2026.** Le gabarit est posé." in une
+
+
 def test_pousser_joue_les_deux_tests_de_la_feuille_de_route():
     """``scripts/pousser.sh`` joue, avant d'envoyer un commit qui touche la
     feuille de route, ce test-ci et le suivant (action 163) : renommés, l'envoi

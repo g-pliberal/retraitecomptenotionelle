@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Le bloc « Reprise » de chaque action en cours, et ceux de ses étapes.
 
-    python scripts/reprise.py          # toutes les actions en cours
-    python scripts/reprise.py 138      # une action
+    python scripts/reprise.py          # toutes les actions en cours, sans leurs notes
+    python scripts/reprise.py 138      # une action, avec la liste de ses notes
 
 Une session qui cherche quoi faire ne lit que ces blocs (``CLAUDE.md``,
 « Économiser le contexte »). Chaque action `en cours` de
@@ -10,9 +10,13 @@ Une session qui cherche quoi faire ne lit que ces blocs (``CLAUDE.md``,
 depuis l'action 148, sont dans ``docs/feuille_de_route/<numéro>/`` ; quand
 ses étapes se mènent en parallèle, chacune tient son propre bloc, en tête du
 fichier de sa note, tant qu'elle n'est pas finie. Ce script met ces blocs
-bout à bout, avec la liste des notes de chaque action, sans rien lire
-d'autre ; ``tests/test_prose.py`` en tient la forme et la mesure, que
-:func:`fautes_d_un_bloc` dit.
+bout à bout, sans rien lire d'autre ; ``tests/test_prose.py`` en tient la
+forme et la mesure, que :func:`fautes_d_un_bloc` dit.
+
+Sans numéro, les notes de chaque action tiennent en une ligne, qui les compte
+et dit où elles sont : listées une à une, elles faisaient 125 Ko des 197 Ko
+imprimés le 13 novembre 2026 (action 135). Avec un numéro, la liste est
+entière, une note par ligne, avec son titre.
 """
 
 from __future__ import annotations
@@ -165,17 +169,24 @@ def titre_d_une_note(texte: str) -> str:
     return premiere[2:].strip() if premiere.startswith("# ") else premiere.strip()
 
 
-def imprimer(action: Action, racine: Path = RACINE) -> list[str]:
+def imprimer(action: Action, racine: Path = RACINE, liste: bool = True) -> list[str]:
+    """Le bloc d'une action, ses notes, puis les blocs de ses étapes
+    inachevées. Sans ``liste``, les notes ne font qu'une ligne."""
     sortie = [f"### {action.numero}. {action.titre} — `{action.etat}`",
               f"({FEUILLE}:{action.ligne})", "", *action.ouverture]
     fichiers = notes(action.numero, racine)
     if not fichiers:
         return sortie
     en_cours = []
-    sortie += ["", f"Notes, dans {NOTES}/{action.numero}/ :"]
+    if liste:
+        sortie += ["", f"Notes, dans {NOTES}/{action.numero}/ :"]
+    else:
+        sortie += ["", f"Notes : {len(fichiers)}, dans {NOTES}/{action.numero}/ ; "
+                       f"`python scripts/reprise.py {action.numero}` les liste."]
     for chemin in fichiers:
         texte = chemin.read_text(encoding="utf-8")
-        sortie.append(f"  {chemin.name} — {titre_d_une_note(texte)}")
+        if liste:
+            sortie.append(f"  {chemin.name} — {titre_d_une_note(texte)}")
         bloc = reprise_d_une_note(texte)
         if bloc:
             en_cours.append((chemin, bloc))
@@ -184,17 +195,18 @@ def imprimer(action: Action, racine: Path = RACINE) -> list[str]:
     return sortie
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: list[str] | None = None, racine: Path = RACINE) -> int:
     analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     analyseur.add_argument("numeros", nargs="*", help="les actions à imprimer (toutes par défaut)")
     arguments = analyseur.parse_args(argv)
-    texte = (RACINE / FEUILLE).read_text(encoding="utf-8")
+    texte = (racine / FEUILLE).read_text(encoding="utf-8")
     choisies = [a for a in actions(texte) if a.etat == EN_COURS
                 and (not arguments.numeros or a.numero in arguments.numeros)]
     if not choisies:
         print("Aucune action en cours sous ces numéros.")
         return 1
-    blocs = ["\n".join(imprimer(action)) for action in choisies]
+    blocs = ["\n".join(imprimer(action, racine, liste=bool(arguments.numeros)))
+             for action in choisies]
     print("\n\n".join(blocs))
     return 0
 
