@@ -1,0 +1,16 @@
+date: "2026-11-13"
+session: "action 135 : reprise.py en sommaire, et les trente dernières notes d'une action"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement à scripts/reprise.py, à ses tests (tests/test_prose.py), à
+  CLAUDE.md, à la carte du dépôt, au préambule de la feuille de route et à
+  une phrase de l'architecture.
+trouve: >-
+  Aucune règle n'a changé. Sans numéro, le script imprime le sommaire des
+  actions en cours, 4 Ko ; avec un numéro, les blocs d'une action et ses
+  trente dernières notes, 22 000 caractères au plus. Chaque sortie entre en
+  entier dans le contexte d'une session.
+reste: >-
+  Les blocs d'étape des actions 138 et 186, à revoir par leurs sessions. Au
+  propriétaire : raccourcir la course de GitHub. Comparer les réponses des
+  agents de recherche à celles relevées avant.

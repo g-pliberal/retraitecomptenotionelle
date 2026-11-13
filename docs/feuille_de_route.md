@@ -60,8 +60,8 @@ titre. Ce fichier ne garde, de chaque action ouverte, que son titre, son bloc
 « Reprise », sa demande, son plan, et les notes écrites avant cette date.
 Quand les étapes d'une action se mènent en parallèle, son bloc le dit, et
 chaque étape inachevée tient le sien sous le titre de sa note : deux sessions
-n'écrivent jamais dans le même fichier. `python scripts/reprise.py` imprime
-tous ces blocs. Une action close emporte le dossier de ses notes sous
+n'écrivent jamais dans le même fichier. `python scripts/reprise.py 138`
+imprime ceux d'une action. Une action close emporte le dossier de ses notes sous
 `docs/archives/feuille_de_route/`, où elles sont gelées.
 
 ---
@@ -5766,15 +5766,15 @@ de statuts et les `manque` de la page Méthode.
 du modèle, en temps et en jetons, sans rien céder sur les vérifications ;
 l'essentiel est fait, une note par étape. La course que GitHub lance à chaque
 envoi reprend, depuis le 12 novembre, les calculs gardés de la dernière course
-verte faite sur le même modèle : elle dure alors 17 min 37, relevé sur GitHub,
-et 30 minutes quand le modèle a bougé. Le script `reprise.py`, sans numéro,
-n'imprime plus les listes de notes : 73 Ko au lieu de 197, encore trop pour
-que l'outil Bash d'une session les montre en entier. Trois décisions attendent
-le propriétaire : raccourcir cette course, ce que `reprise.py` imprime sans
-numéro, faire passer seul un changement transversal. Un chantier reste :
-comparer les réponses des agents de recherche, qui démarrent sans le
+verte faite sur le même modèle : elle dure alors 17 min 37 sur GitHub, et
+30 minutes quand le modèle a bougé. Le script `reprise.py` imprime, sans
+numéro, le sommaire des actions en cours, et avec un numéro les blocs d'une
+action et ses trente dernières notes : chaque sortie entre en entier dans le
+contexte d'une session. Deux décisions attendent le propriétaire : raccourcir
+cette course, et faire passer seul un changement transversal. Un chantier
+reste : comparer les réponses des agents de recherche, qui démarrent sans le
 `CLAUDE.md` de la racine, à celles relevées avant. Notes :
-`2026-11-13-reprise-sans-les-listes-de-notes.md` et
+`2026-11-13-reprise-en-sommaire.md` et
 `2026-11-11-eclaireurs-sans-le-claude-md-racine.md`.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
