@@ -6,10 +6,11 @@ le livrable est le site statique (`README.md`). L'architecture est dans
 tableau de bord `docs/etat.md`, que `python scripts/tableau_de_bord.py`
 fabrique ; les chantiers ouverts, dans `docs/feuille_de_route.md` : une
 session qui cherche quoi faire n'y lit que le bloc « Reprise » qui ouvre
-chacune de ses actions `en cours` (`python scripts/reprise.py`), et note ce
-qu'elle a fait dans un fichier à elle, sous `docs/feuille_de_route/`. Ce
-fichier ne garde que les règles : l'histoire de chacune, et l'incident qui
-l'a fait naître, sont dans `docs/archives/conventions.md`.
+chacune de ses actions `en cours` (`python scripts/reprise.py` les énumère,
+`reprise.py 138` imprime celui d'une action), et note ce qu'elle a fait dans
+un fichier à elle, sous `docs/feuille_de_route/`. Ce fichier ne garde que les
+règles : l'histoire de chacune, et l'incident qui l'a fait naître, sont dans
+`docs/archives/conventions.md`.
 
 ## Git : tout va sur `main`
 
@@ -94,9 +95,10 @@ qu'elle dure. D'où sept règles.
   feuille de route s'ouvre, sous son titre, sur un paragraphe
   `**Reprise, au <date>.**` de 150 mots au plus, en lignes de largeur
   ordinaire : où elle en est, ce qui reste, par quoi commencer, et la note à
-  lire pour le détail ; `python scripts/reprise.py` les imprime tous, sans les
-  notes, et `reprise.py 138` ceux d'une action, avec la liste de ses notes. La
-  session qui avance l'action le récrit, daté du jour, au commit de sa note.
+  lire pour le détail ; `python scripts/reprise.py` imprime le sommaire des
+  actions, une ligne chacune, et `reprise.py 138` les blocs d'une action et
+  ses trente dernières notes. La session qui avance l'action le récrit, daté
+  du jour, au commit de sa note.
 - **Chercher avant de lire.** L'outil Grep d'abord, qui omet les lignes
   géantes et passe ce que `.ignore` nomme (`grep -n` par Bash, seulement sur
   un fichier sans ligne démesurée), puis la seule fenêtre utile (`Read` avec

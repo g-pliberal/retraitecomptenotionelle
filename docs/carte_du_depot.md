@@ -290,10 +290,10 @@ Quatre endroits, dans cet ordre :
 2. **Le tableau de bord**, `docs/etat.md` : refait par GitHub à chaque envoi
    (`scripts/tableau_de_bord.py`). Sa partie 1 dit où l'on en est, la 2 ce
    qui ne va pas encore, la 3 les actions en cours et par quoi commencer.
-3. **Les blocs « Reprise »** : `python scripts/reprise.py` imprime, pour
-   chaque action en cours de la feuille de route, où elle en est et par quoi
-   reprendre, et compte ses notes ; `python scripts/reprise.py 138`, pour
-   une seule, les liste.
+3. **Les blocs « Reprise »** : `python scripts/reprise.py` imprime le
+   sommaire des actions en cours de la feuille de route, une ligne chacune ;
+   `python scripts/reprise.py 138`, pour une action, où elle en est et par
+   quoi reprendre, avec ses dernières notes.
 4. **Les notes d'étape**, `docs/feuille_de_route/<action>/` : une par étape,
    datée. Les actions closes passent dans `docs/archives/`.
 
@@ -314,7 +314,7 @@ officiels, sont dans la partie 1 du tableau de bord.
 | ce que le modèle calcule, et ce qu'il trouve | `README.md` | |
 | comment le dépôt est construit, et où va chaque chose | `docs/architecture.md` : « L'essentiel », § 13, annexe C | |
 | où en est le dépôt, ce qui ne va pas, ce qui reste | `docs/etat.md` | `python scripts/tableau_de_bord.py` |
-| ce qui est en cours, et par où reprendre | `docs/feuille_de_route.md`, le bloc « Reprise » de chaque action | `python scripts/reprise.py` |
+| ce qui est en cours, et par où reprendre | `docs/feuille_de_route.md`, le bloc « Reprise » de chaque action | `python scripts/reprise.py`, puis `python scripts/reprise.py 138` |
 | ce qu'une session a fait | `docs/feuille_de_route/<action>/` | `git log` |
 | ce que le modèle ne calcule pas | `docs/limites.md` et `docs/limites/` | |
 | comment le scénario 1 reste le droit en vigueur | `docs/veille_droit.md`, et `data/reference/legislation/journal_de_veille/` | `python scripts/veille_droit.py` |

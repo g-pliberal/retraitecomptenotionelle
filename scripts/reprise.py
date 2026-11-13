@@ -1,22 +1,24 @@
 #!/usr/bin/env python3
-"""Le bloc « Reprise » de chaque action en cours, et ceux de ses étapes.
+"""Le bloc « Reprise » d'une action en cours, et ceux de ses étapes.
 
-    python scripts/reprise.py          # toutes les actions en cours, sans leurs notes
-    python scripts/reprise.py 138      # une action, avec la liste de ses notes
+    python scripts/reprise.py              # le sommaire des actions en cours
+    python scripts/reprise.py 138          # une action : ses blocs, ses dernières notes
+    python scripts/reprise.py 138 --toutes # la même, toutes ses notes listées
 
 Une session qui cherche quoi faire ne lit que ces blocs (``CLAUDE.md``,
 « Économiser le contexte »). Chaque action `en cours` de
 ``docs/feuille_de_route.md`` s'ouvre sur le sien. Ses notes, une par fichier
 depuis l'action 148, sont dans ``docs/feuille_de_route/<numéro>/`` ; quand
 ses étapes se mènent en parallèle, chacune tient son propre bloc, en tête du
-fichier de sa note, tant qu'elle n'est pas finie. Ce script met ces blocs
-bout à bout, sans rien lire d'autre ; ``tests/test_prose.py`` en tient la
-forme et la mesure, que :func:`fautes_d_un_bloc` dit.
+fichier de sa note, tant qu'elle n'est pas finie. Ce script met bout à bout
+les blocs d'une action, sans rien lire d'autre ; ``tests/test_prose.py`` en
+tient la forme et la mesure, que :func:`fautes_d_un_bloc` dit.
 
-Sans numéro, les notes de chaque action tiennent en une ligne, qui les compte
-et dit où elles sont : listées une à une, elles faisaient 125 Ko des 197 Ko
-imprimés le 13 novembre 2026 (action 135). Avec un numéro, la liste est
-entière, une note par ligne, avec son titre.
+Ce qu'il imprime doit entrer en entier dans le contexte de la session qui le
+lance, et l'outil Bash écarte une sortie de :data:`SORTIE_AU_PLUS` caractères
+(action 135, notes du 13 novembre 2026). Sans numéro, il n'imprime donc que
+le sommaire, une ligne par action ; avec un numéro, il ne liste que les
+:data:`NOTES_LISTEES` dernières notes, sauf ``--toutes``.
 """
 
 from __future__ import annotations
@@ -64,6 +66,14 @@ MOTS_AU_PLUS = 150
 LARGEUR_AU_PLUS = 100
 EN_MOTS_DEPUIS = datetime.date(2026, 11, 11)
 LIGNES_D_AVANT = 10
+#: Ce que l'outil Bash d'une session laisse entrer d'une sortie, en
+#: caractères : au-delà, il la range dans un fichier et n'en montre que les
+#: deux premiers kilo-octets. Constaté le 13 novembre 2026 à 31 000
+#: caractères ; 30 000 est la valeur par défaut de Claude Code.
+SORTIE_AU_PLUS = 30_000
+#: Les notes qu'une action liste, les plus récentes : les 272 de l'action 138
+#: portaient sa sortie à 58 916 caractères.
+NOTES_LISTEES = 30
 
 
 @dataclass
@@ -169,35 +179,62 @@ def titre_d_une_note(texte: str) -> str:
     return premiere[2:].strip() if premiere.startswith("# ") else premiere.strip()
 
 
-def imprimer(action: Action, racine: Path = RACINE, liste: bool = True) -> list[str]:
-    """Le bloc d'une action, ses notes, puis les blocs de ses étapes
-    inachevées. Sans ``liste``, les notes ne font qu'une ligne."""
+def etapes_en_cours(fichiers: list[Path]) -> list[tuple[Path, list[str]]]:
+    """Les notes qui portent un bloc « Reprise », chacune avec le sien."""
+    blocs = [(chemin, reprise_d_une_note(chemin.read_text(encoding="utf-8")))
+             for chemin in fichiers]
+    return [(chemin, bloc) for chemin, bloc in blocs if bloc]
+
+
+def ligne_du_sommaire(action: Action, racine: Path = RACINE) -> str:
+    """Une action en une ligne : son numéro, son titre, la date de son bloc,
+    ses notes et ses étapes inachevées."""
+    trouve = OUVERTURE.match(action.ouverture[0]) if action.ouverture else None
+    date = (trouve.group(0)[len("**Reprise, "):-len(".**")] if trouve
+            else "sans bloc « Reprise »")
+    fichiers = notes(action.numero, racine)
+    suite = (f"{len(fichiers)} note{'s' if len(fichiers) > 1 else ''}" if fichiers
+             else "aucune note")
+    etapes = len(etapes_en_cours(fichiers))
+    if etapes:
+        suite += f", {etapes} étape{'s' if etapes > 1 else ''} en cours"
+    return f"{action.numero}. {action.titre} — {date} ; {suite}"
+
+
+def sommaire(choisies: list[Action], racine: Path = RACINE) -> list[str]:
+    return [f"Actions en cours : {len(choisies)}. Le bloc « Reprise » d'une action, "
+            "ses notes et les blocs",
+            "de ses étapes : `python scripts/reprise.py <numéro>`.", "",
+            *(ligne_du_sommaire(action, racine) for action in choisies)]
+
+
+def imprimer(action: Action, racine: Path = RACINE, toutes: bool = False) -> list[str]:
+    """Le bloc d'une action, la liste de ses notes — les dernières, sauf
+    ``toutes`` —, puis les blocs de ses étapes inachevées."""
     sortie = [f"### {action.numero}. {action.titre} — `{action.etat}`",
               f"({FEUILLE}:{action.ligne})", "", *action.ouverture]
     fichiers = notes(action.numero, racine)
     if not fichiers:
         return sortie
-    en_cours = []
-    if liste:
-        sortie += ["", f"Notes, dans {NOTES}/{action.numero}/ :"]
-    else:
-        sortie += ["", f"Notes : {len(fichiers)}, dans {NOTES}/{action.numero}/ ; "
-                       f"`python scripts/reprise.py {action.numero}` les liste."]
-    for chemin in fichiers:
-        texte = chemin.read_text(encoding="utf-8")
-        if liste:
-            sortie.append(f"  {chemin.name} — {titre_d_une_note(texte)}")
-        bloc = reprise_d_une_note(texte)
-        if bloc:
-            en_cours.append((chemin, bloc))
-    for chemin, bloc in en_cours:
+    listees = fichiers if toutes else fichiers[-NOTES_LISTEES:]
+    entete = f"Notes, dans {NOTES}/{action.numero}/ :"
+    if len(listees) < len(fichiers):
+        entete += (f" les {len(listees)} dernières de {len(fichiers)} "
+                   "(`--toutes` les liste toutes).")
+    sortie += ["", entete]
+    for chemin in listees:
+        sortie.append(f"  {chemin.name} — {titre_d_une_note(chemin.read_text(encoding='utf-8'))}")
+    for chemin, bloc in etapes_en_cours(fichiers):
         sortie += ["", f"Étape en cours, {chemin.relative_to(racine).as_posix()} :", *bloc]
     return sortie
 
 
 def main(argv: list[str] | None = None, racine: Path = RACINE) -> int:
     analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    analyseur.add_argument("numeros", nargs="*", help="les actions à imprimer (toutes par défaut)")
+    analyseur.add_argument("numeros", nargs="*",
+                           help="les actions à imprimer (sans numéro, le sommaire)")
+    analyseur.add_argument("--toutes", action="store_true",
+                           help="lister toutes les notes, et non les dernières")
     arguments = analyseur.parse_args(argv)
     texte = (racine / FEUILLE).read_text(encoding="utf-8")
     choisies = [a for a in actions(texte) if a.etat == EN_COURS
@@ -205,8 +242,10 @@ def main(argv: list[str] | None = None, racine: Path = RACINE) -> int:
     if not choisies:
         print("Aucune action en cours sous ces numéros.")
         return 1
-    blocs = ["\n".join(imprimer(action, racine, liste=bool(arguments.numeros)))
-             for action in choisies]
+    if not arguments.numeros:
+        print("\n".join(sommaire(choisies, racine)))
+        return 0
+    blocs = ["\n".join(imprimer(action, racine, arguments.toutes)) for action in choisies]
     print("\n\n".join(blocs))
     return 0
 

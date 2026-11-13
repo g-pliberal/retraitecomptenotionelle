@@ -1154,15 +1154,10 @@ def test_chaque_action_en_cours_s_ouvre_sur_son_bloc_reprise():
     assert not fautes, fautes
 
 
-def test_sans_numero_reprise_n_imprime_que_les_blocs(tmp_path, capsys):
-    """Sans numéro, `scripts/reprise.py` n'imprime que les blocs « Reprise »,
-    celui de chaque action en cours et ceux de ses étapes inachevées : la
-    liste des notes de chaque action tient en une ligne, qui les compte et dit
-    où elles sont. Le 13 novembre 2026, ces listes faisaient 125 Ko des 197 Ko
-    imprimés, 855 lignes dont 272 pour la seule action 138 (action 135, note
-    de ce jour). Avec un numéro, la liste reste, une note par ligne."""
-    reprise = _script("reprise")
-    feuille = tmp_path / reprise.FEUILLE
+def _feuille_de_route_d_essai(reprise, racine: Path) -> Path:
+    """Trois actions, dont deux en cours ; la 7 a trois notes, dont une étape
+    inachevée. Rend le dossier des notes de la 7."""
+    feuille = racine / reprise.FEUILLE
     feuille.parent.mkdir(parents=True)
     feuille.write_text(
         "# Feuille de route\n\n"
@@ -1170,10 +1165,10 @@ def test_sans_numero_reprise_n_imprime_que_les_blocs(tmp_path, capsys):
         "**Reprise, au 12 novembre 2026.** Le calcul est fait.\nReste la page.\n\n"
         "La demande.\n\n"
         "### 8. Le minimum contributif — `en cours`\n\n"
-        "**Reprise, au 13 novembre 2026.** Rien n'est commencé.\n\n"
+        "**Reprise, au 1er novembre 2026.** Rien n'est commencé.\n\n"
         "### 9. Le rachat de trimestres — `à faire`\n\nPlus tard.\n",
         encoding="utf-8")
-    dossier = tmp_path / reprise.NOTES / "7"
+    dossier = racine / reprise.NOTES / "7"
     dossier.mkdir(parents=True)
     (dossier / "2026-11-10-etape-1.md").write_text(
         "# Le calcul de la réversion\n\nFait.\n", encoding="utf-8")
@@ -1183,35 +1178,80 @@ def test_sans_numero_reprise_n_imprime_que_les_blocs(tmp_path, capsys):
         "# La page de la réversion\n\n"
         "**Reprise, au 12 novembre 2026.** Le gabarit est posé.\n\nLe détail.\n",
         encoding="utf-8")
+    return dossier
+
+
+def test_sans_numero_reprise_n_imprime_qu_un_sommaire(tmp_path, capsys):
+    """Sans numéro, `scripts/reprise.py` imprime le sommaire des actions en
+    cours, une ligne chacune : son numéro, son titre, la date de son bloc
+    « Reprise », ses notes et ses étapes inachevées. Les blocs se lisent
+    ensuite par numéro. L'outil Bash d'une session écarte une sortie de
+    30 000 caractères, dont il ne montre que les deux premiers kilo-octets :
+    le 13 novembre 2026, les blocs de vingt-huit actions en faisaient 70 916,
+    et 190 477 avec les listes de notes (action 135, notes de ce jour)."""
+    reprise = _script("reprise")
+    _feuille_de_route_d_essai(reprise, tmp_path)
 
     assert reprise.main([], racine=tmp_path) == 0
-    tout = capsys.readouterr().out
-    # Les blocs des deux actions en cours, et celui de l'étape inachevée.
-    assert "### 7. Les pensions de réversion — `en cours`" in tout
-    assert "Le calcul est fait.\nReste la page." in tout
-    assert "### 8. Le minimum contributif — `en cours`" in tout
-    assert "Rien n'est commencé." in tout
-    assert "Le rachat de trimestres" not in tout
-    assert ("Étape en cours, docs/feuille_de_route/7/2026-11-12-etape-3.md :\n"
-            "**Reprise, au 12 novembre 2026.** Le gabarit est posé.") in tout
-    # Aucune note listée : une ligne par action qui en a, et une seule.
-    for titre in ("Le calcul de la réversion", "Le plafond de ressources",
-                  "La page de la réversion", "2026-11-10-etape-1.md"):
-        assert titre not in tout, titre
-    lignes_de_notes = [ligne for ligne in tout.split("\n") if ligne.startswith("Notes")]
-    assert lignes_de_notes == [
-        "Notes : 3, dans docs/feuille_de_route/7/ ; "
-        "`python scripts/reprise.py 7` les liste."]
+    assert capsys.readouterr().out == (
+        "Actions en cours : 2. Le bloc « Reprise » d'une action, ses notes et les blocs\n"
+        "de ses étapes : `python scripts/reprise.py <numéro>`.\n"
+        "\n"
+        "7. Les pensions de réversion — au 12 novembre 2026 ; 3 notes, 1 étape en cours\n"
+        "8. Le minimum contributif — au 1er novembre 2026 ; aucune note\n")
 
-    # Avec un numéro, comme avant : l'action seule, et ses notes une à une.
+    # Sur le dépôt, le sommaire entre en entier dans le contexte d'une session.
+    assert reprise.SORTIE_AU_PLUS == 30_000
+    assert reprise.main([]) == 0
+    assert len(capsys.readouterr().out) < reprise.SORTIE_AU_PLUS / 2
+
+
+def test_avec_un_numero_reprise_imprime_les_blocs_et_les_dernieres_notes(tmp_path, capsys):
+    """Avec un numéro, `scripts/reprise.py` imprime le bloc « Reprise » de
+    l'action, la liste de ses notes et les blocs de ses étapes inachevées. Il
+    ne liste que les trente notes les plus récentes, et compte les autres :
+    le 13 novembre 2026, les 272 notes de l'action 138 portaient sa sortie à
+    58 916 caractères, que l'outil Bash écarte. `--toutes` les liste toutes."""
+    reprise = _script("reprise")
+    dossier = _feuille_de_route_d_essai(reprise, tmp_path)
+
     assert reprise.main(["7"], racine=tmp_path) == 0
-    une = capsys.readouterr().out
-    assert "### 8." not in une
+    assert capsys.readouterr().out == (
+        "### 7. Les pensions de réversion — `en cours`\n"
+        "(docs/feuille_de_route.md:3)\n"
+        "\n"
+        "**Reprise, au 12 novembre 2026.** Le calcul est fait.\n"
+        "Reste la page.\n"
+        "\n"
+        "Notes, dans docs/feuille_de_route/7/ :\n"
+        "  2026-11-10-etape-1.md — Le calcul de la réversion\n"
+        "  2026-11-11-etape-2.md — Le plafond de ressources\n"
+        "  2026-11-12-etape-3.md — La page de la réversion\n"
+        "\n"
+        "Étape en cours, docs/feuille_de_route/7/2026-11-12-etape-3.md :\n"
+        "**Reprise, au 12 novembre 2026.** Le gabarit est posé.\n")
+
+    # Trente notes plus anciennes s'ajoutent : trente-trois, dont les trois
+    # premières ne sont plus listées. La dernière, une étape inachevée, reste.
+    assert reprise.NOTES_LISTEES == 30
+    for jour in range(1, 31):
+        (dossier / f"2026-09-{jour:02d}-ancienne.md").write_text(
+            f"# L'ancienne note du {jour}\n\nFait.\n", encoding="utf-8")
+    assert reprise.main(["7"], racine=tmp_path) == 0
+    courte = capsys.readouterr().out
+    assert ("Notes, dans docs/feuille_de_route/7/ : les 30 dernières de 33 "
+            "(`--toutes` les liste toutes).\n"
+            "  2026-09-04-ancienne.md — L'ancienne note du 4\n") in courte
+    assert "2026-09-03-ancienne.md" not in courte
+    assert courte.count(" — L'ancienne note du ") == 27
+    assert "  2026-11-12-etape-3.md — La page de la réversion\n" in courte
+    assert "Étape en cours, docs/feuille_de_route/7/2026-11-12-etape-3.md :" in courte
+
+    assert reprise.main(["7", "--toutes"], racine=tmp_path) == 0
+    entiere = capsys.readouterr().out
     assert ("Notes, dans docs/feuille_de_route/7/ :\n"
-            "  2026-11-10-etape-1.md — Le calcul de la réversion\n"
-            "  2026-11-11-etape-2.md — Le plafond de ressources\n"
-            "  2026-11-12-etape-3.md — La page de la réversion\n") in une
-    assert "**Reprise, au 12 novembre 2026.** Le gabarit est posé." in une
+            "  2026-09-01-ancienne.md — L'ancienne note du 1\n") in entiere
+    assert entiere.count(" — L'ancienne note du ") == 30
 
 
 def test_pousser_joue_les_deux_tests_de_la_feuille_de_route():

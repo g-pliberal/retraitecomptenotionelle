@@ -1713,8 +1713,8 @@ qu'on a corrigé.
   action ouverte y tient son titre et son bloc « Reprise » ; ses notes, une
   par fichier depuis l'action 148, sont dans
   `docs/feuille_de_route/<action>/`, et passent avec l'action close sous
-  `docs/archives/feuille_de_route/` (`python scripts/reprise.py` imprime les
-  blocs).
+  `docs/archives/feuille_de_route/` (`python scripts/reprise.py 138` imprime
+  les blocs d'une action).
 - **Le journal de veille** : une entrée par fichier, dans
   `data/reference/legislation/journal_de_veille/`, depuis l'action 148 ;
   `veille.yaml` ne garde que les sources à consulter (`docs/veille_droit.md`).
