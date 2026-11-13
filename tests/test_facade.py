@@ -12,6 +12,7 @@ tant qu'il vit, est à part (``tests/test_facade_jumeau.py``).
 
 from __future__ import annotations
 
+import dataclasses
 import inspect
 import math
 import re
@@ -21,10 +22,13 @@ import pytest
 
 from retraite_notionnelle import carriere as carriere_python
 from retraite_notionnelle import memoire, pont
+from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle import simulateur as simulateur_python
 from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.config import RACINE_PROJET, Neutralisations, Parametres
 from retraite_notionnelle.donnees.chargement import DonneeInsuffisante, Fiabilite
+from retraite_notionnelle.droit import liquider as liquider_python
+from retraite_notionnelle.droit import ouvrir as ouvrir_python
 from retraite_notionnelle.droit.commun import PensionRegime
 from retraite_notionnelle.droit.liquider import EligibleAgricole
 from retraite_notionnelle.journal import Journal
@@ -34,7 +38,7 @@ from retraite_notionnelle.scenarios.notionnel import ResultatNotionnel
 from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Comparaison
 
 import facade
-from facade import Carriere, NonTransmissible, Simulateur, reversion
+from facade import Carriere, NonTransmissible, Simulateur, liquider, ouvrir, reversion
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 HAUTE = Fiabilite.CERTIFIEE
@@ -582,12 +586,173 @@ def test_une_regle_du_moteur_python_ne_lit_pas_une_table_de_la_facade(simulateur
         ouvrir.duree_requise(simulateur.scenario_actuel, periode, carriere)
 
 
+# -- les règles du droit --------------------------------------------------------------
+
+NE_EN_1955 = dict(annee_naissance=1955, sexe="H", affiliation="salarie_prive_non_cadre",
+                  age_debut=23, age_liquidation=62)
+
+
+def test_une_regle_du_droit_se_demande_par_son_module_et_son_nom(simulateur):
+    """Né en 1955, au régime général : 166 trimestres requis (loi du 20 janvier
+    2014, article 2), l'ouverture à soixante-deux ans (L. 161-17-2, loi du
+    9 novembre 2010) et le taux plein à soixante-sept (L. 351-8). À
+    l'Agirc-Arrco, partir à cinquante-sept ans sans la durée abat la pension au
+    coefficient 0,43 de l'accord, et rien au taux plein. Ce que la règle rend
+    revient sous le type que son jumeau annonce."""
+    moteur = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(**NE_EN_1955)
+    periode = simulateur.catalogue["regime_general"].periode(2017)
+    requis, fiabilite = ouvrir.duree_requise(moteur, periode, carriere)
+    assert (requis, type(requis), type(fiabilite)) == (166, int, Fiabilite)
+    ouverture = ouvrir.age_ouverture(moteur, periode, carriere)
+    assert (ouverture, type(ouverture)) == (62.0, float)
+    assert ouvrir.age_taux_plein(moteur, periode, carriere) == 67.0
+
+    parti_tot = simulateur.carriere_simple(**{**SALARIE, "age_debut": 25, "age_liquidation": 57})
+    complementaire = simulateur.catalogue["agirc_arrco"].periode(2019)
+    assert liquider.abattement_points(
+        moteur, complementaire, parti_tot, 100, 172, 57.0, 2022) == pytest.approx(0.43)
+    assert liquider.abattement_points(
+        moteur, complementaire, parti_tot, 172, 172, 57.0, 2022) == 1.0
+
+
+def test_les_arguments_d_une_regle_se_lient_comme_le_python_les_lie(simulateur):
+    """Par leur rang comme par leur nom, les valeurs par défaut du jumeau
+    comprises ; un argument inconnu ou en trop est une ``TypeError``, avant
+    node."""
+    moteur = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(**NE_EN_1955)
+    periode = simulateur.catalogue["regime_general"].periode(2017)
+    assert ouvrir.age_ouverture(moteur, carriere=carriere, periode=periode,
+                                parents_compris=False) == 62.0
+    with pytest.raises(TypeError, match="generation"):
+        ouvrir.age_ouverture(moteur, periode, carriere, generation=1955)
+    with pytest.raises(TypeError):
+        ouvrir.age_taux_plein(moteur, periode, carriere, 2017)
+
+
+def test_une_regle_sans_moteur_se_demande_de_meme():
+    """R. 173-4-3, l'exemple de la circulaire Cnav n° 2004/29 : 21 années, 126
+    trimestres sur 174, « 21 x 126 / 174 = 15,2 arrondi à 15 »."""
+    retenues = liquider.annees_au_prorata(21, 126, 174)
+    assert (retenues, type(retenues)) == (15, int)
+    assert liquider.annees_au_prorata(total=20, duree=28, somme=135) == 4
+
+
+def test_une_date_passe_a_la_regle_au_mois_pres(simulateur):
+    """L'Agirc-Arrco revalorise au 1er novembre : le point vaut 1,3498 € en
+    octobre 2023 et 1,4159 € en novembre ; une année se lit au 31 décembre."""
+    moteur = simulateur.scenario_actuel
+    assert liquider.valeur_du_point(moteur, "agirc_arrco", DateMois(2023, 10)) == (1.3498, HAUTE)
+    assert liquider.valeur_du_point(moteur, "agirc_arrco", DateMois(2023, 11)) == (1.4159, HAUTE)
+    assert liquider.valeur_du_point(moteur, "agirc_arrco", 2023) == (1.4159, HAUTE)
+    assert liquider.valeur_du_point(moteur, "regime_general", 2023) is None
+
+
+def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
+    """Une règle servie se déclare (``pont.REGLES_DE_LA_FACADE``) : une autre,
+    une règle privée, une classe du module sont refusées, au lieu que le type
+    de ce qu'elles rendent se devine. Ce que le jumeau ne porte pas manque,
+    comme à un module."""
+    with pytest.raises(NonTransmissible, match="liquider.liquider_chaque_regime"):
+        liquider.liquider_chaque_regime
+    with pytest.raises(NonTransmissible, match="liquider._coefficient_anticipation"):
+        liquider._coefficient_anticipation
+    with pytest.raises(NonTransmissible, match="liquider.EligibleMinimum"):
+        liquider.EligibleMinimum
+    with pytest.raises(AttributeError, match="ouvrir.regle_lunaire"):
+        ouvrir.regle_lunaire
+    with pytest.raises(ValueError, match="ouvrir.ouvrir"):
+        pont.regle_du_droit("ouvrir", "ouvrir", float)
+    assert facade.REGLES is pont.REGLES_DE_LA_FACADE
+    assert set(facade.REGLES) == {"liquider", "ouvrir"}
+
+
+def test_une_regle_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulateur):
+    """Le moteur d'un simulateur de la façade, une période de son catalogue,
+    une carrière, une date, des valeurs simples. Le moteur Python, une période
+    que le test a retouchée, un objet du moteur — les durées d'un relevé —
+    n'arriveraient pas au portage : la règle est refusée."""
+    moteur = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(**NE_EN_1955)
+    periode = simulateur.catalogue["regime_general"].periode(2017)
+    with pytest.raises(NonTransmissible, match="moteur"):
+        ouvrir.duree_requise(simulateur_python.Simulateur().scenario_actuel, periode, carriere)
+    with pytest.raises(NonTransmissible, match="moteur"):
+        ouvrir.duree_requise(None, periode, carriere)
+    retouchee = dataclasses.replace(periode, age_taux_plein=65.0)
+    with pytest.raises(NonTransmissible, match="catalogue"):
+        ouvrir.age_taux_plein(moteur, retouchee, carriere)
+    with pytest.raises(NonTransmissible, match="durees"):
+        liquider.abattement_points(moteur, periode, carriere, 100, 166, 62.0, 2017,
+                                   durees=SimpleNamespace(tous_regimes=100))
+    with pytest.raises(NonTransmissible, match="duree .PeriodeRegime."):
+        liquider.annees_au_prorata(21, periode, 174)
+
+
+def test_une_regle_se_demande_sous_les_parametres_de_son_moteur(simulateur):
+    """Les conventions du COR ne valent que pour la page Coût : sous elles, la
+    valeur de service de l'Agirc-Arrco de 2045 suit la convention, moins que
+    les prix, qui la portent sans elles."""
+    convenu = Simulateur(Parametres(conventions_cor=True)).scenario_actuel
+    sans, _ = liquider.valeur_du_point(simulateur.scenario_actuel, "agirc_arrco", 2045)
+    avec, _ = liquider.valeur_du_point(convenu, "agirc_arrco", 2045)
+    assert avec < sans
+
+
+def test_une_regle_n_est_pas_servie_sous_un_modele_modifie(simulateur, monkeypatch):
+    with pytest.raises(NonTransmissible, match="modèle modifié"):
+        liquider.annees_au_prorata(21, 126, 174)
+    with pytest.raises(NonTransmissible, match="modifi"):
+        liquider.annees_au_prorata = lambda *valeurs: 0
+
+
+def _parametres_du_portage(module: str, regle: str) -> list[tuple[str, str | None]]:
+    """Les paramètres de la règle dans le portage, et la valeur par défaut que
+    chacun y prend, telle qu'elle est écrite."""
+    source = (RACINE_PROJET / "moteur" / "js" / "droit" / f"{module}.js").read_text(
+        encoding="utf-8")
+    nom = re.sub(r"_([a-z0-9])", lambda lettre: lettre.group(1).upper(), regle)
+    ecrits = re.search(r"^export function %s\(([^)]*)\)" % nom, source, re.MULTILINE).group(1)
+    return [(parametre.split("=")[0].strip(),
+             parametre.split("=")[1].strip() if "=" in parametre else None)
+            for parametre in ecrits.split(",") if parametre.strip()]
+
+
+#: La valeur par défaut d'un paramètre, comme le portage l'écrit.
+DEFAUTS_DU_PORTAGE = {"null": None, "true": True, "false": False}
+
+
+@pytest.mark.parametrize("module, regle", [
+    (module, regle) for module, regles in sorted(pont.REGLES_DE_LA_FACADE.items())
+    for regle in regles])
+def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(module, regle):
+    """La façade passe les arguments par leur rang, ceux que le test tait à
+    leur valeur par défaut du Python : le portage en attend autant, sous la
+    même valeur par défaut. Deux noms seulement diffèrent d'un côté à
+    l'autre."""
+    jumelle = getattr({"liquider": liquider_python, "ouvrir": ouvrir_python}[module], regle)
+    attendus = [(nom, None if parametre.default is inspect.Parameter.empty else parametre.default)
+                for nom, parametre in inspect.signature(jumelle).parameters.items()]
+    autres_noms = {"annees": "anneesRetenues", "carriere": "carriereSaisie",
+                   "periode": "periodeLiquidation"}
+    portes = _parametres_du_portage(module, regle)
+    assert len(portes) == len(attendus)
+    for (nom, defaut), (porte, ecrit) in zip(attendus, portes):
+        en_chameau = re.sub(r"_([a-z0-9])", lambda lettre: lettre.group(1).upper(), nom)
+        assert porte in (en_chameau, autres_noms.get(nom)), (regle, nom, porte)
+        lu = None if ecrit is None else DEFAUTS_DU_PORTAGE.get(ecrit, ecrit)
+        assert (lu if type(lu) is not str else float(lu)) == defaut, (regle, nom, ecrit)
+        assert type(lu) is not str or type(defaut) in (int, float), (regle, nom, ecrit)
+
+
 # -- un test resté sur le moteur Python ------------------------------------------------
 
 def test_un_test_sans_marque_passe_par_la_facade(request):
     """Dans un fichier basculé, les entrées sont celles de la façade, et le
     simulateur du test est le sien, le même d'un test à l'autre."""
     assert Simulateur is facade.Simulateur and reversion is facade.reversion
+    assert liquider is facade.liquider and ouvrir is facade.ouvrir
     simulateur = facade.simulateur_du_test(request, Parametres())
     assert type(simulateur) is facade.Simulateur
     assert facade.simulateur_du_test(request, Parametres()) is simulateur
@@ -604,6 +769,7 @@ def test_un_test_marque_reste_sur_le_moteur_python(request):
     assert Simulateur is simulateur_python.Simulateur
     assert Carriere is carriere_python.Carriere
     assert reversion.__module__ == "retraite_notionnelle.droit.reversion"
+    assert liquider is liquider_python and ouvrir is ouvrir_python
     simulateur = facade.simulateur_du_test(request, Parametres())
     assert type(simulateur) is simulateur_python.Simulateur
     assert facade.simulateur_du_test(request, Parametres()) is simulateur
@@ -612,6 +778,7 @@ def test_un_test_marque_reste_sur_le_moteur_python(request):
 def test_apres_un_test_marque_les_entrees_sont_de_nouveau_celles_de_la_facade():
     assert Simulateur is facade.Simulateur and Carriere is facade.Carriere
     assert reversion is facade.reversion
+    assert liquider is facade.liquider and ouvrir is facade.ouvrir
 
 
 def test_des_variantes_d_univers_sont_refusees():

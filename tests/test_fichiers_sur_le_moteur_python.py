@@ -96,7 +96,7 @@ FICHIERS = (
 #: Les fichiers passés à la façade (``from facade import …``) qui gardent des
 #: tests sur le moteur Python, sous la marque ``sur_le_moteur_python``, et le
 #: nombre de ces tests. Il ne fait que décroître.
-RESTES = {"test_reversion.py": 6, "test_simulateur.py": 121}
+RESTES = {"test_reversion.py": 6, "test_simulateur.py": 66}
 
 
 def _du_moteur(module: str) -> bool:

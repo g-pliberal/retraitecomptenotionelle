@@ -31,6 +31,14 @@ et ce qu'elle rend revient sous le type que la méthode du jumeau annonce. Une
 règle du moteur Python à qui un test passe le moteur de la façade n'y lit
 rien : elle tournerait en Python sur les tables du portage.
 
+**Les règles du droit** se demandent par leur module et leur nom
+(``ouvrir.duree_requise(moteur, periode, carriere)``), que le fichier importe
+d'ici : le portage appelle la sienne, parmi celles que
+``pont.REGLES_DE_LA_FACADE`` déclare, sur le moteur d'un simulateur de la
+façade, une période de son catalogue, une carrière, une date, des valeurs
+simples. Ce qui n'en est pas — le moteur Python, une période retouchée, un
+objet du moteur — n'arriverait pas au portage : la règle est refusée.
+
 **Un test resté sur le moteur Python**, dans un fichier basculé, porte la
 marque ``sur_le_moteur_python`` et sa raison : le temps de ce test, les
 entrées de son fichier et son simulateur redeviennent ceux du Python
@@ -50,9 +58,12 @@ import pytest
 from retraite_notionnelle import carriere as _carriere
 from retraite_notionnelle import memoire, pont
 from retraite_notionnelle import simulateur as _simulateur
+from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import PeriodeRegime
 from retraite_notionnelle.pont import NonTransmissible
+from retraite_notionnelle.droit import liquider as _liquider
+from retraite_notionnelle.droit import ouvrir as _ouvrir
 from retraite_notionnelle.droit import reversion as _reversion
 from retraite_notionnelle.scenarios import actuel as _actuel
 
@@ -68,6 +79,9 @@ ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversio
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
+
+#: Les règles du droit que la façade sert, par module.
+REGLES = pont.REGLES_DE_LA_FACADE
 
 #: Les séries de chaque simulateur de la façade qui les a données, et ses
 #: paramètres : un bâtisseur de la carrière reconnaît ainsi celles qu'on lui
@@ -177,15 +191,21 @@ def _argument_de_table(simulateur: Simulateur, valeur):
     if type(valeur) is datetime.date:
         return valeur.isoformat()
     if isinstance(valeur, PeriodeRegime):
-        periodes = (simulateur._donnees.catalogue[valeur.regime].periodes
-                    if valeur.regime in simulateur._donnees.catalogue else ())
-        rang = next((rang for rang, connue in enumerate(periodes) if connue is valeur), None)
-        if rang is None:
-            raise NonTransmissible(
-                f"période du régime {valeur.regime} passée en argument qui n'est pas du "
-                "catalogue du simulateur de la façade : le portage ne la verrait pas")
-        return pont.PeriodeDuCatalogue(valeur.regime, rang, valeur.debut)
+        return _periode_du_catalogue(simulateur, valeur)
     return valeur
+
+
+def _periode_du_catalogue(simulateur: Simulateur, periode: PeriodeRegime):
+    """Une période du catalogue du simulateur telle que le pont la transmet :
+    par son rang dans son régime."""
+    periodes = (simulateur._donnees.catalogue[periode.regime].periodes
+                if periode.regime in simulateur._donnees.catalogue else ())
+    rang = next((rang for rang, connue in enumerate(periodes) if connue is periode), None)
+    if rang is None:
+        raise NonTransmissible(
+            f"période du régime {periode.regime} passée en argument qui n'est pas du "
+            "catalogue du simulateur de la façade : le portage ne la verrait pas")
+    return pont.PeriodeDuCatalogue(periode.regime, rang, periode.debut)
 
 
 class ScenarioActuel(_Ferme):
@@ -335,6 +355,97 @@ def reversion(moteur, pensions, carriere, annee, *arguments, **options):
                      *valeurs.values())
 
 
+# -- les règles du droit ---------------------------------------------------------------
+
+#: Les valeurs simples qu'une règle reçoit telles quelles.
+_SIMPLES = (bool, int, float, str, type(None))
+
+
+class Regles(_Ferme):
+    """Un module de règles du droit, sous le nom de son jumeau : celles de ses
+    règles que la façade sert (:data:`REGLES`), appelées par le portage."""
+
+    def __init__(self, nom: str, jumeau) -> None:
+        object.__setattr__(self, "_nom", nom)
+        object.__setattr__(self, "_jumeau", jumeau)
+
+    def __getattr__(self, regle):
+        # Ce que le jumeau ne porte pas manque ici comme à un module : pytest
+        # sonde ainsi ce qu'un fichier de tests importe.
+        if regle.startswith("__") or not hasattr(self._jumeau, regle):
+            raise AttributeError(f"{self._nom}.{regle}")
+        if regle not in REGLES[self._nom]:
+            raise NonTransmissible(
+                f"{self._nom}.{regle} : la façade ne sert pas cette règle du droit "
+                "(pont.REGLES_DE_LA_FACADE) — le test reste sur le moteur Python, ou la "
+                "demande au pont")
+        jumelle = getattr(self._jumeau, regle)
+        rendu = _type_rendu(jumelle, vars(self._jumeau))
+
+        def servie(*arguments, **nommes):
+            lies = inspect.signature(jumelle).bind(*arguments, **nommes)
+            lies.apply_defaults()
+            return _demander_la_regle(self._nom, regle, rendu, lies.arguments)
+
+        return servie
+
+
+def _type_rendu(jumelle, noms: dict):
+    """Le type que la règle du jumeau annonce rendre, lu seul : ceux de ses
+    arguments nomment des types que son module n'importe que pour les
+    annoncer."""
+    def porteur(): ...
+    porteur.__annotations__ = {"return": jumelle.__annotations__["return"]}
+    return typing.get_type_hints(porteur, globalns=noms)["return"]
+
+
+def _demander_la_regle(module: str, regle: str, rendu, arguments: dict):
+    """La règle, demandée au portage sous les paramètres du simulateur dont
+    elle reçoit le moteur, les réglages de référence quand elle n'en reçoit
+    pas — sur le modèle intact seulement."""
+    if not memoire.modele_intact():
+        raise NonTransmissible(
+            f"{module}.{regle} : modèle modifié (monkeypatch, memoire.modele_modifie) — ce "
+            "que le test remplace en Python, le portage ne le voit pas")
+    simulateur = None
+    if "moteur" in arguments:
+        if not isinstance(arguments["moteur"], ScenarioActuel):
+            raise NonTransmissible(
+                f"{module}.{regle} : moteur passé en argument que la façade ne sait pas "
+                "transmettre — la règle se demande sur le moteur d'un simulateur de la façade "
+                "(simulateur.scenario_actuel)")
+        simulateur = arguments["moteur"]._simulateur
+    return pont.regle_du_droit(
+        module, regle, rendu,
+        *(_argument_de_regle(f"{module}.{regle}", simulateur, nom, valeur)
+          for nom, valeur in arguments.items()),
+        parametres=None if simulateur is None else simulateur.parametres)
+
+
+def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, valeur):
+    """Un argument d'une règle du droit tel que le pont le transmet : le
+    moteur du simulateur par sa marque ; une période de son catalogue par son
+    rang ; une carrière, une date au mois, une valeur simple ou une suite de
+    valeurs simples, telles quelles. Le reste — un objet du moteur Python, un
+    dictionnaire — n'arriverait pas au portage sous son type."""
+    if nom == "moteur":
+        return pont.MOTEUR
+    if isinstance(valeur, PeriodeRegime) and simulateur is not None:
+        return _periode_du_catalogue(simulateur, valeur)
+    if type(valeur) in _SIMPLES or isinstance(valeur, (_carriere.Carriere, DateMois)):
+        return valeur
+    if type(valeur) in (tuple, list) and all(type(element) in _SIMPLES for element in valeur):
+        return list(valeur)
+    raise NonTransmissible(
+        f"{regle} : argument {nom} ({type(valeur).__name__}) que la façade ne sait pas "
+        "transmettre au portage — le test reste sur le moteur Python, ou se porte à la main")
+
+
+#: ``droit.liquider`` et ``droit.ouvrir``, leurs règles servies par le portage.
+liquider = Regles("liquider", _liquider)
+ouvrir = Regles("ouvrir", _ouvrir)
+
+
 # -- un test resté sur le moteur Python ----------------------------------------------
 #
 # Dans un fichier basculé, un test que la façade ne sait pas encore servir —
@@ -348,7 +459,7 @@ MARQUE = "sur_le_moteur_python"
 
 #: Le jumeau Python de chaque entrée qu'un fichier basculé importe d'ici.
 JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
-           "reversion": _reversion.reversion}
+           "reversion": _reversion.reversion, "liquider": _liquider, "ouvrir": _ouvrir}
 
 #: Les simulateurs des tests, par fichier, par moteur et par paramètres.
 _SIMULATEURS: dict[tuple, object] = {}

@@ -24,13 +24,12 @@ from retraite_notionnelle.config import (
 )
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS
-from retraite_notionnelle.droit import liquider, ouvrir
 
 # Les entrées du moteur passent par la façade des tests (action 161) : le
 # portage les calcule. Un test qui appelle encore une règle du moteur Python
 # le garde, sous la marque ``sur_le_moteur_python`` et sa raison.
 import facade
-from facade import Carriere, Simulateur
+from facade import Carriere, Simulateur, liquider, ouvrir
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 #: Témoins versionnés : ce que des sources extérieures ont réellement publié.
@@ -1997,7 +1996,6 @@ def test_les_points_d_un_regime_fusionne_sont_convertis(simulateur):
         service_agirc_2018 / service_arrco_2018, rel=1e-6)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_un_regime_ferme_ne_vaut_jamais_plus_que_son_successeur(simulateur):
     """Une conversion aux fusions préserve les droits : elle ne les multiplie pas.
 
@@ -2027,7 +2025,6 @@ def test_un_regime_ferme_ne_vaut_jamais_plus_que_son_successeur(simulateur):
             assert valeur[0] <= reference[0] * 1.001, (code, annee, valeur[0], reference[0])
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_le_rendement_du_point_ne_saute_pas_d_une_annee_sur_l_autre(simulateur):
     """Cent euros cotisés une année ou la suivante donnent des pensions voisines.
 
@@ -2061,7 +2058,6 @@ def test_le_rendement_du_point_ne_saute_pas_d_une_annee_sur_l_autre(simulateur):
             precedent = rendu
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_duree_de_proratisation_n_est_pas_la_duree_requise(simulateur):
     """Article R. 351-6 : deux durées, et elles ne montent pas ensemble.
 
@@ -2123,7 +2119,6 @@ def test_la_proratisation_ne_penalise_pas_une_carriere_qui_atteint_sa_duree(simu
     assert "154/154" in base.detail, base.detail
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_les_trimestres_de_decote_sont_des_entiers(simulateur):
     """Article R. 351-27 : le nombre de trimestres est arrondi à l'entier supérieur.
 
@@ -2251,7 +2246,7 @@ def test_le_prix_du_point_n_est_pas_prolonge_au_dela_du_publie(simulateur):
     assert valeurs.achat("rafp", 2005) is not None
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
+@pytest.mark.sur_le_moteur_python("Simulateur.pour_la_projection")
 def test_le_prix_d_achat_agirc_arrco_suit_le_salaire_moyen_au_dela_du_bareme(simulateur):
     """La valeur d'achat de l'Agirc-Arrco « évolue au premier janvier de chaque
     année [...] comme le salaire annuel moyen des ressortissants du régime tel
@@ -2921,7 +2916,7 @@ def test_le_coefficient_de_revalorisation_s_ancre_sur_la_derniere_circulaire(
     )
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
+@pytest.mark.sur_le_moteur_python("minimum_garanti.ratio_point_indice")
 def test_le_dernier_traitement_ne_recoit_pas_les_coefficients_du_regime_general(
         simulateur):
     """Les arrêtés ne valent que pour un salaire PORTÉ AU COMPTE.
@@ -3110,7 +3105,6 @@ def test_les_coefficients_d_anticipation_sont_ceux_de_l_agirc_arrco():
     assert _coefficient_anticipation(15 + 1 / 3, 40) == pytest.approx(0.83)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_l_abattement_de_la_complementaire_n_est_pas_celui_de_la_base(simulateur):
     """À dix ans d'anticipation, 0,43 chez l'Agirc-Arrco, 0,75 à la base.
 
@@ -3135,7 +3129,6 @@ def test_l_abattement_de_la_complementaire_n_est_pas_celui_de_la_base(simulateur
         periode, carriere, requis, requis, 57.0, 2022) == pytest.approx(1.0)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_majoration_pour_enfants_de_la_complementaire_est_plafonnee(simulateur):
     """10 % à la base, mais au plus 2 367,48 € par an à l'Agirc-Arrco.
 
@@ -4330,7 +4323,6 @@ def test_les_annees_posterieures_a_la_liquidation_n_ouvrent_rien(simulateur):
     assert borne.trimestres_valides == prolongee.trimestres_valides
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_decote_de_la_fonction_publique_est_celle_de_l_article_l14(simulateur):
     """Ni le coefficient du privé, ni son âge d'annulation.
 
@@ -4448,7 +4440,6 @@ def test_les_points_carmf_d_avant_1991_valent_un_tiers_de_plus(simulateur):
     assert conversions.echelle("carmf_complementaire", 1985, 1990)[0] == 1.0
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_decote_des_regimes_speciaux_arrive_quatre_ans_apres(simulateur):
     """La réforme de 2008 leur donne la décote de la fonction publique, en 2010.
 
@@ -4509,7 +4500,6 @@ def test_la_decote_des_regimes_speciaux_arrive_quatre_ans_apres(simulateur):
     assert age_annulation == pytest.approx(57.0)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_decote_des_regimes_speciaux_se_lit_au_mois_et_borne_la_duree(simulateur):
     """Deux règles des décrets de 2008, écrites dans chacun.
 
@@ -4557,7 +4547,6 @@ def test_la_decote_des_regimes_speciaux_se_lit_au_mois_et_borne_la_duree(simulat
             scenario, periode, carriere, trimestres, requis, age, age_annulation) == borne
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_surcote_des_regimes_speciaux_ne_compte_que_depuis_juillet_2008(simulateur):
     """« cotisés et effectués après le 1er juillet 2008, au-delà de l'âge […] et
     en sus » de la durée requise, et rien sous cent soixante trimestres : le
@@ -4586,7 +4575,6 @@ def test_la_surcote_des_regimes_speciaux_ne_compte_que_depuis_juillet_2008(simul
             carriere, 159, 150, age) == 0
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_le_ballet_de_l_opera_a_l_age_d_annulation_que_le_v_ecrit(simulateur):
     """« l'âge minimum d'ouverture du droit à pension qui leur est applicable
     majoré de quatre trimestres pour la période du 1er juillet 2010 au 30 juin
@@ -4615,7 +4603,6 @@ def test_le_ballet_de_l_opera_a_l_age_d_annulation_que_le_v_ecrit(simulateur):
         assert coefficient == pytest.approx(taux), (annee, mois)
         assert age == pytest.approx(annulation), (annee, mois)
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_crpcen_rend_la_table_de_decote_qu_elle_publie(simulateur):
     """La page « La décote » de la CRPCEN, génération par génération.
 
@@ -4658,7 +4645,6 @@ def test_la_crpcen_rend_la_table_de_decote_qu_elle_publie(simulateur):
     assert ouvrir.age_ouverture(scenario, periode, carriere) == pytest.approx(63.0)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_crpcen_liquide_les_dix_meilleures_annees_ecretees(simulateur):
     """Décret n° 90-1215, article 89 : « le salaire annuel moyen correspondant
     aux périodes de cotisations versées au cours des dix années civiles
@@ -4666,7 +4652,7 @@ def test_la_crpcen_liquide_les_dix_meilleures_annees_ecretees(simulateur):
     pour moitié pour la part excédant trois fois le plafond », et pour rien
     au-delà de sept. La fiche liquidait les six derniers mois, sans plafond.
     """
-    from retraite_notionnelle.carriere import Carriere, LigneRelevee
+    from retraite_notionnelle.carriere import LigneRelevee
 
     scenario = simulateur.scenario_actuel
     macro = simulateur.macro
@@ -4675,7 +4661,7 @@ def test_la_crpcen_liquide_les_dix_meilleures_annees_ecretees(simulateur):
         lignes = [LigneRelevee(annee, "clerc_de_notaire",
                                k * macro.plafond_securite_sociale(annee))
                   for annee, k in multiples.items()]
-        carriere = Carriere.depuis_releve(1962, "F", lignes, 62.0, macro)
+        carriere = simulateur.carriere_releve(1962, "F", lignes, 62.0)
         periode = simulateur.catalogue["crpcen"].periode(carriere.annee_liquidation)
         return liquider.salaire_de_reference(
             scenario, "crpcen", carriere, periode, carriere.annee_liquidation, False)
@@ -4692,7 +4678,6 @@ def test_la_crpcen_liquide_les_dix_meilleures_annees_ecretees(simulateur):
     assert 1.1 < hausse / un < 1.3
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_l_agent_des_ieg_qui_ouvre_son_droit_avant_2025_garde_les_regles_d_avant(simulateur):
     """Deux règles que la CNIEG applique, et que le moteur ne suivait pas.
 
@@ -4754,7 +4739,6 @@ def test_l_agent_des_ieg_qui_ouvre_son_droit_avant_2025_garde_les_regles_d_avant
     assert age_annulation == pytest.approx(62.0)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_l_age_d_annulation_du_ballet_de_l_opera_est_quarante_deux_ans(simulateur):
     """Le seul âge de référence qui ne soit pas l'âge d'ouverture plus cinq ans.
 
@@ -4933,7 +4917,7 @@ def test_apres_l_age_du_taux_plein_la_duree_est_majoree(simulateur):
     assert "× 150/150, 131 trimestres majorés" in detail(1940, 68, 35, "commercant")
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
+@pytest.mark.sur_le_moteur_python("liquider.duree_majoree_apres_taux_plein")
 def test_depuis_2004_la_duree_majoree_regarde_tous_les_regimes(simulateur):
     """Depuis 2004, la majoration n'est due que « tant qu'ils n'ont pas
     accompli dans le régime général et, le cas échéant, dans un ou plusieurs
@@ -5276,7 +5260,7 @@ def test_l_age_agirc_arrco_de_2011_a_2018_est_celui_de_la_caisse(simulateur):
     assert arrco(1954, 62 + 1 / 12).detail.endswith(
         "coefficient d'anticipation 0.8050")
 
-@pytest.mark.sur_le_moteur_python("liquider")
+@pytest.mark.sur_le_moteur_python("liquider.repartir_les_annees")
 def test_la_reforme_agricole_rend_l_exemple_de_la_msa(simulateur):
     """L'exemple de la MSA (« Réforme de la retraite des exploitants : 25
     meilleures années », section 3). Un salarié agricole de 1984 à 1993,
@@ -5335,7 +5319,6 @@ def test_la_reforme_agricole_rend_l_exemple_de_la_msa(simulateur):
         if p.regime == "msa_salaries").detail
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_les_regimes_alignes_hors_liquidation_unique_se_partagent_les_annees(simulateur):
     """R. 173-4-3, depuis les pensions de 2004 : le polypensionné du régime
     général, des salariés agricoles et des artisans et commerçants que la
@@ -6114,7 +6097,6 @@ def _chef_de_1990_a_2025(revenus: dict[int, float]) -> list[dict]:
                for annee in (2026, 2027)])
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_le_revenu_des_annees_cotisees_au_minimum_se_tire_des_cotisations(simulateur):
     """De 2016 à 2025, le chef d'exploitation dont l'AVI, la cotisation du 1° de
     L. 731-42, a été « portée à [sa] valeur minimale », 3,32 % de 800 SMIC
@@ -6196,7 +6178,7 @@ process.stdout.write(JSON.stringify({ details, annuels }));
     assert [moyenne(d) for d in obtenus["details"]] == pytest.approx(moyennes, abs=0.01)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
+@pytest.mark.sur_le_moteur_python("liquider.majorer_les_points_de_1952_a_1972")
 def test_les_points_de_chef_de_1952_a_1972_se_majorent_annee_par_annee():
     """Pour les pensions qui prennent effet depuis 2026, les majorations des
     points acquis du 1er juillet 1952 au 31 décembre 1972, fixées selon « le
@@ -6352,7 +6334,7 @@ process.stdout.write(JSON.stringify(details));
     assert json.loads(execution.stdout) == [chef, collaborateur]
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
+@pytest.mark.sur_le_moteur_python("liquider.majoration_des_points_de_1952_a_1972_d_avant_2026")
 def test_les_points_de_chef_de_1952_a_1972_se_majorent_d_un_seul_taux_avant_2026():
     """Pour les pensions prises du 1er juillet 1986 au 31 décembre 2025, « le
     nombre de points acquis par les chefs d'exploitation ou d'entreprise
@@ -6427,7 +6409,6 @@ process.stdout.write(JSON.stringify(cas.map(([cotisations, chef]) =>
         assert obtenu == pytest.approx(list(attendu), abs=1e-9)
 
 
-@pytest.mark.sur_le_moteur_python("ouvrir")
 def test_la_pension_agricole_de_1986_a_2025_majore_les_points_de_chef_de_1952_a_1972(
         simulateur):
     """La majoration des points de chef de 1952 à 1972 (décret n° 86-1084,
@@ -6859,7 +6840,7 @@ process.stdout.write(JSON.stringify(obtenus));
         == attendu
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
+@pytest.mark.sur_le_moteur_python("liquider.repartir_les_annees")
 def test_la_repartition_des_annees_suit_r_173_3_2():
     """« Arrondis à chaque étape à l'entier non nul le plus proche, la fraction
     d'année égale à 0,5 étant comptée pour une année » ; les années
@@ -7612,7 +7593,6 @@ def test_les_generations_coupees_en_cours_d_annee_sont_lues_au_mois(simulateur):
     assert opposables(1960, 2) == opposables(1960, 11)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_avant_l_asf_de_1983_l_abattement_se_lit_a_l_age_seul(simulateur):
     """Jusqu'au 31 mars 1983, l'Agirc et l'Arrco servaient le taux plein à
     soixante-cinq ans et abattaient toute anticipation, quelle que soit la
@@ -7646,7 +7626,6 @@ def test_avant_l_asf_de_1983_l_abattement_se_lit_a_l_age_seul(simulateur):
         apres, carriere, 168, 150, 62.0, 1984) == pytest.approx(0.88)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_surcote_ircantec_suit_les_deux_taux_de_l_arrete(simulateur):
     """Le IV de l'article 16, taux par taux, sur une carrière écrite à la main.
 
@@ -7677,7 +7656,6 @@ def test_la_surcote_ircantec_suit_les_deux_taux_de_l_arrete(simulateur):
         periode, carriere, 164, 160, 65.0, 2010) == pytest.approx(1.0)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_surcote_ircantec_ne_paie_pas_deux_fois_la_meme_periode(simulateur):
     """Le 2° ne compte que ce que le 1° ne compte pas.
 
@@ -7703,7 +7681,6 @@ def test_la_surcote_ircantec_ne_paie_pas_deux_fois_la_meme_periode(simulateur):
 
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_surcote_ircantec_compte_sa_fenetre_au_mois(simulateur):
     """Le 2° se compte d'anniversaire à anniversaire, comme le 1°, « un
     trimestre équiva[lant] à une période de 90 jours » (article 16, IV,
@@ -7727,7 +7704,6 @@ def test_la_surcote_ircantec_compte_sa_fenetre_au_mois(simulateur):
     ) == pytest.approx(1.0 + 0.00625 * 18)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_le_racl_minorait_les_generations_d_avant_1955_par_leur_annexe(simulateur):
     """Arrêté du 21 novembre 2013, article 21 du RACL : « pour les adhérents nés
     antérieurement au 1er janvier 1953, le coefficient de minoration est égal à
@@ -7754,7 +7730,6 @@ def test_le_racl_minorait_les_generations_d_avant_1955_par_leur_annexe(simulateu
     assert coefficient(1954, 64) == pytest.approx(0.87)
     assert coefficient(1955, 62) == pytest.approx(0.75)
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_surcote_ircantec_n_existe_pas_avant_2010(simulateur):
     """« À compter du 1er janvier 2010 », dit le paragraphe 4, et c'est ce qui
     coupe la fiche en deux au milieu de sa période 2009-2010. Une liquidation
@@ -7787,7 +7762,6 @@ def test_la_surcote_ircantec_n_existe_pas_avant_2010(simulateur):
     assert porteurs == {"ircantec"}, porteurs
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_un_abattement_ircantec_ne_se_transforme_jamais_en_majoration(simulateur):
     """Abattu et majoré ne se rencontrent pas.
 
@@ -7813,7 +7787,6 @@ def _periode(simulateur, code, annee):
     return simulateur.catalogue[code].periode(annee)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_cnavpl_sert_la_surcote_du_regime_general(simulateur):
     """R. 643-8 : « au titre des périodes d'activité ayant donné lieu à
     cotisations à la charge de l'assuré accomplies à compter du 1er janvier
@@ -7840,7 +7813,6 @@ def test_la_cnavpl_sert_la_surcote_du_regime_general(simulateur):
     assert apres.surcote_par_trimestre == pytest.approx(0.0125)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_carmf_majore_des_62_ans_puis_moins_apres_65_et_plus_rien_a_70(simulateur):
     """Article 15 des statuts depuis le 1er janvier 2017 : « 1,25 % par
     trimestre séparant le premier jour du trimestre civil suivant celui où le
@@ -7882,7 +7854,6 @@ def test_la_carmf_majore_des_62_ans_puis_moins_apres_65_et_plus_rien_a_70(simula
         asv, carriere, 144, 165, 66.0, 2020) == pytest.approx(1.0 + 0.0125 * 12 + 0.0075 * 4)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_cavec_majore_vingt_trimestres_au_plus_apres_65_ans(simulateur):
     """Article 13 des statuts : « une majoration de 0,75 % par trimestre plein
     de prorogation au-delà de cet âge, dans la limite maximale de 15 % » de
@@ -7908,7 +7879,6 @@ def test_la_cavec_majore_vingt_trimestres_au_plus_apres_65_ans(simulateur):
     ) == pytest.approx(1.0)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_carpimko_majore_depuis_l_age_du_taux_plein_lu_a_la_generation(simulateur):
     """Article 12 ter, inséré par l'arrêté du 31 juillet 2015 : « 1,25 % par
     trimestre civil entier d'ajournement postérieur à l'âge du taux plein dans
@@ -7936,7 +7906,6 @@ def test_la_carpimko_majore_depuis_l_age_du_taux_plein_lu_a_la_generation(simula
     ) == pytest.approx(1.0)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_cavp_majore_trois_ans_au_plus_a_un_demi_pour_cent(simulateur):
     """Article 12 des statuts (arrêté du 23 juin 2011) : « majorée lorsqu'elle
     est liquidée au-delà de l'âge permettant d'obtenir une retraite à taux
@@ -7955,7 +7924,6 @@ def test_la_cavp_majore_trois_ans_au_plus_a_un_demi_pour_cent(simulateur):
         periode, carriere, 176, 169, 72.0, 2028) == pytest.approx(1.06)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_cprn_majore_un_demi_pour_cent_jusqu_a_70_ans_puis_un_pour_cent_sans_borne(simulateur):
     """Arrêté du 16 décembre 2013 : « 0,5 % par trimestre au-delà de l'âge du
     taux plein, jusqu'à l'âge de 70 ans » ; arrêté du 29 novembre 2023, en
@@ -7987,7 +7955,6 @@ def test_la_cprn_majore_un_demi_pour_cent_jusqu_a_70_ans_puis_un_pour_cent_sans_
     ) == pytest.approx(1.0)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_cipav_majore_par_annees_pleines_a_qui_a_trente_ans_de_caisse(simulateur):
     """Fiche pratique 2022 : « 5 % par année pleine de différé si, à 67 ans,
     vous réunissez 30 années d'affiliation à la Cipav ». Une année et demie
@@ -8012,7 +7979,6 @@ def test_la_cipav_majore_par_annees_pleines_a_qui_a_trente_ans_de_caisse(simulat
 
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_cavp_borne_sa_majoration_par_generation(simulateur):
     """Annexe à l'article 15 des statuts (arrêté du 23 juin 2011), reprise par
     l'article 12 du règlement de 2026 : nés jusqu'au 30 juin 1951, « Pas de
@@ -8038,7 +8004,6 @@ def test_la_cavp_borne_sa_majoration_par_generation(simulateur):
     assert coefficient(1957, 1, 71.0) == pytest.approx(1.06)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_cipav_borne_le_report_a_cinq_ans_et_le_comptait_de_65_ans(simulateur):
     """« peut différer la date d'entrée en jouissance de la pension de retraite
     complémentaire de 1 à 5 ans » (statuts, article 3.15, et décret
@@ -8065,7 +8030,6 @@ def test_la_cipav_borne_le_report_a_cinq_ans_et_le_comptait_de_65_ans(simulateur
     assert coefficient(1958, 74.0) == pytest.approx(1.25)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_cprn_ne_majore_que_les_trimestres_d_exercice(simulateur):
     """« un coefficient de majoration est appliqué à la pension des notaires
     ayant continué à exercer et à cotiser » (statuts de 2013, article 16 ;
@@ -8090,7 +8054,6 @@ def test_la_cprn_ne_majore_que_les_trimestres_d_exercice(simulateur):
         pytest.approx(1.0))
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_carpimko_majore_des_que_la_duree_du_regime_de_base_est_atteinte(simulateur):
     """Article 12 ter des statuts, puis article 5 du règlement de 2026 : la
     majoration court « au-delà de l'âge auquel elle aurait pu être liquidée
@@ -8114,7 +8077,6 @@ def test_la_carpimko_majore_des_que_la_duree_du_regime_de_base_est_atteinte(simu
     # Sans la durée, l'âge du taux plein de la table, 67 ans : l'abattement.
     assert liquider.age_de_la_duree_atteinte(scenario, periode, carriere, 150, 168, 64.0) is None
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_les_exploitants_agricoles_ont_la_surcote_du_regime_general(simulateur):
     """D. 732-42 : la durée « accomplie à compter du 1er janvier 2004, au-delà
     de l'âge fixé à l'article L. 732-18 et au-delà de la durée minimale prévue
@@ -8204,7 +8166,6 @@ def test_la_categorie_active_oppose_l_age_anticipe_et_non_l_age_legal(simulateur
     assert super_actif.age_ouverture_opposable == pytest.approx(52.0)
 
 
-@pytest.mark.sur_le_moteur_python("ouvrir")
 def test_les_ages_classes_suivent_les_deux_montees_en_charge(simulateur):
     """Loi du 9 novembre 2010 : 55 -> 57 ans à compter du 1er juillet 1956,
     quatre mois puis cinq par génération (décret n° 2011-2103, article 2). Loi
@@ -8258,7 +8219,6 @@ def test_sans_la_duree_de_services_classes_le_droit_commun_reprend(simulateur):
     assert ouverture(37) == "age_legal"     # vingt ans
 
 
-@pytest.mark.sur_le_moteur_python("ouvrir")
 def test_l_age_d_annulation_de_la_decote_d_un_actif_est_sa_limite_d_age(simulateur):
     """L'article L. 14 retranche ses trimestres de la LIMITE D'ÂGE du grade :
     soixante-deux ans en catégorie active, non soixante-sept. Un agent classé
@@ -8358,7 +8318,6 @@ def test_le_classement_oppose_sa_propre_duree_requise(simulateur):
     assert requis(super_actif, 1976) == 172
 
 
-@pytest.mark.sur_le_moteur_python("ouvrir")
 def test_la_surcote_d_un_actif_se_compte_depuis_l_age_legal_de_droit_commun(simulateur):
     """Le III de l'article L. 14 ne donne la majoration qu'« au-delà de l'âge
     mentionné à l'article L. 161-17-2 », et le D du XXIV de l'article 10 de la
@@ -8420,7 +8379,6 @@ def test_la_duree_militaire_se_lit_a_l_annee_ou_l_ancienne_est_atteinte(simulate
     assert ouverture(1985) == pytest.approx(35.0, abs=0.02)         # dix-sept ans
 
 
-@pytest.mark.sur_le_moteur_python("ouvrir")
 def test_la_pension_militaire_s_ouvre_le_mois_qui_suit_ses_services(simulateur):
     """Elle s'ouvre à qui « réunit, à la date de son admission à la retraite »,
     ses années de services (L. 24, II, 2°), et sa jouissance « ne peut être
@@ -8480,7 +8438,6 @@ def test_le_militaire_de_moins_de_quinze_ans_reste_au_droit_commun(simulateur):
     assert resultat.age_ouverture_opposable == pytest.approx(64.0)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_decote_du_militaire_est_celle_du_II_de_l_article_L_14(simulateur):
     """Elle ne compte pas des âges mais des SERVICES : les trimestres manquants
     pour atteindre la durée d'ouverture augmentée de dix trimestres, dans la
@@ -8530,7 +8487,6 @@ def test_le_militaire_n_a_pas_de_surcote(simulateur):
     assert "taux 75.000%" in civile.detail
 
 
-@pytest.mark.sur_le_moteur_python("ouvrir")
 def test_la_derogation_ne_deborde_pas_sur_un_regime_special(simulateur):
     """Plusieurs régimes SPÉCIAUX servent eux aussi une catégorie active, et
     leur fiche le déclare — la SNCF a ses agents de conduite. Ce n'est pas la
@@ -8669,7 +8625,6 @@ def test_un_artisan_d_une_seule_caisse_n_est_pas_touche(simulateur):
     assert "liquidées ensemble" not in pensions["cancava"].detail
 
 
-@pytest.mark.sur_le_moteur_python("ouvrir")
 def test_carriere_longue_quatre_trimestres_pour_qui_est_ne_au_dernier_trimestre(simulateur):
     """D. 351-1-1 : cinq trimestres avant la fin de l'année civile des dix-huit
     ans, ou QUATRE pour qui est né entre le 1er octobre et le 31 décembre. Le
@@ -8828,7 +8783,6 @@ def _entre_tot(annee_naissance: int, mois_naissance: int, age_debut: float, age:
         interruptions={annee: motif for annee in inactif}))
 
 
-@pytest.mark.sur_le_moteur_python("ouvrir")
 def test_les_portes_de_2012_ne_valent_que_pour_les_generations_que_le_texte_nomme(simulateur):
     """Le décret du 2 juillet 2012 (D. 351-1-1, LEGIARTI000026139949, pensions
     prenant effet du 1er novembre 2012 au 31 août 2023) ouvre la carrière
@@ -8873,7 +8827,6 @@ def test_les_portes_de_2012_ne_valent_que_pour_les_generations_que_le_texte_nomm
         assert ouvrir.age_ouverture_droit(actuel, carriere) == pytest.approx(60.0)
 
 
-@pytest.mark.sur_le_moteur_python("ouvrir")
 def test_avant_novembre_2012_la_duree_d_assurance_passait_de_huit_trimestres_la_duree_requise(
         simulateur):
     """Les rédactions de 2003 et de 2010 de D. 351-1-1 (LEGIARTI000006736521,
@@ -8909,7 +8862,7 @@ def test_avant_novembre_2012_la_duree_d_assurance_passait_de_huit_trimestres_la_
     assert ouvrir.age_ouverture_droit(actuel, carriere) == pytest.approx(60.0)
 
 
-@pytest.mark.sur_le_moteur_python("ouvrir")
+@pytest.mark.sur_le_moteur_python("carriere_longue._portes")
 def test_jusqu_en_juin_2011_les_fonctionnaires_gardaient_les_portes_de_l_ancien_l_25_bis(
         simulateur):
     """D. 16-1, la rédaction par génération que le décret n° 2010-1748 insère
@@ -8944,7 +8897,6 @@ def test_jusqu_en_juin_2011_les_fonctionnaires_gardaient_les_portes_de_l_ancien_
         "carriere_longue", "carriere_longue"]
 
 
-@pytest.mark.sur_le_moteur_python("ouvrir")
 def test_des_juillet_2011_la_date_d_effet_decide_quelle_que_soit_la_demande(simulateur):
     """L'article 118, III, de la loi n° 2010-1330 parle des demandes déposées à
     compter du 1er juillet 2011. Le SRE l'a lu autrement, le 7 avril 2011 : la
@@ -9126,7 +9078,6 @@ def test_les_periodes_reputees_cotisees_sont_celles_de_la_redaction_a_la_date_d_
     assert opposes - cotises == reputes
 
 
-@pytest.mark.sur_le_moteur_python("ouvrir")
 def test_avant_novembre_2012_le_chomage_ne_rouvrait_pas_la_carriere_longue(simulateur):
     """Ce que la date change pour l'assuré. Né en 1950, entré à seize ans et
     demi, trois années de chômage indemnisé : 158 trimestres cotisés à
@@ -9408,7 +9359,6 @@ def test_l_inversion_avoue_ce_qu_aucune_carriere_ne_sert(simulateur):
     assert saut.pension_dessous < saut.cible < saut.pension
 
 
-@pytest.mark.sur_le_moteur_python("ouvrir")
 def test_les_ages_des_marins_suivent_la_duree_de_leurs_services(simulateur):
     """Trois pensions, trois âges, et c'est la durée de services qui choisit.
 
@@ -9481,7 +9431,6 @@ def test_le_marin_est_bonifie_des_deux_enfants(simulateur):
 # -- action 89 : la minoration des trois régimes de l'IRCEC -------------------
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_l_ircec_compte_des_annees_et_non_des_trimestres(simulateur):
     """Règlement du RAAP, art. 27 b : « 2,5 % par année pour chacune des deux
     premières années manquantes ; 5 % par année manquante supplémentaire » —
@@ -9515,7 +9464,6 @@ def test_l_ircec_compte_des_annees_et_non_des_trimestres(simulateur):
         periode, carriere, 172, 172, 62.0, 2022) == pytest.approx(1.0)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_le_racl_n_a_rejoint_les_deux_autres_qu_en_2025(simulateur):
     """De 2014 à 2024, le RACL minorait de « 5 % par année manquante », sans
     renvoi au régime de base, et seul l'âge ouvrait le taux plein : une
@@ -9583,7 +9531,6 @@ def test_les_avocats_cotisent_au_bareme_de_leur_annee(simulateur):
 # -- action 89 : la décote des navigants de l'aviation civile -----------------
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_crpn_decote_par_la_duree_seule_jusqu_a_soixante_ans(simulateur):
     """R. 6527-22 du code des transports : « une décote égale à 5 % par annuité
     manquante » sous trente annuités, sans condition d'âge depuis 2022 ; et
@@ -9613,7 +9560,6 @@ def test_la_crpn_decote_par_la_duree_seule_jusqu_a_soixante_ans(simulateur):
         assert avant.age_taux_plein == pytest.approx(60.0)
 
 
-@pytest.mark.sur_le_moteur_python("liquider")
 def test_la_crpn_abaisse_la_cible_des_nes_avant_1971_partis_a_55_ans(simulateur):
     """Décret n° 2011-1500, article 26, III, depuis le 1er janvier 2022 :
     « pour les personnes nées avant le 1er janvier 1971, lorsque la
@@ -9652,7 +9598,6 @@ def test_la_crpn_abaisse_la_cible_des_nes_avant_1971_partis_a_55_ans(simulateur)
                 age_debut=35, age_liquidation=60)) == 36
 
 
-@pytest.mark.sur_le_moteur_python("ouvrir")
 def test_la_comedie_francaise_lit_l_age_et_la_duree_de_son_decret(simulateur):
     """Décret n° 68-960 : l'âge de soixante-deux ans de l'article 6 ne vaut
     qu'à compter de la génération 1962, abaissé à soixante ans avant 1957 et
@@ -9689,7 +9634,6 @@ def test_la_comedie_francaise_lit_l_age_et_la_duree_de_son_decret(simulateur):
             naissance)
 
 
-@pytest.mark.sur_le_moteur_python("ouvrir")
 def test_les_deputes_lisent_l_age_a_la_generation_et_la_duree_a_l_ouverture(
         simulateur):
     """Règlement de la Caisse de pensions des députés : l'âge d'ouverture

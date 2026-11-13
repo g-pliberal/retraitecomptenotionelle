@@ -2319,10 +2319,7 @@ def table_du_moteur(table: str, methode: str, type_rendu, *arguments, parametres
         raise ValueError(f"méthode de table que la façade ne sert pas : {table}.{methode} "
                          "(pont.TABLES_DE_LA_FACADE)")
     carrieres: list = []
-    valeurs = [{"valeur": {"@": "series"}} if argument is SERIES
-               else {"valeur": {"@": "periode", **dataclasses.asdict(argument)}}
-               if isinstance(argument, PeriodeDuCatalogue)
-               else _argument_du_droit(argument, carrieres) for argument in arguments]
+    valeurs = [_argument_de_la_facade(argument, carrieres) for argument in arguments]
     reponse = _demander({"facade": {
         "parametres": parametres_en_donnees(Parametres() if parametres is None else parametres),
         "carrieres": [carriere_en_donnees(carriere) for carriere in carrieres],
@@ -2333,3 +2330,76 @@ def table_du_moteur(table: str, methode: str, type_rendu, *arguments, parametres
     if "refus" in reponse:
         raise erreur_du_portage(**reponse["refus"])
     return lu_strictement(type_rendu, reponse["rendu"], f"{table}.{methode}")
+
+
+def _argument_de_la_facade(argument, carrieres: list) -> dict:
+    """Un argument d'une méthode de table ou d'une règle du droit que la façade
+    sert, tel que ``pont.mjs`` le relit : comme celui d'un appel du droit
+    (:func:`_argument_du_droit`), sauf trois, qui passent par leur marque — les
+    séries du simulateur, une période de son catalogue, et une date au mois,
+    dont le portage refait une ``DateMois``."""
+    from .calendrier import DateMois
+
+    if argument is SERIES:
+        return {"valeur": {"@": "series"}}
+    if isinstance(argument, PeriodeDuCatalogue):
+        return {"valeur": {"@": "periode", **dataclasses.asdict(argument)}}
+    if isinstance(argument, DateMois):
+        return {"valeur": {"@": "date_mois", "annee": argument.annee, "mois": argument.mois}}
+    return _argument_du_droit(argument, carrieres)
+
+
+# -- les règles du droit, par la façade (action 161) ------------------------------
+#
+# Un test appelle aussi une règle du droit — ``ouvrir.duree_requise(moteur,
+# periode, carriere)``. La façade la sert par son module et son nom : le
+# portage appelle la sienne, et ce qu'elle rend revient sous le type que le
+# jumeau Python annonce, lu strictement, comme une méthode de table.
+
+#: Les règles du droit que la façade sert, sous les noms du Python :
+#: ``{module: règles}``. Chacune a les mêmes arguments, dans le même ordre et
+#: sous les mêmes valeurs par défaut, dans le portage
+#: (``moteur/js/droit/<module>.js`` ; ``tests/test_facade.py`` le vérifie), et
+#: un appel confronté au jumeau (``tests/test_facade_jumeau.py``). Une règle
+#: qui n'y est pas est refusée avant node.
+REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
+    "liquider": ("abattement_points", "age_de_la_duree_atteinte", "annees_au_prorata",
+                 "borne_de_la_duree", "decote_opposable", "duree_proratisation",
+                 "moyenne_des_meilleures_annees", "retranche_decote",
+                 "revenu_des_cotisations_minimales", "salaire_de_reference",
+                 "taux_de_majoration_de_1952_a_1972", "trimestres_de_decote",
+                 "trimestres_de_surcote_regimes_speciaux", "valeur_du_point"),
+    "ouvrir": ("age_ouverture", "age_ouverture_commun", "age_ouverture_droit", "age_surcote",
+               "age_taux_plein", "duree_requise"),
+}
+
+
+def regle_du_droit(module: str, regle: str, type_rendu, *arguments, parametres=None,
+                   paquet: bytes | None = None):
+    """Ce que rend la règle ``regle`` du module ``module`` du droit, sous les
+    noms du Python (``"ouvrir"``, ``"duree_requise"``), appelée par le portage,
+    sous ``parametres`` : ses arguments dans l'ordre du jumeau, comme ceux
+    d'une méthode de table (:func:`table_du_moteur`) — :data:`MOTEUR`, une
+    carrière, une période du catalogue (:class:`PeriodeDuCatalogue`), une
+    ``DateMois``, une valeur. Ce qu'elle rend revient sous ``type_rendu``, que
+    la règle du jumeau annonce, lu strictement. Une règle que
+    :data:`REGLES_DE_LA_FACADE` ne déclare pas est refusée avant node ; ce que
+    le portage refuse lève l'erreur que le Python lève
+    (:func:`erreur_du_portage`)."""
+    from .config import Parametres
+
+    if regle not in REGLES_DE_LA_FACADE.get(module, ()):
+        raise ValueError(f"règle du droit que la façade ne sert pas : {module}.{regle} "
+                         "(pont.REGLES_DE_LA_FACADE)")
+    carrieres: list = []
+    valeurs = [_argument_de_la_facade(argument, carrieres) for argument in arguments]
+    reponse = _demander({"facade": {
+        "parametres": parametres_en_donnees(Parametres() if parametres is None else parametres),
+        "carrieres": [carriere_en_donnees(carriere) for carriere in carrieres],
+        "entree": "droit.regle",
+        "arguments": [_argument_du_droit(SIMULATEUR, carrieres), {"valeur": module},
+                      {"valeur": regle}, *valeurs],
+    }}, _paquet_de(parametres, paquet))
+    if "refus" in reponse:
+        raise erreur_du_portage(**reponse["refus"])
+    return lu_strictement(type_rendu, reponse["rendu"], f"{module}.{regle}")

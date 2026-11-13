@@ -21,9 +21,12 @@ import pytest
 
 from retraite_notionnelle import pont
 from retraite_notionnelle import simulateur as simulateur_python
+from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import Carriere as CarrierePython
 from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.config import RACINE_PROJET, Parametres
+from retraite_notionnelle.droit import liquider as liquider_python
+from retraite_notionnelle.droit import ouvrir as ouvrir_python
 from retraite_notionnelle.journal import Journal
 
 import facade
@@ -295,4 +298,135 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_dans_les_tables_du_moteur(parametre
         refait = getattr(getattr(jumeau.scenario_actuel, table), methode)(*arguments(jumeau))
         if lu != refait or (not isinstance(refait, dict) and repr(lu) != repr(refait)):
             ecarts.append(f"{table}.{methode} : la façade lit {lu!r}, le jumeau rend {refait!r}")
+    assert not ecarts, "\n".join(ecarts)
+
+
+# -- les règles du droit ---------------------------------------------------------------
+
+def _salarie(simulateur):
+    return simulateur.carriere_simple(
+        annee_naissance=1965, sexe="H", affiliation="salarie_prive_non_cadre", age_debut=23,
+        age_liquidation=64)
+
+
+def _agent(simulateur):
+    return simulateur.carriere_simple(
+        annee_naissance=1945, sexe="H", affiliation="agent_sncf", age_debut=21,
+        age_liquidation=64.0)
+
+
+def _fonctionnaire(simulateur):
+    return simulateur.carriere_simple(
+        annee_naissance=1962, sexe="F", affiliation="fonctionnaire_etat", age_debut=22,
+        age_liquidation=60, nombre_enfants=3)
+
+
+def _du_regime(regime: str, annee: int, carriere, *suite):
+    """Les arguments d'une règle qui lit le moteur, une période et une
+    carrière : la période du régime à cette année, dans le catalogue du
+    simulateur."""
+    return lambda s: (s.scenario_actuel, s.catalogue[regime].periode(annee), carriere(s), *suite)
+
+
+#: Des appels de chaque règle du droit que la façade sert
+#: (``pont.REGLES_DE_LA_FACADE``) : ``(module, règle, arguments)``, les
+#: arguments bâtis sur le simulateur de chaque côté — son moteur, une période
+#: de son catalogue, sa carrière.
+APPELS_DES_REGLES = [
+    ("liquider", "abattement_points",
+     _du_regime("agirc_arrco", 2019, _salarie, 100, 172, 57.0, 2022)),
+    ("liquider", "abattement_points",
+     _du_regime("agirc_arrco", 2019, _salarie, 172, 172, 62.0, 2027, 120, True, "active")),
+    ("liquider", "abattement_points",
+     _du_regime("ircantec", 2029, _salarie, 150, 172, 62.0, 2027)),
+    ("liquider", "age_de_la_duree_atteinte",
+     _du_regime("agirc_arrco", 2029, _salarie, 176, 172, 64.0)),
+    ("liquider", "age_de_la_duree_atteinte",
+     _du_regime("agirc_arrco", 2029, _salarie, 150, 172, 64.0)),
+    ("liquider", "annees_au_prorata", lambda s: (21, 126, 174)),
+    ("liquider", "annees_au_prorata", lambda s: (25, 1, 400)),
+    ("liquider", "borne_de_la_duree", _du_regime("regime_general", 2029, _salarie, 172)),
+    ("liquider", "borne_de_la_duree", _du_regime("sncf", 2009, _agent, 160)),
+    ("liquider", "decote_opposable", _du_regime("regime_general", 2029, _salarie, 2029)),
+    ("liquider", "decote_opposable", _du_regime("sncf", 2009, _agent, 2009)),
+    ("liquider", "decote_opposable",
+     _du_regime("fonction_publique_etat", 2022, _fonctionnaire, 2022)),
+    ("liquider", "duree_proratisation", _du_regime("regime_general", 2029, _salarie, 172)),
+    ("liquider", "duree_proratisation",
+     _du_regime("fonction_publique_etat", 2022, _fonctionnaire, 168)),
+    ("liquider", "moyenne_des_meilleures_annees",
+     lambda s: ([30, 30, 30, 29, 30, 30, 24, 30, 30, 33, 40, 30, 30, 24, 30, 30, 23, 30, 16, 24,
+                 30, 30], 13)),
+    ("liquider", "moyenne_des_meilleures_annees", lambda s: ([12.5, 40.25, 7.0], 2)),
+    ("liquider", "retranche_decote", _du_regime("regime_general", 2029, _salarie)),
+    ("liquider", "retranche_decote",
+     _du_regime("fonction_publique_etat", 2022, _fonctionnaire)),
+    ("liquider", "revenu_des_cotisations_minimales", lambda s: (2016, 3000.0, 9.67)),
+    ("liquider", "revenu_des_cotisations_minimales", lambda s: (2020, 9000.0, 10.15, 0.5)),
+    ("liquider", "salaire_de_reference",
+     lambda s: (s.scenario_actuel, "regime_general", _salarie(s),
+                s.catalogue["regime_general"].periode(2029), 2029, True)),
+    ("liquider", "salaire_de_reference",
+     lambda s: (s.scenario_actuel, "regime_general", _salarie(s),
+                s.catalogue["regime_general"].periode(2029), 2029, False, 1965, False,
+                ("regime_general", "msa_salaries"), 2, 2000, 10, True, True)),
+    ("liquider", "taux_de_majoration_de_1952_a_1972", lambda s: (15.0,)),
+    ("liquider", "taux_de_majoration_de_1952_a_1972", lambda s: (22.5,)),
+    ("liquider", "trimestres_de_decote",
+     _du_regime("regime_general", 2029, _salarie, 150, 172, 62.0, 67.0)),
+    ("liquider", "trimestres_de_decote",
+     _du_regime("fonction_publique_etat", 2022, _fonctionnaire, 150, 168, 60.0, 65.0)),
+    ("liquider", "trimestres_de_surcote_regimes_speciaux", lambda s: (_agent(s), 172, 160, 55.0)),
+    ("liquider", "trimestres_de_surcote_regimes_speciaux", lambda s: (_agent(s), 159, 150, 55.0)),
+    ("liquider", "valeur_du_point", lambda s: (s.scenario_actuel, "agirc_arrco", 2023)),
+    ("liquider", "valeur_du_point",
+     lambda s: (s.scenario_actuel, "agirc_arrco", DateMois(2023, 10))),
+    ("liquider", "valeur_du_point", lambda s: (s.scenario_actuel, "arrco", 2022)),
+    ("liquider", "valeur_du_point", lambda s: (s.scenario_actuel, "agirc_arrco", 2045)),
+    ("liquider", "valeur_du_point", lambda s: (s.scenario_actuel, "regime_general", 2023)),
+    ("ouvrir", "age_ouverture", _du_regime("regime_general", 2029, _salarie)),
+    ("ouvrir", "age_ouverture",
+     _du_regime("fonction_publique_etat", 2022, _fonctionnaire, False, False)),
+    ("ouvrir", "age_ouverture", _du_regime("sncf", 2009, _agent)),
+    ("ouvrir", "age_ouverture_commun", _du_regime("regime_general", 2029, _salarie)),
+    ("ouvrir", "age_ouverture_commun",
+     _du_regime("fonction_publique_etat", 2022, _fonctionnaire)),
+    ("ouvrir", "age_ouverture_droit", lambda s: (s.scenario_actuel, _salarie(s))),
+    ("ouvrir", "age_ouverture_droit", lambda s: (s.scenario_actuel, _fonctionnaire(s))),
+    ("ouvrir", "age_surcote", _du_regime("regime_general", 2029, _salarie)),
+    ("ouvrir", "age_surcote", _du_regime("sncf", 2009, _agent)),
+    ("ouvrir", "age_taux_plein", _du_regime("regime_general", 2029, _salarie)),
+    ("ouvrir", "age_taux_plein", _du_regime("fonction_publique_etat", 2022, _fonctionnaire)),
+    ("ouvrir", "duree_requise", _du_regime("regime_general", 2029, _salarie)),
+    ("ouvrir", "duree_requise", _du_regime("fonction_publique_etat", 2022, _fonctionnaire)),
+    ("ouvrir", "duree_requise", _du_regime("sncf", 2009, _agent)),
+]
+
+
+def test_chaque_regle_du_droit_servie_a_son_appel_confronte():
+    assert {(module, regle) for module, regle, _ in APPELS_DES_REGLES} == {
+        (module, regle) for module, regles in pont.REGLES_DE_LA_FACADE.items()
+        for regle in regles}
+
+
+@pytest.mark.parametrize("parametres", [Parametres(), Parametres(conventions_cor=True)],
+                         ids=["reference", "conventions_cor"])
+def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
+    """Chaque règle du droit que la façade sert, appelée par le portage et par
+    le jumeau, chacun sur son moteur : la même valeur, au bit près, sous le
+    type que la règle annonce — un âge entier que le jumeau rend « 62 » revient
+    « 62.0 » de la façade, qui le lit sous ce type."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    servi = facade.Simulateur(parametres)
+    jumeau = simulateur_python.Simulateur(parametres)
+    modules = {"liquider": liquider_python, "ouvrir": ouvrir_python}
+    ecarts = []
+    for module, regle, arguments in APPELS_DES_REGLES:
+        lu = getattr(getattr(facade, module), regle)(*arguments(servi))
+        refait = getattr(modules[module], regle)(*arguments(jumeau))
+        if repr(lu) != repr(pont.lu_strictement(
+                facade._type_rendu(getattr(modules[module], regle), vars(modules[module])),
+                json.loads(json.dumps(pont._en_donnees(refait))), f"{module}.{regle}")):
+            ecarts.append(f"{module}.{regle} : la façade lit {lu!r}, le jumeau rend {refait!r}")
     assert not ecarts, "\n".join(ecarts)

@@ -1763,13 +1763,35 @@ LECTURES.facade = facade;
 // Les tables du moteur, par la façade : un bloc à part (action 161).
 
 /**
+ * Un argument d'une méthode de table ou d'une règle du droit que la façade
+ * sert (`_argument_de_la_facade` de `pont.py`). Trois passent par leur
+ * marque : les séries du simulateur, `{"@": "series"}` ; une période du
+ * catalogue, `{"@": "periode", regime, rang, debut}`, celle de ce rang parmi
+ * les périodes du régime, dont l'année de début est vérifiée ; une date au
+ * mois, `{"@": "date_mois", annee, mois}`, une vraie `DateMois`. Une période
+ * que le catalogue ne tient pas arrête la demande, au lieu de passer pour un
+ * refus du moteur.
+ */
+function argumentDeLaFacade({ macro, catalogue }, valeur) {
+  const marque = valeur !== null && typeof valeur === "object" && !Array.isArray(valeur)
+    ? valeur["@"] : undefined;
+  if (marque === "series") return macro;
+  if (marque === "date_mois") return new DateMois(valeur.annee, valeur.mois);
+  if (marque === "periode") {
+    const periode = catalogue.obtenir(valeur.regime).periodes[valeur.rang];
+    if (periode === undefined || periode.debut !== valeur.debut) {
+      throw new TypeError(`période que le catalogue ne tient pas : ${JSON.stringify(valeur)}`);
+    }
+    return periode;
+  }
+  return valeur;
+}
+
+/**
  * La méthode d'une table du moteur du scénario 1, sous les noms du Python
  * (`table_du_moteur` de `pont.py`, qui déclare celles que la façade sert) :
- * ce qu'elle rend sur ces arguments, tel quel (`telQuel`). Deux arguments
- * passent par leur marque : les séries du simulateur, `{"@": "series"}`, et
- * une période du catalogue, `{"@": "periode", regime, rang, debut}`, celle de
- * ce rang parmi les périodes du régime, dont l'année de début est vérifiée.
- * Une table, une méthode ou une période que le moteur ne tient pas arrête la
+ * ce qu'elle rend sur ces arguments (`argumentDeLaFacade`), tel quel
+ * (`telQuel`). Une table ou une méthode que le moteur ne tient pas arrête la
  * demande, au lieu de passer pour un refus du moteur.
  */
 ENTREES_DE_LA_FACADE["scenario_actuel.table"] = (moteur, table, methode, ...valeurs) => {
@@ -1779,20 +1801,29 @@ ENTREES_DE_LA_FACADE["scenario_actuel.table"] = (moteur, table, methode, ...vale
     || nom.startsWith("_")) {
     throw new TypeError(`table ou méthode que le moteur ne tient pas : ${table}.${methode}`);
   }
-  const marque = (valeur) => (valeur !== null && typeof valeur === "object"
-    && !Array.isArray(valeur) ? valeur["@"] : undefined);
-  const lu = (valeur) => {
-    if (marque(valeur) === "series") return moteur.macro;
-    if (marque(valeur) === "periode") {
-      const periode = moteur.catalogue.obtenir(valeur.regime).periodes[valeur.rang];
-      if (periode === undefined || periode.debut !== valeur.debut) {
-        throw new TypeError(`période que le catalogue ne tient pas : ${JSON.stringify(valeur)}`);
-      }
-      return periode;
-    }
-    return valeur;
-  };
-  return telQuel(tenue[nom](...valeurs.map(lu)));
+  return telQuel(tenue[nom](...valeurs.map((valeur) => argumentDeLaFacade(moteur, valeur))));
+};
+
+// Les règles du droit, par la façade : un bloc à part (action 161).
+
+/** Les modules du droit dont la façade sert des règles, sous leur nom. */
+const MODULES_DU_DROIT = { liquider, ouvrir };
+
+/**
+ * Une règle du droit, sous les noms du Python (`regle_du_droit` de `pont.py`,
+ * qui déclare celles que la façade sert) : ce qu'elle rend sur ces arguments
+ * (`argumentDeLaFacade`), dans l'ordre de son jumeau, tel quel (`telQuel`).
+ * Un module ou une règle que le portage ne tient pas arrête la demande, au
+ * lieu de passer pour un refus du moteur.
+ */
+ENTREES_DE_LA_FACADE["droit.regle"] = (simulateur, module, regle, ...valeurs) => {
+  const nom = enChameau(regle);
+  if (!Object.hasOwn(MODULES_DU_DROIT, module) || nom.startsWith("_")
+    || typeof MODULES_DU_DROIT[module][nom] !== "function") {
+    throw new TypeError(`règle que le droit ne tient pas : ${module}.${regle}`);
+  }
+  return telQuel(MODULES_DU_DROIT[module][nom](
+    ...valeurs.map((valeur) => argumentDeLaFacade(simulateur, valeur))));
 };
 
 // -- la fin de la façade des tests ----------------------------------------------
