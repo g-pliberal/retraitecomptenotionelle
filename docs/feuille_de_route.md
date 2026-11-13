@@ -8077,16 +8077,17 @@ base des conventions collectives ». Trois étapes en naissent ; les étapes 4 e
 
 ### 186. Le programme du parti sur les retraites : chaque grande idée étudiée à fond, aux sources, puis le modèle et le site qui la montrent — `en cours`
 
-**Reprise, au 9 novembre 2026.** La réversion est tranchée pour le scénario 6
-(décisions 16 à 28) ; le stock gardé est au coût, le site le dément encore
-(`…-reversion-scenario-6-plan.md`). Décisions 29 et 30 : les lectures de la
-29 chiffrées, LVT et TVA comprises (`…-deux-lectures-au-modele.md`). Le
-message (8, décisions 31 à 33, 68, 89, 90), les enfants (3, 50 à 61), les
-recettes (4, 79 à 81, et la CTA, 88 : `…-cta.md`) et les chiffres (7, 82 à
-85) sont tranchés ; l'indexation (5) et les complémentaires (6, baisse : 86
-et 87) étudiées ; le site (9) et le gel (10) aussi ; chaque note tient son
-bloc. Par quoi commencer : A ou B, au propriétaire, puis les chantiers 3, 5,
-6, 9 et 10, et le chiffrage des décisions 89 et 90. Rien n'est gelé.
+**Reprise, au 13 novembre 2026.** Tout ce que l'action attend du propriétaire
+est rassemblé dans une seule note, `186/2026-11-13-questions-au-proprietaire.md` :
+trente et une questions en six lots, chacune avec ce que chaque réponse change
+et une recommandation. La première décide du reste : le taux de cotisation,
+18 %, 21,2 % ou 15,9 %. Elles lui ont été posées le 13 novembre ; ses réponses
+ne sont pas encore écrites. Par quoi commencer : lire la fin de cette note,
+« Ce que le propriétaire a répondu », et lui reposer ce qui y manque. Ensuite
+seulement, des sessions neuves portent ses réponses au modèle puis au site,
+une étape chacune. Ce qui est déjà tranché et attend son portage — la
+réversion, les enfants, les recettes, les complémentaires — est dit en tête
+de chaque note de l'action. Aucune action n'est gelée.
 
 **D'où elle vient.** Le 6 novembre 2026, le propriétaire demande un bilan :
 les vagues se succèdent, et le chantier semble sans fin. La session mesure
