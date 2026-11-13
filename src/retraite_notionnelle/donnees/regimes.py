@@ -796,6 +796,12 @@ class PeriodeRegime:
     #: invalidité : voir :class:`PointsInvalidite`. ``None`` partout ailleurs
     #: qu'aux complémentaires des artisans et des commerçants.
     points_invalidite: PointsInvalidite | None = None
+    #: L'ÂGE DEPUIS LEQUEL L'INAPTE EST SERVI SANS COEFFICIENT, dans un régime
+    #: en points, pour une pension que la période liquide : « À partir de 62
+    #: ans » « En cas d'inaptitude au travail », écrivent les statuts de la
+    #: CAVOM du 1er janvier 2016 au 31 décembre 2024 (article 14, I, 1°).
+    #: ``None`` : l'inapte reçoit le coefficient de son âge.
+    age_sans_coefficient_de_l_inapte: float | None = None
     #: BORNES EN EUROS, ANNÉE PAR ANNÉE : celle que le régime fixe lui-même
     #: chaque année, et qui ne suit ni le plafond de la Sécurité sociale ni un
     #: montant figé. C'est le plafond propre de la première tranche du RCI de
@@ -2376,6 +2382,10 @@ class CatalogueRegimes:
                     p.get("calcul_provisoire_non_salaries", False)
                 ),
                 fractions_des_cultes=bool(p.get("fractions_des_cultes", False)),
+                age_sans_coefficient_de_l_inapte=(
+                    None if p.get("age_sans_coefficient_de_l_inapte") is None
+                    else float(p["age_sans_coefficient_de_l_inapte"])
+                ),
                 points_de=p.get("points_de"),
                 valeur_point_euros=(
                     None if p.get("valeur_point_euros") is None

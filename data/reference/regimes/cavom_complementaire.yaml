@@ -101,6 +101,7 @@ periodes:
     decote_annulee_par_la_duree: cavom_ages_minoration
     abattement_points: cavom_ages_minoration
     surcote_par_trimestre: null
+    age_sans_coefficient_de_l_inapte: 62
     avantages_non_contributifs: [reversion]
     notes: >-
       LA RÉFORME DE 2016 REND LE RÉGIME PROPORTIONNEL : 12,50 % du revenu
@@ -167,6 +168,7 @@ periodes:
     decote_annulee_par_la_duree: cavom_ages_minoration
     abattement_points: cavom_ages_minoration
     surcote_par_trimestre: null
+    age_sans_coefficient_de_l_inapte: 62
     avantages_non_contributifs: [reversion]
     notes: >-
       2017 : même régime, plafond de cinq plafonds de la Sécurité sociale
@@ -190,6 +192,7 @@ periodes:
     decote_annulee_par_la_duree: cavom_ages_minoration
     abattement_points: cavom_ages_minoration
     surcote_par_trimestre: null
+    age_sans_coefficient_de_l_inapte: 62
     avantages_non_contributifs: [reversion]
     notes: >-
       2018 : même régime, plafond de six plafonds de la Sécurité sociale
@@ -213,6 +216,7 @@ periodes:
     decote_annulee_par_la_duree: cavom_ages_minoration
     abattement_points: cavom_ages_minoration
     surcote_par_trimestre: null
+    age_sans_coefficient_de_l_inapte: 62
     avantages_non_contributifs: [reversion]
     notes: >-
       2019 : même régime, plafond de sept plafonds de la Sécurité sociale
@@ -220,6 +224,32 @@ periodes:
       du plafond depuis le 1er janvier 2019 (décret n° 2019-373). Voir la
       période de 2016.
   - debut: 2020
+    fin: 2024
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    age_table: cavom
+    duree_requise_trimestres: null
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_8_pass
+    assiette_minimale_pass: 0.19
+    taux_cotisation_retraite: 0.125
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: cavom_ages_minoration
+    abattement_points: cavom_ages_minoration
+    surcote_par_trimestre: null
+    age_sans_coefficient_de_l_inapte: 62
+    avantages_non_contributifs: [reversion]
+    notes: >-
+      Depuis 2020 : huit plafonds de la Sécurité sociale — 384 480 € en
+      2026 — et une assiette minimale de 19 % du plafond, 9 131 € en 2026,
+      que l'article 2 du décret n° 79-265 applique aussi aux deux premières
+      années d'activité depuis le décret n° 2026-418 (LEGIARTI000054168585).
+      Voir la période de 2016.
+  - debut: 2025
     fin: null
     type_calcul: points
     age_ouverture: 62
@@ -239,8 +269,10 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
-      Depuis 2020 : huit plafonds de la Sécurité sociale — 384 480 € en
-      2026 — et une assiette minimale de 19 % du plafond, 9 131 € en 2026,
-      que l'article 2 du décret n° 79-265 applique aussi aux deux premières
-      années d'activité depuis le décret n° 2026-418 (LEGIARTI000054168585).
-      Voir la période de 2016.
+      Depuis 2025 : les paramètres de 2020. La période ne s'en sépare que
+      par l'inapte, que les statuts servaient sans coefficient dès 62 ans
+      jusqu'au 31 décembre 2024 (`age_sans_coefficient_de_l_inapte`, à la
+      période de 2016) : l'article 14 récrit au 1er janvier 2025 (arrêté
+      du 12 décembre 2024, 4°) lui ouvre ses droits à 62 ans (1°, a), et
+      ne sert sans coefficient que « les affiliés ayant atteint l'âge de
+      67 ans » (2°). Voir les périodes de 2016 et de 2020.

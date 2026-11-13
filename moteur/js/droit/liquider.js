@@ -3012,6 +3012,17 @@ export function tauxPleinAnticipe(moteur, periode, carriere, ageLiquidation) {
 }
 
 /**
+ * L'inapte que la section sert sans coefficient depuis l'âge que la période
+ * écrit (`age_sans_coefficient_de_l_inapte`) : « À partir de 62 ans » « En
+ * cas d'inaptitude au travail », à la CAVOM du 1er janvier 2016 au
+ * 31 décembre 2024. Voir `liquider.inapte_sans_coefficient`.
+ */
+export function inapteSansCoefficient(periode, carriere, ageLiquidation) {
+  const age = periode.age_sans_coefficient_de_l_inapte ?? null;
+  return age !== null && carriere.inaptitude && ageLiquidation >= age - 1e-9;
+}
+
+/**
  * Minoration des trois régimes de l'IRCEC : 2,5 % pour chacune des deux
  * premières années manquantes jusqu'à l'âge du taux plein, 5 % au-delà, une
  * année entamée comptant entière ; ou la décote du régime de base si elle
@@ -3334,6 +3345,9 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
     );
   }
   if (abattement < 1.0 && tauxPleinAnticipe(moteur, periode, carriere, ageLiquidation)) {
+    abattement = 1.0;
+  }
+  if (abattement < 1.0 && inapteSansCoefficient(periode, carriere, ageLiquidation)) {
     abattement = 1.0;
   }
 

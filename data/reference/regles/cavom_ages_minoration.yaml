@@ -34,6 +34,9 @@ ecrit:
   0,75 à cinq ans du taux plein à un, que `abattement_points` rend à
   `liquider_chaque_regime`, et l'âge d'ouverture et l'âge du taux plein, que la table
   `cavom` de `ages_regimes.csv` rend à l'ouverture
+- >-
+  le coefficient ramené à un pour l'inapte de 62 ans dont la pension prend effet du
+  1er janvier 2016 au 31 décembre 2024 (`age_sans_coefficient_de_l_inapte`)
 dates_qui_decident:
 - liquidation.date_effet
 versions:
@@ -62,6 +65,7 @@ versions:
       abattement_points: cavom
       age_table: cavom
       surcote_par_trimestre: null
+      age_sans_coefficient_de_l_inapte: null
     droit: celui de la version statuts_de_2016, présumé
   exemples: aucun trouvé
 - id: statuts_de_2016
@@ -131,6 +135,7 @@ versions:
       abattement_points: cavom
       age_table: cavom
       surcote_par_trimestre: null
+      age_sans_coefficient_de_l_inapte: 62
     droit: >-
       ouverture et taux plein à 60 et 65 ans jusqu'à la génération 1955, puis six mois
       de plus par génération jusqu'à 62 et 67 ans depuis celle de 1959 ; avant l'âge du
@@ -204,6 +209,7 @@ versions:
       abattement_points: cavom
       age_table: cavom
       surcote_par_trimestre: null
+      age_sans_coefficient_de_l_inapte: null
     droit: >-
       la table de 2016, prolongée : ouverture à 62 ans et 6 mois, 63 ans, 63 ans et 6
       mois pour les générations 1965 à 1967, à 64 ans depuis 1968, taux plein à 67 ans
@@ -255,6 +261,7 @@ versions:
       abattement_points: cavom
       age_table: cavom
       surcote_par_trimestre: null
+      age_sans_coefficient_de_l_inapte: null
     droit: celui des statuts de 2025, mot pour mot
     conditions: celles des statuts de 2025
   exemples: aucun trouvé
@@ -267,22 +274,24 @@ approximations:
     Le modèle sert avant le 1er janvier 2016 la table et le coefficient de 2016 aux
     générations nées avant 1956 (ouverture à 60 ans, taux plein à 65 ans, 5 % par année
     manquante), que nul texte lu ne date ; ce que les statuts d'alors disaient n'est pas
-    lu.
+    lu. Il n'y sert pas l'inapte sans coefficient, que seuls les statuts de 2016
+    écrivent parmi les textes lus.
   effet: >-
     non mesuré ; né le 10 mars 1955, liquidé le 1er avril 2015 à 60 ans, le modèle sert
     0,75 (essai du 5 novembre 2026, dans les deux moteurs)
 - version: [statuts_de_2016]
-  textes: statuts de 2016, article 14, I, 1°, deuxième alinéa
+  textes: >-
+    statuts de 2016, article 14, I, 1°, deuxième alinéa, « En cas d'inaptitude au
+    travail reconnue dans les conditions prévues aux articles 27 à 33 des statuts de la
+    CNAVPL », puis « dans les statuts en vigueur »
   ecart: >-
-    Le modèle n'exempte pas l'inapte : il lui oppose le coefficient jusqu'à l'âge du
-    taux plein, quand les statuts lui servent la pension sans coefficient dès 62 ans
-    (essai du 5 novembre 2026, requête du formulaire, case de l'inaptitude cochée, dans
-    les deux moteurs). La même classe que la CAVEC, la CARPV, la CAVAMAC et la CARCDSF.
-  effet: >-
-    jusqu'à 25 points de la pension : inapte né le 10 mars 1959, liquidé le 1er avril
-    2021 à 62 ans, le modèle sert 0,75 (13 564,47 € par an), le texte 1 (18 085,97 €) ;
-    né le 10 mars 1957, le 1er avril 2019, 0,80 au lieu de 1 ; né le 10 mars 1955, le
-    1er avril 2017, 0,85 au lieu de 1
+    Le modèle sert sans coefficient, dès 62 ans, l'affilié dont la carrière déclare
+    l'inaptitude au travail (la case de l'inaptitude du formulaire), et lui seul : les
+    articles 27 à 33 des statuts de la CNAVPL, qui disent comment elle est reconnue,
+    ne sont pas lus, et le titulaire d'une pension d'invalidité ou d'une incapacité
+    permanente, que le régime général répute inapte, ne l'est pas ici sans cette
+    déclaration.
+  effet: non mesuré
 - version: [statuts_de_2016]
   textes: >-
     statuts de 2016, article 14, I, 1°, « À partir de 62 ans « En cas d'inaptitude au
@@ -294,10 +303,10 @@ approximations:
     l'âge d'ouverture (60 ans jusqu'à la génération 1955, puis six mois de plus par
     génération) ; il ne dit pas si l'inapte, que le 1° sert sans coefficient « À partir
     de 62 ans », l'est aussi dès l'âge d'ouverture de sa génération. Le modèle lui oppose
-    le coefficient avant 62 ans comme après (l'approximation précédente) : né le 10 mars
+    le coefficient avant 62 ans, et le sert sans coefficient depuis : né le 10 mars
     1955, inapte, liquidé le 1er avril 2016 à 61 ans, quatre années avant 65 ans, 0,80,
-    12 830,11 € par an (essai du 5 novembre 2026, case de l'inaptitude cochée, dans les
-    deux moteurs) ; si l'âge de l'inapte suit la table, le texte sert 1 :
+    12 830,11 € par an (essai du 5 novembre 2026, refait le 13, case de l'inaptitude
+    cochée, dans les deux moteurs) ; si l'âge de l'inapte suit la table, le texte sert 1 :
     12 830,11 / 0,80 = 16 037,64 €, 3 207,53 € de plus par an ; s'il reste 62 ans, 0,80.
   effet: >-
     de 2016 à 2024, l'inapte né avant 1959 liquidé entre l'âge d'ouverture de sa
@@ -427,8 +436,17 @@ effet: >-
   deux non-tranchés déclarés (l'âge de l'inapte né avant 1959, l'âge de la demande ou
   de l'effet), la condition de la date d'effet complétée pour l'assuré né le 1er, le
   cumul de 2020 et le 18° de 2016 dits.
+  Corrigée le 13 novembre 2026 (action 130, décision du propriétaire du même jour) :
+  jusque-là, le modèle opposait à l'inapte de 2016 à 2024 le coefficient de son âge,
+  quand l'article 14, I, 1°, des statuts de 2016 le sert sans coefficient « À partir
+  de 62 ans » — né le 10 mars 1959, inapte, liquidé le 1er avril 2021 à 62 ans : 0,75,
+  13 564,47 € par an, au lieu de 1, 18 085,96 €, 4 521,49 € de moins ; né le 10 mars
+  1957, le 1er avril 2019, 0,80 au lieu de 1 ; né le 10 mars 1955, le 1er avril 2017,
+  0,85 au lieu de 1. Depuis, `age_sans_coefficient_de_l_inapte: 62` aux périodes qui
+  liquident de 2016 à 2024, dans les deux moteurs. Restent non servies l'ouverture de
+  l'inapte à 62 ans depuis 2025 et la date d'effet au trimestre civil.
 sources:
-  lu_le: 2026-11-05
+  lu_le: 2026-11-13
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -438,6 +456,15 @@ sources:
     à la CAVOM. Vérifier l'arrondi à l'année d'un âge non entier depuis 2025 sur un
     exemple de la caisse.
   lectures:
+  - type: jorf
+    reference: >-
+      Relus pour la correction de l'inapte de 2016 à 2024 : arrêté du 30 décembre 2015,
+      annexe, 5° (JORFARTI000031740853), et arrêté du 12 décembre 2024, annexe, II, 4°
+      (JORFARTI000050823056), dans l'index JORF du dépôt, à jour du 11 novembre 2026 ;
+      code de la sécurité sociale, articles L. 643-4 (LEGIARTI000019959512, du 19
+      décembre 2008 au 31 août 2023) et L. 643-5 (LEGIARTI000006743795), dans l'index
+      LEGI, à jour du 11 novembre 2026.
+    date: 2026-11-13
   - type: jorf
     reference: >-
       Arrêté du 30 décembre 2015, annexe, 5° et 8° (JORFARTI000031740853) ; arrêté du
@@ -488,17 +515,22 @@ code:
     la 65e année ») et de la CAVAMAC de 2011 à 2023 (« 5 % lorsque la liquidation […]
     intervient dans les douze mois précédant l'âge requis », 10 % du 13e au 24e mois,
     jusqu'à 25 %). `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule
-    pas la minoration.
+    pas la minoration. `age_sans_coefficient_de_l_inapte: 62` : le coefficient de
+    l'affilié dont la carrière déclare l'inaptitude revient à un dès cet âge, pour une
+    pension que la période liquide.
   python: >-
-    droit/liquider.py : abattement_points, abattement_ircec, trimestres_de_decote,
+    droit/liquider.py : abattement_points, abattement_ircec, inapte_sans_coefficient,
+    trimestres_de_decote,
     surcote_points, _ABATTEMENTS_IRCEC, _ABATTEMENTS_PAR_ANNEE_AGE_SEUL ;
     droit/ouvrir.py : age_ouverture, age_taux_plein ; scenarios/actuel.py : AgesRegimes
   javascript: >-
-    moteur/js/droit/liquider.js : abattementPoints, abattementIrcec, trimestresDeDecote,
+    moteur/js/droit/liquider.js : abattementPoints, abattementIrcec,
+    inapteSansCoefficient, trimestresDeDecote,
     surcotePoints ; moteur/js/droit/ouvrir.js : ageOuverture, ageTauxPlein ;
     moteur/js/regimes.js : AgesRegimes
   parametres: >-
     contenu.parametres de chaque version : abattement_points, age_table,
-    surcote_par_trimestre ; regimes/cavom_complementaire.yaml : age_ouverture,
-    age_taux_plein ; legislation/ages_regimes.csv : cavom
+    surcote_par_trimestre, age_sans_coefficient_de_l_inapte ;
+    regimes/cavom_complementaire.yaml : age_ouverture, age_taux_plein,
+    age_sans_coefficient_de_l_inapte ; legislation/ages_regimes.csv : cavom
   tests: [tests/test_sections_juridiques.py, tests/test_sections_liberales.py]

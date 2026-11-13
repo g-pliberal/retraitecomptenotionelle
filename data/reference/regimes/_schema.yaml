@@ -692,6 +692,16 @@ champs_periode:
     description: "plafond, en années, de l'anticipation par enfant (null : sans plafond)"
     defaut: null
 
+  age_sans_coefficient_de_l_inapte:
+    description: >-
+      Régimes en points : âge depuis lequel l'affilié reconnu inapte au
+      travail est servi sans coefficient d'anticipation, pour une pension
+      que la période liquide — « À partir de 62 ans » « En cas d'inaptitude
+      au travail » (CAVOM, statuts dans la rédaction de l'arrêté du
+      30 décembre 2015, article 14, I, 1°, du 1er janvier 2016 au
+      31 décembre 2024). `null` : l'inapte reçoit le coefficient de son âge.
+    defaut: null
+
   surcote_par_trimestre: "majoration par trimestre supplémentaire (fraction, null si aucune)"
 
   surcote_bareme:

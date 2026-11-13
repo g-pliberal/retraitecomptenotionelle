@@ -158,6 +158,95 @@ def test_le_plafond_de_la_cavom_monte_par_marches(simulateur):
         assert periode.taux_cotisation_retraite == pytest.approx(0.125), annee
 
 
+#: La requête du formulaire d'un officier ministériel, au salaire de deux Smic.
+REQUETE_D_OFFICIER_MINISTERIEL = {
+    "age_reference": "fixe_apres_bascule", "bascule": "2026",
+    "conversion_acquis": "reference", "debut": "25", "emploi": "cor_2026",
+    "enfants": "0", "euros": "2026", "indexation": "triple_lock_inverse",
+    "primes": "0", "profil": "plat", "projection": "cor_reference",
+    "salaire": "2", "sexe": "H", "stock": "prix", "table": "unisexe",
+    "statut": "officier_ministeriel",
+}
+
+#: (naissance, âge demandé, inapte) : le coefficient que le texte oppose à la
+#: pension de la CAVOM, posé à la main.
+INAPTES_DE_LA_CAVOM = {
+    # Né le 10 mars 1959, 62 ans, le 1er avril 2021 : cinq années avant 67 ans,
+    # « 0,75 si la retraite est attribuée lorsque l'affilié est âgé de 62 ans ».
+    ("1959-03-10", "62", "non"): 0.75,
+    # Le même, inapte : « À partir de 62 ans » « En cas d'inaptitude au
+    # travail », sans coefficient.
+    ("1959-03-10", "62", "oui"): 1.0,
+    # À 64 ans, le 1er avril 2023 : 0,85 ; inapte, sans coefficient.
+    ("1959-03-10", "64", "non"): 0.85,
+    ("1959-03-10", "64", "oui"): 1.0,
+    # Né le 10 mars 1957, inapte, 62 ans le 1er avril 2019 ; né le 10 mars
+    # 1955, le 1er avril 2017 : 62 ans atteints, sans coefficient.
+    ("1957-03-10", "62", "oui"): 1.0,
+    ("1955-03-10", "62", "oui"): 1.0,
+    # Né le 10 novembre 1962, inapte : 62 ans le 10 novembre 2024, la pension
+    # le 1er décembre 2024, sous les statuts de 2016 : sans coefficient.
+    ("1962-11-10", "62", "oui"): 1.0,
+    # Né le 10 décembre 1962, inapte : la pension le 1er janvier 2025, le jour
+    # où les statuts de 2025 entrent en vigueur. L'inapte y ouvre ses droits à
+    # 62 ans (1°, a), sans que le 2° le serve sans coefficient : cinq années
+    # manquantes, « 5 % par année manquante », 0,75.
+    ("1962-12-10", "62", "oui"): 0.75,
+    # Né le 10 mars 1963, inapte, 62 ans le 1er avril 2025 : de même, 0,75.
+    ("1963-03-10", "62", "oui"): 0.75,
+}
+
+
+@pytest.fixture(scope="module")
+def inaptes_de_la_cavom():
+    """Chaque cas, servi par le portage et refait au bit près par le moteur
+    Python (``servi_et_refait``)."""
+    from outils_pont import servi_et_refait
+
+    cas = [{"cle": "|".join(cle),
+            "requete": {**REQUETE_D_OFFICIER_MINISTERIEL, "naissance": cle[0],
+                        "liquidation": cle[1],
+                        **({"inaptitude": "oui"} if cle[2] == "oui" else {})}}
+           for cle in INAPTES_DE_LA_CAVOM]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    return {cle: {p["regime"]: p for p in servi["actuel"]["pensions_par_regime"]}
+            for cle, servi in servis.items()}
+
+
+@pytest.mark.parametrize("cle", INAPTES_DE_LA_CAVOM,
+                         ids=["|".join(cle) for cle in INAPTES_DE_LA_CAVOM])
+def test_la_cavom_sert_l_inapte_sans_coefficient_des_62_ans_de_2016_a_2024(
+        inaptes_de_la_cavom, cle):
+    """Statuts de la CAVOM, article 14, I, 1° (arrêté du 30 décembre 2015, en
+    vigueur du 1er janvier 2016 au 31 décembre 2024) : la liquidation « peut
+    intervenir : 1° À partir de 62 ans — En cas d'inaptitude au travail
+    reconnue dans les conditions prévues aux articles 27 à 33 des statuts de
+    la CNAVPL ; Ou avec application des coefficients d'anticipation
+    suivants : 0,75 si la retraite est attribuée lorsque l'affilié est âgé de
+    62 ans […] ». L'inapte de 62 ans est servi sans coefficient. Depuis le
+    1er janvier 2025 (arrêté du 12 décembre 2024, 4°), l'inapte ouvre ses
+    droits à 62 ans, et seuls les « affiliés ayant atteint l'âge de 67 ans »
+    sont servis sans coefficient. Jusqu'au 13 novembre 2026, le modèle
+    opposait à l'inapte de 2016 à 2024 le coefficient de son âge."""
+    cavom = inaptes_de_la_cavom["|".join(cle)]["cavom_complementaire"]
+    assert cavom["montant"] > 0
+    assert _coefficient(cavom["detail"]) == pytest.approx(INAPTES_DE_LA_CAVOM[cle])
+
+
+def test_l_inapte_de_la_cavom_recoit_un_tiers_de_plus_que_le_valide_de_62_ans(
+        inaptes_de_la_cavom):
+    """Né le 10 mars 1959, parti à 62 ans le 1er avril 2021 : le valide reçoit
+    ses points × 0,75, l'inapte ses points entiers — la pension du premier
+    divisée par 0,75, un tiers de plus (13 564,47 € et 18 085,96 € par an au
+    cas posé, en euros de 2026 : 4 521,49 € de plus)."""
+    valide = inaptes_de_la_cavom["1959-03-10|62|non"]["cavom_complementaire"]["montant"]
+    inapte = inaptes_de_la_cavom["1959-03-10|62|oui"]["cavom_complementaire"]["montant"]
+    assert valide == pytest.approx(13_564.47, abs=0.005)
+    assert inapte == pytest.approx(valide / 0.75, abs=0.005)
+    assert inapte - valide == pytest.approx(4_521.49, abs=0.005)
+
+
 # -- la CPRN -------------------------------------------------------------------
 
 

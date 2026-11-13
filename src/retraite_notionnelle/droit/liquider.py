@@ -4116,6 +4116,8 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
     if abattement < 1.0 and taux_plein_anticipe(moteur, 
             periode, carriere, age_liquidation):
         abattement = 1.0
+    if abattement < 1.0 and inapte_sans_coefficient(periode, carriere, age_liquidation):
+        abattement = 1.0
 
     if abattement < 1.0:
         # ABATTU ET MAJORÉ NE SE RENCONTRENT PAS. Les deux majorations de
@@ -4318,6 +4320,22 @@ def coefficient_convention_1947(age_liquidation: float) -> float:
     if age >= 65:
         return 1.0
     return _COEFFICIENTS_CONVENTION_1947[max(55, age)]
+
+
+def inapte_sans_coefficient(periode: PeriodeRegime, carriere: Carriere,
+                            age_liquidation: float) -> bool:
+    """L'inapte que la section sert sans coefficient depuis l'âge que la
+    période écrit (``age_sans_coefficient_de_l_inapte``).
+
+    La liquidation « peut intervenir : 1° À partir de 62 ans — En cas
+    d'inaptitude au travail reconnue dans les conditions prévues aux articles
+    27 à 33 des statuts de la CNAVPL ; Ou avec application des coefficients
+    d'anticipation suivants » (statuts de la CAVOM, article 14, I, 1°, arrêté
+    du 30 décembre 2015, du 1er janvier 2016 au 31 décembre 2024). Seule
+    compte l'inaptitude que la carrière déclare : les articles 27 à 33 des
+    statuts de la CNAVPL ne sont pas lus (fiche ``cavom_ages_minoration``)."""
+    age = periode.age_sans_coefficient_de_l_inapte
+    return age is not None and carriere.inaptitude and age_liquidation >= age - 1e-9
 
 
 def taux_plein_anticipe(moteur, periode: PeriodeRegime, carriere: Carriere,
