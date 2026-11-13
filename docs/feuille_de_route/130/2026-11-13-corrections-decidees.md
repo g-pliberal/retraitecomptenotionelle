@@ -21,9 +21,12 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
 
 ## La file
 
-- [ ] 1. **CAVOM, l'inapte de 2016 à 2024** : le modèle le minore à 62 ans, le texte le
+- [x] 1. **CAVOM, l'inapte de 2016 à 2024** : le modèle le minore à 62 ans, le texte le
   sert sans minoration (4 521,49 € en moins). Note
-  `2026-11-05-carte-des-fiches-cavom-lue-au-droit.md`.
+  `2026-11-05-carte-des-fiches-cavom-lue-au-droit.md`. Corrigé le 13 novembre 2026 :
+  l'inapte est servi sans coefficient dès 62 ans pour une pension de 2016 à 2024, dans les
+  deux moteurs (18 085,96 € au lieu de 13 564,47 € au cas posé) ; note
+  `2026-11-13-correction-cavom-inapte-2016-2024.md`.
 - [ ] 2. **CAVOM, l'inapte depuis 2025** : le modèle lui refuse 62 ans, le règlement
   l'ouvre (six mois de pension, 8 317,99 €). Même note.
 - [ ] 3. **CPRN, le passage de 2024** : né en 1961, parti en 2023, servi en avril 2025

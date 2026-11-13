@@ -1,0 +1,24 @@
+date: "2026-11-13"
+session: "action 130, file des corrections décidées, ligne 1 : l'inapte de la CAVOM de 2016 à 2024"
+consulte: >-
+  `python scripts/veille_droit.py` ; les index JORF et LEGI récupérés par
+  `dila_index.py --recuperer`, à jour au 11 novembre 2026. Au JORF, rouverts : l'arrêté du 30
+  décembre 2015, annexe, 5° (JORFARTI000031740853, article 14 des statuts de la CAVOM), et
+  l'arrêté du 12 décembre 2024, annexe, II, 4° (JORFARTI000050823056, article 14 récrit).
+  Dans LEGI : L. 643-4 en vigueur le 1er avril 2021 (LEGIARTI000019959512, du 19 décembre
+  2008 au 31 août 2023) et L. 643-5 (LEGIARTI000006743795).
+trouve: >-
+  Le texte tranche : du 1er janvier 2016 au 31 décembre 2024, la liquidation « peut
+  intervenir : 1° À partir de 62 ans — En cas d'inaptitude au travail reconnue dans les
+  conditions prévues aux articles 27 à 33 des statuts de la CNAVPL ; Ou avec application des
+  coefficients d'anticipation suivants », et l'inapte de 62 ans est servi sans coefficient ;
+  depuis le 1er janvier 2025, il ouvre ses droits à 62 ans, avec le coefficient. Le modèle
+  lui opposait le coefficient de son âge : corrigé dans les deux moteurs
+  (`age_sans_coefficient_de_l_inapte: 62` aux périodes qui liquident de 2016 à 2024), 4 521,49
+  € de plus par an au cas posé (né le 10 mars 1959, parti le 1er avril 2021). La fiche
+  `cavom_ages_minoration` relue ce jour, l'erreur passée à son histoire.
+reste: >-
+  Les articles 27 à 33 des statuts de la CNAVPL, non lus : seule l'inaptitude que la carrière
+  déclare compte. L'inapte né avant 1959 avant 62 ans, que le texte ne tranche pas. Les
+  statuts d'avant 2016, au seul Bulletin officiel. Les lignes 2 à 30 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).
