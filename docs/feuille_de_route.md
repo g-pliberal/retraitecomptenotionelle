@@ -3294,14 +3294,14 @@ fabriqués.
 **Reprise, au 14 novembre 2026.** Le propriétaire a décidé, le 13 novembre, de corriger
 dans le modèle chacune des erreurs déclarées des caisses des libéraux, une session par
 erreur. La file est la note `130/2026-11-13-corrections-decidees.md` : trente lignes, les
-plus lourdes d'abord, à cocher une à une. La file se poursuit : quatre lignes sont
-corrigées (l'inapte des officiers ministériels, les notaires en 2024, la réversion de la
-caisse des dentistes), vingt-six restent. Une seule session à la fois touche au modèle :
-une session d'aiguillage ouvre chaque correction et attend son compte rendu. Par quoi
-commencer : la ligne 5, première non cochée (les deux premières années d'exercice des
-médecins), avec le test d'abord et la veille du droit. Hors de la file : les points que
-le texte ne tranche pas, les navigants avant cinquante ans, la forme de la fiche du
-décret n° 2026-418.
+plus lourdes d'abord, à cocher une à une. La file se poursuit : cinq lignes sont
+corrigées, la dernière étant les deux premières années d'exercice des médecins ;
+vingt-cinq restent. Une seule session à la fois touche au modèle : une session
+d'aiguillage ouvre chaque correction et attend son compte rendu. Par quoi commencer : la
+ligne 6, première non cochée (la part proportionnelle des deux premières années des
+dentistes), avec le test d'abord et la veille du droit, après la note de la ligne 5.
+Hors de la file : les points que le texte ne tranche pas, les navigants avant cinquante
+ans, la forme de la fiche du décret n° 2026-418.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

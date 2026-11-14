@@ -45,9 +45,14 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   marié depuis deux ans sauf enfant, pour un décès depuis le 11 octobre 2007, dans les deux
   moteurs (4 147,36 € et 5 654,21 € par an aux cas posés, au lieu de rien) ; fiche
   `reversion_carcdsf` ; note `2026-11-14-correction-carcdsf-reversion.md`.
-- [ ] 5. **CARMF, les deux premières années d'exercice** : dispensées sans points depuis
+- [x] 5. **CARMF, les deux premières années d'exercice** : dispensées sans points depuis
   le 1er juillet 2026, le modèle en donne (2 284,25 € de trop). Note
-  `2026-11-06-e10-decret-2026-418.md`.
+  `2026-11-06-e10-decret-2026-418.md`. Corrigé le 14 novembre 2026 : le médecin installé
+  avant 40 ans ne cotise ni n'acquiert ses deux premières années, pour les cotisations
+  de 2027 et d'après, dans les deux moteurs, au scénario 1 et au compte (51 417,01 € par
+  an au lieu de 53 701,26 € au cas posé) ; l'année 2026 et la lecture des vingt-quatre
+  mois restent des limites déclarées ; note
+  `2026-11-14-correction-carmf-deux-premieres-annees.md`.
 - [ ] 6. **CARCDSF, la part proportionnelle des deux premières années**, dispensée depuis
   le 1er juillet 2026 (1 528,23 € de trop). Même note.
 - [ ] 7. **CARMF, l'exemption passé 75 ans**, sans points depuis le 1er juillet 2026 (au

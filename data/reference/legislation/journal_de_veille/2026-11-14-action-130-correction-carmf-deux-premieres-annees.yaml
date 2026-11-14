@@ -1,0 +1,25 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 5 : les deux premières années d'exercice à la CARMF"
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index LEGI récupéré par `dila_index.py --recuperer`,
+  à jour au 11 novembre 2026. Dans LEGI, au 1er juillet 2026 : décret n° 49-579, articles 4
+  (LEGIARTI000054168136, et la rédaction d'avant, LEGIARTI000050865157), 4-1
+  (LEGIARTI000054168116) et 2 (LEGIARTI000054168125) ; décret n° 2026-418, article 30
+  (LEGIARTI000054157413).
+trouve: >-
+  Le texte tranche : depuis le 1er juillet 2026, « Tout médecin obligatoirement affilié à
+  la caisse est dispensé du paiement de la cotisation afférente au présent régime pendant
+  les deux premières années d'exercice de la profession libérale si cet exercice débute
+  alors qu'il n'a pas atteint l'âge de 40 ans », et ces cotisations « ne donnent pas lieu à
+  acquisition de points ». Le modèle faisait cotiser et acquérir ces deux années : corrigé
+  dans les deux moteurs (`dispense_de_debut` à la période de 2026 de
+  `carmf_complementaire.yaml`), au scénario 1 et au compte notionnel, 2 284,25 € par an de
+  moins au cas posé (née le 1er janvier 2001, installée le 1er janvier 2027 : 51 417,01 €
+  au lieu de 53 701,26 €). La fiche `decret_2026_418_liberaux` relue ce jour, l'erreur
+  passée à son histoire.
+reste: >-
+  Les cotisations de 2026 et d'avant, que les statuts d'avant le 1er juillet 2026 réglaient,
+  non lus (question 22). La lecture des « deux premières années », vingt-quatre mois ou
+  années civiles, que le texte ne dit pas : le modèle dispense l'année civile du début et la
+  suivante. Le rachat de l'article 4-2, non porté. Les lignes 6 à 30 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).
