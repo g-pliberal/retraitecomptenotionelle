@@ -22,8 +22,32 @@ SEUIL = 50_000
 NON_TEXTE = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".pdf", ".ipynb"}
 
 
-def _milliers(n: int) -> str:
+def milliers(n: int) -> str:
     return f"{n:,}".replace(",", " ")
+
+
+def poids(chemin: str, dossier: str | None) -> int | None:
+    """Les octets d'un fichier texte, lu depuis le dossier de la session, ou
+    None : ce que `Read` lit autrement que comme du texte, un fichier absent."""
+    if os.path.splitext(chemin)[1].lower() in NON_TEXTE:
+        return None
+    if not os.path.isabs(chemin):
+        chemin = os.path.join(dossier or os.getcwd(), chemin)
+    try:
+        return os.stat(chemin).st_size
+    except OSError:
+        return None
+
+
+def refus(raison: str) -> dict:
+    """La réponse qui refuse l'appel, avec la raison que le modèle lit."""
+    return {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "deny",
+            "permissionDecisionReason": raison,
+        }
+    }
 
 
 def decision(appel: dict) -> dict | None:
@@ -34,32 +58,19 @@ def decision(appel: dict) -> dict | None:
     chemin = entree.get("file_path")
     if not isinstance(chemin, str) or not chemin or entree.get("limit"):
         return None
-    if os.path.splitext(chemin)[1].lower() in NON_TEXTE:
+    taille = poids(chemin, appel.get("cwd"))
+    if taille is None or taille <= SEUIL:
         return None
-    if not os.path.isabs(chemin):
-        chemin = os.path.join(appel.get("cwd") or os.getcwd(), chemin)
-    try:
-        taille = os.stat(chemin).st_size
-    except OSError:
-        return None
-    if taille <= SEUIL:
-        return None
-    raison = (
-        f"{entree['file_path']} pèse {_milliers(taille)} octets, plus de"
-        f" {_milliers(SEUIL)} : il ne se lit pas d'un bloc."
+    return refus(
+        f"{chemin} pèse {milliers(taille)} octets, plus de"
+        f" {milliers(SEUIL)} : il ne se lit pas d'un bloc."
         " Chercher d'abord (outil Grep, avec -n), puis ne lire que la fenêtre"
         " utile, par Read avec offset et limit."
     )
-    return {
-        "hookSpecificOutput": {
-            "hookEventName": "PreToolUse",
-            "permissionDecision": "deny",
-            "permissionDecisionReason": raison,
-        }
-    }
 
 
-def main() -> int:
+def repondre(decision) -> int:
+    """Lit l'appel sur l'entrée standard, écrit la réponse de `decision`."""
     try:
         appel = json.loads(sys.stdin.buffer.read().decode("utf-8"))
     except (ValueError, OSError):
@@ -71,4 +82,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(repondre(decision))

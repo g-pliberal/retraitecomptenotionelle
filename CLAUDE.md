@@ -102,11 +102,11 @@ qu'elle dure. D'où sept règles.
 - **Chercher avant de lire.** L'outil Grep d'abord, qui omet les lignes
   géantes et passe ce que `.ignore` nomme (`grep -n` par Bash, seulement sur
   un fichier sans ligne démesurée), puis la seule fenêtre utile (`Read` avec
-  `offset` et `limit`, ou `sed -n`). Un fichier texte de plus de 50 000
-  octets ne se lit jamais en entier, ni par `Read`, que le hook
-  `.claude/hooks/lecture.py` refuse alors sans `limit`, ni par `cat`, qu'il
-  ne voit pas ; les témoins de `tests/temoins/`, par `resumer_temoins.py` ou
-  une requête ciblée.
+  `offset` et `limit`, ou `sed -n`). Un fichier texte de plus de 50 000 octets
+  ne se lit jamais en entier : les hooks `.claude/hooks/lecture.py` et
+  `bash.py` refusent `Read` sans `limit` et le `cat` qui l'écrit à la session,
+  pas `head`, `sed`, un script ni un chemin en variable ; les témoins de
+  `tests/temoins/`, par `resumer_temoins.py` ou une requête ciblée.
 - **Ce dont seule la conclusion compte, l'éclaireur le lit.** Une recherche
   de plusieurs lectures dont la session ne veut que la réponse — où une
   règle, un chiffre ou un test se trouve, ce que la feuille de route, ses
@@ -117,10 +117,11 @@ qu'elle dure. D'où sept règles.
   Il rend des `fichier:ligne` et des citations exactes ; ce que la session
   modifie ou cite, elle le relit elle-même, à la fenêtre qu'il désigne.
 - **Les sorties longues passent par `tail` ou `grep`** :
-  `python -m pytest 2>&1 | tail -n 30`, de même pour `regenerer.py` et
-  `resumer_temoins.py` ; jamais de `git diff` ni de `git show` entier sur un
-  témoin ou sur `pages.js`. Passé <!--chiffre:tenu(test_la_sortie_d_une_commande_bash_est_plafonnee)-->10 000<!--/--> caractères, Bash n'en rend
-  que le début, et le fichier où lire la suite, sauf après un échec.
+  `python -m pytest 2>&1 | tail -n 30`, qu'un pytest nu reçoit du hook
+  `bash.py`, de même, à la main, pour `regenerer.py` et `resumer_temoins.py` ;
+  jamais de `git diff` ni de `git show` entier sur un témoin ou sur
+  `pages.js`. Passé <!--chiffre:tenu(test_la_sortie_d_une_commande_bash_est_plafonnee)-->10 000<!--/--> caractères, Bash n'en rend que le début, et le
+  fichier où lire la suite, sauf après un échec.
 - **L'enquête à la mesure de la question.** Une question appelle la
   vérification qui y répond, pas davantage ; une recherche en éventail,
   plusieurs agents en parallèle, ne se lance qu'à la demande du propriétaire.

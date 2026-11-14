@@ -149,12 +149,13 @@ CONTROLES = {
     # L'outillage du dépôt : l'index de la DILA, la publication sur main et
     # ses pilotes de fusion, ce partage-ci, le filet des déplacements
     # (docs/architecture.md, § 12), l'arbre du dépôt, ce que les sessions
-    # consomment, le hook qui refuse les lectures d'un bloc, celui du test
-    # d'abord (action 162), et la carte des jumeaux Python et JavaScript
-    # (action 161).
+    # consomment, le hook qui refuse les lectures d'un bloc, celui de Bash,
+    # qui refuse le `cat` d'un gros fichier et coupe les sorties longues,
+    # celui du test d'abord (action 162), et la carte des jumeaux Python et
+    # JavaScript (action 161).
     "test_dila_index.py", "test_pousser.py", "test_fusionner.py", "test_niveaux.py",
     "test_conservation.py", "test_outillage.py", "test_arbre.py", "test_consommation.py",
-    "test_hook_lecture.py", "test_hook_tdd.py", "test_jumeaux.py",
+    "test_hook_lecture.py", "test_hook_bash.py", "test_hook_tdd.py", "test_jumeaux.py",
     # Ce qui entre encore dans le moteur Python depuis la fabrique, relevé en
     # faisant tourner chacune de ses étapes : plusieurs minutes (action 161,
     # lot A).

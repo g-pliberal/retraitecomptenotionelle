@@ -106,6 +106,23 @@
         ]
       },
       {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(cat *)",
+            "command": "python \"${CLAUDE_PROJECT_DIR}/.claude/hooks/bash.py\" cat",
+            "timeout": 5
+          },
+          {
+            "type": "command",
+            "if": "Bash(python *)",
+            "command": "python \"${CLAUDE_PROJECT_DIR}/.claude/hooks/bash.py\" queue",
+            "timeout": 5
+          }
+        ]
+      },
+      {
         "matcher": "Edit|Write",
         "hooks": [
           {
