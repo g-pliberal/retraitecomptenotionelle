@@ -1,0 +1,29 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 29 : la longue carrière de la CAVAMAC minorée de 15 % depuis le 1er janvier 2024"
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index JORF récupéré par `dila_index.py
+  --recuperer`, à jour du 11 novembre 2026, retiré après lecture. Arrêté du 4 août 2023,
+  article 2 (JORFARTI000047977903) et annexe, 7° (JORFARTI000047977908) ; règlement de
+  2026, articles 4 et 5 (JORFARTI000054436046). L'index LEGI n'a pas été récupéré :
+  L. 351-1-1 n'a pas été relu, ses conditions restant celles que la base sert.
+trouve: >-
+  Le texte tranche pour le départ que la longue carrière ouvre : depuis le 1er janvier
+  2024, la pension est liquidée « au plus tôt : - à 62 ans pour les assurés ayant
+  commencé leur activité avant l'âge de 20 ans ; - à 63 ans pour les assurés ayant
+  commencé leur activité avant l'âge de 21 ans. Avec, dans les deux cas, l'application
+  d'un coefficient de minoration de 15 % » ; le règlement de 2026 le reprend. Le modèle
+  lui opposait 1,25 % par trimestre manquant jusqu'à 67 ans : corrigé dans les deux
+  moteurs, par deux paramètres de période (`carriere_longue_minoree_de`,
+  `carriere_longue_minoree_depuis_l_age`) aux périodes de 2024 et de 2026 de
+  `cavamac_complementaire.yaml`. L'agent né le 1er janvier 1964, au travail depuis ses
+  18 ans, parti à 62 ans le 1er janvier 2026, reçoit 0,85 au lieu de 0,75 (21 758,51 €
+  par an au cas posé, au lieu de 19 198,69 €). La fiche `cavamac_minoration_age_seul`
+  relue ce jour, l'erreur passée à son histoire.
+reste: >-
+  L'assuré qui remplit les conditions de la longue carrière et part après son âge légal,
+  avant 64 ans, garde au modèle la minoration de tous (0,80 à 63 ans, né en 1964), quand
+  le règlement de 2026 ne le sort de la dérogation qu'« à compter de l'âge de 64 ans »,
+  et que les statuts de 2024 ne disent pas quand elle cesse : déclaré dans la fiche, non
+  corrigé. La complémentaire servie avant 62 ans, et avant 2024, dès que la base ouvre la
+  longue carrière. La ligne 30 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).

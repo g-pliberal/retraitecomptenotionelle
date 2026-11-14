@@ -270,7 +270,13 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   1er février 1954, pension au 1er novembre 2023 : 26 068,01 € par an au lieu de
   27 252,92 € ; dix points de trop, et non cinq, pour la génération 1952) ; note
   `2026-11-14-correction-cavamac-septembre-2023.md`.
-- [ ] 29. **CAVAMAC, la longue carrière à 15 %** (dix points de trop à 62 ans). Même note.
+- [x] 29. **CAVAMAC, la longue carrière à 15 %** (dix points de trop à 62 ans). Même note.
+  Corrigé le 14 novembre 2026 : la longue carrière qui ouvre le départ est minorée de
+  15 % depuis 62 ans, depuis le 1er janvier 2024, dans les deux moteurs (né le
+  1er janvier 1964, au travail depuis ses 18 ans, pension au 1er janvier 2026 à 62 ans :
+  21 758,51 € par an au lieu de 19 198,69 €) ; celui qui remplit ces conditions et part
+  après son âge légal, avant 64 ans, reste déclaré (cinq points de trop à 63 ans) ; note
+  `2026-11-14-correction-cavamac-longue-carriere.md`.
 - [x] 30. **CAVAMAC, la réversion non servie.** Même note.
   Corrigé le 14 novembre 2026 : 60 % au conjoint survivant de 65 ans, marié deux ans au
   moins sauf enfant, partagée avec les précédents conjoints, gardée au remariage, dans
