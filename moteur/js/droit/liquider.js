@@ -13,7 +13,7 @@
  * `data/reference/etapes/liquider_chaque_regime.yaml`.
  */
 
-import { DateMois, MOIS_PAR_AN } from "../calendrier.js";
+import { DateMois, MOIS_PAR_AN, moisTravailles } from "../calendrier.js";
 import { revenuCotise, salaireMoyenAnnuel } from "../carriere.js";
 import * as chrono from "../chronologie.js";
 import { arrondi, formatFixe, formatPourcentage } from "../format.js";
@@ -303,6 +303,24 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
             regimesDuHandicap.has(code));
         }
         pensions.push(pension);
+        continue;
+      }
+      const minimumDExercice = periode.exercice_minimum_annees;
+      if (minimumDExercice !== null && minimumDExercice !== undefined
+          && anneesDExercice(moteur, carriere, code) < minimumDExercice - 1e-9) {
+        // LA PRESTATION N'EST PAS ATTRIBUÉE à qui a exercé moins longtemps :
+        // l'ASV, « aux médecins ayant exercé, pendant au moins un an, leur
+        // activité professionnelle non-salariée dans le cadre des
+        // conventions » (décret n° 72-968, article 7). Voir le Python.
+        pensions.push({
+          regime: code,
+          montant: 0.0,
+          type_calcul: periode.type_calcul,
+          detail: "prestation non attribuée : moins "
+            + (minimumDExercice === 1 ? "d'un an" : `de ${minimumDExercice} ans`)
+            + " d'exercice dans le régime (décret n° 72-968, article 7)",
+          fiabilite: regime.fiabilite,
+        });
         continue;
       }
       let montant = 0.0;
@@ -3684,6 +3702,50 @@ export function trimestresCivilsDExercice(moteur, carriere, code, debut, fin) {
     }
   }
   return nombre;
+}
+
+/**
+ * Les années d'exercice dans le régime `code`, de date à date : les mois des
+ * périodes d'activité déclarées dont le statut y cotise, jusqu'à la date
+ * d'effet. C'est ce que lit la durée minimale de l'ASV
+ * (`exercice_minimum_annees`). Les lignes n'en disent rien : l'année d'un
+ * changement de métier va entière à celui qui en occupe le plus de mois, et
+ * neuf mois d'exercice y font une année. Une carrière posée ligne à ligne,
+ * sans période déclarée, n'a qu'elles : la somme de leurs fractions d'année.
+ */
+export function anneesDExercice(moteur, carriere, code) {
+  const emplois = carriere.chronologie
+    ? chrono.periodes(carriere.chronologie, carriere.personne)
+      .filter((periode) => periode.sorte === chrono.EMPLOI)
+    : [];
+  if (emplois.length === 0) {
+    let annees = 0.0;
+    for (const ligne of carriere.lignes) {
+      if (ligne.cotise && coordonner.regimesDe(
+        moteur, ligne, ligne.annee,
+        moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee),
+        ligne.revenu, moteur.macro.plafond_securite_sociale.valeur(ligne.annee),
+      ).includes(code)) {
+        annees += ligne.fraction_annee;
+      }
+    }
+    return annees;
+  }
+  const effet = carriere.dateLiquidation;
+  let mois = 0;
+  for (const periode of emplois) {
+    const ouverture = chrono.moisDe(periode.debut);
+    let cloture = periode.fin ? chrono.moisDe(periode.fin) : effet;
+    if (cloture.rang > effet.rang) {
+      cloture = effet;
+    }
+    for (let annee = ouverture.annee; annee <= cloture.annee; annee += 1) {
+      if (moteur.affiliations.regimes(periode.attributs.affiliation, annee).includes(code)) {
+        mois += moisTravailles(annee, ouverture, cloture);
+      }
+    }
+  }
+  return mois / MOIS_PAR_AN;
 }
 
 /**

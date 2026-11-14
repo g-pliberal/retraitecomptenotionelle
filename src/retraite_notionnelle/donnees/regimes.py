@@ -566,6 +566,10 @@ class PeriodeRegime:
     #: titre des trente premières années de cotisation » (statuts, article
     #: 3.15 ; décret n° 79-262, article 5-2, II). ``None`` : tous les points.
     surcote_premieres_annees: int | None
+    #: Les années d'exercice dans le régime, de date à date, sans lesquelles
+    #: la prestation n'est pas attribuée : l'ASV des médecins, « pendant au
+    #: moins un an » (décret n° 72-968, article 7). ``None`` : sans condition.
+    exercice_minimum_annees: int | None
     #: ``par_age_seul`` ne compte que les trimestres COTISÉS depuis l'âge de
     #: départ du décompte, et non le temps écoulé : la CAVAMAC majore depuis
     #: 2024 « pour chaque année pleine cotisée dans le présent régime ».
@@ -2371,6 +2375,10 @@ class CatalogueRegimes:
                 surcote_premieres_annees=(
                     None if p.get("surcote_premieres_annees") is None
                     else int(p["surcote_premieres_annees"])
+                ),
+                exercice_minimum_annees=(
+                    None if p.get("exercice_minimum_annees") is None
+                    else int(p["exercice_minimum_annees"])
                 ),
                 surcote_trimestres_cotises=bool(p.get("surcote_trimestres_cotises", False)),
                 surcote_depuis_la_duree=bool(p.get("surcote_depuis_la_duree", False)),

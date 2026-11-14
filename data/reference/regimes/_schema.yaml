@@ -1337,6 +1337,16 @@ champs_periode:
       incomplète.
     defaut: null
 
+  exercice_minimum_annees:
+    description: >-
+      Durée d'exercice DANS CE RÉGIME, en années comptées de date à date sur
+      les périodes cotisées, sans laquelle la prestation n'est pas attribuée :
+      l'ASV des médecins, « aux médecins ayant exercé, pendant au moins un
+      an, leur activité professionnelle non-salariée dans le cadre des
+      conventions » (décret n° 72-968, article 7). Lue à la période de la
+      date d'effet. `null` : aucune condition.
+    defaut: null
+
   points_gratuits:
     description: >-
       Points attribués À LA LIQUIDATION, sans cotisation, pour les années

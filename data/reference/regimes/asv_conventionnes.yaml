@@ -167,6 +167,7 @@ periodes:
     valeur_point_annee: 2011
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
@@ -221,6 +222,7 @@ periodes:
     valeur_point_annee: 2011
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Comme de 1985 à 1987, dont la note dit la part des caisses, les
@@ -254,6 +256,7 @@ periodes:
     valeur_point_annee: 2011
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Comme de 1985 à 1987, dont la note dit la part des caisses, les
@@ -284,6 +287,7 @@ periodes:
     valeur_point_annee: 2011
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Comme de 1985 à 1987, dont la note dit la part des caisses, les
@@ -316,6 +320,7 @@ periodes:
     valeur_point_annee: 2011
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Comme de 1985 à 1987, dont la note dit la part des caisses, les
@@ -346,6 +351,7 @@ periodes:
     valeur_point_annee: 2011
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Comme de 1985 à 1987, dont la note dit la part des caisses, les
@@ -379,6 +385,7 @@ periodes:
     valeur_point_annee: 2011
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA PART DU MÉDECIN PASSE À LA MOITIÉ. Du 30 mars 1993 au 8 juillet
@@ -435,6 +442,7 @@ periodes:
     valeur_point_annee: 2011
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       FORFAIT : « A compter du 1er janvier 1994, à l'article D. 645-2 (1°)
@@ -478,6 +486,7 @@ periodes:
     valeur_point_annee: 2011
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
@@ -526,6 +535,7 @@ periodes:
     valeur_point_annee: null
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
@@ -576,6 +586,7 @@ periodes:
     valeur_point_annee: null
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
@@ -631,6 +642,7 @@ periodes:
     valeur_point_annee: null
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
@@ -685,6 +697,7 @@ periodes:
     valeur_point_annee: null
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
@@ -727,6 +740,7 @@ periodes:
     valeur_point_annee: null
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
@@ -768,6 +782,7 @@ periodes:
     valeur_point_annee: null
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
@@ -808,6 +823,7 @@ periodes:
     valeur_point_annee: null
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
@@ -860,6 +876,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
@@ -924,6 +941,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
@@ -976,6 +994,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
@@ -1028,6 +1047,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
@@ -1081,6 +1101,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
@@ -1134,6 +1155,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
@@ -1187,6 +1209,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
@@ -1240,6 +1263,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
@@ -1299,6 +1323,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`

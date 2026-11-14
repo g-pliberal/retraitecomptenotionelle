@@ -32,7 +32,7 @@ from dataclasses import dataclass
 from datetime import date
 from typing import TYPE_CHECKING
 
-from ..calendrier import MOIS_PAR_AN, DateMois
+from ..calendrier import MOIS_PAR_AN, DateMois, mois_travailles
 from ..carriere import revenu_cotise, salaire_moyen_annuel
 from ..donnees.chargement import Fiabilite
 from ..donnees.macro import REGIME_DE_MAYOTTE
@@ -799,6 +799,27 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                             durees.trimestres_par_regime.get(code, 0)),
                         code in regimes_du_handicap)
                 pensions.append(pension)
+                continue
+            minimum_d_exercice = periode.exercice_minimum_annees
+            if (minimum_d_exercice is not None
+                    and annees_d_exercice(moteur, carriere, code)
+                    < minimum_d_exercice - 1e-9):
+                # LA PRESTATION N'EST PAS ATTRIBUÉE à qui a exercé moins
+                # longtemps : l'ASV, « aux médecins ayant exercé, pendant au
+                # moins un an, leur activité professionnelle non-salariée dans
+                # le cadre des conventions » (décret n° 72-968, article 7, en
+                # vigueur depuis le 15 février 1985). Le régime garde sa ligne,
+                # à zéro, avec sa raison : le médecin y a cotisé.
+                pensions.append(PensionRegime(
+                    regime=code,
+                    montant=0.0,
+                    type_calcul=periode.type_calcul,
+                    detail="prestation non attribuée : moins "
+                    + ("d'un an" if minimum_d_exercice == 1
+                       else f"de {minimum_d_exercice} ans")
+                    + " d'exercice dans le régime (décret n° 72-968, article 7)",
+                    fiabilite=regime.fiabilite,
+                ))
                 continue
             montant = 0.0
             fiabilite_regime = regime.fiabilite
@@ -4904,6 +4925,43 @@ def trimestres_civils_d_exercice(moteur, carriere: Carriere, code: str | None,
                 break
         courant = courant.plus_mois(3)
     return nombre
+
+
+def annees_d_exercice(moteur, carriere: Carriere, code: str) -> float:
+    """Les années d'exercice dans le régime ``code``, de date à date : les
+    mois des périodes d'activité déclarées dont le statut y cotise, jusqu'à la
+    date d'effet. C'est ce que lit la durée minimale de l'ASV
+    (``exercice_minimum_annees``). Les lignes n'en disent rien : l'année d'un
+    changement de métier va entière à celui qui en occupe le plus de mois, et
+    neuf mois d'exercice y font une année. Une carrière posée ligne à ligne,
+    sans période déclarée, n'a qu'elles : la somme de leurs fractions
+    d'année."""
+    from .. import chronologie as chrono
+
+    emplois = [periode for periode in (
+        chrono.periodes(carriere.chronologie, carriere.personne)
+        if carriere.chronologie else []) if periode["sorte"] == chrono.EMPLOI]
+    if not emplois:
+        annees = 0.0
+        for ligne in carriere.lignes:
+            if ligne.cotise and code in coordonner.regimes_de(
+                    moteur, ligne, ligne.annee,
+                    moteur.affiliations.date_entree(carriere, ligne.affiliation, ligne.annee),
+                    revenu=ligne.revenu,
+                    plafond=moteur.macro.plafond_securite_sociale(ligne.annee)):
+                annees += ligne.fraction_annee
+        return annees
+    effet = carriere.date_liquidation
+    mois = 0
+    for periode in emplois:
+        ouverture = chrono.mois_de(periode["debut"])
+        cloture = chrono.mois_de(periode["fin"]) if periode.get("fin") else effet
+        if cloture.rang > effet.rang:
+            cloture = effet
+        for annee in range(ouverture.annee, cloture.annee + 1):
+            if code in moteur.affiliations.regimes(periode["attributs"]["affiliation"], annee):
+                mois += mois_travailles(annee, ouverture, cloture)
+    return mois / MOIS_PAR_AN
 
 
 def premieres_annees_majorees(moteur, periode: PeriodeRegime, carriere: Carriere,

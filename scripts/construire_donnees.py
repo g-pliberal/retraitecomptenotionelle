@@ -955,6 +955,8 @@ def _regles_des_sections(p) -> dict:
             p.surcote_trimestres_civils_d_exercice or None,
         # Le report de la Cipav, sur les points des trente premières années.
         "surcote_premieres_annees": p.surcote_premieres_annees,
+        # L'ASV des médecins, attribuée après un an d'exercice au moins.
+        "exercice_minimum_annees": p.exercice_minimum_annees,
         # L'inapte de la CAVOM de 2016 à 2024, sans coefficient dès 62 ans.
         "age_sans_coefficient_de_l_inapte": p.age_sans_coefficient_de_l_inapte,
         # L'ancien déporté et l'ancien combattant de la CARCDSF, sans coefficient.

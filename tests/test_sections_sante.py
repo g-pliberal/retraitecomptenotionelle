@@ -1479,6 +1479,58 @@ def test_passe_le_dernier_exercice_fixe_la_valeur_de_l_asv_suit_les_prix(
         11.82 * simulateur.macro.coefficient_prix(2026, 2027), abs=5e-7)
 
 
+# -- l'ASV des médecins : un an d'exercice au moins (action 130, la file) ----------
+
+@pytest.fixture(scope="module")
+def exercices_courts_a_l_asv():
+    """Né le 1er janvier 1960, salarié du privé non cadre depuis ses 22 ans,
+    médecin libéral conventionné de ses 40 ans à l'âge de la clé, salarié
+    ensuite, parti à 65 ans : les pensions du droit actuel, servies par le
+    portage et refaites au bit près par le moteur Python."""
+    from outils_pont import servi_et_refait
+
+    requete = {"sexe": "H", "naissance": "1960-01-01", "debut": "22", "salaire": "1",
+               "statut": "salarie_prive_non_cadre", "liquidation": "65",
+               "metier2_debut": "40", "metier2_statut": "medecin_liberal",
+               "metier3_statut": "salarie_prive_non_cadre"}
+    cas = [{"cle": fin, "requete": {**requete, "metier3_debut": fin}}
+           for fin in ("40.75", "41")]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    return {cle: {p["regime"]: p for p in servi["actuel"]["pensions_par_regime"]}
+            for cle, servi in servis.items()}
+
+
+def test_l_asv_n_est_pas_attribuee_au_medecin_qui_a_exerce_moins_d_un_an(
+        exercices_courts_a_l_asv):
+    """Ligne 17 de la file des corrections (action 130) : la prestation « est
+    attribuée aux médecins ayant exercé, pendant au moins un an, leur activité
+    professionnelle non-salariée dans le cadre des conventions » (décret
+    n° 72-968, article 7, LEGIARTI000006765959 depuis le 15 février 1985,
+    LEGIARTI000054168425 depuis le 1er juillet 2026). Neuf mois d'exercice, de
+    janvier à septembre 2000 : rien n'est dû, quand le modèle servait
+    27 points × 11,82 € × 1,15 = 367,01 € par an. Douze mois, l'année 2000
+    entière : 27 points (article 2), × 11,82 € (décret n° 2011-1644, article
+    4, exercice 2025) × 1,15 (douze trimestres depuis 62 ans) = 367,01 €."""
+    de_neuf_mois = exercices_courts_a_l_asv["40.75"]["asv_conventionnes"]
+    assert de_neuf_mois["montant"] == 0.0
+    assert "moins d'un an d'exercice" in de_neuf_mois["detail"]
+    assert "article 7" in de_neuf_mois["detail"]
+    d_un_an = exercices_courts_a_l_asv["41"]["asv_conventionnes"]
+    assert d_un_an["montant"] == pytest.approx(367.01, abs=0.005)
+    # La complémentaire de la CARMF, que l'article 7 ne régit pas, reste servie.
+    assert exercices_courts_a_l_asv["40.75"]["carmf_complementaire"]["montant"] > 0
+
+
+def test_la_fiche_de_l_asv_porte_la_duree_d_exercice_de_l_article_7(simulateur):
+    """Un an depuis le décret n° 85-205 du 12 février 1985 (JORFTEXT000000520378,
+    en vigueur le 15 février 1985) ; la règle d'avant, non lue, n'est pas
+    portée."""
+    periodes = simulateur.catalogue["asv_conventionnes"].periodes
+    assert {p.exercice_minimum_annees for p in periodes if p.debut >= 1985} == {1}
+    assert {p.exercice_minimum_annees for p in periodes if p.debut < 1985} == {None}
+
+
 # -- la CAVP : la carrière longue depuis le 10 janvier 2024 (action 130, la file) --
 
 REQUETE_DE_PHARMACIEN = {**REQUETE_DE_MEDECIN, "sexe": "H", "statut": "pharmacien"}
