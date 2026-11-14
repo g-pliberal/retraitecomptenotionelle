@@ -66,7 +66,36 @@ et c'est elle qui pousse chaque réveil de l'aiguillage au-delà de l'heure.
 un rouge se voit une ou deux corrections plus tard, et la session qui le
 trouve a deux ou trois commits à trier au lieu d'un.
 
+**Deux corrections à la fois, une file par caisse : écarté.** Le propriétaire,
+la décision prise : « Je veux accélérer ». Les dix-huit lignes restantes
+tiennent à cinq caisses, et deux files menées de front auraient divisé la
+durée. Relevé, par `git log --name-only`, sur les douze corrections finies :
+les caisses ne sont pas séparées dans le code.
+
+- *Sept sur douze ajoutent un champ au catalogue commun des régimes* (les
+  lignes 1, 2, 5, 6, 7, 11 et 12) : `data/reference/regimes/_schema.yaml`,
+  sous `champs_periode` ; `src/retraite_notionnelle/donnees/regimes.py`, dans
+  `PeriodeRegime` et `CatalogueRegimes` ; `scripts/construire_donnees.py`. Au
+  même endroit : la ligne 2, la CAVOM, et la ligne 11, la CAVP, insèrent
+  toutes deux après la ligne 804 de `regimes.py`.
+- *Neuf sur douze touchent un fichier du droit commun aux caisses*, dans les
+  deux moteurs : `acquerir`, `ouvrir`, `departs`, `liquider`, `reversion`,
+  `compte`.
+- *Sept sur douze écrivent dans `tests/test_sections_sante.py`*, qui tient les
+  médecins, les dentistes, les pharmaciens et la CARPIMKO.
+- *Onze sur douze refont `moteur/donnees.json`*, que `pousser.sh` règle seul.
+
+Deux sessions de front se heurteraient donc au rebasage plus d'une fois sur
+deux, sur une source, ce que `pousser.sh` refuse ; et nul ne sait, avant de
+relire le texte, si une ligne demande un champ de plus. La file reste en
+série.
+
 **Ce qui reste.**
+
+- Le temps des outils dans une session de correction, 13 min 06 sur 18 min 11
+  pour la dixième, n'est pas décomposé : ce que ses 49 appels ont lancé, et
+  combien de fois la suite rapide. C'est le levier qui reste pour aller plus
+  vite.
 
 - Relever, sur les lignes 13 et suivantes, la durée d'une correction et
   l'écriture du cache à chaque réveil de l'aiguillage. Attendu, non mesuré :
