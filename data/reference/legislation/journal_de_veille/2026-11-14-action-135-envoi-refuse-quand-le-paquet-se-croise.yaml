@@ -1,0 +1,13 @@
+date: "2026-11-14"
+session: "action 135 : l'envoi refusé quand deux sessions ont refait le paquet"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1
+  ni à aucune donnée d'un régime, seulement à scripts/pousser.sh, à
+  .gitattributes et à tests/test_pousser.py.
+trouve: >-
+  Aucune règle n'a changé. Au rebasage, pousser.sh gardait le paquet de main
+  et jetait celui de la session : une correction partait sans le paquet qui
+  la porte, quatre fois le 14 novembre. Il refuse désormais l'envoi et nomme
+  le script qui refait le paquet.
+reste: >-
+  Dire l'exception dans CLAUDE.md, qui énumère les refus de pousser.sh.

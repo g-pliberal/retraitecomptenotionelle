@@ -527,6 +527,41 @@ def test_un_conflit_sur_un_fichier_fabrique_garde_la_version_de_main(atelier, tm
     assert git(session, "status", "--porcelain") == ""
 
 
+def test_une_correction_ne_part_jamais_avec_le_paquet_d_une_autre(atelier, tmp_path):
+    """Les deux moteurs lisent leurs règles au paquet : une correction publiée
+    avec le paquet d'une autre session laisserait sur main le test de la
+    correction rouge, jusqu'au commit où GitHub refait le paquet (le
+    14 novembre 2026, quatre fois, file de l'action 130). Un fichier fabriqué
+    que ``.gitattributes`` marque ``refaire=<script>`` ne se règle donc pas
+    seul : le script refuse, et nomme le script qui le refait."""
+    distant, session = atelier
+    autre = _marquer_fabrique(distant, tmp_path)
+    (autre / "moteur").mkdir()
+    commiter(autre, ".gitattributes", "fabrique.json -merge\n"
+             "moteur/donnees.json -merge refaire=scripts/construire_donnees.py\n")
+    commiter(autre, "moteur/donnees.json", "{}\n")
+    git(autre, "push", "--quiet", "origin", "main")
+    git(session, "pull", "--quiet", "--rebase", "origin", "main")
+
+    (session / "regle.yaml").write_text("ma correction\n", encoding="utf-8")
+    (session / "moteur/donnees.json").write_text('{"ma correction": 1}\n', encoding="utf-8")
+    (session / "fabrique.json").write_text('{"session": 1}\n', encoding="utf-8")
+    git(session, "add", "-A")
+    git(session, "commit", "--quiet", "-m", "ma correction, son paquet refait")
+    mienne = git(session, "rev-parse", "HEAD")
+    commiter(autre, "moteur/donnees.json", '{"sa correction": 1}\n')
+    attendu = commiter(autre, "fabrique.json", '{"autre": 1}\n')
+    git(autre, "push", "--quiet", "origin", "main")
+
+    acheve = pousser(session)
+    assert acheve.returncode != 0
+    assert tete_distante(distant, "main") == attendu, "rien poussé"
+    assert "moteur/donnees.json" in acheve.stderr
+    assert "python scripts/construire_donnees.py" in acheve.stderr
+    assert git(session, "rev-parse", "HEAD") == mienne, "le rebasage a été abandonné"
+    assert git(session, "status", "--porcelain") == ""
+
+
 def test_un_commit_qui_ne_portait_que_du_fabrique_disparait(atelier, tmp_path):
     distant, session, autre = _preparer(atelier, tmp_path)
     commiter(session, "source.py", "ma règle\n")

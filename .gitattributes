@@ -55,15 +55,21 @@ tests/temoins/conservation.json merge=ensembles
 # les refait après l'envoi. C'est aussi la liste que `pousser.sh` lit :
 # un fichier fabriqué qui naît s'y ajoute.
 #
+# Le paquet fait exception, par `refaire=<son script>` : les deux moteurs y
+# lisent leurs règles, et garder celui de main publierait la correction de la
+# session sans le paquet qui la porte, son test rouge sur main jusqu'au commit
+# de GitHub. `pousser.sh` refuse alors, et nomme le script : la session rebase
+# à la main et refait le paquet des sources réunies (action 135).
+#
 # On ne touche pas à l'attribut `diff` : le diff chiffre par chiffre des
 # témoins est ce qui rend le portage JavaScript vérifiable, il doit rester
 # lisible.
 
-moteur/donnees.json            -merge
+moteur/donnees.json            -merge refaire=scripts/construire_donnees.py
 tests/temoins/pages.json       -merge
 tests/temoins/simulations.json -merge
-data/derive/equilibre.json     -merge
-data/derive/agregats.json      -merge
+data/derive/equilibre.json     -merge refaire=scripts/construire_donnees.py
+data/derive/agregats.json      -merge refaire=scripts/construire_donnees.py
 docs/chiffrage_plf.csv         -merge
 docs/etat.md                   -merge
 data/reference/regimes/inventaire.yaml -merge

@@ -76,8 +76,16 @@ avec_fusions() {
 # envoi (tests.yml, action 148). Un commit qui ne portait que des fichiers
 # fabriqués devient vide : on le saute. Un conflit sur une source refuse —
 # sauf ce que les deux pilotes ci-dessus ont déjà réglé pendant la fusion.
+# Refuse aussi le fichier fabriqué que .gitattributes marque `refaire=<script>`,
+# le paquet : les deux moteurs y lisent leurs règles, et la correction de la
+# session partirait avec le paquet d'une autre, son propre test rouge sur main
+# jusqu'au commit de GitHub (action 135, 14 novembre 2026).
 fabrique() {
     git check-attr merge -- "$1" | grep -q ': merge: unset$'
+}
+a_refaire="" le_refait=""
+script_qui_refait() {
+    git check-attr refaire -- "$1" | sed -n 's/^.*: refaire: \(scripts\/.*\)$/\1/p'
 }
 rebase_en_cours() {
     [ -d "$(git rev-parse --git-path rebase-merge)" ] \
@@ -86,7 +94,7 @@ rebase_en_cours() {
 rebaser() {
     declarer_les_pilotes
     avec_fusions rebase --quiet origin/main >/dev/null 2>&1 && return 0
-    local tours=0 conflits fichier
+    local tours=0 conflits fichier script
     while rebase_en_cours; do
         tours=$(( tours + 1 ))
         [ "$tours" -gt 100 ] && return 1
@@ -94,6 +102,8 @@ rebaser() {
         [ -z "$conflits" ] && return 1
         while IFS= read -r fichier; do
             fabrique "$fichier" || return 1
+            script=$(script_qui_refait "$fichier")
+            [ -z "$script" ] || { a_refaire="$fichier"; le_refait="python $script"; return 1; }
         done <<< "$conflits"
         while IFS= read -r fichier; do
             # « ours », au rebasage, est main (et nos commits déjà rejoués).
@@ -147,7 +157,11 @@ else
     fi
     if ! rebaser; then
         git rebase --abort >/dev/null 2>&1 || true
-        echo "pousser: le rebasage sur origin/main bute sur un conflit, rien poussé — le résoudre à la main (git rebase origin/main)" >&2
+        if [ -n "$a_refaire" ]; then
+            echo "pousser: $a_refaire a été refait aussi sur main, rien poussé — le refaire des sources réunies : git rebase origin/main ; à chaque arrêt, $le_refait, git add -A, git rebase --continue ; puis les tests, et bash scripts/pousser.sh" >&2
+        else
+            echo "pousser: le rebasage sur origin/main bute sur un conflit, rien poussé — le résoudre à la main (git rebase origin/main)" >&2
+        fi
         exit 1
     fi
 fi
