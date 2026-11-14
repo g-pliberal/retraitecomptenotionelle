@@ -1,11 +1,5 @@
 # Le rendement net du déficit : ce que chaque génération paie, et ce que la comparaison devient
 
-**Reprise, au 13 novembre 2026.** Le rendement net est chiffré. Le
-propriétaire a tranché le 13 novembre : le rendement ne se montre plus sur le
-site (décision 127). L'argument « net du déficit, la proposition rend plus »,
-faux au modèle, n'a donc plus de place ; c'est la lecture de la session, à lui
-confirmer. Cette note n'a plus rien à faire.
-
 *Le 9 novembre 2026, le propriétaire ouvre la suite du chantier 7 de
 l'action 186 : « le rendement des cotisations, net de ce que chaque
 génération paie pour combler le déficit ». Le constat de départ est celui des

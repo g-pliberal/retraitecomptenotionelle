@@ -1,15 +1,5 @@
 # Les planchers propres à certaines caisses, étudiés aux sources : qui perd, combien, et ce que le droit permet
 
-**Reprise, au 7 novembre 2026.** Le propriétaire a tranché (décisions 62 à
-66, 69 et 78) : planchers gardés tant que leur caisse a des réserves, la
-garantie ensuite, dès la bascule pour la CNRACL, l'État, la SNCF et la
-complémentaire agricole ; la garantie ouverte dès l'invalidité, pour tous les
-invalides. Deux sessions neuves, ouvertes le même jour, mènent la suite :
-la vérification caisse par caisse (note `…-invalidite-caisses.md`) et les
-cinq questions (note `…-invalidite-questions.md`), que le propriétaire
-garde ouvertes pour y réfléchir. Cette note n'a plus rien à faire. Le modèle
-n'est touché qu'après, par une session du modèle, au seul scénario 6.
-
 *Le 7 novembre 2026, le propriétaire, qui avait dit « Oui » à ce que la garantie vieillesse remplace aussi les planchers propres à certaines caisses (décision 42), rouvre la question : « J'aimerais revoir ce sujet pour voir comment vont être impactés les gens. J'aimerais surtout voir notre marge de manœuvre légale sur le sujet. » La session a lu : la note de la CNRACL au COR sur les bénéficiaires du minimum garanti (février 2023), la note du secrétariat du COR sur les minima de pension (février 2023), les fiches du COR de juillet 2024 sur la CNRACL, la caisse des cheminots et celle des IEG, les pages de la CNIEG sur son minimum, et, dans l'index LEGI de la DILA (à jour au 2 novembre 2026), les textes de chaque plancher. Les sites de la DREES, de la sécurité sociale et du Sénat ont refusé la lecture automatique (503) : les chiffres qui en viennent ont été relevés par le moteur de recherche, sans lecture de la page, et sont marqués comme tels. Les calculs faits à côté sont restés dans le brouillon de la session ; leur méthode est écrite à chaque chiffre. Ce que la note conclut est une piste, pas une décision : le propriétaire tranche.*
 
 ## L'essentiel : les perdants sont les couples, les longues carrières et ceux qui partent avant 65 ans ; le droit protège surtout les pensions servies
