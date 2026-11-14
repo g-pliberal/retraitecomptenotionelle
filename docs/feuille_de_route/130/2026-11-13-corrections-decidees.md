@@ -39,8 +39,12 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   d'une pension que sa date sépare du départ déclaré se lit dans les règles de chaque
   mois, dans les deux moteurs (servi le 1er janvier 2024 au lieu du 1er avril 2025 au cas
   posé, 13 164,74 € par an de 2024) ; note `2026-11-13-correction-cprn-passage-de-2024.md`.
-- [ ] 4. **CARCDSF, la réversion non servie** (4 147,36 € et 5 654,21 €). Fiche
+- [x] 4. **CARCDSF, la réversion non servie** (4 147,36 € et 5 654,21 €). Fiche
   `carcdsf_minoration_age_seul` ; note `2026-11-05-carte-des-fiches-carcdsf-lue-au-droit.md`.
+  Corrigé le 14 novembre 2026 : 60 % de la retraite complémentaire au conjoint de 65 ans,
+  marié depuis deux ans sauf enfant, pour un décès depuis le 11 octobre 2007, dans les deux
+  moteurs (4 147,36 € et 5 654,21 € par an aux cas posés, au lieu de rien) ; fiche
+  `reversion_carcdsf` ; note `2026-11-14-correction-carcdsf-reversion.md`.
 - [ ] 5. **CARMF, les deux premières années d'exercice** : dispensées sans points depuis
   le 1er juillet 2026, le modèle en donne (2 284,25 € de trop). Note
   `2026-11-06-e10-decret-2026-418.md`.

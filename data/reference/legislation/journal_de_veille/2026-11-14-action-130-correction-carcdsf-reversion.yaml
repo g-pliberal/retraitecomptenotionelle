@@ -1,0 +1,25 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 4 : la réversion de la CARCDSF servie"
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index JORF récupéré par `dila_index.py --recuperer`,
+  à jour au 11 novembre 2026. Rouverts : les statuts de 2007, articles 39 à 50
+  (JORFARTI000002063756), ceux de 2011, articles 32 à 43 (JORFARTI000023909792), le
+  règlement de 2026, articles 9 à 19 (JORFARTI000054435749), et les arrêtés du 9 juillet 2012
+  (JORFARTI000026208364), du 22 décembre 2017 (JORFARTI000036251928) et du 27 décembre 2023
+  (JORFARTI000048880707). Sur le site de la CARCDSF : « Condition d'attribution de réversion
+  dans les régimes RC et PCV », janvier 2024, et la foire aux questions de la réversion.
+trouve: >-
+  Le texte tranche, et les trois rédactions disent la même règle : 60 % de la retraite
+  complémentaire au conjoint survivant de 65 ans, marié deux ans au moins avant le décès sauf
+  enfant issu du mariage, partagée avec l'ex-conjoint divorcé non remarié, supprimée au
+  remariage, la bonification de 10 % pour trois enfants s'y appliquant ; la caisse le
+  confirme, sans condition de ressources. Le modèle n'en servait rien : corrigé dans les deux
+  moteurs, par la fiche `reversion_carcdsf`. Dentiste né le 1er juin 1950, mort en juin 2020,
+  conjointe née en 1952 : 60 % de 6 912,27 €, 4 147,36 € par an.
+reste: >-
+  La réversion du survivant inapte dès 60 ans et la réversion anticipée, minorée, que la
+  saisie ne dit pas ; les décès d'avant le 11 octobre 2007, au règlement de 1955, non lu ;
+  les sages-femmes d'avant le 1er juillet 2011, aux statuts de la CARSAF ; aucun exemple
+  chiffré publié, à demander à la caisse. La réversion du régime des prestations
+  complémentaires de vieillesse, non portée. Les lignes 5 à 30 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).
