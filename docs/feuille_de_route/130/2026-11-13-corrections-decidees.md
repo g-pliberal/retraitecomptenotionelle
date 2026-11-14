@@ -190,7 +190,14 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   entamée, aucune majoration après 65 ans (né le 1er septembre 1950, pension au
   1er mars 2011 : 6 380,81 € par an au lieu de 6 593,50 €) ; note
   `2026-11-14-correction-carcdsf-premier-semestre-2011.md`.
-- [ ] 23. **CARCDSF, l'inapte et les catégories sans minoration.** Mêmes fiche et note.
+- [x] 23. **CARCDSF, l'inapte et les catégories sans minoration.** Mêmes fiche et note.
+  Corrigé le 14 novembre 2026 : l'inapte et l'ancien déporté sont servis sans minoration
+  depuis les statuts de 2007, l'ancien combattant de 2007 à juin 2011 et depuis 2024,
+  dans les deux moteurs (inapte né le 1er janvier 1948, pension au 1er janvier 2008 :
+  7 342,68 € par an au lieu de 5 507,01 €) ; le grand invalide de guerre et le parent
+  d'un enfant handicapé, sans saisie, et l'inapte de 62 ans depuis 2024, que le texte
+  ne tranche pas, restent déclarés ; note
+  `2026-11-14-correction-carcdsf-inapte-et-categories.md`.
 - [ ] 24. **CARCDSF, la majoration au temps écoulé.** Mêmes fiche et note.
 - [ ] 25. **CARCDSF, depuis 2024 : la majoration de 1,25 % et les nés de 1951 à 1954.**
   Mêmes fiche et note.

@@ -1,0 +1,43 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 23 : l'inapte et les catégories que la CARCDSF sert sans minoration"
+consulte: >-
+  `python scripts/veille_droit.py` ; les index JORF et LEGI récupérés par
+  `dila_index.py --recuperer`, à jour du 11 novembre 2026. Statuts de la CARCDSF : de
+  2007, articles 20 à 22 (JORFARTI000001859980) ; de 2011, articles 19 à 21
+  (JORFARTI000023909792) ; l'arrêté du 9 juillet 2012 (JORFARTI000026208364), qui n'y
+  touche pas ; celui du 22 décembre 2017, 21° (JORFARTI000036251928) ; de 2024,
+  article 35 (JORFARTI000048880707) ; règlement de 2026, articles 1er et 3
+  (JORFARTI000054435749). L. 643-4 dans ses rédactions de 2004 et du 1er septembre
+  2023 (LEGIARTI000006743792, LEGIARTI000047453026), L. 643-3, IV
+  (LEGIARTI000047453031), D. 643-14 (LEGIARTI000047634694), D. 351-1-14
+  (LEGIARTI000047634688), D. 351-2 dans ses rédactions de 1985 et du 9 juillet 2024
+  (LEGIARTI000006736530, LEGIARTI000049917724), L. 351-8, 5° (LEGIARTI000051289852).
+trouve: >-
+  Le texte tranche. Sont servis « sans application de coefficients de minoration » :
+  l'inapte, le grand invalide de guerre et l'ancien déporté ou interné, « à partir de
+  60 ans » (2007, article 20, I, a), puis « à partir de l'âge prévu à l'article
+  L. 161-17-2 » (2011, article 19, I, a ; 2017, article 35), puis « à l'âge prévu au IV
+  de l'article L. 643-3 », 62 ans, pour « les affiliés relevant du 2° de l'article
+  L. 643-4 » (2024, article 35, II ; règlement de 2026, article 3, II) ; l'ancien
+  combattant ou prisonnier de guerre, aux âges de D. 351-2, sous les statuts de 2007
+  (article 20, II, a) et, par le d du 2° de L. 643-4, depuis ceux de 2024 — ceux de
+  2011 et de 2017 ne le nomment pas. Le modèle leur opposait la minoration de
+  l'assuré valide : corrigé dans les deux moteurs, par deux paramètres de période de
+  `carcdsf_complementaire.yaml` (`age_sans_coefficient_de_l_inapte`, qui lit désormais
+  aussi l'âge légal de la génération, et `categories_sans_coefficient`, neuf). Inapte
+  ou ancien déporté né le 1er janvier 1948, pension au 1er janvier 2008 à 60 ans :
+  7 342,68 € par an au lieu de 5 507,01 € ; né le 1er janvier 1955, pension au
+  1er janvier 2017 : 10 119,93 € au lieu de 7 083,95 € ; né le 1er janvier 1965,
+  pension au 1er octobre 2027 : 15 874,55 € au lieu de 13 493,37 €. La fiche
+  `carcdsf_minoration_age_seul` relue ce jour, l'erreur passée à son histoire.
+reste: >-
+  Le grand invalide de guerre et le parent d'un enfant handicapé (nommé depuis le
+  25 décembre 2017), sans saisie au modèle, gardent la minoration. Seule compte
+  l'inaptitude que la carrière déclare. L'inapte reste refusé entre 62 ans et l'âge
+  légal de sa génération depuis 2024 : l'article 1er du règlement demande l'âge de
+  L. 161-17-2 quand son article 3, II, ouvre « un départ anticipé » à 62 ans, ce que
+  le texte ne tranche pas. Le 1er janvier 2024, la période de 2024 sert l'ancien
+  combattant que les statuts de 2017 ne nomment pas (ligne 26). La même classe à la
+  CAVEC, à la CARPV et à la CAVAMAC, que la file ne nomme pas pour l'inapte. Les
+  lignes 24 à 30 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).
