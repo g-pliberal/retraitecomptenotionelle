@@ -957,6 +957,90 @@ def test_le_compte_ne_porte_pas_la_cotisation_que_la_carmf_exempte_passe_75_ans(
         "carmf_complementaire"] == pytest.approx(5_154.86, abs=0.005)
 
 
+# -- l'ASV des médecins : la cotisation d'avant 2012 (action 130) ----------------
+
+#: Année : (la cotisation du médecin, la fraction que les caisses y ajoutent),
+#: en euros de l'année, là où la fiche ancre le tarif de la consultation ; un
+#: franc vaut 1 / 6,55957 €. Les caisses versent « le double de la cotisation
+#: des bénéficiaires » (D. 645-3, LEGIARTI000006738166, 168 et 169), ou, du
+#: 30 mars 1993 au 8 juillet 1994, une cotisation « égale à la cotisation
+#: exigible des bénéficiaires » (LEGIARTI000006738167).
+COTISATIONS_DE_L_ASV_AU_TEXTE = {
+    # D. 645-2 (LEGIARTI000006738371) : « pour les médecins, à trente fois la
+    # valeur au 1er janvier de l'année en cause du tarif de la consultation »,
+    # « appelée à concurrence de 75 p. 100 » (décret n° 72-968, article 6,
+    # LEGIARTI000006765951). 30 × 75 F × 0,75 = 1 687,50 F.
+    1985: (257.26, 2.0),
+    # Article 6, rédaction du 8 juillet 1994 (LEGIARTI000006765957) : « Pour
+    # l'exercice 1993 […] la cotisation est fixée à 43,333 2 fois la valeur au
+    # 1er janvier 1993 du tarif ». 43,3332 × 100 F = 4 333,32 F.
+    1993: (660.61, 1.0),
+    # Décret n° 94-564, article 1er, II (JORFARTI000001585515) : « A compter du
+    # 1er janvier 1994 […] cinquante-deux fois ». 52 × 100 F = 5 200 F.
+    1994: (792.73, 2.0),
+    1995: (792.73, 2.0),
+    # D. 645-2 (LEGIARTI000006738376) : « soixante fois ». 60 × 110 F = 6 600 F.
+    1999: (1_006.16, 2.0),
+    # D. 645-2 (LEGIARTI000006738380) : « au titre de l'exercice 2004, à
+    # soixante fois ». 60 × 20 € = 1 200 € : le cas posé de la note
+    # `130/2026-11-13-relecture-asv-medecins-points.md`, 2 400 € des caisses.
+    2004: (1_200.0, 2.0),
+}
+
+#: Année : le nombre de consultations que le médecin verse, l'appel compris,
+#: sous l'article 6 du décret n° 72-968 (LEGIARTI000006765951 à 955) : 75 %
+#: de trente fois ; « pour l'année 1988 […] trente et une fois », « pour
+#: l'année 1990 […] 33 fois », et pour l'année 1992 trente fois « majorée de
+#: dix fois », chacune « appelée à concurrence de 100 p. 100 ».
+CONSULTATIONS_DE_L_ASV_AU_TEXTE = {
+    1982: 22.5, 1987: 22.5, 1988: 31.0, 1989: 22.5, 1990: 33.0, 1991: 22.5, 1992: 40.0}
+
+
+@pytest.fixture(scope="module")
+def versees_a_l_asv():
+    """Ce que le compte reçoit de l'ASV, année par année, de la médecin née le
+    1er janvier 1945 et installée à 27 ans, en 1972 : sa part seule
+    (``salariale``), puis celle des caisses avec (``totale``)."""
+    annees = sorted({*COTISATIONS_DE_L_ASV_AU_TEXTE, *CONSULTATIONS_DE_L_ASV_AU_TEXTE})
+    return {
+        part: {annee: _versees_au_compte(
+            "1945-01-01", "27", annee,
+            requete={**REQUETE_DE_MEDECIN, "liquidation": "68",
+                     "part_cotisation": part})["asv_conventionnes"]
+               for annee in annees}
+        for part in ("salariale", "totale")}
+
+
+@pytest.mark.parametrize("annee", COTISATIONS_DE_L_ASV_AU_TEXTE)
+def test_le_medecin_verse_a_l_asv_les_consultations_du_texte_et_les_caisses_le_double(
+        versees_a_l_asv, annee):
+    """D. 645-2 fixe « la cotisation annuelle des bénéficiaires », D. 645-3
+    celle des caisses, au double : le médecin paie N consultations, les caisses
+    2 N. Jusqu'au 14 novembre 2026, la fiche prenait N consultations pour le
+    total et n'en donnait que le tiers au médecin : 400 € en 2004 au lieu de
+    1 200 €, et 1 200 € au compte au lieu de 3 600 €."""
+    medecin, des_caisses = COTISATIONS_DE_L_ASV_AU_TEXTE[annee]
+    assert versees_a_l_asv["salariale"][annee] == pytest.approx(medecin, abs=0.005)
+    assert versees_a_l_asv["totale"][annee] == pytest.approx(
+        medecin * (1 + des_caisses), abs=0.02)
+
+
+@pytest.mark.parametrize("annee", CONSULTATIONS_DE_L_ASV_AU_TEXTE)
+def test_l_appel_de_l_asv_suit_l_article_6_du_decret_de_1972(
+        simulateur, versees_a_l_asv, annee):
+    """L'article 6 du décret n° 72-968 appelle la cotisation à 75 % de 1981 à
+    1992, sauf en 1988, en 1990 et en 1992, que le texte fixe une à une. Le
+    tarif de la consultation n'est pas une série du dépôt : la fiche porte par
+    les prix celui de 1985, 75 F, et le test ne tient que le nombre de
+    consultations, que le modèle prenait à dix (le tiers de trente) chaque
+    année."""
+    consultation = 75 / 6.55957 * simulateur.macro.coefficient_prix(1985, annee)
+    assert versees_a_l_asv["salariale"][annee] / consultation == pytest.approx(
+        CONSULTATIONS_DE_L_ASV_AU_TEXTE[annee], abs=0.002)
+    assert versees_a_l_asv["totale"][annee] == pytest.approx(
+        3 * versees_a_l_asv["salariale"][annee], rel=1e-5)
+
+
 #: (année de naissance) : la valeur de service du point de l'ASV des médecins à
 #: la date d'effet de la pension, prise à 65 ans par un médecin né un 1er
 #: janvier, telle que le texte la fixe, en euros courants.

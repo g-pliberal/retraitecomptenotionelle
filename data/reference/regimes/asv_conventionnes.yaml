@@ -47,7 +47,9 @@ inventaire:
     plafond de neuf par an, atteint dès 68 000 € de revenu. Le forfait de
     2017 à 2024, revalorisé sur le revenu moyen des médecins, est projeté
     sur les prix depuis 2016. Le tarif de la consultation, base du forfait
-    de 1985 à 2011, n'est pas une série du dépôt.
+    jusqu'en 2011, n'est pas une série du dépôt : la fiche le prend à 75 F
+    en 1985, 100 F en 1993, 1994 et 1995, 110 F en 1999 et 20 € en 2004, et
+    le porte par les prix entre ces années.
 periodes:
   - debut: 1972
     fin: 1980
@@ -64,7 +66,7 @@ periodes:
     taux_cotisation_retraite: 0.000000
     part_assurance_maladie_forfait: 0.666667
     part_assurance_maladie_taux: 0.666667
-    cotisation_forfaitaire_euros: 114.34
+    cotisation_forfaitaire_euros: 205.81
     cotisation_forfaitaire_annee: 1985
     points_par_trimestre_valide: 7.54
     valeur_point_euros: 15.55
@@ -81,14 +83,17 @@ periodes:
       : le forfait et le taux de la fiche valent donc un tiers du total,
       et la part des caisses, que disent `part_assurance_maladie_forfait`
       et `part_assurance_maladie_taux`, est portée au compte comme une
-      part patronale depuis le 14 octobre 2026 (action 138, étape 18). FORFAIT : le
-      décret n° 72-968 renvoie la cotisation à un arrêté que l'index ne
-      porte pas ; la première version codifiée est celle de 1985, « trente
-      fois la valeur au 1er janvier de l'année en cause du tarif de la
-      consultation du médecin omnipraticien » (D. 645-2,
-      LEGIARTI000006738371), soit, à 75 F la consultation, 2 250 F par an
-      dont un tiers pour le médecin — 114,34 € de 1985, projetés en
-      arrière sur les prix. POINTS : « 30,16 points de retraite pour les
+      part patronale depuis le 14 octobre 2026 (action 138, étape 18). FORFAIT :
+      la cotisation du médecin est à l'article 1er, a, du décret n° 71-544,
+      dont l'index ne porte pas les rédactions d'avant 1981 ; le résumé du
+      décret n° 81-274 (JORFTEXT000000685106) la dit de « TRENTE FOIS LA
+      VALEUR AU 1 JANVIER DE L'ANNEE EN COURS DU TARIF DE LA CONSULTATION »
+      et appelée à 60 % jusqu'au 30 juin 1981. Faute du multiple d'avant
+      1981, la fiche prend trente fois à 60 %, dix-huit consultations : à
+      75 F la consultation de 1985, 1 350 F, 205,81 € de 1985, projetés en
+      arrière sur les prix ; les caisses versent le double. Jusqu'au 14
+      novembre 2026 la fiche prenait trente consultations pour le total et
+      n'en donnait que le tiers au médecin (action 130). POINTS : « 30,16 points de retraite pour les
       périodes de cotisation comprises entre le 1er juillet 1972 et le 31
       décembre 1993 », « au prorata du nombre de trimestres cotisés »
       (décret n° 72-968, art. 2, LEGIARTI000024871109) — soit 7,54 points
@@ -112,7 +117,7 @@ periodes:
     taux_cotisation_retraite: 0.000000
     part_assurance_maladie_forfait: 0.666667
     part_assurance_maladie_taux: 0.666667
-    cotisation_forfaitaire_euros: 114.34
+    cotisation_forfaitaire_euros: 257.26
     cotisation_forfaitaire_annee: 1985
     points_par_trimestre_valide: 7.54
     valeur_point_euros: 15.55
@@ -130,8 +135,18 @@ periodes:
       JORFTEXT000054435848). La fiche n'en portait aucune ; la période de
       1972 à 1984 est coupée en 1981 pour la servir à sa date. Lu le 23
       septembre 2026 (action 89).
+      FORFAIT : « A COMPTER DU 01-07-1981, LA COTISATION DES MEDECINS
+      CONVENTIONNES A CE REGIME EST APPELEE A CONCURRENCE DE 75% AU LIEU DE
+      60% » (décret n° 81-274, résumé du Journal officiel,
+      JORFTEXT000000685106 ; décret n° 72-968, article 6,
+      LEGIARTI000006765951), sur « TRENTE FOIS » le tarif de la consultation
+      : 22,5 consultations, 1 687,50 F à 75 F, 257,26 € de 1985 ramenés aux
+      prix ; les caisses versent le double, « dans des conditions identiques
+      ». L'année 1981, appelée à 60 % jusqu'au 30 juin, est prise à 75 %.
+      Jusqu'au 14 novembre 2026 la fiche n'en portait que dix consultations
+      (action 130).
   - debut: 1985
-    fin: 1992
+    fin: 1987
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -145,7 +160,7 @@ periodes:
     taux_cotisation_retraite: 0.000000
     part_assurance_maladie_forfait: 0.666667
     part_assurance_maladie_taux: 0.666667
-    cotisation_forfaitaire_euros: 114.34
+    cotisation_forfaitaire_euros: 257.26
     cotisation_forfaitaire_annee: 1985
     points_par_trimestre_valide: 7.54
     valeur_point_euros: 15.55
@@ -166,10 +181,15 @@ periodes:
       trente fois la valeur au 1er janvier de l'année en cause du tarif de
       la consultation du médecin omnipraticien » (D. 645-2,
       LEGIARTI000006738371 au 21 décembre 1985, LEGIARTI000006738372
-      jusqu'au 30 mars 1993). Le tarif C n'est pas une série du dépôt : 75
-      F en 1985, d'où 2 250 F, un tiers pour le médecin, 114,34 € de 1985
-      ramenés aux prix ; le tarif a monté plus vite que les prix sur la
-      période, la fiche sous-estime donc un peu le forfait. POINTS : «
+      jusqu'au 30 mars 1993). C'est la cotisation du médecin, et non
+      le total, et elle est « appelée à concurrence de 75 p. 100 » (décret
+      n° 72-968, article 6, LEGIARTI000006765951) : 22,5 consultations. Le
+      tarif C n'est pas une série du dépôt : 75 F en 1985, d'où 1 687,50 F,
+      257,26 € de 1985 ramenés aux prix ; le tarif a monté plus vite que
+      les prix sur la période, la fiche sous-estime donc un peu le forfait.
+      Jusqu'au 14 novembre 2026 la fiche prenait les trente consultations
+      pour le total et n'en donnait que le tiers au médecin, 114,34 €
+      (action 130). POINTS : «
       30,16 points de retraite pour les périodes de cotisation comprises
       entre le 1er juillet 1972 et le 31 décembre 1993 », « au prorata du
       nombre de trimestres cotisés » (décret n° 72-968, art. 2,
@@ -179,6 +199,164 @@ periodes:
       LEGIARTI000024853556), prise pour valeur de 2011 et ramenée aux prix
       de l'année de liquidation ; aucune valeur antérieure n'est dans
       l'index, niveau `estimee`.
+  - debut: 1988
+    fin: 1988
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
+    cotisation_forfaitaire_euros: 354.44
+    cotisation_forfaitaire_annee: 1985
+    points_par_trimestre_valide: 7.54
+    valeur_point_euros: 15.55
+    valeur_point_annee: 2011
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Comme de 1985 à 1987, dont la note dit la part des caisses, les
+      points et la valeur de service ; seul le FORFAIT change. « Par
+      dérogation au précédent alinéa et pour l'année 1988, la cotisation des
+      médecins conventionnés est fixée à trente et une fois la valeur au 1er
+      janvier 1988 du tarif de la consultation […]. Elle est appelée à
+      concurrence de 100 p. 100 » (décret n° 72-968, article 6,
+      LEGIARTI000006765952) : 31 × 75 F = 2 325 F, 354,44 € de 1985 ramenés
+      aux prix, faute du tarif de 1988. Coupée le 14 novembre 2026 (action
+      130).
+  - debut: 1989
+    fin: 1989
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
+    cotisation_forfaitaire_euros: 257.26
+    cotisation_forfaitaire_annee: 1985
+    points_par_trimestre_valide: 7.54
+    valeur_point_euros: 15.55
+    valeur_point_annee: 2011
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Comme de 1985 à 1987, dont la note dit la part des caisses, les
+      points et la valeur de service ; seul le FORFAIT change. Trente
+      consultations « appelée[s] à concurrence de 75 p. 100 » (décret n°
+      72-968, article 6, LEGIARTI000006765952) : 22,5 × 75 F = 1 687,50 F,
+      257,26 € de 1985 ramenés aux prix. Coupée le 14 novembre 2026 (action
+      130).
+  - debut: 1990
+    fin: 1990
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
+    cotisation_forfaitaire_euros: 377.31
+    cotisation_forfaitaire_annee: 1985
+    points_par_trimestre_valide: 7.54
+    valeur_point_euros: 15.55
+    valeur_point_annee: 2011
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Comme de 1985 à 1987, dont la note dit la part des caisses, les
+      points et la valeur de service ; seul le FORFAIT change. « Par
+      dérogation au premier alinéa et pour l'année 1990, la cotisation des
+      médecins conventionnés est fixée à 33 fois la valeur au 1er janvier
+      1990 du tarif de la consultation […]. Elle est appelée à concurrence
+      de 100 p. 100 » (décret n° 72-968, article 6, LEGIARTI000006765953) :
+      33 × 75 F = 2 475 F, 377,31 € de 1985 ramenés aux prix, faute du tarif
+      de 1990. Coupée le 14 novembre 2026 (action 130).
+  - debut: 1991
+    fin: 1991
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
+    cotisation_forfaitaire_euros: 257.26
+    cotisation_forfaitaire_annee: 1985
+    points_par_trimestre_valide: 7.54
+    valeur_point_euros: 15.55
+    valeur_point_annee: 2011
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Comme de 1985 à 1987, dont la note dit la part des caisses, les
+      points et la valeur de service ; seul le FORFAIT change. Trente
+      consultations « appelée[s] à concurrence de 75 p. 100 » (décret n°
+      72-968, article 6, LEGIARTI000006765953) : 22,5 × 75 F = 1 687,50 F,
+      257,26 € de 1985 ramenés aux prix. Coupée le 14 novembre 2026 (action
+      130).
+  - debut: 1992
+    fin: 1992
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.000000
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
+    cotisation_forfaitaire_euros: 457.35
+    cotisation_forfaitaire_annee: 1985
+    points_par_trimestre_valide: 7.54
+    valeur_point_euros: 15.55
+    valeur_point_annee: 2011
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    notes: >-
+      Comme de 1985 à 1987, dont la note dit la part des caisses, les
+      points et la valeur de service ; seul le FORFAIT change. « A titre
+      exceptionnel pour l'année 1992, la cotisation des médecins
+      conventionnés mentionnée au premier alinéa est majorée de dix fois la
+      valeur au 1er janvier du tarif de la consultation […]. Elle est
+      appelée à concurrence de 100 p. 100 » (décret n° 72-968, article 6,
+      LEGIARTI000006765955) : quarante consultations, 40 × 75 F = 3 000 F,
+      457,35 € de 1985 ramenés aux prix, faute du tarif de 1992. Coupée le
+      14 novembre 2026 (action 130).
   - debut: 1993
     fin: 1993
     type_calcul: points
@@ -194,7 +372,7 @@ periodes:
     taux_cotisation_retraite: 0.000000
     part_assurance_maladie_forfait: 0.5
     part_assurance_maladie_taux: 0.5
-    cotisation_forfaitaire_euros: 343.01
+    cotisation_forfaitaire_euros: 660.61
     cotisation_forfaitaire_annee: 1993
     points_par_trimestre_valide: 7.54
     valeur_point_euros: 15.55
@@ -206,10 +384,21 @@ periodes:
       LA PART DU MÉDECIN PASSE À LA MOITIÉ. Du 30 mars 1993 au 8 juillet
       1994 la cotisation des caisses « est égale à la cotisation exigible
       des bénéficiaires pratiquant les tarifs conventionnels pour les
-      médecins » (D. 645-3, LEGIARTI000006738167), et le forfait total
-      monte à « quarante-cinq fois la valeur […] du tarif de la
-      consultation » (D. 645-2, LEGIARTI000006738373) : 45 × 100 F = 4 500
-      F, dont la moitié, 2 250 F = 343,01 €, pour le médecin. POINTS : «
+      médecins » (D. 645-3, LEGIARTI000006738167). D. 645-2 portait la
+      cotisation du médecin, et non le total, à « quarante-cinq fois la
+      valeur […] du tarif de la consultation » (LEGIARTI000006738373), que
+      le décret n° 94-564 a remplacée après coup : « Pour l'exercice 1993 et
+      par dérogation au 1° de l'article D. 645-2 du code de la sécurité
+      sociale, la cotisation est fixée à 43,333 2 fois la valeur au 1er
+      janvier 1993 du tarif de la consultation », « appelée à concurrence de
+      100 p. 100 » (décret n° 72-968, article 6, LEGIARTI000006765957 ; la
+      loi n° 96-452, article 33, valide ces appels) : 43,3332 × 100 F =
+      4 333,32 F = 660,61 € pour le médecin, et autant pour les caisses :
+      le décret de 1994 ne dit pas ce qu'elles doivent pour 1993, et la
+      fiche garde l'égalité du texte en vigueur cette année-là.
+      Jusqu'au 14 novembre 2026 la fiche prenait quarante-cinq consultations
+      pour le total et en donnait la moitié au médecin, 343,01 € (action
+      130). POINTS : «
       30,16 points de retraite pour les périodes de cotisation comprises
       entre le 1er juillet 1972 et le 31 décembre 1993 », « au prorata du
       nombre de trimestres cotisés » (décret n° 72-968, art. 2,
@@ -237,10 +426,10 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.000000
-    part_assurance_maladie_forfait: 0.5
-    part_assurance_maladie_taux: 0.5
-    cotisation_forfaitaire_euros: 343.01
-    cotisation_forfaitaire_annee: 1993
+    part_assurance_maladie_forfait: 0.666667
+    part_assurance_maladie_taux: 0.666667
+    cotisation_forfaitaire_euros: 792.73
+    cotisation_forfaitaire_annee: 1994
     points_par_trimestre_valide: 6.75
     valeur_point_euros: 15.55
     valeur_point_annee: 2011
@@ -248,10 +437,18 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
-      Même forfait de 45 C partagé par moitié (D. 645-2
-      LEGIARTI000006738374, D. 645-3 LEGIARTI000006738167 jusqu'au 8
-      juillet 1994, puis LEGIARTI000006738168 qui rend la part des caisses
-      double : l'année est prise à la moitié). POINTS : « 27 points pour
+      FORFAIT : « A compter du 1er janvier 1994, à l'article D. 645-2 (1°)
+      du code de la sécurité sociale, les termes : << trente fois >> sont
+      remplacés par les termes : << cinquante-deux fois >> » (décret n°
+      94-564 du 6 juillet 1994, article 1er, II, JORFARTI000001585515 ; D.
+      645-2, LEGIARTI000006738374) : 52 × 100 F = 5 200 F = 792,73 € pour le
+      médecin. Le même décret abroge celui du 29 mars 1993 (article 4), et
+      D. 645-3 fixe de nouveau la cotisation des caisses « au double de la
+      cotisation des bénéficiaires » le 8 juillet 1994
+      (LEGIARTI000006738168) : l'année est prise au double, quand le texte
+      d'avant le 8 juillet la mettait à l'égalité (LEGIARTI000006738167).
+      Jusqu'au 14 novembre 2026 la fiche tenait 1994 à quarante-cinq
+      consultations partagées par moitié, 343,01 € (action 130). POINTS : « 27 points pour
       les périodes de cotisation postérieures au 31 décembre 1993 »
       (décret n° 72-968, art. 2, LEGIARTI000024871109), au prorata des
       trimestres — 6,75 par trimestre validé, sans égard au revenu. VALEUR
@@ -259,11 +456,6 @@ periodes:
       (décret n° 2011-1644, art. 4, LEGIARTI000024853556), prise pour
       valeur de 2011 et ramenée aux prix de l'année de liquidation ;
       aucune valeur antérieure n'est dans l'index, niveau `estimee`.
-      LA PART DES CAISSES À L'ÉGALITÉ : du 30 mars 1993 au 8 juillet 1994,
-      D. 645-3 fixe la cotisation des caisses « égale à la cotisation
-      exigible des bénéficiaires pratiquant les tarifs conventionnels pour
-      les médecins » (LEGIARTI000006738167), et non au double : la moitié
-      du total, que la fiche porte sur toute l'année 1994.
   - debut: 1995
     fin: 1998
     type_calcul: points
@@ -279,7 +471,7 @@ periodes:
     taux_cotisation_retraite: 0.000000
     part_assurance_maladie_forfait: 0.666667
     part_assurance_maladie_taux: 0.666667
-    cotisation_forfaitaire_euros: 264.27
+    cotisation_forfaitaire_euros: 792.73
     cotisation_forfaitaire_annee: 1995
     points_par_trimestre_valide: 6.75
     valeur_point_euros: 15.55
@@ -299,10 +491,12 @@ periodes:
       part patronale depuis le 14 octobre 2026 (action 138, étape 18). FORFAIT : «
       cinquante-deux fois la valeur au 1er janvier de l'année en cause du
       tarif de la consultation du médecin omnipraticien » (D. 645-2,
-      LEGIARTI000006738375 ; le décret 95-442 qui le portait a été annulé
-      par le Conseil d'État le 17 janvier 1997, NOTA de l'article, sans
-      que l'index porte un autre montant). 52 × 100 F = 5 200 F, un tiers
-      pour le médecin : 264,27 € de 1995. POINTS : « 27 points pour les
+      LEGIARTI000006738375 ; le décret n° 95-442, que le Conseil d'État a
+      annulé le 17 janvier 1997, NOTA de l'article, n'y changeait que les
+      chirurgiens-dentistes). C'est la cotisation du médecin, et non le
+      total : 52 × 100 F = 5 200 F, 792,73 € de 1995. Jusqu'au 14 novembre
+      2026 la fiche n'en donnait que le tiers au médecin, 264,27 € (action
+      130). POINTS : « 27 points pour les
       périodes de cotisation postérieures au 31 décembre 1993 » (décret n°
       72-968, art. 2, LEGIARTI000024871109), au prorata des trimestres —
       6,75 par trimestre validé, sans égard au revenu. VALEUR DE SERVICE :
@@ -325,7 +519,7 @@ periodes:
     taux_cotisation_retraite: 0.000000
     part_assurance_maladie_forfait: 0.666667
     part_assurance_maladie_taux: 0.666667
-    cotisation_forfaitaire_euros: 335.39
+    cotisation_forfaitaire_euros: 1006.16
     cotisation_forfaitaire_annee: 1999
     points_par_trimestre_valide: 6.75
     valeur_point_euros: 15.55
@@ -346,8 +540,10 @@ periodes:
       soixante fois la valeur au 1er janvier de l'année en cause du tarif
       de la consultation du médecin omnipraticien » (D. 645-2,
       LEGIARTI000006738376 pour 1999 et 2000, LEGIARTI000006738377,
-      LEGIARTI000006738378 pour 2003). 60 × 110 F = 6 600 F, un tiers pour
-      le médecin : 335,39 € de 1999. POINTS : « 27 points pour les
+      LEGIARTI000006738378 pour 2003). C'est la cotisation du médecin, et
+      non le total : 60 × 110 F = 6 600 F, 1 006,16 € de 1999. Jusqu'au 14
+      novembre 2026 la fiche n'en donnait que le tiers au médecin, 335,39 €
+      (action 130). Le tarif de 110 F n'est pas relu. POINTS : « 27 points pour les
       périodes de cotisation postérieures au 31 décembre 1993 » (décret n°
       72-968, art. 2, LEGIARTI000024871109), au prorata des trimestres —
       6,75 par trimestre validé, sans égard au revenu. VALEUR DE SERVICE :
@@ -373,7 +569,7 @@ periodes:
     taux_cotisation_retraite: 0.000000
     part_assurance_maladie_forfait: 0.666667
     part_assurance_maladie_taux: 0.666667
-    cotisation_forfaitaire_euros: 400.00
+    cotisation_forfaitaire_euros: 1200.00
     cotisation_forfaitaire_annee: 2004
     points_par_trimestre_valide: 6.75
     valeur_point_euros: 15.55
@@ -393,9 +589,14 @@ periodes:
       part patronale depuis le 14 octobre 2026 (action 138, étape 18). FORFAIT :
       soixante fois la consultation, reconduit exercice par exercice (D.
       645-2, LEGIARTI000006738380 pour 2004, LEGIARTI000006738381 pour
-      2005, jusqu'à LEGIARTI000023380413 pour 2010 et 2011). C = 20 €
-      depuis 2002 : 1 200 € par an, 400 € pour le médecin, en euros de
-      2004. POINTS : « 27 points pour les périodes de cotisation
+      2005, jusqu'à LEGIARTI000023380413 pour 2010 et 2011). C'est la
+      cotisation du médecin, et non le total. C = 20 € depuis 2002 : 1 200 €
+      par an pour le médecin, 2 400 € pour les caisses, en euros de 2004.
+      Jusqu'au 14 novembre 2026 la fiche n'en donnait que le tiers au
+      médecin, 400 € (action 130). D. 645-3, qui fixait le double des
+      caisses, s'arrête le 2 décembre 2004 (LEGIARTI000006738169) : de 2005
+      à 2011 leur part tient à la convention médicale (L. 162-14-1, 5°),
+      non lue, et la fiche garde le double. POINTS : « 27 points pour les périodes de cotisation
       postérieures au 31 décembre 1993 » (décret n° 72-968, art. 2,
       LEGIARTI000024871109), au prorata des trimestres — 6,75 par
       trimestre validé, sans égard au revenu. VALEUR DE SERVICE : « La

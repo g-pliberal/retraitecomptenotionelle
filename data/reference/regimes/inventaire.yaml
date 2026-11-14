@@ -3051,7 +3051,9 @@ inventaire:
       compte le porte comme sa cotisation. Les points d'ajustement sont pris au plafond
       de neuf par an, atteint dès 68 000 € de revenu. Le forfait de 2017 à 2024, revalorisé
       sur le revenu moyen des médecins, est projeté sur les prix depuis 2016. Le tarif
-      de la consultation, base du forfait de 1985 à 2011, n'est pas une série du dépôt.
+      de la consultation, base du forfait jusqu'en 2011, n'est pas une série du dépôt
+      : la fiche le prend à 75 F en 1985, 100 F en 1993, 1994 et 1995, 110 F en 1999
+      et 20 € en 2004, et le porte par les prix entre ces années.
 
   - code: asv_auxiliaires_medicaux
     nom: >-

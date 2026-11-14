@@ -58,6 +58,54 @@ versions:
   - {id: LEGIARTI000006738166, article: "D. 645-3 CSS", en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006738373, article: "D. 645-2 CSS", en_vigueur: 1993-03-30}
   - {id: LEGIARTI000006738167, article: "D. 645-3 CSS", en_vigueur: 1993-03-30}
+  - id: LEGIARTI000006765951
+    article: décret n° 72-968, article 6, du 1er juillet 1981 au 28 avril 1988
+    en_vigueur: 1981-07-01
+    citation: >-
+      « A titre transitoire, la cotisation de médecins conventionnés fixée à l'article
+      1er, a, du décret n° 71-544 du 2 juillet 1971 modifié est appelée à concurrence de
+      75 p. 100. La cotisation des organismes d'assurance maladie fixée à l'article 2
+      dudit décret est calculée dans des conditions identiques. »
+  - id: LEGIARTI000006765952
+    article: décret n° 72-968, article 6, du 28 avril 1988 au 29 décembre 1990
+    en_vigueur: 1988-04-28
+    citation: >-
+      « Par dérogation au précédent alinéa et pour l'année 1988, la cotisation des
+      médecins conventionnés est fixée à trente et une fois la valeur au 1er janvier 1988
+      du tarif de la consultation du médecin omnipraticien conventionné servant de base
+      au remboursement par les organismes d'assurance maladie. Elle est appelée à
+      concurrence de 100 p. 100. »
+  - id: LEGIARTI000006765953
+    article: décret n° 72-968, article 6, du 29 décembre 1990 au 27 février 1992
+    en_vigueur: 1990-12-29
+    citation: >-
+      « Par dérogation au premier alinéa et pour l'année 1990, la cotisation des médecins
+      conventionnés est fixée à 33 fois la valeur au 1er janvier 1990 du tarif de la
+      consultation du médecin omnipraticien conventionné servant de base au
+      remboursement par les organismes d'assurance maladie. Elle est appelée à
+      concurrence de 100 p. 100. »
+  - id: LEGIARTI000006765954
+    article: décret n° 72-968, article 6, du 27 février 1992 au 22 septembre 1992
+    en_vigueur: 1992-02-27
+    citation: >-
+      « Par dérogation au premier alinéa et pour l'année 1992, la cotisation des médecins
+      conventionnés est appelée à concurrence de 100 p. 100. »
+  - id: LEGIARTI000006765955
+    article: décret n° 72-968, article 6, du 22 septembre 1992 au 30 mars 1993
+    en_vigueur: 1992-09-22
+    citation: >-
+      « A titre exceptionnel pour l'année 1992, la cotisation des médecins conventionnés
+      mentionnée au premier alinéa est majorée de dix fois la valeur au 1er janvier du
+      tarif de la consultation du médecin omnipraticien conventionné servant de base au
+      remboursement par les organismes d'assurance maladie. Elle est appelée à
+      concurrence de 100 p. 100. »
+  - id: LEGIARTI000006765956
+    article: décret n° 72-968, article 6, du 30 mars 1993 au 8 juillet 1994
+    en_vigueur: 1993-03-30
+    citation: >-
+      « A titre transitoire, la cotisation de médecins conventionnés fixée à l'article
+      1er, a, du décret n° 71-544 du 2 juillet 1971 modifié est appelée à concurrence de
+      100 p. 100. »
   - id: LEGIARTI000006765943
     article: décret n° 72-968, article 2, du 27 mars 1981 au 8 juillet 1994
     en_vigueur: 1981-03-27
@@ -108,10 +156,16 @@ versions:
       JORFTEXT000000685106 : « TRENTE FOIS LA VALEUR AU 1 JANVIER DE L'ANNEE EN COURS DU
       TARIF DE LA CONSULTATION ») ; puis « trente fois la valeur au 1er janvier de
       l'année en cause du tarif de la consultation du médecin omnipraticien »
-      (D. 645-2), dont les caisses d'assurance maladie paient le double de la part du
-      médecin (D. 645-3) ; du 30 mars 1993 au 1er janvier 1994, quarante-cinq fois la
-      consultation (D. 645-2, LEGIARTI000006738373), les caisses payant autant que le
-      médecin du 30 mars 1993 au 8 juillet 1994 (D. 645-3, LEGIARTI000006738167)
+      (D. 645-2) : c'est « la cotisation annuelle des bénéficiaires », celle du médecin,
+      et les caisses d'assurance maladie versent en plus « le double de la cotisation des
+      bénéficiaires » (D. 645-3). L'article 6 du décret n° 72-968 décide de ce qui est
+      appelé : 60 % jusqu'au 30 juin 1981, 75 % ensuite, soit 22,5 consultations, les
+      caisses « dans des conditions identiques » ; par exception, trente et une fois en
+      1988, trente-trois fois en 1990 et quarante fois en 1992 (trente, « majorée de dix
+      fois »), appelées à 100 % ; pour l'exercice 1993, 43,333 2 fois, à 100 % (rédaction
+      du 8 juillet 1994, qui remplace les quarante-cinq fois de D. 645-2 du 30 mars
+      1993, LEGIARTI000006738373), les caisses versant autant que le médecin du 30 mars
+      1993 au 8 juillet 1994 (D. 645-3, LEGIARTI000006738167)
     valeur_de_service: >-
       jusqu'au 8 juillet 1994, l'article 2 ne compte pas en points : « une prestation
       supplémentaire annuelle correspondant à 1055 fois la valeur du tarif de la
@@ -135,6 +189,16 @@ versions:
   - {id: LEGIARTI000024871109, article: "décret n° 72-968, article 2", en_vigueur: 2012-01-01}
   - {id: LEGIARTI000006738374, article: "D. 645-2 CSS", en_vigueur: 1994-01-01}
   - {id: LEGIARTI000006738168, article: "D. 645-3 CSS", en_vigueur: 1994-07-08}
+  - id: LEGIARTI000006765957
+    article: décret n° 72-968, article 6, depuis le 8 juillet 1994
+    en_vigueur: 1994-07-08
+    citation: >-
+      « A compter du 1er janvier 1993, la cotisation des médecins est appelée à
+      concurrence de 100 p. 100. Pour l'exercice 1993 et par dérogation au 1° de
+      l'article D. 645-2 du code de la sécurité sociale, la cotisation est fixée à
+      43,333 2 fois la valeur au 1er janvier 1993 du tarif de la consultation du médecin
+      omnipraticien conventionné servant de base au remboursement par les organismes
+      d'assurance maladie. »
   - {id: LEGIARTI000006738375, article: "D. 645-2 CSS", en_vigueur: 1995-01-01}
   - {id: LEGIARTI000006738169, article: "D. 645-3 CSS", en_vigueur: 1995-08-31}
   - {id: LEGIARTI000006738376, article: "D. 645-2 CSS", en_vigueur: 1999-01-01}
@@ -189,9 +253,8 @@ versions:
       ses rédactions annuelles) ; les caisses paient le double de la part du médecin du
       8 juillet 1994 au 2 décembre 2004 (D. 645-3, dont la dernière rédaction d'alors,
       LEGIARTI000006738169, s'arrête ce jour-là) ; de 2005 à 2011, leur part a une autre
-      source, non lue (la convention médicale). La fiche de régime tient encore 1994 à
-      quarante-cinq fois partagées par moitié, et cite D. 645-3 jusqu'en 2011 : à
-      corriger avec la cotisation d'avant 2012 (file du 13 novembre 2026, ligne 9)
+      source, non lue (la convention médicale). C'est la cotisation du médecin, appelée
+      à 100 % depuis le 1er janvier 1993 (décret n° 72-968, article 6)
     valeur_de_service: >-
       depuis 2006, « Les points non liquidés et acquis antérieurement au 1er janvier 2006
       ouvrent droit à un montant annuel de pension égal à la somme des produits du
@@ -330,18 +393,34 @@ versions:
 approximations:
 - version: [trente_points_seize, vingt_sept_points, forfait_et_ajustement, ajustement_a_quatre_pour_cent]
   ecart: >-
-    La fiche de régime ne porte que la part du médecin — un tiers du forfait, la moitié
-    de 1993 à 1994 — ; la part des caisses d'assurance maladie est décrite, non comptée.
-    Les points ne dépendent pas de la cotisation : seul le compte notionnel, qui
-    reprend la cotisation, le voit.
-  effet: aucun sur la prestation ; les deux tiers du forfait manquent à la cotisation reprise
+    La part des caisses se lit de deux façons sur trois années. En 1993, le décret du 6
+    juillet 1994 fixe après coup la cotisation du médecin à 43,333 2 consultations sans
+    dire ce que les caisses doivent pour cet exercice : la fiche de régime garde
+    l'égalité de D. 645-3 d'alors. En 1994, D. 645-3 met les caisses à l'égalité
+    jusqu'au 8 juillet et au double ensuite : l'année est prise au double. En 1981,
+    l'appel passe de 60 à 75 % le 1er juillet : l'année est prise à 75 %. De 2005 à
+    2011, D. 645-3 abrogé, la part des caisses tient à la convention médicale, non lue
+    : la fiche garde le double. Avant 1981, le multiple de la consultation n'est pas
+    lu (décret n° 71-544, article 1er, a) : la fiche prend trente fois, appelées à 60 %.
+  effet: >-
+    aucun sur la prestation ; au compte notionnel, 660,61 € par an de 1993 de plus
+    si les caisses devaient le double en 1993, 396,37 € de 1994 de moins si l'on
+    partage 1994 par semestre, 77,18 € de 1985 de moins si l'on partage 1981 de même
 - version: [trente_points_seize, vingt_sept_points]
   ecart: >-
-    Le tarif de la consultation n'est pas une série du dépôt : le forfait de 1985 à 2011
-    est pris à une valeur de consultation de l'année de sa rédaction, ramenée aux prix
-    (114,34 € de 1985, 343,01 € de 1993, 264,27 € de 1995, 335,39 € de 1999, 400 € de
-    2004), et la période de 1972 à 1984 prend le forfait de 1985.
-  effet: aucun sur les points ; la cotisation reprise, sous-estimée là où le tarif a monté plus vite que les prix
+    Le tarif de la consultation n'est pas une série du dépôt : la cotisation d'avant
+    2012 est prise à cinq tarifs, que la fiche de régime porte par les prix entre eux —
+    75 F en 1985, pour toutes les années de 1972 à 1992, 100 F en 1993, en 1994 et en
+    1995, 110 F en 1999, 20 € en 2004 —, quand le texte veut « la valeur au 1er janvier
+    de l'année en cause ». Aucun de ces tarifs n'est relu à sa source ; celui de 1999
+    est douteux : une question écrite à l'Assemblée nationale dit la consultation à
+    115 F depuis avril 1998. Recoupement de 2011 : soixante fois 23 € font 1 380 €, ce
+    que la presse médicale donne au secteur 1, et 4 140 € au secteur 2 ; le modèle,
+    1 200 € de 2004 portés par les prix, en donne 1 344,76 €.
+  effet: >-
+    aucun sur les points ; la cotisation reprise, sous-estimée là où le tarif a monté
+    plus vite que les prix : 35 € par an pour le médecin en 2011, 106 € au compte avec
+    la part des caisses ; à 115 F en 1999, 45,73 € et 137,20 €
 - version: [forfait_et_ajustement, ajustement_a_quatre_pour_cent]
   ecart: >-
     Le forfait de 2016, 4 850 € dont un tiers pour le médecin, est prolongé aux prix, et
@@ -434,6 +513,16 @@ sources:
     Restent à lire : la valeur de service d'avant 1999, année par année ; la source de
     la part des caisses de 2005 à 2011 ; l'article 6 du décret n° 72-968, ses sept
     rédactions, qui décide de la cotisation appelée (ligne 9 de la file).
+  - >-
+    Relu le 14 novembre 2026 (action 130, file des corrections, ligne 9), à l'index LEGI
+    à jour du 11 novembre 2026 : D. 645-2 dans ses vingt-deux rédactions, D. 645-3 dans
+    les quatre de 1985 à 2004, les sept rédactions de l'article 6 du décret n° 72-968,
+    L. 645-2 de 1985 et de 2004 ; au Journal officiel, le décret n° 81-274, les
+    articles 1er et 4 du décret n° 94-564, l'article 33 de la loi n° 96-452, le décret
+    n° 2004-1319. Restent à lire : le tarif de la consultation au 1er janvier de chaque
+    année, de 1972 à 2011, aux arrêtés qui approuvent les conventions et leurs
+    avenants ; l'article 1er, a, du décret n° 71-544 d'avant 1981 ; la convention
+    médicale de 2005 pour la part des caisses.
   lectures:
   - type: legifrance
     reference: >-
@@ -446,6 +535,14 @@ sources:
       décret n° 2011-1644, article 4, rédaction en vigueur (LEGIARTI000052567955) et
       rédaction de 2012 (LEGIARTI000024853556) ; décret n° 72-968, article 2, de 1981 à
       2026 : index LEGI du dépôt, à jour au 13 novembre 2026
+    date: 2026-11-14
+  - type: legifrance
+    reference: >-
+      D. 645-2 CSS, de 1985 à 2020 ; D. 645-3 CSS, de 1985 à 2004 ; décret n° 72-968,
+      article 6, ses sept rédactions (LEGIARTI000006765951 à 957) ; L. 645-2 CSS, de
+      1985 et de 2004 ; décrets n° 81-274, n° 94-564 et n° 2004-1319, loi n° 96-452,
+      article 33, au Journal officiel : index LEGI et JORF du dépôt, à jour au 11
+      novembre 2026
     date: 2026-11-14
 textes_sans_effet:
 - id: LEGIARTI000006765940
@@ -546,9 +643,11 @@ code:
     tests/temoins/simulations.json, les carrières du statut medecin_liberal ;
     tests/test_sections_sante.py :
     test_la_valeur_de_service_de_l_asv_des_medecins_est_celle_du_texte,
-    test_l_asv_de_2002_et_de_2005_se_pose_a_la_main
+    test_l_asv_de_2002_et_de_2005_se_pose_a_la_main,
+    test_le_medecin_verse_a_l_asv_les_consultations_du_texte_et_les_caisses_le_double,
+    test_l_appel_de_l_asv_suit_l_article_6_du_decret_de_1972
   moteur: >-
-    Ses données : regimes/asv_conventionnes.yaml, vingt-deux périodes en points, statut
+    Ses données : regimes/asv_conventionnes.yaml, vingt-sept périodes en points, statut
     medecin_liberal ; la part des caisses va au compte par
     ConstructeurCompte._cotisation_ligne.
 historique:
@@ -585,6 +684,23 @@ historique:
   2026 : la cotisation de 1994, le décret n° 71-544, la fin de D. 645-3 en 2004, la
   citation de 2026, les points liquidés de 2006 à 2010, le texte dont naissent les 27
   points.
+- >-
+  2026-11-14 — action 130, file des corrections décidées le 13 novembre 2026, ligne 9 :
+  la cotisation d'avant 2012 est celle du texte. D. 645-2 fixe « la cotisation annuelle
+  des bénéficiaires », D. 645-3 celle des caisses « au double » : le médecin paie N
+  consultations, les caisses 2 N. La fiche de régime prenait N consultations pour le
+  total et n'en donnait que le tiers au médecin ; elle ne lisait pas l'article 6 du
+  décret n° 72-968, qui décide de l'appel, et tenait 1994 à quarante-cinq fois
+  partagées par moitié. Elle porte désormais, pour le médecin : dix-huit consultations
+  avant 1981, 22,5 de 1981 à 1991, sauf trente et une en 1988 et trente-trois en 1990,
+  quarante en 1992, 43,3332 en 1993, les caisses à l'égalité, cinquante-deux de 1994 à
+  1998 et soixante de 1999 à 2011, les caisses au double ; la période de 1985 à 1992
+  est coupée en six. Au cas posé, la médecin de secteur 1 en 2004, dans les deux
+  moteurs : 60 × 20 € = 1 200 € au lieu de 400 €, et 3 600 € au compte notionnel avec
+  la part des caisses, au lieu de 1 200 € : 2 400 € de plus par an. En 1985, 257,26 €
+  au lieu de 114,34 € ; en 1993, 660,61 € au lieu de 343,01 € ; en 1994, 792,73 € au
+  lieu de 348,67 €. La prestation du scénario 1, dont les points ne dépendent pas de
+  la cotisation, ne change pas.
 effet: >-
   Les médecins libéraux conventionnés : près du tiers de la pension d'un médecin de
   secteur 1 ; le modèle en rend les points annuels à moins de 1 % de la calculette de la
