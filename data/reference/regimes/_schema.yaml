@@ -1082,6 +1082,9 @@ champs_periode:
       `valeur_point_annee`, pour un régime dont la caisse est seule à la
       publier et dont `valeurs_point.csv` ne porte donc rien. Revalorisée sur
       les prix d'une année à l'autre, comme la loi le prescrit (L. 161-23-1).
+      Sans `valeur_point_annee` (`null`), la valeur est celle que le texte
+      fixe en euros courants pour les années de la période, sans
+      revalorisation : l'ASV des médecins, de 1999 à 2025.
       `valeurs_point.csv` prime quand il porte le régime.
 
   bareme_trimestre:

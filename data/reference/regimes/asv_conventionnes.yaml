@@ -329,7 +329,7 @@ periodes:
     cotisation_forfaitaire_annee: 1999
     points_par_trimestre_valide: 6.75
     valeur_point_euros: 15.55
-    valeur_point_annee: 2011
+    valeur_point_annee: null
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -351,10 +351,13 @@ periodes:
       périodes de cotisation postérieures au 31 décembre 1993 » (décret n°
       72-968, art. 2, LEGIARTI000024871109), au prorata des trimestres —
       6,75 par trimestre validé, sans égard au revenu. VALEUR DE SERVICE :
-      15,55 € au premier semestre 2012 pour tous les points (décret n°
-      2011-1644, art. 4, LEGIARTI000024853556), prise pour valeur de 2011
-      et ramenée aux prix de l'année de liquidation ; aucune valeur
-      antérieure n'est dans l'index, niveau `estimee`.
+      « La valeur du point de retraite est fixée à 102 F » (décret n°
+      72-968, art. 2, du 28 mars 1999 au 1er janvier 2004,
+      LEGIARTI000006765945), que le décret n° 2011-1644 écrit « 15,55
+      euros pour le premier semestre de l'exercice 2012 » (art. 4,
+      LEGIARTI000024853556) : fixée par le texte, en euros courants, sans
+      année d'ancrage (`valeur_point_annee: null`), depuis le 14 novembre
+      2026 (action 130).
   - debut: 2004
     fin: 2011
     type_calcul: points
@@ -374,7 +377,7 @@ periodes:
     cotisation_forfaitaire_annee: 2004
     points_par_trimestre_valide: 6.75
     valeur_point_euros: 15.55
-    valeur_point_annee: 2011
+    valeur_point_annee: null
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -395,11 +398,14 @@ periodes:
       2004. POINTS : « 27 points pour les périodes de cotisation
       postérieures au 31 décembre 1993 » (décret n° 72-968, art. 2,
       LEGIARTI000024871109), au prorata des trimestres — 6,75 par
-      trimestre validé, sans égard au revenu. VALEUR DE SERVICE : 15,55 €
-      au premier semestre 2012 pour tous les points (décret n° 2011-1644,
-      art. 4, LEGIARTI000024853556), prise pour valeur de 2011 et ramenée
-      aux prix de l'année de liquidation ; aucune valeur antérieure n'est
-      dans l'index, niveau `estimee`.
+      trimestre validé, sans égard au revenu. VALEUR DE SERVICE : « La
+      valeur du point de retraite est fixée à 102 F » (décret n° 72-968,
+      art. 2, LEGIARTI000006765946 du 1er janvier 2004 au 6 octobre 2006,
+      LEGIARTI000006765947 jusqu'au 1er janvier 2012), que le décret n°
+      2011-1644 écrit « 15,55 euros pour le premier semestre de l'exercice
+      2012 » (art. 4, LEGIARTI000024853556) : fixée par le texte, en euros
+      courants, sans année d'ancrage (`valeur_point_annee: null`), depuis
+      le 14 novembre 2026 (action 130).
   - debut: 2012
     fin: 2012
     type_calcul: points
@@ -421,7 +427,7 @@ periodes:
     points_ajustement_par_forfait: 18
     points_ajustement_maximum: 9
     valeur_point_euros: 13.0
-    valeur_point_annee: 2012
+    valeur_point_annee: null
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -475,7 +481,7 @@ periodes:
     points_ajustement_par_forfait: 18
     points_ajustement_maximum: 9
     valeur_point_euros: 13.0
-    valeur_point_annee: 2012
+    valeur_point_annee: null
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -517,7 +523,7 @@ periodes:
     points_ajustement_par_forfait: 18
     points_ajustement_maximum: 9
     valeur_point_euros: 13.0
-    valeur_point_annee: 2012
+    valeur_point_annee: null
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -558,7 +564,7 @@ periodes:
     points_ajustement_par_forfait: 18
     points_ajustement_maximum: 9
     valeur_point_euros: 13.0
-    valeur_point_annee: 2012
+    valeur_point_annee: null
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -598,7 +604,7 @@ periodes:
     points_ajustement_par_forfait: 18
     points_ajustement_maximum: 9
     valeur_point_euros: 13.0
-    valeur_point_annee: 2012
+    valeur_point_annee: null
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -644,7 +650,7 @@ periodes:
     points_ajustement_par_forfait: 18
     points_ajustement_maximum: 9
     valeur_point_euros: 11.31
-    valeur_point_annee: 2017
+    valeur_point_annee: null
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
@@ -702,7 +708,7 @@ periodes:
     points_ajustement_par_forfait: 18
     points_ajustement_maximum: 9
     valeur_point_euros: 11.31
-    valeur_point_annee: 2017
+    valeur_point_annee: null
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
@@ -754,7 +760,7 @@ periodes:
     points_ajustement_par_forfait: 18
     points_ajustement_maximum: 9
     valeur_point_euros: 11.31
-    valeur_point_annee: 2017
+    valeur_point_annee: null
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
@@ -806,7 +812,7 @@ periodes:
     points_ajustement_par_forfait: 18
     points_ajustement_maximum: 9
     valeur_point_euros: 11.31
-    valeur_point_annee: 2017
+    valeur_point_annee: null
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
@@ -859,7 +865,7 @@ periodes:
     points_ajustement_par_forfait: 18
     points_ajustement_maximum: 9
     valeur_point_euros: 11.36
-    valeur_point_annee: 2021
+    valeur_point_annee: null
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
@@ -912,7 +918,7 @@ periodes:
     points_ajustement_par_forfait: 18
     points_ajustement_maximum: 9
     valeur_point_euros: 11.48
-    valeur_point_annee: 2022
+    valeur_point_annee: null
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
@@ -965,7 +971,7 @@ periodes:
     points_ajustement_par_forfait: 18
     points_ajustement_maximum: 9
     valeur_point_euros: 11.71
-    valeur_point_annee: 2023
+    valeur_point_annee: null
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
@@ -1018,7 +1024,7 @@ periodes:
     points_ajustement_par_forfait: 18
     points_ajustement_maximum: 9
     valeur_point_euros: 11.82
-    valeur_point_annee: 2025
+    valeur_point_annee: null
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
@@ -1077,7 +1083,7 @@ periodes:
     points_ajustement_par_forfait: 18
     points_ajustement_maximum: 9
     valeur_point_euros: 11.82
-    valeur_point_annee: 2025
+    valeur_point_annee: 2026
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
@@ -1104,7 +1110,10 @@ periodes:
       « 11,31 euros jusqu'à l'exercice 2020, 11,36 euros pour l'exercice
       2021, 11,48 euros pour l'exercice 2022, 11,71 euros pour les
       exercices 2023 et 2024 et 11,82 euros à compter de l'exercice 2025 »
-      (art. 4, LEGIARTI000052567955).
+      (art. 4, LEGIARTI000052567955) : 11,82 € en 2026, dernier exercice
+      que le texte lu le 14 novembre 2026 fixe, et, au-delà, cette valeur
+      portée aux prix depuis 2026 (`valeur_point_annee: 2026`), faute de
+      texte — une projection, non une règle.
       LA RETRAITE EN TEMPS CHOISI, depuis le 1er janvier 2017 (arrêté du
       1er décembre 2016, JORFARTI000033538061, article 12 des statuts) :
       mêmes mots qu'au régime complémentaire de la CARMF — taux plein à

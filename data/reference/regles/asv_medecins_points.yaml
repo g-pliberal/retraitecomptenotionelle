@@ -102,11 +102,16 @@ versions:
       juillet 1972 et le 31 décembre 1993 », au prorata des trimestres (article 2) :
       7,54 points par trimestre, sans égard au revenu
     cotisation: >-
-      jusqu'en 1985, un arrêté que l'index ne porte pas ; puis « trente fois la valeur au
-      1er janvier de l'année en cause du tarif de la consultation du médecin
-      omnipraticien » (D. 645-2), dont les caisses d'assurance maladie paient le double
-      de la part du médecin (D. 645-3) ; du 30 mars 1993 au 8 juillet 1994, quarante-cinq
-      fois la consultation, partagées par moitié
+      jusqu'en 1985, l'article 1er, a, du décret n° 71-544 du 2 juillet 1971, que
+      l'article 2 de 1981 nomme et que l'index LEGI ne porte pas : un décret, non un
+      arrêté, dont le Journal officiel garde le résumé de 1981 (décret n° 81-274,
+      JORFTEXT000000685106 : « TRENTE FOIS LA VALEUR AU 1 JANVIER DE L'ANNEE EN COURS DU
+      TARIF DE LA CONSULTATION ») ; puis « trente fois la valeur au 1er janvier de
+      l'année en cause du tarif de la consultation du médecin omnipraticien »
+      (D. 645-2), dont les caisses d'assurance maladie paient le double de la part du
+      médecin (D. 645-3) ; du 30 mars 1993 au 1er janvier 1994, quarante-cinq fois la
+      consultation (D. 645-2, LEGIARTI000006738373), les caisses payant autant que le
+      médecin du 30 mars 1993 au 8 juillet 1994 (D. 645-3, LEGIARTI000006738167)
     valeur_de_service: >-
       jusqu'au 8 juillet 1994, l'article 2 ne compte pas en points : « une prestation
       supplémentaire annuelle correspondant à 1055 fois la valeur du tarif de la
@@ -166,7 +171,7 @@ versions:
       lesquelles le versement des prestations supplémentaires de vieillesse peut se
       cumuler avec une activité libérale sont identiques à celles prévues à l'article
       L. 643-6 du code de la sécurité sociale. »
-  nee_de: LEGIARTI000006738374
+  nee_de: LEGIARTI000006765944
   bornes:
     revenu.annee: [1994-01-01, 2012-01-01]
   contenu:
@@ -174,10 +179,19 @@ versions:
       « 27 points pour les périodes de cotisation postérieures au 31 décembre 1993 », au
       prorata des trimestres : 6,75 par trimestre
     cotisation: >-
-      quarante-cinq fois la consultation en 1994, cinquante-deux fois en 1995 — le
-      décret n° 95-442 qui le portait a été annulé par le Conseil d'État le 17 janvier
-      1997 —, soixante fois de 1999 à 2011 (D. 645-2, ses rédactions annuelles) ; les
-      caisses paient le double de la part du médecin depuis le 8 juillet 1994 (D. 645-3)
+      cinquante-deux fois la consultation depuis le 1er janvier 1994 (D. 645-2,
+      LEGIARTI000006738374 : « pour les médecins, à cinquante-deux fois la valeur au 1er
+      janvier de l'année en cause du tarif de la consultation du médecin
+      omnipraticien » ; décret n° 94-564, article 1er, II, JORFARTI000001585515) —
+      quarante-cinq fois ne valait que du 30 mars 1993 au 1er janvier 1994, et le décret
+      n° 95-442, que le Conseil d'État a annulé le 17 janvier 1997, ne changeait à
+      D. 645-2 que les chirurgiens-dentistes —, soixante fois de 1999 à 2011 (D. 645-2,
+      ses rédactions annuelles) ; les caisses paient le double de la part du médecin du
+      8 juillet 1994 au 2 décembre 2004 (D. 645-3, dont la dernière rédaction d'alors,
+      LEGIARTI000006738169, s'arrête ce jour-là) ; de 2005 à 2011, leur part a une autre
+      source, non lue (la convention médicale). La fiche de régime tient encore 1994 à
+      quarante-cinq fois partagées par moitié, et cite D. 645-3 jusqu'en 2011 : à
+      corriger avec la cotisation d'avant 2012 (file du 13 novembre 2026, ligne 9)
     valeur_de_service: >-
       depuis 2006, « Les points non liquidés et acquis antérieurement au 1er janvier 2006
       ouvrent droit à un montant annuel de pension égal à la somme des produits du
@@ -185,9 +199,9 @@ versions:
       « peut varier selon l'année durant laquelle les points ont été acquis et selon
       l'année de liquidation de la pension » ; ceux acquis depuis le 1er janvier 2006, à
       une valeur unique fixée par décret (L. 645-5) ; de 1994 à mars 1999, 100 F
-      revalorisés comme les pensions du régime général ; puis 102 F, soit 15,55 €, jusqu'au
-      premier semestre 2012 (article 2, rédactions de 1999, 2004 et 2006, et décret
-      n° 2011-1644, article 4)
+      revalorisés comme les pensions du régime général ; puis 102 F, jusqu'au premier
+      semestre 2012 (article 2, rédactions de 1999, 2004 et 2006) : 102 F font
+      15,5498 €, que le décret n° 2011-1644 écrit 15,55 € (article 4)
   exemples: aucun trouvé
 - id: forfait_et_ajustement
   statut: lue
@@ -273,7 +287,8 @@ versions:
       3 % pour l'assuré en cumul emploi-retraite (L. 643-6) et celui de L. 642-4-2
       (D. 645-2)
     valeur_de_service: >-
-      pour les pensions liquidées avant 2006, 15,55 € au premier semestre 2012, 15,25 €
+      pour les pensions liquidées avant 2006 (article 4, I) et pour les points liquidés
+      de 2006 à 2010 (II, 1°), 15,55 € au premier semestre 2012, 15,25 €
       au second, 14,80 € en 2013, 14,40 € en 2014, 14 € de 2015 à 2020, 14,06 € en 2021,
       14,21 € en 2022, 14,49 € depuis 2023, 14,63 € depuis 2025 ; pour les points
       liquidés depuis 2011, 13 € du second semestre 2012 à 2020, puis 13,05 €, 13,19 €,
@@ -303,9 +318,9 @@ versions:
     conditions: >-
       depuis le 1er juillet 2026 (décret n° 2026-418), les prestations « sont attribuées
       aux médecins ayant exercé, pendant au moins un an, leur activité professionnelle
-      non-salariée dans le cadre des conventions » (article 7) ; le médecin qui exerce en
-      cumul emploi-retraite « ne peut obtenir aucun nouveau droit à retraite au titre
-      des cotisations versées » (article 2) ; l'affiliation part du premier jour du
+      non-salariée dans le cadre des conventions » (article 7) ; les médecins qui
+      exercent en cumul emploi-retraite sont ceux « qui ne peuvent obtenir aucun nouveau
+      droit à retraite au titre des cotisations versées » (article 2) ; l'affiliation part du premier jour du
       trimestre civil qui suit le début de l'exercice conventionné (article 3) ; le
       médecin au revenu inférieur à un seuil fixé par arrêté peut demander à être
       dispensé (article 4) ; les conditions d'attribution et de service passent au
@@ -344,32 +359,39 @@ approximations:
     1972, nés avant 1945 environ
 - version: [vingt_sept_points, forfait_et_ajustement, ajustement_a_quatre_pour_cent]
   ecart: >-
-    La valeur de service est celle de la période de la fiche de régime en vigueur à la
-    liquidation, pour tous les points : elle rejoint l'article 4 pour les liquidations
-    depuis 2012, où tous les points d'une même liquidation ont une même valeur, mais
-    les liquidations d'avant 2012 prennent 15,55 €, la valeur de 2012, ramenée aux
-    prix.
-  effet: non mesuré ; les seules liquidations d'avant 2012
-- version: [vingt_sept_points, forfait_et_ajustement, ajustement_a_quatre_pour_cent]
-  ecart: >-
-    ERREUR DÉCLARÉE (action 130, E16), non corrigée. Le modèle porte la valeur de service
-    d'une année d'ancrage aux prix de l'année de liquidation (`valeur_point_annee`,
-    `valeur_point_fiche`) ; les textes la fixent en francs ou en euros courants, sans
-    indexation : 102 F, soit 15,55 €, de mars 1999 au premier semestre 2012 (article 2,
-    rédactions de 1999, 2004 et 2006) ; 13 € du second semestre 2012 à 2020, 11,31 € de
-    2017 à 2020 pour les points liquidés depuis 2017, 11,71 € en 2023 et 2024 (décret
-    n° 2011-1644, article 4). Le modèle sert donc trop peu avant 2011, et trop entre ses
-    ancres (liquidations de 2013 à 2016, de 2018 à 2020, de 2024)
+    La valeur de service est celle que le texte fixe pour l'exercice de la date d'effet
+    (`liquidation.date_effet`), la même pour tous les points : 15,55 € de 1999 à 2011,
+    13 € de 2012 à 2016, puis 11,31 €, 11,36 €, 11,48 €, 11,71 € et 11,82 €, sans
+    indexation (fiche de régime, `valeur_point_annee: null`). Trois choses restent
+    approchées. Le premier semestre de 2012 : la période de 2012 porte 13 €, quand le
+    texte donne 15,55 € jusqu'au 30 juin à qui part de janvier à juin. Les années 1999 à
+    2001 : 102 F font 15,5498 €, et non 15,55 €. Ce que le texte fait ensuite de la
+    valeur, exercice par exercice, selon l'année de liquidation — le point liquidé en
+    2005 tombe à 14 € de 2015 à 2020, celui de 2015 reste à 13 € jusqu'en 2020 — n'est
+    pas porté : la fiche de régime ne donne que la valeur à la date d'effet.
   effet: >-
-    cas posés (moteur Python, réglages par défaut), hommes nés en janvier, médecins
-    libéraux (`medecin_liberal`, niveau 1) de 30 à 65 ans : né en 1937, liquidation en
-    2002, 879,52 points × 13,313333 € = 11 709,34 € servis, le texte 879,52 × 15,5498 €
-    (102 F / 6,55957) = 13 676,36 € : 1 967,02 € par an en moins ; né en 1940 (2005),
-    960,52 × (15,5498 − 14,133314) = 1 360,56 € en moins ; né en 1950 (2015), 994,46 ×
-    (13,184592 − 13) = 183,57 € de trop ; né en 1953 (2018), 998,37 × (11,518896 − 11,31)
-    × 1,15 = 239,84 € de trop ; né en 1959 (2024), 1 014,99 × (11,944317 − 11,71) × 1,15
-    = 273,50 € de trop. Les liquidations de 1994 à 1999 (100 F revalorisés comme le
-    régime général) et d'avant 1994 (le tarif de la consultation) : non mesuré
+    six mois à 2,55 € par point de trop peu pour un départ du premier semestre 2012 ;
+    0,18 € par an au cas posé de 2002, s'il était parti de 1999 à 2001 ; la suite de la
+    pension servie, non mesurée
+- version: [trente_points_seize, vingt_sept_points]
+  ecart: >-
+    Les pensions prises avant 1999 ne sont pas lues au texte : le modèle leur sert
+    15,55 €, pris pour valeur de 2011 et ramené aux prix de l'année d'effet
+    (`valeur_point_annee: 2011`), quand le texte donne le tarif de la consultation
+    jusqu'en 1993, puis « 100 F », valeur « revalorisée chaque année dans les
+    conditions prévues pour les pensions du régime général », du 1er janvier 1994 au
+    28 mars 1999 (article 2, LEGIARTI000006765944). Le premier trimestre de 1999 prend
+    à l'inverse les 15,55 € de la période de 1999.
+  effet: non mesuré ; les médecins nés avant 1934 environ, partis à 65 ans avant 1999
+- version: ajustement_a_quatre_pour_cent
+  ecart: >-
+    Passé 2026, dernier exercice que le texte lu le 14 novembre 2026 fixe (« 11,82 euros
+    à compter de l'exercice 2025 »), le modèle porte cette valeur aux prix depuis 2026
+    (`valeur_point_annee: 2026`) : une projection, non une règle, à remplacer par la
+    valeur de chaque décret à sa parution.
+  effet: >-
+    aucun jusqu'en 2026 ; au-delà, la hausse des prix de la projection, quand le texte
+    en vigueur laisse 11,82 €
 - version: [trente_points_seize, vingt_sept_points, forfait_et_ajustement]
   ecart: >-
     ERREUR DÉCLARÉE (action 130, E16), non corrigée. Depuis le 15 février 1985, la
@@ -377,28 +399,41 @@ approximations:
     (article 7 ; dix ans avant, décret n° 71-542, article 7) ; le modèle ne pose aucune
     durée minimale, et sert les points d'un exercice plus court. Le décompte des
     trimestres par le modèle n'est pas confronté non plus à l'article 3 (l'affiliation
-    au premier jour du trimestre civil suivant) : non mesuré
+    au premier jour du trimestre civil suivant) ni à l'article 2 (« au prorata du nombre
+    de trimestres cotisés ») : relevé le 13 novembre 2026, six mois dans une année
+    civile donnent 27 points, trois mois aucun, six mois à cheval sur deux années
+    aucun ; non mesuré
   effet: >-
     cas posé (moteur Python, réglages par défaut), homme né en janvier 1960, salarié du
     privé non cadre de 22 à 40 ans et de 40 ans 9 mois à la liquidation à 65 ans (niveau
     1), médecin libéral de 40 ans à 40 ans 9 mois : le modèle sert 27 points × 11,82 € ×
     1,15 = 367,01 € par an ; le texte, rien : 367,01 € de trop
 sources:
-  lu_le: 2026-11-06
+  lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Porter chaque année le forfait que la CARMF publie, revalorisé sur le revenu moyen
-    des affiliés, et la valeur de service que le décret n° 2011-1644 fixe.
+    des affiliés, et relire l'article 4 du décret n° 2011-1644 à chaque décret qui le
+    récrit : la valeur de service de 2027 et d'après n'est qu'une projection.
   - >-
     Lu le 6 novembre 2026 (action 130, E16) : les rédactions de l'article 2 du décret
     n° 72-968 de 1981 à 2006, et toutes celles que la fiche cite. Reste à lire la
     rédaction de 1972 de l'article 2 (hors de l'index LEGI) et l'arrêté de 1972 qui
     fixait la cotisation avant le code ; à couper les versions à la date de liquidation
     (`liquidation.date_effet`), qui décide de la valeur de service et de la durée
-    minimale ; à chiffrer les liquidations d'avant 1999. Deux erreurs déclarées, non
-    corrigées (approximations) : la valeur de service portée aux prix, la durée minimale
-    d'un an non servie.
+    minimale ; à chiffrer les liquidations d'avant 1999. Une erreur déclarée, non
+    corrigée (approximations) : la durée minimale d'un an non servie. La valeur de
+    service portée aux prix est corrigée depuis le 14 novembre 2026 (historique).
+  - >-
+    Relu le 14 novembre 2026 (action 130, file des corrections, ligne 8), à l'index LEGI
+    à jour du 13 novembre 2026 : l'article 4 du décret n° 2011-1644, dans ses rédactions
+    de 2012 et du 14 novembre 2025, sans rédaction plus récente ; l'article 2 du décret
+    n° 72-968 de 1981 à 2026 ; D. 645-2 de 1993 à 1999 et D. 645-3 jusqu'en 2004 ; au
+    Journal officiel, le décret n° 81-274 et les articles 1er et 3 du décret n° 94-564.
+    Restent à lire : la valeur de service d'avant 1999, année par année ; la source de
+    la part des caisses de 2005 à 2011 ; l'article 6 du décret n° 72-968, ses sept
+    rédactions, qui décide de la cotisation appelée (ligne 9 de la file).
   lectures:
   - type: legifrance
     reference: >-
@@ -406,6 +441,12 @@ sources:
       et de 2026 ; décret n° 2011-1644, articles 1er à 6 ; D. 645-2 et D. 645-3 CSS, de
       1985 à 2020 ; L. 645-5 CSS : index LEGI du dépôt, à jour au 12 octobre 2026
     date: 2026-10-13
+  - type: legifrance
+    reference: >-
+      décret n° 2011-1644, article 4, rédaction en vigueur (LEGIARTI000052567955) et
+      rédaction de 2012 (LEGIARTI000024853556) ; décret n° 72-968, article 2, de 1981 à
+      2026 : index LEGI du dépôt, à jour au 13 novembre 2026
+    date: 2026-11-14
 textes_sans_effet:
 - id: LEGIARTI000006765940
   reference: décret n° 72-968, article 1er, du 1er juillet 1972 au 15 février 1985
@@ -500,8 +541,12 @@ code:
     regimes/asv_conventionnes.yaml : cotisation_forfaitaire_euros,
     points_par_trimestre_valide, points_ajustement_par_forfait,
     points_ajustement_maximum, taux_cotisation_retraite, valeur_point_euros,
-    part_assurance_maladie_forfait, part_assurance_maladie_taux
-  tests: tests/temoins/simulations.json, les carrières du statut medecin_liberal
+    valeur_point_annee, part_assurance_maladie_forfait, part_assurance_maladie_taux
+  tests: >-
+    tests/temoins/simulations.json, les carrières du statut medecin_liberal ;
+    tests/test_sections_sante.py :
+    test_la_valeur_de_service_de_l_asv_des_medecins_est_celle_du_texte,
+    test_l_asv_de_2002_et_de_2005_se_pose_a_la_main
   moteur: >-
     Ses données : regimes/asv_conventionnes.yaml, vingt-deux périodes en points, statut
     medecin_liberal ; la part des caisses va au compte par
@@ -521,6 +566,25 @@ historique:
   points n'en changent pas. Le forfait de 2025 et de 2026, 1 852 et 1 917 € pour le
   médecin, lu au guide de la CNAVPL et chez la CARMF, au lieu de celui de 2016 projeté
   sur les prix.
+- >-
+  2026-11-14 — action 130, file des corrections décidées le 13 novembre 2026, ligne 8 :
+  la valeur de service est celle du texte. Le modèle portait aux prix de l'année
+  d'effet une valeur ancrée à une autre année (`valeur_point_annee`), quand les textes
+  la fixent en francs puis en euros courants : 102 F, soit 15,55 €, de mars 1999 au
+  premier semestre 2012 (décret n° 72-968, article 2), puis 13 €, 11,31 €, 11,36 €,
+  11,48 €, 11,71 € et 11,82 € selon l'exercice (décret n° 2011-1644, article 4). Il
+  servait donc trop peu avant 2012 et trop entre ses ancres, 2026 compris. Les périodes
+  de 1999 à 2025 de la fiche de régime perdent leur année d'ancrage, celle de 2026
+  s'ancre en 2026. Aux cas posés, médecins nés un 1er janvier, au salaire moyen de 30 à
+  65 ans, dans les deux moteurs : né en 1937 (2002), 879,52 points × 15,55 € =
+  13 676,54 € au lieu de 11 709,34 €, 1 967,20 € de plus par an ; né en 1940 (2005),
+  14 936,09 € au lieu de 13 575,33 € ; né en 1959 (2024), 1 014,45 points × 11,71 € ×
+  1,15 = 13 661,11 € au lieu de 13 934,47 €, 273,36 € de moins ; né en 1961 (2026),
+  1 019,93 points × 11,82 € × 1,15 = 13 863,87 € au lieu de 14 106,48 €, 242,62 € de
+  moins. La même session reprend les écarts (c) à (g) de la relecture du 13 novembre
+  2026 : la cotisation de 1994, le décret n° 71-544, la fin de D. 645-3 en 2004, la
+  citation de 2026, les points liquidés de 2006 à 2010, le texte dont naissent les 27
+  points.
 effet: >-
   Les médecins libéraux conventionnés : près du tiers de la pension d'un médecin de
   secteur 1 ; le modèle en rend les points annuels à moins de 1 % de la calculette de la

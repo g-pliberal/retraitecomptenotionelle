@@ -698,12 +698,15 @@ def test_la_dispense_de_la_carmf_retire_2_284_euros_a_la_medecin_de_26_ans(
         debuts_a_la_carmf):
     """Au cas posé, les cotisations revalorisées tombent de 990 652 € à
     948 513 €, et la pension de 53 701,26 € à 51 417,01 € : 2 284,25 € par an.
-    La base et l'ASV, que l'article ne vise pas, ne bougent pas."""
+    La base et l'ASV, que l'article ne vise pas, ne bougent pas. L'ASV, que
+    le modèle servait 44 511,19 €, est depuis le 14 novembre 2026 à la valeur
+    de service de 2026 portée aux prix, et non plus à celle de 2025 (1,75 % de
+    hausse en 2026) : 44 511,19 / 1,0175 = 43 745,64 €."""
     pensions = debuts_a_la_carmf["2001-01-01|26"]
     assert "cotisations revalorisées 948,513 €" in pensions["carmf_complementaire"]["detail"]
     assert 53_701.26 - pensions["carmf_complementaire"]["montant"] == pytest.approx(
         2_284.25, abs=0.005)
-    assert pensions["asv_conventionnes"]["montant"] == pytest.approx(44_511.19, abs=0.005)
+    assert pensions["asv_conventionnes"]["montant"] == pytest.approx(43_745.64, abs=0.005)
     assert pensions["cnavpl"]["montant"] == pytest.approx(31_726.78, abs=0.005)
 
 
@@ -924,12 +927,15 @@ def test_l_exemption_de_la_carmf_retire_300_euros_a_la_medecin_de_76_ans(
         departs_passe_75_ans):
     """Au cas posé, les cotisations revalorisées tombent de 324 444 € à
     319 289 €, et la pension de 18 895,60 € à 18 595,38 € : 300,22 € par an.
-    La base et l'ASV, que l'article ne vise pas, ne bougent pas."""
+    La base et l'ASV, que l'article ne vise pas, ne bougent pas. L'ASV, que
+    le modèle servait 22 383,12 €, est depuis le 14 novembre 2026 à la valeur
+    de service de 2026 portée aux prix, et non plus à celle de 2025 (1,75 % de
+    hausse en 2026) : 22 383,12 / 1,0175 = 21 998,15 €."""
     pensions = departs_passe_75_ans["1951-01-01|76.5"]
     assert "cotisations revalorisées 319,289 €" in pensions["carmf_complementaire"]["detail"]
     assert 18_895.60 - pensions["carmf_complementaire"]["montant"] == pytest.approx(
         300.22, abs=0.005)
-    assert pensions["asv_conventionnes"]["montant"] == pytest.approx(22_383.12, abs=0.005)
+    assert pensions["asv_conventionnes"]["montant"] == pytest.approx(21_998.15, abs=0.005)
     assert pensions["cnavpl"]["montant"] == pytest.approx(18_281.12, abs=0.005)
 
 
@@ -949,3 +955,99 @@ def test_le_compte_ne_porte_pas_la_cotisation_que_la_carmf_exempte_passe_75_ans(
     assert _versees_au_compte(
         "1952-01-01", "30", 2027, requete={**REQUETE_DE_MEDECIN, "liquidation": "75.5"})[
         "carmf_complementaire"] == pytest.approx(5_154.86, abs=0.005)
+
+
+#: (année de naissance) : la valeur de service du point de l'ASV des médecins à
+#: la date d'effet de la pension, prise à 65 ans par un médecin né un 1er
+#: janvier, telle que le texte la fixe, en euros courants.
+VALEURS_DE_SERVICE_DE_L_ASV = {
+    # Décret n° 72-968, article 2, du 28 mars 1999 au 1er janvier 2012
+    # (LEGIARTI000006765945, 946 et 947) : « La valeur du point de retraite est
+    # fixée à 102 F », que le décret n° 2011-1644 (article 4,
+    # LEGIARTI000024853556) écrit « 15,55 euros pour le premier semestre de
+    # l'exercice 2012 ».
+    "1937": 15.55,   # pension de 2002
+    "1940": 15.55,   # pension de 2005
+    # Décret n° 2011-1644, article 4, II, 2° (LEGIARTI000052567955) : les
+    # points liquidés à compter du 1er janvier 2011, « 13 euros à compter du
+    # second semestre de l'exercice 2012 et jusqu'à l'exercice 2020 ».
+    "1950": 13.0,    # pension de 2015
+    # Même article, II, 3° : les points liquidés à compter du 1er janvier 2017,
+    # « 11,31 euros jusqu'à l'exercice 2020, 11,36 euros pour l'exercice 2021,
+    # 11,48 euros pour l'exercice 2022, 11,71 euros pour les exercices 2023 et
+    # 2024 et 11,82 euros à compter de l'exercice 2025 ».
+    "1953": 11.31,   # pension de 2018
+    "1955": 11.31,   # pension de 2020
+    "1956": 11.36,   # pension de 2021
+    "1959": 11.71,   # pension de 2024
+    "1960": 11.82,   # pension de 2025
+    "1961": 11.82,   # pension de 2026
+}
+
+
+@pytest.fixture(scope="module")
+def asv_a_65_ans():
+    """La prestation de l'ASV de chaque cas, servie par le portage et refaite
+    au bit près par le moteur Python (``servi_et_refait``) : médecin libéral
+    au salaire moyen depuis ses 30 ans, parti à 65 ans, euros courants."""
+    from outils_pont import servi_et_refait
+
+    cas = [{"cle": naissance,
+            "requete": {"statut": "medecin_liberal", "salaire": "1", "debut": "30",
+                        "liquidation": "65", "naissance": f"{naissance}-01-01"}}
+           for naissance in (*VALEURS_DE_SERVICE_DE_L_ASV, "1962")]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    return {cle: next(p for p in servi["actuel"]["pensions_par_regime"]
+                      if p["regime"] == "asv_conventionnes")
+            for cle, servi in servis.items()}
+
+
+def _points_valeur_et_majoration(detail: str) -> tuple[float, float, float]:
+    """« 1,014.45 points × valeur de service 11.71 € × coefficient de
+    majoration 1.1500 » : les points, la valeur, le coefficient (1 sans lui)."""
+    import re
+
+    lu = re.match(r"([\d,.]+) points × valeur de service ([\d.]+) €"
+                  r"(?: × coefficient de majoration ([\d.]+))?", detail)
+    assert lu, detail
+    return (float(lu[1].replace(",", "")), float(lu[2]), float(lu[3] or 1.0))
+
+
+@pytest.mark.parametrize("naissance", VALEURS_DE_SERVICE_DE_L_ASV)
+def test_la_valeur_de_service_de_l_asv_des_medecins_est_celle_du_texte(
+        asv_a_65_ans, naissance):
+    """Les textes fixent la valeur de service du point en francs puis en euros
+    courants, exercice par exercice, sans l'indexer : l'article 2 du décret
+    n° 72-968 de 1999 à 2011, l'article 4 du décret n° 2011-1644 depuis.
+    Jusqu'au 14 novembre 2026, le modèle portait aux prix de l'année d'effet
+    une valeur ancrée à une autre année : 13,31 € en 2002 au lieu de 15,55 €,
+    11,94 € en 2024 au lieu de 11,71 €, 12,03 € en 2026 au lieu de 11,82 €."""
+    pension = asv_a_65_ans[naissance]
+    points, valeur, majoration = _points_valeur_et_majoration(pension["detail"])
+    assert valeur == VALEURS_DE_SERVICE_DE_L_ASV[naissance]
+    # Les points du détail sont arrondis au centième : 0,005 point à 15,55 €.
+    assert pension["montant"] == pytest.approx(
+        points * VALEURS_DE_SERVICE_DE_L_ASV[naissance] * majoration, abs=0.1)
+
+
+def test_l_asv_de_2002_et_de_2005_se_pose_a_la_main(asv_a_65_ans):
+    """Né le 1er janvier 1937, médecin de 1967 à 2001 : le régime court depuis
+    1972, vingt-deux années à 30,16 points (1972 à 1993) et huit à 27 points
+    (1994 à 2001), 663,52 + 216 = 879,52 points ; × 15,55 € = 13 676,54 € par
+    an, quand le modèle servait 11 709,34 € : 1 967,20 € de moins. Né en 1940,
+    trois années à 27 points de plus, 960,52 points ; × 15,55 € = 14 936,09 €,
+    au lieu de 13 575,33 €."""
+    assert asv_a_65_ans["1937"]["montant"] == pytest.approx(13_676.54, abs=0.005)
+    assert asv_a_65_ans["1940"]["montant"] == pytest.approx(14_936.09, abs=0.005)
+
+
+def test_passe_le_dernier_exercice_fixe_la_valeur_de_l_asv_suit_les_prix(
+        simulateur, asv_a_65_ans):
+    """Le texte lu le 14 novembre 2026 fixe 11,82 € « à compter de l'exercice
+    2025 » : 2026 est le dernier exercice échu sous cette valeur. Au-delà, le
+    modèle projette, et la porte aux prix depuis 2026, non depuis 2025 : une
+    seule année de hausse en 2027."""
+    valeur = _points_valeur_et_majoration(asv_a_65_ans["1962"]["detail"])[1]
+    assert valeur == pytest.approx(
+        11.82 * simulateur.macro.coefficient_prix(2026, 2027), abs=5e-7)

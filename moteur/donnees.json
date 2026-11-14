@@ -203209,7 +203209,7 @@ null
 "duree_requise_trimestres":172,
 "ecretement_salaire_reference":null,
 "fin":2003,
-"notes":"LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal` est `sans_employeur` : le moteur porte au compte tout ce que la fiche écrit, sans part patronale. Or les caisses d'assurance maladie versent une cotisation égale au DOUBLE de celle du médecin (D. 645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995) : le forfait et le taux de la fiche valent donc un tiers du total, et la part des caisses, que disent `part_assurance_maladie_forfait` et `part_assurance_maladie_taux`, est portée au compte comme une part patronale depuis le 14 octobre 2026 (action 138, étape 18). FORFAIT : « soixante fois la valeur au 1er janvier de l'année en cause du tarif de la consultation du médecin omnipraticien » (D. 645-2, LEGIARTI000006738376 pour 1999 et 2000, LEGIARTI000006738377, LEGIARTI000006738378 pour 2003). 60 × 110 F = 6 600 F, un tiers pour le médecin : 335,39 € de 1999. POINTS : « 27 points pour les périodes de cotisation postérieures au 31 décembre 1993 » (décret n° 72-968, art. 2, LEGIARTI000024871109), au prorata des trimestres — 6,75 par trimestre validé, sans égard au revenu. VALEUR DE SERVICE : 15,55 € au premier semestre 2012 pour tous les points (décret n° 2011-1644, art. 4, LEGIARTI000024853556), prise pour valeur de 2011 et ramenée aux prix de l'année de liquidation ; aucune valeur antérieure n'est dans l'index, niveau `estimee`.",
+"notes":"LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal` est `sans_employeur` : le moteur porte au compte tout ce que la fiche écrit, sans part patronale. Or les caisses d'assurance maladie versent une cotisation égale au DOUBLE de celle du médecin (D. 645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995) : le forfait et le taux de la fiche valent donc un tiers du total, et la part des caisses, que disent `part_assurance_maladie_forfait` et `part_assurance_maladie_taux`, est portée au compte comme une part patronale depuis le 14 octobre 2026 (action 138, étape 18). FORFAIT : « soixante fois la valeur au 1er janvier de l'année en cause du tarif de la consultation du médecin omnipraticien » (D. 645-2, LEGIARTI000006738376 pour 1999 et 2000, LEGIARTI000006738377, LEGIARTI000006738378 pour 2003). 60 × 110 F = 6 600 F, un tiers pour le médecin : 335,39 € de 1999. POINTS : « 27 points pour les périodes de cotisation postérieures au 31 décembre 1993 » (décret n° 72-968, art. 2, LEGIARTI000024871109), au prorata des trimestres — 6,75 par trimestre validé, sans égard au revenu. VALEUR DE SERVICE : « La valeur du point de retraite est fixée à 102 F » (décret n° 72-968, art. 2, du 28 mars 1999 au 1er janvier 2004, LEGIARTI000006765945), que le décret n° 2011-1644 écrit « 15,55 euros pour le premier semestre de l'exercice 2012 » (art. 4, LEGIARTI000024853556) : fixée par le texte, en euros courants, sans année d'ancrage (`valeur_point_annee: null`), depuis le 14 novembre 2026 (action 130).",
 "part_assurance_maladie_forfait":0.666667,
 "part_assurance_maladie_taux":0.666667,
 "part_au_dela_du_plafond":null,
@@ -203249,7 +203249,7 @@ null
 "trimestres_maximum":null,
 "trimestres_maximum_leve_avant_age":null,
 "type_calcul":"points",
-"valeur_point_annee":2011,
+"valeur_point_annee":null,
 "valeur_point_euros":15.55
 },
 {
@@ -203292,7 +203292,7 @@ null
 "duree_requise_trimestres":172,
 "ecretement_salaire_reference":null,
 "fin":2011,
-"notes":"LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal` est `sans_employeur` : le moteur porte au compte tout ce que la fiche écrit, sans part patronale. Or les caisses d'assurance maladie versent une cotisation égale au DOUBLE de celle du médecin (D. 645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995) : le forfait et le taux de la fiche valent donc un tiers du total, et la part des caisses, que disent `part_assurance_maladie_forfait` et `part_assurance_maladie_taux`, est portée au compte comme une part patronale depuis le 14 octobre 2026 (action 138, étape 18). FORFAIT : soixante fois la consultation, reconduit exercice par exercice (D. 645-2, LEGIARTI000006738380 pour 2004, LEGIARTI000006738381 pour 2005, jusqu'à LEGIARTI000023380413 pour 2010 et 2011). C = 20 € depuis 2002 : 1 200 € par an, 400 € pour le médecin, en euros de 2004. POINTS : « 27 points pour les périodes de cotisation postérieures au 31 décembre 1993 » (décret n° 72-968, art. 2, LEGIARTI000024871109), au prorata des trimestres — 6,75 par trimestre validé, sans égard au revenu. VALEUR DE SERVICE : 15,55 € au premier semestre 2012 pour tous les points (décret n° 2011-1644, art. 4, LEGIARTI000024853556), prise pour valeur de 2011 et ramenée aux prix de l'année de liquidation ; aucune valeur antérieure n'est dans l'index, niveau `estimee`.",
+"notes":"LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal` est `sans_employeur` : le moteur porte au compte tout ce que la fiche écrit, sans part patronale. Or les caisses d'assurance maladie versent une cotisation égale au DOUBLE de celle du médecin (D. 645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995) : le forfait et le taux de la fiche valent donc un tiers du total, et la part des caisses, que disent `part_assurance_maladie_forfait` et `part_assurance_maladie_taux`, est portée au compte comme une part patronale depuis le 14 octobre 2026 (action 138, étape 18). FORFAIT : soixante fois la consultation, reconduit exercice par exercice (D. 645-2, LEGIARTI000006738380 pour 2004, LEGIARTI000006738381 pour 2005, jusqu'à LEGIARTI000023380413 pour 2010 et 2011). C = 20 € depuis 2002 : 1 200 € par an, 400 € pour le médecin, en euros de 2004. POINTS : « 27 points pour les périodes de cotisation postérieures au 31 décembre 1993 » (décret n° 72-968, art. 2, LEGIARTI000024871109), au prorata des trimestres — 6,75 par trimestre validé, sans égard au revenu. VALEUR DE SERVICE : « La valeur du point de retraite est fixée à 102 F » (décret n° 72-968, art. 2, LEGIARTI000006765946 du 1er janvier 2004 au 6 octobre 2006, LEGIARTI000006765947 jusqu'au 1er janvier 2012), que le décret n° 2011-1644 écrit « 15,55 euros pour le premier semestre de l'exercice 2012 » (art. 4, LEGIARTI000024853556) : fixée par le texte, en euros courants, sans année d'ancrage (`valeur_point_annee: null`), depuis le 14 novembre 2026 (action 130).",
 "part_assurance_maladie_forfait":0.666667,
 "part_assurance_maladie_taux":0.666667,
 "part_au_dela_du_plafond":null,
@@ -203332,7 +203332,7 @@ null
 "trimestres_maximum":null,
 "trimestres_maximum_leve_avant_age":null,
 "type_calcul":"points",
-"valeur_point_annee":2011,
+"valeur_point_annee":null,
 "valeur_point_euros":15.55
 },
 {
@@ -203415,7 +203415,7 @@ null
 "trimestres_maximum":null,
 "trimestres_maximum_leve_avant_age":null,
 "type_calcul":"points",
-"valeur_point_annee":2012,
+"valeur_point_annee":null,
 "valeur_point_euros":13.0
 },
 {
@@ -203498,7 +203498,7 @@ null
 "trimestres_maximum":null,
 "trimestres_maximum_leve_avant_age":null,
 "type_calcul":"points",
-"valeur_point_annee":2012,
+"valeur_point_annee":null,
 "valeur_point_euros":13.0
 },
 {
@@ -203581,7 +203581,7 @@ null
 "trimestres_maximum":null,
 "trimestres_maximum_leve_avant_age":null,
 "type_calcul":"points",
-"valeur_point_annee":2012,
+"valeur_point_annee":null,
 "valeur_point_euros":13.0
 },
 {
@@ -203664,7 +203664,7 @@ null
 "trimestres_maximum":null,
 "trimestres_maximum_leve_avant_age":null,
 "type_calcul":"points",
-"valeur_point_annee":2012,
+"valeur_point_annee":null,
 "valeur_point_euros":13.0
 },
 {
@@ -203747,7 +203747,7 @@ null
 "trimestres_maximum":null,
 "trimestres_maximum_leve_avant_age":null,
 "type_calcul":"points",
-"valeur_point_annee":2012,
+"valeur_point_annee":null,
 "valeur_point_euros":13.0
 },
 {
@@ -203830,7 +203830,7 @@ null
 "trimestres_maximum":null,
 "trimestres_maximum_leve_avant_age":null,
 "type_calcul":"points",
-"valeur_point_annee":2017,
+"valeur_point_annee":null,
 "valeur_point_euros":11.31
 },
 {
@@ -203913,7 +203913,7 @@ null
 "trimestres_maximum":null,
 "trimestres_maximum_leve_avant_age":null,
 "type_calcul":"points",
-"valeur_point_annee":2017,
+"valeur_point_annee":null,
 "valeur_point_euros":11.31
 },
 {
@@ -203996,7 +203996,7 @@ null
 "trimestres_maximum":null,
 "trimestres_maximum_leve_avant_age":null,
 "type_calcul":"points",
-"valeur_point_annee":2017,
+"valeur_point_annee":null,
 "valeur_point_euros":11.31
 },
 {
@@ -204079,7 +204079,7 @@ null
 "trimestres_maximum":null,
 "trimestres_maximum_leve_avant_age":null,
 "type_calcul":"points",
-"valeur_point_annee":2017,
+"valeur_point_annee":null,
 "valeur_point_euros":11.31
 },
 {
@@ -204162,7 +204162,7 @@ null
 "trimestres_maximum":null,
 "trimestres_maximum_leve_avant_age":null,
 "type_calcul":"points",
-"valeur_point_annee":2021,
+"valeur_point_annee":null,
 "valeur_point_euros":11.36
 },
 {
@@ -204245,7 +204245,7 @@ null
 "trimestres_maximum":null,
 "trimestres_maximum_leve_avant_age":null,
 "type_calcul":"points",
-"valeur_point_annee":2022,
+"valeur_point_annee":null,
 "valeur_point_euros":11.48
 },
 {
@@ -204328,7 +204328,7 @@ null
 "trimestres_maximum":null,
 "trimestres_maximum_leve_avant_age":null,
 "type_calcul":"points",
-"valeur_point_annee":2023,
+"valeur_point_annee":null,
 "valeur_point_euros":11.71
 },
 {
@@ -204411,7 +204411,7 @@ null
 "trimestres_maximum":null,
 "trimestres_maximum_leve_avant_age":null,
 "type_calcul":"points",
-"valeur_point_annee":2025,
+"valeur_point_annee":null,
 "valeur_point_euros":11.82
 },
 {
@@ -204454,7 +204454,7 @@ null
 "duree_requise_trimestres":null,
 "ecretement_salaire_reference":null,
 "fin":null,
-"notes":"LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal` est `sans_employeur` : le moteur porte au compte tout ce que la fiche écrit, sans part patronale. Or les caisses d'assurance maladie versent une cotisation égale au DOUBLE de celle du médecin (D. 645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995) : le forfait et le taux de la fiche valent donc un tiers du total, et la part des caisses, que disent `part_assurance_maladie_forfait` et `part_assurance_maladie_taux`, est portée au compte comme une part patronale depuis le 14 octobre 2026 (action 138, étape 18). Ajustement « 4 % à compter de l'exercice 2026 » (art. 2 dans sa rédaction du décret n° 2025-1076, LEGIARTI000052567960, « aux cotisations et aux prestations dues au titre des périodes courant à compter du 1er janvier 2026 »). FORFAIT : 5 751 € en secteur 2, 1 917 € en secteur 1 (CARMF, cotisations 2026, relevé au registre le 4 octobre 2026). VALEUR DE SERVICE des points liquidés depuis 2017 : « 11,31 euros jusqu'à l'exercice 2020, 11,36 euros pour l'exercice 2021, 11,48 euros pour l'exercice 2022, 11,71 euros pour les exercices 2023 et 2024 et 11,82 euros à compter de l'exercice 2025 » (art. 4, LEGIARTI000052567955). LA RETRAITE EN TEMPS CHOISI, depuis le 1er janvier 2017 (arrêté du 1er décembre 2016, JORFARTI000033538061, article 12 des statuts) : mêmes mots qu'au régime complémentaire de la CARMF — taux plein à l'âge légal sans décote ni durée, « coefficient de majoration de 1,25 % par trimestre séparant le premier jour du trimestre civil suivant celui où le médecin atteint cet âge de la date d'effet de la retraite », « réduit à 0,75 % par trimestre » après 65 ans, rien au-delà du soixante-dixième anniversaire. Le règlement du 10 juillet 2026 (LEGIARTI000054437501, III, article 2) écrit « après l'âge de 62 ans » ; la fiche retient 62 ans sur toute la période.",
+"notes":"LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal` est `sans_employeur` : le moteur porte au compte tout ce que la fiche écrit, sans part patronale. Or les caisses d'assurance maladie versent une cotisation égale au DOUBLE de celle du médecin (D. 645-3, LEGIARTI000006738166 dès 1985, LEGIARTI000006738169 dès 1995) : le forfait et le taux de la fiche valent donc un tiers du total, et la part des caisses, que disent `part_assurance_maladie_forfait` et `part_assurance_maladie_taux`, est portée au compte comme une part patronale depuis le 14 octobre 2026 (action 138, étape 18). Ajustement « 4 % à compter de l'exercice 2026 » (art. 2 dans sa rédaction du décret n° 2025-1076, LEGIARTI000052567960, « aux cotisations et aux prestations dues au titre des périodes courant à compter du 1er janvier 2026 »). FORFAIT : 5 751 € en secteur 2, 1 917 € en secteur 1 (CARMF, cotisations 2026, relevé au registre le 4 octobre 2026). VALEUR DE SERVICE des points liquidés depuis 2017 : « 11,31 euros jusqu'à l'exercice 2020, 11,36 euros pour l'exercice 2021, 11,48 euros pour l'exercice 2022, 11,71 euros pour les exercices 2023 et 2024 et 11,82 euros à compter de l'exercice 2025 » (art. 4, LEGIARTI000052567955) : 11,82 € en 2026, dernier exercice que le texte lu le 14 novembre 2026 fixe, et, au-delà, cette valeur portée aux prix depuis 2026 (`valeur_point_annee: 2026`), faute de texte — une projection, non une règle. LA RETRAITE EN TEMPS CHOISI, depuis le 1er janvier 2017 (arrêté du 1er décembre 2016, JORFARTI000033538061, article 12 des statuts) : mêmes mots qu'au régime complémentaire de la CARMF — taux plein à l'âge légal sans décote ni durée, « coefficient de majoration de 1,25 % par trimestre séparant le premier jour du trimestre civil suivant celui où le médecin atteint cet âge de la date d'effet de la retraite », « réduit à 0,75 % par trimestre » après 65 ans, rien au-delà du soixante-dixième anniversaire. Le règlement du 10 juillet 2026 (LEGIARTI000054437501, III, article 2) écrit « après l'âge de 62 ans » ; la fiche retient 62 ans sur toute la période.",
 "part_assurance_maladie_forfait":0.666667,
 "part_assurance_maladie_taux":0.666667,
 "part_au_dela_du_plafond":null,
@@ -204494,7 +204494,7 @@ null
 "trimestres_maximum":null,
 "trimestres_maximum_leve_avant_age":null,
 "type_calcul":"points",
-"valeur_point_annee":2025,
+"valeur_point_annee":2026,
 "valeur_point_euros":11.82
 }
 ],
