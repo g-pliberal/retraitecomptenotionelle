@@ -1,9 +1,7 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: vert
-sources: 8a6f920ee98e5bb3976816070d3f8f5078cedc09
-date: 2026-11-14T10:46:20Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43584454624
-presomptions: rouge
-presomptions_echecs:
-  - "FAILED tests/test_sections_sante.py::test_la_carpimko_majore_depuis_son_age - assert 1.0125 == 1.025 ± 1.0e-06"
+sources: b5856c7d9d3d34a803793ea10e219cd065c6a4c6
+date: 2026-11-14T12:12:07Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43590833532
+presomptions: vert
