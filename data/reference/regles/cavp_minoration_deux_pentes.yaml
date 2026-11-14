@@ -37,6 +37,10 @@ ecrit:
   `abattement_regime_de_base` et la majoration de `surcote_par_age_seul` rendent à
   `liquider_chaque_regime`, et l'âge de la retraite entière, que la table `cavp` de
   `ages_regimes.csv` rend à l'ouverture ; la bonification de 10 % pour trois enfants
+- >-
+  le coefficient de la carrière longue dont la pension prend effet depuis le 10 janvier
+  2024, la première pente seule, de l'âge du départ à 65 ans
+  (`carriere_longue_minoree_jusqu_au_palier`)
 dates_qui_decident:
 - liquidation.date_effet
 versions:
@@ -74,6 +78,7 @@ versions:
       decote_par_trimestre: 0.0125
       decote_annulee_par_la_duree: true
       surcote_par_trimestre: null
+      carriere_longue_minoree_jusqu_au_palier: false
     droit: >-
       présumé : la règle du modèle, celle du régime de base, 1,25 % par trimestre
       manquant à la durée dans la limite des trimestres qui séparent de l'âge
@@ -128,6 +133,7 @@ versions:
       decote_annulee_par_la_duree: false
       decote_palier_age: null
       surcote_par_trimestre: null
+      carriere_longue_minoree_jusqu_au_palier: false
     droit: >-
       retraite entière à 65 ans ; dès 60 ans, 1,25 % par trimestre manquant pour
       atteindre 65 ans, vingt au plus, à l'âge seul ; aucune majoration ; l'inapte sans
@@ -212,6 +218,7 @@ versions:
       decote_par_trimestre_apres_palier: 0.005
       surcote_par_trimestre: 0.005
       surcote_trimestres_maximum: 12
+      carriere_longue_minoree_jusqu_au_palier: false
     droit: >-
       ouverture à l'âge de L. 161-17-2 (de D. 161-2-1-9 pour les nés avant 1956) ;
       retraite entière à 65 ans jusqu'à la génération 1952, à 66 ans de 1953 à 1955, à
@@ -267,6 +274,7 @@ versions:
       decote_par_trimestre_apres_palier: 0.005
       surcote_par_trimestre: 0.005
       surcote_trimestres_maximum: 12
+      carriere_longue_minoree_jusqu_au_palier: true
     droit: >-
       celui des statuts de 2011, l'inapte et la carrière longue exceptés : qui liquide
       sa base par anticipation au titre des II, III ou IV de L. 643-3 liquide sa
@@ -345,6 +353,7 @@ versions:
       decote_par_trimestre_apres_palier: 0.005
       surcote_par_trimestre: 0.005
       surcote_trimestres_maximum: 12
+      carriere_longue_minoree_jusqu_au_palier: true
     droit: >-
       celui des statuts de 2024, mot pour mot pour la minoration, la carrière longue et
       la majoration (article 12), la date d'effet (article 14) et les enfants (article
@@ -447,27 +456,14 @@ approximations:
     arrêté du 19 décembre 2023, annexe, II, 6° (article 15) ; règlement de 2026,
     article 12, septième alinéa
   ecart: >-
-    Erreur du modèle, déclarée, non corrigée : depuis le 10 janvier 2024, la carrière
-    longue « est affectée d'un coefficient de minoration égal à - 1,25 % par trimestre
-    manquant jusqu'à l'âge de 65 ans » ; le modèle lui sert les deux pentes, 0,5 % par
-    trimestre de 65 ans à l'âge du 1° de L. 351-8 en plus, dans la limite de vingt
-    trimestres que l'article 15 de 2009 posait et que celui de 2011, qui le remplace,
-    n'a plus. La lecture contraire — la dérogation ne ferait que compter la première
-    pente depuis l'âge du départ, la seconde restant due — n'est pas tenable : la
-    dérogation fixe le coefficient « égal à » 1,25 % par trimestre « jusqu'à l'âge de 65
-    ans », là où la règle générale le compte « pour atteindre l'âge permettant d'obtenir
-    une pension de retraite à taux plein ». À soixante ans, les deux s'accordent.
-  effet: >-
-    né le 10 mars 1965, entré à 19 ans, parti en carrière longue à 62 ans le 1er avril
-    2027 : le modèle sert 0,81 (12 × 1,25 % + 8 × 0,5 % = 19 %), 11 035,07 € par an ; le
-    texte 0,85 (12 × 1,25 %), 11 035,07 / 0,81 × 0,85 = 11 580,01 €, 544,94 € par an de
-    moins ; né le 10 mars 1966, entré à 20 ans, à 63 ans le 1er avril 2029 : 0,86 au
-    lieu de 0,90, 12 175,81 € au lieu de 12 742,13 €, 566,32 € de moins ; né le 10 mars
-    1966, entré à 15 ans, à 58 ans le 1er avril 2024 : 0,75 au lieu de 0,65 (28 × 1,25
-    %), 10 580,06 € au lieu de 10 580,06 / 0,75 × 0,65 = 9 169,39 €, 1 410,68 € par an
-    de trop ; né le 10 mars 1964, entré à 17 ans, à 60 ans le 1er avril 2024 : 0,75
-    dans le modèle et le texte. Essai du 5 novembre 2026, dans les deux moteurs,
-    requête du formulaire, motif `carriere_longue`
+    Le modèle sert la dérogation à la liquidation que la carrière longue ouvre avant
+    l'âge légal (l'ouverture du droit, `carriere_longue`), à la date d'effet que le
+    modèle retient, le premier du mois qui suit l'âge : il compte au trimestre supérieur
+    les trimestres « jusqu'à l'âge de 65 ans » (le trimestre entamé, non tranché, plus
+    haut), et ne lit que le II de L. 643-3 — le III et le IV, handicap et inaptitude,
+    sont renvoyés plus bas. Aucun exemple de la caisse ne rejoue une pension de carrière
+    longue liquidée depuis 2024.
+  effet: au plus 1,25 point de la pension ; non mesuré
 - version: [statuts_de_2009, statuts_de_2011, statuts_de_2024, reglement_de_2026]
   textes: statuts de 2009, article 14 ; règlement de 2026, article 14
   ecart: >-
@@ -577,8 +573,23 @@ effet: >-
   trimestre entamé. Retouchée le même jour, après la relecture R-E5 : un troisième
   non-tranché, la majoration des nés jusqu'au 30 juin 1951 de 2011 à 2026, et les
   arrêtés de 1956 et de 1989 nommés.
+  Corrigée le 14 novembre 2026 (action 130, décision du propriétaire du 13) : jusque-là,
+  le modèle opposait à la carrière longue liquidée depuis le 10 janvier 2024 les deux
+  pentes de la règle générale, dans la limite de vingt trimestres que l'article 15 de
+  2009 posait, quand la dérogation de l'article 15 de 2024, que l'article 12 du
+  règlement de 2026 reprend, fixe le coefficient « égal à - 1,25 % par trimestre
+  manquant jusqu'à l'âge de 65 ans » — né le 10 mars 1965, entré à 19 ans, parti à 62
+  ans le 1er avril 2027 : 0,81 (12 × 1,25 % + 8 × 0,5 % = 19 %), 11 035,07 € par an, au
+  lieu de 0,85 (12 × 1,25 %), 11 580,01 €, 544,94 € de moins ; né le 10 mars 1966, entré
+  à 20 ans, à 63 ans le 1er avril 2029 : 0,86 au lieu de 0,90, 12 175,81 € au lieu de
+  12 742,13 € ; né le 10 mars 1966, entré à 15 ans, à 58 ans le 1er avril 2024 : 0,75 au
+  lieu de 0,65 (28 × 1,25 %), 10 580,06 € au lieu de 9 169,39 €, 1 410,68 € de trop ; à
+  60 ans, 0,75 dans les deux. Depuis, `carriere_longue_minoree_jusqu_au_palier: true`
+  aux périodes qui liquident depuis le 10 janvier 2024 — la période de 2020 du régime
+  coupée ce jour-là —, dans les deux moteurs. Reste non servie la date d'effet au
+  trimestre civil.
 sources:
-  lu_le: 2026-11-05
+  lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -591,6 +602,16 @@ sources:
     avant juillet 1951 parti après 65 ans de 2011 à 2026, et une pension de carrière
     longue liquidée depuis 2024.
   lectures:
+  - type: jorf
+    reference: >-
+      Relus pour la correction de la carrière longue depuis 2024 : arrêté du 19 décembre
+      2023, annexe, II, 6° (JORFARTI000048880592), et arrêté du 10 juillet 2026, annexe
+      I, article 12 (JORFARTI000054436087), dans l'index JORF du dépôt, à jour du 11
+      novembre 2026 ; code de la sécurité sociale, article L. 643-3, II, « L'âge prévu
+      au premier alinéa du I est abaissé dans les conditions définies à l'article L.
+      351-1-1 » (LEGIARTI000053280388, en vigueur depuis le 31 décembre 2025), dans
+      l'index LEGI, à jour du 11 novembre 2026.
+    date: 2026-11-14
   - type: jorf
     reference: >-
       Arrêté du 11 mai 2009, articles 1er et 2 et annexe, partie III, articles 12 à 17
@@ -636,6 +657,9 @@ code:
     `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule pas la minoration,
     que seul l'âge efface. `decote_palier_age: 65` et `decote_par_trimestre_apres_palier:
     0.005` : 1,25 % par trimestre jusqu'à 65 ans, 0,5 % au-delà.
+    `carriere_longue_minoree_jusqu_au_palier: true` : la liquidation que la carrière
+    longue ouvre n'est minorée que de 1,25 % par trimestre de son âge à 65 ans, sans la
+    seconde pente ni limite de trimestres.
   python: >-
     droit/liquider.py : abattement_points, abattement_regime_de_base, decote_opposable,
     trimestres_de_decote ; droit/ouvrir.py : age_taux_plein ; scenarios/actuel.py :
@@ -648,8 +672,10 @@ code:
   parametres: >-
     contenu.parametres de chaque version : age_table, decote_par_trimestre,
     decote_annulee_par_la_duree, decote_palier_age, decote_par_trimestre_apres_palier,
-    surcote_par_trimestre, surcote_trimestres_maximum ; regimes/cavp_complementaire.yaml :
+    carriere_longue_minoree_jusqu_au_palier, surcote_par_trimestre,
+    surcote_trimestres_maximum ; regimes/cavp_complementaire.yaml :
     age_table, age_taux_plein, decote_par_trimestre, decote_palier_age,
-    decote_par_trimestre_apres_palier, avantages_non_contributifs ;
+    decote_par_trimestre_apres_palier, carriere_longue_minoree_jusqu_au_palier,
+    date_effet, avantages_non_contributifs ;
     legislation/ages_regimes.csv : cavp
   tests: [tests/test_sections_sante.py, tests/test_sections_liberales.py, tests/js/moteur.test.js]

@@ -948,6 +948,9 @@ def _regles_des_sections(p) -> dict:
         "surcote_depuis_la_duree": p.surcote_depuis_la_duree or None,
         # L'inapte de la CAVOM de 2016 à 2024, sans coefficient dès 62 ans.
         "age_sans_coefficient_de_l_inapte": p.age_sans_coefficient_de_l_inapte,
+        # La carrière longue de la CAVP depuis 2024, à la première pente seule.
+        "carriere_longue_minoree_jusqu_au_palier": (
+            p.carriere_longue_minoree_jusqu_au_palier or None),
         # L'inapte de la CAVOM depuis 2025, ouvert à 62 ans.
         "age_ouverture_de_l_inapte": p.age_ouverture_de_l_inapte,
     }

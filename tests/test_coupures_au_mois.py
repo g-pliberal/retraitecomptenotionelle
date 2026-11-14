@@ -182,7 +182,9 @@ def test_les_dates_d_effet_partagent_les_annees_sans_trou_ni_doublon():
     assert coupees == {"regime_general", "msa_salaries", "cavec_complementaire",
                        "ircec_racl", "cps_saint_pierre_et_miquelon", "cssm_mayotte",
                        # statuts de 2011, en vigueur le 1er juillet 2011
-                       "cavamac_complementaire"}
+                       "cavamac_complementaire",
+                       # article 15 des statuts récrit, en vigueur le 10 janvier 2024
+                       "cavp_complementaire"}
 
 
 @pytest.mark.parametrize("bornes,message", [

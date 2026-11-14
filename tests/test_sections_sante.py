@@ -293,9 +293,9 @@ def test_chaque_version_de_la_cavp_est_portee_par_le_modele(simulateur):
     Chaque premier du mois de 1949 à 2040, la période qui liquide une pension
     prenant effet ce jour porte les paramètres que chaque version lit, hors de
     ce que la fiche déclare (`CAVP_HORS_DU_MODELE`). Les écarts que ces
-    paramètres ne disent pas — la carrière longue depuis 2024, la date d'effet
-    au trimestre civil, la valeur de service par génération — sont déclarés
-    dans la fiche."""
+    paramètres ne disent pas — la date d'effet au trimestre civil, la valeur de
+    service par génération — sont déclarés dans la fiche ; la carrière longue
+    depuis 2024, corrigée le 14 novembre 2026, y est un paramètre."""
     _chaque_version_est_portee(simulateur, "cavp_complementaire",
                                "cavp_minoration_deux_pentes", "liquidation.date_effet",
                                CAVP_HORS_DU_MODELE, 1949)
@@ -1135,3 +1135,94 @@ def test_passe_le_dernier_exercice_fixe_la_valeur_de_l_asv_suit_les_prix(
     valeur = _points_valeur_et_majoration(asv_a_65_ans["1962"]["detail"])[1]
     assert valeur == pytest.approx(
         11.82 * simulateur.macro.coefficient_prix(2026, 2027), abs=5e-7)
+
+
+# -- la CAVP : la carrière longue depuis le 10 janvier 2024 (action 130, la file) --
+
+REQUETE_DE_PHARMACIEN = {**REQUETE_DE_MEDECIN, "sexe": "H", "statut": "pharmacien"}
+
+#: (naissance, âge du début d'exercice, âge demandé) : le coefficient que le
+#: texte oppose à la retraite complémentaire de la CAVP, posé à la main.
+CARRIERES_LONGUES_A_LA_CAVP = {
+    # Né le 10 mars 1965, entré à 19 ans, parti en carrière longue à 62 ans,
+    # le 1er avril 2027, sous le règlement de 2026 : douze trimestres jusqu'à
+    # 65 ans, 12 × 1,25 % = 15 %, et rien de 65 à 67 ans.
+    ("1965-03-10", "19", "62"): 0.85,
+    # Né le 10 mars 1966, entré à 20 ans, à 63 ans le 1er avril 2029 : huit
+    # trimestres, 8 × 1,25 % = 10 %.
+    ("1966-03-10", "20", "63"): 0.90,
+    # Né le 10 mars 1966, entré à 15 ans, à 58 ans le 1er avril 2024, sous les
+    # statuts de 2024 : vingt-huit trimestres « jusqu'à l'âge de 65 ans », sans
+    # la limite de vingt que l'article 15 de 2009 posait : 28 × 1,25 % = 35 %.
+    ("1966-03-10", "15", "58"): 0.65,
+    # Né le 10 mars 1964, entré à 17 ans, à 60 ans le 1er avril 2024 : vingt
+    # trimestres, 25 %.
+    ("1964-03-10", "17", "60"): 0.75,
+    # Né le 10 janvier 1962, entré à 18 ans, à 62 ans le 1er février 2024, la
+    # première date d'effet qui suit le 10 janvier 2024 : 15 %.
+    ("1962-01-10", "18", "62"): 0.85,
+    # Né le 10 décembre 1961, entré à 18 ans, à 62 ans le 1er janvier 2024 :
+    # les statuts de 2011, que l'arrêté publié le 9 janvier ne touche pas
+    # encore, n'écrivent pas la dérogation. Le modèle y garde les deux pentes,
+    # 12 × 1,25 % + 8 × 0,5 % = 19 % (la carrière longue d'avant 2024 est
+    # renvoyée à la fiche `liquidation_regime_par_regime`).
+    ("1961-12-10", "18", "62"): 0.81,
+    # Né le 10 mars 1962, entré à 21 ans, parti à 63 ans le 1er avril 2025,
+    # passé son âge légal, sans carrière longue : la règle générale, les deux
+    # pentes, 8 × 1,25 % + 8 × 0,5 % = 14 %.
+    ("1962-03-10", "21", "63"): 0.86,
+    # Né le 10 mars 1965, entré à 19 ans, parti à 64 ans le 1er avril 2029,
+    # passé son âge légal : la liquidation n'est plus anticipée, les deux
+    # pentes, 4 × 1,25 % + 8 × 0,5 % = 9 %.
+    ("1965-03-10", "19", "64"): 0.91,
+}
+
+
+@pytest.fixture(scope="module")
+def carrieres_longues_a_la_cavp():
+    """Chaque cas, servi par le portage et refait au bit près par le moteur
+    Python (``servi_et_refait``)."""
+    from outils_pont import servi_et_refait
+
+    cas = [{"cle": "|".join(cle),
+            "requete": {**REQUETE_DE_PHARMACIEN, "naissance": cle[0],
+                        "debut": cle[1], "liquidation": cle[2]}}
+           for cle in CARRIERES_LONGUES_A_LA_CAVP]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    return {cle: {p["regime"]: p for p in servi["actuel"]["pensions_par_regime"]}
+            for cle, servi in servis.items()}
+
+
+@pytest.mark.parametrize("cle", CARRIERES_LONGUES_A_LA_CAVP,
+                         ids=["|".join(cle) for cle in CARRIERES_LONGUES_A_LA_CAVP])
+def test_la_cavp_minore_la_carriere_longue_jusqu_a_65_ans_seulement_depuis_2024(
+        carrieres_longues_a_la_cavp, cle):
+    """Statuts de la CAVP, article 15 (arrêté du 19 décembre 2023, annexe, II,
+    6°, publié le 9 janvier 2024, en vigueur le 10) : « Par dérogation, en cas
+    de liquidation anticipée dans les conditions prévues au II de l'article
+    L. 643-3, sa pension de retraite complémentaire est affectée d'un
+    coefficient de minoration égal à - 1,25 % par trimestre manquant jusqu'à
+    l'âge de 65 ans. » ; le règlement de 2026 (arrêté du 10 juillet 2026,
+    annexe I, article 12) le reprend, « par trimestre d'anticipation jusqu'à
+    l'âge de 65 ans ». Jusqu'au 14 novembre 2026, le modèle opposait à la
+    carrière longue les deux pentes de la règle générale, dans la limite de
+    vingt trimestres."""
+    cavp = carrieres_longues_a_la_cavp["|".join(cle)]["cavp_complementaire"]
+    assert cavp["montant"] > 0
+    assert _coefficient(cavp["detail"]) == pytest.approx(
+        CARRIERES_LONGUES_A_LA_CAVP[cle])
+
+
+def test_la_carriere_longue_de_la_cavp_se_pose_a_la_main(carrieres_longues_a_la_cavp):
+    """Né le 10 mars 1965, parti à 62 ans le 1er avril 2027 : le modèle servait
+    ses points × 0,81, 11 035,07 € par an ; le texte, × 0,85 : 11 035,07 / 0,81
+    × 0,85 = 11 580,01 €, 544,94 € de plus. Né le 10 mars 1966, parti à 58 ans
+    le 1er avril 2024 : 10 580,06 € sous 0,75 ; × 0,65 / 0,75 = 9 169,39 €,
+    1 410,68 € de moins (euros de 2026)."""
+    a_62_ans = carrieres_longues_a_la_cavp["1965-03-10|19|62"]["cavp_complementaire"]
+    a_58_ans = carrieres_longues_a_la_cavp["1966-03-10|15|58"]["cavp_complementaire"]
+    assert a_62_ans["montant"] == pytest.approx(11_035.07 / 0.81 * 0.85, abs=0.01)
+    assert a_62_ans["montant"] == pytest.approx(11_580.01, abs=0.01)
+    assert a_58_ans["montant"] == pytest.approx(10_580.06 / 0.75 * 0.65, abs=0.01)
+    assert a_58_ans["montant"] == pytest.approx(9_169.39, abs=0.01)

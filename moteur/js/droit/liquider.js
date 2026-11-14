@@ -220,6 +220,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
   const parLeHandicap = ouverture.motif === "handicap";
   const versionDuHandicap = parLeHandicap ? invalidite.versionDuHandicap(moteur, carriere) : null;
   const regimesDuHandicap = parLeHandicap ? moteur.invalidites.regimes("handicap") : new Set();
+  // La liquidation anticipée pour carrière longue (II de L. 643-3), que la
+  // CAVP minore à part depuis le 10 janvier 2024.
+  const parLaCarriereLongue = ouverture.motif === "carriere_longue";
   // La catégorie de L. 351-8 qui donne au salarié le taux plein du régime
   // général, que ses complémentaires suivent ; `null` sans elle.
   const parCategorie = categories.tauxPleinParCategorie(
@@ -461,7 +464,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         abattement = abattementPoints(
           moteur, periode, carriere, trimestres, requisReference, ageLiquidation,
           anneeLiquidation, trimestresParRegime.get(code) ?? 0, parLeHandicap,
-          parCategorie, durees,
+          parCategorie, durees, parLaCarriereLongue,
         );
         // LA TRANCHE C D'AVANT 2016 GARDE LE COEFFICIENT POUR ÂGE, même au
         // taux plein : voir le Python. Le coefficient affiché est celui de la
@@ -2958,10 +2961,12 @@ export function valeurPointFiche(moteur, periode, annee) {
  * Coefficient qui reprend la décote du régime de base — à deux pentes quand
  * la fiche en écrit deux : la CAVP minore de 1,25 % par trimestre jusqu'à
  * 65 ans et de 0,5 % de 65 ans à l'âge du taux plein. Les trimestres d'avant
- * le palier se comptent au premier taux. Voir le modèle Python.
+ * le palier se comptent au premier taux. La carrière longue, quand la période
+ * l'écrit (`carriere_longue_minoree_jusqu_au_palier`), ne reçoit que la
+ * première pente, comptée de son âge au palier. Voir le modèle Python.
  */
 export function abattementRegimeDeBase(moteur, periode, carriere, trimestres, requis, ageLiquidation,
-  anneeLiquidation, handicap = false) {
+  anneeLiquidation, handicap = false, carriereLongue = false) {
   // Le régime en points que la fiche `inaptitude_au_travail` nomme sert
   // l'inapte sans abattement.
   if (invalidite.tauxPleinDeLInapte(moteur, periode.regime, carriere, ageLiquidation)) {
@@ -2976,10 +2981,18 @@ export function abattementRegimeDeBase(moteur, periode, carriere, trimestres, re
   if (decote === null) {
     return 1.0;
   }
+  const palier = periode.decote_palier_age ?? null;
+  if (carriereLongue && palier !== null && periode.carriere_longue_minoree_jusqu_au_palier) {
+    // « un coefficient de minoration égal à - 1,25 % par trimestre manquant
+    // jusqu'à l'âge de 65 ans » : ni la seconde pente, ni la limite de vingt
+    // trimestres.
+    return Math.max(0.0, 1.0 - decote * Math.max(
+      0, auTrimestreSuperieur((palier - ageLiquidation) * 4),
+    ));
+  }
   const trimestresDecote = trimestresDeDecote(
     moteur, periode, carriere, trimestres, requis, ageLiquidation, ageAnnulation,
   );
-  const palier = periode.decote_palier_age ?? null;
   const tauxApres = periode.decote_par_trimestre_apres_palier ?? null;
   if (palier !== null && tauxApres !== null && trimestresDecote > 0) {
     const avant = Math.min(
@@ -3253,7 +3266,8 @@ export function coefficientConvention1947(ageLiquidation) {
 }
 
 export function abattementPoints(moteur, periode, carriere, trimestres, requis, ageLiquidation,
-  anneeLiquidation, trimestresRegime = 0, handicap = false, categorie = null, durees = null) {
+  anneeLiquidation, trimestresRegime = 0, handicap = false, categorie = null, durees = null,
+  carriereLongue = false) {
   // L'Ircantec a le même barème que l'Agirc-Arrco, et son texte l'écrit :
   // article 16 de l'arrêté du 30 décembre 1970, mêmes marches et mêmes deux
   // lectures. Voir le docstring du modèle Python. `trimestresRegime` est la
@@ -3263,6 +3277,8 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
   // `categorie` : la fiche du taux plein par catégorie de L. 351-8 que
   // l'assuré a au régime général, `null` sans elle. `durees` : les durées de
   // l'assuré, dont l'Ircantec lit celle du régime général (5° de 1978).
+  // `carriereLongue` : la liquidation ouverte par la carrière longue, que la
+  // CAVP minore de sa première pente seule (`abattementRegimeDeBase`).
   if (carriere.au_deces) {
     // La pension que l'assuré eût obtenue à son décès : la réversion d'une
     // complémentaire porte sur les points acquis, sans coefficient. Voir
@@ -3342,6 +3358,7 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
   } else {
     abattement = abattementRegimeDeBase(
       moteur, periode, carriere, trimestres, requis, ageLiquidation, anneeLiquidation, handicap,
+      carriereLongue,
     );
   }
   if (abattement < 1.0 && tauxPleinAnticipe(moteur, periode, carriere, ageLiquidation)) {

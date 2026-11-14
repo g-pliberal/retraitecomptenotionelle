@@ -716,6 +716,9 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                            if par_le_handicap else None)
     regimes_du_handicap = (moteur.invalidites.regimes("handicap")
                            if par_le_handicap else frozenset())
+    #: La liquidation anticipée pour carrière longue (II de L. 643-3), que la
+    #: CAVP minore à part depuis le 10 janvier 2024.
+    par_la_carriere_longue = ouverture.motif == "carriere_longue"
     #: La catégorie de L. 351-8 qui donne au salarié le taux plein du régime
     #: général — ancien déporté, mère de famille ouvrière, travailleur manuel,
     #: ancien combattant ou prisonnier —, que ses complémentaires suivent
@@ -983,6 +986,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     age_liquidation, annee_liquidation,
                     trimestres_par_regime.get(code, 0),
                     handicap=par_le_handicap, categorie=par_categorie, durees=durees,
+                    carriere_longue=par_la_carriere_longue,
                 )
                 # LA TRANCHE C D'AVANT 2016 GARDE LE COEFFICIENT POUR ÂGE.
                 # L'exonération au taux plein ne vaut que « sur les tranches
@@ -3971,7 +3975,7 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
                        annee_liquidation: int,
                        trimestres_regime: int = 0,
                        handicap: bool = False, categorie: str | None = None,
-                       durees=None) -> float:
+                       durees=None, carriere_longue: bool = False) -> float:
     """Coefficient d'un régime en points : abattu avant le taux plein,
     majoré après.
 
@@ -3986,7 +3990,9 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
     taux plein par catégorie de L. 351-8 que l'assuré a au régime général
     (:func:`~.categories.taux_plein_par_categorie`), ``None`` sans elle.
     ``durees`` sont les durées de l'assuré, dont l'Ircantec lit celle du
-    régime général (5° de l'article 16, de 1978 à 1983).
+    régime général (5° de l'article 16, de 1978 à 1983). ``carriere_longue``
+    dit la liquidation ouverte par la carrière longue, que la CAVP minore de
+    sa première pente seule (:func:`abattement_regime_de_base`).
 
     « Avant le taux plein » est une condition de DURÉE autant que d'âge :
     une complémentaire est servie sans abattement dès que l'assuré a le
@@ -4112,6 +4118,7 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
         abattement = abattement_regime_de_base(moteur,
             periode, carriere, trimestres, requis,
             age_liquidation, annee_liquidation, handicap,
+            carriere_longue,
         )
     if abattement < 1.0 and taux_plein_anticipe(moteur, 
             periode, carriere, age_liquidation):
@@ -4373,7 +4380,8 @@ def abattement_regime_de_base(moteur, periode: PeriodeRegime,
                                carriere: Carriere, trimestres: int,
                                requis: int, age_liquidation: float,
                                annee_liquidation: int,
-                               handicap: bool = False) -> float:
+                               handicap: bool = False,
+                               carriere_longue: bool = False) -> float:
     """Coefficient qui reprend la décote du régime de base : un taux par
     trimestre manquant, au plus favorable de l'âge et de la durée.
 
@@ -4385,6 +4393,15 @@ def abattement_regime_de_base(moteur, periode: PeriodeRegime,
     2011). Les trimestres d'avant le palier se comptent au premier taux,
     les autres au second : un pharmacien parti à soixante-quatre ans en
     perd quatre à 1,25 % et huit à 0,5 %, soit 9 %.
+
+    **La carrière longue, la première pente seule, quand la période l'écrit**
+    (``carriere_longue_minoree_jusqu_au_palier``). « Par dérogation, en cas
+    de liquidation anticipée dans les conditions prévues au II de l'article
+    L. 643-3, sa pension de retraite complémentaire est affectée d'un
+    coefficient de minoration égal à - 1,25 % par trimestre manquant jusqu'à
+    l'âge de 65 ans » (statuts de la CAVP, article 15, depuis le 10 janvier
+    2024 ; règlement de 2026, article 12) : ni la seconde pente, ni la limite
+    de vingt trimestres. Parti à 62 ans, 12 × 1,25 % = 15 % ; à 58 ans, 35 %.
 
     Le régime en points que la fiche ``inaptitude_au_travail`` nomme — les
     assurances sociales d'avant 1945 — sert l'inapte sans abattement, comme
@@ -4405,6 +4422,10 @@ def abattement_regime_de_base(moteur, periode: PeriodeRegime,
     )
     if decote is None:
         return 1.0
+    if (carriere_longue and periode.decote_palier_age is not None
+            and periode.carriere_longue_minoree_jusqu_au_palier):
+        return max(0.0, 1.0 - decote * max(0, _au_trimestre_superieur(
+            (periode.decote_palier_age - age_liquidation) * 4)))
     trimestres_decote = trimestres_de_decote(moteur, 
         periode, carriere, trimestres, requis, age_liquidation,
         age_annulation

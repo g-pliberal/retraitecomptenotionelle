@@ -302,7 +302,8 @@ periodes:
       n'en ont aucune, atteignaient l'âge du taux plein avant 2012.
       Servie à partir de 2012.
   - debut: 2020
-    fin: 2025
+    fin: 2023
+    date_effet: [2020-01-01, 2024-01-10]
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -361,6 +362,46 @@ periodes:
       ans, reçoivent ici trois ans, et celles d'avant juillet 1951, qui
       n'en ont aucune, atteignaient l'âge du taux plein avant 2012.
       Servie à partir de 2012.
+  - debut: 2024
+    fin: 2025
+    date_effet: [2024-01-10, 2026-01-01]
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    age_table: cavp
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: sans_objet
+    taux_cotisation_retraite: 0.0
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: cavp_minoration_deux_pentes
+    decote_palier_age: 65
+    decote_par_trimestre_apres_palier: 0.005
+    carriere_longue_minoree_jusqu_au_palier: true
+    surcote_par_trimestre: 0.005
+    surcote_points: surcote_par_age_seul
+    surcote_trimestres_maximum: 12
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    cotisation_forfaitaire_euros: 6880.00
+    cotisation_forfaitaire_annee: 2024
+    notes: >-
+      2024-2025 : les paramètres de 2020. La période ne s'en sépare que par
+      la carrière longue, pour les pensions qui prennent effet depuis le
+      10 janvier 2024 (`date_effet`) : l'arrêté du 19 décembre 2023, publié
+      le 9 janvier 2024 sans date d'effet propre (JORFARTI000048880592,
+      annexe, II, 6°), récrit l'article 15 des statuts — « Par dérogation,
+      en cas de liquidation anticipée dans les conditions prévues au II de
+      l'article L. 643-3, sa pension de retraite complémentaire est
+      affectée d'un coefficient de minoration égal à - 1,25 % par trimestre
+      manquant jusqu'à l'âge de 65 ans. » La carrière longue ne reçoit que
+      la première pente, de son âge à 65 ans, sans la seconde ni la limite
+      de vingt trimestres (`carriere_longue_minoree_jusqu_au_palier`) :
+      15 % à 62 ans, 35 % à 58 ans. Jusqu'au 14 novembre 2026, la fiche lui
+      opposait les deux pentes. Voir la période de 2020.
   - debut: 2026
     fin: null
     type_calcul: points
@@ -379,6 +420,7 @@ periodes:
     decote_annulee_par_la_duree: cavp_minoration_deux_pentes
     decote_palier_age: 65
     decote_par_trimestre_apres_palier: 0.005
+    carriere_longue_minoree_jusqu_au_palier: true
     surcote_par_trimestre: 0.005
     surcote_points: surcote_par_age_seul
     surcote_trimestres_maximum: 12
@@ -406,3 +448,8 @@ periodes:
       ans, reçoivent ici trois ans, et celles d'avant juillet 1951, qui
       n'en ont aucune, atteignaient l'âge du taux plein avant 2012.
       Servie à partir de 2012.
+      LA CARRIÈRE LONGUE, à la première pente seule
+      (`carriere_longue_minoree_jusqu_au_palier`) : le règlement de 2026
+      (JORFARTI000054436087, article 12) reprend la dérogation des statuts
+      de 2024, « - 1,25 % par trimestre d'anticipation jusqu'à l'âge de 65
+      ans ». Voir la période de 2024.

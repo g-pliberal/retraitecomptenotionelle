@@ -802,6 +802,14 @@ class PeriodeRegime:
     #: CAVOM du 1er janvier 2016 au 31 décembre 2024 (article 14, I, 1°).
     #: ``None`` : l'inapte reçoit le coefficient de son âge.
     age_sans_coefficient_de_l_inapte: float | None = None
+    #: LA CARRIÈRE LONGUE MINORÉE DE LA PREMIÈRE PENTE SEULE, de son âge au
+    #: palier (``decote_palier_age``), pour une pension que la période
+    #: liquide : « un coefficient de minoration égal à - 1,25 % par trimestre
+    #: manquant jusqu'à l'âge de 65 ans », écrivent les statuts de la CAVP
+    #: depuis le 10 janvier 2024 (article 15) et son règlement de 2026
+    #: (article 12). ``False`` : la carrière longue reçoit la minoration de
+    #: tous.
+    carriere_longue_minoree_jusqu_au_palier: bool = False
     #: L'ÂGE AUQUEL LA SECTION OUVRE SES DROITS À L'INAPTE, quand sa
     #: génération ouvre plus tard, pour une pension que la période liquide :
     #: « a) 62 ans pour les affiliés relevant du a du 2° de l'article
@@ -2420,6 +2428,9 @@ class CatalogueRegimes:
                 age_sans_coefficient_de_l_inapte=(
                     None if p.get("age_sans_coefficient_de_l_inapte") is None
                     else float(p["age_sans_coefficient_de_l_inapte"])
+                ),
+                carriere_longue_minoree_jusqu_au_palier=bool(
+                    p.get("carriere_longue_minoree_jusqu_au_palier", False)
                 ),
                 age_ouverture_de_l_inapte=(
                     None if p.get("age_ouverture_de_l_inapte") is None
