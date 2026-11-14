@@ -705,19 +705,6 @@ approximations:
   effet: >-
     non mesuré ; sans effet probable sur la minoration par l'âge, non établi : l'article
     18 de 1955, de la section des chirurgiens-dentistes, reste à lire au Bulletin officiel
-- version: [statuts_de_2007]
-  textes: statuts de 2007, article 20 ; arrêté du 13 avril 2011, article 3
-  ecart: >-
-    Du 1er janvier au 30 juin 2011, le modèle liquide par la période de 2011, qui porte les
-    statuts de 2011, quand ceux de 2007 sont en vigueur jusqu'au 30 juin : la minoration
-    se compte par trimestre depuis 65 ans, non par année d'âge entamée, et la majoration
-    au-delà de 65 ans, que les statuts de 2007 ne servent pas, est servie (essai du 5
-    novembre 2026, dans les deux moteurs).
-  effet: >-
-    né le 1er septembre 1950, liquidé le 1er mars 2011 à 60 ans et 6 mois : le texte, 25 %
-    « au cours de la 61e année », 0,75 ; le modèle, 18 trimestres à 1,25 %, 0,775, 2,5
-    points de trop. Né le 1er janvier 1944, liquidé le 1er avril 2011 à 67 ans et 3 mois :
-    le texte, 1 ; le modèle, 1,09 ; jusqu'à 20 points
 - version: [statuts_de_2007, statuts_de_2011, statuts_de_2011_modifies_en_2012, statuts_de_2017, statuts_de_2024, reglement_de_2026]
   textes: >-
     statuts de 2007, article 20, I, a, et II, a ; de 2011, article 19, I, a ; de 2017,
@@ -857,8 +844,7 @@ effet: >-
   avant, ceux de 2011 le 1er juillet 2011, leurs bornes le 22 juillet 2012, les âges
   écrits le 25 décembre 2017, l'article 35 récrit le 10 janvier 2024, le règlement le
   18 juillet 2026 ; ni l'inapte et les catégories sans minoration ne
-  sont servis, ni les statuts de 2011 au premier semestre,
-  ni ceux de 2017 du 1er au 9 janvier 2024 ;
+  sont servis, ni les statuts de 2017 du 1er au 9 janvier 2024 ;
   la majoration se compte au temps, non à l'exercice libéral par trimestre civil, et à
   1,25 % les trimestres d'avant 2024.
   Corrigée le 14 novembre 2026 (décision du propriétaire du 13 novembre, ligne 4 de la
@@ -867,7 +853,9 @@ effet: >-
   moteurs (fiche `reversion_carcdsf`, qui en déclare les limites).
   Les statuts de 2007, que le modèle ne servait qu'aux pensions de 2008, le sont
   depuis le 14 novembre 2026 à celles qui prennent effet depuis le 11 octobre 2007
-  (historique).
+  (historique). Ceux de 2011, que le modèle servait dès le 1er janvier 2011, ne le
+  sont plus, depuis le même jour, qu'aux pensions qui prennent effet depuis le
+  1er juillet 2011 (historique).
 sources:
   lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
@@ -951,6 +939,21 @@ historique:
   au lieu de 1 (6 399,74 € par an au lieu de 7 529,11 €, en euros de 2026) ; né le
   1er août 1947, à 60 ans et 3 mois, 0,75 ; la mère de trois enfants née le 1er août
   1945, sans minoration, reçoit les 10 % de l'article 23 (752,91 €) au lieu de rien.
+- >-
+  2026-11-14 — corrigée (action 130, décision du propriétaire du 13 novembre, ligne 22
+  de la file) : le modèle liquidait par sa période de 2011, qui porte les statuts de
+  2011, les pensions qui prennent effet du 1er janvier au 30 juin 2011, quand
+  l'arrêté du 13 avril 2011 n'entre en vigueur qu'« à compter du 1er juillet 2011 »
+  (article 3) et que les statuts de 2007 valent jusque-là : la minoration se comptait
+  par trimestre depuis 65 ans, non par année d'âge entamée, et la majoration au-delà
+  de 65 ans, que les statuts de 2007 ne servent pas, était servie. La période de 2010
+  de `carcdsf_complementaire.yaml` liquide désormais les pensions qui prennent effet
+  jusqu'au 30 juin 2011, celle de 2011 depuis le 1er juillet (`date_effet`), dans les
+  deux moteurs : le dentiste né le 1er septembre 1950, au travail dès 20 ans, pension
+  au 1er mars 2011 à 60 ans et 6 mois, « au cours de la 61e année », reçoit le
+  coefficient 0,75 de l'article 20 au lieu de 0,775 (6 380,81 € par an au lieu de
+  6 593,50 €, en euros de 2026) ; né le 1er janvier 1944, pension au 1er avril 2011
+  à 67 ans et 3 mois, 1 au lieu de 1,09 (9 410,90 € au lieu de 10 257,88 €).
 code:
   interrupteurs:
     abattement_points: cavom

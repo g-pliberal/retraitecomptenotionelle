@@ -187,7 +187,8 @@ def test_les_dates_d_effet_partagent_les_annees_sans_trou_ni_doublon():
                        "cavp_complementaire",
                        # arrêté du 22 mars 2017, en vigueur le 30 mars 2017
                        "carmf_complementaire", "asv_conventionnes",
-                       # statuts de 2007, en vigueur le 11 octobre 2007
+                       # statuts de 2007, en vigueur le 11 octobre 2007, et de
+                       # 2011, le 1er juillet 2011
                        "carcdsf_complementaire"}
 
 

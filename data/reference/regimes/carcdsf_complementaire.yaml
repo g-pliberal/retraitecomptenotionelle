@@ -220,6 +220,7 @@ periodes:
     cotisation_forfaitaire_annee: 2020
   - debut: 2010
     fin: 2010
+    date_effet: [2010-01-01, 2011-07-01]
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -240,6 +241,7 @@ periodes:
     cotisation_forfaitaire_annee: 2020
   - debut: 2011
     fin: 2011
+    date_effet: [2011-07-01, 2012-01-01]
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -263,7 +265,13 @@ periodes:
     cotisation_forfaitaire_euros: 2690.4
     cotisation_forfaitaire_annee: 2020
     notes: >-
-      LES STATUTS DU 13 AVRIL 2011 (JORFTEXT000023909782). Ouverture à
+      LES STATUTS DU 13 AVRIL 2011 (JORFTEXT000023909782), en vigueur « à
+      compter du 1er juillet 2011 » (article 3 de l'arrêté), sans
+      disposition transitoire pour la liquidation : la fiche les sert aux
+      pensions qui prennent effet depuis ce jour (`date_effet`), et celles
+      de janvier à juin 2011 se liquident aux statuts de 2007, par la
+      période de 2010 ; elle les servait dès le 1er janvier 2011 jusqu'au
+      14 novembre 2026. Ouverture à
       l'âge de L. 161-17-2, taux plein à ce même âge « majoré de cinq ans
       » — l'âge d'annulation des tables communes pour toutes les
       générations concernées —, et une minoration « fonction de l'âge

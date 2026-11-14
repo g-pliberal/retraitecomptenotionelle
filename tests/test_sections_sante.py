@@ -207,6 +207,57 @@ def test_la_carcdsf_sert_ses_statuts_de_2007_des_le_11_octobre_2007():
         assert sum(parts) == pytest.approx(majoration, abs=0.005), cle
 
 
+#: (naissance, âge au départ, sexe, enfants) : la pension de la CARCDSF par an
+#: et son coefficient. Dentiste au double du salaire moyen depuis ses 20 ans,
+#: euros de 2026. Les points ne dépendent pas du texte qui liquide : chaque
+#: montant est celui du taux plein (8 507,7438 €, 9 410,8999 €, 8 327,4606 €,
+#: 8 424,8476 €) multiplié à la main par le coefficient du texte en vigueur.
+CARCDSF_EN_2011 = {
+    # Né le 1er septembre 1950, pension au 1er mars 2011, à 60 ans et 6 mois :
+    # statuts de 2007, article 20, « 25 % pour un départ en retraite au cours
+    # de la 61e année ». 8 507,7438 × 0,75 = 6 380,81 €.
+    ("1950-09-01", "60.5", "H", "0"): (6_380.81, 0.75),
+    # Né le 1er octobre 1950, pension au 1er janvier 2011, à 60 ans et 3 mois :
+    # de même, 8 327,4606 × 0,75 = 6 245,60 €.
+    ("1950-10-01", "60.25", "H", "0"): (6_245.60, 0.75),
+    # Né le 1er janvier 1944, pension au 1er avril 2011, à 67 ans et 3 mois :
+    # les statuts de 2007 ne majorent pas la pension prise après 65 ans.
+    # 9 410,8999 × 1 = 9 410,90 €.
+    ("1944-01-01", "67.25", "H", "0"): (9_410.90, 1.0),
+    # Né le 1er janvier 1951, pension au 1er juillet 2011, à 60 ans et 6 mois,
+    # le jour où les statuts de 2011 entrent en vigueur : leur article 19, « 5 %
+    # par année d'anticipation », que le modèle compte au trimestre, dix-huit à
+    # 1,25 %, ce que la fiche déclare ; inchangé. 8 424,8476 × 0,775 = 6 529,26 €.
+    ("1951-01-01", "60.5", "H", "0"): (6_529.26, 0.775),
+}
+
+
+def test_la_carcdsf_sert_ses_statuts_de_2007_jusqu_au_30_juin_2011():
+    """Arrêté du 13 avril 2011 (JORFTEXT000023909782), publié le 27 : article 3
+    (JORFARTI000023909788), « Les dispositions du présent arrêté entrent en
+    vigueur à compter du 1er juillet 2011. » ; article 2 (JORFARTI000023909786),
+    l'arrêté du 1er octobre 2007 « est abrogé ». Aucune disposition transitoire
+    ne touche la liquidation. Une pension qui prend effet de janvier à juin 2011
+    se liquide donc aux statuts de 2007 : la minoration par année d'âge entamée,
+    aucune majoration après 65 ans ; le modèle y servait les statuts de 2011, six
+    mois trop tôt (corrigé le 14 novembre 2026). Servi par le portage, refait au
+    bit près par le moteur Python."""
+    from outils_pont import servi_et_refait
+
+    cas = [{"cle": "|".join(cle),
+            "requete": {**REQUETE_DE_DENTISTE, "debut": "20", "naissance": cle[0],
+                        "liquidation": cle[1], "sexe": cle[2], "enfants": cle[3]}}
+           for cle in CARCDSF_EN_2011]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    for cle, (montant, coefficient) in CARCDSF_EN_2011.items():
+        actuel = servis["|".join(cle)]["actuel"]
+        [pension] = [p for p in actuel["pensions_par_regime"]
+                     if p["regime"] == "carcdsf_complementaire"]
+        assert _coefficient(pension["detail"]) == pytest.approx(coefficient), cle
+        assert pension["montant"] == pytest.approx(montant, abs=0.005), cle
+
+
 # -- la CAVP -------------------------------------------------------------------
 
 
