@@ -1532,6 +1532,149 @@ def test_les_deux_moteurs_servent_la_reversion_du_dentiste(saisies):
         0.0, "mariage")
 
 
+# -- la complémentaire des agents généraux d'assurance ----------------------------------
+
+@pytest.mark.parametrize("deces, conjoint, base, attendu, version, effet", [
+    # L'agent servi au taux plein de la ligne 27 de la file (action 130),
+    # 14 984,97 euros par an : 60 % × 14 984,97 = 8 990,98.
+    ("2020-06-15", "1952", 14984.97, 8990.98, "statuts_de_2011", "2020-07-01"),
+    # Celui de la ligne 28, sa pension prorogée de 10 % comprise, 26 068,01
+    # euros : 60 % × 26 068,01 = 15 640,81.
+    ("2030-06-15", "1958", 26068.01, 15640.81, "reglement_de_2026", "2030-07-01"),
+    # Le conjoint doit « être âgé d'au moins 65 ans » : née le 10 mars 1960, au
+    # premier jour du mois qui suit ses soixante-cinq ans.
+    ("2020-06-15", "1960-03-10", 14984.97, 8990.98, "statuts_de_2011", "2025-04-01"),
+    # Les statuts de 2011, en vigueur le 1er juillet 2011 : 60 % × 10 000.
+    ("2011-07-01", "1940", 10000.0, 6000.0, "statuts_de_2011", "2011-08-01"),
+])
+def test_la_cavamac_reverse_soixante_pour_cent_a_soixante_cinq_ans(
+        simulateur, deces, conjoint, base, attendu, version, effet):
+    """Statuts de 2011, articles 22 et 23 (arrêté du 23 juin 2011,
+    JORFARTI000024270173) ; règlement de 2026, articles 11 et 12 (arrêté du 10
+    juillet 2026, JORFARTI000054436046) : le conjoint survivant « âgé d'au
+    moins 65 ans » a droit « à une pension de réversion calculée sur soixante
+    pour cent (60 %) des points de retraite acquis par l'adhérent décédé »,
+    qui « bénéficie du coefficient de prorogation ». Jusqu'au 14 novembre
+    2026, le modèle n'en servait rien, motif « non_portee »."""
+    carriere = _carriere(simulateur, 1935, 65.0, conjoint, deces, mariage="1975-06")
+    ligne, = _lignes(simulateur, carriere, [("cavamac_complementaire", base)],
+                     min(int(deces[:4]), 2026))
+    assert ligne == ("cavamac_complementaire", 0.60, attendu, "servie", version, effet)
+
+
+@pytest.mark.parametrize("mariage, enfants, servie", [
+    ("2018-05", 0, True),
+    ("2019-01", 0, False),
+    ("2019-01", 1, True),
+])
+def test_la_cavamac_demande_deux_ans_de_mariage_sauf_enfant(simulateur, mariage, enfants,
+                                                            servie):
+    """Statuts de 2011, article 22 : « être marié depuis deux ans au moins au
+    moment du décès de l'adhérent ou qu'un enfant au moins, né ou à naître,
+    soit issu de leur union ». Mort le 15 juin 2020 : marié en mai 2018, tout ;
+    en janvier 2019, rien ; avec un enfant, tout."""
+    carriere = _carriere(simulateur, 1950, 65.0, "1952", "2020-06-15", mariage=mariage,
+                         enfants=enfants)
+    ligne, = _lignes(simulateur, carriere, [("cavamac_complementaire", 14984.97)], 2020)
+    assert ligne[2:4] == ((8990.98, "servie") if servie else (0.0, "mariage"))
+
+
+@pytest.mark.parametrize("union", ["mariage", "pacs"])
+def test_la_reversion_de_la_cavamac_survit_au_remariage(simulateur, union):
+    """Ni les statuts de 2011 ni le règlement de 2026 ne retirent la réversion
+    au survivant remarié, et la caisse le dit : « Le remariage du bénéficiaire
+    ne suspend pas le versement de la pension de réversion RCO. » La
+    survivante née en mars 1960, remariée en mai 2022, est servie à ses
+    soixante-cinq ans."""
+    carriere = _carriere(simulateur, 1950, 65.0, "1960-03-10", "2020-06-15",
+                         mariage="1985-06", nouvelle_union=union, union_depuis="2022-05-10")
+    ligne, = _lignes(simulateur, carriere, [("cavamac_complementaire", 14984.97)], 2020)
+    assert ligne[2:] == (8990.98, "servie", "statuts_de_2011", "2025-04-01")
+
+
+@pytest.mark.parametrize("remariage", [None, "1990-01"])
+def test_la_reversion_de_la_cavamac_se_partage_avec_l_ex_conjoint_meme_remarie(
+        simulateur, remariage):
+    """Articles 22 et 25 : « Le conjoint divorcé est assimilé à un conjoint
+    survivant », sans qu'il lui soit demandé de ne pas s'être remarié, et la
+    pension « est partagée entre son conjoint survivant et le ou les
+    précédents conjoints divorcés au prorata de la durée respective de chaque
+    mariage. Cette durée, déterminée de date à date, est arrondie au nombre de
+    mois inférieur. » 240 mois avec la survivante, 120 avec la précédente :
+    les deux tiers, que la précédente se soit remariée ou non."""
+    carriere = _carriere(simulateur, 1950, 65.0, "1952", "2020-06-10", mariage="2000-06",
+                         ex_conjoints=({"naissance": "1951", "mariage": "1975-06",
+                                        "divorce": "1985-06", "remariage": remariage},))
+    ligne, = reversion(simulateur.scenario_actuel,
+                       [("cavamac_complementaire", 14984.97, HAUTE)], carriere, 2020).regimes
+    assert ligne.part == pytest.approx(240 / 360)
+    assert ligne.montant == pytest.approx(0.60 * 14984.97 * 240 / 360)
+
+
+def test_la_majoration_pour_trois_enfants_suit_la_reversion_de_la_cavamac(simulateur):
+    """Article 18 : « Le nombre des points de retraite acquis dans le présent
+    régime est majoré de 10 % au profit de l'adhérent ayant eu au moins trois
+    enfants », et la réversion se calcule sur 60 % de ces points (article 23) ;
+    la caisse : « A ce montant s'ajoutent éventuellement : la majoration pour
+    enfants de 10 % ». La pension de 14 984,97 euros, majorée de 1 498,50
+    euros : 60 % × 14 984,97 × 1,10 = 9 890,08 euros."""
+    carriere = _carriere(simulateur, 1950, 65.0, "1952", "2020-06-15", mariage="1975-06",
+                         enfants=3)
+    ligne, = reversion(simulateur.scenario_actuel,
+                       [("cavamac_complementaire", 14984.97, HAUTE)], carriere, 2020,
+                       majorations={"cavamac_complementaire": 1498.497}).regimes
+    assert round(ligne.montant, 2) == 9890.08
+    assert ligne.majoration == pytest.approx(899.0982)
+
+
+def test_avant_le_1er_juillet_2011_la_reversion_de_la_cavamac_n_est_pas_portee(simulateur):
+    """Les statuts d'avant ceux de 2011, publiés au Bulletin officiel, ne sont
+    pas à l'index du Journal officiel : la réversion d'un décès d'avant le
+    1er juillet 2011 n'est pas servie, et sa ligne le dit."""
+    carriere = _carriere(simulateur, 1935, 65.0, "1940", "2011-06-30", mariage="1975-06")
+    assert _lignes(simulateur, carriere, [("cavamac_complementaire", 10000.0)], 2011) == [
+        ("cavamac_complementaire", 0.0, 0.0, "non_portee", None, None)]
+
+
+#: Un agent général d'assurance né le 1er juin 1950, installé à vingt-cinq ans,
+#: parti à soixante-sept ans, mort en juin 2020 ; son épouse, née en 1952,
+#: mariée en 1975.
+AGENT_GENERAL = {"statut": "agent_general_assurance", "naissance": "1950-06-01",
+                 "debut": "25", "liquidation": "67", "deces": "2020-06", "conjoint": "1952",
+                 "mariage": "1975"}
+
+
+def test_les_deux_moteurs_servent_la_reversion_de_l_agent_general(saisies):
+    """La veuve de soixante-huit ans de l'agent général reçoit, au premier
+    jour du mois qui suit le décès, 60 % de sa retraite complémentaire
+    (statuts de 2011, articles 22 à 24), 10 % de plus avec trois enfants
+    (article 18), et rien quand le mariage a moins de deux ans (article 22) :
+    le portage le sert, et le moteur Python le refait au bit près."""
+    from outils_pont import servi_et_refait
+
+    requetes = {"seule": AGENT_GENERAL, "trois_enfants": {**AGENT_GENERAL, "enfants": "3"},
+                "mariee_en_2019": {**AGENT_GENERAL, "mariage": "2019"}}
+    servis, refus = servi_et_refait(
+        [{"cle": cle, "requete": requete} for cle, requete in requetes.items()])
+    assert refus == {}, refus
+
+    def ligne(sortie):
+        return next(l for l in sortie["regimes"] if l["regime"] == "cavamac_complementaire")
+
+    entieres = {cle: ligne(_sortie(saisies, requete)) for cle, requete in requetes.items()}
+    for cle, entiere in entieres.items():
+        assert ligne(servis[cle]["reversion"])["montant"] == entiere["montant"], cle
+    seule = entieres["seule"]
+    assert (seule["taux"], seule["motif"], seule["date_effet"]) == (0.60, "servie", "2020-07-01")
+    assert seule["base"] > 0 and seule["montant"] == pytest.approx(0.60 * seule["base"])
+    # Avec trois enfants, la pension de l'agent n'est pas la même au centime :
+    # la réversion se lit sur la sienne.
+    trois = entieres["trois_enfants"]
+    assert trois["base"] > 0 and trois["montant"] == pytest.approx(0.60 * trois["base"] * 1.10)
+    assert (entieres["mariee_en_2019"]["montant"], entieres["mariee_en_2019"]["motif"]) == (
+        0.0, "mariage")
+
+
 # -- l'âge d'avant 1973, le cumul d'avant 2004, les majorations forfaitaires -------------
 
 @pytest.mark.parametrize("conjoint, invalidite, version, date_effet", [

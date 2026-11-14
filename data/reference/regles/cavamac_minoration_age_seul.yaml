@@ -454,20 +454,6 @@ approximations:
     non mesuré dans la population ; la pension que le modèle fait partir le 1er novembre
     2023 se compare au 1er octobre 2023 ou au 1er janvier 2024, premiers jours de
     trimestre civil : un ou deux mois d'écart sur la date d'effet, selon la demande
-- version: [statuts_d_avant_2011, statuts_de_2011, statuts_de_septembre_2023, statuts_de_2024, reglement_de_2026]
-  textes: >-
-    statuts de 2011, articles 22 et 23 ; règlement de 2026, articles 11 et 12 ; avant
-    2011, nul texte lu de la réversion
-  ecart: >-
-    Le modèle ne sert aucune réversion de la CAVAMAC : aucune fiche de réversion ne
-    nomme `cavamac_complementaire`, et la ligne vaut zéro, motif `non_portee`, comme
-    pour la CAVEC et la CARPV (relecture R-E). Les statuts de 2011 et le règlement de
-    2026 servent au conjoint survivant âgé d'au moins 65 ans, marié deux ans au moins
-    ou dont un enfant est issu de l'union, de l'adhérent titulaire d'au moins 1 500
-    points, « soixante pour cent (60 %) des points de retraite acquis par l'adhérent
-    décédé » ; son montant « n'est pas minoré par le coefficient de minoration »
-    mais « bénéficie du coefficient de prorogation ».
-  effet: non mesuré ; pour le conjoint survivant, toute la réversion
 textes_sans_effet:
 - id: JORFARTI000017890649
   article: arrêté du 17 décembre 2007, annexe
@@ -508,7 +494,8 @@ effet: >-
   Lue au droit le 5 novembre 2026 (action 130) : cinq versions, les statuts de 2011
   en vigueur le 1er juillet 2011, présumés avant, l'article 15 récrit le 1er septembre
   2023, l'article 16 le 1er janvier 2024, le règlement de 2026 ; ni la longue carrière
-  à 15 %, ni la réversion ne sont servies. La majoration du second semestre 2011, que
+  à 15 %, ni la réversion ne sont servies. La réversion l'est depuis le 14 novembre 2026
+  (fiche `reversion_cavamac`). La majoration du second semestre 2011, que
   le modèle ne servait pas, et la minoration qu'il opposait à l'inapte, à l'ancien
   déporté ou interné et, depuis 2024, à l'ancien combattant, 25 % à 62 ans, sont
   corrigées depuis le 14 novembre 2026 (historique), comme le taux plein « de 67 ans »
@@ -644,6 +631,14 @@ historique:
   1952, au 1er septembre 2023 à 70 ans et 9 mois, trois années, 1,15 au lieu de 1,25,
   dix points et non cinq. La minoration n'en change pas : nul n'a moins de 67 ans à
   ces dates dont la table ne dise déjà 67 ans.
+- >-
+  2026-11-14 — la réversion servie (décision du propriétaire du 13 novembre, ligne 30 de
+  la file de l'action 130) : jusque-là, le modèle ne servait aucune réversion de la
+  CAVAMAC, motif `non_portee`, quand les statuts de 2011 (articles 22 à 25) et le
+  règlement de 2026 (articles 11 à 14) donnent au conjoint survivant de 65 ans 60 % des
+  points de l'adhérent ; il en sert depuis 60 % de la pension, dans les deux moteurs
+  (fiche `reversion_cavamac`, qui en déclare les limites) : 8 990,98 € par an au lieu
+  de rien pour la veuve de l'agent parti avec 14 984,97 €.
 code:
   interrupteurs:
     abattement_points: cavom

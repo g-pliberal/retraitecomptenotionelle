@@ -49,7 +49,12 @@ applique à chaque régime la version de sa fiche que les dates choisissent :
   (``reversion_carcdsf``) : 60 %, à soixante-cinq ans, au conjoint marié deux
   ans au décès, sauf enfant, partagée avec les précédents conjoints non
   remariés, perdue au remariage ; pour un décès d'avant le 11 octobre 2007,
-  sa ligne dit qu'elle n'est pas portée.
+  sa ligne dit qu'elle n'est pas portée ;
+* la complémentaire des agents généraux d'assurance (``reversion_cavamac``) :
+  60 %, à soixante-cinq ans, au conjoint marié deux ans au décès, sauf enfant,
+  partagée avec les précédents conjoints, même remariés, gardée au
+  remariage ; pour un décès d'avant le 1er juillet 2011, sa ligne dit qu'elle
+  n'est pas portée.
 
 Les autres régimes n'ont pas encore de fiche : leur ligne le dit, sans montant.
 
@@ -1931,7 +1936,7 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
                        if parametres.get("majoration_sans_anticipation")
                        and majorations_sans_anticipation is not None else majorations)
         # La durée du mariage au décès que la version demande, sauf enfant issu
-        # du mariage (``mariage_minimum_annees`` : la CARCDSF, deux ans).
+        # du mariage (``mariage_minimum_annees`` : la CARCDSF et la CAVAMAC, deux ans).
         servie = _mariage_dure(conjoint, deces, enfants,
                                parametres.get("mariage_minimum_annees"))
         majoration = (float(parametres.get("majoration_reversible") or 0.0)

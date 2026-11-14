@@ -1,0 +1,278 @@
+schema_version: 1
+id: reversion_cavamac
+intitule: >-
+  Pension de réversion du régime complémentaire de la CAVAMAC (statuts de 2011, articles
+  22 à 25 ; règlement de 2026, articles 11 à 14) : 60 % des points de l'agent général
+  d'assurance, sa majoration de prorogation et sa majoration pour enfants comprises, au
+  conjoint survivant de 65 ans marié depuis deux ans au moins, sauf enfant issu de
+  l'union ; partagée avec les précédents conjoints divorcés, même remariés, gardée au
+  remariage. Sans condition de ressources.
+domaine: reversion
+regimes:
+- cavamac_complementaire
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- conjoint.deces
+- union.debut, d'un mariage, et union.fin, pour le conjoint divorcé ; les précédents
+  conjoints de l'adhérent, leur mariage et leur divorce, que le partage au prorata des
+  mariages lit
+- la naissance du survivant, qui dit son âge
+- les enfants de l'adhérent, que le modèle tient pour issus de l'union
+- la retraite complémentaire de l'adhérent décédé, et sa majoration pour trois enfants
+ecrit:
+- la pension de réversion du survivant au régime complémentaire de la CAVAMAC
+dates_qui_decident:
+- conjoint.deces
+# Les versions forment un partage de la date du décès (§ 4.1), comme celles de
+# la réversion de la CARCDSF. Les deux textes lus disent la même règle : 60 %
+# des points, à 65 ans, deux ans de mariage sauf enfant, le partage avec les
+# précédents conjoints divorcés. Les statuts d'avant 2011, au Bulletin
+# officiel, ne sont pas lus : le moteur ne sert pas la réversion d'un décès
+# d'avant le 1er juillet 2011 (`portee: false`).
+versions:
+- id: avant_juillet_2011
+  statut: supposee
+  hypothese: >-
+    les statuts approuvés par l'arrêté du 22 décembre 1967 et leurs modifications de
+    1983, 1990 et 1998, que les statuts de 2011 remplacent, sont au Bulletin officiel et
+    non à l'index du Journal officiel (fiche `cavamac_minoration_age_seul`) : le moteur
+    ne sert pas la réversion d'un décès d'avant le 1er juillet 2011, et sa ligne le dit
+  fiabilite: estimee
+  bornes:
+    conjoint.deces: [null, 2011-07-01]
+  contenu:
+    droit: la réversion des statuts d'avant 2011, que nul texte lu ne dit
+    parametres:
+      portee: false
+      fiabilite: estimee
+  exemples: aucun trouvé
+- id: statuts_de_2011
+  statut: lue
+  textes:
+  - id: JORFARTI000024270173
+    article: >-
+      statuts du régime d'assurance vieillesse complémentaire, annexe de l'arrêté du 23
+      juin 2011, articles 18 et 22 à 25
+    en_vigueur: 2011-07-01
+    publie_le: 2011-06-29
+    citation: >-
+      « Au décès d'un adhérent titulaire d'au moins 1 500 points de retraite dans le
+      présent régime, son conjoint survivant a droit à une pension de réversion s'il
+      remplit les conditions suivantes : ― être âgé d'au moins 65 ans ; ― être marié
+      depuis deux ans au moins au moment du décès de l'adhérent ou qu'un enfant au
+      moins, né ou à naître, soit issu de leur union. […] Le conjoint divorcé est
+      assimilé à un conjoint survivant. » (article 22) ; « Le conjoint survivant de
+      l'adhérent décédé a droit, s'il remplit les conditions mentionnées à l'article 22,
+      à une pension de réversion calculée sur soixante pour cent (60 %) des points de
+      retraite acquis par l'adhérent décédé au titre du présent régime. Le montant de la
+      pension de réversion n'est pas minoré par le coefficient de minoration qui a pu
+      être, le cas échéant, appliqué lors de la liquidation par anticipation des droits à
+      retraite de l'adhérent décédé. Le montant de la pension de réversion bénéficie du
+      coefficient de prorogation qui a pu être, le cas échéant, appliqué lors de la
+      liquidation des droits à retraite de l'adhérent décédé au-delà de l'âge requis
+      pour l'obtention d'une pension de retraite complémentaire à taux plein dans le
+      présent régime. La ou les pensions de réversion du ou des conjoints survivants ne
+      peuvent être globalement supérieures à la pension de retraite complémentaire
+      perçue par l'adhérent au moment de son décès. » (article 23) ; « En cas de décès de
+      l'adhérent titulaire d'une pension de retraite complémentaire, la pension de
+      réversion prend effet au premier jour du trimestre civil suivant le décès de
+      l'adhérent si la demande est déposée dans le délai d'un an suivant le décès. »
+      (article 24) ; « la pension de réversion, calculée conformément aux dispositions
+      de l'article 23 des présents statuts, est partagée entre son conjoint survivant et
+      le ou les précédents conjoints divorcés au prorata de la durée respective de
+      chaque mariage. Cette durée, déterminée de date à date, est arrondie au nombre de
+      mois inférieur. » (article 25) ; « Le nombre des points de retraite acquis dans le
+      présent régime est majoré de 10 % au profit de l'adhérent ayant eu au moins trois
+      enfants » (article 18)
+  - id: JORFARTI000028814573
+    article: arrêté du 28 mars 2014, annexe, II, b et c (articles 24 et 25 des statuts)
+    publie_le: 2014-04-02
+    citation: >-
+      « b) L'article 24 est ainsi modifié : ― au premier et au troisième alinéa, les
+      deux occurrences du mot : « trimestre » sont remplacées par le mot : « mois » ;
+      ― au dernier alinéa, le mot : « trimestriellement » est remplacé par le mot :
+      « mensuellement » »
+  nee_de: JORFARTI000024270173
+  bornes:
+    conjoint.deces: [2011-07-01, 2026-07-18]
+  contenu:
+    droit: >-
+      60 % des points de retraite acquis par l'adhérent décédé, sans le coefficient de
+      minoration de sa liquidation anticipée, avec son coefficient de prorogation ; la
+      majoration de 10 % de ses points pour trois enfants y est comprise ; au plus la
+      pension qu'il percevait à son décès
+    beneficiaire: >-
+      le conjoint survivant, et le conjoint divorcé, même remarié ; entre plusieurs, un
+      partage au prorata de la durée de chaque mariage, de date à date, arrondie au
+      nombre de mois inférieur
+    conditions: >-
+      65 ans ; un mariage de deux ans au moins au décès, sauf enfant né ou à naître issu
+      de l'union ; au moins 1 500 points au compte de l'adhérent ; aucune condition de
+      ressources ; le remariage ne la retire pas ; effet au premier jour du trimestre
+      civil qui suit le décès du retraité, du mois depuis l'arrêté du 28 mars 2014
+    parametres:
+      taux: 0.60
+      age_minimum: 65
+      mariage_minimum_annees: 2
+      ex_conjoints: tous
+      majoration_reversible: 0.60
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: reglement_de_2026
+  statut: lue
+  textes:
+  - id: JORFARTI000054436046
+    article: >-
+      règlement du régime d'assurance vieillesse complémentaire, annexe I de l'arrêté
+      du 10 juillet 2026, articles 11 à 14
+    en_vigueur: 2026-07-18
+    publie_le: 2026-07-17
+    citation: >-
+      « Au décès d'un adhérent titulaire d'au moins 1 500 points de retraite dans le
+      présent régime, son conjoint survivant a droit à une pension de réversion s'il
+      remplit les conditions suivantes : - être âgé d'au moins 65 ans ; - être marié
+      depuis deux ans au moins au moment du décès de l'adhérent ou qu'un enfant au
+      moins, né ou à naître, soit issu de leur union. […] Le conjoint divorcé est
+      assimilé à un conjoint survivant. » (article 11) ; « une pension de réversion
+      calculée sur soixante pour cent (60 %) des points de retraite acquis par
+      l'adhérent décédé au titre du présent régime. Le montant de la pension de
+      réversion n'est pas minoré par le coefficient de minoration […]. Le montant de la
+      pension de réversion bénéficie du coefficient de prorogation » (article 12) ; « la
+      pension de réversion prend effet au premier jour du mois civil suivant le décès de
+      l'adhérent si la demande est déposée dans le délai d'un an suivant le décès »
+      (article 13) ; « partagée entre son conjoint survivant et le ou les précédents
+      conjoints divorcés au prorata de la durée respective de chaque mariage » (article
+      14)
+  nee_de: JORFARTI000054436046
+  bornes:
+    conjoint.deces: [2026-07-18, null]
+  contenu:
+    droit: la version statuts_de_2011
+    beneficiaire: la version statuts_de_2011
+    conditions: celles de statuts_de_2011, l'effet au premier jour du mois civil
+    parametres:
+      taux: 0.60
+      age_minimum: 65
+      mariage_minimum_annees: 2
+      ex_conjoints: tous
+      majoration_reversible: 0.60
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations:
+- version: [avant_juillet_2011]
+  ecart: >-
+    la réversion d'un décès d'avant le 1er juillet 2011 n'est pas servie : sa ligne le
+    dit (`non_portee`)
+  effet: non mesuré
+- ecart: >-
+    la version se choisit à la date du décès, non à celle où la réversion prend effet :
+    le survivant d'un décès d'avant le 1er juillet 2011 qui atteint 65 ans sous les
+    statuts de 2011 n'est pas servi, quand ces statuts lui ouvriraient sans doute le
+    droit
+  effet: non mesuré
+- ecart: >-
+    le modèle reverse 60 % de la pension servie à l'adhérent, minoration comprise, quand
+    le texte reverse 60 % de ses points sans « le coefficient de minoration qui a pu
+    être […] appliqué lors de la liquidation par anticipation » : la réversion de
+    l'adhérent parti avant son taux plein est servie trop bas, de toute sa minoration ;
+    celle de l'adhérent parti au taux plein ou au-delà est juste, sa prorogation
+    comprise
+  effet: >-
+    jusqu'à 25 % de la réversion pour un départ à 62 ans jusqu'en 2023 : l'agent dont
+    les points valent 14 984,97 euros par an, parti minoré de 25 %, laisse 6 743,24
+    euros au lieu de 8 990,98 ; non mesuré dans la population
+- ecart: >-
+    le seuil de 1 500 points n'est pas lu : le modèle sert une réversion au survivant
+    de l'adhérent qui en a moins, quand le texte lui verse un capital (article 21 des
+    statuts de 2011, non porté au régime) ; le plafond de la pension perçue par
+    l'adhérent à son décès (article 23) n'est pas appliqué, qu'une minoration de 25 %
+    au plus ne fait pas atteindre à 60 %
+  effet: non mesuré ; les carrières de moins de 1 500 points
+- ecart: >-
+    tout enfant déclaré lève la condition de deux ans de mariage, quand le texte demande
+    un enfant « issu de leur union » ; la majoration de 5 % pour enfant handicapé à
+    charge, que la caisse ajoute à la réversion, n'est pas portée au régime
+  effet: non mesuré
+- ecart: >-
+    le partage au prorata des mariages lit les précédents conjoints que la saisie
+    déclare, deux au plus, sans vérifier qu'ils remplissent les conditions de l'article
+    22 — 65 ans, deux ans de mariage —, et se fige au décès : la part du bénéficiaire
+    décédé, qui « accroît celle de l'autre », n'est pas reportée ; la réversion
+    provisoire du conjoint d'un adhérent disparu et la réversion au prorata des
+    cotisations réglées ne sont pas servies
+  effet: non mesuré
+- ecart: >-
+    la réversion prend effet au premier jour du mois qui suit le décès ou les 65 ans :
+    de juillet 2011 à l'arrêté du 28 mars 2014, le texte la fait partir au premier
+    jour du trimestre civil qui suit le décès du retraité ; pour l'adhérent mort avant
+    sa retraite, au premier jour du trimestre, puis du mois, où survient le décès ; les
+    montants sont ceux de l'année du décès
+  effet: un ou deux mois de réversion ; non mesuré
+presomptions:
+  reversion_demandee_dans_l_annee: >-
+    la date d'effet, au premier jour du mois qui suit le décès, ou qui suit les 65 ans
+    du survivant
+  deces_apres_le_depart: >-
+    la réversion que la page montre sans décès déclaré, pour un décès supposé juste
+    après le départ, ou cette année pour qui est déjà parti
+sources:
+  lu_le: 2026-11-14
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Ouverte le 14 novembre 2026, à la ligne 30 de la file des corrections de l'action
+    130 : jusque-là, le modèle ne servait aucune réversion de la CAVAMAC.
+  - >-
+    Les statuts d'avant 2011, au Bulletin officiel, pour les décès d'avant le
+    1er juillet 2011 ; la pension de l'adhérent sans sa minoration, que le moteur ne
+    sait pas rendre à la réversion ; le capital unique sous 1 500 points.
+  lectures:
+  - type: jorf
+    reference: >-
+      index JORF du dépôt, à jour au 11 novembre 2026 : arrêté du 23 juin 2011, annexe,
+      articles 18 et 21 à 25 (JORFARTI000024270173) ; arrêté du 28 mars 2014, annexe, II
+      (JORFARTI000028814573), qui fait partir la réversion au mois et non plus au
+      trimestre ; arrêté du 4 août 2023, annexe (JORFARTI000047977908), qui ne touche
+      pas aux articles 22 à 25 ; arrêté du 8 juillet 2025, annexe, I
+      (JORFARTI000051895020), le paiement jusqu'à la fin du mois du décès ; arrêté du 10
+      juillet 2026, annexe I, articles 11 à 14 (JORFARTI000054436046)
+    date: 2026-11-14
+  - type: autre
+    reference: >-
+      CAVAMAC, « La pension de réversion » : au régime complémentaire, « attribuée sans
+      condition de ressources à votre conjoint survivant âgé d'au moins 65 ans ans, sous
+      réserve de justifier d'une durée de mariage minimum de 2 ans » ; « aucune durée de
+      mariage n'est exigée si un enfant est issu du mariage » ; « Le remariage du
+      bénéficiaire ne suspend pas le versement de la pension de réversion RCO » ;
+      « calculé sur la base de 60 % de vos points acquis à la cessation d'activité. A ce
+      montant s'ajoutent éventuellement : la majoration pour enfants de 10 % […], la
+      majoration pour enfant handicapé à charge de 5 %, la majoration appliquée si vous
+      avez pris votre retraite au-delà de l'âge du taux plein » ; « Il n'est pas tenu
+      compte de la minoration » ; aucun exemple chiffré
+    date: 2026-11-14
+    url: https://www.cavamac.fr/je-suis-a-la-retraite/la-pension-de-reversion/
+code:
+  python: >-
+    droit/reversion.py : reversion, _mariage_dure, _part_du_survivant, _admis_ailleurs ;
+    scenarios/actuel.py : Reversions
+  javascript: >-
+    moteur/js/droit/reversion.js : reversion, mariageDure, partDuSurvivant,
+    admisAilleurs ; moteur/js/regimes.js : Reversions
+  parametres: >-
+    contenu.parametres de chaque version : portee, fiabilite, taux, age_minimum,
+    mariage_minimum_annees, ex_conjoints, majoration_reversible
+  tests: tests/test_reversion.py
+historique:
+- >-
+  2026-11-14 — née à la ligne 30 de la file des corrections de l'action 130 : la fiche
+  `cavamac_minoration_age_seul`, lue au droit le 5 novembre 2026, déclarait que le
+  modèle ne servait aucune réversion de la CAVAMAC, motif `non_portee` ; il en sert
+  depuis 60 % à 65 ans, dans les deux moteurs.
+effet: >-
+  Tout conjoint, ou conjoint divorcé, d'un agent général d'assurance qui décède depuis
+  le 1er juillet 2011. Agent parti au taux plein avec 14 984,97 € par an, mort en juin
+  2020, conjointe née en 1952 : 60 % de 14 984,97 €, 8 990,98 € par an, au lieu de
+  rien ; parti prorogé de 10 % avec 26 068,01 €, mort en juin 2030, conjointe de 1958 :
+  15 640,81 €.

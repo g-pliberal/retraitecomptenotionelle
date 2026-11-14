@@ -1807,7 +1807,7 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     const reversibles = parametres.majoration_sans_anticipation
       && majorationsSansAnticipation !== null ? majorationsSansAnticipation : majorations;
     // La durée du mariage au décès que la version demande, sauf enfant issu du
-    // mariage (`mariage_minimum_annees` : la CARCDSF, deux ans).
+    // mariage (`mariage_minimum_annees` : la CARCDSF et la CAVAMAC, deux ans).
     const servie = mariageDure(conjoint, deces, enfants, parametres.mariage_minimum_annees);
     const majoration = servie ? Number(parametres.majoration_reversible ?? 0.0)
       * ((reversibles ?? {})[regime] ?? 0.0) * part : 0.0;
