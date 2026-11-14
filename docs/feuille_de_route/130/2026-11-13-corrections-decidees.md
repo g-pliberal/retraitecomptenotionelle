@@ -12,6 +12,14 @@ d'ouvrir la suivante. La session qui corrige coche sa ligne (`- [x]`) et y ajout
 phrase : ce qui est corrigé, ou « limite déclarée » si le texte, relu, ne tranche pas.
 Chaque correction suit le test d'abord et la veille du droit, sur Fable 5.2.
 
+**Depuis le 14 novembre 2026, sans attendre GitHub.** Le propriétaire l'a décidé ce jour
+(« Applique le point 1 », note `135/2026-11-14-correction-sans-attendre-le-verdict.md`) :
+la session qui corrige rend compte dès son envoi sur `main`, sa suite rapide et les tests
+de sa zone verts, sans attendre le verdict de la suite complète, et la session
+d'aiguillage ouvre la suivante aussitôt. Chaque session lit ce verdict à son ouverture,
+puis avant son envoi (`.github/etat_suite.yaml` sur `origin/main`) : rouge, elle répare
+avant tout. La dernière ligne de la file attend, elle, le verdict de son envoi.
+
 **Hors de la file**, faute de décision : les points que le texte ne tranche pas (la Cipav
 en 2007 et ses anciens de la caisse des géomètres, la CAVEC, quatre à la CARMF, d'autres à
 la CPRN, la CAVP, la CARPIMKO et la CAVOM), qui restent des limites déclarées ; la CRPNPAC
