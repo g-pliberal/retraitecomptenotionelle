@@ -854,6 +854,16 @@ champs_periode:
       condition.
     defaut: null
 
+  surcote_premieres_annees:
+    description: >-
+      `par_age_seul` seulement : le nombre des premières années de cotisation
+      À CE RÉGIME dont les points, seuls, se majorent — « uniquement aux
+      points acquis au titre des trente premières années de cotisation à la
+      CIPAV » —, comptées de date à date depuis la première cotisation,
+      l'année où elles s'achèvent prise en entier : une de plus quand la
+      première est partielle. `null` : tous les points se majorent.
+    defaut: null
+
   surcote_trimestres_cotises:
     description: >-
       Avec `surcote_points` en `par_age_seul` seulement : ne compter que les

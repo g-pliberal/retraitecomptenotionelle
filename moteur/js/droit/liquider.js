@@ -313,6 +313,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       // Ce que vaut un point dans le montant, quand il a une valeur de
       // service : la part des points abattus s'y mesure.
       let serviceDesPoints = null;
+      // Le rendement des cotisations revalorisées, quand il y en a : la part
+      // des premières années que le report majore s'y mesure.
+      let rendementDesCotisations = null;
       // BARÈME DU TRIMESTRE : la pension minière est la durée, majorée du
       // coefficient de l'article 131-1, multipliée par la valeur du trimestre
       // de la date d'effet. Voir le Python.
@@ -411,6 +414,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           periode.points_de ?? code, Math.min(anneeLiquidation, derniereAnnee(regime)),
         );
         montant += cumul * rendement;
+        rendementDesCotisations = rendement;
         fiabiliteRegime = Math.min(fiabiliteRegime, fiabiliteRendement);
         details.push(
           `cotisations revalorisées ${formatFixe(cumul, 0, true)} € `
@@ -460,6 +464,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       // Les points qui gardent le coefficient pour âge, et ce coefficient,
       // quand il est plus sévère que celui des autres.
       let abattusALAge = null;
+      // Les cotisations que le report majore, quand il n'en majore qu'une
+      // part, et les années qui les portent.
+      let majorees = null;
       if (!ignorerPenaliteAge) {
         abattement = abattementPoints(
           moteur, periode, carriere, trimestres, requisReference, ageLiquidation,
@@ -478,9 +485,26 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
             abattusALAge = [abattus, pourAge];
           }
         }
+        // LE REPORT NE MAJORE QUE LES PREMIÈRES ANNÉES de cotisation à la
+        // Cipav : voir `premieresAnneesMajorees`. Le coefficient affiché est
+        // celui de la pension entière.
+        if (abattement > 1.0 && rendementDesCotisations !== null && montant > 0
+            && periode.surcote_premieres_annees !== null
+            && periode.surcote_premieres_annees !== undefined) {
+          majorees = premieresAnneesMajorees(moteur, periode, carriere, droits.cotisations, code);
+          if (majorees !== null) {
+            const part = Math.min(1.0, (majorees[0] * rendementDesCotisations) / montant);
+            abattement = 1.0 + (abattement - 1.0) * part;
+          }
+        }
         montant *= abattement;
       }
       let detail = formulePoints(details, abattement);
+      if (majorees !== null) {
+        detail += ", la majoration portant sur les seules cotisations des "
+          + `${periode.surcote_premieres_annees} premières années, de ${majorees[1]} `
+          + `à ${majorees[2]}`;
+      }
       if (abattusALAge !== null) {
         detail += `, dont ${formatFixe(abattusALAge[0], 2, true)} points de la tranche C `
           + `d'avant 2016 au coefficient pour âge ${formatFixe(abattusALAge[1], 4)}`;
@@ -3591,6 +3615,49 @@ export function surcotePoints(moteur, periode, carriere, trimestres, requis, age
     ecoules, Math.max(0, Math.ceil((palier - debut - 1e-9) * 4)),
   );
   return 1.0 + taux * avantPalier + tauxApres * (ecoules - avantPalier);
+}
+
+/**
+ * Les cotisations que le report majore quand la période ne majore que les
+ * points des premières années de cotisation au régime
+ * (`surcote_premieres_annees`) : à la Cipav, « uniquement aux points acquis
+ * au titre des trente premières années de cotisation » (statuts, article
+ * 3.15 ; décret n° 79-262, article 5-2, II). Le texte ne dit pas comment
+ * compter une première année incomplète : le décompte est le plus favorable
+ * à l'affilié, trente ans de date à date depuis la première cotisation,
+ * l'année où ils s'achèvent prise en entier — une année de plus quand la
+ * première est partielle. Rend `null` quand toutes les années en sont,
+ * sinon [les cotisations majorées, la première année, la dernière].
+ */
+export function premieresAnneesMajorees(moteur, periode, carriere, cotisations, code) {
+  const annees = [...new Set(
+    cotisations.filter(([regime]) => regime === code).map(([, annee]) => annee),
+  )].sort((a, b) => a - b);
+  if (annees.length === 0) {
+    return null;
+  }
+  let part = 0.0;
+  for (const ligne of carriere.lignesDe(annees[0])) {
+    if (ligne.cotise && coordonner.regimesDe(
+      moteur, ligne, ligne.annee,
+      moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee),
+      ligne.revenu, moteur.macro.plafond_securite_sociale.valeur(ligne.annee),
+    ).includes(code)) {
+      part += ligne.fraction_annee;
+    }
+  }
+  const nombre = periode.surcote_premieres_annees + (part < 1.0 - 1e-9 ? 1 : 0);
+  if (annees.length <= nombre) {
+    return null;
+  }
+  const derniere = annees[nombre - 1];
+  let majorees = 0.0;
+  for (const [regime, annee, montant] of cotisations) {
+    if (regime === code && annee <= derniere) {
+      majorees += montant;
+    }
+  }
+  return [majorees, annees[0], derniere];
 }
 
 /** Les deux taux du IV de l'article 16 — voir `surcotePoints`. */

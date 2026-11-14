@@ -22,6 +22,12 @@ effet: >-
   de calcul. Ce que le modèle ne sert pas, et ce qu'il sert à tort, `sources.a_relire`
   le dit : à la Cipav, une erreur (E9), qui vaut depuis le 1er janvier 2023 (E11) ; à la
   CARMF, deux ; à la CARCDSF, une (E10).
+  Corrigée le 14 novembre 2026 (décision du propriétaire du 13 novembre, ligne 14 de la
+  file `130/2026-11-13-corrections-decidees.md`) : l'erreur de la Cipav. Le report ne
+  majore plus que les points des trente premières années de cotisation
+  (`surcote_par_age_seul`, `surcote_premieres_annees`), au décompte le plus favorable à
+  l'affilié — née le 10 mars 1959, pension au 1er juillet 2027, un an de report :
+  24 000,52 € par an servis jusque-là, 23 451,33 € depuis, 549,19 € de trop.
   Corrigée le 14 novembre 2026 (décision du propriétaire du 13 novembre, ligne 5 de la
   file `130/2026-11-13-corrections-decidees.md`) : la première des deux erreurs de la
   CARMF. Jusque-là, le modèle faisait cotiser et acquérir les deux premières années
@@ -61,22 +67,25 @@ sources:
     Non portés : l'option pour la classe supérieure, les rachats de points, les
     cotisations volontaires, les dispenses et exonérations accordées sur demande, la
     fraction gérée en capitalisation de la CAVP, la section B, par classes, de la CPRN
-    (`cprn_complementaire.yaml`, `manque`) ; la condition de trente années
-    d'affiliation de la majoration pour report de la Cipav, qui ne porte que sur les
-    points de ces trente années, là où le modèle les majore tous ; le versement
-    forfaitaire unique des petites pensions. Porté, contrairement à ce que cette ligne
+    (`cprn_complementaire.yaml`, `manque`) ; le versement
+    forfaitaire unique des petites pensions. Portée depuis le 14 novembre 2026 : la
+    majoration pour report de la Cipav sur les seuls points des trente premières années
+    de cotisation, que le modèle étendait à tous (`surcote_premieres_annees`). Porté, contrairement à ce que cette ligne
     disait jusqu'au 6 novembre 2026 : l'inscription d'office en classe A la première
     année à la CAVEC (`classes_cotisation_epoques.yaml`, `classe_de_debut` de
     `cavec_complementaire`, rang 0, une année, depuis 2019).
   - >-
-    Erreur prouvée, déclarée et non corrigée (action 130, E9, 6 novembre 2026) : depuis
+    Erreur prouvée, déclarée (action 130, E9, 6 novembre 2026) et corrigée le
+    14 novembre 2026 (ligne 14 de la file, `surcote_premieres_annees`, au décompte le
+    plus favorable à l'affilié, le troisième ci-dessous ; ce qui suit est le constat
+    d'avant la correction) : depuis
     le 1er juillet 2026, l'article 5-2, II, du décret n° 79-262 (décret n° 2026-418,
     article 20, JORFARTI000054153655 ; article 30, « Le présent décret entre en vigueur
     le 1 er juillet 2026 ») majore « de 5% par année entière de prorogation » le compte
     de points de l'affilié de trente années d'affiliation qui diffère sa pension d'un à
     cinq ans au-delà de l'âge du a du 1° de l'article 5-1, et « Cette majoration
     s'applique uniquement aux points acquis au titre des trente premières années de
-    cotisation à la CIPAV » ; le modèle majore tous les points (`surcote_par_age_seul`,
+    cotisation à la CIPAV » ; le modèle majorait tous les points (`surcote_par_age_seul`,
     `cipav_complementaire.yaml`). Essai du 6 novembre 2026, née le 10 mars 1959,
     libérale de la Cipav au double du salaire moyen depuis 22 ans, en euros de 2026,
     cotisant de 1981 à la liquidation : à 68 ans et 3 mois, pension au 1er juillet 2027,
@@ -95,7 +104,8 @@ sources:
     trente ans comptés du 10 mars 1981, 2011 pris en entier, 549,19 € et 3 833,16 €.
     L'erreur se déclare au moins de 549,19 € par an pour un an de report, 3 833,16 €
     pour cinq, le montant qui tient sous les trois ; la lecture qu'appliquera la
-    correction (candidat 50) est au propriétaire. DU 1ER JANVIER 2023 AU 30 JUIN 2026,
+    correction (candidat 50) est au propriétaire, qui a retenu le 13 novembre 2026 la
+    plus favorable à l'affilié, la troisième, servie depuis le 14. DU 1ER JANVIER 2023 AU 30 JUIN 2026,
     LA MÊME ERREUR (action 130, E11, après R-E11) : l'article 3.15 des statuts de la
     Cipav, « Statuts Cipav au 01/01/2023 » que la caisse publie (relus le 6 novembre
     2026, SHA-256 e5034d618178585fdae444ec690247ef83c7e94d7e9ca741682fb98562093790) :
@@ -592,8 +602,9 @@ code:
     civiles de la CARCDSF (article 5), que les statuts de 2011 écrivaient déjà
     (`dispense_de_debut` des périodes de 2012 et d'après, `part: proportionnelle`) ; ce
     qu'il
-    écrit et que le modèle ne porte pas, ou porte à tort — la majoration pour report
-    de la Cipav, que `liquider_chaque_regime` étend à tous les points —,
+    écrit et que le modèle ne porte pas, ou portait à tort — la majoration pour report
+    de la Cipav, que `liquider_chaque_regime` étendait à tous les points jusqu'au
+    14 novembre 2026 —,
     `sources.a_relire` le dit.
   python: >-
     droit/acquerir.py : acquerir, dispense_de_debut, exemption_passe_l_age ;

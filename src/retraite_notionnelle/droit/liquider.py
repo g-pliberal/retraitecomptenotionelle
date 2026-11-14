@@ -808,6 +808,9 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             #: Ce que vaut un point dans le montant, quand il a une valeur de
             #: service : la part des points abattus s'y mesure.
             service_des_points: float | None = None
+            # Le rendement des cotisations revalorisées, quand il y en a : la
+            # part des premières années que le report majore s'y mesure.
+            rendement_des_cotisations: float | None = None
             # BARÈME DU TRIMESTRE : la pension minière est la durée, majorée
             # du coefficient de l'article 131-1, multipliée par la valeur du
             # trimestre de la date d'effet — l'une et l'autre lues dans
@@ -926,6 +929,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     min(annee_liquidation, derniere_annee(regime)),
                 )
                 montant += cumul * rendement
+                rendement_des_cotisations = rendement
                 fiabilite_regime = min(fiabilite_regime, fiabilite_rendement)
                 details.append(
                     f"cotisations revalorisées {cumul:,.0f} € "
@@ -976,6 +980,9 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             #: Les points qui gardent le coefficient pour âge, et ce
             #: coefficient, quand il est plus sévère que celui des autres.
             abattus_a_l_age: tuple[float, float] | None = None
+            # Les cotisations que le report majore, quand il n'en majore
+            # qu'une part, et les années qui les portent.
+            majorees: tuple[float, int, int] | None = None
             if not ignorer_penalite_age:
                 # Le coefficient d'anticipation multiplie le montant : sans
                 # lui, la formule affichée ne le retrouve pas — à dix ans
@@ -1007,8 +1014,25 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                         part = min(1.0, abattus * service_des_points / montant)
                         abattement = abattement * (1.0 - part) + pour_age * part
                         abattus_a_l_age = (abattus, pour_age)
+                # LE REPORT NE MAJORE QUE LES PREMIÈRES ANNÉES de cotisation à
+                # la Cipav : voir `premieres_annees_majorees`. Le coefficient
+                # affiché est celui de la pension entière.
+                if (abattement > 1.0 and rendement_des_cotisations is not None
+                        and montant > 0
+                        and periode.surcote_premieres_annees is not None):
+                    majorees = premieres_annees_majorees(
+                        moteur, periode, carriere, droits.cotisations, code)
+                    if majorees is not None:
+                        part = min(1.0, majorees[0] * rendement_des_cotisations / montant)
+                        abattement = 1.0 + (abattement - 1.0) * part
                 montant *= abattement
             detail = _formule_points(details, abattement)
+            if majorees is not None:
+                detail += (
+                    ", la majoration portant sur les seules cotisations des "
+                    f"{periode.surcote_premieres_annees} premières années, "
+                    f"de {majorees[1]} à {majorees[2]}"
+                )
             if abattus_a_l_age is not None:
                 detail += (
                     f", dont {abattus_a_l_age[0]:,.2f} points de la tranche C "
@@ -4808,6 +4832,40 @@ def age_de_la_duree_atteinte(moteur, periode: PeriodeRegime, carriere: Carriere,
         if trimestres - depuis + 1e-9 >= requis:
             return age
         trimestre += 1
+
+
+def premieres_annees_majorees(moteur, periode: PeriodeRegime, carriere: Carriere,
+                              cotisations, code: str) -> tuple[float, int, int] | None:
+    """Les cotisations que le report majore quand la période ne majore que
+    les points des premières années de cotisation au régime
+    (``surcote_premieres_annees``) : à la Cipav, « uniquement aux points
+    acquis au titre des trente premières années de cotisation » (statuts,
+    article 3.15 ; décret n° 79-262, article 5-2, II). Le texte ne dit pas
+    comment compter une première année incomplète : le décompte est le plus
+    favorable à l'affilié, trente ans de date à date depuis la première
+    cotisation, l'année où ils s'achèvent prise en entier — une année de plus
+    quand la première est partielle. Rend ``None`` quand toutes les années en
+    sont, sinon les cotisations majorées, la première année, la dernière."""
+    annees = sorted({annee for regime, annee, _ in cotisations if regime == code})
+    if not annees:
+        return None
+    part = 0.0
+    for ligne in carriere.lignes_de(annees[0]):
+        if ligne.cotise and code in coordonner.regimes_de(
+                moteur, ligne, ligne.annee,
+                moteur.affiliations.date_entree(carriere, ligne.affiliation, ligne.annee),
+                revenu=ligne.revenu,
+                plafond=moteur.macro.plafond_securite_sociale(ligne.annee)):
+            part += ligne.fraction_annee
+    nombre = periode.surcote_premieres_annees + (1 if part < 1.0 - 1e-9 else 0)
+    if len(annees) <= nombre:
+        return None
+    derniere = annees[nombre - 1]
+    majorees = 0.0
+    for regime, annee, montant in cotisations:
+        if regime == code and annee <= derniere:
+            majorees += montant
+    return majorees, annees[0], derniere
 
 
 def surcote_ircantec(moteur, periode: PeriodeRegime, carriere: Carriere,

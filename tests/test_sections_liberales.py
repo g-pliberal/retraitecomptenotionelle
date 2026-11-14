@@ -634,6 +634,62 @@ def test_chaque_version_de_la_seconde_tranche_de_la_cipav_est_portee_par_le_mode
     assert lues == 18
 
 
+#: Le report de la Cipav ne majore que « les points acquis au titre des trente
+#: premières années de cotisation » (statuts, article 3.15, depuis 2008 ;
+#: décret n° 79-262, article 5-2, II, LEGIARTI000054168515, depuis le
+#: 1er juillet 2026). Ligne 14 de la file des corrections (action 130), au
+#: décompte des trente ans le plus favorable à l'affilié : de date à date
+#: depuis la première cotisation, l'année où ils s'achèvent prise en entier.
+#: Libéral de la Cipav au double du salaire moyen, un an entier de report ;
+#: les cotisations revalorisées, année par année, sont celles des notes
+#: `130/2026-11-06-e10-decret-2026-418.md` et `…-e11-surcote-par-age-seul.md`,
+#: et chaque pension est posée à la main : (naissance, âge demandé, début) →
+#: (les années majorées, la pension).
+REPORT_DE_LA_CIPAV_AU_TEXTE = {
+    # Née le 10 mars 1949, libérale depuis 1971, pension au 1er janvier 2016.
+    # Le régime est institué « à compter du 1er janvier 1979 » (décret
+    # n° 79-262, article 1er, LEGIARTI000006767470) : 1979 est entière, les
+    # trente années vont de 1979 à 2008. 193 940,3125 × 0,062 = 12 024,2994 ;
+    # 0,05 × 0,062 × 137 466,6071 = 426,1465 ; 12 450,45 €.
+    ("1949-03-10", "66.75", "22"): ("de 1979 à 2008", 12450.45),
+    # Née le 10 mars 1957, cotisante depuis le 10 mars 1979, pension au
+    # 1er janvier 2026 : 1979 est partielle, trente ans de date à date
+    # s'achèvent le 9 mars 2009, 2009 prise en entier. 354 057,8613 × 0,061 =
+    # 21 597,5295 ; 0,05 × 0,061 × 177 676,4629 = 541,9132 ; 22 139,44 €.
+    ("1957-03-10", "68.75", "22"): ("de 1979 à 2009", 22139.44),
+    # Née le 10 mars 1959, cotisante depuis le 10 mars 1981, pension au
+    # 1er juillet 2027, sous le décret : de 1981 à 2011. 374 715,4414 × 0,061
+    # = 22 857,6419 ; 0,05 × 0,061 × 194 651,6538 = 593,6875 ; 23 451,33 €.
+    ("1959-03-10", "68.25", "22"): ("de 1981 à 2011", 23451.33),
+}
+
+
+def test_la_cipav_ne_majore_que_les_trente_premieres_annees_dans_les_deux_moteurs():
+    from outils_pont import servi_et_refait
+    from test_complementaires_liberales_a_leur_age import REQUETE
+
+    requete = {**REQUETE, "statut": "profession_liberale"}
+    # Le contrôle : cotisante depuis le 10 mars 1985, trente et une années
+    # civiles jusqu'à 2015, la première partielle : toutes sont majorées.
+    controle = ("1949-03-10", "66.75", "36")
+    cas = [{"cle": "|".join(cle),
+            "requete": {**requete, "naissance": cle[0], "liquidation": cle[1],
+                        "debut": cle[2]}}
+           for cle in (*REPORT_DE_LA_CIPAV_AU_TEXTE, controle)]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+
+    def pension(cle):
+        return {p["regime"]: p for p in servis["|".join(cle)]["actuel"]
+                ["pensions_par_regime"]}["cipav_complementaire"]
+
+    for cle, (annees, montant) in REPORT_DE_LA_CIPAV_AU_TEXTE.items():
+        servie = pension(cle)
+        assert servie["montant"] == pytest.approx(montant, abs=0.01), (cle, servie["detail"])
+        assert annees in servie["detail"], (cle, servie["detail"])
+    assert pension(controle)["detail"].endswith("coefficient de majoration 1.0500")
+
+
 # -- la CNAVPL ------------------------------------------------------------------
 
 

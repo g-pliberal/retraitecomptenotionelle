@@ -561,6 +561,11 @@ class PeriodeRegime:
     surcote_palier_age: float | None
     surcote_par_trimestre_apres_palier: float | None
     surcote_affiliation_minimale_trimestres: int | None
+    #: ``par_age_seul`` ne majore que les points de ces premières années de
+    #: cotisation au régime : la Cipav, « uniquement aux points acquis au
+    #: titre des trente premières années de cotisation » (statuts, article
+    #: 3.15 ; décret n° 79-262, article 5-2, II). ``None`` : tous les points.
+    surcote_premieres_annees: int | None
     #: ``par_age_seul`` ne compte que les trimestres COTISÉS depuis l'âge de
     #: départ du décompte, et non le temps écoulé : la CAVAMAC majore depuis
     #: 2024 « pour chaque année pleine cotisée dans le présent régime ».
@@ -2347,6 +2352,10 @@ class CatalogueRegimes:
                 surcote_affiliation_minimale_trimestres=(
                     None if p.get("surcote_affiliation_minimale_trimestres") is None
                     else int(p["surcote_affiliation_minimale_trimestres"])
+                ),
+                surcote_premieres_annees=(
+                    None if p.get("surcote_premieres_annees") is None
+                    else int(p["surcote_premieres_annees"])
                 ),
                 surcote_trimestres_cotises=bool(p.get("surcote_trimestres_cotises", False)),
                 surcote_depuis_la_duree=bool(p.get("surcote_depuis_la_duree", False)),

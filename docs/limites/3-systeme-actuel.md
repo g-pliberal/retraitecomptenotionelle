@@ -59,11 +59,12 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   CARPIMKO, à la CAVP, à la CPRN et à la CIPAV —, et bornés comme ils le
   sont : soixante-dix ans chez les médecins et, jusqu'en 2023, les notaires,
   vingt trimestres à la CAVEC et à la CARPIMKO, douze à la CAVP, années
-  pleines seulement à la CIPAV et à la CARMF d'avant 2017. Rien n'est servi
+  pleines seulement à la CIPAV, sur les seuls points de ses trente premières
+  années de cotisation, et à la CARMF d'avant 2017. Rien n'est servi
   avant le texte qui date chaque règle, et les taux que les fiches
   reportaient en arrière sans texte — <!--chiffre:illustration()-->0,75<!--/--> % à la CARPIMKO, <!--chiffre:illustration()-->1<!--/--> % à la CPRN —
   sont ceux des arrêtés. Ce que la fiche ne porte pas est dit dans ses
-  notes : la CIPAV ne majore que les points des trente premières années, la
+  notes : la
   CAVP borne les générations 1951 à 1955 à un ou deux ans, la CNAVPL sert
   <!--chiffre:valeur(data/reference/regimes/cnavpl.yaml:periodes.debut=2024;assiette=plafonnee.surcote_par_trimestre*100)-->1,25<!--/--> % aux liquidations de 2024 et non aux trimestres accomplis depuis
   septembre 2023, la MSA ramène à <!--chiffre:valeur(data/reference/regimes/msa_non_salaries.yaml:periodes.debut=2004.surcote_par_trimestre*100)-->0,75<!--/--> % l'escalier de <!--chiffre:illustration()-->3<!--/-->, <!--chiffre:illustration()-->4<!--/--> et <!--chiffre:illustration()-->5<!--/--> % d'avant

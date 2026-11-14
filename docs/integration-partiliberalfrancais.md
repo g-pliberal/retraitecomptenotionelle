@@ -153,7 +153,7 @@ Vérifié sur la copie en production et sur GitHub Pages.
   contenu de ce dépôt, sans transformation. Pas de serveur de calcul, pas de
   base, pas d'API : le modèle tourne dans le navigateur.
 - **Les chemins relatifs conservés** : `index.html` charge `moteur/style.css`,
-  `moteur/donnees.json` (<!--chiffre:poids(moteur/donnees.json)-->6 023<!--/--> Ko bruts,
+  `moteur/donnees.json` (<!--chiffre:poids(moteur/donnees.json)-->6 024<!--/--> Ko bruts,
   <!--chiffre:poids_comprime(moteur/donnees.json)-->819<!--/--> Ko compressés) et `moteur/js/*.js`,
   dont les étapes du droit dans `moteur/js/droit/`, relativement à sa propre
   adresse ; la page d'un dossier (`cout/index.html`) les charge un niveau plus

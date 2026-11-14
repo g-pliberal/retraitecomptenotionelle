@@ -39,7 +39,13 @@ effet: >-
   de la génération — rien pour les nés jusqu'au 30 juin 1951, jusqu'à 66 ans pour ceux du
   1er juillet 1951 à 1952, jusqu'à 68 ans pour ceux de 1953 à 1955, trois ans au-delà du
   taux plein ensuite (`age_surcote_maximum` de la table `cavp`) ; la Cipav, cinq années
-  au plus, comptées de 65 ans jusqu'en 2021 et de l'âge du taux plein ensuite ; la CPRN,
+  au plus, comptées de 65 ans jusqu'en 2021 et de l'âge du taux plein ensuite, sur les
+  seuls points des trente premières années de cotisation (`surcote_premieres_annees`),
+  au décompte le plus favorable à l'affilié : jusqu'au 14 novembre 2026, le modèle les
+  majorait tous — née le 10 mars 1949, pension au 1er janvier 2016, un an de report :
+  12 625,51 € servis, 12 450,45 € depuis, 175,07 € par an de trop ; corrigé ce jour
+  (action 130, décision du propriétaire du 13 novembre, ligne 14 de la file), dans les
+  deux moteurs ; la CPRN,
   les seuls trimestres d'exercice (`surcote_trimestres_cotises`). À la CAVEC, les taux
   changent aux pensions qui prennent effet depuis le 5 septembre 2018 (0,75 %) et depuis
   le 7 juillet 2025 (1,25 %), lendemains de la publication de deux arrêtés sans date
@@ -1410,13 +1416,23 @@ approximations:
     statuts, article 3.15 (versions de 2008 à 2026) ; décret n° 79-262, article 5-2, II
     (LEGIARTI000054168515)
   ecart: >-
-    Erreur déclarée, non corrigée (candidat, au propriétaire) : depuis 2013, le modèle
-    majore tous les points de la Cipav, le texte ceux des trente premières années de
-    cotisation (`sources.a_relire`, cas posés et calculs).
+    Point que le texte ne tranche pas, servi au plus favorable à l'affilié (décision du
+    propriétaire du 13 novembre 2026) : le décompte des trente premières années de
+    cotisation, dont le modèle majore seuls les points depuis le 14 novembre 2026
+    (`surcote_premieres_annees` ; jusque-là il les majorait tous, depuis 2013). Le texte
+    ne dit pas si une première année incomplète en est une, et l'article 3.6 d'avant
+    2023, qui définissait ces années, n'est pas lu : le modèle compte trente ans de date
+    à date depuis la première cotisation, l'année où ils s'achèvent prise en entier —
+    les trente premières années civiles cotisées, et une de plus quand la première est
+    partielle. Il ne compte ni les années d'avant 1979, cotisées au régime auquel celui
+    de 1979 se substitue (non lu), ni une année d'exonération sans cotisation, qui
+    avanceraient la fin des trente années.
   effet: >-
-    au moins 152,05 € par an de trop pour un an de report, pension au 1er janvier 2016 ;
-    537,96 € au 1er janvier 2026 ; depuis le 1er juillet 2026, l'écart déclaré dans
-    `decret_2026_418_liberaux`
+    sous les deux autres décomptes d'une première année partielle, le modèle majore
+    encore trop : née le 10 mars 1957, pension au 1er janvier 2026, 4,87 € par an (1980
+    à 2009) ou 27,83 € (1979 à 2008) ; née le 10 mars 1959, pension au 1er juillet 2027,
+    11,51 € ou 30,19 € ; compté depuis l'affiliation à la caisse (1971 pour la pension
+    de 2016 de `sources.a_relire`), davantage, non chiffré
 - version: [cipav_de_2008, cavec_statuts_de_2008, cavp_statuts_de_2011, cavec_fevrier_2012, cprn_2014]
   regime: cipav_complementaire
   textes: statuts, article 3.15, relu par différence ; arrêté du 3 octobre 2006
@@ -1556,9 +1572,11 @@ sources:
     2009) et celui que nomme R-E12, depuis l'affiliation à la caisse (à 22 ans dans les
     cas posés). Cas posés : libérale de la Cipav au double du salaire moyen depuis
     22 ans, en euros de 2026, un an entier de report au-delà de 65 ans ; 0,05 × 0,062 =
-    0,0031. (1) DE 2013 À 2022, ERREUR DÉCLARÉE, non corrigée (candidat, au
-    propriétaire) : le modèle majore tous les points (périodes de `cipav_complementaire`
-    depuis 2013), le texte ceux des trente premières années. Née le 10 mars 1949,
+    0,0031. (1) DEPUIS 2013, ERREUR CORRIGÉE le 14 novembre 2026 (décision du
+    propriétaire du 13 novembre, ligne 14 de la file, au décompte le plus favorable à
+    l'affilié) : le modèle majorait tous les points (périodes de `cipav_complementaire`
+    depuis 2013), le texte ceux des trente premières années, que le modèle majore seuls
+    depuis (`surcote_premieres_annees`). Le cas posé d'avant la correction. Née le 10 mars 1949,
     pension au 1er janvier 2016 : le modèle sert 193 940,3125 × 0,062 × 1,05 =
     12 625,51 €, dont 0,0031 × 193 940,3125 = 601,2150 € de majoration ; les cotisations
     revalorisées de la Cipav courent de 1979, première année du régime (1 558,2124 €), à
@@ -1566,7 +1584,11 @@ sources:
     426,1465 €, 175,07 € par an de trop ; de 1980 à 2009, 0,0031 × 143 335,1748 =
     444,3390 €, 156,88 € ; de 1979 à 2009, 0,0031 × 144 893,3872 = 449,1695 €, 152,05 € ;
     depuis l'affiliation, en 1971, les trente années s'arrêtent en 2000 et l'écart
-    grossit : au moins 152,05 € par an. (2) DE 2008 À 2012, ERREUR DÉCLARÉE, non
+    grossit : au moins 152,05 € par an. La correction sert 12 450,45 €, 175,07 € de
+    moins : le régime est institué « A compter du 1er janvier 1979 » (décret n° 79-262,
+    article 1er, LEGIARTI000006767470, relu le 14 novembre 2026), 1979 y est une année
+    entière, et les trente années vont de 1979 à 2008 ; les décomptes de 1980 à 2009 et
+    de 1979 à 2009 ne se posent que pour une première année partielle. (2) DE 2008 À 2012, ERREUR DÉCLARÉE, non
     corrigée (candidat, au propriétaire), sous une réserve : le modèle ne majore rien
     (périodes de 1979 à 2012, `surcote_par_trimestre: null`), le texte le fait. Née le
     10 mars 1945, pension au 1er janvier 2012 : le modèle sert 157 922,1741 × 0,062 =
@@ -1592,8 +1614,8 @@ sources:
     vingt-huit, 1979 à 2006 : 0 € ; celle de 2008, vingt-neuf : rien n'est dû, le modèle
     sert juste ; elles sont trente au 1er janvier 2009. Avant 2007 : les statuts de
     1979, au seul Bulletin officiel (question 22). Depuis 2023 et depuis le 1er juillet
-    2026, l'erreur de (1) est déclarée dans `decret_2026_418_liberaux`
-    (`sources.a_relire`).
+    2026, l'erreur de (1), corrigée le même jour, est dite dans
+    `decret_2026_418_liberaux` (`sources.a_relire`).
   - >-
     CPRN : trancher la lecture divergente de la borne de 70 ans par ce que la caisse publie
     d'autre de la règle qu'elle applique, sans la solliciter (docs/architecture.md, § 3.5).
@@ -2079,15 +2101,21 @@ code:
     `surcote_depuis_l_age_legal: true`, de l'âge d'ouverture de la période lu à la
     génération, l'âge légal (`ouvrir.age_ouverture_commun`, la CARMF et l'ASV du
     1er janvier au 29 mars 2017). Le second taux vaut du premier trimestre qui commence
-    à `surcote_palier_age` ou après.
+    à `surcote_palier_age` ou après. `surcote_premieres_annees` (la Cipav, trente) ne
+    majore que les cotisations de ces premières années de cotisation au régime, une de
+    plus quand la première est partielle (`liquider.premieres_annees_majorees`) : le
+    coefficient affiché est celui de la pension entière, et le détail nomme les années
+    majorées.
   python: >-
     droit/liquider.py : liquider_chaque_regime, abattement_points, surcote_points,
-    age_de_la_duree_atteinte, _trimestres_cotises_apres ; droit/ouvrir.py :
+    age_de_la_duree_atteinte, _trimestres_cotises_apres, premieres_annees_majorees ;
+    droit/ouvrir.py :
     age_taux_plein, age_ouverture_commun ; scenarios/actuel.py :
     AgesRegimes.age_surcote_maximum
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints, surcotePoints,
-    ageDeLaDureeAtteinte, trimestresCotisesApres ; moteur/js/droit/ouvrir.js :
+    ageDeLaDureeAtteinte, trimestresCotisesApres, premieresAnneesMajorees ;
+    moteur/js/droit/ouvrir.js :
     ageTauxPlein, ageOuvertureCommun ; moteur/js/regimes.js :
     AgesRegimes.ageSurcoteMaximum
   parametres: >-
@@ -2098,12 +2126,14 @@ code:
     surcote_age_maximum, surcote_affiliation_minimale_trimestres,
     surcote_trimestres_maximum, surcote_pas_trimestres, surcote_palier_age,
     surcote_par_trimestre_apres_palier, surcote_trimestres_cotises,
-    surcote_depuis_l_age_legal, date_effet, age_table, age_taux_plein ;
+    surcote_depuis_l_age_legal, surcote_premieres_annees, date_effet, age_table,
+    age_taux_plein ;
     legislation/ages_regimes.csv : age_surcote_maximum ;
     contenu.parametres de chaque version : surcote_par_trimestre, surcote_pas_trimestres,
     surcote_trimestres_maximum, surcote_age_debut,
     surcote_affiliation_minimale_trimestres, points_majores, surcote_palier_age,
     surcote_par_trimestre_apres_palier, surcote_age_maximum, surcote_trimestres_cotises,
     surcote_depuis_l_age_legal
-  tests: [tests/test_simulateur.py, tests/test_sections_sante.py, tests/test_oracle.py,
-    tests/js/moteur.test.js, tests/temoins/simulations.json]
+  tests: [tests/test_simulateur.py, tests/test_sections_sante.py,
+    tests/test_sections_liberales.py, tests/test_oracle.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

@@ -172,6 +172,7 @@ periodes:
     surcote_age_debut: 65
     surcote_trimestres_maximum: 20
     surcote_affiliation_minimale_trimestres: 120
+    surcote_premieres_annees: 30
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.0
@@ -218,9 +219,10 @@ periodes:
       pleines, depuis soixante-cinq ans : jusqu'au 31 décembre 2021,
       l'article 3.15 des statuts vise l'adhérent « âgé de 65 ans », et il
       borne le report « de 1 à 5 ans », cinq années au plus ; sous
-      condition de cent vingt trimestres dans le régime ; il majore TOUS
-      les points et non ceux des trente premières années, ce que rien
-      dans le modèle ne distingue. Aucun statut de la caisse ne date la
+      condition de cent vingt trimestres dans le régime ; il ne majore, depuis le 14 novembre 2026, que les
+      cotisations des trente premières années de cotisation
+      (`surcote_premieres_annees`), une de plus quand la première est
+      partielle : le décompte le plus favorable à l'affilié. Aucun statut de la caisse ne date la
       règle dans l'index : elle est servie depuis 2013, borne de
       période, et rien avant.
   - debut: 2022
@@ -240,6 +242,7 @@ periodes:
     surcote_pas_trimestres: 4
     surcote_trimestres_maximum: 20
     surcote_affiliation_minimale_trimestres: 120
+    surcote_premieres_annees: 30
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: plafonnee_3_pass
     taux_cotisation_retraite: 0.0
@@ -267,6 +270,7 @@ periodes:
     surcote_pas_trimestres: 4
     surcote_trimestres_maximum: 20
     surcote_affiliation_minimale_trimestres: 120
+    surcote_premieres_annees: 30
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: plafonnee
     taux_cotisation_retraite: 0.09
@@ -291,9 +295,10 @@ periodes:
       de base ». Le moteur retient 1,25 % par trimestre, par années
       pleines, depuis l'âge du taux plein lu à la génération, cinq années
       au plus (« de 1 à 5 ans »), sous condition de cent vingt trimestres
-      dans le régime ; il majore TOUS
-      les points et non ceux des trente premières années, ce que rien
-      dans le modèle ne distingue. Aucun statut de la caisse ne date la
+      dans le régime ; il ne majore, depuis le 14 novembre 2026, que les
+      cotisations des trente premières années de cotisation
+      (`surcote_premieres_annees`), une de plus quand la première est
+      partielle : le décompte le plus favorable à l'affilié. Aucun statut de la caisse ne date la
       règle dans l'index : elle est servie depuis 2013, borne de
       période, et rien avant.
   - debut: 2023
@@ -313,6 +318,7 @@ periodes:
     surcote_pas_trimestres: 4
     surcote_trimestres_maximum: 20
     surcote_affiliation_minimale_trimestres: 120
+    surcote_premieres_annees: 30
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_1_3_pass
     taux_cotisation_retraite: 0.22
@@ -336,9 +342,10 @@ periodes:
       de base ». Le moteur retient 1,25 % par trimestre, par années
       pleines, depuis l'âge du taux plein lu à la génération, cinq années
       au plus (« de 1 à 5 ans »), sous condition de cent vingt trimestres
-      dans le régime ; il majore TOUS
-      les points et non ceux des trente premières années, ce que rien
-      dans le modèle ne distingue. Aucun statut de la caisse ne date la
+      dans le régime ; il ne majore, depuis le 14 novembre 2026, que les
+      cotisations des trente premières années de cotisation
+      (`surcote_premieres_annees`), une de plus quand la première est
+      partielle : le décompte le plus favorable à l'affilié. Aucun statut de la caisse ne date la
       règle dans l'index : elle est servie depuis 2013, borne de
       période, et rien avant.
 
@@ -359,6 +366,7 @@ periodes:
     surcote_pas_trimestres: 4
     surcote_trimestres_maximum: 20
     surcote_affiliation_minimale_trimestres: 120
+    surcote_premieres_annees: 30
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_1_3_5_pass
     taux_cotisation_retraite: 0.22
@@ -376,9 +384,10 @@ periodes:
       de base ». Le moteur retient 1,25 % par trimestre, par années
       pleines, depuis l'âge du taux plein lu à la génération, cinq années
       au plus (« de 1 à 5 ans »), sous condition de cent vingt trimestres
-      dans le régime ; il majore TOUS
-      les points et non ceux des trente premières années, ce que rien
-      dans le modèle ne distingue. Aucun statut de la caisse ne date la
+      dans le régime ; il ne majore, depuis le 14 novembre 2026, que les
+      cotisations des trente premières années de cotisation
+      (`surcote_premieres_annees`), une de plus quand la première est
+      partielle : le décompte le plus favorable à l'affilié. Aucun statut de la caisse ne date la
       règle dans l'index : elle est servie depuis 2013, borne de
       période, et rien avant.
 
@@ -399,6 +408,7 @@ periodes:
     surcote_pas_trimestres: 4
     surcote_trimestres_maximum: 20
     surcote_affiliation_minimale_trimestres: 120
+    surcote_premieres_annees: 30
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: plafonnee
     taux_cotisation_retraite: 0.11
@@ -424,9 +434,10 @@ periodes:
       de base ». Le moteur retient 1,25 % par trimestre, par années
       pleines, depuis l'âge du taux plein lu à la génération, cinq années
       au plus (« de 1 à 5 ans »), sous condition de cent vingt trimestres
-      dans le régime ; il majore TOUS
-      les points et non ceux des trente premières années, ce que rien
-      dans le modèle ne distingue. Aucun statut de la caisse ne date la
+      dans le régime ; il ne majore, depuis le 14 novembre 2026, que les
+      cotisations des trente premières années de cotisation
+      (`surcote_premieres_annees`), une de plus quand la première est
+      partielle : le décompte le plus favorable à l'affilié. Aucun statut de la caisse ne date la
       règle dans l'index : elle est servie depuis 2013, borne de
       période, et rien avant.
   - debut: 2025
@@ -446,6 +457,7 @@ periodes:
     surcote_pas_trimestres: 4
     surcote_trimestres_maximum: 20
     surcote_affiliation_minimale_trimestres: 120
+    surcote_premieres_annees: 30
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_1_4_pass
     taux_cotisation_retraite: 0.21
@@ -466,8 +478,9 @@ periodes:
       de base ». Le moteur retient 1,25 % par trimestre, par années
       pleines, depuis l'âge du taux plein lu à la génération, cinq années
       au plus (« de 1 à 5 ans »), sous condition de cent vingt trimestres
-      dans le régime ; il majore TOUS
-      les points et non ceux des trente premières années, ce que rien
-      dans le modèle ne distingue. Aucun statut de la caisse ne date la
+      dans le régime ; il ne majore, depuis le 14 novembre 2026, que les
+      cotisations des trente premières années de cotisation
+      (`surcote_premieres_annees`), une de plus quand la première est
+      partielle : le décompte le plus favorable à l'affilié. Aucun statut de la caisse ne date la
       règle dans l'index : elle est servie depuis 2013, borne de
       période, et rien avant.
