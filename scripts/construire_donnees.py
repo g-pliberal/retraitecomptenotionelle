@@ -947,6 +947,9 @@ def _regles_des_sections(p) -> dict:
         "surcote_trimestres_cotises": p.surcote_trimestres_cotises or None,
         # La surcote de la CARPIMKO, depuis l'âge où la durée est atteinte.
         "surcote_depuis_la_duree": p.surcote_depuis_la_duree or None,
+        # La surcote de la CARMF et de l'ASV de janvier à mars 2017, depuis
+        # l'âge légal de la génération.
+        "surcote_depuis_l_age_legal": p.surcote_depuis_l_age_legal or None,
         # L'inapte de la CAVOM de 2016 à 2024, sans coefficient dès 62 ans.
         "age_sans_coefficient_de_l_inapte": p.age_sans_coefficient_de_l_inapte,
         # La carrière longue de la CAVP depuis 2024, à la première pente seule.

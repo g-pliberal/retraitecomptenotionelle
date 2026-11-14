@@ -1227,6 +1227,7 @@ periodes:
       (action 151).
   - debut: 2017
     fin: 2017
+    date_effet: [2017-01-01, 2017-03-30]
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -1239,7 +1240,7 @@ periodes:
     decote_par_trimestre: null
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
-    surcote_age_debut: 62
+    surcote_depuis_l_age_legal: surcote_par_age_seul
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
@@ -1256,12 +1257,16 @@ periodes:
       retraite », « réduit à 0,75 % par trimestre à partir du premier
       jour du trimestre civil suivant celui où le médecin atteint l'âge
       de 65 ans, sans pouvoir s'appliquer au-delà du premier jour du
-      trimestre civil suivant le soixante-dixième anniversaire ». Dès le
-      22 mars 2017, un arrêté (JORFARTI000034298521) remplace « après cet
-      âge » par « après l'âge de 62 ans », et le règlement approuvé le 10
-      juillet 2026 (LEGIARTI000054437501) l'écrit de même : la majoration
-      court de soixante-deux ans, quel que soit l'âge légal de la
-      génération (`surcote_age_debut: 62`).
+      trimestre civil suivant le soixante-dixième anniversaire ». « CET
+      ÂGE » EST L'ÂGE LÉGAL DE LA GÉNÉRATION, celui du premier alinéa de
+      L. 351-1 (D. 161-2-1-9 : 60 ans à 61 ans et 7 mois pour les nés
+      avant 1955), pour les pensions qui prennent effet du 1er janvier au
+      29 mars 2017 (`surcote_depuis_l_age_legal`, `date_effet`) : l'arrêté
+      du 22 mars 2017 (JORFARTI000034298521), publié le 29 et sans date
+      d'effet, ne remplace « après cet âge » par « après l'âge de 62
+      ans » que le 30 mars 2017, et la période de 2018 liquide depuis ce
+      jour. La fiche comptait de 62 ans dès le 1er janvier 2017 ; corrigé
+      le 14 novembre 2026 (action 130, ligne 13 de la file).
       LE RÉGIME, LUI, S'OUVRE À L'ÂGE LÉGAL DE LA GÉNÉRATION
       (`age_ouverture_par_generation`, relu le 14 octobre 2026) : la fiche
       ouvrait à soixante-deux ans tous ceux qui partaient depuis 2017, et
@@ -1271,6 +1276,7 @@ periodes:
       est plus haut.
   - debut: 2018
     fin: 2021
+    date_effet: [2017-03-30, 2022-01-01]
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation

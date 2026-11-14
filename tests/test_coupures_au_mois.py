@@ -184,7 +184,9 @@ def test_les_dates_d_effet_partagent_les_annees_sans_trou_ni_doublon():
                        # statuts de 2011, en vigueur le 1er juillet 2011
                        "cavamac_complementaire",
                        # article 15 des statuts récrit, en vigueur le 10 janvier 2024
-                       "cavp_complementaire"}
+                       "cavp_complementaire",
+                       # arrêté du 22 mars 2017, en vigueur le 30 mars 2017
+                       "carmf_complementaire", "asv_conventionnes"}
 
 
 @pytest.mark.parametrize("bornes,message", [

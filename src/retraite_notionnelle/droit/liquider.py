@@ -4664,7 +4664,9 @@ def surcote_points(moteur, periode: PeriodeRegime, carriere: Carriere,
     plein dans la limite de vingt trimestres » (CARPIMKO, art. 12 ter),
     « par trimestre plein de prorogation au-delà de cet âge, dans la limite
     maximale de 25 % » (CAVEC, art. 13). Le décompte part de
-    ``surcote_age_debut``, ou de l'âge du taux plein lu à la génération ;
+    ``surcote_age_debut``, ou de l'âge du taux plein lu à la génération —
+    de l'âge légal de la génération sous ``surcote_depuis_l_age_legal``, la
+    CARMF et l'ASV du 1er janvier au 29 mars 2017 — ;
     il s'arrête à ``surcote_age_maximum`` — le soixante-dixième
     anniversaire, chez les médecins et les notaires — et à
     ``surcote_trimestres_maximum`` ; il ne retient que des multiples de
@@ -4725,7 +4727,11 @@ def surcote_points(moteur, periode: PeriodeRegime, carriere: Carriere,
     if minimum is not None and trimestres_regime < minimum:
         return 1.0
     debut = periode.surcote_age_debut
-    if debut is None:
+    if periode.surcote_depuis_l_age_legal:
+        # « Après cet âge », celui du premier alinéa de L. 351-1 : l'âge légal
+        # de la génération (CARMF et ASV, du 1er janvier au 29 mars 2017).
+        debut = ouvrir.age_ouverture_commun(moteur, periode, carriere)
+    elif debut is None:
         debut = ouvrir.age_taux_plein(moteur, periode, carriere)
     if periode.surcote_depuis_la_duree:
         par_la_duree = age_de_la_duree_atteinte(moteur, periode, carriere,
@@ -4760,7 +4766,10 @@ def surcote_points(moteur, periode: PeriodeRegime, carriere: Carriere,
     palier = periode.surcote_palier_age
     if palier is None or periode.surcote_par_trimestre_apres_palier is None:
         return 1.0 + taux * ecoules
-    avant_palier = min(ecoules, max(0, int((palier - debut + 1e-9) * 4)))
+    # Le second taux vaut « à partir du premier jour du trimestre civil
+    # suivant celui où » l'âge du palier est atteint : le trimestre entamé
+    # avant lui reste au premier taux.
+    avant_palier = min(ecoules, max(0, math.ceil((palier - debut - 1e-9) * 4)))
     return (1.0
             + taux * avant_palier
             + periode.surcote_par_trimestre_apres_palier

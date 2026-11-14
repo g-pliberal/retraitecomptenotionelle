@@ -328,10 +328,11 @@ def test_chaque_version_de_la_carmf_est_portee_par_le_modele(
     statuts que le Journal officiel ne publie pas. Chaque premier du mois de
     1949 à 2040, la période qui liquide une pension prenant effet ce jour — ou
     celle de l'année du revenu — porte les paramètres que chaque version lit.
-    Les écarts que ces paramètres ne disent pas — l'âge légal de janvier à
-    mars 2017, le revenu de l'avant-dernière année — sont déclarés dans les
-    fiches ; la date d'effet au trimestre civil de la complémentaire, corrigée
-    le 14 novembre 2026, a son paramètre et ses essais
+    L'écart que ces paramètres ne disent pas — le revenu de l'avant-dernière
+    année — est déclaré dans la fiche ; l'âge légal de janvier à mars 2017,
+    corrigé le 14 novembre 2026, a son paramètre et ses essais
+    (`CARMF_AU_TEXTE_DE_JANVIER_A_MARS_2017`), comme la date d'effet au
+    trimestre civil de la complémentaire, corrigée le même jour
     (`tests/test_sections_liberales.py`)."""
     _chaque_version_est_portee(simulateur, regime, fiche, date_qui_decide, set(), 1949)
 
@@ -360,7 +361,40 @@ CARMF_AU_TEXTE = {
 }
 
 
-def test_la_carmf_sert_ses_coefficients_dans_les_deux_moteurs():
+#: Du 1er janvier au 29 mars 2017, les mêmes articles, dans la rédaction des
+#: arrêtés des 30 novembre et 1er décembre 2016 (JORFARTI000033521562,
+#: JORFARTI000033538061), majorent « après cet âge », celui du premier alinéa
+#: de L. 351-1 : l'âge légal de la génération (D. 161-2-1-9,
+#: LEGIARTI000025089933), non 62 ans, que l'arrêté du 22 mars 2017, en vigueur
+#: le 30 mars, écrit sans rétroagir (JORFARTI000034298521). Ligne 13 de la
+#: file des corrections (action 130), posée à la main : (naissance, âge
+#: demandé, et ses mois quand il ne s'écrit pas en décimales exactes).
+CARMF_AU_TEXTE_DE_JANVIER_A_MARS_2017 = {
+    # Née le 10 mars 1952 : 60 ans et 9 mois le 10 décembre 2012, le décompte
+    # part du 1er janvier 2013 ; la pension le 1er janvier 2017, avant ses 65
+    # ans : 16 trimestres × 1,25 % = 20 %.
+    ("1952-03-10", "64.75"): "coefficient de majoration 1.2000",
+    # La même, la pension le 1er mars 2017, dernière date d'effet de cette
+    # rédaction : deux mois de plus ne font pas un trimestre, 20 % encore.
+    ("1952-03-10", "64", "11"): "coefficient de majoration 1.2000",
+    # La même, la pension le 1er avril 2017, sous l'arrêté du 22 mars : de
+    # 62 ans, du 1er avril 2014 au 1er avril 2017, 12 × 1,25 % = 15 %.
+    ("1952-03-10", "65"): "coefficient de majoration 1.1500",
+    # Né le 10 mars 1948 : 60 ans le 10 mars 2008, du 1er avril 2008 au 1er
+    # avril 2013 (65 ans le 10 mars 2013), 20 × 1,25 % ; puis 15 × 0,75 %
+    # jusqu'au 1er janvier 2017 : 25 % + 11,25 % = 36,25 %.
+    ("1948-03-10", "68.75"): "coefficient de majoration 1.3625",
+    # Né le 10 août 1951 : 60 ans et 4 mois le 10 décembre 2011, du 1er
+    # janvier 2012 ; 65 ans le 10 août 2016, 0,75 % du 1er octobre 2016 ; la
+    # pension le 1er janvier 2017 : 19 × 1,25 % + 1 × 0,75 % = 24,5 %.
+    ("1951-08-10", "65", "4"): "coefficient de majoration 1.2450",
+}
+
+
+@pytest.mark.parametrize("au_texte", [
+    CARMF_AU_TEXTE, CARMF_AU_TEXTE_DE_JANVIER_A_MARS_2017,
+], ids=["depuis_le_30_mars_2017", "de_janvier_a_mars_2017"])
+def test_la_carmf_sert_ses_coefficients_dans_les_deux_moteurs(au_texte):
     from outils_pont import servi_et_refait
 
     requete = {
@@ -372,14 +406,16 @@ def test_la_carmf_sert_ses_coefficients_dans_les_deux_moteurs():
         "statut": "medecin_liberal",
     }
     cas = [{"cle": "|".join(cle),
-            "requete": {**requete, "naissance": cle[0], "liquidation": cle[1]}}
-           for cle in CARMF_AU_TEXTE]
+            "requete": {**requete, "naissance": cle[0], "liquidation": cle[1],
+                        **({"liquidation_mois": cle[2]} if len(cle) > 2 else {})}}
+           for cle in au_texte]
     servis, refus = servi_et_refait(cas)
     assert refus == {}, refus
-    for cle, coefficient in CARMF_AU_TEXTE.items():
+    for cle, coefficient in au_texte.items():
         pensions = {p["regime"]: p for p in servis["|".join(cle)]["actuel"]["pensions_par_regime"]}
         for regime in ("carmf_complementaire", "asv_conventionnes"):
-            assert coefficient in pensions[regime]["detail"], (cle, regime)
+            assert coefficient in pensions[regime]["detail"], (
+                cle, regime, pensions[regime]["detail"])
 
 
 # -- les écarts de la relecture R-E7, corrigés (action 130, E6-bis) ---------------

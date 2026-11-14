@@ -805,7 +805,8 @@ champs_periode:
       `par_age_seul` seulement : âge à partir duquel les trimestres écoulés
       comptent. `null` prend l'âge du taux plein de la fiche, lu à la
       génération quand `age_taux_plein_par_generation` l'est. La CARMF et l'ASV
-      comptent dès 62 ans (statuts du 30 novembre et du 1er décembre 2016), la
+      comptent dès 62 ans (arrêté du 22 mars 2017 ; de l'âge légal du 1er janvier
+      au 29 mars 2017, `surcote_depuis_l_age_legal`), la
       CAVEC dès 65 ans, la CARPIMKO, la CAVP et la CPRN dès l'âge du taux
       plein.
     defaut: null
@@ -869,6 +870,18 @@ champs_periode:
       légal de droit commun dès que la durée du régime de base est atteinte —,
       et non du seul âge du taux plein ? La CARPIMKO majore « au-delà de l'âge
       auquel elle aurait pu être liquidée sans abattement ».
+    renvoi: true
+    valeurs: [true]
+    defaut: false
+
+  surcote_depuis_l_age_legal:
+    description: >-
+      Avec `surcote_points` en `par_age_seul` seulement : le décompte part-il
+      de l'âge d'ouverture de la période, lu à la génération
+      (`age_ouverture_par_generation`), et non de `surcote_age_debut` ? La
+      CARMF et l'ASV majorent « après cet âge », celui du premier alinéa de
+      L. 351-1, pour les pensions prenant effet du 1er janvier au 29 mars
+      2017, avant « après l'âge de 62 ans » (arrêté du 22 mars 2017).
     renvoi: true
     valeurs: [true]
     defaut: false

@@ -3536,7 +3536,11 @@ export function surcotePoints(moteur, periode, carriere, trimestres, requis, age
     return 1.0;
   }
   let debut = periode.surcote_age_debut;
-  if (debut === null || debut === undefined) {
+  if (periode.surcote_depuis_l_age_legal) {
+    // « Après cet âge », celui du premier alinéa de L. 351-1 : l'âge légal
+    // de la génération (CARMF et ASV, du 1er janvier au 29 mars 2017).
+    debut = ouvrir.ageOuvertureCommun(moteur, periode, carriere);
+  } else if (debut === null || debut === undefined) {
     debut = ouvrir.ageTauxPlein(moteur, periode, carriere);
   }
   if (periode.surcote_depuis_la_duree) {
@@ -3580,8 +3584,11 @@ export function surcotePoints(moteur, periode, carriere, trimestres, requis, age
       || tauxApres === null || tauxApres === undefined) {
     return 1.0 + taux * ecoules;
   }
+  // Le second taux vaut « à partir du premier jour du trimestre civil
+  // suivant celui où » l'âge du palier est atteint : le trimestre entamé
+  // avant lui reste au premier taux.
   const avantPalier = Math.min(
-    ecoules, Math.max(0, Math.floor((palier - debut + 1e-9) * 4)),
+    ecoules, Math.max(0, Math.ceil((palier - debut - 1e-9) * 4)),
   );
   return 1.0 + taux * avantPalier + tauxApres * (ecoules - avantPalier);
 }

@@ -156,6 +156,8 @@ versions:
       decote_par_trimestre: null
       surcote_points: par_age_seul
       surcote_par_trimestre: 0.0125
+      surcote_age_debut: null
+      surcote_depuis_l_age_legal: true
       surcote_palier_age: 65
       surcote_par_trimestre_apres_palier: 0.0075
       surcote_age_maximum: 70
@@ -203,6 +205,7 @@ versions:
       surcote_points: par_age_seul
       surcote_par_trimestre: 0.0125
       surcote_age_debut: 62
+      surcote_depuis_l_age_legal: false
       surcote_palier_age: 65
       surcote_par_trimestre_apres_palier: 0.0075
       surcote_age_maximum: 70
@@ -278,6 +281,7 @@ versions:
       surcote_points: par_age_seul
       surcote_par_trimestre: 0.0125
       surcote_age_debut: 62
+      surcote_depuis_l_age_legal: false
       surcote_palier_age: 65
       surcote_par_trimestre_apres_palier: 0.0075
       surcote_age_maximum: 70
@@ -335,24 +339,27 @@ approximations:
     après l'âge de 62 ans »), en vigueur le 30 mars 2017
   ecart: >-
     Du 1er janvier au 29 mars 2017, la majoration court de l'âge du premier alinéa de
-    L. 351-1, l'âge légal de la génération ; le modèle la fait courir de 62 ans dès le
-    1er janvier 2017. Le texte ne tranche pas pour une pension prenant effet dans ces
-    trois mois et liquidée après le 29 mars, puisque « Ces coefficients sont déterminés
-    définitivement lors de la liquidation des droits » (cette phrase dit que les
-    coefficients ne se revoient pas, non quelle rédaction les fixe). La lecture du modèle
-    est la plus faible des deux : la fiche choisit ses versions par la date d'effet, et
-    l'arrêté du 22 mars 2017, sans date, n'entre en vigueur que le 30 mars, sans effet
-    rétroactif écrit ; elle reste possible, d'où le point non tranché. Né le 10 mars 1952, 60 ans et 9
-    mois le 10 décembre 2012 (D. 161-2-1-9, 3°), parti à 64 ans et 9 mois, la pension
-    le 1er janvier 2017 : première lecture, la règle de la date d'effet, 16 trimestres
-    du 1er janvier 2013, 20 %, 1,20 ; seconde, celle du modèle, 11 trimestres du 1er
-    avril 2014, 1,1375. Écart : 679,34 € par an à la complémentaire (12 364,01 €
-    servis), 873,34 € à l'ASV (15 894,81 €), soit 1 552,68 € par an, seuls les nés
-    avant 1955 dont la pension prend effet du 1er janvier au 1er mars 2017 étant
-    touchés.
+    L. 351-1, l'âge légal de la génération ; le modèle, qui la faisait courir de 62 ans
+    dès le 1er janvier 2017, la sert ainsi depuis le 14 novembre 2026
+    (`surcote_depuis_l_age_legal`, périodes coupées au 30 mars 2017). Le texte ne
+    tranche pas pour une pension prenant effet dans ces trois mois et liquidée après le
+    29 mars, puisque « Ces coefficients sont déterminés définitivement lors de la
+    liquidation des droits » (cette phrase dit que les coefficients ne se revoient pas,
+    non quelle rédaction les fixe). La lecture du modèle est la plus forte des deux : la
+    fiche choisit ses versions par la date d'effet, et l'arrêté du 22 mars 2017, sans
+    date, n'entre en vigueur que le 30 mars, sans effet rétroactif écrit ; l'autre, 62
+    ans pour qui est liquidé après le 29 mars, reste possible, d'où le point non
+    tranché. Né le 10 mars 1952, 60 ans et 9 mois le 10 décembre 2012 (D. 161-2-1-9,
+    3°), parti à 64 ans et 9 mois, la pension le 1er janvier 2017 : première lecture,
+    la règle de la date d'effet, celle du modèle, 16 trimestres du 1er janvier 2013,
+    20 %, 1,20 ; seconde, 11 trimestres du 1er avril 2014, 1,1375. Écart : 679,34 € par
+    an à la complémentaire (13 043,35 € servis), 873,34 € à l'ASV (16 768,15 €), soit
+    1 552,68 € par an, seuls les nés avant 1955 dont la pension prend effet du
+    1er janvier au 1er mars 2017 étant touchés. Ce que la caisse a servi ce
+    trimestre-là n'est pas lu.
   effet: >-
-    1 552,68 € par an (679,34 € à la complémentaire, 873,34 € à l'ASV), né le 10 mars 1952, la pension le 1er janvier 2017, si la première lecture vaut ; 0 € si la seconde.
-    Essai du 6 novembre 2026, dans les deux moteurs, requête du formulaire (médecin libéral, entré à 22 ans, deux salaires moyens, né le 10 du mois).
+    0 € si la première lecture vaut ; 1 552,68 € par an de trop (679,34 € à la complémentaire, 873,34 € à l'ASV), né le 10 mars 1952, la pension le 1er janvier 2017, si la seconde vaut pour une pension liquidée après le 29 mars 2017.
+    Essai du 14 novembre 2026, dans les deux moteurs, requête du formulaire (médecin libéral, entré à 22 ans, deux salaires moyens, né le 10 du mois).
 - version: [statuts_de_2017, statuts_de_mars_2017]
   textes: >-
     l'article des statuts qui fixe la date d'effet, que le Journal officiel ne publie
@@ -477,6 +484,12 @@ effet: >-
   trimestre civil de la complémentaire depuis le 18 juillet 2026 ; quatre points non
   tranchés, l'âge de l'ASV avant 2017, l'âge légal de janvier à mars 2017, la date
   d'effet d'avant 2026 et celle de l'ASV.
+  Corrigé le 14 novembre 2026 (ligne 13 de la même file) : du 1er janvier au 29 mars
+  2017, la majoration court de l'âge légal de la génération, « cet âge » des arrêtés
+  des 30 novembre et 1er décembre 2016, et non de 62 ans, que l'arrêté du 22 mars 2017
+  n'écrit que le 30 mars — née le 10 mars 1952, la pension le 1er janvier 2017 : 1,20
+  au lieu de 1,1375, 679,34 € par an de plus à la complémentaire, 873,34 € à l'ASV
+  (`surcote_depuis_l_age_legal`, `date_effet`, dans les deux moteurs).
   Corrigée le 14 novembre 2026 (action 130, décision du propriétaire du 13, ligne 12 de
   la file) : jusque-là, le modèle servait la complémentaire le premier du mois qui suit
   l'âge, avec la base, quand l'article 24 du règlement de 2026 la fixe « au premier jour
@@ -585,9 +598,9 @@ code:
   parametres: >-
     contenu.parametres de chaque version : age_ouverture_par_generation, age_taux_plein,
     duree_requise_trimestres, decote_par_trimestre, surcote_points,
-    surcote_par_trimestre, surcote_age_debut, surcote_palier_age,
-    surcote_par_trimestre_apres_palier, surcote_age_maximum ;
+    surcote_par_trimestre, surcote_age_debut, surcote_depuis_l_age_legal,
+    surcote_palier_age, surcote_par_trimestre_apres_palier, surcote_age_maximum ;
     regimes/carmf_complementaire.yaml : age_taux_plein, effet_au_trimestre_civil,
-    avantages_non_contributifs ;
-    regimes/asv_conventionnes.yaml : avantages_non_contributifs
+    date_effet, avantages_non_contributifs ;
+    regimes/asv_conventionnes.yaml : date_effet, avantages_non_contributifs
   tests: [tests/test_sections_sante.py, tests/test_sections_liberales.py, tests/js/moteur.test.js]

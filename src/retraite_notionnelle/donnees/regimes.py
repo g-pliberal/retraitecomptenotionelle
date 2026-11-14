@@ -572,6 +572,12 @@ class PeriodeRegime:
     #: abattement » (statuts de 2015, article 12 ter ; règlement de 2026,
     #: article 5).
     surcote_depuis_la_duree: bool
+    #: ``par_age_seul`` court de l'âge d'ouverture de la période, lu à la
+    #: génération, et non de ``surcote_age_debut`` : la CARMF et l'ASV
+    #: majorent « après cet âge », celui du premier alinéa de L. 351-1, du
+    #: 1er janvier au 29 mars 2017 (arrêtés des 30 novembre et 1er décembre
+    #: 2016), avant « après l'âge de 62 ans » (arrêté du 22 mars 2017).
+    surcote_depuis_l_age_legal: bool
     #: Plafond en euros de la majoration pour enfants, et année à laquelle il
     #: est publié. Le plafond suit ensuite la valeur de service du point.
     plafond_majoration_enfants: float | None
@@ -1950,6 +1956,7 @@ INTERRUPTEURS: dict[str, object] = {
     "decote_par_la_duree_seule": False,
     "surcote_trimestres_cotises": False,
     "surcote_depuis_la_duree": False,
+    "surcote_depuis_l_age_legal": False,
     "assiette_plancher": False,
     "assiette_forfaitaire": False,
     "points_au_prorata_des_cotisations": False,
@@ -2343,6 +2350,8 @@ class CatalogueRegimes:
                 ),
                 surcote_trimestres_cotises=bool(p.get("surcote_trimestres_cotises", False)),
                 surcote_depuis_la_duree=bool(p.get("surcote_depuis_la_duree", False)),
+                surcote_depuis_l_age_legal=bool(
+                    p.get("surcote_depuis_l_age_legal", False)),
                 plafond_majoration_enfants=(
                     None if p.get("plafond_majoration_enfants") is None
                     else float(p["plafond_majoration_enfants"])
