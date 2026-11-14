@@ -1695,6 +1695,13 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       // ne s'écrit pas, comme celle d'un régime qui ne sert rien.
       continue;
     }
+    if ((parametres.portee ?? true) === false) {
+      // Une version dont le texte n'est pas lu : la ligne le dit, sans montant.
+      lignes.set(regime, new ReversionRegime({
+        regime, base, montant: 0.0, motif: "non_portee",
+      }));
+      continue;
+    }
     const taux = Number(parametres.taux);
     // La part du survivant, partagée avec les précédents conjoints au prorata
     // des mariages, et la ligne arrêtée par son union nouvelle.
@@ -1799,10 +1806,14 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     // la version le dit.
     const reversibles = parametres.majoration_sans_anticipation
       && majorationsSansAnticipation !== null ? majorationsSansAnticipation : majorations;
-    const majoration = Number(parametres.majoration_reversible ?? 0.0)
-      * ((reversibles ?? {})[regime] ?? 0.0) * part;
-    lignes.set(regime, jusquAuRemariage(ligne(regime, base, taux * base * part + majoration,
-      "servie", fiche, version, taux, dateEffet, fiabilite, majoration).avec({ part }),
+    // La durée du mariage au décès que la version demande, sauf enfant issu du
+    // mariage (`mariage_minimum_annees` : la CARCDSF, deux ans).
+    const servie = mariageDure(conjoint, deces, enfants, parametres.mariage_minimum_annees);
+    const majoration = servie ? Number(parametres.majoration_reversible ?? 0.0)
+      * ((reversibles ?? {})[regime] ?? 0.0) * part : 0.0;
+    lignes.set(regime, jusquAuRemariage(ligne(regime, base,
+      servie ? taux * base * part + majoration : 0.0, servie ? "servie" : "mariage",
+      fiche, version, taux, dateEffet, fiabilite, majoration).avec({ part }),
     parametres, conjoint));
   }
 

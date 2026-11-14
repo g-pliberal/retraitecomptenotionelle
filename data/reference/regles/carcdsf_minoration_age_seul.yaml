@@ -827,21 +827,6 @@ approximations:
     19 si le trimestre entamé compte, 0,715 : 12 à 13,5 points de trop. Sous
     `PRESOMPTIONS_DECALEES=1`, à jour présumé, l'effet passe au 1er décembre 2023 et le
     modèle sert alors 0,715 (relecture R-E2, non rejouée dans la retouche du 5 novembre)
-- version: [statuts_de_2007, statuts_de_2011, statuts_de_2011_modifies_en_2012, statuts_de_2017, statuts_de_2024, reglement_de_2026]
-  textes: >-
-    statuts de 2007, articles 39 et 48 ; de 2011, articles 32 et 41 (51 depuis 2017) ;
-    règlement de 2026, articles 9, 18 et 19
-  ecart: >-
-    Le modèle ne sert aucune réversion de la CARCDSF : la ligne vaut zéro, motif
-    `non_portee`, comme pour la CAVEC, la CARPV et la CAVAMAC. Le texte sert au conjoint
-    survivant, à 65 ans, ou à 60 ans s'il est inapte, 60 % de la retraite complémentaire,
-    par anticipation dès 60 ans avec une minoration (par l'âge en 2007, 1,25 % par
-    trimestre manquant depuis 2011), et la majoration de 10 % pour trois enfants.
-  effet: >-
-    dentiste né le 1er juin 1950, liquidé à 65 ans, mort en juin 2020, conjointe née en
-    1952 : base 6 912,27 €, montant 0 dans les deux moteurs ; le texte, 60 %, 4 147,36 €
-    par an. Né le 1er juin 1960, mort en juin 2030, conjointe de 1958 : base 9 423,69 €,
-    montant 0 ; le texte, 5 654,21 €
 - version: [statuts_de_2017, statuts_de_2024, reglement_de_2026]
   textes: statuts de 2017 et de 2024, article 61 ; règlement de 2026, article 24
   ecart: >-
@@ -885,11 +870,15 @@ effet: >-
   130) : sept versions, les statuts de 2007 en vigueur le 11 octobre 2007, présumés
   avant, ceux de 2011 le 1er juillet 2011, leurs bornes le 22 juillet 2012, les âges
   écrits le 25 décembre 2017, l'article 35 récrit le 10 janvier 2024, le règlement le
-  18 juillet 2026 ; ni l'inapte et les catégories sans minoration, ni la réversion ne
+  18 juillet 2026 ; ni l'inapte et les catégories sans minoration ne
   sont servis, ni les statuts de 2007 avant 2008, ni ceux de 2011 au premier semestre,
   ni ceux de 2017 du 1er au 9 janvier 2024 ;
   la majoration se compte au temps, non à l'exercice libéral par trimestre civil, et à
   1,25 % les trimestres d'avant 2024.
+  Corrigée le 14 novembre 2026 (décision du propriétaire du 13 novembre, ligne 4 de la
+  file de l'action 130) : jusque-là, le modèle ne servait aucune réversion de la CARCDSF,
+  motif `non_portee` ; il en sert depuis 60 % au conjoint de 65 ans, dans les deux
+  moteurs (fiche `reversion_carcdsf`, qui en déclare les limites).
 sources:
   lu_le: 2026-11-05
   prochaine_relecture: 2027-03-31

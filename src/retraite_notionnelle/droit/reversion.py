@@ -44,7 +44,12 @@ applique à chaque régime la version de sa fiche que les dates choisissent :
   plafonds annuels de la Sécurité sociale, que les réversions des régimes de
   base comptent aussi, et le ménage du survivant qui vit en couple, sous le
   même plafond ; pour un décès d'avant 2013, sa ligne dit qu'elle n'est pas
-  portée.
+  portée ;
+* la complémentaire des chirurgiens-dentistes et des sages-femmes
+  (``reversion_carcdsf``) : 60 %, à soixante-cinq ans, au conjoint marié deux
+  ans au décès, sauf enfant, partagée avec les précédents conjoints non
+  remariés, perdue au remariage ; pour un décès d'avant le 11 octobre 2007,
+  sa ligne dit qu'elle n'est pas portée.
 
 Les autres régimes n'ont pas encore de fiche : leur ligne le dit, sans montant.
 
@@ -1827,6 +1832,11 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             # Un droit direct versé en capital ne laisse rien à reverser : la
             # ligne ne s'écrit pas, comme celle d'un régime qui ne sert rien.
             continue
+        if parametres.get("portee", True) is False:
+            # Une version dont le texte n'est pas lu : la ligne le dit, sans
+            # montant.
+            lignes[regime] = ReversionRegime(regime, base, 0.0, "non_portee")
+            continue
         taux = float(parametres["taux"])
         # La part du survivant, partagée avec les précédents conjoints au
         # prorata des mariages, et la ligne arrêtée par son union nouvelle.
@@ -1920,11 +1930,16 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         reversibles = (majorations_sans_anticipation
                        if parametres.get("majoration_sans_anticipation")
                        and majorations_sans_anticipation is not None else majorations)
+        # La durée du mariage au décès que la version demande, sauf enfant issu
+        # du mariage (``mariage_minimum_annees`` : la CARCDSF, deux ans).
+        servie = _mariage_dure(conjoint, deces, enfants,
+                               parametres.get("mariage_minimum_annees"))
         majoration = (float(parametres.get("majoration_reversible") or 0.0)
-                      * (reversibles or {}).get(regime, 0.0) * part)
+                      * (reversibles or {}).get(regime, 0.0) * part) if servie else 0.0
         lignes[regime] = _jusqu_au_remariage(replace(
-            ligne(regime, base, taux * base * part + majoration, "servie", fiche, version,
-                  taux, date_effet, fiabilite),
+            ligne(regime, base, taux * base * part + majoration if servie else 0.0,
+                  "servie" if servie else "mariage", fiche, version, taux, date_effet,
+                  fiabilite),
             majoration=majoration, part=part), parametres, conjoint)
 
     # Le plafond de ressources est un : les réversions des régimes alignés se

@@ -1,0 +1,328 @@
+schema_version: 1
+id: reversion_carcdsf
+intitule: >-
+  Retraite de réversion du régime complémentaire de la CARCDSF (statuts de 2007,
+  articles 39 à 49 ; statuts de 2011, articles 32 à 42 ; règlement de 2026, articles 9
+  à 19) : 60 % de la retraite complémentaire du chirurgien-dentiste ou de la sage-femme,
+  au conjoint survivant de 65 ans marié depuis deux ans au moins, sauf enfant issu du
+  mariage ; partagée avec les précédents conjoints divorcés non remariés, perdue au
+  remariage, majorée de 10 % pour trois enfants. Sans condition de ressources.
+domaine: reversion
+regimes:
+- carcdsf_complementaire
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- conjoint.deces
+- union.debut, d'un mariage, et union.fin, pour l'ex-conjoint divorcé ; les précédents
+  conjoints de l'affilié, leur mariage, leur divorce et leur remariage, que le partage
+  au prorata des mariages lit
+- la naissance du survivant, qui dit son âge, et l'union nouvelle qu'il forme
+- les enfants de l'affilié, que le modèle tient pour issus du mariage
+- la retraite complémentaire de l'affilié décédé, et sa majoration pour trois enfants
+ecrit:
+- la retraite de réversion du survivant au régime complémentaire de la CARCDSF
+dates_qui_decident:
+- conjoint.deces
+# Les versions forment un partage de la date du décès (§ 4.1), comme celles de
+# la complémentaire des indépendants. Les trois textes lus disent la même règle
+# pour ce que le modèle sert : 60 %, à 65 ans, deux ans de mariage sauf enfant,
+# le partage avec les précédents conjoints non remariés, la perte au remariage,
+# la bonification de 10 %. Ils ne diffèrent que par la minoration de la
+# réversion anticipée, que le modèle ne sert pas (voir les approximations). Le
+# règlement de 1955, d'avant les statuts de 2007, n'est pas lu : le moteur ne
+# sert pas la réversion d'un décès d'avant le 11 octobre 2007 (`portee: false`).
+versions:
+- id: avant_octobre_2007
+  statut: supposee
+  hypothese: >-
+    le règlement approuvé par l'arrêté du 6 janvier 1955, que l'arrêté du 1er octobre
+    2007 abroge, et ses modifications de 1984, 1985, 1992 et 1997 ne sont à l'index du
+    Journal officiel que par des notices (fiche `carcdsf_minoration_age_seul`) : le
+    moteur ne sert pas la réversion d'un décès d'avant le 11 octobre 2007, et sa ligne
+    le dit
+  fiabilite: estimee
+  bornes:
+    conjoint.deces: [null, 2007-10-11]
+  contenu:
+    droit: la réversion du règlement de 1955, que nul texte lu ne dit
+    parametres:
+      portee: false
+      fiabilite: estimee
+  exemples: aucun trouvé
+- id: statuts_de_2007
+  statut: lue
+  textes:
+  - id: JORFARTI000002063756
+    article: >-
+      statuts du régime complémentaire de la Caisse autonome de retraite des
+      chirurgiens-dentistes, annexe de l'arrêté du 1er octobre 2007, articles 39 à 49
+    en_vigueur: 2007-10-11
+    publie_le: 2007-10-10
+    citation: >-
+      « Le conjoint survivant d'un chirurgien-dentiste qui, au moment de son décès,
+      était allocataire ou remplissait les conditions requises pour l'ouverture d'un
+      droit à retraite reçoit à 65 ans ou à partir de 60 ans en cas d'inaptitude au
+      travail, une retraite de réversion du régime complémentaire. Le conjoint survivant
+      peut, à partir de l'âge de 60 ans, demander la liquidation de sa retraite de
+      réversion par anticipation selon les dispositions prévues à l'article 20 des
+      présents statuts. » (article 39) ; « La retraite de réversion n'est accordée au
+      conjoint survivant que si la date du mariage a précédé de deux ans au moins la
+      date du décès. Toutefois, aucune condition de durée de mariage ne sera exigée s'il
+      existe un enfant issu du mariage ou, et ceci sous réserve de l'approbation du
+      conseil d'administration, si le décès a pour cause un fait subit et imprévisible.
+      La retraite de réversion est supprimée en cas de remariage. » (article 40) ;
+      « L'ex-conjoint divorcé non remarié est assimilé à un conjoint survivant pour
+      l'application des articles 39 et 40. » (article 41) ; « La part de chaque
+      bénéficiaire est calculée au prorata de la durée respective de chaque mariage.
+      Cette durée est calculée de date à date. » (article 42) ; « Le conjoint survivant
+      du chirurgien-dentiste retraité a droit à une retraite de réversion égale à 60 %
+      de la retraite complémentaire versée au chirurgien-dentiste, dans les conditions
+      prévues aux articles 18 à 25 des présents statuts. » (article 48) ; « La
+      bonification de 10 % pour enfants à charge élevés, mentionnée à l'article 23,
+      s'applique aux pensions de réversion versées au conjoint survivant ainsi qu'aux
+      ex-conjoints divorcés non remariés, s'ils remplissent les conditions dudit
+      article. » (article 49)
+  nee_de: JORFARTI000002063756
+  bornes:
+    conjoint.deces: [2007-10-11, 2011-07-01]
+  contenu:
+    droit: >-
+      60 % de la retraite complémentaire versée au chirurgien-dentiste ; la bonification
+      de 10 % pour trois enfants s'y applique
+    beneficiaire: >-
+      le conjoint survivant, et l'ex-conjoint divorcé non remarié ; entre plusieurs, un
+      partage au prorata de la durée de chaque mariage, de date à date
+    conditions: >-
+      65 ans, 60 ans en cas d'inaptitude au travail, ou dès 60 ans par anticipation,
+      minorée selon l'article 20 ; un mariage antérieur de deux ans au moins au décès,
+      sauf enfant issu du mariage ; supprimée en cas de remariage ; aucune condition de
+      ressources
+    parametres:
+      taux: 0.60
+      age_minimum: 65
+      mariage_minimum_annees: 2
+      ex_conjoints: non_remaries
+      perte_au_remariage: [mariage]
+      majoration_reversible: 0.60
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: statuts_de_2011
+  statut: lue
+  textes:
+  - id: JORFARTI000023909792
+    article: >-
+      statuts du régime d'assurance vieillesse complémentaire de la section
+      professionnelle des chirurgiens-dentistes et des sages-femmes, annexe de l'arrêté
+      du 13 avril 2011, articles 32 à 42
+    en_vigueur: 2011-07-01
+    publie_le: 2011-04-27
+    citation: >-
+      « Le conjoint survivant d'un adhérent qui, au moment de son décès, était
+      allocataire ou remplissait les conditions requises pour l'ouverture d'un droit à
+      retraite reçoit à 65 ans ou à partir de 60 ans en cas d'inaptitude au travail une
+      retraite de réversion du régime complémentaire. Le conjoint survivant peut, à
+      partir de l'âge de 60 ans, demander la liquidation de sa retraite de réversion par
+      anticipation, avec application d'un coefficient de minoration de 1,25 % par
+      trimestre manquant entre la date d'entrée en jouissance de la pension de réversion
+      à l'âge de 65 ans et la date de prise d'effet de la pension de réversion. »
+      (article 32) ; « La retraite de réversion n'est accordée au conjoint survivant que
+      si la date du mariage a précédé de deux ans au moins la date du décès. Toutefois,
+      aucune condition de durée de mariage ne sera exigée s'il existe un enfant issu du
+      mariage ou, et ceci sous réserve de l'approbation du conseil d'administration, si
+      le décès a pour cause un fait subit et imprévisible. La retraite de réversion est
+      supprimée en cas de remariage. » (article 33) ; « L'ex-conjoint divorcé non remarié
+      est assimilé à un conjoint survivant pour l'application des articles 32 et 33. »
+      (article 34) ; « La part de chaque bénéficiaire est calculée au prorata de la durée
+      respective de chaque mariage. Cette durée est calculée de date à date. » (article
+      35) ; « Le conjoint survivant de l'adhérent retraité a droit à une retraite de
+      réversion égale à 60 % de la retraite complémentaire versée ou qui aurait été
+      versée au titulaire, dans les conditions prévues aux articles 17 à 21 des présents
+      statuts. » (article 41) ; « La bonification de 10 % pour enfants à charge élevés,
+      mentionnée à l'article 22, s'applique aux pensions de réversion versées au
+      conjoint survivant ainsi qu'aux ex-conjoints divorcés non remariés, s'ils
+      remplissent les conditions dudit article. » (article 42)
+  nee_de: JORFARTI000023909792
+  bornes:
+    conjoint.deces: [2011-07-01, 2026-07-18]
+  contenu:
+    droit: >-
+      60 % de la retraite complémentaire versée ou qui aurait été versée au titulaire ;
+      la bonification de 10 % pour trois enfants s'y applique
+    beneficiaire: la version statuts_de_2007
+    conditions: >-
+      celles de statuts_de_2007 ; la réversion anticipée, dès 60 ans, minorée de 1,25 %
+      par trimestre manquant jusqu'à 65 ans
+    parametres:
+      taux: 0.60
+      age_minimum: 65
+      mariage_minimum_annees: 2
+      ex_conjoints: non_remaries
+      perte_au_remariage: [mariage]
+      majoration_reversible: 0.60
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: reglement_de_2026
+  statut: lue
+  textes:
+  - id: JORFARTI000054435749
+    article: >-
+      règlement du régime d'assurance vieillesse complémentaire des chirurgiens-dentistes
+      et des sages-femmes, annexe I de l'arrêté du 10 juillet 2026, articles 9 à 19
+    en_vigueur: 2026-07-18
+    publie_le: 2026-07-17
+    citation: >-
+      « Le conjoint survivant d'un affilié qui, au moment de son décès, était allocataire
+      ou remplissait les conditions requises pour l'ouverture d'un droit à retraite
+      reçoit à 65 ans ou à partir de 60 ans en cas d'inaptitude au travail, une retraite
+      de réversion du régime complémentaire. » (article 9) ; « La retraite de réversion
+      n'est accordée au conjoint survivant que si la date du mariage a précédé de deux
+      ans au moins la date du décès. » et « La retraite de réversion est supprimée en cas
+      de remariage. » (article 10) ; « L'ex-conjoint divorcé non remarié est assimilé à
+      un conjoint survivant pour l'application des articles 9 et 10. » (article 11) ;
+      « Le conjoint survivant de l'affilié retraité a droit à une retraite de réversion
+      égale à 60 % de la retraite complémentaire versée ou qui aurait été versée au
+      titulaire, dans les conditions prévues aux articles 1 à 4 du présent règlement. »
+      (article 18) ; « La bonification de 10 % pour enfants à charge élevés, mentionnée à
+      l'article 5, s'applique aux pensions de réversion versées au conjoint survivant
+      ainsi qu'aux ex-conjoints divorcés non remariés, s'ils remplissent les conditions
+      dudit article. » (article 19)
+  nee_de: JORFARTI000054435749
+  bornes:
+    conjoint.deces: [2026-07-18, null]
+  contenu:
+    droit: la version statuts_de_2011
+    beneficiaire: la version statuts_de_2007
+    conditions: celles de statuts_de_2011
+    parametres:
+      taux: 0.60
+      age_minimum: 65
+      mariage_minimum_annees: 2
+      ex_conjoints: non_remaries
+      perte_au_remariage: [mariage]
+      majoration_reversible: 0.60
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations:
+- version: [avant_octobre_2007]
+  ecart: >-
+    la réversion d'un décès d'avant le 11 octobre 2007 n'est pas servie : sa ligne le
+    dit (`non_portee`)
+  effet: non mesuré
+- ecart: >-
+    la version se choisit à la date du décès, non à celle où la réversion prend effet :
+    le survivant d'un décès d'avant le 11 octobre 2007 qui atteint 65 ans sous les
+    statuts de 2007 ou de 2011 n'est pas servi, quand ces statuts lui ouvriraient sans
+    doute le droit
+  effet: non mesuré
+- ecart: >-
+    le modèle sert la réversion à 65 ans, au premier jour du mois qui suit : ni dès 60
+    ans au survivant inapte au travail, ni par anticipation dès 60 ans — minorée par
+    l'âge selon l'article 20 des statuts de 2007, de 1,25 % par trimestre manquant
+    depuis le 1er juillet 2011 —, que le survivant demande et que la saisie ne dit pas
+  effet: >-
+    jusqu'à cinq ans de réversion pour le survivant inapte de 60 ans ; pour l'anticipation,
+    cinq ans d'une réversion minorée de 25 % contre une réversion entière ensuite ; non
+    mesuré
+- ecart: >-
+    la bonification de 10 % est celle de l'affilié, reversée à 60 % : le modèle tient
+    ses enfants pour ceux du survivant, quand le texte la sert au survivant qui remplit
+    lui-même les conditions — la caisse dit « si le conjoint a eu au moins 3 enfants
+    avec le titulaire ». Du 11 octobre au 31 décembre 2007, le modèle ne sert pas la
+    bonification à l'affilié (fiche `carcdsf_minoration_age_seul`), ni donc à son
+    survivant
+  effet: 10 % de la réversion ; non mesuré
+- ecart: >-
+    tout enfant déclaré lève la condition de deux ans de mariage, quand le texte demande
+    un enfant « issu du mariage » ; le décès de « cause […] subit et imprévisible », qui
+    la lève aussi sous réserve de l'approbation du conseil d'administration, n'est pas
+    une donnée du modèle
+  effet: non mesuré
+- ecart: >-
+    le partage au prorata des mariages lit les précédents conjoints que la saisie
+    déclare, deux au plus, et se fige au décès ; le droit recouvré par le survivant
+    remarié en cas de nouveau veuvage ou de nouveau divorce (article 37 des statuts de
+    2011) n'est pas servi ; la réversion provisoire du conjoint d'un affilié disparu
+    (article 38) non plus ; la condition d'être à jour des cotisations (article 40),
+    non vérifiée
+  effet: non mesuré
+- ecart: >-
+    la réversion prend effet au premier jour du mois qui suit le décès ou les 65 ans,
+    quand le règlement de 2026 sert les allocations « à partir du premier jour du
+    trimestre civil qui suit la date de demande » (article 24, fiche
+    `carcdsf_minoration_age_seul`) ; les montants sont ceux de l'année du décès
+  effet: un ou deux mois de réversion ; non mesuré
+- version: [statuts_de_2007]
+  ecart: >-
+    les statuts de 2007, écrits pour les seuls chirurgiens-dentistes, sont servis aussi
+    au survivant d'une sage-femme, entrée à la caisse en 2009 : les statuts de la
+    CARSAF ne sont pas lus
+  effet: non mesuré
+- ecart: >-
+    la réversion du régime des prestations complémentaires de vieillesse des
+    chirurgiens-dentistes et des sages-femmes, que la caisse sert aussi à 60 %, n'est
+    pas portée : sa ligne le dit (`non_portee`)
+  effet: 60 % de la pension de ce régime ; non mesuré
+presomptions:
+  reversion_demandee_dans_l_annee: >-
+    la date d'effet, au premier jour du mois qui suit le décès, ou qui suit les 65 ans
+    du survivant
+  deces_apres_le_depart: >-
+    la réversion que la page montre sans décès déclaré, pour un décès supposé juste
+    après le départ, ou cette année pour qui est déjà parti
+sources:
+  lu_le: 2026-11-14
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Ouverte le 14 novembre 2026, à la ligne 4 de la file des corrections de l'action
+    130 : jusque-là, le modèle ne servait aucune réversion de la CARCDSF.
+  - >-
+    Le règlement de 1955 et ses modifications, au Bulletin officiel, et les statuts de la
+    CARSAF, pour les décès d'avant le 11 octobre 2007 et les sages-femmes d'avant le
+    1er juillet 2011 ; l'article 20 des statuts de 2007, pour la minoration de la
+    réversion anticipée ; la date d'effet que la caisse retient.
+  lectures:
+  - type: jorf
+    reference: >-
+      index JORF du dépôt, à jour au 11 novembre 2026 : arrêté du 1er octobre 2007,
+      annexe, articles 39 à 50 (JORFARTI000002063756) ; arrêté du 13 avril 2011, annexe,
+      articles 32 à 43 (JORFARTI000023909792) ; arrêté du 10 juillet 2026, annexe I,
+      articles 9 à 19 (JORFARTI000054435749) ; les arrêtés du 9 juillet 2012
+      (JORFARTI000026208364) et du 22 décembre 2017 (JORFARTI000036251928) ne disent
+      rien de la réversion, celui du 27 décembre 2023 (JORFARTI000048880707) n'y touche
+      que pour le régime des prestations complémentaires de vieillesse (article 35 bis)
+    date: 2026-11-14
+  - type: autre
+    reference: >-
+      CARCDSF, « Condition d'attribution de réversion dans les régimes RC et PCV »,
+      janvier 2024 : au régime complémentaire, « À partir de 65 ans », « 2 ans (sauf
+      dérogations statutaires) » de mariage, « 60 % », « 10 % des points si le conjoint
+      a eu au moins 3 enfants avec le titulaire », conditions de ressources « Non »,
+      remariage « Perte du droit à la pension de réversion » ; aucun exemple chiffré
+    date: 2026-11-14
+    url: https://www.carcdsf.fr/images/pdf/Tbl_condattrib_RC_PCV_CD.pdf
+code:
+  python: >-
+    droit/reversion.py : reversion, _mariage_dure, _part_du_survivant, _admis_ailleurs,
+    _jusqu_au_remariage ; scenarios/actuel.py : Reversions
+  javascript: >-
+    moteur/js/droit/reversion.js : reversion, mariageDure, partDuSurvivant,
+    admisAilleurs, jusquAuRemariage ; moteur/js/regimes.js : Reversions
+  parametres: >-
+    contenu.parametres de chaque version : portee, fiabilite, taux, age_minimum,
+    mariage_minimum_annees, ex_conjoints, perte_au_remariage, majoration_reversible
+  tests: tests/test_reversion.py
+historique:
+- >-
+  2026-11-14 — née à la ligne 4 de la file des corrections de l'action 130 : la fiche
+  `carcdsf_minoration_age_seul`, lue au droit le 5 novembre 2026, déclarait que le
+  modèle ne servait aucune réversion de la CARCDSF, motif `non_portee` ; il en sert
+  depuis 60 % à 65 ans, dans les deux moteurs.
+effet: >-
+  Tout conjoint, ou ex-conjoint non remarié, d'un chirurgien-dentiste ou d'une
+  sage-femme qui décède depuis le 11 octobre 2007. Dentiste né le 1er juin 1950,
+  liquidé à 65 ans, mort en juin 2020, conjointe née en 1952 : 60 % de 6 912,27 €,
+  4 147,36 € par an, au lieu de rien ; né le 1er juin 1960, mort en juin 2030,
+  conjointe de 1958 : 60 % de 9 423,69 €, 5 654,21 €.

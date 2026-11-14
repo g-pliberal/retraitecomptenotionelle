@@ -1398,6 +1398,140 @@ def test_la_rci_compte_le_menage_sous_le_meme_plafond(simulateur):
     assert ligne.plafond_du_menage is True
 
 
+# -- la complémentaire des chirurgiens-dentistes et des sages-femmes ----------------------
+
+@pytest.mark.parametrize("deces, conjoint, base, attendu, version, effet", [
+    # Les deux cas posés de la note du 5 novembre 2026 (action 130) : 60 % ×
+    # 6 912,27 = 4 147,36 ; 60 % × 9 423,69 = 5 654,21.
+    ("2020-06-15", "1952", 6912.27, 4147.36, "statuts_de_2011", "2020-07-01"),
+    ("2030-06-15", "1958", 9423.69, 5654.21, "reglement_de_2026", "2030-07-01"),
+    # La survivante de soixante ans « reçoit à 65 ans » : née le 10 mars 1960,
+    # au premier jour du mois qui suit ses soixante-cinq ans.
+    ("2020-06-15", "1960-03-10", 6912.27, 4147.36, "statuts_de_2011", "2025-04-01"),
+    # Les statuts de 2007, en vigueur le 11 octobre 2007 : 60 % × 5 000 = 3 000.
+    ("2009-03-10", "1940", 5000.0, 3000.0, "statuts_de_2007", "2009-04-01"),
+])
+def test_la_carcdsf_reverse_soixante_pour_cent_a_soixante_cinq_ans(
+        simulateur, deces, conjoint, base, attendu, version, effet):
+    """Statuts de 2007, articles 39 et 48 (arrêté du 1er octobre 2007,
+    JORFARTI000002063756) ; de 2011, articles 32 et 41 (arrêté du 13 avril
+    2011, JORFARTI000023909792) ; règlement de 2026, articles 9 et 18 (arrêté
+    du 10 juillet 2026, JORFARTI000054435749) : le conjoint survivant « reçoit
+    à 65 ans […] une retraite de réversion du régime complémentaire », « égale
+    à 60 % de la retraite complémentaire versée ou qui aurait été versée au
+    titulaire ». Jusqu'au 14 novembre 2026, le modèle n'en servait rien, motif
+    « non_portee »."""
+    carriere = _carriere(simulateur, 1935, 65.0, conjoint, deces, mariage="1975-06")
+    ligne, = _lignes(simulateur, carriere, [("carcdsf_complementaire", base)],
+                     min(int(deces[:4]), 2026))
+    assert ligne == ("carcdsf_complementaire", 0.60, attendu, "servie", version, effet)
+
+
+@pytest.mark.parametrize("mariage, enfants, servie", [
+    ("2018-05", 0, True),
+    ("2019-01", 0, False),
+    ("2019-01", 1, True),
+])
+def test_la_carcdsf_demande_deux_ans_de_mariage_sauf_enfant(simulateur, mariage, enfants,
+                                                            servie):
+    """Statuts de 2011, article 33 : « La retraite de réversion n'est accordée
+    au conjoint survivant que si la date du mariage a précédé de deux ans au
+    moins la date du décès. Toutefois, aucune condition de durée de mariage ne
+    sera exigée s'il existe un enfant issu du mariage ». Mort le 15 juin 2020 :
+    marié en mai 2018, tout ; en janvier 2019, rien ; avec un enfant, tout."""
+    carriere = _carriere(simulateur, 1950, 65.0, "1952", "2020-06-15", mariage=mariage,
+                         enfants=enfants)
+    ligne, = _lignes(simulateur, carriere, [("carcdsf_complementaire", 6912.27)], 2020)
+    assert ligne[2:4] == ((4147.36, "servie") if servie else (0.0, "mariage"))
+
+
+@pytest.mark.parametrize("union, motif", [("mariage", "remariage"), ("pacs", "servie")])
+def test_la_reversion_de_la_carcdsf_se_perd_au_remariage(simulateur, union, motif):
+    """Article 33 : « La retraite de réversion est supprimée en cas de
+    remariage. » La survivante née en mars 1960, remariée en mai 2022, n'a
+    rien à ses soixante-cinq ans ; un pacte civil ne lui retire rien."""
+    carriere = _carriere(simulateur, 1950, 65.0, "1960-03-10", "2020-06-15",
+                         mariage="1985-06", nouvelle_union=union, union_depuis="2022-05-10")
+    ligne, = _lignes(simulateur, carriere, [("carcdsf_complementaire", 6912.27)], 2020)
+    assert ligne[3] == motif
+
+
+@pytest.mark.parametrize("remariage, part", [(None, 240 / 360), ("1990-01", 1.0)])
+def test_la_reversion_de_la_carcdsf_se_partage_avec_l_ex_conjoint_non_remarie(
+        simulateur, remariage, part):
+    """Articles 34 et 35 : « L'ex-conjoint divorcé non remarié est assimilé à
+    un conjoint survivant », et la pension « est partagée entre eux […] au
+    prorata de la durée respective de chaque mariage. Cette durée est calculée
+    de date à date. » 240 mois avec la survivante, 120 avec la précédente :
+    les deux tiers ; tout, quand la précédente s'est remariée."""
+    carriere = _carriere(simulateur, 1950, 65.0, "1952", "2020-06-10", mariage="2000-06",
+                         ex_conjoints=({"naissance": "1951", "mariage": "1975-06",
+                                        "divorce": "1985-06", "remariage": remariage},))
+    ligne, = reversion(simulateur.scenario_actuel,
+                       [("carcdsf_complementaire", 6912.27, HAUTE)], carriere, 2020).regimes
+    assert ligne.part == pytest.approx(part)
+    assert ligne.montant == pytest.approx(0.60 * 6912.27 * part)
+
+
+def test_la_bonification_pour_trois_enfants_suit_la_reversion_de_la_carcdsf(simulateur):
+    """Article 42 : « La bonification de 10 % pour enfants à charge élevés,
+    mentionnée à l'article 22, s'applique aux pensions de réversion versées au
+    conjoint survivant ». La pension de 6 912,27 euros, majorée de 691,23
+    euros : 60 % × 6 912,27 × 1,10 = 4 562,10 euros."""
+    carriere = _carriere(simulateur, 1950, 65.0, "1952", "2020-06-15", mariage="1975-06",
+                         enfants=3)
+    ligne, = reversion(simulateur.scenario_actuel,
+                       [("carcdsf_complementaire", 6912.27, HAUTE)], carriere, 2020,
+                       majorations={"carcdsf_complementaire": 691.227}).regimes
+    assert round(ligne.montant, 2) == 4562.10
+    assert ligne.majoration == pytest.approx(414.7362)
+
+
+def test_avant_le_11_octobre_2007_la_reversion_de_la_carcdsf_n_est_pas_portee(simulateur):
+    """Le règlement de 1955 et ses modifications ne sont à l'index du Journal
+    officiel que par des notices : la réversion d'un décès d'avant les statuts
+    de 2007, en vigueur le 11 octobre, n'est pas servie, et sa ligne le dit."""
+    carriere = _carriere(simulateur, 1935, 65.0, "1940", "2007-10-10", mariage="1975-06")
+    assert _lignes(simulateur, carriere, [("carcdsf_complementaire", 5000.0)], 2007) == [
+        ("carcdsf_complementaire", 0.0, 0.0, "non_portee", None, None)]
+
+
+#: Un chirurgien-dentiste né le 1er juin 1950, installé à vingt-cinq ans, parti
+#: à soixante-cinq ans, mort en juin 2020 ; son épouse, née en 1952, mariée en
+#: 1975.
+DENTISTE = {"statut": "chirurgien_dentiste_ou_sage_femme", "naissance": "1950-06-01",
+            "debut": "25", "liquidation": "65", "deces": "2020-06", "conjoint": "1952",
+            "mariage": "1975"}
+
+
+def test_les_deux_moteurs_servent_la_reversion_du_dentiste(saisies):
+    """La veuve de soixante-huit ans du dentiste reçoit, au premier jour du
+    mois qui suit le décès, 60 % de sa retraite complémentaire (statuts de
+    2011, articles 32 et 41), 10 % de plus avec trois enfants (article 42), et
+    rien quand le mariage a moins de deux ans (article 33) : le portage le
+    sert, et le moteur Python le refait au bit près."""
+    from outils_pont import servi_et_refait
+
+    requetes = {"seule": DENTISTE, "trois_enfants": {**DENTISTE, "enfants": "3"},
+                "mariee_en_2019": {**DENTISTE, "mariage": "2019"}}
+    servis, refus = servi_et_refait(
+        [{"cle": cle, "requete": requete} for cle, requete in requetes.items()])
+    assert refus == {}, refus
+
+    def ligne(sortie):
+        return next(l for l in sortie["regimes"] if l["regime"] == "carcdsf_complementaire")
+
+    entieres = {cle: ligne(_sortie(saisies, requete)) for cle, requete in requetes.items()}
+    for cle, entiere in entieres.items():
+        assert ligne(servis[cle]["reversion"])["montant"] == entiere["montant"], cle
+    seule = entieres["seule"]
+    assert (seule["taux"], seule["motif"], seule["date_effet"]) == (0.60, "servie", "2020-07-01")
+    assert seule["base"] > 0 and seule["montant"] == pytest.approx(0.60 * seule["base"])
+    assert entieres["trois_enfants"]["montant"] == pytest.approx(0.60 * seule["base"] * 1.10)
+    assert (entieres["mariee_en_2019"]["montant"], entieres["mariee_en_2019"]["motif"]) == (
+        0.0, "mariage")
+
+
 # -- l'âge d'avant 1973, le cumul d'avant 2004, les majorations forfaitaires -------------
 
 @pytest.mark.parametrize("conjoint, invalidite, version, date_effet", [
