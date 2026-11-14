@@ -3610,9 +3610,20 @@ export function surcotePoints(moteur, periode, carriere, trimestres, requis, age
     debut = ouvrir.ageTauxPlein(moteur, periode, carriere);
   }
   if (periode.surcote_depuis_la_duree) {
-    const parLaDuree = ageDeLaDureeAtteinte(
+    let parLaDuree = ageDeLaDureeAtteinte(
       moteur, periode, carriere, trimestres, requis, ageLiquidation,
     );
+    const derniere = periode.surcote_age_legal_de_la_base_jusqu_a_la_generation;
+    if (parLaDuree !== null && derniere !== null && derniere !== undefined
+        && carriere.annee_naissance <= derniere) {
+      // « Liquidant leur pension du régime de base sans abattement » (CARPIMKO,
+      // statuts de 2015, articles 11, 2°, a, et 12 quater, 1°) : pas avant
+      // l'âge légal de la base, celui du premier alinéa de L. 351-1.
+      const legal = moteur.agesOuverture.age(carriere.generation);
+      if (legal !== null) {
+        parLaDuree = Math.max(parLaDuree, legal[0]);
+      }
+    }
     if (parLaDuree !== null) {
       debut = Math.min(debut, parLaDuree);
     }

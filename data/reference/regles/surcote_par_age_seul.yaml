@@ -2119,7 +2119,10 @@ code:
     de la période écrit pour la génération (la CAVP). `surcote_trimestres_cotises: true`
     ne compte que les trimestres cotisés depuis le début du décompte (la CPRN) ;
     `surcote_depuis_la_duree: true` le fait partir de l'âge légal dès que la durée du
-    régime de base est atteinte (`liquider.age_de_la_duree_atteinte`, la CARPIMKO) ;
+    régime de base est atteinte (`liquider.age_de_la_duree_atteinte`, la CARPIMKO), sans
+    remonter avant l'âge légal de la base jusqu'à la génération que nomme
+    `surcote_age_legal_de_la_base_jusqu_a_la_generation` (ses générations 1955 et
+    antérieures de 2015 à 2023, fiche `carpimko_ages_2015`) ;
     `surcote_depuis_l_age_legal: true`, de l'âge d'ouverture de la période lu à la
     génération, l'âge légal (`ouvrir.age_ouverture_commun`, la CARMF et l'ASV du
     1er janvier au 29 mars 2017). Le second taux vaut du premier trimestre qui commence

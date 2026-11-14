@@ -527,51 +527,60 @@ approximations:
     11.2 (a) ne nomme que les nés depuis 1961, et le 2° frappe toute liquidation avant 65
     ans de « 4 % par année d'anticipation », la durée n'y entrant que pour les « 0,25 %
     par trimestre manquant ». Né le 10 décembre 1954, entré à vingt ans, l'auxiliaire
-    médical part à 62 ans le 1er janvier 2017 avec sa durée ; le modèle le majore de
-    trois trimestres, 1,0375, 5 681,23 € par an, 5 475,88 € sans coefficient. Première
-    lecture : taux plein, la majoration comptée de l'âge légal de sa base (voir
-    l'approximation suivante), 1,0125, 5 544,33 €. Seconde lecture : douze trimestres
+    médical part à 62 ans le 1er janvier 2017 avec sa durée ; le modèle le sert au taux
+    plein et le majore d'un trimestre civil, compté de l'âge légal de sa base, 1,0125,
+    5 544,34 € par an, 5 475,89 € sans coefficient : c'est la première lecture (il en
+    comptait trois jusqu'au 14 novembre 2026, 5 681,23 € : voir l'approximation
+    suivante). Seconde lecture : douze trimestres
     jusqu'à 65 ans (2 ans, 11 mois et 9 jours, le trimestre incomplet compté entier),
     trois années, 12 %, 0,88, 4 818,78 €. Entré à 26 ans, 21 trimestres manquants, 12 %
     + 0,25 % × 12 = 15 %, 0,85 : le modèle et les deux lectures s'accordent. Jusqu'à un
     exemple de la caisse — une pension d'un assuré né avant 1956, prise de 2016 à 2023
     avec sa durée —, le modèle garde la première lecture.
   effet: >-
-    136,90 € par an de trop au moins dans la première lecture (205,35 € si la majoration
-    se compte de l'âge de la table : l'approximation suivante), 862,45 € dans la
-    seconde, dans le cas posé ; la seconde ôterait jusqu'à 20 points de la pension prise à 60 ans avec la
+    rien dans la première lecture (68,45 € par an de trop si la majoration se compte de
+    l'âge de la table : l'approximation sur l'âge d'où elle se compte), 725,56 € de trop
+    dans la seconde, dans le cas posé ; la seconde ôterait jusqu'à 20 points de la pension prise à 60 ans avec la
     durée
 - version: [statuts_de_2015, statuts_de_2019, statuts_de_2024, reglement_de_2026]
   textes: >-
     statuts, article 11, 2°, a, et article 12 ter, rédaction de 2015 ; article 11, 2),
     rédaction de 2024 ; règlement de 2026, articles 3, 4 et 5
   ecart: >-
-    Erreur du modèle, déclarée, non corrigée, pour les générations 1955 et antérieures
-    de 2015 à 2024 : la majoration court « au-delà de l'âge auquel elle aurait pu être
-    liquidée sans abattement » (article 12 ter) ; le taux plein avant l'âge de la table y
-    suppose de liquider la base « sans abattement » (article 11, 2°, a), ce qui ne se
-    peut qu'à l'âge légal de la base (L. 643-3, I, et D. 161-2-1-9, 5° : « Soixante et
-    un ans et sept mois pour les assurés nés en 1954 »). Le modèle la fait courir de
-    l'âge où la durée est atteinte, cherché depuis l'âge minimal de la caisse
-    (`age_ouverture_commun`). Né le 10 décembre 1954, entré à vingt ans, durée atteinte
-    avant 61 ans et 7 mois, le 10 juillet 2016 : un seul trimestre civil entier
-    d'ajournement avant le 1er janvier 2017, octobre à décembre, 1,0125 ; le modèle en
-    compte trois, d'avril à décembre, 1,0375 ; 5 681,23 / 1,0375 × 1,0125 = 5 544,33 €. La
-    seconde lecture de l'approximation précédente ne majore pas du tout avant 65 ans.
-    Pour les générations 1956 à 1960 de 2015 à 2024, et pour toutes depuis 2024, le texte
-    ne tranche pas : l'abattement, « 1,25 % par trimestre manquant pour pouvoir liquider
-    la retraite de base à taux plein » (article 12 quater, 1°, de 2015 ; article 4 du
-    règlement), est nul dès la durée atteinte, quand le taux plein avant l'âge de la
-    table (article 11, 2°, a ; article 3, 2) du règlement) demande les conditions de la
-    base.
+    Le texte ne tranche pas, pour les générations 1956 à 1960 de 2015 à 2024 et pour
+    toutes depuis le 10 janvier 2024, si la majoration peut courir avant l'âge légal de
+    la base : elle court « au-delà de l'âge auquel elle aurait pu être liquidée sans
+    abattement » (article 12 ter), et l'abattement, « 1,25 % par trimestre manquant pour
+    pouvoir liquider la retraite de base à taux plein » (article 12 quater, 1°, de 2015 ;
+    article 4 du règlement), est nul dès la durée atteinte, quand le taux plein avant
+    l'âge de la table (article 11, 2°, a ; article 3, 2) du règlement) demande les
+    conditions de la base. Le modèle la fait courir de l'âge où la durée est atteinte,
+    cherché depuis l'âge minimal de la caisse (`age_ouverture_commun`).
+    Pour les générations 1955 et antérieures de 2015 à 2024, le texte tranche, et le
+    modèle le suit depuis le 14 novembre 2026 (action 130, décision du propriétaire du
+    13, ligne 19 de la file) : le taux plein avant l'âge de la table y suppose de
+    liquider la base « sans abattement » (article 11, 2°, a), ce qui ne se peut qu'à
+    l'âge légal de la base (L. 643-3, I, et D. 161-2-1-9, 5° : « Soixante et un ans et
+    sept mois pour les assurés nés en 1954 »), et la seconde lecture de l'approximation
+    précédente ne majore pas du tout avant 65 ans. Jusque-là, le modèle comptait pour
+    elles aussi depuis l'âge où la durée est atteinte : né le 10 décembre 1954, entré à
+    vingt ans, durée atteinte avant 61 ans et 7 mois, le 10 juillet 2016, un seul
+    trimestre civil entier d'ajournement avant le 1er janvier 2017, octobre à décembre,
+    1,0125 ; le modèle en comptait trois, d'avril à décembre, 1,0375, 5 681,23 € par an
+    au lieu de 5 681,23 / 1,0375 × 1,0125 = 5 544,34 €, 136,90 € de trop. Depuis,
+    `surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955`, aux périodes de 2016 à
+    2023 du régime, ne fait pas partir le décompte avant cet âge, dans les deux moteurs.
+    La pension du 1er janvier 2024, que la période de 2024 sert, n'y perd rien : le né de
+    1955 a 62 ans depuis vingt-quatre trimestres au moins, plus que les vingt de la
+    limite.
   effet: >-
-    136,90 € par an de trop au moins dans le cas posé, la majoration comptée de l'âge où
-    la pension aurait pu être liquidée sans abattement ; comptée de l'âge du taux plein
-    de la table, « Age prévu à l'article 11.1 », 65 ans pour la génération 1955 et
-    antérieure (l'approximation sur l'âge d'où la majoration se compte), elle est nulle
-    à 62 ans : 5 681,23 / 1,0375 = 5 475,88 €, 205,35 € par an de trop (essai du 5
-    novembre 2026, refait dans les deux moteurs) ; non mesuré pour les générations
-    suivantes
+    non mesuré pour les générations 1956 à 1960 de 2015 à 2024 et pour toutes depuis
+    2024 ; pour les générations 1955 et antérieures de 2015 à 2024, rien depuis la
+    correction, la majoration comptée de l'âge où la pension aurait pu être liquidée
+    sans abattement ; comptée de l'âge du taux plein de la table, « Age prévu à l'article
+    11.1 », 65 ans pour la génération 1955 et antérieure (l'approximation sur l'âge d'où
+    la majoration se compte), elle est nulle à 62 ans : 5 681,23 / 1,0375 = 5 475,89 €,
+    68,45 € par an de trop dans le cas posé
 - version: [statuts_de_2015, statuts_de_2019]
   textes: statuts, article 12 quater, 2°, rédaction de l'arrêté du 31 juillet 2015
   ecart: >-
@@ -722,10 +731,11 @@ effet: >-
   officiel no 96-52. Erreurs du modèle déclarées, non corrigées : de 1984 à juin 1987,
   la durée annule une minoration que les statuts font de l'âge seul (28,57 € par an
   dans le cas posé) ; de 2015 à 2024, la majoration des générations 1955 et
-  antérieures comptée avant l'âge légal de leur base (136,90 €) ; la date d'effet au
-  mois, non au trimestre civil (475,50 €). Non tranchés : les 4 % par année des mêmes
-  générations quand elles ont leur durée (136,90 € ou 862,45 € par an), l'âge d'où la
-  majoration se compte (1 263,99 €).
+  antérieures comptée avant l'âge légal de leur base (136,90 €), corrigée depuis (plus
+  bas) ; la date d'effet au mois, non au trimestre civil (475,50 €). Non tranchés : les
+  4 % par année des mêmes générations quand elles ont leur durée (136,90 € ou 862,45 €
+  par an alors, rien ou 725,56 € depuis la correction), l'âge d'où la majoration se
+  compte (1 263,99 €).
   Corrigée le 14 novembre 2026 (action 130, décision du propriétaire du 13, ligne 12 de
   la file) : jusque-là, le modèle servait la complémentaire le premier du mois qui suit
   l'âge, avec la base, quand l'article 11 des statuts de 1984 et l'article 7 du
@@ -743,6 +753,18 @@ effet: >-
   trimestres, et majorait depuis une durée que sa génération n'avait pas (1,05 au lieu
   de 1,0375 dans le cas posé). Du 5 juin 1987 au 17 juillet 2026, l'article n'est pas
   lu, et le modèle sert au premier du mois.
+  Corrigée le 14 novembre 2026 (action 130, décision du propriétaire du 13, ligne 19 de
+  la file) : jusque-là, pour une pension du 3 octobre 2015 à la fin de 2023, le modèle
+  majorait les générations 1955 et antérieures depuis l'âge où leur durée est atteinte,
+  cherché depuis 60 ans, quand les statuts de 2015 ne les servent au taux plein avant
+  65 ans que « liquidant leur pension du régime de base sans abattement » (articles 11,
+  2°, a, et 12 quater, 1°), donc pas avant l'âge légal de la base — né le 10 décembre
+  1954, entré à vingt ans, pension du 1er janvier 2017 : trois trimestres majorés,
+  1,0375, 5 681,23 € par an, au lieu d'un seul depuis ses 61 ans et 7 mois, 1,0125,
+  5 544,34 € ; 136,90 € par an de trop. Depuis,
+  `surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955` aux périodes de 2016 à
+  2023, dans les deux moteurs. Les générations 1956 à 1960, et toutes depuis 2024,
+  restent comptées de la durée atteinte, le texte ne tranchant pas.
 sources:
   lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
@@ -754,6 +776,15 @@ sources:
     à la CARPIMKO, ou à lire en bibliothèque. Les régimes de 1956 (décrets n° 56-97 et n°
     56-129) et leurs statuts, pour les pensions d'avant 1984.
   lectures:
+  - type: jorf
+    reference: >-
+      Relus pour la correction de la majoration des générations 1955 et antérieures :
+      statuts de 2015, articles 11, 12, 12 ter et 12 quater (JORFARTI000031255547), et
+      arrêté du 27 décembre 2023, annexe, 3° et 6° (JORFARTI000048880643), dans l'index
+      JORF ; D. 161-2-1-9 (LEGIARTI000025089933) et L. 643-3, I (LEGIARTI000028498667),
+      dans leur rédaction du 1er janvier 2017, dans l'index LEGI ; tous deux à jour du
+      11 novembre 2026.
+    date: 2026-11-14
   - type: jorf
     reference: >-
       Relus pour la correction de la date d'effet au trimestre civil : statuts de 1984,
@@ -821,7 +852,9 @@ code:
     trimestre, sur le moindre des trimestres manquants à la durée requise et de ceux qui
     séparent de cet âge (`decote_opposable`) ; la surcote se compte de cet âge, ou de
     celui où la durée est atteinte, cherché depuis l'âge minimal (`surcote_points`,
-    `age_de_la_duree_atteinte`, `age_ouverture_commun`). De 1984 à 2015, les périodes
+    `age_de_la_duree_atteinte`, `age_ouverture_commun`), sans remonter avant l'âge légal
+    de la base pour les générations 1955 et antérieures, de 2015 à 2023
+    (`surcote_age_legal_de_la_base_jusqu_a_la_generation`). De 1984 à 2015, les périodes
     lisent l'âge légal et l'âge d'annulation de la décote de la génération, la même
     décote, sans surcote ; avant 1984, aucune période. La pension prend effet avec
     celle du régime de base, le premier du mois qui suit l'âge, hors des bornes de
@@ -844,6 +877,7 @@ code:
     surcote_par_trimestre, surcote_trimestres_maximum ;
     regimes/carpimko_complementaire.yaml : age_table, decote_par_trimestre,
     surcote_par_trimestre, surcote_points, surcote_depuis_la_duree,
+    surcote_age_legal_de_la_base_jusqu_a_la_generation,
     surcote_trimestres_maximum, effet_au_trimestre_civil ;
     legislation/ages_regimes.csv : carpimko_2016, generation, age_ouverture,
     age_taux_plein

@@ -899,6 +899,17 @@ champs_periode:
     valeurs: [true]
     defaut: false
 
+  surcote_age_legal_de_la_base_jusqu_a_la_generation:
+    description: >-
+      Avec `surcote_depuis_la_duree` seulement : la dernière génération pour
+      laquelle le décompte ne part pas avant l'âge légal de droit commun, celui
+      du premier alinéa de L. 351-1, la durée fût-elle atteinte plus tôt. La
+      CARPIMKO de 2015 à 2023 ne sert au taux plein avant 65 ans la
+      « GÉNÉRATION 1955 ET ANTÉRIEURE » que « liquidant leur pension du régime
+      de base sans abattement » (statuts de 2015, articles 11, 2°, a, et
+      12 quater, 1°). `null` : dès la durée atteinte.
+    defaut: null
+
   surcote_depuis_l_age_legal:
     description: >-
       Avec `surcote_points` en `par_age_seul` seulement : le décompte part-il

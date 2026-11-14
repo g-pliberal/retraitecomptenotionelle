@@ -4815,6 +4815,16 @@ def surcote_points(moteur, periode: PeriodeRegime, carriere: Carriere,
     if periode.surcote_depuis_la_duree:
         par_la_duree = age_de_la_duree_atteinte(moteur, periode, carriere,
                                                 trimestres, requis, age_liquidation)
+        derniere = periode.surcote_age_legal_de_la_base_jusqu_a_la_generation
+        if (par_la_duree is not None and derniere is not None
+                and carriere.annee_naissance <= derniere):
+            # « Liquidant leur pension du régime de base sans abattement »
+            # (CARPIMKO, statuts de 2015, articles 11, 2°, a, et 12 quater,
+            # 1°) : pas avant l'âge légal de la base, celui du premier alinéa
+            # de L. 351-1.
+            legal = moteur.ages_ouverture.age(carriere.generation)
+            if legal is not None:
+                par_la_duree = max(par_la_duree, legal[0])
         if par_la_duree is not None:
             debut = min(debut, par_la_duree)
     fin = age_liquidation

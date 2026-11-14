@@ -873,6 +873,73 @@ def test_la_carpimko_majore_le_report_des_le_3_octobre_2015_dans_les_deux_moteur
     assert pension("decembre")["detail"].endswith("coefficient de majoration 1.0750")
 
 
+def test_la_carpimko_ne_majore_pas_avant_l_age_legal_de_la_base_les_nes_avant_1956():
+    """Ligne 19 de la file des corrections (action 130). Statuts de 2015
+    (JORFARTI000031255547) : la majoration court « au-delà de l'âge auquel
+    elle aurait pu être liquidée sans abattement » (article 12 ter) ; pour la
+    « GÉNÉRATION 1955 ET ANTÉRIEURE », le taux plein avant 65 ans va aux
+    assurés « liquidant leur pension du régime de base sans abattement »
+    (articles 11, 2°, a, et 12 quater, 1°), ce qui ne se peut qu'à l'âge légal
+    de la base (L. 643-3, I ; D. 161-2-1-9 : « Soixante et un ans et sept mois
+    pour les assurés nés en 1954 », « Soixante deux ans pour les assurés nés à
+    compter du 1er janvier 1955 »). Le modèle comptait la majoration de l'âge
+    où la durée est atteinte, cherché depuis 60 ans."""
+    from outils_pont import servi_et_refait
+    from test_complementaires_liberales_a_leur_age import REQUETE
+
+    # Auxiliaires médicaux entrés à vingt ans, leur durée atteinte avant l'âge
+    # légal de leur base.
+    # Né le 10 décembre 1954 : 61 ans et 7 mois le 10 juillet 2016. Pension du
+    # 1er janvier 2017 (62 ans) : un seul trimestre civil entier d'ajournement,
+    # octobre à décembre 2016, 1,0125 ; 5 475,8887 € sans coefficient (note
+    # `130/2026-11-05-e3-bis-corrections-de-r-e4.md`) × 1,0125 = 5 544,34 €, au
+    # lieu de 5 681,23 € : 136,90 € de moins. Pension du 1er janvier 2018
+    # (63 ans) : cinq trimestres civils, d'octobre 2016 à décembre 2017, 1,0625.
+    # Né le 10 décembre 1955 : 62 ans le 10 décembre 2017. Pension du
+    # 1er janvier 2019 (63 ans) : les quatre trimestres civils de 2018, 1,05.
+    # Né le 10 décembre 1956, que le texte ne tranche pas (son abattement, par
+    # trimestre manquant, est nul dès la durée atteinte) : le modèle garde sa
+    # lecture, 1,0625 à 63 ans.
+    requete = {**REQUETE, "statut": "auxiliaire_medical", "debut": "20"}
+    cas = [{"cle": cle, "requete": {**requete, "naissance": naissance, "liquidation": age}}
+           for cle, naissance, age in (("1954 à 62 ans", "1954-12-10", "62"),
+                                       ("1954 à 63 ans", "1954-12-10", "63"),
+                                       ("1955 à 63 ans", "1955-12-10", "63"),
+                                       ("1956 à 63 ans", "1956-12-10", "63"))]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+
+    def pension(cle):
+        return {p["regime"]: p for p in servis[cle]["actuel"]
+                ["pensions_par_regime"]}["carpimko_complementaire"]
+
+    de_1954 = pension("1954 à 62 ans")
+    assert de_1954["detail"].endswith("coefficient de majoration 1.0125")
+    assert de_1954["montant"] == pytest.approx(5544.34, abs=0.01)
+    assert pension("1954 à 63 ans")["detail"].endswith("coefficient de majoration 1.0625")
+    assert pension("1955 à 63 ans")["detail"].endswith("coefficient de majoration 1.0500")
+    assert pension("1956 à 63 ans")["detail"].endswith("coefficient de majoration 1.0625")
+
+
+def test_l_age_legal_de_la_base_borne_la_majoration_de_la_carpimko_de_2015_a_2023(simulateur):
+    """Les statuts de 2015 et de 2019 liquident du 3 octobre 2015 au 9 janvier
+    2024 ; l'arrêté du 27 décembre 2023 abroge ensuite le 2° de l'article
+    12 quater, et le texte ne tranche plus. La pension du 1er janvier 2024, que
+    la période de 2024 sert, n'y perd rien : le né de 1955 a 62 ans depuis six
+    ans au moins, plus que les vingt trimestres de la limite."""
+    caisse = simulateur.catalogue["carpimko_complementaire"]
+
+    def derniere(jour):
+        return (caisse.periode_a_l_effet(jour)
+                .surcote_age_legal_de_la_base_jusqu_a_la_generation)
+
+    assert derniere("2015-10-01") is None
+    for jour in ("2015-11-01", "2016-01-01", "2019-06-01", "2023-12-01"):
+        assert derniere(jour) == 1955, jour
+    assert derniere("2024-02-01") is None
+    assert derniere("2026-08-01") is None
+
+
 # -- la CNAVPL ------------------------------------------------------------------
 
 

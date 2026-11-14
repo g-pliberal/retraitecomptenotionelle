@@ -947,6 +947,9 @@ def _regles_des_sections(p) -> dict:
         "surcote_trimestres_cotises": p.surcote_trimestres_cotises or None,
         # La surcote de la CARPIMKO, depuis l'âge où la durée est atteinte.
         "surcote_depuis_la_duree": p.surcote_depuis_la_duree or None,
+        # Pas avant l'âge légal de la base, jusqu'à cette génération.
+        "surcote_age_legal_de_la_base_jusqu_a_la_generation":
+            p.surcote_age_legal_de_la_base_jusqu_a_la_generation,
         # La surcote de la CARMF et de l'ASV de janvier à mars 2017, depuis
         # l'âge légal de la génération.
         "surcote_depuis_l_age_legal": p.surcote_depuis_l_age_legal or None,

@@ -581,6 +581,13 @@ class PeriodeRegime:
     #: abattement » (statuts de 2015, article 12 ter ; règlement de 2026,
     #: article 5).
     surcote_depuis_la_duree: bool
+    #: Avec lui, la dernière génération pour laquelle le décompte ne part pas
+    #: avant l'âge légal de droit commun, la durée fût-elle atteinte plus
+    #: tôt : la CARPIMKO de 2015 à 2023 ne sert au taux plein avant 65 ans la
+    #: « GÉNÉRATION 1955 ET ANTÉRIEURE » que « liquidant leur pension du
+    #: régime de base sans abattement » (statuts de 2015, articles 11, 2°, a,
+    #: et 12 quater, 1°). ``None`` : dès la durée atteinte.
+    surcote_age_legal_de_la_base_jusqu_a_la_generation: int | None
     #: ``par_age_seul`` court de l'âge d'ouverture de la période, lu à la
     #: génération, et non de ``surcote_age_debut`` : la CARMF et l'ASV
     #: majorent « après cet âge », celui du premier alinéa de L. 351-1, du
@@ -2398,6 +2405,11 @@ class CatalogueRegimes:
                 ),
                 surcote_trimestres_cotises=bool(p.get("surcote_trimestres_cotises", False)),
                 surcote_depuis_la_duree=bool(p.get("surcote_depuis_la_duree", False)),
+                surcote_age_legal_de_la_base_jusqu_a_la_generation=(
+                    None
+                    if p.get("surcote_age_legal_de_la_base_jusqu_a_la_generation") is None
+                    else int(p["surcote_age_legal_de_la_base_jusqu_a_la_generation"])
+                ),
                 surcote_depuis_l_age_legal=bool(
                     p.get("surcote_depuis_l_age_legal", False)),
                 surcote_trimestres_civils_d_exercice=bool(

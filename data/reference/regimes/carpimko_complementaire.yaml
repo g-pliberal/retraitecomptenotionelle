@@ -400,6 +400,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
     surcote_depuis_la_duree: surcote_par_age_seul
+    surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_5_pass
@@ -463,6 +464,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
     surcote_depuis_la_duree: surcote_par_age_seul
+    surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_5_pass
@@ -505,6 +507,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
     surcote_depuis_la_duree: surcote_par_age_seul
+    surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_5_pass
@@ -547,6 +550,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
     surcote_depuis_la_duree: surcote_par_age_seul
+    surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_5_pass
@@ -589,6 +593,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
     surcote_depuis_la_duree: surcote_par_age_seul
+    surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_5_pass
@@ -631,6 +636,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
     surcote_depuis_la_duree: surcote_par_age_seul
+    surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_5_pass
@@ -673,6 +679,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
     surcote_depuis_la_duree: surcote_par_age_seul
+    surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_5_pass
@@ -715,6 +722,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
     surcote_depuis_la_duree: surcote_par_age_seul
+    surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_5_pass
