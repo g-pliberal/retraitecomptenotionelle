@@ -132,10 +132,11 @@ versions:
       la pension à 65 ans, dès 60 ans pour l'inapte et l'ancien déporté ou interné ;
       avant 65 ans, 0,75 à 60 ans, 0,80 à 61, 0,85 à 62, 0,90 à 63, 0,95 à 64, selon
       l'âge seul, aucune durée n'y entrant ; aucune majoration ; la pension au premier
-      jour du trimestre civil qui suit la demande. Le modèle ouvre à l'âge de L. 161-17-2
-      et minore jusqu'à l'âge d'annulation de la décote de la génération, 60 et 65 ans
-      pour celles qui liquident avant 1987, de 1,25 % par trimestre, cinq points par
-      année ; la durée y annule la minoration (voir les approximations)
+      jour du trimestre civil qui suit la demande. Le modèle ouvre à l'âge de L. 161-17-2,
+      60 ans pour les générations qui liquident avant 1987, et minore jusqu'à 65 ans de
+      1,25 % par trimestre, cinq points par année, sans que la durée du régime de base
+      l'annule ; l'inapte, l'ancien déporté ou interné et, aux âges de sa fiche,
+      l'ancien combattant ou prisonnier de guerre sont servis sans coefficient
     conditions: avoir versé toutes les cotisations dues
   exemples: aucun trouvé
 - id: statuts_de_1987
@@ -461,26 +462,10 @@ approximations:
 - version: [statuts_de_1984]
   textes: statuts de 1984, article 12
   ecart: >-
-    Erreur du modèle, déclarée, non corrigée : les statuts minorent par l'âge seul, «
-    0,75 si la liquidation intervient à soixante ans » ; le modèle annule la minoration
-    quand la durée du régime de base est atteinte. Né le 10 mars 1925, entré à vingt
-    ans, l'auxiliaire médical part à 60 ans le 1er avril 1985 avec sa durée : le modèle
-    sert 114,27 € par an, sans coefficient ; les statuts, 0,75 × 114,27 = 85,71 €.
-    L'erreur n'est prouvée que jusqu'au 4 juin 1987 : le cas d'une pension prise en
-    1990 tombe sous l'arrêté du 20 mai 1987, dont le texte n'est pas lu (version
-    `statuts_de_1987`, supposée).
-  effet: >-
-    28,57 € par an de trop dans le cas posé, jusqu'à 25 points de la pension prise de
-    60 à 64 ans avec la durée, du 1er janvier 1984 au 4 juin 1987 ; sans la durée, le
-    modèle rend le coefficient du texte aux âges entiers (entré à 26 ans, 0,75,
-    85,71 €)
-- version: [statuts_de_1984]
-  textes: statuts de 1984, article 12
-  ecart: >-
     Le texte ne tranche pas l'âge entamé : « 0,75 si la liquidation intervient à
     soixante ans », puis 0,80 à soixante et un ans, sans dire si l'âge se compte en
-    années révolues ; le modèle compte 1,25 % par trimestre, 0,775 à 60 ans et 6 mois
-    sans la durée, quand les années révolues donneraient 0,75.
+    années révolues ; le modèle compte 1,25 % par trimestre, 0,775 à 60 ans et 6 mois,
+    quand les années révolues donneraient 0,75.
   effet: moins de cinq points de la pension ; non mesuré
 - version: [statuts_de_1984, reglement_de_2026]
   textes: statuts de 1984, article 11 ; règlement de 2026, article 7
@@ -730,7 +715,7 @@ effet: >-
   1987 à 2015 présumés, faute du texte de l'arrêté du 20 mai 1987 et du Bulletin
   officiel no 96-52. Erreurs du modèle déclarées, non corrigées : de 1984 à juin 1987,
   la durée annule une minoration que les statuts font de l'âge seul (28,57 € par an
-  dans le cas posé) ; de 2015 à 2024, la majoration des générations 1955 et
+  dans le cas posé), corrigée depuis (plus bas) ; de 2015 à 2024, la majoration des générations 1955 et
   antérieures comptée avant l'âge légal de leur base (136,90 €), corrigée depuis (plus
   bas) ; la date d'effet au mois, non au trimestre civil (475,50 €). Non tranchés : les
   4 % par année des mêmes générations quand elles ont leur durée (136,90 € ou 862,45 €
@@ -765,6 +750,22 @@ effet: >-
   `surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955` aux périodes de 2016 à
   2023, dans les deux moteurs. Les générations 1956 à 1960, et toutes depuis 2024,
   restent comptées de la durée atteinte, le texte ne tranchant pas.
+  Corrigée le 14 novembre 2026 (action 130, décision du propriétaire du 13, ligne 20 de
+  la file) : jusque-là, pour une pension du 1er janvier 1984 au 4 juin 1987, le modèle
+  annulait la minoration quand la durée du régime de base était atteinte, quand
+  l'article 12 des statuts de 1984 la fait de l'âge seul, « 0,75 si la liquidation
+  intervient à soixante ans » — né le 10 mars 1925, entré à vingt ans, l'auxiliaire
+  médical part à 60 ans le 1er avril 1985 avec sa durée : 114,27 € par an, sans
+  coefficient, au lieu de 0,75 × 114,27 = 85,71 € ; 28,57 € par an de trop. Et il
+  minorait jusqu'à 67 ans, son repli, les générations d'avant 1930, que sa table des
+  âges ne porte pas, quand l'article 10 dit 65 ans : sans la durée, 0,75 à 61 ans au
+  lieu de 0,80, et 0,90 à 65 ans au lieu de rien. Depuis, la période de 1984 du régime
+  ne liquide que jusqu'au 4 juin 1987 (`date_effet`), avec
+  `decote_annulee_par_la_duree: false` et 65 ans pour toute génération, dans les deux
+  moteurs, par les données ; l'inapte et l'ancien déporté ou interné y gardent leur
+  pension entière à 60 ans (article 10, 1°), l'ancien combattant et l'ancien
+  prisonnier de guerre aux âges de la loi du 21 novembre 1973 (article 11). Les
+  pensions d'après le 4 juin 1987 gardent la règle présumée, que la durée annule.
 sources:
   lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
@@ -776,6 +777,13 @@ sources:
     à la CARPIMKO, ou à lire en bibliothèque. Les régimes de 1956 (décrets n° 56-97 et n°
     56-129) et leurs statuts, pour les pensions d'avant 1984.
   lectures:
+  - type: jorf
+    reference: >-
+      Relus pour la correction de la minoration par l'âge seul de 1984 à juin 1987 :
+      statuts de 1984, articles 9 à 13 (LEGIARTI000006782878 à LEGIARTI000006782882,
+      que LEGI garde dans leur seule rédaction du 1er janvier 1984), dans l'index LEGI
+      du dépôt, à jour du 11 novembre 2026.
+    date: 2026-11-14
   - type: jorf
     reference: >-
       Relus pour la correction de la majoration des générations 1955 et antérieures :
@@ -841,6 +849,8 @@ sources:
       https://www.carpimko.com/je-prepare-ma-retraite/mes-regimes-de-retraite/age-de-ma-retraite
     date: 2026-09-23
 code:
+  interrupteurs:
+    decote_annulee_par_la_duree: false
   moteur: >-
     Les périodes de `carpimko_complementaire` qui liquident depuis le 3 octobre 2015
     (`date_effet` de celle de 2016, action 130, ligne 16 de la file) nomment la table
@@ -854,9 +864,14 @@ code:
     celui où la durée est atteinte, cherché depuis l'âge minimal (`surcote_points`,
     `age_de_la_duree_atteinte`, `age_ouverture_commun`), sans remonter avant l'âge légal
     de la base pour les générations 1955 et antérieures, de 2015 à 2023
-    (`surcote_age_legal_de_la_base_jusqu_a_la_generation`). De 1984 à 2015, les périodes
-    lisent l'âge légal et l'âge d'annulation de la décote de la génération, la même
-    décote, sans surcote ; avant 1984, aucune période. La pension prend effet avec
+    (`surcote_age_legal_de_la_base_jusqu_a_la_generation`). Du 5 juin 1987 à 2015, les
+    périodes lisent l'âge légal et l'âge d'annulation de la décote de la génération, la
+    même décote, que la durée annule, sans surcote ; du 1er janvier 1984 au 4 juin 1987
+    (`date_effet` de la période de 1984), `decote_annulee_par_la_duree: false` : la
+    décote se compte des seuls trimestres qui séparent de 65 ans (`age_taux_plein`),
+    `age_sans_coefficient_de_l_inapte` et `categories_sans_coefficient` rendant le
+    coefficient 1 à l'inapte dès 60 ans et aux catégories dont la fiche est nommée ;
+    avant 1984, aucune période. La pension prend effet avec
     celle du régime de base, le premier du mois qui suit l'âge, hors des bornes de
     `effet_au_trimestre_civil` (`[1984-01-01, 1987-06-05]`, `[2026-07-18, null]`), où
     `departs` la reporte au premier jour du trimestre civil qui commence ce jour-là ou
@@ -878,7 +893,9 @@ code:
     regimes/carpimko_complementaire.yaml : age_table, decote_par_trimestre,
     surcote_par_trimestre, surcote_points, surcote_depuis_la_duree,
     surcote_age_legal_de_la_base_jusqu_a_la_generation,
-    surcote_trimestres_maximum, effet_au_trimestre_civil ;
+    surcote_trimestres_maximum, effet_au_trimestre_civil, date_effet,
+    decote_annulee_par_la_duree, age_taux_plein, age_sans_coefficient_de_l_inapte,
+    categories_sans_coefficient ;
     legislation/ages_regimes.csv : carpimko_2016, generation, age_ouverture,
     age_taux_plein
   tests:

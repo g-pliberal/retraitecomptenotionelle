@@ -29,17 +29,20 @@ inventaire:
     - {reference: "décret n° 84-143 du 22 février 1984", id: null}
 periodes:
   - debut: 1984
-    fin: 1995
+    fin: 1986
+    date_effet: [1984-01-01, 1987-06-05]
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
-    age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
+    age_taux_plein: 65
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: carpimko_ages_2015
+    age_sans_coefficient_de_l_inapte: 60
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
     surcote_par_trimestre: null
     effet_au_trimestre_civil: [1984-01-01, 1987-06-05]
     avantages_non_contributifs: [reversion]
@@ -56,6 +59,43 @@ periodes:
       SON MONTANT EST EXTRAPOLÉ : les décrets annuels ne sont dépouillés qu'à
       partir de 2001, et le forfait de 2002 est reconduit vers l'amont en euros
       constants. C'est la convention du dépôt pour un montant sans série.
+      LA MINORATION EST CELLE DE L'ÂGE SEUL pour une pension qui prend effet
+      du 1er janvier 1984 au 4 juin 1987 (`date_effet`) : « 0,75 si la
+      liquidation intervient à soixante ans », 0,80 à soixante et un ans,
+      jusqu'à 0,95 à soixante-quatre ans (statuts de 1984, article 12), cinq
+      points par année, que la durée du régime de base n'annule pas
+      (`decote_annulee_par_la_duree`), jusqu'à 65 ans, l'âge de l'article 10,
+      pour toute génération (`age_taux_plein`). SANS COEFFICIENT À 60 ANS : l'inapte et
+      l'ancien déporté ou interné (article 10, 1°), l'ancien combattant et
+      l'ancien prisonnier de guerre de la loi du 21 novembre 1973, aux âges
+      de leur fiche (article 11). La période s'arrête au lendemain de la
+      publication de l'arrêté du 20 mai 1987, dont le texte n'est pas lu.
+  - debut: 1987
+    fin: 1995
+    date_effet: [1987-06-05, 1996-01-01]
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    assiette: plafonnee_5_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_forfaitaire_euros: 624.00
+    cotisation_forfaitaire_annee: 2002
+    notes: >-
+      LES STATUTS D'APRÈS L'ARRÊTÉ DU 20 MAI 1987 NE SONT PAS LUS : publié le
+      4 juin 1987, il approuve des modifications du régime complémentaire dont
+      l'index n'a que le titre. La période liquide les pensions qui prennent
+      effet depuis le lendemain (`date_effet`) et garde, faute du texte, la
+      minoration que la durée du régime de base annule, sans le report au
+      trimestre civil. LE FORFAIT, extrapolé, est celui de la période de 1984.
   - debut: 1996
     fin: 2001
     type_calcul: points

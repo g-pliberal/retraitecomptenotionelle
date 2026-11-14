@@ -980,6 +980,84 @@ def test_la_carpimko_ne_majore_pas_avant_l_age_legal_de_la_base_les_nes_avant_19
     assert pension("1956 à 63 ans")["detail"].endswith("coefficient de majoration 1.0625")
 
 
+#: Statuts de 1984 de la CARPIMKO (action 130, ligne 20 de la file) : la clé —
+#: naissance, âge demandé, titre déclaré — et ce que le texte sert, le montant
+#: annuel et le coefficient. L'auxiliaire médical entre à vingt ans : sa durée
+#: du régime de base est atteinte à 60 ans. Les montants sans coefficient sont
+#: ceux de la note `130/2026-11-05-e3-bis-corrections-de-r-e4.md`, qui ne
+#: bougent pas ; les coefficients, ceux de l'article 12, posés à la main.
+CARPIMKO_STATUTS_DE_1984 = {
+    # Né le 10 mars 1925, 60 ans le 10 mars 1985, pension au 1er avril 1985 :
+    # « 0,75 si la liquidation intervient à soixante ans », 114,2748 × 0,75 =
+    # 85,71 €, au lieu de 114,27 € : 28,57 € de moins.
+    ("1925-03-10", "60", ""): (85.71, 0.75),
+    # Le même à 61 ans, le 1er avril 1986 : « 0,80 », 175,9683 × 0,80 = 140,77 €.
+    ("1925-03-10", "61", ""): (140.77, 0.80),
+    # Né le 10 mars 1922, à 64 ans, le 1er avril 1986 : « 0,95 », 175,9683 ×
+    # 0,95 = 167,17 € ; à 65 ans, le 1er avril 1987, sans coefficient, 242,00 €.
+    ("1922-03-10", "64", ""): (167.17, 0.95),
+    ("1922-03-10", "65", ""): (242.00, 1.0),
+    # Article 10, 1° : « soixante ans en cas d'inaptitude au travail, ou s'ils
+    # ont la qualité d'ancien déporté ou interné ». Sans coefficient à 60 ans.
+    ("1925-03-10", "60", "inaptitude"): (114.27, 1.0),
+    ("1925-03-10", "60", "deporte"): (114.27, 1.0),
+    # Article 11 : « Les dispositions de la loi du 21 novembre 1973 concernant
+    # les anciens prisonniers de guerre et les anciens combattants […] sont
+    # applicables au présent régime complémentaire » — 60 ans pour cinquante-
+    # quatre mois de captivité ou de services, 64 ans pour six à dix-sept mois
+    # (décret n° 74-54, article 1er).
+    ("1925-03-10", "60", "guerre=54"): (114.27, 1.0),
+    ("1925-03-10", "60", "guerre=6"): (85.71, 0.75),
+    # Né le 10 mars 1927, pension au 1er avril 1987, la dernière date d'effet
+    # que les statuts de 1984 liquident (un trimestre civil, article 11) :
+    # 242,0010 × 0,75 = 181,50 €.
+    ("1927-03-10", "60", ""): (181.50, 0.75),
+    # Né le 10 mars 1930, pension au 1er avril 1990 : après l'arrêté du 20 mai
+    # 1987, dont le texte n'est pas lu, le modèle garde sa lecture, 465,78 €.
+    ("1930-03-10", "60", ""): (465.78, 1.0),
+}
+
+
+def test_la_carpimko_minore_par_l_age_seul_de_1984_a_juin_1987():
+    """Ligne 20 de la file des corrections (action 130). Statuts de 1984
+    (arrêté du 22 février 1984, JORFTEXT000000315359), article 12
+    (LEGIARTI000006782881) : « Le bénéfice de la retraite peut être accordé
+    par anticipation si l'adhérent a versé toutes les cotisations dues. Dans
+    ce cas, la retraite est affectée des coefficients de minoration suivants :
+    0,75 si la liquidation intervient à soixante ans ; 0,80 […] à soixante et
+    un ans ; 0,85 […] à soixante-deux ans ; 0,90 […] à soixante-trois ans ;
+    0,95 […] à soixante-quatre ans. » Aucune durée n'y entre ; le modèle
+    annulait la minoration quand celle du régime de base était atteinte. Lus
+    jusqu'au 4 juin 1987, jour où paraît l'arrêté du 20 mai 1987. Servi par le
+    portage, refait au bit près par le moteur Python."""
+    from outils_pont import servi_et_refait
+    from test_complementaires_liberales_a_leur_age import REQUETE
+
+    requete = {**REQUETE, "statut": "auxiliaire_medical", "debut": "20"}
+
+    def titre(declare):
+        if not declare:
+            return {}
+        nom, _, valeur = declare.partition("=")
+        return {nom: valeur or "oui"}
+
+    cas = [{"cle": "|".join(cle),
+            "requete": {**requete, "naissance": cle[0], "liquidation": cle[1],
+                        **titre(cle[2])}}
+           for cle in CARPIMKO_STATUTS_DE_1984]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    ecarts = {}
+    for cle, (montant, coefficient) in CARPIMKO_STATUTS_DE_1984.items():
+        actuel = servis["|".join(cle)]["actuel"]
+        [pension] = [p for p in actuel["pensions_par_regime"]
+                     if p["regime"] == "carpimko_complementaire"]
+        if (_coefficient(pension["detail"]) != pytest.approx(coefficient)
+                or pension["montant"] != pytest.approx(montant, abs=0.005)):
+            ecarts[cle] = (_coefficient(pension["detail"]), round(pension["montant"], 2))
+    assert ecarts == {}, ecarts
+
+
 def test_l_age_legal_de_la_base_borne_la_majoration_de_la_carpimko_de_2015_a_2023(simulateur):
     """Les statuts de 2015 et de 2019 liquident du 3 octobre 2015 au 9 janvier
     2024 ; l'arrêté du 27 décembre 2023 abroge ensuite le 2° de l'article
