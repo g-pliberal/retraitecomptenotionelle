@@ -1,0 +1,31 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 19 : la CARPIMKO ne majore pas avant l'âge légal de la base les générations 1955 et antérieures"
+consulte: >-
+  `python scripts/veille_droit.py` ; les index JORF et LEGI récupérés par
+  `dila_index.py --recuperer`, à jour du 11 novembre 2026. Arrêté du 31 juillet 2015,
+  annexe (JORFARTI000031255547), lue en entier : articles 11, 12, 12 ter et 12 quater.
+  Arrêté du 27 décembre 2023, annexe (JORFARTI000048880643), lue à « 12 quater ».
+  D. 161-2-1-9 (LEGIARTI000025089933) et L. 643-3 (LEGIARTI000028498667), dans leur
+  rédaction du 1er janvier 2017.
+trouve: >-
+  La majoration court « au-delà de l'âge auquel elle aurait pu être liquidée sans
+  abattement » (article 12 ter) ; pour la « GÉNÉRATION 1955 ET ANTÉRIEURE », le taux
+  plein avant 65 ans demande de liquider la base « sans abattement » (articles 11, 2°,
+  a, et 12 quater, 1°), ce qui ne se peut qu'à l'âge légal de la base, « Soixante et un
+  ans et sept mois pour les assurés nés en 1954 ». Le modèle la comptait de l'âge où la
+  durée est atteinte, cherché depuis 60 ans : corrigé dans les deux moteurs, pour les
+  pensions du 3 octobre 2015 à la fin de 2023
+  (`surcote_age_legal_de_la_base_jusqu_a_la_generation: 1955` aux périodes de 2016 à
+  2023 de `carpimko_complementaire.yaml`). Né le 10 décembre 1954, entré à vingt ans,
+  pension du 1er janvier 2017 : un trimestre civil entier, 1,0125, 5 544,34 € par an au
+  lieu de 5 681,23 € (136,90 € de moins). L'arrêté du 27 décembre 2023 récrit
+  l'article 12 quater sans son 2° : la borne s'arrête là. Les fiches
+  `carpimko_ages_2015` et `surcote_par_age_seul` relues ce jour, l'erreur passée à
+  l'histoire de la première.
+reste: >-
+  Les 4 % par année d'anticipation des générations 1955 et antérieures quand elles ont
+  leur durée, que le texte ne tranche pas (rien ou 725,56 € par an au cas posé, depuis
+  la correction). La majoration avant l'âge légal de la base pour les générations 1956
+  à 1960 de 2015 à 2024, et pour toutes depuis 2024, non tranchée. Le décompte en
+  trimestres écoulés et non en trimestres civils, et la date d'effet de 1987 à juillet
+  2026, dont l'article n'est pas lu.

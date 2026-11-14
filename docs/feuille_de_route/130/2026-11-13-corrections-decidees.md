@@ -190,8 +190,14 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   an de moins à la CARMF, 119,42 € à l'ASV) ; le reste de la ligne 13, le passage à
   0,75 % des nés du second semestre de 1951, est réglé avec ; note
   `2026-11-14-correction-carmf-asv-trimestre-civil-suivant.md`.
-- [ ] 19. **CARPIMKO, les générations 1955 et antérieures de 2015 à 2024** (136,90 € de
+- [x] 19. **CARPIMKO, les générations 1955 et antérieures de 2015 à 2024** (136,90 € de
   trop). Fiche `carpimko_ages_2015` ; note `2026-11-05-e3-bis-corrections-de-r-e4.md`.
+  Corrigé le 14 novembre 2026 : pour une pension du 3 octobre 2015 à la fin de 2023, la
+  majoration de ces générations ne se compte plus avant l'âge légal de leur régime de
+  base, dans les deux moteurs (né le 10 décembre 1954, pension du 1er janvier 2017 :
+  5 544,34 € par an au lieu de 5 681,23 €) ; les générations suivantes, et toutes depuis
+  2024, restent une limite déclarée ; note
+  `2026-11-14-correction-carpimko-generations-1955-et-anterieures.md`.
 - [ ] 20. **CARPIMKO, de 1984 au 4 juin 1987** (28,57 € de trop). Mêmes fiche et note.
 - [x] 21. **CARCDSF, du 11 octobre au 31 décembre 2007** : les statuts de 2007 non servis.
   Fiche `carcdsf_minoration_age_seul` ; note
