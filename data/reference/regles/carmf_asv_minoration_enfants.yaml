@@ -374,29 +374,29 @@ approximations:
     9 ; code de la sécurité sociale, L. 161-17-2, 3°, rédaction de la loi n° 2025-1403
     (LEGIARTI000053280889), pour l'âge légal des nés en 1964
   ecart: >-
-    ERREUR DU MODÈLE, à la complémentaire, déclarée et non corrigée (pour le
-    propriétaire) : l'article 24 fixe la date d'effet « au premier jour du trimestre
-    civil qui suit la réalisation de toutes les conditions d'ouverture des droits » ;
-    le modèle la fixe au premier jour du mois qui suit l'âge. Né le 10 mai 1964, parti à
-    63 ans le 10 mai 2027 (l'âge légal des nés en 1964 est de 62 ans et 9 mois, L.
-    161-17-2, 3°, pour les pensions prenant effet depuis le 1er septembre 2026 : le
-    départ le dépasse, et la cessation fait la date d'effet) : le modèle sert la
-    complémentaire le 1er juin 2027, le texte
-    le 1er juillet ; 4 trimestres de majoration des deux côtés, du 1er juillet 2026 ;
-    un mois de trop, 14 056,14 / 12 = 1 171,35 €. Né le 10 mars 1964, parti à 63 ans et
-    un mois le 10 avril 2027 : le modèle sert le 1er mai 2027, à 1,05 (4 trimestres
-    d'âge entiers) ; le texte le 1er juillet 2027, à 1,0625 (5 trimestres civils du 1er
-    avril 2026) ; deux mois de trop, 2 337,68 €, puis 14 026,06 / 1,05 × 1,0625 − 14
-    026,06 = 166,98 € par an de moins. À l'ASV, le règlement ne dit pas la date d'effet
-    de la pension du médecin — l'article 2 la nomme, l'article 7 n'étend que les règles
-    des conjoints, l'article 9 ne vise que le médecin débiteur — : point non tranché ;
-    première lecture, celle du guide de la caisse, le trimestre civil, 1 320,91 € dans
-    le premier cas, 2 656,35 € puis 189,74 € par an dans le second ; seconde, celle du
-    modèle, 0 €. Le rectificatif du 8 août 2026 est lu : il ne déplace qu'un intitulé de
-    chapitre (textes sans effet).
+    À la complémentaire, l'article 24 fixe la date d'effet « au premier jour du
+    trimestre civil qui suit la réalisation de toutes les conditions d'ouverture des
+    droits, sans pouvoir être antérieure à la date de la demande ». Le modèle ne
+    connaît pas la demande : il tient la pension pour demandée à temps, et reporte la
+    date qu'il présume — le premier du mois qui suit l'âge demandé — au premier jour du
+    trimestre civil qui commence ce jour-là ou après (`effet_au_trimestre_civil`),
+    depuis le 18 juillet 2026 ; la condition du formulaire reçu dans les douze mois
+    n'est pas portée. La pension de base, que R. 643-6 du code de la sécurité sociale
+    date de même, reste servie au premier du mois (fiche `cnavpl_allocation_avant_2004`).
+    À l'ASV, le règlement ne dit pas la date d'effet de la pension du médecin —
+    l'article 2 la nomme, l'article 7 n'étend que les règles des conjoints, l'article 9
+    ne vise que le médecin débiteur — : point non tranché ; première lecture, celle du
+    guide de la caisse, le trimestre civil ; seconde, celle du modèle, qui la sert au
+    premier du mois, avec la base. Né le 10 mai 1964, entré à 22 ans, parti à 63 ans le
+    10 mai 2027 : l'ASV servie le 1er juin, 15 850,88 € par an, un mois avant la
+    complémentaire. Le rectificatif du 8 août 2026 est lu : il ne déplace qu'un
+    intitulé de chapitre (textes sans effet).
   effet: >-
-    à la complémentaire, 1 171,35 € (un mois de trop), ou 2 337,68 € (deux mois de trop) puis 166,98 € par an de moins ; à l'ASV, 0 € ou, si la première lecture vaut, 1 320,91 €, ou 2 656,35 € puis 189,74 € par an.
-    Essai du 6 novembre 2026, dans les deux moteurs, requête du formulaire (médecin libéral, entré à 22 ans, deux salaires moyens, né le 10 du mois).
+    à la complémentaire, aucun quand la demande est faite à temps ; à l'ASV, 0 € ou, si
+    la première lecture vaut, 1 320,91 € (un mois de trop), ou 2 656,35 € puis
+    189,74 € par an de moins. Essai du 6 novembre 2026, dans les deux moteurs, requête
+    du formulaire (médecin libéral, entré à 22 ans, deux salaires moyens, né le 10 du
+    mois).
 - version: [statuts_d_avant_2017, statuts_de_2017, statuts_de_mars_2017]
   textes: >-
     l'article 22 du règlement, ajouté par l'arrêté du 16 janvier 1964, et l'article des
@@ -477,8 +477,22 @@ effet: >-
   trimestre civil de la complémentaire depuis le 18 juillet 2026 ; quatre points non
   tranchés, l'âge de l'ASV avant 2017, l'âge légal de janvier à mars 2017, la date
   d'effet d'avant 2026 et celle de l'ASV.
+  Corrigée le 14 novembre 2026 (action 130, décision du propriétaire du 13, ligne 12 de
+  la file) : jusque-là, le modèle servait la complémentaire le premier du mois qui suit
+  l'âge, avec la base, quand l'article 24 du règlement de 2026 la fixe « au premier jour
+  du trimestre civil qui suit la réalisation de toutes les conditions d'ouverture des
+  droits » — né le 10 mai 1964, entré à 22 ans, parti à 63 ans : servi dès le 1er juin
+  2027 au lieu du 1er juillet, un mois de trop, 14 056,14 / 12 = 1 171,35 € ; né le 10
+  mars 1964, parti à 63 ans et un mois : servi dès le 1er mai 2027 à 1,05 au lieu du
+  1er juillet à 1,0625, deux mois de trop, 2 337,68 €, puis 14 026,06 / 1,05 × 1,0625 =
+  14 193,04 € au lieu de 14 026,06 €, 166,98 € par an de moins. Depuis,
+  `effet_au_trimestre_civil: [2026-07-18, null]` à la période de 2026 de la
+  complémentaire, dans les deux moteurs : la date présumée, depuis le 18 juillet 2026,
+  est reportée au premier jour du trimestre civil qui commence ce jour-là ou après, et
+  la pension s'y liquide seule, après la base, aux conditions d'ouverture de celle-ci.
+  L'ASV reste servie au premier du mois, son règlement ne la datant pas.
 sources:
-  lu_le: 2026-11-06
+  lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -489,6 +503,12 @@ sources:
     CARMF. Demander à la caisse une pension prenant effet le 1er janvier 2017 d'un
     médecin né avant 1955, et la date d'effet qu'elle donne à l'ASV.
   lectures:
+  - type: jorf
+    reference: >-
+      Relu pour la correction de la date d'effet au trimestre civil : arrêté du 10
+      juillet 2026, annexe, I, article 24 (JORFARTI000054435859), dans l'index JORF du
+      dépôt, à jour du 11 novembre 2026.
+    date: 2026-11-14
   - type: jorf
     reference: >-
       Arrêtés du 1er avril 2008 (JORFARTI000018605102 à 110), du 9 août 2010
@@ -555,16 +575,19 @@ code:
   python: >-
     droit/liquider.py : abattement_points, abattement_ircec, _ABATTEMENTS_IRCEC,
     _ABATTEMENTS_PAR_ANNEE_AGE_SEUL, surcote_points ; droit/ouvrir.py : age_taux_plein ;
-    droit/completer.py : completer, _taux_majoration_enfants
+    droit/completer.py : completer, _taux_majoration_enfants ; droit/departs.py :
+    _au_trimestre_civil, departs_et_demandes
   javascript: >-
     moteur/js/droit/liquider.js : abattementPoints, abattementIrcec, surcotePoints ;
     moteur/js/droit/ouvrir.js : ageTauxPlein ; moteur/js/droit/completer.js : completer,
-    tauxMajorationEnfants
+    tauxMajorationEnfants ; moteur/js/droit/departs.js : auTrimestreCivil,
+    departsEtDemandes
   parametres: >-
     contenu.parametres de chaque version : age_ouverture_par_generation, age_taux_plein,
     duree_requise_trimestres, decote_par_trimestre, surcote_points,
     surcote_par_trimestre, surcote_age_debut, surcote_palier_age,
     surcote_par_trimestre_apres_palier, surcote_age_maximum ;
-    regimes/carmf_complementaire.yaml : age_taux_plein, avantages_non_contributifs ;
+    regimes/carmf_complementaire.yaml : age_taux_plein, effet_au_trimestre_civil,
+    avantages_non_contributifs ;
     regimes/asv_conventionnes.yaml : avantages_non_contributifs
   tests: [tests/test_sections_sante.py, tests/test_sections_liberales.py, tests/js/moteur.test.js]

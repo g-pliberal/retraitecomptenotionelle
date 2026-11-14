@@ -933,7 +933,8 @@ def _regles_des_sections(p) -> dict:
 
     La décote à deux pentes de la CAVP, le taux plein anticipé des mères de la
     CARCDSF, la surcote par années cotisées de la CAVAMAC, l'âge de l'inapte
-    servi sans coefficient de la CAVOM et celui où elle l'ouvre : même raison que
+    servi sans coefficient de la CAVOM et celui où elle l'ouvre, la date d'effet
+    au trimestre civil de quatre sections : même raison que
     pour les marins, le moteur JavaScript lit leur absence comme leur nullité.
     """
     champs = {
@@ -953,6 +954,10 @@ def _regles_des_sections(p) -> dict:
             p.carriere_longue_minoree_jusqu_au_palier or None),
         # L'inapte de la CAVOM depuis 2025, ouvert à 62 ans.
         "age_ouverture_de_l_inapte": p.age_ouverture_de_l_inapte,
+        # La pension servie au premier jour du trimestre civil qui suit : la
+        # CAVOM, la CARPIMKO, la CAVP, la CARMF depuis le 18 juillet 2026.
+        "effet_au_trimestre_civil": (list(p.effet_au_trimestre_civil)
+                                     if p.effet_au_trimestre_civil else None),
     }
     return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
 

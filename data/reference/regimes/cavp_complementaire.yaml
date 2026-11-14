@@ -155,6 +155,7 @@ periodes:
     decote_par_trimestre: 0.0125
     decote_annulee_par_la_duree: cavp_minoration_deux_pentes
     surcote_par_trimestre: null
+    effet_au_trimestre_civil: [2009-06-07, null]
     avantages_non_contributifs: [reversion, majoration_enfants]
     cotisation_forfaitaire_euros: 6880.00
     cotisation_forfaitaire_annee: 2024
@@ -206,6 +207,7 @@ periodes:
     surcote_par_trimestre: 0.005
     surcote_points: surcote_par_age_seul
     surcote_trimestres_maximum: 12
+    effet_au_trimestre_civil: [2009-06-07, null]
     avantages_non_contributifs: [reversion, majoration_enfants]
     cotisation_forfaitaire_euros: 6880.00
     cotisation_forfaitaire_annee: 2024
@@ -272,6 +274,7 @@ periodes:
     surcote_par_trimestre: 0.005
     surcote_points: surcote_par_age_seul
     surcote_trimestres_maximum: 12
+    effet_au_trimestre_civil: [2009-06-07, null]
     avantages_non_contributifs: [reversion, majoration_enfants]
     cotisation_forfaitaire_euros: 6880.00
     cotisation_forfaitaire_annee: 2024
@@ -323,6 +326,7 @@ periodes:
     surcote_par_trimestre: 0.005
     surcote_points: surcote_par_age_seul
     surcote_trimestres_maximum: 12
+    effet_au_trimestre_civil: [2009-06-07, null]
     avantages_non_contributifs: [reversion, majoration_enfants]
     cotisation_forfaitaire_euros: 6880.00
     cotisation_forfaitaire_annee: 2024
@@ -385,6 +389,7 @@ periodes:
     surcote_par_trimestre: 0.005
     surcote_points: surcote_par_age_seul
     surcote_trimestres_maximum: 12
+    effet_au_trimestre_civil: [2009-06-07, null]
     avantages_non_contributifs: [reversion, majoration_enfants]
     cotisation_forfaitaire_euros: 6880.00
     cotisation_forfaitaire_annee: 2024
@@ -424,6 +429,7 @@ periodes:
     surcote_par_trimestre: 0.005
     surcote_points: surcote_par_age_seul
     surcote_trimestres_maximum: 12
+    effet_au_trimestre_civil: [2009-06-07, null]
     avantages_non_contributifs: [reversion, majoration_enfants]
     cotisation_forfaitaire_euros: 7657.00
     cotisation_forfaitaire_annee: 2026

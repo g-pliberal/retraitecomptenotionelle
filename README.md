@@ -190,8 +190,8 @@ de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Lire une page transfère son
 texte et de quoi l'animer : <!--chiffre:poids_comprime(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->167<!--/--> Ko compressés
 (<!--chiffre:poids(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->541<!--/--> Ko bruts) pour l'accueil. Le premier calcul y ajoute
-le moteur, <!--chiffre:poids_comprime(moteur/js/*.js + moteur/js/droit/*.js - moteur/js/routeur.js - moteur/js/adresses.js - moteur/js/cles.js - moteur/js/gabarit.js - moteur/js/format.js - moteur/js/calendrier.js - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->938<!--/--> Ko compressés, et le paquet
-de données, <!--chiffre:poids_comprime(moteur/donnees.json)-->818<!--/--> Ko compressés (<!--chiffre:poids(moteur/donnees.json)-->6 021<!--/--> Ko bruts) ; le tout prend quelques dixièmes
+le moteur, <!--chiffre:poids_comprime(moteur/js/*.js + moteur/js/droit/*.js - moteur/js/routeur.js - moteur/js/adresses.js - moteur/js/cles.js - moteur/js/gabarit.js - moteur/js/format.js - moteur/js/calendrier.js - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->939<!--/--> Ko compressés, et le paquet
+de données, <!--chiffre:poids_comprime(moteur/donnees.json)-->818<!--/--> Ko compressés (<!--chiffre:poids(moteur/donnees.json)-->6 022<!--/--> Ko bruts) ; le tout prend quelques dixièmes
 de seconde, et les chargements suivants sont immédiats.
 
 Neuf pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -236,7 +236,7 @@ Chaque page est écrite toute faite, et ne charge qu'au premier calcul
 `moteur/js/`, le moteur qui calcule, en JavaScript et sans aucune bibliothèque,
 ce qui dépend de ce que le lecteur saisit — sa carrière, ses droits et sa
 pension —, et `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->6 021<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->6 022<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->80<!--/--> fiches de régime, et ce que le Python a calculé une fois pour toutes
 sous les réglages de référence : le coût et les carrières types, que les pages
@@ -261,7 +261,7 @@ Il est traité de front : **le JavaScript de `moteur/js/` fait foi**, et
 Le moteur Python, qui garde ses jumeaux jusqu'à leur retrait, refait chaque
 simulation et doit la retrouver au bit près (`tests/test_pont.py`) ;
 `node --test` rejoue les simulations côté JavaScript et les compare valeur par valeur —
-<!--chiffre:portage(valeurs)-->175 310<!--/--> nombres,
+<!--chiffre:portage(valeurs)-->175 420<!--/--> nombres,
 dont <!--chiffre:portage(identiques)-->100,0<!--/--> % identiques
 au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->0,0<!--/--> · 10⁻¹⁵ (un *ulp*, la précision d'un flottant, vaut 2 · 10⁻¹⁶). Les
 deux moteurs ne diffèrent plus d'un *ulp* : le JavaScript calcule

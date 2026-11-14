@@ -186,7 +186,15 @@ sources:
     sépare la base des complémentaires datées à part (CARPV, CAVEC, CAVOM, CARPIMKO,
     CPRN), dont la date d'effet n'est pas lue dans les statuts, sauf celle de la
     CARPIMKO de 2026, au trimestre civil elle aussi (règlement, article 7,
-    JORFARTI000054435915).
+    JORFARTI000054435915). Depuis le 14 novembre 2026 (action 130, ligne 12 de la
+    file), le moteur sert au trimestre civil les complémentaires de la CAVOM (depuis
+    2016), de la CARPIMKO (de 1984 à juin 1987, et depuis le 18 juillet 2026), de la
+    CAVP (depuis le 7 juin 2009) et de la CARMF (depuis le 18 juillet 2026), lues dans
+    leurs statuts : c'est la base, restée au mois, qui part désormais un ou deux mois
+    avant elles. Le correctif gardé ne s'applique plus tel quel — `departs` et la page
+    portent déjà le motif `trimestre_civil` —, et l'écart de la CARPIMKO liquidée sans
+    sa base, qu'il étendait, est corrigé : elle lit la durée requise de la base. Restent
+    à lire la CARPV, la CAVEC et la CPRN.
   - >-
     Lue le 3 novembre 2026 (file L de la vague 6, action 130), quand la base des
     libéraux cessa de s'ouvrir à l'âge de ses complémentaires : elle ne s'ouvrait avant

@@ -32,7 +32,7 @@ from typing import TYPE_CHECKING
 from ..calendrier import MOIS_PAR_AN, DateMois, en_mois, trimestres_civils
 from ..donnees.chargement import Fiabilite, charger_chomage_complementaires
 from . import categories, compter, coordonner, etranger, invalidite
-from .commun import date_d_effet, ligne_cotisee, periode_de_liquidation
+from .commun import SANS_LEUR_BASE, date_d_effet, ligne_cotisee, periode_de_liquidation
 from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
@@ -197,64 +197,37 @@ class Ouverture:
         }
 
 
-def ouvrir(moteur: ScenarioActuel, releve: Releve,
-           regimes: frozenset[str] | None = None) -> Ouverture:
-    """Ce que le droit ouvre à la demande dont ``releve`` est le relevé.
+def _references(moteur: ScenarioActuel, releve: Releve, codes: list[str]
+                ) -> tuple[int, list[str], float | None, float | None]:
+    """Ce que les régimes ``codes`` opposent ensemble à une demande : la durée
+    requise de référence, la plus longue des leurs ; les régimes qui
+    l'opposent ; l'âge d'ouverture le plus précoce, et le même sans
+    l'invalidité ni l'inaptitude — ``None`` quand aucun n'oppose d'âge.
 
-    La durée requise de référence est la plus longue de celles des régimes de
-    base en annuités ; l'âge d'ouverture, le plus précoce des leurs. Une
-    carrière qui n'a que des points les lit sur ses régimes en points, dans
-    une seconde passe. Quand l'âge demandé précède cet âge, la carrière
-    longue peut encore ouvrir le droit ; sinon, la liquidation n'est pas
-    ouverte, et le dit.
+    DEUX PASSES, ET LA SECONDE NE SERT QU'À QUI N'A QUE DES POINTS.
+    Les régimes en ANNUITÉS commandent, comme partout ailleurs. Mais une
+    carrière entière en points n'en a aucun, et la boucle laissait alors
+    l'âge de référence à ``None`` : aucun âge ne lui était opposé,
+    et un chef d'exploitation pouvait liquider à cinquante ans sans que
+    rien ne le refuse, quand l'artisan de la grille se le voyait refuser
+    à la même page. La durée de référence retombait de son côté sur 160,
+    c'est-à-dire sur une durée que plus aucune génération ne doit — et
+    c'est cette durée-là que l'abattement du régime en points opposait.
 
-    ``regimes`` sont ceux que la demande vise quand ils ne liquident pas tous
-    au même départ (:mod:`.departs`) : chacun s'ouvre à SON âge, et le
-    régime général de l'agent parti à cinquante-sept ans ne s'ouvre pas à
-    l'âge de sa catégorie active. ``None`` : tous.
-    """
+    La seconde passe ne s'ouvre donc que si la première n'a rien trouvé,
+    et les comportements des carrières en annuités ne bougent pas d'un
+    trimestre. L'Agirc-Arrco et l'Ircantec en sont écartées comme
+    ailleurs : elles n'opposent pas la durée du régime de base, et ne
+    sont jamais seules sur une carrière."""
     carriere = releve.carriere
-    durees, droits = releve.durees, releve.droits
-    annee_liquidation = carriere.annee_liquidation
-    age_liquidation = carriere.age_liquidation or 0.0
-    majoration_enfants = durees.enfants
-    fiabilite = Fiabilite.CERTIFIEE
-
-    # Durée requise de référence : celle du régime de base. C'est elle qui
-    # commande le taux plein, donc aussi l'abattement des complémentaires —
-    # un assuré au taux plein liquide sa complémentaire sans abattement,
-    # quel que soit son âge.
-    requis_reference = 0
-    #: Les régimes qui l'opposent : ceux des fonctionnaires ont leurs portes
-    #: de la carrière longue (:meth:`CarriereLongue.de_la_fonction_publique`).
-    opposants: list[str] = []
-    #: Âge d'ouverture des droits le plus précoce parmi les régimes de base
-    #: que la demande liquide. Un polypensionné liquide chaque pension à
-    #: l'âge de son régime (:mod:`.departs`) ; quand tous liquident au même
-    #: départ, c'est l'âge du plus précoce qui ouvre ce départ.
-    age_ouverture_reference: float | None = None
-    #: Le même, sans l'invalidité ni l'inaptitude : l'âge qu'elles devancent.
-    age_sans_invalidite: float | None = None
-    codes = [code for code in droits.codes if regimes is None or code in regimes]
     # Un régime et celui qui lui succède liquident ensemble, sous les règles
     # de la caisse qui aurait le dossier : les autres membres du groupe
     # sont sautés partout où un régime liquide.
     groupes = releve.groupes
-    # DEUX PASSES, ET LA SECONDE NE SERT QU'À QUI N'A QUE DES POINTS.
-    # Les régimes en ANNUITÉS commandent, comme partout ailleurs. Mais une
-    # carrière entière en points n'en a aucun, et la boucle laissait alors
-    # `age_ouverture_reference` à ``None`` : aucun âge ne lui était opposé,
-    # et un chef d'exploitation pouvait liquider à cinquante ans sans que
-    # rien ne le refuse, quand l'artisan de la grille se le voyait refuser
-    # à la même page. `requis_reference` retombait de son côté sur 160,
-    # c'est-à-dire sur une durée que plus aucune génération ne doit — et
-    # c'est cette durée-là que l'abattement du régime en points opposait.
-    #
-    # La seconde passe ne s'ouvre donc que si la première n'a rien trouvé,
-    # et les comportements des carrières en annuités ne bougent pas d'un
-    # trimestre. L'Agirc-Arrco et l'Ircantec en sont écartées comme
-    # ailleurs : elles n'opposent pas la durée du régime de base, et ne
-    # sont jamais seules sur une carrière.
+    requis = 0
+    opposants: list[str] = []
+    age: float | None = None
+    sans_invalidite: float | None = None
     for calculs in (("annuites",), ("points", "mixte")):
         candidates: list[tuple[str, PeriodeRegime]] = []
         for code in codes:
@@ -283,23 +256,70 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
         # R-E-bis). Chacune se demande à son âge (:mod:`.departs`).
         retenues = bases_d_abord(moteur, candidates) if "points" in calculs else candidates
         for code, periode in retenues:
-            requis_reference = max(
-                requis_reference, duree_requise(moteur, periode, carriere)[0]
-            )
+            requis = max(requis, duree_requise(moteur, periode, carriere)[0])
             opposants.append(code)
             age_regime = age_ouverture(moteur, periode, carriere)
-            age_ouverture_reference = (
-                age_regime if age_ouverture_reference is None
-                else min(age_ouverture_reference, age_regime)
-            )
-            sans_invalidite = age_ouverture(moteur, periode, carriere,
-                                            invalidite_comprise=False)
-            age_sans_invalidite = (
-                sans_invalidite if age_sans_invalidite is None
-                else min(age_sans_invalidite, sans_invalidite)
-            )
-        if age_ouverture_reference is not None:
+            age = age_regime if age is None else min(age, age_regime)
+            sans = age_ouverture(moteur, periode, carriere, invalidite_comprise=False)
+            sans_invalidite = sans if sans_invalidite is None else min(sans_invalidite, sans)
+        if age is not None:
             break
+    return requis, opposants, age, sans_invalidite
+
+
+def ouvrir(moteur: ScenarioActuel, releve: Releve,
+           regimes: frozenset[str] | None = None) -> Ouverture:
+    """Ce que le droit ouvre à la demande dont ``releve`` est le relevé.
+
+    La durée requise de référence est la plus longue de celles des régimes de
+    base en annuités ; l'âge d'ouverture, le plus précoce des leurs. Une
+    carrière qui n'a que des points les lit sur ses régimes en points, dans
+    une seconde passe. Quand l'âge demandé précède cet âge, la carrière
+    longue peut encore ouvrir le droit ; sinon, la liquidation n'est pas
+    ouverte, et le dit.
+
+    ``regimes`` sont ceux que la demande vise quand ils ne liquident pas tous
+    au même départ (:mod:`.departs`) : chacun s'ouvre à SON âge, et le
+    régime général de l'agent parti à cinquante-sept ans ne s'ouvre pas à
+    l'âge de sa catégorie active. ``None`` : tous.
+    """
+    carriere = releve.carriere
+    durees, droits = releve.durees, releve.droits
+    annee_liquidation = carriere.annee_liquidation
+    age_liquidation = carriere.age_liquidation or 0.0
+    majoration_enfants = durees.enfants
+    fiabilite = Fiabilite.CERTIFIEE
+
+    # Durée requise de référence : celle du régime de base. C'est elle qui
+    # commande le taux plein, donc aussi l'abattement des complémentaires —
+    # un assuré au taux plein liquide sa complémentaire sans abattement,
+    # quel que soit son âge. Les régimes qui l'opposent : ceux des
+    # fonctionnaires ont leurs portes de la carrière longue
+    # (:meth:`CarriereLongue.de_la_fonction_publique`). Âge d'ouverture des
+    # droits : le plus précoce parmi les régimes de base que la demande
+    # liquide. Un polypensionné liquide chaque pension à l'âge de son régime
+    # (:mod:`.departs`) ; quand tous liquident au même départ, c'est l'âge du
+    # plus précoce qui ouvre ce départ. Le même, sans l'invalidité ni
+    # l'inaptitude : l'âge qu'elles devancent.
+    codes = [code for code in droits.codes if regimes is None or code in regimes]
+    requis_reference, opposants, age_ouverture_reference, age_sans_invalidite = (
+        _references(moteur, releve, codes))
+    if regimes is not None and age_ouverture_reference is None:
+        # UNE COMPLÉMENTAIRE LIQUIDÉE SANS SA BASE, à sa date
+        # (:mod:`.departs`) : la demande ne tient aucun régime qui oppose une
+        # durée ou un âge. Celle qui suit sa base — la CAVP, la CARMF, servies
+        # au trimestre civil qui suit — s'ouvre aux conditions des régimes de
+        # base de la carrière, carrière longue comprise : la CAVP minorait
+        # sinon la carrière longue par ses deux pentes. Celle qui se demande à
+        # son âge, sans la base (``SANS_LEUR_BASE``), ne leur doit que leur
+        # durée requise : la CARPIMKO retombait sinon sur 160 trimestres, et
+        # majorait depuis une durée que sa génération n'a pas atteinte.
+        bases = _references(moteur, releve, list(droits.codes))
+        if any(code not in SANS_LEUR_BASE
+               and moteur.catalogue[code].etage not in ETAGES_DE_BASE for code in codes):
+            requis_reference, opposants, age_ouverture_reference, age_sans_invalidite = bases
+        else:
+            requis_reference = bases[0]
     requis_reference = requis_reference or 160
 
     # Trimestres réellement COTISÉS, tous régimes : ils commandent la

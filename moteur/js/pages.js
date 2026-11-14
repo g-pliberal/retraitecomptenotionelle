@@ -4021,6 +4021,7 @@ const POURQUOI_CE_DEPART = {
   invalidite: "en remplacement de votre pension d'invalidité",
   radiation: "à votre radiation des cadres pour invalidité",
   limite_d_age: "à la limite d'âge de votre emploi",
+  trimestre_civil: "au premier jour du trimestre civil qui suit, comme ses statuts le fixent",
 };
 
 /**
@@ -4042,6 +4043,8 @@ const POURQUOI_PAS_A_CETTE_DATE = {
     + `se liquide à sa radiation, le 1<sup>er</sup> ${retenue}`,
   limite_d_age: (retenue) => "votre emploi prend fin à sa limite d'âge, et sa pension "
     + `part de ce jour, le 1<sup>er</sup> ${retenue}`,
+  trimestre_civil: (retenue) => "ses statuts la font commencer au premier jour du "
+    + `trimestre civil qui suit, le 1<sup>er</sup> ${retenue}`,
   ensemble: (retenue, complementaire) => (complementaire
     ? "elle suit la pension de base dont elle partage les années, servie le "
       + `1<sup>er</sup> ${retenue}`

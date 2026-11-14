@@ -28655,7 +28655,7 @@
   }
  },
  "cumul_salarie_et_liberal": {
-  "appels_liquider": 3,
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -28804,52 +28804,91 @@
     "actuel": {
      "age_ouverture_opposable": 64.0,
      "avantages_appliques": [],
+     "departs": [
+      {
+       "date_effet": "2039-02-01",
+       "montant": 64494.50985623019,
+       "montant_a_l_effet": 64494.50985623019,
+       "motif": "depart",
+       "regimes": [
+        "agirc_arrco",
+        "arrco",
+        "arrco_tranche_2",
+        "asv_conventionnes",
+        "cnavpl",
+        "regime_general"
+       ]
+      },
+      {
+       "date_effet": "2039-04-01",
+       "montant": 7189.375185039677,
+       "montant_a_l_effet": 7189.375185039677,
+       "motif": "trimestre_civil",
+       "regimes": [
+        "carmf_complementaire"
+       ]
+      }
+     ],
      "liquidation_ouverte": true,
      "minimum_applique": false,
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
+       "date_effet": "2039-02-01",
        "detail": "2,914.10 points × valeur de service 1.796301 €",
        "montant": 5234.591954749106,
+       "montant_a_l_effet": 5234.591954749106,
        "regime": "agirc_arrco"
       },
       {
+       "date_effet": "2039-02-01",
        "detail": "2,765.82 points × valeur de service 1.796301 €",
        "montant": 4968.238340803394,
+       "montant_a_l_effet": 4968.238340803394,
        "regime": "arrco"
       },
       {
+       "date_effet": "2039-02-01",
        "detail": "aucun droit",
        "montant": 0.0,
+       "montant_a_l_effet": 0.0,
        "regime": "arrco_tranche_2"
       },
       {
+       "date_effet": "2039-02-01",
        "detail": "892.11 points × valeur de service 14.810336 € × coefficient de majoration 1.1000",
        "montant": 14533.686141710512,
+       "montant_a_l_effet": 14533.686141710512,
        "regime": "asv_conventionnes"
       },
       {
-       "detail": "cotisations revalorisées 145,888 € × rendement 4.48% × coefficient de majoration 1.1000",
-       "montant": 7189.375185039677,
-       "regime": "carmf_complementaire"
-      },
-      {
+       "date_effet": "2039-02-01",
        "detail": "12,308.67 points × valeur de service 0.826848 €",
        "montant": 10177.393686935842,
+       "montant_a_l_effet": 10177.393686935842,
        "regime": "cnavpl"
       },
       {
+       "date_effet": "2039-02-01",
        "detail": "SR 59,161.20 € × taux 50.000% × 172/172",
        "montant": 29580.599732031333,
+       "montant_a_l_effet": 29580.599732031333,
        "regime": "regime_general"
+      },
+      {
+       "date_effet": "2039-04-01",
+       "detail": "cotisations revalorisées 145,888 € × rendement 4.48% × coefficient de majoration 1.1000 ; servie à partir du 1er avril 2039, 7,189.38 € de 2039, soit 7,189.38 € de 2039",
+       "montant": 7189.375185039677,
+       "montant_a_l_effet": 7189.375185039677,
+       "regime": "carmf_complementaire"
       }
      ],
-     "pension_annuelle": 71683.88504126985,
-     "pension_annuelle_euros_constants": 57210.28378301464,
+     "pension_annuelle": 71683.88504126987,
+     "pension_annuelle_euros_constants": 57210.283783014645,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 5973.657086772488,
-     "taux_remplacement": 0.5973549365161709,
-     "total_contributif": 71683.88504126985
+     "pension_mensuelle": 5973.657086772489,
+     "taux_remplacement": 0.597354936516171,
+     "total_contributif": 71683.88504126987
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -28951,7 +28990,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.33989113703109347,
-     "variation_vs_actuel": -0.4310063979493165
+     "variation_vs_actuel": -0.4310063979493166
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
@@ -28984,7 +29023,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.3757844177122293,
-     "variation_vs_actuel": -0.37091937349034276
+     "variation_vs_actuel": -0.3709193734903429
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -29016,7 +29055,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.1478559143269569,
-     "variation_vs_actuel": -0.7524823094469324
+     "variation_vs_actuel": -0.7524823094469325
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -205883,7 +205922,7 @@
   }
  },
  "statut_auxiliaire_medical": {
-  "appels_liquider": 3,
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -206027,24 +206066,51 @@
     "actuel": {
      "age_ouverture_opposable": 64.0,
      "avantages_appliques": [],
+     "departs": [
+      {
+       "date_effet": "2039-02-01",
+       "montant": 19782.220369755378,
+       "montant_a_l_effet": 19782.220369755378,
+       "motif": "depart",
+       "regimes": [
+        "asv_auxiliaires_medicaux",
+        "cnavpl"
+       ]
+      },
+      {
+       "date_effet": "2039-04-01",
+       "montant": 7433.674668406301,
+       "montant_a_l_effet": 7433.674668406301,
+       "motif": "trimestre_civil",
+       "regimes": [
+        "carpimko_complementaire"
+       ]
+      }
+     ],
      "liquidation_ouverte": true,
      "minimum_applique": false,
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
+       "date_effet": "2039-02-01",
        "detail": "1,268.64 points × valeur de service 1.899626 €",
        "montant": 2409.944993831882,
+       "montant_a_l_effet": 2409.944993831882,
        "regime": "asv_auxiliaires_medicaux"
       },
       {
-       "detail": "cotisations revalorisées 135,404 € × rendement 5.49%",
-       "montant": 7433.674668406301,
-       "regime": "carpimko_complementaire"
-      },
-      {
+       "date_effet": "2039-02-01",
        "detail": "21,010.25 points × valeur de service 0.826848 €",
        "montant": 17372.275375923495,
+       "montant_a_l_effet": 17372.275375923495,
        "regime": "cnavpl"
+      },
+      {
+       "date_effet": "2039-04-01",
+       "detail": "cotisations revalorisées 135,404 € × rendement 5.49% ; servie à partir du 1er avril 2039, 7,433.67 € de 2039, soit 7,433.67 € de 2039",
+       "montant": 7433.674668406301,
+       "montant_a_l_effet": 7433.674668406301,
+       "regime": "carpimko_complementaire"
       }
      ],
      "pension_annuelle": 27215.895038161678,
@@ -207943,7 +208009,7 @@
   }
  },
  "statut_auxiliaire_medical_1965": {
-  "appels_liquider": 3,
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -208087,24 +208153,51 @@
     "actuel": {
      "age_ouverture_opposable": 62.75,
      "avantages_appliques": [],
+     "departs": [
+      {
+       "date_effet": "2029-02-01",
+       "montant": 15922.163756889684,
+       "montant_a_l_effet": 15922.163756889684,
+       "motif": "depart",
+       "regimes": [
+        "asv_auxiliaires_medicaux",
+        "cnavpl"
+       ]
+      },
+      {
+       "date_effet": "2029-04-01",
+       "montant": 4471.079306367488,
+       "montant_a_l_effet": 4471.079306367488,
+       "motif": "trimestre_civil",
+       "regimes": [
+        "carpimko_complementaire"
+       ]
+      }
+     ],
      "liquidation_ouverte": true,
      "minimum_applique": false,
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
+       "date_effet": "2029-02-01",
        "detail": "1,199.29 points × valeur de service 1.59707 €",
        "montant": 1915.35138503441,
+       "montant_a_l_effet": 1915.35138503441,
        "regime": "asv_auxiliaires_medicaux"
       },
       {
-       "detail": "cotisations revalorisées 79,454 € × rendement 5.49% × coefficient de majoration 1.0250",
-       "montant": 4471.079306367488,
-       "regime": "carpimko_complementaire"
-      },
-      {
+       "date_effet": "2029-02-01",
        "detail": "19,657.76 points × valeur de service 0.695155 € × coefficient de majoration 1.0250",
        "montant": 14006.812371855274,
+       "montant_a_l_effet": 14006.812371855274,
        "regime": "cnavpl"
+      },
+      {
+       "date_effet": "2029-04-01",
+       "detail": "cotisations revalorisées 79,454 € × rendement 5.49% × coefficient de majoration 1.0250 ; servie à partir du 1er avril 2029, 4,471.08 € de 2029, soit 4,471.08 € de 2029",
+       "montant": 4471.079306367488,
+       "montant_a_l_effet": 4471.079306367488,
+       "regime": "carpimko_complementaire"
       }
      ],
      "pension_annuelle": 20393.24306325717,
@@ -211387,7 +211480,7 @@
   }
  },
  "statut_biologiste_liberal": {
-  "appels_liquider": 3,
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -211531,24 +211624,51 @@
     "actuel": {
      "age_ouverture_opposable": 64.0,
      "avantages_appliques": [],
+     "departs": [
+      {
+       "date_effet": "2039-02-01",
+       "montant": 23167.526254214397,
+       "montant_a_l_effet": 23167.526254214397,
+       "motif": "depart",
+       "regimes": [
+        "asv_directeurs_laboratoire",
+        "cnavpl"
+       ]
+      },
+      {
+       "date_effet": "2039-04-01",
+       "montant": 15613.344995465364,
+       "montant_a_l_effet": 15613.344995465364,
+       "motif": "trimestre_civil",
+       "regimes": [
+        "cavp_complementaire"
+       ]
+      }
+     ],
      "liquidation_ouverte": true,
      "minimum_applique": false,
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
+       "date_effet": "2039-02-01",
        "detail": "11,575.23 points × valeur de service 0.50066 €",
        "montant": 5795.250878290901,
+       "montant_a_l_effet": 5795.250878290901,
        "regime": "asv_directeurs_laboratoire"
       },
       {
-       "detail": "cotisations revalorisées 399,942 € × rendement 4.29% × coefficient d'anticipation 0.9100",
-       "montant": 15613.344995465364,
-       "regime": "cavp_complementaire"
-      },
-      {
+       "date_effet": "2039-02-01",
        "detail": "21,010.25 points × valeur de service 0.826848 €",
        "montant": 17372.275375923495,
+       "montant_a_l_effet": 17372.275375923495,
        "regime": "cnavpl"
+      },
+      {
+       "date_effet": "2039-04-01",
+       "detail": "cotisations revalorisées 399,942 € × rendement 4.29% × coefficient d'anticipation 0.9100 ; servie à partir du 1er avril 2039, 15,613.34 € de 2039, soit 15,613.34 € de 2039",
+       "montant": 15613.344995465364,
+       "montant_a_l_effet": 15613.344995465364,
+       "regime": "cavp_complementaire"
       }
      ],
      "pension_annuelle": 38780.87124967976,
@@ -213025,7 +213145,7 @@
   }
  },
  "statut_biologiste_liberal_1955": {
-  "appels_liquider": 3,
+  "appels_liquider": 6,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -213086,16 +213206,6 @@
        "relevement_des_exploitants": 0.0
       },
       {
-       "au_depart": 11412.218244781458,
-       "aujourd_hui": 13225.745897377192,
-       "coefficient": 1.1589110560013185,
-       "fiabilite": "moyenne",
-       "majoration_exceptionnelle": 0.0,
-       "regime": "cavp_complementaire",
-       "regle": "par_defaut",
-       "relevement_des_exploitants": 0.0
-      },
-      {
        "au_depart": 10912.791739057435,
        "aujourd_hui": 12656.153371887525,
        "coefficient": 1.1597539543057998,
@@ -213103,6 +213213,16 @@
        "majoration_exceptionnelle": 0.0,
        "regime": "cnavpl",
        "regle": "point",
+       "relevement_des_exploitants": 0.0
+      },
+      {
+       "au_depart": 11412.218244781458,
+       "aujourd_hui": 13225.745897377192,
+       "coefficient": 1.1589110560013185,
+       "fiabilite": "moyenne",
+       "majoration_exceptionnelle": 0.0,
+       "regime": "cavp_complementaire",
+       "regle": "par_defaut",
        "relevement_des_exploitants": 0.0
       }
      ],
@@ -213232,24 +213352,51 @@
     "actuel": {
      "age_ouverture_opposable": 62.0,
      "avantages_appliques": [],
+     "departs": [
+      {
+       "date_effet": "2019-02-01",
+       "montant": 14322.72882498938,
+       "montant_a_l_effet": 14322.72882498938,
+       "motif": "depart",
+       "regimes": [
+        "asv_directeurs_laboratoire",
+        "cnavpl"
+       ]
+      },
+      {
+       "date_effet": "2019-04-01",
+       "montant": 11412.218244781458,
+       "montant_a_l_effet": 11412.218244781458,
+       "motif": "trimestre_civil",
+       "regimes": [
+        "cavp_complementaire"
+       ]
+      }
+     ],
      "liquidation_ouverte": true,
      "minimum_applique": false,
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
+       "date_effet": "2019-02-01",
        "detail": "10,076.31 points × valeur de service 0.338411 €",
        "montant": 3409.9370859319456,
+       "montant_a_l_effet": 3409.9370859319456,
        "regime": "asv_directeurs_laboratoire"
       },
       {
-       "detail": "cotisations revalorisées 263,331 € × rendement 4.66% × coefficient d'anticipation 0.9300",
-       "montant": 11412.218244781458,
-       "regime": "cavp_complementaire"
-      },
-      {
+       "date_effet": "2019-02-01",
        "detail": "18,353.01 points × valeur de service 0.569 € × coefficient de majoration 1.0450",
        "montant": 10912.791739057435,
+       "montant_a_l_effet": 10912.791739057435,
        "regime": "cnavpl"
+      },
+      {
+       "date_effet": "2019-04-01",
+       "detail": "cotisations revalorisées 263,331 € × rendement 4.66% × coefficient d'anticipation 0.9300 ; servie à partir du 1er avril 2019, 11,412.22 € de 2019, soit 11,412.22 € de 2019",
+       "montant": 11412.218244781458,
+       "montant_a_l_effet": 11412.218244781458,
+       "regime": "cavp_complementaire"
       }
      ],
      "pension_annuelle": 25734.94706977084,
@@ -213447,7 +213594,7 @@
   }
  },
  "statut_biologiste_liberal_1965": {
-  "appels_liquider": 3,
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -213591,24 +213738,51 @@
     "actuel": {
      "age_ouverture_opposable": 62.75,
      "avantages_appliques": [],
+     "departs": [
+      {
+       "date_effet": "2029-02-01",
+       "montant": 18840.00091654173,
+       "montant_a_l_effet": 18840.00091654173,
+       "motif": "depart",
+       "regimes": [
+        "asv_directeurs_laboratoire",
+        "cnavpl"
+       ]
+      },
+      {
+       "date_effet": "2029-04-01",
+       "montant": 12883.70929913741,
+       "montant_a_l_effet": 12883.70929913741,
+       "motif": "trimestre_civil",
+       "regimes": [
+        "cavp_complementaire"
+       ]
+      }
+     ],
      "liquidation_ouverte": true,
      "minimum_applique": false,
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
+       "date_effet": "2029-02-01",
        "detail": "11,482.47 points × valeur de service 0.420919 €",
        "montant": 4833.1885446864535,
+       "montant_a_l_effet": 4833.1885446864535,
        "regime": "asv_directeurs_laboratoire"
       },
       {
-       "detail": "cotisations revalorisées 330,021 € × rendement 4.29% × coefficient d'anticipation 0.9100",
-       "montant": 12883.70929913741,
-       "regime": "cavp_complementaire"
-      },
-      {
+       "date_effet": "2029-02-01",
        "detail": "19,657.76 points × valeur de service 0.695155 € × coefficient de majoration 1.0250",
        "montant": 14006.812371855274,
+       "montant_a_l_effet": 14006.812371855274,
        "regime": "cnavpl"
+      },
+      {
+       "date_effet": "2029-04-01",
+       "detail": "cotisations revalorisées 330,021 € × rendement 4.29% × coefficient d'anticipation 0.9100 ; servie à partir du 1er avril 2029, 12,883.71 € de 2029, soit 12,883.71 € de 2029",
+       "montant": 12883.70929913741,
+       "montant_a_l_effet": 12883.70929913741,
+       "regime": "cavp_complementaire"
       }
      ],
      "pension_annuelle": 31723.710215679137,
@@ -276738,7 +276912,7 @@
   }
  },
  "statut_medecin_liberal": {
-  "appels_liquider": 3,
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -276882,24 +277056,51 @@
     "actuel": {
      "age_ouverture_opposable": 64.0,
      "avantages_appliques": [],
+     "departs": [
+      {
+       "date_effet": "2039-02-01",
+       "montant": 38508.48514761473,
+       "montant_a_l_effet": 38508.48514761473,
+       "motif": "depart",
+       "regimes": [
+        "asv_conventionnes",
+        "cnavpl"
+       ]
+      },
+      {
+       "date_effet": "2039-04-01",
+       "montant": 11462.377355406144,
+       "montant_a_l_effet": 11462.377355406144,
+       "motif": "trimestre_civil",
+       "regimes": [
+        "carmf_complementaire"
+       ]
+      }
+     ],
      "liquidation_ouverte": true,
      "minimum_applique": false,
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
+       "date_effet": "2039-02-01",
        "detail": "1,297.39 points × valeur de service 14.810336 € × coefficient de majoration 1.1000",
        "montant": 21136.20977169124,
+       "montant_a_l_effet": 21136.20977169124,
        "regime": "asv_conventionnes"
       },
       {
-       "detail": "cotisations revalorisées 232,597 € × rendement 4.48% × coefficient de majoration 1.1000",
-       "montant": 11462.377355406144,
-       "regime": "carmf_complementaire"
-      },
-      {
+       "date_effet": "2039-02-01",
        "detail": "21,010.25 points × valeur de service 0.826848 €",
        "montant": 17372.275375923495,
+       "montant_a_l_effet": 17372.275375923495,
        "regime": "cnavpl"
+      },
+      {
+       "date_effet": "2039-04-01",
+       "detail": "cotisations revalorisées 232,597 € × rendement 4.48% × coefficient de majoration 1.1000 ; servie à partir du 1er avril 2039, 11,462.38 € de 2039, soit 11,462.38 € de 2039",
+       "montant": 11462.377355406144,
+       "montant_a_l_effet": 11462.377355406144,
+       "regime": "carmf_complementaire"
       }
      ],
      "pension_annuelle": 49970.86250302088,
@@ -278798,7 +278999,7 @@
   }
  },
  "statut_medecin_liberal_1965": {
-  "appels_liquider": 3,
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -278942,24 +279143,51 @@
     "actuel": {
      "age_ouverture_opposable": 62.75,
      "avantages_appliques": [],
+     "departs": [
+      {
+       "date_effet": "2029-02-01",
+       "montant": 31287.303962159658,
+       "montant_a_l_effet": 31287.303962159658,
+       "motif": "depart",
+       "regimes": [
+        "asv_conventionnes",
+        "cnavpl"
+       ]
+      },
+      {
+       "date_effet": "2029-04-01",
+       "montant": 9617.463218482495,
+       "montant_a_l_effet": 9617.463218482495,
+       "motif": "trimestre_civil",
+       "regimes": [
+        "carmf_complementaire"
+       ]
+      }
+     ],
      "liquidation_ouverte": true,
      "minimum_applique": false,
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
+       "date_effet": "2029-02-01",
        "detail": "1,261.66 points × valeur de service 12.451473 € × coefficient de majoration 1.1000",
        "montant": 17280.491590304384,
+       "montant_a_l_effet": 17280.491590304384,
        "regime": "asv_conventionnes"
       },
       {
-       "detail": "cotisations revalorisées 195,160 € × rendement 4.48% × coefficient de majoration 1.1000",
-       "montant": 9617.463218482495,
-       "regime": "carmf_complementaire"
-      },
-      {
+       "date_effet": "2029-02-01",
        "detail": "19,657.76 points × valeur de service 0.695155 € × coefficient de majoration 1.0250",
        "montant": 14006.812371855274,
+       "montant_a_l_effet": 14006.812371855274,
        "regime": "cnavpl"
+      },
+      {
+       "date_effet": "2029-04-01",
+       "detail": "cotisations revalorisées 195,160 € × rendement 4.48% × coefficient de majoration 1.1000 ; servie à partir du 1er avril 2029, 9,617.46 € de 2029, soit 9,617.46 € de 2029",
+       "montant": 9617.463218482495,
+       "montant_a_l_effet": 9617.463218482495,
+       "regime": "carmf_complementaire"
       }
      ],
      "pension_annuelle": 40904.76718064216,
@@ -279542,7 +279770,7 @@
   }
  },
  "statut_medecin_liberal_secteur_2": {
-  "appels_liquider": 3,
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -279686,24 +279914,51 @@
     "actuel": {
      "age_ouverture_opposable": 64.0,
      "avantages_appliques": [],
+     "departs": [
+      {
+       "date_effet": "2039-02-01",
+       "montant": 38508.48514761473,
+       "montant_a_l_effet": 38508.48514761473,
+       "motif": "depart",
+       "regimes": [
+        "asv_conventionnes",
+        "cnavpl"
+       ]
+      },
+      {
+       "date_effet": "2039-04-01",
+       "montant": 11462.377355406144,
+       "montant_a_l_effet": 11462.377355406144,
+       "motif": "trimestre_civil",
+       "regimes": [
+        "carmf_complementaire"
+       ]
+      }
+     ],
      "liquidation_ouverte": true,
      "minimum_applique": false,
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
+       "date_effet": "2039-02-01",
        "detail": "1,297.39 points × valeur de service 14.810336 € × coefficient de majoration 1.1000",
        "montant": 21136.20977169124,
+       "montant_a_l_effet": 21136.20977169124,
        "regime": "asv_conventionnes"
       },
       {
-       "detail": "cotisations revalorisées 232,597 € × rendement 4.48% × coefficient de majoration 1.1000",
-       "montant": 11462.377355406144,
-       "regime": "carmf_complementaire"
-      },
-      {
+       "date_effet": "2039-02-01",
        "detail": "21,010.25 points × valeur de service 0.826848 €",
        "montant": 17372.275375923495,
+       "montant_a_l_effet": 17372.275375923495,
        "regime": "cnavpl"
+      },
+      {
+       "date_effet": "2039-04-01",
+       "detail": "cotisations revalorisées 232,597 € × rendement 4.48% × coefficient de majoration 1.1000 ; servie à partir du 1er avril 2039, 11,462.38 € de 2039, soit 11,462.38 € de 2039",
+       "montant": 11462.377355406144,
+       "montant_a_l_effet": 11462.377355406144,
+       "regime": "carmf_complementaire"
       }
      ],
      "pension_annuelle": 49970.86250302088,
@@ -281602,7 +281857,7 @@
   }
  },
  "statut_medecin_liberal_secteur_2_1965": {
-  "appels_liquider": 3,
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -281746,24 +282001,51 @@
     "actuel": {
      "age_ouverture_opposable": 62.75,
      "avantages_appliques": [],
+     "departs": [
+      {
+       "date_effet": "2029-02-01",
+       "montant": 31287.303962159658,
+       "montant_a_l_effet": 31287.303962159658,
+       "motif": "depart",
+       "regimes": [
+        "asv_conventionnes",
+        "cnavpl"
+       ]
+      },
+      {
+       "date_effet": "2029-04-01",
+       "montant": 9617.463218482495,
+       "montant_a_l_effet": 9617.463218482495,
+       "motif": "trimestre_civil",
+       "regimes": [
+        "carmf_complementaire"
+       ]
+      }
+     ],
      "liquidation_ouverte": true,
      "minimum_applique": false,
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
+       "date_effet": "2029-02-01",
        "detail": "1,261.66 points × valeur de service 12.451473 € × coefficient de majoration 1.1000",
        "montant": 17280.491590304384,
+       "montant_a_l_effet": 17280.491590304384,
        "regime": "asv_conventionnes"
       },
       {
-       "detail": "cotisations revalorisées 195,160 € × rendement 4.48% × coefficient de majoration 1.1000",
-       "montant": 9617.463218482495,
-       "regime": "carmf_complementaire"
-      },
-      {
+       "date_effet": "2029-02-01",
        "detail": "19,657.76 points × valeur de service 0.695155 € × coefficient de majoration 1.0250",
        "montant": 14006.812371855274,
+       "montant_a_l_effet": 14006.812371855274,
        "regime": "cnavpl"
+      },
+      {
+       "date_effet": "2029-04-01",
+       "detail": "cotisations revalorisées 195,160 € × rendement 4.48% × coefficient de majoration 1.1000 ; servie à partir du 1er avril 2029, 9,617.46 € de 2029, soit 9,617.46 € de 2029",
+       "montant": 9617.463218482495,
+       "montant_a_l_effet": 9617.463218482495,
+       "regime": "carmf_complementaire"
       }
      ],
      "pension_annuelle": 40904.76718064216,
@@ -303945,7 +304227,7 @@
   }
  },
  "statut_officier_ministeriel": {
-  "appels_liquider": 3,
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -304089,19 +304371,43 @@
     "actuel": {
      "age_ouverture_opposable": 64.0,
      "avantages_appliques": [],
+     "departs": [
+      {
+       "date_effet": "2039-02-01",
+       "montant": 17372.275375923495,
+       "montant_a_l_effet": 17372.275375923495,
+       "motif": "depart",
+       "regimes": [
+        "cnavpl"
+       ]
+      },
+      {
+       "date_effet": "2039-04-01",
+       "montant": 14797.65541704752,
+       "montant_a_l_effet": 14797.65541704752,
+       "motif": "trimestre_civil",
+       "regimes": [
+        "cavom_complementaire"
+       ]
+      }
+     ],
      "liquidation_ouverte": true,
      "minimum_applique": false,
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 284,461 € × rendement 6.12% × coefficient d'anticipation 0.8500",
-       "montant": 14797.65541704752,
-       "regime": "cavom_complementaire"
-      },
-      {
+       "date_effet": "2039-02-01",
        "detail": "21,010.25 points × valeur de service 0.826848 €",
        "montant": 17372.275375923495,
+       "montant_a_l_effet": 17372.275375923495,
        "regime": "cnavpl"
+      },
+      {
+       "date_effet": "2039-04-01",
+       "detail": "cotisations revalorisées 284,461 € × rendement 6.12% × coefficient d'anticipation 0.8500 ; servie à partir du 1er avril 2039, 14,797.66 € de 2039, soit 14,797.66 € de 2039",
+       "montant": 14797.65541704752,
+       "montant_a_l_effet": 14797.65541704752,
+       "regime": "cavom_complementaire"
       }
      ],
      "pension_annuelle": 32169.930792971012,
@@ -305515,7 +305821,7 @@
   }
  },
  "statut_officier_ministeriel_1955": {
-  "appels_liquider": 3,
+  "appels_liquider": 6,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -305566,16 +305872,6 @@
      "minimum_vieillesse": 0.0,
      "par_regime": [
       {
-       "au_depart": 9485.644847758409,
-       "aujourd_hui": 11069.739655277028,
-       "coefficient": 1.1669991690541694,
-       "fiabilite": "moyenne",
-       "majoration_exceptionnelle": 0.0,
-       "regime": "cavom_complementaire",
-       "regle": "par_defaut",
-       "relevement_des_exploitants": 0.0
-      },
-      {
        "au_depart": 10912.791739057435,
        "aujourd_hui": 12656.153371887525,
        "coefficient": 1.1597539543057998,
@@ -305583,6 +305879,16 @@
        "majoration_exceptionnelle": 0.0,
        "regime": "cnavpl",
        "regle": "point",
+       "relevement_des_exploitants": 0.0
+      },
+      {
+       "au_depart": 9485.644847758409,
+       "aujourd_hui": 11069.739655277028,
+       "coefficient": 1.1669991690541694,
+       "fiabilite": "moyenne",
+       "majoration_exceptionnelle": 0.0,
+       "regime": "cavom_complementaire",
+       "regle": "par_defaut",
        "relevement_des_exploitants": 0.0
       }
      ],
@@ -305712,19 +306018,43 @@
     "actuel": {
      "age_ouverture_opposable": 62.0,
      "avantages_appliques": [],
+     "departs": [
+      {
+       "date_effet": "2019-02-01",
+       "montant": 10912.791739057435,
+       "montant_a_l_effet": 10912.791739057435,
+       "motif": "depart",
+       "regimes": [
+        "cnavpl"
+       ]
+      },
+      {
+       "date_effet": "2019-04-01",
+       "montant": 9485.644847758409,
+       "montant_a_l_effet": 9485.644847758409,
+       "motif": "trimestre_civil",
+       "regimes": [
+        "cavom_complementaire"
+       ]
+      }
+     ],
      "liquidation_ouverte": true,
      "minimum_applique": false,
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 163,152 € × rendement 6.12% × coefficient d'anticipation 0.9500",
-       "montant": 9485.644847758409,
-       "regime": "cavom_complementaire"
-      },
-      {
+       "date_effet": "2019-02-01",
        "detail": "18,353.01 points × valeur de service 0.569 € × coefficient de majoration 1.0450",
        "montant": 10912.791739057435,
+       "montant_a_l_effet": 10912.791739057435,
        "regime": "cnavpl"
+      },
+      {
+       "date_effet": "2019-04-01",
+       "detail": "cotisations revalorisées 163,152 € × rendement 6.12% × coefficient d'anticipation 0.9500 ; servie à partir du 1er avril 2019, 9,485.64 € de 2019, soit 9,485.64 € de 2019",
+       "montant": 9485.644847758409,
+       "montant_a_l_effet": 9485.644847758409,
+       "regime": "cavom_complementaire"
       }
      ],
      "pension_annuelle": 20398.436586815842,
@@ -305917,7 +306247,7 @@
   }
  },
  "statut_officier_ministeriel_1965": {
-  "appels_liquider": 3,
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -306061,19 +306391,43 @@
     "actuel": {
      "age_ouverture_opposable": 62.75,
      "avantages_appliques": [],
+     "departs": [
+      {
+       "date_effet": "2029-02-01",
+       "montant": 14006.812371855274,
+       "montant_a_l_effet": 14006.812371855274,
+       "motif": "depart",
+       "regimes": [
+        "cnavpl"
+       ]
+      },
+      {
+       "date_effet": "2029-04-01",
+       "montant": 11730.819953616363,
+       "montant_a_l_effet": 11730.819953616363,
+       "motif": "trimestre_civil",
+       "regimes": [
+        "cavom_complementaire"
+       ]
+      }
+     ],
      "liquidation_ouverte": true,
      "minimum_applique": false,
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 225,506 € × rendement 6.12% × coefficient d'anticipation 0.8500",
-       "montant": 11730.819953616363,
-       "regime": "cavom_complementaire"
-      },
-      {
+       "date_effet": "2029-02-01",
        "detail": "19,657.76 points × valeur de service 0.695155 € × coefficient de majoration 1.0250",
        "montant": 14006.812371855274,
+       "montant_a_l_effet": 14006.812371855274,
        "regime": "cnavpl"
+      },
+      {
+       "date_effet": "2029-04-01",
+       "detail": "cotisations revalorisées 225,506 € × rendement 6.12% × coefficient d'anticipation 0.8500 ; servie à partir du 1er avril 2029, 11,730.82 € de 2029, soit 11,730.82 € de 2029",
+       "montant": 11730.819953616363,
+       "montant_a_l_effet": 11730.819953616363,
+       "regime": "cavom_complementaire"
       }
      ],
      "pension_annuelle": 25737.632325471637,
@@ -322993,7 +323347,7 @@
   }
  },
  "statut_pharmacien": {
-  "appels_liquider": 3,
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -323137,19 +323491,43 @@
     "actuel": {
      "age_ouverture_opposable": 64.0,
      "avantages_appliques": [],
+     "departs": [
+      {
+       "date_effet": "2039-02-01",
+       "montant": 17372.275375923495,
+       "montant_a_l_effet": 17372.275375923495,
+       "motif": "depart",
+       "regimes": [
+        "cnavpl"
+       ]
+      },
+      {
+       "date_effet": "2039-04-01",
+       "montant": 15613.344995465364,
+       "montant_a_l_effet": 15613.344995465364,
+       "motif": "trimestre_civil",
+       "regimes": [
+        "cavp_complementaire"
+       ]
+      }
+     ],
      "liquidation_ouverte": true,
      "minimum_applique": false,
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 399,942 € × rendement 4.29% × coefficient d'anticipation 0.9100",
-       "montant": 15613.344995465364,
-       "regime": "cavp_complementaire"
-      },
-      {
+       "date_effet": "2039-02-01",
        "detail": "21,010.25 points × valeur de service 0.826848 €",
        "montant": 17372.275375923495,
+       "montant_a_l_effet": 17372.275375923495,
        "regime": "cnavpl"
+      },
+      {
+       "date_effet": "2039-04-01",
+       "detail": "cotisations revalorisées 399,942 € × rendement 4.29% × coefficient d'anticipation 0.9100 ; servie à partir du 1er avril 2039, 15,613.34 € de 2039, soit 15,613.34 € de 2039",
+       "montant": 15613.344995465364,
+       "montant_a_l_effet": 15613.344995465364,
+       "regime": "cavp_complementaire"
       }
      ],
      "pension_annuelle": 32985.62037138886,
@@ -324563,7 +324941,7 @@
   }
  },
  "statut_pharmacien_1955": {
-  "appels_liquider": 3,
+  "appels_liquider": 6,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -324614,16 +324992,6 @@
      "minimum_vieillesse": 0.0,
      "par_regime": [
       {
-       "au_depart": 11412.218244781458,
-       "aujourd_hui": 13318.049208724793,
-       "coefficient": 1.1669991690541694,
-       "fiabilite": "moyenne",
-       "majoration_exceptionnelle": 0.0,
-       "regime": "cavp_complementaire",
-       "regle": "par_defaut",
-       "relevement_des_exploitants": 0.0
-      },
-      {
        "au_depart": 10912.791739057435,
        "aujourd_hui": 12656.153371887525,
        "coefficient": 1.1597539543057998,
@@ -324631,6 +324999,16 @@
        "majoration_exceptionnelle": 0.0,
        "regime": "cnavpl",
        "regle": "point",
+       "relevement_des_exploitants": 0.0
+      },
+      {
+       "au_depart": 11412.218244781458,
+       "aujourd_hui": 13318.049208724793,
+       "coefficient": 1.1669991690541694,
+       "fiabilite": "moyenne",
+       "majoration_exceptionnelle": 0.0,
+       "regime": "cavp_complementaire",
+       "regle": "par_defaut",
        "relevement_des_exploitants": 0.0
       }
      ],
@@ -324760,19 +325138,43 @@
     "actuel": {
      "age_ouverture_opposable": 62.0,
      "avantages_appliques": [],
+     "departs": [
+      {
+       "date_effet": "2019-02-01",
+       "montant": 10912.791739057435,
+       "montant_a_l_effet": 10912.791739057435,
+       "motif": "depart",
+       "regimes": [
+        "cnavpl"
+       ]
+      },
+      {
+       "date_effet": "2019-04-01",
+       "montant": 11412.218244781458,
+       "montant_a_l_effet": 11412.218244781458,
+       "motif": "trimestre_civil",
+       "regimes": [
+        "cavp_complementaire"
+       ]
+      }
+     ],
      "liquidation_ouverte": true,
      "minimum_applique": false,
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 263,331 € × rendement 4.66% × coefficient d'anticipation 0.9300",
-       "montant": 11412.218244781458,
-       "regime": "cavp_complementaire"
-      },
-      {
+       "date_effet": "2019-02-01",
        "detail": "18,353.01 points × valeur de service 0.569 € × coefficient de majoration 1.0450",
        "montant": 10912.791739057435,
+       "montant_a_l_effet": 10912.791739057435,
        "regime": "cnavpl"
+      },
+      {
+       "date_effet": "2019-04-01",
+       "detail": "cotisations revalorisées 263,331 € × rendement 4.66% × coefficient d'anticipation 0.9300 ; servie à partir du 1er avril 2019, 11,412.22 € de 2019, soit 11,412.22 € de 2019",
+       "montant": 11412.218244781458,
+       "montant_a_l_effet": 11412.218244781458,
+       "regime": "cavp_complementaire"
       }
      ],
      "pension_annuelle": 22325.009983838892,
@@ -324965,7 +325367,7 @@
   }
  },
  "statut_pharmacien_1965": {
-  "appels_liquider": 3,
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -325109,19 +325511,43 @@
     "actuel": {
      "age_ouverture_opposable": 62.75,
      "avantages_appliques": [],
+     "departs": [
+      {
+       "date_effet": "2029-02-01",
+       "montant": 14006.812371855274,
+       "montant_a_l_effet": 14006.812371855274,
+       "motif": "depart",
+       "regimes": [
+        "cnavpl"
+       ]
+      },
+      {
+       "date_effet": "2029-04-01",
+       "montant": 12883.70929913741,
+       "montant_a_l_effet": 12883.70929913741,
+       "motif": "trimestre_civil",
+       "regimes": [
+        "cavp_complementaire"
+       ]
+      }
+     ],
      "liquidation_ouverte": true,
      "minimum_applique": false,
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 330,021 € × rendement 4.29% × coefficient d'anticipation 0.9100",
-       "montant": 12883.70929913741,
-       "regime": "cavp_complementaire"
-      },
-      {
+       "date_effet": "2029-02-01",
        "detail": "19,657.76 points × valeur de service 0.695155 € × coefficient de majoration 1.0250",
        "montant": 14006.812371855274,
+       "montant_a_l_effet": 14006.812371855274,
        "regime": "cnavpl"
+      },
+      {
+       "date_effet": "2029-04-01",
+       "detail": "cotisations revalorisées 330,021 € × rendement 4.29% × coefficient d'anticipation 0.9100 ; servie à partir du 1er avril 2029, 12,883.71 € de 2029, soit 12,883.71 € de 2029",
+       "montant": 12883.70929913741,
+       "montant_a_l_effet": 12883.70929913741,
+       "regime": "cavp_complementaire"
       }
      ],
      "pension_annuelle": 26890.521670992683,

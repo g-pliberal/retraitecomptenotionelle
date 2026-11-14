@@ -102,6 +102,7 @@ periodes:
     abattement_points: cavom_ages_minoration
     surcote_par_trimestre: null
     age_sans_coefficient_de_l_inapte: 62
+    effet_au_trimestre_civil: [2016-01-01, null]
     avantages_non_contributifs: [reversion]
     notes: >-
       LA RÉFORME DE 2016 REND LE RÉGIME PROPORTIONNEL : 12,50 % du revenu
@@ -169,6 +170,7 @@ periodes:
     abattement_points: cavom_ages_minoration
     surcote_par_trimestre: null
     age_sans_coefficient_de_l_inapte: 62
+    effet_au_trimestre_civil: [2016-01-01, null]
     avantages_non_contributifs: [reversion]
     notes: >-
       2017 : même régime, plafond de cinq plafonds de la Sécurité sociale
@@ -193,6 +195,7 @@ periodes:
     abattement_points: cavom_ages_minoration
     surcote_par_trimestre: null
     age_sans_coefficient_de_l_inapte: 62
+    effet_au_trimestre_civil: [2016-01-01, null]
     avantages_non_contributifs: [reversion]
     notes: >-
       2018 : même régime, plafond de six plafonds de la Sécurité sociale
@@ -217,6 +220,7 @@ periodes:
     abattement_points: cavom_ages_minoration
     surcote_par_trimestre: null
     age_sans_coefficient_de_l_inapte: 62
+    effet_au_trimestre_civil: [2016-01-01, null]
     avantages_non_contributifs: [reversion]
     notes: >-
       2019 : même régime, plafond de sept plafonds de la Sécurité sociale
@@ -242,6 +246,7 @@ periodes:
     abattement_points: cavom_ages_minoration
     surcote_par_trimestre: null
     age_sans_coefficient_de_l_inapte: 62
+    effet_au_trimestre_civil: [2016-01-01, null]
     avantages_non_contributifs: [reversion]
     notes: >-
       Depuis 2020 : huit plafonds de la Sécurité sociale — 384 480 € en
@@ -268,6 +273,7 @@ periodes:
     abattement_points: cavom_ages_minoration
     surcote_par_trimestre: null
     age_ouverture_de_l_inapte: 62
+    effet_au_trimestre_civil: [2016-01-01, null]
     avantages_non_contributifs: [reversion]
     notes: >-
       Depuis 2025 : les paramètres de 2020. La période ne s'en sépare que

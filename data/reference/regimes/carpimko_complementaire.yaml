@@ -41,6 +41,7 @@ periodes:
     salaire_reference: carriere_entiere
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    effet_au_trimestre_civil: [1984-01-01, 1987-06-05]
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.0
@@ -813,6 +814,7 @@ periodes:
     surcote_points: surcote_par_age_seul
     surcote_depuis_la_duree: surcote_par_age_seul
     surcote_trimestres_maximum: 20
+    effet_au_trimestre_civil: [2026-07-18, null]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: plafonnee_3_pass
     assiette_minimale_pass: 0.5

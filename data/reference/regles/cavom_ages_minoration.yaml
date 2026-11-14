@@ -41,6 +41,10 @@ ecrit:
   l'âge d'ouverture ramené à 62 ans pour l'inapte des générations 1965 et suivantes
   dont la pension prend effet depuis le 1er janvier 2025 (`age_ouverture_de_l_inapte`),
   que `age_ouverture` rend aux départs
+- >-
+  la date d'effet de la pension, reportée au premier jour du trimestre civil qui suit
+  depuis le 1er janvier 2016 (`effet_au_trimestre_civil`), que `departs` rend à la
+  liquidation
 dates_qui_decident:
 - liquidation.date_effet
 versions:
@@ -363,23 +367,21 @@ approximations:
   textes: >-
     statuts de 2016 et de 2025, article 14, II ; règlement de 2026, article 1er, II
   ecart: >-
-    Le modèle fait prendre effet la pension au premier jour du mois qui suit l'âge
-    (fiche date_effet_mois_suivant), quand la retraite de la CAVOM « prend effet au plus
-    tôt au premier jour du trimestre civil qui suit » la demande, la cessation
-    d'activité et le paiement des cotisations : sa pension commence deux mois trop tôt
-    quand le modèle la fait prendre effet au deuxième mois d'un trimestre civil, un
-    mois quand c'est au troisième — l'âge atteint au premier ou au deuxième mois d'un
-    trimestre civil, ou, pour l'assuré né le 1er d'un mois, que le modèle sert dès le
-    jour de son anniversaire, au deuxième ou au troisième.
+    La retraite « prend effet au plus tôt au premier jour du trimestre civil qui suit
+    le dernier des faits ci-après » : la demande, la justification de la cessation
+    d'activité, le paiement des cotisations. Le modèle ne connaît ni la demande ni le
+    paiement : il tient la pension pour demandée à temps, et reporte la date qu'il
+    présume — le premier du mois qui suit l'âge, ou le jour de l'anniversaire de
+    l'assuré né le 1er — au premier jour du trimestre civil qui commence ce jour-là ou
+    après (`effet_au_trimestre_civil`). Le second alinéa du II, la cessation à effet
+    rétroactif, n'est pas porté. La pension de base, que R. 643-6 du code de la
+    sécurité sociale date de même, reste servie au premier du mois (fiche
+    `cnavpl_allocation_avant_2004`) : le modèle la sert un ou deux mois avant la
+    complémentaire, quand les deux commencent le même jour.
   effet: >-
-    un ou deux mois de pension : né le 10 mai 1959, à 62 ans le 10 mai 2021, le modèle
-    sert la CAVOM dès le 1er juin 2021 (13 580,64 € par an, 0,75), le texte au 1er
-    juillet 2021, au même coefficient : un mois de trop, 1 131,72 € (essai du 5
-    novembre 2026, dans les deux moteurs) ; né le 1er mai 1959, dès le 1er mai 2021
-    (13 546,16 € par an), le texte au 1er juillet : deux mois, 13 546,16 × 2 / 12 =
-    2 257,69 € ; né le 1er mars 1959, dès le 1er mars (13 529,99 € par an), le texte
-    au 1er avril : un mois, 1 127,50 € ; né le 1er avril 1959, dès le 1er avril, comme
-    le texte (essais du 5 novembre 2026, dans les deux moteurs)
+    aucun sur la complémentaire demandée à temps ; une demande tardive la reporte
+    encore, d'un trimestre par trimestre de retard. Avant 2016, la règle n'est que
+    présumée, et le modèle sert au premier du mois.
 - version: [statuts_de_2016]
   textes: statuts de 2016, article 23, « Les taux de décote sont ajustés en conséquence »
   ecart: >-
@@ -461,10 +463,23 @@ effet: >-
   mois au lieu du 1er avril, six mois de pension, 8 317,99 € (16 635,98 € par an) ;
   jusqu'à deux ans pour la génération 1968. Depuis, `age_ouverture_de_l_inapte: 62` à
   la période qui liquide depuis 2025, dans les deux moteurs : l'inapte y part à 62
-  ans, avec le coefficient de cinq années manquantes, 0,75. Reste non servie la date
-  d'effet au trimestre civil.
+  ans, avec le coefficient de cinq années manquantes, 0,75.
+  Corrigée le 14 novembre 2026 (même décision, ligne 12 de la file) : jusque-là, le
+  modèle servait la complémentaire le premier du mois qui suit l'âge, avec la base,
+  quand l'article 14, II, des statuts de 2016 et de 2025 et l'article 1er, II, du
+  règlement de 2026 la font prendre effet « au plus tôt au premier jour du trimestre
+  civil qui suit » la demande et la cessation d'activité — né le 10 mai 1959, 62 ans
+  le 10 mai 2021 : servi dès le 1er juin 2021 au lieu du 1er juillet, un mois de trop,
+  1 131,72 € (13 580,64 € par an, 0,75) ; né le 1er mai 1959, dès le 1er mai, deux
+  mois, 2 257,69 € ; né le 1er mars 1959, dès le 1er mars au lieu du 1er avril.
+  Depuis, `effet_au_trimestre_civil: [2016-01-01, null]` aux périodes qui liquident
+  depuis 2016, dans les deux moteurs : la date présumée, un premier du mois, est
+  reportée au premier jour du trimestre civil qui commence ce jour-là ou après, et la
+  pension s'y liquide, à l'âge et sous la rédaction de ce jour — l'inapte né le 10
+  novembre 1962, servi le 1er janvier 2025 et non plus le 1er décembre 2024, l'est
+  sous les statuts de 2025, à 0,75.
 sources:
-  lu_le: 2026-11-13
+  lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -474,6 +489,14 @@ sources:
     à la CAVOM. Vérifier l'arrondi à l'année d'un âge non entier depuis 2025 sur un
     exemple de la caisse.
   lectures:
+  - type: jorf
+    reference: >-
+      Relus pour la correction de la date d'effet au trimestre civil : arrêté du 30
+      décembre 2015, annexe, 5°, article 14, II (JORFARTI000031740853), et arrêté du 10
+      juillet 2026, annexe I, article 1er, II (JORFARTI000054435969), dans l'index JORF
+      du dépôt, à jour du 11 novembre 2026 ; l'arrêté du 12 décembre 2024, annexe, II,
+      4° (JORFARTI000050823056), ne récrit pas le II de l'article 14.
+    date: 2026-11-14
   - type: jorf
     reference: >-
       Relus pour la correction de l'ouverture de l'inapte depuis 2025 : arrêté du 12
@@ -547,22 +570,28 @@ code:
     pension que la période liquide. `age_ouverture_de_l_inapte: 62` : l'âge
     d'ouverture du même affilié est ramené à cet âge quand sa génération ouvre plus
     tard, pour une pension que la période liquide, et son coefficient reste celui de
-    son âge.
+    son âge. `effet_au_trimestre_civil: [2016-01-01, null]` : `departs` reporte la
+    date présumée de la pension, quand elle tombe dans ces bornes, au premier jour du
+    trimestre civil qui commence ce jour-là ou après (motif `trimestre_civil`), et la
+    pension s'y liquide seule, après la base.
   python: >-
     droit/liquider.py : abattement_points, abattement_ircec, inapte_sans_coefficient,
     trimestres_de_decote,
     surcote_points, _ABATTEMENTS_IRCEC, _ABATTEMENTS_PAR_ANNEE_AGE_SEUL ;
-    droit/ouvrir.py : age_ouverture, age_taux_plein ; scenarios/actuel.py : AgesRegimes
+    droit/ouvrir.py : age_ouverture, age_taux_plein ; scenarios/actuel.py : AgesRegimes ;
+    droit/departs.py : _au_trimestre_civil, departs_et_demandes
   javascript: >-
     moteur/js/droit/liquider.js : abattementPoints, abattementIrcec,
     inapteSansCoefficient, trimestresDeDecote,
     surcotePoints ; moteur/js/droit/ouvrir.js : ageOuverture, ageTauxPlein ;
-    moteur/js/regimes.js : AgesRegimes
+    moteur/js/regimes.js : AgesRegimes ; moteur/js/droit/departs.js : auTrimestreCivil,
+    departsEtDemandes
   parametres: >-
     contenu.parametres de chaque version : abattement_points, age_table,
     surcote_par_trimestre, age_sans_coefficient_de_l_inapte,
     age_ouverture_de_l_inapte ;
     regimes/cavom_complementaire.yaml : age_ouverture, age_taux_plein,
-    age_sans_coefficient_de_l_inapte, age_ouverture_de_l_inapte ;
+    age_sans_coefficient_de_l_inapte, age_ouverture_de_l_inapte,
+    effet_au_trimestre_civil ;
     legislation/ages_regimes.csv : cavom
   tests: [tests/test_sections_juridiques.py, tests/test_sections_liberales.py]

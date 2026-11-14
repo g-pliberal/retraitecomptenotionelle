@@ -36,7 +36,12 @@ effet: >-
   de l'ajournement après l'âge du taux plein, qui retranchait un mois à qui est né
   un 1er, est juste depuis le même jour (circulaire Cnav n° 8/89, point 12), et
   l'exemple 3 de la surcote de droit commun de la CNRACL, dont l'agent est né un 1er
-  janvier, est rendu.
+  janvier, est rendu. Depuis le 14 novembre 2026, quatre complémentaires de libéraux
+  reportent cette date au premier jour du trimestre civil qui commence ce jour-là ou
+  après, comme leurs statuts la fixent (`effet_au_trimestre_civil` : la CAVOM depuis
+  2016, la CARPIMKO de 1984 à juin 1987 et depuis le 18 juillet 2026, la CAVP depuis
+  le 7 juin 2009, la CARMF depuis le 18 juillet 2026 ; fiches `cavom_ages_minoration`,
+  `carpimko_ages_2015`, `cavp_minoration_deux_pentes`, `carmf_asv_minoration_enfants`).
 sources:
   lu_le: 2026-09-28
   prochaine_relecture: 2027-03-31

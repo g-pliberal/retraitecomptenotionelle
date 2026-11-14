@@ -23,7 +23,9 @@ import {
 } from "../regimes.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import * as categories from "./categories.js";
-import { dateDEffet, ligneCotisee, periodeDeLiquidation } from "./commun.js";
+import {
+  SANS_LEUR_BASE, dateDEffet, ligneCotisee, periodeDeLiquidation,
+} from "./commun.js";
 import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import { borneCarriere, REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
@@ -123,46 +125,31 @@ export class Ouverture {
 }
 
 /**
- * Ce que le droit ouvre à la demande dont `releve` est le relevé. `regimes`
- * sont ceux que la demande vise quand ils ne liquident pas tous au même départ
- * (`departs.js`) : chacun s'ouvre à SON âge ; `null` : tous. Voir le Python.
+ * Ce que les régimes `codes` opposent ensemble à une demande : la durée
+ * requise de référence, la plus longue des leurs ; les régimes qui l'opposent ;
+ * l'âge d'ouverture le plus précoce, et le même sans l'invalidité ni
+ * l'inaptitude — `null` quand aucun n'oppose d'âge. Voir `_references` dans le
+ * Python.
+ *
+ * DEUX PASSES, ET LA SECONDE NE SERT QU'À QUI N'A QUE DES POINTS. Les régimes
+ * en annuités commandent ; mais une carrière entière en points n'en a aucun,
+ * et l'âge de référence restait nul — aucun âge ne lui était opposé, et un
+ * chef d'exploitation pouvait liquider à cinquante ans sans que rien ne le
+ * refuse. La durée de référence retombait de son côté sur 160, une durée que
+ * plus aucune génération ne doit, et c'est elle que l'abattement du régime en
+ * points opposait.
  */
-export function ouvrir(moteur, releve, regimes = null) {
+function references(moteur, releve, codes) {
   const carriere = releve.carriere;
-  const { durees, droits } = releve;
-  const anneeLiquidation = carriere.anneeLiquidation;
-  const ageLiquidation = carriere.age_liquidation || 0.0;
-  const majorationEnfants = durees.enfants;
-  const codes = droits.codes.filter((code) => regimes === null || regimes.has(code));
-  let fiabilite = Fiabilite.CERTIFIEE;
-
-  // Durée requise de référence : celle du régime de base. C'est elle qui
-  // commande le taux plein, donc aussi l'abattement des complémentaires —
-  // un assuré au taux plein liquide sa complémentaire sans abattement, quel
-  // que soit son âge.
-  let requisReference = 0;
-  // Les régimes qui l'opposent : ceux des fonctionnaires ont leurs portes de
-  // la carrière longue. Voir le Python.
-  const opposants = [];
-  // Âge d'ouverture des droits le plus précoce parmi les régimes de base que
-  // la demande liquide. Un polypensionné liquide chaque pension à l'âge de son
-  // régime (`departs.js`) ; quand tous liquident au même départ, c'est l'âge
-  // du plus précoce qui ouvre ce départ.
-  let ageOuvertureReference = null;
-  // Le même, sans l'invalidité ni l'inaptitude : l'âge qu'elles devancent.
-  let ageSansInvalidite = null;
   // Un régime et celui qui lui succède liquident ensemble, sous les règles
   // de la caisse qui aurait le dossier : les autres membres du groupe sont
   // sautés partout où un régime liquide. À FAUX, chaque nom de caisse est
   // liquidé sur ses seules années — variante qui ne sert qu'à mesurer.
   const groupes = releve.groupes;
-  // DEUX PASSES, ET LA SECONDE NE SERT QU'À QUI N'A QUE DES POINTS. Les
-  // régimes en annuités commandent ; mais une carrière entière en points
-  // n'en a aucun, et `ageOuvertureReference` restait nul — aucun âge ne lui
-  // était opposé, et un chef d'exploitation pouvait liquider à cinquante ans
-  // sans que rien ne le refuse. `requisReference` retombait de son côté sur
-  // 160, une durée que plus aucune génération ne doit, et c'est elle que
-  // l'abattement du régime en points opposait.
+  let requis = 0;
+  const opposants = [];
+  let age = null;
+  let sansInvalidite = null;
   for (const calculs of [["annuites"], ["points", "mixte"]]) {
     const candidates = [];
     for (const code of codes) {
@@ -191,22 +178,61 @@ export function ouvrir(moteur, releve, regimes = null) {
     // L. 161-17-2 (L. 643-3, I). Voir le Python.
     const retenues = calculs.includes("points") ? basesDAbord(moteur, candidates) : candidates;
     for (const [code, periode] of retenues) {
-      requisReference = Math.max(requisReference, dureeRequise(moteur, periode, carriere)[0]);
+      requis = Math.max(requis, dureeRequise(moteur, periode, carriere)[0]);
       opposants.push(code);
       const ageRegime = ageOuverture(moteur, periode, carriere);
-      ageOuvertureReference = ageOuvertureReference === null
-        ? ageRegime
-        : Math.min(ageOuvertureReference, ageRegime);
-      const sansInvalidite = ageOuverture(moteur, periode, carriere, false);
-      ageSansInvalidite = ageSansInvalidite === null
-        ? sansInvalidite
-        : Math.min(ageSansInvalidite, sansInvalidite);
+      age = age === null ? ageRegime : Math.min(age, ageRegime);
+      const sans = ageOuverture(moteur, periode, carriere, false);
+      sansInvalidite = sansInvalidite === null ? sans : Math.min(sansInvalidite, sans);
     }
-    if (ageOuvertureReference !== null) {
+    if (age !== null) {
       break;
     }
   }
-  requisReference = requisReference || 160;
+  return { requis, opposants, age, sansInvalidite };
+}
+
+/**
+ * Ce que le droit ouvre à la demande dont `releve` est le relevé. `regimes`
+ * sont ceux que la demande vise quand ils ne liquident pas tous au même départ
+ * (`departs.js`) : chacun s'ouvre à SON âge ; `null` : tous. Voir le Python.
+ */
+export function ouvrir(moteur, releve, regimes = null) {
+  const carriere = releve.carriere;
+  const { durees, droits } = releve;
+  const anneeLiquidation = carriere.anneeLiquidation;
+  const ageLiquidation = carriere.age_liquidation || 0.0;
+  const majorationEnfants = durees.enfants;
+  const codes = droits.codes.filter((code) => regimes === null || regimes.has(code));
+  let fiabilite = Fiabilite.CERTIFIEE;
+
+  // Durée requise de référence : celle du régime de base. C'est elle qui
+  // commande le taux plein, donc aussi l'abattement des complémentaires —
+  // un assuré au taux plein liquide sa complémentaire sans abattement, quel
+  // que soit son âge. Les régimes qui l'opposent : ceux des fonctionnaires
+  // ont leurs portes de la carrière longue. Âge d'ouverture des droits : le
+  // plus précoce parmi les régimes de base que la demande liquide. Un
+  // polypensionné liquide chaque pension à l'âge de son régime
+  // (`departs.js`) ; quand tous liquident au même départ, c'est l'âge du
+  // plus précoce qui ouvre ce départ. Le même, sans l'invalidité ni
+  // l'inaptitude : l'âge qu'elles devancent.
+  let reference = references(moteur, releve, codes);
+  if (regimes !== null && reference.age === null) {
+    // UNE COMPLÉMENTAIRE LIQUIDÉE SANS SA BASE, à sa date (`departs.js`) : la
+    // demande ne tient aucun régime qui oppose une durée ou un âge. Celle qui
+    // suit sa base — la CAVP, la CARMF, servies au trimestre civil qui suit —
+    // s'ouvre aux conditions des régimes de base de la carrière, carrière
+    // longue comprise ; celle qui se demande à son âge, sans la base
+    // (`SANS_LEUR_BASE`), ne leur doit que leur durée requise. Voir le Python.
+    const bases = references(moteur, releve, droits.codes);
+    const suitSaBase = codes.some((code) => !SANS_LEUR_BASE.has(code)
+      && !ETAGES_DE_BASE.has(moteur.catalogue.obtenir(code).etage));
+    reference = suitSaBase ? bases : { ...reference, requis: bases.requis };
+  }
+  const requisReference = reference.requis || 160;
+  const opposants = reference.opposants;
+  let ageOuvertureReference = reference.age;
+  const ageSansInvalidite = reference.sansInvalidite;
 
   // Trimestres réellement COTISÉS, tous régimes : ils commandent la carrière
   // longue et la majoration du minimum contributif. Ceux qu'un accord fait

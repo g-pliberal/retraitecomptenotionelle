@@ -238,11 +238,16 @@ def test_la_carpimko_arrete_sa_minoration_a_son_propre_age(simulateur):
 
 
 def test_la_carpimko_majore_depuis_son_age(simulateur):
-    """Née en 1960, taux plein à 66 ans et 8 mois pour qui n'a pas la durée du
-    régime de base : un trimestre civil entier avant 67 ans, 1,25 %. Qui l'a
-    plus tôt est majoré dès qu'il l'atteint (article 12 ter)."""
+    """Née en janvier 1960, taux plein à 66 ans et 8 mois, en septembre 2026,
+    pour qui n'a pas la durée du régime de base ; demandée à 67 ans, en janvier
+    2027, la pension prend effet « au premier jour du trimestre civil qui suit
+    la demande » (règlement de 2026, article 7), le 1er avril 2027 : deux
+    trimestres civils entiers d'ajournement, d'octobre 2026 à mars 2027, 2,5 %
+    — un seul, 1,25 %, tant que le modèle la servait le 1er février, jusqu'au
+    14 novembre 2026. Qui a la durée plus tôt est majoré dès qu'il l'atteint
+    (article 12 ter)."""
     _, pensions = _calculer(simulateur, "auxiliaire_medical", 1960, 67.0, debut=30.0)
-    assert _coefficient(pensions["carpimko_complementaire"].detail) == pytest.approx(1.0125)
+    assert _coefficient(pensions["carpimko_complementaire"].detail) == pytest.approx(1.025)
 
 
 #: Ce que le modèle ne porte pas d'une version lue de la CARPIMKO, et que sa
@@ -267,8 +272,10 @@ def test_chaque_version_de_la_carpimko_est_portee_par_le_modele(
     des paramètres que la version lit, hors de ce que la fiche déclare
     (`CARPIMKO_HORS_DU_MODELE`). Les écarts au texte que ces paramètres ne
     disent pas — la durée qui annule l'abattement, l'âge seul de 1984, les
-    4 % par année des générations 1955 et antérieures de 2015 à 2024, le
-    trimestre civil de la date d'effet — sont déclarés dans les fiches."""
+    4 % par année des générations 1955 et antérieures de 2015 à 2024 — sont
+    déclarés dans les fiches ; la date d'effet au trimestre civil, corrigée le
+    14 novembre 2026, a son paramètre et ses essais
+    (`tests/test_sections_liberales.py`)."""
     _chaque_version_est_portee(simulateur, "carpimko_complementaire", fiche,
                                date_qui_decide, CARPIMKO_HORS_DU_MODELE, 1984)
 
@@ -292,10 +299,12 @@ def test_chaque_version_de_la_cavp_est_portee_par_le_modele(simulateur):
     l'arrêté du 19 décembre 2023 ; règlement de 2026, articles 8, 12, 14 et 15.
     Chaque premier du mois de 1949 à 2040, la période qui liquide une pension
     prenant effet ce jour porte les paramètres que chaque version lit, hors de
-    ce que la fiche déclare (`CAVP_HORS_DU_MODELE`). Les écarts que ces
-    paramètres ne disent pas — la date d'effet au trimestre civil, la valeur de
-    service par génération — sont déclarés dans la fiche ; la carrière longue
-    depuis 2024, corrigée le 14 novembre 2026, y est un paramètre."""
+    ce que la fiche déclare (`CAVP_HORS_DU_MODELE`). L'écart que ces
+    paramètres ne disent pas — la valeur de service par génération — est
+    déclaré dans la fiche ; la carrière longue depuis 2024, corrigée le
+    14 novembre 2026, y est un paramètre, et la date d'effet au trimestre
+    civil, corrigée le même jour, a le sien et ses essais
+    (`tests/test_sections_liberales.py`)."""
     _chaque_version_est_portee(simulateur, "cavp_complementaire",
                                "cavp_minoration_deux_pentes", "liquidation.date_effet",
                                CAVP_HORS_DU_MODELE, 1949)
@@ -317,8 +326,10 @@ def test_chaque_version_de_la_carmf_est_portee_par_le_modele(
     1949 à 2040, la période qui liquide une pension prenant effet ce jour — ou
     celle de l'année du revenu — porte les paramètres que chaque version lit.
     Les écarts que ces paramètres ne disent pas — l'âge légal de janvier à
-    mars 2017, la date d'effet au trimestre civil, le revenu de l'avant-dernière
-    année — sont déclarés dans les fiches."""
+    mars 2017, le revenu de l'avant-dernière année — sont déclarés dans les
+    fiches ; la date d'effet au trimestre civil de la complémentaire, corrigée
+    le 14 novembre 2026, a son paramètre et ses essais
+    (`tests/test_sections_liberales.py`)."""
     _chaque_version_est_portee(simulateur, regime, fiche, date_qui_decide, set(), 1949)
 
 

@@ -467,21 +467,23 @@ approximations:
 - version: [statuts_de_2009, statuts_de_2011, statuts_de_2024, reglement_de_2026]
   textes: statuts de 2009, article 14 ; règlement de 2026, article 14
   ecart: >-
-    Erreur du modèle, déclarée, non corrigée, la même que pour la CAVOM et la CARPIMKO :
-    l'entrée en jouissance « est fixée au premier jour du trimestre civil qui suit cette
-    demande », phrase qu'aucun texte ne touche de 2009 à 2026 (2011 ajoute à l'article
-    le paiement mensuel, 2016 en change le dernier alinéa, la fin du versement, 2025 en
-    supprime le quatrième, qui n'est pas celui de l'entrée en jouissance, qu'on compte
-    à part ou non la première phrase de l'article) et que le règlement reprend ; le modèle
-    sert la pension le premier du mois qui suit l'âge, avec la base
-    (`date_effet_mois_suivant`). Le texte ne tranche pas si un trimestre entamé
-    au-delà de l'âge du taux plein majore.
+    L'entrée en jouissance « est fixée au premier jour du trimestre civil qui suit
+    cette demande », phrase qu'aucun texte ne touche de 2009 à 2026 (2011 ajoute à
+    l'article le paiement mensuel, 2016 en change le dernier alinéa, la fin du
+    versement, 2025 en supprime le quatrième, qui n'est pas celui de l'entrée en
+    jouissance, qu'on compte à part ou non la première phrase de l'article) et que le
+    règlement reprend. Le modèle ne connaît pas la demande : il tient la pension pour
+    demandée à temps, et reporte la date qu'il présume — le premier du mois qui suit
+    l'âge demandé — au premier jour du trimestre civil qui commence ce jour-là ou après
+    (`effet_au_trimestre_civil`), depuis le 7 juin 2009. La pension de base, que R. 643-6 du code de la
+    sécurité sociale date de même, reste servie au premier du mois (fiche
+    `cnavpl_allocation_avant_2004`) : le modèle la sert un ou deux mois avant la
+    complémentaire, quand les deux commencent le même jour. Le texte
+    ne tranche pas si un trimestre entamé au-delà de l'âge du taux plein majore. Avant
+    le 7 juin 2009, les statuts ne sont pas lus, et le modèle sert au premier du mois.
   effet: >-
-    né le 10 mai 1960, entré à 21 ans, le pharmacien demande sa pension à 67 ans, en mai
-    2027 : le modèle la sert dès le 1er juin 2027, 14 548,91 € par an ; le règlement, le
-    1er juillet 2027 : un mois servi trop tôt, 14 548,91 / 12 = 1 212,41 €, sans
-    majoration dans aucun des deux (un mois et 21 jours au-delà de 67 ans). Essai du 5
-    novembre 2026, dans les deux moteurs, requête du formulaire
+    aucun sur la complémentaire demandée à temps ; une demande tardive la reporte
+    encore
 - version: [statuts_de_2009, statuts_de_2011, statuts_de_2024]
   textes: >-
     statuts de 2009 et de 2011, article 15 (l'inapte) ; arrêté du 19 décembre 2023,
@@ -586,8 +588,19 @@ effet: >-
   lieu de 0,65 (28 × 1,25 %), 10 580,06 € au lieu de 9 169,39 €, 1 410,68 € de trop ; à
   60 ans, 0,75 dans les deux. Depuis, `carriere_longue_minoree_jusqu_au_palier: true`
   aux périodes qui liquident depuis le 10 janvier 2024 — la période de 2020 du régime
-  coupée ce jour-là —, dans les deux moteurs. Reste non servie la date d'effet au
-  trimestre civil.
+  coupée ce jour-là —, dans les deux moteurs.
+  Corrigée encore le 14 novembre 2026 (même décision, ligne 12 de la file) : jusque-là,
+  le modèle servait la complémentaire le premier du mois qui suit l'âge, avec la base,
+  quand l'article 14 des statuts de 2009 et du règlement de 2026 fixe son entrée en
+  jouissance « au premier jour du trimestre civil qui suit cette demande » — né le 10
+  mai 1960, entré à 21 ans, le pharmacien demande sa pension à 67 ans, en mai 2027 :
+  servi dès le 1er juin 2027 au lieu du 1er juillet, un mois de trop, 14 548,91 / 12 =
+  1 212,41 €. Depuis, `effet_au_trimestre_civil: [2009-06-07, null]` aux périodes qui
+  liquident depuis 2009, dans les deux moteurs : la date présumée, quand elle tombe
+  dans ces bornes, est reportée au premier jour du trimestre civil qui commence ce
+  jour-là ou après, et la pension s'y liquide seule, après la base, aux conditions
+  d'ouverture de celle-ci — la carrière longue y garde sa minoration de 1,25 % jusqu'à
+  65 ans : né le 10 janvier 1962, entré à 18 ans, servi le 1er avril 2024, 0,85.
 sources:
   lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
@@ -602,6 +615,16 @@ sources:
     avant juillet 1951 parti après 65 ans de 2011 à 2026, et une pension de carrière
     longue liquidée depuis 2024.
   lectures:
+  - type: jorf
+    reference: >-
+      Relus pour la correction de la date d'effet au trimestre civil : arrêté du 11 mai
+      2009, annexe, statuts du régime complémentaire, article 14 (JORFARTI000020694605),
+      et arrêté du 10 juillet 2026, annexe I, article 14 (JORFARTI000054436087), dans
+      l'index JORF du dépôt, à jour du 11 novembre 2026. Le même arrêté de 2009 fixe la
+      pension de base à la même date (statuts du régime de base, article 22), comme R.
+      643-6 du code de la sécurité sociale ; le règlement de 2026 fait de même pour la
+      capitalisation (article 23) et les biologistes (III, article 3).
+    date: 2026-11-14
   - type: jorf
     reference: >-
       Relus pour la correction de la carrière longue depuis 2024 : arrêté du 19 décembre
@@ -659,16 +682,23 @@ code:
     0.005` : 1,25 % par trimestre jusqu'à 65 ans, 0,5 % au-delà.
     `carriere_longue_minoree_jusqu_au_palier: true` : la liquidation que la carrière
     longue ouvre n'est minorée que de 1,25 % par trimestre de son âge à 65 ans, sans la
-    seconde pente ni limite de trimestres.
+    seconde pente ni limite de trimestres. `effet_au_trimestre_civil: [2009-06-07,
+    null]` : `departs` reporte la date présumée de la pension, quand elle tombe dans ces
+    bornes, au premier jour du trimestre civil qui commence ce jour-là ou après (motif
+    `trimestre_civil`) ; elle s'y liquide seule, après la base, aux conditions
+    d'ouverture de celle-ci (`ouvrir`).
   python: >-
     droit/liquider.py : abattement_points, abattement_regime_de_base, decote_opposable,
     trimestres_de_decote ; droit/ouvrir.py : age_taux_plein ; scenarios/actuel.py :
-    AgesRegimes ; droit/completer.py : completer, _taux_majoration_enfants
+    AgesRegimes ; droit/completer.py : completer, _taux_majoration_enfants ;
+    droit/departs.py : _au_trimestre_civil, departs_et_demandes ; droit/ouvrir.py :
+    ouvrir, _references
   javascript: >-
     moteur/js/droit/liquider.js : abattementPoints, abattementRegimeDeBase,
     decoteOpposable, trimestresDeDecote ; moteur/js/droit/ouvrir.js : ageTauxPlein ;
     moteur/js/regimes.js : AgesRegimes ; moteur/js/droit/completer.js : completer,
-    tauxMajorationEnfants
+    tauxMajorationEnfants ; moteur/js/droit/departs.js : auTrimestreCivil,
+    departsEtDemandes ; moteur/js/droit/ouvrir.js : ouvrir, references
   parametres: >-
     contenu.parametres de chaque version : age_table, decote_par_trimestre,
     decote_annulee_par_la_duree, decote_palier_age, decote_par_trimestre_apres_palier,
@@ -676,6 +706,6 @@ code:
     surcote_trimestres_maximum ; regimes/cavp_complementaire.yaml :
     age_table, age_taux_plein, decote_par_trimestre, decote_palier_age,
     decote_par_trimestre_apres_palier, carriere_longue_minoree_jusqu_au_palier,
-    date_effet, avantages_non_contributifs ;
+    date_effet, effet_au_trimestre_civil, avantages_non_contributifs ;
     legislation/ages_regimes.csv : cavp
   tests: [tests/test_sections_sante.py, tests/test_sections_liberales.py, tests/js/moteur.test.js]

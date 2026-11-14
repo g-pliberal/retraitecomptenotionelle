@@ -20,6 +20,39 @@ from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
 
 
+#: Les complémentaires que leurs statuts font demander à leur âge, sans la
+#: base : chacune forme une unité à elle. La CARPV, « dès leur soixantième
+#: anniversaire », sous la seule condition d'« avoir versé les cotisations
+#: exigibles de l'ensemble des régimes appelés par la CARPV » (statuts
+#: approuvés le 18 octobre 2021, articles 33 et 34, en vigueur le 1er janvier
+#: 2022 ; règlement de 2026, articles 1er et 2) — avant 2022, la séparation
+#: est présumée, les statuts n'étant publiés qu'au Bulletin officiel (fiche
+#: liquidation_regime_par_regime, approximations) ; la
+#: CAVEC, « entre 60 et 65 ans, avec application d'un abattement définitif de
+#: 1,25 % par trimestre manquant » (statuts de 2008, article 3.13 ; de 2018,
+#: partie 2, article 12 ; règlement de 2026, article 1.1.3). Ni leurs textes,
+#: ni L. 643-3, ni L. 644-1 ne les lient à la liquidation de la base. La
+#: CRPNPAC, ses deux tranches : « Une pension de retraite est servie à
+#: l'affilié [...] dès lors qu'il réunit cumulativement à la date d'effet de
+#: la pension les conditions suivantes : 1° Avoir atteint l'âge de cinquante
+#: ans ; 2° Justifier de vingt annuités » (code de l'aviation civile,
+#: R. 426-11, I, rédaction de 2012), sans rien demander du régime général,
+#: qui attend l'âge de L. 161-17-2 (L. 351-1). La CAVOM, « 1° À partir de 62
+#: ans » et, « pour les générations antérieures », dès 60 ans (statuts,
+#: articles 14 et 23, arrêté du 30 décembre 2015 ; article 14, arrêté du
+#: 12 décembre 2024) ; la CARPIMKO, « l'âge prévu par les dispositions des
+#: articles 3, 4 et 6 » (règlement de 2026, article 2), dès 60 ans pour les
+#: générations 1955 et antérieures (article 12 quater des statuts depuis
+#: l'arrêté du 31 juillet 2015) ; la CPRN, 60 ans pour les nés avant 1954, et
+#: « l'article L. 161-17-2 [...] différé de vingt-quatre mois » après (statuts,
+#: article 15, arrêté du 16 décembre 2013, en vigueur de 2014 à 2023) : chacune
+#: à son âge, avant la base ou après.
+SANS_LEUR_BASE = frozenset({"carpv_complementaire", "cavec_complementaire",
+                            "cavom_complementaire", "carpimko_complementaire",
+                            "cprn_complementaire",
+                            "crpnpac", "crpnpac_tranche_2"})
+
+
 def derniere_annee(regime) -> int:
     """Dernière année pour laquelle le régime a des paramètres."""
     annees = [p.fin if p.fin is not None else 9999 for p in regime.periodes]

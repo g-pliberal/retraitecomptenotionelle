@@ -7,6 +7,18 @@
  * Jumeau de `src/retraite_notionnelle/droit/commun.py`.
  */
 
+/**
+ * Les complémentaires que leurs statuts font demander à leur âge, sans la
+ * base : elles forment une unité à elles. La CRPNPAC, ses deux tranches,
+ * « dès lors qu'il réunit [...] 1° Avoir atteint l'âge de cinquante ans »
+ * (R. 426-11 du code de l'aviation civile). La CAVOM, la CARPIMKO et la
+ * CPRN, chacune à l'âge de ses statuts, avant la base ou après. Voir
+ * `SANS_LEUR_BASE` (commun.py).
+ */
+export const SANS_LEUR_BASE = new Set(["carpv_complementaire", "cavec_complementaire",
+  "cavom_complementaire", "carpimko_complementaire", "cprn_complementaire",
+  "crpnpac", "crpnpac_tranche_2"]);
+
 /** Dernière année pour laquelle le régime a des paramètres. */
 export function derniereAnnee(regime) {
   if (regime.periodes.length === 0) {

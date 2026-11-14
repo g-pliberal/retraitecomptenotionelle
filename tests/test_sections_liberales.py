@@ -1053,3 +1053,237 @@ def test_la_table_du_decret_2026_418_est_celle_de_l_index_jorf():
             "AND titre LIKE 'Décret n° 2026-418 du 29 mai 2026 %'"))
     assert documents == {i: "8" if n == "18, fin" else n
                          for n, (i, _, _) in ARTICLES_DU_DECRET_2026_418.items()}
+
+
+# -- la date d'effet au trimestre civil (action 130, la file, ligne 12) --------
+
+#: La requête du formulaire d'un libéral, au salaire de deux Smic.
+REQUETE_DE_LIBERAL = {
+    "age_reference": "fixe_apres_bascule", "bascule": "2026",
+    "conversion_acquis": "reference", "emploi": "cor_2026",
+    "enfants": "0", "euros": "2026", "indexation": "triple_lock_inverse",
+    "primes": "0", "profil": "plat", "projection": "cor_reference",
+    "salaire": "2", "sexe": "H", "stock": "prix", "table": "unisexe",
+}
+
+#: Les dates présumées — le premier du mois qui suit l'âge demandé — que le
+#: texte lu de chaque caisse reporte au premier jour du trimestre civil qui
+#: suit, [depuis, jusqu'à) : CAVOM, statuts de 2016, article 14, II, en vigueur
+#: le 1er janvier 2016, et règlement de 2026 ; CARPIMKO, statuts de 1984,
+#: article 11, jusqu'à l'arrêté du 20 mai 1987, non lu, en vigueur le 5 juin,
+#: puis règlement de 2026, article 7, en vigueur le 18 juillet 2026 ; CAVP,
+#: statuts du 11 mai 2009, article 14, en vigueur le 7 juin 2009, et règlement
+#: de 2026 ; CARMF, règlement de 2026, I, article 24.
+TRIMESTRE_CIVIL = {
+    "cavom_complementaire": [("2016-01-01", None)],
+    "carpimko_complementaire": [("1984-01-01", "1987-06-05"), ("2026-07-18", None)],
+    "cavp_complementaire": [("2009-06-07", None)],
+    "carmf_complementaire": [("2026-07-18", None)],
+}
+
+
+def test_les_quatre_caisses_portent_la_date_d_effet_au_trimestre_civil(simulateur):
+    """Chaque premier du mois de 1949 à 2040, la période qui liquide une
+    pension de ce jour dit si le texte lu la reporte au trimestre civil
+    (`effet_au_trimestre_civil`, [depuis, jusqu'à)) ; aucun autre régime ne
+    le dit : ce que nul texte lu ne fixe reste au premier du mois."""
+    for code, plages in TRIMESTRE_CIVIL.items():
+        caisse = simulateur.catalogue[code]
+        for annee in range(1949, 2041):
+            for mois in range(1, 13):
+                jour = f"{annee:04d}-{mois:02d}-01"
+                periode = caisse.periode_a_l_effet(jour)
+                plage = None if periode is None else periode.effet_au_trimestre_civil
+                porte = plage is not None and plage[0] <= jour and (
+                    plage[1] is None or jour < plage[1])
+                attendu = any(depuis <= jour and (jusqu is None or jour < jusqu)
+                              for depuis, jusqu in plages)
+                assert porte == attendu, (code, jour)
+    autres = sorted(regime.code for regime in simulateur.catalogue
+                    for periode in regime.periodes
+                    if periode.effet_au_trimestre_civil is not None)
+    assert sorted(set(autres)) == sorted(TRIMESTRE_CIVIL)
+
+
+#: (statut, naissance, âge du début, âge demandé) : la complémentaire, la date
+#: d'effet que son texte lui fixe, et son coefficient, posés à la main.
+EFFETS_AU_TRIMESTRE_CIVIL = {
+    # CAVOM. Né le 10 mai 1959, 62 ans le 10 mai 2021 : la base le 1er juin,
+    # la CAVOM « au plus tôt au premier jour du trimestre civil qui suit » la
+    # demande et la cessation, le 1er juillet 2021, à 62 ans, 0,75.
+    ("officier_ministeriel", "1959-05-10", "25", "62"):
+        ("cavom_complementaire", "2021-07-01", 0.75),
+    # Né le 1er mai 1959, que le modèle sert dès le 1er mai : le 1er juillet.
+    ("officier_ministeriel", "1959-05-01", "25", "62"):
+        ("cavom_complementaire", "2021-07-01", 0.75),
+    # Né le 1er mars 1959, servi dès le 1er mars : le 1er avril.
+    ("officier_ministeriel", "1959-03-01", "25", "62"):
+        ("cavom_complementaire", "2021-04-01", 0.75),
+    # CARPIMKO, règlement de 2026, article 7. Né le 10 novembre 1959, entré à
+    # 26 ans, demande à 67 ans, en novembre 2026 : le 1er janvier 2027 ; son
+    # taux plein à 66 ans et 4 mois, en mars 2026, trois trimestres civils
+    # entiers d'ajournement, d'avril à décembre 2026 : 1,0375.
+    ("auxiliaire_medical", "1959-11-10", "26", "67"):
+        ("carpimko_complementaire", "2027-01-01", 1.0375),
+    # Statuts de 1984, article 11. Né le 10 mai 1920, 65 ans le 10 mai 1985 :
+    # le 1er juillet 1985, sans coefficient.
+    ("auxiliaire_medical", "1920-05-10", "25", "65"):
+        ("carpimko_complementaire", "1985-07-01", 1.0),
+    # CAVP, règlement de 2026, article 14. Né le 10 mai 1960, entré à 21 ans,
+    # demande à 67 ans, en mai 2027 : le 1er juillet 2027, sans majoration (un
+    # mois et 21 jours au-delà de 67 ans).
+    ("pharmacien", "1960-05-10", "21", "67"):
+        ("cavp_complementaire", "2027-07-01", 1.0),
+    # Statuts du 11 mai 2009, article 14, en vigueur le 7 juin 2009. Né le
+    # 10 août 1944, 65 ans le 10 août 2009 : le 1er octobre 2009.
+    ("pharmacien", "1944-08-10", "25", "65"):
+        ("cavp_complementaire", "2009-10-01", 1.0),
+    # CARMF, règlement de 2026, I, article 24. Né le 10 mai 1964, entré à
+    # 22 ans, parti à 63 ans : le 1er juillet 2027 ; 62 ans le 10 mai 2026, quatre trimestres
+    # du 1er juillet 2026 au 1er juillet 2027, 1,05.
+    ("medecin_liberal", "1964-05-10", "22", "63"):
+        ("carmf_complementaire", "2027-07-01", 1.05),
+    # Né le 10 mars 1964, parti à 63 ans et un mois, en avril 2027 : le
+    # 1er juillet 2027 ; 62 ans le 10 mars 2026, cinq trimestres du 1er avril
+    # 2026 au 1er juillet 2027, 1,0625.
+    ("medecin_liberal", "1964-03-10", "22", "63.0833"):
+        ("carmf_complementaire", "2027-07-01", 1.0625),
+    # Né le 10 juillet 1959, parti à 67 ans, que le modèle date du 1er août
+    # 2026, passé le 18 juillet : le 1er octobre 2026 ; 62 ans le 10 juillet
+    # 2021, 65 ans le 10 juillet 2024 : douze trimestres à 1,25 % du
+    # 1er octobre 2021, huit à 0,75 % du 1er octobre 2024, 1,21.
+    ("medecin_liberal", "1959-07-10", "22", "67"):
+        ("carmf_complementaire", "2026-10-01", 1.21),
+}
+
+#: Les mêmes clés : la complémentaire que le texte lu ne reporte pas, servie
+#: au départ déclaré, avec sa base.
+EFFETS_AU_PREMIER_DU_MOIS = {
+    # CAVOM. Né le 10 mars 1959 ou le 1er avril 1959 : le 1er avril 2021, qui
+    # ouvre un trimestre civil.
+    ("officier_ministeriel", "1959-03-10", "25", "62"): "cavom_complementaire",
+    ("officier_ministeriel", "1959-04-01", "25", "62"): "cavom_complementaire",
+    # Né le 10 mai 1950, parti à 65 ans le 1er juin 2015, avant les statuts
+    # de 2016 : la règle d'avant n'est que présumée.
+    ("officier_ministeriel", "1950-05-10", "25", "65"): "cavom_complementaire",
+    # CARPIMKO. Né le 10 mai 1925, 65 ans en mai 1990, sous l'arrêté du
+    # 20 mai 1987, non lu ; né le 10 mai 1959, 67 ans en mai 2026, sous des
+    # statuts dont l'article qui date la pension n'est pas lu.
+    ("auxiliaire_medical", "1925-05-10", "25", "65"): "carpimko_complementaire",
+    ("auxiliaire_medical", "1959-05-10", "26", "67"): "carpimko_complementaire",
+    # CAVP. Né le 10 février 1944, 65 ans en février 2009, avant le 7 juin.
+    ("pharmacien", "1944-02-10", "25", "65"): "cavp_complementaire",
+    # CARMF. Né le 10 mai 1959, parti à 67 ans le 1er juin 2026, avant le
+    # règlement : les statuts d'alors ne sont pas lus sur ce point.
+    ("medecin_liberal", "1959-05-10", "22", "67"): "carmf_complementaire",
+}
+
+
+@pytest.fixture(scope="module")
+def effets_des_liberaux():
+    """Chaque cas, servi par le portage et refait au bit près par le moteur
+    Python (``servi_et_refait``)."""
+    from outils_pont import servi_et_refait
+
+    cas = [{"cle": "|".join(cle),
+            "requete": {**REQUETE_DE_LIBERAL, "statut": cle[0], "naissance": cle[1],
+                        "liquidation": cle[3], **({"debut": cle[2]} if cle[2] else {})}}
+           for cle in [*EFFETS_AU_TRIMESTRE_CIVIL, *EFFETS_AU_PREMIER_DU_MOIS]]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    return {cle: servi["actuel"] for cle, servi in servis.items()}
+
+
+def _coefficient_de(detail: str) -> float:
+    import re
+
+    lu = re.search(r"coefficient d(?:'anticipation|e majoration) ([0-9.]+)", detail)
+    return float(lu.group(1)) if lu else 1.0
+
+
+_MOIS = ("janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août",
+         "septembre", "octobre", "novembre", "décembre")
+
+
+@pytest.mark.parametrize("cle", EFFETS_AU_TRIMESTRE_CIVIL,
+                         ids=["|".join(cle) for cle in EFFETS_AU_TRIMESTRE_CIVIL])
+def test_la_complementaire_prend_effet_au_trimestre_civil_qui_suit(
+        effets_des_liberaux, cle):
+    """« La retraite prend effet au plus tôt au premier jour du trimestre civil
+    qui suit le dernier des faits ci-après : - la demande [...] ; - la
+    justification de la cessation d'activité » (CAVOM, statuts de 2016,
+    article 14, II ; règlement de 2026, article 1er, II) ; « La date d'entrée
+    en jouissance de la retraite est fixée au premier jour du trimestre civil
+    qui suit la demande » (CARPIMKO, statuts de 1984, article 11 ; règlement de
+    2026, article 7) ; « L'entrée en jouissance de la retraite de droits
+    propres est fixée au premier jour du trimestre civil qui suit cette
+    demande » (CAVP, statuts de 2009 et règlement de 2026, article 14) ; « La
+    date d'effet de l'allocation est fixée au premier jour du trimestre civil
+    qui suit la réalisation de toutes les conditions d'ouverture des droits »
+    (CARMF, règlement de 2026, I, article 24). Jusqu'au 14 novembre 2026, le
+    modèle servait ces pensions le premier du mois qui suit l'âge, avec la
+    base : un ou deux mois trop tôt. La base, et l'ASV, que son règlement ne
+    date pas, restent au départ déclaré : seule la complémentaire dit sa
+    date."""
+    regime, date, coefficient = EFFETS_AU_TRIMESTRE_CIVIL[cle]
+    servi = effets_des_liberaux["|".join(cle)]
+    pensions = {p["regime"]: p for p in servi["pensions_par_regime"]}
+    [declare, reporte] = servi["departs"]
+    assert declare["motif"] == "depart" and declare["date_effet"] < date
+    assert reporte == {"date_effet": date, "motif": "trimestre_civil"}
+    le_premier = f"servie à partir du 1er {_MOIS[int(date[5:7]) - 1]} {date[:4]}"
+    assert [code for code, p in pensions.items() if "servie" in p["detail"]] == [regime]
+    assert le_premier in pensions[regime]["detail"]
+    assert _coefficient_de(pensions[regime]["detail"]) == pytest.approx(coefficient)
+
+
+@pytest.mark.parametrize("cle", EFFETS_AU_PREMIER_DU_MOIS,
+                         ids=["|".join(cle) for cle in EFFETS_AU_PREMIER_DU_MOIS])
+def test_la_complementaire_reste_au_depart_quand_nul_texte_lu_ne_la_reporte(
+        effets_des_liberaux, cle):
+    """Une date qui ouvre déjà un trimestre civil, ou une pension que le texte
+    lu ne date pas : un seul départ, le déclaré."""
+    servi = effets_des_liberaux["|".join(cle)]
+    pensions = {p["regime"]: p for p in servi["pensions_par_regime"]}
+    assert pensions[EFFETS_AU_PREMIER_DU_MOIS[cle]]["montant"] > 0
+    assert servi["departs"] == []
+
+
+def test_la_date_d_effet_au_trimestre_civil_se_pose_a_la_main(effets_des_liberaux):
+    """Les cas posés des fiches. La pension ne change que de date quand son
+    coefficient ne bouge pas : l'officier ministériel, 13 580,64 € par an, un
+    mois de trop, 1 131,72 € ; le pharmacien, 14 548,91 €, un mois, 1 212,41 € ;
+    le médecin né le 10 mai 1964, 14 056,14 €, un mois, 1 171,35 €. Elle
+    gagne les trimestres du report : le médecin né le 10 mars 1964, deux mois
+    de trop, 2 337,68 €, puis 14 026,06 / 1,05 × 1,0625 = 14 193,04 € ; l'auxiliaire
+    médical, un mois de trop, 475,50 €, puis 5 706,01 / 1,025 × 1,0375 =
+    5 775,59 €, aux euros de 2026, l'année du départ déclaré."""
+    def montant(cle, regime):
+        pensions = effets_des_liberaux[cle]["pensions_par_regime"]
+        return {p["regime"]: p for p in pensions}[regime]["montant"]
+
+    assert montant("officier_ministeriel|1959-05-10|25|62",
+                   "cavom_complementaire") == pytest.approx(13_580.64, abs=0.01)
+    assert montant("pharmacien|1960-05-10|21|67",
+                   "cavp_complementaire") == pytest.approx(14_548.91, abs=0.01)
+    assert montant("medecin_liberal|1964-05-10|22|63",
+                   "carmf_complementaire") == pytest.approx(14_056.14, abs=0.01)
+    assert montant("medecin_liberal|1964-03-10|22|63.0833",
+                   "carmf_complementaire") == pytest.approx(
+                       14_026.06 / 1.05 * 1.0625, abs=0.01)
+    assert montant("auxiliaire_medical|1959-11-10|26|67",
+                   "carpimko_complementaire") == pytest.approx(
+                       5_706.01 / 1.025 * 1.0375, abs=0.01)
+
+
+def test_la_page_dit_la_complementaire_servie_au_trimestre_civil():
+    """Le pharmacien né le 10 mai 1960, parti à 67 ans : la page dit que sa
+    complémentaire ne commence que le 1er juillet 2027, et pourquoi."""
+    from retraite_notionnelle.web.site import rendre
+
+    page = rendre("/simuler", {**REQUETE_DE_LIBERAL, "statut": "pharmacien",
+                               "naissance": "1960-05-10", "debut": "21",
+                               "liquidation": "67"})[1]
+    assert "Vos pensions ne commencent pas toutes à la\nmême date." in page
+    assert "le 1<sup>er</sup> juillet 2027" in page
+    assert "au premier jour du trimestre civil qui suit, comme ses statuts le fixent" in page

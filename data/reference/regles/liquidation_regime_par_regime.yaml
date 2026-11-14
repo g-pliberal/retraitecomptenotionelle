@@ -551,15 +551,15 @@ sources:
     date: 2026-11-05
 code:
   python: >-
-    droit/departs.py : departs, departs_et_demandes, DemandeExaminee,
-    liquider_les_departs ; carriere.py : Carriere.demandes_de_pension ;
+    droit/departs.py : departs, departs_et_demandes, _au_trimestre_civil,
+    DemandeExaminee, liquider_les_departs ; carriere.py : Carriere.demandes_de_pension ;
     droit/liquidation.py : Demande, Etat ; droit/ouvrir.py : ouvrir ;
     droit/liquider.py : liquider_chaque_regime ; droit/completer.py : completer ;
     scenarios/actuel.py : resultat_des_departs ; echeancier.py : Echeancier._partir ;
     revalorisation.py : mener_au_mois, faire_vivre
   javascript: >-
-    moteur/js/droit/departs.js : departs, departsEtDemandes, DemandeExaminee,
-    liquiderLesDeparts ; moteur/js/carriere.js : Carriere.demandesDePension ;
+    moteur/js/droit/departs.js : departs, departsEtDemandes, auTrimestreCivil,
+    DemandeExaminee, liquiderLesDeparts ; moteur/js/carriere.js : Carriere.demandesDePension ;
     moteur/js/saisie.js : PREFIXE_DEMANDE ; moteur/js/droit/liquidation.js : Demande,
     Etat ; moteur/js/droit/ouvrir.js : ouvrir ; moteur/js/droit/liquider.js :
     liquiderChaqueRegime ; moteur/js/droit/completer.js : completer ;

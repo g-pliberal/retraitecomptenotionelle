@@ -257,6 +257,28 @@ def _dates_d_effet(bornes, debut_periode: int, fin_periode: int | None,
     return debut, fin
 
 
+def _effet_au_trimestre_civil(bornes, lieu: str) -> tuple[str, str | None] | None:
+    """Les dates présumées qu'une période reporte au trimestre civil, [début,
+    fin) au jour, en AAAA-MM-JJ ; ``None`` sans déclaration."""
+    if bornes is None:
+        return None
+    if not isinstance(bornes, (list, tuple)) or len(bornes) != 2 or bornes[0] is None:
+        raise ValueError(f"{lieu} : `effet_au_trimestre_civil` s'écrit [début, fin], "
+                         f"au jour, et non {bornes!r}")
+    # Le YAML lit un jour écrit AAAA-MM-JJ comme une date.
+    debut, fin = (None if jour is None else
+                  jour.isoformat() if hasattr(jour, "isoformat") else str(jour)
+                  for jour in bornes)
+    for jour in (debut, fin):
+        if jour is not None and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", jour):
+            raise ValueError(f"{lieu} : `effet_au_trimestre_civil` porte {jour!r}, qui "
+                             "n'est pas une date AAAA-MM-JJ")
+    if fin is not None and fin <= debut:
+        raise ValueError(f"{lieu} : `effet_au_trimestre_civil` finit le {fin}, avant "
+                         f"son début, le {debut}")
+    return debut, fin
+
+
 def _complement(part: float) -> float:
     """Ce qu'un tiers verse pour un euro de l'assuré, quand il paie ``part``
     du total : 2 pour deux tiers, 1,5 pour 60 %."""
@@ -835,6 +857,13 @@ class PeriodeRegime:
     #: ``None`` : du 1er janvier de ``debut`` au 1er janvier qui suit ``fin``
     #: (:attr:`effet`).
     date_effet: tuple[str, str | None] | None = None
+    #: LA PENSION QUI PREND EFFET AU TRIMESTRE CIVIL : les dates présumées —
+    #: le premier du mois qui suit la demande —, [début, fin) en AAAA-MM-JJ,
+    #: que le texte du régime reporte « au premier jour du trimestre civil qui
+    #: suit » (CAVOM, CARPIMKO, CAVP, CARMF depuis le 18 juillet 2026). Les
+    #: bornes sont celles du texte lu, non celles de la période. ``None`` : la
+    #: pension prend effet le premier du mois (``droit/departs.py``).
+    effet_au_trimestre_civil: tuple[str, str | None] | None = None
     #: LES TAUX PROPRES DES NON-SALARIÉS : ce que paie au régime général un
     #: assuré SANS EMPLOYEUR — l'artisan, le commerçant depuis 2018, le libéral
     #: non réglementé depuis 2019 —, à qui le droit fixe son barème (D. 633-3) :
@@ -2491,6 +2520,9 @@ class CatalogueRegimes:
                 date_effet=_dates_d_effet(
                     p.get("date_effet"), int(p["debut"]),
                     None if p.get("fin") is None else int(p["fin"]),
+                    f"{chemin.name}, période {p.get('debut')}"),
+                effet_au_trimestre_civil=_effet_au_trimestre_civil(
+                    p.get("effet_au_trimestre_civil"),
                     f"{chemin.name}, période {p.get('debut')}"),
                 notes=(p.get("notes") or "").strip(),
             )

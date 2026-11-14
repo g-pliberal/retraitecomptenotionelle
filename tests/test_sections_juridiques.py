@@ -184,9 +184,15 @@ INAPTES_DE_LA_CAVOM = {
     # 1955, le 1er avril 2017 : 62 ans atteints, sans coefficient.
     ("1957-03-10", "62", "oui"): 1.0,
     ("1955-03-10", "62", "oui"): 1.0,
+    # Né le 10 septembre 1962, inapte : 62 ans le 10 septembre 2024, la pension
+    # le 1er octobre 2024, sous les statuts de 2016 : sans coefficient.
+    ("1962-09-10", "62", "oui"): 1.0,
     # Né le 10 novembre 1962, inapte : 62 ans le 10 novembre 2024, la pension
-    # le 1er décembre 2024, sous les statuts de 2016 : sans coefficient.
-    ("1962-11-10", "62", "oui"): 1.0,
+    # « au premier jour du trimestre civil qui suit » (article 14, II), le
+    # 1er janvier 2025, sous les statuts de 2025 : 0,75 — sans coefficient
+    # tant que le modèle la servait le 1er décembre 2024, jusqu'au 14 novembre
+    # 2026.
+    ("1962-11-10", "62", "oui"): 0.75,
     # Né le 10 décembre 1962, inapte : la pension le 1er janvier 2025, le jour
     # où les statuts de 2025 entrent en vigueur. L'inapte y ouvre ses droits à
     # 62 ans (1°, a), sans que le 2° le serve sans coefficient : cinq années

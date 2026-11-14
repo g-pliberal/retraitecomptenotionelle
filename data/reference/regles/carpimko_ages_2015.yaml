@@ -485,19 +485,31 @@ approximations:
 - version: [statuts_de_1984, reglement_de_2026]
   textes: statuts de 1984, article 11 ; règlement de 2026, article 7
   ecart: >-
-    Erreur du modèle, déclarée, non corrigée, la même que pour la CAVOM : la pension
-    prend effet « au premier jour du trimestre civil qui suit la demande » ; le modèle
-    la sert le premier du mois qui suit l'âge, avec la base (`date_effet_mois_suivant`).
-    Né le 10 novembre 1959, l'auxiliaire médical demande sa pension à 67 ans, en
-    novembre 2026 : le modèle la sert dès le 1er décembre 2026, majorée de deux
-    trimestres civils entiers (avril à septembre 2026), 1,025, 5 706,01 € par an ; le
-    règlement, le 1er janvier 2027, majorée de trois, octobre à décembre 2026 compris,
-    5 706,01 / 1,025 × 1,0375 = 5 775,59 €. De 1996 à 2026, l'article qui la date
-    n'est pas lu.
+    La date d'entrée en jouissance « est fixée au premier jour du trimestre civil qui
+    suit la demande, sans pouvoir être antérieure » à l'âge. Le modèle ne connaît pas
+    la demande : il tient la pension pour demandée à temps, et reporte la date qu'il
+    présume — le premier du mois qui suit l'âge demandé — au premier jour du trimestre
+    civil qui commence ce jour-là ou après (`effet_au_trimestre_civil`), du 1er janvier
+    1984 au 4 juin 1987 et depuis le 18 juillet 2026. La pension de base, que R. 643-6
+    du code de la sécurité sociale date de même, et les prestations complémentaires de
+    vieillesse, que leur règlement de 2026 date de même (article 2), restent servies au
+    premier du mois : le modèle les sert un ou deux mois avant la complémentaire.
   effet: >-
-    un mois de pension servi trop tôt, 5 706,01 / 12 = 475,50 € dans le cas posé, puis
-    69,59 € par an de moins que le règlement, aux valeurs de 2026 ; jusqu'à deux mois
-    selon le mois de naissance
+    aucun sur la complémentaire demandée à temps ; une demande tardive la reporte
+    encore
+- version: [statuts_de_1987, statuts_de_1996, statuts_de_2015, statuts_de_2019, statuts_de_2024]
+  textes: >-
+    arrêté du 20 mai 1987 et statuts approuvés le 20 novembre 1996 (Bulletin officiel
+    no 96-52), non lus
+  ecart: >-
+    Du 5 juin 1987 au 17 juillet 2026, l'article qui date la pension n'est pas lu : le
+    modèle la sert le premier du mois qui suit l'âge, avec la base
+    (`date_effet_mois_suivant`), quand les statuts de 1984, avant, et le règlement de
+    2026, après, la fixent au premier jour du trimestre civil qui suit la demande. Le
+    texte ne tranche pas, faute d'être lu.
+  effet: >-
+    si la règle n'a pas changé entre-temps, un ou deux mois de pension servis trop
+    tôt, et les trimestres civils d'ajournement du report en moins ; 0 € sinon
 - version: [statuts_de_2015, statuts_de_2019]
   textes: >-
     statuts, articles 11, 12 et 12 quater, rédaction de l'arrêté du 31 juillet 2015
@@ -718,8 +730,25 @@ effet: >-
   mois, non au trimestre civil (475,50 €). Non tranchés : les 4 % par année des mêmes
   générations quand elles ont leur durée (136,90 € ou 862,45 € par an), l'âge d'où la
   majoration se compte (1 263,99 €).
+  Corrigée le 14 novembre 2026 (action 130, décision du propriétaire du 13, ligne 12 de
+  la file) : jusque-là, le modèle servait la complémentaire le premier du mois qui suit
+  l'âge, avec la base, quand l'article 11 des statuts de 1984 et l'article 7 du
+  règlement de 2026 fixent son entrée en jouissance « au premier jour du trimestre
+  civil qui suit la demande » — né le 10 novembre 1959, entré à 26 ans, l'auxiliaire
+  médical demande sa pension à 67 ans, en novembre 2026 : servi dès le 1er décembre
+  2026, majoré de deux trimestres civils entiers, 1,025, 5 706,01 € par an, au lieu du
+  1er janvier 2027, majoré de trois, 1,0375, 5 706,01 / 1,025 × 1,0375 = 5 775,59 € ;
+  un mois de trop, 475,50 €, puis 69,59 € par an de moins. Depuis,
+  `effet_au_trimestre_civil` aux périodes de 1984 (`[1984-01-01, 1987-06-05]`) et de
+  2026 (`[2026-07-18, null]`), dans les deux moteurs : la date présumée, quand elle
+  tombe dans ces bornes, est reportée au premier jour du trimestre civil qui commence
+  ce jour-là ou après, et la pension s'y liquide seule, après la base, sous la durée
+  requise de celle-ci — une complémentaire liquidée sans sa base retombait sur 160
+  trimestres, et majorait depuis une durée que sa génération n'avait pas (1,05 au lieu
+  de 1,0375 dans le cas posé). Du 5 juin 1987 au 17 juillet 2026, l'article n'est pas
+  lu, et le modèle sert au premier du mois.
 sources:
-  lu_le: 2026-11-05
+  lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -729,6 +758,15 @@ sources:
     à la CARPIMKO, ou à lire en bibliothèque. Les régimes de 1956 (décrets n° 56-97 et n°
     56-129) et leurs statuts, pour les pensions d'avant 1984.
   lectures:
+  - type: jorf
+    reference: >-
+      Relus pour la correction de la date d'effet au trimestre civil : statuts de 1984,
+      article 11 (LEGIARTI000006782880, que LEGI garde dans sa seule rédaction de 1984),
+      dans l'index LEGI du dépôt, et arrêté du 10 juillet 2026, annexe, règlement du
+      régime complémentaire, article 7, et règlement des prestations complémentaires de
+      vieillesse, article 2 (JORFARTI000054435915), dans l'index JORF, tous deux à jour
+      du 11 novembre 2026 ; aucun arrêté publié de 1987 à 2025 ne porte l'article.
+    date: 2026-11-14
   - type: jorf
     reference: >-
       Relus après la relecture R-E5 : arrêté du 27 décembre 2023, annexe, 6°, l'article
@@ -789,22 +827,27 @@ code:
     `age_de_la_duree_atteinte`, `age_ouverture_commun`). De 1984 à 2015, les périodes
     lisent l'âge légal et l'âge d'annulation de la décote de la génération, la même
     décote, sans surcote ; avant 1984, aucune période. La pension prend effet avec
-    celle du régime de base, le premier du mois qui suit l'âge. Les écarts au texte :
-    voir `approximations`.
+    celle du régime de base, le premier du mois qui suit l'âge, hors des bornes de
+    `effet_au_trimestre_civil` (`[1984-01-01, 1987-06-05]`, `[2026-07-18, null]`), où
+    `departs` la reporte au premier jour du trimestre civil qui commence ce jour-là ou
+    après (motif `trimestre_civil`) : elle s'y liquide seule, sous la durée requise de
+    la base (`ouvrir`). Les écarts au texte : voir `approximations`.
   python: >-
     scenarios/actuel.py : AgesRegimes, AgesRegimes.ages ; droit/ouvrir.py : ouvrir,
     age_taux_plein, age_ouverture_commun ; droit/liquider.py : decote_opposable,
-    trimestres_de_decote, surcote_points, age_de_la_duree_atteinte
+    trimestres_de_decote, surcote_points, age_de_la_duree_atteinte ;
+    droit/departs.py : _au_trimestre_civil, departs_et_demandes
   javascript: >-
     moteur/js/regimes.js : AgesRegimes, AgesRegimes.ages ; moteur/js/droit/ouvrir.js :
     ouvrir, ageTauxPlein, ageOuvertureCommun ; moteur/js/droit/liquider.js :
-    decoteOpposable, trimestresDeDecote, surcotePoints, ageDeLaDureeAtteinte
+    decoteOpposable, trimestresDeDecote, surcotePoints, ageDeLaDureeAtteinte ;
+    moteur/js/droit/departs.js : auTrimestreCivil, departsEtDemandes
   parametres: >-
     contenu.parametres de chaque version : age_table, decote_par_trimestre,
     surcote_par_trimestre, surcote_trimestres_maximum ;
     regimes/carpimko_complementaire.yaml : age_table, decote_par_trimestre,
     surcote_par_trimestre, surcote_points, surcote_depuis_la_duree,
-    surcote_trimestres_maximum ;
+    surcote_trimestres_maximum, effet_au_trimestre_civil ;
     legislation/ages_regimes.csv : carpimko_2016, generation, age_ouverture,
     age_taux_plein
   tests:

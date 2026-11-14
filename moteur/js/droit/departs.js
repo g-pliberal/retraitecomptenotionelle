@@ -24,7 +24,9 @@
 
 import { DateMois } from "../calendrier.js";
 import { menerAuMois } from "../revalorisation.js";
-import { derniereAnnee, ligneCotisee, periodeDeLiquidation } from "./commun.js";
+import {
+  SANS_LEUR_BASE, derniereAnnee, ligneCotisee, periodeDeLiquidation,
+} from "./commun.js";
 import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import * as etranger from "./etranger.js";
@@ -40,17 +42,7 @@ export const ETAGES_DES_UNITES = new Set(["base", "integre"]);
 /** Le RAFP, que l'article 6 du décret n° 2004-569 n'ouvre qu'à l'âge légal. */
 export const RAFP = "rafp";
 
-/**
- * Les complémentaires que leurs statuts font demander à leur âge, sans la
- * base : elles forment une unité à elles. La CRPNPAC, ses deux tranches,
- * « dès lors qu'il réunit [...] 1° Avoir atteint l'âge de cinquante ans »
- * (R. 426-11 du code de l'aviation civile). La CAVOM, la CARPIMKO et la
- * CPRN, chacune à l'âge de ses statuts, avant la base ou après. Voir
- * `SANS_LEUR_BASE` (departs.py).
- */
-export const SANS_LEUR_BASE = new Set(["carpv_complementaire", "cavec_complementaire",
-  "cavom_complementaire", "carpimko_complementaire", "cprn_complementaire",
-  "crpnpac", "crpnpac_tranche_2"]);
+export { SANS_LEUR_BASE };
 
 /** Ce qui date un départ, par rapport au départ déclaré. */
 export const MOTIF_DEPART = "depart";
@@ -64,6 +56,11 @@ export const MOTIF_INVALIDITE = "invalidite";
 export const MOTIF_RADIATION = "radiation";
 /** La pension du fonctionnaire ou du militaire radié par limite d'âge. */
 export const MOTIF_LIMITE = "limite_d_age";
+/**
+ * La complémentaire que son texte sert « au premier jour du trimestre civil
+ * qui suit » la demande, reportée du premier du mois à ce jour.
+ */
+export const MOTIF_TRIMESTRE = "trimestre_civil";
 
 /**
  * Ce qu'une demande devient quand elle ne date pas sa pension : servie avec la
@@ -104,7 +101,8 @@ export class DemandeExaminee {
     this.demandee = demandee;
     // Le mois où la pension commence ; `null` sans pension de ce régime.
     this.retenue = retenue;
-    // `demande`, `depart`, `ouverture`, `sortie`, `ensemble` ou `sans_pension`.
+    // `demande`, `depart`, `ouverture`, `sortie`, `trimestre_civil`, `ensemble` ou
+    // `sans_pension`.
     this.motif = motif;
   }
 
@@ -210,6 +208,29 @@ function periodesDeLUnite(moteur, unite, date) {
     }
   }
   return periodes;
+}
+
+/**
+ * Le mois où le régime sert une pension que le modèle présume au 1er du mois
+ * `date` : ce mois, ou le premier du trimestre civil qui commence ce jour-là
+ * ou après, quand la période qui la liquide la reporte « au premier jour du
+ * trimestre civil qui suit » la demande (`effet_au_trimestre_civil`, [début,
+ * fin) des dates présumées). Le premier du mois présumé suit déjà le mois de
+ * la demande. Voir `_au_trimestre_civil` dans le Python.
+ */
+function auTrimestreCivil(moteur, code, date) {
+  const periode = moteur.catalogue.contient(code)
+    ? periodeDeLiquidation(moteur.catalogue.obtenir(code), date)
+    : null;
+  const plage = periode === null ? null : (periode.effet_au_trimestre_civil ?? null);
+  if (plage === null) {
+    return date;
+  }
+  const jour = new Depart(date).dateEffet;
+  if (jour < plage[0] || (plage[1] !== null && jour >= plage[1])) {
+    return date;
+  }
+  return date.plusMois((3 - ((date.mois - 1) % 3)) % 3);
 }
 
 /**
@@ -560,6 +581,15 @@ export function departsEtDemandes(moteur, carriereSaisie) {
       parRegime.set(code, [demandee, MOTIF_DEMANDE]);
     }
   }
+  // La CAVOM, la CARPIMKO, la CAVP et la CARMF servent leur complémentaire
+  // « au premier jour du trimestre civil qui suit » la demande : la date
+  // présumée ou demandée, un premier du mois, y est reportée.
+  for (const [code, [quand]] of [...parRegime]) {
+    const reportee = auTrimestreCivil(moteur, code, quand);
+    if (reportee.rang > quand.rang) {
+      parRegime.set(code, [reportee, MOTIF_TRIMESTRE]);
+    }
+  }
 
   const examens = examiner(demandees, parRegime, new Set(uniteDe.keys()), legal);
   const parDate = new Map();
@@ -573,14 +603,15 @@ export function departsEtDemandes(moteur, carriereSaisie) {
     return [unique, examens];
   }
   // Ce qui date un départ : l'acte de la personne d'abord, puis la sortie de
-  // l'armée ; l'ouverture d'un régime sinon, le RAFP à l'âge légal compris.
+  // l'armée ; l'ouverture d'un régime sinon, le RAFP à l'âge légal compris ;
+  // le trimestre civil, quand lui seul le date.
   const motifDe = (rang, regimes) => {
     if (rang === declare.rang) {
       return MOTIF_DEPART;
     }
     const motifs = new Set([...regimes].map((code) => parRegime.get(code)[1]));
     for (const retenu of [MOTIF_DEMANDE, MOTIF_SORTIE, MOTIF_RADIATION, MOTIF_LIMITE,
-      MOTIF_INVALIDITE]) {
+      MOTIF_INVALIDITE, MOTIF_OUVERTURE, MOTIF_TRIMESTRE]) {
       if (motifs.has(retenu)) {
         return retenu;
       }
@@ -610,7 +641,8 @@ function examiner(demandees, parRegime, unites, legal) {
       motif = MOTIF_DEMANDE;
     } else if (code === RAFP && legal !== null && retenue.rang === legal.rang) {
       motif = MOTIF_OUVERTURE;
-    } else if (presume === MOTIF_DEMANDE || !unites.has(code)) {
+    } else if (presume !== MOTIF_TRIMESTRE
+        && (presume === MOTIF_DEMANDE || !unites.has(code))) {
       motif = ENSEMBLE;
     }
     return new DemandeExaminee(code, demandee, retenue, motif);

@@ -66,7 +66,8 @@ from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
 from . import compter, coordonner, etranger, invalidite, limite_age, ouvrir
-from .commun import derniere_annee, ligne_cotisee, periode_de_liquidation
+from .commun import (SANS_LEUR_BASE, derniere_annee, ligne_cotisee,
+                     periode_de_liquidation)
 
 if TYPE_CHECKING:
     from ..carriere import AnneeCarriere, Carriere
@@ -81,37 +82,6 @@ ETAGES_DES_UNITES = frozenset({"base", "integre"})
 #: Le RAFP, que l'article 6 du décret n° 2004-569 n'ouvre qu'à l'âge légal.
 RAFP = "rafp"
 
-#: Les complémentaires que leurs statuts font demander à leur âge, sans la
-#: base : chacune forme une unité à elle. La CARPV, « dès leur soixantième
-#: anniversaire », sous la seule condition d'« avoir versé les cotisations
-#: exigibles de l'ensemble des régimes appelés par la CARPV » (statuts
-#: approuvés le 18 octobre 2021, articles 33 et 34, en vigueur le 1er janvier
-#: 2022 ; règlement de 2026, articles 1er et 2) — avant 2022, la séparation
-#: est présumée, les statuts n'étant publiés qu'au Bulletin officiel (fiche
-#: liquidation_regime_par_regime, approximations) ; la
-#: CAVEC, « entre 60 et 65 ans, avec application d'un abattement définitif de
-#: 1,25 % par trimestre manquant » (statuts de 2008, article 3.13 ; de 2018,
-#: partie 2, article 12 ; règlement de 2026, article 1.1.3). Ni leurs textes,
-#: ni L. 643-3, ni L. 644-1 ne les lient à la liquidation de la base. La
-#: CRPNPAC, ses deux tranches : « Une pension de retraite est servie à
-#: l'affilié [...] dès lors qu'il réunit cumulativement à la date d'effet de
-#: la pension les conditions suivantes : 1° Avoir atteint l'âge de cinquante
-#: ans ; 2° Justifier de vingt annuités » (code de l'aviation civile,
-#: R. 426-11, I, rédaction de 2012), sans rien demander du régime général,
-#: qui attend l'âge de L. 161-17-2 (L. 351-1). La CAVOM, « 1° À partir de 62
-#: ans » et, « pour les générations antérieures », dès 60 ans (statuts,
-#: articles 14 et 23, arrêté du 30 décembre 2015 ; article 14, arrêté du
-#: 12 décembre 2024) ; la CARPIMKO, « l'âge prévu par les dispositions des
-#: articles 3, 4 et 6 » (règlement de 2026, article 2), dès 60 ans pour les
-#: générations 1955 et antérieures (article 12 quater des statuts depuis
-#: l'arrêté du 31 juillet 2015) ; la CPRN, 60 ans pour les nés avant 1954, et
-#: « l'article L. 161-17-2 [...] différé de vingt-quatre mois » après (statuts,
-#: article 15, arrêté du 16 décembre 2013, en vigueur de 2014 à 2023) : chacune
-#: à son âge, avant la base ou après.
-SANS_LEUR_BASE = frozenset({"carpv_complementaire", "cavec_complementaire",
-                            "cavom_complementaire", "carpimko_complementaire",
-                            "cprn_complementaire",
-                            "crpnpac", "crpnpac_tranche_2"})
 
 #: Ce qui date un départ, par rapport au départ déclaré.
 MOTIF_DEPART = "depart"
@@ -128,6 +98,10 @@ MOTIF_RADIATION = "radiation"
 #: La pension du fonctionnaire ou du militaire radié des cadres par limite
 #: d'âge (:func:`~.limite_age.radiation`).
 MOTIF_LIMITE = "limite_d_age"
+#: La complémentaire que son texte sert « au premier jour du trimestre civil
+#: qui suit » la demande, reportée du premier du mois à ce jour
+#: (:func:`_au_trimestre_civil`).
+MOTIF_TRIMESTRE = "trimestre_civil"
 
 #: Ce qu'une demande devient quand elle ne date pas sa pension : servie avec
 #: la pension que la loi lui attache — le régime liquidé avec elle, ou le
@@ -150,7 +124,8 @@ class Depart:
     #: ``invalidite``, la pension de vieillesse qui remplace la pension
     #: d'invalidité ; ``radiation``, la pension du fonctionnaire radié des
     #: cadres pour invalidité ; ``limite_d_age``, celle du fonctionnaire ou du
-    #: militaire radié par limite d'âge.
+    #: militaire radié par limite d'âge ; ``trimestre_civil``, la
+    #: complémentaire que son texte sert au trimestre civil qui suit.
     motif: str = MOTIF_DEPART
 
     @property
@@ -261,6 +236,34 @@ def _periodes_de_l_unite(moteur: ScenarioActuel, unite: frozenset[str],
             if code in moteur.catalogue
             and (periode := periode_de_liquidation(
                 moteur.catalogue[code], date)) is not None]
+
+
+def _au_trimestre_civil(moteur: ScenarioActuel, code: str, date: DateMois) -> DateMois:
+    """Le mois où le régime sert une pension que le modèle présume au 1er du
+    mois ``date`` : ce mois, ou le premier du trimestre civil qui commence ce
+    jour-là ou après, quand la période qui la liquide la reporte
+    (``effet_au_trimestre_civil``, [début, fin) des dates présumées).
+
+    « La retraite prend effet au plus tôt au premier jour du trimestre civil
+    qui suit le dernier des faits ci-après : - la demande [...] ; - la
+    justification de la cessation d'activité » (CAVOM, statuts de 2016,
+    article 14, II, et règlement de 2026) ; « La date d'entrée en jouissance
+    de la retraite est fixée au premier jour du trimestre civil qui suit la
+    demande » (CARPIMKO, statuts de 1984, article 11, et règlement de 2026,
+    article 7) ; de même la CAVP (statuts de 2009 et règlement de 2026,
+    article 14) et la CARMF (règlement de 2026, I, article 24, « qui suit la
+    réalisation de toutes les conditions d'ouverture des droits »). Le
+    premier du mois présumé suit déjà le mois de la demande : celui qui
+    ouvre un trimestre civil reste, les deux autres sont reportés."""
+    periode = (periode_de_liquidation(moteur.catalogue[code], date)
+               if code in moteur.catalogue else None)
+    plage = None if periode is None else periode.effet_au_trimestre_civil
+    if plage is None:
+        return date
+    jour = Depart(date).date_effet
+    if jour < plage[0] or (plage[1] is not None and jour >= plage[1]):
+        return date
+    return date.plus_mois((3 - (date.mois - 1) % 3) % 3)
 
 
 def _ouverture_sous(moteur: ScenarioActuel, carriere: Carriere,
@@ -553,6 +556,13 @@ def departs_et_demandes(moteur: ScenarioActuel, carriere: Carriere
     for code, (quand, _) in list(par_regime.items()):
         if code not in unite_de and code in demandees and demandees[code] > quand:
             par_regime[code] = (demandees[code], MOTIF_DEMANDE)
+    # La CAVOM, la CARPIMKO, la CAVP et la CARMF servent leur complémentaire
+    # « au premier jour du trimestre civil qui suit » la demande : la date
+    # présumée ou demandée, un premier du mois, y est reportée.
+    for code, (quand, _) in list(par_regime.items()):
+        reportee = _au_trimestre_civil(moteur, code, quand)
+        if reportee > quand:
+            par_regime[code] = (reportee, MOTIF_TRIMESTRE)
 
     examens = _examiner(demandees, par_regime, set(unite_de), legal)
     par_date: dict[DateMois, set[str]] = {}
@@ -565,12 +575,13 @@ def departs_et_demandes(moteur: ScenarioActuel, carriere: Carriere
         """Ce qui date un départ : l'acte de la personne d'abord, puis la
         sortie de l'armée, puis la substitution de la pension d'invalidité ;
         l'ouverture d'un régime sinon — le RAFP à l'âge légal compris, qui
-        peut précéder le départ déclaré."""
+        peut précéder le départ déclaré ; le trimestre civil, quand lui seul
+        le date."""
         if quand == declare:
             return MOTIF_DEPART
         motifs = {par_regime[code][1] for code in par_date[quand]}
         for retenu in (MOTIF_DEMANDE, MOTIF_SORTIE, MOTIF_RADIATION, MOTIF_LIMITE,
-                       MOTIF_INVALIDITE):
+                       MOTIF_INVALIDITE, MOTIF_OUVERTURE, MOTIF_TRIMESTRE):
             if retenu in motifs:
                 return retenu
         return MOTIF_OUVERTURE
@@ -594,7 +605,7 @@ def _examiner(demandees: dict[str, DateMois], par_regime: dict[str, tuple[DateMo
             motif = MOTIF_DEMANDE
         elif code == RAFP and retenue == legal:
             motif = MOTIF_OUVERTURE
-        elif motif == MOTIF_DEMANDE or code not in unites:
+        elif motif != MOTIF_TRIMESTRE and (motif == MOTIF_DEMANDE or code not in unites):
             motif = ENSEMBLE
         examens.append(DemandeExaminee(code, demandee, retenue, motif))
     return tuple(examens)

@@ -713,6 +713,19 @@ champs_periode:
       l'inapte attend l'âge de sa génération.
     defaut: null
 
+  effet_au_trimestre_civil:
+    description: >-
+      Régimes en points : les dates présumées — le premier du mois qui suit
+      la demande —, [début, fin) au jour (AAAA-MM-JJ), que le texte du
+      régime reporte « au premier jour du trimestre civil qui suit » la
+      demande ou la réalisation des conditions (CAVOM, statuts de 2016,
+      article 14, II ; CARPIMKO, statuts de 1984, article 11, et règlement
+      de 2026, article 7 ; CAVP, statuts de 2009 et règlement de 2026,
+      article 14 ; CARMF, règlement de 2026, I, article 24). Les bornes
+      sont celles du texte lu : elles peuvent couper la période. `null` : la
+      pension prend effet le premier du mois, avec la base.
+    defaut: null
+
   carriere_longue_minoree_jusqu_au_palier:
     description: >-
       Régimes en points à deux pentes (`decote_palier_age`) : la liquidation
