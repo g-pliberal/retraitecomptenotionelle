@@ -218,8 +218,15 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   lieu de 9 247,91 €) ; la cessation en cours d'année, la condition d'être à jour de
   ses cotisations et les trimestres d'avant le 1er juillet 2011 restent déclarés ; note
   `2026-11-14-correction-carcdsf-majoration-au-trimestre-civil.md`.
-- [ ] 25. **CARCDSF, depuis 2024 : la majoration de 1,25 % et les nés de 1951 à 1954.**
+- [x] 25. **CARCDSF, depuis 2024 : la majoration de 1,25 % et les nés de 1951 à 1954.**
   Mêmes fiche et note.
+  Corrigé le 14 novembre 2026 : depuis les statuts de 2024, la majoration vaut 1 % par
+  trimestre accompli avant le 1er janvier 2024 et 1,25 % depuis, comptée depuis 67 ans
+  pour toutes les générations, dans les deux moteurs (né le 1er janvier 1955, pension
+  au 1er janvier 2025 : 17 595,30 € par an au lieu de 17 870,23 € ; né le 1er janvier
+  1953, pension au 1er avril 2024 : 18 280,73 € au lieu de 19 656,70 €) ; le cumul des
+  limites de 20 et de 25 %, que le texte ne tranche pas, reste déclaré ; note
+  `2026-11-14-correction-carcdsf-majoration-depuis-2024.md`.
 - [ ] 26. **CARCDSF, la pension du 1er janvier 2024** (la septième erreur). Fiche
   `carcdsf_minoration_age_seul` ; note `2026-11-05-retouches-de-la-relecture-r-e2.md`.
 - [ ] 27. **CAVAMAC, la minoration de 25 % à 62 ans.** Note

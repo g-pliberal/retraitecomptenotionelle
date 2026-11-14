@@ -1,0 +1,32 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 25 : la majoration de la CARCDSF depuis 2024, à 1 % avant 2024 et depuis 67 ans"
+consulte: >-
+  `python scripts/veille_droit.py` ; les index JORF et LEGI récupérés par
+  `dila_index.py --recuperer`, à jour du 11 novembre 2026. Statuts de la CARCDSF de
+  2024, article 35, I, a et c (JORFARTI000048880707) ; règlement de 2026, article 3, I,
+  a et c (JORFARTI000054435749) ; code de la sécurité sociale, L. 351-8, 1°, rédactions
+  du 1er septembre 2023 (LEGIARTI000047452736) et du 28 février 2025
+  (LEGIARTI000051289852), et le premier alinéa de L. 161-17-2 dans ses rédactions
+  depuis le 1er septembre 2023.
+trouve: >-
+  Le texte tranche. Depuis le 10 janvier 2024, le taux plein vaut « à partir de l'âge
+  prévu au 1° de l'article L. 351-8 », « l'âge prévu au premier alinéa de l'article
+  L. 161-17-2 augmenté de trois années », 67 ans pour toutes les générations ; la
+  majoration est de « 1 % par trimestre civil entier d'exercice libéral […] accompli
+  avant le 1er janvier 2024, dans la limite de 20 % », de « 1,25 % par trimestre […]
+  accompli à compter du 1er janvier 2024, dans la limite de 25 % ». Le modèle servait
+  1,25 % à tous les trimestres, comptés depuis l'âge des statuts de 2017 pour les nés
+  avant 1955 : corrigé dans les deux moteurs, par deux paramètres des trois périodes de
+  `carcdsf_complementaire.yaml` depuis 2024 (`surcote_par_trimestre_depuis`,
+  `surcote_par_trimestre_d_avant`), qui ne lisent plus l'âge du taux plein à la
+  génération. Dentiste né le 1er janvier 1955, pension au 1er janvier 2025 :
+  17 595,30 € par an au lieu de 17 870,23 € ; né le 1er janvier 1953, pension au
+  1er avril 2024 : 18 280,73 € au lieu de 19 656,70 €. La fiche
+  `carcdsf_minoration_age_seul` relue ce jour, l'erreur passée à son histoire.
+reste: >-
+  Le texte ne dit pas si les limites de 20 et de 25 % se cumulent : le modèle borne
+  chaque majoration à part et les additionne, ce que la fiche déclare, à poser au
+  propriétaire. Les trois points de la ligne 24 : la cessation en cours d'année, la
+  condition d'être à jour de ses cotisations, les trimestres d'exercice d'avant le
+  1er juillet 2011. La pension du 1er janvier 2024 (ligne 26). Les lignes 26 à 30 de la
+  file (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).
