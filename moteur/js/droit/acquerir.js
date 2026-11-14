@@ -126,6 +126,26 @@ export function dispenseDeDebut(affiliations, periode, carriere, code, ligne) {
 }
 
 /**
+ * L'EXEMPTION PASSÉ UN ÂGE (`exemption_passe_l_age`) : la ligne n'est plus
+ * cotisée à ce régime, sans points. « Tout médecin qui continue d'exercer en
+ * qualité de non salarié est exempté du versement de la cotisation à partir
+ * du premier jour du semestre civil qui suit son soixante-quinzième
+ * anniversaire » (CARMF, décret n° 49-579, article 4, II, depuis le
+ * 1er juillet 2026), et ces cotisations « ne donnent pas lieu à acquisition
+ * de points » (article 4-1, II). Le semestre qui suit l'anniversaire s'ouvre
+ * le 1er juillet de son année ou le 1er janvier de la suivante : sont
+ * exemptées, sous toute lecture, les années civiles d'après celle de
+ * l'anniversaire. Le second semestre de l'année d'un anniversaire tombé au
+ * premier reste cotisé : le texte ne dit pas si la cotisation, annuelle, se
+ * partage au semestre. Jumeau de `exemption_passe_l_age`.
+ */
+export function exemptionPasseLAge(periode, carriere, ligne) {
+  const regle = periode.exemption_passe_l_age;
+  return Boolean(regle) && ligne.cotise && ligne.annee >= regle.depuis
+    && ligne.annee > carriere.annee_naissance + regle.age;
+}
+
+/**
  * L'assiette minimale que la ligne oppose à l'un de ces régimes : celle du
  * régime de BASE d'un indépendant (D. 633-2, D. 642-4) ; jusqu'en 2015, celle
  * de la COMPLÉMENTAIRE des artisans et des commerçants, qui tombe avec celle de
@@ -610,7 +630,8 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
         // seule part proportionnelle, plus bas. Voir `dispenseDeDebut`.
         const dispensee = dispenseDeDebut(
           moteur.affiliations, periode, carriere, code, ligne);
-        if (dispensee === "entiere") {
+        // L'EXEMPTION PASSÉ UN ÂGE, de même. Voir `exemptionPasseLAge`.
+        if (dispensee === "entiere" || exemptionPasseLAge(periode, carriere, ligne)) {
           continue;
         }
         // BARÈME D'UN AUTRE RÉGIME : une tranche que tous les affiliés ne

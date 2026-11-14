@@ -890,6 +890,12 @@ class PeriodeRegime:
     #: n° 50-28, article 3-1). ``None`` : aucune dispense. Voir
     #: ``acquerir.dispense_de_debut``.
     dispense_de_debut: tuple[int, float | None, int, str | None] | None = None
+    #: L'EXEMPTION DE DROIT PASSÉ UN ÂGE, sans points : l'âge, et la première
+    #: année de cotisation que la fiche exempte, ``(75, 2027)`` — la CARMF
+    #: depuis le 1er juillet 2026 (décret n° 49-579, articles 4, II, et 4-1,
+    #: II) : les années civiles d'après celle de l'anniversaire. ``None`` :
+    #: aucune exemption. Voir ``acquerir.exemption_passe_l_age``.
+    exemption_passe_l_age: tuple[int, int] | None = None
     notes: str = ""
 
     def prise_en_charge(self, forfait: float, proportionnelle: float) -> float:
@@ -2377,6 +2383,11 @@ class CatalogueRegimes:
                           else float(p["dispense_de_debut"]["avant_l_age"]),
                           int(p["dispense_de_debut"]["depuis"]),
                           p["dispense_de_debut"].get("part"))
+                ),
+                exemption_passe_l_age=(
+                    None if p.get("exemption_passe_l_age") is None
+                    else (int(p["exemption_passe_l_age"]["age"]),
+                          int(p["exemption_passe_l_age"]["depuis"]))
                 ),
                 points_par_trimestre_valide=(
                     None if p.get("points_par_trimestre_valide") is None

@@ -42,8 +42,17 @@ effet: >-
   depuis les cotisations de 2012, et non depuis le seul 1er juillet 2026. Depuis,
   `dispense_de_debut`, sans condition d'âge et pour la seule part proportionnelle, aux
   périodes de 2012 et d'après de `carcdsf_complementaire.yaml`, dans les deux moteurs :
-  le forfait et ses six points restent, au scénario 1 comme au compte notionnel. Reste
-  à la CARMF l'exemption passé 75 ans.
+  le forfait et ses six points restent, au scénario 1 comme au compte notionnel.
+  Corrigée le 14 novembre 2026 (ligne 7 de la même file) : la seconde erreur de la
+  CARMF. Jusque-là, le modèle faisait cotiser et acquérir jusqu'au départ le médecin
+  qui continue d'exercer, que l'article 4, II, du décret n° 49-579 exempte « à partir du
+  premier jour du semestre civil qui suit son soixante-quinzième anniversaire », sans
+  points (article 4-1, II) — née le 1er janvier 1951, médecin libérale au double du
+  salaire moyen depuis ses 30 ans, pension à 76 ans et 6 mois (1er juillet 2027) :
+  18 895,60 € par an au lieu de 18 595,38 €, 300,22 € de trop. Depuis,
+  `exemption_passe_l_age` à la période de 2026 de `carmf_complementaire.yaml`, dans les
+  deux moteurs : ni points au scénario 1, ni cotisation au compte notionnel, pour les
+  années civiles d'après celle des 75 ans, cotisations de 2027 et d'après.
 sources:
   lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
@@ -153,22 +162,36 @@ sources:
     dispensée n'est pas portée, sauf sous le taux commun de la proposition, que le
     droit en vigueur ne règle pas.
   - >-
-    Erreur prouvée, déclarée et non corrigée (action 130, E10) : le même article 4, II :
-    « Tout médecin qui continue d'exercer en qualité de non salarié est exempté du
-    versement de la cotisation à partir du premier jour du semestre civil qui suit son
-    soixante-quinzième anniversaire », dispense sans points (article 4-1, II) ; le
-    modèle fait cotiser jusqu'au départ. Née le 1er janvier 1951, médecin libérale au
-    double du salaire moyen depuis 30 ans, pension à 76 ans et 6 mois (1er juillet
-    2027) : le modèle sert 324 443,6335 × 0,0448 × 1,30 = 18 895,60 € ; le semestre de
-    2027 (5 154,8634 €) est dispensé sous toute lecture, 300,22 € par an de trop ; le
-    second semestre de 2026 l'est aussi si la cotisation de 2026 se partage au semestre,
-    comme les exonérations semestrielles du IV du même article (la moitié de
-    10 239,2845 €), 598,39 € par an de trop. Une faculté que le modèle ne porte pas et
-    que la correction nommera (E11, après R-E11), l'article 4-3 (LEGIARTI000054168112) :
-    « Tout médecin qui continue d'exercer en qualité de non salarié et qui n'est plus
-    tenu de cotiser à titre obligatoire, à partir du premier jour du semestre civil qui
-    suit son soixante-quinzième anniversaire, peut continuer à cotiser volontairement,
-    quel que soit son âge. » ; le modèle simule l'assuré obligatoire : l'erreur tient.
+    L'exemption de la CARMF passé 75 ans, servie depuis le 14 novembre 2026 (`effet`),
+    et ce qu'elle laisse. Le texte, relu à l'index LEGI le 14 novembre 2026 : le même
+    article 4, II (LEGIARTI000054168136) : « Tout médecin qui continue d'exercer en
+    qualité de non salarié est exempté du versement de la cotisation à partir du premier
+    jour du semestre civil qui suit son soixante-quinzième anniversaire », sans points
+    (article 4-1, II). Le semestre qui suit l'anniversaire s'ouvre le 1er juillet de son
+    année ou le 1er janvier de la suivante : le modèle exempte les années civiles
+    d'après celle de l'anniversaire, que toute lecture exempte. Née le 1er janvier 1951,
+    médecin libérale au double du salaire moyen depuis 30 ans, pension à 76 ans et
+    6 mois (1er juillet 2027) : le semestre de 2027 (5 154,8634 € de cotisation
+    revalorisée) n'est plus cotisé, (324 443,6335 − 5 154,8634) × 0,0448 × 1,30 =
+    18 595,38 € au lieu de 18 895,60 €. Limites déclarées. (a) Le second semestre de
+    l'année d'un anniversaire tombé au premier semestre reste cotisé : le texte ne dit
+    pas si la cotisation, annuelle (article 2), se partage au semestre, comme le IV du
+    même article le fait d'une « cotisation semestrielle », et l'article 3 renvoie son
+    versement aux statuts, non lus ; au cas posé, la moitié des 10 239,2845 € de 2026,
+    298,17 € par an de trop encore si elle se partage. (b) Les cotisations de 2026 et
+    d'avant ne sont pas exemptées : avant le 1er juillet 2026, les rédactions de
+    l'article 4 ne disaient rien de l'exemption, qui tenait, si elle existait, aux
+    statuts, non lus (question 22) ; ni l'index LEGI ni celui du JORF ne la portent
+    avant le décret n° 2026-418. (c) La faculté de l'article 4-3
+    (LEGIARTI000054168112) n'est pas portée : « Tout médecin qui continue d'exercer en
+    qualité de non salarié et qui n'est plus tenu de cotiser à titre obligatoire, à
+    partir du premier jour du semestre civil qui suit son soixante-quinzième
+    anniversaire, peut continuer à cotiser volontairement, quel que soit son âge. » ;
+    le modèle simule le médecin qui ne cotise pas volontairement. (d) La fiche de paie
+    du site, qui ne connaît ni l'âge ni le début d'exercice, prélève la cotisation du
+    médecin que rien ne dispense. Au compte notionnel, la cotisation exemptée n'est pas
+    portée, sauf sous le taux commun de la proposition, que le droit en vigueur ne
+    règle pas.
   - >-
     La dispense de la part proportionnelle des deux premières années civiles de la
     CARCDSF, servie depuis le 14 novembre 2026 (`effet`), et ce qu'elle laisse. Le
@@ -300,8 +323,9 @@ sources:
       « médecins », la CARMF (`carmf_complementaire.yaml`). Âges et minoration :
       `carmf_asv_minoration_enfants`, version `reglement_de_2026`. Article 4, I et II,
       dispenses des deux premières années d'exercice et passé le semestre des 75 ans,
-      sans points (article 4-1, II) : la première servie depuis le 14 novembre 2026
-      (`dispense_de_debut`), la seconde non servie, une erreur (`sources.a_relire`) ;
+      sans points (article 4-1, II) : servies l'une et l'autre depuis le 14 novembre
+      2026 (`dispense_de_debut`, `exemption_passe_l_age`), sous les limites de
+      `sources.a_relire` ;
       III à V, dispenses et exonérations sur demande ou pour incapacité, non portées ;
       4-2 à 4-4, rachat et achat de points (`rachats_et_versements`).
     date: 2026-05-31
@@ -513,7 +537,7 @@ sources:
       n° 49-579, article 4 (LEGIARTI000054168136) : c'est l'article 3 du décret
       n° 2026-418, mot pour mot — I, la dispense des deux premières années d'exercice
       avant 40 ans, servie depuis le 14 novembre 2026, et II, l'exemption passé le
-      semestre des 75 ans, l'erreur déclarée de `sources.a_relire` ; III à VI, dispenses
+      semestre des 75 ans, servie depuis le même jour ; III à VI, dispenses
       et exonérations sur demande,
       pour incapacité ou maternité, non portées. Décret n° 50-28, article 2
       (LEGIARTI000054168195) : la cotisation forfaitaire de six points et la
@@ -555,27 +579,29 @@ textes_a_rattacher:
   reference: décret n° 2026-418 du 29 mai 2026 (JORF du 31 mai 2026)
 code:
   moteur: >-
-    Le décret ne change aucun paramètre que le dépôt porte, hors les dispenses de la
-    CARMF et de la CARCDSF : les périodes des régimes
+    Le décret ne change aucun paramètre que le dépôt porte, hors les dispenses et
+    l'exemption de la CARMF et la dispense de la CARCDSF : les périodes des régimes
     qu'il réécrit gardent leurs taux, leurs assiettes, leurs classes et leurs âges, que
     `acquerir` sert en points et `liquider_chaque_regime` liquide comme avant. Ce qu'il
     écrit à neuf et que le modèle porte : la majoration de 10 % pour trois enfants de la
     Cipav (article 20), qui est la fiche `sections_liberales_majoration_enfants`, et la
     dispense des deux premières années d'exercice de la CARMF (article 3), que
     `dispense_de_debut` rend à `acquerir` et au compte (`dispense_de_debut` de la
-    période de 2026), et celle de la part proportionnelle des deux premières années
+    période de 2026), son exemption passé le semestre des 75 ans (même article), que
+    `exemption_passe_l_age` leur rend de même, et celle de la part proportionnelle des deux premières années
     civiles de la CARCDSF (article 5), que les statuts de 2011 écrivaient déjà
     (`dispense_de_debut` des périodes de 2012 et d'après, `part: proportionnelle`) ; ce
     qu'il
-    écrit et que le modèle ne porte pas, ou porte à tort — l'exemption de la CARMF passé
-    75 ans, que `acquerir` ignore, la majoration pour report
+    écrit et que le modèle ne porte pas, ou porte à tort — la majoration pour report
     de la Cipav, que `liquider_chaque_regime` étend à tous les points —,
     `sources.a_relire` le dit.
   python: >-
-    droit/acquerir.py : acquerir, dispense_de_debut ; droit/liquider.py :
+    droit/acquerir.py : acquerir, dispense_de_debut, exemption_passe_l_age ;
+    droit/liquider.py :
     liquider_chaque_regime ; moteur/compte.py : ConstructeurCompte
   javascript: >-
-    moteur/js/droit/acquerir.js : acquerir, dispenseDeDebut ; moteur/js/droit/liquider.js :
+    moteur/js/droit/acquerir.js : acquerir, dispenseDeDebut, exemptionPasseLAge ;
+    moteur/js/droit/liquider.js :
     liquiderChaqueRegime ; moteur/js/compte.js : ConstructeurCompte
   parametres: >-
     regimes/asv_auxiliaires_medicaux.yaml, regimes/asv_chirurgiens_dentistes.yaml,
@@ -585,7 +611,8 @@ code:
     regimes/cavamac_complementaire.yaml, regimes/cavec_complementaire.yaml,
     regimes/cavom_complementaire.yaml, regimes/cavp_complementaire.yaml,
     regimes/cipav_complementaire.yaml, regimes/cprn_complementaire.yaml : assiette,
-    taux_cotisation_retraite, avantages_non_contributifs, dispense_de_debut
+    taux_cotisation_retraite, avantages_non_contributifs, dispense_de_debut,
+    exemption_passe_l_age
   tests:
   - >-
     tests/test_sections_liberales.py, qui tient ce que la lecture du décret dans les
@@ -593,7 +620,8 @@ code:
     la fiche de sa règle
   - >-
     tests/test_sections_juridiques.py, tests/test_sections_sante.py — qui tient aussi la
-    dispense des deux premières années d'exercice de la CARMF et celle de la part
-    proportionnelle de la CARCDSF, au scénario 1 et au compte — et
+    dispense des deux premières années d'exercice de la CARMF, son exemption passé le
+    semestre des 75 ans et la dispense de la part proportionnelle de la CARCDSF, au
+    scénario 1 et au compte — et
     tests/test_pcv_sante.py, qui tiennent les paramètres des autres sections, que le
     décret laisse

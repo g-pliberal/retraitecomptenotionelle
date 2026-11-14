@@ -141,6 +141,28 @@ def dispense_de_debut(affiliations, periode, carriere, code: str, ligne) -> str 
     return part or "entiere"
 
 
+def exemption_passe_l_age(periode, carriere, ligne) -> bool:
+    """L'EXEMPTION PASSÉ UN ÂGE (``exemption_passe_l_age``) : la ligne n'est
+    plus cotisée à ce régime, sans points.
+
+    « Tout médecin qui continue d'exercer en qualité de non salarié est exempté
+    du versement de la cotisation à partir du premier jour du semestre civil
+    qui suit son soixante-quinzième anniversaire » (CARMF, décret n° 49-579,
+    article 4, II, depuis le 1er juillet 2026), et ces cotisations « ne
+    donnent pas lieu à acquisition de points » (article 4-1, II). Le semestre
+    qui suit l'anniversaire s'ouvre le 1er juillet de son année ou le
+    1er janvier de la suivante : sont exemptées, sous toute lecture, les
+    années civiles d'après celle de l'anniversaire. Le second semestre de
+    l'année d'un anniversaire tombé au premier reste cotisé : le texte ne dit
+    pas si la cotisation, annuelle, se partage au semestre. Jumeau de
+    ``exemptionPasseLAge``."""
+    regle = periode.exemption_passe_l_age
+    if not regle or not ligne.cotise:
+        return False
+    age, depuis = regle
+    return ligne.annee >= depuis and ligne.annee > carriere.annee_naissance + age
+
+
 def assiette_minimale(moteur: ScenarioActuel, codes, ligne) -> float:
     """L'assiette minimale que la ligne oppose à l'un de ces régimes.
 
@@ -694,7 +716,10 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 # `dispense_de_debut`.
                 dispensee = dispense_de_debut(
                     moteur.affiliations, periode, carriere, code, ligne)
-                if dispensee == "entiere":
+                # L'EXEMPTION PASSÉ UN ÂGE, de même. Voir
+                # `exemption_passe_l_age`.
+                if dispensee == "entiere" or exemption_passe_l_age(
+                        periode, carriere, ligne):
                     continue
                 # BARÈME D'UN AUTRE RÉGIME : une tranche que tous les
                 # affiliés ne cotisent pas forme une fiche à part, dont les

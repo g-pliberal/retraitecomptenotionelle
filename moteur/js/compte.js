@@ -23,7 +23,9 @@ import {
 import { Fiabilite } from "./serie.js";
 import { REGIME_DE_MAYOTTE } from "./macro.js";
 import { primesSoumises } from "./primes.js";
-import { assietteDuCollaborateur, dispenseDeDebut, secondePartDeRco } from "./droit/acquerir.js";
+import {
+  assietteDuCollaborateur, dispenseDeDebut, exemptionPasseLAge, secondePartDeRco,
+} from "./droit/acquerir.js";
 
 /** Le seul régime dont la contribution employeur est un taux d'équilibre. */
 const REGIME_ETAT = "fonction_publique_etat";
@@ -693,7 +695,9 @@ export class ConstructeurCompte {
         // Voir `dispenseDeDebut`.
         const dispensee = acquisitionCommune ? null
           : dispenseDeDebut(this.affiliations, periode, carriere, code, ligne);
-        if (dispensee === "entiere") {
+        // L'EXEMPTION PASSÉ UN ÂGE, de même. Voir `exemptionPasseLAge`.
+        if (dispensee === "entiere" || (!acquisitionCommune
+            && exemptionPasseLAge(periode, carriere, ligne))) {
           continue;
         }
         const [borneBasse, borneHaute] = this._bornesProratisees(

@@ -33,7 +33,7 @@ from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation,
                               ContributionsEmployeurPubliques, CotisationsDesCultes,
                               PartRetraiteSeuleEtat, SalairesForfaitaires)
 from ..droit.acquerir import (assiette_du_collaborateur, dispense_de_debut,
-                              seconde_part_de_rco)
+                              exemption_passe_l_age, seconde_part_de_rco)
 from .fusion import RegimeFusionne
 from .indexation import Indexation
 from ..somme import somme_ordonnee
@@ -839,7 +839,11 @@ class ConstructeurCompte:
                 # reste. Voir `dispense_de_debut`.
                 dispensee = None if acquisition_commune else dispense_de_debut(
                     self.affiliations, periode, carriere, code, ligne)
-                if dispensee == "entiere":
+                # L'EXEMPTION PASSÉ UN ÂGE, de même. Voir
+                # `exemption_passe_l_age`.
+                if dispensee == "entiere" or (
+                        not acquisition_commune
+                        and exemption_passe_l_age(periode, carriere, ligne)):
                     continue
                 borne_basse, borne_haute = self._bornes_proratisees(
                     periode, annee, part, sans_employeur and code == REGIME_DE_MAYOTTE

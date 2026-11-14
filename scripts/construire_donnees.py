@@ -872,6 +872,11 @@ def _regimes() -> list[dict]:
                                ("annees", "avant_l_age", "depuis", "part"),
                                p.dispense_de_debut) if valeur is not None}}
                        if p.dispense_de_debut else {}),
+                    # La période de la CARMF de 2026 : absente, aucune
+                    # exemption passé un âge.
+                    **({"exemption_passe_l_age": dict(zip(
+                           ("age", "depuis"), p.exemption_passe_l_age))}
+                       if p.exemption_passe_l_age else {}),
                     # La fiche datée du salaire annuel moyen, aux seules
                     # périodes qui y renvoient : absente, la moyenne annuelle.
                     **({"regles_du_salaire_annuel_moyen": p.regles_du_salaire_annuel_moyen}

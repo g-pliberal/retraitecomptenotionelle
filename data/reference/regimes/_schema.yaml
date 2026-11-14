@@ -1224,6 +1224,23 @@ champs_periode:
       article 16, puis 18). `null` : aucune dispense.
     defaut: null
 
+  exemption_passe_l_age:
+    description: >-
+      Régimes en points : l'exemption de droit passé un âge, sans points —
+      `age`, l'âge ; `depuis`, la première année de cotisation que la fiche
+      exempte. « Tout médecin qui continue d'exercer en qualité de non
+      salarié est exempté du versement de la cotisation à partir du premier
+      jour du semestre civil qui suit son soixante-quinzième anniversaire »
+      (CARMF, décret n° 49-579, article 4, II, depuis le 1er juillet 2026),
+      et ces cotisations « ne donnent pas lieu à acquisition de points »
+      (article 4-1, II). Sont exemptées les années civiles d'après celle de
+      l'anniversaire, que toute lecture exempte ; le second semestre de
+      l'année d'un anniversaire tombé au premier reste cotisé, le texte ne
+      disant pas si la cotisation annuelle se partage au semestre. Le compte
+      notionnel ne porte pas davantage la cotisation exemptée. `null` :
+      aucune exemption.
+    defaut: null
+
   assiette_plancher:
     description: >-
       L'assiette est-elle relevée au repère quand elle lui est inférieure ?

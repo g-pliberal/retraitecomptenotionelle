@@ -125,10 +125,13 @@ def test_la_fiche_preleve_ce_que_le_compte_recoit(simulateur, statut):
     1975 à 2029, chaque ligne de retraite de la fiche vaut ce que le compte
     reçoit de l'assuré pour ce régime. Le revenu ne changeant pas, l'année de
     revenu que la classe regarde (N, N-1 ou N-2) n'y change rien, et la classe
-    du début d'activité est passée depuis longtemps."""
+    du début d'activité est passée depuis longtemps. La fiche ne connaît pas
+    l'âge : l'assuré, né en 1954, n'a 75 ans qu'en 2029, et la CARMF, qui
+    exempte de cotisation les années civiles d'après (décret n° 49-579,
+    article 4, II), ne l'exempte d'aucune de celles-ci."""
     revenu = 60_000.0
     carriere = Carriere(
-        annee_naissance=1935, sexe="H", age_liquidation=95,
+        annee_naissance=1954, sexe="H", age_liquidation=76,
         lignes=[AnneeCarriere(annee=annee, affiliation=statut, trimestres_valides=4,
                               revenu=revenu) for annee in range(1960, 2030)])
     compte = ConstructeurCompte(

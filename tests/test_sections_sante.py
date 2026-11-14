@@ -856,3 +856,96 @@ def test_le_compte_ne_porte_que_le_forfait_des_deux_premieres_annees_de_la_denti
         assert versees["cnavpl"] > 0 and versees["asv_chirurgiens_dentistes"] > 0
     assert _versees_au_compte("2001-01-01", "26", 2029, requete=REQUETE_DE_DENTISTE)[
         "carcdsf_complementaire"] == pytest.approx(9_977.88, abs=0.005)
+
+
+# -- la CARMF : l'exemption passé 75 ans (action 130, la file, ligne 7) ------------
+
+#: (naissance, âge du départ) : la retraite complémentaire que la CARMF sert à
+#: la médecin libérale au double du salaire moyen, installée à 30 ans, par an,
+#: en euros de 2026.
+DEPARTS_PASSE_75_ANS = {
+    # Née le 1er janvier 1951, partie à 76 ans et 6 mois, le 1er juillet 2027 :
+    # 75 ans le 1er janvier 2026, exemptée du 1er juillet 2026. Le semestre de
+    # 2027 n'est pas dû sous toute lecture. Posé à la main (note
+    # `130/2026-11-06-e10-decret-2026-418.md`) : le modèle servait
+    # 324 443,6335 € de cotisations revalorisées, dont 5 154,8634 € du semestre
+    # de 2027 (0,118 × 87 370,5656 € / 2) ; 324 443,6335 − 5 154,8634 =
+    # 319 288,7701 ; × 0,0448 = 14 304,1369 ; × 1,30 = 18 595,38 €, 300,22 € de
+    # moins que 18 895,60 €. L'année 2026 reste cotisée en entier (limite
+    # déclarée à la fiche : le partage de la cotisation au semestre).
+    ("1951-01-01", "76.5"): 18_595.38,
+    # Née le 1er juillet 1951, partie à 76 ans, le 1er juillet 2027 : 75 ans le
+    # 1er juillet 2026, exemptée du 1er janvier 2027, le semestre civil qui
+    # suit. Les mêmes cotisations, le même semestre de 2027 : 18 595,38 €.
+    ("1951-07-01", "76"): 18_595.38,
+    # Née le 1er janvier 1952, partie à 75 ans et 6 mois, le 1er juillet 2027 :
+    # 75 ans le 1er janvier 2027, exemptée du 1er juillet 2027, le jour de son
+    # départ. Rien n'est exempté, et la pension reste celle d'avant la
+    # correction.
+    ("1952-01-01", "75.5"): 18_665.63,
+}
+
+
+@pytest.fixture(scope="module")
+def departs_passe_75_ans():
+    """Chaque cas, servi par le portage et refait au bit près par le moteur
+    Python (``servi_et_refait``)."""
+    from outils_pont import servi_et_refait
+
+    cas = [{"cle": "|".join(cle),
+            "requete": {**REQUETE_DE_MEDECIN, "naissance": cle[0], "debut": "30",
+                        "liquidation": cle[1]}}
+           for cle in DEPARTS_PASSE_75_ANS]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    return {cle: {p["regime"]: p for p in servi["actuel"]["pensions_par_regime"]}
+            for cle, servi in servis.items()}
+
+
+@pytest.mark.parametrize("cle", DEPARTS_PASSE_75_ANS,
+                         ids=["|".join(cle) for cle in DEPARTS_PASSE_75_ANS])
+def test_la_carmf_exempte_sans_points_passe_le_semestre_des_75_ans(
+        departs_passe_75_ans, cle):
+    """Décret n° 49-579, article 4, II, dans la rédaction du décret
+    n° 2026-418 (article 3), en vigueur le 1er juillet 2026
+    (LEGIARTI000054168136) : « Tout médecin qui continue d'exercer en qualité
+    de non salarié est exempté du versement de la cotisation à partir du
+    premier jour du semestre civil qui suit son soixante-quinzième
+    anniversaire. » Article 4-1, II (LEGIARTI000054168116) : « Les cotisations
+    ou fractions de cotisations ayant fait l'objet d'une dispense au titre des
+    I à III de l'article 4 ne donnent pas lieu à acquisition de points. »
+    Jusqu'au 14 novembre 2026, le modèle faisait cotiser et acquérir jusqu'au
+    départ."""
+    carmf = departs_passe_75_ans["|".join(cle)]["carmf_complementaire"]
+    assert carmf["montant"] == pytest.approx(DEPARTS_PASSE_75_ANS[cle], abs=0.005)
+
+
+def test_l_exemption_de_la_carmf_retire_300_euros_a_la_medecin_de_76_ans(
+        departs_passe_75_ans):
+    """Au cas posé, les cotisations revalorisées tombent de 324 444 € à
+    319 289 €, et la pension de 18 895,60 € à 18 595,38 € : 300,22 € par an.
+    La base et l'ASV, que l'article ne vise pas, ne bougent pas."""
+    pensions = departs_passe_75_ans["1951-01-01|76.5"]
+    assert "cotisations revalorisées 319,289 €" in pensions["carmf_complementaire"]["detail"]
+    assert 18_895.60 - pensions["carmf_complementaire"]["montant"] == pytest.approx(
+        300.22, abs=0.005)
+    assert pensions["asv_conventionnes"]["montant"] == pytest.approx(22_383.12, abs=0.005)
+    assert pensions["cnavpl"]["montant"] == pytest.approx(18_281.12, abs=0.005)
+
+
+def test_le_compte_ne_porte_pas_la_cotisation_que_la_carmf_exempte_passe_75_ans():
+    """« Exempté du versement de la cotisation » : la médecin née le 1er janvier
+    1951 ne verse rien à la complémentaire au premier semestre de 2027 —
+    0,118 × 87 370,5656 / 2 = 5 154,86 €, que le compte portait —, et le compte
+    porte ce qui a été versé. La base et l'ASV, que l'article ne vise pas,
+    restent dues ; l'année 2026, celle du semestre où l'exemption commence,
+    reste cotisée. Née un an plus tard, elle doit encore ce semestre de 2027."""
+    requete = {**REQUETE_DE_MEDECIN, "liquidation": "76.5"}
+    versees = _versees_au_compte("1951-01-01", "30", 2027, requete=requete)
+    assert "carmf_complementaire" not in versees
+    assert versees["cnavpl"] > 0 and versees["asv_conventionnes"] > 0
+    assert _versees_au_compte("1951-01-01", "30", 2026, requete=requete)[
+        "carmf_complementaire"] > 0
+    assert _versees_au_compte(
+        "1952-01-01", "30", 2027, requete={**REQUETE_DE_MEDECIN, "liquidation": "75.5"})[
+        "carmf_complementaire"] == pytest.approx(5_154.86, abs=0.005)
