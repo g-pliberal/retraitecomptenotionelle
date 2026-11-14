@@ -177,8 +177,13 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   pension au 1er novembre 2007 : 6 399,74 € par an au lieu de 7 529,11 €) ; la règle
   d'avant le 11 octobre 2007 reste présumée ; note
   `2026-11-14-correction-carcdsf-statuts-de-2007.md`.
-- [ ] 22. **CARCDSF, du 1er janvier au 30 juin 2011** : les statuts de 2011 servis six
+- [x] 22. **CARCDSF, du 1er janvier au 30 juin 2011** : les statuts de 2011 servis six
   mois trop tôt. Mêmes fiche et note.
+  Corrigé le 14 novembre 2026 : une pension qui prend effet de janvier à juin 2011 se
+  liquide aux statuts de 2007, dans les deux moteurs — la minoration par année d'âge
+  entamée, aucune majoration après 65 ans (né le 1er septembre 1950, pension au
+  1er mars 2011 : 6 380,81 € par an au lieu de 6 593,50 €) ; note
+  `2026-11-14-correction-carcdsf-premier-semestre-2011.md`.
 - [ ] 23. **CARCDSF, l'inapte et les catégories sans minoration.** Mêmes fiche et note.
 - [ ] 24. **CARCDSF, la majoration au temps écoulé.** Mêmes fiche et note.
 - [ ] 25. **CARCDSF, depuis 2024 : la majoration de 1,25 % et les nés de 1951 à 1954.**

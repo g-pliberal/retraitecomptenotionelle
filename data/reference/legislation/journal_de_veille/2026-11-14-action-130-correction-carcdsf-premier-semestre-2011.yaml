@@ -1,0 +1,26 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 22 : les statuts de 2007 de la CARCDSF servis jusqu'au 30 juin 2011"
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index JORF récupéré par `dila_index.py
+  --recuperer`, à jour du 11 novembre 2026. Arrêté du 13 avril 2011
+  (JORFTEXT000023909782), publié le 27 : ses articles 2 et 3 (JORFARTI000023909786,
+  JORFARTI000023909788) et son annexe (JORFARTI000023909792), dont l'article 19 et le
+  chapitre VI, « Dispositions transitoires » ; « transitoire », « 1er juillet 2011 »,
+  « prend effet », « prennent effet » et « liquid », cherchés dans l'annexe.
+trouve: >-
+  Le texte tranche : l'arrêté entre en vigueur « à compter du 1er juillet 2011 »
+  (article 3) et abroge celui du 1er octobre 2007 (article 2) ; ses dispositions
+  transitoires ne portent que sur les sages-femmes venues de la CARSAF. Le modèle
+  servait les statuts de 2011 dès le 1er janvier 2011 : corrigé dans les deux moteurs,
+  par les données (`date_effet` aux périodes de 2010 et de 2011 de
+  `carcdsf_complementaire.yaml`). Une pension qui prend effet de janvier à juin 2011
+  reçoit la minoration par année d'âge entamée de l'article 20 des statuts de 2007 (né
+  le 1er septembre 1950, pension au 1er mars 2011 à 60 ans et 6 mois : 0,75, soit
+  6 380,81 € par an au lieu de 6 593,50 €), sans majoration après 65 ans (né le
+  1er janvier 1944, pension au 1er avril 2011 : 9 410,90 € au lieu de 10 257,88 €). La
+  fiche `carcdsf_minoration_age_seul` relue ce jour, l'erreur passée à son histoire.
+reste: >-
+  L'index LEGI n'a pas été récupéré. Au 1er juillet 2011, la lecture de « 5 % par
+  année d'anticipation » au trimestre, et l'exercice d'avant le 1er juillet 2011 dans
+  la majoration, restent déclarés. Les lignes 23 à 30 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).
