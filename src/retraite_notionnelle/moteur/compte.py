@@ -32,7 +32,8 @@ from ..donnees.macro import REGIME_DE_MAYOTTE, DonneesMacro
 from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation,
                               ContributionsEmployeurPubliques, CotisationsDesCultes,
                               PartRetraiteSeuleEtat, SalairesForfaitaires)
-from ..droit.acquerir import assiette_du_collaborateur, seconde_part_de_rco
+from ..droit.acquerir import (assiette_du_collaborateur, dispense_de_debut,
+                              seconde_part_de_rco)
 from .fusion import RegimeFusionne
 from .indexation import Indexation
 from ..somme import somme_ordonnee
@@ -832,6 +833,13 @@ class ConstructeurCompte:
                 regime.hors_repartition and self.parametres.isoler_capitalisation
             )
             for periode in regime.periodes_actives(annee):
+                # LA DISPENSE DE DÉBUT D'EXERCICE : le compte porte ce qui a
+                # été versé, et la cotisation dispensée ne l'est pas. Sous le
+                # taux commun, le régime ne fait que délimiter l'assiette, et
+                # reste. Voir `dispense_de_debut`.
+                if not acquisition_commune and dispense_de_debut(
+                        self.affiliations, periode, carriere, code, ligne):
+                    continue
                 borne_basse, borne_haute = self._bornes_proratisees(
                     periode, annee, part, sans_employeur and code == REGIME_DE_MAYOTTE
                 )

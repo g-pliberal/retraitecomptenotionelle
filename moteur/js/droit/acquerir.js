@@ -81,6 +81,38 @@ export function anneesDejaExercees(carriere, affiliation, annee, maximum) {
 }
 
 /**
+ * LA DISPENSE DE DÉBUT D'EXERCICE (`dispense_de_debut`) : la cotisation de
+ * cette ligne à ce régime est-elle dispensée, sans points ? « Tout médecin
+ * obligatoirement affilié à la caisse est dispensé du paiement de la
+ * cotisation afférente au présent régime pendant les deux premières années
+ * d'exercice de la profession libérale si cet exercice débute alors qu'il n'a
+ * pas atteint l'âge de 40 ans » (CARMF, décret n° 49-579, article 4, I, depuis
+ * le 1er juillet 2026), et ces cotisations « ne donnent pas lieu à acquisition
+ * de points » (article 4-1, II). L'exercice débute à la première entrée dans
+ * un statut que le régime affilie : passer du secteur 1 au secteur 2 ne le
+ * recommence pas. Jumeau de `dispense_de_debut`.
+ */
+export function dispenseDeDebut(affiliations, periode, carriere, code, ligne) {
+  const regle = periode.dispense_de_debut;
+  if (!regle || !ligne.cotise || ligne.annee < regle.depuis) {
+    return false;
+  }
+  let debut = null;
+  for (const autre of carriere.lignes) {
+    if (!autre.cotise || !affiliations.periodes(autre.affiliation).some(
+      (tranche) => (tranche.regimes ?? []).includes(code))) {
+      continue;
+    }
+    const entree = carriere.dateEntree(autre.affiliation);
+    if (entree !== null && (debut === null || entree.rang < debut.rang)) {
+      debut = entree;
+    }
+  }
+  return debut !== null && ligne.annee < debut.annee + regle.annees
+    && debut.rang < carriere.dateDeLAge(regle.avant_l_age).rang;
+}
+
+/**
  * L'assiette minimale que la ligne oppose à l'un de ces régimes : celle du
  * régime de BASE d'un indépendant (D. 633-2, D. 642-4) ; jusqu'en 2015, celle
  * de la COMPLÉMENTAIRE des artisans et des commerçants, qui tombe avec celle de
@@ -561,6 +593,11 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
         code, Math.max(derniereAnneeParRegime.get(code) ?? 0, ligne.annee),
       );
       for (const [tranche, periode] of regime.periodesActives(ligne.annee).entries()) {
+        // LA DISPENSE DE DÉBUT D'EXERCICE : ni cotisation ni points. Voir
+        // `dispenseDeDebut`.
+        if (dispenseDeDebut(moteur.affiliations, periode, carriere, code, ligne)) {
+          continue;
+        }
         // BARÈME D'UN AUTRE RÉGIME : une tranche que tous les affiliés ne
         // cotisent pas forme une fiche à part, dont les points restent ceux
         // du régime d'origine. Voir `points_de`.

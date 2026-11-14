@@ -1398,6 +1398,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    dispense_de_debut: {annees: 2, avant_l_age: 40, depuis: 2027}
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Taux de la table « Cotisations proportionnelles » de la chronologie
@@ -1407,6 +1408,16 @@ periodes:
       LEGIARTI000026885080, LEGIARTI000050865167, LEGIARTI000054168125) :
       c'est le taux contractuel, appelé aux taux annuels de la chronologie
       de la caisse que la fiche porte.
+      LA DISPENSE DES DEUX PREMIÈRES ANNÉES (`dispense_de_debut`), depuis le
+      1er juillet 2026 (décret n° 49-579, article 4, I, dans la rédaction
+      du décret n° 2026-418, LEGIARTI000054168136) : « Tout médecin
+      obligatoirement affilié à la caisse est dispensé du paiement de la
+      cotisation afférente au présent régime pendant les deux premières
+      années d'exercice de la profession libérale si cet exercice débute
+      alors qu'il n'a pas atteint l'âge de 40 ans », sans points (article
+      4-1, II, LEGIARTI000054168116). La fiche la sert aux cotisations de
+      2027 et d'après : celles de 2026 et d'avant tiennent aux statuts
+      d'avant le 1er juillet 2026, non lus (`decret_2026_418_liberaux`).
       LA RETRAITE EN TEMPS CHOISI, depuis le 1er janvier 2017 (arrêté du
       30 novembre 2016, JORFARTI000033521562) : le régime s'ouvre à taux
       plein à l'âge légal, sans décote ni durée, et « si le médecin

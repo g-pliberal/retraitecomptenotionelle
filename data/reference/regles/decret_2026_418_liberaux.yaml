@@ -22,8 +22,19 @@ effet: >-
   de calcul. Ce que le modèle ne sert pas, et ce qu'il sert à tort, `sources.a_relire`
   le dit : à la Cipav, une erreur (E9), qui vaut depuis le 1er janvier 2023 (E11) ; à la
   CARMF, deux ; à la CARCDSF, une (E10).
+  Corrigée le 14 novembre 2026 (décision du propriétaire du 13 novembre, ligne 5 de la
+  file `130/2026-11-13-corrections-decidees.md`) : la première des deux erreurs de la
+  CARMF. Jusque-là, le modèle faisait cotiser et acquérir les deux premières années
+  d'exercice du médecin installé avant 40 ans, que l'article 4, I, du décret n° 49-579
+  dispense sans points (article 4-1, II) — née le 1er janvier 2001, installée le
+  1er janvier 2027, pension à 67 ans : 53 701,26 € par an au lieu de 51 417,01 €,
+  2 284,25 € de trop. Depuis, `dispense_de_debut` à la période de 2026 de
+  `carmf_complementaire.yaml`, dans les deux moteurs : ni points au scénario 1, ni
+  cotisation au compte notionnel, pour les cotisations de 2027 et d'après. Restent à la
+  CARMF l'exemption passé 75 ans, et à la CARCDSF la part proportionnelle des deux
+  premières années.
 sources:
-  lu_le: 2026-11-12
+  lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -102,26 +113,34 @@ sources:
     le 1er janvier 2008 », tous au seul Bulletin officiel (question 22), qui peuvent régler
     le report de 2007 ; avant 2007, les statuts de 1979, au même Bulletin.
   - >-
-    Erreur prouvée, déclarée et non corrigée (action 130, E10, 6 novembre 2026) : depuis
-    le 1er juillet 2026, l'article 4 du décret n° 49-579 (décret n° 2026-418, article 3,
-    JORFARTI000054153420) écrit « Tout médecin obligatoirement affilié à la caisse est
-    dispensé du paiement de la cotisation afférente au présent régime pendant les deux
-    premières années d'exercice de la profession libérale si cet exercice débute alors
-    qu'il n'a pas atteint l'âge de 40 ans », et l'article 4-1, II : « Les cotisations ou
-    fractions de cotisations ayant fait l'objet d'une dispense au titre des I à III de
-    l'article 4 ne donnent pas lieu à acquisition de points » ; le modèle fait cotiser
-    et acquérir ces deux années à la complémentaire de la CARMF
-    (`carmf_complementaire.yaml`, période de 2026 : 11,8 %, sans dispense). Essai du
-    6 novembre 2026, née le 1er janvier 2001, médecin libérale au double du salaire
-    moyen depuis 26 ans (1er janvier 2027), en euros de 2026, pension à 67 ans : le
-    modèle sert 990 651,9421 × 0,0448 × 1,21 = 53 701,26 €, dont (20 997,0503 +
-    21 141,5017) × 0,0448 × 1,21 = 2 284,25 € par an au titre de 2027 et 2028, de
-    trop. Une faculté, sur demande, que le modèle ne porte pas et que la correction
-    nommera (E11, après R-E11) : l'article 4-2, I (LEGIARTI000054168114) ouvre au rachat
-    « un point par trimestre d'exercice en qualité de non salarié, antérieur au 1 er
-    juillet 1949 ou trimestre assimilé dans les conditions prévues à l'article 4-4 ou
-    trimestres ayant donné lieu à dispense dans les conditions prévues au I de l'article
-    4 » ; le modèle simule le médecin qui ne rachète pas : l'erreur tient.
+    La dispense des deux premières années d'exercice de la CARMF, servie depuis le
+    14 novembre 2026 (`effet`), et ce qu'elle laisse. Le texte : depuis le 1er juillet
+    2026, l'article 4 du décret n° 49-579 (décret n° 2026-418, article 3,
+    JORFARTI000054153420 ; LEGIARTI000054168136) écrit « Tout médecin obligatoirement
+    affilié à la caisse est dispensé du paiement de la cotisation afférente au présent
+    régime pendant les deux premières années d'exercice de la profession libérale si cet
+    exercice débute alors qu'il n'a pas atteint l'âge de 40 ans », et l'article 4-1, II
+    (LEGIARTI000054168116) : « Les cotisations ou fractions de cotisations ayant fait
+    l'objet d'une dispense au titre des I à III de l'article 4 ne donnent pas lieu à
+    acquisition de points ». Quatre limites, déclarées. (a) Les cotisations de 2026 et
+    d'avant ne sont pas dispensées : avant le 1er juillet 2026, la dispense tenait aux
+    statuts (article 4 d'alors, LEGIARTI000050865157), non lus (question 22) ; le
+    médecin installé en 2025 ou en 2026 cotise au modèle toute l'année 2026, quand le
+    second semestre au moins en est dispensé. (b) « Les deux premières années
+    d'exercice » : le texte ne dit pas si ce sont vingt-quatre mois ou deux années
+    civiles ; le modèle dispense l'année civile du début et la suivante, que les deux
+    lectures dispensent, et fait cotiser la troisième en entier, dont les premiers
+    mois seraient dispensés sous la lecture des vingt-quatre mois, pour un début en
+    cours d'année. (c) L'exercice débute au premier jour du mois d'entrée dans le
+    statut de médecin libéral, secteur 1 ou secteur 2 ; l'exercice libéral d'une autre
+    profession, avant, n'est pas compté. (d) Une faculté, sur demande, que le modèle
+    ne porte pas : l'article 4-2, I (LEGIARTI000054168114) ouvre au rachat « un point
+    par trimestre d'exercice en qualité de non salarié, antérieur au 1 er juillet 1949
+    ou trimestre assimilé dans les conditions prévues à l'article 4-4 ou trimestres
+    ayant donné lieu à dispense dans les conditions prévues au I de l'article 4 » ; le
+    modèle simule le médecin qui ne rachète pas. Au compte notionnel, la cotisation
+    dispensée n'est pas portée, sauf sous le taux commun de la proposition, que le
+    droit en vigueur ne règle pas.
   - >-
     Erreur prouvée, déclarée et non corrigée (action 130, E10) : le même article 4, II :
     « Tout médecin qui continue d'exercer en qualité de non salarié est exempté du
@@ -237,7 +256,8 @@ sources:
       « médecins », la CARMF (`carmf_complementaire.yaml`). Âges et minoration :
       `carmf_asv_minoration_enfants`, version `reglement_de_2026`. Article 4, I et II,
       dispenses des deux premières années d'exercice et passé le semestre des 75 ans,
-      sans points (article 4-1, II) : non servies, deux erreurs (`sources.a_relire`) ;
+      sans points (article 4-1, II) : la première servie depuis le 14 novembre 2026
+      (`dispense_de_debut`), la seconde non servie, une erreur (`sources.a_relire`) ;
       III à V, dispenses et exonérations sur demande ou pour incapacité, non portées ;
       4-2 à 4-4, rachat et achat de points (`rachats_et_versements`).
     date: 2026-05-31
@@ -448,8 +468,9 @@ sources:
       qu'au JORF (action 184, étape 6, index LEGI à jour au 11 novembre 2026). Décret
       n° 49-579, article 4 (LEGIARTI000054168136) : c'est l'article 3 du décret
       n° 2026-418, mot pour mot — I, la dispense des deux premières années d'exercice
-      avant 40 ans, et II, l'exemption passé le semestre des 75 ans, les deux erreurs
-      déclarées de `sources.a_relire` ; III à VI, dispenses et exonérations sur demande,
+      avant 40 ans, servie depuis le 14 novembre 2026, et II, l'exemption passé le
+      semestre des 75 ans, l'erreur déclarée de `sources.a_relire` ; III à VI, dispenses
+      et exonérations sur demande,
       pour incapacité ou maternité, non portées. Décret n° 50-28, article 2
       (LEGIARTI000054168195) : la cotisation forfaitaire de six points et la
       proportionnelle de 0,65 à 5 plafonds y sont inchangées ; les dispenses, que « les
@@ -476,19 +497,25 @@ textes_a_rattacher:
   reference: décret n° 2026-418 du 29 mai 2026 (JORF du 31 mai 2026)
 code:
   moteur: >-
-    Le décret ne change aucun paramètre que le dépôt porte : les périodes des régimes
+    Le décret ne change aucun paramètre que le dépôt porte, hors la dispense de la
+    CARMF : les périodes des régimes
     qu'il réécrit gardent leurs taux, leurs assiettes, leurs classes et leurs âges, que
     `acquerir` sert en points et `liquider_chaque_regime` liquide comme avant. Ce qu'il
-    écrit à neuf et que le modèle porte, la majoration de 10 % pour trois enfants de la
-    Cipav (article 20), est la fiche `sections_liberales_majoration_enfants` ; ce qu'il
-    écrit et que le modèle ne porte pas, ou porte à tort — les dispenses de la CARMF et
-    de la CARCDSF, que `acquerir` ignore, la majoration pour report de la Cipav, que
-    `liquider_chaque_regime` étend à tous les points —, `sources.a_relire` le dit.
+    écrit à neuf et que le modèle porte : la majoration de 10 % pour trois enfants de la
+    Cipav (article 20), qui est la fiche `sections_liberales_majoration_enfants`, et la
+    dispense des deux premières années d'exercice de la CARMF (article 3), que
+    `dispense_de_debut` rend à `acquerir` et au compte (`dispense_de_debut` de la
+    période de 2026) ; ce qu'il
+    écrit et que le modèle ne porte pas, ou porte à tort — l'exemption de la CARMF passé
+    75 ans et la dispense de la CARCDSF, que `acquerir` ignore, la majoration pour report
+    de la Cipav, que `liquider_chaque_regime` étend à tous les points —,
+    `sources.a_relire` le dit.
   python: >-
-    droit/acquerir.py : acquerir ; droit/liquider.py : liquider_chaque_regime
+    droit/acquerir.py : acquerir, dispense_de_debut ; droit/liquider.py :
+    liquider_chaque_regime ; moteur/compte.py : ConstructeurCompte
   javascript: >-
-    moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
-    liquiderChaqueRegime
+    moteur/js/droit/acquerir.js : acquerir, dispenseDeDebut ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime ; moteur/js/compte.js : ConstructeurCompte
   parametres: >-
     regimes/asv_auxiliaires_medicaux.yaml, regimes/asv_chirurgiens_dentistes.yaml,
     regimes/asv_conventionnes.yaml, regimes/asv_directeurs_laboratoire.yaml,
@@ -497,13 +524,15 @@ code:
     regimes/cavamac_complementaire.yaml, regimes/cavec_complementaire.yaml,
     regimes/cavom_complementaire.yaml, regimes/cavp_complementaire.yaml,
     regimes/cipav_complementaire.yaml, regimes/cprn_complementaire.yaml : assiette,
-    taux_cotisation_retraite, avantages_non_contributifs
+    taux_cotisation_retraite, avantages_non_contributifs, dispense_de_debut
   tests:
   - >-
     tests/test_sections_liberales.py, qui tient ce que la lecture du décret dans les
     articles des trois sections a corrigé, et que chacun des 31 articles est rapporté à
     la fiche de sa règle
   - >-
-    tests/test_sections_juridiques.py, tests/test_sections_sante.py et
+    tests/test_sections_juridiques.py, tests/test_sections_sante.py — qui tient aussi la
+    dispense des deux premières années d'exercice de la CARMF, au scénario 1 et au
+    compte — et
     tests/test_pcv_sante.py, qui tiennent les paramètres des autres sections, que le
     décret laisse

@@ -880,6 +880,13 @@ class PeriodeRegime:
     #: D. 633-6, pose les mêmes multiples. Vide : aucun forfait. Voir
     #: ``acquerir``.
     assiette_de_debut_en_bases_mensuelles: tuple[tuple[str, tuple[int, ...]], ...] = ()
+    #: LA DISPENSE DE DROIT DU DÉBUT D'EXERCICE, sans points : le nombre
+    #: d'années dispensées, l'âge que l'affilié ne doit pas avoir atteint
+    #: quand l'exercice débute, la première année de cotisation que la fiche
+    #: dispense, ``(2, 40.0, 2027)`` — la CARMF depuis le 1er juillet 2026
+    #: (décret n° 49-579, articles 4, I, et 4-1, II). ``None`` : aucune
+    #: dispense. Voir ``acquerir.dispense_de_debut``.
+    dispense_de_debut: tuple[int, float, int] | None = None
     notes: str = ""
 
     def prise_en_charge(self, forfait: float, proportionnelle: float) -> float:
@@ -2360,6 +2367,12 @@ class CatalogueRegimes:
                 assiette_de_debut_en_bases_mensuelles=tuple(sorted(
                     (str(statut), tuple(int(m) for m in multiples)) for statut, multiples
                     in (p.get("assiette_de_debut_en_bases_mensuelles") or {}).items())),
+                dispense_de_debut=(
+                    None if p.get("dispense_de_debut") is None
+                    else (int(p["dispense_de_debut"]["annees"]),
+                          float(p["dispense_de_debut"]["avant_l_age"]),
+                          int(p["dispense_de_debut"]["depuis"]))
+                ),
                 points_par_trimestre_valide=(
                     None if p.get("points_par_trimestre_valide") is None
                     else float(p["points_par_trimestre_valide"])

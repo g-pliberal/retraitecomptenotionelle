@@ -23,7 +23,7 @@ import {
 import { Fiabilite } from "./serie.js";
 import { REGIME_DE_MAYOTTE } from "./macro.js";
 import { primesSoumises } from "./primes.js";
-import { assietteDuCollaborateur, secondePartDeRco } from "./droit/acquerir.js";
+import { assietteDuCollaborateur, dispenseDeDebut, secondePartDeRco } from "./droit/acquerir.js";
 
 /** Le seul régime dont la contribution employeur est un taux d'équilibre. */
 const REGIME_ETAT = "fonction_publique_etat";
@@ -687,6 +687,14 @@ export class ConstructeurCompte {
         regime.hors_repartition && this.parametres.isoler_capitalisation
       );
       for (const periode of regime.periodesActives(annee)) {
+        // LA DISPENSE DE DÉBUT D'EXERCICE : le compte porte ce qui a été
+        // versé, et la cotisation dispensée ne l'est pas. Sous le taux
+        // commun, le régime ne fait que délimiter l'assiette, et reste.
+        // Voir `dispenseDeDebut`.
+        if (!acquisitionCommune
+            && dispenseDeDebut(this.affiliations, periode, carriere, code, ligne)) {
+          continue;
+        }
         const [borneBasse, borneHaute] = this._bornesProratisees(
           periode, annee, part, sansEmployeur && code === REGIME_DE_MAYOTTE,
         );

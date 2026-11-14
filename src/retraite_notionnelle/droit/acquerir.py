@@ -98,6 +98,37 @@ def annees_deja_exercees(carriere, affiliation: str, annee: int, maximum: int) -
     return rang
 
 
+def dispense_de_debut(affiliations, periode, carriere, code: str, ligne) -> bool:
+    """LA DISPENSE DE DÉBUT D'EXERCICE (``dispense_de_debut``) : la cotisation
+    de cette ligne à ce régime est-elle dispensée, sans points ?
+
+    « Tout médecin obligatoirement affilié à la caisse est dispensé du paiement
+    de la cotisation afférente au présent régime pendant les deux premières
+    années d'exercice de la profession libérale si cet exercice débute alors
+    qu'il n'a pas atteint l'âge de 40 ans » (CARMF, décret n° 49-579, article
+    4, I, depuis le 1er juillet 2026), et ces cotisations « ne donnent pas
+    lieu à acquisition de points » (article 4-1, II). L'exercice débute à la
+    première entrée dans un statut que le régime affilie : passer du secteur 1
+    au secteur 2 ne le recommence pas. Jumeau de ``dispenseDeDebut``."""
+    regle = periode.dispense_de_debut
+    if not regle or not ligne.cotise:
+        return False
+    annees, avant_l_age, depuis = regle
+    if ligne.annee < depuis:
+        return False
+    debut = None
+    for autre in carriere.lignes:
+        if not autre.cotise or not any(
+                code in (tranche.get("regimes") or ())
+                for tranche in affiliations.periodes(autre.affiliation)):
+            continue
+        entree = carriere.date_entree(autre.affiliation)
+        if entree is not None and (debut is None or entree.rang < debut.rang):
+            debut = entree
+    return (debut is not None and ligne.annee < debut.annee + annees
+            and debut.rang < carriere.date_de_l_age(avant_l_age).rang)
+
+
 def assiette_minimale(moteur: ScenarioActuel, codes, ligne) -> float:
     """L'assiette minimale que la ligne oppose à l'un de ces régimes.
 
@@ -646,6 +677,10 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 derniere_annee_par_regime.get(code, 0), ligne.annee
             )
             for tranche, periode in enumerate(regime.periodes_actives(ligne.annee)):
+                # LA DISPENSE DE DÉBUT D'EXERCICE : ni cotisation ni points.
+                # Voir `dispense_de_debut`.
+                if dispense_de_debut(moteur.affiliations, periode, carriere, code, ligne):
+                    continue
                 # BARÈME D'UN AUTRE RÉGIME : une tranche que tous les
                 # affiliés ne cotisent pas forme une fiche à part, dont les
                 # points restent ceux du régime d'origine. Voir `points_de`.

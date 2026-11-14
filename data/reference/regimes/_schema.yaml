@@ -1197,6 +1197,25 @@ champs_periode:
       des mois de l'année. `null` : aucun forfait.
     defaut: null
 
+  dispense_de_debut:
+    description: >-
+      Régimes en points : la dispense de droit du début d'exercice, sans
+      points — `annees`, le nombre d'années dispensées ; `avant_l_age`,
+      l'âge que l'affilié ne doit pas avoir atteint quand l'exercice
+      débute ; `depuis`, la première année de cotisation que la fiche
+      dispense. « Tout médecin obligatoirement affilié à la caisse est
+      dispensé du paiement de la cotisation afférente au présent régime
+      pendant les deux premières années d'exercice de la profession libérale
+      si cet exercice débute alors qu'il n'a pas atteint l'âge de 40 ans »
+      (CARMF, décret n° 49-579, article 4, I, depuis le 1er juillet 2026),
+      et ces cotisations « ne donnent pas lieu à acquisition de points »
+      (article 4-1, II). L'exercice débute au mois de la première entrée
+      dans un statut que le régime affilie ; les années dispensées sont les
+      années civiles de la carrière, celle du début et les suivantes. Le
+      compte notionnel ne porte pas davantage la cotisation dispensée.
+      `null` : aucune dispense.
+    defaut: null
+
   assiette_plancher:
     description: >-
       L'assiette est-elle relevée au repère quand elle lui est inférieure ?

@@ -625,3 +625,117 @@ def test_une_complementaire_qui_a_ses_ages_n_ouvre_pas_le_droit(
     # Et le taux plein de la carrière est celui de la base, non les 65 ans de
     # la complémentaire.
     assert ouvrir.age_taux_plein_droit(actuel, carriere) >= age
+
+
+# -- la CARMF : la dispense des deux premières années (action 130, la file) --------
+
+REQUETE_DE_MEDECIN = {
+    "age_reference": "fixe_apres_bascule", "bascule": "2026",
+    "conversion_acquis": "reference", "emploi": "cor_2026",
+    "enfants": "0", "euros": "2026", "indexation": "triple_lock_inverse",
+    "liquidation": "67", "primes": "0", "profil": "plat",
+    "projection": "cor_reference", "salaire": "2", "sexe": "F", "stock": "prix",
+    "table": "unisexe", "statut": "medecin_liberal",
+}
+
+#: (naissance, âge du début d'exercice) : la retraite complémentaire que la
+#: CARMF sert à 67 ans, par an, en euros de 2026.
+DEBUTS_A_LA_CARMF = {
+    # Née le 1er janvier 2001, installée le 1er janvier 2027, à 26 ans : 2027 et
+    # 2028, ses deux premières années d'exercice, sont dispensées, sans points.
+    # Posé à la main (note `130/2026-11-06-e10-decret-2026-418.md`) : le modèle
+    # servait 990 651,9421 € de cotisations revalorisées, dont 20 997,0503 € de
+    # 2027 (0,118 × 87 370,5656 € l'année même, × 2,0366) et 21 141,5017 € de
+    # 2028 ; 990 651,9421 − 42 138,5520 = 948 513,3901 ; × 0,0448 =
+    # 42 493,3999 ; × 1,21 = 51 417,01 €, 2 284,25 € de moins que 53 701,26 €.
+    ("2001-01-01", "26"): 51_417.01,
+    # Née le 1er janvier 1987, installée le 1er janvier 2027, le jour de ses
+    # 40 ans : elle a « atteint l'âge de 40 ans », rien n'est dispensé, et la
+    # pension reste celle d'avant la correction.
+    ("1987-01-01", "40"): 26_389.47,
+    # Née le 1er janvier 1986, installée le 1er janvier 2025, à 39 ans : ses
+    # deux premières années, 2025 et 2026, précèdent les cotisations que
+    # l'article 4 du 1er juillet 2026 dispense de façon prouvée ; la pension
+    # reste celle d'avant la correction (limite déclarée à la fiche).
+    ("1986-01-01", "39"): 26_506.51,
+}
+
+
+@pytest.fixture(scope="module")
+def debuts_a_la_carmf():
+    """Chaque cas, servi par le portage et refait au bit près par le moteur
+    Python (``servi_et_refait``)."""
+    from outils_pont import servi_et_refait
+
+    cas = [{"cle": "|".join(cle),
+            "requete": {**REQUETE_DE_MEDECIN, "naissance": cle[0], "debut": cle[1]}}
+           for cle in DEBUTS_A_LA_CARMF]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    return {cle: {p["regime"]: p for p in servi["actuel"]["pensions_par_regime"]}
+            for cle, servi in servis.items()}
+
+
+@pytest.mark.parametrize("cle", DEBUTS_A_LA_CARMF,
+                         ids=["|".join(cle) for cle in DEBUTS_A_LA_CARMF])
+def test_la_carmf_dispense_sans_points_les_deux_premieres_annees_d_exercice(
+        debuts_a_la_carmf, cle):
+    """Décret n° 49-579, article 4, I, dans la rédaction du décret n° 2026-418
+    (article 3), en vigueur le 1er juillet 2026 (LEGIARTI000054168136) : « Tout
+    médecin obligatoirement affilié à la caisse est dispensé du paiement de la
+    cotisation afférente au présent régime pendant les deux premières années
+    d'exercice de la profession libérale si cet exercice débute alors qu'il
+    n'a pas atteint l'âge de 40 ans. » Article 4-1, II (LEGIARTI000054168116) :
+    « Les cotisations ou fractions de cotisations ayant fait l'objet d'une
+    dispense au titre des I à III de l'article 4 ne donnent pas lieu à
+    acquisition de points. » Jusqu'au 14 novembre 2026, le modèle faisait
+    cotiser et acquérir ces deux années."""
+    carmf = debuts_a_la_carmf["|".join(cle)]["carmf_complementaire"]
+    assert carmf["montant"] == pytest.approx(DEBUTS_A_LA_CARMF[cle], abs=0.005)
+
+
+def test_la_dispense_de_la_carmf_retire_2_284_euros_a_la_medecin_de_26_ans(
+        debuts_a_la_carmf):
+    """Au cas posé, les cotisations revalorisées tombent de 990 652 € à
+    948 513 €, et la pension de 53 701,26 € à 51 417,01 € : 2 284,25 € par an.
+    La base et l'ASV, que l'article ne vise pas, ne bougent pas."""
+    pensions = debuts_a_la_carmf["2001-01-01|26"]
+    assert "cotisations revalorisées 948,513 €" in pensions["carmf_complementaire"]["detail"]
+    assert 53_701.26 - pensions["carmf_complementaire"]["montant"] == pytest.approx(
+        2_284.25, abs=0.005)
+    assert pensions["asv_conventionnes"]["montant"] == pytest.approx(44_511.19, abs=0.005)
+    assert pensions["cnavpl"]["montant"] == pytest.approx(31_726.78, abs=0.005)
+
+
+def _versees_au_compte(naissance: str, debut: str, annee: int) -> dict:
+    """Les cotisations de l'année que le compte notionnel reçoit, régime par
+    régime, rendues par le portage et refaites par le moteur Python
+    (``droit_et_refait``)."""
+    from outils_pont import Saisies, droit_et_refait
+    from retraite_notionnelle import pont
+
+    requete = {**REQUETE_DE_MEDECIN, "naissance": naissance, "debut": debut}
+    saisies = Saisies()
+    lus, refus = droit_et_refait(
+        {"versees": ("compte.cotisation_annuelle.par_regime", pont.SIMULATEUR,
+                     saisies.carriere(requete), annee)},
+        saisies.simulateur(requete).parametres)
+    assert refus == {}, refus
+    return dict(lus["versees"])
+
+
+def test_le_compte_ne_porte_pas_la_cotisation_que_la_carmf_dispense():
+    """« Dispensé du paiement de la cotisation afférente au présent régime » :
+    la médecin installée à 26 ans le 1er janvier 2027 ne verse rien à la
+    complémentaire en 2027 ni en 2028 — 0,118 × 87 370,5656 = 10 309,73 € en
+    2027, que le compte portait —, et le compte porte ce qui a été versé. La
+    base et l'ASV, que l'article ne vise pas, restent dues ; la troisième
+    année, la complémentaire l'est."""
+    for annee in (2027, 2028):
+        versees = _versees_au_compte("2001-01-01", "26", annee)
+        assert "carmf_complementaire" not in versees, annee
+        assert versees["cnavpl"] > 0 and versees["asv_conventionnes"] > 0
+    assert _versees_au_compte("2001-01-01", "26", 2029)["carmf_complementaire"] > 0
+    # Installée le jour de ses 40 ans : rien n'est dispensé.
+    assert _versees_au_compte("1987-01-01", "40", 2027)["carmf_complementaire"] == (
+        pytest.approx(10_309.73, abs=0.005))
