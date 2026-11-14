@@ -20,6 +20,18 @@ d'aiguillage ouvre la suivante aussitôt. Chaque session lit ce verdict à son o
 puis avant son envoi (`.github/etat_suite.yaml` sur `origin/main`) : rouge, elle répare
 avant tout. La dernière ligne de la file attend, elle, le verdict de son envoi.
 
+**Depuis le 14 novembre 2026, deux files de front.** Le propriétaire l'a décidé ce jour
+(« Deux files de front », même note) : pour cette file seulement, deux sessions corrigent
+le modèle en même temps, une par file. La file A tient les lignes 13 à 20 (les médecins,
+la Cipav, la CARPIMKO), la file B les lignes 21 à 30 (la CARCDSF, la CAVAMAC) ; dans
+chacune, les lignes se suivent une à une, et une file vidée prend la dernière ligne non
+ouverte de l'autre. Les deux files écrivent souvent au même endroit du catalogue des
+régimes : quand `pousser.sh` refuse un conflit sur une source, la session rebase à la
+main sur `origin/main`, garde les deux ajouts, refait ce que les scripts fabriquent,
+relance ses tests, puis renvoie. Le bloc « Reprise » de l'action 130 ne se récrit plus
+ligne à ligne : la file dit seule où elle en est. Un rouge de GitHub, la première session
+qui le lit le répare, après avoir vérifié qu'un commit plus récent ne le répare pas déjà.
+
 **Hors de la file**, faute de décision : les points que le texte ne tranche pas (la Cipav
 en 2007 et ses anciens de la caisse des géomètres, la CAVEC, quatre à la CARMF, d'autres à
 la CPRN, la CAVP, la CARPIMKO et la CAVOM), qui restent des limites déclarées ; la CRPNPAC

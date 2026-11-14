@@ -5764,17 +5764,16 @@ de statuts et les `manque` de la page Méthode.
 ### 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats — `en cours`
 
 **Reprise, au 14 novembre 2026.** L'action réduit ce que coûte un changement
-du modèle, en temps et en jetons, sans rien céder sur les vérifications ;
-l'essentiel est fait, une note par étape. Mesuré le 14 novembre sur une
-correction de l'action 130 : 53 minutes, dont 34 à attendre le verdict de la
-suite complète sur GitHub. Depuis, une session de correction rend compte dès
-son envoi, et la suivante lit le verdict en s'ouvrant. Reste à relever, sur
-les corrections suivantes, leur durée et ce que la session qui les lance
-récrit de son cache à chaque compte rendu. Deux décisions attendent le
-propriétaire : raccourcir la course de GitHub, qui dure de 17 à 30 minutes,
-et faire passer seul un changement transversal. Un chantier reste : comparer
-les réponses des agents de recherche, qui démarrent sans le `CLAUDE.md` de la
-racine, à celles relevées avant. Notes :
+du modèle, en temps et en jetons, sans rien céder sur les vérifications.
+Mesuré sur une correction de l'action 130 : 53 minutes, dont 34 à attendre le
+verdict de la suite complète sur GitHub. Depuis, une session de correction
+rend compte dès son envoi, et ces corrections passent en deux files menées de
+front. Reste à relever leur durée, les conflits entre les deux files, et ce
+que la session qui les lance récrit de son cache à chaque compte rendu. Deux
+décisions attendent le propriétaire : raccourcir la course de GitHub, qui
+dure de 17 à 30 minutes, et faire passer seul un changement transversal. Un
+chantier reste : comparer les réponses des agents de recherche, qui démarrent
+sans le `CLAUDE.md` de la racine, à celles relevées avant. Notes :
 `2026-11-14-correction-sans-attendre-le-verdict.md` et
 `2026-11-11-eclaireurs-sans-le-claude-md-racine.md`.
 

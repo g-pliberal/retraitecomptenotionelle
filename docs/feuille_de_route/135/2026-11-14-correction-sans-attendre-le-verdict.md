@@ -90,6 +90,24 @@ deux, sur une source, ce que `pousser.sh` refuse ; et nul ne sait, avant de
 relire le texte, si une ligne demande un champ de plus. La file reste en
 série.
 
+**La décision du propriétaire, à 12 h 20 UTC**, ce relevé lu : « C'est
+beaucoup trop lent. Il faut enchaîner », puis, entre la série, une session par
+caisse et deux files de front, cette dernière, son prix dit : à peu près un
+envoi sur deux tombe sur un conflit que la session résout à la main, et un
+rouge est plus dur à attribuer. La règle « une seule session à la fois sur le
+modèle » est donc levée pour cette file seulement, et la conclusion du
+paragraphe précédent ne tient plus.
+
+- *La file A* : les lignes 13 à 20. *La file B* : les lignes 21 à 30. La
+  correction 13, partie à 11 h 51 UTC sous la consigne sans attente, continue ;
+  la ligne 21 s'ouvre sans l'attendre.
+- *Un conflit sur une source* : la session rebase à la main, garde les deux
+  ajouts, refait ce que les scripts fabriquent, relance ses tests et renvoie.
+- *Le bloc « Reprise » de l'action 130* ne se récrit plus à chaque ligne, ce
+  que `documentation.md` demande quand des étapes se mènent de front.
+- *Écrit* : un second paragraphe daté aux règles de la file, et un second
+  message à la session d'aiguillage.
+
 **Ce qui reste.**
 
 - Le temps des outils dans une session de correction, 13 min 06 sur 18 min 11
@@ -97,6 +115,8 @@ série.
   combien de fois la suite rapide. C'est le levier qui reste pour aller plus
   vite.
 
+- Relever, sur les deux files, combien d'envois ont buté sur un conflit et ce
+  que chacun a coûté, et si un rouge s'est laissé attribuer.
 - Relever, sur les lignes 13 et suivantes, la durée d'une correction et
   l'écriture du cache à chaque réveil de l'aiguillage. Attendu, non mesuré :
   une demi-heure de moins par correction, et un réveil à quelques dizaines de
