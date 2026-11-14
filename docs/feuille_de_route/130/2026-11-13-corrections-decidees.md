@@ -204,7 +204,14 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   d'un enfant handicapé, sans saisie, et l'inapte de 62 ans depuis 2024, que le texte
   ne tranche pas, restent déclarés ; note
   `2026-11-14-correction-carcdsf-inapte-et-categories.md`.
-- [ ] 24. **CARCDSF, la majoration au temps écoulé.** Mêmes fiche et note.
+- [x] 24. **CARCDSF, la majoration au temps écoulé.** Mêmes fiche et note.
+  Corrigé le 14 novembre 2026 : depuis les statuts de 2011, la majoration se compte par
+  trimestre civil entier d'exercice libéral qui suit le trimestre civil de l'âge, dans
+  les deux moteurs (né le 1er janvier 1948, pension au 1er janvier 2015 : 11 063,17 €
+  par an au lieu de 11 166,56 € ; le même sans activité de 2010 à 2014 : 8 562,88 € au
+  lieu de 9 247,91 €) ; la cessation en cours d'année, la condition d'être à jour de
+  ses cotisations et les trimestres d'avant le 1er juillet 2011 restent déclarés ; note
+  `2026-11-14-correction-carcdsf-majoration-au-trimestre-civil.md`.
 - [ ] 25. **CARCDSF, depuis 2024 : la majoration de 1,25 % et les nés de 1951 à 1954.**
   Mêmes fiche et note.
 - [ ] 26. **CARCDSF, la pension du 1er janvier 2024** (la septième erreur). Fiche

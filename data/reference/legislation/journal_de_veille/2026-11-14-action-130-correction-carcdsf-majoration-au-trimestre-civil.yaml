@@ -1,0 +1,33 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 24 : la majoration de la CARCDSF comptée par trimestre civil entier d'exercice libéral"
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index JORF récupéré par
+  `dila_index.py --recuperer`, à jour du 11 novembre 2026. Statuts de la CARCDSF : de
+  2011, article 19, I, c (JORFARTI000023909792) ; l'arrêté du 9 juillet 2012
+  (JORFARTI000026208364), qui n'y touche pas ; celui du 22 décembre 2017, 21°
+  (JORFARTI000036251928) ; de 2024, article 35, I, c (JORFARTI000048880707) ;
+  règlement de 2026, article 3, I, c (JORFARTI000054435749).
+trouve: >-
+  Le texte tranche. Depuis le 1er juillet 2011, la majoration « est égale à 1 % par
+  trimestre civil entier d'exercice libéral suivant le dernier jour du trimestre civil
+  incluant l'âge », aux affiliés « qui poursuivent leur activité libérale » ; depuis
+  2024, 1,25 % pour le trimestre « accompli à compter du 1er janvier 2024 », dans les
+  mêmes mots. Le modèle comptait le temps écoulé depuis l'âge, que l'affilié exerce ou
+  non : corrigé dans les deux moteurs, par un interrupteur de la fiche
+  `carcdsf_minoration_age_seul` (`surcote_trimestres_civils_d_exercice`), auquel
+  renvoient les quinze périodes de `carcdsf_complementaire.yaml` depuis le 1er juillet
+  2011. Dentiste né le 1er janvier 1948, pension au 1er janvier 2015 : sept trimestres,
+  11 063,17 € par an au lieu de 11 166,56 € ; le même sans activité de 2010 à 2014 :
+  8 562,88 € au lieu de 9 247,91 € ; né le 1er janvier 1958, pension au 1er janvier
+  2028 : 20 032,18 € au lieu de 20 252,31 €. La fiche relue ce jour, l'erreur passée à
+  son histoire.
+reste: >-
+  L'exercice n'est connu qu'à l'année de la carrière : une cessation en cours d'année
+  ne se déclare pas, et l'exercice libéral est lu comme une ligne cotisée au régime. La
+  condition d'être à jour de ses cotisations (article 34 des statuts de 2017, article 2
+  du règlement de 2026) n'est pas modélisée. Les trimestres d'exercice d'avant le
+  1er juillet 2011 comptent, ce que le texte ne tranche pas. Le taux de 1,25 % des
+  trimestres d'avant 2024 et l'âge de départ des nés de 1951 à 1954 (ligne 25). La même
+  classe à la CARMF et à l'ASV (ligne 18), et le point non tranché de la CARPIMKO. Les
+  lignes 25 à 30 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).
