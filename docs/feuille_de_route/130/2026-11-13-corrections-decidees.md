@@ -109,10 +109,17 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   62 ans, 9 169,39 € au lieu de 10 580,06 € à 58 ans, aux cas posés) ; la même dérogation
   au régime des biologistes de la caisse, hors de la file, reste à lire ; note
   `2026-11-14-correction-cavp-carriere-longue-depuis-2024.md`.
-- [ ] 12. **La date d'effet au trimestre civil** : CAVOM, CARPIMKO, CAVP, et CARMF depuis
+- [x] 12. **La date d'effet au trimestre civil** : CAVOM, CARPIMKO, CAVP, et CARMF depuis
   le 18 juillet 2026 ; le modèle sert au premier du mois (un ou deux mois de trop : 1 131,72 €,
   475,50 €, 1 212,41 €, 1 171,35 ou 2 337,68 €). Une erreur, quatre caisses. Note
-  `2026-11-06-carte-des-fiches-carmf-lue-au-droit.md`.
+  `2026-11-06-carte-des-fiches-carmf-lue-au-droit.md`. Corrigé le 14 novembre 2026 : la
+  complémentaire de ces quatre caisses prend effet au premier jour du trimestre civil
+  qui suit, dans les bornes des textes lus (CAVOM depuis 2016, CARPIMKO de 1984 à juin
+  1987 et depuis le 18 juillet 2026, CAVP depuis le 7 juin 2009, CARMF depuis le
+  18 juillet 2026), dans les deux moteurs ; liquidée sans sa base, elle en garde la
+  durée requise et les conditions d'ouverture ; la base des libéraux, que R. 643-6 date
+  de même, reste au mois (action 192, étape 3, au propriétaire) ; note
+  `2026-11-14-correction-date-d-effet-au-trimestre-civil.md`.
 - [ ] 13. **CARMF et ASV, l'âge de janvier à mars 2017** : l'âge légal, non 62 ans
   (679,34 € en moins, l'ASV 873,34 €). Fiche `surcote_par_age_seul` ; note
   `2026-11-06-e13-surcote-par-age-seul.md`.

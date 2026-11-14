@@ -1,0 +1,42 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 12 : quatre complémentaires de libéraux servies au premier jour du trimestre civil qui suit"
+consulte: >-
+  `python scripts/veille_droit.py` ; les index JORF et LEGI récupérés par `dila_index.py
+  --recuperer`, à jour du 11 novembre 2026. CAVOM : arrêté du 30 décembre 2015, annexe,
+  5°, article 14, II (JORFARTI000031740853) ; arrêté du 12 décembre 2024, annexe, II, 4°
+  (JORFARTI000050823056) ; arrêté du 10 juillet 2026, annexe I, article 1er, II
+  (JORFARTI000054435969). CARPIMKO : statuts de 1984, article 11 (LEGIARTI000006782880) ;
+  arrêté du 10 juillet 2026, règlement du régime complémentaire, article 7, et règlement
+  des prestations complémentaires de vieillesse, article 2 (JORFARTI000054435915). CAVP :
+  arrêté du 11 mai 2009, statuts du régime complémentaire, article 14, et du régime de
+  base, article 22 (JORFARTI000020694605) ; arrêté du 10 juillet 2026, annexe I, articles
+  14 et 23, et III, article 3 (JORFARTI000054436087). CARMF : arrêté du 10 juillet 2026,
+  annexe, I, article 24 (JORFARTI000054435859). Code de la sécurité sociale, R. 643-6,
+  ses trois rédactions (LEGIARTI000006751828, LEGIARTI000006751829,
+  LEGIARTI000047265890). CAVAMAC et CARCDSF : arrêtés du 10 juillet 2026, articles 9
+  (JORFARTI000054436046) et 24 (JORFARTI000054435749).
+trouve: >-
+  Le texte tranche : la complémentaire prend effet « au premier jour du trimestre civil
+  qui suit » la demande — la CAVOM depuis le 1er janvier 2016, la CARPIMKO sous ses
+  statuts de 1984 et depuis le 18 juillet 2026, la CAVP depuis le 7 juin 2009, la CARMF
+  depuis le 18 juillet 2026, « qui suit la réalisation de toutes les conditions
+  d'ouverture des droits ». Le modèle la servait le premier du mois qui suit l'âge :
+  corrigé dans les deux moteurs, par un paramètre de période
+  (`effet_au_trimestre_civil`, les bornes du texte lu) et un motif de départ
+  (`trimestre_civil`). Aux cas posés : un mois de trop à la CAVOM (1 131,72 €), à la
+  CARPIMKO (475,50 €), à la CAVP (1 212,41 €), un ou deux à la CARMF (1 171,35 € ou
+  2 337,68 €). Deux défauts d'une complémentaire liquidée sans sa base corrigés avec
+  lui : la durée requise, qui retombait sur 160 trimestres (CARPIMKO), et le motif de la
+  carrière longue, perdu (CAVP). Les fiches `cavom_ages_minoration`,
+  `carpimko_ages_2015`, `cavp_minoration_deux_pentes` et `carmf_asv_minoration_enfants`
+  relues ce jour, l'erreur passée à leur histoire.
+reste: >-
+  La pension de base des libéraux, que R. 643-6 date au même trimestre civil et que le
+  modèle sert au mois : la règle, écrite, attend la décision du propriétaire (action
+  192, étape 3) ; d'ici là, la base part un ou deux mois avant la complémentaire. Le
+  même report, écrit et non servi : la CAVAMAC et la CARCDSF (règlements de 2026), les
+  prestations complémentaires de vieillesse des auxiliaires médicaux, la capitalisation
+  et les biologistes de la CAVP. Non lus : la CARPIMKO du 5 juin 1987 au 17 juillet
+  2026, la CAVOM d'avant 2016, la CARMF de 2017 au 17 juillet 2026, la CARPV, la CAVEC,
+  la CPRN ; l'ASV des médecins, que son règlement ne date pas. Les lignes 13 à 30 de la
+  file (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).

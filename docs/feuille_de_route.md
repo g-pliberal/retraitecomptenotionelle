@@ -3293,15 +3293,15 @@ fabriqués.
 
 **Reprise, au 14 novembre 2026.** Le propriétaire a décidé, le 13 novembre, de corriger
 chacune des erreurs déclarées des caisses des libéraux, une session par erreur. La file
-est la note `130/2026-11-13-corrections-decidees.md` : trente lignes, les plus lourdes
-d'abord. La file se poursuit : onze lignes sont corrigées, la dernière étant la carrière
-longue de la caisse des pharmaciens, minorée jusqu'à 65 ans seulement depuis 2024 ;
-dix-neuf restent. Une seule session à la fois touche au modèle : une session
-d'aiguillage ouvre chaque correction et attend son compte rendu. Par quoi commencer : la
-ligne 12 (la pension servie au premier jour du trimestre civil), avec le test d'abord et
-la veille du droit, après la note de la ligne 11. Hors de la file : les points que le
-texte ne tranche pas, les navigants avant cinquante ans, la forme de la fiche du décret
-n° 2026-418.
+est la note `130/2026-11-13-corrections-decidees.md` : trente lignes. La file se
+poursuit : douze lignes sont corrigées, la dernière étant la complémentaire de quatre
+caisses, servie au premier jour du trimestre civil ; dix-huit restent. La pension de
+base des libéraux, due le même jour, reste servie au mois : sa règle attend le
+propriétaire (action 192, étape 3). Une seule session à la fois touche au modèle : une
+session d'aiguillage ouvre chaque correction. Par quoi commencer : la ligne 13 (l'âge
+des médecins de janvier à mars 2017), après la note de la ligne 12. Hors de la file :
+les points que le texte ne tranche pas, les navigants avant cinquante ans, la forme de
+la fiche du décret n° 2026-418.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
