@@ -450,17 +450,6 @@ def _(m: Modele):
         assert _proche(resultat.pension_annuelle * refait.diviseur, resultat.capital_notionnel)
 
 
-@controle("rendement_independant_de_la_carriere")
-def _(m: Modele):
-    """Une seule indexation, sans argument de carrière, pour tous les comptes."""
-    import inspect
-    indexation = m.sim.indexation
-    assert m.sim.constructeur.indexation is indexation
-    assert m.sim.constructeur_liberal.indexation is indexation
-    assert m.sim.constructeur_employeur.indexation is indexation
-    assert list(inspect.signature(indexation.taux).parameters) == ["annee"]
-
-
 @controle("indexation_masse_salariale_par_defaut")
 def _(m: Modele):
     assert m.base.mode_indexation is ModeIndexation.MASSE_SALARIALE

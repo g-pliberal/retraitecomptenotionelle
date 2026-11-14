@@ -247,3 +247,20 @@ affirmations:
       réponse « À quel âge pourrai-je partir ? » dit encore le rapport
       exact de ce que cela coûte ; le contrôle reste sous les autres
       entrées qui le nomment.
+
+  - id: accueil.rendement_meme_pour_tous
+    page: /
+    extrait: "Le rendement est le même pour tous"
+    porte: le taux d'indexation d'une année ne dépend pas de la carrière
+    etat: verifiee
+    controle: rendement_independant_de_la_carriere
+    retiree_le: 2026-11-14
+    motif: >-
+      vraie de l'indexation d'une année, fausse à quelques dixièmes près
+      sur une vie entière : le rendement réel va de −0,1 % à 0,5 % entre
+      les carrières types nées en 2000
+      (`docs/feuille_de_route/186/2026-11-08-site-etude.md`). Le
+      propriétaire la retire le 13 novembre 2026, contre la
+      recommandation de la garder avec sa condition (action 186,
+      décision 128) ; elle quitte l'accueil le 14 novembre, et son
+      contrôle, qui ne servait qu'à elle, s'en va.

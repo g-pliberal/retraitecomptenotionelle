@@ -1,13 +1,12 @@
 # Le site face au programme : ce qu'il dément, ce que montrera la version publique, et le rendement
 
-**Reprise, au 13 novembre 2026.** Le propriétaire a tranché le 13 novembre
-(décisions 127 à 129 et 131) : le tableau des rendements sort du site ; les
-deux phrases de l'accueil sur le rendement et les 100 % sont retirées ; la
-baisse montrée à un retraité est celle de ce qu'il touche en 2026 ; une petite
-passe d'abord, la refonte ensuite. L'apport pour un logement est retiré du
-programme (décision 132). Reste une session du site, quand ses pages seront
-libres : la petite passe, dont la liste est dans
-`2026-11-13-questions-au-proprietaire.md`.
+**Reprise, au 14 novembre 2026.** La petite passe du site a retiré, le 14
+novembre, le tableau des rendements du simulateur (décision 127) et la phrase
+« le rendement est le même pour tous » de l'accueil (décision 128). La phrase
+des 100 % était déjà partie ; l'apport pour un logement n'a jamais été sur le
+site. Reste à la petite passe le message aux retraités (décision 126), qui
+ajoute une phrase, puis la refonte. Le détail :
+`2026-11-14-site-petite-passe-retraits.md`.
 
 *Le 7 novembre 2026, le propriétaire demande d'attaquer le chantier 9 de
 l'action 186, « Le site et le simulateur » (« Attaque le chantier 9 »). La

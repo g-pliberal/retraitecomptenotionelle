@@ -76,6 +76,15 @@ def test_accueil_sans_parametres_ne_calcule_rien(page):
     assert "Résultats" not in texte
 
 
+def test_l_accueil_ne_dit_plus_le_rendement_le_meme_pour_tous(page):
+    """« Le rendement est le même pour tous » quitte l'accueil (action 186,
+    décision 128) : vraie de l'indexation d'une année, fausse à quelques
+    dixièmes près sur une vie entière."""
+    texte = page("/")
+    assert "En quoi ce serait plus juste" in texte
+    assert "rendement est le même pour tous" not in texte
+
+
 def test_simulation_affiche_les_quatre_systemes(page):
     """Les quatre systèmes comparés, nommés par leur assiette.
 

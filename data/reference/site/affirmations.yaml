@@ -206,13 +206,6 @@ affirmations:
     etat: verifiee
     controle: garantie_comptee_a_part
 
-  - id: accueil.rendement_meme_pour_tous
-    page: /
-    extrait: "Le rendement est le même pour tous"
-    porte: le taux d'indexation d'une année ne dépend pas de la carrière
-    etat: verifiee
-    controle: rendement_independant_de_la_carriere
-
   - id: accueil.esperance_de_vie_propre
     page: /
     extrait: "Chacun est divisé par sa propre espérance de vie."

@@ -604,7 +604,8 @@ def test_plusieurs_ages_de_depart_cote_a_cote(saisies, page):
     assert any(depart.pensions_apres_impot["actuel"] < depart.pensions_nettes["actuel"]
                for depart in departs)
     assert "une personne seule, sans enfant à charge" in bloc
-    assert bloc.count("<table") == 4 and "rendement réel" in bloc
+    # Le tableau des rendements est sorti du site (action 186, décision 127).
+    assert bloc.count("<table") == 3 and "rendement" not in bloc
     assert "Partir plus tôt ou plus tard" not in page("/simuler", **REQUETES["parti"])
 
 

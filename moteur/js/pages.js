@@ -5870,8 +5870,9 @@ ${revenus}`);
  * plein automatique (`balayageDeLEstimation`, contexte.js), et ce que
  * chacun des quatre systèmes en fait sur toute la retraite — la pension
  * nette du premier mois, puis après impôt (étape 5), le taux de
- * remplacement net, après impôt, le rendement réel, le patrimoine
- * retraite —, sous la convention de l'OCDE : l'impôt d'une personne seule.
+ * remplacement net, après impôt, le patrimoine retraite —, sous la
+ * convention de l'OCDE : l'impôt d'une personne seule. Le tableau des
+ * rendements en est sorti (action 186, décision 127).
  * Puis l'âge d'équilibre de la génération, où son diviseur rend celui de la
  * génération de référence. Rien quand l'estimation ne se chiffre pas, ni
  * pour un seul âge.
@@ -5925,18 +5926,6 @@ function partirPlusTotOuPlusTard(contexte, saisie) {
     ["", "nombre", "nombre", "nombre", "nombre", "nombre"],
     "Le système 1 sur toute la retraite", true);
 
-  const rendements = g.tableau(
-    ["Départ", ...numeros.map((numero) => `Système ${numero}`)],
-    balayage.map((ligne) => [
-      libelleDepart(ligne),
-      ...SCENARIOS_AFFICHES.map(([scenario]) => ouRien(
-        ligne.depart.indicateurs[scenario].rendement_reel,
-        // Arrondi au millième, un rendement de −0,04 % s'écrit 0,0 %, sans signe.
-        (v) => g.pourcentage(Math.abs(v) < 0.0005 ? 0.0 : v, true, 1))),
-    ]),
-    ["", ...numeros.map(() => "nombre")],
-    "Le rendement réel de vos cotisations, par an", true);
-
   let equilibre = "";
   const simulateur = contexte.simulateur(saisie.parametres(contexte.base));
   try {
@@ -5955,16 +5944,16 @@ l'âge de référence du compte en ${reference.annee}.</p>`;
   return g.depliant("Partir plus tôt ou plus tard", `
 <p>La même carrière, liquidée chaque année de l'âge où le droit s'ouvre à
 l'âge du taux plein automatique, travail prolongé jusqu'au départ. Partir plus
-tard relève la pension de chaque mois, mais la sert moins longtemps : les
-deux derniers tableaux comptent toute la retraite, chaque année pesée par la
-chance d'y être en vie.${g.bulle(
+tard relève la pension de chaque mois, mais la sert moins longtemps : le
+dernier tableau compte toute la retraite, chaque année pesée par la chance
+d'y être en vie.${g.bulle(
     "Comment ces indicateurs sont comptés",
     "Selon la convention de l'OCDE (<i>Pensions at a Glance</i>) : la mortalité "
     + "projetée de l'INSEE, propre à votre génération et à votre sexe, le "
     + "patrimoine actualisé à 1,5 % par an au-dessus des prix et rapporté au "
     + "dernier revenu. Pensions et revenus sont nets de la CSG, de la CRDS et "
-    + "des cotisations de chaque année. Ce qui est dit « après impôt », le "
-    + "patrimoine et le rendement sont aussi nets de l'impôt sur le revenu : "
+    + "des cotisations de chaque année. Ce qui est dit « après impôt » et le "
+    + "patrimoine sont aussi nets de l'impôt sur le revenu : "
     + "celui d'une personne seule, sans enfant à charge, qui ne déclare que ses "
     + "revenus d'activité et ses pensions, au barème de chaque année, que la "
     + "page fait suivre les prix au-delà de la dernière loi de finances ; la "
@@ -5972,15 +5961,13 @@ chance d'y être en vie.${g.bulle(
     + "seule. Le "
     + "remplacement rapporte la pension du premier mois au revenu net de la "
     + "dernière année travaillée en entier, en euros constants ; le "
-    + "rendement réel est le taux qui égale les cotisations versées aux "
-    + "pensions espérées, au-dessus des prix ; le minimum vieillesse dit "
+    + "minimum vieillesse dit "
     + "combien de fois la pension nette couvre l'allocation d'une personne "
     + "seule.",
   )}</p>
 ${pensions}
 ${apresImpot}
-${actuel}
-${rendements}${equilibre}`);
+${actuel}${equilibre}`);
 }
 
 /**
@@ -16671,9 +16658,6 @@ par une règle et payée par la génération suivante, la règle change quand le
 compte n'y est pas, et ce qu'un euro cotisé rapporte dépend ainsi de l'année de
 naissance, sans que personne ne l'ait voté.</p>
 <ul class="serree">
-  <li><strong>Le rendement est le même pour tous</strong> : la croissance de la
-  masse des salaires, c'est-à-dire exactement ce que la répartition peut payer à
-  taux inchangé.</li>
   <li><strong>Chacun est divisé par sa propre espérance de vie.</strong> Vivre
   plus longtemps étale le même capital sur plus d'années, au lieu d'envoyer la
   facture à la génération d'après.</li>
