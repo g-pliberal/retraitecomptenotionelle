@@ -658,7 +658,6 @@ periodes:
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
@@ -667,6 +666,8 @@ periodes:
     decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     decote_trimestres_maximum: 12
     surcote_par_trimestre: 0.0125
+    surcote_par_trimestre_depuis: 2024
+    surcote_par_trimestre_d_avant: 0.01
     surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
@@ -689,8 +690,9 @@ periodes:
       la limite de 15 % » — douze trimestres, `decote_trimestres_maximum:
       12` — que la durée n'annule toujours pas ; majoration de 1 % par
       trimestre accompli avant le 1er janvier 2024 dans la limite de 20 %,
-      de 1,25 % depuis dans la limite de 25 %. La fiche sert 1,25 % à tous
-      les trimestres des liquidations de 2024 et après, à l'année près. La
+      de 1,25 % depuis dans la limite de 25 %, depuis 67 ans pour toutes
+      les générations (`surcote_par_trimestre_depuis`,
+      `surcote_par_trimestre_d_avant`). La
       page de la caisse, lue le 23 septembre 2026, écrit les mêmes règles,
       sans le plafond de 15 %, et donne l'exemple : « si vous avez eu 2
       enfants, vous pouvez bénéficier du taux plein pour ce régime dès 65
@@ -701,7 +703,6 @@ periodes:
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
@@ -710,6 +711,8 @@ periodes:
     decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     decote_trimestres_maximum: 12
     surcote_par_trimestre: 0.0125
+    surcote_par_trimestre_depuis: 2024
+    surcote_par_trimestre_d_avant: 0.01
     surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
@@ -737,7 +740,6 @@ periodes:
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
@@ -746,6 +748,8 @@ periodes:
     decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     decote_trimestres_maximum: 12
     surcote_par_trimestre: 0.0125
+    surcote_par_trimestre_depuis: 2024
+    surcote_par_trimestre_d_avant: 0.01
     surcote_points: carcdsf_minoration_age_seul
     surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20

@@ -4835,8 +4835,27 @@ def surcote_points(moteur, periode: PeriodeRegime, carriere: Carriere,
         atteint = carriere.mois_de_l_anniversaire(debut)
         suivant = DateMois(atteint.annee, 1).plus_mois(
             3 * ((atteint.mois - 1) // 3 + 1))
-        ecoules = trimestres_civils_d_exercice(
-            moteur, carriere, code, suivant, carriere.date_de_l_age(fin))
+        effet = carriere.date_de_l_age(fin)
+        depuis = periode.surcote_par_trimestre_depuis
+        if depuis is not None:
+            # « 1 % par trimestre […] accompli avant le 1er janvier 2024, dans
+            # la limite de 20 % », « 1,25 % par trimestre […] accompli à
+            # compter du 1er janvier 2024, dans la limite de 25 % » (CARCDSF,
+            # statuts de 2024, article 35, I, c) : deux taux selon la date du
+            # trimestre, chacun sous sa limite.
+            bascule = DateMois(depuis, 1)
+            maximum = periode.surcote_trimestres_maximum
+            avant = trimestres_civils_d_exercice(
+                moteur, carriere, code, suivant,
+                effet if effet.rang < bascule.rang else bascule)
+            apres = trimestres_civils_d_exercice(
+                moteur, carriere, code,
+                suivant if suivant.rang > bascule.rang else bascule, effet)
+            if maximum is not None:
+                avant = min(avant, maximum)
+                apres = min(apres, maximum)
+            return 1.0 + periode.surcote_par_trimestre_d_avant * avant + taux * apres
+        ecoules = trimestres_civils_d_exercice(moteur, carriere, code, suivant, effet)
     if periode.surcote_trimestres_cotises:
         # « Pour chaque année pleine COTISÉE dans le présent régime »
         # (CAVAMAC, statuts dans la rédaction de l'arrêté du 4 août 2023,

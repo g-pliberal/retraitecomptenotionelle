@@ -552,6 +552,8 @@ versions:
       decote_par_trimestre: 0.0125
       decote_trimestres_maximum: 12
       surcote_par_trimestre: 0.0125
+      surcote_par_trimestre_depuis: 2024
+      surcote_par_trimestre_d_avant: 0.01
       surcote_trimestres_maximum: 20
       taux_plein_anticipe_par_enfant_annees: 1
       taux_plein_anticipe_maximum_annees: 5
@@ -679,6 +681,8 @@ versions:
       decote_par_trimestre: 0.0125
       decote_trimestres_maximum: 12
       surcote_par_trimestre: 0.0125
+      surcote_par_trimestre_depuis: 2024
+      surcote_par_trimestre_d_avant: 0.01
       surcote_trimestres_maximum: 20
       taux_plein_anticipe_par_enfant_annees: 1
       taux_plein_anticipe_maximum_annees: 5
@@ -763,23 +767,21 @@ approximations:
     non mesuré : nul pour l'affilié qui exerce toute l'année jusqu'à sa pension ; un à
     trois trimestres, 1 à 3,75 points, l'année d'une cessation que la carrière ne date pas
 - version: [statuts_de_2024, reglement_de_2026]
-  textes: statuts de 2024, article 35, I, a et c ; règlement de 2026, article 3, I, a et c ; L. 351-8, 1°
+  textes: statuts de 2024, article 35, I, c ; règlement de 2026, article 3, I, c
   ecart: >-
-    Le modèle majore de 1,25 % tous les trimestres, quand le texte n'en sert que 1 % à
-    ceux accomplis avant le 1er janvier 2024 ; et il compte la majoration des générations
-    de juillet 1951 à 1954 depuis l'âge de leur table (66 ans et 2 mois en 1953), quand le
-    texte la compte depuis l'âge du 1° de L. 351-8, 67 ans (essai du 5 novembre 2026, dans
-    les deux moteurs).
+    Depuis le 14 novembre 2026, le modèle majore de 1 % les trimestres accomplis avant le
+    1er janvier 2024 et de 1,25 % les suivants, comptés depuis 67 ans pour toutes les
+    générations (`surcote_par_trimestre_depuis`, `surcote_par_trimestre_d_avant`,
+    historique). Il en reste un écart : le texte borne la première majoration à 20 % et
+    la seconde à 25 %, sans dire si elles se cumulent ; le modèle borne chacune à part,
+    vingt trimestres, et les additionne, la lecture la plus favorable à l'affilié
+    (a_relire).
   effet: >-
-    né le 1er janvier 1955, liquidé le 1er janvier 2025 à 70 ans : le texte, sept
-    trimestres à 1 % (avril 2022 à décembre 2023) et quatre à 1,25 %, 1,12 ; le modèle,
-    1,15. Né le 1er janvier 1953, liquidé le 1er avril 2024 : le texte, quinze trimestres
-    à 1 % (avril 2020 à décembre 2023) et un à 1,25 %, 1,1625 ; le modèle, 1,25. Les 3
-    points du premier cas et les 8,75 du second comprenaient le trimestre de l'âge que le
-    modèle comptait à tort, l'écart précédent, corrigé le 14 novembre 2026 : le modèle
-    rend depuis 1,1375 au premier cas, onze trimestres à 1,25 %, 1,75 point de trop, qui
-    est le taux ; au second, vingt trimestres depuis avril 2019, toujours 1,25, la limite
-    de vingt trimestres masquant le trimestre retiré (relecture R-E2)
+    nul tant que les deux majorations ne passent pas 25 % ensemble, ce qui demande une
+    pension prise après 72 ans, depuis avril 2025. Né le 1er janvier 1950, 67 ans le
+    1er janvier 2017, pension au 1er janvier 2026 à 76 ans : le modèle, 20 % et huit
+    trimestres à 1,25 %, 1,30 ; 1,25 si la limite de 25 % vaut pour le tout, 5 points de
+    trop ; 20 points au plus, à 79 ans
 - version: [statuts_de_2011, statuts_de_2011_modifies_en_2012, statuts_de_2017]
   textes: statuts de 2011, article 19, I, b, et son tableau ; arrêté du 9 juillet 2012, annexe
   ecart: >-
@@ -875,6 +877,9 @@ effet: >-
   La majoration, que le modèle comptait au temps écoulé depuis l'âge, que l'affilié
   exerce ou non, se compte depuis le 14 novembre 2026 par trimestre civil entier
   d'exercice qui suit le trimestre civil de l'âge (historique).
+  Les trimestres d'avant 2024, que le modèle majorait de 1,25 % comme les suivants, et
+  depuis l'âge des statuts de 2017 pour les nés avant 1955, le sont de 1 % depuis le
+  14 novembre 2026, et depuis 67 ans pour tous (historique).
 sources:
   lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
@@ -1020,6 +1025,31 @@ historique:
   20 252,31 €). L'écart figurait aux approximations depuis le 5 novembre 2026 ; il n'y
   reste que la cessation en cours d'année, la condition d'être à jour de ses
   cotisations et les trimestres d'avant le 1er juillet 2011.
+- >-
+  2026-11-14 — corrigée (action 130, décision du propriétaire du 13 novembre, ligne 25
+  de la file) : aux pensions qui prennent effet depuis le 10 janvier 2024, le modèle
+  majorait de 1,25 % tous les trimestres, quand les statuts de 2024 n'en servent que
+  1 % à ceux « accompli[s] avant le 1er janvier 2024, dans la limite de 20 % », et
+  1,25 % à ceux « accompli[s] à compter du 1er janvier 2024, dans la limite de 25 % »
+  (article 35, I, c ; règlement de 2026, article 3, I, c) ; et il comptait la
+  majoration des nés avant 1955 depuis l'âge des statuts de 2017 (65 ans avant juillet
+  1951, 66 ans et 2 mois en 1953, 66 ans et 7 mois en 1954), quand le texte la compte
+  depuis « l'âge prévu au 1° de l'article L. 351-8 », 67 ans pour toutes les
+  générations. Deux paramètres des trois périodes de `carcdsf_complementaire.yaml`
+  depuis 2024, `surcote_par_trimestre_depuis: 2024` et
+  `surcote_par_trimestre_d_avant: 0.01`, dans les deux moteurs (`surcotePoints`), et
+  ces périodes ne lisent plus l'âge du taux plein à la génération
+  (`age_taux_plein_par_generation`). Le dentiste né le 1er janvier 1955, au travail dès
+  20 ans, pension au 1er janvier 2025 à 70 ans : sept trimestres à 1 % et quatre à
+  1,25 %, 1,12 au lieu de 1,1375 (17 595,30 € par an au lieu de 17 870,23 €, en euros
+  de 2026) ; né le 1er janvier 1953, pension au 1er avril 2024 : quinze trimestres à
+  1 % depuis avril 2020 et un à 1,25 %, 1,1625 au lieu de 1,25 (18 280,73 € au lieu de
+  19 656,70 €) ; né le 1er janvier 1954, pension au 1er avril 2024 : 1,1225 au lieu de
+  1,175 (17 446,14 € au lieu de 18 262,10 €) ; né le 1er janvier 1950, pension au
+  1er juillet 2024 : 20 % et deux trimestres à 1,25 %, 1,225 au lieu de 1,25
+  (20 020,03 € au lieu de 20 428,60 €). L'écart figurait aux approximations depuis le
+  5 novembre 2026 ; il n'y reste que le cumul des deux limites, que le texte ne tranche
+  pas.
 code:
   interrupteurs:
     abattement_points: cavom
@@ -1056,10 +1086,12 @@ code:
     age_sans_coefficient_de_l_inapte, categories_sans_coefficient,
     age_ouverture_par_generation, age_table, age_taux_plein, age_taux_plein_par_generation,
     decote_par_trimestre, decote_trimestres_maximum, surcote_par_trimestre,
+    surcote_par_trimestre_depuis, surcote_par_trimestre_d_avant,
     surcote_trimestres_maximum, taux_plein_anticipe_par_enfant_annees,
     taux_plein_anticipe_maximum_annees ; regimes/carcdsf_complementaire.yaml :
     age_taux_plein, age_table, decote_par_trimestre, decote_trimestres_maximum,
-    surcote_par_trimestre, surcote_trimestres_maximum, surcote_trimestres_civils_d_exercice,
+    surcote_par_trimestre, surcote_par_trimestre_depuis, surcote_par_trimestre_d_avant,
+    surcote_trimestres_maximum, surcote_trimestres_civils_d_exercice,
     taux_plein_anticipe_par_enfant_annees,
     taux_plein_anticipe_maximum_annees, age_sans_coefficient_de_l_inapte,
     categories_sans_coefficient, avantages_non_contributifs, date_effet ;

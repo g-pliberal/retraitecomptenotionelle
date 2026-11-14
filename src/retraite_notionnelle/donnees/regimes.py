@@ -593,6 +593,14 @@ class PeriodeRegime:
     #: libéral suivant le dernier jour du trimestre civil incluant l'âge »
     #: (statuts de 2011, article 19, I, c ; règlement de 2026, article 3).
     surcote_trimestres_civils_d_exercice: bool
+    #: Avec lui, deux taux selon la date du trimestre : ``surcote_par_trimestre``
+    #: pour ceux accomplis depuis le 1er janvier de cette année,
+    #: ``surcote_par_trimestre_d_avant`` pour les autres, chacun sous
+    #: ``surcote_trimestres_maximum`` — la CARCDSF, 1 % avant 2024 dans la
+    #: limite de 20 %, 1,25 % depuis dans la limite de 25 % (statuts de 2024,
+    #: article 35, I, c). ``None`` : un seul taux.
+    surcote_par_trimestre_depuis: int | None
+    surcote_par_trimestre_d_avant: float | None
     #: Plafond en euros de la majoration pour enfants, et année à laquelle il
     #: est publié. Le plafond suit ensuite la valeur de service du point.
     plafond_majoration_enfants: float | None
@@ -2386,6 +2394,14 @@ class CatalogueRegimes:
                     p.get("surcote_depuis_l_age_legal", False)),
                 surcote_trimestres_civils_d_exercice=bool(
                     p.get("surcote_trimestres_civils_d_exercice", False)),
+                surcote_par_trimestre_depuis=(
+                    None if p.get("surcote_par_trimestre_depuis") is None
+                    else int(p["surcote_par_trimestre_depuis"])
+                ),
+                surcote_par_trimestre_d_avant=(
+                    None if p.get("surcote_par_trimestre_d_avant") is None
+                    else float(p["surcote_par_trimestre_d_avant"])
+                ),
                 plafond_majoration_enfants=(
                     None if p.get("plafond_majoration_enfants") is None
                     else float(p["plafond_majoration_enfants"])

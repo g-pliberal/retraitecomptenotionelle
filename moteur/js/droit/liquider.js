@@ -3637,9 +3637,29 @@ export function surcotePoints(moteur, periode, carriere, trimestres, requis, age
     const atteint = carriere.moisDeLAnniversaire(debut);
     const suivant = new DateMois(atteint.annee, 1)
       .plusMois(3 * (Math.floor((atteint.mois - 1) / 3) + 1));
-    ecoules = trimestresCivilsDExercice(
-      moteur, carriere, code, suivant, carriere.dateDeLAge(fin),
-    );
+    const effet = carriere.dateDeLAge(fin);
+    const depuis = periode.surcote_par_trimestre_depuis;
+    if (depuis !== null && depuis !== undefined) {
+      // « 1 % par trimestre […] accompli avant le 1er janvier 2024, dans la
+      // limite de 20 % », « 1,25 % par trimestre […] accompli à compter du
+      // 1er janvier 2024, dans la limite de 25 % » (CARCDSF, statuts de 2024,
+      // article 35, I, c) : deux taux selon la date du trimestre, chacun sous
+      // sa limite.
+      const bascule = new DateMois(depuis, 1);
+      const maximum = periode.surcote_trimestres_maximum ?? null;
+      let avant = trimestresCivilsDExercice(
+        moteur, carriere, code, suivant, effet.rang < bascule.rang ? effet : bascule,
+      );
+      let apres = trimestresCivilsDExercice(
+        moteur, carriere, code, suivant.rang > bascule.rang ? suivant : bascule, effet,
+      );
+      if (maximum !== null) {
+        avant = Math.min(avant, maximum);
+        apres = Math.min(apres, maximum);
+      }
+      return 1.0 + periode.surcote_par_trimestre_d_avant * avant + taux * apres;
+    }
+    ecoules = trimestresCivilsDExercice(moteur, carriere, code, suivant, effet);
   }
   if (periode.surcote_trimestres_cotises) {
     // « Pour chaque année pleine COTISÉE dans le présent régime » (CAVAMAC

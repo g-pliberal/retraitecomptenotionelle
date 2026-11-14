@@ -924,6 +924,22 @@ champs_periode:
     valeurs: [true]
     defaut: false
 
+  surcote_par_trimestre_depuis:
+    description: >-
+      Avec `surcote_trimestres_civils_d_exercice` seulement : l'année au
+      1er janvier de laquelle `surcote_par_trimestre` commence de valoir, les
+      trimestres civils accomplis avant prenant `surcote_par_trimestre_d_avant`,
+      et `surcote_trimestres_maximum` bornant chacun des deux décomptes. La
+      CARCDSF majore de « 1 % par trimestre […] accompli avant le 1er janvier
+      2024, dans la limite de 20 % », de « 1,25 % par trimestre […] accompli à
+      compter du 1er janvier 2024, dans la limite de 25 % » (statuts de 2024,
+      article 35, I, c). `null` : un seul taux.
+    defaut: null
+
+  surcote_par_trimestre_d_avant:
+    description: "taux par trimestre accompli avant `surcote_par_trimestre_depuis` (fraction, null sans lui)"
+    defaut: null
+
   taux_majoration_enfants:
     description: >-
       Barème PROPRE de la majoration pour enfants, par nombre d'enfants à

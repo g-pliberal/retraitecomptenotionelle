@@ -440,6 +440,67 @@ def test_la_carcdsf_majore_par_trimestre_civil_entier_d_exercice_liberal():
     assert ecarts == {}, ecarts
 
 
+#: (naissance, âge au départ) : la pension de la CARCDSF par an et son
+#: coefficient, aux statuts de 2024. Dentiste au double du salaire moyen depuis
+#: ses 20 ans, euros de 2026. Chaque montant est celui du taux plein
+#: (15 710,0892 €, 15 725,3600 €, 15 542,2154 €, 16 342,8792 €) multiplié à la
+#: main par la majoration du texte.
+CARCDSF_MAJOREE_DEPUIS_2024 = {
+    # Né le 1er janvier 1955, 67 ans le 1er janvier 2022, pension au 1er janvier
+    # 2025 : sept trimestres « accompli[s] avant le 1er janvier 2024 », d'avril
+    # 2022 à décembre 2023, à 1 %, et quatre depuis, à 1,25 %.
+    # 15 710,0892 × 1,12 = 17 595,30 € ; le modèle, onze à 1,25 %, 17 870,23 €.
+    ("1955-01-01", "70"): (17_595.30, 1.12),
+    # Né le 1er janvier 1953, pension au 1er avril 2024 : l'âge « prévu au 1° de
+    # l'article L. 351-8 », 67 ans pour toutes les générations, le 1er janvier
+    # 2020, et non les 66 ans et 2 mois des statuts de 2017 ; quinze trimestres
+    # d'avril 2020 à décembre 2023 à 1 %, un à 1,25 %.
+    # 15 725,3600 × 1,1625 = 18 280,73 € ; le modèle, 1,25, 19 656,70 €.
+    ("1953-01-01", "71.25"): (18_280.73, 1.1625),
+    # Né le 1er janvier 1954, pension au 1er avril 2024 : 67 ans le 1er janvier
+    # 2021, et non 66 ans et 7 mois ; onze trimestres d'avril 2021 à décembre
+    # 2023 à 1 %, un à 1,25 %. 15 542,2154 × 1,1225 = 17 446,14 € ; le modèle,
+    # 1,175.
+    ("1954-01-01", "70.25"): (17_446.14, 1.1225),
+    # Né le 1er janvier 1950, pension au 1er juillet 2024 : 67 ans le 1er
+    # janvier 2017, vingt-sept trimestres d'avril 2017 à décembre 2023, « dans
+    # la limite de 20 % », et deux à 1,25 %. 16 342,8792 × 1,225 = 20 020,03 € ;
+    # le modèle, 1,25.
+    ("1950-01-01", "74.5"): (20_020.03, 1.225),
+}
+
+
+def test_la_carcdsf_majore_de_1_pour_cent_les_trimestres_d_avant_2024_depuis_67_ans():
+    """Statuts de 2024, article 35, I, a et c (JORFARTI000048880707) ; règlement
+    de 2026, article 3, I, a et c (JORFARTI000054435749) : taux plein « à partir
+    de l'âge prévu au 1° de l'article L. 351-8 », « l'âge prévu au premier
+    alinéa de l'article L. 161-17-2 augmenté de trois années » (LEGIARTI000047452736),
+    67 ans pour toutes les générations ; « 1 % par trimestre civil entier
+    d'exercice libéral […] accompli avant le 1er janvier 2024, dans la limite
+    de 20 % », « 1,25 % par trimestre […] accompli à compter du 1er janvier
+    2024, dans la limite de 25 % ». Le modèle servait 1,25 % à tous les
+    trimestres, comptés depuis l'âge des statuts de 2017 pour les nés avant
+    1955 (corrigé le 14 novembre 2026). Servi par le portage, refait au bit
+    près par le moteur Python."""
+    from outils_pont import servi_et_refait
+
+    cas = [{"cle": "|".join(cle),
+            "requete": {**REQUETE_DE_DENTISTE, "debut": "20", "naissance": cle[0],
+                        "liquidation": cle[1], "sexe": "H", "enfants": "0"}}
+           for cle in CARCDSF_MAJOREE_DEPUIS_2024]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    ecarts = {}
+    for cle, (montant, coefficient) in CARCDSF_MAJOREE_DEPUIS_2024.items():
+        actuel = servis["|".join(cle)]["actuel"]
+        [pension] = [p for p in actuel["pensions_par_regime"]
+                     if p["regime"] == "carcdsf_complementaire"]
+        if (_coefficient(pension["detail"]) != pytest.approx(coefficient)
+                or pension["montant"] != pytest.approx(montant, abs=0.005)):
+            ecarts[cle] = (_coefficient(pension["detail"]), round(pension["montant"], 2))
+    assert ecarts == {}, ecarts
+
+
 # -- la CAVP -------------------------------------------------------------------
 
 
