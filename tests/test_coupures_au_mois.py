@@ -186,7 +186,9 @@ def test_les_dates_d_effet_partagent_les_annees_sans_trou_ni_doublon():
                        # article 15 des statuts récrit, en vigueur le 10 janvier 2024
                        "cavp_complementaire",
                        # arrêté du 22 mars 2017, en vigueur le 30 mars 2017
-                       "carmf_complementaire", "asv_conventionnes"}
+                       "carmf_complementaire", "asv_conventionnes",
+                       # statuts de 2007, en vigueur le 11 octobre 2007
+                       "carcdsf_complementaire"}
 
 
 @pytest.mark.parametrize("bornes,message", [

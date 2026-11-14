@@ -706,20 +706,6 @@ approximations:
     non mesuré ; sans effet probable sur la minoration par l'âge, non établi : l'article
     18 de 1955, de la section des chirurgiens-dentistes, reste à lire au Bulletin officiel
 - version: [statuts_de_2007]
-  textes: statuts de 2007, articles 20 et 23 ; arrêté du 1er octobre 2007, publié le 10 octobre
-  ecart: >-
-    Du 11 octobre au 31 décembre 2007, le modèle liquide par la période de 2004 à 2007, qui
-    porte la décote du régime de base, quand les statuts de 2007 sont en vigueur : la
-    minoration par l'âge n'est pas servie dès que la durée est réunie, ni la majoration
-    de 10 % pour trois enfants, ni le taux plein avancé de la mère (essai du 5 novembre
-    2026, dans les deux moteurs).
-  effet: >-
-    pour le dentiste né le 1er octobre 1945, au travail dès 20 ans, liquidé le 1er
-    novembre 2007 à 62 ans et 1 mois, « au cours de la 63e année » : le texte, 15 % de
-    minoration, coefficient 0,85 ; le modèle, 1. Jusqu'à 25 points à 60 ans. La mère de
-    trois enfants, née le même jour, même carrière : le texte, 1 (62 ans pour trois
-    enfants) et 10 % de plus ; le modèle, 1 sans les 10 %
-- version: [statuts_de_2007]
   textes: statuts de 2007, article 20 ; arrêté du 13 avril 2011, article 3
   ecart: >-
     Du 1er janvier au 30 juin 2011, le modèle liquide par la période de 2011, qui porte les
@@ -871,7 +857,7 @@ effet: >-
   avant, ceux de 2011 le 1er juillet 2011, leurs bornes le 22 juillet 2012, les âges
   écrits le 25 décembre 2017, l'article 35 récrit le 10 janvier 2024, le règlement le
   18 juillet 2026 ; ni l'inapte et les catégories sans minoration ne
-  sont servis, ni les statuts de 2007 avant 2008, ni ceux de 2011 au premier semestre,
+  sont servis, ni les statuts de 2011 au premier semestre,
   ni ceux de 2017 du 1er au 9 janvier 2024 ;
   la majoration se compte au temps, non à l'exercice libéral par trimestre civil, et à
   1,25 % les trimestres d'avant 2024.
@@ -879,8 +865,11 @@ effet: >-
   file de l'action 130) : jusque-là, le modèle ne servait aucune réversion de la CARCDSF,
   motif `non_portee` ; il en sert depuis 60 % au conjoint de 65 ans, dans les deux
   moteurs (fiche `reversion_carcdsf`, qui en déclare les limites).
+  Les statuts de 2007, que le modèle ne servait qu'aux pensions de 2008, le sont
+  depuis le 14 novembre 2026 à celles qui prennent effet depuis le 11 octobre 2007
+  (historique).
 sources:
-  lu_le: 2026-11-05
+  lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -926,6 +915,15 @@ sources:
       son article 3 (JORFARTI000023336805), qui insère le titre VII ; le texte de l'article
       18 n'est pas à l'index
     date: 2026-11-05
+  - type: jorf
+    reference: >-
+      Arrêté du 1er octobre 2007, relu avant la correction, dans l'index JORF du dépôt, à
+      jour du 11 novembre 2026 : ses trois articles (JORFARTI000001289079,
+      JORFARTI000002267801, JORFARTI000002068265) et les six pièces de son annexe, dont
+      les articles 20 et 23 (JORFARTI000001859980) ; publié le 10 octobre 2007, il ne
+      fixe aucune date d'entrée en vigueur et ne porte aucune disposition transitoire
+      (« transitoire » et « 2008 » n'y sont nulle part).
+    date: 2026-11-14
   - type: autre
     reference: >-
       CARCDSF, page « A quel âge demander ses droits » : taux plein à 67 ans, «
@@ -937,6 +935,22 @@ sources:
       €, 11,35 % de 0,65 à 5 plafonds), conforme à la fiche.
     url: https://www.carcdsf.fr/retraite/a-quel-age-demander-ses-droits-56
     date: 2026-09-23
+historique:
+- >-
+  2026-11-14 — corrigée (action 130, décision du propriétaire du 13 novembre, ligne 21
+  de la file) : le modèle liquidait par sa période de 2004 à 2007, qui porte la décote
+  du régime de base, les pensions qui prennent effet du 11 octobre au 31 décembre 2007,
+  quand les statuts de 2007 sont en vigueur depuis le 11 octobre, lendemain de la
+  publication de l'arrêté du 1er octobre 2007, sans disposition transitoire : ni la
+  minoration par l'âge dès que la durée était réunie, ni la majoration de 10 % pour
+  trois enfants, ni le taux plein avancé de la mère n'étaient servis. La période de
+  2008 de `carcdsf_complementaire.yaml` liquide désormais les pensions qui prennent
+  effet depuis le 11 octobre 2007 (`date_effet`), dans les deux moteurs : le dentiste
+  né le 1er août 1945, au travail dès 20 ans, pension au 1er novembre 2007 à 62 ans
+  et 3 mois, « au cours de la 63e année », reçoit le coefficient 0,85 de l'article 20
+  au lieu de 1 (6 399,74 € par an au lieu de 7 529,11 €, en euros de 2026) ; né le
+  1er août 1947, à 60 ans et 3 mois, 0,75 ; la mère de trois enfants née le 1er août
+  1945, sans minoration, reçoit les 10 % de l'article 23 (752,91 €) au lieu de rien.
 code:
   interrupteurs:
     abattement_points: cavom
@@ -966,6 +980,6 @@ code:
     taux_plein_anticipe_maximum_annees ; regimes/carcdsf_complementaire.yaml :
     age_taux_plein, age_table, decote_par_trimestre, decote_trimestres_maximum,
     surcote_par_trimestre, surcote_trimestres_maximum, taux_plein_anticipe_par_enfant_annees,
-    taux_plein_anticipe_maximum_annees, avantages_non_contributifs ;
+    taux_plein_anticipe_maximum_annees, avantages_non_contributifs, date_effet ;
     legislation/ages_regimes.csv : carcdsf_2011
   tests: [tests/test_sections_sante.py, tests/test_sections_liberales.py, tests/js/moteur.test.js]

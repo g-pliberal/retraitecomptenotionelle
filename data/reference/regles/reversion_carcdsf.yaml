@@ -229,9 +229,7 @@ approximations:
     la bonification de 10 % est celle de l'affilié, reversée à 60 % : le modèle tient
     ses enfants pour ceux du survivant, quand le texte la sert au survivant qui remplit
     lui-même les conditions — la caisse dit « si le conjoint a eu au moins 3 enfants
-    avec le titulaire ». Du 11 octobre au 31 décembre 2007, le modèle ne sert pas la
-    bonification à l'affilié (fiche `carcdsf_minoration_age_seul`), ni donc à son
-    survivant
+    avec le titulaire »
   effet: 10 % de la réversion ; non mesuré
 - ecart: >-
     tout enfant déclaré lève la condition de deux ans de mariage, quand le texte demande

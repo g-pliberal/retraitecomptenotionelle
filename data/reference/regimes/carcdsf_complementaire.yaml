@@ -37,8 +37,8 @@ inventaire:
     La CARSAF des sages-femmes, fusionnée dans la CARCDSF en 2009, avait son
     propre barème avant : les sages-femmes d'avant 2009 reçoivent celui des
     dentistes. Les statuts d'avant 2007, publiés au Bulletin officiel, ne
-    sont pas lus : avant 2008 la fiche garde la règle d'âge du régime de
-    base. Le tableau de minoration des nés de juillet 1951 à 1954 (arrêté du
+    sont pas lus : avant le 11 octobre 2007 la fiche garde la règle d'âge
+    du régime de base. Le tableau de minoration des nés de juillet 1951 à 1954 (arrêté du
     9 juillet 2012) n'est publié qu'en image, et 1,25 % par trimestre en
     tient lieu.
 periodes:
@@ -139,6 +139,7 @@ periodes:
     cotisation_forfaitaire_annee: 2020
   - debut: 2004
     fin: 2007
+    date_effet: [2004-01-01, 2007-10-11]
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -157,6 +158,7 @@ periodes:
     cotisation_forfaitaire_annee: 2020
   - debut: 2008
     fin: 2008
+    date_effet: [2007-10-11, 2009-01-01]
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -180,8 +182,11 @@ periodes:
       (JORFTEXT000000252172) approuve les statuts du régime complémentaire
       de la caisse des chirurgiens-dentistes et abroge ceux de 1955, que
       l'index ne porte pas, non plus que les modifications publiées au
-      Bulletin officiel (1985 à 1997) : la fiche les sert à partir de
-      2008, première année pleine, et rien avant. Article 20 : taux plein
+      Bulletin officiel (1985 à 1997) : la fiche les sert aux pensions qui
+      prennent effet depuis le 11 octobre 2007 (`date_effet`), lendemain
+      de la publication de l'arrêté, qui ne fixe aucune date et ne porte
+      aucune disposition transitoire ; elle ne les servait qu'à partir de
+      2008 jusqu'au 14 novembre 2026. Article 20 : taux plein
       « à partir de 65 ans », et avant « un coefficient de minoration,
       fonction de l'âge » — 25 % au cours de la 61e année, 20 % de la 62e,
       15 %, 10 % puis 5 % de la 65e, c'est-à-dire 5 % par année manquante,

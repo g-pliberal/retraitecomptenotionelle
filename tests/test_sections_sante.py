@@ -148,6 +148,65 @@ def test_la_carcdsf_majore_apres_son_age(simulateur):
     assert _coefficient(pensions["carcdsf_complementaire"].detail) == pytest.approx(1.0)
 
 
+#: (naissance, âge à la liquidation, sexe, enfants) : la retraite
+#: complémentaire de la CARCDSF, par an en euros de 2026, sa majoration pour
+#: enfants, et le coefficient du détail. Dentiste au double du salaire moyen
+#: depuis ses 20 ans ; les points ne dépendent pas du texte qui liquide, et
+#: chaque montant est celui du taux plein (7 529,1074 €, 7 543,3030 €,
+#: 7 251,9622 €, 7 514,9118 €) multiplié à la main par le coefficient de
+#: l'article 20 des statuts de 2007.
+CARCDSF_A_L_AUTOMNE_2007 = {
+    # Né le 1er août 1945, pension au 1er novembre 2007, à 62 ans et 3 mois,
+    # « au cours de la 63e année » : 15 %. 7 529,1074 × 0,85 = 6 399,74 €.
+    ("1945-08-01", "62.25", "H", "0"): (6_399.74, 0.0, 0.85),
+    # Né le 1er septembre 1945, pension au 1er décembre 2007 : de même,
+    # 7 543,3030 × 0,85 = 6 411,81 €.
+    ("1945-09-01", "62.25", "H", "0"): (6_411.81, 0.0, 0.85),
+    # Né le 1er août 1947, pension au 1er novembre 2007, à 60 ans et 3 mois,
+    # « au cours de la 61e année » : 25 %. 7 251,9622 × 0,75 = 5 438,97 €.
+    ("1947-08-01", "60.25", "H", "0"): (5_438.97, 0.0, 0.75),
+    # Née le 1er août 1945, mère de trois enfants : « à partir de 62 ans pour
+    # trois enfants », sans minoration (article 20, II, b), et « majoré de
+    # 10 % » (article 23) : 7 529,11 €, et 0,10 × 7 529,1074 = 752,91 €.
+    ("1945-08-01", "62.25", "F", "3"): (7_529.11, 752.91, 1.0),
+    # Né le 1er juillet 1945, pension au 1er octobre 2007, dix jours avant les
+    # statuts : le règlement de 1955, que nul texte lu ne dit ; le modèle y
+    # présume la décote de la base, que la durée annule, ce que la fiche déclare.
+    ("1945-07-01", "62.25", "H", "0"): (7_514.91, 0.0, 1.0),
+}
+
+
+def test_la_carcdsf_sert_ses_statuts_de_2007_des_le_11_octobre_2007():
+    """L'arrêté du 1er octobre 2007 (JORFTEXT000000252172), publié le 10, ne
+    fixe aucune date et ne porte aucune disposition transitoire : ses statuts
+    entrent en vigueur le 11 octobre 2007, et l'article 2 abroge le règlement de
+    1955. Article 20 (JORFARTI000001859980) : « b) Avec application d'un
+    coefficient de minoration, fonction de l'âge à la date à laquelle la
+    pension prend effet pour les assurés âgés entre 60 et 65 ans […] : - 25 %
+    pour un départ en retraite au cours de la 61e année ; […] - 15 % pour un
+    départ en retraite au cours de la 63e année ». Une pension qui prend effet
+    le 1er novembre ou le 1er décembre 2007 se liquide à ces statuts ; le
+    modèle ne les servait qu'aux pensions de 2008 (corrigé le 14 novembre
+    2026). Servi par le portage, refait au bit près par le moteur Python."""
+    from outils_pont import servi_et_refait
+
+    cas = [{"cle": "|".join(cle),
+            "requete": {**REQUETE_DE_DENTISTE, "debut": "20", "naissance": cle[0],
+                        "liquidation": cle[1], "sexe": cle[2], "enfants": cle[3]}}
+           for cle in CARCDSF_A_L_AUTOMNE_2007]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    for cle, (montant, majoration, coefficient) in CARCDSF_A_L_AUTOMNE_2007.items():
+        actuel = servis["|".join(cle)]["actuel"]
+        [pension] = [p for p in actuel["pensions_par_regime"]
+                     if p["regime"] == "carcdsf_complementaire"]
+        assert _coefficient(pension["detail"]) == pytest.approx(coefficient), cle
+        assert pension["montant"] == pytest.approx(montant, abs=0.005), cle
+        parts = [dict(a["par_regime"]).get("carcdsf_complementaire", 0.0)
+                 for a in actuel["avantages_appliques"] if a["code"] == "majoration_enfants"]
+        assert sum(parts) == pytest.approx(majoration, abs=0.005), cle
+
+
 # -- la CAVP -------------------------------------------------------------------
 
 
