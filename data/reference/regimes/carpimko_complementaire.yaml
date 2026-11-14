@@ -357,6 +357,7 @@ periodes:
     cotisation_forfaitaire_annee: 2014
   - debut: 2015
     fin: 2015
+    date_effet: [2015-01-01, 2015-10-03]
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -378,9 +379,13 @@ periodes:
     notes: >-
       AUCUNE MAJORATION DE REPORT AVANT L'ARRÊTÉ DU 31 JUILLET 2015, qui
       l'insère ; la fiche portait 0,75 % sans texte, que le moteur ne
-      lisait pas.
+      lisait pas. Cette période liquide jusqu'au 2 octobre 2015
+      (`date_effet`) : l'arrêté, publié le 2 octobre sans date d'effet,
+      entre en vigueur le 3, et la période de 2016 sert ses âges et sa
+      majoration aux pensions qui prennent effet depuis ce jour.
   - debut: 2016
     fin: 2016
+    date_effet: [2015-10-03, 2017-01-01]
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -416,8 +421,11 @@ periodes:
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
       l'âge où la pension pouvait être liquidée sans abattement — l'âge
       légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
-      partir de 2016, première année pleine.
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
       SES ÂGES, DEPUIS L'ARRÊTÉ DU 31 JUILLET 2015 (JORFTEXT000031255542).
       Article 12 quater, repris par l'arrêté du 27 décembre 2023 et par
       l'article 6 du règlement du 10 juillet 2026 : taux plein à 65 ans
@@ -476,8 +484,11 @@ periodes:
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
       l'âge où la pension pouvait être liquidée sans abattement — l'âge
       légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
-      partir de 2016, première année pleine.
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
   - debut: 2018
     fin: 2018
     type_calcul: points
@@ -515,8 +526,11 @@ periodes:
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
       l'âge où la pension pouvait être liquidée sans abattement — l'âge
       légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
-      partir de 2016, première année pleine.
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
   - debut: 2019
     fin: 2019
     type_calcul: points
@@ -554,8 +568,11 @@ periodes:
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
       l'âge où la pension pouvait être liquidée sans abattement — l'âge
       légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
-      partir de 2016, première année pleine.
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
   - debut: 2020
     fin: 2020
     type_calcul: points
@@ -593,8 +610,11 @@ periodes:
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
       l'âge où la pension pouvait être liquidée sans abattement — l'âge
       légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
-      partir de 2016, première année pleine.
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
   - debut: 2021
     fin: 2021
     type_calcul: points
@@ -632,8 +652,11 @@ periodes:
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
       l'âge où la pension pouvait être liquidée sans abattement — l'âge
       légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
-      partir de 2016, première année pleine.
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
   - debut: 2022
     fin: 2022
     type_calcul: points
@@ -671,8 +694,11 @@ periodes:
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
       l'âge où la pension pouvait être liquidée sans abattement — l'âge
       légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
-      partir de 2016, première année pleine.
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
   - debut: 2023
     fin: 2023
     type_calcul: points
@@ -710,8 +736,11 @@ periodes:
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
       l'âge où la pension pouvait être liquidée sans abattement — l'âge
       légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
-      partir de 2016, première année pleine.
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
   - debut: 2024
     fin: 2024
     type_calcul: points
@@ -749,8 +778,11 @@ periodes:
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
       l'âge où la pension pouvait être liquidée sans abattement — l'âge
       légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
-      partir de 2016, première année pleine.
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
       TROIS ENFANTS DEPUIS L'ARRÊTÉ DU 27 DÉCEMBRE 2023
       (JORFTEXT000048880637) : « le montant de la pension des assurés
       ayant eu au moins trois enfants est majoré de 10 % dans les mêmes
@@ -795,8 +827,11 @@ periodes:
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
       l'âge où la pension pouvait être liquidée sans abattement — l'âge
       légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
-      partir de 2016, première année pleine.
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).
   - debut: 2026
     fin: null
     type_calcul: points
@@ -854,5 +889,8 @@ periodes:
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
       l'âge où la pension pouvait être liquidée sans abattement — l'âge
       légal dès que la durée du régime de base est atteinte, l'âge du taux
-      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
-      partir de 2016, première année pleine.
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, aux
+      pensions qui prennent effet depuis le 3 octobre 2015, lendemain de
+      la publication de l'arrêté, qui ne fixe aucune date (`date_effet`
+      de la période de 2016 ; la fiche ne la servait qu'en 2016, corrigé
+      le 14 novembre 2026).

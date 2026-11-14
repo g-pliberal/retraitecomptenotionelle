@@ -189,7 +189,9 @@ def test_les_dates_d_effet_partagent_les_annees_sans_trou_ni_doublon():
                        "carmf_complementaire", "asv_conventionnes",
                        # statuts de 2007, en vigueur le 11 octobre 2007, et de
                        # 2011, le 1er juillet 2011
-                       "carcdsf_complementaire"}
+                       "carcdsf_complementaire",
+                       # arrêté du 31 juillet 2015, en vigueur le 3 octobre 2015
+                       "carpimko_complementaire"}
 
 
 @pytest.mark.parametrize("bornes,message", [

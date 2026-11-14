@@ -730,6 +730,44 @@ def test_la_cipav_majore_le_report_depuis_2008_dans_les_deux_moteurs():
     assert "majoration" not in pension("1940-03-10")["detail"]
 
 
+def test_la_carpimko_majore_le_report_des_le_3_octobre_2015_dans_les_deux_moteurs():
+    """Ligne 16 de la file des corrections (action 130) : l'arrêté du
+    31 juillet 2015, publié le 2 octobre 2015 sans date d'effet
+    (JORFARTI000031255544, JORFARTI000031255547), entre en vigueur le
+    3 octobre 2015 ; son article 12 ter majore de « 1,25 % par trimestre civil
+    entier d'ajournement postérieur à l'âge du taux plein dans la limite de
+    vingt trimestres ». Le modèle ne servait l'arrêté qu'aux pensions de
+    2016."""
+    from outils_pont import servi_et_refait
+    from test_complementaires_liberales_a_leur_age import REQUETE
+
+    # Né le 10 mars 1949, auxiliaire médical depuis ses 25 ans : 160 trimestres
+    # à 65 ans, quand sa génération en doit 161 ; le taux plein lui vient de
+    # l'âge seul, 65 ans (article 12 quater, 1°, « GÉNÉRATION 1955 ET
+    # ANTÉRIEURE […] 65 ans »), le 10 mars 2014. Trimestres civils entiers
+    # d'ajournement : d'avril 2014 à septembre 2015, six, pour une pension du
+    # 1er novembre comme du 1er décembre 2015 ; 1 + 6 × 0,0125 = 1,075.
+    # Au 1er novembre 2015, 5 298,1861 € sans majoration (note
+    # `130/2026-11-06-e13-surcote-par-age-seul.md`) : × 1,075 = 5 695,55 €,
+    # 397,36 € de plus. Au 1er octobre 2015, l'arrêté n'est pas en vigueur.
+    requete = {**REQUETE, "statut": "auxiliaire_medical", "naissance": "1949-03-10"}
+    cas = [{"cle": mois, "requete": {**requete, "liquidation": age}}
+           for mois, age in (("octobre", "66.5"), ("novembre", "66.5833"),
+                             ("decembre", "66.6667"))]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+
+    def pension(cle):
+        return {p["regime"]: p for p in servis[cle]["actuel"]
+                ["pensions_par_regime"]}["carpimko_complementaire"]
+
+    assert "majoration" not in pension("octobre")["detail"]
+    de_novembre = pension("novembre")
+    assert de_novembre["detail"].endswith("coefficient de majoration 1.0750")
+    assert de_novembre["montant"] == pytest.approx(5695.55, abs=0.01)
+    assert pension("decembre")["detail"].endswith("coefficient de majoration 1.0750")
+
+
 # -- la CNAVPL ------------------------------------------------------------------
 
 
