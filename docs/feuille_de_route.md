@@ -5765,20 +5765,20 @@ de statuts et les `manque` de la page Méthode.
 ### 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats — `en cours`
 
 **Reprise, au 14 novembre 2026.** L'action réduit ce que coûte un changement
-du modèle, en temps et en jetons, sans céder sur les vérifications. Une
-correction de l'action 130 prenait 53 minutes, dont 34 à attendre le verdict
-de GitHub : elle rend compte dès son envoi, et ces corrections passent en
-deux files. Refaire le paquet après un changement du modèle prenait 238
-secondes, et en prend 168 : la grille du coût ne s'y simule plus qu'une fois.
-Reste à y répartir les calculs indépendants sur les cœurs, à relever la
-durée des corrections et les conflits entre les deux files. Deux décisions
-attendent le propriétaire : raccourcir la course de GitHub, de 17 à 30
-minutes, et faire passer seul un changement transversal. Un chantier reste :
-comparer les réponses des agents de recherche, sans le `CLAUDE.md` de la
-racine, à celles relevées avant. Notes :
-`2026-11-14-paquet-sans-resimuler-la-grille.md`,
-`2026-11-14-correction-sans-attendre-le-verdict.md` et
-`2026-11-11-eclaireurs-sans-le-claude-md-racine.md`.
+du modèle, en temps et en jetons, sans céder sur les vérifications. La
+vérification complète que GitHub lance à chaque envoi prenait 47 minutes
+quand le modèle venait de changer : partagée entre plusieurs machines, elle
+en a pris 19 à l'essai. Son verdict se publie désormais même si une session
+a envoyé entre-temps, avec ce que chaque partie a duré. Par quoi commencer :
+relever ces durées sur les premières vérifications de `main`, puis
+raccourcir les deux tests de huit et neuf minutes, qui fixent le plancher.
+Restent aussi : répartir sur les cœurs les calculs du paquet, relever la
+durée des corrections, comparer les réponses des agents de recherche à
+celles d'avant. Une décision attend le propriétaire : faire passer seul un
+changement transversal. Notes :
+`2026-11-14-course-en-travaux-paralleles.md`,
+`2026-11-14-paquet-sans-resimuler-la-grille.md` et
+`2026-11-14-correction-sans-attendre-le-verdict.md`.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus
