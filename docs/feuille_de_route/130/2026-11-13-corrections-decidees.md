@@ -70,10 +70,16 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   semestre de l'année d'un anniversaire tombé au premier, l'année 2026 et la cotisation
   volontaire restent des limites déclarées ; note
   `2026-11-14-correction-carmf-exemption-passe-75-ans.md`.
-- [ ] 8. **ASV des médecins, la valeur de service** : fixée par les textes, non portée
+- [x] 8. **ASV des médecins, la valeur de service** : fixée par les textes, non portée
   aux prix (1 967,02 € en moins en 2002, 273,50 € de trop en 2024, 242,76 € en 2026). La
   session reprend aussi dans la fiche `asv_medecins_points` les écarts (c) à (g) de la
-  note `2026-11-13-relecture-asv-medecins-points.md`.
+  note `2026-11-13-relecture-asv-medecins-points.md`. Corrigé le 14 novembre 2026 : le
+  point vaut ce que le texte fixe pour l'exercice de la date d'effet, de 1999 à 2026,
+  dans les deux moteurs (13 676,54 € au lieu de 11 709,34 € en 2002, 13 661,11 € au lieu
+  de 13 934,47 € en 2024, 13 863,87 € au lieu de 14 106,48 € en 2026, aux cas posés) ; le
+  premier semestre de 2012, les pensions d'avant 1999 et la valeur d'après 2026 restent
+  des limites déclarées ; les écarts (c) à (g) sont repris dans la fiche ; note
+  `2026-11-14-correction-asv-medecins-valeur-de-service.md`.
 - [ ] 9. **ASV des médecins, la cotisation d'avant 2012**, portée au tiers : le médecin
   paie N consultations, les caisses le double (2 400 € par an de moins au compte en 2004) ;
   avec le taux d'appel de l'article 6 et la cotisation de 1994. Même note, écarts (a) à (c).
