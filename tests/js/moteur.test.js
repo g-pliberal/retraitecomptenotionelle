@@ -461,7 +461,9 @@ test("les sections de santé minorent comme leurs règlements", () => {
   proche(coefficient(calculer(dentiste, 1960, 65, "F", 2), "carcdsf_complementaire"), 1);
   proche(coefficient(calculer(dentiste, 1960, 64.75, "F", 2), "carcdsf_complementaire"), 0.8875);
   proche(coefficient(calculer(dentiste, 1960, 65, "H", 2), "carcdsf_complementaire"), 0.90);
-  proche(coefficient(calculer(dentiste, 1957, 69), "carcdsf_complementaire"), 1.10);
+  // Sept trimestres civils entiers après celui des 67 ans, d'avril 2024 à
+  // décembre 2025, 1,25 % chacun : le trimestre « incluant l'âge » ne compte pas.
+  proche(coefficient(calculer(dentiste, 1957, 69), "carcdsf_complementaire"), 1.0875);
 
   proche(coefficient(calculer("pharmacien", 1975, 64), "cavp_complementaire"), 0.91);
   proche(coefficient(calculer("pharmacien", 1954, 64), "cavp_complementaire"), 0.93);
