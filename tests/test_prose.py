@@ -1258,6 +1258,83 @@ def test_avec_un_numero_reprise_imprime_les_blocs_et_les_dernieres_notes(tmp_pat
     assert entiere.count(" — L'ancienne note du ") == 30
 
 
+def test_reprise_tient_une_action_sous_le_plafond_de_bash(tmp_path, capsys):
+    """Ce que `scripts/reprise.py <numéro>` imprime entre en entier dans le
+    contexte d'une session : sous le plafond de la sortie de Bash, compté en
+    octets, qui majorent les caractères. Quand les blocs des étapes inachevées
+    n'y tiennent pas, chacune se réduit à une ligne — sa note, la date de son
+    bloc — et son bloc s'imprime à la demande, par un mot du nom de sa note,
+    avec les notes qui le portent. Le 14 novembre 2026, les seize blocs
+    d'étape de l'action 138 portaient sa sortie à 20 466 caractères, les
+    vingt et un de la 186 à 17 315, et presque aucun ne dit son étape finie :
+    les ôter aurait perdu ce qui reste à faire (action 135, note de ce jour)."""
+    reprise = _script("reprise")
+    dossier = _feuille_de_route_d_essai(reprise, tmp_path)
+    phrase = "Le chantier attend la réponse du propriétaire sur ce qui reste à faire.\n"
+    for rang in range(1, 21):
+        (dossier / f"2026-11-13-chantier-{rang}.md").write_text(
+            f"# Le chantier {rang}\n\n**Reprise, au 13 novembre 2026.** Chantier {rang}.\n"
+            + phrase * 8 + "\nLe détail.\n", encoding="utf-8")
+    entete = ("### 7. Les pensions de réversion — `en cours`\n"
+              "(docs/feuille_de_route.md:3)\n"
+              "\n"
+              "**Reprise, au 12 novembre 2026.** Le calcul est fait.\n"
+              "Reste la page.\n"
+              "\n")
+
+    # Vingt et un blocs d'étape, plus de 12 000 caractères : une ligne chacun.
+    assert reprise.main(["7"], racine=tmp_path) == 0
+    sortie = capsys.readouterr().out
+    assert len(sortie.encode("utf-8")) < reprise.SORTIE_AU_PLUS
+    assert sortie.startswith(entete + "Notes, dans docs/feuille_de_route/7/ :\n")
+    assert "  2026-11-13-chantier-9.md — Le chantier 9\n" in sortie
+    assert (
+        "\n"
+        "Étapes en cours : 21, une ligne chacune, leurs blocs ne tenant pas en une sortie. Le bloc\n"
+        "d'une étape et ses notes : `python scripts/reprise.py 7 <mots du nom de sa note>`.\n"
+        "  2026-11-12-etape-3.md — au 12 novembre 2026\n"
+        "  2026-11-13-chantier-1.md — au 13 novembre 2026\n") in sortie
+    assert sortie.endswith("  2026-11-13-chantier-9.md — au 13 novembre 2026\n")
+    assert "Le gabarit est posé." not in sortie and "Étape en cours," not in sortie
+
+    # Un mot du nom d'une note, entier : « chantier-2 » n'est pas « chantier-20 ».
+    assert reprise.main(["7", "chantier-2"], racine=tmp_path) == 0
+    assert capsys.readouterr().out == (
+        entete
+        + "Notes, dans docs/feuille_de_route/7/, dont le nom porte « chantier-2 » :\n"
+        "  2026-11-13-chantier-2.md — Le chantier 2\n"
+        "\n"
+        "Étape en cours, docs/feuille_de_route/7/2026-11-13-chantier-2.md :\n"
+        "**Reprise, au 13 novembre 2026.** Chantier 2.\n" + phrase * 8)
+
+    # Une étape finie n'a plus de bloc : ses notes seules.
+    assert reprise.main(["7", "etape-2"], racine=tmp_path) == 0
+    assert capsys.readouterr().out == (
+        entete
+        + "Notes, dans docs/feuille_de_route/7/, dont le nom porte « etape-2 » :\n"
+        "  2026-11-11-etape-2.md — Le plafond de ressources\n")
+
+    assert reprise.main(["7", "absent"], racine=tmp_path) == 0
+    assert capsys.readouterr().out == (
+        entete + "Aucune note de docs/feuille_de_route/7/ ne porte « absent » dans son nom.\n")
+
+    # Un mot sans le numéro de son action ne désigne rien.
+    with pytest.raises(SystemExit):
+        reprise.main(["chantier-2"], racine=tmp_path)
+    capsys.readouterr()
+
+    # Sur le dépôt, chaque action en cours.
+    texte = (RACINE / reprise.FEUILLE).read_text(encoding="utf-8")
+    trop = {}
+    for action in reprise.actions(texte):
+        if action.etat == reprise.EN_COURS:
+            assert reprise.main([action.numero]) == 0
+            octets = len(capsys.readouterr().out.encode("utf-8"))
+            if octets >= reprise.SORTIE_AU_PLUS:
+                trop[action.numero] = octets
+    assert not trop, f"sorties de `reprise.py <numéro>` au-dessus du plafond de Bash : {trop}"
+
+
 def test_pousser_joue_les_deux_tests_de_la_feuille_de_route():
     """``scripts/pousser.sh`` joue, avant d'envoyer un commit qui touche la
     feuille de route, ce test-ci et le suivant (action 163) : renommés, l'envoi

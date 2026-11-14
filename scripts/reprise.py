@@ -4,6 +4,7 @@
     python scripts/reprise.py              # le sommaire des actions en cours
     python scripts/reprise.py 138          # une action : ses blocs, ses dernières notes
     python scripts/reprise.py 138 --toutes # la même, toutes ses notes listées
+    python scripts/reprise.py 138 etape-14 # une étape : son bloc, ses notes
 
 Une session qui cherche quoi faire ne lit que ces blocs (``CLAUDE.md``,
 « Économiser le contexte »). Chaque action `en cours` de
@@ -18,7 +19,10 @@ Ce qu'il imprime doit entrer en entier dans le contexte de la session qui le
 lance, et l'outil Bash écarte une sortie de :data:`SORTIE_AU_PLUS` caractères
 (action 135, notes du 13 novembre 2026). Sans numéro, il n'imprime donc que
 le sommaire, une ligne par action ; avec un numéro, il ne liste que les
-:data:`NOTES_LISTEES` dernières notes, sauf ``--toutes``.
+:data:`NOTES_LISTEES` dernières notes, sauf ``--toutes``, et réduit chaque
+étape inachevée à une ligne quand leurs blocs n'y tiennent pas (note du
+14 novembre 2026) : le bloc d'une étape s'imprime alors par un mot du nom de
+sa note, avec les notes qui le portent.
 """
 
 from __future__ import annotations
@@ -210,23 +214,52 @@ def sommaire(choisies: list[Action], racine: Path = RACINE) -> list[str]:
             *(ligne_du_sommaire(action, racine) for action in choisies)]
 
 
-def imprimer(action: Action, racine: Path = RACINE, toutes: bool = False) -> list[str]:
+def porte(nom: str, mot: str) -> bool:
+    """Le nom d'une note porte-t-il ce mot, ou cette suite de mots, entier :
+    « etape-1 » n'est pas dans « etape-14 »."""
+    return re.search(rf"(?:^|-){re.escape(mot)}(?:-|\.md$)", nom) is not None
+
+
+def imprimer(action: Action, racine: Path = RACINE, toutes: bool = False,
+             mots_du_nom: tuple[str, ...] = (), en_lignes: bool = False) -> list[str]:
     """Le bloc d'une action, la liste de ses notes — les dernières, sauf
-    ``toutes`` —, puis les blocs de ses étapes inachevées."""
+    ``toutes`` —, puis les blocs de ses étapes inachevées, ou une ligne
+    chacune si ``en_lignes``. Avec ``mots_du_nom``, les seules notes, et les
+    seules étapes, dont le nom porte l'un d'eux."""
     sortie = [f"### {action.numero}. {action.titre} — `{action.etat}`",
               f"({FEUILLE}:{action.ligne})", "", *action.ouverture]
     fichiers = notes(action.numero, racine)
+    dossier = f"{NOTES}/{action.numero}/"
+    entete = f"Notes, dans {dossier}"
+    if mots_du_nom:
+        cherche = ", ".join(f"« {mot} »" for mot in mots_du_nom)
+        fichiers = [chemin for chemin in fichiers
+                    if any(porte(chemin.name, mot) for mot in mots_du_nom)]
+        if not fichiers:
+            return sortie + ["", f"Aucune note de {dossier} ne porte {cherche} dans son nom."]
+        entete += f", dont le nom porte {cherche}"
     if not fichiers:
         return sortie
     listees = fichiers if toutes else fichiers[-NOTES_LISTEES:]
-    entete = f"Notes, dans {NOTES}/{action.numero}/ :"
+    entete += " :"
     if len(listees) < len(fichiers):
         entete += (f" les {len(listees)} dernières de {len(fichiers)} "
                    "(`--toutes` les liste toutes).")
     sortie += ["", entete]
     for chemin in listees:
         sortie.append(f"  {chemin.name} — {titre_d_une_note(chemin.read_text(encoding='utf-8'))}")
-    for chemin, bloc in etapes_en_cours(fichiers):
+    etapes = etapes_en_cours(fichiers)
+    if en_lignes and etapes:
+        sortie += ["", f"Étapes en cours : {len(etapes)}, une ligne chacune, leurs blocs ne "
+                   "tenant pas en une sortie. Le bloc",
+                   "d'une étape et ses notes : "
+                   f"`python scripts/reprise.py {action.numero} <mots du nom de sa note>`."]
+        for chemin, bloc in etapes:
+            trouve = OUVERTURE.match(bloc[0])
+            date = trouve.group(0)[len("**Reprise, "):-len(".**")] if trouve else "sans date"
+            sortie.append(f"  {chemin.name} — {date}")
+        return sortie
+    for chemin, bloc in etapes:
         sortie += ["", f"Étape en cours, {chemin.relative_to(racine).as_posix()} :", *bloc]
     return sortie
 
@@ -234,10 +267,16 @@ def imprimer(action: Action, racine: Path = RACINE, toutes: bool = False) -> lis
 def main(argv: list[str] | None = None, racine: Path = RACINE) -> int:
     analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     analyseur.add_argument("numeros", nargs="*",
-                           help="les actions à imprimer (sans numéro, le sommaire)")
+                           help="les actions à imprimer (sans numéro, le sommaire) ; un "
+                           "autre mot, « etape-14 », n'en garde que les notes et les "
+                           "étapes dont le nom le porte")
     analyseur.add_argument("--toutes", action="store_true",
                            help="lister toutes les notes, et non les dernières")
     arguments = analyseur.parse_args(argv)
+    mots_du_nom = tuple(mot for mot in arguments.numeros if not mot.isdigit())
+    arguments.numeros = [mot for mot in arguments.numeros if mot.isdigit()]
+    if mots_du_nom and not arguments.numeros:
+        analyseur.error("un mot du nom d'une note demande le numéro de son action")
     texte = (racine / FEUILLE).read_text(encoding="utf-8")
     choisies = [a for a in actions(texte) if a.etat == EN_COURS
                 and (not arguments.numeros or a.numero in arguments.numeros)]
@@ -247,8 +286,15 @@ def main(argv: list[str] | None = None, racine: Path = RACINE) -> int:
     if not arguments.numeros:
         print("\n".join(sommaire(choisies, racine)))
         return 0
-    blocs = ["\n".join(imprimer(action, racine, arguments.toutes)) for action in choisies]
-    print("\n\n".join(blocs))
+    # Les blocs des étapes en entier s'ils tiennent sous le plafond de Bash,
+    # compté en octets, qui majorent les caractères ; sinon une ligne chacune.
+    for en_lignes in (False, True):
+        sortie = "\n\n".join(
+            "\n".join(imprimer(action, racine, arguments.toutes, mots_du_nom, en_lignes))
+            for action in choisies)
+        if len(sortie.encode("utf-8")) + 1 < SORTIE_AU_PLUS:
+            break
+    print(sortie)
     return 0
 
 
