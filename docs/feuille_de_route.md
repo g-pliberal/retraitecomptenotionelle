@@ -5779,8 +5779,9 @@ passer seul un changement transversal. Notes :
 `2026-11-14-course-en-travaux-paralleles.md`,
 `2026-11-14-envoi-refuse-quand-le-paquet-se-croise.md`,
 `2026-11-14-correction-sans-attendre-le-verdict.md`,
-`2026-11-14-sortie-de-bash-plafonnee.md`, `2026-11-14-hook-de-bash.md` et
-`2026-11-14-reprise-sous-le-plafond.md`.
+`2026-11-14-sortie-de-bash-plafonnee.md`, `2026-11-14-hook-de-bash.md`,
+`2026-11-14-reprise-sous-le-plafond.md` et
+`2026-11-14-queue-de-regenerer-et-du-resume.md`.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus
