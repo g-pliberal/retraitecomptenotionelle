@@ -376,10 +376,10 @@ def calculer_bilans(contexte, annee: int, scenarios: Sequence[str],
     par défaut, la grille du coût (``GRILLE_DU_COUT``), celle de ses masses et
     de son engagement ; un test la restreint.
     """
+    from . import memoire
     from .castypes import GRILLE_DU_COUT
     from .cout import (
         COTE_COTISANTS,
-        _pensionnes,
         _ponderation,
         _tetes_par_poids,
         calculer_engagements,
@@ -387,6 +387,9 @@ def calculer_bilans(contexte, annee: int, scenarios: Sequence[str],
 
     cas_types = GRILLE_DU_COUT if cas_types is None else cas_types
     simulateur = contexte.simulateur()
+    # La grille, simulée une fois pour l'engagement et pour les profils, et
+    # celle que le coût a déjà simulée sous ces règles, si la mémoire la garde.
+    grille = memoire.grille_du_cout(contexte.base, cas_types, simulateur=simulateur)
     population = contexte.population()
     solde = contexte.cout().solde
     ligne = solde.annee(annee)
@@ -394,9 +397,10 @@ def calculer_bilans(contexte, annee: int, scenarios: Sequence[str],
         raise ValueError(f"le bilan de la page Coût ne couvre pas {annee}")
     if engagement is None:
         acquis = calculer_engagements(simulateur, contexte.depenses(), population,
-                                      annee, scenarios, cas_types=cas_types)
+                                      annee, scenarios, cas_types=cas_types,
+                                      grille_simulee=grille)
         engagement = acquis.part_pib
-    pensionnes, _ = _pensionnes(simulateur, cas_types)
+    pensionnes, _ = grille
     revalorisation = RevalorisationServie(
         simulateur.pour_la_projection(),
         min((p.annee_liquidation for p in pensionnes), default=annee) - _DEMI_TRANCHE,
@@ -421,9 +425,9 @@ def calculer_bilans(contexte, annee: int, scenarios: Sequence[str],
 
 def bilans_gardes(contexte, annee: int, scenarios: Sequence[str]) -> dict[str, BilanCompte]:
     """:func:`calculer_bilans` sous les réglages du ``contexte``, fait une
-    fois : ``memoire`` le garde comme le coût qu'il lit. Il simule deux fois la
-    grille du coût, pour l'engagement et pour les profils, soit plus d'une
-    minute ; la table du paquet le fige (``_agregats``), et son test le relit."""
+    fois : ``memoire`` le garde comme le coût qu'il lit, dont il prend la grille
+    simulée, pour l'engagement et pour les profils ; la table du paquet le fige
+    (``_agregats``), et son test le relit."""
     from . import memoire
 
     scenarios = tuple(scenarios)

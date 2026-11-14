@@ -5156,7 +5156,9 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
                          scenarios: Sequence[str],
                          cas_types: tuple[CasType, ...] = GRILLE_DU_COUT,
                          ponderation: str = "effectifs",
-                         liquidation: str = "droit") -> EngagementAcquis:
+                         liquidation: str = "droit",
+                         grille_simulee: tuple[list[Pensionne], dict[str, int]] | None = None,
+                         ) -> EngagementAcquis:
     """L'engagement acquis à ``annee``, système par système, en part de PIB.
 
     LA CONVENTION D'ACQUISITION EST LE PRORATA TEMPORIS, et il faut la nommer :
@@ -5183,8 +5185,13 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
     pour les systèmes notionnels. Jusqu'au 23 septembre 2026, le système
     actuel suivait ici la règle notionnelle, plus rapide que les prix :
     son engagement de 2021 en était grossi d'un dixième.
+
+    ``grille_simulee`` : ce que :func:`_pensionnes` rend pour ce simulateur,
+    ces cas types et cette liquidation, quand l'appelant l'a déjà — la fabrique
+    du paquet, le bilan du compte ; la grille ne se simule alors pas ici.
     """
-    pensionnes, _ = _pensionnes(simulateur, cas_types, liquidation)
+    pensionnes, _ = (grille_simulee if grille_simulee is not None
+                     else _pensionnes(simulateur, cas_types, liquidation))
     poids = _ponderation(simulateur, ponderation, cas_types,
                          tetes=_tetes_par_poids(pensionnes, population))
     macro = simulateur.macro

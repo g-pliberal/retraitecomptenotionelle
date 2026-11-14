@@ -753,6 +753,41 @@ def test_un_calcul_se_garde_tant_que_l_empreinte_est_la_meme(monkeypatch, memoir
     assert sorted(d.name for d in memoire_isolee.DOSSIER.iterdir()) == ["e1", "e2"]
 
 
+def test_la_grille_du_cout_se_garde_sous_une_seule_cle(monkeypatch, memoire_isolee):
+    """La grille du coût simulée se garde sous une clé, celle que ``cout()``
+    lui donne : qui la demande seule (``grille_du_cout`` : l'engagement acquis
+    de la fabrique du paquet, le bilan du compte) prend celle que le coût a
+    simulée, ou la lui laisse, sans la simuler une seconde fois (action 135)."""
+    import functools
+
+    from retraite_notionnelle import Parametres, cout
+    from retraite_notionnelle.castypes import CAS_TYPES, GRILLE_DU_COUT
+
+    faites = []
+
+    def pensionnes(simulateur, cas_types, liquidation="droit"):
+        faites.append((simulateur.parametres, cas_types, liquidation))
+        return [], {"refus": len(faites)}
+
+    @functools.wraps(cout.calculer_cout)
+    def sans_calcul(*arguments, grille_simulee=None, **options):
+        return grille_simulee
+
+    monkeypatch.setattr(cout, "_pensionnes", pensionnes)
+    monkeypatch.setattr(cout, "calculer_cout", sans_calcul)
+    monkeypatch.setattr(memoire_isolee, "empreinte", lambda: "e1")
+    parametres, cas = Parametres(), CAS_TYPES[:1]
+    assert memoire_isolee.grille_du_cout(parametres, cas) == ([], {"refus": 1})
+    assert memoire_isolee.grille_du_cout(parametres, cas) == ([], {"refus": 1})
+    # Le coût reçoit la grille gardée, et ne la simule pas.
+    assert memoire_isolee.cout(parametres, cas_types=cas) == ([], {"refus": 1})
+    assert faites == [(parametres, cas, "droit")]
+    # Sans grille nommée, celle du dépôt ; une autre liquidation, une autre clé.
+    assert memoire_isolee.grille_du_cout(parametres) == ([], {"refus": 2})
+    assert memoire_isolee.grille_du_cout(parametres, cas, "age_legal") == ([], {"refus": 3})
+    assert faites[1:] == [(parametres, GRILLE_DU_COUT, "droit"), (parametres, cas, "age_legal")]
+
+
 def test_chaque_lecture_rend_un_objet_neuf(monkeypatch, memoire_isolee):
     """Comme ``charger_yaml`` rend une copie : ce qu'un appelant fait de son
     objet ne touche pas le suivant."""

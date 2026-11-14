@@ -2407,6 +2407,31 @@ def test_l_engagement_revalorise_comme_les_masses(depenses, population, monkeypa
             2.0 * reference.part_pib(cle), rel=1e-12), cle
 
 
+def test_l_engagement_prend_la_grille_deja_simulee(depenses, population, monkeypatch):
+    """L'engagement acquis se somme sur la grille du coût, que le coût a déjà
+    simulée : reçue (``grille_simulee``, comme ``calculer_cout``), elle ne se
+    simule pas une seconde fois, et l'engagement est le même, au bit près. La
+    fabrique du paquet et le bilan du compte la passent (action 135) : vingt
+    secondes de moins à chaque engagement."""
+    from retraite_notionnelle import cout
+
+    simulateur = Simulateur(Parametres())
+    cas = CAS_TYPES[:2]
+    scenarios = ["actuel", "notionnel_liberal"]
+    reference = calculer_engagements(simulateur, depenses, population, 2021,
+                                     scenarios, cas_types=cas)
+    grille = cout._pensionnes(simulateur, cas)
+
+    def interdit(*arguments, **options):
+        raise AssertionError("la grille reçue ne se simule pas une seconde fois")
+
+    monkeypatch.setattr(cout, "_pensionnes", interdit)
+    recu = calculer_engagements(simulateur, depenses, population, 2021,
+                                scenarios, cas_types=cas, grille_simulee=grille)
+    assert recu == reference
+    assert reference.part_pib("actuel") > 0.0
+
+
 def test_l_engagement_compte_les_survivants_de_chaque_population(depenses, population,
                                                                   monkeypatch):
     """L'engagement acquis est la somme des masses à venir : il compte, comme

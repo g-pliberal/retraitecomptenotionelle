@@ -2416,14 +2416,18 @@ def _bilan(contexte=None, paquet: bytes | None = None) -> dict:
     # par elle que le chiffre du dépôt et celui du tableau 29 se comparent, et
     # la choisir ailleurs comparerait deux millésimes. Douze secondes de plus,
     # pour la même raison que le reste de cette table : la page ne peut pas
-    # sommer quatre-vingts années de flux chez le lecteur.
+    # sommer quatre-vingts années de flux chez le lecteur. Sur la grille que
+    # le coût vient de simuler, et que la mémoire des calculs garde : vingt
+    # secondes de moins que de la simuler ici une seconde fois (action 135).
+    from retraite_notionnelle import memoire
     from retraite_notionnelle.cout import calculer_engagements
 
     comptes = contexte.comptes()
     annee_engagement = comptes.annees_engagements()[-1]
     engagement = calculer_engagements(
         contexte.simulateur(), contexte.depenses(), contexte.population(),
-        annee_engagement, scenarios)
+        annee_engagement, scenarios,
+        grille_simulee=memoire.grille_du_cout(contexte.base))
     # LES ÉCARTS MÉDIANS DE LA GRILLE, que l'accueil écrit en réponse à « ma
     # retraite va-t-elle baisser ? ». Pour la même raison : l'accueil ne
     # simule rien, et il se rend toujours sous les réglages de référence, ceux
@@ -2613,8 +2617,8 @@ def _agregats(contexte=None, paquet: bytes | None = None) -> dict:
         # LE BILAN DU COMPTE, À LA MANIÈRE SUÉDOISE (action 138, étape 19) : ce
         # que chaque système doit au titre des droits acquis, et ce que ses
         # cotisations et ses réserves peuvent porter, à la dernière année dont
-        # le COR publie les réserves. Plus d'une minute la première fois, la
-        # grille du coût s'y simulant deux fois : ``memoire`` le garde.
+        # le COR publie les réserves. Sur la grille que le coût a simulée ;
+        # ``memoire`` le garde.
         "bilan_compte": figer_bilan_compte(
             bilans_gardes(contexte, reserves.derniere_annee(), list(pages.SCENARIOS_MONTRES)),
             reserves.rendement(reserves.derniere_annee())),

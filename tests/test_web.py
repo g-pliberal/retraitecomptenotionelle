@@ -509,6 +509,41 @@ def test_le_paquet_est_a_jour(contexte):
         )
 
 
+def test_le_bilan_du_paquet_prend_la_grille_que_le_cout_a_simulee(monkeypatch):
+    """L'engagement acquis du bilan se somme sur la grille du coût, sous les
+    réglages de référence : celle que le coût vient de simuler et que la
+    mémoire des calculs garde (``memoire.grille_du_cout``). La fabrique la lui
+    passe au lieu de la laisser se simuler une seconde fois, vingt secondes
+    (action 135). Le coût est lu de sa table figée, et le test s'arrête à
+    l'engagement : il ne regarde que la grille qu'il reçoit."""
+    from retraite_notionnelle import cout, memoire
+    from retraite_notionnelle.contexte import Contexte
+
+    class Arret(Exception):
+        pass
+
+    class SurLaTable(Contexte):
+        def cout(self):
+            return site().contexte.cout()
+
+    gardee, demandees, recues = ([], {}), [], []
+
+    def grille_du_cout(parametres, *autres):
+        demandees.append((parametres, autres))
+        return gardee
+
+    def engagements(*arguments, grille_simulee=None, **options):
+        recues.append(grille_simulee)
+        raise Arret
+
+    monkeypatch.setattr(memoire, "grille_du_cout", grille_du_cout)
+    monkeypatch.setattr(cout, "calculer_engagements", engagements)
+    with pytest.raises(Arret):
+        _construction()._bilan(SurLaTable())
+    assert demandees == [(Parametres(), ())]
+    assert len(recues) == 1 and recues[0] is gardee
+
+
 def test_le_paquet_contient_les_donnees_du_modele():
     import json
 

@@ -149,3 +149,30 @@ def test_le_bilan_se_pese_sur_la_grille_du_cout(monkeypatch):
     bilans = calculer_bilans(SurLaTable(), 2025, ["actuel"], engagement=lambda cle: 4.0)
     assert demandees == [GRILLE_DU_COUT]
     assert bilans["actuel"].dette == 4.0
+
+
+@pytest.mark.skipif(not disponible(), reason="node absent : le portage ne se lit pas")
+def test_le_bilan_ne_simule_la_grille_qu_une_fois(monkeypatch):
+    """Le bilan lit la grille deux fois, pour l'engagement acquis qui fait sa
+    dette et pour ses profils par âge : c'est la même, sous les mêmes règles,
+    et elle ne se simule qu'une fois (action 135). Jusqu'au 14 novembre 2026,
+    chacun la simulait pour soi, vingt secondes chacun sur la grille du coût."""
+    from retraite_notionnelle import cout
+    from retraite_notionnelle.contexte import Contexte
+
+    simuler = cout._pensionnes
+    demandees = []
+
+    def pensionnes(simulateur, cas_types, liquidation="droit"):
+        demandees.append(cas_types)
+        return simuler(simulateur, cas_types, liquidation)
+
+    class SurLaTable(Contexte):
+        def cout(self):
+            return site().contexte.cout()
+
+    cas = CAS_TYPES[:2]
+    monkeypatch.setattr(cout, "_pensionnes", pensionnes)
+    bilans = calculer_bilans(SurLaTable(), 2025, ["actuel"], cas_types=cas)
+    assert demandees == [cas]
+    assert bilans["actuel"].dette > 0.0
