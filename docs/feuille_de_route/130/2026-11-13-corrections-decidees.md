@@ -241,8 +241,14 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   moteurs (né le 1er octobre 1961, pension au 1er janvier 2024 : 10 015,14 € par an au
   lieu de 11 906,11 €) ; le compte du trimestre entamé et ce que la caisse a servi
   restent déclarés ; note `2026-11-14-correction-carcdsf-pension-du-1er-janvier-2024.md`.
-- [ ] 27. **CAVAMAC, la minoration de 25 % à 62 ans.** Note
+- [x] 27. **CAVAMAC, la minoration de 25 % à 62 ans.** Note
   `2026-11-05-carte-des-fiches-cavamac-lue-au-droit.md`.
+  Corrigé le 14 novembre 2026 : l'inapte et l'ancien déporté ou interné sont servis
+  sans minoration dès l'âge légal depuis le 1er juillet 2011, l'ancien combattant
+  depuis 2024, dans les deux moteurs (inapte né le 1er janvier 1955, pension au
+  1er janvier 2017 : 14 984,97 € par an au lieu de 11 238,73 €) ; l'ouverture de
+  l'inapte à 62 ans avant l'âge légal et les autres catégories restent déclarées ;
+  note `2026-11-14-correction-cavamac-inapte-et-categories.md`.
 - [ ] 28. **CAVAMAC, de septembre à décembre 2023** (cinq points de trop au plus). Même
   note.
 - [ ] 29. **CAVAMAC, la longue carrière à 15 %** (dix points de trop à 62 ans). Même note.

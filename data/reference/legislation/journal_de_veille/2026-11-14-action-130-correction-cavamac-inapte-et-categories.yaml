@@ -1,0 +1,42 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 27 : l'inapte et les catégories que la CAVAMAC sert sans minoration"
+consulte: >-
+  `python scripts/veille_droit.py` ; les index JORF et LEGI récupérés par
+  `dila_index.py --recuperer` puis `--mettre-a-jour`, à jour des 14 et 13 novembre 2026.
+  Statuts de la CAVAMAC de 2011, articles 15 et 16 (JORFARTI000024270173) ; annexe de
+  l'arrêté du 4 août 2023, 6° et 7° (JORFARTI000047977908) ; règlement de 2026,
+  articles 4 et 5 (JORFARTI000054436046). Décret n° 74-436 du 15 mai 1974, articles
+  1er à 5 (LEGIARTI000006764071 à LEGIARTI000006764075). L. 643-4 dans sa rédaction du
+  1er septembre 2023 (LEGIARTI000047453026), D. 643-14 (LEGIARTI000047634694),
+  D. 351-1-14 (LEGIARTI000053355951), D. 351-2 dans sa rédaction du 9 juillet 2024
+  (LEGIARTI000049917724).
+trouve: >-
+  Le texte tranche pour l'inapte et l'ancien déporté ou interné. Sont servis « à taux
+  plein sans application d'un coefficient de minoration au plus tôt à partir de l'âge
+  prévu à l'article L. 161-17-2 » l'inapte, l'ancien déporté ou interné, l'ancien
+  combattant du décret n° 74-436, le grand invalide et l'invalide professionnel à 66 %
+  (statuts de 2011, article 15, a à e) ; depuis le 1er septembre 2023, « à partir de
+  l'âge prévu au IV de l'article L. 643-3 », 62 ans pour l'inapte, « les assurés
+  mentionnés aux 2° et 3° de l'article L. 643-4 » (arrêté du 4 août 2023, 6°, b ;
+  règlement de 2026, article 4). Le modèle leur opposait la minoration de l'assuré
+  valide, 25 % à 62 ans : corrigé dans les deux moteurs, sans ligne de code, par les
+  deux paramètres de période de la ligne 23 (`age_sans_coefficient_de_l_inapte`,
+  `categories_sans_coefficient`) posés aux quatre périodes de 2012 à 2026 de
+  `cavamac_complementaire.yaml`. Inapte ou ancien déporté né le 1er janvier 1955,
+  pension au 1er janvier 2017 à 62 ans : 14 984,97 € par an au lieu de 11 238,73 € ;
+  inapte né le 1er janvier 1951, pension au 1er juillet 2011 : 12 610,23 € au lieu de
+  9 457,67 € ; né le 1er janvier 1965, pension au 1er octobre 2027 : 25 169,58 € au
+  lieu de 19 821,04 €. L'article 1er du décret n° 74-436, auquel les statuts de 2011
+  renvoient, est abrogé depuis le 21 décembre 1985. La fiche
+  `cavamac_minoration_age_seul` relue ce jour, l'erreur passée à son histoire.
+reste: >-
+  L'ancien combattant de 2011 à 2023, que les statuts servent aux âges du décret
+  n° 74-436 et non à ceux de la pratique de la Cnav que la fiche de la catégorie
+  porte, garde la minoration, comme de septembre à décembre 2023 la personne du 5° de
+  L. 351-8 ; le grand invalide et l'invalide professionnel à 66 %, sans saisie, et le
+  travailleur handicapé, aussi. L'inapte reste refusé entre 62 ans et l'âge légal de sa
+  génération depuis le 1er septembre 2023 : la question, que la fiche posait déjà au
+  propriétaire, n'est pas dans la file. Avant le 1er juillet 2011, nul texte lu. La
+  même classe à la CAVEC et à la CARPV, que la file ne nomme pas pour l'inapte. Les
+  lignes 28 à 30 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).
