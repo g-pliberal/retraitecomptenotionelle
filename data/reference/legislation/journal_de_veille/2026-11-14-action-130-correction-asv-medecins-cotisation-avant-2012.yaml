@@ -1,0 +1,35 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 9 : la cotisation d'avant 2012 de l'ASV des médecins"
+consulte: >-
+  `python scripts/veille_droit.py` ; les index LEGI et JORF récupérés par `dila_index.py
+  --recuperer`, à jour du 11 novembre 2026. Dans LEGI : D. 645-2, ses vingt-deux
+  rédactions (LEGIARTI000006738371 à 383, LEGIARTI000023380413) ; D. 645-3 de 1985 à
+  2004 (LEGIARTI000006738166 à 169) ; décret n° 72-968, article 6, ses sept rédactions
+  (LEGIARTI000006765951 à 957) ; L. 645-2 de 1985 et de 2004 (LEGIARTI000006743812,
+  LEGIARTI000006743818). Au JORF : le décret n° 81-274 (JORFTEXT000000685106), les
+  articles 1er et 4 du décret n° 94-564 (JORFARTI000001585515, JORFARTI000001970295),
+  l'article 33 de la loi n° 96-452 (JORFARTI000001981995), le décret n° 2004-1319
+  (JORFTEXT000000446136). Hors du droit : une recherche sur la toile pour la cotisation
+  de 2011 (la presse médicale et une lettre de la CARMF) et pour le tarif de la
+  consultation (une question écrite à l'Assemblée nationale).
+trouve: >-
+  Le texte tranche : D. 645-2 fixe « la cotisation annuelle des bénéficiaires », trente,
+  cinquante-deux puis soixante fois le tarif de la consultation, et D. 645-3 celle des
+  caisses « au double de la cotisation des bénéficiaires » (à l'égalité du 30 mars 1993
+  au 8 juillet 1994). L'article 6 du décret n° 72-968 l'appelle à 75 % de 1981 à 1992,
+  et fixe 1988 à trente et une fois, 1990 à trente-trois, 1992 à quarante, 1993 à
+  43,333 2 fois, à 100 %. La fiche du régime prenait N consultations pour le total et
+  n'en donnait que le tiers au médecin : corrigé dans les données
+  (`asv_conventionnes.yaml`), de 1972 à 2011, dans les deux moteurs. Au cas posé, 2004 :
+  1 200 € au lieu de 400 € pour le médecin, 3 600 € au lieu de 1 200 € au compte
+  notionnel. Aucune pension du scénario 1 ne change. La fiche `asv_medecins_points`
+  relue ce jour, l'article 6 cité rédaction par rédaction.
+reste: >-
+  Le tarif de la consultation au 1er janvier de chaque année, de 1972 à 2011, aux arrêtés
+  qui approuvent les conventions et leurs avenants : la fiche en garde cinq, non relus,
+  portés par les prix ; celui de 1999, 110 F, est douteux (115 F depuis avril 1998 selon
+  une question écrite). L'article 1er, a, du décret n° 71-544 d'avant 1981. La part des
+  caisses en 1993, au premier semestre de 1994, et de 2005 à 2011 (la convention
+  médicale). Les quatre autres ASV, dont la cotisation d'avant 2007 n'est pas lue aux
+  multiples de D. 645-2. Les lignes 10 à 30 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).

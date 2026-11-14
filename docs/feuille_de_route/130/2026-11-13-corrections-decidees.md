@@ -80,9 +80,17 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   premier semestre de 2012, les pensions d'avant 1999 et la valeur d'après 2026 restent
   des limites déclarées ; les écarts (c) à (g) sont repris dans la fiche ; note
   `2026-11-14-correction-asv-medecins-valeur-de-service.md`.
-- [ ] 9. **ASV des médecins, la cotisation d'avant 2012**, portée au tiers : le médecin
+- [x] 9. **ASV des médecins, la cotisation d'avant 2012**, portée au tiers : le médecin
   paie N consultations, les caisses le double (2 400 € par an de moins au compte en 2004) ;
   avec le taux d'appel de l'article 6 et la cotisation de 1994. Même note, écarts (a) à (c).
+  Corrigé le 14 novembre 2026 : la fiche du régime porte la cotisation du médecin que
+  fixent D. 645-2 et l'article 6 du décret n° 72-968, de 1972 à 2011, et les caisses y
+  ajoutent le double, dans les deux moteurs (1 200 € au lieu de 400 € pour le médecin en
+  2004, 3 600 € au lieu de 1 200 € au compte, au cas posé) ; aucune pension du droit
+  actuel ne change ; le tarif de la consultation, que la fiche porte par les prix, les
+  caisses en 1993 et au premier semestre de 1994, l'année 1981 et les années d'avant
+  restent des limites déclarées ; note
+  `2026-11-14-correction-asv-medecins-cotisation-avant-2012.md`.
 - [ ] 10. **CAVAMAC, la majoration du second semestre 2011** (1 332,33 € en moins). Note
   `2026-11-06-fiches-communes-des-sections-lues-au-droit.md`.
 - [ ] 11. **CAVP, la carrière longue depuis le 10 janvier 2024** : 1,25 % par trimestre
