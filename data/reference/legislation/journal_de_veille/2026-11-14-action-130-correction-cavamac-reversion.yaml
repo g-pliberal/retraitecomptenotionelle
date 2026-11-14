@@ -1,0 +1,26 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 30 : la réversion de la CAVAMAC servie"
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index JORF récupéré par `dila_index.py --recuperer`,
+  à jour au 11 novembre 2026, retiré après lecture. Rouverts : les statuts de 2011, articles
+  18 et 21 à 25 (JORFARTI000024270173), le règlement de 2026, articles 11 à 14
+  (JORFARTI000054436046), et les arrêtés du 28 mars 2014 (JORFARTI000028814573), du 4 août
+  2023 (JORFARTI000047977908) et du 8 juillet 2025 (JORFARTI000051895020). Sur le site de la
+  CAVAMAC : « La pension de réversion ».
+trouve: >-
+  Le texte tranche, et les deux rédactions disent la même règle : 60 % des points de
+  l'adhérent au conjoint survivant de 65 ans, marié deux ans au moins au décès sauf enfant
+  issu de l'union, partagée avec les précédents conjoints divorcés au prorata des mariages,
+  sans la minoration du défunt, avec sa prorogation ; rien ne la retire au remariage, et la
+  caisse le confirme, sans condition de ressources, la majoration pour enfants de 10 % s'y
+  ajoutant. Depuis l'arrêté du 28 mars 2014 elle part au mois, et non au trimestre civil, qui
+  suit le décès. Le modèle n'en servait rien : corrigé dans les deux moteurs, par la fiche
+  `reversion_cavamac`. Agent parti au taux plein avec 14 984,97 € par an, mort en juin 2020,
+  conjointe née en 1952 : 60 %, 8 990,98 € par an.
+reste: >-
+  La minoration du défunt, que le texte retire et que le moteur garde dans la pension qu'il
+  reverse : jusqu'à 25 % de la réversion en moins pour le conjoint de l'agent parti avant son
+  taux plein, déclaré dans la fiche. Le capital sous 1 500 points ; les décès d'avant le
+  1er juillet 2011, aux statuts du Bulletin officiel, non lus ; la date d'effet au trimestre
+  civil de 2011 à mars 2014 ; aucun exemple chiffré publié, à demander à la caisse. La
+  réversion de la CAVEC, de la CARPV et des autres sections, non portée.

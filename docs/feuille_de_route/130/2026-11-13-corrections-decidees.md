@@ -271,7 +271,13 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   27 252,92 € ; dix points de trop, et non cinq, pour la génération 1952) ; note
   `2026-11-14-correction-cavamac-septembre-2023.md`.
 - [ ] 29. **CAVAMAC, la longue carrière à 15 %** (dix points de trop à 62 ans). Même note.
-- [ ] 30. **CAVAMAC, la réversion non servie.** Même note.
+- [x] 30. **CAVAMAC, la réversion non servie.** Même note.
+  Corrigé le 14 novembre 2026 : 60 % au conjoint survivant de 65 ans, marié deux ans au
+  moins sauf enfant, partagée avec les précédents conjoints, gardée au remariage, dans
+  les deux moteurs (agent parti avec 14 984,97 € par an, mort en juin 2020 : 8 990,98 €
+  par an au lieu de rien) ; la minoration du défunt, que le texte retire de la réversion,
+  et les décès d'avant le 1er juillet 2011 restent déclarés ; fiche `reversion_cavamac`,
+  note `2026-11-14-correction-cavamac-reversion.md`.
 
 Si une ligne ne se retrouve pas telle quelle dans sa note ou sa fiche — le relevé du
 13 novembre n'a pas retrouvé tous les comptes de l'ancien bloc « Reprise » —, la session le
