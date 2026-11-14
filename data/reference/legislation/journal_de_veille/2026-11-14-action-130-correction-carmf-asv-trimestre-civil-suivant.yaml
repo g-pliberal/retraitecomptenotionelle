@@ -1,0 +1,33 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 18 : la majoration de la CARMF et de l'ASV comptée du premier jour du trimestre civil qui suit l'âge"
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index JORF récupéré par `dila_index.py
+  --recuperer`, à jour du 11 novembre 2026. Arrêté du 30 novembre 2016, annexe
+  (JORFARTI000033521562), article 15 des statuts du régime complémentaire de la CARMF ;
+  arrêté du 1er décembre 2016, annexe (JORFARTI000033538061), article 12 des statuts de
+  l'ASV ; arrêté du 22 mars 2017, annexe (JORFARTI000034298521) ; règlements du
+  10 juillet 2026 (JORFARTI000054435859), I, article 2, et III, article 2.
+trouve: >-
+  Le texte tranche : « 1,25 % par trimestre séparant le premier jour du trimestre civil
+  suivant celui où le médecin atteint cet âge de la date d'effet de la retraite »,
+  « réduit à 0,75 % par trimestre à partir du premier jour du trimestre civil suivant
+  celui où le médecin atteint l'âge de 65 ans, sans pouvoir s'appliquer au-delà du
+  premier jour du trimestre civil suivant le soixante dixième anniversaire », aux deux
+  régimes, de 2017 aux règlements de 2026. Le modèle comptait du premier jour du mois
+  où l'âge est atteint : un trimestre de trop pour le médecin né le premier jour d'un
+  trimestre civil, et pour celui qui, né un autre jour, ne prend pas sa pension au
+  premier jour d'un trimestre civil. Corrigé dans les deux moteurs, par un interrupteur
+  de période (`surcote_du_trimestre_civil_suivant`) posé sur les périodes de
+  `carmf_complementaire.yaml` et d'`asv_conventionnes.yaml` depuis 2017. Né le
+  1er janvier 1958, pension au 1er janvier 2025 : 1,2025 au lieu de 1,21, 16 016,14 €
+  par an au lieu de 16 116,03 € à la CARMF (99,89 € de moins), 19 147,78 € au lieu de
+  19 267,20 € à l'ASV (119,42 € de moins). Le passage à 0,75 % des nés de juillet à
+  décembre 1951, que la ligne 13 laissait approché, se lit au même décompte : né le
+  10 septembre 1951, pension au 1er janvier 2017, 1,2325 au lieu de 1,2375. Les fiches
+  `surcote_par_age_seul` et `carmf_asv_minoration_enfants` relues ce jour, l'erreur
+  passée à leur histoire.
+reste: >-
+  Ce que la caisse sert au médecin né le premier jour d'un trimestre civil n'est lu
+  dans aucun exemple publié. Le point non tranché de la CARPIMKO (« par trimestre civil
+  entier d'ajournement postérieur à l'âge »), hors de la file. Les lignes 19 à 30 de la
+  file (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).

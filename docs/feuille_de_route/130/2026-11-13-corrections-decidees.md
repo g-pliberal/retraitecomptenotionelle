@@ -181,8 +181,15 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   lieu de 367,01 € par an) ; les dix ans d'avant le 15 février 1985 et la même durée aux
   quatre autres régimes des praticiens conventionnés restent à porter ; note
   `2026-11-14-correction-asv-medecins-un-an-d-exercice.md`.
-- [ ] 18. **CARMF et ASV, né le premier jour d'un trimestre** : un trimestre de trop
+- [x] 18. **CARMF et ASV, né le premier jour d'un trimestre** : un trimestre de trop
   (99,89 € et 119,42 € de trop). Note `2026-11-06-e13-surcote-par-age-seul.md`.
+  Corrigé le 14 novembre 2026 : la majoration des deux régimes se compte du premier
+  jour du trimestre civil qui suit celui où l'âge est atteint, jusqu'à la date d'effet,
+  le passage à 0,75 % et la limite des 70 ans lus de même, dans les deux moteurs (né
+  le 1er janvier 1958, pension au 1er janvier 2025 : 1,2025 au lieu de 1,21, 99,89 € par
+  an de moins à la CARMF, 119,42 € à l'ASV) ; le reste de la ligne 13, le passage à
+  0,75 % des nés du second semestre de 1951, est réglé avec ; note
+  `2026-11-14-correction-carmf-asv-trimestre-civil-suivant.md`.
 - [ ] 19. **CARPIMKO, les générations 1955 et antérieures de 2015 à 2024** (136,90 € de
   trop). Fiche `carpimko_ages_2015` ; note `2026-11-05-e3-bis-corrections-de-r-e4.md`.
 - [ ] 20. **CARPIMKO, de 1984 au 4 juin 1987** (28,57 € de trop). Mêmes fiche et note.
