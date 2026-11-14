@@ -3291,17 +3291,18 @@ fabriqués.
 
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
-**Reprise, au 14 novembre 2026.** Le propriétaire a décidé, le 13 novembre, de corriger
-chacune des erreurs déclarées des caisses des libéraux, une session par erreur. La file
-est la note `130/2026-11-13-corrections-decidees.md` : trente lignes. La file se
-poursuit : treize lignes sont corrigées, la dernière étant la majoration des médecins,
-comptée depuis leur âge légal pour les pensions de janvier à mars 2017 ; dix-sept
-restent. La pension de base des libéraux reste servie au mois : sa règle attend le
-propriétaire (action 192, étape 3). Deux sessions corrigent de front, une par moitié
-de la file, qui dit où chacune en est. Par quoi commencer : la ligne 14 (le report de
-la Cipav depuis 2013), après la note de la ligne 13. Hors de la file : les points
-que le texte ne tranche pas, les navigants avant cinquante ans, la fiche du décret
-n° 2026-418.
+**Reprise, au 14 novembre 2026.** La file des trente corrections décidées par le
+propriétaire le 13 novembre est close. Chaque erreur des caisses des libéraux qu'elle
+nommait est corrigée dans les deux moteurs, ou gardée comme limite déclarée quand le
+texte ne tranchait pas : la note `130/2026-11-13-corrections-decidees.md` le dit ligne
+par ligne. Reste, hors de la file, faute de décision du propriétaire : les
+points que le texte ne tranche pas, que cette note énumère ; les navigants avant
+cinquante ans ; la fiche du décret n° 2026-418 ; la réversion des autres caisses de
+libéraux, non servie ; celle des agents généraux d'assurance, servie trop bas quand le
+défunt était parti avec une minoration. La pension de base des libéraux reste servie au
+mois : sa règle attend le propriétaire (action 192, étape 3). Par quoi commencer :
+demander au propriétaire lequel de ces points ouvrir. À lire d'abord :
+`130/2026-11-14-correction-cavamac-reversion.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
