@@ -205,6 +205,7 @@ periodes:
       8,1585 %.
   - debut: 2004
     fin: 2011
+    date_effet: [2004-01-01, 2011-07-01]
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -230,6 +231,7 @@ periodes:
       libéral.
   - debut: 2012
     fin: 2018
+    date_effet: [2011-07-01, 2019-01-01]
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -256,9 +258,12 @@ periodes:
       agent général verse sept euros pour cinq euros de droits — et le
       rendement de ce qu'il verse tombe à 3,53 %, le plus bas du catalogue
       libéral.
-      LES STATUTS DE 2011, servis à partir de 2012, première année
-      pleine : l'arrêté du 23 juin 2011 les met en vigueur le 1er juillet
-      (JORFARTI000024270156, annexe JORFARTI000024270173). Taux plein « à
+      LES STATUTS DE 2011, servis aux pensions qui prennent effet depuis
+      le 1er juillet 2011 (`date_effet`) : l'arrêté du 23 juin 2011 les met
+      en vigueur ce jour-là, abroge ceux de 1967 et ne porte aucune
+      disposition transitoire (JORFARTI000024270156, …158, annexe
+      JORFARTI000024270173). La fiche ne les servait qu'à partir de 2012
+      jusqu'au 14 novembre 2026. Taux plein « à
       l'âge prévu à l'article L. 161-17-2 du code de la sécurité sociale
       augmenté de cinq années » (article 15) — 65 ans avant la génération
       de juillet 1951, 67 ans depuis celle de 1955, soit la table du 1° de

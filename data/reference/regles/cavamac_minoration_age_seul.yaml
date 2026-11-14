@@ -361,22 +361,6 @@ approximations:
     pas de `surcote_par_trimestre`) : la présomption ne porte que sur la minoration.
     Ce que les statuts d'alors disaient de l'une et de l'autre n'est pas lu.
   effet: non mesuré
-- version: [statuts_de_2011]
-  textes: statuts de 2011, article 16, premier alinéa ; arrêté du 23 juin 2011, article 2
-  ecart: >-
-    Le modèle ne sert pas la majoration de 5 % par année pleine différée aux pensions
-    qui prennent effet du 1er juillet au 31 décembre 2011 : il les liquide par la
-    période de 2004 à 2011, qui n'en porte pas, quand les statuts de 2011 sont en
-    vigueur depuis le 1er juillet (essai du 5 novembre 2026, détail du moteur Python).
-  effet: >-
-    non mesuré dans la population ; pour l'agent né en février 1945, au taux plein à 65
-    ans, qui liquide en novembre 2011 à 66 ans et 9 mois, une année pleine différée,
-    soit 5 % de ses points : le modèle sert le coefficient 1, le texte 1,05 ; l'écart
-    va jusqu'à 25 points, plafond de l'article 16 : l'agent né en février 1940, au taux
-    plein à 65 ans, qui liquide en novembre 2011 à 71 ans et 9 mois, six années pleines
-    différées, 25 % de ses points au plus, le modèle sert 1, le texte 1,25, et le modèle
-    ne sert 1,25 qu'à partir de janvier 2012 (essai du 5 novembre 2026, et rejoué le
-    5 novembre dans le moteur Python)
 - version: [statuts_de_2011, statuts_de_septembre_2023, statuts_de_2024, reglement_de_2026]
   textes: >-
     statuts de 2011, article 15, a à e ; arrêté du 4 août 2023, annexe, 6°, b ;
@@ -520,9 +504,10 @@ effet: >-
   en vigueur le 1er juillet 2011, présumés avant, l'article 15 récrit le 1er septembre
   2023, l'article 16 le 1er janvier 2024, le règlement de 2026 ; ni l'inapte et les
   catégories sans minoration, ni la longue carrière à 15 %, ni la réversion ne sont
-  servis, ni la majoration du second semestre 2011.
+  servis. La majoration du second semestre 2011, que le modèle ne servait pas, est
+  corrigée depuis le 14 novembre 2026 (historique).
 sources:
-  lu_le: 2026-11-05
+  lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -545,6 +530,13 @@ sources:
       ne touchent qu'aux statuts généraux ; les notices de 1967 à 1998, qui ne donnent
       que des titres et des numéros d'articles.
     date: 2026-11-05
+  - type: jorf
+    reference: >-
+      Arrêté du 23 juin 2011, relu avant la correction : article 2
+      (JORFARTI000024270156), article 3 (JORFARTI000024270158) et annexe
+      (JORFARTI000024270173), article 16, « pour chaque année pleine différée », sans
+      disposition transitoire ; dans l'index JORF du dépôt, à jour du 11 novembre 2026.
+    date: 2026-11-14
   - type: legifrance
     reference: >-
       Index LEGI du dépôt, à jour du 4 novembre 2026 : décret n° 67-1169, article 4,
@@ -568,6 +560,19 @@ sources:
     url: >-
       https://www.cavamac.fr/documents/calcul-des-decotes-surcotes-rbl-rco-quelques-exemples/
     date: 2026-09-23
+historique:
+- >-
+  2026-11-14 — corrigée (action 130, décision du propriétaire du 13 novembre, ligne 10
+  de la file) : le modèle liquidait par sa période de 2004 à 2011, sans majoration, les
+  pensions qui prennent effet du 1er juillet au 31 décembre 2011, quand les statuts de
+  2011 sont en vigueur depuis le 1er juillet (arrêté du 23 juin 2011, article 2), sans
+  disposition transitoire. La période de 2012 à 2018 de `cavamac_complementaire.yaml`
+  liquide désormais les pensions qui prennent effet depuis le 1er juillet 2011
+  (`date_effet`), dans les deux moteurs : l'agent né en février 1945, au taux plein à
+  65 ans, qui liquide en novembre 2011 à 66 ans et 9 mois, une année pleine différée,
+  reçoit le coefficient 1,05 de l'article 16, au lieu de 1 ; né en février 1940, à 71
+  ans et 9 mois, 1,25. La majoration pour trois enfants de l'article 18 suit la même
+  correction (`sections_liberales_majoration_enfants`).
 code:
   interrupteurs:
     abattement_points: cavom
@@ -596,5 +601,5 @@ code:
     contenu.parametres de chaque version : abattement_points, age_ouverture_par_generation,
     age_taux_plein, age_taux_plein_par_generation, decote_par_trimestre ;
     regimes/cavamac_complementaire.yaml : surcote_par_trimestre, surcote_pas_trimestres,
-    surcote_trimestres_maximum, surcote_trimestres_cotises
+    surcote_trimestres_maximum, surcote_trimestres_cotises, date_effet
   tests: [tests/test_sections_liberales.py]

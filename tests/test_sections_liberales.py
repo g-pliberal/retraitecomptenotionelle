@@ -121,6 +121,34 @@ def test_la_cavamac_majore_par_annee_pleine_et_depuis_2024_par_annee_cotisee(
     assert _coefficient(pensions["cavamac_complementaire"].detail) == pytest.approx(1.0)
 
 
+def test_la_cavamac_majore_l_annee_differee_des_le_1er_juillet_2011(simulateur):
+    """Les statuts de 2011 entrent en vigueur le 1er juillet 2011 (arrêté du
+    23 juin 2011, article 2), sans disposition transitoire : « une majoration
+    de 5 % du nombre de points […] pour chaque année pleine différée au-delà
+    de l'âge mentionné à l'article 15 » (article 16). L'agent né en février
+    1945, au taux plein à 65 ans, qui liquide en novembre 2011 à 66 ans et
+    9 mois, a différé une année pleine : 1,05. Le modèle ne servait les
+    statuts de 2011 qu'aux pensions de 2012 (corrigé le 14 novembre 2026)."""
+    def coefficient(age: float) -> tuple[tuple[int, int], float]:
+        carriere = Carriere.depuis_parcours(
+            annee_naissance=1945, mois_naissance=2, jour_naissance=1, sexe="H",
+            metiers=[Metier(affiliation="agent_general_assurance", age_debut=21.0,
+                            niveau_salaire=1.0)],
+            age_liquidation=age, macro=simulateur.macro)
+        resultat = simulateur.scenario_actuel.calculer(carriere)
+        [pension] = [p for p in resultat.pensions_par_regime
+                     if p.regime == "cavamac_complementaire"]
+        effet = carriere.date_liquidation
+        return (effet.annee, effet.mois), _coefficient(pension.detail)
+
+    assert coefficient(66.75) == ((2011, 11), pytest.approx(1.05))
+    # 66 ans et 5 mois, le 1er juillet 2011, premier jour des statuts.
+    assert coefficient(66 + 5 / 12) == ((2011, 7), pytest.approx(1.05))
+    # Le 1er juin 2011, les statuts de 1967, que nul texte lu ne dit : le
+    # modèle n'y sert aucune majoration, ce que la fiche déclare.
+    assert coefficient(66 + 4 / 12) == ((2011, 6), pytest.approx(1.0))
+
+
 def test_la_cavamac_majore_de_dix_pour_cent_pour_trois_enfants(simulateur):
     resultat, pensions = _calculer(simulateur, "agent_general_assurance", 1960,
                                    67.0, sexe="F", enfants=3)
@@ -367,15 +395,13 @@ def test_la_cipav_majore_pour_trois_enfants_depuis_2000(simulateur):
 SECTIONS_QUI_MAJORENT = ("cavamac_complementaire", "cavec_complementaire",
                          "cipav_complementaire")
 
-#: L'écart que la fiche déclare, lue au droit le 6 novembre 2026 (action 130,
-#: E8) : les statuts de la CAVAMAC de 2011 entrent en vigueur le 1er juillet
+#: L'écart que la fiche déclarait, lue au droit le 6 novembre 2026 (action
+#: 130) : les statuts de la CAVAMAC de 2011 entrent en vigueur le 1er juillet
 #: 2011 (arrêté du 23 juin 2011, article 2) et majorent de 10 % les points de
-#: l'adhérent qui a eu trois enfants (article 18) ; le modèle ne sert la
+#: l'adhérent qui a eu trois enfants (article 18) ; le modèle ne servait la
 #: majoration qu'aux pensions qui prennent effet depuis le 1er janvier 2012.
-#: Erreur prouvée, déclarée et non corrigée : les dates d'effet de juillet à
-#: décembre 2011, où le modèle ne sert rien.
-MAJORATION_OMISE_PAR_LE_MODELE = {
-    ("cavamac_complementaire", 2011, mois) for mois in range(7, 13)}
+#: Corrigé le 14 novembre 2026 : plus aucune date d'effet n'est omise.
+MAJORATION_OMISE_PAR_LE_MODELE: set[tuple[str, int, int]] = set()
 
 
 def test_chaque_version_de_la_majoration_pour_enfants_des_sections_est_portee():
@@ -384,7 +410,7 @@ def test_chaque_version_de_la_majoration_pour_enfants_des_sections_est_portee():
     ``sections_liberales_majoration_enfants`` donne à trois enfants est celle
     que la période de liquidation de chaque section déclare
     (``majoration_enfants`` dans ``avantages_non_contributifs``, que
-    ``_taux_majoration_enfants`` sert à 10 %), hors l'écart déclaré."""
+    ``_taux_majoration_enfants`` sert à 10 %), sans écart."""
     from retraite_notionnelle.carriere import DateMois
     from retraite_notionnelle.droit.commun import periode_de_liquidation
     from retraite_notionnelle.droit.completer import _taux_majoration_enfants
@@ -419,8 +445,8 @@ def test_chaque_version_de_la_majoration_pour_enfants_des_sections_est_portee():
                     continue
                 assert servi == pytest.approx(taux[code]), (version["id"], code, jour)
                 vus += 1
-    assert omis == 6
-    assert vus == 51 * 12 * 3 - 6
+    assert omis == 0
+    assert vus == 51 * 12 * 3
 
 
 #: Né un 10 mars, l'âge se compte du 1er avril (``Carriere.origine_des_ages``) :
@@ -438,10 +464,10 @@ def test_chaque_version_de_la_majoration_pour_enfants_des_sections_est_portee():
 MAJORATIONS_AUX_DATES_QUI_COMPTENT = {
     # CAVAMAC : statuts approuvés par l'arrêté du 23 juin 2011, « en vigueur le
     # 1er juillet 2011 » (article 2), article 18 : « majoré de 10 % au profit de
-    # l'adhérent ayant eu au moins trois enfants ». Le modèle ne sert rien avant
-    # le 1er janvier 2012 : erreur prouvée, déclarée, non corrigée (candidat 47).
+    # l'adhérent ayant eu au moins trois enfants ». Le modèle ne servait rien
+    # avant le 1er janvier 2012 : corrigé le 14 novembre 2026.
     ("agent_general_assurance", "1946-03-10", "65.25"):  # 1er juillet 2011
-        ((0.10,), 0.0, ("cavamac_depuis_juillet_2011", "cavamac_complementaire")),
+        ((0.10,), 0.10, None),
     ("agent_general_assurance", "1946-03-10", "65.75"):  # 1er janvier 2012
         ((0.10,), 0.10, None),
     # CAVEC : les statuts de 2018 sans « bonification » ; l'arrêté du 4 juillet
@@ -479,7 +505,7 @@ def test_les_lectures_de_la_majoration_pour_enfants_des_sections_que_le_modele_n
         if ecart is not None:
             assert ecart in declarees, cle
             ecarts += 1
-    assert ecarts == 3
+    assert ecarts == 2
 
 
 def test_la_majoration_pour_enfants_des_sections_aux_dates_qui_comptent_dans_les_deux_moteurs():
@@ -487,8 +513,10 @@ def test_la_majoration_pour_enfants_des_sections_aux_dates_qui_comptent_dans_les
     une mère de trois enfants de chaque section, la majoration que le modèle
     sert à la date d'effet (``MAJORATIONS_AUX_DATES_QUI_COMPTENT``, le taux
     servi) : 10 % de la pension de la complémentaire, ou rien. Au 1er juillet
-    2011, la CAVAMAC ne reçoit rien où le texte donne 10 %, l'écart déclaré ;
-    au 1er décembre 1999, la Cipav rien, l'une des deux lectures."""
+    2011, la CAVAMAC reçoit les 10 % de ses statuts de 2011, en vigueur ce
+    jour-là : 0,10 × 13 323,31 = 1 332,331, soit 1 332,33 € par an au cas posé
+    (corrigé le 14 novembre 2026) ; au 1er décembre 1999, la Cipav rien, l'une
+    des deux lectures."""
     from outils_pont import servi_et_refait
 
     requete = {
@@ -514,6 +542,12 @@ def test_la_majoration_pour_enfants_des_sections_aux_dates_qui_comptent_dans_les
                  if a["code"] == "majoration_enfants"]
         assert montant > 0, cle
         assert sum(parts) == pytest.approx(taux * montant), cle
+        if cle == ("agent_general_assurance", "1946-03-10", "65.25"):
+            # Posé à la main : 65 ans et 3 mois, le taux plein à 65 ans, aucune
+            # année pleine différée (article 16), donc les mêmes points ;
+            # article 18, 10 % de 13 323,31 €.
+            assert montant == pytest.approx(13_323.31, abs=0.005), cle
+            assert sum(parts) == pytest.approx(1_332.33, abs=0.005), cle
 
 
 #: Ce que le décret n° 79-262 (article 2, rédaction du décret n° 2022-1746) et

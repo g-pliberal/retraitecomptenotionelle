@@ -180,7 +180,9 @@ def test_les_dates_d_effet_partagent_les_annees_sans_trou_ni_doublon():
                 liquident = [p for p in regime.periodes if p.liquide(jour)]
                 assert len(liquident) == len(couvrent), (regime.code, jour)
     assert coupees == {"regime_general", "msa_salaries", "cavec_complementaire",
-                       "ircec_racl", "cps_saint_pierre_et_miquelon", "cssm_mayotte"}
+                       "ircec_racl", "cps_saint_pierre_et_miquelon", "cssm_mayotte",
+                       # statuts de 2011, en vigueur le 1er juillet 2011
+                       "cavamac_complementaire"}
 
 
 @pytest.mark.parametrize("bornes,message", [

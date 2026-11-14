@@ -276,28 +276,6 @@ versions:
       trois enfants au moins ; à la Cipav, ni privé ni retiré de l'autorité parentale
   exemples: aucun trouvé
 approximations:
-- version: [cavamac_depuis_juillet_2011]
-  regime: cavamac_complementaire
-  textes: >-
-    arrêté du 23 juin 2011, article 2 (JORFARTI000024270156) et annexe, article 18
-    (JORFARTI000024270173)
-  ecart: >-
-    Erreur prouvée, déclarée et non corrigée : les statuts de 2011 entrent en vigueur le
-    1er juillet 2011 et abrogent ceux de 1967, sans disposition transitoire (ni « 2011
-    » ni « 2012 » dans les 29 983 caractères de l'annexe) ; une pension qui prend effet
-    du 1er juillet au 1er décembre 2011 se liquide à leur article 18. Le modèle ne
-    déclare `majoration_enfants` qu'à la période de 2012 (« servis à partir de 2012,
-    première année pleine », `cavamac_complementaire.yaml`) : il ne sert rien à ces six
-    dates d'effet. La lecture contraire, que la majoration n'atteindrait que les
-    pensions de 2012, ne tient à aucun texte. Essai du 6 novembre 2026, une mère de
-    trois enfants née le 10 mars 1946, agent général au double du salaire moyen depuis
-    22 ans, en euros de 2026 : partie à 65 ans et 3 mois, pension au 1er juillet 2011,
-    13 323,31 € de CAVAMAC, aucune majoration ; le texte en donne 0,10 × 13 323,31 =
-    1 332,33 € ; partie à 65 ans et 9 mois, pension au 1er janvier 2012, le modèle
-    sert 1 382,64 €, 10 % de 13 826,36 €.
-  effet: >-
-    −10 % de la pension de la CAVAMAC, par an, pour un parent de trois enfants dont la
-    pension prend effet de juillet à décembre 2011 : 1 332,33 € au cas posé
 - version: [aucune_avant_2000, cipav_depuis_2000]
   regime: cavamac_complementaire
   textes: >-
@@ -433,13 +411,14 @@ effet: >-
   novembre 2026 (action 130) : cinq versions sur la date d'effet ; la CAVEC conforme
   depuis le 7 juillet 2025, la Cipav et la CAVAMAC au décret et aux règlements de
   2026 ; une erreur prouvée, la CAVAMAC de juillet à décembre 2011 (1 332,33 € par an
-  au cas posé) ; un point non tranché, la Cipav avant 2000 (403,40 €) ; des manques,
+  au cas posé), corrigée le 14 novembre 2026 (historique) ; un point non tranché, la
+  Cipav avant 2000 (403,40 €) ; des manques,
   les statuts de la CAVAMAC d'avant 2011, les 5 % par enfant handicapé de la CAVAMAC
   (et, depuis le 18 juillet 2026, par enfant qui ouvre droit à l'AAH) ; la
   réversion de la CAVEC, que ses textes majorent aussi, jointe à l'écart déclaré de
   `cavec_minoration_age_seul` (aucune réversion de la CAVEC servie).
 sources:
-  lu_le: 2026-11-06
+  lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -484,11 +463,34 @@ sources:
       5-2 (LEGIARTI000054168515) ; dans l'index LEGI du dépôt, à jour du 5 novembre
       2026.
     date: 2026-11-06
+  - type: jorf
+    reference: >-
+      Arrêté du 23 juin 2011, relu avant la correction : article 2
+      (JORFARTI000024270156), « entrent en vigueur le 1er juillet 2011 » ; article 3
+      (JORFARTI000024270158), l'arrêté de 1967 « est abrogé » ; annexe
+      (JORFARTI000024270173), articles 16, 17 et 18, sans « 2011 », « 2012 » ni «
+      transitoire » dans ses 29 983 caractères ; dans l'index JORF du dépôt, à jour du
+      11 novembre 2026.
+    date: 2026-11-14
+historique:
+- >-
+  2026-11-14 — corrigée (action 130, décision du propriétaire du 13 novembre, ligne 10
+  de la file) : la fiche du régime ne servait les statuts de 2011 de la CAVAMAC qu'aux
+  pensions de 2012, « première année pleine » ; l'arrêté du 23 juin 2011 les met en
+  vigueur le 1er juillet 2011 (article 2), abroge ceux de 1967 (article 3) et ne porte
+  aucune disposition transitoire. La période de 2012 à 2018 de
+  `cavamac_complementaire.yaml` liquide désormais les pensions qui prennent effet
+  depuis le 1er juillet 2011 (`date_effet`), dans les deux moteurs. Le cas posé le 6
+  novembre 2026, une mère de trois enfants née le 10 mars 1946, agent général au double
+  du salaire moyen depuis 22 ans, en euros de 2026, partie à 65 ans et 3 mois, pension
+  au 1er juillet 2011 : 13 323,31 € de CAVAMAC, et 0,10 × 13 323,31 = 1 332,33 € de
+  majoration par an (article 18), au lieu de rien. Six dates d'effet, de juillet à
+  décembre 2011.
 code:
   moteur: >-
-    Les périodes de la complémentaire de la CAVAMAC depuis 2012, de la Cipav depuis
-    2000, et de la CAVEC pour les pensions prenant effet depuis le 7 juillet 2025
-    (`date_effet`), déclarent `majoration_enfants`, que `completer` sert au barème
+    Les périodes de la complémentaire de la CAVAMAC pour les pensions prenant effet
+    depuis le 1er juillet 2011 (`date_effet`), de la Cipav depuis 2000, et de la CAVEC
+    pour les pensions prenant effet depuis le 7 juillet 2025 (`date_effet`), déclarent `majoration_enfants`, que `completer` sert au barème
     commun de `_taux_majoration_enfants`, 10 % dès trois enfants, sur la pension de
     chacune, minorée ou majorée par l'âge, à la période de liquidation
     (`periode_de_liquidation`). Le nombre d'enfants seul l'ouvre : ni l'éducation de
@@ -508,11 +510,12 @@ code:
     tests/test_sections_liberales.py,
     test_chaque_version_de_la_majoration_pour_enfants_des_sections_est_portee, qui
     confronte chaque mois de 1990 à 2040 la période de liquidation de chaque section à
-    la version de la date, l'écart de 2011 déclaré, et
+    la version de la date, sans écart, et
     test_la_majoration_pour_enfants_des_sections_aux_dates_qui_comptent_dans_les_deux_moteurs,
     sept cas aux bornes, servis par le portage et refaits par le moteur Python, au
-    taux que le modèle sert ; et
+    taux que le modèle sert, et les 1 332,33 € du cas posé de la CAVAMAC au 1er juillet
+    2011 ; et
     test_les_lectures_de_la_majoration_pour_enfants_des_sections_que_le_modele_ne_suit_pas_sont_declarees,
     qui confronte à chaque cas les lectures du texte au taux servi, et lie chacun des
-    trois écarts (la CAVAMAC en 2011, la Cipav avant 2000 et sa forme supposée depuis)
-    à l'approximation qui le déclare
+    deux écarts (la Cipav avant 2000 et sa forme supposée depuis) à l'approximation qui
+    le déclare
