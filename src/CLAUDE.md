@@ -33,10 +33,17 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   de `donnees/agregats.py`, et que lisent les accesseurs de
   `moteur/js/agregats.js`, ses seuls lecteurs : ceux du Python sont partis
   (note de décision 0005), et aucun ne s'y ajoute. Après
-  elle, ou après toute modification des données, `python scripts/regenerer.py`
+  elle, ou après toute modification des données, la session refait ce que
+  ses tests lisent, et cela seul : le paquet
+  (`python scripts/construire_donnees.py`), puis les témoins
+  (`python scripts/construire_temoins.py`) ; si un test de la suite rapide ou
+  de sa zone réclame un autre fichier fabriqué, elle refait celui-là, par son
+  script. `python scripts/regenerer.py`
   refait tout ce qu'un script fabrique — le paquet, les témoins, le
   chiffrage, les tableaux, le tableau de bord, les chiffres ancrés —, dans
-  l'ordre (`--verifier` dit ce qui est périmé sans rien écrire) ;
+  l'ordre (`--verifier` dit ce qui est périmé sans rien écrire) : GitHub le
+  lance après chaque envoi (`CLAUDE.md`, « Les fichiers fabriqués et la suite
+  complète sont à GitHub »), et une session ne le lance pas avant le sien ;
   `python scripts/resumer_temoins.py` dit ce qu'elle déplace,
   scénario par scénario, et le diff des témoins, chiffre par chiffre. Une
   étape dont rien n'a bougé ne se relance pas, et la suite ne revérifie pas
@@ -101,10 +108,14 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   au bit près ; un nombre nouveau du résultat (`dictionnaire()`) déclare son
   type dans la table de `pont.py` (`ENTIERS_DU_RESULTAT`,
   `FLOTTANTS_DU_RESULTAT`). Ce qui n'a pas de jumeau — le coût, les carrières
-  types — s'écrit en Python seul, son test d'abord. Puis
-  `python scripts/regenerer.py`, et `python scripts/resumer_temoins.py`,
+  types — s'écrit en Python seul, son test d'abord. Puis le
+  paquet et les témoins, une fois chacun (`python scripts/construire_donnees.py`,
+  `python scripts/construire_temoins.py`), et
+  `python scripts/resumer_temoins.py`,
   pour voir ce qu'il déplace ; `-m rapide` et les tests de sa zone, puis le
-  commit.
+  commit. Le reste de la fabrique — l'accueil, le chiffrage, les tableaux, les
+  pages, le tableau de bord, les chiffres ancrés — est à GitHub :
+  `regenerer.py` ne se lance pas avant l'envoi.
   Les tests de sa zone comptent les confrontations légères, sept secondes
   sans mémoire : `python -m pytest tests/test_oracle.py tests/test_destinie.py
   tests/test_estimation_officielle.py tests/test_verification.py` ; elles ont

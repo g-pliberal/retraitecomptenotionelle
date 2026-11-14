@@ -108,12 +108,58 @@ paragraphe précédent ne tient plus.
 - *Écrit* : un second paragraphe daté aux règles de la file, et un second
   message à la session d'aiguillage.
 
+**Le temps des outils, décomposé.** Le propriétaire : « Tu m'as aussi dit
+que les outils utilisés en session étaient lents. On peut regarder ça ? » Un
+agent sur Sonnet a relevé, par `list_events`, chaque appel d'outil du premier
+tour de la correction 10 et sa durée, de l'appel à son résultat : 55 appels,
+808,6 s une fois les chevauchements ôtés, pour 786 s et 49 appels au compte de
+la plateforme ; l'écart n'est pas expliqué.
+
+| de 7 h 22 min 19 à 7 h 40 min 20 UTC | durée |
+|---|---|
+| lire la file et le texte, écrire le test, corriger | 3 min 10 |
+| `construire_donnees.py`, puis un fichier de tests | 3 min 07 |
+| la fiche de règle | 51 s |
+| `regenerer.py`, en arrière-plan : la note s'écrit, puis 4 min 37 d'attente | 6 min 19 |
+| la suite rapide et onze fichiers de tests, lancés ensemble | 3 min 53 |
+| les commits et l'envoi | 16 s |
+
+Le travail lui-même tient en trois minutes ; la fabrique en prend plus de
+neuf, et le paquet y est refait deux fois, seul puis dans `regenerer.py`.
+
+- *Deux consignes se contredisaient.* `CLAUDE.md` dit, depuis l'action 148,
+  qu'une session n'est pas tenue de régénérer ; `src/CLAUDE.md` et
+  `data/CLAUDE.md` disaient encore de lancer `regenerer.py` après toute
+  modification des données, et dans la liste de contrôle d'un changement du
+  modèle.
+- *Ce que `regenerer.py` prend, étape par étape*, mesuré ce jour dans le
+  conteneur de la session, sur un modèle inchangé, la mémoire des calculs
+  pleine et celle de la fabrique ignorée : 164 s, dont le paquet 29,1 s,
+  l'accueil 68,8 s, les témoins 32,3 s, le chiffrage 25,1 s, la prose 23,2 s.
+  Le paquet seul, mémoire des calculs vide : 151,7 s ici, 182 s environ dans
+  la correction 10.
+
+**La décision du propriétaire** : « fait les trois ».
+
+1. *Les corrections ne lancent plus `regenerer.py`* : le paquet et les
+   témoins, une fois chacun. Message à la session d'aiguillage.
+2. *Les deux consignes de zone alignées* sur la règle générale, avec la
+   réserve d'un test qui réclamerait un autre fichier fabriqué.
+3. *`construire_donnees.py` plus rapide* : une session neuve.
+
+Non vérifié par un essai : que la suite rapide et les tests de la zone ne
+lisent, de la fabrique, que le paquet et les témoins. La règle générale le
+suppose depuis l'action 148 ; la réserve écrite aux consignes couvre le cas
+contraire. Une session ne voit plus, avant son envoi, ce que sa correction
+déplace à l'accueil et au chiffrage : GitHub le commite après.
+
 **Ce qui reste.**
 
-- Le temps des outils dans une session de correction, 13 min 06 sur 18 min 11
-  pour la dixième, n'est pas décomposé : ce que ses 49 appels ont lancé, et
-  combien de fois la suite rapide. C'est le levier qui reste pour aller plus
-  vite.
+- Vérifier, sur les premières corrections qui suivent la consigne, que la
+  suite rapide et les tests de la zone ne réclament que le paquet et les
+  témoins, et ce que la correction dure alors.
+- `construire_donnees.py` plus rapide après un changement du modèle : une
+  session neuve, ouverte ce jour.
 
 - Relever, sur les deux files, combien d'envois ont buté sur un conflit et ce
   que chacun a coûté, et si un rouge s'est laissé attribuer.

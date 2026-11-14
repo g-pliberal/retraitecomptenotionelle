@@ -2,8 +2,11 @@
 
 Claude Code les charge à la première lecture d'un fichier de `data/`, en plus
 de `CLAUDE.md`. Une donnée modifiée déplace des résultats :
-`python scripts/regenerer.py` refait ce qu'un script en fabrique, et
-`python scripts/resumer_temoins.py` dit ce qui a bougé (`src/CLAUDE.md`). Une
+la session refait le paquet et les témoins, que ses tests lisent
+(`python scripts/construire_donnees.py`, `python scripts/construire_temoins.py`),
+et `python scripts/resumer_temoins.py` dit ce qui a bougé ; le reste de ce
+qu'un script fabrique, `regenerer.py` le refait sur GitHub, après l'envoi
+(`src/CLAUDE.md`). Une
 règle du scénario 1 ne s'écrit qu'en suivant `docs/veille_droit.md`.
 
 - **Les données** sont dans `data/`. Tous les régimes, calculés ou non : un
