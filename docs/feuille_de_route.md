@@ -5769,17 +5769,18 @@ du modèle, en temps et en jetons, sans céder sur les vérifications. La
 vérification complète que GitHub lance à chaque envoi prenait 47 minutes
 quand le modèle venait de changer : partagée entre plusieurs machines, elle
 en a pris 19 à l'essai. Une session ne reçoit plus que le début d'une
-sortie de plus de 10 000 caractères. Par quoi commencer : relever les durées
-des premières vérifications de `main`, puis raccourcir les deux tests de
-huit et neuf minutes. Restent aussi : répartir sur
-les cœurs les calculs du paquet, relever la durée des corrections, comparer
-les réponses des agents de recherche à celles d'avant, raccourcir ce que
-`reprise.py` imprime des actions 138 et 186, qui dépasse ce plafond. Une
-décision attend le propriétaire : faire passer seul un changement
-transversal. Notes : `2026-11-14-course-en-travaux-paralleles.md`,
+sortie de plus de 10 000 caractères, et ce que `reprise.py` imprime d'une
+action tient dessous. Par quoi commencer : relever les durées des premières
+vérifications de `main`, puis raccourcir les deux tests de huit et neuf
+minutes. Restent aussi : répartir sur les cœurs les calculs du paquet,
+relever la durée des corrections, comparer les réponses des agents de
+recherche à celles d'avant. Une décision attend le propriétaire : faire
+passer seul un changement transversal. Notes :
+`2026-11-14-course-en-travaux-paralleles.md`,
 `2026-11-14-envoi-refuse-quand-le-paquet-se-croise.md`,
 `2026-11-14-correction-sans-attendre-le-verdict.md`,
-`2026-11-14-sortie-de-bash-plafonnee.md` et `2026-11-14-hook-de-bash.md`.
+`2026-11-14-sortie-de-bash-plafonnee.md`, `2026-11-14-hook-de-bash.md` et
+`2026-11-14-reprise-sous-le-plafond.md`.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus
