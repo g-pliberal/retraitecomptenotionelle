@@ -32,8 +32,13 @@ effet: >-
   quand le modèle en comptait onze, 1,1375 — 679,34 € par an servis en moins à la CARMF
   (12 364,01 € servis, 13 043,35 € depuis), 873,34 € à l'ASV (15 894,81 €, 16 768,15 €
   depuis) ; corrigé ce jour (action 130, décision du propriétaire du 13 novembre,
-  ligne 13 de la file), dans les deux moteurs. La CARPIMKO, que
-  le modèle ne majore qu'en 2016, majore depuis le 3 octobre 2015. La CARPIMKO majore depuis
+  ligne 13 de la file), dans les deux moteurs. La CARPIMKO majore les
+  pensions qui prennent effet depuis le 3 octobre 2015, lendemain de la publication de
+  l'arrêté du 31 juillet 2015 : jusqu'au 14 novembre 2026, le modèle ne la servait qu'en
+  2016 — né le 10 mars 1949, auxiliaire médical depuis ses 25 ans, 65 ans le 10 mars
+  2014, pension au 1er novembre 2015, six trimestres civils entiers d'ajournement :
+  5 298,19 € servis, 5 695,55 € depuis, 397,36 € par an servis en moins ; corrigé ce jour
+  (ligne 16 de la file), dans les deux moteurs, par les données du régime. Elle majore depuis
   l'âge où la pension pouvait être liquidée sans abattement, l'âge légal dès que la durée
   du régime de base est atteinte (`surcote_depuis_la_duree`) ; la CAVP, dans les bornes
   de la génération — rien pour les nés jusqu'au 30 juin 1951, jusqu'à 66 ans pour ceux du
@@ -1510,18 +1515,29 @@ approximations:
   regime: carpimko_complementaire
   textes: arrêté du 31 juillet 2015, annexe, article 12 ter (JORFARTI000031255547)
   ecart: >-
-    Erreur déclarée, non corrigée (candidat, au propriétaire), sous une réserve : du
-    3 octobre au 31 décembre 2015, le texte majore ; le modèle ne majore rien
-    (`surcote_par_trimestre: null` jusqu'en 2015). La réserve : si la pension ne prend
-    effet qu'au premier jour d'un trimestre civil (statuts de 1984, article 11 ;
-    règlement de 2026, article 7 ; l'article qui la date de 1996 à 2026 n'est pas lu),
-    aucune ne prend effet dans ces trois mois, et l'écart se réduit à la date d'effet,
-    déjà déclarée dans `carpimko_ages_2015`.
+    Réserve, sur la date d'effet : du 3 octobre au 31 décembre 2015, le modèle sert des
+    pensions au 1er novembre et au 1er décembre, majorées comme le texte le dit ; si la
+    pension ne prend effet qu'au premier jour d'un trimestre civil (statuts de 1984,
+    article 11 ; règlement de 2026, article 7 ; l'article qui la date de 1996 à 2026
+    n'est pas lu), aucune ne prend effet dans ces trois mois, et l'écart se réduit à la
+    date d'effet, déjà déclarée dans `carpimko_ages_2015`. Jusqu'au 14 novembre 2026, le
+    modèle n'y majorait rien (`surcote_par_trimestre: null` jusqu'en 2015), quand le
+    texte majore : erreur corrigée ce jour (action 130, décision du propriétaire du
+    13 novembre, ligne 16 de la file), par la date d'effet des périodes de 2015 et de
+    2016 de `carpimko_complementaire.yaml`, dans les deux moteurs.
   effet: >-
-    né le 10 mars 1949, taux plein à 65 ans le 10 mars 2014 (article 12 quater, 1°),
-    pension au 1er novembre 2015 : le modèle sert 5 298,19 € par an, sans majoration ; le
-    texte, au moins six trimestres civils entiers (avril 2014 à septembre 2015), 1,075 :
-    au moins 397,36 € par an servis en moins ; sous la lecture que le modèle applique au même article depuis 2016 (`surcote_depuis_la_duree` : la durée atteinte à 62 ans et 3 mois, le 1er juillet 2011, où il sert « coefficient de majoration 1.2250 » au 1er janvier 2016), dix-sept trimestres civils entiers de juillet 2011 à septembre 2015, seize si celui qui commence le jour même ne compte pas (le point non tranché) : 5 298,1861 × 0,2125 = 1 125,86 € ou × 0,20 = 1 059,64 € par an, sous la même réserve (essais du 6 novembre 2026, dans les deux moteurs ; R-E14, E14)
+    aucun aux dates d'effet du premier jour d'un trimestre civil. L'erreur corrigée : né
+    le 10 mars 1949, auxiliaire médical depuis ses 25 ans (160 trimestres à 65 ans, 161
+    requis), taux plein à 65 ans le 10 mars 2014 (article 12 quater, 1°), pension au
+    1er novembre 2015 : le modèle servait 5 298,19 € par an, sans majoration ; le texte,
+    six trimestres civils entiers (avril 2014 à septembre 2015), 1,075 : 5 695,55 €
+    depuis, 397,36 € par an servis en moins ; depuis ses 22 ans, sous la lecture que le
+    modèle applique au même article (`surcote_depuis_la_duree` : la durée atteinte à
+    62 ans et 3 mois, le 1er juillet 2011), dix-sept trimestres civils entiers de juillet
+    2011 à septembre 2015, 1,2125 : 6 424,05 € depuis, 1 125,86 € par an servis en
+    moins, seize trimestres si celui qui commence le jour même ne compte pas (le point
+    non tranché, 1 059,64 €) (essais des 6 et 14 novembre 2026, dans les deux moteurs ;
+    R-E14, E14)
 - version: [carpimko_octobre_2015, carmf_asv_2017, carmf_asv_mars_2017, cprn_juin_2017, cavec_septembre_2018, cipav_2022, cipav_2023, cprn_2024, cavec_juillet_2025, cipav_depuis_juillet_2026, reglements_de_2026]
   regime: carpimko_complementaire
   textes: statuts, article 12 ter (2015 à juillet 2026) ; règlement de 2026, article 5

@@ -165,8 +165,14 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   d'affiliation comptées depuis 1979, qui manquent à une pension de 2008, et l'année
   2007 restent des limites déclarées ; note
   `2026-11-14-correction-cipav-report-de-2008-a-2012.md`.
-- [ ] 16. **CARPIMKO, d'octobre à décembre 2015** : rien de majoré (au moins 397,36 € en
-  moins). Notes `2026-11-06-e13-surcote-par-age-seul.md` et `…-e14-…`.
+- [x] 16. **CARPIMKO, d'octobre à décembre 2015** : rien de majoré (au moins 397,36 € en
+  moins). Notes `2026-11-06-e13-surcote-par-age-seul.md` et `…-e14-…`. Corrigé le
+  14 novembre 2026 : l'arrêté du 31 juillet 2015, sa majoration comme ses âges, est
+  servi aux pensions qui prennent effet depuis le 3 octobre 2015, dans les deux
+  moteurs, par les données du régime (né le 10 mars 1949, pension au 1er novembre
+  2015 : 5 695,55 € par an au lieu de 5 298,19 €, 397,36 € de plus) ; la date d'effet
+  au trimestre civil, non lue de 1987 à 2026, reste une limite déclarée ; note
+  `2026-11-14-correction-carpimko-report-octobre-2015.md`.
 - [ ] 17. **ASV des médecins, la durée minimale d'un an** (367,01 € de trop). Fiche
   `asv_medecins_points`.
 - [ ] 18. **CARMF et ASV, né le premier jour d'un trimestre** : un trimestre de trop

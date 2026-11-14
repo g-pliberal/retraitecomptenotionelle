@@ -39,8 +39,8 @@ lit:
 ecrit:
 - >-
   le coefficient qui minore ou majore la pension complémentaire, que
-  `liquider_chaque_regime` applique aux cotisations revalorisées, et, depuis 2016,
-  l'âge minimal et l'âge du taux plein, que la table `carpimko_2016` de
+  `liquider_chaque_regime` applique aux cotisations revalorisées, et, pour les
+  pensions qui prennent effet depuis le 3 octobre 2015, l'âge minimal et l'âge du taux plein, que la table `carpimko_2016` de
   `ages_regimes.csv` rend à l'ouverture
 dates_qui_decident:
 - liquidation.date_effet
@@ -616,14 +616,6 @@ approximations:
     minimal (60 ans à 61 ans et 8 mois) ; il ne se lit que dans l'autre sens, celui de
     la table `carpimko_2016` et de la rédaction de 2024.
   effet: aucun
-- version: [statuts_de_2015]
-  textes: arrêté du 31 juillet 2015, publié le 2 octobre 2015
-  ecart: >-
-    Du 3 octobre au 31 décembre 2015, le modèle sert la complémentaire à l'âge de la
-    base, la table `carpimko_2016` n'entrant qu'au 1er janvier 2016 : déclaré dans
-    `liquidation_regime_par_regime` (la complémentaire de la CAVOM, de la CARPIMKO et de
-    la CPRN servie à son âge), non repris ici.
-  effet: voir `liquidation_regime_par_regime`
 - version: [statuts_de_2015, statuts_de_2019]
   textes: statuts, articles 11 et 12, rédactions de 2015 et 2019
   ecart: >-
@@ -718,7 +710,11 @@ reformes:
 effet: >-
   La fiche lisait 67 ans dès la génération 1955 ; la table `carpimko_2016` arrête
   la décote et fait partir la majoration à l'âge que l'article 12 quater écrit,
-  depuis 2016. Trois enfants majorent la pension depuis 2024. Lue au droit le 5
+  pour les pensions qui prennent effet depuis le 3 octobre 2015, lendemain de la
+  publication de l'arrêté du 31 juillet 2015 : jusqu'au 14 novembre 2026, le modèle ne
+  servait cet arrêté, ses âges comme sa majoration, qu'aux pensions de 2016 (corrigé ce
+  jour, action 130, ligne 16 de la file, par la date d'effet des périodes de 2015 et de
+  2016 du régime ; le cas posé est dans `surcote_par_age_seul`). Trois enfants majorent la pension depuis 2024. Lue au droit le 5
   novembre 2026 (action 130) : avant 1984, les statuts de 1984 lus dans LEGI, puis
   2015, 2019, 2024 et le règlement de 2026. Retouchée le même jour après la relecture
   R-E4 : huit versions, les statuts de 1984 lus jusqu'au 4 juin 1987 seulement, ceux de
@@ -815,7 +811,8 @@ sources:
     date: 2026-09-23
 code:
   moteur: >-
-    Depuis 2016, les périodes de `carpimko_complementaire` nomment la table
+    Les périodes de `carpimko_complementaire` qui liquident depuis le 3 octobre 2015
+    (`date_effet` de celle de 2016, action 130, ligne 16 de la file) nomment la table
     `carpimko_2016` de `legislation/ages_regimes.csv` (`age_table`), que
     `AgesRegimes.ages` lit à la génération : taux plein à 65 ans jusqu'à la génération
     1955, quatre mois de plus par génération jusqu'à 67 ans pour celle de 1961 ; âge

@@ -1,0 +1,28 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 16 : la CARPIMKO majore le report dès le 3 octobre 2015"
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index JORF récupéré par `dila_index.py
+  --recuperer`, à jour du 11 novembre 2026. Arrêté du 31 juillet 2015
+  (JORFTEXT000031255542, Journal officiel du 2 octobre 2015) : ses articles 1er et 2
+  (JORFARTI000031255544, JORFARTI000031255545) et son annexe (JORFARTI000031255547),
+  lue à « 12 ter », « ajourn », « vigueur », « compter du », « 2016 », « jouissance »,
+  « prend effet », « date d'effet », « transitoire » et « Article 11 ».
+trouve: >-
+  Ni les articles ni l'annexe ne fixent de date : l'arrêté entre en vigueur le
+  3 octobre 2015, lendemain de sa publication. Article 12 ter : « 1,25 % par trimestre
+  civil entier d'ajournement postérieur à l'âge du taux plein dans la limite de vingt
+  trimestres ». Le modèle ne servait l'arrêté, sa majoration comme ses âges (article
+  12 quater), qu'aux pensions de 2016 : corrigé dans les deux moteurs, par les données
+  (`date_effet` des périodes de 2015 et de 2016 de `carpimko_complementaire.yaml`,
+  coupées au 3 octobre 2015). Né le 10 mars 1949, auxiliaire médical depuis ses 25 ans,
+  pension au 1er novembre 2015, six trimestres civils entiers après ses 65 ans :
+  5 695,55 € par an au lieu de 5 298,19 € (397,36 € de plus). Les fiches
+  `surcote_par_age_seul`, `carpimko_ages_2015` et `liquidation_regime_par_regime`
+  relues ce jour, l'erreur passée à leur histoire.
+reste: >-
+  La date d'effet de la pension de 1987 à juillet 2026, dont l'article n'est pas lu
+  (l'arrêté de 2015 récrit l'article 11, qui la portait en 1984, sans la dire) : si
+  elle est au premier jour du trimestre civil, aucune pension ne prend effet du
+  3 octobre au 31 décembre 2015. Le trimestre civil qui commence le jour où l'âge est
+  atteint, que le texte ne tranche pas. Les 4 % par année d'anticipation des
+  générations 1955 et antérieures, non portés (ligne 19 de la file).

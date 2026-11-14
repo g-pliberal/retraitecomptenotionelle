@@ -294,10 +294,11 @@ approximations:
     qu'à partir de leur entrée en vigueur. La CAVOM, avant le 1er janvier 2016 : le
     modèle lui garde ses 60 ans (table `cavom`), sans texte lu ; l'arrêté du 7 octobre
     2014 (JORFARTI000029830483) ne parle ni de liquidation ni d'âge, et ceux d'avant
-    n'ont à l'index qu'un titre ou une notice. La CARPIMKO, du 3 octobre au 31
-    décembre 2015 : le modèle ne prend sa table (`carpimko_2016`) qu'au 1er janvier
-    2016, et la sert avant à l'âge de la base ; les statuts d'avant, publiés au
-    Bulletin officiel (arrêté du 20 novembre 1996), ne sont pas lus. La CPRN, avant
+    n'ont à l'index qu'un titre ou une notice. La CARPIMKO, avant le 3 octobre
+    2015 : le modèle la sert à l'âge de la base ; les statuts d'alors, publiés au
+    Bulletin officiel (arrêté du 20 novembre 1996), ne sont pas lus ; depuis ce jour,
+    il prend sa table (`carpimko_2016`), qu'il ne prenait qu'au 1er janvier 2016
+    jusqu'au 14 novembre 2026 (action 130, ligne 16 de la file). La CPRN, avant
     le 1er janvier 2014 : servie à l'âge de la base, sans texte lu ; les statuts de
     2005 ne sont publiés qu'au Bulletin officiel no 2005/01 (JORFARTI000001075201), et
     l'arrêté du 16 décembre 2013 en cite l'article 14 : « La demande ne peut être
