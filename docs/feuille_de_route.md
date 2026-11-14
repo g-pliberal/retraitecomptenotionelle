@@ -5768,16 +5768,16 @@ de statuts et les `manque` de la page Méthode.
 du modèle, en temps et en jetons, sans céder sur les vérifications. La
 vérification complète que GitHub lance à chaque envoi prenait 47 minutes
 quand le modèle venait de changer : partagée entre plusieurs machines, elle
-en a pris 19 à l'essai. Une session ne reçoit plus que le début d'une
-sortie de plus de 10 000 caractères, et ce que `reprise.py` imprime d'une
-action tient dessous. Par quoi commencer : relever les durées des premières
-vérifications de `main`, puis raccourcir les deux tests de huit et neuf
-minutes. Restent aussi : répartir sur les cœurs les calculs du paquet,
-relever la durée des corrections, comparer les réponses des agents de
-recherche à celles d'avant. Une décision attend le propriétaire : faire
+en a pris 19 à l'essai. Ses deux cas les plus longs sont raccourcis : l'étude
+de l'indexation ne chiffre plus que ce que ses tests lisent, et la
+confrontation de la façade au jumeau se joue en huit parts. Par quoi
+commencer : relever les durées des premières vérifications de `main`.
+Restent aussi : répartir sur les cœurs les calculs du
+paquet, relever la durée des corrections, comparer les réponses des agents
+de recherche à celles d'avant. Une décision attend le propriétaire : faire
 passer seul un changement transversal. Notes : celles du 14 novembre, que
 `reprise.py 135` liste ; la dernière,
-`2026-11-14-sortie-de-regenerer-mesuree.md`.
+`2026-11-14-deux-tests-les-plus-lents.md`.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus

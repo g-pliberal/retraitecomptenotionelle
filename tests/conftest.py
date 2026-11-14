@@ -188,9 +188,14 @@ EXCEPTIONS = {
     # moteur Python : deux minutes (action 161, la façade).
     ("test_facade_jumeau.py",
      "test_le_jumeau_refait_le_scenario_1_que_la_facade_sert_sur_chaque_temoin"): "complet",
-    # Et sa comparaison entière, journal compris : quatre minutes.
+    # Et sa comparaison entière, journal compris : quatre minutes. L'un et
+    # l'autre en huit parts, que les processus se partagent (action 135).
     ("test_facade_jumeau.py",
      "test_le_jumeau_refait_la_comparaison_que_la_facade_sert_sur_chaque_temoin"): "complet",
+    # Les types que la façade sert sur tous les témoins, sans le jumeau : une
+    # minute de node.
+    ("test_facade_jumeau.py",
+     "test_la_facade_sert_chaque_type_sur_l_ensemble_des_temoins"): "complet",
     # L'option des cas types des deux lectures de la décision 29, simulée au
     # portage et refaite au moteur Python : sept secondes (action 161, lot B).
     ("test_lectures_decision_29.py",

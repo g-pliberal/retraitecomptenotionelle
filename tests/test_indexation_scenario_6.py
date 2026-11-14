@@ -111,12 +111,29 @@ def test_une_variante_demographique_ne_se_croise_pas_avec_une_crise_de_l_emploi(
 # -- l'étude ------------------------------------------------------------------
 
 
+#: Les voies et trajectoires que les tests de l'étude lisent. L'étude
+#: entière chiffre chaque voie sous chaque trajectoire, une soixantaine de
+#: calculs du coût : dix minutes sur une machine de GitHub sans mémoire des
+#: calculs, le plus long cas de la suite (action 135). Chaque résultat ne
+#: dépend que de la baisse de la voie 2 et des primes de la voie 1, que
+#: l'étude calcule toujours : elle n'en chiffre ici que ceux que voici.
+LUS = {("voie_2", "cor"), ("decidee", "cor"), ("regle", "cor"), ("voie_3", "cor"),
+       ("voie_1_inflation_basse", "inflation_basse"), ("voie_1_emploi_ia", "emploi_ia"),
+       ("v1_dates", "cor"), ("v1_recommencee", "cor"), ("rp_dates_commun", "cor"),
+       ("rp_dates_a_soi", "cor"), ("rp_jamais_a_soi", "cor")}
+
+
 @pytest.fixture(scope="module")
 def etude():
     sys.path.insert(0, str(RACINE / "scripts"))
     import indexation_scenario_6 as script
 
-    return script.etudier()
+    return script.etudier(seulement=LUS)
+
+
+def test_l_etude_ne_chiffre_que_ce_qu_on_lui_demande(etude):
+    assert set(etude.resultats) == LUS
+    assert set(etude.primes) == {"inflation_basse", "emploi_ia"}
 
 
 def test_la_baisse_d_avance_de_la_voie_2_rend_au_cor_la_regle_alpha_un(etude):

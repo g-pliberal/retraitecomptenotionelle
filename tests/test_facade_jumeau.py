@@ -99,15 +99,35 @@ def _a_plat(valeur, types: set[str]):
     return valeur
 
 
-def _ecarts(pas: int, entree) -> tuple[list[str], set[str], int]:
-    """Un témoin sur ``pas`` : sa carrière, que le portage bâtit de sa requête,
-    passée à ``entree`` — liquidée, ou simulée — sur le simulateur de la façade
-    et sur celui du Python, sous ses paramètres. Les écarts, les types relus,
-    et le nombre de carrières."""
+#: Les parts entre lesquelles se découpe la confrontation de tous les témoins :
+#: chacune est un cas, que les processus de la suite se partagent (action 135).
+#: D'un seul tenant, la comparaison durait de quatre à six minutes sur une
+#: machine de GitHub, et fermait la tranche qui la portait.
+PARTS = 8
+
+
+def _noms(pas: int, part: int = 0, parts: int = 1) -> list[str]:
+    """Un témoin sur ``pas``, dans l'ordre des noms, puis la part ``part`` des
+    ``parts``."""
+    return sorted(json.loads(TEMOINS.read_text(encoding="utf-8")))[::pas][part::parts]
+
+
+def _carrieres(pas: int, part: int = 0, parts: int = 1) -> dict:
+    """Les témoins de :func:`_noms` : la carrière de chacun, que le portage
+    bâtit de sa requête, et ses paramètres."""
     temoins = json.loads(TEMOINS.read_text(encoding="utf-8"))
     carrieres, refus = pont.carrieres_des_saisies(
-        [{"cle": nom, "requete": temoins[nom]["requete"]} for nom in sorted(temoins)[::pas]])
+        [{"cle": nom, "requete": temoins[nom]["requete"]} for nom in _noms(pas, part, parts)])
     assert refus == {}
+    return carrieres
+
+
+def _ecarts(pas: int, entree, part: int = 0,
+            parts: int = 1) -> tuple[list[str], set[str], int]:
+    """Les carrières de :func:`_carrieres`, passées à ``entree`` — liquidées,
+    ou simulées — sur le simulateur de la façade et sur celui du Python, sous
+    leurs paramètres. Les écarts, les types relus, et le nombre de carrières."""
+    carrieres = _carrieres(pas, part, parts)
     ecarts, types = [], set()
     for nom, (parametres, carriere) in carrieres.items():
         servi = entree(facade.Simulateur(parametres), carriere)
@@ -118,31 +138,33 @@ def _ecarts(pas: int, entree) -> tuple[list[str], set[str], int]:
     return ecarts, types, len(carrieres)
 
 
-def _ecarts_du_scenario_1(pas: int) -> tuple[list[str], set[str], int]:
-    return _ecarts(pas, lambda simulateur, carriere: simulateur.scenario_actuel.calculer(carriere))
+def _scenario_1(simulateur, carriere):
+    return simulateur.scenario_actuel.calculer(carriere)
 
 
-def _ecarts_de_la_comparaison(pas: int) -> tuple[list[str], set[str], int]:
-    return _ecarts(pas, lambda simulateur, carriere: simulateur.simuler(carriere))
+def _comparaison(simulateur, carriere):
+    return simulateur.simuler(carriere)
 
 
 def test_le_jumeau_refait_le_scenario_1_que_la_facade_sert_sur_un_temoin_sur_vingt():
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    ecarts, _, nombre = _ecarts_du_scenario_1(20)
+    ecarts, _, nombre = _ecarts(20, _scenario_1)
     assert nombre >= 40
     assert not ecarts, f"{len(ecarts)} écart(s), dont : {ecarts[:5]}"
 
 
-def test_le_jumeau_refait_le_scenario_1_que_la_facade_sert_sur_chaque_temoin():
-    """Tous les témoins, deux minutes de moteur Python : chaque type du
-    résultat y est relu au moins une fois, les plus rares compris."""
+@pytest.mark.parametrize("part", range(PARTS))
+def test_le_jumeau_refait_le_scenario_1_que_la_facade_sert_sur_chaque_temoin(part):
+    """Tous les témoins, en :data:`PARTS` parts : deux minutes de moteur
+    Python en tout. Que chaque type du résultat y soit relu, les plus rares
+    compris, :func:`test_la_facade_sert_chaque_type_sur_l_ensemble_des_temoins`
+    le dit."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    ecarts, types, nombre = _ecarts_du_scenario_1(1)
-    assert nombre >= 900
+    ecarts, _, nombre = _ecarts(1, _scenario_1, part, PARTS)
+    assert nombre >= 900 // PARTS
     assert not ecarts, f"{len(ecarts)} écart(s), dont : {ecarts[:5]}"
-    assert TYPES_RARES <= types
 
 
 def test_le_jumeau_refait_la_comparaison_que_la_facade_sert_sur_un_temoin_sur_quarante():
@@ -150,29 +172,57 @@ def test_le_jumeau_refait_la_comparaison_que_la_facade_sert_sur_un_temoin_sur_qu
     paie, le journal, hors du contenu de la liquidation, qui ne passe pas."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    ecarts, _, nombre = _ecarts_de_la_comparaison(40)
+    ecarts, _, nombre = _ecarts(40, _comparaison)
     assert nombre >= 20
     assert not ecarts, f"{len(ecarts)} écart(s), dont : {ecarts[:5]}"
 
 
-def test_le_jumeau_refait_la_comparaison_que_la_facade_sert_sur_chaque_temoin():
-    """Tous les témoins, quatre minutes de moteur Python : chaque type de la
-    comparaison y est relu au moins une fois. Seule s'écarte la fiche de paie
-    de quatre témoins, où le jumeau ne suit pas le portage
-    (:data:`FICHES_QUE_LE_JUMEAU_NE_REFAIT_PAS`)."""
+@pytest.mark.parametrize("part", range(PARTS))
+def test_le_jumeau_refait_la_comparaison_que_la_facade_sert_sur_chaque_temoin(part):
+    """Tous les témoins, en :data:`PARTS` parts : quatre minutes de moteur
+    Python en tout. Seule s'écarte la fiche de paie de quatre témoins, où le
+    jumeau ne suit pas le portage (:data:`FICHES_QUE_LE_JUMEAU_NE_REFAIT_PAS`) ;
+    chacune s'y écarte encore, dans la part qui la porte."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    ecarts, types, nombre = _ecarts_de_la_comparaison(1)
-    assert nombre >= 900
+    ecarts, _, nombre = _ecarts(1, _comparaison, part, PARTS)
+    assert nombre >= 900 // PARTS
     connus = {nom: [ecart for ecart in ecarts
                     if ecart.startswith(f"{nom}.remuneration.annees.")
                     and ".proposition." in ecart]
-              for nom in FICHES_QUE_LE_JUMEAU_NE_REFAIT_PAS}
+              for nom in FICHES_QUE_LE_JUMEAU_NE_REFAIT_PAS
+              if nom in _noms(1, part, PARTS)}
     autres = [ecart for ecart in ecarts if not any(ecart in fiche for fiche in connus.values())]
     assert not autres, f"{len(autres)} écart(s), dont : {autres[:5]}"
-    assert TYPES_RARES | TYPES_DE_LA_COMPARAISON <= types
     if not TOLERANCE_DU_MOTEUR_PYTHON:
         assert all(connus.values()), [nom for nom, fiche in connus.items() if not fiche]
+
+
+def test_les_parts_couvrent_chaque_temoin_une_fois():
+    """Les parts, réunies, sont tous les témoins, chacun une fois, et les
+    fiches que le jumeau ne refait pas en sont."""
+    temoins = _noms(1)
+    parts = [_noms(1, part, PARTS) for part in range(PARTS)]
+    assert sorted(nom for part in parts for nom in part) == temoins
+    assert len(temoins) >= 900
+    assert set(FICHES_QUE_LE_JUMEAU_NE_REFAIT_PAS) <= set(temoins)
+
+
+def test_la_facade_sert_chaque_type_sur_l_ensemble_des_temoins():
+    """Sur tous les témoins, la façade sert au moins une fois chaque type du
+    scénario 1, les plus rares compris, et chaque type de la comparaison :
+    chaque part confrontant au jumeau, champ par champ, tout ce que la façade
+    sert, chacun de ces types y est confronté. La façade seule : une minute
+    de node, sans le moteur Python."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    du_scenario_1, de_la_comparaison = set(), set()
+    for parametres, carriere in _carrieres(1).values():
+        simulateur = facade.Simulateur(parametres)
+        _a_plat(_scenario_1(simulateur, carriere), du_scenario_1)
+        _a_plat(_comparaison(simulateur, carriere), de_la_comparaison)
+    assert TYPES_RARES <= du_scenario_1
+    assert TYPES_RARES | TYPES_DE_LA_COMPARAISON <= de_la_comparaison
 
 
 #: Une salariée née en 1965, partie à 64 ans.

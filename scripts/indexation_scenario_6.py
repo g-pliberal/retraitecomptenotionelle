@@ -251,7 +251,11 @@ def _cumul(pensions: I.PensionsDuProgramme, flux: dict[int, float]) -> dict[int,
     return resultat
 
 
-def etudier() -> Etude:
+def etudier(seulement: set[tuple[str, str]] | None = None) -> Etude:
+    """Chaque voie de :data:`CLES` sous chaque trajectoire, ou, sous
+    ``seulement``, les seuls couples (voie, trajectoire) qu'il nomme : chacun
+    ne dépend que de la baisse de la voie 2 et des primes de la voie 1, que
+    l'étude calcule toujours."""
     from retraite_notionnelle.cout import COMPOSANTE_GARANTIE
 
     voies, trajectoires = I.charger()
@@ -285,13 +289,16 @@ def etudier() -> Etude:
 
     resultats: dict[tuple[str, str], Resultat] = {}
     for nom_t, trajectoire in trajectoires.items():
+        cles = [cle for cle in CLES if seulement is None or (cle, nom_t) in seulement]
+        if not cles:
+            continue
         masses_stock = stock_aux_prix[nom_t]
         etalon = _pensions(regle, trajectoire)
         delta = _actualisation(etalon)
         etalon_total = _droits_directs(_cout(regle, trajectoire))
         etalon_stock = {a: m * etalon.detail_stock().servi[a] for a, m in masses_stock.items()}
         etalon_nouvelles = {a: etalon_total[a] - etalon_stock[a] for a in etalon_stock}
-        for cle in CLES:
+        for cle in cles:
             voie = _voie(voies, cle, baisse, primes)
             cout = _cout(voie, trajectoire, masses=masses)
             pensions = _pensions(voie, trajectoire, masses)
