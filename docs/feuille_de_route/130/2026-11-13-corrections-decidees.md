@@ -91,8 +91,15 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   caisses en 1993 et au premier semestre de 1994, l'année 1981 et les années d'avant
   restent des limites déclarées ; note
   `2026-11-14-correction-asv-medecins-cotisation-avant-2012.md`.
-- [ ] 10. **CAVAMAC, la majoration du second semestre 2011** (1 332,33 € en moins). Note
-  `2026-11-06-fiches-communes-des-sections-lues-au-droit.md`.
+- [x] 10. **CAVAMAC, la majoration du second semestre 2011** (1 332,33 € en moins). Note
+  `2026-11-06-fiches-communes-des-sections-lues-au-droit.md`. Corrigé le 14 novembre
+  2026 : les statuts de 2011 sont servis aux pensions qui prennent effet depuis le
+  1er juillet 2011, et non depuis 2012, dans les deux moteurs, par les données du régime
+  (1 332,33 € par an de majoration pour trois enfants au cas posé, au lieu de rien) ; la
+  majoration de 5 % par année différée du même semestre, que la fiche
+  `cavamac_minoration_age_seul` déclarait, est corrigée du même geste ; les statuts
+  d'avant le 1er juillet 2011, non lus, restent une limite déclarée ; note
+  `2026-11-14-correction-cavamac-second-semestre-2011.md`.
 - [ ] 11. **CAVP, la carrière longue depuis le 10 janvier 2024** : 1,25 % par trimestre
   (544,94 € en moins, ou 1 410,68 € de trop). Fiche `cavp_minoration_deux_pentes` ; note
   `2026-11-05-carte-des-fiches-cavp-lue-au-droit.md`.

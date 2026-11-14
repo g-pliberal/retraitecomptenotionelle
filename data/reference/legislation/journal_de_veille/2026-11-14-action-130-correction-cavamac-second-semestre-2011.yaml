@@ -1,0 +1,25 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 10 : les statuts de 2011 de la CAVAMAC servis dès le 1er juillet 2011"
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index JORF récupéré par `dila_index.py
+  --recuperer`, à jour du 11 novembre 2026. Arrêté du 23 juin 2011, article 2
+  (JORFARTI000024270156), article 3 (JORFARTI000024270158) et annexe
+  (JORFARTI000024270173), articles 16, 17 et 18 ; dans l'annexe, « 2011 », « 2012 »,
+  « transitoire » et « prend effet », cherchés.
+trouve: >-
+  Le texte tranche : « Les dispositions du présent arrêté entrent en vigueur le 1er
+  juillet 2011 », l'arrêté de 1967 « est abrogé », et l'annexe ne porte aucune disposition
+  transitoire. Le modèle ne servait les statuts de 2011 qu'aux pensions de 2012 : corrigé
+  dans les deux moteurs, par les données (`date_effet` aux périodes de 2004 et de 2012 de
+  `cavamac_complementaire.yaml`). Une pension qui prend effet de juillet à décembre 2011
+  reçoit la majoration de 10 % pour trois enfants (article 18 : 1 332,33 € par an au cas
+  posé, née le 10 mars 1946, pension le 1er juillet 2011, au lieu de rien) et la
+  majoration de 5 % par année pleine différée (article 16 : 1,05 au lieu de 1 pour
+  l'agent né en février 1945 parti en novembre 2011). Les fiches
+  `sections_liberales_majoration_enfants` et `cavamac_minoration_age_seul` relues ce
+  jour, l'erreur passée à leur histoire.
+reste: >-
+  Les statuts de la CAVAMAC d'avant le 1er juillet 2011, non lus (Bulletin officiel,
+  fac-similé du Journal officiel de 1967). Les 5 % par enfant handicapé de l'article 19
+  et les enfants élevés neuf ans, non portés. Les lignes 11 à 30 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).
