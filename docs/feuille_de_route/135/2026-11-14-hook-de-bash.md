@@ -78,6 +78,11 @@ session qui écrit son tube garde donc sa fenêtre.
   d'orchestration les demandait aussi ; la proposition que le propriétaire a
   approuvée dit « ajouter `| tail -n 30` à un `pytest` nu ». Les y joindre
   tient en une alternative du motif `LONGUE`, et se décide avec lui.
+- *Ce que le plafond de la sortie y change* (note du même jour sur la sortie
+  de Bash plafonnée) : une commande en échec de plus de 10 000 caractères
+  n'en rend que le début, sans sa fin. Le pytest nu, récrit, y échappe. Le
+  défaut reste ouvert pour ce que le hook ne récrit pas : `regenerer.py`,
+  `resumer_temoins.py`, `python3`, un pytest dans une commande composée.
 
 **L'accord pour les gardes**, relu à sa source. Ce commit touche
 `.claude/settings.json` et deux hooks, `bash.py`, qui naît, et `lecture.py`,
