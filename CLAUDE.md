@@ -96,9 +96,9 @@ qu'elle dure. D'où sept règles.
   `**Reprise, au <date>.**` de 150 mots au plus, en lignes de largeur
   ordinaire : où elle en est, ce qui reste, par quoi commencer, et la note à
   lire pour le détail ; `python scripts/reprise.py` imprime le sommaire des
-  actions, une ligne chacune, et `reprise.py 138` les blocs d'une action et
-  ses trente dernières notes. La session qui avance l'action le récrit, daté
-  du jour, au commit de sa note.
+  actions, `reprise.py 138` les blocs d'une action et de ses étapes (une ligne
+  par étape au-delà du plafond de Bash), `reprise.py 138 etape-14` celui d'une
+  étape. Qui avance l'action le récrit, daté du jour, au commit de sa note.
 - **Chercher avant de lire.** L'outil Grep d'abord, qui omet les lignes
   géantes et passe ce que `.ignore` nomme (`grep -n` par Bash, seulement sur
   un fichier sans ligne démesurée), puis la seule fenêtre utile (`Read` avec
@@ -170,7 +170,7 @@ qu'elle dure. D'où sept règles.
 ## Listes de contrôle
 
 - **Au début d'une étape** : lire le bloc « Reprise » de son action, et celui
-  de son étape s'il en a un (`python scripts/reprise.py <action>`), puis
+  de son étape s'il en a un (`reprise.py <action> <mot de sa note>`), puis
   relever, par l'éclaireur ou par `grep -n` de son numéro ou de son domaine,
   ce que la feuille de route, ses notes et les fiches lui renvoient, avant
   d'écrire la moindre ligne.
