@@ -22,6 +22,7 @@ s'étendre.
 
 from __future__ import annotations
 
+import json
 import re
 import importlib.util
 import sys
@@ -1200,10 +1201,13 @@ def test_sans_numero_reprise_n_imprime_qu_un_sommaire(tmp_path, capsys):
         "7. Les pensions de réversion — au 12 novembre 2026 ; 3 notes, 1 étape en cours\n"
         "8. Le minimum contributif — au 1er novembre 2026 ; aucune note\n")
 
-    # Sur le dépôt, le sommaire entre en entier dans le contexte d'une session.
-    assert reprise.SORTIE_AU_PLUS == 30_000
+    # Sur le dépôt, le sommaire entre en entier dans le contexte d'une session :
+    # sous le plafond que le dépôt règle depuis le 14 novembre 2026
+    # (`bashOutputMaxChars`, 10 000 caractères), avec un quart de marge.
+    reglages = json.loads((RACINE / ".claude" / "settings.json").read_text(encoding="utf-8"))
+    assert reprise.SORTIE_AU_PLUS == reglages.get("bashOutputMaxChars") == 10_000
     assert reprise.main([]) == 0
-    assert len(capsys.readouterr().out) < reprise.SORTIE_AU_PLUS / 2
+    assert len(capsys.readouterr().out) < reprise.SORTIE_AU_PLUS * 3 / 4
 
 
 def test_avec_un_numero_reprise_imprime_les_blocs_et_les_dernieres_notes(tmp_path, capsys):

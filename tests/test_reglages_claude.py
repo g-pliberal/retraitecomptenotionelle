@@ -18,7 +18,8 @@ Claude, lue contre nos réglages »). Le même jour : les deux agents de lecture
 démarrent sans le `CLAUDE.md` de la racine, une carte du dépôt dans leur
 consigne (note « Les éclaireurs sans le `CLAUDE.md` racine ») ; et les outils
 que le dépôt n'emploie pas sortent de chaque requête (note « Le contexte de
-départ »).
+départ »). Le 14 novembre 2026 : la sortie d'une commande Bash plafonnée (note
+« La sortie de Bash plafonnée à 10 000 caractères »).
 """
 
 import json
@@ -295,3 +296,21 @@ def test_le_skill_des_presentations_reste_annonce():
     """`docs/presentation_adherents_*.pptx` : le dépôt s'en sert."""
     assert list((RACINE / "docs").glob("presentation_adherents_*.pptx"))
     assert f"anthropic-skills:{SKILL_DU_COMPTE_GARDE}" not in REGLAGES.get("skillOverrides", {})
+
+
+def test_la_sortie_d_une_commande_bash_est_plafonnee():
+    """« Les sorties longues passent par `tail` ou `grep` » (`CLAUDE.md`) :
+    une garde, et non plus une seule consigne. Sans réglage, une commande
+    réussie rend jusqu'à 30 000 caractères, que chaque appel suivant relit ;
+    `bashOutputMaxChars` abaisse ce plafond, et au-delà la session ne reçoit
+    que les 2 000 premiers caractères et le chemin du fichier où lire le reste
+    (`tools-reference.md`, « Output limits »). La valeur se mesure : le
+    14 novembre 2026, la plus longue des sorties qu'une session lit en entier
+    faisait 7 708 octets, hors `reprise.py 138` et `186`. Claude Code ramène
+    le réglage entre 4 000 et 128 000, et n'écoute plus la variable
+    `BASH_MAX_OUTPUT_LENGTH` dès qu'il est posé (`settings-reference.md`,
+    « bashOutputMaxChars ») : elle ne se règle donc pas à côté. `CLAUDE.md`
+    donne le plafond aux sessions, d'un chiffre que ce test tient."""
+    assert REGLAGES.get("bashOutputMaxChars") == 10_000
+    assert "BASH_MAX_OUTPUT_LENGTH" not in REGLAGES.get("env", {})
+    assert "-->10 000<!--/--> caractères, Bash" in (RACINE / "CLAUDE.md").read_text(encoding="utf-8")

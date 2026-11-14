@@ -119,7 +119,8 @@ qu'elle dure. D'où sept règles.
 - **Les sorties longues passent par `tail` ou `grep`** :
   `python -m pytest 2>&1 | tail -n 30`, de même pour `regenerer.py` et
   `resumer_temoins.py` ; jamais de `git diff` ni de `git show` entier sur un
-  témoin ou sur `pages.js`.
+  témoin ou sur `pages.js`. Passé <!--chiffre:tenu(test_la_sortie_d_une_commande_bash_est_plafonnee)-->10 000<!--/--> caractères, Bash n'en rend
+  que le début, et le fichier où lire la suite, sauf après un échec.
 - **L'enquête à la mesure de la question.** Une question appelle la
   vérification qui y répond, pas davantage ; une recherche en éventail,
   plusieurs agents en parallèle, ne se lance qu'à la demande du propriétaire.

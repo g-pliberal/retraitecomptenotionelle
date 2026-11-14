@@ -69,8 +69,10 @@ LIGNES_D_AVANT = 10
 #: Ce que l'outil Bash d'une session laisse entrer d'une sortie, en
 #: caractères : au-delà, il la range dans un fichier et n'en montre que les
 #: deux premiers kilo-octets. Constaté le 13 novembre 2026 à 31 000
-#: caractères ; 30 000 est la valeur par défaut de Claude Code.
-SORTIE_AU_PLUS = 30_000
+#: caractères, sous la valeur par défaut de Claude Code, 30 000 ; le dépôt
+#: la règle à 10 000 depuis le 14 (`bashOutputMaxChars`, dans
+#: `.claude/settings.json`), et un test tient les deux d'accord.
+SORTIE_AU_PLUS = 10_000
 #: Les notes qu'une action liste, les plus récentes : les 272 de l'action 138
 #: portaient sa sortie à 58 916 caractères.
 NOTES_LISTEES = 30
