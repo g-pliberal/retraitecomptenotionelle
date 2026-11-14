@@ -30,9 +30,20 @@ effet: >-
   1er janvier 2027, pension à 67 ans : 53 701,26 € par an au lieu de 51 417,01 €,
   2 284,25 € de trop. Depuis, `dispense_de_debut` à la période de 2026 de
   `carmf_complementaire.yaml`, dans les deux moteurs : ni points au scénario 1, ni
-  cotisation au compte notionnel, pour les cotisations de 2027 et d'après. Restent à la
-  CARMF l'exemption passé 75 ans, et à la CARCDSF la part proportionnelle des deux
-  premières années.
+  cotisation au compte notionnel, pour les cotisations de 2027 et d'après.
+  Corrigée le 14 novembre 2026 (ligne 6 de la même file) : l'erreur de la CARCDSF.
+  Jusque-là, le modèle faisait cotiser et acquérir aux nouveaux affiliés la part
+  proportionnelle de leurs deux premières années civiles d'exercice, que l'article 3-1
+  du décret n° 50-28 dispense, les droits correspondants supprimés (article 3-5) — née
+  le 1er janvier 2001, chirurgienne-dentiste installée le 1er janvier 2027, pension à
+  67 ans : 52 158,40 € par an au lieu de 50 630,17 €, 1 528,23 € de trop. La relecture a
+  trouvé la même dispense, dans les mêmes mots, aux statuts approuvés par l'arrêté du
+  13 avril 2011, en vigueur le 1er juillet 2011 (article 11, puis 13) : l'erreur valait
+  depuis les cotisations de 2012, et non depuis le seul 1er juillet 2026. Depuis,
+  `dispense_de_debut`, sans condition d'âge et pour la seule part proportionnelle, aux
+  périodes de 2012 et d'après de `carcdsf_complementaire.yaml`, dans les deux moteurs :
+  le forfait et ses six points restent, au scénario 1 comme au compte notionnel. Reste
+  à la CARMF l'exemption passé 75 ans.
 sources:
   lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
@@ -159,19 +170,49 @@ sources:
     suit son soixante-quinzième anniversaire, peut continuer à cotiser volontairement,
     quel que soit son âge. » ; le modèle simule l'assuré obligatoire : l'erreur tient.
   - >-
-    Erreur prouvée, déclarée et non corrigée (action 130, E10) : depuis le 1er juillet
-    2026, l'article 3-1 du décret n° 50-28 (décret n° 2026-418, article 5,
-    JORFARTI000054153467) écrit « Les nouveaux affiliés sont dispensés de la cotisation
-    proportionnelle au titre des deux premières années civiles de leur exercice », et
-    l'article 3-5 : « Les dispenses ou réductions partielles mentionnées aux articles
-    3-1 à 3-4 entraînent respectivement la suppression ou la réduction des droits
-    correspondants » ; le modèle fait cotiser à la complémentaire de la CARCDSF, ces
-    deux années, la part proportionnelle (`carcdsf_complementaire.yaml`, période de
-    2026 : 11,35 % de 0,65 à 5 plafonds). Née le 1er janvier 2001, chirurgienne-dentiste
-    au double du salaire moyen depuis 26 ans (1er janvier 2027), pension à 67 ans : le
-    modèle sert 876 611,8159 × 0,0595 = 52 158,40 € ; la part proportionnelle de 2027 et
-    2028, revalorisée (12 798,2854 + 12 886,3326 €, la cotisation de chaque année moins
-    celle d'un revenu de 0,65 plafond), × 0,0595 = 1 528,23 € par an de trop.
+    La dispense de la part proportionnelle des deux premières années civiles de la
+    CARCDSF, servie depuis le 14 novembre 2026 (`effet`), et ce qu'elle laisse. Le
+    texte : depuis le 1er juillet 2026, l'article 3-1 du décret n° 50-28 (décret
+    n° 2026-418, article 5, JORFARTI000054153467 ; LEGIARTI000054168193) écrit « Les
+    nouveaux affiliés sont dispensés de la cotisation proportionnelle au titre des deux
+    premières années civiles de leur exercice et peuvent, sur demande écrite, bénéficier
+    également d'une dispense de la cotisation forfaitaire », et l'article 3-5
+    (LEGIARTI000054168184) : « Les dispenses ou réductions partielles mentionnées aux
+    articles 3-1 à 3-4 entraînent respectivement la suppression ou la réduction des
+    droits correspondants ». Avant, les statuts approuvés par l'arrêté du 13 avril 2011
+    (JORFTEXT000023909782), en vigueur le 1er juillet 2011, que l'index LEGI porte en
+    quatre rédactions : article 11 (LEGIARTI000023910336, puis LEGIARTI000026210162 du
+    22 juillet 2012), « Les nouveaux adhérents sont dispensés de la cotisation
+    proportionnelle au titre des deux premières années civiles de leur exercice et
+    peuvent, sur demande écrite, bénéficier également d'une dispense de la cotisation
+    forfaitaire », et article 16, « Les dispenses ou réductions partielles visées aux
+    articles 11 à 15 entraînent respectivement la suppression ou la réduction des droits
+    correspondants » ; articles 13 et 18, « Les nouveaux affiliés », depuis le
+    25 décembre 2017 (LEGIARTI000036540562, puis LEGIARTI000036621382 du 10 février
+    2018). Cinq limites, déclarées. (a) L'année 2011 n'est pas dispensée : les statuts
+    approuvés par l'arrêté du 1er octobre 2007 (LEGIARTI000023450470, du 11 octobre 2007
+    au 1er juillet 2011), article 11, ne dispensaient que sur demande, « Les nouveaux
+    adhérents peuvent être, sur demande écrite, dispensés des cotisations forfaitaires
+    et proportionnelles pendant les deux premières années civiles de leur exercice et
+    des cotisations forfaitaires les trois années civiles suivantes », et rien ne dit
+    comment la caisse a traité, au second semestre de 2011, la cotisation d'une première
+    année déjà appelée ; le modèle dispense 2012, deuxième année civile de l'installé de
+    2011, et le fait cotiser en 2011. Avant le 11 octobre 2007, les statuts, au seul
+    Bulletin officiel, ne sont pas lus. (b) La dispense de la cotisation forfaitaire,
+    sur demande écrite, n'est pas portée : le modèle simule l'affilié qui ne la demande
+    pas, et lui sert les six points du forfait. (c) Le rachat des points non cotisés
+    (article 3-7, I, LEGIARTI000054168176 ; statuts de 2011, article 26), sur demande,
+    de la sixième à la quinzième année d'affiliation, ne vise que « les points
+    forfaitaires », et n'est pas porté. (d) L'exercice débute au premier jour du mois
+    d'entrée dans un statut que la caisse affilie (chirurgien-dentiste ou sage-femme) ;
+    l'article 2 (LEGIARTI000054168195) fait prendre effet à l'affiliation « au premier
+    jour du trimestre civil suivant le début […] de l'activité professionnelle », ce
+    que le modèle ne confronte pas : pour un début au dernier trimestre, l'année civile
+    de l'exercice précède celle de la première cotisation, et le modèle dispense les
+    deux années civiles de l'exercice, comme le texte l'écrit. (e) Celui qui cesse puis
+    reprend n'est pas un nouvel affilié : le modèle ne dispense que depuis la première
+    entrée. Au compte notionnel, la part dispensée n'est pas portée, sauf sous le taux
+    commun de la proposition, que le droit en vigueur ne règle pas.
   - >-
     Avant le 1er juillet 2026, les dispenses de la CARMF et de la CARCDSF : un point non
     tranché, dont la question 22 du propriétaire part de deux articles des décrets (E11,
@@ -191,7 +232,10 @@ sources:
     lesquelles des exonérations ou des dispenses de cotisations peuvent être accordées
     dans les premières années d'activité professionnelle ou en cas d'infortune ou
     d'incapacité d'exercice de la profession ». Le principe est au décret, ses
-    conditions aux statuts, que l'index n'a pas : au seul Bulletin officiel.
+    conditions aux statuts. Pour la CARCDSF, le point est tranché depuis le 14 novembre
+    2026 : l'index LEGI porte les statuts de 2007 et de 2011, et la dispense des
+    nouveaux affiliés y est de droit depuis le 1er juillet 2011 (ligne ci-dessus). Pour
+    la CARMF, il reste entier : ses statuts ne sont qu'au Bulletin officiel.
   lectures:
   - type: jorf
     reference: >-
@@ -279,9 +323,9 @@ sources:
       « chirurgiens-dentistes et des sages-femmes », la CARCDSF
       (`carcdsf_complementaire.yaml`). Âges et minoration : `carcdsf_minoration_age_seul`,
       version `reglement_de_2026`. Article 3-1, dispense de la cotisation proportionnelle
-      des deux premières années civiles, avec la suppression des droits (3-5) : non
-      servie, une erreur (`sources.a_relire`) ; 3-2 à 3-4, sur demande ; 3-7, rachat des
-      points dispensés (`rachats_et_versements`).
+      des deux premières années civiles, avec la suppression des droits (3-5) : servie
+      depuis le 14 novembre 2026 (`dispense_de_debut`) ; 3-2 à 3-4, sur demande ; 3-7,
+      rachat des points dispensés (`rachats_et_versements`).
     date: 2026-05-31
   - type: jorf
     reference: >-
@@ -480,6 +524,20 @@ sources:
       prend effet au premier jour du trimestre civil suivant le début ou la fin de
       l'activité professionnelle », que la fiche n'a pas confrontée au modèle.
     date: 2026-11-11
+  - type: legifrance
+    reference: >-
+      la dispense des nouveaux affiliés de la CARCDSF, relue avant de la servir (action
+      130, ligne 6 de la file, index LEGI à jour au 11 novembre 2026). Décret n° 50-28,
+      articles 3-1 (LEGIARTI000054168193), 3-5 (LEGIARTI000054168184) et 3-7
+      (LEGIARTI000054168176), en vigueur le 1er juillet 2026 : c'est l'article 5 du
+      décret n° 2026-418, mot pour mot. Statuts approuvés par l'arrêté du 13 avril 2011
+      (JORFTEXT000023909782), les quatre rédactions de l'index — LEGIARTI000023910336 du
+      1er juillet 2011, LEGIARTI000026210162 du 22 juillet 2012, LEGIARTI000036540562 du
+      25 décembre 2017, LEGIARTI000036621382 du 10 février 2018 — : la même dispense de
+      droit, articles 11 et 16, puis 13 et 18. Statuts approuvés par l'arrêté du
+      1er octobre 2007 (LEGIARTI000023450470), article 11 : une dispense sur demande.
+      Citations dans `sources.a_relire`.
+    date: 2026-11-14
 textes_sans_effet:
 - id: LEGIARTI000006738107
   article: code de la sécurité sociale, D. 641-6, abrogé par l'article 1er du décret
@@ -497,17 +555,20 @@ textes_a_rattacher:
   reference: décret n° 2026-418 du 29 mai 2026 (JORF du 31 mai 2026)
 code:
   moteur: >-
-    Le décret ne change aucun paramètre que le dépôt porte, hors la dispense de la
-    CARMF : les périodes des régimes
+    Le décret ne change aucun paramètre que le dépôt porte, hors les dispenses de la
+    CARMF et de la CARCDSF : les périodes des régimes
     qu'il réécrit gardent leurs taux, leurs assiettes, leurs classes et leurs âges, que
     `acquerir` sert en points et `liquider_chaque_regime` liquide comme avant. Ce qu'il
     écrit à neuf et que le modèle porte : la majoration de 10 % pour trois enfants de la
     Cipav (article 20), qui est la fiche `sections_liberales_majoration_enfants`, et la
     dispense des deux premières années d'exercice de la CARMF (article 3), que
     `dispense_de_debut` rend à `acquerir` et au compte (`dispense_de_debut` de la
-    période de 2026) ; ce qu'il
+    période de 2026), et celle de la part proportionnelle des deux premières années
+    civiles de la CARCDSF (article 5), que les statuts de 2011 écrivaient déjà
+    (`dispense_de_debut` des périodes de 2012 et d'après, `part: proportionnelle`) ; ce
+    qu'il
     écrit et que le modèle ne porte pas, ou porte à tort — l'exemption de la CARMF passé
-    75 ans et la dispense de la CARCDSF, que `acquerir` ignore, la majoration pour report
+    75 ans, que `acquerir` ignore, la majoration pour report
     de la Cipav, que `liquider_chaque_regime` étend à tous les points —,
     `sources.a_relire` le dit.
   python: >-
@@ -532,7 +593,7 @@ code:
     la fiche de sa règle
   - >-
     tests/test_sections_juridiques.py, tests/test_sections_sante.py — qui tient aussi la
-    dispense des deux premières années d'exercice de la CARMF, au scénario 1 et au
-    compte — et
+    dispense des deux premières années d'exercice de la CARMF et celle de la part
+    proportionnelle de la CARCDSF, au scénario 1 et au compte — et
     tests/test_pcv_sante.py, qui tiennent les paramètres des autres sections, que le
     décret laisse

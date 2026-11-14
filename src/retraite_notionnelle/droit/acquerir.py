@@ -98,9 +98,11 @@ def annees_deja_exercees(carriere, affiliation: str, annee: int, maximum: int) -
     return rang
 
 
-def dispense_de_debut(affiliations, periode, carriere, code: str, ligne) -> bool:
-    """LA DISPENSE DE DÉBUT D'EXERCICE (``dispense_de_debut``) : la cotisation
-    de cette ligne à ce régime est-elle dispensée, sans points ?
+def dispense_de_debut(affiliations, periode, carriere, code: str, ligne) -> str | None:
+    """LA DISPENSE DE DÉBUT D'EXERCICE (``dispense_de_debut``) : ce que cette
+    ligne est dispensée de cotiser à ce régime, sans points — ``"entiere"``,
+    toute la cotisation ; ``"proportionnelle"``, sa seule part proportionnelle,
+    le forfait restant dû ; ``None``, rien.
 
     « Tout médecin obligatoirement affilié à la caisse est dispensé du paiement
     de la cotisation afférente au présent régime pendant les deux premières
@@ -109,13 +111,19 @@ def dispense_de_debut(affiliations, periode, carriere, code: str, ligne) -> bool
     4, I, depuis le 1er juillet 2026), et ces cotisations « ne donnent pas
     lieu à acquisition de points » (article 4-1, II). L'exercice débute à la
     première entrée dans un statut que le régime affilie : passer du secteur 1
-    au secteur 2 ne le recommence pas. Jumeau de ``dispenseDeDebut``."""
+    au secteur 2 ne le recommence pas. À la CARCDSF, sans condition d'âge,
+    « Les nouveaux affiliés sont dispensés de la cotisation proportionnelle au
+    titre des deux premières années civiles de leur exercice » (décret
+    n° 50-28, article 3-1 ; statuts approuvés par l'arrêté du 13 avril 2011,
+    article 11, puis 13), ce qui entraîne « la suppression […] des droits
+    correspondants » (article 3-5 ; statuts, article 16, puis 18). Jumeau de
+    ``dispenseDeDebut``."""
     regle = periode.dispense_de_debut
     if not regle or not ligne.cotise:
-        return False
-    annees, avant_l_age, depuis = regle
+        return None
+    annees, avant_l_age, depuis, part = regle
     if ligne.annee < depuis:
-        return False
+        return None
     debut = None
     for autre in carriere.lignes:
         if not autre.cotise or not any(
@@ -125,8 +133,12 @@ def dispense_de_debut(affiliations, periode, carriere, code: str, ligne) -> bool
         entree = carriere.date_entree(autre.affiliation)
         if entree is not None and (debut is None or entree.rang < debut.rang):
             debut = entree
-    return (debut is not None and ligne.annee < debut.annee + annees
-            and debut.rang < carriere.date_de_l_age(avant_l_age).rang)
+    if debut is None or ligne.annee >= debut.annee + annees:
+        return None
+    if (avant_l_age is not None
+            and debut.rang >= carriere.date_de_l_age(avant_l_age).rang):
+        return None
+    return part or "entiere"
 
 
 def assiette_minimale(moteur: ScenarioActuel, codes, ligne) -> float:
@@ -677,9 +689,12 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 derniere_annee_par_regime.get(code, 0), ligne.annee
             )
             for tranche, periode in enumerate(regime.periodes_actives(ligne.annee)):
-                # LA DISPENSE DE DÉBUT D'EXERCICE : ni cotisation ni points.
-                # Voir `dispense_de_debut`.
-                if dispense_de_debut(moteur.affiliations, periode, carriere, code, ligne):
+                # LA DISPENSE DE DÉBUT D'EXERCICE : ni cotisation ni points,
+                # ou la seule part proportionnelle, plus bas. Voir
+                # `dispense_de_debut`.
+                dispensee = dispense_de_debut(
+                    moteur.affiliations, periode, carriere, code, ligne)
+                if dispensee == "entiere":
                     continue
                 # BARÈME D'UN AUTRE RÉGIME : une tranche que tous les
                 # affiliés ne cotisent pas forme une fiche à part, dont les
@@ -879,6 +894,11 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 if forfait_collaborateur is not None:
                     assiette = (forfait_collaborateur
                                 * moteur.macro.smic_horaire(ligne.annee) * part)
+                # LA PART PROPORTIONNELLE DISPENSÉE au début de l'exercice :
+                # il ne reste que le forfait, et ses points. Voir
+                # `dispense_de_debut`.
+                if dispensee == "proportionnelle":
+                    assiette = 0.0
                 # La cotisation forfaitaire s'ajoute à la proportionnelle,
                 # et elle est due quel que soit le revenu — cf.
                 # `Compte._cotisation_forfaitaire`, même convention

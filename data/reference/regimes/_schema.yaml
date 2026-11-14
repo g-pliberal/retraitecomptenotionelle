@@ -1213,7 +1213,15 @@ champs_periode:
       dans un statut que le régime affilie ; les années dispensées sont les
       années civiles de la carrière, celle du début et les suivantes. Le
       compte notionnel ne porte pas davantage la cotisation dispensée.
-      `null` : aucune dispense.
+      Sans `avant_l_age`, aucune condition d'âge ; `part: proportionnelle`,
+      seule la part proportionnelle est dispensée, le forfait et ses points
+      restant dus : « Les nouveaux affiliés sont dispensés de la cotisation
+      proportionnelle au titre des deux premières années civiles de leur
+      exercice » (CARCDSF, décret n° 50-28, article 3-1, depuis le 1er juillet
+      2026 ; avant, statuts approuvés par l'arrêté du 13 avril 2011, article
+      11, puis 13, depuis le 1er juillet 2011), ce qui entraîne « la
+      suppression […] des droits correspondants » (article 3-5 ; statuts,
+      article 16, puis 18). `null` : aucune dispense.
     defaut: null
 
   assiette_plancher:

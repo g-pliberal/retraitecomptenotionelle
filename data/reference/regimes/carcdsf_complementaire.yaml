@@ -273,6 +273,17 @@ periodes:
       du taux plein, dans la limite de 20 %. L'anticipation des mères
       devient d'« une année d'anticipation par enfant mis au monde, dans
       la limite de cinq années ».
+      LA DISPENSE DES NOUVEAUX AFFILIÉS (`dispense_de_debut`, aux périodes
+      de 2012 et d'après) : « Les nouveaux adhérents sont dispensés de la
+      cotisation proportionnelle au titre des deux premières années civiles
+      de leur exercice » (article 11, LEGIARTI000023910336 ; article 13
+      depuis le 25 décembre 2017, LEGIARTI000036540562), ce qui entraîne «
+      la suppression […] des droits correspondants » (article 16, puis
+      18) ; depuis le 1er juillet 2026, les articles 3-1 et 3-5 du décret
+      n° 50-28 (LEGIARTI000054168193, LEGIARTI000054168184). Le forfait et
+      ses six points restent dus. L'année 2011, appelée sous les statuts de
+      2007, qui ne dispensaient que sur demande, n'est pas dispensée
+      (`decret_2026_418_liberaux`).
   - debut: 2012
     fin: 2012
     type_calcul: points
@@ -297,6 +308,7 @@ periodes:
     taux_cotisation_retraite: 0.1005
     cotisation_forfaitaire_euros: 2690.4
     cotisation_forfaitaire_annee: 2020
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
   - debut: 2013
     fin: 2013
     type_calcul: points
@@ -321,6 +333,7 @@ periodes:
     taux_cotisation_retraite: 0.102
     cotisation_forfaitaire_euros: 2690.4
     cotisation_forfaitaire_annee: 2020
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
   - debut: 2014
     fin: 2014
     type_calcul: points
@@ -345,6 +358,7 @@ periodes:
     taux_cotisation_retraite: 0.103
     cotisation_forfaitaire_euros: 2690.4
     cotisation_forfaitaire_annee: 2020
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
   - debut: 2015
     fin: 2015
     type_calcul: points
@@ -369,6 +383,7 @@ periodes:
     taux_cotisation_retraite: 0.104
     cotisation_forfaitaire_euros: 2690.4
     cotisation_forfaitaire_annee: 2020
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
   - debut: 2016
     fin: 2016
     type_calcul: points
@@ -393,6 +408,7 @@ periodes:
     taux_cotisation_retraite: 0.105
     cotisation_forfaitaire_euros: 2690.4
     cotisation_forfaitaire_annee: 2020
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
   - debut: 2017
     fin: 2017
     type_calcul: points
@@ -417,6 +433,7 @@ periodes:
     taux_cotisation_retraite: 0.106
     cotisation_forfaitaire_euros: 2690.4
     cotisation_forfaitaire_annee: 2020
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
   - debut: 2018
     fin: 2019
     type_calcul: points
@@ -441,6 +458,7 @@ periodes:
     taux_cotisation_retraite: 0.1065
     cotisation_forfaitaire_euros: 2690.4
     cotisation_forfaitaire_annee: 2020
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
     notes: >-
       Dernier palier avant les mémentos : le taux est celui du barème IPP,
       que les mémentos de 2020 à 2022 confirmeront à l'identique.
@@ -468,6 +486,7 @@ periodes:
     taux_cotisation_retraite: 0.1065
     cotisation_forfaitaire_euros: 2690.4
     cotisation_forfaitaire_annee: 2020
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
     notes: >-
       PREMIER EXERCICE LU DANS UN MÉMENTO. « Cotisation forfaitaire :
       2 690,40 €. Cotisation proportionnelle : 10,65 % des revenus
@@ -504,6 +523,7 @@ periodes:
     taux_cotisation_retraite: 0.1065
     cotisation_forfaitaire_euros: 2690.4
     cotisation_forfaitaire_annee: 2021
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
   - debut: 2022
     fin: 2022
     type_calcul: points
@@ -528,6 +548,7 @@ periodes:
     taux_cotisation_retraite: 0.1065
     cotisation_forfaitaire_euros: 2769.0
     cotisation_forfaitaire_annee: 2022
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
     notes: >-
       Forfait 2 769 € pour six points, soit 461,50 € le point, servi
       27,55 € : rendement 5,97 %, le haut de la bande.
@@ -555,6 +576,7 @@ periodes:
     taux_cotisation_retraite: 0.108
     cotisation_forfaitaire_euros: 2959.8
     cotisation_forfaitaire_annee: 2023
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
     notes: >-
       Le taux passe à 10,80 % et l'assiette suit le plafond : 37 393 € –
       219 960 €. Forfait 2 959,80 € pour six points, soit 493,30 € le
@@ -587,6 +609,7 @@ periodes:
     taux_cotisation_retraite: 0.108
     cotisation_forfaitaire_euros: 3108.0
     cotisation_forfaitaire_annee: 2024
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
     notes: >-
       Forfait 3 108 € pour six points — 518 € le point, servi 30,81 € —,
       assiette 39 413 € – 231 840 €.
@@ -626,6 +649,7 @@ periodes:
     taux_cotisation_retraite: 0.108
     cotisation_forfaitaire_euros: 3178.8
     cotisation_forfaitaire_annee: 2025
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
     notes: >-
       Forfait 3 178,80 € pour six points — 529,80 € le point, servi
       31,50 €. La valeur de service ne se lit pas directement : le mémento
@@ -658,6 +682,7 @@ periodes:
     taux_cotisation_retraite: 0.1135
     cotisation_forfaitaire_euros: 3210.6
     cotisation_forfaitaire_annee: 2026
+    dispense_de_debut: {annees: 2, depuis: 2012, part: proportionnelle}
     notes: >-
       La réforme de l'assiette sociale des indépendants élargit la tranche
       — de 0,65 à 5 plafonds au lieu de 0,85 à 5, soit 31 239 € – 240 300 €

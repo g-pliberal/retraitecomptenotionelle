@@ -691,8 +691,9 @@ export class ConstructeurCompte {
         // versé, et la cotisation dispensée ne l'est pas. Sous le taux
         // commun, le régime ne fait que délimiter l'assiette, et reste.
         // Voir `dispenseDeDebut`.
-        if (!acquisitionCommune
-            && dispenseDeDebut(this.affiliations, periode, carriere, code, ligne)) {
+        const dispensee = acquisitionCommune ? null
+          : dispenseDeDebut(this.affiliations, periode, carriere, code, ligne);
+        if (dispensee === "entiere") {
           continue;
         }
         const [borneBasse, borneHaute] = this._bornesProratisees(
@@ -779,6 +780,11 @@ export class ConstructeurCompte {
         const forfaitCollaborateur = assietteDuCollaborateur(code, ligne);
         if (forfaitCollaborateur !== null) {
           assiette = forfaitCollaborateur * this.macro.smic_horaire.valeur(annee) * part;
+        }
+        // LA PART PROPORTIONNELLE DISPENSÉE au début de l'exercice : seul le
+        // forfait est versé. Voir `dispenseDeDebut`.
+        if (dispensee === "proportionnelle") {
+          assiette = 0.0;
         }
         // LA GARANTIE MINIMALE DE POINTS DE L'AGIRC. De 1989 à 2018, le cadre
         // dont la tranche B n'achetait pas 120 points par an payait une

@@ -863,10 +863,14 @@ def _regimes() -> list[dict]:
                            statut: list(multiples) for statut, multiples
                            in p.assiette_de_debut_en_bases_mensuelles}}
                        if p.assiette_de_debut_en_bases_mensuelles else {}),
-                    # La période de la CARMF de 2026 : absente, aucune dispense
-                    # de début d'exercice.
-                    **({"dispense_de_debut": dict(zip(
-                           ("annees", "avant_l_age", "depuis"), p.dispense_de_debut))}
+                    # La période de la CARMF de 2026, celles de la CARCDSF
+                    # depuis 2012 : absente, aucune dispense de début
+                    # d'exercice ; sans `avant_l_age`, aucune condition d'âge ;
+                    # sans `part`, toute la cotisation.
+                    **({"dispense_de_debut": {
+                           cle: valeur for cle, valeur in zip(
+                               ("annees", "avant_l_age", "depuis", "part"),
+                               p.dispense_de_debut) if valeur is not None}}
                        if p.dispense_de_debut else {}),
                     # La fiche datée du salaire annuel moyen, aux seules
                     # périodes qui y renvoient : absente, la moyenne annuelle.

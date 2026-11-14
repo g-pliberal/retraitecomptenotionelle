@@ -707,14 +707,15 @@ def test_la_dispense_de_la_carmf_retire_2_284_euros_a_la_medecin_de_26_ans(
     assert pensions["cnavpl"]["montant"] == pytest.approx(31_726.78, abs=0.005)
 
 
-def _versees_au_compte(naissance: str, debut: str, annee: int) -> dict:
+def _versees_au_compte(naissance: str, debut: str, annee: int,
+                       requete: dict = REQUETE_DE_MEDECIN) -> dict:
     """Les cotisations de l'année que le compte notionnel reçoit, régime par
     régime, rendues par le portage et refaites par le moteur Python
     (``droit_et_refait``)."""
     from outils_pont import Saisies, droit_et_refait
     from retraite_notionnelle import pont
 
-    requete = {**REQUETE_DE_MEDECIN, "naissance": naissance, "debut": debut}
+    requete = {**requete, "naissance": naissance, "debut": debut}
     saisies = Saisies()
     lus, refus = droit_et_refait(
         {"versees": ("compte.cotisation_annuelle.par_regime", pont.SIMULATEUR,
@@ -739,3 +740,119 @@ def test_le_compte_ne_porte_pas_la_cotisation_que_la_carmf_dispense():
     # Installée le jour de ses 40 ans : rien n'est dispensé.
     assert _versees_au_compte("1987-01-01", "40", 2027)["carmf_complementaire"] == (
         pytest.approx(10_309.73, abs=0.005))
+
+
+# -- la CARCDSF : la part proportionnelle des deux premières années (action 130) ---
+
+REQUETE_DE_DENTISTE = {**REQUETE_DE_MEDECIN, "statut": "chirurgien_dentiste_ou_sage_femme"}
+
+#: (naissance, âge du début d'exercice) : la retraite complémentaire que la
+#: CARCDSF sert à 67 ans, par an.
+DEBUTS_A_LA_CARCDSF = {
+    # Née le 1er janvier 2001, installée le 1er janvier 2027 : en 2027 et en
+    # 2028, ses deux premières années civiles d'exercice, la part
+    # proportionnelle est dispensée, sans droits ; le forfait et ses six points
+    # restent. Posé à la main (note `130/2026-11-06-e10-decret-2026-418.md`) : le
+    # modèle servait 876 611,8159 € de cotisations revalorisées, dont la part
+    # proportionnelle de 2027, 0,1135 × (87 370,5656 − 0,65 × 49 237,47) =
+    # 6 284,0648 € l'année même, × 2,0366 = 12 798,2854 €, et celle de 2028,
+    # 12 886,3326 € ; 876 611,8159 − 25 684,6180 = 850 927,1979 ; × 0,0595 =
+    # 50 630,17 €, 1 528,23 € de moins que 52 158,40 €.
+    ("2001-01-01", "26"): 50_630.17,
+    # Née le 1er janvier 1987, installée le 1er janvier 2027, à 40 ans : la
+    # CARCDSF ne pose aucune condition d'âge, à l'inverse de la CARMF. Le
+    # modèle servait 26 039,01 € ; les mêmes parts proportionnelles de 2027 et
+    # de 2028, revalorisées jusqu'en 2054 (6 284,0648 × 1,0175^27 = 10 038,5258 ;
+    # 6 438,0244 × 1,0175^26 = 10 107,5869), × 0,0595 = 1 198,69 € : 24 840,32 €.
+    ("1987-01-01", "40"): 24_840.32,
+    # Née le 1er janvier 1986, installée le 1er janvier 2012 : les statuts
+    # approuvés par l'arrêté du 13 avril 2011, en vigueur le 1er juillet 2011,
+    # écrivent la même dispense (article 11). Le modèle servait 35 644,53 € ;
+    # la part proportionnelle de 2012, 5 853,1628 − 2 532,9286 (le forfait,
+    # 2 690,40 € de 2020 ramenés par les prix) = 3 320,2342 €, × 1,993857
+    # (les prix de 2013 à 2053, ceux de l'Insee puis 1,75 % par an), et celle
+    # de 2013, 5 969,7377 − 2 555,0157 = 3 414,7220 €, × 1,976621 : 13 369,6858 ;
+    # × 0,0595 = 795,50 € : 34 849,04 €.
+    ("1986-01-01", "26"): 34_849.04,
+    # Née le 1er janvier 1985, installée le 1er janvier 2011 : 2012, sa
+    # deuxième année civile, est dispensée (3 320,2342 × 1,959565, les prix de
+    # 2013 à 2052, × 0,0595 = 387,12 € de moins que 34 731,23 €) ; 2011, appelée
+    # sous les statuts de 2007, qui ne dispensaient que « sur demande écrite »,
+    # reste cotisée (limite déclarée à la fiche).
+    ("1985-01-01", "26"): 34_344.11,
+    # Née le 1er janvier 1984, installée le 1er janvier 2010 : ses deux
+    # premières années précèdent les statuts de 2011, et la pension reste
+    # celle d'avant la correction.
+    ("1984-01-01", "26"): 33_842.09,
+}
+
+
+@pytest.fixture(scope="module")
+def debuts_a_la_carcdsf():
+    """Chaque cas, servi par le portage et refait au bit près par le moteur
+    Python (``servi_et_refait``)."""
+    from outils_pont import servi_et_refait
+
+    cas = [{"cle": "|".join(cle),
+            "requete": {**REQUETE_DE_DENTISTE, "naissance": cle[0], "debut": cle[1]}}
+           for cle in DEBUTS_A_LA_CARCDSF]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    return {cle: {p["regime"]: p for p in servi["actuel"]["pensions_par_regime"]}
+            for cle, servi in servis.items()}
+
+
+@pytest.mark.parametrize("cle", DEBUTS_A_LA_CARCDSF,
+                         ids=["|".join(cle) for cle in DEBUTS_A_LA_CARCDSF])
+def test_la_carcdsf_dispense_la_part_proportionnelle_des_deux_premieres_annees(
+        debuts_a_la_carcdsf, cle):
+    """Décret n° 50-28, article 3-1, dans la rédaction du décret n° 2026-418
+    (article 5), en vigueur le 1er juillet 2026 (LEGIARTI000054168193) : « Les
+    nouveaux affiliés sont dispensés de la cotisation proportionnelle au titre
+    des deux premières années civiles de leur exercice ». Article 3-5
+    (LEGIARTI000054168184) : « Les dispenses ou réductions partielles
+    mentionnées aux articles 3-1 à 3-4 entraînent respectivement la suppression
+    ou la réduction des droits correspondants. » Avant, les statuts approuvés
+    par l'arrêté du 13 avril 2011, en vigueur le 1er juillet 2011
+    (LEGIARTI000023910336), article 11 : « Les nouveaux adhérents sont
+    dispensés de la cotisation proportionnelle au titre des deux premières
+    années civiles de leur exercice », et article 16, la suppression des droits
+    correspondants ; articles 13 et 18 depuis le 25 décembre 2017
+    (LEGIARTI000036540562). Jusqu'au 14 novembre 2026, le modèle faisait
+    cotiser et acquérir la part proportionnelle de ces deux années."""
+    carcdsf = debuts_a_la_carcdsf["|".join(cle)]["carcdsf_complementaire"]
+    assert carcdsf["montant"] == pytest.approx(DEBUTS_A_LA_CARCDSF[cle], abs=0.005)
+
+
+def test_la_dispense_de_la_carcdsf_retire_1_528_euros_a_la_dentiste_de_26_ans(
+        debuts_a_la_carcdsf):
+    """Au cas posé, les cotisations revalorisées tombent de 876 612 € à
+    850 927 €, et la pension de 52 158,40 € à 50 630,17 € : 1 528,23 € par an.
+    La base et les prestations complémentaires de vieillesse, que l'article ne
+    vise pas, ne bougent pas."""
+    pensions = debuts_a_la_carcdsf["2001-01-01|26"]
+    assert "cotisations revalorisées 850,927 €" in (
+        pensions["carcdsf_complementaire"]["detail"])
+    assert 52_158.40 - pensions["carcdsf_complementaire"]["montant"] == pytest.approx(
+        1_528.23, abs=0.005)
+    assert pensions["asv_chirurgiens_dentistes"]["montant"] == pytest.approx(
+        26_394.77, abs=0.005)
+    assert pensions["cnavpl"]["montant"] == pytest.approx(31_726.78, abs=0.005)
+
+
+def test_le_compte_ne_porte_que_le_forfait_des_deux_premieres_annees_de_la_dentiste():
+    """« Dispensés de la cotisation proportionnelle » : la dentiste installée
+    le 1er janvier 2027 ne verse à la complémentaire, en 2027, que la
+    cotisation forfaitaire — 3 210,60 € de 2026, que le modèle porte à
+    3 210,60 × 1,0175 = 3 266,79 € en 2027 —, et non les 0,1135 × (87 370,5656
+    − 0,65 × 49 237,47) = 6 284,06 € de plus que le compte portait (9 550,85 €) ;
+    de même en 2028 (3 210,60 × 1,0175² = 3 323,95 €). La base et les
+    prestations complémentaires de vieillesse restent dues ; la troisième
+    année, la part proportionnelle l'est."""
+    for annee, forfait in ((2027, 3_266.79), (2028, 3_323.95)):
+        versees = _versees_au_compte("2001-01-01", "26", annee,
+                                     requete=REQUETE_DE_DENTISTE)
+        assert versees["carcdsf_complementaire"] == pytest.approx(forfait, abs=0.005)
+        assert versees["cnavpl"] > 0 and versees["asv_chirurgiens_dentistes"] > 0
+    assert _versees_au_compte("2001-01-01", "26", 2029, requete=REQUETE_DE_DENTISTE)[
+        "carcdsf_complementaire"] == pytest.approx(9_977.88, abs=0.005)

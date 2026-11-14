@@ -81,8 +81,10 @@ export function anneesDejaExercees(carriere, affiliation, annee, maximum) {
 }
 
 /**
- * LA DISPENSE DE DÉBUT D'EXERCICE (`dispense_de_debut`) : la cotisation de
- * cette ligne à ce régime est-elle dispensée, sans points ? « Tout médecin
+ * LA DISPENSE DE DÉBUT D'EXERCICE (`dispense_de_debut`) : ce que cette ligne
+ * est dispensée de cotiser à ce régime, sans points — `"entiere"`, toute la
+ * cotisation ; `"proportionnelle"`, sa seule part proportionnelle, le forfait
+ * restant dû ; `null`, rien. « Tout médecin
  * obligatoirement affilié à la caisse est dispensé du paiement de la
  * cotisation afférente au présent régime pendant les deux premières années
  * d'exercice de la profession libérale si cet exercice débute alors qu'il n'a
@@ -90,12 +92,17 @@ export function anneesDejaExercees(carriere, affiliation, annee, maximum) {
  * le 1er juillet 2026), et ces cotisations « ne donnent pas lieu à acquisition
  * de points » (article 4-1, II). L'exercice débute à la première entrée dans
  * un statut que le régime affilie : passer du secteur 1 au secteur 2 ne le
- * recommence pas. Jumeau de `dispense_de_debut`.
+ * recommence pas. À la CARCDSF, sans condition d'âge, « Les nouveaux affiliés
+ * sont dispensés de la cotisation proportionnelle au titre des deux premières
+ * années civiles de leur exercice » (décret n° 50-28, article 3-1 ; statuts
+ * approuvés par l'arrêté du 13 avril 2011, article 11, puis 13), ce qui
+ * entraîne « la suppression […] des droits correspondants » (article 3-5 ;
+ * statuts, article 16, puis 18). Jumeau de `dispense_de_debut`.
  */
 export function dispenseDeDebut(affiliations, periode, carriere, code, ligne) {
   const regle = periode.dispense_de_debut;
   if (!regle || !ligne.cotise || ligne.annee < regle.depuis) {
-    return false;
+    return null;
   }
   let debut = null;
   for (const autre of carriere.lignes) {
@@ -108,8 +115,14 @@ export function dispenseDeDebut(affiliations, periode, carriere, code, ligne) {
       debut = entree;
     }
   }
-  return debut !== null && ligne.annee < debut.annee + regle.annees
-    && debut.rang < carriere.dateDeLAge(regle.avant_l_age).rang;
+  if (debut === null || ligne.annee >= debut.annee + regle.annees) {
+    return null;
+  }
+  if (regle.avant_l_age !== null && regle.avant_l_age !== undefined
+      && debut.rang >= carriere.dateDeLAge(regle.avant_l_age).rang) {
+    return null;
+  }
+  return regle.part ?? "entiere";
 }
 
 /**
@@ -593,9 +606,11 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
         code, Math.max(derniereAnneeParRegime.get(code) ?? 0, ligne.annee),
       );
       for (const [tranche, periode] of regime.periodesActives(ligne.annee).entries()) {
-        // LA DISPENSE DE DÉBUT D'EXERCICE : ni cotisation ni points. Voir
-        // `dispenseDeDebut`.
-        if (dispenseDeDebut(moteur.affiliations, periode, carriere, code, ligne)) {
+        // LA DISPENSE DE DÉBUT D'EXERCICE : ni cotisation ni points, ou la
+        // seule part proportionnelle, plus bas. Voir `dispenseDeDebut`.
+        const dispensee = dispenseDeDebut(
+          moteur.affiliations, periode, carriere, code, ligne);
+        if (dispensee === "entiere") {
           continue;
         }
         // BARÈME D'UN AUTRE RÉGIME : une tranche que tous les affiliés ne
@@ -725,6 +740,11 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
         const forfaitCollaborateur = assietteDuCollaborateur(code, ligne);
         if (forfaitCollaborateur !== null) {
           assiette = forfaitCollaborateur * moteur.macro.smic_horaire.valeur(ligne.annee) * part;
+        }
+        // LA PART PROPORTIONNELLE DISPENSÉE au début de l'exercice : il ne
+        // reste que le forfait, et ses points. Voir `dispenseDeDebut`.
+        if (dispensee === "proportionnelle") {
+          assiette = 0.0;
         }
         // La cotisation forfaitaire s'ajoute à la proportionnelle, et elle est
         // due quel que soit le revenu — même convention que dans compte.js.

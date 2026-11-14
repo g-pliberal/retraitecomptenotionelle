@@ -883,10 +883,13 @@ class PeriodeRegime:
     #: LA DISPENSE DE DROIT DU DÉBUT D'EXERCICE, sans points : le nombre
     #: d'années dispensées, l'âge que l'affilié ne doit pas avoir atteint
     #: quand l'exercice débute, la première année de cotisation que la fiche
-    #: dispense, ``(2, 40.0, 2027)`` — la CARMF depuis le 1er juillet 2026
-    #: (décret n° 49-579, articles 4, I, et 4-1, II). ``None`` : aucune
-    #: dispense. Voir ``acquerir.dispense_de_debut``.
-    dispense_de_debut: tuple[int, float, int] | None = None
+    #: dispense, la part dispensée, ``(2, 40.0, 2027, None)`` — la CARMF depuis
+    #: le 1er juillet 2026 (décret n° 49-579, articles 4, I, et 4-1, II). Sans
+    #: condition d'âge et pour la seule part proportionnelle, ``(2, None, 2012,
+    #: "proportionnelle")`` — la CARCDSF (statuts de 2011, article 11 ; décret
+    #: n° 50-28, article 3-1). ``None`` : aucune dispense. Voir
+    #: ``acquerir.dispense_de_debut``.
+    dispense_de_debut: tuple[int, float | None, int, str | None] | None = None
     notes: str = ""
 
     def prise_en_charge(self, forfait: float, proportionnelle: float) -> float:
@@ -2370,8 +2373,10 @@ class CatalogueRegimes:
                 dispense_de_debut=(
                     None if p.get("dispense_de_debut") is None
                     else (int(p["dispense_de_debut"]["annees"]),
-                          float(p["dispense_de_debut"]["avant_l_age"]),
-                          int(p["dispense_de_debut"]["depuis"]))
+                          None if p["dispense_de_debut"].get("avant_l_age") is None
+                          else float(p["dispense_de_debut"]["avant_l_age"]),
+                          int(p["dispense_de_debut"]["depuis"]),
+                          p["dispense_de_debut"].get("part"))
                 ),
                 points_par_trimestre_valide=(
                     None if p.get("points_par_trimestre_valide") is None

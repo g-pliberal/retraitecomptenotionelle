@@ -837,8 +837,9 @@ class ConstructeurCompte:
                 # été versé, et la cotisation dispensée ne l'est pas. Sous le
                 # taux commun, le régime ne fait que délimiter l'assiette, et
                 # reste. Voir `dispense_de_debut`.
-                if not acquisition_commune and dispense_de_debut(
-                        self.affiliations, periode, carriere, code, ligne):
+                dispensee = None if acquisition_commune else dispense_de_debut(
+                    self.affiliations, periode, carriere, code, ligne)
+                if dispensee == "entiere":
                     continue
                 borne_basse, borne_haute = self._bornes_proratisees(
                     periode, annee, part, sans_employeur and code == REGIME_DE_MAYOTTE
@@ -935,6 +936,10 @@ class ConstructeurCompte:
                 if forfait_collaborateur is not None:
                     assiette = (forfait_collaborateur
                                 * self.macro.smic_horaire(annee) * part)
+                # LA PART PROPORTIONNELLE DISPENSÉE au début de l'exercice :
+                # seul le forfait est versé. Voir `dispense_de_debut`.
+                if dispensee == "proportionnelle":
+                    assiette = 0.0
                 # LA GARANTIE MINIMALE DE POINTS DE L'AGIRC. De 1989 à 2018, le
                 # cadre dont la tranche B n'achetait pas 120 points par an
                 # payait une cotisation forfaitaire qui les achetait : 72,71 €
