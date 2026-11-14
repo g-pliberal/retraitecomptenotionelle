@@ -7829,9 +7829,13 @@ def test_la_carmf_majore_des_62_ans_puis_moins_apres_65_et_plus_rien_a_70(simula
         annee_naissance=1954, sexe="H", affiliation="medecin_liberal",
         age_debut=30, age_liquidation=66,
     )
-    # Douze trimestres à 1,25 % de 62 à 65 ans, quatre à 0,75 % ensuite.
+    # Né le 1er janvier 1954, 62 ans le 1er janvier 2016 : douze trimestres à
+    # 1,25 % du 1er avril 2016 au 1er avril 2019, premier jour du trimestre
+    # civil qui suit ses 65 ans, puis trois à 0,75 % jusqu'au 1er janvier 2020
+    # — quatre tant que le modèle comptait le trimestre civil où tombe l'âge
+    # (action 130, ligne 18 de la file, corrigée le 14 novembre 2026).
     assert liquider.abattement_points(scenario,
-        periode, carriere, 144, 165, 66.0, 2020) == pytest.approx(1.0 + 0.0125 * 12 + 0.0075 * 4)
+        periode, carriere, 144, 165, 66.0, 2020) == pytest.approx(1.0 + 0.0125 * 12 + 0.0075 * 3)
     # À soixante-douze ans, le compte s'arrête à soixante-dix : 15 % + 15 %.
     assert liquider.abattement_points(scenario,
         periode, carriere, 168, 165, 72.0, 2026) == pytest.approx(1.30)
@@ -7851,7 +7855,7 @@ def test_la_carmf_majore_des_62_ans_puis_moins_apres_65_et_plus_rien_a_70(simula
     # L'ASV suit les mêmes mots.
     asv = _periode(simulateur, "asv_conventionnes", 2020)
     assert liquider.abattement_points(scenario,
-        asv, carriere, 144, 165, 66.0, 2020) == pytest.approx(1.0 + 0.0125 * 12 + 0.0075 * 4)
+        asv, carriere, 144, 165, 66.0, 2020) == pytest.approx(1.0 + 0.0125 * 12 + 0.0075 * 3)
 
 
 def test_la_cavec_majore_vingt_trimestres_au_plus_apres_65_ans(simulateur):

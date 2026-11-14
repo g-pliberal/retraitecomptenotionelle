@@ -601,6 +601,13 @@ class PeriodeRegime:
     #: article 35, I, c). ``None`` : un seul taux.
     surcote_par_trimestre_depuis: int | None
     surcote_par_trimestre_d_avant: float | None
+    #: ``par_age_seul`` compte du premier jour du trimestre civil qui suit
+    #: celui où l'âge est atteint, jusqu'à la date d'effet, le palier et l'âge
+    #: maximum lus de même : la CARMF et l'ASV majorent « par trimestre
+    #: séparant le premier jour du trimestre civil suivant celui où le médecin
+    #: atteint cet âge de la date d'effet de la retraite » (statuts, articles
+    #: 15 et 12, depuis 2017).
+    surcote_du_trimestre_civil_suivant: bool
     #: Plafond en euros de la majoration pour enfants, et année à laquelle il
     #: est publié. Le plafond suit ensuite la valeur de service du point.
     plafond_majoration_enfants: float | None
@@ -1989,6 +1996,7 @@ INTERRUPTEURS: dict[str, object] = {
     "surcote_depuis_la_duree": False,
     "surcote_depuis_l_age_legal": False,
     "surcote_trimestres_civils_d_exercice": False,
+    "surcote_du_trimestre_civil_suivant": False,
     "assiette_plancher": False,
     "assiette_forfaitaire": False,
     "points_au_prorata_des_cotisations": False,
@@ -2402,6 +2410,8 @@ class CatalogueRegimes:
                     None if p.get("surcote_par_trimestre_d_avant") is None
                     else float(p["surcote_par_trimestre_d_avant"])
                 ),
+                surcote_du_trimestre_civil_suivant=bool(
+                    p.get("surcote_du_trimestre_civil_suivant", False)),
                 plafond_majoration_enfants=(
                     None if p.get("plafond_majoration_enfants") is None
                     else float(p["plafond_majoration_enfants"])

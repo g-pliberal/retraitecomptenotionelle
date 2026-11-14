@@ -744,9 +744,37 @@ CARMF_AU_TEXTE_DE_JANVIER_A_MARS_2017 = {
 }
 
 
+#: Les mêmes articles comptent du « premier jour du trimestre civil suivant
+#: celui où le médecin atteint cet âge » à la date d'effet, et non du mois où
+#: l'âge est atteint : né le premier jour d'un trimestre civil, ce trimestre-là
+#: ne compte pas ; né un autre jour, les mois qui séparent l'âge du trimestre
+#: civil suivant non plus. Le passage à 0,75 % se lit de même au trimestre
+#: civil qui suit les 65 ans. Ligne 18 de la file des corrections (action
+#: 130), posée à la main depuis le texte (JORFARTI000033521562,
+#: JORFARTI000033538061, JORFARTI000034298521).
+CARMF_AU_TRIMESTRE_CIVIL = {
+    # Né le 1er janvier 1958 : 62 ans le 1er janvier 2020, le décompte part du
+    # 1er avril 2020 ; 65 ans le 1er janvier 2023, 0,75 % du 1er avril 2023 ;
+    # la pension le 1er janvier 2025 : 12 × 1,25 % + 7 × 0,75 % = 20,25 %.
+    ("1958-01-01", "67"): "coefficient de majoration 1.2025",
+    # Né le 10 février 1955 : 62 ans le 10 février 2017, du 1er avril 2017 ; la
+    # pension le 1er mars 2019, vingt-trois mois après : 7 × 1,25 % = 8,75 %.
+    ("1955-02-10", "64"): "coefficient de majoration 1.0875",
+    # Né le 10 septembre 1951, pension au 1er janvier 2017, de l'âge légal :
+    # 60 ans et 4 mois le 10 janvier 2012, du 1er avril 2012 ; 65 ans le
+    # 10 septembre 2016, 0,75 % du 1er octobre 2016 : 18 × 1,25 % + 1 × 0,75 %
+    # = 23,25 %.
+    ("1951-09-10", "65.25"): "coefficient de majoration 1.2325",
+    # Né le 1er janvier 1950 : du 1er avril 2012 au 1er avril 2015, 12 ×
+    # 1,25 % ; puis jusqu'au 1er avril 2020, premier jour du trimestre civil
+    # qui suit ses 70 ans, 20 × 0,75 % ; 30 %, la pension le 1er avril 2021.
+    ("1950-01-01", "71.25"): "coefficient de majoration 1.3000",
+}
+
+
 @pytest.mark.parametrize("au_texte", [
-    CARMF_AU_TEXTE, CARMF_AU_TEXTE_DE_JANVIER_A_MARS_2017,
-], ids=["depuis_le_30_mars_2017", "de_janvier_a_mars_2017"])
+    CARMF_AU_TEXTE, CARMF_AU_TEXTE_DE_JANVIER_A_MARS_2017, CARMF_AU_TRIMESTRE_CIVIL,
+], ids=["depuis_le_30_mars_2017", "de_janvier_a_mars_2017", "au_trimestre_civil"])
 def test_la_carmf_sert_ses_coefficients_dans_les_deux_moteurs(au_texte):
     from outils_pont import servi_et_refait
 
@@ -1050,17 +1078,25 @@ DEBUTS_A_LA_CARMF = {
     # servait 990 651,9421 € de cotisations revalorisées, dont 20 997,0503 € de
     # 2027 (0,118 × 87 370,5656 € l'année même, × 2,0366) et 21 141,5017 € de
     # 2028 ; 990 651,9421 − 42 138,5520 = 948 513,3901 ; × 0,0448 =
-    # 42 493,3999 ; × 1,21 = 51 417,01 €, 2 284,25 € de moins que 53 701,26 €.
-    ("2001-01-01", "26"): 51_417.01,
+    # 42 493,3999 ; × 1,2025 = 51 098,31 €. Née le premier jour d'un trimestre
+    # civil, sa majoration part du 1er avril 2063 : douze trimestres à 1,25 %,
+    # sept à 0,75 % jusqu'au 1er janvier 2068, 1,2025 et non 1,21 (ligne 18 de
+    # la file, corrigée le 14 novembre 2026 ; 51 417,01 € jusque-là). Sans la
+    # dispense : 990 651,9421 × 0,0448 × 1,2025 = 53 368,40 €, 2 270,09 € de
+    # plus.
+    ("2001-01-01", "26"): 51_098.31,
     # Née le 1er janvier 1987, installée le 1er janvier 2027, le jour de ses
     # 40 ans : elle a « atteint l'âge de 40 ans », rien n'est dispensé, et la
-    # pension reste celle d'avant la correction.
-    ("1987-01-01", "40"): 26_389.47,
+    # pension reste celle d'avant la correction de la dispense, 26 389,47 € au
+    # coefficient 1,21, soit, à 1,2025 (ligne 18) : 26 389,47 / 1,21 × 1,2025.
+    ("1987-01-01", "40"): 26_225.90,
     # Née le 1er janvier 1986, installée le 1er janvier 2025, à 39 ans : ses
     # deux premières années, 2025 et 2026, précèdent les cotisations que
     # l'article 4 du 1er juillet 2026 dispense de façon prouvée ; la pension
-    # reste celle d'avant la correction (limite déclarée à la fiche).
-    ("1986-01-01", "39"): 26_506.51,
+    # reste celle d'avant la correction de la dispense (limite déclarée à la
+    # fiche), 26 506,51 € au coefficient 1,21, soit, à 1,2025 (ligne 18) :
+    # 26 506,51 / 1,21 × 1,2025.
+    ("1986-01-01", "39"): 26_342.21,
 }
 
 
@@ -1097,19 +1133,22 @@ def test_la_carmf_dispense_sans_points_les_deux_premieres_annees_d_exercice(
     assert carmf["montant"] == pytest.approx(DEBUTS_A_LA_CARMF[cle], abs=0.005)
 
 
-def test_la_dispense_de_la_carmf_retire_2_284_euros_a_la_medecin_de_26_ans(
+def test_la_dispense_de_la_carmf_retire_2_270_euros_a_la_medecin_de_26_ans(
         debuts_a_la_carmf):
     """Au cas posé, les cotisations revalorisées tombent de 990 652 € à
-    948 513 €, et la pension de 53 701,26 € à 51 417,01 € : 2 284,25 € par an.
+    948 513 €, et la pension de 53 368,40 € à 51 098,31 € : 2 270,09 € par an
+    (53 701,26 €, 51 417,01 € et 2 284,25 € tant que le modèle comptait un
+    trimestre de majoration de trop, jusqu'à la ligne 18 de la file).
     La base et l'ASV, que l'article ne vise pas, ne bougent pas. L'ASV, que
     le modèle servait 44 511,19 €, est depuis le 14 novembre 2026 à la valeur
     de service de 2026 portée aux prix, et non plus à celle de 2025 (1,75 % de
-    hausse en 2026) : 44 511,19 / 1,0175 = 43 745,64 €."""
+    hausse en 2026) : 44 511,19 / 1,0175 = 43 745,64 € au coefficient 1,21,
+    soit, à 1,2025 (ligne 18) : 43 745,64 / 1,21 × 1,2025 = 43 474,49 €."""
     pensions = debuts_a_la_carmf["2001-01-01|26"]
     assert "cotisations revalorisées 948,513 €" in pensions["carmf_complementaire"]["detail"]
-    assert 53_701.26 - pensions["carmf_complementaire"]["montant"] == pytest.approx(
-        2_284.25, abs=0.005)
-    assert pensions["asv_conventionnes"]["montant"] == pytest.approx(43_745.64, abs=0.005)
+    assert 53_368.40 - pensions["carmf_complementaire"]["montant"] == pytest.approx(
+        2_270.09, abs=0.005)
+    assert pensions["asv_conventionnes"]["montant"] == pytest.approx(43_474.49, abs=0.005)
     assert pensions["cnavpl"]["montant"] == pytest.approx(31_726.78, abs=0.005)
 
 
@@ -1572,13 +1611,15 @@ def test_l_asv_n_est_pas_attribuee_au_medecin_qui_a_exerce_moins_d_un_an(
     janvier à septembre 2000 : rien n'est dû, quand le modèle servait
     27 points × 11,82 € × 1,15 = 367,01 € par an. Douze mois, l'année 2000
     entière : 27 points (article 2), × 11,82 € (décret n° 2011-1644, article
-    4, exercice 2025) × 1,15 (douze trimestres depuis 62 ans) = 367,01 €."""
+    4, exercice 2025) × 1,1375 (62 ans le 1er janvier 2022, onze trimestres
+    du 1er avril 2022 au 1er janvier 2025 ; 1,15 et 367,01 € jusqu'à la ligne
+    18 de la file) = 363,02 €."""
     de_neuf_mois = exercices_courts_a_l_asv["40.75"]["asv_conventionnes"]
     assert de_neuf_mois["montant"] == 0.0
     assert "moins d'un an d'exercice" in de_neuf_mois["detail"]
     assert "article 7" in de_neuf_mois["detail"]
     d_un_an = exercices_courts_a_l_asv["41"]["asv_conventionnes"]
-    assert d_un_an["montant"] == pytest.approx(367.01, abs=0.005)
+    assert d_un_an["montant"] == pytest.approx(363.02, abs=0.005)
     # La complémentaire de la CARMF, que l'article 7 ne régit pas, reste servie.
     assert exercices_courts_a_l_asv["40.75"]["carmf_complementaire"]["montant"] > 0
 

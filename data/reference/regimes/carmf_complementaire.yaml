@@ -1244,6 +1244,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    surcote_du_trimestre_civil_suivant: surcote_par_age_seul
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
@@ -1293,6 +1294,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    surcote_du_trimestre_civil_suivant: surcote_par_age_seul
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
@@ -1330,6 +1332,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    surcote_du_trimestre_civil_suivant: surcote_par_age_seul
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
@@ -1367,6 +1370,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    surcote_du_trimestre_civil_suivant: surcote_par_age_seul
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
@@ -1404,6 +1408,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    surcote_du_trimestre_civil_suivant: surcote_par_age_seul
     dispense_de_debut: {annees: 2, avant_l_age: 40, depuis: 2027}
     exemption_passe_l_age: {age: 75, depuis: 2027}
     effet_au_trimestre_civil: [2026-07-18, null]

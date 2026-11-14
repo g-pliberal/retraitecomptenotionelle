@@ -158,6 +158,7 @@ versions:
       surcote_par_trimestre: 0.0125
       surcote_age_debut: null
       surcote_depuis_l_age_legal: true
+      surcote_du_trimestre_civil_suivant: true
       surcote_palier_age: 65
       surcote_par_trimestre_apres_palier: 0.0075
       surcote_age_maximum: 70
@@ -206,6 +207,7 @@ versions:
       surcote_par_trimestre: 0.0125
       surcote_age_debut: 62
       surcote_depuis_l_age_legal: false
+      surcote_du_trimestre_civil_suivant: true
       surcote_palier_age: 65
       surcote_par_trimestre_apres_palier: 0.0075
       surcote_age_maximum: 70
@@ -282,6 +284,7 @@ versions:
       surcote_par_trimestre: 0.0125
       surcote_age_debut: 62
       surcote_depuis_l_age_legal: false
+      surcote_du_trimestre_civil_suivant: true
       surcote_palier_age: 65
       surcote_par_trimestre_apres_palier: 0.0075
       surcote_age_maximum: 70
@@ -581,10 +584,12 @@ code:
   moteur: >-
     `abattement_points: cavom`, le barème par année d'âge manquante que la fiche
     `cavom_ages_minoration` décrit, et dont la CARMF écrivait les coefficients de 2000 à
-    2016 ; depuis 2017, `surcote_points: par_age_seul`, des trimestres d'âge entiers
-    depuis `surcote_age_debut` jusqu'à l'âge du départ, au taux de
-    `surcote_par_trimestre_apres_palier` après `surcote_palier_age`, jusqu'à
-    `surcote_age_maximum`.
+    2016 ; depuis 2017, `surcote_points: par_age_seul`, des trimestres entiers du
+    premier jour du trimestre civil qui suit celui où `surcote_age_debut` est atteint
+    jusqu'à la date d'effet (`surcote_du_trimestre_civil_suivant`, depuis le
+    14 novembre 2026, action 130, ligne 18 de la file ; du mois où l'âge est atteint
+    jusque-là), au taux de `surcote_par_trimestre_apres_palier` du trimestre civil qui
+    suit `surcote_palier_age`, jusqu'à celui qui suit `surcote_age_maximum`.
   python: >-
     droit/liquider.py : abattement_points, abattement_ircec, _ABATTEMENTS_IRCEC,
     _ABATTEMENTS_PAR_ANNEE_AGE_SEUL, surcote_points ; droit/ouvrir.py : age_taux_plein ;
@@ -599,7 +604,8 @@ code:
     contenu.parametres de chaque version : age_ouverture_par_generation, age_taux_plein,
     duree_requise_trimestres, decote_par_trimestre, surcote_points,
     surcote_par_trimestre, surcote_age_debut, surcote_depuis_l_age_legal,
-    surcote_palier_age, surcote_par_trimestre_apres_palier, surcote_age_maximum ;
+    surcote_du_trimestre_civil_suivant, surcote_palier_age,
+    surcote_par_trimestre_apres_palier, surcote_age_maximum ;
     regimes/carmf_complementaire.yaml : age_taux_plein, effet_au_trimestre_civil,
     date_effet, avantages_non_contributifs ;
     regimes/asv_conventionnes.yaml : date_effet, avantages_non_contributifs

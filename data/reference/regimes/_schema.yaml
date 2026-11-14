@@ -940,6 +940,20 @@ champs_periode:
     description: "taux par trimestre accompli avant `surcote_par_trimestre_depuis` (fraction, null sans lui)"
     defaut: null
 
+  surcote_du_trimestre_civil_suivant:
+    description: >-
+      Avec `surcote_points` en `par_age_seul` seulement : le décompte part-il
+      du premier jour du trimestre civil qui suit celui où l'âge de départ est
+      atteint, jusqu'à la date d'effet, le palier et l'âge maximum lus de
+      même, et non du mois où l'âge est atteint ? La CARMF et l'ASV majorent
+      « par trimestre séparant le premier jour du trimestre civil suivant
+      celui où le médecin atteint cet âge de la date d'effet de la retraite »
+      (statuts, articles 15 et 12, depuis 2017 ; règlements de 2026, article
+      2). Sans renvoi, le temps écoulé depuis l'âge suffit.
+    renvoi: true
+    valeurs: [true]
+    defaut: false
+
   taux_majoration_enfants:
     description: >-
       Barème PROPRE de la majoration pour enfants, par nombre d'enfants à

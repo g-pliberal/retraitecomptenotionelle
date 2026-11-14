@@ -4742,7 +4742,10 @@ def surcote_points(moteur, periode: PeriodeRegime, carriere: Carriere,
     maximale de 25 % » (CAVEC, art. 13). Le décompte part de
     ``surcote_age_debut``, ou de l'âge du taux plein lu à la génération —
     de l'âge légal de la génération sous ``surcote_depuis_l_age_legal``, la
-    CARMF et l'ASV du 1er janvier au 29 mars 2017 — ;
+    CARMF et l'ASV du 1er janvier au 29 mars 2017 — et, sous
+    ``surcote_du_trimestre_civil_suivant``, du premier jour du trimestre
+    civil qui suit celui où cet âge est atteint, jusqu'à la date d'effet,
+    comme le palier et la limite (CARMF et ASV) ;
     il s'arrête à ``surcote_age_maximum`` — le soixante-dixième
     anniversaire, chez les médecins et les notaires — et à
     ``surcote_trimestres_maximum`` ; il ne retient que des multiples de
@@ -4856,6 +4859,20 @@ def surcote_points(moteur, periode: PeriodeRegime, carriere: Carriere,
                 apres = min(apres, maximum)
             return 1.0 + periode.surcote_par_trimestre_d_avant * avant + taux * apres
         ecoules = trimestres_civils_d_exercice(moteur, carriere, code, suivant, effet)
+    # « Par trimestre séparant le premier jour du trimestre civil suivant
+    # celui où le médecin atteint cet âge de la date d'effet », rien « au-delà
+    # du premier jour du trimestre civil suivant le soixante-dixième
+    # anniversaire » (CARMF, article 15 ; ASV, article 12) : ni le trimestre
+    # civil où tombe l'âge, ni les mois d'un trimestre entamé.
+    civil = bool(periode.surcote_du_trimestre_civil_suivant)
+    depart = _trimestre_civil_suivant(carriere, debut) if civil else None
+    if civil:
+        terme = carriere.date_de_l_age(age_liquidation)
+        if periode.surcote_age_maximum is not None:
+            limite = _trimestre_civil_suivant(carriere, periode.surcote_age_maximum)
+            if limite.rang < terme.rang:
+                terme = limite
+        ecoules = max(0, (terme.rang - depart.rang) // 3)
     if periode.surcote_trimestres_cotises:
         # « Pour chaque année pleine COTISÉE dans le présent régime »
         # (CAVAMAC, statuts dans la rédaction de l'arrêté du 4 août 2023,
@@ -4874,11 +4891,20 @@ def surcote_points(moteur, periode: PeriodeRegime, carriere: Carriere,
     # Le second taux vaut « à partir du premier jour du trimestre civil
     # suivant celui où » l'âge du palier est atteint : le trimestre entamé
     # avant lui reste au premier taux.
-    avant_palier = min(ecoules, max(0, math.ceil((palier - debut - 1e-9) * 4)))
+    avant_palier = min(ecoules, max(
+        0,
+        (_trimestre_civil_suivant(carriere, palier).rang - depart.rang) // 3
+        if civil else math.ceil((palier - debut - 1e-9) * 4)))
     return (1.0
             + taux * avant_palier
             + periode.surcote_par_trimestre_apres_palier
             * (ecoules - avant_palier))
+
+
+def _trimestre_civil_suivant(carriere: Carriere, age: float) -> DateMois:
+    """Le premier jour du trimestre civil qui suit celui où l'âge est atteint."""
+    atteint = carriere.mois_de_l_anniversaire(age)
+    return DateMois(atteint.annee, 1).plus_mois(3 * ((atteint.mois - 1) // 3 + 1))
 
 
 def age_de_la_duree_atteinte(moteur, periode: PeriodeRegime, carriere: Carriere,

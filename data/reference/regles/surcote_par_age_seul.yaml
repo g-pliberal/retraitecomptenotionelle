@@ -24,8 +24,20 @@ effet: >-
   « après l'âge de 62 ans » depuis l'arrêté du 22 mars 2017, et de l'âge légal de la
   génération, 60 ans à 61 ans et 7 mois avant 1955, du 1er janvier au 29 mars 2017
   (`surcote_depuis_l_age_legal`, périodes coupées au 30 mars 2017 par `date_effet`),
-  sauf une erreur déclarée (action 130, E13) : le médecin né le premier jour d'un
-  trimestre civil compte au modèle le trimestre où tombe l'âge. Jusqu'au 14 novembre
+  du « premier jour du trimestre civil suivant celui où le médecin atteint cet âge »
+  à la date d'effet (`surcote_du_trimestre_civil_suivant`) : jusqu'au 14 novembre 2026,
+  le modèle comptait du premier jour du mois où l'âge est atteint, un trimestre de trop
+  pour le médecin né le premier jour d'un trimestre civil, et pour qui, né un autre
+  jour, ne prenait pas sa pension au premier jour d'un trimestre civil — né le
+  1er janvier 1958, pension au 1er janvier 2025 : dix-neuf trimestres du 1er avril
+  2020, douze à 1,25 % et sept à 0,75 %, 1,2025, quand le modèle en comptait vingt,
+  1,21 — 99,89 € par an servis en trop à la CARMF (16 116,03 € servis, 16 016,14 €
+  depuis), 119,42 € à l'ASV (19 267,20 €, 19 147,78 € depuis) ; le passage à 0,75 %
+  se lit de même au trimestre civil qui suit les 65 ans — né le 10 septembre 1951,
+  pension au 1er janvier 2017 : dix-huit trimestres à 1,25 % du 1er avril 2012, un à
+  0,75 % du 1er octobre 2016, 1,2325 au lieu de 1,2375 ; corrigé ce jour (action 130,
+  décision du propriétaire du 13 novembre, ligne 18 de la file), dans les deux
+  moteurs. Jusqu'au 14 novembre
   2026, le modèle comptait de 62 ans dès le 1er janvier 2017, ce que le texte n'écrit
   que depuis le 30 mars : née le 10 mars 1952 (60 ans et 9 mois le 10 décembre 2012),
   pension au 1er janvier 2017, seize trimestres à 1,25 % du 1er janvier 2013, 1,20,
@@ -664,6 +676,7 @@ versions:
           à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
         cprn_complementaire: l'âge du taux plein
       surcote_depuis_l_age_legal: {carmf_complementaire: true, asv_conventionnes: true}
+      surcote_du_trimestre_civil_suivant: {carmf_complementaire: true, asv_conventionnes: true}
       surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
       surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
       surcote_age_maximum:
@@ -742,6 +755,7 @@ versions:
           l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
           à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
         cprn_complementaire: l'âge du taux plein
+      surcote_du_trimestre_civil_suivant: {carmf_complementaire: true, asv_conventionnes: true}
       surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
       surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
       surcote_age_maximum:
@@ -809,6 +823,7 @@ versions:
           l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
           à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
         cprn_complementaire: l'âge du taux plein
+      surcote_du_trimestre_civil_suivant: {carmf_complementaire: true, asv_conventionnes: true}
       surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
       surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
       surcote_age_maximum:
@@ -875,6 +890,7 @@ versions:
           l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
           à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
         cprn_complementaire: l'âge du taux plein
+      surcote_du_trimestre_civil_suivant: {carmf_complementaire: true, asv_conventionnes: true}
       surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
       surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
       surcote_age_maximum:
@@ -949,6 +965,7 @@ versions:
           l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
           à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
         cprn_complementaire: l'âge du taux plein
+      surcote_du_trimestre_civil_suivant: {carmf_complementaire: true, asv_conventionnes: true}
       surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
       surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
       surcote_age_maximum:
@@ -1026,6 +1043,7 @@ versions:
           l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
           à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
         cprn_complementaire: l'âge du taux plein
+      surcote_du_trimestre_civil_suivant: {carmf_complementaire: true, asv_conventionnes: true}
       surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
       surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
       surcote_age_maximum:
@@ -1097,6 +1115,7 @@ versions:
           l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
           à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
         cprn_complementaire: l'âge du taux plein
+      surcote_du_trimestre_civil_suivant: {carmf_complementaire: true, asv_conventionnes: true}
       surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
       surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
       surcote_age_maximum:
@@ -1163,6 +1182,7 @@ versions:
           l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
           à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
         cprn_complementaire: l'âge du taux plein
+      surcote_du_trimestre_civil_suivant: {carmf_complementaire: true, asv_conventionnes: true}
       surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
       surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
       surcote_age_maximum:
@@ -1234,6 +1254,7 @@ versions:
           l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
           à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
         cprn_complementaire: l'âge du taux plein
+      surcote_du_trimestre_civil_suivant: {carmf_complementaire: true, asv_conventionnes: true}
       surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
       surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
       surcote_age_maximum:
@@ -1337,6 +1358,7 @@ versions:
           l'âge du taux plein de l'article 8 : 65 ans avant 1953, 66 ans de 1953 à 1955,
           l'âge du 1° de L. 351-8 depuis 1956
         cprn_complementaire: l'âge du taux plein
+      surcote_du_trimestre_civil_suivant: {carmf_complementaire: true, asv_conventionnes: true}
       surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
       surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
       surcote_age_maximum:
@@ -1481,37 +1503,6 @@ approximations:
     1980 à 2004 (version `avant_2007`)
   ecart: aucun connu ; la règle d'avant 2007 n'est pas lue (question 22).
   effet: non mesuré
-- version: [carmf_asv_2017, carmf_asv_mars_2017, cprn_juin_2017, cavec_septembre_2018, cipav_2022, cipav_2023, cprn_2024, cavec_juillet_2025, cipav_depuis_juillet_2026, reglements_de_2026]
-  textes: >-
-    statuts de la CARMF, article 15, et de l'ASV, article 12, de 2017 à juillet 2026 ;
-    règlements de 2026, article 2 de chacun
-  ecart: >-
-    Erreur déclarée, non corrigée (candidat, au propriétaire) : le texte compte du
-    « premier jour du trimestre civil suivant celui où le médecin atteint cet âge » ; le
-    modèle compte les trimestres de trois mois révolus depuis le premier jour du mois où
-    l'âge est atteint (`origine_des_ages`), et, pour le médecin né le premier jour d'un
-    trimestre civil (1er janvier, avril, juillet, octobre), compte le trimestre où tombe
-    l'âge. Né un autre jour, le modèle compte comme le texte aux dates d'effet du
-    premier jour d'un trimestre civil ; le compte s'égalise quand la limite des 70 ans
-    est atteinte. La même erreur, déclarée à la CARCDSF
-    (`carcdsf_minoration_age_seul`), y est corrigée depuis le 14 novembre 2026. Du
-    1er janvier au 29 mars 2017, où le décompte part
-    de l'âge légal (corrigé le 14 novembre 2026), la même cause déplace le passage à
-    0,75 % du médecin né de juillet à décembre 1951 : ses 60 ans et 4 mois ne tombent
-    pas à un nombre entier de trimestres de ses 65 ans, le modèle garde à 1,25 % le
-    trimestre de trois mois entamé avant 65 ans, et le compte du texte dépend du mois
-    de naissance dans le trimestre civil.
-  effet: >-
-    né le 1er janvier 1958, pension au 1er janvier 2025 : le texte, dix-neuf trimestres
-    (du 1er avril 2020), douze à 1,25 % et sept à 0,75 %, 1,2025 ; le modèle, vingt, 1,21
-    (né le 2 janvier, 1,2025) : 99,89 € par an de trop à la CARMF (16 116,03 € servis),
-    119,42 € à l'ASV (19 267,20 €) (essai du 6 novembre 2026, dans les deux moteurs). Né
-    le 10 septembre 1951 (60 ans et 4 mois le 10 janvier 2012, décompte du 1er avril
-    2012 ; 65 ans le 10 septembre 2016, 0,75 % du 1er octobre 2016), pension au
-    1er janvier 2017 : le texte, dix-huit trimestres à 1,25 % et un à 0,75 %, 1,2325 ;
-    le modèle, dix-neuf à 1,25 %, 1,2375 : 55,16 € par an de trop à la CARMF
-    (13 653,27 € servis), 70,72 € à l'ASV (17 503,22 €) ; né le 10 août 1951, les deux
-    comptent 1,245 (essai du 14 novembre 2026, dans les deux moteurs)
 - version: [carpimko_octobre_2015]
   regime: carpimko_complementaire
   textes: arrêté du 31 juillet 2015, annexe, article 12 ter (JORFARTI000031255547)
@@ -2118,6 +2109,7 @@ code:
     surcote_trimestres_cotises: true
     surcote_depuis_la_duree: true
     surcote_depuis_l_age_legal: true
+    surcote_du_trimestre_civil_suivant: true
   moteur: >-
     `surcote_points: par_age_seul` : trimestres civils ENTIERS écoulés entre `surcote_age_debut`
     — l'âge du taux plein de la période, lu à la génération, si le champ est nul — et
@@ -2131,20 +2123,27 @@ code:
     `surcote_depuis_l_age_legal: true`, de l'âge d'ouverture de la période lu à la
     génération, l'âge légal (`ouvrir.age_ouverture_commun`, la CARMF et l'ASV du
     1er janvier au 29 mars 2017). Le second taux vaut du premier trimestre qui commence
-    à `surcote_palier_age` ou après. `surcote_premieres_annees` (la Cipav, trente) ne
+    à `surcote_palier_age` ou après. `surcote_du_trimestre_civil_suivant: true` (la
+    CARMF et l'ASV) compte les trimestres de trois mois entiers du premier jour du
+    trimestre civil qui suit celui où l'âge de départ est atteint jusqu'à la date
+    d'effet, sans dépasser le premier jour du trimestre civil qui suit
+    `surcote_age_maximum`, le second taux valant du premier jour du trimestre civil qui
+    suit `surcote_palier_age` (`liquider._trimestre_civil_suivant`). `surcote_premieres_annees` (la Cipav, trente) ne
     majore que les cotisations de ces premières années de cotisation au régime, une de
     plus quand la première est partielle (`liquider.premieres_annees_majorees`) : le
     coefficient affiché est celui de la pension entière, et le détail nomme les années
     majorées.
   python: >-
     droit/liquider.py : liquider_chaque_regime, abattement_points, surcote_points,
-    age_de_la_duree_atteinte, _trimestres_cotises_apres, premieres_annees_majorees ;
+    age_de_la_duree_atteinte, _trimestres_cotises_apres, premieres_annees_majorees,
+    _trimestre_civil_suivant ;
     droit/ouvrir.py :
     age_taux_plein, age_ouverture_commun ; scenarios/actuel.py :
     AgesRegimes.age_surcote_maximum
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints, surcotePoints,
-    ageDeLaDureeAtteinte, trimestresCotisesApres, premieresAnneesMajorees ;
+    ageDeLaDureeAtteinte, trimestresCotisesApres, premieresAnneesMajorees,
+    trimestreCivilSuivant ;
     moteur/js/droit/ouvrir.js :
     ageTauxPlein, ageOuvertureCommun ; moteur/js/regimes.js :
     AgesRegimes.ageSurcoteMaximum
@@ -2156,14 +2155,15 @@ code:
     surcote_age_maximum, surcote_affiliation_minimale_trimestres,
     surcote_trimestres_maximum, surcote_pas_trimestres, surcote_palier_age,
     surcote_par_trimestre_apres_palier, surcote_trimestres_cotises,
-    surcote_depuis_l_age_legal, surcote_premieres_annees, date_effet, age_table,
+    surcote_depuis_l_age_legal, surcote_du_trimestre_civil_suivant,
+    surcote_premieres_annees, date_effet, age_table,
     age_taux_plein ;
     legislation/ages_regimes.csv : age_surcote_maximum ;
     contenu.parametres de chaque version : surcote_par_trimestre, surcote_pas_trimestres,
     surcote_trimestres_maximum, surcote_age_debut,
     surcote_affiliation_minimale_trimestres, points_majores, surcote_palier_age,
     surcote_par_trimestre_apres_palier, surcote_age_maximum, surcote_trimestres_cotises,
-    surcote_depuis_l_age_legal
+    surcote_depuis_l_age_legal, surcote_du_trimestre_civil_suivant
   tests: [tests/test_simulateur.py, tests/test_sections_sante.py,
     tests/test_sections_liberales.py, tests/test_oracle.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]

@@ -956,6 +956,9 @@ def _regles_des_sections(p) -> dict:
         # Ses deux taux depuis 2024, selon la date du trimestre.
         "surcote_par_trimestre_depuis": p.surcote_par_trimestre_depuis,
         "surcote_par_trimestre_d_avant": p.surcote_par_trimestre_d_avant,
+        # La surcote de la CARMF et de l'ASV, du trimestre civil qui suit l'âge.
+        "surcote_du_trimestre_civil_suivant":
+            p.surcote_du_trimestre_civil_suivant or None,
         # Le report de la Cipav, sur les points des trente premières années.
         "surcote_premieres_annees": p.surcote_premieres_annees,
         # L'ASV des médecins, attribuée après un an d'exercice au moins.

@@ -884,6 +884,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    surcote_du_trimestre_civil_suivant: surcote_par_age_seul
     exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
@@ -949,6 +950,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    surcote_du_trimestre_civil_suivant: surcote_par_age_seul
     exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
@@ -1002,6 +1004,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    surcote_du_trimestre_civil_suivant: surcote_par_age_seul
     exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
@@ -1055,6 +1058,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    surcote_du_trimestre_civil_suivant: surcote_par_age_seul
     exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
@@ -1109,6 +1113,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    surcote_du_trimestre_civil_suivant: surcote_par_age_seul
     exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
@@ -1163,6 +1168,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    surcote_du_trimestre_civil_suivant: surcote_par_age_seul
     exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
@@ -1217,6 +1223,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    surcote_du_trimestre_civil_suivant: surcote_par_age_seul
     exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
@@ -1271,6 +1278,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    surcote_du_trimestre_civil_suivant: surcote_par_age_seul
     exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
@@ -1331,6 +1339,7 @@ periodes:
     surcote_age_maximum: 70
     surcote_palier_age: 65
     surcote_par_trimestre_apres_palier: 0.0075
+    surcote_du_trimestre_civil_suivant: surcote_par_age_seul
     exercice_minimum_annees: 1
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-

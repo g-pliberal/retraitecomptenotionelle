@@ -3661,6 +3661,23 @@ export function surcotePoints(moteur, periode, carriere, trimestres, requis, age
     }
     ecoules = trimestresCivilsDExercice(moteur, carriere, code, suivant, effet);
   }
+  // « Par trimestre séparant le premier jour du trimestre civil suivant celui
+  // où le médecin atteint cet âge de la date d'effet », rien « au-delà du
+  // premier jour du trimestre civil suivant le soixante-dixième
+  // anniversaire » (CARMF, article 15 ; ASV, article 12) : ni le trimestre
+  // civil où tombe l'âge, ni les mois d'un trimestre entamé.
+  const civil = Boolean(periode.surcote_du_trimestre_civil_suivant);
+  const depart = civil ? trimestreCivilSuivant(carriere, debut) : null;
+  if (civil) {
+    let terme = carriere.dateDeLAge(ageLiquidation);
+    if (periode.surcote_age_maximum !== null && periode.surcote_age_maximum !== undefined) {
+      const limite = trimestreCivilSuivant(carriere, periode.surcote_age_maximum);
+      if (limite.rang < terme.rang) {
+        terme = limite;
+      }
+    }
+    ecoules = Math.max(0, Math.floor((terme.rang - depart.rang) / 3));
+  }
   if (periode.surcote_trimestres_cotises) {
     // « Pour chaque année pleine COTISÉE dans le présent régime » (CAVAMAC
     // depuis 2024) : le temps écoulé sans cotiser ne compte plus.
@@ -3685,9 +3702,18 @@ export function surcotePoints(moteur, periode, carriere, trimestres, requis, age
   // suivant celui où » l'âge du palier est atteint : le trimestre entamé
   // avant lui reste au premier taux.
   const avantPalier = Math.min(
-    ecoules, Math.max(0, Math.ceil((palier - debut - 1e-9) * 4)),
+    ecoules,
+    Math.max(0, civil
+      ? (trimestreCivilSuivant(carriere, palier).rang - depart.rang) / 3
+      : Math.ceil((palier - debut - 1e-9) * 4)),
   );
   return 1.0 + taux * avantPalier + tauxApres * (ecoules - avantPalier);
+}
+
+/** Le premier jour du trimestre civil qui suit celui où l'âge est atteint. */
+function trimestreCivilSuivant(carriere, age) {
+  const atteint = carriere.moisDeLAnniversaire(age);
+  return new DateMois(atteint.annee, 1).plusMois(3 * (Math.floor((atteint.mois - 1) / 3) + 1));
 }
 
 /**
