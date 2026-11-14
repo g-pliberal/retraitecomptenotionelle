@@ -1,0 +1,29 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 11 : la carrière longue de la CAVP minorée jusqu'à 65 ans seulement depuis le 10 janvier 2024"
+consulte: >-
+  `python scripts/veille_droit.py` ; les index JORF et LEGI récupérés par `dila_index.py
+  --recuperer`, à jour du 11 novembre 2026. Arrêté du 19 décembre 2023, annexe, II, 6°
+  (JORFARTI000048880592), l'article 15 des statuts du régime complémentaire et l'article
+  11 de ceux du régime des prestations complémentaires de vieillesse ; arrêté du 10
+  juillet 2026, annexe I, article 12 (JORFARTI000054436087) ; code de la sécurité
+  sociale, article L. 643-3, II (LEGIARTI000053280388, en vigueur depuis le 31 décembre
+  2025).
+trouve: >-
+  Le texte tranche : « Par dérogation, en cas de liquidation anticipée dans les
+  conditions prévues au II de l'article L. 643-3, sa pension de retraite complémentaire
+  est affectée d'un coefficient de minoration égal à - 1,25 % par trimestre manquant
+  jusqu'à l'âge de 65 ans », depuis le 10 janvier 2024, que le règlement de 2026 reprend.
+  Le modèle opposait à la carrière longue les deux pentes de la règle générale, dans la
+  limite de vingt trimestres : corrigé dans les deux moteurs, par un paramètre de période
+  (`carriere_longue_minoree_jusqu_au_palier`) et la période de 2020 de
+  `cavp_complementaire.yaml` coupée au 10 janvier 2024. Né le 10 mars 1965, parti à 62
+  ans le 1er avril 2027 : 0,85 au lieu de 0,81, 11 580,01 € par an au lieu de
+  11 035,07 € ; né le 10 mars 1966, parti à 58 ans le 1er avril 2024 : 0,65 au lieu de
+  0,75, 9 169,39 € au lieu de 10 580,06 €. La fiche `cavp_minoration_deux_pentes` relue
+  ce jour, l'erreur passée à son histoire.
+reste: >-
+  La même dérogation au régime des prestations complémentaires de vieillesse des
+  biologistes (article 11 des statuts de 2024), que le modèle sert par la décote du
+  régime de base : à lire avec la fiche `asv_autres_professions_de_sante`. Un exemple de
+  la caisse pour une carrière longue liquidée depuis 2024. Les lignes 12 à 30 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).

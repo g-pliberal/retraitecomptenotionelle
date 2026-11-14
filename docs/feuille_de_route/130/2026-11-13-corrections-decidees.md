@@ -100,9 +100,15 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   `cavamac_minoration_age_seul` déclarait, est corrigée du même geste ; les statuts
   d'avant le 1er juillet 2011, non lus, restent une limite déclarée ; note
   `2026-11-14-correction-cavamac-second-semestre-2011.md`.
-- [ ] 11. **CAVP, la carrière longue depuis le 10 janvier 2024** : 1,25 % par trimestre
+- [x] 11. **CAVP, la carrière longue depuis le 10 janvier 2024** : 1,25 % par trimestre
   (544,94 € en moins, ou 1 410,68 € de trop). Fiche `cavp_minoration_deux_pentes` ; note
-  `2026-11-05-carte-des-fiches-cavp-lue-au-droit.md`.
+  `2026-11-05-carte-des-fiches-cavp-lue-au-droit.md`. Corrigé le 14 novembre 2026 : la
+  carrière longue n'est minorée que de 1,25 % par trimestre de son âge à 65 ans, sans la
+  seconde pente ni la limite de vingt trimestres, pour une pension qui prend effet depuis
+  le 10 janvier 2024, dans les deux moteurs (11 580,01 € par an au lieu de 11 035,07 € à
+  62 ans, 9 169,39 € au lieu de 10 580,06 € à 58 ans, aux cas posés) ; la même dérogation
+  au régime des biologistes de la caisse, hors de la file, reste à lire ; note
+  `2026-11-14-correction-cavp-carriere-longue-depuis-2024.md`.
 - [ ] 12. **La date d'effet au trimestre civil** : CAVOM, CARPIMKO, CAVP, et CARMF depuis
   le 18 juillet 2026 ; le modèle sert au premier du mois (un ou deux mois de trop : 1 131,72 €,
   475,50 €, 1 212,41 €, 1 171,35 ou 2 337,68 €). Une erreur, quatre caisses. Note
