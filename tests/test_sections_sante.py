@@ -501,6 +501,75 @@ def test_la_carcdsf_majore_de_1_pour_cent_les_trimestres_d_avant_2024_depuis_67_
     assert ecarts == {}, ecarts
 
 
+#: (naissance, âge au départ, titre déclaré) : la pension de la CARCDSF par an
+#: et son coefficient, autour du 10 janvier 2024. Dentiste au double du salaire
+#: moyen depuis ses 20 ans, euros de 2026. Le texte qui liquide ne change pas
+#: les points : chaque montant est celui du taux plein (14 007,1918 €,
+#: 14 556,6256 €, 15 472,3486 €, 14 214,8130 €) multiplié à la main par le
+#: coefficient des statuts en vigueur à la date d'effet.
+CARCDSF_AU_1ER_JANVIER_2024 = {
+    # Né le 1er octobre 1961, pension au 1er janvier 2024, à 62 ans et 3 mois,
+    # l'âge de L. 161-17-2 : cinquante-sept mois avant 67 ans, dix-neuf
+    # trimestres entiers, « 1,50 % par trimestre manquant », sans limite :
+    # 28,5 %. 14 007,1918 × 0,715 = 10 015,14 €.
+    ("1961-10-01", "62.25", ""): (10_015.14, 0.715),
+    # Le même, inapte : sans minoration « à partir de l'âge prévu à l'article
+    # L. 161-17-2 » ; ancien combattant, que les statuts de 2017 ne nomment
+    # pas : la minoration du valide.
+    ("1961-10-01", "62.25", "inaptitude"): (14_007.19, 1.0),
+    ("1961-10-01", "62.25", "guerre=60"): (10_015.14, 0.715),
+    # Né le 1er janvier 1958, pension au 1er janvier 2024, à 66 ans : quatre
+    # trimestres, 6 %. 14 556,6256 × 0,94 = 13 683,23 €.
+    ("1958-01-01", "66", ""): (13_683.23, 0.94),
+    # Né le 1er janvier 1953, pension au 1er janvier 2024, à 71 ans : taux plein
+    # à « 66 ans et 2 mois pour les assurés nés à compter du 1er janvier 1953 »,
+    # le 1er mars 2019 ; dix-neuf trimestres civils d'exercice, d'avril 2019 à
+    # décembre 2023, à 1 %, « dans la limite de 20 % ». 15 472,3486 × 1,19 =
+    # 18 412,09 €.
+    ("1953-01-01", "71", ""): (18_412.09, 1.19),
+    # Né le 1er novembre 1961, pension au 1er février 2024, à 62 ans et 3 mois :
+    # les statuts de 2024, « 1,25 % par trimestre manquant […] dans la limite
+    # de 15 % ». 14 214,8130 × 0,85 = 12 082,59 €.
+    ("1961-11-01", "62.25", ""): (12_082.59, 0.85),
+}
+
+
+def test_la_carcdsf_sert_ses_statuts_de_2017_jusqu_au_9_janvier_2024():
+    """Arrêté du 27 décembre 2023 (JORFTEXT000048880697), publié le 9 janvier
+    2024 : ni ses articles ni son annexe (JORFARTI000048880707) ne portent de
+    date d'application, et il entre en vigueur le lendemain, le 10. Une pension
+    qui prend effet le 1er janvier 2024 se liquide donc aux statuts de 2017
+    (article 35, JORFARTI000036251928) : « 1,50 % par trimestre manquant » sans
+    limite pour les nés depuis 1955, la majoration de 1 % depuis l'âge du taux
+    plein de la génération, l'ancien combattant non nommé. Le modèle y servait
+    les statuts de 2024, neuf jours trop tôt (corrigé le 14 novembre 2026).
+    Servi par le portage, refait au bit près par le moteur Python."""
+    from outils_pont import servi_et_refait
+
+    def titre(declare):
+        if not declare:
+            return {}
+        nom, _, valeur = declare.partition("=")
+        return {nom: valeur or "oui"}
+
+    cas = [{"cle": "|".join(cle),
+            "requete": {**REQUETE_DE_DENTISTE, "debut": "20", "naissance": cle[0],
+                        "liquidation": cle[1], "sexe": "H", "enfants": "0",
+                        **titre(cle[2])}}
+           for cle in CARCDSF_AU_1ER_JANVIER_2024]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    ecarts = {}
+    for cle, (montant, coefficient) in CARCDSF_AU_1ER_JANVIER_2024.items():
+        actuel = servis["|".join(cle)]["actuel"]
+        [pension] = [p for p in actuel["pensions_par_regime"]
+                     if p["regime"] == "carcdsf_complementaire"]
+        if (_coefficient(pension["detail"]) != pytest.approx(coefficient)
+                or pension["montant"] != pytest.approx(montant, abs=0.005)):
+            ecarts[cle] = (_coefficient(pension["detail"]), round(pension["montant"], 2))
+    assert ecarts == {}, ecarts
+
+
 # -- la CAVP -------------------------------------------------------------------
 
 

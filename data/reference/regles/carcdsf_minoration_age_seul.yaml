@@ -738,10 +738,7 @@ approximations:
     le titulaire d'une pension d'invalidité n'est pas réputé inapte ici. Depuis 2024,
     l'inapte reste refusé entre 62 ans et l'âge légal de sa génération (motif
     `non_ouverte`, qui frappe toute la liquidation, la base de la CNAVPL avec elle : fiche
-    liquidation_regime_par_regime), ce que le texte ne tranche pas (a_relire). Le
-    1er janvier 2024, où les statuts de 2017 valent encore, la période de 2024 sert
-    l'ancien combattant qu'ils ne nomment pas (la pension du 1er janvier 2024, septième
-    erreur).
+    liquidation_regime_par_regime), ce que le texte ne tranche pas (a_relire).
   effet: >-
     grand invalide de guerre, ou parent d'un enfant handicapé, né le 1er janvier 1955,
     liquidé le 1er janvier 2017 (2018 pour le parent) : le modèle, 0,70 ; le texte, 1 (30
@@ -798,24 +795,16 @@ approximations:
     modèle, 0,975 ; le texte, 0,975 ou 0,95 si l'année entamée compte, 2,5 points ; liquidé
     le 1er décembre 2011, un mois avant 65 ans : le modèle, 0,9875, un trimestre entamé ;
     le texte, 0,95 si l'année entamée compte, 0,9958 au prorata, 3,75 points)
-- version: [statuts_de_2017]
-  textes: arrêté du 27 décembre 2023, publié le 9 janvier 2024 ; statuts de 2017, article 35
+- version: [statuts_de_2011_modifies_en_2012, statuts_de_2017]
+  textes: arrêté du 9 juillet 2012, annexe ; statuts de 2017, article 35, I, b
   ecart: >-
-    Septième erreur du modèle, après les six de la note du lot
-    (130/2026-11-05-carte-des-fiches-carcdsf-lue-au-droit.md) : il liquide toute l'année
-    2024 par la règle de 2024, quand les statuts de 2017 restent en vigueur jusqu'au 9
-    janvier, par les bornes mêmes de la fiche : une pension qui prend effet le 1er janvier 2024 reçoit
-    la minoration de 2024, 15 % au plus, et non celle de 2017, 1,50 % par trimestre pour
-    les nés depuis 1955, sans limite. Aucune des deux annexes ne porte de date
-    d'application, et le texte tranche : ce qui reste ouvert, c'est le compte du trimestre
-    entamé, et ce que la caisse a servi à ces pensions, qui n'est pas lu (essai du 5
-    novembre 2026, dans les deux moteurs ; relecture R-E2 du même jour)
+    « 1,50 % par trimestre manquant » pour les nés depuis 1955 : le texte ne dit pas si
+    le trimestre entamé compte ; le modèle le compte entier. Nul quand la pension prend
+    effet un nombre entier de trimestres avant l'âge du taux plein.
   effet: >-
-    né le 1er septembre 1961, liquidé le 1er janvier 2024 à 62 ans et 4 mois, 56 mois
-    avant 67 ans : le modèle, 0,85 ; les statuts de 2017, 18 trimestres entiers, 0,73, ou
-    19 si le trimestre entamé compte, 0,715 : 12 à 13,5 points de trop. Sous
-    `PRESOMPTIONS_DECALEES=1`, à jour présumé, l'effet passe au 1er décembre 2023 et le
-    modèle sert alors 0,715 (relecture R-E2, non rejouée dans la retouche du 5 novembre)
+    1,5 point au plus. Né le 1er septembre 1961, liquidé le 1er janvier 2024 à 62 ans et
+    4 mois, 56 mois avant 67 ans : le modèle, 19 trimestres, 0,715 ; 0,73 si seuls les 18
+    trimestres entiers comptent
 - version: [statuts_de_2017, statuts_de_2024, reglement_de_2026]
   textes: statuts de 2017 et de 2024, article 61 ; règlement de 2026, article 24
   ecart: >-
@@ -880,6 +869,9 @@ effet: >-
   Les trimestres d'avant 2024, que le modèle majorait de 1,25 % comme les suivants, et
   depuis l'âge des statuts de 2017 pour les nés avant 1955, le sont de 1 % depuis le
   14 novembre 2026, et depuis 67 ans pour tous (historique).
+  Les statuts de 2024, que le modèle servait dès le 1er janvier 2024, ne le sont plus,
+  depuis le 14 novembre 2026, qu'aux pensions qui prennent effet depuis le 10 janvier
+  2024 ; celle du 1er janvier se liquide aux statuts de 2017 (historique).
 sources:
   lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
@@ -892,8 +884,12 @@ sources:
     Retrouver le tableau des nés du 1er juillet 1951 à 1954, publié en image (JO n° 98 du
     27 avril 2011, texte 14 ; JO n° 168 du 21 juillet 2012, texte 3).
   - >-
-    Poser au propriétaire les écarts de la fiche, dont la pension du 1er janvier 2024,
-    septième erreur, et ce que le texte ne tranche pas : l'inapte à 62 ans depuis 2024,
+    Lire ce que la caisse a servi aux pensions du 1er janvier 2024, que la fiche liquide
+    aux statuts de 2017 faute de date d'application dans l'arrêté du 27 décembre 2023,
+    et si le trimestre entamé compte dans la minoration de 1,50 % par trimestre.
+  - >-
+    Poser au propriétaire les écarts de la fiche et ce que le texte ne tranche pas :
+    l'inapte à 62 ans depuis 2024,
     que l'article 3, II, du règlement ouvre « à l'âge prévu au IV de l'article L. 643-3 »
     quand l'article 1er demande l'âge de L. 161-17-2, dont le refus frappe aussi la base
     de la CNAVPL (fiche liquidation_regime_par_regime) ; si les deux plafonds de la
@@ -935,6 +931,15 @@ sources:
       les articles 20 et 23 (JORFARTI000001859980) ; publié le 10 octobre 2007, il ne
       fixe aucune date d'entrée en vigueur et ne porte aucune disposition transitoire
       (« transitoire » et « 2008 » n'y sont nulle part).
+    date: 2026-11-14
+  - type: jorf
+    reference: >-
+      Arrêté du 27 décembre 2023 (JORFTEXT000048880697), relu avant la correction de la
+      pension du 1er janvier 2024, dans l'index JORF du dépôt, à jour du 11 novembre
+      2026 : publié le 9 janvier 2024, ni son corps ni son annexe
+      (JORFARTI000048880707, article 35 récrit) ne fixent de date d'entrée en vigueur ou
+      d'application à la liquidation ; « 1er janvier 2024 » n'y borne que les
+      trimestres de la majoration.
     date: 2026-11-14
   - type: autre
     reference: >-
@@ -1050,6 +1055,25 @@ historique:
   (20 020,03 € au lieu de 20 428,60 €). L'écart figurait aux approximations depuis le
   5 novembre 2026 ; il n'y reste que le cumul des deux limites, que le texte ne tranche
   pas.
+- >-
+  2026-11-14 — corrigée (action 130, décision du propriétaire du 13 novembre, ligne 26
+  de la file) : le modèle liquidait toute l'année 2024 par les statuts de 2024, quand
+  l'arrêté du 27 décembre 2023, publié le 9 janvier 2024 sans date d'application,
+  n'entre en vigueur que le 10 : une pension qui prend effet le 1er janvier 2024 se
+  liquide aux statuts de 2017. Deux bornes au jour dans
+  `carcdsf_complementaire.yaml` (`date_effet`) : la période de 2023 liquide jusqu'au
+  9 janvier 2024, celle de 2024 depuis le 10 ; aucune ligne des deux moteurs ne change.
+  Le dentiste né le 1er octobre 1961, au travail dès 20 ans, pension au 1er janvier
+  2024 à 62 ans et 3 mois : dix-neuf trimestres à 1,50 %, 0,715 au lieu de 0,85
+  (10 015,14 € par an au lieu de 11 906,11 €, en euros de 2026) ; le même, ancien
+  combattant, que les statuts de 2017 ne nomment pas : 0,715 au lieu de 1 ; né le
+  1er janvier 1958, à 66 ans : 0,94 au lieu de 0,95 (13 683,23 € au lieu de
+  13 828,79 €) ; né le 1er janvier 1953, à 71 ans, majoré depuis 66 ans et 2 mois :
+  1,19 au lieu de 1,15 (18 412,09 € au lieu de 17 793,20 €). L'écart figurait aux
+  approximations depuis le 5 novembre 2026, « septième erreur du modèle » ; le compte
+  du trimestre entamé (né le 1er septembre 1961, à 62 ans et 4 mois : le modèle, 0,715,
+  dix-neuf trimestres ; 0,73 si seuls les trimestres entiers comptent) reste aux
+  approximations, et ce que la caisse a servi à ces pensions reste à lire (a_relire).
 code:
   interrupteurs:
     abattement_points: cavom

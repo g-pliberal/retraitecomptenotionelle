@@ -618,6 +618,7 @@ periodes:
       27,55 € : rendement 5,97 %, le haut de la bande.
   - debut: 2023
     fin: 2023
+    date_effet: [2023-01-01, 2024-01-10]
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -654,6 +655,7 @@ periodes:
       plus tenue à jour ; en cas de désaccord, le mémento gagne.
   - debut: 2024
     fin: 2024
+    date_effet: [2024-01-10, 2025-01-01]
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -685,7 +687,11 @@ periodes:
       Forfait 3 108 € pour six points — 518 € le point, servi 30,81 € —,
       assiette 39 413 € – 231 840 €.
       L'ARRÊTÉ DU 27 DÉCEMBRE 2023 (JORFTEXT000048880697), repris par le
-      règlement du 10 juillet 2026 (article 3). Taux plein à l'âge du 1°
+      règlement du 10 juillet 2026 (article 3), publié le 9 janvier 2024
+      sans date d'application : la fiche le sert aux pensions qui prennent
+      effet depuis le 10 (`date_effet`), et celle du 1er janvier 2024 se
+      liquide aux statuts de 2017, par la période de 2023 ; elle le
+      servait dès le 1er janvier 2024 jusqu'au 14 novembre 2026. Taux plein à l'âge du 1°
       de L. 351-8 ; minoration de « 1,25 % par trimestre manquant […] dans
       la limite de 15 % » — douze trimestres, `decote_trimestres_maximum:
       12` — que la durée n'annule toujours pas ; majoration de 1 % par
