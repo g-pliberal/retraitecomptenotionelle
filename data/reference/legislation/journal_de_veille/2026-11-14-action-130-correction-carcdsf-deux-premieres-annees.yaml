@@ -1,0 +1,30 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 6 : la part proportionnelle des deux premières années à la CARCDSF"
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index LEGI récupéré par `dila_index.py --recuperer`,
+  à jour au 11 novembre 2026. Dans LEGI : décret n° 50-28, articles 3-1
+  (LEGIARTI000054168193), 3-5 (LEGIARTI000054168184), 3-7 (LEGIARTI000054168176) et 2
+  (LEGIARTI000054168195), en vigueur le 1er juillet 2026 ; les statuts approuvés par
+  l'arrêté du 13 avril 2011, dans leurs quatre rédactions (LEGIARTI000023910336,
+  LEGIARTI000026210162, LEGIARTI000036540562, LEGIARTI000036621382) ; les statuts approuvés
+  par l'arrêté du 1er octobre 2007 (LEGIARTI000023450470).
+trouve: >-
+  Le texte tranche : « Les nouveaux affiliés sont dispensés de la cotisation proportionnelle
+  au titre des deux premières années civiles de leur exercice », ce qui entraîne « la
+  suppression ou la réduction des droits correspondants ». La dispense n'est pas née le
+  1er juillet 2026 : les statuts de 2011 l'écrivent dans les mêmes mots depuis le
+  1er juillet 2011 (article 11, puis 13), que l'index LEGI porte, quand la fiche les croyait
+  au seul Bulletin officiel ; ceux de 2007 ne dispensaient que sur demande. Le modèle
+  faisait cotiser et acquérir cette part : corrigé dans les deux moteurs
+  (`dispense_de_debut`, sans âge, `part: proportionnelle`, aux périodes de 2012 et d'après
+  de `carcdsf_complementaire.yaml`), au scénario 1 et au compte notionnel, 1 528,23 € par an
+  de moins au cas posé (née le 1er janvier 2001, installée le 1er janvier 2027 : 50 630,17 €
+  au lieu de 52 158,40 €). La fiche `decret_2026_418_liberaux` relue ce jour, l'erreur
+  passée à son histoire.
+reste: >-
+  L'année 2011, appelée sous les statuts de 2007, non dispensée au modèle ; les statuts
+  d'avant le 11 octobre 2007, non lus. La dispense du forfait sur demande et le rachat de
+  l'article 3-7, non portés. La prise d'effet de l'affiliation au trimestre civil suivant
+  (article 2), non confrontée. Pour la CARMF, les statuts d'avant le 1er juillet 2026, à
+  chercher dans l'index LEGI. Les lignes 7 à 30 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).

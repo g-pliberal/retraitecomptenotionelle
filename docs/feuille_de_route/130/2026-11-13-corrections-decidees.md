@@ -53,8 +53,15 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   an au lieu de 53 701,26 € au cas posé) ; l'année 2026 et la lecture des vingt-quatre
   mois restent des limites déclarées ; note
   `2026-11-14-correction-carmf-deux-premieres-annees.md`.
-- [ ] 6. **CARCDSF, la part proportionnelle des deux premières années**, dispensée depuis
-  le 1er juillet 2026 (1 528,23 € de trop). Même note.
+- [x] 6. **CARCDSF, la part proportionnelle des deux premières années**, dispensée depuis
+  le 1er juillet 2026 (1 528,23 € de trop). Même note. Corrigé le 14 novembre 2026 : le
+  nouvel affilié ne cotise ni n'acquiert la part proportionnelle de ses deux premières
+  années civiles, le forfait et ses six points restant dus, dans les deux moteurs, au
+  scénario 1 et au compte (50 630,17 € par an au lieu de 52 158,40 € au cas posé) ; les
+  statuts de 2011, relus, écrivaient déjà la dispense, et la correction vaut pour les
+  cotisations de 2012 et d'après ; l'année 2011 et la dispense du forfait sur demande
+  restent des limites déclarées ; note
+  `2026-11-14-correction-carcdsf-deux-premieres-annees.md`.
 - [ ] 7. **CARMF, l'exemption passé 75 ans**, sans points depuis le 1er juillet 2026 (au
   moins 300,22 € de trop). Même note.
 - [ ] 8. **ASV des médecins, la valeur de service** : fixée par les textes, non portée
