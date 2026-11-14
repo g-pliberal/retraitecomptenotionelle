@@ -218,17 +218,9 @@ CAVAMAC_SANS_MINORATION = {
 }
 
 
-def test_la_cavamac_sert_sans_minoration_l_inapte_et_les_categories_de_ses_statuts():
-    """Statuts de 2011, article 15, a et b (JORFARTI000024270173) ; arrêté du
-    4 août 2023, annexe, 6°, b (JORFARTI000047977908), et L. 643-4, 2°
-    (LEGIARTI000047453026) ; règlement de 2026, article 4
-    (JORFARTI000054436046). L'inapte et l'ancien déporté ou interné sont servis
-    « sans application d'un coefficient de minoration » dès l'âge de
-    L. 161-17-2, l'inapte dès 62 ans depuis le 1er septembre 2023 ; l'ancien
-    combattant ou prisonnier de guerre du 5° de L. 351-8, aux âges de D. 351-2,
-    depuis les statuts de 2024. Le modèle leur opposait la minoration de
-    l'assuré valide, 25 % à 62 ans (corrigé le 14 novembre 2026). Servi par le
-    portage, refait au bit près par le moteur Python."""
+def _ecarts_de_la_cavamac(attendus: dict) -> dict:
+    """Ce que les deux moteurs servent d'autre que la table : chaque cas servi
+    par le portage et refait au bit près par le moteur Python."""
     from outils_pont import servi_et_refait
 
     requete = {
@@ -249,18 +241,85 @@ def test_la_cavamac_sert_sans_minoration_l_inapte_et_les_categories_de_ses_statu
     cas = [{"cle": "|".join(cle),
             "requete": {**requete, "naissance": cle[0], "liquidation": cle[1],
                         **titre(cle[2])}}
-           for cle in CAVAMAC_SANS_MINORATION]
+           for cle in attendus]
     servis, refus = servi_et_refait(cas)
     assert refus == {}, refus
     ecarts = {}
-    for cle, (montant, coefficient) in CAVAMAC_SANS_MINORATION.items():
+    for cle, (montant, coefficient) in attendus.items():
         actuel = servis["|".join(cle)]["actuel"]
         [pension] = [p for p in actuel["pensions_par_regime"]
                      if p["regime"] == "cavamac_complementaire"]
         if (_coefficient(pension["detail"]) != pytest.approx(coefficient)
                 or pension["montant"] != pytest.approx(montant, abs=0.005)):
             ecarts[cle] = (_coefficient(pension["detail"]), round(pension["montant"], 2))
-    assert ecarts == {}, ecarts
+    return ecarts
+
+
+def test_la_cavamac_sert_sans_minoration_l_inapte_et_les_categories_de_ses_statuts():
+    """Statuts de 2011, article 15, a et b (JORFARTI000024270173) ; arrêté du
+    4 août 2023, annexe, 6°, b (JORFARTI000047977908), et L. 643-4, 2°
+    (LEGIARTI000047453026) ; règlement de 2026, article 4
+    (JORFARTI000054436046). L'inapte et l'ancien déporté ou interné sont servis
+    « sans application d'un coefficient de minoration » dès l'âge de
+    L. 161-17-2, l'inapte dès 62 ans depuis le 1er septembre 2023 ; l'ancien
+    combattant ou prisonnier de guerre du 5° de L. 351-8, aux âges de D. 351-2,
+    depuis les statuts de 2024. Le modèle leur opposait la minoration de
+    l'assuré valide, 25 % à 62 ans (corrigé le 14 novembre 2026). Servi par le
+    portage, refait au bit près par le moteur Python."""
+    assert _ecarts_de_la_cavamac(CAVAMAC_SANS_MINORATION) == {}
+
+
+#: (naissance, âge au départ, titre déclaré) : la pension de la CAVAMAC par an
+#: et son coefficient, autour du 1er septembre 2023. Agent général au double du
+#: salaire moyen depuis ses 22 ans, euros de 2026 ; chaque montant est celui du
+#: taux plein multiplié à la main par le coefficient du texte en vigueur.
+CAVAMAC_DE_SEPTEMBRE_2023 = {
+    # Statuts de 2011, articles 15 et 16 : 5 % « pour chaque année pleine
+    # différée au-delà de l'âge » « prévu à l'article L. 161-17-2 […] augmenté
+    # de cinq années ». Né le 1er décembre 1953, âge légal 61 ans et 2 mois,
+    # taux plein à 66 ans et 2 mois. Pension au 1er août 2023, dernier mois de
+    # cette rédaction, à 69 ans et 8 mois : 3 ans et 6 mois au-delà, trois
+    # années pleines, 23 601,8827 × 1,15 = 27 142,17 €.
+    ("1953-12-01", str(69 + 8 / 12), ""): (27_142.17, 1.15),
+    # Arrêté du 4 août 2023, annexe, 6°, a, en vigueur le 1er septembre 2023
+    # (article 2, 1°) : les mots « prévu à l'article L. 161-17-2 du code de la
+    # sécurité sociale augmenté de cinq années » « sont remplacés par les mots :
+    # « de 67 ans » ». Le même, pension au 1er septembre 2023, à 69 ans et
+    # 9 mois : 2 ans et 9 mois au-delà de 67 ans, deux années pleines,
+    # 23 652,2003 × 1,10 = 26 017,42 €.
+    ("1953-12-01", "69.75", ""): (26_017.42, 1.10),
+    # Le cas de la note du 5 novembre 2026 : né le 1er février 1954 (âge légal
+    # 61 ans et 7 mois), pension au 1er novembre 2023, à 69 ans et 9 mois, deux
+    # années pleines au-delà de 67 ans : 23 698,1944 × 1,10 = 26 068,01 €.
+    ("1954-02-01", "69.75", ""): (26_068.01, 1.10),
+    # Né le 1er décembre 1952, âge légal 60 ans et 9 mois, pension au
+    # 1er septembre 2023, à 70 ans et 9 mois : 3 ans et 9 mois au-delà de
+    # 67 ans, trois années pleines, 23 972,4868 × 1,15 = 27 568,36 € — cinq
+    # années depuis 65 ans et 9 mois, que le texte ne nomme plus.
+    ("1952-12-01", "70.75", ""): (27_568.36, 1.15),
+    # Même arrêté, 6°, b : « sans application d'un coefficient de minoration
+    # les pensions […] des assurés mentionnés aux 2° et 3° de l'article
+    # L. 643-4 », dont, au d du 2°, les « personnes mentionnées au 5° de
+    # l'article L. 351-8 ». Né le 1er août 1961, âge légal 62 ans, pension au
+    # 1er novembre 2023, à 62 ans et 3 mois, 57 mois avant 67 ans : l'ancien
+    # combattant de soixante mois, que D. 351-2 sert au plus tôt, reçoit
+    # 21 070,38 € ; celui de douze mois attend, 21 070,3823 × 0,75 =
+    # 15 802,79 €.
+    ("1961-08-01", "62.25", "guerre=60"): (21_070.38, 1.0),
+    ("1961-08-01", "62.25", "guerre=12"): (15_802.79, 0.75),
+}
+
+
+def test_la_cavamac_sert_l_article_15_de_septembre_2023_des_son_entree_en_vigueur():
+    """Arrêté du 4 août 2023, article 2, 1° (JORFARTI000047977903) : le 6° de
+    l'annexe (JORFARTI000047977908) entre en vigueur le 1er septembre 2023. Le
+    taux plein y est « de 67 ans » pour tous, et la majoration de 5 % par année
+    pleine différée (article 16) se compte depuis cet âge ; les catégories
+    servies sans minoration sont celles des 2° et 3° de L. 643-4. Le modèle
+    gardait jusqu'au 31 décembre 2023 l'âge par génération et la seule
+    catégorie de 2011 (corrigé le 14 novembre 2026). Servi par le portage,
+    refait au bit près par le moteur Python."""
+    assert _ecarts_de_la_cavamac(CAVAMAC_DE_SEPTEMBRE_2023) == {}
 
 
 # -- la CAVEC -------------------------------------------------------------------

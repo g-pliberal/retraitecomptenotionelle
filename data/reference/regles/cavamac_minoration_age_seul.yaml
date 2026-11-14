@@ -229,15 +229,15 @@ versions:
     parametres:
       abattement_points: cavom
       age_ouverture_par_generation: true
-      age_taux_plein_par_generation: true
-      age_sans_coefficient_de_l_inapte: age_legal_par_generation
-      categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
+      age_taux_plein: 67
+      age_taux_plein_par_generation: false
+      age_sans_coefficient_de_l_inapte: 62
+      categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
     droit: >-
-      taux plein « de 67 ans » ; le barème de 2011 demeure jusqu'au 31 décembre, 5 %
-      par tranche de douze mois avant 67 ans ; la majoration par année pleine différée
-      demeure, hors des années de cumul emploi-retraite. Le modèle lit 67 ans dans la
-      table du 1° de L. 351-8, qui le donne à toute génération que la minoration peut
-      atteindre (voir les approximations)
+      taux plein « de 67 ans » pour tous ; le barème de 2011 demeure jusqu'au 31
+      décembre, 5 % par tranche de douze mois avant 67 ans ; la majoration de 5 % par
+      année pleine différée demeure, comptée depuis 67 ans, hors des années de cumul
+      emploi-retraite
     conditions: >-
       sans minoration, dès l'âge du IV de L. 643-3, les assurés des 2° et 3° de L.
       643-4 — l'inapte, le grand invalide, l'ancien déporté ou interné, l'ancien
@@ -377,16 +377,15 @@ approximations:
     règlement de 2026, article 4
   ecart: >-
     L'inapte et l'ancien déporté ou interné sont servis sans minoration depuis le 14
-    novembre 2026, et l'ancien combattant ou prisonnier de guerre depuis les statuts de
-    2024 (historique). Restent minorés comme les autres : l'ancien prisonnier ou
-    combattant de 2011 au 31 décembre 2023 — les statuts de 2011 le servent « aux âges
+    novembre 2026, et l'ancien combattant ou prisonnier de guerre depuis l'article 15
+    du 1er septembre 2023 (historique). Restent minorés comme les autres : l'ancien
+    prisonnier ou combattant de 2011 au 31 août 2023 — les statuts de 2011 le servent
+    « aux âges
     et conditions de durée de captivité ou services fixés » par le décret n° 74-436 du
     15 mai 1974, dont l'article 1er, de soixante ans pour cinquante-quatre mois à
     soixante-quatre ans pour six (LEGIARTI000006764071), est abrogé depuis le 21
     décembre 1985, et la fiche `taux_plein_anciens_combattants_prisonniers` sert sur ces
-    années les âges décalés de la pratique de la Cnav, que ces statuts ne nomment pas ;
-    de septembre à décembre 2023, le 5° de L. 351-8 que nomme le 2° de L. 643-4 n'est
-    pas servi non plus, la période de 2019 à 2023 gardant la seule catégorie de 2011 — ;
+    années les âges décalés de la pratique de la Cnav, que ces statuts ne nomment pas — ;
     le grand invalide et l'invalide professionnel à 66 %, que nulle saisie ne dit ; le
     travailleur handicapé du 3° de L. 643-4, depuis le 1er septembre 2023 :
     `abattement_regime_de_base` ne l'exonère que dans les régimes que nomme la fiche du
@@ -414,10 +413,8 @@ approximations:
     n'ouvre pas la pension à cet âge de soixante-deux ans : il refuse l'inapte avant
     l'âge légal de sa génération, motif `non_ouverte` (le né en 1965 parti à 62 ans, âge
     légal opposé 62,75 ans, le né en 1966, 63,25 ans : relecture R-E, 5 novembre 2026 ;
-    revu le 14 novembre), et ne le sert sans minoration qu'à cet âge légal. De septembre
-    à décembre 2023, la période garde pour l'inapte l'âge légal de 2011, ce qui revient
-    au même tant que la pension ne s'ouvre pas avant. L'ouverture à soixante-deux ans
-    est posée au propriétaire, non corrigée.
+    revu le 14 novembre), et ne le sert sans minoration qu'à cet âge légal. L'ouverture
+    à soixante-deux ans est posée au propriétaire, non corrigée.
   effet: >-
     non mesuré dans la population : les catégories qui restent minorées sont rares
     parmi les agents généraux qui liquident depuis 2011 (un ancien combattant d'Algérie
@@ -425,20 +422,6 @@ approximations:
     refuse la pension de l'inapte entre soixante-deux ans et l'âge légal quand
     celui-ci le dépasse (les générations 1965 et 1966 à 62 ans, motif `non_ouverte`),
     là où le texte l'ouvre
-- version: [statuts_de_septembre_2023]
-  textes: arrêté du 4 août 2023, annexe, 6°, a
-  ecart: >-
-    Le texte fixe le taux plein « de 67 ans » pour tous ; le modèle le lit, jusqu'au 31
-    décembre 2023, dans la table du 1° de L. 351-8 (67 ans depuis la génération 1955,
-    de 65 ans et 4 mois à 66 ans et 7 mois pour celles de juillet 1951 à 1954). La
-    minoration n'en change pas : nul n'est minoré qui n'a pas 67 ans au taux plein
-    (les générations d'avant 1955 ont toutes plus de 68 ans le 1er septembre 2023).
-    La majoration se compte, pour elles, depuis un âge trop bas.
-  effet: >-
-    non mesuré dans la population ; l'agent né en février 1954 qui liquide en novembre
-    2023 à 69 ans et 9 mois a deux années pleines au-delà de 67 ans, 10 % ; le modèle
-    en compte trois depuis 66 ans et 7 mois, et sert 1,15 au lieu de 1,10 (essai du 5
-    novembre 2026)
 - version: [statuts_de_2024, reglement_de_2026]
   textes: >-
     arrêté du 4 août 2023, annexe, 7°, d ; règlement de 2026, article 5, troisième à
@@ -528,7 +511,9 @@ effet: >-
   à 15 %, ni la réversion ne sont servies. La majoration du second semestre 2011, que
   le modèle ne servait pas, et la minoration qu'il opposait à l'inapte, à l'ancien
   déporté ou interné et, depuis 2024, à l'ancien combattant, 25 % à 62 ans, sont
-  corrigées depuis le 14 novembre 2026 (historique).
+  corrigées depuis le 14 novembre 2026 (historique), comme le taux plein « de 67 ans »
+  et les catégories de l'article 15 du 1er septembre 2023, que le modèle ne servait
+  qu'au 1er janvier 2024.
 sources:
   lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
@@ -544,7 +529,7 @@ sources:
     génération : la minoration est corrigée, l'ouverture non ; lire L. 643-5, et ce que
     D. 351-1-14 laisse des autres catégories du 2° de L. 643-4.
   - >-
-    Servir l'ancien combattant de 2011 à 2023 aux âges du décret n° 74-436, le grand
+    Servir l'ancien combattant de 2011 au 31 août 2023 aux âges du décret n° 74-436, le grand
     invalide, l'invalide professionnel à 66 % et le travailleur handicapé, qui gardent
     la minoration.
   lectures:
@@ -570,6 +555,14 @@ sources:
       novembre 2026 : les statuts de 2011, article 15, a à e (JORFARTI000024270173) ;
       l'annexe de l'arrêté du 4 août 2023, 6°, b (JORFARTI000047977908) ; le règlement
       de 2026, article 4 (JORFARTI000054436046).
+    date: 2026-11-14
+  - type: jorf
+    reference: >-
+      Relus avant la correction de septembre 2023, dans l'index JORF du dépôt, à jour
+      du 11 novembre 2026 : l'arrêté du 4 août 2023, article 2 (JORFARTI000047977903)
+      et annexe, 6° et 7° (JORFARTI000047977908), sans disposition transitoire ; et,
+      dans l'index LEGI, D. 351-2 dans sa rédaction du 1er septembre 2023
+      (LEGIARTI000047634554).
     date: 2026-11-14
   - type: legifrance
     reference: >-
@@ -633,6 +626,24 @@ historique:
   an au cas posé au lieu de 11 238,73 €. L'ouverture à soixante-deux ans avant l'âge
   légal, les autres catégories et la règle d'avant le 1er juillet 2011 restent aux
   approximations.
+- >-
+  2026-11-14 — corrigée (action 130, décision du propriétaire du 13 novembre, ligne 28
+  de la file) : le modèle gardait jusqu'au 31 décembre 2023 l'article 15 de 2011, quand
+  l'arrêté du 4 août 2023 met le 6° de son annexe en vigueur le 1er septembre 2023
+  (article 2, 1°), sans disposition transitoire : le taux plein « de 67 ans » pour
+  tous, et les catégories des 2° et 3° de L. 643-4 servies sans minoration. Il lisait
+  le taux plein dans la table du 1° de L. 351-8 — de 65 ans et 4 mois à 66 ans et 7
+  mois pour les générations de juillet 1951 à 1954 — et comptait depuis cet âge la
+  majoration de 5 % par année pleine différée. La période de 2019 à 2023 de
+  `cavamac_complementaire.yaml` est coupée au 1er septembre 2023 (`date_effet`) : sa
+  seconde part porte `age_taux_plein: 67`, sans table par génération, l'inapte à 62
+  ans et l'ancien combattant du 5° de L. 351-8, comme depuis 2024, dans les deux
+  moteurs. L'agent né le 1er février 1954 qui liquide le 1er novembre 2023 à 69 ans et
+  9 mois a deux années pleines au-delà de 67 ans : il reçoit 1,10 au lieu de 1,15,
+  soit 26 068,01 € par an au cas posé au lieu de 27 252,92 € ; né le 1er décembre
+  1952, au 1er septembre 2023 à 70 ans et 9 mois, trois années, 1,15 au lieu de 1,25,
+  dix points et non cinq. La minoration n'en change pas : nul n'a moins de 67 ans à
+  ces dates dont la table ne dise déjà 67 ans.
 code:
   interrupteurs:
     abattement_points: cavom
