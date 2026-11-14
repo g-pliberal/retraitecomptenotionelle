@@ -4147,7 +4147,11 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
     if abattement < 1.0 and taux_plein_anticipe(moteur, 
             periode, carriere, age_liquidation):
         abattement = 1.0
-    if abattement < 1.0 and inapte_sans_coefficient(periode, carriere, age_liquidation):
+    if abattement < 1.0 and inapte_sans_coefficient(
+            moteur, periode, carriere, age_liquidation):
+        abattement = 1.0
+    if abattement < 1.0 and categorie_sans_coefficient(
+            moteur, periode, carriere, durees, age_liquidation):
         abattement = 1.0
 
     if abattement < 1.0:
@@ -4353,7 +4357,7 @@ def coefficient_convention_1947(age_liquidation: float) -> float:
     return _COEFFICIENTS_CONVENTION_1947[max(55, age)]
 
 
-def inapte_sans_coefficient(periode: PeriodeRegime, carriere: Carriere,
+def inapte_sans_coefficient(moteur, periode: PeriodeRegime, carriere: Carriere,
                             age_liquidation: float) -> bool:
     """L'inapte que la section sert sans coefficient depuis l'âge que la
     période écrit (``age_sans_coefficient_de_l_inapte``).
@@ -4365,8 +4369,33 @@ def inapte_sans_coefficient(periode: PeriodeRegime, carriere: Carriere,
     du 30 décembre 2015, du 1er janvier 2016 au 31 décembre 2024). Seule
     compte l'inaptitude que la carrière déclare : les articles 27 à 33 des
     statuts de la CNAVPL ne sont pas lus (fiche ``cavom_ages_minoration``)."""
-    age = periode.age_sans_coefficient_de_l_inapte
-    return age is not None and carriere.inaptitude and age_liquidation >= age - 1e-9
+    ecrit = periode.age_sans_coefficient_de_l_inapte
+    if ecrit is None or not carriere.inaptitude:
+        return False
+    # « à partir de l'âge prévu à l'article L. 161-17-2 » (CARCDSF, statuts de
+    # 2011, article 19, I, a) : l'âge légal de la génération.
+    age = (categories.age_legal(moteur, carriere) if ecrit == categories.AGE_LEGAL
+           else ecrit)
+    return age_liquidation >= age - 1e-9
+
+
+def categorie_sans_coefficient(moteur, periode: PeriodeRegime, carriere: Carriere,
+                               durees, age_liquidation: float) -> bool:
+    """L'affilié d'une catégorie que la section sert sans coefficient, aux
+    conditions de la fiche de cette catégorie
+    (``categories_sans_coefficient``).
+
+    « A taux plein sans application de coefficients de minoration : […] - à
+    partir de 60 ans pour les adhérents : […] - titulaires de la carte d'ancien
+    déporté, ancien interné de la Résistance ou ancien interné politique » ;
+    « sans qu'il soit fait application du taux de minoration […] : a) Les
+    anciens prisonniers de guerre et anciens combattants qui remplissent les
+    conditions d'âge et de durée de service prévues par la loi n° 73-1051 »
+    (statuts de la CARCDSF de 2007, article 20 ; fiche
+    ``carcdsf_minoration_age_seul``)."""
+    noms = periode.categories_sans_coefficient
+    return noms is not None and categories.remplit_l_une_de(
+        moteur, noms, carriere, durees, age_liquidation)
 
 
 def taux_plein_anticipe(moteur, periode: PeriodeRegime, carriere: Carriere,

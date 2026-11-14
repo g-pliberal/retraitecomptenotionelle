@@ -954,6 +954,10 @@ def _regles_des_sections(p) -> dict:
         "surcote_premieres_annees": p.surcote_premieres_annees,
         # L'inapte de la CAVOM de 2016 à 2024, sans coefficient dès 62 ans.
         "age_sans_coefficient_de_l_inapte": p.age_sans_coefficient_de_l_inapte,
+        # L'ancien déporté et l'ancien combattant de la CARCDSF, sans coefficient.
+        "categories_sans_coefficient": (
+            None if p.categories_sans_coefficient is None
+            else list(p.categories_sans_coefficient)),
         # La carrière longue de la CAVP depuis 2024, à la première pente seule.
         "carriere_longue_minoree_jusqu_au_palier": (
             p.carriere_longue_minoree_jusqu_au_palier or None),

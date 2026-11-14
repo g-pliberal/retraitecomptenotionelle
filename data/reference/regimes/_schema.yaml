@@ -699,7 +699,22 @@ champs_periode:
       que la période liquide — « À partir de 62 ans » « En cas d'inaptitude
       au travail » (CAVOM, statuts dans la rédaction de l'arrêté du
       30 décembre 2015, article 14, I, 1°, du 1er janvier 2016 au
-      31 décembre 2024). `null` : l'inapte reçoit le coefficient de son âge.
+      31 décembre 2024). `age_legal_par_generation` : l'âge de L. 161-17-2 de
+      sa génération (CARCDSF, statuts de 2011, article 19, I, a). `null` :
+      l'inapte reçoit le coefficient de son âge.
+    defaut: null
+
+  categories_sans_coefficient:
+    description: >-
+      Régimes en points : les catégories que la section sert sans coefficient
+      d'anticipation, pour une pension que la période liquide, chacune aux
+      conditions que sa fiche écrit à la date d'effet —
+      `taux_plein_anciens_deportes_internes`,
+      `taux_plein_anciens_combattants_prisonniers` : « titulaires de la carte
+      d'ancien déporté, ancien interné », « anciens prisonniers de guerre et
+      anciens combattants qui remplissent les conditions d'âge et de durée de
+      service prévues par la loi n° 73-1051 » (CARCDSF, statuts de 2007,
+      article 20). `null` : aucune.
     defaut: null
 
   age_ouverture_de_l_inapte:

@@ -833,8 +833,16 @@ class PeriodeRegime:
     #: en points, pour une pension que la période liquide : « À partir de 62
     #: ans » « En cas d'inaptitude au travail », écrivent les statuts de la
     #: CAVOM du 1er janvier 2016 au 31 décembre 2024 (article 14, I, 1°).
-    #: ``None`` : l'inapte reçoit le coefficient de son âge.
-    age_sans_coefficient_de_l_inapte: float | None = None
+    #: ``None`` : l'inapte reçoit le coefficient de son âge ;
+    #: ``age_legal_par_generation`` : l'âge de L. 161-17-2 de sa génération
+    #: (CARCDSF, statuts de 2011, article 19, I, a).
+    age_sans_coefficient_de_l_inapte: float | str | None = None
+    #: LES CATÉGORIES SERVIES SANS COEFFICIENT, dans un régime en points, pour
+    #: une pension que la période liquide, chacune aux conditions que sa fiche
+    #: écrit à la date d'effet : l'ancien déporté ou interné, l'ancien
+    #: combattant ou prisonnier de guerre, à la CARCDSF (statuts de 2007,
+    #: article 20). ``None`` : aucune.
+    categories_sans_coefficient: tuple[str, ...] | None = None
     #: LA CARRIÈRE LONGUE MINORÉE DE LA PREMIÈRE PENTE SEULE, de son âge au
     #: palier (``decote_palier_age``), pour une pension que la période
     #: liquide : « un coefficient de minoration égal à - 1,25 % par trimestre
@@ -2473,8 +2481,14 @@ class CatalogueRegimes:
                 ),
                 fractions_des_cultes=bool(p.get("fractions_des_cultes", False)),
                 age_sans_coefficient_de_l_inapte=(
-                    None if p.get("age_sans_coefficient_de_l_inapte") is None
+                    p.get("age_sans_coefficient_de_l_inapte")
+                    if p.get("age_sans_coefficient_de_l_inapte") in (
+                        None, "age_legal_par_generation")
                     else float(p["age_sans_coefficient_de_l_inapte"])
+                ),
+                categories_sans_coefficient=(
+                    None if p.get("categories_sans_coefficient") is None
+                    else tuple(p["categories_sans_coefficient"])
                 ),
                 carriere_longue_minoree_jusqu_au_palier=bool(
                     p.get("carriere_longue_minoree_jusqu_au_palier", False)

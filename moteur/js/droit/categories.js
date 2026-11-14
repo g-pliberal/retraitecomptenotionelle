@@ -115,6 +115,27 @@ export function remplit(moteur, nom, regle, carriere, durees, ageLiquidation) {
     && ageAtteint(moteur, carriere, regle, ageLiquidation);
 }
 
+/**
+ * L'assuré relève-t-il, à la date d'effet, de l'une des catégories `noms`, aux
+ * conditions que la fiche de chacune écrit ce jour-là, quel que soit le régime
+ * qu'elle nomme ? Une section libérale y renvoie : « les conditions d'âge et de
+ * durée de service prévues par la loi n° 73-1051 », « les personnes
+ * mentionnées au 5° de l'article L. 351-8 ». Voir `remplit_l_une_de` du Python.
+ */
+export function remplitLUneDe(moteur, noms, carriere, durees, ageLiquidation) {
+  const date = dateDEffet(carriere);
+  if (date === null || !carriere.titresAuTauxPlein) {
+    return false;
+  }
+  for (const nom of noms) {
+    const regle = moteur.fichesDatees.regle(nom, date);
+    if (regle && regle.existe && remplit(moteur, nom, regle, carriere, durees, ageLiquidation)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /** La fiche de l'âge de soixante-cinq ans du parent de trois enfants. */
 export const FICHE_DES_SOIXANTE_CINQ_ANS = "taux_plein_a_soixante_cinq_ans";
 

@@ -258,6 +258,115 @@ def test_la_carcdsf_sert_ses_statuts_de_2007_jusqu_au_30_juin_2011():
         assert pension["montant"] == pytest.approx(montant, abs=0.005), cle
 
 
+#: (naissance, âge au départ, titre déclaré) : la pension de la CARCDSF par an
+#: et son coefficient. Dentiste au double du salaire moyen depuis ses 20 ans,
+#: euros de 2026. Le titre ne change pas les points : chaque montant est celui
+#: du taux plein (7 342,6791 €, 7 912,5616 €, 7 770,0910 €, 8 424,8476 €,
+#: 10 119,9273 €, 11 107,9034 €, 14 145,1440 €, 15 874,5524 €) multiplié à la
+#: main par le coefficient du texte en vigueur.
+CARCDSF_SANS_MINORATION = {
+    # Statuts de 2007, article 20, I, a : « A taux plein sans application de
+    # coefficients de minoration : […] - à partir de 60 ans pour les adhérents :
+    # - reconnus atteints d'inaptitude à l'exercice de la profession […] ; -
+    # titulaires de la carte d'ancien déporté, ancien interné ». Né le
+    # 1er janvier 1948, pension au 1er janvier 2008, à 60 ans : « 25 % pour un
+    # départ en retraite au cours de la 61e année » au valide,
+    # 7 342,6791 × 0,75 = 5 507,01 € ; rien à l'inapte ni au déporté, 7 342,68 €.
+    ("1948-01-01", "60", ""): (5_507.01, 0.75),
+    ("1948-01-01", "60", "inaptitude"): (7_342.68, 1.0),
+    ("1948-01-01", "60", "deporte"): (7_342.68, 1.0),
+    # Article 20, II, a : sans minoration « entre 60 et moins de 65 ans », « les
+    # anciens prisonniers de guerre et anciens combattants qui remplissent les
+    # conditions d'âge et de durée de service » de D. 351-2 — « soixante-deux
+    # ans pour ceux dont la durée de captivité et des services militaires en
+    # temps de guerre a été de trente à quarante et un mois », « soixante-trois
+    # ans » de dix-huit à vingt-neuf mois, « soixante-quatre ans » de six à
+    # dix-sept. Né le 1er janvier 1944, trente mois, pension au 1er janvier 2008,
+    # à 64 ans : 7 912,56 €, au lieu de 7 912,5616 × 0,95 = 7 516,93 €.
+    ("1944-01-01", "64", "guerre=30"): (7_912.56, 1.0),
+    # Né le 1er janvier 1945, pension au 1er janvier 2008, à 63 ans : dix-huit
+    # mois suffisent, 7 770,09 € ; douze n'ouvrent qu'à 64 ans, « 10 % pour un
+    # départ en retraite au cours de la 64e année », 7 770,0910 × 0,90 =
+    # 6 993,08 €.
+    ("1945-01-01", "63", "guerre=18"): (7_770.09, 1.0),
+    ("1945-01-01", "63", "guerre=12"): (6_993.08, 0.90),
+    # Statuts de 2011, article 19, I, a : sans minoration « à partir de l'âge
+    # prévu à l'article L. 161-17-2 » pour l'inapte, le grand invalide de guerre
+    # et l'ancien déporté ou interné. Né le 1er janvier 1951, inapte, pension au
+    # 1er juillet 2011, à 60 ans et 6 mois : 8 424,85 €.
+    ("1951-01-01", "60.5", "inaptitude"): (8_424.85, 1.0),
+    # Né le 1er janvier 1955, pension au 1er janvier 2017, à 62 ans, vingt
+    # trimestres avant 67 ans, « 1,50 % par trimestre manquant » :
+    # 10 119,9273 × 0,70 = 7 083,95 € au valide ; 10 119,93 € à l'inapte et au
+    # déporté. L'ancien combattant, que les statuts de 2011 ne nomment plus,
+    # garde la minoration.
+    ("1955-01-01", "62", ""): (7_083.95, 0.70),
+    ("1955-01-01", "62", "inaptitude"): (10_119.93, 1.0),
+    ("1955-01-01", "62", "deporte"): (10_119.93, 1.0),
+    ("1955-01-01", "62", "guerre=60"): (7_083.95, 0.70),
+    # Statuts de 2017, article 35, I, a, les mêmes mots : né le 1er janvier
+    # 1958, inapte, pension au 1er janvier 2020, à 62 ans, 11 107,90 €.
+    ("1958-01-01", "62", "inaptitude"): (11_107.90, 1.0),
+    # Statuts de 2024, article 35, II : sans minoration « à l'âge prévu au IV de
+    # l'article L. 643-3 », 62 ans (D. 643-14, D. 351-1-14), « pour les affiliés
+    # relevant du 2° de l'article L. 643-4 » — l'inapte, le grand invalide,
+    # l'ancien déporté ou interné, les « personnes mentionnées au 5° de l'article
+    # L. 351-8 ». Né le 1er janvier 1962, pension au 1er juillet 2024, à 62 ans
+    # et 6 mois : « 1,25 % par trimestre manquant […] dans la limite de 15 % »
+    # au valide, 14 145,1440 × 0,85 = 12 023,37 € ; 14 145,14 € à l'inapte.
+    ("1962-01-01", "62.5", ""): (12_023.37, 0.85),
+    ("1962-01-01", "62.5", "inaptitude"): (14_145.14, 1.0),
+    # Règlement de 2026, article 3, II, mot pour mot. Né le 1er janvier 1965,
+    # pension au 1er octobre 2027, à 62 ans et 9 mois, l'âge de L. 161-17-2 :
+    # 15 874,5524 × 0,85 = 13 493,37 € au valide ; 15 874,55 € à l'inapte, au
+    # déporté, et à l'ancien combattant de soixante mois, que D. 351-2 sert dès
+    # « l'âge prévu à l'article L. 161-17-2 » ; celui de douze mois attend
+    # « l'âge prévu au 1° de l'article L. 351-8 minoré d'un an », 66 ans.
+    ("1965-01-01", "62.75", ""): (13_493.37, 0.85),
+    ("1965-01-01", "62.75", "inaptitude"): (15_874.55, 1.0),
+    ("1965-01-01", "62.75", "deporte"): (15_874.55, 1.0),
+    ("1965-01-01", "62.75", "guerre=60"): (15_874.55, 1.0),
+    ("1965-01-01", "62.75", "guerre=12"): (13_493.37, 0.85),
+}
+
+
+def test_la_carcdsf_sert_sans_minoration_l_inapte_et_les_categories_de_ses_statuts():
+    """Statuts de 2007, article 20 (JORFARTI000001859980) ; de 2011, article 19
+    (JORFARTI000023909792), devenu 35 en 2017 (JORFARTI000036251928) ; de 2024,
+    article 35, II (JORFARTI000048880707) ; règlement de 2026, article 3, II
+    (JORFARTI000054435749). L'inapte et l'ancien déporté ou interné sont servis
+    « sans application de coefficients de minoration » dès 60 ans, puis dès
+    l'âge de L. 161-17-2, puis à 62 ans ; l'ancien combattant ou prisonnier de
+    guerre, aux âges de D. 351-2, sous les statuts de 2007 et depuis ceux de
+    2024. Le modèle leur opposait la minoration de l'assuré valide (corrigé le
+    14 novembre 2026). Servi par le portage, refait au bit près par le moteur
+    Python."""
+    from outils_pont import servi_et_refait
+
+    def titre(declare):
+        if not declare:
+            return {}
+        nom, _, valeur = declare.partition("=")
+        return {nom: valeur or "oui"}
+
+    cas = [{"cle": "|".join(cle),
+            "requete": {**REQUETE_DE_DENTISTE, "debut": "20", "naissance": cle[0],
+                        "liquidation": cle[1], "sexe": "H", "enfants": "0",
+                        **titre(cle[2])}}
+           for cle in CARCDSF_SANS_MINORATION]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    ecarts = {}
+    for cle, (montant, coefficient) in CARCDSF_SANS_MINORATION.items():
+        actuel = servis["|".join(cle)]["actuel"]
+        [pension] = [p for p in actuel["pensions_par_regime"]
+                     if p["regime"] == "carcdsf_complementaire"]
+        if (_coefficient(pension["detail"]) != pytest.approx(coefficient)
+                or pension["montant"] != pytest.approx(montant, abs=0.005)):
+            ecarts[cle] = (_coefficient(pension["detail"]), round(pension["montant"], 2))
+    assert ecarts == {}, ecarts
+
+
 # -- la CAVP -------------------------------------------------------------------
 
 

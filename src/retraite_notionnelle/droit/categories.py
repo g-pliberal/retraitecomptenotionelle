@@ -346,6 +346,25 @@ def age_du_fonctionnaire_parent_de_trois_enfants(moteur: ScenarioActuel, regime:
         else None)
 
 
+def remplit_l_une_de(moteur: ScenarioActuel, noms, carriere: Carriere, durees,
+                     age_liquidation: float) -> bool:
+    """L'assuré relève-t-il, à la date d'effet, de l'une des catégories
+    ``noms``, aux conditions que la fiche de chacune écrit ce jour-là, quel que
+    soit le régime qu'elle nomme ? Une section libérale y renvoie : « les
+    conditions d'âge et de durée de service prévues par la loi n° 73-1051 »
+    (statuts de la CARCDSF de 2007, article 20, II, a), « les personnes
+    mentionnées au 5° de l'article L. 351-8 » (L. 643-4, 2°, d)."""
+    date = date_d_effet(carriere)
+    if date is None or not carriere.titres_au_taux_plein:
+        return False
+    for nom in noms:
+        regle = moteur.fiches_datees.regle(nom, date)
+        if (regle and regle.get("existe")
+                and remplit(moteur, nom, regle, carriere, durees, age_liquidation)):
+            return True
+    return False
+
+
 def taux_plein_par_categorie(moteur: ScenarioActuel, regime: str, carriere: Carriere,
                              durees, age_liquidation: float) -> str | None:
     """La fiche de la catégorie de L. 351-8 qui donne à l'assuré le taux plein

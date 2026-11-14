@@ -3054,9 +3054,27 @@ export function tauxPleinAnticipe(moteur, periode, carriere, ageLiquidation) {
  * cas d'inaptitude au travail », à la CAVOM du 1er janvier 2016 au
  * 31 décembre 2024. Voir `liquider.inapte_sans_coefficient`.
  */
-export function inapteSansCoefficient(periode, carriere, ageLiquidation) {
-  const age = periode.age_sans_coefficient_de_l_inapte ?? null;
-  return age !== null && carriere.inaptitude && ageLiquidation >= age - 1e-9;
+export function inapteSansCoefficient(moteur, periode, carriere, ageLiquidation) {
+  const ecrit = periode.age_sans_coefficient_de_l_inapte ?? null;
+  if (ecrit === null || !carriere.inaptitude) {
+    return false;
+  }
+  // « à partir de l'âge prévu à l'article L. 161-17-2 » (CARCDSF, statuts de
+  // 2011, article 19, I, a) : l'âge légal de la génération.
+  const age = ecrit === categories.AGE_LEGAL ? categories.ageLegal(moteur, carriere) : ecrit;
+  return ageLiquidation >= age - 1e-9;
+}
+
+/**
+ * L'affilié d'une catégorie que la section sert sans coefficient, aux
+ * conditions de la fiche de cette catégorie (`categories_sans_coefficient`) :
+ * l'ancien déporté ou interné, l'ancien combattant ou prisonnier de guerre, à
+ * la CARCDSF. Voir `liquider.categorie_sans_coefficient`.
+ */
+export function categorieSansCoefficient(moteur, periode, carriere, durees, ageLiquidation) {
+  const noms = periode.categories_sans_coefficient ?? null;
+  return noms !== null
+    && categories.remplitLUneDe(moteur, noms, carriere, durees, ageLiquidation);
 }
 
 /**
@@ -3388,7 +3406,11 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
   if (abattement < 1.0 && tauxPleinAnticipe(moteur, periode, carriere, ageLiquidation)) {
     abattement = 1.0;
   }
-  if (abattement < 1.0 && inapteSansCoefficient(periode, carriere, ageLiquidation)) {
+  if (abattement < 1.0 && inapteSansCoefficient(moteur, periode, carriere, ageLiquidation)) {
+    abattement = 1.0;
+  }
+  if (abattement < 1.0 && categorieSansCoefficient(
+    moteur, periode, carriere, durees, ageLiquidation)) {
     abattement = 1.0;
   }
 

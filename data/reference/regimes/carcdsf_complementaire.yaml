@@ -172,6 +172,8 @@ periodes:
     surcote_par_trimestre: null
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: 60
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.095
@@ -198,6 +200,18 @@ periodes:
       `taux_plein_anticipe_par_enfant_annees`. Article 23 : « majoré de 10
       % au profit des allocataires ayant eu au moins trois enfants ».
       Aucune majoration pour report. Lu le 23 septembre 2026 (action 89).
+      SANS MINORATION, depuis le 14 novembre 2026 (action 130, ligne 23 de
+      la file) : l'inapte, que l'article 20, I, a, sert « à partir de 60
+      ans » (`age_sans_coefficient_de_l_inapte: 60`), puis l'article 19
+      de 2011 « à partir de l'âge prévu à l'article L. 161-17-2 »
+      (`age_legal_par_generation`, de 2011 à 2023), puis l'article 35, II,
+      de 2024 « à l'âge prévu au IV de l'article L. 643-3 » (62, depuis
+      2024) ; l'ancien déporté ou interné des mêmes alinéas, et l'ancien
+      combattant ou prisonnier de guerre, aux âges de D. 351-2, que
+      nomment les statuts de 2007 (article 20, II, a) et, par le 2° de
+      L. 643-4, ceux de 2024 (`categories_sans_coefficient`). Le grand
+      invalide de guerre et le parent d'un enfant handicapé n'ont pas de
+      saisie.
   - debut: 2009
     fin: 2009
     type_calcul: points
@@ -213,6 +227,8 @@ periodes:
     surcote_par_trimestre: null
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: 60
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.099
@@ -234,6 +250,8 @@ periodes:
     surcote_par_trimestre: null
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: 60
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.0995
@@ -259,6 +277,8 @@ periodes:
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: age_legal_par_generation
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.1
@@ -316,6 +336,8 @@ periodes:
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: age_legal_par_generation
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.1005
@@ -341,6 +363,8 @@ periodes:
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: age_legal_par_generation
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.102
@@ -366,6 +390,8 @@ periodes:
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: age_legal_par_generation
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.103
@@ -391,6 +417,8 @@ periodes:
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: age_legal_par_generation
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.104
@@ -416,6 +444,8 @@ periodes:
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: age_legal_par_generation
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.105
@@ -441,6 +471,8 @@ periodes:
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: age_legal_par_generation
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.106
@@ -466,6 +498,8 @@ periodes:
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: age_legal_par_generation
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.1065
@@ -494,6 +528,8 @@ periodes:
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: age_legal_par_generation
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.1065
@@ -531,6 +567,8 @@ periodes:
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: age_legal_par_generation
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.1065
@@ -556,6 +594,8 @@ periodes:
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: age_legal_par_generation
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.1065
@@ -584,6 +624,8 @@ periodes:
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: age_legal_par_generation
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.108
@@ -617,6 +659,8 @@ periodes:
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: 62
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.108
@@ -657,6 +701,8 @@ periodes:
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: 62
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.108
@@ -690,6 +736,8 @@ periodes:
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
+    age_sans_coefficient_de_l_inapte: 62
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_065_5_pass
     taux_cotisation_retraite: 0.1135
