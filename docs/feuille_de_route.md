@@ -3297,11 +3297,11 @@ est la note `130/2026-11-13-corrections-decidees.md` : trente lignes. La file se
 poursuit : treize lignes sont corrigées, la dernière étant la majoration des médecins,
 comptée depuis leur âge légal pour les pensions de janvier à mars 2017 ; dix-sept
 restent. La pension de base des libéraux reste servie au mois : sa règle attend le
-propriétaire (action 192, étape 3). Une seule session à la fois touche au modèle : une
-session d'aiguillage ouvre chaque correction. Par quoi commencer : la ligne 14 (le
-report de la Cipav depuis 2013), après la note de la ligne 13, qui dit ce qu'elle
-laisse à la ligne 18. Hors de la file : les points que le texte ne tranche pas, les
-navigants avant cinquante ans, la fiche du décret n° 2026-418.
+propriétaire (action 192, étape 3). Deux sessions corrigent de front, une par moitié
+de la file, qui dit où chacune en est. Par quoi commencer : la ligne 14 (le report de
+la Cipav depuis 2013), après la note de la ligne 13. Hors de la file : les points
+que le texte ne tranche pas, les navigants avant cinquante ans, la fiche du décret
+n° 2026-418.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
