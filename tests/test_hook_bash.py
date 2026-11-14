@@ -1,8 +1,9 @@
 """Le hook de l'outil Bash (`.claude/hooks/bash.py`, feuille de route,
 action 135) : il refuse le `cat` d'un gros fichier texte, que le hook de
 `Read` ne voit pas, à la même règle et au même seuil, et ne rend que la queue
-d'un pytest lancé nu. Appelé comme Claude Code l'appelle : un appel
-en JSON sur son entrée standard, la réponse sur sa sortie."""
+d'un pytest, de `regenerer.py` ou de `resumer_temoins.py` lancés nus. Appelé
+comme Claude Code l'appelle : un appel en JSON sur son entrée standard, la
+réponse sur sa sortie."""
 
 from __future__ import annotations
 
@@ -153,8 +154,8 @@ def test_le_refus_du_cat_est_declare_pour_bash():
     assert declare["command"].endswith('bash.py" cat')
 
 
-# La queue d'un pytest nu (`CLAUDE.md`, « Les sorties longues passent par
-# `tail` ou `grep` »).
+# La queue d'un pytest nu, et des deux scripts que la consigne nomme avec lui
+# (`CLAUDE.md`, « Les sorties longues passent par `tail` ou `grep` »).
 
 def _recrite(commande: str, **entree) -> dict | None:
     reponse = bash.queue_des_sorties(_appel(commande, **entree))
@@ -183,6 +184,47 @@ def test_un_pytest_lance_nu_passe_par_tail(commande):
 
 
 @pytest.mark.parametrize("commande", [
+    # Les formes que le dépôt écrit : les en-têtes des deux scripts, les
+    # consignes des dossiers, les notes.
+    "python scripts/regenerer.py",
+    "python scripts/regenerer.py --verifier",
+    "python scripts/regenerer.py --prose",
+    "FABRIQUE_SANS_MEMOIRE=1 python scripts/regenerer.py",
+    "python scripts/resumer_temoins.py",
+    "python scripts/resumer_temoins.py --depuis origin/main",
+    "python scripts/resumer_temoins.py --depuis HEAD~1 --extremes 3",
+    "python scripts/resumer_temoins.py --depuis bbb85b0^",
+])
+def test_regenerer_et_resumer_temoins_lances_nus_passent_par_tail(commande):
+    """L'accord du 14 novembre 2026, 19 h 12 UTC, joint ces deux scripts au
+    pytest nu, et eux seuls."""
+    assert _recrite(commande)["updatedInput"] == {
+        "command": f"set -o pipefail; {commande} 2>&1 | tail -n 30"}
+    assert "updatedInput" in json.loads(
+        _lancer(json.dumps(_appel(commande)), "queue"))["hookSpecificOutput"]
+
+
+def test_le_resume_des_temoins_tient_dans_la_queue():
+    """Le résumé est ce que la session vient chercher : la queue ne lui en
+    retire rien tant qu'il tient en une ligne de tête, une par scénario et une
+    pour les pages, quoi qu'il bouge et combien d'extrêmes soient demandés."""
+    sys.path.insert(0, str(RACINE / "scripts"))
+    import resumer_temoins
+
+    def simulations(pension: float) -> dict:
+        return {f"temoin_{i}": {"resultat": {"scenarios": {
+            scenario: {"pension_annuelle": pension + i}
+            for scenario, _ in resumer_temoins.SCENARIOS}}} for i in range(40)}
+
+    avant, apres = simulations(1000.0), simulations(1100.0)
+    del avant["temoin_0"], apres["temoin_1"]
+    pages = {f"page_{i}": {"corps": "a"} for i in range(20)}
+    resume = resumer_temoins.resumer(avant, apres, {}, pages)
+    lignes = resumer_temoins.ecrire(resume, "HEAD~1", extremes=5).splitlines()
+    assert len(lignes) == 2 + len(resumer_temoins.SCENARIOS) <= bash.QUEUE
+
+
+@pytest.mark.parametrize("commande", [
     "python -m pytest 2>&1 | tail -n 80",          # la session a choisi sa fenêtre
     "python -m pytest | grep -c passed",
     "python -m pytest > /tmp/sortie.txt",
@@ -197,9 +239,14 @@ def test_un_pytest_lance_nu_passe_par_tail(commande):
     "python -m pytestx",
     "python3 -m pytest",                           # ce que le champ `if` ne lance pas
     "pytest",
-    "python scripts/regenerer.py",                 # l'accord du 14 novembre 2026 dit pytest
-    "python scripts/resumer_temoins.py tests/temoins/carrieres.json",
-    "python scripts/reprise.py 135",               # une sortie courte
+    "python scripts/regenerer.py --verifier 2>&1 | grep PÉRIMÉ",
+    "python scripts/resumer_temoins.py > /tmp/resume.txt",
+    "python scripts/regenerer.py && python scripts/resumer_temoins.py",
+    "python scripts/regenerer.pyc",
+    "python3 scripts/regenerer.py",                # l'accord ne joint que deux scripts,
+    "python ./scripts/regenerer.py",               # sous la forme que le dépôt écrit
+    "python scripts/tableau_de_bord.py",
+    "python scripts/reprise.py 135",
     "python -c 'import pytest'",
     "echo python -m pytest",
     "",

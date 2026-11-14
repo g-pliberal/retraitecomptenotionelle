@@ -118,7 +118,7 @@ qu'elle dure. D'où sept règles.
   modifie ou cite, elle le relit elle-même, à la fenêtre qu'il désigne.
 - **Les sorties longues passent par `tail` ou `grep`** :
   `python -m pytest 2>&1 | tail -n 30`, qu'un pytest nu reçoit du hook
-  `bash.py`, de même, à la main, pour `regenerer.py` et `resumer_temoins.py` ;
+  `bash.py`, comme `regenerer.py` et `resumer_temoins.py` lancés nus ;
   jamais de `git diff` ni de `git show` entier sur un témoin ou sur
   `pages.js`. Passé <!--chiffre:tenu(test_la_sortie_d_une_commande_bash_est_plafonnee)-->10 000<!--/--> caractères, Bash n'en rend que le début, et le
   fichier où lire la suite, sauf après un échec.

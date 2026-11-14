@@ -1,5 +1,5 @@
-"""Refuse le `cat` d'un gros fichier texte, et ne rend que la queue d'un
-pytest nu (feuille de route, action 135).
+"""Refuse le `cat` d'un gros fichier texte, et ne rend que la queue d'une
+sortie longue lancée nue (feuille de route, action 135).
 
 Hook `PreToolUse` de Claude Code, pour l'outil `Bash` : il reçoit l'appel en
 JSON sur son entrée standard, et son argument nomme le comportement voulu,
@@ -10,8 +10,9 @@ fichiers texte est refusé, à la règle et au seuil du hook de `Read`
 (`lecture.py`), avec une raison que le modèle lit. Le `cat` dont la sortie va
 à un tube, à un fichier ou à une variable passe.
 
-`queue` : un `python -m pytest` lancé nu est récrit pour ne rendre que ses
-trente dernières lignes, avec son code de sortie.
+`queue` : un `python -m pytest`, un `python scripts/regenerer.py` ou un
+`python scripts/resumer_temoins.py` lancé nu est récrit pour ne rendre que
+ses trente dernières lignes, avec son code de sortie.
 
 Jamais de blocage sur un doute : une commande que le hook ne sait pas lire,
 un chemin qu'il ne sait pas résoudre laissent passer.
@@ -163,22 +164,23 @@ def refus_du_cat(appel: dict) -> dict | None:
     return None
 
 
-#: Un pytest lancé nu : ni tube, ni redirection, ni commande composée, ni rien
-#: que le shell étendrait. Le motif est celui de
+#: Un pytest lancé nu, ou l'un des deux scripts que `CLAUDE.md` nomme avec
+#: lui, sous la forme que le dépôt écrit : ni tube, ni redirection, ni commande
+#: composée, ni rien que le shell étendrait. Le motif est celui de
 #: https://code.claude.com/docs/en/costs.md, « Offload processing to hooks and
 #: skills ». `python` seul : le champ `if` de la déclaration, `Bash(python *)`,
 #: ne lance pas le script sur `python3` ni sur `pytest`.
 LONGUE = re.compile(
     r"(?:[A-Za-z_]\w*=[\w./:-]* )*"
-    r"python -m pytest"
+    r"python (?:-m pytest|scripts/(?:regenerer|resumer_temoins)\.py)"
     r"(?: [^;&|<>`$#\\\x00-\x1f\x7f]*)?"
 )
 QUEUE = 30
 
 
 def queue_des_sorties(appel: dict) -> dict | None:
-    """L'appel récrit pour ne rendre que la queue d'un pytest nu, ou None
-    pour le laisser tel quel. `pipefail` garde à la commande son code de
+    """L'appel récrit pour ne rendre que la queue d'une sortie longue lancée
+    nue, ou None pour le laisser tel quel. `pipefail` garde à la commande son code de
     sortie, que le tube donnerait à `tail`."""
     if appel.get("tool_name") != "Bash":
         return None
