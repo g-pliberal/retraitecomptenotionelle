@@ -1,0 +1,26 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 7 : l'exemption de la CARMF passé 75 ans"
+consulte: >-
+  `python scripts/veille_droit.py` ; les index LEGI et JORF récupérés par `dila_index.py
+  --recuperer`, LEGI mis à jour au 13 novembre 2026. Dans LEGI, au 1er juillet 2027 : décret
+  n° 49-579, articles 4 (LEGIARTI000054168136), 4-1 (LEGIARTI000054168116), 4-3
+  (LEGIARTI000054168112), 2 (LEGIARTI000054168125) et 3 (LEGIARTI000054168139). Aux deux
+  index, « soixante-quinzième anniversaire », pour les autres sections et pour les textes
+  d'avant le décret n° 2026-418.
+trouve: >-
+  Le texte tranche : depuis le 1er juillet 2026, « Tout médecin qui continue d'exercer en
+  qualité de non salarié est exempté du versement de la cotisation à partir du premier jour
+  du semestre civil qui suit son soixante-quinzième anniversaire », et ces cotisations « ne
+  donnent pas lieu à acquisition de points ». Le modèle faisait cotiser et acquérir jusqu'au
+  départ : corrigé dans les deux moteurs (`exemption_passe_l_age` à la période de 2026 de
+  `carmf_complementaire.yaml`), au scénario 1 et au compte notionnel, pour les années
+  civiles d'après celle des 75 ans, 300,22 € par an de moins au cas posé (née le 1er janvier
+  1951, pension le 1er juillet 2027 : 18 595,38 € au lieu de 18 895,60 €). Aucune autre
+  section n'exempte sa retraite complémentaire passé un âge. La fiche
+  `decret_2026_418_liberaux` relue ce jour, l'erreur passée à son histoire.
+reste: >-
+  Le second semestre de l'année d'un anniversaire tombé au premier, que le texte ne dit pas
+  partagé : l'article 3 renvoie le versement de la cotisation aux statuts, non lus. Les
+  cotisations de 2026 et d'avant, que rien de lu n'exempte (question 22). La cotisation
+  volontaire de l'article 4-3, non portée. Les lignes 8 à 30 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).

@@ -62,8 +62,14 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   cotisations de 2012 et d'après ; l'année 2011 et la dispense du forfait sur demande
   restent des limites déclarées ; note
   `2026-11-14-correction-carcdsf-deux-premieres-annees.md`.
-- [ ] 7. **CARMF, l'exemption passé 75 ans**, sans points depuis le 1er juillet 2026 (au
-  moins 300,22 € de trop). Même note.
+- [x] 7. **CARMF, l'exemption passé 75 ans**, sans points depuis le 1er juillet 2026 (au
+  moins 300,22 € de trop). Même note. Corrigé le 14 novembre 2026 : le médecin qui
+  continue d'exercer ne cotise ni n'acquiert les années civiles d'après celle de ses
+  75 ans, pour les cotisations de 2027 et d'après, dans les deux moteurs, au scénario 1
+  et au compte (18 595,38 € par an au lieu de 18 895,60 € au cas posé) ; le second
+  semestre de l'année d'un anniversaire tombé au premier, l'année 2026 et la cotisation
+  volontaire restent des limites déclarées ; note
+  `2026-11-14-correction-carmf-exemption-passe-75-ans.md`.
 - [ ] 8. **ASV des médecins, la valeur de service** : fixée par les textes, non portée
   aux prix (1 967,02 € en moins en 2002, 273,50 € de trop en 2024, 242,76 € en 2026). La
   session reprend aussi dans la fiche `asv_medecins_points` les écarts (c) à (g) de la
