@@ -4478,6 +4478,16 @@ def abattement_regime_de_base(moteur, periode: PeriodeRegime,
     2024 ; règlement de 2026, article 12) : ni la seconde pente, ni la limite
     de vingt trimestres. Parti à 62 ans, 12 × 1,25 % = 15 % ; à 58 ans, 35 %.
 
+    **La longue carrière, un coefficient fixe, quand la période l'écrit**
+    (``carriere_longue_minoree_de``). Sous les conditions de L. 351-1-1, la
+    pension de la CAVAMAC « peut être liquidée au plus tôt : - à 62 ans pour
+    les assurés ayant commencé leur activité avant l'âge de 20 ans ; - à
+    63 ans pour les assurés ayant commencé leur activité avant l'âge de
+    21 ans. Avec, dans les deux cas, l'application d'un coefficient de
+    minoration de 15 % » (statuts, article 16, depuis le 1er janvier 2024 ;
+    règlement de 2026, article 5). Avant l'âge que la période écrit
+    (``carriere_longue_minoree_depuis_l_age``), la minoration de tous.
+
     Le régime en points que la fiche ``inaptitude_au_travail`` nomme — les
     assurances sociales d'avant 1945 — sert l'inapte sans abattement, comme
     les régimes en annuités qu'elle nomme.
@@ -4497,6 +4507,10 @@ def abattement_regime_de_base(moteur, periode: PeriodeRegime,
     )
     if decote is None:
         return 1.0
+    if (carriere_longue and periode.carriere_longue_minoree_de is not None
+            and age_liquidation
+            >= (periode.carriere_longue_minoree_depuis_l_age or 0) - 1e-9):
+        return 1.0 - periode.carriere_longue_minoree_de
     if (carriere_longue and periode.decote_palier_age is not None
             and periode.carriere_longue_minoree_jusqu_au_palier):
         return max(0.0, 1.0 - decote * max(0, _au_trimestre_superieur(

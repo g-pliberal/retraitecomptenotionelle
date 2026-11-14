@@ -285,6 +285,8 @@ versions:
       decote_par_trimestre: 0.0125
       age_sans_coefficient_de_l_inapte: 62
       categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
+      carriere_longue_minoree_de: 0.15
+      carriere_longue_minoree_depuis_l_age: 62
     droit: >-
       taux plein à 67 ans ; liquidation dès l'âge de L. 161-17-2 avec 1,25 % de
       minoration par trimestre manquant pour atteindre 67 ans, 25 % à 62 ans ; 5 % de
@@ -350,6 +352,8 @@ versions:
       decote_par_trimestre: 0.0125
       age_sans_coefficient_de_l_inapte: 62
       categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
+      carriere_longue_minoree_de: 0.15
+      carriere_longue_minoree_depuis_l_age: 62
     droit: >-
       la règle de 2024, que le règlement reprend des statuts ; la longue carrière n'y
       garde ses 15 % que jusqu'à 64 ans, puis prend le droit commun
@@ -427,13 +431,22 @@ approximations:
     arrêté du 4 août 2023, annexe, 7°, d ; règlement de 2026, article 5, troisième à
     sixième alinéas
   ecart: >-
-    Le modèle ne porte pas la longue carrière à 15 % de minoration à 62 ou 63 ans : il
-    lui oppose 1,25 % par trimestre manquant jusqu'à 67 ans. Depuis le 18 juillet
-    2026, le règlement lui rend le droit commun à 64 ans.
+    Le modèle sert les 15 % de la longue carrière à la pension que la base ouvre par
+    L. 351-1-1 avant l'âge légal, depuis 62 ans (historique, 14 novembre 2026). Il ne
+    les sert pas à l'assuré qui remplit ces conditions et part après l'âge légal de sa
+    génération, avant 64 ans : le modèle ne nomme la longue carrière que lorsqu'elle
+    ouvre le départ, et lui oppose alors 1,25 % par trimestre manquant jusqu'à 67 ans.
+    Le règlement de 2026 ne sort ces assurés de la dérogation qu'« à compter de l'âge
+    de 64 ans » ; les statuts de 2024 ne disent pas quand elle cesse. Avant 62 ans, et
+    avant le 1er janvier 2024, où ces textes n'ouvrent pas la longue carrière, le
+    modèle sert la complémentaire dès que la base l'ouvre, à la minoration de tous
+    (`liquidation_regime_par_regime`). Les deux entrées du texte, avant 20 ans pour 62
+    ans et avant 21 ans pour 63 ans, sont lues aux âges de la base (D. 351-1-1), non
+    comptées à part.
   effet: >-
-    non mesuré dans la population ; l'agent né en 1964 au travail depuis ses 18 ans
-    reçoit au modèle 0,75 à 62 ans (20 trimestres × 1,25 % = 25 %) et 0,80 à 63 ans (16
-    × 1,25 % = 20 %), au texte 0,85 aux deux âges (essai du 5 novembre 2026)
+    non mesuré dans la population ; l'agent né le 1er janvier 1964 au travail depuis
+    ses 18 ans, âge légal 62 ans et 9 mois, qui part à 63 ans reçoit au modèle 0,80 (16
+    trimestres × 1,25 % = 20 %), au règlement de 2026 0,85 : cinq points de trop
 - version: [statuts_de_2011, statuts_de_septembre_2023, statuts_de_2024, reglement_de_2026]
   textes: statuts de 2011, article 20 ; règlement de 2026, article 9
   ecart: >-
@@ -493,14 +506,15 @@ effet: >-
   que les trimestres cotisés au-delà de 67 ans ; tenu par tests/test_sections_liberales.py.
   Lue au droit le 5 novembre 2026 (action 130) : cinq versions, les statuts de 2011
   en vigueur le 1er juillet 2011, présumés avant, l'article 15 récrit le 1er septembre
-  2023, l'article 16 le 1er janvier 2024, le règlement de 2026 ; ni la longue carrière
-  à 15 %, ni la réversion ne sont servies. La réversion l'est depuis le 14 novembre 2026
-  (fiche `reversion_cavamac`). La majoration du second semestre 2011, que
+  2023, l'article 16 le 1er janvier 2024, le règlement de 2026. La réversion est servie
+  depuis le 14 novembre 2026 (fiche `reversion_cavamac`). La majoration du second
+  semestre 2011, que
   le modèle ne servait pas, et la minoration qu'il opposait à l'inapte, à l'ancien
   déporté ou interné et, depuis 2024, à l'ancien combattant, 25 % à 62 ans, sont
   corrigées depuis le 14 novembre 2026 (historique), comme le taux plein « de 67 ans »
   et les catégories de l'article 15 du 1er septembre 2023, que le modèle ne servait
-  qu'au 1er janvier 2024.
+  qu'au 1er janvier 2024, et comme la longue carrière, minorée de 15 % depuis 62 ans
+  quand elle ouvre le départ, à qui le modèle retirait 25 % à 62 ans.
 sources:
   lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
@@ -639,6 +653,24 @@ historique:
   points de l'adhérent ; il en sert depuis 60 % de la pension, dans les deux moteurs
   (fiche `reversion_cavamac`, qui en déclare les limites) : 8 990,98 € par an au lieu
   de rien pour la veuve de l'agent parti avec 14 984,97 €.
+- >-
+  2026-11-14 — corrigée (action 130, décision du propriétaire du 13 novembre, ligne 29
+  de la file) : le modèle opposait à la longue carrière la minoration de tous, 1,25 %
+  par trimestre manquant jusqu'à 67 ans, quand l'article 16 des statuts, dans la
+  rédaction du 1er janvier 2024 (arrêté du 4 août 2023, annexe, 7°, d), et l'article 5
+  du règlement de 2026 la liquident, sous les conditions de L. 351-1-1, « au plus tôt :
+  - à 62 ans pour les assurés ayant commencé leur activité avant l'âge de 20 ans ; - à
+  63 ans pour les assurés ayant commencé leur activité avant l'âge de 21 ans. Avec,
+  dans les deux cas, l'application d'un coefficient de minoration de 15 % ». Deux
+  paramètres de période, aux périodes de 2024 et de 2026 de
+  `cavamac_complementaire.yaml`, lus des deux moteurs quand la longue carrière ouvre la
+  liquidation : `carriere_longue_minoree_de` (0,15) et
+  `carriere_longue_minoree_depuis_l_age` (62). L'agent né le 1er janvier 1964, au
+  travail depuis ses 18 ans, parti à 62 ans le 1er janvier 2026, perdait 20 trimestres
+  × 1,25 % = 25 % de ses points (coefficient 0,75) : il reçoit 0,85, soit 21 758,51 €
+  par an au cas posé au lieu de 19 198,69 € ; né le 1er janvier 1968, entré à 20 ans,
+  parti à 63 ans, 0,85 au lieu de 0,80. Celui qui remplit ces conditions et part après
+  son âge légal, avant 64 ans, reste aux approximations.
 code:
   interrupteurs:
     abattement_points: cavom
@@ -651,7 +683,9 @@ code:
     la minoration ; `age_sans_coefficient_de_l_inapte` et `categories_sans_coefficient`
     rendent le coefficient 1 à l'inapte dès l'âge que la période écrit, et aux
     catégories dont la fiche est nommée, aux conditions qu'elle écrit à la date
-    d'effet ; `surcote_points: par_age_seul`, la majoration par l'âge seul que la
+    d'effet ; `carriere_longue_minoree_de` rend le coefficient 0,85 à la liquidation
+    que la longue carrière ouvre, depuis l'âge de `carriere_longue_minoree_depuis_l_age` ;
+    `surcote_points: par_age_seul`, la majoration par l'âge seul que la
     fiche `surcote_par_age_seul` décrit. `surcote_trimestres_cotises` : ne compter que
     les trimestres COTISÉS depuis l'âge de départ du décompte, et non le temps écoulé
     — « pour chaque année pleine cotisée dans le présent régime » (CAVAMAC, statuts dans
@@ -671,7 +705,8 @@ code:
   parametres: >-
     contenu.parametres de chaque version : abattement_points, age_ouverture_par_generation,
     age_taux_plein, age_taux_plein_par_generation, decote_par_trimestre,
-    age_sans_coefficient_de_l_inapte, categories_sans_coefficient ;
+    age_sans_coefficient_de_l_inapte, categories_sans_coefficient,
+    carriere_longue_minoree_de, carriere_longue_minoree_depuis_l_age ;
     regimes/cavamac_complementaire.yaml : surcote_par_trimestre, surcote_pas_trimestres,
     surcote_trimestres_maximum, surcote_trimestres_cotises, date_effet
   tests: [tests/test_sections_liberales.py]

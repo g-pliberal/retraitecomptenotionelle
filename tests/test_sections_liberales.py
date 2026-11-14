@@ -322,6 +322,71 @@ def test_la_cavamac_sert_l_article_15_de_septembre_2023_des_son_entree_en_vigueu
     assert _ecarts_de_la_cavamac(CAVAMAC_DE_SEPTEMBRE_2023) == {}
 
 
+#: (naissance, âge au départ, âge d'entrée au travail) : la pension de la
+#: CAVAMAC par an et son coefficient, pour la longue carrière. Agent général
+#: au double du salaire moyen, euros de 2026 ; chaque montant est celui du taux
+#: plein multiplié à la main par le coefficient du texte en vigueur.
+CAVAMAC_LONGUE_CARRIERE = {
+    # Arrêté du 4 août 2023, annexe, 7°, d, en vigueur le 1er janvier 2024
+    # (article 2, 2°) : « sous réserve que l'assuré réponde aux conditions pour
+    # bénéficier du dispositif prévu à l'article L. 351-1-1 », la pension « peut
+    # être liquidée au plus tôt : - à 62 ans pour les assurés ayant commencé
+    # leur activité avant l'âge de 20 ans ; - à 63 ans pour les assurés ayant
+    # commencé leur activité avant l'âge de 21 ans. Avec, dans les deux cas,
+    # l'application d'un coefficient de minoration de 15 %. » Né le 1er janvier
+    # 1962, au travail depuis ses 18 ans, pension au 1er janvier 2024, premier
+    # jour de cette rédaction, à 62 ans, six mois avant l'âge de sa génération :
+    # 22 898,2905 × 0,85 = 19 463,55 €, et non 0,75 (vingt trimestres avant
+    # 67 ans à 1,25 %).
+    ("1962-01-01", "62", "debut=18"): (19_463.55, 0.85),
+    # Né le 1er janvier 1964, au travail depuis ses 18 ans, le cas de la note
+    # du 5 novembre 2026 : pension au 1er janvier 2026, à 62 ans,
+    # 25 598,2503 × 0,85 = 21 758,51 € ; au 1er juillet 2026, à 62 ans et
+    # 6 mois, trois mois avant l'âge de sa génération, 25 921,0289 × 0,85 =
+    # 22 032,87 €, et non 0,775.
+    ("1964-01-01", "62", "debut=18"): (21_758.51, 0.85),
+    ("1964-01-01", "62.5", "debut=18"): (22_032.87, 0.85),
+    # Règlement de 2026, article 5 (JORFARTI000054436046), les mêmes mots. Né
+    # le 1er janvier 1965, au travail depuis ses 18 ans, pension au 1er janvier
+    # 2027, à 62 ans : 26 295,6589 × 0,85 = 22 351,31 €.
+    ("1965-01-01", "62", "debut=18"): (22_351.31, 0.85),
+    # « à 63 ans pour les assurés ayant commencé leur activité avant l'âge de
+    # 21 ans ». Né le 1er janvier 1968, au travail depuis ses 20 ans, pension
+    # au 1er janvier 2031, à 63 ans, un an avant l'âge de sa génération :
+    # 28 872,9499 × 0,85 = 24 542,01 €, et non 0,80. Entré à 18 ans et parti à
+    # 63 ans et 6 mois : 30 115,5038 × 0,85 = 25 598,18 €, et non 0,825.
+    ("1968-01-01", "63", "debut=20"): (24_542.01, 0.85),
+    ("1968-01-01", "63.5", "debut=18"): (25_598.18, 0.85),
+    # Sans longue carrière, le deuxième alinéa : « 1,25 % par trimestre
+    # manquant pour atteindre » 67 ans. Né le 1er janvier 1964, entré à 22 ans,
+    # pension au 1er janvier 2027, à 63 ans, seize trimestres :
+    # 25 083,7158 × 0,80 = 20 066,97 €.
+    ("1964-01-01", "63", "debut=22"): (20_066.97, 0.80),
+    # CE QUE LE TEXTE N'OUVRE PAS, et que la correction ne déplace pas : le
+    # modèle sert la complémentaire dès que la base ouvre la longue carrière.
+    # Avant 62 ans (né le 1er janvier 1968, entré à 16 ans, parti à 60 ans le
+    # 1er janvier 2028), et avant le 1er janvier 2024 (né le 1er décembre 1961,
+    # entré à 18 ans, parti à 62 ans le 1er décembre 2023, sous le barème de
+    # 2011, 22 428,1369 × 0,75 = 16 821,10 €), la minoration reste celle de
+    # tous, 25 %.
+    ("1968-01-01", "60", "debut=16"): (20_262.49, 0.75),
+    ("1961-12-01", "62", "debut=18"): (16_821.10, 0.75),
+}
+
+
+def test_la_cavamac_minore_la_longue_carriere_de_quinze_pour_cent_depuis_2024():
+    """Arrêté du 4 août 2023, annexe, 7°, d (JORFARTI000047977908), en vigueur
+    le 1er janvier 2024 (article 2, 2°, JORFARTI000047977903) ; règlement de
+    2026, article 5, troisième à sixième alinéas (JORFARTI000054436046). La
+    longue carrière de L. 351-1-1 est liquidée dès 62 ans, entrée avant 20 ans,
+    ou 63 ans, entrée avant 21 ans, « avec, dans les deux cas, l'application
+    d'un coefficient de minoration de 15 % ». Le modèle lui opposait la
+    minoration de tous, 1,25 % par trimestre avant 67 ans, 25 % à 62 ans
+    (corrigé le 14 novembre 2026). Servi par le portage, refait au bit près
+    par le moteur Python."""
+    assert _ecarts_de_la_cavamac(CAVAMAC_LONGUE_CARRIERE) == {}
+
+
 # -- la CAVEC -------------------------------------------------------------------
 
 

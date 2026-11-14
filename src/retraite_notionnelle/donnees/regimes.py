@@ -883,6 +883,18 @@ class PeriodeRegime:
     #: (article 12). ``False`` : la carrière longue reçoit la minoration de
     #: tous.
     carriere_longue_minoree_jusqu_au_palier: bool = False
+    #: LA LONGUE CARRIÈRE MINORÉE D'UN COEFFICIENT FIXE, pour une pension que
+    #: la période liquide : « Avec, dans les deux cas, l'application d'un
+    #: coefficient de minoration de 15 % », écrivent les statuts de la CAVAMAC
+    #: depuis le 1er janvier 2024 (article 16) et son règlement de 2026
+    #: (article 5). ``None`` : la longue carrière reçoit la minoration de tous.
+    carriere_longue_minoree_de: float | None = None
+    #: L'ÂGE DEPUIS LEQUEL CE COEFFICIENT FIXE EST SERVI : « au plus tôt : - à
+    #: 62 ans pour les assurés ayant commencé leur activité avant l'âge de
+    #: 20 ans ; - à 63 ans pour les assurés ayant commencé leur activité avant
+    #: l'âge de 21 ans » (mêmes articles). ``None`` : dès que la longue
+    #: carrière ouvre la liquidation.
+    carriere_longue_minoree_depuis_l_age: float | None = None
     #: L'ÂGE AUQUEL LA SECTION OUVRE SES DROITS À L'INAPTE, quand sa
     #: génération ouvre plus tard, pour une pension que la période liquide :
     #: « a) 62 ans pour les affiliés relevant du a du 2° de l'article
@@ -2547,6 +2559,14 @@ class CatalogueRegimes:
                 ),
                 carriere_longue_minoree_jusqu_au_palier=bool(
                     p.get("carriere_longue_minoree_jusqu_au_palier", False)
+                ),
+                carriere_longue_minoree_de=(
+                    None if p.get("carriere_longue_minoree_de") is None
+                    else float(p["carriere_longue_minoree_de"])
+                ),
+                carriere_longue_minoree_depuis_l_age=(
+                    None if p.get("carriere_longue_minoree_depuis_l_age") is None
+                    else float(p["carriere_longue_minoree_depuis_l_age"])
                 ),
                 age_ouverture_de_l_inapte=(
                     None if p.get("age_ouverture_de_l_inapte") is None

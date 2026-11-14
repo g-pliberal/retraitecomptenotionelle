@@ -975,6 +975,10 @@ def _regles_des_sections(p) -> dict:
         # La carrière longue de la CAVP depuis 2024, à la première pente seule.
         "carriere_longue_minoree_jusqu_au_palier": (
             p.carriere_longue_minoree_jusqu_au_palier or None),
+        # La longue carrière de la CAVAMAC depuis 2024, à 15 % dès 62 ans.
+        "carriere_longue_minoree_de": p.carriere_longue_minoree_de,
+        "carriere_longue_minoree_depuis_l_age":
+            p.carriere_longue_minoree_depuis_l_age,
         # L'inapte de la CAVOM depuis 2025, ouvert à 62 ans.
         "age_ouverture_de_l_inapte": p.age_ouverture_de_l_inapte,
         # La pension servie au premier jour du trimestre civil qui suit : la

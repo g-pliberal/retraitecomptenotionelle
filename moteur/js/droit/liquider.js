@@ -3005,7 +3005,8 @@ export function valeurPointFiche(moteur, periode, annee) {
  * 65 ans et de 0,5 % de 65 ans à l'âge du taux plein. Les trimestres d'avant
  * le palier se comptent au premier taux. La carrière longue, quand la période
  * l'écrit (`carriere_longue_minoree_jusqu_au_palier`), ne reçoit que la
- * première pente, comptée de son âge au palier. Voir le modèle Python.
+ * première pente, comptée de son âge au palier ; celle de la CAVAMAC, un
+ * coefficient fixe (`carriere_longue_minoree_de`). Voir le modèle Python.
  */
 export function abattementRegimeDeBase(moteur, periode, carriere, trimestres, requis, ageLiquidation,
   anneeLiquidation, handicap = false, carriereLongue = false) {
@@ -3022,6 +3023,14 @@ export function abattementRegimeDeBase(moteur, periode, carriere, trimestres, re
   const [decote, ageAnnulation] = decoteOpposable(moteur, periode, carriere, anneeLiquidation);
   if (decote === null) {
     return 1.0;
+  }
+  // « Avec, dans les deux cas, l'application d'un coefficient de minoration de
+  // 15 % » : la longue carrière de la CAVAMAC, depuis l'âge où ses statuts
+  // l'ouvrent.
+  const forfait = periode.carriere_longue_minoree_de ?? null;
+  if (carriereLongue && forfait !== null
+      && ageLiquidation >= (periode.carriere_longue_minoree_depuis_l_age ?? 0) - 1e-9) {
+    return 1.0 - forfait;
   }
   const palier = periode.decote_palier_age ?? null;
   if (carriereLongue && palier !== null && periode.carriere_longue_minoree_jusqu_au_palier) {

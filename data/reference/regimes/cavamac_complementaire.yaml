@@ -33,9 +33,9 @@ inventaire:
   manque: >-
     L'assiette est reconstituée par un facteur moyen de commissions, qui ne
     décrit aucun assuré en particulier. La règle d'âge d'avant 2011, publiée
-    au seul Bulletin officiel, est supposée celle des statuts de 2011 ; la
-    liquidation des carrières longues à 15 % de minoration et le capital
-    unique versé sous 1 500 points ne sont pas portés.
+    au seul Bulletin officiel, est supposée celle des statuts de 2011 ; le
+    capital unique versé sous 1 500 points n'est pas porté, ni les 15 % de
+    la longue carrière pour qui part après son âge légal, avant 64 ans.
 periodes:
   - debut: 1968
     fin: 1970
@@ -401,6 +401,8 @@ periodes:
     surcote_pas_trimestres: 4
     surcote_trimestres_maximum: 20
     surcote_trimestres_cotises: cavamac_minoration_age_seul
+    carriere_longue_minoree_de: 0.15
+    carriere_longue_minoree_depuis_l_age: 62
     age_sans_coefficient_de_l_inapte: 62
     categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -422,12 +424,17 @@ periodes:
       comptaient le temps écoulé. La caisse l'écrit de même et en publie
       un exemple chiffré — né le 8 août 1960, départ le 1er juillet 2026,
       cinq trimestres jusqu'à la date d'effet du taux plein, 6,25 % —, que
-      `tests/temoins/exemples_officiels.yaml` rejoue. NON PORTÉE : la
+      `tests/temoins/exemples_officiels.yaml` rejoue. LA LONGUE CARRIÈRE,
+      depuis le 14 novembre 2026 (action 130, ligne 29 de la file) : la
       liquidation dès 62 ou 63 ans des assurés qui ont commencé avant 20
-      ou 21 ans, « avec l'application d'un coefficient de minoration de
-      15 % » ; le modèle leur oppose la minoration ordinaire, 25 % à 62 ans
-      et 20 % à 63. La majoration pour trois enfants et ce qui n'est pas
-      porté sont ceux des statuts de 2011, voir la période 2012-2018.
+      ou 21 ans, « avec, dans les deux cas, l'application d'un coefficient
+      de minoration de 15 % » (`carriere_longue_minoree_de`, depuis l'âge de
+      `carriere_longue_minoree_depuis_l_age`), quand la longue carrière
+      ouvre le départ ; le modèle lui opposait la minoration ordinaire, 25 %
+      à 62 ans. RESTE À LA MINORATION ORDINAIRE qui remplit ces conditions
+      et part après son âge légal, avant 64 ans. La majoration pour trois
+      enfants et ce qui n'est pas porté sont ceux des statuts de 2011, voir
+      la période 2012-2018.
   - debut: 2026
     fin: null
     type_calcul: points
@@ -448,6 +455,8 @@ periodes:
     surcote_pas_trimestres: 4
     surcote_trimestres_maximum: 20
     surcote_trimestres_cotises: cavamac_minoration_age_seul
+    carriere_longue_minoree_de: 0.15
+    carriere_longue_minoree_depuis_l_age: 62
     age_sans_coefficient_de_l_inapte: 62
     categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
     avantages_non_contributifs: [reversion, majoration_enfants]

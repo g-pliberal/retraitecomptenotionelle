@@ -753,6 +753,28 @@ champs_periode:
       article 12). `false` : la carrière longue reçoit la minoration de tous.
     defaut: false
 
+  carriere_longue_minoree_de:
+    description: >-
+      Régimes en points : le coefficient de minoration fixe (fraction) de la
+      liquidation anticipée pour longue carrière, pour une pension que la
+      période liquide — « Avec, dans les deux cas, l'application d'un
+      coefficient de minoration de 15 % » (CAVAMAC, statuts dans la rédaction
+      de l'arrêté du 4 août 2023, article 16, depuis le 1er janvier 2024 ;
+      règlement de 2026, article 5). `null` : la longue carrière reçoit la
+      minoration de tous.
+    defaut: null
+
+  carriere_longue_minoree_depuis_l_age:
+    description: >-
+      L'âge depuis lequel `carriere_longue_minoree_de` est servi : « au plus
+      tôt : - à 62 ans pour les assurés ayant commencé leur activité avant
+      l'âge de 20 ans ; - à 63 ans pour les assurés ayant commencé leur
+      activité avant l'âge de 21 ans » (mêmes articles) ; c'est la base qui
+      dit, par ses propres âges, laquelle des deux entrées ouvre le départ.
+      Avant cet âge, la minoration de tous. `null` : dès que la longue
+      carrière ouvre la liquidation.
+    defaut: null
+
   surcote_par_trimestre: "majoration par trimestre supplémentaire (fraction, null si aucune)"
 
   surcote_bareme:

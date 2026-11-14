@@ -2867,9 +2867,9 @@ inventaire:
     manque: >-
       L'assiette est reconstituée par un facteur moyen de commissions, qui ne décrit
       aucun assuré en particulier. La règle d'âge d'avant 2011, publiée au seul Bulletin
-      officiel, est supposée celle des statuts de 2011 ; la liquidation des carrières
-      longues à 15 % de minoration et le capital unique versé sous 1 500 points ne sont
-      pas portés.
+      officiel, est supposée celle des statuts de 2011 ; le capital unique versé sous
+      1 500 points n'est pas porté, ni les 15 % de la longue carrière pour qui part
+      après son âge légal, avant 64 ans.
 
   - code: cavec_complementaire
     nom: >-
