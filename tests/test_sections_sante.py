@@ -51,7 +51,7 @@ def simulateur() -> Simulateur:
 
 def _calculer(simulateur: Simulateur, affiliation: str, naissance: int,
               liquidation: float, debut: float = 21.0, sexe: str = "H",
-              enfants: int = 0):
+              enfants: int = 0, jour: int | None = None):
     carriere = Carriere.depuis_parcours(
         annee_naissance=naissance,
         sexe=sexe,
@@ -60,6 +60,7 @@ def _calculer(simulateur: Simulateur, affiliation: str, naissance: int,
         age_liquidation=liquidation,
         macro=simulateur.macro,
         nombre_enfants=enfants,
+        jour_naissance=jour,
     )
     resultat = simulateur.scenario_actuel.calculer(carriere)
     return resultat, {p.regime: p for p in resultat.pensions_par_regime}
@@ -238,15 +239,17 @@ def test_la_carpimko_arrete_sa_minoration_a_son_propre_age(simulateur):
 
 
 def test_la_carpimko_majore_depuis_son_age(simulateur):
-    """Née en janvier 1960, taux plein à 66 ans et 8 mois, en septembre 2026,
+    """Née le 15 janvier 1960, taux plein à 66 ans et 8 mois, en septembre 2026,
     pour qui n'a pas la durée du régime de base ; demandée à 67 ans, en janvier
     2027, la pension prend effet « au premier jour du trimestre civil qui suit
     la demande » (règlement de 2026, article 7), le 1er avril 2027 : deux
     trimestres civils entiers d'ajournement, d'octobre 2026 à mars 2027, 2,5 %
     — un seul, 1,25 %, tant que le modèle la servait le 1er février, jusqu'au
     14 novembre 2026. Qui a la durée plus tôt est majoré dès qu'il l'atteint
-    (article 12 ter)."""
-    _, pensions = _calculer(simulateur, "auxiliaire_medical", 1960, 67.0, debut=30.0)
+    (article 12 ter). Le jour se déclare : la date d'effet se compte depuis
+    lui."""
+    _, pensions = _calculer(simulateur, "auxiliaire_medical", 1960, 67.0, debut=30.0,
+                            jour=15)
     assert _coefficient(pensions["carpimko_complementaire"].detail) == pytest.approx(1.025)
 
 
