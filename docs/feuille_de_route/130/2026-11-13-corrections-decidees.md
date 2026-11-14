@@ -255,8 +255,13 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   1er janvier 2017 : 14 984,97 € par an au lieu de 11 238,73 €) ; l'ouverture de
   l'inapte à 62 ans avant l'âge légal et les autres catégories restent déclarées ;
   note `2026-11-14-correction-cavamac-inapte-et-categories.md`.
-- [ ] 28. **CAVAMAC, de septembre à décembre 2023** (cinq points de trop au plus). Même
+- [x] 28. **CAVAMAC, de septembre à décembre 2023** (cinq points de trop au plus). Même
   note.
+  Corrigé le 14 novembre 2026 : le taux plein « de 67 ans » pour tous et les catégories
+  de L. 643-4 sont servis dès le 1er septembre 2023, dans les deux moteurs (né le
+  1er février 1954, pension au 1er novembre 2023 : 26 068,01 € par an au lieu de
+  27 252,92 € ; dix points de trop, et non cinq, pour la génération 1952) ; note
+  `2026-11-14-correction-cavamac-septembre-2023.md`.
 - [ ] 29. **CAVAMAC, la longue carrière à 15 %** (dix points de trop à 62 ans). Même note.
 - [ ] 30. **CAVAMAC, la réversion non servie.** Même note.
 

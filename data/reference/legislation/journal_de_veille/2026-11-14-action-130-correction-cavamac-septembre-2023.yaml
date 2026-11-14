@@ -1,0 +1,24 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 28 : l'article 15 de septembre 2023 de la CAVAMAC servi dès le 1er septembre 2023"
+consulte: >-
+  `python scripts/veille_droit.py` ; les index JORF et LEGI récupérés par `dila_index.py
+  --recuperer`, à jour du 11 novembre 2026. Arrêté du 4 août 2023, article 2
+  (JORFARTI000047977903) et annexe (JORFARTI000047977908), lue en entier ; D. 351-2 au
+  1er novembre 2023 (LEGIARTI000047634554).
+trouve: >-
+  Le texte tranche : le 6° de l'annexe entre en vigueur « le 1er septembre 2023 », sans
+  disposition transitoire, et remplace à l'article 15 l'âge de L. 161-17-2 « augmenté de
+  cinq années » par « de 67 ans » ; les catégories servies sans minoration deviennent
+  celles des 2° et 3° de L. 643-4. Le modèle gardait jusqu'au 31 décembre 2023 l'âge par
+  génération et la catégorie de 2011 : corrigé dans les deux moteurs, par les données (la
+  période de 2019 à 2023 de `cavamac_complementaire.yaml` coupée au 1er septembre 2023).
+  L'agent né le 1er février 1954 qui liquide le 1er novembre 2023 reçoit 1,10 au lieu de
+  1,15 (26 068,01 € par an au cas posé, au lieu de 27 252,92 €) ; né le 1er décembre
+  1952, au 1er septembre 2023, 1,15 au lieu de 1,25 : dix points, quand la fiche en
+  disait cinq au plus. La fiche `cavamac_minoration_age_seul` relue ce jour, l'erreur
+  passée à son histoire.
+reste: >-
+  Les années de cumul emploi-retraite que la majoration ne compte plus depuis le 1er
+  septembre 2023 (annexe, 7°, b), non portées ; l'ouverture de l'inapte à soixante-deux
+  ans avant l'âge légal, posée au propriétaire ; les lignes 29 et 30 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).
