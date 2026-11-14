@@ -140,9 +140,14 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   durée requise et les conditions d'ouverture ; la base des libéraux, que R. 643-6 date
   de même, reste au mois (action 192, étape 3, au propriétaire) ; note
   `2026-11-14-correction-date-d-effet-au-trimestre-civil.md`.
-- [ ] 13. **CARMF et ASV, l'âge de janvier à mars 2017** : l'âge légal, non 62 ans
+- [x] 13. **CARMF et ASV, l'âge de janvier à mars 2017** : l'âge légal, non 62 ans
   (679,34 € en moins, l'ASV 873,34 €). Fiche `surcote_par_age_seul` ; note
-  `2026-11-06-e13-surcote-par-age-seul.md`.
+  `2026-11-06-e13-surcote-par-age-seul.md`. Corrigé le 14 novembre 2026 : pour les
+  pensions qui prennent effet du 1er janvier au 29 mars 2017, la majoration des deux
+  régimes court de l'âge légal de la génération, dans les deux moteurs (née le 10 mars
+  1952, pension au 1er janvier 2017 : 1,20 au lieu de 1,1375) ; le passage à 0,75 % des
+  nés du second semestre de 1951 reste approché, avec l'erreur de la ligne 18 ; note
+  `2026-11-14-correction-carmf-asv-age-legal-debut-2017.md`.
 - [ ] 14. **Cipav, le report depuis 2013** : seuls les points des trente premières années
   se majorent (152,05 €, 537,96 € et 549,19 € de trop au moins), au décompte des trente ans
   le plus favorable à l'affilié. Fiche `surcote_par_age_seul` ; notes

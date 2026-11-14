@@ -1,0 +1,30 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 13 : la majoration de la CARMF et de l'ASV comptée depuis l'âge légal du 1er janvier au 29 mars 2017"
+consulte: >-
+  `python scripts/veille_droit.py` ; les index JORF et LEGI récupérés par `dila_index.py
+  --recuperer`, à jour du 11 novembre 2026. Arrêté du 30 novembre 2016, annexe, 1°
+  (JORFARTI000033521562), article 15 des statuts du régime complémentaire de la CARMF ;
+  arrêté du 1er décembre 2016, annexe, 3° (JORFARTI000033538061), article 12 des statuts
+  de l'ASV ; arrêté du 22 mars 2017, annexe (JORFARTI000034298521), et ses articles 1er
+  et 2 (JORFARTI000034298518, JORFARTI000034298519) ; code de la sécurité sociale,
+  L. 351-1 (LEGIARTI000023035688, en vigueur le 1er janvier 2017) et D. 161-2-1-9
+  (LEGIARTI000025089933, du 31 décembre 2011 au 1er septembre 2023).
+trouve: >-
+  Le texte tranche : du 1er janvier au 29 mars 2017, les deux articles majorent « après
+  cet âge », celui du premier alinéa de L. 351-1, l'âge légal de la génération (60 ans à
+  61 ans et 7 mois pour les nés avant 1955) ; l'arrêté du 22 mars 2017, publié le 29 et
+  sans date d'effet, n'écrit « après l'âge de 62 ans » que le 30 mars 2017. Le modèle
+  comptait de 62 ans dès le 1er janvier : corrigé dans les deux moteurs, par un
+  interrupteur de période (`surcote_depuis_l_age_legal`) et les périodes de 2017 de
+  `carmf_complementaire.yaml` et d'`asv_conventionnes.yaml` coupées au 30 mars 2017. Née
+  le 10 mars 1952, pension au 1er janvier 2017 : 1,20 au lieu de 1,1375, 13 043,35 € par
+  an au lieu de 12 364,01 € à la CARMF (679,34 € de plus), 16 768,15 € au lieu de
+  15 894,81 € à l'ASV (873,34 € de plus). Les fiches `surcote_par_age_seul` et
+  `carmf_asv_minoration_enfants` relues ce jour, l'erreur passée à leur histoire.
+reste: >-
+  Ce que la caisse a servi aux pensions de ces trois mois, et à celles liquidées après le
+  29 mars 2017, n'est pas lu (point non tranché de `carmf_asv_minoration_enfants`). Le
+  passage à 0,75 % des nés de juillet à décembre 1951, approché tant que le modèle ne
+  compte pas en trimestres civils (55,16 € par an de trop à la CARMF pour le né du
+  10 septembre 1951) : avec la ligne 18 de la file. Les lignes 14 à 30 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).
