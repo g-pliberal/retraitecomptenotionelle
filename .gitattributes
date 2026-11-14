@@ -69,6 +69,7 @@ docs/etat.md                   -merge
 data/reference/regimes/inventaire.yaml -merge
 .github/etat_suite.yaml        -merge
 .github/verdicts.tsv           -merge
+.github/durees_suite.tsv       -merge
 
 # Les neuf pages du site, toutes faites, et son plan : fabriquées par
 # scripts/construire_pages.py depuis moteur/page.html (action 174). Elles ne se

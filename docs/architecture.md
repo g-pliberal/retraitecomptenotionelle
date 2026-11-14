@@ -1780,7 +1780,18 @@ un envoi reprend la mémoire des calculs (`.cache/calculs`, `memoire.py`) de la
 dernière course verte faite sur le même modèle, et elle seule : sa clé est
 l'empreinte sous laquelle la mémoire garde chaque calcul, et, le modèle
 retouché, la course part sans mémoire, comme toute course lancée à la main
-(action 135). Le site ne part en ligne
+(action 135). La course se partage entre plusieurs machines : la fabrique
+d'abord ; puis la suite, en tranches de fichiers entiers (`--tranche`,
+`pytest_parallele.py`), et la garde des présomptions, chacune sur la sienne,
+sur le commit, les fichiers et les calculs de la fabrique ; puis le travail
+qui publie (`scripts/rassembler_course.py`, `scripts/publier_fabrique.sh`).
+Le verdict porte ce que chaque travail a duré, et se publie même si une
+session a envoyé pendant la course : seul alors, sur la nouvelle tête, les
+fichiers refaits attendant la course suivante ; le hook d'ouverture compte
+les envois venus depuis ses sources. Partie sans mémoire, la course écrit ce
+que chaque fichier de tests a duré (`.github/durees_suite.tsv`,
+`scripts/durees_suite.py`) : les tranches de la suivante s'y pèsent, et une
+session y lit où passe le temps de la suite. Le site ne part en ligne
 que de là : une suite verte sur `main`, son verdict poussé, `tests.yml` déploie
 sur GitHub Pages l'arbre de ce commit, et aucun autre (action 163).
 `tests/conftest.py` range chaque fichier de tests dans son niveau ; un fichier

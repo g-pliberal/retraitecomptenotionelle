@@ -7,16 +7,25 @@ f=.github/etat_suite.yaml
 [ -f "$f" ] || exit 0
 etat=$(sed -n 's/^etat: //p' "$f")
 sources=$(sed -n 's/^sources: //p' "$f")
-depuis=$(git log -1 --format=%H -- "$f" 2>/dev/null)
-attente=$( [ -n "$depuis" ] && git rev-list --count "$depuis"..HEAD 2>/dev/null || echo "?")
+# Les envois venus depuis les sources du verdict, les commits du robot à part :
+# un verdict se publie aussi sur une tête qui a dépassé ses sources (action 135).
+attente=$(git rev-list --count "$sources"..HEAD 2>/dev/null) || attente=
+if [ -n "$attente" ]; then
+    robot=$(git rev-list --count --author='github-actions\[bot\]' "$sources"..HEAD)
+    attente=$((attente - robot))
+fi
 if [ "$etat" = rouge ]; then
-    echo "SUITE ROUGE sur main (GitHub, sources ${sources:0:7}) : la réparer avant toute autre chose."
+    depuis=
+    if [ -n "$attente" ] && [ "$attente" != 0 ]; then
+        depuis=" ; $attente commit(s) depuis"
+    fi
+    echo "SUITE ROUGE sur main (GitHub, sources ${sources:0:7}$depuis) : la réparer avant toute autre chose."
     sed -n '/^course:/p; /^echecs:/,/^presomptions/{/^presomptions/!p}' "$f"
 else
     if [ "$attente" = 0 ]; then
         echo "Suite complète verte sur GitHub, sur la tête de main (${sources:0:7})."
     else
-        echo "Suite complète verte sur GitHub (sources ${sources:0:7}) ; $attente commit(s) depuis, que la course suivante vérifie."
+        echo "Suite complète verte sur GitHub (sources ${sources:0:7}) ; ${attente:-?} commit(s) depuis, que la course suivante vérifie."
     fi
 fi
 # La garde des présomptions (action 135, levier 2) : un test qui écrit en dur

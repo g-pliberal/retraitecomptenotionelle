@@ -63,12 +63,14 @@ def test_une_suite_rouge_n_est_pas_publiee_verte(tmp_path, identifiant):
     du tube est celle de ``tee`` : le 7 octobre 2026, onze courses rouges ont
     été publiées vertes. L'étape se joue ici sous le shell que GitHub lui
     donnerait, pytest remplacé par un échec, et doit échouer ; de même la
-    garde des présomptions (action 135, levier 2)."""
+    garde des présomptions (action 135, levier 2). Chacune, dans son travail,
+    laisse son issue et sa durée au travail qui publie (``issue.txt``), même
+    en échec."""
     import yaml
 
     flux = yaml.safe_load((RACINE / ".github" / "workflows" / "tests.yml")
                           .read_text(encoding="utf-8"))
-    etape = next(e for e in flux["jobs"]["suite"]["steps"] if e.get("id") == identifiant)
+    etape = next(e for e in flux["jobs"][identifiant]["steps"] if e.get("id") == identifiant)
     # Les shells de GitHub : `shell: bash` est `bash --noprofile --norc -eo
     # pipefail {0}` ; sans `shell`, c'est `bash -e {0}`.
     shell = (["bash", "--noprofile", "--norc", "-eo", "pipefail", "-c"]
@@ -76,34 +78,51 @@ def test_une_suite_rouge_n_est_pas_publiee_verte(tmp_path, identifiant):
     script = etape["run"].replace("python -m pytest", "false")
     assert script != etape["run"], "l'étape ne lance plus `python -m pytest`"
     issue = subprocess.run([*shell, script], capture_output=True,
-                           env={**os.environ, "RUNNER_TEMP": str(tmp_path)})
+                           env={**os.environ, "RUNNER_TEMP": str(tmp_path),
+                                "TRANCHE": "1", "TRANCHES": "2"})
     assert issue.returncode != 0
+    dossier = tmp_path / ("tranche" if identifiant == "suite" else "garde")
+    code, secondes = (dossier / "issue.txt").read_text(encoding="utf-8").split()
+    assert code == "1" and int(secondes) >= 0
+    reussie = subprocess.run([*shell, etape["run"].replace("python -m pytest", "true")],
+                             capture_output=True,
+                             env={**os.environ, "RUNNER_TEMP": str(tmp_path),
+                                  "TRANCHE": "1", "TRANCHES": "2"})
+    assert reussie.returncode == 0
+    assert (dossier / "issue.txt").read_text(encoding="utf-8").split()[0] == "0"
 
 
 def test_la_garde_rejoue_les_tests_rapides_sous_d_autres_presomptions():
-    """La garde de l'action 135, levier 2 : après la suite complète, les tests
-    rapides sous les présomptions décalées, et son issue passée au script qui
-    écrit le verdict."""
+    """La garde de l'action 135, levier 2 : à côté de la suite complète, sur
+    une machine à elle, les tests rapides sous les présomptions décalées, et
+    son issue passée au script qui écrit le verdict."""
     import yaml
 
     from conftest import PRESOMPTIONS_DECALEES
 
-    etapes = yaml.safe_load((RACINE / ".github" / "workflows" / "tests.yml")
-                            .read_text(encoding="utf-8"))["jobs"]["suite"]["steps"]
-    ids = [e.get("id") for e in etapes]
-    assert ids.index("garde") == ids.index("suite") + 1
-    garde = etapes[ids.index("garde")]
+    travaux = yaml.safe_load((RACINE / ".github" / "workflows" / "tests.yml")
+                             .read_text(encoding="utf-8"))["jobs"]
+    garde = next(e for e in travaux["garde"]["steps"] if e.get("id") == "garde")
     assert f"{PRESOMPTIONS_DECALEES}=1 python -m pytest -m rapide" in garde["run"]
-    publier = next(e for e in etapes if "publier_fabrique.sh" in e.get("run", ""))
-    assert publier["env"]["GARDE"] == "${{ steps.garde.outcome }}"
+    assert travaux["garde"]["needs"] == "fabrique"
+    assert "garde" in travaux["publier"]["needs"]
+    publier = next(e for e in travaux["publier"]["steps"]
+                   if "publier_fabrique.sh" in e.get("run", ""))
+    assert publier["env"]["GARDE"] == "${{ steps.course.outputs.garde }}"
 
 
 def _publier(tmp_path, garde: str, sortie: str, suite: str = "success",
-             branche: str = "main", bouge: bool = False) -> tuple[dict, str]:
+             branche: str = "main", bouge: bool | str = False,
+             durees: str | None = None, refait: bool = False,
+             durees_suite: Path | None = None) -> tuple[dict, str]:
     """Joue ``publier_fabrique.sh`` dans un dépôt jetable qui pousse sur un
     dépôt nu : le verdict qu'il écrit, et le titre de son commit. Ce qu'il
     rend à GitHub (``GITHUB_OUTPUT``) s'écrit dans ``tmp_path / "sortie_github"`` ;
-    ``bouge`` fait avancer la branche pendant la course."""
+    ``bouge`` fait avancer la branche pendant la course, d'un fichier ``b``
+    qu'une session envoie, ou, s'il vaut ``"verdict"``, du seul verdict d'une
+    autre course. ``refait`` : la course a refait le fichier ``a`` ; ``durees``,
+    ce que ses étapes ont duré (``DUREES``) ; ``durees_suite``, le tableau des
+    durées de ses tests (``DUREES_SUITE``)."""
     import yaml
 
     nu, depot = tmp_path / "origine.git", tmp_path / "depot"
@@ -128,10 +147,17 @@ def _publier(tmp_path, garde: str, sortie: str, suite: str = "success",
     if bouge:
         autre = tmp_path / "autre"
         git("clone", "-q", "-b", branche, str(nu), str(autre), cwd=tmp_path)
-        (autre / "b").write_text("b", encoding="utf-8")
+        if bouge == "verdict":
+            (autre / ".github" / "etat_suite.yaml").write_text("etat: vert\n", encoding="utf-8")
+            (autre / ".github" / "verdicts.tsv").write_text(
+                "2026-01-01T00:00:00Z\t0000000\tvert\tvert\n", encoding="utf-8")
+        else:
+            (autre / "b").write_text("b", encoding="utf-8")
         git("add", "-A", cwd=autre)
         git("commit", "-q", "-m", "b", cwd=autre)
         git("push", "-q", "origin", f"HEAD:{branche}", cwd=autre)
+    if refait:
+        (depot / "a").write_text("refait", encoding="utf-8")
     (tmp_path / "suite.txt").write_text("1 passed\n", encoding="utf-8")
     (tmp_path / "garde.txt").write_text(sortie, encoding="utf-8")
     (tmp_path / "sortie_github").write_text("", encoding="utf-8")
@@ -140,7 +166,9 @@ def _publier(tmp_path, garde: str, sortie: str, suite: str = "success",
                        **env, "GITHUB_REF_NAME": branche, "FABRICATION": "success",
                        "SUITE": suite, "SORTIE_SUITE": str(tmp_path / "suite.txt"),
                        "GARDE": garde, "SORTIE_GARDE": str(tmp_path / "garde.txt"),
-                       "GITHUB_OUTPUT": str(tmp_path / "sortie_github")})
+                       "GITHUB_OUTPUT": str(tmp_path / "sortie_github"),
+                       **({"DUREES": durees} if durees else {}),
+                       **({"DUREES_SUITE": str(durees_suite)} if durees_suite else {})})
     verdict = yaml.safe_load((depot / ".github" / "etat_suite.yaml").read_text(encoding="utf-8"))
     titre = subprocess.run(["git", "log", "-1", "--format=%s", branche], cwd=nu,
                            capture_output=True, text=True, check=True).stdout.strip()
@@ -158,6 +186,202 @@ def test_une_garde_rouge_s_ecrit_a_part_du_verdict_de_la_suite(tmp_path):
     assert "garde des présomptions ROUGE" in titre
     verdict, titre = _publier(tmp_path / "verte", "success", "1 passed\n")
     assert verdict["presomptions"] == "vert" and "ROUGE" not in titre
+
+
+def _publie(tmp_path, chemin: str, branche: str = "main") -> str:
+    """Un fichier tel que la branche du dépôt nu le porte après la course."""
+    return subprocess.run(["git", "show", f"{branche}:{chemin}"], cwd=tmp_path / "origine.git",
+                          capture_output=True, text=True, check=True).stdout
+
+
+@pytest.mark.parametrize("suite, etat", [("success", "vert"), ("failure", "rouge")])
+def test_un_verdict_se_publie_meme_quand_main_a_bouge(tmp_path, suite, etat):
+    """Le 14 novembre 2026, deux sessions envoyaient tous les quarts d'heure
+    et la course durait de 33 à 47 minutes : ``main`` bougeait pendant chaque
+    course, et de 12 h 12 à 16 h 40 aucun verdict n'a été publié, dont deux
+    rouges (action 135). Un verdict tient à ses sources : il se publie seul,
+    sur la tête qui l'a dépassé, sans les fichiers refaits, qui ne valent que
+    pour l'arbre de la course, et sans rien retirer de ce que la session a
+    envoyé."""
+    import yaml
+
+    _, titre = _publier(tmp_path, "success", "1 passed\n", suite=suite, bouge=True,
+                        refait=True)
+    verdict = yaml.safe_load(_publie(tmp_path, ".github/etat_suite.yaml"))
+    sources = subprocess.run(["git", "rev-parse", "main~2"], cwd=tmp_path / "origine.git",
+                             capture_output=True, text=True, check=True).stdout.strip()
+    assert (verdict["etat"], verdict["sources"]) == (etat, sources)
+    assert _publie(tmp_path, "a") == "a" and _publie(tmp_path, "b") == "b"
+    assert sources[:7] in titre and "dépassée" in titre
+    assert ("ROUGE" in titre) == (etat == "rouge")
+    (ligne,) = _publie(tmp_path, ".github/verdicts.tsv").splitlines()
+    assert ligne.split("\t")[1:3] == [sources[:7], etat]
+
+
+def test_le_verdict_d_une_autre_course_ne_fait_pas_bouger_main(tmp_path):
+    """Un verdict publié seul avance ``main`` sans en changer une source : la
+    course qu'il dépasse publie quand même ses fichiers refaits et son site,
+    sur ce verdict, et le journal garde les deux lignes. Sans quoi chaque
+    verdict retiendrait les fichiers de la course suivante."""
+    import yaml
+
+    _, titre = _publier(tmp_path, "success", "1 passed\n", bouge="verdict", refait=True)
+    assert _publie(tmp_path, "a") == "refait" and "1 fichier(s) refait(s)" in titre
+    verdict = yaml.safe_load(_publie(tmp_path, ".github/etat_suite.yaml"))
+    sources = subprocess.run(["git", "rev-parse", "main~2"], cwd=tmp_path / "origine.git",
+                             capture_output=True, text=True, check=True).stdout.strip()
+    assert (verdict["etat"], verdict["sources"]) == ("vert", sources)
+    journal = _publie(tmp_path, ".github/verdicts.tsv").splitlines()
+    assert [l.split("\t")[1] for l in journal] == ["0000000", sources[:7]]
+    assert "en_ligne=oui" in (tmp_path / "sortie_github").read_text(encoding="utf-8").splitlines()
+
+
+def test_le_verdict_dit_ce_que_chaque_etape_a_dure(tmp_path):
+    """La course sans mémoire est passée de 30 à 47 minutes entre le 12 et le
+    14 novembre 2026 sans que rien le montre (action 135) : le verdict porte
+    la durée de chaque étape, en secondes, telle que la course la lui passe
+    (``DUREES``). Sans elle, il n'en dit rien."""
+    verdict, _ = _publier(tmp_path, "success", "1 passed\n",
+                          durees="fabrique=470 suite=2162 garde=175")
+    assert verdict["durees"] == {"fabrique": 470, "suite": 2162, "garde": 175}
+    verdict, _ = _publier(tmp_path / "sans", "success", "1 passed\n")
+    assert "durees" not in verdict
+
+
+def test_les_durees_de_la_suite_se_relevent_par_fichier(tmp_path):
+    """Rien ne disait où passaient les trente-six minutes de la suite (action
+    135). Chaque tranche de la course écrit ses durées, test par test
+    (``--junitxml``) ; ``durees_suite.py`` les somme par fichier de tests, sur
+    toutes les tranches, en secondes entières, le fichier d'une classe étant
+    celui de son module. Posé à la main : 1,4 + 2,2 + 0,3 = 3,9 s pour
+    ``test_a.py``, sur deux tranches ; 0,3 s pour ``test_c.py``, qui ne
+    s'écrit pas, pesant moins d'une seconde."""
+    import durees_suite
+
+    (tmp_path / "1.xml").write_text(
+        '<testsuites><testsuite name="pytest">'
+        '<testcase classname="tests.test_a" name="test_x" time="1.4"/>'
+        '<testcase classname="tests.test_a.TestB" name="test_y[1/2]" time="2.2">'
+        '<failure message="m">t</failure></testcase>'
+        '<testcase classname="tests.test_c" name="test_z" time="0.3"/>'
+        '</testsuite></testsuites>', encoding="utf-8")
+    (tmp_path / "2.xml").write_text(
+        '<testsuites><testsuite name="pytest">'
+        '<testcase classname="tests.test_a" name="test_w" time="0.3"/>'
+        '<testcase classname="tests.sous.test_d.TestE.TestF" name="test_v" time="61.5"/>'
+        '</testsuite></testsuites>', encoding="utf-8")
+    durees = durees_suite.par_fichier([tmp_path / "1.xml", tmp_path / "2.xml"])
+    assert durees == pytest.approx({"tests/test_a.py": 3.9, "tests/test_c.py": 0.3,
+                                    "tests/sous/test_d.py": 61.5})
+    texte = durees_suite.tableau(durees)
+    assert [l for l in texte.splitlines() if not l.startswith("#")] == [
+        "tests/sous/test_d.py\t62", "tests/test_a.py\t4"]
+    # Le greffon qui découpe la suite en tranches relit ce qui s'écrit ici.
+    from retraite_notionnelle import pytest_parallele
+
+    assert pytest_parallele.lire_durees(texte) == {"tests/sous/test_d.py": 62.0,
+                                                   "tests/test_a.py": 4.0}
+
+
+@pytest.mark.parametrize("bouge", [False, True, "verdict"])
+def test_les_durees_de_la_suite_se_publient_avec_le_verdict(tmp_path, bouge):
+    """Le tableau des durées (``DUREES_SUITE``) est une mesure de la course,
+    comme son verdict : il se publie avec lui, que ``main`` ait bougé ou non,
+    sans compter parmi les fichiers refaits ni faire bouger ``main`` pour la
+    course suivante. Une course qui n'en passe pas — elle a repris la mémoire
+    des calculs, et ses durées ne disent rien de la suite sans elle — laisse
+    celui qui est là."""
+    durees = tmp_path / "durees.tsv"
+    tmp_path.mkdir(exist_ok=True)
+    durees.write_text("tests/test_a.py\t4\n", encoding="utf-8")
+    _, titre = _publier(tmp_path, "success", "1 passed\n", bouge=bouge, durees_suite=durees)
+    assert _publie(tmp_path, ".github/durees_suite.tsv") == "tests/test_a.py\t4\n"
+    assert "ROUGE" not in titre and ("0 fichier(s) refait(s)" in titre) == (bouge is not True)
+    _publier(tmp_path / "sans", "success", "1 passed\n", bouge=bouge)
+    assert subprocess.run(["git", "cat-file", "-e", "main:.github/durees_suite.tsv"],
+                          cwd=tmp_path / "sans" / "origine.git",
+                          capture_output=True).returncode != 0
+
+
+def _course(dossier: Path, tranches: dict[int, tuple[str, str]], garde: str | None) -> Path:
+    """Ce que les travaux d'une course laissent au dernier : par tranche, son
+    issue et sa durée (``issue.txt``), sa sortie et ses durées, test par test ;
+    de même la garde."""
+    for rang, (issue, sortie) in tranches.items():
+        tranche = dossier / f"tranche-{rang}"
+        tranche.mkdir(parents=True)
+        (tranche / "issue.txt").write_text(issue + "\n", encoding="utf-8")
+        (tranche / "suite.txt").write_text(sortie, encoding="utf-8")
+        (tranche / "durees.xml").write_text(
+            f'<testsuites><testsuite><testcase classname="tests.test_{rang}" name="t" '
+            f'time="{rang}.4"/><testcase classname="tests.test_commun" name="t{rang}" '
+            'time="1.5"/></testsuite></testsuites>', encoding="utf-8")
+    if garde:
+        (dossier / "garde").mkdir(parents=True)
+        (dossier / "garde" / "issue.txt").write_text(garde + "\n", encoding="utf-8")
+        (dossier / "garde" / "garde.txt").write_text("5 passed\n", encoding="utf-8")
+    return dossier
+
+
+def test_la_course_se_rassemble_de_ses_tranches(tmp_path):
+    """La course joue la suite en tranches, sur autant de machines, et la
+    garde sur une autre (action 135) : le dernier travail en tire ce que
+    ``publier_fabrique.sh`` attend. La suite n'est verte que si chaque tranche
+    l'est ; sa sortie est celle de toutes, dans l'ordre ; elle a duré ce qu'a
+    duré la plus longue. Posé à la main : 300 et 560 secondes, donc 560."""
+    import rassembler_course
+
+    dossier = _course(tmp_path / "rouge", {1: ("0 300", "1 passed\n"),
+                                           2: ("1 560", "FAILED tests/x.py::y - z\n")}, "0 100")
+    rendu = rassembler_course.rassembler(dossier, tranches=2, fabrication="success",
+                                         duree_fabrique="470", memoire="")
+    assert rendu == {"suite": "failure", "garde": "success",
+                     "durees": "fabrique=470 suite=560 tranche_1=300 tranche_2=560 garde=100",
+                     "durees_suite": str(dossier / "durees.tsv")}
+    assert (dossier / "suite.txt").read_text(encoding="utf-8") == (
+        "1 passed\nFAILED tests/x.py::y - z\n")
+    assert (dossier / "garde.txt").read_text(encoding="utf-8") == "5 passed\n"
+    # 1,4 s et 2,4 s, et le fichier commun aux deux tranches, 1,5 + 1,5 s.
+    assert [l for l in (dossier / "durees.tsv").read_text(encoding="utf-8").splitlines()
+            if not l.startswith("#")] == [
+        "tests/test_1.py\t1", "tests/test_2.py\t2", "tests/test_commun.py\t3"]
+    verte = _course(tmp_path / "verte", {1: ("0 300", "a\n"), 2: ("0 200", "b\n")}, "1 90")
+    rendu = rassembler_course.rassembler(verte, tranches=2, fabrication="success",
+                                         duree_fabrique="80", memoire="")
+    assert (rendu["suite"], rendu["garde"]) == ("success", "failure")
+
+
+def test_une_tranche_qui_ne_rend_rien_rougit_la_suite(tmp_path):
+    """Une machine perdue, un travail annulé : la tranche n'a pas laissé son
+    issue, ses tests n'ont pas été joués, et la suite n'est pas verte ; le
+    tableau des durées, incomplet, ne s'écrit pas. De même une garde qui n'a
+    rien rendu."""
+    import rassembler_course
+
+    dossier = _course(tmp_path, {1: ("0 300", "1 passed\n")}, None)
+    rendu = rassembler_course.rassembler(dossier, tranches=2, fabrication="success",
+                                         duree_fabrique="470", memoire="")
+    assert rendu == {"suite": "failure", "garde": "failure",
+                     "durees": "fabrique=470 suite=300 tranche_1=300", "durees_suite": ""}
+    assert "tranche 2" in (dossier / "suite.txt").read_text(encoding="utf-8")
+    assert not (dossier / "durees.tsv").exists()
+
+
+def test_une_course_partie_avec_sa_memoire_ne_publie_pas_ses_durees(tmp_path):
+    """Les tranches se pèsent sur la suite sans mémoire des calculs, la plus
+    longue : une course qui a repris la mémoire d'une autre n'en dit rien, et
+    ne récrit pas le tableau. Une fabrique en échec, elle, n'a lancé ni la
+    suite ni la garde."""
+    import rassembler_course
+
+    dossier = _course(tmp_path / "a", {1: ("0 30", "a\n"), 2: ("0 20", "b\n")}, "0 9")
+    rendu = rassembler_course.rassembler(dossier, tranches=2, fabrication="success",
+                                         duree_fabrique="80", memoire="calculs-e1-yaml6-12")
+    assert rendu["suite"] == "success" and rendu["durees_suite"] == ""
+    rendu = rassembler_course.rassembler(tmp_path / "b", tranches=2, fabrication="failure",
+                                         duree_fabrique="12", memoire="")
+    assert rendu == {"suite": "skipped", "garde": "skipped", "durees": "fabrique=12",
+                     "durees_suite": ""}
 
 
 # -- l'inscription des rédactions, chaque lundi (action 184, étape 4) -------------
@@ -298,11 +522,11 @@ def test_le_workflow_de_l_index_inscrit_puis_fait_juger_son_commit():
 MODELE = "${{ steps.empreinte.outputs.modele }}"
 
 
-def _etapes_de_la_course() -> list[dict]:
+def _etapes_de_la_course(travail: str = "fabrique") -> list[dict]:
     import yaml
 
     return yaml.safe_load((RACINE / ".github" / "workflows" / "tests.yml")
-                          .read_text(encoding="utf-8"))["jobs"]["suite"]["steps"]
+                          .read_text(encoding="utf-8"))["jobs"][travail]["steps"]
 
 
 def _memoire_de_la_course() -> dict:
@@ -350,6 +574,15 @@ def test_la_course_ne_reprend_que_la_memoire_de_son_modele():
     assert _reprise(gardees, etape, "e2-yaml6", 3) is None
     # La bibliothèque qui lit les données change de version : de même.
     assert _reprise(gardees, etape, "e1-yaml7", 3) is None
+    # La fabrique la reprend ; le travail qui publie la garde, sous la même
+    # clé, celle que la fabrique lui passe, et de toutes les machines.
+    (garder,) = [e for e in _etapes_de_la_course("publier")
+                 if e.get("uses", "").startswith("actions/cache")]
+    assert etape["uses"].startswith("actions/cache/restore@")
+    assert garder["uses"].startswith("actions/cache/save@")
+    assert garder["with"] == {
+        "path": ".cache/calculs",
+        "key": cle.replace(MODELE, "${{ needs.fabrique.outputs.modele }}")}
 
 
 def test_la_cle_de_la_memoire_de_la_course_est_l_empreinte_du_modele(tmp_path):
@@ -402,6 +635,196 @@ def test_une_course_lancee_a_la_main_part_sans_memoire():
     # PyYAML lit la clé `on` comme le booléen vrai.
     assert flux[True]["push"] == {"branches": ["main"]}
     assert _memoire_de_la_course()["if"] == "github.event_name == 'push'"
+    # Et seule une course verte la garde, garde des présomptions comprise.
+    (garder,) = [e for e in _etapes_de_la_course("publier")
+                 if e.get("uses", "").startswith("actions/cache")]
+    assert garder["if"] == ("github.event_name == 'push' && steps.course.outputs.suite == "
+                            "'success' && steps.course.outputs.garde == 'success'")
+
+
+# -- la course en travaux parallèles (action 135) ---------------------------------
+
+
+def _flux_des_tests() -> dict:
+    import yaml
+
+    return yaml.safe_load((RACINE / ".github" / "workflows" / "tests.yml")
+                          .read_text(encoding="utf-8"))
+
+
+def _shell(etape: dict) -> list[str]:
+    """Le shell que GitHub donne à une étape."""
+    return (["bash", "--noprofile", "--norc", "-eo", "pipefail", "-c"]
+            if etape.get("shell") == "bash" else ["bash", "-e", "-c"])
+
+
+def test_chaque_travail_de_la_course_joue_l_arbre_de_la_fabrique():
+    """Le 14 novembre 2026, la course tenait 47 minutes sans mémoire sur une
+    seule machine, dont 36 pour la suite et 3 pour la garde (action 135). Elle
+    se partage : la fabrique d'abord, sur le dernier ``main`` ; puis la suite,
+    en tranches, et la garde, chacune sur sa machine ; puis le travail qui
+    publie. ``main`` peut avancer entre deux travaux : chacun reprend le commit
+    que la fabrique a refait, et non la tête du moment. Une tranche rouge
+    n'arrête pas les autres, dont le verdict nomme aussi les échecs."""
+    flux = _flux_des_tests()
+    travaux = flux["jobs"]
+    assert list(travaux) == ["fabrique", "suite", "garde", "publier", "en_ligne"]
+
+    def depart(nom: str) -> dict:
+        (etape,) = [e for e in travaux[nom]["steps"]
+                    if e.get("uses", "").startswith("actions/checkout@")]
+        return etape["with"]
+
+    assert depart("fabrique") == {"ref": "${{ github.ref_name }}"}
+    assert travaux["fabrique"]["outputs"]["sources"] == "${{ steps.sources.outputs.sha }}"
+    for nom in ("suite", "garde"):
+        assert travaux[nom]["needs"] == "fabrique"
+        assert travaux[nom]["if"] == "needs.fabrique.outputs.issue == 'success'"
+        assert depart(nom) == {"ref": "${{ needs.fabrique.outputs.sources }}"}
+    # Le travail qui publie tourne même après un échec : il en écrit le verdict.
+    assert travaux["publier"]["needs"] == ["fabrique", "suite", "garde"]
+    assert travaux["publier"]["if"] == "${{ !cancelled() }}"
+    assert depart("publier") == {
+        "ref": "${{ needs.fabrique.outputs.sources || github.ref_name }}"}
+    tranches = int(flux["env"]["TRANCHES"])
+    assert tranches >= 2
+    assert travaux["suite"]["strategy"] == {
+        "fail-fast": False, "matrix": {"tranche": list(range(1, tranches + 1))}}
+    suite = next(e for e in travaux["suite"]["steps"] if e.get("id") == "suite")
+    assert suite["env"] == {"TRANCHE": "${{ matrix.tranche }}"}
+    assert 'python -m pytest --tranche "$TRANCHE/$TRANCHES"' in suite["run"]
+    assert '--junitxml="$RUNNER_TEMP/tranche/durees.xml"' in suite["run"]
+    # Un travail rouge se voit rouge, son issue rendue.
+    for nom in ("suite", "garde"):
+        etapes = travaux[nom]["steps"]
+        rendre = next(e for e in etapes if e.get("uses", "").startswith("actions/upload-artifact@"))
+        assert rendre["if"] == "always()"
+        assert etapes[-1] == {"name": etapes[-1]["name"],
+                              "if": f"steps.{nom}.outcome != 'success'", "run": "exit 1"}
+    assert next(e for e in travaux["suite"]["steps"]
+                if e.get("uses", "").startswith("actions/upload-artifact@")
+                )["with"]["name"] == "tranche-${{ matrix.tranche }}"
+    course = next(e for e in travaux["publier"]["steps"] if e.get("id") == "course")
+    assert course["env"] == {
+        "FABRICATION": "${{ needs.fabrique.outputs.issue }}",
+        "DUREE_FABRIQUE": "${{ needs.fabrique.outputs.duree }}",
+        "MEMOIRE": "${{ needs.fabrique.outputs.memoire }}"}
+    assert ('python scripts/rassembler_course.py "$RUNNER_TEMP/course" >> "$GITHUB_OUTPUT"'
+            in course["run"])
+    publier = next(e for e in travaux["publier"]["steps"]
+                   if "publier_fabrique.sh" in e.get("run", ""))
+    assert publier["env"] == {
+        "FABRICATION": "${{ needs.fabrique.outputs.issue }}",
+        "SUITE": "${{ steps.course.outputs.suite }}",
+        "SORTIE_SUITE": "${{ runner.temp }}/course/suite.txt",
+        "GARDE": "${{ steps.course.outputs.garde }}",
+        "SORTIE_GARDE": "${{ runner.temp }}/course/garde.txt",
+        "DUREES": "${{ steps.course.outputs.durees }}",
+        "DUREES_SUITE": "${{ steps.course.outputs.durees_suite }}",
+        "COURSE": "${{ github.server_url }}/${{ github.repository }}/actions/runs/"
+                  "${{ github.run_id }}"}
+    verdict = travaux["publier"]["steps"][-1]
+    assert verdict["run"].rstrip().endswith("exit 1")
+    assert verdict["if"] == ("needs.fabrique.outputs.issue != 'success' || "
+                             "steps.course.outputs.suite != 'success' || "
+                             "steps.course.outputs.garde != 'success'")
+
+
+def test_la_fabrique_passe_son_arbre_et_ses_calculs_aux_travaux_suivants(tmp_path):
+    """Les étapes qui passent la main se jouent ici sous le shell que GitHub
+    leur donne. La fabrique laisse ce qu'elle a refait — un fichier changé, un
+    autre né, un troisième parti — et la mémoire de ses calculs ; chaque
+    travail les reprend sur le même commit, et retrouve le même arbre ; une
+    tranche rend les calculs qu'elle a faits de plus, et eux seuls ; le
+    travail qui publie les réunit tous, pour la mémoire de la course suivante.
+    Une fabrique qui n'a rien refait passe quand même la main."""
+    travaux = _flux_des_tests()["jobs"]
+    env = {**os.environ, "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@example.invalid",
+           "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@example.invalid"}
+
+    def git(*arguments, cwd):
+        return subprocess.run(["git", *arguments], cwd=cwd, env=env, check=True,
+                              capture_output=True, text=True).stdout
+
+    def jouer(travail: str, identifiant: str, cwd: Path, temp: Path) -> None:
+        etape = next(e for e in travaux[travail]["steps"] if e.get("id") == identifiant)
+        temp.mkdir(exist_ok=True)
+        subprocess.run([*_shell(etape), etape["run"]], cwd=cwd, check=True,
+                       capture_output=True, env={**env, "RUNNER_TEMP": str(temp)})
+
+    def arbre(depot: Path) -> dict[str, bytes]:
+        return {str(c.relative_to(depot)): c.read_bytes() for c in sorted(depot.rglob("*"))
+                if c.is_file() and ".git" not in c.relative_to(depot).parts}
+
+    origine = tmp_path / "origine"
+    origine.mkdir()
+    git("init", "-q", "-b", "main", cwd=origine)
+    for nom, contenu in {"change": b"avant\n", "part": b"x\n", "reste": b"y\n",
+                         "binaire": bytes(range(256)), ".gitignore": b".cache/\n"}.items():
+        (origine / nom).write_bytes(contenu)
+    git("add", "-A", cwd=origine)
+    git("commit", "-q", "-m", "a", cwd=origine)
+
+    def cloner(nom: str) -> Path:
+        git("clone", "-q", str(origine), str(tmp_path / nom), cwd=tmp_path)
+        return tmp_path / nom
+
+    # La fabrique : rien de refait d'abord, puis trois fichiers et un calcul.
+    fabrique = cloner("fabrique")
+    jouer("fabrique", "passer", fabrique, tmp_path / "t0")
+    vide = cloner("vide")
+    (tmp_path / "t0" / "tranche").mkdir()
+    jouer("suite", "reprendre", vide, tmp_path / "t0")
+    assert arbre(vide) == arbre(origine)
+    (fabrique / "change").write_bytes(b"apr\xc3\xa8s\n")
+    (fabrique / "binaire").write_bytes(bytes(reversed(range(256))))
+    (fabrique / "part").unlink()
+    (fabrique / "sous").mkdir()
+    (fabrique / "sous" / "né").write_bytes(b"z\n")
+    (fabrique / ".cache" / "calculs" / "e1").mkdir(parents=True)
+    (fabrique / ".cache" / "calculs" / "e1" / "fabrique").write_bytes(b"f")
+    jouer("fabrique", "passer", fabrique, tmp_path / "t1")
+    artefact = tmp_path / "t1" / "fabrique"
+    assert sorted(c.name for c in artefact.iterdir()) == ["calculs.tar", "fabrique.patch"]
+
+    # Chaque travail la reprend, par la même étape.
+    reprises = {nom: next(e for e in travaux[nom]["steps"] if e.get("id") == "reprendre")["run"]
+                for nom in ("suite", "garde", "publier")}
+    assert reprises["suite"] == reprises["garde"] == reprises["publier"]
+    rendus = tmp_path / "course"
+    rendus.mkdir()
+    for rang in (1, 2):
+        tranche = cloner(f"tranche-{rang}")
+        temp = tmp_path / f"t-tranche-{rang}"
+        temp.mkdir()
+        (temp / "fabrique").symlink_to(artefact, target_is_directory=True)
+        jouer("suite", "reprendre", tranche, temp)
+        assert arbre(tranche) == arbre(fabrique)
+        assert git("status", "--porcelain", cwd=tranche).split() == git(
+            "status", "--porcelain", cwd=fabrique).split()
+        # La tranche fait un calcul de plus, et le rend seul.
+        calcul = tranche / ".cache" / "calculs" / "e1" / f"tranche-{rang}"
+        calcul.write_bytes(b"t")
+        plus_tard = (temp / "reprise").stat().st_mtime + 10
+        os.utime(calcul, (plus_tard, plus_tard))
+        jouer("suite", "calculs", tranche, temp)
+        noms = subprocess.run(["tar", "-tf", str(temp / "tranche" / "calculs.tar")],
+                              capture_output=True, text=True, check=True).stdout.split()
+        assert noms == [f".cache/calculs/e1/tranche-{rang}"]
+        (temp / "tranche").rename(rendus / f"tranche-{rang}")
+    # Le travail qui publie : l'arbre de la fabrique, et les calculs de tous.
+    publier = cloner("publier")
+    temp = tmp_path / "t-publier"
+    temp.mkdir()
+    rendus.rename(temp / "course")
+    (temp / "course" / "fabrique").symlink_to(artefact, target_is_directory=True)
+    (temp / "fabrique").symlink_to(artefact, target_is_directory=True)
+    jouer("publier", "reprendre", publier, temp)
+    jouer("publier", "calculs", publier, temp)
+    assert sorted(c.name for c in (publier / ".cache" / "calculs" / "e1").iterdir()) == [
+        "fabrique", "tranche-1", "tranche-2"]
+    assert {n: c for n, c in arbre(publier).items() if not n.startswith(".cache")} == {
+        n: c for n, c in arbre(fabrique).items() if not n.startswith(".cache")}
 
 
 # -- les mesures de l'accueil (action 163) ----------------------------------------
@@ -475,7 +898,7 @@ def test_le_site_se_deploie_de_l_arbre_publie_et_de_lui_seul():
 
     flux = yaml.safe_load((RACINE / ".github" / "workflows" / "tests.yml")
                           .read_text(encoding="utf-8"))
-    etapes = flux["jobs"]["suite"]["steps"]
+    etapes = flux["jobs"]["publier"]["steps"]
     publier = next(e for e in etapes if "publier_fabrique.sh" in e.get("run", ""))
     source = next(e for e in etapes if e.get("id") == "pages")
     archive = next(e for e in etapes if "git archive HEAD" in e.get("run", ""))
@@ -487,10 +910,10 @@ def test_le_site_se_deploie_de_l_arbre_publie_et_de_lui_seul():
     assert televerser["with"]["path"] == "${{ runner.temp }}/site"
     assert (etapes.index(publier) < etapes.index(source) < etapes.index(archive)
             < etapes.index(televerser))
-    assert flux["jobs"]["suite"]["outputs"]["en_ligne"] == "${{ steps.pages.outputs.actions }}"
+    assert flux["jobs"]["publier"]["outputs"]["en_ligne"] == "${{ steps.pages.outputs.actions }}"
     deploiement = flux["jobs"]["en_ligne"]
-    assert deploiement["needs"] == "suite"
-    assert "needs.suite.outputs.en_ligne == 'oui'" in deploiement["if"]
+    assert deploiement["needs"] == "publier"
+    assert "needs.publier.outputs.en_ligne == 'oui'" in deploiement["if"]
     assert deploiement["permissions"] == {"pages": "write", "id-token": "write"}
     assert deploiement["environment"]["name"] == "github-pages"
     assert any(str(e.get("uses", "")).startswith("actions/deploy-pages@")
@@ -556,7 +979,7 @@ def test_rien_ne_se_deploie_tant_que_pages_publie_depuis_une_branche(
     import yaml
 
     etapes = yaml.safe_load((RACINE / ".github" / "workflows" / "tests.yml")
-                            .read_text(encoding="utf-8"))["jobs"]["suite"]["steps"]
+                            .read_text(encoding="utf-8"))["jobs"]["publier"]["steps"]
     etape = next(e for e in etapes if e.get("id") == "pages")
     assert "shell" not in etape
     outils = tmp_path / "outils"
@@ -571,6 +994,45 @@ def test_rien_ne_se_deploie_tant_que_pages_publie_depuis_une_branche(
                    env={**os.environ, "PATH": f"{outils}{os.pathsep}{os.environ['PATH']}",
                         "GITHUB_OUTPUT": str(sortie), "GITHUB_REPOSITORY": "o/r"})
     assert ("actions=oui" in sortie.read_text(encoding="utf-8").splitlines()) == deploie
+
+
+@pytest.mark.parametrize("etat, depasse, attendu", [
+    ("vert", False, "sur la tête de main"),
+    ("vert", True, "2 commit(s) depuis"),
+    ("rouge", True, "2 commit(s) depuis"),
+])
+def test_le_hook_de_demarrage_compte_depuis_les_sources_du_verdict(
+        tmp_path, etat, depasse, attendu):
+    """Un verdict publié sur une tête qui a dépassé ses sources ne dit pas
+    cette tête vérifiée : le hook compte les commits de sessions venus depuis
+    les sources, non depuis le commit du verdict ; un rouge le dit aussi, que
+    l'un d'eux a pu réparer."""
+    env = {**os.environ, "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@example.invalid",
+           "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@example.invalid"}
+
+    def git(*arguments) -> str:
+        return subprocess.run(["git", *arguments], cwd=tmp_path, env=env, check=True,
+                              capture_output=True, text=True).stdout.strip()
+
+    def commiter(nom: str, contenu: str, *auteur: str) -> str:
+        (tmp_path / nom).parent.mkdir(exist_ok=True)
+        (tmp_path / nom).write_text(contenu, encoding="utf-8")
+        git("add", "-A")
+        git("commit", "-q", "-m", nom, *auteur)
+        return git("rev-parse", "HEAD")
+
+    git("init", "-q", "-b", "main")
+    sources = commiter("a", "a")
+    if depasse:
+        commiter("b", "b")
+        commiter("c", "c")
+    commiter(".github/etat_suite.yaml", f"etat: {etat}\nsources: {sources}\ncourse: x\n",
+             "--author=github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>")
+    sortie = subprocess.run(["bash", str(RACINE / ".claude" / "hooks" / "etat-suite.sh")],
+                            capture_output=True, text=True, check=True,
+                            env={**os.environ, "CLAUDE_PROJECT_DIR": str(tmp_path)}).stdout
+    assert attendu in sortie.splitlines()[0]
+    assert ("ROUGE" in sortie) == (etat == "rouge")
 
 
 def test_le_hook_de_demarrage_affiche_la_garde_rouge(tmp_path):

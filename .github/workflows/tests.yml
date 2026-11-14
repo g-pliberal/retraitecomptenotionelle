@@ -10,14 +10,19 @@
 # 1. `scripts/regenerer.py` refait le paquet, les mesures que l'accueil cite,
 #    les témoins, le chiffrage, les tableaux, le tableau de bord et les
 #    chiffres ancrés de la prose ;
-# 2. la suite complète, `python -m pytest`, les joue, puis la garde des
-#    présomptions rejoue les tests rapides sous d'autres présomptions ;
+# 2. la suite complète, `python -m pytest`, les joue, en tranches, chacune sur
+#    sa machine, pendant que la garde des présomptions rejoue les tests rapides
+#    sous d'autres présomptions, sur une autre (action 135) : sur une seule
+#    machine, la course sans mémoire tenait 47 minutes le 14 novembre 2026,
+#    dont 36 pour la suite. Chaque travail reprend le commit que la fabrique a
+#    refait, ses fichiers et ses calculs, non la tête du moment ;
 # 3. `scripts/publier_fabrique.sh` commite, sous l'identité noreply du robot,
 #    le verdict (`.github/etat_suite.yaml`, que le hook SessionStart affiche à
-#    l'ouverture de chaque session) et, si la suite est verte, les fichiers
-#    refaits ; puis il pousse sans jamais forcer. Si main a bougé pendant la
-#    course, il ne pousse rien : la course que ce nouvel envoi a lancée refait
-#    tout. Une poussée du jeton du workflow ne relance pas de course ;
+#    l'ouverture de chaque session), avec ce que chaque travail a duré, et, si
+#    la suite est verte, les fichiers refaits ; puis il pousse sans jamais
+#    forcer. Si une session a envoyé pendant la course, il publie le verdict
+#    seul, sur la nouvelle tête : la course que cet envoi a lancée refait les
+#    fichiers. Une poussée du jeton du workflow ne relance pas de course ;
 # 4. une suite verte sur main, son verdict poussé, met le site en ligne
 #    (action 163) : l'arbre de ce commit, déployé sur GitHub Pages par le job
 #    `en_ligne`. Un envoi de session n'a pas passé la suite, et une poussée du
@@ -30,7 +35,9 @@
 # Une course lancée par un envoi reprend la mémoire des calculs
 # (`.cache/calculs`) de la dernière course verte faite sur le même modèle
 # (action 135) : la fabrique et la suite y passent de dix-neuf minutes à neuf.
-# Que le modèle bouge, et elle part sans mémoire.
+# Que le modèle bouge, et elle part sans mémoire ; elle écrit alors ce que
+# chaque fichier de tests a duré (`.github/durees_suite.tsv`), où les tranches
+# de la course suivante se pèsent (`--tranche`, `pytest_parallele.py`).
 #
 # Il se lance aussi à la main, sur n'importe quelle branche (onglet Actions,
 # « Run workflow ») : il y fabrique et pousse de même, sur cette branche, et
@@ -51,16 +58,30 @@ concurrency:
   group: tests-${{ github.ref_name }}
   cancel-in-progress: false
 
+# Le nombre de tranches de la suite : celui des machines qui la jouent
+# (`matrix.tranche`, plus bas ; `tests/test_outillage.py` tient les deux).
+env:
+  TRANCHES: 4
+
 jobs:
-  suite:
+  fabrique:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 30
     outputs:
-      en_ligne: ${{ steps.pages.outputs.actions }}
+      sources: ${{ steps.sources.outputs.sha }}
+      issue: ${{ steps.fabriquer.outcome }}
+      duree: ${{ steps.fabriquer.outputs.duree }}
+      modele: ${{ steps.empreinte.outputs.modele }}
+      memoire: ${{ steps.memoire.outputs.cache-matched-key }}
     steps:
       - uses: actions/checkout@v7
         with:
           ref: ${{ github.ref_name }}
+
+      # Le commit de la course : celui que chaque travail reprend.
+      - name: Les sources de la course
+        id: sources
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-python@v7
         with:
@@ -90,54 +111,293 @@ jobs:
       # Seuls les calculs gardés se reprennent : ni la mémoire de la fabrique
       # (`.cache/fabrique.json`), ni les réussites des tests (`.cache/tests`),
       # qui feraient sauter des étapes et des tests. La mémoire ne s'écrit
-      # qu'au bout d'une course verte, et d'un envoi sur main : lancée à la
-      # main, la course ne reprend ni ne garde rien.
+      # qu'au bout d'une course verte, et d'un envoi sur main, par le travail
+      # qui publie : lancée à la main, la course ne reprend ni ne garde rien.
       - name: La mémoire des calculs
+        id: memoire
         if: github.event_name == 'push'
-        uses: actions/cache@v6
+        uses: actions/cache/restore@v6
         with:
           path: .cache/calculs
           key: calculs-${{ steps.empreinte.outputs.modele }}-${{ github.run_id }}
           restore-keys: calculs-${{ steps.empreinte.outputs.modele }}-
 
+      # Le piège écrit la durée de l'étape, qu'elle réussisse ou non.
       - name: Fabriquer
         id: fabriquer
         continue-on-error: true
-        run: python scripts/regenerer.py
+        shell: bash
+        run: |
+          trap 'echo "duree=$SECONDS" >> "$GITHUB_OUTPUT"' EXIT
+          python scripts/regenerer.py
+
+      # Ce que les travaux suivants reprennent : les fichiers refaits, en un
+      # correctif — changés, nés ou partis, binaires compris —, et la mémoire
+      # des calculs, celle reprise et ceux que la fabrique vient de faire.
+      - name: Passer la main
+        id: passer
+        if: steps.fabriquer.outcome == 'success'
+        run: |
+          mkdir -p "$RUNNER_TEMP/fabrique" .cache/calculs
+          git add -A
+          git diff --cached --binary HEAD > "$RUNNER_TEMP/fabrique/fabrique.patch"
+          tar -cf "$RUNNER_TEMP/fabrique/calculs.tar" .cache/calculs
+
+      - uses: actions/upload-artifact@v6
+        if: steps.fabriquer.outcome == 'success'
+        with:
+          name: fabrique
+          path: ${{ runner.temp }}/fabrique
+          retention-days: 1
+
+  # La suite complète, en tranches de fichiers entiers (`--tranche`,
+  # `pytest_parallele.py`), une par machine. Une tranche rouge n'arrête pas
+  # les autres : le verdict nomme tous les échecs.
+  suite:
+    needs: fabrique
+    if: needs.fabrique.outputs.issue == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        tranche: [1, 2, 3, 4]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.fabrique.outputs.sources }}
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
+      - name: Installer le paquet et ses outils de test
+        run: pip install -e '.[dev]'
+
+      - uses: actions/download-artifact@v7
+        with:
+          name: fabrique
+          path: ${{ runner.temp }}/fabrique
+
+      # Les fichiers que la fabrique a refaits, et la mémoire de ses calculs ;
+      # le témoin `reprise` date ce qui se calcule après.
+      - name: Reprendre la fabrique
+        id: reprendre
+        run: |
+          if [ -s "$RUNNER_TEMP/fabrique/fabrique.patch" ]; then
+            git apply --index "$RUNNER_TEMP/fabrique/fabrique.patch"
+          fi
+          if [ -f "$RUNNER_TEMP/fabrique/calculs.tar" ]; then
+            tar -xf "$RUNNER_TEMP/fabrique/calculs.tar"
+          fi
+          touch "$RUNNER_TEMP/reprise"
 
       # `shell: bash` lance l'étape sous `bash -eo pipefail` : sans lui, GitHub
       # prend `bash -e`, l'issue du tube est celle de `tee`, toujours réussie,
       # et le verdict dit vert sur une suite rouge (le 7 octobre 2026, onze
-      # courses rouges publiées vertes). `tests/test_outillage.py` le tient.
-      - name: La suite complète
+      # courses rouges publiées vertes). Le piège laisse l'issue et la durée
+      # de la tranche au travail qui publie. `tests/test_outillage.py` le tient.
+      - name: La suite complète, une tranche
         id: suite
-        if: steps.fabriquer.outcome == 'success'
         continue-on-error: true
         shell: bash
-        run: python -m pytest -rfE 2>&1 | tee "$RUNNER_TEMP/suite.txt"
+        env:
+          TRANCHE: ${{ matrix.tranche }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/tranche"
+          trap 'echo "$? $SECONDS" > "$RUNNER_TEMP/tranche/issue.txt"' EXIT
+          python -m pytest --tranche "$TRANCHE/$TRANCHES" -rfE --durations=25 --junitxml="$RUNNER_TEMP/tranche/durees.xml" 2>&1 | tee "$RUNNER_TEMP/tranche/suite.txt"
 
-      # La garde des présomptions (action 135, levier 2) : les tests rapides,
-      # une vingtaine de secondes, rejoués sous d'autres présomptions que
-      # celles du vocabulaire (`tests/conftest.py`). Un test qui écrit en dur
-      # une valeur présumée — le jour de naissance, l'année des enfants ou du
-      # mariage — y tombe dès sa naissance. Son verdict s'écrit à part dans
-      # `.github/etat_suite.yaml` : il ne retient pas les fichiers fabriqués,
-      # justes si la suite est verte, mais rend la course rouge.
+      # Les calculs faits ici en plus de ceux de la fabrique : le travail qui
+      # publie les réunit, pour la mémoire de la course suivante.
+      - name: Les calculs de plus
+        id: calculs
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/tranche" .cache/calculs
+          find .cache/calculs -type f -newer "$RUNNER_TEMP/reprise" -print0 \
+            | tar --null -T - -cf "$RUNNER_TEMP/tranche/calculs.tar"
+
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: tranche-${{ matrix.tranche }}
+          path: ${{ runner.temp }}/tranche
+          retention-days: 1
+
+      - name: Le verdict de la tranche
+        if: steps.suite.outcome != 'success'
+        run: exit 1
+
+  # La garde des présomptions (action 135, levier 2) : les tests rapides,
+  # rejoués sous d'autres présomptions que celles du vocabulaire
+  # (`tests/conftest.py`). Un test qui écrit en dur une valeur présumée — le
+  # jour de naissance, l'année des enfants ou du mariage — y tombe dès sa
+  # naissance. Son verdict s'écrit à part dans `.github/etat_suite.yaml` : il
+  # ne retient pas les fichiers fabriqués, justes si la suite est verte, mais
+  # rend la course rouge.
+  garde:
+    needs: fabrique
+    if: needs.fabrique.outputs.issue == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.fabrique.outputs.sources }}
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
+      - name: Installer le paquet et ses outils de test
+        run: pip install -e '.[dev]'
+
+      - uses: actions/download-artifact@v7
+        with:
+          name: fabrique
+          path: ${{ runner.temp }}/fabrique
+
+      # Les fichiers que la fabrique a refaits, et la mémoire de ses calculs ;
+      # le témoin `reprise` date ce qui se calcule après.
+      - name: Reprendre la fabrique
+        id: reprendre
+        run: |
+          if [ -s "$RUNNER_TEMP/fabrique/fabrique.patch" ]; then
+            git apply --index "$RUNNER_TEMP/fabrique/fabrique.patch"
+          fi
+          if [ -f "$RUNNER_TEMP/fabrique/calculs.tar" ]; then
+            tar -xf "$RUNNER_TEMP/fabrique/calculs.tar"
+          fi
+          touch "$RUNNER_TEMP/reprise"
+
       - name: La garde des présomptions
         id: garde
-        if: steps.fabriquer.outcome == 'success'
         continue-on-error: true
         shell: bash
-        run: PRESOMPTIONS_DECALEES=1 python -m pytest -m rapide -rfE 2>&1 | tee "$RUNNER_TEMP/garde.txt"
+        run: |
+          mkdir -p "$RUNNER_TEMP/garde"
+          trap 'echo "$? $SECONDS" > "$RUNNER_TEMP/garde/issue.txt"' EXIT
+          PRESOMPTIONS_DECALEES=1 python -m pytest -m rapide -rfE 2>&1 | tee "$RUNNER_TEMP/garde/garde.txt"
+
+      # Les calculs faits ici en plus de ceux de la fabrique : le travail qui
+      # publie les réunit, pour la mémoire de la course suivante.
+      - name: Les calculs de plus
+        id: calculs
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/garde" .cache/calculs
+          find .cache/calculs -type f -newer "$RUNNER_TEMP/reprise" -print0 \
+            | tar --null -T - -cf "$RUNNER_TEMP/garde/calculs.tar"
+
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: garde
+          path: ${{ runner.temp }}/garde
+          retention-days: 1
+
+      - name: Le verdict de la garde
+        if: steps.garde.outcome != 'success'
+        run: exit 1
+
+  # Le verdict, les fichiers refaits, la mémoire des calculs et le site : ce
+  # travail tourne aussi après un échec, dont il écrit le verdict.
+  publier:
+    needs: [fabrique, suite, garde]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      en_ligne: ${{ steps.pages.outputs.actions }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.fabrique.outputs.sources || github.ref_name }}
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      # Ce que chaque travail a laissé ; une fabrique en échec, une tranche
+      # perdue n'ont rien laissé, et le verdict le dira.
+      - uses: actions/download-artifact@v7
+        continue-on-error: true
+        with:
+          name: fabrique
+          path: ${{ runner.temp }}/fabrique
+
+      - uses: actions/download-artifact@v7
+        continue-on-error: true
+        with:
+          pattern: tranche-*
+          path: ${{ runner.temp }}/course
+
+      - uses: actions/download-artifact@v7
+        continue-on-error: true
+        with:
+          name: garde
+          path: ${{ runner.temp }}/course/garde
+
+      - name: Reprendre la fabrique
+        id: reprendre
+        run: |
+          if [ -s "$RUNNER_TEMP/fabrique/fabrique.patch" ]; then
+            git apply --index "$RUNNER_TEMP/fabrique/fabrique.patch"
+          fi
+          if [ -f "$RUNNER_TEMP/fabrique/calculs.tar" ]; then
+            tar -xf "$RUNNER_TEMP/fabrique/calculs.tar"
+          fi
+          touch "$RUNNER_TEMP/reprise"
+
+      - name: Réunir les calculs de la course
+        id: calculs
+        run: |
+          for archive in "$RUNNER_TEMP"/course/*/calculs.tar; do
+            if [ -f "$archive" ]; then
+              tar -xf "$archive"
+            fi
+          done
+
+      # L'issue de la suite, de la garde, leurs sorties bout à bout et ce que
+      # chaque travail a duré (`scripts/rassembler_course.py`).
+      - name: Rassembler la course
+        id: course
+        env:
+          FABRICATION: ${{ needs.fabrique.outputs.issue }}
+          DUREE_FABRIQUE: ${{ needs.fabrique.outputs.duree }}
+          MEMOIRE: ${{ needs.fabrique.outputs.memoire }}
+        run: python scripts/rassembler_course.py "$RUNNER_TEMP/course" >> "$GITHUB_OUTPUT"
+
+      - name: Garder la mémoire des calculs
+        if: github.event_name == 'push' && steps.course.outputs.suite == 'success' && steps.course.outputs.garde == 'success'
+        uses: actions/cache/save@v6
+        with:
+          path: .cache/calculs
+          key: calculs-${{ needs.fabrique.outputs.modele }}-${{ github.run_id }}
 
       - name: Publier le verdict et les fichiers fabriqués
         id: publier
         env:
-          FABRICATION: ${{ steps.fabriquer.outcome }}
-          SUITE: ${{ steps.suite.outcome }}
-          SORTIE_SUITE: ${{ runner.temp }}/suite.txt
-          GARDE: ${{ steps.garde.outcome }}
-          SORTIE_GARDE: ${{ runner.temp }}/garde.txt
+          FABRICATION: ${{ needs.fabrique.outputs.issue }}
+          SUITE: ${{ steps.course.outputs.suite }}
+          SORTIE_SUITE: ${{ runner.temp }}/course/suite.txt
+          GARDE: ${{ steps.course.outputs.garde }}
+          SORTIE_GARDE: ${{ runner.temp }}/course/garde.txt
+          DUREES: ${{ steps.course.outputs.durees }}
+          DUREES_SUITE: ${{ steps.course.outputs.durees_suite }}
           COURSE: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: bash scripts/publier_fabrique.sh
 
@@ -170,16 +430,16 @@ jobs:
           path: ${{ runner.temp }}/site
 
       - name: Le verdict
-        if: steps.fabriquer.outcome != 'success' || steps.suite.outcome != 'success' || steps.garde.outcome != 'success'
+        if: needs.fabrique.outputs.issue != 'success' || steps.course.outputs.suite != 'success' || steps.course.outputs.garde != 'success'
         run: |
-          echo "::error::Rouge : voir l'étape « La suite complète », « La garde des présomptions » ou « Fabriquer »."
+          echo "::error::Rouge : voir les travaux « suite », « garde » ou « fabrique »."
           exit 1
 
   # Une garde des présomptions rouge rend la course rouge, mais ne retient ni les
   # fichiers fabriqués ni le site : la suite est verte. D'où `!cancelled()`.
   en_ligne:
-    needs: suite
-    if: ${{ !cancelled() && needs.suite.outputs.en_ligne == 'oui' }}
+    needs: publier
+    if: ${{ !cancelled() && needs.publier.outputs.en_ligne == 'oui' }}
     runs-on: ubuntu-latest
     permissions:
       pages: write
