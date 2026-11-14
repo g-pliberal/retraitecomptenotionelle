@@ -59,8 +59,8 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   CARPIMKO, à la CAVP, à la CPRN et à la CIPAV —, et bornés comme ils le
   sont : soixante-dix ans chez les médecins et, jusqu'en 2023, les notaires,
   vingt trimestres à la CAVEC et à la CARPIMKO, douze à la CAVP, années
-  pleines seulement à la CIPAV, sur les seuls points de ses trente premières
-  années de cotisation, et à la CARMF d'avant 2017. Rien n'est servi
+  pleines seulement à la CIPAV, depuis 2008, sur les seuls points de ses
+  trente premières années de cotisation, et à la CARMF d'avant 2017. Rien n'est servi
   avant le texte qui date chaque règle, et les taux que les fiches
   reportaient en arrière sans texte — <!--chiffre:illustration()-->0,75<!--/--> % à la CARPIMKO, <!--chiffre:illustration()-->1<!--/--> % à la CPRN —
   sont ceux des arrêtés. Ce que la fiche ne porte pas est dit dans ses

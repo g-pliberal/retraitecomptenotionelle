@@ -1,0 +1,25 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 15 : la Cipav majore le report depuis le 1er janvier 2008"
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index JORF récupéré par `dila_index.py
+  --recuperer`, à jour du 11 novembre 2026. Arrêté du 3 octobre 2006
+  (JORFARTI000002050100) ; arrêté du 16 décembre 2021, annexe, 19°
+  (JORFARTI000044554134) ; arrêté du 20 mars 2023, annexe, 17° (JORFARTI000047334800) ;
+  les arrêtés de statuts de la Cipav de 2006 à 2013 que l'index rend, dont celui du
+  6 juillet 2012 (JORFTEXT000026200467), qui porte sur l'invalidité-décès.
+trouve: >-
+  L'article 3.15 des statuts de 2006, au seul Bulletin officiel, se relit par
+  différence, et vaut depuis le 1er janvier 2008, où tombent les deux articles de 1979
+  que l'arrêté de 2006 gardait ; aucun arrêté rendu par l'index ne le touche de 2008 à
+  2012. Le modèle ne majorait rien avant 2013 : corrigé dans les deux moteurs, par les
+  données (la période de 2000 à 2012 de `cipav_complementaire.yaml` coupée en 2008, celle
+  de 2008 à 2012 portant les paramètres de 2013). Née le 10 mars 1945, pension au
+  1er janvier 2012, un an de report : 10 210,60 € par an au lieu de 9 791,17 €
+  (419,43 € de plus). Les fiches `surcote_par_age_seul` et `decret_2026_418_liberaux`
+  relues ce jour, l'erreur passée à leur histoire.
+reste: >-
+  Les « trente années d'affiliation » : comptées au régime complémentaire depuis 1979,
+  elles manquent à une pension de 2008, que le modèle ne majore pas (376,45 € par an de
+  moins que sous un décompte depuis l'entrée à la caisse, au cas posé de la fiche). Les
+  dispositions transitoires de 2006 et l'article 3.6 d'avant 2023, non lus (question
+  22). L'année 2007 et les statuts de 1979, hors de la file.

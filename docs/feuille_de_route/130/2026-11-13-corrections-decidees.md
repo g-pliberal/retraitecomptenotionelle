@@ -157,8 +157,14 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   première est partielle (175,07 €, 537,96 € et 549,19 € de moins par an aux trois cas
   posés ; le premier dépasse les 152,05 € annoncés, 1979 étant une année entière) ; note
   `2026-11-14-correction-cipav-report-trente-premieres-annees.md`.
-- [ ] 15. **Cipav, de 2008 à 2012** : le modèle ne majore rien (au moins 215,43 € en
-  moins). Mêmes notes.
+- [x] 15. **Cipav, de 2008 à 2012** : le modèle ne majore rien (au moins 215,43 € en
+  moins). Mêmes notes. Corrigé le 14 novembre 2026 : le report est majoré pour une
+  pension qui prend effet depuis le 1er janvier 2008, comme depuis 2013, dans les deux
+  moteurs, par les données du régime (née le 10 mars 1945, pension au 1er janvier
+  2012 : 10 210,60 € par an au lieu de 9 791,17 €, 419,43 € de plus) ; les trente années
+  d'affiliation comptées depuis 1979, qui manquent à une pension de 2008, et l'année
+  2007 restent des limites déclarées ; note
+  `2026-11-14-correction-cipav-report-de-2008-a-2012.md`.
 - [ ] 16. **CARPIMKO, d'octobre à décembre 2015** : rien de majoré (au moins 397,36 € en
   moins). Notes `2026-11-06-e13-surcote-par-age-seul.md` et `…-e14-…`.
 - [ ] 17. **ASV des médecins, la durée minimale d'un an** (367,01 € de trop). Fiche

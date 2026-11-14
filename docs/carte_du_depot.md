@@ -69,7 +69,7 @@ flowchart LR
 
 Le modèle Python lit les données et fabrique le paquet que charge le site,
 `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->6 024<!--/--> Ko, par
+(<!--chiffre:poids(moteur/donnees.json)-->6 031<!--/--> Ko, par
 `scripts/construire_donnees.py`). Les témoins, dans `tests/temoins/`, le
 moteur JavaScript les simule, par le pont (`scripts/construire_temoins.py`),
 et le moteur Python doit les refaire tant qu'il garde ses jumeaux.
