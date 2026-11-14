@@ -234,8 +234,13 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   1953, pension au 1er avril 2024 : 18 280,73 € au lieu de 19 656,70 €) ; le cumul des
   limites de 20 et de 25 %, que le texte ne tranche pas, reste déclaré ; note
   `2026-11-14-correction-carcdsf-majoration-depuis-2024.md`.
-- [ ] 26. **CARCDSF, la pension du 1er janvier 2024** (la septième erreur). Fiche
+- [x] 26. **CARCDSF, la pension du 1er janvier 2024** (la septième erreur). Fiche
   `carcdsf_minoration_age_seul` ; note `2026-11-05-retouches-de-la-relecture-r-e2.md`.
+  Corrigé le 14 novembre 2026 : une pension qui prend effet le 1er janvier 2024 se
+  liquide aux statuts de 2017, ceux de 2024 ne valant que depuis le 10, dans les deux
+  moteurs (né le 1er octobre 1961, pension au 1er janvier 2024 : 10 015,14 € par an au
+  lieu de 11 906,11 €) ; le compte du trimestre entamé et ce que la caisse a servi
+  restent déclarés ; note `2026-11-14-correction-carcdsf-pension-du-1er-janvier-2024.md`.
 - [ ] 27. **CAVAMAC, la minoration de 25 % à 62 ans.** Note
   `2026-11-05-carte-des-fiches-cavamac-lue-au-droit.md`.
 - [ ] 28. **CAVAMAC, de septembre à décembre 2023** (cinq points de trop au plus). Même

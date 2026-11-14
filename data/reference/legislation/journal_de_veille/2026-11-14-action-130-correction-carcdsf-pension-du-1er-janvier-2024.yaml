@@ -1,0 +1,26 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 26 : les statuts de 2017 de la CARCDSF servis jusqu'au 9 janvier 2024"
+consulte: >-
+  `python scripts/veille_droit.py` ; les index JORF et LEGI récupérés par
+  `dila_index.py --recuperer`, à jour du 11 novembre 2026. Arrêté du 27 décembre 2023
+  (JORFTEXT000048880697), publié le 9 janvier 2024 : son corps, et son annexe
+  (JORFARTI000048880707), où « à compter », « en vigueur », « prennent effet »,
+  « prenant effet » et « 1er janvier 2024 » ont été cherchés. Statuts de 2017,
+  article 35 (JORFARTI000036251928), relus dans la fiche
+  `carcdsf_minoration_age_seul`.
+trouve: >-
+  Le texte tranche : l'arrêté ne fixe aucune date d'entrée en vigueur ni
+  d'application à la liquidation ; publié le 9 janvier 2024, il vaut depuis le 10, et
+  « 1er janvier 2024 » n'y borne que les trimestres de la majoration. Le modèle
+  servait les statuts de 2024 dès le 1er janvier : corrigé dans les deux moteurs, par
+  les données (`date_effet` aux périodes de 2023 et de 2024 de
+  `carcdsf_complementaire.yaml`). Né le 1er octobre 1961, pension au 1er janvier 2024
+  à 62 ans et 3 mois : dix-neuf trimestres à 1,50 %, 0,715 au lieu de 0,85, soit
+  10 015,14 € par an au lieu de 11 906,11 € ; né le 1er janvier 1953, à 71 ans : 1,19
+  au lieu de 1,15. L'erreur est passée à l'histoire de la fiche.
+reste: >-
+  Ce que la caisse a servi aux pensions du 1er janvier 2024, non lu ; le compte du
+  trimestre entamé sous « 1,50 % par trimestre manquant », que le texte ne dit pas et
+  que la fiche déclare. L'article 1er du code civil, qui fonde l'entrée en vigueur au
+  lendemain de la publication, n'est pas à l'index. Les lignes 27 à 30 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).
