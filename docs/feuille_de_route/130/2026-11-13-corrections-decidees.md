@@ -173,8 +173,14 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   2015 : 5 695,55 € par an au lieu de 5 298,19 €, 397,36 € de plus) ; la date d'effet
   au trimestre civil, non lue de 1987 à 2026, reste une limite déclarée ; note
   `2026-11-14-correction-carpimko-report-octobre-2015.md`.
-- [ ] 17. **ASV des médecins, la durée minimale d'un an** (367,01 € de trop). Fiche
-  `asv_medecins_points`.
+- [x] 17. **ASV des médecins, la durée minimale d'un an** (367,01 € de trop). Fiche
+  `asv_medecins_points`. Corrigé le 14 novembre 2026 : la prestation n'est plus
+  attribuée au médecin qui a exercé moins d'un an, pour une pension qui prend effet
+  depuis 1985, l'exercice compté de date à date sur les périodes déclarées, dans les
+  deux moteurs (né le 1er janvier 1960, médecin de janvier à septembre 2000 : rien, au
+  lieu de 367,01 € par an) ; les dix ans d'avant le 15 février 1985 et la même durée aux
+  quatre autres régimes des praticiens conventionnés restent à porter ; note
+  `2026-11-14-correction-asv-medecins-un-an-d-exercice.md`.
 - [ ] 18. **CARMF et ASV, né le premier jour d'un trimestre** : un trimestre de trop
   (99,89 € et 119,42 € de trop). Note `2026-11-06-e13-surcote-par-age-seul.md`.
 - [ ] 19. **CARPIMKO, les générations 1955 et antérieures de 2015 à 2024** (136,90 € de

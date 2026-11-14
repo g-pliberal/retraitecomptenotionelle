@@ -1,0 +1,26 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 17 : l'ASV des médecins n'est pas attribuée avant un an d'exercice"
+consulte: >-
+  `python scripts/veille_droit.py` ; les index LEGI et JORF récupérés par
+  `dila_index.py --recuperer`, à jour du 11 novembre 2026. Décret n° 72-968, article 7,
+  dans ses rédactions du 15 février 1985 (LEGIARTI000006765959) et du 1er juillet 2026
+  (LEGIARTI000054168425) ; décret n° 71-542, article 7, de 1971 (LEGIARTI000006766682)
+  et de 1985 (LEGIARTI000006766683) ; décret n° 85-205 du 12 février 1985 au Journal
+  officiel (JORFTEXT000000520378) ; le décret n° 72-968 cherché à « rembours ».
+trouve: >-
+  La prestation « est attribuée aux médecins ayant exercé, pendant au moins un an, leur
+  activité professionnelle non-salariée dans le cadre des conventions », depuis le
+  15 février 1985, sans changement en 2026 ; dix ans avant. Le modèle ne posait aucune
+  durée : corrigé dans les deux moteurs, par un champ de la fiche de régime
+  (`exercice_minimum_annees`, à 1 sur les périodes de `asv_conventionnes.yaml` depuis
+  1985), l'exercice compté de date à date sur les périodes d'activité déclarées. Né le
+  1er janvier 1960, médecin de janvier à septembre 2000, parti à 65 ans : rien, au
+  lieu de 27 points × 11,82 € × 1,15 = 367,01 € par an. La fiche
+  `asv_medecins_points` relue ce jour, l'erreur passée à son histoire.
+reste: >-
+  Les dix ans d'avant le 15 février 1985, lus et non portés (l'exercice d'avant 1972
+  n'est pas compté au régime). Ce que deviennent les cotisations d'un exercice de
+  moins d'un an, que le décret ne dit pas. La même durée aux quatre autres régimes de
+  prestations complémentaires des praticiens conventionnés, que l'article 7 du décret
+  n° 71-542 régissait aussi, non relue. Le décompte des trimestres de l'ASV, non
+  confronté aux articles 2 et 3 du décret n° 72-968.

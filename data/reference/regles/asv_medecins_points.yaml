@@ -473,20 +473,26 @@ approximations:
     en vigueur laisse 11,82 €
 - version: [trente_points_seize, vingt_sept_points, forfait_et_ajustement]
   ecart: >-
-    ERREUR DÉCLARÉE (action 130, E16), non corrigée. Depuis le 15 février 1985, la
-    prestation n'est attribuée qu'aux médecins « ayant exercé, pendant au moins un an »
-    (article 7 ; dix ans avant, décret n° 71-542, article 7) ; le modèle ne pose aucune
-    durée minimale, et sert les points d'un exercice plus court. Le décompte des
-    trimestres par le modèle n'est pas confronté non plus à l'article 3 (l'affiliation
-    au premier jour du trimestre civil suivant) ni à l'article 2 (« au prorata du nombre
-    de trimestres cotisés ») : relevé le 13 novembre 2026, six mois dans une année
-    civile donnent 27 points, trois mois aucun, six mois à cheval sur deux années
-    aucun ; non mesuré
+    La durée d'exercice de l'article 7. Depuis le 14 novembre 2026, le modèle n'attribue
+    la prestation, pour une pension qui prend effet depuis 1985, qu'au médecin « ayant
+    exercé, pendant au moins un an » (`exercice_minimum_annees`), l'exercice compté de
+    date à date sur les périodes d'activité déclarées. Quatre choses restent approchées.
+    Les dix ans d'avant le 15 février 1985 (décret n° 71-542, article 7,
+    LEGIARTI000006766682, et la mesure transitoire de l'article 7 du décret n° 72-968)
+    ne sont pas portés : le modèle ne compte pas au régime l'exercice d'avant 1972, et
+    sert sans durée minimale une pension d'avant 1985 ; celles du 1er janvier et du
+    1er février 1985 se voient demander un an, et non dix. Une carrière posée ligne à
+    ligne, sans période déclarée, compte ses années civiles : l'année d'un changement de
+    métier y va entière au métier qui en occupe le plus de mois. Le texte ne dit pas ce
+    que deviennent les cotisations du médecin à qui rien n'est attribué : le modèle ne
+    les rembourse pas, et le compte notionnel les garde. Le décompte des trimestres par
+    le modèle n'est confronté ni à l'article 3 (l'affiliation au premier jour du
+    trimestre civil suivant) ni à l'article 2 (« au prorata du nombre de trimestres
+    cotisés ») : relevé le 13 novembre 2026, six mois dans une année civile donnent
+    27 points, trois mois aucun, six mois à cheval sur deux années aucun
   effet: >-
-    cas posé (moteur Python, réglages par défaut), homme né en janvier 1960, salarié du
-    privé non cadre de 22 à 40 ans et de 40 ans 9 mois à la liquidation à 65 ans (niveau
-    1), médecin libéral de 40 ans à 40 ans 9 mois : le modèle sert 27 points × 11,82 € ×
-    1,15 = 367,01 € par an ; le texte, rien : 367,01 € de trop
+    non mesuré ; une pension d'avant 1985 est servie à tort après moins de dix ans
+    d'exercice
 sources:
   lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
@@ -501,9 +507,9 @@ sources:
     rédaction de 1972 de l'article 2 (hors de l'index LEGI) et l'arrêté de 1972 qui
     fixait la cotisation avant le code ; à couper les versions à la date de liquidation
     (`liquidation.date_effet`), qui décide de la valeur de service et de la durée
-    minimale ; à chiffrer les liquidations d'avant 1999. Une erreur déclarée, non
-    corrigée (approximations) : la durée minimale d'un an non servie. La valeur de
-    service portée aux prix est corrigée depuis le 14 novembre 2026 (historique).
+    minimale ; à chiffrer les liquidations d'avant 1999. La durée minimale d'un
+    an, non servie alors, l'est depuis le 14 novembre 2026, comme la valeur de service
+    n'est plus portée aux prix (historique).
   - >-
     Relu le 14 novembre 2026 (action 130, file des corrections, ligne 8), à l'index LEGI
     à jour du 13 novembre 2026 : l'article 4 du décret n° 2011-1644, dans ses rédactions
@@ -523,6 +529,18 @@ sources:
     année, de 1972 à 2011, aux arrêtés qui approuvent les conventions et leurs
     avenants ; l'article 1er, a, du décret n° 71-544 d'avant 1981 ; la convention
     médicale de 2005 pour la part des caisses.
+  - >-
+    Relu le 14 novembre 2026 (action 130, file des corrections, ligne 17), à l'index LEGI
+    à jour du 11 novembre 2026 : l'article 7 du décret n° 72-968 dans ses rédactions du
+    15 février 1985 (LEGIARTI000006765959) et du 1er juillet 2026
+    (LEGIARTI000054168425), mot pour mot les mêmes sur la durée ; l'article 7 du décret
+    n° 71-542, dix ans jusqu'au 15 février 1985 (LEGIARTI000006766682), un an ensuite
+    (LEGIARTI000006766683) ; au Journal officiel, le décret n° 85-205
+    (JORFTEXT000000520378). Le décret n° 72-968 ne parle de remboursement qu'à son
+    article 6, pour le tarif de la consultation : rien sur les cotisations d'un exercice
+    trop court. Restent à porter : les dix ans d'avant 1985, avec
+    l'exercice d'avant 1972 ; à lire : ce que la CARMF fait des cotisations d'un
+    exercice de moins d'un an.
   lectures:
   - type: legifrance
     reference: >-
@@ -543,6 +561,13 @@ sources:
       1985 et de 2004 ; décrets n° 81-274, n° 94-564 et n° 2004-1319, loi n° 96-452,
       article 33, au Journal officiel : index LEGI et JORF du dépôt, à jour au 11
       novembre 2026
+    date: 2026-11-14
+  - type: legifrance
+    reference: >-
+      décret n° 72-968, article 7, rédactions de 1985 et de 2026 (LEGIARTI000006765959,
+      LEGIARTI000054168425) ; décret n° 71-542, article 7, de 1971 et de 1985
+      (LEGIARTI000006766682, LEGIARTI000006766683) ; décret n° 85-205 au Journal
+      officiel : index LEGI et JORF du dépôt, à jour au 11 novembre 2026
     date: 2026-11-14
 textes_sans_effet:
 - id: LEGIARTI000006765940
@@ -628,24 +653,27 @@ code:
     droit/acquerir.py : acquerir ; moteur/compte.py :
     ConstructeurCompte._cotisation_ligne ; donnees/regimes.py :
     PeriodeRegime.prise_en_charge ; droit/liquider.py : liquider_chaque_regime,
-    valeur_point_fiche
+    valeur_point_fiche, annees_d_exercice
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/compte.js :
     ConstructeurCompte._cotisationLigne ; moteur/js/regimes.js :
     PeriodeRegime.priseEnCharge ; moteur/js/droit/liquider.js : liquiderChaqueRegime,
-    valeurPointFiche
+    valeurPointFiche, anneesDExercice
   parametres: >-
     regimes/asv_conventionnes.yaml : cotisation_forfaitaire_euros,
     points_par_trimestre_valide, points_ajustement_par_forfait,
     points_ajustement_maximum, taux_cotisation_retraite, valeur_point_euros,
-    valeur_point_annee, part_assurance_maladie_forfait, part_assurance_maladie_taux
+    valeur_point_annee, part_assurance_maladie_forfait, part_assurance_maladie_taux,
+    exercice_minimum_annees
   tests: >-
     tests/temoins/simulations.json, les carrières du statut medecin_liberal ;
     tests/test_sections_sante.py :
     test_la_valeur_de_service_de_l_asv_des_medecins_est_celle_du_texte,
     test_l_asv_de_2002_et_de_2005_se_pose_a_la_main,
     test_le_medecin_verse_a_l_asv_les_consultations_du_texte_et_les_caisses_le_double,
-    test_l_appel_de_l_asv_suit_l_article_6_du_decret_de_1972
+    test_l_appel_de_l_asv_suit_l_article_6_du_decret_de_1972,
+    test_l_asv_n_est_pas_attribuee_au_medecin_qui_a_exerce_moins_d_un_an,
+    test_la_fiche_de_l_asv_porte_la_duree_d_exercice_de_l_article_7
   moteur: >-
     Ses données : regimes/asv_conventionnes.yaml, vingt-sept périodes en points, statut
     medecin_liberal ; la part des caisses va au compte par
@@ -701,6 +729,23 @@ historique:
   au lieu de 114,34 € ; en 1993, 660,61 € au lieu de 343,01 € ; en 1994, 792,73 € au
   lieu de 348,67 €. La prestation du scénario 1, dont les points ne dépendent pas de
   la cotisation, ne change pas.
+- >-
+  2026-11-14 — action 130, file des corrections décidées le 13 novembre 2026, ligne 17 :
+  la prestation n'est plus attribuée avant un an d'exercice. L'article 7 du décret
+  n° 72-968 la réserve, depuis le 15 février 1985, « aux médecins ayant exercé, pendant
+  au moins un an, leur activité professionnelle non-salariée dans le cadre des
+  conventions » ; le modèle ne posait aucune durée, et servait les points d'un
+  exercice plus court (erreur déclarée le 6 novembre 2026, action 130, E16). Les
+  périodes de la fiche de régime portent la durée depuis 1985
+  (`exercice_minimum_annees: 1`), lue à la date d'effet ; l'exercice se compte de date
+  à date sur les périodes d'activité déclarées, et non sur les lignes annuelles, où
+  l'année d'un changement de métier va entière au métier qui en occupe le plus de
+  mois : neuf mois y faisaient une année. Le régime garde sa ligne, à zéro, avec sa
+  raison. Au cas posé, dans les deux moteurs : homme né le 1er janvier 1960, salarié du
+  privé non cadre depuis ses 22 ans, médecin libéral de janvier à septembre 2000,
+  salarié ensuite, parti à 65 ans : rien, au lieu de 27 points × 11,82 € × 1,15 =
+  367,01 € par an ; médecin toute l'année 2000, 367,01 €, inchangé. Aucun témoin ne
+  bouge. Les dix ans d'avant 1985 restent une limite déclarée (approximations).
 effet: >-
   Les médecins libéraux conventionnés : près du tiers de la pension d'un médecin de
   secteur 1 ; le modèle en rend les points annuels à moins de 1 % de la calculette de la

@@ -199,7 +199,15 @@ periodes:
       2012 pour tous les points (décret n° 2011-1644, art. 4,
       LEGIARTI000024853556), prise pour valeur de 2011 et ramenée aux prix
       de l'année de liquidation ; aucune valeur antérieure n'est dans
-      l'index, niveau `estimee`.
+      l'index, niveau `estimee`. DURÉE
+      D'EXERCICE (`exercice_minimum_annees`, sur chaque période depuis
+      celle-ci) : la prestation « est attribuée aux médecins ayant exercé,
+      pendant au moins un an, leur activité professionnelle non-salariée
+      dans le cadre des conventions » (décret n° 72-968, art. 7,
+      LEGIARTI000006765959 depuis le 15 février 1985, LEGIARTI000054168425
+      depuis le 1er juillet 2026) ; avant, dix ans (décret n° 71-542, art.
+      7, LEGIARTI000006766682), que la fiche ne porte pas. Le modèle ne
+      posait aucune durée jusqu'au 14 novembre 2026 (action 130).
   - debut: 1988
     fin: 1988
     type_calcul: points
