@@ -1,0 +1,32 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 14 : le report de la Cipav ne majore que les points des trente premières années de cotisation"
+consulte: >-
+  `python scripts/veille_droit.py` ; les index JORF et LEGI récupérés par `dila_index.py
+  --recuperer`, à jour du 11 novembre 2026. Décret n° 79-262, article 5-2, en vigueur le
+  1er juillet 2026 (LEGIARTI000054168515) ; son article 1er (LEGIARTI000006767470) et
+  son article 2 (LEGIARTI000006767473) dans leur rédaction de 1979 ; arrêté du 20 mars
+  2023, annexe, 17° (JORFARTI000047334800) ; décret n° 2026-418, article 20
+  (JORFARTI000054153655) ; le décret de 1979 au Journal officiel (JORFTEXT000000702512).
+trouve: >-
+  Le texte tranche : la majoration pour report « s'applique uniquement aux points acquis
+  au titre des trente premières années de cotisation à la CIPAV ». Le modèle majorait
+  tous les points depuis 2013 : corrigé dans les deux moteurs, par un paramètre de
+  période (`surcote_premieres_annees: 30`, périodes de `cipav_complementaire.yaml`
+  depuis 2013). Le décompte, que le texte ne tranche pas, est le plus favorable à
+  l'affilié (décision du propriétaire du 13 novembre 2026) : trente ans de date à date
+  depuis la première cotisation, une année civile de plus quand la première est
+  partielle. Fait neuf : le régime est institué « A compter du 1er janvier 1979 »
+  (article 1er), 1979 est entière pour l'affilié d'avant, et ses trente années vont de
+  1979 à 2008. Née le 10 mars 1949, pension au 1er janvier 2016 : 12 450,45 € par an au
+  lieu de 12 625,51 € (175,07 € de moins) ; née le 10 mars 1957, pension au 1er janvier
+  2026 : 22 139,44 € au lieu de 22 677,41 € (537,96 €) ; née le 10 mars 1959, pension
+  au 1er juillet 2027 : 23 451,33 € au lieu de 24 000,52 € (549,19 €). Les fiches
+  `surcote_par_age_seul` et `decret_2026_418_liberaux` relues ce jour, l'erreur passée à
+  leur histoire.
+reste: >-
+  Le décompte d'une première année partielle reste un point que le texte ne tranche pas
+  (jusqu'à 30,19 € par an de trop sous les autres lectures, aux cas posés) ; l'article
+  3.6 des statuts d'avant 2023, qui définissait les années, n'est pas lu ; les années
+  cotisées avant 1979 au régime auquel celui de 1979 se substitue ne sont pas comptées
+  (non lu). La Cipav de 2008 à 2012 : ligne 15 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).

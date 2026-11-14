@@ -148,10 +148,15 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   1952, pension au 1er janvier 2017 : 1,20 au lieu de 1,1375) ; le passage à 0,75 % des
   nés du second semestre de 1951 reste approché, avec l'erreur de la ligne 18 ; note
   `2026-11-14-correction-carmf-asv-age-legal-debut-2017.md`.
-- [ ] 14. **Cipav, le report depuis 2013** : seuls les points des trente premières années
+- [x] 14. **Cipav, le report depuis 2013** : seuls les points des trente premières années
   se majorent (152,05 €, 537,96 € et 549,19 € de trop au moins), au décompte des trente ans
   le plus favorable à l'affilié. Fiche `surcote_par_age_seul` ; notes
-  `2026-11-06-e10-decret-2026-418.md` à `2026-11-06-e13-surcote-par-age-seul.md`.
+  `2026-11-06-e10-decret-2026-418.md` à `2026-11-06-e13-surcote-par-age-seul.md`. Corrigé le
+  14 novembre 2026 : depuis 2013, le report ne majore plus que les points des trente
+  premières années de cotisation, dans les deux moteurs, une année de plus quand la
+  première est partielle (175,07 €, 537,96 € et 549,19 € de moins par an aux trois cas
+  posés ; le premier dépasse les 152,05 € annoncés, 1979 étant une année entière) ; note
+  `2026-11-14-correction-cipav-report-trente-premieres-annees.md`.
 - [ ] 15. **Cipav, de 2008 à 2012** : le modèle ne majore rien (au moins 215,43 € en
   moins). Mêmes notes.
 - [ ] 16. **CARPIMKO, d'octobre à décembre 2015** : rien de majoré (au moins 397,36 € en
