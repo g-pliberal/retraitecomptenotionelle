@@ -1,0 +1,30 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 20 : la CARPIMKO minore par l'âge seul de 1984 au 4 juin 1987"
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index LEGI récupéré par
+  `dila_index.py legi --recuperer`, à jour du 11 novembre 2026, retiré après lecture.
+  Statuts approuvés par l'arrêté du 22 février 1984 (JORFTEXT000000315359), articles 9
+  à 13 (LEGIARTI000006782878 à LEGIARTI000006782882), que LEGI garde dans leur seule
+  rédaction du 1er janvier 1984. L'index JORF n'a pas été rouvert : l'arrêté du 20 mai
+  1987 (JORFTEXT000000844323) n'y a que son titre (relecture R-E4 du 5 novembre 2026).
+trouve: >-
+  Article 12 : la retraite anticipée « est affectée des coefficients de minoration
+  suivants : 0,75 si la liquidation intervient à soixante ans », 0,80 à soixante et un
+  ans, jusqu'à 0,95 à soixante-quatre ans ; aucune durée n'y entre. Article 10, 1° :
+  65 ans, « ou de soixante ans en cas d'inaptitude au travail, ou s'ils ont la qualité
+  d'ancien déporté ou interné ». Article 11 : la loi du 21 novembre 1973 sur les anciens
+  prisonniers de guerre et les anciens combattants s'applique au régime. Le modèle
+  annulait la minoration quand la durée de la base était atteinte, et minorait jusqu'à
+  67 ans les générations d'avant 1930 : corrigé dans les deux moteurs, par les données,
+  pour les pensions du 1er janvier 1984 au 4 juin 1987 (période de 1984 de
+  `carpimko_complementaire.yaml`, `date_effet`, `decote_annulee_par_la_duree`,
+  `age_taux_plein: 65`, `age_sans_coefficient_de_l_inapte: 60`,
+  `categories_sans_coefficient`). Né le 10 mars 1925, entré à vingt ans, pension du
+  1er avril 1985 : 0,75, 85,71 € par an au lieu de 114,27 € (28,57 € de moins). La fiche
+  `carpimko_ages_2015` relue ce jour, l'erreur passée à son histoire.
+reste: >-
+  Le repli sur 67 ans des générations d'avant 1930, que la table des âges d'annulation
+  de la décote ne porte pas : déclaré à la CARPIMKO de juin 1987 à 1995 (46,58 € par an
+  de moins au cas posé), à mesurer aux quatorze autres régimes en points qui portent le
+  même repli avant 1995. L'âge entamé, que l'article 12 ne tranche pas. Le texte de
+  l'arrêté du 20 mai 1987 et celui du 20 novembre 1996, hors de l'index.

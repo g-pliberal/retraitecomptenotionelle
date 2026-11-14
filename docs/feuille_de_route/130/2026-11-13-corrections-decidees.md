@@ -198,7 +198,15 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
   5 544,34 € par an au lieu de 5 681,23 €) ; les générations suivantes, et toutes depuis
   2024, restent une limite déclarée ; note
   `2026-11-14-correction-carpimko-generations-1955-et-anterieures.md`.
-- [ ] 20. **CARPIMKO, de 1984 au 4 juin 1987** (28,57 € de trop). Mêmes fiche et note.
+- [x] 20. **CARPIMKO, de 1984 au 4 juin 1987** (28,57 € de trop). Mêmes fiche et note.
+  Corrigé le 14 novembre 2026 : pour une pension du 1er janvier 1984 au 4 juin 1987, la
+  minoration est celle de l'âge seul, 0,75 à 60 ans, 0,95 à 64 ans, que la durée
+  n'annule plus, jusqu'à 65 ans pour toute génération, l'inapte, l'ancien déporté et
+  l'ancien combattant servis sans coefficient, dans les deux moteurs, par les données
+  du régime (né le 10 mars 1925, pension du 1er avril 1985 : 85,71 € par an au lieu de
+  114,27 €) ; le repli sur 67 ans des générations d'avant 1930, relevé au passage dans
+  quinze régimes avant 1995, est déclaré, non corrigé ; note
+  `2026-11-14-correction-carpimko-age-seul-de-1984-a-1987.md`.
 - [x] 21. **CARCDSF, du 11 octobre au 31 décembre 2007** : les statuts de 2007 non servis.
   Fiche `carcdsf_minoration_age_seul` ; note
   `2026-11-05-carte-des-fiches-carcdsf-lue-au-droit.md`, « Ce que l'étape laisse ».

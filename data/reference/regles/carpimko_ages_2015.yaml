@@ -459,6 +459,22 @@ approximations:
     Le modèle ne sert rien d'une pension qui prend effet avant 1984, au titre des
     régimes de 1956 que la CARPIMKO remplace : leurs statuts ne sont pas lus.
   effet: non mesuré
+- version: [statuts_de_1987]
+  textes: arrêté du 20 mai 1987, non lu
+  ecart: >-
+    Erreur du modèle, déclarée, non corrigée (relevée le 14 novembre 2026, à la
+    correction de la ligne 20 de la file) : la table des âges d'annulation de la décote
+    commence à la génération 1930, et la période de 1987 du régime replie les
+    générations d'avant sur ses 67 ans, quand la règle que le modèle présume annule la
+    minoration à 65 ans. Né le 10 mars 1925, entré à trente ans, sans sa durée,
+    l'auxiliaire médical part à 65 ans le 1er avril 1990 : le modèle le minore de huit
+    trimestres, 0,90, 419,20 € par an, au lieu de 465,78 €. Quatorze autres régimes
+    portent le même repli à leurs périodes d'avant 1995 (note
+    `130/2026-11-14-correction-carpimko-age-seul-de-1984-a-1987.md`).
+  effet: >-
+    46,58 € par an de moins dans le cas posé ; dix points de la pension, entre 63 et
+    67 ans, pour les générations d'avant 1930 qui n'ont pas la durée, de juin 1987 à
+    1995
 - version: [statuts_de_1984]
   textes: statuts de 1984, article 12
   ecart: >-
