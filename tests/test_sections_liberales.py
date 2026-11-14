@@ -690,6 +690,46 @@ def test_la_cipav_ne_majore_que_les_trente_premieres_annees_dans_les_deux_moteur
     assert pension(controle)["detail"].endswith("coefficient de majoration 1.0500")
 
 
+def test_la_cipav_majore_le_report_depuis_2008_dans_les_deux_moteurs():
+    """Ligne 15 de la file des corrections (action 130) : l'article 3.15 des
+    statuts de 2006 vaut depuis le 1er janvier 2008, où tombent les deux
+    articles de 1979 que l'arrêté du 3 octobre 2006 gardait
+    (JORFARTI000002050100) ; les arrêtés du 16 décembre 2021, 19°
+    (JORFARTI000044554134), et du 20 mars 2023, 17° (JORFARTI000047334800),
+    en montrent le texte : 5 % par année entière de report après 65 ans, avec
+    trente années d'affiliation, sur les points des trente premières années.
+    Le modèle ne majorait rien avant 2013."""
+    from outils_pont import servi_et_refait
+    from test_complementaires_liberales_a_leur_age import REQUETE
+
+    requete = {**REQUETE, "statut": "profession_liberale", "liquidation": "66.75",
+               "debut": "22"}
+    # Née le 10 mars 1945, libérale depuis 1967, pension au 1er janvier 2012,
+    # un an entier de report (65 ans le 10 mars 2010) ; trente-trois années au
+    # régime, de 1979 à 2011, les trente premières de 1979 à 2008. Cotisations
+    # revalorisées de la note `130/2026-11-06-e11-surcote-par-age-seul.md` :
+    # 157 922,1741 × 0,062 = 9 791,1748 ; 0,05 × 0,062 × 135 298,4577 =
+    # 419,4252 ; 10 210,60 €.
+    # Née le 10 mars 1942, pension au 1er janvier 2009 : trente années au
+    # régime, de 1979 à 2008, toutes majorées, 1,05.
+    # Née le 10 mars 1940, pension au 1er janvier 2007 : l'année 2007, que le
+    # texte ne tranche pas, reste hors de la file, sans majoration.
+    cas = [{"cle": naissance, "requete": {**requete, "naissance": naissance}}
+           for naissance in ("1945-03-10", "1942-03-10", "1940-03-10")]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+
+    def pension(cle):
+        return {p["regime"]: p for p in servis[cle]["actuel"]
+                ["pensions_par_regime"]}["cipav_complementaire"]
+
+    de_2012 = pension("1945-03-10")
+    assert de_2012["montant"] == pytest.approx(10210.60, abs=0.01), de_2012["detail"]
+    assert "de 1979 à 2008" in de_2012["detail"]
+    assert pension("1942-03-10")["detail"].endswith("coefficient de majoration 1.0500")
+    assert "majoration" not in pension("1940-03-10")["detail"]
+
+
 # -- la CNAVPL ------------------------------------------------------------------
 
 

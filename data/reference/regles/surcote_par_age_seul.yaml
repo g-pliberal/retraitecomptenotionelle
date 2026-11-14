@@ -45,7 +45,11 @@ effet: >-
   majorait tous — née le 10 mars 1949, pension au 1er janvier 2016, un an de report :
   12 625,51 € servis, 12 450,45 € depuis, 175,07 € par an de trop ; corrigé ce jour
   (action 130, décision du propriétaire du 13 novembre, ligne 14 de la file), dans les
-  deux moteurs ; la CPRN,
+  deux moteurs ; elle est servie depuis le 1er janvier 2008, où tombent les derniers
+  articles des statuts de 1979 : jusqu'au 14 novembre 2026, le modèle ne majorait rien
+  avant 2013 — née le 10 mars 1945, pension au 1er janvier 2012, un an de report :
+  9 791,17 € servis, 10 210,60 € depuis, 419,43 € par an servis en moins ; corrigé ce
+  jour (ligne 15 de la file), dans les deux moteurs, par les données du régime ; la CPRN,
   les seuls trimestres d'exercice (`surcote_trimestres_cotises`). À la CAVEC, les taux
   changent aux pensions qui prennent effet depuis le 5 septembre 2018 (0,75 %) et depuis
   le 7 juillet 2025 (1,25 %), lendemains de la publication de deux arrêtés sans date
@@ -1437,15 +1441,23 @@ approximations:
   regime: cipav_complementaire
   textes: statuts, article 3.15, relu par différence ; arrêté du 3 octobre 2006
   ecart: >-
-    Erreur déclarée, non corrigée (candidat, au propriétaire), sous la réserve des
-    dispositions transitoires de 2006 : de 2008 à 2012, le modèle ne majore rien
-    (`surcote_par_trimestre: null` jusqu'en 2012), le texte majore. Si les trente années
-    d'affiliation se comptent depuis 1979, une pension de 2008 n'en a que vingt-neuf :
-    rien n'est dû cette année-là, le modèle sert juste ; dès 2009, trente au moins.
+    Point que le texte ne tranche pas : les « trente années d'affiliation à la
+    C•I•P•A•V » qui ouvrent le report. Le modèle les compte au régime complémentaire,
+    cent vingt trimestres depuis 1979 (`surcote_affiliation_minimale_trimestres`) : une
+    pension de 2008 n'en a que vingt-neuf, et il ne la majore pas ; comptées depuis
+    l'entrée à la caisse, elle le serait. Les dispositions transitoires de 2006, non
+    lues, peuvent aussi borner les points majorés (question 22). Jusqu'au 14 novembre
+    2026, le modèle ne majorait rien de 2008 à 2012 (`surcote_par_trimestre: null`),
+    quand le texte majore : erreur corrigée ce jour (action 130, décision du
+    propriétaire du 13 novembre, ligne 15 de la file), par la période de 2008 à 2012 de
+    `cipav_complementaire.yaml`, dans les deux moteurs.
   effet: >-
-    au moins 215,43 € par an servis en moins pour un an de report, pension au 1er janvier
-    2012 (419,43 € sous les trois décomptes de la première année du régime), sous toutes
-    les lectures de l'affiliation ; en 2008, 0 € si elle se compte depuis 1979
+    née le 10 mars 1941, libérale depuis 1963, pension au 1er janvier 2008, un an de
+    report : 7 528,93 € servis sans majoration ; si l'affiliation se compte depuis
+    l'entrée à la caisse, 0,0031 × 121 434,2830 = 376,45 € par an servis en moins, les
+    vingt-neuf années étant toutes des trente premières. L'erreur corrigée : née le
+    10 mars 1945, pension au 1er janvier 2012, 9 791,17 € servis, 10 210,60 € depuis,
+    419,43 € par an servis en moins
 - version: [cipav_2007]
   regime: cipav_complementaire
   textes: arrêté du 3 octobre 2006 (JORFARTI000002050100)
@@ -1588,16 +1600,21 @@ sources:
     moins : le régime est institué « A compter du 1er janvier 1979 » (décret n° 79-262,
     article 1er, LEGIARTI000006767470, relu le 14 novembre 2026), 1979 y est une année
     entière, et les trente années vont de 1979 à 2008 ; les décomptes de 1980 à 2009 et
-    de 1979 à 2009 ne se posent que pour une première année partielle. (2) DE 2008 À 2012, ERREUR DÉCLARÉE, non
-    corrigée (candidat, au propriétaire), sous une réserve : le modèle ne majore rien
-    (périodes de 1979 à 2012, `surcote_par_trimestre: null`), le texte le fait. Née le
-    10 mars 1945, pension au 1er janvier 2012 : le modèle sert 157 922,1741 × 0,062 =
+    de 1979 à 2009 ne se posent que pour une première année partielle. (2) DE 2008 À 2012, ERREUR CORRIGÉE le
+    14 novembre 2026 (décision du propriétaire du 13 novembre, ligne 15 de la file) : le
+    modèle ne majorait rien (périodes de 1979 à 2012, `surcote_par_trimestre: null`), le
+    texte le fait, et la période de 2008 à 2012 de `cipav_complementaire.yaml` le sert
+    depuis, au décompte de (1) : 10 210,60 € au cas qui suit, 419,43 € de plus. Le cas
+    posé d'avant la correction. Née le
+    10 mars 1945, pension au 1er janvier 2012 : le modèle servait 157 922,1741 × 0,062 =
     9 791,17 €, sans majoration ; le texte ajoute 0,0031 fois les cotisations des trente
     premières années : de 1979 à 2008, 135 298,4577 €, 419,43 € par an servis en moins ;
     de 1980 à 2009, 141 074,4652 €, 437,33 € ; de 1979 à 2009, 142 608,1012 €,
     442,09 € ; depuis l'affiliation, en 1967, les trente années vont de 1967 à 1996, les
     points de 1979 à 1996, 69 492,8927 €, 215,43 € : au moins 215,43 € par an, au moins
-    419,43 € sous les trois décomptes de la première année. La réserve : les
+    419,43 € sous les trois décomptes de la première année ; 1979 étant une année
+    entière du régime, les trente années vont de 1979 à 2008, et la correction sert
+    419,43 €. La réserve, qui reste : les
     dispositions transitoires de 2006, non lues, peuvent borner les points majorés
     (question 22). (3) EN 2007, POINT NON TRANCHÉ. Née le 10 mars 1940, libérale depuis
     mars 1962, pension au 1er janvier 2007 (66 ans et 9 mois ; 65 ans le 10 mars 2005) :
