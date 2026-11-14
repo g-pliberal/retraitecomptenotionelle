@@ -133,16 +133,20 @@ def test_le_pere_n_a_pas_l_anticipation_des_meres(simulateur):
 
 
 def test_la_carcdsf_majore_apres_son_age(simulateur):
-    """Huit trimestres civils entiers après 67 ans, 1,25 % chacun depuis 2024.
+    """Sept trimestres civils entiers après celui des 67 ans, 1,25 % chacun
+    depuis 2024 : né en janvier 1957, parti en janvier 2026, d'avril 2024 à
+    décembre 2025 — le trimestre « incluant l'âge » ne compte pas.
 
-    Avant 2011 la caisse ne majorait pas ; de 2011 à 2023, 1 % par trimestre.
+    Avant 2011 la caisse ne majorait pas ; de 2011 à 2023, 1 % par trimestre :
+    né en janvier 1948, 65 ans en janvier 2013, parti en janvier 2015, sept
+    trimestres d'avril 2013 à décembre 2014.
     """
     _, pensions = _calculer(simulateur, "chirurgien_dentiste_ou_sage_femme",
                             1957, 69.0)
-    assert _coefficient(pensions["carcdsf_complementaire"].detail) == pytest.approx(1.10)
+    assert _coefficient(pensions["carcdsf_complementaire"].detail) == pytest.approx(1.0875)
     _, pensions = _calculer(simulateur, "chirurgien_dentiste_ou_sage_femme",
                             1948, 67.0)
-    assert _coefficient(pensions["carcdsf_complementaire"].detail) == pytest.approx(1.08)
+    assert _coefficient(pensions["carcdsf_complementaire"].detail) == pytest.approx(1.07)
     _, pensions = _calculer(simulateur, "chirurgien_dentiste_ou_sage_femme",
                             1943, 67.0)
     assert _coefficient(pensions["carcdsf_complementaire"].detail) == pytest.approx(1.0)
@@ -358,6 +362,75 @@ def test_la_carcdsf_sert_sans_minoration_l_inapte_et_les_categories_de_ses_statu
     assert refus == {}, refus
     ecarts = {}
     for cle, (montant, coefficient) in CARCDSF_SANS_MINORATION.items():
+        actuel = servis["|".join(cle)]["actuel"]
+        [pension] = [p for p in actuel["pensions_par_regime"]
+                     if p["regime"] == "carcdsf_complementaire"]
+        if (_coefficient(pension["detail"]) != pytest.approx(coefficient)
+                or pension["montant"] != pytest.approx(montant, abs=0.005)):
+            ecarts[cle] = (_coefficient(pension["detail"]), round(pension["montant"], 2))
+    assert ecarts == {}, ecarts
+
+
+#: (naissance, âge au départ, années sans activité) : la pension de la CARCDSF
+#: par an et son coefficient. Dentiste au double du salaire moyen depuis ses
+#: 20 ans, euros de 2026. Le décompte ne change pas les points : chaque montant
+#: est celui du taux plein (10 339,4117 €, 8 562,8780 €, 9 981,0188 €,
+#: 13 865,6396 €, 13 656,6975 €, 17 610,7061 €) multiplié à la main par la
+#: majoration du texte.
+CARCDSF_MAJOREE = {
+    # Né le 1er janvier 1948, 65 ans le 1er janvier 2013, pension au 1er janvier
+    # 2015 : « 1 % par trimestre civil entier d'exercice libéral suivant le
+    # dernier jour du trimestre civil incluant l'âge ». Le premier trimestre de
+    # 2013 inclut l'âge ; sept trimestres civils entiers le suivent, d'avril
+    # 2013 à décembre 2014. 10 339,4117 × 1,07 = 11 063,17 € ; le modèle
+    # comptait les huit trimestres écoulés, 11 166,56 €.
+    ("1948-01-01", "67", ""): (11_063.17, 1.07),
+    # Le même, sans activité de 2010 à 2014 : aucun trimestre « d'exercice
+    # libéral », aucune majoration. 8 562,88 € ; le modèle, 9 247,91 €.
+    ("1948-01-01", "67", "2010:2014:sans_activite"): (8_562.88, 1.0),
+    # Le même, qui cesse d'exercer le 31 décembre 2013 : trois trimestres
+    # civils entiers d'exercice, d'avril à décembre 2013.
+    # 9 981,0188 × 1,03 = 10 280,45 €.
+    ("1948-01-01", "67", "2014:2014:sans_activite"): (10_280.45, 1.03),
+    # Né le 1er janvier 1953, taux plein à 66 ans et 2 mois, le 1er mars 2019,
+    # en cours de trimestre ; pension au 1er mars 2022 : onze trimestres civils
+    # entiers, d'avril 2019 à décembre 2021, les mois de janvier et de février
+    # 2022 ne faisant pas un trimestre civil. 13 865,6396 × 1,11 = 15 390,86 € ;
+    # le modèle comptait douze fois trois mois depuis l'âge, 1,12.
+    ("1953-01-01", "69.1667", ""): (15_390.86, 1.11),
+    # Le même au 1er janvier 2022 : les mêmes onze trimestres, que le temps
+    # écoulé donnait déjà. 13 656,6975 × 1,11 = 15 158,93 €, inchangé.
+    ("1953-01-01", "69", ""): (15_158.93, 1.11),
+    # Né le 1er janvier 1958, 67 ans le 1er janvier 2025, pension au 1er janvier
+    # 2028, sous le règlement de 2026 : « 1,25 % par trimestre civil entier
+    # d'exercice libéral […] accompli à compter du 1er janvier 2024 », onze,
+    # d'avril 2025 à décembre 2027. 17 610,7061 × 1,1375 = 20 032,18 € ; le
+    # modèle, 1,15.
+    ("1958-01-01", "70", ""): (20_032.18, 1.1375),
+}
+
+
+def test_la_carcdsf_majore_par_trimestre_civil_entier_d_exercice_liberal():
+    """Statuts de 2011, article 19, I, c (JORFARTI000023909792) ; de 2024,
+    article 35, I, c (JORFARTI000048880707) ; règlement de 2026, article 3, I, c
+    (JORFARTI000054435749) : « Les adhérents qui poursuivent leur activité
+    libérale au-delà de l'âge […] bénéficient d'une majoration de leur pension.
+    Cette majoration est égale à 1 % par trimestre civil entier d'exercice
+    libéral suivant le dernier jour du trimestre civil incluant l'âge ». Le
+    modèle comptait le temps écoulé depuis l'âge, que l'affilié exerce ou non
+    (corrigé le 14 novembre 2026). Servi par le portage, refait au bit près par
+    le moteur Python."""
+    from outils_pont import servi_et_refait
+
+    cas = [{"cle": "|".join(cle),
+            "requete": {**REQUETE_DE_DENTISTE, "debut": "20", "naissance": cle[0],
+                        "liquidation": cle[1], "sexe": "H", "enfants": "0",
+                        "interruptions": cle[2]}}
+           for cle in CARCDSF_MAJOREE]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    ecarts = {}
+    for cle, (montant, coefficient) in CARCDSF_MAJOREE.items():
         actuel = servis["|".join(cle)]["actuel"]
         [pension] = [p for p in actuel["pensions_par_regime"]
                      if p["regime"] == "carcdsf_complementaire"]

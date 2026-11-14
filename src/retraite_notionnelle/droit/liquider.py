@@ -993,7 +993,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     age_liquidation, annee_liquidation,
                     trimestres_par_regime.get(code, 0),
                     handicap=par_le_handicap, categorie=par_categorie, durees=durees,
-                    carriere_longue=par_la_carriere_longue,
+                    carriere_longue=par_la_carriere_longue, code=code,
                 )
                 # LA TRANCHE C D'AVANT 2016 GARDE LE COEFFICIENT POUR ÂGE.
                 # L'exonération au taux plein ne vaut que « sur les tranches
@@ -3999,7 +3999,8 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
                        annee_liquidation: int,
                        trimestres_regime: int = 0,
                        handicap: bool = False, categorie: str | None = None,
-                       durees=None, carriere_longue: bool = False) -> float:
+                       durees=None, carriere_longue: bool = False,
+                       code: str | None = None) -> float:
     """Coefficient d'un régime en points : abattu avant le taux plein,
     majoré après.
 
@@ -4163,7 +4164,7 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
         return abattement
     return surcote_points(moteur, 
         periode, carriere, trimestres, requis,
-        age_liquidation, annee_liquidation, trimestres_regime,
+        age_liquidation, annee_liquidation, trimestres_regime, code,
     )
 
 
@@ -4693,7 +4694,8 @@ def surcote_points(moteur, periode: PeriodeRegime, carriere: Carriere,
                     trimestres: int, requis: int,
                     age_liquidation: float,
                     annee_liquidation: int,
-                    trimestres_regime: int = 0) -> float:
+                    trimestres_regime: int = 0,
+                    code: str | None = None) -> float:
     """Majoration d'un régime en points liquidé APRÈS le taux plein.
 
     Trois façons de compter, parce que les textes en écrivent trois, et la
@@ -4804,6 +4806,16 @@ def surcote_points(moteur, periode: PeriodeRegime, carriere: Carriere,
             fin = min(fin, borne)
     # Des trimestres civils ENTIERS : deux mois de plus ne valent rien.
     ecoules = int((max(0.0, fin - debut) + 1e-9) * 4)
+    if periode.surcote_trimestres_civils_d_exercice:
+        # « Par trimestre civil entier d'exercice libéral suivant le dernier
+        # jour du trimestre civil incluant l'âge » (CARCDSF, statuts de 2011,
+        # article 19, I, c) : ni le trimestre de l'âge, ni un trimestre sans
+        # exercice.
+        atteint = carriere.mois_de_l_anniversaire(debut)
+        suivant = DateMois(atteint.annee, 1).plus_mois(
+            3 * ((atteint.mois - 1) // 3 + 1))
+        ecoules = trimestres_civils_d_exercice(
+            moteur, carriere, code, suivant, carriere.date_de_l_age(fin))
     if periode.surcote_trimestres_cotises:
         # « Pour chaque année pleine COTISÉE dans le présent régime »
         # (CAVAMAC, statuts dans la rédaction de l'arrêté du 4 août 2023,
@@ -4861,6 +4873,37 @@ def age_de_la_duree_atteinte(moteur, periode: PeriodeRegime, carriere: Carriere,
         if trimestres - depuis + 1e-9 >= requis:
             return age
         trimestre += 1
+
+
+def trimestres_civils_d_exercice(moteur, carriere: Carriere, code: str | None,
+                                 debut: DateMois, fin: DateMois) -> int:
+    """Les trimestres civils ENTIERS d'exercice au régime ``code``, du premier
+    jour de trimestre civil ``debut`` à la date ``fin``, exclue : ceux dont une
+    ligne cotisée au régime couvre les trois mois. Les mois d'une ligne sont
+    les premiers de l'année, sauf l'année d'entrée
+    (:func:`~retraite_notionnelle.droit.compter.trimestres_de_la_ligne_entre`).
+    ``code`` nul : toute ligne cotisée."""
+    nombre = 0
+    courant = debut
+    while courant.rang + 3 <= fin.rang:
+        for ligne in carriere.lignes_de(courant.annee):
+            mois = round(carriere.part_retenue_ligne(ligne) * 12)
+            if not ligne.cotise or mois <= 0:
+                continue
+            premier = (DateMois(ligne.annee, 1)
+                       if mois == 12 or ligne.annee == carriere.annee_liquidation
+                       else DateMois(ligne.annee, 13 - mois))
+            if premier.rang > courant.rang or courant.rang + 3 > premier.rang + mois:
+                continue
+            if code is None or code in coordonner.regimes_de(
+                    moteur, ligne, ligne.annee,
+                    moteur.affiliations.date_entree(carriere, ligne.affiliation, ligne.annee),
+                    revenu=ligne.revenu,
+                    plafond=moteur.macro.plafond_securite_sociale(ligne.annee)):
+                nombre += 1
+                break
+        courant = courant.plus_mois(3)
+    return nombre
 
 
 def premieres_annees_majorees(moteur, periode: PeriodeRegime, carriere: Carriere,

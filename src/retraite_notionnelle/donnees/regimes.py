@@ -583,6 +583,12 @@ class PeriodeRegime:
     #: 1er janvier au 29 mars 2017 (arrêtés des 30 novembre et 1er décembre
     #: 2016), avant « après l'âge de 62 ans » (arrêté du 22 mars 2017).
     surcote_depuis_l_age_legal: bool
+    #: ``par_age_seul`` ne compte que les trimestres civils ENTIERS d'exercice
+    #: au régime qui suivent le trimestre civil où tombe l'âge de départ du
+    #: décompte : la CARCDSF majore « par trimestre civil entier d'exercice
+    #: libéral suivant le dernier jour du trimestre civil incluant l'âge »
+    #: (statuts de 2011, article 19, I, c ; règlement de 2026, article 3).
+    surcote_trimestres_civils_d_exercice: bool
     #: Plafond en euros de la majoration pour enfants, et année à laquelle il
     #: est publié. Le plafond suit ensuite la valeur de service du point.
     plafond_majoration_enfants: float | None
@@ -1970,6 +1976,7 @@ INTERRUPTEURS: dict[str, object] = {
     "surcote_trimestres_cotises": False,
     "surcote_depuis_la_duree": False,
     "surcote_depuis_l_age_legal": False,
+    "surcote_trimestres_civils_d_exercice": False,
     "assiette_plancher": False,
     "assiette_forfaitaire": False,
     "points_au_prorata_des_cotisations": False,
@@ -2369,6 +2376,8 @@ class CatalogueRegimes:
                 surcote_depuis_la_duree=bool(p.get("surcote_depuis_la_duree", False)),
                 surcote_depuis_l_age_legal=bool(
                     p.get("surcote_depuis_l_age_legal", False)),
+                surcote_trimestres_civils_d_exercice=bool(
+                    p.get("surcote_trimestres_civils_d_exercice", False)),
                 plafond_majoration_enfants=(
                     None if p.get("plafond_majoration_enfants") is None
                     else float(p["plafond_majoration_enfants"])

@@ -748,25 +748,20 @@ approximations:
     statuts de 2011, article 19, I, c ; de 2017 et de 2024, article 35, I, c ; règlement de
     2026, article 3, I, c
   ecart: >-
-    Le modèle compte la majoration par le temps écoulé depuis l'âge du taux plein
-    (`surcote_points: par_age_seul`), quand le texte la compte « par trimestre civil
-    entier d'exercice libéral suivant le dernier jour du trimestre civil incluant l'âge »,
-    aux affiliés « qui poursuivent leur activité libérale » : le trimestre civil où tombe l'âge
-    compte au modèle quand l'âge tombe le premier jour d'un trimestre civil, et aussi,
-    selon le mois de l'effet, quand il tombe en cours de trimestre (le modèle prend le
-    quotient entier des mois écoulés depuis l'âge, le texte les trimestres civils pleins
-    qui suivent celui de l'âge) ; et les trimestres sans exercice libéral y comptent
-    (essai du 5 novembre 2026, dans les deux moteurs ; relecture R-E2).
+    Depuis le 14 novembre 2026, le modèle compte la majoration « par trimestre civil
+    entier d'exercice libéral suivant le dernier jour du trimestre civil incluant l'âge »
+    (`surcote_trimestres_civils_d_exercice`, historique), et non plus par le temps écoulé
+    depuis l'âge. Il en reste trois écarts. L'exercice n'est connu qu'à l'année de la
+    carrière, ses mois seulement l'année de l'entrée et celle du départ : une cessation en
+    cours d'année ne se déclare pas, et l'exercice libéral est lu comme une ligne cotisée
+    au régime, ce qu'aucun texte lu ne définit. La majoration est due « sous réserve de
+    respecter les dispositions du deuxième alinéa de l'article 34 » (2017 ; l'article 2 du
+    règlement de 2026), d'être à jour de ses cotisations, que le modèle ne connaît pas.
+    Les trimestres d'exercice d'avant le 1er juillet 2011 comptent au modèle, ce que le
+    texte ne tranche pas (a_relire).
   effet: >-
-    né le 1er janvier 1948, taux plein à 65 ans le 1er janvier 2013, liquidé le 1er
-    janvier 2015 : le texte, sept trimestres civils entiers (avril 2013 à décembre 2014),
-    1,07 ; le modèle, 1,08. Le même, sans activité de 2010 à 2014 : le texte, 1 ; le
-    modèle, 1,08, et jusqu'à 20 points (25 depuis 2024). Né le 1er janvier 1958, liquidé
-    le 1er janvier 2028 : le texte, onze trimestres à 1,25 %, 1,1375 ; le modèle, 1,15.
-    Né le 1er janvier 1953, taux plein à 66 ans et 2 mois, le 1er mars 2019, âge qui tombe
-    en cours de trimestre : liquidé le 1er mars 2022, le texte, onze trimestres civils
-    entiers (avril 2019 à décembre 2021), 1,11 ; le modèle, 1,12 ; le 1er décembre 2021,
-    le texte 1,10 et le modèle 1,11 ; le 1er février 2022, 1,11 des deux côtés
+    non mesuré : nul pour l'affilié qui exerce toute l'année jusqu'à sa pension ; un à
+    trois trimestres, 1 à 3,75 points, l'année d'une cessation que la carrière ne date pas
 - version: [statuts_de_2024, reglement_de_2026]
   textes: statuts de 2024, article 35, I, a et c ; règlement de 2026, article 3, I, a et c ; L. 351-8, 1°
   ecart: >-
@@ -780,10 +775,11 @@ approximations:
     trimestres à 1 % (avril 2022 à décembre 2023) et quatre à 1,25 %, 1,12 ; le modèle,
     1,15. Né le 1er janvier 1953, liquidé le 1er avril 2024 : le texte, quinze trimestres
     à 1 % (avril 2020 à décembre 2023) et un à 1,25 %, 1,1625 ; le modèle, 1,25. Les 3
-    points du premier cas et les 8,75 du second comprennent le trimestre de l'âge que le
-    modèle compte à tort, qui est l'écart précédent : 1 à 1,25 point sur 3, 1,25 sur 8,75,
-    selon l'ordre du partage ; le reste est le taux, et pour le né de 1953 l'âge du départ
-    de la majoration, 3,75 points chacun (relecture R-E2)
+    points du premier cas et les 8,75 du second comprenaient le trimestre de l'âge que le
+    modèle comptait à tort, l'écart précédent, corrigé le 14 novembre 2026 : le modèle
+    rend depuis 1,1375 au premier cas, onze trimestres à 1,25 %, 1,75 point de trop, qui
+    est le taux ; au second, vingt trimestres depuis avril 2019, toujours 1,25, la limite
+    de vingt trimestres masquant le trimestre retiré (relecture R-E2)
 - version: [statuts_de_2011, statuts_de_2011_modifies_en_2012, statuts_de_2017]
   textes: statuts de 2011, article 19, I, b, et son tableau ; arrêté du 9 juillet 2012, annexe
   ecart: >-
@@ -863,8 +859,7 @@ effet: >-
   écrits le 25 décembre 2017, l'article 35 récrit le 10 janvier 2024, le règlement le
   18 juillet 2026 ; ni le grand invalide de guerre et le parent d'un enfant
   handicapé ne sont servis sans minoration, ni les statuts de 2017 du 1er au 9 janvier 2024 ;
-  la majoration se compte au temps, non à l'exercice libéral par trimestre civil, et à
-  1,25 % les trimestres d'avant 2024.
+  la majoration se compte à 1,25 % les trimestres d'avant 2024.
   Corrigée le 14 novembre 2026 (décision du propriétaire du 13 novembre, ligne 4 de la
   file de l'action 130) : jusque-là, le modèle ne servait aucune réversion de la CARCDSF,
   motif `non_portee` ; il en sert depuis 60 % au conjoint de 65 ans, dans les deux
@@ -877,6 +872,9 @@ effet: >-
   L'inapte, l'ancien déporté ou interné et l'ancien combattant ou prisonnier de
   guerre, que le modèle minorait comme l'assuré valide, sont servis sans minoration
   depuis le 14 novembre 2026, aux âges et sous les textes qui les nomment (historique).
+  La majoration, que le modèle comptait au temps écoulé depuis l'âge, que l'affilié
+  exerce ou non, se compte depuis le 14 novembre 2026 par trimestre civil entier
+  d'exercice qui suit le trimestre civil de l'âge (historique).
 sources:
   lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
@@ -999,20 +997,49 @@ historique:
   L'écart figurait aux approximations depuis le 5 novembre 2026 ; il n'y reste que le
   grand invalide de guerre, le parent d'un enfant handicapé et l'inapte de 62 ans
   depuis 2024.
+- >-
+  2026-11-14 — corrigée (action 130, décision du propriétaire du 13 novembre, ligne 24
+  de la file) : le modèle comptait la majoration par le temps écoulé depuis l'âge du
+  taux plein, le quotient entier des mois par trois, que l'affilié exerce ou non, quand
+  les statuts la comptent « par trimestre civil entier d'exercice libéral suivant le
+  dernier jour du trimestre civil incluant l'âge », aux affiliés « qui poursuivent leur
+  activité libérale » (2011, article 19, I, c ; 2017 et 2024, article 35, I, c ;
+  règlement de 2026, article 3, I, c). Un interrupteur de la fiche,
+  `surcote_trimestres_civils_d_exercice`, auquel renvoient les quinze périodes de
+  `carcdsf_complementaire.yaml` depuis le 1er juillet 2011, dans les deux moteurs
+  (`trimestresCivilsDExercice`) : le décompte part du trimestre civil qui suit celui où
+  tombe l'anniversaire, s'arrête à la date d'effet, et ne retient que les trimestres
+  civils dont une ligne cotisée au régime couvre les trois mois. Le dentiste né le
+  1er janvier 1948, au travail dès 20 ans, pension au 1er janvier 2015 à 67 ans : sept
+  trimestres, d'avril 2013 à décembre 2014, 1,07 au lieu de 1,08 (11 063,17 € par an au
+  lieu de 11 166,56 €, en euros de 2026) ; le même sans activité de 2010 à 2014 : 1 au
+  lieu de 1,08 (8 562,88 € au lieu de 9 247,91 €) ; né le 1er janvier 1953, taux plein
+  le 1er mars 2019, pension au 1er mars 2022 : onze trimestres, 1,11 au lieu de 1,12
+  (15 390,86 € au lieu de 15 529,52 €) ; né le 1er janvier 1958, pension au 1er janvier
+  2028 : onze trimestres à 1,25 %, 1,1375 au lieu de 1,15 (20 032,18 € au lieu de
+  20 252,31 €). L'écart figurait aux approximations depuis le 5 novembre 2026 ; il n'y
+  reste que la cessation en cours d'année, la condition d'être à jour de ses
+  cotisations et les trimestres d'avant le 1er juillet 2011.
 code:
   interrupteurs:
     abattement_points: cavom
     decote_annulee_par_la_duree: false
     surcote_points: par_age_seul
+    surcote_trimestres_civils_d_exercice: true
   moteur: >-
     `abattement_points: cavom`, le barème par année d'âge manquante que la fiche `cavom_ages_minoration`
     décrit ; `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule pas
     la minoration ; `surcote_points: par_age_seul`, la majoration par l'âge seul que la
-    fiche `surcote_par_age_seul` décrit.
+    fiche `surcote_par_age_seul` décrit. `surcote_trimestres_civils_d_exercice` : ne
+    compter que les trimestres civils ENTIERS d'exercice au régime qui suivent le
+    trimestre civil où tombe l'âge, jusqu'à la date d'effet, et non le temps écoulé —
+    « par trimestre civil entier d'exercice libéral suivant le dernier jour du trimestre
+    civil incluant l'âge » (statuts de 2011, article 19, I, c). Sans ce renvoi, le temps
+    écoulé suffit, comme dans les autres sections.
   python: >-
     droit/liquider.py : abattement_points, abattement_ircec, abattement_regime_de_base,
     decote_opposable, trimestres_de_decote, taux_plein_anticipe, inapte_sans_coefficient,
-    categorie_sans_coefficient, surcote_points,
+    categorie_sans_coefficient, surcote_points, trimestres_civils_d_exercice,
     _ABATTEMENTS_IRCEC, _ABATTEMENTS_PAR_ANNEE_AGE_SEUL ; droit/categories.py :
     remplit_l_une_de ; droit/ouvrir.py :
     age_taux_plein ; scenarios/actuel.py : AgesRegimes ; droit/completer.py : completer,
@@ -1020,7 +1047,8 @@ code:
   javascript: >-
     moteur/js/droit/liquider.js : abattementPoints, abattementIrcec,
     abattementRegimeDeBase, decoteOpposable, trimestresDeDecote, tauxPleinAnticipe,
-    inapteSansCoefficient, categorieSansCoefficient, surcotePoints ;
+    inapteSansCoefficient, categorieSansCoefficient, surcotePoints,
+    trimestresCivilsDExercice ;
     moteur/js/droit/categories.js : remplitLUneDe ; moteur/js/droit/ouvrir.js : ageTauxPlein ; moteur/js/regimes.js :
     AgesRegimes ; moteur/js/droit/completer.js : completer, tauxMajorationEnfants
   parametres: >-
@@ -1031,7 +1059,8 @@ code:
     surcote_trimestres_maximum, taux_plein_anticipe_par_enfant_annees,
     taux_plein_anticipe_maximum_annees ; regimes/carcdsf_complementaire.yaml :
     age_taux_plein, age_table, decote_par_trimestre, decote_trimestres_maximum,
-    surcote_par_trimestre, surcote_trimestres_maximum, taux_plein_anticipe_par_enfant_annees,
+    surcote_par_trimestre, surcote_trimestres_maximum, surcote_trimestres_civils_d_exercice,
+    taux_plein_anticipe_par_enfant_annees,
     taux_plein_anticipe_maximum_annees, age_sans_coefficient_de_l_inapte,
     categories_sans_coefficient, avantages_non_contributifs, date_effet ;
     legislation/ages_regimes.csv : carcdsf_2011

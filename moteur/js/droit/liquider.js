@@ -471,7 +471,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         abattement = abattementPoints(
           moteur, periode, carriere, trimestres, requisReference, ageLiquidation,
           anneeLiquidation, trimestresParRegime.get(code) ?? 0, parLeHandicap,
-          parCategorie, durees, parLaCarriereLongue,
+          parCategorie, durees, parLaCarriereLongue, code,
         );
         // LA TRANCHE C D'AVANT 2016 GARDE LE COEFFICIENT POUR ÂGE, même au
         // taux plein : voir le Python. Le coefficient affiché est celui de la
@@ -3309,7 +3309,7 @@ export function coefficientConvention1947(ageLiquidation) {
 
 export function abattementPoints(moteur, periode, carriere, trimestres, requis, ageLiquidation,
   anneeLiquidation, trimestresRegime = 0, handicap = false, categorie = null, durees = null,
-  carriereLongue = false) {
+  carriereLongue = false, code = null) {
   // L'Ircantec a le même barème que l'Agirc-Arrco, et son texte l'écrit :
   // article 16 de l'arrêté du 30 décembre 1970, mêmes marches et mêmes deux
   // lectures. Voir le docstring du modèle Python. `trimestresRegime` est la
@@ -3321,6 +3321,8 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
   // l'assuré, dont l'Ircantec lit celle du régime général (5° de 1978).
   // `carriereLongue` : la liquidation ouverte par la carrière longue, que la
   // CAVP minore de sa première pente seule (`abattementRegimeDeBase`).
+  // `code` : le régime liquidé, dont la CARCDSF ne majore que les trimestres
+  // civils d'exercice (`trimestresCivilsDExercice`).
   if (carriere.au_deces) {
     // La pension que l'assuré eût obtenue à son décès : la réversion d'une
     // complémentaire porte sur les points acquis, sans coefficient. Voir
@@ -3422,7 +3424,7 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
   }
   return surcotePoints(
     moteur, periode, carriere, trimestres, requis, ageLiquidation, anneeLiquidation,
-    trimestresRegime,
+    trimestresRegime, code,
   );
 }
 
@@ -3540,7 +3542,7 @@ export function coefficientSurcoteDatee(moteur, periode, carriere, trimestres, r
 }
 
 export function surcotePoints(moteur, periode, carriere, trimestres, requis, ageLiquidation,
-  anneeLiquidation, trimestresRegime = 0) {
+  anneeLiquidation, trimestresRegime = 0, code = null) {
   const mode = periode.surcote_points;
   if (mode === "aucune") {
     return 1.0;
@@ -3610,6 +3612,17 @@ export function surcotePoints(moteur, periode, carriere, trimestres, requis, age
   }
   // Des trimestres civils ENTIERS : deux mois de plus ne valent rien.
   let ecoules = Math.floor((Math.max(0.0, fin - debut) + 1e-9) * 4);
+  if (periode.surcote_trimestres_civils_d_exercice) {
+    // « Par trimestre civil entier d'exercice libéral suivant le dernier jour
+    // du trimestre civil incluant l'âge » (CARCDSF, statuts de 2011, article
+    // 19, I, c) : ni le trimestre de l'âge, ni un trimestre sans exercice.
+    const atteint = carriere.moisDeLAnniversaire(debut);
+    const suivant = new DateMois(atteint.annee, 1)
+      .plusMois(3 * (Math.floor((atteint.mois - 1) / 3) + 1));
+    ecoules = trimestresCivilsDExercice(
+      moteur, carriere, code, suivant, carriere.dateDeLAge(fin),
+    );
+  }
   if (periode.surcote_trimestres_cotises) {
     // « Pour chaque année pleine COTISÉE dans le présent régime » (CAVAMAC
     // depuis 2024) : le temps écoulé sans cotiser ne compte plus.
@@ -3637,6 +3650,40 @@ export function surcotePoints(moteur, periode, carriere, trimestres, requis, age
     ecoules, Math.max(0, Math.ceil((palier - debut - 1e-9) * 4)),
   );
   return 1.0 + taux * avantPalier + tauxApres * (ecoules - avantPalier);
+}
+
+/**
+ * Les trimestres civils ENTIERS d'exercice au régime `code`, du premier jour
+ * de trimestre civil `debut` à la date `fin`, exclue : ceux dont une ligne
+ * cotisée au régime couvre les trois mois. Les mois d'une ligne sont les
+ * premiers de l'année, sauf l'année d'entrée (`trimestresDeLaLigneEntre`).
+ * `code` nul : toute ligne cotisée.
+ */
+export function trimestresCivilsDExercice(moteur, carriere, code, debut, fin) {
+  let nombre = 0;
+  for (let courant = debut; courant.rang + 3 <= fin.rang; courant = courant.plusMois(3)) {
+    for (const ligne of carriere.lignesDe(courant.annee)) {
+      const mois = Math.round(carriere.partRetenueLigne(ligne) * 12);
+      if (!ligne.cotise || mois <= 0) {
+        continue;
+      }
+      const premier = (mois === 12 || ligne.annee === carriere.anneeLiquidation)
+        ? new DateMois(ligne.annee, 1)
+        : new DateMois(ligne.annee, 13 - mois);
+      if (premier.rang > courant.rang || courant.rang + 3 > premier.rang + mois) {
+        continue;
+      }
+      if (code === null || coordonner.regimesDe(
+        moteur, ligne, ligne.annee,
+        moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee),
+        ligne.revenu, moteur.macro.plafond_securite_sociale.valeur(ligne.annee),
+      ).includes(code)) {
+        nombre += 1;
+        break;
+      }
+    }
+  }
+  return nombre;
 }
 
 /**

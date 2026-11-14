@@ -950,6 +950,9 @@ def _regles_des_sections(p) -> dict:
         # La surcote de la CARMF et de l'ASV de janvier à mars 2017, depuis
         # l'âge légal de la génération.
         "surcote_depuis_l_age_legal": p.surcote_depuis_l_age_legal or None,
+        # La surcote de la CARCDSF, par trimestre civil entier d'exercice.
+        "surcote_trimestres_civils_d_exercice":
+            p.surcote_trimestres_civils_d_exercice or None,
         # Le report de la Cipav, sur les points des trente premières années.
         "surcote_premieres_annees": p.surcote_premieres_annees,
         # L'inapte de la CAVOM de 2016 à 2024, sans coefficient dès 62 ans.

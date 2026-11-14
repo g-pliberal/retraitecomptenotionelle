@@ -274,6 +274,7 @@ periodes:
     decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
     surcote_points: carcdsf_minoration_age_seul
+    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -333,6 +334,7 @@ periodes:
     decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
     surcote_points: carcdsf_minoration_age_seul
+    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -360,6 +362,7 @@ periodes:
     decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
     surcote_points: carcdsf_minoration_age_seul
+    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -387,6 +390,7 @@ periodes:
     decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
     surcote_points: carcdsf_minoration_age_seul
+    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -414,6 +418,7 @@ periodes:
     decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
     surcote_points: carcdsf_minoration_age_seul
+    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -441,6 +446,7 @@ periodes:
     decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
     surcote_points: carcdsf_minoration_age_seul
+    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -468,6 +474,7 @@ periodes:
     decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
     surcote_points: carcdsf_minoration_age_seul
+    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -495,6 +502,7 @@ periodes:
     decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
     surcote_points: carcdsf_minoration_age_seul
+    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -525,6 +533,7 @@ periodes:
     decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
     surcote_points: carcdsf_minoration_age_seul
+    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -564,6 +573,7 @@ periodes:
     decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
     surcote_points: carcdsf_minoration_age_seul
+    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -591,6 +601,7 @@ periodes:
     decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
     surcote_points: carcdsf_minoration_age_seul
+    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -621,6 +632,7 @@ periodes:
     decote_annulee_par_la_duree: carcdsf_minoration_age_seul
     surcote_par_trimestre: 0.01
     surcote_points: carcdsf_minoration_age_seul
+    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -656,6 +668,7 @@ periodes:
     decote_trimestres_maximum: 12
     surcote_par_trimestre: 0.0125
     surcote_points: carcdsf_minoration_age_seul
+    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -698,6 +711,7 @@ periodes:
     decote_trimestres_maximum: 12
     surcote_par_trimestre: 0.0125
     surcote_points: carcdsf_minoration_age_seul
+    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5
@@ -733,6 +747,7 @@ periodes:
     decote_trimestres_maximum: 12
     surcote_par_trimestre: 0.0125
     surcote_points: carcdsf_minoration_age_seul
+    surcote_trimestres_civils_d_exercice: carcdsf_minoration_age_seul
     surcote_trimestres_maximum: 20
     taux_plein_anticipe_par_enfant_annees: 1
     taux_plein_anticipe_maximum_annees: 5

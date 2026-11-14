@@ -911,6 +911,19 @@ champs_periode:
     valeurs: [true]
     defaut: false
 
+  surcote_trimestres_civils_d_exercice:
+    description: >-
+      Avec `surcote_points` en `par_age_seul` seulement : ne compter que les
+      trimestres civils ENTIERS d'exercice au régime qui suivent le trimestre
+      civil où tombe l'âge de départ du décompte, jusqu'à la date d'effet, et
+      non le temps écoulé depuis cet âge ? La CARCDSF majore « par trimestre
+      civil entier d'exercice libéral suivant le dernier jour du trimestre
+      civil incluant l'âge » (statuts de 2011, article 19, I, c). Sans renvoi,
+      le temps écoulé suffit.
+    renvoi: true
+    valeurs: [true]
+    defaut: false
+
   taux_majoration_enfants:
     description: >-
       Barème PROPRE de la majoration pour enfants, par nombre d'enfants à
