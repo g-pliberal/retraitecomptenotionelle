@@ -135,6 +135,8 @@ versions:
       abattement_points: cavom
       age_ouverture_par_generation: true
       age_taux_plein_par_generation: true
+      age_sans_coefficient_de_l_inapte: age_legal_par_generation
+      categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
     droit: >-
       taux plein à l'âge de L. 161-17-2 augmenté de cinq ans, 65 ans pour les
       générations d'avant juillet 1951, 67 ans depuis celle de 1955 ; liquidation dès
@@ -228,6 +230,8 @@ versions:
       abattement_points: cavom
       age_ouverture_par_generation: true
       age_taux_plein_par_generation: true
+      age_sans_coefficient_de_l_inapte: age_legal_par_generation
+      categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
     droit: >-
       taux plein « de 67 ans » ; le barème de 2011 demeure jusqu'au 31 décembre, 5 %
       par tranche de douze mois avant 67 ans ; la majoration par année pleine différée
@@ -279,6 +283,8 @@ versions:
       age_taux_plein: 67
       age_taux_plein_par_generation: false
       decote_par_trimestre: 0.0125
+      age_sans_coefficient_de_l_inapte: 62
+      categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
     droit: >-
       taux plein à 67 ans ; liquidation dès l'âge de L. 161-17-2 avec 1,25 % de
       minoration par trimestre manquant pour atteindre 67 ans, 25 % à 62 ans ; 5 % de
@@ -342,6 +348,8 @@ versions:
       age_taux_plein: 67
       age_taux_plein_par_generation: false
       decote_par_trimestre: 0.0125
+      age_sans_coefficient_de_l_inapte: 62
+      categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
     droit: >-
       la règle de 2024, que le règlement reprend des statuts ; la longue carrière n'y
       garde ses 15 % que jusqu'à 64 ans, puis prend le droit commun
@@ -358,23 +366,33 @@ approximations:
   ecart: >-
     Le modèle sert avant le 1er juillet 2011 la minoration de 2011, que nul texte lu ne
     date ; il n'y sert en revanche aucune majoration (les périodes de 1968 à 2011 n'ont
-    pas de `surcote_par_trimestre`) : la présomption ne porte que sur la minoration.
-    Ce que les statuts d'alors disaient de l'une et de l'autre n'est pas lu.
+    pas de `surcote_par_trimestre`), et il y minore l'inapte et l'ancien déporté comme
+    les autres : la présomption ne porte que sur la minoration.
+    Ce que les statuts d'alors disaient de l'une, de l'autre et des catégories servies
+    sans minoration n'est pas lu.
   effet: non mesuré
 - version: [statuts_de_2011, statuts_de_septembre_2023, statuts_de_2024, reglement_de_2026]
   textes: >-
-    statuts de 2011, article 15, a à e ; arrêté du 4 août 2023, annexe, 6°, b ;
+    statuts de 2011, article 15, c à e ; arrêté du 4 août 2023, annexe, 6°, b ;
     règlement de 2026, article 4
   ecart: >-
-    Le modèle minore comme les autres l'inapte, l'ancien déporté ou interné, l'ancien
-    prisonnier ou combattant, le grand invalide, le travailleur handicapé et
-    l'invalide professionnel à 66 % : jusqu'en 2023, `abattement_ircec` ne lit pour la
-    CAVAMAC que l'âge ; depuis 2024, `abattement_regime_de_base` n'exonère l'inapte et
-    le travailleur handicapé que dans les régimes que nomment les fiches
-    `inaptitude_au_travail` et du handicap, où la CAVAMAC n'est pas. Les statuts et le
-    règlement les servent sans minoration dès l'âge de L. 161-17-2 jusqu'au 31 août
-    2023, dès l'âge du IV de L. 643-3 depuis, sauf l'invalide professionnel, toujours
-    à l'âge de L. 161-17-2. L'âge du IV de L. 643-3 est à l'index du dépôt, quand la
+    L'inapte et l'ancien déporté ou interné sont servis sans minoration depuis le 14
+    novembre 2026, et l'ancien combattant ou prisonnier de guerre depuis les statuts de
+    2024 (historique). Restent minorés comme les autres : l'ancien prisonnier ou
+    combattant de 2011 au 31 décembre 2023 — les statuts de 2011 le servent « aux âges
+    et conditions de durée de captivité ou services fixés » par le décret n° 74-436 du
+    15 mai 1974, dont l'article 1er, de soixante ans pour cinquante-quatre mois à
+    soixante-quatre ans pour six (LEGIARTI000006764071), est abrogé depuis le 21
+    décembre 1985, et la fiche `taux_plein_anciens_combattants_prisonniers` sert sur ces
+    années les âges décalés de la pratique de la Cnav, que ces statuts ne nomment pas ;
+    de septembre à décembre 2023, le 5° de L. 351-8 que nomme le 2° de L. 643-4 n'est
+    pas servi non plus, la période de 2019 à 2023 gardant la seule catégorie de 2011 — ;
+    le grand invalide et l'invalide professionnel à 66 %, que nulle saisie ne dit ; le
+    travailleur handicapé du 3° de L. 643-4, depuis le 1er septembre 2023 :
+    `abattement_regime_de_base` ne l'exonère que dans les régimes que nomme la fiche du
+    handicap, où la CAVAMAC n'est pas. Seule compte l'inaptitude que la carrière
+    déclare : la procédure de la commission d'inaptitude n'est pas modélisée.
+    L'âge du IV de L. 643-3 est à l'index du dépôt, quand la
     fiche le disait fixé par un décret non lu : L. 643-3, IV (LEGIARTI000047453031, pensions
     prenant effet depuis le 1er septembre 2023) dit que la condition d'âge « est
     abaissée, dans des conditions fixées par décret, pour les assurés relevant des 2°
@@ -389,20 +407,24 @@ approximations:
     (LEGIARTI000053280388, pensions prenant effet à compter du 1er septembre 2026) garde
     le IV mot pour mot ; le reste de cette rédaction n'est pas lu ici. Ce que le texte
     ne tranche pas : l'âge du grand invalide, de l'ancien déporté ou interné et de la
-    personne du 5° de L. 351-8, que D. 351-1-14 ne nomme pas ; et si l'inapte de L. 643-5
+    personne du 5° de L. 351-8, que D. 351-1-14 ne nomme pas — le modèle les sert dès
+    l'âge de L. 161-17-2, ou aux âges de D. 351-2 — ; et si l'inapte de L. 643-5
     (L. 643-4, 2°, a) est celui que D. 351-1-14 nomme « dans les conditions prévues à
     l'article L. 351-7 » : L. 643-5 n'est pas lu ici. Le modèle
-    ne sert pas cet âge de soixante-deux ans : il refuse l'inapte avant l'âge légal de
-    sa génération, motif `non_ouverte` (le né en 1965 parti à 62 ans, âge légal opposé
-    62,75 ans, le né en 1966, 63,25 ans : relecture R-E, 5 novembre 2026), puis le
-    minore. L'écart est posé au propriétaire, non corrigé.
+    n'ouvre pas la pension à cet âge de soixante-deux ans : il refuse l'inapte avant
+    l'âge légal de sa génération, motif `non_ouverte` (le né en 1965 parti à 62 ans, âge
+    légal opposé 62,75 ans, le né en 1966, 63,25 ans : relecture R-E, 5 novembre 2026 ;
+    revu le 14 novembre), et ne le sert sans minoration qu'à cet âge légal. De septembre
+    à décembre 2023, la période garde pour l'inapte l'âge légal de 2011, ce qui revient
+    au même tant que la pension ne s'ouvre pas avant. L'ouverture à soixante-deux ans
+    est posée au propriétaire, non corrigée.
   effet: >-
-    non mesuré dans la population ; pour l'inapte, toute la minoration de son âge :
-    l'agent né en 1955 qui part à 62 ans en 2017 perd 5 tranches de douze mois × 5 % =
-    25 % de ses points au modèle (coefficient 0,75, essai du 5 novembre 2026), rien au
-    texte ; depuis le 1er septembre 2023, le modèle refuse de plus la pension de
-    l'inapte entre soixante-deux ans et l'âge légal quand celui-ci le dépasse (les
-    générations 1965 et 1966 à 62 ans, motif `non_ouverte`), là où le texte l'ouvre
+    non mesuré dans la population : les catégories qui restent minorées sont rares
+    parmi les agents généraux qui liquident depuis 2011 (un ancien combattant d'Algérie
+    a plus de soixante-sept ans en 2011) ; depuis le 1er septembre 2023, le modèle
+    refuse la pension de l'inapte entre soixante-deux ans et l'âge légal quand
+    celui-ci le dépasse (les générations 1965 et 1966 à 62 ans, motif `non_ouverte`),
+    là où le texte l'ouvre
 - version: [statuts_de_septembre_2023]
   textes: arrêté du 4 août 2023, annexe, 6°, a
   ecart: >-
@@ -502,10 +524,11 @@ effet: >-
   que les trimestres cotisés au-delà de 67 ans ; tenu par tests/test_sections_liberales.py.
   Lue au droit le 5 novembre 2026 (action 130) : cinq versions, les statuts de 2011
   en vigueur le 1er juillet 2011, présumés avant, l'article 15 récrit le 1er septembre
-  2023, l'article 16 le 1er janvier 2024, le règlement de 2026 ; ni l'inapte et les
-  catégories sans minoration, ni la longue carrière à 15 %, ni la réversion ne sont
-  servis. La majoration du second semestre 2011, que le modèle ne servait pas, est
-  corrigée depuis le 14 novembre 2026 (historique).
+  2023, l'article 16 le 1er janvier 2024, le règlement de 2026 ; ni la longue carrière
+  à 15 %, ni la réversion ne sont servies. La majoration du second semestre 2011, que
+  le modèle ne servait pas, et la minoration qu'il opposait à l'inapte, à l'ancien
+  déporté ou interné et, depuis 2024, à l'ancien combattant, 25 % à 62 ans, sont
+  corrigées depuis le 14 novembre 2026 (historique).
 sources:
   lu_le: 2026-11-14
   prochaine_relecture: 2027-03-31
@@ -516,10 +539,14 @@ sources:
     1983 qui modifie les statuts du régime complémentaire (JORFTEXT000000494188), dont
     l'index n'a que le titre.
   - >-
-    Poser au propriétaire l'écart de l'inapte (soixante-deux ans, D. 643-14 et D.
-    351-1-14, lus le 5 novembre 2026) et dire si le modèle l'ouvre à cet âge, avant
-    l'âge légal de sa génération ; lire ce que D. 351-1-14 laisse des autres catégories
-    du 2° de L. 643-4.
+    Poser au propriétaire l'ouverture de la pension de l'inapte à soixante-deux ans
+    (D. 643-14 et D. 351-1-14, lus le 5 novembre 2026), avant l'âge légal de sa
+    génération : la minoration est corrigée, l'ouverture non ; lire L. 643-5, et ce que
+    D. 351-1-14 laisse des autres catégories du 2° de L. 643-4.
+  - >-
+    Servir l'ancien combattant de 2011 à 2023 aux âges du décret n° 74-436, le grand
+    invalide, l'invalide professionnel à 66 % et le travailleur handicapé, qui gardent
+    la minoration.
   lectures:
   - type: jorf
     reference: >-
@@ -536,6 +563,20 @@ sources:
       (JORFARTI000024270156), article 3 (JORFARTI000024270158) et annexe
       (JORFARTI000024270173), article 16, « pour chaque année pleine différée », sans
       disposition transitoire ; dans l'index JORF du dépôt, à jour du 11 novembre 2026.
+    date: 2026-11-14
+  - type: jorf
+    reference: >-
+      Relus avant la correction de l'inapte, dans l'index JORF du dépôt, à jour du 14
+      novembre 2026 : les statuts de 2011, article 15, a à e (JORFARTI000024270173) ;
+      l'annexe de l'arrêté du 4 août 2023, 6°, b (JORFARTI000047977908) ; le règlement
+      de 2026, article 4 (JORFARTI000054436046).
+    date: 2026-11-14
+  - type: legifrance
+    reference: >-
+      Décret n° 74-436 du 15 mai 1974, articles 1er à 5, dans l'index LEGI du dépôt, à
+      jour du 13 novembre 2026 : l'article 1er (LEGIARTI000006764071), les âges de
+      soixante à soixante-quatre ans selon la durée de captivité et de services, en
+      vigueur du 16 mai 1974 au 21 décembre 1985.
     date: 2026-11-14
   - type: legifrance
     reference: >-
@@ -573,6 +614,25 @@ historique:
   reçoit le coefficient 1,05 de l'article 16, au lieu de 1 ; né en février 1940, à 71
   ans et 9 mois, 1,25. La majoration pour trois enfants de l'article 18 suit la même
   correction (`sections_liberales_majoration_enfants`).
+- >-
+  2026-11-14 — corrigée (action 130, décision du propriétaire du 13 novembre, ligne 27
+  de la file) : le modèle minorait comme les autres l'inapte, l'ancien déporté ou
+  interné et l'ancien combattant ou prisonnier de guerre — jusqu'en 2023,
+  `abattement_ircec` ne lisait pour la CAVAMAC que l'âge ; depuis 2024,
+  `abattement_regime_de_base` n'exonérait l'inapte que dans les régimes de la fiche
+  `inaptitude_au_travail`, où la CAVAMAC n'est pas —, quand les statuts de 2011
+  (article 15, a et b), l'arrêté du 4 août 2023 (annexe, 6°, b, par le 2° de L. 643-4)
+  et le règlement de 2026 (article 4) les servent « sans application d'un coefficient
+  de minoration ». Deux paramètres de période, aux quatre périodes de 2012 à 2026 de
+  `cavamac_complementaire.yaml`, lus des deux moteurs : `age_sans_coefficient_de_l_inapte`
+  (`age_legal_par_generation` jusqu'en 2023, 62 depuis 2024) et
+  `categories_sans_coefficient` (l'ancien déporté ou interné partout, l'ancien
+  combattant du 5° de L. 351-8 depuis 2024). L'agent né le 1er janvier 1955, inapte,
+  parti à 62 ans le 1er janvier 2017, perdait cinq tranches de douze mois × 5 % = 25 %
+  de ses points (coefficient 0,75) : il reçoit le coefficient 1, soit 14 984,97 € par
+  an au cas posé au lieu de 11 238,73 €. L'ouverture à soixante-deux ans avant l'âge
+  légal, les autres catégories et la règle d'avant le 1er juillet 2011 restent aux
+  approximations.
 code:
   interrupteurs:
     abattement_points: cavom
@@ -582,7 +642,10 @@ code:
   moteur: >-
     `abattement_points: cavom`, le barème par année d'âge manquante que la fiche `cavom_ages_minoration`
     décrit ; `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule pas
-    la minoration ; `surcote_points: par_age_seul`, la majoration par l'âge seul que la
+    la minoration ; `age_sans_coefficient_de_l_inapte` et `categories_sans_coefficient`
+    rendent le coefficient 1 à l'inapte dès l'âge que la période écrit, et aux
+    catégories dont la fiche est nommée, aux conditions qu'elle écrit à la date
+    d'effet ; `surcote_points: par_age_seul`, la majoration par l'âge seul que la
     fiche `surcote_par_age_seul` décrit. `surcote_trimestres_cotises` : ne compter que
     les trimestres COTISÉS depuis l'âge de départ du décompte, et non le temps écoulé
     — « pour chaque année pleine cotisée dans le présent régime » (CAVAMAC, statuts dans
@@ -591,15 +654,18 @@ code:
     dans les autres sections.
   python: >-
     droit/liquider.py : abattement_points, abattement_ircec, abattement_regime_de_base,
-    decote_opposable, trimestres_de_decote, surcote_points, _ABATTEMENTS_IRCEC,
+    decote_opposable, trimestres_de_decote, inapte_sans_coefficient,
+    categorie_sans_coefficient, surcote_points, _ABATTEMENTS_IRCEC,
     _ABATTEMENTS_PAR_ANNEE_AGE_SEUL ; droit/ouvrir.py : age_taux_plein
   javascript: >-
     moteur/js/droit/liquider.js : abattementPoints, abattementIrcec,
-    abattementRegimeDeBase, decoteOpposable, trimestresDeDecote, surcotePoints ;
+    abattementRegimeDeBase, decoteOpposable, trimestresDeDecote, inapteSansCoefficient,
+    categorieSansCoefficient, surcotePoints ;
     moteur/js/droit/ouvrir.js : ageTauxPlein
   parametres: >-
     contenu.parametres de chaque version : abattement_points, age_ouverture_par_generation,
-    age_taux_plein, age_taux_plein_par_generation, decote_par_trimestre ;
+    age_taux_plein, age_taux_plein_par_generation, decote_par_trimestre,
+    age_sans_coefficient_de_l_inapte, categories_sans_coefficient ;
     regimes/cavamac_complementaire.yaml : surcote_par_trimestre, surcote_pas_trimestres,
     surcote_trimestres_maximum, surcote_trimestres_cotises, date_effet
   tests: [tests/test_sections_liberales.py]

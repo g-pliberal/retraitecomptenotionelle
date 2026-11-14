@@ -160,6 +160,109 @@ def test_la_cavamac_majore_de_dix_pour_cent_pour_trois_enfants(simulateur):
     assert _majoration(resultat, "cavamac_complementaire") == 0.0
 
 
+#: (naissance, âge au départ, titre déclaré) : la pension de la CAVAMAC par an
+#: et son coefficient. Agent général au double du salaire moyen depuis ses
+#: 22 ans, euros de 2026. Le titre ne change pas les points : chaque montant est
+#: celui du taux plein (12 610,2304 €, 14 984,9734 €, 17 879,9355 €,
+#: 21 070,3823 €, 21 752,7869 €, 25 169,5755 €) multiplié à la main par le
+#: coefficient du texte en vigueur.
+CAVAMAC_SANS_MINORATION = {
+    # Statuts de 2011, article 15, en vigueur le 1er juillet 2011 : « à taux
+    # plein sans application d'un coefficient de minoration au plus tôt à partir
+    # de l'âge prévu à l'article L. 161-17-2 […] : a) Pour les adhérents reconnus
+    # atteints d'inaptitude au travail […] ; b) Pour les anciens déportés et
+    # internés ». Né le 1er janvier 1951, âge légal 60 ans, taux plein à 65 ans,
+    # pension au 1er juillet 2011, à 60 ans et 6 mois, 54 mois avant : « 25 %
+    # […] entre le 49e et le 60e mois » (article 16) au valide,
+    # 12 610,2304 × 0,75 = 9 457,67 € ; rien à l'inapte, 12 610,23 €.
+    ("1951-01-01", "60.5", ""): (9_457.67, 0.75),
+    ("1951-01-01", "60.5", "inaptitude"): (12_610.23, 1.0),
+    # Né le 1er janvier 1955, âge légal 62 ans, taux plein à 67 ans, pension au
+    # 1er janvier 2017, à 62 ans, 60 mois avant : 25 % au valide,
+    # 14 984,9734 × 0,75 = 11 238,73 € ; 14 984,97 € à l'inapte et au déporté.
+    ("1955-01-01", "62", ""): (11_238.73, 0.75),
+    ("1955-01-01", "62", "inaptitude"): (14_984.97, 1.0),
+    ("1955-01-01", "62", "deporte"): (14_984.97, 1.0),
+    # Né le 1er janvier 1958, inapte, pension au 1er janvier 2020, à 62 ans :
+    # 17 879,94 €, au lieu de 17 879,9355 × 0,75 = 13 409,95 €.
+    ("1958-01-01", "62", "inaptitude"): (17_879.94, 1.0),
+    # Arrêté du 4 août 2023, annexe, 6°, b, en vigueur le 1er septembre 2023 :
+    # « à partir de l'âge prévu au IV de l'article L. 643-3 et sans application
+    # d'un coefficient de minoration les pensions […] des assurés mentionnés aux
+    # 2° et 3° de l'article L. 643-4 », dont l'inapte, à 62 ans (D. 643-14,
+    # D. 351-1-14). Né le 1er août 1961, âge légal 62 ans, pension au
+    # 1er novembre 2023, à 62 ans et 3 mois, 57 mois avant 67 ans : 25 % au
+    # valide, 21 070,3823 × 0,75 = 15 802,79 € ; 21 070,38 € à l'inapte.
+    ("1961-08-01", "62.25", ""): (15_802.79, 0.75),
+    ("1961-08-01", "62.25", "inaptitude"): (21_070.38, 1.0),
+    # Statuts de 2024 : « 1,25 % par trimestre manquant pour atteindre » 67 ans.
+    # Né le 1er janvier 1962, pension au 1er juillet 2024, à 62 ans et 6 mois,
+    # dix-huit trimestres : 21 752,7869 × 0,775 = 16 858,41 € au valide ;
+    # 21 752,79 € à l'inapte et au déporté (L. 643-4, 2°, a et c).
+    ("1962-01-01", "62.5", ""): (16_858.41, 0.775),
+    ("1962-01-01", "62.5", "inaptitude"): (21_752.79, 1.0),
+    ("1962-01-01", "62.5", "deporte"): (21_752.79, 1.0),
+    # Règlement de 2026, article 4, mot pour mot. Né le 1er janvier 1965,
+    # pension au 1er octobre 2027, à 62 ans et 9 mois, l'âge de L. 161-17-2,
+    # dix-sept trimestres : 25 169,5755 × 0,7875 = 19 821,04 € au valide ;
+    # 25 169,58 € à l'inapte, au déporté, et à l'ancien combattant de soixante
+    # mois (L. 643-4, 2°, d, « personnes mentionnées au 5° de l'article
+    # L. 351-8 »), que D. 351-2 sert dès « l'âge prévu à l'article L. 161-17-2 » ;
+    # celui de douze mois attend « l'âge prévu au 1° de l'article L. 351-8
+    # minoré d'un an », 66 ans.
+    ("1965-01-01", "62.75", ""): (19_821.04, 0.7875),
+    ("1965-01-01", "62.75", "inaptitude"): (25_169.58, 1.0),
+    ("1965-01-01", "62.75", "deporte"): (25_169.58, 1.0),
+    ("1965-01-01", "62.75", "guerre=60"): (25_169.58, 1.0),
+    ("1965-01-01", "62.75", "guerre=12"): (19_821.04, 0.7875),
+}
+
+
+def test_la_cavamac_sert_sans_minoration_l_inapte_et_les_categories_de_ses_statuts():
+    """Statuts de 2011, article 15, a et b (JORFARTI000024270173) ; arrêté du
+    4 août 2023, annexe, 6°, b (JORFARTI000047977908), et L. 643-4, 2°
+    (LEGIARTI000047453026) ; règlement de 2026, article 4
+    (JORFARTI000054436046). L'inapte et l'ancien déporté ou interné sont servis
+    « sans application d'un coefficient de minoration » dès l'âge de
+    L. 161-17-2, l'inapte dès 62 ans depuis le 1er septembre 2023 ; l'ancien
+    combattant ou prisonnier de guerre du 5° de L. 351-8, aux âges de D. 351-2,
+    depuis les statuts de 2024. Le modèle leur opposait la minoration de
+    l'assuré valide, 25 % à 62 ans (corrigé le 14 novembre 2026). Servi par le
+    portage, refait au bit près par le moteur Python."""
+    from outils_pont import servi_et_refait
+
+    requete = {
+        "age_reference": "fixe_apres_bascule", "bascule": "2026",
+        "conversion_acquis": "reference", "debut": "22", "emploi": "cor_2026",
+        "enfants": "0", "euros": "2026", "indexation": "triple_lock_inverse",
+        "primes": "0", "profil": "plat", "projection": "cor_reference",
+        "salaire": "2", "sexe": "H", "stock": "prix", "table": "unisexe",
+        "statut": "agent_general_assurance",
+    }
+
+    def titre(declare):
+        if not declare:
+            return {}
+        nom, _, valeur = declare.partition("=")
+        return {nom: valeur or "oui"}
+
+    cas = [{"cle": "|".join(cle),
+            "requete": {**requete, "naissance": cle[0], "liquidation": cle[1],
+                        **titre(cle[2])}}
+           for cle in CAVAMAC_SANS_MINORATION]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    ecarts = {}
+    for cle, (montant, coefficient) in CAVAMAC_SANS_MINORATION.items():
+        actuel = servis["|".join(cle)]["actuel"]
+        [pension] = [p for p in actuel["pensions_par_regime"]
+                     if p["regime"] == "cavamac_complementaire"]
+        if (_coefficient(pension["detail"]) != pytest.approx(coefficient)
+                or pension["montant"] != pytest.approx(montant, abs=0.005)):
+            ecarts[cle] = (_coefficient(pension["detail"]), round(pension["montant"], 2))
+    assert ecarts == {}, ecarts
+
+
 # -- la CAVEC -------------------------------------------------------------------
 
 
@@ -238,7 +341,9 @@ def test_chaque_pension_minoree_porte_les_ages_et_le_taux_de_sa_version(
         jour = debut or date(caisse.creation, 1, 1)
         while jour < (fin or date(2041, 1, 1)):
             periode = caisse.periode_a_l_effet(jour.isoformat())
-            assert {cle: getattr(periode, cle) for cle in lus} == lus, (version["id"], jour)
+            portes = {cle: getattr(periode, cle) for cle in lus}
+            portes = {cle: list(v) if isinstance(v, tuple) else v for cle, v in portes.items()}
+            assert portes == lus, (version["id"], jour)
             assert periode.decote_annulee_par_la_duree is False, (version["id"], jour)
             jour = date(jour.year + jour.month // 12, jour.month % 12 + 1, 1)
 

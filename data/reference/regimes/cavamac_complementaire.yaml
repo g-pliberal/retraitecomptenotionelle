@@ -251,6 +251,8 @@ periodes:
     surcote_points: cavamac_minoration_age_seul
     surcote_pas_trimestres: 4
     surcote_trimestres_maximum: 20
+    age_sans_coefficient_de_l_inapte: age_legal_par_generation
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LE SOMMET : appel à 142,86 % (décret n° 2003-1255 du 26 décembre
@@ -282,6 +284,22 @@ periodes:
       que le modèle ne sait pas dire, et le capital unique de dix-huit
       fois la pension annuelle versé sous 1 500 points (article 21) — la
       pension reste servie en rente, comme celle du RAFP sous son seuil.
+      SANS MINORATION, depuis le 14 novembre 2026 (action 130, ligne 27 de
+      la file) : l'inapte, que l'article 15, a, sert « à taux plein sans
+      application d'un coefficient de minoration au plus tôt à partir de
+      l'âge prévu à l'article L. 161-17-2 »
+      (`age_sans_coefficient_de_l_inapte: age_legal_par_generation`,
+      jusqu'en 2023), puis l'arrêté du 4 août 2023 « à partir de l'âge
+      prévu au IV de l'article L. 643-3 », 62 ans (D. 643-14, D. 351-1-14 ;
+      62, depuis 2024) ; l'ancien déporté ou interné de l'article 15, b,
+      puis du 2° de L. 643-4, et, depuis 2024, l'ancien combattant ou
+      prisonnier de guerre du 5° de L. 351-8, aux âges de D. 351-2
+      (`categories_sans_coefficient`). RESTENT MINORÉS, faute de saisie ou
+      de texte servi : l'ancien combattant du décret n° 74-436 de 2011 à
+      2023 (article 15, c), le grand invalide, l'invalide professionnel à
+      66 %, le travailleur handicapé depuis le 1er septembre 2023 ; de
+      septembre à décembre 2023, la période garde l'âge légal et la seule
+      catégorie de 2011.
   - debut: 2019
     fin: 2023
     type_calcul: points
@@ -303,6 +321,8 @@ periodes:
     surcote_points: cavamac_minoration_age_seul
     surcote_pas_trimestres: 4
     surcote_trimestres_maximum: 20
+    age_sans_coefficient_de_l_inapte: age_legal_par_generation
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes]
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Appel ramené à 129,5 %, soit 8,16 %. C'est le dernier taux que le
@@ -333,6 +353,8 @@ periodes:
     surcote_pas_trimestres: 4
     surcote_trimestres_maximum: 20
     surcote_trimestres_cotises: cavamac_minoration_age_seul
+    age_sans_coefficient_de_l_inapte: 62
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       Appel ramené à 129,5 %, soit 8,16 %. C'est le dernier taux que le
@@ -378,6 +400,8 @@ periodes:
     surcote_pas_trimestres: 4
     surcote_trimestres_maximum: 20
     surcote_trimestres_cotises: cavamac_minoration_age_seul
+    age_sans_coefficient_de_l_inapte: 62
+    categories_sans_coefficient: [taux_plein_anciens_deportes_internes, taux_plein_anciens_combattants_prisonniers]
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       LA BAISSE DU TAUX D'APPEL, que la caisse annonce dans son tableau de
