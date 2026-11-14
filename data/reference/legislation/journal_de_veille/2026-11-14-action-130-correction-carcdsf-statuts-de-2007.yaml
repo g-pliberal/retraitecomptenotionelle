@@ -1,0 +1,28 @@
+date: "2026-11-14"
+session: "action 130, file des corrections décidées, ligne 21 : les statuts de 2007 de la CARCDSF servis dès le 11 octobre 2007"
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index JORF récupéré par `dila_index.py
+  --recuperer`, à jour du 11 novembre 2026. Arrêté du 1er octobre 2007
+  (JORFTEXT000000252172), publié le 10 : ses articles 1er, 2 et 3
+  (JORFARTI000001289079, JORFARTI000002267801, JORFARTI000002068265) et les six pièces
+  de son annexe, dont les articles 20 et 23 (JORFARTI000001859980) ; « transitoire »,
+  « entrée en vigueur », « 2008 », « prend effet » et « à compter du », cherchés dans
+  les neuf pièces.
+trouve: >-
+  Le texte tranche : l'arrêté ne fixe aucune date et ne porte aucune disposition
+  transitoire ; publié le 10 octobre 2007, ses statuts sont en vigueur le 11, et le
+  règlement de 1955 est abrogé. Le modèle ne servait les statuts de 2007 qu'aux
+  pensions de 2008 : corrigé dans les deux moteurs, par les données (`date_effet` aux
+  périodes de 2004 et de 2008 de `carcdsf_complementaire.yaml`). Une pension qui prend
+  effet le 1er novembre ou le 1er décembre 2007 reçoit la minoration par l'âge de
+  l'article 20 (né le 1er août 1945, pension au 1er novembre 2007 à 62 ans et 3 mois :
+  0,85, soit 6 399,74 € par an au lieu de 7 529,11 € ; à 60 ans et 3 mois, 0,75), le
+  taux plein avancé de la mère et la majoration de 10 % pour trois enfants de
+  l'article 23 (752,91 € au lieu de rien). Les fiches `carcdsf_minoration_age_seul` et
+  `reversion_carcdsf` relues ce jour, l'erreur passée à l'histoire de la première.
+reste: >-
+  Le règlement de 1955 et ses modifications, non lus (Bulletin officiel no 97-20), et
+  son article 18, en vigueur jusqu'au 1er janvier 2011. L'index LEGI n'a pas été
+  récupéré : l'article 1er du code civil, qui fonde l'entrée en vigueur au lendemain
+  de la publication, n'y est de toute façon pas. Les lignes 22 à 30 de la file
+  (`docs/feuille_de_route/130/2026-11-13-corrections-decidees.md`).

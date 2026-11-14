@@ -163,9 +163,15 @@ Les notes citées sont dans ce dossier ; les montants, par an, aux cas posés.
 - [ ] 19. **CARPIMKO, les générations 1955 et antérieures de 2015 à 2024** (136,90 € de
   trop). Fiche `carpimko_ages_2015` ; note `2026-11-05-e3-bis-corrections-de-r-e4.md`.
 - [ ] 20. **CARPIMKO, de 1984 au 4 juin 1987** (28,57 € de trop). Mêmes fiche et note.
-- [ ] 21. **CARCDSF, du 11 octobre au 31 décembre 2007** : les statuts de 2007 non servis.
+- [x] 21. **CARCDSF, du 11 octobre au 31 décembre 2007** : les statuts de 2007 non servis.
   Fiche `carcdsf_minoration_age_seul` ; note
   `2026-11-05-carte-des-fiches-carcdsf-lue-au-droit.md`, « Ce que l'étape laisse ».
+  Corrigé le 14 novembre 2026 : une pension qui prend effet depuis le 11 octobre 2007
+  se liquide aux statuts de 2007, dans les deux moteurs — la minoration par l'âge, le
+  taux plein avancé de la mère, les 10 % pour trois enfants (né le 1er août 1945,
+  pension au 1er novembre 2007 : 6 399,74 € par an au lieu de 7 529,11 €) ; la règle
+  d'avant le 11 octobre 2007 reste présumée ; note
+  `2026-11-14-correction-carcdsf-statuts-de-2007.md`.
 - [ ] 22. **CARCDSF, du 1er janvier au 30 juin 2011** : les statuts de 2011 servis six
   mois trop tôt. Mêmes fiche et note.
 - [ ] 23. **CARCDSF, l'inapte et les catégories sans minoration.** Mêmes fiche et note.
