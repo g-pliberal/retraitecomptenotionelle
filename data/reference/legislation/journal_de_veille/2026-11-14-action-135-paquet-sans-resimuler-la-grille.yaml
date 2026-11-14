@@ -1,0 +1,17 @@
+date: "2026-11-14"
+session: "action 135 : le paquet refait sans resimuler la grille du coût"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1
+  ni à aucune donnée d'un régime, seulement à la mémoire des calculs
+  (memoire.py), à l'engagement acquis et au bilan du compte, qui prennent la
+  grille que le coût a simulée, à scripts/construire_donnees.py et à leurs
+  tests.
+trouve: >-
+  Aucune règle n'a changé. La grille du coût se simulait quatre fois sous les
+  réglages de référence à chaque fabrication du paquet ; elle ne se simule
+  plus qu'une fois. Le paquet refait est identique à l'octet ; 238 s puis
+  168 s, mémoire des calculs vide.
+reste: >-
+  Répartir sur les cœurs les calculs indépendants de la fabrique du paquet
+  (attendu, non mesuré : de 60 à 80 s) ; profiler les masses du coût,
+  calculées sept fois.
