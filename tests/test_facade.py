@@ -779,6 +779,79 @@ def test_le_releve_ne_sert_que_ce_qu_il_transmet(simulateur):
         durees.trimestres = 0
 
 
+# -- les cotisations du relevé et le constructeur du compte -----------------------------
+
+#: Un chef d'exploitation né en 1925, de 1952 à 1972 à 100 € par an, sous le
+#: plafond, parti à soixante-cinq ans, en 1990.
+CHEF_DE_1952 = dict(annee_naissance=1925, mois_naissance=1, jour_naissance=15, sexe="H",
+                    age_liquidation=65.0)
+
+
+def _chef_de_1952():
+    from retraite_notionnelle.carriere import AnneeCarriere
+
+    return Carriere(**CHEF_DE_1952, lignes=[
+        AnneeCarriere(annee=annee, revenu=100.0, affiliation="exploitant_agricole")
+        for annee in range(1952, 1973)])
+
+
+def test_le_releve_rend_ses_cotisations(simulateur):
+    """« Pour l'exercice 1952, les cotisations professionnelles [...] sont
+    égales à la moitié des cotisations annuelles » (décret n° 52-1166,
+    article 45) : la cotisation de 1952 que le relevé revalorise, ramenée aux
+    prix de son année, est la moitié des 8,5 % de 100 €, 4,25 € ; celle de
+    1953, 8,50 €. Elles passent le pont en données, ``(code, annee, montant)``."""
+    cotisations = facade.releve.construire(
+        simulateur.scenario_actuel, _chef_de_1952()).droits.cotisations
+    assert type(cotisations) is tuple
+    code, annee, montant = cotisations[0]
+    assert (type(code), type(annee), type(montant)) == (str, int, float)
+    assert {annee: round(montant / simulateur.macro.coefficient_prix(annee, 1990), 2)
+            for code, annee, montant in cotisations
+            if code == "msa_non_salaries" and annee in (1952, 1953)} == {1952: 4.25, 1953: 8.50}
+
+
+def test_le_constructeur_du_compte_rend_la_cotisation_d_une_annee(simulateur):
+    """Le même chef : son compte reçoit pour 1952 la moitié de la cotisation
+    annuelle, 4,25 €, sous le constructeur du scénario 2 comme sous celui des
+    scénarios 4 et 5. Ce qu'il rend revient sous le type du Python."""
+    from retraite_notionnelle.moteur.compte import CotisationAnnuelle
+
+    for constructeur in (simulateur.constructeur, simulateur.constructeur_employeur):
+        cotisation = constructeur.cotisation_annuelle(_chef_de_1952(), 1952)
+        assert type(cotisation) is CotisationAnnuelle
+        assert dict(cotisation.par_regime) == {"msa_non_salaries": 4.25}
+        assert type(cotisation.fiabilite) is Fiabilite
+
+
+def test_le_constructeur_du_compte_rend_le_taux_effectif_d_une_periode(simulateur):
+    """44,1 % de la rémunération d'un agent civil de l'État en 2025 : la part du
+    taux de l'État que la Cour des comptes rattache à sa retraite (tableau
+    n° 15), que le compte des scénarios 4 et 5 reçoit par défaut. La période
+    passe au portage par son rang dans le catalogue."""
+    periode = next(iter(
+        simulateur.catalogue["fonction_publique_etat"].periodes_actives(2025)))
+    taux, employeur, origine, fiabilite = simulateur.constructeur_employeur.taux_effectif(
+        "fonction_publique_etat", periode, 2025, militaire=False)
+    assert (employeur, origine, fiabilite) == (pytest.approx(0.441), "retraite_seule",
+                                               Fiabilite.HAUTE)
+    assert type(taux) is float
+
+
+def test_le_constructeur_ne_sert_que_ce_qu_il_transmet(simulateur):
+    """Une méthode que la façade ne déclare pas, un constructeur qu'elle ne
+    sert pas, une retouche : refusés, au lieu de tourner en Python."""
+    with pytest.raises(NonTransmissible, match="constructeur.construire"):
+        simulateur.constructeur.construire
+    with pytest.raises(NonTransmissible, match="constructeur_liberal"):
+        simulateur.constructeur_liberal
+    with pytest.raises(NonTransmissible, match="modifi"):
+        simulateur.constructeur.taux_effectif = None
+    with pytest.raises(ValueError, match="constructeur.construire"):
+        pont.constructeur_du_compte("constructeur", "construire", dict)
+    assert facade.CONSTRUCTEURS is pont.CONSTRUCTEURS_DE_LA_FACADE
+
+
 #: Une mère née en 1962, au salaire bas, entrée à vingt ans, partie à
 #: soixante-quatre ans et demi, en 2027, qui a élevé ses enfants de 1985 à
 #: 2002 sous l'AVPF.

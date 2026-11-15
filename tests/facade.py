@@ -39,8 +39,13 @@ façade, une période de son catalogue, une carrière et l'une de ses lignes,
 une date, des valeurs simples. Ce qui n'en est pas — le moteur Python, une période retouchée, un
 objet du moteur — n'arriverait pas au portage : la règle est refusée.
 
+**Le constructeur du compte** (``simulateur.constructeur``,
+``simulateur.constructeur_employeur``) sert ce que
+``pont.CONSTRUCTEURS_DE_LA_FACADE`` déclare — la cotisation d'une année, le
+taux porté au compte —, ses arguments transmis comme ceux d'une table.
+
 **Le relevé des droits** (``releve.construire``) revient en données, ce que
-les tests en lisent : ses durées et ses points. Ses durées repassent au
+les tests en lisent : ses durées, ses points et ses cotisations. Ses durées repassent au
 portage, qui les refait du relevé de leur carrière, quand une règle les
 reçoit (``liquider.duree_du_regime_aligne``).
 
@@ -73,6 +78,7 @@ from retraite_notionnelle.droit import liquider as _liquider
 from retraite_notionnelle.droit import ouvrir as _ouvrir
 from retraite_notionnelle.droit import releve as _releve
 from retraite_notionnelle.droit import reversion as _reversion
+from retraite_notionnelle.moteur import compte as _compte
 from retraite_notionnelle.scenarios import actuel as _actuel
 
 #: Les données du simulateur Python que la façade laisse lire : des chargeurs,
@@ -91,6 +97,10 @@ TABLES = pont.TABLES_DE_LA_FACADE
 
 #: Les règles du droit que la façade sert, par module.
 REGLES = pont.REGLES_DE_LA_FACADE
+
+#: Les méthodes des constructeurs du compte que la façade sert, par
+#: constructeur.
+CONSTRUCTEURS = pont.CONSTRUCTEURS_DE_LA_FACADE
 
 #: Les séries de chaque simulateur de la façade qui les a données, et ses
 #: paramètres : un bâtisseur de la carrière reconnaît ainsi celles qu'on lui
@@ -285,6 +295,8 @@ class Simulateur(_Ferme):
     def __getattr__(self, nom):
         if nom in DONNEES:
             return getattr(self._donnees, nom)
+        if nom in CONSTRUCTEURS:
+            return Constructeur(self, nom)
         return super().__getattr__(nom)
 
     def simuler(self, carriere):
@@ -319,6 +331,45 @@ class Simulateur(_Ferme):
         return _demander("simulateur.carriere_releve", self.parametres, pont.SIMULATEUR, _options(
             _carriere.Carriere.depuis_releve, annee_naissance=annee_naissance, sexe=sexe,
             releve=list(releve), age_liquidation=age_liquidation, macro=None, **options))
+
+
+class Constructeur(_Ferme):
+    """Un constructeur du compte d'un simulateur de la façade : celles de ses
+    méthodes que la façade sert (:data:`CONSTRUCTEURS`), appelées par le
+    portage sur le sien, leurs arguments transmis comme ceux d'une méthode de
+    table."""
+
+    def __init__(self, simulateur: Simulateur, nom: str) -> None:
+        object.__setattr__(self, "_simulateur", simulateur)
+        object.__setattr__(self, "_nom", nom)
+
+    def __getattr__(self, methode):
+        if methode.startswith("__"):
+            raise AttributeError(methode)
+        if methode not in CONSTRUCTEURS[self._nom]:
+            raise NonTransmissible(
+                f"{self._nom}.{methode} : la façade ne sert pas cette méthode du constructeur "
+                "(pont.CONSTRUCTEURS_DE_LA_FACADE) — le test la demande au pont, ou se porte "
+                "à la main")
+        jumelle = getattr(_compte.ConstructeurCompte, methode)
+        rendu = typing.get_type_hints(jumelle, vars(_compte))["return"]
+        simulateur = self._simulateur
+
+        def servie(*arguments, **nommes):
+            lies = inspect.signature(jumelle).bind(None, *arguments, **nommes)
+            lies.apply_defaults()
+            _, *valeurs = lies.arguments.values()
+            if not memoire.modele_intact():
+                raise NonTransmissible(
+                    f"{self._nom}.{methode} : modèle modifié (monkeypatch, "
+                    "memoire.modele_modifie) — ce que le test remplace en Python, le portage "
+                    "ne le voit pas")
+            return pont.constructeur_du_compte(
+                self._nom, methode, rendu,
+                *(_argument_de_table(simulateur, valeur) for valeur in valeurs),
+                parametres=simulateur.parametres)
+
+        return servie
 
 
 class Carriere(_carriere.Carriere):
@@ -551,10 +602,12 @@ class Durees(_Ferme):
 
 class Droits(_Ferme):
     """Les droits du relevé (``acquerir.Droits``), lus du portage : ses
-    ``points``, ``(code, annee, points, taux)``, dans l'ordre."""
+    ``points``, ``(code, annee, points, taux)``, et ses ``cotisations``
+    revalorisées, ``(code, annee, montant)``, dans l'ordre."""
 
-    def __init__(self, points) -> None:
+    def __init__(self, points, cotisations) -> None:
         object.__setattr__(self, "points", points)
+        object.__setattr__(self, "cotisations", cotisations)
 
 
 class Releve(_Ferme):
@@ -594,7 +647,7 @@ class Releves(_Ferme):
                 "façade (simulateur.scenario_actuel)")
         simulateur = moteur._simulateur
         lu = _demander("releve.construire", simulateur.parametres, pont.MOTEUR, carriere)
-        return Releve(Durees(simulateur, carriere, lu), Droits(lu["points"]))
+        return Releve(Durees(simulateur, carriere, lu), Droits(lu["points"], lu["cotisations"]))
 
 
 #: ``droit.releve``, son ``construire`` servi par le portage.

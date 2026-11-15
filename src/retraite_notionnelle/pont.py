@@ -2216,7 +2216,8 @@ def releve_des_donnees(donnees: dict) -> dict:
     ``pont.mjs``), lu strictement : ``par_annee``, par compte, régime et année,
     les trimestres crédités ; ``plafonds``, par compte, celui de chaque année
     de la carrière ; ``trimestres_par_regime`` et ``trimestres`` ; ``points``,
-    les crédits ``(code, annee, points, taux)``, dans l'ordre."""
+    les crédits ``(code, annee, points, taux)``, dans l'ordre ; ``cotisations``,
+    les cotisations revalorisées ``(code, annee, montant)``, dans l'ordre."""
     durees = donnees["durees"]
     return {
         "par_annee": {compte: {code: dict(annees) for code, annees in lu_strictement(
@@ -2231,6 +2232,8 @@ def releve_des_donnees(donnees: dict) -> dict:
         "trimestres": lu_strictement(int, durees["trimestres"], "releve.trimestres"),
         "points": lu_strictement(tuple[tuple[str, int, float, float | None], ...],
                                  donnees["points"], "releve.points"),
+        "cotisations": lu_strictement(tuple[tuple[str, int, float], ...],
+                                      donnees["cotisations"], "releve.cotisations"),
     }
 
 
@@ -2370,23 +2373,65 @@ def table_du_moteur(table: str, methode: str, type_rendu, *arguments, parametres
     strictement. Une méthode que :data:`TABLES_DE_LA_FACADE` ne déclare pas est
     refusée avant node ; ce que le portage refuse lève l'erreur que le Python
     lève (:func:`erreur_du_portage`)."""
-    from .config import Parametres
-
     if methode not in TABLES_DE_LA_FACADE.get(table, ()):
         raise ValueError(f"méthode de table que la façade ne sert pas : {table}.{methode} "
                          "(pont.TABLES_DE_LA_FACADE)")
+    return _methode_servie("scenario_actuel.table", MOTEUR, table, methode, type_rendu,
+                           arguments, parametres, paquet)
+
+
+def _methode_servie(entree: str, porteur, nom: str, methode: str, type_rendu, arguments,
+                    parametres, paquet: bytes | None):
+    """La méthode ``methode`` de l'objet ``nom`` du ``porteur`` — le moteur
+    ou le simulateur —, demandée au portage par l'entrée ``entree`` de la
+    façade, ce qu'elle rend lu strictement sous ``type_rendu``."""
+    from .config import Parametres
+
     carrieres: list = []
     valeurs = [_argument_de_la_facade(argument, carrieres) for argument in arguments]
     reponse = _demander({"facade": {
         "parametres": parametres_en_donnees(Parametres() if parametres is None else parametres),
         "carrieres": [carriere_en_donnees(carriere) for carriere in carrieres],
-        "entree": "scenario_actuel.table",
-        "arguments": [_argument_du_droit(MOTEUR, carrieres), {"valeur": table},
+        "entree": entree,
+        "arguments": [_argument_du_droit(porteur, carrieres), {"valeur": nom},
                       {"valeur": methode}, *valeurs],
     }}, _paquet_de(parametres, paquet))
     if "refus" in reponse:
         raise erreur_du_portage(**reponse["refus"])
-    return lu_strictement(type_rendu, reponse["rendu"], f"{table}.{methode}")
+    return lu_strictement(type_rendu, reponse["rendu"], f"{nom}.{methode}")
+
+
+# -- le constructeur du compte, par la façade (action 161) -------------------------
+#
+# Un test lit aussi ce que le constructeur du compte notionnel prélève une
+# année — ``simulateur.constructeur_employeur.cotisation_annuelle(carriere,
+# 1952)`` — ou le taux qu'il porte au compte. La façade sert ces méthodes comme
+# celles d'une table : le portage appelle celle de son constructeur.
+
+#: Les méthodes des constructeurs du compte que la façade sert, sous les noms
+#: du Python : ``{constructeur: méthodes}``. Chacune a les mêmes arguments,
+#: dans le même ordre, dans le portage (``moteur/js/compte.js``), et un appel
+#: confronté au jumeau (``tests/test_facade_jumeau.py``). Une méthode qui n'y
+#: est pas est refusée avant node.
+CONSTRUCTEURS_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
+    "constructeur": ("cotisation_annuelle", "taux_effectif"),
+    "constructeur_employeur": ("cotisation_annuelle", "taux_effectif"),
+}
+
+
+def constructeur_du_compte(constructeur: str, methode: str, type_rendu, *arguments,
+                           parametres=None, paquet: bytes | None = None):
+    """Ce que rend la méthode ``methode`` du constructeur ``constructeur`` du
+    simulateur, sous les noms du Python, appelée par le portage sur le sien,
+    sous ``parametres`` : ses arguments comme ceux d'une méthode de table
+    (:func:`table_du_moteur`), ce qu'elle rend lu strictement sous
+    ``type_rendu``. Une méthode que :data:`CONSTRUCTEURS_DE_LA_FACADE` ne
+    déclare pas est refusée avant node."""
+    if methode not in CONSTRUCTEURS_DE_LA_FACADE.get(constructeur, ()):
+        raise ValueError(f"méthode de constructeur que la façade ne sert pas : "
+                         f"{constructeur}.{methode} (pont.CONSTRUCTEURS_DE_LA_FACADE)")
+    return _methode_servie("simulateur.constructeur", SIMULATEUR, constructeur, methode,
+                           type_rendu, arguments, parametres, paquet)
 
 
 def _argument_de_la_facade(argument, carrieres: list) -> dict:

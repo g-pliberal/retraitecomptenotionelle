@@ -1751,8 +1751,9 @@ const ENTREES_DE_LA_FACADE = {
  * Le relevé des droits en données, par ce que les tests en lisent : ses
  * durées — par compte, régime et année ; le plafond de chaque année de la
  * carrière, de sa première à celle de l'effet ; la durée de chaque régime et
- * la durée tous régimes — et les points de chaque régime,
- * `[code, annee, points, taux]`. Ses durées repassent au portage par la
+ * la durée tous régimes —, les points de chaque régime,
+ * `[code, annee, points, taux]`, et les cotisations revalorisées,
+ * `[code, annee, montant]`. Ses durées repassent au portage par la
  * carrière dont il vient (`durees_du_releve`, `argumentDuDroit`).
  */
 function releveEnDonnees({ durees, droits }, carriere) {
@@ -1772,6 +1773,7 @@ function releveEnDonnees({ durees, droits }, carriere) {
       trimestres: durees.trimestres,
     },
     points: droits.points.map((point) => [...point]),
+    cotisations: droits.cotisations.map((cotisation) => [...cotisation]),
   };
 }
 
@@ -1847,6 +1849,28 @@ ENTREES_DE_LA_FACADE["scenario_actuel.table"] = (moteur, table, methode, ...vale
     throw new TypeError(`table ou méthode que le moteur ne tient pas : ${table}.${methode}`);
   }
   return telQuel(tenue[nom](...valeurs.map((valeur) => argumentDeLaFacade(moteur, valeur))));
+};
+
+// Le constructeur du compte, par la façade : un bloc à part (action 161).
+
+/**
+ * La méthode d'un constructeur du compte du simulateur, sous les noms du
+ * Python (`constructeur_du_compte` de `pont.py`, qui déclare celles que la
+ * façade sert) : ce qu'elle rend sur ces arguments (`argumentDeLaFacade`),
+ * tel quel (`telQuel`). Un constructeur ou une méthode que le simulateur ne
+ * tient pas arrête la demande, au lieu de passer pour un refus du moteur.
+ */
+ENTREES_DE_LA_FACADE["simulateur.constructeur"] = (simulateur, constructeur, methode,
+  ...valeurs) => {
+  const tenu = constructeur.startsWith("constructeur")
+    ? simulateur[enChameau(constructeur)] : undefined;
+  const nom = enChameau(methode);
+  if (tenu === null || typeof tenu !== "object" || typeof tenu[nom] !== "function"
+    || nom.startsWith("_")) {
+    throw new TypeError(
+      `constructeur ou méthode que le simulateur ne tient pas : ${constructeur}.${methode}`);
+  }
+  return telQuel(tenu[nom](...valeurs.map((valeur) => argumentDeLaFacade(simulateur, valeur))));
 };
 
 // Les règles du droit, par la façade : un bloc à part (action 161).

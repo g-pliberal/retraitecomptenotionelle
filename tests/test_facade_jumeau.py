@@ -24,7 +24,7 @@ from retraite_notionnelle import simulateur as simulateur_python
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import Carriere as CarrierePython
 from retraite_notionnelle.carriere import LigneRelevee, Metier
-from retraite_notionnelle.config import RACINE_PROJET, Parametres
+from retraite_notionnelle.config import RACINE_PROJET, ContributionEtat, Parametres
 from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import liquider as liquider_python
@@ -638,3 +638,68 @@ def test_le_jumeau_rend_le_releve_que_la_facade_lit(parametres):
         assert repr(lu.droits.points) == repr(pont.lu_strictement(
             tuple[tuple[str, int, float, float | None], ...],
             json.loads(json.dumps(pont._en_donnees(refait.droits.points))), nom)), nom
+        assert repr(lu.droits.cotisations) == repr(pont.lu_strictement(
+            tuple[tuple[str, int, float], ...],
+            json.loads(json.dumps(pont._en_donnees(refait.droits.cotisations))), nom)), nom
+
+
+# -- le constructeur du compte -----------------------------------------------------------
+
+def _periode_active(regime: str, annee: int):
+    """La première période active du régime cette année, dans le catalogue
+    du simulateur."""
+    return lambda s: next(iter(s.catalogue[regime].periodes_actives(annee)))
+
+
+def _cumul(simulateur):
+    """Un salarié du privé qui est aussi artisan en 2010 : deux activités la
+    même année, que ``cotisation_annuelle`` additionne."""
+    from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+
+    return Carriere(annee_naissance=1970, sexe="H", age_liquidation=64.0, lignes=[
+        AnneeCarriere(annee=2010, revenu=30000.0, affiliation="salarie_prive_non_cadre"),
+        AnneeCarriere(annee=2010, revenu=12000.0, affiliation="artisan")])
+
+
+#: Des appels de chaque méthode de constructeur que la façade sert
+#: (``pont.CONSTRUCTEURS_DE_LA_FACADE``) : ``(constructeur, méthode,
+#: arguments)``, bâtis sur le simulateur de chaque côté.
+APPELS_DES_CONSTRUCTEURS = [
+    ("constructeur", "cotisation_annuelle", lambda s: (_salarie(s), 2000)),
+    ("constructeur", "cotisation_annuelle", lambda s: (_cumul(s), 2010)),
+    ("constructeur", "taux_effectif", lambda s: (
+        "regime_general", _periode_active("regime_general", 2020)(s), 2020)),
+    ("constructeur_employeur", "cotisation_annuelle", lambda s: (_fonctionnaire(s), 2010)),
+    ("constructeur_employeur", "cotisation_annuelle", lambda s: (_artisan(s), 1970)),
+    ("constructeur_employeur", "taux_effectif", lambda s: (
+        "fonction_publique_etat", _periode_active("fonction_publique_etat", 2010)(s), 2010,
+        False, False, True)),
+    ("constructeur_employeur", "taux_effectif", lambda s: (
+        "fonction_publique_etat", _periode_active("fonction_publique_etat", 2000)(s), 2000)),
+]
+
+
+def test_chaque_methode_de_constructeur_servie_a_son_appel_confronte():
+    assert {(nom, methode) for nom, methode, _ in APPELS_DES_CONSTRUCTEURS} == {
+        (nom, methode) for nom, methodes in pont.CONSTRUCTEURS_DE_LA_FACADE.items()
+        for methode in methodes}
+
+
+@pytest.mark.parametrize("parametres", [
+    Parametres(), Parametres(contribution_etat=ContributionEtat.ENTIERE)],
+    ids=["reference", "etat_entiere"])
+def test_le_jumeau_rend_ce_que_la_facade_lit_des_constructeurs(parametres):
+    """Chaque méthode de constructeur que la façade sert, appelée par le
+    portage sur son constructeur et par le jumeau sur le sien : la même
+    valeur, au bit près, sous les mêmes types."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    servi = facade.Simulateur(parametres)
+    jumeau = simulateur_python.Simulateur(parametres)
+    ecarts = []
+    for nom, methode, arguments in APPELS_DES_CONSTRUCTEURS:
+        lu = getattr(getattr(servi, nom), methode)(*arguments(servi))
+        refait = getattr(getattr(jumeau, nom), methode)(*arguments(jumeau))
+        if repr(lu) != repr(refait):
+            ecarts.append(f"{nom}.{methode} : la façade lit {lu!r}, le jumeau rend {refait!r}")
+    assert not ecarts, "\n".join(ecarts)

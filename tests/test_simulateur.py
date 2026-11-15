@@ -1099,7 +1099,6 @@ def _part_employeur_etat(simulateur, annee, militaire=False):
     return employeur, origine, fiabilite
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.constructeur_employeur")
 def test_le_taux_de_l_etat_est_ramene_a_sa_part_retraite_par_defaut(simulateur):
     """Le défaut depuis le 24 septembre 2026 : ce qui n'est pas contributif se
     finance par l'impôt, non par le compte, et le compte d'un agent de l'État
@@ -1110,7 +1109,6 @@ def test_le_taux_de_l_etat_est_ramene_a_sa_part_retraite_par_defaut(simulateur):
     assert origine == "retraite_seule"
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.constructeur_employeur")
 def test_le_taux_entier_reste_un_reglage(entiere):
     """Sous ``entiere``, le compte reçoit ce que l'État a versé, tel quel —
     pour un militaire, le taux des militaires : 126,07 % de la solde en 2025."""
@@ -1127,7 +1125,6 @@ def test_le_taux_entier_reste_un_reglage(entiere):
             == _part_employeur_etat(entiere, 2005))
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.constructeur_employeur")
 def test_la_part_retraite_seule_est_celle_de_la_cour_l_annee_mesuree(retraite_seule):
     """44,1 % pour un civil, 51,2 % pour un militaire : le tableau n° 15.
 
@@ -1143,7 +1140,6 @@ def test_la_part_retraite_seule_est_celle_de_la_cour_l_annee_mesuree(retraite_se
     assert fiabilite is Fiabilite.HAUTE
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.constructeur_employeur")
 def test_les_autres_annees_recoivent_la_meme_proportion_supposee(retraite_seule):
     """Hors de 2025, la proportion est une hypothèse, et le résultat le dit.
 
@@ -1159,7 +1155,6 @@ def test_les_autres_annees_recoivent_la_meme_proportion_supposee(retraite_seule)
         assert fiabilite is Fiabilite.ESTIMEE, annee
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.constructeur_employeur")
 def test_le_militaire_recoit_la_meme_proportion_de_son_propre_taux(retraite_seule):
     """51,2 / 126,07 de ce que l'État verse pour ses militaires, chaque année.
 
@@ -6588,7 +6583,6 @@ process.stdout.write(JSON.stringify(
     return obtenu
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.constructeur_employeur")
 def test_le_compte_porte_ce_que_l_exploitant_verse_pour_l_annee(simulateur):
     """Le compte porte ce qui a été versé, et l'exploitant verse pour l'année
     civile entière, dans sa situation du 1er janvier (L. 731-10-1 du code
@@ -6626,7 +6620,6 @@ def test_le_compte_porte_ce_que_l_exploitant_verse_pour_l_annee(simulateur):
     assert not {"msa_non_salaries", "msa_rco"} & set(installe)
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.constructeur_employeur")
 def test_le_compte_porte_la_cotisation_du_collaborateur_sur_son_forfait(simulateur):
     """Le collaborateur et l'aide familial ne cotisent pas sur un revenu, mais
     sur un forfait : à la base, depuis 2004, « l'assiette minimale prévue à
@@ -6670,7 +6663,6 @@ def _chef_d_exploitation_jusqu_en_2027(revenu: float, affiliation: str = "exploi
     (72090.0, 4613.76, 701.246640),
     (120150.0, 8410.50, 1278.314188),
 ])
-@pytest.mark.sur_le_moteur_python("Simulateur.constructeur_employeur")
 def test_la_cotisation_de_rco_du_chef_a_deux_parts_depuis_2026(
         simulateur, revenu, cotisation, points):
     """Pour les périodes courant depuis le 1er janvier 2026, la cotisation de
@@ -6706,7 +6698,6 @@ def test_la_cotisation_de_rco_du_chef_a_deux_parts_depuis_2026(
             points, abs=2e-6)
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.constructeur_employeur")
 def test_la_seconde_part_de_rco_ne_touche_ni_les_annees_d_avant_ni_le_collaborateur(simulateur):
     """Le décret n° 2024-688 s'applique « au titre des périodes courant à
     compter du 1er janvier 2026 » (article 6) : l'année 2025 garde la seule
@@ -6729,7 +6720,6 @@ def test_la_seconde_part_de_rco_ne_touche_ni_les_annees_d_avant_ni_le_collaborat
         simulateur, naissance, lignes, 2026)["points"]["msa_rco"] == 88.0
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.constructeur, releve.droits.cotisations")
 def test_l_exercice_1952_ne_preleve_que_la_moitie_de_la_cotisation_annuelle(simulateur):
     """« Pour l'exercice 1952, les cotisations professionnelles visées aux
     articles 20 et 21 de la loi du 10 juillet 1952 sont égales à la moitié des
