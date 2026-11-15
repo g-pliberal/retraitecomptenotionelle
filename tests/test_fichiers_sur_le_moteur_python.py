@@ -68,7 +68,6 @@ FICHIERS = (
     "test_solde_fusion.py",
    
     "test_univers.py", "test_versements_uniques.py",
-    "test_web.py",
 )
 
 

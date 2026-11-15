@@ -681,20 +681,20 @@ def test_le_balayage_des_temoins_couvre_tous_les_statuts():
     import importlib.util
     from pathlib import Path
 
-    from retraite_notionnelle.carriere import Affiliations
-    from retraite_notionnelle.config import RACINE_DONNEES
+    from facade import Simulateur
 
+    codes = set(Simulateur().affiliations.codes)
     chemin = Path(__file__).resolve().parents[1] / "scripts" / "construire_temoins.py"
     specification = importlib.util.spec_from_file_location("construire_temoins", chemin)
     module = importlib.util.module_from_spec(specification)
     specification.loader.exec_module(module)
 
-    manquants = set(Affiliations(RACINE_DONNEES).codes) - set(module.STATUTS)
+    manquants = codes - set(module.STATUTS)
     assert not manquants, (
         "statuts sans témoin, donc sans comparaison Python/JavaScript : "
         + ", ".join(sorted(manquants))
     )
-    inconnus = set(module.STATUTS) - set(Affiliations(RACINE_DONNEES).codes)
+    inconnus = set(module.STATUTS) - codes
     assert not inconnus, "statuts balayés mais absents du routage : " + ", ".join(
         sorted(inconnus)
     )
@@ -3452,15 +3452,17 @@ def test_le_tableau_des_regles_d_indexation_sort_bien_du_modele(contexte):
     """
     from dataclasses import replace
 
+    from retraite_notionnelle import pont
     from retraite_notionnelle.config import ModeIndexation
-    from retraite_notionnelle.moteur.indexation import Indexation
 
     simulateur = contexte.simulateur()
 
     def cumul(mode: ModeIndexation, lissage: int = 1) -> float:
+        """Le rendement cumulé de 1940 à 2025, que le portage seul calcule
+        (``pont.indexation``)."""
         parametres = replace(simulateur.parametres, mode_indexation=mode,
                              lissage_indexation=lissage)
-        return Indexation(simulateur.macro, parametres).coefficient(1940, 2025)
+        return pont.indexation([("coefficient", 1940, 2025)], parametres)[0]
 
     prix = cumul(ModeIndexation.PRIX)
     attendues = [
@@ -3539,8 +3541,8 @@ def test_la_correction_des_trois_generations_se_retrouve():
     """
     from dataclasses import replace
 
+    from facade import Simulateur
     from retraite_notionnelle.config import ModeIndexation, Parametres
-    from retraite_notionnelle.simulateur import Simulateur
 
     def correction(generation: int) -> float:
         ecarts = {}
@@ -3610,8 +3612,8 @@ def test_le_README_montre_la_simulation_que_le_modele_calcule_vraiment():
     """
     from pathlib import Path
 
+    from facade import Simulateur
     from retraite_notionnelle import Parametres
-    from retraite_notionnelle.simulateur import Simulateur
 
     simulateur = Simulateur(Parametres())
     comparaison = simulateur.simuler(simulateur.carriere_simple(
