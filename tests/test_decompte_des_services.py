@@ -31,10 +31,13 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.droit.compter import arrondir_les_services
 from retraite_notionnelle.web.site import ErreurSite
 
+from facade import compter
 from outils_pont import RefusDuPortage, Saisies, refus_de_la_saisie, saisie_du_portage
+
+#: Le décompte final du portage, servi par la façade.
+arrondir_les_services = compter.arrondir_les_services
 
 RACINE = Path(__file__).resolve().parents[1]
 FICHE = RACINE / "data" / "reference" / "regles" / "decompte_des_services_fonction_publique.yaml"
@@ -131,9 +134,9 @@ def test_les_services_d_avant_1948_entrent_au_decompte_de_l_etat():
     civiles d'avant 1948, que le régime de l'État liquide avec les siens : 136
     trimestres. Le décompte au jour ne les comptait d'abord que dans les trois
     régimes de la fiche, et en perdait huit."""
-    from retraite_notionnelle.carriere import Carriere, Metier
-    from retraite_notionnelle.droit import liquidation
-    from retraite_notionnelle.simulateur import Simulateur
+    from retraite_notionnelle.carriere import Metier
+
+    from facade import Carriere, Simulateur, liquidation
 
     simulateur = Simulateur()
     carriere = Carriere.depuis_parcours(

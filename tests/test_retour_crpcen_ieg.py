@@ -32,12 +32,11 @@ import pytest
 
 from retraite_notionnelle import Parametres
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+from retraite_notionnelle.carriere import AnneeCarriere
 from retraite_notionnelle.config import PartCotisation
-from retraite_notionnelle.droit import coordonner
-from retraite_notionnelle.moteur.compte import ConstructeurCompte
-from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import module, site
+
+from facade import Carriere, ConstructeurCompte, Simulateur, coordonner
 
 PARAMETRES = Parametres()
 REVENU = 40_000.0

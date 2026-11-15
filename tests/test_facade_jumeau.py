@@ -829,6 +829,8 @@ APPELS_DES_REGLES = [
                 None, {2024: 0.6}, {2024: "apprenti"})),
     ("carriere", "salaire_moyen_annuel", lambda s: (s.macro, 1990)),
     ("carriere", "salaire_moyen_annuel", lambda s: (s.macro, 2030)),
+    ("compter", "arrondir_les_services", lambda s: (20 * 360 + 45, {"unite_jours": 90, "seuil_jours": 45})),
+    ("compter", "arrondir_les_services", lambda s: (180 + 89, {"unite_jours": 180, "seuil_jours": 90})),
     ("compter", "majoration_pour_enfants",
      lambda s: (s.scenario_actuel, _mere(s, "profession_liberale"), {"cnavpl": 160}, 2020)),
     ("compter", "majoration_pour_enfants",
