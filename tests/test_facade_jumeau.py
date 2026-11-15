@@ -292,6 +292,29 @@ def _mere_partie_tot(simulateur):
         age_liquidation=62, nombre_enfants=2)
 
 
+def _entre_a_seize_ans(simulateur):
+    """Un fonctionnaire de l'État né en 1946, entré à seize ans, parti en
+    2005 : les portes de la carrière longue des fonctionnaires."""
+    return simulateur.carriere_simple(
+        annee_naissance=1946, sexe="H", affiliation="fonctionnaire_etat", age_debut=16,
+        age_liquidation=59.0)
+
+
+def _parti_en_2000(simulateur):
+    """Un salarié parti en 2000, avant toute porte de la carrière longue."""
+    return simulateur.carriere_simple(
+        annee_naissance=1940, sexe="H", affiliation="salarie_prive_non_cadre", age_debut=16,
+        age_liquidation=60.0)
+
+
+def _entre_a_quinze_ans(simulateur):
+    """Un fonctionnaire de l'État né en 1955, entré à quinze ans, parti en
+    2014 : sa carrière longue s'ouvre avant le départ."""
+    return simulateur.carriere_simple(
+        annee_naissance=1955, sexe="H", affiliation="fonctionnaire_etat", age_debut=15,
+        age_liquidation=59.0)
+
+
 def _tranche_b(simulateur, annee: int):
     (periode,) = [periode for periode in simulateur.catalogue["agirc"].periodes_actives(annee)
                   if periode.assiette == "tranche_b"]
@@ -303,6 +326,12 @@ def _tranche_b(simulateur, annee: int):
 #: arguments bâtis sur le simulateur de chaque côté — sa carrière, ses séries,
 #: une période de son catalogue.
 APPELS_DES_TABLES = [
+    ("ages_categorie_active", "derogation", lambda s: ("active", 1960.0)),
+    ("ages_categorie_active", "derogation", lambda s: ("active", 1980.0)),
+    ("ages_categorie_active", "derogation", lambda s: ("super_active", 1970.0)),
+    ("ages_categorie_active", "derogation", lambda s: ("sedentaire", 1960.0)),
+    ("carriere_longue", "_portes", lambda s: (_entre_a_seize_ans(s), True)),
+    ("carriere_longue", "_portes", lambda s: (_parti_en_2000(s),)),
     ("ages_annulation_decote", "age", lambda s: (1955.0,)),
     ("ages_annulation_decote", "age", lambda s: (1951.5,)),
     ("ages_ouverture", "age", lambda s: (1955.0,)),
@@ -604,6 +633,13 @@ _RELEVE_CUMULE = (LigneRelevee(2023, "salarie_prive_cadre", 30000.0),
                                type_periode="chomage_indemnise"))
 
 APPELS_DES_REGLES = [
+    ("ouvrir", "ouverture_carriere_longue",
+     _du_regime("fonction_publique_etat", 2014, _entre_a_quinze_ans)),
+    ("ouvrir", "ouverture_carriere_longue",
+     _du_regime("fonction_publique_etat", 2022, _fonctionnaire)),
+    ("liquider", "nombre_d_annees_retenues", _du_regime("regime_general", 2005, _salarie, 1940)),
+    ("liquider", "nombre_d_annees_retenues", _du_regime("regime_general", 2029, _salarie, 1965)),
+    ("liquider", "nombre_d_annees_retenues", _du_regime("rsi", 2007, _artisan, 1945)),
     ("carriere", "prolonger_releve",
      lambda s: (list(_RELEVE_A_80), DateMois(2028, 1), s.macro, None, None, {2026: 0.5})),
     ("carriere", "prolonger_releve",

@@ -1985,7 +1985,9 @@ function argumentDeLaFacade(porteur, valeur) {
  */
 ENTREES_DE_LA_FACADE["scenario_actuel.table"] = (moteur, table, methode, ...valeurs) => {
   const tenue = moteur[enChameau(table)];
-  const nom = enChameau(methode);
+  // Une méthode privée au Python (`_portes`) est publique au portage, sous
+  // son nom sans le tiret bas.
+  const nom = enChameau(methode.replace(/^_(?=[a-z])/, ""));
   if (tenue === null || typeof tenue !== "object" || typeof tenue[nom] !== "function"
     || nom.startsWith("_")) {
     throw new TypeError(`table ou méthode que le moteur ne tient pas : ${table}.${methode}`);

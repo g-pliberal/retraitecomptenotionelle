@@ -2515,8 +2515,9 @@ def facade(entree: str, *arguments, parametres=None, paquet: bytes | None = None
 #: refusée avant node.
 TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "ages_annulation_decote": ("age",),
+    "ages_categorie_active": ("derogation",),
     "ages_ouverture": ("age",),
-    "carriere_longue": ("cotises_reputes",),
+    "carriere_longue": ("_portes", "cotises_reputes"),
     "complement_differentiel_rco": ("regle", "smic_net"),
     "conversions_points": ("echelle", "fusion"),
     "durees_requises": ("trimestres",),
@@ -2757,14 +2758,15 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
                  "duree_du_regime_aligne",
                  "duree_proratisation", "majoration_des_points_de_1952_a_1972_d_avant_2026",
                  "majorer_les_points_de_1952_a_1972", "maximum_des_pensions",
-                 "moyenne_des_meilleures_annees",
+                 "moyenne_des_meilleures_annees", "nombre_d_annees_retenues",
                  "repartir_les_annees", "retranche_decote", "revenu_des_cotisations_minimales", "salaire_de_reference",
                  "taux_de_majoration_de_1952_a_1972", "trimestres_de_decote",
                  "trimestres_de_surcote_regimes_speciaux", "valeur_du_point",
                  "valeur_point_fiche"),
     "ouvrir": ("age_ouverture", "age_ouverture_commun", "age_ouverture_droit", "age_surcote",
                "age_taux_plein", "depart_parent_trois_enfants", "derogation_active",
-               "duree_requise", "fin_indemnisation", "indemnisation_bornee"),
+               "duree_requise", "fin_indemnisation", "indemnisation_bornee",
+               "ouverture_carriere_longue"),
     # Le relevé à rebours : les points qu'un revenu ouvre, et le revenu que
     # des points supposent (action 138, étape 11).
     "releve": ("points_de_l_annee", "revenu_des_points"),

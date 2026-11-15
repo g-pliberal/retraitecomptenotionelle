@@ -33,7 +33,6 @@ from pathlib import Path
 import pytest
 
 from facade import Simulateur
-from retraite_notionnelle import simulateur as _moteur_python
 from retraite_notionnelle.config import Parametres
 from test_oracle_familles import (
     PRECISION_OPENFISCA,
@@ -87,10 +86,9 @@ def simulateur() -> Simulateur:
 
 
 @pytest.fixture(scope="module")
-def ages_categorie_active():
-    """La table des âges des emplois classés, que la façade ne sert pas
-    encore : lue sur le moteur Python (action 161)."""
-    return _moteur_python.Simulateur(Parametres()).scenario_actuel.ages_categorie_active
+def ages_categorie_active(simulateur):
+    """La table des âges des emplois classés, servie par le portage."""
+    return simulateur.scenario_actuel.ages_categorie_active
 
 
 @pytest.fixture(scope="module")

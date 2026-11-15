@@ -29,11 +29,10 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+from facade import Carriere, Simulateur, ouvrir
+from retraite_notionnelle.carriere import AnneeCarriere
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.droit import ouvrir
-from retraite_notionnelle.simulateur import Simulateur
 from test_oracle_familles import AFFILIATIONS, PRECISION_OPENFISCA, PREFIXES
 
 TEMOIN = (Path(__file__).resolve().parent / "temoins"
@@ -83,6 +82,25 @@ def temoin() -> dict:
 @pytest.fixture(scope="module")
 def simulateur() -> Simulateur:
     return Simulateur(Parametres())
+
+
+@pytest.fixture(scope="module")
+def constantes_du_portage() -> dict:
+    """Les portes datées et la durée fixe des fonctionnaires, telles que le
+    portage les tient (``CarriereLongue``, dans ``moteur/js/regimes.js``) :
+    les dates au rang de leur mois."""
+    import subprocess
+
+    lu = subprocess.run(
+        ["node", "--input-type=module", "-e",
+         'import { CarriereLongue } from "./moteur/js/regimes.js";'
+         "process.stdout.write(JSON.stringify({portes: [...CarriereLongue"
+         ".PORTES_FONCTION_PUBLIQUE_DEPUIS], duree: CarriereLongue.DUREE_FIXE_FONCTION_PUBLIQUE}));"],
+        cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+        encoding="utf-8", check=True)
+    constantes = json.loads(lu.stdout)
+    return {"portes": {float(age): rang for age, rang in constantes["portes"]},
+            "duree": constantes["duree"]}
 
 
 def _carriere(profil: dict, absentes: tuple[int, ...] = (),
@@ -187,7 +205,7 @@ def test_les_deux_servent_la_meme_pension(temoin, nous):
 # -- les portes d'avant 2009 -----------------------------------------------------
 
 def test_les_portes_de_la_fonction_publique_s_ouvrent_chacune_a_sa_date(
-        temoin, nous, simulateur):
+        temoin, nous, simulateur, constantes_du_portage):
     """L. 25 bis, rédaction du 1er janvier 2005 (LEGIARTI000006362733) :
     « 1° A compter du 1er janvier 2008, à cinquante-six ans [...] ; 2° A
     compter du 1er juillet 2006, à cinquante-huit ans [...] ; 3° A compter du
@@ -199,7 +217,8 @@ def test_les_portes_de_la_fonction_publique_s_ouvrent_chacune_a_sa_date(
     profils = _de_la_regle(temoin, PORTES_AVANT_2009)
     assert {code for code, _ in profils} == set(OUVERT_AVANT_2009)
     carriere_longue = simulateur.scenario_actuel.carriere_longue
-    assert carriere_longue.PORTES_FONCTION_PUBLIQUE_DEPUIS == PORTES_DE_L_ARTICLE
+    assert constantes_du_portage["portes"] == {age: depuis.rang
+                                               for age, depuis in PORTES_DE_L_ARTICLE.items()}
     for code, entree in profils:
         profil, moi = entree["profil"], nous[code]
         ouvert = OUVERT_AVANT_2009[code]
@@ -214,7 +233,7 @@ def test_les_portes_de_la_fonction_publique_s_ouvrent_chacune_a_sa_date(
                                 if depuis.rang <= carriere.date_liquidation.rang}, code
 
 
-def test_la_duree_est_fixe_avant_2009(simulateur):
+def test_la_duree_est_fixe_avant_2009(simulateur, constantes_du_portage):
     """« au moins égale à 160 trimestres » à cinquante-neuf ans, en 2005 : le
     dépôt opposait la durée de l'année d'ouverture des fonctionnaires, 154
     trimestres en 2005, et ouvrait la porte à 156 trimestres cotisés. Le
@@ -230,8 +249,7 @@ def test_la_duree_est_fixe_avant_2009(simulateur):
     profil = {"code": "etat_1946_lacunes_en_2005", "regime": "fonction_publique_etat",
               "naissance": 1946, "debut": 1962, "liquidation": 2005,
               "traitement": 30000.0}
-    carriere_longue = simulateur.scenario_actuel.carriere_longue
-    assert carriere_longue.DUREE_FIXE_FONCTION_PUBLIQUE == DUREE_FIXE
+    assert constantes_du_portage["duree"] == DUREE_FIXE
     trois, une = (1980, 1981, 1982), (1983,)
     ouverte = _le_droit(simulateur, profil, sans_cotisation=trois)
     refusee = _le_droit(simulateur, profil, une, trois)

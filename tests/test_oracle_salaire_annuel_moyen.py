@@ -33,10 +33,10 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+from retraite_notionnelle.carriere import AnneeCarriere
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.droit import liquider
-from retraite_notionnelle.simulateur import Simulateur
+
+from facade import Carriere, Simulateur, liquider
 
 TEMOIN = Path(__file__).resolve().parent / "temoins" / "openfisca_salaire_annuel_moyen.json"
 

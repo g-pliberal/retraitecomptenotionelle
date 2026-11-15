@@ -588,8 +588,8 @@ def test_une_methode_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     table = simulateur.scenario_actuel.reversions
     with pytest.raises(NonTransmissible, match="reversions.fiche "):
         table.fiche("reversion")
-    with pytest.raises(NonTransmissible, match="carriere_longue._portes"):
-        simulateur.scenario_actuel.carriere_longue._portes
+    with pytest.raises(NonTransmissible, match="carriere_longue._requis"):
+        simulateur.scenario_actuel.carriere_longue._requis
     with pytest.raises(NonTransmissible, match="table_lunaire"):
         simulateur.scenario_actuel.table_lunaire
     with pytest.raises(ValueError, match="reversions.fiche "):
@@ -1672,6 +1672,58 @@ def test_les_ages_et_l_inaptitude_se_lisent_dans_leurs_tables(simulateur):
     au_31_aout_2023 = Simulateur(Parametres().avec(droit_contrefactuel="au_31_aout_2023"))
     assert au_31_aout_2023.scenario_actuel.ages_ouverture.age(1968.0)[0] == 62.0
     assert actuel.ages_ouverture.age(1968.0)[0] > 62.0
+
+
+def _fonctionnaire(naissance: int, debut: int, liquidation: int) -> Carriere:
+    """Un fonctionnaire de l'État, quatre trimestres par an de ``debut`` à la
+    veille de ``liquidation``, né un 1er janvier."""
+    lignes = [carriere_python.AnneeCarriere(annee=annee, revenu=30000.0,
+                                            affiliation="fonctionnaire_etat",
+                                            trimestres_valides=4)
+              for annee in range(debut, liquidation)]
+    return Carriere(annee_naissance=naissance, sexe="H", lignes=lignes,
+                    age_liquidation=float(liquidation - naissance), jour_naissance=1)
+
+
+def test_les_ages_des_emplois_classes_se_lisent_dans_leur_table(simulateur):
+    """La catégorie active de la génération 1960 part à 57 ans, cinq ans
+    avant la limite d'âge de 62 ans (loi n° 2010-1330, art. 35 et 31), après
+    quinze ans de services classés ; la super-active de 1950 à 50 ans, après
+    vingt-cinq. Aucune dérogation pour un classement que la table ignore."""
+    table = simulateur.scenario_actuel.ages_categorie_active
+    active = table.derogation("active", 1960.0)
+    assert (active.age_ouverture, active.age_annulation, active.services_requis) == (
+        57.0, 62.0, 15.0)
+    assert table.derogation("super_active", 1950.0).age_ouverture == 50.0
+    assert table.derogation("sedentaire", 1960.0) is None
+
+
+def test_le_salaire_annuel_moyen_retient_les_annees_de_la_generation(simulateur):
+    """Les dix meilleures années pour la génération 1933, une de plus par
+    génération, vingt-cinq à partir de 1948 (décret n° 93-1022, art. 1er) :
+    dix-sept pour la génération 1940."""
+    periode = simulateur.catalogue["regime_general"].periode(2005)
+    carriere = _fonctionnaire(1940, 1960, 2005)
+    assert liquider.nombre_d_annees_retenues(simulateur.scenario_actuel, periode,
+                                             carriere, 1940) == 17
+    assert liquider.nombre_d_annees_retenues(simulateur.scenario_actuel, periode,
+                                             carriere, 1950) == 25
+
+
+def test_la_carriere_longue_du_fonctionnaire_s_ouvre_par_le_portage(simulateur):
+    """L. 25 bis du code des pensions : en 2005, seule la porte de 59 ans est
+    ouverte aux fonctionnaires (« 3° A compter du 1er janvier 2005 »), non
+    celles de 58 et 56 ans. Le fonctionnaire né en 1955, entré à quinze ans,
+    réunit en 2014 les 174 trimestres de sa génération et huit de plus
+    (D. 16-1, II) : son droit s'ouvre à 15 + 174 / 4 ans."""
+    actuel = simulateur.scenario_actuel
+    en_2005 = _fonctionnaire(1946, 1962, 2005)
+    assert {porte[2] for porte in actuel.carriere_longue._portes(en_2005)} == {
+        56.0, 58.0, 59.0}
+    assert [porte[2] for porte in actuel.carriere_longue._portes(en_2005, True)] == [59.0]
+    periode = simulateur.catalogue["fonction_publique_etat"].periode(2014)
+    assert ouvrir.ouverture_carriere_longue(
+        actuel, periode, _fonctionnaire(1955, 1970, 2014)) == 15 + 174 / 4
 
 
 def test_le_foyer_se_demande_au_portage_et_revient_sous_son_type(simulateur):
