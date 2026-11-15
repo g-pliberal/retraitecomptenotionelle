@@ -2151,21 +2151,58 @@ ENTREES_DE_LA_FACADE["liquidation.demande_de_depart"] = (carriere, nature) => {
  * (`CONTENUS_QUI_NE_PASSENT_PAS`).
  */
 ENTREES_DE_LA_FACADE["liquidation.liquider"] = (moteur, demande, carriere, neutralisations,
-  avecJournal = false) => {
+  avecJournal = false, servies = []) => {
   const avant = appels();
   const journal = avecJournal ? new Journal() : null;
-  const liquidee = liquiderLaDemande(new Demande(demande), new Etat(carriere, journal),
+  const liquidee = liquiderLaDemande(new Demande(demande), new Etat(carriere, journal, servies),
     new ContexteDeLiquidation(moteur, neutralisations));
+  return liquidationTelleQuelle(liquidee, appels() - avant, journal);
+};
+
+/**
+ * Ce que les tests lisent d'une liquidation (`liquidation_des_donnees` de
+ * `pont.py`), et la date et l'ouverture de la carrière qu'elle a liquidée.
+ */
+function liquidationTelleQuelle(liquidee, lesAppels, journal) {
+  const { demande } = liquidee;
+  const date = liquidee.carriere.dateLiquidation;
   return {
     taux: liquidee.pensions.taux, regimes: telQuel(liquidee.regimes),
     pensions: telQuel(liquidee.pensions.regimes), plafonds: telQuel(liquidee.pensions.plafonds),
     complements: telQuel(liquidee.complements.regimes),
     avantages_des_complements: telQuel(liquidee.complements.avantages),
+    minimum_applique: liquidee.complements.minimumApplique,
     total: liquidee.total, hors_repartition: liquidee.horsRepartition,
     total_contributif: liquidee.totalContributif, mesures: telQuel(liquidee.mesures),
     avantages: telQuel(liquidee.avantages), lignes: telQuel(liquidee.releve.lignes()),
-    donnees: telQuel(liquidee.donnees()), appels: appels() - avant,
+    donnees: telQuel(liquidee.donnees()), appels: lesAppels,
     fiabilite: liquidee.fiabilite, journal: journalTelQuel(journal),
+    demande: {
+      personne: demande.personne, date_effet: demande.dateEffet, evenement: demande.evenement,
+      date_evenement: demande.dateEvenement, motif: demande.motif, nature: demande.nature,
+      regimes: [...demande.regimes],
+    },
+    date_liquidation: [date.annee, date.mois], ouverte: liquidee.ouverture.ouverte,
+  };
+}
+
+/**
+ * Chaque départ liquidé (`liquider_les_departs` du Python), sur la carrière,
+ * le contexte du moteur et ses neutralisations, et les départs que le test a
+ * reçus — `[année, mois, régimes, motif]` —, ou ceux que le portage date :
+ * chaque liquidation telle que `liquidation.liquider` la rend, et les appels
+ * de `liquider` qu'elles ont coûtés ensemble.
+ */
+ENTREES_DE_LA_FACADE["departs.liquider_les_departs"] = (moteur, carriere, neutralisations,
+  nature, liste) => {
+  const avant = appels();
+  const lesDeparts = liste === null ? null : liste.map(([annee, mois, regimes, motif]) =>
+    new departs.Depart(new DateMois(annee, mois), new Set(regimes), motif));
+  const liquidations = departs.liquiderLesDeparts(moteur, carriere,
+    new ContexteDeLiquidation(moteur, neutralisations), nature, lesDeparts);
+  return {
+    liquidations: liquidations.map((liquidee) => liquidationTelleQuelle(liquidee, 0, null)),
+    appels: appels() - avant,
   };
 };
 

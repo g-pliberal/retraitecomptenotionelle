@@ -2164,6 +2164,27 @@ def test_la_liquidation_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulate
             facade.liquidation.liquider(demande, etat, contexte)
 
 
+
+def test_les_departs_se_liquident_au_portage_sans_journal_ni_retraite_progressive(simulateur):
+    """``departs.liquider_les_departs`` se demande au portage : le départ
+    unique d'un salarié parti à l'âge légal, ouvert, liquidé au mois de son
+    départ. Un journal, une retraite progressive, le moteur Python
+    n'arriveraient pas au portage."""
+    demande, carriere = _depart_a_taux_plein(simulateur)
+    moteur = simulateur.scenario_actuel
+    contexte = facade.liquidation.Contexte(moteur)
+    [seule] = facade.departs.liquider_les_departs(moteur, carriere, contexte)
+    assert seule.ouverte
+    assert seule.demande.date_effet == demande.date_effet
+    assert seule.pensions.taux == 0.5
+    for options, motif in [({"journal": Journal()}, "journal"),
+                           ({"progressive": (object(), object())}, "progressive")]:
+        with pytest.raises(NonTransmissible, match=motif):
+            facade.departs.liquider_les_departs(moteur, carriere, contexte, **options)
+    with pytest.raises(NonTransmissible, match="moteur"):
+        facade.departs.liquider_les_departs(
+            simulateur_python.Simulateur().scenario_actuel, carriere, contexte)
+
 def _mere_de_deux_enfants(simulateur):
     """Une salariée née en 1970, deux enfants, deux années d'éducation qui
     ouvrent l'AVPF, partie à 64 ans : la cascade mesure ses trimestres
@@ -2362,7 +2383,7 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "carriere.prolongee", "simulateur.garantie_vieillesse",
                               "echeancier.parcourir", "simulateur.echeancier",
                               "echeancier.depart_de", "echeancier.sortes", "journal.operer",
-                              "pilote.age_de_depart")
+                              "pilote.age_de_depart", "departs.liquider_les_departs")
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)
 
 

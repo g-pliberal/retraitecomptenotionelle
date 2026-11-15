@@ -129,7 +129,7 @@ ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversio
            "simulateur.proposition", "simulateur.carriere_proposition", "carriere.prolongee",
            "simulateur.garantie_vieillesse", "echeancier.parcourir", "simulateur.echeancier",
            "echeancier.depart_de", "echeancier.sortes", "journal.operer",
-           "pilote.age_de_depart")
+           "pilote.age_de_depart", "departs.liquider_les_departs")
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
@@ -1224,6 +1224,34 @@ class _Departs(Regles):
 
     Depart = _departs.Depart
     DemandeExaminee = _departs.DemandeExaminee
+    PensionServie = _departs.PensionServie
+
+    def liquider_les_departs(self, moteur, carriere, contexte, nature: str = "definitive",
+                             liste=None, journal=None, progressive=None) -> list:
+        """``liquider_les_departs``, servie par le portage : chaque départ
+        liquidé, sur le moteur d'un simulateur de la façade et ses
+        neutralisations, les départs reçus ou ceux que le portage date. Un
+        journal, une retraite progressive n'arriveraient pas au portage."""
+        entree = "departs.liquider_les_departs"
+        if not isinstance(moteur, ScenarioActuel):
+            raise NonTransmissible(
+                f"{entree} : moteur que la façade ne sait pas transmettre — les départs se "
+                "liquident sur le moteur d'un simulateur de la façade "
+                "(simulateur.scenario_actuel)")
+        if journal is not None:
+            raise NonTransmissible(f"{entree} : un journal, que le portage ne verrait pas")
+        if progressive is not None:
+            raise NonTransmissible(
+                f"{entree} : une retraite progressive, que le portage ne verrait pas")
+        neutralisations = _contexte_de_la_facade(entree, moteur, contexte)
+        lu = _demander(entree, moteur._simulateur.parametres, pont.MOTEUR, carriere,
+                       neutralisations, nature,
+                       None if liste is None else [
+                           [depart.date.annee, depart.date.mois, sorted(depart.regimes),
+                            depart.motif] for depart in liste])
+        _APPELS[0] += lu["appels"]
+        return [Liquidee(liquidee, liquidee["demande"], contexte)
+                for liquidee in lu["liquidations"]]
 
 
 departs = _Departs("departs", _departs)
@@ -1254,7 +1282,8 @@ class Liquidee(_Ferme):
 
     def __init__(self, lu: dict, demande, contexte) -> None:
         pensions = _Pensions(lu["taux"], lu["pensions"], lu["plafonds"])
-        complements = _Complements(lu["complements"], lu["avantages_des_complements"])
+        complements = _Complements(lu["complements"], lu["avantages_des_complements"],
+                                   lu["minimum_applique"])
         for nom, valeur in (("pensions", pensions), ("complements", complements),
                             ("regimes", lu["regimes"]),
                             ("total", lu["total"]), ("hors_repartition", lu["hors_repartition"]),
@@ -1262,7 +1291,9 @@ class Liquidee(_Ferme):
                             ("mesures", lu["mesures"]), ("avantages", lu["avantages"]),
                             ("demande", demande), ("contexte", contexte),
                             ("releve", _Lignes(lu["lignes"])), ("_donnees", lu["donnees"]),
-                            ("fiabilite", lu["fiabilite"])):
+                            ("fiabilite", lu["fiabilite"]),
+                            ("date_liquidation", lu["date_liquidation"]),
+                            ("ouverte", lu["ouverte"])):
             object.__setattr__(self, nom, valeur)
 
     def donnees(self) -> dict:
@@ -1294,9 +1325,10 @@ class _Complements(_Ferme):
     """Les compléments d'une liquidation : la pension de chaque régime
     complétée, et les avantages que l'étape « compléter » sert."""
 
-    def __init__(self, regimes: tuple, avantages: tuple) -> None:
+    def __init__(self, regimes: tuple, avantages: tuple, minimum_applique: bool) -> None:
         object.__setattr__(self, "regimes", regimes)
         object.__setattr__(self, "avantages", avantages)
+        object.__setattr__(self, "minimum_applique", minimum_applique)
 
 
 #: Les appels de ``liquider`` que les liquidations de la façade ont coûtés au
@@ -1311,9 +1343,10 @@ class _Liquidation(_Ferme):
     ``demande_de_depart``, servie aussi ; ``appels``, ceux que les
     liquidations de la façade ont coûtés au portage ; ``Demande``, ``Etat``,
     ``Contexte`` et ``Mesure``, les types du Python, qui portent ce qu'on lui
-    passe, et ses constantes. Le journal, les pensions déjà servies, une
-    pension provisoire, une date d'observation, une hypothèse n'arriveraient
-    pas au portage : la liquidation est refusée."""
+    passe, et ses constantes. Les pensions déjà servies
+    (``departs.PensionServie``) passent ; le journal, une pension provisoire,
+    une date d'observation, une hypothèse n'arriveraient pas au portage : la
+    liquidation est refusée."""
 
     Demande = _liquidation.Demande
     Etat = _liquidation.Etat
@@ -1348,11 +1381,12 @@ class _Liquidation(_Ferme):
             raise NonTransmissible(
                 "liquidation.liquider : journal qui n'est pas un journal vide de la façade — "
                 "le portage ne verrait pas ses entrées")
-        if (etat.servies, etat.initiales, etat.recalcul) != ((), (), True):
+        if (etat.initiales, etat.recalcul) != ((), True) or not all(
+                type(servie) is _departs.PensionServie for servie in etat.servies):
             raise NonTransmissible(
-                "liquidation.liquider : état qui porte plus que sa carrière et un journal vide "
-                "(pensions servies, pensions provisoires, recalcul) — le portage ne le verrait "
-                "pas")
+                "liquidation.liquider : état qui porte plus que sa carrière, un journal vide "
+                "et des pensions servies (departs.PensionServie) — pensions provisoires, "
+                "recalcul — le portage ne le verrait pas")
         if (contexte.observation, contexte.hypothese) != (None, None):
             raise NonTransmissible(
                 "liquidation.liquider : contexte qui porte plus que le moteur et ses "
@@ -1363,7 +1397,8 @@ class _Liquidation(_Ferme):
                    "regimes": list(demande.regimes)}
         lu = _demander("liquidation.liquider", moteur._simulateur.parametres, pont.MOTEUR,
                        donnees, etat.carriere, sorted(contexte.neutralisations),
-                       journal is not None)
+                       journal is not None,
+                       [dataclasses.asdict(servie) for servie in etat.servies])
         _APPELS[0] += lu["appels"]
         # Ce que la liquidation a écrit au journal du portage, que le journal
         # de la façade reprend : rien, qu'elle est pure.

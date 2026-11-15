@@ -30,7 +30,6 @@ from retraite_notionnelle.web.site import ErreurSite
 
 import facade
 from facade import Carriere, Simulateur, departs, faire_vivre, liquidation
-from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 from outils_pont import RefusDuPortage, Saisies, refus_de_la_saisie, saisie_du_portage
 
 #: L'âge le plus tardif que la saisie date : un an sous l'âge terminal des
@@ -146,21 +145,20 @@ def test_l_agent_de_categorie_active_parti_trop_tot_n_a_qu_un_depart(simulateur)
 
 # -- chaque départ liquidé -------------------------------------------------------
 
-@pytest.mark.sur_le_moteur_python("departs.liquider_les_departs, que la façade ne sert pas")
 def test_chaque_depart_ne_liquide_que_ses_regimes_sur_la_carriere_a_sa_date(simulateur):
     moteur = simulateur.scenario_actuel
     carriere = _aide_soignante(simulateur)
     liste = departs.departs(moteur, carriere)
     liquidations = departs.liquider_les_departs(
         moteur, carriere, liquidation.Contexte(moteur), liste=liste)
+    assert len(liquidations) == len(liste) == 2
     for depart, liquidee in zip(liste, liquidations):
         assert {p.regime for p in liquidee.regimes} == set(depart.regimes)
         assert liquidee.demande.date_effet == depart.date_effet
-        assert liquidee.carriere.date_liquidation == depart.date
-        assert liquidee.ouverture.ouverte
+        assert liquidee.date_liquidation == depart.date
+        assert liquidee.ouverte
 
 
-@pytest.mark.sur_le_moteur_python("une liquidation qui voit des pensions déjà servies, que la façade ne transmet pas")
 def test_le_minimum_contributif_s_ecrete_sur_les_pensions_deja_servies(simulateur):
     """R. 173-7 : le plafond d'écrêtement compte les pensions du mois de la
     date d'effet, celles que les départs précédents servent comprises."""

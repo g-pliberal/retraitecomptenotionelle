@@ -2297,6 +2297,7 @@ def liquidation_des_donnees(donnees: dict) -> dict:
     from .droit.liquidation import Mesure
     from .donnees.chargement import Fiabilite
     from .droit.liquider import EligiblePlafondEnfants
+    from .calendrier import DateMois
 
     return {"taux": lu_strictement(float, donnees["taux"], "liquidation.taux"),
             "pensions": lu_strictement(tuple[PensionRegime, ...], donnees["pensions"],
@@ -2320,7 +2321,23 @@ def liquidation_des_donnees(donnees: dict) -> dict:
             "appels": lu_strictement(int, donnees["appels"], "liquidation.appels"),
             "fiabilite": lu_strictement(Fiabilite, donnees["fiabilite"], "liquidation.fiabilite"),
             "journal": (None if donnees["journal"] is None
-                        else journal_des_donnees(donnees["journal"], "liquidation.journal"))}
+                        else journal_des_donnees(donnees["journal"], "liquidation.journal")),
+            "minimum_applique": lu_strictement(bool, donnees["minimum_applique"],
+                                               "liquidation.minimum_applique"),
+            "demande": demande_des_donnees(donnees["demande"]),
+            "date_liquidation": DateMois(*lu_strictement(
+                tuple[int, int], donnees["date_liquidation"], "liquidation.date_liquidation")),
+            "ouverte": lu_strictement(bool, donnees["ouverte"], "liquidation.ouverte")}
+
+
+def departs_liquides_des_donnees(lu: dict) -> dict:
+    """Chaque départ liquidé que le portage a écrit
+    (``departs.liquider_les_departs`` de ``pont.mjs``) : chaque liquidation,
+    lue comme :func:`liquidation_des_donnees`, et ``appels``, ceux de
+    ``liquider`` qu'elles ont coûtés ensemble."""
+    return {"liquidations": [liquidation_des_donnees(liquidee)
+                             for liquidee in lu["liquidations"]],
+            "appels": lu_strictement(int, lu["appels"], "departs.appels")}
 
 
 def etape_de_la_liquidation_des_donnees(donnees: dict) -> dict:
@@ -2492,6 +2509,7 @@ LECTURES_DE_LA_FACADE = {
     "simulateur.garantie_vieillesse": garantie_vieillesse_des_donnees,
     "liquidation.liquider": liquidation_des_donnees,
     "liquidation.demande_de_depart": demande_des_donnees,
+    "departs.liquider_les_departs": departs_liquides_des_donnees,
     "coordonner.coordonner": coordination_des_donnees,
     "compter.compter": durees_des_donnees,
     "acquerir.acquerir": droits_des_donnees,
