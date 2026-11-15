@@ -7331,11 +7331,11 @@ de `contribution_etat`.
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Ses règles s'importent toutes les unes les autres : le retrait se fera par le
 haut, une fois le moteur Python plus exécuté. Plus aucun test ne lui fait
-refaire ce que le portage calcule. Restent 75 fichiers de tests qui importent
-une règle Python, rangés en vagues du plus court au plus long ; la première
-est finie. Une étape par session. Par quoi commencer : la deuxième vague,
-40 fichiers, en passant chacun par la façade des tests ou par le pont. Le
-détail : `2026-11-15-la-fin-de-la-premiere-vague.md`, et les vagues dans
+refaire ce que le portage calcule. Restent 44 fichiers de tests qui importent
+une règle Python, rangés en vagues du plus court au plus long. Une étape par
+session. Par quoi commencer : les neuf fichiers qui restent de la deuxième
+vague, chacun par la façade des tests ou par le pont, puis la troisième. Le
+détail : `2026-11-15-la-deuxieme-vague.md`, et les vagues dans
 `2026-11-15-les-temoins-sans-jumeau-et-l-inventaire.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
