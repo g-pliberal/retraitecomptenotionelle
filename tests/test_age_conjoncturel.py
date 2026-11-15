@@ -134,47 +134,43 @@ def test_la_grille_ne_suit_pas_la_montee_des_annees_recentes(mesures):
 def test_les_departs_de_la_grille_se_datent_au_portage_sans_les_jumeaux(monkeypatch):
     """Les départs que l'étude lit de la grille — l'année et l'âge de chaque
     case, les cases que le droit écarte laissées de côté — viennent du portage
-    (``castypes.departs_au_portage``, action 161, lot B) : ceux que le moteur
-    Python rendait par ``calculer_cas_types``, à l'identique, type de l'âge
-    compris, sans qu'il ne date, ne bâtisse ni ne simule rien. Trois cas types
-    sur toutes les générations du coût, dont le militaire, dont le droit
-    écarte trois cases ; et l'artisan entré deux ans plus tôt sur trois
-    générations, comme ``cout_age_depart.py`` rejoue la lecture sur une grille
-    modifiée."""
+    (``castypes.departs_au_portage``, action 161, lot B), sans qu'aucun jumeau
+    Python ne date, ne bâtisse ni ne simule rien. Trois cas types sur toutes
+    les générations du coût, dont le militaire, dont le droit écarte trois
+    cases ; et l'artisan entré deux ans plus tôt sur trois générations, comme
+    ``cout_age_depart.py`` rejoue la lecture sur une grille modifiée.
+
+    Ce que le moteur Python en rendait par ``calculer_cas_types``, à
+    l'identique, type de l'âge compris, est figé au témoin des valeurs
+    (action 161, étape 8j) : il ne refait plus la grille."""
     import shutil
     from dataclasses import replace
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne calcule pas ici")
     from outils_pont import empecher_les_jumeaux_du_cout
-    from retraite_notionnelle.castypes import CAS_TYPES, calculer_cas_types
+    from outils_valeurs import valeur_figee
+    from retraite_notionnelle.castypes import CAS_TYPES
     from retraite_notionnelle.cout import generations
     from retraite_notionnelle.simulateur import Simulateur
-
-    def du_moteur_python(simulateur, cas_types, retenues):
-        grille = calculer_cas_types(simulateur, cas_types, retenues, "droit")
-        departs = {}
-        for (code, _), comparaison in grille.resultats.items():
-            carriere = comparaison.carriere
-            departs.setdefault(code, []).append(
-                (carriere.annee_liquidation, float(carriere.age_liquidation)))
-        return {code: sorted(points) for code, points in departs.items()}, grille.echecs
 
     simulateur = Simulateur(Parametres())
     fiches = {cas.code: cas for cas in CAS_TYPES}
     grilles = (
-        (tuple(fiches[code] for code in ("salaire_moyen", "militaire", "exploitant_agricole")),
+        ("trois_cas_types",
+         tuple(fiches[code] for code in ("salaire_moyen", "militaire", "exploitant_agricole")),
          generations()),
-        ((replace(fiches["artisan"], age_debut=fiches["artisan"].age_debut - 2),),
+        ("artisan_entre_plus_tot",
+         (replace(fiches["artisan"], age_debut=fiches["artisan"].age_debut - 2),),
          (1950, 1955, 1960)),
     )
-    attendus = [du_moteur_python(simulateur, cas_types, retenues)
-                for cas_types, retenues in grilles]
-    assert len(attendus[0][1]) == 6, "le droit écarte six cases de la première grille"
     empecher_les_jumeaux_du_cout(monkeypatch)
-    for (cas_types, retenues), (departs, _) in zip(grilles, attendus):
-        lus = age_conjoncturel.departs_de_la_grille(simulateur, cas_types, retenues)
-        assert lus == departs
-        assert all(type(age) is float for points in lus.values() for _, age in points)
-    assert age_conjoncturel.departs_de_la_grille(simulateur, grilles[1][0]) \
+    lus = {nom: age_conjoncturel.departs_de_la_grille(simulateur, cas_types, retenues)
+           for nom, cas_types, retenues in grilles}
+    for nom, departs in lus.items():
+        assert valeur_figee(f"departs::{nom}", departs) == departs
+        assert all(type(age) is float for points in departs.values() for _, age in points)
+    assert sum(len(points) for points in lus["trois_cas_types"].values()) \
+        == 3 * len(generations()) - 6, "le droit écarte six cases de la première grille"
+    assert age_conjoncturel.departs_de_la_grille(simulateur, grilles[1][1]) \
         .keys() == {"artisan"}

@@ -1,4 +1,13 @@
 {
+ "test_age_conjoncturel.py::departs::artisan_entre_plus_tot": {
+  "valeur": "5a03835c17954b5b"
+ },
+ "test_age_conjoncturel.py::departs::trois_cas_types": {
+  "valeur": "ddb54be99d1de73c"
+ },
+ "test_avantages.py::par_carriere::1960": {
+  "valeur": "72236ae2bb92db18"
+ },
  "test_cout.py::grille du coût bâtie": {
   "valeur": "3368d56812f4a0cc"
  },

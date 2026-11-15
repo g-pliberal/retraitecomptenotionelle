@@ -7336,11 +7336,11 @@ par une référence figée dans `tests/temoins/` : `servis.json`,
 `sorties.json`, `valeurs.json`, et `droit.json` pour chaque appel du droit
 par le pont. Plus aucun appel du droit ne se refait en Python, ni
 l'inversion, ni aucune carrière de la grille, ni la réversion, ni la
-chronologie dans les tests. Restent les confrontations que la note énumère
-(`test_age_conjoncturel.py`, `test_avantages.py`, les `moitie_python`),
-puis cent fichiers de tests qui importent une règle Python. Une étape par
-session. Par quoi commencer : `test_age_conjoncturel.py`. Le détail :
-`2026-11-15-la-chronologie-au-temoin.md`.
+chronologie, ni les départs de l'âge conjoncturel, ni le coût par carrière
+dans les tests. Restent les `moitie_python` que la note énumère, puis cent
+fichiers de tests qui importent une règle Python. Une étape par session. Par
+quoi commencer : `test_cumul_activites.py`. Le détail :
+`2026-11-15-l-age-conjoncturel-au-temoin.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

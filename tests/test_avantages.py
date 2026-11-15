@@ -920,48 +920,16 @@ def test_la_decomposition_date_chaque_cohorte_au_droit_de_sa_generation(script_c
 
 # --- `cout_avantages.py --par-carriere` ------------------------------------
 
-def _par_carriere_au_moteur_python(cout_avantages, simulateur, generation: int):
-    """``par_carriere`` telle qu'elle s'écrivait avant de passer au portage
-    (action 161, étape 6b) : l'âge par le pilote Python, les deux liquidations
-    au scénario 1 du moteur Python, puis :func:`avantages.recalculer`."""
-    from dataclasses import replace
-
-    from retraite_notionnelle.avantages import (carriere_variante, recalculer,
-                                                scenarios_neutralises)
-
-    variantes = scenarios_neutralises(simulateur)
-    lignes = []
-    for cas in cout_avantages.CAS_TYPES:
-        try:
-            age = cas.age_liquidation_pour(simulateur, generation)
-        except (ValueError, KeyError):
-            continue
-        milieu = max(1, int((age - cas.age_debut) / 2))
-        dose = tuple(
-            [(milieu + rang, "chomage_indemnise")
-             for rang in range(cout_avantages.DOSE_INTERRUPTION)]
-            + [(max(0, int(20 - cas.age_debut)), "service_militaire")])
-        charge = replace(cas, interruptions_relatives=dose)
-        try:
-            reelle = simulateur.scenario_actuel.calculer(
-                carriere_variante(simulateur, cas, generation, age))
-            chargee = simulateur.scenario_actuel.calculer(
-                carriere_variante(simulateur, charge, generation, age))
-        except (ValueError, KeyError):
-            continue
-        propres, refus = recalculer(simulateur, cas, generation, age, reelle, variantes)
-        sous_dose, _ = recalculer(simulateur, charge, generation, age, chargee, variantes)
-        lignes.append((cas, age, reelle.pension_annuelle, chargee.pension_annuelle,
-                       propres, sous_dose, refus))
-    return lignes
-
-
 def test_le_cout_par_carriere_passe_par_le_portage_sans_le_moteur_python(monkeypatch):
     """``--par-carriere`` date chaque cas type, bâtit sa carrière réelle et
     la même sous la dose, et les liquide, avec chaque contrefactuelle, par le
-    portage (``pont.ages_de_depart``, ``pont.avantages``) : chaque ligne
-    égale, au bit près, celle que le moteur Python calculait — sans qu'il ne
-    calcule rien. L'option n'avait aucun test (action 161, étape 6b)."""
+    portage (``pont.ages_de_depart``, ``pont.avantages``), sans que le moteur
+    Python ne calcule rien. L'option n'avait aucun test (action 161, étape 6b).
+
+    Chaque ligne égalait, au bit près, celle que le moteur Python calculait
+    (l'âge par le pilote, les deux liquidations au scénario 1, puis
+    ``avantages.recalculer``) : c'est ce qui est figé au témoin des valeurs
+    (action 161, étape 8j), et le moteur Python ne refait plus la table."""
     import shutil
     import sys
     from pathlib import Path
@@ -971,14 +939,9 @@ def test_le_cout_par_carriere_passe_par_le_portage_sans_le_moteur_python(monkeyp
     sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
     import cout_avantages
     from outils_pont import empecher_les_jumeaux_du_cout
+    from outils_valeurs import valeur_figee
     from retraite_notionnelle import Parametres, avantages
     from retraite_notionnelle.simulateur import Simulateur
-
-    attendues = _par_carriere_au_moteur_python(cout_avantages, Simulateur(Parametres()), 1960)
-    # Ce que l'option montre : des cas types datés, et la dose qui fait
-    # apparaître au moins un avantage que la carrière réelle ne porte pas.
-    assert len(attendues) > 10
-    assert any(dose != propres for *_, propres, dose, _ in attendues)
 
     empecher_les_jumeaux_du_cout(monkeypatch)
 
@@ -987,4 +950,9 @@ def test_le_cout_par_carriere_passe_par_le_portage_sans_le_moteur_python(monkeyp
 
     monkeypatch.setattr(avantages, "recalculer", interdit)
     monkeypatch.setattr(Simulateur, "scenario_actuel", property(interdit))
-    assert cout_avantages.par_carriere(Simulateur(Parametres()), 1960) == attendues
+    lignes = cout_avantages.par_carriere(Simulateur(Parametres()), 1960)
+    assert valeur_figee("par_carriere::1960", lignes) == lignes
+    # Ce que l'option montre : des cas types datés, et la dose qui fait
+    # apparaître au moins un avantage que la carrière réelle ne porte pas.
+    assert len(lignes) > 10
+    assert any(dose != propres for *_, propres, dose, _ in lignes)
