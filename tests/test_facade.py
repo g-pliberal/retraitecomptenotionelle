@@ -30,9 +30,11 @@ from retraite_notionnelle.config import (RACINE_PROJET, ContributionEtat, Neutra
 from retraite_notionnelle.donnees.chargement import DonneeInsuffisante, Fiabilite
 from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
+from retraite_notionnelle.droit import liquidation as liquidation_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
 from retraite_notionnelle.droit import reversion as reversion_python
+from retraite_notionnelle import revalorisation as revalorisation_python
 from retraite_notionnelle.droit.commun import PensionRegime
 from retraite_notionnelle.droit.liquider import EligibleAgricole, EligibleMinimum
 from retraite_notionnelle.journal import Journal
@@ -682,7 +684,8 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     with pytest.raises(ValueError, match="ouvrir.ouvrir"):
         pont.regle_du_droit("ouvrir", "ouvrir", float)
     assert facade.REGLES is pont.REGLES_DE_LA_FACADE
-    assert set(facade.REGLES) == {"commun", "completer", "liquider", "ouvrir", "reversion"}
+    assert set(facade.REGLES) == {"commun", "completer", "liquider", "ouvrir", "reversion",
+                                  "revalorisation"}
 
 
 def test_une_regle_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulateur):
@@ -1025,6 +1028,78 @@ def test_les_regles_de_la_reversion_se_demandent_sous_un_nom_a_elles():
     assert facade.JUMEAUX["regles_de_la_reversion"] is reversion_python
 
 
+def test_une_regle_privee_du_jumeau_se_demande_a_la_fonction_du_portage():
+    """``_cumuler``, privée au Python, est ``cumuler`` dans le portage, qui
+    l'exporte pour la façade. Avant le 1er juillet 1974, la réversion ne se
+    cumule pas : elle complète la retraite personnelle, divisée par le nombre
+    des réversions de base (D. 171-1) — 3 000 € moins la moitié de 2 000 €.
+    Depuis, la limite est de 52 % du total des retraites et de la pension
+    principale (D. 355-1) : (50 000 + 65 973) × 52 % = 60 305,96, au-dessus de
+    la réversion et des retraites, qui passent entières."""
+    assert regles_de_la_reversion._cumuler({"cumul": "aucun"}, 3000.0, 2000.0, 0.0,
+                                           None, 2) == (2000.0, 0.0)
+    montant, limite = regles_de_la_reversion._cumuler(
+        {"cumul": "limite", "cumul_taux": 0.52}, 1000.0, 50000.0, 65973.0, None, 1)
+    assert montant == 1000.0 and limite == pytest.approx(60305.96)
+
+
+def test_les_majorations_forfaitaires_se_demandent_sur_une_pension_de_regime(simulateur):
+    """La pension du régime général prise en février 1973 sur la durée
+    maximum reçoit 5,5 % au 1er décembre 1982 : « en 1973 à 47,82 % (45,33 %
+    x 1,055) » (circulaire Cnav n° 79/82, B) ; sur une durée moindre, rien."""
+    pension = PensionRegime(regime="regime_general", montant=1000.0, type_calcul="annuites",
+                            detail="", fiabilite=HAUTE, sur_la_duree_maximum=True)
+    assert facade.revalorisation.majorations_forfaitaires(
+        simulateur.scenario_actuel, pension, "1973-02-01") == (("1982-12-01", 0.055),)
+    assert facade.revalorisation.majorations_forfaitaires(
+        simulateur.scenario_actuel, dataclasses.replace(pension, sur_la_duree_maximum=False),
+        "1973-02-01") == ()
+    assert facade.JUMEAUX["revalorisation"] is revalorisation_python
+
+
+# -- la liquidation ---------------------------------------------------------------------
+
+def _depart_a_taux_plein(simulateur):
+    """Un salarié né en 1958, entré à 20 ans, parti à 62, l'âge légal : ses
+    168 trimestres passent les 167 requis, sa pension est au taux plein, sans
+    surcote."""
+    carriere = simulateur.carriere_simple(1958, "H", "salarie_prive_non_cadre", 20, 62)
+    return liquidation_python.demande_de_depart(carriere), carriere
+
+
+def test_la_liquidation_se_demande_au_portage(simulateur):
+    """La liquidation d'une demande, dans l'état d'une carrière, sous le
+    contexte du moteur de la façade : le taux plein, 50 % (L. 351-1), et la
+    pension de chaque régime, que la façade rend en données."""
+    demande, carriere = _depart_a_taux_plein(simulateur)
+    liquidee = facade.liquidation.liquider(
+        demande, facade.liquidation.Etat(carriere),
+        facade.liquidation.Contexte(simulateur.scenario_actuel))
+    assert liquidee.pensions.taux == 0.5
+    montants = {pension.regime: pension.montant for pension in liquidee.regimes}
+    assert set(montants) >= {"regime_general", "agirc_arrco"}
+    assert all(type(montant) is float and montant > 0 for montant in montants.values())
+    assert facade.JUMEAUX["liquidation"] is liquidation_python
+
+
+def test_la_liquidation_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulateur):
+    """L'état d'une carrière seule, le contexte du moteur de la façade sans
+    rien de plus : le journal, les pensions déjà servies, une neutralisation,
+    une date d'observation, le moteur Python n'arriveraient pas au portage."""
+    demande, carriere = _depart_a_taux_plein(simulateur)
+    Etat, Contexte = facade.liquidation.Etat, facade.liquidation.Contexte
+    moteur = simulateur.scenario_actuel
+    for etat, contexte, motif in [
+            (Etat(carriere, servies=(object(),)), Contexte(moteur), "état"),
+            (Etat(carriere, recalcul=False), Contexte(moteur), "état"),
+            (Etat(carriere), Contexte(moteur, frozenset({"avpf"})), "contexte"),
+            (Etat(carriere), Contexte(moteur, observation="2026-01-01"), "contexte"),
+            (Etat(carriere), Contexte(simulateur_python.Simulateur().scenario_actuel),
+             "moteur")]:
+        with pytest.raises(NonTransmissible, match=motif):
+            facade.liquidation.liquider(demande, etat, contexte)
+
+
 def test_une_regle_se_demande_sous_les_parametres_de_son_moteur(simulateur):
     """Les conventions du COR ne valent que pour la page Coût : sous elles, la
     valeur de service de l'Agirc-Arrco de 2045 suit la convention, moins que
@@ -1045,9 +1120,11 @@ def test_une_regle_n_est_pas_servie_sous_un_modele_modifie(simulateur, monkeypat
 def _parametres_du_portage(module: str, regle: str) -> list[tuple[str, str | None]]:
     """Les paramètres de la règle dans le portage, et la valeur par défaut que
     chacun y prend, telle qu'elle est écrite."""
-    source = (RACINE_PROJET / "moteur" / "js" / "droit" / f"{module}.js").read_text(
-        encoding="utf-8")
-    nom = re.sub(r"_([a-z0-9])", lambda lettre: lettre.group(1).upper(), regle)
+    dossier = RACINE_PROJET / "moteur" / "js"
+    source = (dossier / f"{module}.js" if module == "revalorisation"
+              else dossier / "droit" / f"{module}.js").read_text(encoding="utf-8")
+    # Une règle privée au Python s'exporte sans son tiret bas.
+    nom = re.sub(r"_([a-z0-9])", lambda lettre: lettre.group(1).upper(), regle.lstrip("_"))
     ecrits = re.search(r"^export function %s\(((?:[^()]|\(\))*)\)" % nom, source,
                        re.MULTILINE).group(1)
     return [(parametre.split("=")[0].strip(),
@@ -1070,7 +1147,8 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
     l'autre."""
     jumelle = getattr({"commun": commun_python, "completer": completer_python,
                        "liquider": liquider_python, "ouvrir": ouvrir_python,
-                       "reversion": reversion_python}[module], regle)
+                       "reversion": reversion_python,
+                       "revalorisation": revalorisation_python}[module], regle)
     attendus = [(nom, None if parametre.default is inspect.Parameter.empty else parametre.default)
                 for nom, parametre in inspect.signature(jumelle).parameters.items()]
     autres_noms = {"annees": "anneesRetenues", "carriere": "carriereSaisie",
@@ -1136,5 +1214,6 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "reversion.reversion", "simulateur.carriere_simple",
                               "simulateur.carriere_parcours", "simulateur.carriere_releve",
                               "carriere.depuis_profil", "carriere.depuis_parcours",
-                              "releve.construire", "simulateur.regime_fusionne")
+                              "releve.construire", "simulateur.regime_fusionne",
+                              "liquidation.liquider")
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)

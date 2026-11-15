@@ -20,17 +20,21 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle import pont
+from retraite_notionnelle import revalorisation as revalorisation_python
 from retraite_notionnelle import simulateur as simulateur_python
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import Carriere as CarrierePython
 from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.config import RACINE_PROJET, ContributionEtat, Parametres
+from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
+from retraite_notionnelle.droit import liquidation as liquidation_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
 from retraite_notionnelle.droit import reversion as reversion_python
 from retraite_notionnelle.droit import releve as releve_python
+from retraite_notionnelle.droit.commun import PensionRegime
 from retraite_notionnelle.droit.liquider import EligibleMinimum
 from retraite_notionnelle.journal import Journal
 
@@ -416,6 +420,12 @@ def _mere_sous_l_avpf(simulateur):
         interruptions={annee: "education_enfant" for annee in range(1985, 2003)})
 
 
+def _pension(regime: str, maximum: bool) -> PensionRegime:
+    """Une pension de régime, prise ou non sur la durée maximum."""
+    return PensionRegime(regime=regime, montant=1000.0, type_calcul="annuites", detail="",
+                         fiabilite=Fiabilite.CERTIFIEE, sur_la_duree_maximum=maximum)
+
+
 def _ligne_de(carriere, annee: int):
     """Les arguments de ``commun.ligne_cotisee`` : le moteur, la carrière, et
     sa ligne de l'année."""
@@ -565,6 +575,20 @@ APPELS_DES_REGLES = [
     ("completer", "selon_la_regle", lambda s: (_ARTISAN, _PERIODES_COTISEES, 24)),
     ("reversion", "mois_de_mariage", lambda s: ("1990-06-15", "2000-03-15")),
     ("reversion", "mois_de_mariage", lambda s: ("2000-06-01", "1999-05-01")),
+    ("reversion", "_cumuler",
+     lambda s: ({"cumul": "limite", "cumul_taux": 0.52}, 1000.0, 50000.0, 65973.0, None, 1)),
+    ("reversion", "_cumuler", lambda s: ({"cumul": "aucun"}, 3000.0, 2000.0, 0.0, None, 2)),
+    ("reversion", "_cumuler",
+     lambda s: ({"cumul": "limite", "cumul_taux": 0.5}, 8000.0, 9000.0, 3000.0, 15000.0, 2)),
+    ("reversion", "_cumuler", lambda s: ({}, 8000.0, 9000.0, 3000.0, None, 1)),
+    ("revalorisation", "majorations_forfaitaires",
+     lambda s: (s.scenario_actuel, _pension("regime_general", True), "1970-02-01")),
+    ("revalorisation", "majorations_forfaitaires",
+     lambda s: (s.scenario_actuel, _pension("msa_salaries", True), "1970-02-01")),
+    ("revalorisation", "majorations_forfaitaires",
+     lambda s: (s.scenario_actuel, _pension("regime_general", False), "1972-02-01")),
+    ("revalorisation", "majorations_forfaitaires",
+     lambda s: (s.scenario_actuel, _pension("regime_general", True), "1980-02-01")),
 ]
 
 
@@ -587,7 +611,7 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
     jumeau = simulateur_python.Simulateur(parametres)
     modules = {"commun": commun_python, "completer": completer_python,
                "liquider": liquider_python, "ouvrir": ouvrir_python,
-               "reversion": reversion_python}
+               "reversion": reversion_python, "revalorisation": revalorisation_python}
     ecarts = []
     for module, regle, arguments in APPELS_DES_REGLES:
         lu = getattr(facade.regles_de_la_reversion if module == "reversion"
@@ -641,6 +665,43 @@ def test_le_jumeau_rend_le_releve_que_la_facade_lit(parametres):
         assert repr(lu.droits.cotisations) == repr(pont.lu_strictement(
             tuple[tuple[str, int, float], ...],
             json.loads(json.dumps(pont._en_donnees(refait.droits.cotisations))), nom)), nom
+
+
+# -- la liquidation ---------------------------------------------------------------------
+
+@pytest.mark.parametrize("parametres", [Parametres(), Parametres(conventions_cor=True)],
+                         ids=["reference", "conventions_cor"])
+def test_le_jumeau_rend_la_liquidation_que_la_facade_lit(parametres):
+    """La liquidation d'un salarié, d'un agent de la SNCF, d'un artisan d'avant
+    1973 et d'une fonctionnaire mère de trois enfants, au départ de leur
+    carrière, et celle, vivant, de la carrière d'un assuré mort avant son
+    départ : le même taux, la même pension de chaque régime, au bit près."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    servi = facade.Simulateur(parametres)
+    jumeau = simulateur_python.Simulateur(parametres)
+    for carriere in (_salarie, _agent, _artisan, _fonctionnaire, _mort_avant):
+        lue, refaite = carriere(servi), carriere(jumeau)
+        lu = facade.liquidation.liquider(
+            liquidation_python.demande_de_depart(lue), facade.liquidation.Etat(lue),
+            facade.liquidation.Contexte(servi.scenario_actuel))
+        refait = liquidation_python.liquider(
+            liquidation_python.demande_de_depart(refaite), liquidation_python.Etat(refaite),
+            liquidation_python.Contexte(jumeau.scenario_actuel))
+        nom = carriere.__name__
+        assert lu.pensions.taux == refait.pensions.taux, nom
+        assert repr(lu.regimes) == repr(pont.lu_strictement(
+            tuple[PensionRegime, ...], json.loads(json.dumps(pont._en_donnees(refait.regimes))),
+            nom)), nom
+
+
+def _mort_avant(simulateur):
+    """Un salarié né en 1970 liquidé à cinquante-quatre ans, avant que son
+    droit ne s'ouvre : la liquidation d'un vivant, décotée, que la réversion
+    d'un assuré mort avant son départ compare à la sienne."""
+    return simulateur.carriere_simple(
+        annee_naissance=1970, sexe="H", affiliation="salarie_prive_non_cadre", age_debut=22,
+        age_liquidation=54)
 
 
 # -- le constructeur du compte -----------------------------------------------------------

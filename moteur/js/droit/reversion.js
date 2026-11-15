@@ -633,9 +633,9 @@ function premiereDateDEffet(table, fiche, conjoint, lendemain, deces) {
 /**
  * La réversion d'avant juillet 2004 qu'il reste quand le survivant a ses
  * propres retraites, et la limite de cumul : `[montant, limite]` (D. 355-1).
- * Voir `_cumuler` du Python.
+ * Voir `_cumuler` du Python, que la façade des tests demande ici.
  */
-function cumuler(parametres, montant, retraites, principale, forfaitaire, reversions) {
+export function cumuler(parametres, montant, retraites, principale, forfaitaire, reversions) {
   const regle = parametres.cumul ?? null;
   if (regle === null || montant <= 0 || retraites <= 0) {
     return [montant, 0.0];

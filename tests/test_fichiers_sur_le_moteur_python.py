@@ -82,7 +82,7 @@ FICHIERS = (
     "test_regle_de_chacun.py", "test_releve_lu.py", "test_releve_prolonge.py",
     "test_remuneration.py", "test_retablissement.py", "test_retour_crpcen_ieg.py",
     "test_retraite_progressive.py", "test_revalorisation.py", "test_revenu_des_points.py",
-    "test_reversion.py", "test_salaire_annuel_moyen.py", "test_scenarios_meres.py",
+    "test_salaire_annuel_moyen.py", "test_scenarios_meres.py",
     "test_sections_juridiques.py", "test_sections_liberales.py", "test_sections_sante.py",
     "test_services_fonction_publique.py", "test_services_passes.py", "test_simulateur.py",
     "test_sncf_ratp.py", "test_solde_fusion.py", "test_stock_age_legal.py", "test_taux_moyens.py",
@@ -96,7 +96,7 @@ FICHIERS = (
 #: Les fichiers passés à la façade (``from facade import …``) qui gardent des
 #: tests sur le moteur Python, sous la marque ``sur_le_moteur_python``, et le
 #: nombre de ces tests. Il ne fait que décroître.
-RESTES = {"test_reversion.py": 4, "test_simulateur.py": 37}
+RESTES = {"test_simulateur.py": 37}
 
 
 def _du_moteur(module: str) -> bool:

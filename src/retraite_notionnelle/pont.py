@@ -2211,6 +2211,18 @@ def resultat_actuel_des_donnees(actuel: dict):
 _PAR_ANNEE = tuple[tuple[str, tuple[tuple[int, int], ...]], ...]
 
 
+def liquidation_des_donnees(donnees: dict) -> dict:
+    """La liquidation que le portage a écrite (``liquidation.liquider`` de
+    ``pont.mjs``), par ce que les tests en lisent, lu strictement : ``taux``,
+    le plus haut des taux de liquidation des régimes en annuités ;
+    ``regimes``, la pension de chaque régime, complétée, dans l'ordre."""
+    from .droit.commun import PensionRegime
+
+    return {"taux": lu_strictement(float, donnees["taux"], "liquidation.taux"),
+            "regimes": lu_strictement(tuple[PensionRegime, ...], donnees["regimes"],
+                                      "liquidation.regimes")}
+
+
 def releve_des_donnees(donnees: dict) -> dict:
     """Le relevé des droits que le portage a écrit (``releveEnDonnees`` de
     ``pont.mjs``), lu strictement : ``par_annee``, par compte, régime et année,
@@ -2257,6 +2269,7 @@ LECTURES_DE_LA_FACADE = {
     "reversion.reversion": reversion_des_donnees,
     "releve.construire": releve_des_donnees,
     "simulateur.regime_fusionne": regime_fusionne_des_donnees,
+    "liquidation.liquider": liquidation_des_donnees,
 }
 
 #: Le type que le Python donne à une erreur du portage, quand ce n'est pas
@@ -2508,9 +2521,10 @@ TABLES_DES_REGLES: dict[str, frozenset[str]] = {
 
 #: Les objets du droit qu'une règle de la façade reçoit, sous les noms que le
 #: portage leur donne (:data:`CLASSES_EN_CHAMEAU`) : un éligible au minimum
-#: contributif, que ``droit/completer.js`` lit en chameau.
-TYPES_DE_LA_FACADE = frozenset({"EligibleMinimum"})
-CLASSES_EN_CHAMEAU |= TYPES_DE_LA_FACADE
+#: contributif, que ``droit/completer.js`` lit en chameau ; une pension de
+#: régime, que le portage écrit et lit sous les noms du Python.
+TYPES_DE_LA_FACADE = frozenset({"EligibleMinimum", "PensionRegime"})
+CLASSES_EN_CHAMEAU |= {"EligibleMinimum"}
 
 
 # -- les règles du droit, par la façade (action 161) ------------------------------
@@ -2540,7 +2554,10 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
                  "trimestres_de_surcote_regimes_speciaux", "valeur_du_point"),
     "ouvrir": ("age_ouverture", "age_ouverture_commun", "age_ouverture_droit", "age_surcote",
                "age_taux_plein", "duree_requise"),
-    "reversion": ("mois_de_mariage",),
+    # ``_cumuler``, privée au Python, que le portage exporte sous ``cumuler``.
+    "reversion": ("_cumuler", "mois_de_mariage"),
+    # Hors de ``droit/`` : ``revalorisation.js``, à la racine du portage.
+    "revalorisation": ("majorations_forfaitaires",),
 }
 
 

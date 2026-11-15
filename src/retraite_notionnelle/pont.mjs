@@ -158,7 +158,8 @@ import * as cumul from "../../moteur/js/droit/cumul.js";
 import * as departs from "../../moteur/js/droit/departs.js";
 import { foyerEtNet } from "../../moteur/js/droit/foyer.js";
 import * as invalidite from "../../moteur/js/droit/invalidite.js";
-import { appels } from "../../moteur/js/droit/liquidation.js";
+import { Contexte as ContexteDeLiquidation, Demande, Etat, appels, liquider as liquiderLaDemande }
+  from "../../moteur/js/droit/liquidation.js";
 import * as liquider from "../../moteur/js/droit/liquider.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import * as releve from "../../moteur/js/droit/releve.js";
@@ -173,6 +174,7 @@ import { Restitution } from "../../moteur/js/restitution.js";
 import {
   derniereValeurPubliee, faireVivre, produit, RevalorisationServie, RevalorisationsPensions,
 } from "../../moteur/js/revalorisation.js";
+import * as revalorisation from "../../moteur/js/revalorisation.js";
 import { Saisie } from "../../moteur/js/saisie.js";
 import { ScenarioActuel } from "../../moteur/js/scenario-actuel.js";
 import { Simulateur } from "../../moteur/js/simulateur.js";
@@ -1885,7 +1887,7 @@ ENTREES_DE_LA_FACADE["simulateur.constructeur"] = (simulateur, constructeur, met
 // Les règles du droit, par la façade : un bloc à part (action 161).
 
 /** Les modules du droit dont la façade sert des règles, sous leur nom. */
-const MODULES_DU_DROIT = { commun, completer, liquider, ouvrir, reversion };
+const MODULES_DU_DROIT = { commun, completer, liquider, ouvrir, reversion, revalorisation };
 
 /**
  * Une règle du droit, sous les noms du Python (`regle_du_droit` de `pont.py`,
@@ -1895,13 +1897,31 @@ const MODULES_DU_DROIT = { commun, completer, liquider, ouvrir, reversion };
  * lieu de passer pour un refus du moteur.
  */
 ENTREES_DE_LA_FACADE["droit.regle"] = (simulateur, module, regle, ...valeurs) => {
-  const nom = enChameau(regle);
+  // Une règle privée au Python (`_cumuler`) est exportée par le portage sous
+  // son nom sans le tiret bas, pour la façade seule.
+  const nom = enChameau(regle.replace(/^_(?=[a-z])/, ""));
   if (!Object.hasOwn(MODULES_DU_DROIT, module) || nom.startsWith("_")
     || typeof MODULES_DU_DROIT[module][nom] !== "function") {
     throw new TypeError(`règle que le droit ne tient pas : ${module}.${regle}`);
   }
   return telQuel(MODULES_DU_DROIT[module][nom](
     ...valeurs.map((valeur) => argumentDeLaFacade(simulateur, valeur))));
+};
+
+// La liquidation, par la façade : un bloc à part (action 161).
+
+/**
+ * La liquidation d'une demande (`liquidation_de_la_facade` de `pont.py`),
+ * dans l'état d'une carrière seule, sous le contexte du moteur sans rien de
+ * plus : ce que les tests en lisent, le taux de ses pensions et la pension de
+ * chaque régime, telle quelle (`telQuel`). La liquidation entière tient son
+ * contexte, les tables du moteur, et ne passe pas le pont
+ * (`CONTENUS_QUI_NE_PASSENT_PAS`).
+ */
+ENTREES_DE_LA_FACADE["liquidation.liquider"] = (moteur, demande, carriere) => {
+  const liquidee = liquiderLaDemande(new Demande(demande), new Etat(carriere),
+    new ContexteDeLiquidation(moteur));
+  return { taux: liquidee.pensions.taux, regimes: telQuel(liquidee.regimes) };
 };
 
 // -- la fin de la façade des tests ----------------------------------------------

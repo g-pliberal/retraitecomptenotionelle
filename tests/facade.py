@@ -70,6 +70,7 @@ import pytest
 
 from retraite_notionnelle import carriere as _carriere
 from retraite_notionnelle import memoire, pont
+from retraite_notionnelle import revalorisation as _revalorisation
 from retraite_notionnelle import simulateur as _simulateur
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import ContributionEtat, Parametres
@@ -77,6 +78,7 @@ from retraite_notionnelle.donnees.regimes import PeriodeRegime
 from retraite_notionnelle.pont import NonTransmissible
 from retraite_notionnelle.droit import commun as _commun
 from retraite_notionnelle.droit import completer as _completer
+from retraite_notionnelle.droit import liquidation as _liquidation
 from retraite_notionnelle.droit import liquider as _liquider
 from retraite_notionnelle.droit import ouvrir as _ouvrir
 from retraite_notionnelle.droit import releve as _releve
@@ -90,11 +92,11 @@ from retraite_notionnelle.scenarios import actuel as _actuel
 DONNEES = frozenset({"catalogue", "affiliations"})
 
 
-#: Les dix entrées du moteur Python que la façade sert, sous leurs noms.
+#: Les onze entrées du moteur Python que la façade sert, sous leurs noms.
 ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversion",
            "simulateur.carriere_simple", "simulateur.carriere_parcours",
            "simulateur.carriere_releve", "carriere.depuis_profil", "carriere.depuis_parcours",
-           "releve.construire", "simulateur.regime_fusionne")
+           "releve.construire", "simulateur.regime_fusionne", "liquidation.liquider")
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
@@ -588,6 +590,78 @@ ouvrir = Regles("ouvrir", _ouvrir)
 #: Les règles du module de la réversion, sous un nom à elles : ``reversion``
 #: est l'entrée de la réversion, la fonction du module qui porte son nom.
 regles_de_la_reversion = Regles("reversion", _reversion)
+#: ``revalorisation``, hors du droit : les majorations forfaitaires de 1972 à
+#: 1982, servies par le portage.
+revalorisation = Regles("revalorisation", _revalorisation)
+
+
+# -- la liquidation ---------------------------------------------------------------------
+
+class Liquidee(_Ferme):
+    """La liquidation que le portage a calculée, par ce que les tests en
+    lisent : le taux de ses pensions (``pensions.taux``) et la pension de
+    chaque régime (``regimes``). Le reste — le relevé, l'ouverture, les
+    compléments, les mesures — ne passe pas le pont : la liquidation entière
+    tient son contexte, les tables du moteur."""
+
+    def __init__(self, lu: dict) -> None:
+        object.__setattr__(self, "pensions", _Taux(lu["taux"]))
+        object.__setattr__(self, "regimes", lu["regimes"])
+
+
+class _Taux(_Ferme):
+    """Les pensions d'une liquidation, par leur seul taux."""
+
+    def __init__(self, taux: float) -> None:
+        object.__setattr__(self, "taux", taux)
+
+
+class _Liquidation(_Ferme):
+    """``droit.liquidation`` : ``liquider``, servie par le portage, sur une
+    demande, l'état d'une carrière seule et le contexte du moteur d'un
+    simulateur de la façade, sans rien de plus ; ``Demande``, ``Etat`` et
+    ``Contexte``, les types du Python, qui portent ce qu'on lui passe. Le
+    journal, les pensions déjà servies, une pension provisoire, une
+    neutralisation, une date d'observation, une hypothèse n'arriveraient pas
+    au portage : la liquidation est refusée."""
+
+    Demande = _liquidation.Demande
+    Etat = _liquidation.Etat
+    Contexte = _liquidation.Contexte
+
+    def __getattr__(self, nom):
+        # Ce que le jumeau ne porte pas manque ici comme à un module : pytest
+        # sonde ainsi ce qu'un fichier de tests importe.
+        if nom.startswith("__") or not hasattr(_liquidation, nom):
+            raise AttributeError(f"liquidation.{nom}")
+        return super().__getattr__(nom)
+
+    def liquider(self, demande, etat, contexte) -> Liquidee:
+        moteur = contexte.univers
+        if not isinstance(moteur, ScenarioActuel):
+            raise NonTransmissible(
+                "liquidation.liquider : moteur du contexte que la façade ne sait pas "
+                "transmettre — la liquidation se demande sur le moteur d'un simulateur de la "
+                "façade (simulateur.scenario_actuel)")
+        if (etat.journal, etat.servies, etat.initiales, etat.recalcul) != (None, (), (), True):
+            raise NonTransmissible(
+                "liquidation.liquider : état qui porte plus que sa carrière (journal, pensions "
+                "servies, pensions provisoires, recalcul) — le portage ne le verrait pas")
+        if (contexte.neutralisations, contexte.observation, contexte.hypothese) != (
+                frozenset(), None, None):
+            raise NonTransmissible(
+                "liquidation.liquider : contexte qui porte plus que le moteur (neutralisation, "
+                "observation, hypothèse) — le portage ne le verrait pas")
+        donnees = {"personne": demande.personne, "dateEffet": demande.date_effet,
+                   "evenement": demande.evenement, "dateEvenement": demande.date_evenement,
+                   "motif": demande.motif, "nature": demande.nature,
+                   "regimes": list(demande.regimes)}
+        return Liquidee(_demander("liquidation.liquider", moteur._simulateur.parametres,
+                                  pont.MOTEUR, donnees, etat.carriere))
+
+
+#: ``droit.liquidation``, sa liquidation servie par le portage.
+liquidation = _Liquidation()
 
 
 # -- le relevé des droits -------------------------------------------------------------
@@ -697,7 +771,8 @@ MARQUE = "sur_le_moteur_python"
 JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
            "reversion": _reversion.reversion, "commun": _commun, "completer": _completer,
            "liquider": _liquider, "ouvrir": _ouvrir, "releve": _releve,
-           "regles_de_la_reversion": _reversion}
+           "regles_de_la_reversion": _reversion, "revalorisation": _revalorisation,
+           "liquidation": _liquidation}
 
 #: Les simulateurs des tests, par fichier, par moteur et par paramètres.
 _SIMULATEURS: dict[tuple, object] = {}
