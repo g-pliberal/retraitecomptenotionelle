@@ -216,8 +216,9 @@ DUREE_REQUISE_SELON_LA_DATE_D_EFFET = (
 def test_la_duree_requise_des_nes_avant_1943_est_de_160_trimestres_depuis_2003():
     from outils_pont import droit_et_fige
 
+    from facade import Carriere
     from retraite_notionnelle import pont
-    from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+    from retraite_notionnelle.carriere import AnneeCarriere
 
     appels, attendus = {}, {}
     for annee, mois, age, effet, mois_effet, trimestres in DUREE_REQUISE_SELON_LA_DATE_D_EFFET:

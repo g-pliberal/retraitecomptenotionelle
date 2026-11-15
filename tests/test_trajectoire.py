@@ -99,7 +99,7 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.simulateur import Simulateur
+from facade import Simulateur
 
 from outils_pont import Saisies
 

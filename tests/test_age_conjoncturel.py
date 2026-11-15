@@ -152,7 +152,7 @@ def test_les_departs_de_la_grille_se_datent_au_portage_sans_les_jumeaux(monkeypa
     from outils_valeurs import valeur_figee
     from retraite_notionnelle.castypes import CAS_TYPES
     from retraite_notionnelle.cout import generations
-    from retraite_notionnelle.simulateur import Simulateur
+    from facade import Simulateur
 
     simulateur = Simulateur(Parametres())
     fiches = {cas.code: cas for cas in CAS_TYPES}

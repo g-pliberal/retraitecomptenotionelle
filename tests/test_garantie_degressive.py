@@ -27,8 +27,8 @@ from retraite_notionnelle.config import Parametres, SituationFoyer
 from retraite_notionnelle.donnees.distribution import DistributionPensions, Tranche
 from retraite_notionnelle import pont
 from retraite_notionnelle.garantie import complement_garantie
-from retraite_notionnelle.simulateur import Simulateur
 
+from facade import Simulateur
 from outils_garantie import cout_garantie, cout_garantie_par_sexe
 from outils_garantie import manque_moyen as _manque_moyen
 
@@ -73,8 +73,8 @@ def test_le_bareme_retire_la_pension_en_entier_puis_de_moitie(plancher, cas):
 
 @pytest.mark.parametrize("situation, cas", [
     (SituationFoyer.SEUL, SEUL), (SituationFoyer.COUPLE, COUPLE)])
-def test_le_moteur_python_sert_le_meme_bareme_que_le_portage(situation, cas):
-    """Le jumeau de ``_garantieVieillesse``, à 66 ans en 2026 : le plancher est
+def test_le_portage_sert_le_bareme_a_soixante_six_ans(situation, cas):
+    """``_garantieVieillesse``, par la façade, à 66 ans en 2026 : le plancher est
     alors celui de la proposition, sans prix à lui appliquer."""
     simulateur = Simulateur(Parametres(situation_foyer=situation))
     carriere = simulateur.carriere_simple(

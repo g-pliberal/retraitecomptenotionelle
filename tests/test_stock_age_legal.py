@@ -15,7 +15,6 @@ import pytest
 from retraite_notionnelle import cout as C
 from retraite_notionnelle import memoire, pont
 from retraite_notionnelle.config import Parametres, StockAgeLegal
-from retraite_notionnelle.simulateur import Simulateur
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
@@ -84,6 +83,7 @@ def test_les_cas_types_passent_par_le_portage(monkeypatch):
         pytest.skip("node absent : le portage ne calcule pas ici")
     from outils_pont import empecher_les_jumeaux_du_cout
     from outils_valeurs import valeur_figee
+    from facade import Simulateur
 
     simulateurs = {variante: Simulateur(stock_age_legal.parametres_de(variante, PARAMETRES))
                    for variante in ("droit_commun", "tout_droit")}

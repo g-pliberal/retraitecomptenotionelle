@@ -43,10 +43,9 @@ from __future__ import annotations
 import pytest
 
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import Carriere, Metier
-from retraite_notionnelle.droit import departs
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.carriere import Metier
 
+from facade import Carriere, Simulateur, departs
 from outils_pont import servi_et_fige
 
 REQUETE = {
@@ -89,7 +88,7 @@ def test_la_crpnpac_se_sert_a_son_age_et_le_regime_general_au_sien(servis, age):
 
 
 def test_le_premier_depart_ne_liquide_que_la_crpnpac():
-    """Le jumeau Python : à cinquante-cinq ans, les deux tranches de la
+    """Le portage, par la façade : à cinquante-cinq ans, les deux tranches de la
     CRPNPAC ; le 1er décembre 2026, le régime général, et l'Agirc-Arrco qui le
     suit, comme toute complémentaire des salariés que le modèle fait liquider
     avec sa base."""

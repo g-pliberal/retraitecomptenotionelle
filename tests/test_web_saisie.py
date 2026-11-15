@@ -19,7 +19,6 @@ from urllib.parse import parse_qsl
 import pytest
 
 from retraite_notionnelle import chronologie
-from retraite_notionnelle.carriere import Affiliations
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.chargement import charger_periodes_non_travaillees
 from retraite_notionnelle.web.site import ErreurSite, disponible, module, rendre, site
@@ -341,21 +340,24 @@ def test_les_bornes_des_calendriers_sont_opposables_hors_du_navigateur():
 def test_le_depart_le_plus_tardif_se_convertit_encore_en_rente():
     """La saisie accepte un départ jusqu'au dernier âge entier que les tables de
     mortalité convertissent en rente (action 151). À cet âge, pour la
-    génération la plus ancienne comme pour la plus jeune, le diviseur du compte
-    notionnel est encore positif ; un an plus tard, à l'âge terminal des
-    tables, il est nul, et le moteur refuse de diviser."""
-    from retraite_notionnelle.config import Parametres
-    from retraite_notionnelle.moteur.conversion import Convertisseur
-    from retraite_notionnelle.simulateur import Simulateur
+    génération la plus ancienne comme pour la plus jeune, le convertisseur du
+    portage rend le coefficient du compte notionnel, son diviseur positif ; un
+    an plus tard, à l'âge terminal des tables, il est nul, et le portage
+    refuse de diviser."""
+    from retraite_notionnelle import pont
 
-    simulateur = Simulateur(Parametres())
-    convertisseur = Convertisseur(simulateur.mortalite, simulateur.parametres)
     maximal = SAISIE.AGE_LIQUIDATION_MAXIMAL
+    sonde = "conversion.coefficient.esperance_residuelle"
+    appels = {}
     for naissance in (SAISIE.NAISSANCE_MINIMALE, SAISIE.NAISSANCE_MAXIMALE):
         depart = naissance + maximal
-        assert convertisseur.coefficient(maximal, depart).diviseur > 0
-        with pytest.raises(ValueError, match="diviseur nul"):
-            convertisseur.coefficient(maximal + 1, depart + 1)
+        appels[f"{naissance} au plus tard"] = (sonde, pont.SIMULATEUR, maximal, depart)
+        appels[f"{naissance} un an après"] = (sonde, pont.SIMULATEUR, maximal + 1, depart + 1)
+    lus, refus = pont.droit(appels)
+    assert set(lus) == {cle for cle in appels if cle.endswith("au plus tard")}
+    assert all(esperance > 0 for esperance in lus.values())
+    assert set(refus) == {cle for cle in appels if cle.endswith("un an après")}
+    assert all("diviseur nul" in motif for motif in refus.values()), refus
 
 
 def test_le_site_simule_le_depart_le_plus_tardif(page):
@@ -1865,8 +1867,10 @@ def test_les_statuts_payes_a_l_indice_sont_ceux_de_l_etat_et_de_la_cnracl():
     régime de base est, l'année du modèle, celui de l'État ou la CNRACL. Ni
     l'ouvrier de l'État (FSPOEIE), ni le fonctionnaire de Nouvelle-Calédonie,
     ni l'agent non titulaire."""
+    from facade import Simulateur
+
     parametres = Parametres()
-    affiliations = Affiliations(parametres.racine_donnees)
+    affiliations = Simulateur(parametres).affiliations
     attendus = {code for code in affiliations.codes
                 if {"fonction_publique_etat", "cnracl"}
                 & set(affiliations.regimes(code, parametres.annee_courante))}

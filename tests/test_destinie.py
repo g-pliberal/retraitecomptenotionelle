@@ -467,13 +467,10 @@ def test_le_scenario_1_se_mesure_au_portage_sans_le_moteur_python(temoin, monkey
     """Le moteur qui fait foi est le JavaScript (note de décision 0005) : ce
     que le scénario 1 sert à chaque cas, le portage le sert
     (``pont.scenario_actuel``), et le moteur Python, qu'on empêche ici de
-    simuler, n'y entre pas."""
-    from retraite_notionnelle.simulateur import Simulateur
+    simuler (``empecher_les_jumeaux_du_cout``), n'y entre pas."""
+    from outils_pont import empecher_les_jumeaux_du_cout
 
-    def interdit(*_, **__):
-        raise AssertionError("le moteur Python simule un cas de Destinie")
-
-    monkeypatch.setattr(Simulateur, "simuler", interdit)
+    empecher_les_jumeaux_du_cout(monkeypatch)
     ecarts = ecarts_du_temoin(temoin)
     assert set(ecarts) == set(temoin["cas"])
     assert all(mesures["trimestres"] == 0 for code, mesures in ecarts.items()

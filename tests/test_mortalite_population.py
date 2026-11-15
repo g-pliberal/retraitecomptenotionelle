@@ -44,7 +44,7 @@ from retraite_notionnelle.castypes import (GRILLE_DU_COUT,  # noqa: E402
                                            primes_projetees_en_donnees)
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.cout import Pensionne, VoletLiberal, calculer_cout  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from facade import Simulateur  # noqa: E402
 
 
 class _Mortalite:

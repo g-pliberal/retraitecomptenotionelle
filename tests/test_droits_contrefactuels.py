@@ -17,8 +17,7 @@ from __future__ import annotations
 
 import pytest
 
-from retraite_notionnelle.droit import ouvrir
-
+from facade import Simulateur, ouvrir
 from outils_pont import Saisies
 
 SANS_SUSPENSION = "loi_2023_sans_suspension"
@@ -64,20 +63,26 @@ def saisies() -> Saisies:
     return Saisies()
 
 
+@pytest.fixture(scope="module")
+def du_portage() -> Saisies:
+    """Les saisies, et un simulateur de la façade, que le portage sert."""
+    return Saisies(Simulateur)
+
+
 def _moteur(saisies: Saisies, parametres, droit: str | None):
     return saisies.simulateur(parametres.avec(droit_contrefactuel=droit)).scenario_actuel
 
 
 @pytest.mark.parametrize("droit", [None, SANS_SUSPENSION, AU_31_AOUT_2023])
 @pytest.mark.parametrize("naissance", sorted(ATTENDUS))
-def test_l_age_legal_et_la_duree_de_chaque_etat_du_droit(saisies, naissance, droit):
+def test_l_age_legal_et_la_duree_de_chaque_etat_du_droit(du_portage, naissance, droit):
     """Un salarié entré à vingt-trois ans, que la carrière longue ne vise pas,
     liquidé à soixante-sept ans : le droit s'ouvre à l'âge légal de l'état du
     droit retenu, et la durée requise est la sienne."""
     annee = int(naissance[:4])
-    parametres, carriere = saisies.lire({"naissance": naissance, "debut": f"{annee + 23}-09",
-                                         "liquidation": f"{annee + 67}{naissance[4:7]}"})
-    moteur = _moteur(saisies, parametres, droit)
+    parametres, carriere = du_portage.lire({"naissance": naissance, "debut": f"{annee + 23}-09",
+                                            "liquidation": f"{annee + 67}{naissance[4:7]}"})
+    moteur = _moteur(du_portage, parametres, droit)
     age, trimestres = ATTENDUS[naissance][droit]
     assert ouvrir.age_ouverture_droit(moteur, carriere) == pytest.approx(age)
     assert moteur.calculer(carriere).trimestres_requis == trimestres

@@ -1530,7 +1530,6 @@ def test_le_budget_de_calcul_mesure_les_carrieres_que_le_portage_batit(monkeypat
     simulateur par jeu de paramètres."""
     import budget_calcul
     import construire_temoins
-    from retraite_notionnelle.carriere import Carriere
 
     monkeypatch.setattr(construire_temoins, "_cas", lambda: [
         {"nom": nom, "requete": {"statut": statut, "naissance": "1970"}}
@@ -1538,7 +1537,8 @@ def test_le_budget_de_calcul_mesure_les_carrieres_que_le_portage_batit(monkeypat
     saisies = budget_calcul.carrieres()
     assert len(saisies) == 2
     assert saisies[0][0] is saisies[1][0]
-    assert [type(carriere) for _, carriere in saisies] == [Carriere, Carriere]
+    assert [type(carriere).__name__ for _, carriere in saisies] == ["Carriere", "Carriere"]
+    assert all(carriere.lignes for _, carriere in saisies)
 
 
 def test_le_routeur_du_site_est_hors_de_l_empreinte():

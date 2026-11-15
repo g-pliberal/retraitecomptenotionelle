@@ -35,7 +35,7 @@ import yaml
 
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.noyau import carte
-from retraite_notionnelle.simulateur import Simulateur
+from facade import Simulateur
 
 SALAIRE, COMPLEMENTAIRE = "cultes_salaire_annuel_moyen", "cultes_retraite_complementaire"
 LOT = (SALAIRE, COMPLEMENTAIRE)

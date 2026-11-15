@@ -1,31 +1,36 @@
 """La version d'une fiche qui s'applique à une situation : ``noyau/versions.py``.
 
 ``docs/architecture.md``, § 4.1. Le moteur lit les versions des fiches qu'il
-applique — aujourd'hui les trimestres des enfants — par une seule fonction, et
-son jumeau JavaScript fait de même sur le paquet. Ce test tient la lecture sur
-les fiches mêmes : à chaque cas de bascule, la veille et le jour de chaque
-borne, une version et une seule s'applique, celle que le partage désigne.
+applique — les trimestres des enfants, la réversion, l'invalidité, les
+carrières hors de France, les périodes réputées cotisées — par une seule
+fonction, sur les fiches que son paquet porte préparées. Ce test tient la
+lecture sur ces fiches : à chaque cas de bascule, la veille et le jour de
+chaque borne, une version et une seule s'applique, celle que le partage
+désigne.
 """
 
 from __future__ import annotations
 
 import itertools
+import json
 from datetime import date
+from pathlib import Path
 
 import pytest
 
 from retraite_notionnelle.noyau import carte, partage, versions
-from retraite_notionnelle.scenarios.actuel import MajorationsPourEnfants
 
-#: Les fiches que le moteur lit.
-LUES = sorted(MajorationsPourEnfants.FICHES.values())
+#: Les fiches dont le portage lit les versions, que son paquet porte préparées.
+PAQUET = Path(__file__).resolve().parents[1] / "moteur" / "donnees.json"
+LUES = sorted(json.loads(PAQUET.read_text(encoding="utf-8"))["versions_des_fiches"])
 
 
 @pytest.mark.parametrize("nom", LUES)
 def test_une_version_et_une_seule_a_chaque_bascule(nom):
     """La veille et le jour de chaque borne, pour chaque combinaison des dates
-    qui décident : exactement la version dont les bornes les contiennent, sauf
-    là où le vocabulaire tient la combinaison pour impossible."""
+    qui décident : exactement la version dont les bornes les contiennent,
+    l'exception plutôt que la version dont elle l'est, sauf là où le
+    vocabulaire tient la combinaison pour impossible."""
     fiche = carte.fiches()[nom]
     preparee = versions.preparer(fiche)
     noms = fiche["dates_qui_decident"]
@@ -39,11 +44,13 @@ def test_une_version_et_une_seule_a_chaque_bascule(nom):
             continue
         version = versions.applicable(preparee, {n: d.isoformat() for n, d in situation.items()})
         assert version is not None, (nom, situation)
-        attendue = [v["id"] for v in fiche["versions"]
-                    if all((v["bornes"].get(n, [None, None])[0] is None
-                            or v["bornes"][n][0] <= situation[n])
-                           and (v["bornes"].get(n, [None, None])[1] is None
-                                or situation[n] < v["bornes"][n][1]) for n in noms)]
+        contiennent = [v for v in fiche["versions"]
+                       if all((v["bornes"].get(n, [None, None])[0] is None
+                               or v["bornes"][n][0] <= situation[n])
+                              and (v["bornes"].get(n, [None, None])[1] is None
+                                   or situation[n] < v["bornes"][n][1]) for n in noms)]
+        exceptees = {v.get("exception_de") for v in contiennent}
+        attendue = [v["id"] for v in contiennent if v["id"] not in exceptees]
         assert [version["id"]] == attendue, (nom, situation)
 
 

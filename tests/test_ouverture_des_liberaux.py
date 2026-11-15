@@ -52,10 +52,9 @@ import re
 import pytest
 
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import Carriere, Metier
-from retraite_notionnelle.droit import departs, ouvrir
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.carriere import Metier
 
+from facade import Carriere, Simulateur, departs, ouvrir
 from outils_pont import servi_et_fige
 
 REQUETE = {

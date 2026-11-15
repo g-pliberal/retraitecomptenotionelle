@@ -335,17 +335,16 @@ def test_le_plafond_du_regime_unifie_est_le_cumul_des_deux_plafonds():
 
 
 def test_chaque_version_dit_les_regimes_calcules_sans_le_coefficient():
-    """Le moteur lit la fiche à la date d'effet (`FichesDatees`) : chaque
-    version nomme les régimes dont la majoration se calcule sur les droits sans
-    le coefficient d'anticipation (``sans_anticipation``) — l'Arrco de 2012 à
+    """Le portage lit la fiche à la date d'effet (les fiches datées de son
+    paquet, ``moteur/donnees.json``) : chaque version nomme les régimes dont
+    la majoration se calcule sur les droits sans le coefficient d'anticipation (``sans_anticipation``) — l'Arrco de 2012 à
     2018, et non l'Agirc, que le guide n° 9 de mars 2017 dit « en tenir
     compte » ; tous depuis 2019, selon la circulaire 2020-02-DRJ ; aucun avant
     2012, qu'aucun texte lu ne tranche et qu'une approximation déclare. Les
     versions d'une même date d'effet en nomment les mêmes, et l'une d'elles
     cite le texte qui le dit."""
-    from retraite_notionnelle.scenarios.actuel import FichesDatees
-
-    assert MAJORATION in FichesDatees.NOMS
+    paquet = Path(__file__).resolve().parents[1] / "moteur" / "donnees.json"
+    assert MAJORATION in json.loads(paquet.read_text(encoding="utf-8"))["fiches_datees"]
     fiche = carte.fiches()[MAJORATION]
     for version in _versions(MAJORATION):
         lus = version["contenu"]["parametres"].get("sans_anticipation")

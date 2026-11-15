@@ -109,15 +109,14 @@ def _part(parts, regime: str) -> float:
 
 
 def test_le_bareme_servi_est_celui_de_l_accord_annee_par_annee():
-    """La table du moteur sert aux points de l'Agirc d'avant 2012, pour trois à
+    """La table du portage sert aux points de l'Agirc d'avant 2012, pour trois à
     sept enfants et plus, la majoration de l'article 6 bis affectée du
     pourcentage de l'année de service : 100 % jusqu'en 1994, 96 % en 1995,
     85 % en 1996, 80 % depuis 1997 ; aux points de l'Arrco, le même barème à
     toute année de service."""
-    from retraite_notionnelle.config import RACINE_DONNEES
-    from retraite_notionnelle.scenarios.actuel import MajorationsEnfantsPoints
+    from facade import Simulateur
 
-    table = MajorationsEnfantsPoints(RACINE_DONNEES)
+    table = Simulateur().scenario_actuel.majorations_enfants_points
     for service, pourcentage in POURCENTAGE.items():
         for enfants, base in enumerate(AVANT_LE_POURCENTAGE, start=3):
             for code in ("agirc", "agirc_entreprises_nouvelles"):

@@ -42,17 +42,15 @@ Python le refait au bit près.
 
 from __future__ import annotations
 
+import json
 import re
+from pathlib import Path
 
 import pytest
 
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.donnees.chargement import charger_table_par_generation
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes
-from retraite_notionnelle.scenarios.actuel import (
-    AgesCategorieActive, AgesRegimes, CarriereLongue, DureesServicesActifs,
-    DureesServicesMilitaires,
-)
 
 from outils_pont import servi_et_fige
 
@@ -185,31 +183,22 @@ def test_les_tables_d_ages_par_generation_tombent_sur_un_mois_entier():
     assert lues >= 5
 
 
+#: Le paquet des données que le portage charge.
+PAQUET = Path(__file__).resolve().parents[1] / "moteur" / "donnees.json"
+
+
 def test_les_autres_ages_de_la_legislation_tombent_sur_un_mois_entier():
-    regimes = AgesRegimes(RACINE_DONNEES)
-    ages = [age for lignes in regimes._table.values()
-            for ouverture, taux_plein, _ in lignes.values() for age in (ouverture, taux_plein)]
-    ages += [age for lignes in regimes._surcotes.values() for age in lignes.values()]
-    actifs = AgesCategorieActive(RACINE_DONNEES)
-    ages += [age for lignes in actifs._table.values() for derogation in lignes.values()
-             for age in (derogation.age_ouverture, derogation.age_annulation,
-                         derogation.services_requis)]
-    for classe in (DureesServicesActifs, DureesServicesMilitaires):
-        ages += [annees for lignes in classe(RACINE_DONNEES)._table.values()
-                 for annees, _ in lignes.values()]
-    longue = CarriereLongue(RACINE_DONNEES)
-    ages += [ligne[4] for lignes in longue._table.values() for ligne in lignes]
+    """Les âges et les durées que le portage lit dans son paquet, que les
+    tables écrivent au centième et que leur chargeur ramène au mois : les âges
+    propres des régimes et la borne de leur surcote, la catégorie active, les
+    services militaires et actifs, la carrière longue."""
+    paquet = json.loads(PAQUET.read_text(encoding="utf-8"))
+    ages = [age for lignes in paquet["ages_regimes"].values() for ligne in lignes.values()
+            for age in (ligne[0], ligne[1], ligne[4])]
+    ages += [age for lignes in paquet["categorie_active"].values()
+             for ligne in lignes.values() for age in ligne[:3]]
+    for table in ("durees_services_actifs", "durees_services_militaires"):
+        ages += [ligne[0] for lignes in paquet[table].values() for ligne in lignes.values()]
+    ages += [porte[4] for portes in paquet["carriere_longue"].values() for porte in portes]
+    assert len(ages) > 100
     assert _hors_du_mois(ages) == []
-
-
-AGE = re.compile(r"(^|_)age(_|$)")
-
-
-def test_les_ages_des_fiches_de_regime_tombent_sur_un_mois_entier():
-    hors = {}
-    for regime in CatalogueRegimes(RACINE_DONNEES):
-        for periode in regime.periodes:
-            for champ, valeur in vars(periode).items():
-                if AGE.search(champ) and isinstance(valeur, float) and _hors_du_mois([valeur]):
-                    hors[f"{regime.code}:{periode.debut}:{champ}"] = valeur
-    assert hors == {}

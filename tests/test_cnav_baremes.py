@@ -1484,11 +1484,8 @@ def test_la_duree_majoree_apres_l_age_du_taux_plein_suit_le_bareme_de_la_caisse(
     arrondie au trimestre supérieur : l'assuré né le 1er octobre 1938, qui
     liquide à soixante-cinq ans, plus trois mois par trimestre et un mois, avec
     quarante, quarante et un ou cinquante-neuf trimestres, sous la limite."""
-    from types import SimpleNamespace
-
-    from retraite_notionnelle.carriere import Carriere
-    from retraite_notionnelle.droit import liquider
-    from retraite_notionnelle.simulateur import Simulateur
+    from facade import Carriere, Simulateur, liquider
+    from retraite_notionnelle import pont
 
     simulateur = Simulateur()
     scenario = simulateur.scenario_actuel
@@ -1501,7 +1498,7 @@ def test_la_duree_majoree_apres_l_age_du_taux_plein_suit_le_bareme_de_la_caisse(
         for trimestres in (40, 41, 59):
             majores = liquider.duree_majoree_apres_taux_plein(
                 scenario, periode, carriere,
-                SimpleNamespace(trimestres_par_regime={"regime_general": trimestres}),
+                pont.DureesPosees({"regime_general": trimestres}),
                 ("regime_general",), trimestres, 160, 65.0)
             assert majores == min(-(-trimestres * milliemes // 1000), 160), (
                 ajournement, trimestres)

@@ -34,7 +34,7 @@ def test_le_simulateur_individuel_garde_le_taux_minimal():
     """La convention est celle de la page Coût : le simulateur individuel
     cotise au minimum de l'accord, 4 % appelés à 120 % en 1990 ; son jumeau de
     projection au taux moyen de Trajectoire, 5,42 %."""
-    from retraite_notionnelle.simulateur import Simulateur
+    from facade import Simulateur
 
     simulateur = Simulateur()
     assert not simulateur.catalogue.taux_moyens

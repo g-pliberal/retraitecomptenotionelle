@@ -9,8 +9,7 @@ import pytest
 
 from retraite_notionnelle import cout as C
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.scenarios.notionnel import ScenarioNotionnel
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.noyau import univers
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
@@ -85,18 +84,18 @@ def test_le_stock_est_intact_et_les_actifs_recoivent_18_pour_cent(reference, pro
 
 
 def test_le_contexte_rend_ses_attributs():
-    """Le contexte ne remplace plus que la liste du coût ; le moteur, il le
-    laisse intact : la variante est un univers, que le simulateur de l'étude
-    calcule à la place du scénario 6 (action 161)."""
-    avant = (ScenarioNotionnel.liberal, C.CLES_PROSPECTIVES)
+    """Le contexte ne remplace que la liste du coût, et la rend en sortant ;
+    la variante est un univers, que le simulateur de l'étude calcule à la
+    place du scénario 6 (action 161)."""
+    avant = C.CLES_PROSPECTIVES
     with proposition_prospective.PropositionProspective():
         assert proposition_prospective.LIBERAL in C.CLES_PROSPECTIVES
-        assert ScenarioNotionnel.liberal is avant[0]
-    assert (ScenarioNotionnel.liberal, C.CLES_PROSPECTIVES) == avant
+    assert C.CLES_PROSPECTIVES == avant
     simulateur = proposition_prospective.simulateur(PARAMETRES)
     assert simulateur.univers[proposition_prospective.LIBERAL].id == "notionnel_liberal_prospectif"
-    assert Simulateur(PARAMETRES).univers[proposition_prospective.LIBERAL].id == (
-        proposition_prospective.LIBERAL)
+    reference = PARAMETRES.racine_donnees / "reference"
+    lus = univers.charger(reference / "univers", reference / "couches", reference / "regles")
+    assert lus[proposition_prospective.LIBERAL].id == proposition_prospective.LIBERAL
 
 
 def test_l_accueil_cite_le_solde_de_la_variante_prospective(prospective):
