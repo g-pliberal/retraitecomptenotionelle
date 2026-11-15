@@ -37,7 +37,7 @@ from retraite_notionnelle.droit import (cumul, departs, foyer, invalidite, liqui
 from retraite_notionnelle.echeancier import Echeancier
 from retraite_notionnelle.moteur.compte import ConstructeurCompte
 from retraite_notionnelle.remuneration import fiche_depuis_brut
-from retraite_notionnelle.revalorisation import faire_vivre
+from retraite_notionnelle.revalorisation import derniere_valeur_publiee, faire_vivre
 from retraite_notionnelle.simulateur import Comparaison, Simulateur
 from retraite_notionnelle.web.site import module, site
 
@@ -563,6 +563,7 @@ JUMEAUX_DE_L_HISTOIRE_DU_DROIT = {
         lambda moteur, *valeurs: moteur.minimum_garanti.ratio_point_indice(*valeurs),
     "scenario_actuel.conversions_points.echelle":
         lambda moteur, *valeurs: moteur.conversions_points.echelle(*valeurs),
+    "revalorisation.derniere_valeur_publiee": derniere_valeur_publiee,
 }
 JUMEAUX_DU_DROIT.update(JUMEAUX_DE_L_HISTOIRE_DU_DROIT)
 

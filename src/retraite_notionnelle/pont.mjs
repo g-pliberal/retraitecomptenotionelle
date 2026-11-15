@@ -169,7 +169,7 @@ import { BORNES_ASSIETTE, CarriereLongue } from "../../moteur/js/regimes.js";
 import { ficheDepuisBrut } from "../../moteur/js/remuneration.js";
 import { Restitution } from "../../moteur/js/restitution.js";
 import {
-  faireVivre, produit, RevalorisationServie, RevalorisationsPensions,
+  derniereValeurPubliee, faireVivre, produit, RevalorisationServie, RevalorisationsPensions,
 } from "../../moteur/js/revalorisation.js";
 import { Saisie } from "../../moteur/js/saisie.js";
 import { ScenarioActuel } from "../../moteur/js/scenario-actuel.js";
@@ -1628,6 +1628,7 @@ const FONCTIONS_DE_L_HISTOIRE_DU_DROIT = {
     (moteur, ...valeurs) => moteur.minimumGaranti.ratioPointIndice(...valeurs),
   "scenario_actuel.conversions_points.echelle":
     (moteur, ...valeurs) => moteur.conversionsPoints.echelle(...valeurs),
+  "revalorisation.derniere_valeur_publiee": derniereValeurPubliee,
 };
 Object.assign(FONCTIONS_DU_DROIT, FONCTIONS_DE_L_HISTOIRE_DU_DROIT);
 

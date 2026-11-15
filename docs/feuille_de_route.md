@@ -7327,13 +7327,13 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 13 novembre 2026.** Le moteur Python d'une carrière se retire au
+**Reprise, au 15 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Les tests y passent par une façade (`tests/facade.py`), qui sert les entrées
 du moteur, ses tables et vingt règles de `droit/`. Le propriétaire a tranché
-trois questions le 13 novembre (note de décision 0008). Reste, une étape par
-session, dans cet ordre. La recherche de la dernière année publiée d'un
-point, demandée au pont. Le § 3 du README, son tableau refait de ce que le
+trois questions le 13 novembre (note de décision 0008). Le coût demande
+désormais au pont la dernière année publiée d'un point. Reste, une étape par
+session, dans cet ordre. Le § 3 du README, son tableau refait de ce que le
 pont rend. Le code mort du portage, retiré. Les autres règles de `droit/` à
 la façade, puis les autres fichiers de tests. Quatre études :
 `scenarios_meres.py`, `cout_avantages.py --par-carriere`,

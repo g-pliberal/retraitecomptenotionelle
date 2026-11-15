@@ -74,9 +74,30 @@ from .garantie import complement_garantie
 from .revalorisation_servie import (  # ce que ce jumeau partage avec la lecture du coût
     DEBUT_REGLE_GENERALE_PUBLIC, DERNIERE_ANNEE_PEREQUATION, FIN_PEREQUATION,
     REGIMES_FONCTION_PUBLIQUE, REGLE_FONCTION_PUBLIQUE, REGLE_GENERALE, REGLE_POINT,
-    _derniere_annee, _derniere_valeur_publiee,
+    _derniere_annee,
 )
 from .somme import somme_ordonnee
+
+
+def derniere_valeur_publiee(actuel, code: str) -> int | None:
+    """Dernière année dont la valeur de service est publiée, au bout de la
+    chaîne des fusions que :func:`~retraite_notionnelle.droit.liquider.valeur_du_point`
+    remonte : le jumeau de ``derniereValeurPubliee`` (``moteur/js/revalorisation.js``),
+    que le coût demande au pont (note de décision 0008) et qui part avec ce
+    module."""
+    courant = code
+    for _ in range(len(actuel.catalogue) + 1):  # garde-fou : jamais de boucle
+        derniere = actuel.valeurs_point.derniere_annee_servie(courant)
+        if derniere is None:
+            return None
+        successeur = (actuel.catalogue[courant].integre_dans
+                      if courant in actuel.catalogue else None)
+        reprise = (actuel.conversions_points.fusion(courant, successeur)
+                   if successeur else None)
+        if reprise is None:
+            return derniere
+        courant = successeur
+    return None  # pragma: no cover - chaîne de successions cyclique
 
 
 # -- ce que le droit a servi depuis la liquidation ---------------------------
@@ -675,7 +696,7 @@ class PensionServie:
             periode = regime.periode(min(annee_liquidation, _derniere_annee(regime)))
             bareme = (periode.points_de if periode is not None else None) or code
             au_depart = liquider.valeur_du_point(self.actuel, bareme, depart)
-            publiee = _derniere_valeur_publiee(self.actuel, bareme)
+            publiee = derniere_valeur_publiee(self.actuel, bareme)
             if au_depart is not None and au_depart[0] > 0 and publiee is not None:
                 # Au-delà de la dernière valeur publiée, la règle générale
                 # prend le relais : c'est celle du régime de base des

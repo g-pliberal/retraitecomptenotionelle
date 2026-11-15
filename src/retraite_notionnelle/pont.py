@@ -1823,7 +1823,9 @@ def indexation(appels: list[tuple], parametres=None, paquet: bytes | None = None
 #: la fonction publique, sous les mêmes arguments ; ce que devient un
 #: traitement indiciaire d'une année à une autre, ``None`` hors de la série du
 #: point ; le changement d'unité des points d'un régime entre l'année de leur
-#: acquisition et celle de leur liquidation. Elles s'ajoutent aux lectures du
+#: acquisition et celle de leur liquidation ; la dernière année dont la
+#: valeur de service d'un point est publiée, au bout de ses fusions, ``None``
+#: sans série (note de décision 0008). Elles s'ajoutent aux lectures du
 #: droit (``FONCTIONS_DE_L_HISTOIRE_DU_DROIT`` de ``pont.mjs``) : le coût les
 #: demande par lot (:func:`droit`), avec ``liquider.valeur_du_point``.
 LECTURES_DE_L_HISTOIRE_DU_DROIT = {
@@ -1832,6 +1834,7 @@ LECTURES_DE_L_HISTOIRE_DU_DROIT = {
         tuple[float, Fiabilite],
     "scenario_actuel.minimum_garanti.ratio_point_indice": float | None,
     "scenario_actuel.conversions_points.echelle": tuple[float, Fiabilite],
+    "revalorisation.derniere_valeur_publiee": int | None,
 }
 LECTURES_DU_DROIT.update(LECTURES_DE_L_HISTOIRE_DU_DROIT)
 

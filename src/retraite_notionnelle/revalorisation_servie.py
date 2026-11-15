@@ -13,8 +13,9 @@ servi jusqu'au dernier barème publié, en demandant au portage, par lot, les
 règles du moteur dont elle fait les moyennes.
 
 Ce module n'importe aucune règle du moteur Python d'une carrière : il tient
-sans ``revalorisation.py``, qui lui reprend les constantes et les deux
-lectures de tables qu'ils partagent tant que ce jumeau vit (action 161).
+sans ``revalorisation.py``, qui lui reprend les constantes et la lecture
+de table qu'ils partagent tant que ce jumeau vit (action 161) ; la dernière
+année publiée d'un point, elle la demande au portage (note de décision 0008).
 """
 
 from __future__ import annotations
@@ -54,24 +55,6 @@ REGLE_FONCTION_PUBLIQUE = "fonction_publique"
 REGIMES_FONCTION_PUBLIQUE = frozenset({
     "fonction_publique_etat", "pensions_civiles_1853", "cnracl", "fspoeie",
 })
-
-
-def _derniere_valeur_publiee(actuel, code: str) -> int | None:
-    """Dernière année dont la valeur de service est publiée, au bout de la
-    chaîne des fusions que :func:`~retraite_notionnelle.droit.liquider.valeur_du_point` remonte."""
-    courant = code
-    for _ in range(len(actuel.catalogue) + 1):  # garde-fou : jamais de boucle
-        derniere = actuel.valeurs_point.derniere_annee_servie(courant)
-        if derniere is None:
-            return None
-        successeur = (actuel.catalogue[courant].integre_dans
-                      if courant in actuel.catalogue else None)
-        reprise = (actuel.conversions_points.fusion(courant, successeur)
-                   if successeur else None)
-        if reprise is None:
-            return derniere
-        courant = successeur
-    return None  # pragma: no cover - chaîne de successions cyclique
 
 
 def _derniere_annee(regime) -> int:
@@ -138,9 +121,9 @@ class RevalorisationServie:
         self._convenus: dict[str, str | None] = series.convenus
         actuel = simulateur.scenario_actuel
         self._catalogue = actuel.catalogue
-        #: Ce que le droit a servi, jusqu'au dernier barème : voir
-        #: :meth:`coefficient_historique`. Construit à la demande.
-        self._moteur = actuel
+        #: La dernière année publiée de chaque barème : voir
+        #: :meth:`_derniere_valeur_publiee`. Lue à la demande.
+        self._publiees: dict[str, int | None] | None = None
         self._revalorisations = simulateur.revalorisations
         self._parametres = simulateur.parametres
         self._prix_reels: dict[int, float] = {}
@@ -182,6 +165,7 @@ class RevalorisationServie:
     DECRETS_PUBLICS = "scenario_actuel.revalorisations_pensions.retenues.fonction_publique.produit"
     POINT_D_INDICE = "scenario_actuel.minimum_garanti.ratio_point_indice"
     ECHELLE_DU_POINT = "scenario_actuel.conversions_points.echelle"
+    DERNIERE_VALEUR_PUBLIEE = "revalorisation.derniere_valeur_publiee"
 
     def _lot(self, appels: dict[str, tuple]) -> dict:
         """Ce que le portage rend de chaque appel d'une règle du moteur, sous
@@ -193,6 +177,29 @@ class RevalorisationServie:
         for cle, motif in refus.items():
             raise ValueError(f"{cle} : {motif}")
         return lus
+
+    def _derniere_valeur_publiee(self, bareme: str) -> int | None:
+        """La dernière année dont la valeur de service de ``bareme`` est
+        publiée, au bout de ses fusions, que le portage calcule
+        (``derniereValeurPubliee``, note de décision 0008) : demandée d'un
+        seul lot pour chaque barème du catalogue, à la première lecture."""
+        from . import pont
+
+        if self._publiees is None:
+            baremes = set(self._catalogue.codes)
+            for code in self._catalogue.codes:
+                baremes.update(periode.points_de for periode in self._catalogue[code].periodes
+                               if periode.points_de)
+            self._publiees = {}
+        else:
+            baremes = set()
+        if bareme not in self._publiees:
+            baremes.add(bareme)
+        if baremes:
+            self._publiees.update(self._lot({
+                code: (self.DERNIERE_VALEUR_PUBLIEE, pont.MOTEUR, code)
+                for code in sorted(baremes)}))
+        return self._publiees[bareme]
 
     def _jours(self, fin: int | None) -> list[date]:
         """Le premier jour de chaque mois de :attr:`HISTOIRE_DEPUIS` à ``fin`` :
@@ -274,7 +281,7 @@ class RevalorisationServie:
             # changement d'unité du point entre deux années de son histoire,
             # que :meth:`_historique` lit.
             bareme = regle[1]
-            publiee = _derniere_valeur_publiee(self._moteur, bareme)
+            publiee = self._derniere_valeur_publiee(bareme)
             jours = self._jours(publiee)
             annees = [jour.year for jour in jours[::12]]
             lus = self._lot({
@@ -307,7 +314,7 @@ class RevalorisationServie:
             periode = fiche.periode(min(annee_liquidation, _derniere_annee(fiche)))
             if periode is not None and periode.type_calcul in ("points", "mixte"):
                 bareme = periode.points_de or regime
-                if _derniere_valeur_publiee(self._moteur, bareme) is not None:
+                if self._derniere_valeur_publiee(bareme) is not None:
                     regle = (REGLE_POINT, bareme)
             if regle == REGLE_GENERALE and regime in REGIMES_FONCTION_PUBLIQUE:
                 regle = REGLE_FONCTION_PUBLIQUE

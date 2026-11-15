@@ -175,7 +175,12 @@ export function coefficientTraitementDiffere(revalorisations, ratioPointIndice,
   return point * decrets * generale;
 }
 
-function derniereValeurPubliee(actuel, code) {
+/**
+ * La dernière année dont la valeur de service d'un point est publiée, au bout
+ * de la chaîne de ses fusions ; `null` sans série. Le coût la demande au pont
+ * (`revalorisation.derniere_valeur_publiee`, note de décision 0008).
+ */
+export function derniereValeurPubliee(actuel, code) {
   let courant = code;
   for (let garde = 0; garde < actuel.catalogue.taille + 1; garde += 1) {
     const derniere = actuel.valeursPoint.derniereAnneeServie(courant);

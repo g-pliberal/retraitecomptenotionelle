@@ -2646,6 +2646,28 @@ def test_le_pont_sert_les_regles_de_l_histoire_du_droit():
     assert type(lus["point constant"]) is float and type(lus["arrco depuis"][0]) is float
 
 
+def test_le_pont_sert_la_derniere_annee_publiee_d_un_point():
+    """La dernière année dont la valeur de service d'un point est publiée, au
+    bout de la chaîne de ses fusions : l'histoire du droit la demande au
+    portage (note de décision 0008, point 2), et son jumeau la refait tant
+    qu'il reste. Valeurs posées à la main, depuis les barèmes.
+
+    ``valeurs_point.csv`` : la série de l'Arrco s'arrête en 2018, celle de
+    l'Agirc-Arrco en 2026, celle de l'UNIRS en 1998. ``conversions_points.csv``
+    : l'Arrco et l'Agirc fusionnent dans l'Agirc-Arrco en 2019, l'UNIRS dans
+    l'Arrco en 1999. Le régime général n'a pas de point, ni un code inconnu."""
+    _sans_node()
+    from outils_pont import droit_et_refait
+
+    publiee = "revalorisation.derniere_valeur_publiee"
+    lus, refus = droit_et_refait({code: (publiee, pont.MOTEUR, code) for code in (
+        "agirc_arrco", "arrco", "agirc", "unirs", "regime_general", "inconnu")})
+    assert refus == {}
+    assert lus == {"agirc_arrco": 2026, "arrco": 2026, "agirc": 2026, "unirs": 2026,
+                   "regime_general": None, "inconnu": None}
+    assert type(lus["arrco"]) is int
+
+
 def test_l_histoire_du_droit_demande_ses_regles_au_portage_par_lot(monkeypatch):
     """``RevalorisationServie.coefficient_historique`` — ce que le droit a
     servi à une pension liquidée, à la moyenne de chaque année, en euros
@@ -2665,12 +2687,17 @@ def test_l_histoire_du_droit_demande_ses_regles_au_portage_par_lot(monkeypatch):
     1,4159 en 2023, 1,4159 puis 1,4386 en 2024. L'Arrco, dont le point change
     d'unité en 1999 : 0,382876 puis 0,387464 au 1er avril 1998, 1,000005 puis
     1,008999 au 1er avril 1999, le point de 1998 en valant 0,387464 de 1999.
-    Le RAFP, hors répartition, ne se revalorise pas, et ne demande rien."""
+    Le RAFP, hors répartition, ne se revalorise pas, et ne demande rien. La
+    dernière année publiée de chaque barème du catalogue, au bout de ses
+    fusions, vient d'un lot à elle, au premier régime en points (note de
+    décision 0008) : la classe ne lit plus ni les valeurs ni les fusions des
+    points."""
     _sans_node()
     from retraite_notionnelle.droit import liquider
     from retraite_notionnelle.revalorisation import RevalorisationsPensions
     from retraite_notionnelle.revalorisation_servie import RevalorisationServie
-    from retraite_notionnelle.scenarios.actuel import ConversionsPoints, MinimumGaranti
+    from retraite_notionnelle.scenarios.actuel import (ConversionsPoints, MinimumGaranti,
+                                                       ValeursPoint)
 
     simulateur = Simulateur(Parametres())
     servie = RevalorisationServie(simulateur, 1990, 2030)
@@ -2682,7 +2709,8 @@ def test_l_histoire_du_droit_demande_ses_regles_au_portage_par_lot(monkeypatch):
 
     for porteur, regle in ((liquider, "valeur_du_point"), (RevalorisationsPensions, "generale"),
                            (RevalorisationsPensions, "retenues"),
-                           (MinimumGaranti, "ratio_point_indice"), (ConversionsPoints, "echelle")):
+                           (MinimumGaranti, "ratio_point_indice"), (ConversionsPoints, "echelle"),
+                           (ConversionsPoints, "fusion"), (ValeursPoint, "derniere_annee_servie")):
         monkeypatch.setattr(porteur, regle, calcule)
     lots = []
     droit = pont.droit
@@ -2710,13 +2738,14 @@ def test_l_histoire_du_droit_demande_ses_regles_au_portage_par_lot(monkeypatch):
     parametres = simulateur.parametres
     assert lots == [(["generale"], parametres),
                     (["generale", "produit", "ratio_point_indice"], parametres),
+                    (["derniere_valeur_publiee"], parametres),
                     (["echelle", "valeur_du_point"], parametres),
                     (["echelle", "valeur_du_point"], parametres)]
     # Une règle lue ne se redemande pas, à d'autres années non plus.
     assert servie.coefficient_historique("regime_general", 2030, 2050) == 1.0
     assert servie.coefficient_historique("arrco", 1995, 2020) > 0.0
     assert servie.coefficient_historique("cnracl", 1995, 2020) > 0.0
-    assert len(lots) == 4
+    assert len(lots) == 5
     monkeypatch.setattr(pont.shutil, "which", lambda nom: None)
     with pytest.raises(pont.PontIndisponible, match="node"):
         sans_node.coefficient_historique("regime_general", 2022, 2023)
@@ -2749,7 +2778,8 @@ def test_les_regles_de_l_histoire_du_droit_sont_celles_du_jumeau_au_bit(monkeypa
     for code in simulateur.scenario_actuel.catalogue.codes:
         for liquidation in range(1949, 2026, 4):
             assert servie.coefficient_historique(code, liquidation, 2024) > 0.0
-    assert len(lots) == len(servie._nominaux) > 10
+    assert len(lots) == len(servie._nominaux) + 1 > 10
     assert {servie.COEFFICIENT_GENERAL} in lots
     assert {servie.COEFFICIENT_GENERAL, servie.DECRETS_PUBLICS, servie.POINT_D_INDICE} in lots
-    assert lots.count({servie.VALEUR_DU_POINT, servie.ECHELLE_DU_POINT}) == len(lots) - 2
+    assert lots.count({servie.DERNIERE_VALEUR_PUBLIEE}) == 1
+    assert lots.count({servie.VALEUR_DU_POINT, servie.ECHELLE_DU_POINT}) == len(lots) - 3
