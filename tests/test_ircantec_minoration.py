@@ -28,10 +28,12 @@ from __future__ import annotations
 
 import pytest
 
-from retraite_notionnelle.droit.liquider import (
-    _COEFFICIENT_ANTICIPATION_PLANCHER,
-    _coefficient_anticipation,
-)
+from retraite_notionnelle.droit.liquider import _COEFFICIENT_ANTICIPATION_PLANCHER
+
+from facade import liquider
+
+#: Le barème du portage, servi par la façade.
+_coefficient_anticipation = liquider._coefficient_anticipation
 
 #: L'âge auquel le coefficient vaut un, dans toutes les tables publiées.
 AGE_NORMAL = 67.0

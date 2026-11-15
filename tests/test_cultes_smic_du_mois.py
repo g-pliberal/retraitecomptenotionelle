@@ -27,8 +27,8 @@ import csv
 import pytest
 
 from retraite_notionnelle.config import RACINE_DONNEES
-from retraite_notionnelle.droit import liquider
-from retraite_notionnelle.simulateur import Simulateur
+
+from facade import Simulateur, ligne_de, liquider
 
 FRANC = 6.55957
 
@@ -125,7 +125,8 @@ def test_la_base_forfaitaire_des_cultes_suit_le_smic_de_chaque_mois(simulateur):
         periode = simulateur.catalogue["cavimac"].periode(annee)
         assert periode.smic_du_mois, annee
         assert liquider.assiette_de_reference(
-            simulateur.scenario_actuel, periode, ligne) == pytest.approx(base, abs=0.01), annee
+            simulateur.scenario_actuel, periode, ligne_de(carriere, ligne)
+        ) == pytest.approx(base, abs=0.01), annee
 
 
 def test_seules_les_bases_forfaitaires_des_cultes_suivent_le_smic_du_mois(simulateur):

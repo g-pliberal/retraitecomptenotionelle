@@ -780,7 +780,24 @@ def _majores(**durees):
                       durees["regime_general"], 150, 65.0)
 
 
+def _assiette(affiliation, regime, annee):
+    """``liquider.assiette_de_reference`` sur la ligne d'une année d'une
+    carrière simple, sous la période de l'année du régime."""
+    def arguments(simulateur):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=1958, sexe="H", affiliation=affiliation, age_debut=25,
+            age_liquidation=67, niveau_salaire=1.0, jour_naissance=1)
+        ligne = next(ligne for ligne in carriere.lignes if ligne.annee == annee)
+        if isinstance(simulateur, facade.Simulateur):
+            ligne = facade.ligne_de(carriere, ligne)
+        return (simulateur.scenario_actuel, simulateur.catalogue[regime].periode(annee), ligne)
+    return arguments
+
+
 APPELS_DES_REGLES = [
+    ("liquider", "assiette_de_reference", _assiette("ministre_du_culte", "cavimac", 2008)),
+    ("liquider", "assiette_de_reference", _assiette("ministre_du_culte", "cavimac", 1990)),
+    ("liquider", "assiette_de_reference", _assiette("salarie_prive_non_cadre", "regime_general", 2010)),
     ("liquider", "duree_majoree_apres_taux_plein", _majores(regime_general=130, msa_salaries=10)),
     ("liquider", "duree_majoree_apres_taux_plein", _majores(regime_general=140, msa_salaries=5)),
     ("liquider", "duree_majoree_apres_taux_plein",

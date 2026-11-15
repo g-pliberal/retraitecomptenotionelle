@@ -826,6 +826,16 @@ class Carriere(_carriere.Carriere):
                       arguments, options)
 
 
+def ligne_de(carriere, ligne) -> pont.LigneDeCarriere:
+    """Une ligne de ``carriere``, en argument d'une règle qui reçoit la ligne
+    sans sa carrière (``liquider.assiette_de_reference``) : le portage la
+    relit, par son rang, dans cette carrière, qui lui passe avec elle."""
+    rang = next((rang for rang, connue in enumerate(carriere.lignes) if connue is ligne), None)
+    if rang is None:
+        raise NonTransmissible("ligne_de : une ligne qui n'est pas de cette carrière")
+    return pont.LigneDeCarriere(carriere, rang)
+
+
 def _batie(entree: str, batisseur, arguments: tuple, options: dict):
     """La carrière d'un bâtisseur de ``Carriere``, sous les paramètres du
     simulateur dont on lui passe les séries."""
@@ -1059,6 +1069,9 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
                 "ceux du relevé — le portage les refait du relevé de la carrière, sous ses "
                 "drapeaux par défaut")
         return pont.DroitsDuReleve(valeur._carriere)
+    if isinstance(valeur, pont.LigneDeCarriere):
+        # Une ligne et sa carrière, que le test a nommées (``ligne_de``).
+        return valeur
     if isinstance(valeur, _carriere.AnneeCarriere):
         # Le portage relit la ligne, par son rang, dans la carrière que la
         # règle reçoit : une ligne qui n'en est pas n'y arriverait pas.
