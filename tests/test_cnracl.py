@@ -34,14 +34,17 @@ perdu de 2012 à 2026.
 
 from __future__ import annotations
 
+import json
+import shutil
+import subprocess
 from datetime import date
 
 import pytest
 
-from retraite_notionnelle.carriere import Carriere, Metier
-from retraite_notionnelle.revalorisation import coefficient_traitement_differe
-from retraite_notionnelle.simulateur import Simulateur
-from retraite_notionnelle.droit import liquider
+from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.config import RACINE_PROJET
+
+from facade import Carriere, Simulateur, ligne_de, liquider
 
 
 @pytest.fixture(scope="module")
@@ -146,8 +149,37 @@ def test_un_trimestre_de_duree_prend_le_taux_de_son_dernier_mois(simulateur):
 
 # -- la pension différée ------------------------------------------------------
 
-def _sans_point(perception: int, arrivee: int) -> float:
-    return 1.0
+#: Le coefficient du portage, sous un point d'indice qui rend 1 et note
+#: chaque appel : ``[coefficient, appels]`` pour chaque cas.
+_COEFFICIENT_DU_PORTAGE = """
+import { readFileSync } from "node:fs";
+import { RevalorisationsPensions, coefficientTraitementDiffere }
+  from "./moteur/js/revalorisation.js";
+const paquet = JSON.parse(readFileSync("./moteur/donnees.json", "utf8"));
+const revalorisations = new RevalorisationsPensions(paquet);
+const rendu = JSON.parse(process.argv[1]).map(([perception, radiation, paiement]) => {
+  const appels = [];
+  const point = (depart, arrivee) => { appels.push([depart, arrivee]); return 1.0; };
+  return [coefficientTraitementDiffere(revalorisations, point, perception, radiation,
+    paiement), appels];
+});
+process.stdout.write(JSON.stringify(rendu));
+"""
+
+
+def _coefficient_traitement_differe(perception: int, radiation: date,
+                                    paiement: date) -> tuple[float, list]:
+    """Le coefficient du traitement différé, calculé par le portage, et les
+    appels qu'il fait au point d'indice."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage ne se vérifie pas ici")
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _COEFFICIENT_DU_PORTAGE,
+         json.dumps([[perception, radiation.isoformat(), paiement.isoformat()]])],
+        cwd=RACINE_PROJET, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr
+    ((coefficient, appels),) = json.loads(execution.stdout)
+    return coefficient, [tuple(appel) for appel in appels]
 
 
 def test_le_traitement_differe_prend_les_revalorisations_des_pensions(simulateur):
@@ -158,38 +190,27 @@ def test_le_traitement_differe_prend_les_revalorisations_des_pensions(simulateur
     pension bénéficie de la revalorisation des pensions » (CNRACL) —, et en
     2020 le coefficient de L. 161-25, 1 %, la dérogation de 0,3 % ne visant que
     les pensions servies."""
-    revalorisations = simulateur.scenario_actuel.revalorisations_pensions
     attendu = 1.0
     for coefficient in (1.021, 1.013, 1.001, 1.008, 1.003, 1.01, 1.004, 1.011,
                         1.04, 1.008, 1.053, 1.022, 1.009):
         attendu *= coefficient
-    assert coefficient_traitement_differe(
-        revalorisations, _sans_point, 2011, date(2012, 1, 1), date(2026, 1, 1),
-    ) == pytest.approx(attendu, rel=1e-12)
+    assert _coefficient_traitement_differe(
+        2011, date(2012, 1, 1), date(2026, 1, 1))[0] == pytest.approx(attendu, rel=1e-12)
     # Celle du jour de la radiation n'est pas due, celle du jour de la mise
     # en paiement l'est.
-    assert coefficient_traitement_differe(
-        revalorisations, _sans_point, 2023, date(2024, 1, 1), date(2025, 1, 1),
-    ) == pytest.approx(1.022, rel=1e-12)
-    assert coefficient_traitement_differe(
-        revalorisations, _sans_point, 2018, date(2019, 1, 1), date(2021, 1, 1),
-    ) == pytest.approx(1.01 * 1.004, rel=1e-12)
+    assert _coefficient_traitement_differe(
+        2023, date(2024, 1, 1), date(2025, 1, 1))[0] == pytest.approx(1.022, rel=1e-12)
+    assert _coefficient_traitement_differe(
+        2018, date(2019, 1, 1), date(2021, 1, 1))[0] == pytest.approx(1.01 * 1.004, rel=1e-12)
 
 
 def test_avant_2004_la_perequation_puis_les_decrets(simulateur):
     """Radié en 1996, payé en 2005 : le point jusqu'en 2003 — la péréquation
     faisait suivre le traitement des actifs à toute pension civile —, puis les
     décrets de 2004 et de 2005, celui du 1er janvier 2004 compris."""
-    revalorisations = simulateur.scenario_actuel.revalorisations_pensions
-    appels = []
-
-    def point(perception: int, arrivee: int) -> float:
-        appels.append((perception, arrivee))
-        return 1.0
-
-    assert coefficient_traitement_differe(
-        revalorisations, point, 1995, date(1996, 1, 1), date(2005, 1, 1),
-    ) == pytest.approx(1.015 * 1.02, rel=1e-12)
+    coefficient, appels = _coefficient_traitement_differe(
+        1995, date(1996, 1, 1), date(2005, 1, 1))
+    assert coefficient == pytest.approx(1.015 * 1.02, rel=1e-12)
     assert appels == [(1995, 2003)]
 
 
@@ -259,7 +280,7 @@ def test_ni_la_carriere_complete_ni_la_banque_de_france_ne_bougent(simulateur):
     ligne = next(l for l in complete.lignes if l.annee == 2025)
     assert liquider.salaire_de_reference(actuel,
         "fonction_publique_etat", complete, periode, 2026, False
-    ) == pytest.approx(liquider.assiette_de_reference(actuel, periode, ligne)
+    ) == pytest.approx(liquider.assiette_de_reference(actuel, periode, ligne_de(complete, ligne))
                        * actuel.minimum_garanti.ratio_point_indice(2025, 2026))
     banque = Carriere.depuis_parcours(
         annee_naissance=1962, sexe="H", age_liquidation=64, macro=simulateur.macro,
@@ -269,7 +290,7 @@ def test_ni_la_carriere_complete_ni_la_banque_de_france_ne_bougent(simulateur):
     ligne_bdf = next(l for l in banque.lignes if l.annee == 2011)
     assert liquider.salaire_de_reference(actuel,
         "banque_de_france", banque, periode_bdf, 2026, False
-    ) == pytest.approx(liquider.assiette_de_reference(actuel, periode_bdf, ligne_bdf)
+    ) == pytest.approx(liquider.assiette_de_reference(actuel, periode_bdf, ligne_de(banque, ligne_bdf))
                        * simulateur.macro.coefficient_revalorisation_salaires(2011, 2026))
     ancienne = Carriere.depuis_parcours(
         annee_naissance=1940, sexe="H", age_liquidation=61, macro=simulateur.macro,
@@ -279,5 +300,5 @@ def test_ni_la_carriere_complete_ni_la_banque_de_france_ne_bougent(simulateur):
     ligne_1984 = next(l for l in ancienne.lignes if l.annee == 1984)
     assert liquider.salaire_de_reference(actuel,
         "fonction_publique_etat", ancienne, periode_2001, 2001, False
-    ) == pytest.approx(liquider.assiette_de_reference(actuel, periode_2001, ligne_1984)
+    ) == pytest.approx(liquider.assiette_de_reference(actuel, periode_2001, ligne_de(ancienne, ligne_1984))
                        * actuel.minimum_garanti.ratio_point_indice(1984, 2001))

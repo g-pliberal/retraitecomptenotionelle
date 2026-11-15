@@ -447,6 +447,12 @@ APPELS_DES_TABLES = [
     ("decote_regimes_speciaux", "parametres", lambda s: (2005,)),
     ("durees_requises_regimes", "ligne", lambda s: ("ieg_2014", 1965.0, 24300)),
     ("durees_requises_regimes", "ligne", lambda s: ("ieg_2014", 1963 + 10 / 12, 24234)),
+    ("surcote_baremes", "connait", lambda s: ("cnbf",)),
+    ("surcote_baremes", "connait", lambda s: ("bareme_lunaire",)),
+    ("surcote_baremes", "coefficient",
+     lambda s: ("cnbf", [(DateMois(2010, 4), False), (DateMois(2010, 7), False)])),
+    ("surcote_baremes", "coefficient",
+     lambda s: ("cnbf", [(DateMois(2013, 1), True), (DateMois(2013, 4), True)])),
 ]
 
 

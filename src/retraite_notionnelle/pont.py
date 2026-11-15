@@ -2765,6 +2765,7 @@ TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "pension_majoree_reference": ("montant", "regle"),
     "rendements": ("rendement",),
     "revalorisations_pensions": ("generale",),
+    "surcote_baremes": ("coefficient", "connait"),
     "reversions": ("fiche_du_regime", "limite_cumul", "majoration_enfant", "minimum",
                    "plafond_majoration", "version"),
     "valeurs_point": ("_en_vigueur", "achat", "achat_prolonge", "derniere_annee_servie", "garantie",
