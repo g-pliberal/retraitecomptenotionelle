@@ -37,6 +37,7 @@ from retraite_notionnelle.droit import cultes as cultes_python
 from retraite_notionnelle.droit import departs as departs_python
 from retraite_notionnelle.droit import foyer as foyer_python
 from retraite_notionnelle.droit import invalidite as invalidite_python
+from retraite_notionnelle.droit import limite_age as limite_age_python
 from retraite_notionnelle.droit import liquidation as liquidation_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
@@ -491,6 +492,14 @@ def _fonctionnaire(simulateur):
     return simulateur.carriere_simple(
         annee_naissance=1962, sexe="F", affiliation="fonctionnaire_etat", age_debut=22,
         age_liquidation=60, nombre_enfants=3)
+
+
+def _maintenu(simulateur):
+    """Un fonctionnaire né en 1990 qui demande à partir à soixante-quinze ans :
+    radié à soixante-dix, au terme du maintien qu'on lui présume."""
+    return simulateur.carriere_simple(
+        annee_naissance=1990, sexe="H", affiliation="fonctionnaire_etat", age_debut=22,
+        age_liquidation=75, jour_naissance=15)
 
 
 def _policier(simulateur):
@@ -1005,6 +1014,13 @@ APPELS_DES_REGLES = [
                                                  _salarie_agricole_de_1907(s))),
     ("liquider", "pension_maximale", lambda s: (s.scenario_actuel, "cnav_pl",
                                                  _cadre_de_1925(s))),
+    # La radiation par limite d'âge : un sédentaire maintenu jusqu'à soixante-dix
+    # ans, un actif, une carrière qui finit avant sa limite.
+    ("limite_age", "radiation", lambda s: (s.scenario_actuel, _maintenu(s))),
+    ("limite_age", "radiation", lambda s: (s.scenario_actuel, _policier(s))),
+    ("limite_age", "radiation", lambda s: (s.scenario_actuel, _fonctionnaire(s))),
+    ("limite_age", "radier", lambda s: (s.scenario_actuel, _maintenu(s))),
+    ("limite_age", "radier", lambda s: (s.scenario_actuel, _fonctionnaire(s))),
     ("liquider", "taux_acquis_l_emporte", lambda s: (0.55, 117, 0.5, 132, 87.7, 0.5, 1.0)),
     ("liquider", "taux_acquis_l_emporte", lambda s: (0.55, 60, 0.5, 68, 68.1, 0.5, 1.0)),
     ("liquider", "taux_acquis_l_emporte", lambda s: (0.55, 117, 0.5, 132, None, 0.5, 1.0)),
@@ -1167,7 +1183,8 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
                "compter": compter_python, "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
                "reversion": reversion_python, "revalorisation": revalorisation_python,
                "cultes": cultes_python, "departs": departs_python, "releve": releve_python,
-               "invalidite": invalidite_python, "categories": categories_python}
+               "invalidite": invalidite_python, "categories": categories_python,
+               "limite_age": limite_age_python}
     ecarts = []
     for module, regle, arguments in APPELS_DES_REGLES:
         lu = getattr(facade.regles_de_la_reversion if module == "reversion"

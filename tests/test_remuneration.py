@@ -30,7 +30,6 @@ from __future__ import annotations
 import pytest
 
 from retraite_notionnelle import Parametres
-from retraite_notionnelle.carriere import Affiliations
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.donnees.macro import DonneesMacro
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes
@@ -49,7 +48,8 @@ from retraite_notionnelle.remuneration import (
     smic_annuel,
 )
 from retraite_notionnelle.restitution import Restitution, points_csg_rendus
-from retraite_notionnelle.simulateur import Simulateur
+
+from facade import Simulateur
 
 
 PARAMETRES = Parametres()
@@ -64,7 +64,7 @@ def pieces():
     return {
         "macro": macro,
         "catalogue": CatalogueRegimes(PARAMETRES.racine_donnees),
-        "affiliations": Affiliations(PARAMETRES.racine_donnees),
+        "affiliations": Simulateur(PARAMETRES).affiliations,
         "prelevements": prelevements,
         "bareme": prelevements.profil("salarie_prive"),
         "plafond": macro.plafond_securite_sociale(ANNEE),

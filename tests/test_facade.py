@@ -38,6 +38,7 @@ from retraite_notionnelle.droit import cultes as cultes_python
 from retraite_notionnelle.droit import departs as departs_python
 from retraite_notionnelle.droit import foyer as foyer_python
 from retraite_notionnelle.droit import invalidite as invalidite_python
+from retraite_notionnelle.droit import limite_age as limite_age_python
 from retraite_notionnelle.droit import liquidation as liquidation_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
@@ -737,7 +738,8 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     assert set(facade.REGLES) == {"acquerir", "carriere", "categories", "commun", "completer",
                                   "compter",
                                   "cultes", "departs",
-                                  "foyer", "invalidite", "liquider", "ouvrir", "releve",
+                                  "foyer", "invalidite", "limite_age", "liquider", "ouvrir",
+                                  "releve",
                                   "reversion", "revalorisation"}
 
 
@@ -2305,7 +2307,8 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
                        "completer": completer_python,
                        "compter": compter_python,
                        "cultes": cultes_python, "departs": departs_python, "foyer": foyer_python,
-                       "invalidite": invalidite_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
+                       "invalidite": invalidite_python, "limite_age": limite_age_python,
+                       "liquider": liquider_python, "ouvrir": ouvrir_python,
                        "releve": releve_python, "reversion": reversion_python,
                        "revalorisation": revalorisation_python}[module], regle)
     attendus = [(nom, None if parametre.default is inspect.Parameter.empty else parametre.default)

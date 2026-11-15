@@ -167,6 +167,7 @@ import * as departs from "../../moteur/js/droit/departs.js";
 import * as foyerEtape from "../../moteur/js/droit/foyer.js";
 import { foyerEtNet } from "../../moteur/js/droit/foyer.js";
 import * as invalidite from "../../moteur/js/droit/invalidite.js";
+import * as limiteAge from "../../moteur/js/droit/limite_age.js";
 import {
   Contexte as ContexteDeLiquidation, Demande, Etat, appels, demandeDeDepart,
   liquider as liquiderLaDemande,
@@ -2289,7 +2290,8 @@ const MODULES_DU_DROIT = {
       moteur, carriere, eligible, pension, ressources,
       { quand, regle, tauxPleinRequis, surcoteComprise }),
   },
-  cultes, departs, foyer: foyerEtape, invalidite, liquider, ouvrir, releve, reversion,
+  cultes, departs, foyer: foyerEtape, invalidite, limite_age: limiteAge, liquider, ouvrir,
+  releve, reversion,
   revalorisation,
 };
 

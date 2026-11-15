@@ -3063,6 +3063,9 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     # La rente viagère d'invalidité du fonctionnaire (L. 28).
     "invalidite": ("age_de_l_aspa", "categorie_de_la_pension", "plancher_de_la_substitution",
                    "rente_viagere_d_invalidite"),
+    # La radiation des cadres par limite d'âge, et la carrière dont elle
+    # arrête les services.
+    "limite_age": ("radiation", "radier"),
     "liquider": ("_coefficient_anticipation", "abattement_points", "abattre_au_dela_du_plafond",
                  "age_de_la_duree_atteinte", "annees_au_prorata",
                  "assiette_de_reference", "conversion_capital_rafp", "majoration_rafp",

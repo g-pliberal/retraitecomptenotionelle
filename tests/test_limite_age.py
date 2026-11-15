@@ -21,10 +21,10 @@ from __future__ import annotations
 import pytest
 
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import Carriere, Metier
-from retraite_notionnelle.droit import departs, limite_age
+from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.noyau import carte
-from retraite_notionnelle.simulateur import Simulateur
+
+from facade import Carriere, Simulateur, departs, limite_age
 
 
 @pytest.fixture(scope="module")

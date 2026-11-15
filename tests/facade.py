@@ -102,6 +102,7 @@ from retraite_notionnelle.droit import cultes as _cultes
 from retraite_notionnelle.droit import departs as _departs
 from retraite_notionnelle.droit import foyer as _foyer
 from retraite_notionnelle.droit import invalidite as _invalidite
+from retraite_notionnelle.droit import limite_age as _limite_age
 from retraite_notionnelle.droit import liquidation as _liquidation
 from retraite_notionnelle.droit import liquider as _liquider
 from retraite_notionnelle.droit import ouvrir as _ouvrir
@@ -1308,6 +1309,8 @@ class _Departs(Regles):
 
 
 departs = _Departs("departs", _departs)
+#: La radiation des cadres par limite d'âge, et la carrière qu'elle arrête.
+limite_age = Regles("limite_age", _limite_age)
 #: ``revalorisation``, hors du droit : les majorations forfaitaires de 1972 à
 #: 1982, servies par le portage.
 revalorisation = Regles("revalorisation", _revalorisation)
