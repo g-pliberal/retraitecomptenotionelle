@@ -7331,14 +7331,13 @@ de `contribution_etat`.
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Dans les 24 paires qui restent, chaque fonction écrite des deux côtés est
 déclarée dans `scripts/jumeaux_gardees.yaml` : gardée, avec son lecteur
-Python, ou partant avec le moteur. `tests/test_jumeaux_au_bit.py` confronte
-au bit près chaque fonction gardée qui a sa grille d'arguments à son double :
-81 sont faites, toutes identiques sauf un écart déclaré. Reste, une étape
-par session : les grilles des 47 autres, en relisant leurs lecteurs par
-leurs appels, dans `contexte.py`, `bilan.py` et `equilibre.py`, et cinq
-confrontées par leur appelant ; puis le retrait du moteur Python ; puis les
-périodes assimilées du relevé.
-Le détail : `2026-11-15-six-fichiers-et-les-regimes-au-bit-pres.md`.
+Python et le test qui la confronte à son double, désormais obligatoire, ou
+partant avec le moteur. Les 118 gardées sont toutes confrontées, identiques
+au bit près sauf deux écarts déclarés. Reste, une étape par session : le
+retrait des règles du moteur Python, une paire à la fois, avec les fonctions
+que la liste dit partantes ; puis les périodes assimilées du relevé.
+Par quoi commencer : `python scripts/jumeaux.py`, puis la liste.
+Le détail : `2026-11-15-les-dernieres-fonctions-gardees-au-bit-pres.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
