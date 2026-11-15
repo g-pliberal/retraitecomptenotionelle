@@ -321,6 +321,20 @@ APPELS_DES_TABLES = [
     ("minimum_garanti", "montant", lambda s: (2024, 160, 168, 7)),
     ("minimum_garanti", "reference", lambda s: (2024,)),
     ("minimum_garanti", "reference", lambda s: (2010, 7)),
+    ("complement_differentiel_rco", "regle", lambda s: ("2014-12-01",)),
+    ("complement_differentiel_rco", "regle", lambda s: ("2023-09-01",)),
+    ("complement_differentiel_rco", "smic_net", lambda s: (2021,)),
+    ("complement_differentiel_rco", "smic_net", lambda s: (2035,)),
+    ("complement_differentiel_rco", "smic_net", lambda s: (1990,)),
+    ("minimum_vieillesse", "deux_etages", lambda s: (1950,)),
+    ("minimum_vieillesse", "deux_etages", lambda s: (2005,)),
+    ("minimum_vieillesse", "deux_etages", lambda s: (2007,)),
+    ("pension_majoree_reference", "montant", lambda s: ("pmr_chef", 2026, 12)),
+    ("pension_majoree_reference", "montant", lambda s: ("pmr_chef", 2030, 6)),
+    ("pension_majoree_reference", "montant", lambda s: ("plafond_depuis_septembre_2023", 2030)),
+    ("pension_majoree_reference", "montant", lambda s: ("mesure_inconnue", 2026)),
+    ("pension_majoree_reference", "regle", lambda s: ("2008-12-01",)),
+    ("pension_majoree_reference", "regle", lambda s: ("2026-06-01",)),
     ("minimum_vieillesse", "plafond", lambda s: (2025,)),
     ("minimum_vieillesse", "plafond", lambda s: (1930,)),
     ("minimum_vieillesse", "plafond_couple", lambda s: (2026,)),
@@ -511,7 +525,70 @@ def _chomeur(naissance=1958, debut=20, depart=66, annees=range(2016, 2025)):
     return carriere
 
 
+def _agricole(naissance, depart, metiers=(("exploitant_agricole", 20.0),)):
+    """Un exploitant agricole à faible revenu, bâti sur le simulateur."""
+    def carriere(simulateur):
+        return simulateur.carriere_parcours(
+            annee_naissance=naissance, sexe="H", jour_naissance=15,
+            metiers=[Metier(code, debut, niveau_salaire=0.3) for code, debut in metiers],
+            age_liquidation=depart)
+    return carriere
+
+
+def _plans(naissance, depart, quand=None):
+    """Les arguments des plans de revalorisation d'un exploitant : ceux que
+    sa liquidation a lus."""
+    def arguments(simulateur):
+        carriere = _agricole(naissance, depart)(simulateur)
+        exploitant = simulateur.scenario_actuel.calculer(carriere).exploitant_agricole
+        return (simulateur.scenario_actuel, carriere, exploitant.eligible, exploitant.pension,
+                exploitant.trimestres, quand)
+    return arguments
+
+
+def _pmr(naissance, depart, ressources=0.0, metiers=(("exploitant_agricole", 20.0),)):
+    """Les arguments de la pension majorée de référence d'un exploitant, sur
+    une pension de base presque nulle."""
+    def arguments(simulateur):
+        carriere = _agricole(naissance, depart, metiers)(simulateur)
+        eligible = simulateur.scenario_actuel.calculer(carriere).chef_d_exploitation.eligible
+        return (simulateur.scenario_actuel, carriere, eligible,
+                PensionRegime("msa_non_salaries", 0.0001, "annuites", "", Fiabilite.CERTIFIEE),
+                ressources)
+    return arguments
+
+
+def _points_de_chef(naissance, depart, metiers):
+    """Les droits du relevé d'un exploitant, et sa carrière."""
+    def arguments(simulateur):
+        carriere = _agricole(naissance, depart, metiers)(simulateur)
+        construire = (facade.releve if isinstance(simulateur, facade.Simulateur)
+                      else releve_python).construire
+        return construire(simulateur.scenario_actuel, carriere).droits, carriere
+    return arguments
+
+
+def _point_de_la_fiche(annee):
+    def arguments(simulateur):
+        regime = simulateur.catalogue["msa_non_salaries"]
+        return (simulateur.scenario_actuel,
+                commun_python.periode_de_liquidation(regime, DateMois(annee, 1)), annee)
+    return arguments
+
+
 APPELS_DES_REGLES = [
+    ("completer", "majoration_retraite_proportionnelle", _plans(1942, 60)),
+    ("completer", "majoration_retraite_proportionnelle", _plans(1930, 65)),
+    ("completer", "majoration_retraite_proportionnelle", _plans(1942, 60, "2005-01-01")),
+    ("completer", "pension_majoree", _pmr(1955, 64)),
+    ("completer", "pension_majoree", _pmr(1955, 64, 9000.0)),
+    ("completer", "pension_majoree",
+     _pmr(1955, 64, 0.0, (("collaborateur_agricole", 20.0), ("exploitant_agricole", 40.0)))),
+    ("completer", "points_rco_de_chef", _points_de_chef(
+        1962, 64, (("exploitant_agricole", 20.0), ("collaborateur_agricole", 49.0)))),
+    ("completer", "points_rco_de_chef", _points_de_chef(1955, 64, (("exploitant_agricole", 20.0),))),
+    ("liquider", "valeur_point_fiche", _point_de_la_fiche(2002)),
+    ("liquider", "valeur_point_fiche", _point_de_la_fiche(1995)),
     ("ouvrir", "fin_indemnisation", lambda s: (s.scenario_actuel, _chomeur()(s))),
     ("ouvrir", "fin_indemnisation",
      lambda s: (s.scenario_actuel, _chomeur(1950, 30, 67, range(2008, 2018))(s))),
@@ -866,6 +943,69 @@ def test_le_jumeau_compte_les_contrats_et_les_jours_que_la_facade_lit():
         for jours in (None, 37, 100):
             assert facade.compter.jours_par_annee(debut, fin, jours) == (
                 compter_python.jours_par_annee(debut, fin, jours)), (debut, jours)
+
+
+def test_le_jumeau_rend_la_periode_de_liquidation_que_la_facade_lit():
+    """La période qui liquide une pension, demandée au portage par son rang :
+    celle du catalogue que le jumeau rend, la même, pour plusieurs régimes et
+    plusieurs dates, au-delà de la dernière année comprise."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    servi = facade.Simulateur()
+    for code in ("msa_non_salaries", "regime_general", "agirc_arrco", "fonction_publique_etat"):
+        regime = servi.catalogue[code]
+        for date in (DateMois(1975, 1), DateMois(2002, 7), DateMois(2019, 9),
+                     DateMois(2100, 1)):
+            assert facade.commun.periode_de_liquidation(regime, date) is (
+                commun_python.periode_de_liquidation(regime, date)), (code, date)
+
+
+# -- faire vivre ------------------------------------------------------------------------
+
+def _exploitant(naissance, depart, metiers=(("exploitant_agricole", 20.0, 0.3),), **options):
+    """Une carrière d'exploitant agricole, que « faire vivre » révise."""
+    def carriere(simulateur):
+        return simulateur.carriere_parcours(
+            annee_naissance=naissance, sexe=options.pop("sexe", "H"), jour_naissance=15,
+            metiers=[Metier(code, debut, niveau_salaire=niveau)
+                     for code, debut, niveau in metiers],
+            age_liquidation=depart, **options)
+    return carriere
+
+
+@pytest.mark.parametrize("parametres", [Parametres(), Parametres(conventions_cor=True)],
+                         ids=["reference", "conventions_cor"])
+def test_le_jumeau_fait_vivre_ce_que_la_facade_lit(parametres):
+    """« Faire vivre » des chefs d'exploitation partis en 1995, 2005, 2015 et
+    2019, d'une conjointe collaboratrice et d'un salarié, à plusieurs
+    échéances : la même ``Revalorisee``, champ par champ, au bit près du
+    jumeau."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    servi = facade.Simulateur(parametres)
+    jumeau = simulateur_python.Simulateur(parametres)
+    cas = [(_exploitant(1930, 65), (1996, 1997, 2001, 2008, 2026)),
+           (_exploitant(1943, 62), (2005, 2009, 2026)),
+           (_exploitant(1953, 62), (2016, 2023, 2026)),
+           (_exploitant(1957, 62, sexe="F",
+                        metiers=(("collaborateur_agricole", 20.0, 0.3),)), (2020, 2026)),
+           (_exploitant(1957, 62, metiers=(("salarie_prive_non_cadre", 20.0, 1.0),)), (2026,))]
+    ecarts = []
+    for carriere, annees in cas:
+        lue, refaite = carriere(servi), carriere(jumeau)
+        resultat = servi.scenario_actuel.calculer(lue)
+        resultat_jumeau = jumeau.scenario_actuel.calculer(refaite)
+        for annee in annees:
+            lu = facade.faire_vivre(servi, lue, resultat, annee)
+            refait = revalorisation_python.faire_vivre(jumeau, refaite, resultat_jumeau, annee)
+            # Relue comme le pont la relit : la majoration d'une carrière sans
+            # enfant, le jumeau l'écrit « 0 », une somme vide.
+            relue = pont.lu_strictement(revalorisation_python.Revalorisee, json.loads(
+                json.dumps(pont._en_donnees(refait))), "Revalorisee")
+            ecart = ecarts_d_ecriture(lu, relue, tolerance=TOLERANCE_DU_MOTEUR_PYTHON)
+            if ecart:
+                ecarts.append(f"{lue.annee_naissance}, {annee} : {ecart}")
+    assert not ecarts, "\n".join(ecarts)
 
 
 # -- la liquidation ---------------------------------------------------------------------

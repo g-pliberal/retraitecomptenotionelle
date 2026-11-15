@@ -1415,6 +1415,10 @@ function argumentDuDroit(simulateur, carrieres, argument) {
     return releve.construire(simulateur.scenarioActuel,
       carrieres[argument.durees_du_releve]).durees;
   }
+  if (Object.hasOwn(argument, "droits_du_releve")) {
+    return releve.construire(simulateur.scenarioActuel,
+      carrieres[argument.droits_du_releve]).droits;
+  }
   return argument.valeur;
 }
 
@@ -1761,6 +1765,15 @@ const ENTREES_DE_LA_FACADE = {
       liquiderSuccessions: successions,
     }), carriere),
   "simulateur.regime_fusionne": (simulateur) => telQuel(simulateur.regimeFusionne),
+  // La période qui liquide la pension, par son rang parmi celles du régime.
+  "commun.periode_de_liquidation": (simulateur, code, annee, mois) => {
+    const regime = simulateur.catalogue.obtenir(code);
+    const periode = commun.periodeDeLiquidation(regime, new DateMois(annee, mois));
+    return periode === null ? null : regime.periodes.indexOf(periode);
+  },
+  // « Faire vivre », sur le scénario 1 que le portage refait de la carrière.
+  "revalorisation.faire_vivre": (simulateur, carriere, annee) => telQuel(faireVivre(
+    simulateur, carriere, simulateur.scenarioActuel.calculer(carriere), annee)),
   // Les étapes du relevé, chacune seule, refaites de la carrière : bornée, la
   // carrière est celle que le relevé lit (`indemnisationBornee`).
   "coordonner.coordonner": (moteur, carriere) => coordinationEnDonnees(
@@ -2002,7 +2015,17 @@ ENTREES_DE_LA_FACADE["simulateur.constructeur"] = (simulateur, constructeur, met
 
 /** Les modules du droit dont la façade sert des règles, sous leur nom. */
 const MODULES_DU_DROIT = {
-  commun, completer, cultes, foyer: foyerEtape, liquider, ouvrir, reversion, revalorisation,
+  commun,
+  // `pension_majoree` reçoit ses options par leur nom, que le Python passe
+  // dans l'ordre de son jumeau.
+  completer: {
+    ...completer,
+    pensionMajoree: (moteur, carriere, eligible, pension, ressources, quand, regle,
+      tauxPleinRequis, surcoteComprise) => completer.pensionMajoree(
+      moteur, carriere, eligible, pension, ressources,
+      { quand, regle, tauxPleinRequis, surcoteComprise }),
+  },
+  cultes, foyer: foyerEtape, liquider, ouvrir, reversion, revalorisation,
 };
 
 /**

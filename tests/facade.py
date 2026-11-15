@@ -113,7 +113,8 @@ ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversio
            "carriere.depuis_releve", "releve.construire", "simulateur.regime_fusionne", "liquidation.liquider",
            "liquidation.demande_de_depart", "coordonner.coordonner", "compter.compter",
            "acquerir.acquerir", "compter.cumul_plafonne", "compter.des_regimes",
-           "droit.etapes", "compter.trimestres_du_contrat", "compter.jours_par_annee")
+           "droit.etapes", "compter.trimestres_du_contrat", "compter.jours_par_annee",
+           "revalorisation.faire_vivre", "commun.periode_de_liquidation")
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
@@ -294,8 +295,47 @@ class ScenarioActuel(_Ferme):
             self, carriere, *drapeaux, **nommes)
         lies.apply_defaults()
         _, _, *valeurs = lies.arguments.values()
-        return _demander("scenario_actuel.calculer", self._simulateur.parametres,
-                         pont.MOTEUR, carriere, *valeurs)
+        resultat = _demander("scenario_actuel.calculer", self._simulateur.parametres,
+                             pont.MOTEUR, carriere, *valeurs)
+        if not nommes and not drapeaux:
+            # « Faire vivre » reçoit ce résultat : le portage le refait de la
+            # même carrière, sous ses drapeaux par défaut.
+            _CALCULES[id(resultat)] = (resultat, carriere, self._simulateur)
+            if len(_CALCULES) > _CALCULES_GARDES:
+                del _CALCULES[next(iter(_CALCULES))]
+        return resultat
+
+
+#: Les catalogues que les simulateurs de la façade ont laissé lire, et leur
+#: simulateur : une règle qui reçoit un régime du catalogue le demande au
+#: portage sous ses paramètres (:meth:`_Commun.periode_de_liquidation`).
+_CATALOGUES: dict[int, tuple] = {}
+
+#: Les résultats du scénario 1 que la façade a rendus sous les drapeaux par
+#: défaut, par leur identité : le résultat, sa carrière et son simulateur.
+#: Les derniers seulement, que les tests d'un fichier relisent.
+_CALCULES: dict[int, tuple] = {}
+_CALCULES_GARDES = 512
+
+
+def faire_vivre(simulateur, carriere, resultat, annee: int | None = None):
+    """``revalorisation.faire_vivre`` : les pensions du scénario 1 menées à
+    l'échéance de ``annee``, servies par le portage, qui refait ``resultat``
+    de ``carriere``, et rendues sous le type du Python (``Revalorisee``). Le
+    résultat doit être celui que le moteur de ce simulateur de la façade a
+    rendu pour cette carrière, sous les drapeaux par défaut : un autre
+    n'arriverait pas au portage."""
+    calcule = _CALCULES.get(id(resultat))
+    if (not isinstance(simulateur, Simulateur) or calcule is None
+            or calcule[0] is not resultat or calcule[1] is not carriere
+            or calcule[2] is not simulateur):
+        raise NonTransmissible(
+            "revalorisation.faire_vivre : un résultat que le portage ne refait pas — il "
+            "refait le scénario 1 de la carrière, sous ses drapeaux par défaut, sur le "
+            "moteur du simulateur de la façade qui l'a rendu (simulateur.scenario_actuel."
+            "calculer(carriere))")
+    return _demander("revalorisation.faire_vivre", simulateur.parametres, pont.SIMULATEUR,
+                     carriere, annee)
 
 
 class Simulateur(_Ferme):
@@ -341,7 +381,10 @@ class Simulateur(_Ferme):
 
     def __getattr__(self, nom):
         if nom in DONNEES:
-            return getattr(self._donnees, nom)
+            donnee = getattr(self._donnees, nom)
+            if nom == "catalogue":
+                _CATALOGUES[id(donnee)] = (donnee, self)
+            return donnee
         if nom in CONSTRUCTEURS:
             # Sous le taux entier de l'État, le simulateur du portage ne bâtit
             # pas de constructeur du prélèvement : c'est celui des scénarios 4
@@ -532,7 +575,8 @@ _SIMPLES = (bool, int, float, str, type(None))
 
 class Regles(_Ferme):
     """Un module de règles du droit, sous le nom de son jumeau : celles de ses
-    règles que la façade sert (:data:`REGLES`), appelées par le portage."""
+    règles que la façade sert (:data:`REGLES`), appelées par le portage, et
+    ses constantes, des valeurs simples, telles quelles."""
 
     def __init__(self, nom: str, jumeau) -> None:
         object.__setattr__(self, "_nom", nom)
@@ -543,6 +587,9 @@ class Regles(_Ferme):
         # sonde ainsi ce qu'un fichier de tests importe.
         if regle.startswith("__") or not hasattr(self._jumeau, regle):
             raise AttributeError(f"{self._nom}.{regle}")
+        if type(getattr(self._jumeau, regle)) in _SIMPLES:
+            # Une constante du module, une valeur simple : rien à calculer.
+            return getattr(self._jumeau, regle)
         if regle not in REGLES[self._nom]:
             raise NonTransmissible(
                 f"{self._nom}.{regle} : la façade ne sert pas cette règle du droit "
@@ -587,14 +634,15 @@ def _demander_la_regle(module: str, regle: str, rendu, arguments: dict):
                 "transmettre — la règle se demande sur le moteur d'un simulateur de la façade "
                 "(simulateur.scenario_actuel)")
         simulateur = arguments["moteur"]._simulateur
-    for durees in (valeur for valeur in arguments.values() if isinstance(valeur, Durees)):
+    for durees in (valeur for valeur in arguments.values()
+                   if isinstance(valeur, (Durees, Droits))):
         # Le portage refait ces durées du relevé de leur carrière, sous les
         # paramètres du simulateur qui les a rendues : la règle les reçoit
         # avec cette carrière-là, et sur ce simulateur-là.
         if "carriere" in arguments and arguments["carriere"] is not durees._carriere:
             raise NonTransmissible(
-                f"{module}.{regle} : durées d'une autre carrière que celle de la règle — le "
-                "portage les refait du relevé de la carrière qu'il reçoit")
+                f"{module}.{regle} : durées ou droits d'une autre carrière que celle de la "
+                "règle — le portage les refait du relevé de la carrière qu'il reçoit")
         if simulateur is not None and simulateur.parametres != durees._simulateur.parametres:
             raise NonTransmissible(
                 f"{module}.{regle} : durées rendues sous d'autres paramètres que ceux du moteur")
@@ -664,6 +712,13 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
                 "ceux du relevé — le portage les refait du relevé de la carrière, sous ses "
                 "drapeaux par défaut")
         return pont.DureesDuReleve(valeur._carriere)
+    if isinstance(valeur, Droits):
+        if not valeur._source.du_releve:
+            raise NonTransmissible(
+                f"{regle} : argument {nom}, des droits acquis sous d'autres drapeaux que "
+                "ceux du relevé — le portage les refait du relevé de la carrière, sous ses "
+                "drapeaux par défaut")
+        return pont.DroitsDuReleve(valeur._carriere)
     if isinstance(valeur, _carriere.AnneeCarriere):
         # Le portage relit la ligne, par son rang, dans la carrière que la
         # règle reçoit : une ligne qui n'en est pas n'y arriverait pas.
@@ -798,10 +853,29 @@ class _Completer(Regles):
             "neutralisations": _contexte_de_la_facade(entree, moteur, contexte)}),))
 
 
+class _Commun(Regles):
+    """``droit.commun`` : ses règles, et la période qui liquide une pension,
+    rendue du catalogue du simulateur dont vient le régime."""
+
+    def periode_de_liquidation(self, regime, date: DateMois):
+        entree = "commun.periode_de_liquidation"
+        simulateur = next((simulateur for catalogue, simulateur in _CATALOGUES.values()
+                           if regime.code in catalogue and catalogue[regime.code] is regime),
+                          None)
+        if simulateur is None or not isinstance(date, DateMois):
+            raise NonTransmissible(
+                f"{entree} : un régime qui n'est pas du catalogue d'un simulateur de la façade "
+                "(simulateur.catalogue), ou une date qui n'est pas une DateMois — le portage "
+                "ne les verrait pas")
+        rang = _demander(entree, simulateur.parametres, pont.SIMULATEUR, regime.code,
+                         date.annee, date.mois)
+        return None if rang is None else regime.periodes[rang]
+
+
 #: ``droit.commun``, ``droit.completer``, ``droit.liquider`` et
 #: ``droit.ouvrir``, leurs règles servies par le portage, et les étapes des
 #: trois derniers.
-commun = Regles("commun", _commun)
+commun = _Commun("commun", _commun)
 completer = _Completer("completer", _completer)
 #: ``droit.foyer`` : l'étape « foyer et net », rendue sous le type ``Foyer``,
 #: le contexte d'une liquidation par ses neutralisations.
@@ -983,6 +1057,14 @@ class _Lu(_Ferme):
     def donnees(self) -> dict:
         return self._donnees
 
+    @property
+    def _carriere(self):
+        return self._source.carriere
+
+    @property
+    def _simulateur(self):
+        return self._source.moteur._simulateur
+
 
 class Coordination(_Lu):
     """La coordination d'une carrière (``coordonner.Coordination``), lue du
@@ -1086,14 +1168,6 @@ class Durees(_Lu):
     @property
     def duree_hors_surcote(self) -> int:
         return self._des_regimes(())["hors_surcote"]
-
-    @property
-    def _carriere(self):
-        return self._source.carriere
-
-    @property
-    def _simulateur(self):
-        return self._source.moteur._simulateur
 
     def plafond(self, table: str, annee: int, membres: tuple[str, ...] = ()) -> int:
         """Le plafond de l'année, que le portage a lu sans régimes nommés :
@@ -1301,7 +1375,7 @@ JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
            "foyer": _foyer, "liquider": _liquider, "ouvrir": _ouvrir, "releve": _releve,
            "regles_de_la_reversion": _reversion, "revalorisation": _revalorisation,
            "liquidation": _liquidation, "coordonner": _coordonner, "compter": _compter,
-           "acquerir": _acquerir, "cultes": _cultes,
+           "acquerir": _acquerir, "cultes": _cultes, "faire_vivre": _revalorisation.faire_vivre,
            "ConstructeurCompte": _compte.ConstructeurCompte}
 
 #: Les simulateurs des tests, par fichier, par moteur et par paramètres.

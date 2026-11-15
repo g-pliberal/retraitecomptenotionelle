@@ -675,8 +675,8 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     une règle privée, une classe du module sont refusées, au lieu que le type
     de ce qu'elles rendent se devine. Ce que le jumeau ne porte pas manque,
     comme à un module."""
-    with pytest.raises(NonTransmissible, match="completer.points_rco_de_chef"):
-        completer.points_rco_de_chef
+    with pytest.raises(NonTransmissible, match="completer.complement_differentiel"):
+        completer.complement_differentiel
     with pytest.raises(NonTransmissible, match="liquider._coefficient_anticipation"):
         liquider._coefficient_anticipation
     with pytest.raises(NonTransmissible, match="liquider.EligibleMinimum"):
@@ -1296,6 +1296,123 @@ def test_le_maximum_des_cultes_se_lit_dans_sa_table(simulateur):
     assert type(fiabilite) is Fiabilite
 
 
+def test_les_tables_des_minima_agricoles_se_lisent_au_portage(simulateur):
+    """La pension majorée de référence des chefs, 9 741,00 € en décembre 2026,
+    exige quatre-vingt-dix trimestres en 2010 ; le complément différentiel
+    vaut 73 % d'une carrière complète en 2015, sur le SMIC net agricole ; le
+    minimum vieillesse de 2002 a encore ses deux étages, et celui de 2007 n'en
+    a plus (action 138, étapes 6 et 8)."""
+    pmr = simulateur.scenario_actuel.pension_majoree_reference
+    assert pmr.montant("pmr_chef", 2026, 12) == (9741.00, Fiabilite.MOYENNE)
+    assert pmr.montant("mesure_inconnue", 2026) is None
+    assert pmr.regle("2010-06-01")["duree_minimale"] == 90
+    complement = simulateur.scenario_actuel.complement_differentiel_rco
+    assert complement.regle("2015-06-01")["pourcentage"] == 0.73
+    smic, fiabilite = complement.smic_net(2021)
+    assert int(0.85 * 1820 * smic / 12 * 100) / 100 == 1035.57
+    assert type(fiabilite) is Fiabilite
+    etages = simulateur.scenario_actuel.minimum_vieillesse.deux_etages(2002)
+    assert etages.avts > 0 and etages.supplementaire > 0 and type(etages.fiabilite) is Fiabilite
+    assert simulateur.scenario_actuel.minimum_vieillesse.deux_etages(2007) is None
+
+
+def _chef_parti_en_1995(simulateur):
+    return Carriere.depuis_parcours(
+        annee_naissance=1930, sexe="H", jour_naissance=15,
+        metiers=[Metier("exploitant_agricole", 20.0, niveau_salaire=0.3)],
+        age_liquidation=65, macro=simulateur.macro)
+
+
+def test_faire_vivre_se_demande_au_portage(simulateur):
+    """Une carrière complète de chef partie en 1995 à faible revenu : rien ne
+    la révise en 1996 ; en 1997, les plans de revalorisation lui servent ses
+    premiers points, au tiers (décret n° 97-163, articles 2 et 3). « Faire
+    vivre » rend la ``Revalorisee`` du Python, que le portage écrit, sur le
+    scénario 1 qu'il refait de la même carrière."""
+    carriere = _chef_parti_en_1995(simulateur)
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    en_1996 = facade.faire_vivre(simulateur, carriere, resultat, 1996)
+    assert type(en_1996) is revalorisation_python.Revalorisee
+    assert en_1996.annee == 1996 and en_1996.exploitant is None
+    revision = facade.faire_vivre(simulateur, carriere, resultat, 1997).exploitant
+    assert revision.annee_des_plans == 1997 and revision.points_servis > 0
+    assert facade.faire_vivre(simulateur, carriere, resultat).annee == (
+        simulateur.parametres.annee_courante)
+
+
+def test_faire_vivre_refuse_un_resultat_que_le_portage_ne_refait_pas(simulateur):
+    """Le portage refait le scénario 1 de la carrière qu'il reçoit : le
+    résultat d'une autre carrière, d'autres drapeaux ou du moteur Python
+    n'y arriverait pas."""
+    carriere = _chef_parti_en_1995(simulateur)
+    autre = _chef_parti_en_1995(simulateur)
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    with pytest.raises(NonTransmissible, match="faire_vivre"):
+        facade.faire_vivre(simulateur, autre, resultat, 1997)
+    with pytest.raises(NonTransmissible, match="faire_vivre"):
+        facade.faire_vivre(simulateur, carriere, simulateur.scenario_actuel.calculer(
+            carriere, avantages_non_contributifs=False), 1997)
+    with pytest.raises(NonTransmissible, match="faire_vivre"):
+        facade.faire_vivre(Simulateur(), carriere, resultat, 1997)
+
+
+def test_une_constante_d_un_module_du_droit_se_lit_sur_la_facade():
+    """Une constante du module, une valeur simple, se lit telle quelle : le
+    portage n'a rien à en calculer. Une règle que la façade ne sert pas
+    reste refusée."""
+    assert completer.RCO == completer_python.RCO == "msa_rco"
+    assert completer.HEURES_DU_COMPLEMENT == completer_python.HEURES_DU_COMPLEMENT
+    with pytest.raises(NonTransmissible, match="complement_differentiel"):
+        completer.complement_differentiel
+
+
+def test_les_regles_des_minima_agricoles_se_demandent_au_portage(simulateur):
+    """Un chef parti en 2002 : les plans de revalorisation portent sa
+    pension au minimum vieillesse d'une personne seule (décret n° 2002-298,
+    article 3), et la règle rend les plans que le résultat a lus. La
+    pension majorée de référence d'un chef parti en 2019, à la PMR du chef sur
+    la durée retenue (D. 732-111). Les points de RCO que le complément
+    retranche, gratuits compris (D. 732-166-4). La période qui liquide la
+    pension, et la valeur de son point."""
+    moteur = simulateur.scenario_actuel
+    chef = Carriere.depuis_parcours(
+        annee_naissance=1942, sexe="H", jour_naissance=15,
+        metiers=[Metier("exploitant_agricole", 20.0, niveau_salaire=0.3)],
+        age_liquidation=60, macro=simulateur.macro)
+    resultat = moteur.calculer(chef)
+    exploitant = resultat.exploitant_agricole
+    plans = completer.majoration_retraite_proportionnelle(
+        moteur, chef, exploitant.eligible, exploitant.pension, exploitant.trimestres)
+    assert type(plans) is completer_python.MajorationProportionnelle
+    assert plans == exploitant.plans and plans.points > 0
+    regime = simulateur.catalogue[exploitant.regime]
+    periode = commun.periode_de_liquidation(regime, chef.date_liquidation)
+    assert periode is commun_python.periode_de_liquidation(regime, chef.date_liquidation)
+    assert liquider.valeur_point_fiche(moteur, periode, 2002) == pytest.approx(
+        liquider_python.valeur_point_fiche(
+            simulateur_python.Simulateur().scenario_actuel, periode, 2002), abs=1e-12)
+    parti_en_2019 = Carriere.depuis_parcours(
+        annee_naissance=1955, sexe="H", jour_naissance=15,
+        metiers=[Metier("exploitant_agricole", 20.0, niveau_salaire=0.3)],
+        age_liquidation=64, macro=simulateur.macro)
+    eligible = moteur.calculer(parti_en_2019).chef_d_exploitation.eligible
+    pleine, _ = moteur.pension_majoree_reference.montant(
+        "pmr_chef", 2019, parti_en_2019.mois_liquidation)
+    presque_rien = PensionRegime("msa_non_salaries", 0.0001, "annuites", "", HAUTE)
+    majoree = completer.pension_majoree(moteur, parti_en_2019, eligible, presque_rien, 0.0)
+    assert type(majoree) is completer_python.PensionMajoree
+    retenue = min(eligible.duree, eligible.reference)
+    assert majoree.avant_ecretement == pytest.approx(
+        pleine * retenue / eligible.reference, abs=1e-3)
+    droits = facade.releve.construire(moteur, parti_en_2019).droits
+    gratuits = droits.gratuits["msa_rco"][0]
+    de_chef = sum(p for code, _, p, _ in droits.points if code == "msa_rco")
+    assert completer.points_rco_de_chef(droits, parti_en_2019) == pytest.approx(
+        gratuits + de_chef)
+    with pytest.raises(NonTransmissible, match="points_rco_de_chef"):
+        completer.points_rco_de_chef(droits, chef)
+
+
 def test_un_constructeur_du_compte_se_batit_sous_d_autres_parametres(simulateur):
     """Les cotisations des arrêtés de 1990 à la CAVIMAC : 6 210 F de l'assuré,
     1 000 F de solidarité de sa collectivité (décret n° 79-607, art. 24 et
@@ -1623,6 +1740,11 @@ def _parametres_du_portage(module: str, regle: str) -> list[tuple[str, str | Non
     nom = re.sub(r"_([a-z0-9])", lambda lettre: lettre.group(1).upper(), regle.lstrip("_"))
     ecrits = re.search(r"^export function %s\(((?:[^()]|\(\))*)\)" % nom, source,
                        re.MULTILINE).group(1)
+    # Des options reçues par leur nom (``pensionMajoree``) suivent les autres
+    # paramètres, dans leur ordre : le pont les y range (``MODULES_DU_DROIT``).
+    options = re.search(r"\{([^{}]*)\}\s*=\s*\{\}\s*$", ecrits)
+    if options is not None:
+        ecrits = ecrits[:options.start()] + options.group(1)
     return [(parametre.split("=")[0].strip(),
              parametre.split("=")[1].strip() if "=" in parametre else None)
             for parametre in ecrits.split(",") if parametre.strip()]
@@ -1715,5 +1837,6 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "coordonner.coordonner", "compter.compter",
                               "acquerir.acquerir", "compter.cumul_plafonne",
                               "compter.des_regimes", "droit.etapes",
-                              "compter.trimestres_du_contrat", "compter.jours_par_annee")
+                              "compter.trimestres_du_contrat", "compter.jours_par_annee",
+                              "revalorisation.faire_vivre", "commun.periode_de_liquidation")
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)

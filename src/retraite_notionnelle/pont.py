@@ -1220,6 +1220,16 @@ class DureesDuReleve:
 
 
 @dataclasses.dataclass(frozen=True)
+class DroitsDuReleve:
+    """Les droits du relevé de cette carrière (``releve.construire``), en
+    argument d'une règle de la façade : comme ses durées
+    (:class:`DureesDuReleve`), le portage les refait du relevé de la
+    carrière, sur le moteur de la demande (``droits_du_releve``)."""
+
+    carriere: object
+
+
+@dataclasses.dataclass(frozen=True)
 class LigneDeCarriere:
     """La ligne de ce rang d'une carrière (``carriere.lignes[rang]``), en
     argument d'une règle de la façade : le portage la relit dans la carrière
@@ -1514,6 +1524,8 @@ def _argument_du_droit(argument, carrieres: list) -> dict:
         return {"periode": [argument.code, argument.annee]}
     if isinstance(argument, DureesDuReleve):
         return {"durees_du_releve": _argument_du_droit(argument.carriere, carrieres)["carriere"]}
+    if isinstance(argument, DroitsDuReleve):
+        return {"droits_du_releve": _argument_du_droit(argument.carriere, carrieres)["carriere"]}
     if isinstance(argument, LigneDeCarriere):
         return {"ligne": [_argument_du_droit(argument.carriere, carrieres)["carriere"],
                           argument.rang]}
@@ -2413,6 +2425,9 @@ LECTURES_DE_LA_FACADE = {
         tuple[tuple[int, int], ...], lu, "jours_par_annee")),
     "compter.des_regimes": lambda lu: des_regimes_des_donnees(lu),
     "droit.etapes": etape_de_la_liquidation_des_donnees,
+    "revalorisation.faire_vivre": lambda lu: _contenu_lu("revalorisation", lu, "Revalorisee"),
+    "commun.periode_de_liquidation": lambda rang: lu_strictement(
+        int | None, rang, "periode_de_liquidation"),
 }
 
 #: Le type que le Python donne à une erreur du portage, quand ce n'est pas
@@ -2485,12 +2500,14 @@ def facade(entree: str, *arguments, parametres=None, paquet: bytes | None = None
 #: refusée avant node.
 TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "carriere_longue": ("cotises_reputes",),
+    "complement_differentiel_rco": ("regle", "smic_net"),
     "conversions_points": ("echelle", "fusion"),
     "durees_requises": ("trimestres",),
     "maximum_des_cultes": ("valeur",),
     "minimum_contributif": ("regle", "valeurs"),
     "minimum_garanti": ("montant", "reference"),
-    "minimum_vieillesse": ("plafond", "plafond_couple"),
+    "minimum_vieillesse": ("deux_etages", "plafond", "plafond_couple"),
+    "pension_majoree_reference": ("montant", "regle"),
     "revalorisations_pensions": ("generale",),
     "reversions": ("fiche_du_regime", "limite_cumul", "majoration_enfant", "minimum",
                    "plafond_majoration", "version"),
@@ -2499,7 +2516,7 @@ TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
 
 # Ce que devient un point à une fusion (``conversions_points.fusion``) : le
 # portage en écrit les champs en casse de chameau.
-CLASSES_EN_CHAMEAU |= {"ConversionPoint"}
+CLASSES_EN_CHAMEAU |= {"ConversionPoint", "DeuxEtages"}
 
 
 class _Series:
@@ -2669,8 +2686,8 @@ TABLES_DES_REGLES: dict[str, frozenset[str]] = {
 #: portage leur donne (:data:`CLASSES_EN_CHAMEAU`) : un éligible au minimum
 #: contributif, que ``droit/completer.js`` lit en chameau ; une pension de
 #: régime, que le portage écrit et lit sous les noms du Python.
-TYPES_DE_LA_FACADE = frozenset({"EligibleMinimum", "PensionRegime"})
-CLASSES_EN_CHAMEAU |= {"EligibleMinimum", "DureesDesCultes"}
+TYPES_DE_LA_FACADE = frozenset({"EligibleMinimum", "EligibleAgricole", "PensionRegime"})
+CLASSES_EN_CHAMEAU |= {"EligibleMinimum", "DureesDesCultes", "PensionMajoree"}
 
 
 # -- les règles du droit, par la façade (action 161) ------------------------------
@@ -2692,7 +2709,9 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     # les durées du relevé, et la part de l'écart du V du décret n° 2006-1325.
     "cultes": ("durees", "part_de_l_ecart"),
     "completer": ("avpf_retenue", "borne_avec_les_droits_d_avant_1973", "complement_minimum",
-                  "majoration_ouverte", "plancher_du_regime", "selon_la_regle"),
+                  "majoration_ouverte", "majoration_retraite_proportionnelle",
+                  "pension_majoree", "plancher_du_regime", "points_rco_de_chef",
+                  "selon_la_regle"),
     # L'étape « foyer et net » entière : le portage rend le ``Foyer`` du
     # journal, que la façade lit sous le type du Python.
     "foyer": ("foyer_et_net",),
@@ -2704,7 +2723,8 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
                  "moyenne_des_meilleures_annees",
                  "repartir_les_annees", "retranche_decote", "revenu_des_cotisations_minimales", "salaire_de_reference",
                  "taux_de_majoration_de_1952_a_1972", "trimestres_de_decote",
-                 "trimestres_de_surcote_regimes_speciaux", "valeur_du_point"),
+                 "trimestres_de_surcote_regimes_speciaux", "valeur_du_point",
+                 "valeur_point_fiche"),
     "ouvrir": ("age_ouverture", "age_ouverture_commun", "age_ouverture_droit", "age_surcote",
                "age_taux_plein", "depart_parent_trois_enfants", "derogation_active",
                "duree_requise", "fin_indemnisation", "indemnisation_bornee"),

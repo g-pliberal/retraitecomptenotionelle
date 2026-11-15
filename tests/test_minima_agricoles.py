@@ -21,24 +21,27 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
-from types import SimpleNamespace
 
 import pytest
 
-from retraite_notionnelle.carriere import Carriere, Metier
+from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.donnees.chargement import Fiabilite
-from retraite_notionnelle.droit import completer
-from retraite_notionnelle.droit.liquider import valeur_du_point
+from retraite_notionnelle.droit.commun import PensionRegime
 from retraite_notionnelle.echeancier import Echeancier
-from retraite_notionnelle.revalorisation import faire_vivre
-from retraite_notionnelle.simulateur import Simulateur
+
+import facade
+from facade import (Carriere, Simulateur, commun, completer, faire_vivre, liquider, ouvrir,
+                    releve)
+from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
+
+valeur_du_point = liquider.valeur_du_point
 
 RACINE = Path(__file__).resolve().parents[1]
 
 
-@pytest.fixture(scope="module")
-def simulateur() -> Simulateur:
-    return Simulateur()
+@pytest.fixture
+def simulateur(request) -> Simulateur:
+    return facade.simulateur_du_test(request)
 
 
 def _chef(simulateur: Simulateur, naissance: int, liquidation: float, niveau: float = 0.3,
@@ -59,6 +62,10 @@ def _resultat(simulateur: Simulateur, carriere: Carriere):
     avantages = {a.code: a for a in resultat.avantages_appliques}
     pensions = {p.regime: p.montant for p in resultat.pensions_par_regime}
     return resultat, avantages, pensions
+
+
+#: Une pension de base presque nulle, que la pension majorée relève.
+_PRESQUE_RIEN = PensionRegime("msa_non_salaries", 0.0001, "annuites", "", Fiabilite.CERTIFIEE)
 
 
 def _cible(simulateur: Simulateur, carriere: Carriere) -> float:
@@ -373,9 +380,6 @@ def test_le_forfait_que_les_plans_retranchent_ne_compte_pas_les_annees_secondair
     proportionnelle (L. 732-28). La moyenne n des plans se lit sur la pension
     moins le forfait qu'elle porte, qui ne les compte pas, en points par année
     d'assurance (décret n° 2002-297, article 4 ; D. 732-144)."""
-    from retraite_notionnelle.droit import ouvrir, releve
-    from retraite_notionnelle.droit.commun import periode_de_liquidation
-
     metiers = [Metier("salarie_prive_non_cadre", 20.0, niveau_salaire=0.3),
                Metier("exploitant_agricole", 42.0, niveau_salaire=0.3, cumul=True,
                       age_fin=46.0),
@@ -387,8 +391,8 @@ def test_le_forfait_que_les_plans_retranchent_ne_compte_pas_les_annees_secondair
     assert secondaires == list(range(1982, 1986)) and min(par_annee) == 1982
     resultat, avantages, _ = _resultat(simulateur, carriere)
     exploitant = resultat.exploitant_agricole
-    periode = periode_de_liquidation(simulateur.scenario_actuel.catalogue[exploitant.regime],
-                                     carriere.date_liquidation)
+    periode = commun.periode_de_liquidation(simulateur.catalogue[exploitant.regime],
+                                            carriere.date_liquidation)
     requis, _ = ouvrir.duree_requise(simulateur.scenario_actuel, periode, carriere)
     points = _points_au_compte(simulateur, resultat,
                                sum(min(par_annee[a], 4) for a in secondaires))
@@ -455,14 +459,11 @@ def _points_au_compte(simulateur: Simulateur, resultat, hors_forfait: int = 0) -
     pension avant surcote, moins la retraite forfaitaire qu'elle porte, à la
     valeur du point de la liquidation. Le forfait ne compte pas les
     ``hors_forfait`` trimestres de chef à titre secondaire (L. 732-28)."""
-    from retraite_notionnelle.droit import liquider, ouvrir
-    from retraite_notionnelle.droit.commun import periode_de_liquidation
-
     actuel = simulateur.scenario_actuel
     exploitant = resultat.exploitant_agricole
     carriere = exploitant.carriere
-    periode = periode_de_liquidation(actuel.catalogue[exploitant.regime],
-                                     carriere.date_liquidation)
+    periode = commun.periode_de_liquidation(simulateur.catalogue[exploitant.regime],
+                                            carriere.date_liquidation)
     requis, _ = ouvrir.duree_requise(actuel, periode, carriere)
     proratisation, _ = liquider.duree_proratisation(actuel, periode, carriere, requis)
     forfait = periode.pension_forfaitaire_annuelle * actuel.macro.coefficient_prix(
@@ -662,7 +663,6 @@ def test_la_duree_reconstituee_perd_quinze_points_par_annee_secondaire(simulateu
     forfait, divisés par seize (D. 732-110, III) — sans la minoration, elle
     dépasserait la durée agricole et y serait ramenée. Servie depuis février
     2014, quand la PMR ne demande plus de durée minimale (D. 732-109)."""
-    from retraite_notionnelle.droit import releve
 
     metiers = [Metier("salarie_prive_non_cadre", 20.0, niveau_salaire=0.3),
                Metier("exploitant_agricole", 51.0, niveau_salaire=0.1, cumul=True,
@@ -772,8 +772,7 @@ def test_le_chef_de_moins_de_dix_sept_ans_et_demi_a_le_minimum_du_couple(simulat
 def _annee_des_conjoints(carriere: Carriere) -> int:
     """L'année d'effet des revalorisations des conjoints : celle d'avant, pour
     une pension prise un 1er janvier (D. 732-120, D. 732-142)."""
-    from retraite_notionnelle.droit.commun import date_d_effet
-    effet = date_d_effet(carriere)
+    effet = f"{carriere.annee_liquidation:04d}-{carriere.date_liquidation.mois:02d}-01"
     return int(effet[:4]) - (1 if effet[5:] == "01-01" else 0)
 
 
@@ -1073,7 +1072,7 @@ def test_une_carriere_melee_recoit_pmr1_et_pmr2_au_prorata(simulateur):
     attendue = (pleine * eligible.chef + reduite * (retenue - eligible.chef)) / eligible.reference
     base = completer.pension_majoree(
         simulateur.scenario_actuel, carriere, eligible,
-        SimpleNamespace(montant=0.0001), 0.0)
+        _PRESQUE_RIEN, 0.0)
     assert base.avant_ecretement == pytest.approx(attendue, abs=1e-3)
     assert f"PMR {pleine:,.2f} € × {eligible.chef}/" in avantages[
         "pension_majoree_reference"].detail
@@ -1146,12 +1145,12 @@ def test_qui_peut_pretendre_a_une_reversion_du_regime_recoit_pmr1_partout(simula
     assert avantages["pension_majoree_reference"].detail.startswith(
         f"PMR {pleine:,.2f} € × {retenue}/{eligible.reference}, au taux plein")
     majoree = completer.pension_majoree(simulateur.scenario_actuel, carriere, eligible,
-                                        SimpleNamespace(montant=0.0001), 0.0)
+                                        _PRESQUE_RIEN, 0.0)
     assert majoree.duree_reduite == 0
     assert majoree.avant_ecretement == pytest.approx(
         pleine * retenue / eligible.reference, abs=1e-3)
     sans = completer.pension_majoree(simulateur.scenario_actuel, _veuve(simulateur, None),
-                                     eligible, SimpleNamespace(montant=0.0001), 0.0)
+                                     eligible, _PRESQUE_RIEN, 0.0)
     assert sans.duree_reduite == retenue - 40
 
 
@@ -1169,12 +1168,12 @@ def test_la_reversion_du_regime_se_retranche_de_la_pmr_et_compte_au_plafond(simu
     retenue = min(eligible.duree, eligible.reference)
     moteur = simulateur.scenario_actuel
     majoree = completer.pension_majoree(moteur, carriere, eligible,
-                                        SimpleNamespace(montant=0.0001), 0.0)
+                                        _PRESQUE_RIEN, 0.0)
     assert majoree.reversion == pytest.approx(REVERSION_EN_2016, rel=1e-12)
     assert majoree.avant_ecretement == pytest.approx(
         pleine * retenue / eligible.reference - REVERSION_EN_2016, abs=1e-3)
     ecretee = completer.pension_majoree(moteur, carriere, eligible,
-                                        SimpleNamespace(montant=0.0001),
+                                        _PRESQUE_RIEN,
                                         majoree.plafond - 2500.0)
     assert ecretee.complement == pytest.approx(2500.0 - REVERSION_EN_2016, rel=1e-12)
     assert f", moins {REVERSION_EN_2016:,.2f} € de réversion du régime" in avantages[
@@ -1375,6 +1374,7 @@ _REVISIONS = [
 ]
 
 
+@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait ce que le portage calcule")
 def test_les_deux_moteurs_revisent_la_meme_majoration(simulateur):
     """La révision de D. 732-114, à l'échéance : la réversion qui commence
     après le départ, la pension étrangère le mois qui suit, le régime général
@@ -1431,6 +1431,7 @@ process.stdout.write(JSON.stringify(cas.map((reversion) => simulateur.simuler(
 """
 
 
+@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait ce que le portage calcule")
 def test_les_deux_moteurs_servent_la_meme_pmr_aux_veuves(simulateur):
     """Le 2° de D. 732-110, II, et la réversion retranchée et comptée au
     plafond, au départ et à chaque échéance : le résultat entier, en Python et
@@ -1461,7 +1462,6 @@ def test_le_complement_ne_retranche_que_les_points_de_chef(simulateur):
     2011, parti en 2026 : la formule de D. 732-166-4 ne retranche que N, les
     points acquis au titre des périodes de chef, gratuits compris ; ceux du
     collaborateur n'en sont pas, et le complément les laisse en sus."""
-    from retraite_notionnelle.droit import releve
     metiers = [Metier("exploitant_agricole", 20.0, niveau_salaire=0.3),
                Metier("collaborateur_agricole", 49.0, niveau_salaire=0.3)]
     carriere = _chef(simulateur, 1962, 64, metiers=metiers)
@@ -1505,7 +1505,6 @@ def test_le_chef_a_titre_secondaire_ne_compte_que_depuis_2026(simulateur):
 
 
 def _points(simulateur: Simulateur, carriere: Carriere) -> dict[tuple[str, int], float]:
-    from retraite_notionnelle.droit import releve
     points: dict[tuple[str, int], float] = {}
     for code, annee, nombre, _ in releve.construire(
             simulateur.scenario_actuel, carriere).droits.points:
@@ -1627,6 +1626,7 @@ def test_ce_que_la_duree_ouvrait_deja_n_est_pas_releve(simulateur):
         assert faire_vivre(simulateur, carriere, resultat, 2026).relevement is None
 
 
+@pytest.mark.sur_le_moteur_python("echeancier.Echeancier")
 def test_l_echeancier_inscrit_le_relevement_a_sa_date(simulateur):
     """Un début de composante, que la loi induit, le 1er septembre 2023 : les
     points gratuits et ceux du complément, à la valeur du point de ce jour."""
