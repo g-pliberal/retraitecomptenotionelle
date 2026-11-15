@@ -62,7 +62,7 @@ FICHIERS = (
     "test_fonction_publique_etat.py", "test_garantie_degressive.py", "test_garantie_par_sexe.py",
     "test_grille_large.py", "test_ieg.py", "test_indemnite_csg.py", "test_independants.py",
     "test_indexation_programme.py", "test_ines.py", "test_interpenetration.py",
-    "test_invalidite.py", "test_ircantec_minoration.py", "test_ircec_auteurs.py",
+    "test_ircantec_minoration.py", "test_ircec_auteurs.py",
     "test_lectures_decision_29.py", "test_limite_age.py", "test_liquidation.py",
     "test_majoration_enfants_agirc_1994_a_1996.py", "test_majoration_exceptionnelle.py",
     "test_marins.py", "test_mayotte.py", "test_mines.py",
@@ -90,7 +90,7 @@ FICHIERS = (
 #: Les fichiers passés à la façade (``from facade import …``) qui gardent des
 #: tests sur le moteur Python, sous la marque ``sur_le_moteur_python``, et le
 #: nombre de ces tests. Il ne fait que décroître.
-RESTES = {"test_droit.py": 1, "test_liquidation.py": 10,
+RESTES = {"test_droit.py": 1, "test_invalidite.py": 4, "test_liquidation.py": 10,
           "test_majoration_conjoint_a_charge.py": 1, "test_majoration_enfants_a_charge.py": 3,
           "test_minima_agricoles.py": 3, "test_oracle.py": 15,
           "test_oracle_periodes_assimilees.py": 1, "test_periodes_assimilees.py": 1,

@@ -14,21 +14,43 @@ import pytest
 
 from retraite_notionnelle import chronologie as chrono
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import Carriere, Metier
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.web.site import ErreurSite
 
+import facade
+from facade import Carriere, Simulateur, faire_vivre, invalidite, ouvrir
+from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 from outils_pont import RefusDuPortage, Saisies, refus_de_la_saisie, saisie_du_portage
 
 
-@pytest.fixture(scope="module")
-def simulateur() -> Simulateur:
-    return Simulateur()
+@pytest.fixture
+def simulateur(request) -> Simulateur:
+    return facade.simulateur_du_test(request)
 
 
 @pytest.fixture(scope="module")
 def saisies() -> Saisies:
     return Saisies()
+
+
+#: Les simulateurs de la façade, un par jeu de paramètres.
+_SIMULATEURS: dict = {}
+
+
+def _simulateur(saisies: Saisies, requete: dict) -> Simulateur:
+    """Le simulateur de la façade des paramètres que le portage lit de la
+    saisie."""
+    parametres = saisies.parametres(requete)
+    if parametres not in _SIMULATEURS:
+        _SIMULATEURS[parametres] = Simulateur(parametres)
+    return _SIMULATEURS[parametres]
+
+
+def _simuler(saisies: Saisies, requete: dict):
+    """La comparaison de la carrière que le portage bâtit de la saisie,
+    simulée par la façade."""
+    parametres, carriere = saisies.lire(requete)
+    return _simulateur(saisies, requete).simuler(carriere)
 
 
 def _requete(**champs) -> dict:
@@ -195,16 +217,16 @@ def test_une_invalidite_suivie_d_une_reprise_a_pris_fin(simulateur):
 
 def test_la_radiation_clot_un_emploi_de_fonctionnaire_civil(saisies):
     with pytest.raises(RefusDuPortage, match="elle clôt un emploi de fonctionnaire civil"):
-        saisies.simuler(_requete(radiation_invalidite="2015-06"))
+        _simuler(saisies, _requete(radiation_invalidite="2015-06"))
     with pytest.raises(RefusDuPortage,
                        match="la carrière reste dans la fonction publique en 2016"):
-        saisies.simuler(_requete(statut="fonctionnaire_etat", radiation_invalidite="2015-06"))
+        _simuler(saisies, _requete(statut="fonctionnaire_etat", radiation_invalidite="2015-06"))
     # Radiée en janvier, l'emploi clos ne touche pas son année.
     with pytest.raises(RefusDuPortage,
                        match="la carrière reste dans la fonction publique en 2015"):
-        saisies.simuler(_requete(statut="fonctionnaire_etat", radiation_invalidite="2015-01"))
+        _simuler(saisies, _requete(statut="fonctionnaire_etat", radiation_invalidite="2015-01"))
     # Radiée en juin 2015, sans activité ensuite : la carrière tient.
-    saisies.simuler(_requete(statut="fonctionnaire_etat", radiation_invalidite="2015-06",
+    _simuler(saisies, _requete(statut="fonctionnaire_etat", radiation_invalidite="2015-06",
                              metier2_debut="2015-06", metier2_statut="sans_activite"))
 
 
@@ -269,7 +291,7 @@ def _lu_par_python(saisies: Saisies, requete: dict) -> dict:
     """Ce que le moteur Python lit de la carrière que le portage bâtit, et
     simule."""
     parametres, vue = saisies.lire(requete)
-    saisies.simulateur(parametres).simuler(vue)
+    _simulateur(saisies, requete).simuler(vue)
     pension, radiation = vue.pension_d_invalidite, vue.radiation_pour_invalidite
     mois = "{0.annee}-{0.mois:02d}".format
     return {
@@ -320,7 +342,7 @@ def test_le_portage_lit_les_memes_faits(saisies):
 
 def _actuel(saisies, **champs):
     """Le scénario 1 d'une saisie : ce que la page lit du système actuel."""
-    return saisies.simuler(champs).actuel
+    return _simuler(saisies, champs).actuel
 
 
 def _pension(actuel, regime):
@@ -435,8 +457,6 @@ def test_l_inapte_a_l_aspa_des_son_age(saisies):
 def test_l_age_de_l_aspa_suit_la_version(simulateur):
     """Soixante ans avant 2011, l'âge légal de 2011 à 2023, soixante-deux ans
     depuis ; soixante-cinq ans pour qui n'est pas inapte."""
-    from retraite_notionnelle.droit.invalidite import age_de_l_aspa
-
     moteur = simulateur.scenario_actuel
     for naissance, liquidation, attendu in ((1945, 60.0, 60.0), (1952, 62.0, 60.75),
                                             (1965, 62.0, 62.0)):
@@ -445,12 +465,12 @@ def test_l_age_de_l_aspa_suit_la_version(simulateur):
             metiers=[Metier("salarie_prive_non_cadre", 21.0)],
             age_liquidation=liquidation, macro=simulateur.macro,
             invalidite={"pension": None, "inaptitude": True, "radiation": None})
-        assert age_de_l_aspa(moteur, carriere) == attendu, naissance
+        assert invalidite.age_de_l_aspa(moteur, carriere) == attendu, naissance
         valide = Carriere.depuis_parcours(
             annee_naissance=naissance, sexe="H", mois_naissance=6,
             metiers=[Metier("salarie_prive_non_cadre", 21.0)],
             age_liquidation=liquidation, macro=simulateur.macro)
-        assert age_de_l_aspa(moteur, valide) == 65.0
+        assert invalidite.age_de_l_aspa(moteur, valide) == 65.0
 
 
 # -- le plancher de la pension substituée ----------------------------------------
@@ -497,8 +517,10 @@ def _pension_d_invalidite_a_la_main(simulateur, carriere, debut: int, effet, tau
          for ligne in carriere.lignes
          if 1948 <= ligne.annee < debut and ligne.type_periode == "emploi"),
         reverse=True)[:10]
+    # Aucune de ces fenêtres ne passe janvier 2020, la seule revalorisation
+    # par tranche : le montant de décembre 2019 n'y a pas à se dire.
     coefficient, _ = simulateur.scenario_actuel.revalorisations_pensions.generale(
-        date(debut, 1, 1), date(*effet, 1), False, float("inf"))
+        date(debut, 1, 1), date(*effet, 1), False, None)
     return taux * sum(revalorises) / len(revalorises) * coefficient
 
 
@@ -562,8 +584,7 @@ def test_la_categorie_se_declare_ou_se_presume(simulateur):
     à l'assistance d'une tierce personne » (L. 341-4). Déclarée, elle vaut ;
     sinon, la présomption ``categorie_de_la_pension_d_invalidite`` donne la
     première à qui travaille à l'âge de la substitution, la deuxième à l'autre."""
-    from retraite_notionnelle.droit.invalidite import categorie_de_la_pension
-
+    categorie_de_la_pension = invalidite.categorie_de_la_pension
     moteur = simulateur.scenario_actuel
     presumee = "categorie_de_la_pension_d_invalidite"
     sans_activite = _ex_invalide(simulateur, 1942, 20.0, 1.0, range(1982, 2003), 60.0)
@@ -594,7 +615,7 @@ def test_la_categorie_dite_au_site_fixe_le_plancher_de_la_pension_substituee(sai
     saisie dit va au modèle : de troisième, au taux de la deuxième, le même
     plancher, sans présomption ; de première, à 30 %, la pension d'invalidité
     reste sous la pension de vieillesse, servie seule (L. 341-4, L. 341-15)."""
-    simulateur = saisies.simulateur(_SUBSTITUE_EN_1980)
+    simulateur = _simulateur(saisies, _SUBSTITUE_EN_1980)
     carriere = saisies.carriere(_SUBSTITUE_EN_1980)
     attendue = _pension_d_invalidite_a_la_main(simulateur, carriere, 1975, (1980, 4), 0.5)
 
@@ -638,8 +659,6 @@ def test_la_deuxieme_categorie_passe_de_40_a_50_pour_cent_en_1961(simulateur):
 def _servie(simulateur, carriere, resultat, annee: int) -> float:
     """La pension du régime général que « faire vivre » sert au 31 décembre de
     ``annee``."""
-    from retraite_notionnelle.revalorisation import faire_vivre
-
     vivante = faire_vivre(simulateur, carriere, resultat, annee)
     return next(r.aujourd_hui for r in vivante.regimes if r.regime == "regime_general")
 
@@ -653,6 +672,7 @@ def _revalorisee(simulateur, annee_d_effet: int, annee: int) -> float:
         date(annee_d_effet, 1, 1), date(annee, 12, 31), False, None)[0]
 
 
+@pytest.mark.sur_le_moteur_python("faire vivre un résultat retouché (sur_la_duree_maximum), que le portage ne refait pas")
 def test_les_majorations_de_1972_a_1977_ne_relevent_pas_la_pension_d_invalidite(simulateur):
     """« La majoration forfaitaire de 5 % s'applique uniquement à la pension de
     vieillesse résultant des cotisations. En conséquence, pour les ex-invalides,
@@ -707,8 +727,6 @@ def test_les_six_pour_cent_de_1982_ne_relevent_pas_l_avts_de_l_ex_invalide(simul
     minimum entier de l'ex-invalide, l'AVTS, au-dessus de sa pension
     d'invalidité de deuxième catégorie. Les 6 % de décembre 1982 relèvent l'une
     et l'autre, qui restent sous l'AVTS : servie, elle n'a pas les 6 %."""
-    from retraite_notionnelle.droit.invalidite import plancher_de_la_substitution
-
     moteur = simulateur.scenario_actuel
     carriere = _ex_invalide(simulateur, 1909, 36.0, 0.12, range(1960, 1970), 60.0)
     resultat, general = _general(simulateur, carriere)
@@ -717,10 +735,10 @@ def test_les_six_pour_cent_de_1982_ne_relevent_pas_l_avts_de_l_ex_invalide(simul
     assert general.montant == pytest.approx(avts, abs=0.01)
     minimum, = (a for a in resultat.avantages_appliques
                 if a.libelle == "Pension minimum (AVTS)")
-    invalidite = plancher_de_la_substitution(moteur, carriere, ["regime_general"])
-    assert invalidite.categorie == 2
+    plancher = invalidite.plancher_de_la_substitution(moteur, carriere, ["regime_general"])
+    assert plancher.categorie == 2
     assert max(general.montant - minimum.montant,
-               invalidite.pension_d_invalidite) * 1.06 < avts
+               plancher.pension_d_invalidite) * 1.06 < avts
     assert _servie(simulateur, carriere, resultat, 1981) == pytest.approx(
         avts * _revalorisee(simulateur, 1969, 1981))
     assert _servie(simulateur, carriere, resultat, 1983) == pytest.approx(
@@ -784,6 +802,7 @@ def _les_deux_moteurs(cas: list[dict]) -> list[str]:
     return [json.dumps(attendu, ensure_ascii=False) for attendu in attendus]
 
 
+@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait la liquidation du portage")
 def test_les_deux_moteurs_servent_le_meme_plancher():
     """Chaque étape de la liquidation écrit la même donnée en Python et en
     JavaScript, et chaque requête est portée au plancher."""
@@ -791,6 +810,7 @@ def test_les_deux_moteurs_servent_le_meme_plancher():
         assert "plancher de la pension substituée" in attendu, rang
 
 
+@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait la liquidation du portage")
 def test_les_deux_moteurs_lisent_la_categorie_que_la_saisie_dit():
     """La catégorie que la saisie dit (action 138, étape 4), sur la pension
     d'invalidité de 1982 : chaque étape de la liquidation écrit la même donnée
@@ -817,6 +837,7 @@ REQUETES_DES_MAJORATIONS = [
 ]
 
 
+@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait la liquidation et l'échéance du portage")
 def test_les_deux_moteurs_comparent_les_majorations_au_plancher():
     """Chaque étape de la liquidation et de l'échéance écrit la même donnée en
     Python et en JavaScript : les 6 % de décembre 1982 ne relèvent ni l'AVTS de
@@ -864,8 +885,7 @@ def test_la_rente_viagere_d_invalidite_et_le_plafond_du_traitement(saisies):
 
 
 def test_la_rente_compte_pour_le_tiers_au_dela_du_seuil():
-    from retraite_notionnelle.droit.invalidite import rente_viagere_d_invalidite
-
+    rente_viagere_d_invalidite = invalidite.rente_viagere_d_invalidite
     assert rente_viagere_d_invalidite(30_000.0, 0.5, 40_000.0) == pytest.approx(15_000.0)
     assert rente_viagere_d_invalidite(70_000.0, 0.5, 40_000.0) == pytest.approx(
         0.5 * (40_000.0 + 30_000.0 / 3.0))
@@ -1037,8 +1057,6 @@ def test_l_age_au_plus_tot_compte_le_depart_des_handicapes(simulateur):
     """L'âge que les cas types et « Mon estimation retraite » lisent : celui
     où la durée cotisée en situation de handicap est réunie, cinquante-cinq
     ans pour qui en a 140 à soixante-deux — au taux plein aussi."""
-    from retraite_notionnelle.droit import ouvrir
-
     def carriere(invalidite=None):
         return Carriere.depuis_parcours(
             1973, "H", [Metier("salarie_prive_non_cadre", 26.0 + 10 / 12, 1.0)], 62.0,

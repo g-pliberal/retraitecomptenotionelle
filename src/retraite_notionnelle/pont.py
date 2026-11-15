@@ -2754,6 +2754,11 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     # L'étape « foyer et net » entière : le portage rend le ``Foyer`` du
     # journal, que la façade lit sous le type du Python.
     "foyer": ("foyer_et_net",),
+    # L'âge de l'ASPA de l'inapte (R. 815-1), la catégorie de la pension
+    # d'invalidité et le plancher de la pension substituée (L. 341-15).
+    # La rente viagère d'invalidité du fonctionnaire (L. 28).
+    "invalidite": ("age_de_l_aspa", "categorie_de_la_pension", "plancher_de_la_substitution",
+                   "rente_viagere_d_invalidite"),
     "liquider": ("abattement_points", "age_de_la_duree_atteinte", "annees_au_prorata",
                  "borne_de_la_duree", "coefficient_surcote_datee", "decote_opposable",
                  "duree_du_regime_aligne",
@@ -2766,7 +2771,7 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
                  "trimestres_de_surcote_regimes_speciaux", "valeur_du_point",
                  "valeur_point_fiche"),
     "ouvrir": ("age_ouverture", "age_ouverture_commun", "age_ouverture_droit", "age_surcote",
-               "age_taux_plein", "depart_parent_trois_enfants", "derogation_active",
+               "age_taux_plein", "age_taux_plein_droit", "depart_parent_trois_enfants", "derogation_active",
                "duree_requise", "fin_indemnisation", "indemnisation_bornee",
                "ouverture_carriere_longue"),
     # Le relevé à rebours : les points qu'un revenu ouvre, et le revenu que

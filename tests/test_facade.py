@@ -33,6 +33,7 @@ from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import compter as compter_python
 from retraite_notionnelle.droit import cultes as cultes_python
 from retraite_notionnelle.droit import foyer as foyer_python
+from retraite_notionnelle.droit import invalidite as invalidite_python
 from retraite_notionnelle.droit import liquidation as liquidation_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
@@ -48,8 +49,8 @@ from retraite_notionnelle.scenarios.notionnel import ResultatNotionnel
 from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Comparaison
 
 import facade
-from facade import (Carriere, NonTransmissible, Simulateur, commun, completer, foyer, liquider,
-                    ouvrir, regles_de_la_reversion, reversion)
+from facade import (Carriere, NonTransmissible, Simulateur, commun, completer, foyer,
+                    invalidite, liquider, ouvrir, regles_de_la_reversion, reversion)
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 HAUTE = Fiabilite.CERTIFIEE
@@ -698,8 +699,8 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
         pont.regle_du_droit("ouvrir", "ouvrir", float)
     assert facade.REGLES is pont.REGLES_DE_LA_FACADE
     assert set(facade.REGLES) == {"carriere", "commun", "completer", "compter", "cultes",
-                                  "foyer", "liquider", "ouvrir", "releve", "reversion",
-                                  "revalorisation"}
+                                  "foyer", "invalidite", "liquider", "ouvrir", "releve",
+                                  "reversion", "revalorisation"}
 
 
 def test_une_regle_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulateur):
@@ -1791,6 +1792,74 @@ def test_le_maximum_des_pensions_se_demande_au_portage(simulateur):
     assert liquider.taux_acquis_l_emporte(0.55, 117, 0.5, 132, None, 0.5, 1.0) is False
 
 
+def _inapte_ou_invalide(simulateur, naissance, liquidation, **invalidite_ou_interruptions):
+    """Un salarié du privé né le 15 mars, inapte, ou que sa carrière finit en
+    invalidité."""
+    return Carriere.depuis_parcours(
+        annee_naissance=naissance, mois_naissance=3, jour_naissance=15, sexe="H",
+        metiers=[Metier("salarie_prive_non_cadre", 21.0, niveau_salaire=0.5)],
+        age_liquidation=liquidation, macro=simulateur.macro, **invalidite_ou_interruptions)
+
+
+def test_l_age_de_l_aspa_se_demande_au_portage(simulateur):
+    """« L'âge mentionné à l'article L. 815-1 est fixé à soixante-cinq ans. Il
+    est abaissé à l'âge prévu à l'article L. 161-17-2 pour les personnes
+    mentionnées aux 2° à 5° de l'article L. 351-8 » (R. 815-1) : soixante-deux
+    ans pour l'inapte né en 1965, soixante-cinq pour l'autre."""
+    moteur = simulateur.scenario_actuel
+    inapte = _inapte_ou_invalide(simulateur, 1965, 62.0, invalidite={
+        "pension": None, "inaptitude": True, "radiation": None})
+    assert invalidite.age_de_l_aspa(moteur, inapte) == 62.0
+    assert invalidite.age_de_l_aspa(moteur, _inapte_ou_invalide(simulateur, 1965, 62.0)) == 65.0
+
+
+def test_la_rente_d_invalidite_se_demande_au_portage():
+    """La rente viagère d'invalidité du fonctionnaire : le taux d'invalidité
+    du traitement jusqu'au seuil, du tiers de ce qui le dépasse au-delà, et de
+    rien passé dix fois le seuil (L. 28 du code des pensions ; article 37 du
+    décret de la CNRACL)."""
+    assert invalidite.rente_viagere_d_invalidite(30_000.0, 0.5, 40_000.0) == 15_000.0
+    assert invalidite.rente_viagere_d_invalidite(70_000.0, 0.5, 40_000.0) == pytest.approx(
+        0.5 * (40_000.0 + 30_000.0 / 3.0))
+    assert invalidite.rente_viagere_d_invalidite(900_000.0, 1.0, 40_000.0) == pytest.approx(
+        40_000.0 + 360_000.0 / 3.0)
+
+
+def test_le_taux_plein_du_handicape_se_demande_au_portage(simulateur):
+    """Né en 1973, cent quarante trimestres cotisés en situation de handicap à
+    soixante-deux ans : le taux plein dès cinquante-cinq ans (L. 351-1-3,
+    D. 351-1-5)."""
+    handicape = Carriere.depuis_parcours(
+        1973, "H", [Metier("salarie_prive_non_cadre", 26.0 + 10 / 12, 1.0)], 62.0,
+        simulateur.macro, mois_naissance=6, jour_naissance=1,
+        invalidite={"pension": None, "inaptitude": False, "radiation": None,
+                    "handicap": 21.0 + 7 / 12})
+    assert ouvrir.age_taux_plein_droit(simulateur.scenario_actuel, handicape) == pytest.approx(55.0)
+
+
+def test_la_categorie_et_le_plancher_de_l_invalide_se_demandent_au_portage(simulateur):
+    """La catégorie que l'assuré dit est la sienne, sans présomption ; tue, la
+    deuxième, quand il ne travaille plus (L. 341-4). Invalide de 2009 à ses
+    soixante-deux ans, substitué le 1er avril 2022 : le plancher de sa pension
+    de vieillesse est le montant entier de l'AVTS, 3 566,43 € par an au
+    1er janvier 2022 (L. 341-15 ; circulaire Cnav n° 2022/3)."""
+    moteur = simulateur.scenario_actuel
+    invalide = _inapte_ou_invalide(simulateur, 1960, 62.0,
+                                   interruptions={annee: "invalidite" for annee in range(2009, 2023)})
+    assert invalidite.categorie_de_la_pension(moteur, invalide) == (
+        2, "categorie_de_la_pension_d_invalidite")
+    dite = _inapte_ou_invalide(simulateur, 1960, 62.0,
+                               interruptions={annee: "invalidite" for annee in range(2009, 2023)},
+                               invalidite={"pension": 48 + 10 / 12, "categorie": 3})
+    assert invalidite.categorie_de_la_pension(moteur, dite) == (3, None)
+    plancher = invalidite.plancher_de_la_substitution(moteur, invalide, ["regime_general"])
+    assert isinstance(plancher, invalidite_python.PlancherDeLaSubstitution)
+    assert plancher.regime == "regime_general"
+    assert plancher.montant == pytest.approx(3_566.43, abs=0.01)
+    assert plancher.pension_d_invalidite is None and isinstance(plancher.fiabilite, Fiabilite)
+    assert invalidite.plancher_de_la_substitution(moteur, invalide, ["cnav_pl"]) is None
+
+
 def test_le_foyer_se_demande_au_portage_et_revient_sous_son_type(simulateur):
     """« Foyer et net » sur une carrière qui déclare sa conjointe : le barème
     du couple, son plafond, les ressources de la conjointe ; ce que le portage
@@ -1981,7 +2050,8 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
     jumelle = getattr({"carriere": carriere_python, "commun": commun_python,
                        "completer": completer_python,
                        "compter": compter_python,
-                       "cultes": cultes_python, "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
+                       "cultes": cultes_python, "foyer": foyer_python,
+                       "invalidite": invalidite_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
                        "releve": releve_python, "reversion": reversion_python,
                        "revalorisation": revalorisation_python}[module], regle)
     attendus = [(nom, None if parametre.default is inspect.Parameter.empty else parametre.default)

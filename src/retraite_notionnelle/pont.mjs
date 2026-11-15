@@ -2034,7 +2034,7 @@ const MODULES_DU_DROIT = {
       moteur, carriere, eligible, pension, ressources,
       { quand, regle, tauxPleinRequis, surcoteComprise }),
   },
-  cultes, foyer: foyerEtape, liquider, ouvrir, releve, reversion, revalorisation,
+  cultes, foyer: foyerEtape, invalidite, liquider, ouvrir, releve, reversion, revalorisation,
 };
 
 /**

@@ -91,6 +91,7 @@ from retraite_notionnelle.droit import coordonner as _coordonner
 from retraite_notionnelle.droit import completer as _completer
 from retraite_notionnelle.droit import cultes as _cultes
 from retraite_notionnelle.droit import foyer as _foyer
+from retraite_notionnelle.droit import invalidite as _invalidite
 from retraite_notionnelle.droit import liquidation as _liquidation
 from retraite_notionnelle.droit import liquider as _liquider
 from retraite_notionnelle.droit import ouvrir as _ouvrir
@@ -924,6 +925,9 @@ regles_de_la_reversion = Regles("reversion", _reversion)
 #: ``droit.cultes`` : la durée de chaque fraction de la pension des cultes,
 #: sur les durées du relevé, et la part de l'écart de la génération.
 cultes = Regles("cultes", _cultes)
+#: ``droit.invalidite`` : l'âge de l'ASPA de l'inapte, la catégorie de la
+#: pension d'invalidité et le plancher de la pension substituée.
+invalidite = Regles("invalidite", _invalidite)
 #: ``revalorisation``, hors du droit : les majorations forfaitaires de 1972 à
 #: 1982, servies par le portage.
 revalorisation = Regles("revalorisation", _revalorisation)
@@ -1429,7 +1433,8 @@ JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
            "foyer": _foyer, "liquider": _liquider, "ouvrir": _ouvrir, "releve": _releve,
            "regles_de_la_reversion": _reversion, "revalorisation": _revalorisation,
            "liquidation": _liquidation, "coordonner": _coordonner, "compter": _compter,
-           "acquerir": _acquerir, "cultes": _cultes, "faire_vivre": _revalorisation.faire_vivre,
+           "acquerir": _acquerir, "cultes": _cultes, "invalidite": _invalidite,
+           "faire_vivre": _revalorisation.faire_vivre,
            "ConstructeurCompte": _compte.ConstructeurCompte,
            "prolonger_releve": _carriere.prolonger_releve,
            "salaire_moyen_annuel": _carriere.salaire_moyen_annuel}

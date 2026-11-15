@@ -33,6 +33,7 @@ from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import compter as compter_python
 from retraite_notionnelle.droit import cultes as cultes_python
 from retraite_notionnelle.droit import foyer as foyer_python
+from retraite_notionnelle.droit import invalidite as invalidite_python
 from retraite_notionnelle.droit import liquidation as liquidation_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
@@ -469,6 +470,45 @@ def _policier(simulateur):
         1960, "H", [Metier("fonctionnaire_etat_super_actif", 19.0, 1.0)], 52.0)
 
 
+def _inapte(simulateur):
+    """Un salarié né en 1952, inapte, parti à soixante-deux ans : l'âge de
+    l'ASPA de sa version."""
+    return simulateur.carriere_parcours(
+        1952, "H", [Metier("salarie_prive_non_cadre", 21.0)], 62.0, mois_naissance=6,
+        invalidite={"pension": None, "inaptitude": True, "radiation": None})
+
+
+def _ex_invalide(annee_naissance, debut, salaire, fin, liquidation, declaree=None):
+    """Un salarié né le 15 mars, invalide de ``fin`` à son départ, ou qui dit
+    sa pension d'invalidité (``declaree``)."""
+    def carriere(simulateur):
+        return simulateur.carriere_parcours(
+            annee_naissance, "H", [Metier("salarie_prive_non_cadre", debut, salaire)],
+            liquidation, mois_naissance=3, jour_naissance=15,
+            interruptions={annee: "invalidite"
+                           for annee in range(fin, annee_naissance + int(liquidation) + 1)},
+            invalidite=declaree)
+    return carriere
+
+
+#: L'ex-invalide de 2022 porté à l'AVTS ; celui de 1982, que sa pension
+#: d'invalidité de deuxième catégorie relève ; le même, qui la dit de première.
+_A_L_AVTS = _ex_invalide(1960, 47.5, 0.5, 2009, 62.0)
+_DE_1982 = _ex_invalide(1942, 20.0, 1.0, 1982, 60.0)
+_DE_PREMIERE = _ex_invalide(1942, 20.0, 1.0, 1982, 60.0,
+                            {"pension": 39 + 10 / 12, "categorie": 1})
+
+
+def _handicape(simulateur):
+    """Né en 1973, cent quarante trimestres cotisés en situation de handicap à
+    soixante-deux ans : le départ des handicapés."""
+    return simulateur.carriere_parcours(
+        1973, "H", [Metier("salarie_prive_non_cadre", 26.0 + 10 / 12, 1.0)], 62.0,
+        mois_naissance=6, jour_naissance=1,
+        invalidite={"pension": None, "inaptitude": False, "radiation": None,
+                    "handicap": 21.0 + 7 / 12})
+
+
 def _cadre_de_1925(simulateur):
     """Un cadre au quintuple du salaire moyen, parti en 1990 : le maximum des
     pensions du régime général."""
@@ -815,6 +855,23 @@ APPELS_DES_REGLES = [
     ("liquider", "taux_acquis_l_emporte", lambda s: (0.55, 117, 0.5, 132, 87.7, 0.5, 1.0)),
     ("liquider", "taux_acquis_l_emporte", lambda s: (0.55, 60, 0.5, 68, 68.1, 0.5, 1.0)),
     ("liquider", "taux_acquis_l_emporte", lambda s: (0.55, 117, 0.5, 132, None, 0.5, 1.0)),
+    ("invalidite", "age_de_l_aspa", lambda s: (s.scenario_actuel, _inapte(s))),
+    ("invalidite", "rente_viagere_d_invalidite", lambda s: (30_000.0, 0.5, 40_000.0)),
+    ("invalidite", "rente_viagere_d_invalidite", lambda s: (70_000.0, 0.65, 40_000.0)),
+    ("invalidite", "rente_viagere_d_invalidite", lambda s: (900_000.0, 1.0, 40_000.0)),
+    ("ouvrir", "age_taux_plein_droit", lambda s: (s.scenario_actuel, _handicape(s))),
+    ("ouvrir", "age_taux_plein_droit", lambda s: (s.scenario_actuel, _salarie(s))),
+    ("invalidite", "age_de_l_aspa", lambda s: (s.scenario_actuel, _salarie(s))),
+    ("invalidite", "categorie_de_la_pension", lambda s: (s.scenario_actuel, _DE_1982(s))),
+    ("invalidite", "categorie_de_la_pension", lambda s: (s.scenario_actuel, _DE_PREMIERE(s))),
+    ("invalidite", "plancher_de_la_substitution",
+     lambda s: (s.scenario_actuel, _A_L_AVTS(s), ["regime_general"])),
+    ("invalidite", "plancher_de_la_substitution",
+     lambda s: (s.scenario_actuel, _DE_1982(s), ["regime_general"])),
+    ("invalidite", "plancher_de_la_substitution",
+     lambda s: (s.scenario_actuel, _DE_PREMIERE(s), ["regime_general"])),
+    ("invalidite", "plancher_de_la_substitution",
+     lambda s: (s.scenario_actuel, _salarie(s), ["regime_general"])),
     ("commun", "date_d_effet", lambda s: (_cadre_de_1925(s),)),
     ("commun", "date_d_effet", lambda s: (_salarie(s),)),
     ("commun", "majoration_du_conjoint",
@@ -915,7 +972,8 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
     modules = {"carriere": carriere_python, "commun": commun_python, "completer": completer_python,
                "compter": compter_python, "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
                "reversion": reversion_python, "revalorisation": revalorisation_python,
-               "cultes": cultes_python, "releve": releve_python}
+               "cultes": cultes_python, "releve": releve_python,
+               "invalidite": invalidite_python}
     ecarts = []
     for module, regle, arguments in APPELS_DES_REGLES:
         lu = getattr(facade.regles_de_la_reversion if module == "reversion"
