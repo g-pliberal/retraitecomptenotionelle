@@ -1,15 +1,15 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: vert
-sources: 0fdc849712fff258652659d2ca3a400b4603e9c2
-date: 2026-11-15T19:20:14Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43750611953
+sources: 8f78d2fc56ce82a2eb36aea91cccc43ac2394308
+date: 2026-11-15T21:06:18Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43760760726
 presomptions: vert
 durees:
-  fabrique: 233
-  suite: 444
-  tranche_1: 343
-  tranche_2: 444
-  tranche_3: 257
-  tranche_4: 349
-  garde: 121
+  fabrique: 211
+  suite: 358
+  tranche_1: 358
+  tranche_2: 353
+  tranche_3: 259
+  tranche_4: 323
+  garde: 124
