@@ -1053,6 +1053,8 @@ APPELS_DES_REGLES = [
     ("ouvrir", "duree_requise", _du_regime("regime_general", 2029, _salarie)),
     ("ouvrir", "duree_requise", _du_regime("fonction_publique_etat", 2022, _fonctionnaire)),
     ("ouvrir", "duree_requise", _du_regime("sncf", 2009, _agent)),
+    ("ouvrir", "mois_ouverture_des_droits", _du_regime("regime_general", 2029, _salarie)),
+    ("ouvrir", "mois_ouverture_des_droits", _du_regime("sncf", 2009, _agent)),
     ("completer", "borne_avec_les_droits_d_avant_1973",
      lambda s: (4700.0, _ARTISAN, 0.0, 0, 0, 7831.22, 8557.38, True, _PERIODES_COTISEES, 0)),
     ("completer", "borne_avec_les_droits_d_avant_1973",

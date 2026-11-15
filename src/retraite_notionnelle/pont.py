@@ -3055,7 +3055,7 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "ouvrir": ("age_annulation_droit", "age_ouverture", "age_ouverture_commun",
                "age_ouverture_droit", "age_surcote",
                "age_taux_plein", "age_taux_plein_droit", "depart_parent_trois_enfants", "derogation_active",
-               "duree_requise", "fin_indemnisation", "indemnisation_bornee",
+               "duree_requise", "fin_indemnisation", "indemnisation_bornee", "mois_ouverture_des_droits",
                "ouverture_carriere_longue"),
     # Le relevé à rebours : les points qu'un revenu ouvre, et le revenu que
     # des points supposent (action 138, étape 11).

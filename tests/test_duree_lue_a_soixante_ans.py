@@ -36,10 +36,8 @@ import pytest
 from retraite_notionnelle import Parametres
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import RACINE_DONNEES
-from retraite_notionnelle.droit import ouvrir
-from retraite_notionnelle.scenarios.actuel import (
-    CalendriersDureeRequise, DureesRequisesRegimes)
-from retraite_notionnelle.simulateur import Simulateur
+
+from facade import Simulateur, ouvrir
 
 #: Le calendrier de 2008, au mois où les conditions sont réunies : « 151
 #: trimestres pour les personnes remplissant les conditions [...] entre le
@@ -189,15 +187,15 @@ def test_generation_par_generation_le_moteur_rend_la_duree_du_texte(simulateur, 
     assert ecarts == []
 
 
-def test_les_tables_lues_a_soixante_ans_sont_le_calendrier_a_soixante_ans():
+def test_les_tables_lues_a_soixante_ans_sont_le_calendrier_a_soixante_ans(simulateur):
     """Les tables que les fiches de la CRPCEN et de la Comédie-Française
     nomment pour les pensions de 2017 et après portent, génération par
     génération, la marche du calendrier de 2008 que cette génération atteint à
     soixante ans ; elles ne répondent qu'aux conditions réunies depuis le
     1er janvier 2017 et se lisent, avant soixante ans, à la génération qui les
     atteint."""
-    tables = DureesRequisesRegimes(RACINE_DONNEES)
-    calendriers = CalendriersDureeRequise(RACINE_DONNEES)
+    tables = simulateur.scenario_actuel.durees_requises_regimes
+    calendriers = simulateur.scenario_actuel.calendriers_duree_requise
     for nom in ("crpcen_calendrier_a_60", "comedie_francaise_calendrier_a_60"):
         for rang in range(DateMois(1956, 7).rang, DateMois(1959, 6).rang + 1):
             naissance = DateMois.depuis_rang(rang)
@@ -233,7 +231,7 @@ AVANT_SOIXANTE_ANS = [
 
 @pytest.mark.parametrize("regime, naissance, ouverture, droit", AVANT_SOIXANTE_ANS)
 def test_qui_part_avant_soixante_ans_doit_la_duree_de_qui_les_atteint(
-        regime, naissance, ouverture, droit):
+        simulateur, regime, naissance, ouverture, droit):
     """La durée posée à la main se lit dans la table de 2014 du texte, à la
     génération qui a soixante ans le mois où les conditions sont réunies ; les
     tables que nomme la période de la pension, dans l'ordre, la rendent."""
@@ -248,7 +246,7 @@ def test_qui_part_avant_soixante_ans_doit_la_duree_de_qui_les_atteint(
                               .read_text(encoding="utf-8"))["periodes"]
     periode = next(p for p in periodes if p["debut"] <= ouverture.annee
                    and (p["fin"] is None or ouverture.annee <= p["fin"]))
-    tables = DureesRequisesRegimes(RACINE_DONNEES)
+    tables = simulateur.scenario_actuel.durees_requises_regimes
     lignes = [tables.ligne(nom, _generation(naissance), ouverture.rang)
               for nom in periode["duree_requise_table"]]
     assert next(ligne for ligne in lignes if ligne)[0] == droit, (regime, str(naissance))
