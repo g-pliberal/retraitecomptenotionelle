@@ -1,9 +1,9 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: rouge
-sources: 365731f089c70d2aa574dceb3c024ef52e6a9f9c
-date: 2026-11-15T05:38:57Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43680635091
+sources: e21927812508993d22eac982bac789a04306740b
+date: 2026-11-15T05:55:47Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43681637882
 echecs:
   - "ERROR tests/test_oracle_minima.py::test_le_temoin_suit_sa_convention_de_traduction - retraite_notionnelle.pont.NonTransmissible: ouvrir.duree_requise : moteur passé en argument que la façade ne sait pas transmettre — la règle se demande sur le moteur d'un simulateur de la façade (simulateur.scenario_actuel)"
   - "ERROR tests/test_oracle_minima.py::test_le_bareme_du_minimum_garanti_concorde - AssertionError"
@@ -21,22 +21,22 @@ echecs:
   - "ERROR tests/test_oracle_categorie_active.py::test_la_proratisation_des_actifs_est_l_ecart_d_openfisca - AssertionError"
   - "ERROR tests/test_oracle_categorie_active.py::test_la_super_active_ne_s_ouvre_pas_chez_openfisca - AssertionError"
   - "ERROR tests/test_oracle_categorie_active.py::test_le_portage_javascript_lit_la_duree_a_l_annee_d_atteinte - AssertionError"
-  - "ERROR tests/test_oracle_enfants.py::test_la_majoration_de_duree_ne_joue_que_sur_la_decote - retraite_notionnelle.pont.NonTransmissible: ouvrir.duree_requise : moteur passé en argument que la façade ne sait pas transmettre — la règle se demande sur le moteur d'un simulateur de la façade (simulateur.scenario_actuel)"
-  - "ERROR tests/test_oracle_enfants.py::test_la_cnracl_n_a_pas_de_majoration_de_duree_chez_lui - AssertionError"
-  - "ERROR tests/test_oracle_enfants.py::test_l_enfant_ne_avant_le_recrutement_selon_la_date_de_la_pension - AssertionError"
-  - "ERROR tests/test_oracle_enfants.py::test_l_accouchement_avant_le_recrutement_n_ouvre_pas_la_majoration - AssertionError"
-  - "ERROR tests/test_oracle_enfants.py::test_la_pension_concorde_au_centime_hors_des_ecarts - AssertionError"
-  - "ERROR tests/test_oracle_enfants.py::test_le_depart_des_parents_n_est_pas_l_objet - AssertionError"
+  - "ERROR tests/test_oracle_enfants.py::test_le_depart_des_parents_n_est_pas_l_objet - retraite_notionnelle.pont.NonTransmissible: ouvrir.duree_requise : moteur passé en argument que la façade ne sait pas transmettre — la règle se demande sur le moteur d'un simulateur de la façade (simulateur.scenario_actuel)"
   - "ERROR tests/test_oracle_enfants.py::test_la_bonification_compte_chaque_enfant_au_dela_de_trois - AssertionError"
   - "ERROR tests/test_oracle_enfants.py::test_la_majoration_de_pension_croit_de_cinq_points_par_enfant - AssertionError"
   - "ERROR tests/test_oracle_enfants.py::test_le_traitement_plafonne_la_pension_majoree - AssertionError"
   - "ERROR tests/test_oracle_enfants.py::test_les_enfants_nes_depuis_2004_comptent_en_duree_seulement - AssertionError"
+  - "ERROR tests/test_oracle_enfants.py::test_la_majoration_de_duree_ne_joue_que_sur_la_decote - AssertionError"
+  - "ERROR tests/test_oracle_enfants.py::test_la_cnracl_n_a_pas_de_majoration_de_duree_chez_lui - AssertionError"
+  - "ERROR tests/test_oracle_enfants.py::test_l_enfant_ne_avant_le_recrutement_selon_la_date_de_la_pension - AssertionError"
+  - "ERROR tests/test_oracle_enfants.py::test_l_accouchement_avant_le_recrutement_n_ouvre_pas_la_majoration - AssertionError"
+  - "ERROR tests/test_oracle_enfants.py::test_la_pension_concorde_au_centime_hors_des_ecarts - AssertionError"
 presomptions: vert
 durees:
-  fabrique: 460
-  suite: 562
-  tranche_1: 318
-  tranche_2: 562
-  tranche_3: 363
-  tranche_4: 320
-  garde: 205
+  fabrique: 444
+  suite: 489
+  tranche_1: 295
+  tranche_2: 435
+  tranche_3: 441
+  tranche_4: 489
+  garde: 150
