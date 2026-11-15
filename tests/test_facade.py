@@ -1593,6 +1593,21 @@ def test_le_plafond_du_couple_se_lit_dans_la_table_du_minimum_vieillesse(simulat
     assert couple == 19442.21
 
 
+def test_les_ages_et_l_inaptitude_se_lisent_dans_leurs_tables(simulateur):
+    """L'âge légal de la génération 1955, 62 ans (D. 161-2-1-9, loi de 2010),
+    et celui du taux plein, 67 ans (L. 351-8) ; l'inapte part à 62 ans en
+    2024 (L. 351-1-5). Sous le droit au 31 août 2023, la génération 1968
+    garde les 62 ans de la loi de 2010, que le droit en vigueur relève."""
+    actuel = simulateur.scenario_actuel
+    age, fiabilite = actuel.ages_ouverture.age(1955.0)
+    assert (age, type(age), type(fiabilite)) == (62.0, float, Fiabilite)
+    assert actuel.ages_annulation_decote.age(1955.0)[0] == 67.0
+    assert 12 * actuel.invalidites.version("inaptitude", "2024-03-01")["parametres"]["age"] == 744
+    au_31_aout_2023 = Simulateur(Parametres().avec(droit_contrefactuel="au_31_aout_2023"))
+    assert au_31_aout_2023.scenario_actuel.ages_ouverture.age(1968.0)[0] == 62.0
+    assert actuel.ages_ouverture.age(1968.0)[0] > 62.0
+
+
 def test_le_foyer_se_demande_au_portage_et_revient_sous_son_type(simulateur):
     """« Foyer et net » sur une carrière qui déclare sa conjointe : le barème
     du couple, son plafond, les ressources de la conjointe ; ce que le portage

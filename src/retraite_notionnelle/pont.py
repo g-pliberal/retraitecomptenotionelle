@@ -2499,10 +2499,13 @@ def facade(entree: str, *arguments, parametres=None, paquet: bytes | None = None
 #: jumeau (``tests/test_facade_jumeau.py``). Une méthode qui n'y est pas est
 #: refusée avant node.
 TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
+    "ages_annulation_decote": ("age",),
+    "ages_ouverture": ("age",),
     "carriere_longue": ("cotises_reputes",),
     "complement_differentiel_rco": ("regle", "smic_net"),
     "conversions_points": ("echelle", "fusion"),
     "durees_requises": ("trimestres",),
+    "invalidites": ("version",),
     "maximum_des_cultes": ("valeur",),
     "minimum_contributif": ("regle", "valeurs"),
     "minimum_garanti": ("montant", "reference"),

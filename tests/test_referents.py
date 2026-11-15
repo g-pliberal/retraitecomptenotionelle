@@ -22,19 +22,18 @@ from types import SimpleNamespace
 import pytest
 import yaml
 
-from retraite_notionnelle.carriere import Carriere, LigneRelevee
+from retraite_notionnelle.carriere import LigneRelevee
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.contributions_equilibre import charger_contributions_equilibre
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.donnees.impot_revenu import charger_baremes_impot_revenu
-from retraite_notionnelle.droit import foyer
-from retraite_notionnelle.droit.releve import points_de_l_annee
 from retraite_notionnelle.effet_retour import charger_seuils_csg, tranche_csg
 from retraite_notionnelle.impot_revenu import (
     Declarant, Foyer, impot_aux_parametres, impot_du_bareme)
-from retraite_notionnelle.scenarios.actuel import (
-    AgesOuvertureAvantReforme2023, AgesOuvertureAvantSuspension, TableRecouverte)
-from retraite_notionnelle.simulateur import Simulateur
+
+import facade
+from facade import Carriere, Simulateur, foyer, releve
+from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 RACINE = Path(__file__).resolve().parents[1]
 REGISTRE = RACINE / "data" / "reference" / "referents.yaml"
@@ -528,7 +527,7 @@ def test_modele_as_compte_les_points_du_depot_sauf_sur_la_tranche_1(moteur, anne
     plafond, achat = PLAFOND_ET_VALEUR_D_ACHAT[annee]
     chez_lui = MODELE_AS[annee, remuneration][1]
     attendu = chez_lui + min(remuneration, plafond) * (0.062 - 0.0787 / 1.27) / achat
-    au_depot = points_de_l_annee(moteur, "salarie_prive_cadre", annee, "complementaire",
+    au_depot = releve.points_de_l_annee(moteur, "salarie_prive_cadre", annee, "complementaire",
                                  remuneration)
     assert au_depot == pytest.approx(attendu, abs=1e-4), (
         f"modele_as, {annee}, {remuneration} € : {chez_lui} points chez lui, "
@@ -610,14 +609,12 @@ ASPA_CATALA = {2018: 9_998.40, 2019: 10_418.40, 2020: 10_838.40, 2021: 10_881.75
 ASPA_COUPLE_CATALA = {2018: 15_522.54, 2019: 16_174.59, 2020: 16_826.64}
 
 
-@pytest.mark.parametrize("droit, dessus", [
-    ("au_31_aout_2023", AgesOuvertureAvantReforme2023),
-    ("loi_2023_sans_suspension", AgesOuvertureAvantSuspension)])
-def test_catala_ouvre_le_droit_a_l_age_du_depot_sauf_en_1967(moteur, droit, dessus):
+@pytest.mark.parametrize("droit", ["au_31_aout_2023", "loi_2023_sans_suspension"])
+def test_catala_ouvre_le_droit_a_l_age_du_depot_sauf_en_1967(droit):
     """Ses âges sont ceux que le droit contrefactuel du dépôt pose sur l'âge en
-    vigueur, comme `ScenarioActuel._sous_le_droit` : la loi de 2010 au 31 août
+    vigueur (`ScenarioActuel._sous_le_droit`) : la loi de 2010 au 31 août
     2023, celle de 2023 sans la suspension. Sauf 1967, son erreur."""
-    ages = TableRecouverte(dessus(moteur.parametres.racine_donnees), moteur.ages_ouverture)
+    ages = Simulateur(Parametres().avec(droit_contrefactuel=droit)).scenario_actuel.ages_ouverture
     for naissance, chez_lui in AGES_CATALA[droit].items():
         attendu = (AGE_DE_1967_SOUS_LA_LOI_DE_2023
                    if droit == "loi_2023_sans_suspension" and naissance.startswith("1967")
@@ -1001,23 +998,23 @@ EDIFIS_REJOUE = {
 }
 
 
-def _agirc_arrco_au_depot(moteur, annee: int, brut: float) -> tuple[float, float]:
+def _agirc_arrco_au_depot(simulateur, annee: int, brut: float) -> tuple[float, float]:
     """Ce que le dépôt prélève pour la retraite complémentaire d'un salarié non
     cadre payé ``brut`` dans l'année, la part du salarié puis celle de l'employeur :
     les cotisations de ses fiches de régime, sur leurs tranches, et les
     contributions d'équilibre (`contributions_equilibre_agirc_arrco.yaml`)."""
-    plafond = moteur.macro.plafond_securite_sociale(annee)
-    codes = frozenset(moteur.affiliations.regimes("salarie_prive_non_cadre", annee,
+    plafond = simulateur.macro.plafond_securite_sociale(annee)
+    codes = frozenset(simulateur.affiliations.regimes("salarie_prive_non_cadre", annee,
                                                   revenu=brut, plafond=plafond))
     salarie = employeur = 0.0
     for code in sorted(codes & {"arrco", "arrco_tranche_2", "agirc_arrco"}):
-        for periode in moteur.catalogue[code].periodes_actives(annee):
+        for periode in simulateur.catalogue[code].periodes_actives(annee):
             bas, haut = periode.bornes_assiette_en_euros(plafond, annee)
             assiette = max(0.0, min(brut, haut) - bas)
             salarie += assiette * periode.taux_cotisation_salarie
             employeur += assiette * periode.taux_cotisation_retraite * (1 - periode.part_salariale)
     for contribution in charger_contributions_equilibre(
-            moteur.parametres.racine_donnees).contributions:
+            simulateur.parametres.racine_donnees).contributions:
         if contribution.due_pour("salarie_prive_non_cadre", codes):
             part = contribution.montant(annee, brut, plafond, False, salarie=True)
             salarie += part
@@ -1053,16 +1050,16 @@ def _ce_qui_l_ecarte_du_depot(version: str, annee: int, brut: float,
 
 
 @pytest.mark.parametrize("cas", sorted(TAUX_AGIRC_ARRCO_EDIFIS))
-def test_les_taux_agirc_arrco_d_edifis_sont_ceux_du_depot_au_centieme(moteur, cas):
+def test_les_taux_agirc_arrco_d_edifis_sont_ceux_du_depot_au_centieme(simulateur, cas):
     """Ses taux, tranche par tranche, sont ceux que le dépôt prélève, chaque part
     au centième — le dépôt prend 40 % exacts, 4,008 % sous le plafond, quand la
     caisse publie 3,15 + 0,86 = 4,01 % —, sauf, à sa tête, la CEG du salarié sur la
     tranche 2, 1,02 % au lieu de 1,08. Lus au plafond, à deux et à trois plafonds,
     où la CET, due dès qu'il est dépassé, l'est sur tout le salaire."""
     version, annee = cas
-    plafond = moteur.macro.plafond_securite_sociale(annee)
+    plafond = simulateur.macro.plafond_securite_sociale(annee)
     sous_le_plafond, a_deux, a_trois = (
-        _agirc_arrco_au_depot(moteur, annee, k * plafond) for k in (1, 2, 3))
+        _agirc_arrco_au_depot(simulateur, annee, k * plafond) for k in (1, 2, 3))
     au_depot = []
     for part in (0, 1):
         cet = (a_deux[part] - sous_le_plafond[part] - (a_trois[part] - a_deux[part])) / plafond
@@ -1078,12 +1075,12 @@ def test_les_taux_agirc_arrco_d_edifis_sont_ceux_du_depot_au_centieme(moteur, ca
 
 
 @pytest.mark.parametrize("cas", sorted(EDIFIS_REJOUE))
-def test_edifis_preleve_l_agirc_arrco_du_depot_sauf_le_partage_et_ses_erreurs(moteur, cas):
+def test_edifis_preleve_l_agirc_arrco_du_depot_sauf_le_partage_et_ses_erreurs(simulateur, cas):
     version, annee, plafonds = cas
-    plafond = moteur.macro.plafond_securite_sociale(annee)
+    plafond = simulateur.macro.plafond_securite_sociale(annee)
     assert plafond == 12 * PLAFOND_MENSUEL_EDIFIS[annee]
     brut = plafonds * plafond
-    au_depot = _agirc_arrco_au_depot(moteur, annee, brut)
+    au_depot = _agirc_arrco_au_depot(simulateur, annee, brut)
     ecart = _ce_qui_l_ecarte_du_depot(version, annee, brut, plafond)
     attendu = tuple(d + e for d, e in zip(au_depot, ecart))
     assert attendu == pytest.approx(EDIFIS_REJOUE[cas], abs=0.006), (
@@ -1182,12 +1179,15 @@ class _BaremeDeSaphir:
         return None
 
 
+@pytest.mark.sur_le_moteur_python("un barème de l'ASPA posé à la main : la façade ne transmet pas "
+                                   "une table retouchée")
 @pytest.mark.parametrize("pensions, conjoint, chez_lui", ASPA_SAPHIR)
-def test_l_aspa_de_saphir_est_celle_du_depot_a_bareme_egal(simulateur, pensions, conjoint,
+def test_l_aspa_de_saphir_est_celle_du_depot_a_bareme_egal(request, pensions, conjoint,
                                                             chez_lui):
     """L'allocation différentielle sous le plafond d'une personne seule ou du
     couple, partagée par moitié ou bornée au montant d'une personne seule : la
     règle du dépôt (`droit/foyer.py`), sur son barème, au dixième de centime."""
+    simulateur = facade.simulateur_du_test(request)
     actuel = simulateur.scenario_actuel
     moteur = SimpleNamespace(minimum_vieillesse=_BaremeDeSaphir(), parametres=actuel.parametres,
                              macro=actuel.macro,
@@ -1406,9 +1406,11 @@ def test_le_bareme_de_l_aspa_d_euromod_est_celui_du_depot_sauf_ses_arrondis():
                     f"euromod, ASPA {cle} de {annee} : {chez_lui} € chez lui, {au_depot} au dépôt")
 
 
+@pytest.mark.sur_le_moteur_python("un barème de l'ASPA posé à la main : la façade ne transmet pas "
+                                   "une table retouchée")
 @pytest.mark.parametrize("cas", sorted(ASPA_REJOUEE_EUROMOD))
 def test_l_aspa_d_euromod_retranche_des_pensions_l_abattement_des_personnes_agees(
-        simulateur, depot, cas):
+        request, depot, cas):
     """Son allocation est le plafond moins ses ressources, que R. 815-22 fait des
     pensions, et qu'il abat de l'abattement de l'impôt des personnes âgées — 2 344 €
     en 2015, 2 796 € en 2025, par allocataire. Le dépôt sert, sous son barème, la
@@ -1423,6 +1425,7 @@ def test_l_aspa_d_euromod_retranche_des_pensions_l_abattement_des_personnes_agee
     allocataires = 2 if menage == "deux" else 1
     pensions = 3_000 * (1 if menage == "seule" else 2)
     assert chez_lui == pytest.approx(plafond - (pensions - allocataires * abattement), abs=0.01)
+    simulateur = facade.simulateur_du_test(request)
     actuel = simulateur.scenario_actuel
     moteur = SimpleNamespace(minimum_vieillesse=_Bareme(seule, couple), parametres=actuel.parametres,
                              macro=actuel.macro,

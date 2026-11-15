@@ -301,6 +301,13 @@ def _tranche_b(simulateur, annee: int):
 #: arguments bâtis sur le simulateur de chaque côté — sa carrière, ses séries,
 #: une période de son catalogue.
 APPELS_DES_TABLES = [
+    ("ages_annulation_decote", "age", lambda s: (1955.0,)),
+    ("ages_annulation_decote", "age", lambda s: (1951.5,)),
+    ("ages_ouverture", "age", lambda s: (1955.0,)),
+    ("ages_ouverture", "age", lambda s: (1968.0,)),
+    ("ages_ouverture", "age", lambda s: (1930.0,)),
+    ("invalidites", "version", lambda s: ("inaptitude", "2024-03-01")),
+    ("invalidites", "version", lambda s: ("inaptitude", "1960-01-01")),
     ("carriere_longue", "cotises_reputes", lambda s: (_mere_partie_tot(s), 160, 8)),
     ("carriere_longue", "cotises_reputes", lambda s: (_mere_partie_tot(s), 160, 0)),
     ("conversions_points", "echelle", lambda s: ("agirc", 1990, 2026)),
@@ -371,8 +378,10 @@ def test_chaque_methode_de_table_servie_a_son_appel_confronte():
         for methode in methodes}
 
 
-@pytest.mark.parametrize("parametres", [Parametres(), Parametres(conventions_cor=True)],
-                         ids=["reference", "conventions_cor"])
+@pytest.mark.parametrize("parametres", [
+    Parametres(), Parametres(conventions_cor=True),
+    Parametres().avec(droit_contrefactuel="au_31_aout_2023")],
+    ids=["reference", "conventions_cor", "au_31_aout_2023"])
 def test_le_jumeau_rend_ce_que_la_facade_lit_dans_les_tables_du_moteur(parametres):
     """Chaque méthode de table que la façade sert, appelée par le portage sur
     sa table et par le jumeau sur la sienne : la même valeur, au bit près, sous
