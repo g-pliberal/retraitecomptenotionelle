@@ -4,16 +4,18 @@ points supposent, retrouvé par le barème que la pension du scénario 1 appliqu
 Un relevé chiffre en points, et non en euros, les années d'un régime qui compte
 en points et celles que seule la complémentaire chiffre. Le revenu rendu est le
 plus bas qui ouvre ces points : il les ouvre, et un euro de moins ne les ouvre
-pas. Son jumeau JavaScript est éprouvé contre lui par la lecture des relevés
-(`test_releve_lu.py`), qui le prend pour convertisseur des deux côtés.
+pas. Les deux règles sont servies par le portage (`tests/facade.py`, action
+161) ; leur jumeau Python leur est confronté par `test_facade_jumeau.py`.
 """
 
 from __future__ import annotations
 
 import pytest
 
-from retraite_notionnelle.droit.releve import points_de_l_annee, revenu_des_points
-from retraite_notionnelle.simulateur import Simulateur
+from facade import Simulateur, releve
+
+points_de_l_annee = releve.points_de_l_annee
+revenu_des_points = releve.revenu_des_points
 
 
 @pytest.fixture(scope="module")

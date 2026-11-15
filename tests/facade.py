@@ -1271,9 +1271,15 @@ def _coordination_de_la_facade(entree: str, coordination) -> Coordination:
 
 class Releves(_Module):
     """``droit.releve``, sous le nom de son jumeau : ``construire``, servi
-    par le portage, ses drapeaux compris."""
+    par le portage, ses drapeaux compris ; ses règles (:data:`REGLES`), le
+    relevé à rebours, servies comme celles d'un module du droit."""
 
     _jumeau = _releve
+
+    def __getattr__(self, nom):
+        if nom in REGLES["releve"]:
+            return Regles("releve", _releve).__getattr__(nom)
+        return super().__getattr__(nom)
 
     def construire(self, moteur, carriere, **drapeaux) -> Releve:
         lies = inspect.signature(_releve.construire).bind(moteur, carriere, **drapeaux)

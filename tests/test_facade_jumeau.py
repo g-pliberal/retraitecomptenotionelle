@@ -587,6 +587,16 @@ APPELS_DES_REGLES = [
     ("completer", "points_rco_de_chef", _points_de_chef(
         1962, 64, (("exploitant_agricole", 20.0), ("collaborateur_agricole", 49.0)))),
     ("completer", "points_rco_de_chef", _points_de_chef(1955, 64, (("exploitant_agricole", 20.0),))),
+    ("releve", "points_de_l_annee",
+     lambda s: (s.scenario_actuel, "salarie_prive_cadre", 2018, "complementaire", 52_000.0)),
+    ("releve", "points_de_l_annee",
+     lambda s: (s.scenario_actuel, "exploitant_agricole", 2018, "base", 9_000.0, 4)),
+    ("releve", "revenu_des_points",
+     lambda s: (s.scenario_actuel, "exploitant_agricole", 2018, "complementaire", 221.89, 4)),
+    ("releve", "revenu_des_points",
+     lambda s: (s.scenario_actuel, "medecin_liberal", 2015, "base", 550, 4)),
+    ("releve", "revenu_des_points",
+     lambda s: (s.scenario_actuel, "medecin_liberal", 2003, "base", 400, 4)),
     ("liquider", "valeur_point_fiche", _point_de_la_fiche(2002)),
     ("liquider", "valeur_point_fiche", _point_de_la_fiche(1995)),
     ("ouvrir", "fin_indemnisation", lambda s: (s.scenario_actuel, _chomeur()(s))),
@@ -783,7 +793,7 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
     modules = {"commun": commun_python, "completer": completer_python,
                "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
                "reversion": reversion_python, "revalorisation": revalorisation_python,
-               "cultes": cultes_python}
+               "cultes": cultes_python, "releve": releve_python}
     ecarts = []
     for module, regle, arguments in APPELS_DES_REGLES:
         lu = getattr(facade.regles_de_la_reversion if module == "reversion"

@@ -27,10 +27,10 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.droit.releve import points_de_l_annee, revenu_des_points
 from retraite_notionnelle.lignes import json_en_lignes
-from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import disponible, module, rendre
+
+from facade import Simulateur, releve
 
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "scripts" / "fetch"))
@@ -425,7 +425,7 @@ def moteur():
 @pytest.fixture(scope="module")
 def convertir(moteur):
     """Le barème du modèle, qui dit ce que la lecture doit trouver."""
-    return functools.partial(revenu_des_points, moteur)
+    return functools.partial(releve.revenu_des_points, moteur)
 
 
 def test_une_annee_coupee_par_employeur_est_recollee():
@@ -509,7 +509,7 @@ def test_les_points_d_un_liberal_disent_son_revenu(moteur):
     lecture = _lire("liberal_en_points", "modele")
     lues = {ligne.annee: ligne for ligne in lecture.lignes}
     assert lues[2003].revenu == 0
-    assert points_de_l_annee(moteur, "medecin_liberal", 2015, "base",
+    assert releve.points_de_l_annee(moteur, "medecin_liberal", 2015, "base",
                              lues[2015].revenu, 4) >= 412 - 1e-6
     assert lues[2016].revenu == round(5 * moteur.macro.plafond_securite_sociale(2016))
     (convertie,) = [note for note in lecture.notes if "ne chiffre qu'en points" in note]
@@ -526,9 +526,9 @@ def test_une_annee_que_seule_la_complementaire_chiffre(moteur):
     lues = {ligne.annee: ligne for ligne in lecture.lignes}
     assert lues[2018].statut == "salarie_prive_non_cadre"
     assert lues[2019].statut == "contractuel_public"
-    assert points_de_l_annee(moteur, "salarie_prive_non_cadre", 2018, "complementaire",
+    assert releve.points_de_l_annee(moteur, "salarie_prive_non_cadre", 2018, "complementaire",
                              lues[2018].revenu, 0) >= 2.90 - 1e-6
-    assert points_de_l_annee(moteur, "contractuel_public", 2019, "complementaire",
+    assert releve.points_de_l_annee(moteur, "contractuel_public", 2019, "complementaire",
                              lues[2019].revenu, 1) >= 7 - 1e-6
     assert not any("sans revenu" in note for note in lecture.notes)
     # Une année qui porte un revenu le garde : ses points ne s'y ajoutent pas.

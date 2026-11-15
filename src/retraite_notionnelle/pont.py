@@ -2687,7 +2687,8 @@ TABLES_DES_REGLES: dict[str, frozenset[str]] = {
 #: contributif, que ``droit/completer.js`` lit en chameau ; une pension de
 #: régime, que le portage écrit et lit sous les noms du Python.
 TYPES_DE_LA_FACADE = frozenset({"EligibleMinimum", "EligibleAgricole", "PensionRegime"})
-CLASSES_EN_CHAMEAU |= {"EligibleMinimum", "DureesDesCultes", "PensionMajoree"}
+CLASSES_EN_CHAMEAU |= {"EligibleMinimum", "DureesDesCultes", "PensionMajoree",
+                       "RevenuDesPoints"}
 
 
 # -- les règles du droit, par la façade (action 161) ------------------------------
@@ -2728,6 +2729,9 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "ouvrir": ("age_ouverture", "age_ouverture_commun", "age_ouverture_droit", "age_surcote",
                "age_taux_plein", "depart_parent_trois_enfants", "derogation_active",
                "duree_requise", "fin_indemnisation", "indemnisation_bornee"),
+    # Le relevé à rebours : les points qu'un revenu ouvre, et le revenu que
+    # des points supposent (action 138, étape 11).
+    "releve": ("points_de_l_annee", "revenu_des_points"),
     # ``_cumuler``, privée au Python, que le portage exporte sous ``cumuler``.
     "reversion": ("_cumuler", "mois_de_mariage"),
     # Hors de ``droit/`` : ``revalorisation.js``, à la racine du portage.

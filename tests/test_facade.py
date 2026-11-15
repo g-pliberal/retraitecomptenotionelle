@@ -35,6 +35,7 @@ from retraite_notionnelle.droit import foyer as foyer_python
 from retraite_notionnelle.droit import liquidation as liquidation_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
+from retraite_notionnelle.droit import releve as releve_python
 from retraite_notionnelle.droit import reversion as reversion_python
 from retraite_notionnelle import revalorisation as revalorisation_python
 from retraite_notionnelle.droit.commun import PensionRegime
@@ -687,7 +688,7 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
         pont.regle_du_droit("ouvrir", "ouvrir", float)
     assert facade.REGLES is pont.REGLES_DE_LA_FACADE
     assert set(facade.REGLES) == {"commun", "completer", "cultes", "foyer", "liquider", "ouvrir",
-                                  "reversion", "revalorisation"}
+                                  "releve", "reversion", "revalorisation"}
 
 
 def test_une_regle_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulateur):
@@ -1413,6 +1414,22 @@ def test_les_regles_des_minima_agricoles_se_demandent_au_portage(simulateur):
         completer.points_rco_de_chef(droits, chef)
 
 
+def test_le_releve_dit_les_points_d_une_annee_et_le_revenu_qu_ils_supposent(simulateur):
+    """Le régime de base des libéraux, deux tranches : en 2015, 550 points au
+    plus, que tout revenu de cinq plafonds ouvre ; avant 2004, cent points par
+    trimestre, que le revenu ne fait pas bouger (action 138, étape 11). Les
+    deux règles du relevé à rebours sont servies par le portage, et le revenu
+    revient sous le type du Python."""
+    moteur = simulateur.scenario_actuel
+    au_plafond = facade.releve.revenu_des_points(moteur, "medecin_liberal", 2015, "base", 550, 4)
+    assert type(au_plafond) is releve_python.RevenuDesPoints and au_plafond.au_plafond
+    assert au_plafond.revenu == round(5 * moteur.macro.plafond_securite_sociale(2015))
+    assert facade.releve.points_de_l_annee(
+        moteur, "medecin_liberal", 2015, "base", au_plafond.revenu, 4) == pytest.approx(550)
+    assert facade.releve.revenu_des_points(moteur, "medecin_liberal", 2003, "base", 400,
+                                           4) is None
+
+
 def test_un_constructeur_du_compte_se_batit_sous_d_autres_parametres(simulateur):
     """Les cotisations des arrêtés de 1990 à la CAVIMAC : 6 210 F de l'assuré,
     1 000 F de solidarité de sa collectivité (décret n° 79-607, art. 24 et
@@ -1765,7 +1782,7 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
     l'autre."""
     jumelle = getattr({"commun": commun_python, "completer": completer_python,
                        "cultes": cultes_python, "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
-                       "reversion": reversion_python,
+                       "releve": releve_python, "reversion": reversion_python,
                        "revalorisation": revalorisation_python}[module], regle)
     attendus = [(nom, None if parametre.default is inspect.Parameter.empty else parametre.default)
                 for nom, parametre in inspect.signature(jumelle).parameters.items()]
