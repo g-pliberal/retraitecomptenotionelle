@@ -44,7 +44,7 @@ ENTREES = frozenset({"Simulateur", "ScenarioActuel", "Carriere", "reversion"})
 #: que décroître.
 FICHIERS = (
     "test_affirmations.py", "test_age_conjoncturel.py", "test_ages_au_mois.py",
-    "test_agirc_arrco_au_droit.py", "test_avantages.py", "test_bonifications_emplois.py",
+    "test_agirc_arrco_au_droit.py", "test_avantages.py",
     "test_caisses_du_pacifique.py", "test_capitalisation.py", "test_chomage_complementaires.py",
     "test_chronologie.py", "test_cnav_baremes.py", "test_cnav_exposes.py", "test_cnracl.py",
     "test_coefficients_agirc_1947.py", "test_contributions_equilibre.py",
@@ -69,7 +69,7 @@ FICHIERS = (
     "test_marins.py", "test_mayotte.py", "test_micro_social.py", "test_mines.py",
     "test_minima_agricoles.py", "test_minimum_pension_sncf.py", "test_mortalite_population.py",
     "test_moteur.py", "test_oracle.py", "test_oracle_carriere_longue_fonction_publique.py",
-    "test_oracle_categorie_active.py", "test_oracle_enfants.py", "test_oracle_familles.py",
+    "test_oracle_categorie_active.py", "test_oracle_enfants.py",
     "test_oracle_minima.py", "test_oracle_periodes_assimilees.py",
     "test_oracle_points_enfants_arrco.py", "test_oracle_salaire_annuel_moyen.py",
     "test_outillage.py", "test_outre_mer.py", "test_ouverture_des_liberaux.py",
@@ -88,7 +88,7 @@ FICHIERS = (
     "test_sncf_ratp.py", "test_solde_fusion.py", "test_stock_age_legal.py", "test_taux_moyens.py",
     "test_taux_plein_a_soixante_cinq_ans.py", "test_taux_plein_par_categorie.py",
     "test_temps_partiel.py", "test_trajectoire.py", "test_trimestres_enfants.py",
-    "test_trimestres_utiles.py", "test_univers.py", "test_versements_uniques.py",
+    "test_univers.py", "test_versements_uniques.py",
     "test_versions.py", "test_web.py", "test_web_saisie.py",
 )
 

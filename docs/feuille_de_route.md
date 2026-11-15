@@ -7330,16 +7330,16 @@ de `contribution_etat`.
 **Reprise, au 15 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Les tests y passent par une façade (`tests/facade.py`), qui sert les entrées
-du moteur, la liquidation entière et sa demande, chacune de ses étapes seule,
-contexte compris, ses tables, trente-six règles du droit, trois
-constructeurs du compte, et le relevé des droits entier. `test_reversion.py`
-et `test_droit.py` n'ont plus de test sur le moteur Python, hors une
-confrontation ; `test_liquidation.py` en garde 10 sur 22. Le propriétaire a
-tranché trois questions (note de décision 0008). Reste, une étape par
-session : les autres fichiers de tests, d'abord ceux qui lisent le relevé
-(« Ce qui reste » de `2026-11-15-les-etapes-seules-a-la-facade.md`). Puis
-quatre études, la liste des fonctions gardées des deux côtés, le retrait, et les
-lignes du relevé des périodes assimilées (table de
+du moteur, la liquidation entière et chacune de ses étapes, ses tables,
+trente-neuf règles du droit, trois constructeurs du compte, et le relevé
+des droits entier, emplois classés et services compris. `test_reversion.py`,
+`test_droit.py`, et trois fichiers du relevé, n'ont plus de test sur le
+moteur Python, hors une confrontation. Le propriétaire a tranché trois
+questions (note de décision 0008). Reste, une étape par session : les autres
+fichiers de tests, d'abord ceux du relevé, chacun avec ce qui lui manque
+(« Ce qui reste » de `2026-11-15-trois-fichiers-du-releve-a-la-facade.md`).
+Puis quatre études, la liste des fonctions gardées des deux côtés, le
+retrait, et les lignes du relevé des périodes assimilées (table de
 `2026-11-13-les-decisions-du-proprietaire.md`).
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je

@@ -30,10 +30,9 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+from facade import Carriere, Simulateur, liquider, ouvrir, releve
+from retraite_notionnelle.carriere import AnneeCarriere
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.droit import liquider, ouvrir, releve
-from retraite_notionnelle.simulateur import Simulateur
 
 TEMOINS = Path(__file__).resolve().parent / "temoins"
 TEMOIN_TEMPS_PARTIEL_ET_PARENTS = TEMOINS / "openfisca_temps_partiel_et_parents.json"

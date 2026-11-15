@@ -390,6 +390,13 @@ def _fonctionnaire(simulateur):
         age_liquidation=60, nombre_enfants=3)
 
 
+def _policier(simulateur):
+    """Un policier né en 1960, entré à 19 ans, parti à 52 ans : la
+    super-active."""
+    return simulateur.carriere_parcours(
+        1960, "H", [Metier("fonctionnaire_etat_super_actif", 19.0, 1.0)], 52.0)
+
+
 def _du_regime(regime: str, annee: int, carriere, *suite):
     """Les arguments d'une règle qui lit le moteur, une période et une
     carrière : la période du régime à cette année, dans le catalogue du
@@ -538,6 +545,10 @@ APPELS_DES_REGLES = [
      _du_regime("regime_general", 2029, _salarie, 150, 172, 62.0, 67.0)),
     ("liquider", "trimestres_de_decote",
      _du_regime("fonction_publique_etat", 2022, _fonctionnaire, 150, 168, 60.0, 65.0)),
+    ("liquider", "coefficient_surcote_datee",
+     _du_regime("regime_general", 2029, _salarie, 180, 172, 8, 62.0)),
+    ("liquider", "coefficient_surcote_datee",
+     _du_regime("fonction_publique_etat", 2022, _fonctionnaire, 172, 168, 4, 60.0)),
     ("liquider", "trimestres_de_surcote_regimes_speciaux", lambda s: (_agent(s), 172, 160, 55.0)),
     ("liquider", "trimestres_de_surcote_regimes_speciaux", lambda s: (_agent(s), 159, 150, 55.0)),
     ("liquider", "valeur_du_point", lambda s: (s.scenario_actuel, "agirc_arrco", 2023)),
@@ -565,6 +576,11 @@ APPELS_DES_REGLES = [
     ("ouvrir", "age_surcote", _du_regime("sncf", 2009, _agent)),
     ("ouvrir", "age_taux_plein", _du_regime("regime_general", 2029, _salarie)),
     ("ouvrir", "age_taux_plein", _du_regime("fonction_publique_etat", 2022, _fonctionnaire)),
+    ("ouvrir", "depart_parent_trois_enfants",
+     _du_regime("fonction_publique_etat", 2022, _fonctionnaire)),
+    ("ouvrir", "depart_parent_trois_enfants", _du_regime("regime_general", 2029, _salarie)),
+    ("ouvrir", "derogation_active", _du_regime("fonction_publique_etat", 2012, _policier)),
+    ("ouvrir", "derogation_active", _du_regime("fonction_publique_etat", 2022, _fonctionnaire)),
     ("ouvrir", "duree_requise", _du_regime("regime_general", 2029, _salarie)),
     ("ouvrir", "duree_requise", _du_regime("fonction_publique_etat", 2022, _fonctionnaire)),
     ("ouvrir", "duree_requise", _du_regime("sncf", 2009, _agent)),

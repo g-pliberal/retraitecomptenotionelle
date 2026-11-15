@@ -1916,7 +1916,8 @@ CHAMPS_SANS_OBJET = {
 #: Les types dont le portage écrit les champs en casse de chameau.
 CLASSES_EN_CHAMEAU = frozenset({
     "EligibleAgricole", "RemunerationActif", "AnneeComparee", "FicheDePaie",
-    "MajorationProportionnelle", "Foyer"})
+    "MajorationProportionnelle", "Foyer", "DepartParentTroisEnfants",
+    "DerogationActive"})
 
 #: Les champs que le portage écrit sous un autre nom que celui du Python, hors
 #: de la casse de chameau : ``{type: {champ: nom du portage}}``.
@@ -2274,6 +2275,20 @@ def demande_des_donnees(donnees: dict):
     return lu_strictement(Demande, donnees, "Demande")
 
 
+def des_regimes_des_donnees(lu: dict) -> dict:
+    """Ce que les durées disent de régimes nommés (``compter.des_regimes`` de
+    ``pont.mjs``), lu strictement : leurs ``services_effectifs`` et
+    ``services_liquidables`` ; ce que les emplois classés leur ajoutent,
+    ``services``, ``majorations``, ``bonifications`` — celles qui portent le
+    pourcentage au-delà du maximum — ; et ``hors_surcote``, de tous les
+    régimes."""
+    noms = ("services_effectifs", "services_liquidables", "services", "majorations",
+            "bonifications", "hors_surcote")
+    if set(lu) != set(noms):
+        raise ValueError(f"des_regimes : {sorted(lu)} au lieu de {list(noms)}")
+    return {nom: lu_strictement(int, lu[nom], f"des_regimes.{nom}") for nom in noms}
+
+
 def durees_des_donnees(durees: dict) -> dict:
     """Les durées que le portage a écrites (``dureesEnDonnees`` de
     ``pont.mjs``), lues strictement : ``par_annee``, par compte, régime et
@@ -2296,7 +2311,10 @@ def durees_des_donnees(durees: dict) -> dict:
         "hors_annee": {compte: dict(lu_strictement(
             tuple[tuple[str, float], ...], regimes, f"releve.hors_annee.{compte}"))
             for compte, regimes in durees["hors_annee"].items()},
-        "enfants": durees["enfants"],
+        "enfants": None if durees["enfants"] is None else {
+            **durees["enfants"], "par_regime": dict(lu_strictement(
+                tuple[tuple[str, tuple[int, int]], ...], durees["enfants"]["par_regime"],
+                "releve.enfants.par_regime"))},
         "donnees": durees["donnees"],
     }
 
@@ -2385,6 +2403,7 @@ LECTURES_DE_LA_FACADE = {
     "compter.compter": durees_des_donnees,
     "acquerir.acquerir": droits_des_donnees,
     "compter.cumul_plafonne": lambda cumul: lu_strictement(int, cumul, "cumul_plafonne"),
+    "compter.des_regimes": lambda lu: des_regimes_des_donnees(lu),
     "droit.etapes": etape_de_la_liquidation_des_donnees,
 }
 
@@ -2666,7 +2685,8 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     # journal, que la façade lit sous le type du Python.
     "foyer": ("foyer_et_net",),
     "liquider": ("abattement_points", "age_de_la_duree_atteinte", "annees_au_prorata",
-                 "borne_de_la_duree", "decote_opposable", "duree_du_regime_aligne",
+                 "borne_de_la_duree", "coefficient_surcote_datee", "decote_opposable",
+                 "duree_du_regime_aligne",
                  "duree_proratisation", "majoration_des_points_de_1952_a_1972_d_avant_2026",
                  "majorer_les_points_de_1952_a_1972", "maximum_des_pensions",
                  "moyenne_des_meilleures_annees",
@@ -2674,7 +2694,8 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
                  "taux_de_majoration_de_1952_a_1972", "trimestres_de_decote",
                  "trimestres_de_surcote_regimes_speciaux", "valeur_du_point"),
     "ouvrir": ("age_ouverture", "age_ouverture_commun", "age_ouverture_droit", "age_surcote",
-               "age_taux_plein", "duree_requise"),
+               "age_taux_plein", "depart_parent_trois_enfants", "derogation_active",
+               "duree_requise"),
     # ``_cumuler``, privée au Python, que le portage exporte sous ``cumuler``.
     "reversion": ("_cumuler", "mois_de_mariage"),
     # Hors de ``droit/`` : ``revalorisation.js``, à la racine du portage.

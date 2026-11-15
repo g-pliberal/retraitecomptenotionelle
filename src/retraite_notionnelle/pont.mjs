@@ -1770,6 +1770,17 @@ const ENTREES_DE_LA_FACADE = {
   },
   "compter.cumul_plafonne": (moteur, carriere, bornee, avantages, table, membres) => etapes(
     moteur, carriere, bornee, avantages).durees.cumulPlafonne(table, membres),
+  "compter.des_regimes": (moteur, carriere, bornee, avantages, membres) => {
+    const { durees } = etapes(moteur, carriere, bornee, avantages);
+    return {
+      services_effectifs: durees.servicesEffectifs(membres),
+      services_liquidables: durees.servicesLiquidables(membres),
+      services: durees.servicesDesEmplois(membres),
+      majorations: durees.majorationsDesEmplois(membres),
+      bonifications: durees.bonificationsDesEmplois(membres),
+      hors_surcote: durees.dureeHorsSurcote,
+    };
+  },
 };
 
 /** La coordination et les durées de la carrière, bornée ou non. */
@@ -1824,6 +1835,7 @@ function dureesEnDonnees(durees, carriere) {
       enfants: enfants.enfants.map(({ enfant, naissance, regime, dispositif, version }) => ({
         enfant, naissance, regime, dispositif, version,
       })),
+      par_regime: [...enfants.parRegime()],
     },
     donnees: telQuel(durees.donnees()),
   };

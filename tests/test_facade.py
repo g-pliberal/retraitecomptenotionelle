@@ -841,6 +841,7 @@ def test_le_releve_sert_ses_drapeaux(simulateur):
     sans = facade.releve.construire(actuel, mere, avantages_non_contributifs=False)
     assert (avec.durees.enfants.trimestres, avec.durees.enfants.regimes,
             avec.durees.enfants.dispositifs) == (24, ["regime_general"], ["mda"])
+    assert avec.durees.enfants.par_regime() == {"regime_general": (24, 24)}
     assert sans.durees.enfants is None
     assert sans.durees.trimestres == avec.durees.trimestres - 24
 
@@ -866,6 +867,33 @@ def test_chaque_etape_se_sert_seule(simulateur):
             durees.plafond("assurance", annee))
         for annee in {annee for code in regimes
                       for annee in durees.par_annee["assurance"].get(code, {})})
+
+
+def test_les_emplois_classes_et_les_services_se_lisent_sur_les_durees(simulateur):
+    """Le policier né en 1960 entré à 19 ans, parti à 52 ans : le cinquième de
+    ses services (art. 1er de la loi du 8 avril 1957), borné à cinq annuités,
+    lui ajoute vingt trimestres de services et de durée, aucune majoration ;
+    la bonification n'est pas de L. 12, et ne porte pas le pourcentage
+    au-delà du maximum. Ce que les durées en disent, régime par régime, le
+    portage le refait, comme ses trente-trois ans de services, 132 trimestres ;
+    ce que le relevé ne transmet pas est refusé."""
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=1960, sexe="H", metiers=[Metier("fonctionnaire_etat_super_actif", 19.0, 1.0)],
+        age_liquidation=52.0, macro=simulateur.macro, mois_naissance=1, part_primes=0.15)
+    durees = facade.releve.construire(simulateur.scenario_actuel, carriere).durees
+    (emploi,) = durees.emplois
+    assert (emploi.regime, emploi.services, emploi.duree, emploi.majoration,
+            emploi.au_dela_du_maximum) == ("fonction_publique_etat", 20, 20, 0, False)
+    etat = ("fonction_publique_etat",)
+    assert (durees.services_des_emplois(etat), durees.majorations_des_emplois(etat),
+            durees.bonifications_des_emplois(etat), durees.duree_hors_surcote) == (20, 0, 0, 20)
+    assert durees.services_des_emplois(("cnracl",)) == 0
+    assert (durees.services_effectifs(etat), durees.services_liquidables(etat)) == (132, 132)
+    with pytest.raises(NonTransmissible, match="texte"):
+        emploi.texte
+    sans = facade.releve.construire(simulateur.scenario_actuel, carriere,
+                                    avantages_non_contributifs=False).durees
+    assert sans.emplois == () and sans.duree_hors_surcote == 0
 
 
 def test_une_etape_ne_sert_que_ce_qu_elle_transmet(simulateur):
@@ -1507,5 +1535,5 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "liquidation.liquider", "liquidation.demande_de_depart",
                               "coordonner.coordonner", "compter.compter",
                               "acquerir.acquerir", "compter.cumul_plafonne",
-                              "droit.etapes")
+                              "compter.des_regimes", "droit.etapes")
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)

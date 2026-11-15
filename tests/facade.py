@@ -108,7 +108,8 @@ ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversio
            "simulateur.carriere_releve", "carriere.depuis_profil", "carriere.depuis_parcours",
            "releve.construire", "simulateur.regime_fusionne", "liquidation.liquider",
            "liquidation.demande_de_depart", "coordonner.coordonner", "compter.compter",
-           "acquerir.acquerir", "compter.cumul_plafonne", "droit.etapes")
+           "acquerir.acquerir", "compter.cumul_plafonne", "compter.des_regimes",
+           "droit.etapes")
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
@@ -495,10 +496,13 @@ class Regles(_Ferme):
 def _type_rendu(jumelle, noms: dict):
     """Le type que la règle du jumeau annonce rendre, lu seul : ceux de ses
     arguments nomment des types que son module n'importe que pour les
-    annoncer."""
+    annoncer. Un type rendu que le module n'importe que pour l'annoncer
+    (``DerogationActive``) se lit dans le module du moteur qui le tient."""
+    from retraite_notionnelle.scenarios import actuel
+
     def porteur(): ...
     porteur.__annotations__ = {"return": jumelle.__annotations__["return"]}
-    return typing.get_type_hints(porteur, globalns=noms)["return"]
+    return typing.get_type_hints(porteur, globalns={**vars(actuel), **noms})["return"]
 
 
 def _demander_la_regle(module: str, regle: str, rendu, arguments: dict):
@@ -924,21 +928,41 @@ class _Enfant(_Ferme):
 
 class _Enfants(_Ferme):
     """Les trimestres des enfants (``compter.MajorationEnfants``) :
-    ``trimestres``, ``regimes``, ``dispositifs``, et chaque enfant —
-    ``enfant``, ``naissance``, ``regime``, ``dispositif``, ``version``."""
+    ``trimestres``, ``regimes``, ``dispositifs``, chaque enfant —
+    ``enfant``, ``naissance``, ``regime``, ``dispositif``, ``version`` —, et
+    les trimestres et les services de chaque régime (:meth:`par_regime`)."""
 
     def __init__(self, lu: dict) -> None:
         for nom in ("trimestres", "regimes", "dispositifs"):
             object.__setattr__(self, nom, lu[nom])
         object.__setattr__(self, "enfants", tuple(_Enfant(e) for e in lu["enfants"]))
+        object.__setattr__(self, "_par_regime", lu["par_regime"])
+
+    def par_regime(self) -> dict[str, tuple[int, int]]:
+        return dict(self._par_regime)
+
+
+class _Emploi(_Ferme):
+    """Ce qu'un emploi classé ajoute (``compter.TrimestresEmploi``), tel que
+    le schéma des durées le décrit : ``regime``, ``fiche``, ``version``,
+    ``services``, ``duree``, ``majoration``, ``au_dela_du_maximum`` et
+    ``fiabilite``, en son nom ; le texte n'en passe pas."""
+
+    def __init__(self, lu: dict) -> None:
+        for nom, valeur in lu.items():
+            object.__setattr__(self, nom, valeur)
 
 
 class Durees(_Lu):
     """Les durées d'une carrière (``compter.Durees``), lues du portage :
     ``par_annee``, ``trimestres_par_regime``, ``trimestres``, ``hors_annee``,
-    ``enfants``, le plafond de chaque année de la carrière (:meth:`plafond`),
-    et le cumul plafonné de régimes nommés (:meth:`cumul_plafonne`), demandé
-    au portage."""
+    ``enfants``, ``emplois``, le plafond de chaque année de la carrière
+    (:meth:`plafond`), et, demandés au portage, le cumul plafonné de régimes
+    nommés (:meth:`cumul_plafonne`), leurs services
+    (:meth:`services_effectifs`, :meth:`services_liquidables`) et ce que leurs
+    emplois classés leur ajoutent (:meth:`services_des_emplois`,
+    :meth:`majorations_des_emplois`, :meth:`bonifications_des_emplois`,
+    :attr:`duree_hors_surcote`)."""
 
     def __init__(self, source: _Source, lu: dict) -> None:
         super().__init__(source, lu, ("par_annee", "trimestres_par_regime", "trimestres",
@@ -946,6 +970,32 @@ class Durees(_Lu):
         object.__setattr__(self, "_plafonds", lu["plafonds"])
         object.__setattr__(self, "enfants",
                            None if lu["enfants"] is None else _Enfants(lu["enfants"]))
+        object.__setattr__(self, "emplois",
+                           tuple(_Emploi(e) for e in lu["donnees"]["emplois"]))
+
+    def _des_regimes(self, membres: tuple[str, ...]) -> dict:
+        source = self._source
+        return source.demander("compter.des_regimes", source.bornee,
+                               source.avantages_non_contributifs, list(membres))
+
+    def services_effectifs(self, membres: tuple[str, ...]) -> int:
+        return self._des_regimes(membres)["services_effectifs"]
+
+    def services_liquidables(self, membres: tuple[str, ...]) -> int:
+        return self._des_regimes(membres)["services_liquidables"]
+
+    def services_des_emplois(self, membres: tuple[str, ...]) -> int:
+        return self._des_regimes(membres)["services"]
+
+    def majorations_des_emplois(self, membres: tuple[str, ...]) -> int:
+        return self._des_regimes(membres)["majorations"]
+
+    def bonifications_des_emplois(self, membres: tuple[str, ...]) -> int:
+        return self._des_regimes(membres)["bonifications"]
+
+    @property
+    def duree_hors_surcote(self) -> int:
+        return self._des_regimes(())["hors_surcote"]
 
     @property
     def _carriere(self):

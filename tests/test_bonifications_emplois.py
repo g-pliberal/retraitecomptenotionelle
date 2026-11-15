@@ -31,9 +31,8 @@ from __future__ import annotations
 
 import pytest
 
-from retraite_notionnelle.carriere import Carriere, Metier
-from retraite_notionnelle.droit import releve
-from retraite_notionnelle.simulateur import Simulateur
+from facade import Carriere, Simulateur, releve
+from retraite_notionnelle.carriere import Metier
 
 POLICIER = "fonctionnaire_etat_super_actif"
 ETAT = ("fonction_publique_etat",)

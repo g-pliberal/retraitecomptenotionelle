@@ -38,10 +38,9 @@ from dataclasses import dataclass
 
 import pytest
 
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+from facade import Carriere, Simulateur, liquider, ouvrir, releve
+from retraite_notionnelle.carriere import AnneeCarriere
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.droit import liquider, ouvrir, releve
-from retraite_notionnelle.simulateur import Simulateur
 
 PRIVE = "salarie_prive_non_cadre"
 ETAT = "fonctionnaire_etat"
