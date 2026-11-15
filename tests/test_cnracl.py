@@ -82,6 +82,19 @@ def test_la_carriere_longue_avant_soixante_ans_lit_la_duree_a_l_ouverture(
     assert resultat.trimestres_requis == requis
 
 
+@pytest.mark.parametrize("naissance, liquidation, ouvert", [
+    (1946, 58, False), (1947, 58, False), (1950, 56, False), (1949, 59, True),
+])
+def test_l_ouvrier_de_l_etat_a_les_portes_des_fonctionnaires(
+        simulateur, naissance, liquidation, ouvert):
+    """Le jumeau Python : loi n° 2004-1484, article 119, II — L. 25 bis
+    « applicable[s] aux ouvriers » de l'État à compter du 1er janvier 2005.
+    Voir tests/test_oracle_carriere_longue_fonction_publique.py."""
+    _, resultat = _calculer(simulateur, "ouvrier_etat", naissance, 15, liquidation)
+    assert resultat.liquidation_ouverte is ouvert
+    assert (resultat.motif_ouverture == "carriere_longue") is ouvert
+
+
 def test_la_condition_de_la_carriere_longue_reste_la_duree_de_la_generation(simulateur):
     """D. 16-1, rédaction du décret n° 2026-345 : la carrière longue s'ouvre à
     qui a cotisé « au moins [la] durée mentionnée à l'article L. 161-17-3 »,

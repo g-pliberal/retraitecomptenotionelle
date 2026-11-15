@@ -2181,9 +2181,11 @@ CarriereLongue.ENFANTS_REPUTES_COTISES_MAXIMUM = 2;
 /**
  * Les fonctionnaires n'ont la carrière longue que depuis 2005, chaque porte à
  * sa date (L. 25 bis du code des pensions ; loi n° 2004-1370, article 57) :
- * rang du premier mois de chacune, par âge de départ.
+ * rang du premier mois de chacune, par âge de départ. Les ouvriers de l'État
+ * aussi : L. 25 bis leur est « applicable » (loi n° 2004-1484, article 119, II).
  */
-CarriereLongue.REGIMES_FONCTION_PUBLIQUE = new Set(["fonction_publique_etat", "cnracl"]);
+CarriereLongue.REGIMES_FONCTION_PUBLIQUE = new Set(
+  ["fonction_publique_etat", "cnracl", "fspoeie"]);
 CarriereLongue.PORTES_FONCTION_PUBLIQUE_DEPUIS = new Map([
   [59, new DateMois(2005, 1).rang], [58, new DateMois(2006, 7).rang],
   [56, new DateMois(2008, 1).rang]]);

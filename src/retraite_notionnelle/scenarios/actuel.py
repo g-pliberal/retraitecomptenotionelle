@@ -2180,7 +2180,12 @@ class CarriereLongue:
     #: l'application ; la table le lit à la date d'effet, faute de celle de la
     #: demande. Le régime général les ouvrait toutes trois dès 2004 ; le
     #: modèle les ouvrait de même aux fonctionnaires (action 153, étape 2).
-    REGIMES_FONCTION_PUBLIQUE = frozenset({"fonction_publique_etat", "cnracl"})
+    #: L. 25 bis vaut aussi pour les ouvriers de l'État : « Les dispositions de
+    #: l'article L. 25 bis [...] sont applicables aux ouvriers relevant du
+    #: régime des pensions des ouvriers des établissements industriels de
+    #: l'Etat » (loi n° 2004-1484, article 119, II), puis l'article 22 ter du
+    #: décret n° 2004-1056 ; le modèle leur ouvrait les portes du régime général.
+    REGIMES_FONCTION_PUBLIQUE = frozenset({"fonction_publique_etat", "cnracl", "fspoeie"})
     PORTES_FONCTION_PUBLIQUE_DEPUIS = {
         59.0: DateMois(2005, 1), 58.0: DateMois(2006, 7), 56.0: DateMois(2008, 1),
     }

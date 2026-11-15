@@ -233,6 +233,33 @@ def test_les_portes_de_la_fonction_publique_s_ouvrent_chacune_a_sa_date(
                                 if depuis.rang <= carriere.date_liquidation.rang}, code
 
 
+#: Loi n° 2004-1484 de finances pour 2005, article 119 (JORFARTI000001723087),
+#: qui crée L. 25 bis : « II. - Les dispositions de l'article L. 25 bis du code
+#: des pensions civiles et militaires de retraite sont applicables aux ouvriers
+#: relevant du régime des pensions des ouvriers des établissements industriels
+#: de l'Etat. III. - Les dispositions du présent article entrent en vigueur le
+#: 1er janvier 2005. » L'ouvrier de l'État, entré à quinze ans, né un 1er
+#: janvier, a donc les portes des fonctionnaires, chacune à sa date et sur leur
+#: durée fixe : rien en 2004, cinquante-neuf ans seulement en 2005, pas
+#: cinquante-six ans avant 2008 ; cinquante-neuf ans en 2008.
+OUVRIER_DE_L_ETAT_AVANT_2009 = [
+    (1946, 58, False), (1947, 58, False), (1950, 56, False), (1949, 59, True),
+]
+
+
+@pytest.mark.parametrize("naissance, liquidation, ouvert", OUVRIER_DE_L_ETAT_AVANT_2009)
+def test_l_ouvrier_de_l_etat_a_les_portes_des_fonctionnaires(
+        simulateur, naissance, liquidation, ouvert):
+    """Le dépôt lui ouvrait les portes du régime général dès 2004, sur la durée
+    de l'année d'ouverture : parti à 58 ans en 2004 et en 2005, à 56 en 2006."""
+    carriere = simulateur.carriere_simple(
+        annee_naissance=naissance, mois_naissance=1, sexe="H",
+        affiliation="ouvrier_etat", age_debut=15, age_liquidation=liquidation)
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    assert resultat.liquidation_ouverte is ouvert
+    assert (resultat.motif_ouverture == "carriere_longue") is ouvert
+
+
 def test_la_duree_est_fixe_avant_2009(simulateur, constantes_du_portage):
     """« au moins égale à 160 trimestres » à cinquante-neuf ans, en 2005 : le
     dépôt opposait la durée de l'année d'ouverture des fonctionnaires, 154

@@ -28,9 +28,13 @@ effet: >-
   jusqu'en octobre 2012, exigent de tous, 168 trimestres avant le 19 décembre 2008, puis
   la durée de l'année des soixante ans majorée de huit trimestres : le même fonctionnaire,
   à 160 trimestres cotisés et 160 d'assurance, partait à 59 ans en 2005 (action 138,
-  étape 21).
+  étape 21). Jusqu'au 15 novembre 2026, l'ouvrier de l'État (FSPOEIE) gardait les
+  portes du régime général dès 2004, sur la durée de l'année d'ouverture : né en 1946,
+  entré à quinze ans, il partait à 58 ans en 2004 ; né en 1950, à 56 ans en 2006. La loi
+  de finances pour 2005 lui rend L. 25 bis applicable : ni l'un ni l'autre n'y a droit
+  (tests/test_oracle_carriere_longue_fonction_publique.py, tests/test_cnracl.py).
 sources:
-  lu_le: 2026-11-12
+  lu_le: 2026-11-15
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -38,6 +42,19 @@ sources:
     — invalidité, handicap, parents de trois enfants, conjoint ou enfant invalide
     — ne sont pas modélisés.
   lectures:
+  - type: jorf
+    reference: >-
+      Loi n° 2004-1484 de finances pour 2005, article 119 (JORFARTI000001723087), lu dans
+      l'index JORF du 11 novembre 2026 : le I crée L. 25 bis ; « II. - Les dispositions
+      de l'article L. 25 bis du code des pensions civiles et militaires de retraite sont
+      applicables aux ouvriers relevant du régime des pensions des ouvriers des
+      établissements industriels de l'Etat. III. - Les dispositions du présent article
+      entrent en vigueur le 1er janvier 2005. » Puis l'article 22 ter du décret
+      n° 2004-1056 (LEGIARTI000023394264, 1er juillet 2011 ; LEGIARTI000029134294) :
+      « Les dispositions de l'article L. 25 bis et des articles D. 16-1 » s'y appliquent.
+      Aucune documentation de la Caisse des dépôts sur la date des portes des ouvriers
+      n'a été trouvée (recherche du 15 novembre 2026) : la règle est celle du texte.
+    date: 2004-12-30
   - type: legifrance
     reference: >-
       loi n° 2023-270, article 10, XXIV, A, B et C, lus dans l'index LEGI : le C
