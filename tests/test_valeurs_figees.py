@@ -139,6 +139,31 @@ def test_chaque_valeur_figee_l_est_par_un_test_qui_la_nomme():
     assert {nom.partition("::")[0] for nom in outils_valeurs.valeurs_figees()} <= set(fichiers)
 
 
+def test_un_test_fige_aussi_par_une_fixture_ou_une_aide_qui_fige():
+    """Un test fige une valeur par son corps, mais aussi par une fixture ou une
+    aide de son fichier qui appelle :func:`valeur_figee` : refait à neuf, le
+    témoin le relance aussi, sans quoi ses valeurs en sortiraient (les
+    dispenses de ``test_independants.py``, étape 8p)."""
+    source = (
+        "import pytest\n"
+        "@pytest.fixture\n"
+        "def figeur(request):\n"
+        "    return lambda v: valeur_figee(request.node.name, v)\n"
+        "def _aide(v): return valeur_figee('aide', v)\n"
+        "def _par_l_aide(v): return _aide(v)\n"
+        "def test_par_son_corps(): valeur_figee('x', 1)\n"
+        "def test_par_la_fixture(figeur): figeur(1)\n"
+        "def test_par_une_aide(): _par_l_aide(1)\n"
+        "def test_sans(): assert True\n")
+    assert outils_valeurs.tests_qui_figent_dans(source) == [
+        "test_par_son_corps", "test_par_la_fixture", "test_par_une_aide"]
+    figent = set(outils_valeurs.tests_qui_figent())
+    for nom in outils_valeurs.valeurs_figees():
+        fichier, _, valeur = nom.partition("::")
+        if valeur.startswith("test_"):
+            assert f"{fichier}::{valeur.partition('[')[0]}" in figent, nom
+
+
 def test_le_temoin_se_refait_a_neuf_en_relancant_les_tests_qui_figent():
     """``scripts/construire_temoins.py`` refait le témoin des valeurs en
     relançant chaque fichier qui fige une valeur sous ``FIGER_VALEURS=1``, sur

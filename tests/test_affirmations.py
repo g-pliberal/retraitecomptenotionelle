@@ -1748,14 +1748,13 @@ def _(m: Modele):
 @controle("le_moteur_du_site_fait_foi")
 def _(m: Modele):
     """Le moteur du site fait foi (note de décision 0005) : les carrières
-    témoins se simulent par lui, sans le moteur Python, et ``tests/js/`` le
-    fait les retrouver nombre par nombre ; son jumeau Python doit les refaire
-    au bit près, tant qu'il en garde un (``tests/test_pont.py``). La phrase
-    porte sur la vérification même : c'est elle que ce contrôle tient, et le
-    jour où le dernier jumeau se retire, il tombe, et la page avec lui. « Des
-    centaines » de témoins : deux cents au moins. Les pages, dont le texte
-    n'est écrit qu'en JavaScript depuis la phase 8, sont figées en témoins,
-    que la suite fait rendre de nouveau et compare
+    témoins se simulent par lui, sans le moteur Python, ce qu'il en rend est
+    figé, et ``tests/js/`` le fait les retrouver nombre par nombre. La page ne
+    promet plus de jumeau Python refaisant les témoins : les tests qui l'y
+    tenaient sont partis avec la phrase (action 161, étape 8q), et la page
+    n'en parle plus. « Des centaines » de témoins : deux cents au moins. Les
+    pages, dont le texte n'est écrit qu'en JavaScript depuis la phase 8, sont
+    figées en témoins, que la suite fait rendre de nouveau et compare
     (``test_les_temoins_du_portage_sont_a_jour``)."""
     simulations = json.loads((RACINE / "tests" / "temoins" / "simulations.json")
                              .read_text(encoding="utf-8"))
@@ -1764,9 +1763,12 @@ def _(m: Modele):
     assert "temoinsSimulations" in moteur
     pont = (RACINE / "tests" / "test_pont.py").read_text(encoding="utf-8")
     assert "def test_les_temoins_se_simulent_par_le_portage_sans_le_moteur_python" in pont
-    assert "def test_le_moteur_python_refait_chaque_temoin" in pont
+    assert "def test_le_portage_relu_par_la_table_redonne_les_temoins_a_l_octet" in pont
+    assert "def test_le_moteur_python_refait" not in pont
     assert "def test_les_temoins_du_portage_sont_a_jour" in (
         RACINE / "tests" / "test_web.py").read_text(encoding="utf-8")
+    methode = textes_de("/methode")
+    assert methode and not any("jumeau" in texte for texte in methode)
     assert (RACINE / "moteur" / "js" / "pages.js").exists()
     assert len(TEMOINS_PAR_NOM) > 10
 

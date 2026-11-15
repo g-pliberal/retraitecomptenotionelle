@@ -135,21 +135,36 @@ def fichiers_qui_figent() -> list[str]:
     return sorted({chemin.partition("::")[0] for chemin in tests_qui_figent()})
 
 
-def tests_qui_figent() -> list[str]:
-    """Les tests qui figent une valeur, ``<fichier>::<test>`` sous ``tests/`` :
-    ceux dont le corps appelle :func:`valeur_figee`, et que
-    ``construire_temoins.py --valeurs`` relance, eux seuls."""
+def tests_qui_figent_dans(source: str) -> list[str]:
+    """Les tests du code ``source`` qui figent une valeur : ceux dont le corps
+    appelle :func:`valeur_figee`, ou qui nomment — en argument, comme une
+    fixture, ou dans leur corps — une fonction du fichier qui la fige, de
+    proche en proche."""
     import ast
 
+    fonctions = {noeud.name: noeud for noeud in ast.parse(source).body
+                 if isinstance(noeud, ast.FunctionDef)}
+    lus = {nom: {n.id for n in ast.walk(fonction) if isinstance(n, ast.Name)}
+           | {argument.arg for argument in fonction.args.args}
+           for nom, fonction in fonctions.items()}
+    figent = {nom for nom, noms in lus.items() if "valeur_figee" in noms}
+    avance = True
+    while avance:
+        de_plus = {nom for nom, noms in lus.items() if nom not in figent and noms & figent}
+        figent |= de_plus
+        avance = bool(de_plus)
+    return [nom for nom in fonctions if nom.startswith("test_") and nom in figent]
+
+
+def tests_qui_figent() -> list[str]:
+    """Les tests qui figent une valeur, ``<fichier>::<test>`` sous ``tests/`` :
+    ceux que :func:`tests_qui_figent_dans` trouve, et que
+    ``construire_temoins.py --valeurs`` relance, eux seuls."""
     propres = {"outils_valeurs.py", "test_valeurs_figees.py"}
     trouves = []
     for chemin in sorted(RACINE_DES_TESTS.glob("test_*.py")):
         texte = chemin.read_text(encoding="utf-8")
         if chemin.name in propres or "valeur_figee(" not in texte:
             continue
-        for noeud in ast.parse(texte).body:
-            if (isinstance(noeud, ast.FunctionDef) and noeud.name.startswith("test_")
-                    and any(isinstance(appel, ast.Call) and isinstance(appel.func, ast.Name)
-                            and appel.func.id == "valeur_figee" for appel in ast.walk(noeud))):
-                trouves.append(f"{chemin.name}::{noeud.name}")
+        trouves += [f"{chemin.name}::{nom}" for nom in tests_qui_figent_dans(texte)]
     return trouves

@@ -181,9 +181,6 @@ EXCEPTIONS = {
     # minute de node (action 161, étape 6).
     ("test_pont.py", "test_le_portage_relu_par_la_table_redonne_les_temoins_a_l_octet"):
         "complet",
-    # Et tous, simulés au moteur Python, qui leur est confronté tant qu'il garde
-    # ses jumeaux : trois quarts de minute.
-    ("test_pont.py", "test_le_moteur_python_refait_chaque_temoin"): "complet",
     # Le scénario 1 de chaque témoin, servi par la façade des tests et refait au
     # moteur Python : deux minutes (action 161, la façade).
     ("test_facade_jumeau.py",

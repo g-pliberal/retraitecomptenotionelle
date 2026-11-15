@@ -15607,17 +15607,16 @@ date opposée est celle de l'entrée dans le métier, au mois près : qui est en
  * Comment ce site est construit, et comment on le vérifie.
  *
  * C'est l'argument de confiance d'un public technique — un moteur sans
- * bibliothèque qui fait foi, son jumeau Python tenu au bit près sur des
+ * bibliothèque qui fait foi, ce qu'il rend figé sur des centaines de
  * témoins, le coût calculé une fois —, et il n'était accessible que par le
  * lien GitHub en bas de l'accueil. Il est ici, là où le lecteur est déjà dans
  * le détail. Aucun nombre de tests ni de témoins n'y est écrit : ils bougent à
  * chaque session, et le README les porte, recalculés par un test.
  *
  * Le JavaScript fait foi depuis le 31 octobre 2026 (note de décision 0005).
- * Le dépliant ne dit pas lequel des deux exemplaires les références
- * extérieures éprouvent : elles passent du Python au JavaScript (action 161),
- * et chaque phrase doit rester vraie pendant et après. Le modèle est
- * confronté aux sources, et ses deux exemplaires sont identiques au bit près.
+ * Le dépliant ne parle plus du jumeau Python : plus aucun test ne lui fait
+ * refaire les témoins (action 161, étape 8q), et il se retire. Chaque phrase
+ * doit rester vraie pendant et après ce retrait.
  */
 function methodeConstruction() {
   return g.depliant("Comment ce site est construit, et comment on le vérifie", `
@@ -15629,12 +15628,10 @@ n'est envoyé nulle part. <strong>C'est lui qui fait foi.</strong></p>
 <p>Le modèle est confronté aux sources — les textes, les barèmes, et des
 calculateurs extérieurs comme OpenFisca, qui servent d'oracle au système 1,
 jusqu'au temps partiel, aux enfants et à la catégorie active des fonctionnaires.
-Écrit d'abord en Python, il y garde un jumeau pendant la migration, dans
-<a href="${g.DEPOT}/tree/main/src">le dossier <code>src/</code></a> : les deux
-exemplaires sont identiques au bit près, jusqu'au dernier chiffre que
-l'ordinateur retient. Sur des centaines de carrières témoins (chaque statut
-d'affiliation, à six générations), un seul nombre que le jumeau ne retrouve pas
-fait échouer les tests.</p>
+Sur des centaines de carrières témoins (chaque statut d'affiliation, à six
+générations), ce que le moteur rend est conservé dans le dépôt, jusqu'au
+dernier chiffre que l'ordinateur retient : un seul nombre qui change fait
+échouer les tests.</p>
 <p>Le coût pour toute la population se calcule en Python, une fois, quand le
 site est fabriqué, sur des carrières que le moteur du site simule, et arrive
 tout fait avec les données. Le texte des pages n'est écrit qu'une fois, en

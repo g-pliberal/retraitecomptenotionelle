@@ -2196,9 +2196,9 @@ affirmations:
     page: /methode
     extrait: "C'est lui qui fait foi."
     porte: >-
-      le moteur du site calcule les carrières témoins, que son jumeau Python
-      doit refaire au bit près ; ses pages, écrites une fois, sont figées en
-      témoins
+      le moteur du site calcule les carrières témoins, dont chaque nombre est
+      figé et retrouvé au bit près ; ses pages, écrites une fois, sont figées
+      en témoins
     etat: verifiee
     controle: le_moteur_du_site_fait_foi
 
