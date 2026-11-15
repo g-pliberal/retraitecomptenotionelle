@@ -17,7 +17,6 @@ import csv
 import datetime
 import re
 from pathlib import Path
-from types import SimpleNamespace
 
 import pytest
 import yaml
@@ -25,7 +24,6 @@ import yaml
 from retraite_notionnelle.carriere import LigneRelevee
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.contributions_equilibre import charger_contributions_equilibre
-from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.donnees.impot_revenu import charger_baremes_impot_revenu
 from retraite_notionnelle.effet_retour import charger_seuils_csg, tranche_csg
 from retraite_notionnelle.impot_revenu import (
@@ -33,7 +31,6 @@ from retraite_notionnelle.impot_revenu import (
 
 import facade
 from facade import Carriere, Simulateur, foyer, releve
-from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 RACINE = Path(__file__).resolve().parents[1]
 REGISTRE = RACINE / "data" / "reference" / "referents.yaml"
@@ -1165,40 +1162,53 @@ ABATTEMENT_AGES_REJOUE = {
     (2016, 16_383): (14_745, 1_174, 2_352), (2016, 26_400): (23_760, 0, 1_176)}
 
 
-class _BaremeDeSaphir:
-    """Son barème de l'ASPA de 2017, où le dépôt lit le sien : la moyenne de
-    l'année, d'une personne seule et d'un couple, sans les deux étages."""
-
-    def plafond(self, annee):
-        return ASPA_SAPHIR_2017["seule"], Fiabilite.HAUTE
-
-    def plafond_couple(self, annee):
-        return ASPA_SAPHIR_2017["couple"], Fiabilite.HAUTE
-
-    def deux_etages(self, annee):
-        return None
+def _de_la_table(chemin: Path, annee: int) -> str:
+    return next(l["valeur"] for l in _csv(chemin) if int(l["annee"]) == annee)
 
 
-@pytest.mark.sur_le_moteur_python("un barème de l'ASPA posé à la main : la façade ne transmet pas "
-                                   "une table retouchée")
+def _sur_un_bareme(request, annee: int, seule: float, couple: float):
+    """Le simulateur d'une copie des données où le barème de l'ASPA de
+    ``annee`` est ``seule`` pour une personne seule, ``couple`` pour un couple :
+    les deux tables du dépôt, récrites à leur ligne de l'année, que le portage
+    lit comme les siennes. Depuis 2007, l'ASPA n'a plus deux étages."""
+    assert annee > 2006
+
+    def a(valeur: float):
+        def retoucher(texte: str) -> str:
+            lignes = texte.splitlines()
+            debut = f"{annee},"
+            rang = next(i for i, l in enumerate(lignes) if l.startswith(debut))
+            lignes[rang] = f"{annee},{valeur:.6f}," + lignes[rang].split(",", 2)[2]
+            return "\n".join(lignes) + "\n"
+        return retoucher
+
+    tables = {"minimum_vieillesse.csv": seule, "minimum_vieillesse_couple.csv": couple}
+    retouches = {f"reference/legislation/{fichier}": a(valeur)
+                 for fichier, valeur in tables.items()
+                 if float(_de_la_table(LEGISLATION / fichier, annee)) != valeur}
+    copie = facade.donnees_retouchees(request, ("barème de l'ASPA", annee, seule, couple),
+                                      retouches)
+    return facade.simulateur_du_test(request, Parametres(racine_donnees=copie))
+
+
 @pytest.mark.parametrize("pensions, conjoint, chez_lui", ASPA_SAPHIR)
 def test_l_aspa_de_saphir_est_celle_du_depot_a_bareme_egal(request, pensions, conjoint,
                                                             chez_lui):
     """L'allocation différentielle sous le plafond d'une personne seule ou du
     couple, partagée par moitié ou bornée au montant d'une personne seule : la
-    règle du dépôt (`droit/foyer.py`), sur son barème, au dixième de centime."""
-    simulateur = facade.simulateur_du_test(request)
-    actuel = simulateur.scenario_actuel
-    moteur = SimpleNamespace(minimum_vieillesse=_BaremeDeSaphir(), parametres=actuel.parametres,
-                             macro=actuel.macro,
-                             carrieres_hors_de_france=actuel.carrieres_hors_de_france)
+    règle du dépôt (`droit/foyer.py`), sur son barème — la moyenne de l'année,
+    d'une personne seule et d'un couple, posée sur une copie des données —, au
+    dixième de centime."""
+    simulateur = _sur_un_bareme(request, 2017, ASPA_SAPHIR_2017["seule"],
+                                ASPA_SAPHIR_2017["couple"])
     du_conjoint = None if conjoint is None else {
         "naissance": f"{2017 - conjoint[0]}-07-01", "sexe": "F", "mariage": None,
         "ressources": conjoint[1], "invalidite": None}
     carriere = simulateur.carriere_simple(
         annee_naissance=1947, sexe="H", affiliation="salarie_prive_non_cadre",
         age_liquidation=66.0, age_debut=20.0, niveau_salaire=0.3, conjoint=du_conjoint)
-    au_depot = foyer.foyer_et_net(moteur, carriere.personne, "2017-12-31", 2017, pensions,
+    au_depot = foyer.foyer_et_net(simulateur.scenario_actuel, carriere.personne, "2017-12-31",
+                                  2017, pensions,
                                   True, carriere=carriere).minimum_vieillesse
     assert au_depot == pytest.approx(chez_lui, abs=1e-3), (
         f"saphir, ASPA de {pensions} € (conjoint {conjoint}) : {chez_lui} € chez lui, "
@@ -1369,23 +1379,6 @@ def _impot_du_bareme_sans_arrondi(annee: int, revenu: float) -> float:
                for t, bas, haut in zip(b["taux"], bornes, bornes[1:]))
 
 
-class _Bareme:
-    """Un barème de l'ASPA, d'une personne seule et d'un couple, sans les deux
-    étages, où le dépôt lit le sien."""
-
-    def __init__(self, seule, couple):
-        self.seule, self.couple = seule, couple
-
-    def plafond(self, annee):
-        return self.seule, Fiabilite.HAUTE
-
-    def plafond_couple(self, annee):
-        return self.couple, Fiabilite.HAUTE
-
-    def deux_etages(self, annee):
-        return None
-
-
 def test_le_bareme_de_l_aspa_d_euromod_est_celui_du_depot_sauf_ses_arrondis():
     """Son mensuel est celui du dépôt à un centime près — l'annuel de la caisse
     divisé par douze —, sauf en 2016 et en 2018, où il arrondit à l'euro, et
@@ -1406,8 +1399,6 @@ def test_le_bareme_de_l_aspa_d_euromod_est_celui_du_depot_sauf_ses_arrondis():
                     f"euromod, ASPA {cle} de {annee} : {chez_lui} € chez lui, {au_depot} au dépôt")
 
 
-@pytest.mark.sur_le_moteur_python("un barème de l'ASPA posé à la main : la façade ne transmet pas "
-                                   "une table retouchée")
 @pytest.mark.parametrize("cas", sorted(ASPA_REJOUEE_EUROMOD))
 def test_l_aspa_d_euromod_retranche_des_pensions_l_abattement_des_personnes_agees(
         request, depot, cas):
@@ -1425,11 +1416,7 @@ def test_l_aspa_d_euromod_retranche_des_pensions_l_abattement_des_personnes_agee
     allocataires = 2 if menage == "deux" else 1
     pensions = 3_000 * (1 if menage == "seule" else 2)
     assert chez_lui == pytest.approx(plafond - (pensions - allocataires * abattement), abs=0.01)
-    simulateur = facade.simulateur_du_test(request)
-    actuel = simulateur.scenario_actuel
-    moteur = SimpleNamespace(minimum_vieillesse=_Bareme(seule, couple), parametres=actuel.parametres,
-                             macro=actuel.macro,
-                             carrieres_hors_de_france=actuel.carrieres_hors_de_france)
+    simulateur = _sur_un_bareme(request, annee, seule, couple)
     conjoint = None if menage == "seule" else {
         "naissance": f"{annee - (70 if menage == 'deux' else 60)}-07-01", "sexe": "F",
         "mariage": None, "ressources": 3_000, "invalidite": None}
@@ -1437,7 +1424,7 @@ def test_l_aspa_d_euromod_retranche_des_pensions_l_abattement_des_personnes_agee
         annee_naissance=annee - 70, sexe="H", affiliation="salarie_prive_non_cadre",
         age_liquidation=66.0, age_debut=20.0, niveau_salaire=0.3, conjoint=conjoint)
     au_depot = allocataires * foyer.foyer_et_net(
-        moteur, carriere.personne, f"{annee}-12-31", annee, 3_000, True,
+        simulateur.scenario_actuel, carriere.personne, f"{annee}-12-31", annee, 3_000, True,
         carriere=carriere).minimum_vieillesse
     loi = seule - 3_000 if menage == "seule" else (
         couple - 6_000 if menage == "deux" else min(seule, couple - 6_000))
