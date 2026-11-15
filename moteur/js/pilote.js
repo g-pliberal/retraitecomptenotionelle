@@ -144,9 +144,14 @@ export function pointFixe(depart, proposer) {
     if (confirme > propose + 1e-9) {
       // L'âge plus précoce n'est pas ouvert sous SES règles, mais le droit peut
       // s'ouvrir entre les deux (durée datée par la date d'effet depuis la
-      // suspension de 2026) : on essaie l'âge qu'il oppose alors.
-      if (confirme < age - 1e-9) {
-        age = confirme;
+      // suspension de 2026) : on remonte les âges qu'il oppose alors, et on
+      // ne retient que celui qui se confirme lui-même. Sans quoi une durée qui
+      // monte d'un bloc au 1er janvier — l'année agricole — faisait passer la
+      // recherche d'une année à l'autre jusqu'au bout des passes, sur un âge
+      // où le droit n'est pas ouvert (action 192, étape 2).
+      const ouvert = premierAgeOuvert(confirme, age, proposer);
+      if (ouvert !== null) {
+        age = ouvert;
         continue;
       }
       break;
@@ -154,6 +159,26 @@ export function pointFixe(depart, proposer) {
     age = propose;
   }
   return age;
+}
+
+/**
+ * Le premier âge, de `essai` en montant et avant `plafond`, que `proposer`
+ * confirme lui-même — le droit ne lui oppose pas d'âge plus tardif —, ou
+ * `null`. La montée suit les âges que le droit oppose, au plus
+ * `PASSES_LIQUIDATION` fois. Voir `_premier_age_ouvert` (pilote.py).
+ */
+function premierAgeOuvert(essai, plafond, proposer) {
+  for (let passe = 0; passe < PASSES_LIQUIDATION && essai < plafond - 1e-9; passe += 1) {
+    const propose = proposer(essai);
+    if (propose === null) {
+      return null;
+    }
+    if (propose <= essai + 1e-9) {
+      return essai;
+    }
+    essai = propose;
+  }
+  return null;
 }
 
 /**

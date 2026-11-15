@@ -8656,6 +8656,72 @@ def test_avant_novembre_2012_le_ne_au_dernier_trimestre_reunit_ses_quatre_trimes
         "non_ouverte", "carriere_longue"]
 
 
+def test_le_non_salarie_agricole_debute_avec_quatre_trimestres_a_son_regime(simulateur):
+    """Le non-salarié agricole est tenu pour entré avant la borne avec QUATRE
+    trimestres validés à son régime « à la fin de l'année au cours de laquelle
+    est survenu » l'anniversaire, quel que soit son mois de naissance : le
+    III de l'article 28 ter du décret n° 55-753 dès 2004 (LEGIARTI000006763597),
+    puis l'article D. 732-40 du code rural, de sa rédaction de 2005
+    (LEGIARTI000006597425, « soit des conditions définies à l'article
+    D. 351-1-3 du code de la sécurité sociale, soit ») à celle de 2026
+    (LEGIARTI000053365409, « par dérogation à l'article D. 351-1-3 »). La MSA
+    le dit de même : « au moins quatre trimestres si vous étiez non-salarié
+    agricole ; cinq trimestres si vous étiez salarié (quatre trimestres si
+    vous êtes né au cours du dernier trimestre) » (guide « La retraite
+    anticipée pour longue carrière », réf. 11342, janvier 2020). Le modèle lui
+    en demandait cinq, comme au salarié. Trois aides familiaux devenus chefs
+    d'exploitation, chacun entré le 15 décembre de l'année d'avant celle de
+    la borne, qui ne valide rien au régime, présent au 1er janvier suivant :
+    quatre trimestres à la fin de l'année de l'anniversaire, aucun n'est né
+    au dernier trimestre.
+
+    - Né le 15 juin 1965, quatre trimestres en 1983, l'année de ses dix-huit
+      ans ; il part le 1er janvier 2026, à soixante ans et six mois, avec les
+      172 trimestres cotisés de 1983 à 2025 pour 172 requis : la porte des
+      dix-huit ans, à soixante ans (D. 351-1-1, I), sous la rédaction de 2026.
+    - Né le 15 septembre 1964, quatre trimestres en 1982 ; il part le
+      1er janvier 2025, à soixante ans et trois mois, avec les 172 trimestres
+      de 1982 à 2024 pour 171 requis : la même porte, sous la rédaction de
+      2023 (LEGIARTI000047634525).
+    - Né le 15 juin 1950, quatre trimestres en 1967, l'année de ses dix-sept
+      ans ; il part le 1er janvier 2010, à cinquante-neuf ans et six mois,
+      avec les 172 trimestres de 1967 à 2009, pour 162 requis et 170
+      d'assurance : la porte des dix-sept ans, à cinquante-neuf ans, sous la
+      rédaction de 2005.
+
+    Le salarié du même parcours, quatre trimestres à la fin de l'année de la
+    borne et né avant octobre, n'a pas la porte (D. 351-1-3). Dans les deux
+    moteurs."""
+    from retraite_notionnelle import chronologie
+
+    def construite(annee_naissance, mois_naissance, age_debut, age, agricole=True):
+        metiers = ([Metier("collaborateur_agricole", age_debut, 1.0),
+                    Metier("exploitant_agricole", age_debut + 4.0, 1.0)] if agricole
+                   else [Metier("salarie_prive_non_cadre", age_debut, 1.0)])
+        return chronologie.completer(chronologie.du_parcours(
+            annee_naissance=annee_naissance, sexe="H", mois_naissance=mois_naissance,
+            jour_naissance=15, age_liquidation=age, metiers=metiers))
+
+    cas = [(1965, 6, 17.5, 60.5, "janvier 2026", 1983),
+           (1964, 9, 17.25, 60.25, "janvier 2025", 1982),
+           (1950, 6, 16.5, 59.5, "janvier 2010", 1967)]
+    construites = []
+    for annee_naissance, mois, age_debut, age, effet, annee_de_la_borne in cas:
+        for agricole in (True, False):
+            parcours = construite(annee_naissance, mois, age_debut, age, agricole)
+            carriere = Carriere.depuis_chronologie(parcours, simulateur.macro)
+            assert str(carriere.date_liquidation) == effet
+            # Quatre trimestres à la fin de l'année de la borne, aucun avant.
+            assert sum(l.trimestres_valides for l in carriere.lignes
+                       if l.annee <= annee_de_la_borne) == 4
+            assert sum(carriere.trimestres_retenus(l) for l in carriere.lignes
+                       if l.cotise) == 172
+            construites.append(parcours)
+
+    assert _motifs_d_ouverture_en_deux_moteurs(simulateur, construites) == [
+        "carriere_longue", "non_ouverte"] * 3
+
+
 def _entre_tot(annee_naissance: int, mois_naissance: int, age_debut: float, age: float,
                inactif: tuple[int, ...] = (), motif: str = "inactivite",
                affiliation: str = "salarie_prive_non_cadre") -> dict:

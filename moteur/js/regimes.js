@@ -2055,13 +2055,14 @@ export class CarriereLongue {
    * Jusqu'en octobre 2012, la porte exige aussi une durée d'assurance, tous
    * régimes, de huit trimestres au-delà de la durée requise (chapeau de
    * D. 351-1-1, rédactions de 2003 et de 2010) : `trimestresAssurance` est
-   * celle que le taux lit ; sans elle, la condition n'est pas lue. Voir le
-   * Python.
+   * celle que le taux lit ; sans elle, la condition n'est pas lue. `agricoles`
+   * sont les trimestres validés au régime des non-salariés agricoles, année
+   * par année (`entreePrecoce`). Voir le Python.
    *
    * @returns {[number, number]|null} âge de départ et fiabilité.
    */
   ageDeDepart(carriere, anneeLiquidation, trimestresCotises, requis, etrangers = null,
-    fonctionPublique = false, trimestresAssurance = null) {
+    fonctionPublique = false, trimestresAssurance = null, agricoles = null) {
     const portes = this.portes(carriere, fonctionPublique);
     if (portes === null) {
       return null;
@@ -2071,8 +2072,8 @@ export class CarriereLongue {
     let meilleur = null;
     for (const [ageMax, trimestresDebut, ageDepart, supplement, fiabilite, assurance]
       of portes) {
-      if (!this.entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers)
-          || trimestresCotises < requis + supplement) {
+      if (!this.entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers,
+        agricoles) || trimestresCotises < requis + supplement) {
         continue;
       }
       if (assurance !== null && trimestresAssurance !== null
@@ -2102,7 +2103,7 @@ export class CarriereLongue {
    * où ses durées sont réunies, et la plus précoce l'emporte.
    */
   agePropose(carriere, anneeLiquidation, trimestresCotises, requis, ageLiquidation,
-    etrangers = null, fonctionPublique = false, trimestresAssurance = null) {
+    etrangers = null, fonctionPublique = false, trimestresAssurance = null, agricoles = null) {
     const portes = this.portes(carriere, fonctionPublique);
     if (portes === null) {
       return null;
@@ -2110,7 +2111,8 @@ export class CarriereLongue {
     requis = this.requisDe(carriere, requis, fonctionPublique);
     let meilleur = null;
     for (const [ageMax, trimestresDebut, ageDepart, supplement, , assurance] of portes) {
-      if (!this.entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers)) {
+      if (!this.entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers,
+        agricoles)) {
         continue;
       }
       let atteint = ageLiquidation + (requis + supplement - trimestresCotises) / 4.0;
@@ -2136,8 +2138,16 @@ export class CarriereLongue {
    * au cours du dernier trimestre de l'année civile (D. 351-1-3, 2°) : le modèle
    * lit le mois de naissance. `etrangers`, une `Map` de l'année aux trimestres
    * qu'un accord fait compter hors de France, comptent ici comme en France.
+   *
+   * Le non-salarié agricole l'est aussi avec QUATRE trimestres validés à son
+   * régime à la fin de la même année, quel que soit son mois de naissance :
+   * « soit » les conditions de D. 351-1-3, « soit » ceux-là (III de l'article
+   * 28 ter du décret n° 55-753 dès 2004, puis D. 732-40 du code rural), « par
+   * dérogation à l'article D. 351-1-3 » dans la rédaction de 2026. `agricoles`
+   * est la `Map` de l'année à ces trimestres ; sans elle, la voie n'est pas lue.
    */
-  entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers = null) {
+  entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers = null,
+    agricoles = null) {
     // Quatre trimestres au plus par année civile, activités cumulées comprises.
     // Cotisée ou assimilée, toute ligne qui valide des trimestres compte.
     const parAnnee = new Map();
@@ -2158,6 +2168,13 @@ export class CarriereLongue {
       acquis += Math.min(4, trimestres);
     }
     if (acquis >= trimestresDebut) return true;
+    let auRegimeAgricole = 0;
+    for (const [annee, trimestres] of agricoles ?? []) {
+      if (annee <= carriere.annee_naissance + ageMax && annee < anneeLiquidation) {
+        auRegimeAgricole += Math.min(4, trimestres);
+      }
+    }
+    if (auRegimeAgricole >= CarriereLongue.TRIMESTRES_DE_DEBUT_AGRICOLES) return true;
     if (carriere.mois_naissance < CarriereLongue.MOIS_DERNIER_TRIMESTRE) return false;
     if (carriere.dateLiquidation.rang < CarriereLongue.QUATRE_TRIMESTRES_A_LA_FIN_DE_L_ANNEE_DEPUIS) {
       // Avant novembre 2012, dans l'année de l'anniversaire seule.
@@ -2175,6 +2192,11 @@ CarriereLongue.MOIS_DERNIER_TRIMESTRE = 10;
  * seule (D. 351-1-3, 2° ; décret n° 2012-847, article 14).
  */
 CarriereLongue.QUATRE_TRIMESTRES_A_LA_FIN_DE_L_ANNEE_DEPUIS = new DateMois(2012, 11).rang;
+/**
+ * Les trimestres validés à son régime qui tiennent le non-salarié agricole
+ * pour entré avant la borne (D. 732-40 du code rural, toutes ses rédactions).
+ */
+CarriereLongue.TRIMESTRES_DE_DEBUT_AGRICOLES = 4;
 /** Rang du mois de septembre 2026 : premières pensions où les enfants comptent. */
 CarriereLongue.ENFANTS_REPUTES_COTISES_DEPUIS = 2026 * 12 + 8;
 CarriereLongue.ENFANTS_REPUTES_COTISES_MAXIMUM = 2;

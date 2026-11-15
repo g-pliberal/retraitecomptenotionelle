@@ -558,8 +558,11 @@ def test_la_grille_porte_au_minimum_trop_de_nouveaux_retraites_et_aucun_fonction
     ÉCART DÉCLARÉ. Parmi les nouveaux retraités de 2024 de la grille, ceux du
     régime général (Cnav, artisans, contractuels) sont au minimum contributif
     pour 24 % d'entre eux, deux cinquièmes de trop : le salarié au Smic et l'inapte,
-    hommes l'un et l'autre. Aucun fonctionnaire n'y touche le minimum garanti,
-    et l'exploitant agricole, seul de son régime, a toujours le sien. Les
+    hommes l'un et l'autre. Aucun fonctionnaire n'y touche le minimum garanti.
+    L'exploitant agricole, seul de son régime, avait toujours le sien ; il n'a
+    plus de cohorte qui parte en 2024 depuis qu'il a la porte des vingt ans de
+    la carrière longue (action 192, étape 2, 15 novembre 2026) : celle de 1962
+    part en 2023, la suivante après 2024. Les
     mêmes cas types, que ``scripts/part_minimum_contributif.py --grille
     reference`` pèse aux personnes de 2020, en portent 10,8 % au minimum en
     2024 : la part dépend des poids, faute de population
@@ -569,15 +572,14 @@ def test_la_grille_porte_au_minimum_trop_de_nouveaux_retraites_et_aucun_fonction
     publie = temoin["valeurs"]["08_graphique_1"]
     nouveaux = [c for c in grille if c.nouvelle]
     assert {c.code for c in nouveaux if au_minimum(c.code, c.generation)} == {
-        "smic_carriere_complete", "smic_carriere_complete~inapte", "exploitant_agricole"}
+        "smic_carriere_complete", "smic_carriere_complete~inapte"}
     general = [c for c in nouveaux if _regime_principal(c.code) == "regime_general"]
     assert _part_au_minimum(general, au_minimum) > publie["regime_general"]["2024"]["valeur"]
     for regime in ("cnracl", "fpe_civils", "fpe_militaires"):
         lot = [c for c in nouveaux if _regime_principal(c.code) == regime]
         assert lot and _part_au_minimum(lot, au_minimum) == 0.0, regime
         assert publie[regime]["2024"]["valeur"] > 4, regime
-    exploitants = [c for c in nouveaux if _regime_principal(c.code) == "msa_non_salaries"]
-    assert _part_au_minimum(exploitants, au_minimum) == 100.0
+    assert not [c for c in nouveaux if _regime_principal(c.code) == "msa_non_salaries"]
     assert publie["msa_non_salaries"]["2024"]["valeur"] < 20
 
 
@@ -1079,7 +1081,7 @@ def test_la_grille_met_chaque_regime_de_2024_a_un_ou_deux_ages_quand_la_source_l
     cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
     nouveaux = [c for c in grille if c.nouvelle]
     assert {cas.code for cas in GRILLE_DU_COUT} - {c.code for c in nouveaux} == {
-        "fonctionnaire_sedentaire", "fonctionnaire_actif~sedentaire"}
+        "fonctionnaire_sedentaire", "fonctionnaire_actif~sedentaire", "exploitant_agricole"}
 
     def regime(c) -> str:
         return REGIME_PRINCIPAL[cas_types[c.code].caisses[0]]
@@ -1090,7 +1092,6 @@ def test_la_grille_met_chaque_regime_de_2024_a_un_ou_deux_ages_quand_la_source_l
     lignes = {
         "tous_regimes": lambda c: True,
         "regime_general": lambda c: regime(c) == "regime_general",
-        "msa_non_salaries": lambda c: regime(c) == "msa_non_salaries",
         "fpe_civils": lambda c: regime(c) == "fpe_civils",
         "fpe_militaires": lambda c: regime(c) == "fpe_militaires",
         "cnracl": lambda c: regime(c) == "cnracl",
@@ -1122,7 +1123,7 @@ def test_la_grille_met_chaque_regime_de_2024_a_un_ou_deux_ages_quand_la_source_l
     assert 29 < distance["regime_general"] < 33
 
     # Un seul âge de départ en 2024 : toute la ligne dans une tranche, à 100 moins sa part publiée.
-    une_tranche = {"msa_non_salaries": "62_ans", "fpe_militaires": "moins_de_57",
+    une_tranche = {"fpe_militaires": "moins_de_57",
                    "cnracl": "62_ans", "sncf": "moins_de_57", "cnavpl": "plus_de_66"}
     for ligne, tranche in une_tranche.items():
         assert parts[ligne][tranche] == pytest.approx(100.0), ligne
@@ -1835,8 +1836,11 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
     # mesure de chaque jeu de présomptions, à la même marge.
     jour = vocabulaire.presomptions()["jour_de_naissance"]["valeur"]
     (bas_minima, haut_minima), (bas_net, haut_net) = {
-        15: ((7_450, 7_550), (28_980, 29_040)),   # mesuré : 7 496,79 et 29 009,54
-        1: ((7_540, 7_640), (28_845, 28_905)),    # mesuré : 7 590,17 et 28 874,77
+        # Mesuré le 15 novembre 2026, l'exploitant agricole parti un an plus
+        # tôt par la porte des vingt ans (action 192, étape 2) ; avant : 7 496,79
+        # et 29 009,54 au 15, 7 590,17 et 28 874,77 au 1er.
+        15: ((7_250, 7_350), (29_085, 29_145)),   # mesuré : 7 304,40 et 29 115,57
+        1: ((7_275, 7_375), (29_010, 29_070)),    # mesuré : 7 326,25 et 29 041,87
     }[jour]
     assert bas_minima < minima < haut_minima
     assert bas_net < en_courants - minima < haut_net

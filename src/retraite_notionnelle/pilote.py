@@ -194,14 +194,38 @@ def point_fixe(age: float, proposer: Callable[[float], float | None]) -> float:
             # droit peut s'ouvrir entre les deux : depuis la suspension de
             # 2026, la durée opposable dépend de la date d'effet, et un né
             # en 1965 que la règle de 2027 ferait partir à 60 ans et 9 mois
-            # part à 61 ans sous celle de 2026. On essaie donc l'âge que le
-            # droit oppose alors, s'il reste plus précoce que l'âge retenu.
-            if confirme < age - 1e-9:
-                age = confirme
+            # part à 61 ans sous celle de 2026. On remonte donc les âges que
+            # le droit oppose alors, et on ne retient que celui qui se
+            # confirme lui-même, s'il reste plus précoce que l'âge retenu :
+            # une durée qui monte d'un bloc au 1er janvier — l'année agricole
+            # — faisait passer la recherche d'une année à l'autre jusqu'au
+            # bout des passes, sur un âge où le droit n'est pas ouvert
+            # (action 192, étape 2).
+            ouvert = _premier_age_ouvert(confirme, age, proposer)
+            if ouvert is not None:
+                age = ouvert
                 continue
             break
         age = propose
     return age
+
+
+def _premier_age_ouvert(essai: float, plafond: float,
+                        proposer: Callable[[float], float | None]) -> float | None:
+    """Le premier âge, de ``essai`` en montant et avant ``plafond``, que
+    ``proposer`` confirme lui-même, ou ``None`` : la montée suit les âges que
+    le droit oppose, au plus :data:`PASSES_LIQUIDATION` fois. Le jumeau de
+    ``premierAgeOuvert`` (``moteur/js/pilote.js``)."""
+    passe = 0
+    while passe < PASSES_LIQUIDATION and essai < plafond - 1e-9:
+        propose = proposer(essai)
+        if propose is None:
+            return None
+        if propose <= essai + 1e-9:
+            return essai
+        essai = propose
+        passe += 1
+    return None
 
 
 def age_propose(simulateur: Simulateur, cas: CasType, generation: int,

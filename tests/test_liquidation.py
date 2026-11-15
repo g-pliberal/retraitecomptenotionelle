@@ -548,6 +548,34 @@ def test_le_pilote_fait_descendre_a_la_carriere_longue_une_carriere_qui_ne_valid
 
 # -- le nombre d'appels déclaré ----------------------------------------------------
 
+@pytest.mark.parametrize("generation", [1953, 1954])
+def test_le_pilote_ne_fait_pas_partir_l_exploitant_avant_que_sa_duree_soit_reunie(
+        simulateur, generation):
+    """Le régime agricole valide l'année entière à qui y est présent au
+    1er janvier : la durée cotisée de l'exploitant agricole monte de quatre
+    trimestres au 1er janvier, et non d'un trimestre tous les trois mois. Né en
+    janvier 1953 et installé au 1er janvier 1973, l'année de ses vingt ans, il
+    a les quatre trimestres de 1973 à son régime à la fin de cette année
+    (D. 732-40 du code rural) et la porte des vingt ans, à 60 ans, sur les
+    165 trimestres cotisés de sa génération (D. 351-1-1, rédaction du
+    1er novembre 2012). Posé à la main : 4 × 40 = 160 trimestres de 1973 à
+    2012, 164 avec 2013, 168 avec 2014. Il part donc au début de 2014, à
+    61 ans ; le né de janvier 1954, 164 trimestres à la fin de 2014, au début
+    de 2015, à 61 ans aussi. Le droit date la durée cotisée comme si elle
+    montait au fil des mois (``CarriereLongue.agePropose``) : liquidée en 2013,
+    la carrière se voit opposer un trimestre de plus, liquidée en 2014, un âge
+    de 2013. Le point fixe passait de l'un à l'autre, et s'arrêtait au bout de
+    ses passes, à 60 ans et 8 mois, où le droit n'est pas ouvert (action 192,
+    étape 2). Dans les deux moteurs."""
+    cas = next(c for c in CAS_TYPES if c.code == "exploitant_agricole")
+    retenus, _, refus = pont.ages_de_depart(
+        [{"cle": cas.code, **cas.pour_le_portage(simulateur, generation)}],
+        simulateur.parametres)
+    assert not refus
+    assert retenus[cas.code] == pytest.approx(61.0)
+    assert pilote.age_de_depart(simulateur, cas, generation) == pytest.approx(61.0)
+
+
 def test_chaque_temoin_declare_ses_appels_de_liquider_sous_le_nombre_declare():
     """Chaque témoin compte ses appels de ``liquider``, liquidations d'essai
     comprises : ``scripts/construire_temoins.py`` les écrit, le portage

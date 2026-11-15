@@ -330,7 +330,8 @@ function carriereLongueAcquise(moteur, carriere, periodes) {
   const anticipe = moteur.carriereLongue.ageDeDepart(
     carriere, anneeLiquidation, cotises, requis, etrangers.cotises[famille],
     moteur.carriereLongue.deLaFonctionPublique(periodes.map(([code]) => code)),
-    ouvrirLeDroit.dureeDAssurance(carriere, majoration, etrangers.trimestres(famille)));
+    ouvrirLeDroit.dureeDAssurance(carriere, majoration, etrangers.trimestres(famille)),
+    ouvrirLeDroit.trimestresAgricoles(moteur, carriere));
   return anticipe === null ? null : anticipe[0];
 }
 

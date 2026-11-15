@@ -1,17 +1,5 @@
 # Étape 2 : la carrière longue du non-salarié agricole, quatre trimestres à la fin de l'année de l'anniversaire
 
-**Reprise, au 12 novembre 2026.** La lecture est faite, la règle est écrite,
-mais elle n'est pas publiée. Le non-salarié agricole est tenu pour entré tôt
-avec quatre trimestres à son régime à la fin de l'année de l'anniversaire,
-depuis 2004 ; la MSA l'applique. La règle et son test, verts dans les deux
-moteurs, sont gardés dans un fichier à rejouer. Publiée, elle avance d'un an
-le départ du cas type de l'exploitant agricole, le seul de son régime dans le
-coût : sept tests du coût se déplacent, et le calcul qui date les cas types
-fait partir celui de 1953 à un âge où le droit n'est pas ouvert. Ce qui
-reste : corriger ce calcul, le test d'abord ; rejouer le fichier ; remesurer
-les sept tests. Au propriétaire, avant : garder ou recaler ce cas type.
-Détail plus bas.
-
 **La demande, le 12 novembre 2026.** La passe de lecture de l'action 184 a
 trouvé des points que le modèle n'applique pas ou qu'elle n'a pas pu vérifier
 (note `184/2026-11-12-etape-6-bilan-de-la-passe.md`). La session

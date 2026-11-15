@@ -1954,11 +1954,13 @@ def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):
     # depuis les civils de l'État pesés sur leurs départs actifs (action 138,
     # étape 3) ; de seize depuis que chaque cohorte de la grille part l'année
     # du droit de sa génération (même étape, 18 octobre 2026), la dérive de
-    # 2070 passant de 1,033 à 1,050. Les deux lectures encadrent encore la
-    # vérité.
+    # 2070 passant de 1,033 à 1,050 ; de vingt et demi depuis que l'exploitant
+    # agricole a la porte des vingt ans de la carrière longue et part un an plus
+    # tôt (action 192, étape 2, 15 novembre 2026). Les deux lectures encadrent
+    # encore la vérité.
     ecart = cout.dette_derive.horizon("notionnel_liberal") - cout.dette.horizon(
         "notionnel_liberal")
-    assert 0.12 < ecart < 0.20, ecart
+    assert 0.12 < ecart < 0.22, ecart
 
 
 def test_le_pib_projete_croit_moins_vite_que_l_hypothese_nominale(avenir):

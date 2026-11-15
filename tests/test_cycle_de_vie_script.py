@@ -221,7 +221,13 @@ def test_les_ages_d_un_cas_type_ne_tiennent_qu_a_sa_mortalite(portage, simulateu
     """Le cas type n'entre dans ses âges d'équilibre que par la mortalité de
     son diviseur, la population où son salaire le range, et par son sexe pour
     la part de vie : le salarié au SMIC et l'exploitant agricole, du même
-    vingtile, ont les mêmes âges, à des âges de départ qu'une année sépare. Le
+    vingtile, ont les mêmes âges. Une année séparait leurs départs jusqu'au
+    15 novembre 2026 ; ils partent depuis tous deux à soixante-deux ans, par
+    la porte des vingt ans de la carrière longue : l'exploitant né en janvier
+    2000 et installé à vingt ans a les quatre trimestres de 2020 à son régime
+    à la fin de l'année de ses vingt ans, qui lui suffisent (D. 732-40 du
+    code rural), quand le modèle lui en demandait cinq et ne lui ouvrait que
+    la porte des vingt et un ans, à soixante-trois (action 192, étape 2). Le
     fonctionnaire de catégorie active le montrait, du vingtile du salarié au
     salaire moyen et parti cinq ans avant lui, jusqu'à son recalage sur les
     actifs de la CNRACL (action 159, étape 5), qui le range au onzième. Le
@@ -235,7 +241,7 @@ def test_les_ages_d_un_cas_type_ne_tiennent_qu_a_sa_mortalite(portage, simulateu
     moyen, smic, exploitant = (ages[f"{code}|2000"] for code in (
         "salaire_moyen", "smic_carriere_complete", "exploitant_agricole"))
     assert smic["population"] == exploitant["population"] == "niveau_de_vie_v04"
-    assert exploitant["age_de_depart"] - smic["age_de_depart"] == 1.0
+    assert exploitant["age_de_depart"] == smic["age_de_depart"] == 62.0
     assert ((smic["diviseur"], smic["part_de_vie"])
             == (exploitant["diviseur"], exploitant["part_de_vie"]))
     assert moyen["population"] == "niveau_de_vie_v14"

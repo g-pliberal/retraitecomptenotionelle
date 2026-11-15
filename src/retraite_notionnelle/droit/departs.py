@@ -365,7 +365,8 @@ def _carriere_longue_acquise(moteur: ScenarioActuel, carriere: Carriere,
     anticipe = moteur.carriere_longue.age_de_depart(
         carriere, annee_liquidation, cotises, requis, etrangers.cotises[famille],
         moteur.carriere_longue.de_la_fonction_publique(code for code, _ in periodes),
-        ouvrir.duree_d_assurance(carriere, majoration, etrangers.trimestres(famille)))
+        ouvrir.duree_d_assurance(carriere, majoration, etrangers.trimestres(famille)),
+        ouvrir.trimestres_agricoles(moteur, carriere))
     return None if anticipe is None else anticipe[0]
 
 

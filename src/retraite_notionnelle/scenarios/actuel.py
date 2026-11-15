@@ -2151,6 +2151,14 @@ class CarriereLongue:
     #: point 113).
     QUATRE_TRIMESTRES_A_LA_FIN_DE_L_ANNEE_DEPUIS = DateMois(2012, 11)
 
+    #: Les trimestres validés à son régime qui tiennent le non-salarié
+    #: agricole pour entré avant la borne, « à la fin de l'année » de
+    #: l'anniversaire et quel que soit son mois de naissance : III de l'article
+    #: 28 ter du décret n° 55-753 (LEGIARTI000006763597, 2004), puis D. 732-40
+    #: du code rural, de LEGIARTI000006597425 (2005) à LEGIARTI000053365409
+    #: (2026).
+    TRIMESTRES_DE_DEBUT_AGRICOLES = 4
+
     #: Génération de la règle générale, celle qui vaut à défaut d'une ligne
     #: plus précise.
     GENERATION_GENERALE = 1900.0
@@ -2331,7 +2339,8 @@ class CarriereLongue:
 
     def _entree_precoce(self, carriere: Carriere, annee_liquidation: int,
                         age_max: int, trimestres_debut: int,
-                        etrangers: dict[int, int] | None = None) -> bool:
+                        etrangers: dict[int, int] | None = None,
+                        agricoles: dict[int, int] | None = None) -> bool:
         """La condition d'entrée précoce est-elle remplie pour cette porte ?
 
         Elle se lit sur la DURÉE D'ASSURANCE validée avant la fin de l'année
@@ -2358,6 +2367,22 @@ class CarriereLongue:
         ``etrangers`` sont les trimestres qu'un accord fait compter hors de
         France, année par année : ils comptent ici comme en France (fiche
         ``totalisation_des_periodes_etrangeres``).
+
+        **Le non-salarié agricole l'est aussi avec quatre trimestres validés à
+        son régime** à la fin de la même année, quel que soit son mois de
+        naissance : sont considérés comme ayant débuté avant la borne « les
+        assurés justifiant soit des conditions définies à l'article D. 351-1-3
+        du code de la sécurité sociale, soit ayant validé au titre de
+        l'assurance vieillesse des personnes non salariées des professions
+        agricoles quatre trimestres à la fin de l'année au cours de laquelle
+        est survenu » l'anniversaire (:attr:`TRIMESTRES_DE_DEBUT_AGRICOLES`),
+        « par dérogation à l'article D. 351-1-3 » dans la rédaction de 2026 ;
+        la MSA : « au moins quatre trimestres si vous étiez non-salarié
+        agricole » (guide réf. 11342, janvier 2020). Son régime valide l'année
+        entière à qui est présent au 1er janvier, et rien à qui entre après :
+        cinq trimestres lui demanderaient une année de plus. Le modèle lui en
+        demandait cinq jusqu'au 15 novembre 2026. ``agricoles`` sont ces
+        trimestres, année par année ; sans eux, la voie n'est pas lue.
         """
         par_annee: dict[int, int] = {}
         for ligne in carriere.lignes:
@@ -2373,6 +2398,11 @@ class CarriereLongue:
                 par_annee[annee] = par_annee.get(annee, 0) + trimestres
         acquis = somme_ordonnee(min(4, trimestres) for trimestres in par_annee.values())
         if acquis >= trimestres_debut:
+            return True
+        au_regime_agricole = somme_ordonnee(
+            min(4, trimestres) for annee, trimestres in (agricoles or {}).items()
+            if annee <= carriere.annee_naissance + age_max and annee < annee_liquidation)
+        if au_regime_agricole >= self.TRIMESTRES_DE_DEBUT_AGRICOLES:
             return True
         if carriere.mois_naissance < self.MOIS_DERNIER_TRIMESTRE:
             return False
@@ -2465,7 +2495,8 @@ class CarriereLongue:
                       trimestres_cotises: int, requis: int,
                       etrangers: dict[int, int] | None = None,
                       fonction_publique: bool = False,
-                      trimestres_assurance: int | None = None
+                      trimestres_assurance: int | None = None,
+                      agricoles: dict[int, int] | None = None
                       ) -> tuple[float, Fiabilite] | None:
         """Âge le plus précoce ouvert par le dispositif, ou ``None``.
 
@@ -2476,7 +2507,8 @@ class CarriereLongue:
         réputés tels — c'est ce qui distingue ce dispositif de la durée
         d'assurance qui commande la décote. ``trimestres_cotises`` est la durée que
         :meth:`cotises_reputes` a déjà complétée, ``etrangers`` les trimestres
-        cotisés hors de France, année par année (:meth:`_entree_precoce`).
+        cotisés hors de France, année par année, ``agricoles`` ceux que valide
+        le régime des non-salariés agricoles (:meth:`_entree_precoce`).
 
         **Et jusqu'en octobre 2012, la durée d'assurance aussi** : les
         rédactions de 2003 et de 2010 n'ouvrent le dispositif qu'aux assurés
@@ -2501,7 +2533,8 @@ class CarriereLongue:
         ouvertures = []
         for age_max, trimestres_debut, age_depart, supplement, fiabilite, assurance in portes:
             if not self._entree_precoce(
-                    carriere, annee_liquidation, age_max, trimestres_debut, etrangers):
+                    carriere, annee_liquidation, age_max, trimestres_debut, etrangers,
+                    agricoles):
                 continue
             if trimestres_cotises < requis + supplement:
                 continue
@@ -2516,7 +2549,8 @@ class CarriereLongue:
                     age_liquidation: float,
                     etrangers: dict[int, int] | None = None,
                     fonction_publique: bool = False,
-                    trimestres_assurance: int | None = None) -> float | None:
+                    trimestres_assurance: int | None = None,
+                    agricoles: dict[int, int] | None = None) -> float | None:
         """Âge le plus précoce que le dispositif ouvrirait à qui continue de
         cotiser jusqu'à son départ, ou ``None``.
 
@@ -2539,7 +2573,8 @@ class CarriereLongue:
         candidats = []
         for age_max, trimestres_debut, age_depart, supplement, _, assurance in portes:
             if not self._entree_precoce(
-                    carriere, annee_liquidation, age_max, trimestres_debut, etrangers):
+                    carriere, annee_liquidation, age_max, trimestres_debut, etrangers,
+                    agricoles):
                 continue
             atteint = age_liquidation + (requis + supplement - trimestres_cotises) / 4.0
             if assurance is not None and trimestres_assurance is not None:

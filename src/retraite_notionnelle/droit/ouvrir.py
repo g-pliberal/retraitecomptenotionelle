@@ -384,6 +384,7 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
             # La durée d'assurance que le taux lit, tous régimes : celle que
             # les rédactions d'avant novembre 2012 opposent aussi.
             durees.pour_le_taux(famille),
+            trimestres_agricoles(moteur, carriere),
         )
         # Au mois près : la table écrit soixante ans et huit mois 60,67, que
         # l'âge exact, 60,666…, n'atteindrait jamais.
@@ -1291,7 +1292,23 @@ def age_carriere_longue(moteur, carriere: Carriere,
         etrangers.cotises[famille],
         moteur.carriere_longue.de_la_fonction_publique(code for code, _ in periodes),
         duree_d_assurance(carriere, majoration, etrangers.trimestres(famille)),
+        trimestres_agricoles(moteur, carriere),
     )
+
+
+def trimestres_agricoles(moteur, carriere: Carriere) -> dict[int, int]:
+    """Les trimestres que le régime des non-salariés agricoles valide, année
+    par année : ceux des lignes qu'il reçoit. Quatre d'entre eux à la fin de
+    l'année de la borne valent début d'activité (D. 732-40 du code rural,
+    :meth:`~retraite_notionnelle.scenarios.actuel.CarriereLongue._entree_precoce`)."""
+    par_annee: dict[int, int] = {}
+    for ligne in carriere.lignes:
+        if ligne.trimestres_valides > 0 and (
+                coordonner.REGIME_DES_NON_SALARIES_AGRICOLES in coordonner.regimes_de(
+                    moteur, ligne, ligne.annee, moteur.affiliations.date_entree(
+                        carriere, ligne.affiliation, ligne.annee))):
+            par_annee[ligne.annee] = par_annee.get(ligne.annee, 0) + ligne.trimestres_valides
+    return par_annee
 
 
 def duree_d_assurance(carriere: Carriere, majoration, etrangers: int) -> int:

@@ -286,6 +286,7 @@ export function ouvrir(moteur, releve, regimes = null) {
       // La durée d'assurance que le taux lit, tous régimes : celle que les
       // rédactions d'avant novembre 2012 opposent aussi.
       durees.pourLeTaux(famille),
+      trimestresAgricoles(moteur, carriere),
     );
     // Au mois près : la table écrit soixante ans et huit mois 60,67, que
     // l'âge exact, 60,666…, n'atteindrait jamais.
@@ -1082,7 +1083,27 @@ export function ageCarriereLongue(moteur, carriere, annuites) {
     etrangers.cotises[famille],
     moteur.carriereLongue.deLaFonctionPublique(annuites.map(([code]) => code)),
     dureeDAssurance(carriere, majoration, etrangers.trimestres(famille)),
+    trimestresAgricoles(moteur, carriere),
   );
+}
+
+/**
+ * Les trimestres que le régime des non-salariés agricoles valide, année par
+ * année : ceux des lignes qu'il reçoit. Quatre d'entre eux à la fin de l'année
+ * de la borne valent début d'activité (D. 732-40 du code rural,
+ * `CarriereLongue.entreePrecoce`). Voir `trimestres_agricoles` du Python.
+ */
+export function trimestresAgricoles(moteur, carriere) {
+  const parAnnee = new Map();
+  for (const ligne of carriere.lignes) {
+    if (ligne.trimestres_valides > 0 && coordonner.regimesDe(
+      moteur, ligne, ligne.annee,
+      moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee),
+    ).includes(coordonner.REGIME_DES_NON_SALARIES_AGRICOLES)) {
+      parAnnee.set(ligne.annee, (parAnnee.get(ligne.annee) ?? 0) + ligne.trimestres_valides);
+    }
+  }
+  return parAnnee;
 }
 
 /**
