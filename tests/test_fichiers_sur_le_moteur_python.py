@@ -95,6 +95,7 @@ FICHIERS = (
 #: tests sur le moteur Python, sous la marque ``sur_le_moteur_python``, et le
 #: nombre de ces tests. Il ne fait que décroître.
 RESTES = {"test_droit.py": 1, "test_liquidation.py": 10, "test_minima_agricoles.py": 3,
+          "test_oracle.py": 15,
           "test_oracle_periodes_assimilees.py": 1, "test_periodes_assimilees.py": 1,
           "test_periodes_assimilees_exemples_officiels.py": 1, "test_referents.py": 2,
           "test_simulateur.py": 37}

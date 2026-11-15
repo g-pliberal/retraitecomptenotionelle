@@ -7334,11 +7334,11 @@ du moteur, la liquidation entière et chacune de ses étapes, ses tables,
 cinquante-trois règles, « faire vivre », les constructeurs du compte, sous
 d'autres paramètres compris, et le relevé entier. `test_reversion.py`, `test_droit.py`, douze
 fichiers du relevé, `test_referents.py`, `test_sections_liberales.py`,
-`test_temps_partiel.py`, `test_releve_prolonge.py`, `test_lodeom.py` et
-`test_micro_social.py` n'ont presque plus de test sur le moteur Python.
-Le propriétaire a tranché trois questions (note de décision 0008).
+`test_temps_partiel.py`, `test_releve_prolonge.py`, `test_lodeom.py`,
+`test_micro_social.py` et `test_oracle.py` n'ont presque plus de test sur le
+moteur Python.
 Reste, une étape par session : les autres fichiers de tests, chacun avec ce
-qui lui manque (« Ce qui reste » de `2026-11-15-trois-fichiers-de-la-carriere-a-la-facade.md`).
+qui lui manque (« Ce qui reste » de `2026-11-15-l-oracle-a-la-facade.md`).
 Puis quatre études, la
 liste des fonctions gardées des deux côtés, le retrait, et les lignes du
 relevé des périodes assimilées (table de

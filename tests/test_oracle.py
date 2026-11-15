@@ -81,15 +81,11 @@ import pytest
 from outils_pont import droit_et_refait
 from retraite_notionnelle import pont
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+from facade import Carriere, entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
+from retraite_notionnelle.carriere import AnneeCarriere
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes
-from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.donnees.chargement import Fiabilite, SerieAnnuelle
-from retraite_notionnelle.droit import departs, invalidite, liquider, ouvrir
-from retraite_notionnelle.echeancier import Echeancier
-from retraite_notionnelle.scenarios.actuel import (
-    AgesAnnulationDecote, MinimumGaranti, ScenarioActuel, ValeursPoint)
 
 TEMOINS = Path(__file__).resolve().parent / "temoins"
 TEMOIN = TEMOINS / "openfisca_regime_general.json"
@@ -325,12 +321,17 @@ def _sans_les_jumeaux(monkeypatch, *jumeaux) -> None:
         monkeypatch.setattr(objet, nom, interdit)
 
 
+@pytest.mark.sur_le_moteur_python("un garde-fou du jumeau Python : il empêche ses "
+                                  "règles de calculer, et part avec elles")
 def test_le_regime_general_se_mesure_au_portage_sans_les_jumeaux_python(
         oracle, nos_calculs, monkeypatch):
     """Le moteur qui fait foi est le JavaScript (note de décision 0005) :
     chaque profil du témoin se mesure au portage, une fonction du droit après
     l'autre (``pont.droit``), et les jumeaux Python, qu'on empêche ici de
     calculer, n'y entrent pas."""
+    from retraite_notionnelle.droit import liquider, ouvrir
+    from retraite_notionnelle.scenarios.actuel import ScenarioActuel
+
     _sans_les_jumeaux(monkeypatch, (ScenarioActuel, "calculer"), (ouvrir, "duree_requise"),
                       (liquider, "duree_proratisation"), (liquider, "decote_opposable"),
                       (liquider, "salaire_de_reference"), (liquider, "trimestres_de_decote"))
@@ -664,11 +665,16 @@ def test_le_minimum_garanti_reste_proche(oracle_fonction_publique, nos_calculs_f
 
 
 
+@pytest.mark.sur_le_moteur_python("un garde-fou du jumeau Python : il empêche ses "
+                                  "règles de calculer, et part avec elles")
 def test_la_pension_civile_se_mesure_au_portage_sans_les_jumeaux_python(
         oracle_fonction_publique, nos_calculs_fonction_publique, monkeypatch):
     """Chaque profil du témoin de la pension civile se mesure au portage, le
     moteur qui fait foi, minimum garanti compris (``pont.droit``) : les
     jumeaux Python, qu'on empêche ici de calculer, n'y entrent pas."""
+    from retraite_notionnelle.droit import liquider, ouvrir
+    from retraite_notionnelle.scenarios.actuel import MinimumGaranti, ScenarioActuel
+
     _sans_les_jumeaux(monkeypatch, (ScenarioActuel, "calculer"), (ouvrir, "duree_requise"),
                       (liquider, "duree_proratisation"), (liquider, "decote_opposable"),
                       (liquider, "salaire_de_reference"), (liquider, "trimestres_de_decote"),
@@ -824,11 +830,16 @@ def test_le_coefficient_d_anticipation_arrco_concorde_sur_les_annees_pleines(
 
 
 
+@pytest.mark.sur_le_moteur_python("un garde-fou du jumeau Python : il empêche ses "
+                                  "règles de calculer, et part avec elles")
 def test_l_arrco_se_mesure_au_portage_sans_les_jumeaux_python(
         oracle_arrco, nos_points_arrco, monkeypatch):
     """Les points, l'abattement et la valeur de service de chaque profil du
     témoin de l'Arrco se mesurent au portage (``pont.droit``) : les jumeaux
     Python, qu'on empêche ici de calculer, n'y entrent pas."""
+    from retraite_notionnelle.droit import liquider
+    from retraite_notionnelle.scenarios.actuel import ScenarioActuel
+
     _sans_les_jumeaux(monkeypatch, (ScenarioActuel, "calculer"), (liquider, "valeur_du_point"))
     nos = _nos_points_arrco(_profils(oracle_arrco), pont.droit)
     assert set(nos) == set(oracle_arrco["profils"]) and nos == nos_points_arrco
@@ -1214,6 +1225,8 @@ def test_le_coefficient_d_anticipation_agirc_concorde(oracle_agirc, nos_points_a
 
 
 
+@pytest.mark.sur_le_moteur_python("un garde-fou du jumeau Python : il empêche ses "
+                                  "règles de calculer, et part avec elles")
 def test_l_agirc_se_mesure_au_portage_sans_les_jumeaux_python(
         oracle_agirc, bareme_agirc, nos_points_agirc, services_agirc, monkeypatch):
     """Le barème de l'Agirc — sa fiche, le plafond de chaque année, les bornes
@@ -1221,6 +1234,9 @@ def test_l_agirc_se_mesure_au_portage_sans_les_jumeaux_python(
     de service de chaque profil du témoin se lisent au portage
     (``pont.droit``) : les jumeaux Python, qu'on empêche ici de calculer ou de
     lire, n'y entrent pas."""
+    from retraite_notionnelle.droit import liquider
+    from retraite_notionnelle.scenarios.actuel import ScenarioActuel, ValeursPoint
+
     _sans_les_jumeaux(monkeypatch, (ScenarioActuel, "calculer"), (liquider, "valeur_du_point"),
                       (ValeursPoint, "achat"), (CatalogueRegimes, "__getitem__"),
                       (SerieAnnuelle, "__call__"))
@@ -1639,6 +1655,8 @@ def test_la_decote_du_regime_general_qui_commande_l_ircantec_concorde(
 
 
 
+@pytest.mark.sur_le_moteur_python("un garde-fou du jumeau Python : il empêche ses "
+                                  "règles de calculer, et part avec elles")
 def test_l_ircantec_se_mesure_au_portage_sans_les_jumeaux_python(
         oracle_ircantec, bareme_ircantec, nos_points_ircantec, services_ircantec,
         ages_du_taux_plein_ircantec, monkeypatch):
@@ -1646,6 +1664,8 @@ def test_l_ircantec_se_mesure_au_portage_sans_les_jumeaux_python(
     taux plein de sa génération et la valeur de service qu'OpenFisca lit se
     lisent au portage (``pont.droit``) : les jumeaux Python, qu'on empêche ici
     de calculer ou de lire, n'y entrent pas."""
+    from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, ScenarioActuel, ValeursPoint
+
     _sans_les_jumeaux(monkeypatch, (ScenarioActuel, "calculer"), (ValeursPoint, "achat"),
                       (ValeursPoint, "service"), (AgesAnnulationDecote, "age"),
                       (CatalogueRegimes, "__getitem__"), (SerieAnnuelle, "__call__"))
@@ -1934,6 +1954,8 @@ def test_la_cesure_a_la_succession_reste_mesurable(oracle, nos_pensions_alignees
     assert 0.995 < max(ecarts) < 1.000, max(ecarts)
 
 
+@pytest.mark.sur_le_moteur_python("un garde-fou du jumeau Python : il empêche ses "
+                                  "règles de calculer, et part avec elles")
 def test_les_regimes_alignes_se_mesurent_au_portage_sans_les_jumeaux_python(
         oracle, nos_pensions_alignees, monkeypatch):
     """La pension de base de chaque statut aligné, sur chaque profil du
@@ -1941,6 +1963,8 @@ def test_les_regimes_alignes_se_mesurent_au_portage_sans_les_jumeaux_python(
     par celle du régime général, chaque caisse sur ses seules années —, se
     mesure au portage (``pont.droit``) : le jumeau Python, qu'on empêche ici de
     calculer, n'y entre pas."""
+    from retraite_notionnelle.scenarios.actuel import ScenarioActuel
+
     _sans_les_jumeaux(monkeypatch, (ScenarioActuel, "calculer"))
     assert _nos_pensions_alignees(_profils(oracle), pont.droit) == nos_pensions_alignees
 
@@ -2605,12 +2629,16 @@ def _exemples_de_chaque_forme() -> list[dict]:
     return [next(e for e in exemples if forme(e["carriere"])) for forme in formes]
 
 
+@pytest.mark.sur_le_moteur_python("un garde-fou du jumeau Python : il empêche ses "
+                                  "règles de calculer, et part avec elles")
 def test_les_carrieres_des_exemples_se_batissent_au_portage_sans_les_jumeaux_python(
         monkeypatch):
     """La carrière de chaque exemple, de chaque forme, se bâtit au portage
     (``simulateur.carriere_simple``), depuis le mois d'où ses âges se comptent,
     et s'y liquide (``scenario_actuel.calculer``) : les jumeaux Python, qu'on
     empêche ici de calculer, n'y entrent pas."""
+    from retraite_notionnelle.scenarios.actuel import ScenarioActuel
+    from retraite_notionnelle.simulateur import Simulateur
     from retraite_notionnelle import calendrier, chronologie
 
     exemples = _exemples_de_chaque_forme()
@@ -2647,12 +2675,16 @@ def _mesures_sans_les_jumeaux(monkeypatch, cles: tuple[str, ...], *jumeaux,
             for exemple, carriere, resultat, cle, attendue in mesures]
 
 
+@pytest.mark.sur_le_moteur_python("un garde-fou du jumeau Python : il empêche ses "
+                                  "règles de calculer, et part avec elles")
 def test_l_ouverture_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
         monkeypatch):
     """L'âge d'ouverture du droit, le mois où il est atteint et la date d'effet
     au plus tôt se mesurent au portage (``ouvrir.age_ouverture_droit``,
     ``calendrier.en_mois``, ``carriere.date_de_l_age``) : les jumeaux Python,
     qu'on empêche ici de calculer, n'y entrent pas."""
+    from retraite_notionnelle.carriere import Carriere
+    from retraite_notionnelle.droit import ouvrir
     from retraite_notionnelle import calendrier
 
     for cas, lue, attendue in _mesures_sans_les_jumeaux(
@@ -2662,12 +2694,16 @@ def test_l_ouverture_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
         assert lue == attendue, cas
 
 
+@pytest.mark.sur_le_moteur_python("un garde-fou du jumeau Python : il empêche ses "
+                                  "règles de calculer, et part avec elles")
 def test_la_liquidation_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
         monkeypatch):
     """Les années que retient le salaire annuel moyen, la pension rapportée à
     lui et au plafond, la valeur de service au jour du départ se mesurent au
     portage (``liquider``, la période du régime, le plafond) : les jumeaux
     Python, qu'on empêche ici de calculer ou de lire, n'y entrent pas."""
+    from retraite_notionnelle.droit import liquider
+
     for cas, lue, attendue in _mesures_sans_les_jumeaux(
             monkeypatch,
             ("annees_du_salaire_annuel_moyen", "pension_base_sur_sam",
@@ -2678,6 +2714,8 @@ def test_la_liquidation_des_exemples_se_mesure_au_portage_sans_les_jumeaux_pytho
         assert lue == attendue, cas
 
 
+@pytest.mark.sur_le_moteur_python("un garde-fou du jumeau Python : il empêche ses "
+                                  "règles de calculer, et part avec elles")
 def test_la_prestation_du_rafp_se_mesure_au_portage_sans_les_jumeaux_python(
         monkeypatch):
     """L'âge légal qui ouvre le RAFP, son coefficient de majoration, son seuil
@@ -2685,6 +2723,9 @@ def test_la_prestation_du_rafp_se_mesure_au_portage_sans_les_jumeaux_python(
     forme — rente, capital en une fois ou en deux — se mesurent au portage :
     les jumeaux Python, qu'on empêche ici de calculer ou de lire, n'y entrent
     pas."""
+    from retraite_notionnelle.carriere import Carriere
+    from retraite_notionnelle.droit import departs, liquider
+
     choisis = ("erafp_1964_effet_2027_04_6000_points", "erafp_1966_effet_2029_04_3000_points",
                "erafp_1966_effet_2031_01_3000_points", "erafp_1963_effet_2026_11_5000_points",
                "erafp_ra2022_alain_capital_apres_la_base")
@@ -2699,6 +2740,8 @@ def test_la_prestation_du_rafp_se_mesure_au_portage_sans_les_jumeaux_python(
         assert lue == attendue, cas
 
 
+@pytest.mark.sur_le_moteur_python("un garde-fou du jumeau Python : il empêche ses "
+                                  "règles de calculer, et part avec elles")
 def test_le_releve_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
         monkeypatch):
     """La carrière lue sur un relevé (``simulateur.carriere_releve``), les points
@@ -2707,6 +2750,8 @@ def test_le_releve_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
     les services liquidables d'un régime se mesurent au portage
     (``releve.construire``) : les jumeaux Python, qu'on empêche ici de
     calculer, n'y entrent pas."""
+    from retraite_notionnelle.carriere import Carriere
+    from retraite_notionnelle.simulateur import Simulateur
     from retraite_notionnelle.droit import releve
 
     choisis = ("ircantec_points_2024_deux_tranches", "ircantec_points_2019_base_documentaire",
@@ -2722,6 +2767,8 @@ def test_le_releve_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
         assert lue == attendue, cas
 
 
+@pytest.mark.sur_le_moteur_python("un garde-fou du jumeau Python : il empêche ses "
+                                  "règles de calculer, et part avec elles")
 def test_l_invalidite_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
         monkeypatch):
     """Les durées que le départ des assurés handicapés exige, cotisée et
@@ -2729,6 +2776,8 @@ def test_l_invalidite_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
     fonctionnaire radié pour invalidité, portée au plancher ou servie avec sa
     rente, sous la version que la radiation choisit, se mesurent au portage :
     les jumeaux Python, qu'on empêche ici de calculer, n'y entrent pas."""
+    from retraite_notionnelle.droit import invalidite
+
     choisis = ("ur_handicap_1961_59", "ur_handicap_1961_59_fonctionnaire",
                "sre_plancher_monsieur_g_65", "sre_plancher_monsieur_g_55",
                "sre_rente_viagere_monsieur_h")
@@ -2743,6 +2792,8 @@ def test_l_invalidite_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
         assert lue == attendue, cas
 
 
+@pytest.mark.sur_le_moteur_python("un garde-fou du jumeau Python : il empêche ses "
+                                  "règles de calculer, et part avec elles")
 def test_la_reversion_et_l_echeancier_des_exemples_se_mesurent_au_portage_sans_les_jumeaux(
         monkeypatch):
     """La réversion que des pensions prêtées ouvrent — sa version, ses taux, son
@@ -2751,6 +2802,7 @@ def test_la_reversion_et_l_echeancier_des_exemples_se_mesurent_au_portage_sans_l
     plafond des nouvelles pensions de l'activité après le départ se mesurent
     au portage (``reversion.reversion``, ``Echeancier.parcourir``) : les
     jumeaux Python, qu'on empêche ici de calculer, n'y entrent pas."""
+    from retraite_notionnelle.echeancier import Echeancier
     from retraite_notionnelle.droit import reversion as module_de_la_reversion
 
     cles = ("dates_d_effet_de_la_reversion", "dates_de_revision_de_la_reversion",
@@ -2767,6 +2819,8 @@ def test_la_reversion_et_l_echeancier_des_exemples_se_mesurent_au_portage_sans_l
         assert lue == attendue, cas
 
 
+@pytest.mark.sur_le_moteur_python("un garde-fou du jumeau Python : il empêche ses "
+                                  "règles de calculer, et part avec elles")
 def test_le_cumul_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
         monkeypatch):
     """Le cumul de l'activité après le départ — sous des pensions prêtées, sur
@@ -2775,6 +2829,8 @@ def test_le_cumul_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
     d'où il est intégral se mesurent au portage (``cumul.cumuler``,
     ``Echeancier.parcourir``) : les jumeaux Python, qu'on empêche ici de
     calculer, n'y entrent pas."""
+    from retraite_notionnelle.echeancier import Echeancier
+    from retraite_notionnelle.scenarios.actuel import ScenarioActuel
     from retraite_notionnelle.droit import cumul
 
     choisis = ("sp_f12402_cumul_sous_le_plafond", "sp_f12402_cumul_plafond_depasse",
@@ -2793,6 +2849,8 @@ def test_le_cumul_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
         assert lue == attendue, cas
 
 
+@pytest.mark.sur_le_moteur_python("un garde-fou du jumeau Python : il empêche ses "
+                                  "règles de calculer, et part avec elles")
 def test_le_foyer_la_revalorisation_la_paie_et_le_compte_se_mesurent_au_portage(
         monkeypatch):
     """Le minimum vieillesse du foyer, d'un allocataire ou de deux, la
@@ -2801,6 +2859,7 @@ def test_le_foyer_la_revalorisation_la_paie_et_le_compte_se_mesurent_au_portage(
     cotisation Agirc de l'année, sous ses deux parts, avant et après la fusion,
     se mesurent au portage : les jumeaux Python, qu'on empêche ici de calculer,
     n'y entrent pas."""
+    from retraite_notionnelle.scenarios.actuel import ScenarioActuel
     from retraite_notionnelle import remuneration, revalorisation
     from retraite_notionnelle.droit import foyer
     from retraite_notionnelle.moteur.compte import ConstructeurCompte
