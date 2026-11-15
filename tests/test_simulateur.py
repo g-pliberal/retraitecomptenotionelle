@@ -5245,7 +5245,6 @@ def test_l_age_agirc_arrco_de_2011_a_2018_est_celui_de_la_caisse(simulateur):
     assert arrco(1954, 62 + 1 / 12).detail.endswith(
         "coefficient d'anticipation 0.8050")
 
-@pytest.mark.sur_le_moteur_python("liquider.repartir_les_annees")
 def test_la_reforme_agricole_rend_l_exemple_de_la_msa(simulateur):
     """L'exemple de la MSA (« Réforme de la retraite des exploitants : 25
     meilleures années », section 3). Un salarié agricole de 1984 à 1993,
@@ -6143,7 +6142,6 @@ process.stdout.write(JSON.stringify({ details, annuels }));
     assert [moyenne(d) for d in obtenus["details"]] == pytest.approx(moyennes, abs=0.01)
 
 
-@pytest.mark.sur_le_moteur_python("liquider.majorer_les_points_de_1952_a_1972")
 def test_les_points_de_chef_de_1952_a_1972_se_majorent_annee_par_annee():
     """Pour les pensions qui prennent effet depuis 2026, les majorations des
     points acquis du 1er juillet 1952 au 31 décembre 1972, fixées selon « le
@@ -6299,7 +6297,6 @@ process.stdout.write(JSON.stringify(details));
     assert json.loads(execution.stdout) == [chef, collaborateur]
 
 
-@pytest.mark.sur_le_moteur_python("liquider.majoration_des_points_de_1952_a_1972_d_avant_2026")
 def test_les_points_de_chef_de_1952_a_1972_se_majorent_d_un_seul_taux_avant_2026():
     """Pour les pensions prises du 1er juillet 1986 au 31 décembre 2025, « le
     nombre de points acquis par les chefs d'exploitation ou d'entreprise
@@ -6797,7 +6794,6 @@ process.stdout.write(JSON.stringify(obtenus));
         == attendu
 
 
-@pytest.mark.sur_le_moteur_python("liquider.repartir_les_annees")
 def test_la_repartition_des_annees_suit_r_173_3_2():
     """« Arrondis à chaque étape à l'entier non nul le plus proche, la fraction
     d'année égale à 0,5 étant comptée pour une année » ; les années

@@ -803,6 +803,45 @@ def test_une_ligne_ne_passe_qu_avec_sa_carriere(simulateur):
         commun.ligne_cotisee(moteur, carriere, dataclasses.replace(carriere.lignes[0]))
 
 
+def test_une_regle_recoit_une_table_que_le_portage_lit_en_map():
+    """Un dictionnaire que le portage lit en ``Map`` passe en table, ses clés
+    sous leur type, et ce qu'il rend revient en dictionnaire. L'exemple de la
+    MSA (« Réforme de la retraite des exploitants : 25 meilleures années »,
+    section 3) : 40 trimestres alignés et 132 de non-salarié agricole font
+    « 6 ans » et « 19 » (R. 173-3-2) ; 88 trimestres avant 2016 et 44 depuis,
+    « 13 ans » et « 6 ans ». Sans minimums, la règle les tient pour nuls."""
+    assert liquider.repartir_les_annees(
+        25, {"alignes": 40, "msa_non_salaries": 132},
+        minimums={"msa_non_salaries": 2}, priorite=("msa_non_salaries", "alignes"),
+    ) == {"alignes": 6, "msa_non_salaries": 19}
+    assert liquider.repartir_les_annees(
+        19, {"avant": 88, "apres": 44}, priorite=("avant", "apres")) == {"avant": 13, "apres": 6}
+    assert liquider.repartir_les_annees(25, {"a": 50, "b": 50, "c": 50}) \
+        == {"a": 8, "b": 8, "c": 8}
+
+
+def test_les_points_de_chef_passent_annee_par_annee():
+    """Des points par année, une table aux clés entières, et des cotisations
+    en couples : vingt points en 1960 et quinze en 1961, de chef, font une
+    moyenne de 17,5 et 5 % (R. 732-67) : 21 points, et 15,75 arrondis à 16 ;
+    1 000 € par an de 1960 à 1969, à 6 % de rendement et 3 € de service, vingt
+    points, 6,57 % de 600 € (D. 732-77), 39,42 €."""
+    majores, taux, moyenne = liquider.majorer_les_points_de_1952_a_1972(
+        {1960: 20.0, 1961: 15.0}, [1960, 1961])
+    assert majores == {1960: 21.0, 1961: 16.0}
+    assert (taux, moyenne) == pytest.approx((0.05, 17.5), abs=1e-12)
+    assert liquider.majoration_des_points_de_1952_a_1972_d_avant_2026(
+        [(annee, 1000.0) for annee in range(1960, 1970)], list(range(1960, 1970)), 0.06, 3.0,
+    ) == pytest.approx((39.42, 0.0657, 20.0), abs=1e-9)
+
+
+def test_une_table_mal_formee_ne_passe_pas():
+    """Une table dont une valeur n'est pas simple n'arriverait pas au portage
+    sous son type : refusée."""
+    with pytest.raises(NonTransmissible, match="durees"):
+        liquider.repartir_les_annees(25, {"alignes": [40]})
+
+
 def test_une_regle_se_demande_sous_les_parametres_de_son_moteur(simulateur):
     """Les conventions du COR ne valent que pour la page Coût : sous elles, la
     valeur de service de l'Agirc-Arrco de 2045 suit la convention, moins que
@@ -826,14 +865,15 @@ def _parametres_du_portage(module: str, regle: str) -> list[tuple[str, str | Non
     source = (RACINE_PROJET / "moteur" / "js" / "droit" / f"{module}.js").read_text(
         encoding="utf-8")
     nom = re.sub(r"_([a-z0-9])", lambda lettre: lettre.group(1).upper(), regle)
-    ecrits = re.search(r"^export function %s\(([^)]*)\)" % nom, source, re.MULTILINE).group(1)
+    ecrits = re.search(r"^export function %s\(((?:[^()]|\(\))*)\)" % nom, source,
+                       re.MULTILINE).group(1)
     return [(parametre.split("=")[0].strip(),
              parametre.split("=")[1].strip() if "=" in parametre else None)
             for parametre in ecrits.split(",") if parametre.strip()]
 
 
 #: La valeur par défaut d'un paramètre, comme le portage l'écrit.
-DEFAUTS_DU_PORTAGE = {"null": None, "true": True, "false": False}
+DEFAUTS_DU_PORTAGE = {"null": None, "true": True, "false": False, "[]": ()}
 
 
 @pytest.mark.parametrize("module, regle", [
@@ -842,7 +882,8 @@ DEFAUTS_DU_PORTAGE = {"null": None, "true": True, "false": False}
 def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(module, regle):
     """La façade passe les arguments par leur rang, ceux que le test tait à
     leur valeur par défaut du Python : le portage en attend autant, sous la
-    même valeur par défaut. Deux noms seulement diffèrent d'un côté à
+    même valeur par défaut — une table vide pour le ``None`` d'une table
+    (``pont.TABLES_DES_REGLES``). Deux noms seulement diffèrent d'un côté à
     l'autre."""
     jumelle = getattr({"commun": commun_python, "completer": completer_python,
                        "liquider": liquider_python, "ouvrir": ouvrir_python}[module], regle)
@@ -856,6 +897,9 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
         en_chameau = re.sub(r"_([a-z0-9])", lambda lettre: lettre.group(1).upper(), nom)
         assert porte in (en_chameau, autres_noms.get(nom)), (regle, nom, porte)
         lu = None if ecrit is None else DEFAUTS_DU_PORTAGE.get(ecrit, ecrit)
+        if ecrit == "new Map()" and nom in pont.TABLES_DES_REGLES.get(f"{module}.{regle}", ()):
+            # La table vide, que la façade passe pour le ``None`` du Python.
+            lu = None
         assert (lu if type(lu) is not str else float(lu)) == defaut, (regle, nom, ecrit)
         assert type(lu) is not str or type(defaut) in (int, float), (regle, nom, ecrit)
 

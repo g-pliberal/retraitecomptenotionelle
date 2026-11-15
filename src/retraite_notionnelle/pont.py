@@ -2391,9 +2391,10 @@ def table_du_moteur(table: str, methode: str, type_rendu, *arguments, parametres
 def _argument_de_la_facade(argument, carrieres: list) -> dict:
     """Un argument d'une méthode de table ou d'une règle du droit que la façade
     sert, tel que ``pont.mjs`` le relit : comme celui d'un appel du droit
-    (:func:`_argument_du_droit`), sauf trois, qui passent par leur marque — les
-    séries du simulateur, une période de son catalogue, et une date au mois,
-    dont le portage refait une ``DateMois``."""
+    (:func:`_argument_du_droit`), sauf quatre, qui passent par leur marque — les
+    séries du simulateur, une période de son catalogue, une date au mois,
+    dont le portage refait une ``DateMois``, et une :class:`Table`, dont il
+    refait une ``Map``."""
     from .calendrier import DateMois
 
     if argument is SERIES:
@@ -2402,11 +2403,34 @@ def _argument_de_la_facade(argument, carrieres: list) -> dict:
         return {"valeur": {"@": "periode", **dataclasses.asdict(argument)}}
     if isinstance(argument, DateMois):
         return {"valeur": {"@": "date_mois", "annee": argument.annee, "mois": argument.mois}}
+    if isinstance(argument, Table):
+        return {"valeur": {"@": "table", "entrees": [[cle, _en_donnees(element)]
+                                                     for cle, element in argument.entrees]}}
     if dataclasses.is_dataclass(argument) and type(argument).__name__ in TYPES_DE_LA_FACADE:
         return {"valeur": {_nom_du_portage(type(argument), champ.name):
                            _en_donnees(getattr(argument, champ.name))
                            for champ in dataclasses.fields(argument)}}
     return _argument_du_droit(argument, carrieres)
+
+
+@dataclasses.dataclass(frozen=True)
+class Table:
+    """Un dictionnaire que le portage lit en ``Map``, en argument d'une règle
+    de la façade (:data:`TABLES_DES_REGLES`) : ses entrées, ``(clé, valeur)``,
+    dans l'ordre, chaque clé sous son type — une année reste un entier, quand
+    JSON écrirait en texte la clé d'un objet."""
+
+    entrees: tuple
+
+
+#: Les arguments des règles de la façade que le portage lit en ``Map``, sous
+#: leur nom : ``{"module.règle": noms}``. Un dictionnaire y passe en
+#: :class:`Table` ; ``None``, la table vide que la règle du Python lui
+#: substitue.
+TABLES_DES_REGLES: dict[str, frozenset[str]] = {
+    "liquider.majorer_les_points_de_1952_a_1972": frozenset({"points"}),
+    "liquider.repartir_les_annees": frozenset({"durees", "minimums"}),
+}
 
 
 #: Les objets du droit qu'une règle de la façade reçoit, sous les noms que le
@@ -2435,8 +2459,9 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
                   "majoration_ouverte", "plancher_du_regime", "selon_la_regle"),
     "liquider": ("abattement_points", "age_de_la_duree_atteinte", "annees_au_prorata",
                  "borne_de_la_duree", "decote_opposable", "duree_du_regime_aligne",
-                 "duree_proratisation", "moyenne_des_meilleures_annees", "retranche_decote",
-                 "revenu_des_cotisations_minimales", "salaire_de_reference",
+                 "duree_proratisation", "majoration_des_points_de_1952_a_1972_d_avant_2026",
+                 "majorer_les_points_de_1952_a_1972", "moyenne_des_meilleures_annees",
+                 "repartir_les_annees", "retranche_decote", "revenu_des_cotisations_minimales", "salaire_de_reference",
                  "taux_de_majoration_de_1952_a_1972", "trimestres_de_decote",
                  "trimestres_de_surcote_regimes_speciaux", "valeur_du_point"),
     "ouvrir": ("age_ouverture", "age_ouverture_commun", "age_ouverture_droit", "age_surcote",

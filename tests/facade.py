@@ -449,18 +449,35 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
     """Un argument d'une règle du droit tel que le pont le transmet : le
     moteur du simulateur par sa marque ; une période de son catalogue par son
     rang ; une carrière, une date au mois, une valeur simple, une suite de
-    valeurs simples, la règle d'une fiche — un dictionnaire de valeurs simples
-    sous des noms —, un éligible au minimum (``pont.TYPES_DE_LA_FACADE``),
-    tels quels ; une ligne de la carrière de la règle, par son rang. Le reste — un objet du moteur Python, un dictionnaire que le
-    portage lirait en ``Map`` — n'arriverait pas au portage sous son type."""
+    valeurs simples ou de couples de valeurs simples, la règle d'une fiche —
+    un dictionnaire de valeurs simples sous des noms —, un éligible au
+    minimum (``pont.TYPES_DE_LA_FACADE``), tels quels ; une ligne de la
+    carrière de la règle, par son rang ; un dictionnaire que le portage lit
+    en ``Map`` (``pont.TABLES_DES_REGLES``), en table. Le reste — un objet du
+    moteur Python, un dictionnaire que la façade ne déclare pas en table —
+    n'arriverait pas au portage sous son type."""
     if nom == "moteur":
         return pont.MOTEUR
+    if nom in pont.TABLES_DES_REGLES.get(regle, ()):
+        # Le portage lit l'argument en ``Map`` : il passe en table, ses clés
+        # sous leur type ; ``None``, la table vide que le Python lui substitue.
+        table = {} if valeur is None else valeur
+        if type(table) is dict and all(type(cle) in _SIMPLES and type(element) in _SIMPLES
+                                       for cle, element in table.items()):
+            return pont.Table(tuple(table.items()))
+        raise NonTransmissible(
+            f"{regle} : argument {nom}, une table que le portage lit en Map, dont une clé ou "
+            "une valeur n'est pas simple — elle n'arriverait pas au portage sous son type")
     if isinstance(valeur, PeriodeRegime) and simulateur is not None:
         return _periode_du_catalogue(simulateur, valeur)
     if type(valeur) in _SIMPLES or isinstance(valeur, (_carriere.Carriere, DateMois)):
         return valeur
     if type(valeur) in (tuple, list) and all(type(element) in _SIMPLES for element in valeur):
         return list(valeur)
+    if type(valeur) in (tuple, list) and all(
+            type(element) in (tuple, list) and all(type(membre) in _SIMPLES for membre in element)
+            for element in valeur):
+        return [list(element) for element in valeur]
     if type(valeur) is dict and all(type(cle) is str and type(element) in _SIMPLES
                                     for cle, element in valeur.items()):
         return dict(valeur)

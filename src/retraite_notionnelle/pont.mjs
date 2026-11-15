@@ -1806,11 +1806,13 @@ LECTURES.facade = facade;
 
 /**
  * Un argument d'une méthode de table ou d'une règle du droit que la façade
- * sert (`_argument_de_la_facade` de `pont.py`). Trois passent par leur
+ * sert (`_argument_de_la_facade` de `pont.py`). Quatre passent par leur
  * marque : les séries du simulateur, `{"@": "series"}` ; une période du
  * catalogue, `{"@": "periode", regime, rang, debut}`, celle de ce rang parmi
  * les périodes du régime, dont l'année de début est vérifiée ; une date au
- * mois, `{"@": "date_mois", annee, mois}`, une vraie `DateMois`. Une période
+ * mois, `{"@": "date_mois", annee, mois}`, une vraie `DateMois` ; une table,
+ * `{"@": "table", entrees}`, une `Map` de ces entrées, leurs clés sous leur
+ * type (`TABLES_DES_REGLES` de `pont.py`). Une période
  * que le catalogue ne tient pas arrête la demande, au lieu de passer pour un
  * refus du moteur.
  */
@@ -1819,6 +1821,7 @@ function argumentDeLaFacade({ macro, catalogue }, valeur) {
     ? valeur["@"] : undefined;
   if (marque === "series") return macro;
   if (marque === "date_mois") return new DateMois(valeur.annee, valeur.mois);
+  if (marque === "table") return new Map(valeur.entrees);
   if (marque === "periode") {
     const periode = catalogue.obtenir(valeur.regime).periodes[valeur.rang];
     if (periode === undefined || periode.debut !== valeur.debut) {
