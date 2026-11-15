@@ -7329,16 +7329,16 @@ de `contribution_etat`.
 
 **Reprise, au 15 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
-Ses règles s'importent toutes les unes les autres : aucune paire ne part
-seule, le retrait se fera par le haut, une fois le moteur Python plus
-exécuté. Deux choses l'exécutent encore. D'abord les confrontations, qui
-font refaire au Python ce que le portage calcule : dix-sept tests marqués
-`sur_le_moteur_python`, `servi_et_refait`, et celles que `tests/test_pont.py`
-déclare. Ensuite cent fichiers de tests qui importent une règle Python
-(`tests/test_fichiers_sur_le_moteur_python.py`). Une étape par session.
-Par quoi commencer : retirer les confrontations, en figeant d'abord par un
-témoin ce qu'elles seules exécutaient.
-Le détail : `2026-11-15-le-solveur-de-l-inversion-retire.md`.
+Ses règles s'importent toutes les unes les autres : le retrait se fera par le
+haut, une fois le moteur Python plus exécuté. Les confrontations, qui lui
+font refaire ce que le portage calcule, partent d'abord, chacune remplacée
+par une référence figée. Celle des cas du scénario 1 est faite : le témoin
+`tests/temoins/servis.json` tient lieu du moteur Python. Restent dix-sept
+tests marqués `sur_le_moteur_python`, puis les confrontations de
+`tests/test_pont.py`. Ensuite, cent fichiers de tests qui importent une
+règle Python. Une étape par session. Par quoi commencer : les dix-sept tests
+marqués, par un témoin des sorties des scripts `tests/js/comparer-*.mjs`.
+Le détail : `2026-11-15-les-servis-figes.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
