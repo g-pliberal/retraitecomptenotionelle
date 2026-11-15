@@ -75,37 +75,24 @@ def test_chaque_variante_est_une_regle_du_moteur():
         stock_age_legal.parametres_de("inconnue", PARAMETRES)
 
 
-def test_les_cas_types_passent_par_le_portage_au_bit_pres_du_jumeau(monkeypatch):
+def test_les_cas_types_passent_par_le_portage(monkeypatch):
     """Les cas types de l'étude se datent et se simulent par le portage, la
     règle du stock dans les paramètres de la demande (action 161) : la pension
-    de chaque système, en euros constants, au bit près de ce que le jumeau
-    Python en simule sous la même règle et ``pont.par_le_jumeau()`` — sans que
-    le moteur Python ne calcule rien."""
+    de chaque système, en euros constants, telle que le témoin des valeurs la porte
+    (``outils_valeurs``, étape 8d) — sans que le moteur Python ne calcule rien."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne calcule pas ici")
     from outils_pont import empecher_les_jumeaux_du_cout
-    from retraite_notionnelle.castypes import CAS_TYPES, calculer_cas_types
+    from outils_valeurs import valeur_figee
 
-    codes = {code for code, _ in stock_age_legal.CAS_STOCK}
-    generations = tuple(sorted({generation for _, generation in stock_age_legal.CAS_STOCK}))
     simulateurs = {variante: Simulateur(stock_age_legal.parametres_de(variante, PARAMETRES))
                    for variante in ("droit_commun", "tout_droit")}
     attendus = {}
-    with pont.par_le_jumeau():
-        for variante, simulateur in simulateurs.items():
-            grille = calculer_cas_types(
-                simulateur, tuple(cas for cas in CAS_TYPES if cas.code in codes), generations)
-            attendus[variante] = {
-                f"{code}|{generation}": {
-                    scenario: comparaison.en_euros_constants(
-                        getattr(comparaison, scenario).pension_annuelle, scenario)
-                    for scenario, _ in C.SCENARIOS}
-                for code, generation in stock_age_legal.CAS_STOCK
-                if (comparaison := grille.resultats.get((code, generation))) is not None}
     empecher_les_jumeaux_du_cout(monkeypatch)
     for variante, simulateur in simulateurs.items():
-        lues = stock_age_legal.pensions_des_cas(simulateur)
-        assert lues == attendus[variante], variante
+        lues = valeur_figee(f"pensions des cas sous {variante}",
+                            stock_age_legal.pensions_des_cas(simulateur))
+        attendus[variante] = lues
         assert list(lues) == [f"{code}|{generation}"
                               for code, generation in stock_age_legal.CAS_STOCK], variante
     # Un agent de conduite parti à cinquante-deux ans : le droit commun le

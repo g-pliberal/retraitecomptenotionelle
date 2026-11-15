@@ -1067,13 +1067,11 @@ def cases_de_la_grille(
 
 def batie_au_portage(parametres, cas_types: Iterable[CasType]) -> bool:
     """La grille se date-t-elle et se bâtit-elle au portage (action 161,
-    étape 6) ? Quand ce que ces paramètres font calculer y passe
-    (``pont.par_le_portage``), et que le portage refait ce que chacun de ses
-    cas types date et bâtit (:func:`decrit_au_portage`) : ``CasType``, et
-    ``CasTypeLarge``, de ``scripts/grille_large.py``, qui récrit sa carrière
-    et son âge, et ce qu'il en passe au portage (étape 7)."""
-    return pont.par_le_portage(parametres) and all(decrit_au_portage(type(cas))
-                                                   for cas in cas_types)
+    étape 6) ? Quand le portage refait ce que chacun de ses cas types date et
+    bâtit (:func:`decrit_au_portage`) : ``CasType``, et ``CasTypeLarge``, de
+    ``scripts/grille_large.py``, qui récrit sa carrière et son âge, et ce qu'il
+    en passe au portage (étape 7)."""
+    return all(decrit_au_portage(type(cas)) for cas in cas_types)
 
 
 #: Ce qui date et bâtit la carrière d'un cas type, et que

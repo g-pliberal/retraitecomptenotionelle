@@ -1321,19 +1321,16 @@ def test_les_contextes_qui_remplacent_le_modele_font_taire_la_memoire():
     import proposition_prospective
     import solde_fusion
 
-    from retraite_notionnelle import Parametres, pont
-
     contextes = (
         (proposition_prospective.PropositionProspective(), True),
         (solde_fusion.RegimeUniqueVariante(solde_fusion.Hypothese("A", "le modèle", None)),
          True),
     )
-    for contexte, au_portage in contextes:
-        assert memoire._active() and pont.par_le_portage(Parametres())
+    for contexte, _ in contextes:
+        assert memoire._active()
         with contexte:
             assert not memoire._active(), contexte
-            assert pont.par_le_portage(Parametres()) is au_portage, contexte
-        assert memoire._active() and pont.par_le_portage(Parametres())
+        assert memoire._active()
 
 
 def test_un_test_qui_remplace_quelque_chose_n_a_pas_de_memoire(monkeypatch):

@@ -38,8 +38,9 @@ from retraite_notionnelle.castypes import (
 from retraite_notionnelle.config import RACINE_DONNEES, RACINE_PROJET
 from retraite_notionnelle.simulateur import Simulateur
 
-from outils_pont import (TOLERANCE_DU_MOTEUR_PYTHON, Saisies, ecarts_d_ecriture,
+from outils_pont import (TOLERANCE_DU_MOTEUR_PYTHON, ecarts_d_ecriture,
                          empecher_les_jumeaux_du_cout)
+from outils_valeurs import valeur_figee
 
 SCENARIOS = ("notionnel_retroactif", "notionnel_retroactif_employeur", "notionnel_liberal")
 
@@ -61,64 +62,30 @@ SAISIES = (
 )
 
 
-def _aujourd_hui(aujourd_hui, scenarios=SCENARIOS) -> dict | None:
-    """Ce que les écarts médians lisent de la pension d'aujourd'hui d'un
-    retraité, ou rien pour qui n'est pas encore parti."""
-    if aujourd_hui is None:
-        return None
-    return {
-        "pension_annuelle": aujourd_hui.pension("actuel"),
-        "pensions_totales": {scenario: aujourd_hui.pension_totale(scenario)
-                             for scenario in scenarios},
-        "rente_capitalisee_volontaire": aujourd_hui.rente_capitalisee_volontaire,
-    }
-
-
-def _carrieres_simulees(simulateur: Simulateur, scenarios=SCENARIOS,
-                        ) -> tuple[list[dict], dict[str, dict]]:
-    """Les cases de ``CASES``, demandées au pont, et ce que le moteur Python en
-    simule de ``scenarios``, sous les univers et les paramètres de
-    ``simulateur``."""
-    demandes, attendus = [], {}
+def _demandes_des_cases(simulateur: Simulateur) -> list[dict]:
+    """Les cases de ``CASES``, telles qu'on les demande au pont : la grille les
+    date sous les univers et les paramètres de ``simulateur``."""
+    demandes = []
     for code, generation in CASES:
         cas = next(cas for cas in CAS_TYPES if cas.code == code)
         carriere = carriere_de_la_grille(simulateur, cas, generation)
-        comparaison = simulateur.simuler(carriere)
-        cle = f"{code}|{generation}"
-        demandes.append({"cle": cle, "options": cas.options(generation, carriere.age_liquidation)})
-        attendus[cle] = {
-            "annee_liquidation": comparaison.carriere.annee_liquidation,
-            "annees_liquidation": {scenario: comparaison.carriere_de(scenario).annee_liquidation
-                                   for scenario in scenarios},
-            "variations": {scenario: comparaison.variation_totale(scenario)
-                           for scenario in scenarios},
-            # L'écart hors du pilier, que les études lisent des cas types.
-            "ecarts": {scenario: comparaison.variation(scenario) for scenario in scenarios},
-            "pension_annuelle": comparaison.actuel.pension_annuelle,
-            "trimestres_requis": comparaison.actuel.trimestres_requis,
-            # Ce que les écarts médians du bilan lisent d'une case.
-            "pensions_totales": {scenario: comparaison.pension_totale(scenario)
-                                 for scenario in scenarios},
-            "rentes_volontaires": {scenario: comparaison.rente_capitalisee_volontaire(scenario)
-                                   for scenario in scenarios},
-            # La pension de l'étalon et de chaque scénario, hors du pilier, en
-            # euros constants : ce que ``scripts/stock_age_legal.py`` lit.
-            "pensions_euros_constants": {
-                scenario: comparaison.en_euros_constants(
-                    getattr(comparaison, scenario).pension_annuelle, scenario)
-                for scenario in ("actuel", *scenarios)},
-            "aujourd_hui": _aujourd_hui(comparaison.aujourd_hui, scenarios),
-        }
-    return demandes, attendus
+        demandes.append({"cle": f"{code}|{generation}",
+                         "options": cas.options(generation, carriere.age_liquidation)})
+    return demandes
 
 
-def test_le_pont_rend_au_bit_pres_ce_que_le_moteur_python_simule():
+def test_le_pont_rend_des_cases_ce_que_le_temoin_des_valeurs_porte():
+    """Le portage rend de chaque case ce que le témoin des valeurs porte
+    (action 161, étape 8d) : ce que le moteur Python en simulait au bit près
+    tant qu'il gardait ses jumeaux — l'année de liquidation, les variations,
+    les écarts hors du pilier, les pensions totales et en euros constants, la
+    pension d'aujourd'hui d'un retraité —, chaque nombre sous son type."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    demandes, attendus = _carrieres_simulees(Simulateur(Parametres()))
+    demandes = _demandes_des_cases(Simulateur(Parametres()))
     resultats, echecs = pont.carrieres(demandes, SCENARIOS)
     assert not echecs
-    assert resultats == attendus
+    valeur_figee("cases", resultats)
     # Les deux sortes de cases : celles qui partiront, celles déjà parties.
     assert {lu["aujourd_hui"] is None for lu in resultats.values()} == {True, False}
     for lu in resultats.values():
@@ -144,21 +111,21 @@ def _variantes() -> dict:
             univers.charger(univers.VARIANTES)["notionnel_liberal_prospectif"]}
 
 
-def test_une_variante_passe_au_portage_dans_la_demande_au_bit_pres_du_jumeau():
+def test_une_variante_passe_au_portage_dans_la_demande():
     """Un univers que le paquet ne porte pas — la proposition prospective, à
     la place du scénario 6 (action 161) — passe au portage dans la demande, son
     calcul tel que la fabrication le résout : le portage rend, de chaque case,
-    ce que le jumeau Python simule de la même variante, au bit près, et autre
+    ce que le témoin des valeurs porte (action 161, étape 8d), et autre
     chose que le scénario 6, sur les cases déjà parties comme sur celles qui
     partiront."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     simulateur = Simulateur(Parametres(), variantes=_variantes())
-    demandes, attendus = _carrieres_simulees(simulateur)
+    demandes = _demandes_des_cases(simulateur)
     resultats, echecs = pont.carrieres(demandes, SCENARIOS,
                                        univers=simulateur.univers_de_la_demande)
     assert not echecs
-    assert resultats == attendus
+    valeur_figee("cases sous la proposition prospective", resultats)
     sans, _ = pont.carrieres(demandes, SCENARIOS)
     for parties in (True, False):
         assert any(lu["ecarts"]["notionnel_liberal"] != sans[cle]["ecarts"]["notionnel_liberal"]
@@ -169,12 +136,11 @@ def test_une_variante_passe_au_portage_dans_la_demande_au_bit_pres_du_jumeau():
 PROSPECTIFS = ("notionnel_prospectif", "notionnel_prospectif_employeur")
 
 
-def test_le_stock_a_l_age_legal_passe_au_portage_dans_la_demande_au_bit_pres_du_jumeau():
+def test_le_stock_a_l_age_legal_passe_au_portage_dans_la_demande():
     """La règle du stock à l'âge légal (``Parametres.stock_age_legal``,
     action 161), qu'aucun réglage de référence ne porte, passe au portage dans
     les paramètres de la demande : sous chacune de ses trois variantes, le
-    portage rend de chaque case ce que le jumeau Python simule sous la même
-    règle, au bit près, et autre chose que sans elle — les cases déjà parties
+    portage rend de chaque case ce que le témoin des valeurs porte, et autre chose que sans elle — les cases déjà parties
     dans les scénarios rétroactifs, sous ``droit_commun`` et ``tout_droit`` ;
     celles qui partiront dans les prospectifs, sous ``acquis``."""
     if shutil.which("node") is None:
@@ -187,12 +153,12 @@ def test_le_stock_a_l_age_legal_passe_au_portage_dans_la_demande_au_bit_pres_du_
                            (StockAgeLegal.TOUT_DROIT, SCENARIOS),
                            (StockAgeLegal.ACQUIS, PROSPECTIFS)):
         simulateur = Simulateur(replace(Parametres(), stock_age_legal=regle))
-        demandes, attendus = _carrieres_simulees(simulateur, scenarios)
+        demandes = _demandes_des_cases(simulateur)
         if sans is None:
             sans, _ = pont.carrieres(demandes, scenarios)
         resultats, echecs = pont.carrieres(demandes, scenarios, parametres=simulateur.parametres)
         assert not echecs
-        assert resultats == attendus, regle
+        valeur_figee(f"cases sous le stock {regle.value}", resultats)
         assert any(lu["ecarts"][scenario] != sans[cle]["ecarts"][scenario]
                    for cle, lu in resultats.items() for scenario in touches), regle
 
@@ -203,12 +169,12 @@ BAREMES = (((1.0, 0.2815, 0.1145), (8.0, 0.2215, 0.0904), (None, 0.0240, 0.0040)
            ((None, 0.2290, 0.0950),))
 
 
-def test_le_bareme_du_regime_unique_passe_au_portage_dans_la_demande_au_bit_pres_du_jumeau():
+def test_le_bareme_du_regime_unique_passe_au_portage_dans_la_demande():
     """Le barème du régime unique (``Parametres.bareme_regime_unique``, action
     161), qu'aucun réglage de référence ne porte, passe au portage dans les
     paramètres de la demande, et en revient sous les types du Python : sous
-    chaque barème, le portage rend de chaque case ce que le jumeau Python simule
-    sous le même, au bit près, et autre chose que sans lui, dans les scénarios
+    chaque barème, le portage rend de chaque case ce que le témoin des valeurs
+    porte, et autre chose que sans lui, dans les scénarios
     du régime unique. Un barème mal formé arrête le compte du jumeau, comme
     celui du portage."""
     sous_un_bareme = replace(Parametres(), bareme_regime_unique=BAREMES[0])
@@ -222,46 +188,30 @@ def test_le_bareme_du_regime_unique_passe_au_portage_dans_la_demande_au_bit_pres
     sans = None
     for bareme in BAREMES:
         simulateur = Simulateur(replace(Parametres(), bareme_regime_unique=bareme))
-        demandes, attendus = _carrieres_simulees(simulateur)
+        demandes = _demandes_des_cases(simulateur)
         if sans is None:
             sans, _ = pont.carrieres(demandes, SCENARIOS)
         resultats, echecs = pont.carrieres(demandes, SCENARIOS, parametres=simulateur.parametres)
         assert not echecs
-        assert resultats == attendus, bareme
+        valeur_figee(f"cases sous le barème {bareme}", resultats)
         for scenario in ("notionnel_retroactif", "notionnel_retroactif_employeur"):
             assert any(lu["ecarts"][scenario] != sans[cle]["ecarts"][scenario]
                        for cle, lu in resultats.items()), (bareme, scenario)
 
 
-def test_le_pont_simule_une_saisie_comme_le_site_au_bit_pres_du_moteur_python():
+def test_le_pont_simule_une_saisie_comme_le_site():
     """Les carrières d'exemple du bilan figé sont des saisies, que le portage
     simule comme le site (``Contexte.simuler``, ``contexte.js``) : de chacune,
     la fiche de paie de l'année de référence sous le droit en vigueur, le
-    passage aux euros constants, et la pension de chaque système demandé, au
-    bit près de ce que le moteur Python simule de la carrière que le portage
-    bâtit de la même saisie — la saisie n'a que son exemplaire (action 161,
-    étape 6)."""
+    passage aux euros constants, et la pension de chaque système demandé,
+    tels que le témoin des valeurs les porte — la saisie n'a que son exemplaire
+    (action 161, étapes 6 et 8d)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     demandes = [{"cle": str(rang), "saisie": saisie} for rang, saisie in enumerate(SAISIES)]
-    carrieres, refus = pont.carrieres_des_saisies(demandes)
-    assert not refus
-    attendus = {}
-    for cle, (parametres, carriere) in carrieres.items():
-        comparaison = Simulateur(parametres).simuler(carriere)
-        fiche = comparaison.remuneration.reference.droit_en_vigueur
-        attendus[cle] = {
-            "fiche": {"annee": fiche.annee, "brut": fiche.brut, "net": fiche.net,
-                      "retraite_totale": fiche.retraite_totale,
-                      "retraite_employeur": fiche.retraite_employeur},
-            "coefficient_euros_constants": comparaison.coefficient_euros_constants,
-            "pension_annuelle": comparaison.actuel.pension_annuelle,
-            "pensions": {scenario: getattr(comparaison, scenario).pension_annuelle
-                         for scenario in SCENARIOS},
-        }
     resultats, echecs = pont.saisies(demandes, SCENARIOS)
     assert not echecs
-    assert resultats == attendus
+    valeur_figee("saisies", resultats)
     for lu in resultats.values():
         assert type(lu["fiche"]["annee"]) is int
         assert all(type(lu["fiche"][champ]) is float
@@ -317,7 +267,7 @@ def _ages_au_portage(simulateur, cohortes, variante: str = "droit"):
     return ages, refus
 
 
-def test_le_portage_date_les_cas_types_au_bit_pres_du_pilote_python():
+def test_le_portage_date_les_cas_types():
     """Le coût fait dater ses cas types au portage (``ageDeDepart`` de
     ``moteur/js/pilote.js`` ; action 161, étape 6), sur la carrière d'un seul
     statut que leurs options décrivent, ses primes projetées sous les
@@ -327,17 +277,13 @@ def test_le_portage_date_les_cas_types_au_bit_pres_du_pilote_python():
     l'âge écrit sous la variante ``absolu``."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from retraite_notionnelle import pilote
-
     cohortes = [(next(cas for cas in GRILLE_DU_COUT if cas.code == code), generation)
                 for code, generation in DEPARTS_D_ESSAI]
-    for simulateur in (Simulateur(Parametres()), Simulateur(Parametres()).pour_la_projection()):
+    for nom, simulateur in (("référence", Simulateur(Parametres())),
+                            ("projection", Simulateur(Parametres()).pour_la_projection())):
         ages, refus = _ages_au_portage(simulateur, cohortes)
         assert not refus
-        attendus = {f"{cas.code}|{generation}": float(pilote.age_de_depart(simulateur, cas,
-                                                                            generation))
-                    for cas, generation in cohortes}
-        assert ages == attendus
+        valeur_figee(f"âges des cas types sous les paramètres de {nom}", ages)
         assert all(type(age) is float for age in ages.values())
         # La descente : un an plus tôt que l'âge écrit, et plus.
         assert ages["artisan|1911"] == 62.0 and ages["contractuel_public|1884"] == 61.0
@@ -388,22 +334,21 @@ CARRIERES_D_ESSAI = (("salaire_moyen", 1879), ("agent_ieg", 1886),
                      ("artisan", 1911), ("salaire_moyen", 1975), ("profession_liberale", 1980))
 
 
-def test_le_portage_bat_les_carrieres_de_la_grille_comme_le_python():
+def test_le_portage_bat_les_carrieres_de_la_grille():
     """Le coût fait bâtir au portage la carrière de chaque case de sa grille,
     partie à l'âge que le portage lui fixe (action 161, étape 6) : sous les
     conventions du COR, l'entrée tardive d'un fonctionnaire, que le Python
     décrit en métiers, et ses primes projetées ; les cases que le droit écarte,
     sous le motif du Python ; et les deux carrières que l'âge légal de la
     proposition en dérive, poursuivie jusqu'à lui ou attendue sans activité.
-    Chacune revient sous les types du Python, égale à celle qu'il bâtit
-    (``castypes.carriere_de_la_grille``, ``Carriere.prolongee``) ; d'une cohorte
+    Chacune revient sous les types du Python, telle que le témoin des valeurs la
+    porte ; d'une cohorte
     voisine, l'année et le mois de son départ seulement."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     from retraite_notionnelle.castypes import primes_projetees_en_donnees
 
     simulateur = Simulateur(Parametres()).pour_la_projection()
-    macro, age_legal = simulateur.macro, simulateur.parametres.age_legal_liberal
     cohortes = {f"{code}|{generation}": (next(cas for cas in GRILLE_DU_COUT if cas.code == code),
                                          generation)
                 for code, generation in CARRIERES_D_ESSAI}
@@ -416,23 +361,15 @@ def test_le_portage_bat_les_carrieres_de_la_grille_comme_le_python():
                      for rendre in ("carriere", "depart")} | {
         f"agent_ieg|1886|{rendre}": "aucun régime actif sur la période"
         for rendre in ("carriere", "depart")}
-    for cle, (cas, generation) in cohortes.items():
+    valeur_figee("carrières de la grille", lus)
+    for cle in cohortes:
         if f"{cle}|carriere" in refus:
-            with pytest.raises(ValueError, match=refus[f"{cle}|carriere"]):
-                carriere_de_la_grille(simulateur, cas, generation)
             continue
-        carriere = carriere_de_la_grille(simulateur, cas, generation)
         bati = lus[f"{cle}|carriere"]
-        assert type(bati["carriere"]) is Carriere
-        assert bati["carriere"] == carriere, cle
+        carriere = bati["carriere"]
+        assert type(carriere) is Carriere
         assert bati["age"] == float(carriere.age_liquidation), cle
-        reportee = carriere.prolongee(age_legal, macro)
-        if reportee is carriere:
-            assert (bati["reportee"], bati["attente"]) == (None, None), cle
-        else:
-            assert bati["reportee"] == reportee, cle
-            assert bati["attente"] == carriere.prolongee(age_legal, macro,
-                                                         attente_travaillee=False), cle
+        assert (bati["reportee"] is None) == (bati["attente"] is None), cle
         assert lus[f"{cle}|depart"] == {"age": bati["age"], "annee": carriere.annee_liquidation,
                                         "mois": carriere.mois_liquidation}, cle
     # Ce que les cohortes font traverser : l'entrée tardive, un report et un
@@ -471,8 +408,8 @@ def test_la_grille_des_carrieres_types_se_date_au_portage_sans_les_jumeaux(memoi
     et les âges qu'en écrit ``figer_cas_types`` (``castypes.ages_de_la_grille``)
     se datent au portage (action 161, étape 6) : le pilote Python, l'ouverture
     du droit et les constructeurs de carrières, qu'on empêche ici de calculer,
-    n'y entrent pas. Chaque case et chaque motif sont ceux du Python, et chaque
-    âge l'est sous son type : l'âge écrit, un entier, quand le droit ne le
+    n'y entrent pas. Chaque case, chaque motif et chaque âge sont ceux que
+    le témoin des valeurs porte, chaque âge sous son type : l'âge écrit, un entier, quand le droit ne le
     déplace pas — la table l'écrit sans décimale —, un flottant sinon."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
@@ -481,17 +418,13 @@ def test_la_grille_des_carrieres_types_se_date_au_portage_sans_les_jumeaux(memoi
     simulateur = Simulateur(Parametres())
     # Les générations de la table, et deux que le droit écarte en partie.
     generations = (1880, 1885, *GENERATIONS)
-    with pont.par_le_jumeau():
-        en_python = cases_de_la_grille(simulateur, CAS_TYPES, generations)
-        ages_en_python = ages_de_la_grille(simulateur)
     _interdire(monkeypatch, _jumeaux_qui_datent_et_batissent())
-    assert cases_de_la_grille(simulateur, CAS_TYPES, generations) == en_python
-    ages = ages_de_la_grille(simulateur)
-    assert ages == ages_en_python
-    assert _types(ages) == _types(ages_en_python)
+    cases = valeur_figee("cases de la grille des carrières types",
+                         cases_de_la_grille(simulateur, CAS_TYPES, generations))
+    ages = valeur_figee("âges de la grille des carrières types", ages_de_la_grille(simulateur))
     assert {type(age) for age in ages.values()} == {int, float}
-    assert set(en_python[1].values()) == {"liquidation antérieure à la répartition",
-                                          "aucun régime actif sur la période"}
+    assert set(cases[1].values()) == {"liquidation antérieure à la répartition",
+                                      "aucun régime actif sur la période"}
 
 
 def test_les_departs_des_facteurs_de_la_depense_se_datent_au_portage_sans_les_jumeaux(
@@ -501,7 +434,7 @@ def test_les_departs_des_facteurs_de_la_depense_se_datent_au_portage_sans_les_ju
     étape 6), sous chacune de leurs formes : la grille, l'entrée dans l'emploi
     décalée comme celle de l'EIC, le départ dès l'ouverture du droit. Le pilote
     Python et les constructeurs de carrières, qu'on empêche ici de calculer,
-    n'y entrent pas ; chaque date est celle du Python, cohorte par cohorte, et
+    n'y entrent pas ; chaque date est celle que le témoin des valeurs porte, et
     une case que le droit écarte n'en a aucune."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
@@ -515,11 +448,8 @@ def test_les_departs_des_facteurs_de_la_depense_se_datent_au_portage_sans_les_ju
         return [dates_des_departs(Parametres(), cas_types=cas, generations=(1880, 1965, 2000),
                                   **forme) for forme in formes]
 
-    with pont.par_le_jumeau():
-        en_python = dates()
     _interdire(monkeypatch, _jumeaux_qui_datent_et_batissent())
-    au_portage = dates()
-    assert au_portage == en_python
+    au_portage = valeur_figee("dates des départs des facteurs de la dépense", dates())
     # L'entrée décalée et le départ dès l'ouverture déplacent des dates ; la
     # grille écarte des cases de la génération 1880.
     assert au_portage[1] != au_portage[0] and au_portage[2] != au_portage[0]
@@ -552,8 +482,8 @@ def test_le_cout_des_avantages_liquide_sa_grille_au_portage_sans_les_jumeaux(mem
     légal de chaque génération. Le pilote Python, l'ouverture du droit, les
     constructeurs de carrières, les scénarios neutralisés et le scénario 1 du
     moteur Python, qu'on empêche ici de calculer, n'y entrent pas. Couple pour
-    couple, la décomposition est celle du Python, chaque nombre sous son type,
-    chaque refus sous sa raison ; et le coût, année par année, est le même."""
+    couple, la décomposition et le coût sont ceux que le témoin des valeurs porte,
+    chaque nombre sous son type, chaque refus sous sa raison."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     from retraite_notionnelle import avantages, cout
@@ -566,11 +496,6 @@ def test_le_cout_des_avantages_liquide_sa_grille_au_portage_sans_les_jumeaux(mem
     monkeypatch.setattr(avantages, "generations", lambda: (1885, 1910, 1955, 1965, 1975))
     depenses = DepensesRetraite(RACINE_DONNEES)
     population = Population(RACINE_DONNEES, Parametres().hypothese_esperance_vie)
-    with pont.par_le_jumeau():
-        en_python = avantages.decomposer(Simulateur(Parametres()))
-        cout_en_python = avantages.calculer_avantages(Simulateur(Parametres()), depenses,
-                                                      population)
-
     def interdit(*_, **__):
         raise AssertionError("un jumeau Python date, bâtit ou liquide le coût des avantages")
 
@@ -578,11 +503,10 @@ def test_le_cout_des_avantages_liquide_sa_grille_au_portage_sans_les_jumeaux(mem
                              (ScenarioActuel, "calculer"), (avantages, "scenarios_neutralises"),
                              (cout, "_carrieres_voisines"), (avantages, "_carrieres_voisines")))
     monkeypatch.setattr(Simulateur, "scenario_actuel", property(interdit))
-    au_portage = avantages.decomposer(Simulateur(Parametres()))
-    assert au_portage == en_python
-    assert _types([vars(p) for p in au_portage[0]]) == _types([vars(p) for p in en_python[0]])
-    assert avantages.calculer_avantages(Simulateur(Parametres()), depenses,
-                                        population) == cout_en_python
+    au_portage = valeur_figee("décomposition des avantages",
+                              avantages.decomposer(Simulateur(Parametres())))
+    valeur_figee("coût des avantages", avantages.calculer_avantages(
+        Simulateur(Parametres()), depenses, population))
     pensionnes, refus = au_portage
     # L'artisan né en 1910 descend sous l'âge écrit ; l'agent des IEG né en 1885
     # est écarté.
@@ -768,13 +692,13 @@ RELEVE_A_PROLONGER = {
 }
 
 
-def test_le_pont_sert_le_scenario_actuel_au_bit_pres_du_moteur_python():
+def test_le_pont_sert_le_scenario_actuel():
     """Les confrontations aux références extérieures — l'estimation officielle,
     Destinie 2 — lisent du scénario 1 ce qu'aucun témoin n'écrit : la part de
     chaque régime dans la majoration pour enfants, la durée validée, le taux.
     Le portage le sert (:func:`pont.scenario_actuel`), chaque nombre sous le
-    type que le Python lui donne, et le moteur Python, qui garde ses jumeaux,
-    le refait au bit près sous Linux x86_64 (:data:`TOLERANCE_DU_MOTEUR_PYTHON`).
+    type que le Python lui donne, tel que le témoin des valeurs le porte (action 161,
+    étape 8d).
     Un relevé que l'appelant a prolongé à sa façon s'en tient à ses années."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
@@ -786,11 +710,7 @@ def test_le_pont_sert_le_scenario_actuel_au_bit_pres_du_moteur_python():
            {"cle": "tel_quel", "requete": RELEVE_A_PROLONGER, "prolonger": False}]
     servis, refus = pont.scenario_actuel(cas)
     assert refus == {}
-    refaits, refus = Saisies().scenario_actuel(cas)
-    assert refus == {}
-    for cle, servi in servis.items():
-        assert ecarts_d_ecriture(refaits[cle], servi,
-                                 tolerance=TOLERANCE_DU_MOTEUR_PYTHON) == [], cle
+    valeur_figee("scénario 1 servi", servis)
     veuf = servis["veuf"]
     (majoration,) = (avantage for avantage in veuf["actuel"]["avantages_appliques"]
                      if avantage["code"] == "majoration_enfants")
@@ -1476,16 +1396,15 @@ def test_les_parametres_passent_en_donnees_sous_les_noms_du_portage():
     assert donnees == json.loads(lus)
 
 
-def test_la_grille_du_cout_passe_le_pont_au_bit_pres_du_moteur_python():
+def test_la_grille_du_cout_passe_le_pont():
     """Ce que le coût lit de chaque case de sa grille — la pension de chaque
     système en euros constants ; la proposition sur la carrière où elle se
     calcule, sa garantie, son compte et son pilier ; le report de l'âge légal ;
     ce que le droit en vigueur prélève, année par année ; la part de chaque
     régime ; la population de sa mortalité — et la proposition seule sur les
     carrières qu'il en dérive : le portage le rend, sur des carrières passées
-    en données et sous les paramètres de la projection, au bit près de ce que
-    le moteur Python calcule (``cout._simulations_en_python``), chaque nombre
-    sous son type."""
+    en données et sous les paramètres de la projection, tel que le témoin des
+    valeurs le porte (action 161, étape 8d), chaque nombre sous son type."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     from retraite_notionnelle import cout
@@ -1501,13 +1420,10 @@ def test_la_grille_du_cout_passe_le_pont_au_bit_pres_du_moteur_python():
             "reportee": carriere.prolongee(age_legal, macro),
             "attente": carriere.prolongee(age_legal, macro, attente_travaillee=False)}})
     scenarios = [cle for cle, _ in cout.SCENARIOS]
-    attendus, refus = cout._simulations_en_python(simulateur, cas, scenarios)
-    assert not refus
     resultats, echecs = pont.grille_du_cout(cas, scenarios, simulateur.parametres,
                                             pont.paquet_des_donnees())
     assert not echecs
-    assert _types(resultats) == _types(attendus)
-    assert resultats == attendus
+    valeur_figee("grille du coût", resultats)
     # Ce que les cases font traverser : un report, un départ déjà pris, un
     # pilier, une population de mortalité, une pension de deux régimes.
     lus = resultats.values()
@@ -1523,8 +1439,6 @@ def test_les_parametres_du_cout_passent_le_pont():
     paramètres, non sous ceux de référence : le pilier ne s'ouvre qu'à elle."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from retraite_notionnelle import cout
-
     variante = replace(Parametres(), annee_bascule=2030)
     scenarios = ["actuel", "notionnel_liberal"]
     lus = {}
@@ -1532,10 +1446,9 @@ def test_les_parametres_du_cout_passent_le_pont():
         simulateur = Simulateur(parametres).pour_la_projection()
         carriere = _carriere_du_cout(simulateur, "salaire_moyen", 1975)
         cas = [{"cle": "salaire_moyen|1975", "carriere": carriere, "propositions": {}}]
-        attendus, _ = cout._simulations_en_python(simulateur, cas, scenarios)
         resultats, _ = pont.grille_du_cout(cas, scenarios, simulateur.parametres,
                                            pont.paquet_des_donnees())
-        assert resultats == attendus
+        valeur_figee(f"grille du coût, bascule en {parametres.annee_bascule}", resultats)
         lus[parametres.annee_bascule] = resultats["salaire_moyen|1975"]
     assert min(lus[2026]["liberal"]["pilier"]["annees"]) == 2026
     assert min(lus[2030]["liberal"]["pilier"]["annees"]) == 2030
@@ -1546,8 +1459,8 @@ def test_les_lignes_du_compte_d_un_scenario_passent_le_pont_sous_un_bareme():
     """Les scénarios que la demande nomme (``comptes``), la grille du coût rend
     de plus, de chaque case, les lignes de leur compte — ce qu'il porte, année
     par année, et sur quels revenus —, ce que ``scripts/solde_fusion.py`` lit
-    du scénario 4 sous le barème d'un régime unique (action 161) : au bit près
-    du jumeau (``cout._simulations_en_python``), sous le modèle comme sous un
+    du scénario 4 sous le barème d'un régime unique (action 161) : tel que le
+    témoin des valeurs le porte, sous le modèle comme sous un
     barème, qui ne change que ce que le compte porte après la bascule. Sans
     ``comptes``, aucune ligne."""
     if shutil.which("node") is None:
@@ -1563,12 +1476,10 @@ def test_les_lignes_du_compte_d_un_scenario_passent_le_pont_sous_un_bareme():
         cas = [{"cle": f"{code}|{generation}", "propositions": {},
                 "carriere": _carriere_du_cout(simulateur, code, generation)}
                for code, generation in CASES_DU_COUT]
-        attendus, refus = cout._simulations_en_python(simulateur, cas, scenarios, comptes)
         resultats, echecs = pont.grille_du_cout(cas, scenarios, simulateur.parametres,
                                                 pont.paquet_des_donnees(), comptes=comptes)
-        assert not refus and not echecs
-        assert _types(resultats) == _types(attendus)
-        assert resultats == attendus, bareme
+        assert not echecs
+        valeur_figee(f"comptes de la grille du coût sous le barème {bareme}", resultats)
         assert all(set(lu["comptes"]) == set(comptes) for lu in resultats.values())
         lus[bareme] = resultats
     sans = pont.grille_du_cout(cas[:1], scenarios, simulateur.parametres,
@@ -1615,70 +1526,31 @@ def test_le_cout_date_et_bat_sa_grille_par_le_portage_sans_les_jumeaux(memoire_i
     pilote Python, l'ouverture du droit qu'il interroge, les constructeurs de
     carrières, la projection des primes et le moteur Python, qu'on empêche ici
     de calculer, n'y entrent pas — ni dans ses cohortes nées toute l'année.
-    Couple pour couple, la grille est celle que le Python date, bâtit et simule
-    sous ``pont.par_le_jumeau()``."""
+    Couple pour couple, la grille est celle que le témoin des valeurs porte
+    (``outils_valeurs``), que le Python datait, bâtissait et simulait au bit
+    près tant qu'il gardait ses jumeaux (action 161, étape 8d)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     from retraite_notionnelle import cout
 
     monkeypatch.setattr(cout, "generations", lambda: (1965, 2000))
     simulateur = Simulateur(Parametres())
-    with pont.par_le_jumeau():
-        en_python = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
-        nees_en_python = cout._nees_toute_l_annee(simulateur, GRILLE_D_ESSAI, en_python[0],
-                                                  "droit")
     empecher_les_jumeaux_du_cout(monkeypatch)
-    par_le_portage = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
-    assert par_le_portage == en_python
-    assert _types([vars(p) for p in par_le_portage[0]]) == _types([vars(p) for p in en_python[0]])
-    assert cout._nees_toute_l_annee(simulateur, GRILLE_D_ESSAI, par_le_portage[0],
-                                    "droit") == nees_en_python
+    par_le_portage = valeur_figee("grille d'essai du coût", cout._pensionnes(
+        simulateur, GRILLE_D_ESSAI, "droit"))
+    valeur_figee("grille d'essai du coût, nés toute l'année", cout._nees_toute_l_annee(
+        simulateur, GRILLE_D_ESSAI, par_le_portage[0], "droit"))
     # Ce que la grille d'essai fait traverser : un report de l'âge légal, la
     # bascule entre les cohortes d'une génération.
     assert any(p.propre.annee_liquidation > p.annee_liquidation for p in par_le_portage[0])
     assert any(p.autre is not None for p in par_le_portage[0])
 
 
-def test_sous_le_jumeau_le_cout_simule_sa_grille_en_python(memoire_isolee, monkeypatch):
-    """Une confrontation qui fait refaire au jumeau ce que le portage calcule
-    s'ouvre sous ``pont.par_le_jumeau()`` : la grille s'y simule par le moteur
-    Python, sans rien faire dater, bâtir ni simuler au portage, et rend ce
-    que le portage rend, couple pour couple, chaque nombre au bit près. Une
-    seule demande part encore : les séries de la revalorisation servie, que
-    le portage seul calcule et que le jumeau lit comme le coût (note de
-    décision 0007)."""
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from retraite_notionnelle import cout
-
-    monkeypatch.setattr(cout, "generations", lambda: (1950, 1965, 1975, 2000))
-    simulateur = Simulateur(Parametres())
-    par_le_portage = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
-    demandes = []
-    demander = pont._demander
-
-    def espion(demande, paquet):
-        demandes.extend(demande)
-        return demander(demande, paquet)
-
-    monkeypatch.setattr(pont, "_demander", espion)
-    with pont.par_le_jumeau():
-        en_python = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
-    assert demandes == ["revalorisation_servie"]
-    assert en_python == par_le_portage
-    assert _types([vars(p) for p in en_python[0]]) == _types([vars(p) for p in par_le_portage[0]])
-    pensionnes = par_le_portage[0]
-    assert len(pensionnes) == len(GRILLE_D_ESSAI) * 4
-    assert any(p.autre is not None for p in pensionnes)
-    assert any(p.propre.annee_liquidation > p.annee_liquidation for p in pensionnes)
-
-
 def test_le_cout_d_une_variante_simule_sa_grille_par_le_portage(memoire_isolee, monkeypatch):
     """Le coût sous une variante d'une étude — la proposition prospective,
     ``scripts/proposition_prospective.py`` — simule sa grille par le portage,
     la variante dans la demande (action 161) : couple pour couple, chaque
-    nombre sous son type, ce que le jumeau calcule de la même variante sous
-    ``pont.par_le_jumeau()`` ; et autre chose que le coût du scénario 6, sur
+    nombre sous son type, ce que le témoin des valeurs porte ; et autre chose que le coût du scénario 6, sur
     une génération partie avant la bascule comme sur une autre, après."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
@@ -1686,11 +1558,8 @@ def test_le_cout_d_une_variante_simule_sa_grille_par_le_portage(memoire_isolee, 
 
     monkeypatch.setattr(cout, "generations", lambda: (1950, 2000))
     simulateur = Simulateur(Parametres(), variantes=_variantes())
-    with pont.par_le_jumeau():
-        en_python = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
-    par_le_portage = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
-    assert par_le_portage == en_python
-    assert _types([vars(p) for p in par_le_portage[0]]) == _types([vars(p) for p in en_python[0]])
+    par_le_portage = valeur_figee("grille d'essai du coût sous la proposition prospective",
+                                  cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit"))
     du_scenario_6 = cout._pensionnes(Simulateur(Parametres()), GRILLE_D_ESSAI, "droit")[0]
     for generation in (1950, 2000):
         assert any(p.propre != q.propre for p, q in zip(par_le_portage[0], du_scenario_6)
@@ -1703,7 +1572,7 @@ def test_le_cout_sous_la_regle_du_stock_simule_sa_grille_par_le_portage(memoire_
     (``Parametres.stock_age_legal``, ``scripts/stock_age_legal.py``) simule sa
     grille par le portage, la règle dans les paramètres de la demande
     (action 161) : couple pour couple, chaque nombre sous son type, ce que le
-    jumeau calcule sous la même règle et ``pont.par_le_jumeau()`` ; et autre
+    témoin des valeurs porte ; et autre
     chose que sans elle, sur la génération que la règle touche — partie avant
     la bascule sous ``droit_commun``, après sous ``acquis``."""
     if shutil.which("node") is None:
@@ -1715,12 +1584,8 @@ def test_le_cout_sous_la_regle_du_stock_simule_sa_grille_par_le_portage(memoire_
     sans = cout._pensionnes(Simulateur(Parametres()), GRILLE_D_ESSAI, "droit")[0]
     for regle, touchee in ((StockAgeLegal.DROIT_COMMUN, 1950), (StockAgeLegal.ACQUIS, 2000)):
         simulateur = Simulateur(replace(Parametres(), stock_age_legal=regle))
-        with pont.par_le_jumeau():
-            en_python = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
-        par_le_portage = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
-        assert par_le_portage == en_python, regle
-        assert (_types([vars(p) for p in par_le_portage[0]])
-                == _types([vars(p) for p in en_python[0]])), regle
+        par_le_portage = valeur_figee(f"grille d'essai du coût sous le stock {regle.value}",
+                                      cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit"))
         # La pension de chaque scénario : ``acquis`` ne touche que les
         # prospectifs, que le volet de la proposition ne porte pas.
         assert any(p.pensions != q.pensions for p, q in zip(par_le_portage[0], sans)
@@ -1741,27 +1606,6 @@ def test_sous_monkeypatch_le_cout_simule_sa_grille_par_le_portage(monkeypatch):
         cout._pensionnes(Simulateur(Parametres()), GRILLE_D_ESSAI, "droit")
 
 
-def test_sur_des_donnees_d_ailleurs_le_cout_calcule_par_le_portage(tmp_path):
-    """Des données d'ailleurs — une copie que l'on a retouchée
-    (``scripts/facteurs_depense.py --sans-suspension``) — se calculent par le
-    portage, sur leur paquet (``pont.paquet_des_donnees``), comme celles du
-    dépôt : seul ``pont.par_le_jumeau()`` renvoie au moteur Python. Un
-    contexte qui ne fait que taire la mémoire des calculs
-    (``memoire.modele_modifie``) laisse calculer le portage."""
-    from retraite_notionnelle import memoire
-
-    ailleurs = replace(Parametres(), racine_donnees=tmp_path)
-    assert pont.par_le_portage(Parametres())
-    assert pont.par_le_portage(ailleurs)
-    with memoire.modele_modifie():
-        assert pont.par_le_portage(Parametres())
-    with pont.par_le_jumeau():
-        assert not pont.par_le_portage(Parametres())
-        assert not pont.par_le_portage(ailleurs)
-        assert not memoire._active()
-    assert pont.par_le_portage(Parametres())
-
-
 #: Le levier qui fait calculer le jumeau Python (``pont.par_le_jumeau``).
 LEVIER = "par_le_jumeau"
 
@@ -1773,30 +1617,11 @@ LEVIER = "par_le_jumeau"
 #: pas, s'écrit en données, une couche ou un paramètre de la demande au pont
 #: (note de décision 0006). Une confrontation part avec la paire qu'elle
 #: confronte, et le levier avec la dernière.
-CONFRONTATIONS_DU_JUMEAU = {
-    "tests/test_cout.py": ("test_le_portage_bat_toute_la_grille_du_cout_comme_le_python",),
-    "tests/test_grille_large.py": (
-        "test_la_grille_large_se_date_et_se_bat_au_portage_sans_les_jumeaux",
-        "test_les_mesures_de_la_grille_large_passent_par_le_portage_sans_les_jumeaux"),
-    "tests/test_pont.py": (
-        "test_la_grille_des_carrieres_types_se_date_au_portage_sans_les_jumeaux",
-        "test_les_departs_des_facteurs_de_la_depense_se_datent_au_portage_sans_les_jumeaux",
-        "test_le_cout_des_avantages_liquide_sa_grille_au_portage_sans_les_jumeaux",
-        "test_le_cout_date_et_bat_sa_grille_par_le_portage_sans_les_jumeaux",
-        "test_le_cout_d_une_variante_simule_sa_grille_par_le_portage",
-        "test_le_cout_sous_la_regle_du_stock_simule_sa_grille_par_le_portage",
-        "test_sur_des_donnees_d_ailleurs_le_cout_date_bat_et_simule_sa_grille_par_le_portage"),
-    "tests/test_solde_fusion.py": (
-        "test_la_grille_se_simule_par_le_portage_au_bit_pres_du_jumeau",),
-    "tests/test_stock_age_legal.py": (
-        "test_les_cas_types_passent_par_le_portage_au_bit_pres_du_jumeau",),
-}
+CONFRONTATIONS_DU_JUMEAU: dict[str, tuple[str, ...]] = {}
 
 #: Les tests du levier lui-même — ce qu'il aiguille, le moteur Python qui
 #: calcule sous lui —, qui partent avec lui.
-TESTS_DU_LEVIER = {"tests/test_pont.py": (
-    "test_sous_le_jumeau_le_cout_simule_sa_grille_en_python",
-    "test_sur_des_donnees_d_ailleurs_le_cout_calcule_par_le_portage")}
+TESTS_DU_LEVIER: dict[str, tuple[str, ...]] = {}
 
 
 def _ouvertures_du_levier(source: str) -> set[str]:
@@ -1960,13 +1785,10 @@ def test_sur_des_donnees_d_ailleurs_le_cout_date_bat_et_simule_sa_grille_par_le_
 
     monkeypatch.setattr(cout, "generations", lambda: (1968,))
     simulateur = Simulateur(replace(Parametres(), racine_donnees=donnees_d_ailleurs))
-    with pont.par_le_jumeau():
-        en_python = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
     du_depot = cout._pensionnes(Simulateur(Parametres()), GRILLE_D_ESSAI, "droit")
     empecher_les_jumeaux_du_cout(monkeypatch)
-    par_le_portage = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
-    assert par_le_portage == en_python
-    assert _types([vars(p) for p in par_le_portage[0]]) == _types([vars(p) for p in en_python[0]])
+    par_le_portage = valeur_figee("grille d'essai du coût sur des données d'ailleurs",
+                                  cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit"))
 
     def departs(pensionnes) -> dict[str, int]:
         return {p.code: p.annee_liquidation for p in pensionnes[0]}

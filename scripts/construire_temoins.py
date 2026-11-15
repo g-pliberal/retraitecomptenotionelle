@@ -24,9 +24,13 @@ site calcule et ce qu'il écrit :
 * ``tests/temoins/sorties.json`` — l'empreinte de ce que chaque script de
   comparaison de ``tests/js/`` écrit de chacune de ses entrées
   (``outils_sorties.sortie_figee``), refaite en relançant le script (action
-  161, étape 8c).
+  161, étape 8c) ;
+* ``tests/temoins/valeurs.json`` — l'empreinte de ce que le portage rend à une
+  fonction Python dans les confrontations du pont (``outils_valeurs.valeur_figee``),
+  refaite en relançant, sous ``FIGER_VALEURS=1``, chaque fichier de tests qui
+  en fige une (action 161, étape 8d).
 
-Les quatre fichiers sont versionnés : une différence de chiffre entre les deux
+Les cinq fichiers sont versionnés : une différence de chiffre entre les deux
 implémentations fait échouer la confrontation du moteur Python, et une
 modification voulue du modèle, ou du texte du site, apparaît en diff dans le
 dépôt, chiffre par chiffre et mot par mot. C'est ce qui rend le portage
@@ -36,14 +40,18 @@ vérifiable plutôt que crédible.
     python scripts/construire_temoins.py --verifier # échoue s'ils sont périmés
     python scripts/construire_temoins.py --servis   # le témoin des servis seul
     python scripts/construire_temoins.py --sorties  # le témoin des sorties seul
+    python scripts/construire_temoins.py --valeurs  # le témoin des valeurs seul
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -66,6 +74,9 @@ SERVIS = DOSSIER / "servis.json"
 #: les scripts de comparaison écrivent de leurs entrées ; une entrée neuve y
 #: entre par ``FIGER_SORTIES=1``.
 SORTIES = DOSSIER / "sorties.json"
+#: Le témoin des valeurs (``tests/outils_valeurs.py``) : l'empreinte de ce que
+#: le portage rend à une fonction Python, sous le nom que le test lui donne.
+VALEURS = DOSSIER / "valeurs.json"
 
 #: Réglages du cas de base. Chaque cas ci-dessous en dérive.
 BASE = {
@@ -2813,16 +2824,38 @@ def sorties(figes: dict[str, dict]) -> dict[str, dict]:
     return refaire(figes)
 
 
+def valeurs(lancer=subprocess.run) -> dict[str, dict]:
+    """Le témoin des valeurs refait à neuf : chaque test qui fige une valeur
+    (``outils_valeurs.tests_qui_figent``), relancé sous
+    ``FIGER_VALEURS=1`` sur un témoin vide, à part (action 161, étape 8d). Un
+    test qui échoue avant de figer laisse sa valeur absente : la suite le dit."""
+    sys.path.insert(0, str(RACINE / "tests"))
+    from outils_valeurs import tests_qui_figent
+
+    with tempfile.TemporaryDirectory() as dossier:
+        temoin = Path(dossier) / "valeurs.json"
+        temoin.write_text("{}\n", encoding="utf-8")
+        lancer([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider",
+                *(f"tests/{test}" for test in tests_qui_figent())],
+               cwd=RACINE, check=False, capture_output=True,
+               env={**os.environ, "FIGER_VALEURS": "1", "TEMOIN_DES_VALEURS": str(temoin)})
+        return json.loads(temoin.read_text(encoding="utf-8"))
+
+
 def construire(seulement_les_servis: bool = False,
-               seulement_les_sorties: bool = False) -> dict[Path, bytes]:
+               seulement_les_sorties: bool = False,
+               seulement_les_valeurs: bool = False) -> dict[Path, bytes]:
     fichiers = {}
-    if not seulement_les_sorties:
+    seul = seulement_les_servis or seulement_les_sorties or seulement_les_valeurs
+    if seulement_les_servis or not seul:
         figes = json.loads(SERVIS.read_text(encoding="utf-8")) if SERVIS.exists() else {}
         fichiers[SERVIS] = servis(figes)
-    if not seulement_les_servis:
+    if seulement_les_sorties or not seul:
         figes = json.loads(SORTIES.read_text(encoding="utf-8")) if SORTIES.exists() else {}
         fichiers[SORTIES] = sorties(figes)
-    if not (seulement_les_servis or seulement_les_sorties):
+    if seulement_les_valeurs or not seul:
+        fichiers[VALEURS] = valeurs()
+    if not seul:
         fichiers |= {SIMULATIONS: _simulations(), PAGES: _pages()}
     return {
         chemin: (json.dumps(contenu, ensure_ascii=False, sort_keys=True, indent=1) + "\n")
@@ -2845,10 +2878,15 @@ def main(argv: list[str] | None = None) -> int:
         "--sorties", action="store_true",
         help="ne refaire que le témoin des sorties",
     )
+    analyseur.add_argument(
+        "--valeurs", action="store_true",
+        help="ne refaire que le témoin des valeurs, en relançant les tests qui en figent",
+    )
     arguments = analyseur.parse_args(argv)
 
     attendus = construire(seulement_les_servis=arguments.servis,
-                          seulement_les_sorties=arguments.sorties)
+                          seulement_les_sorties=arguments.sorties,
+                          seulement_les_valeurs=arguments.valeurs)
 
     if arguments.verifier:
         for chemin, contenu in attendus.items():

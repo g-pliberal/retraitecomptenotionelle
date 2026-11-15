@@ -23,7 +23,7 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle import cout as C
-from retraite_notionnelle import memoire, pont
+from retraite_notionnelle import memoire
 from retraite_notionnelle.castypes import GRILLE_DU_COUT, poids_effectifs
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.simulateur import Simulateur
@@ -3730,17 +3730,18 @@ def test_la_grille_large_se_date_et_se_bat_au_portage_sans_les_jumeaux(memoire_i
     chaque case et chaque âge, sous la variante du droit comme sous l'âge
     écrit (``castypes.cases_de_la_grille``, ``castypes.ages_de_la_grille``),
     sous son type ; sous ceux de la projection, la grille bâtie du coût
-    (``cout._grille_batie``) et sa simulation (``cout._pensionnes``) : ceux du
-    Python, au bit près, alors que le pilote Python, l'ouverture du droit, les
+    (``cout._grille_batie``) et sa simulation (``cout._pensionnes``) : ceux que
+    le témoin des valeurs porte (étape 8d), alors que le pilote Python, l'ouverture du droit, les
     constructeurs de carrières, l'échéancier et le scénario 1 du moteur
     Python, qu'on empêche ici de calculer, n'y entrent pas."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from retraite_notionnelle import castypes, pilote
+    from retraite_notionnelle import castypes
     from retraite_notionnelle.castypes import CasType
     from retraite_notionnelle.scenarios.actuel import ScenarioActuel
 
-    from test_pont import _interdire, _jumeaux_qui_datent_et_batissent, _types
+    from outils_valeurs import valeur_figee
+    from test_pont import _interdire, _jumeaux_qui_datent_et_batissent
 
     echantillon = _echantillon_au_portage()
     generations = (1950, 1965, 1980)
@@ -3754,30 +3755,13 @@ def test_la_grille_large_se_date_et_se_bat_au_portage_sans_les_jumeaux(memoire_i
                 C._grille_batie(reference.pour_la_projection(), echantillon, "droit"),
                 C._pensionnes(reference, echantillon, "droit"))
 
-    with pont.par_le_jumeau():
-        reference = Simulateur(Parametres())
-        en_python = tout(reference)
-        projection = reference.pour_la_projection()
-        # Ce que l'échantillon fait traverser : l'entrée tardive sous les
-        # conventions du COR, les deux attentes, la surcote cherchée.
-        par_code = {cas.code: cas for cas in echantillon}
-        assert par_code["essai~entree"]._delai_d_entree(projection, 1965) > 0.0
-        for code in ("essai~attente", "essai~surcote"):
-            assert (par_code[code].age_liquidation_pour(reference, 1965)
-                    > pilote.age_de_depart(reference, par_code[code], 1965)), code
-
     _interdire(monkeypatch, (*_jumeaux_qui_datent_et_batissent(), (ScenarioActuel, "calculer"),
                              (Simulateur, "echeancier"), (Simulateur, "simuler"),
                              (Simulateur, "proposition"), (G.CasTypeLarge, "_carriere"),
                              (CasType, "_carriere_entree_tardive"),
                              (G, "_debut_de_la_surcote_en_python")))
-    au_portage = tout(Simulateur(Parametres()))
-    assert au_portage[0] == en_python[0] and _types(au_portage[0]) == _types(en_python[0])
-    assert au_portage[1] == en_python[1] and _types(au_portage[1]) == _types(en_python[1])
-    assert au_portage[2] == en_python[2]
-    assert au_portage[3] == en_python[3]
-    assert (_types([vars(p) for p in au_portage[3][0]])
-            == _types([vars(p) for p in en_python[3][0]]))
+    au_portage = valeur_figee("échantillon daté, bâti et simulé",
+                              tout(Simulateur(Parametres())))
     assert len(au_portage[3][0]) == len(echantillon) * 2
 
 
@@ -3792,7 +3776,7 @@ def test_les_mesures_de_la_grille_large_passent_par_le_portage_sans_les_jumeaux(
     la décote d'un départ (``avec_decote``), la proratisation et le minimum
     (``_proratisations``), la condition du départ (``condition_au_depart``,
     ``_conditions``), la surcote servie (``_depart_et_surcote``). Chacune rend
-    ce que le moteur Python rend, au bit près, alors que le pilote Python,
+    ce que le témoin des valeurs porte (étape 8d), alors que le pilote Python,
     l'ouverture du droit, les constructeurs de carrières, l'échéancier et le
     scénario 1 du moteur Python, qu'on empêche ici de calculer, n'y entrent
     pas."""
@@ -3801,7 +3785,8 @@ def test_les_mesures_de_la_grille_large_passent_par_le_portage_sans_les_jumeaux(
     from retraite_notionnelle.castypes import CasType
     from retraite_notionnelle.scenarios.actuel import ScenarioActuel
 
-    from test_pont import _interdire, _jumeaux_qui_datent_et_batissent, _types
+    from outils_valeurs import valeur_figee
+    from test_pont import _interdire, _jumeaux_qui_datent_et_batissent
 
     monkeypatch.setattr(C, "generations", lambda: (1950, 1965))
     du_depot = {cas.code: cas for cas in GRILLE_DU_COUT}
@@ -3836,19 +3821,15 @@ def test_les_mesures_de_la_grille_large_passent_par_le_portage_sans_les_jumeaux(
                         for generation in (1950, 1965)],
         }
 
-    with pont.par_le_jumeau():
-        en_python = mesures()
-    # Ce que l'échantillon fait traverser : une décote, une avance, chaque
-    # condition de départ, une surcote servie.
-    assert any(en_python["decote"]) and any(en_python["avance"])
-    assert {condition for _age, condition in en_python["condition"]} >= {
-        "carriere_longue", "decote", "surcote", "taux_plein_autre"}
-
     _interdire(monkeypatch, (*_jumeaux_qui_datent_et_batissent(), (ScenarioActuel, "calculer"),
                              (Simulateur, "echeancier"), (G.CasTypeLarge, "_carriere"),
                              (CasType, "_carriere_entree_tardive"),
                              (G, "_debut_de_la_surcote_en_python")))
     au_portage = mesures()
-    for mesure, valeur in en_python.items():
-        assert au_portage[mesure] == valeur, mesure
-        assert _types(au_portage[mesure]) == _types(valeur), mesure
+    for mesure, valeur in au_portage.items():
+        valeur_figee(f"mesure {mesure} de l'échantillon", valeur)
+    # Ce que l'échantillon fait traverser : une décote, une avance, chaque
+    # condition de départ, une surcote servie.
+    assert any(au_portage["decote"]) and any(au_portage["avance"])
+    assert {condition for _age, condition in au_portage["condition"]} >= {
+        "carriere_longue", "decote", "surcote", "taux_plein_autre"}

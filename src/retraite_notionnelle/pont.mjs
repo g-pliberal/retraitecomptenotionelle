@@ -463,7 +463,7 @@ function capitauxDuCompte(resultat) {
 
 /**
  * Chaque case de la grille du coût : ce que `cout.py` lit de la comparaison
- * (`_simulations_en_python`, son jumeau Python), la proposition seule sur
+ * (`_simulations`), la proposition seule sur
  * chaque carrière nommée de `propositions`, et les lignes du compte de chaque
  * scénario que `comptes` nomme. Seule la comparaison peut refuser une case,
  * comme `calculer_cas_types` ne range parmi les échecs que ce que la

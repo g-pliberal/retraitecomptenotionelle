@@ -76,17 +76,17 @@ def test_chaque_hypothese_est_un_bareme_du_moteur(hypotheses):
         assert ConstructeurCompte.taux_unifie is taux_unifie
 
 
-def test_la_grille_se_simule_par_le_portage_au_bit_pres_du_jumeau(hypotheses, monkeypatch):
+def test_la_grille_se_simule_par_le_portage(hypotheses, monkeypatch):
     """Sous chaque barème, la grille du coût se simule par le portage, le
     barème dans les paramètres de la demande, et rend de chaque couple, avec ce
     que le coût en lit, ce que le compte du scénario 4 prélève et sur quels
-    revenus (action 161) : au bit près de ce que le jumeau Python en simule
-    sous le même barème et ``pont.par_le_jumeau()`` — sans que le moteur
-    Python ne calcule rien. Le prélèvement du régime unique y change après la
+    revenus (action 161) : ce que le témoin des valeurs porte (``outils_valeurs``,
+    étape 8d) — sans que le moteur Python ne calcule rien. Le prélèvement du régime unique y change après la
     bascule, et non avant."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne calcule pas ici")
     from outils_pont import empecher_les_jumeaux_du_cout
+    from outils_valeurs import valeur_figee
     from retraite_notionnelle.castypes import GRILLE_DU_COUT
 
     monkeypatch.setattr(C, "generations", lambda: (1965, 2000))
@@ -94,17 +94,12 @@ def test_la_grille_se_simule_par_le_portage_au_bit_pres_du_jumeau(hypotheses, mo
                    if cas.code in ("salaire_moyen", "artisan", "fonctionnaire_sedentaire"))
     _, toutes = hypotheses
     lus = {}
-    for lettre in "BC":
-        simulateur = Simulateur(solde_fusion.parametres_de(toutes[lettre], PARAMETRES))
-        with solde_fusion.RegimeUniqueVariante(toutes[lettre]):
-            with pont.par_le_jumeau():
-                lus[f"{lettre}, jumeau"] = C._pensionnes(simulateur, grille, "droit")
     empecher_les_jumeaux_du_cout(monkeypatch)
     for lettre in "BC":
         simulateur = Simulateur(solde_fusion.parametres_de(toutes[lettre], PARAMETRES))
         with solde_fusion.RegimeUniqueVariante(toutes[lettre]):
-            lus[lettre] = C._pensionnes(simulateur, grille, "droit")
-        assert lus[lettre] == lus[f"{lettre}, jumeau"], lettre
+            lus[lettre] = valeur_figee(f"grille sous l'hypothèse {lettre}",
+                                       C._pensionnes(simulateur, grille, "droit"))
         assert len(lus[lettre][0]) == len(grille) * 2, lettre
     bascule = PARAMETRES.annee_bascule
     for b, c in zip(lus["B"][0], lus["C"][0], strict=True):

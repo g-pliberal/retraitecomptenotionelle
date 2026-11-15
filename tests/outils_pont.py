@@ -144,28 +144,6 @@ def actuel_en_donnees(actuel) -> dict:
     }
 
 
-def scenario_actuel_en_donnees(comparaison: Comparaison) -> dict:
-    """Ce que :func:`pont.scenario_actuel` rend du portage, tiré d'une
-    comparaison du moteur Python, son jumeau : les mêmes champs, relus sous
-    les mêmes types (:func:`pont.scenario_actuel_des_donnees`) — le zéro d'une
-    somme vide, que le moteur Python rend entier, y devient « 0.0 », comme
-    dans les témoins."""
-    actuel, reversion = comparaison.actuel, comparaison.reversion
-    date = comparaison.carriere.date_liquidation
-    return pont.scenario_actuel_des_donnees({
-        "annee_liquidation": date.annee,
-        "mois_liquidation": date.mois,
-        "coefficient_euros_constants": comparaison.coefficient_euros_constants,
-        "actuel": actuel_en_donnees(actuel),
-        "reversion": None if reversion is None else {
-            "annee": reversion.annee,
-            "regimes": [{"regime": ligne.regime, "montant": ligne.montant,
-                         "date_effet": ligne.date_effet}
-                        for ligne in reversion.regimes],
-        },
-    })
-
-
 class RefusDuPortage(Exception):
     """Le portage refuse la requête : sa saisie, ou le modèle quand il en
     bâtit la carrière. Le message est son motif, tel que le site l'écrit."""
@@ -216,18 +194,6 @@ class Saisies:
         niveau trouvé (``niveau_inverse``)."""
         parametres, carriere = self.lire(requete)
         return self.simulateur(parametres).simuler(carriere)
-
-    def scenario_actuel(self, cas: list[dict]) -> tuple[dict[str, dict], dict[str, str]]:
-        """Ce que :func:`pont.scenario_actuel` sert de chaque cas, ``{"cle",
-        "requete", "prolonger"}``, refait au moteur Python tant qu'il garde ses
-        jumeaux (action 161) : la carrière que le portage bâtit de la même
-        requête, tel quel le relevé que l'appelant a prolongé, simulée par le
-        jumeau Python, sous les champs et les types du pont
-        (:func:`scenario_actuel_en_donnees`). Puis, sous leur clé, les motifs
-        des requêtes que le portage refuse."""
-        carrieres, refus = pont.carrieres_des_saisies(cas)
-        return ({cle: scenario_actuel_en_donnees(self.simulateur(parametres).simuler(carriere))
-                 for cle, (parametres, carriere) in carrieres.items()}, refus)
 
 
 #: Le pont du scénario 1 tel quel, que :func:`servi_et_fige` appelle quand

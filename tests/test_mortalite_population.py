@@ -38,6 +38,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import entrees_du_moteur  # noqa: E402
 import mortalite_population as M  # noqa: E402
 from outils_pont import droit_et_refait  # noqa: E402
+from outils_valeurs import valeur_figee  # noqa: E402
 from retraite_notionnelle import pont  # noqa: E402
 from retraite_notionnelle.castypes import (GRILLE_DU_COUT, carriere_de_la_grille,  # noqa: E402
                                            primes_projetees_en_donnees)
@@ -353,8 +354,8 @@ def test_les_capitaux_d_un_compte_passent_le_pont():
     """Des scénarios que la demande nomme (``capitaux``), la grille du coût
     rend de plus, de chaque case, le capital du compte à la liquidation et ce
     qu'en portent les droits acquis à la bascule — ce que le déficit en lit
-    (``_parts_ouvertes``, action 161) —, au bit près du jumeau
-    (``cout._simulations_en_python``). Le salarié au salaire moyen né en 1955
+    (``_parts_ouvertes``, action 161) —, tels que le témoin des valeurs les
+    porte (``outils_valeurs``, action 161, étape 8d). Le salarié au salaire moyen né en 1955
     part en 2017, avant la bascule de 2026 : les scénarios 3 et 5 lui gardent
     le droit en vigueur, et tout son capital y est un droit acquis. Né en
     2005, il entre au travail l'année de la bascule : rien d'acquis avant
@@ -372,10 +373,8 @@ def test_les_capitaux_d_un_compte_passent_le_pont():
     paquet = pont.paquet_des_donnees()
     lus, echecs = pont.grille_du_cout(cas, scenarios, simulateur.parametres, paquet,
                                       capitaux=capitaux)
-    attendus, refus = cout._simulations_en_python(simulateur, cas, scenarios,
-                                                  capitaux=capitaux)
-    assert not echecs and not refus
-    assert lus == attendus
+    assert not echecs
+    valeur_figee("capitaux du compte", lus)
     for lu in lus.values():
         assert set(lu["capitaux"]) == set(capitaux)
         for capital in lu["capitaux"].values():

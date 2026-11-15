@@ -227,57 +227,6 @@ class _PontOuvert:
             self._processus.kill()
 
 
-#: Les contextes ouverts sous lesquels le jumeau Python calcule
-#: (:func:`par_le_jumeau`).
-_JUMEAU = 0
-
-
-@contextlib.contextmanager
-def par_le_jumeau():
-    """Le temps d'une confrontation : le jumeau Python refait ce que le
-    portage calcule, et la mémoire des calculs, qui ne connaît que le modèle
-    intact, se tait (``memoire.modele_modifie``).
-
-    Seules s'y ouvrent les confrontations, et les tests du levier lui-même,
-    que ``tests/test_pont.py`` déclare un à un (``CONFRONTATIONS_DU_JUMEAU``,
-    ``TESTS_DU_LEVIER``) et que ``test_seules_les_confrontations_ouvrent_le_jumeau``
-    tient (action 161, « le coût sous un modèle modifié », sous-étape 6) ;
-    une confrontation part avec la paire qu'elle confronte, et le levier avec
-    la dernière. Aucune étude ni aucun script : une variante qui remplacerait
-    une fonction du moteur, que le portage ne voit pas, s'écrit en données,
-    une couche ou un paramètre de la demande au pont (note de décision
-    0006) — ``proposition_prospective.py``, un univers que la demande porte
-    (``Simulateur.univers_de_la_demande``) ; ``stock_age_legal.py`` et
-    ``solde_fusion.py``, une règle du moteur sous un paramètre
-    (``Parametres.stock_age_legal``, ``Parametres.bareme_regime_unique``)."""
-    global _JUMEAU
-    from .memoire import modele_modifie
-
-    with modele_modifie():
-        _JUMEAU += 1
-        try:
-            yield
-        finally:
-            _JUMEAU -= 1
-
-
-def par_le_portage(parametres) -> bool:
-    """Ce que ces paramètres font calculer passe-t-il par le portage (action
-    161, étapes 5 et 6) ? Le coût y simule, y date et y bâtit sa grille, la
-    table y date ses carrières types.
-
-    Oui, sur les données du dépôt comme sur des données d'ailleurs — une copie
-    que l'on a retouchée (``scripts/facteurs_depense.py --sans-suspension``) :
-    le portage calcule sur leur paquet (:func:`paquet_des_donnees`), même quand
-    la mémoire des calculs se tait — sous ``monkeypatch``
-    (``tests/conftest.py``) ou un contexte qui remplace une fonction du coût
-    (``memoire.modele_modifie``) : ce qu'ils remplacent, le Python le lit. Non
-    sous :func:`par_le_jumeau`, que seules les confrontations ouvrent : le
-    jumeau Python y refait ce que le portage calcule. Ce n'est pas un repli :
-    sans node, le calcul s'arrête (:class:`PontIndisponible`)."""
-    return not _JUMEAU
-
-
 def _du_depot(racine) -> bool:
     """``racine`` est-elle celle des données du dépôt ?"""
     from .config import RACINE_DONNEES
@@ -731,9 +680,8 @@ def grille_du_cout(cas: list[dict], scenarios, parametres, paquet: bytes | None 
     """Chaque case de la grille du coût, ``{"cle", "carriere",
     "propositions"}`` — sa carrière, et celles, nommées, sur lesquelles le coût
     calcule la proposition seule —, simulée par le portage sous
-    ``parametres``, ceux de la projection : sous sa clé, ce que le coût en lit,
-    tel que ``cout._simulations_en_python`` le tire du moteur Python, son
-    jumeau. Puis, sous leur clé, les motifs des cases que le portage refuse.
+    ``parametres``, ceux de la projection : sous sa clé, ce que le coût en lit
+    (``cout._simulations``). Puis, sous leur clé, les motifs des cases que le portage refuse.
     ``univers`` porte les variantes d'une étude, chacune à la place du calcul
     que le paquet porte sous sa clé (``Simulateur.univers_de_la_demande``,
     action 161). ``comptes`` nomme les scénarios dont chaque case rend de plus

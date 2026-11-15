@@ -86,10 +86,7 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   qui en remplace une fonction du coût ou d'une étude s'ouvre sous
   `memoire.modele_modifie()`, et `monkeypatch` la fait taire ; une fonction
   du moteur, que le portage ne voit pas, ne se remplace pas : sa variante
-  s'écrit en données (note de décision 0006). Seules les confrontations,
-  déclarées une à une dans `tests/test_pont.py`
-  (`CONFRONTATIONS_DU_JUMEAU`), s'ouvrent sous `pont.par_le_jumeau()`, qui
-  fait aussi calculer le jumeau. `SerieAnnuelle` et
+  s'écrit en données (note de décision 0006). `SerieAnnuelle` et
   `Carriere` sont immuables après leur constructeur : un champ réassigné
   après coup casserait leurs mémoires sans bruit.
 

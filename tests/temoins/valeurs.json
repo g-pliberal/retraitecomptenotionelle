@@ -1,0 +1,137 @@
+{
+ "test_cout.py::grille du coût bâtie": {
+  "valeur": "3368d56812f4a0cc"
+ },
+ "test_grille_large.py::mesure avance de l'échantillon": {
+  "valeur": "ceead619d3dde6bc"
+ },
+ "test_grille_large.py::mesure avances de l'échantillon": {
+  "valeur": "fe7b784566e2fc29"
+ },
+ "test_grille_large.py::mesure avec_decote de l'échantillon": {
+  "valeur": "a19cb7825a7b5b8a"
+ },
+ "test_grille_large.py::mesure condition de l'échantillon": {
+  "valeur": "002472d97ee53d7a"
+ },
+ "test_grille_large.py::mesure conditions de l'échantillon": {
+  "valeur": "af40855d8ebae38f"
+ },
+ "test_grille_large.py::mesure debut de l'échantillon": {
+  "valeur": "7c51c3783cb9a40d"
+ },
+ "test_grille_large.py::mesure decote de l'échantillon": {
+  "valeur": "7ac04c8fa1ada5a0"
+ },
+ "test_grille_large.py::mesure ouvertures de l'échantillon": {
+  "valeur": "4c7875340e43be87"
+ },
+ "test_grille_large.py::mesure proratisations de l'échantillon": {
+  "valeur": "a933d8242c415a84"
+ },
+ "test_grille_large.py::mesure surcote de l'échantillon": {
+  "valeur": "7e51ed63f14e9c4c"
+ },
+ "test_grille_large.py::échantillon daté, bâti et simulé": {
+  "valeur": "65e0e8dde05fc6d7"
+ },
+ "test_mortalite_population.py::capitaux du compte": {
+  "valeur": "328d1336286fdda1"
+ },
+ "test_pont.py::carrières de la grille": {
+  "valeur": "7905fa657ea4127f"
+ },
+ "test_pont.py::cases": {
+  "valeur": "920249f18b744f33"
+ },
+ "test_pont.py::cases de la grille des carrières types": {
+  "valeur": "2f0ac38f5e3d9dd2"
+ },
+ "test_pont.py::cases sous la proposition prospective": {
+  "valeur": "0f46e3e6334361f6"
+ },
+ "test_pont.py::cases sous le barème ((1.0, 0.2815, 0.1145), (8.0, 0.2215, 0.0904), (None, 0.024, 0.004))": {
+  "valeur": "6f3861882a8bcf52"
+ },
+ "test_pont.py::cases sous le barème ((None, 0.229, 0.095),)": {
+  "valeur": "c2205fa0f2df6e83"
+ },
+ "test_pont.py::cases sous le stock acquis": {
+  "valeur": "38b7acdb4799c0bd"
+ },
+ "test_pont.py::cases sous le stock droit_commun": {
+  "valeur": "0cc1dcd8c08412bc"
+ },
+ "test_pont.py::cases sous le stock tout_droit": {
+  "valeur": "0cc1dcd8c08412bc"
+ },
+ "test_pont.py::comptes de la grille du coût sous le barème ((1.0, 0.2815, 0.1145), (8.0, 0.2215, 0.0904), (None, 0.024, 0.004))": {
+  "valeur": "213177fcfd82031a"
+ },
+ "test_pont.py::comptes de la grille du coût sous le barème None": {
+  "valeur": "5813bac47b09279c"
+ },
+ "test_pont.py::coût des avantages": {
+  "valeur": "110f08db48990224"
+ },
+ "test_pont.py::dates des départs des facteurs de la dépense": {
+  "valeur": "ba0be432d7e404a9"
+ },
+ "test_pont.py::décomposition des avantages": {
+  "valeur": "ec9d7e5980c67fd0"
+ },
+ "test_pont.py::grille d'essai du coût": {
+  "valeur": "1dc5f605c90472e6"
+ },
+ "test_pont.py::grille d'essai du coût sous la proposition prospective": {
+  "valeur": "396bd5a69c474a58"
+ },
+ "test_pont.py::grille d'essai du coût sous le stock acquis": {
+  "valeur": "c5f2c742d04fa806"
+ },
+ "test_pont.py::grille d'essai du coût sous le stock droit_commun": {
+  "valeur": "d73ff0409379fbf0"
+ },
+ "test_pont.py::grille d'essai du coût sur des données d'ailleurs": {
+  "valeur": "5a1033a8f3b3110b"
+ },
+ "test_pont.py::grille d'essai du coût, nés toute l'année": {
+  "valeur": "a56817c9b8a5bf25"
+ },
+ "test_pont.py::grille du coût": {
+  "valeur": "b136b5b276f441f9"
+ },
+ "test_pont.py::grille du coût, bascule en 2026": {
+  "valeur": "f374dcfda8b75e83"
+ },
+ "test_pont.py::grille du coût, bascule en 2030": {
+  "valeur": "1cc0993c8cd18c7a"
+ },
+ "test_pont.py::saisies": {
+  "valeur": "5f264ef94007c666"
+ },
+ "test_pont.py::scénario 1 servi": {
+  "valeur": "6143284ced50c25d"
+ },
+ "test_pont.py::âges de la grille des carrières types": {
+  "valeur": "06e1ecff2ba1420a"
+ },
+ "test_pont.py::âges des cas types sous les paramètres de projection": {
+  "valeur": "0e35c0f68a20ffa2"
+ },
+ "test_pont.py::âges des cas types sous les paramètres de référence": {
+  "valeur": "0e35c0f68a20ffa2"
+ },
+ "test_solde_fusion.py::grille sous l'hypothèse B": {
+  "valeur": "bfe2dad68e54bd4b"
+ },
+ "test_solde_fusion.py::grille sous l'hypothèse C": {
+  "valeur": "4ac8391f80b8e342"
+ },
+ "test_stock_age_legal.py::pensions des cas sous droit_commun": {
+  "valeur": "c154d424761481c1"
+ },
+ "test_stock_age_legal.py::pensions des cas sous tout_droit": {
+  "valeur": "95c5673df3a03558"
+ }
+}
