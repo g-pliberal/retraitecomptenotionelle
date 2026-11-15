@@ -417,7 +417,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `approximations` | 14 |
   | `regimes` | 1 |
 
-- **Les textes** : 646 rédactions à rattacher à une version de la fiche qui les cite, 5 638 à examiner, et 9 226 sans statut, que le cliquet tient à 9 228 au plus. Les textes qui en ont le plus : `css` 4 738, `decret_46_2769` 938, `rural` 837, `cpcmr` 561, `decret_90_1215` 319 (`python scripts/textes.py`).
+- **Les textes** : 646 rédactions à rattacher à une version de la fiche qui les cite, 5 638 à examiner, et 9 226 sans statut, que le cliquet tient à 9 226 au plus. Les textes qui en ont le plus : `css` 4 738, `decret_46_2769` 938, `rural` 837, `cpcmr` 561, `decret_90_1215` 319 (`python scripts/textes.py`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`agirc_arrco_valeur_achat`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 
