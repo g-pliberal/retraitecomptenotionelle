@@ -850,7 +850,9 @@ def departs_des_cas(cas: list[dict], parametres, primes: dict[int, float] | None
     départ porte de plus son année (``"annee"``) et ce que le journal garde de
     sa liquidation (``"liquidation"``) : chaque pension du code des pensions,
     ``(regime, montant, traitement)``, la pension avant tout complément et le
-    traitement de l'article L. 15 qui la liquide."""
+    traitement de l'article L. 15 qui la liquide. Sous ``"lire": "minimum"``,
+    que lit ``scripts/part_minimum_contributif.py`` (étape 6d), son départ
+    porte de plus ``"minimum"`` (:func:`_minimum_des_donnees`)."""
     reponse = _demander({"departs_des_cas": {
         "parametres": parametres_en_donnees(parametres), "primes": primes, "cas": cas}},
         _paquet_de(parametres, paquet))
@@ -868,6 +870,8 @@ def departs_des_cas(cas: list[dict], parametres, primes: dict[int, float] | None
                 "pensions": tuple((regime, _flottant(montant), _flottant(surcote))
                                   for regime, montant, surcote in lu["pensions_par_regime"]),
             }
+            if "minimum" in lu:
+                depart["minimum"] = _minimum_des_donnees(lu["minimum"])
             if "liquidation" in lu:
                 depart["annee"] = _entier(lu["annee"], "annee")
                 depart["liquidation"] = tuple(
@@ -876,6 +880,25 @@ def departs_des_cas(cas: list[dict], parametres, primes: dict[int, float] | None
         resultats[cle] = {"age": _flottant(lu["age"]), "attendu": bool(lu.get("attendu")),
                           "depart": depart, "refus": lu.get("refus")}
     return resultats, reponse["echecs"]
+
+
+def _minimum_des_donnees(lu: dict) -> dict:
+    """Ce que la mesure du minimum contributif lit d'un départ
+    (``minimumAuDepart`` de ``pont.mjs``), sous les types du Python : l'année
+    et le mois de la liquidation, entiers ; chaque pension, ``(regime,
+    montant, date_effet)``, la date ``None`` sous un départ unique ; chaque
+    minimum contributif appliqué, ``(part de chaque régime, détail)`` ; le
+    minimum avant écrêtement, ``None`` sans lui."""
+    avant = lu["avant_ecretement"]
+    return {
+        "annee": _entier(lu["annee"], "minimum.annee"),
+        "mois": _entier(lu["mois"], "minimum.mois"),
+        "pensions": tuple((regime, _flottant(montant), date_effet)
+                          for regime, montant, date_effet in lu["pensions"]),
+        "minima": tuple((tuple((regime, _flottant(part)) for regime, part in minimum["par_regime"]),
+                         minimum["detail"]) for minimum in lu["minima"]),
+        "avant_ecretement": None if avant is None else _flottant(avant),
+    }
 
 
 def debuts_de_la_surcote(cas: list[dict], parametres, primes: dict[int, float] | None = None,

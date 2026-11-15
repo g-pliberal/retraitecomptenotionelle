@@ -93,7 +93,8 @@ sys.path.insert(0, str(RACINE / "src"))
 sys.path.insert(0, str(RACINE / "scripts"))
 
 import grille_large as G  # noqa: E402
-from retraite_notionnelle import memoire  # noqa: E402
+from retraite_notionnelle import memoire, pont  # noqa: E402
+from retraite_notionnelle.castypes import primes_projetees_en_donnees  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 from retraite_notionnelle.somme import somme_ordonnee  # noqa: E402
@@ -234,33 +235,40 @@ def _mesurer(parametres: Parametres, morceau: tuple, regime: str = REGIME) -> li
     d'effet de cette pension, minimum annuel qui la relève, majoration servie,
     minimum avant écrêtement))``, ce dernier ``None`` avant 2012 ; ``(indice,
     génération, None)`` pour une carrière que le moteur refuse.
+
+    Le portage date, bâtit et simule chaque carrière, d'une demande
+    (``pont.departs_des_cas``, sous ``"lire": "minimum"``, action 161,
+    étape 6d), sous les conventions de la page Coût
+    (``Simulateur.pour_la_projection``).
     """
     simulateur = Simulateur(parametres).pour_la_projection()
+    lus, refus = pont.departs_des_cas(
+        [{"cle": str(rang), **cas.pour_le_portage(simulateur, generation), "lire": "minimum"}
+         for rang, (_indice, cas, generation) in enumerate(morceau)],
+        simulateur.parametres, primes_projetees_en_donnees(simulateur),
+        pont.paquet_des_donnees(simulateur.parametres.racine_donnees))
     sortie = []
-    for indice, cas, generation in morceau:
-        try:
-            carriere = cas.construire(simulateur, generation)
-            actuel = simulateur.echeancier(carriere).au_depart
-        except (ValueError, KeyError):
+    for rang, (indice, _cas, generation) in enumerate(morceau):
+        cle = str(rang)
+        depart = None if cle in refus else lus[cle]["depart"]
+        if depart is None:
             sortie.append((indice, generation, None))
             continue
-        pensions = [p for p in actuel.pensions_par_regime
-                    if p.regime == regime and p.montant > 0.0]
+        lu = depart["minimum"]
+        pensions = [(nom, date_effet) for nom, montant, date_effet in lu["pensions"]
+                    if nom == regime and montant > 0.0]
         if not pensions:
             continue
         annee, mois = min(
-            (int(p.date_effet[:4]), int(p.date_effet[5:7])) if p.date_effet
-            else (carriere.annee_liquidation, carriere.mois_liquidation)
-            for p in pensions)
+            (int(date_effet[:4]), int(date_effet[5:7])) if date_effet
+            else (lu["annee"], lu["mois"])
+            for _nom, date_effet in pensions)
         minimum, majore = 0.0, False
-        for avantage in actuel.avantages_appliques:
-            if avantage.code == "minimum_contributif":
-                minimum += somme_ordonnee(montant for nom, montant in avantage.par_regime
-                                          if nom == regime)
-                majore = majore or MAJORATION in avantage.detail
-        avant = (None if actuel.minimum_ecrete is None
-                 else actuel.minimum_ecrete.avant_ecretement)
-        sortie.append((indice, generation, (annee, mois, minimum, majore, avant)))
+        for par_regime, detail in lu["minima"]:
+            minimum += somme_ordonnee(montant for nom, montant in par_regime if nom == regime)
+            majore = majore or MAJORATION in detail
+        sortie.append((indice, generation, (annee, mois, minimum, majore,
+                                            lu["avant_ecretement"])))
     return sortie
 
 

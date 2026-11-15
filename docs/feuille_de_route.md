@@ -7330,18 +7330,18 @@ de `contribution_etat`.
 **Reprise, au 15 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Les tests y passent par une façade (`tests/facade.py`), qui sert le moteur
-entier ou presque, et des données retouchées en copie quand un test changeait
-une fonction du droit. La plupart des fichiers de tests n'ont plus de test sur
+entier ou presque. La plupart des fichiers de tests n'ont plus de test sur
 le moteur Python, hors les confrontations des deux moteurs.
 Ne restent marqués que ces confrontations, le solveur du niveau de salaire
 d'une pension visée, et quinze garde-fous de `test_oracle.py`, que le
 propriétaire doit trancher.
-Les études des mères, du coût par carrière et du cycle de vie passent par le pont.
-Reste, une étape par session : `part_minimum_contributif.py`, puis
-`partage_taux_unique.py`,
-la liste des fonctions gardées des deux côtés, le retrait, et les périodes
-assimilées du relevé (table de `2026-11-13-les-decisions-du-proprietaire.md`).
-Le détail : `2026-11-15-le-cycle-de-vie-deja-au-portage.md`.
+Les études des mères, du coût par carrière, du cycle de vie et du minimum
+contributif passent par le pont.
+Reste, une étape par session : `partage_taux_unique.py`, qui lit les règles
+de la fiche de paie, à instruire d'abord ; puis la liste des fonctions
+gardées des deux côtés, le retrait, et les périodes assimilées du relevé
+(table de `2026-11-13-les-decisions-du-proprietaire.md`).
+Le détail : `2026-11-15-le-minimum-contributif-par-le-portage.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

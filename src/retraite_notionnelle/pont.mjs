@@ -664,6 +664,29 @@ function liquidationAuJournal(carriere, journal) {
 }
 
 /**
+ * Ce que `scripts/part_minimum_contributif.py` lit d'un départ (action 161,
+ * étape 6d) : l'année et le mois de la liquidation de la carrière ; chaque
+ * pension de régime, `[regime, montant, date_effet]`, la date `null` quand
+ * le départ est unique ; de chaque minimum contributif appliqué, la part de
+ * chaque régime et le détail ; le minimum avant écrêtement (R. 173-8), `null`
+ * sans écrêtement.
+ */
+function minimumAuDepart(carriere, depart) {
+  return {
+    annee: carriere.anneeLiquidation,
+    mois: carriere.moisLiquidation,
+    pensions: depart.pensions_par_regime
+      .map(({ regime, montant, date_effet }) => [regime, montant, date_effet ?? null]),
+    minima: depart.avantages_appliques
+      .filter(({ code }) => code === "minimum_contributif")
+      .map(({ par_regime, detail }) => ({
+        par_regime: (par_regime ?? []).map(([regime, part]) => [regime, part]), detail,
+      })),
+    avant_ecretement: depart.minimum_ecrete?.avant_ecretement ?? null,
+  };
+}
+
+/**
  * Le départ de chaque cas type, `{cle, regle, options, parcours, entree,
  * attente, lire}`, sous `parametres` — ce que lisent les mesures de
  * `scripts/grille_large.py` (`Departs`, étape 7) : l'âge que son pilote fixe
@@ -675,7 +698,9 @@ function liquidationAuJournal(carriere, journal) {
  * le refuse (`refus`), l'âge gardé, comme le Python lit l'âge sans le départ.
  * Sous `lire: "liquidation"`, le cas est une case de la grille, que le droit
  * peut écarter (`verifierLaCase`), et son départ porte de plus ce que le
- * journal garde de sa liquidation (`liquidationAuJournal`).
+ * journal garde de sa liquidation (`liquidationAuJournal`). Sous
+ * `lire: "minimum"`, il porte de plus ce que la mesure du minimum contributif
+ * en lit (`minimumAuDepart`).
  */
 function departsDesCas({ parametres, primes, cas }) {
   const simulateur = simulateurSous(parametres);
@@ -698,6 +723,8 @@ function departsDesCas({ parametres, primes, cas }) {
       depart = echeancier.auDepart;
       if (duJournal) {
         journal = liquidationAuJournal(carriere, echeancier.journal);
+      } else if (un.lire === "minimum") {
+        journal = { minimum: minimumAuDepart(carriere, depart) };
       }
     } catch (erreur) {
       if (erreurDuProgramme(erreur)) {

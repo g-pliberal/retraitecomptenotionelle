@@ -298,3 +298,46 @@ def test_les_salaries_agricoles_ne_se_comptent_qu_au_salariat_prive():
     eacr = {(str(a), c, s): v for (a, c, s), v in P.observees(racine).items()}
     deduite = P.part_agricole_deduite(eacr, "2023", "H")
     assert deduite == pytest.approx(100 * (12.15 - 10.72) / (29.62 - 10.72), abs=0.01)
+
+
+
+def test_le_minimum_se_mesure_au_portage_sans_le_moteur_python(monkeypatch):
+    """Chaque carrière se date, se bâtit et se simule au scénario 1 par le
+    portage (``pont.departs_des_cas``, sous ``"lire": "minimum"``), sans que
+    le moteur Python ne calcule rien (action 161, étape 6d) : les cas types de
+    la table et ceux de la grille élargie, au régime général, puis l'artisan
+    au RSI. La mesure entière, avant et après, rend les mêmes sorties à
+    l'octet (note ``2026-11-15-le-minimum-contributif-par-le-portage.md``)."""
+    import shutil
+    from dataclasses import replace
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage ne calcule pas ici")
+    import grille_large as G
+    from outils_pont import empecher_les_jumeaux_du_cout
+
+    empecher_les_jumeaux_du_cout(monkeypatch)
+
+    def interdit(*_, **__):
+        raise AssertionError("le moteur Python simule la mesure du minimum")
+
+    monkeypatch.setattr(P.Simulateur, "echeancier", interdit)
+    cas = {c.code: c for c in CAS_TYPES}
+    larges = G.reference()[::7]
+    morceau = tuple(
+        [(0, cas["smic_carriere_complete"], 1955), (1, cas["cadre"], 1955)]
+        + [(2 + rang, v.cas, generation) for rang, v in enumerate(larges)
+           for generation in (1950, 1962)])
+    mesures = {indice: mesure for indice, _, mesure in P._mesurer(Parametres(), morceau)}
+    # Le Smic de 1955 relevé au minimum, majoré, sous l'écrêtement ; le cadre
+    # au-dessus ; chaque carrière de la grille élargie mesurée, aucune refusée.
+    annee, _, minimum, majore, avant = mesures[0]
+    assert 2015 <= annee <= 2017 and minimum > 0.0 and majore and minimum <= avant
+    assert mesures[1][2] == 0.0
+    assert all(mesure is not None for mesure in mesures.values())
+    artisan = replace(cas["artisan"], niveau_salaire=0.3)
+    rsi = {indice: mesure for indice, _, mesure in P._mesurer(
+        Parametres(), ((0, artisan, 1946), (1, artisan, 1950)), P.REGIME_DES_ARTISANS)}
+    # Avant 2012, le minimum du RSI sans écrêtement ; après, sous lui.
+    assert rsi[0][0] < 2012 and rsi[0][2] > 0.0 and rsi[0][4] is None
+    assert 2012 <= rsi[1][0] < 2018 and 0.0 < rsi[1][2] <= rsi[1][4]
