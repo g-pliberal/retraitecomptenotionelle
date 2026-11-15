@@ -2,8 +2,7 @@
 
 Action 138, étape 11 (registre, chantier 138.11). Chaque pays publie, avec ses
 diviseurs, la table de mortalité qui les fait : on la lit à sa source, on la
-donne au diviseur du dépôt (``diviseur_de_courbe``, et son jumeau
-``diviseurDeCourbe``), et l'on confronte le résultat au chiffre publié. Un
+donne au diviseur du dépôt (``diviseurDeCourbe``, du portage), et l'on confronte le résultat au chiffre publié. Un
 écart se comprend avant de se corriger ; ici, il n'en reste aucun qui ne
 s'explique.
 
@@ -78,8 +77,6 @@ import subprocess
 from pathlib import Path
 
 import pytest
-
-from retraite_notionnelle.moteur.conversion import diviseur_de_courbe
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -412,13 +409,10 @@ def _cas() -> dict[str, tuple[list[float], float]]:
     return cas
 
 
-def _python() -> dict[str, float]:
-    return {nom: diviseur_de_courbe(courbe, taux) for nom, (courbe, taux) in _cas().items()}
-
-
 @pytest.fixture(scope="module")
-def deux_moteurs() -> dict[str, dict[str, float]]:
-    """Le diviseur de chaque cas, par le Python et par le portage."""
+def diviseurs() -> dict[str, dict[str, float]]:
+    """Le diviseur de chaque cas, par le portage (``diviseurDeCourbe``), seul
+    moteur depuis le retrait du jumeau Python (action 161)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     entree = json.dumps({nom: [courbe, taux] for nom, (courbe, taux) in _cas().items()})
@@ -430,23 +424,16 @@ def deux_moteurs() -> dict[str, dict[str, float]]:
               "console.log(JSON.stringify(sortie));")
     sortie = subprocess.run(["node", "--input-type=module", "-e", script], cwd=RACINE,
                             capture_output=True, text=True, encoding="utf-8", check=True)
-    return {"python": _python(), "javascript": json.loads(sortie.stdout)}
-
-
-def test_les_deux_moteurs_rendent_le_meme_diviseur(deux_moteurs):
-    python, javascript = deux_moteurs["python"], deux_moteurs["javascript"]
-    assert python.keys() == javascript.keys()
-    for nom, valeur in python.items():
-        assert javascript[nom] == pytest.approx(valeur, rel=1e-13), nom
+    return {"javascript": json.loads(sortie.stdout)}
 
 
 # ---------------------------------------------------------------------------
 # Finlande : la formule même du dépôt
 # ---------------------------------------------------------------------------
 
-def test_la_finlande_au_millionieme(deux_moteurs):
+def test_la_finlande_au_millionieme(diviseurs):
     """EAL2009 et EAL2024, au millionième, et le coefficient qui s'en tire."""
-    for moteur in deux_moteurs.values():
+    for moteur in diviseurs.values():
         assert round(moteur["fi_2009"], 6) == 16.778288
         assert round(moteur["fi_2024"], 6) == 17.718722
         assert round(round(moteur["fi_2009"], 6) / round(moteur["fi_2024"], 6), 5) == 0.94692
@@ -464,23 +451,23 @@ def _mois_gus(diviseur: float, courbe: list[float]) -> float:
     return round(round(esperance, 2) * 12, 1)
 
 
-def test_la_pologne_au_dixieme_de_mois(deux_moteurs):
-    for moteur in deux_moteurs.values():
+def test_la_pologne_au_dixieme_de_mois(diviseurs):
+    for moteur in diviseurs.values():
         for age, publie in GUS_2026.items():
             if age != GUS_ARRONDI_SUR_LE_FIL:
                 assert _mois_gus(moteur[f"pl_{age}"], _pologne(age)) == publie, age
     # L'arrondi au centième d'année fait le dixième de mois : sans lui, 222,8.
-    brut = deux_moteurs["python"]["pl_65"] + _pologne(65)[-1] * POLOGNE_ESPERANCE_A_100
+    brut = diviseurs["javascript"]["pl_65"] + _pologne(65)[-1] * POLOGNE_ESPERANCE_A_100
     assert round(brut * 12, 1) == 222.8
 
 
-def test_a_64_ans_l_arrondi_du_gus_tombe_sur_le_fil(deux_moteurs):
+def test_a_64_ans_l_arrondi_du_gus_tombe_sur_le_fil(diviseurs):
     """Les entiers de la table D passent 19,305 ans, l'espérance refaite de
     ses quotients non : le communiqué écrit 231,7 mois, le dépôt 231,6."""
     age = GUS_ARRONDI_SUR_LE_FIL
     gus = POLOGNE_T64 / POLOGNE_L64
     assert round(gus, 2) == 19.31 and round(round(gus, 2) * 12, 1) == GUS_2026[age]
-    for moteur in deux_moteurs.values():
+    for moteur in diviseurs.values():
         refaite = moteur[f"pl_{age}"] + _pologne(age)[-1] * POLOGNE_ESPERANCE_A_100
         assert 19.3048 < refaite < 19.305 < gus < 19.3052
         assert _mois_gus(moteur[f"pl_{age}"], _pologne(age)) == 231.6
@@ -506,10 +493,10 @@ def test_la_suede_au_centieme_par_sa_convention():
         assert round(_delningstal(_suede(age)), 2) == publie, age
 
 
-def test_le_diviseur_du_depot_est_plus_court_d_un_vingt_quatrieme_d_annee(deux_moteurs):
+def test_le_diviseur_du_depot_est_plus_court_d_un_vingt_quatrieme_d_annee(diviseurs):
     """Rente continue contre mensualités d'avance : 1/24 d'année, que
     l'actualisation écorne d'un millième au plus."""
-    for moteur in deux_moteurs.values():
+    for moteur in diviseurs.values():
         assert round(moteur["se_65"], 2) == 17.30
         for age, publie in PFS_2026_2.items():
             ecart = _delningstal(_suede(age)) - moteur[f"se_{age}"]
@@ -537,10 +524,10 @@ def test_l_italie_au_millieme_par_sa_convention():
         assert (h + f) / 2 == pytest.approx(total, abs=0.0006), age
 
 
-def test_le_diviseur_du_depot_rend_la_pension_directe_moins_0_0385(deux_moteurs):
+def test_le_diviseur_du_depot_rend_la_pension_directe_moins_0_0385(diviseurs):
     """La rente continue vaut l'annuité d'avance moins un demi, à l'ordre près
     de l'actualisation ; l'Italie retire 0,4615."""
-    for moteur in deux_moteurs.values():
+    for moteur in diviseurs.values():
         for age, (hommes, femmes, total) in ITALIE_C2_DIRECTE.items():
             depot = (moteur[f"it_h_{age}"] + moteur[f"it_f_{age}"]) / 2
             assert total - depot == pytest.approx(0.5 - ITALIE_K, abs=0.004), age
@@ -551,12 +538,12 @@ def test_le_diviseur_du_depot_rend_la_pension_directe_moins_0_0385(deux_moteurs)
 # Lettonie : l'espérance de vie du moment, interpolée entre les âges ronds
 # ---------------------------------------------------------------------------
 
-def test_la_lettonie_au_centieme_aux_ages_ronds(deux_moteurs):
+def test_la_lettonie_au_centieme_aux_ages_ronds(diviseurs):
     """Sans actualisation, le diviseur du dépôt est l'espérance de vie du CSB,
     sur la table abrégée de 2024, la mortalité constante entre deux âges
     publiés : au centième, de 40 à 85 ans, les survivants étant publiés à
     l'unité."""
-    for moteur in deux_moteurs.values():
+    for moteur in diviseurs.values():
         for age in range(40, 90, 5):
             esperance = _esperance_lettone(moteur[f"lv_{age}"], _lettonie(age))
             assert esperance == pytest.approx(LETTONIE_G_2026[age], abs=0.01), age
@@ -606,11 +593,11 @@ def test_la_norvege_au_centieme_par_sa_convention():
     assert next(grille, None) is None
 
 
-def test_le_diviseur_du_depot_rend_le_delingstall_sans_heritage(deux_moteurs):
+def test_le_diviseur_du_depot_rend_le_delingstall_sans_heritage(diviseurs):
     """Le dépôt escompte au milieu de l'année, NAV en son début : à taux égal,
     le facteur 0,9925^½ les sépare, exactement. Le gain d'héritage (0,964 à 62
     ans, 0,827 à 75 ans) est le reste ; il est au registre, ``a_trancher``."""
-    for moteur in deux_moteurs.values():
+    for moteur in diviseurs.values():
         for age in range(62, 76):
             depot = moteur[f"no_{age}"] / 0.9925 ** 0.5
             assert depot * _gain_d_heritage(age) == pytest.approx(_delingstall(age), rel=1e-12), age

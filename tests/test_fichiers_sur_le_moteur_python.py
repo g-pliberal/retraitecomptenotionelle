@@ -49,7 +49,7 @@ FICHIERS = (
     "test_controle_drees_panorama.py", "test_coupures_au_mois.py", "test_cout.py",
     "test_cout_age_depart.py", "test_cumul_activites.py",
     "test_cycle_de_vie_references.py", "test_cycle_de_vie_script.py",
-    "test_diviseur_exemples_officiels.py", "test_donnees.py",
+    "test_donnees.py",
     "test_duree_lue_a_soixante_ans.py", "test_effet_retour.py", "test_emploi_retraite.py",
     "test_estimation_officielle.py", "test_etranger.py",
     "test_exonerations_agirc_arrco.py", "test_facade.py", "test_facade_jumeau.py",
