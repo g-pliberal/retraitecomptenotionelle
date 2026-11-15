@@ -1767,6 +1767,10 @@ const ENTREES_DE_LA_FACADE = {
       liquiderSuccessions: successions,
     }), carriere),
   "simulateur.regime_fusionne": (simulateur) => telQuel(simulateur.regimeFusionne),
+  // Ce que la garantie vieillesse de la proposition ajoute à une pension
+  // obligatoire, sur cette carrière (scénario 6).
+  "simulateur.garantie_vieillesse": (simulateur, carriere, pension, rente) => telQuel(
+    simulateur.scenarioLiberal._garantieVieillesse(carriere, pension, rente)),
   // Le scénario 6 sur une carrière telle quelle, et la carrière que la
   // proposition fait liquider : `null` quand c'est la même, que la façade
   // rend alors elle-même.
@@ -1972,6 +1976,10 @@ function argumentDeLaFacade(porteur, valeur) {
   const marque = valeur !== null && typeof valeur === "object" && !Array.isArray(valeur)
     ? valeur["@"] : undefined;
   if (marque === "series") return macro;
+  if (marque === "salaire_moyen") return (annee) => salaireMoyenAnnuel(macro, annee);
+  if (marque === "durees_posees") {
+    return { trimestresParRegime: new Map(valeur.trimestres_par_regime) };
+  }
   if (marque === "regime_fusionne") {
     if (!(porteur instanceof Simulateur)) {
       throw new TypeError("régime unique passé à ce qui n'est pas un simulateur");
@@ -2094,6 +2102,21 @@ ENTREES_DE_LA_FACADE["droit.regle"] = (simulateur, module, regle, ...valeurs) =>
     ...valeurs.map((valeur) => argumentDeLaFacade(simulateur, valeur))));
 };
 
+/**
+ * Une constante du droit, sous son nom (`constante_du_droit` de `pont.py`,
+ * qui déclare celles que la façade lit) : une valeur simple, telle quelle.
+ * Ce que le module n'exporte pas, ou qui n'est pas une valeur simple, arrête
+ * la demande.
+ */
+ENTREES_DE_LA_FACADE["droit.constante"] = (simulateur, module, nom) => {
+  const valeur = Object.hasOwn(MODULES_DU_DROIT, module) ? MODULES_DU_DROIT[module][nom]
+    : undefined;
+  if (!["number", "string", "boolean"].includes(typeof valeur)) {
+    throw new TypeError(`constante que le droit ne tient pas : ${module}.${nom}`);
+  }
+  return valeur;
+};
+
 // La liquidation, par la façade : un bloc à part (action 161).
 
 /**
@@ -2126,6 +2149,9 @@ ENTREES_DE_LA_FACADE["liquidation.liquider"] = (moteur, demande, carriere, neutr
     new ContexteDeLiquidation(moteur, neutralisations));
   return {
     taux: liquidee.pensions.taux, regimes: telQuel(liquidee.regimes),
+    pensions: telQuel(liquidee.pensions.regimes), plafonds: telQuel(liquidee.pensions.plafonds),
+    complements: telQuel(liquidee.complements.regimes),
+    avantages_des_complements: telQuel(liquidee.complements.avantages),
     total: liquidee.total, hors_repartition: liquidee.horsRepartition,
     total_contributif: liquidee.totalContributif, mesures: telQuel(liquidee.mesures),
     avantages: telQuel(liquidee.avantages), lignes: telQuel(liquidee.releve.lignes()),

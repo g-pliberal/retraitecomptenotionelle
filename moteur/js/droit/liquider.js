@@ -41,7 +41,7 @@ export const SCHEMA_VERSION = 1;
 const SURCOTE_DEPUIS = new DateMois(2004, 1);
 
 /** Âge au-delà duquel le barème de 2007-2008 sert 1,25 %. */
-const SURCOTE_AGE_MAJORE = 65;
+export const SURCOTE_AGE_MAJORE = 65;
 
 /**
  * Barèmes de décote lus dans une table, et non dans la fiche du régime : le

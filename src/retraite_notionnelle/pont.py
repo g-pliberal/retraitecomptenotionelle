@@ -2254,6 +2254,15 @@ def resultat_notionnel_des_donnees(resultat: dict):
     return lu_strictement(ResultatNotionnel, resultat, "ResultatNotionnel")
 
 
+def garantie_vieillesse_des_donnees(garantie: dict):
+    """La garantie vieillesse de la proposition que le portage a écrite
+    (``_garantieVieillesse`` du scénario 6), sous le type du Python
+    (``GarantieVieillesse``), lue strictement."""
+    from .scenarios.notionnel import GarantieVieillesse
+
+    return lu_strictement(GarantieVieillesse, garantie, "GarantieVieillesse")
+
+
 def resultat_actuel_des_donnees(actuel: dict):
     """Le résultat entier du scénario 1 que le portage a écrit, sous le type du
     Python (``ResultatActuel``), lu strictement. Le module du scénario ne se
@@ -2275,6 +2284,10 @@ def liquidation_des_donnees(donnees: dict) -> dict:
     ``pont.mjs``), par ce que les tests en lisent, lu strictement : ``taux``,
     le plus haut des taux de liquidation des régimes en annuités ;
     ``regimes``, la pension de chaque régime, complétée, dans l'ordre ;
+    ``pensions`` et ``plafonds``, les pensions de l'étape « liquider », avant
+    les compléments, et ce que le plafond de L. 18 en écarte ;
+    ``complements`` et ``avantages_des_complements``, ce que l'étape
+    « compléter » écrit ;
     ``total``, ``hors_repartition`` et ``total_contributif`` ; ``mesures``,
     ce que la cascade a mesuré, et ``avantages``, chaque avantage appliqué ;
     ``lignes``, celles du relevé qu'elle a lues, et ``donnees``, ce que le
@@ -2282,8 +2295,18 @@ def liquidation_des_donnees(donnees: dict) -> dict:
     ``liquider`` a tourné, liquidations d'essai comprises."""
     from .droit.commun import AvantageApplique, PensionRegime
     from .droit.liquidation import Mesure
+    from .droit.liquider import EligiblePlafondEnfants
 
     return {"taux": lu_strictement(float, donnees["taux"], "liquidation.taux"),
+            "pensions": lu_strictement(tuple[PensionRegime, ...], donnees["pensions"],
+                                       "liquidation.pensions.regimes"),
+            "plafonds": lu_strictement(tuple[EligiblePlafondEnfants, ...], donnees["plafonds"],
+                                       "liquidation.pensions.plafonds"),
+            "complements": lu_strictement(tuple[PensionRegime, ...], donnees["complements"],
+                                          "liquidation.complements.regimes"),
+            "avantages_des_complements": lu_strictement(
+                tuple[AvantageApplique, ...], donnees["avantages_des_complements"],
+                "liquidation.complements.avantages"),
             "regimes": lu_strictement(tuple[PensionRegime, ...], donnees["regimes"],
                                       "liquidation.regimes"),
             **{cle: lu_strictement(float, donnees[cle], f"liquidation.{cle}")
@@ -2462,6 +2485,7 @@ LECTURES_DE_LA_FACADE = {
     "simulateur.proposition": lambda lu: resultat_notionnel_des_donnees(lu),
     "simulateur.carriere_proposition": lambda lu: None if lu is None else carriere_des_donnees(lu),
     "carriere.prolongee": lambda lu: None if lu is None else carriere_des_donnees(lu),
+    "simulateur.garantie_vieillesse": garantie_vieillesse_des_donnees,
     "liquidation.liquider": liquidation_des_donnees,
     "liquidation.demande_de_depart": demande_des_donnees,
     "coordonner.coordonner": coordination_des_donnees,
@@ -2562,6 +2586,9 @@ TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "ages_annulation_decote": ("age",),
     "ages_categorie_active": ("derogation",),
     "ages_ouverture": ("age",),
+    # Le forfait de la catégorie d'un marin (R. 11), le salaire moyen passé
+    # par sa marque (:data:`SALAIRE_MOYEN`).
+    "grilles": ("forfait",),
     "annees_salaire_reference": ("annees",),
     "carriere_longue": ("_portes", "cotises_reputes"),
     "complement_differentiel_rco": ("regle", "smic_net"),
@@ -2600,6 +2627,30 @@ class _Series:
 #: Les séries du simulateur en argument d'une méthode de table : le portage y
 #: met les siennes (``simulateur.macro``), sous les paramètres de la demande.
 SERIES = _Series()
+
+
+class _SalaireMoyen:
+    """Le salaire moyen des séries du simulateur, une fonction de l'année, en
+    argument d'une méthode de table (``grilles.forfait``)."""
+
+    def __repr__(self) -> str:
+        return "pont.SALAIRE_MOYEN"
+
+
+#: Le salaire moyen annuel des séries du simulateur, en argument fonction
+#: d'une méthode de table : le portage y met
+#: ``(a) => salaireMoyenAnnuel(macro, a)``, sous les paramètres de la demande.
+SALAIRE_MOYEN = _SalaireMoyen()
+
+
+@dataclasses.dataclass(frozen=True)
+class DureesPosees:
+    """Des durées posées par le test, trimestres par régime, en argument d'une
+    règle de la façade qui ne lit d'elles que ``trimestres_par_regime``
+    (``liquider.duree_majoree_apres_taux_plein``) : le portage en fait une
+    ``Map``. Le jumeau les lit telles quelles."""
+
+    trimestres_par_regime: dict
 
 
 class _RegimeFusionne:
@@ -2748,6 +2799,11 @@ def _argument_de_la_facade(argument, carrieres: list) -> dict:
 
     if argument is SERIES:
         return {"valeur": {"@": "series"}}
+    if argument is SALAIRE_MOYEN:
+        return {"valeur": {"@": "salaire_moyen"}}
+    if isinstance(argument, DureesPosees):
+        return {"valeur": {"@": "durees_posees",
+                           "trimestres_par_regime": list(argument.trimestres_par_regime.items())}}
     if argument is REGIME_FUSIONNE:
         return {"valeur": {"@": "regime_fusionne"}}
     if isinstance(argument, PeriodeDuCatalogue):
@@ -2841,7 +2897,7 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
                    "rente_viagere_d_invalidite"),
     "liquider": ("_coefficient_anticipation", "abattement_points", "age_de_la_duree_atteinte", "annees_au_prorata",
                  "borne_de_la_duree", "coefficient_surcote_datee", "decote_opposable",
-                 "duree_du_regime_aligne",
+                 "duree_du_regime_aligne", "duree_majoree_apres_taux_plein",
                  "duree_proratisation", "majoration_des_points_de_1952_a_1972_d_avant_2026",
                  "majorer_les_points_de_1952_a_1972", "maximum_des_pensions",
                  "moyenne_des_meilleures_annees", "nombre_d_annees_retenues",
@@ -2862,6 +2918,35 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     # Hors de ``droit/`` : ``revalorisation.js``, à la racine du portage.
     "revalorisation": ("majorations_forfaitaires",),
 }
+
+
+#: Les constantes du droit que la façade lit au portage, sous les noms du
+#: Python : ``{module: constantes}``. Le portage les exporte de
+#: ``moteur/js/droit/<module>.js`` ; une constante qui n'y est pas est refusée
+#: avant node.
+CONSTANTES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
+    # L'âge du barème de 2007-2008 au-delà duquel la surcote est majorée.
+    "liquider": ("SURCOTE_AGE_MAJORE",),
+}
+
+
+def constante_du_droit(module: str, nom: str, paquet: bytes | None = None):
+    """La constante ``nom`` du module ``module`` du droit, telle que le portage
+    l'exporte : une valeur simple. Une constante que
+    :data:`CONSTANTES_DE_LA_FACADE` ne déclare pas est refusée avant node."""
+    from .config import Parametres
+
+    if nom not in CONSTANTES_DE_LA_FACADE.get(module, ()):
+        raise ValueError(f"constante du droit que la façade ne lit pas : {module}.{nom} "
+                         "(pont.CONSTANTES_DE_LA_FACADE)")
+    reponse = _demander({"facade": {
+        "parametres": parametres_en_donnees(Parametres()), "carrieres": [],
+        "entree": "droit.constante",
+        "arguments": [_argument_du_droit(SIMULATEUR, []), {"valeur": module}, {"valeur": nom}],
+    }}, _paquet_de(None, paquet))
+    if "refus" in reponse:
+        raise erreur_du_portage(**reponse["refus"])
+    return reponse["rendu"]
 
 
 def regle_du_droit(module: str, regle: str, type_rendu, *arguments, parametres=None,

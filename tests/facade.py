@@ -120,13 +120,22 @@ ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversio
            "droit.etapes", "compter.trimestres_du_contrat", "compter.jours_par_annee",
            "revalorisation.faire_vivre", "commun.periode_de_liquidation",
            "revalorisation.majorer_les_petites_pensions", "revalorisation.actuel_aujourd_hui",
-           "simulateur.proposition", "simulateur.carriere_proposition", "carriere.prolongee")
+           "simulateur.proposition", "simulateur.carriere_proposition", "carriere.prolongee",
+           "simulateur.garantie_vieillesse")
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
 
 #: Les règles du droit que la façade sert, par module.
 REGLES = pont.REGLES_DE_LA_FACADE
+
+#: Les constantes du droit que la façade lit au portage, par module.
+CONSTANTES = pont.CONSTANTES_DE_LA_FACADE
+
+#: Le salaire moyen des séries du simulateur, une fonction de l'année, en
+#: argument d'une méthode de table (``grilles.forfait``) : le portage y met
+#: le sien.
+SALAIRE_MOYEN = pont.SALAIRE_MOYEN
 
 #: Les méthodes des constructeurs du compte que la façade sert, par
 #: constructeur.
@@ -467,6 +476,11 @@ class Simulateur(_Ferme):
             return self._constructeurs.setdefault(nom, Constructeur(self, nom))
         return super().__getattr__(nom)
 
+    @property
+    def scenario_liberal(self):
+        """Le scénario 6, par sa garantie vieillesse seule."""
+        return _ScenarioLiberal(self)
+
     def pour_la_projection(self) -> "Simulateur":
         """``Simulateur.pour_la_projection`` : le simulateur de la page Coût,
         sous les conventions du COR et sans le minimum vieillesse au scénario
@@ -524,6 +538,19 @@ class Simulateur(_Ferme):
         return _demander("simulateur.carriere_releve", self.parametres, pont.SIMULATEUR, _options(
             _carriere.Carriere.depuis_releve, annee_naissance=annee_naissance, sexe=sexe,
             releve=list(releve), age_liquidation=age_liquidation, macro=None, **options))
+
+
+class _ScenarioLiberal(_Ferme):
+    """Le scénario 6 d'un simulateur de la façade : sa garantie vieillesse,
+    servie par le portage."""
+
+    def __init__(self, simulateur: Simulateur) -> None:
+        object.__setattr__(self, "_simulateur", simulateur)
+
+    def _garantie_vieillesse(self, carriere, pension_contributive: float,
+                             rente_capitalisee: float = 0.0):
+        return _demander("simulateur.garantie_vieillesse", self._simulateur.parametres,
+                         pont.SIMULATEUR, carriere, pension_contributive, rente_capitalisee)
 
 
 def prolongee(carriere, age_liquidation: float, macro, attente_travaillee: bool = True):
@@ -730,6 +757,9 @@ class Regles(_Ferme):
         object.__setattr__(self, "_jumeau", jumeau)
 
     def __getattr__(self, regle):
+        if regle in CONSTANTES.get(self._nom, ()):
+            # Une constante du portage, que le jumeau tient ailleurs ou pas.
+            return pont.constante_du_droit(self._nom, regle)
         # Ce que le jumeau ne porte pas manque ici comme à un module : pytest
         # sonde ainsi ce qu'un fichier de tests importe.
         if regle.startswith("__") or not hasattr(self._jumeau, regle):
@@ -883,6 +913,8 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
     if isinstance(valeur, _liquidation.Contexte):
         return pont.ContexteDuMoteur(tuple(_contexte_de_la_facade(
             regle, None if simulateur is None else simulateur.scenario_actuel, valeur)))
+    if isinstance(valeur, pont.DureesPosees):
+        return valeur
     if isinstance(valeur, Durees):
         if not valeur._source.du_releve:
             raise NonTransmissible(
@@ -1099,16 +1131,20 @@ salaire_moyen_annuel = carriere.salaire_moyen_annuel
 
 class Liquidee(_Ferme):
     """La liquidation que le portage a calculée, par ce que les tests en
-    lisent : le taux de ses pensions (``pensions.taux``), la pension de chaque
-    régime (``regimes``), ses totaux, ses mesures et ses avantages, la demande
+    lisent : ses pensions avant les compléments (``pensions``, leur taux,
+    leurs régimes, leurs plafonds), ses compléments (``complements``), la
+    pension de chaque régime (``regimes``), ses totaux, ses mesures et ses avantages, la demande
     et le contexte qu'elle a reçus, les lignes du relevé qu'elle a lues
     (``releve.lignes()``) et ce que le contrat C.6 en décrit (``donnees()``).
-    Le reste — le relevé entier, l'ouverture, les compléments — ne passe pas
+    Le reste — le relevé entier, l'ouverture — ne passe pas
     le pont : la liquidation entière tient son contexte, les tables du
     moteur."""
 
     def __init__(self, lu: dict, demande, contexte) -> None:
-        for nom, valeur in (("pensions", _Taux(lu["taux"])), ("regimes", lu["regimes"]),
+        pensions = _Pensions(lu["taux"], lu["pensions"], lu["plafonds"])
+        complements = _Complements(lu["complements"], lu["avantages_des_complements"])
+        for nom, valeur in (("pensions", pensions), ("complements", complements),
+                            ("regimes", lu["regimes"]),
                             ("total", lu["total"]), ("hors_repartition", lu["hors_repartition"]),
                             ("total_contributif", lu["total_contributif"]),
                             ("mesures", lu["mesures"]), ("avantages", lu["avantages"]),
@@ -1130,11 +1166,24 @@ class _Lignes(_Ferme):
         return self._lignes
 
 
-class _Taux(_Ferme):
-    """Les pensions d'une liquidation, par leur seul taux."""
+class _Pensions(_Ferme):
+    """Les pensions d'une liquidation, celles de l'étape « liquider » : leur
+    taux, la pension de chaque régime avant les compléments, et ce que le
+    plafond de L. 18 en écarte."""
 
-    def __init__(self, taux: float) -> None:
+    def __init__(self, taux: float, regimes: tuple, plafonds: tuple) -> None:
         object.__setattr__(self, "taux", taux)
+        object.__setattr__(self, "regimes", regimes)
+        object.__setattr__(self, "plafonds", plafonds)
+
+
+class _Complements(_Ferme):
+    """Les compléments d'une liquidation : la pension de chaque régime
+    complétée, et les avantages que l'étape « compléter » sert."""
+
+    def __init__(self, regimes: tuple, avantages: tuple) -> None:
+        object.__setattr__(self, "regimes", regimes)
+        object.__setattr__(self, "avantages", avantages)
 
 
 #: Les appels de ``liquider`` que les liquidations de la façade ont coûtés au

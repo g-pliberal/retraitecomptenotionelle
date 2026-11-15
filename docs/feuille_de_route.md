@@ -7335,10 +7335,10 @@ soixante-dix règles, « faire vivre » et le système 1 servi une année, la
 proposition et son report, la mortalité, les constructeurs du compte et le
 relevé entier. `test_reversion.py`, `test_droit.py`, douze fichiers du
 relevé, les oracles et quinze autres n'ont presque plus de test sur le
-moteur Python ; `test_simulateur.py` en garde sept.
+moteur Python ; `test_simulateur.py` n'en garde que deux, le solveur.
 Reste, une étape par session : les autres fichiers de tests, chacun avec ce
-qui lui manque (« Ce qui reste » de
-`2026-11-15-la-proposition-et-la-mortalite-a-la-facade.md`).
+qui lui manque, d'abord `test_liquidation.py` (« Ce qui reste » de
+`2026-11-15-la-garantie-et-les-durees-posees-a-la-facade.md`).
 Puis quatre études, la liste des fonctions gardées des deux côtés, le
 retrait, et les périodes assimilées du relevé (table de
 `2026-11-13-les-decisions-du-proprietaire.md`).

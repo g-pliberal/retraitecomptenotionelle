@@ -2348,5 +2348,84 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "revalorisation.majorer_les_petites_pensions",
                               "revalorisation.actuel_aujourd_hui",
                               "simulateur.proposition", "simulateur.carriere_proposition",
-                              "carriere.prolongee")
+                              "carriere.prolongee", "simulateur.garantie_vieillesse")
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)
+
+
+def test_l_age_majore_de_la_surcote_se_lit_au_portage():
+    """Le barème de 2007-2008 majore la surcote des trimestres acquis au-delà
+    de soixante-cinq ans (décret n° 2006-1611) : une constante du portage,
+    que la façade lit au pont (``pont.CONSTANTES_DE_LA_FACADE``)."""
+    assert pont.constante_du_droit("liquider", "SURCOTE_AGE_MAJORE") == 65
+    assert liquider.SURCOTE_AGE_MAJORE == 65
+    with pytest.raises(ValueError, match="liquider.SURCOTE_INCONNUE"):
+        pont.constante_du_droit("liquider", "SURCOTE_INCONNUE")
+
+
+def test_le_forfait_du_marin_se_demande_au_portage(simulateur):
+    """R. 11 du code des pensions de retraite des marins : la catégorie dont
+    le forfait est le plus proche du revenu. L'arrêté de 2024 fixe la
+    treizième à 41 467,86 € ; une année qu'aucun arrêté ne couvre prend la
+    grille la plus proche, ramenée au salaire moyen (``pont.SALAIRE_MOYEN``),
+    une estimation."""
+    grilles = simulateur.scenario_actuel.grilles
+    assert grilles.forfait("marins", 2024, 40000.0, facade.SALAIRE_MOYEN) == (
+        pytest.approx(41467.86), 13, Fiabilite.CERTIFIEE)
+    _, categorie, fiabilite = grilles.forfait("marins", 2040, 1.0e9, facade.SALAIRE_MOYEN)
+    assert fiabilite == Fiabilite.ESTIMEE and categorie > 13
+    assert grilles.forfait("inconnu", 2024, 40000.0, facade.SALAIRE_MOYEN) is None
+
+
+def test_la_duree_majoree_des_regimes_alignes_se_demande_au_portage(simulateur):
+    """Circulaire Cnav n° 2004/20, point 45 : un assuré de soixante-cinq ans
+    et six mois, deux trimestres d'ajournement, 5 % ; 130 trimestres au
+    régime général et 10 à la MSA, 147 tous régimes sous la limite de 150 :
+    130 + 6,5, soit 137. Des durées posées (``pont.DureesPosees``)."""
+    periode = simulateur.catalogue["regime_general"].periode(2004)
+    carriere = Carriere(annee_naissance=1938, sexe="H", mois_naissance=10,
+                        jour_naissance=1, age_liquidation=65 + 7 / 12)
+    durees = pont.DureesPosees({"regime_general": 130, "msa_salaries": 10})
+    assert liquider.duree_majoree_apres_taux_plein(
+        simulateur.scenario_actuel, periode, carriere, durees, ("regime_general",),
+        130, 150, 65.0) == 137
+
+
+def test_la_garantie_vieillesse_de_la_proposition_se_demande_au_portage(simulateur):
+    """Une ligne du tableau de la proposition (décision 100 du programme) :
+    seule, à 300 € par mois, sous le pivot de 525 €, la pension est retirée
+    en entier du plancher de 1 050 € : 750 €."""
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1960, sexe="F", affiliation="salarie_prive_non_cadre",
+        age_debut=22, age_liquidation=66, niveau_salaire=0.3)
+    assert carriere.annee_liquidation == 2026
+    garantie = simulateur.scenario_liberal._garantie_vieillesse(carriere, 300.0 * 12)
+    assert garantie.coefficient_prix == pytest.approx(1.0)
+    assert garantie.complement / 12 == pytest.approx(750.0)
+    with pytest.raises(NonTransmissible, match="_ScenarioLiberal.calculer"):
+        simulateur.scenario_liberal.calculer
+
+
+def test_la_liquidation_rend_ses_pensions_avant_les_complements(simulateur):
+    """L. 17 du code des pensions : le minimum garanti se compare à la
+    pension liquidée, avant lui. La liquidation de la façade rend les
+    pensions de l'étape « liquider » (``pensions.regimes``), la surcote que
+    le plafond de L. 18 écarte (``pensions.plafonds``), et les compléments
+    (``complements``) : la fonctionnaire de la CNRACL à 30 % du salaire moyen
+    reçoit le minimum garanti en complément de sa pension liquidée."""
+    from facade import liquidation
+
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1969, mois_naissance=1, jour_naissance=1, sexe="F",
+        affiliation="fonctionnaire_territorial_hospitalier", age_debut=21,
+        age_liquidation=64.5, nombre_enfants=2, niveau_salaire=0.3)
+    liquidee = liquidation.liquider(
+        liquidation.demande_de_depart(carriere), liquidation.Etat(carriere),
+        liquidation.Contexte(simulateur.scenario_actuel, frozenset()))
+    indice, avant = next((i, p) for i, p in enumerate(liquidee.pensions.regimes)
+                         if p.regime == "cnracl")
+    plafond = next(e for e in liquidee.pensions.plafonds if e.indice == indice)
+    assert 0 < plafond.surcote < avant.montant
+    assert liquidee.complements.regimes == liquidee.regimes
+    servis = {a.code: a.montant for a in liquidee.complements.avantages}
+    assert servis["minimum_garanti"] == pytest.approx(
+        liquidee.complements.regimes[indice].montant - avant.montant)

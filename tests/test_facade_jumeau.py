@@ -328,7 +328,18 @@ def _tranche_b(simulateur, annee: int):
 #: (``pont.TABLES_DE_LA_FACADE``) : ``(table, méthode, arguments)``, les
 #: arguments bâtis sur le simulateur de chaque côté — sa carrière, ses séries,
 #: une période de son catalogue.
+def _salaire_moyen(simulateur):
+    """Le salaire moyen des séries du simulateur : sa marque à la façade, une
+    fonction de l'année au jumeau."""
+    if isinstance(simulateur, facade.Simulateur):
+        return facade.SALAIRE_MOYEN
+    return lambda annee: carriere_python.salaire_moyen_annuel(simulateur.macro, annee)
+
+
 APPELS_DES_TABLES = [
+    ("grilles", "forfait", lambda s: ("marins", 2024, 40000.0, _salaire_moyen(s))),
+    ("grilles", "forfait", lambda s: ("marins", 2040, 52000.0, _salaire_moyen(s))),
+    ("grilles", "forfait", lambda s: ("marins", 2001, 15000.0, _salaire_moyen(s))),
     ("ages_categorie_active", "derogation", lambda s: ("active", 1960.0)),
     ("ages_categorie_active", "derogation", lambda s: ("active", 1980.0)),
     ("ages_categorie_active", "derogation", lambda s: ("super_active", 1970.0)),
@@ -715,7 +726,22 @@ _RELEVE_CUMULE = (LigneRelevee(2023, "salarie_prive_cadre", 30000.0),
                   LigneRelevee(2023, "salarie_prive_non_cadre", 5000.0, 1.5,
                                type_periode="chomage_indemnise"))
 
+def _majores(**durees):
+    """``liquider.duree_majoree_apres_taux_plein`` sur des durées posées : un
+    assuré de soixante-cinq ans et sept mois en mai 2004 (circulaire Cnav
+    n° 2004/20, point 45)."""
+    carriere = CarrierePython(annee_naissance=1938, sexe="H", mois_naissance=10,
+                              jour_naissance=1, age_liquidation=65 + 7 / 12)
+    return lambda s: (s.scenario_actuel, s.catalogue["regime_general"].periode(2004), carriere,
+                      pont.DureesPosees(durees), ("regime_general",),
+                      durees["regime_general"], 150, 65.0)
+
+
 APPELS_DES_REGLES = [
+    ("liquider", "duree_majoree_apres_taux_plein", _majores(regime_general=130, msa_salaries=10)),
+    ("liquider", "duree_majoree_apres_taux_plein", _majores(regime_general=140, msa_salaries=5)),
+    ("liquider", "duree_majoree_apres_taux_plein",
+     _majores(regime_general=136, msa_salaries=2, cnavpl=10)),
     ("acquerir", "points_msa_retenus", lambda s: (15.0, 1993)),
     ("acquerir", "points_msa_retenus", lambda s: (15.0, 2000)),
     ("liquider", "_coefficient_anticipation", lambda s: (12, 20)),
@@ -1298,6 +1324,14 @@ def test_le_jumeau_rend_la_liquidation_que_la_facade_lit(parametres):
                 refait.total, refait.hors_repartition, refait.total_contributif), cas
             assert lu.mesures == refait.mesures, cas
             assert lu.avantages == tuple(refait.avantages), cas
+            assert repr(lu.pensions.regimes) == repr(pont.lu_strictement(
+                tuple[PensionRegime, ...],
+                json.loads(json.dumps(pont._en_donnees(refait.pensions.regimes))), nom)), cas
+            assert lu.pensions.plafonds == tuple(refait.pensions.plafonds), cas
+            assert repr(lu.complements.regimes) == repr(pont.lu_strictement(
+                tuple[PensionRegime, ...],
+                json.loads(json.dumps(pont._en_donnees(refait.complements.regimes))), nom)), cas
+            assert lu.complements.avantages == tuple(refait.complements.avantages), cas
             assert (facade.liquidation.appels() - avant
                     == liquidation_python.appels() - avant_jumeau), cas
 
@@ -1620,3 +1654,38 @@ def test_le_jumeau_rend_la_proposition_que_la_facade_lit():
                                                 rel=TOLERANCE_DU_MOTEUR_PYTHON)
     assert lu.conversion.diviseur == pytest.approx(refait.conversion.diviseur,
                                                    rel=TOLERANCE_DU_MOTEUR_PYTHON)
+
+
+def test_chaque_constante_du_droit_lue_au_portage_est_celle_du_jumeau():
+    """Une constante que la façade lit au portage
+    (``pont.CONSTANTES_DE_LA_FACADE``) : la même que celle du jumeau, que le
+    moteur Python du scénario 1 tient."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle.scenarios.actuel import ScenarioActuel
+
+    assert pont.CONSTANTES_DE_LA_FACADE == {"liquider": ("SURCOTE_AGE_MAJORE",)}
+    assert pont.constante_du_droit("liquider", "SURCOTE_AGE_MAJORE") == (
+        ScenarioActuel.SURCOTE_AGE_MAJORE)
+
+
+@pytest.mark.parametrize("parametres", [Parametres(), Parametres(conventions_cor=True)],
+                         ids=["reference", "conventions_cor"])
+def test_le_jumeau_rend_la_garantie_vieillesse_que_la_facade_lit(parametres):
+    """La garantie vieillesse de la proposition, sur une carrière liquidée à
+    soixante-six ans et une autre à soixante-deux, sous plusieurs pensions et
+    une rente : la même, au bit près."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    servi = facade.Simulateur(parametres)
+    jumeau = simulateur_python.Simulateur(parametres)
+    for age in (66, 62):
+        def carriere(simulateur):
+            return simulateur.carriere_simple(
+                annee_naissance=1960, sexe="F", affiliation="salarie_prive_non_cadre",
+                age_debut=22, age_liquidation=age, niveau_salaire=0.3)
+        lue, refaite = carriere(servi), carriere(jumeau)
+        for pension, rente in ((3600.0, 0.0), (10800.0, 0.0), (60000.0, 0.0), (3600.0, 1200.0)):
+            assert servi.scenario_liberal._garantie_vieillesse(lue, pension, rente) == (
+                jumeau.scenario_liberal._garantie_vieillesse(refaite, pension, rente)), (
+                age, pension, rente)

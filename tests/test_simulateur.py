@@ -1335,7 +1335,6 @@ def _forme_suedoise(plancher: float, ressources: float) -> float:
     return max(0.0, pivot - 0.5 * (ressources - pivot))
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.scenario_liberal")
 def test_la_garantie_reproduit_le_tableau_de_la_proposition(simulateur):
     """Les cinq lignes du tableau de la proposition, en euros de 2026, sous la
     garantie dégressive (décision 100 du programme, 9 novembre 2026).
@@ -3431,7 +3430,6 @@ def test_la_liquidation_unique_reunit_les_regimes_alignes(simulateur):
     assert len(base(1955, 62, "salarie_agricole", mois=9)) == 1
 
 
-@pytest.mark.sur_le_moteur_python("scenarios.actuel.ScenarioActuel")
 def test_le_bareme_2007_de_la_surcote_majore_au_dela_de_65_ans(simulateur):
     """L'âge du barème de 2007-2008 n'est écrit nulle part dans les données.
 
@@ -3442,9 +3440,8 @@ def test_le_bareme_2007_de_la_surcote_majore_au_dela_de_65_ans(simulateur):
     le barème et le moteur parlent du même âge. Le changer d'un côté sans
     l'autre échoue ici, et la prose qui le cite s'appuie sur ce nom.
     """
-    from retraite_notionnelle.scenarios.actuel import ScenarioActuel
-
-    assert ScenarioActuel.SURCOTE_AGE_MAJORE == 65
+    # La constante du moteur qui fait foi, le portage, lue par la façade.
+    assert liquider.SURCOTE_AGE_MAJORE == 65
 
     chemin = (RACINE_DONNEES / "reference" / "legislation"
               / "surcote_baremes.csv")
@@ -3546,7 +3543,6 @@ def test_la_surcote_parentale_du_regime_general_est_la_surcote_ouverte_un_an_plu
         0.05 * (pension.montant - parentale.montant - minimum.montant))
 
 
-@pytest.mark.sur_le_moteur_python("droit.liquidation")
 def test_le_minimum_garanti_se_compare_a_la_pension_qui_porte_les_deux_surcotes(
         simulateur):
     """« Le montant normal de votre pension est donc comparé à celui du minimum
@@ -3562,7 +3558,7 @@ def test_le_minimum_garanti_se_compare_a_la_pension_qui_porte_les_deux_surcotes(
     d'enfants et deux de droit commun, quarante-trois ans de services : le
     minimum entier.
     """
-    from retraite_notionnelle.droit import liquidation
+    from facade import liquidation
 
     garanti = simulateur.scenario_actuel.minimum_garanti
 
@@ -4337,7 +4333,6 @@ def test_le_marin_parti_avant_cinquante_cinq_ans_plafonne_a_vingt_cinq_annuites(
     assert apres.pension_annuelle > avant.pension_annuelle * 1.35
 
 
-@pytest.mark.sur_le_moteur_python("carriere.salaire_moyen_annuel")
 def test_le_marin_cotise_et_liquide_sur_le_forfait_de_sa_categorie(simulateur):
     """R. 11 : la pension est calculée sur « le salaire forfaitaire de la
     catégorie dans laquelle le marin a été classé », non sur sa paie.
@@ -4346,8 +4341,6 @@ def test_le_marin_cotise_et_liquide_sur_le_forfait_de_sa_categorie(simulateur):
     ce forfait, et non les 40 000 €, que le compte notionnel reçoit et que le
     scénario 1 liquide.
     """
-    from retraite_notionnelle.carriere import salaire_moyen_annuel
-
     # Profil plat : ce test vise la GRILLE des forfaits, et un marin à
     # 40 000 € doit tomber dans la treizième catégorie. Le défaut déformerait
     # ce salaire avec l'âge et le ferait changer de catégorie.
@@ -4359,7 +4352,7 @@ def test_le_marin_cotise_et_liquide_sur_le_forfait_de_sa_categorie(simulateur):
     ligne = carriere.ligne(2024)
     forfait = simulateur.scenario_actuel.grilles.forfait(
         "marins", 2024, ligne.revenu_annualise,
-        lambda a: salaire_moyen_annuel(simulateur.macro, a),
+        facade.SALAIRE_MOYEN,
     )
     assert forfait[1] == 13
     assert forfait[0] == pytest.approx(41467.86)
@@ -4861,7 +4854,6 @@ def test_apres_l_age_du_taux_plein_la_duree_est_majoree(simulateur):
     assert "× 150/150, 131 trimestres majorés" in detail(1940, 68, 35, "commercant")
 
 
-@pytest.mark.sur_le_moteur_python("liquider.duree_majoree_apres_taux_plein")
 def test_depuis_2004_la_duree_majoree_regarde_tous_les_regimes(simulateur):
     """Depuis 2004, la majoration n'est due que « tant qu'ils n'ont pas
     accompli dans le régime général et, le cas échéant, dans un ou plusieurs
@@ -4871,8 +4863,7 @@ def test_depuis_2004_la_duree_majoree_regarde_tous_les_regimes(simulateur):
     exemples de la circulaire Cnav n° 2004/20 (point 45) : un assuré de
     soixante-cinq ans et six mois, deux trimestres d'ajournement, 5 %.
     """
-    from types import SimpleNamespace
-
+    from retraite_notionnelle import pont
     from retraite_notionnelle.calendrier import DateMois
 
     scenario = simulateur.scenario_actuel
@@ -4883,7 +4874,7 @@ def test_depuis_2004_la_duree_majoree_regarde_tous_les_regimes(simulateur):
 
     def majores(**durees):
         return liquider.duree_majoree_apres_taux_plein(
-            scenario, periode, carriere, SimpleNamespace(trimestres_par_regime=durees),
+            scenario, periode, carriere, pont.DureesPosees(durees),
             ("regime_general",), durees["regime_general"], 150, 65.0)
 
     # 130 + 6,5 : 137, et 147 tous régimes, sous la limite.
