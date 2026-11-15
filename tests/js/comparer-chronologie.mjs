@@ -6,7 +6,7 @@
  * `duParcours` ou de `duReleve`, ses `periodes_assimilees` et ses
  * `prolongations_de_la_charge` s'il en a — et écrit sur la sortie standard, pour
  * chacune, la chronologie complétée par les présomptions du paquet, ou
- * l'erreur levée. `tests/test_chronologie.py` compare le tout au Python.
+ * l'erreur levée. `tests/test_chronologie.py` le confronte au témoin des sorties.
  *
  *     node tests/js/comparer-chronologie.mjs saisies.json
  */

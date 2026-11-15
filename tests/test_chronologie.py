@@ -1103,61 +1103,24 @@ SAISIES = [
 ]
 
 
-def _python(saisie: dict) -> dict:
-    def assimilees(construite: dict) -> dict:
-        if saisie.get("prolongations_de_la_charge"):
-            construite = chronologie.avec_prolongations_de_la_charge(
-                construite, saisie["prolongations_de_la_charge"])
-        if not saisie.get("periodes_assimilees"):
-            return construite
-        return chronologie.avec_periodes_assimilees(construite, saisie["periodes_assimilees"])
-
-    try:
-        if "parcours" in saisie:
-            options = dict(saisie["parcours"])
-            options["metiers"] = [Metier(**m) for m in options["metiers"]]
-            if options.get("interruptions"):
-                options["interruptions"] = {int(a): m for a, m in options["interruptions"].items()}
-            return {"chronologie": chronologie.completer(
-                assimilees(chronologie.du_parcours(**options)))}
-        options = dict(saisie["releve"])
-        options["releve"] = [LigneRelevee(**l) for l in options["releve"]]
-        return {"chronologie": chronologie.completer(
-            assimilees(chronologie.du_releve(**options)))}
-    except ValueError as erreur:
-        return {"erreur": str(erreur)}
-
-
-def test_le_portage_construit_la_meme_chronologie():
-    """Les deux moteurs échangent la même donnée (§ 7.1) : pour chaque saisie,
-    le JavaScript rend, au JSON près, la chronologie du Python — et refuse ce
-    qu'il refuse, avec les mêmes mots."""
-    import json
+def test_le_portage_construit_la_chronologie_figee():
+    """Pour chaque saisie, la chronologie que le portage construit
+    (``comparer-chronologie.mjs``) — ou le refus, avec ses mots — est celle
+    que le témoin des sorties fige : figée sur des chronologies que le moteur
+    Python rendait encore au JSON près, elle tient la place de la
+    confrontation qui les lui faisait refaire (action 161, étape 8i)."""
     import shutil
-    import subprocess
-    import tempfile
-    from pathlib import Path
+
+    from outils_sorties import sortie_figee
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-
-    racine = Path(__file__).resolve().parents[1]
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        json.dump(SAISIES, fichier)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(racine / "tests" / "js" / "comparer-chronologie.mjs"), chemin],
-            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, execution.stderr
-    obtenus = json.loads(execution.stdout)
-    attendus = [json.loads(json.dumps(_python(saisie))) for saisie in SAISIES]
-    assert len(obtenus) == len(attendus)
-    for numero, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
-        assert obtenu == attendu, f"saisie {numero}"
+    obtenus = sortie_figee("comparer-chronologie.mjs", SAISIES)
+    assert len(obtenus) == len(SAISIES)
+    # Le témoin ne dit que l'empreinte : chaque sortie est au moins de la
+    # forme du contrat, une chronologie ou un refus.
+    for numero, obtenu in enumerate(obtenus):
+        assert set(obtenu) in ({"chronologie"}, {"erreur"}), f"saisie {numero}"
 
 
 def test_le_moteur_lit_la_naissance_que_la_chronologie_porte():

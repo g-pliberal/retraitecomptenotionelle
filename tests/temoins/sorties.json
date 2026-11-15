@@ -316,6 +316,56 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "bb9caeceec984732"
  },
+ "036fdee83012de61": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1965,
+    "etranger": {
+     "pensions": [
+      {
+       "age": 67.25,
+       "mensuel": 263.5,
+       "pays": "MA"
+      }
+     ],
+     "periodes": [
+      {
+       "activite": "salariee",
+       "debut": 15.0,
+       "fin": 21.0,
+       "pays": "MA"
+      },
+      {
+       "activite": "non_salariee",
+       "debut": 33.5,
+       "fin": 36.5,
+       "pays": "OI"
+      }
+     ],
+     "residence": "PT"
+    },
+    "interruptions": {
+     "1999": "sans_activite",
+     "2000": "sans_activite",
+     "2001": "sans_activite"
+    },
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 21.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "mois_naissance": 6,
+    "sexe": "H"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "6f029fd6c1e16091"
+ },
  "03829204cb4f82d4": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -485,6 +535,54 @@
   "script": "simuler.mjs",
   "sortie": "99f389ba8866980d"
  },
+ "06041f106a2e9f6d": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 63.0,
+    "annee_naissance": 1962,
+    "naissances_enfants": [
+     "1987-02-29"
+    ],
+    "nombre_enfants": 1,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "26f94760c1425b3f"
+ },
+ "063de4a0b71a497c": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1950,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "reversion_agricole": {
+     "debut": "2019-02",
+     "mensuel": -5
+    },
+    "sexe": "H"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "eaec05dd5b89416b"
+ },
  "06892230c4dfaa0a": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -509,6 +607,34 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "936a5cfcbfcba12b"
+ },
+ "06a1f59a59cae3ab": {
+  "entree": {
+   "periodes_assimilees": [
+    {
+     "debut": "2016-01",
+     "fin": "2016-02",
+     "jours": 40,
+     "motif": "stage_de_formation_professionnelle"
+    }
+   ],
+   "releve": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1966,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1985,
+      "revenu": 2000.0,
+      "trimestres": 1,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "d2ebf79729b0ff02"
  },
  "06a58c4cf1dc5bfc": {
   "entree": {
@@ -1236,6 +1362,30 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "de09e681748143b8"
  },
+ "126550f2fe31ca3f": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1950,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "reversion_agricole": {
+     "debut": "1949-12",
+     "mensuel": 50
+    },
+    "sexe": "H"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "c3c1f1d5f5fe11cc"
+ },
  "129c8b350c0ccc33": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -1288,6 +1438,18 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "7b740b66d7874637"
+ },
+ "13bee8422f1c5bed": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 63.0,
+    "annee_naissance": 1962,
+    "releve": [],
+    "sexe": "H"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "b807fb6d03735702"
  },
  "13f101966aceb562": {
   "entree": {
@@ -1820,6 +1982,32 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "1ee0286359c56900"
+ },
+ "1cc6bda9c6112d20": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 60.0,
+    "annee_naissance": 1942,
+    "invalidite": {
+     "categorie": 4,
+     "inaptitude": false,
+     "pension": 40.0,
+     "radiation": null
+    },
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 20.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "sexe": "H"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "247a8b7aa8bf1035"
  },
  "1cfabde58d4fea82": {
   "entree": {
@@ -2356,6 +2544,29 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "fc6df36390f39e32"
  },
+ "24e899407201ae15": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 63.0,
+    "annee_naissance": 1962,
+    "etranger": {
+     "residence": "FR"
+    },
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "198a418434947e25"
+ },
  "254acbb35ab47a54": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -2433,6 +2644,55 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "391a586d1e06725c"
+ },
+ "271d8eed5278e67a": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1963,
+    "jour_naissance": 29,
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 22.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "mois_naissance": 2,
+    "sexe": "H"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "07a03d1232285e6c"
+ },
+ "271dc2bcfb91817b": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1960,
+    "conjoint": {
+     "mariage": null,
+     "naissance": "1962-03",
+     "ressources": null,
+     "sexe": "F"
+    },
+    "deces": "2031-10",
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 21.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "sexe": "H"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "9973cfc887c6feff"
  },
  "272c302ed6d9c300": {
   "entree": {
@@ -2512,6 +2772,36 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "5dcb70328066d154"
  },
+ "2752111b8eebfe2a": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 63.0,
+    "annee_naissance": 1962,
+    "etranger": {
+     "periodes": [
+      {
+       "activite": null,
+       "debut": 30.0,
+       "fin": 35.0,
+       "pays": "DE"
+      }
+     ]
+    },
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "2a54c8b03e000810"
+ },
  "2778603c0b3df84e": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -2562,6 +2852,55 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "a35198550af802af"
+ },
+ "28369136feb4fcfc": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 63.0,
+    "annee_naissance": 1962,
+    "jour_naissance": 1,
+    "mois_naissance": 1,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "2f64afb8dead81a2"
+ },
+ "284d3253e304d1e0": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1958,
+    "conjoint": {
+     "mariage": null,
+     "naissance": "1960",
+     "nouvelle_union": "veuvage",
+     "ressources": null,
+     "sexe": "H"
+    },
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "47f4905e78b09f87"
  },
  "2855c91ce5026071": {
   "entree": {
@@ -3344,6 +3683,33 @@
   "script": "faire-vivre-retouchee.mjs",
   "sortie": "73e4a08337aa6bc7"
  },
+ "326136e940c7e942": {
+  "entree": {
+   "periodes_assimilees": [
+    {
+     "debut": "1985",
+     "fin": "1986",
+     "motif": "chomage_indemnise"
+    }
+   ],
+   "releve": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1966,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1985,
+      "revenu": 2000.0,
+      "trimestres": 1,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "5e6119462a9838f3"
+ },
  "32cccaf23e005ca1": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -4032,6 +4398,30 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "dccaf3b04b9357b8"
  },
+ "3996b8f320536eb5": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 63.0,
+    "annee_naissance": 1962,
+    "naissances_enfants": [
+     "1961"
+    ],
+    "nombre_enfants": 1,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "d83fb2bcf2d9937e"
+ },
  "39a1df5aa9736518": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -4350,6 +4740,33 @@
   "script": "comparer-droit.mjs",
   "sortie": "2288965de343418a"
  },
+ "3cc275b3a21f7245": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1958,
+    "conjoint": {
+     "mariage": null,
+     "naissance": "1960",
+     "nouvelle_union": "concubinage",
+     "ressources": null,
+     "sexe": "H"
+    },
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "b6ba5bc2295f3fa9"
+ },
  "3d1a80b82a6a7eda": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -4480,6 +4897,34 @@
   "script": "comparer-droit.mjs",
   "sortie": "25d4a91efaf9818e"
  },
+ "3fedf2c9b8a1aacd": {
+  "entree": {
+   "periodes_assimilees": [
+    {
+     "debut": "1985",
+     "dispositif": "atelier",
+     "fin": "1986",
+     "motif": "stage_d_insertion"
+    }
+   ],
+   "releve": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1966,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1985,
+      "revenu": 2000.0,
+      "trimestres": 1,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "00e1ea054d63caa3"
+ },
  "402005aecfa2f569": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -4530,6 +4975,35 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "573ee3c6addb3b8c"
+ },
+ "40a63dc2ea5dee9e": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 63.0,
+    "annee_naissance": 1962,
+    "etranger": {
+     "pensions": [
+      {
+       "age": 66.0,
+       "mensuel": 100,
+       "pays": null
+      }
+     ]
+    },
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "310ce44e2a872245"
  },
  "40c5b70ac508f4c8": {
   "entree": {
@@ -4682,6 +5156,63 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "a6771a2a95e87bd4"
+ },
+ "441466ca24fbe14f": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1958,
+    "conjoint": {
+     "mariage": "1984-06-16",
+     "naissance": "1955",
+     "nouvelle_union": "mariage",
+     "nouvelle_union_depuis": "2024-09",
+     "nouvelle_union_fin": "2024-08",
+     "ressources": null,
+     "sexe": "H"
+    },
+    "deces": "2024-02-11",
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "10b07cf795c9f82b"
+ },
+ "451f79de68a20d26": {
+  "entree": {
+   "periodes_assimilees": [
+    {
+     "debut": "1986",
+     "fin": "1985",
+     "motif": "sportif_de_haut_niveau"
+    }
+   ],
+   "releve": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1966,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1985,
+      "revenu": 2000.0,
+      "trimestres": 1,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "2f904ddf3255b7f4"
  },
  "4598e7ac21d56068": {
   "entree": {
@@ -5189,6 +5720,35 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "b7097b3574104be8"
+ },
+ "4fc8770bcfe8d05e": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 63.0,
+    "annee_naissance": 1962,
+    "nombre_enfants": 1,
+    "part_primes": 0.1,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     },
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1985,
+      "revenu": 3000.0,
+      "trimestres": null,
+      "type_periode": "chomage_indemnise"
+     }
+    ],
+    "sexe": "H"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "a14ddc4f7aaa184f"
  },
  "502e8b43ef2cb942": {
   "entree": {
@@ -5938,6 +6498,31 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "3b157bbe9bf57b01"
  },
+ "5b7fb336fcea5772": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1972,
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 23.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "naissances_enfants": [
+     "1999",
+     "2001"
+    ],
+    "nombre_enfants": 1,
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "6ee4287ca3a470d7"
+ },
  "5c2171d29d9b09e6": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -6192,6 +6777,26 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "930e1166b7315620"
+ },
+ "60fa92a68fa0fe64": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1970,
+    "metiers": [
+     {
+      "affiliation": "artisan",
+      "age_debut": 20.0,
+      "age_fin": null,
+      "cumul": true,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "cc2ce8854864bbf1"
  },
  "612823c77fed0d03": {
   "entree": {
@@ -6845,6 +7450,26 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "e963f327c6028521"
  },
+ "6aa04fad3c105888": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1958,
+    "metiers": [
+     {
+      "affiliation": "agent_sncf",
+      "age_debut": 19.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "sexe": "H"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "53361c161e0c9bf0"
+ },
  "6aa440bf4c1a706c": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -6925,6 +7550,28 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "8ce7f384df015123"
+ },
+ "6b15aeb58c0d3271": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 62.75,
+    "annee_naissance": 1964,
+    "jour_naissance": 16,
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 22.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "mois_naissance": 5,
+    "sexe": "H"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "14d46f173f381d0a"
  },
  "6b8d10b227021efc": {
   "entree": {
@@ -7078,6 +7725,37 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "64707df07b89e1f4"
+ },
+ "6d40fa882dc7149d": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1960,
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 21.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "naissances_enfants": [
+     "1988-05",
+     "1991-11-20"
+    ],
+    "nombre_enfants": 2,
+    "sexe": "H"
+   },
+   "prolongations_de_la_charge": [
+    {
+     "enfant": 3,
+     "motif": "etudes"
+    }
+   ]
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "905b7d0e54439d63"
  },
  "6d768592e6424997": {
   "entree": {
@@ -7256,6 +7934,31 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "de527cb509c16113"
+ },
+ "7003898ed497f3f4": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 63.0,
+    "annee_naissance": 1962,
+    "invalidite": {
+     "inaptitude": false,
+     "pension": 70.0,
+     "radiation": null
+    },
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "089ba14c400af3cc"
  },
  "70785335a67580b9": {
   "entree": {
@@ -8020,6 +8723,31 @@
   "script": "comparer-droit.mjs",
   "sortie": "b595eaff7d454313"
  },
+ "7df288d3a4007f41": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 63.0,
+    "annee_naissance": 1962,
+    "etranger": {
+     "pensions": [],
+     "periodes": [],
+     "residence": "autre"
+    },
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "74bc929c80702890"
+ },
  "7ea7d59f34c17705": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -8069,6 +8797,33 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "159043aada35f7c2"
+ },
+ "80082d2f5f85b80c": {
+  "entree": {
+   "periodes_assimilees": [
+    {
+     "debut": "1960",
+     "fin": "1985",
+     "motif": "sportif_de_haut_niveau"
+    }
+   ],
+   "releve": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1966,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1985,
+      "revenu": 2000.0,
+      "trimestres": 1,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "0e534d5bfc09b012"
  },
  "80391aa015daf3e5": {
   "entree": {
@@ -8440,6 +9195,28 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "ccb9f8780a819c4b"
  },
+ "8541307bec094365": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1990,
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 23.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "mois_naissance": 2,
+    "nombre_enfants": 3,
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "91a3f48af5d18178"
+ },
  "858305ca3bc19baa": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -8551,6 +9328,33 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "3ce460fd6635f09b"
+ },
+ "863563525efb9aaa": {
+  "entree": {
+   "periodes_assimilees": [
+    {
+     "debut": "1985",
+     "fin": "1986",
+     "motif": "stage_d_insertion"
+    }
+   ],
+   "releve": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1966,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1985,
+      "revenu": 2000.0,
+      "trimestres": 1,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "42d559a3fda38907"
  },
  "865ef0b42e8b6cc6": {
   "entree": {
@@ -8934,6 +9738,31 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "4e3454ba87f74b03"
  },
+ "8c620f575699b74f": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1972,
+    "metiers": [
+     {
+      "affiliation": "fonctionnaire_etat",
+      "age_debut": 23.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "naissances_enfants": [
+     "1999",
+     "2004-11"
+    ],
+    "nombre_enfants": 3,
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "98662d5fffb05735"
+ },
  "8c6726ced56a3290": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -9011,6 +9840,32 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "e2998d97a2d077ef"
+ },
+ "8c77f1f5e92ccf73": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1958,
+    "conjoint": {
+     "mariage": "1959",
+     "naissance": "1960",
+     "ressources": null,
+     "sexe": "H"
+    },
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "15e7b013094ea276"
  },
  "8cb3cc63818bf4b6": {
   "entree": {
@@ -9421,6 +10276,30 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "5a9d757590e34741"
  },
+ "926f8f9f62ff241f": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1950,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "reversion_agricole": {
+     "debut": "2019",
+     "mensuel": 0
+    },
+    "sexe": "H"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "1f80c3745e6e288e"
+ },
  "93037bb3d06182d8": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -9782,6 +10661,43 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "0356b84878b113a0"
+ },
+ "961510e9f2683650": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1970,
+    "invalidite": {
+     "inaptitude": false,
+     "pension": null,
+     "radiation": {
+      "age": 48.5,
+      "imputable": true,
+      "taux": 65
+     }
+    },
+    "metiers": [
+     {
+      "affiliation": "fonctionnaire_territorial_hospitalier",
+      "age_debut": 22.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     },
+     {
+      "affiliation": "sans_activite",
+      "age_debut": 48.5,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "mois_naissance": 4,
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "f78d044eeafd8161"
  },
  "96905efa17b34d01": {
   "entree": {
@@ -10164,6 +11080,32 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "dc2446d6ba9867e3"
+ },
+ "9c1a5216199e7d2a": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1958,
+    "conjoint": {
+     "mariage": null,
+     "naissance": "1960",
+     "ressources": null,
+     "sexe": "X"
+    },
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "9d6d8ece52368a82"
  },
  "9c24faa4c57ec6ad": {
   "entree": {
@@ -11724,6 +12666,83 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "2d2068047c3e040c"
  },
+ "b6a46f37411f1ade": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 63.0,
+    "annee_naissance": 1962,
+    "etranger": {
+     "periodes": [
+      {
+       "activite": "salariee",
+       "debut": 30.0,
+       "fin": 35.0,
+       "pays": "DE"
+      },
+      {
+       "activite": "salariee",
+       "debut": 20.0,
+       "fin": 30.5,
+       "pays": "AT"
+      }
+     ]
+    },
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "f92f42378eeac9ec"
+ },
+ "b876d929e8e41f82": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 64.25,
+    "annee_naissance": 1965,
+    "interruptions": {
+     "1992": "maternite",
+     "1996": "chomage_indemnise"
+    },
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 22.5,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 0.9
+     },
+     {
+      "affiliation": "fonctionnaire_etat",
+      "age_debut": 30.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.1
+     },
+     {
+      "affiliation": "profession_liberale",
+      "age_debut": 40.0,
+      "age_fin": 45.0,
+      "cumul": true,
+      "niveau_salaire": 0.3
+     }
+    ],
+    "mois_naissance": 3,
+    "nombre_enfants": 2,
+    "part_primes": 0.2,
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "aa5e9040b8863d67"
+ },
  "b87f9c545ea34c36": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -11930,6 +12949,38 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "150bd64852fbc14f"
+ },
+ "bb4da7923135ee4d": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1960,
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 21.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "naissances_enfants": [
+     "1988-05",
+     "1991-11-20"
+    ],
+    "nombre_enfants": 2,
+    "sexe": "H"
+   },
+   "prolongations_de_la_charge": [
+    {
+     "enfant": 2,
+     "fin": "2010",
+     "motif": "infirmite"
+    }
+   ]
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "b20059935458c112"
  },
  "bb745e2e64c9f001": {
   "entree": {
@@ -12679,6 +13730,37 @@
   "script": "comparer-droit.mjs",
   "sortie": "0686262bddcec275"
  },
+ "c3980e95cb6e73ad": {
+  "entree": {
+   "prolongations_de_la_charge": [
+    {
+     "enfant": 1,
+     "fin": "2014-06",
+     "motif": "etudes"
+    }
+   ],
+   "releve": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1966,
+    "naissances_enfants": [
+     "1995"
+    ],
+    "nombre_enfants": 1,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1985,
+      "revenu": 2000.0,
+      "trimestres": 1,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "e8f595a6ab42e239"
+ },
  "c3d1cc48bc4b478e": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -13122,6 +14204,30 @@
   "script": "simuler.mjs",
   "sortie": "a8a7f81132b55638"
  },
+ "ca947dc636af7e4e": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1972,
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 23.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "naissances_enfants": [
+     "1999-6"
+    ],
+    "nombre_enfants": 1,
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "135cc6d0cc2de4d5"
+ },
  "cca4eadf97e6882a": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -13413,6 +14519,41 @@
   "script": "comparer-droit.mjs",
   "sortie": "0b64cc4a975e163c"
  },
+ "cf0bb656e79cd6e1": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1958,
+    "conjoint": {
+     "fin_d_activite": "2025-03-15",
+     "mariage": "1984-06-16",
+     "naissance": "1955",
+     "ressources": 12000,
+     "revenus_d_activite": 8000,
+     "sexe": "H",
+     "variations_d_activite": [
+      [
+       "2025-03-15",
+       9000
+      ]
+     ]
+    },
+    "deces": "2024-02-11",
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "31aed805bf57974b"
+ },
  "cf209cc76b6981e4": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -13643,6 +14784,52 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "f7c4c6d4c59a4759"
  },
+ "d35c9a7a3320caf1": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1960,
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 21.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "naissances_enfants": [
+     "1988-05",
+     "1991-11-20"
+    ],
+    "nombre_enfants": 2,
+    "sexe": "H"
+   },
+   "prolongations_de_la_charge": [
+    {
+     "enfant": 1,
+     "fin": "2009-07",
+     "motif": "etudes"
+    },
+    {
+     "enfant": 2,
+     "fin": "2010-09-01",
+     "motif": "apprentissage"
+    },
+    {
+     "enfant": 2,
+     "motif": "infirmite"
+    },
+    {
+     "enfant": 1,
+     "fin": null,
+     "motif": "etudes"
+    }
+   ]
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "5d572a8f372a326d"
+ },
  "d4010c22873a1a3b": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -13821,6 +15008,35 @@
   ],
   "script": "faire-vivre-retouchee.mjs",
   "sortie": "72540b55cd43e5d7"
+ },
+ "d654b6066fb09386": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 63.0,
+    "annee_naissance": 1962,
+    "invalidite": {
+     "inaptitude": false,
+     "pension": null,
+     "radiation": {
+      "age": 40.0,
+      "imputable": false,
+      "taux": 120
+     }
+    },
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "fe8ece64235fa8d4"
  },
  "d68abed8b407815a": {
   "entree": {
@@ -14731,6 +15947,30 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "221d3f5925f03fc1"
  },
+ "e20c2643790b481f": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 63.0,
+    "annee_naissance": 1962,
+    "naissances_enfants": [
+     "1990-05-17"
+    ],
+    "nombre_enfants": 1,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "e12b11a2cba4e4f5"
+ },
  "e21c04c3f94566e3": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -14858,6 +16098,33 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "097207d722380147"
+ },
+ "e3426bea610c967c": {
+  "entree": {
+   "periodes_assimilees": [
+    {
+     "debut": "2031",
+     "fin": "2032",
+     "motif": "sportif_de_haut_niveau"
+    }
+   ],
+   "releve": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1966,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1985,
+      "revenu": 2000.0,
+      "trimestres": 1,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "674c81ed4b085b8b"
  },
  "e34b304835be9cdf": {
   "entree": {
@@ -15069,6 +16336,54 @@
   "script": "comparer-droit.mjs",
   "sortie": "8cc7ad2d410e7914"
  },
+ "e594e54381e22926": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1958,
+    "conjoint": {
+     "fin_d_activite": "2025-03-15",
+     "mariage": "1984-06-16",
+     "naissance": "1955",
+     "nouvelle_union": "concubinage",
+     "nouvelle_union_depuis": "2024-09",
+     "ressources": 12000,
+     "ressources_du_nouveau_conjoint": 15000,
+     "revenus_d_activite": 8000,
+     "sexe": "H",
+     "variations_d_activite": [
+      [
+       "2026-05",
+       9000
+      ],
+      [
+       "2024-11",
+       8500
+      ]
+     ],
+     "variations_du_nouveau_conjoint": [
+      [
+       "2025-07-14",
+       11000
+      ]
+     ]
+    },
+    "deces": "2024-02-11",
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "ed566f8204a2e1fd"
+ },
  "e59cad1d8b99ff56": {
   "entree": {
    "conjoint": "1962",
@@ -15190,6 +16505,64 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "8b7515822347ffa1"
+ },
+ "e86a8a6dd003a16a": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1958,
+    "conjoint": {
+     "mariage": "1990",
+     "naissance": "1960",
+     "ressources": null,
+     "sexe": "H"
+    },
+    "deces": "1989-05",
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "7475249a460f0cfe"
+ },
+ "e8dca26ef68f72a1": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1960,
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 21.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "naissances_enfants": [
+     "1988-05",
+     "1991-11-20"
+    ],
+    "nombre_enfants": 2,
+    "sexe": "H"
+   },
+   "prolongations_de_la_charge": [
+    {
+     "enfant": 1,
+     "motif": "chomage"
+    }
+   ]
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "7efd90138ac9188b"
  },
  "e98c5ca9b7a3b8bc": {
   "entree": {
@@ -15423,6 +16796,38 @@
   "script": "comparer-droit.mjs",
   "sortie": "3a01326e291be8ef"
  },
+ "ebf5bc74135bd2dd": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1960,
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 21.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "naissances_enfants": [
+     "1988-05",
+     "1991-11-20"
+    ],
+    "nombre_enfants": 2,
+    "sexe": "H"
+   },
+   "prolongations_de_la_charge": [
+    {
+     "enfant": 2,
+     "fin": "1991",
+     "motif": "apprentissage"
+    }
+   ]
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "85389eb85f5db9d8"
+ },
  "eda86a1f21d23835": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -15593,6 +16998,39 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "0249da3d63780223"
+ },
+ "efaf6f8bf312522a": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1958,
+    "conjoint": {
+     "fin_d_activite": "2025-03-15",
+     "mariage": "1984-06-16",
+     "naissance": "1955",
+     "nouvelle_union": "concubinage",
+     "nouvelle_union_depuis": "2024-09",
+     "nouvelle_union_fin": "2026-01",
+     "ressources": 12000,
+     "ressources_du_nouveau_conjoint": 15000,
+     "revenus_d_activite": 8000,
+     "sexe": "H"
+    },
+    "deces": "2024-02-11",
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "954dec73f552c66f"
  },
  "f02fb8a9e69114a6": {
   "entree": {
@@ -15773,6 +17211,41 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "605ffb67fc0fd745"
  },
+ "f2b1e06f249a62b1": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1965,
+    "interruptions": {
+     "2020": "invalidite",
+     "2021": "invalidite",
+     "2022": "invalidite",
+     "2023": "invalidite",
+     "2024": "invalidite",
+     "2025": "invalidite",
+     "2026": "invalidite",
+     "2027": "invalidite"
+    },
+    "invalidite": {
+     "inaptitude": true,
+     "pension": 55.25,
+     "radiation": null
+    },
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 21.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "sexe": "H"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "407251421cff37b7"
+ },
  "f367ad98d8c9cef0": {
   "entree": {
    "conjoint": "1932-06",
@@ -15933,6 +17406,55 @@
   "script": "comparer-droit.mjs",
   "sortie": "9ab2802184315d73"
  },
+ "f6ee2b281ac1ea2b": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 60.0,
+    "annee_naissance": 1942,
+    "interruptions": {
+     "1982": "invalidite",
+     "1983": "invalidite",
+     "1984": "invalidite",
+     "1985": "invalidite",
+     "1986": "invalidite",
+     "1987": "invalidite",
+     "1988": "invalidite",
+     "1989": "invalidite",
+     "1990": "invalidite",
+     "1991": "invalidite",
+     "1992": "invalidite",
+     "1993": "invalidite",
+     "1994": "invalidite",
+     "1995": "invalidite",
+     "1996": "invalidite",
+     "1997": "invalidite",
+     "1998": "invalidite",
+     "1999": "invalidite",
+     "2000": "invalidite",
+     "2001": "invalidite",
+     "2002": "invalidite"
+    },
+    "invalidite": {
+     "categorie": 1,
+     "inaptitude": false,
+     "pension": 40.0,
+     "radiation": null
+    },
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 20.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "sexe": "H"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "1262157e98d09273"
+ },
  "f71069e82524c382": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -15957,6 +17479,82 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "38dc26f1448f84c3"
+ },
+ "f7498f2e0fd14851": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1958,
+    "conjoint": {
+     "mariage": "1984-06-16",
+     "naissance": "1955",
+     "nouvelle_union": "pacs",
+     "ressources": 12000,
+     "ressources_du_nouveau_conjoint": 15000,
+     "revenus_d_activite": 8000,
+     "sexe": "H"
+    },
+    "deces": "2024-02-11",
+    "naissances_enfants": [
+     "1986"
+    ],
+    "nombre_enfants": 1,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "1da74233ca3515b0"
+ },
+ "f7812fda57894e8d": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1998,
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 16.5,
+      "apprentissage": true,
+      "niveau_salaire": 0.5
+     },
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 19.0,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "sexe": "H"
+   },
+   "periodes_assimilees": [
+    {
+     "debut": "2021-03-01",
+     "fin": "2021-09-01",
+     "jours": 120,
+     "motif": "stage_de_formation_professionnelle"
+    },
+    {
+     "debut": "2016",
+     "fin": "2018-07",
+     "motif": "sportif_de_haut_niveau"
+    },
+    {
+     "debut": "2026-07-14",
+     "fin": "2026-09-10",
+     "motif": "conge_supplementaire_de_naissance"
+    }
+   ]
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "523aaaf1586ca1e0"
  },
  "f7cc9a5d57cb7d54": {
   "entree": {
@@ -16024,6 +17622,59 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "58c1ccceabb9ca7c"
+ },
+ "f87d9b2c1731650a": {
+  "entree": {
+   "releve": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1958,
+    "deces": "2024-13",
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1984,
+      "revenu": 9000.0,
+      "trimestres": 4,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "005d74101b9f8990"
+ },
+ "f89cdfcf9f909264": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 62.0,
+    "annee_naissance": 1960,
+    "metiers": [
+     {
+      "affiliation": "salarie_prive",
+      "age_debut": 21.0,
+      "age_fin": null,
+      "cumul": false,
+      "niveau_salaire": 1.0
+     }
+    ],
+    "naissances_enfants": [
+     "1988-05",
+     "1991-11-20"
+    ],
+    "nombre_enfants": 2,
+    "sexe": "H"
+   },
+   "prolongations_de_la_charge": [
+    {
+     "enfant": 1,
+     "fin": "2009-13",
+     "motif": "etudes"
+    }
+   ]
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "cf306900015ed580"
  },
  "f8ccedffe030b8ad": {
   "entree": {
@@ -16146,6 +17797,34 @@
   ],
   "script": "faire-vivre-retouchee.mjs",
   "sortie": "97d736ddc9ecad0f"
+ },
+ "f9c6321755b177b4": {
+  "entree": {
+   "periodes_assimilees": [
+    {
+     "debut": "1985-02",
+     "dispositif": "tuc",
+     "fin": "1985-11",
+     "motif": "stage_d_insertion"
+    }
+   ],
+   "releve": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1966,
+    "releve": [
+     {
+      "affiliation": "salarie_prive",
+      "annee": 1985,
+      "revenu": 2000.0,
+      "trimestres": 1,
+      "type_periode": "emploi"
+     }
+    ],
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "7dae3693d2a6db15"
  },
  "fa5d37fc10d7ed99": {
   "entree": {
@@ -16302,6 +17981,29 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "d8c327535a17bd92"
+ },
+ "fda5f1990a24523b": {
+  "entree": {
+   "parcours": {
+    "age_liquidation": 64.0,
+    "annee_naissance": 1952,
+    "jour_naissance": 15,
+    "metiers": [
+     {
+      "affiliation": "collaborateur_agricole",
+      "age_debut": 20.0,
+      "niveau_salaire": 0.3
+     }
+    ],
+    "reversion_agricole": {
+     "debut": "2010-03-20",
+     "mensuel": 150.0
+    },
+    "sexe": "F"
+   }
+  },
+  "script": "comparer-chronologie.mjs",
+  "sortie": "fee2d39462a25637"
  },
  "fdd41eb2b970f72b": {
   "entree": {
