@@ -262,6 +262,95 @@ def test_des_lignes_se_disent_en_plages():
     assert jumeaux.plages([]) == ""
 
 
+# -- les fonctions des deux côtés, et la liste de celles qu'on garde -------------
+
+
+def test_les_fonctions_d_un_fichier_python():
+    texte = (
+        "def charger(x):\n    def interne():\n        pass\n"
+        "def _privee():\n    pass\n"
+        "class Table:\n"
+        "    def __init__(self):\n        pass\n"
+        "    def __post_init__(self):\n        pass\n"
+        "    @property\n    def premiere_annee(self):\n        pass\n"
+        "    def valeur_de(self, annee):\n        pass\n")
+    assert jumeaux.fonctions_python(texte) == {"charger", "_privee", "premiere_annee", "valeur_de"}
+
+
+def test_les_fonctions_d_un_fichier_javascript():
+    texte = (
+        "export function survie(age) {\n  const interne = (x) => x;\n  if (age) {}\n}\n"
+        "function _lire(x) {}\n"
+        "export async function charger() {}\n"
+        "export const quantileNormal = (p) => p;\n"
+        "const grille = function (n) {};\n"
+        "export const LIMITE = 3;\n"
+        "export class Table {\n"
+        "  constructor(x) {\n    for (;;) {}\n  }\n"
+        "  valeurDe(annee) {\n    if (annee) {}\n  }\n"
+        "  get premiereAnnee() {}\n"
+        "  static depuis(donnees) {}\n"
+        "  #prive() {}\n"
+        "}\n"
+        "  hors(x) {}\n")
+    assert jumeaux.fonctions_javascript(texte) == {
+        "survie", "_lire", "charger", "quantileNormal", "grille", "valeurDe", "premiereAnnee", "depuis"}
+
+
+def test_une_fonction_est_en_double_sous_le_meme_nom_au_passage_pres_en_camel():
+    python = "def taux_de(a):\n    pass\ndef _calibrer():\n    pass\ndef seul():\n    pass\n"
+    javascript = "export function tauxDe(a) {}\nfunction _calibrer() {}\nexport function autre() {}\n"
+    assert jumeaux.en_double(python, javascript) == {"taux_de": "tauxDe", "_calibrer": "_calibrer"}
+
+
+def _depot_de_la_liste(racine: Path, liste: str) -> list[str]:
+    return _ecrire(racine, {
+        "src/retraite_notionnelle/donnees/taux.py":
+            "def placement(a):\n    pass\ndef revenu_avpf():\n    pass\ndef charger():\n    pass\n",
+        "moteur/js/taux.js":
+            "/**\n * Portage de `donnees/taux.py`.\n */\n"
+            "export function placement(a) {}\nexport function revenuAvpf() {}\n",
+        "src/retraite_notionnelle/droit/liquider.py": "from .donnees.taux import revenu_avpf\n",
+        "moteur/js/droit/liquider.js": "/**\n * Portage de `droit/liquider.py`.\n */\n",
+        "src/retraite_notionnelle/cout.py": "x = placement(1)\n",
+        "tests/test_taux.py": "def test_placement():\n    placement(1)\n",
+        "scripts/jumeaux_gardees.yaml": liste,
+    })
+
+
+def test_la_liste_des_fonctions_gardees_se_verifie_seule(tmp_path):
+    juste = (
+        "src/retraite_notionnelle/donnees/taux.py:\n"
+        "  gardees:\n"
+        "    placement: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_taux.py::test_placement}\n"
+        "  au_moteur: [revenu_avpf]\n")
+    fichiers = _depot_de_la_liste(tmp_path, juste)
+    assert jumeaux.ecarts_de_la_liste(tmp_path, fichiers) == []
+
+    # Chaque faute rougit, et se dit.
+    fautes = {
+        # une fonction en double qui n'est pas déclarée
+        "src/retraite_notionnelle/donnees/taux.py:\n  gardees:\n"
+        "    placement: {lecteur: src/retraite_notionnelle/cout.py}\n": "revenu_avpf",
+        # une entrée périmée
+        juste + "  au_moteur_aussi: []\n": "au_moteur_aussi",
+        juste.replace("[revenu_avpf]", "[revenu_avpf, disparue]"): "disparue",
+        # un lecteur qui est un test, un jumeau du moteur, ou qui ne la lit pas
+        juste.replace("lecteur: src/retraite_notionnelle/cout.py", "lecteur: tests/test_taux.py"):
+            "tests/test_taux.py",
+        juste.replace("lecteur: src/retraite_notionnelle/cout.py",
+                      "lecteur: src/retraite_notionnelle/droit/liquider.py"): "droit/liquider.py",
+        juste.replace("tests/test_taux.py::test_placement", "tests/test_taux.py::test_absent"):
+            "test_absent",
+        # une paire déclarée qui n'en est pas une
+        juste + "src/retraite_notionnelle/absent.py:\n  au_moteur: []\n": "absent.py",
+    }
+    for liste, mot in fautes.items():
+        fichiers = _depot_de_la_liste(tmp_path, liste)
+        ecarts = jumeaux.ecarts_de_la_liste(tmp_path, fichiers)
+        assert ecarts and any(mot in e for e in ecarts), (liste, ecarts)
+
+
 # -- le dépôt --------------------------------------------------------------------
 
 
@@ -297,3 +386,11 @@ def test_la_carte_et_le_detail_d_une_paire_s_impriment(carte):
     assert jumeaux.imprimer_la_carte(carte)[0].startswith("La carte des jumeaux : ")
     ((rang, fiche),) = jumeaux.chercher(carte, "simulateur")
     assert "Côté Python" in jumeaux.imprimer_une_paire(carte, fiche, rang)
+
+
+def test_les_fonctions_gardees_des_deux_cotes_sont_declarees_et_tenues():
+    """La liste de la clôture (action 161, question 4) : dans chaque paire qui
+    reste, toute fonction écrite des deux côtés est gardée — avec le fichier
+    Python qui la lit, ni test ni jumeau du moteur — ou part avec le moteur."""
+    ecarts = jumeaux.ecarts_de_la_liste(RACINE, jumeaux.fichiers_suivis())
+    assert not ecarts, "\n".join(ecarts)

@@ -1,0 +1,344 @@
+# La liste de la clôture de l'action 161 (question 4, note de décision 0008) :
+# dans chaque paire Python–JavaScript qui reste après le retrait du moteur
+# Python, chaque fonction écrite des deux côtés, sous le même nom au passage
+# près de `nom_long` à `nomLong`, est
+#
+# - gardée (`gardees`) : le fichier Python qui la lit, ni test ni jumeau du
+#   moteur — ou son propre fichier, quand une fonction gardée l'appelle —, et
+#   le test qui confronte ses deux exemplaires, s'il existe déjà ;
+# - ou une règle du moteur (`au_moteur`), que seuls le moteur Python et des
+#   tests lisent en Python : elle part avec lui.
+#
+# Les paires qui n'y sont pas sont celles du moteur et de la zone grise, qui
+# partent ou se tranchent. `tests/test_jumeaux.py` confronte la liste au
+# dépôt (`jumeaux.ecarts_de_la_liste`) : une fonction écrite des deux côtés
+# sans être déclarée, une entrée périmée, un lecteur qui part ou ne la nomme
+# pas, un test qui n'existe pas, rougissent. Dressée le 15 novembre 2026 par
+# les noms que l'arbre syntaxique du lecteur emploie et la fermeture de ses
+# imports ; le test de confrontation de chaque fonction gardée reste à écrire
+# (étape suivante, `docs/feuille_de_route/161/`).
+
+src/retraite_notionnelle/calendrier.py:
+  gardees:
+    decomposer: {lecteur: scripts/cout_avantages.py}
+    depuis_rang: {lecteur: scripts/construire_donnees.py}
+    en_mois: {lecteur: src/retraite_notionnelle/calendrier.py, test: tests/test_moteur.py::test_un_demi_mois_compte_le_mois_qui_suit_dans_les_deux_moteurs}
+    formater_age: {lecteur: scripts/cycle_de_vie.py}
+    rang: {lecteur: scripts/conservation.py}
+  au_moteur:
+    - fraction_annee
+    - mois_travailles
+    - origine_des_ages
+    - plus_mois
+    - trimestres_civils
+
+src/retraite_notionnelle/config.py:
+  gardees:
+    avec: {lecteur: scripts/construire_donnees.py}
+    taux_au: {lecteur: src/retraite_notionnelle/donnees/primes.py}
+  au_moteur:
+    - frais_capitalisation
+    - sous_regime_frais
+    - sous_regime_taux
+    - taux_capitalisation_applique
+    - taux_capitalisation_volontaire_applique
+    - taux_retraite_propose
+
+src/retraite_notionnelle/contexte.py:
+  gardees:
+    _agregat: {lecteur: src/retraite_notionnelle/contexte.py}
+    _donnee: {lecteur: src/retraite_notionnelle/contexte.py}
+    assiette: {lecteur: scripts/construire_donnees.py}
+    avantages: {lecteur: scripts/construire_donnees.py}
+    bilan: {lecteur: scripts/bilan_compte.py}
+    comptes: {lecteur: scripts/construire_donnees.py}
+    cout: {lecteur: scripts/construire_donnees.py}
+    depenses: {lecteur: scripts/construire_donnees.py}
+    distribution: {lecteur: scripts/construire_donnees.py}
+    simulateur: {lecteur: scripts/bilan_compte.py}
+  au_moteur:
+    - frontiere
+    - inventaire_avantages
+    - pour
+    - restitution
+
+src/retraite_notionnelle/contributions_equilibre.py:
+  gardees:
+    bareme: {lecteur: scripts/construire_donnees.py}
+    charger_contributions_equilibre: {lecteur: scripts/construire_donnees.py}
+    prelevement: {lecteur: src/retraite_notionnelle/contributions_equilibre.py}
+  au_moteur:
+    - contributions_d_une_carriere
+    - part_salariale_annualisee
+
+src/retraite_notionnelle/donnees/assiette.py:
+  gardees:
+    annee_de_reference: {lecteur: scripts/construire_donnees.py}
+    fiabilite: {lecteur: scripts/construire_donnees.py}
+    montant: {lecteur: scripts/construire_donnees.py}
+    part_pib: {lecteur: scripts/chiffrage_plf.py}
+    poste: {lecteur: scripts/chiffrage_plf.py}
+    taux_prelevement: {lecteur: scripts/mesures_prose.py}
+
+src/retraite_notionnelle/donnees/bilan.py:
+  gardees:
+    annee: {lecteur: scripts/bilan_compte.py}
+    charger_bilan: {lecteur: scripts/mesures_prose.py}
+    coefficient: {lecteur: scripts/construire_donnees.py}
+    depense: {lecteur: scripts/construire_donnees.py}
+    ecart_pour: {lecteur: scripts/mesures_prose.py}
+    exemple: {lecteur: scripts/mesures_prose.py}
+    part_pib: {lecteur: scripts/construire_donnees.py}
+    ressources: {lecteur: scripts/mesures_prose.py}
+    ressources_de: {lecteur: scripts/construire_donnees.py}
+    sensibilite: {lecteur: scripts/construire_donnees.py}
+    solde: {lecteur: scripts/construire_donnees.py}
+  au_moteur:
+    - solde_meur
+
+src/retraite_notionnelle/donnees/caracteristiques.py:
+  gardees:
+    beneficiaires_minimum: {lecteur: scripts/garantie_par_sexe.py}
+    part_femmes: {lecteur: src/retraite_notionnelle/cout.py}
+    part_majorations: {lecteur: src/retraite_notionnelle/donnees/caracteristiques.py}
+    part_non_cotisee: {lecteur: src/retraite_notionnelle/donnees/caracteristiques.py}
+    rapport_deplacement: {lecteur: scripts/garantie_par_sexe.py}
+    valeur: {lecteur: scripts/bilan_compte.py}
+  au_moteur:
+    - part_minimum_pension
+
+src/retraite_notionnelle/donnees/chargement.py:
+  gardees:
+    brut: {lecteur: scripts/construire_donnees.py}
+    fiabilite: {lecteur: scripts/construire_donnees.py}
+    fiabilite_minimale_sur: {lecteur: src/retraite_notionnelle/donnees/macro.py}
+    prolongee: {lecteur: src/retraite_notionnelle/cout.py}
+
+src/retraite_notionnelle/donnees/depenses.py:
+  gardees:
+    annees: {lecteur: scripts/age_depart_csp.py}
+    depense: {lecteur: scripts/chiffrage_plf.py}
+    depense_systeme: {lecteur: scripts/mesures_prose.py}
+    fiabilite: {lecteur: scripts/construire_donnees.py}
+    part_pib: {lecteur: scripts/chiffrage_plf.py}
+    part_repartition: {lecteur: src/retraite_notionnelle/cout.py}
+    repartition: {lecteur: scripts/mesures_prose.py}
+    reversion: {lecteur: scripts/construire_temoins.py}
+  au_moteur:
+    - annees_ventilees
+    - pensions_droit
+
+src/retraite_notionnelle/donnees/distribution.py:
+  gardees:
+    part_femmes: {lecteur: src/retraite_notionnelle/cout.py}
+    part_sous: {lecteur: scripts/grille_large.py}
+
+src/retraite_notionnelle/donnees/effectifs.py:
+  gardees:
+    caisses: {lecteur: scripts/construire_donnees.py}
+    effectif: {lecteur: scripts/construire_donnees.py}
+    fiabilite: {lecteur: scripts/construire_donnees.py}
+    serie: {lecteur: scripts/age_depart_csp.py}
+
+src/retraite_notionnelle/donnees/equilibre.py:
+  gardees:
+    annees: {lecteur: scripts/age_depart_csp.py}
+    annees_engagements: {lecteur: scripts/construire_donnees.py}
+    depense: {lecteur: scripts/chiffrage_plf.py}
+    derniere_annee_transferts: {lecteur: src/retraite_notionnelle/donnees/equilibre.py}
+    engagements: {lecteur: scripts/construire_donnees.py}
+    fiabilite: {lecteur: scripts/construire_donnees.py}
+    indice: {lecteur: scripts/construire_donnees.py}
+    indice_croissance: {lecteur: scripts/mesures_prose.py}
+    part: {lecteur: scripts/age_conjoncturel.py}
+    part_contributive: {lecteur: scripts/construire_donnees.py}
+    periodes: {lecteur: scripts/construire_donnees.py}
+    premiere_annee_transferts: {lecteur: src/retraite_notionnelle/donnees/equilibre.py}
+    ressource: {lecteur: src/retraite_notionnelle/cout.py}
+    solde: {lecteur: scripts/chiffrage_plf.py}
+    transfert: {lecteur: src/retraite_notionnelle/donnees/equilibre.py}
+    transfert_organisme: {lecteur: scripts/scenarios_meres.py}
+    transfert_part_pib: {lecteur: src/retraite_notionnelle/donnees/equilibre.py}
+    transfert_supprime_part_pib: {lecteur: src/retraite_notionnelle/donnees/equilibre.py}
+    valeur: {lecteur: scripts/bilan_compte.py}
+    variante_du_scenario: {lecteur: scripts/grille_large.py}
+    variantes_disponibles: {lecteur: scripts/construire_donnees.py}
+  au_moteur:
+    - annees_ventilees
+    - depense_maximale_toutes_variantes
+    - derniere_annee_eec
+    - part_groupe
+    - premiere_annee_eec
+    - ressource_groupe
+    - solde_eec
+    - transfert_part_ressources
+
+src/retraite_notionnelle/donnees/indemnite_csg.py:
+  gardees:
+    initiale: {lecteur: src/retraite_notionnelle/donnees/indemnite_csg.py}
+    montants: {lecteur: scripts/mesures_prose.py}
+    rapport: {lecteur: scripts/construire_donnees.py}
+    vaut: {lecteur: src/retraite_notionnelle/donnees/indemnite_csg.py}
+  au_moteur:
+    - contribution_de_solidarite
+
+src/retraite_notionnelle/donnees/macro.py:
+  gardees:
+    _assujetti: {lecteur: src/retraite_notionnelle/donnees/macro.py}
+    _salaire_validant_du_departement: {lecteur: src/retraite_notionnelle/donnees/macro.py}
+    _trimestres_de_la_retenue: {lecteur: src/retraite_notionnelle/donnees/macro.py}
+    coefficient_prix: {lecteur: scripts/controle_eacr.py}
+    coefficient_revalorisation_par_rapport: {lecteur: src/retraite_notionnelle/donnees/macro.py}
+    coefficient_revalorisation_portee_au_compte: {lecteur: scripts/mesures_prose.py}
+    coefficient_revalorisation_salaires: {lecteur: scripts/mesures_prose.py}
+    coefficient_salaire_moyen: {lecteur: src/retraite_notionnelle/cout.py}
+    colonne_de_revalorisation_en_vigueur: {lecteur: src/retraite_notionnelle/donnees/macro.py}
+    seuil_d_un_trimestre: {lecteur: src/retraite_notionnelle/donnees/macro.py}
+    smic_annuel: {lecteur: scripts/grille_large.py}
+    smic_horaire_des_mois: {lecteur: src/retraite_notionnelle/donnees/macro.py}
+    smic_horaire_du_forfait: {lecteur: src/retraite_notionnelle/contributions_equilibre.py}
+  au_moteur:
+    - coefficient_smic
+    - fiabilite_sur
+    - plafond_de_cotisations
+    - productivite_nominale
+    - revenu_avpf
+    - salaire_au_compte
+    - smic_horaire_au_1er_juillet
+    - smic_horaire_de
+
+src/retraite_notionnelle/donnees/mortalite.py:
+  gardees:
+    _courbe_brute: {lecteur: src/retraite_notionnelle/donnees/mortalite.py}
+    _reference_population: {lecteur: scripts/construire_donnees.py}
+    _survie_cellule: {lecteur: src/retraite_notionnelle/donnees/mortalite.py}
+    cible_population: {lecteur: src/retraite_notionnelle/donnees/mortalite.py}
+    courbe: {lecteur: scripts/construire_donnees.py}
+    courbe_survie: {lecteur: scripts/garantie_par_sexe.py}
+    courbe_survie_unisexe: {lecteur: src/retraite_notionnelle/donnees/mortalite.py}
+    esperance_residuelle: {lecteur: scripts/mesures_prose.py}
+    facteur_population: {lecteur: scripts/mortalite_population.py}
+    fiabilite: {lecteur: scripts/construire_donnees.py}
+    loi: {lecteur: src/retraite_notionnelle/donnees/mortalite.py}
+    population_niveau_de_vie: {lecteur: scripts/mesures_prose.py}
+    population_niveau_de_vie_euros: {lecteur: src/retraite_notionnelle/cout.py}
+    populations: {lecteur: scripts/construire_donnees.py}
+    survie: {lecteur: scripts/mortalite_population.py}
+    survie_annuelle: {lecteur: src/retraite_notionnelle/donnees/mortalite.py}
+
+src/retraite_notionnelle/donnees/patrimoine.py:
+  gardees:
+    _esperance_min_lognormale: {lecteur: src/retraite_notionnelle/donnees/patrimoine.py}
+    _esperance_min_quantiles: {lecteur: src/retraite_notionnelle/donnees/patrimoine.py}
+    annee: {lecteur: scripts/age_conjoncturel.py}
+    couverture: {lecteur: scripts/facteurs_depense.py}
+    distribution: {lecteur: scripts/construire_donnees.py}
+    forme: {lecteur: scripts/grille_large.py}
+    grille: {lecteur: scripts/age_conjoncturel.py}
+    populations: {lecteur: scripts/construire_donnees.py}
+    quantile_normal: {lecteur: src/retraite_notionnelle/donnees/patrimoine.py}
+    repartition_normale: {lecteur: src/retraite_notionnelle/donnees/patrimoine.py}
+    statistiques: {lecteur: scripts/construire_donnees.py}
+
+src/retraite_notionnelle/donnees/prelevements_historiques.py:
+  gardees:
+    charger_prelevements_historiques: {lecteur: scripts/construire_donnees.py}
+    csg_deductible_pension: {lecteur: src/retraite_notionnelle/effet_retour.py}
+    en_vigueur: {lecteur: src/retraite_notionnelle/donnees/prelevements_historiques.py}
+    valeur: {lecteur: scripts/bilan_compte.py}
+  au_moteur:
+    - bareme_independant
+    - famille_de_la_fiche
+    - famille_independant
+    - hors_retraite
+    - hors_retraite_annuel
+    - maladie_independant
+    - non_deductibles
+    - non_deductibles_annuel
+    - taux_deductible_pension
+    - taux_deductible_pension_annuel
+    - taux_pension
+    - taux_pension_annuel
+
+src/retraite_notionnelle/donnees/primes.py:
+  gardees:
+    assiette: {lecteur: scripts/construire_donnees.py}
+    part_comptee: {lecteur: src/retraite_notionnelle/donnees/primes.py}
+    parts: {lecteur: scripts/construire_donnees.py}
+    prime: {lecteur: scripts/fetch/trajectoire.py}
+    taux_annuel: {lecteur: src/retraite_notionnelle/donnees/primes.py}
+    taux_au: {lecteur: src/retraite_notionnelle/donnees/primes.py}
+  au_moteur:
+    - taux_annuels
+    - taux_supplementaires
+
+src/retraite_notionnelle/donnees/regimes.py:
+  gardees:
+    _en_vigueur: {lecteur: src/retraite_notionnelle/donnees/regimes.py}
+    _regle: {lecteur: scripts/mesures_prose.py}
+    annee_grille: {lecteur: src/retraite_notionnelle/donnees/regimes.py}
+    annees: {lecteur: scripts/age_depart_csp.py}
+    bornes_assiette_en_pass: {lecteur: scripts/solde_fusion.py}
+    cotisation: {lecteur: scripts/construire_donnees.py}
+    couverture: {lecteur: scripts/calendrier_regimes.py}
+    couvre: {lecteur: src/retraite_notionnelle/donnees/regimes.py}
+    dater_les_taux_moyens: {lecteur: src/retraite_notionnelle/donnees/regimes.py}
+    effet: {lecteur: scripts/calendrier_regimes.py}
+    forfait: {lecteur: scripts/construire_donnees.py}
+    grille: {lecteur: scripts/age_conjoncturel.py}
+    montants: {lecteur: scripts/mesures_prose.py}
+    morceau_d_annees: {lecteur: src/retraite_notionnelle/donnees/regimes.py}
+    periode: {lecteur: scripts/construire_regimes_md.py}
+    periodes_actives: {lecteur: scripts/solde_fusion.py}
+    regimes: {lecteur: scripts/construire_donnees.py}
+    repere_assiette: {lecteur: src/retraite_notionnelle/contributions_equilibre.py}
+    taux: {lecteur: scripts/chiffrage_plf.py}
+    taux_cotisation_salarie: {lecteur: scripts/solde_fusion.py}
+    vivant: {lecteur: scripts/indexation_scenario_6.py}
+  au_moteur:
+    - ajustement_total
+    - assiette_minimale
+    - bornes_assiette_en_euros
+    - bornes_de_l_annee
+    - bornes_en_euros
+    - liquide
+    - ouvert
+    - part_du_revenu
+    - periode_a_l_effet
+    - points_garantis
+    - prise_en_charge
+    - revenu_retenu
+    - taux_du_cotisant
+
+src/retraite_notionnelle/donnees/taux.py:
+  gardees:
+    forward_neutre: {lecteur: src/retraite_notionnelle/donnees/taux.py}
+    maturite_maximale: {lecteur: src/retraite_notionnelle/cout.py}
+    placement: {lecteur: src/retraite_notionnelle/cout.py}
+    prime: {lecteur: scripts/fetch/trajectoire.py}
+    zero_continu: {lecteur: scripts/construire_donnees.py}
+    zero_neutre: {lecteur: src/retraite_notionnelle/donnees/taux.py}
+
+src/retraite_notionnelle/donnees/tva.py:
+  gardees:
+    assiettes: {lecteur: scripts/mesures_prose.py}
+    fiabilite: {lecteur: scripts/construire_donnees.py}
+    montant: {lecteur: scripts/construire_donnees.py}
+    part_pib: {lecteur: scripts/chiffrage_plf.py}
+  au_moteur:
+    - variation_prix
+
+src/retraite_notionnelle/donnees/vie_en_couple.py:
+  gardees:
+    part: {lecteur: scripts/age_conjoncturel.py}
+    part_moyenne: {lecteur: scripts/garantie_par_sexe.py}
+
+src/retraite_notionnelle/frontiere.py:
+  gardees:
+    charger_frontiere: {lecteur: scripts/construire_donnees.py}
+  au_moteur:
+    - derniere
+
+src/retraite_notionnelle/noyau/versions.py:
+  au_moteur:
+    - applicable

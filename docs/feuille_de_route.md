@@ -7329,18 +7329,15 @@ de `contribution_etat`.
 
 **Reprise, au 15 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
-Les tests y passent par une façade (`tests/facade.py`), qui sert le moteur
-entier ou presque. La plupart des fichiers de tests n'ont plus de test sur
-le moteur Python, hors les confrontations des deux moteurs.
-Ne restent marqués que ces confrontations et le solveur du niveau de salaire
-d'une pension visée.
-Toutes les études passent par le pont ; la fiche de paie y est servie.
-Le propriétaire a tranché le 15 novembre : les garde-fous de
-`test_oracle.py` sont partis, l'ordre des portes de la carrière longue reste.
-Reste, une étape par session : la liste des fonctions gardées des deux
-côtés, le retrait, et les périodes assimilées du relevé (table de
-`2026-11-13-les-decisions-du-proprietaire.md`).
-Le détail : `2026-11-15-la-fiche-de-paie-par-le-portage.md`.
+Les tests y passent par une façade (`tests/facade.py`), et toutes les
+études par le pont.
+Dans les 24 paires qui restent, chaque fonction écrite des deux côtés est
+déclarée dans `scripts/jumeaux_gardees.yaml` : gardée, avec son lecteur
+Python, ou partant avec le moteur. Un test de `tests/test_jumeaux.py` la
+confronte au dépôt. Reste, une étape par session : le test qui confronte
+chaque fonction gardée à son double, sur une grille d'arguments ; le
+retrait du moteur Python ; les périodes assimilées du relevé.
+Le détail : `2026-11-15-la-liste-des-fonctions-gardees.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

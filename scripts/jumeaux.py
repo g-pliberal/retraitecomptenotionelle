@@ -478,6 +478,135 @@ def paires(racine: Path, fichiers: list[str]) -> tuple[list[Paire], list[tuple[s
     return sorted(sortie, key=lambda p: p.python), mortes
 
 
+# -- les fonctions des deux côtés, et la liste de celles qu'on garde -------------
+#
+# La clôture de l'action 161 se dit par fonction (question 4, note de décision
+# 0008) : dans chaque paire qui reste après le retrait du moteur Python, toute
+# fonction écrite des deux côtés est soit gardée — un fichier Python qui n'est
+# ni un test ni un jumeau du moteur la lit, et un test la confronte à son
+# double —, soit une règle du moteur, qui part avec lui. La liste le déclare ;
+# ``ecarts_de_la_liste`` la confronte au dépôt.
+
+#: La liste des fonctions gardées des deux côtés, par paire qui reste.
+LISTE = "scripts/jumeaux_gardees.yaml"
+#: Ce qu'une paire de la liste déclare.
+CLES_DE_LA_LISTE = {"gardees", "au_moteur"}
+#: Une fonction ou une méthode du JavaScript : au bord gauche, ou dans le
+#: corps d'une classe, à deux espaces.
+FONCTION_JS = re.compile(r"^(?:export\s+)?(?:async\s+)?function\*?\s+([\w$]+)\s*\(")
+FLECHE_JS = re.compile(r"^(?:export\s+)?(?:const|let|var)\s+([\w$]+)\s*=\s*"
+                       r"(?:async\s+)?(?:function\b|\([^)]*\)\s*=>|[\w$]+\s*=>)")
+CLASSE_JS = re.compile(r"^(?:export\s+)?(?:default\s+)?class\b")
+METHODE_JS = re.compile(r"^  (?:static\s+)?(?:async\s+)?(?:get\s+|set\s+)?\*?([A-Za-z_$][\w$]*)\s*\([^;]*\)\s*\{")
+MOTS_JS = {"constructor", "if", "for", "while", "switch", "catch", "return", "function"}
+
+
+def fonctions_python(texte: str) -> set[str]:
+    """Les fonctions d'un module Python et les méthodes de ses classes, hors
+    des méthodes spéciales (``__init__``…) et des fonctions imbriquées."""
+    noms = set()
+    for noeud in ast.parse(texte).body:
+        corps = noeud.body if isinstance(noeud, ast.ClassDef) else [noeud]
+        for membre in corps:
+            if isinstance(membre, (ast.FunctionDef, ast.AsyncFunctionDef)) and not (
+                    membre.name.startswith("__") and membre.name.endswith("__")):
+                noms.add(membre.name)
+    return noms
+
+
+def fonctions_javascript(texte: str) -> set[str]:
+    """Les fonctions d'un module JavaScript — déclarées, ou fléchées et
+    nommées par une constante, au bord gauche — et les méthodes de ses
+    classes, hors du constructeur et des méthodes privées (``#…``)."""
+    noms, dans_une_classe = set(), False
+    for ligne in texte.split("\n"):
+        if dans_une_classe:
+            if ligne.startswith("}"):
+                dans_une_classe = False
+                continue
+            trouve = METHODE_JS.match(ligne)
+            if trouve and trouve.group(1) not in MOTS_JS:
+                noms.add(trouve.group(1))
+            continue
+        if CLASSE_JS.match(ligne):
+            dans_une_classe = not ligne.rstrip().endswith("}")
+            continue
+        trouve = FONCTION_JS.match(ligne) or FLECHE_JS.match(ligne)
+        if trouve:
+            noms.add(trouve.group(1))
+    return noms
+
+
+def en_camel(nom: str) -> str:
+    """``nom_long`` en ``nomLong``, les soulignés de tête gardés (§ 7.1 de
+    l'architecture : « fonction par fonction, avec les mêmes noms »)."""
+    tete = nom[:len(nom) - len(nom.lstrip("_"))]
+    premier, *suite = nom.lstrip("_").split("_")
+    return tete + premier + "".join(mot[:1].upper() + mot[1:] for mot in suite)
+
+
+def en_double(python: str, javascript: str) -> dict[str, str]:
+    """Les fonctions écrites des deux côtés : le nom Python, et son double."""
+    cote_js = fonctions_javascript(javascript)
+    return {nom: en_camel(nom) for nom in sorted(fonctions_python(python))
+            if en_camel(nom) in cote_js}
+
+
+def lire_la_liste(racine: Path = RACINE) -> dict:
+    chemin = racine / LISTE
+    if not chemin.is_file():
+        return {}
+    return yaml.load(chemin.read_text(encoding="utf-8"), Loader=CHARGEUR) or {}
+
+
+def _le_test_existe(racine: Path, reference: str) -> bool:
+    fichier, _, nom = reference.partition("::")
+    chemin = racine / fichier
+    return bool(nom) and chemin.is_file() and re.search(
+        rf"^\s*def {re.escape(nom)}\(", chemin.read_text(encoding="utf-8"), re.M) is not None
+
+
+def ecarts_de_la_liste(racine: Path, fichiers: list[str]) -> list[str]:
+    """Ce qui sépare la liste des fonctions gardées du dépôt : une paire
+    déclarée qui n'en est pas une ; une fonction en double que la liste ne
+    déclare pas, ou qu'elle déclare deux fois ; une entrée périmée ; un
+    lecteur qui est un test, un jumeau du moteur, ou qui ne nomme pas la
+    fonction ; un test de confrontation qui n'existe pas."""
+    liste = lire_la_liste(racine)
+    par_python = {paire.python: paire for paire in paires(racine, fichiers)[0]}
+    moteur = set(par_python) - set(liste)
+    ecarts = []
+    for python, declaree in liste.items():
+        declaree = declaree or {}
+        if python not in par_python:
+            ecarts.append(f"{python} : déclaré, mais n'est pas une paire")
+            continue
+        for cle in sorted(set(declaree) - CLES_DE_LA_LISTE):
+            ecarts.append(f"{python} : clé inconnue « {cle} »")
+        doubles = en_double(_lire(racine, python), _lire(racine, par_python[python].javascript))
+        gardees = declaree.get("gardees") or {}
+        au_moteur = declaree.get("au_moteur") or []
+        for nom in sorted(set(gardees) & set(au_moteur)):
+            ecarts.append(f"{python} : {nom} est à la fois gardée et au moteur")
+        for nom in sorted(set(doubles) - set(gardees) - set(au_moteur)):
+            ecarts.append(f"{python} : {nom} est écrite des deux côtés, et la liste ne la déclare pas")
+        for nom in sorted((set(gardees) | set(au_moteur)) - set(doubles)):
+            ecarts.append(f"{python} : {nom} n'est plus écrite des deux côtés, l'entrée est périmée")
+        for nom, entree in sorted(gardees.items()):
+            entree = entree or {}
+            lecteur, test = entree.get("lecteur"), entree.get("test")
+            if not lecteur:
+                ecarts.append(f"{python} : {nom} est gardée sans lecteur")
+            elif lecteur.startswith("tests/") or lecteur in moteur:
+                ecarts.append(f"{python} : {nom} a pour lecteur {lecteur}, qui part ou n'est qu'un test")
+            elif lecteur not in fichiers or not re.search(
+                    rf"\b{re.escape(nom)}\b", _lire(racine, lecteur)):
+                ecarts.append(f"{python} : {nom} a pour lecteur {lecteur}, qui ne la nomme pas")
+            if test and not _le_test_existe(racine, test):
+                ecarts.append(f"{python} : {nom} est confrontée par {test}, qui n'existe pas")
+    return ecarts
+
+
 # -- ce qui nomme le code : fiches, ancres, mentions ----------------------------
 
 
