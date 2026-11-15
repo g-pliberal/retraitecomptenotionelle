@@ -15,8 +15,10 @@
 # sans être déclarée, une entrée périmée, un lecteur qui part ou ne la nomme
 # pas, un test qui n'existe pas, rougissent. Dressée le 15 novembre 2026 par
 # les noms que l'arbre syntaxique du lecteur emploie et la fermeture de ses
-# imports ; le test de confrontation de chaque fonction gardée reste à écrire
-# (étape suivante, `docs/feuille_de_route/161/`).
+# imports. Le test de confrontation, `tests/test_jumeaux_au_bit.py`, éprouve
+# chaque fonction gardée qui y a sa grille, au bit près, et la nomme en colonne
+# `test` ; les lecteurs de `mortalite.py`, `taux.py`, `patrimoine.py` et
+# `distribution.py` y ont été relus par leurs appels (étape 7b).
 
 src/retraite_notionnelle/calendrier.py:
   gardees:
@@ -130,8 +132,8 @@ src/retraite_notionnelle/donnees/depenses.py:
 
 src/retraite_notionnelle/donnees/distribution.py:
   gardees:
-    part_femmes: {lecteur: src/retraite_notionnelle/cout.py}
-    part_sous: {lecteur: scripts/grille_large.py}
+    part_femmes: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    part_sous: {lecteur: scripts/grille_large.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
 
 src/retraite_notionnelle/donnees/effectifs.py:
   gardees:
@@ -209,36 +211,38 @@ src/retraite_notionnelle/donnees/macro.py:
 
 src/retraite_notionnelle/donnees/mortalite.py:
   gardees:
-    _courbe_brute: {lecteur: src/retraite_notionnelle/donnees/mortalite.py}
-    _reference_population: {lecteur: scripts/construire_donnees.py}
-    _survie_cellule: {lecteur: src/retraite_notionnelle/donnees/mortalite.py}
-    cible_population: {lecteur: src/retraite_notionnelle/donnees/mortalite.py}
-    courbe: {lecteur: scripts/construire_donnees.py}
-    courbe_survie: {lecteur: scripts/garantie_par_sexe.py}
-    courbe_survie_unisexe: {lecteur: src/retraite_notionnelle/donnees/mortalite.py}
-    esperance_residuelle: {lecteur: scripts/mesures_prose.py}
-    facteur_population: {lecteur: scripts/mortalite_population.py}
-    fiabilite: {lecteur: scripts/construire_donnees.py}
-    loi: {lecteur: src/retraite_notionnelle/donnees/mortalite.py}
-    population_niveau_de_vie: {lecteur: scripts/mesures_prose.py}
-    population_niveau_de_vie_euros: {lecteur: src/retraite_notionnelle/cout.py}
-    populations: {lecteur: scripts/construire_donnees.py}
-    survie: {lecteur: scripts/mortalite_population.py}
-    survie_annuelle: {lecteur: src/retraite_notionnelle/donnees/mortalite.py}
+    _courbe_brute: {lecteur: src/retraite_notionnelle/donnees/mortalite.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    _reference_population: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    _survie_cellule: {lecteur: src/retraite_notionnelle/donnees/mortalite.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    cible_population: {lecteur: src/retraite_notionnelle/donnees/mortalite.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    courbe: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    courbe_survie: {lecteur: scripts/garantie_par_sexe.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    courbe_survie_unisexe: {lecteur: src/retraite_notionnelle/donnees/mortalite.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    esperance_residuelle: {lecteur: scripts/mesures_prose.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    facteur_population: {lecteur: scripts/mortalite_population.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    loi: {lecteur: src/retraite_notionnelle/donnees/mortalite.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    population_niveau_de_vie: {lecteur: scripts/mesures_prose.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    population_niveau_de_vie_euros: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    populations: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    survie_annuelle: {lecteur: src/retraite_notionnelle/donnees/mortalite.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+  au_moteur:
+    - fiabilite
+    - survie
 
 src/retraite_notionnelle/donnees/patrimoine.py:
   gardees:
-    _esperance_min_lognormale: {lecteur: src/retraite_notionnelle/donnees/patrimoine.py}
-    _esperance_min_quantiles: {lecteur: src/retraite_notionnelle/donnees/patrimoine.py}
-    annee: {lecteur: scripts/age_conjoncturel.py}
-    couverture: {lecteur: scripts/facteurs_depense.py}
-    distribution: {lecteur: scripts/construire_donnees.py}
-    forme: {lecteur: scripts/grille_large.py}
-    grille: {lecteur: scripts/age_conjoncturel.py}
-    populations: {lecteur: scripts/construire_donnees.py}
-    quantile_normal: {lecteur: src/retraite_notionnelle/donnees/patrimoine.py}
-    repartition_normale: {lecteur: src/retraite_notionnelle/donnees/patrimoine.py}
-    statistiques: {lecteur: scripts/construire_donnees.py}
+    annee: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    distribution: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    forme: {lecteur: src/retraite_notionnelle/donnees/patrimoine.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    grille: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    populations: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    quantile_normal: {lecteur: src/retraite_notionnelle/donnees/patrimoine.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    statistiques: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+  au_moteur:
+    - _esperance_min_lognormale
+    - _esperance_min_quantiles
+    - couverture
+    - repartition_normale
 
 src/retraite_notionnelle/donnees/prelevements_historiques.py:
   gardees:
@@ -312,12 +316,12 @@ src/retraite_notionnelle/donnees/regimes.py:
 
 src/retraite_notionnelle/donnees/taux.py:
   gardees:
-    forward_neutre: {lecteur: src/retraite_notionnelle/donnees/taux.py}
-    maturite_maximale: {lecteur: src/retraite_notionnelle/cout.py}
-    placement: {lecteur: src/retraite_notionnelle/cout.py}
-    prime: {lecteur: scripts/fetch/trajectoire.py}
-    zero_continu: {lecteur: scripts/construire_donnees.py}
-    zero_neutre: {lecteur: src/retraite_notionnelle/donnees/taux.py}
+    forward_neutre: {lecteur: src/retraite_notionnelle/donnees/taux.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    maturite_maximale: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    placement: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    prime: {lecteur: src/retraite_notionnelle/donnees/taux.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    zero_continu: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    zero_neutre: {lecteur: src/retraite_notionnelle/donnees/taux.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
 
 src/retraite_notionnelle/donnees/tva.py:
   gardees:

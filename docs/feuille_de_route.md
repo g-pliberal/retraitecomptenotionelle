@@ -7329,15 +7329,16 @@ de `contribution_etat`.
 
 **Reprise, au 15 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
-Les tests y passent par une façade (`tests/facade.py`), et toutes les
-études par le pont.
 Dans les 24 paires qui restent, chaque fonction écrite des deux côtés est
 déclarée dans `scripts/jumeaux_gardees.yaml` : gardée, avec son lecteur
-Python, ou partant avec le moteur. Un test de `tests/test_jumeaux.py` la
-confronte au dépôt. Reste, une étape par session : le test qui confronte
-chaque fonction gardée à son double, sur une grille d'arguments ; le
-retrait du moteur Python ; les périodes assimilées du relevé.
-Le détail : `2026-11-15-la-liste-des-fonctions-gardees.md`.
+Python, ou partant avec le moteur. `tests/test_jumeaux_au_bit.py` confronte
+au bit près chaque fonction gardée qui a sa grille d'arguments à son double :
+29 sont faites, celles de la mortalité, de la courbe des taux, du patrimoine
+et de la distribution, dont deux écarts déclarés. Reste, une étape par
+session : les grilles des 135 autres, en relisant leurs lecteurs par leurs
+appels, quelques fichiers à la fois ; puis le retrait du moteur Python ;
+puis les périodes assimilées du relevé.
+Le détail : `2026-11-15-les-jumeaux-gardes-au-bit-pres.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
