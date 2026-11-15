@@ -17,7 +17,9 @@ zéro : celle de son intégration. Il part de la trajectoire que le COR projette
 à législation inchangée (``comptes_complementaires.csv``, juin 2024), et en
 retire ce que les décisions coupent :
 
-- à l'Agirc-Arrco, la CEG et la CET, une part fixe de ses cotisations
+- à l'Agirc-Arrco, la CEG et la CET, et ce que sa tranche 2 prélève au-delà
+  de 18 % (décision 139 : « 18 % partout » pour le salarié du privé dès la
+  bascule), une part fixe de ses cotisations
   (:func:`contributions_supprimees_agirc_arrco`), appliquée à ce qu'elle reçoit
   au titre des salaires — cotisations, compensation des allègements, transferts
   de l'Unédic et du FSV, qui paient aussi la CEG ; la compensation, gardée
@@ -88,6 +90,12 @@ ANNEE_DES_ASSIETTES = 2024
 #: retenue par le propriétaire le 7 novembre 2026 pour les complémentaires).
 ANNEES_DE_BAISSE = 5
 
+#: Ce qu'un salarié du privé verse au plus, régime général et Agirc-Arrco
+#: réunis, dès la bascule : « 18 % dès le premier jour » (décision 111), et
+#: « 18 % partout » (décision 139). Au-dessus du plafond, l'Agirc-Arrco
+#: prélève seule 21,59 % : sa tranche 2 est ramenée à ce taux.
+TAUX_MAXIMAL = 0.18
+
 
 @dataclass(frozen=True)
 class Caisse:
@@ -147,13 +155,16 @@ class ContributionsSupprimees:
     ceg_meur: float
     cet_meur: float
     cotisations_meur: float
+    #: Ce que la tranche 2 ramenée à :data:`TAUX_MAXIMAL` retire (décision 139).
+    tranche_2_meur: float = 0.0
 
     @property
     def part(self) -> float:
-        """La part de ce que l'Agirc-Arrco prélève sur les salaires que la CEG
-        et la CET font, et que leur suppression retire."""
-        retire = self.ceg_meur + self.cet_meur
-        return retire / (self.cotisations_meur + retire)
+        """La part de ce que l'Agirc-Arrco prélève sur les salaires que la CEG,
+        la CET et la baisse de sa tranche 2 font, et que les décisions 36 et
+        139 lui retirent."""
+        retire = self.ceg_meur + self.cet_meur + self.tranche_2_meur
+        return retire / (self.cotisations_meur + self.ceg_meur + self.cet_meur)
 
 
 def _taux_agirc_arrco(racine: Path, annee: int) -> dict[str, float]:
@@ -201,6 +212,7 @@ def contributions_supprimees_agirc_arrco(
         ceg_meur=ceg_t1 * tranche_1 + ceg_t2 * tranche_2,
         cet_meur=cet * (tranche_1_au_dessus + tranche_2),
         cotisations_meur=taux["tranche_1"] * tranche_1 + taux["tranche_2"] * tranche_2,
+        tranche_2_meur=max(0.0, taux["tranche_2"] - TAUX_MAXIMAL) * tranche_2,
     )
 
 

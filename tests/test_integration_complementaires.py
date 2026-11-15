@@ -118,7 +118,20 @@ def test_la_ceg_et_la_cet_rapportent_pres_de_18_md_en_2024():
     assert pertes.ceg_meur == pytest.approx(16_916, abs=2)
     assert pertes.cet_meur == pytest.approx(1_114, abs=2)
     assert pertes.cotisations_meur == pytest.approx(75_955, abs=2)
-    assert pertes.part == pytest.approx(18_030 / 93_986, abs=1e-4)
+    assert (pertes.ceg_meur + pertes.cet_meur) / (pertes.cotisations_meur + pertes.ceg_meur
+                                                  + pertes.cet_meur) == pytest.approx(
+        18_030 / 93_986, abs=1e-4)
+
+
+def test_la_tranche_2_ramenee_a_18_pourcent_retire_pres_de_4_3_md_de_plus():
+    """Décision 139 : « 18 % partout ». Au-dessus du plafond, l'Agirc-Arrco
+    prélève 21,59 % (17 % × 127 %), plus que les 18 % promis ; elle ramène sa
+    tranche 2 à 18 % dès la bascule. À la main, sur les assiettes de 2024 :
+    3,59 % de 119 878 M€, 4 304 M€ ; avec la CEG et la CET, 22 334 M€ retirés
+    sur 93 986 M€ prélevés : 23,76 %."""
+    pertes = ic.contributions_supprimees_agirc_arrco(RACINE_DONNEES)
+    assert pertes.tranche_2_meur == pytest.approx(4_304, abs=2)
+    assert pertes.part == pytest.approx(22_334 / 93_986, abs=1e-4)
 
 
 # --- La projection --------------------------------------------------------
@@ -139,18 +152,20 @@ def test_la_complementaire_agricole_privee_des_droits_sur_les_alcools_rejoint_en
     assert projections["msa_exploitants_complementaire"].annee_integration == 2026
 
 
-def test_l_agirc_arrco_sans_ceg_ni_cet_rejoint_en_2032(projections):
+def test_l_agirc_arrco_sans_ceg_ni_cet_et_a_18_pourcent_rejoint_en_2030(projections):
     """À la main, en part de PIB : 113,6 Md€ fin 2025 sur 2 991 Md€ de PIB,
-    3,80 % ; la CEG et la CET coûtent 19,18 % de ses cotisations, de sa
-    compensation et des transferts de l'Unédic et du FSV, 0,63 % du PIB par an ;
-    le COR lui donne un solde de − 0,02 % en 2026, + 0,07 % en 2030, et un
-    rendement de 3 % sur ses réserves. Fin 2026, 3,22 % ; 2027, 2,62 % ;
-    2028, 2,00 % ; 2029, 1,39 % ; 2030, 0,78 % ; 2031, 0,15 % ; 2032,
-    sous zéro."""
+    3,80 % ; la CEG, la CET et la tranche 2 ramenée à 18 % (décision 139)
+    coûtent 23,76 % de ses cotisations, de sa compensation et des transferts
+    de l'Unédic et du FSV, 0,79 % du PIB par an, quand la CEG et la CET seules
+    en coûtaient 0,63 % et l'épuisaient en 2032 (fin 2030, 0,78 % ; fin 2031,
+    0,15 %). Les 0,16 point de plus par an, portés au rendement de 3 % que le
+    COR prête à ses réserves, font 0,16 × (1 + 1,03 + 1,06 + 1,09 + 1,13),
+    0,85 % du PIB fin 2030 : plus que les 0,78 % qui restaient. Fin 2026,
+    3,22 − 0,16, 3,06 % ; 2029, 1,39 − 0,67, 0,72 % ; 2030, sous zéro."""
     agirc_arrco = projections["agirc_arrco"]
-    assert agirc_arrco.annee_integration == 2032
-    assert agirc_arrco.reserves[2026] == pytest.approx(0.0322, abs=0.0005)
-    assert agirc_arrco.reserves[2030] == pytest.approx(0.0078, abs=0.0010)
+    assert agirc_arrco.annee_integration == 2030
+    assert agirc_arrco.reserves[2026] == pytest.approx(0.0306, abs=0.0005)
+    assert agirc_arrco.reserves[2029] == pytest.approx(0.0072, abs=0.0010)
 
 
 def test_ses_seules_reserves_techniques_l_integreraient_plus_tot(projections):

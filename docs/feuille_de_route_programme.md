@@ -802,6 +802,16 @@ chaque réponse change) :
      pensions », celles d'aujourd'hui et celles à venir. Non chiffré : à
      étudier, face à la décision 46.
 
+Le 14 novembre 2026, à la session qui portait la décision 111 au modèle
+(note `186/2026-11-14-dix-huit-pourcent-du-prive.md`) :
+
+139. **Le salarié du privé cotise 18 % partout, au-dessus du plafond
+     aussi** : « 18 % partout ». Au-dessus du plafond, l'Agirc-Arrco
+     prélève seule 21,59 % (17 % × 127 %) ; elle ramène sa tranche 2 à 18 %
+     dès la bascule, et le régime général n'y prend plus rien. La décision
+     40 est corrigée sur ce point. Sous les décisions 36 et 139, ses
+     réserves s'épuisent en 2030, non en 2032.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le

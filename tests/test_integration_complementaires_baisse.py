@@ -77,9 +77,10 @@ def test_les_deux_premieres_ne_bougent_pas(projections):
     """La complémentaire agricole tombe dès 2026 : sa baisse, par cinquièmes,
     ne lui rend en 2026 qu'un cinquième de quelque 45 % de 1,085 Md€, moins
     de 0,1 Md€, quand il lui en manque 0,124. L'Agirc-Arrco ne baisse rien
-    (décision 43) : 2032, comme sans la baisse."""
+    (décision 43) : 2030, comme sans la baisse, la tranche 2 ramenée à 18 %
+    (décision 139)."""
     assert projections["msa_exploitants_complementaire"].annee_integration == 2026
-    assert projections["agirc_arrco"].annee_integration == 2032
+    assert projections["agirc_arrco"].annee_integration == 2030
 
 
 def test_la_baisse_recule_les_avocats_et_l_ircantec(projections):
