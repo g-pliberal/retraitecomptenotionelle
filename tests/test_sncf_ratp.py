@@ -18,6 +18,7 @@ fiches le déclarent, et le dernier test le tient, cas par cas.
 
 from __future__ import annotations
 
+import functools
 from datetime import date
 
 import pytest
@@ -26,9 +27,8 @@ import yaml
 from retraite_notionnelle.calendrier import DateMois, en_mois
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.noyau import carte
-from retraite_notionnelle.scenarios.actuel import (
-    AgesRegimes, AgesSurcoteRegimesSpeciaux, CalendriersDureeRequise,
-    DecoteRegimesSpeciaux, DureesRequisesRegimes)
+
+from facade import Simulateur
 
 REGIMES = ("sncf", "ratp")
 PERIODES = {regime: yaml.safe_load((RACINE_DONNEES / "reference" / "regimes" / f"{regime}.yaml")
@@ -43,6 +43,12 @@ DEBUT = DateMois(1930, 1)
 #: La dernière année que les confrontations parcourent.
 HORIZON = 2050
 
+
+
+@functools.cache
+def _tables():
+    """Les tables du moteur du scénario 1, servies par le portage (la façade)."""
+    return Simulateur().scenario_actuel
 
 def _versions(nom: str) -> list[dict]:
     versions = carte.fiches()[nom].get("versions") or []
@@ -107,8 +113,8 @@ def test_l_age_d_annulation_de_la_decote_est_celui_de_chaque_version():
     d'âges que nomment les périodes le portent : une génération qui atteint
     son âge d'ouverture avant 2025 garde l'âge d'avant, quelle que soit
     l'année où elle part, comme la CPRPSNCF l'écrit."""
-    bareme = DecoteRegimesSpeciaux(RACINE_DONNEES)
-    ages = AgesRegimes(RACINE_DONNEES)
+    bareme = _tables().decote_regimes_speciaux
+    ages = _tables().ages_regimes
     for version in _versions("age_reference_decote_sncf_ratp"):
         lus, bornes = version["contenu"]["parametres"], version["bornes"]
         if "ouverture_du_droit" not in bornes:
@@ -159,7 +165,7 @@ def test_l_age_de_la_surcote_est_celui_de_chaque_version():
     pour 1970. Chaque année qu'une version couvre en entier, la période du
     régime branche l'âge propre de la surcote, et sa table donne à toute
     génération qui peut l'avoir l'âge que la version écrit."""
-    surcote = AgesSurcoteRegimesSpeciaux(RACINE_DONNEES)
+    surcote = _tables().ages_surcote_regimes_speciaux
     confrontees = set()
     for version in _versions("age_surcote_sncf_ratp"):
         lus = version["contenu"]["parametres"]
@@ -194,8 +200,8 @@ def test_la_duree_requise_est_celle_de_chaque_version():
     l'article 23-1. Le pourcentage maximum est de 75 %. Le calendrier et les
     tables du modèle le portent, au mois où les conditions sont réunies ; une
     table ne répond pas avant sa date."""
-    calendriers = CalendriersDureeRequise(RACINE_DONNEES)
-    tables = DureesRequisesRegimes(RACINE_DONNEES)
+    calendriers = _tables().calendriers_duree_requise
+    tables = _tables().durees_requises_regimes
     for version in _versions("duree_requise_sncf_ratp"):
         lus = version["contenu"]["parametres"]
         bornes = version["bornes"]["ouverture_du_droit"]
@@ -306,7 +312,7 @@ def test_qui_part_avant_l_age_de_lecture_doit_la_duree_de_qui_l_atteint(
     lus = next(v for v in fiche["versions"] if v["id"] == version)["contenu"]["parametres"]
     periode = _periode(regime, effet)
     generation = naissance.annee + (naissance.mois - 1) / 12
-    age = AgesRegimes(RACINE_DONNEES).ages(periode["age_table"], generation)[0]
+    age = _tables().ages_regimes.ages(periode["age_table"], generation)[0]
     assert naissance.plus_mois(en_mois(age)) == ouverture
     assert age < lus["ages_de_lecture"][regime]
     if "duree_avant_l_age_de_lecture" in lus:
@@ -314,7 +320,7 @@ def test_qui_part_avant_l_age_de_lecture_doit_la_duree_de_qui_l_atteint(
     else:
         lue = ouverture.annee - lus["ages_de_lecture"][regime] + (ouverture.mois - 1) / 12
         assert _escalier(lus["tables_par_generation"][regime], round(lue, 3)) == droit
-    tables = DureesRequisesRegimes(RACINE_DONNEES)
+    tables = _tables().durees_requises_regimes
     lignes = [tables.ligne(nom, generation, ouverture.rang)
               for nom in periode["duree_requise_table"]]
     assert next(ligne for ligne in lignes if ligne)[0] == droit
@@ -331,7 +337,7 @@ def test_la_duree_par_annee_de_la_ratp_ne_sert_que_qui_part_avant_soixante_ans()
     modèle ne sert que le roulant : chaque table d'âges que nomment les
     périodes de 2025 et après, et l'âge qu'elles écrivent, ouvrent son droit
     avant soixante ans."""
-    ages = AgesRegimes(RACINE_DONNEES)
+    ages = _tables().ages_regimes
     for annee in range(2025, HORIZON + 1):
         periode = _periode("ratp", annee)
         assert periode["duree_requise_table"][0] == "ratp_avant_60", annee
@@ -370,7 +376,7 @@ def test_ce_que_le_modele_fait_autrement_la_fiche_le_declare(regime, naissance, 
         assert _escalier(lus["duree_avant_l_age_de_lecture"], ouverture.annee) == droit
     else:
         assert _escalier(lus["tables_par_generation"][regime], round(lue, 3)) == droit
-    tables = DureesRequisesRegimes(RACINE_DONNEES)
+    tables = _tables().durees_requises_regimes
     lignes = [tables.ligne(nom, generation, ouverture.rang)
               for nom in _periode(regime, ouverture.annee)["duree_requise_table"]]
     assert next(ligne for ligne in lignes if ligne)[0] == modele

@@ -13,15 +13,17 @@ from __future__ import annotations
 import pytest
 
 from retraite_notionnelle.config import RACINE_DONNEES
-from retraite_notionnelle.scenarios.actuel import MajorationsPourEnfants
+
+from facade import Simulateur
 
 
 @pytest.fixture(scope="module")
-def majorations() -> MajorationsPourEnfants:
-    return MajorationsPourEnfants(RACINE_DONNEES)
+def majorations():
+    """La table des majorations pour enfants, servie par le portage (la façade)."""
+    return Simulateur().scenario_actuel.majorations_enfants
 
 
-def _accorde(majorations: MajorationsPourEnfants, dispositif: str, naissance: str,
+def _accorde(majorations, dispositif: str, naissance: str,
              date_effet: str, naissances: list[str] | None = None):
     """La version, les trimestres et les services qu'un enfant de la mère
     ouvre ; ``None`` s'il n'ouvre rien. ``naissances`` sont celles de tous ses

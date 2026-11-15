@@ -35,7 +35,8 @@ import pytest
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes
-from retraite_notionnelle.scenarios.actuel import Rendements
+
+from facade import Simulateur
 
 CAFAT = "cafat_nouvelle_caledonie"
 WALLIS = "wallis_et_futuna"
@@ -127,8 +128,9 @@ TAUX_DE_LA_CAISSE_LOCALE = (0.09, 0.03)
 
 
 @pytest.fixture(scope="module")
-def rendements() -> Rendements:
-    return Rendements(RACINE_DONNEES)
+def rendements():
+    """La table des rendements du moteur, servie par le portage (la façade)."""
+    return Simulateur().scenario_actuel.rendements
 
 
 @pytest.fixture(scope="module")

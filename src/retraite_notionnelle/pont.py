@@ -2734,6 +2734,7 @@ TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "durees_requises": ("trimestres",),
     "fiches_datees": ("regle",),
     "invalidites": ("version",),
+    "majorations_enfants": ("par_enfant",),
     "majorations_enfants_points": ("taux",),
     "maximum_des_cultes": ("valeur",),
     "minimum_contributif": ("avts", "pension_minimum", "regle", "valeurs"),
