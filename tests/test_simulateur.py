@@ -29,7 +29,7 @@ from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS
 # portage les calcule. Un test qui appelle encore une règle du moteur Python
 # le garde, sous la marque ``sur_le_moteur_python`` et sa raison.
 import facade
-from facade import Carriere, Simulateur, completer, liquider, ouvrir
+from facade import Carriere, Simulateur, completer, liquider, ouvrir, releve
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 #: Témoins versionnés : ce que des sources extérieures ont réellement publié.
@@ -5364,7 +5364,6 @@ def _stagiaire_de_2016() -> dict:
           "fin": "2016-12-31", "jours": 300}]))
 
 
-@pytest.mark.sur_le_moteur_python("droit.releve")
 def test_r_173_4_3_arrete_les_durees_au_trimestre_civil_qui_precede_l_effet(simulateur):
     """Les durées que R. 173-4-3 compare sont « arrêtée[s] au dernier jour du
     trimestre civil précédant la date d'effet » (circulaire Cnav n° 2004/29,
@@ -5374,8 +5373,6 @@ def test_r_173_4_3_arrete_les_durees_au_trimestre_civil_qui_precede_l_effet(simu
     import json
     import shutil
     import subprocess
-
-    from retraite_notionnelle.droit import releve
 
     construite = _stagiaire_de_2016()
     carriere = Carriere.depuis_chronologie(construite, simulateur.macro)
@@ -5405,7 +5402,6 @@ process.stdout.write(String(dureeDuRegimeAligne(carriere, durees, ["regime_gener
     assert execution.stdout == "117"
 
 
-@pytest.mark.sur_le_moteur_python("droit.releve")
 def test_la_duree_qui_proratise_s_arrete_au_trimestre_civil_qui_precede_l_effet(simulateur):
     """La durée d'assurance du régime général, celle de L. 351-1 qui
     proratise, est « arrêtée au dernier jour du trimestre civil précédant la
@@ -5422,8 +5418,6 @@ def test_la_duree_qui_proratise_s_arrete_au_trimestre_civil_qui_precede_l_effet(
     import subprocess
 
     from retraite_notionnelle import chronologie
-    from retraite_notionnelle.droit import releve
-
     partielle = chronologie.completer(chronologie.avec_periodes_assimilees(
         chronologie.du_parcours(
             annee_naissance=1995, sexe="F", age_liquidation=64.0, jour_naissance=15,
@@ -5489,7 +5483,6 @@ def _exploitant_parti_en_aout_2024(derniere: str = "exploitant_agricole",
             for annee in range(1985, 2025)]))
 
 
-@pytest.mark.sur_le_moteur_python("droit.releve")
 def test_l_exploitant_agricole_compte_les_quatre_trimestres_de_l_annee_ou_il_cesse(simulateur):
     """Le chef d'exploitation qui cesse en cours d'année doit les cotisations
     « au titre de l'année civile entière » (L. 731-10-1 du code rural), et le
@@ -5505,8 +5498,6 @@ def test_l_exploitant_agricole_compte_les_quatre_trimestres_de_l_annee_ou_il_ces
     import json
     import shutil
     import subprocess
-
-    from retraite_notionnelle.droit import releve
 
     construites = [_exploitant_parti_en_aout_2024(),
                    _exploitant_parti_en_aout_2024("salarie_prive_non_cadre"),
@@ -5566,7 +5557,6 @@ def _exploitant_en_stage_l_annee_ou_il_cesse() -> dict:
           "fin": "2030-05-31"}]))
 
 
-@pytest.mark.sur_le_moteur_python("droit.releve")
 def test_r_173_3_2_arrete_les_regimes_alignes_au_trimestre_civil_l_annee_ou_l_exploitant_cesse(
         simulateur):
     """R. 173-3-2, II, arrête les durées qu'il répartit « pour les régimes
@@ -5588,8 +5578,6 @@ def test_r_173_3_2_arrete_les_regimes_alignes_au_trimestre_civil_l_annee_ou_l_ex
     import json
     import shutil
     import subprocess
-
-    from retraite_notionnelle.droit import releve
 
     construite = _exploitant_en_stage_l_annee_ou_il_cesse()
     carriere = Carriere.depuis_chronologie(construite, simulateur.macro)
@@ -5663,7 +5651,6 @@ def _agricole_parti_en_aout_2024(affiliation: str) -> dict:
             for annee in range(1985, 2025)]))
 
 
-@pytest.mark.sur_le_moteur_python("droit.releve")
 def test_l_annee_ou_l_exploitant_agricole_cesse_lui_vaut_les_points_d_une_annee(simulateur):
     """Les cotisations de l'année où l'exploitant cesse sont dues « au titre de
     l'année civile entière » (L. 731-10-1 du code rural), sur un revenu annuel,
@@ -5682,8 +5669,6 @@ def test_l_annee_ou_l_exploitant_agricole_cesse_lui_vaut_les_points_d_une_annee(
     import json
     import shutil
     import subprocess
-
-    from retraite_notionnelle.droit import releve
 
     construites = [_agricole_parti_en_aout_2024("exploitant_agricole"),
                    _agricole_parti_en_aout_2024("collaborateur_agricole")]
@@ -5728,8 +5713,6 @@ def _annee_agricole_en_deux_moteurs(simulateur, naissance: dict, lignes: list[di
     import json
     import shutil
     import subprocess
-
-    from retraite_notionnelle.droit import releve
 
     carriere = Carriere(**naissance, lignes=[AnneeCarriere(**ligne) for ligne in lignes])
     obtenu = {
@@ -5936,7 +5919,6 @@ def _installe_en_juillet(installation: int, naissance: int, depart: int,
                for annee in range(installation + 1, depart + 1)])
 
 
-@pytest.mark.sur_le_moteur_python("droit.releve")
 def test_l_exploitant_installe_apres_le_1er_janvier_ne_cotise_rien_pour_l_annee(simulateur):
     """Les cotisations des non-salariés agricoles « sont fixées pour chaque
     année civile », et la situation de l'exploitant « est appréciée au premier
@@ -5962,8 +5944,6 @@ def test_l_exploitant_installe_apres_le_1er_janvier_ne_cotise_rien_pour_l_annee(
     import json
     import shutil
     import subprocess
-
-    from retraite_notionnelle.droit import releve
 
     cas = {"2010": dict(lignes=_installe_en_juillet(2010, 1962, 2024), naissance=1962,
                         age=62.5, annee=2010),
@@ -6515,7 +6495,6 @@ process.stdout.write(JSON.stringify(sorties));
     assert json.loads(execution.stdout) == sorties
 
 
-@pytest.mark.sur_le_moteur_python("droit.releve")
 def test_l_annee_ou_l_exploitant_cesse_avant_son_depart_compte_entiere(simulateur):
     """L. 731-10-1 du code rural ne vise pas la seule année du départ : qui
     cesse en cours d'année, laquelle que ce soit, doit les cotisations « au
@@ -6530,8 +6509,6 @@ def test_l_annee_ou_l_exploitant_cesse_avant_son_depart_compte_entiere(simulateu
     15 430,32 €), et non onze, la moitié des 22 que valent ses 6 000 € (2°) ;
     et les 133 de l'assiette minimale de la RCO (1 820 SMIC, 18 473 €). Dans
     les deux moteurs."""
-    from retraite_notionnelle.droit import releve
-
     naissance = dict(annee_naissance=1962, sexe="H", jour_naissance=15, age_liquidation=62.5)
     lignes = ([dict(annee=annee, revenu=12000.0, affiliation="exploitant_agricole")
                for annee in range(1990, 2020)]
@@ -6547,7 +6524,6 @@ def test_l_annee_ou_l_exploitant_cesse_avant_son_depart_compte_entiere(simulateu
         "points": {"msa_non_salaries": 30.0, "msa_rco": 133.0}}
 
 
-@pytest.mark.sur_le_moteur_python("droit.releve")
 def test_le_conjoint_collaborateur_devenu_chef_garde_son_annee_de_collaborateur(simulateur):
     """La situation que fixent les cotisations de l'année est celle du
     1er janvier (L. 731-10-1 du code rural ; R. 731-57) : le chef qui cesse
@@ -6566,8 +6542,6 @@ def test_le_conjoint_collaborateur_devenu_chef_garde_son_annee_de_collaborateur(
     RCO, 33 et cent ; la ligne de cheffe n'y a rien, et l'année n'est pas de
     cheffe pour les minima (D. 732-110), même quand sa ligne vient en tête.
     Dans les deux moteurs."""
-    from retraite_notionnelle.droit import releve
-
     naissance = dict(annee_naissance=1962, sexe="F", jour_naissance=15, age_liquidation=62.5)
     lignes = ([dict(annee=annee, revenu=4000.0, affiliation="collaborateur_agricole")
                for annee in range(1990, 2015)]
@@ -6762,7 +6736,7 @@ def test_la_seconde_part_de_rco_ne_touche_ni_les_annees_d_avant_ni_le_collaborat
         simulateur, naissance, lignes, 2026)["points"]["msa_rco"] == 88.0
 
 
-@pytest.mark.sur_le_moteur_python("droit.releve")
+@pytest.mark.sur_le_moteur_python("Simulateur.constructeur, releve.droits.cotisations")
 def test_l_exercice_1952_ne_preleve_que_la_moitie_de_la_cotisation_annuelle(simulateur):
     """« Pour l'exercice 1952, les cotisations professionnelles visées aux
     articles 20 et 21 de la loi du 10 juillet 1952 sont égales à la moitié des
@@ -6777,8 +6751,6 @@ def test_l_exercice_1952_ne_preleve_que_la_moitie_de_la_cotisation_annuelle(simu
     import json
     import shutil
     import subprocess
-
-    from retraite_notionnelle.droit import releve
 
     naissance = dict(annee_naissance=1925, mois_naissance=1, jour_naissance=15, sexe="H",
                      age_liquidation=65.0)

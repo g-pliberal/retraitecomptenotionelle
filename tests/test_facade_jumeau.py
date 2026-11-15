@@ -28,6 +28,7 @@ from retraite_notionnelle.config import RACINE_PROJET, Parametres
 from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
+from retraite_notionnelle.droit import releve as releve_python
 from retraite_notionnelle.droit.liquider import EligibleMinimum
 from retraite_notionnelle.journal import Journal
 
@@ -380,6 +381,23 @@ def _du_regime(regime: str, annee: int, carriere, *suite):
     return lambda s: (s.scenario_actuel, s.catalogue[regime].periode(annee), carriere(s), *suite)
 
 
+def _artisan(simulateur):
+    return simulateur.carriere_simple(
+        annee_naissance=1945, sexe="H", affiliation="artisan", age_debut=20, age_liquidation=62)
+
+
+def _aligne(carriere, membres: tuple[str, ...]):
+    """Les arguments de ``liquider.duree_du_regime_aligne`` : la carrière, les
+    durées de son relevé, que chaque côté construit sur son moteur, et les
+    régimes."""
+    def arguments(s):
+        construite = carriere(s)
+        construire = (facade.releve if isinstance(s, facade.Simulateur)
+                      else releve_python).construire
+        return construite, construire(s.scenario_actuel, construite).durees, membres
+    return arguments
+
+
 #: Deux régimes porteurs du minimum : un artisan dont les droits d'avant 1973
 #: bornent le minimum (D. 634-6), un polypensionné du régime général au-delà
 #: de la durée requise.
@@ -418,6 +436,9 @@ APPELS_DES_REGLES = [
     ("liquider", "decote_opposable", _du_regime("sncf", 2009, _agent, 2009)),
     ("liquider", "decote_opposable",
      _du_regime("fonction_publique_etat", 2022, _fonctionnaire, 2022)),
+    ("liquider", "duree_du_regime_aligne", _aligne(_salarie, ("regime_general",))),
+    ("liquider", "duree_du_regime_aligne",
+     _aligne(_artisan, ("cancava_avant_1973", "cancava"))),
     ("liquider", "duree_proratisation", _du_regime("regime_general", 2029, _salarie, 172)),
     ("liquider", "duree_proratisation",
      _du_regime("fonction_publique_etat", 2022, _fonctionnaire, 168)),
@@ -524,3 +545,36 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
                 json.loads(json.dumps(pont._en_donnees(refait))), f"{module}.{regle}")):
             ecarts.append(f"{module}.{regle} : la façade lit {lu!r}, le jumeau rend {refait!r}")
     assert not ecarts, "\n".join(ecarts)
+
+
+@pytest.mark.parametrize("parametres", [Parametres(), Parametres(conventions_cor=True)],
+                         ids=["reference", "conventions_cor"])
+def test_le_jumeau_rend_le_releve_que_la_facade_lit(parametres):
+    """Le relevé des droits d'un salarié, d'un artisan d'avant 1973 et d'une
+    fonctionnaire mère de trois enfants, construit par le portage et par le
+    jumeau : les mêmes durées, par compte, régime et année, le même plafond
+    de chaque année, les mêmes durées de régime et tous régimes, les mêmes
+    points, au bit près."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    servi = facade.Simulateur(parametres)
+    jumeau = simulateur_python.Simulateur(parametres)
+    for carriere in (_salarie, _artisan, _fonctionnaire):
+        lu = facade.releve.construire(servi.scenario_actuel, carriere(servi))
+        construite = carriere(jumeau)
+        refait = releve_python.construire(jumeau.scenario_actuel, construite)
+        nom = carriere.__name__
+        assert lu.durees.par_annee == {
+            compte: {code: annees for code, annees in regimes.items()}
+            for compte, regimes in refait.durees.par_annee.items()}, nom
+        premiere = min(ligne.annee for ligne in construite.lignes)
+        for compte in refait.durees.par_annee:
+            assert [lu.durees.plafond(compte, annee) for annee in range(
+                premiere, construite.date_liquidation.annee + 1)] == [
+                refait.durees.plafond(compte, annee) for annee in range(
+                    premiere, construite.date_liquidation.annee + 1)], (nom, compte)
+        assert lu.durees.trimestres_par_regime == refait.durees.trimestres_par_regime, nom
+        assert lu.durees.trimestres == refait.durees.trimestres, nom
+        assert repr(lu.droits.points) == repr(pont.lu_strictement(
+            tuple[tuple[str, int, float, float | None], ...],
+            json.loads(json.dumps(pont._en_donnees(refait.droits.points))), nom)), nom

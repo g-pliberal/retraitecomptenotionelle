@@ -7330,12 +7330,12 @@ de `contribution_etat`.
 **Reprise, au 15 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Les tests y passent par une façade (`tests/facade.py`), qui sert les entrées
-du moteur, ses tables et vingt-cinq règles de `droit/`, dont cinq du minimum
-contributif. Le propriétaire a tranché trois questions (note de décision
+du moteur, ses tables, vingt-six règles de `droit/` et le relevé des droits,
+rendu en données. Le propriétaire a tranché trois questions (note de décision
 0008), et le code mort du moteur JavaScript est retiré. Reste, une étape par
-session, dans l'ordre. Les autres règles de `droit/` à la façade, en tête
-celle qui bâtit le relevé, puis les autres fichiers de tests : commencer par
-« Ce qui reste » de `2026-11-15-les-regles-de-completer-a-la-facade.md`.
+session, dans l'ordre. Les autres règles de `droit/` à la façade, puis les
+autres fichiers de tests : commencer par « Ce qui reste » de
+`2026-11-15-le-releve-a-la-facade.md`.
 Puis quatre études : `scenarios_meres.py`, `cout_avantages.py --par-carriere`,
 `part_minimum_contributif.py`, `partage_taux_unique.py`. Puis la liste des
 fonctions gardées des deux côtés, le retrait, et les lignes du relevé des

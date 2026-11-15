@@ -1396,6 +1396,10 @@ function argumentDuDroit(simulateur, carrieres, argument) {
   if (Object.hasOwn(argument, "carriere")) {
     return carrieres[argument.carriere];
   }
+  if (Object.hasOwn(argument, "durees_du_releve")) {
+    return releve.construire(simulateur.scenarioActuel,
+      carrieres[argument.durees_du_releve]).durees;
+  }
   return argument.valeur;
 }
 
@@ -1733,7 +1737,37 @@ const ENTREES_DE_LA_FACADE = {
   "scenario_actuel.calculer": (moteur, carriere, ...drapeaux) => telQuel(
     moteur.calculer(carriere, ...drapeaux)),
   "reversion.reversion": (...valeurs) => FONCTIONS_DU_DROIT["reversion.reversion"](...valeurs),
+  "releve.construire":
+    (moteur, carriere) => releveEnDonnees(releve.construire(moteur, carriere), carriere),
 };
+
+/**
+ * Le relevé des droits en données, par ce que les tests en lisent : ses
+ * durées — par compte, régime et année ; le plafond de chaque année de la
+ * carrière, de sa première à celle de l'effet ; la durée de chaque régime et
+ * la durée tous régimes — et les points de chaque régime,
+ * `[code, annee, points, taux]`. Ses durées repassent au portage par la
+ * carrière dont il vient (`durees_du_releve`, `argumentDuDroit`).
+ */
+function releveEnDonnees({ durees, droits }, carriere) {
+  const premiere = Math.min(...carriere.lignes.map((ligne) => ligne.annee));
+  const annees = [];
+  for (let annee = premiere; annee <= carriere.dateLiquidation.annee; annee += 1) {
+    annees.push(annee);
+  }
+  const comptes = Object.keys(durees.parAnnee);
+  return {
+    durees: {
+      par_annee: Object.fromEntries(comptes.map((compte) => [compte,
+        [...durees.parAnnee[compte]].map(([code, parAnnee]) => [code, [...parAnnee]])])),
+      plafonds: Object.fromEntries(comptes.map((compte) => [compte,
+        annees.map((annee) => [annee, durees.plafond(compte, annee)])])),
+      trimestres_par_regime: [...durees.trimestresParRegime],
+      trimestres: durees.trimestres,
+    },
+    points: droits.points.map((point) => [...point]),
+  };
+}
 
 /**
  * Une entrée de la façade, `{entree, arguments}`, sous les paramètres et sur

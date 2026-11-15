@@ -39,6 +39,11 @@ façade, une période de son catalogue, une carrière, une date, des valeurs
 simples. Ce qui n'en est pas — le moteur Python, une période retouchée, un
 objet du moteur — n'arriverait pas au portage : la règle est refusée.
 
+**Le relevé des droits** (``releve.construire``) revient en données, ce que
+les tests en lisent : ses durées et ses points. Ses durées repassent au
+portage, qui les refait du relevé de leur carrière, quand une règle les
+reçoit (``liquider.duree_du_regime_aligne``).
+
 **Un test resté sur le moteur Python**, dans un fichier basculé, porte la
 marque ``sur_le_moteur_python`` et sa raison : le temps de ce test, les
 entrées de son fichier et son simulateur redeviennent ceux du Python
@@ -65,6 +70,7 @@ from retraite_notionnelle.pont import NonTransmissible
 from retraite_notionnelle.droit import completer as _completer
 from retraite_notionnelle.droit import liquider as _liquider
 from retraite_notionnelle.droit import ouvrir as _ouvrir
+from retraite_notionnelle.droit import releve as _releve
 from retraite_notionnelle.droit import reversion as _reversion
 from retraite_notionnelle.scenarios import actuel as _actuel
 
@@ -73,10 +79,11 @@ from retraite_notionnelle.scenarios import actuel as _actuel
 DONNEES = frozenset({"catalogue", "affiliations"})
 
 
-#: Les huit entrées du moteur Python que la façade sert, sous leurs noms.
+#: Les neuf entrées du moteur Python que la façade sert, sous leurs noms.
 ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversion",
            "simulateur.carriere_simple", "simulateur.carriere_parcours",
-           "simulateur.carriere_releve", "carriere.depuis_profil", "carriere.depuis_parcours")
+           "simulateur.carriere_releve", "carriere.depuis_profil", "carriere.depuis_parcours",
+           "releve.construire")
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
@@ -416,6 +423,18 @@ def _demander_la_regle(module: str, regle: str, rendu, arguments: dict):
                 "transmettre — la règle se demande sur le moteur d'un simulateur de la façade "
                 "(simulateur.scenario_actuel)")
         simulateur = arguments["moteur"]._simulateur
+    for durees in (valeur for valeur in arguments.values() if isinstance(valeur, Durees)):
+        # Le portage refait ces durées du relevé de leur carrière, sous les
+        # paramètres du simulateur qui les a rendues : la règle les reçoit
+        # avec cette carrière-là, et sur ce simulateur-là.
+        if arguments.get("carriere") is not durees._carriere:
+            raise NonTransmissible(
+                f"{module}.{regle} : durées d'une autre carrière que celle de la règle — le "
+                "portage les refait du relevé de la carrière qu'il reçoit")
+        if simulateur is not None and simulateur.parametres != durees._simulateur.parametres:
+            raise NonTransmissible(
+                f"{module}.{regle} : durées rendues sous d'autres paramètres que ceux du moteur")
+        simulateur = durees._simulateur
     return pont.regle_du_droit(
         module, regle, rendu,
         *(_argument_de_regle(f"{module}.{regle}", simulateur, nom, valeur)
@@ -444,6 +463,8 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
         return dict(valeur)
     if dataclasses.is_dataclass(valeur) and type(valeur).__name__ in pont.TYPES_DE_LA_FACADE:
         return valeur
+    if isinstance(valeur, Durees):
+        return pont.DureesDuReleve(valeur._carriere)
     raise NonTransmissible(
         f"{regle} : argument {nom} ({type(valeur).__name__}) que la façade ne sait pas "
         "transmettre au portage — le test reste sur le moteur Python, ou se porte à la main")
@@ -454,6 +475,96 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
 completer = Regles("completer", _completer)
 liquider = Regles("liquider", _liquider)
 ouvrir = Regles("ouvrir", _ouvrir)
+
+
+# -- le relevé des droits -------------------------------------------------------------
+#
+# ``releve.construire`` rend un relevé que le pont ne passe pas : ses durées et
+# ses droits sont des objets du moteur. La façade en rend ce que les tests en
+# lisent, en données — les durées par compte, régime et année, le plafond de
+# chaque année, la durée de chaque régime et tous régimes, les points de
+# chaque régime —, et ses durées repassent au portage, qui les refait du
+# relevé de leur carrière, quand une règle les reçoit
+# (``liquider.duree_du_regime_aligne``).
+
+
+class Durees(_Ferme):
+    """Les durées du relevé d'une carrière (``compter.Durees``), lues du
+    portage : ``par_annee``, ``trimestres_par_regime``, ``trimestres``, et le
+    plafond de chaque année de la carrière (:meth:`plafond`)."""
+
+    def __init__(self, simulateur: Simulateur, carriere, lu: dict) -> None:
+        object.__setattr__(self, "_simulateur", simulateur)
+        object.__setattr__(self, "_carriere", carriere)
+        object.__setattr__(self, "_plafonds", lu["plafonds"])
+        for nom in ("par_annee", "trimestres_par_regime", "trimestres"):
+            object.__setattr__(self, nom, lu[nom])
+
+    def plafond(self, table: str, annee: int, membres: tuple[str, ...] = ()) -> int:
+        """Le plafond de l'année, que le portage a lu sans régimes nommés :
+        celui de régimes nommés n'a pas passé le pont."""
+        if membres:
+            raise NonTransmissible(
+                "Durees.plafond : le plafond de membres nommés ne passe pas le pont — le "
+                "relevé n'en rend que celui de l'année")
+        plafonds = self._plafonds[table]
+        if annee not in plafonds:
+            raise NonTransmissible(
+                f"Durees.plafond : {annee} est hors de la carrière, dont le relevé ne rend "
+                "que les années")
+        return plafonds[annee]
+
+
+class Droits(_Ferme):
+    """Les droits du relevé (``acquerir.Droits``), lus du portage : ses
+    ``points``, ``(code, annee, points, taux)``, dans l'ordre."""
+
+    def __init__(self, points) -> None:
+        object.__setattr__(self, "points", points)
+
+
+class Releve(_Ferme):
+    """Le relevé des droits d'une carrière, ce que les tests en lisent :
+    ``durees`` et ``droits``."""
+
+    def __init__(self, durees: Durees, droits: Droits) -> None:
+        object.__setattr__(self, "durees", durees)
+        object.__setattr__(self, "droits", droits)
+
+
+class Releves(_Ferme):
+    """``droit.releve``, sous le nom de son jumeau : ``construire``, servi
+    par le portage, ses drapeaux à leur valeur par défaut seulement."""
+
+    def __getattr__(self, nom):
+        # Ce que le jumeau ne porte pas manque ici comme à un module : pytest
+        # sonde ainsi ce qu'un fichier de tests importe.
+        if nom.startswith("__") or not hasattr(_releve, nom):
+            raise AttributeError(f"releve.{nom}")
+        return super().__getattr__(nom)
+
+    def construire(self, moteur, carriere, **drapeaux) -> Releve:
+        lies = inspect.signature(_releve.construire).bind(moteur, carriere, **drapeaux)
+        lies.apply_defaults()
+        poses = [nom for nom, valeur in lies.arguments.items()
+                 if nom not in ("moteur", "carriere")
+                 and valeur != inspect.signature(_releve.construire).parameters[nom].default]
+        if poses:
+            raise NonTransmissible(
+                f"releve.construire : {', '.join(poses)} — la façade ne transmet pas les "
+                "drapeaux du relevé")
+        if not isinstance(moteur, ScenarioActuel):
+            raise NonTransmissible(
+                "releve.construire : moteur passé en argument que la façade ne sait pas "
+                "transmettre — le relevé se demande sur le moteur d'un simulateur de la "
+                "façade (simulateur.scenario_actuel)")
+        simulateur = moteur._simulateur
+        lu = _demander("releve.construire", simulateur.parametres, pont.MOTEUR, carriere)
+        return Releve(Durees(simulateur, carriere, lu), Droits(lu["points"]))
+
+
+#: ``droit.releve``, son ``construire`` servi par le portage.
+releve = Releves()
 
 
 # -- un test resté sur le moteur Python ----------------------------------------------
@@ -470,7 +581,7 @@ MARQUE = "sur_le_moteur_python"
 #: Le jumeau Python de chaque entrée qu'un fichier basculé importe d'ici.
 JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
            "reversion": _reversion.reversion, "completer": _completer, "liquider": _liquider,
-           "ouvrir": _ouvrir}
+           "ouvrir": _ouvrir, "releve": _releve}
 
 #: Les simulateurs des tests, par fichier, par moteur et par paramètres.
 _SIMULATEURS: dict[tuple, object] = {}

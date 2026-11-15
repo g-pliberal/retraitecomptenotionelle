@@ -1210,6 +1210,16 @@ class CarriereSimple:
 
 
 @dataclasses.dataclass(frozen=True)
+class DureesDuReleve:
+    """Les durées du relevé de cette carrière (``releve.construire``), en
+    argument d'une règle de la façade : elles ne passent pas le pont, et le
+    portage les refait du relevé de la carrière, sur le moteur de la demande
+    (``durees_du_releve``, ``argumentDuDroit`` de ``pont.mjs``)."""
+
+    carriere: object
+
+
+@dataclasses.dataclass(frozen=True)
 class Periode:
     """La période d'un régime à une année, ``catalogue[code].periode(annee)``,
     en argument d'un appel du droit (:func:`droit`) : le portage y met la
@@ -1483,6 +1493,8 @@ def _argument_du_droit(argument, carrieres: list) -> dict:
         return {"carriere_simple": _en_donnees(argument.options)}
     if isinstance(argument, Periode):
         return {"periode": [argument.code, argument.annee]}
+    if isinstance(argument, DureesDuReleve):
+        return {"durees_du_releve": _argument_du_droit(argument.carriere, carrieres)["carriere"]}
     if isinstance(argument, Carriere):
         rang = next((rang for rang, connue in enumerate(carrieres) if connue is argument), None)
         if rang is None:
@@ -2182,6 +2194,33 @@ def resultat_actuel_des_donnees(actuel: dict):
 #: Ce que rend chaque entrée de la façade (``ENTREES_DE_LA_FACADE`` de
 #: ``pont.mjs``), relu sous le type du Python. Une entrée qui n'y est pas est
 #: refusée avant node.
+#: Les durées du relevé, chaque compte et chaque régime par ses années.
+_PAR_ANNEE = tuple[tuple[str, tuple[tuple[int, int], ...]], ...]
+
+
+def releve_des_donnees(donnees: dict) -> dict:
+    """Le relevé des droits que le portage a écrit (``releveEnDonnees`` de
+    ``pont.mjs``), lu strictement : ``par_annee``, par compte, régime et année,
+    les trimestres crédités ; ``plafonds``, par compte, celui de chaque année
+    de la carrière ; ``trimestres_par_regime`` et ``trimestres`` ; ``points``,
+    les crédits ``(code, annee, points, taux)``, dans l'ordre."""
+    durees = donnees["durees"]
+    return {
+        "par_annee": {compte: {code: dict(annees) for code, annees in lu_strictement(
+            _PAR_ANNEE, regimes, f"releve.par_annee.{compte}")}
+            for compte, regimes in durees["par_annee"].items()},
+        "plafonds": {compte: dict(lu_strictement(
+            tuple[tuple[int, int], ...], plafonds, f"releve.plafonds.{compte}"))
+            for compte, plafonds in durees["plafonds"].items()},
+        "trimestres_par_regime": dict(lu_strictement(
+            tuple[tuple[str, int], ...], durees["trimestres_par_regime"],
+            "releve.trimestres_par_regime")),
+        "trimestres": lu_strictement(int, durees["trimestres"], "releve.trimestres"),
+        "points": lu_strictement(tuple[tuple[str, int, float, float | None], ...],
+                                 donnees["points"], "releve.points"),
+    }
+
+
 LECTURES_DE_LA_FACADE = {
     "simulateur.simuler": comparaison_des_donnees,
     "simulateur.carriere_simple": carriere_des_donnees,
@@ -2191,6 +2230,7 @@ LECTURES_DE_LA_FACADE = {
     "carriere.depuis_parcours": carriere_des_donnees,
     "scenario_actuel.calculer": resultat_actuel_des_donnees,
     "reversion.reversion": reversion_des_donnees,
+    "releve.construire": releve_des_donnees,
 }
 
 #: Le type que le Python donne à une erreur du portage, quand ce n'est pas
@@ -2380,8 +2420,8 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "completer": ("borne_avec_les_droits_d_avant_1973", "complement_minimum",
                   "majoration_ouverte", "plancher_du_regime", "selon_la_regle"),
     "liquider": ("abattement_points", "age_de_la_duree_atteinte", "annees_au_prorata",
-                 "borne_de_la_duree", "decote_opposable", "duree_proratisation",
-                 "moyenne_des_meilleures_annees", "retranche_decote",
+                 "borne_de_la_duree", "decote_opposable", "duree_du_regime_aligne",
+                 "duree_proratisation", "moyenne_des_meilleures_annees", "retranche_decote",
                  "revenu_des_cotisations_minimales", "salaire_de_reference",
                  "taux_de_majoration_de_1952_a_1972", "trimestres_de_decote",
                  "trimestres_de_surcote_regimes_speciaux", "valeur_du_point"),

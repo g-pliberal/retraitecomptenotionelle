@@ -725,6 +725,46 @@ def test_une_regle_ne_recoit_qu_un_dictionnaire_de_valeurs_simples(simulateur):
         completer.majoration_ouverte({2004: "sans_distinction"}, 120)
 
 
+def test_le_releve_revient_avec_ses_durees_et_ses_points(simulateur):
+    """Le relevé d'un salarié né en janvier 1955, entré à vingt-trois ans,
+    parti à soixante-deux, le 1er février 2017 : quatre trimestres par année
+    de 1978 à 2016 (R. 351-9), 156 au régime général, et aucun en 2017, dont
+    la durée s'arrête au dernier trimestre civil qui précède l'effet
+    (R. 351-1). La durée du régime aligné que R. 173-4-3 compare est la même.
+    Ce que le relevé rend passe le pont en données ; ses durées repassent au
+    portage par la carrière dont il vient."""
+    carriere = simulateur.carriere_simple(**NE_EN_1955)
+    releve = facade.releve.construire(simulateur.scenario_actuel, carriere)
+    durees = releve.durees
+    assert durees.par_annee["assurance"]["regime_general"][1978] == 4
+    assert 2017 not in durees.par_annee["assurance"]["regime_general"]
+    assert (durees.plafond("assurance", 2016), durees.plafond("assurance", 2017)) == (4, 0)
+    assert durees.trimestres_par_regime["regime_general"] == 156
+    assert durees.trimestres == 156
+    aligne = liquider.duree_du_regime_aligne(carriere, durees, ("regime_general",))
+    assert (aligne, type(aligne)) == (156, int)
+    # Le non-cadre acquiert ses points à l'Arrco, avant la fusion de 2019.
+    assert "arrco" in {code for code, annee, *_ in releve.droits.points if annee == 2016}
+
+
+def test_le_releve_ne_sert_que_ce_qu_il_transmet(simulateur):
+    """Les drapeaux de ``construire``, un plafond de régimes nommés, des durées
+    passées avec une autre carrière n'arriveraient pas au portage : refusés."""
+    carriere = simulateur.carriere_simple(**NE_EN_1955)
+    with pytest.raises(NonTransmissible, match="points_gratuits"):
+        facade.releve.construire(simulateur.scenario_actuel, carriere, points_gratuits=False)
+    with pytest.raises(NonTransmissible, match="moteur"):
+        facade.releve.construire(simulateur_python.Simulateur().scenario_actuel, carriere)
+    durees = facade.releve.construire(simulateur.scenario_actuel, carriere).durees
+    with pytest.raises(NonTransmissible, match="membres"):
+        durees.plafond("assurance", 2016, ("regime_general",))
+    autre = simulateur.carriere_simple(**SALARIE)
+    with pytest.raises(NonTransmissible, match="carrière"):
+        liquider.duree_du_regime_aligne(autre, durees, ("regime_general",))
+    with pytest.raises(NonTransmissible, match="modifi"):
+        durees.trimestres = 0
+
+
 def test_une_regle_se_demande_sous_les_parametres_de_son_moteur(simulateur):
     """Les conventions du COR ne valent que pour la page Coût : sous elles, la
     valeur de service de l'Agirc-Arrco de 2045 suit la convention, moins que
@@ -829,5 +869,6 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
     assert facade.ENTREES == ("simulateur.simuler", "scenario_actuel.calculer",
                               "reversion.reversion", "simulateur.carriere_simple",
                               "simulateur.carriere_parcours", "simulateur.carriere_releve",
-                              "carriere.depuis_profil", "carriere.depuis_parcours")
+                              "carriere.depuis_profil", "carriere.depuis_parcours",
+                              "releve.construire")
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)
