@@ -6847,7 +6847,7 @@ circulaire_rsi_2011_006_10022001.pdf,Circulaire RSI 2011/006 du 10/02/2011,,2001
 circulaire_rsi_2011_006_10022011.pdf,Circulaire RSI 2011/006 du 10/02/2011,Carrière ; Retraite personnelle de base,2011-02-10,limite,data/reference/regles/duree_requise_par_generation.yaml ; data/reference/regles/taux_plein_anciens_combattants_prisonniers.yaml ; data/reference/regles/rachats_et_versements.yaml ; docs/limites/3-systeme-actuel.md ; data/reference/regles/assiette_rco_independants.yaml,
 circulaire_rsi_2011_011_29042011.pdf,Circulaire RSI 2011/011 du 29042011,,2011-04-29,a_lire,,
 circulaire_rsi_2011_013_31052011.pdf,Circulaire RSI 2011/013 du 31/05/2011,,2011-05-31,a_lire,,
-circulaire_rsi_2011_014_31052011.pdf,Circulaire RSI 2011/014 du 31/05/2011,Retraite personnelle de base,2011-05-31,limite,data/reference/regles/carriere_longue.yaml,
+circulaire_rsi_2011_014_31052011.pdf,Circulaire RSI 2011/014 du 31/05/2011,Retraite personnelle de base,2011-05-31,recoupe,tests/test_simulateur.py::test_l_artisan_ne_au_dernier_trimestre_a_l_option_des_quatre_trimestres_a_dix_huit_ans,
 circulaire_rsi_2011_015_31052011.pdf,Circulaire RSI 2011/015 du 31/05/2011,,2011-05-31,a_lire,,
 circulaire_rsi_2011_017_14062011.pdf,Circulaire RSI 2011/017 du 14/06/2011,Retraite personnelle de base,2011-06-14,limite,data/reference/regles/pension_d_invalidite_substituee.yaml ; data/reference/regles/inaptitude_au_travail.yaml ; data/reference/regles/date_effet_mois_suivant.yaml,
 circulaire_rsi_2011_017_14072011.pdf,Circulaire RSI 2011/017 du 14/07/2011,,2011-07-14,a_lire,,

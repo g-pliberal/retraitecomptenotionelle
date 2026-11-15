@@ -8636,6 +8636,53 @@ def test_avant_novembre_2012_le_ne_au_dernier_trimestre_reunit_ses_quatre_trimes
         "non_ouverte", "carriere_longue"]
 
 
+def test_l_artisan_ne_au_dernier_trimestre_a_l_option_des_quatre_trimestres_a_dix_huit_ans(
+        simulateur):
+    """De juillet 2011 à octobre 2012, l'assuré né au dernier trimestre qui
+    n'avait pas cinq trimestres à la fin de l'année de ses dix-huit ans en
+    justifiait quatre « au titre de l'année » de cet anniversaire (D. 351-1-3,
+    2°, rédaction de 2011). Le décret n° 2010-1734 l'écrit pour les artisans
+    et les commerçants par la même phrase (article 2, II, JORFARTI000023334266) :
+    « L'article D. 351-1-3 du code de la sécurité sociale et le III de
+    l'article 3 bis du décret n° 73-937 du 2 octobre 1973 susvisé sont ainsi
+    modifiés : [...] 2° Les mots : « seizième ou dix-septième » sont remplacés
+    par les mots : « seizième, dix-septième ou dix-huitième » ». La version
+    consolidée du 3 bis (LEGIARTI000023397572) ne l'a reporté qu'au 1° de son
+    III, et son 2° ne nomme, à la lettre de Légifrance, que les seizième et
+    dix-septième anniversaires. Le RSI l'applique comme le décret : « la
+    condition des 4 trimestres acquis au cours de l'année des 16,17 ou 18
+    ans » (circulaire RSI n° 2011/014 du 31 mai 2011, annexe 1, remarque 1).
+
+    Nés le 15 novembre 1951 et entrés le 1er janvier 1969, un artisan, un
+    commerçant et un salarié ont les quatre trimestres de 1969, l'année de
+    leurs dix-huit ans, et aucun avant : ils partent le 1er décembre 2011, à
+    soixante ans, par la porte des dix-huit ans des nés du second semestre
+    1951 (D. 351-1-1, II, 4°, rédaction du 1er juillet 2011), avec 171
+    trimestres cotisés pour 163 requis, et 171 d'assurance pour 163 + 8. Né
+    le 15 septembre, le salarié du même parcours n'a pas la porte. Dans les
+    deux moteurs."""
+    from retraite_notionnelle import chronologie
+
+    def construite(mois_naissance, metier):
+        return chronologie.completer(chronologie.du_parcours(
+            annee_naissance=1951, sexe="H", mois_naissance=mois_naissance,
+            jour_naissance=15, age_liquidation=60.0,
+            metiers=[Metier(metier, 17 + (12 - mois_naissance + 0.5) / 12, 1.0)]))
+
+    construites = [construite(11, metier)
+                   for metier in ("artisan", "commercant", "salarie_prive_non_cadre")]
+    construites.append(construite(9, "salarie_prive_non_cadre"))
+    for parcours, effet in zip(construites, ["décembre 2011"] * 3 + ["octobre 2011"]):
+        carriere = Carriere.depuis_chronologie(parcours, simulateur.macro)
+        assert str(carriere.date_liquidation) == effet
+        assert {annee: sum(l.trimestres_valides for l in carriere.lignes if l.annee == annee)
+                for annee in (1968, 1969)} == {1968: 0, 1969: 4}
+        assert sum(carriere.trimestres_retenus(l) for l in carriere.lignes if l.cotise) == 171
+
+    assert _motifs_d_ouverture_en_deux_moteurs(simulateur, construites) == [
+        "carriere_longue"] * 3 + ["non_ouverte"]
+
+
 def test_le_non_salarie_agricole_debute_avec_quatre_trimestres_a_son_regime(simulateur):
     """Le non-salarié agricole est tenu pour entré avant la borne avec QUATRE
     trimestres validés à son régime « à la fin de l'année au cours de laquelle
