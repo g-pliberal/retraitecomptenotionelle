@@ -196,5 +196,8 @@
  },
  "test_stock_age_legal.py::pensions des cas sous tout_droit": {
   "valeur": "95c5673df3a03558"
+ },
+ "test_web.py::carrières tirées au hasard": {
+  "valeur": "f1868e6dcc8c3930"
  }
 }

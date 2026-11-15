@@ -4,10 +4,10 @@
  *     node tests/js/comparer.mjs cas.json
  *
  * Le fichier attendu est une liste d'objets ``{requete, resultat}`` — ou
- * ``{requete, erreur}`` quand le modèle Python refuse de calculer. C'est le
- * format que produit ``tests/test_web.py``, qui tire des carrières au hasard :
- * les témoins figés de ``tests/temoins/`` couvrent des cas choisis, celui-ci
- * couvre ceux auxquels personne n'a pensé. Un dictionnaire de cas nommés —
+ * ``{requete, erreur}`` quand le modèle Python refuse de calculer. Les
+ * carrières tirées au hasard de ``tests/test_web.py`` ne passent plus par lui
+ * depuis l'étape 8n de l'action 161 : figées au témoin des valeurs, elles ne
+ * se refont plus en Python. Un dictionnaire de cas nommés —
  * ``tests/temoins/simulations.json`` lui-même — se lit aussi : c'est ainsi
  * que ``scripts/verifier_prose.py`` compte ce que le README en affirme.
  *

@@ -45,7 +45,6 @@ from outils_web import (
     FEUILLE_DE_STYLE, SIMULATION_TEMOIN, TITRES, _hors_depliants, _sans_blocs, contexte,
     g, montants_du_portage, page, page_et_routeur, pages, saisies,
 )
-from outils_portage import moitie_python
 
 
 #: Le site, en JavaScript : ses pages et ses modules se lisent par node
@@ -729,17 +728,16 @@ def test_le_portage_javascript_retrouve_les_chiffres_du_modele():
     assert execution.returncode == 0, execution.stdout + execution.stderr
 
 
-def _carrieres_au_hasard() -> list[dict]:
-    """Les carrières du test suivant, et ce que le modèle en calcule, ou le
-    refus qu'il leur oppose : la carrière que le portage bâtit de chaque
-    requête, par le pont, et que le moteur Python simule."""
+def _requetes_au_hasard() -> list[dict]:
+    """Les requêtes du test suivant : soixante carrières tirées au hasard,
+    graine fixe, donc reproductibles."""
     import random
 
     saisies = Saisies()
     alea = random.Random(20260828)
     statuts = list(saisies.simulateur().affiliations.codes)
-    cas = []
-    for numero in range(60):
+    requetes = []
+    for _ in range(60):
         # Les âges sont tirés EN MOIS, et le mois de naissance avec : c'est là
         # que le portage a le plus de chances de diverger, puisque le mois
         # commande la date de liquidation, les mois cotisés de l'année du
@@ -785,48 +783,66 @@ def _carrieres_au_hasard() -> list[dict]:
             requete[f"metier{rang}_debut"] = str(age_changement)
             requete[f"metier{rang}_statut"] = alea.choice(statuts)
             requete[f"metier{rang}_salaire"] = f"{alea.uniform(0.1, 9):.3f}"
-        nom = f"aleatoire_{numero}"
-        try:
-            resultat = saisies.simuler(requete).dictionnaire()
-        except (RefusDuPortage, DonneeInsuffisante, KeyError, ValueError) as erreur:
-            cas.append({"nom": nom, "requete": requete, "erreur": str(erreur)})
-            continue
-        cas.append({"nom": nom, "requete": requete, "resultat": _sans_nan(resultat)})
-    return cas
+        requetes.append(requete)
+    return requetes
+
+
+#: Le portage simule chaque requête, ou dit qu'il la refuse.
+_HASARD_JS = """
+import { readFileSync } from "node:fs";
+import { Saisie } from "./moteur/js/saisie.js";
+import { Contexte } from "./moteur/js/contexte.js";
+const requetes = JSON.parse(readFileSync(process.argv[1], "utf8"));
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const sorties = requetes.map((requete) => {
+  try {
+    return { resultat: contexte.simuler(Saisie.depuisRequete(
+      requete, false, contexte.paquet.presomptions)).dictionnaire() };
+  } catch (erreur) {
+    return { refus: true };
+  }
+});
+process.stdout.write(JSON.stringify(sorties));
+"""
 
 
 def test_le_portage_javascript_concorde_sur_des_carrieres_tirees_au_hasard():
     """Les témoins figés couvrent des cas choisis ; celui-ci, des cas non prévus.
 
     Un portage se trompe rarement là où on l'a regardé. On tire donc des
-    carrières au hasard — graine fixe, donc reproductible —, on les calcule ici,
-    et ``tests/js/comparer.mjs`` vérifie que le site retrouve chaque valeur. Le
-    calcul Python se garde tant que rien de ce qu'il lit ne bouge
-    (``outils_portage.py``) ; le site, lui, se rejoue à chaque passage.
+    carrières au hasard — graine fixe, donc reproductible —, et le portage
+    les simule. Ce qu'il en rend, vu identique à ce que le moteur Python
+    calculait, refus compris, est figé au témoin des valeurs (action 161,
+    étape 8n) : le site se rejoue à chaque passage, et tout ce qui bouge se
+    voit.
     """
-    import json
     import shutil
     import subprocess
     import tempfile
-    from pathlib import Path
+
+    from outils_valeurs import valeur_figee
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
 
-    cas = moitie_python(_carrieres_au_hasard)
     racine = Path(__file__).resolve().parents[1]
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:
-        json.dump(cas, fichier, ensure_ascii=False)
+        json.dump(_requetes_au_hasard(), fichier, ensure_ascii=False)
         chemin = fichier.name
     try:
         execution = subprocess.run(
-            ["node", "tests/js/comparer.mjs", chemin],
+            ["node", "--input-type=module", "-e", _HASARD_JS, chemin],
             cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False,
         )
     finally:
         Path(chemin).unlink(missing_ok=True)
-    assert execution.returncode == 0, execution.stdout + execution.stderr
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    sorties = json.loads(execution.stdout)
+    assert len(sorties) == 60
+    calculees = sum("resultat" in sortie for sortie in sorties)
+    assert 0 < calculees < 60, f"{calculees} carrières calculées sur 60"
+    assert valeur_figee("carrières tirées au hasard", sorties) == sorties
 
 
 @pytest.mark.parametrize("nom,champs", [

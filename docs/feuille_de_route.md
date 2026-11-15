@@ -7332,15 +7332,13 @@ profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Ses règles s'importent toutes les unes les autres : le retrait se fera par le
 haut, une fois le moteur Python plus exécuté. Les confrontations, qui lui
 font refaire ce que le portage calcule, partent d'abord, chacune remplacée
-par une référence figée dans `tests/temoins/` : `servis.json`,
-`sorties.json`, `valeurs.json`, et `droit.json` pour chaque appel du droit
-par le pont. Plus rien ne se refait en Python : ni le droit, ni
-l'inversion, la grille, la réversion, la chronologie, l'âge conjoncturel, le
-coût par carrière, les cumuls, le cycle de vie, ni les variantes
-d'espérance de vie. Reste un `moitie_python`, dans `test_web.py`, puis cent
-fichiers de tests qui importent une règle Python. Une étape par session.
-Par quoi commencer : `test_web.py`. Le détail :
-`2026-11-15-les-variantes-d-esperance-de-vie-au-temoin.md`.
+par une référence figée dans `tests/temoins/`. Plus aucun `moitie_python`
+dans les tests : les carrières tirées au hasard de `test_web.py` sont
+figées à leur tour. Restent quatre confrontations sans lui, par
+`comparer.mjs` (`test_independants.py`, `test_pcv_sante.py`), les deux tests
+qui refont les témoins, puis cent fichiers de tests qui importent une règle
+Python. Une étape par session. Par quoi commencer : `test_independants.py`.
+Le détail : `2026-11-15-les-carrieres-au-hasard-au-temoin.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
