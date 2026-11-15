@@ -7333,12 +7333,12 @@ Dans les 24 paires qui restent, chaque fonction écrite des deux côtés est
 déclarée dans `scripts/jumeaux_gardees.yaml` : gardée, avec son lecteur
 Python, ou partant avec le moteur. `tests/test_jumeaux_au_bit.py` confronte
 au bit près chaque fonction gardée qui a sa grille d'arguments à son double :
-29 sont faites, celles de la mortalité, de la courbe des taux, du patrimoine
-et de la distribution, dont deux écarts déclarés. Reste, une étape par
-session : les grilles des 135 autres, en relisant leurs lecteurs par leurs
-appels, quelques fichiers à la fois ; puis le retrait du moteur Python ;
-puis les périodes assimilées du relevé.
-Le détail : `2026-11-15-les-jumeaux-gardes-au-bit-pres.md`.
+57 sont faites, dans onze fichiers de données, toutes identiques sauf un
+écart déclaré. Reste, une étape par session : les grilles des 90 autres, en
+relisant leurs lecteurs par leurs appels, de `calendrier.py` à
+`regimes.py` ; puis le retrait du moteur Python ; puis les périodes
+assimilées du relevé.
+Le détail : `2026-11-15-sept-fichiers-de-donnees-au-bit-pres.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
