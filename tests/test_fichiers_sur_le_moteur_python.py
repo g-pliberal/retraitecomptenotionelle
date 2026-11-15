@@ -44,7 +44,7 @@ ENTREES = frozenset({"Simulateur", "ScenarioActuel", "Carriere", "reversion"})
 #: que décroître.
 FICHIERS = (
     "test_avantages.py",
-    "test_capitalisation.py", "test_chronologie.py", "test_cnracl.py",
+    "test_chronologie.py", "test_cnracl.py",
    
     "test_controle_drees_panorama.py", "test_cout.py",
     "test_cout_age_depart.py",

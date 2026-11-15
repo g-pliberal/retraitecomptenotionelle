@@ -9,7 +9,6 @@ ensuite des ordres de grandeur.
 
 from __future__ import annotations
 
-import contextlib
 import math
 
 import pytest
@@ -22,25 +21,15 @@ from retraite_notionnelle.config import (
 )
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.donnees.frais import FraisEpargneRetraite
-from retraite_notionnelle.donnees.mortalite import DonneesMortalite
-from retraite_notionnelle.donnees.taux import CourbeTauxSansRisque, TauxPlacement
-from retraite_notionnelle.moteur.capitalisation import (
-    MATURITE_MAXIMALE,
-    ConstructeurCapitalisation,
-    repartition,
-)
-from retraite_notionnelle.moteur.conversion import Convertisseur
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.donnees.taux import CourbeTauxSansRisque
+from retraite_notionnelle.moteur.capitalisation import MATURITE_MAXIMALE
+
+from facade import Simulateur
 
 
 @pytest.fixture(scope="module")
 def courbe() -> CourbeTauxSansRisque:
     return CourbeTauxSansRisque(RACINE_DONNEES)
-
-
-@pytest.fixture(scope="module")
-def mortalite() -> DonneesMortalite:
-    return DonneesMortalite(RACINE_DONNEES, cache_disque=False)
 
 
 @pytest.fixture(scope="module")
@@ -54,27 +43,6 @@ FRAIS_FIGES = dict(
     frais_versement_paliers=(), frais_gestion_paliers=(),
     frais_arrerages_paliers=(), frais_encours_rente_paliers=(),
 )
-
-
-class CourbePlate:
-    """Courbe fictive à taux unique, pour les tests d'identité.
-
-    Quand toutes les maturités rendent le même taux, l'échelle de maturités
-    n'a plus d'effet : le capital admet une forme close, et c'est elle qui
-    permet de vérifier la convention de date et l'application des frais sans
-    dépendre d'aucune donnée.
-    """
-
-    def __init__(self, taux: float) -> None:
-        self.taux = taux
-        self.annee = 2026
-        self.date = "2026-01-01"
-
-    def placement(self, annee_placement: int, duree: int) -> TauxPlacement:
-        return TauxPlacement(
-            taux=self.taux, differe=max(0, annee_placement - self.annee),
-            duree=duree, fiabilite=Fiabilite.CERTIFIEE,
-        )
 
 
 # -- la courbe et ses forwards ------------------------------------------------
@@ -126,151 +94,9 @@ def test_une_duree_nulle_est_refusee(courbe):
 
 # -- l'allocation des maturités -----------------------------------------------
 
-
-@contextlib.contextmanager
-def _regle_d_allocation(regle):
-    """Substitue une règle d'allocation le temps d'un calcul.
-
-    Le constructeur appelle ``repartition`` par son nom de module : l'échanger
-    ici permet de comparer des allocations sans en garder aucune dans le
-    moteur, qui n'en porte qu'une.
-    """
-    from retraite_notionnelle.moteur import capitalisation as module
-    ancienne = module.repartition
-    module.repartition = regle
-    try:
-        yield
-    finally:
-        module.repartition = ancienne
-
-
-
-
-def test_la_repartition_est_une_repartition(courbe):
-    """Les poids somment à un, et aucune maturité ne dépasse l'horizon."""
-    for horizon in range(1, 60):
-        parts = repartition(horizon)
-        assert sum(poids for _, poids in parts) == pytest.approx(1.0)
-        assert all(poids > 0 for _, poids in parts)
-        assert max(maturite for maturite, _ in parts) <= horizon
-
-
-def test_le_versement_est_adosse_a_l_horizon():
-    """Une seule ligne, qui tombe l'année du départ tant que la courbe la cote.
-
-    C'est toute la règle : l'actif sans risque d'une dette datée est le
-    zéro-coupon qui arrive à échéance ce jour-là. Au-delà du bout de courbe, la
-    maturité est plafonnée — on n'achète pas un titre qui n'est pas coté — et
-    c'est le seul cas où un replacement subsiste.
-    """
-    for horizon in range(1, MATURITE_MAXIMALE + 1):
-        assert repartition(horizon) == ((horizon, 1.0),), (
-            "sous le bout de courbe, la maturité EST l'horizon"
-        )
-    for horizon in range(MATURITE_MAXIMALE + 1, 60):
-        assert repartition(horizon) == ((MATURITE_MAXIMALE, 1.0),)
-    assert repartition(0) == ()
-
-
-def test_les_maturites_achetees_sont_des_points_cotes(courbe):
-    """L'adossement n'interpole ni n'extrapole en deçà du bout de courbe."""
-    cotees = set(courbe.maturites)
-    for horizon in range(1, 60):
-        for maturite, _ in repartition(horizon):
-            assert maturite in cotees
-
-
-def test_sous_les_anticipations_pures_l_echelle_est_sans_effet(mortalite, simulateur):
-    """Le capital ne dépend PAS de la façon dont les maturités coupent l'horizon.
-
-    C'est une identité, pas une approximation, et c'est elle qui a fait tomber
-    l'échelle glissante 2/10/30 : enchaîner des placements courts ou bloquer un
-    long accumule exactement ``exp(z(T)·T − z(t)·t)``, parce que c'est ce que
-    l'arbitrage impose au forward. Tant que ``prime_terme_trente_ans`` est nul,
-    toute règle qui pave l'horizon sans le dépasser donne le MÊME capital.
-
-    Le test le vérifie sur quatre règles que tout sépare — dont l'ancienne
-    échelle, reconstituée ici pour ne plus avoir à la garder dans le moteur.
-    """
-    def echelle_glissante(horizon: int) -> tuple[tuple[int, float], ...]:
-        """L'allocation par glide path, telle qu'elle servait jusqu'en 2026."""
-        if horizon <= 0:
-            return ()
-        borner = lambda v: min(1.0, max(0.0, v))  # noqa: E731
-        longue = 0.75 * borner((horizon - 10) / 20)
-        courte = 0.75 * borner((10 - horizon) / 8)
-        cumul: dict[int, float] = {}
-        for maturite, part in zip((2, 10, 30), (courte, 1.0 - courte - longue, longue)):
-            if part > 0:
-                effective = min(maturite, horizon)
-                cumul[effective] = cumul.get(effective, 0.0) + part
-        return tuple(sorted(cumul.items()))
-
-    def tout_court(horizon: int) -> tuple[tuple[int, float], ...]:
-        return ((1, 1.0),) if horizon > 0 else ()
-
-    def moitie_moitie(horizon: int) -> tuple[tuple[int, float], ...]:
-        if horizon <= 0:
-            return ()
-        if horizon == 1:
-            return ((1, 1.0),)
-        return ((1, 0.5), (min(horizon, MATURITE_MAXIMALE), 0.5))
-
-    assiettes = {annee: 30_000.0 for annee in range(2030, 2066)}
-    capitaux = []
-    for regle in (repartition, echelle_glissante, tout_court, moitie_moitie):
-        with _regle_d_allocation(regle):
-            pilier = ConstructeurCapitalisation(
-                simulateur.courbe_taux, mortalite,
-                Convertisseur(mortalite, simulateur.parametres), simulateur.parametres,
-            ).construire(assiettes, 1996, 64.0, 2060)
-        capitaux.append(pilier.capital)
-
-    assert capitaux[0] > 0
-    for capital in capitaux[1:]:
-        assert capital == pytest.approx(capitaux[0], abs=0.01), (
-            "sans prime de terme, l'allocation est un paramètre libre sans effet"
-        )
-
-
-def test_avec_une_prime_de_terme_l_adossement_domine(mortalite):
-    """Dès que la prime n'est plus ignorée, bloquer l'horizon rapporte.
-
-    Et c'est le SEUL réglage sous lequel l'allocation rapporte quelque chose :
-    la prime est ce que le roulement rachète à chaque échéance et que
-    l'adossement paie une fois. Le test l'exige contre l'ancienne échelle et
-    contre un roulement à un an, dans cet ordre-là — plus on roule, plus on
-    paie.
-    """
-    def tout_court(horizon: int) -> tuple[tuple[int, float], ...]:
-        return ((1, 1.0),) if horizon > 0 else ()
-
-    def echelle_glissante(horizon: int) -> tuple[tuple[int, float], ...]:
-        if horizon <= 0:
-            return ()
-        borner = lambda v: min(1.0, max(0.0, v))  # noqa: E731
-        longue = 0.75 * borner((horizon - 10) / 20)
-        courte = 0.75 * borner((10 - horizon) / 8)
-        cumul: dict[int, float] = {}
-        for maturite, part in zip((2, 10, 30), (courte, 1.0 - courte - longue, longue)):
-            if part > 0:
-                effective = min(maturite, horizon)
-                cumul[effective] = cumul.get(effective, 0.0) + part
-        return tuple(sorted(cumul.items()))
-
-    parametres = Parametres(prime_terme_trente_ans=0.005)
-    courbe = CourbeTauxSansRisque(RACINE_DONNEES, parametres.prime_terme_trente_ans)
-    assiettes = {annee: 30_000.0 for annee in range(2030, 2066)}
-
-    capitaux = {}
-    for nom, regle in (("adosse", repartition), ("echelle", echelle_glissante),
-                       ("roule", tout_court)):
-        with _regle_d_allocation(regle):
-            capitaux[nom] = ConstructeurCapitalisation(
-                courbe, mortalite, Convertisseur(mortalite, parametres), parametres,
-            ).construire(assiettes, 1996, 64.0, 2060).capital
-
-    assert capitaux["adosse"] > capitaux["echelle"] > capitaux["roule"]
+# L'adossement, et ce que l'allocation vaut sous les anticipations pures ou
+# sous une prime de terme, s'éprouvent sur le portage :
+# ``tests/js/capitalisation.test.js`` (action 161, quatrième vague).
 
 
 def test_la_prime_de_terme_ne_retouche_pas_la_courbe_du_jour():
@@ -292,68 +118,14 @@ def test_la_prime_de_terme_ne_retouche_pas_la_courbe_du_jour():
     assert primee.prime(60) == pytest.approx(0.005), "plafonnée au bout de courbe"
 
 
-# -- l'accumulation, sur une courbe plate -------------------------------------
+# -- l'accumulation ------------------------------------------------------------
+
+# Les identités sur une courbe plate — la forme close du capital, les frais,
+# leur trajectoire, la transmission — s'éprouvent sur le portage :
+# ``tests/js/capitalisation.test.js``.
 
 
-def _constructeur(taux: float, mortalite, parametres: Parametres):
-    return ConstructeurCapitalisation(
-        CourbePlate(taux), mortalite, Convertisseur(mortalite, parametres), parametres
-    )
-
-
-def test_le_capital_a_la_forme_close_quand_la_courbe_est_plate(mortalite):
-    """Identité de référence : versement crédité en fin d'année, puis
-    ``(1 + taux)(1 - frais)`` par année restante.
-
-    Elle vérifie d'un coup la convention de date — un versement ne rapporte pas
-    l'année de son versement, exactement comme au compte notionnel —, l'ordre
-    des prélèvements et l'absence d'année offerte ou perdue.
-    """
-    parametres = Parametres(**FRAIS_FIGES)
-    constructeur = _constructeur(0.03, mortalite, parametres)
-    assiettes = {annee: 30_000.0 for annee in range(2026, 2041)}
-
-    pilier = constructeur.construire(
-        assiettes=assiettes, annee_naissance=1990,
-        age_liquidation=50.0, annee_liquidation=2040,
-    )
-
-    net = 30_000.0 * parametres.taux_capitalisation_applique * (
-        1 - parametres.frais_versement_capitalisation
-    )
-    facteur = (1 + 0.03) * (1 - parametres.frais_gestion_capitalisation)
-    attendu = sum(net * facteur ** (2040 - annee) for annee in range(2026, 2041))
-    assert pilier.capital == pytest.approx(attendu)
-
-    # Le versement de l'année de liquidation est bien porté, et bien sans
-    # intérêt : c'est le dernier terme de la somme, à l'exposant zéro.
-    assert pilier.annees[-1].versement_net == pytest.approx(net)
-    assert pilier.annees[-1].encours - pilier.annees[-2].encours * facteur == (
-        pytest.approx(net)
-    )
-
-
-def test_sans_frais_le_capital_est_celui_de_la_courbe_seule(mortalite):
-    parametres = Parametres(
-        frais_versement_capitalisation=0.0,
-        frais_gestion_capitalisation=0.0,
-        **FRAIS_FIGES,
-    )
-    constructeur = _constructeur(0.04, mortalite, parametres)
-    assiettes = {annee: 40_000.0 for annee in range(2026, 2036)}
-    pilier = constructeur.construire(
-        assiettes=assiettes, annee_naissance=1990,
-        age_liquidation=45.0, annee_liquidation=2035,
-    )
-    brut = 40_000.0 * parametres.taux_capitalisation_applique
-    attendu = sum(brut * 1.04 ** (2035 - annee) for annee in range(2026, 2036))
-    assert pilier.capital == pytest.approx(attendu)
-    assert pilier.capital_hors_frais == pytest.approx(pilier.capital)
-    assert pilier.frais_preleves == 0.0
-    assert pilier.taux_rendement_annuel == pytest.approx(0.04)
-
-
-def test_les_frais_coutent_plus_que_ce_qu_ils_prelevent(mortalite, simulateur):
+def test_les_frais_coutent_plus_que_ce_qu_ils_prelevent(simulateur):
     """Le coût complet des frais dépasse les frais prélevés.
 
     La différence est le rendement que les sommes prélevées n'ont pas produit.
@@ -408,26 +180,6 @@ def test_la_rente_est_le_capital_divise_puis_ampute_des_frais_d_arrerages(simula
     assert 0.8 < pilier.facteur_encours_rente < 1.0
 
 
-def test_le_frais_sur_la_reserve_de_rente_vaut_une_actualisation_negative(mortalite):
-    """0,52 % par an sur la réserve d'une rente nivelée, c'est diviser le
-    capital par ``Σ p_t (1 − f)^(−t)`` : au diviseur du modèle, huit pour
-    cent de rente ; et rien du tout quand le frais est nul."""
-    avec = Parametres(**FRAIS_FIGES)
-    sans = Parametres(frais_encours_rente_capitalisation=0.0, **FRAIS_FIGES)
-    assiettes = {annee: 30_000.0 for annee in range(2026, 2066)}
-    args = dict(assiettes=assiettes, annee_naissance=2001,
-                age_liquidation=64.0, annee_liquidation=2065)
-    pilier_avec = _constructeur(0.03, mortalite, avec).construire(**args)
-    pilier_sans = _constructeur(0.03, mortalite, sans).construire(**args)
-    assert pilier_sans.facteur_encours_rente == 1.0
-    assert pilier_avec.capital == pytest.approx(pilier_sans.capital)
-    courbe = mortalite.courbe(64.0, 2065.0, None, avec.table_generation, None)
-    attendu = sum(courbe) / sum(p / (1 - 0.0052) ** t for t, p in enumerate(courbe))
-    assert pilier_avec.facteur_encours_rente == pytest.approx(attendu)
-    assert 0.90 < attendu < 0.94
-    assert pilier_avec.rente_annuelle == pytest.approx(pilier_sans.rente_annuelle * attendu)
-
-
 # -- la trajectoire des frais -------------------------------------------------
 
 
@@ -453,58 +205,6 @@ def test_les_frais_par_defaut_baissent_et_ne_remontent_jamais():
     assert parametres.frais_capitalisation("versement", 2079) == 0.0
     assert parametres.frais_capitalisation("arrerages", 2079) == 0.0
     assert parametres.frais_capitalisation("gestion", 2079) == pytest.approx(0.0020)
-
-
-def test_la_baisse_porte_sur_les_nouveaux_depots_et_le_stock_garde_son_tarif(mortalite):
-    """Sans convergence, un versement d'avant le palier est prélevé à son tarif
-    d'entrée jusqu'au bout ; celui d'après entre au nouveau tarif."""
-    parametres = Parametres(
-        frais_versement_capitalisation=0.0, frais_versement_paliers=(),
-        frais_gestion_capitalisation=0.01, frais_gestion_paliers=((2030, 0.0),),
-        frais_arrerages_paliers=(), frais_encours_rente_paliers=(),
-        convergence_frais_stock=0.0,
-    )
-    constructeur = _constructeur(0.0, mortalite, parametres)
-    # Un seul versement en 2027 : il garde 1 % par an malgré le palier de 2030.
-    ancien = constructeur.construire(
-        assiettes={2027: 20_000.0}, annee_naissance=1990,
-        age_liquidation=50.0, annee_liquidation=2040,
-    )
-    brut = 20_000.0 * parametres.taux_capitalisation_applique
-    assert ancien.capital == pytest.approx(brut * 0.99 ** 13)
-    assert ancien.annees[-1].taux_frais_gestion == pytest.approx(0.01)
-    # Un seul versement en 2031 : il entre à zéro et n'est jamais prélevé.
-    nouveau = constructeur.construire(
-        assiettes={2031: 20_000.0}, annee_naissance=1990,
-        age_liquidation=50.0, annee_liquidation=2040,
-    )
-    assert nouveau.capital == pytest.approx(brut)
-    assert nouveau.frais_gestion == 0.0
-
-
-def test_la_convergence_rapproche_le_stock_du_tarif_des_nouveaux_depots(mortalite):
-    """À convergence 1, tout le stock passe au tarif du jour ; à 0,5, l'écart
-    se referme de moitié chaque année."""
-    def pilier(convergence):
-        parametres = Parametres(
-            frais_versement_capitalisation=0.0, frais_versement_paliers=(),
-            frais_gestion_capitalisation=0.01, frais_gestion_paliers=((2030, 0.0),),
-            frais_arrerages_paliers=(), frais_encours_rente_paliers=(),
-            convergence_frais_stock=convergence,
-        )
-        return _constructeur(0.0, mortalite, parametres).construire(
-            assiettes={2027: 20_000.0}, annee_naissance=1990,
-            age_liquidation=50.0, annee_liquidation=2040,
-        )
-    brut = 20_000.0 * Parametres().taux_capitalisation_applique
-    total = pilier(1.0)
-    # 1 % en 2028 et 2029, puis zéro dès 2030.
-    assert total.capital == pytest.approx(brut * 0.99 ** 2)
-    partiel = pilier(0.5)
-    taux = [a.taux_frais_gestion for a in partiel.annees if a.annee >= 2030]
-    assert taux[0] == pytest.approx(0.005)
-    assert taux[1] == pytest.approx(0.0025)
-    assert total.capital > partiel.capital > pilier(0.0).capital
 
 
 def test_au_taux_technique_nul_les_deux_diviseurs_sont_le_meme(simulateur):
@@ -577,30 +277,6 @@ def test_l_esperance_de_capital_transmis_est_encadree(simulateur):
     assert tard.esperance_capital_transmis > tot.esperance_capital_transmis
     assert (tard.probabilite_deces_avant_liquidation
             > tot.probabilite_deces_avant_liquidation)
-
-
-def test_la_transmission_suit_la_table_du_modele(mortalite):
-    """L'espérance transmise se recalcule à la main, sur la même table.
-
-    Elle n'est pas une approximation : c'est la somme, année par année, de la
-    probabilité de mourir cette année-là par l'encours moyen de l'année.
-    """
-    parametres = Parametres(**FRAIS_FIGES)
-    constructeur = _constructeur(0.03, mortalite, parametres)
-    assiettes = {annee: 30_000.0 for annee in range(2026, 2041)}
-    pilier = constructeur.construire(
-        assiettes=assiettes, annee_naissance=1990,
-        age_liquidation=50.0, annee_liquidation=2040, sexe="H",
-    )
-    survie = mortalite.courbe(36.0, 2026.0, None, parametres.table_generation)
-    attendu = sum(
-        (survie[i] - survie[i + 1]) * 0.5 * (a.encours_ouverture + a.encours)
-        for i, a in enumerate(pilier.annees[:-1])
-    )
-    assert pilier.esperance_capital_transmis == pytest.approx(attendu)
-    assert pilier.probabilite_deces_avant_liquidation == pytest.approx(
-        survie[0] - survie[len(pilier.annees) - 1]
-    )
 
 
 # -- le branchement dans la proposition ---------------------------------------
@@ -1086,63 +762,6 @@ def test_les_regimes_de_taux_s_ordonnent_sur_la_rente():
         comparaison = simulateur.simuler(simulateur.carriere_simple(**carriere))
         rentes[regime] = comparaison.notionnel_liberal.capitalisation.rente_annuelle
     assert rentes["forwards"] > rentes["prime"] > rentes["prime_haute"] > 0
-
-
-def test_le_reglage_des_taux_est_ce_qui_fait_peser_l_allocation():
-    """Sous « forwards », adossement et roulement rendent le MÊME euro.
-
-    C'est ce que le menu du site est fait pour montrer, et c'est la raison
-    d'être des deux autres réglages : sans eux, aucune allocation n'en vaut
-    une autre, et l'adossement à la date du départ ne se justifie que par le
-    risque de réinvestissement qu'il supprime.
-    """
-    def roulement(horizon: int) -> tuple[tuple[int, float], ...]:
-        return ((1, 1.0),) if horizon > 0 else ()
-
-    carriere = dict(annee_naissance=2004, sexe="H",
-                    affiliation="salarie_prive_non_cadre", age_debut=22, age_liquidation=64)
-    for regime, attendu in (("forwards", "identique"), ("prime", "adossement gagne")):
-        parametres = Parametres().sous_regime_taux(regime)
-        simulateur = Simulateur(parametres)
-        adosse = simulateur.simuler(
-            simulateur.carriere_simple(**carriere)
-        ).notionnel_liberal.capitalisation.capital
-        with _regle_d_allocation(roulement):
-            simulateur = Simulateur(parametres)
-            roule = simulateur.simuler(
-                simulateur.carriere_simple(**carriere)
-            ).notionnel_liberal.capitalisation.capital
-        if attendu == "identique":
-            assert adosse == pytest.approx(roule, abs=0.01)
-        else:
-            assert adosse > roule
-
-
-def test_le_reglage_des_taux_ne_touche_pas_le_taux_d_emprunt_de_la_dette():
-    """« Système 4 seulement » : le menu le dit, et ce test l'exige.
-
-    La prime de terme portée sur la courbe COMMUNE déplaçait aussi le taux
-    auquel la page Coût finance les déficits, donc le stock de dette de tous
-    les systèmes — jusqu'à dix points de PIB sur le système actuel, qui n'a pas
-    de pilier capitalisé. Les deux courbes sont donc séparées, et ce test tient
-    la séparation : ``courbe_taux`` est celle que la BCE publie, ``courbe_taux_
-    pilier`` est la seule que le réglage traverse.
-    """
-    nu = Simulateur(Parametres())
-    for regime in ("forwards", "prime", "prime_haute"):
-        simulateur = Simulateur(Parametres().sous_regime_taux(regime))
-        assert simulateur.courbe_taux.prime_terme == 0.0, (
-            "la courbe du taux d'emprunt ne porte jamais de prime"
-        )
-        # Le forward à un an est ce que `cout.calculer_dette` consomme.
-        for annee in (2030, 2050, 2070):
-            assert (simulateur.courbe_taux.placement(annee - 1, 1).taux
-                    == pytest.approx(nu.courbe_taux.placement(annee - 1, 1).taux,
-                                     abs=1e-15))
-        attendu = Parametres().sous_regime_taux(regime).prime_terme_trente_ans
-        assert simulateur.courbe_taux_pilier.prime_terme == attendu
-        assert (simulateur.constructeur_capitalisation.courbe
-                is simulateur.courbe_taux_pilier)
 
 
 def test_les_regimes_de_frais_s_ordonnent_sur_la_rente():
