@@ -34,7 +34,7 @@ from retraite_notionnelle import Parametres, pont
 from retraite_notionnelle.droit import liquidation
 from retraite_notionnelle.carriere import AnneeCarriere, Carriere
 from retraite_notionnelle.castypes import (
-    CAS_TYPES, GENERATIONS, GRILLE_DU_COUT, carriere_de_la_grille, cases_de_la_grille)
+    CAS_TYPES, GENERATIONS, GRILLE_DU_COUT, cases_de_la_grille)
 from retraite_notionnelle.config import RACINE_DONNEES, RACINE_PROJET
 from retraite_notionnelle.simulateur import Simulateur
 
@@ -63,15 +63,16 @@ SAISIES = (
 
 
 def _demandes_des_cases(simulateur: Simulateur) -> list[dict]:
-    """Les cases de ``CASES``, telles qu'on les demande au pont : la grille les
-    date sous les univers et les paramètres de ``simulateur``."""
-    demandes = []
-    for code, generation in CASES:
-        cas = next(cas for cas in CAS_TYPES if cas.code == code)
-        carriere = carriere_de_la_grille(simulateur, cas, generation)
-        demandes.append({"cle": f"{code}|{generation}",
-                         "options": cas.options(generation, carriere.age_liquidation)})
-    return demandes
+    """Les cases de ``CASES``, telles qu'on les demande au pont : le pilote
+    du portage les date sous les paramètres de ``simulateur``
+    (:func:`_ages_au_portage`)."""
+    cohortes = [(next(cas for cas in CAS_TYPES if cas.code == code), generation)
+                for code, generation in CASES]
+    ages, refus = _ages_au_portage(simulateur, cohortes)
+    assert refus == {}
+    return [{"cle": f"{cas.code}|{generation}",
+             "options": cas.options(generation, ages[f"{cas.code}|{generation}"])}
+            for cas, generation in cohortes]
 
 
 def test_le_pont_rend_des_cases_ce_que_le_temoin_des_valeurs_porte():
@@ -222,20 +223,19 @@ def test_le_pont_simule_une_saisie_comme_le_site():
 
 
 def test_chaque_case_passe_au_portage_partant_a_l_age_que_le_pilote_fixe():
-    """Le Python fixe l'âge de chaque départ et écarte ce que le droit écarte
-    (``carriere_de_la_grille``) ; le portage simule. Sous les conventions du
-    COR, la carrière d'un cas type se déforme en Python : rien ne passe."""
+    """Le portage fixe l'âge de chaque départ et écarte ce que le droit écarte
+    (``castypes.cases_de_la_grille``) : les options de chaque case et le motif
+    de chaque refus, tels que le témoin des valeurs les porte, figés quand le
+    moteur Python les refaisait encore (action 161, étape 8f). Sous les
+    conventions du COR, la carrière d'un cas type se déforme : rien ne passe."""
     simulateur = Simulateur(Parametres())
     types = tuple(cas for cas in CAS_TYPES if cas.code in ("cadre", "carriere_interrompue"))
     options, echecs = cases_de_la_grille(simulateur, types, (1940, 2000))
     assert set(options) | set(echecs) == {(cas.code, generation)
                                          for cas in types for generation in (1940, 2000)}
-    for cas in types:
-        for generation in (1940, 2000):
-            if (cas.code, generation) in options:
-                carriere = carriere_de_la_grille(simulateur, cas, generation)
-                assert options[(cas.code, generation)] == cas.options(
-                    generation, carriere.age_liquidation)
+    valeur_figee("cases de la grille et leurs refus",
+                 {f"{code}|{generation}": lu for (code, generation), lu
+                  in sorted(options.items()) + sorted(echecs.items())})
     with pytest.raises(ValueError, match="COR"):
         cases_de_la_grille(simulateur.pour_la_projection(), types, (2000,))
 
@@ -661,8 +661,9 @@ def test_sans_paquet_le_pont_reste_ouvert_d_une_demande_a_l_autre(monkeypatch):
 def test_une_saisie_par_la_pension_passe_le_pont_par_la_carriere_que_l_inversion_trouve():
     """Sa carrière vient de la pension, que le contexte inverse en la
     simulant (``Contexte.simuler``, ``contexte.js``) : le pont rend celle que
-    l'inversion trouve, que le site simule, et non une carrière au revenu de
-    la saisie."""
+    l'inversion trouve, que le portage simule (``simulateur.simuler``, par
+    :func:`pont.droit`) à la pension du site, et non une carrière au revenu
+    de la saisie."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     from retraite_notionnelle.web.site import module, site
@@ -674,7 +675,10 @@ def test_une_saisie_par_la_pension_passe_le_pont_par_la_carriere_que_l_inversion
     (parametres, carriere), (_, au_revenu) = lus["pension"], lus["revenu"]
     saisie = module("saisie").Saisie.depuis_requete(
         par_pension, False, site().contexte.paquet.presomptions)
-    assert (Simulateur(parametres).simuler(carriere).actuel.pension_annuelle
+    simulee, refus = pont.droit({"a": ("simulateur.simuler", pont.SIMULATEUR, carriere)},
+                                parametres)
+    assert not refus
+    assert (simulee["a"]["resultat"]["scenarios"]["actuel"]["pension_annuelle"]
             == site().contexte.simuler(saisie).actuel.pension_annuelle)
     assert ([ligne.revenu for ligne in carriere.lignes]
             != [ligne.revenu for ligne in au_revenu.lignes])
@@ -1042,9 +1046,25 @@ CASES_DU_COUT = (("fonctionnaire_sedentaire", 1990), ("fonctionnaire_actif", 197
                  ("carriere_interrompue", 1950), ("salaire_moyen", 1970))
 
 
-def _carriere_du_cout(simulateur, code: str, generation: int):
-    return carriere_de_la_grille(
-        simulateur, next(cas for cas in GRILLE_DU_COUT if cas.code == code), generation)
+def _carrieres_du_cout(simulateur, cases) -> dict[str, dict]:
+    """Les carrières des ``cases``, ``(code, génération)`` de la grille du
+    coût, que le portage bâtit sous les paramètres de ``simulateur``, ses
+    primes projetées sous les conventions du COR
+    (:func:`pont.carrieres_de_la_grille`) : sous ``code|génération``, la
+    carrière, ``carriere``, et les deux que l'âge légal de la proposition en
+    dérive, ``reportee`` et ``attente`` — la carrière elle-même quand il ne
+    la reporte pas, comme ``Carriere.prolongee`` la rend."""
+    from retraite_notionnelle.castypes import primes_projetees_en_donnees
+
+    lus, refus = pont.carrieres_de_la_grille(
+        [{"cle": f"{code}|{generation}", "rendre": "carriere",
+          **next(cas for cas in GRILLE_DU_COUT if cas.code == code).pour_le_portage(
+              simulateur, generation)}
+         for code, generation in cases],
+        simulateur.parametres, primes_projetees_en_donnees(simulateur), "droit")
+    assert refus == {}
+    return {cle: {nom: lu[nom] or lu["carriere"] for nom in ("carriere", "reportee", "attente")}
+            for cle, lu in lus.items()}
 
 
 def _types(valeur):
@@ -1063,9 +1083,13 @@ def test_une_carriere_passe_en_donnees_champ_par_champ():
     (``primes_projetees``, l'entrée tardive), passe au portage en données pour
     qu'il la simule (``pont.grille_du_cout``) : tous les champs de la carrière,
     chaque ligne entière et la chronologie dont elle est la vue, en JSON strict
-    — un champ qui naîtrait sans passer le pont ferait échouer ce test."""
+    — un champ qui naîtrait sans passer le pont ferait échouer ce test. Le
+    portage la bâtit (:func:`_carrieres_du_cout`)."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
     simulateur = Simulateur(Parametres()).pour_la_projection()
-    carriere = _carriere_du_cout(simulateur, "fonctionnaire_sedentaire", 1990)
+    (bati,) = _carrieres_du_cout(simulateur, [("fonctionnaire_sedentaire", 1990)]).values()
+    carriere = bati["carriere"]
     donnees = pont.carriere_en_donnees(carriere)
     assert set(donnees) == {champ.name for champ in fields(Carriere)}
     for ligne in donnees["lignes"]:
@@ -1374,15 +1398,10 @@ def test_la_grille_du_cout_passe_le_pont():
     from retraite_notionnelle import cout
 
     simulateur = Simulateur(Parametres()).pour_la_projection()
-    macro = simulateur.macro
-    age_legal = simulateur.parametres.age_legal_liberal
-    cas = []
-    for code, generation in CASES_DU_COUT:
-        carriere = _carriere_du_cout(simulateur, code, generation)
-        cas.append({"cle": f"{code}|{generation}", "carriere": carriere, "propositions": {
-            "sans_report": carriere,
-            "reportee": carriere.prolongee(age_legal, macro),
-            "attente": carriere.prolongee(age_legal, macro, attente_travaillee=False)}})
+    cas = [{"cle": cle, "carriere": bati["carriere"], "propositions": {
+                "sans_report": bati["carriere"], "reportee": bati["reportee"],
+                "attente": bati["attente"]}}
+           for cle, bati in _carrieres_du_cout(simulateur, CASES_DU_COUT).items()]
     scenarios = [cle for cle, _ in cout.SCENARIOS]
     resultats, echecs = pont.grille_du_cout(cas, scenarios, simulateur.parametres,
                                             pont.paquet_des_donnees())
@@ -1408,8 +1427,8 @@ def test_les_parametres_du_cout_passent_le_pont():
     lus = {}
     for parametres in (Parametres(), variante):
         simulateur = Simulateur(parametres).pour_la_projection()
-        carriere = _carriere_du_cout(simulateur, "salaire_moyen", 1975)
-        cas = [{"cle": "salaire_moyen|1975", "carriere": carriere, "propositions": {}}]
+        (bati,) = _carrieres_du_cout(simulateur, [("salaire_moyen", 1975)]).values()
+        cas = [{"cle": "salaire_moyen|1975", "carriere": bati["carriere"], "propositions": {}}]
         resultats, _ = pont.grille_du_cout(cas, scenarios, simulateur.parametres,
                                            pont.paquet_des_donnees())
         valeur_figee(f"grille du coût, bascule en {parametres.annee_bascule}", resultats)
@@ -1437,9 +1456,8 @@ def test_les_lignes_du_compte_d_un_scenario_passent_le_pont_sous_un_bareme():
     for bareme in (None, BAREMES[0]):
         simulateur = Simulateur(replace(Parametres(), bareme_regime_unique=bareme)
                                 ).pour_la_projection()
-        cas = [{"cle": f"{code}|{generation}", "propositions": {},
-                "carriere": _carriere_du_cout(simulateur, code, generation)}
-               for code, generation in CASES_DU_COUT]
+        cas = [{"cle": cle, "propositions": {}, "carriere": bati["carriere"]}
+               for cle, bati in _carrieres_du_cout(simulateur, CASES_DU_COUT).items()]
         resultats, echecs = pont.grille_du_cout(cas, scenarios, simulateur.parametres,
                                                 pont.paquet_des_donnees(), comptes=comptes)
         assert not echecs

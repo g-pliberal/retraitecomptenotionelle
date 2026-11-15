@@ -7334,11 +7334,12 @@ haut, une fois le moteur Python plus exécuté. Les confrontations, qui lui
 font refaire ce que le portage calcule, partent d'abord, chacune remplacée
 par une référence figée dans `tests/temoins/` : `servis.json`,
 `sorties.json`, `valeurs.json`, et `droit.json` pour chaque appel du droit
-par le pont. Plus aucun appel du droit ne se refait en Python. Restent
-l'inversion, les carrières que les tests bâtissent en Python, les
-confrontations que la note énumère, puis cent fichiers de tests qui importent
-une règle Python. Une étape par session. Par quoi commencer : la première
-confrontation de la liste. Le détail : `2026-11-15-le-temoin-du-droit.md`.
+par le pont. Plus aucun appel du droit ne se refait en Python, ni
+l'inversion, ni les carrières de `test_pont.py`. Restent les carrières que
+trois autres fichiers bâtissent en Python, les confrontations que la note
+énumère, puis cent fichiers de tests qui importent une règle Python. Une
+étape par session. Par quoi commencer : `test_lectures_decision_29.py`. Le
+détail : `2026-11-15-le-calcul-a-rebours-au-portage.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

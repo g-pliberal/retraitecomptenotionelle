@@ -47,6 +47,9 @@
  "test_pont.py::cases de la grille des carrières types": {
   "valeur": "2f0ac38f5e3d9dd2"
  },
+ "test_pont.py::cases de la grille et leurs refus": {
+  "valeur": "9ac1714aca64af49"
+ },
  "test_pont.py::cases sous la proposition prospective": {
   "valeur": "0f46e3e6334361f6"
  },
