@@ -30,9 +30,10 @@ from __future__ import annotations
 
 import pytest
 
-from retraite_notionnelle.carriere import Carriere, LigneRelevee, Metier
-from retraite_notionnelle.droit import compter
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.carriere import LigneRelevee, Metier
+
+from facade import (Carriere, Simulateur, acquerir, commun, completer, compter, coordonner,
+                    releve)
 
 
 @pytest.fixture(scope="module")
@@ -641,8 +642,6 @@ def test_chaque_version_de_la_majoration_pour_enfants_des_sections_est_portee():
     (``majoration_enfants`` dans ``avantages_non_contributifs``, que
     ``_taux_majoration_enfants`` sert à 10 %), sans écart."""
     from retraite_notionnelle.carriere import DateMois
-    from retraite_notionnelle.droit.commun import periode_de_liquidation
-    from retraite_notionnelle.droit.completer import _taux_majoration_enfants
     from retraite_notionnelle.noyau import carte
 
     catalogue = Simulateur().catalogue
@@ -664,8 +663,8 @@ def test_chaque_version_de_la_majoration_pour_enfants_des_sections_est_portee():
             assert set(taux) == set(SECTIONS_QUI_MAJORENT), version["id"]
             for code in SECTIONS_QUI_MAJORENT:
                 regime = catalogue[code]
-                periode = periode_de_liquidation(regime, DateMois(annee, mois))
-                servi = (_taux_majoration_enfants(regime, 3, periode)
+                periode = commun.periode_de_liquidation(regime, DateMois(annee, mois))
+                servi = (completer._taux_majoration_enfants(regime, 3, periode)
                          if "majoration_enfants" in periode.avantages_non_contributifs
                          else 0.0)
                 if (code, annee, mois) in MAJORATION_OMISE_PAR_LE_MODELE:
@@ -814,7 +813,6 @@ def test_la_cipav_cotise_aux_deux_tranches_du_decret_dans_les_deux_moteurs(
 
     from retraite_notionnelle import pont
     from retraite_notionnelle.carriere import AnneeCarriere
-    from retraite_notionnelle.droit import acquerir, coordonner
 
     lus, refus = droit_et_refait({"fiche": (
         "remuneration.fiche_depuis_brut.lignes_de_retraite", pont.SIMULATEUR,
@@ -1378,7 +1376,6 @@ def test_les_points_d_une_annee_incomplete_suivent_sa_cotisation(simulateur):
     from pathlib import Path
 
     from retraite_notionnelle.carriere import AnneeCarriere
-    from retraite_notionnelle.droit import releve
 
     def lignes():
         return [dict(annee=annee, revenu=40_000.0, affiliation="profession_liberale")

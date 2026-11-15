@@ -30,6 +30,7 @@ from retraite_notionnelle.config import (RACINE_PROJET, ContributionEtat, Neutra
 from retraite_notionnelle.donnees.chargement import DonneeInsuffisante, Fiabilite
 from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
+from retraite_notionnelle.droit import compter as compter_python
 from retraite_notionnelle.droit import cultes as cultes_python
 from retraite_notionnelle.droit import foyer as foyer_python
 from retraite_notionnelle.droit import liquidation as liquidation_python
@@ -559,6 +560,15 @@ def test_une_table_se_lit_sous_les_parametres_de_son_simulateur(simulateur):
     assert "agirc_arrco" in convenu.valeurs_point.regimes_convenus("valeur_service")
 
 
+def test_la_valeur_de_service_d_un_point_se_lit_dans_sa_table(simulateur):
+    """La valeur de service du point de la CNAVPL en 2026, que la caisse
+    publie : 0,6599 €, sous le type que son jumeau annonce ; rien pour un
+    régime qui n'a pas de point."""
+    valeur, fiabilite = simulateur.scenario_actuel.valeurs_point.service("cnavpl", 2026)
+    assert (valeur, type(fiabilite)) == (0.6599, Fiabilite)
+    assert simulateur.scenario_actuel.valeurs_point.service("regime_lunaire", 2026) is None
+
+
 def test_la_version_d_une_reversion_se_lit_par_la_fiche_de_son_regime(simulateur):
     """« Le montant maximum de la pension principale de réversion [...] est égal
     à 54 % du maximum » (circulaire Cnav n° 3/95, § 13) : la version de la
@@ -687,8 +697,9 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     with pytest.raises(ValueError, match="ouvrir.ouvrir"):
         pont.regle_du_droit("ouvrir", "ouvrir", float)
     assert facade.REGLES is pont.REGLES_DE_LA_FACADE
-    assert set(facade.REGLES) == {"commun", "completer", "cultes", "foyer", "liquider", "ouvrir",
-                                  "releve", "reversion", "revalorisation"}
+    assert set(facade.REGLES) == {"commun", "completer", "compter", "cultes", "foyer",
+                                  "liquider", "ouvrir", "releve", "reversion",
+                                  "revalorisation"}
 
 
 def test_une_regle_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulateur):
@@ -1574,6 +1585,35 @@ def test_une_regle_privee_du_jumeau_se_demande_a_la_fonction_du_portage():
     assert montant == 1000.0 and limite == pytest.approx(60305.96)
 
 
+def test_les_regles_des_enfants_des_sections_liberales_se_demandent_au_portage(simulateur):
+    """La majoration de durée d'assurance que la CNAVPL rend aux mères depuis
+    le 1er avril 2010 (L. 643-1-1) : huit trimestres par enfant, deux enfants,
+    seize trimestres, portés par la section ; les mines, en points, ne
+    portent pas leurs bonifications. Le taux de la majoration pour enfants,
+    sur un régime du catalogue : 10 % à trois enfants à la Cipav en 2020
+    (décret n° 99-913, article 6), rien à deux ; dans la fonction publique,
+    10 % et 5 % par enfant au-delà du troisième (L. 18 du code des pensions
+    civiles et militaires), 15 % à quatre."""
+    mere = Carriere.depuis_parcours(
+        annee_naissance=1958, sexe="F",
+        metiers=[Metier(affiliation="salarie_prive_non_cadre", age_debut=20.0)],
+        age_liquidation=62.0, macro=simulateur.macro, nombre_enfants=2)
+    actuel = simulateur.scenario_actuel
+    assert facade.compter.majoration_pour_enfants(actuel, mere, {"mines": 160}, 2020) is None
+    porteur = facade.compter.majoration_pour_enfants(actuel, mere, {"cnavpl": 160}, 2020)
+    assert porteur.regimes == ["cnavpl"] and porteur.trimestres == 16
+    cipav = simulateur.catalogue["cipav_complementaire"]
+    periode = commun.periode_de_liquidation(cipav, DateMois(2020, 1))
+    assert completer._taux_majoration_enfants(cipav, 3, periode) == 0.10
+    assert completer._taux_majoration_enfants(cipav, 2, periode) == 0.0
+    etat = simulateur.catalogue["fonction_publique_etat"]
+    assert completer._taux_majoration_enfants(etat, 4) == pytest.approx(0.15)
+    # Un régime d'un autre catalogue n'arriverait pas au portage.
+    with pytest.raises(NonTransmissible, match="catalogue d'un simulateur de la façade"):
+        completer._taux_majoration_enfants(
+            simulateur_python.Simulateur().catalogue["fonction_publique_etat"], 4)
+
+
 def _foyer_du_couple(simulateur, conjoint: str, mariage: str | None = None):
     """Un salarié né en 1955, parti à 66 ans, marié à une conjointe née en
     ``conjoint`` qui déclare 4 000 € de ressources."""
@@ -1796,6 +1836,7 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
     (``pont.TABLES_DES_REGLES``). Deux noms seulement diffèrent d'un côté à
     l'autre."""
     jumelle = getattr({"commun": commun_python, "completer": completer_python,
+                       "compter": compter_python,
                        "cultes": cultes_python, "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
                        "releve": releve_python, "reversion": reversion_python,
                        "revalorisation": revalorisation_python}[module], regle)

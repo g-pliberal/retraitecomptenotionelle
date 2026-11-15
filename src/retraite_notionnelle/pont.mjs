@@ -1934,9 +1934,10 @@ LECTURES.facade = facade;
 
 /**
  * Un argument d'une méthode de table ou d'une règle du droit que la façade
- * sert (`_argument_de_la_facade` de `pont.py`). Cinq passent par leur
+ * sert (`_argument_de_la_facade` de `pont.py`). Six passent par leur
  * marque : les séries du simulateur, `{"@": "series"}` ; son régime unique,
- * `{"@": "regime_fusionne"}`, à un constructeur seulement ; une période du
+ * `{"@": "regime_fusionne"}`, à un constructeur seulement ; un régime du
+ * catalogue, `{"@": "regime", code}` ; une période du
  * catalogue, `{"@": "periode", regime, rang, debut}`, celle de ce rang parmi
  * les périodes du régime, dont l'année de début est vérifiée ; une date au
  * mois, `{"@": "date_mois", annee, mois}`, une vraie `DateMois` ; une table,
@@ -1962,6 +1963,7 @@ function argumentDeLaFacade(porteur, valeur) {
     return new ContexteDeLiquidation(
       porteur instanceof Simulateur ? porteur.scenarioActuel : porteur, valeur.neutralisations);
   }
+  if (marque === "regime") return catalogue.obtenir(valeur.code);
   if (marque === "periode") {
     const periode = catalogue.obtenir(valeur.regime).periodes[valeur.rang];
     if (periode === undefined || periode.debut !== valeur.debut) {
@@ -2016,6 +2018,7 @@ ENTREES_DE_LA_FACADE["simulateur.constructeur"] = (simulateur, constructeur, met
 /** Les modules du droit dont la façade sert des règles, sous leur nom. */
 const MODULES_DU_DROIT = {
   commun,
+  compter: compterEtape,
   // `pension_majoree` reçoit ses options par leur nom, que le Python passe
   // dans l'ordre de son jumeau.
   completer: {

@@ -82,7 +82,7 @@ from retraite_notionnelle import revalorisation as _revalorisation
 from retraite_notionnelle import simulateur as _simulateur
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import ContributionEtat, Parametres
-from retraite_notionnelle.donnees.regimes import PeriodeRegime
+from retraite_notionnelle.donnees.regimes import PeriodeRegime, Regime
 from retraite_notionnelle.pont import NonTransmissible
 from retraite_notionnelle.droit import acquerir as _acquerir
 from retraite_notionnelle.droit import commun as _commun
@@ -647,6 +647,17 @@ def _demander_la_regle(module: str, regle: str, rendu, arguments: dict):
             raise NonTransmissible(
                 f"{module}.{regle} : durées rendues sous d'autres paramètres que ceux du moteur")
         simulateur = durees._simulateur
+    for regime in (valeur for valeur in arguments.values() if isinstance(valeur, Regime)):
+        # Un régime du catalogue : le portage le prend dans le sien, sous les
+        # paramètres du simulateur qui l'a laissé lire.
+        du_regime = _simulateur_du_regime(regime)
+        if du_regime is None or (simulateur is not None
+                                 and simulateur.parametres != du_regime.parametres):
+            raise NonTransmissible(
+                f"{module}.{regle} : un régime qui n'est pas du catalogue d'un simulateur de "
+                "la façade (simulateur.catalogue), sous les paramètres du moteur — le "
+                "portage ne le verrait pas")
+        simulateur = simulateur or du_regime
     lu = pont.regle_du_droit(
         module, regle, rendu,
         *(_argument_de_regle(f"{module}.{regle}", simulateur, nom, valeur,
@@ -666,8 +677,8 @@ def _demander_la_regle(module: str, regle: str, rendu, arguments: dict):
 def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, valeur,
                        carriere=None):
     """Un argument d'une règle du droit tel que le pont le transmet : le
-    moteur du simulateur par sa marque ; une période de son catalogue par son
-    rang ; une carrière, une date au mois, une valeur simple, une suite de
+    moteur du simulateur par sa marque ; un régime de son catalogue par son
+    code ; une période de son catalogue par son rang ; une carrière, une date au mois, une valeur simple, une suite de
     valeurs simples ou de couples de valeurs simples, la règle d'une fiche —
     un dictionnaire de valeurs simples sous des noms —, un éligible au
     minimum (``pont.TYPES_DE_LA_FACADE``), tels quels ; une ligne de la
@@ -689,6 +700,8 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
             "une valeur n'est pas simple — elle n'arriverait pas au portage sous son type")
     if isinstance(valeur, PeriodeRegime) and simulateur is not None:
         return _periode_du_catalogue(simulateur, valeur)
+    if isinstance(valeur, Regime) and simulateur is not None:
+        return pont.RegimeDuCatalogue(valeur.code)
     if type(valeur) in _SIMPLES or isinstance(valeur, (_carriere.Carriere, DateMois)):
         return valeur
     if type(valeur) in (tuple, list) and all(type(element) in _SIMPLES for element in valeur):
@@ -853,15 +866,20 @@ class _Completer(Regles):
             "neutralisations": _contexte_de_la_facade(entree, moteur, contexte)}),))
 
 
+def _simulateur_du_regime(regime: Regime):
+    """Le simulateur de la façade dont le catalogue tient ``regime``, ou
+    ``None``."""
+    return next((simulateur for catalogue, simulateur in _CATALOGUES.values()
+                 if regime.code in catalogue and catalogue[regime.code] is regime), None)
+
+
 class _Commun(Regles):
     """``droit.commun`` : ses règles, et la période qui liquide une pension,
     rendue du catalogue du simulateur dont vient le régime."""
 
     def periode_de_liquidation(self, regime, date: DateMois):
         entree = "commun.periode_de_liquidation"
-        simulateur = next((simulateur for catalogue, simulateur in _CATALOGUES.values()
-                           if regime.code in catalogue and catalogue[regime.code] is regime),
-                          None)
+        simulateur = _simulateur_du_regime(regime)
         if simulateur is None or not isinstance(date, DateMois):
             raise NonTransmissible(
                 f"{entree} : un régime qui n'est pas du catalogue d'un simulateur de la façade "
@@ -1308,9 +1326,15 @@ class _Compter(_Module):
     """``droit.compter`` : ``compter``, servi par le portage sur une
     coordination de la façade ; ``trimestres_du_contrat`` et
     ``jours_par_annee``, sur leurs dates, que le portage reçoit en jours
-    depuis 1970, sous les réglages de référence, qu'elles ne lisent pas."""
+    depuis 1970, sous les réglages de référence, qu'elles ne lisent pas ; ses
+    règles (:data:`REGLES`), servies comme celles d'un module du droit."""
 
     _jumeau = _compter
+
+    def __getattr__(self, nom):
+        if nom in REGLES["compter"]:
+            return Regles("compter", _compter).__getattr__(nom)
+        return super().__getattr__(nom)
 
     @staticmethod
     def _jours(jour: datetime.date) -> int:

@@ -2720,7 +2720,7 @@ export function complementMinimum(nue, plancher, coefficientSurcote, dateEffet) 
  * `plafondMajoration` qui borne. Une fiche qui porte son propre barème — les
  * marins, qui bonifient dès deux enfants — l'emporte.
  */
-function tauxMajorationEnfants(regime, nombreEnfants, periode = null) {
+export function tauxMajorationEnfants(regime, nombreEnfants, periode = null) {
   const bareme = periode?.taux_majoration_enfants;
   if (bareme && bareme.length > 0) {
     return bareme[Math.min(nombreEnfants, bareme.length - 1)];

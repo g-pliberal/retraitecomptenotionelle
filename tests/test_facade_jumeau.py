@@ -29,6 +29,7 @@ from retraite_notionnelle.config import RACINE_PROJET, ContributionEtat, Paramet
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
+from retraite_notionnelle.droit import compter as compter_python
 from retraite_notionnelle.droit import cultes as cultes_python
 from retraite_notionnelle.droit import foyer as foyer_python
 from retraite_notionnelle.droit import liquidation as liquidation_python
@@ -369,6 +370,9 @@ APPELS_DES_TABLES = [
     ("valeurs_point", "garantie", lambda s: ("agirc", _tranche_b(s, 1995), 1995, 1.0, 1.0)),
     ("valeurs_point", "garantie", lambda s: ("agirc", _tranche_b(s, 2010), 2010, 0.5, 0.8)),
     ("valeurs_point", "regimes_convenus", lambda s: ("valeur_service",)),
+    ("valeurs_point", "service", lambda s: ("cnavpl", 2022)),
+    ("valeurs_point", "service", lambda s: ("agirc_arrco", 2045)),
+    ("valeurs_point", "service", lambda s: ("regime_lunaire", 2020)),
 ]
 
 
@@ -490,6 +494,11 @@ _POLYPENSIONNE = EligibleMinimum(
 _PERIODES_COTISEES = {"majoration": "periodes_cotisees", "seuil_trimestres_cotises": 120}
 
 
+def _mere(s, affiliation: str, enfants: int = 2):
+    """Une mère née en 1958, partie à 62 ans, de ``enfants`` enfants."""
+    return s.carriere_simple(1958, "F", affiliation, 20.0, 62.0, nombre_enfants=enfants)
+
+
 def _en_couple(s, annee: int, conjoint: str | None = None):
     """Un salarié qui a 66 ans en ``annee``, marié à une conjointe née en
     ``conjoint`` qui déclare 4 000 € de ressources, ou seul."""
@@ -586,6 +595,19 @@ def _point_de_la_fiche(annee):
 
 
 APPELS_DES_REGLES = [
+    ("compter", "majoration_pour_enfants",
+     lambda s: (s.scenario_actuel, _mere(s, "profession_liberale"), {"cnavpl": 160}, 2020)),
+    ("compter", "majoration_pour_enfants",
+     lambda s: (s.scenario_actuel, _mere(s, "salarie_prive_non_cadre"), {"mines": 160}, 2020)),
+    ("compter", "majoration_pour_enfants",
+     lambda s: (s.scenario_actuel, _mere(s, "fonctionnaire_etat", 3),
+                {"regime_general": 40, "fonction_publique_etat": 120}, 2020)),
+    ("completer", "_taux_majoration_enfants",
+     lambda s: (s.catalogue["cipav_complementaire"], 3,
+                s.catalogue["cipav_complementaire"].periode(2020))),
+    ("completer", "_taux_majoration_enfants",
+     lambda s: (s.catalogue["fonction_publique_etat"], 5)),
+    ("completer", "_taux_majoration_enfants", lambda s: (s.catalogue["regime_general"], 2)),
     ("completer", "majoration_retraite_proportionnelle", _plans(1942, 60)),
     ("completer", "majoration_retraite_proportionnelle", _plans(1930, 65)),
     ("completer", "majoration_retraite_proportionnelle", _plans(1942, 60, "2005-01-01")),
@@ -800,7 +822,7 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
     servi = facade.Simulateur(parametres)
     jumeau = simulateur_python.Simulateur(parametres)
     modules = {"commun": commun_python, "completer": completer_python,
-               "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
+               "compter": compter_python, "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
                "reversion": reversion_python, "revalorisation": revalorisation_python,
                "cultes": cultes_python, "releve": releve_python}
     ecarts = []

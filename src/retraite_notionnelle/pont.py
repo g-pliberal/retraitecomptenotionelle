@@ -2514,7 +2514,7 @@ TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "revalorisations_pensions": ("generale",),
     "reversions": ("fiche_du_regime", "limite_cumul", "majoration_enfant", "minimum",
                    "plafond_majoration", "version"),
-    "valeurs_point": ("achat", "achat_prolonge", "garantie", "regimes_convenus"),
+    "valeurs_point": ("achat", "achat_prolonge", "garantie", "regimes_convenus", "service"),
 }
 
 # Ce que devient un point à une fusion (``conversions_points.fusion``) : le
@@ -2560,6 +2560,15 @@ class PeriodeDuCatalogue:
     regime: str
     rang: int
     debut: int
+
+
+@dataclasses.dataclass(frozen=True)
+class RegimeDuCatalogue:
+    """Un régime du catalogue, en argument d'une règle du droit : celui de ce
+    code, que le portage prend dans son catalogue
+    (``completer._taux_majoration_enfants``)."""
+
+    code: str
 
 
 def table_du_moteur(table: str, methode: str, type_rendu, *arguments, parametres=None,
@@ -2639,8 +2648,8 @@ def constructeur_du_compte(constructeur: str, methode: str, type_rendu, *argumen
 def _argument_de_la_facade(argument, carrieres: list) -> dict:
     """Un argument d'une méthode de table ou d'une règle du droit que la façade
     sert, tel que ``pont.mjs`` le relit : comme celui d'un appel du droit
-    (:func:`_argument_du_droit`), sauf cinq, qui passent par leur marque — les
-    séries du simulateur, son régime unique, une période de son catalogue, une date au mois,
+    (:func:`_argument_du_droit`), sauf six, qui passent par leur marque — les
+    séries du simulateur, son régime unique, un régime ou une période de son catalogue, une date au mois,
     dont le portage refait une ``DateMois``, et une :class:`Table`, dont il
     refait une ``Map``."""
     from .calendrier import DateMois
@@ -2651,6 +2660,8 @@ def _argument_de_la_facade(argument, carrieres: list) -> dict:
         return {"valeur": {"@": "regime_fusionne"}}
     if isinstance(argument, PeriodeDuCatalogue):
         return {"valeur": {"@": "periode", **dataclasses.asdict(argument)}}
+    if isinstance(argument, RegimeDuCatalogue):
+        return {"valeur": {"@": "regime", "code": argument.code}}
     if isinstance(argument, DateMois):
         return {"valeur": {"@": "date_mois", "annee": argument.annee, "mois": argument.mois}}
     if isinstance(argument, ContexteDuMoteur):
@@ -2680,6 +2691,7 @@ class Table:
 #: :class:`Table` ; ``None``, la table vide que la règle du Python lui
 #: substitue.
 TABLES_DES_REGLES: dict[str, frozenset[str]] = {
+    "compter.majoration_pour_enfants": frozenset({"trimestres_par_regime"}),
     "liquider.majorer_les_points_de_1952_a_1972": frozenset({"points"}),
     "liquider.repartir_les_annees": frozenset({"durees", "minimums"}),
 }
@@ -2709,10 +2721,12 @@ CLASSES_EN_CHAMEAU |= {"EligibleMinimum", "DureesDesCultes", "PensionMajoree",
 #: qui n'y est pas est refusée avant node.
 REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "commun": ("ligne_cotisee",),
+    # Les trimestres des enfants et le régime qui les porte (R. 173-15).
+    "compter": ("majoration_pour_enfants",),
     # Les deux fractions de la pension des cultes : la durée de chacune, sur
     # les durées du relevé, et la part de l'écart du V du décret n° 2006-1325.
     "cultes": ("durees", "part_de_l_ecart"),
-    "completer": ("avpf_retenue", "borne_avec_les_droits_d_avant_1973", "complement_minimum",
+    "completer": ("_taux_majoration_enfants", "avpf_retenue", "borne_avec_les_droits_d_avant_1973", "complement_minimum",
                   "majoration_ouverte", "majoration_retraite_proportionnelle",
                   "pension_majoree", "plancher_du_regime", "points_rco_de_chef",
                   "selon_la_regle"),
