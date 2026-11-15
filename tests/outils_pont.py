@@ -347,11 +347,13 @@ def droit_et_fige(appels: dict[str, tuple], parametres=None, paquet: bytes | Non
     Python restait (action 161, étape 8e) : ce que les assertions d'un test
     ne disent pas, le témoin le garde. Sous ``FIGER_DROIT=1``, une demande
     absente s'y ajoute, et un rendu qui a bougé s'y refait. Sur un autre
-    paquet que celui du dépôt, il n'y a rien à confronter."""
+    paquet que celui du dépôt, ni sous la garde des présomptions
+    (``PRESOMPTIONS_DECALEES``, ``tests/conftest.py``), qui décale ce que le
+    témoin a figé, il n'y a rien à confronter."""
     from outils_valeurs import empreinte_de_la_valeur
 
     lus, refus = DROIT_DU_PORTAGE(appels, parametres, paquet)
-    if paquet is not None:
+    if paquet is not None or os.environ.get("PRESOMPTIONS_DECALEES"):
         return lus, refus
     empreinte = empreinte_de_la_demande(appels, parametres)
     rendu = empreinte_de_la_valeur({"lus": lus, "refus": refus})
@@ -374,11 +376,14 @@ def droit_et_fige(appels: dict[str, tuple], parametres=None, paquet: bytes | Non
 
 def fichiers_qui_appellent_le_droit() -> list[str]:
     """Les fichiers de tests qui appellent :func:`droit_et_fige`, nommés sous
-    ``tests/`` : ceux que ``construire_temoins.py --droit`` relance."""
+    ``tests/`` : ceux que ``construire_temoins.py --droit`` relance. Ceux qui
+    chargent ``scripts/simulateurs.py`` l'appellent aussi, par les fonctions
+    de ``tests/test_oracle.py``."""
     racine = Path(__file__).resolve().parent
     return sorted(chemin.name for chemin in racine.glob("test_*.py")
                   if chemin.name != "test_droit_fige.py"
-                  and "droit_et_fige" in chemin.read_text(encoding="utf-8"))
+                  and any(marque in chemin.read_text(encoding="utf-8")
+                          for marque in ("droit_et_fige", '"simulateurs.py"')))
 
 
 @functools.cache

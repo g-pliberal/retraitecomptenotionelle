@@ -15,6 +15,15 @@ de juge, et la garde des présomptions est réparée.
   le témoin ne le peut pas. Sous `PRESOMPTIONS_DECALEES`, `valeur_figee` ne
   lit ni n'écrit plus le témoin, et les autres assertions du test restent
   juges (`test_sous_la_garde_des_presomptions_le_temoin_se_tait`).
+- **La suite rouge depuis l'étape 8e, et la garde sur le témoin du droit** :
+  `test_simulateurs.py` demande au droit par les fonctions de
+  `tests/test_oracle.py` que `scripts/simulateurs.py` charge, sans nommer
+  `droit_et_fige` ; le témoin refait à neuf ne le relançait pas, et ses
+  demandes en sortaient. `fichiers_qui_appellent_le_droit` le compte
+  désormais (`test_le_temoin_se_refait_aussi_des_tests_qui_passent_par_l_oracle`),
+  et le témoin, refait à neuf, les porte. Sous la garde des présomptions,
+  `droit_et_fige` se tait comme `valeur_figee` ; les tests du mécanisme
+  même ôtent la variable. La garde rejouée ici : verte.
 - **Les saisies de `test_reversion.py`** : `Saisies` (`tests/outils_pont.py`)
   prend le simulateur qui simule ; le fichier lui passe celui de la façade,
   que le portage sert. Les trente-sept appels qui simulaient en Python

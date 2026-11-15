@@ -31,6 +31,8 @@ def temoin_vide(tmp_path, monkeypatch):
     chemin.write_text("{}\n", encoding="utf-8")
     monkeypatch.setattr(outils_valeurs, "TEMOIN_DES_VALEURS", chemin)
     monkeypatch.delenv("FIGER_VALEURS", raising=False)
+    # Le témoin même s'éprouve ici, sous la garde des présomptions aussi.
+    monkeypatch.delenv("PRESOMPTIONS_DECALEES", raising=False)
     outils_valeurs.valeurs_figees.cache_clear()
     yield chemin
     outils_valeurs.valeurs_figees.cache_clear()

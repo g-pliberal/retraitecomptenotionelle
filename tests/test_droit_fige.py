@@ -35,6 +35,8 @@ def temoin_vide(tmp_path, monkeypatch):
     chemin.write_text("{}\n", encoding="utf-8")
     monkeypatch.setattr(outils_pont, "TEMOIN_DU_DROIT", chemin)
     monkeypatch.delenv("FIGER_DROIT", raising=False)
+    # Le témoin même s'éprouve ici, sous la garde des présomptions aussi.
+    monkeypatch.delenv("PRESOMPTIONS_DECALEES", raising=False)
     outils_pont.droit_fige.cache_clear()
     yield chemin
     outils_pont.droit_fige.cache_clear()
@@ -175,3 +177,29 @@ def test_le_temoin_du_depot_est_ecrit_et_trie():
     for entree in figes.values():
         assert set(entree) == {"fonctions", "rendu"}
         assert set(entree["fonctions"]) <= set(pont.LECTURES_DU_DROIT)
+
+
+def test_sous_la_garde_des_presomptions_le_temoin_du_droit_se_tait(temoin_vide, portage,
+                                                                    monkeypatch):
+    """La garde des présomptions (``PRESOMPTIONS_DECALEES``,
+    ``tests/conftest.py``) décale ce que le portage lit, et ce que les tests
+    lui demandent : le témoin, figé sous les présomptions du vocabulaire, ne
+    peut que s'en écarter. Sous elle, il n'est ni lu ni écrit, comme le témoin
+    des valeurs ; le portage rend ce qu'il rend."""
+    from conftest import PRESOMPTIONS_DECALEES
+
+    monkeypatch.setenv(PRESOMPTIONS_DECALEES, "1")
+    monkeypatch.setenv("FIGER_DROIT", "1")
+    assert droit_et_fige(dict(APPELS)) == ({"a": 3.0}, {"b": "refusé"})
+    assert json.loads(temoin_vide.read_text(encoding="utf-8")) == {}
+
+
+def test_le_temoin_se_refait_aussi_des_tests_qui_passent_par_l_oracle():
+    """``scripts/simulateurs.py`` interroge le droit par les fonctions de
+    ``tests/test_oracle.py``, qui confrontent au témoin : ``test_simulateurs.py``
+    lui fait des demandes sans nommer ``droit_et_fige``. Le témoin refait à
+    neuf (``construire_temoins.py --droit``) relance aussi ce fichier, sans
+    quoi ses demandes en sortent et la suite tombe."""
+    fichiers = outils_pont.fichiers_qui_appellent_le_droit()
+    assert {"test_oracle.py", "test_simulateurs.py"} <= set(fichiers)
+    assert "test_droit_fige.py" not in fichiers
