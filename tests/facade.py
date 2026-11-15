@@ -47,10 +47,15 @@ comme ceux d'une table. Le régime unique d'après la bascule
 (``simulateur.regime_fusionne``) se lit sur le simulateur, et passe au
 constructeur par sa marque ; un autre ne passe pas.
 
-**Le relevé des droits** (``releve.construire``) revient en données, ce que
-les tests en lisent : ses durées, ses points et ses cotisations. Ses durées repassent au
-portage, qui les refait du relevé de leur carrière, quand une règle les
-reçoit (``liquider.duree_du_regime_aligne``).
+**Le relevé des droits** (``releve.construire``, ses drapeaux compris)
+revient en données, ce que les tests en lisent : ses lignes et ses groupes,
+sa coordination, ses durées, ses points et ses cotisations, et ce que chaque
+étape écrit sous son schéma. Ses étapes se servent aussi seules
+(``coordonner.coordonner``, ``compter.compter``, ``acquerir.acquerir``),
+refaites par le portage de la carrière et des drapeaux dont elles viennent.
+Ses durées repassent au portage, qui les refait du relevé de leur carrière,
+quand une règle les reçoit (``liquider.duree_du_regime_aligne``) : celles
+du relevé sous ses drapeaux par défaut seulement.
 
 **Un test resté sur le moteur Python**, dans un fichier basculé, porte la
 marque ``sur_le_moteur_python`` et sa raison : le temps de ce test, les
@@ -76,7 +81,10 @@ from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import ContributionEtat, Parametres
 from retraite_notionnelle.donnees.regimes import PeriodeRegime
 from retraite_notionnelle.pont import NonTransmissible
+from retraite_notionnelle.droit import acquerir as _acquerir
 from retraite_notionnelle.droit import commun as _commun
+from retraite_notionnelle.droit import compter as _compter
+from retraite_notionnelle.droit import coordonner as _coordonner
 from retraite_notionnelle.droit import completer as _completer
 from retraite_notionnelle.droit import liquidation as _liquidation
 from retraite_notionnelle.droit import liquider as _liquider
@@ -92,11 +100,13 @@ from retraite_notionnelle.scenarios import actuel as _actuel
 DONNEES = frozenset({"catalogue", "affiliations"})
 
 
-#: Les onze entrées du moteur Python que la façade sert, sous leurs noms.
+#: Les quinze entrées du moteur Python que la façade sert, sous leurs noms.
 ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversion",
            "simulateur.carriere_simple", "simulateur.carriere_parcours",
            "simulateur.carriere_releve", "carriere.depuis_profil", "carriere.depuis_parcours",
-           "releve.construire", "simulateur.regime_fusionne", "liquidation.liquider")
+           "releve.construire", "simulateur.regime_fusionne", "liquidation.liquider",
+           "coordonner.coordonner", "compter.compter", "acquerir.acquerir",
+           "compter.cumul_plafonne")
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
@@ -565,6 +575,11 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
     if dataclasses.is_dataclass(valeur) and type(valeur).__name__ in pont.TYPES_DE_LA_FACADE:
         return valeur
     if isinstance(valeur, Durees):
+        if not valeur._source.du_releve:
+            raise NonTransmissible(
+                f"{regle} : argument {nom}, des durées comptées sous d'autres drapeaux que "
+                "ceux du relevé — le portage les refait du relevé de la carrière, sous ses "
+                "drapeaux par défaut")
         return pont.DureesDuReleve(valeur._carriere)
     if isinstance(valeur, _carriere.AnneeCarriere):
         # Le portage relit la ligne, par son rang, dans la carrière que la
@@ -664,28 +679,114 @@ class _Liquidation(_Ferme):
 liquidation = _Liquidation()
 
 
-# -- le relevé des droits -------------------------------------------------------------
+# -- le relevé des droits et ses étapes -----------------------------------------------
 #
-# ``releve.construire`` rend un relevé que le pont ne passe pas : ses durées et
-# ses droits sont des objets du moteur. La façade en rend ce que les tests en
-# lisent, en données — les durées par compte, régime et année, le plafond de
-# chaque année, la durée de chaque régime et tous régimes, les points de
-# chaque régime —, et ses durées repassent au portage, qui les refait du
-# relevé de leur carrière, quand une règle les reçoit
-# (``liquider.duree_du_regime_aligne``).
+# ``releve.construire`` rend un relevé que le pont ne passe pas : ses étapes sont
+# des objets du moteur. La façade en rend ce que les tests en lisent, en
+# données — l'enveloppe du contrat C.5 et ses lignes, les groupes de la
+# liquidation unique ; la coordination, ses régimes par ligne et sa carrière ;
+# les durées par compte, régime et année, le plafond de chaque année, la durée
+# de chaque régime et tous régimes, ce qui ne tient à aucune année, les
+# trimestres des enfants ; les points, les cotisations, les points acquis et
+# gratuits de chaque régime —, et ce que chaque étape écrit sous son schéma
+# (``donnees()``). Les étapes se servent aussi seules (``coordonner``,
+# ``compter``, ``acquerir``) : chacune garde la carrière et les drapeaux dont
+# elle vient, que le portage reçoit pour la refaire. Ses durées repassent au
+# portage, qui les refait du relevé de leur carrière, quand une règle les
+# reçoit (``liquider.duree_du_regime_aligne``) : celles du relevé sous ses
+# drapeaux par défaut seulement.
 
 
-class Durees(_Ferme):
-    """Les durées du relevé d'une carrière (``compter.Durees``), lues du
-    portage : ``par_annee``, ``trimestres_par_regime``, ``trimestres``, et le
-    plafond de chaque année de la carrière (:meth:`plafond`)."""
+@dataclasses.dataclass(frozen=True)
+class _Source:
+    """D'où vient une étape : la carrière, son moteur, et les drapeaux sous
+    lesquels le portage la refait — ``bornee``, la carrière que le relevé lit
+    (``ouvrir.indemnisation_bornee``)."""
 
-    def __init__(self, simulateur: Simulateur, carriere, lu: dict) -> None:
-        object.__setattr__(self, "_simulateur", simulateur)
-        object.__setattr__(self, "_carriere", carriere)
-        object.__setattr__(self, "_plafonds", lu["plafonds"])
-        for nom in ("par_annee", "trimestres_par_regime", "trimestres"):
+    moteur: object
+    carriere: object
+    bornee: bool = True
+    avantages_non_contributifs: bool = True
+    points_gratuits: bool = True
+    liquider_successions: bool = True
+
+    def demander(self, entree: str, *arguments):
+        return _demander(entree, self.moteur._simulateur.parametres, pont.MOTEUR,
+                         self.carriere, *arguments)
+
+    @property
+    def du_releve(self) -> bool:
+        """Le relevé de la carrière sous ses drapeaux par défaut, que le
+        portage refait quand une règle en reçoit les durées."""
+        return (self.bornee, self.avantages_non_contributifs, self.points_gratuits,
+                self.liquider_successions) == (True, True, True, True)
+
+
+class _Lu(_Ferme):
+    """Ce qu'une étape a écrit, lu du portage : ses champs, et ``donnees()``,
+    ce que son schéma décrit."""
+
+    def __init__(self, source: _Source, lu: dict, champs: tuple[str, ...]) -> None:
+        object.__setattr__(self, "_source", source)
+        object.__setattr__(self, "_donnees", lu["donnees"])
+        for nom in champs:
             object.__setattr__(self, nom, lu[nom])
+
+    def donnees(self) -> dict:
+        return self._donnees
+
+
+class Coordination(_Lu):
+    """La coordination d'une carrière (``coordonner.Coordination``), lue du
+    portage : ``regimes``, ceux de chaque ligne ; ``carriere``, celle qu'elle
+    a reçue quand elle l'a gardée, la carrière rétablie sinon ;
+    ``retablissements``, ceux que son schéma décrit."""
+
+    def __init__(self, source: _Source, lu: dict) -> None:
+        super().__init__(source, lu, ("regimes",))
+        object.__setattr__(self, "carriere",
+                           source.carriere if lu["inchangee"] else lu["carriere"])
+        object.__setattr__(self, "retablissements", tuple(lu["donnees"]["retablissements"]))
+
+
+class _Enfant(_Ferme):
+    def __init__(self, lu: dict) -> None:
+        for nom, valeur in lu.items():
+            object.__setattr__(self, nom, valeur)
+
+
+class _Enfants(_Ferme):
+    """Les trimestres des enfants (``compter.MajorationEnfants``) :
+    ``trimestres``, ``regimes``, ``dispositifs``, et chaque enfant —
+    ``enfant``, ``naissance``, ``regime``, ``dispositif``, ``version``."""
+
+    def __init__(self, lu: dict) -> None:
+        for nom in ("trimestres", "regimes", "dispositifs"):
+            object.__setattr__(self, nom, lu[nom])
+        object.__setattr__(self, "enfants", tuple(_Enfant(e) for e in lu["enfants"]))
+
+
+class Durees(_Lu):
+    """Les durées d'une carrière (``compter.Durees``), lues du portage :
+    ``par_annee``, ``trimestres_par_regime``, ``trimestres``, ``hors_annee``,
+    ``enfants``, le plafond de chaque année de la carrière (:meth:`plafond`),
+    et le cumul plafonné de régimes nommés (:meth:`cumul_plafonne`), demandé
+    au portage."""
+
+    def __init__(self, source: _Source, lu: dict) -> None:
+        super().__init__(source, lu, ("par_annee", "trimestres_par_regime", "trimestres",
+                                      "hors_annee"))
+        object.__setattr__(self, "_plafonds", lu["plafonds"])
+        object.__setattr__(self, "enfants",
+                           None if lu["enfants"] is None else _Enfants(lu["enfants"]))
+
+    @property
+    def _carriere(self):
+        return self._source.carriere
+
+    @property
+    def _simulateur(self):
+        return self._source.moteur._simulateur
 
     def plafond(self, table: str, annee: int, membres: tuple[str, ...] = ()) -> int:
         """Le plafond de l'année, que le portage a lu sans régimes nommés :
@@ -701,59 +802,156 @@ class Durees(_Ferme):
                 "que les années")
         return plafonds[annee]
 
+    def cumul_plafonne(self, table: str, membres: tuple[str, ...], annees=None) -> int:
+        """Le cumul de ``membres`` dans ``table``, chaque année plafonnée,
+        refait par le portage ; un filtre d'années, une fonction, ne passe
+        pas le pont."""
+        if annees is not None:
+            raise NonTransmissible(
+                "Durees.cumul_plafonne : le filtre des annees, une fonction, ne passe pas le pont")
+        source = self._source
+        return source.demander("compter.cumul_plafonne", source.bornee,
+                               source.avantages_non_contributifs, table, list(membres))
 
-class Droits(_Ferme):
-    """Les droits du relevé (``acquerir.Droits``), lus du portage : ses
-    ``points``, ``(code, annee, points, taux)``, et ses ``cotisations``
-    revalorisées, ``(code, annee, montant)``, dans l'ordre."""
 
-    def __init__(self, points, cotisations) -> None:
-        object.__setattr__(self, "points", points)
-        object.__setattr__(self, "cotisations", cotisations)
+class Droits(_Lu):
+    """Les droits d'une carrière (``acquerir.Droits``), lus du portage :
+    ``points``, ``(code, annee, points, taux)``, et ``cotisations``
+    revalorisées, ``(code, annee, montant)``, dans l'ordre ;
+    ``points_acquis``, ``majoration_points``, ``plafonds``,
+    ``(code, total, avant, retenus)``, et ``gratuits``, par régime,
+    ``(points, avant)``."""
+
+    def __init__(self, source: _Source, lu: dict) -> None:
+        super().__init__(source, lu, ("points", "cotisations", "points_acquis",
+                                      "majoration_points", "plafonds", "gratuits"))
 
 
 class Releve(_Ferme):
     """Le relevé des droits d'une carrière, ce que les tests en lisent :
-    ``durees`` et ``droits``."""
+    ``coordination``, ``durees``, ``droits``, ``groupes``, et l'enveloppe du
+    contrat C.5 (:meth:`donnees`) et ses lignes (:meth:`lignes`)."""
 
-    def __init__(self, durees: Durees, droits: Droits) -> None:
-        object.__setattr__(self, "durees", durees)
-        object.__setattr__(self, "droits", droits)
+    def __init__(self, source: _Source, lu: dict) -> None:
+        object.__setattr__(self, "coordination", Coordination(source, lu["coordination"]))
+        object.__setattr__(self, "durees", Durees(source, lu["durees"]))
+        object.__setattr__(self, "droits", Droits(source, lu["droits"]))
+        object.__setattr__(self, "groupes", lu["groupes"])
+        object.__setattr__(self, "_donnees", lu["donnees"])
+
+    def donnees(self) -> dict:
+        return self._donnees
+
+    def lignes(self) -> list[dict]:
+        return self._donnees["lignes"]
 
 
-class Releves(_Ferme):
-    """``droit.releve``, sous le nom de son jumeau : ``construire``, servi
-    par le portage, ses drapeaux à leur valeur par défaut seulement."""
+class _Module(_Ferme):
+    """Un module du droit sous le nom de son jumeau : ses constantes, telles
+    quelles ; ce qu'il sert, par le portage ; le reste, refusé."""
+
+    _jumeau = None
 
     def __getattr__(self, nom):
         # Ce que le jumeau ne porte pas manque ici comme à un module : pytest
         # sonde ainsi ce qu'un fichier de tests importe.
-        if nom.startswith("__") or not hasattr(_releve, nom):
-            raise AttributeError(f"releve.{nom}")
+        if nom.startswith("__") or not hasattr(self._jumeau, nom):
+            raise AttributeError(f"{self._jumeau.__name__}.{nom}")
+        constante = getattr(self._jumeau, nom)
+        if type(constante) in _SIMPLES:
+            return constante
         return super().__getattr__(nom)
+
+
+def _moteur_de_la_facade(entree: str, moteur) -> ScenarioActuel:
+    if not isinstance(moteur, ScenarioActuel):
+        raise NonTransmissible(
+            f"{entree} : moteur passé en argument que la façade ne sait pas transmettre — "
+            "l'étape se demande sur le moteur d'un simulateur de la façade "
+            "(simulateur.scenario_actuel)")
+    return moteur
+
+
+def _coordination_de_la_facade(entree: str, coordination) -> Coordination:
+    if not isinstance(coordination, Coordination):
+        raise NonTransmissible(
+            f"{entree} : coordination que la façade ne sait pas transmettre — elle vient de "
+            "coordonner.coordonner ou du relevé de la façade")
+    return coordination
+
+
+class Releves(_Module):
+    """``droit.releve``, sous le nom de son jumeau : ``construire``, servi
+    par le portage, ses drapeaux compris."""
+
+    _jumeau = _releve
 
     def construire(self, moteur, carriere, **drapeaux) -> Releve:
         lies = inspect.signature(_releve.construire).bind(moteur, carriere, **drapeaux)
         lies.apply_defaults()
-        poses = [nom for nom, valeur in lies.arguments.items()
-                 if nom not in ("moteur", "carriere")
-                 and valeur != inspect.signature(_releve.construire).parameters[nom].default]
-        if poses:
-            raise NonTransmissible(
-                f"releve.construire : {', '.join(poses)} — la façade ne transmet pas les "
-                "drapeaux du relevé")
-        if not isinstance(moteur, ScenarioActuel):
-            raise NonTransmissible(
-                "releve.construire : moteur passé en argument que la façade ne sait pas "
-                "transmettre — le relevé se demande sur le moteur d'un simulateur de la "
-                "façade (simulateur.scenario_actuel)")
-        simulateur = moteur._simulateur
-        lu = _demander("releve.construire", simulateur.parametres, pont.MOTEUR, carriere)
-        return Releve(Durees(simulateur, carriere, lu), Droits(lu["points"], lu["cotisations"]))
+        _moteur_de_la_facade("releve.construire", moteur)
+        source = _Source(moteur, carriere, True, lies.arguments["avantages_non_contributifs"],
+                         lies.arguments["points_gratuits"],
+                         lies.arguments["liquider_successions"])
+        return Releve(source, source.demander(
+            "releve.construire", source.avantages_non_contributifs, source.points_gratuits,
+            source.liquider_successions))
 
 
-#: ``droit.releve``, son ``construire`` servi par le portage.
+class _Coordonner(_Module):
+    """``droit.coordonner`` : ``coordonner``, servi par le portage."""
+
+    _jumeau = _coordonner
+
+    def coordonner(self, moteur, carriere) -> Coordination:
+        source = _Source(_moteur_de_la_facade("coordonner.coordonner", moteur), carriere,
+                         bornee=False)
+        return Coordination(source, source.demander("coordonner.coordonner"))
+
+
+class _Compter(_Module):
+    """``droit.compter`` : ``compter``, servi par le portage sur une
+    coordination de la façade."""
+
+    _jumeau = _compter
+
+    def compter(self, moteur, coordination, avantages_non_contributifs: bool = True) -> Durees:
+        _moteur_de_la_facade("compter.compter", moteur)
+        origine = _coordination_de_la_facade("compter.compter", coordination)._source
+        source = _Source(moteur, origine.carriere, origine.bornee, avantages_non_contributifs,
+                         liquider_successions=False)
+        return Durees(source, source.demander("compter.compter", source.bornee,
+                                              avantages_non_contributifs))
+
+
+class _Acquerir(_Module):
+    """``droit.acquerir`` : ``acquerir``, servi par le portage sur une
+    coordination de la façade et les durées qu'elle a comptées."""
+
+    _jumeau = _acquerir
+
+    def acquerir(self, moteur, coordination, durees, avec_points_gratuits: bool = True) -> Droits:
+        _moteur_de_la_facade("acquerir.acquerir", moteur)
+        origine = _coordination_de_la_facade("acquerir.acquerir", coordination)._source
+        if (not isinstance(durees, Durees) or durees._source.carriere is not origine.carriere
+                or durees._source.bornee != origine.bornee):
+            raise NonTransmissible(
+                "acquerir.acquerir : durées qui ne sont pas celles de la coordination — le "
+                "portage les refait de sa carrière")
+        source = _Source(moteur, origine.carriere, origine.bornee,
+                         durees._source.avantages_non_contributifs, avec_points_gratuits,
+                         liquider_successions=False)
+        return Droits(source, source.demander(
+            "acquerir.acquerir", source.bornee, source.avantages_non_contributifs,
+            avec_points_gratuits))
+
+
+#: ``droit.releve``, ``droit.coordonner``, ``droit.compter`` et
+#: ``droit.acquerir``, servis par le portage.
 releve = Releves()
+coordonner = _Coordonner()
+compter = _Compter()
+acquerir = _Acquerir()
 
 
 # -- un test resté sur le moteur Python ----------------------------------------------
@@ -772,7 +970,8 @@ JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
            "reversion": _reversion.reversion, "commun": _commun, "completer": _completer,
            "liquider": _liquider, "ouvrir": _ouvrir, "releve": _releve,
            "regles_de_la_reversion": _reversion, "revalorisation": _revalorisation,
-           "liquidation": _liquidation}
+           "liquidation": _liquidation, "coordonner": _coordonner, "compter": _compter,
+           "acquerir": _acquerir}
 
 #: Les simulateurs des tests, par fichier, par moteur et par paramètres.
 _SIMULATEURS: dict[tuple, object] = {}

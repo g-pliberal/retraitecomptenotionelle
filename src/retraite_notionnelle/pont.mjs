@@ -151,6 +151,9 @@ import * as impotRevenu from "../../moteur/js/impot-revenu.js";
 import {
   FICHE_DE_L_APPRENTISSAGE, FICHE_DES_MILITAIRES, FICHES_DES_EMPLOIS, contrats,
 } from "../../moteur/js/droit/compter.js";
+import * as acquerirEtape from "../../moteur/js/droit/acquerir.js";
+import * as compterEtape from "../../moteur/js/droit/compter.js";
+import * as coordonnerEtape from "../../moteur/js/droit/coordonner.js";
 import { REGIMES_CODE_DES_PENSIONS } from "../../moteur/js/droit/coordonner.js";
 import * as commun from "../../moteur/js/droit/commun.js";
 import * as completer from "../../moteur/js/droit/completer.js";
@@ -1745,38 +1748,119 @@ const ENTREES_DE_LA_FACADE = {
   "scenario_actuel.calculer": (moteur, carriere, ...drapeaux) => telQuel(
     moteur.calculer(carriere, ...drapeaux)),
   "reversion.reversion": (...valeurs) => FONCTIONS_DU_DROIT["reversion.reversion"](...valeurs),
-  "releve.construire":
-    (moteur, carriere) => releveEnDonnees(releve.construire(moteur, carriere), carriere),
+  // Les drapeaux du relevé suivent la carrière, dans l'ordre du jumeau.
+  "releve.construire": (moteur, carriere, avantages, gratuits, successions) => releveEnDonnees(
+    releve.construire(moteur, carriere, {
+      avantagesNonContributifs: avantages, pointsGratuits: gratuits,
+      liquiderSuccessions: successions,
+    }), carriere),
   "simulateur.regime_fusionne": (simulateur) => telQuel(simulateur.regimeFusionne),
+  // Les étapes du relevé, chacune seule, refaites de la carrière : bornée, la
+  // carrière est celle que le relevé lit (`indemnisationBornee`).
+  "coordonner.coordonner": (moteur, carriere) => coordinationEnDonnees(
+    coordonnerEtape.coordonner(moteur, carriere), carriere),
+  "compter.compter": (moteur, carriere, bornee, avantages) => dureesEnDonnees(
+    etapes(moteur, carriere, bornee, avantages).durees, carriere),
+  "acquerir.acquerir": (moteur, carriere, bornee, avantages, gratuits) => {
+    const { coordination, durees } = etapes(moteur, carriere, bornee, avantages);
+    return droitsEnDonnees(acquerirEtape.acquerir(moteur, coordination, durees, gratuits));
+  },
+  "compter.cumul_plafonne": (moteur, carriere, bornee, avantages, table, membres) => etapes(
+    moteur, carriere, bornee, avantages).durees.cumulPlafonne(table, membres),
 };
 
+/** La coordination et les durées de la carrière, bornée ou non. */
+function etapes(moteur, carriere, bornee, avantages) {
+  const coordination = coordonnerEtape.coordonner(
+    moteur, bornee ? ouvrir.indemnisationBornee(moteur, carriere) : carriere);
+  return { coordination, durees: compterEtape.compter(moteur, coordination, avantages) };
+}
+
 /**
- * Le relevé des droits en données, par ce que les tests en lisent : ses
- * durées — par compte, régime et année ; le plafond de chaque année de la
- * carrière, de sa première à celle de l'effet ; la durée de chaque régime et
- * la durée tous régimes —, les points de chaque régime,
- * `[code, annee, points, taux]`, et les cotisations revalorisées,
- * `[code, annee, montant]`. Ses durées repassent au portage par la
- * carrière dont il vient (`durees_du_releve`, `argumentDuDroit`).
+ * La coordination en données : ce que son schéma décrit (`donnees`), les
+ * régimes de chaque ligne, et la carrière rétablie, ou `inchangee` quand la
+ * coordination a gardé celle qu'elle a reçue.
  */
-function releveEnDonnees({ durees, droits }, carriere) {
+function coordinationEnDonnees(coordination, carriere) {
+  const inchangee = coordination.carriere === carriere;
+  return {
+    donnees: telQuel(coordination.donnees()),
+    regimes: coordination.regimes.map((regimes) => [...regimes]),
+    inchangee,
+    carriere: inchangee ? null : carriereEnDonnees(coordination.carriere),
+  };
+}
+
+/**
+ * Les durées en données, par ce que les tests en lisent : par compte, régime
+ * et année ; le plafond de chaque année de la carrière, de sa première à
+ * celle de l'effet ; la durée de chaque régime et la durée tous régimes ; ce
+ * qui se compte hors des années ; les trimestres des enfants ; et ce que leur
+ * schéma décrit (`donnees`).
+ */
+function dureesEnDonnees(durees, carriere) {
   const premiere = Math.min(...carriere.lignes.map((ligne) => ligne.annee));
   const annees = [];
   for (let annee = premiere; annee <= carriere.dateLiquidation.annee; annee += 1) {
     annees.push(annee);
   }
   const comptes = Object.keys(durees.parAnnee);
+  const { enfants } = durees;
   return {
-    durees: {
-      par_annee: Object.fromEntries(comptes.map((compte) => [compte,
-        [...durees.parAnnee[compte]].map(([code, parAnnee]) => [code, [...parAnnee]])])),
-      plafonds: Object.fromEntries(comptes.map((compte) => [compte,
-        annees.map((annee) => [annee, durees.plafond(compte, annee)])])),
-      trimestres_par_regime: [...durees.trimestresParRegime],
-      trimestres: durees.trimestres,
+    par_annee: Object.fromEntries(comptes.map((compte) => [compte,
+      [...durees.parAnnee[compte]].map(([code, parAnnee]) => [code, [...parAnnee]])])),
+    plafonds: Object.fromEntries(comptes.map((compte) => [compte,
+      annees.map((annee) => [annee, durees.plafond(compte, annee)])])),
+    trimestres_par_regime: [...durees.trimestresParRegime],
+    trimestres: durees.trimestres,
+    hors_annee: Object.fromEntries(Object.entries(durees.horsAnnee)
+      .map(([compte, parRegime]) => [compte, [...parRegime]])),
+    enfants: enfants === null ? null : {
+      trimestres: enfants.trimestres, regimes: [...enfants.regimes],
+      dispositifs: [...enfants.dispositifs],
+      enfants: enfants.enfants.map(({ enfant, naissance, regime, dispositif, version }) => ({
+        enfant, naissance, regime, dispositif, version,
+      })),
     },
+    donnees: telQuel(durees.donnees()),
+  };
+}
+
+/**
+ * Les droits en données, par ce que les tests en lisent : les points,
+ * `[code, annee, points, taux]`, et les cotisations revalorisées,
+ * `[code, annee, montant]`, dans l'ordre ; les points acquis et la majoration
+ * de chaque régime ; les plafonds de durée, `[code, total, avant, retenus]` ;
+ * les points gratuits, `code → [points, avant]` ; et ce que leur schéma
+ * décrit (`donnees`).
+ */
+function droitsEnDonnees(droits) {
+  return {
     points: droits.points.map((point) => [...point]),
     cotisations: droits.cotisations.map((cotisation) => [...cotisation]),
+    points_acquis: [...droits.pointsAcquis],
+    majoration_points: [...droits.majorationPoints],
+    plafonds: droits.plafonds.map((plafond) => [...plafond]),
+    gratuits: [...droits.gratuits].map(([code, gratuit]) => [code, [...gratuit]]),
+    donnees: telQuel(droits.donnees()),
+  };
+}
+
+/**
+ * Le relevé des droits en données, par ce que les tests en lisent : ses
+ * durées et ses droits (`dureesEnDonnees`, `droitsEnDonnees`), sa
+ * coordination (`coordinationEnDonnees`), les membres du groupe de chaque
+ * régime qui liquide avec d'autres, et l'enveloppe du contrat C.5
+ * (`donnees`). Ses durées repassent au portage par la carrière dont il vient
+ * (`durees_du_releve`, `argumentDuDroit`).
+ */
+function releveEnDonnees(leReleve, carriere) {
+  return {
+    durees: dureesEnDonnees(leReleve.durees, carriere),
+    droits: droitsEnDonnees(leReleve.droits),
+    coordination: coordinationEnDonnees(leReleve.coordination, carriere),
+    groupes: [...leReleve.groupes].map(([code, membres]) => [code, [...membres]]),
+    donnees: telQuel(leReleve.donnees()),
   };
 }
 

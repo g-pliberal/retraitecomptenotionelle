@@ -667,6 +667,64 @@ def test_le_jumeau_rend_le_releve_que_la_facade_lit(parametres):
             json.loads(json.dumps(pont._en_donnees(refait.droits.cotisations))), nom)), nom
 
 
+#: Les drapeaux du relevé que la façade transmet, un à un.
+DRAPEAUX_DU_RELEVE = ({}, {"avantages_non_contributifs": False}, {"points_gratuits": False},
+                      {"liquider_successions": False})
+
+
+def _en_json(valeur):
+    return json.loads(json.dumps(pont._en_donnees(valeur)))
+
+
+@pytest.mark.parametrize("parametres", [Parametres(), Parametres(conventions_cor=True)],
+                         ids=["reference", "conventions_cor"])
+def test_le_jumeau_rend_le_releve_entier_et_ses_etapes_que_la_facade_lit(parametres):
+    """Le relevé du salarié, de l'artisan d'avant 1973 et de la fonctionnaire
+    mère de trois enfants, sous chacun de ses drapeaux, et chacune de ses
+    étapes demandée seule : la même enveloppe du contrat C.5, les mêmes
+    groupes, la même coordination, les mêmes durées et les mêmes droits sous
+    leur schéma, les mêmes points acquis, plafonds et points gratuits, le
+    même cumul plafonné de tous les régimes, au bit près."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle.droit import acquerir as acquerir_python
+    from retraite_notionnelle.droit import compter as compter_python
+    from retraite_notionnelle.droit import coordonner as coordonner_python
+
+    servi = facade.Simulateur(parametres)
+    jumeau = simulateur_python.Simulateur(parametres)
+    for carriere in (_salarie, _artisan, _fonctionnaire):
+        lue, construite = carriere(servi), carriere(jumeau)
+        for drapeaux in DRAPEAUX_DU_RELEVE:
+            nom = (carriere.__name__, tuple(drapeaux))
+            lu = facade.releve.construire(servi.scenario_actuel, lue, **drapeaux)
+            refait = releve_python.construire(jumeau.scenario_actuel, construite, **drapeaux)
+            assert lu.donnees() == _en_json(refait.donnees()), nom
+            assert lu.groupes == refait.groupes, nom
+            for etape in ("coordination", "durees", "droits"):
+                assert getattr(lu, etape).donnees() == _en_json(
+                    getattr(refait, etape).donnees()), (nom, etape)
+            assert lu.coordination.regimes == refait.coordination.regimes, nom
+            assert lu.durees.hors_annee == refait.durees.hors_annee, nom
+            assert lu.droits.points_acquis == refait.droits.points_acquis, nom
+            assert lu.droits.majoration_points == refait.droits.majoration_points, nom
+            assert lu.droits.plafonds == tuple(refait.droits.plafonds), nom
+            assert lu.droits.gratuits == refait.droits.gratuits, nom
+        coordination = facade.coordonner.coordonner(servi.scenario_actuel, lue)
+        refaite = coordonner_python.coordonner(jumeau.scenario_actuel, construite)
+        assert coordination.donnees() == _en_json(refaite.donnees()), carriere.__name__
+        for avantages in (True, False):
+            durees = facade.compter.compter(servi.scenario_actuel, coordination, avantages)
+            refaites = compter_python.compter(jumeau.scenario_actuel, refaite, avantages)
+            assert durees.donnees() == _en_json(refaites.donnees()), carriere.__name__
+            tous = tuple(refaites.par_annee["assurance"])
+            assert durees.cumul_plafonne("assurance", tous) == refaites.cumul_plafonne(
+                "assurance", tous), carriere.__name__
+            droits = facade.acquerir.acquerir(servi.scenario_actuel, coordination, durees)
+            assert droits.donnees() == _en_json(acquerir_python.acquerir(
+                jumeau.scenario_actuel, refaite, refaites).donnees()), carriere.__name__
+
+
 # -- la liquidation ---------------------------------------------------------------------
 
 @pytest.mark.parametrize("parametres", [Parametres(), Parametres(conventions_cor=True)],

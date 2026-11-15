@@ -20,19 +20,20 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle import chronologie
-from retraite_notionnelle.carriere import Carriere, Metier
-from retraite_notionnelle.droit import acquerir, compter, coordonner, releve
+from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.noyau import contrats
-from retraite_notionnelle.simulateur import Simulateur
 
+import facade
+from facade import Carriere, Simulateur, acquerir, compter, coordonner, releve
+from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 from outils_portage import moitie_python
 
 RACINE = Path(__file__).resolve().parents[1]
 
 
-@pytest.fixture(scope="module")
-def simulateur() -> Simulateur:
-    return Simulateur()
+@pytest.fixture
+def simulateur(request) -> Simulateur:
+    return facade.simulateur_du_test(request)
 
 
 def _carriere(simulateur: Simulateur, metiers: list[Metier], naissance: int = 1962,
@@ -235,11 +236,9 @@ def test_le_releve_d_un_releve_de_carriere_est_observe(simulateur):
     sont observées, non calculées."""
     from retraite_notionnelle.carriere import LigneRelevee
 
-    carriere = Carriere.depuis_releve(
-        annee_naissance=1970, sexe="H",
-        releve=[LigneRelevee(annee, "salarie_prive_non_cadre", 20000.0, 4)
-                for annee in range(1992, 2034)],
-        age_liquidation=64, macro=simulateur.macro)
+    carriere = simulateur.carriere_releve(
+        1970, "H", [LigneRelevee(annee, "salarie_prive_non_cadre", 20000.0, 4)
+                    for annee in range(1992, 2034)], 64)
     lignes = releve.construire(simulateur.scenario_actuel, carriere).lignes()
     durees = [ligne for ligne in lignes if ligne["droit"]["unite"] == "trimestre"]
     assert durees and all(ligne["origine"] == "observee" and ligne["fait"].startswith("releve_")
@@ -328,6 +327,7 @@ def _ecarts(obtenu, attendu, chemin: str, ecarts: list[str]) -> None:
         ecarts.append(f"{chemin} : python={attendu} js={obtenu}")
 
 
+@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait les étapes du portage")
 def test_les_deux_moteurs_ecrivent_les_memes_etapes():
     """Pour une requête sur cinq des témoins, chaque étape écrit la même donnée
     en Python et en JavaScript — la coordination, les durées, les droits — et

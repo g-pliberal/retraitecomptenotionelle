@@ -2223,14 +2223,14 @@ def liquidation_des_donnees(donnees: dict) -> dict:
                                       "liquidation.regimes")}
 
 
-def releve_des_donnees(donnees: dict) -> dict:
-    """Le relevé des droits que le portage a écrit (``releveEnDonnees`` de
-    ``pont.mjs``), lu strictement : ``par_annee``, par compte, régime et année,
-    les trimestres crédités ; ``plafonds``, par compte, celui de chaque année
-    de la carrière ; ``trimestres_par_regime`` et ``trimestres`` ; ``points``,
-    les crédits ``(code, annee, points, taux)``, dans l'ordre ; ``cotisations``,
-    les cotisations revalorisées ``(code, annee, montant)``, dans l'ordre."""
-    durees = donnees["durees"]
+def durees_des_donnees(durees: dict) -> dict:
+    """Les durées que le portage a écrites (``dureesEnDonnees`` de
+    ``pont.mjs``), lues strictement : ``par_annee``, par compte, régime et
+    année, les trimestres crédités ; ``plafonds``, par compte, celui de chaque
+    année de la carrière ; ``trimestres_par_regime`` et ``trimestres`` ;
+    ``hors_annee``, par compte et régime, ce qui ne tient à aucune année ;
+    ``enfants``, les trimestres des enfants, ``None`` sans eux ; ``donnees``,
+    ce que leur schéma décrit, tel quel."""
     return {
         "par_annee": {compte: {code: dict(annees) for code, annees in lu_strictement(
             _PAR_ANNEE, regimes, f"releve.par_annee.{compte}")}
@@ -2242,10 +2242,69 @@ def releve_des_donnees(donnees: dict) -> dict:
             tuple[tuple[str, int], ...], durees["trimestres_par_regime"],
             "releve.trimestres_par_regime")),
         "trimestres": lu_strictement(int, durees["trimestres"], "releve.trimestres"),
+        "hors_annee": {compte: dict(lu_strictement(
+            tuple[tuple[str, float], ...], regimes, f"releve.hors_annee.{compte}"))
+            for compte, regimes in durees["hors_annee"].items()},
+        "enfants": durees["enfants"],
+        "donnees": durees["donnees"],
+    }
+
+
+def droits_des_donnees(droits: dict) -> dict:
+    """Les droits que le portage a écrits (``droitsEnDonnees`` de
+    ``pont.mjs``), lus strictement : ``points``, les crédits
+    ``(code, annee, points, taux)``, et ``cotisations``, les cotisations
+    revalorisées ``(code, annee, montant)``, dans l'ordre ;
+    ``points_acquis`` et ``majoration_points``, par régime ; ``plafonds``,
+    ``(code, total, avant, retenus)`` ; ``gratuits``, par régime,
+    ``(points, avant)`` ; ``donnees``, ce que leur schéma décrit, tel quel."""
+    return {
         "points": lu_strictement(tuple[tuple[str, int, float, float | None], ...],
-                                 donnees["points"], "releve.points"),
+                                 droits["points"], "releve.points"),
         "cotisations": lu_strictement(tuple[tuple[str, int, float], ...],
-                                      donnees["cotisations"], "releve.cotisations"),
+                                      droits["cotisations"], "releve.cotisations"),
+        "points_acquis": dict(lu_strictement(tuple[tuple[str, float], ...],
+                                             droits["points_acquis"], "releve.points_acquis")),
+        "majoration_points": dict(lu_strictement(
+            tuple[tuple[str, float], ...], droits["majoration_points"],
+            "releve.majoration_points")),
+        "plafonds": lu_strictement(tuple[tuple[str, float, float, float], ...],
+                                   droits["plafonds"], "releve.plafonds_des_droits"),
+        "gratuits": {code: tuple(gratuit) for code, gratuit in droits["gratuits"]},
+        "donnees": droits["donnees"],
+    }
+
+
+def coordination_des_donnees(coordination: dict) -> dict:
+    """La coordination que le portage a écrite (``coordinationEnDonnees`` de
+    ``pont.mjs``) : ``donnees``, ce que son schéma décrit, tel quel ;
+    ``regimes``, ceux de chaque ligne ; ``inchangee``, quand elle a gardé la
+    carrière reçue, et sinon ``carriere``, la carrière rétablie, sous le type
+    du Python."""
+    return {
+        "donnees": coordination["donnees"],
+        "regimes": lu_strictement(tuple[tuple[str, ...], ...], coordination["regimes"],
+                                  "coordination.regimes"),
+        "inchangee": lu_strictement(bool, coordination["inchangee"], "coordination.inchangee"),
+        "carriere": (None if coordination["carriere"] is None
+                     else carriere_des_donnees(coordination["carriere"])),
+    }
+
+
+def releve_des_donnees(donnees: dict) -> dict:
+    """Le relevé des droits que le portage a écrit (``releveEnDonnees`` de
+    ``pont.mjs``) : ses ``durees`` (:func:`durees_des_donnees`), ses
+    ``droits`` (:func:`droits_des_donnees`), sa ``coordination``
+    (:func:`coordination_des_donnees`), ``groupes``, les membres du groupe de
+    chaque régime qui liquide avec d'autres, le liquidateur en tête, et
+    ``donnees``, l'enveloppe du contrat C.5, telle quelle."""
+    return {
+        "durees": durees_des_donnees(donnees["durees"]),
+        "droits": droits_des_donnees(donnees["droits"]),
+        "coordination": coordination_des_donnees(donnees["coordination"]),
+        "groupes": {code: tuple(membres) for code, membres in lu_strictement(
+            tuple[tuple[str, tuple[str, ...]], ...], donnees["groupes"], "releve.groupes")},
+        "donnees": donnees["donnees"],
     }
 
 
@@ -2270,6 +2329,10 @@ LECTURES_DE_LA_FACADE = {
     "releve.construire": releve_des_donnees,
     "simulateur.regime_fusionne": regime_fusionne_des_donnees,
     "liquidation.liquider": liquidation_des_donnees,
+    "coordonner.coordonner": coordination_des_donnees,
+    "compter.compter": durees_des_donnees,
+    "acquerir.acquerir": droits_des_donnees,
+    "compter.cumul_plafonne": lambda cumul: lu_strictement(int, cumul, "cumul_plafonne"),
 }
 
 #: Le type que le Python donne à une erreur du portage, quand ce n'est pas

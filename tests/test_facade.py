@@ -766,11 +766,14 @@ def test_le_releve_revient_avec_ses_durees_et_ses_points(simulateur):
 
 
 def test_le_releve_ne_sert_que_ce_qu_il_transmet(simulateur):
-    """Les drapeaux de ``construire``, un plafond de régimes nommés, des durées
-    passées avec une autre carrière n'arriveraient pas au portage : refusés."""
+    """Un plafond de régimes nommés, des durées passées avec une autre
+    carrière, ou celles d'un relevé construit sous un drapeau, que le portage
+    refait du relevé de la carrière sous ses drapeaux par défaut,
+    n'arriveraient pas au portage : refusés."""
     carriere = simulateur.carriere_simple(**NE_EN_1955)
-    with pytest.raises(NonTransmissible, match="points_gratuits"):
-        facade.releve.construire(simulateur.scenario_actuel, carriere, points_gratuits=False)
+    sans = facade.releve.construire(simulateur.scenario_actuel, carriere, points_gratuits=False)
+    with pytest.raises(NonTransmissible, match="drapeaux"):
+        liquider.duree_du_regime_aligne(carriere, sans.durees, ("regime_general",))
     with pytest.raises(NonTransmissible, match="moteur"):
         facade.releve.construire(simulateur_python.Simulateur().scenario_actuel, carriere)
     durees = facade.releve.construire(simulateur.scenario_actuel, carriere).durees
@@ -781,6 +784,106 @@ def test_le_releve_ne_sert_que_ce_qu_il_transmet(simulateur):
         liquider.duree_du_regime_aligne(autre, durees, ("regime_general",))
     with pytest.raises(NonTransmissible, match="modifi"):
         durees.trimestres = 0
+
+
+# -- le relevé entier et ses étapes ------------------------------------------------------
+
+#: Un artisan devenu salarié, né en 1960, parti à soixante-quatre ans, en 2024 :
+#: la liquidation unique réunit ses régimes alignés (L. 173-1-2).
+ARTISAN_PUIS_SALARIE = dict(annee_naissance=1960, sexe="H", age_liquidation=64,
+                            metiers=[Metier("artisan", 20.0),
+                                     Metier("salarie_prive_non_cadre", 40.0)])
+
+
+def test_le_releve_rend_ses_lignes_ses_groupes_et_ses_etapes(simulateur):
+    """Le relevé de l'artisan devenu salarié revient avec ses lignes (contrat
+    C.5), le groupe de la liquidation unique, le liquidateur en tête, et ce
+    que chaque étape a écrit : la coordination, une ligne de régimes par
+    ligne de carrière ; les durées et les droits, en données, sous leur
+    schéma ; les points acquis de chaque régime."""
+    carriere = simulateur.carriere_parcours(**ARTISAN_PUIS_SALARIE)
+    releve = facade.releve.construire(simulateur.scenario_actuel, carriere)
+    donnees = releve.donnees()
+    assert donnees["lignes"] == releve.lignes() and donnees["lignes"]
+    assert releve.groupes and all(type(membres) is tuple and len(membres) >= 2
+                                  for membres in releve.groupes.values())
+    assert [g["regimes"] for g in donnees["groupes"]] == [
+        list(membres) for membres in dict.fromkeys(releve.groupes.values())]
+    coordination = releve.coordination
+    assert len(coordination.regimes) == len(coordination.carriere.lignes)
+    assert all(type(regimes) is tuple for regimes in coordination.regimes)
+    assert coordination.donnees()["lignes"][0]["affiliation"] == "artisan"
+    assert releve.durees.donnees()["trimestres"] == releve.durees.trimestres
+    assert {point["regime"] for point in releve.droits.donnees()["points"]} == set(
+        releve.droits.points_acquis)
+    assert releve.durees.hors_annee["assurance"] == {}
+    assert releve.durees.enfants is None
+
+
+def test_le_releve_sert_ses_drapeaux(simulateur):
+    """Les trois drapeaux de ``construire`` passent au portage : sans la
+    liquidation unique, aucun groupe ; sans points gratuits, le chef
+    d'exploitation installé en 1975 n'en a pas ; sans avantages non
+    contributifs, la mère de trois enfants n'a pas ses vingt-quatre
+    trimestres."""
+    actuel = simulateur.scenario_actuel
+    artisan = simulateur.carriere_parcours(**ARTISAN_PUIS_SALARIE)
+    assert facade.releve.construire(actuel, artisan, liquider_successions=False).groupes == {}
+    chef = simulateur.carriere_parcours(annee_naissance=1955, sexe="H", age_liquidation=64,
+                                        metiers=[Metier("exploitant_agricole", 20.0)])
+    assert facade.releve.construire(actuel, chef).droits.gratuits
+    assert facade.releve.construire(actuel, chef, points_gratuits=False).droits.gratuits == {}
+    mere = simulateur.carriere_parcours(annee_naissance=1970, sexe="F", age_liquidation=64,
+                                        nombre_enfants=3,
+                                        metiers=[Metier("salarie_prive_non_cadre", 22.0)])
+    avec = facade.releve.construire(actuel, mere)
+    sans = facade.releve.construire(actuel, mere, avantages_non_contributifs=False)
+    assert (avec.durees.enfants.trimestres, avec.durees.enfants.regimes,
+            avec.durees.enfants.dispositifs) == (24, ["regime_general"], ["mda"])
+    assert sans.durees.enfants is None
+    assert sans.durees.trimestres == avec.durees.trimestres - 24
+
+
+def test_chaque_etape_se_sert_seule(simulateur):
+    """``coordonner``, ``compter`` et ``acquerir``, servis par le portage, une
+    étape après l'autre, rendent ce que le relevé rend ; une carrière que la
+    coordination ne rétablit pas revient elle-même ; le cumul plafonné de
+    plusieurs régimes se lit sur les durées."""
+    actuel = simulateur.scenario_actuel
+    carriere = simulateur.carriere_parcours(**ARTISAN_PUIS_SALARIE)
+    coordination = facade.coordonner.coordonner(actuel, carriere)
+    assert coordination.carriere is carriere and coordination.retablissements == ()
+    durees = facade.compter.compter(actuel, coordination)
+    droits = facade.acquerir.acquerir(actuel, coordination, durees)
+    releve = facade.releve.construire(actuel, carriere)
+    assert coordination.donnees() == releve.coordination.donnees()
+    assert durees.donnees() == releve.durees.donnees()
+    assert droits.donnees() == releve.droits.donnees()
+    regimes = ("regime_general", "cancava")
+    assert durees.cumul_plafonne("assurance", regimes) == sum(
+        min(sum(durees.par_annee["assurance"].get(code, {}).get(annee, 0) for code in regimes),
+            durees.plafond("assurance", annee))
+        for annee in {annee for code in regimes
+                      for annee in durees.par_annee["assurance"].get(code, {})})
+
+
+def test_une_etape_ne_sert_que_ce_qu_elle_transmet(simulateur):
+    """Une coordination, des durées qui ne viennent pas de la façade, ou des
+    durées d'une autre coordination, un filtre d'années n'arriveraient pas au
+    portage : refusés."""
+    actuel = simulateur.scenario_actuel
+    carriere = simulateur.carriere_parcours(**ARTISAN_PUIS_SALARIE)
+    coordination = facade.coordonner.coordonner(actuel, carriere)
+    with pytest.raises(NonTransmissible, match="coordination"):
+        facade.compter.compter(actuel, object())
+    autre = facade.coordonner.coordonner(actuel, simulateur.carriere_simple(**SALARIE))
+    with pytest.raises(NonTransmissible, match="durées"):
+        facade.acquerir.acquerir(actuel, coordination, facade.compter.compter(actuel, autre))
+    durees = facade.compter.compter(actuel, coordination)
+    with pytest.raises(NonTransmissible, match="annees"):
+        durees.cumul_plafonne("assurance", ("regime_general",), lambda annee: annee > 2000)
+    with pytest.raises(NonTransmissible, match="drapeaux"):
+        liquider.duree_du_regime_aligne(carriere, durees, ("regime_general",))
 
 
 # -- les cotisations du relevé et le constructeur du compte -----------------------------
@@ -1215,5 +1318,7 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "simulateur.carriere_parcours", "simulateur.carriere_releve",
                               "carriere.depuis_profil", "carriere.depuis_parcours",
                               "releve.construire", "simulateur.regime_fusionne",
-                              "liquidation.liquider")
+                              "liquidation.liquider", "coordonner.coordonner",
+                              "compter.compter", "acquerir.acquerir",
+                              "compter.cumul_plafonne")
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)
