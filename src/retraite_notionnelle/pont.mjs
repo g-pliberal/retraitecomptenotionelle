@@ -2247,7 +2247,7 @@ ENTREES_DE_LA_FACADE["droit.etapes"] = (moteur, carriere, avantages, gratuits, s
 /**
  * Un échéancier parcouru, par ce que les tests en lisent : son journal
  * (`journalTelQuel`), et ce que le contrat décrit des contenus qui ne passent
- * pas, le scénario 1 au départ et aujourd'hui, tels quels, et
+ * pas, le scénario 1 au départ et aujourd'hui, et la réversion, tels quels, et
  * les appels de `liquider` que son parcours a coûtés depuis `avant`.
  */
 function echeancierTelQuel(echeancier, avant) {
@@ -2259,7 +2259,10 @@ function echeancierTelQuel(echeancier, avant) {
       .filter((entree) => CONTENUS_QUI_NE_PASSENT_PAS.has(entree.sorte))
       .map((entree) => [entree.id, telQuel(entree.donnees().contenu.donnee)])),
     au_depart: telQuel(echeancier.auDepart),
-    aujourd_hui: telQuel(echeancier.aujourdhui), appels: appels() - avant,
+    aujourd_hui: telQuel(echeancier.aujourdhui),
+    // La réversion qu'il liquide au décès de l'assuré, ses champs sous les
+    // noms du Python, ou `null`.
+    reversion: telQuel(echeancier.reversion), appels: appels() - avant,
   };
 }
 

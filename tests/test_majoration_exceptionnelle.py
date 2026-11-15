@@ -34,7 +34,7 @@ from retraite_notionnelle.droit.completer import PetitePension
 from retraite_notionnelle.revalorisation import FICHE_DE_LA_MAJORATION, RegimeServi
 
 import facade
-from facade import (Echeancier, PensionServie, Simulateur, faire_vivre,
+from facade import (Echeancier, Parametres, PensionServie, Simulateur, faire_vivre,
                     majorer_les_petites_pensions)
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
@@ -227,8 +227,21 @@ def test_ni_la_pension_d_apres_ni_la_decotee_ni_la_courte_ne_le_sont(simulateur)
     assert all(p.cotises_tous_regimes < 120 for p in cas["courte"][1].petites_pensions)
 
 
-@pytest.mark.sur_le_moteur_python("l'échéancier, et un simulateur sans la fiche, que la façade ne sert pas")
-def test_l_echeancier_l_inscrit_a_sa_date_et_la_reversion_ne_la_lit_pas(simulateur):
+def _sans_la_majoration(request) -> Simulateur:
+    """Le simulateur d'une copie des données où la majoration n'existe pour
+    aucune pension : la fiche n'ouvre plus rien, comme si elle manquait
+    (``majorerLesPetitesPensions`` passe l'une comme l'autre)."""
+    def retirer(texte: str) -> str:
+        assert texte.count("existe: true") == 1
+        return texte.replace("existe: true", "existe: false")
+
+    copie = facade.donnees_retouchees(
+        request, ("sans la majoration exceptionnelle",),
+        {f"reference/regles/{FICHE_DE_LA_MAJORATION}.yaml": retirer})
+    return facade.simulateur_du_test(request, Parametres(racine_donnees=copie))
+
+
+def test_l_echeancier_l_inscrit_a_sa_date_et_la_reversion_ne_la_lit_pas(simulateur, request):
     """Un début de composante, que la loi induit, le 1er septembre 2023 ; la
     pension de l'échéance la compte. La réversion du conjoint, elle, se
     calcule sans elle (circulaire, 5.1.3.1) : la même avec ou sans la fiche."""
@@ -243,11 +256,10 @@ def test_l_echeancier_l_inscrit_a_sa_date_et_la_reversion_ne_la_lit_pas(simulate
         "2023-09-01", "debut_de_composante", "induit")
     composante = entrees["majoration_exceptionnelle_regime_general"].contenu
     assert 99.0 * 12 <= composante["montant"]["annuel"] <= 100.0 * 12
-    sans = Simulateur()
-    sans.scenario_actuel.fiches_datees = sans.scenario_actuel.fiches_datees.sans(
-        FICHE_DE_LA_MAJORATION)
-    temoin = Echeancier(sans)
+    temoin = Echeancier(_sans_la_majoration(request))
     temoin.parcourir(carriere, 2026)
+    assert "majoration_exceptionnelle_" + carriere.personne not in {e.id for e in temoin.journal}
+    assert temoin.reversion is not None
     assert temoin.reversion.donnees() == echeancier.reversion.donnees()
     assert echeancier.aujourd_hui.pension_annuelle > temoin.aujourd_hui.pension_annuelle
 

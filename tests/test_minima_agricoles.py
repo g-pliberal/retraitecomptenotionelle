@@ -27,11 +27,10 @@ import pytest
 from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit.commun import PensionRegime
-from retraite_notionnelle.echeancier import Echeancier
 
 import facade
-from facade import (Carriere, Simulateur, commun, completer, faire_vivre, liquider, ouvrir,
-                    releve)
+from facade import (Carriere, Echeancier, Simulateur, commun, completer, faire_vivre, liquider,
+                    ouvrir, releve)
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 valeur_du_point = liquider.valeur_du_point
@@ -1626,7 +1625,6 @@ def test_ce_que_la_duree_ouvrait_deja_n_est_pas_releve(simulateur):
         assert faire_vivre(simulateur, carriere, resultat, 2026).relevement is None
 
 
-@pytest.mark.sur_le_moteur_python("echeancier.Echeancier")
 def test_l_echeancier_inscrit_le_relevement_a_sa_date(simulateur):
     """Un début de composante, que la loi induit, le 1er septembre 2023 : les
     points gratuits et ceux du complément, à la valeur du point de ce jour."""
@@ -1636,7 +1634,11 @@ def test_l_echeancier_inscrit_le_relevement_a_sa_date(simulateur):
     evenement = entrees["relevement_des_exploitants_" + carriere.personne]
     assert (evenement.debut, evenement.contenu.sorte, evenement.contenu.origine) == (
         "2023-09-01", "debut_de_composante", "induit")
-    relevement = faire_vivre(simulateur, carriere, echeancier.au_depart, 2026).relevement
+    # Le départ de l'échéancier est le scénario 1 de la carrière : « faire
+    # vivre » le reçoit du moteur de la façade, qui le refait.
+    au_depart = simulateur.scenario_actuel.calculer(carriere)
+    assert echeancier.au_depart == au_depart
+    relevement = faire_vivre(simulateur, carriere, au_depart, 2026).relevement
     composante = entrees["relevement_msa_rco"].contenu
     assert composante["montant"]["annuel"] == pytest.approx(
         (relevement.points_gratuits + relevement.points_complement)

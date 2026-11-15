@@ -2524,7 +2524,9 @@ def echeancier_des_donnees(lu: dict) -> dict:
     (:func:`journal_des_donnees`) ; ``decrites``, ce que le contrat décrit du
     contenu de chaque entrée qui ne passe pas, par son identifiant ;
     ``au_depart`` et ``aujourd_hui``, le
-    scénario 1 au départ et à l'échéance, ou ``None`` ; ``appels``, ceux de
+    scénario 1 au départ et à l'échéance, ou ``None`` ; ``reversion``, celle
+    qu'il liquide au décès de l'assuré (:func:`reversion_des_donnees`), ou
+    ``None`` ; ``appels``, ceux de
     ``liquider`` que son parcours a coûtés."""
     return {"journal": journal_des_donnees(lu["journal"], "echeancier.journal"),
             "decrites": lu_strictement(dict[str, dict], lu["decrites"], "echeancier.decrites"),
@@ -2532,6 +2534,7 @@ def echeancier_des_donnees(lu: dict) -> dict:
                           else resultat_actuel_des_donnees(lu["au_depart"])),
             "aujourd_hui": (None if lu["aujourd_hui"] is None
                             else actuel_aujourd_hui_des_donnees(lu["aujourd_hui"])),
+            "reversion": reversion_des_donnees(lu["reversion"]),
             "appels": lu_strictement(int, lu["appels"], "echeancier.appels")}
 
 

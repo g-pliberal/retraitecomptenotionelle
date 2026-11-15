@@ -414,10 +414,10 @@ class Echeancier(_Ferme):
     """``Echeancier`` : sur un simulateur de la façade, ``parcourir``, servi
     par le portage, l'échéance comprise ; puis ce que les tests en lisent —
     son journal (:class:`Journal`), le scénario 1 au départ (``au_depart``) et
-    à l'échéance (``aujourd_hui``). Les liquidations de son parcours se
-    comptent dans ``liquidation.appels()``. Le reste de l'échéancier — sa
-    réversion, ses durées au départ, sa retraite progressive — ne passe pas le
-    pont, et se refuse."""
+    à l'échéance (``aujourd_hui``), la réversion qu'il liquide au décès de
+    l'assuré (``reversion``). Les liquidations de son parcours se comptent
+    dans ``liquidation.appels()``. Le reste de l'échéancier — ses durées au
+    départ, sa retraite progressive — ne passe pas le pont, et se refuse."""
 
     def __init__(self, simulateur) -> None:
         if not isinstance(simulateur, Simulateur):
@@ -428,6 +428,7 @@ class Echeancier(_Ferme):
         object.__setattr__(self, "journal", Journal())
         object.__setattr__(self, "au_depart", None)
         object.__setattr__(self, "aujourd_hui", None)
+        object.__setattr__(self, "reversion", None)
 
     def _lire(self, lu: dict) -> None:
         entrees = [dataclasses.replace(entree, contenu=_Decrit(entree.sorte,
@@ -436,6 +437,7 @@ class Echeancier(_Ferme):
         object.__setattr__(self, "journal", Journal._des_entrees(entrees))
         object.__setattr__(self, "au_depart", lu["au_depart"])
         object.__setattr__(self, "aujourd_hui", lu["aujourd_hui"])
+        object.__setattr__(self, "reversion", lu["reversion"])
         _APPELS[0] += lu["appels"]
 
     def parcourir(self, carriere, echeance: int | None = None):
