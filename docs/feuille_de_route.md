@@ -7331,18 +7331,16 @@ de `contribution_etat`.
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Les tests y passent par une façade (`tests/facade.py`), qui sert les entrées
 du moteur, la liquidation entière et chacune de ses étapes, ses tables,
-soixante-huit règles, « faire vivre » et le système 1 servi une année, la
-majoration des petites pensions, les constructeurs du compte, sous d'autres
-paramètres compris, et le relevé entier. `test_reversion.py`,
-`test_droit.py`, douze fichiers du relevé, les cinq fichiers d'oracle et
-quinze autres n'ont presque plus de test sur le moteur Python ;
-`test_simulateur.py` en garde quinze.
+soixante-dix règles, « faire vivre » et le système 1 servi une année, la
+proposition et son report, la mortalité, les constructeurs du compte et le
+relevé entier. `test_reversion.py`, `test_droit.py`, douze fichiers du
+relevé, les oracles et quinze autres n'ont presque plus de test sur le
+moteur Python ; `test_simulateur.py` en garde sept.
 Reste, une étape par session : les autres fichiers de tests, chacun avec ce
 qui lui manque (« Ce qui reste » de
-`2026-11-15-le-simulateur-a-la-facade.md`).
-Puis quatre études, la
-liste des fonctions gardées des deux côtés, le retrait, et les lignes du
-relevé des périodes assimilées (table de
+`2026-11-15-la-proposition-et-la-mortalite-a-la-facade.md`).
+Puis quatre études, la liste des fonctions gardées des deux côtés, le
+retrait, et les périodes assimilées du relevé (table de
 `2026-11-13-les-decisions-du-proprietaire.md`).
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je

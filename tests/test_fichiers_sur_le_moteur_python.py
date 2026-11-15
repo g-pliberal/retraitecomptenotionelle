@@ -98,7 +98,7 @@ RESTES = {"test_departs.py": 2, "test_droit.py": 1, "test_invalidite.py": 4, "te
           "test_periodes_assimilees_exemples_officiels.py": 1, "test_pension_maximale.py": 5,
           "test_pension_minimum_avant_1983.py": 2,
           "test_referents.py": 2,
-          "test_simulateur.py": 15}
+          "test_simulateur.py": 7}
 
 
 def _du_moteur(module: str) -> bool:

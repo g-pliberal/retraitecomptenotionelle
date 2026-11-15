@@ -2246,6 +2246,14 @@ def comparaison_des_donnees(comparaison: dict):
     return lu_strictement(Comparaison, comparaison, "Comparaison")
 
 
+def resultat_notionnel_des_donnees(resultat: dict):
+    """Le résultat d'un univers notionnel que le portage a écrit, sous le type
+    du Python (``ResultatNotionnel``), lu strictement."""
+    from .scenarios.notionnel import ResultatNotionnel
+
+    return lu_strictement(ResultatNotionnel, resultat, "ResultatNotionnel")
+
+
 def resultat_actuel_des_donnees(actuel: dict):
     """Le résultat entier du scénario 1 que le portage a écrit, sous le type du
     Python (``ResultatActuel``), lu strictement. Le module du scénario ne se
@@ -2451,6 +2459,9 @@ LECTURES_DE_LA_FACADE = {
     "reversion.reversion": reversion_des_donnees,
     "releve.construire": releve_des_donnees,
     "simulateur.regime_fusionne": regime_fusionne_des_donnees,
+    "simulateur.proposition": lambda lu: resultat_notionnel_des_donnees(lu),
+    "simulateur.carriere_proposition": lambda lu: None if lu is None else carriere_des_donnees(lu),
+    "carriere.prolongee": lambda lu: None if lu is None else carriere_des_donnees(lu),
     "liquidation.liquider": liquidation_des_donnees,
     "liquidation.demande_de_depart": demande_des_donnees,
     "coordonner.coordonner": coordination_des_donnees,
@@ -2701,6 +2712,31 @@ def constructeur_du_compte(constructeur: str, methode: str, type_rendu, *argumen
                            type_rendu, arguments, parametres, paquet)
 
 
+# -- la mortalité du simulateur, par la façade (action 161) -----------------------
+
+#: Les méthodes des données de mortalité du simulateur que la façade sert,
+#: sous les noms du Python : les mêmes arguments, dans le même ordre, dans le
+#: portage (``moteur/js/mortalite.js``), et un appel confronté au jumeau
+#: (``tests/test_facade_jumeau.py``). Une méthode qui n'y est pas est refusée
+#: avant node.
+MORTALITE_DE_LA_FACADE: tuple[str, ...] = ("survie_annuelle",)
+
+
+def mortalite_du_simulateur(methode: str, type_rendu, *arguments, parametres=None,
+                            paquet: bytes | None = None):
+    """Ce que rend la méthode ``methode`` des données de mortalité du
+    simulateur (``simulateur.mortalite``), appelée par le portage sur les
+    siennes, sous ``parametres`` : ses arguments comme ceux d'une méthode de
+    table (:func:`table_du_moteur`), ce qu'elle rend lu strictement sous
+    ``type_rendu``. Une méthode que :data:`MORTALITE_DE_LA_FACADE` ne déclare
+    pas est refusée avant node."""
+    if methode not in MORTALITE_DE_LA_FACADE:
+        raise ValueError(f"méthode de la mortalité que la façade ne sert pas : {methode} "
+                         "(pont.MORTALITE_DE_LA_FACADE)")
+    return _methode_servie("simulateur.mortalite", SIMULATEUR, "mortalite", methode,
+                           type_rendu, arguments, parametres, paquet)
+
+
 def _argument_de_la_facade(argument, carrieres: list) -> dict:
     """Un argument d'une méthode de table ou d'une règle du droit que la façade
     sert, tel que ``pont.mjs`` le relit : comme celui d'un appel du droit
@@ -2777,6 +2813,8 @@ CLASSES_EN_CHAMEAU |= {"EligibleMinimum", "DureesDesCultes", "PensionMajoree",
 #: un appel confronté au jumeau (``tests/test_facade_jumeau.py``). Une règle
 #: qui n'y est pas est refusée avant node.
 REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
+    # Le plancher de seize points de la retraite proportionnelle (R. 732-73).
+    "acquerir": ("points_msa_retenus",),
     # Hors de ``droit/`` : ``carriere.js``, à la racine du portage — le relevé
     # prolongé jusqu'au départ, et le salaire moyen d'une année.
     "carriere": ("prolonger_releve", "salaire_moyen_annuel"),
@@ -2801,7 +2839,7 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     # La rente viagère d'invalidité du fonctionnaire (L. 28).
     "invalidite": ("age_de_l_aspa", "categorie_de_la_pension", "plancher_de_la_substitution",
                    "rente_viagere_d_invalidite"),
-    "liquider": ("abattement_points", "age_de_la_duree_atteinte", "annees_au_prorata",
+    "liquider": ("_coefficient_anticipation", "abattement_points", "age_de_la_duree_atteinte", "annees_au_prorata",
                  "borne_de_la_duree", "coefficient_surcote_datee", "decote_opposable",
                  "duree_du_regime_aligne",
                  "duree_proratisation", "majoration_des_points_de_1952_a_1972_d_avant_2026",

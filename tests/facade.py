@@ -83,6 +83,7 @@ from retraite_notionnelle import revalorisation as _revalorisation
 from retraite_notionnelle import simulateur as _simulateur
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import ContributionEtat, Parametres
+from retraite_notionnelle.donnees.mortalite import DonneesMortalite
 from retraite_notionnelle.donnees.regimes import PeriodeRegime, Regime
 from retraite_notionnelle.pont import NonTransmissible
 from retraite_notionnelle.droit import acquerir as _acquerir
@@ -118,7 +119,8 @@ ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversio
            "acquerir.acquerir", "compter.cumul_plafonne", "compter.des_regimes",
            "droit.etapes", "compter.trimestres_du_contrat", "compter.jours_par_annee",
            "revalorisation.faire_vivre", "commun.periode_de_liquidation",
-           "revalorisation.majorer_les_petites_pensions", "revalorisation.actuel_aujourd_hui")
+           "revalorisation.majorer_les_petites_pensions", "revalorisation.actuel_aujourd_hui",
+           "simulateur.proposition", "simulateur.carriere_proposition", "carriere.prolongee")
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
@@ -417,6 +419,7 @@ class Simulateur(_Ferme):
         object.__setattr__(self, "scenario_actuel", ScenarioActuel(self))
         object.__setattr__(self, "_constructeurs", {})
         object.__setattr__(self, "_regime_fusionne", None)
+        object.__setattr__(self, "_projection", None)
 
     @property
     def macro(self):
@@ -435,6 +438,12 @@ class Simulateur(_Ferme):
             object.__setattr__(self, "_regime_fusionne", _demander(
                 "simulateur.regime_fusionne", self.parametres, pont.SIMULATEUR))
         return self._regime_fusionne
+
+    @property
+    def mortalite(self):
+        """Les données de mortalité du simulateur : ses quotients lus par
+        leur chargeur, ses méthodes servies par le portage."""
+        return _Mortalite(self)
 
     @property
     def indexation(self):
@@ -458,6 +467,20 @@ class Simulateur(_Ferme):
             return self._constructeurs.setdefault(nom, Constructeur(self, nom))
         return super().__getattr__(nom)
 
+    def pour_la_projection(self) -> "Simulateur":
+        """``Simulateur.pour_la_projection`` : le simulateur de la page Coût,
+        sous les conventions du COR et sans le minimum vieillesse au scénario
+        1, un simulateur de la façade, bâti une fois ; sous ces réglages,
+        lui-même. Ce ne sont que des paramètres : le portage les reçoit."""
+        if (self.parametres.conventions_cor
+                and not self.parametres.minimum_vieillesse_dans_le_scenario_actuel):
+            return self
+        if self._projection is None:
+            object.__setattr__(self, "_projection", Simulateur(dataclasses.replace(
+                self.parametres, conventions_cor=True,
+                minimum_vieillesse_dans_le_scenario_actuel=False)))
+        return self._projection
+
     def simuler(self, carriere):
         """``Simulateur.simuler`` : la comparaison entière, son journal
         compris, sous les paramètres du simulateur, racine des données
@@ -473,6 +496,17 @@ class Simulateur(_Ferme):
                                "simulateur de la façade")
         comparaison.parametres = self.parametres
         return comparaison
+
+    def carriere_proposition(self, carriere):
+        """``Simulateur.carriere_proposition`` : la carrière que la proposition
+        fait liquider, reportée à son âge légal, ou celle qu'on lui passe."""
+        reportee = _demander("simulateur.carriere_proposition", self.parametres,
+                             pont.SIMULATEUR, carriere)
+        return carriere if reportee is None else reportee
+
+    def proposition(self, carriere):
+        """``Simulateur.proposition`` : le scénario 6 sur cette carrière-là."""
+        return _demander("simulateur.proposition", self.parametres, pont.SIMULATEUR, carriere)
 
     def carriere_simple(self, annee_naissance, sexe, affiliation, age_debut, age_liquidation,
                         **options):
@@ -490,6 +524,56 @@ class Simulateur(_Ferme):
         return _demander("simulateur.carriere_releve", self.parametres, pont.SIMULATEUR, _options(
             _carriere.Carriere.depuis_releve, annee_naissance=annee_naissance, sexe=sexe,
             releve=list(releve), age_liquidation=age_liquidation, macro=None, **options))
+
+
+def prolongee(carriere, age_liquidation: float, macro, attente_travaillee: bool = True):
+    """``Carriere.prolongee`` : la carrière poursuivie jusqu'à un départ à
+    ``age_liquidation``, par le portage, sur les séries du simulateur de la
+    façade qui les a données ; elle-même quand le départ n'est pas plus
+    tardif."""
+    parametres = _parametres_des_series(macro)
+    prolongee_ = _demander("carriere.prolongee", parametres, pont.SIMULATEUR, carriere,
+                           age_liquidation, attente_travaillee)
+    return carriere if prolongee_ is None else prolongee_
+
+
+class _Mortalite(_Ferme):
+    """``Simulateur.mortalite`` : ses quotients observés, des données, lus
+    par leur chargeur Python ; celles de ses méthodes que la façade sert
+    (``pont.MORTALITE_DE_LA_FACADE``), appelées par le portage sur les
+    siennes."""
+
+    def __init__(self, simulateur: Simulateur) -> None:
+        object.__setattr__(self, "_simulateur", simulateur)
+
+    @property
+    def _quotients_observes(self):
+        return self._simulateur._donnees.mortalite._quotients_observes
+
+    def __getattr__(self, methode):
+        if methode.startswith("__"):
+            raise AttributeError(methode)
+        if methode not in pont.MORTALITE_DE_LA_FACADE:
+            raise NonTransmissible(
+                f"mortalite.{methode} : la façade ne sert pas cette méthode de la mortalité "
+                "(pont.MORTALITE_DE_LA_FACADE) — le test la demande au pont, ou se porte à "
+                "la main")
+        jumelle = getattr(DonneesMortalite, methode)
+        rendu = typing.get_type_hints(jumelle)["return"]
+        simulateur = self._simulateur
+
+        def servie(*arguments, **nommes):
+            if not memoire.modele_intact():
+                raise NonTransmissible(
+                    f"mortalite.{methode} : modèle modifié (monkeypatch, "
+                    "memoire.modele_modifie) — le portage ne le voit pas")
+            lies = inspect.signature(jumelle).bind(None, *arguments, **nommes)
+            lies.apply_defaults()
+            _, *valeurs = lies.arguments.values()
+            return pont.mortalite_du_simulateur(methode, rendu, *valeurs,
+                                                parametres=simulateur.parametres)
+
+        return servie
 
 
 class Constructeur(_Ferme):
@@ -1367,6 +1451,10 @@ class _Module(_Ferme):
         if type(constante) is dict and all(
                 type(v) in _SIMPLES for v in (*constante, *constante.values())):
             return dict(constante)
+        # Une règle du module que la façade sert (``acquerir.points_msa_retenus``).
+        module = self._jumeau.__name__.rsplit(".", 1)[-1]
+        if nom in REGLES.get(module, ()):
+            return getattr(Regles(module, self._jumeau), nom)
         return super().__getattr__(nom)
 
 

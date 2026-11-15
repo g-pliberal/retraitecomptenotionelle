@@ -29,6 +29,7 @@ from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.config import (RACINE_PROJET, ContributionEtat, Neutralisations,
                                          Parametres)
 from retraite_notionnelle.donnees.chargement import DonneeInsuffisante, Fiabilite
+from retraite_notionnelle.droit import acquerir as acquerir_python
 from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import compter as compter_python
@@ -51,8 +52,8 @@ from retraite_notionnelle.scenarios.notionnel import ResultatNotionnel
 from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Comparaison
 
 import facade
-from facade import (Carriere, NonTransmissible, Simulateur, commun, completer, departs, foyer,
-                    invalidite, liquider, ouvrir, regles_de_la_reversion, reversion)
+from facade import (Carriere, NonTransmissible, Simulateur, acquerir, commun, completer, departs,
+                    foyer, invalidite, liquider, ouvrir, regles_de_la_reversion, reversion)
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 HAUTE = Fiabilite.CERTIFIEE
@@ -723,8 +724,8 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     comme à un module."""
     with pytest.raises(NonTransmissible, match="completer.complement_differentiel"):
         completer.complement_differentiel
-    with pytest.raises(NonTransmissible, match="liquider._coefficient_anticipation"):
-        liquider._coefficient_anticipation
+    with pytest.raises(NonTransmissible, match="liquider._au_trimestre_superieur"):
+        liquider._au_trimestre_superieur
     with pytest.raises(NonTransmissible, match="liquider.EligibleMinimum"):
         liquider.EligibleMinimum
     with pytest.raises(AttributeError, match="ouvrir.regle_lunaire"):
@@ -732,7 +733,8 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     with pytest.raises(ValueError, match="ouvrir.ouvrir"):
         pont.regle_du_droit("ouvrir", "ouvrir", float)
     assert facade.REGLES is pont.REGLES_DE_LA_FACADE
-    assert set(facade.REGLES) == {"carriere", "commun", "completer", "compter", "cultes", "departs",
+    assert set(facade.REGLES) == {"acquerir", "carriere", "commun", "completer", "compter",
+                                  "cultes", "departs",
                                   "foyer", "invalidite", "liquider", "ouvrir", "releve",
                                   "reversion", "revalorisation"}
 
@@ -1994,6 +1996,88 @@ def test_la_categorie_et_le_plancher_de_l_invalide_se_demandent_au_portage(simul
     assert invalidite.plancher_de_la_substitution(moteur, invalide, ["cnav_pl"]) is None
 
 
+def test_le_simulateur_de_la_projection_est_celui_de_la_facade(simulateur):
+    """Le simulateur de la page Coût : les conventions du COR, sans le minimum
+    vieillesse au scénario 1 (``Simulateur.pour_la_projection``), un
+    simulateur de la façade, bâti une fois ; sous ces réglages, lui-même."""
+    projection = simulateur.pour_la_projection()
+    assert isinstance(projection, Simulateur)
+    assert projection.parametres.conventions_cor
+    assert not projection.parametres.minimum_vieillesse_dans_le_scenario_actuel
+    assert projection.pour_la_projection() is projection
+    assert simulateur.pour_la_projection() is projection
+    # La convention du COR prolonge la valeur de service de l'Agirc-Arrco.
+    assert projection.scenario_actuel.valeurs_point.regimes_convenus("valeur_service")
+
+
+def test_la_mortalite_du_simulateur_se_demande_au_portage(simulateur):
+    """Les quotients de Vallin et Meslé, que l'INED sert : un homme de
+    soixante-dix ans en 1950 meurt dans l'année avec une probabilité de
+    0,051121 (``quotients_periode.csv``) ; la survie d'une année couverte est
+    son complément, que le portage calcule. Les quotients se lisent par leur
+    chargeur Python, des données."""
+    mortalite = simulateur.mortalite
+    assert mortalite.survie_annuelle(70, 1950, "H") == pytest.approx(1.0 - 0.051121)
+    assert mortalite._quotients_observes[(1950, "H")][70] == pytest.approx(0.051121)
+    with pytest.raises(NonTransmissible, match="mortalite.courbe"):
+        mortalite.courbe
+
+
+def _salarie_de(simulateur, naissance: int, age: float):
+    return simulateur.carriere_simple(
+        annee_naissance=naissance, sexe="H", affiliation="salarie_prive_non_cadre",
+        age_debut=21, age_liquidation=age)
+
+
+def test_le_depart_de_la_proposition_se_demande_au_portage(simulateur):
+    """L'âge légal de la proposition, soixante-cinq ans, ne reporte que les
+    départs qu'elle régit, à compter de la bascule : né en 1970 et parti à
+    soixante-deux ans, l'assuré part en 2035 ; né en 1962, parti en 2025, il
+    garde sa carrière, la même ; le scénario 6 sur la carrière reportée est
+    celui de la comparaison."""
+    precoce = _salarie_de(simulateur, 1970, 62.0)
+    reportee = simulateur.carriere_proposition(precoce)
+    assert (reportee.age_liquidation, reportee.annee_liquidation) == (65.0, 2035)
+    avant_bascule = _salarie_de(simulateur, 1962, 63.0)
+    assert simulateur.carriere_proposition(avant_bascule) is avant_bascule
+    assert simulateur.proposition(reportee).pension_annuelle == (
+        simulateur.simuler(precoce).notionnel_liberal.pension_annuelle)
+
+
+def test_la_carriere_prolongee_se_demande_au_portage(simulateur):
+    """Le départ reporté de trois ans : sans activité, la carrière garde ses
+    lignes ; travaillé, elle en gagne trois ; à l'âge saisi, elle est la même."""
+    carriere = _salarie_de(simulateur, 1970, 62.0)
+    attente = facade.prolongee(carriere, 65.0, simulateur.macro, attente_travaillee=False)
+    travaillee = facade.prolongee(carriere, 65.0, simulateur.macro)
+    assert attente.lignes == carriere.lignes and attente.age_liquidation == 65.0
+    assert len(travaillee.lignes) == len(carriere.lignes) + 3
+    assert facade.prolongee(carriere, 62.0, simulateur.macro) is carriere
+
+
+def test_le_coefficient_d_anticipation_agirc_arrco_se_demande_au_portage():
+    """L'exemple de l'Agirc-Arrco : douze trimestres manquants valent 0,88 ;
+    trois ans et dix mois d'anticipation par l'âge, seize trimestres
+    arrondis au supérieur, 0,83 ; rien au-delà de la dernière ligne du
+    barème (accord du 17 novembre 2017, annexe A)."""
+    assert liquider._coefficient_anticipation(0, 20) == 1.0
+    assert liquider._coefficient_anticipation(12, 20) == pytest.approx(0.88)
+    assert liquider._coefficient_anticipation(15 + 1 / 3, 40) == pytest.approx(0.83)
+    assert liquider._coefficient_anticipation(40, 40) == pytest.approx(0.43)
+    assert liquider._coefficient_anticipation(21, 20) is None
+
+
+def test_les_points_msa_retenus_se_demandent_au_portage():
+    """« Pour le calcul des retraites proportionnelles prenant effet
+    postérieurement au 31 décembre 1993, le nombre de points acquis chaque
+    année [...] ne peut être inférieur à seize » (R. 732-73), jusqu'en 2025."""
+    assert acquerir.points_msa_retenus(15.0, 1993) == 15.0
+    assert acquerir.points_msa_retenus(15.0, 1994) == 16.0
+    assert acquerir.points_msa_retenus(15.0, 2025) == 16.0
+    assert acquerir.points_msa_retenus(15.0, 2026) == 15.0
+    assert acquerir.points_msa_retenus(23.0, 2000) == 23.0
+
+
 def test_le_foyer_se_demande_au_portage_et_revient_sous_son_type(simulateur):
     """« Foyer et net » sur une carrière qui déclare sa conjointe : le barème
     du couple, son plafond, les ressources de la conjointe ; ce que le portage
@@ -2181,7 +2265,8 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
     même valeur par défaut — une table vide pour le ``None`` d'une table
     (``pont.TABLES_DES_REGLES``). Deux noms seulement diffèrent d'un côté à
     l'autre."""
-    jumelle = getattr({"carriere": carriere_python, "commun": commun_python,
+    jumelle = getattr({"acquerir": acquerir_python, "carriere": carriere_python,
+                       "commun": commun_python,
                        "completer": completer_python,
                        "compter": compter_python,
                        "cultes": cultes_python, "departs": departs_python, "foyer": foyer_python,
@@ -2261,5 +2346,7 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "compter.trimestres_du_contrat", "compter.jours_par_annee",
                               "revalorisation.faire_vivre", "commun.periode_de_liquidation",
                               "revalorisation.majorer_les_petites_pensions",
-                              "revalorisation.actuel_aujourd_hui")
+                              "revalorisation.actuel_aujourd_hui",
+                              "simulateur.proposition", "simulateur.carriere_proposition",
+                              "carriere.prolongee")
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)

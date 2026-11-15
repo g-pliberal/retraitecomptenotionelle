@@ -4112,7 +4112,8 @@ export function moisApresLeDepart(carriere, age) {
   return Math.max(0, Math.floor((age - Number(acte.attributs.age)) * 12 + 0.5));
 }
 
-function coefficientAnticipation(trimestresManquants, maximum) {
+// Exportée pour la façade des tests seule (`_coefficient_anticipation`).
+export function coefficientAnticipation(trimestresManquants, maximum) {
   const manquants = auTrimestreSuperieur(trimestresManquants);
   if (manquants <= 0) {
     return 1.0;

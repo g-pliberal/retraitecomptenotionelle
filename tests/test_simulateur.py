@@ -2224,7 +2224,6 @@ def test_le_prix_du_point_n_est_pas_prolonge_au_dela_du_publie(simulateur):
     assert valeurs.achat("rafp", 2005) is not None
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.pour_la_projection")
 def test_le_prix_d_achat_agirc_arrco_suit_le_salaire_moyen_au_dela_du_bareme(simulateur):
     """La valeur d'achat de l'Agirc-Arrco « évolue au premier janvier de chaque
     année [...] comme le salaire annuel moyen des ressortissants du régime tel
@@ -3036,7 +3035,6 @@ def test_l_age_d_annulation_de_la_decote_suit_la_generation(simulateur):
 # -- abattement propre aux complémentaires -----------------------------------
 
 
-@pytest.mark.sur_le_moteur_python("droit.liquider._coefficient_anticipation")
 def test_les_coefficients_d_anticipation_sont_ceux_de_l_agirc_arrco():
     """Le barème du régime, et non la décote du régime de base.
 
@@ -3046,7 +3044,7 @@ def test_les_coefficients_d_anticipation_sont_ceux_de_l_agirc_arrco():
     155 trimestres sur 167 requis (0,88 pour douze trimestres manquants) se voit
     appliquer 0,88.
     """
-    from retraite_notionnelle.droit.liquider import _coefficient_anticipation
+    _coefficient_anticipation = liquider._coefficient_anticipation
 
     # Table des trimestres manquants : un point par trimestre jusqu'à douze,
     # un point et quart ensuite, et rien au-delà de vingt.
@@ -3748,7 +3746,6 @@ def test_la_complementaire_agricole_ouvre_ses_points_a_l_assiette_minimale(simul
     assert pension.montant > 0
 
 
-@pytest.mark.sur_le_moteur_python("droit.acquerir")
 def test_la_base_agricole_ouvre_seize_points_au_minimum_avant_2004(simulateur):
     """Le minimum d'assiette de la retraite proportionnelle agricole est de 400
     SMIC horaires jusqu'au décret n° 2004-783, de 600 ensuite : quinze points,
@@ -3762,7 +3759,7 @@ def test_la_base_agricole_ouvre_seize_points_au_minimum_avant_2004(simulateur):
     quinze points sont portés à seize pour une pension prenant effet de 1994 à
     2025 (R. 732-73), depuis le 16 octobre 2026.
     """
-    from retraite_notionnelle.droit import acquerir, compter, coordonner
+    from facade import acquerir, compter, coordonner
 
     carriere = simulateur.carriere_simple(
         annee_naissance=1945, sexe="H", affiliation="exploitant_agricole",
@@ -4160,7 +4157,6 @@ def test_la_majoration_compte_l_avpf_depuis_septembre_2023(simulateur):
 # -- mortalité observée avant 1986 -------------------------------------------
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.mortalite")
 def test_les_quotients_observes_remontent_avant_eurostat(simulateur):
     """Eurostat s'arrête à 1986 ; l'INED, lui, remonte au XIXe siècle.
 
@@ -7429,7 +7425,6 @@ def test_les_tranches_des_avocats_sont_en_euros_non_en_plafonds(simulateur):
     assert tranche_2.bornes_assiette_en_euros(48_060) == (48_060.0, 8 * 48_060.0)
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.scenario_notionnel")
 def test_la_pension_ne_fait_plus_de_marche_au_milieu_de_l_annee(simulateur):
     """Deux mois d'écart déplaçaient la pension de six à sept pour cent.
 
@@ -7439,7 +7434,6 @@ def test_la_pension_ne_fait_plus_de_marche_au_milieu_de_l_annee(simulateur):
     l'autre pour le scénario 3. La date étant désormais lue au mois, la pension
     progresse mois par mois.
     """
-    from retraite_notionnelle.carriere import Carriere
 
     # Né le 1er janvier 1962 : ses douze départs tombent en 2026. Le compte se
     # revalorise au 1er janvier, et ce pas-là, d'une année à l'autre, n'est
@@ -7452,7 +7446,7 @@ def test_la_pension_ne_fait_plus_de_marche_au_milieu_de_l_annee(simulateur):
             jour_naissance=1,
         )
         pensions.append(
-            simulateur.scenario_notionnel.retroactif(carriere).pension_annuelle
+            simulateur.simuler(carriere).notionnel_retroactif.pension_annuelle
         )
 
     assert pensions == sorted(pensions)
@@ -9716,7 +9710,6 @@ def test_la_prolongation_d_un_releve_ne_depend_pas_de_l_ordre_des_lignes(simulat
                 == pytest.approx(sum(l.revenu for l in autre.lignes_de(annee))))
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.proposition")
 def test_une_attente_sans_activite_n_ajoute_aucune_ligne(simulateur):
     """L'autre hypothèse de la page Coût : le reporté attend sans activité. La
     carrière garde ses lignes, part à l'âge légal, et son compte n'y gagne que
@@ -9724,16 +9717,16 @@ def test_une_attente_sans_activite_n_ajoute_aucune_ligne(simulateur):
     carriere = simulateur.carriere_simple(
         annee_naissance=1970, sexe="H", affiliation="salarie_prive_non_cadre",
         age_debut=21, age_liquidation=62.0)
-    attente = carriere.prolongee(65.0, simulateur.macro, attente_travaillee=False)
-    travaillee = carriere.prolongee(65.0, simulateur.macro)
+    attente = facade.prolongee(carriere, 65.0, simulateur.macro, attente_travaillee=False)
+    travaillee = facade.prolongee(carriere, 65.0, simulateur.macro)
     assert attente.lignes == carriere.lignes
     assert attente.age_liquidation == travaillee.age_liquidation == 65.0
     assert (simulateur.proposition(attente).pension_annuelle
             < simulateur.proposition(travaillee).pension_annuelle)
-    assert carriere.prolongee(62.0, simulateur.macro, attente_travaillee=False) is carriere
+    assert facade.prolongee(carriere, 62.0, simulateur.macro,
+                            attente_travaillee=False) is carriere
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.carriere_proposition")
 def test_l_age_legal_ne_reporte_que_les_departs_qu_il_regit(simulateur):
     """Avant 65 ans et à compter de la bascule : reporté. Avant la bascule,
     ou à 65 ans et plus : la carrière elle-même."""
@@ -9756,7 +9749,6 @@ def test_l_age_legal_ne_reporte_que_les_departs_qu_il_regit(simulateur):
     assert sans_age.carriere_proposition(precoce) is precoce
 
 
-@pytest.mark.sur_le_moteur_python("Carriere.prolongee")
 def test_le_report_ne_touche_que_la_proposition(simulateur):
     """Les scénarios 1 à 5 partent à l'âge saisi ; le 6 part à 65 ans, et ses
     montants se comparent aux autres en euros constants."""
@@ -9768,7 +9760,7 @@ def test_le_report_ne_touche_que_la_proposition(simulateur):
 
     assert comparaison.depart_reporte and not sans_age.depart_reporte
     assert comparaison.carriere_de("notionnel_liberal").age_liquidation == 65.0
-    assert comparaison.carriere_de("notionnel_retroactif_employeur") is carriere
+    assert comparaison.carriere_de("notionnel_retroactif_employeur") == carriere
     for cle in ("notionnel_retroactif", "notionnel_prospectif",
                 "notionnel_retroactif_employeur", "notionnel_prospectif_employeur"):
         assert getattr(comparaison, cle).pension_annuelle == pytest.approx(

@@ -28,6 +28,7 @@ from retraite_notionnelle.carriere import Carriere as CarrierePython
 from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.config import RACINE_PROJET, ContributionEtat, Parametres
 from retraite_notionnelle.donnees.chargement import Fiabilite
+from retraite_notionnelle.droit import acquerir as acquerir_python
 from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import compter as compter_python
@@ -715,6 +716,11 @@ _RELEVE_CUMULE = (LigneRelevee(2023, "salarie_prive_cadre", 30000.0),
                                type_periode="chomage_indemnise"))
 
 APPELS_DES_REGLES = [
+    ("acquerir", "points_msa_retenus", lambda s: (15.0, 1993)),
+    ("acquerir", "points_msa_retenus", lambda s: (15.0, 2000)),
+    ("liquider", "_coefficient_anticipation", lambda s: (12, 20)),
+    ("liquider", "_coefficient_anticipation", lambda s: (15 + 1 / 3, 40)),
+    ("liquider", "_coefficient_anticipation", lambda s: (21, 20)),
     ("ouvrir", "ouverture_carriere_longue",
      _du_regime("fonction_publique_etat", 2014, _entre_a_quinze_ans)),
     ("ouvrir", "ouverture_carriere_longue",
@@ -1016,7 +1022,7 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     servi = facade.Simulateur(parametres)
     jumeau = simulateur_python.Simulateur(parametres)
-    modules = {"carriere": carriere_python, "commun": commun_python, "completer": completer_python,
+    modules = {"acquerir": acquerir_python, "carriere": carriere_python, "commun": commun_python, "completer": completer_python,
                "compter": compter_python, "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
                "reversion": reversion_python, "revalorisation": revalorisation_python,
                "cultes": cultes_python, "departs": departs_python, "releve": releve_python,
@@ -1550,3 +1556,67 @@ def test_le_jumeau_majore_les_petites_pensions_que_la_facade_lit():
                                      tolerance=TOLERANCE_DU_MOTEUR_PYTHON), pensions
         assert not ecarts_d_ecriture(list(lu[1]), list(refait[1]),
                                      tolerance=TOLERANCE_DU_MOTEUR_PYTHON), pensions
+
+
+#: Les appels de la mortalité du simulateur : un quotient observé, un âge et
+#: une date fractionnaires, une année projetée, une année au-delà des tables.
+APPELS_DE_LA_MORTALITE = [
+    ("survie_annuelle", (70, 1950, "H")),
+    ("survie_annuelle", (63 + 4 / 12, 2038.5, "F")),
+    ("survie_annuelle", (85.0, 2060, "H")),
+    ("survie_annuelle", (95.25, 2130, "F")),
+]
+
+
+def test_chaque_methode_de_la_mortalite_servie_a_son_appel_confronte():
+    assert {methode for methode, _ in APPELS_DE_LA_MORTALITE} == set(
+        pont.MORTALITE_DE_LA_FACADE)
+
+
+@pytest.mark.parametrize("parametres", [Parametres(), Parametres(conventions_cor=True)],
+                         ids=["reference", "conventions_cor"])
+def test_le_jumeau_rend_la_mortalite_que_la_facade_lit(parametres):
+    """La survie d'une année, calculée par le portage et par le jumeau sur les
+    données de mortalité de leur simulateur : la même, au bit près."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    servi = facade.Simulateur(parametres).mortalite
+    jumeau = simulateur_python.Simulateur(parametres).mortalite
+    for methode, arguments in APPELS_DE_LA_MORTALITE:
+        assert getattr(servi, methode)(*arguments) == getattr(jumeau, methode)(*arguments), (
+            methode, arguments)
+
+
+def _ecart_des_carrieres(lue, refaite) -> str | None:
+    """Deux carrières comparées comme celles d'un bâtisseur, champ par champ,
+    la refaite relue comme le pont la relit."""
+    relue = pont.carriere_des_donnees(json.loads(json.dumps(pont.carriere_en_donnees(refaite))))
+    return ecarts_d_ecriture(pont.carriere_en_donnees(lue), pont.carriere_en_donnees(relue),
+                             tolerance=TOLERANCE_DU_MOTEUR_PYTHON)
+
+
+def test_le_jumeau_rend_la_proposition_que_la_facade_lit():
+    """Le départ de la proposition, la carrière prolongée, sans activité ou
+    travaillée, et le scénario 6 : ce que le portage rend, le jumeau le
+    refait."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    servi = facade.Simulateur(Parametres())
+    jumeau = simulateur_python.Simulateur(Parametres())
+    precoce = servi.carriere_simple(annee_naissance=1970, sexe="F",
+                                    affiliation="salarie_prive_cadre", age_debut=23,
+                                    age_liquidation=62.5, mois_naissance=7)
+    ecarts = []
+    reportee = servi.carriere_proposition(precoce)
+    ecarts.append(_ecart_des_carrieres(reportee, jumeau.carriere_proposition(precoce)))
+    for attente in (True, False):
+        ecarts.append(_ecart_des_carrieres(
+            facade.prolongee(precoce, 64.25, servi.macro, attente),
+            precoce.prolongee(64.25, jumeau.macro, attente)))
+    assert [e for e in ecarts if e] == []
+    lu = servi.proposition(reportee)
+    refait = jumeau.proposition(reportee)
+    assert lu.pension_annuelle == pytest.approx(refait.pension_annuelle,
+                                                rel=TOLERANCE_DU_MOTEUR_PYTHON)
+    assert lu.conversion.diviseur == pytest.approx(refait.conversion.diviseur,
+                                                   rel=TOLERANCE_DU_MOTEUR_PYTHON)

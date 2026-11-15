@@ -1767,6 +1767,21 @@ const ENTREES_DE_LA_FACADE = {
       liquiderSuccessions: successions,
     }), carriere),
   "simulateur.regime_fusionne": (simulateur) => telQuel(simulateur.regimeFusionne),
+  // Le scénario 6 sur une carrière telle quelle, et la carrière que la
+  // proposition fait liquider : `null` quand c'est la même, que la façade
+  // rend alors elle-même.
+  "simulateur.proposition": (simulateur, carriere) => telQuel(
+    simulateur.proposition(carriere)),
+  "simulateur.carriere_proposition": (simulateur, carriere) => {
+    const reportee = simulateur.carriereProposition(carriere);
+    return reportee === carriere ? null : carriereEnDonnees(reportee);
+  },
+  // La carrière poursuivie jusqu'à un départ plus tardif, sur les séries du
+  // simulateur ; `null` quand c'est la même.
+  "carriere.prolongee": (simulateur, carriere, age, attenteTravaillee) => {
+    const prolongee = carriere.prolongee(age, simulateur.macro, attenteTravaillee);
+    return prolongee === carriere ? null : carriereEnDonnees(prolongee);
+  },
   // La période qui liquide la pension, par son rang parmi celles du régime.
   "commun.periode_de_liquidation": (simulateur, code, annee, mois) => {
     const regime = simulateur.catalogue.obtenir(code);
@@ -2021,11 +2036,29 @@ ENTREES_DE_LA_FACADE["simulateur.constructeur"] = (simulateur, constructeur, met
   return telQuel(tenu[nom](...valeurs.map((valeur) => argumentDeLaFacade(simulateur, valeur))));
 };
 
+/**
+ * La méthode des données de mortalité du simulateur, sous les noms du Python
+ * (`mortalite_du_simulateur` de `pont.py`, qui déclare celles que la façade
+ * sert) : ce qu'elle rend sur ces arguments, tel quel (`telQuel`). Une
+ * méthode que les données ne tiennent pas arrête la demande.
+ */
+ENTREES_DE_LA_FACADE["simulateur.mortalite"] = (simulateur, nom, methode, ...valeurs) => {
+  const tenue = nom === "mortalite" ? simulateur.mortalite : undefined;
+  const methodeEnChameau = enChameau(methode);
+  if (tenue === undefined || typeof tenue[methodeEnChameau] !== "function"
+    || methodeEnChameau.startsWith("_")) {
+    throw new TypeError(`méthode que la mortalité ne tient pas : ${nom}.${methode}`);
+  }
+  return telQuel(tenue[methodeEnChameau](
+    ...valeurs.map((valeur) => argumentDeLaFacade(simulateur, valeur))));
+};
+
 // Les règles du droit, par la façade : un bloc à part (action 161).
 
 /** Les modules du droit dont la façade sert des règles, sous leur nom. */
 const MODULES_DU_DROIT = {
   // Hors du droit : le relevé prolongé et le salaire moyen d'une année.
+  acquerir: acquerirEtape,
   carriere: { prolongerReleve, salaireMoyenAnnuel },
   commun,
   compter: compterEtape,
