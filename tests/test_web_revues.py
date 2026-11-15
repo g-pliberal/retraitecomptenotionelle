@@ -1640,15 +1640,12 @@ def test_la_methode_dit_comment_le_site_est_construit():
 
     Un dépliant dit le moteur d'une carrière, écrit en JavaScript sans
     bibliothèque, qui tourne dans le navigateur et fait foi (note de décision
-    0005) ; son jumeau Python, tenu au bit près sur les témoins le temps de la
-    migration ; le coût, calculé en Python et livré tout fait ; les pages
+    0005) ; ce qu'il rend, conservé au bit près sur les témoins ; le coût, calculé en Python et livré tout fait ; les pages
     figées ; le paquet de données — sans un nombre de tests ni de témoins, qui
     dériveraient : le README les porte, et un test les recalcule.
 
-    Il ne dit pas lequel des deux exemplaires les références extérieures
-    éprouvent : elles passent de l'un à l'autre (action 161), et la phrase
-    resterait vraie. Le modèle l'est, et ses deux exemplaires sont identiques.
-    Le Python « de référence », dont le JavaScript était le « portage », n'y
+    Il ne parle plus du jumeau Python : plus aucun test ne lui fait refaire
+    les témoins (action 161), et il se retire. Le Python « de référence », dont le JavaScript était le « portage », n'y
     revient pas : c'était vrai jusqu'au 31 octobre 2026.
     """
     corps = rendre("/methode", {})[1]
@@ -1658,20 +1655,20 @@ def test_la_methode_dit_comment_le_site_est_construit():
     assert section, "le dépliant de construction manque"
     dedans = section.group(1)
     for attendu in (f'href="{g.DEPOT}/tree/main/moteur/js"',
-                    f'href="{g.DEPOT}/tree/main/src"',
                     f'href="{g.DEPOT}/tree/main/tests"',
                     'href="./#sources" data-vers="sources"'):
         assert attendu in dedans, attendu
     texte = " ".join(re.sub(r"<[^>]+>", " ", dedans).split())
     for attendu in ("écrit en JavaScript, sans aucune bibliothèque",
                     "tourne entièrement dans votre navigateur", "C'est lui qui fait foi.",
-                    "garde un jumeau", "identiques au bit près", "confronté aux sources",
+                    "est conservé dans le dépôt", "confronté aux sources",
                     "Le coût pour toute la population", "se calcule en Python, une fois",
                     "chaque page est figée en témoin"):
         assert attendu in texte, attendu
-    for perime in ("modèle de référence", "portage"):
+    for perime in ("modèle de référence", "portage", "jumeau"):
         assert perime not in texte, (
-            f"« {perime} » : le JavaScript fait foi depuis le 31 octobre 2026")
+            f"« {perime} » : le JavaScript fait foi depuis le 31 octobre 2026, et "
+            "son jumeau Python se retire")
     assert not re.search(r"\b\d{3,} (?:tests|témoins|carrières)", dedans), (
         "un nombre de tests ou de témoins écrit à la main dériverait"
     )
