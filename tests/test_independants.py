@@ -42,6 +42,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -838,54 +839,30 @@ process.stdout.write(JSON.stringify(sortie));
 """
 
 
-def _proches(obtenu, attendu, chemin="") -> list[str]:
-    if attendu is None:
-        return []
-    if isinstance(attendu, bool) or not isinstance(attendu, (int, float)):
-        if isinstance(attendu, dict):
-            return [e for cle, v in attendu.items()
-                    for e in _proches(obtenu.get(cle), v, f"{chemin}.{cle}")]
-        if isinstance(attendu, list):
-            if not isinstance(obtenu, list) or len(obtenu) != len(attendu):
-                return [f"{chemin} : {obtenu!r} au lieu de {attendu!r}"]
-            return [e for i, v in enumerate(attendu)
-                    for e in _proches(obtenu[i], v, f"{chemin}[{i}]")]
-        return [] if obtenu == attendu else [f"{chemin} : {obtenu!r} au lieu de {attendu!r}"]
-    if obtenu is None or abs(obtenu - attendu) > 1e-9 * max(1.0, abs(attendu)):
-        return [f"{chemin} : {obtenu!r} au lieu de {attendu!r}"]
-    return []
-
-
 @pytest.fixture
-def deux_moteurs(simulateur):
-    """Ce qui rend les lignes de chaque relevé, par année, en Python, une fois
-    vérifié que le JavaScript rend les mêmes lignes et le même résultat entier.
+def deux_moteurs(request):
+    """Ce qui rend les lignes de chaque relevé, par année, au portage, une
+    fois vérifié que ses lignes et son résultat entier sont ceux que le témoin
+    des valeurs a figés : le moteur Python les rendait identiques au
+    milliardième près quand ils l'ont été (action 161, étape 8p).
     Une fixture, et non une fonction : la garde des présomptions saute les
     tests qui la demandent, `"node"` lu dans sa source (`tests/conftest.py`),
     le portage ne décalant pas les siennes."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    sys.path.insert(0, str(RACINE / "scripts"))
-    from construire_temoins import _fini
 
     def confronter(cas) -> list[dict]:
-        attendus, lignes = [], []
-        for c in cas:
-            carriere = simulateur.carriere_releve(
-                c["naissance"], "F", [LigneRelevee(**ligne) for ligne in c["releve"]],
-                c["age"])
-            lignes.append({ligne.annee: ligne for ligne in carriere.lignes})
-            attendus.append({
-                "lignes": [[l.annee, l.trimestres_valides, l.assiette_minimale_base,
-                            l.dispense_assiette_minimale] for l in carriere.lignes],
-                "resultat": _fini(simulateur.simuler(carriere).dictionnaire())})
         execution = subprocess.run(
             ["node", "--input-type=module", "-e", _JUMEAU_DISPENSES, json.dumps(cas)],
             cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
         assert execution.returncode == 0, execution.stderr[-2000:]
-        ecarts = _proches(json.loads(execution.stdout), attendus)
-        assert not ecarts, ecarts[:10]
-        return lignes
+        sorties = json.loads(execution.stdout)
+        assert valeur_figee(request.node.name, sorties) == sorties
+        return [{annee: SimpleNamespace(annee=annee, trimestres_valides=trimestres,
+                                        assiette_minimale_base=assiette,
+                                        dispense_assiette_minimale=dispense)
+                 for annee, trimestres, assiette, dispense in sortie["lignes"]}
+                for sortie in sorties]
 
     return confronter
 
@@ -1001,10 +978,12 @@ process.stdout.write(JSON.stringify(sortie));
 
 
 @pytest.fixture
-def points_des_deux_moteurs(simulateur):
-    """Ce qui rend, pour chaque relevé, les points crédités par le portage et
-    par son jumeau Python : ``{"javascript": [...], "python": [...]}``, chaque
-    relevé y donnant ``{(régime, année): points}``."""
+def points_des_deux_moteurs():
+    """Ce qui rend, pour chaque relevé, les points crédités par le portage :
+    ``{"javascript": [...]}``, chaque relevé y donnant ``{(régime, année):
+    points}``. Son jumeau Python, qui les rendait identiques, n'y est plus
+    confronté (action 161, étape 8p) : chaque test tient le portage aux
+    points que les textes donnent."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
 
@@ -1015,23 +994,11 @@ def points_des_deux_moteurs(simulateur):
         return total
 
     def calculer(cas) -> dict[str, list[dict[tuple[str, int], float]]]:
-        python = []
-        for c in cas:
-            carriere = simulateur.carriere_releve(
-                c["naissance"], "F", [LigneRelevee(**ligne) for ligne in c["releve"]],
-                c["age"])
-            actuel = simulateur.scenario_actuel
-            coordination = coordonner.coordonner(actuel, carriere)
-            droits = acquerir.acquerir(actuel, coordination,
-                                       compter.compter(actuel, coordination))
-            python.append(sommer((code, annee, points)
-                                 for code, annee, points, _ in droits.points))
         execution = subprocess.run(
             ["node", "--input-type=module", "-e", _JUMEAU_POINTS, json.dumps(cas)],
             cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
         assert execution.returncode == 0, execution.stderr[-2000:]
-        javascript = [sommer(credits) for credits in json.loads(execution.stdout)]
-        return {"javascript": javascript, "python": python}
+        return {"javascript": [sommer(credits) for credits in json.loads(execution.stdout)]}
 
     return calculer
 

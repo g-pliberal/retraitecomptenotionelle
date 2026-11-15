@@ -7330,16 +7330,13 @@ de `contribution_etat`.
 **Reprise, au 15 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Ses règles s'importent toutes les unes les autres : le retrait se fera par le
-haut, une fois le moteur Python plus exécuté. Presque toutes les
-confrontations, qui lui faisaient refaire ce que le portage calcule, sont
-parties : ce que le portage rend est figé dans `tests/temoins/`, et l'outil
-qui gardait leur moitié Python est retiré. Restent deux confrontations, des
-lignes et des points, dans
-`test_independants.py`, qui bâtissent la carrière en Python, les deux tests
-qui refont les témoins, puis cent fichiers de tests qui importent une règle
-Python. Une étape par session. Par quoi commencer : les deux confrontations
-de `test_independants.py`.
-Le détail : `2026-11-15-les-independants-et-la-sante-au-temoin.md`.
+haut, une fois le moteur Python plus exécuté. Toutes les confrontations, qui
+lui faisaient refaire ce que le portage calcule, sont parties : ce que le
+portage rend est figé dans `tests/temoins/`, ou tenu aux valeurs des textes.
+Restent les deux tests qui refont les témoins au moteur Python, à la session
+du site, puis cent fichiers de tests qui importent une règle Python. Une
+étape par session. Par quoi commencer : les deux tests des témoins.
+Le détail : `2026-11-15-les-confrontations-des-independants-sans-python.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

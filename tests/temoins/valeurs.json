@@ -95,6 +95,15 @@
  "test_independants.py::points d'invalidité": {
   "valeur": "f15ba18caf47a8a1"
  },
+ "test_independants.py::test_l_assiette_minimale_de_2022_est_celle_du_decret_n_2022_1438": {
+  "valeur": "e6298a369c77d85c"
+ },
+ "test_independants.py::test_l_assiette_minimale_des_artisans_et_commercants_court_depuis_1973": {
+  "valeur": "92baa091df9a4195"
+ },
+ "test_independants.py::test_les_deux_moteurs_servent_les_memes_droits_aux_dispenses": {
+  "valeur": "6b3dc576d3839c13"
+ },
  "test_lectures_decision_29.py::cas types sous le taux 0.1123": {
   "valeur": "d5927d688b7d32fe"
  },
