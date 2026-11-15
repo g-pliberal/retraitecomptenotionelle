@@ -57,7 +57,7 @@ class _Racine:
 
 
 #: À la place d'un argument : la racine des données en Python, le paquet
-#: dans le portage — ``part_femmes(racine)`` contre ``partFemmes(paquet)``.
+#: dans le portage, pour une fonction de module qui lit l'une ou l'autre.
 SOURCE = _Racine()
 
 
@@ -243,10 +243,9 @@ def _grilles() -> dict[tuple[str, str], Grille]:
         (PATRIMOINE, "forme"): Grille(par_population),
         (PATRIMOINE, "grille"): Grille(par_population),
 
-        # La distribution des pensions, par sexe, et la part des femmes.
+        # La distribution des pensions, par sexe.
         (DISTRIBUTION, "part_sous"): Grille(pensions, tuple(
             (montant,) for montant in _pas(0.0, 7000.0, 25.0) + [-10.0, 1e5])),
-        (DISTRIBUTION, "part_femmes"): Grille(("module:distribution",), ((SOURCE,),)),
     }
 
 
@@ -260,10 +259,6 @@ ECARTS_DECLARES = {
         "le paquet ne porte pas les populations publiées à plusieurs âges "
         "(cnav_*), dont seul le coût lit les facteurs par tranche d'âge : "
         "21 populations au portage, 24 en Python",
-    (DISTRIBUTION, "part_femmes"):
-        "le Python lit tous les retraités (52,8 %), le portage les résidents "
-        "en France du paquet (54,0 %) ; partFemmes n'a aucun lecteur dans le "
-        "portage, qui lit partFemmesResidents : son exemplaire est à retirer",
 }
 
 

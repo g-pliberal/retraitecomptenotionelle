@@ -132,7 +132,6 @@ src/retraite_notionnelle/donnees/depenses.py:
 
 src/retraite_notionnelle/donnees/distribution.py:
   gardees:
-    part_femmes: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     part_sous: {lecteur: scripts/grille_large.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
 
 src/retraite_notionnelle/donnees/effectifs.py:
