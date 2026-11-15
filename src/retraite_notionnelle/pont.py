@@ -2521,9 +2521,10 @@ TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "complement_differentiel_rco": ("regle", "smic_net"),
     "conversions_points": ("echelle", "fusion"),
     "durees_requises": ("trimestres",),
+    "fiches_datees": ("regle",),
     "invalidites": ("version",),
     "maximum_des_cultes": ("valeur",),
-    "minimum_contributif": ("regle", "valeurs"),
+    "minimum_contributif": ("avts", "pension_minimum", "regle", "valeurs"),
     "minimum_garanti": ("montant", "reference"),
     "minimum_vieillesse": ("deux_etages", "plafond", "plafond_couple"),
     "pension_majoree_reference": ("montant", "regle"),
@@ -2740,7 +2741,7 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     # Hors de ``droit/`` : ``carriere.js``, à la racine du portage — le relevé
     # prolongé jusqu'au départ, et le salaire moyen d'une année.
     "carriere": ("prolonger_releve", "salaire_moyen_annuel"),
-    "commun": ("ligne_cotisee",),
+    "commun": ("date_d_effet", "ligne_cotisee", "majoration_du_conjoint"),
     # Les trimestres des enfants et le régime qui les porte (R. 173-15).
     "compter": ("majoration_pour_enfants",),
     # Les deux fractions de la pension des cultes : la durée de chacune, sur
@@ -2759,8 +2760,9 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
                  "duree_proratisation", "majoration_des_points_de_1952_a_1972_d_avant_2026",
                  "majorer_les_points_de_1952_a_1972", "maximum_des_pensions",
                  "moyenne_des_meilleures_annees", "nombre_d_annees_retenues",
-                 "repartir_les_annees", "retranche_decote", "revenu_des_cotisations_minimales", "salaire_de_reference",
-                 "taux_de_majoration_de_1952_a_1972", "trimestres_de_decote",
+                 "pension_maximale", "repartir_les_annees", "retranche_decote", "revenu_des_cotisations_minimales", "salaire_de_reference",
+                 "taux_acquis_l_emporte", "taux_de_majoration_de_1952_a_1972",
+                 "trimestres_de_decote",
                  "trimestres_de_surcote_regimes_speciaux", "valeur_du_point",
                  "valeur_point_fiche"),
     "ouvrir": ("age_ouverture", "age_ouverture_commun", "age_ouverture_droit", "age_surcote",

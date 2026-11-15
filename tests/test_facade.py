@@ -516,8 +516,8 @@ def test_ce_que_la_facade_ne_sert_pas_ne_se_lit_pas_sur_son_simulateur(simulateu
     lieu de faire tourner le moteur Python. Ses données, elles, se lisent."""
     with pytest.raises(NonTransmissible, match="convertisseur"):
         simulateur.convertisseur
-    with pytest.raises(NonTransmissible, match="fiches_datees"):
-        simulateur.scenario_actuel.fiches_datees
+    with pytest.raises(NonTransmissible, match="majorations_enfants"):
+        simulateur.scenario_actuel.majorations_enfants
     assert simulateur.macro.plafond_securite_sociale(2024) == 46368.0
     assert "artisan" in simulateur.affiliations
     assert simulateur.scenario_actuel.macro is simulateur.macro
@@ -1724,6 +1724,71 @@ def test_la_carriere_longue_du_fonctionnaire_s_ouvre_par_le_portage(simulateur):
     periode = simulateur.catalogue["fonction_publique_etat"].periode(2014)
     assert ouvrir.ouverture_carriere_longue(
         actuel, periode, _fonctionnaire(1955, 1970, 2014)) == 15 + 174 / 4
+
+
+def test_les_fiches_datees_se_lisent_au_portage(simulateur):
+    """Le maximum des pensions du régime général : aucun avant 1949, 40 % du
+    plafond en 1962, 50 % depuis 1983 (barème « Montant maximum de la retraite
+    personnelle » de la Cnav), chacun dans la version de sa date. La majoration pour conjoint à charge : en 150es
+    du 1er mars 1975 au décret du 12 janvier 2007, rien pour une pension
+    prenant effet depuis 2011."""
+    fiches = simulateur.scenario_actuel.fiches_datees
+    maximum = liquider.FICHE_DE_LA_PENSION_MAXIMALE
+    assert not fiches.regle(maximum, "1948-12-01")["existe"]
+    assert fiches.regle(maximum, "1962-01-01")["pourcentages"][-1][1] == 0.40
+    assert fiches.regle(maximum, "2026-01-01")["pourcentages"][-1][1] == 0.50
+    conjoint = completer.FICHE_DU_CONJOINT
+    assert fiches.regle(conjoint, "1975-03-01")["prorata"] == 150
+    assert not fiches.regle(conjoint, "2011-01-01")["existe"]
+    assert fiches.regle("fiche_lunaire", "2011-01-01") is None
+
+
+def test_la_majoration_du_conjoint_se_demande_au_portage():
+    """4 000 F depuis 1976, 609,80 € depuis 2002 (barème de la Cnav) : la
+    majoration que servent les étapes à une date est celle de la dernière
+    commencée, rien avant la première."""
+    etapes = (("1976-01-01", 4000 / 6.55957), ("2002-01-01", 609.80))
+    assert commun.majoration_du_conjoint(etapes, "1990-06-01") == pytest.approx(4000 / 6.55957)
+    assert commun.majoration_du_conjoint(etapes, "2026-01-01") == 609.80
+    assert commun.majoration_du_conjoint(etapes, "1975-12-31") == 0.0
+
+
+def test_la_pension_minimum_d_avant_1983_se_lit_au_portage(simulateur):
+    """La pension minimum, 11 300 F au 1er janvier 1983 ; rien en 1944.
+    L'allocation aux vieux travailleurs salariés, 4 023,51 € en 2025 (R. 732-70,
+    sa série datée). La date d'effet du salarié né le 15 mars 1905, parti à
+    soixante-cinq ans : le 1er avril 1970, premier jour du mois qui suit."""
+    minimum = simulateur.scenario_actuel.minimum_contributif
+    montant, fiabilite = minimum.pension_minimum(1983, 3)
+    assert montant == pytest.approx(11_300 / 6.55957)
+    assert isinstance(fiabilite, Fiabilite)
+    assert minimum.pension_minimum(1944, 12) == (0.0, Fiabilite.CERTIFIEE)
+    assert minimum.avts(2025)[0] == pytest.approx(4_023.51)
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=1905, mois_naissance=3, jour_naissance=15, sexe="H",
+        metiers=[Metier(affiliation="salarie_prive_non_cadre", age_debut=40.0,
+                        niveau_salaire=0.18)],
+        age_liquidation=65.0, macro=simulateur.macro)
+    assert commun.date_d_effet(carriere) == "1970-04-01"
+
+
+def test_le_maximum_des_pensions_se_demande_au_portage(simulateur):
+    """Le maximum de la pension du régime général, 50 % du plafond de l'année
+    de liquidation depuis 1983 ; aucun pour la Cipav. Le troisième cas de la
+    circulaire Cnav n° 22/83 : 55 % sur 117 trimestres l'emporte sur 50 % sur
+    132 une fois l'une et l'autre ramenées au maximum (44 460 F sur un salaire
+    annuel moyen de 152 000 F), non sans lui."""
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1925, sexe="H", affiliation="salarie_prive_cadre",
+        age_debut=20, age_liquidation=65, niveau_salaire=5.0)
+    moteur = simulateur.scenario_actuel
+    assert liquider.pension_maximale(moteur, "cnav_pl", carriere) is None
+    montant, fiabilite = liquider.pension_maximale(moteur, "regime_general", carriere)
+    assert montant == pytest.approx(0.5 * simulateur.macro.plafond_securite_sociale(1990))
+    assert isinstance(fiabilite, Fiabilite)
+    maximum = 44_460 * 150 / 152_000
+    assert liquider.taux_acquis_l_emporte(0.55, 117, 0.5, 132, maximum, 0.5, 1.0) is True
+    assert liquider.taux_acquis_l_emporte(0.55, 117, 0.5, 132, None, 0.5, 1.0) is False
 
 
 def test_le_foyer_se_demande_au_portage_et_revient_sous_son_type(simulateur):

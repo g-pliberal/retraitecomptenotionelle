@@ -19,8 +19,9 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.droit import liquider
-from retraite_notionnelle.simulateur import Simulateur
+import facade
+from facade import Simulateur, faire_vivre, liquider
+from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 RACINE = Path(__file__).resolve().parents[1]
 FRANC = 6.55957
@@ -42,9 +43,9 @@ BAREME = [
 ]
 
 
-@pytest.fixture(scope="module")
-def simulateur() -> Simulateur:
-    return Simulateur()
+@pytest.fixture
+def simulateur(request) -> Simulateur:
+    return facade.simulateur_du_test(request)
 
 
 def _euros(montant: float, unite: str) -> float:
@@ -147,6 +148,7 @@ def test_le_maximum_suit_le_taux_acquis_au_31_mars_1983(simulateur):
     assert pension.montant == pytest.approx(0.55 * plafond)
 
 
+@pytest.mark.sur_le_moteur_python("le salaire de référence remplacé en Python, que le portage ne voit pas")
 def test_le_maximum_garde_le_taux_acquis_sous_la_surcote(simulateur, monkeypatch):
     """Né en 1917, parti en 2005 à quatre-vingt-huit ans et demi : le maximum
     garde le coefficient du taux acquis de 55 % — l'arrêté du 9 octobre 1986,
@@ -199,6 +201,7 @@ def _au_dessus_du_plafond(monkeypatch, simulateur, annee: int, facteur: float) -
     monkeypatch.setattr(liquider, "salaire_de_reference", au_dessus)
 
 
+@pytest.mark.sur_le_moteur_python("le salaire de référence remplacé en Python, que le portage ne voit pas")
 @pytest.mark.parametrize("facteur, au_maximum_de_1982", [
     # 1,3 plafond : la pension calculée, 41,6 % du plafond de 1971, est ramenée à
     # 40 % ; majorée de 6 %, elle reste sous le maximum de 1982 : servie entière.
@@ -217,7 +220,6 @@ def test_la_pension_au_maximum_est_majoree_sur_son_montant_entier(
     trimestres, ramené au maximum de 1971, reçoit les 6 % de décembre 1982
     (loi n° 82-599, article 1er) sur sa pension calculée, que le maximum de
     1982, la moitié du plafond, borne."""
-    from retraite_notionnelle.revalorisation import faire_vivre
     _au_dessus_du_plafond(monkeypatch, simulateur, 1971, facteur)
     carriere, pension = _regime_general(simulateur, 1906, 65)
     plafond = simulateur.macro.plafond_securite_sociale(1971)
@@ -247,6 +249,7 @@ process.stdout.write(JSON.stringify(cas.map(
 """
 
 
+@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait le maximum du jour du portage")
 def test_les_deux_moteurs_comparent_la_pension_majoree_au_maximum_du_jour(simulateur):
     """Ce que le maximum du jour de la dernière majoration change à la pension,
     au bit près dans les deux moteurs. La pension de 1971 ramenée au maximum
@@ -328,6 +331,7 @@ process.stdout.write(JSON.stringify(annees.map((annee) => {
 """
 
 
+@pytest.mark.sur_le_moteur_python("confrontation : le jumeau fait vivre une pension retouchée")
 def test_les_deux_moteurs_font_vivre_la_pension_ramenee_au_maximum(simulateur):
     """La pension de 1971 ramenée au maximum, que le maximum de 1982 arrête : la
     même dans les deux moteurs, de 1981, avant la majoration, à 2026, ce que le
@@ -336,7 +340,6 @@ def test_les_deux_moteurs_font_vivre_la_pension_ramenee_au_maximum(simulateur):
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     from dataclasses import replace
 
-    from retraite_notionnelle.revalorisation import faire_vivre
     options = {"annee_naissance": 1906, "sexe": "H", "affiliation": "salarie_prive_cadre",
                "age_debut": 20, "age_liquidation": 65, "niveau_salaire": 5.0}
     carriere = simulateur.carriere_simple(**options)
@@ -417,6 +420,7 @@ CAS = [
 ]
 
 
+@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait le journal du portage")
 def test_les_deux_moteurs_ramenent_au_meme_maximum():
     """Le journal de l'échéancier — les composantes et leur formule — est le même
     en Python et en JavaScript."""

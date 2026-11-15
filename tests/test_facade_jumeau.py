@@ -401,6 +401,15 @@ APPELS_DES_TABLES = [
     ("valeurs_point", "garantie", lambda s: ("agirc", _tranche_b(s, 2010), 2010, 0.5, 0.8)),
     ("valeurs_point", "regimes_convenus", lambda s: ("valeur_service",)),
     ("valeurs_point", "service", lambda s: ("cnavpl", 2022)),
+    ("fiches_datees", "regle", lambda s: ("pension_maximale_regime_general", "1965-01-01")),
+    ("fiches_datees", "regle", lambda s: ("pension_maximale_regime_general", "2026-01-01")),
+    ("fiches_datees", "regle", lambda s: ("majoration_conjoint_a_charge", "1990-01-01")),
+    ("fiches_datees", "regle", lambda s: ("fiche_lunaire", "2026-01-01")),
+    ("minimum_contributif", "pension_minimum", lambda s: (1983, 3)),
+    ("minimum_contributif", "pension_minimum", lambda s: (1970, 1)),
+    ("minimum_contributif", "pension_minimum", lambda s: (1944, 12)),
+    ("minimum_contributif", "avts", lambda s: (2025,)),
+    ("minimum_contributif", "avts", lambda s: (1950, 6)),
     ("valeurs_point", "service", lambda s: ("agirc_arrco", 2045)),
     ("valeurs_point", "service", lambda s: ("regime_lunaire", 2020)),
 ]
@@ -458,6 +467,21 @@ def _policier(simulateur):
     super-active."""
     return simulateur.carriere_parcours(
         1960, "H", [Metier("fonctionnaire_etat_super_actif", 19.0, 1.0)], 52.0)
+
+
+def _cadre_de_1925(simulateur):
+    """Un cadre au quintuple du salaire moyen, parti en 1990 : le maximum des
+    pensions du régime général."""
+    return simulateur.carriere_simple(
+        annee_naissance=1925, sexe="H", affiliation="salarie_prive_cadre", age_debut=20,
+        age_liquidation=65, niveau_salaire=5.0)
+
+
+def _salarie_agricole_de_1907(simulateur):
+    """Un salarié agricole parti en 1972 : le maximum de son régime, le premier."""
+    return simulateur.carriere_simple(
+        annee_naissance=1907, sexe="H", affiliation="salarie_agricole", age_debut=20,
+        age_liquidation=65, niveau_salaire=5.0)
 
 
 def _du_regime(regime: str, annee: int, carriere, *suite):
@@ -782,6 +806,21 @@ APPELS_DES_REGLES = [
     ("ouvrir", "age_ouverture", _du_regime("regime_general", 2029, _salarie)),
     ("ouvrir", "age_ouverture",
      _du_regime("fonction_publique_etat", 2022, _fonctionnaire, False, False)),
+    ("liquider", "pension_maximale", lambda s: (s.scenario_actuel, "regime_general",
+                                                 _cadre_de_1925(s))),
+    ("liquider", "pension_maximale", lambda s: (s.scenario_actuel, "msa_salaries",
+                                                 _salarie_agricole_de_1907(s))),
+    ("liquider", "pension_maximale", lambda s: (s.scenario_actuel, "cnav_pl",
+                                                 _cadre_de_1925(s))),
+    ("liquider", "taux_acquis_l_emporte", lambda s: (0.55, 117, 0.5, 132, 87.7, 0.5, 1.0)),
+    ("liquider", "taux_acquis_l_emporte", lambda s: (0.55, 60, 0.5, 68, 68.1, 0.5, 1.0)),
+    ("liquider", "taux_acquis_l_emporte", lambda s: (0.55, 117, 0.5, 132, None, 0.5, 1.0)),
+    ("commun", "date_d_effet", lambda s: (_cadre_de_1925(s),)),
+    ("commun", "date_d_effet", lambda s: (_salarie(s),)),
+    ("commun", "majoration_du_conjoint",
+     lambda s: ((("1976-01-01", 609.80), ("2002-01-01", 609.80)), "1975-06-01")),
+    ("commun", "majoration_du_conjoint",
+     lambda s: ((("1976-01-01", 609.79), ("2002-01-01", 609.80)), "1999-06-01")),
     ("liquider", "maximum_des_pensions",
      lambda s: (s.scenario_actuel, "regime_general", "1965-01-01", 1965)),
     ("liquider", "maximum_des_pensions",

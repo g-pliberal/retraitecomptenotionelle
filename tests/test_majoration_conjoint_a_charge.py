@@ -10,6 +10,7 @@ compter du 1er janvier 2011, elle reste servie à qui l'avait au 31 décembre 20
 
 from __future__ import annotations
 
+import functools
 import json
 import shutil
 import subprocess
@@ -19,11 +20,8 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.droit import completer
-from retraite_notionnelle.droit.commun import majoration_du_conjoint
-from retraite_notionnelle.revalorisation import faire_vivre
-from retraite_notionnelle.simulateur import Simulateur
-
+from facade import Simulateur, commun, completer, faire_vivre
+from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 from outils_pont import Saisies
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -39,8 +37,25 @@ def saisies() -> Saisies:
     return Saisies()
 
 
+@functools.cache
+def _simulateur(parametres) -> Simulateur:
+    """Le simulateur de la façade de ces paramètres, un par jeu."""
+    return Simulateur(parametres)
+
+
 def _simuler(saisies, **requete):
-    return requete, saisies.simuler(requete)
+    """La comparaison de la carrière que le portage bâtit de la saisie,
+    simulée par la façade."""
+    parametres, carriere = saisies.lire(requete)
+    return requete, _simulateur(parametres).simuler(carriere)
+
+
+def _vivante(simulateur, comparaison, annee: int):
+    """« Faire vivre » le scénario 1 de la comparaison : la façade le refait
+    de sa carrière (``scenario_actuel.calculer``), comme le portage."""
+    carriere = comparaison.carriere
+    return faire_vivre(simulateur, carriere, simulateur.scenario_actuel.calculer(carriere),
+                       annee)
 
 
 def _general(comparaison):
@@ -68,8 +83,8 @@ def test_la_fiche_date_le_prorata_et_la_suppression():
         "aucun", 150, "duree_requise"]
     assert not fiches.regle(nom, "2011-01-01")["existe"]
     montants = fiches.regle(nom, "1990-01-01")["montants"]
-    assert majoration_du_conjoint(montants, "1980-01-01") == pytest.approx(4000 / 6.55957)
-    assert majoration_du_conjoint(montants, "2026-01-01") == 609.80
+    assert commun.majoration_du_conjoint(montants, "1980-01-01") == pytest.approx(4000 / 6.55957)
+    assert commun.majoration_du_conjoint(montants, "2026-01-01") == 609.80
 
 
 # -- la date d'effet ---------------------------------------------------------------
@@ -134,10 +149,10 @@ def test_la_majoration_s_ouvre_aux_soixante_cinq_ans_du_conjoint_et_reste_nomina
     assert _majoration(comparaison) is None
     assert _general(comparaison).conjoint[0] == ("1997-07-01", pytest.approx(4000 / 6.55957))
     assert "à compter de juillet 1997" in _general(comparaison).detail
-    simulateur = saisies.simulateur(requete)
+    simulateur = _simulateur(saisies.parametres(requete))
 
     def general(resultat, annee):
-        vivante = faire_vivre(simulateur, resultat.carriere, resultat.actuel, annee)
+        vivante = _vivante(simulateur, resultat, annee)
         return next(r for r in vivante.regimes if r.regime == "regime_general")
 
     assert general(comparaison, 1996).aujourd_hui == pytest.approx(
@@ -149,8 +164,8 @@ def test_la_majoration_s_ouvre_aux_soixante_cinq_ans_du_conjoint_et_reste_nomina
 
 def test_la_majoration_du_depart_ne_se_revalorise_pas(saisies):
     requete, comparaison = _simuler(saisies, **PARTI_EN_1995, conjoint="1928")
-    simulateur = saisies.simulateur(requete)
-    vivante = faire_vivre(simulateur, comparaison.carriere, comparaison.actuel, 2026)
+    simulateur = _simulateur(saisies.parametres(requete))
+    vivante = _vivante(simulateur, comparaison, 2026)
     general = next(r for r in vivante.regimes if r.regime == "regime_general")
     assert general.conjoint_au_depart == pytest.approx(4000 / 6.55957)
     assert general.aujourd_hui == pytest.approx(
@@ -172,6 +187,7 @@ CAS = [
 ]
 
 
+@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait la comparaison du portage")
 def test_les_deux_moteurs_servent_la_meme_majoration(saisies):
     """Le résultat entier, aujourd'hui compris, est le même en Python et en
     JavaScript."""

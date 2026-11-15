@@ -25,10 +25,12 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import Carriere, Metier
+from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.donnees.chargement import Fiabilite
-from retraite_notionnelle.droit.commun import date_d_effet
-from retraite_notionnelle.simulateur import Simulateur
+
+import facade
+from facade import Carriere, Simulateur, acquerir, commun, faire_vivre
+from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 RACINE = Path(__file__).resolve().parents[1]
 LEGISLATION = RACINE / "data" / "reference" / "legislation"
@@ -39,9 +41,9 @@ AVTS_DECEMBRE_1979 = 7_400 / 6.55957
 AVTS_JANVIER_1981 = 8_500 / 6.55957
 
 
-@pytest.fixture(scope="module")
-def simulateur() -> Simulateur:
-    return Simulateur()
+@pytest.fixture
+def simulateur(request) -> Simulateur:
+    return facade.simulateur_du_test(request)
 
 
 def _calculer(simulateur: Simulateur, naissance: int, liquidation: float, debut: float,
@@ -53,7 +55,7 @@ def _calculer(simulateur: Simulateur, naissance: int, liquidation: float, debut:
     resultat = simulateur.scenario_actuel.calculer(carriere)
     minimum = next((a for a in resultat.avantages_appliques
                     if a.code == "minimum_contributif"), None)
-    return (date_d_effet(carriere), resultat,
+    return (commun.date_d_effet(carriere), resultat,
             {p.regime: p for p in resultat.pensions_par_regime}, minimum)
 
 
@@ -156,14 +158,13 @@ def test_les_six_pour_cent_de_1982_ne_relevent_pas_la_pension_minimum(simulateur
     laissent sous le minimum, servi revalorisé, sans eux."""
     from datetime import date
 
-    from retraite_notionnelle.revalorisation import faire_vivre
 
     carriere = Carriere.depuis_parcours(
         annee_naissance=1905, mois_naissance=3, jour_naissance=15, sexe="H",
         metiers=[Metier(affiliation="salarie_prive_non_cadre", age_debut=40.0,
                         niveau_salaire=0.18)],
         age_liquidation=65.0, macro=simulateur.macro)
-    assert date_d_effet(carriere) == "1970-04-01"
+    assert commun.date_d_effet(carriere) == "1970-04-01"
     resultat = simulateur.scenario_actuel.calculer(carriere)
     general = next(p for p in resultat.pensions_par_regime if p.regime == "regime_general")
     minimum, = (a for a in resultat.avantages_appliques if a.code == "minimum_contributif")
@@ -222,6 +223,7 @@ CAS = [
 ]
 
 
+@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait le journal du portage")
 def test_les_deux_moteurs_servent_la_meme_pension_minimum():
     """Chaque étape de la liquidation écrit la même donnée en Python et en
     JavaScript, la pension minimum comprise."""
@@ -252,16 +254,15 @@ def test_les_deux_moteurs_servent_la_meme_pension_minimum():
     assert portees, "aucune requête n'est portée à la pension minimum"
 
 
+@pytest.mark.sur_le_moteur_python("points_msa, une règle de l'acquisition que la façade ne sert pas")
 def test_le_maximum_de_r_732_70_lit_l_avts(simulateur):
     """« M = PM-AVTS/37,5 x VP », où « AVTS représente le montant de
     l'allocation aux vieux travailleurs salariés » (R. 732-70) : au plafond de
     2025, 113,4 points, arrondis à 113, les « 23 à 113 points » que la MSA
     annonce ; la retraite forfaitaire, figée depuis 2014, en donnait 115."""
-    from retraite_notionnelle.droit.acquerir import points_msa
-
     actuel = simulateur.scenario_actuel
     assert actuel.minimum_contributif.avts(2025)[0] == pytest.approx(4_023.51)
     assert actuel.minimum_contributif.avts(2015)[0] == pytest.approx(3_379.95)
     periode = actuel.catalogue["msa_non_salaries"].periode(2025)
     plafond = actuel.macro.plafond_securite_sociale(2025)
-    assert points_msa(actuel, periode, 2025, plafond) == 113
+    assert acquerir.points_msa(actuel, periode, 2025, plafond) == 113

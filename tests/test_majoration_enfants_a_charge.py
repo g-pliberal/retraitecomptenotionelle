@@ -10,6 +10,7 @@ depuis 2019, sur les droits sans le coefficient d'anticipation depuis 2012
 
 from __future__ import annotations
 
+import functools
 import json
 import shutil
 import subprocess
@@ -19,12 +20,10 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.droit import completer
-from retraite_notionnelle.droit.commun import (AvantageApplique, fusionner_les_charges,
-                                               parts_de_la_majoration)
-from retraite_notionnelle.revalorisation import faire_vivre
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.droit.commun import AvantageApplique
 
+from facade import Simulateur, commun, completer, faire_vivre
+from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 from outils_pont import Saisies
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -38,9 +37,26 @@ def saisies() -> Saisies:
     return Saisies()
 
 
+@functools.cache
+def _simulateur(parametres) -> Simulateur:
+    """Le simulateur de la façade de ces paramètres, un par jeu."""
+    return Simulateur(parametres)
+
+
 def _simuler(saisies, **requete):
+    """La comparaison de la carrière que le portage bâtit de la saisie,
+    simulée par la façade."""
     requete = {**CADRE, **requete}
-    return requete, saisies.simuler(requete)
+    parametres, carriere = saisies.lire(requete)
+    return requete, _simulateur(parametres).simuler(carriere)
+
+
+def _vivante(simulateur, comparaison, annee: int):
+    """« Faire vivre » le scénario 1 de la comparaison : la façade le refait
+    de sa carrière (``scenario_actuel.calculer``), comme le portage."""
+    carriere = comparaison.carriere
+    return faire_vivre(simulateur, carriere, simulateur.scenario_actuel.calculer(carriere),
+                       annee)
 
 
 def _majoration(comparaison) -> AvantageApplique | None:
@@ -126,6 +142,7 @@ def test_la_plus_forte_des_deux_majorations_est_servie(saisies):
     assert "3 enfants à charge" in majoration.detail
 
 
+@pytest.mark.sur_le_moteur_python("fins_de_charge sur une carrière de fortune, que le pont ne passe pas")
 def test_seul_compte_l_enfant_a_charge_a_la_date_d_effet():
     """L'enfant qui a dix-huit ans au départ n'est plus à charge, celui qui
     naît après ne l'est pas encore (article 93) ; chacun cesse de l'être à son
@@ -152,10 +169,10 @@ def test_la_majoration_cesse_avec_la_charge(saisies):
     ensuite."""
     requete, comparaison = _simuler(saisies, naissance="1943-03-15", liquidation="2005-04",
                                     enfants="2", naissances="1990,1995-05")
-    simulateur = saisies.simulateur(requete)
+    simulateur = _simulateur(saisies.parametres(requete))
     servies = {}
     for annee in (2007, 2008, 2012, 2013, 2020):
-        vivante = faire_vivre(simulateur, comparaison.carriere, comparaison.actuel, annee)
+        vivante = _vivante(simulateur, comparaison, annee)
         arrco = next(r.coefficient for r in vivante.regimes if r.regime == "arrco")
         servies[annee] = vivante.majoration_enfants * vivante.coefficient_majoration / arrco
     majoration = _majoration(comparaison).montant
@@ -166,28 +183,29 @@ def test_la_majoration_cesse_avec_la_charge(saisies):
     assert servies[2020] == pytest.approx(0.0, abs=1e-9)
 
 
+@pytest.mark.sur_le_moteur_python("des avantages et des étapes imbriquées, que le pont ne passe pas")
 def test_les_parts_a_une_date_et_la_reunion_de_deux_departs():
     etapes = (("2010-01-01", (("arrco", 10.0),)), ("2012-06-01", (("arrco", 4.0),)),
               ("2015-01-01", ()))
     avantage = AvantageApplique(code="majoration_enfants", libelle="", montant=30.0,
                                 par_regime=(("regime_general", 20.0), ("arrco", 10.0)),
                                 a_charge=etapes)
-    assert parts_de_la_majoration([avantage]) == [("regime_general", 20.0), ("arrco", 10.0)]
-    assert parts_de_la_majoration([avantage], "2011-12-31") == [
+    assert commun.parts_de_la_majoration([avantage]) == [("regime_general", 20.0), ("arrco", 10.0)]
+    assert commun.parts_de_la_majoration([avantage], "2011-12-31") == [
         ("regime_general", 20.0), ("arrco", 10.0)]
     total = {}
-    for code, part in parts_de_la_majoration([avantage], "2013-12-31"):
+    for code, part in commun.parts_de_la_majoration([avantage], "2013-12-31"):
         total[code] = total.get(code, 0.0) + part
     assert total == {"regime_general": 20.0, "arrco": 4.0}
     autres = (("2011-01-01", (("agirc", 2.0),)), ("2013-01-01", ()))
-    assert fusionner_les_charges(etapes, autres) == (
+    assert commun.fusionner_les_charges(etapes, autres) == (
         ("2010-01-01", (("arrco", 10.0), ("agirc", 2.0))),
         ("2011-01-01", (("arrco", 10.0), ("agirc", 2.0))),
         ("2012-06-01", (("arrco", 4.0), ("agirc", 2.0))),
         ("2013-01-01", (("arrco", 4.0),)),
         ("2015-01-01", ()),
     )
-    assert fusionner_les_charges((), autres) == autres
+    assert commun.fusionner_les_charges((), autres) == autres
 
 
 # -- les deux moteurs ---------------------------------------------------------------
@@ -204,6 +222,7 @@ CAS = [
 ]
 
 
+@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait la comparaison du portage")
 def test_les_deux_moteurs_servent_la_meme_majoration(saisies):
     """Le résultat entier, aujourd'hui compris — où la majoration a perdu
     l'enfant qui n'est plus à charge —, est le même en Python et en
