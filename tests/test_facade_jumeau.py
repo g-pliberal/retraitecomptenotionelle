@@ -1322,6 +1322,7 @@ def test_le_jumeau_rend_la_liquidation_que_la_facade_lit(parametres):
             assert lu.releve.lignes() == _en_json(refait.releve.lignes()), cas
             assert (lu.total, lu.hors_repartition, lu.total_contributif) == (
                 refait.total, refait.hors_repartition, refait.total_contributif), cas
+            assert lu.fiabilite == refait.fiabilite, cas
             assert lu.mesures == refait.mesures, cas
             assert lu.avantages == tuple(refait.avantages), cas
             assert repr(lu.pensions.regimes) == repr(pont.lu_strictement(
@@ -1689,3 +1690,78 @@ def test_le_jumeau_rend_la_garantie_vieillesse_que_la_facade_lit(parametres):
             assert servi.scenario_liberal._garantie_vieillesse(lue, pension, rente) == (
                 jumeau.scenario_liberal._garantie_vieillesse(refaite, pension, rente)), (
                 age, pension, rente)
+
+
+# -- l'échéancier, le journal et le pilote ----------------------------------------------
+
+def _retraite_de_2005(simulateur):
+    """Un salarié né en 1945 parti en 2005 : l'échéance de l'année courante
+    fait vivre sa pension et revoit son ASPA."""
+    return simulateur.carriere_parcours(1945, "H", [Metier("salarie_prive_non_cadre", 20.0)], 60)
+
+
+@pytest.mark.parametrize("parametres", [Parametres(), Parametres(conventions_cor=True)],
+                         ids=["reference", "conventions_cor"])
+def test_le_jumeau_parcourt_l_echeancier_que_la_facade_lit(parametres):
+    """L'échéancier du salarié, de l'agent de la SNCF, de la fonctionnaire,
+    de la mère que l'AVPF couvre et du retraité de 2005, parcouru jusqu'à
+    l'échéance de l'année courante : le même journal — chaque entrée, ce qui
+    la date, et son contenu quand il passe —, le même scénario 1 au départ et
+    aujourd'hui, les mêmes appels de ``liquider`` ; le même départ tiré de la
+    carrière ; et, sur ce journal, ce que le journal sert à chaque date."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle import echeancier as echeancier_python
+
+    servi = facade.Simulateur(parametres)
+    jumeau = simulateur_python.Simulateur(parametres)
+    annee = parametres.annee_courante
+    for carriere in (_salarie, _agent, _fonctionnaire, _mere_avpf, _retraite_de_2005):
+        lue, refaite = carriere(servi), carriere(jumeau)
+        nom = carriere.__name__
+        assert facade.echeancier.depart_de(lue) == echeancier_python.depart_de(refaite), nom
+        lu, refait = facade.echeancier.Echeancier(servi), echeancier_python.Echeancier(jumeau)
+        avant, avant_jumeau = facade.liquidation.appels(), liquidation_python.appels()
+        journal = lu.parcourir(lue, echeance=annee)
+        journal_jumeau = refait.parcourir(refaite, echeance=annee)
+        assert (facade.liquidation.appels() - avant
+                == liquidation_python.appels() - avant_jumeau), nom
+        assert [(e.id, e.evenement, e.inscrite_le, e.debut, e.fin, e.sorte, e.remplace)
+                for e in journal] == [
+            (e.id, e.evenement, e.inscrite_le, e.debut, e.fin, e.sorte, e.remplace)
+            for e in journal_jumeau], nom
+        for entree, refaite_entree in zip(journal, journal_jumeau):
+            assert entree.donnees() == _en_json(refaite_entree.donnees()), (nom, entree.id)
+        assert lu.au_depart == pont.resultat_actuel_des_donnees(_en_json(refait.au_depart)), nom
+        assert (lu.aujourd_hui is None) == (refait.aujourd_hui is None), nom
+        for date in ("2004-12-31", "2005-06-01", f"{annee:04d}-12-31"):
+            for sorte in (None, "composante", "foyer"):
+                assert [e.id for e in journal.servi(date, sorte=sorte)] == [
+                    e.id for e in journal_jumeau.servi(date, sorte=sorte)], (nom, date, sorte)
+            assert [e.id for e in journal.etat_au(date)] == [
+                e.id for e in journal_jumeau.etat_au(date)], (nom, date)
+    # Ce que chaque sorte appelle, que le paquet garde du vocabulaire, sans
+    # ce qui la dit.
+    assert facade.echeancier.SORTES == {
+        nom: {cle: sorte[cle] for cle in ("liquider", "motif", "nature") if cle in sorte}
+        for nom, sorte in echeancier_python.SORTES.items()}
+
+
+@pytest.mark.parametrize("parametres", [Parametres(), Parametres(conventions_cor=True)],
+                         ids=["reference", "conventions_cor"])
+def test_le_jumeau_date_le_depart_que_le_pilote_de_la_facade_lit(parametres):
+    """L'âge de départ des six premiers cas types, nés en 1950, 1960 et 1975,
+    sous la règle du droit et l'âge écrit : le même que le pilote du jumeau."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle import pilote as pilote_python
+    from retraite_notionnelle.castypes import CAS_TYPES
+
+    servi = facade.Simulateur(parametres)
+    jumeau = simulateur_python.Simulateur(parametres)
+    for cas in CAS_TYPES[:6]:
+        for generation in (1950, 1960, 1975):
+            for variante in ("droit", "absolu"):
+                assert facade.pilote.age_de_depart(servi, cas, generation, variante) == (
+                    pilote_python.age_de_depart(jumeau, cas, generation, variante)), (
+                    cas.code, generation, variante)

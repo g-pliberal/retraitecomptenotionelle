@@ -2295,6 +2295,7 @@ def liquidation_des_donnees(donnees: dict) -> dict:
     ``liquider`` a tourné, liquidations d'essai comprises."""
     from .droit.commun import AvantageApplique, PensionRegime
     from .droit.liquidation import Mesure
+    from .donnees.chargement import Fiabilite
     from .droit.liquider import EligiblePlafondEnfants
 
     return {"taux": lu_strictement(float, donnees["taux"], "liquidation.taux"),
@@ -2316,7 +2317,10 @@ def liquidation_des_donnees(donnees: dict) -> dict:
             "avantages": lu_strictement(tuple[AvantageApplique, ...], donnees["avantages"],
                                         "liquidation.avantages"),
             "lignes": donnees["lignes"], "donnees": donnees["donnees"],
-            "appels": lu_strictement(int, donnees["appels"], "liquidation.appels")}
+            "appels": lu_strictement(int, donnees["appels"], "liquidation.appels"),
+            "fiabilite": lu_strictement(Fiabilite, donnees["fiabilite"], "liquidation.fiabilite"),
+            "journal": (None if donnees["journal"] is None
+                        else journal_des_donnees(donnees["journal"], "liquidation.journal"))}
 
 
 def etape_de_la_liquidation_des_donnees(donnees: dict) -> dict:
@@ -2503,7 +2507,55 @@ LECTURES_DE_LA_FACADE = {
     "commun.periode_de_liquidation": lambda rang: lu_strictement(
         int | None, rang, "periode_de_liquidation"),
     "revalorisation.majorer_les_petites_pensions": lambda lu: majorations_des_donnees(lu),
+    "echeancier.parcourir": lambda lu: echeancier_des_donnees(lu),
+    "simulateur.echeancier": lambda lu: echeancier_des_donnees(lu),
+    "echeancier.depart_de": lambda lu: evenement_des_donnees(lu),
+    "echeancier.sortes": lambda lu: sortes_des_donnees(lu),
+    "journal.operer": lambda lu: None if lu is None else lu_strictement(
+        tuple[int, ...], lu, "journal"),
+    "pilote.age_de_depart": lambda lu: {
+        "age": _flottant(lu["age"]),
+        "appels": lu_strictement(int, lu["appels"], "pilote.appels")},
 }
+
+def echeancier_des_donnees(lu: dict) -> dict:
+    """L'échéancier parcouru que le portage a écrit (``echeancierTelQuel`` de
+    ``pont.mjs``), lu strictement : ``journal``, sous le type du Python
+    (:func:`journal_des_donnees`) ; ``decrites``, ce que le contrat décrit du
+    contenu de chaque entrée qui ne passe pas, par son identifiant ;
+    ``au_depart`` et ``aujourd_hui``, le
+    scénario 1 au départ et à l'échéance, ou ``None`` ; ``appels``, ceux de
+    ``liquider`` que son parcours a coûtés."""
+    return {"journal": journal_des_donnees(lu["journal"], "echeancier.journal"),
+            "decrites": lu_strictement(dict[str, dict], lu["decrites"], "echeancier.decrites"),
+            "au_depart": (None if lu["au_depart"] is None
+                          else resultat_actuel_des_donnees(lu["au_depart"])),
+            "aujourd_hui": (None if lu["aujourd_hui"] is None
+                            else actuel_aujourd_hui_des_donnees(lu["aujourd_hui"])),
+            "appels": lu_strictement(int, lu["appels"], "echeancier.appels")}
+
+
+def evenement_des_donnees(lu) -> object:
+    """Le départ que le portage tire d'une carrière (``departDe`` de
+    ``moteur/js/echeancier.js``), sous le type du Python (``Evenement``), ou
+    ``None``."""
+    from .echeancier import Evenement
+
+    return None if lu is None else lu_strictement(Evenement, lu, "Evenement")
+
+
+def sortes_des_donnees(lu) -> dict[str, dict]:
+    """Ce que chaque sorte d'événement appelle, tel que le paquet le tient :
+    ``liquider``, un booléen, ``motif`` et ``nature``, des textes ou rien."""
+    sortes = lu_strictement(dict[str, dict], lu, "sortes")
+    for nom, sorte in sortes.items():
+        if set(sorte) - {"liquider", "motif", "nature"}:
+            raise ValueError(f"sortes.{nom} : le portage écrit les champs {sorted(sorte)}")
+        lu_strictement(bool, sorte["liquider"], f"sortes.{nom}.liquider")
+        for cle in ("motif", "nature"):
+            lu_strictement(str | None, sorte.get(cle), f"sortes.{nom}.{cle}")
+    return sortes
+
 
 def actuel_aujourd_hui_des_donnees(lu) -> object:
     """Le système 1 servi une année (``actuelAujourdhui`` de

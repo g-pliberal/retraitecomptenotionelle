@@ -23,9 +23,7 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle import echeancier as _echeancier
-from retraite_notionnelle import journal as _journal
-from retraite_notionnelle import pilote
+from retraite_notionnelle import pont
 from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.castypes import CAS_TYPES
 from retraite_notionnelle.noyau import contrats
@@ -33,17 +31,19 @@ from retraite_notionnelle.noyau import contrats
 import facade
 from facade import (Carriere, Simulateur, actuel_aujourd_hui, completer, faire_vivre, foyer,
                     liquidation, liquider, ouvrir, releve)
+from facade import echeancier as _echeancier
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
+from facade import journal as _journal
+from facade import pilote
 from outils_portage import moitie_python
 
 RACINE = Path(__file__).resolve().parents[1]
 
 # Ce fichier passe à la façade (action 161) : la liquidation, sa demande, ses
 # neutralisations, ses mesures et ses appels, le foyer se demandent au
-# portage, comme chaque étape seule, son contexte compris. Le journal,
-# l'échéancier, le pilote et la confrontation des deux moteurs gardent le
-# moteur Python, sous la marque
-# ``sur_le_moteur_python`` et sa raison.
+# portage, comme chaque étape seule, son contexte compris, le journal,
+# l'échéancier et le pilote. La confrontation des deux moteurs garde le
+# moteur Python, sous la marque ``sur_le_moteur_python`` et sa raison.
 
 
 @pytest.fixture
@@ -257,7 +257,6 @@ def test_la_liquidation_suit_le_contrat_c6(simulateur, nom):
     assert set(donnees["lignes_consommees"]) == lues
 
 
-@pytest.mark.sur_le_moteur_python("journal.Journal, que l'état d'une liquidation ne passe pas")
 def test_liquider_est_une_fonction_pure(simulateur):
     """La même demande, le même état, le même contexte : la même liquidation.
     Elle ne touche ni la carrière ni le journal qu'elle lit."""
@@ -375,7 +374,6 @@ def _entree(ident: str, date: str, remplace: str | None = None,
                            remplace=remplace)
 
 
-@pytest.mark.sur_le_moteur_python("journal.Journal")
 def test_le_journal_ne_s_ecrit_qu_en_ajoutant():
     journal = _journal.Journal()
     journal.inscrire(_entree("pension_regime_general", "2020-01-01"))
@@ -387,7 +385,6 @@ def test_le_journal_ne_s_ecrit_qu_en_ajoutant():
     assert len(journal) == 1
 
 
-@pytest.mark.sur_le_moteur_python("journal.Journal")
 def test_le_journal_sert_la_derniere_entree_de_chaque_lignee():
     """Une composante et ses révisions forment une lignée : pour une période,
     le journal sert la dernière entrée dont l'effet la couvre ; à une date,
@@ -415,7 +412,6 @@ def test_le_journal_sert_la_derniere_entree_de_chaque_lignee():
 
 # -- l'échéancier ----------------------------------------------------------------
 
-@pytest.mark.sur_le_moteur_python("echeancier.Echeancier")
 def test_l_echeancier_inscrit_le_depart_puis_l_echeance(simulateur):
     """Parti en 2005 : le départ appelle la liquidation, puis l'ASPA du
     jour ; l'échéance de l'année courante fait vivre les pensions et revoit
@@ -450,7 +446,6 @@ def test_l_echeancier_inscrit_le_depart_puis_l_echeance(simulateur):
         simulateur, carriere, au_depart, annee).pension_annuelle
 
 
-@pytest.mark.sur_le_moteur_python("echeancier.depart_de")
 def test_le_depart_est_un_acte_tire_de_la_carriere(simulateur):
     carriere = _carriere(simulateur, **CARRIERES["salarie"])
     depart = _echeancier.depart_de(carriere)
@@ -473,7 +468,6 @@ def test_le_simulateur_fait_passer_le_scenario_1_par_l_echeancier(simulateur):
 
 @pytest.mark.parametrize("cas", [c for c in CAS_TYPES if c.regle_liquidation != "services"][:4],
                          ids=lambda c: c.code)
-@pytest.mark.sur_le_moteur_python("pilote.age_de_depart")
 def test_le_pilote_date_un_depart_sans_rien_liquider(simulateur, cas):
     """Le point fixe des cas types n'interroge que l'étape « ouvrir le
     droit » : il ne coûte aucune liquidation, et donne l'âge que les cas
@@ -481,11 +475,13 @@ def test_le_pilote_date_un_depart_sans_rien_liquider(simulateur, cas):
     avant = liquidation.appels()
     age = pilote.age_de_depart(simulateur, cas, 1960)
     assert liquidation.appels() == avant
-    assert age == cas.age_liquidation_pour(simulateur, 1960)
+    # L'âge que le coût retient pour ce cas type (``pont.ages_de_depart``).
+    retenus, _, refus = pont.ages_de_depart(
+        [{"cle": cas.code, **cas.pour_le_portage(simulateur, 1960)}], simulateur.parametres)
+    assert not refus and age == retenus[cas.code]
     assert pilote.age_de_depart(simulateur, cas, 1960, "absolu") == cas.age_liquidation
 
 
-@pytest.mark.sur_le_moteur_python("pilote.age_de_depart")
 def test_le_pilote_fait_attendre_l_age_d_annulation_a_une_carriere_qui_ne_valide_plus(
         simulateur):
     """Une carrière sans activité n'atteint pas sa durée en attendant. Né en
@@ -518,7 +514,6 @@ def test_le_pilote_fait_attendre_l_age_d_annulation_a_une_carriere_qui_ne_valide
 
 
 @pytest.mark.parametrize("regle", ["taux_plein", "ouverture"])
-@pytest.mark.sur_le_moteur_python("pilote.age_de_depart")
 def test_le_pilote_fait_descendre_a_la_carriere_longue_une_carriere_qui_ne_valide_plus(
         simulateur, regle):
     """Une carrière sans activité depuis qu'elle a sa durée l'avait déjà plus

@@ -77,8 +77,11 @@ import typing
 import pytest
 
 from retraite_notionnelle import carriere as _carriere
+from retraite_notionnelle import castypes as _castypes
 from retraite_notionnelle import echeancier as _echeancier
+from retraite_notionnelle import journal as _journal
 from retraite_notionnelle import memoire, pont
+from retraite_notionnelle import pilote as _pilote
 from retraite_notionnelle import revalorisation as _revalorisation
 from retraite_notionnelle import simulateur as _simulateur
 from retraite_notionnelle.calendrier import DateMois
@@ -121,7 +124,9 @@ ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversio
            "revalorisation.faire_vivre", "commun.periode_de_liquidation",
            "revalorisation.majorer_les_petites_pensions", "revalorisation.actuel_aujourd_hui",
            "simulateur.proposition", "simulateur.carriere_proposition", "carriere.prolongee",
-           "simulateur.garantie_vieillesse")
+           "simulateur.garantie_vieillesse", "echeancier.parcourir", "simulateur.echeancier",
+           "echeancier.depart_de", "echeancier.sortes", "journal.operer",
+           "pilote.age_de_depart")
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
@@ -403,13 +408,105 @@ def majorer_les_petites_pensions(moteur, resultat, datees, regimes, servie, a_l_
 
 
 class Echeancier(_Ferme):
-    """``Echeancier`` : la façade ne le sert pas encore. Un test marqué
-    ``sur_le_moteur_python`` reçoit son jumeau (:data:`JUMEAUX`)."""
+    """``Echeancier`` : sur un simulateur de la façade, ``parcourir``, servi
+    par le portage, l'échéance comprise ; puis ce que les tests en lisent —
+    son journal (:class:`Journal`), le scénario 1 au départ (``au_depart``) et
+    à l'échéance (``aujourd_hui``). Les liquidations de son parcours se
+    comptent dans ``liquidation.appels()``. Le reste de l'échéancier — sa
+    réversion, ses durées au départ, sa retraite progressive — ne passe pas le
+    pont, et se refuse."""
 
-    def __init__(self, *arguments, **nommes) -> None:
-        raise NonTransmissible(
-            "Echeancier : la façade ne sert pas l'échéancier — le test reste sur le moteur "
-            "Python, sous la marque sur_le_moteur_python")
+    def __init__(self, simulateur) -> None:
+        if not isinstance(simulateur, Simulateur):
+            raise NonTransmissible(
+                "Echeancier : simulateur que la façade ne sait pas transmettre — l'échéancier "
+                "se demande sur un simulateur de la façade")
+        object.__setattr__(self, "simulateur", simulateur)
+        object.__setattr__(self, "journal", Journal())
+        object.__setattr__(self, "au_depart", None)
+        object.__setattr__(self, "aujourd_hui", None)
+
+    def _lire(self, lu: dict) -> None:
+        entrees = [dataclasses.replace(entree, contenu=_Decrit(entree.sorte,
+                                                              lu["decrites"][entree.id]))
+                   if entree.id in lu["decrites"] else entree for entree in lu["journal"]]
+        object.__setattr__(self, "journal", Journal._des_entrees(entrees))
+        object.__setattr__(self, "au_depart", lu["au_depart"])
+        object.__setattr__(self, "aujourd_hui", lu["aujourd_hui"])
+        _APPELS[0] += lu["appels"]
+
+    def parcourir(self, carriere, echeance: int | None = None):
+        self._lire(_demander("echeancier.parcourir", self.simulateur.parametres,
+                             pont.SIMULATEUR, carriere, echeance))
+        return self.journal
+
+
+class _Decrit(_Ferme):
+    """Le contenu d'une entrée du journal qui ne passe pas le pont — une
+    liquidation tient son contexte, les tables du moteur —, par ce que son
+    contrat en décrit (``donnees()``), que le portage écrit ; le reste se
+    refuse."""
+
+    def __init__(self, sorte: str, donnee: dict) -> None:
+        object.__setattr__(self, "sorte", sorte)
+        object.__setattr__(self, "_donnee", donnee)
+
+    def donnees(self) -> dict:
+        return self._donnee
+
+
+class Journal(_Ferme):
+    """``journal.Journal`` : ses entrées tenues ici, sous le type du Python
+    (``Entree``), qui porte leur contenu ; chaque inscription, ce qu'il sert
+    pour une période et son état à une date, demandés au portage, qui refait
+    le journal de ce qui date chaque entrée — son contenu, qu'il ne lit pas,
+    n'y passe pas. Ce que le portage refuse d'inscrire lève la ``ValueError``
+    du Python."""
+
+    def __init__(self) -> None:
+        object.__setattr__(self, "_entrees", [])
+
+    @classmethod
+    def _des_entrees(cls, entrees: list) -> "Journal":
+        """Le journal de ces entrées, que le portage a déjà inscrites."""
+        journal = cls()
+        journal._entrees.extend(entrees)
+        return journal
+
+    def _operer(self, entrees: list, operation: str, *valeurs):
+        datees = [{"id": e.id, "evenement": e.evenement, "inscrite_le": e.inscrite_le,
+                   "debut": e.debut, "fin": e.fin, "sorte": e.sorte, "remplace": e.remplace,
+                   "annule": e.annule} for e in entrees]
+        return _demander("journal.operer", Parametres(), datees, operation, list(valeurs))
+
+    def inscrire(self, entree):
+        if not isinstance(entree, _journal.Entree):
+            raise NonTransmissible("journal.inscrire : ce n'est pas une Entree du journal")
+        self._operer([*self._entrees, entree], "inscrire")
+        self._entrees.append(entree)
+        return entree
+
+    def __iter__(self):
+        return iter(list(self._entrees))
+
+    def __len__(self) -> int:
+        return len(self._entrees)
+
+    def entree(self, ident: str):
+        for entree in self._entrees:
+            if entree.id == ident:
+                return entree
+        raise KeyError(ident)
+
+    def etat_au(self, date: str) -> list:
+        return [self._entrees[rang] for rang in self._operer(self._entrees, "etat_au", date)]
+
+    def servi(self, debut: str, fin: str | None = None, sorte: str | None = None) -> list:
+        return [self._entrees[rang]
+                for rang in self._operer(self._entrees, "servi", debut, fin, sorte)]
+
+    def donnees(self) -> list[dict]:
+        return [entree.donnees() for entree in self._entrees]
 
 
 class Simulateur(_Ferme):
@@ -510,6 +607,15 @@ class Simulateur(_Ferme):
                                "simulateur de la façade")
         comparaison.parametres = self.parametres
         return comparaison
+
+    def echeancier(self, carriere) -> Echeancier:
+        """``Simulateur.echeancier`` : l'échéancier du scénario 1 parcouru
+        pour la carrière, servi par le portage, qui date lui-même
+        l'échéance."""
+        echeancier = Echeancier(self)
+        echeancier._lire(_demander("simulateur.echeancier", self.parametres, pont.SIMULATEUR,
+                                   carriere))
+        return echeancier
 
     def carriere_proposition(self, carriere):
         """``Simulateur.carriere_proposition`` : la carrière que la proposition
@@ -1133,7 +1239,8 @@ class Liquidee(_Ferme):
     """La liquidation que le portage a calculée, par ce que les tests en
     lisent : ses pensions avant les compléments (``pensions``, leur taux,
     leurs régimes, leurs plafonds), ses compléments (``complements``), la
-    pension de chaque régime (``regimes``), ses totaux, ses mesures et ses avantages, la demande
+    pension de chaque régime (``regimes``), ses totaux, ses mesures et ses avantages, sa
+    fiabilité, la demande
     et le contexte qu'elle a reçus, les lignes du relevé qu'elle a lues
     (``releve.lignes()``) et ce que le contrat C.6 en décrit (``donnees()``).
     Le reste — le relevé entier, l'ouverture — ne passe pas
@@ -1149,7 +1256,8 @@ class Liquidee(_Ferme):
                             ("total_contributif", lu["total_contributif"]),
                             ("mesures", lu["mesures"]), ("avantages", lu["avantages"]),
                             ("demande", demande), ("contexte", contexte),
-                            ("releve", _Lignes(lu["lignes"])), ("_donnees", lu["donnees"])):
+                            ("releve", _Lignes(lu["lignes"])), ("_donnees", lu["donnees"]),
+                            ("fiabilite", lu["fiabilite"])):
             object.__setattr__(self, nom, valeur)
 
     def donnees(self) -> dict:
@@ -1230,10 +1338,16 @@ class _Liquidation(_Ferme):
                 "liquidation.liquider : moteur du contexte que la façade ne sait pas "
                 "transmettre — la liquidation se demande sur le moteur d'un simulateur de la "
                 "façade (simulateur.scenario_actuel)")
-        if (etat.journal, etat.servies, etat.initiales, etat.recalcul) != (None, (), (), True):
+        journal = etat.journal
+        if journal is not None and (not isinstance(journal, Journal) or len(journal)):
             raise NonTransmissible(
-                "liquidation.liquider : état qui porte plus que sa carrière (journal, pensions "
-                "servies, pensions provisoires, recalcul) — le portage ne le verrait pas")
+                "liquidation.liquider : journal qui n'est pas un journal vide de la façade — "
+                "le portage ne verrait pas ses entrées")
+        if (etat.servies, etat.initiales, etat.recalcul) != ((), (), True):
+            raise NonTransmissible(
+                "liquidation.liquider : état qui porte plus que sa carrière et un journal vide "
+                "(pensions servies, pensions provisoires, recalcul) — le portage ne le verrait "
+                "pas")
         if (contexte.observation, contexte.hypothese) != (None, None):
             raise NonTransmissible(
                 "liquidation.liquider : contexte qui porte plus que le moteur et ses "
@@ -1243,8 +1357,13 @@ class _Liquidation(_Ferme):
                    "motif": demande.motif, "nature": demande.nature,
                    "regimes": list(demande.regimes)}
         lu = _demander("liquidation.liquider", moteur._simulateur.parametres, pont.MOTEUR,
-                       donnees, etat.carriere, sorted(contexte.neutralisations))
+                       donnees, etat.carriere, sorted(contexte.neutralisations),
+                       journal is not None)
         _APPELS[0] += lu["appels"]
+        # Ce que la liquidation a écrit au journal du portage, que le journal
+        # de la façade reprend : rien, qu'elle est pure.
+        if journal is not None:
+            journal._entrees.extend(lu["journal"])
         return Liquidee(lu, demande, contexte)
 
 
@@ -1617,6 +1736,58 @@ class _Acquerir(_Module):
             avec_points_gratuits))
 
 
+class _Echeanciers(_Module):
+    """``echeancier`` : l'échéancier (:class:`Echeancier`) ; ``depart_de``,
+    servi par le portage ; ``SORTES``, ce que chaque sorte d'événement
+    appelle, tel que le paquet du portage le tient, sans ce qui la dit ; et
+    ``Evenement``, le type du Python."""
+
+    _jumeau = _echeancier
+    Echeancier = Echeancier
+    Evenement = _echeancier.Evenement
+
+    def depart_de(self, carriere):
+        return _demander("echeancier.depart_de", Parametres(), carriere)
+
+    @property
+    def SORTES(self) -> dict[str, dict]:  # noqa: N802 — le nom de la constante du jumeau
+        return _demander("echeancier.sortes", Parametres(), pont.SIMULATEUR)
+
+
+class _Journaux(_Module):
+    """``journal`` : le journal (:class:`Journal`) et ``Entree``, le type du
+    Python."""
+
+    _jumeau = _journal
+    Journal = Journal
+    Entree = _journal.Entree
+
+
+class _Pilote(_Module):
+    """``pilote`` : ``age_de_depart``, servi par le portage sur un simulateur
+    de la façade, le cas type passé par ce que le portage en lit
+    (``CasType.pour_le_portage``), la part des primes projetée comme le COR
+    la projette (``castypes.primes_projetees_en_donnees``). Ses appels de
+    ``liquider`` se comptent dans ``liquidation.appels()``."""
+
+    _jumeau = _pilote
+
+    def age_de_depart(self, simulateur, cas, generation: int, variante: str = "droit") -> float:
+        if not isinstance(simulateur, Simulateur):
+            raise NonTransmissible(
+                "pilote.age_de_depart : simulateur que la façade ne sait pas transmettre")
+        lu = _demander("pilote.age_de_depart", simulateur.parametres, pont.SIMULATEUR,
+                       cas.pour_le_portage(simulateur, generation), variante,
+                       _castypes.primes_projetees_en_donnees(simulateur))
+        _APPELS[0] += lu["appels"]
+        return lu["age"]
+
+
+#: ``echeancier``, ``journal`` et ``pilote``, servis par le portage.
+echeancier = _Echeanciers()
+journal = _Journaux()
+pilote = _Pilote()
+
 #: ``droit.releve``, ``droit.coordonner``, ``droit.compter`` et
 #: ``droit.acquerir``, servis par le portage.
 releve = Releves()
@@ -1647,7 +1818,8 @@ JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
            "actuel_aujourd_hui": _revalorisation.actuel_aujourd_hui,
            "PensionServie": _revalorisation.PensionServie,
            "majorer_les_petites_pensions": _revalorisation.majorer_les_petites_pensions,
-           "Echeancier": _echeancier.Echeancier,
+           "Echeancier": _echeancier.Echeancier, "echeancier": _echeancier,
+           "journal": _journal, "pilote": _pilote,
            "ConstructeurCompte": _compte.ConstructeurCompte,
            "prolonger_releve": _carriere.prolonger_releve,
            "salaire_moyen_annuel": _carriere.salaire_moyen_annuel}

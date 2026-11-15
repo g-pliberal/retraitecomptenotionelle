@@ -147,7 +147,8 @@ import { ConstructeurCompte } from "../../moteur/js/compte.js";
 import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
 import { niveauRelatif } from "../../moteur/js/conversion.js";
 import { Contexte } from "../../moteur/js/contexte.js";
-import { Echeancier } from "../../moteur/js/echeancier.js";
+import { Echeancier, departDe } from "../../moteur/js/echeancier.js";
+import { Entree, Journal } from "../../moteur/js/journal.js";
 import * as garantie from "../../moteur/js/garantie.js";
 import * as impotRevenu from "../../moteur/js/impot-revenu.js";
 import {
@@ -1724,13 +1725,19 @@ const CONTENUS_QUI_NE_PASSENT_PAS = new Set(["liquidation"]);
  * et son contenu, quand il passe.
  */
 function comparaisonTelleQuelle({ journal, ...comparaison }) {
-  return {
-    ...telQuel(comparaison),
-    journal: journal === null ? null : [...journal].map(({ contenu, ...entree }) => ({
-      ...telQuel(entree),
-      contenu: CONTENUS_QUI_NE_PASSENT_PAS.has(entree.sorte) ? null : telQuel(contenu),
-    })),
-  };
+  return { ...telQuel(comparaison), journal: journalTelQuel(journal) };
+}
+
+/**
+ * Le journal entrée par entrée, dans l'ordre de leur inscription : ce qui
+ * date chacune, et son contenu, quand il passe (`journal_des_donnees` de
+ * `pont.py`).
+ */
+function journalTelQuel(journal) {
+  return journal === null ? null : [...journal].map(({ contenu, ...entree }) => ({
+    ...telQuel(entree),
+    contenu: CONTENUS_QUI_NE_PASSENT_PAS.has(entree.sorte) ? null : telQuel(contenu),
+  }));
 }
 
 /**
@@ -2143,9 +2150,11 @@ ENTREES_DE_LA_FACADE["liquidation.demande_de_depart"] = (carriere, nature) => {
  * contexte, les tables du moteur, et ne passe pas le pont
  * (`CONTENUS_QUI_NE_PASSENT_PAS`).
  */
-ENTREES_DE_LA_FACADE["liquidation.liquider"] = (moteur, demande, carriere, neutralisations) => {
+ENTREES_DE_LA_FACADE["liquidation.liquider"] = (moteur, demande, carriere, neutralisations,
+  avecJournal = false) => {
   const avant = appels();
-  const liquidee = liquiderLaDemande(new Demande(demande), new Etat(carriere),
+  const journal = avecJournal ? new Journal() : null;
+  const liquidee = liquiderLaDemande(new Demande(demande), new Etat(carriere, journal),
     new ContexteDeLiquidation(moteur, neutralisations));
   return {
     taux: liquidee.pensions.taux, regimes: telQuel(liquidee.regimes),
@@ -2156,6 +2165,7 @@ ENTREES_DE_LA_FACADE["liquidation.liquider"] = (moteur, demande, carriere, neutr
     total_contributif: liquidee.totalContributif, mesures: telQuel(liquidee.mesures),
     avantages: telQuel(liquidee.avantages), lignes: telQuel(liquidee.releve.lignes()),
     donnees: telQuel(liquidee.donnees()), appels: appels() - avant,
+    fiabilite: liquidee.fiabilite, journal: journalTelQuel(journal),
   };
 };
 
@@ -2229,6 +2239,80 @@ ENTREES_DE_LA_FACADE["droit.etapes"] = (moteur, carriere, avantages, gratuits, s
     rendu = { etape, ...rendu, donnees: telQuel(ecrite.donnees()) };
   }
   return rendu;
+};
+
+// L'échéancier, le journal et le pilote, par la façade : un bloc à part
+// (action 161).
+
+/**
+ * Un échéancier parcouru, par ce que les tests en lisent : son journal
+ * (`journalTelQuel`), et ce que le contrat décrit des contenus qui ne passent
+ * pas, le scénario 1 au départ et aujourd'hui, tels quels, et
+ * les appels de `liquider` que son parcours a coûtés depuis `avant`.
+ */
+function echeancierTelQuel(echeancier, avant) {
+  return {
+    journal: journalTelQuel(echeancier.journal),
+    // Ce que le contrat de chaque entrée dont le contenu ne passe pas en
+    // décrit (`Entree.donnees`), par son identifiant.
+    decrites: Object.fromEntries([...echeancier.journal]
+      .filter((entree) => CONTENUS_QUI_NE_PASSENT_PAS.has(entree.sorte))
+      .map((entree) => [entree.id, telQuel(entree.donnees().contenu.donnee)])),
+    au_depart: telQuel(echeancier.auDepart),
+    aujourd_hui: telQuel(echeancier.aujourdhui), appels: appels() - avant,
+  };
+}
+
+/** L'échéancier de la carrière, parcouru jusqu'à l'échéance `echeance`, ou sans elle. */
+ENTREES_DE_LA_FACADE["echeancier.parcourir"] = (simulateur, carriere, echeance) => {
+  const avant = appels();
+  const echeancier = new Echeancier(simulateur);
+  echeancier.parcourir(carriere, echeance);
+  return echeancierTelQuel(echeancier, avant);
+};
+
+/** L'échéancier du simulateur (`Simulateur.echeancier`), qui date lui-même l'échéance. */
+ENTREES_DE_LA_FACADE["simulateur.echeancier"] = (simulateur, carriere) => {
+  const avant = appels();
+  return echeancierTelQuel(simulateur.echeancier(carriere), avant);
+};
+
+/** Le départ que la carrière déclare, ou `null`. */
+ENTREES_DE_LA_FACADE["echeancier.depart_de"] = (carriere) => telQuel(departDe(carriere));
+
+/** Ce que chaque sorte d'événement appelle, tel que le paquet le tient. */
+ENTREES_DE_LA_FACADE["echeancier.sortes"] = (simulateur) => telQuel(
+  new Echeancier(simulateur).sortes);
+
+/**
+ * Le journal des entrées `entrees` — ce qui date chacune, sous les noms du
+ * Python, sans son contenu —, inscrites dans l'ordre, et, sur lui,
+ * l'opération : `inscrire`, rien de plus ; `servi`, `[debut, fin, sorte]`,
+ * et `etat_au`, `[date]`, les rangs des entrées qu'elles rendent. Une
+ * inscription que le journal refuse est un refus.
+ */
+ENTREES_DE_LA_FACADE["journal.operer"] = (entrees, operation, valeurs) => {
+  const journal = new Journal();
+  const rangs = new Map();
+  entrees.forEach(({ inscrite_le: inscriteLe, ...entree }, rang) => {
+    rangs.set(journal.inscrire(new Entree({ ...entree, inscriteLe, contenu: null })), rang);
+  });
+  if (operation === "inscrire") return null;
+  if (operation === "servi") return journal.servi(...valeurs).map((e) => rangs.get(e));
+  if (operation === "etat_au") return journal.etatAu(...valeurs).map((e) => rangs.get(e));
+  throw new TypeError(`opération du journal que la façade ne sert pas : ${operation}`);
+};
+
+/**
+ * L'âge de départ d'un cas type (`pilote.age_de_depart` du Python), `{regle,
+ * options, parcours, entree, attente}` (`CasType.pour_le_portage`), sous la
+ * variante, la part des primes projetée par `primes` (`ageDuCas`) ; et les
+ * appels de `liquider` qu'il a coûtés.
+ */
+ENTREES_DE_LA_FACADE["pilote.age_de_depart"] = (simulateur, cas, variante, primes) => {
+  const avant = appels();
+  const { age } = ageDuCas(simulateur, cas, primes, variante);
+  return { age, appels: appels() - avant };
 };
 
 // -- la fin de la façade des tests ----------------------------------------------

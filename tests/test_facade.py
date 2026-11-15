@@ -1459,14 +1459,15 @@ def test_la_majoration_des_petites_pensions_refuse_ce_que_le_portage_ne_verrait_
         simulateur):
     """La règle de chaque régime se lit sur le simulateur de la façade qui
     tient le moteur : celle du moteur Python, ou d'un autre simulateur,
-    n'arriverait pas au portage. L'échéancier, la façade ne le sert pas."""
+    n'arriverait pas au portage. L'échéancier, de même, ne se sert que sur un
+    simulateur de la façade."""
     with pytest.raises(NonTransmissible, match="majorer_les_petites_pensions"):
         _liquidation_unique_de_la_circulaire(
             simulateur, revalorisation_python.PensionServie(simulateur_python.Simulateur()))
     with pytest.raises(NonTransmissible, match="majorer_les_petites_pensions"):
         _liquidation_unique_de_la_circulaire(simulateur, facade.PensionServie(Simulateur()))
     with pytest.raises(NonTransmissible, match="échéancier"):
-        facade.Echeancier(simulateur)
+        facade.Echeancier(simulateur_python.Simulateur())
 
 
 def _policier(simulateur, **options):
@@ -2135,17 +2136,27 @@ def test_la_liquidation_se_demande_au_portage(simulateur):
     assert facade.JUMEAUX["liquidation"] is liquidation_python
 
 
+def _journal_d_une_entree():
+    journal = facade.journal.Journal()
+    journal.inscrire(facade.journal.Entree(
+        "pension_regime_general", "depart_assure", "2020-01-01", "2020-01-01", None,
+        "composante", {"id": "pension_regime_general"}))
+    return journal
+
+
 def test_la_liquidation_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulateur):
-    """L'état d'une carrière seule, le contexte du moteur de la façade sans
-    rien de plus : le journal, les pensions déjà servies, une neutralisation,
-    une date d'observation, le moteur Python n'arriveraient pas au portage."""
+    """L'état d'une carrière seule et d'un journal vide de la façade, le
+    contexte du moteur de la façade sans rien de plus : le journal du Python,
+    un journal qui tient des entrées, les pensions déjà servies, une date
+    d'observation, le moteur Python n'arriveraient pas au portage."""
     demande, carriere = _depart_a_taux_plein(simulateur)
     Etat, Contexte = facade.liquidation.Etat, facade.liquidation.Contexte
     moteur = simulateur.scenario_actuel
     for etat, contexte, motif in [
             (Etat(carriere, servies=(object(),)), Contexte(moteur), "état"),
             (Etat(carriere, recalcul=False), Contexte(moteur), "état"),
-            (Etat(carriere, journal=Journal()), Contexte(moteur), "état"),
+            (Etat(carriere, journal=Journal()), Contexte(moteur), "journal"),
+            (Etat(carriere, journal=_journal_d_une_entree()), Contexte(moteur), "journal"),
             (Etat(carriere), Contexte(moteur, observation="2026-01-01"), "contexte"),
             (Etat(carriere), Contexte(simulateur_python.Simulateur().scenario_actuel),
              "moteur")]:
@@ -2348,7 +2359,10 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "revalorisation.majorer_les_petites_pensions",
                               "revalorisation.actuel_aujourd_hui",
                               "simulateur.proposition", "simulateur.carriere_proposition",
-                              "carriere.prolongee", "simulateur.garantie_vieillesse")
+                              "carriere.prolongee", "simulateur.garantie_vieillesse",
+                              "echeancier.parcourir", "simulateur.echeancier",
+                              "echeancier.depart_de", "echeancier.sortes", "journal.operer",
+                              "pilote.age_de_depart")
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)
 
 
