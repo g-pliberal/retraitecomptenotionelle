@@ -53,6 +53,12 @@
  "test_cycle_de_vie_script.py::demandes de l'étude, écrites": {
   "valeur": "48ea1f6fe345f7f8"
  },
+ "test_flux_fonction_publique.py::journal de la liquidation des statutaires": {
+  "valeur": "ecdf1afde900daae"
+ },
+ "test_flux_fonction_publique.py::mesures de l'étude": {
+  "valeur": "3dd44e6c1af39a69"
+ },
  "test_grille_large.py::mesure avance de l'échantillon": {
   "valeur": "ceead619d3dde6bc"
  },

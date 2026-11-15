@@ -54,7 +54,6 @@ FICHIERS = (
     "test_estimation_officielle.py", "test_etranger.py",
     "test_facade.py", "test_facade_jumeau.py",
     "test_facteurs_depense.py",
-    "test_flux_fonction_publique.py",
     "test_grille_large.py",
     "test_independants.py", "test_indexation_programme.py",
    

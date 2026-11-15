@@ -62,9 +62,10 @@ from pathlib import Path
 
 import pytest
 
+from facade import Simulateur
+from outils_valeurs import valeur_figee
 from retraite_notionnelle import memoire
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.simulateur import Simulateur
 
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "scripts"))
@@ -326,8 +327,7 @@ def test_le_droit_a_revalorise_les_pensions_moins_vite_que_les_prix_depuis_2016(
     2019 et 2020 —, quand les prix montaient de 20,7 % : la page, qui indexe
     le stock sur les prix, sert aux retraités partis avant 2016 un vingt-cinquième
     de plus que le droit."""
-    from retraite_notionnelle.simulateur import Simulateur
-
+    
     chemin = RACINE / "data/reference/legislation/revalorisation_pensions.csv"
     with chemin.open(encoding="utf-8") as fichier:
         lignes = list(csv.DictReader(l for l in fichier if not l.lstrip().startswith("#")))
@@ -357,44 +357,32 @@ def _statutaires():
     return tuple(cas for cas in CAS_TYPES if cas.code in flux.REFERENTS)
 
 
-def test_le_pont_rend_le_journal_de_la_liquidation_au_bit_pres_du_moteur_python():
+def test_le_pont_rend_le_journal_de_la_liquidation_que_le_temoin_porte():
     """Ce que l'étude lit d'un cas type qui part, le pont le rend d'une
     lecture, ``"lire": "liquidation"`` de ``pont.departs_des_cas`` (action
     161, lot B) : l'année et l'âge du départ, la durée validée, et, du journal
     de la liquidation, chaque pension du code des pensions avant tout
     complément avec le traitement de l'article L. 15 qui la liquide. Les trois
     cas types statutaires, sur les générations du coût et celles que l'étude
-    fait partir en 2025, sous les deux conventions : 182 cases que le moteur
-    Python simulait (``calculer_cas_types``), au bit près, et les dix qu'il
-    écartait, sous le même motif. Les cases y passent toutes : sans pension du
-    code des pensions (les premières générations du sédentaire), avec une,
+    fait partir en 2025, sous les deux conventions : 182 cases, et dix
+    écartées. Ce que le portage en rend, vu identique, au bit près, à ce que
+    le moteur Python simulait (``calculer_cas_types``), est figé au témoin des
+    valeurs (action 161, étape 9d). Les cases y passent toutes : sans pension
+    du code des pensions (les premières générations du sédentaire), avec une,
     avec deux liquidations au journal."""
     import shutil
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne calcule pas ici")
     from retraite_notionnelle import pont
-    from retraite_notionnelle.castypes import (age_lu, calculer_cas_types,
-                                              primes_projetees_en_donnees)
+    from retraite_notionnelle.castypes import age_lu, primes_projetees_en_donnees
     from retraite_notionnelle.cout import generations
-
-    def du_moteur_python(comparaison):
-        return {
-            "age": comparaison.carriere.age_liquidation,
-            "annee": comparaison.carriere.annee_liquidation,
-            "trimestres_valides": comparaison.actuel.trimestres_valides,
-            "liquidation": tuple(
-                (pensions.regimes[plafond.indice].regime,
-                 pensions.regimes[plafond.indice].montant, plafond.traitement)
-                for entree in comparaison.journal if entree.sorte == "liquidation"
-                for pensions in (entree.contenu.pensions,) for plafond in pensions.plafonds),
-        }
 
     retenues = tuple(sorted({*generations(), 1961, 1963, 1977}))
     statutaires = _statutaires()
     formes = set()
-    for simulateur in _conventions().values():
-        grille = calculer_cas_types(simulateur, statutaires, retenues, "droit")
+    rendus = {}
+    for nom, simulateur in _conventions().items():
         cohortes = {f"{cas.code}|{generation}": (cas, generation)
                     for cas in statutaires for generation in retenues}
         lus, refus = pont.departs_des_cas(
@@ -402,87 +390,48 @@ def test_le_pont_rend_le_journal_de_la_liquidation_au_bit_pres_du_moteur_python(
              for cle, (cas, generation) in cohortes.items()],
             simulateur.parametres, primes_projetees_en_donnees(simulateur),
             pont.paquet_des_donnees())
-        assert {(cohortes[cle][0].code, cohortes[cle][1]): motif
-                for cle, motif in refus.items()} == grille.echecs
-        assert len(grille.echecs) == 5 and len(grille.resultats) == 91
+        assert len(refus) == 5 and len(cohortes) - len(refus) == 91
+        departs = {}
         for cle, (cas, generation) in cohortes.items():
             if cle in refus:
                 continue
-            attendu = du_moteur_python(grille.resultats[(cas.code, generation)])
             depart = lus[cle]["depart"]
             lu = {"age": age_lu(cas, lus[cle]["age"]), "annee": depart["annee"],
                   "trimestres_valides": depart["trimestres_valides"],
                   "liquidation": depart["liquidation"]}
-            assert lu == attendu, cle
-            assert type(lu["age"]) is type(attendu["age"]), cle
             assert all(type(nombre) is float for _, *nombres in lu["liquidation"]
                        for nombre in nombres), cle
-            formes.add(len(attendu["liquidation"]))
+            formes.add(len(lu["liquidation"]))
+            departs[cle] = lu
+        rendus[nom] = {"departs": departs, "refus": refus}
     assert formes == {0, 1}
+    assert valeur_figee("journal de la liquidation des statutaires", rendus) == rendus
 
 
 def test_l_etude_mesure_ses_cas_types_au_portage_sans_le_moteur_python(monkeypatch):
     """L'étude demande ses liquidations au portage (``flux.Departs``, action
     161, lot B) : la génération que le droit fait partir chaque année, et les
-    cinq mesures de chaque cas type, sont celles que le moteur Python rendait
-    par ``calculer_cas_types`` — le flux de 2025 sous les deux conventions,
-    puis chaque année de 2016 à 2025 sous celles de la page Coût, les années
-    sans départ comprises —, au bit près, sans qu'il ne date, ne bâtisse ni ne
-    simule rien."""
+    cinq mesures de chaque cas type — le flux de 2025 sous les deux
+    conventions, puis chaque année de 2016 à 2025 sous celles de la page Coût,
+    trois années sans départ —, sans que le moteur Python ne date, ne bâtisse
+    ni ne simule rien. Ce qu'elle en rend, vu identique, au bit près, à ce que
+    le moteur Python rendait par ``calculer_cas_types``, est figé au témoin
+    des valeurs (action 161, étape 9d)."""
     import shutil
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne calcule pas ici")
     from outils_pont import empecher_les_jumeaux_du_cout
-    from retraite_notionnelle.castypes import calculer_cas_types
-
-    def depart_du_moteur_python(simulateur, cas, annee):
-        """La marche de l'étude, telle qu'elle la faisait au moteur Python."""
-        generation = annee - round(cas.age_liquidation)
-        vues = set()
-        while generation not in vues:
-            vues.add(generation)
-            grille = calculer_cas_types(simulateur, (cas,), (generation,), "droit")
-            comparaison = grille.resultats[(cas.code, generation)]
-            depart = comparaison.carriere.annee_liquidation
-            if depart == annee:
-                return generation, comparaison
-            generation += 1 if depart < annee else -1
-        return None
-
-    def mesures_du_moteur_python(simulateur, annees):
-        mesures = {}
-        for cas in _statutaires():
-            for annee in annees:
-                parti = depart_du_moteur_python(simulateur, cas, annee)
-                if parti is None:
-                    continue
-                generation, comparaison = parti
-                pensions = next(entree.contenu.pensions for entree in comparaison.journal
-                                if entree.sorte == "liquidation")
-                plafond = pensions.plafonds[0]
-                pension, traitement = pensions.regimes[plafond.indice].montant, plafond.traitement
-                point = flux.point_annuel(annee)
-                mesures.setdefault(cas.code, {})[annee] = (generation, {
-                    indicateur: round(valeur, 4) for indicateur, valeur in {
-                        "age_premiere_mise_en_paiement": float(
-                            comparaison.carriere.age_liquidation),
-                        "duree_tous_regimes_trimestres": float(
-                            comparaison.actuel.trimestres_valides),
-                        "taux_liquidation": pension / traitement,
-                        "indice_liquidation": traitement / point,
-                        "pension_principale_eur": pension / 12.0,
-                    }.items()})
-        return mesures
-
-    conventions = _conventions()
-    attendus = {nom: mesures_du_moteur_python(simulateur, (flux.ANNEE,))
-                for nom, simulateur in conventions.items()}
-    annuelles = mesures_du_moteur_python(conventions["projection"], flux.ANNEES)
-    assert sum(len(annees) for annees in annuelles.values()) == 27, "trois années sans départ"
 
     empecher_les_jumeaux_du_cout(monkeypatch)
-    for nom, simulateur in conventions.items():
-        assert flux.mesurer_le_modele(simulateur) == {
-            code: annees[flux.ANNEE] for code, annees in attendus[nom].items()}, nom
-    assert flux.mesurer_les_annees(conventions["projection"]) == annuelles
+    conventions = _conventions()
+    mesures = {nom: flux.mesurer_le_modele(simulateur) for nom, simulateur in conventions.items()}
+    annuelles = flux.mesurer_les_annees(conventions["projection"])
+    assert sum(len(annees) for annees in annuelles.values()) == 27, "trois années sans départ"
+    # Le flux de 2025 sous les conventions du coût est l'année 2025 des
+    # années mesurées sous elles.
+    assert mesures["projection"] == {code: annees[flux.ANNEE]
+                                     for code, annees in annuelles.items()
+                                     if flux.ANNEE in annees}
+    rendus = {"mesures": mesures, "annuelles": annuelles}
+    assert valeur_figee("mesures de l'étude", rendus) == rendus
