@@ -718,6 +718,15 @@ def _point_de_la_fiche(annee):
     return arguments
 
 
+
+def _points_msa(annee, revenu):
+    """Les points de R. 732-71 d'un revenu, sur la période de l'année du
+    régime des non-salariés agricoles."""
+    def arguments(simulateur):
+        periode = simulateur.catalogue["msa_non_salaries"].periode(annee)
+        return (simulateur.scenario_actuel, periode, annee, revenu)
+    return arguments
+
 #: Un relevé de fonctionnaire qui finit en 2024 à 80 %, et un autre qui
 #: cumule un emploi et un chômage indemnisé, une ligne de trimestres
 #: fractionnaires.
@@ -744,6 +753,14 @@ APPELS_DES_REGLES = [
      _majores(regime_general=136, msa_salaries=2, cnavpl=10)),
     ("acquerir", "points_msa_retenus", lambda s: (15.0, 1993)),
     ("acquerir", "points_msa_retenus", lambda s: (15.0, 2000)),
+    # Les quatre marches de R. 732-71, et le plafond, où M lit l'AVTS.
+    ("acquerir", "points_msa", _points_msa(2025, 5_000.0)),
+    ("acquerir", "points_msa", _points_msa(2025, 7_500.0)),
+    ("acquerir", "points_msa", _points_msa(2025, 12_000.0)),
+    ("acquerir", "points_msa", _points_msa(2025, 20_000.0)),
+    ("acquerir", "points_msa", _points_msa(2025, 40_000.0)),
+    ("acquerir", "points_msa", _points_msa(2025, 47_100.0)),
+    ("acquerir", "points_msa", _points_msa(2002, 15_000.0)),
     ("liquider", "_coefficient_anticipation", lambda s: (12, 20)),
     ("liquider", "_coefficient_anticipation", lambda s: (15 + 1 / 3, 40)),
     ("liquider", "_coefficient_anticipation", lambda s: (21, 20)),

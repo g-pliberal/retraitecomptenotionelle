@@ -7335,7 +7335,7 @@ une fonction du droit. La plupart des fichiers de tests n'ont plus de test sur
 le moteur Python, hors les confrontations des deux moteurs.
 Reste, une étape par session : les autres tests marqués qui ne sont pas des
 confrontations, chacun avec ce qui lui manque (« Ce qui reste » de
-`2026-11-15-le-bareme-de-l-aspa-a-la-facade.md`).
+`2026-11-15-les-points-msa-a-la-facade.md`).
 Puis quatre études, la liste des fonctions gardées des deux côtés, le
 retrait, et les périodes assimilées du relevé (table de
 `2026-11-13-les-decisions-du-proprietaire.md`).

@@ -2921,8 +2921,9 @@ CLASSES_EN_CHAMEAU |= {"EligibleMinimum", "DureesDesCultes", "PensionMajoree",
 #: un appel confronté au jumeau (``tests/test_facade_jumeau.py``). Une règle
 #: qui n'y est pas est refusée avant node.
 REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
-    # Le plancher de seize points de la retraite proportionnelle (R. 732-73).
-    "acquerir": ("points_msa_retenus",),
+    # L'escalier de la retraite proportionnelle agricole (R. 732-71) et son
+    # plancher de seize points (R. 732-73).
+    "acquerir": ("points_msa", "points_msa_retenus"),
     # Hors de ``droit/`` : ``carriere.js``, à la racine du portage — le relevé
     # prolongé jusqu'au départ, et le salaire moyen d'une année.
     "carriere": ("prolonger_releve", "salaire_moyen_annuel"),

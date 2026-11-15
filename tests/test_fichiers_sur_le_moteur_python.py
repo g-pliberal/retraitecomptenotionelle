@@ -96,7 +96,7 @@ RESTES = {"test_departs.py": 2, "test_droit.py": 1, "test_invalidite.py": 3, "te
           "test_minima_agricoles.py": 3, "test_oracle.py": 15,
           "test_oracle_periodes_assimilees.py": 1, "test_periodes_assimilees.py": 1,
           "test_periodes_assimilees_exemples_officiels.py": 1, "test_pension_maximale.py": 3,
-          "test_pension_minimum_avant_1983.py": 2,
+          "test_pension_minimum_avant_1983.py": 1,
           "test_simulateur.py": 2}
 
 

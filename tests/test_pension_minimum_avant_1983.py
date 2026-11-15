@@ -254,7 +254,6 @@ def test_les_deux_moteurs_servent_la_meme_pension_minimum():
     assert portees, "aucune requête n'est portée à la pension minimum"
 
 
-@pytest.mark.sur_le_moteur_python("points_msa, une règle de l'acquisition que la façade ne sert pas")
 def test_le_maximum_de_r_732_70_lit_l_avts(simulateur):
     """« M = PM-AVTS/37,5 x VP », où « AVTS représente le montant de
     l'allocation aux vieux travailleurs salariés » (R. 732-70) : au plafond de
@@ -263,6 +262,6 @@ def test_le_maximum_de_r_732_70_lit_l_avts(simulateur):
     actuel = simulateur.scenario_actuel
     assert actuel.minimum_contributif.avts(2025)[0] == pytest.approx(4_023.51)
     assert actuel.minimum_contributif.avts(2015)[0] == pytest.approx(3_379.95)
-    periode = actuel.catalogue["msa_non_salaries"].periode(2025)
-    plafond = actuel.macro.plafond_securite_sociale(2025)
+    periode = simulateur.catalogue["msa_non_salaries"].periode(2025)
+    plafond = simulateur.macro.plafond_securite_sociale(2025)
     assert acquerir.points_msa(actuel, periode, 2025, plafond) == 113
