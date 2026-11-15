@@ -94,6 +94,52 @@ def test_le_solde_vie_entiere_se_recompose(lignes):
         assert abs(ligne.solde_vie - attendu) < 1e-6
 
 
+def test_la_grille_passe_par_le_portage_sans_le_moteur_python(monkeypatch):
+    """La grille date, bâtit et simule chaque mère par le portage (action
+    161, lot B) : l'âge de référence, l'âge que le scénario 1 oppose à la
+    carrière, la carrière, la comparaison et la revalorisation de l'aide au
+    compte. Chaque ligne égale, au bit près, celle que le moteur Python
+    calculait des mêmes appels — sans qu'il ne calcule rien."""
+    import shutil
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage ne calcule pas ici")
+    from outils_pont import empecher_les_jumeaux_du_cout
+    from retraite_notionnelle.droit import ouvrir
+    from retraite_notionnelle.simulateur import Simulateur
+
+    class DuMoteurPython(scenarios_meres.Grille):
+        """Les mêmes appels, faits au moteur Python."""
+
+        @property
+        def age_reference(self) -> float:
+            return self.simulateur.age_reference.age(self.generation + 64)
+
+        def _batir(self, **options):
+            return self.simulateur.carriere_simple(**options)
+
+        def _simuler(self, carriere):
+            return self.simulateur.simuler(carriere)
+
+        def _age_du_droit(self, regle: str, carriere):
+            return getattr(ouvrir, regle)(self.simulateur.scenario_actuel, carriere)
+
+        def _coefficient(self, depuis: int, jusqu_a: int) -> float:
+            return self.simulateur.indexation.coefficient(depuis, jusqu_a)
+
+    attendues = [DuMoteurPython(1966, 0.9, "salarie_prive_non_cadre", 21).calculer(s)
+                 for s in scenarios_meres.SITUATIONS]
+    empecher_les_jumeaux_du_cout(monkeypatch)
+
+    def interdit(*_, **__):
+        raise AssertionError("le moteur Python date ou revalorise la grille des mères")
+
+    monkeypatch.setattr(Simulateur, "age_reference", property(interdit))
+    monkeypatch.setattr(Simulateur, "indexation", property(interdit))
+    grille = scenarios_meres.Grille(1966, 0.9, "salarie_prive_non_cadre", 21)
+    assert [grille.calculer(s) for s in scenarios_meres.SITUATIONS] == attendues
+
+
 # --- La bonification de la fonction publique, et la case où elle tombe -----
 
 def _par_enfant(dispositif: str, naissance_mere: int, liquidation: int):

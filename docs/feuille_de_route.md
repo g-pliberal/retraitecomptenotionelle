@@ -7336,11 +7336,12 @@ le moteur Python, hors les confrontations des deux moteurs.
 Ne restent marqués que ces confrontations, le solveur du niveau de salaire
 d'une pension visée, et quinze garde-fous de `test_oracle.py`, que le
 propriétaire doit trancher.
-Reste, une étape par session : quatre études, à commencer par
-`scenarios_meres.py`, la liste des fonctions gardées des deux côtés, le
-retrait, et les périodes assimilées du relevé (table de
+L'étude des mères (`scenarios_meres.py`) passe désormais par le pont.
+Reste, une étape par session : trois études, à commencer par l'option
+`--par-carriere` de `cout_avantages.py`, la liste des fonctions gardées des
+deux côtés, le retrait, et les périodes assimilées du relevé (table de
 `2026-11-13-les-decisions-du-proprietaire.md`). Le détail :
-`2026-11-15-les-fins-de-charge-a-la-facade.md`.
+`2026-11-15-la-grille-des-meres-par-le-portage.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

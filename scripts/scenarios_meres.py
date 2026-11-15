@@ -71,14 +71,14 @@ import argparse
 import csv
 import sys
 from dataclasses import dataclass
+from functools import cached_property
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from retraite_notionnelle.somme import somme_ordonnee
-from retraite_notionnelle import Parametres  # noqa: E402
+from retraite_notionnelle import Parametres, pont  # noqa: E402
 from retraite_notionnelle.carriere import salaire_moyen_annuel  # noqa: E402
-from retraite_notionnelle.droit import ouvrir  # noqa: E402
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
 from retraite_notionnelle.simulateur import Comparaison, Simulateur  # noqa: E402
 
@@ -194,9 +194,17 @@ class Ligne:
 
 
 class Grille:
+    """La grille d'une génération. Le moteur d'une carrière n'a qu'un
+    exemplaire, en JavaScript (action 161) : la grille lui demande, par le pont,
+    l'âge de référence, l'âge que le scénario 1 oppose à une carrière, la
+    carrière, sa simulation et la revalorisation du compte. Le simulateur
+    Python ne lui prête que ses données — les séries, les comptes de la
+    retraite."""
+
     def __init__(self, generation: int, niveau: float, affiliation: str,
                  age_debut: float, parametres: Parametres | None = None) -> None:
         self.simulateur = Simulateur(parametres or Parametres())
+        self.parametres = self.simulateur.parametres
         self.generation = generation
         self.niveau = niveau
         self.affiliation = affiliation
@@ -226,11 +234,38 @@ class Grille:
         return [self.generation + AGE_PREMIER_ENFANT + ECART_ENTRE_ENFANTS * i
                 for i in range(situation.nombre_enfants)]
 
-    @property
+    @cached_property
     def age_reference(self) -> float:
         # L'âge de référence se lit à l'année où la génération l'atteint ; le
-        # simulateur le résout lui-même, on lui demande celui de 64 ans.
-        return self.simulateur.age_reference.age(self.generation + 64)
+        # portage le résout lui-même, on lui demande celui de 64 ans.
+        lus, refus = pont.droit(
+            {"age": ("age_reference.age", pont.SIMULATEUR, self.generation + 64)},
+            self.parametres)
+        if refus:
+            raise ValueError(refus["age"])
+        return lus["age"]
+
+    # -- ce que le portage calcule ----------------------------------------------
+
+    def _batir(self, **options):
+        """La carrière d'un seul statut, ``Simulateur.carriere_simple``."""
+        return pont.facade("simulateur.carriere_simple", pont.SIMULATEUR, options,
+                           parametres=self.parametres)
+
+    def _simuler(self, carriere) -> Comparaison:
+        """La comparaison entière, ``Simulateur.simuler``."""
+        return pont.facade("simulateur.simuler", pont.SIMULATEUR, carriere,
+                           parametres=self.parametres)
+
+    def _age_du_droit(self, regle: str, carriere) -> float | None:
+        """``ouvrir.age_taux_plein_droit`` ou ``ouvrir.age_ouverture_droit``,
+        sur le moteur du scénario 1."""
+        return pont.regle_du_droit("ouvrir", regle, float | None, pont.MOTEUR, carriere,
+                                   parametres=self.parametres)
+
+    def _coefficient(self, depuis: int, jusqu_a: int) -> float:
+        """La revalorisation du compte d'une année à une autre."""
+        return pont.indexation([("coefficient", depuis, jusqu_a)], self.parametres)[0]
 
     def _carriere(self, situation: Situation, nombre_enfants: int, motif: str,
                   age_liquidation: float):
@@ -239,7 +274,7 @@ class Grille:
             for i in range(situation.annees_arret)
         }
         affiliation = situation.affiliation or self.affiliation
-        return self.simulateur.carriere_simple(
+        return self._batir(
             annee_naissance=self.generation, sexe="F",
             affiliation=affiliation,
             age_debut=self.age_debut,
@@ -262,12 +297,12 @@ class Grille:
         """
         if not isinstance(situation.depart, str):
             return float(situation.depart)
-        actuel = self.simulateur.scenario_actuel
-        resoudre = (ouvrir.age_taux_plein_droit if situation.depart == "taux_plein"
-                    else ouvrir.age_ouverture_droit)
+        regle = ("age_taux_plein_droit" if situation.depart == "taux_plein"
+                 else "age_ouverture_droit")
         age = self.age_reference
         for _ in range(PASSES_LIQUIDATION):
-            propose = resoudre(actuel, self._carriere(situation, nombre_enfants, motif, age))
+            propose = self._age_du_droit(
+                regle, self._carriere(situation, nombre_enfants, motif, age))
             if propose is None or abs(propose - age) < 1e-9:
                 break
             age = propose
@@ -290,8 +325,8 @@ class Grille:
         # mesure chaque avantage. Ce que les trimestres d'enfants font à la
         # DATE se lit d'une ligne à l'autre, dans la colonne « Départ ».
         age = self._age_liquidation(situation, situation.nombre_enfants, motif)
-        avec = self.simulateur.simuler(self._carriere(situation, situation.nombre_enfants, motif, age))
-        sans = self.simulateur.simuler(self._carriere(situation, 0, "sans_activite", age))
+        avec = self._simuler(self._carriere(situation, situation.nombre_enfants, motif, age))
+        sans = self._simuler(self._carriere(situation, 0, "sans_activite", age))
         actuel = self._mensuel(avec, avec.actuel.pension_annuelle)
         liberal = self._mensuel(avec, avec.pension_totale(LIBERAL), LIBERAL)
         garantie = avec.notionnel_liberal.garantie_vieillesse
@@ -301,7 +336,7 @@ class Grille:
         aides = {annee: self.aide_par_enfant(annee)
                  for annee in self.annees_de_naissance(situation)}
         capital_aides = somme_ordonnee(
-            montant * self.simulateur.indexation.coefficient(annee, annee_liquidation)
+            montant * self._coefficient(annee, annee_liquidation)
             for annee, montant in aides.items()
         )
         return Ligne(
