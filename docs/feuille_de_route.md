@@ -7336,10 +7336,9 @@ constructeurs du compte, et le relevé des droits entier. `test_reversion.py`
 et `test_droit.py` n'ont plus de test sur le moteur Python, hors une
 confrontation ; `test_liquidation.py` en garde 10 sur 22. Le propriétaire a
 tranché trois questions (note de décision 0008). Reste, une étape par
-session, dans l'ordre. Les autres fichiers de tests : commencer par ceux qui
-lisent le relevé (« Ce qui reste » de
-`2026-11-15-les-etapes-seules-a-la-facade.md`). Puis quatre
-études, la liste des fonctions gardées des deux côtés, le retrait, et les
+session : les autres fichiers de tests, d'abord ceux qui lisent le relevé
+(« Ce qui reste » de `2026-11-15-les-etapes-seules-a-la-facade.md`). Puis
+quatre études, la liste des fonctions gardées des deux côtés, le retrait, et les
 lignes du relevé des périodes assimilées (table de
 `2026-11-13-les-decisions-du-proprietaire.md`).
 
