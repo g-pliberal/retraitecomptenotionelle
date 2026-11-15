@@ -22,7 +22,9 @@
 # d'`assiette.py`, `tva.py`, `effectifs.py`, `depenses.py`, `vie_en_couple.py`
 # et `caracteristiques.py` à l'étape 7c, avec ceux de `chargement.py`,
 # d'`indemnite_csg.py` et de `primes.py`, ces deux-là que seul le moteur
-# appelle.
+# appelle ; ceux de `calendrier.py`, `config.py`, `macro.py`,
+# `prelevements_historiques.py`, `contributions_equilibre.py`, `frontiere.py`
+# et `regimes.py` à l'étape 7d.
 
 src/retraite_notionnelle/calendrier.py:
   gardees:
@@ -284,40 +286,40 @@ src/retraite_notionnelle/donnees/primes.py:
 src/retraite_notionnelle/donnees/regimes.py:
   gardees:
     _en_vigueur: {lecteur: src/retraite_notionnelle/donnees/regimes.py}
-    _regle: {lecteur: scripts/mesures_prose.py}
-    annee_grille: {lecteur: src/retraite_notionnelle/donnees/regimes.py}
-    annees: {lecteur: scripts/age_depart_csp.py}
-    bornes_assiette_en_pass: {lecteur: scripts/solde_fusion.py}
-    cotisation: {lecteur: scripts/construire_donnees.py}
-    couverture: {lecteur: scripts/calendrier_regimes.py}
-    couvre: {lecteur: src/retraite_notionnelle/donnees/regimes.py}
+    bornes_assiette_en_pass: {lecteur: scripts/solde_fusion.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    couvre: {lecteur: src/retraite_notionnelle/donnees/regimes.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     dater_les_taux_moyens: {lecteur: src/retraite_notionnelle/donnees/regimes.py}
-    effet: {lecteur: scripts/calendrier_regimes.py}
-    forfait: {lecteur: scripts/construire_donnees.py}
-    grille: {lecteur: scripts/age_conjoncturel.py}
-    montants: {lecteur: scripts/mesures_prose.py}
-    morceau_d_annees: {lecteur: src/retraite_notionnelle/donnees/regimes.py}
-    periode: {lecteur: scripts/construire_regimes_md.py}
-    periodes_actives: {lecteur: scripts/solde_fusion.py}
-    regimes: {lecteur: scripts/construire_donnees.py}
-    repere_assiette: {lecteur: src/retraite_notionnelle/contributions_equilibre.py}
-    taux: {lecteur: scripts/chiffrage_plf.py}
-    taux_cotisation_salarie: {lecteur: scripts/solde_fusion.py}
-    vivant: {lecteur: scripts/indexation_scenario_6.py}
+    effet: {lecteur: src/retraite_notionnelle/donnees/regimes.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    morceau_d_annees: {lecteur: src/retraite_notionnelle/donnees/regimes.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    periode: {lecteur: src/retraite_notionnelle/revalorisation_servie.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    periodes_actives: {lecteur: scripts/solde_fusion.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    taux: {lecteur: scripts/mesures_prose.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    taux_cotisation_salarie: {lecteur: scripts/solde_fusion.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
   au_moteur:
+    - _regle
     - ajustement_total
+    - annee_grille
+    - annees
     - assiette_minimale
     - bornes_assiette_en_euros
     - bornes_de_l_annee
     - bornes_en_euros
+    - cotisation
+    - couverture
+    - forfait
+    - grille
     - liquide
+    - montants
     - ouvert
     - part_du_revenu
     - periode_a_l_effet
     - points_garantis
     - prise_en_charge
+    - regimes
+    - repere_assiette
     - revenu_retenu
     - taux_du_cotisant
+    - vivant
 
 src/retraite_notionnelle/donnees/taux.py:
   gardees:
