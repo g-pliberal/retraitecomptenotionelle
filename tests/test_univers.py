@@ -27,7 +27,7 @@ from retraite_notionnelle.config import (
     SourceCotisations,
 )
 from retraite_notionnelle.noyau import carte, univers
-from retraite_notionnelle.scenarios import univers as moteur
+from retraite_notionnelle.noyau import calcul_notionnel as moteur
 
 RACINE = Path(__file__).resolve().parents[1]
 REFERENCE = RACINE_DONNEES / "reference"
@@ -410,23 +410,6 @@ def test_le_moteur_refuse_ce_qu_il_ne_sait_pas_faire(tous):
         moteur.calcul_notionnel(tous["actuel"], parametres)
 
 
-def test_le_simulateur_partage_ce_que_les_univers_partagent():
-    """Deux univers qui changent les mêmes paramètres partagent leur compte,
-    comme 2 et 3, ou 4 et 5 ; le pilier n'est construit que pour l'univers
-    qui l'ajoute."""
-    from retraite_notionnelle.simulateur import Simulateur
-
-    simulateur = Simulateur()
-    compte = {cle: simulateur.scenario_de(calcul).constructeur
-              for cle, calcul in simulateur.calculs.items()}
-    assert compte["notionnel_retroactif"] is compte["notionnel_prospectif"] is simulateur.constructeur
-    assert (compte["notionnel_retroactif_employeur"] is compte["notionnel_prospectif_employeur"]
-            is simulateur.constructeur_employeur)
-    assert compte["notionnel_liberal"] is simulateur.constructeur_liberal
-    assert [cle for cle, calcul in simulateur.calculs.items()
-            if simulateur.scenario_de(calcul).capitalisation is not None] == ["notionnel_liberal"]
-
-
 # -- la proposition prospective, une variante hors du paquet ----------------------------
 
 #: L'intitulé que porte son résultat, comme ``tests/js/univers.test.js`` le lui
@@ -471,26 +454,18 @@ def test_la_proposition_prospective_est_le_scenario_5_a_18_pour_cent(tous):
 
 
 def test_une_variante_tient_la_place_de_son_univers_le_temps_d_une_etude():
-    """Une étude fait calculer une variante que le paquet ne porte pas : le
-    simulateur la prend à la place de l'univers qu'elle remplace, sous sa clé,
-    et la garde sous les conventions de la projection ; ce qu'il en passe au
-    pont est son calcul tel que la fabrication le résout. Une variante qui ne
-    remplace aucun univers de la proposition l'arrête."""
-    from retraite_notionnelle.simulateur import Simulateur
+    """Une étude fait calculer une variante que le paquet ne porte pas : elle
+    passe au pont son calcul tel que la fabrication le résout, sous la clé de
+    l'univers qu'il remplace, et le portage le prend à sa place
+    (``tests/js/univers.test.js``). Une variante qui ne remplace aucun univers
+    de la proposition arrête le portage."""
+    from retraite_notionnelle import pont
 
-    prospective = _prospective()
-    simulateur = Simulateur(Parametres(), variantes={"notionnel_liberal": prospective})
-    assert list(simulateur.calculs) == list(Simulateur().calculs)
-    assert simulateur.calculs["notionnel_liberal"] == moteur.calcul_notionnel(prospective,
-                                                                              Parametres())
-    assert (simulateur.pour_la_projection().calculs["notionnel_liberal"]
-            == simulateur.calculs["notionnel_liberal"])
-    assert simulateur.univers_de_la_demande == {
-        "notionnel_liberal": moteur.calcul_notionnel(prospective, None).donnees()}
-    assert Simulateur().univers_de_la_demande == {}
+    calcul = moteur.calcul_notionnel(_prospective(), None).donnees()
     for cle in ("notionnel_inconnu", "actuel"):
-        with pytest.raises(ValueError, match="ne remplace aucun univers de la proposition"):
-            Simulateur(Parametres(), variantes={cle: prospective}).calculs
+        with pytest.raises(RuntimeError,
+                           match=f"ne remplacent aucun univers de la proposition : {cle}"):
+            pont.carrieres([], ["notionnel_liberal"], univers={cle: calcul})
 
 
 # -- le portage -----------------------------------------------------------------------
@@ -528,7 +503,10 @@ def test_le_paquet_porte_les_univers_resolus(tous):
 
 def test_les_deux_moteurs_tirent_la_meme_chose_des_univers(calculs):
     """Le portage résout les renvois sous ses réglages comme le Python sous
-    les siens, bâtit les mêmes scénarios et partage les mêmes comptes. Il
+    les siens, bâtit les mêmes scénarios et partage les mêmes comptes : deux
+    univers qui changent les mêmes paramètres partagent leur compte, comme 2
+    et 3, ou 4 et 5, et le pilier n'est construit que pour l'univers qui
+    l'ajoute. Il
     rangeait aussi les mêmes univers parmi les prospectifs de la page Coût,
     jusqu'au 11 octobre 2026 : le coût n'est plus porté (action 150)."""
     from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS
@@ -543,14 +521,20 @@ def test_les_deux_moteurs_tirent_la_meme_chose_des_univers(calculs):
         "  calculs: Object.fromEntries(Object.entries(c).map(([k, v]) => ["
         "    k, { ...v, neutralisations: [...v.neutralisations].sort() }])),"
         "  partages: ["
+        "    s.scenarioDe(c.notionnel_retroactif).constructeur === s.constructeur,"
         "    s.scenarioDe(c.notionnel_prospectif).constructeur === s.constructeur,"
-        "    s.scenarioDe(c.notionnel_prospectif_employeur).constructeur === s.constructeurEmployeur,"
-        "    s.scenarioLiberal.capitalisation !== null,"
-        "    s.scenarioNotionnel.capitalisation === null],"
+        "    s.scenarioDe(c.notionnel_retroactif_employeur).constructeur"
+        "      === s.constructeurEmployeur,"
+        "    s.scenarioDe(c.notionnel_prospectif_employeur).constructeur"
+        "      === s.constructeurEmployeur,"
+        "    ![s.constructeur, s.constructeurEmployeur].includes("
+        "      s.scenarioLiberal.constructeur)],"
+        "  capitalises: Object.keys(c).filter((k) => s.scenarioDe(c[k]).capitalisation !== null),"
         "}));")
     assert [tuple(s) for s in lu["scenarios"]] == list(SCENARIOS_NOTIONNELS)
     for cle, calcul in calculs.items():
         attendu = calcul.donnees()
         attendu["neutralisations"] = sorted(calcul.neutralisations)
         assert lu["calculs"][cle] == attendu, cle
-    assert lu["partages"] == [True, True, True, True]
+    assert lu["partages"] == [True, True, True, True, True]
+    assert lu["capitalises"] == ["notionnel_liberal"]

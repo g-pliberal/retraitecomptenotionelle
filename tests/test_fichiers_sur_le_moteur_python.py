@@ -67,7 +67,7 @@ FICHIERS = (
     "test_sections_juridiques.py", "test_sections_sante.py",
     "test_solde_fusion.py",
    
-    "test_univers.py", "test_versements_uniques.py",
+    "test_versements_uniques.py",
 )
 
 

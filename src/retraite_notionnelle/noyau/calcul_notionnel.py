@@ -5,7 +5,10 @@ La pile se résout quand on fabrique les données (``docs/architecture.md``,
 :func:`calcul_notionnel` en tire — le compte, rétroactif ou ouvert à la bascule
 par une transition, les paramètres que les couches lui changent, le pilier
 capitalisé, la garantie vieillesse, l'âge légal, et ce que la liquidation
-fictive de la transition neutralise.
+fictive de la transition neutralise. C'est la fabrique qui le tire, pour le
+paquet (``scripts/construire_donnees.py``) et pour la demande d'une étude :
+il reste en Python (note de décision 0006), hors de ``scenarios/``, d'où il
+est venu le 15 novembre 2026 (action 161, étape 9e).
 
 Il refuse ce qu'il ne sait pas faire (§ 6.7) : une fiche de la proposition qu'il
 ne connaît pas, ou qu'une couche ajoute depuis une autre date que celle où il
@@ -22,7 +25,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 from ..config import Parametres
-from ..noyau.univers import ORIGINE, Univers
+from .univers import ORIGINE, Univers
 
 #: La transition qui ouvre le compte à la bascule.
 _A_LA_BASCULE_DU_REVENU = {"date": "revenu.annee", "valeur": {"parametre": "annee_bascule"}}

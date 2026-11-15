@@ -643,7 +643,7 @@ class ScenarioNotionnel:
         ``neutralisations`` est ce que la couche d'un seul calcul de l'univers
         retire à la liquidation fictive des droits acquis
         (``data/reference/couches/contributif_seul.yaml``) : l'univers la
-        donne, par ``scenarios/univers.py``.
+        donne, par ``noyau/calcul_notionnel.py``.
         """
         annee_liquidation = carriere.annee_liquidation
         age_liquidation = carriere.age_liquidation or 0.0

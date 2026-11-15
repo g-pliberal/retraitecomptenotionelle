@@ -26,4 +26,4 @@ règle du scénario 1 ne s'écrit qu'en suivant `docs/veille_droit.md`.
   posées sur le droit réel ; ce qu'elles ajoutent a sa fiche dans
   `data/reference/regles/proposition/`, qui cite le README. Une variante
   s'écrit en couche, jamais dans le code, et le moteur refuse ce qu'il ne
-  sait pas calculer (`scenarios/univers.py`).
+  sait pas calculer (`noyau/calcul_notionnel.py`).

@@ -66,7 +66,7 @@ export function scenariosNotionnels(paquet) {
  * Ce que le site fait d'un univers : le calcul que la fabrication en a tiré, car
  * le site ne résout pas les couches (docs/architecture.md, § 13.5). Un paramètre
  * qui se lit dans un autre — le taux unique, dans `taux_cotisation_liberal` —
- * se lit sous les réglages du site. Voir `scenarios/univers.py`.
+ * se lit sous les réglages du site. Voir `noyau/calcul_notionnel.py`.
  */
 export function calculNotionnel(calcul, parametres) {
   const modifications = {};

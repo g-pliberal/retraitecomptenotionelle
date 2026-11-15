@@ -20,7 +20,7 @@ Ce module lit couches et univers, les confronte au contrat C.4, à la carte et
 au vocabulaire, et dit de chaque univers ce qu'il ajoute, ce qu'il change, ce
 qu'il neutralise dans un calcul, et quelles fiches du droit réel aucune de ses
 couches ne décide. Il ne calcule rien : le moteur lit ce qu'il en tire
-(``scenarios/univers.py``) et refuse ce qu'il ne sait pas faire.
+(``noyau/calcul_notionnel.py``) et refuse ce qu'il ne sait pas faire.
 
 Les règles de la pile, que :func:`controler` tient :
 

@@ -60,7 +60,7 @@ from .revalorisation_servie import RevalorisationServie
 from .noyau import univers as univers_de_droit
 from .scenarios.actuel import ResultatActuel, ScenarioActuel
 from .scenarios.notionnel import ResultatNotionnel, ScenarioNotionnel
-from .scenarios.univers import CalculNotionnel, calcul_notionnel
+from .noyau.calcul_notionnel import CalculNotionnel, calcul_notionnel
 from .somme import somme_ordonnee
 
 

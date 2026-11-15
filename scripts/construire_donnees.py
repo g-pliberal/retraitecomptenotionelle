@@ -89,7 +89,7 @@ from retraite_notionnelle.donnees.regimes import (  # noqa: E402
     charger_inventaire,
     charger_taux_moyens,
 )
-from retraite_notionnelle.scenarios.univers import calcul_notionnel  # noqa: E402
+from retraite_notionnelle.noyau.calcul_notionnel import calcul_notionnel  # noqa: E402
 from retraite_notionnelle.scenarios.actuel import (  # noqa: E402
     AgesAnnulationDecote,
     AgesJouissanceMilitaire,
