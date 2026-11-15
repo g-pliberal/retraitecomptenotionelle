@@ -48,7 +48,7 @@ FICHIERS = (
    
     "test_controle_drees_panorama.py", "test_cout.py",
     "test_cout_age_depart.py",
-    "test_cycle_de_vie_references.py", "test_cycle_de_vie_script.py",
+    "test_cycle_de_vie_references.py",
     "test_donnees.py",
     "test_effet_retour.py", "test_emploi_retraite.py",
     "test_estimation_officielle.py", "test_etranger.py",

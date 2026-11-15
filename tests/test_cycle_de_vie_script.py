@@ -1,4 +1,4 @@
-"""Le pont du cycle de vie : les cas types du COR, que le Python bâtit, calculés
+"""Le pont du cycle de vie : les cas types du COR, calculés
 par le portage (action 161, étape 5).
 
 ``scripts/cycle_de_vie.py`` résout chaque case de la grille — les options de
@@ -8,9 +8,9 @@ les âges de départ et les âges d'équilibre. Le cycle de vie n'a plus qu'un
 exemplaire, le portage (action 161), dont ``tests/js/cycle-de-vie.test.js``
 tient les définitions ; ici, ce que seuls les cas types portent — un profil
 au SMIC, des interruptions, une part de primes, des enfants — arrive au
-portage tel que le Python le bâtit : la simulation, qui garde ses deux
-moteurs, s'y confronte, et les étages du départ se posent à la main sur
-celle du Python. Les âges d'équilibre d'un cas type disent ce qu'ils doivent
+portage tel que la façade le bâtit et le simule (``tests/facade.py``,
+action 161, étape 9d), et les étages du départ se posent à la main sur
+cette simulation. Les âges d'équilibre d'un cas type disent ce qu'ils doivent
 dire.
 """
 
@@ -24,9 +24,9 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle import pont
-from retraite_notionnelle.castypes import CAS_TYPES, calculer_cas_types
+from facade import Simulateur, pilote
+from retraite_notionnelle.castypes import CAS_TYPES
 from retraite_notionnelle.config import RACINE_DONNEES, Parametres
-from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import module, site
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
@@ -51,6 +51,25 @@ def portage():
         pytest.skip("node absent : le pont ne se vérifie pas ici")
 
 
+def _grille(simulateur, generations) -> dict[tuple[str, int], object]:
+    """La grille des cas types simulée par la façade, comme
+    ``castypes.calculer_cas_types`` la simulait en Python : l'âge que le
+    pilote fixe, la carrière bâtie à cet âge, les cases avant la répartition
+    ou sans régime actif écartées (``carriere_de_la_grille``)."""
+    grille = {}
+    for cas in CAS_TYPES:
+        for generation in generations:
+            carriere = cas.carriere_a(simulateur, generation,
+                                      pilote.age_de_depart(simulateur, cas, generation))
+            if carriere.annee_liquidation <= simulateur.parametres.annee_debut_repartition:
+                continue
+            if not any(simulateur.affiliations.regimes(cas.affiliation, ligne.annee)
+                       for ligne in carriere.lignes):
+                continue
+            grille[cas.code, generation] = simulateur.simuler(carriere)
+    return grille
+
+
 def _proches(obtenu: float, attendu: float) -> bool:
     return math.isclose(obtenu, attendu, rel_tol=1e-9, abs_tol=1e-9)
 
@@ -66,25 +85,25 @@ def _annees_cotisees(carriere) -> int:
 
 
 @pytest.mark.parametrize("cor", (False, True), ids=("depot", "cor"))
-def test_chaque_cas_type_arrive_au_portage_tel_que_le_python_le_batit(portage, simulateur,
+def test_chaque_cas_type_arrive_au_portage_tel_que_la_facade_le_batit(portage, simulateur,
                                                                        cor):
     """Les treize cas types, nés en 1960 et en 2000 : la carrière que le
     portage bâtit des options que le script lui passe (``_cases``) se simule
-    comme celle que ``castypes`` bâtit en Python — l'année du départ de chaque
+    comme celle que la façade bâtit au pilote (``_grille``) — l'année du départ de chaque
     système, la durée requise, la pension du système actuel et celle de chaque
     système, pilier capitalisé compris (``pont.carrieres``) —, et les
     indicateurs que le script en rend, sous chaque convention, comptent les
-    années cotisées de la carrière du Python. Le cycle de vie, seul exemplaire
+    années cotisées de cette carrière. Le cycle de vie, seul exemplaire
     depuis l'action 161, se tient ailleurs : ici, la carrière qu'il reçoit."""
     generations = (1960, 2000)
-    grille = calculer_cas_types(simulateur, generations=generations)
+    grille = _grille(simulateur, generations)
     cases = [case for case in script._cases(simulateur)
              if int(case["cle"].rsplit("|", 1)[1]) in generations]
-    assert len(grille.resultats) == len(CAS_TYPES) * len(generations) == len(cases)
+    assert len(grille) == len(CAS_TYPES) * len(generations) == len(cases)
     simules, echecs = pont.carrieres(cases, script.SCENARIOS)
     assert not echecs, echecs
     obtenu = script.calculer(simulateur, cor=cor)
-    for (code, generation), comparaison in grille.resultats.items():
+    for (code, generation), comparaison in grille.items():
         cle = f"{code}|{generation}"
         lu = simules[cle]
         assert lu["annee_liquidation"] == comparaison.carriere.annee_liquidation, cle
@@ -112,7 +131,7 @@ def _sans_ecart(obtenu, attendu) -> bool:
 
 def _etages_du_scenario_1(simulateur, comparaison) -> dict[str, float]:
     """La pension du départ du scénario 1, étage par étage, posée à la main
-    sur la simulation du Python : chaque régime de répartition à l'étage que
+    sur la simulation de la façade : chaque régime de répartition à l'étage que
     son catalogue lui donne, sa part de la majoration pour enfants comprise
     (``etagesAuDepart``, ``moteur/js/cycle-de-vie.js``)."""
     etages: dict[str, float] = {}
@@ -134,18 +153,18 @@ def _etages_du_scenario_1(simulateur, comparaison) -> dict[str, float]:
 
 
 @pytest.mark.parametrize("impot", (None, "prix"), ids=("avant_impot", "apres_impot"))
-def test_la_pension_par_etage_d_un_cas_type_suit_les_regimes_que_le_python_simule(
+def test_la_pension_par_etage_d_un_cas_type_suit_les_regimes_simules(
         portage, simulateur, impot):
     """Les treize cas types, nés en 1960 et en 2000 : la pension du départ du
     système actuel, étage par étage, que le portage calcule, est celle que
-    chaque régime sert dans la simulation du Python, rangée à son étage ; la
+    chaque régime sert dans la simulation de la façade, rangée à son étage ; la
     pension après impôt n'est chiffrée que sous l'impôt, pour chaque système.
     Le fonctionnaire sédentaire n'a que son régime intégré ; l'artisan, sa
     base et sa complémentaire."""
     generations = (1960, 2000)
-    grille = calculer_cas_types(simulateur, generations=generations)
+    grille = _grille(simulateur, generations)
     obtenu = script.etages(simulateur, impot=impot)
-    for (code, generation), comparaison in grille.resultats.items():
+    for (code, generation), comparaison in grille.items():
         lus = obtenu[f"{code}|{generation}"]
         assert set(lus) == set(script.SCENARIOS), (code, generation)
         assert _sans_ecart(lus["actuel"]["etages"],
