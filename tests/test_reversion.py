@@ -25,15 +25,13 @@ import pytest
 from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.chronologie import fait
 from retraite_notionnelle.donnees.chargement import Fiabilite
-from retraite_notionnelle.droit.liquider import maximum_des_pensions
-from retraite_notionnelle.droit.reversion import mois_de_mariage
 from retraite_notionnelle.web.site import ErreurSite
 
 # Les entrées du moteur passent par la façade des tests (action 161) : le
 # portage les calcule. Un test qui appelle encore une règle du moteur Python
 # le garde, sous la marque ``sur_le_moteur_python`` et sa raison.
 import facade
-from facade import Carriere, Simulateur, reversion
+from facade import Carriere, Simulateur, liquider, regles_de_la_reversion, reversion
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
 
@@ -589,7 +587,6 @@ BAREME_DU_MAXIMUM = [
 
 
 @pytest.mark.parametrize("date, montant, unite", BAREME_DU_MAXIMUM)
-@pytest.mark.sur_le_moteur_python("maximum_des_pensions")
 def test_le_maximum_de_la_reversion_est_celui_du_bareme_de_la_cnav(
         simulateur, date, montant, unite):
     """« Le montant maximum de la pension principale de réversion [...] est égal à
@@ -602,8 +599,8 @@ def test_le_maximum_de_la_reversion_est_celui_du_bareme_de_la_cnav(
     table = simulateur.scenario_actuel.reversions
     taux = float(table.version(table.fiche_du_regime("regime_general"), date, date)
                  ["parametres"]["taux"])
-    maximum, _ = maximum_des_pensions(simulateur.scenario_actuel, "regime_general", date,
-                                      int(date[:4]))
+    maximum, _ = liquider.maximum_des_pensions(simulateur.scenario_actuel, "regime_general",
+                                               date, int(date[:4]))
     euros = montant if unite == "€" else montant / FRANC / (100 if unite == "AF" else 1)
     assert taux * maximum == pytest.approx(euros, rel=1e-3)
 
@@ -3769,10 +3766,10 @@ def _sortie(saisies, requete):
     return saisies.simuler(requete).dictionnaire()["reversion"]
 
 
-@pytest.mark.sur_le_moteur_python("mois_de_mariage")
 def test_la_duree_d_un_mariage_se_compte_en_mois_de_date_a_date():
     """« Cette durée, déterminée de date à date, est arrondie au nombre de mois
     inférieur » (R. 353-4)."""
+    mois_de_mariage = regles_de_la_reversion.mois_de_mariage
     assert mois_de_mariage("1990-06-15", "2000-03-10") == 116
     assert mois_de_mariage("1990-06-15", "2000-03-15") == 117
     assert mois_de_mariage("2000-06-01", "2023-05-01") == 275

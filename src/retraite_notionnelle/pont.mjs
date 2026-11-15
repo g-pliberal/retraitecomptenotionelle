@@ -1852,7 +1852,7 @@ ENTREES_DE_LA_FACADE["scenario_actuel.table"] = (moteur, table, methode, ...vale
 // Les règles du droit, par la façade : un bloc à part (action 161).
 
 /** Les modules du droit dont la façade sert des règles, sous leur nom. */
-const MODULES_DU_DROIT = { commun, completer, liquider, ouvrir };
+const MODULES_DU_DROIT = { commun, completer, liquider, ouvrir, reversion };
 
 /**
  * Une règle du droit, sous les noms du Python (`regle_du_droit` de `pont.py`,

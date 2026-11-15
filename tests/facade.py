@@ -506,6 +506,9 @@ commun = Regles("commun", _commun)
 completer = Regles("completer", _completer)
 liquider = Regles("liquider", _liquider)
 ouvrir = Regles("ouvrir", _ouvrir)
+#: Les règles du module de la réversion, sous un nom à elles : ``reversion``
+#: est l'entrée de la réversion, la fonction du module qui porte son nom.
+regles_de_la_reversion = Regles("reversion", _reversion)
 
 
 # -- le relevé des droits -------------------------------------------------------------
@@ -612,7 +615,8 @@ MARQUE = "sur_le_moteur_python"
 #: Le jumeau Python de chaque entrée qu'un fichier basculé importe d'ici.
 JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
            "reversion": _reversion.reversion, "commun": _commun, "completer": _completer,
-           "liquider": _liquider, "ouvrir": _ouvrir, "releve": _releve}
+           "liquider": _liquider, "ouvrir": _ouvrir, "releve": _releve,
+           "regles_de_la_reversion": _reversion}
 
 #: Les simulateurs des tests, par fichier, par moteur et par paramètres.
 _SIMULATEURS: dict[tuple, object] = {}

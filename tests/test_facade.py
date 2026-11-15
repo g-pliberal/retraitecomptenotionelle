@@ -31,6 +31,7 @@ from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
+from retraite_notionnelle.droit import reversion as reversion_python
 from retraite_notionnelle.droit.commun import PensionRegime
 from retraite_notionnelle.droit.liquider import EligibleAgricole, EligibleMinimum
 from retraite_notionnelle.journal import Journal
@@ -41,7 +42,7 @@ from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Comparaison
 
 import facade
 from facade import (Carriere, NonTransmissible, Simulateur, commun, completer, liquider,
-                    ouvrir, reversion)
+                    ouvrir, regles_de_la_reversion, reversion)
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 HAUTE = Fiabilite.CERTIFIEE
@@ -552,19 +553,31 @@ def test_une_table_se_lit_sous_les_parametres_de_son_simulateur(simulateur):
     assert "agirc_arrco" in convenu.valeurs_point.regimes_convenus("valeur_service")
 
 
+def test_la_version_d_une_reversion_se_lit_par_la_fiche_de_son_regime(simulateur):
+    """« Le montant maximum de la pension principale de réversion [...] est égal
+    à 54 % du maximum » (circulaire Cnav n° 3/95, § 13) : la version de la
+    réversion du régime général, que la fiche de son régime donne, porte ce
+    taux en 2026 ; un régime sans fiche n'en a pas."""
+    table = simulateur.scenario_actuel.reversions
+    fiche = table.fiche_du_regime("regime_general")
+    version = table.version(fiche, "2026-01-01", "2026-01-01")
+    assert float(version["parametres"]["taux"]) == 0.54
+    assert table.fiche_du_regime("regime_lunaire") is None
+
+
 def test_une_methode_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     """Une méthode servie se déclare (``pont.TABLES_DE_LA_FACADE``) : une
     autre, une méthode privée, une table que le moteur ne tient pas sont
     refusées, au lieu que le type de ce qu'elles rendent se devine."""
     table = simulateur.scenario_actuel.reversions
-    with pytest.raises(NonTransmissible, match="reversions.fiche_du_regime"):
-        table.fiche_du_regime("regime_general")
+    with pytest.raises(NonTransmissible, match="reversions.fiche "):
+        table.fiche("reversion")
     with pytest.raises(NonTransmissible, match="carriere_longue._portes"):
         simulateur.scenario_actuel.carriere_longue._portes
     with pytest.raises(NonTransmissible, match="table_lunaire"):
         simulateur.scenario_actuel.table_lunaire
-    with pytest.raises(ValueError, match="reversions.fiche_du_regime"):
-        pont.table_du_moteur("reversions", "fiche_du_regime", dict, "regime_general")
+    with pytest.raises(ValueError, match="reversions.fiche "):
+        pont.table_du_moteur("reversions", "fiche", dict, "reversion")
     assert facade.TABLES is pont.TABLES_DE_LA_FACADE
 
 
@@ -668,7 +681,7 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     with pytest.raises(ValueError, match="ouvrir.ouvrir"):
         pont.regle_du_droit("ouvrir", "ouvrir", float)
     assert facade.REGLES is pont.REGLES_DE_LA_FACADE
-    assert set(facade.REGLES) == {"commun", "completer", "liquider", "ouvrir"}
+    assert set(facade.REGLES) == {"commun", "completer", "liquider", "ouvrir", "reversion"}
 
 
 def test_une_regle_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulateur):
@@ -842,6 +855,28 @@ def test_une_table_mal_formee_ne_passe_pas():
         liquider.repartir_les_annees(25, {"alignes": [40]})
 
 
+def test_le_maximum_des_pensions_est_la_moitie_du_plafond(simulateur):
+    """Le maximum des pensions du régime général, 50 % du plafond de la
+    Sécurité sociale (R. 351-29) : 24 030 € en 2026, le plafond étant de
+    48 060 € ; 54 % en font les 12 976,20 € du barème de la réversion de la
+    Cnav. Un régime que la fiche ne borne pas n'a pas de maximum."""
+    maximum, fiabilite = liquider.maximum_des_pensions(
+        simulateur.scenario_actuel, "regime_general", "2026-01-01", 2026)
+    assert maximum == pytest.approx(24_030.0) and type(fiabilite) is Fiabilite
+    assert liquider.maximum_des_pensions(
+        simulateur.scenario_actuel, "regime_lunaire", "2026-01-01", 2026) is None
+
+
+def test_les_regles_de_la_reversion_se_demandent_sous_un_nom_a_elles():
+    """``reversion`` est l'entrée de la réversion : les règles de son module se
+    demandent sous ``regles_de_la_reversion``. La durée d'un mariage,
+    « déterminée de date à date, est arrondie au nombre de mois inférieur »
+    (R. 353-4) : du 15 juin 1990 au 10 mars 2000, 116 mois."""
+    duree = regles_de_la_reversion.mois_de_mariage("1990-06-15", "2000-03-10")
+    assert (duree, type(duree)) == (116, int)
+    assert facade.JUMEAUX["regles_de_la_reversion"] is reversion_python
+
+
 def test_une_regle_se_demande_sous_les_parametres_de_son_moteur(simulateur):
     """Les conventions du COR ne valent que pour la page Coût : sous elles, la
     valeur de service de l'Agirc-Arrco de 2045 suit la convention, moins que
@@ -886,7 +921,8 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
     (``pont.TABLES_DES_REGLES``). Deux noms seulement diffèrent d'un côté à
     l'autre."""
     jumelle = getattr({"commun": commun_python, "completer": completer_python,
-                       "liquider": liquider_python, "ouvrir": ouvrir_python}[module], regle)
+                       "liquider": liquider_python, "ouvrir": ouvrir_python,
+                       "reversion": reversion_python}[module], regle)
     attendus = [(nom, None if parametre.default is inspect.Parameter.empty else parametre.default)
                 for nom, parametre in inspect.signature(jumelle).parameters.items()]
     autres_noms = {"annees": "anneesRetenues", "carriere": "carriereSaisie",

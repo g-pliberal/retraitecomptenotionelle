@@ -2322,7 +2322,8 @@ TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "minimum_garanti": ("montant", "reference"),
     "minimum_vieillesse": ("plafond",),
     "revalorisations_pensions": ("generale",),
-    "reversions": ("limite_cumul", "majoration_enfant", "minimum", "plafond_majoration"),
+    "reversions": ("fiche_du_regime", "limite_cumul", "majoration_enfant", "minimum",
+                   "plafond_majoration", "version"),
     "valeurs_point": ("achat", "achat_prolonge", "garantie", "regimes_convenus"),
 }
 
@@ -2460,12 +2461,14 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "liquider": ("abattement_points", "age_de_la_duree_atteinte", "annees_au_prorata",
                  "borne_de_la_duree", "decote_opposable", "duree_du_regime_aligne",
                  "duree_proratisation", "majoration_des_points_de_1952_a_1972_d_avant_2026",
-                 "majorer_les_points_de_1952_a_1972", "moyenne_des_meilleures_annees",
+                 "majorer_les_points_de_1952_a_1972", "maximum_des_pensions",
+                 "moyenne_des_meilleures_annees",
                  "repartir_les_annees", "retranche_decote", "revenu_des_cotisations_minimales", "salaire_de_reference",
                  "taux_de_majoration_de_1952_a_1972", "trimestres_de_decote",
                  "trimestres_de_surcote_regimes_speciaux", "valeur_du_point"),
     "ouvrir": ("age_ouverture", "age_ouverture_commun", "age_ouverture_droit", "age_surcote",
                "age_taux_plein", "duree_requise"),
+    "reversion": ("mois_de_mariage",),
 }
 
 

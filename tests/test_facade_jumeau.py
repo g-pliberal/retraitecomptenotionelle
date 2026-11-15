@@ -29,6 +29,7 @@ from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
+from retraite_notionnelle.droit import reversion as reversion_python
 from retraite_notionnelle.droit import releve as releve_python
 from retraite_notionnelle.droit.liquider import EligibleMinimum
 from retraite_notionnelle.journal import Journal
@@ -315,11 +316,18 @@ APPELS_DES_TABLES = [
      lambda s: (datetime.date(1986, 12, 31), datetime.date(1988, 12, 31), False, None)),
     ("revalorisations_pensions", "generale",
      lambda s: (datetime.date(2017, 12, 31), datetime.date(2024, 12, 31), True, 1500.0)),
+    ("reversions", "fiche_du_regime", lambda s: ("regime_general",)),
+    ("reversions", "fiche_du_regime", lambda s: ("regime_lunaire",)),
     ("reversions", "limite_cumul", lambda s: (2001,)),
     ("reversions", "majoration_enfant", lambda s: (2010,)),
     ("reversions", "minimum", lambda s: (2025,)),
     ("reversions", "minimum", lambda s: (1940,)),
     ("reversions", "plafond_majoration", lambda s: (2010,)),
+    ("reversions", "version", lambda s: (
+        s.scenario_actuel.reversions.fiche_du_regime("regime_general"), "1985-01-01", "1984-06-15")),
+    ("reversions", "version", lambda s: (
+        s.scenario_actuel.reversions.fiche_du_regime("fonction_publique_etat"), "2026-01-01",
+        "2025-11-02")),
     ("valeurs_point", "achat", lambda s: ("agirc_arrco", 2024)),
     ("valeurs_point", "achat", lambda s: ("agirc", 1990)),
     ("valeurs_point", "achat", lambda s: ("agirc_arrco", 2090)),
@@ -517,6 +525,12 @@ APPELS_DES_REGLES = [
     ("ouvrir", "age_ouverture", _du_regime("regime_general", 2029, _salarie)),
     ("ouvrir", "age_ouverture",
      _du_regime("fonction_publique_etat", 2022, _fonctionnaire, False, False)),
+    ("liquider", "maximum_des_pensions",
+     lambda s: (s.scenario_actuel, "regime_general", "1965-01-01", 1965)),
+    ("liquider", "maximum_des_pensions",
+     lambda s: (s.scenario_actuel, "regime_general", "2026-01-01", 2026)),
+    ("liquider", "maximum_des_pensions",
+     lambda s: (s.scenario_actuel, "agirc_arrco", "2026-01-01", 2026)),
     ("ouvrir", "age_ouverture", _du_regime("sncf", 2009, _agent)),
     ("ouvrir", "age_ouverture_commun", _du_regime("regime_general", 2029, _salarie)),
     ("ouvrir", "age_ouverture_commun",
@@ -549,6 +563,8 @@ APPELS_DES_REGLES = [
     ("completer", "selon_la_regle", lambda s: (_ARTISAN, {"majoration": "sans_distinction"}, 0)),
     ("completer", "selon_la_regle", lambda s: (_POLYPENSIONNE, _PERIODES_COTISEES, 24)),
     ("completer", "selon_la_regle", lambda s: (_ARTISAN, _PERIODES_COTISEES, 24)),
+    ("reversion", "mois_de_mariage", lambda s: ("1990-06-15", "2000-03-15")),
+    ("reversion", "mois_de_mariage", lambda s: ("2000-06-01", "1999-05-01")),
 ]
 
 
@@ -570,10 +586,12 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
     servi = facade.Simulateur(parametres)
     jumeau = simulateur_python.Simulateur(parametres)
     modules = {"commun": commun_python, "completer": completer_python,
-               "liquider": liquider_python, "ouvrir": ouvrir_python}
+               "liquider": liquider_python, "ouvrir": ouvrir_python,
+               "reversion": reversion_python}
     ecarts = []
     for module, regle, arguments in APPELS_DES_REGLES:
-        lu = getattr(getattr(facade, module), regle)(*arguments(servi))
+        lu = getattr(facade.regles_de_la_reversion if module == "reversion"
+                     else getattr(facade, module), regle)(*arguments(servi))
         refait = getattr(modules[module], regle)(*arguments(jumeau))
         if dataclasses.is_dataclass(refait):
             # Un éligible que le jumeau rend : le portage l'écrit sous ses noms,
