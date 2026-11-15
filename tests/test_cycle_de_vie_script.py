@@ -261,10 +261,11 @@ def test_l_etude_date_ses_cases_au_portage_sans_le_moteur_python(portage, simula
     chaque case part, le portage le fixe (``castypes.cases_de_la_grille``,
     ``castypes.ages_de_la_grille``), et ce qu'elle demande ensuite à
     ``cycle_de_vie.mjs`` — la grille et ses étages, les balayages, les âges
-    d'équilibre — est, à l'octet, type de l'âge compris, ce qu'elle demandait
-    quand le pilote Python datait : la grille entière, treize cas types sur
-    sept générations ; trois cas types que le droit ne fait pas partir à
-    l'âge écrit, sur trois générations, sous les trois hypothèses de
+    d'équilibre — est, à l'octet, type de l'âge compris, ce que le témoin des
+    valeurs porte, figé quand le pilote Python datait encore les cases pour
+    les confronter (action 161, étape 8g) : la grille entière, treize cas
+    types sur sept générations ; trois cas types que le droit ne fait pas
+    partir à l'âge écrit, sur trois générations, sous les trois hypothèses de
     productivité ; les treize cas types sur deux générations. Les demandes
     égales, les sorties le sont : le programme qui les calcule ne change pas.
     Les jumeaux Python du pilote, des bâtisseurs et du simulateur sont
@@ -272,33 +273,10 @@ def test_l_etude_date_ses_cases_au_portage_sans_le_moteur_python(portage, simula
     import json
 
     from outils_pont import empecher_les_jumeaux_du_cout
-    from retraite_notionnelle.castypes import GENERATIONS, carriere_de_la_grille
-
-    def ecrite(demande) -> str:
-        return json.dumps(demande, ensure_ascii=False, sort_keys=True)
+    from outils_valeurs import valeur_figee
 
     types = [_cas(code) for code in ("salaire_moyen", "militaire", "fonctionnaire_actif")]
     generations, hypotheses = [1950, 1970, 2000], list(script.productivites(RACINE_DONNEES))
-    grille = [{"cle": f"{cas.code}|{generation}", "options": cas.options(
-                   generation, carriere_de_la_grille(simulateur, cas, generation).age_liquidation)}
-              for cas in sorted(CAS_TYPES, key=lambda cas: cas.code)
-              for generation in GENERATIONS]
-    balayages = []
-    for hypothese in hypotheses:
-        projete = Simulateur(Parametres(scenario_projection=hypothese))
-        for cas in types:
-            for generation in generations:
-                age = cas.age_liquidation_pour(projete, generation)
-                balayages.append({"cle": f"{cas.code}|{generation}|{hypothese}",
-                                  "productivite": hypothese, "age": age,
-                                  "options": cas.options(generation, age)})
-    equilibre = [{"cle": f"{cas.code}|{generation}", "options": cas.options(
-                      generation, cas.age_liquidation_pour(simulateur, generation))}
-                 for cas in CAS_TYPES for generation in (1950, 2000)]
-    assert len(grille) == 91 and len(balayages) == 27 and len(equilibre) == 26
-    assert any(type(case["options"]["age_liquidation"]) is int for case in grille)
-    assert any(type(case["options"]["age_liquidation"]) is float for case in grille)
-
     demandes = []
 
     def note(demande: dict) -> dict:
@@ -311,8 +289,12 @@ def test_l_etude_date_ses_cases_au_portage_sans_le_moteur_python(portage, simula
     script.etages(simulateur)
     script.balayer(types, generations, hypotheses, cor=False)
     script.equilibres(simulateur, (2000,), (1950, 2000))
-    assert [ecrite(demande) for demande in demandes] == [ecrite(attendue) for attendue in (
-        {"grille": {"cas": grille, "cor": True, "impot": "prix"}},
-        {"etages": {"cas": grille, "impot": None}},
-        {"ages": {"cas": balayages, "cor": False, "impot": None, "pas": script.PAS_DES_AGES}},
-        {"equilibre": {"generations": [2000], "cas": equilibre}})]
+    grille = demandes[0]["grille"]["cas"]
+    assert demandes[1]["etages"]["cas"] == grille
+    assert (len(grille), len(demandes[2]["ages"]["cas"]),
+            len(demandes[3]["equilibre"]["cas"])) == (91, 27, 26)
+    assert any(type(case["options"]["age_liquidation"]) is int for case in grille)
+    assert any(type(case["options"]["age_liquidation"]) is float for case in grille)
+    valeur_figee("demandes de l'étude, écrites",
+                 [json.dumps(demande, ensure_ascii=False, sort_keys=True)
+                  for demande in demandes])

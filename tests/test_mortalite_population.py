@@ -40,7 +40,7 @@ import mortalite_population as M  # noqa: E402
 from outils_pont import droit_et_fige  # noqa: E402
 from outils_valeurs import valeur_figee  # noqa: E402
 from retraite_notionnelle import pont  # noqa: E402
-from retraite_notionnelle.castypes import (GRILLE_DU_COUT, carriere_de_la_grille,  # noqa: E402
+from retraite_notionnelle.castypes import (GRILLE_DU_COUT,  # noqa: E402
                                            primes_projetees_en_donnees)
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.cout import Pensionne, VoletLiberal, calculer_cout  # noqa: E402
@@ -231,11 +231,9 @@ def test_chaque_couple_a_le_vingtile_que_la_page_donne_a_sa_carriere():
     commun = M._simulateur(None)
     cas = tuple(un for un in GRILLE_DU_COUT if un.code == "salaire_moyen")
     vingtiles = M._vingtiles(commun, cas, "droit")
-    defaut = Simulateur(Parametres()).pour_la_projection()
-    attendu = defaut.convertisseur.population_de(
-        carriere_de_la_grille(defaut, cas[0], 1965, "droit"))
-    assert attendu is not None
-    assert vingtiles["salaire_moyen", 1965] == attendu
+    # Le quatorzième, que la page donne (action 138, étape 7) : le moteur
+    # Python ne le refait plus (action 161, étape 8g).
+    assert vingtiles["salaire_moyen", 1965] == "niveau_de_vie_v14"
 
 
 def test_la_grille_est_celle_que_la_page_pese():

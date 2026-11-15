@@ -2,6 +2,9 @@
  "test_cout.py::grille du coût bâtie": {
   "valeur": "3368d56812f4a0cc"
  },
+ "test_cycle_de_vie_script.py::demandes de l'étude, écrites": {
+  "valeur": "48ea1f6fe345f7f8"
+ },
  "test_grille_large.py::mesure avance de l'échantillon": {
   "valeur": "ceead619d3dde6bc"
  },
@@ -34,6 +37,12 @@
  },
  "test_grille_large.py::échantillon daté, bâti et simulé": {
   "valeur": "65e0e8dde05fc6d7"
+ },
+ "test_lectures_decision_29.py::cas types sous le taux 0.1123": {
+  "valeur": "d5927d688b7d32fe"
+ },
+ "test_lectures_decision_29.py::cas types sous le taux 0.18": {
+  "valeur": "4222750dd4d305ff"
  },
  "test_mortalite_population.py::capitaux du compte": {
   "valeur": "328d1336286fdda1"

@@ -63,7 +63,7 @@ FICHIERS = (
     "test_grille_large.py", "test_ieg.py", "test_indemnite_csg.py", "test_independants.py",
     "test_indexation_programme.py", "test_ines.py", "test_interpenetration.py",
     "test_ircantec_minoration.py", "test_ircec_auteurs.py",
-    "test_lectures_decision_29.py", "test_limite_age.py",
+    "test_limite_age.py",
     "test_majoration_enfants_agirc_1994_a_1996.py",
     "test_marins.py", "test_mayotte.py", "test_mines.py",
     "test_minimum_pension_sncf.py", "test_mortalite_population.py",
