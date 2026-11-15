@@ -71,12 +71,15 @@ import yaml  # noqa: E402
 
 from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import Parametres  # noqa: E402
+from retraite_notionnelle import pont  # noqa: E402
 from retraite_notionnelle.avantages import (  # noqa: E402
-    CONTRIBUTIF, LIGNES_LUES, MOTIFS, NEUTRALISATIONS, calculer_avantages,
-    carriere_variante, decomposer,
-    masses, masses_anticipees, recalculer, scenarios_neutralises,
+    CONTRIBUTIF, LIGNES_LUES, MOTIFS, NEUTRALISATIONS, _ecarts, _Liquidee,
+    _options_de_la_variante, _variantes_demandees, calculer_avantages, decomposer,
+    masses, masses_anticipees,
 )
-from retraite_notionnelle.castypes import CAS_TYPES  # noqa: E402
+from retraite_notionnelle.castypes import (  # noqa: E402
+    CAS_TYPES, age_lu, primes_projetees_en_donnees,
+)
 from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
 from retraite_notionnelle.cout import _ponderation, _tetes_par_poids  # noqa: E402
 from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
@@ -145,14 +148,23 @@ def par_carriere(simulateur: Simulateur, generation: int):
     une DOSE COMMUNE : cinq années de chômage indemnisé au milieu de la vie
     active, et une année de service national au début. C'est une hypothèse,
     affichée comme telle, et non une mesure de ce que la population a vécu.
+
+    Le portage date chaque cas type (``pont.ages_de_depart``), puis bâtit sa
+    carrière réelle et la même sous la dose, et les liquide au scénario 1 et
+    sous chaque contrefactuelle qu'elles demandent (``pont.avantages``) ; les
+    écarts, et les refus du garde-fou, se mesurent ici (action 161, étape 6b).
+    Un cas type que le portage ne date ou ne liquide pas est omis.
     """
-    variantes = scenarios_neutralises(simulateur)
-    lignes = []
+    paquet = pont.paquet_des_donnees(simulateur.parametres.racine_donnees)
+    ages, attendus, _refus = pont.ages_de_depart(
+        [{"cle": cas.code, **cas.pour_le_portage(simulateur, generation)} for cas in CAS_TYPES],
+        simulateur.parametres, primes_projetees_en_donnees(simulateur), paquet=paquet)
+    cases = []
+    demandes = []
     for cas in CAS_TYPES:
-        try:
-            age = cas.age_liquidation_pour(simulateur, generation)
-        except (ValueError, KeyError):
+        if cas.code not in ages:
             continue
+        age = age_lu(cas, ages[cas.code], cas.code in attendus)
         # La dose est posée en DÉCALAGES depuis l'âge d'entrée, comme les
         # interruptions d'un cas type : le chômage au milieu de la vie active,
         # là où il coûte le plus cher au salaire de référence, et le service
@@ -163,21 +175,34 @@ def par_carriere(simulateur: Simulateur, generation: int):
             + [(max(0, int(20 - cas.age_debut)), "service_militaire")]
         )
         charge = replace(cas, interruptions_relatives=dose)
-        try:
-            reelle = simulateur.scenario_actuel.calculer(
-                carriere_variante(simulateur, cas, generation, age))
-            chargee = simulateur.scenario_actuel.calculer(
-                carriere_variante(simulateur, charge, generation, age))
-        except (ValueError, KeyError):
+        for cle, carriere in ((f"{cas.code}|reelle", cas), (f"{cas.code}|dose", charge)):
+            de_carriere, de_scenario = _variantes_demandees(carriere, generation)
+            demandes.append({"cle": cle,
+                             "options": _options_de_la_variante(carriere, generation, age),
+                             "carriere": de_carriere, "scenario": list(de_scenario)})
+        cases.append((cas, charge, age))
+    lues, _ecartees = pont.avantages(demandes, simulateur.parametres, paquet)
+    lignes = []
+    for cas, charge, age in cases:
+        reelle, chargee = lues.get(f"{cas.code}|reelle"), lues.get(f"{cas.code}|dose")
+        if reelle is None or chargee is None:
             continue
         # Deux mesures pour deux questions : ce que la carrière RÉELLE du cas
         # type porte, et ce que la même carrière porterait si elle avait connu
         # la dose. Les deux sont rendues, et la seconde est signalée.
-        propres, refus = recalculer(simulateur, cas, generation, age, reelle, variantes)
-        sous_dose, _ = recalculer(simulateur, charge, generation, age, chargee, variantes)
-        lignes.append((cas, age, reelle.pension_annuelle, chargee.pension_annuelle,
-                       propres, sous_dose, refus))
+        propres, refus = _mesurer(cas, reelle)
+        sous_dose, _ = _mesurer(charge, chargee)
+        lignes.append((cas, age, reelle["liquidee"]["pension_annuelle"],
+                       chargee["liquidee"]["pension_annuelle"], propres, sous_dose, refus))
     return lignes
+
+
+def _mesurer(cas, lue: dict) -> tuple[dict[str, float], dict[str, str]]:
+    """Les écarts de chaque contrefactuelle à la liquidation que le portage
+    rend (``pont.avantages``), et les refus du garde-fou."""
+    liquidee = _Liquidee(**lue["liquidee"])
+    return _ecarts(cas, liquidee.pension_annuelle, liquidee.trimestres_requis,
+                   liquidee.avpf, lue["sans"])
 
 
 def _dire_les_refus(refus: dict[str, str]) -> None:
