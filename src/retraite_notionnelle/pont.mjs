@@ -139,7 +139,7 @@ import { fileURLToPath } from "node:url";
 
 import { DateMois, enMois, origineDesAges } from "../../moteur/js/calendrier.js";
 import {
-  AnneeCarriere, Carriere, prolongerReleve, salaireMoyenAnnuel,
+  AnneeCarriere, Carriere, ancrageSalaireMoyen, prolongerReleve, salaireMoyenAnnuel,
 } from "../../moteur/js/carriere.js";
 import { ConstructeurCapitalisation } from "../../moteur/js/capitalisation.js";
 import { valeur as valeurPresumee } from "../../moteur/js/chronologie.js";
@@ -1108,12 +1108,23 @@ const FONCTIONS_DES_SONDES = {
   "age_reference.age": (simulateur, annee) => simulateur.ageReference.age(annee),
   "conversion.coefficient.esperance_residuelle": (simulateur, age, annee) => simulateur
     .convertisseur.coefficient(age, annee).esperance_residuelle,
+  // Le diviseur d'une liquidation, sous sa table de mortalité : celle de la
+  // population nommée, ou celle du simulateur (action 161, étape 9b).
+  "conversion.coefficient.diviseur": (simulateur, age, annee, sexe, mois, population) =>
+    simulateur.convertisseur.coefficient(age, annee, sexe, mois, population).diviseur,
   "conversion.effet_anticipation": (simulateur, age, reference, annee) => simulateur
     .convertisseur.effetAnticipation(age, reference, annee),
   "indexation.coefficient": (simulateur, depart, arrivee) => simulateur.indexation
     .coefficient(depart, arrivee),
+  // Le taux d'une année sous la règle d'indexation, et les trois séries dont
+  // une règle le tire : l'inflation, le salaire moyen, la productivité.
+  "indexation.taux": (simulateur, annee) => {
+    const taux = simulateur.indexation.taux(annee);
+    return [taux.taux, taux.inflation, taux.salaire_moyen, taux.productivite];
+  },
   "capitalisation.facteur_encours_rente": (simulateur, frais, age, annee) => simulateur
     .constructeurCapitalisation._facteurEncoursRente(frais, age, annee, null, null),
+  "carriere.ancrage_salaire_moyen": (simulateur) => ancrageSalaireMoyen(simulateur.macro),
   "carriere.salaire_moyen_annuel":
     (simulateur, annee) => salaireMoyenAnnuel(simulateur.macro, annee),
   "restitution.part_du_poste": (simulateur, annee) => restitutionDe(simulateur).partDuPoste(annee),

@@ -1451,9 +1451,13 @@ def pilier_des_donnees(pilier: dict) -> dict:
 LECTURES_DES_SONDES = {
     "age_reference.age": float,
     "conversion.coefficient.esperance_residuelle": float,
+    "conversion.coefficient.diviseur": float,
     "conversion.effet_anticipation": float,
     "indexation.coefficient": float,
+    # Le taux d'une année, puis l'inflation, le salaire moyen, la productivité.
+    "indexation.taux": tuple[float, float, float, float],
     "capitalisation.facteur_encours_rente": float,
+    "carriere.ancrage_salaire_moyen": tuple[int, float],
     "carriere.salaire_moyen_annuel": float,
     "restitution.part_du_poste": float,
     "restitution.annuelle.points_csg": float,

@@ -112,7 +112,8 @@ from retraite_notionnelle.scenarios import actuel as _actuel
 
 #: Les données du simulateur Python que la façade laisse lire : des chargeurs,
 #: qui restent en Python (note de décision 0006), et aucune règle.
-DONNEES = frozenset({"catalogue", "affiliations"})
+DONNEES = frozenset({"catalogue", "affiliations", "effectifs", "distribution",
+                     "caracteristiques", "patrimoine", "vie_en_couple", "courbe_taux"})
 
 
 #: Les entrées du moteur Python que la façade sert, sous leurs noms ;

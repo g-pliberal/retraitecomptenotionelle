@@ -47,14 +47,13 @@ import yaml
 
 from retraite_notionnelle.avantages import LIGNES_LUES
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import ancrage_salaire_moyen, salaire_moyen_annuel
 from retraite_notionnelle.castypes import GENERATIONS, calculer_cas_types
 from retraite_notionnelle.config import (
     ModeIndexation,
     Parametres,
     RevalorisationStock,
 )
-from retraite_notionnelle import memoire
+from retraite_notionnelle import memoire, pont
 from retraite_notionnelle.cout import (
     CONVENTION_RAPPORT,
     financer,
@@ -62,18 +61,14 @@ from retraite_notionnelle.cout import (
 from retraite_notionnelle.donnees.bilan import charger_bilan
 from retraite_notionnelle.donnees.chargement import Fiabilite, journal_certification
 from retraite_notionnelle.donnees.distribution import DistributionPensions, part_femmes
-from retraite_notionnelle.moteur.indexation import Indexation
-from retraite_notionnelle.moteur.indexation import cumuls as cumuls_indexation
 from retraite_notionnelle.remuneration import AnneeComparee, charger_prelevements
-from retraite_notionnelle.droit.liquider import _coefficient_anticipation
-from retraite_notionnelle.scenarios.actuel import MinimumVieillesse
-from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.cout import COMPOSANTE_GARANTIE
 from retraite_notionnelle.donnees.equilibre import ORGANISMES, POSTES_TRANSFERTS
 from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.web.site import ErreurSite, disponible, module, site
 
 from outils_garantie import cout_garantie, cout_garantie_par_sexe
+from facade import Simulateur, liquider
 from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
 
 #: Le texte du site n'est écrit qu'une fois, en JavaScript : ses constantes et
@@ -97,6 +92,16 @@ ETATS = ("verifiee", "contredite", "hors_modele", "sans_portee")
 #: rien. « En clair. » et « Réserve. » sont les deux plus courts du catalogue,
 #: et leur point final les distingue.
 LONGUEUR_MINIMALE_EXTRAIT = 8
+
+
+def du_portage(fonction: str, *arguments, parametres: Parametres | None = None):
+    """Ce que rend au portage une règle que les sondes de la prose appellent
+    (``pont.droit``), sur le simulateur des ``parametres``, ceux de référence
+    sans eux : ces contrôles n'interrogent plus le moteur Python (action 161,
+    étape 9b)."""
+    lus, refus = pont.droit({"rendu": (fonction, pont.SIMULATEUR, *arguments)}, parametres)
+    assert not refus, refus
+    return lus["rendu"]
 
 # -- le texte des pages ------------------------------------------------------
 
@@ -184,15 +189,16 @@ class Modele:
     pour tous ceux qui le lisent.
 
     Une carrière se saisit comme sur le site, par la requête d'une adresse :
-    le portage la lit et en bâtit la carrière, que le moteur Python simule
-    (``tests/outils_pont.py``, action 161, étape 6). Une naissance s'y écrit
-    avec son jour, que la saisie présumerait sinon. Le coût et les données
-    qu'agrègent les pages se lisent dans le contexte, qui reste en Python.
+    le portage la lit, en bâtit la carrière et la simule, par la façade des
+    tests (``tests/outils_pont.py``, ``tests/facade.py`` ; action 161, étape
+    9b). Une naissance s'y écrit avec son jour, que la saisie présumerait
+    sinon. Le coût, les carrières types et les données qu'agrègent les pages
+    se lisent dans le contexte, qui reste en Python.
     """
 
     def __init__(self) -> None:
         self.contexte = Contexte()
-        self.saisies = Saisies()
+        self.saisies = Saisies(Simulateur)
         self.sim = self.saisies.simulateur()
         self.base = self.contexte.base
         self._simulations: dict[tuple, object] = {}
@@ -254,7 +260,7 @@ class Modele:
     @cached_property
     def grille_cas_types(self):
         """Les treize carrières croisées avec sept générations, une fois."""
-        return calculer_cas_types(self.sim)
+        return calculer_cas_types(self.contexte.simulateur())
 
     @cached_property
     def avantages(self):
@@ -266,9 +272,14 @@ class Modele:
 
     @cached_property
     def cumuls(self) -> dict[str, float]:
-        """Ce que rend chaque règle que le site compare, calculé par le modèle."""
-        return cumuls_indexation(self.sim.macro, self.base, pages.REGLES_COMPAREES,
-                                 pages.ANNEE_VERSEMENT_COMPARE, pages.ANNEE_ARRIVEE_COMPAREE)
+        """Ce que rend chaque règle que le site compare, calculé par le modèle :
+        le coefficient de l'indexation du portage sous chacune."""
+        return {libelle: du_portage(
+            "indexation.coefficient", pages.ANNEE_VERSEMENT_COMPARE,
+            pages.ANNEE_ARRIVEE_COMPAREE, parametres=replace(
+                self.base, mode_indexation=ModeIndexation(mode),
+                lissage_indexation=int(lissage)))
+            for libelle, mode, lissage in pages.REGLES_COMPAREES}
 
     @property
     def solde(self):
@@ -442,18 +453,17 @@ def _(m: Modele):
         conversion = resultat.conversion
         population = conversion.table.split("_generation_", 1)[1] \
             if "_generation_" in conversion.table else None
-        refait = m.sim.convertisseur.coefficient(
-            carriere.age_liquidation, carriere.annee_liquidation, carriere.sexe,
-            carriere.mois_liquidation, population=population,
-        )
-        assert _proche(refait.diviseur, conversion.diviseur)
-        assert _proche(resultat.pension_annuelle * refait.diviseur, resultat.capital_notionnel)
+        diviseur = du_portage(
+            "conversion.coefficient.diviseur", carriere.age_liquidation,
+            carriere.annee_liquidation, carriere.sexe, carriere.mois_liquidation, population)
+        assert _proche(diviseur, conversion.diviseur)
+        assert _proche(resultat.pension_annuelle * diviseur, resultat.capital_notionnel)
 
 
 @controle("indexation_masse_salariale_par_defaut")
 def _(m: Modele):
     assert m.base.mode_indexation is ModeIndexation.MASSE_SALARIALE
-    assert m.sim.indexation.lissage == 1
+    assert m.base.lissage_indexation == 1
 
 
 @controle("premiere_ligne_indexation_par_defaut")
@@ -646,7 +656,7 @@ def _(m: Modele):
 
 @controle("garantie_individualisee")
 def _(m: Modele):
-    assert MinimumVieillesse.AGE_OUVERTURE == 65
+    assert module("regimes").MinimumVieillesse.AGE_OUVERTURE == 65
     seul = m.smic.notionnel_liberal.garantie_vieillesse
     couple = m.smic_en_couple.notionnel_liberal.garantie_vieillesse
     coefficient = seul.coefficient_prix
@@ -690,7 +700,9 @@ def _(m: Modele):
     seule = {
         sexe: 1.0 - m.sim.vie_en_couple.part_moyenne(
             sexe,
-            list(m.sim.mortalite.courbe_survie(
+            # La courbe de survie de la garantie de population, que le coût
+            # tire du simulateur du contexte, en Python (note de décision 0007).
+            list(m.contexte.simulateur().mortalite.courbe_survie(
                 65, m.base.annee_bascule, sexe, True, None)),
         )
         for sexe in ("F", "H")
@@ -1003,42 +1015,27 @@ def _(m: Modele):
 
     C'est ce que la page affirme, et c'est ce qui justifie le menu : la valeur
     de l'allocation est nulle tant que les forwards sont pris pour les taux
-    futurs, et elle apparaît dès qu'une prime de terme est retirée.
+    futurs, et elle apparaît dès qu'une prime de terme est retirée. Le pilier
+    d'un salarié né en 2004, parti à 64 ans en 2068, qui verse sur 30 000 € par
+    an depuis la bascule, bâti par le portage : adossé, comme le moteur le
+    place, ou placé à un an et renouvelé jusqu'au départ, une allocation
+    décrite en données (``capitalisation.construire``, ``pont.mjs``).
     """
-    import contextlib
+    assiettes = {annee: 30_000.0 for annee in range(m.base.annee_bascule, 2068)}
+    roulement = {horizon: [[1, 1.0]] for horizon in range(1, 2068 - m.base.annee_bascule + 1)}
 
-    from retraite_notionnelle.moteur import capitalisation as module
-
-    @contextlib.contextmanager
-    def roulement_a_un_an():
-        ancienne = module.repartition
-        module.repartition = lambda h: ((1, 1.0),) if h > 0 else ()
-        try:
-            yield
-        finally:
-            module.repartition = ancienne
-
-    carriere = dict(annee_naissance=2004, sexe="H",
-                    affiliation="salarie_prive_non_cadre",
-                    age_debut=22, age_liquidation=64)
-
-    def capital(parametres) -> float:
-        simulateur = Simulateur(parametres)
-        resultat = simulateur.simuler(simulateur.carriere_simple(**carriere))
-        return resultat.notionnel_liberal.capitalisation.capital
+    def capital(parametres, repartitions=None) -> float:
+        return du_portage("capitalisation.construire", assiettes, 2004, 64.0, 2068,
+                          repartitions, parametres=parametres)["capital"]
 
     assert m.base.prime_terme_trente_ans == 0.0, "le site publie sous les forwards"
     defaut = m.base.sous_regime_taux("forwards")
     assert defaut == m.base
-    with roulement_a_un_an():
-        roule = capital(defaut)
-    assert _proche(capital(defaut), roule, relatif=1e-9)
+    assert _proche(capital(defaut), capital(defaut, roulement), relatif=1e-9)
 
     avec_prime = m.base.sous_regime_taux("prime")
     assert avec_prime.prime_terme_trente_ans > 0
-    with roulement_a_un_an():
-        roule_prime = capital(avec_prime)
-    assert capital(avec_prime) > roule_prime
+    assert capital(avec_prime) > capital(avec_prime, roulement)
 
 
 @controle("cinq_points_volontaires_separes")
@@ -1097,14 +1094,13 @@ def _(m: Modele):
     elles que la page affirme : aucune maturité au-delà de l'horizon, aucune
     échéance avant le départ tant que la courbe couvre l'horizon.
     """
-    from retraite_notionnelle.moteur.capitalisation import MATURITE_MAXIMALE, repartition
-
+    capitalisation = module("capitalisation")
     for horizon in (2, 10, 17, 30, 40):
-        lignes = repartition(horizon)
+        lignes = capitalisation.repartition(horizon)
         assert len(lignes) == 1, (horizon, lignes)
         (maturite, poids), = lignes
         assert poids == 1.0
-        assert maturite == min(horizon, MATURITE_MAXIMALE)
+        assert maturite == min(horizon, capitalisation.MATURITE_MAXIMALE)
     pilier = m.defaut.notionnel_liberal.capitalisation
     for annee in pilier.annees:
         for maturite, _ in annee.placements:
@@ -1718,7 +1714,8 @@ def _(m: Modele):
     # « Euros d'aujourd'hui » : l'échelle est celle de l'année courante du
     # modèle, non celle du départ ni celle des euros constants.
     assert module("saisie").DEFAUTS["unite_revenu"] == "euros_mois"
-    assert _proche(echelle.moyen, salaire_moyen_annuel(m.sim.macro, m.base.annee_courante))
+    assert _proche(echelle.moyen, du_portage(
+        "carriere.salaire_moyen_annuel", m.base.annee_courante))
 
 
 @controle("ancrage_du_salaire_moyen")
@@ -1734,8 +1731,8 @@ def _(m: Modele):
             ligne for ligne in flux if not ligne.startswith("#"))}
     assert lignes["2024"]["fiabilite"] == "certifiee"
     publie = float(lignes["2024"]["salaire_moyen_annuel"])
-    assert ancrage_salaire_moyen(m.sim.macro) == (2024, publie)
-    assert salaire_moyen_annuel(m.sim.macro, 2024) == publie
+    assert du_portage("carriere.ancrage_salaire_moyen") == (2024, publie)
+    assert du_portage("carriere.salaire_moyen_annuel", 2024) == publie
 
 
 @controle("legende_rouge_vert")
@@ -2926,8 +2923,8 @@ def _(m: Modele):
 
 @controle("decote_plafonnee_a_vingt_trimestres")
 def _(m: Modele):
-    assert _coefficient_anticipation(20, 20) is not None
-    assert _coefficient_anticipation(21, 20) is None
+    assert liquider._coefficient_anticipation(20, 20) is not None
+    assert liquider._coefficient_anticipation(21, 20) is None
 
 
 @controle("ecarts_structurels_hors_comptage")
@@ -2961,11 +2958,12 @@ def _(m: Modele):
 
 @controle("triple_lock_est_un_minimum")
 def _(m: Modele):
-    indexation = Indexation(m.sim.macro, replace(
-        m.base, mode_indexation=ModeIndexation.TRIPLE_LOCK_INVERSE, lissage_indexation=1))
+    triple = replace(m.base, mode_indexation=ModeIndexation.TRIPLE_LOCK_INVERSE,
+                     lissage_indexation=1)
     for annee in (1975, 1995, 2015):
-        taux = indexation.taux(annee)
-        assert _proche(taux.taux, min(taux.inflation, taux.salaire_moyen, taux.productivite))
+        taux, inflation, salaire_moyen, productivite = du_portage(
+            "indexation.taux", annee, parametres=triple)
+        assert _proche(taux, min(inflation, salaire_moyen, productivite))
 
 
 @controle("revalorisation_pratiquee_pres_de_cinq_fois_les_prix")
@@ -2985,10 +2983,11 @@ def _(m: Modele):
 def _(m: Modele):
     coefficients = {}
     for lissage in (1, 5):
-        indexation = Indexation(m.sim.macro, replace(
-            m.base, mode_indexation=ModeIndexation.PIB_NOMINAL, lissage_indexation=lissage))
+        lisse = replace(m.base, mode_indexation=ModeIndexation.PIB_NOMINAL,
+                        lissage_indexation=lissage)
         for arrivee in (2019, 2020):
-            coefficients[lissage, arrivee] = indexation.coefficient(1980, arrivee)
+            coefficients[lissage, arrivee] = du_portage(
+                "indexation.coefficient", 1980, arrivee, parametres=lisse)
     assert coefficients[1, 2020] < coefficients[1, 2019]
     assert coefficients[5, 2020] >= coefficients[5, 2019]
 
