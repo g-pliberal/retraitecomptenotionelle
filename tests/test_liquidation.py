@@ -41,8 +41,9 @@ RACINE = Path(__file__).resolve().parents[1]
 
 # Ce fichier passe à la façade (action 161) : la liquidation, sa demande, ses
 # neutralisations, ses mesures et ses appels, le foyer se demandent au
-# portage. Les étapes seules, le journal, l'échéancier, le pilote et la
-# confrontation des deux moteurs gardent le moteur Python, sous la marque
+# portage, comme chaque étape seule, son contexte compris. Le journal,
+# l'échéancier, le pilote et la confrontation des deux moteurs gardent le
+# moteur Python, sous la marque
 # ``sur_le_moteur_python`` et sa raison.
 
 
@@ -98,7 +99,6 @@ CARRIERES = {
 # -- chaque étape, seule -------------------------------------------------------
 
 @pytest.mark.parametrize("nom", sorted(CARRIERES))
-@pytest.mark.sur_le_moteur_python("ouvrir, liquider, completer et foyer : les étapes seules")
 def test_chaque_etape_de_la_liquidation_suit_son_schema(simulateur, nom):
     """Ouvrir le droit, liquider chaque régime, compléter tous régimes, foyer
     et net : chaque étape, appelée seule sur le relevé, écrit une donnée que

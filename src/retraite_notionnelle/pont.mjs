@@ -1922,6 +1922,10 @@ function argumentDeLaFacade(porteur, valeur) {
   }
   if (marque === "date_mois") return new DateMois(valeur.annee, valeur.mois);
   if (marque === "table") return new Map(valeur.entrees);
+  if (marque === "contexte") {
+    return new ContexteDeLiquidation(
+      porteur instanceof Simulateur ? porteur.scenarioActuel : porteur, valeur.neutralisations);
+  }
   if (marque === "periode") {
     const periode = catalogue.obtenir(valeur.regime).periodes[valeur.rang];
     if (periode === undefined || periode.debut !== valeur.debut) {
@@ -2034,6 +2038,54 @@ ENTREES_DE_LA_FACADE["liquidation.liquider"] = (moteur, demande, carriere, neutr
     avantages: telQuel(liquidee.avantages), lignes: telQuel(liquidee.releve.lignes()),
     donnees: telQuel(liquidee.donnees()), appels: appels() - avant,
   };
+};
+
+// Les étapes de la liquidation, chacune seule, par la façade : un bloc à part
+// (action 161).
+
+/**
+ * L'étape au bout d'une chaîne (`etape_de_la_liquidation_des_donnees` de
+ * `pont.py`) : le relevé de la carrière, sous ses drapeaux, puis chaque
+ * étape de `etapes`, `[nom, options]` — `ouvrir`, ses régimes ; `liquider`,
+ * les neutralisations de son contexte (`null` sans contexte), ses régimes et
+ * `nationale` ; `completer`, les neutralisations de son contexte —, chacune
+ * sur ce que la précédente a écrit. Ce que la dernière écrit revient par ce
+ * que les tests en lisent. Une étape que la chaîne ne connaît pas arrête la
+ * demande.
+ */
+ENTREES_DE_LA_FACADE["droit.etapes"] = (moteur, carriere, avantages, gratuits, successions,
+  etapes) => {
+  const leReleve = releve.construire(moteur, carriere, {
+    avantagesNonContributifs: avantages, pointsGratuits: gratuits,
+    liquiderSuccessions: successions,
+  });
+  const contexte = ({ neutralisations }) => (neutralisations === null ? null
+    : new ContexteDeLiquidation(moteur, neutralisations));
+  const regimes = ({ regimes: codes }) => (codes === null ? null : new Set(codes));
+  let ouverture = null;
+  let pensions = null;
+  let rendu = null;
+  for (const [etape, options] of etapes) {
+    let ecrite;
+    if (etape === "ouvrir") {
+      ecrite = ouverture = ouvrir.ouvrir(moteur, leReleve, regimes(options));
+      rendu = {
+        requis: ouverture.requis, age: ouverture.age, motif: ouverture.motif,
+        trimestres_cotises: ouverture.trimestresCotises,
+      };
+    } else if (etape === "liquider") {
+      ecrite = pensions = liquider.liquiderChaqueRegime(moteur, leReleve, ouverture,
+        contexte(options), regimes(options), options.nationale);
+      rendu = { regimes: telQuel(pensions.regimes), taux: pensions.taux };
+    } else if (etape === "completer") {
+      ecrite = completer.completer(moteur, leReleve, ouverture, pensions, contexte(options));
+      rendu = { regimes: telQuel(ecrite.regimes), total: ecrite.total };
+    } else {
+      throw new TypeError(`étape de la liquidation que la façade ne sert pas : ${etape}`);
+    }
+    rendu = { etape, ...rendu, donnees: telQuel(ecrite.donnees()) };
+  }
+  return rendu;
 };
 
 // -- la fin de la façade des tests ----------------------------------------------

@@ -800,6 +800,63 @@ def test_le_jumeau_rend_la_liquidation_que_la_facade_lit(parametres):
                     == liquidation_python.appels() - avant_jumeau), cas
 
 
+@pytest.mark.parametrize("parametres", [Parametres(), Parametres(conventions_cor=True)],
+                         ids=["reference", "conventions_cor"])
+def test_le_jumeau_rend_les_etapes_de_la_liquidation_que_la_facade_lit(parametres):
+    """Les étapes de la liquidation, chacune seule, sur le relevé du salarié,
+    de l'agent de la SNCF, de l'artisan d'avant 1973, de la fonctionnaire
+    mère de trois enfants et de la mère sous l'AVPF, sous quatre contextes, et
+    le foyer de chacun sous ce contexte : la même ouverture, les mêmes
+    pensions, les mêmes compléments et le même foyer, au bit près."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    servi = facade.Simulateur(parametres)
+    jumeau = simulateur_python.Simulateur(parametres)
+
+    def pensions_lues(pensions, cas):
+        return repr(pont.lu_strictement(tuple[PensionRegime, ...], json.loads(json.dumps(
+            pont._en_donnees(pensions))), str(cas)))
+
+    for carriere in (_salarie, _agent, _artisan, _fonctionnaire, _mere_avpf):
+        lue, refaite = carriere(servi), carriere(jumeau)
+        releve = facade.releve.construire(servi.scenario_actuel, lue)
+        refait = releve_python.construire(jumeau.scenario_actuel, refaite)
+        ouverture = facade.ouvrir.ouvrir(servi.scenario_actuel, releve)
+        ouverte = ouvrir_python.ouvrir(jumeau.scenario_actuel, refait)
+        assert ouverture.donnees() == _en_json(ouverte.donnees()), carriere.__name__
+        assert (ouverture.requis, ouverture.age, ouverture.motif,
+                ouverture.trimestres_cotises) == (ouverte.requis, ouverte.age, ouverte.motif,
+                                                  ouverte.trimestres_cotises)
+        for neutralisations in (None, (), ("avantages_non_contributifs",), ("avpf",),
+                                ("points_gratuits", "decote_surcote")):
+            cas = (carriere.__name__, neutralisations)
+            contexte, contexte_jumeau = (None, None) if neutralisations is None else (
+                liquidation_python.Contexte(servi.scenario_actuel, frozenset(neutralisations)),
+                liquidation_python.Contexte(jumeau.scenario_actuel, frozenset(neutralisations)))
+            pensions = facade.liquider.liquider_chaque_regime(
+                servi.scenario_actuel, releve, ouverture, contexte)
+            liquidees = liquider_python.liquider_chaque_regime(
+                jumeau.scenario_actuel, refait, ouverte, contexte_jumeau)
+            assert pensions.donnees() == _en_json(liquidees.donnees()), cas
+            assert pensions.taux == liquidees.taux, cas
+            assert repr(pensions.regimes) == pensions_lues(liquidees.regimes, cas), cas
+            complements = facade.completer.completer(
+                servi.scenario_actuel, releve, ouverture, pensions, contexte)
+            completees = completer_python.completer(
+                jumeau.scenario_actuel, refait, ouverte, liquidees, contexte_jumeau)
+            assert complements.donnees() == _en_json(completees.donnees()), cas
+            assert complements.total == completees.total, cas
+            assert repr(complements.regimes) == pensions_lues(completees.regimes, cas), cas
+            date = ouverture.donnees()["date_effet"]
+            lu = facade.foyer.foyer_et_net(servi.scenario_actuel, lue.personne, date,
+                                           lue.annee_liquidation, complements.total, True,
+                                           contexte)
+            foyer_refait = foyer_python.foyer_et_net(
+                jumeau.scenario_actuel, refaite.personne, date, refaite.annee_liquidation,
+                completees.total, True, contexte_jumeau)
+            assert lu.donnees() == _en_json(foyer_refait.donnees()), cas
+
+
 def _mere_avpf(simulateur):
     """Une salariée née en 1970, deux enfants et deux années d'éducation qui
     ouvrent l'AVPF : la cascade mesure ses trimestres d'enfants, puis

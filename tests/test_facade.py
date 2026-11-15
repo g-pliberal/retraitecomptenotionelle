@@ -674,8 +674,8 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     une règle privée, une classe du module sont refusées, au lieu que le type
     de ce qu'elles rendent se devine. Ce que le jumeau ne porte pas manque,
     comme à un module."""
-    with pytest.raises(NonTransmissible, match="liquider.liquider_chaque_regime"):
-        liquider.liquider_chaque_regime
+    with pytest.raises(NonTransmissible, match="completer.points_rco_de_chef"):
+        completer.points_rco_de_chef
     with pytest.raises(NonTransmissible, match="liquider._coefficient_anticipation"):
         liquider._coefficient_anticipation
     with pytest.raises(NonTransmissible, match="liquider.EligibleMinimum"):
@@ -885,6 +885,92 @@ def test_une_etape_ne_sert_que_ce_qu_elle_transmet(simulateur):
         durees.cumul_plafonne("assurance", ("regime_general",), lambda annee: annee > 2000)
     with pytest.raises(NonTransmissible, match="drapeaux"):
         liquider.duree_du_regime_aligne(carriere, durees, ("regime_general",))
+
+
+# -- les étapes de la liquidation, chacune seule ----------------------------------------
+
+#: Un salarié né en 1960, entré à 23 ans, parti à 62 ans, en 2022, l'âge
+#: légal de sa génération (L. 161-17-2) : 39 ans d'assurance, 156 trimestres
+#: pour 167 requis (L. 161-17-3), onze de moins, qui décotent.
+SALARIE_A_62_ANS = dict(annee_naissance=1960, sexe="H", affiliation="salarie_prive_non_cadre",
+                        age_debut=23, age_liquidation=62)
+
+
+def _contexte(simulateur, *neutralisations, **champs):
+    return liquidation_python.Contexte(simulateur.scenario_actuel, frozenset(neutralisations),
+                                       **champs)
+
+
+def test_les_etapes_de_la_liquidation_se_servent_l_une_apres_l_autre(simulateur):
+    """``ouvrir``, ``liquider_chaque_regime`` et ``completer``, servis par le
+    portage, chacun sur ce que la précédente a rendu : le droit ouvre à 62
+    ans, à l'âge légal, sur 167 trimestres requis ; le régime de base liquide
+    au taux de 50 % moins 0,625 point par trimestre manquant, onze
+    (D. 351-1-2) : 43,125 % ; « compléter » reçoit les pensions que
+    « liquider » a écrites, dans le même ordre."""
+    actuel = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(**SALARIE_A_62_ANS)
+    releve = facade.releve.construire(actuel, carriere)
+    ouverture = ouvrir.ouvrir(actuel, releve)
+    assert (ouverture.requis, ouverture.age, ouverture.motif) == (167, 62.0, "age_legal")
+    assert ouverture.donnees()["requis"] == 167
+    pensions = liquider.liquider_chaque_regime(actuel, releve, ouverture, _contexte(simulateur))
+    assert pensions.taux == pytest.approx(0.43125)
+    assert all(type(pension) is PensionRegime for pension in pensions.regimes)
+    assert [p["regime"] for p in pensions.donnees()["regimes"]] == [
+        p.regime for p in pensions.regimes]
+    complements = completer.completer(actuel, releve, ouverture, pensions,
+                                      _contexte(simulateur))
+    assert [p.regime for p in complements.regimes] == [p.regime for p in pensions.regimes]
+    assert type(complements.total) is float and complements.total > 0
+
+
+def test_le_contexte_porte_ses_neutralisations_aux_etapes(simulateur):
+    """La décote neutralisée, le régime de base liquide au taux plein, 50 % ;
+    les avantages non contributifs neutralisés, le foyer ne sert pas l'ASPA,
+    qu'il sert à une personne seule de 6 000 € de ressources."""
+    actuel = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(**SALARIE_A_62_ANS)
+    releve = facade.releve.construire(actuel, carriere)
+    ouverture = ouvrir.ouvrir(actuel, releve)
+    sans_decote = liquider.liquider_chaque_regime(actuel, releve, ouverture,
+                                                  _contexte(simulateur, "decote_surcote"))
+    assert sans_decote.taux == 0.5
+    completer.completer(actuel, releve, ouverture, sans_decote,
+                        _contexte(simulateur, "decote_surcote"))
+    servi = foyer.foyer_et_net(actuel, "assure", "2026-06-01", 2026, 6000.0, True,
+                               _contexte(simulateur))
+    neutralise = foyer.foyer_et_net(actuel, "assure", "2026-06-01", 2026, 6000.0, True,
+                                    _contexte(simulateur, "avantages_non_contributifs"))
+    assert servi.minimum_vieillesse > 0 and neutralise.minimum_vieillesse == 0.0
+
+
+def test_une_etape_de_la_liquidation_ne_sert_que_ce_qu_elle_transmet(simulateur):
+    """Une ouverture d'un autre relevé, des pensions d'une autre ouverture, un
+    contexte d'un autre moteur ou qui porte une observation, des pensions
+    déjà servies n'arriveraient pas au portage : refusés."""
+    actuel = simulateur.scenario_actuel
+    releve = facade.releve.construire(actuel, simulateur.carriere_simple(**SALARIE_A_62_ANS))
+    autre = facade.releve.construire(actuel, simulateur.carriere_simple(**SALARIE))
+    ouverture = ouvrir.ouvrir(actuel, releve)
+    with pytest.raises(NonTransmissible, match="relevé"):
+        ouvrir.ouvrir(actuel, object())
+    with pytest.raises(NonTransmissible, match="ouverture"):
+        liquider.liquider_chaque_regime(actuel, releve, ouvrir.ouvrir(actuel, autre))
+    with pytest.raises(NonTransmissible, match="contexte"):
+        liquider.liquider_chaque_regime(actuel, releve, ouverture,
+                                        _contexte(simulateur, observation="2030-01-01"))
+    with pytest.raises(NonTransmissible, match="contexte"):
+        liquider.liquider_chaque_regime(actuel, releve, ouverture, liquidation_python.Contexte(
+            Simulateur().scenario_actuel))
+    pensions = liquider.liquider_chaque_regime(actuel, releve, ouverture)
+    with pytest.raises(NonTransmissible, match="pensions"):
+        completer.completer(actuel, autre, ouvrir.ouvrir(actuel, autre), pensions)
+    with pytest.raises(NonTransmissible, match="servies"):
+        completer.completer(actuel, releve, ouverture, pensions, servies=100.0)
+    with pytest.raises(NonTransmissible, match="contexte"):
+        foyer.foyer_et_net(actuel, "assure", "2026-06-01", 2026, 6000.0, True,
+                           _contexte(simulateur, observation="2030-01-01"))
 
 
 # -- les cotisations du relevé et le constructeur du compte -----------------------------
@@ -1184,15 +1270,6 @@ def test_le_foyer_se_demande_au_portage_et_revient_sous_son_type(simulateur):
     assert facade.JUMEAUX["foyer"] is foyer_python
 
 
-def test_le_foyer_ne_recoit_pas_le_contexte_d_une_liquidation(simulateur):
-    """Le contexte d'une liquidation, objet du moteur Python, n'arriverait pas
-    au portage : la règle est refusée."""
-    contexte = liquidation_python.Contexte(simulateur.scenario_actuel, frozenset())
-    with pytest.raises(NonTransmissible, match="contexte"):
-        foyer.foyer_et_net(simulateur.scenario_actuel, "assure", "2026-06-01", 2026, 6000.0,
-                           True, contexte)
-
-
 def test_les_majorations_forfaitaires_se_demandent_sur_une_pension_de_regime(simulateur):
     """La pension du régime général prise en février 1973 sur la durée
     maximum reçoit 5,5 % au 1er décembre 1982 : « en 1973 à 47,82 % (45,33 %
@@ -1429,5 +1506,6 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "releve.construire", "simulateur.regime_fusionne",
                               "liquidation.liquider", "liquidation.demande_de_depart",
                               "coordonner.coordonner", "compter.compter",
-                              "acquerir.acquerir", "compter.cumul_plafonne")
+                              "acquerir.acquerir", "compter.cumul_plafonne",
+                              "droit.etapes")
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)

@@ -101,13 +101,14 @@ from retraite_notionnelle.scenarios import actuel as _actuel
 DONNEES = frozenset({"catalogue", "affiliations"})
 
 
-#: Les seize entrées du moteur Python que la façade sert, sous leurs noms.
+#: Les dix-sept entrées du moteur Python que la façade sert, sous leurs noms ;
+#: ``droit.etapes``, les étapes de la liquidation, chacune seule.
 ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversion",
            "simulateur.carriere_simple", "simulateur.carriere_parcours",
            "simulateur.carriere_releve", "carriere.depuis_profil", "carriere.depuis_parcours",
            "releve.construire", "simulateur.regime_fusionne", "liquidation.liquider",
            "liquidation.demande_de_depart", "coordonner.coordonner", "compter.compter",
-           "acquerir.acquerir", "compter.cumul_plafonne")
+           "acquerir.acquerir", "compter.cumul_plafonne", "droit.etapes")
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
@@ -575,6 +576,9 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
         return dict(valeur)
     if dataclasses.is_dataclass(valeur) and type(valeur).__name__ in pont.TYPES_DE_LA_FACADE:
         return valeur
+    if isinstance(valeur, _liquidation.Contexte):
+        return pont.ContexteDuMoteur(tuple(_contexte_de_la_facade(
+            regle, None if simulateur is None else simulateur.scenario_actuel, valeur)))
     if isinstance(valeur, Durees):
         if not valeur._source.du_releve:
             raise NonTransmissible(
@@ -597,14 +601,135 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
         "transmettre au portage — le test reste sur le moteur Python, ou se porte à la main")
 
 
+# -- les étapes de la liquidation, chacune seule ---------------------------------------
+#
+# ``ouvrir.ouvrir``, ``liquider.liquider_chaque_regime`` et
+# ``completer.completer`` reçoivent le relevé et ce que l'étape précédente a
+# écrit, objets du moteur que le pont ne passe pas. Chaque étape de la façade
+# garde donc son relevé et la chaîne des étapes qui l'ont faite, leurs
+# options comprises : le portage refait le relevé de sa carrière, sous ses
+# drapeaux, puis chaque étape de la chaîne (``droit.etapes`` de ``pont.mjs``).
+# Le contexte d'une liquidation passe par ses neutralisations, sur le moteur
+# de l'étape ; une date d'observation, une hypothèse n'arriveraient pas au
+# portage.
+
+
+def _contexte_de_la_facade(entree: str, moteur, contexte):
+    """Les neutralisations du contexte, triées, que le portage reçoit ;
+    ``None`` sans contexte."""
+    if contexte is None:
+        return None
+    if not isinstance(contexte, _liquidation.Contexte) or contexte.univers is not moteur:
+        raise NonTransmissible(
+            f"{entree} : contexte d'un autre moteur que celui de l'étape — le portage le "
+            "refait sur le moteur du simulateur de la façade (simulateur.scenario_actuel)")
+    if (contexte.observation, contexte.hypothese) != (None, None):
+        raise NonTransmissible(
+            f"{entree} : contexte qui porte plus que le moteur et ses neutralisations "
+            "(observation, hypothèse) — le portage ne le verrait pas")
+    return sorted(contexte.neutralisations)
+
+
+class Etape(_Ferme):
+    """Ce qu'une étape de la liquidation a écrit, lu du portage : ses champs,
+    et ``donnees()``, ce que son schéma décrit — l'ouverture, ``requis``,
+    ``age``, ``motif``, ``trimestres_cotises`` ; les pensions, ``regimes`` et
+    ``taux`` ; les compléments, ``regimes`` et ``total``. Elle garde son
+    relevé et la chaîne des étapes dont elle vient, que le portage refait."""
+
+    def __init__(self, releve, chaine: tuple, lu: dict) -> None:
+        object.__setattr__(self, "_releve", releve)
+        object.__setattr__(self, "_chaine", chaine)
+        for nom, valeur in lu.items():
+            object.__setattr__(self, "_donnees" if nom == "donnees" else nom, valeur)
+
+    def donnees(self) -> dict:
+        return self._donnees
+
+
+def _etape(entree: str, moteur, releve, chaine: tuple) -> Etape:
+    """L'étape au bout de ``chaine``, sur le relevé de la façade ``releve``,
+    demandée au portage."""
+    _moteur_de_la_facade(entree, moteur)
+    if not isinstance(releve, Releve) or releve._source.moteur is not moteur:
+        raise NonTransmissible(
+            f"{entree} : relevé que la façade ne sait pas transmettre — il vient de "
+            "releve.construire de la façade, sur le moteur de l'étape")
+    source = releve._source
+    return Etape(releve, chaine, source.demander(
+        "droit.etapes", source.avantages_non_contributifs, source.points_gratuits,
+        source.liquider_successions, [[nom, options] for nom, options in chaine]))
+
+
+def _precedente(entree: str, nom: str, etape, releve, attendue: str) -> tuple:
+    """La chaîne de l'étape précédente, qui doit être de ce relevé-là."""
+    if (not isinstance(etape, Etape) or etape._releve is not releve
+            or etape._chaine[-1][0] != attendue):
+        raise NonTransmissible(
+            f"{entree} : {nom} qui ne vient pas de l'étape « {attendue} » de la façade sur ce "
+            "relevé — le portage refait chaque étape du relevé qu'il reçoit")
+    return etape._chaine
+
+
+def _regimes(regimes) -> list | None:
+    return None if regimes is None else sorted(regimes)
+
+
+class _Ouvrir(Regles):
+    """``droit.ouvrir`` : ses règles, et l'étape ``ouvrir``."""
+
+    def ouvrir(self, moteur, releve, regimes=None) -> Etape:
+        return _etape("ouvrir.ouvrir", moteur, releve,
+                      (("ouvrir", {"regimes": _regimes(regimes)}),))
+
+
+class _Liquider(Regles):
+    """``droit.liquider`` : ses règles, et l'étape ``liquider_chaque_regime``."""
+
+    def liquider_chaque_regime(self, moteur, releve, ouverture, contexte=None, regimes=None,
+                               nationale: bool = False) -> Etape:
+        entree = "liquider.liquider_chaque_regime"
+        chaine = _precedente(entree, "ouverture", ouverture, releve, "ouvrir")
+        return _etape(entree, moteur, releve, chaine + (("liquider", {
+            "neutralisations": _contexte_de_la_facade(entree, moteur, contexte),
+            "regimes": _regimes(regimes), "nationale": nationale}),))
+
+
+class _Completer(Regles):
+    """``droit.completer`` : ses règles, et l'étape ``completer``, sur les
+    pensions d'une seule liquidation : des pensions déjà servies, provisoires
+    ou nationales n'arriveraient pas au portage."""
+
+    def completer(self, moteur, releve, ouverture, liquidees, contexte=None,
+                  servies: float = 0.0, initiales: tuple = (), recalcul: bool = True,
+                  nationales=None, nature: str = "definitive",
+                  premiere_retraite: str | None = None) -> Etape:
+        entree = "completer.completer"
+        if (servies, tuple(initiales), recalcul, nationales, nature, premiere_retraite) != (
+                0.0, (), True, None, "definitive", None):
+            raise NonTransmissible(
+                f"{entree} : pensions servies, initiales, recalcul, nationales, nature ou "
+                "première retraite que la façade ne transmet pas — le test reste sur le "
+                "moteur Python")
+        _precedente(entree, "ouverture", ouverture, releve, "ouvrir")
+        chaine = _precedente(entree, "pensions", liquidees, releve, "liquider")
+        if chaine[:-1] != ouverture._chaine:
+            raise NonTransmissible(
+                f"{entree} : pensions d'une autre ouverture que celle de l'étape")
+        return _etape(entree, moteur, releve, chaine + (("completer", {
+            "neutralisations": _contexte_de_la_facade(entree, moteur, contexte)}),))
+
+
 #: ``droit.commun``, ``droit.completer``, ``droit.liquider`` et
-#: ``droit.ouvrir``, leurs règles servies par le portage.
+#: ``droit.ouvrir``, leurs règles servies par le portage, et les étapes des
+#: trois derniers.
 commun = Regles("commun", _commun)
-completer = Regles("completer", _completer)
-#: ``droit.foyer`` : l'étape « foyer et net », rendue sous le type ``Foyer``.
+completer = _Completer("completer", _completer)
+#: ``droit.foyer`` : l'étape « foyer et net », rendue sous le type ``Foyer``,
+#: le contexte d'une liquidation par ses neutralisations.
 foyer = Regles("foyer", _foyer)
-liquider = Regles("liquider", _liquider)
-ouvrir = Regles("ouvrir", _ouvrir)
+liquider = _Liquider("liquider", _liquider)
+ouvrir = _Ouvrir("ouvrir", _ouvrir)
 #: Les règles du module de la réversion, sous un nom à elles : ``reversion``
 #: est l'entrée de la réversion, la fonction du module qui porte son nom.
 regles_de_la_reversion = Regles("reversion", _reversion)
@@ -880,6 +1005,7 @@ class Releve(_Ferme):
         object.__setattr__(self, "droits", Droits(source, lu["droits"]))
         object.__setattr__(self, "groupes", lu["groupes"])
         object.__setattr__(self, "_donnees", lu["donnees"])
+        object.__setattr__(self, "_source", source)
 
     def donnees(self) -> dict:
         return self._donnees

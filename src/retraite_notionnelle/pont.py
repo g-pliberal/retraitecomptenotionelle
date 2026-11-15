@@ -1230,6 +1230,15 @@ class LigneDeCarriere:
 
 
 @dataclasses.dataclass(frozen=True)
+class ContexteDuMoteur:
+    """Le contexte d'une liquidation sur le moteur de la demande, par ses
+    neutralisations, en argument d'une règle de la façade : le portage en
+    refait un, sur son moteur (``argumentDeLaFacade`` de ``pont.mjs``)."""
+
+    neutralisations: tuple[str, ...]
+
+
+@dataclasses.dataclass(frozen=True)
 class Periode:
     """La période d'un régime à une année, ``catalogue[code].periode(annee)``,
     en argument d'un appel du droit (:func:`droit`) : le portage y met la
@@ -2237,6 +2246,26 @@ def liquidation_des_donnees(donnees: dict) -> dict:
             "appels": lu_strictement(int, donnees["appels"], "liquidation.appels")}
 
 
+def etape_de_la_liquidation_des_donnees(donnees: dict) -> dict:
+    """L'étape de la liquidation au bout d'une chaîne (``droit.etapes`` de
+    ``pont.mjs``), par ce que les tests en lisent, lu strictement :
+    l'ouverture, ``requis``, ``age``, ``motif`` et ``trimestres_cotises`` ;
+    les pensions, ``regimes`` et ``taux`` ; les compléments, ``regimes`` et
+    ``total`` ; chacune, ``donnees``, ce que son schéma décrit, tel quel."""
+    from .droit.commun import PensionRegime
+
+    etape = donnees["etape"]
+    lectures = {
+        "ouvrir": {"requis": int, "age": float | None, "motif": str,
+                   "trimestres_cotises": int},
+        "liquider": {"regimes": tuple[PensionRegime, ...], "taux": float},
+        "completer": {"regimes": tuple[PensionRegime, ...], "total": float},
+    }[etape]
+    return {"donnees": donnees["donnees"],
+            **{nom: lu_strictement(type_, donnees[nom], f"{etape}.{nom}")
+               for nom, type_ in lectures.items()}}
+
+
 def demande_des_donnees(donnees: dict):
     """La demande qu'un départ appelle (``liquidation.demande_de_depart`` de
     ``pont.mjs``), lue strictement sous le type du Python (``Demande``)."""
@@ -2356,6 +2385,7 @@ LECTURES_DE_LA_FACADE = {
     "compter.compter": durees_des_donnees,
     "acquerir.acquerir": droits_des_donnees,
     "compter.cumul_plafonne": lambda cumul: lu_strictement(int, cumul, "cumul_plafonne"),
+    "droit.etapes": etape_de_la_liquidation_des_donnees,
 }
 
 #: Le type que le Python donne à une erreur du portage, quand ce n'est pas
@@ -2575,6 +2605,8 @@ def _argument_de_la_facade(argument, carrieres: list) -> dict:
         return {"valeur": {"@": "periode", **dataclasses.asdict(argument)}}
     if isinstance(argument, DateMois):
         return {"valeur": {"@": "date_mois", "annee": argument.annee, "mois": argument.mois}}
+    if isinstance(argument, ContexteDuMoteur):
+        return {"valeur": {"@": "contexte", "neutralisations": list(argument.neutralisations)}}
     if isinstance(argument, Table):
         return {"valeur": {"@": "table", "entrees": [[cle, _en_donnees(element)]
                                                      for cle, element in argument.entrees]}}
