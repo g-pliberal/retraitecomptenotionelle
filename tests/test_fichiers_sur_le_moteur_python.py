@@ -69,7 +69,7 @@ FICHIERS = (
     "test_marins.py", "test_mayotte.py", "test_micro_social.py", "test_mines.py",
     "test_minima_agricoles.py", "test_minimum_pension_sncf.py", "test_mortalite_population.py",
     "test_moteur.py", "test_oracle.py", "test_oracle_carriere_longue_fonction_publique.py",
-    "test_oracle_categorie_active.py", "test_oracle_enfants.py", "test_oracle_minima.py",
+    "test_oracle_categorie_active.py",
     "test_oracle_points_enfants_arrco.py", "test_oracle_salaire_annuel_moyen.py",
     "test_outillage.py", "test_outre_mer.py", "test_ouverture_des_liberaux.py",
     "test_ouverture_des_navigants.py", "test_parents_trois_enfants.py", "test_pcv_sante.py",

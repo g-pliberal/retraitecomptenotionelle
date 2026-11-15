@@ -32,8 +32,9 @@ from pathlib import Path
 
 import pytest
 
+from facade import Simulateur
+from retraite_notionnelle import simulateur as _moteur_python
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.simulateur import Simulateur
 from test_oracle_familles import (
     PRECISION_OPENFISCA,
     PREFIXES,
@@ -83,6 +84,13 @@ def temoin() -> dict:
 @pytest.fixture(scope="module")
 def simulateur() -> Simulateur:
     return Simulateur(Parametres())
+
+
+@pytest.fixture(scope="module")
+def ages_categorie_active():
+    """La table des âges des emplois classés, que la façade ne sert pas
+    encore : lue sur le moteur Python (action 161)."""
+    return _moteur_python.Simulateur(Parametres()).scenario_actuel.ages_categorie_active
 
 
 @pytest.fixture(scope="module")
@@ -154,7 +162,7 @@ def test_le_temoin_suit_sa_convention_de_traduction(temoin):
 
 # -- l'âge anticipé ---------------------------------------------------------------
 
-def test_l_age_anticipe_s_ouvre_des_deux_cotes(temoin, nous, simulateur):
+def test_l_age_anticipe_s_ouvre_des_deux_cotes(temoin, nous, ages_categorie_active):
     """L. 24, I, 1° : l'emploi classé en catégorie active ouvre la pension à
     l'âge anticipé de sa génération — 55 ans, puis 55 ans et 4 mois pour la
     génération du second semestre 1956, et ainsi jusqu'à 57 ans pour celle de
@@ -164,7 +172,7 @@ def test_l_age_anticipe_s_ouvre_des_deux_cotes(temoin, nous, simulateur):
     for code, entree in profils:
         profil, eux, moi = entree["profil"], entree["openfisca"], nous[code]
         age = moi["derogation_active"].age_ouverture
-        assert age == simulateur.scenario_actuel.ages_categorie_active.derogation(
+        assert age == ages_categorie_active.derogation(
             "active", profil["naissance"]).age_ouverture, code
         assert age <= profil["liquidation"] - profil["naissance"], code
         assert eux["ouverture_des_droits_le"] == _date(profil, age), code
@@ -265,7 +273,7 @@ def test_la_proratisation_des_actifs_est_l_ecart_d_openfisca(temoin, nous):
 
 # -- la super-active --------------------------------------------------------------
 
-def test_la_super_active_ne_s_ouvre_pas_chez_openfisca(temoin, nous, simulateur):
+def test_la_super_active_ne_s_ouvre_pas_chez_openfisca(temoin, nous, ages_categorie_active):
     """L. 24, I, 1° : l'emploi super-actif ouvre l'âge minoré, 50 ans et neuf
     mois pour la génération 1962, à qui a vingt-sept ans de services
     super-actifs — vingt-cinq s'il les avait atteints avant juillet 2011
@@ -280,8 +288,8 @@ def test_la_super_active_ne_s_ouvre_pas_chez_openfisca(temoin, nous, simulateur)
         profil, eux, moi = entree["profil"], entree["openfisca"], nous[code]
         derogation = moi["derogation_active"]
         assert derogation is not None, code
-        assert derogation.age_ouverture == simulateur.scenario_actuel \
-            .ages_categorie_active.derogation("super_active", 1962).age_ouverture
+        assert derogation.age_ouverture == ages_categorie_active.derogation(
+            "super_active", 1962).age_ouverture
         assert _annees_classees(profil) >= DUREE_SUPER_ACTIVE_AVANT_2011, code
         assert moi["liquidation_ouverte"], code
         assert moi["duree_assurance"] - moi["services"] == BONIFICATION_DU_CINQUIEME_PLAFOND

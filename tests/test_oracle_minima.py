@@ -28,11 +28,10 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+from facade import Carriere, Simulateur, liquider
+from retraite_notionnelle.carriere import AnneeCarriere
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.droit import liquider
 from retraite_notionnelle.droit.liquider import MINORATION_AGE_MINIMUM_GARANTI
-from retraite_notionnelle.simulateur import Simulateur
 from test_oracle_familles import AFFILIATIONS, PRECISION_OPENFISCA, _notre_calcul
 
 TEMOIN = Path(__file__).resolve().parent / "temoins" / "openfisca_minima.json"

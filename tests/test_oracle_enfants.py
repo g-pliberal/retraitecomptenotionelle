@@ -30,8 +30,8 @@ from pathlib import Path
 
 import pytest
 
+from facade import Simulateur
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.simulateur import Simulateur
 from test_oracle_familles import (
     PRECISION_OPENFISCA,
     PREFIXES,
