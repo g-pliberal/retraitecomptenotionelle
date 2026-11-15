@@ -1245,6 +1245,47 @@ def test_les_regles_des_cultes_se_demandent_au_portage(simulateur):
         facade.cultes.fraction_d_avant_1998
 
 
+def _cadre_au_chomage(simulateur, annees, naissance=1958, debut=20, depart=66):
+    return simulateur.carriere_simple(
+        annee_naissance=naissance, sexe="H", affiliation="salarie_prive_cadre",
+        mois_naissance=1, jour_naissance=15, age_debut=debut, age_liquidation=depart,
+        niveau_salaire=1.5, profil_carriere="plat",
+        interruptions={annee: "chomage_indemnise" for annee in annees})
+
+
+def test_la_coupure_du_chomage_se_demande_au_portage(simulateur):
+    """L. 5421-4 du code du travail : né le 15 janvier 1958, avec la durée,
+    l'indemnisation cesse à l'âge légal, 62 ans, le 1er février 2020 ; né en
+    1950 sans la durée, à l'âge d'annulation de la décote, 65 ans. La
+    carrière bornée arrive en ``Carriere`` ; celle qu'il n'y a pas à borner
+    revient elle-même, comme le jumeau la rend."""
+    chomee = _cadre_au_chomage(simulateur, range(2016, 2025))
+    moteur = simulateur.scenario_actuel
+    assert facade.ouvrir.fin_indemnisation(moteur, chomee) == DateMois(2020, 2)
+    tardive = _cadre_au_chomage(simulateur, range(2008, 2018), 1950, 30, 67)
+    assert tardive.age_au(facade.ouvrir.fin_indemnisation(moteur, tardive)) == 65
+    bornee = facade.ouvrir.indemnisation_bornee(moteur, chomee)
+    assert type(bornee) is carriere_python.Carriere and bornee is not chomee
+    assert {l.annee: l.type_periode for l in bornee.lignes if l.annee in (2020, 2021)} == {
+        2020: "chomage_indemnise", 2021: "sans_activite"}
+    jeune = _cadre_au_chomage(simulateur, (2000,))
+    assert facade.ouvrir.indemnisation_bornee(moteur, jeune) is jeune
+
+
+def test_la_carriere_d_un_releve_se_batit_au_portage(simulateur):
+    """``Carriere.depuis_releve`` sur les séries du simulateur est
+    ``carriere_releve`` : la façade la demande au portage, comme les deux
+    autres bâtisseurs."""
+    releve = [LigneRelevee(1990, "salarie_prive_non_cadre", 15000.0),
+              LigneRelevee(1991, "salarie_prive_non_cadre", 16000.0, 3, "chomage_indemnise")]
+    attendue = pont.carriere_en_donnees(simulateur.carriere_releve(
+        annee_naissance=1965, sexe="H", releve=releve, age_liquidation=64))
+    assert "depuis_releve" in vars(Carriere)
+    assert pont.carriere_en_donnees(Carriere.depuis_releve(
+        annee_naissance=1965, sexe="H", releve=releve, age_liquidation=64,
+        macro=simulateur.macro)) == attendue
+
+
 def test_le_maximum_des_cultes_se_lit_dans_sa_table(simulateur):
     """Les arrêtés : rien avant la création du régime, 19 650 F en 1990
     (le fichier garde six décimales)."""
@@ -1669,7 +1710,7 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "reversion.reversion", "simulateur.carriere_simple",
                               "simulateur.carriere_parcours", "simulateur.carriere_releve",
                               "carriere.depuis_profil", "carriere.depuis_parcours",
-                              "releve.construire", "simulateur.regime_fusionne",
+                              "carriere.depuis_releve", "releve.construire", "simulateur.regime_fusionne",
                               "liquidation.liquider", "liquidation.demande_de_depart",
                               "coordonner.coordonner", "compter.compter",
                               "acquerir.acquerir", "compter.cumul_plafonne",

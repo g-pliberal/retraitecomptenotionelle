@@ -45,7 +45,7 @@ ENTREES = frozenset({"Simulateur", "ScenarioActuel", "Carriere", "reversion"})
 FICHIERS = (
     "test_affirmations.py", "test_age_conjoncturel.py", "test_ages_au_mois.py",
     "test_agirc_arrco_au_droit.py", "test_avantages.py",
-    "test_caisses_du_pacifique.py", "test_capitalisation.py", "test_chomage_complementaires.py",
+    "test_caisses_du_pacifique.py", "test_capitalisation.py",
     "test_chronologie.py", "test_cnav_baremes.py", "test_cnav_exposes.py", "test_cnracl.py",
     "test_coefficients_agirc_1947.py", "test_contributions_equilibre.py",
     "test_controle_drees_panorama.py", "test_coupures_au_mois.py", "test_cout.py",

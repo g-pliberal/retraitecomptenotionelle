@@ -110,7 +110,7 @@ DONNEES = frozenset({"catalogue", "affiliations"})
 ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversion",
            "simulateur.carriere_simple", "simulateur.carriere_parcours",
            "simulateur.carriere_releve", "carriere.depuis_profil", "carriere.depuis_parcours",
-           "releve.construire", "simulateur.regime_fusionne", "liquidation.liquider",
+           "carriere.depuis_releve", "releve.construire", "simulateur.regime_fusionne", "liquidation.liquider",
            "liquidation.demande_de_depart", "coordonner.coordonner", "compter.compter",
            "acquerir.acquerir", "compter.cumul_plafonne", "compter.des_regimes",
            "droit.etapes", "compter.trimestres_du_contrat", "compter.jours_par_annee")
@@ -477,7 +477,7 @@ def ConstructeurCompte(macro, catalogue, affiliations, indexation, parametres) -
 
 
 class Carriere(_carriere.Carriere):
-    """``Carriere``, ses deux bâtisseurs servis par le portage : la carrière
+    """``Carriere``, ses trois bâtisseurs servis par le portage : la carrière
     qu'ils rendent est une ``Carriere`` du Python, le type que le pont
     échange."""
 
@@ -489,6 +489,11 @@ class Carriere(_carriere.Carriere):
     @classmethod
     def depuis_parcours(cls, *arguments, **options):
         return _batie("carriere.depuis_parcours", _carriere.Carriere.depuis_parcours,
+                      arguments, options)
+
+    @classmethod
+    def depuis_releve(cls, *arguments, **options):
+        return _batie("carriere.depuis_releve", _carriere.Carriere.depuis_releve,
                       arguments, options)
 
 
@@ -594,12 +599,20 @@ def _demander_la_regle(module: str, regle: str, rendu, arguments: dict):
             raise NonTransmissible(
                 f"{module}.{regle} : durées rendues sous d'autres paramètres que ceux du moteur")
         simulateur = durees._simulateur
-    return pont.regle_du_droit(
+    lu = pont.regle_du_droit(
         module, regle, rendu,
         *(_argument_de_regle(f"{module}.{regle}", simulateur, nom, valeur,
                              arguments.get("carriere"))
           for nom, valeur in arguments.items()),
         parametres=None if simulateur is None else simulateur.parametres)
+    carriere = arguments.get("carriere")
+    if (isinstance(lu, _carriere.Carriere) and isinstance(carriere, _carriere.Carriere)
+            and pont.carriere_en_donnees(lu) == pont.carriere_en_donnees(carriere)):
+        # Une règle qui rend la carrière qu'elle reçoit, intacte
+        # (``ouvrir.indemnisation_bornee``), la rend elle-même, comme le
+        # jumeau : le pont n'en transmet qu'une copie.
+        return carriere
+    return lu
 
 
 def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, valeur,

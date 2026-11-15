@@ -12,16 +12,17 @@ import re
 
 import pytest
 
-from retraite_notionnelle import Parametres
 from retraite_notionnelle.config import RACINE_DONNEES, PartCotisation
 from retraite_notionnelle.donnees.chargement import charger_chomage_complementaires
-from retraite_notionnelle.moteur.compte import ConstructeurCompte
-from retraite_notionnelle.simulateur import Simulateur
+
+import facade
+from facade import Carriere, ConstructeurCompte, Simulateur, ouvrir
+from facade import releve as _releve
 
 
-@pytest.fixture(scope="module")
-def simulateur() -> Simulateur:
-    return Simulateur(Parametres())
+@pytest.fixture
+def simulateur(request) -> Simulateur:
+    return facade.simulateur_du_test(request)
 
 
 @pytest.fixture(scope="module")
@@ -302,7 +303,8 @@ def test_l_indemnisation_cesse_au_taux_plein(simulateur):
     (L. 5421-4 du code du travail) : les années de chômage qui commencent après
     ne valent ni trimestre ni point, et le scénario 1 sert ce que servirait la
     même carrière sans activité ces années-là."""
-    from retraite_notionnelle.droit.ouvrir import fin_indemnisation, indemnisation_bornee
+    fin_indemnisation = ouvrir.fin_indemnisation
+    indemnisation_bornee = ouvrir.indemnisation_bornee
 
     def carriere(interruptions, naissance=1958, debut=20, depart=66):
         # Né le 15 janvier : le jour se déclare, puisque la coupure se compte
@@ -345,7 +347,7 @@ def test_la_coupure_d_avant_1984(simulateur):
     01-04-1983 » (arrêté du 29 avril 1983), le décret n° 84-344 applique
     L. 351-19 « à compter du 01-04-1983 »."""
     from retraite_notionnelle.calendrier import DateMois
-    from retraite_notionnelle.droit.ouvrir import fin_indemnisation
+    fin_indemnisation = ouvrir.fin_indemnisation
 
     def carriere(naissance, annees, depart):
         return simulateur.carriere_simple(
@@ -408,8 +410,9 @@ def test_la_coupure_respecte_le_releve(simulateur):
     """Un relevé de carrière qui porte des trimestres de chômage après le
     taux plein fait foi : la caisse les a validés, l'indemnisation a donc
     couru, et le modèle n'y retouche pas."""
-    from retraite_notionnelle.carriere import Carriere, LigneRelevee
-    from retraite_notionnelle.droit.ouvrir import indemnisation_bornee
+    from retraite_notionnelle.carriere import LigneRelevee
+
+    indemnisation_bornee = ouvrir.indemnisation_bornee
 
     releve = ([LigneRelevee(a, "salarie_prive_cadre", 40000.0, 4) for a in range(1978, 2016)]
               + [LigneRelevee(a, "salarie_prive_cadre", 40000.0, 4, "chomage_indemnise")
@@ -428,8 +431,6 @@ def test_le_chomage_caledonien_ne_vaut_aucun_point(simulateur, regles):
     accord du 17 novembre 2017, art. 59) : une année chômée n'y vaut aucun
     point, et le compte notionnel n'en porte rien. À Saint-Pierre-et-Miquelon,
     l'Unédic indemnise : l'année chômée vaut ses points et sa cotisation."""
-    from retraite_notionnelle.droit import releve as _releve
-
     assert regles.sans_validation == frozenset({"salarie_nouvelle_caledonie"})
     for code, annee in (("arrco", 2005), ("arrco_tranche_2", 1990), ("agirc_arrco", 2020)):
         assert regles.part_validee(code, annee, "salarie_nouvelle_caledonie") == 0.0

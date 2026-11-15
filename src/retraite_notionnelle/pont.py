@@ -2396,6 +2396,7 @@ LECTURES_DE_LA_FACADE = {
     "simulateur.carriere_releve": carriere_des_donnees,
     "carriere.depuis_profil": carriere_des_donnees,
     "carriere.depuis_parcours": carriere_des_donnees,
+    "carriere.depuis_releve": carriere_des_donnees,
     "scenario_actuel.calculer": resultat_actuel_des_donnees,
     "reversion.reversion": reversion_des_donnees,
     "releve.construire": releve_des_donnees,
@@ -2706,7 +2707,7 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
                  "trimestres_de_surcote_regimes_speciaux", "valeur_du_point"),
     "ouvrir": ("age_ouverture", "age_ouverture_commun", "age_ouverture_droit", "age_surcote",
                "age_taux_plein", "depart_parent_trois_enfants", "derogation_active",
-               "duree_requise"),
+               "duree_requise", "fin_indemnisation", "indemnisation_bornee"),
     # ``_cumuler``, privée au Python, que le portage exporte sous ``cumuler``.
     "reversion": ("_cumuler", "mois_de_mariage"),
     # Hors de ``droit/`` : ``revalorisation.js``, à la racine du portage.

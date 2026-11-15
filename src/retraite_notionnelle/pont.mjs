@@ -1748,6 +1748,8 @@ const ENTREES_DE_LA_FACADE = {
     Carriere.depuisProfil({ ...optionsDeLaFacade(options), macro: simulateur.macro })),
   "carriere.depuis_parcours": (simulateur, options) => carriereEnDonnees(
     Carriere.depuisParcours({ ...optionsDeLaFacade(options), macro: simulateur.macro })),
+  "carriere.depuis_releve": (simulateur, options) => carriereEnDonnees(
+    Carriere.depuisReleve({ ...options, macro: simulateur.macro })),
   // Les drapeaux de `calculer` suivent la carrière, tous, dans l'ordre du jumeau.
   "scenario_actuel.calculer": (moteur, carriere, ...drapeaux) => telQuel(
     moteur.calculer(carriere, ...drapeaux)),

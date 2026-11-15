@@ -274,7 +274,8 @@ def test_le_jumeau_batit_la_carriere_que_la_facade_sert(cas):
     attendue = pont.carriere_en_donnees(getattr(refait, batisseur)(**options))
     assert ecarts_d_ecriture(pont.carriere_en_donnees(getattr(servi, batisseur)(**options)),
                              attendue, tolerance=TOLERANCE_DU_MOTEUR_PYTHON) == []
-    de_carriere = {"carriere_simple": "depuis_profil", "carriere_parcours": "depuis_parcours"}
+    de_carriere = {"carriere_simple": "depuis_profil", "carriere_parcours": "depuis_parcours",
+                   "carriere_releve": "depuis_releve"}
     if batisseur in de_carriere:
         directe = getattr(facade.Carriere, de_carriere[batisseur])(**options, macro=servi.macro)
         assert ecarts_d_ecriture(pont.carriere_en_donnees(directe), attendue,
@@ -498,7 +499,29 @@ def _durees_du_ministre(*options):
     return durees
 
 
+def _chomeur(naissance=1958, debut=20, depart=66, annees=range(2016, 2025)):
+    """Un cadre au chômage indemnisé ces années-là, que la coupure au taux
+    plein borne, ou non."""
+    def carriere(simulateur):
+        return simulateur.carriere_simple(
+            annee_naissance=naissance, sexe="H", affiliation="salarie_prive_cadre",
+            mois_naissance=1, jour_naissance=15, age_debut=debut, age_liquidation=depart,
+            niveau_salaire=1.5, profil_carriere="plat",
+            interruptions={annee: "chomage_indemnise" for annee in annees})
+    return carriere
+
+
 APPELS_DES_REGLES = [
+    ("ouvrir", "fin_indemnisation", lambda s: (s.scenario_actuel, _chomeur()(s))),
+    ("ouvrir", "fin_indemnisation",
+     lambda s: (s.scenario_actuel, _chomeur(1950, 30, 67, range(2008, 2018))(s))),
+    ("ouvrir", "fin_indemnisation",
+     lambda s: (s.scenario_actuel, _chomeur(1921, 18, 65, range(1980, 1987))(s))),
+    ("ouvrir", "indemnisation_bornee", lambda s: (s.scenario_actuel, _chomeur()(s))),
+    ("ouvrir", "indemnisation_bornee",
+     lambda s: (s.scenario_actuel, _chomeur(1950, 30, 67, range(2008, 2018))(s))),
+    ("ouvrir", "indemnisation_bornee",
+     lambda s: (s.scenario_actuel, _chomeur(annees=(2000,))(s))),
     ("cultes", "part_de_l_ecart", lambda s: (1938,)),
     ("cultes", "part_de_l_ecart", lambda s: (1941,)),
     ("cultes", "part_de_l_ecart", lambda s: (1950,)),
@@ -689,6 +712,19 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
         lu = getattr(facade.regles_de_la_reversion if module == "reversion"
                      else getattr(facade, module), regle)(*arguments(servi))
         refait = getattr(modules[module], regle)(*arguments(jumeau))
+        if isinstance(refait, CarrierePython):
+            # Une carrière que la règle rend : elle se compare comme celle
+            # d'un bâtisseur, champ par champ, ses lignes comprises.
+            # Relue comme le pont la relit : l'âge que le jumeau tient en
+            # entier, la carrière du portage le tient en nombre.
+            relue = pont.carriere_des_donnees(
+                json.loads(json.dumps(pont.carriere_en_donnees(refait))))
+            ecart = ecarts_d_ecriture(pont.carriere_en_donnees(lu),
+                                      pont.carriere_en_donnees(relue),
+                                      tolerance=TOLERANCE_DU_MOTEUR_PYTHON)
+            if ecart:
+                ecarts.append(f"{module}.{regle} : {ecart}")
+            continue
         if dataclasses.is_dataclass(refait):
             # Un éligible ou un foyer que le jumeau rend : le portage l'écrit
             # sous ses noms, que la façade a lus ; il se compare champ à champ.
