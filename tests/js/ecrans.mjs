@@ -1041,6 +1041,9 @@ async function jouerUnScenario(scenario) {
  *     passer — la plus ancienne qui attend, une fois demandée ;
  *   - `geste` : une expression jouée dans la page ;
  *   - `jusqua` : une expression, attendue vraie ;
+ *   - `cliquer` : un vrai clic de souris, en `{x, y}`, ou au centre de
+ *     l'élément que nomme un sélecteur ;
+ *   - `touche` : une vraie touche du clavier, ainsi `Escape` ;
  *   - `pause` : un délai, en millisecondes ;
  *   - `noter` : un nom, sous lequel la course garde ce que rend l'expression
  *     `valeur`, ou, sans elle, la mesure entière de la page (`MESURER`).
@@ -1098,6 +1101,29 @@ async function jouerUneCourse(course) {
         while (!await evaluer(etape.jusqua).catch(() => false)) {
           if (Date.now() - debut > DELAI_RENDU) { fautes.push(`jamais vrai : ${etape.jusqua}`); break; }
           await pause(50);
+        }
+      } else if (etape.cliquer !== undefined) {
+        // Un vrai clic de souris, au point que dit l'étape : ce que le
+        // navigateur fait de lui-même, un fond de dialogue qui le ferme, ne
+        // répond pas au clic qu'un script simule.
+        // Un sélecteur vise le centre du premier élément qui y répond,
+        // amené d'abord au milieu de l'écran.
+        const { x, y } = typeof etape.cliquer === "string"
+          ? await evaluer(`(() => {
+              const el = document.querySelector(${JSON.stringify(etape.cliquer)});
+              el.scrollIntoView({ block: "center", inline: "nearest" });
+              const b = el.getBoundingClientRect();
+              return { x: b.left + b.width / 2, y: b.top + b.height / 2 };
+            })()`)
+          : etape.cliquer;
+        for (const type of ["mousePressed", "mouseReleased"]) {
+          await page("Input.dispatchMouseEvent", { type, x, y, button: "left", clickCount: 1 });
+        }
+      } else if (etape.touche !== undefined) {
+        // Une vraie touche du clavier, ainsi `Escape`.
+        for (const type of ["keyDown", "keyUp"]) {
+          await page("Input.dispatchKeyEvent", { type, key: etape.touche, code: etape.touche,
+            windowsVirtualKeyCode: etape.touche === "Escape" ? 27 : 0 });
         }
       } else if (etape.pause !== undefined) {
         await pause(etape.pause);

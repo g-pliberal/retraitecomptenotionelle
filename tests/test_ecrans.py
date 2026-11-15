@@ -1170,6 +1170,8 @@ def _course_de_l_affichage(largeur: int, hauteur: int) -> dict:
         ouvrir, etat("rouvert"),
         {"geste": 'document.querySelector("dialog#affichage button[data-retablir]").click()'},
         etat("retabli"),
+        # Un clic sur le fond, au coin de l'écran, hors du panneau, le ferme.
+        {"cliquer": {"x": 4, "y": hauteur - 4}}, {"pause": 200}, etat("fond"),
     ]
     return {"nom": f"affichage à {largeur}", "depart": "./",
             "ecran": {"largeur": largeur, "hauteur": hauteur}, "etapes": etapes}
@@ -1218,6 +1220,8 @@ def test_le_bandeau_ouvre_le_panneau_affichage():
             assert panneau["gauche"] >= 0 and panneau["droite"] <= note["ecran"], (ou, panneau)
             assert min(note["pastilles"]) >= HAUTEUR_D_UN_CONTROLE, (ou, etat, note["pastilles"])
         assert not course["notes"]["ferme"]["ouvert"], f"{ou} : le panneau ne se ferme pas"
+        assert course["notes"]["retabli"]["ouvert"], ou
+        assert not course["notes"]["fond"]["ouvert"], f"{ou} : le fond ne ferme pas le panneau"
 
 
 def test_chaque_reglage_de_l_affichage_s_applique_aussitot():
@@ -1405,3 +1409,93 @@ def test_un_navigateur_absent_ou_casse_echoue_aussitot_avec_son_message(tmp_path
                else "error while loading shared libraries: libnss3.so")
     assert attendu in ouvert.stderr, ouvert.stderr
     assert len(_lancements(tmp_path)) == (1 if cas == "casse" else 0)
+
+
+# -- les bulles du glossaire, au navigateur ---------------------------------------
+#
+# Le 15 novembre 2026, sur la fiche « toggletip » de Modern Web Guidance : une
+# bulle est un `popover`, que le navigateur tient — une seule ouverte, fermée
+# par un clic ailleurs ou par Échap —, posée dans la couche du dessus, où ni un
+# tableau qui défile ni une carte ne la rognent, et ancrée sous son mot.
+
+#: Le mot du glossaire posé dans un tableau de l'accueil, et un autre.
+MOT_DANS_UN_TABLEAU = "td .mot > .terme"
+AUTRE_MOT = "p .mot > .terme"
+APPEL = "label .mot > .terme.appel"
+
+ETAT_DES_BULLES = """(() => {
+  const boite = (el) => {
+    const b = el.getBoundingClientRect();
+    return { gauche: b.left, droite: b.right, haut: b.top, bas: b.bottom };
+  };
+  return [...document.querySelectorAll(".mot > .terme")]
+    .filter((terme) => terme.getAttribute("aria-expanded") === "true"
+      || terme.nextElementSibling.matches(":popover-open"))
+    .map((terme) => {
+      const bulle = terme.nextElementSibling;
+      const b = bulle.getBoundingClientRect();
+      const dessus = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2);
+      return { mot: terme.textContent, ouverte: bulle.matches(":popover-open"),
+               etendu: terme.getAttribute("aria-expanded"), terme: boite(terme),
+               bulle: boite(bulle), visible: Boolean(dessus && bulle.contains(dessus)),
+               focus: document.activeElement === terme,
+               champ: document.activeElement?.matches("input, select, textarea") };
+    });
+})()"""
+
+
+def _course_des_bulles(largeur: int, hauteur: int) -> dict:
+    etat = lambda nom: {"noter": nom, "valeur": ETAT_DES_BULLES}  # noqa: E731
+    pause = {"pause": 200}
+    return {
+        "nom": f"bulles à {largeur}", "depart": "./",
+        "ecran": {"largeur": largeur, "hauteur": hauteur},
+        "etapes": [
+            {"jusqua": PRETE},
+            {"cliquer": MOT_DANS_UN_TABLEAU}, pause, etat("ouverte"),
+            {"cliquer": MOT_DANS_UN_TABLEAU}, pause, etat("refermee"),
+            {"cliquer": MOT_DANS_UN_TABLEAU}, pause,
+            {"cliquer": AUTRE_MOT}, pause, etat("l autre"),
+            {"cliquer": {"x": largeur - 4, "y": 4}}, pause, etat("ailleurs"),
+            {"cliquer": AUTRE_MOT}, pause, {"touche": "Escape"}, pause, etat("echap"),
+            {"noter": "focus", "valeur": 'document.activeElement.matches(".mot > .terme")'},
+            {"geste": "window.__quittee = true"}, *_aller("simuler/"),
+            {"cliquer": APPEL}, pause, etat("appel"),
+        ],
+    }
+
+
+@functools.lru_cache(maxsize=None)
+def _bulles() -> tuple:
+    resultat = jouer({"ecrans": [], "routes": [], "chargements": [],
+                      "courses": [_course_des_bulles(l, h) for l, h in CHARGEMENTS]})
+    return tuple(resultat["courses"])
+
+
+def test_une_bulle_du_glossaire_est_tenue_par_le_navigateur():
+    """Un clic ouvre la bulle, dans la couche du dessus et dans l'écran ; un
+    second la referme ; une autre ouverte ferme la première ; un clic ailleurs
+    ou Échap la ferment, Échap rendant le focus au mot ; l'appel posé dans un
+    libellé ouvre sa bulle sans donner le focus au champ."""
+    for course in _bulles():
+        ou, notes = course["nom"], course["notes"]
+        assert not course["fautes"] and not course["erreurs"], (ou, course["fautes"],
+                                                                 course["erreurs"])
+        ecran = course["ecran"]
+        for etat in ("ouverte", "l autre", "appel"):
+            assert len(notes[etat]) == 1, (ou, etat, notes[etat])
+            bulle = notes[etat][0]
+            assert bulle["ouverte"] and bulle["etendu"] == "true", (ou, etat, bulle)
+            assert bulle["visible"], f"{ou}, {etat} : la bulle est cachée ou rognée"
+            cadre = bulle["bulle"]
+            assert cadre["gauche"] >= 0 and cadre["droite"] <= ecran, (ou, etat, cadre)
+            if ecran > 800:
+                # Au large, ancrée sous son mot, à moins qu'elle n'ait dû passer dessus.
+                assert (cadre["haut"] >= bulle["terme"]["bas"]
+                        or cadre["bas"] <= bulle["terme"]["haut"]), (ou, etat, bulle)
+        assert notes["l autre"][0]["mot"] != notes["ouverte"][0]["mot"], ou
+        assert notes["refermee"] == [], (ou, notes["refermee"])
+        assert notes["ailleurs"] == [], (ou, notes["ailleurs"])
+        assert notes["echap"] == [], (ou, notes["echap"])
+        assert notes["focus"], f"{ou} : Échap n'a pas laissé le focus au mot"
+        assert not notes["appel"][0]["champ"], f"{ou} : l'appel a donné le focus au champ"

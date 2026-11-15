@@ -532,9 +532,11 @@ export function panneauAffichage() {
     + `<div class="pastilles">${choix.map(([valeur, texte], rang) => "<label>"
       + `<input type="radio" name="${nom}" value="${valeur}"${rang ? "" : " checked"}>`
       + `${texte}</label>`).join("")}</div></fieldset>`;
-  // Le contenu tient dans une boîte à lui : un clic sur le dialogue lui-même
-  // est alors un clic sur le fond, qui le ferme.
-  return `<dialog id="affichage" aria-labelledby="titre-affichage"><div class="reglages">
+  // Un clic sur le fond le ferme : `closedby="any"`, que le navigateur tient
+  // seul. Là où l'attribut manque, le routeur prend le relais ; le contenu tient
+  // pour cela dans une boîte à lui, et un clic sur le dialogue lui-même est
+  // alors un clic sur le fond.
+  return `<dialog id="affichage" closedby="any" aria-labelledby="titre-affichage"><div class="reglages">
 <div class="tete"><h2 id="titre-affichage">Affichage</h2><button type="button" data-fermer>Fermer</button></div>
 ${REGLAGES_AFFICHAGE.map(reglage).join("\n")}
 <p><button type="button" data-retablir>Rétablir les réglages par défaut</button></p>
@@ -731,7 +733,7 @@ export function bulle(sujet, texte) {
   return '<span class="mot"><button type="button" class="terme appel" '
     + `aria-expanded="false" aria-label="${echapper(sujet)}">`
     + `${icone("circle-help")}</button>`
-    + `<span class="bulle" role="note" hidden>${texte}</span></span>`;
+    + `<span class="bulle" role="note" popover>${texte}</span></span>`;
 }
 
 /**
@@ -1227,7 +1229,7 @@ export function mot(terme, definition) {
   // lui, reste un vrai bouton : c'est un pictogramme, pas un mot de la phrase.
   return '<span class="mot"><span class="terme" role="button" tabindex="0" '
     + `aria-expanded="false">${echapper(terme)}</span>`
-    + `<span class="bulle" role="note" hidden>${echapper(definition)}</span></span>`;
+    + `<span class="bulle" role="note" popover>${echapper(definition)}</span></span>`;
 }
 
 /**

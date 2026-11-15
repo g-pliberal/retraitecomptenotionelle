@@ -188,7 +188,7 @@ def _hors_depliants(corps: str) -> str:
     voit pas, et qui feraient dépasser son budget au simple fait que le site
     connaît beaucoup de régimes. Le menu est donc réduit à ce qu'il montre.
     """
-    sans_bulles = re.sub(r'<span class="bulle"[^>]*hidden>.*?</span>', " ", corps,
+    sans_bulles = re.sub(r'<span class="bulle"[^>]*popover>.*?</span>', " ", corps,
                          flags=re.S)
     sans_options = re.sub(r"<select\b[^>]*>.*?</select>", "<select></select>",
                           sans_bulles, flags=re.S)

@@ -590,6 +590,7 @@ summary {
 summary::-webkit-details-marker { display: none; }
 summary::marker { content: ""; }
 summary > .icone { color: var(--texte-doux); transition: transform 0.15s; }
+details[open] > summary > .icone { transform: rotate(180deg); }
 summary:hover { color: var(--texte); }
 details > .grille { margin-top: 1rem; }
 .depot {
@@ -930,7 +931,6 @@ section.cle > .source {
 }
 .partage > .repli[hidden] { display: none; }
 section.cle > .partage { max-width: none; border-top: 1px solid var(--trait); }
-.mot { position: relative; }
 .mot > .terme {
   
   font: inherit; color: inherit; background: none; border: none;
@@ -949,18 +949,32 @@ section.cle > .partage { max-width: none; border-top: 1px solid var(--trait); }
 .mot > .terme:hover, .mot > .terme[aria-expanded="true"] { color: var(--or-texte); }
 .mot > .terme[aria-expanded="true"] { border-bottom-style: solid; }
 .mot > .bulle {
-  display: block; position: absolute; left: 0; top: calc(100% + 0.5rem);
-  z-index: 25; width: max(14rem, min(22rem, 70vw));
+  position: fixed; inset: auto 0.75rem 0.75rem; margin: 0;
+  width: auto; max-width: none; overflow: visible;
   background: var(--fond-carte); color: var(--texte);
   border: 1px solid var(--trait-champ); border-radius: 0;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-  padding: 0.75rem 1rem; font-size: var(--t-petit); line-height: 1.45;
+  padding: 0.9rem 1rem; font-size: 1rem; line-height: 1.45;
   
   font-weight: 400; font-style: normal; text-align: left; white-space: normal;
   font-family: "Public Sans", system-ui, sans-serif; text-transform: none;
   letter-spacing: 0;
 }
-.mot > .bulle[hidden] { display: none; }
+@supports not selector(:popover-open) {
+  .mot > .bulle { display: none; }
+}
+@supports (position-anchor: --mot-ouvert) {
+  @media (width > 34rem) {
+  .mot > .terme[aria-expanded="true"] { anchor-name: --mot-ouvert; }
+  .mot > .bulle {
+      position-anchor: --mot-ouvert; inset: auto;
+      top: anchor(bottom); left: anchor(left); margin: 0.5rem 0;
+      width: max(14rem, min(22rem, 70vw));
+      padding: 0.75rem 1rem; font-size: var(--t-petit);
+      position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+    }
+}
+}
 .graphique { margin: 1.5rem 0 1.75rem; position: relative; }
 .graphique svg { display: block; width: 100%; height: auto; overflow: visible;
                  touch-action: pan-y; }
@@ -1177,12 +1191,6 @@ body.calcul-en-cours::after {
   .partage > .partager,
   .partage > .partager-x { flex: 1 1 100%; justify-content: center; }
   .partage > .etat { flex: 1 1 100%; }
-  .mot { position: static; }
-  .mot > .bulle {
-    position: fixed; left: 0.75rem; right: 0.75rem; bottom: 0.75rem;
-    top: auto; width: auto; max-width: none; z-index: 30;
-    font-size: 1rem; padding: 0.9rem 1rem;
-  }
   form .grille { gap: 0.9rem; }
 }
 .cadre-carte.en-image { min-width: 36rem; }
@@ -1227,8 +1235,8 @@ promesse</strong>, celle que le système actuel fait à la même carrière. Ce q
 la grille mesure le plus sûrement est l'écart entre ses lignes : ce qu'un
 militaire touche de plus ou de moins qu'un artisan, à cotisation égale. Le
 niveau général dépend aussi d'un
-<span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">réglage annuel</span><span class="bulle" role="note" hidden>Le facteur commun qui, chaque année, ramènerait toutes les pensions à ce que les cotisations permettent de payer : au-dessus de 1 il en reste, en dessous il en manque. Le modèle le calcule mais ne l&#x27;applique pas aux pensions affichées.</span></span> que le modèle
-calcule mais n'applique jamais — et <strong>chaque système a le sien</strong>.<span class="mot"><button type="button" class="terme appel" aria-expanded="false" aria-label="Ce qu&#x27;un coefficient appliqué déplacerait"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></svg></button><span class="bulle" role="note" hidden>Un facteur commun laisserait ces cases inchangées, une case
+<span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">réglage annuel</span><span class="bulle" role="note" popover>Le facteur commun qui, chaque année, ramènerait toutes les pensions à ce que les cotisations permettent de payer : au-dessus de 1 il en reste, en dessous il en manque. Le modèle le calcule mais ne l&#x27;applique pas aux pensions affichées.</span></span> que le modèle
+calcule mais n'applique jamais — et <strong>chaque système a le sien</strong>.<span class="mot"><button type="button" class="terme appel" aria-expanded="false" aria-label="Ce qu&#x27;un coefficient appliqué déplacerait"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></svg></button><span class="bulle" role="note" popover>Un facteur commun laisserait ces cases inchangées, une case
 étant déjà un rapport de deux pensions. Mais il y a quatre coefficients, un par
 système : les ramener chacun à SON équilibre déplacerait les écarts, de 16
 points en médiane sur les 80 cases de cette grille, et bien plus sur les
@@ -1269,7 +1277,7 @@ carrière</a><a href="../methode/">Comment c'est calculé</a></p>
 général relèverait leur pension de 1,5 % en moyenne</strong> : 62 % y
 gagneraient, 32 % y perdraient, et 6 % n'y verraient pas de différence notable
 (<em>Les Dossiers de la DREES</em> n° 103, novembre 2022). Et le
-<span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">taux de remplacement</span><span class="bulle" role="note" hidden>La première pension rapportée au dernier revenu d&#x27;activité : 60 % veut dire que la pension vaut 60 % de ce que vous gagniez juste avant de partir. Les deux termes sont pris dans la MÊME unité : deux bruts, ou deux nets là où la page affiche des nets.</span></span> est un peu plus haut au régime général que
+<span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">taux de remplacement</span><span class="bulle" role="note" popover>La première pension rapportée au dernier revenu d&#x27;activité : 60 % veut dire que la pension vaut 60 % de ce que vous gagniez juste avant de partir. Les deux termes sont pris dans la MÊME unité : deux bruts, ou deux nets là où la page affiche des nets.</span></span> est un peu plus haut au régime général que
 dans la fonction publique de l'État : 74,8 % contre 73,8 % (DREES, <em>Les
 retraités et les retraites</em>, 2025). Selon le jaune, l'avantage apparent
 d'une pension calculée sur les six derniers mois de traitement est compensé par
@@ -1282,7 +1290,7 @@ régimes est le plus généreux. La comparaison de la DREES se refait sur une
 carrière, au <a href="../simuler/">simulateur</a> : la même saisie,
 primes comprises, sous le statut de fonctionnaire de l'État, puis sous celui de
 salarié du privé.</p></div></details>
-<details class="section"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>À quel âge chacun part, et pourquoi</span></summary><div class="dedans"><p class="discret">Un cas type ne porte pas un âge de départ mais une RÈGLE, et chaque génération liquide donc au sien. La plupart partent dès le <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">taux plein</span><span class="bulle" role="note" hidden>Le taux de pension entier, sans décote : on l&#x27;obtient avec la durée exigée, ou à l&#x27;âge où la décote s&#x27;annule quelle que soit la durée.</span></span>, qui dépend à la fois de l'âge légal et de la durée requise de leur génération. Ceux dont un statut commande le départ (agent de conduite, agent des IEG) partent à l'âge que ce statut leur ouvre. L'agent de catégorie active pourrait partir ainsi, mais il attend, comme les actifs de la CNRACL, le taux plein que son classement avance. Le militaire, lui, part à une DURÉE de services, pas à un âge. Ce sont les âges des systèmes 1 à 3.</p><div class="defilant" tabindex="0" role="region" aria-label="Âge de liquidation de chaque cas type, par génération"><table><caption><span>Âge de liquidation de chaque cas type, par génération</span></caption><thead><tr><th class="" scope="col">Cas type</th><th class="nombre" scope="col">1940</th><th class="nombre" scope="col">1950</th><th class="nombre" scope="col">1960</th><th class="nombre" scope="col">1970</th><th class="nombre" scope="col">1980</th><th class="nombre" scope="col">1990</th><th class="nombre" scope="col">2000</th></tr></thead><tbody><tr><th class="" scope="row">Salarié au niveau du SMIC, carrière complète</th><td class="nombre">60 ans</td><td class="nombre">60 ans</td><td class="nombre">60 ans</td><td class="nombre">61 ans et 9 mois</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td></tr><tr><th class="" scope="row">Salarié au salaire moyen</th><td class="nombre">60 ans et 3 mois</td><td class="nombre">61 ans et 6 mois</td><td class="nombre">62 ans et 9 mois</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td></tr><tr><th class="" scope="row">Cadre du privé</th><td class="nombre">62 ans et 3 mois</td><td class="nombre">63 ans et 6 mois</td><td class="nombre">64 ans et 9 mois</td><td class="nombre">66 ans</td><td class="nombre">66 ans</td><td class="nombre">66 ans</td><td class="nombre">66 ans</td></tr><tr><th class="" scope="row">Carrière interrompue (5 ans hors emploi)</th><td class="nombre">60 ans</td><td class="nombre">60 ans</td><td class="nombre">62 ans</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td></tr><tr><th class="" scope="row">Fonctionnaire sédentaire (catégorie B)</th><td class="nombre">60 ans</td><td class="nombre">62 ans et 6 mois</td><td class="nombre">63 ans et 9 mois</td><td class="nombre">65 ans</td><td class="nombre">65 ans</td><td class="nombre">65 ans</td><td class="nombre">65 ans</td></tr><tr><th class="" scope="row">Fonctionnaire de catégorie active (départ anticipé)</th><td class="nombre">59 ans et 6 mois</td><td class="nombre">60 ans</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td></tr><tr><th class="" scope="row">Militaire non officier (radiation après vingt-sept ans et demi de services)</th><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td></tr><tr><th class="" scope="row">Agent de conduite SNCF</th><td class="nombre">50 ans</td><td class="nombre">50 ans</td><td class="nombre">50 ans</td><td class="nombre">51 ans et 4 mois</td><td class="nombre">54 ans</td><td class="nombre">54 ans</td><td class="nombre">63 ans</td></tr><tr><th class="" scope="row">Agent des industries électriques et gazières</th><td class="nombre">55 ans</td><td class="nombre">55 ans</td><td class="nombre">55 ans</td><td class="nombre">57 ans et 9 mois</td><td class="nombre">59 ans</td><td class="nombre">59 ans</td><td class="nombre">59 ans</td></tr><tr><th class="" scope="row">Artisan</th><td class="nombre">64 ans</td><td class="nombre">64 ans et 6 mois</td><td class="nombre">65 ans et 9 mois</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td></tr><tr><th class="" scope="row">Chef d&#x27;exploitation agricole</th><td class="nombre">60 ans</td><td class="nombre">60 ans</td><td class="nombre">62 ans</td><td class="nombre">63 ans</td><td class="nombre">63 ans</td><td class="nombre">63 ans</td><td class="nombre">63 ans</td></tr><tr><th class="" scope="row">Profession libérale</th><td class="nombre">65 ans</td><td class="nombre">65 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td></tr><tr><th class="" scope="row">Agent contractuel de la fonction publique</th><td class="nombre">64 ans</td><td class="nombre">64 ans et 6 mois</td><td class="nombre">65 ans et 9 mois</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td></tr></tbody></table></div></div></details>
+<details class="section"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>À quel âge chacun part, et pourquoi</span></summary><div class="dedans"><p class="discret">Un cas type ne porte pas un âge de départ mais une RÈGLE, et chaque génération liquide donc au sien. La plupart partent dès le <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">taux plein</span><span class="bulle" role="note" popover>Le taux de pension entier, sans décote : on l&#x27;obtient avec la durée exigée, ou à l&#x27;âge où la décote s&#x27;annule quelle que soit la durée.</span></span>, qui dépend à la fois de l'âge légal et de la durée requise de leur génération. Ceux dont un statut commande le départ (agent de conduite, agent des IEG) partent à l'âge que ce statut leur ouvre. L'agent de catégorie active pourrait partir ainsi, mais il attend, comme les actifs de la CNRACL, le taux plein que son classement avance. Le militaire, lui, part à une DURÉE de services, pas à un âge. Ce sont les âges des systèmes 1 à 3.</p><div class="defilant" tabindex="0" role="region" aria-label="Âge de liquidation de chaque cas type, par génération"><table><caption><span>Âge de liquidation de chaque cas type, par génération</span></caption><thead><tr><th class="" scope="col">Cas type</th><th class="nombre" scope="col">1940</th><th class="nombre" scope="col">1950</th><th class="nombre" scope="col">1960</th><th class="nombre" scope="col">1970</th><th class="nombre" scope="col">1980</th><th class="nombre" scope="col">1990</th><th class="nombre" scope="col">2000</th></tr></thead><tbody><tr><th class="" scope="row">Salarié au niveau du SMIC, carrière complète</th><td class="nombre">60 ans</td><td class="nombre">60 ans</td><td class="nombre">60 ans</td><td class="nombre">61 ans et 9 mois</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td></tr><tr><th class="" scope="row">Salarié au salaire moyen</th><td class="nombre">60 ans et 3 mois</td><td class="nombre">61 ans et 6 mois</td><td class="nombre">62 ans et 9 mois</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td></tr><tr><th class="" scope="row">Cadre du privé</th><td class="nombre">62 ans et 3 mois</td><td class="nombre">63 ans et 6 mois</td><td class="nombre">64 ans et 9 mois</td><td class="nombre">66 ans</td><td class="nombre">66 ans</td><td class="nombre">66 ans</td><td class="nombre">66 ans</td></tr><tr><th class="" scope="row">Carrière interrompue (5 ans hors emploi)</th><td class="nombre">60 ans</td><td class="nombre">60 ans</td><td class="nombre">62 ans</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td></tr><tr><th class="" scope="row">Fonctionnaire sédentaire (catégorie B)</th><td class="nombre">60 ans</td><td class="nombre">62 ans et 6 mois</td><td class="nombre">63 ans et 9 mois</td><td class="nombre">65 ans</td><td class="nombre">65 ans</td><td class="nombre">65 ans</td><td class="nombre">65 ans</td></tr><tr><th class="" scope="row">Fonctionnaire de catégorie active (départ anticipé)</th><td class="nombre">59 ans et 6 mois</td><td class="nombre">60 ans</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td></tr><tr><th class="" scope="row">Militaire non officier (radiation après vingt-sept ans et demi de services)</th><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td></tr><tr><th class="" scope="row">Agent de conduite SNCF</th><td class="nombre">50 ans</td><td class="nombre">50 ans</td><td class="nombre">50 ans</td><td class="nombre">51 ans et 4 mois</td><td class="nombre">54 ans</td><td class="nombre">54 ans</td><td class="nombre">63 ans</td></tr><tr><th class="" scope="row">Agent des industries électriques et gazières</th><td class="nombre">55 ans</td><td class="nombre">55 ans</td><td class="nombre">55 ans</td><td class="nombre">57 ans et 9 mois</td><td class="nombre">59 ans</td><td class="nombre">59 ans</td><td class="nombre">59 ans</td></tr><tr><th class="" scope="row">Artisan</th><td class="nombre">64 ans</td><td class="nombre">64 ans et 6 mois</td><td class="nombre">65 ans et 9 mois</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td></tr><tr><th class="" scope="row">Chef d&#x27;exploitation agricole</th><td class="nombre">60 ans</td><td class="nombre">60 ans</td><td class="nombre">62 ans</td><td class="nombre">63 ans</td><td class="nombre">63 ans</td><td class="nombre">63 ans</td><td class="nombre">63 ans</td></tr><tr><th class="" scope="row">Profession libérale</th><td class="nombre">65 ans</td><td class="nombre">65 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td></tr><tr><th class="" scope="row">Agent contractuel de la fonction publique</th><td class="nombre">64 ans</td><td class="nombre">64 ans et 6 mois</td><td class="nombre">65 ans et 9 mois</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td></tr></tbody></table></div></div></details>
 </div>
 </main>
 <footer>
@@ -1306,7 +1314,7 @@ salarié du privé.</p></div></details>
   <p class="retour-site">Un outil du <a href="https://partiliberalfrancais.fr/" target="_top">Parti libéral français</a>.</p>
 </div>
 </footer>
-<dialog id="affichage" aria-labelledby="titre-affichage"><div class="reglages">
+<dialog id="affichage" closedby="any" aria-labelledby="titre-affichage"><div class="reglages">
 <div class="tete"><h2 id="titre-affichage">Affichage</h2><button type="button" data-fermer>Fermer</button></div>
 <fieldset><legend>Taille du texte</legend><div class="pastilles"><label><input type="radio" name="taille" value="normal" checked>Normale</label><label><input type="radio" name="taille" value="grand">Grande</label><label><input type="radio" name="taille" value="tres-grand">Très grande</label></div></fieldset>
 <fieldset><legend>Police de caractères</legend><div class="pastilles"><label><input type="radio" name="police" value="standard" checked>Standard</label><label><input type="radio" name="police" value="lisible">Très lisible</label></div></fieldset>

@@ -8169,16 +8169,18 @@ dans un module du calcul, avec son test, et la page le lit ; le site
 
 ### 189. Le site à la charte du parti, puis lisible par l'électeur — `en cours`
 
-**Reprise, au 10 novembre 2026.** Deux fils, une seule session sur les pages à
-la fois. L'aspect du parti (étapes 4 à 7) est fait : la coquille, le corps, les
-figures et la saisie, le panneau « Affichage ». Reste le texte (étape 2), par
+**Reprise, au 15 novembre 2026.** Deux fils, une seule session sur les pages à
+la fois. L'aspect du parti (étapes 4 à 8) est fait : la coquille, le corps,
+les figures et la saisie, le panneau « Affichage », les bulles en `popover`.
+Reste le texte (étape 2), par
 quoi commencer : l'accueil et Partager sont récrits ; restent, sur l'avis du
 propriétaire, le texte des autres pages, et ce qui attend le modèle ou une
 décision — la réversion gardée, la décision 89, les pensions qui montent, « En
 bref », la carte « Le taux », que la décision 48 dément. Puis l'étape 3, au
 mainteneur de la copie du parti. Notes, sous `189/` :
 `etape-2-le-texte-pour-l-electeur`, `etape-4-la-coquille` à
-`etape-6-les-figures-et-la-saisie`, `etape-7-le-panneau-affichage`.
+`etape-6-les-figures-et-la-saisie`, `etape-7-le-panneau-affichage`,
+`etape-8-trois-gestes-natifs`.
 
 **D'où elle vient.** Le 8 novembre 2026, le propriétaire : « J'aimerais
 changer le style du site. C'est beaucoup mieux sur cet autre site que j'ai

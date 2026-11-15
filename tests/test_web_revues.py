@@ -77,7 +77,7 @@ def test_le_jargon_du_relecteur_porte_sa_definition():
         ))
 
     def bulles(corps: str) -> str:
-        return " ".join(re.findall(r'<span class="bulle" role="note" hidden>(.*?)</span>',
+        return " ".join(re.findall(r'<span class="bulle" role="note" popover>(.*?)</span>',
                                    corps))
 
     resultats = rendre("/simuler", SIMULATION_TEMOIN)[1]
@@ -2299,7 +2299,7 @@ def test_la_complementaire_paie_sa_cotisation_maladie_sur_la_page():
     # d'interrogation : le net est le défaut depuis le 5 novembre 2026, et sa
     # note entière dépassait le budget de mots des résultats.
     detail = re.search(r'La pension est nette de [^<]*<span class="mot">.*?'
-                       r'<span class="bulle"[^>]*hidden>(.*?)</span></span>', corps, re.S)
+                       r'<span class="bulle"[^>]*popover>(.*?)</span></span>', corps, re.S)
     assert detail, "le détail du net n'est plus sous un point d'interrogation"
     for morceau in ("1 % de cotisation maladie", "présumé fait de vos seules pensions",
                     "ne change pas vos prélèvements"):

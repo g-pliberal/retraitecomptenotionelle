@@ -2970,7 +2970,7 @@ def test_les_metiers_forment_des_groupes_de_champs_nommes(page):
 #: menus repliés. C'est la mesure qui compte pour le texte d'un formulaire —
 #: tout le reste attend qu'on le demande.
 def _mots_visibles(corps: str) -> int:
-    texte = re.sub(r'<span class="bulle"[^>]*hidden>.*?</span>', " ", corps, flags=re.S)
+    texte = re.sub(r'<span class="bulle"[^>]*popover>.*?</span>', " ", corps, flags=re.S)
     # Un bouton caché ne se lit pas davantage : « Réinitialiser » ne paraît,
     # devant l'exemple, qu'à la première frappe, et c'est alors un contrôle.
     texte = re.sub(r"<button\b[^>]*\bhidden>.*?</button>", " ", texte, flags=re.S)
@@ -3186,6 +3186,18 @@ def test_le_panneau_affichage_tient_en_trois_reglages_sans_theme_sombre():
     assert "<button type=\"button\" data-fermer>Fermer</button>" in panneau
     assert "Ces choix restent dans votre navigateur" in panneau
     assert "sombre" not in panneau.lower() and "theme" not in panneau.lower()
+
+
+def test_le_panneau_affichage_se_ferme_au_fond_par_le_navigateur():
+    """Un clic sur le fond ferme le panneau : c'est le navigateur qui le fait,
+    par ``closedby="any"`` (fiche « light-dismiss a dialog » de Modern Web
+    Guidance, 15 novembre 2026). Le script ne le rattrape plus que là où
+    l'attribut manque — Safari, au 15 novembre 2026 —, et le dit par le test
+    de ``closedBy``."""
+    panneau = g.panneauAffichage()
+    assert panneau.startswith('<dialog id="affichage" closedby="any" ')
+    routeur = page_et_routeur()
+    assert '"closedBy" in HTMLDialogElement.prototype' in routeur
 
 
 def test_les_reglages_d_affichage_ne_quittent_pas_le_navigateur():
@@ -3935,7 +3947,7 @@ def test_chaque_mot_du_glossaire_porte_sa_definition(chemin):
             r'<button type="button" class="terme appel" aria-expanded="false" '
             r'aria-label="[^"]+"><svg class="icone" ', mot,
         ), mot[:90]
-        bulle = re.search(r'<span class="bulle" role="note" hidden>(.*)', mot, re.S)
+        bulle = re.search(r'<span class="bulle" role="note" popover>(.*)', mot, re.S)
         assert bulle and bulle.group(1).strip(), f"{chemin} : mot sans définition"
 
 
@@ -4142,11 +4154,12 @@ def test_le_script_du_site_sait_ouvrir_les_mots_du_glossaire():
     from pathlib import Path
 
     page = page_et_routeur()
-    assert '.closest(".mot > .terme")' in page
+    assert '.closest?.(".mot > .terme")' in page
     assert 'setAttribute("aria-expanded"' in page
-    # Échap referme, et rend le focus au mot : sans cela le clavier n'a aucun
-    # moyen de refermer une bulle ouverte (WCAG 1.4.13).
-    assert 'evenement.key !== "Escape"' in page
+    # Échap referme, et laisse le focus au mot (WCAG 1.4.13) : c'est le
+    # navigateur qui le fait d'une bulle `popover`, ce que joue
+    # `test_une_bulle_du_glossaire_est_tenue_par_le_navigateur`.
+    assert "togglePopover" in page
 
 
 # -- la discipline de la page Coût ---------------------------------------------
@@ -4487,7 +4500,7 @@ def test_une_page_depliee_tient_son_budget(adresse):
     page a dit."""
     chemin, _, requete = adresse.partition("?")
     corps = rendre(chemin, dict(parse_qsl(requete)))[1]
-    sans_bulles = re.sub(r'<span class="bulle"[^>]*hidden>.*?</span>', " ", corps,
+    sans_bulles = re.sub(r'<span class="bulle"[^>]*popover>.*?</span>', " ", corps,
                          flags=re.S)
     lu = re.sub(r"<select\b[^>]*>.*?</select>", " ", sans_bulles, flags=re.S)
     lu = re.sub(r"<pre\b[^>]*>.*?</pre>", " ", lu, flags=re.S)

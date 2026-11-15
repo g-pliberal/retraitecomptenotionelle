@@ -1869,14 +1869,22 @@ function cocherLAffichage(panneau, reglages) {
 // qui n'en est pas un, les pose alors ici.
 poserLAffichage(lireLAffichage());
 
+// Le navigateur ferme lui-même le panneau au clic sur son fond
+// (`closedby="any"`) ; Safari, au 15 novembre 2026, ne le sait pas encore.
+const FOND_QUI_FERME = typeof HTMLDialogElement !== "undefined"
+  && "closedBy" in HTMLDialogElement.prototype;
+
 document.addEventListener("click", (evenement) => {
   const panneau = document.getElementById("affichage");
   if (!panneau) { return; }
   if (evenement.target.closest?.("header.bandeau button.affichage")) {
     cocherLAffichage(panneau, affichagePose());
     if (!panneau.open) { panneau.showModal(); }
-  } else if (evenement.target === panneau || evenement.target.closest?.("#affichage [data-fermer]")) {
-    // Le bouton, ou le fond : le contenu du dialogue est dans sa propre boîte.
+  } else if (evenement.target.closest?.("#affichage [data-fermer]")
+             || (evenement.target === panneau && !FOND_QUI_FERME)) {
+    // Le bouton ; ou le fond, là où `closedby` manque : le contenu du dialogue
+    // est dans sa propre boîte, et un clic sur le dialogue lui-même est un clic
+    // sur le fond.
     panneau.close();
   } else if (evenement.target.closest?.("#affichage [data-retablir]")) {
     const parDefaut = reglagesAdmis(() => null);
@@ -1901,53 +1909,66 @@ document.getElementById("affichage")?.addEventListener("close", () => {
 // -- les mots du glossaire ---------------------------------------------------
 //
 // Un mot de spécialiste porte sa définition, et elle s'ouvre sur place. Le
-// gabarit écrit pour cela un `<button class="terme" aria-expanded>` suivi de sa
-// bulle : c'est ici que le bouton se met à basculer.
+// gabarit écrit pour cela un mot ou un appel (`.terme`, `aria-expanded`) suivi
+// de sa bulle, un `popover` : le navigateur la pose dans la couche du dessus,
+// où ni un tableau qui défile ni une carte ne la rognent, n'en laisse qu'une
+// ouverte, et la referme d'un clic ailleurs ou par Échap (fiche « toggletip »
+// de Modern Web Guidance, 15 novembre 2026). Il ne reste ici qu'à l'ouvrir —
+// un mot est un `<span role="button">`, que `popovertarget` ne connaît pas —
+// et à tenir `aria-expanded`, que la feuille de style lit aussi pour ancrer la
+// bulle sous son mot.
 //
 // En écoute DÉLÉGUÉE, sur le document, et non sur chaque bouton : le contenu de
 // <main> est remplacé en bloc à chaque rendu, et des écouteurs posés un par un
-// disparaîtraient avec les boutons qui les portaient. Un clic n'importe où
-// ailleurs referme la bulle ouverte — c'est ce qu'on attend d'une bulle, et
-// sans cela deux définitions se recouvriraient.
-function fermerLesMots(sauf) {
-  for (const bouton of document.querySelectorAll('.mot > .terme[aria-expanded="true"]')) {
-    if (bouton === sauf) { continue; }
-    bouton.setAttribute("aria-expanded", "false");
-    bouton.nextElementSibling.hidden = true;
-  }
-}
+// disparaîtraient avec les boutons qui les portaient.
+//
+// Le navigateur referme une bulle dès qu'on appuie hors d'elle, son mot compris
+// — un mot n'est pas pour lui l'invocateur d'une bulle ouverte par script. Un
+// second clic sur le mot la refermerait donc à l'appui, puis la rouvrirait au
+// clic : on retient, à l'appui, la bulle qui était ouverte.
+let ouverteALAppui = null;
+document.addEventListener("pointerdown", (evenement) => {
+  const bulle = evenement.target.closest?.(".mot > .terme")?.nextElementSibling;
+  ouverteALAppui = bulle?.matches?.(":popover-open") ? bulle : null;
+}, true);
 
 document.addEventListener("click", (evenement) => {
-  const terme = evenement.target.closest(".mot > .terme");
-  fermerLesMots(terme);
+  const terme = evenement.target.closest?.(".mot > .terme");
+  const appui = ouverteALAppui;
+  ouverteALAppui = null;
   if (!terme) { return; }
   // Un appel de bulle posé dans un <label> ferait, sans cela, DEUX choses d'un
   // seul clic : ouvrir la bulle, et donner le focus au champ que le libellé
   // désigne — sur un champ date, le calendrier s'ouvrirait par-dessus la bulle.
   evenement.preventDefault();
-  const ouvrir = terme.getAttribute("aria-expanded") !== "true";
-  terme.setAttribute("aria-expanded", String(ouvrir));
-  terme.nextElementSibling.hidden = !ouvrir;
+  const bulle = terme.nextElementSibling;
+  if (!bulle.togglePopover) { return; }
+  if (bulle === appui) {
+    if (bulle.matches(":popover-open")) { bulle.hidePopover(); }
+    return;
+  }
+  bulle.togglePopover();
 });
 
-// Échap referme, et rend le focus au mot : c'est ce que fait toute fenêtre
-// surgissante, et sans cela le clavier n'a aucun moyen de refermer celle-ci
-// (WCAG 1.4.13).
+// L'état du mot suit celui de sa bulle, quelle que soit la façon dont elle
+// s'est ouverte ou fermée, et le suit AVANT qu'elle se peigne : l'ancre de la
+// bulle en dépend. `beforetoggle` ne remonte pas : on l'écoute à la descente.
+document.addEventListener("beforetoggle", (evenement) => {
+  const bulle = evenement.target;
+  if (!bulle.matches?.(".mot > .bulle")) { return; }
+  bulle.previousElementSibling.setAttribute("aria-expanded",
+    String(evenement.newState === "open"));
+}, true);
+
+// Le mot du glossaire est un `<span role="button">` — un vrai bouton ne coule
+// pas dans une phrase sous Chromium — et doit donc répondre à Entrée et à
+// Espace comme un bouton le ferait de lui-même. Échap, c'est le navigateur.
 document.addEventListener("keydown", (evenement) => {
-  // Le mot du glossaire est un `<span role="button">` — un vrai bouton ne
-  // coule pas dans une phrase sous Chromium — et doit donc répondre à Entrée
-  // et à Espace comme un bouton le ferait de lui-même.
   if ((evenement.key === "Enter" || evenement.key === " ")
       && evenement.target.matches?.('.mot > .terme[role="button"]')) {
     evenement.preventDefault();
     evenement.target.click();
-    return;
   }
-  if (evenement.key !== "Escape") { return; }
-  const ouvert = document.querySelector('.mot > .terme[aria-expanded="true"]');
-  if (!ouvert) { return; }
-  fermerLesMots(null);
-  ouvert.focus();
 });
 
 // -- les tableaux, à la largeur de l'écran ------------------------------------
