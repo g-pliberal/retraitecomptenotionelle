@@ -27,10 +27,11 @@ from retraite_notionnelle import simulateur as simulateur_python
 from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.config import RACINE_PROJET, Neutralisations, Parametres
 from retraite_notionnelle.donnees.chargement import DonneeInsuffisante, Fiabilite
+from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
 from retraite_notionnelle.droit.commun import PensionRegime
-from retraite_notionnelle.droit.liquider import EligibleAgricole
+from retraite_notionnelle.droit.liquider import EligibleAgricole, EligibleMinimum
 from retraite_notionnelle.journal import Journal
 from retraite_notionnelle.remuneration import AnneeComparee, FicheDePaie, RemunerationActif
 from retraite_notionnelle.scenarios.actuel import ResultatActuel
@@ -38,7 +39,8 @@ from retraite_notionnelle.scenarios.notionnel import ResultatNotionnel
 from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Comparaison
 
 import facade
-from facade import Carriere, NonTransmissible, Simulateur, liquider, ouvrir, reversion
+from facade import (Carriere, NonTransmissible, Simulateur, completer, liquider, ouvrir,
+                    reversion)
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 HAUTE = Fiabilite.CERTIFIEE
@@ -665,7 +667,7 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     with pytest.raises(ValueError, match="ouvrir.ouvrir"):
         pont.regle_du_droit("ouvrir", "ouvrir", float)
     assert facade.REGLES is pont.REGLES_DE_LA_FACADE
-    assert set(facade.REGLES) == {"liquider", "ouvrir"}
+    assert set(facade.REGLES) == {"completer", "liquider", "ouvrir"}
 
 
 def test_une_regle_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulateur):
@@ -688,6 +690,39 @@ def test_une_regle_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulateur):
                                    durees=SimpleNamespace(tous_regimes=100))
     with pytest.raises(NonTransmissible, match="duree .PeriodeRegime."):
         liquider.annees_au_prorata(21, periode, 174)
+
+
+#: Un régime porteur du minimum : 140 trimestres, dont 40 cotisés, sur 152.
+ELIGIBLE = EligibleMinimum(
+    indice=0, prorata_assurance=140 / 152, prorata_cotise=40 / 152, taux_plein=True,
+    duree_regime=140, cotisee_regime=40, proratisation=152, requis=160,
+    duree_tous_regimes=140, cotisee_tous_regimes=40, porte_avpf=True,
+    bornee_avec=("cancava_avant_1973",))
+
+
+def test_une_regle_recoit_un_eligible_au_minimum_et_la_regle_de_sa_fiche(simulateur):
+    """Un éligible au minimum passe au portage sous les noms qu'il y porte, et
+    en revient sous son type ; la règle de la fiche, un dictionnaire de valeurs
+    simples, passe telle quelle. De janvier 2004 à juin 2005, la durée cotisée
+    vaut la durée d'assurance (lettre ministérielle du 25 mars 2004)."""
+    sans_distinction = completer.selon_la_regle(ELIGIBLE, {"majoration": "sans_distinction"}, 0)
+    assert type(sans_distinction) is EligibleMinimum
+    assert sans_distinction == dataclasses.replace(
+        ELIGIBLE, cotisee_regime=140, prorata_cotise=140 / 152, cotisee_tous_regimes=140)
+    assert completer.plancher_du_regime(sans_distinction, 6511.06, 6706.39, True, True) == (
+        pytest.approx(6706.39 * 140 / 152))
+    seuil = {"majoration": "periodes_cotisees", "seuil_trimestres_cotises": 120}
+    assert completer.majoration_ouverte(seuil, 120) is True
+    assert completer.majoration_ouverte(seuil, 118) is False
+
+
+def test_une_regle_ne_recoit_qu_un_dictionnaire_de_valeurs_simples(simulateur):
+    """Un dictionnaire dont une valeur n'est pas simple, ou dont une clé n'est
+    pas un texte, n'arriverait pas au portage sous son type : refusé."""
+    with pytest.raises(NonTransmissible, match="regle"):
+        completer.majoration_ouverte({"majoration": object()}, 120)
+    with pytest.raises(NonTransmissible, match="regle"):
+        completer.majoration_ouverte({2004: "sans_distinction"}, 120)
 
 
 def test_une_regle_se_demande_sous_les_parametres_de_son_moteur(simulateur):
@@ -731,7 +766,8 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
     leur valeur par défaut du Python : le portage en attend autant, sous la
     même valeur par défaut. Deux noms seulement diffèrent d'un côté à
     l'autre."""
-    jumelle = getattr({"liquider": liquider_python, "ouvrir": ouvrir_python}[module], regle)
+    jumelle = getattr({"completer": completer_python, "liquider": liquider_python,
+                       "ouvrir": ouvrir_python}[module], regle)
     attendus = [(nom, None if parametre.default is inspect.Parameter.empty else parametre.default)
                 for nom, parametre in inspect.signature(jumelle).parameters.items()]
     autres_noms = {"annees": "anneesRetenues", "carriere": "carriereSaisie",

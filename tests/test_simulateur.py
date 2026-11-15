@@ -29,7 +29,7 @@ from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS
 # portage les calcule. Un test qui appelle encore une règle du moteur Python
 # le garde, sous la marque ``sur_le_moteur_python`` et sa raison.
 import facade
-from facade import Carriere, Simulateur, liquider, ouvrir
+from facade import Carriere, Simulateur, completer, liquider, ouvrir
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 #: Témoins versionnés : ce que des sources extérieures ont réellement publié.
@@ -1782,7 +1782,6 @@ def test_le_minimum_contributif_releve_les_petites_pensions(simulateur):
     assert resultat.minimum_applique is True
 
 
-@pytest.mark.sur_le_moteur_python("droit.completer.complement_minimum")
 def test_la_surcote_s_ajoute_au_minimum_comme_la_circulaire_le_calcule():
     """Les deux exemples de la circulaire Cnav 2018-04, point 3.4, rejoués.
 
@@ -1797,16 +1796,14 @@ def test_la_surcote_s_ajoute_au_minimum_comme_la_circulaire_le_calcule():
     10 % × (693,51 + 22,50) = 71,60 € pour une pension de 600 € surcotée de
     3,75 % et portée au minimum majoré de 2017.
     """
-    from retraite_notionnelle.droit.completer import complement_minimum
-
-    servie = 621 * 1.025 + complement_minimum(621, 645.07, 1.025, (2009, 10))
+    servie = 621 * 1.025 + completer.complement_minimum(621, 645.07, 1.025, (2009, 10))
     assert servie == pytest.approx(660.59, abs=0.01)
-    servie = 621 * 1.015 + complement_minimum(621, 633.61, 1.015, (2008, 1))
+    servie = 621 * 1.015 + completer.complement_minimum(621, 633.61, 1.015, (2008, 1))
     assert servie == pytest.approx(633.61, abs=0.01)
     # Au-dessus du minimum, rien n'est ajouté, quelle que soit la date.
-    assert complement_minimum(700, 645.07, 1.025, (2009, 10)) == 0.0
-    assert complement_minimum(630, 633.61, 1.015, (2008, 1)) == 0.0
-    servie = 600 * 1.0375 + complement_minimum(600, 693.51, 1.0375, (2017, 1))
+    assert completer.complement_minimum(700, 645.07, 1.025, (2009, 10)) == 0.0
+    assert completer.complement_minimum(630, 633.61, 1.015, (2008, 1)) == 0.0
+    servie = 600 * 1.0375 + completer.complement_minimum(600, 693.51, 1.0375, (2017, 1))
     assert servie == pytest.approx(716.01, abs=0.01)
     assert 0.10 * servie == pytest.approx(71.60, abs=0.01)
 
@@ -4119,7 +4116,6 @@ def _eligible(regime: int, cotisee_regime: int, proratisation: int, requis: int,
         cotisee_tous_regimes=cotisee_regime + cotisee_autres, porte_avpf=True)
 
 
-@pytest.mark.sur_le_moteur_python("droit.completer.majoration_ouverte")
 def test_les_exemples_des_circulaires_de_2005_et_2009_sont_rejoues():
     """Les huit exemples chiffrés des circulaires Cnav 2005/30 (points 511 à
     513) et 2009/17 (point 22), au centime : les circulaires tronquent, le
@@ -4130,9 +4126,6 @@ def test_les_exemples_des_circulaires_de_2005_et_2009_sont_rejoues():
     mois). Un assuré né en 1945 a une durée de proratisation de 154 trimestres
     et une durée requise de 160 ; né en 1949, 161 et 161 ; né en 1944, 152.
     """
-    from retraite_notionnelle.droit.completer import (majoration_ouverte,
-                                                      plancher_du_regime)
-
     base, majore = 6641.28, 6840.51
     cas_2005 = [
         # (régime, dont cotisés, autres régimes, dont cotisés) : minimum majoré
@@ -4145,38 +4138,35 @@ def test_les_exemples_des_circulaires_de_2005_et_2009_sont_rejoues():
     ]
     for (regime, cotise, autres, cotise_autres), attendu in cas_2005:
         eligible = _eligible(regime, cotise, 154, 160, autres, cotise_autres)
-        plancher = plancher_du_regime(eligible, base, majore, True, True)
+        plancher = completer.plancher_du_regime(eligible, base, majore, True, True)
         assert plancher == pytest.approx(attendu, abs=0.03), (regime, cotise, autres)
 
     # 2009/17 : le seuil de 120 trimestres cotisés, tous régimes.
     regle = {"majoration": "periodes_cotisees", "seuil_trimestres_cotises": 120}
     base, majore = 584.48, 638.68
     poly = _eligible(100, 90, 161, 161, 56, 54)
-    assert majoration_ouverte(regle, 144)
-    assert plancher_du_regime(poly, base, majore, True, True) == pytest.approx(
+    assert completer.majoration_ouverte(regle, 144)
+    assert completer.plancher_du_regime(poly, base, majore, True, True) == pytest.approx(
         393.32, abs=0.01)
     mono = _eligible(150, 118, 152, 160)
-    assert not majoration_ouverte(regle, 118)
-    assert plancher_du_regime(mono, base, majore, False, True) == pytest.approx(
+    assert not completer.majoration_ouverte(regle, 118)
+    assert completer.plancher_du_regime(mono, base, majore, False, True) == pytest.approx(
         576.78, abs=0.01)
 
 
-@pytest.mark.sur_le_moteur_python("droit.completer.plancher_du_regime")
 def test_la_majoration_de_2004_ne_distinguait_pas_les_periodes_cotisees():
     """De janvier 2004 à juin 2005, « le montant afférent aux périodes
     cotisées » à toute pension au taux plein, au prorata de la durée
     d'assurance (lettre ministérielle du 25 mars 2004, point 2) ; pour un
     pluriactif au-delà de 160 trimestres, au prorata de la durée du régime sur
     la durée tous régimes."""
-    from retraite_notionnelle.droit.completer import plancher_du_regime, selon_la_regle
-
     regle = {"majoration": "sans_distinction"}
     base, majore = 6511.06, 6706.39
-    mono = selon_la_regle(_eligible(140, 40, 152, 160), regle, 0)
-    assert plancher_du_regime(mono, base, majore, True, True) == pytest.approx(
+    mono = completer.selon_la_regle(_eligible(140, 40, 152, 160), regle, 0)
+    assert completer.plancher_du_regime(mono, base, majore, True, True) == pytest.approx(
         majore * 140 / 152)
-    poly = selon_la_regle(_eligible(60, 10, 152, 160, 140, 130), regle, 0)
-    assert plancher_du_regime(poly, base, majore, True, True) == pytest.approx(
+    poly = completer.selon_la_regle(_eligible(60, 10, 152, 160, 140, 130), regle, 0)
+    assert completer.plancher_du_regime(poly, base, majore, True, True) == pytest.approx(
         majore * 60 / 200)
 
 
@@ -5144,7 +5134,6 @@ def test_les_annees_d_avant_1973_bornent_le_minimum_des_independants(simulateur)
     assert salarie["regime_general"][0] == pytest.approx(entier(1993) * 40 / 150)
 
 
-@pytest.mark.sur_le_moteur_python("droit.completer")
 def test_sans_annees_d_avant_1973_la_borne_ne_joue_pas():
     """La borne ne vaut que « lorsque l'assuré justifie également de périodes
     d'assurance ou d'activité professionnelle non salariée antérieures au 1er
@@ -5158,10 +5147,10 @@ def test_sans_annees_d_avant_1973_la_borne_ne_joue_pas():
     import shutil
     import subprocess
 
-    from retraite_notionnelle.droit import completer
+    from retraite_notionnelle.droit.liquider import EligibleMinimum
 
     base, majore = 7_831.22, 8_557.38
-    eligible = liquider.EligibleMinimum(
+    eligible = EligibleMinimum(
         indice=0, prorata_assurance=100 / 166, prorata_cotise=53 / 166, taux_plein=True,
         duree_regime=100, cotisee_regime=53, proratisation=166, requis=166,
         duree_tous_regimes=167, cotisee_tous_regimes=120, bornee_avec=("cancava_avant_1973",))

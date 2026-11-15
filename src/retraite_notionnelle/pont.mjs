@@ -152,6 +152,7 @@ import {
   FICHE_DE_L_APPRENTISSAGE, FICHE_DES_MILITAIRES, FICHES_DES_EMPLOIS, contrats,
 } from "../../moteur/js/droit/compter.js";
 import { REGIMES_CODE_DES_PENSIONS } from "../../moteur/js/droit/coordonner.js";
+import * as completer from "../../moteur/js/droit/completer.js";
 import * as cumul from "../../moteur/js/droit/cumul.js";
 import * as departs from "../../moteur/js/droit/departs.js";
 import { foyerEtNet } from "../../moteur/js/droit/foyer.js";
@@ -1808,7 +1809,7 @@ ENTREES_DE_LA_FACADE["scenario_actuel.table"] = (moteur, table, methode, ...vale
 // Les règles du droit, par la façade : un bloc à part (action 161).
 
 /** Les modules du droit dont la façade sert des règles, sous leur nom. */
-const MODULES_DU_DROIT = { liquider, ouvrir };
+const MODULES_DU_DROIT = { completer, liquider, ouvrir };
 
 /**
  * Une règle du droit, sous les noms du Python (`regle_du_droit` de `pont.py`,

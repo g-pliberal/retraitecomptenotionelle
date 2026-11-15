@@ -25,8 +25,10 @@ from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import Carriere as CarrierePython
 from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.config import RACINE_PROJET, Parametres
+from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
+from retraite_notionnelle.droit.liquider import EligibleMinimum
 from retraite_notionnelle.journal import Journal
 
 import facade
@@ -378,6 +380,21 @@ def _du_regime(regime: str, annee: int, carriere, *suite):
     return lambda s: (s.scenario_actuel, s.catalogue[regime].periode(annee), carriere(s), *suite)
 
 
+#: Deux régimes porteurs du minimum : un artisan dont les droits d'avant 1973
+#: bornent le minimum (D. 634-6), un polypensionné du régime général au-delà
+#: de la durée requise.
+_ARTISAN = EligibleMinimum(
+    indice=0, prorata_assurance=100 / 166, prorata_cotise=53 / 166, taux_plein=True,
+    duree_regime=100, cotisee_regime=53, proratisation=166, requis=166,
+    duree_tous_regimes=167, cotisee_tous_regimes=120, bornee_avec=("cancava_avant_1973",))
+_POLYPENSIONNE = EligibleMinimum(
+    indice=1, prorata_assurance=1.0, prorata_cotise=90 / 161, taux_plein=True, surcote=1.025,
+    duree_regime=100, cotisee_regime=90, proratisation=161, requis=161,
+    duree_tous_regimes=156, cotisee_tous_regimes=144, porte_avpf=True,
+    bornee_au_minimum_entier=True)
+_PERIODES_COTISEES = {"majoration": "periodes_cotisees", "seuil_trimestres_cotises": 120}
+
+
 #: Des appels de chaque règle du droit que la façade sert
 #: (``pont.REGLES_DE_LA_FACADE``) : ``(module, règle, arguments)``, les
 #: arguments bâtis sur le simulateur de chaque côté — son moteur, une période
@@ -450,6 +467,25 @@ APPELS_DES_REGLES = [
     ("ouvrir", "duree_requise", _du_regime("regime_general", 2029, _salarie)),
     ("ouvrir", "duree_requise", _du_regime("fonction_publique_etat", 2022, _fonctionnaire)),
     ("ouvrir", "duree_requise", _du_regime("sncf", 2009, _agent)),
+    ("completer", "borne_avec_les_droits_d_avant_1973",
+     lambda s: (4700.0, _ARTISAN, 0.0, 0, 0, 7831.22, 8557.38, True, _PERIODES_COTISEES, 0)),
+    ("completer", "borne_avec_les_droits_d_avant_1973",
+     lambda s: (4700.0, _ARTISAN, 120.5, 12, 8, 7831.22, 8557.38, True, _PERIODES_COTISEES, 0)),
+    ("completer", "borne_avec_les_droits_d_avant_1973",
+     lambda s: (9000.0, _POLYPENSIONNE, 10.0, 4, 4, 7831.22, 8557.38, False,
+                {"majoration": "aucune"}, 0)),
+    ("completer", "complement_minimum", lambda s: (621.0, 645.07, 1.025, (2009, 10))),
+    ("completer", "complement_minimum", lambda s: (621.0, 633.61, 1.015, (2008, 1))),
+    ("completer", "complement_minimum", lambda s: (0.0, 633.61, 1.015, (2008, 1))),
+    ("completer", "majoration_ouverte", lambda s: (_PERIODES_COTISEES, 118)),
+    ("completer", "majoration_ouverte", lambda s: (_PERIODES_COTISEES, 144)),
+    ("completer", "majoration_ouverte", lambda s: ({"majoration": "aucune"}, 160)),
+    ("completer", "plancher_du_regime", lambda s: (_ARTISAN, 7831.22, 8557.38, True, True)),
+    ("completer", "plancher_du_regime",
+     lambda s: (_POLYPENSIONNE, 584.48, 638.68, True, False)),
+    ("completer", "selon_la_regle", lambda s: (_ARTISAN, {"majoration": "sans_distinction"}, 0)),
+    ("completer", "selon_la_regle", lambda s: (_POLYPENSIONNE, _PERIODES_COTISEES, 24)),
+    ("completer", "selon_la_regle", lambda s: (_ARTISAN, _PERIODES_COTISEES, 24)),
 ]
 
 
@@ -470,11 +506,19 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     servi = facade.Simulateur(parametres)
     jumeau = simulateur_python.Simulateur(parametres)
-    modules = {"liquider": liquider_python, "ouvrir": ouvrir_python}
+    modules = {"completer": completer_python, "liquider": liquider_python,
+               "ouvrir": ouvrir_python}
     ecarts = []
     for module, regle, arguments in APPELS_DES_REGLES:
         lu = getattr(getattr(facade, module), regle)(*arguments(servi))
         refait = getattr(modules[module], regle)(*arguments(jumeau))
+        if dataclasses.is_dataclass(refait):
+            # Un éligible que le jumeau rend : le portage l'écrit sous ses noms,
+            # que la façade a lus ; il se compare champ à champ.
+            if repr(lu) != repr(refait):
+                ecarts.append(f"{module}.{regle} : la façade lit {lu!r}, le jumeau rend "
+                              f"{refait!r}")
+            continue
         if repr(lu) != repr(pont.lu_strictement(
                 facade._type_rendu(getattr(modules[module], regle), vars(modules[module])),
                 json.loads(json.dumps(pont._en_donnees(refait))), f"{module}.{regle}")):

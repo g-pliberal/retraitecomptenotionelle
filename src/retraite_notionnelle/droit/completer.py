@@ -387,7 +387,7 @@ def borne_avec_les_droits_d_avant_1973(plancher: float, eligible, avant_1973: fl
     return min(plancher, borne - avant_1973)
 
 
-def selon_la_regle(eligible, regle: dict, avpf: int):
+def selon_la_regle(eligible, regle: dict, avpf: int) -> liquider.EligibleMinimum:
     """Les durées cotisées de l'éligible, telles que la majoration de cette date
     les lit.
 

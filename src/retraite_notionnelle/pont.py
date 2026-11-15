@@ -2349,7 +2349,18 @@ def _argument_de_la_facade(argument, carrieres: list) -> dict:
         return {"valeur": {"@": "periode", **dataclasses.asdict(argument)}}
     if isinstance(argument, DateMois):
         return {"valeur": {"@": "date_mois", "annee": argument.annee, "mois": argument.mois}}
+    if dataclasses.is_dataclass(argument) and type(argument).__name__ in TYPES_DE_LA_FACADE:
+        return {"valeur": {_nom_du_portage(type(argument), champ.name):
+                           _en_donnees(getattr(argument, champ.name))
+                           for champ in dataclasses.fields(argument)}}
     return _argument_du_droit(argument, carrieres)
+
+
+#: Les objets du droit qu'une règle de la façade reçoit, sous les noms que le
+#: portage leur donne (:data:`CLASSES_EN_CHAMEAU`) : un éligible au minimum
+#: contributif, que ``droit/completer.js`` lit en chameau.
+TYPES_DE_LA_FACADE = frozenset({"EligibleMinimum"})
+CLASSES_EN_CHAMEAU |= TYPES_DE_LA_FACADE
 
 
 # -- les règles du droit, par la façade (action 161) ------------------------------
@@ -2366,6 +2377,8 @@ def _argument_de_la_facade(argument, carrieres: list) -> dict:
 #: un appel confronté au jumeau (``tests/test_facade_jumeau.py``). Une règle
 #: qui n'y est pas est refusée avant node.
 REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
+    "completer": ("borne_avec_les_droits_d_avant_1973", "complement_minimum",
+                  "majoration_ouverte", "plancher_du_regime", "selon_la_regle"),
     "liquider": ("abattement_points", "age_de_la_duree_atteinte", "annees_au_prorata",
                  "borne_de_la_duree", "decote_opposable", "duree_proratisation",
                  "moyenne_des_meilleures_annees", "retranche_decote",

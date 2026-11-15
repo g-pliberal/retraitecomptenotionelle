@@ -62,6 +62,7 @@ from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import PeriodeRegime
 from retraite_notionnelle.pont import NonTransmissible
+from retraite_notionnelle.droit import completer as _completer
 from retraite_notionnelle.droit import liquider as _liquider
 from retraite_notionnelle.droit import ouvrir as _ouvrir
 from retraite_notionnelle.droit import reversion as _reversion
@@ -425,9 +426,11 @@ def _demander_la_regle(module: str, regle: str, rendu, arguments: dict):
 def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, valeur):
     """Un argument d'une règle du droit tel que le pont le transmet : le
     moteur du simulateur par sa marque ; une période de son catalogue par son
-    rang ; une carrière, une date au mois, une valeur simple ou une suite de
-    valeurs simples, telles quelles. Le reste — un objet du moteur Python, un
-    dictionnaire — n'arriverait pas au portage sous son type."""
+    rang ; une carrière, une date au mois, une valeur simple, une suite de
+    valeurs simples, la règle d'une fiche — un dictionnaire de valeurs simples
+    sous des noms —, un éligible au minimum (``pont.TYPES_DE_LA_FACADE``),
+    tels quels. Le reste — un objet du moteur Python, un dictionnaire que le
+    portage lirait en ``Map`` — n'arriverait pas au portage sous son type."""
     if nom == "moteur":
         return pont.MOTEUR
     if isinstance(valeur, PeriodeRegime) and simulateur is not None:
@@ -436,12 +439,19 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
         return valeur
     if type(valeur) in (tuple, list) and all(type(element) in _SIMPLES for element in valeur):
         return list(valeur)
+    if type(valeur) is dict and all(type(cle) is str and type(element) in _SIMPLES
+                                    for cle, element in valeur.items()):
+        return dict(valeur)
+    if dataclasses.is_dataclass(valeur) and type(valeur).__name__ in pont.TYPES_DE_LA_FACADE:
+        return valeur
     raise NonTransmissible(
         f"{regle} : argument {nom} ({type(valeur).__name__}) que la façade ne sait pas "
         "transmettre au portage — le test reste sur le moteur Python, ou se porte à la main")
 
 
-#: ``droit.liquider`` et ``droit.ouvrir``, leurs règles servies par le portage.
+#: ``droit.completer``, ``droit.liquider`` et ``droit.ouvrir``, leurs règles
+#: servies par le portage.
+completer = Regles("completer", _completer)
 liquider = Regles("liquider", _liquider)
 ouvrir = Regles("ouvrir", _ouvrir)
 
@@ -459,7 +469,8 @@ MARQUE = "sur_le_moteur_python"
 
 #: Le jumeau Python de chaque entrée qu'un fichier basculé importe d'ici.
 JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
-           "reversion": _reversion.reversion, "liquider": _liquider, "ouvrir": _ouvrir}
+           "reversion": _reversion.reversion, "completer": _completer, "liquider": _liquider,
+           "ouvrir": _ouvrir}
 
 #: Les simulateurs des tests, par fichier, par moteur et par paramètres.
 _SIMULATEURS: dict[tuple, object] = {}
