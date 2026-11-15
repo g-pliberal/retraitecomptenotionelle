@@ -25,7 +25,8 @@ from retraite_notionnelle import memoire, pont
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle import simulateur as simulateur_python
 from retraite_notionnelle.carriere import LigneRelevee, Metier
-from retraite_notionnelle.config import RACINE_PROJET, Neutralisations, Parametres
+from retraite_notionnelle.config import (RACINE_PROJET, ContributionEtat, Neutralisations,
+                                         Parametres)
 from retraite_notionnelle.donnees.chargement import DonneeInsuffisante, Fiabilite
 from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
@@ -838,17 +839,52 @@ def test_le_constructeur_du_compte_rend_le_taux_effectif_d_une_periode(simulateu
     assert type(taux) is float
 
 
+def test_le_constructeur_du_compte_rend_un_compte_entier(simulateur):
+    """Le compte du même chef, ouvert en 1952 et liquidé en 1990 : une
+    cotisation par année, de 1952 à 1972, la première à 4,25 €, la moitié de la
+    cotisation annuelle (décret n° 52-1166, article 45), la suivante à 8,50 €,
+    les 8,5 % de 100 € ; un seul régime au capital. Il revient sous le type du
+    Python, ses cotisations comprises."""
+    from retraite_notionnelle.moteur.compte import CompteNotionnel, CotisationAnnuelle
+
+    compte = simulateur.constructeur.construire(_chef_de_1952(), 1990, annee_debut=1952)
+    assert type(compte) is CompteNotionnel
+    assert all(type(cotisation) is CotisationAnnuelle for cotisation in compte.cotisations)
+    assert [cotisation.annee for cotisation in compte.cotisations] == list(range(1952, 1973))
+    assert [cotisation.cotisation for cotisation in compte.cotisations[:2]] == [4.25, 8.50]
+    assert set(compte.capital_par_regime) == {"msa_non_salaries"}
+    assert compte.capital == pytest.approx(compte.capital_par_regime["msa_non_salaries"])
+    assert compte.annee_liquidation == 1990
+
+
+def test_le_prelevement_porte_le_taux_entier_de_l_etat(simulateur):
+    """Ce que le droit en vigueur prélève sur un civil de l'État en 2025 : le
+    taux entier que l'État verse, 78,28 % (la série des taux appelés,
+    ``contribution_employeur_public.csv``), quand son compte
+    ne reçoit par défaut que 44,1 %. Sous le taux entier, le constructeur du
+    prélèvement est celui des scénarios 4 et 5."""
+    periode = next(iter(
+        simulateur.catalogue["fonction_publique_etat"].periodes_actives(2025)))
+    _, employeur, origine, _ = simulateur.constructeur_prelevement.taux_effectif(
+        "fonction_publique_etat", periode, 2025, militaire=False)
+    assert (employeur, origine) == (pytest.approx(0.7828), "appelee")
+    entiere = facade.Simulateur(Parametres().avec(contribution_etat=ContributionEtat.ENTIERE))
+    assert entiere.constructeur_prelevement is entiere.constructeur_employeur
+    assert simulateur.constructeur_prelevement is not simulateur.constructeur_employeur
+    assert simulateur.constructeur is simulateur.constructeur
+
+
 def test_le_constructeur_ne_sert_que_ce_qu_il_transmet(simulateur):
     """Une méthode que la façade ne déclare pas, un constructeur qu'elle ne
     sert pas, une retouche : refusés, au lieu de tourner en Python."""
-    with pytest.raises(NonTransmissible, match="constructeur.construire"):
-        simulateur.constructeur.construire
+    with pytest.raises(NonTransmissible, match="constructeur.taux_unifie"):
+        simulateur.constructeur.taux_unifie
     with pytest.raises(NonTransmissible, match="constructeur_liberal"):
         simulateur.constructeur_liberal
     with pytest.raises(NonTransmissible, match="modifi"):
         simulateur.constructeur.taux_effectif = None
-    with pytest.raises(ValueError, match="constructeur.construire"):
-        pont.constructeur_du_compte("constructeur", "construire", dict)
+    with pytest.raises(ValueError, match="constructeur.taux_unifie"):
+        pont.constructeur_du_compte("constructeur", "taux_unifie", dict)
     assert facade.CONSTRUCTEURS is pont.CONSTRUCTEURS_DE_LA_FACADE
 
 

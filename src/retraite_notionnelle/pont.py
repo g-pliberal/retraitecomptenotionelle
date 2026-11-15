@@ -2414,8 +2414,9 @@ def _methode_servie(entree: str, porteur, nom: str, methode: str, type_rendu, ar
 #: confronté au jumeau (``tests/test_facade_jumeau.py``). Une méthode qui n'y
 #: est pas est refusée avant node.
 CONSTRUCTEURS_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
-    "constructeur": ("cotisation_annuelle", "taux_effectif"),
-    "constructeur_employeur": ("cotisation_annuelle", "taux_effectif"),
+    "constructeur": ("cotisation_annuelle", "taux_effectif", "construire"),
+    "constructeur_employeur": ("cotisation_annuelle", "taux_effectif", "construire"),
+    "constructeur_prelevement": ("cotisation_annuelle", "taux_effectif", "construire"),
 }
 
 

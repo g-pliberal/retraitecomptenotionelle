@@ -661,6 +661,12 @@ def _cumul(simulateur):
         AnneeCarriere(annee=2010, revenu=12000.0, affiliation="artisan")])
 
 
+def _compte_entier(carriere, annee_debut=None):
+    """Les arguments de ``construire`` : le compte de la carrière jusqu'à sa
+    liquidation, ouvert à son début ou à ``annee_debut``."""
+    return carriere, carriere.annee_liquidation, annee_debut
+
+
 #: Des appels de chaque méthode de constructeur que la façade sert
 #: (``pont.CONSTRUCTEURS_DE_LA_FACADE``) : ``(constructeur, méthode,
 #: arguments)``, bâtis sur le simulateur de chaque côté.
@@ -676,6 +682,14 @@ APPELS_DES_CONSTRUCTEURS = [
         False, False, True)),
     ("constructeur_employeur", "taux_effectif", lambda s: (
         "fonction_publique_etat", _periode_active("fonction_publique_etat", 2000)(s), 2000)),
+    ("constructeur", "construire", lambda s: _compte_entier(_salarie(s))),
+    ("constructeur", "construire", lambda s: _compte_entier(_cumul(s))),
+    ("constructeur_employeur", "construire", lambda s: _compte_entier(_fonctionnaire(s))),
+    ("constructeur_employeur", "construire", lambda s: _compte_entier(_artisan(s), 1975)),
+    ("constructeur_prelevement", "cotisation_annuelle", lambda s: (_fonctionnaire(s), 2010)),
+    ("constructeur_prelevement", "taux_effectif", lambda s: (
+        "fonction_publique_etat", _periode_active("fonction_publique_etat", 2025)(s), 2025)),
+    ("constructeur_prelevement", "construire", lambda s: _compte_entier(_fonctionnaire(s))),
 ]
 
 

@@ -40,9 +40,10 @@ une date, des valeurs simples. Ce qui n'en est pas — le moteur Python, une pé
 objet du moteur — n'arriverait pas au portage : la règle est refusée.
 
 **Le constructeur du compte** (``simulateur.constructeur``,
-``simulateur.constructeur_employeur``) sert ce que
-``pont.CONSTRUCTEURS_DE_LA_FACADE`` déclare — la cotisation d'une année, le
-taux porté au compte —, ses arguments transmis comme ceux d'une table.
+``simulateur.constructeur_employeur``, ``simulateur.constructeur_prelevement``)
+sert ce que ``pont.CONSTRUCTEURS_DE_LA_FACADE`` déclare — la cotisation d'une
+année, le taux porté au compte, le compte entier —, ses arguments transmis
+comme ceux d'une table.
 
 **Le relevé des droits** (``releve.construire``) revient en données, ce que
 les tests en lisent : ses durées, ses points et ses cotisations. Ses durées repassent au
@@ -69,7 +70,7 @@ from retraite_notionnelle import carriere as _carriere
 from retraite_notionnelle import memoire, pont
 from retraite_notionnelle import simulateur as _simulateur
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.config import ContributionEtat, Parametres
 from retraite_notionnelle.donnees.regimes import PeriodeRegime
 from retraite_notionnelle.pont import NonTransmissible
 from retraite_notionnelle.droit import commun as _commun
@@ -283,6 +284,7 @@ class Simulateur(_Ferme):
         object.__setattr__(self, "parametres", donnees.parametres)
         object.__setattr__(self, "_donnees", donnees)
         object.__setattr__(self, "scenario_actuel", ScenarioActuel(self))
+        object.__setattr__(self, "_constructeurs", {})
 
     @property
     def macro(self):
@@ -296,7 +298,13 @@ class Simulateur(_Ferme):
         if nom in DONNEES:
             return getattr(self._donnees, nom)
         if nom in CONSTRUCTEURS:
-            return Constructeur(self, nom)
+            # Sous le taux entier de l'État, le simulateur du portage ne bâtit
+            # pas de constructeur du prélèvement : c'est celui des scénarios 4
+            # et 5 (``constructeurPrelevement``, ``moteur/js/simulateur.js``).
+            if (nom == "constructeur_prelevement"
+                    and self.parametres.contribution_etat == ContributionEtat.ENTIERE):
+                nom = "constructeur_employeur"
+            return self._constructeurs.setdefault(nom, Constructeur(self, nom))
         return super().__getattr__(nom)
 
     def simuler(self, carriere):

@@ -1207,7 +1207,6 @@ def test_la_part_retraite_seule_ne_touche_que_l_etat_et_la_part_patronale(
         assert getattr(apres, cle).pension_annuelle < getattr(avant, cle).pension_annuelle, cle
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.constructeur_prelevement")
 def test_le_prelevement_du_droit_en_vigueur_ne_depend_pas_du_reglage(
         entiere, retraite_seule):
     """Le réglage change ce qui est PORTÉ AU COMPTE, non ce qui est PRÉLEVÉ.
