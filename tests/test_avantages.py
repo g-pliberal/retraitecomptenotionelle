@@ -49,19 +49,18 @@ def par_code(inventaire) -> dict[str, dict]:
 
 
 def _codes_de_la_cascade() -> set[str]:
-    """Les codes que ``ScenarioActuel.calculer`` peut émettre : ce que la
-    liquidation mesure par des liquidations d'essai, ce que l'étape qui
-    complète applique, et l'ASPA de l'étape « foyer et net ».
+    """Les codes que le scénario 1 peut émettre : ce que la liquidation
+    mesure par des liquidations d'essai, ce que l'étape qui complète
+    applique, et l'ASPA de l'étape « foyer et net ».
 
-    Lus dans la SOURCE plutôt que par une simulation : une cascade ne rend que
-    les avantages qu'une carrière donnée déclenche, et aucune carrière ne les
-    déclenche tous. La source, elle, les porte tous.
+    Lus dans la SOURCE du portage plutôt que par une simulation : une cascade
+    ne rend que les avantages qu'une carrière donnée déclenche, et aucune
+    carrière ne les déclenche tous. La source, elle, les porte tous.
     """
-    from retraite_notionnelle.droit import completer, foyer, liquidation
-
-    source = "".join(__import__("inspect").getsource(module)
-                     for module in (liquidation, completer, foyer))
-    return set(re.findall(r'AvantageApplique\(\s*code="([a-z_]+)"', source))
+    droit = RACINE_DONNEES.parent / "moteur" / "js" / "droit"
+    source = "".join((droit / f"{module}.js").read_text(encoding="utf-8")
+                     for module in ("liquidation", "completer", "foyer"))
+    return set(re.findall(r'\bcode: "([a-z_]+)"', source))
 
 
 def test_le_vocabulaire_de_l_inventaire_est_ferme(inventaire):
@@ -454,7 +453,9 @@ def _apprenti_puis_salarie(simulateur, fin_du_salariat: int, age_liquidation: fl
     de 2017 à ``fin_du_salariat`` exclue. Le relevé porte les euros sans les
     trimestres : le modèle les valide du salaire, comme la caisse."""
     from retraite_notionnelle import chronologie
-    from retraite_notionnelle.carriere import Carriere, LigneRelevee
+    from retraite_notionnelle.carriere import LigneRelevee
+
+    from facade import Carriere
 
     apprentissage = {2014: 400.0, 2015: 900.0, 2016: 900.0}
     salaires = {**apprentissage, **dict.fromkeys(range(2017, fin_du_salariat), 30000.0)}
@@ -490,7 +491,7 @@ def test_le_retrait_de_l_apprentissage_ne_retire_que_le_complement(script_cout):
     rapport de 134 à 124 ; sa complémentaire, faite de points, ne bouge pas.
     """
     from retraite_notionnelle import Parametres
-    from retraite_notionnelle.simulateur import Simulateur
+    from facade import Simulateur
 
     simulateur = Simulateur(Parametres())
     variante = script_cout.scenarios_neutralises(simulateur)["apprentissage"]
@@ -770,7 +771,7 @@ def test_les_retraites_de_moins_de_soixante_ans_confrontes_au_jaune_pensions_202
     from retraite_notionnelle.castypes import CAS_TYPES
     from retraite_notionnelle.cout import _ponderation, _tetes_par_poids
     from retraite_notionnelle.donnees.population import Population
-    from retraite_notionnelle.simulateur import Simulateur
+    from facade import Simulateur
 
     annee = 2025
     simulateur = Simulateur(Parametres())
@@ -906,7 +907,7 @@ def test_la_decomposition_date_chaque_cohorte_au_droit_de_sa_generation(script_c
     64 ans, en 2030 et en 2031. La décomposition, qui ne simule que la
     génération 1965, faisait partir ces deux-là en 2029 et en 2030."""
     from retraite_notionnelle import Parametres
-    from retraite_notionnelle.simulateur import Simulateur
+    from facade import Simulateur
 
     salarie = next(cas for cas in script_cout.CAS_TYPES if cas.code == "salaire_moyen")
     monkeypatch.setattr(script_cout, "CAS_TYPES", (salarie,))

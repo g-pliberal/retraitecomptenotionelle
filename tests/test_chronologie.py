@@ -11,9 +11,10 @@ from __future__ import annotations
 import pytest
 
 from retraite_notionnelle import chronologie
-from retraite_notionnelle.carriere import Carriere, LigneRelevee, Metier
-from retraite_notionnelle.droit import compter
+from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.noyau import vocabulaire
+
+from facade import Carriere, Simulateur, compter
 
 PARCOURS = dict(
     annee_naissance=1965, sexe="F", mois_naissance=3, age_liquidation=64.25,
@@ -392,10 +393,9 @@ def test_le_controle_trouve_ce_qui_ne_tient_pas():
 
 @pytest.fixture(scope="module")
 def macro():
-    from retraite_notionnelle.config import RACINE_DONNEES
-    from retraite_notionnelle.donnees.macro import DonneesMacro
-
-    return DonneesMacro(RACINE_DONNEES)
+    """Les séries d'un simulateur de la façade : le portage bâtit la carrière
+    sur les siennes."""
+    return Simulateur().macro
 
 
 def test_la_carriere_porte_la_chronologie_dont_elle_est_la_vue(macro):
@@ -1129,8 +1129,6 @@ def test_le_moteur_lit_la_naissance_que_la_chronologie_porte():
     b ter ; nés en 2002, sous L. 12 b : quatre chacun, tous de services. Les
     dates sont déclarées : le test ne dépend pas de l'âge que la présomption
     donne aux parents. Le moteur lit la chronologie, et rien d'autre."""
-    from retraite_notionnelle.simulateur import Simulateur
-
     simulateur = Simulateur()
     actuel = simulateur.scenario_actuel
 
