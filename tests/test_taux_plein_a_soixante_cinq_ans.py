@@ -267,12 +267,12 @@ REQUETE = {
 ])
 def test_la_pension_du_regime_general_de_bout_en_bout(age, enfants, taux):
     """Le simulateur, de la requête à la pension, dans les deux moteurs
-    (``servi_et_refait``)."""
-    from outils_pont import servi_et_refait
+    (``servi_et_fige``)."""
+    from outils_pont import servi_et_fige
 
     naissances = REQUETE["naissances"] if enfants == "3" else "1976-04, 1978-06"
     requete = {**REQUETE, "liquidation": age, "enfants": enfants, "naissances": naissances}
-    servis, refus = servi_et_refait([{"cle": "assurée", "requete": requete}])
+    servis, refus = servi_et_fige([{"cle": "assurée", "requete": requete}])
     assert refus == {}, refus
     general = [p for p in servis["assurée"]["actuel"]["pensions_par_regime"]
                if p["regime"] == "regime_general"]
@@ -449,7 +449,7 @@ AVANT_1973 = {
 
 def test_les_points_d_avant_1973_sans_minoration():
     """Les points d'avant 1973, de la requête à la pension, dans les deux
-    moteurs (``servi_et_refait``)."""
+    moteurs (``servi_et_fige``)."""
     assert _coefficients_servis(AVANT_1973) == {
         cle: attendus for cle, (_, attendus) in AVANT_1973.items()}
 
@@ -470,10 +470,10 @@ NON_TRANCHE_CULTES = {"taux": "taux 50.000%", "avant 1998": "= 507.73 €"}
 
 def test_l_activite_cultuelle_compte_comme_l_emploi():
     """Le point que les textes ne tranchent pas, dans les deux moteurs
-    (``servi_et_refait``), déclaré à la fiche."""
-    from outils_pont import servi_et_refait
+    (``servi_et_fige``), déclaré à la fiche."""
+    from outils_pont import servi_et_fige
 
-    servis, refus = servi_et_refait([{"cle": "ministre", "requete": {
+    servis, refus = servi_et_fige([{"cle": "ministre", "requete": {
         **REQUETE, "liquidation": "65", **MINISTRE_DU_CULTE}}])
     assert refus == {}, refus
     detail = next(p["detail"] for p in servis["ministre"]["actuel"]["pensions_par_regime"]
@@ -607,12 +607,12 @@ NON_TRANCHE = {
 
 def _coefficients_servis(cas: dict) -> dict[str, dict[str, float | None]]:
     """Le coefficient d'anticipation que la formule de chaque régime de ``cas``
-    affiche, dans les deux moteurs (``servi_et_refait``)."""
+    affiche, dans les deux moteurs (``servi_et_fige``)."""
     import re
 
-    from outils_pont import servi_et_refait
+    from outils_pont import servi_et_fige
 
-    servis, refus = servi_et_refait(
+    servis, refus = servi_et_fige(
         [{"cle": cle, "requete": {**REQUETE, "liquidation": "65", **champs}}
          for cle, (champs, _) in cas.items()])
     assert refus == {}, refus
@@ -652,10 +652,10 @@ def test_la_tranche_c_d_avant_2016_garde_son_coefficient():
     points : 1 − 0,05 × points de la tranche C / points."""
     import re
 
-    from outils_pont import servi_et_refait
+    from outils_pont import servi_et_fige
 
     requete = {**REQUETE, "liquidation": "65", "statut": "salarie_prive_cadre", "salaire": "8"}
-    servis, refus = servi_et_refait([{"cle": "cadre", "requete": requete}])
+    servis, refus = servi_et_fige([{"cle": "cadre", "requete": requete}])
     assert refus == {}, refus
     details = {p["regime"]: p["detail"] for p in servis["cadre"]["actuel"]["pensions_par_regime"]}
     assert "coefficient d'anticipation" not in details["arrco"], details["arrco"]
@@ -933,12 +933,12 @@ BOUT_EN_BOUT = {
 
 def test_la_pension_du_fonctionnaire_de_bout_en_bout():
     """Le simulateur, de la requête au taux de la pension, dans les deux moteurs
-    (``servi_et_refait``) : le taux que la formule affiche, au millième."""
+    (``servi_et_fige``) : le taux que la formule affiche, au millième."""
     import re
 
-    from outils_pont import servi_et_refait
+    from outils_pont import servi_et_fige
 
-    servis, refus = servi_et_refait(
+    servis, refus = servi_et_fige(
         [{"cle": cle, "requete": {**REQUETE, "liquidation": "65", **champs}}
          for cle, (champs, _, _) in BOUT_EN_BOUT.items()])
     assert refus == {}, refus
@@ -962,12 +962,12 @@ def test_le_minimum_garanti_s_ouvre_a_soixante_cinq_ans():
     d'annulation de sa génération (66 ans et 3 mois) ne l'ouvrent, et le décret
     n° 2010-1744, article 3, ne minore cet âge que pour qui atteint l'âge
     d'ouverture de 2011 à 2015, elle en 2017. Dans les deux moteurs
-    (``servi_et_refait``)."""
-    from outils_pont import servi_et_refait
+    (``servi_et_fige``)."""
+    from outils_pont import servi_et_fige
 
     cas = {"trois enfants": ("3", "1978-04, 1980-06, 1982-06"),
            "deux enfants": ("2", "1978-04, 1980-06")}
-    servis, refus = servi_et_refait(
+    servis, refus = servi_et_fige(
         [{"cle": cle, "requete": {**REQUETE, **CONGES_DE_1978_A_1980, "liquidation": "65",
                                   "statut": "fonctionnaire_etat", "salaire": "0.3",
                                   "enfants": enfants, "naissances": naissances}}

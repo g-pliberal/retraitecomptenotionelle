@@ -17,8 +17,8 @@ La majoration se pose comme le guide la pose : « Nombre de points de retraite
 valeur que la pension de chaque régime affiche ; le coefficient, lu dans la
 table de l'âge (annexe A de l'accord de 1961, article 18 ; accord du 17 novembre
 2017, article 84, 2 ; accord du 25 avril 1996, article 10). Chaque cas part de
-la requête du simulateur, servi par le portage et refait par le moteur Python
-(``servi_et_refait``). Les calculs, posés à la main, sont dans la note
+la requête du simulateur, servi par le portage et confronté au témoin des servis
+(``servi_et_fige``). Les calculs, posés à la main, sont dans la note
 docs/feuille_de_route/130/2026-11-03-majoration-enfants-agirc-arrco-avant-le-coefficient.md.
 """
 
@@ -28,7 +28,7 @@ import re
 
 import pytest
 
-from outils_pont import servi_et_refait
+from outils_pont import servi_et_fige
 
 #: La carrière commune : une salariée de trois enfants au salaire moyen.
 REQUETE = {
@@ -109,7 +109,7 @@ POINTS_ET_VALEUR = re.compile(r"([\d,]+\.\d+) points × valeur de service ([\d.]
 @pytest.fixture(scope="module")
 def servis():
     cas = [{"cle": cle, "requete": {**REQUETE, **champs}} for cle, champs in CAS.items()]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     return {cle: servi["actuel"] for cle, servi in servis.items()}
 

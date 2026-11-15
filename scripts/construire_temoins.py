@@ -16,9 +16,13 @@ site calcule et ce qu'il écrit :
   § 8), et ``web/site.py`` le fait rendre par node, sur le paquet
   ``moteur/donnees.json`` — qu'il faut donc avoir reconstruit d'abord. Son
   ``corps`` est une liste de morceaux, une ligne ou un élément chacun
-  (``retraite_notionnelle.lignes``), dont la concaténation rend la page.
+  (``retraite_notionnelle.lignes``), dont la concaténation rend la page ;
+* ``tests/temoins/servis.json`` — le scénario 1 que le portage sert à chaque
+  cas des confrontations des tests (``outils_pont.servi_et_fige``), refait de
+  ses propres requêtes : la référence qui remplace le moteur Python qui les
+  refaisait (action 161, étape 8b).
 
-Les deux fichiers sont versionnés : une différence de chiffre entre les deux
+Les trois fichiers sont versionnés : une différence de chiffre entre les deux
 implémentations fait échouer la confrontation du moteur Python, et une
 modification voulue du modèle, ou du texte du site, apparaît en diff dans le
 dépôt, chiffre par chiffre et mot par mot. C'est ce qui rend le portage
@@ -26,6 +30,7 @@ vérifiable plutôt que crédible.
 
     python scripts/construire_temoins.py            # régénère les témoins
     python scripts/construire_temoins.py --verifier # échoue s'ils sont périmés
+    python scripts/construire_temoins.py --servis   # le témoin des servis seul
 """
 
 from __future__ import annotations
@@ -48,6 +53,10 @@ from retraite_notionnelle.web.site import module, rendre  # noqa: E402
 DOSSIER = RACINE / "tests" / "temoins"
 SIMULATIONS = DOSSIER / "simulations.json"
 PAGES = DOSSIER / "pages.json"
+#: Le témoin des servis (``tests/outils_pont.py``, :func:`servi_et_fige`) :
+#: ce que le portage sert aux cas des confrontations du scénario 1, refait ici
+#: de ses propres requêtes ; un cas neuf y entre par ``FIGER_SERVIS=1``.
+SERVIS = DOSSIER / "servis.json"
 
 #: Réglages du cas de base. Chaque cas ci-dessous en dérive.
 BASE = {
@@ -2774,11 +2783,23 @@ def _pages() -> dict:
     return pages
 
 
-def construire() -> dict[Path, bytes]:
-    fichiers = {
-        SIMULATIONS: _simulations(),
-        PAGES: _pages(),
-    }
+def servis(figes: dict[str, dict]) -> dict[str, dict]:
+    """Chaque cas du témoin des servis, servi de nouveau par le portage
+    (:func:`pont.scenario_actuel`) : sa clé, sa requête, et ce qui en est
+    servi, ou le motif de son refus (action 161, étape 8b)."""
+    cas = [{**entree["cas"], "cle": empreinte} for empreinte, entree in figes.items()]
+    servis_, refus = pont.scenario_actuel(cas) if cas else ({}, {})
+    return {empreinte: {"cle": entree["cle"], "cas": entree["cas"],
+                        **({"refus": refus[empreinte]} if empreinte in refus
+                           else {"servi": json.loads(json.dumps(servis_[empreinte]))})}
+            for empreinte, entree in figes.items()}
+
+
+def construire(seulement_les_servis: bool = False) -> dict[Path, bytes]:
+    figes = json.loads(SERVIS.read_text(encoding="utf-8")) if SERVIS.exists() else {}
+    fichiers = {SERVIS: servis(figes)}
+    if not seulement_les_servis:
+        fichiers |= {SIMULATIONS: _simulations(), PAGES: _pages()}
     return {
         chemin: (json.dumps(contenu, ensure_ascii=False, sort_keys=True, indent=1) + "\n")
         .encode("utf-8")
@@ -2792,9 +2813,13 @@ def main(argv: list[str] | None = None) -> int:
         "--verifier", action="store_true",
         help="ne rien écrire ; échouer si les témoins versionnés sont périmés",
     )
+    analyseur.add_argument(
+        "--servis", action="store_true",
+        help="ne refaire que le témoin des servis, en quelques secondes",
+    )
     arguments = analyseur.parse_args(argv)
 
-    attendus = construire()
+    attendus = construire(seulement_les_servis=arguments.servis)
 
     if arguments.verifier:
         for chemin, contenu in attendus.items():

@@ -38,8 +38,7 @@ Le modèle prenait le plus bas des âges des régimes en points, et la CARPV, la
 CAVEC et ces prestations, ouvertes à soixante ans, ouvraient la base avec
 elles (relecture R-E-bis, note
 ``docs/feuille_de_route/130/2026-11-03-relecture-corrections-r-e.md``). Chaque
-cas part de la requête du simulateur, servi par le portage et refait par le
-moteur Python (``servi_et_refait``) : un libéral né le 10 de son mois, qui
+cas part de la requête du simulateur, servi par le portage et confronté au témoin des servis (``servi_et_fige``) : un libéral né le 10 de son mois, qui
 demande son départ à soixante ans. Une pension prend effet au premier jour du
 mois qui suit l'anniversaire de son âge (``Carriere.date_de_l_age``). Les
 dates, posées à la main, sont dans la note
@@ -57,7 +56,7 @@ from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.droit import departs, ouvrir
 from retraite_notionnelle.simulateur import Simulateur
 
-from outils_pont import servi_et_refait
+from outils_pont import servi_et_fige
 
 REQUETE = {
     "age_reference": "fixe_apres_bascule", "bascule": "2026",
@@ -101,7 +100,7 @@ def servis():
             "requete": {**REQUETE, "statut": statut, "naissance": naissance}}
            for statut in (*SECTIONS, "biologiste_liberal")
            for generation, (naissance, _, _) in GENERATIONS.items()]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     return {cle: servi["actuel"] for cle, servi in servis.items()}
 
@@ -198,7 +197,7 @@ def avant_2004():
     cas = [{"cle": age, "requete": {**REQUETE, "statut": "profession_liberale",
                                     "naissance": "1930-02-10", "liquidation": age}}
            for age in AVANT_2004]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     return {cle: servi["actuel"] for cle, servi in servis.items()}
 
@@ -246,7 +245,7 @@ def test_le_biologiste_est_minore_jusqu_a_l_age_de_l_351_8():
     cas = [{"cle": naissance, "requete": {**REQUETE, "statut": "biologiste_liberal",
                                           "naissance": naissance, "liquidation": age}}
            for naissance, (age, _) in BIOLOGISTES.items()]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     lus = {}
     for naissance, servi in servis.items():
@@ -281,7 +280,7 @@ def test_avant_2009_le_biologiste_est_minore_jusqu_a_soixante_cinq_ans():
     cas = [{"cle": naissance, "requete": {**REQUETE, "statut": "biologiste_liberal",
                                           "naissance": naissance, "liquidation": age}}
            for naissance, (age, _) in BIOLOGISTES_AVANT_2009.items()]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     lus = {}
     for naissance, servi in servis.items():

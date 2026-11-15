@@ -25,7 +25,7 @@ from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import ErreurSite, disponible, rendre
 
-from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage, servi_et_refait
+from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage, servi_et_fige
 from outils_portage import moitie_python
 
 
@@ -282,8 +282,7 @@ _ORGANISATIONS_SPECIALES = {
 
 @pytest.fixture(scope="module")
 def accessoires() -> dict[str, dict]:
-    """Le scénario 1 de chaque cas, servi par le portage et refait par le
-    moteur Python (``servi_et_refait``)."""
+    """Le scénario 1 de chaque cas, servi par le portage et confronté au témoin des servis (``servi_et_fige``)."""
     cas = [{"cle": f"{statut}/seul",
             "requete": {**{c: v for c, v in _ACCESSOIRE.items()
                            if not c.startswith("metier2")}, "statut": statut}}
@@ -292,7 +291,7 @@ def accessoires() -> dict[str, dict]:
              "requete": {**_ACCESSOIRE, **dates, "statut": statut}}
             for statut in [*_ORGANISATIONS_SPECIALES, "militaire", "medecin_liberal"]
             for quand, dates in (("avant", _AVANT_2015), ("apres", _APRES_2015))]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     return {cle: servi["actuel"] for cle, servi in servis.items()}
 

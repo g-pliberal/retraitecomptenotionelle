@@ -16,8 +16,8 @@ année, enfants, conjoint, décès —, et confronte, régime par régime : la
 durée d'assurance, majoration pour enfants comprise ; le taux ; la pension de
 droit direct ; les majorations de 10 % pour trois enfants ; la réversion servie
 l'année du décès. Le seul test qui exige R, `test_destinie_rejoue_le_temoin`,
-se saute sans lui. Tant que le moteur Python garde ses jumeaux (action 161),
-il refait au bit près chaque cas que le portage sert.
+se saute sans lui. Chaque cas que le portage sert se confronte au témoin des
+servis (``tests/temoins/servis.json``).
 
 Chaque quantité concorde à sa tolérance, ou son écart est DÉCLARÉ, cas par
 cas, avec sa cause et sa borne (`ECARTS`) : un écart inexpliqué fait échouer
@@ -71,7 +71,7 @@ from pathlib import Path
 
 import pytest
 
-from outils_pont import servi_et_refait
+from outils_pont import servi_et_fige
 from retraite_notionnelle import pont
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -453,13 +453,13 @@ def test_le_scenario_1_concorde_avec_destinie_ou_son_ecart_est_explique(ecarts):
     assert not ecarts_hors, "\n".join(ecarts_hors)
 
 
-def test_le_moteur_python_refait_chaque_cas_au_bit_pres(temoin):
-    """Tant que le moteur Python garde ses jumeaux (action 161), il refait au
-    bit près, sous Linux x86_64, ce que le portage sert à chaque cas du témoin,
-    réversion et majoration de chaque régime comprises
-    (:func:`outils_pont.servi_et_refait`) : aucun cas de la confrontation ne
-    perd la vérification du Python."""
-    servis, refus = servi_et_refait(_cas_du_temoin(temoin))
+def test_le_temoin_des_servis_fige_chaque_cas(temoin):
+    """Ce que le portage sert à chaque cas du témoin de Destinie, réversion et
+    majoration de chaque régime comprises, se confronte au témoin des servis,
+    au bit près sous Linux x86_64 (:func:`outils_pont.servi_et_fige`) : il
+    tient la place du moteur Python qui refaisait chaque cas (action 161,
+    étape 8b)."""
+    servis, refus = servi_et_fige(_cas_du_temoin(temoin))
     assert refus == {} and set(servis) == set(temoin["cas"])
 
 

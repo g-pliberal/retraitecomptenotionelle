@@ -50,8 +50,8 @@ La base : « soixante-deux ans pour les assurés nés à compter du 1er janvier
 mois pour les assurés nés en 1953 » (D. 161-2-1-9, LEGIARTI000025089933) ;
 « 9° Soixante-deux ans et neuf mois pour les assurés nés en 1963 »
 (D. 161-2-1-9, LEGIARTI000047634502). Chaque cas part de la requête du
-simulateur, servi par le portage et refait par le moteur Python
-(``servi_et_refait``) ; une pension prend effet au premier jour du mois qui
+simulateur, servi par le portage et confronté au témoin des servis
+(``servi_et_fige``) ; une pension prend effet au premier jour du mois qui
 suit l'anniversaire de son âge, et chaque date tombe aussi au premier jour
 d'un trimestre civil, la date d'effet de la CAVOM et de la CARPIMKO. Le
 calcul de chaque date est posé à la main dans
@@ -62,7 +62,7 @@ from __future__ import annotations
 
 import pytest
 
-from outils_pont import servi_et_refait
+from outils_pont import servi_et_fige
 
 REQUETE = {
     "age_reference": "fixe_apres_bascule", "bascule": "2026",
@@ -115,7 +115,7 @@ def servis():
             "requete": {**REQUETE, "statut": cle[0], "naissance": cle[1],
                         "liquidation": cle[2]}}
            for cle in [*CAS, ("pharmacien", "1953-03-10", "61")]]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     return {cle: servi["actuel"] for cle, servi in servis.items()}
 

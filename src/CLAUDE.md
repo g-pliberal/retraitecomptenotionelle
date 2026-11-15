@@ -121,8 +121,9 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   tests/test_estimation_officielle.py tests/test_verification.py` ; elles ont
   rougi `main` quatre fois du 6 au 17 octobre 2026 (action 163, garde 4).
   L'estimation officielle et Destinie 2 y éprouvent le portage
-  (`pont.scenario_actuel`), et y font refaire au moteur Python, au bit près,
-  chaque cas qu'il sert (`servi_et_refait`, `tests/outils_pont.py`) ; les
+  (`pont.scenario_actuel`), et chaque cas qu'il sert se confronte, au bit
+  près, au témoin des servis (`servi_et_fige`, `tests/outils_pont.py`), qu'un
+  changement voulu refait par `construire_temoins.py --servis` ; les
   exemples d'OpenFisca et des caisses passent au pont, fonction par fonction,
   par `pont.droit` (action 161). Le
   coût et ses confrontations (`test_cout.py`, `test_facteurs_depense.py`,

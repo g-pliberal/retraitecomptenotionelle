@@ -26,8 +26,8 @@ toujours si la retraite a pris effet avant le 1er mars 1994 ; 9,6 % en 1995 ;
 31 décembre 1996 suit, après sa date d'effet, le pourcentage de chaque année :
 les étapes de la majoration (``a_charge``) le disent, et sa part de 1997 est
 celle que le modèle servait déjà. Chaque cas part de la requête du
-simulateur, servi par le portage et refait par le moteur Python
-(``servi_et_refait``) : un cadre de trois enfants, parti à 65 ans, au taux
+simulateur, servi par le portage et confronté au témoin des servis
+(``servi_et_fige``) : un cadre de trois enfants, parti à 65 ans, au taux
 plein. Les calculs, posés à la main, sont dans la note
 docs/feuille_de_route/130/2026-11-03-majoration-enfants-agirc-1995-1996.md.
 """
@@ -38,7 +38,7 @@ import re
 
 import pytest
 
-from outils_pont import servi_et_refait
+from outils_pont import servi_et_fige
 
 REQUETE = {
     "age_reference": "fixe_apres_bascule", "bascule": "2026",
@@ -85,7 +85,7 @@ POINTS_ET_VALEUR = re.compile(r"([\d,]+\.\d+) points × valeur de service ([\d.]
 def servis():
     cas = [{"cle": cle, "requete": {**REQUETE, "naissance": naissance}}
            for cle, (naissance, *_reste) in CAS.items()]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     return {cle: servi["actuel"] for cle, servi in servis.items()}
 

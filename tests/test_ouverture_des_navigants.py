@@ -31,8 +31,8 @@ moins 50 % » (L. 351-1-3, LEGIARTI000028498841).
 Le modèle prenait l'âge de la CRPNPAC, complémentaire en annuités, pour celui
 de tout le départ : parti à cinquante-cinq ans, le navigant touchait le régime
 général et l'Agirc-Arrco avec elle. Chaque cas part de la requête du
-simulateur, servi par le portage et refait par le moteur Python
-(``servi_et_refait``) : un navigant né le 10 février 1964, entré à vingt-deux
+simulateur, servi par le portage et confronté au témoin des servis
+(``servi_et_fige``) : un navigant né le 10 février 1964, entré à vingt-deux
 ans. Une pension prend effet au premier jour du mois qui suit l'anniversaire
 de son âge. Les dates, posées à la main, sont dans la note
 ``docs/feuille_de_route/130/2026-11-05-crpnpac-et-regime-general.md``.
@@ -47,7 +47,7 @@ from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.droit import departs
 from retraite_notionnelle.simulateur import Simulateur
 
-from outils_pont import servi_et_refait
+from outils_pont import servi_et_fige
 
 REQUETE = {
     "age_reference": "fixe_apres_bascule", "bascule": "2026",
@@ -76,7 +76,7 @@ DEPARTS = {
 @pytest.fixture(scope="module")
 def servis():
     cas = [{"cle": age, "requete": {**REQUETE, "liquidation": age}} for age in DEPARTS]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     return {cle: servi["actuel"] for cle, servi in servis.items()}
 

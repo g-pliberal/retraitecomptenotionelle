@@ -10,8 +10,8 @@ son texte ; il poursuit la carrière comme la page le dit, et la fait liquider
 par le portage, le moteur qui fait foi (note de décision 0005), à la date de
 chaque départ, en euros de la page, majoration pour enfants comprise ; et
 l'écart qu'il imprime est celui du modèle à la caisse, ligne par ligne, puis
-étage par étage. Tant que le moteur Python garde ses jumeaux (action 161), il
-refait au bit près chaque départ que ces tests font servir au portage.
+étage par étage. Chaque départ que ces tests font servir au portage se
+confronte au témoin des servis (``tests/temoins/servis.json``).
 """
 
 from __future__ import annotations
@@ -27,7 +27,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from outils_pont import SCENARIO_ACTUEL_DU_PORTAGE, servi_et_refait
+from outils_pont import SCENARIO_ACTUEL_DU_PORTAGE, servi_et_fige
 from retraite_notionnelle import pont
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -92,13 +92,13 @@ def _estimation(**remplacements) -> dict:
 
 
 @pytest.fixture(autouse=True)
-def _le_moteur_python_refait_chaque_depart(monkeypatch):
-    """Le portage sert chaque départ que ces tests confrontent, et le moteur
-    Python, tant qu'il garde ses jumeaux (action 161), le refait au bit près
-    sous Linux x86_64 : un écart arrête le test qui l'a demandé, sur ce qui
-    diffère (:func:`outils_pont.servi_et_refait`). Aucun cas de la
-    confrontation ne perd ainsi la vérification du moteur Python."""
-    monkeypatch.setattr(pont, "scenario_actuel", servi_et_refait)
+def _le_temoin_des_servis_fige_chaque_depart(monkeypatch):
+    """Le portage sert chaque départ que ces tests confrontent, et le témoin
+    des servis le fige, au bit près sous Linux x86_64 : un écart arrête le
+    test qui l'a demandé, sur ce qui diffère (:func:`outils_pont.servi_et_fige`).
+    Il tient la place du moteur Python qui refaisait chaque départ (action
+    161, étape 8b)."""
+    monkeypatch.setattr(pont, "scenario_actuel", servi_et_fige)
 
 
 @pytest.fixture(scope="module")

@@ -205,16 +205,16 @@ INAPTES_DE_LA_CAVOM = {
 
 @pytest.fixture(scope="module")
 def inaptes_de_la_cavom():
-    """Chaque cas, servi par le portage et refait au bit près par le moteur
-    Python (``servi_et_refait``)."""
-    from outils_pont import servi_et_refait
+    """Chaque cas, servi par le portage et confronté au
+    témoin des servis (``servi_et_fige``)."""
+    from outils_pont import servi_et_fige
 
     cas = [{"cle": "|".join(cle),
             "requete": {**REQUETE_D_OFFICIER_MINISTERIEL, "naissance": cle[0],
                         "liquidation": cle[1],
                         **({"inaptitude": "oui"} if cle[2] == "oui" else {})}}
            for cle in INAPTES_DE_LA_CAVOM]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     return {cle: {p["regime"]: p for p in servi["actuel"]["pensions_par_regime"]}
             for cle, servi in servis.items()}
@@ -276,16 +276,16 @@ OUVERTURE_DE_L_INAPTE_DE_LA_CAVOM = {
 
 @pytest.fixture(scope="module")
 def ouvertures_de_l_inapte_de_la_cavom():
-    """Chaque cas, servi par le portage et refait au bit près par le moteur
-    Python (``servi_et_refait``)."""
-    from outils_pont import servi_et_refait
+    """Chaque cas, servi par le portage et confronté au
+    témoin des servis (``servi_et_fige``)."""
+    from outils_pont import servi_et_fige
 
     cas = [{"cle": "|".join(cle),
             "requete": {**REQUETE_D_OFFICIER_MINISTERIEL, "naissance": cle[0],
                         "liquidation": cle[1],
                         **({"inaptitude": "oui"} if cle[2] == "oui" else {})}}
            for cle in OUVERTURE_DE_L_INAPTE_DE_LA_CAVOM]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     return {cle: servi["actuel"] for cle, servi in servis.items()}
 
@@ -434,7 +434,7 @@ CPRN_AU_TEXTE = {
 
 
 def test_la_cprn_sert_ses_ages_et_ses_coefficients_dans_les_deux_moteurs():
-    from outils_pont import servi_et_refait
+    from outils_pont import servi_et_fige
 
     requete = {
         "age_reference": "fixe_apres_bascule", "bascule": "2026",
@@ -447,7 +447,7 @@ def test_la_cprn_sert_ses_ages_et_ses_coefficients_dans_les_deux_moteurs():
     cas = [{"cle": "|".join(cle),
             "requete": {**requete, "naissance": cle[0], "liquidation": cle[1]}}
            for cle in CPRN_AU_TEXTE]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     for cle, (date_effet, coefficient) in CPRN_AU_TEXTE.items():
         actuel = servis["|".join(cle)]["actuel"]

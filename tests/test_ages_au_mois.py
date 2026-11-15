@@ -36,7 +36,7 @@ L'ouverture : la pension est servie « à partir de l'âge mentionné à
 l'article L. 161-17-2 » (L. 351-1, LEGIARTI000023035688), l'âge de
 D. 161-2-1-9 pour les générations 1951 à 1954.
 
-Chaque cas passe par ``servi_et_refait`` : le portage le sert, le moteur
+Chaque cas passe par ``servi_et_fige`` : le portage le sert, le moteur
 Python le refait au bit près.
 """
 
@@ -54,7 +54,7 @@ from retraite_notionnelle.scenarios.actuel import (
     DureesServicesMilitaires,
 )
 
-from outils_pont import servi_et_refait
+from outils_pont import servi_et_fige
 
 REQUETE = {
     "age_reference": "fixe_apres_bascule", "bascule": "2026",
@@ -110,7 +110,7 @@ def servis():
             cas.append(_cas(statut, naissance, taux_plein))
             cas.append(_cas(statut, naissance, ouverture))
             cas.append(_cas(statut, naissance, _avant(ouverture)))
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     return {cle: servi["actuel"] for cle, servi in servis.items()}
 

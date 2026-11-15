@@ -24,10 +24,13 @@ from __future__ import annotations
 import contextlib
 import dataclasses
 import functools
+import hashlib
 import json
 import math
+import os
 import platform
 import sys
+from pathlib import Path
 
 from retraite_notionnelle import calendrier, chronologie, pont
 from retraite_notionnelle.config import Parametres
@@ -227,42 +230,88 @@ class Saisies:
                  for cle, (parametres, carriere) in carrieres.items()}, refus)
 
 
-#: Le pont du scénario 1 tel quel, que :func:`servi_et_refait` appelle quand
+#: Le pont du scénario 1 tel quel, que :func:`servi_et_fige` appelle quand
 #: une confrontation la met à sa place.
 SCENARIO_ACTUEL_DU_PORTAGE = pont.scenario_actuel
 
+#: Le témoin des servis : ce que le portage sert à chaque cas que les
+#: confrontations du scénario 1 demandent, sous l'empreinte du cas
+#: (:func:`empreinte_du_cas`), avec sa clé, sa requête et ce qui en est servi,
+#: ou le motif de son refus. ``scripts/construire_temoins.py`` le refait de
+#: ses propres requêtes (action 161, étape 8b).
+TEMOIN_DES_SERVIS = Path(__file__).resolve().parent / "temoins" / "servis.json"
+
+
+def empreinte_du_cas(cas: dict) -> str:
+    """L'empreinte de ce que le portage lit d'un cas, sa clé ôtée : deux
+    fichiers qui nomment autrement le même cas le partagent."""
+    lu = {cle: valeur for cle, valeur in cas.items() if cle != "cle"}
+    texte = json.dumps(lu, ensure_ascii=False, sort_keys=True)
+    return hashlib.sha256(texte.encode("utf-8")).hexdigest()[:16]
+
 
 @functools.cache
-def _saisies() -> Saisies:
-    """Les saisies du moteur Python que confrontent :func:`servi_et_refait`,
-    un simulateur par jeu de paramètres, gardés d'un cas à l'autre."""
-    return Saisies()
+def servis_figes() -> dict[str, dict]:
+    """Le témoin des servis, tel que le fichier le porte."""
+    return json.loads(TEMOIN_DES_SERVIS.read_text(encoding="utf-8"))
 
 
-def servi_et_refait(cas: list[dict], paquet: bytes | None = None,
-                    ) -> tuple[dict[str, dict], dict[str, str]]:
-    """Ce que le portage sert de chaque cas (:func:`pont.scenario_actuel`), le
-    moteur Python confronté tant qu'il garde ses jumeaux (action 161) : il doit
-    le refaire au bit près sous Linux x86_64
-    (:data:`TOLERANCE_DU_MOTEUR_PYTHON`), et refuser ce que le portage
-    refuse, ou la confrontation s'arrête sur ce qui diffère. Une confrontation
-    la met à la place du pont : chacun de ses cas éprouve les deux moteurs, et
-    aucun chemin que les témoins n'exercent ne perd la vérification du
-    Python. Sur un autre paquet que celui du dépôt, il n'y a rien à refaire."""
+def _figer(entrees: dict[str, dict]) -> None:
+    """Ajoute des entrées au témoin, sous verrou, et le remplace d'un coup :
+    les processus de la suite peuvent figer, et le lire, en même temps."""
+    import fcntl  # POSIX seul : figer ne se fait que sous Linux ou macOS
+
+    import tempfile
+
+    verrou = Path(tempfile.gettempdir()) / "temoin_des_servis.verrou"
+    with open(verrou, "a", encoding="utf-8") as tenu:
+        fcntl.flock(tenu, fcntl.LOCK_EX)
+        figes = json.loads(TEMOIN_DES_SERVIS.read_text(encoding="utf-8"))
+        figes.update(entrees)
+        provisoire = TEMOIN_DES_SERVIS.with_suffix(f".{os.getpid()}.provisoire")
+        provisoire.write_text(json.dumps(figes, ensure_ascii=False, sort_keys=True, indent=1)
+                              + "\n", encoding="utf-8")
+        os.replace(provisoire, TEMOIN_DES_SERVIS)
+    servis_figes.cache_clear()
+
+
+def servi_et_fige(cas: list[dict], paquet: bytes | None = None,
+                  ) -> tuple[dict[str, dict], dict[str, str]]:
+    """Ce que le portage sert de chaque cas (:func:`pont.scenario_actuel`),
+    confronté au témoin des servis (:data:`TEMOIN_DES_SERVIS`) : chaque cas
+    doit y être, servi ou refusé de même, au bit près sous Linux x86_64
+    (:data:`TOLERANCE_DU_MOTEUR_PYTHON`). Il tient la place du moteur Python
+    qui refaisait chaque cas tant qu'il gardait ses jumeaux (action 161,
+    étape 8b) : ce que les assertions d'un test ne disent pas, le témoin le
+    garde. Sous ``FIGER_SERVIS=1``, un cas absent s'y ajoute. Sur un autre
+    paquet que celui du dépôt, il n'y a rien à confronter."""
     servis, refus = SCENARIO_ACTUEL_DU_PORTAGE(cas, paquet)
     if paquet is not None:
         return servis, refus
-    refaits, refus_du_python = _saisies().scenario_actuel(cas)
-    ecarts = [f"{cle} : le portage le refuse ({refus[cle]}), le moteur Python le sert"
-              for cle in refaits if cle in refus]
-    ecarts += [f"{cle} : le moteur Python le refuse ({motif}), le portage le sert"
-               for cle, motif in refus_du_python.items() if cle in servis]
-    ecarts += [f"{cle}, {ecart}" for cle, servi in servis.items() if cle in refaits
-               for ecart in ecarts_d_ecriture(refaits[cle], servi,
-                                              tolerance=TOLERANCE_DU_MOTEUR_PYTHON)]
+    figes = servis_figes()
+    absents, ecarts = {}, []
+    for un_cas in cas:
+        cle, empreinte = un_cas["cle"], empreinte_du_cas(un_cas)
+        lu = ({"refus": refus[cle]} if cle in refus else {"servi": servis[cle]})
+        if empreinte not in figes:
+            absents[empreinte] = {"cle": cle, "cas": {k: v for k, v in un_cas.items()
+                                                       if k != "cle"}, **lu}
+            continue
+        fige = {k: v for k, v in figes[empreinte].items() if k in ("servi", "refus")}
+        ecarts += [f"{cle}, {ecart}" for ecart in ecarts_d_ecriture(
+            json.loads(json.dumps(lu)), fige, tolerance=TOLERANCE_DU_MOTEUR_PYTHON)]
+    if absents and os.environ.get("FIGER_SERVIS") == "1":
+        _figer(absents)
+    elif absents:
+        raise AssertionError(
+            f"{len(absents)} cas absent(s) du témoin des servis, dont "
+            f"{[entree['cle'] for entree in absents.values()][:5]} : les y ajouter par "
+            "FIGER_SERVIS=1 python -m pytest <ce fichier>")
     if ecarts:
-        raise AssertionError("le moteur Python ne refait pas ce que le portage sert "
-                             f"({len(ecarts)} écart(s)) : " + " ; ".join(ecarts[:5]))
+        raise AssertionError(
+            f"le portage ne sert plus ce que le témoin des servis porte ({len(ecarts)} "
+            "écart(s)) ; si le déplacement est voulu, le témoin se refait par python "
+            "scripts/construire_temoins.py --servis : " + " ; ".join(ecarts[:5]))
     return servis, refus
 
 

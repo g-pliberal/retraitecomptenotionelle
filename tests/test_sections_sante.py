@@ -191,14 +191,14 @@ def test_la_carcdsf_sert_ses_statuts_de_2007_des_le_11_octobre_2007():
     départ en retraite au cours de la 63e année ». Une pension qui prend effet
     le 1er novembre ou le 1er décembre 2007 se liquide à ces statuts ; le
     modèle ne les servait qu'aux pensions de 2008 (corrigé le 14 novembre
-    2026). Servi par le portage, refait au bit près par le moteur Python."""
-    from outils_pont import servi_et_refait
+    2026). Servi par le portage, confronté au témoin des servis."""
+    from outils_pont import servi_et_fige
 
     cas = [{"cle": "|".join(cle),
             "requete": {**REQUETE_DE_DENTISTE, "debut": "20", "naissance": cle[0],
                         "liquidation": cle[1], "sexe": cle[2], "enfants": cle[3]}}
            for cle in CARCDSF_A_L_AUTOMNE_2007]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     for cle, (montant, majoration, coefficient) in CARCDSF_A_L_AUTOMNE_2007.items():
         actuel = servis["|".join(cle)]["actuel"]
@@ -244,15 +244,14 @@ def test_la_carcdsf_sert_ses_statuts_de_2007_jusqu_au_30_juin_2011():
     ne touche la liquidation. Une pension qui prend effet de janvier à juin 2011
     se liquide donc aux statuts de 2007 : la minoration par année d'âge entamée,
     aucune majoration après 65 ans ; le modèle y servait les statuts de 2011, six
-    mois trop tôt (corrigé le 14 novembre 2026). Servi par le portage, refait au
-    bit près par le moteur Python."""
-    from outils_pont import servi_et_refait
+    mois trop tôt (corrigé le 14 novembre 2026). Servi par le portage, confronté au témoin des servis."""
+    from outils_pont import servi_et_fige
 
     cas = [{"cle": "|".join(cle),
             "requete": {**REQUETE_DE_DENTISTE, "debut": "20", "naissance": cle[0],
                         "liquidation": cle[1], "sexe": cle[2], "enfants": cle[3]}}
            for cle in CARCDSF_EN_2011]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     for cle, (montant, coefficient) in CARCDSF_EN_2011.items():
         actuel = servis["|".join(cle)]["actuel"]
@@ -343,9 +342,9 @@ def test_la_carcdsf_sert_sans_minoration_l_inapte_et_les_categories_de_ses_statu
     l'âge de L. 161-17-2, puis à 62 ans ; l'ancien combattant ou prisonnier de
     guerre, aux âges de D. 351-2, sous les statuts de 2007 et depuis ceux de
     2024. Le modèle leur opposait la minoration de l'assuré valide (corrigé le
-    14 novembre 2026). Servi par le portage, refait au bit près par le moteur
-    Python."""
-    from outils_pont import servi_et_refait
+    14 novembre 2026). Servi par le portage, confronté au
+    témoin des servis."""
+    from outils_pont import servi_et_fige
 
     def titre(declare):
         if not declare:
@@ -358,7 +357,7 @@ def test_la_carcdsf_sert_sans_minoration_l_inapte_et_les_categories_de_ses_statu
                         "liquidation": cle[1], "sexe": "H", "enfants": "0",
                         **titre(cle[2])}}
            for cle in CARCDSF_SANS_MINORATION]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     ecarts = {}
     for cle, (montant, coefficient) in CARCDSF_SANS_MINORATION.items():
@@ -418,16 +417,15 @@ def test_la_carcdsf_majore_par_trimestre_civil_entier_d_exercice_liberal():
     Cette majoration est égale à 1 % par trimestre civil entier d'exercice
     libéral suivant le dernier jour du trimestre civil incluant l'âge ». Le
     modèle comptait le temps écoulé depuis l'âge, que l'affilié exerce ou non
-    (corrigé le 14 novembre 2026). Servi par le portage, refait au bit près par
-    le moteur Python."""
-    from outils_pont import servi_et_refait
+    (corrigé le 14 novembre 2026). Servi par le portage, confronté au témoin des servis."""
+    from outils_pont import servi_et_fige
 
     cas = [{"cle": "|".join(cle),
             "requete": {**REQUETE_DE_DENTISTE, "debut": "20", "naissance": cle[0],
                         "liquidation": cle[1], "sexe": "H", "enfants": "0",
                         "interruptions": cle[2]}}
            for cle in CARCDSF_MAJOREE]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     ecarts = {}
     for cle, (montant, coefficient) in CARCDSF_MAJOREE.items():
@@ -480,15 +478,14 @@ def test_la_carcdsf_majore_de_1_pour_cent_les_trimestres_d_avant_2024_depuis_67_
     de 20 % », « 1,25 % par trimestre […] accompli à compter du 1er janvier
     2024, dans la limite de 25 % ». Le modèle servait 1,25 % à tous les
     trimestres, comptés depuis l'âge des statuts de 2017 pour les nés avant
-    1955 (corrigé le 14 novembre 2026). Servi par le portage, refait au bit
-    près par le moteur Python."""
-    from outils_pont import servi_et_refait
+    1955 (corrigé le 14 novembre 2026). Servi par le portage, confronté au témoin des servis."""
+    from outils_pont import servi_et_fige
 
     cas = [{"cle": "|".join(cle),
             "requete": {**REQUETE_DE_DENTISTE, "debut": "20", "naissance": cle[0],
                         "liquidation": cle[1], "sexe": "H", "enfants": "0"}}
            for cle in CARCDSF_MAJOREE_DEPUIS_2024]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     ecarts = {}
     for cle, (montant, coefficient) in CARCDSF_MAJOREE_DEPUIS_2024.items():
@@ -543,8 +540,8 @@ def test_la_carcdsf_sert_ses_statuts_de_2017_jusqu_au_9_janvier_2024():
     limite pour les nés depuis 1955, la majoration de 1 % depuis l'âge du taux
     plein de la génération, l'ancien combattant non nommé. Le modèle y servait
     les statuts de 2024, neuf jours trop tôt (corrigé le 14 novembre 2026).
-    Servi par le portage, refait au bit près par le moteur Python."""
-    from outils_pont import servi_et_refait
+    Servi par le portage, confronté au témoin des servis."""
+    from outils_pont import servi_et_fige
 
     def titre(declare):
         if not declare:
@@ -557,7 +554,7 @@ def test_la_carcdsf_sert_ses_statuts_de_2017_jusqu_au_9_janvier_2024():
                         "liquidation": cle[1], "sexe": "H", "enfants": "0",
                         **titre(cle[2])}}
            for cle in CARCDSF_AU_1ER_JANVIER_2024]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     ecarts = {}
     for cle, (montant, coefficient) in CARCDSF_AU_1ER_JANVIER_2024.items():
@@ -845,7 +842,7 @@ CARMF_AU_TRIMESTRE_CIVIL = {
     CARMF_AU_TEXTE, CARMF_AU_TEXTE_DE_JANVIER_A_MARS_2017, CARMF_AU_TRIMESTRE_CIVIL,
 ], ids=["depuis_le_30_mars_2017", "de_janvier_a_mars_2017", "au_trimestre_civil"])
 def test_la_carmf_sert_ses_coefficients_dans_les_deux_moteurs(au_texte):
-    from outils_pont import servi_et_refait
+    from outils_pont import servi_et_fige
 
     requete = {
         "age_reference": "fixe_apres_bascule", "bascule": "2026",
@@ -859,7 +856,7 @@ def test_la_carmf_sert_ses_coefficients_dans_les_deux_moteurs(au_texte):
             "requete": {**requete, "naissance": cle[0], "liquidation": cle[1],
                         **({"liquidation_mois": cle[2]} if len(cle) > 2 else {})}}
            for cle in au_texte]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     for cle, coefficient in au_texte.items():
         pensions = {p["regime"]: p for p in servis["|".join(cle)]["actuel"]["pensions_par_regime"]}
@@ -969,7 +966,7 @@ def test_l_age_legal_des_nes_en_1964_est_celui_de_l_161_17_2():
     à 62 ans et 9 mois (62,75) les nés en 1964, non à 62,5 — dans les deux
     moteurs —, si bien que les cas de la fiche, partis à 63 ans et au-delà,
     n'en changent pas."""
-    from outils_pont import servi_et_refait
+    from outils_pont import servi_et_fige
     from retraite_notionnelle.noyau import carte
 
     fiche = carte.fiches()["carmf_asv_minoration_enfants"]
@@ -987,7 +984,7 @@ def test_l_age_legal_des_nes_en_1964_est_celui_de_l_161_17_2():
         "statut": "medecin_liberal", "naissance": "1964-05-10",
     }
     ages = ("62.5", "62.75", "63")
-    servis, refus = servi_et_refait(
+    servis, refus = servi_et_fige(
         [{"cle": age, "requete": {**requete, "liquidation": age}} for age in ages])
     assert refus == {}, refus
     assert [servis[age]["actuel"]["liquidation_ouverte"] for age in ages] == [False, True, True]
@@ -1171,14 +1168,14 @@ DEBUTS_A_LA_CARMF = {
 
 @pytest.fixture(scope="module")
 def debuts_a_la_carmf():
-    """Chaque cas, servi par le portage et refait au bit près par le moteur
-    Python (``servi_et_refait``)."""
-    from outils_pont import servi_et_refait
+    """Chaque cas, servi par le portage et confronté au
+    témoin des servis (``servi_et_fige``)."""
+    from outils_pont import servi_et_fige
 
     cas = [{"cle": "|".join(cle),
             "requete": {**REQUETE_DE_MEDECIN, "naissance": cle[0], "debut": cle[1]}}
            for cle in DEBUTS_A_LA_CARMF]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     return {cle: {p["regime"]: p for p in servi["actuel"]["pensions_par_regime"]}
             for cle, servi in servis.items()}
@@ -1224,7 +1221,7 @@ def test_la_dispense_de_la_carmf_retire_2_270_euros_a_la_medecin_de_26_ans(
 def _versees_au_compte(naissance: str, debut: str, annee: int,
                        requete: dict = REQUETE_DE_MEDECIN) -> dict:
     """Les cotisations de l'année que le compte notionnel reçoit, régime par
-    régime, rendues par le portage et refaites par le moteur Python
+    régime, rendues par le portage et confrontées au témoin des servis
     (``droit_et_refait``)."""
     from outils_pont import Saisies, droit_et_refait
     from retraite_notionnelle import pont
@@ -1303,14 +1300,14 @@ DEBUTS_A_LA_CARCDSF = {
 
 @pytest.fixture(scope="module")
 def debuts_a_la_carcdsf():
-    """Chaque cas, servi par le portage et refait au bit près par le moteur
-    Python (``servi_et_refait``)."""
-    from outils_pont import servi_et_refait
+    """Chaque cas, servi par le portage et confronté au
+    témoin des servis (``servi_et_fige``)."""
+    from outils_pont import servi_et_fige
 
     cas = [{"cle": "|".join(cle),
             "requete": {**REQUETE_DE_DENTISTE, "naissance": cle[0], "debut": cle[1]}}
            for cle in DEBUTS_A_LA_CARCDSF]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     return {cle: {p["regime"]: p for p in servi["actuel"]["pensions_par_regime"]}
             for cle, servi in servis.items()}
@@ -1402,15 +1399,15 @@ DEPARTS_PASSE_75_ANS = {
 
 @pytest.fixture(scope="module")
 def departs_passe_75_ans():
-    """Chaque cas, servi par le portage et refait au bit près par le moteur
-    Python (``servi_et_refait``)."""
-    from outils_pont import servi_et_refait
+    """Chaque cas, servi par le portage et confronté au
+    témoin des servis (``servi_et_fige``)."""
+    from outils_pont import servi_et_fige
 
     cas = [{"cle": "|".join(cle),
             "requete": {**REQUETE_DE_MEDECIN, "naissance": cle[0], "debut": "30",
                         "liquidation": cle[1]}}
            for cle in DEPARTS_PASSE_75_ANS]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     return {cle: {p["regime"]: p for p in servi["actuel"]["pensions_par_regime"]}
             for cle, servi in servis.items()}
@@ -1582,16 +1579,15 @@ VALEURS_DE_SERVICE_DE_L_ASV = {
 
 @pytest.fixture(scope="module")
 def asv_a_65_ans():
-    """La prestation de l'ASV de chaque cas, servie par le portage et refaite
-    au bit près par le moteur Python (``servi_et_refait``) : médecin libéral
+    """La prestation de l'ASV de chaque cas, servie par le portage et confrontée au témoin des servis (``servi_et_fige``) : médecin libéral
     au salaire moyen depuis ses 30 ans, parti à 65 ans, euros courants."""
-    from outils_pont import servi_et_refait
+    from outils_pont import servi_et_fige
 
     cas = [{"cle": naissance,
             "requete": {"statut": "medecin_liberal", "salaire": "1", "debut": "30",
                         "liquidation": "65", "naissance": f"{naissance}-01-01"}}
            for naissance in (*VALEURS_DE_SERVICE_DE_L_ASV, "1962")]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     return {cle: next(p for p in servi["actuel"]["pensions_par_regime"]
                       if p["regime"] == "asv_conventionnes")
@@ -1655,8 +1651,8 @@ def exercices_courts_a_l_asv():
     """Né le 1er janvier 1960, salarié du privé non cadre depuis ses 22 ans,
     médecin libéral conventionné de ses 40 ans à l'âge de la clé, salarié
     ensuite, parti à 65 ans : les pensions du droit actuel, servies par le
-    portage et refaites au bit près par le moteur Python."""
-    from outils_pont import servi_et_refait
+    portage et confrontées au témoin des servis."""
+    from outils_pont import servi_et_fige
 
     requete = {"sexe": "H", "naissance": "1960-01-01", "debut": "22", "salaire": "1",
                "statut": "salarie_prive_non_cadre", "liquidation": "65",
@@ -1664,7 +1660,7 @@ def exercices_courts_a_l_asv():
                "metier3_statut": "salarie_prive_non_cadre"}
     cas = [{"cle": fin, "requete": {**requete, "metier3_debut": fin}}
            for fin in ("40.75", "41")]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     return {cle: {p["regime"]: p for p in servi["actuel"]["pensions_par_regime"]}
             for cle, servi in servis.items()}
@@ -1745,15 +1741,15 @@ CARRIERES_LONGUES_A_LA_CAVP = {
 
 @pytest.fixture(scope="module")
 def carrieres_longues_a_la_cavp():
-    """Chaque cas, servi par le portage et refait au bit près par le moteur
-    Python (``servi_et_refait``)."""
-    from outils_pont import servi_et_refait
+    """Chaque cas, servi par le portage et confronté au
+    témoin des servis (``servi_et_fige``)."""
+    from outils_pont import servi_et_fige
 
     cas = [{"cle": "|".join(cle),
             "requete": {**REQUETE_DE_PHARMACIEN, "naissance": cle[0],
                         "debut": cle[1], "liquidation": cle[2]}}
            for cle in CARRIERES_LONGUES_A_LA_CAVP]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     return {cle: {p["regime"]: p for p in servi["actuel"]["pensions_par_regime"]}
             for cle, servi in servis.items()}

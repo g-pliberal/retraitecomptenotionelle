@@ -221,8 +221,8 @@ CAVAMAC_SANS_MINORATION = {
 
 def _ecarts_de_la_cavamac(attendus: dict) -> dict:
     """Ce que les deux moteurs servent d'autre que la table : chaque cas servi
-    par le portage et refait au bit près par le moteur Python."""
-    from outils_pont import servi_et_refait
+    par le portage et confronté au témoin des servis."""
+    from outils_pont import servi_et_fige
 
     requete = {
         "age_reference": "fixe_apres_bascule", "bascule": "2026",
@@ -243,7 +243,7 @@ def _ecarts_de_la_cavamac(attendus: dict) -> dict:
             "requete": {**requete, "naissance": cle[0], "liquidation": cle[1],
                         **titre(cle[2])}}
            for cle in attendus]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     ecarts = {}
     for cle, (montant, coefficient) in attendus.items():
@@ -266,7 +266,7 @@ def test_la_cavamac_sert_sans_minoration_l_inapte_et_les_categories_de_ses_statu
     combattant ou prisonnier de guerre du 5° de L. 351-8, aux âges de D. 351-2,
     depuis les statuts de 2024. Le modèle leur opposait la minoration de
     l'assuré valide, 25 % à 62 ans (corrigé le 14 novembre 2026). Servi par le
-    portage, refait au bit près par le moteur Python."""
+    portage, confronté au témoin des servis."""
     assert _ecarts_de_la_cavamac(CAVAMAC_SANS_MINORATION) == {}
 
 
@@ -319,7 +319,7 @@ def test_la_cavamac_sert_l_article_15_de_septembre_2023_des_son_entree_en_vigueu
     servies sans minoration sont celles des 2° et 3° de L. 643-4. Le modèle
     gardait jusqu'au 31 décembre 2023 l'âge par génération et la seule
     catégorie de 2011 (corrigé le 14 novembre 2026). Servi par le portage,
-    refait au bit près par le moteur Python."""
+    confronté au témoin des servis."""
     assert _ecarts_de_la_cavamac(CAVAMAC_DE_SEPTEMBRE_2023) == {}
 
 
@@ -383,8 +383,7 @@ def test_la_cavamac_minore_la_longue_carriere_de_quinze_pour_cent_depuis_2024():
     ou 63 ans, entrée avant 21 ans, « avec, dans les deux cas, l'application
     d'un coefficient de minoration de 15 % ». Le modèle lui opposait la
     minoration de tous, 1,25 % par trimestre avant 67 ans, 25 % à 62 ans
-    (corrigé le 14 novembre 2026). Servi par le portage, refait au bit près
-    par le moteur Python."""
+    (corrigé le 14 novembre 2026). Servi par le portage, confronté au témoin des servis."""
     assert _ecarts_de_la_cavamac(CAVAMAC_LONGUE_CARRIERE) == {}
 
 
@@ -737,7 +736,7 @@ def test_les_lectures_de_la_majoration_pour_enfants_des_sections_que_le_modele_n
 
 
 def test_la_majoration_pour_enfants_des_sections_aux_dates_qui_comptent_dans_les_deux_moteurs():
-    """Le portage sert, et le moteur Python refait (``servi_et_refait``), à
+    """Le portage sert, et le témoin des servis fige (``servi_et_fige``), à
     une mère de trois enfants de chaque section, la majoration que le modèle
     sert à la date d'effet (``MAJORATIONS_AUX_DATES_QUI_COMPTENT``, le taux
     servi) : 10 % de la pension de la complémentaire, ou rien. Au 1er juillet
@@ -745,7 +744,7 @@ def test_la_majoration_pour_enfants_des_sections_aux_dates_qui_comptent_dans_les
     jour-là : 0,10 × 13 323,31 = 1 332,331, soit 1 332,33 € par an au cas posé
     (corrigé le 14 novembre 2026) ; au 1er décembre 1999, la Cipav rien, l'une
     des deux lectures."""
-    from outils_pont import servi_et_refait
+    from outils_pont import servi_et_fige
 
     requete = {
         "age_reference": "fixe_apres_bascule", "bascule": "2026",
@@ -760,7 +759,7 @@ def test_la_majoration_pour_enfants_des_sections_aux_dates_qui_comptent_dans_les
     cas = [{"cle": "|".join(cle), "requete": {**requete, "statut": cle[0],
                                                "naissance": cle[1], "liquidation": cle[2]}}
            for cle in MAJORATIONS_AUX_DATES_QUI_COMPTENT]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     for cle, (_, taux, _) in MAJORATIONS_AUX_DATES_QUI_COMPTENT.items():
         actuel = servis["|".join(cle)]["actuel"]
@@ -892,7 +891,7 @@ REPORT_DE_LA_CIPAV_AU_TEXTE = {
 
 
 def test_la_cipav_ne_majore_que_les_trente_premieres_annees_dans_les_deux_moteurs():
-    from outils_pont import servi_et_refait
+    from outils_pont import servi_et_fige
     from test_complementaires_liberales_a_leur_age import REQUETE
 
     requete = {**REQUETE, "statut": "profession_liberale"}
@@ -903,7 +902,7 @@ def test_la_cipav_ne_majore_que_les_trente_premieres_annees_dans_les_deux_moteur
             "requete": {**requete, "naissance": cle[0], "liquidation": cle[1],
                         "debut": cle[2]}}
            for cle in (*REPORT_DE_LA_CIPAV_AU_TEXTE, controle)]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
 
     def pension(cle):
@@ -926,7 +925,7 @@ def test_la_cipav_majore_le_report_depuis_2008_dans_les_deux_moteurs():
     en montrent le texte : 5 % par année entière de report après 65 ans, avec
     trente années d'affiliation, sur les points des trente premières années.
     Le modèle ne majorait rien avant 2013."""
-    from outils_pont import servi_et_refait
+    from outils_pont import servi_et_fige
     from test_complementaires_liberales_a_leur_age import REQUETE
 
     requete = {**REQUETE, "statut": "profession_liberale", "liquidation": "66.75",
@@ -943,7 +942,7 @@ def test_la_cipav_majore_le_report_depuis_2008_dans_les_deux_moteurs():
     # texte ne tranche pas, reste hors de la file, sans majoration.
     cas = [{"cle": naissance, "requete": {**requete, "naissance": naissance}}
            for naissance in ("1945-03-10", "1942-03-10", "1940-03-10")]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
 
     def pension(cle):
@@ -965,7 +964,7 @@ def test_la_carpimko_majore_le_report_des_le_3_octobre_2015_dans_les_deux_moteur
     entier d'ajournement postérieur à l'âge du taux plein dans la limite de
     vingt trimestres ». Le modèle ne servait l'arrêté qu'aux pensions de
     2016."""
-    from outils_pont import servi_et_refait
+    from outils_pont import servi_et_fige
     from test_complementaires_liberales_a_leur_age import REQUETE
 
     # Né le 10 mars 1949, auxiliaire médical depuis ses 25 ans : 160 trimestres
@@ -981,7 +980,7 @@ def test_la_carpimko_majore_le_report_des_le_3_octobre_2015_dans_les_deux_moteur
     cas = [{"cle": mois, "requete": {**requete, "liquidation": age}}
            for mois, age in (("octobre", "66.5"), ("novembre", "66.5833"),
                              ("decembre", "66.6667"))]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
 
     def pension(cle):
@@ -1006,7 +1005,7 @@ def test_la_carpimko_ne_majore_pas_avant_l_age_legal_de_la_base_les_nes_avant_19
     pour les assurés nés en 1954 », « Soixante deux ans pour les assurés nés à
     compter du 1er janvier 1955 »). Le modèle comptait la majoration de l'âge
     où la durée est atteinte, cherché depuis 60 ans."""
-    from outils_pont import servi_et_refait
+    from outils_pont import servi_et_fige
     from test_complementaires_liberales_a_leur_age import REQUETE
 
     # Auxiliaires médicaux entrés à vingt ans, leur durée atteinte avant l'âge
@@ -1028,7 +1027,7 @@ def test_la_carpimko_ne_majore_pas_avant_l_age_legal_de_la_base_les_nes_avant_19
                                        ("1954 à 63 ans", "1954-12-10", "63"),
                                        ("1955 à 63 ans", "1955-12-10", "63"),
                                        ("1956 à 63 ans", "1956-12-10", "63"))]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
 
     def pension(cle):
@@ -1092,8 +1091,8 @@ def test_la_carpimko_minore_par_l_age_seul_de_1984_a_juin_1987():
     0,95 […] à soixante-quatre ans. » Aucune durée n'y entre ; le modèle
     annulait la minoration quand celle du régime de base était atteinte. Lus
     jusqu'au 4 juin 1987, jour où paraît l'arrêté du 20 mai 1987. Servi par le
-    portage, refait au bit près par le moteur Python."""
-    from outils_pont import servi_et_refait
+    portage, confronté au témoin des servis."""
+    from outils_pont import servi_et_fige
     from test_complementaires_liberales_a_leur_age import REQUETE
 
     requete = {**REQUETE, "statut": "auxiliaire_medical", "debut": "20"}
@@ -1108,7 +1107,7 @@ def test_la_carpimko_minore_par_l_age_seul_de_1984_a_juin_1987():
             "requete": {**requete, "naissance": cle[0], "liquidation": cle[1],
                         **titre(cle[2])}}
            for cle in CARPIMKO_STATUTS_DE_1984]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     ecarts = {}
     for cle, (montant, coefficient) in CARPIMKO_STATUTS_DE_1984.items():
@@ -1686,15 +1685,15 @@ EFFETS_AU_PREMIER_DU_MOIS = {
 
 @pytest.fixture(scope="module")
 def effets_des_liberaux():
-    """Chaque cas, servi par le portage et refait au bit près par le moteur
-    Python (``servi_et_refait``)."""
-    from outils_pont import servi_et_refait
+    """Chaque cas, servi par le portage et confronté au
+    témoin des servis (``servi_et_fige``)."""
+    from outils_pont import servi_et_fige
 
     cas = [{"cle": "|".join(cle),
             "requete": {**REQUETE_DE_LIBERAL, "statut": cle[0], "naissance": cle[1],
                         "liquidation": cle[3], **({"debut": cle[2]} if cle[2] else {})}}
            for cle in [*EFFETS_AU_TRIMESTRE_CIVIL, *EFFETS_AU_PREMIER_DU_MOIS]]
-    servis, refus = servi_et_refait(cas)
+    servis, refus = servi_et_fige(cas)
     assert refus == {}, refus
     return {cle: servi["actuel"] for cle, servi in servis.items()}
 

@@ -1505,12 +1505,12 @@ def test_les_deux_moteurs_servent_la_reversion_du_dentiste(saisies):
     mois qui suit le décès, 60 % de sa retraite complémentaire (statuts de
     2011, articles 32 et 41), 10 % de plus avec trois enfants (article 42), et
     rien quand le mariage a moins de deux ans (article 33) : le portage le
-    sert, et le moteur Python le refait au bit près."""
-    from outils_pont import servi_et_refait
+    sert, et le témoin des servis le fige."""
+    from outils_pont import servi_et_fige
 
     requetes = {"seule": DENTISTE, "trois_enfants": {**DENTISTE, "enfants": "3"},
                 "mariee_en_2019": {**DENTISTE, "mariage": "2019"}}
-    servis, refus = servi_et_refait(
+    servis, refus = servi_et_fige(
         [{"cle": cle, "requete": requete} for cle, requete in requetes.items()])
     assert refus == {}, refus
 
@@ -1645,12 +1645,12 @@ def test_les_deux_moteurs_servent_la_reversion_de_l_agent_general(saisies):
     jour du mois qui suit le décès, 60 % de sa retraite complémentaire
     (statuts de 2011, articles 22 à 24), 10 % de plus avec trois enfants
     (article 18), et rien quand le mariage a moins de deux ans (article 22) :
-    le portage le sert, et le moteur Python le refait au bit près."""
-    from outils_pont import servi_et_refait
+    le portage le sert, et le témoin des servis le fige."""
+    from outils_pont import servi_et_fige
 
     requetes = {"seule": AGENT_GENERAL, "trois_enfants": {**AGENT_GENERAL, "enfants": "3"},
                 "mariee_en_2019": {**AGENT_GENERAL, "mariage": "2019"}}
-    servis, refus = servi_et_refait(
+    servis, refus = servi_et_fige(
         [{"cle": cle, "requete": requete} for cle, requete in requetes.items()])
     assert refus == {}, refus
 
