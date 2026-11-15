@@ -702,10 +702,6 @@ export class FicheDePaie {
     return this.brut - this.net;
   }
 
-  get cotisationsPatronales() {
-    return this.coutDuTravail - this.brut;
-  }
-
   get retraiteSalarie() {
     return this.lignes.filter((l) => l.retraite)
       .reduce((total, l) => total + l.salarie, 0);
@@ -724,14 +720,6 @@ export class FicheDePaie {
   get retraiteTotale() {
     const impute = this.reductionGenerale * this.partRetraiteDansLaReduction;
     return Math.max(0, this.retraiteSalarie + this.retraiteEmployeur - impute);
-  }
-
-  get tauxRetraite() {
-    return this.coutDuTravail ? this.retraiteTotale / this.coutDuTravail : 0;
-  }
-
-  get ecartBrutNet() {
-    return this.brut ? this.cotisationsSalariales / this.brut : 0;
   }
 
   /** Ce que le salarié touche, rapporté à ce que son emploi coûte. */
@@ -1411,24 +1399,6 @@ const MEMOIRE_CONTRIBUTIONS = new Map();
 const MEMOIRE_COUR = new Map();
 
 /**
- * La fiche de paie sait-elle décrire ce statut ?
- *
- * Pas celui d'un auteur, bien qu'il soit de la famille du privé : son
- * précompte n'est pas une fiche de paie, et celle du salarié lui prêtait une
- * assurance chômage, une complémentaire et un employeur qu'il n'a pas.
- */
-export function ficheDePaiePossible(affiliations, statut) {
-  if (affiliations.partSalarialeSeule(statut)) {
-    return false;
-  }
-  try {
-    return FAMILLES_COUVERTES.includes(affiliations.famille(statut));
-  } catch {
-    return false;
-  }
-}
-
-/**
  * La famille de la fiche de `statut` l'année `annee` : celle d'un indépendant,
  * que ses régimes de base de l'année disent — l'artisan, le commerçant, le
  * libéral, l'avocat, dont les postes diffèrent —, ou celle de son profil.
@@ -1469,7 +1439,8 @@ export function profilDeLaFiche(affiliations, catalogue, statut, annee, anneeEnt
     return null;
   }
   if (affiliations.partSalarialeSeule(statut)) {
-    // Un auteur n'a pas de fiche de paie : voir `ficheDePaiePossible`.
+    // Un auteur n'a pas de fiche de paie : son précompte n'en est pas une,
+    // et celle du salarié lui prêterait chômage, complémentaire et employeur.
     return null;
   }
   if (famille === "independant" || affiliations.sansEmployeur(statut)) {

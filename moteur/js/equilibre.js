@@ -409,7 +409,7 @@ export class ComptesRetraite {
     this.tauxPrelevement = SerieAnnuelle.depuisPaquet("taux_prelevement_retraite",
                                                       brut.taux_prelevement);
     // Les mêmes ressources sous l'AUTRE convention comptable du COR, toutes
-    // années au niveau projeté : `ressourceEec` dit ce qu'elle est.
+    // années au niveau projeté.
     this.ressourcesEec = SerieAnnuelle.depuisPaquet("ressources_eec_retraite",
                                                     brut.ressources_eec);
     // Les droits à pension ACQUIS À DATE, en part de PIB : le stock, là où
@@ -498,30 +498,6 @@ export class ComptesRetraite {
     // Par les accesseurs et non par les séries : sous une variante, c'est le
     // seul chemin qui rende le solde de CETTE variante.
     return this.ressource(annee) - this.depense(annee);
-  }
-
-  /** Part d'un poste dans les ressources de l'année. */
-  /**
-   * Ce que le taux de prélèvement de `annee` vaut, rapporté à celui de
-   * `reference`.
-   *
-   * LE PROFIL, ET JAMAIS LE NIVEAU. Le COR projette son taux sur les revenus
-   * d'activité ; le dépôt mesure le sien sur l'assiette qu'il certifie, et les
-   * deux définitions ne coïncident pas — 32,14 % contre 32,84 % en 2025.
-   * Emprunter le niveau déplacerait la recette de 2 % sans le dire ; emprunter
-   * le rapport d'une année à l'autre n'emprunte que la FORME de la
-   * trajectoire. Vaut un sur toute année où l'assiette est publiée.
-   */
-  /**
-   * Les ressources sous la convention EEC, en part de PIB. Tout le reste du
-   * compte est sous EPR, où les contributions d'équilibre suivent le besoin
-   * des régimes de fonctionnaires : le déficit publié est donc un déficit
-   * APRÈS que l'État a bouclé ces régimes. Sous EEC son effort est figé en
-   * part de PIB. L'écart change de signe — moins à court terme, 0,49 point de
-   * plus en 2069 — et les deux moyennes ne diffèrent pas de deux centièmes.
-   */
-  ressourceEec(annee) {
-    return this.ressourcesEec.valeur(annee);
   }
 
   /** Le solde sous EEC : les mêmes dépenses, l'autre recette. */
@@ -681,14 +657,6 @@ export class ComptesRetraite {
 
   get derniereAnneeTransferts() {
     return Math.min(...[...this.transferts.values()].map((s) => s.derniereAnnee));
-  }
-
-  anneesTransferts() {
-    const liste = [];
-    for (let a = this.premiereAnneeTransferts; a <= this.derniereAnneeTransferts; a += 1) {
-      liste.push(a);
-    }
-    return liste;
   }
 
   fiabilite(annee) {

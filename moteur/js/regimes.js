@@ -445,10 +445,6 @@ export class AgesCategorieActive {
     }
   }
 
-  get classements() {
-    return Object.keys(this._table).sort();
-  }
-
   /**
    * @returns {{ageOuverture: number, ageAnnulation: number,
    *            servicesRequis: number, fiabilite: number,
@@ -498,10 +494,6 @@ export class DureesServicesMilitaires {
     for (const [categorie, valeurs] of Object.entries(this._table)) {
       this._annees[categorie] = Object.keys(valeurs).map(Number).sort((a, b) => a - b);
     }
-  }
-
-  get categories() {
-    return Object.keys(this._table).sort();
   }
 
   /** Durée d'avant la loi de 2010 — quinze ans, ou vingt-cinq. */
@@ -2756,31 +2748,6 @@ export class CatalogueRegimes {
     yield* this._regimes.values();
   }
 
-  enRepartition() {
-    return [...this].filter((r) => !r.hors_repartition);
-  }
-
-  ouverts(annee) {
-    return [...this].filter((r) => r.ouvert(annee));
-  }
-
-  /**
-   * Suit la chaîne d'absorption jusqu'au régime réellement compétent.
-   * Exemple : ``organic`` en 2010 renvoie ``rsi`` ; en 2020, ``regime_general``.
-   */
-  resoudreSuccession(code, annee) {
-    const vu = new Set([code]);
-    let courant = this.obtenir(code);
-    while (courant.extinction !== null && annee >= courant.extinction) {
-      const suivant = courant.integre_dans;
-      if (suivant === null || suivant === undefined || vu.has(suivant)) {
-        break;
-      }
-      vu.add(suivant);
-      courant = this.obtenir(suivant);
-    }
-    return courant.code;
-  }
 }
 
 /**
@@ -3492,11 +3459,6 @@ export class ValeursPoint {
       .sort();
   }
 
-  /** Le COR suppose-t-il une trajectoire à cette valeur du point ? */
-  aUneConvention(regime, mesure) {
-    return this._conventions.has(`${regime}|${mesure}`);
-  }
-
   /**
    * Dernière valeur publiée à l'année demandée, ou avant elle. Une valeur reste
    * en vigueur jusqu'à sa modification : c'est la règle de lecture d'un barème.
@@ -3722,12 +3684,6 @@ export class ContributionsEmployeurPubliques {
   couverture(regime) {
     const bornes = this._bornes.get(regime);
     return bornes === undefined ? null : [bornes[0], bornes[1]];
-  }
-
-  /** Première et dernière année du taux propre aux militaires. */
-  couvertureMilitaires() {
-    const bornes = this._bornesMilitaires;
-    return bornes === null ? null : [bornes[0], bornes[1]];
   }
 
   /**

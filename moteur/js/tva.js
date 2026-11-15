@@ -62,19 +62,6 @@ export class AssietteTva {
     return somme;
   }
 
-  /** Ce que les taux d'aujourd'hui en tirent, en millions d'euros. */
-  recette(nette = true) {
-    let somme = 0.0;
-    for (const [taux, assiette] of this.assiettes(nette)) somme += taux * assiette;
-    return somme;
-  }
-
-  /** Le taux unique qui rapporterait exactement ce que rapportent les quatre. */
-  tauxMoyen(nette = true) {
-    const montant = this.montant(nette);
-    return montant ? this.recette(nette) / montant : 0.0;
-  }
-
   /** L'assiette rapportée au PIB de `annee`, et tenue à ce niveau ensuite. */
   partPib(nette = true) {
     const pib = this.chargee ? this.pib.valeur(this.annee) : 0.0;

@@ -192,10 +192,6 @@ export class PrelevementsHistoriques {
       (jour) => this.tauxPension(jour, partsDuMois(jour, parts, avant)));
   }
 
-  tauxCsgPension(jour, taux) {
-    return this.pensions[`csg_taux_${taux}`].valeur(jour);
-  }
-
   csgDeductiblePension(jour, taux = "plein") {
     return this.pensions[`csg_taux_${taux}`].valeur(jour, "deductible");
   }

@@ -66,10 +66,6 @@ export class DistributionPensions {
     }
     return cumul;
   }
-
-  get sommeDesParts() {
-    return this.tranches.reduce((somme, tranche) => somme + tranche.part, 0);
-  }
 }
 
 /**

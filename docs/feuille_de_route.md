@@ -7331,11 +7331,12 @@ de `contribution_etat`.
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Les tests y passent par une façade (`tests/facade.py`), qui sert les entrées
 du moteur, ses tables et vingt règles de `droit/`. Le propriétaire a tranché
-trois questions le 13 novembre (note de décision 0008). Le coût demande
+trois questions (note de décision 0008). Le coût demande
 au pont la dernière année publiée d'un point ; les tableaux du README se
-font de ce que le pont simule de l'adresse du site donnée. Reste, une
-étape par session, dans cet ordre. Le code mort du portage, retiré. Les
-autres règles de `droit/` à la façade, puis les autres fichiers de tests. Quatre études :
+font de ce que le pont simule de l'adresse du site donnée. Le code mort
+du moteur JavaScript est retiré. Reste, une étape par session, dans
+l'ordre. Les autres règles de `droit/` à la façade, puis les autres fichiers
+de tests. Quatre études :
 `scenarios_meres.py`, `cout_avantages.py --par-carriere`,
 `part_minimum_contributif.py`, `partage_taux_unique.py`. La liste des
 fonctions gardées des deux côtés, puis le retrait, puis les lignes du relevé

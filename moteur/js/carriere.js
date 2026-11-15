@@ -38,25 +38,6 @@ function propre(table, cle) {
 }
 
 /**
- * Périodes non cotisées reconnues par le système actuel. Elles ouvrent des
- * droits gratuits aujourd'hui ; elles n'en ouvrent aucun dans les scénarios
- * notionnels, sauf si des cotisations ont réellement été versées.
- */
-export const PERIODES_NON_COTISEES = new Set([
-  "chomage_indemnise",
-  "chomage_solidarite",
-  "preretraite_fne",
-  "chomage_non_indemnise",
-  "maladie",
-  "invalidite",
-  "maternite",
-  "education_enfant",
-  "service_militaire",
-  "inactivite",
-  "etudes",
-]);
-
-/**
  * Les interruptions qui supposent le contrat de travail ROMPU : le chômage et
  * la préretraite ; les autres le suspendent. Voir le Python
  * (`INTERRUPTIONS_DE_RUPTURE`).

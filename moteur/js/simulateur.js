@@ -261,10 +261,6 @@ export class Comparaison {
     return this._taux(this.notionnel_retroactif.pension_annuelle);
   }
 
-  get tauxRemplacementProspectif() {
-    return this._taux(this.notionnel_prospectif.pension_annuelle);
-  }
-
   /** Taux de remplacement de n'importe lequel des scénarios notionnels. */
   tauxRemplacement(scenario) {
     return this._taux(this[scenario].pension_annuelle, scenario);

@@ -106,19 +106,6 @@ export class CourbeTauxSansRisque {
   }
 
   /**
-   * Taux forward continu d'un placement différé de `differe` années.
-   * `differe = 0` rend le taux comptant, sans cas particulier.
-   */
-  forwardContinu(differe, duree) {
-    if (duree <= 0) {
-      throw new Error("la durée d'un placement doit être strictement positive");
-    }
-    const arrivee = differe + duree;
-    return (this.zeroContinu(arrivee) * arrivee - this.zeroContinu(differe) * differe)
-      / duree;
-  }
-
-  /**
    * Taux annuel d'un placement fait en `anneePlacement` pour `duree` années.
    *
    * Le différé se compte en années pleines depuis l'année de la courbe : les

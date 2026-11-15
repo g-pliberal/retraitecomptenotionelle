@@ -1245,17 +1245,6 @@ export function completer(chronologie, presomptions = null) {
   return { schema_version: chronologie.schema_version ?? SCHEMA_VERSION, faits, liens };
 }
 
-/** Les présomptions qui ont posé un fait ou un lien de la chronologie. */
-export function presomptionsEmployees(chronologie) {
-  const noms = new Set();
-  for (const element of [...(chronologie.faits ?? []), ...(chronologie.liens ?? [])]) {
-    if (element.origine === "presume") {
-      noms.add(element.presomption);
-    }
-  }
-  return [...noms].sort();
-}
-
 // -- lire ------------------------------------------------------------------------
 
 /** Les faits d'une personne, d'une sorte s'il le faut, dans leur ordre. */

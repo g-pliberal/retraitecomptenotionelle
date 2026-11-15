@@ -111,10 +111,6 @@ export class LoiMortalite {
     this.fiabilite = fiabilite;
   }
 
-  force(age) {
-    return this.a + this.b * exp(this.k * (age - 60.0));
-  }
-
   /** Probabilité de survivre ``duree`` années à partir de ``ageDebut``. */
   survie(ageDebut, duree) {
     if (duree <= 0) {
@@ -124,11 +120,6 @@ export class LoiMortalite {
     const integrale = this.a * duree
       + (this.b / this.k) * u * (exp(this.k * duree) - 1.0);
     return exp(-integrale);
-  }
-
-  /** Espérance de vie résiduelle complète à ``age``, table du moment. */
-  esperance(age) {
-    return esperanceMakeham(this.a, this.b, this.k, age);
   }
 }
 
@@ -287,12 +278,7 @@ export class DonneesMortalite {
     this._facteursPaquet = populations.facteurs || {};
     this._esperancesPubliees = populations.esperances || {};
     this._niveauxDeVie = populations.niveaux_de_vie || {};
-    this._anneeNiveauxDeVie = populations.annee_niveaux_de_vie ?? null;
     this._facteurs = new Map();
-  }
-
-  get utiliseTablesReelles() {
-    return Object.keys(this._quotients).length > 0;
   }
 
   // -- populations particulières ---------------------------------------------
@@ -301,12 +287,6 @@ export class DonneesMortalite {
   get populations() {
     return [...new Set(Object.keys(this._esperancesPubliees).map((cle) => cle.split("|")[0]))]
       .sort();
-  }
-
-  /** L'année d'observation et l'espérance à 65 ans publiées : `[annee, e65]`. */
-  esperancePubliee(population, sexe) {
-    const [annee, valeur] = this._referencePopulation(population, sexe);
-    return [annee, valeur];
   }
 
   _referencePopulation(population, sexe) {
@@ -352,14 +332,10 @@ export class DonneesMortalite {
     return this.populationNiveauDeVieEuros(rapportAuMoyen * moyen);
   }
 
-  /** L'année dont les niveaux de vie des vingtiles sont les euros. */
-  get anneeNiveauxDeVie() {
-    return this._anneeNiveauxDeVie;
-  }
-
   /**
    * Le vingtile dont le niveau de vie mensuel moyen publié est le plus proche
-   * d'un montant, en euros de `anneeNiveauxDeVie`. Portage de
+   * d'un montant, en euros de l'année que le paquet
+   * donne aux niveaux de vie (`annee_niveaux_de_vie`). Portage de
    * `population_niveau_de_vie_euros` ; l'ordre de parcours est celui des
    * vingtiles croissants, comme le `min` de Python garde le premier des ex æquo.
    */

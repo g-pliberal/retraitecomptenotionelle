@@ -14116,16 +14116,6 @@ système qui n'a pas existé. Tout est détaillé sur la page
 `, "cout-sources");
 }
 
-/** Tout ce que cette page ne dit pas, en une seule liste. */
-/**
- * La part de l'avance que la succession couvre, telle que la trajectoire l'a
- * retenue l'année de la bascule — calculée ou réglée.
- */
-function partRepriseBascule(contexte) {
-  const ligne = contexte.cout().avenir.annee(contexte.base.annee_bascule);
-  return ligne !== null && ligne.garantie ? ligne.garantie.partReprise : 0.0;
-}
-
 function coutDetailLimites(contexte) {
   const c = contexte.cout();
   const solde = c.solde;

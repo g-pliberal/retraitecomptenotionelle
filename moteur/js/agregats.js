@@ -332,10 +332,6 @@ export class SoldeFige {
 
   get derniereAnnee() { return borne(this.annees, -1); }
 
-  observees() {
-    return this.annees.filter((ligne) => !ligne.projete);
-  }
-
   projetees() {
     return this.annees.filter((ligne) => ligne.projete);
   }
@@ -547,10 +543,6 @@ class DetteFigee {
 
   cumulSoldes(scenario) {
     return lire(this._brut.cumuls_soldes, scenario, "cumul des soldes du système");
-  }
-
-  cumulInterets(scenario) {
-    return lire(this._brut.cumuls_interets, scenario, "cumul des intérêts du système");
   }
 }
 

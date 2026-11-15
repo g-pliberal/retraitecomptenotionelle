@@ -13,10 +13,6 @@ import { fiabiliteDepuisTexte } from "../serie.js";
 import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
 
-/** Les fiches des primes, que `FichesDatees` porte. */
-export const FICHES_DES_PRIMES = ["indemnite_sujetions_speciales_police",
-  "prime_speciale_sujetion_aides_soignants", "indemnite_de_feu_sapeurs_pompiers"];
-
 /** Ce que la pension fait de la prime. */
 export const NATURES_DES_PRIMES = ["traitement", "supplement"];
 

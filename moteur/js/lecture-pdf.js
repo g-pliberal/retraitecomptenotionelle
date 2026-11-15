@@ -1190,7 +1190,3 @@ export async function contenuDeLaPage(octets, page) {
   }
   return contenuDeLObjetPage(objets, flux, pages[page - 1]);
 }
-
-export async function textePdf(octets) {
-  return (await lignesPdf(octets)).join("\n");
-}

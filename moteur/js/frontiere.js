@@ -42,10 +42,6 @@ class TrancheComplementaire {
   get part_sous_plafond() {
     return 1 - this.acquisitif / this.verse_sous_plafond;
   }
-
-  get part_au_dessus() {
-    return 1 - this.acquisitif / this.verse_au_dessus;
-  }
 }
 
 /** Le versant `cotisation` de la frontière, chiffré et en proportion. */

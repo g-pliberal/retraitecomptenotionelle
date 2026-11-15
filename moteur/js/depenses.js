@@ -206,19 +206,6 @@ export class DepensesRetraite {
     return this.droitsDerives.valeur(annee);
   }
 
-  /**
-   * Un poste non contributif des comptes, en millions d'euros courants.
-   *
-   * `null` hors de la fenêtre publiée. La DREES ne donne ce grain qu'à partir
-   * de 2020, quand le total du risque remonte à 1959.
-   */
-  prestation(poste, annee) {
-    const serie = this.prestations.get(poste);
-    if (serie === undefined) return null;
-    if (annee < serie.premiereAnnee || annee > serie.derniereAnnee) return null;
-    return serie.valeur(annee);
-  }
-
   partPib(annee) {
     return this.total.valeur(annee) / this.pib.valeur(annee);
   }

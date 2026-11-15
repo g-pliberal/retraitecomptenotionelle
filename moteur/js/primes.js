@@ -12,10 +12,6 @@
  * de décision 0005).
  */
 
-/** Les assiettes d'une retenue ou d'une contribution supplémentaire. */
-export const ASSIETTES = ["remuneration_soumise", "traitement_et_prime", "traitement",
-  "prime_soumise"];
-
 /** Ce que la rémunération d'une ligne porte, en parts d'elle. */
 export class Parts {
   constructor(traitement, prime = 0.0, soumise = 0.0) {
