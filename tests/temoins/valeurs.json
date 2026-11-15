@@ -14,6 +14,42 @@
  "test_cumul_activites.py::cumuls_tires_au_hasard": {
   "valeur": "80a8a69d5e189815"
  },
+ "test_cycle_de_vie_portage.py::contributions agent_chemins_fer_secondaires-1930": {
+  "valeur": "713dde7075f725b1"
+ },
+ "test_cycle_de_vie_portage.py::contributions agent_sncf-1975": {
+  "valeur": "44136fa355b3678a"
+ },
+ "test_cycle_de_vie_portage.py::contributions artisan-1936": {
+  "valeur": "44136fa355b3678a"
+ },
+ "test_cycle_de_vie_portage.py::contributions artisan-1970": {
+  "valeur": "44136fa355b3678a"
+ },
+ "test_cycle_de_vie_portage.py::contributions commercant-1936": {
+  "valeur": "44136fa355b3678a"
+ },
+ "test_cycle_de_vie_portage.py::contributions fonctionnaire_etat-1966": {
+  "valeur": "44136fa355b3678a"
+ },
+ "test_cycle_de_vie_portage.py::contributions salarie_prive_cadre-1958": {
+  "valeur": "a6099031322c0d3d"
+ },
+ "test_cycle_de_vie_portage.py::contributions salarie_prive_cadre-1975": {
+  "valeur": "7cbb5f6019398b54"
+ },
+ "test_cycle_de_vie_portage.py::contributions salarie_prive_non_cadre-1948": {
+  "valeur": "43d725d17699df65"
+ },
+ "test_cycle_de_vie_portage.py::contributions salarie_prive_non_cadre-1962": {
+  "valeur": "986ff24306dc0d8c"
+ },
+ "test_cycle_de_vie_portage.py::contributions salarie_prive_non_cadre-1990": {
+  "valeur": "7e26e9f35bbb0b40"
+ },
+ "test_cycle_de_vie_portage.py::impots de la grille": {
+  "valeur": "0a9e3641e180b5f8"
+ },
  "test_cycle_de_vie_script.py::demandes de l'étude, écrites": {
   "valeur": "48ea1f6fe345f7f8"
  },

@@ -50,7 +50,7 @@ FICHIERS = (
     "test_coefficients_agirc_1947.py", "test_contributions_equilibre.py",
     "test_controle_drees_panorama.py", "test_coupures_au_mois.py", "test_cout.py",
     "test_cout_age_depart.py", "test_cultes_au_droit.py",
-    "test_cultes_smic_du_mois.py", "test_cumul_activites.py", "test_cycle_de_vie_portage.py",
+    "test_cultes_smic_du_mois.py", "test_cumul_activites.py",
     "test_cycle_de_vie_references.py", "test_cycle_de_vie_script.py",
     "test_decompte_des_services.py", "test_destinie.py",
     "test_diviseur_exemples_officiels.py", "test_donnees.py",

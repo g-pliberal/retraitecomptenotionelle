@@ -7334,13 +7334,13 @@ haut, une fois le moteur Python plus exécuté. Les confrontations, qui lui
 font refaire ce que le portage calcule, partent d'abord, chacune remplacée
 par une référence figée dans `tests/temoins/` : `servis.json`,
 `sorties.json`, `valeurs.json`, et `droit.json` pour chaque appel du droit
-par le pont. Plus aucun appel du droit ne se refait en Python, ni
-l'inversion, ni la grille, ni la réversion, ni la chronologie, ni l'âge
-conjoncturel, ni le coût par carrière, ni les cumuls tirés au hasard. Restent les `moitie_python`
-que la note énumère, puis cent fichiers de tests qui importent une règle
-Python. Une étape par session. Par quoi commencer :
-`test_cycle_de_vie_portage.py`. Le détail :
-`2026-11-15-les-cumuls-tires-au-temoin.md`.
+par le pont. Plus rien ne se refait en Python : ni le droit, ni
+l'inversion, la grille, la réversion, la chronologie, l'âge conjoncturel, le
+coût par carrière, les cumuls, ni le cycle de vie. Restent les
+`moitie_python` que la note énumère, puis cent fichiers de tests qui
+importent une règle Python. Une étape par session. Par quoi commencer :
+`test_moteur.py`. Le détail :
+`2026-11-15-les-contributions-et-l-impot-au-temoin.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

@@ -1,16 +1,16 @@
-"""Les jumeaux que lit le cycle de vie du portage, rejoués contre le Python.
+"""Les jumeaux que lit le cycle de vie du portage.
 
 Le cycle de vie n'a plus qu'un exemplaire, ``moteur/js/cycle-de-vie.js``
 (action 161) : ses définitions se tiennent dans ``tests/js/cycle-de-vie.test.js``,
 et sa concordance avec ``cycle_de_vie.py`` est partie avec lui. Restent ici
-trois paires qu'il lit, et dont le Python garde son jumeau pour le coût et la
-fabrique : ``contributions_equilibre.py`` et
-``moteur/js/contributions-equilibre.js``, sur des carrières de statuts et de
-générations variés ; ``impot_revenu.py`` et ``moteur/js/impot-revenu.js``,
-étape par étape, sur une grille de foyers, d'années et de revenus ;
-``donnees/prelevements_historiques.py`` et
-``moteur/js/prelevements-historiques.js``, famille par famille, sur une
-grille d'années et de revenus. Chaque chiffre doit s'y retrouver.
+trois paires qu'il lit. ``moteur/js/contributions-equilibre.js``, sur des
+carrières de statuts et de générations variés, et ``moteur/js/impot-revenu.js``,
+étape par étape, sur une grille de foyers, d'années et de revenus, se
+confrontaient au moteur Python : vus identiques, ils sont figés au témoin des
+valeurs (étape 8l). ``donnees/prelevements_historiques.py``, jumeau que le
+Python garde pour le coût et la fabrique, se rejoue contre
+``moteur/js/prelevements-historiques.js``, famille par famille, sur une grille
+d'années et de revenus : chaque chiffre doit s'y retrouver.
 """
 
 from __future__ import annotations
@@ -23,11 +23,6 @@ import tempfile
 from pathlib import Path
 
 import pytest
-
-from retraite_notionnelle.contributions_equilibre import contributions_d_une_carriere
-from retraite_notionnelle.simulateur import Simulateur
-
-from outils_portage import moitie_python
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -110,47 +105,10 @@ def _demandes_d_impot() -> list[dict]:
     return demandes
 
 
-def _impots_python(demandes: tuple) -> list[dict]:
-    import dataclasses
-
-    from retraite_notionnelle.donnees.impot_revenu import (
-        charger_baremes_impot_revenu,
-        croissance_macro,
-    )
-    from retraite_notionnelle.impot_revenu import Declarant, Foyer, impot_du_foyer
-
-    simulateur = Simulateur()
-    baremes = charger_baremes_impot_revenu(RACINE / "data")
-    resultats = []
-    for demande in map(json.loads, demandes):
-        foyer = demande["foyer"]
-        resultat = impot_du_foyer(
-            Foyer(declarants=tuple(Declarant(**d) for d in foyer["declarants"]),
-                  enfants=foyer.get("enfants", 0),
-                  enfants_invalides=foyer.get("enfants_invalides", 0),
-                  veuf=foyer.get("veuf", False),
-                  taxe_complementaire_de_l_annee_precedente=foyer.get(
-                      "taxe_complementaire_de_l_annee_precedente", 0.0)),
-            demande["annee"], baremes, unite=demande["unite"],
-            indexation=demande["indexation"],
-            croissance=croissance_macro(simulateur.macro, demande["indexation"]))
-        valeurs = dataclasses.asdict(resultat)
-        valeurs["fiabilite"] = resultat.fiabilite.name.lower()
-        resultats.append(json.loads(json.dumps(valeurs)))
-    return resultats
-
-
 def _options(affiliation, generation, sexe, age, enfants):
     return {"annee_naissance": generation, "sexe": sexe, "affiliation": affiliation,
             "age_debut": 21, "age_liquidation": age, "niveau_salaire": 1.3,
             "nombre_enfants": enfants}
-
-
-def _contributions_python(carrieres) -> list[dict[str, float]]:
-    simulateur = Simulateur()
-    return [{str(annee): montant for annee, montant in contributions_d_une_carriere(
-        simulateur, simulateur.carriere_simple(**_options(*carriere))).items()}
-        for carriere in carrieres]
 
 
 def _node(demande: dict) -> dict:
@@ -189,49 +147,48 @@ def _ecarts(obtenu, attendu, chemin="") -> list[str]:
 
 
 @pytest.fixture(scope="module")
-def les_deux():
+def le_portage():
+    """Ce que le portage rend des carrières et de la grille de l'impôt."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    demandes = _demandes_d_impot()
-    attendu = {
-        "contributions": moitie_python(_contributions_python, CARRIERES),
-        "impots": moitie_python(
-            _impots_python, tuple(json.dumps(d, sort_keys=True) for d in demandes)),
-    }
-    obtenu = _node({"carrieres": [_options(*c) for c in CARRIERES], "impots": demandes})
-    return obtenu, attendu
+    return _node({"carrieres": [_options(*c) for c in CARRIERES],
+                  "impots": _demandes_d_impot()})
 
 
 @pytest.mark.parametrize("rang", range(len(CARRIERES)),
                          ids=[f"{a}-{g}" for a, g, *_ in CARRIERES])
 def test_les_contributions_d_equilibre_de_chaque_carriere_se_retrouvent_en_javascript(
-        les_deux, rang):
-    obtenu, attendu = les_deux
-    contributions = obtenu["contributions"][rang]
+        le_portage, rang):
+    """Les contributions de chaque carrière, vues identiques à ce que le moteur
+    Python rendait, sont figées au témoin des valeurs (action 161, étape 8l)."""
+    from outils_valeurs import valeur_figee
+
+    contributions = le_portage["contributions"][rang]
     assert "erreur" not in contributions, contributions.get("erreur")
-    ecarts = _ecarts(contributions, attendu["contributions"][rang])
-    assert not ecarts, "; ".join(sorted(ecarts)[:8])
+    affiliation, generation, *_ = CARRIERES[rang]
+    assert valeur_figee(f"contributions {affiliation}-{generation}",
+                        contributions) == contributions
 
 
-def test_le_salarie_du_prive_verse_des_contributions_d_equilibre_des_deux_cotes(les_deux):
+def test_le_salarie_du_prive_verse_des_contributions_d_equilibre(le_portage):
     """Le contrôle a un objet : un salarié du privé en verse depuis 1984."""
-    obtenu, _ = les_deux
-    assert len(obtenu["contributions"][2]) > 30
+    assert len(le_portage["contributions"][2]) > 30
 
 
-def test_l_impot_de_chaque_foyer_se_retrouve_en_javascript(les_deux):
+def test_l_impot_de_chaque_foyer_se_retrouve_en_javascript(le_portage):
     """Le jumeau de ``impot_revenu.py``, étape par étape, sur la grille : les
     parts, le barème et son plafonnement, la décote, chaque correction, la
     prime pour l'emploi, le seuil de recouvrement, en francs et en euros, lus
-    et projetés."""
-    obtenu, attendu = les_deux
-    assert len(obtenu["impots"]) == len(attendu["impots"])
-    ecarts = [e for rang, (o, a) in enumerate(zip(obtenu["impots"], attendu["impots"]))
-              for e in _ecarts(o, a, f"[{rang}] {a['annee']}")]
-    assert not ecarts, f"{len(ecarts)} écarts : " + "; ".join(ecarts[:8])
+    et projetés. Vu identique à ce que le moteur Python rendait, il est figé
+    au témoin des valeurs (action 161, étape 8l)."""
+    from outils_valeurs import valeur_figee
+
+    impots = le_portage["impots"]
+    assert len(impots) == len(_demandes_d_impot())
+    assert valeur_figee("impots de la grille", impots) == impots
 
 
-def test_la_grille_de_l_impot_a_un_objet(les_deux):
+def test_la_grille_de_l_impot_a_un_objet(le_portage):
     """La grille touche chaque étape : chaque correction y joue au moins une
     fois, l'abattement des adhérents sous chacune de ses lois, l'exonération
     au salaire minimum de 1960, au minimum garanti de 1971, d'un salaire et
@@ -239,7 +196,7 @@ def test_la_grille_de_l_impot_a_un_objet(les_deux):
     pensions a la sienne, et sous celle de 1977 ; la taxe complémentaire, de
     l'artisan de 1964 et de son abattement partagé à l'abattement de 1969,
     jusqu'à sa fin."""
-    _, attendu = les_deux
+    impots = le_portage["impots"]
     for etape in ("plafonnement", "reduction_complementaire", "reduction_des_salaires", "decote",
                   "reduction_sous_condition_de_revenus", "minoration_exceptionnelle",
                   "majoration_exceptionnelle", "reduction_exceptionnelle",
@@ -247,21 +204,21 @@ def test_la_grille_de_l_impot_a_un_objet(les_deux):
                   "abattement_vingt_pour_cent", "abattement_age_invalidite",
                   "abattement_adherents", "majoration_des_benefices", "exonere",
                   "taxe_complementaire", "taxe_complementaire_deduite"):
-        assert any(i[etape] for i in attendu["impots"]), etape
-    taxes = {(d["nom"], d["annee"]) for d, i in zip(_demandes_d_impot(), attendu["impots"])
+        assert any(i[etape] for i in impots), etape
+    taxes = {(d["nom"], d["annee"]) for d, i in zip(_demandes_d_impot(), impots)
              if i["taxe_complementaire"]}
     assert {("artisan_fiscal", 1964), ("couple_independant", 1964), ("liberal_adherent", 1969),
             ("artisan_adherent", 1969)} <= taxes
     assert not {("artisan_fiscal", 1965), ("artisan_adherent", 1970)} & taxes
-    exoneres = {(d["nom"], d["annee"]) for d, i in zip(_demandes_d_impot(), attendu["impots"])
+    exoneres = {(d["nom"], d["annee"]) for d, i in zip(_demandes_d_impot(), impots)
                 if i["exonere"]}
     assert {("invalide", 1960), ("invalide", 1971), ("deficit", 1971), ("retraite", 1975),
             ("artisan_adherent", 1975), ("salarie", 1977)} <= exoneres
-    abattus = {(d["nom"], d["annee"]) for d, i in zip(_demandes_d_impot(), attendu["impots"])
+    abattus = {(d["nom"], d["annee"]) for d, i in zip(_demandes_d_impot(), impots)
                if i["abattement_adherents"]}
     assert {("artisan_adherent", 1976), ("artisan_adherent", 1977),
             ("liberal_adherent", 1978), ("liberal_adherent", 1983)} <= abattus
-    primes = {(d["nom"], d["annee"]) for d, i in zip(_demandes_d_impot(), attendu["impots"])
+    primes = {(d["nom"], d["annee"]) for d, i in zip(_demandes_d_impot(), impots)
               if i["prime_pour_l_emploi"]}
     assert {("artisan_adherent", 2005), ("pluriactif", 2005), ("pluriactif_deficit", 2000),
             ("pluriactif_deficit", 2001)} <= primes
