@@ -563,14 +563,29 @@ def test_le_pilote_ne_fait_pas_partir_l_exploitant_avant_que_sa_duree_soit_reuni
     la carrière se voit opposer un trimestre de plus, liquidée en 2014, un âge
     de 2013. Le point fixe passait de l'un à l'autre, et s'arrêtait au bout de
     ses passes, à 60 ans et 8 mois, où le droit n'est pas ouvert (action 192,
-    étape 2). Dans les deux moteurs."""
+    étape 2). Dans les deux moteurs.
+
+    Le jour de naissance du cas type est présumé (le 15 du mois) : né le 15
+    janvier 1953, il part le 1er février 2014, à 61 ans. Né le 1er, sa
+    pension peut partir le jour même de son anniversaire (R. 351-37), le
+    1er janvier 2014, où il n'est plus présent au régime et n'a pas les
+    quatre trimestres de 2014 : il part au plus tôt le 1er février, à 61 ans
+    et un mois. Le pilote, qui suit l'âge que le droit oppose par trimestre
+    projeté, l'y fait partir jusqu'à un trimestre plus tard (le 1er avril
+    2014), jamais avant (garde des présomptions, ``tests/conftest.py``)."""
+    from retraite_notionnelle.noyau import vocabulaire
+
+    jour = vocabulaire.presomptions()["jour_de_naissance"]["valeur"]
+    au_plus_tot = 61.0 if jour > 1 else 61.0 + 1 / 12
     cas = next(c for c in CAS_TYPES if c.code == "exploitant_agricole")
     retenus, _, refus = pont.ages_de_depart(
         [{"cle": cas.code, **cas.pour_le_portage(simulateur, generation)}],
         simulateur.parametres)
     assert not refus
-    assert retenus[cas.code] == pytest.approx(61.0)
-    assert pilote.age_de_depart(simulateur, cas, generation) == pytest.approx(61.0)
+    for age in (retenus[cas.code], pilote.age_de_depart(simulateur, cas, generation)):
+        assert au_plus_tot - 1e-9 <= age <= au_plus_tot + 0.25 + 1e-9
+        if jour > 1:
+            assert age == pytest.approx(61.0)
 
 
 def test_chaque_temoin_declare_ses_appels_de_liquider_sous_le_nombre_declare():

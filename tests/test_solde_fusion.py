@@ -280,7 +280,10 @@ def test_l_accueil_cite_les_deux_recettes_hors_du_travail(reference):
     # Un excédent et des réserves, quand la mesure les donne.
     assert m["solde_moyen_proposition"] > 0 and m["dette_2070_proposition"] < 0
     assert "un excédent de 0,2 point par an" in corps
-    # L'espace avant « % » est insécable sur la page.
-    assert re.search(r"des réserves de 6\s% du PIB", corps)
+    # L'espace avant « % » est insécable sur la page. Les réserves sont celles
+    # que la mesure donne : 6 % du PIB jusqu'au 15 novembre 2026, 7 % depuis
+    # que l'exploitant agricole a la porte des vingt ans de la carrière longue
+    # (action 192, étape 2), que la fabrique récrit dans la mesure.
+    assert re.search(rf"des réserves de {-m['dette_2070_proposition']}\s% du PIB", corps)
     assert "la dette qu'elle accumule" not in corps
 
