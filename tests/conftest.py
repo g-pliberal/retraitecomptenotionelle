@@ -307,11 +307,12 @@ EXCEPTIONS = {
     # Le portage JavaScript, rejoué contre le Python : deux moteurs.
     ("test_cumul_activites.py",
      "test_le_portage_javascript_concorde_sur_des_cumuls_tires_au_hasard"): "complet",
-    # Les étapes de l'acquisition, sur une requête sur cinq des témoins.
-    ("test_droit.py", "test_les_deux_moteurs_ecrivent_les_memes_etapes"): "complet",
+    # Les étapes de l'acquisition, sur une requête sur cinq des témoins, au
+    # témoin des sorties.
+    ("test_droit.py", "test_chaque_etape_ecrit_ce_que_le_temoin_fige"): "complet",
     # Les étapes de la liquidation et le journal, sur la même requête sur cinq.
     ("test_liquidation.py",
-     "test_les_deux_moteurs_liquident_et_journalisent_a_l_identique"): "complet",
+     "test_la_liquidation_et_le_journal_sont_ceux_du_temoin"): "complet",
     # Les deux minima des exploitants agricoles, dans les deux moteurs.
     ("test_minima_agricoles.py",
      "test_les_deux_moteurs_servent_les_memes_minima_agricoles"): "complet",

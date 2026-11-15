@@ -20,9 +20,13 @@ site calcule et ce qu'il écrit :
 * ``tests/temoins/servis.json`` — le scénario 1 que le portage sert à chaque
   cas des confrontations des tests (``outils_pont.servi_et_fige``), refait de
   ses propres requêtes : la référence qui remplace le moteur Python qui les
-  refaisait (action 161, étape 8b).
+  refaisait (action 161, étape 8b) ;
+* ``tests/temoins/sorties.json`` — l'empreinte de ce que chaque script de
+  comparaison de ``tests/js/`` écrit de chacune de ses entrées
+  (``outils_sorties.sortie_figee``), refaite en relançant le script (action
+  161, étape 8c).
 
-Les trois fichiers sont versionnés : une différence de chiffre entre les deux
+Les quatre fichiers sont versionnés : une différence de chiffre entre les deux
 implémentations fait échouer la confrontation du moteur Python, et une
 modification voulue du modèle, ou du texte du site, apparaît en diff dans le
 dépôt, chiffre par chiffre et mot par mot. C'est ce qui rend le portage
@@ -31,6 +35,7 @@ vérifiable plutôt que crédible.
     python scripts/construire_temoins.py            # régénère les témoins
     python scripts/construire_temoins.py --verifier # échoue s'ils sont périmés
     python scripts/construire_temoins.py --servis   # le témoin des servis seul
+    python scripts/construire_temoins.py --sorties  # le témoin des sorties seul
 """
 
 from __future__ import annotations
@@ -57,6 +62,10 @@ PAGES = DOSSIER / "pages.json"
 #: ce que le portage sert aux cas des confrontations du scénario 1, refait ici
 #: de ses propres requêtes ; un cas neuf y entre par ``FIGER_SERVIS=1``.
 SERVIS = DOSSIER / "servis.json"
+#: Le témoin des sorties (``tests/outils_sorties.py``) : l'empreinte de ce que
+#: les scripts de comparaison écrivent de leurs entrées ; une entrée neuve y
+#: entre par ``FIGER_SORTIES=1``.
+SORTIES = DOSSIER / "sorties.json"
 
 #: Réglages du cas de base. Chaque cas ci-dessous en dérive.
 BASE = {
@@ -2795,10 +2804,25 @@ def servis(figes: dict[str, dict]) -> dict[str, dict]:
             for empreinte, entree in figes.items()}
 
 
-def construire(seulement_les_servis: bool = False) -> dict[Path, bytes]:
-    figes = json.loads(SERVIS.read_text(encoding="utf-8")) if SERVIS.exists() else {}
-    fichiers = {SERVIS: servis(figes)}
+def sorties(figes: dict[str, dict]) -> dict[str, dict]:
+    """Chaque entrée du témoin des sorties, son script relancé
+    (``outils_sorties.refaire``, action 161, étape 8c)."""
+    sys.path.insert(0, str(RACINE / "tests"))
+    from outils_sorties import refaire
+
+    return refaire(figes)
+
+
+def construire(seulement_les_servis: bool = False,
+               seulement_les_sorties: bool = False) -> dict[Path, bytes]:
+    fichiers = {}
+    if not seulement_les_sorties:
+        figes = json.loads(SERVIS.read_text(encoding="utf-8")) if SERVIS.exists() else {}
+        fichiers[SERVIS] = servis(figes)
     if not seulement_les_servis:
+        figes = json.loads(SORTIES.read_text(encoding="utf-8")) if SORTIES.exists() else {}
+        fichiers[SORTIES] = sorties(figes)
+    if not (seulement_les_servis or seulement_les_sorties):
         fichiers |= {SIMULATIONS: _simulations(), PAGES: _pages()}
     return {
         chemin: (json.dumps(contenu, ensure_ascii=False, sort_keys=True, indent=1) + "\n")
@@ -2817,9 +2841,14 @@ def main(argv: list[str] | None = None) -> int:
         "--servis", action="store_true",
         help="ne refaire que le témoin des servis, en quelques secondes",
     )
+    analyseur.add_argument(
+        "--sorties", action="store_true",
+        help="ne refaire que le témoin des sorties",
+    )
     arguments = analyseur.parse_args(argv)
 
-    attendus = construire(seulement_les_servis=arguments.servis)
+    attendus = construire(seulement_les_servis=arguments.servis,
+                          seulement_les_sorties=arguments.sorties)
 
     if arguments.verifier:
         for chemin, contenu in attendus.items():

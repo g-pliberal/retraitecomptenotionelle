@@ -63,7 +63,7 @@ FICHIERS = (
     "test_grille_large.py", "test_ieg.py", "test_indemnite_csg.py", "test_independants.py",
     "test_indexation_programme.py", "test_ines.py", "test_interpenetration.py",
     "test_ircantec_minoration.py", "test_ircec_auteurs.py",
-    "test_lectures_decision_29.py", "test_limite_age.py", "test_liquidation.py",
+    "test_lectures_decision_29.py", "test_limite_age.py",
     "test_majoration_enfants_agirc_1994_a_1996.py",
     "test_marins.py", "test_mayotte.py", "test_mines.py",
     "test_minimum_pension_sncf.py", "test_mortalite_population.py",
@@ -89,14 +89,10 @@ FICHIERS = (
 
 #: Les fichiers passés à la façade (``from facade import …``) qui gardent des
 #: tests sur le moteur Python, sous la marque ``sur_le_moteur_python``, et le
-#: nombre de ces tests. Il ne fait que décroître.
-RESTES = {"test_droit.py": 1, "test_invalidite.py": 3, "test_liquidation.py": 1,
-          "test_majoration_conjoint_a_charge.py": 1, "test_majoration_enfants_a_charge.py": 1,
-          "test_majoration_exceptionnelle.py": 1,
-          "test_minima_agricoles.py": 2,
-          "test_oracle_periodes_assimilees.py": 1, "test_periodes_assimilees.py": 1,
-          "test_periodes_assimilees_exemples_officiels.py": 1, "test_pension_maximale.py": 3,
-          "test_pension_minimum_avant_1983.py": 1}
+#: nombre de ces tests. Il ne fait que décroître : vide depuis que les
+#: dernières confrontations sont passées au témoin des sorties (action 161,
+#: étape 8c, ``tests/outils_sorties.py``).
+RESTES: dict[str, int] = {}
 
 
 def _du_moteur(module: str) -> bool:

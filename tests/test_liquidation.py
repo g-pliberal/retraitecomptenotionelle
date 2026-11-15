@@ -16,8 +16,6 @@ from __future__ import annotations
 
 import json
 import shutil
-import subprocess
-import tempfile
 from dataclasses import replace
 from pathlib import Path
 
@@ -32,18 +30,17 @@ import facade
 from facade import (Carriere, Simulateur, actuel_aujourd_hui, completer, faire_vivre, foyer,
                     liquidation, liquider, ouvrir, releve)
 from facade import echeancier as _echeancier
-from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 from facade import journal as _journal
 from facade import pilote
-from outils_portage import moitie_python
+from outils_sorties import sortie_figee
 
 RACINE = Path(__file__).resolve().parents[1]
 
 # Ce fichier passe à la façade (action 161) : la liquidation, sa demande, ses
 # neutralisations, ses mesures et ses appels, le foyer se demandent au
 # portage, comme chaque étape seule, son contexte compris, le journal,
-# l'échéancier et le pilote. La confrontation des deux moteurs garde le
-# moteur Python, sous la marque ``sur_le_moteur_python`` et sa raison.
+# l'échéancier et le pilote. La confrontation des deux moteurs est passée au
+# témoin des sorties (``outils_sorties``, action 161, étape 8c).
 
 
 @pytest.fixture
@@ -621,39 +618,6 @@ def _requetes() -> list[dict]:
                    for cle in ("departs", "demandes", "cumul"))]
 
 
-def _python(requetes: list[dict]) -> list[dict]:
-    """Ce que la liquidation et l'échéancier écrivent, en Python, pour chaque
-    requête, sur la carrière que le portage en bâtit (``outils_pont``) : la
-    liquidation et ses étapes, le journal, et les appels."""
-    # Le jumeau lui-même, et non le nom du fichier, que la façade sert : les
-    # confrontations des autres fichiers appellent aussi cette aide.
-    from retraite_notionnelle.droit import liquidation
-
-    from outils_pont import Saisies
-
-    saisies = Saisies()
-    sortie = []
-    for requete in requetes:
-        try:
-            parametres, carriere = saisies.lire(requete)
-            simulateur = saisies.simulateur(parametres)
-            avant = liquidation.appels()
-            journal = simulateur.simuler(carriere).journal
-        except Exception as erreur:  # noqa: BLE001 — le refus est comparé
-            sortie.append({"erreur": str(erreur)})
-            continue
-        # Une liquidation par départ : une seule, sauf quand les régimes
-        # liquident à des dates différentes.
-        sortie.append({"liquidations": [
-            {"ouverture": liquidee.ouverture.donnees(),
-             "pensions": liquidee.pensions.donnees(),
-             "complements": liquidee.complements.donnees()}
-            for liquidee in (e.contenu for e in journal if e.sorte == "liquidation")],
-                       "journal": journal.donnees(),
-                       "appels": liquidation.appels() - avant})
-    return json.loads(json.dumps(sortie))
-
-
 def _ecarts(obtenu, attendu, chemin: str, ecarts: list[str]) -> None:
     """Les écarts entre les deux moteurs : un milliardième au plus sur un
     nombre, comme les témoins (tests/js/comparer.mjs) ; rien ailleurs."""
@@ -675,36 +639,19 @@ def _ecarts(obtenu, attendu, chemin: str, ecarts: list[str]) -> None:
         ecarts.append(f"{chemin} : python={attendu} js={obtenu}")
 
 
-@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait la liquidation et le journal du portage")
-def test_les_deux_moteurs_liquident_et_journalisent_a_l_identique():
+def test_la_liquidation_et_le_journal_sont_ceux_du_temoin():
     """Pour une requête sur cinq des témoins, chaque étape de la liquidation
-    écrit la même donnée en Python et en JavaScript, le journal a les mêmes
+    écrit la donnée que le témoin des sorties fige, le journal a les mêmes
     entrées — la liquidation au contrat C.6, ses composantes, l'ASPA, la
-    revalorisation de l'échéance —, et les deux moteurs appellent
-    ``liquider`` le même nombre de fois."""
+    revalorisation de l'échéance —, et ``liquider`` est appelé le même nombre
+    de fois. Le moteur Python, qui les refaisait, ne sert plus (action 161,
+    étape 8c)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     requetes = _requetes()
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        json.dump(requetes, fichier)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(RACINE / "tests" / "js" / "comparer-liquidation.mjs"), chemin],
-            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    obtenus = json.loads(execution.stdout)
-    attendus = moitie_python(_python, requetes)
-    assert len(obtenus) == len(attendus) == len(requetes)
-    assert sum("journal" in a for a in attendus) > 0.9 * len(requetes)
-    assert any(any(e["contenu"]["sorte"] == "revalorisation" for e in a["journal"])
-               for a in attendus if "journal" in a), "au moins une échéance"
-    assert any(len(a["liquidations"]) > 1 for a in attendus if "liquidations" in a), \
+    obtenus = sortie_figee("comparer-liquidation.mjs", requetes)
+    assert sum("journal" in o for o in obtenus) > 0.9 * len(requetes)
+    assert any(any(e["contenu"]["sorte"] == "revalorisation" for e in o["journal"])
+               for o in obtenus if "journal" in o), "au moins une échéance"
+    assert any(len(o["liquidations"]) > 1 for o in obtenus if "liquidations" in o), \
         "au moins une carrière dont les régimes liquident à des dates différentes"
-    ecarts: list[str] = []
-    for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
-        _ecarts(obtenu, attendu, f"requête {rang}", ecarts)
-    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])

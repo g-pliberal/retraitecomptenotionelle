@@ -430,15 +430,11 @@ def test_les_deux_moteurs_reversent_les_droits_d_avant_1973():
     relève la réversion alignée ne porte que leur total au minimum. Les étapes
     de la liquidation et le journal, réversion comprise, sont les mêmes dans
     les deux moteurs."""
-    import json
     import shutil
-    import subprocess
-    import tempfile
-    from pathlib import Path
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    from test_liquidation import RACINE, _ecarts, _python
+    from outils_sorties import sortie_figee
     from test_minimum_pension_sncf import REQUETE
 
     requetes = [{**REQUETE, **cas} for cas in (
@@ -449,26 +445,11 @@ def test_les_deux_moteurs_reversent_les_droits_d_avant_1973():
         {"naissance": "1950", "liquidation": "62", "statut": "artisan", "debut": "20",
          "salaire": "0.2", "conjoint": "1952", "deces": "2015-05"},
     )]
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        json.dump(requetes, fichier)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(RACINE / "tests" / "js" / "comparer-liquidation.mjs"), chemin],
-            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    obtenus, attendus = json.loads(execution.stdout), _python(requetes)
-    assert not any("erreur" in attendu for attendu in attendus), attendus
-    ecarts: list[str] = []
-    for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
-        _ecarts(obtenu, attendu, f"requête {rang}", ecarts)
-    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
+    obtenus = sortie_figee("comparer-liquidation.mjs", requetes)
+    assert not any("erreur" in obtenu for obtenu in obtenus), obtenus
     lignes = [{ligne["regime"]: ligne for ligne in next(
-        entree["contenu"]["donnee"]["regimes"] for entree in attendu["journal"]
-        if entree["id"] == "liquidation_reversion_conjoint")} for attendu in attendus]
+        entree["contenu"]["donnee"]["regimes"] for entree in obtenu["journal"]
+        if entree["id"] == "liquidation_reversion_conjoint")} for obtenu in obtenus]
     for reversions, (alignee, points) in zip(lignes, (
             ("cancava", "cancava_avant_1973"), ("organic", "organic_avant_1973"),
             ("rsi", "cancava_avant_1973"))):

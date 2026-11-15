@@ -341,32 +341,18 @@ def _servis(sortie: dict) -> dict:
 
 
 @functools.cache
-def _deux_moteurs(cas: str) -> tuple[list[dict], list[dict]]:
-    """Ce que servent le portage, qui fait foi, puis son jumeau Python, pour
-    chaque requête de ``cas`` (JSON, une liste de retouches de la requête)."""
+def _servis_par_le_portage(cas: str) -> list[dict]:
+    """Ce que sert le portage pour chaque requête de ``cas`` (JSON, une liste
+    de retouches de la requête). Son jumeau Python, qui le refaisait, ne sert
+    plus (action 161, étape 8c) : les attendus viennent des textes."""
     import shutil
-    import subprocess
-    import tempfile
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    from test_liquidation import _python
+    from outils_sorties import lancer
 
     requetes = [{**REQUETE, **retouche} for retouche in json.loads(cas)]
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        json.dump(requetes, fichier)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(RACINE / "tests" / "js" / "comparer-liquidation.mjs"), chemin],
-            cwd=RACINE, capture_output=True, text=True,
-            encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    return ([_servis(sortie) for sortie in json.loads(execution.stdout)],
-            [_servis(sortie) for sortie in _python(requetes)])
+    return [_servis(sortie) for sortie in lancer("comparer-liquidation.mjs", requetes)]
 
 
 def _attendus(date: str, coefficient: float | None) -> dict:
@@ -406,10 +392,9 @@ def test_avant_le_31_aout_1983_la_table_par_annee_d_age():
     à l'âge révolu ; l'escalier au trimestre, dès la publication de l'arrêté
     qui le crée (« fixés désormais par trimestre »)."""
     cas = json.dumps([retouche for retouche, _, _ in TABLE_PAR_ANNEE_D_AGE])
-    portage, jumeau = _deux_moteurs(cas)
+    portage = _servis_par_le_portage(cas)
     attendus = [_attendus(date, coefficient) for _, date, coefficient in TABLE_PAR_ANNEE_D_AGE]
     assert portage == attendus
-    assert jumeau == attendus
 
 
 #: L'exonération de qui a la durée du taux plein du régime général : la
@@ -446,11 +431,10 @@ def test_la_duree_n_exonere_qu_a_compter_du_1er_avril_1983():
     ans dès le 1er juillet 1982 (6° a) et la femme de la loi du 12 juillet
     1977 dès le 30 septembre 1978 (5°), que les deux tests suivants
     rejouent."""
-    portage, jumeau = _deux_moteurs(json.dumps([retouche for retouche, _ in
+    portage = _servis_par_le_portage(json.dumps([retouche for retouche, _ in
                                                 EXONERATION_A_LA_DUREE]))
     attendus = [attendu for _, attendu in EXONERATION_A_LA_DUREE]
     assert portage == attendus
-    assert jumeau == attendus
 
 
 #: Une carrière dont la durée ne se discute pas : salarié du privé dès dix-huit
@@ -512,11 +496,10 @@ def test_l_agent_de_soixante_trois_ans_et_cent_cinquante_trimestres_des_juillet_
     pas de coefficient (6° a), aux trois régimes, dans les deux moteurs ;
     l'ancien agent, l'agent plus jeune ou à la durée courte gardent la
     table."""
-    portage, jumeau = _deux_moteurs(json.dumps([retouche for retouche, _ in
+    portage = _servis_par_le_portage(json.dumps([retouche for retouche, _ in
                                                 AGENTS_DE_SOIXANTE_TROIS_ANS]))
     attendus = [attendu for _, attendu in AGENTS_DE_SOIXANTE_TROIS_ANS]
     assert portage == attendus
-    assert jumeau == attendus
 
 
 #: Le 6° a) reste écrit, mot pour mot, dans les rédactions du 31 août 1983 et
@@ -563,11 +546,10 @@ def test_le_6_a_sert_l_agent_de_soixante_trois_ans_jusqu_au_1er_janvier_2004():
     l'agent de soixante-trois ans qui a cent cinquante trimestres, mais pas la
     durée de sa génération, n'a pas de coefficient, aux trois régimes, dans
     les deux moteurs ; dès le 1er janvier 2004, la seconde table et l'âge."""
-    portage, jumeau = _deux_moteurs(json.dumps(
+    portage = _servis_par_le_portage(json.dumps(
         [retouche for retouche, _ in AGENTS_DE_SOIXANTE_TROIS_ANS_JUSQU_EN_2003]))
     attendus = [attendu for _, attendu in AGENTS_DE_SOIXANTE_TROIS_ANS_JUSQU_EN_2003]
     assert portage == attendus
-    assert jumeau == attendus
 
 
 #: Le 5° de l'article 16, rédaction du 30 septembre 1978 (LEGIARTI000006381609) :
@@ -618,8 +600,7 @@ def test_la_femme_de_la_loi_de_1977_du_30_septembre_1978_au_1er_avril_1983():
     demi d'assurance au régime général, de soixante-trois ans en 1978, de
     soixante ans ensuite, n'a pas de coefficient (5°), aux trois régimes, dans
     les deux moteurs ; l'homme, ou la femme sans la durée, garde la table."""
-    portage, jumeau = _deux_moteurs(json.dumps([retouche for retouche, _ in
+    portage = _servis_par_le_portage(json.dumps([retouche for retouche, _ in
                                                 FEMMES_DE_LA_LOI_DE_1977]))
     attendus = [attendu for _, attendu in FEMMES_DE_LA_LOI_DE_1977]
     assert portage == attendus
-    assert jumeau == attendus

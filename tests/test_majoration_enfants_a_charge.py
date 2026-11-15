@@ -13,9 +13,6 @@ from __future__ import annotations
 import functools
 import json
 import shutil
-import subprocess
-import sys
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -23,7 +20,7 @@ import pytest
 from retraite_notionnelle.droit.commun import AvantageApplique
 
 from facade import Simulateur, commun, completer, faire_vivre
-from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
+from outils_sorties import sortie_figee
 from outils_pont import Saisies
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -220,30 +217,12 @@ CAS = [
 ]
 
 
-@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait la comparaison du portage")
-def test_les_deux_moteurs_servent_la_meme_majoration(saisies):
+def test_la_majoration_est_celle_du_temoin():
     """Le résultat entier, aujourd'hui compris — où la majoration a perdu
-    l'enfant qui n'est plus à charge —, est le même en Python et en
-    JavaScript."""
+    l'enfant qui n'est plus à charge —, est celui que le témoin des sorties
+    fige (action 161, étape 8c)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    sys.path.insert(0, str(RACINE / "scripts"))
-    from construire_temoins import _fini
-
-    attendus = []
-    for cas in CAS:
-        attendus.append({"requete": {**CADRE, **cas},
-                         "resultat": _fini(saisies.simuler({**CADRE, **cas}).dictionnaire())})
-    texte = json.dumps(attendus, ensure_ascii=False)
+    texte = json.dumps(sortie_figee("simuler.mjs", [{**CADRE, **cas} for cas in CAS]),
+                       ensure_ascii=False)
     assert "enfant à charge" in texte and "enfants à charge" in texte
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        fichier.write(texte)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(RACINE / "tests" / "js" / "comparer.mjs"), chemin],
-            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]

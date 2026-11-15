@@ -19,7 +19,6 @@ from retraite_notionnelle.web.site import ErreurSite
 
 import facade
 from facade import Carriere, Parametres, Simulateur, faire_vivre, invalidite, ouvrir
-from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 from outils_pont import RefusDuPortage, Saisies, refus_de_la_saisie, saisie_du_portage
 
 
@@ -780,42 +779,22 @@ REQUETES_DU_PLANCHER = [
 
 
 def _les_deux_moteurs(cas: list[dict]) -> list[str]:
-    """Ce que le Python écrit de chaque requête — la liquidation, ses étapes et
-    le journal, échéance comprise —, en texte, une fois vérifié que le
-    JavaScript écrit la même donnée."""
+    """Ce que le portage écrit de chaque requête — la liquidation, ses étapes
+    et le journal, échéance comprise —, en texte, une fois vérifié que c'est
+    ce que le témoin des sorties fige (action 161, étape 8c)."""
     import json
     import shutil
-    import subprocess
-    import tempfile
-    from pathlib import Path
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    from test_liquidation import _ecarts, _python
+    from outils_sorties import sortie_figee
 
-    racine = Path(__file__).resolve().parents[1]
     requetes = [{**REQUETE_DU_PLANCHER, **requete} for requete in cas]
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        json.dump(requetes, fichier)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(racine / "tests" / "js" / "comparer-liquidation.mjs"), chemin],
-            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    obtenus, attendus = json.loads(execution.stdout), _python(requetes)
-    assert not any("erreur" in attendu for attendu in attendus), attendus
-    ecarts: list[str] = []
-    for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
-        _ecarts(obtenu, attendu, f"requête {rang}", ecarts)
-    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
-    return [json.dumps(attendu, ensure_ascii=False) for attendu in attendus]
+    obtenus = sortie_figee("comparer-liquidation.mjs", requetes)
+    assert not any("erreur" in obtenu for obtenu in obtenus), obtenus
+    return [json.dumps(obtenu, ensure_ascii=False) for obtenu in obtenus]
 
 
-@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait la liquidation du portage")
 def test_les_deux_moteurs_servent_le_meme_plancher():
     """Chaque étape de la liquidation écrit la même donnée en Python et en
     JavaScript, et chaque requête est portée au plancher."""
@@ -823,7 +802,6 @@ def test_les_deux_moteurs_servent_le_meme_plancher():
         assert "plancher de la pension substituée" in attendu, rang
 
 
-@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait la liquidation du portage")
 def test_les_deux_moteurs_lisent_la_categorie_que_la_saisie_dit():
     """La catégorie que la saisie dit (action 138, étape 4), sur la pension
     d'invalidité de 1982 : chaque étape de la liquidation écrit la même donnée
@@ -850,7 +828,6 @@ REQUETES_DES_MAJORATIONS = [
 ]
 
 
-@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait la liquidation et l'échéance du portage")
 def test_les_deux_moteurs_comparent_les_majorations_au_plancher():
     """Chaque étape de la liquidation et de l'échéance écrit la même donnée en
     Python et en JavaScript : les 6 % de décembre 1982 ne relèvent ni l'AVTS de

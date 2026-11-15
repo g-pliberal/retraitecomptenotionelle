@@ -33,7 +33,6 @@ from retraite_notionnelle.carriere import LigneRelevee
 
 import facade
 from facade import Carriere, Simulateur, compter, releve
-from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 RACINE = Path(__file__).resolve().parents[1]
 SALARIE = "salarie_prive_non_cadre"
@@ -190,7 +189,6 @@ def test_le_complement_de_l_apprenti_n_est_pas_cotise(simulateur):
     assert cotises == {2014: 0, 2015: 3, 2016: 3}
 
 
-@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait les durées du portage")
 def test_le_portage_rejoue_les_memes_exemples(simulateur):
     """Le portage écrit, pour chaque exemple, les durées du Python, et donc
     les trimestres de la circulaire."""

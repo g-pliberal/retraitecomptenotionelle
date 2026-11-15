@@ -69,6 +69,7 @@ moteur/donnees.json            -merge refaire=scripts/construire_donnees.py
 tests/temoins/pages.json       -merge
 tests/temoins/simulations.json -merge
 tests/temoins/servis.json      -merge
+tests/temoins/sorties.json     -merge
 data/derive/equilibre.json     -merge refaire=scripts/construire_donnees.py
 data/derive/agregats.json      -merge refaire=scripts/construire_donnees.py
 docs/chiffrage_plf.csv         -merge

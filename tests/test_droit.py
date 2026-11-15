@@ -13,8 +13,6 @@ from __future__ import annotations
 
 import json
 import shutil
-import subprocess
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -25,8 +23,7 @@ from retraite_notionnelle.noyau import contrats
 
 import facade
 from facade import Carriere, Simulateur, acquerir, compter, coordonner, releve
-from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
-from outils_portage import moitie_python
+from outils_sorties import sortie_figee
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -283,74 +280,13 @@ def _requetes() -> list[dict]:
     return [temoins[nom]["requete"] for nom in noms if nom in retenus]
 
 
-def _python(requetes: list[dict]) -> list[dict]:
-    """Ce que chaque étape écrit, en Python, pour chaque requête, sur la
-    carrière que le portage en bâtit (``outils_pont``)."""
-    from outils_pont import Saisies
-
-    saisies = Saisies()
-    sortie = []
-    for requete in requetes:
-        try:
-            parametres, carriere = saisies.lire(requete)
-            simulateur = saisies.simulateur(parametres)
-            simulateur.simuler(carriere)
-        except Exception as erreur:  # noqa: BLE001 — le refus est comparé
-            sortie.append({"erreur": str(erreur)})
-            continue
-        releve_ = releve.construire(simulateur.scenario_actuel, carriere)
-        sortie.append({"coordination": releve_.coordination.donnees(),
-                       "durees": releve_.durees.donnees(),
-                       "droits": releve_.droits.donnees(),
-                       "releve": releve_.donnees()})
-    return json.loads(json.dumps(sortie))
-
-
-def _ecarts(obtenu, attendu, chemin: str, ecarts: list[str]) -> None:
-    """Les écarts entre les deux moteurs : un milliardième au plus sur un
-    nombre, comme les témoins (tests/js/comparer.mjs) ; rien ailleurs."""
-    if isinstance(attendu, bool) or not isinstance(attendu, (int, float)):
-        if isinstance(attendu, dict) and isinstance(obtenu, dict):
-            for cle in sorted(set(attendu) | set(obtenu)):
-                _ecarts(obtenu.get(cle), attendu.get(cle), f"{chemin}.{cle}", ecarts)
-        elif isinstance(attendu, list) and isinstance(obtenu, list) and len(attendu) == len(obtenu):
-            for rang, (o, a) in enumerate(zip(obtenu, attendu)):
-                _ecarts(o, a, f"{chemin}[{rang}]", ecarts)
-        elif obtenu != attendu:
-            ecarts.append(f"{chemin} : python={str(attendu)[:80]} js={str(obtenu)[:80]}")
-        return
-    if isinstance(obtenu, bool) or not isinstance(obtenu, (int, float)):
-        ecarts.append(f"{chemin} : python={attendu} js={obtenu}")
-        return
-    echelle = max(abs(attendu), 1e-300)
-    if abs(obtenu - attendu) / echelle > 1e-9 and abs(obtenu - attendu) > 1e-12:
-        ecarts.append(f"{chemin} : python={attendu} js={obtenu}")
-
-
-@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait les étapes du portage")
-def test_les_deux_moteurs_ecrivent_les_memes_etapes():
-    """Pour une requête sur cinq des témoins, chaque étape écrit la même donnée
-    en Python et en JavaScript — la coordination, les durées, les droits — et
-    le relevé a les mêmes lignes : chaque étape se compare seule (§ 7.1)."""
+def test_chaque_etape_ecrit_ce_que_le_temoin_fige():
+    """Pour une requête sur cinq des témoins, chaque étape — la coordination,
+    les durées, les droits — et le relevé écrivent la donnée que le témoin des
+    sorties fige : chaque étape se compare seule (§ 7.1). Le moteur Python,
+    qui les refaisait, ne sert plus (action 161, étape 8c)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     requetes = _requetes()
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        json.dump(requetes, fichier)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(RACINE / "tests" / "js" / "comparer-droit.mjs"), chemin],
-            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    obtenus = json.loads(execution.stdout)
-    attendus = moitie_python(_python, requetes)
-    assert len(obtenus) == len(attendus) == len(requetes)
-    assert sum("releve" in a for a in attendus) > 0.9 * len(requetes)
-    ecarts: list[str] = []
-    for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
-        _ecarts(obtenu, attendu, f"requête {rang}", ecarts)
-    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
+    obtenus = sortie_figee("comparer-droit.mjs", requetes)
+    assert sum("releve" in o for o in obtenus) > 0.9 * len(requetes)

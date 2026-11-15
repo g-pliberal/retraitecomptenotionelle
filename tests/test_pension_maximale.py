@@ -13,15 +13,13 @@ from __future__ import annotations
 
 import json
 import shutil
-import subprocess
-import tempfile
 from pathlib import Path
 
 import pytest
 
 import facade
 from facade import Parametres, Simulateur, faire_vivre, liquider
-from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
+from outils_sorties import sortie_figee
 
 RACINE = Path(__file__).resolve().parents[1]
 FRANC = 6.55957
@@ -240,37 +238,18 @@ def test_la_pension_au_maximum_est_majoree_sur_son_montant_entier(
         maximum_de_1982 if au_maximum_de_1982 else calculee * servie.coefficient)
 
 
-#: Le jumeau JavaScript de ``maximum_du_jour``, sur les mêmes pensions.
-_JUMEAU_DU_MAXIMUM = """
-import { readFileSync } from "node:fs";
-import { Contexte } from "./moteur/js/contexte.js";
-import { PensionServie, maximumDuJour } from "./moteur/js/revalorisation.js";
-const paquet = JSON.parse(readFileSync("moteur/donnees.json", "utf8"));
-const servie = new PensionServie(new Contexte(paquet).simulateur());
-const cas = JSON.parse(process.argv[1]);
-process.stdout.write(JSON.stringify(cas.map(
-  ([pension, annee, depart, menee, ecretement, jusqua]) =>
-    maximumDuJour(servie, pension, annee, depart, menee, ecretement, jusqua))));
-"""
-
-
-@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait le maximum du jour du portage")
-def test_les_deux_moteurs_comparent_la_pension_majoree_au_maximum_du_jour(simulateur):
+def test_la_pension_majoree_est_comparee_au_maximum_du_jour(simulateur):
     """Ce que le maximum du jour de la dernière majoration change à la pension,
-    au bit près dans les deux moteurs. La pension de 1971 ramenée au maximum
-    reprend sous celui de 1982 ce qu'il lui avait retiré, ou une part ; celle de
-    1970 sur la durée maximum en reprend une part sous celui de 1972, puis
-    s'arrête, ses trois majorations de 5 % menées plus vite que le plafond, sous
-    celui d'octobre 1977 ; de même la pension du salarié agricole de 1971, sans
-    maximum à sa liquidation, sous celui de 1982 ; celle de l'ajournement, sous le
-    maximum de 1972 qu'il multiplie ; celle de 1980 ne reçoit aucune majoration."""
+    tel que le témoin des sorties le fige (action 161, étape 8c). La pension
+    de 1971 ramenée au maximum reprend sous celui de 1982 ce qu'il lui avait
+    retiré, ou une part ; celle de 1970 sur la durée maximum en reprend une
+    part sous celui de 1972, puis s'arrête, ses trois majorations de 5 % menées
+    plus vite que le plafond, sous celui d'octobre 1977 ; de même la pension du
+    salarié agricole de 1971, sans maximum à sa liquidation, sous celui de
+    1982 ; celle de l'ajournement, sous le maximum de 1972 qu'il multiplie ;
+    celle de 1980 ne reçoit aucune majoration."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    from datetime import date
-
-    from retraite_notionnelle.donnees.chargement import Fiabilite
-    from retraite_notionnelle.droit.commun import PensionRegime
-    from retraite_notionnelle.revalorisation import PensionServie, maximum_du_jour
     plafond = simulateur.macro.plafond_securite_sociale
     general, agricole = ({"regime": "regime_general", "sur_la_duree_maximum": False},
                          {"regime": "msa_salaries", "sur_la_duree_maximum": False})
@@ -289,85 +268,32 @@ def test_les_deux_moteurs_comparent_la_pension_majoree_au_maximum_du_jour(simula
         (sur_la_duree, 1980, "1980-02-01", 0.50 * plafond(1980), 0.10 * plafond(1980),
          "1990-12-31"),
     ]
-    servie = PensionServie(simulateur)
-    attendu = [maximum_du_jour(
-        servie, PensionRegime(regime=pension["regime"], montant=menee, type_calcul="annuites",
-                              detail="", fiabilite=Fiabilite.HAUTE,
-                              sur_la_duree_maximum=pension["sur_la_duree_maximum"],
-                              ecretement_du_maximum=ecretement,
-                              coefficient_du_maximum=pension.get("coefficient_du_maximum", 1.0)),
-        annee, date.fromisoformat(depart), menee, ecretement, date.fromisoformat(jusqu_a))
-        for pension, annee, depart, menee, ecretement, jusqu_a in cas]
-    assert attendu[0] == pytest.approx(cas[0][4])
-    assert all(0 < attendu[rang] < cas[rang][4] for rang in (1, 2, 6))
-    assert attendu[3] < 0 and attendu[5] < 0
-    assert attendu[4] == attendu[7] == 0.0
-    execution = subprocess.run(
-        ["node", "--input-type=module", "-e", _JUMEAU_DU_MAXIMUM, json.dumps(
-            [[{"type_calcul": "annuites", "coefficient_du_maximum": 1.0, **pension}, annee,
-              depart, menee, ecretement, jusqu_a]
-             for pension, annee, depart, menee, ecretement, jusqu_a in cas])],
-        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    assert json.loads(execution.stdout) == attendu
+    rendu = sortie_figee("maximum-du-jour.mjs", [
+        [{"type_calcul": "annuites", "coefficient_du_maximum": 1.0, **pension}, annee,
+         depart, menee, ecretement, jusqu_a]
+        for pension, annee, depart, menee, ecretement, jusqu_a in cas])
+    assert rendu[0] == pytest.approx(cas[0][4])
+    assert all(0 < rendu[rang] < cas[rang][4] for rang in (1, 2, 6))
+    assert rendu[3] < 0 and rendu[5] < 0
+    assert rendu[4] == rendu[7] == 0.0
 
 
-#: Le jumeau JavaScript de « faire vivre », sur la même liquidation, dont la
-#: pension du régime général est ramenée au maximum.
-_JUMEAU_DE_FAIRE_VIVRE = """
-import { readFileSync } from "node:fs";
-import { Contexte } from "./moteur/js/contexte.js";
-import { faireVivre } from "./moteur/js/revalorisation.js";
-const paquet = JSON.parse(readFileSync("moteur/donnees.json", "utf8"));
-const simulateur = new Contexte(paquet).simulateur();
-const [options, montant, ecretement, annees] = JSON.parse(process.argv[1]);
-const carriere = simulateur.carriereSimple(options);
-const resultat = simulateur.scenarioActuel.calculer(carriere);
-for (const pension of resultat.pensions_par_regime) {
-  if (pension.regime === "regime_general") {
-    pension.montant = montant;
-    pension.ecretement_du_maximum = ecretement;
-  }
-}
-process.stdout.write(JSON.stringify(annees.map((annee) => {
-  const vivante = faireVivre(simulateur, carriere, resultat, annee);
-  return [vivante.donnees(), vivante.regimes.map((r) => r.aujourd_hui)];
-})));
-"""
-
-
-@pytest.mark.sur_le_moteur_python("confrontation : le jumeau fait vivre une pension retouchée")
-def test_les_deux_moteurs_font_vivre_la_pension_ramenee_au_maximum(simulateur):
-    """La pension de 1971 ramenée au maximum, que le maximum de 1982 arrête : la
-    même dans les deux moteurs, de 1981, avant la majoration, à 2026, ce que le
-    maximum du jour y change compris, et le mensuel de décembre 2019."""
+def test_la_pension_ramenee_au_maximum_vit_sous_le_maximum_du_jour(simulateur):
+    """La pension de 1971 ramenée au maximum, que le maximum de 1982 arrête,
+    de 1981, avant la majoration, à 2026 : ce que le maximum du jour y change,
+    tel que le témoin des sorties le fige (action 161, étape 8c)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    from dataclasses import replace
-
     options = {"annee_naissance": 1906, "sexe": "H", "affiliation": "salarie_prive_cadre",
                "age_debut": 20, "age_liquidation": 65, "niveau_salaire": 5.0}
-    carriere = simulateur.carriere_simple(**options)
-    resultat = simulateur.scenario_actuel.calculer(carriere)
     plafond = simulateur.macro.plafond_securite_sociale(1971)
     montant, ecretement = 0.40 * plafond, 0.56 * plafond
-    resultat = replace(resultat, pensions_par_regime=tuple(
-        replace(p, montant=montant, ecretement_du_maximum=ecretement)
-        if p.regime == "regime_general" else p for p in resultat.pensions_par_regime))
-    annees = [1981, 1982, 1990, 2026]
-    attendu = json.loads(json.dumps([
-        [vivante.donnees(), [r.aujourd_hui for r in vivante.regimes]]
-        for vivante in (faire_vivre(simulateur, carriere, resultat, annee) for annee in annees)]))
+    rendu = sortie_figee("faire-vivre-retouchee.mjs", [
+        [options, montant, ecretement, annee] for annee in (1981, 1982, 1990, 2026)])
     jours = [{r["regime"]: r.get("maximum_du_jour", 0.0) for r in donnees["regimes"]}
-             for donnees, _ in attendu]
+             for donnees, _ in rendu]
     assert jours[0]["regime_general"] == 0.0
     assert all(jour["regime_general"] > 0 for jour in jours[1:])
-    execution = subprocess.run(
-        ["node", "--input-type=module", "-e", _JUMEAU_DE_FAIRE_VIVRE,
-         json.dumps([options, montant, ecretement, annees])],
-        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    assert json.loads(execution.stdout) == attendu
 
 
 # -- la circulaire n° 22/83 ------------------------------------------------------
@@ -425,29 +351,10 @@ CAS = [
 ]
 
 
-@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait le journal du portage")
-def test_les_deux_moteurs_ramenent_au_meme_maximum():
-    """Le journal de l'échéancier — les composantes et leur formule — est le même
-    en Python et en JavaScript."""
+def test_le_journal_du_maximum_est_celui_du_temoin():
+    """Le journal de l'échéancier — les composantes et leur formule — est celui
+    que le témoin des sorties fige (action 161, étape 8c)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    from test_liquidation import _ecarts, _python
-
-    requetes = [{**REQUETE, **cas} for cas in CAS]
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        json.dump(requetes, fichier)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(RACINE / "tests" / "js" / "comparer-liquidation.mjs"), chemin],
-            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    obtenus, attendus = json.loads(execution.stdout), _python(requetes)
-    assert "ramenée au maximum des pensions" in json.dumps(attendus, ensure_ascii=False)
-    ecarts: list[str] = []
-    for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
-        _ecarts(obtenu, attendu, f"requête {rang}", ecarts)
-    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
+    obtenus = sortie_figee("comparer-liquidation.mjs", [{**REQUETE, **cas} for cas in CAS])
+    assert "ramenée au maximum des pensions" in json.dumps(obtenus, ensure_ascii=False)

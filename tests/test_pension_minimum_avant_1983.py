@@ -19,8 +19,6 @@ from __future__ import annotations
 import csv
 import json
 import shutil
-import subprocess
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -30,7 +28,7 @@ from retraite_notionnelle.donnees.chargement import Fiabilite
 
 import facade
 from facade import Carriere, Simulateur, acquerir, commun, faire_vivre
-from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
+from outils_sorties import sortie_figee
 
 RACINE = Path(__file__).resolve().parents[1]
 LEGISLATION = RACINE / "data" / "reference" / "legislation"
@@ -223,34 +221,15 @@ CAS = [
 ]
 
 
-@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait le journal du portage")
-def test_les_deux_moteurs_servent_la_meme_pension_minimum():
-    """Chaque étape de la liquidation écrit la même donnée en Python et en
-    JavaScript, la pension minimum comprise."""
+def test_la_pension_minimum_est_celle_du_temoin():
+    """Chaque étape de la liquidation, la pension minimum comprise, écrit la
+    donnée que le témoin des sorties fige (action 161, étape 8c)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    from test_liquidation import _ecarts, _python
-
-    requetes = [{**REQUETE, **cas} for cas in CAS]
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        json.dump(requetes, fichier)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(RACINE / "tests" / "js" / "comparer-liquidation.mjs"), chemin],
-            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    obtenus, attendus = json.loads(execution.stdout), _python(requetes)
-    assert not any("erreur" in attendu for attendu in attendus), attendus
-    ecarts: list[str] = []
-    for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
-        _ecarts(obtenu, attendu, f"requête {rang}", ecarts)
-    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
-    portees = [rang for rang, attendu in enumerate(attendus)
-               if "porté à la pension minimum" in json.dumps(attendu, ensure_ascii=False)]
+    obtenus = sortie_figee("comparer-liquidation.mjs", [{**REQUETE, **cas} for cas in CAS])
+    assert not any("erreur" in obtenu for obtenu in obtenus), obtenus
+    portees = [rang for rang, obtenu in enumerate(obtenus)
+               if "porté à la pension minimum" in json.dumps(obtenu, ensure_ascii=False)]
     assert portees, "aucune requête n'est portée à la pension minimum"
 
 

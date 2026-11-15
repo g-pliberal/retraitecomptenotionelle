@@ -37,9 +37,7 @@ from retraite_notionnelle import chronologie
 from retraite_notionnelle.carriere import LigneRelevee
 from retraite_notionnelle.config import Parametres
 
-import facade
 from facade import Carriere, Simulateur, liquider, releve
-from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 RACINE = Path(__file__).resolve().parents[1]
 TEMOIN = RACINE / "tests" / "temoins" / "openfisca_periodes_assimilees.json"
@@ -335,10 +333,9 @@ process.stdout.write(JSON.stringify(sortie));
 """
 
 
-@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait les pensions du portage")
-def test_le_portage_javascript_sert_les_memes_pensions(temoin, request, tmp_path):
-    """Le jumeau JavaScript sert, sur les onze profils, la même pension de
-    base, au milliardième."""
+def test_le_portage_javascript_sert_les_memes_pensions(temoin, nous, tmp_path):
+    """Le portage, appelé seul, sert sur les onze profils la même pension de
+    base que par la façade, au milliardième."""
     import shutil
     import subprocess
 
@@ -353,7 +350,5 @@ def test_le_portage_javascript_sert_les_memes_pensions(temoin, request, tmp_path
         cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
     assert execution.returncode == 0, execution.stderr[-2000:]
     portage = json.loads(execution.stdout)
-    jumeau = facade.simulateur_du_test(request, Parametres())
-    for code, entree in temoin["profils"].items():
-        moi = _le_droit(jumeau, entree["profil"])
-        assert portage[code] == pytest.approx(moi["pension_brute"], rel=1e-9), code
+    for code in temoin["profils"]:
+        assert portage[code] == pytest.approx(nous[code]["pension_brute"], rel=1e-9), code

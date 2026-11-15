@@ -17,10 +17,7 @@ vivre » y sont servies par le portage.
 
 from __future__ import annotations
 
-import json
 import shutil
-import subprocess
-import tempfile
 from datetime import date
 from pathlib import Path
 from types import SimpleNamespace
@@ -36,7 +33,7 @@ from retraite_notionnelle.revalorisation import FICHE_DE_LA_MAJORATION, RegimeSe
 import facade
 from facade import (Echeancier, Parametres, PensionServie, Simulateur, faire_vivre,
                     majorer_les_petites_pensions)
-from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
+from outils_sorties import sortie_figee
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -287,33 +284,14 @@ CAS = [
 ]
 
 
-@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait l'échéancier du portage")
-def test_les_deux_moteurs_servent_la_meme_majoration():
+def test_le_journal_de_la_majoration_est_celui_du_temoin():
     """Le journal de l'échéancier — l'événement du 1er septembre 2023, sa
-    composante, la pension de l'échéance — est le même en Python et en
-    JavaScript."""
+    composante, la pension de l'échéance — est celui que le témoin des sorties
+    fige (action 161, étape 8c)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    from test_liquidation import _ecarts, _python
-
-    requetes = [{**REQUETE, **cas} for cas in CAS]
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        json.dump(requetes, fichier)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(RACINE / "tests" / "js" / "comparer-liquidation.mjs"), chemin],
-            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    obtenus, attendus = json.loads(execution.stdout), _python(requetes)
-    majorees = [a for a in attendus
+    obtenus = sortie_figee("comparer-liquidation.mjs", [{**REQUETE, **cas} for cas in CAS])
+    majorees = [o for o in obtenus
                 if any(e["id"].startswith("majoration_exceptionnelle_")
-                       for e in a.get("journal", []))]
+                       for e in o.get("journal", []))]
     assert majorees, "aucune requête n'est majorée"
-    ecarts: list[str] = []
-    for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
-        _ecarts(obtenu, attendu, f"requête {rang}", ecarts)
-    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])

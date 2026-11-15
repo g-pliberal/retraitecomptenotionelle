@@ -18,8 +18,6 @@ import json
 import math
 import shutil
 import subprocess
-import sys
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -31,7 +29,7 @@ from retraite_notionnelle.droit.commun import PensionRegime
 import facade
 from facade import (Carriere, Echeancier, Simulateur, commun, completer, faire_vivre, liquider,
                     ouvrir, releve)
-from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
+from outils_sorties import sortie_figee
 
 valeur_du_point = liquider.valeur_du_point
 
@@ -1373,7 +1371,6 @@ _REVISIONS = [
 ]
 
 
-@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait ce que le portage calcule")
 def test_les_deux_moteurs_revisent_la_meme_majoration(simulateur):
     """La révision de D. 732-114, à l'échéance : la réversion qui commence
     après le départ, la pension étrangère le mois qui suit, le régime général
@@ -1414,46 +1411,22 @@ def test_les_deux_moteurs_revisent_la_meme_majoration(simulateur):
     assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
 
 
-#: Le jumeau JavaScript : la conjointe collaboratrice de :func:`_veuve`,
-#: simulée entière, sous chacune des réversions déclarées.
-_JUMEAU_DES_VEUVES = """
-import { readFileSync } from "node:fs";
-import { Simulateur } from "./moteur/js/simulateur.js";
-const cas = JSON.parse(process.argv[1]);
-const simulateur = new Simulateur(JSON.parse(readFileSync("./moteur/donnees.json", "utf8")));
-process.stdout.write(JSON.stringify(cas.map((reversion) => simulateur.simuler(
-  simulateur.carriereParcours({
-    annee_naissance: 1952, sexe: "F", age_liquidation: 64, jour_naissance: 15,
-    metiers: [{ affiliation: "collaborateur_agricole", age_debut: 20, niveau_salaire: 0.3 }],
-    reversion_agricole: reversion,
-  })).dictionnaire())));
-"""
-
-
-@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait ce que le portage calcule")
-def test_les_deux_moteurs_servent_la_meme_pmr_aux_veuves(simulateur):
+def test_la_pmr_des_veuves_est_celle_du_temoin():
     """Le 2° de D. 732-110, II, et la réversion retranchée et comptée au
-    plafond, au départ et à chaque échéance : le résultat entier, en Python et
-    en JavaScript, des veuves de 2010, à la réversion nulle ou de 150 € par
-    mois, et de celle de 2018."""
+    plafond, au départ et à chaque échéance : le résultat entier des veuves de
+    2010, à la réversion nulle ou de 150 € par mois, et de celle de 2018, tel
+    que le témoin des sorties le fige (action 161, étape 8c). La conjointe
+    collaboratrice est celle de :func:`_veuve`."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    sys.path.insert(0, str(RACINE / "scripts"))
-    from construire_temoins import _fini
-    from test_liquidation import _ecarts
-
     cas = [{"debut": "2010-03", "mensuel": 0.0}, {"debut": "2010-03", "mensuel": 150.0},
            {"debut": "2018-06", "mensuel": 150.0}]
-    execution = subprocess.run(
-        ["node", "--input-type=module", "-e", _JUMEAU_DES_VEUVES, json.dumps(cas)],
-        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    ecarts: list[str] = []
-    for rang, (reversion, obtenu) in enumerate(zip(cas, json.loads(execution.stdout))):
-        attendu = json.loads(json.dumps(_fini(
-            simulateur.simuler(_veuve(simulateur, reversion)).dictionnaire())))
-        _ecarts(obtenu, attendu, f"veuve {rang}", ecarts)
-    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
+    obtenus = sortie_figee("simuler-parcours.mjs", [{
+        "annee_naissance": 1952, "sexe": "F", "age_liquidation": 64, "jour_naissance": 15,
+        "metiers": [{"affiliation": "collaborateur_agricole", "age_debut": 20,
+                     "niveau_salaire": 0.3}],
+        "reversion_agricole": reversion} for reversion in cas])
+    assert not any("erreur" in obtenu for obtenu in obtenus), obtenus
 
 
 def test_le_complement_ne_retranche_que_les_points_de_chef(simulateur):
@@ -1733,33 +1706,18 @@ def test_les_deux_moteurs_servent_les_memes_minima_agricoles():
     JavaScript, minima des exploitants compris."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    from test_liquidation import _ecarts, _python
+    from outils_sorties import sortie_figee
 
     requetes = [{**REQUETE, **cas} for cas in CAS]
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        json.dump(requetes, fichier)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(RACINE / "tests" / "js" / "comparer-liquidation.mjs"), chemin],
-            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    obtenus, attendus = json.loads(execution.stdout), _python(requetes)
-    codes = {d["code"] for a in attendus for l in a["liquidations"]
+    obtenus = sortie_figee("comparer-liquidation.mjs", requetes)
+    codes = {d["code"] for a in obtenus for l in a["liquidations"]
              for d in l["complements"]["dispositifs"]}
     assert {"pension_majoree_reference", "complement_differentiel_rco",
             "majoration_retraite_proportionnelle"} <= codes
     assert sum(any(e["id"] == "relevement_msa_rco" for e in a["journal"])
-               for a in attendus) == 2
+               for a in obtenus) == 2
     revises = [{cle for e in a["journal"] if "regimes" in e["contenu"].get("donnee", {})
                 for r in e["contenu"]["donnee"]["regimes"] for cle in r}
-               for a in attendus]
+               for a in obtenus]
     assert sum("pension_majoree_de_2009" in cles for cles in revises) >= 3
     assert sum("plans_de_revalorisation" in cles for cles in revises) >= 3
-    ecarts: list[str] = []
-    for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
-        _ecarts(obtenu, attendu, f"requête {rang}", ecarts)
-    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])

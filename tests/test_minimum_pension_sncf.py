@@ -27,8 +27,6 @@ from __future__ import annotations
 
 import json
 import shutil
-import subprocess
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -238,28 +236,13 @@ def test_les_deux_moteurs_servent_le_meme_minimum_de_pension():
     JavaScript, le minimum de pension de la SNCF compris."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    from test_liquidation import _ecarts, _python
+    from outils_sorties import sortie_figee
 
     requetes = [{**REQUETE, **cas} for cas in CAS]
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        json.dump(requetes, fichier)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(RACINE / "tests" / "js" / "comparer-liquidation.mjs"), chemin],
-            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    obtenus, attendus = json.loads(execution.stdout), _python(requetes)
-    assert not any("erreur" in attendu for attendu in attendus), attendus
-    ecarts: list[str] = []
-    for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
-        _ecarts(obtenu, attendu, f"requête {rang}", ecarts)
-    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
-    portees = [rang for rang, attendu in enumerate(attendus)
-               if "porté au minimum de pension" in json.dumps(attendu, ensure_ascii=False)]
+    obtenus = sortie_figee("comparer-liquidation.mjs", requetes)
+    assert not any("erreur" in obtenu for obtenu in obtenus), obtenus
+    portees = [rang for rang, obtenu in enumerate(obtenus)
+               if "porté au minimum de pension" in json.dumps(obtenu, ensure_ascii=False)]
     assert portees == [0, 4, 5, 6, 7, 9], portees
-    reversion = json.dumps(attendus[9], ensure_ascii=False)
+    reversion = json.dumps(obtenus[9], ensure_ascii=False)
     assert '"motif": "minimum"' in reversion, "la réversion n'est pas portée au minimum"

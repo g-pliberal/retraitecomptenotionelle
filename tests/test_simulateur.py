@@ -3629,12 +3629,10 @@ def test_les_deux_moteurs_servent_la_meme_surcote_parentale():
     garanti la pension qui porte les deux surcotes."""
     import json
     import shutil
-    import subprocess
-    import tempfile
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    from test_liquidation import _ecarts, _python
+    from outils_sorties import sortie_figee
 
     mere = {"naissance": "1969", "naissance_mois": "1", "sexe": "F", "enfants": "2",
             "unite_revenu": "moyen", "salaire": "1"}
@@ -3651,28 +3649,11 @@ def test_les_deux_moteurs_servent_la_meme_surcote_parentale():
          "liquidation": "64.5", "salaire": "0.41"},
         {**mere, "statut": "profession_liberale", "debut": "21", "liquidation": "66"},
     ]
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        json.dump(requetes, fichier)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(Path(__file__).resolve().parent / "js" / "comparer-liquidation.mjs"),
-             chemin],
-            cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
-            encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    obtenus, attendus = json.loads(execution.stdout), _python(requetes)
+    obtenus = sortie_figee("comparer-liquidation.mjs", requetes)
     # Le minimum garanti efface la surcote parentale de la plus petite pension.
-    assert all("surcote_parentale" in json.dumps(attendu)
-               for rang, attendu in enumerate(attendus) if rang != 4), attendus
-    assert "avec la surcote parentale" in json.dumps(attendus[4]), attendus[4]
-    ecarts: list[str] = []
-    for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
-        _ecarts(obtenu, attendu, f"requête {rang}", ecarts)
-    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
+    assert all("surcote_parentale" in json.dumps(obtenu)
+               for rang, obtenu in enumerate(obtenus) if rang != 4), obtenus
+    assert "avec la surcote parentale" in json.dumps(obtenus[4]), obtenus[4]
 
 
 # -- régimes que le barème en points fait sortir du rendement instantané -----
@@ -4194,7 +4175,7 @@ def test_le_salaire_de_reference_ne_retient_que_les_annees_du_regime(simulateur)
     prorata de durée, lui, restait celui du régime. Le modèle rapportait donc
     une part de carrière publique à une assiette qui ne l'était pas.
     """
-    from retraite_notionnelle.carriere import AnneeCarriere, LigneRelevee, Metier
+    from retraite_notionnelle.carriere import AnneeCarriere
     from facade import Carriere
 
     publiques = [AnneeCarriere(annee=a, revenu=20_000.0,
@@ -4239,7 +4220,7 @@ def test_les_annees_posterieures_a_la_liquidation_n_ouvrent_rien(simulateur):
     années postérieures achetaient des points et validaient des trimestres,
     ce qui annulait jusqu'à la décote de qui, précisément, part tôt.
     """
-    from retraite_notionnelle.carriere import AnneeCarriere, LigneRelevee, Metier
+    from retraite_notionnelle.carriere import AnneeCarriere
     from facade import Carriere
 
     avant = [AnneeCarriere(annee=a, revenu=40_000.0,
@@ -6971,7 +6952,6 @@ def test_le_minimum_vieillesse_complete_les_toutes_petites_pensions(simulateur):
     )
 
     # Et le paramètre la retire d'un seul geste : ce n'est pas une pension.
-    from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS
     from facade import Simulateur
 
     sans = Simulateur(simulateur.parametres.avec(

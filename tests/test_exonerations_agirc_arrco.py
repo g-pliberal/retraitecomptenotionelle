@@ -20,8 +20,6 @@ from __future__ import annotations
 import json
 import re
 import shutil
-import subprocess
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -183,23 +181,8 @@ def test_les_deux_moteurs_servent_les_memes_coefficients():
     février 1983."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    from test_liquidation import _ecarts, _python
+    from outils_sorties import sortie_figee
 
     requetes = [{**REQUETE, **cas} for cas in CAS]
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        json.dump(requetes, fichier)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(RACINE / "tests" / "js" / "comparer-liquidation.mjs"), chemin],
-            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    obtenus, attendus = json.loads(execution.stdout), _python(requetes)
-    assert "coefficient d'anticipation 0.8300" in json.dumps(attendus[0], ensure_ascii=False)
-    ecarts: list[str] = []
-    for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
-        _ecarts(obtenu, attendu, f"requête {rang}", ecarts)
-    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
+    obtenus = sortie_figee("comparer-liquidation.mjs", requetes)
+    assert "coefficient d'anticipation 0.8300" in json.dumps(obtenus[0], ensure_ascii=False)
