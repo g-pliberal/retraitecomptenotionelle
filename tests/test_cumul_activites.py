@@ -11,7 +11,6 @@ annuel formé de la somme des deux activités, écrêté une seule fois au plafo
 from __future__ import annotations
 
 import json
-import math
 import random
 import shutil
 import subprocess
@@ -26,7 +25,6 @@ from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import ErreurSite, disponible, rendre
 
 from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage, servi_et_fige
-from outils_portage import moitie_python
 
 
 @pytest.fixture(scope="module")
@@ -124,44 +122,12 @@ def test_le_compte_notionnel_porte_les_deux_cotisations(simulateur):
             > seule.notionnel_retroactif.pension_annuelle)
 
 
-def _sans_nan(valeur):
-    if isinstance(valeur, float) and math.isnan(valeur):
-        return None
-    if isinstance(valeur, dict):
-        return {cle: _sans_nan(v) for cle, v in valeur.items()}
-    if isinstance(valeur, (list, tuple)):
-        return [_sans_nan(v) for v in valeur]
-    return valeur
-
-
-def _ecarts(obtenu, attendu, chemin="") -> list[str]:
-    if isinstance(attendu, dict):
-        if not isinstance(obtenu, dict):
-            return [f"{chemin} : {obtenu!r} au lieu d'un objet"]
-        ecarts = []
-        for cle in attendu.keys() | obtenu.keys():
-            ecarts += _ecarts(obtenu.get(cle), attendu.get(cle), f"{chemin}.{cle}")
-        return ecarts
-    if isinstance(attendu, list):
-        if not isinstance(obtenu, list) or len(obtenu) != len(attendu):
-            return [f"{chemin} : {obtenu!r} au lieu de {attendu!r}"]
-        return [e for i, (o, a) in enumerate(zip(obtenu, attendu))
-                for e in _ecarts(o, a, f"{chemin}[{i}]")]
-    if (isinstance(attendu, (int, float)) and not isinstance(attendu, bool)
-            and isinstance(obtenu, (int, float)) and not isinstance(obtenu, bool)):
-        if math.isclose(obtenu, attendu, rel_tol=1e-9, abs_tol=1e-9):
-            return []
-    elif obtenu == attendu:
-        return []
-    return [f"{chemin} : {obtenu!r} au lieu de {attendu!r}"]
-
-
-def _cumuls_tires_au_hasard(graine: int, nombre: int) -> tuple[list, list]:
-    """Les parcours tirés — graine fixe —, et ce que le Python en fait : la
-    moitié Python du test, que la mémoire des calculs garde."""
-    simulateur = Simulateur()
+def _parcours_tires_au_hasard(graine: int, nombre: int) -> list[dict]:
+    """Les parcours tirés — graine fixe —, chacun avec une à deux activités
+    cumulées, parmi les statuts du paquet que le portage lit."""
+    paquet = Path(__file__).resolve().parents[1] / "moteur" / "donnees.json"
+    statuts = list(json.loads(paquet.read_text(encoding="utf-8"))["affiliations"])
     alea = random.Random(graine)
-    statuts = list(simulateur.affiliations.codes)
     parcours = []
     for _ in range(nombre):
         debut = alea.randint(16 * 12, 28 * 12) / 12
@@ -191,34 +157,24 @@ def _cumuls_tires_au_hasard(graine: int, nombre: int) -> tuple[list, list]:
             "nombre_enfants": alea.randint(0, 3),
             "metiers": metiers,
         })
-
-    attendus = []
-    for options in parcours:
-        try:
-            carriere = simulateur.carriere_parcours(
-                **{**options, "metiers": [Metier(**m) for m in options["metiers"]]})
-            attendus.append({"resultat": _sans_nan(
-                simulateur.simuler(carriere).dictionnaire())})
-        except (ValueError, KeyError) as erreur:
-            attendus.append({"erreur": str(erreur)})
-    return parcours, attendus
+    return parcours
 
 
 def test_le_portage_javascript_concorde_sur_des_cumuls_tires_au_hasard():
     """Les témoins figés n'exercent qu'un statut à la fois : aucun ne cumule.
 
     On tire donc des parcours au hasard — graine fixe —, chacun avec une à deux
-    activités cumulées, on les simule ici et dans le site, et chaque valeur de
-    la comparaison doit se retrouver des deux côtés, refus compris. La moitié
-    Python est gardée par la mémoire des calculs (``moitie_python``) ; la
-    moitié JavaScript, celle qu'on éprouve, se rejoue à chaque passage.
+    activités cumulées, et le site les simule. Le moteur Python les simulait
+    aussi, et chaque valeur de la comparaison se retrouvait des deux côtés,
+    refus compris : ce que le portage rend est figé au témoin des valeurs
+    (action 161, étape 8k), et le moteur Python ne refait plus les parcours.
     """
+    from outils_valeurs import valeur_figee
+
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
 
-    parcours, attendus = moitie_python(_cumuls_tires_au_hasard, 20260922, 40)
-    assert sum("resultat" in a for a in attendus) >= 20, "trop peu de parcours simulés"
-
+    parcours = _parcours_tires_au_hasard(20260922, 40)
     racine = Path(__file__).resolve().parents[1]
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:
@@ -234,13 +190,9 @@ def test_le_portage_javascript_concorde_sur_des_cumuls_tires_au_hasard():
     assert execution.returncode == 0, execution.stderr
     obtenus = json.loads(execution.stdout)
 
-    for numero, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
-        if "erreur" in attendu:
-            assert "erreur" in obtenu, f"parcours {numero} : Python refuse, pas le site"
-            continue
-        assert "resultat" in obtenu, f"parcours {numero} : {obtenu.get('erreur')}"
-        ecarts = _ecarts(obtenu["resultat"], attendu["resultat"])
-        assert not ecarts, f"parcours {numero} : " + "; ".join(ecarts[:5])
+    assert len(obtenus) == len(parcours)
+    assert sum("resultat" in o for o in obtenus) >= 20, "trop peu de parcours simulés"
+    assert valeur_figee("cumuls_tires_au_hasard", obtenus) == obtenus
 
 
 # -- l'activité accessoire de l'agent d'un régime spécial ----------------------

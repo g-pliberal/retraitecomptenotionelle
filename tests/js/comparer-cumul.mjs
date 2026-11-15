@@ -4,7 +4,7 @@
  * Reçoit en argument un fichier JSON — une liste d'options de
  * `carriereParcours`, activités cumulées comprises — et écrit sur la sortie
  * standard, pour chacune, le dictionnaire de la comparaison ou l'erreur levée.
- * `tests/test_cumul_activites.py` compare le tout au modèle Python.
+ * `tests/test_cumul_activites.py` le confronte au témoin des valeurs.
  *
  *     node tests/js/comparer-cumul.mjs parcours.json
  */

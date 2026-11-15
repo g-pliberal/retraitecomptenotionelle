@@ -7335,12 +7335,12 @@ font refaire ce que le portage calcule, partent d'abord, chacune remplacée
 par une référence figée dans `tests/temoins/` : `servis.json`,
 `sorties.json`, `valeurs.json`, et `droit.json` pour chaque appel du droit
 par le pont. Plus aucun appel du droit ne se refait en Python, ni
-l'inversion, ni aucune carrière de la grille, ni la réversion, ni la
-chronologie, ni les départs de l'âge conjoncturel, ni le coût par carrière
-dans les tests. Restent les `moitie_python` que la note énumère, puis cent
-fichiers de tests qui importent une règle Python. Une étape par session. Par
-quoi commencer : `test_cumul_activites.py`. Le détail :
-`2026-11-15-l-age-conjoncturel-au-temoin.md`.
+l'inversion, ni la grille, ni la réversion, ni la chronologie, ni l'âge
+conjoncturel, ni le coût par carrière, ni les cumuls tirés au hasard. Restent les `moitie_python`
+que la note énumère, puis cent fichiers de tests qui importent une règle
+Python. Une étape par session. Par quoi commencer :
+`test_cycle_de_vie_portage.py`. Le détail :
+`2026-11-15-les-cumuls-tires-au-temoin.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

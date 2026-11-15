@@ -11,6 +11,9 @@
  "test_cout.py::grille du coût bâtie": {
   "valeur": "3368d56812f4a0cc"
  },
+ "test_cumul_activites.py::cumuls_tires_au_hasard": {
+  "valeur": "80a8a69d5e189815"
+ },
  "test_cycle_de_vie_script.py::demandes de l'étude, écrites": {
   "valeur": "48ea1f6fe345f7f8"
  },
