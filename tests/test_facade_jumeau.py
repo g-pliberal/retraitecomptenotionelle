@@ -25,6 +25,7 @@ from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import Carriere as CarrierePython
 from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.config import RACINE_PROJET, Parametres
+from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
@@ -398,6 +399,25 @@ def _aligne(carriere, membres: tuple[str, ...]):
     return arguments
 
 
+def _mere_sous_l_avpf(simulateur):
+    """Une mère née en 1962, au salaire bas, qui a élevé ses enfants de 1985 à
+    2002 sous l'AVPF."""
+    return simulateur.carriere_simple(
+        annee_naissance=1962, sexe="F", affiliation="salarie_prive_non_cadre", age_debut=20,
+        age_liquidation=64.5, niveau_salaire=0.3, profil_carriere="plat",
+        interruptions={annee: "education_enfant" for annee in range(1985, 2003)})
+
+
+def _ligne_de(carriere, annee: int):
+    """Les arguments de ``commun.ligne_cotisee`` : le moteur, la carrière, et
+    sa ligne de l'année."""
+    def arguments(s):
+        construite = carriere(s)
+        return s.scenario_actuel, construite, next(
+            ligne for ligne in construite.lignes if ligne.annee == annee)
+    return arguments
+
+
 #: Deux régimes porteurs du minimum : un artisan dont les droits d'avant 1973
 #: bornent le minimum (D. 634-6), un polypensionné du régime général au-delà
 #: de la durée requise.
@@ -418,6 +438,12 @@ _PERIODES_COTISEES = {"majoration": "periodes_cotisees", "seuil_trimestres_cotis
 #: arguments bâtis sur le simulateur de chaque côté — son moteur, une période
 #: de son catalogue, sa carrière.
 APPELS_DES_REGLES = [
+    ("commun", "ligne_cotisee", _ligne_de(_mere_sous_l_avpf, 1984)),
+    ("commun", "ligne_cotisee", _ligne_de(_mere_sous_l_avpf, 1990)),
+    ("completer", "avpf_retenue",
+     lambda s: (s.scenario_actuel, _mere_sous_l_avpf(s), 24)),
+    ("completer", "avpf_retenue",
+     lambda s: (s.scenario_actuel, _mere_sous_l_avpf(s), 0)),
     ("liquider", "abattement_points",
      _du_regime("agirc_arrco", 2019, _salarie, 100, 172, 57.0, 2022)),
     ("liquider", "abattement_points",
@@ -527,8 +553,8 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     servi = facade.Simulateur(parametres)
     jumeau = simulateur_python.Simulateur(parametres)
-    modules = {"completer": completer_python, "liquider": liquider_python,
-               "ouvrir": ouvrir_python}
+    modules = {"commun": commun_python, "completer": completer_python,
+               "liquider": liquider_python, "ouvrir": ouvrir_python}
     ecarts = []
     for module, regle, arguments in APPELS_DES_REGLES:
         lu = getattr(getattr(facade, module), regle)(*arguments(servi))

@@ -35,8 +35,8 @@ rien : elle tournerait en Python sur les tables du portage.
 (``ouvrir.duree_requise(moteur, periode, carriere)``), que le fichier importe
 d'ici : le portage appelle la sienne, parmi celles que
 ``pont.REGLES_DE_LA_FACADE`` déclare, sur le moteur d'un simulateur de la
-façade, une période de son catalogue, une carrière, une date, des valeurs
-simples. Ce qui n'en est pas — le moteur Python, une période retouchée, un
+façade, une période de son catalogue, une carrière et l'une de ses lignes,
+une date, des valeurs simples. Ce qui n'en est pas — le moteur Python, une période retouchée, un
 objet du moteur — n'arriverait pas au portage : la règle est refusée.
 
 **Le relevé des droits** (``releve.construire``) revient en données, ce que
@@ -67,6 +67,7 @@ from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import PeriodeRegime
 from retraite_notionnelle.pont import NonTransmissible
+from retraite_notionnelle.droit import commun as _commun
 from retraite_notionnelle.droit import completer as _completer
 from retraite_notionnelle.droit import liquider as _liquider
 from retraite_notionnelle.droit import ouvrir as _ouvrir
@@ -437,18 +438,20 @@ def _demander_la_regle(module: str, regle: str, rendu, arguments: dict):
         simulateur = durees._simulateur
     return pont.regle_du_droit(
         module, regle, rendu,
-        *(_argument_de_regle(f"{module}.{regle}", simulateur, nom, valeur)
+        *(_argument_de_regle(f"{module}.{regle}", simulateur, nom, valeur,
+                             arguments.get("carriere"))
           for nom, valeur in arguments.items()),
         parametres=None if simulateur is None else simulateur.parametres)
 
 
-def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, valeur):
+def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, valeur,
+                       carriere=None):
     """Un argument d'une règle du droit tel que le pont le transmet : le
     moteur du simulateur par sa marque ; une période de son catalogue par son
     rang ; une carrière, une date au mois, une valeur simple, une suite de
     valeurs simples, la règle d'une fiche — un dictionnaire de valeurs simples
     sous des noms —, un éligible au minimum (``pont.TYPES_DE_LA_FACADE``),
-    tels quels. Le reste — un objet du moteur Python, un dictionnaire que le
+    tels quels ; une ligne de la carrière de la règle, par son rang. Le reste — un objet du moteur Python, un dictionnaire que le
     portage lirait en ``Map`` — n'arriverait pas au portage sous son type."""
     if nom == "moteur":
         return pont.MOTEUR
@@ -465,13 +468,24 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
         return valeur
     if isinstance(valeur, Durees):
         return pont.DureesDuReleve(valeur._carriere)
+    if isinstance(valeur, _carriere.AnneeCarriere):
+        # Le portage relit la ligne, par son rang, dans la carrière que la
+        # règle reçoit : une ligne qui n'en est pas n'y arriverait pas.
+        rang = next((rang for rang, ligne in enumerate(getattr(carriere, "lignes", ()))
+                     if ligne is valeur), None)
+        if rang is None:
+            raise NonTransmissible(
+                f"{regle} : argument {nom}, une ligne qui n'est pas de la carrière de la "
+                "règle — le portage la relit, par son rang, dans cette carrière")
+        return pont.LigneDeCarriere(carriere, rang)
     raise NonTransmissible(
         f"{regle} : argument {nom} ({type(valeur).__name__}) que la façade ne sait pas "
         "transmettre au portage — le test reste sur le moteur Python, ou se porte à la main")
 
 
-#: ``droit.completer``, ``droit.liquider`` et ``droit.ouvrir``, leurs règles
-#: servies par le portage.
+#: ``droit.commun``, ``droit.completer``, ``droit.liquider`` et
+#: ``droit.ouvrir``, leurs règles servies par le portage.
+commun = Regles("commun", _commun)
 completer = Regles("completer", _completer)
 liquider = Regles("liquider", _liquider)
 ouvrir = Regles("ouvrir", _ouvrir)
@@ -580,8 +594,8 @@ MARQUE = "sur_le_moteur_python"
 
 #: Le jumeau Python de chaque entrée qu'un fichier basculé importe d'ici.
 JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
-           "reversion": _reversion.reversion, "completer": _completer, "liquider": _liquider,
-           "ouvrir": _ouvrir, "releve": _releve}
+           "reversion": _reversion.reversion, "commun": _commun, "completer": _completer,
+           "liquider": _liquider, "ouvrir": _ouvrir, "releve": _releve}
 
 #: Les simulateurs des tests, par fichier, par moteur et par paramètres.
 _SIMULATEURS: dict[tuple, object] = {}

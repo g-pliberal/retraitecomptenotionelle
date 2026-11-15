@@ -4170,7 +4170,6 @@ def test_la_majoration_de_2004_ne_distinguait_pas_les_periodes_cotisees():
         majore * 60 / 200)
 
 
-@pytest.mark.sur_le_moteur_python("droit.commun.ligne_cotisee")
 def test_la_majoration_compte_l_avpf_depuis_septembre_2023(simulateur):
     """Depuis le 1er septembre 2023, les trimestres d'AVPF et d'AVA comptent
     parmi les périodes cotisées de la majoration, pour le seuil de 120
@@ -4178,9 +4177,6 @@ def test_la_majoration_compte_l_avpf_depuis_septembre_2023(simulateur):
     D. 351-2-2, circulaire Cnav 2024/28, point 3.3). Le dépôt ne comptait que
     les trimestres cotisés : une mère qui a élevé ses enfants dix-huit ans sous
     l'AVPF n'avait pas les 120 trimestres, ni donc la majoration."""
-    from retraite_notionnelle.droit.commun import ligne_cotisee
-    from retraite_notionnelle.droit.completer import avpf_retenue
-
     moteur = simulateur.scenario_actuel
     carriere = simulateur.carriere_simple(
         annee_naissance=1962, sexe="F", affiliation="salarie_prive_non_cadre",
@@ -4189,10 +4185,10 @@ def test_la_majoration_compte_l_avpf_depuis_septembre_2023(simulateur):
     )
     cotises = carriere.trimestres_cumules(
         ligne for ligne in carriere.lignes
-        if ligne_cotisee(moteur, carriere, ligne)
+        if facade.commun.ligne_cotisee(moteur, carriere, ligne)
         and ligne.annee <= carriere.annee_liquidation)
-    assert avpf_retenue(moteur, carriere, 24) == 24
-    assert avpf_retenue(moteur, carriere, 0) == 0
+    assert completer.avpf_retenue(moteur, carriere, 24) == 24
+    assert completer.avpf_retenue(moteur, carriere, 0) == 0
     assert cotises < 120 <= cotises + 24
     resultat = simulateur.simuler(carriere).actuel
     minimum = [a for a in resultat.avantages_appliques if a.code == "minimum_contributif"]

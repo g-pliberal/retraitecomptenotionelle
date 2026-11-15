@@ -27,6 +27,7 @@ from retraite_notionnelle import simulateur as simulateur_python
 from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.config import RACINE_PROJET, Neutralisations, Parametres
 from retraite_notionnelle.donnees.chargement import DonneeInsuffisante, Fiabilite
+from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
@@ -39,8 +40,8 @@ from retraite_notionnelle.scenarios.notionnel import ResultatNotionnel
 from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Comparaison
 
 import facade
-from facade import (Carriere, NonTransmissible, Simulateur, completer, liquider, ouvrir,
-                    reversion)
+from facade import (Carriere, NonTransmissible, Simulateur, commun, completer, liquider,
+                    ouvrir, reversion)
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 HAUTE = Fiabilite.CERTIFIEE
@@ -667,7 +668,7 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     with pytest.raises(ValueError, match="ouvrir.ouvrir"):
         pont.regle_du_droit("ouvrir", "ouvrir", float)
     assert facade.REGLES is pont.REGLES_DE_LA_FACADE
-    assert set(facade.REGLES) == {"completer", "liquider", "ouvrir"}
+    assert set(facade.REGLES) == {"commun", "completer", "liquider", "ouvrir"}
 
 
 def test_une_regle_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulateur):
@@ -765,6 +766,43 @@ def test_le_releve_ne_sert_que_ce_qu_il_transmet(simulateur):
         durees.trimestres = 0
 
 
+#: Une mère née en 1962, au salaire bas, entrée à vingt ans, partie à
+#: soixante-quatre ans et demi, en 2027, qui a élevé ses enfants de 1985 à
+#: 2002 sous l'AVPF.
+MERE_SOUS_L_AVPF = dict(
+    annee_naissance=1962, sexe="F", affiliation="salarie_prive_non_cadre", age_debut=20,
+    age_liquidation=64.5, niveau_salaire=0.3, profil_carriere="plat",
+    interruptions={annee: "education_enfant" for annee in range(1985, 2003)})
+
+
+def test_une_regle_recoit_une_ligne_de_sa_carriere(simulateur):
+    """Une ligne passe au portage par son rang dans la carrière que la règle
+    reçoit. L'année 1984, d'emploi, compte parmi les trimestres cotisés ;
+    l'année 1990, d'éducation d'un enfant, non : elle porte l'AVPF, dont la
+    majoration du minimum retient, depuis septembre 2023, vingt-quatre
+    trimestres au plus (L. 351-10, D. 351-2-2), et aucun avant (plafond nul)."""
+    moteur = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(**MERE_SOUS_L_AVPF)
+    par_annee = {ligne.annee: ligne for ligne in carriere.lignes}
+    assert commun.ligne_cotisee(moteur, carriere, par_annee[1984]) is True
+    assert commun.ligne_cotisee(moteur, carriere, par_annee[1990]) is False
+    assert completer.avpf_retenue(moteur, carriere, 24) == 24
+    assert completer.avpf_retenue(moteur, carriere, 0) == 0
+
+
+def test_une_ligne_ne_passe_qu_avec_sa_carriere(simulateur):
+    """Le portage relit la ligne dans la carrière qu'il reçoit : une ligne
+    d'une autre carrière, une ligne retouchée n'arriveraient pas au portage
+    sous leur valeur : refusées."""
+    moteur = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(**MERE_SOUS_L_AVPF)
+    autre = simulateur.carriere_simple(**NE_EN_1955)
+    with pytest.raises(NonTransmissible, match="ligne"):
+        commun.ligne_cotisee(moteur, carriere, autre.lignes[0])
+    with pytest.raises(NonTransmissible, match="ligne"):
+        commun.ligne_cotisee(moteur, carriere, dataclasses.replace(carriere.lignes[0]))
+
+
 def test_une_regle_se_demande_sous_les_parametres_de_son_moteur(simulateur):
     """Les conventions du COR ne valent que pour la page Coût : sous elles, la
     valeur de service de l'Agirc-Arrco de 2045 suit la convention, moins que
@@ -806,8 +844,8 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
     leur valeur par défaut du Python : le portage en attend autant, sous la
     même valeur par défaut. Deux noms seulement diffèrent d'un côté à
     l'autre."""
-    jumelle = getattr({"completer": completer_python, "liquider": liquider_python,
-                       "ouvrir": ouvrir_python}[module], regle)
+    jumelle = getattr({"commun": commun_python, "completer": completer_python,
+                       "liquider": liquider_python, "ouvrir": ouvrir_python}[module], regle)
     attendus = [(nom, None if parametre.default is inspect.Parameter.empty else parametre.default)
                 for nom, parametre in inspect.signature(jumelle).parameters.items()]
     autres_noms = {"annees": "anneesRetenues", "carriere": "carriereSaisie",

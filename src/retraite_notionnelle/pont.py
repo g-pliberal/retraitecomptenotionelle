@@ -1220,6 +1220,16 @@ class DureesDuReleve:
 
 
 @dataclasses.dataclass(frozen=True)
+class LigneDeCarriere:
+    """La ligne de ce rang d'une carrière (``carriere.lignes[rang]``), en
+    argument d'une règle de la façade : le portage la relit dans la carrière
+    qu'il reçoit (``ligne``, ``argumentDuDroit`` de ``pont.mjs``)."""
+
+    carriere: object
+    rang: int
+
+
+@dataclasses.dataclass(frozen=True)
 class Periode:
     """La période d'un régime à une année, ``catalogue[code].periode(annee)``,
     en argument d'un appel du droit (:func:`droit`) : le portage y met la
@@ -1495,6 +1505,9 @@ def _argument_du_droit(argument, carrieres: list) -> dict:
         return {"periode": [argument.code, argument.annee]}
     if isinstance(argument, DureesDuReleve):
         return {"durees_du_releve": _argument_du_droit(argument.carriere, carrieres)["carriere"]}
+    if isinstance(argument, LigneDeCarriere):
+        return {"ligne": [_argument_du_droit(argument.carriere, carrieres)["carriere"],
+                          argument.rang]}
     if isinstance(argument, Carriere):
         rang = next((rang for rang, connue in enumerate(carrieres) if connue is argument), None)
         if rang is None:
@@ -2417,7 +2430,8 @@ CLASSES_EN_CHAMEAU |= TYPES_DE_LA_FACADE
 #: un appel confronté au jumeau (``tests/test_facade_jumeau.py``). Une règle
 #: qui n'y est pas est refusée avant node.
 REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
-    "completer": ("borne_avec_les_droits_d_avant_1973", "complement_minimum",
+    "commun": ("ligne_cotisee",),
+    "completer": ("avpf_retenue", "borne_avec_les_droits_d_avant_1973", "complement_minimum",
                   "majoration_ouverte", "plancher_du_regime", "selon_la_regle"),
     "liquider": ("abattement_points", "age_de_la_duree_atteinte", "annees_au_prorata",
                  "borne_de_la_duree", "decote_opposable", "duree_du_regime_aligne",

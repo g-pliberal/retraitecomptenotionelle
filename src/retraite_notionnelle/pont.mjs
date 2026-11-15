@@ -152,6 +152,7 @@ import {
   FICHE_DE_L_APPRENTISSAGE, FICHE_DES_MILITAIRES, FICHES_DES_EMPLOIS, contrats,
 } from "../../moteur/js/droit/compter.js";
 import { REGIMES_CODE_DES_PENSIONS } from "../../moteur/js/droit/coordonner.js";
+import * as commun from "../../moteur/js/droit/commun.js";
 import * as completer from "../../moteur/js/droit/completer.js";
 import * as cumul from "../../moteur/js/droit/cumul.js";
 import * as departs from "../../moteur/js/droit/departs.js";
@@ -1376,7 +1377,8 @@ function avantages({ parametres, cas }) {
  * le moteur du scénario 1 (`simulateur.scenarioActuel`), ou sa variante que la
  * mesure des avantages neutralise (`neutralise`, `scenariosNeutralises`), et
  * les tables qu'on lui prête, la période d'un régime à une année, une carrière
- * de la demande, par son rang, ou une valeur.
+ * de la demande, par son rang, la ligne d'une carrière de la demande, par
+ * leurs rangs, ou une valeur.
  */
 function argumentDuDroit(simulateur, carrieres, argument) {
   if (Object.hasOwn(argument, "simulateur")) {
@@ -1395,6 +1397,10 @@ function argumentDuDroit(simulateur, carrieres, argument) {
   }
   if (Object.hasOwn(argument, "carriere")) {
     return carrieres[argument.carriere];
+  }
+  if (Object.hasOwn(argument, "ligne")) {
+    const [carriere, rang] = argument.ligne;
+    return carrieres[carriere].lignes[rang];
   }
   if (Object.hasOwn(argument, "durees_du_releve")) {
     return releve.construire(simulateur.scenarioActuel,
@@ -1843,7 +1849,7 @@ ENTREES_DE_LA_FACADE["scenario_actuel.table"] = (moteur, table, methode, ...vale
 // Les règles du droit, par la façade : un bloc à part (action 161).
 
 /** Les modules du droit dont la façade sert des règles, sous leur nom. */
-const MODULES_DU_DROIT = { completer, liquider, ouvrir };
+const MODULES_DU_DROIT = { commun, completer, liquider, ouvrir };
 
 /**
  * Une règle du droit, sous les noms du Python (`regle_du_droit` de `pont.py`,
