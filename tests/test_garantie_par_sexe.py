@@ -17,7 +17,8 @@ from dataclasses import replace
 
 from retraite_notionnelle import memoire
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.simulateur import Simulateur
+
+from facade import Simulateur
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 

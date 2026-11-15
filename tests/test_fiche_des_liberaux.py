@@ -31,15 +31,15 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle import Parametres
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+from retraite_notionnelle.carriere import AnneeCarriere
 from retraite_notionnelle.config import PartCotisation
 from retraite_notionnelle.donnees.prelevements_historiques import (
     charger_prelevements_historiques, famille_de_la_fiche)
-from retraite_notionnelle.moteur.compte import ConstructeurCompte
 from retraite_notionnelle.remuneration import (
     charger_prelevements, fiche_depuis_brut, profil_de_la_fiche, salaire_brut_depuis_net)
-from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import module
+
+from facade import Carriere, ConstructeurCompte, Simulateur
 
 PARAMETRES = Parametres()
 RACINE = Path(__file__).resolve().parents[1]

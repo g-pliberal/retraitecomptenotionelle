@@ -32,8 +32,9 @@ from retraite_notionnelle.donnees.prelevements_historiques import (
     charger_prelevements_historiques,
 )
 from retraite_notionnelle.remuneration import charger_prelevements, fiche_depuis_brut
-from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import module, site
+
+from facade import Simulateur
 
 APRES = dt.date(2026, 6, 1)
 

@@ -33,14 +33,14 @@ import pytest
 
 from retraite_notionnelle import Parametres
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere, LigneRelevee
+from retraite_notionnelle.carriere import AnneeCarriere, LigneRelevee
 from retraite_notionnelle.config import PartCotisation
-from retraite_notionnelle.moteur.compte import ConstructeurCompte
 from retraite_notionnelle.remuneration import (
     famille_du_statut, fiche_depuis_brut, profil_de_la_fiche, salaire_brut_depuis_net,
     salaire_net_depuis_brut)
-from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import ErreurSite, module, site
+
+from facade import Carriere, ConstructeurCompte, Simulateur
 from outils_pont import refus_de_la_saisie, saisie_du_portage
 
 PARAMETRES = Parametres()
