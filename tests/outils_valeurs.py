@@ -108,7 +108,11 @@ def valeur_figee(nom: str, valeur):
     que le portage rend aujourd'hui. Elle tient la place du moteur Python qui
     la refaisait tant qu'il gardait ses jumeaux (action 161, étape 8d). Sous
     ``FIGER_VALEURS=1``, une valeur absente s'y ajoute, et une valeur qui a
-    bougé s'y refait."""
+    bougé s'y refait. Sous la garde des présomptions
+    (``PRESOMPTIONS_DECALEES``, ``tests/conftest.py``), qui décale ce que le
+    témoin a figé, il n'est ni lu ni écrit."""
+    if os.environ.get("PRESOMPTIONS_DECALEES"):
+        return valeur
     cle = f"{_fichier_du_test()}::{nom}"
     empreinte = empreinte_de_la_valeur(valeur)
     figee = valeurs_figees().get(cle)

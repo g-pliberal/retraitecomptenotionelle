@@ -107,6 +107,26 @@ def test_une_valeur_qui_bouge_arrete_le_test_et_se_refait_sous_figer(temoin_vide
         {"x": 1.5})
 
 
+def test_sous_la_garde_des_presomptions_le_temoin_se_tait(temoin_vide, monkeypatch):
+    """Le témoin fige ce que le portage rend sous les présomptions du
+    vocabulaire ; la garde des présomptions (``PRESOMPTIONS_DECALEES``,
+    ``tests/conftest.py``) les décale, du Python comme du portage. La
+    confrontation au moteur Python que le témoin remplace tenait sous elle,
+    les deux côtés lisant les mêmes valeurs décalées ; le témoin, lui, ne
+    peut que s'en écarter : sous la garde, il n'est ni lu ni écrit, et les
+    autres assertions du test restent seules juges."""
+    from conftest import PRESOMPTIONS_DECALEES
+
+    temoin_vide.write_text(json.dumps({"test_valeurs_figees.py::essai": {
+        "valeur": "0" * 16}}), encoding="utf-8")
+    monkeypatch.setenv(PRESOMPTIONS_DECALEES, "1")
+    monkeypatch.setenv("FIGER_VALEURS", "1")
+    assert valeur_figee("essai", {"x": 1.5}) == {"x": 1.5}
+    assert valeur_figee("absente", 2.0) == 2.0
+    assert json.loads(temoin_vide.read_text(encoding="utf-8")) == {
+        "test_valeurs_figees.py::essai": {"valeur": "0" * 16}}
+
+
 def test_chaque_valeur_figee_l_est_par_un_test_qui_la_nomme():
     """Chaque nom du témoin désigne un fichier de tests qui fige une valeur :
     une valeur qu'aucun test ne fige plus en sort, quand le témoin se refait
