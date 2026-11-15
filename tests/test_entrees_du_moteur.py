@@ -24,16 +24,6 @@ sys.path.insert(0, str(RACINE / "scripts"))
 import entrees_du_moteur  # noqa: E402
 import regenerer  # noqa: E402
 
-#: Les deux exemples du README : ``construire_tableaux_md.py`` les écrit par
-#: ``Comparaison.tableau()``, une mise en forme qui n'existe qu'en Python, et
-#: bâtit et simule donc encore leur carrière au moteur Python. Ce que le § 3
-#: du README doit montrer quand ce moteur part est une question laissée au
-#: propriétaire (``docs/feuille_de_route/161/2026-11-12-lot-a-les-sondes-par-le-pont.md``).
-EXEMPLES_DU_README = {
-    "scripts/construire_tableaux_md.py": (
-        "simulateur.py:Simulateur.carriere_simple", "simulateur.py:Simulateur.simuler"),
-}
-
 #: Par étape de la fabrique, sous le nom de son script, ce qui entre encore
 #: dans le moteur Python d'une carrière : le fichier qui appelle, et chaque
 #: règle du moteur qu'il appelle du dehors (``entrees_du_moteur.relever``).
@@ -52,7 +42,10 @@ ENTREES_DE_LA_FABRIQUE: dict[str, dict[str, tuple[str, ...]]] = {
     "construire_temoins.py": {},
     "construire_pages.py": {},
     "chiffrage_plf.py": {},
-    "construire_tableaux_md.py": EXEMPLES_DU_README,
+    # Les deux exemples du README : leur carrière se simule au portage, sur
+    # l'adresse du site que le README donne, et leur tableau se met en forme
+    # dans la fabrique (note de décision 0008).
+    "construire_tableaux_md.py": {},
     "tableau_de_bord.py": {},
     # Les sondes de la prose : leurs carrières se bâtissent et se simulent au
     # portage, leurs règles s'y appellent une à une (``pont.droit``,

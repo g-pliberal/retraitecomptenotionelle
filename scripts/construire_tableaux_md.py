@@ -34,12 +34,14 @@ from __future__ import annotations
 import argparse
 import sys
 from dataclasses import replace
+from functools import lru_cache
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle import Parametres, pont  # noqa: E402
+from retraite_notionnelle.somme import somme_ordonnee  # noqa: E402
 from retraite_notionnelle.web.site import module, site  # noqa: E402
 
 #: Les règles que le site compare, et les bornes de leur cumul : le texte du
@@ -173,11 +175,11 @@ def tableau_generations() -> str:
     return "\n".join(lignes)
 
 
-#: L'exemple du §3 du README : la sortie de ``Comparaison.tableau()`` pour la
-#: carrière que le bloc de code juste au-dessus construit. Elle était collée à
-#: la main, et elle avait vieilli — la rente du pilier annonçait 1 569 € quand
-#: le modèle en sert 1 515 — sans que le bloc de code, que le contrôle de la
-#: prose ne lit pas, puisse le dire.
+#: L'exemple du §3 du README : le tableau des six scénarios, du pilier et de
+#: qui verse la cotisation, pour la carrière dont le bloc donne l'adresse sur
+#: le site. Il était collé à la main, et il avait vieilli — la rente du pilier
+#: annonçait 1 569 € quand le modèle en sert 1 515 — sans que rien puisse le
+#: dire.
 REPERE_EXEMPLE = "exemple_fonctionnaire"
 TITRE_EXEMPLE = "Fonctionnaire d'État née en 1975, 20 % de primes, partie à 64 ans"
 
@@ -186,49 +188,176 @@ TITRE_EXEMPLE = "Fonctionnaire d'État née en 1975, 20 % de primes, partie à 6
 #: l'anticipation que le modèle calcule, et non celle qu'on a cru lire.
 REPERE_SNCF = "exemple_sncf"
 
+#: Le simulateur du site, et la requête de chaque exemple : le README donne
+#: cette adresse, et son tableau est ce que le portage en simule
+#: (``pont.simulations``, comme le site). La carrière est celle des sondes de
+#: la prose (``mesures_prose.EXEMPLES``), au résultat près, ce que
+#: ``tests/test_prose.py`` vérifie (note de décision 0008, action 161).
+SIMULATEUR_DU_SITE = "https://g-pliberal.github.io/retraitecomptenotionelle/simuler/"
+REQUETES = {
+    "fonctionnaire": {"naissance": "1975", "sexe": "F", "statut": "fonctionnaire_etat",
+                      "debut": "22", "liquidation": "64", "unite_revenu": "moyen",
+                      "salaire": "1", "profil": "ascendant", "primes": "0.2",
+                      "montants": "brut"},
+    "sncf": {"naissance": "1955", "sexe": "H", "statut": "agent_sncf",
+             "debut": "20", "liquidation": "50", "unite_revenu": "moyen",
+             "salaire": "1.1", "profil": "ascendant", "montants": "brut"},
+}
 
-def _sortie(exemple: str) -> list[str]:
-    """Les lignes de ``Comparaison.tableau()`` pour un exemple des sondes de
-    la prose (``mesures_prose.EXEMPLES``). La mise en forme n'existe qu'en
-    Python : la carrière s'y bâtit et s'y simule encore au moteur Python,
-    seule entrée de ce script qui reste (action 161, lot A ; la question du
-    § 3 du README, laissée au propriétaire)."""
-    sys.path.insert(0, str(RACINE / "scripts"))
-    from mesures_prose import _carriere_de
-    from retraite_notionnelle.simulateur import Simulateur
-
-    parametres, options = _carriere_de({"exemple": exemple})
-    simulateur = Simulateur(parametres)
-    return simulateur.simuler(simulateur.carriere_simple(**options)).tableau().split("\n")
+LARGEUR = 104
 
 
-def _bloc(titre: str, corps: list[str]) -> str:
-    return "\n".join(["```", titre, "", *(l.rstrip() for l in corps), "```"])
+def adresse_du_site(exemple: str) -> str:
+    """L'adresse du simulateur du site qui ouvre la carrière d'un exemple."""
+    from urllib.parse import urlencode
+
+    return f"{SIMULATEUR_DU_SITE}#{urlencode(REQUETES[exemple])}"
+
+
+@lru_cache(maxsize=None)
+def simulation(exemple: str) -> dict:
+    """Le résultat que le portage simule de l'adresse d'un exemple, comme le
+    site la simule (``Comparaison.dictionnaire()``)."""
+    lus, refus = pont.simulations([{"cle": exemple, "requete": REQUETES[exemple]}])
+    if refus:
+        raise SystemExit(f"le portage refuse l'exemple {exemple} du README : {refus}")
+    return lus[exemple]["resultat"]
+
+
+def _titres() -> list[tuple[str, int, str]]:
+    """Les scénarios notionnels, dans l'ordre : leur clé, leur numéro et leur
+    nom, que les univers de la proposition écrivent en données."""
+    from retraite_notionnelle.noyau import univers
+
+    return [(u.id, u.numero, u.nom) for u in univers.de_la_proposition()]
+
+
+class _Tableau:
+    """La mise en forme du tableau d'une simulation, lue du résultat que le
+    pont rend : celle que ``Comparaison.tableau()`` écrivait, à l'octet, pour
+    les lignes que le README reprend."""
+
+    def __init__(self, resultat: dict) -> None:
+        self.r = resultat
+        self.scenarios = resultat["scenarios"]
+        self.reporte = resultat["liquidation_liberal"]["reportee"]
+
+    def coefficient(self, scenario: str | None) -> float:
+        if scenario == "notionnel_liberal" and self.reporte:
+            return self.r["liquidation_liberal"]["coefficient_euros_constants"]
+        return self.r["unite"]["coefficient"]
+
+    def ecart(self, montant: float, scenario: str) -> float:
+        reference = self.scenarios["actuel"]["pension_annuelle"]
+        if reference <= 0:
+            return float("nan")
+        if not (scenario == "notionnel_liberal" and self.reporte):
+            return montant / reference - 1.0
+        return (montant * self.coefficient(scenario)
+                / (reference * self.coefficient(None)) - 1.0)
+
+    def ligne(self, nom: str, montant: float, ecart: float | str | None,
+              scenario: str | None = None) -> str:
+        if isinstance(ecart, str):
+            variation = ecart
+        else:
+            variation = "réf." if ecart is None else f"{ecart:+.1%}"
+        constant = montant * self.coefficient(scenario)
+        return (f"{nom:<62} {montant:>10,.0f}€ {constant:>10,.0f}€ "
+                f"{constant/12:>8,.0f}€ {variation:>8}")
+
+    def scenarios_(self) -> list[str]:
+        """L'en-tête et les six scénarios."""
+        bascule = self.r["regime_fusionne"]["annee_bascule"]
+        lignes = [f"{'Scénario':<62} {'Courants':>11} {'Constants':>11} "
+                  f"{'Mensuel':>9} {'Écart':>8}",
+                  "-" * LARGEUR,
+                  self.ligne("1. Système actuel", self.scenarios["actuel"]["pension_annuelle"],
+                             None)]
+        for cle, numero, titre in _titres():
+            montant = self.scenarios[cle]["pension_annuelle"]
+            lignes.append(self.ligne(f"{numero}. " + titre.format(bascule=bascule),
+                                     montant, self.ecart(montant, cle), cle))
+        return lignes
+
+    def a_part(self) -> list[str]:
+        """Ce qui est servi à part : la retraite additionnelle, que les six
+        scénarios servent à l'identique, puis le pilier capitalisé du dernier,
+        et son total."""
+        lignes = []
+        hors_repartition = self.scenarios["actuel"]["pension_hors_repartition"]
+        if hors_repartition > 0:
+            lignes += ["-" * LARGEUR,
+                       self.ligne("   hors répartition (RAFP), servi à part, identique aux 6",
+                                  hors_repartition, "")]
+        liberal = self.scenarios["notionnel_liberal"]
+        rente = liberal["rente_capitalisation_obligatoire"]
+        if rente > 0:
+            numero = _titres()[-1][1]
+            volontaire = liberal["rente_capitalisation_volontaire"]
+            lignes.append("-" * LARGEUR)
+            if volontaire > 0:
+                lignes += [
+                    self.ligne(f"   + rente capitalisée obligatoire, scénario {numero}",
+                               rente - volontaire, "", "notionnel_liberal"),
+                    self.ligne("   + rente capitalisée volontaire, les 5 points rendus",
+                               volontaire, "", "notionnel_liberal")]
+            else:
+                lignes.append(self.ligne(
+                    f"   + rente du pilier capitalisé, scénario {numero} seul",
+                    rente, "", "notionnel_liberal"))
+            total = liberal["pension_totale"]
+            lignes.append(self.ligne(f"   = total servi par le scénario {numero}", total,
+                                     self.ecart(total, "notionnel_liberal"),
+                                     "notionnel_liberal"))
+        return lignes
+
+    def qui_verse(self) -> list[str]:
+        """Qui verse la cotisation, en euros courants cumulés."""
+        employeur = self.r["contribution_employeur"]
+        origines = employeur["annees_par_origine"]
+        if not (employeur["employeur"] > 0 or origines):
+            return []
+        lignes = ["Qui verse la cotisation, en euros courants cumulés :"]
+        if employeur["employeur"] > 0:
+            lignes += [
+                f"  part salariale     {employeur['agent']:>13,.0f} €   scénarios 2 et 3",
+                f"  part patronale     {employeur['employeur']:>13,.0f} €"
+                f"   soit {employeur['part']:.0%} du total",
+                f"  total              {employeur['total']:>13,.0f} €   scénarios 4 et 5",
+            ]
+        if origines:
+            trouvees = somme_ordonnee(nombre for origine, nombre in origines.items()
+                                      if origine != "repli")
+            repli = origines.get("repli", 0)
+            lignes.append(
+                f"  contribution employeur publique trouvée sur {trouvees} année(s)"
+                + (f", inconnue sur {repli} — le taux du privé y tient lieu d'étalon"
+                   if repli else ""))
+        return lignes
+
+
+def _bloc(exemple: str, titre: str, corps: list[str]) -> str:
+    return "\n".join([
+        f"[Ouvrir cette carrière dans le simulateur du site]({adresse_du_site(exemple)})",
+        "", "```", titre, "", *(l.rstrip() for l in corps), "```"])
 
 
 def sortie_exemple() -> str:
     """Le tableau de l'exemple et la ligne de qui verse quoi, sans le reste."""
-    lignes = _sortie("fonctionnaire")
-    debut = next(i for i, l in enumerate(lignes) if l.startswith("Scénario"))
-    fin = next(i for i, l in enumerate(lignes) if l.lstrip().startswith("= total"))
-    verse = next(i for i, l in enumerate(lignes) if l.startswith("Qui verse"))
-    return _bloc(TITRE_EXEMPLE, lignes[debut:fin + 1] + [""] + lignes[verse:verse + 5])
+    tableau_ = _Tableau(simulation("fonctionnaire"))
+    return _bloc("fonctionnaire", TITRE_EXEMPLE,
+                 tableau_.scenarios_() + tableau_.a_part() + [""] + tableau_.qui_verse())
 
 
 def sortie_sncf() -> str:
     """Les six scénarios de l'agent de conduite, sous le titre qui les situe."""
-    from mesures_prose import _simulation_de
-
-    lignes = _sortie("sncf")
-    debut = next(i for i, l in enumerate(lignes) if l.startswith("Scénario"))
-    fin = next(i for i, l in enumerate(lignes) if l.startswith("6. "))
-    # L'écart à l'âge de référence, que le portage calcule (les sondes de la
-    # prose, par le pont).
-    ecart = _simulation_de({"exemple": "sncf"})["resultat"]["age_reference"]
+    resultat = simulation("sncf")
+    ecart = resultat["age_reference"]
     situation = (f" ({abs(ecart['ecart_annees']):g} ans avant l'âge de référence)"
                  if ecart["anticipe"] else "")
     titre = f"Agent de conduite SNCF né en 1955, parti à 50 ans{situation}"
-    return _bloc(titre, lignes[debut:fin + 1])
+    return _bloc("sncf", titre, _Tableau(resultat).scenarios_())
 
 
 def remplacer(texte: str, repere: str, contenu: str) -> str:

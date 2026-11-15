@@ -42,19 +42,12 @@ l'assuré a supporté lui-même, la même grandeur pour tous les statuts. Les
 scénarios **4 et 5 y ajoutent la part patronale**. Pour un non-salarié, qui n'a
 pas d'employeur, les quatre se réduisent à deux.
 
-```python
-from retraite_notionnelle import Parametres
-from retraite_notionnelle.simulateur import Simulateur
-
-simulateur = Simulateur(Parametres())
-print(simulateur.simuler(simulateur.carriere_simple(
-    annee_naissance=1955, sexe="H", affiliation="agent_sncf",
-    age_debut=20, age_liquidation=50,
-    niveau_salaire=1.1, profil_carriere="ascendant",
-)).tableau())
-```
+Un agent de conduite de la SNCF né en 1955, parti à cinquante ans, avant la
+bascule, le montre ; le lien ouvre sa carrière dans le simulateur du site.
 
 <!-- exemple_sncf:debut -->
+[Ouvrir cette carrière dans le simulateur du site](https://g-pliberal.github.io/retraitecomptenotionelle/simuler/#naissance=1955&sexe=H&statut=agent_sncf&debut=20&liquidation=50&unite_revenu=moyen&salaire=1.1&profil=ascendant&montants=brut)
+
 ```
 Agent de conduite SNCF né en 1955, parti à 50 ans (15 ans avant l'âge de référence)
 
@@ -650,20 +643,14 @@ séries l'en dispensent :
   la charge de l'exploitant sans bouger depuis <!--chiffre:minimum(data/reference/legislation/contribution_employeur_public.csv:annee?regime=mines)-->1984<!--/--> ; l'Opéra de Paris et la
   Comédie-Française, <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=1992&regime=opera_de_paris)-->8,80<!--/--> % en 1992 et <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=opera_de_paris)-->9,56<!--/--> % en 2026.
 
-```python
-comparaison = simulateur.simuler(simulateur.carriere_simple(
-    annee_naissance=1975, sexe="F", affiliation="fonctionnaire_etat",
-    age_debut=22, age_liquidation=64,
-    part_primes=0.2, profil_carriere="ascendant",
-))
-print(comparaison.tableau())
-
-# Le détail par régime du scénario 1, que la page « Simuler » affiche aussi
-for pension in comparaison.actuel.pensions_par_regime:
-    print(f"{pension.regime:<28} {pension.montant:>10,.0f} €   {pension.detail}")
-```
+Une fonctionnaire d'État née en 1975, entrée à vingt-deux ans avec vingt pour
+cent de primes et partie à soixante-quatre, le montre ; le lien ouvre sa
+carrière dans le simulateur du site, qui détaille aussi la pension du système
+actuel, régime par régime.
 
 <!-- exemple_fonctionnaire:debut -->
+[Ouvrir cette carrière dans le simulateur du site](https://g-pliberal.github.io/retraitecomptenotionelle/simuler/#naissance=1975&sexe=F&statut=fonctionnaire_etat&debut=22&liquidation=64&unite_revenu=moyen&salaire=1&profil=ascendant&primes=0.2&montants=brut)
+
 ```
 Fonctionnaire d'État née en 1975, 20 % de primes, partie à 64 ans
 

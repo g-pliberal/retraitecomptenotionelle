@@ -625,6 +625,34 @@ def test_les_tableaux_produits_ne_sont_pas_perimes():
     assert rendu.returncode == 0, rendu.stdout + rendu.stderr
 
 
+def test_les_exemples_du_README_donnent_l_adresse_du_site_qu_ils_simulent():
+    """Le README ne montre plus d'appel au simulateur Python : chacun de ses
+    deux exemples donne l'adresse du simulateur du site pour sa carrière, et
+    son tableau est ce que le portage simule de cette adresse-là (note de
+    décision 0008, action 161). Les sondes de la prose, qui citent ces
+    exemples ailleurs, lisent la même carrière : le résultat de l'adresse est
+    celui de la sonde, à l'octet."""
+    if not disponible():
+        pytest.skip("node absent : le portage ne tourne pas sans lui")
+    sys.path.insert(0, str(RACINE / "scripts"))
+    import construire_tableaux_md as tableaux
+    from mesures_prose import _simulation_de
+
+    readme = (RACINE / "README.md").read_text(encoding="utf-8")
+    for repere, exemple in ((tableaux.REPERE_SNCF, "sncf"),
+                            (tableaux.REPERE_EXEMPLE, "fonctionnaire")):
+        adresse = tableaux.adresse_du_site(exemple)
+        assert adresse.startswith(
+            "https://g-pliberal.github.io/retraitecomptenotionelle/simuler/#"), adresse
+        bloc = readme.split(f"<!-- {repere}:debut -->")[1].split(f"<!-- {repere}:fin -->")[0]
+        assert f"]({adresse})" in bloc, f"l'exemple {exemple} ne donne pas son adresse"
+        assert tableaux.simulation(exemple) == _simulation_de({"exemple": exemple})["resultat"]
+    # Ni l'introduction ni le § 3 n'appellent plus le moteur Python.
+    avant_le_site = readme.split("## Ouvrir le simulateur")[0]
+    assert "carriere_simple(" not in avant_le_site
+    assert "comparaison = simulateur.simuler" not in readme
+
+
 def test_le_tableau_de_bord_n_est_pas_perime():
     """Où en est le dépôt ne s'écrit pas à la main.
 
