@@ -188,9 +188,9 @@ def test_la_fiche_date_l_age_du_parent_de_trois_enfants():
 
 
 def test_l_age_du_taux_plein_du_parent_de_trois_enfants():
-    """L'âge d'annulation de la décote au régime général, dans les deux moteurs :
-    le portage le rend, le jumeau Python le refait (``droit_et_refait``)."""
-    from outils_pont import droit_et_refait
+    """L'âge d'annulation de la décote au régime général :
+    le portage le rend, le témoin du droit le garde (``droit_et_fige``)."""
+    from outils_pont import droit_et_fige
 
     appels, attendus = {}, {}
     for cle, (champs, age) in CAS.items():
@@ -199,7 +199,7 @@ def test_l_age_du_taux_plein_du_parent_de_trois_enfants():
                        pont.Periode("regime_general", carriere.annee_liquidation),
                        carriere, carriere.annee_liquidation)
         attendus[cle] = age
-    lus, refus = droit_et_refait(appels)
+    lus, refus = droit_et_fige(appels)
     assert refus == {}, refus
     obtenus = {cle: lu[1] for cle, lu in lus.items()}
     assert obtenus == {cle: pytest.approx(age, abs=0.005) for cle, age in attendus.items()}
@@ -228,14 +228,14 @@ def test_les_regimes_alignes_suivent():
     régimes obligatoires de retraite auxquels s'appliquent les dispositions de
     l'article L. 351-8 »). Les complémentaires que le modèle ne sert pas encore :
     ``ENCORE_A_L_AGE_DE_LA_GENERATION``."""
-    from outils_pont import droit_et_refait
+    from outils_pont import droit_et_fige
 
     carriere = _carriere("interrompue trois ans", sans=(1980, 1981, 1982))
     annee = carriere.annee_liquidation
     appels = {regime: ("liquider.decote_opposable", pont.MOTEUR,
                        pont.Periode(regime, annee), carriere, annee)
               for regime in ALIGNES}
-    lus, refus = droit_et_refait(appels)
+    lus, refus = droit_et_fige(appels)
     assert refus == {}, refus
     assert {regime: lu[1] for regime, lu in lus.items()} == ALIGNES
 
@@ -358,19 +358,19 @@ def _avant_1998(detail: str) -> str:
 
 
 def test_la_pension_des_cultes_de_bout_en_bout():
-    """La pension de la ministre du culte, dans les deux moteurs
-    (``droit_et_refait``) : ses deux fractions au taux plein à soixante-cinq ans,
+    """La pension de la ministre du culte, que le portage rend
+    (``droit_et_fige``) : ses deux fractions au taux plein à soixante-cinq ans,
     celle d'avant 1998 majorée jusqu'au minimum ; le parent de deux enfants
     garde la décote."""
     import re
 
-    from outils_pont import droit_et_refait
+    from outils_pont import droit_et_fige
 
     cultes = (*range(1980, 1988), *range(2005, 2018))
     appels = {cle: ("scenario_actuel.calculer", pont.MOTEUR, _ministre_du_culte(
         cle, naissances, cultes=cultes, salariat=range(1971, 1976)))
         for cle, (naissances, _, _, _) in CULTES_DE_BOUT_EN_BOUT.items()}
-    lus, refus = droit_et_refait(appels)
+    lus, refus = droit_et_fige(appels)
     assert refus == {}, refus
     for cle, (_, taux, avant_1998, decote) in CULTES_DE_BOUT_EN_BOUT.items():
         pensions = {p["regime"]: p["detail"] for p in lus[cle]["pensions_par_regime"]}
@@ -405,7 +405,7 @@ def test_les_annees_cultuelles_d_avant_1979_ne_sont_pas_cotisees():
     d'avril 1981, juin 1984 et juin 1986 : 1979 et 1980, 8 trimestres cotisés ;
     1981 à 1983, aucun ; 8 cotisés d'activité avant, l'activité cultuelle
     comptée comme l'emploi (``NON_TRANCHE_CULTES``) : 65 ans, aux deux régimes."""
-    from outils_pont import droit_et_refait
+    from outils_pont import droit_et_fige
 
     cas = {
         "enfant de 1980": (_ministre_du_culte(
@@ -419,7 +419,7 @@ def test_les_annees_cultuelles_d_avant_1979_ne_sont_pas_cotisees():
                                   pont.Periode(regime, carriere.annee_liquidation),
                                   carriere, carriere.annee_liquidation)
               for cle, (carriere, _) in cas.items() for regime in ("cavimac", "regime_general")}
-    lus, refus = droit_et_refait(appels)
+    lus, refus = droit_et_fige(appels)
     assert refus == {}, refus
     assert {cle: lu[1] for cle, lu in lus.items()} == {
         f"{cle}|{regime}": pytest.approx(age, abs=0.005)
@@ -515,17 +515,17 @@ DECLARATIONS = {
 
 
 def test_ailleurs_le_moteur_lit_encore_l_age_de_la_generation():
-    """L'âge d'où se comptent la décote ou le coefficient, dans les deux moteurs
-    (``droit_et_refait``) : celui de la génération, là où le droit dit
+    """L'âge d'où se comptent la décote ou le coefficient, que le portage rend
+    (``droit_et_fige``) : celui de la génération, là où le droit dit
     soixante-cinq ans — un écart déclaré, en attendant le calcul."""
-    from outils_pont import droit_et_refait
+    from outils_pont import droit_et_fige
 
     carriere = _carriere("interrompue trois ans", sans=(1980, 1981, 1982))
     annee = carriere.annee_liquidation
     appels = {regime: ("liquider.decote_opposable", pont.MOTEUR,
                        pont.Periode(regime, annee), carriere, annee)
               for regime in ENCORE_A_L_AGE_DE_LA_GENERATION}
-    lus, refus = droit_et_refait(appels)
+    lus, refus = droit_et_fige(appels)
     assert refus == {}, refus
     assert {regime: lu[1] for regime, lu in lus.items()} == {
         regime: pytest.approx(AGE_DE_1953, abs=0.005)
@@ -834,9 +834,9 @@ CAS_FONCTIONNAIRES = {
 
 
 def test_l_age_d_annulation_du_fonctionnaire_parent_de_trois_enfants():
-    """L'âge d'annulation de la décote de la fonctionnaire de l'État, dans les
-    deux moteurs (``droit_et_refait``)."""
-    from outils_pont import droit_et_refait
+    """L'âge d'annulation de la décote de la fonctionnaire de l'État, , que le
+    portage rend (``droit_et_fige``)."""
+    from outils_pont import droit_et_fige
 
     appels, attendus = {}, {}
     for cle, (champs, age) in CAS_FONCTIONNAIRES.items():
@@ -845,7 +845,7 @@ def test_l_age_d_annulation_du_fonctionnaire_parent_de_trois_enfants():
                        pont.Periode("fonction_publique_etat", carriere.annee_liquidation),
                        carriere, carriere.annee_liquidation)
         attendus[cle] = age
-    lus, refus = droit_et_refait(appels)
+    lus, refus = droit_et_fige(appels)
     assert refus == {}, refus
     obtenus = {cle: lu[1] for cle, lu in lus.items()}
     assert obtenus == {cle: pytest.approx(age, abs=0.005) for cle, age in attendus.items()}
@@ -862,7 +862,7 @@ def test_la_cnracl_et_les_ouvriers_de_l_etat_suivent():
     """Le même âge à la CNRACL et aux ouvriers de l'État ; l'emploi classé en
     catégorie active, dont la limite d'âge n'était pas de soixante-cinq ans,
     garde le sien, celui du parent de deux enfants."""
-    from outils_pont import droit_et_refait
+    from outils_pont import droit_et_fige
 
     appels = {}
     for regime, statut in REGIMES_DES_FONCTIONNAIRES.items():
@@ -885,7 +885,7 @@ def test_la_cnracl_et_les_ouvriers_de_l_etat_suivent():
             "liquider.decote_opposable", pont.MOTEUR,
             pont.Periode("cnracl", carriere.annee_liquidation), carriere,
             carriere.annee_liquidation)
-    lus, refus = droit_et_refait(appels)
+    lus, refus = droit_et_fige(appels)
     assert refus == {}, refus
     ages = {cle: lu[1] for cle, lu in lus.items()}
     assert {cle: age for cle, age in ages.items() if not cle.startswith("active")} == {

@@ -6,8 +6,8 @@ et ``scripts/mesures_accueil.py`` cessent d'y entrer (lot A, seconde ligne).
 Chaque règle qu'une sonde appelait une à une se demande au portage par le
 pont (``pont.droit``), sous le nom de son jumeau Python ; ce fichier dit ce
 que chacune rend, par le chiffre que la prose publie ou que le texte fixe, et
-:func:`outils_pont.droit_et_refait` la fait refaire au jumeau, au bit près,
-tant qu'il reste. Puis il fait tourner les sondes sous le relevé de
+:func:`outils_pont.droit_et_fige` confronte ce qu'elle rend au témoin du
+droit. Puis il fait tourner les sondes sous le relevé de
 ``scripts/entrees_du_moteur.py`` : plus aucune n'entre dans le moteur Python.
 """
 
@@ -29,7 +29,7 @@ RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "scripts"))
 
 import entrees_du_moteur  # noqa: E402
-from outils_pont import droit_et_refait  # noqa: E402
+from outils_pont import droit_et_fige  # noqa: E402
 
 pytestmark = pytest.mark.skipif(shutil.which("node") is None,
                                 reason="node absent : le pont ne se vérifie pas ici")
@@ -37,7 +37,7 @@ pytestmark = pytest.mark.skipif(shutil.which("node") is None,
 
 def _rendu(appels: dict[str, tuple], parametres=None) -> dict:
     """Ce que le portage rend de ces appels, son jumeau Python confronté."""
-    lus, refus = droit_et_refait(appels, parametres)
+    lus, refus = droit_et_fige(appels, parametres)
     assert refus == {}
     return lus
 
@@ -142,7 +142,7 @@ def test_le_pont_rend_le_taux_de_la_tranche_1_d_un_regime():
     lus = _rendu({"etat": ("fusion.taux_total.tranche_1", pont.SIMULATEUR,
                            "fonction_publique_etat", 2023)})
     assert round(lus["etat"] * 100, 2) == 11.10
-    _, refus = droit_et_refait({"avant": ("fusion.taux_total.tranche_1", pont.SIMULATEUR,
+    _, refus = droit_et_fige({"avant": ("fusion.taux_total.tranche_1", pont.SIMULATEUR,
                                           "agirc_arrco", 1900)})
     assert "période active" in refus["avant"]
 

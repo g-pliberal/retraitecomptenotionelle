@@ -561,13 +561,13 @@ def test_les_leviers_de_la_mesure_des_avantages_neutralisent_au_portage_comme_le
     d'une fiche (``sans``), le catalogue privé d'une déclaration
     (``sansDeclaration``), le barème de la carrière longue vidé, la règle du
     salaire de référence des parents repoussée hors de portée (action 161,
-    étape 6). Chacun liquide au bit près ce que liquide son jumeau Python
-    (``droit_et_refait``), et chacun mord : la carrière que son levier vise
+    étape 6). Ce que chacun liquide, le témoin du droit le garde
+    (``droit_et_fige``), et chacun mord : la carrière que son levier vise
     n'y liquide pas ce qu'elle liquide au scénario 1 — le montant, ou, pour
     la carrière longue, le motif de l'ouverture."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from outils_pont import droit_et_refait
+    from outils_pont import droit_et_fige
     from test_avantages import _apprenti_puis_salarie
 
     carrieres = {code: pont.CarriereSimple(options)
@@ -581,7 +581,7 @@ def test_les_leviers_de_la_mesure_des_avantages_neutralisent_au_portage_comme_le
         appels[f"{code}|reelle"] = ("scenario_actuel.calculer", pont.MOTEUR, carriere)
         appels[f"{code}|sans"] = ("scenario_actuel.calculer", pont.MOTEUR.neutralisant(code),
                                   carriere)
-    lus, refus = droit_et_refait(appels)
+    lus, refus = droit_et_fige(appels)
     assert not refus
     for code in carrieres:
         reelle, sans = lus[f"{code}|reelle"], lus[f"{code}|sans"]
@@ -815,42 +815,6 @@ def test_le_pont_fait_appeler_les_fonctions_du_droit_au_bit_pres_de_leur_jumeau(
         pont.droit({"a": ("liquider.inconnue", pont.MOTEUR)})
 
 
-def test_le_controle_du_droit_voit_un_ulp_deplace_dans_le_jumeau_python(monkeypatch):
-    """Les exemples d'OpenFisca et des caisses font appeler le droit au
-    portage, et son jumeau Python le refait tant qu'il reste (action 161) :
-    :func:`outils_pont.droit_et_refait` rend ce que le portage rend, chaque
-    fonction refaite par son jumeau (``JUMEAUX_DU_DROIT``, un par fonction que
-    le pont relit), et arrête la confrontation sur un ulp qu'on y déplace —
-    au-delà de la tolérance hors de Linux x86_64."""
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le pont ne se vérifie pas ici")
-    import math
-
-    from outils_pont import JUMEAUX_DU_DROIT, droit_et_refait
-
-    assert set(JUMEAUX_DU_DROIT) == set(pont.LECTURES_DU_DROIT)
-    profil = {"code": "a", "debut": 1980, "liquidation": 2016, "naissance": 1954,
-              "salaire": 31_000.0}
-    carriere, rg = _carriere_d_openfisca(profil), pont.Periode("regime_general", 2016)
-    appels = {
-        "salaire": ("liquider.salaire_de_reference", pont.MOTEUR, "regime_general", carriere,
-                    rg, 2016, True, 1954, True),
-        "resultat": ("scenario_actuel.calculer", pont.MOTEUR, carriere),
-    }
-    lus, refus = droit_et_refait(appels)
-    assert refus == {} and lus == pont.droit(appels)[0]
-    jumeau = JUMEAUX_DU_DROIT["liquider.salaire_de_reference"]
-
-    def deplace(*arguments):
-        rendu = jumeau(*arguments)
-        return (math.nextafter(rendu, math.inf) if TOLERANCE_DU_MOTEUR_PYTHON == 0.0
-                else rendu * (1 + 1e-9))
-
-    monkeypatch.setitem(JUMEAUX_DU_DROIT, "liquider.salaire_de_reference", deplace)
-    with pytest.raises(AssertionError, match="salaire"):
-        droit_et_refait(appels)
-
-
 def test_le_pont_rend_ce_que_chaque_ligne_du_releve_cite():
     """Le tableau de bord compte, sur les relevés des cas types, les lignes
     qui citent leur fiche et la version qu'elles appliquent (contrat C.5) : le
@@ -865,10 +829,10 @@ def test_le_pont_rend_ce_que_chaque_ligne_du_releve_cite():
     version d'avant 2010. Le jumeau Python le refait tant qu'il reste."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from outils_pont import droit_et_refait
+    from outils_pont import droit_et_fige
 
     options = {"annee_naissance": 1970, "sexe": "F", "age_debut": 22, "age_liquidation": 64}
-    lus, refus = droit_et_refait({
+    lus, refus = droit_et_fige({
         "fonctionnaire": ("releve.construire.lignes.citations", pont.MOTEUR, pont.CarriereSimple(
             {**options, "affiliation": "fonctionnaire_etat"})),
         "mere": ("releve.construire.lignes.citations", pont.MOTEUR, pont.CarriereSimple(
@@ -896,16 +860,16 @@ def test_le_pont_bat_une_carriere_de_ses_options_sans_la_faire_passer():
     que ``simulateur.carriere_simple`` bâtit de ses options
     (``pont.CarriereSimple``), que le portage bâtit lui-même, sans qu'elle
     passe le pont. Liquidée, elle rend ce que rend la même carrière bâtie,
-    écrite en données et relue ; le jumeau Python la bâtit et la refait au bit
-    près (``droit_et_refait``)."""
+    écrite en données et relue ; le témoin du droit garde ce qu'elle rend
+    (``droit_et_fige``)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from outils_pont import droit_et_refait
+    from outils_pont import droit_et_fige
 
     options = {"annee_naissance": 1962, "sexe": "F", "affiliation": "salarie_prive_non_cadre",
                "age_debut": 21.5, "age_liquidation": 64.25, "nombre_enfants": 2,
                "interruptions": {1990: "chomage_indemnise"}, "temps_partiel": {2000: 0.8}}
-    lus, echecs = droit_et_refait({
+    lus, echecs = droit_et_fige({
         "carriere": ("simulateur.carriere_simple", pont.SIMULATEUR, options),
         "par_options": ("scenario_actuel.calculer", pont.MOTEUR, pont.CarriereSimple(options)),
     })
@@ -2421,7 +2385,7 @@ def test_le_pont_sert_les_regles_de_l_histoire_du_droit():
     1,333333 pour la complémentaire des médecins en 1991, aucun pour un point
     acquis depuis, ni pour un régime sans conversion."""
     _sans_node()
-    from outils_pont import droit_et_refait
+    from outils_pont import droit_et_fige
 
     from retraite_notionnelle.donnees.chargement import Fiabilite
 
@@ -2429,7 +2393,7 @@ def test_le_pont_sert_les_regles_de_l_histoire_du_droit():
     decrets = "scenario_actuel.revalorisations_pensions.retenues.fonction_publique.produit"
     point = "scenario_actuel.minimum_garanti.ratio_point_indice"
     echelle = "scenario_actuel.conversions_points.echelle"
-    lus, refus = droit_et_refait({
+    lus, refus = droit_et_fige({
         "generale": (generale, pont.MOTEUR, "2022-12-31", "2024-06-01", False, 2004.0),
         "le jour du départ": (generale, pont.MOTEUR, "2023-01-01", "2024-06-01", False, 2004.0),
         "le jour compris": (generale, pont.MOTEUR, "2023-01-01", "2024-06-01", True, 2004.0),
@@ -2479,10 +2443,10 @@ def test_le_pont_sert_la_derniere_annee_publiee_d_un_point():
     : l'Arrco et l'Agirc fusionnent dans l'Agirc-Arrco en 2019, l'UNIRS dans
     l'Arrco en 1999. Le régime général n'a pas de point, ni un code inconnu."""
     _sans_node()
-    from outils_pont import droit_et_refait
+    from outils_pont import droit_et_fige
 
     publiee = "revalorisation.derniere_valeur_publiee"
-    lus, refus = droit_et_refait({code: (publiee, pont.MOTEUR, code) for code in (
+    lus, refus = droit_et_fige({code: (publiee, pont.MOTEUR, code) for code in (
         "agirc_arrco", "arrco", "agirc", "unirs", "regime_general", "inconnu")})
     assert refus == {}
     assert lus == {"agirc_arrco": 2026, "arrco": 2026, "agirc": 2026, "unirs": 2026,
@@ -2578,13 +2542,13 @@ def test_les_regles_de_l_histoire_du_droit_sont_celles_du_jumeau_au_bit(monkeypa
     décision 0007). L'histoire du droit demandait ses règles au moteur
     Python ; elle les demande au portage. Chaque appel de chacun de ses lots
     — chaque mois de chaque règle de revalorisation depuis 1949, chaque
-    changement d'unité d'un point entre deux années —, le jumeau Python le
-    refait, au bit (``droit_et_refait``), sur chaque régime du catalogue,
+    changement d'unité d'un point entre deux années —, le témoin du droit
+    garde ce qu'il rend (``droit_et_fige``), sur chaque régime du catalogue,
     liquidé tous les quatre ans, sous les réglages de la page Coût, où le
     point de l'Agirc-Arrco a sa valeur convenue. Le régime général, la
     fonction publique et chaque barème de points y ont leur lot."""
     _sans_node()
-    from outils_pont import droit_et_refait
+    from outils_pont import droit_et_fige
 
     from retraite_notionnelle.revalorisation_servie import RevalorisationServie
 
@@ -2592,7 +2556,7 @@ def test_les_regles_de_l_histoire_du_droit_sont_celles_du_jumeau_au_bit(monkeypa
 
     def confronte(appels, parametres=None, paquet=None):
         lots.append({fonction for fonction, *_ in appels.values()})
-        return droit_et_refait(appels, parametres, paquet)
+        return droit_et_fige(appels, parametres, paquet)
 
     monkeypatch.setattr(pont, "droit", confronte)
     simulateur = Simulateur(Parametres()).pour_la_projection()

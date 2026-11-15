@@ -7332,14 +7332,13 @@ profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Ses règles s'importent toutes les unes les autres : le retrait se fera par le
 haut, une fois le moteur Python plus exécuté. Les confrontations, qui lui
 font refaire ce que le portage calcule, partent d'abord, chacune remplacée
-par une référence figée : `servis.json` pour le scénario 1, `sorties.json`
-pour les scripts de `tests/js/`, `valeurs.json` pour ce que le pont rend à
-une fonction Python (`tests/temoins/`). Le levier du jumeau est parti : le
-coût ne simule plus sa grille en Python. Restent `droit_et_refait`, 85
-appels dans douze fichiers, puis les confrontations que la note énumère,
-puis cent fichiers de tests qui importent une règle Python. Une étape par
-session. Par quoi commencer : figer `droit_et_refait` comme `servi_et_fige`.
-Le détail : `2026-11-15-le-temoin-des-valeurs.md`.
+par une référence figée dans `tests/temoins/` : `servis.json`,
+`sorties.json`, `valeurs.json`, et `droit.json` pour chaque appel du droit
+par le pont. Plus aucun appel du droit ne se refait en Python. Restent
+l'inversion, les carrières que les tests bâtissent en Python, les
+confrontations que la note énumère, puis cent fichiers de tests qui importent
+une règle Python. Une étape par session. Par quoi commencer : la première
+confrontation de la liste. Le détail : `2026-11-15-le-temoin-du-droit.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

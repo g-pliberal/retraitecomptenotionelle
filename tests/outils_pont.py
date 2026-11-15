@@ -21,7 +21,6 @@ Ce module n'est pas un fichier de tests, et pytest ne le collecte pas.
 
 from __future__ import annotations
 
-import contextlib
 import dataclasses
 import functools
 import hashlib
@@ -32,15 +31,8 @@ import platform
 import sys
 from pathlib import Path
 
-from retraite_notionnelle import calendrier, chronologie, pont
+from retraite_notionnelle import pont
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
-from retraite_notionnelle.droit import (cumul, departs, foyer, invalidite, liquider,
-                                        ouvrir, releve, reversion)
-from retraite_notionnelle.echeancier import Echeancier
-from retraite_notionnelle.moteur.compte import ConstructeurCompte
-from retraite_notionnelle.remuneration import fiche_depuis_brut
-from retraite_notionnelle.revalorisation import derniere_valeur_publiee, faire_vivre
 from retraite_notionnelle.simulateur import Comparaison, Simulateur
 from retraite_notionnelle.web.site import module, site
 
@@ -281,415 +273,109 @@ def servi_et_fige(cas: list[dict], paquet: bytes | None = None,
     return servis, refus
 
 
-def _pension_pour_invalidite(moteur, regime: str, carriere, *valeurs):
-    """La version de la retraite pour invalidité d'un régime, puis la pension
-    du fonctionnaire qu'elle sert, sous ses autres arguments — la pension, le
-    traitement, l'année : ce que le portage enchaîne ; aucune pension sans
-    version."""
-    version = invalidite.retraite_pour_invalidite(moteur, regime, carriere)
-    return None if version is None else invalidite.pension_du_fonctionnaire_invalide(
-        moteur, carriere, version, *valeurs)
-
-
-def _en_dictionnaire(objet):
-    """Un dataclass rendu, par ses champs, comme le portage l'écrit ; ``None``
-    tel quel."""
-    return None if objet is None else dataclasses.asdict(objet)
-
-
-def _reversion(moteur, pensions, carriere, annee, deces_suppose=None, en_capital=(), *autres):
-    """La réversion que des pensions ouvrent, ses régimes servis en capital en
-    ensemble, comme le portage les lit."""
-    return _en_dictionnaire(reversion.reversion(moteur, pensions, carriere, annee, deces_suppose,
-                                                frozenset(en_capital), *autres))
-
-
-def _parcourue(simulateur: Simulateur, carriere) -> Echeancier:
-    """L'échéancier du simulateur, la carrière parcourue."""
-    echeancier = Echeancier(simulateur)
-    echeancier.parcourir(carriere)
-    return echeancier
-
-
-def _cumul_des_pensions_pretees(moteur, carriere, liquidee, pretees: dict,
-                                annee_courante: int):
-    """Le cumul de l'activité après le départ, chaque régime servant chaque
-    année la pension prêtée, sans majoration pour enfants, sur le scénario 1
-    de la carrière liquidée : ce que le portage refait."""
-    return _en_dictionnaire(cumul.cumuler(moteur, carriere, moteur.calculer(liquidee),
-                                          lambda annee: (dict(pretees), 0.0), annee_courante))
-
-
-def _lignes_de_retraite(simulateur: Simulateur, statut: str, annee: int, brut: float):
-    """Les lignes de retraite de la fiche de paie d'un revenu brut annuel,
-    ``(code, part du salarié)`` ; aucune sans fiche."""
-    fiche = fiche_depuis_brut(simulateur.parametres.racine_donnees, simulateur.macro,
-                              simulateur.catalogue, simulateur.affiliations, statut, annee, brut)
-    return None if fiche is None else tuple((ligne.code, ligne.salarie)
-                                            for ligne in fiche.lignes if ligne.retraite)
-
-
-def _plafonds_apres_le_depart(simulateur: Simulateur, carriere):
-    """Le plafond de chaque nouvelle pension que l'activité après le départ
-    constitue, ``(regime, plafond)`` ; aucune sans activité."""
-    droits = _parcourue(simulateur, carriere).au_depart.droits_apres_depart
-    return None if droits is None else tuple((p.regime, p.plafond) for p in droits.pensions)
-
-
-#: Le jumeau Python de chaque fonction du droit que le pont fait appeler
-#: (``FONCTIONS_DU_DROIT`` de ``pont.mjs``, :data:`pont.LECTURES_DU_DROIT`),
-#: sous les mêmes arguments, que :func:`droit_et_refait` lui fait refaire tant
-#: qu'il reste (action 161) : une fonction de plus au pont y déclare le sien.
-JUMEAUX_DU_DROIT = {
-    "calendrier.en_mois": calendrier.en_mois,
-    "calendrier.origine_des_ages": lambda naissance, jour: dataclasses.asdict(
-        calendrier.origine_des_ages(naissance, jour)),
-    "carriere.date_de_l_age": lambda carriere, age: dataclasses.asdict(
-        carriere.date_de_l_age(age)),
-    "departs.age_legal": departs.age_legal,
-    "chronologie.valeur": chronologie.valeur,
-    "compte.cotisation_annuelle.par_regime": lambda simulateur, carriere, annee: (
-        ConstructeurCompte(simulateur.macro, simulateur.catalogue, simulateur.affiliations,
-                           simulateur.indexation, simulateur.parametres)
-        .cotisation_annuelle(carriere, annee).par_regime),
-    "cumul.cumuler.pensions_pretees": _cumul_des_pensions_pretees,
-    "echeancier.parcourir.au_depart.cumul": lambda simulateur, carriere: _en_dictionnaire(
-        _parcourue(simulateur, carriere).au_depart.cumul),
-    "echeancier.parcourir.reversion": lambda simulateur, carriere: _en_dictionnaire(
-        _parcourue(simulateur, carriere).reversion),
-    "echeancier.parcourir.au_depart.droits_apres_depart.pensions": _plafonds_apres_le_depart,
-    "foyer.foyer_et_net.minimum_vieillesse":
-        lambda *valeurs: foyer.foyer_et_net(*valeurs).minimum_vieillesse,
-    "invalidite.exigences_du_handicap": invalidite.exigences_du_handicap,
-    "invalidite.retraite_pour_invalidite.pension_du_fonctionnaire_invalide":
-        _pension_pour_invalidite,
-    "ouvrir.age_ouverture_droit": ouvrir.age_ouverture_droit,
-    "ouvrir.duree_requise": ouvrir.duree_requise,
-    "periode.capital_seuil_points": lambda periode: periode.capital_seuil_points,
-    "liquider.duree_proratisation": liquider.duree_proratisation,
-    "liquider.majoration_rafp": liquider.majoration_rafp,
-    "liquider.mois_apres_le_depart": liquider.mois_apres_le_depart,
-    "liquider.nombre_d_annees_retenues": liquider.nombre_d_annees_retenues,
-    "liquider.prestation_rafp": lambda *valeurs: dataclasses.asdict(
-        liquider.prestation_rafp(*valeurs)),
-    "liquider.decote_opposable": liquider.decote_opposable,
-    "liquider.salaire_de_reference": liquider.salaire_de_reference,
-    "liquider.trimestres_de_decote": liquider.trimestres_de_decote,
-    "liquider.valeur_du_point": liquider.valeur_du_point,
-    "regimes.BORNES_ASSIETTE": lambda: BORNES_ASSIETTE,
-    "releve.construire.droits.points":
-        lambda moteur, carriere: releve.construire(moteur, carriere).droits.points,
-    "releve.construire.durees.emplois": lambda moteur, carriere: tuple(
-        (emploi.fiche, emploi.services)
-        for emploi in releve.construire(moteur, carriere).durees.emplois),
-    "releve.construire.durees.services_liquidables": lambda moteur, carriere, membres: (
-        releve.construire(moteur, carriere).durees.services_liquidables(tuple(membres))),
-    "releve.construire.lignes.citations": lambda moteur, carriere: tuple(
-        (ligne["id"], ligne.get("fiche"), ligne.get("version"))
-        for ligne in releve.construire(moteur, carriere).lignes()),
-    "remuneration.fiche_depuis_brut.lignes_de_retraite": _lignes_de_retraite,
-    "reversion.reversion": _reversion,
-    "revalorisation.faire_vivre.majorations": lambda simulateur, carriere, annee: [
-        dataclasses.asdict(majoration) for majoration in faire_vivre(
-            simulateur, carriere, simulateur.scenario_actuel.calculer(carriere),
-            annee).majorations],
-    "scenario_actuel.ages_annulation_decote.age":
-        lambda moteur, generation: moteur.ages_annulation_decote.age(generation),
-    "scenario_actuel.ages_ouverture.age":
-        lambda moteur, generation: moteur.ages_ouverture.age(generation),
-    "scenario_actuel.calculer": lambda moteur, carriere, *drapeaux: actuel_en_donnees(
-        moteur.calculer(carriere, *drapeaux)),
-    "scenario_actuel.catalogue.etage": lambda moteur, code: moteur.catalogue[code].etage,
-    "scenario_actuel.catalogue.periodes": lambda moteur, code: [
-        {"debut": periode.debut, "fin": periode.fin, "assiette": periode.assiette,
-         "taux_cotisation_retraite": periode.taux_cotisation_retraite,
-         "part_salariale": periode.part_salariale}
-        for periode in moteur.catalogue[code].periodes],
-    "scenario_actuel.macro.plafond_securite_sociale":
-        lambda moteur, annee: moteur.macro.plafond_securite_sociale(annee),
-    "scenario_actuel.minimum_garanti.montant":
-        lambda moteur, *valeurs: moteur.minimum_garanti.montant(*valeurs),
-    "scenario_actuel.valeurs_point.achat":
-        lambda moteur, *valeurs: moteur.valeurs_point.achat(*valeurs),
-    "scenario_actuel.valeurs_point.service":
-        lambda moteur, *valeurs: moteur.valeurs_point.service(*valeurs),
-    "simulateur.carriere_releve": lambda simulateur, options: pont.carriere_en_donnees(
-        simulateur.carriere_releve(**options)),
-    "simulateur.carriere_simple": lambda simulateur, options: pont.carriere_en_donnees(
-        simulateur.carriere_simple(**options)),
-}
-
-def _fusionne(simulateur: Simulateur, annee: int, critere: str | None) -> dict:
-    from retraite_notionnelle.moteur.fusion import CritereTaux, RegleFusion, fusionner
-
-    regle = RegleFusion() if critere is None else RegleFusion(critere_taux=CritereTaux(critere))
-    return dataclasses.asdict(fusionner(simulateur.catalogue, annee, regle))
-
-
-def _taux_de_la_tranche_1(simulateur: Simulateur, code: str, annee: int) -> float:
-    from retraite_notionnelle.moteur.fusion import _taux_total
-
-    return _taux_total(min(simulateur.catalogue[code].periodes_actives(annee),
-                           key=lambda periode: periode.bornes_assiette_en_pass()[0]))
-
-
-def _restitution(simulateur: Simulateur):
-    from retraite_notionnelle.restitution import Restitution
-
-    return Restitution(simulateur.parametres.racine_donnees,
-                       simulateur.parametres.part_rendue_aux_salaires)
-
-
-def _salaire_moyen_annuel(simulateur: Simulateur, annee: int) -> float:
-    from retraite_notionnelle.carriere import salaire_moyen_annuel
-
-    return salaire_moyen_annuel(simulateur.macro, annee)
-
-
-def _parts_retraite_seule(simulateur: Simulateur) -> tuple[float, float, float]:
-    parts = simulateur.constructeur_employeur.parts_retraite_seule
-    return parts[False, False], parts[True, True], parts[True, False]
-
-
-def _sans_non_finis(valeur):
-    """Une valeur telle que node l'écrit : « null » pour un nombre non fini
-    (``_fini`` de ``scripts/construire_temoins.py``)."""
-    if isinstance(valeur, float) and not math.isfinite(valeur):
-        return None
-    if isinstance(valeur, dict):
-        return {cle: _sans_non_finis(element) for cle, element in valeur.items()}
-    if isinstance(valeur, (list, tuple)):
-        return [_sans_non_finis(element) for element in valeur]
-    return valeur
-
-
-def _simulee(simulateur: Simulateur, carriere) -> dict:
-    """La carrière simulée au moteur Python, telle que le pont la rend aux
-    sondes (``"simulateur.simuler"`` de ``pont.mjs``)."""
-    comparaison = simulateur.simuler(carriere)
-    resultat = comparaison.dictionnaire()
-    remuneration = comparaison.remuneration
-
-    def fiche(lue) -> dict:
-        return {"brut": lue.brut, "net": lue.net, "retraite_salarie": lue.retraite_salarie,
-                "retraite_employeur": lue.retraite_employeur}
-
-    return _sans_non_finis({
-        "resultat": resultat,
-        "diviseurs": {scenario: getattr(comparaison, scenario).conversion.diviseur
-                      for scenario in resultat["scenarios"] if scenario != "actuel"},
-        "remuneration": None if remuneration is None else {
-            "annee": remuneration.reference.annee,
-            "gain_net": remuneration.reference.gain_net,
-            "droit_en_vigueur": fiche(remuneration.reference.droit_en_vigueur),
-            "proposition": fiche(remuneration.reference.proposition),
-            "indemnite_csg_mensuelle": remuneration.indemnite_csg_mensuelle,
-        },
-    })
-
-
-def _garantie_vieillesse(simulateur: Simulateur, carriere, pension: float) -> dict:
-    garantie = simulateur.scenario_liberal._garantie_vieillesse(carriere, pension)
-    return {"plancher_annuel": garantie.plancher_annuel, "complement": garantie.complement}
-
-
-def _pilier(simulateur: Simulateur, assiettes: dict, annee_naissance: int,
-            age_liquidation: float, annee_liquidation: int, repartitions: dict | None) -> dict:
-    """Le pilier capitalisé d'une suite d'assiettes au moteur Python, sous sa
-    règle d'allocation ou sous celle que la demande décrit, par horizon."""
-    from retraite_notionnelle.moteur.capitalisation import ConstructeurCapitalisation
-
-    modele = simulateur.constructeur_capitalisation
-    constructeur = modele if repartitions is None else ConstructeurCapitalisation(
-        modele.courbe, modele.mortalite, modele.convertisseur, modele.parametres,
-        lambda horizon: tuple(map(tuple, repartitions.get(horizon, ()))))
-    pilier = constructeur.construire(assiettes, annee_naissance, age_liquidation,
-                                     annee_liquidation)
-    return {"capital": pilier.capital, "rente_mensuelle": pilier.rente_mensuelle,
-            "annees_cotisees": pilier.annees_cotisees}
-
-
-#: Le jumeau Python de chaque règle que les sondes de la prose et les mesures
-#: de l'accueil demandent au pont (:data:`pont.LECTURES_DES_SONDES`).
-JUMEAUX_DES_SONDES = {
-    "age_reference.age": lambda simulateur, annee: simulateur.age_reference.age(annee),
-    "conversion.coefficient.esperance_residuelle": lambda simulateur, age, annee: (
-        simulateur.convertisseur.coefficient(age, annee).esperance_residuelle),
-    "conversion.effet_anticipation": lambda simulateur, age, reference, annee: (
-        simulateur.convertisseur.effet_anticipation(age, reference, annee)),
-    "indexation.coefficient": lambda simulateur, depart, arrivee: (
-        simulateur.indexation.coefficient(depart, arrivee)),
-    "capitalisation.facteur_encours_rente": lambda simulateur, frais, age, annee: (
-        simulateur.constructeur_capitalisation._facteur_encours_rente(
-            frais, age, annee, None, None)),
-    "carriere.salaire_moyen_annuel": _salaire_moyen_annuel,
-    "restitution.part_du_poste":
-        lambda simulateur, annee: _restitution(simulateur).part_du_poste(annee),
-    "restitution.annuelle.points_csg":
-        lambda simulateur, annee: _restitution(simulateur).annuelle(annee).points_csg,
-    "compte.parts_retraite_seule": _parts_retraite_seule,
-    "fusion.fusionner": _fusionne,
-    "fusion.taux_total.tranche_1": _taux_de_la_tranche_1,
-    "simulateur.simuler": _simulee,
-    "notionnel.garantie_vieillesse": _garantie_vieillesse,
-    "capitalisation.construire": _pilier,
-}
-JUMEAUX_DU_DROIT.update(JUMEAUX_DES_SONDES)
-
-
-def _niveau_relatif(simulateur: Simulateur, carriere) -> float:
-    from retraite_notionnelle.moteur.conversion import niveau_relatif
-
-    return niveau_relatif(carriere, simulateur.macro)
-
-
-#: Le jumeau Python de la règle que l'étude de la mortalité demande au pont
-#: (:data:`pont.LECTURES_DE_LA_MORTALITE`).
-JUMEAUX_DE_LA_MORTALITE = {
-    "conversion.niveau_relatif": _niveau_relatif,
-}
-JUMEAUX_DU_DROIT.update(JUMEAUX_DE_LA_MORTALITE)
-
-
-def _dates(depuis: str, jusqu_a: str, *suite) -> tuple:
-    """Les arguments d'une revalorisation entre deux dates, que le pont passe
-    en dates ISO et que le jumeau Python lit en dates."""
-    import datetime
-
-    return (datetime.date.fromisoformat(depuis), datetime.date.fromisoformat(jusqu_a), *suite)
-
-
-def _decrets_de_la_fonction_publique(moteur, *valeurs):
-    from retraite_notionnelle.revalorisation import produit
-
-    revalorisations = moteur.revalorisations_pensions
-    return produit(revalorisations.retenues(revalorisations.fonction_publique,
-                                            *_dates(*valeurs)))
-
-
-#: Le jumeau Python de chaque règle du moteur que l'histoire du droit demande
-#: au pont (:data:`pont.LECTURES_DE_L_HISTOIRE_DU_DROIT`).
-JUMEAUX_DE_L_HISTOIRE_DU_DROIT = {
-    "scenario_actuel.revalorisations_pensions.generale":
-        lambda moteur, *valeurs: moteur.revalorisations_pensions.generale(*_dates(*valeurs)),
-    "scenario_actuel.revalorisations_pensions.retenues.fonction_publique.produit":
-        _decrets_de_la_fonction_publique,
-    "scenario_actuel.minimum_garanti.ratio_point_indice":
-        lambda moteur, *valeurs: moteur.minimum_garanti.ratio_point_indice(*valeurs),
-    "scenario_actuel.conversions_points.echelle":
-        lambda moteur, *valeurs: moteur.conversions_points.echelle(*valeurs),
-    "revalorisation.derniere_valeur_publiee": derniere_valeur_publiee,
-}
-JUMEAUX_DU_DROIT.update(JUMEAUX_DE_L_HISTOIRE_DU_DROIT)
-
-#: Le pont du droit tel quel, que :func:`droit_et_refait` appelle quand une
-#: confrontation la met à sa place.
+#: Le pont du droit tel quel, que :func:`droit_et_fige` appelle : un test
+#: le remplace par un portage simulé.
 DROIT_DU_PORTAGE = pont.droit
 
 
-@functools.cache
-def _simulateur_du_droit(parametres: Parametres) -> Simulateur:
-    """Le simulateur Python d'un jeu de paramètres que :func:`droit_et_refait`
-    confronte, gardé d'un appel à l'autre."""
-    return Simulateur(parametres)
+#: Le témoin du droit : sous l'empreinte de chaque demande que les tests font
+#: au droit à travers le pont (:func:`empreinte_de_la_demande`), les fonctions
+#: qu'elle appelle et l'empreinte de ce que le portage en rend et en refuse
+#: (action 161, étape 8e). Une variable d'environnement du même nom le
+#: déplace, pour que ``construire_temoins.py --droit`` le refasse à part.
+TEMOIN_DU_DROIT = Path(os.environ.get(
+    "TEMOIN_DU_DROIT", Path(__file__).resolve().parent / "temoins" / "droit.json"))
+
+
+def empreinte_de_la_demande(appels: dict[str, tuple], parametres=None) -> str:
+    """L'empreinte de ce que :func:`pont.droit` envoie au portage : chaque
+    appel sous sa clé, ses arguments mis en données comme le pont les écrit,
+    les carrières qu'ils nomment, et les paramètres, ``None`` pour les
+    réglages de référence."""
+    carrieres: list = []
+    demandes = [[cle, fonction, *(pont._argument_du_droit(argument, carrieres)
+                                  for argument in arguments)]
+                for cle, (fonction, *arguments) in appels.items()]
+    texte = json.dumps({
+        "appels": demandes,
+        "carrieres": [pont.carriere_en_donnees(carriere) for carriere in carrieres],
+        "parametres": None if parametres is None else pont.parametres_en_donnees(parametres),
+    }, ensure_ascii=False, sort_keys=True)
+    return hashlib.sha256(texte.encode("utf-8")).hexdigest()[:16]
 
 
 @functools.cache
-def _scenarios_neutralises(simulateur: Simulateur) -> dict:
-    """Les variantes du scénario 1 que la mesure des avantages non
-    contributifs liquide (``avantages.scenarios_neutralises``), bâties une
-    fois par simulateur."""
-    from retraite_notionnelle.avantages import scenarios_neutralises
-
-    return scenarios_neutralises(simulateur)
+def droit_fige() -> dict[str, dict]:
+    """Le témoin du droit, tel que le fichier le porte."""
+    if not TEMOIN_DU_DROIT.exists():
+        return {}
+    return json.loads(TEMOIN_DU_DROIT.read_text(encoding="utf-8"))
 
 
-def _moteur_du_jumeau(simulateur: Simulateur, moteur: pont.Moteur):
-    """Le moteur du scénario 1 du simulateur Python, ou la variante que la
-    mesure des avantages en neutralise (``pont.Moteur.neutralisant``)."""
-    if moteur.neutralise is None:
-        return simulateur.scenario_actuel
-    return _scenarios_neutralises(simulateur)[moteur.neutralise]
+def _figer_le_droit(empreinte: str, entree: dict) -> None:
+    """Écrit une demande au témoin du droit, sous verrou, et le remplace d'un
+    coup : les processus de la suite peuvent figer, et le lire, en même
+    temps."""
+    import fcntl  # POSIX seul : figer ne se fait que sous Linux ou macOS
+
+    import tempfile
+
+    verrou = Path(tempfile.gettempdir()) / "temoin_du_droit.verrou"
+    with open(verrou, "a", encoding="utf-8") as tenu:
+        fcntl.flock(tenu, fcntl.LOCK_EX)
+        figes = (json.loads(TEMOIN_DU_DROIT.read_text(encoding="utf-8"))
+                 if TEMOIN_DU_DROIT.exists() else {})
+        figes[empreinte] = entree
+        provisoire = TEMOIN_DU_DROIT.with_suffix(f".{os.getpid()}.provisoire")
+        provisoire.write_text(json.dumps(figes, ensure_ascii=False, sort_keys=True, indent=1)
+                              + "\n", encoding="utf-8")
+        os.replace(provisoire, TEMOIN_DU_DROIT)
+    droit_fige.cache_clear()
 
 
-def _argument_du_jumeau(simulateur: Simulateur, argument):
-    """Un argument d'un appel du droit tel que le jumeau Python le reçoit : le
-    moteur du scénario 1, ou sa variante neutralisée, et la période d'un
-    régime, ceux du simulateur Python ; une carrière, que le Python a bâtie,
-    ou une valeur, telle quelle."""
-    if isinstance(argument, pont.Moteur):
-        return _moteur_du_jumeau(simulateur, argument)
-    if argument is pont.SIMULATEUR:
-        return simulateur
-    if isinstance(argument, pont.CarriereSimple):
-        return simulateur.carriere_simple(**argument.options)
-    if isinstance(argument, pont.Periode):
-        return simulateur.catalogue[argument.code].periode(argument.annee)
-    return argument
-
-
-@contextlib.contextmanager
-def _prets_au_jumeau(simulateur: Simulateur, arguments):
-    """Les tables que les arguments d'un appel prêtent au moteur
-    (``pont.Moteur.pretant``), prêtées au moteur Python le temps de l'appel,
-    comme un test les lui prête (``monkeypatch.setattr``), puis rendues."""
-    gardees = []
-    try:
-        for argument in arguments:
-            if not isinstance(argument, pont.Moteur):
-                continue
-            moteur = _moteur_du_jumeau(simulateur, argument)
-            for table, preteuse in argument.prets:
-                if not hasattr(moteur, table):
-                    raise AttributeError(f"le moteur Python ne porte pas la table {table}")
-                gardees.append((moteur, table, getattr(moteur, table)))
-                setattr(moteur, table, getattr(moteur, preteuse))
-        yield
-    finally:
-        for moteur, table, gardee in reversed(gardees):
-            setattr(moteur, table, gardee)
-
-
-def droit_et_refait(appels: dict[str, tuple], parametres=None, paquet: bytes | None = None,
-                    ) -> tuple[dict[str, object], dict[str, str]]:
+def droit_et_fige(appels: dict[str, tuple], parametres=None, paquet: bytes | None = None,
+                  ) -> tuple[dict[str, object], dict[str, str]]:
     """Ce que le portage rend de chaque appel du droit (:func:`pont.droit`),
-    son jumeau Python confronté tant qu'il reste (action 161) : ce qu'il rend,
-    relu sous le type que le pont déclare (:func:`pont.relu_du_droit`), doit
-    s'écrire au bit près sous Linux x86_64 comme ce que le portage a rendu
-    (:data:`TOLERANCE_DU_MOTEUR_PYTHON`), et un appel que le portage refuse,
-    le jumeau doit le refuser, ou la confrontation s'arrête sur ce qui
-    diffère. Les exemples d'OpenFisca et des caisses (``tests/test_oracle.py``)
-    le passent à leurs mesures au lieu du pont : aucun appel ne perd la
-    vérification du Python. Sur un autre paquet que celui du dépôt, il n'y a
-    rien à refaire."""
+    et les motifs de ceux qu'il refuse, confrontés au témoin du droit
+    (:data:`TEMOIN_DU_DROIT`) : la demande doit y être, sous l'empreinte de ce
+    que le portage en rend aujourd'hui, chaque flottant lu à douze chiffres
+    significatifs (``outils_valeurs.empreinte_de_la_valeur``). Il tient la
+    place du jumeau Python qui refaisait chaque appel tant que le moteur
+    Python restait (action 161, étape 8e) : ce que les assertions d'un test
+    ne disent pas, le témoin le garde. Sous ``FIGER_DROIT=1``, une demande
+    absente s'y ajoute, et un rendu qui a bougé s'y refait. Sur un autre
+    paquet que celui du dépôt, il n'y a rien à confronter."""
+    from outils_valeurs import empreinte_de_la_valeur
+
     lus, refus = DROIT_DU_PORTAGE(appels, parametres, paquet)
     if paquet is not None:
         return lus, refus
-    sans_jumeau = sorted({fonction for fonction, *_ in appels.values()}
-                         - set(JUMEAUX_DU_DROIT))
-    if sans_jumeau:
-        raise ValueError(f"fonctions du droit sans jumeau Python : {', '.join(sans_jumeau)} "
-                         "(outils_pont.JUMEAUX_DU_DROIT)")
-    simulateur = _simulateur_du_droit(Parametres() if parametres is None else parametres)
-    ecarts = []
-    for cle, (fonction, *arguments) in appels.items():
-        jumeau = functools.partial(JUMEAUX_DU_DROIT[fonction], *(
-            _argument_du_jumeau(simulateur, argument) for argument in arguments))
-        if cle in refus:
-            try:
-                with _prets_au_jumeau(simulateur, arguments):
-                    jumeau()
-            except Exception:
-                continue
-            ecarts.append(f"{cle} : le portage le refuse ({refus[cle]}), le jumeau Python le rend")
-            continue
-        with _prets_au_jumeau(simulateur, arguments):
-            refait = pont.relu_du_droit(fonction, jumeau())
-        ecarts += ecarts_d_ecriture(refait, lus[cle], (cle,), tolerance=TOLERANCE_DU_MOTEUR_PYTHON)
-    if ecarts:
-        raise AssertionError("le jumeau Python ne refait pas ce que le portage rend "
-                             f"({len(ecarts)} écart(s)) : " + " ; ".join(ecarts[:5]))
-    return lus, refus
+    empreinte = empreinte_de_la_demande(appels, parametres)
+    rendu = empreinte_de_la_valeur({"lus": lus, "refus": refus})
+    fige = droit_fige().get(empreinte)
+    if fige is not None and fige["rendu"] == rendu:
+        return lus, refus
+    fonctions = sorted({fonction for fonction, *_ in appels.values()})
+    if os.environ.get("FIGER_DROIT") == "1":
+        _figer_le_droit(empreinte, {"fonctions": fonctions, "rendu": rendu})
+        return lus, refus
+    if fige is None:
+        raise AssertionError(
+            f"demande au droit absente du témoin ({', '.join(fonctions)[:200]}) : l'y "
+            "ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>")
+    raise AssertionError(
+        f"le portage ne rend plus ce que le témoin du droit porte ({', '.join(fonctions)[:200]}) ;"
+        " si le déplacement est voulu, le témoin se refait par python "
+        "scripts/construire_temoins.py --droit")
+
+
+def fichiers_qui_appellent_le_droit() -> list[str]:
+    """Les fichiers de tests qui appellent :func:`droit_et_fige`, nommés sous
+    ``tests/`` : ceux que ``construire_temoins.py --droit`` relance."""
+    racine = Path(__file__).resolve().parent
+    return sorted(chemin.name for chemin in racine.glob("test_*.py")
+                  if chemin.name != "test_droit_fige.py"
+                  and "droit_et_fige" in chemin.read_text(encoding="utf-8"))
 
 
 @functools.cache

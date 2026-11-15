@@ -37,7 +37,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 import entrees_du_moteur  # noqa: E402
 import mortalite_population as M  # noqa: E402
-from outils_pont import droit_et_refait  # noqa: E402
+from outils_pont import droit_et_fige  # noqa: E402
 from outils_valeurs import valeur_figee  # noqa: E402
 from retraite_notionnelle import pont  # noqa: E402
 from retraite_notionnelle.castypes import (GRILLE_DU_COUT, carriere_de_la_grille,  # noqa: E402
@@ -410,7 +410,7 @@ def test_le_pont_rend_le_niveau_de_salaire_d_une_carriere():
     for code in ("smic_carriere_complete", "cadre"):
         appels[code] = ("conversion.niveau_relatif", pont.SIMULATEUR,
                         _baties(simulateur, code, (1975,))[1975])
-    lus, refus = droit_et_refait(appels, simulateur.parametres)
+    lus, refus = droit_et_fige(appels, simulateur.parametres)
     assert refus == {}
     assert lus["double"] == pytest.approx(2.0, rel=1e-12)
     assert 0.0 < lus["smic_carriere_complete"] < 1.0 < lus["cadre"]

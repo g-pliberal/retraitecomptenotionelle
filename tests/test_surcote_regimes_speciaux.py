@@ -21,7 +21,7 @@ Le modèle servait 0,75 % à tout trimestre de la SNCF de 2009 à 2017, 1,25 %
 à ceux de 2008 des cinq autres, et aucune limite. Chaque cas est posé à la
 main depuis ces textes : le nombre de trimestres de surcote à 0,75 % et à
 1,25 %, d'où le coefficient que la pension doit porter ; le portage le
-calcule, et son jumeau Python le refait au bit près (``droit_et_refait``).
+calcule, et le témoin du droit garde ce qu'il rend (``droit_et_fige``).
 """
 
 from __future__ import annotations
@@ -78,7 +78,7 @@ def taux() -> dict[str, float]:
     n'en rend que le détail, qui l'écrit au millième."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne se fait pas tourner ici")
-    from outils_pont import droit_et_refait
+    from outils_pont import droit_et_fige
 
     appels = {
         cle: ("scenario_actuel.calculer", pont.MOTEUR, pont.CarriereSimple({
@@ -87,7 +87,7 @@ def taux() -> dict[str, float]:
             "age_liquidation": depart, "niveau_salaire": 1.0}))
         for cle, (statut, _, annee, mois, debut, depart, _, _) in CAS.items()
     }
-    lus, refus = droit_et_refait(appels)
+    lus, refus = droit_et_fige(appels)
     assert refus == {}
     resultat = {}
     for cle, (_, regime, *_) in CAS.items():

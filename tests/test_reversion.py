@@ -1174,16 +1174,16 @@ def test_la_fiche_reverse_la_majoration_sans_le_coefficient():
 
 @pytest.mark.parametrize("cle", MAJORATION_REVERSEE)
 def test_la_majoration_reversee_depuis_2019_ne_garde_pas_le_coefficient(saisies, cle):
-    """La réversion que l'échéancier liquide au décès, dans les deux moteurs
-    (``droit_et_refait``) : la retraite du défunt, que les 60 % lisent, garde son
+    """La réversion que l'échéancier liquide au décès, rendue par le portage
+    et confrontée au témoin du droit (``droit_et_fige``) : la retraite du défunt, que les 60 % lisent, garde son
     coefficient (fiche ``reversion_agirc_arrco``, déclaré) ; la majoration
     reversée ne le garde pas, sous le plafond qui bornait celle du défunt."""
-    from outils_pont import droit_et_refait
+    from outils_pont import droit_et_fige
     from retraite_notionnelle import pont
 
     champs, points, coefficient, attendue, arrco = MAJORATION_REVERSEE[cle]
     parametres, carriere = saisies.lire({**CADRE_AUX_TROIS_ENFANTS, **champs})
-    lus, refus = droit_et_refait(
+    lus, refus = droit_et_fige(
         {"reversion": ("echeancier.parcourir.reversion", pont.SIMULATEUR, carriere)},
         parametres)
     assert refus == {}, refus

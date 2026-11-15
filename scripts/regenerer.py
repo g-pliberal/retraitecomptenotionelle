@@ -85,7 +85,7 @@ ACCUEIL = Etape("accueil", "mesures_accueil.py", (), ("--verifier",),
 TEMOINS = Etape("témoins", "construire_temoins.py", (), ("--verifier",),
                 "tests/temoins/simulations.json, tests/temoins/pages.json, "
                 "tests/temoins/servis.json, tests/temoins/sorties.json, "
-                "tests/temoins/valeurs.json")
+                "tests/temoins/valeurs.json, tests/temoins/droit.json")
 #: Les neuf pages du site, toutes faites (action 174) : le gabarit
 #: ``moteur/page.html`` autour du rendu de chacune pour ses réglages par défaut,
 #: et le plan du site. Elles lisent le paquet et les mesures de l'accueil, comme

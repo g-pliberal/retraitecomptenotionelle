@@ -28,9 +28,13 @@ site calcule et ce qu'il écrit :
 * ``tests/temoins/valeurs.json`` — l'empreinte de ce que le portage rend à une
   fonction Python dans les confrontations du pont (``outils_valeurs.valeur_figee``),
   refaite en relançant, sous ``FIGER_VALEURS=1``, chaque fichier de tests qui
-  en fige une (action 161, étape 8d).
+  en fige une (action 161, étape 8d) ;
+* ``tests/temoins/droit.json`` — l'empreinte de ce que le portage rend de
+  chaque demande que les tests font au droit (``outils_pont.droit_et_fige``),
+  refaite en relançant, sous ``FIGER_DROIT=1``, chaque fichier de tests qui
+  en fait une (action 161, étape 8e).
 
-Les cinq fichiers sont versionnés : une différence de chiffre entre les deux
+Ces fichiers sont versionnés : une différence de chiffre entre les deux
 implémentations fait échouer la confrontation du moteur Python, et une
 modification voulue du modèle, ou du texte du site, apparaît en diff dans le
 dépôt, chiffre par chiffre et mot par mot. C'est ce qui rend le portage
@@ -41,6 +45,7 @@ vérifiable plutôt que crédible.
     python scripts/construire_temoins.py --servis   # le témoin des servis seul
     python scripts/construire_temoins.py --sorties  # le témoin des sorties seul
     python scripts/construire_temoins.py --valeurs  # le témoin des valeurs seul
+    python scripts/construire_temoins.py --droit    # le témoin du droit seul
 """
 
 from __future__ import annotations
@@ -77,6 +82,9 @@ SORTIES = DOSSIER / "sorties.json"
 #: Le témoin des valeurs (``tests/outils_valeurs.py``) : l'empreinte de ce que
 #: le portage rend à une fonction Python, sous le nom que le test lui donne.
 VALEURS = DOSSIER / "valeurs.json"
+#: Le témoin du droit (``tests/outils_pont.py``) : l'empreinte de ce que le
+#: portage rend de chaque demande au droit, sous l'empreinte de la demande.
+DROIT = DOSSIER / "droit.json"
 
 #: Réglages du cas de base. Chaque cas ci-dessous en dérive.
 BASE = {
@@ -2842,11 +2850,32 @@ def valeurs(lancer=subprocess.run) -> dict[str, dict]:
         return json.loads(temoin.read_text(encoding="utf-8"))
 
 
+def droit(lancer=subprocess.run) -> dict[str, dict]:
+    """Le témoin du droit refait à neuf : chaque fichier de tests qui appelle
+    le droit (``outils_pont.fichiers_qui_appellent_le_droit``), relancé sous
+    ``FIGER_DROIT=1`` sur un témoin vide, à part (action 161, étape 8e). Un
+    test qui échoue avant de figer laisse sa demande absente : la suite le
+    dit."""
+    sys.path.insert(0, str(RACINE / "tests"))
+    from outils_pont import fichiers_qui_appellent_le_droit
+
+    with tempfile.TemporaryDirectory() as dossier:
+        temoin = Path(dossier) / "droit.json"
+        temoin.write_text("{}\n", encoding="utf-8")
+        lancer([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider",
+                *(f"tests/{fichier}" for fichier in fichiers_qui_appellent_le_droit())],
+               cwd=RACINE, check=False, capture_output=True,
+               env={**os.environ, "FIGER_DROIT": "1", "TEMOIN_DU_DROIT": str(temoin)})
+        return json.loads(temoin.read_text(encoding="utf-8"))
+
+
 def construire(seulement_les_servis: bool = False,
                seulement_les_sorties: bool = False,
-               seulement_les_valeurs: bool = False) -> dict[Path, bytes]:
+               seulement_les_valeurs: bool = False,
+               seulement_le_droit: bool = False) -> dict[Path, bytes]:
     fichiers = {}
-    seul = seulement_les_servis or seulement_les_sorties or seulement_les_valeurs
+    seul = (seulement_les_servis or seulement_les_sorties or seulement_les_valeurs
+            or seulement_le_droit)
     if seulement_les_servis or not seul:
         figes = json.loads(SERVIS.read_text(encoding="utf-8")) if SERVIS.exists() else {}
         fichiers[SERVIS] = servis(figes)
@@ -2855,6 +2884,8 @@ def construire(seulement_les_servis: bool = False,
         fichiers[SORTIES] = sorties(figes)
     if seulement_les_valeurs or not seul:
         fichiers[VALEURS] = valeurs()
+    if seulement_le_droit or not seul:
+        fichiers[DROIT] = droit()
     if not seul:
         fichiers |= {SIMULATIONS: _simulations(), PAGES: _pages()}
     return {
@@ -2882,11 +2913,16 @@ def main(argv: list[str] | None = None) -> int:
         "--valeurs", action="store_true",
         help="ne refaire que le témoin des valeurs, en relançant les tests qui en figent",
     )
+    analyseur.add_argument(
+        "--droit", action="store_true",
+        help="ne refaire que le témoin du droit, en relançant les tests qui l'appellent",
+    )
     arguments = analyseur.parse_args(argv)
 
     attendus = construire(seulement_les_servis=arguments.servis,
                           seulement_les_sorties=arguments.sorties,
-                          seulement_les_valeurs=arguments.valeurs)
+                          seulement_les_valeurs=arguments.valeurs,
+                          seulement_le_droit=arguments.droit)
 
     if arguments.verifier:
         for chemin, contenu in attendus.items():

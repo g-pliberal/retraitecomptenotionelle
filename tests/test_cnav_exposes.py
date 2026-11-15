@@ -214,7 +214,7 @@ DUREE_REQUISE_SELON_LA_DATE_D_EFFET = (
 
 
 def test_la_duree_requise_des_nes_avant_1943_est_de_160_trimestres_depuis_2003():
-    from outils_pont import droit_et_refait
+    from outils_pont import droit_et_fige
 
     from retraite_notionnelle import pont
     from retraite_notionnelle.carriere import AnneeCarriere, Carriere
@@ -232,7 +232,7 @@ def test_la_duree_requise_des_nes_avant_1943_est_de_160_trimestres_depuis_2003()
         appels[cle] = ("ouvrir.duree_requise", pont.MOTEUR,
                        pont.Periode("regime_general", effet), carriere)
         attendus[cle] = trimestres
-    lus, refus = droit_et_refait(appels)
+    lus, refus = droit_et_fige(appels)
     assert refus == {}, refus
     assert {cle: lu[0] for cle, lu in lus.items()} == attendus
 

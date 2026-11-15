@@ -24,12 +24,10 @@ mégaoctets de numpy, pandas et numba.
 **Le moteur confronté est le portage**, celui qui fait foi (note de décision
 0005) : chaque mesure des cinq familles et des régimes alignés le fait
 calculer, une fonction du droit après l'autre (``pont.droit``), sur la
-carrière que le test bâtit. Tant que le moteur Python garde ses jumeaux
-(action 161), il refait chaque appel au bit près
-(``outils_pont.droit_et_refait``).
+carrière que le test bâtit ; le témoin du droit garde ce qu'il rend de chaque
+demande (``outils_pont.droit_et_fige``, action 161, étape 8e).
 Les exemples officiels, plus bas, y passent de même, chacune de leurs
-grandeurs : aucun simulateur Python n'y calcule, sinon celui qui refait chaque
-appel.
+grandeurs : aucun simulateur Python n'y calcule.
 
 Cinq familles de régimes sont confrontées, et c'est tout ce qu'OpenFisca
 expose : le régime général, la pension civile (État et CNRACL), l'Arrco d'avant
@@ -78,7 +76,7 @@ from pathlib import Path
 
 import pytest
 
-from outils_pont import droit_et_refait
+from outils_pont import droit_et_fige
 from retraite_notionnelle import pont
 from retraite_notionnelle.calendrier import DateMois
 from facade import Carriere
@@ -145,15 +143,15 @@ def _profils(temoin: dict) -> dict[str, dict]:
     return {code: entree["profil"] for code, entree in temoin["profils"].items()}
 
 
-def _nos_calculs(profils: dict[str, dict], droit=droit_et_refait) -> dict[str, dict[str, float]]:
+def _nos_calculs(profils: dict[str, dict], droit=droit_et_fige) -> dict[str, dict[str, float]]:
     """Le régime général du scénario 1, sur la carrière exacte de chaque
     profil, sous son code.
 
     Le portage le calcule, le moteur qui fait foi (note de décision 0005), une
     fonction du droit après l'autre (:func:`pont.droit`), en deux demandes : la
     seconde lit dans la première la durée requise, la durée validée et l'âge
-    d'annulation de la décote. Par défaut, ``droit_et_refait`` y fait refaire
-    chaque appel au jumeau Python, au bit près, tant qu'il reste (action 161).
+    d'annulation de la décote. Par défaut, ``droit_et_fige`` confronte ce qu'il
+    en rend au témoin du droit (action 161, étape 8e).
     Les trimestres de décote se relisent sous le type que le pont déclare, un
     flottant, que le jumeau rend entier (``pont.relu_du_droit``, décision du
     propriétaire du 31 octobre 2026).
@@ -367,14 +365,13 @@ def _carriere_de_la_fonction_publique(profil: dict) -> Carriere:
     )
 
 
-def _nos_calculs_fonction_publique(profils: dict[str, dict], droit=droit_et_refait,
+def _nos_calculs_fonction_publique(profils: dict[str, dict], droit=droit_et_fige,
                                    ) -> dict[str, dict[str, float]]:
     """La pension civile du scénario 1, sur la carrière exacte de chaque
     profil, sous son code : le portage la calcule, une fonction du droit après
     l'autre, en deux demandes comme le régime général (:func:`_nos_calculs`),
     la seconde lisant aussi le minimum garanti de la durée validée. Par
-    défaut, le jumeau Python refait chaque appel au bit près
-    (``droit_et_refait``)."""
+    défaut, le témoin du droit garde ce qu'il en rend (``droit_et_fige``)."""
     carrieres = {code: _carriere_de_la_fonction_publique(profil)
                  for code, profil in profils.items()}
     periodes = {code: pont.Periode(profil["regime"], profil["liquidation"])
@@ -665,7 +662,7 @@ def _points_servis(resultat: dict, du_regime) -> tuple[float, float]:
     return points, coefficient
 
 
-def _nos_points_arrco(profils: dict[str, dict], droit=droit_et_refait,
+def _nos_points_arrco(profils: dict[str, dict], droit=droit_et_fige,
                       ) -> dict[str, dict[str, float]]:
     """L'Arrco du scénario 1, sur la carrière exacte de chaque profil, sous
     son code : points acquis, valeur servie, abattement.
@@ -674,7 +671,7 @@ def _nos_points_arrco(profils: dict[str, dict], droit=droit_et_refait,
     pension (:func:`_points_servis`). La tranche 2 des non-cadres a sa propre
     ligne, et OpenFisca additionne les deux. Le portage calcule la pension et
     la valeur du point au jour du départ (:func:`pont.droit`) ; par défaut, le
-    jumeau Python refait chaque appel au bit près (``droit_et_refait``).
+    témoin du droit garde ce qu'il en rend (``droit_et_fige``).
     """
     appels = {}
     for code, profil in profils.items():
@@ -827,14 +824,13 @@ def _annees_du_temoin(temoin: dict) -> range:
                  max(e["profil"]["liquidation"] for e in profils) + 1)
 
 
-def _bareme(code: str, annees, droit=droit_et_refait) -> dict:
+def _bareme(code: str, annees, droit=droit_et_fige) -> dict:
     """Le barème d'un régime, que le portage lit, sur les ``annees`` que
     traversent les profils : ses périodes — leurs années, leur assiette, leur
     taux de cotisation et la part du salarié —, les bornes de chaque assiette
     en plafonds, le plafond de la Sécurité sociale de chaque année, le prix
     d'achat du point et le taux d'appel de chaque année (:func:`pont.droit`).
-    Par défaut, le jumeau Python refait chaque lecture au bit près
-    (``droit_et_refait``)."""
+    Par défaut, le témoin du droit garde ce qu'il en rend (``droit_et_fige``)."""
     annees = list(annees)
     lus, refus = droit({
         "periodes": ("scenario_actuel.catalogue.periodes", pont.MOTEUR, code),
@@ -912,14 +908,14 @@ def _carriere_a_points(profil: dict, affiliation: str) -> Carriere:
 
 
 def _nos_points(profils: dict[str, dict], regime: str, affiliation: str,
-                droit=droit_et_refait) -> dict[str, dict[str, float]]:
+                droit=droit_et_fige) -> dict[str, dict[str, float]]:
     """Points acquis et coefficient d'anticipation de chaque profil, sous son
     code, lus dans la formule servie (:func:`_points_servis`).
 
     Comme pour l'Arrco : la formule que le modèle écrit sous chaque pension est
     celle qu'on doit pouvoir refaire à la main, et c'est donc elle qu'on
     oppose à l'oracle. Le portage calcule la pension (:func:`pont.droit`) ;
-    par défaut, le jumeau Python la refait au bit près (``droit_et_refait``).
+    par défaut, le témoin du droit la garde (``droit_et_fige``).
     """
     lus, refus = droit({code: ("scenario_actuel.calculer", pont.MOTEUR,
                                _carriere_a_points(profil, affiliation))
@@ -932,12 +928,12 @@ def _nos_points(profils: dict[str, dict], regime: str, affiliation: str,
     return mesures
 
 
-def _services_au_depart(profils: dict[str, dict], regime: str, droit=droit_et_refait,
+def _services_au_depart(profils: dict[str, dict], regime: str, droit=droit_et_fige,
                         ) -> dict[str, tuple | None]:
     """La valeur de service du point de ``regime`` au jour du départ de chaque
     profil, le 1er janvier de sa liquidation, sous son code, que le portage
-    lit (:func:`pont.droit`) ; par défaut, le jumeau Python la refait au bit
-    près (``droit_et_refait``)."""
+    lit (:func:`pont.droit`) ; par défaut, le témoin du droit la garde
+    (``droit_et_fige``)."""
     lus, refus = droit({code: ("liquider.valeur_du_point", pont.MOTEUR, regime,
                                DateMois(profil["liquidation"], 1))
                         for code, profil in profils.items()})
@@ -1259,22 +1255,22 @@ def _millesimes_ircantec(temoin: dict) -> dict[str, int]:
             for code, entree in temoin["profils"].items()}
 
 
-def _services_du_millesime(regime: str, millesimes: dict[str, int], droit=droit_et_refait,
+def _services_du_millesime(regime: str, millesimes: dict[str, int], droit=droit_et_fige,
                            ) -> dict[str, tuple | None]:
     """La valeur de service du point de ``regime`` à chaque millésime, sous le
     code du profil, que le portage lit (:func:`pont.droit`) ; par défaut, le
-    jumeau Python la refait au bit près (``droit_et_refait``)."""
+    témoin du droit la garde (``droit_et_fige``)."""
     lus, refus = droit({code: ("scenario_actuel.valeurs_point.service", pont.MOTEUR, regime,
                                millesime) for code, millesime in millesimes.items()})
     assert refus == {}, refus
     return lus
 
 
-def _ages_du_taux_plein(generations: dict[str, int], droit=droit_et_refait,
+def _ages_du_taux_plein(generations: dict[str, int], droit=droit_et_fige,
                         ) -> dict[str, tuple | None]:
     """L'âge d'annulation de la décote de chaque génération, sous le code du
-    profil, que le portage lit (:func:`pont.droit`) ; par défaut, le jumeau
-    Python le refait au bit près (``droit_et_refait``)."""
+    profil, que le portage lit (:func:`pont.droit`) ; par défaut, le témoin
+    du droit le garde (``droit_et_fige``)."""
     lus, refus = droit({code: ("scenario_actuel.ages_annulation_decote.age", pont.MOTEUR,
                                generation) for code, generation in generations.items()})
     assert refus == {}, refus
@@ -1644,15 +1640,15 @@ VARIANTES_DES_INDEPENDANTS = {
 }
 
 
-def _nos_pensions_alignees(profils: dict[str, dict], droit=droit_et_refait) -> dict:
+def _nos_pensions_alignees(profils: dict[str, dict], droit=droit_et_fige) -> dict:
     """Ce que les tests des régimes alignés mesurent du scénario 1 sur la
     carrière exacte de chaque profil, sous ``(statut, variante)``, puis son
     code : la pension de base de chaque statut aligné (:func:`_pension_alignee`)
     telle que la caisse la liquide (``"droit"``), et, pour l'artisan et le
     commerçant, sous chacune des :data:`VARIANTES_DES_INDEPENDANTS` ; sous
     ``"regimes"``, ce que sert chaque régime à leur carrière sans identifiant.
-    Le portage la calcule (:func:`pont.droit`) ; par défaut, le jumeau Python
-    la refait au bit près (``droit_et_refait``)."""
+    Le portage la calcule (:func:`pont.droit`) ; par défaut, le témoin du droit
+    la garde (``droit_et_fige``)."""
     appels = {}
     for affiliation in AFFILIATIONS_ALIGNEES:
         variantes = (VARIANTES_DES_INDEPENDANTS if affiliation in INDEPENDANTS
@@ -1899,7 +1895,7 @@ def _rendu(droit, *appel, parametres=None):
 
 
 def _carriere_exemple(exemple: dict, decalage_mois: int = 0, sans_enfants: bool = False,
-                      droit=droit_et_refait):
+                      droit=droit_et_fige):
     """La carrière que l'exemple décrit, liquidée au mois voulu.
 
     Une seule affiliation, un salaire constant ou un profil, et — quand
@@ -1915,8 +1911,8 @@ def _carriere_exemple(exemple: dict, decalage_mois: int = 0, sans_enfants: bool 
 
     Le portage, qui fait foi, dit le mois d'où les âges se comptent, bâtit la
     carrière (``simulateur.carriere_simple``) et la liquide
-    (``scenario_actuel.calculer``), par le pont : par défaut, le jumeau Python
-    refait chaque appel au bit près (``droit_et_refait``). La carrière revient
+    (``scenario_actuel.calculer``), par le pont : par défaut, le témoin du droit
+    garde ce qu'il en rend (``droit_et_fige``). La carrière revient
     en Python (``pont.carriere_des_donnees``), où des grandeurs la lisent
     encore ; le résultat est celui du pont (``pont.actuel_des_donnees``).
     """
@@ -2047,12 +2043,12 @@ def _carriere_exemple(exemple: dict, decalage_mois: int = 0, sans_enfants: bool 
     raise AssertionError(f"{exemple['id']} : aucune carrière ne donne {cible} trimestres")
 
 
-def _mesurer(exemple: dict, carriere, resultat, cle: str, droit=droit_et_refait):
+def _mesurer(exemple: dict, carriere, resultat, cle: str, droit=droit_et_fige):
     """Ce que le scénario 1 rend pour une grandeur du témoin, écrit comme le
     témoin l'écrit : c'est ce qui se compare à la valeur publiée, et, pour un
     écart connu, à la valeur que le modèle rendait quand on l'a déclaré. Les
-    grandeurs passées au pont s'y mesurent (``droit``) ; par défaut, le jumeau
-    Python refait chaque appel au bit près (``droit_et_refait``)."""
+    grandeurs passées au pont s'y mesurent (``droit``) ; par défaut, le témoin
+    du droit garde ce qu'il en rend (``droit_et_fige``)."""
     if cle in ("trimestres_requis", "trimestres_valides", "taux_liquidation",
                "motif_ouverture", "liquidation_ouverte"):
         return resultat[cle]
@@ -2458,7 +2454,7 @@ def _mesurer(exemple: dict, carriere, resultat, cle: str, droit=droit_et_refait)
     raise AssertionError(f"grandeur inconnue dans le témoin : {cle}")
 
 
-def _cumul_exemple(exemple: dict, carriere, droit=droit_et_refait):
+def _cumul_exemple(exemple: dict, carriere, droit=droit_et_fige):
     """Le cumul emploi-retraite de l'exemple, au portage, par le pont. Quand il
     donne la pension et le revenu, non la carrière, le test prête à chaque
     régime nommé sa pension, et à chaque année son revenu brut ; sinon,

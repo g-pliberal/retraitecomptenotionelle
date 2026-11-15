@@ -270,8 +270,8 @@ def test_avant_avril_2009_le_minimum_majore_du_v_ne_demande_pas_120_trimestres()
     « nés avant 1944 ») ; le minimum majoré, « 7 603,41 euros par an au 1er
     janvier 2008 » (D. 351-2-1, LEGIARTI000017870194). La fraction d'avant 1998
     vaut 7 603,41 × 40 / 150 = 2 027,58 €, et non 6 958,21 × 40 / 150 =
-    1 855,52 €, le minimum seul. Dans les deux moteurs (``droit_et_refait``)."""
-    from outils_pont import droit_et_refait
+    1 855,52 €, le minimum seul. Par le portage (``droit_et_fige``)."""
+    from outils_pont import droit_et_fige
 
     from retraite_notionnelle import pont
 
@@ -279,7 +279,7 @@ def test_avant_avril_2009_le_minimum_majore_du_v_ne_demande_pas_120_trimestres()
         annee_naissance=1943, sexe="H", affiliation="ministre_du_culte",
         mois_naissance=1, jour_naissance=15, age_debut=45, age_liquidation=65,
         niveau_salaire=1.0, profil_carriere="plat")
-    lus, refus = droit_et_refait(
+    lus, refus = droit_et_fige(
         {"1943": ("scenario_actuel.calculer", pont.MOTEUR, carriere)})
     assert refus == {}, refus
     detail = next(p["detail"] for p in lus["1943"]["pensions_par_regime"]

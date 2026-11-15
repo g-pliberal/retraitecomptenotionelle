@@ -805,15 +805,15 @@ COTISATIONS_DE_LA_CIPAV = [
 def test_la_cipav_cotise_aux_deux_tranches_du_decret_dans_les_deux_moteurs(
         simulateur, annee, revenu, attendue):
     """La fiche de paie du libéral de la Cipav (``profession_liberale``), que
-    le portage sert et que le moteur Python refait (``droit_et_refait``), et
+    le portage sert et que le témoin du droit garde (``droit_et_fige``), et
     la cotisation que le scénario 1 inscrit l'année du revenu (``acquerir``),
     ramenée en euros de cette année : celle du texte, au centime."""
-    from outils_pont import droit_et_refait
+    from outils_pont import droit_et_fige
 
     from retraite_notionnelle import pont
     from retraite_notionnelle.carriere import AnneeCarriere
 
-    lus, refus = droit_et_refait({"fiche": (
+    lus, refus = droit_et_fige({"fiche": (
         "remuneration.fiche_depuis_brut.lignes_de_retraite", pont.SIMULATEUR,
         "profession_liberale", annee, revenu)})
     assert refus == {}, refus

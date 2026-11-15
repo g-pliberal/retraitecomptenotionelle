@@ -1221,14 +1221,14 @@ def test_la_dispense_de_la_carmf_retire_2_270_euros_a_la_medecin_de_26_ans(
 def _versees_au_compte(naissance: str, debut: str, annee: int,
                        requete: dict = REQUETE_DE_MEDECIN) -> dict:
     """Les cotisations de l'année que le compte notionnel reçoit, régime par
-    régime, rendues par le portage et confrontées au témoin des servis
-    (``droit_et_refait``)."""
-    from outils_pont import Saisies, droit_et_refait
+    régime, rendues par le portage et confrontées au témoin du droit
+    (``droit_et_fige``)."""
+    from outils_pont import Saisies, droit_et_fige
     from retraite_notionnelle import pont
 
     requete = {**requete, "naissance": naissance, "debut": debut}
     saisies = Saisies()
-    lus, refus = droit_et_refait(
+    lus, refus = droit_et_fige(
         {"versees": ("compte.cotisation_annuelle.par_regime", pont.SIMULATEUR,
                      saisies.carriere(requete), annee)},
         saisies.simulateur(requete).parametres)
