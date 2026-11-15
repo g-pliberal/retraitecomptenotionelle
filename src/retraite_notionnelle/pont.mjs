@@ -2034,7 +2034,8 @@ const MODULES_DU_DROIT = {
       moteur, carriere, eligible, pension, ressources,
       { quand, regle, tauxPleinRequis, surcoteComprise }),
   },
-  cultes, foyer: foyerEtape, invalidite, liquider, ouvrir, releve, reversion, revalorisation,
+  cultes, departs, foyer: foyerEtape, invalidite, liquider, ouvrir, releve, reversion,
+  revalorisation,
 };
 
 /**
@@ -2092,6 +2093,30 @@ ENTREES_DE_LA_FACADE["liquidation.liquider"] = (moteur, demande, carriere, neutr
     total_contributif: liquidee.totalContributif, mesures: telQuel(liquidee.mesures),
     avantages: telQuel(liquidee.avantages), lignes: telQuel(liquidee.releve.lignes()),
     donnees: telQuel(liquidee.donnees()), appels: appels() - avant,
+  };
+};
+
+// La majoration exceptionnelle des petites pensions, par la façade : un bloc à
+// part (action 161).
+
+/**
+ * La majoration exceptionnelle des petites pensions (`majorer_les_petites_pensions`
+ * du Python), sur des pensions que le test a datées — `[pension, année de
+ * liquidation, date d'effet AAAA-MM-JJ, montant]` —, ses régimes servis, ses
+ * petites pensions et la règle de chaque régime du simulateur
+ * (`PensionServie`) : les régimes, chacun avec sa majoration, et le calcul de
+ * la caisse, sans ce que le Python dérive (`a_l_echeance`, `aujourd_hui`).
+ */
+ENTREES_DE_LA_FACADE["revalorisation.majorer_les_petites_pensions"] = (simulateur,
+  petites, datees, regimes, aLEffet, mensuel2019, fin) => {
+  const servis = regimes.map((regime) => ({ ...regime }));
+  const majorations = revalorisation.majorerLesPetitesPensions(
+    simulateur.scenarioActuel, { petites_pensions: petites, avantages_appliques: [] }, datees,
+    servis, new revalorisation.PensionServie(simulateur), new Map(aLEffet), mensuel2019, fin);
+  return {
+    regimes: servis.map(({ aujourd_hui: _derive, ...regime }) => telQuel(regime)),
+    majorations: majorations.map(({ a_l_echeance: _derive, ...majoration }) => telQuel(
+      majoration)),
   };
 };
 

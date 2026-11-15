@@ -11,6 +11,10 @@ servies les pensions des précédents : le minimum contributif s'écrête sur
 elles (R. 173-7). Le résultat est dans les euros du départ déclaré, chaque
 pension gardant sa date et son montant à cette date, que « faire vivre »
 reprend.
+
+Le fichier passe par la façade (action 161) : les départs, la liquidation et
+« faire vivre » y sont servis par le portage, et l'échéancier se lit dans le
+journal de la simulation.
 """
 
 from __future__ import annotations
@@ -20,13 +24,13 @@ from urllib.parse import parse_qsl
 import pytest
 
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import Carriere, Metier
+from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.donnees.mortalite import AGE_TERMINAL
-from retraite_notionnelle.droit import departs, liquidation
-from retraite_notionnelle.revalorisation import faire_vivre
-from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import ErreurSite
 
+import facade
+from facade import Carriere, Simulateur, departs, faire_vivre, liquidation
+from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 from outils_pont import RefusDuPortage, Saisies, refus_de_la_saisie, saisie_du_portage
 
 #: L'âge le plus tardif que la saisie date : un an sous l'âge terminal des
@@ -34,9 +38,9 @@ from outils_pont import RefusDuPortage, Saisies, refus_de_la_saisie, saisie_du_p
 AGE_LIQUIDATION_MAXIMAL = int(AGE_TERMINAL) - 1
 
 
-@pytest.fixture(scope="module")
-def simulateur() -> Simulateur:
-    return Simulateur()
+@pytest.fixture
+def simulateur(request) -> Simulateur:
+    return facade.simulateur_du_test(request)
 
 
 def _carriere(simulateur: Simulateur, metiers: list[Metier], naissance: int = 1962,
@@ -142,6 +146,7 @@ def test_l_agent_de_categorie_active_parti_trop_tot_n_a_qu_un_depart(simulateur)
 
 # -- chaque départ liquidé -------------------------------------------------------
 
+@pytest.mark.sur_le_moteur_python("departs.liquider_les_departs, que la façade ne sert pas")
 def test_chaque_depart_ne_liquide_que_ses_regimes_sur_la_carriere_a_sa_date(simulateur):
     moteur = simulateur.scenario_actuel
     carriere = _aide_soignante(simulateur)
@@ -155,6 +160,7 @@ def test_chaque_depart_ne_liquide_que_ses_regimes_sur_la_carriere_a_sa_date(simu
         assert liquidee.ouverture.ouverte
 
 
+@pytest.mark.sur_le_moteur_python("une liquidation qui voit des pensions déjà servies, que la façade ne transmet pas")
 def test_le_minimum_contributif_s_ecrete_sur_les_pensions_deja_servies(simulateur):
     """R. 173-7 : le plafond d'écrêtement compte les pensions du mois de la
     date d'effet, celles que les départs précédents servent comprises."""
@@ -249,7 +255,7 @@ def test_l_echeancier_inscrit_un_depart_par_date(simulateur):
     """Le départ déclaré est un acte ; les autres dates, la présomption
     ``depart_de_chaque_regime`` les induit."""
     carriere = _aide_soignante(simulateur)
-    journal = simulateur.echeancier(carriere).journal
+    journal = simulateur.simuler(carriere).journal
     evenements = {e.contenu.id: e.contenu for e in journal if e.sorte == "evenement"}
     assert evenements["depart_assure_2022-02-01"].origine == "acte"
     assert evenements["depart_assure_2027-11-01"].origine == "induit"
@@ -302,7 +308,7 @@ def test_une_pension_demandee_plus_tard_se_liquide_a_sa_date(simulateur):
     general = {p.regime: p for p in moteur.calculer(carriere).pensions_par_regime}
     decote = {p.regime: p for p in moteur.calculer(presumee).pensions_par_regime}
     assert general["regime_general"].montant_a_l_effet > 1.4 * decote["regime_general"].montant
-    journal = simulateur.echeancier(carriere).journal
+    journal = simulateur.simuler(carriere).journal
     evenements = {e.contenu.id: e.contenu for e in journal if e.sorte == "evenement"}
     demandee = departs.Depart(carriere.date_de_l_age(67)).date_effet
     assert evenements[f"depart_assure_{demandee}"].origine == "acte"

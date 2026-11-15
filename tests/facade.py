@@ -77,6 +77,7 @@ import typing
 import pytest
 
 from retraite_notionnelle import carriere as _carriere
+from retraite_notionnelle import echeancier as _echeancier
 from retraite_notionnelle import memoire, pont
 from retraite_notionnelle import revalorisation as _revalorisation
 from retraite_notionnelle import simulateur as _simulateur
@@ -90,6 +91,7 @@ from retraite_notionnelle.droit import compter as _compter
 from retraite_notionnelle.droit import coordonner as _coordonner
 from retraite_notionnelle.droit import completer as _completer
 from retraite_notionnelle.droit import cultes as _cultes
+from retraite_notionnelle.droit import departs as _departs
 from retraite_notionnelle.droit import foyer as _foyer
 from retraite_notionnelle.droit import invalidite as _invalidite
 from retraite_notionnelle.droit import liquidation as _liquidation
@@ -115,7 +117,8 @@ ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversio
            "liquidation.demande_de_depart", "coordonner.coordonner", "compter.compter",
            "acquerir.acquerir", "compter.cumul_plafonne", "compter.des_regimes",
            "droit.etapes", "compter.trimestres_du_contrat", "compter.jours_par_annee",
-           "revalorisation.faire_vivre", "commun.periode_de_liquidation")
+           "revalorisation.faire_vivre", "commun.periode_de_liquidation",
+           "revalorisation.majorer_les_petites_pensions")
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
@@ -337,6 +340,49 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None):
             "calculer(carriere))")
     return _demander("revalorisation.faire_vivre", simulateur.parametres, pont.SIMULATEUR,
                      carriere, annee)
+
+
+class PensionServie(_Ferme):
+    """``revalorisation.PensionServie`` : la règle de chaque régime, d'une date
+    à une autre, celle du simulateur de la façade — une marque, que le
+    portage refait de ce simulateur, sous ses paramètres."""
+
+    def __init__(self, simulateur: Simulateur) -> None:
+        object.__setattr__(self, "_simulateur", simulateur)
+
+
+def majorer_les_petites_pensions(moteur, resultat, datees, regimes, servie, a_l_effet,
+                                 mensuel_2019, fin):
+    """``revalorisation.majorer_les_petites_pensions`` : la majoration
+    exceptionnelle de septembre 2023, servie par le portage, sur le moteur et
+    la règle de chaque régime (:class:`PensionServie`) d'un même simulateur de
+    la façade. Le résultat ne passe que par ses petites pensions : des
+    avantages appliqués n'y arriveraient pas."""
+    entree = "revalorisation.majorer_les_petites_pensions"
+    if (not isinstance(moteur, ScenarioActuel) or not isinstance(servie, PensionServie)
+            or servie._simulateur is not moteur._simulateur):
+        raise NonTransmissible(
+            f"{entree} : le moteur et la règle de chaque régime (facade.PensionServie) "
+            "d'un même simulateur de la façade — un autre n'arriverait pas au portage")
+    if list(getattr(resultat, "avantages_appliques", ())):
+        raise NonTransmissible(f"{entree} : des avantages appliqués, que la façade ne "
+                               "transmet pas au portage")
+    return _demander(
+        entree, moteur._simulateur.parametres, pont.SIMULATEUR,
+        list(getattr(resultat, "petites_pensions", ())),
+        [[pension, annee, debut.isoformat(), montant]
+         for pension, annee, debut, montant in datees],
+        list(regimes), list((a_l_effet or {}).items()), mensuel_2019, fin.isoformat())
+
+
+class Echeancier(_Ferme):
+    """``Echeancier`` : la façade ne le sert pas encore. Un test marqué
+    ``sur_le_moteur_python`` reçoit son jumeau (:data:`JUMEAUX`)."""
+
+    def __init__(self, *arguments, **nommes) -> None:
+        raise NonTransmissible(
+            "Echeancier : la façade ne sert pas l'échéancier — le test reste sur le moteur "
+            "Python, sous la marque sur_le_moteur_python")
 
 
 class Simulateur(_Ferme):
@@ -928,6 +974,16 @@ cultes = Regles("cultes", _cultes)
 #: ``droit.invalidite`` : l'âge de l'ASPA de l'inapte, la catégorie de la
 #: pension d'invalidité et le plancher de la pension substituée.
 invalidite = Regles("invalidite", _invalidite)
+class _Departs(Regles):
+    """``droit.departs`` : ses règles servies, et ``Depart`` et
+    ``DemandeExaminee``, les types du Python, que ses règles rendent et que
+    les tests bâtissent pour les comparer."""
+
+    Depart = _departs.Depart
+    DemandeExaminee = _departs.DemandeExaminee
+
+
+departs = _Departs("departs", _departs)
 #: ``revalorisation``, hors du droit : les majorations forfaitaires de 1972 à
 #: 1982, servies par le portage.
 revalorisation = Regles("revalorisation", _revalorisation)
@@ -1433,8 +1489,11 @@ JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
            "foyer": _foyer, "liquider": _liquider, "ouvrir": _ouvrir, "releve": _releve,
            "regles_de_la_reversion": _reversion, "revalorisation": _revalorisation,
            "liquidation": _liquidation, "coordonner": _coordonner, "compter": _compter,
-           "acquerir": _acquerir, "cultes": _cultes, "invalidite": _invalidite,
+           "acquerir": _acquerir, "cultes": _cultes, "departs": _departs, "invalidite": _invalidite,
            "faire_vivre": _revalorisation.faire_vivre,
+           "PensionServie": _revalorisation.PensionServie,
+           "majorer_les_petites_pensions": _revalorisation.majorer_les_petites_pensions,
+           "Echeancier": _echeancier.Echeancier,
            "ConstructeurCompte": _compte.ConstructeurCompte,
            "prolonger_releve": _carriere.prolonger_releve,
            "salaire_moyen_annuel": _carriere.salaire_moyen_annuel}

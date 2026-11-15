@@ -52,7 +52,7 @@ FICHIERS = (
     "test_cout_age_depart.py", "test_cultes_au_droit.py",
     "test_cultes_smic_du_mois.py", "test_cumul_activites.py", "test_cycle_de_vie_portage.py",
     "test_cycle_de_vie_references.py", "test_cycle_de_vie_script.py",
-    "test_decompte_des_services.py", "test_departs.py", "test_destinie.py",
+    "test_decompte_des_services.py", "test_destinie.py",
     "test_diviseur_exemples_officiels.py", "test_donnees.py",
     "test_droits_contrefactuels.py", "test_duree_lue_a_soixante_ans.py", "test_effet_retour.py",
     "test_emploi_retraite.py", "test_estimation_du_site.py", "test_estimation_officielle.py",
@@ -64,7 +64,7 @@ FICHIERS = (
     "test_indexation_programme.py", "test_ines.py", "test_interpenetration.py",
     "test_ircantec_minoration.py", "test_ircec_auteurs.py",
     "test_lectures_decision_29.py", "test_limite_age.py", "test_liquidation.py",
-    "test_majoration_enfants_agirc_1994_a_1996.py", "test_majoration_exceptionnelle.py",
+    "test_majoration_enfants_agirc_1994_a_1996.py",
     "test_marins.py", "test_mayotte.py", "test_mines.py",
     "test_minima_agricoles.py", "test_minimum_pension_sncf.py", "test_mortalite_population.py",
     "test_moteur.py", "test_oracle.py",
@@ -90,8 +90,9 @@ FICHIERS = (
 #: Les fichiers passés à la façade (``from facade import …``) qui gardent des
 #: tests sur le moteur Python, sous la marque ``sur_le_moteur_python``, et le
 #: nombre de ces tests. Il ne fait que décroître.
-RESTES = {"test_droit.py": 1, "test_invalidite.py": 4, "test_liquidation.py": 10,
+RESTES = {"test_departs.py": 2, "test_droit.py": 1, "test_invalidite.py": 4, "test_liquidation.py": 10,
           "test_majoration_conjoint_a_charge.py": 1, "test_majoration_enfants_a_charge.py": 3,
+          "test_majoration_exceptionnelle.py": 2,
           "test_minima_agricoles.py": 3, "test_oracle.py": 15,
           "test_oracle_periodes_assimilees.py": 1, "test_periodes_assimilees.py": 1,
           "test_periodes_assimilees_exemples_officiels.py": 1, "test_pension_maximale.py": 5,

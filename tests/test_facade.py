@@ -13,6 +13,7 @@ tant qu'il vit, est à part (``tests/test_facade_jumeau.py``).
 from __future__ import annotations
 
 import dataclasses
+import datetime
 import inspect
 import math
 import re
@@ -32,6 +33,7 @@ from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import compter as compter_python
 from retraite_notionnelle.droit import cultes as cultes_python
+from retraite_notionnelle.droit import departs as departs_python
 from retraite_notionnelle.droit import foyer as foyer_python
 from retraite_notionnelle.droit import invalidite as invalidite_python
 from retraite_notionnelle.droit import liquidation as liquidation_python
@@ -49,7 +51,7 @@ from retraite_notionnelle.scenarios.notionnel import ResultatNotionnel
 from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Comparaison
 
 import facade
-from facade import (Carriere, NonTransmissible, Simulateur, commun, completer, foyer,
+from facade import (Carriere, NonTransmissible, Simulateur, commun, completer, departs, foyer,
                     invalidite, liquider, ouvrir, regles_de_la_reversion, reversion)
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
@@ -698,7 +700,7 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     with pytest.raises(ValueError, match="ouvrir.ouvrir"):
         pont.regle_du_droit("ouvrir", "ouvrir", float)
     assert facade.REGLES is pont.REGLES_DE_LA_FACADE
-    assert set(facade.REGLES) == {"carriere", "commun", "completer", "compter", "cultes",
+    assert set(facade.REGLES) == {"carriere", "commun", "completer", "compter", "cultes", "departs",
                                   "foyer", "invalidite", "liquider", "ouvrir", "releve",
                                   "reversion", "revalorisation"}
 
@@ -1367,6 +1369,89 @@ def test_faire_vivre_refuse_un_resultat_que_le_portage_ne_refait_pas(simulateur)
             carriere, avantages_non_contributifs=False), 1997)
     with pytest.raises(NonTransmissible, match="faire_vivre"):
         facade.faire_vivre(Simulateur(), carriere, resultat, 1997)
+
+
+def _liquidation_unique_de_la_circulaire(simulateur, servie):
+    """Circulaire Cnav n° 2023-21, 3.2.5, exemple 3 : liquidation unique au
+    1er août 2023, 170 trimestres dont 146 cotisés, une durée maximum de 167,
+    710,94 € par mois."""
+    pension = PensionRegime("regime_general", 710.94 * 12.0, "annuites", "",
+                            Fiabilite.CERTIFIEE)
+    petite = completer_python.PetitePension(
+        regime="regime_general", taux_plein=True, cotisee=146, validee=170, maximum=167,
+        cotises_tous_regimes=146)
+    servi = revalorisation_python.RegimeServi("regime_general", pension.montant, 1.0,
+                                              "regime_general", Fiabilite.CERTIFIEE)
+    resultat = SimpleNamespace(petites_pensions=(petite,), avantages_appliques=[])
+    return facade.majorer_les_petites_pensions(
+        simulateur.scenario_actuel, resultat, [(pension, 2023, datetime.date(2023, 8, 1),
+                                                pension.montant)],
+        [servi], servie, {}, None, datetime.date(2023, 12, 31))
+
+
+def test_la_majoration_des_petites_pensions_se_demande_au_portage(simulateur):
+    """« 100 x (146/167) = 87,42 euros », sous le plafond de 847,57 € : la
+    majoration exceptionnelle, servie par le portage, revient sous les types
+    du Python, et le régime la porte, en euros de l'échéance."""
+    regimes, majorations = _liquidation_unique_de_la_circulaire(
+        simulateur, facade.PensionServie(simulateur))
+    (majoration,) = majorations
+    assert type(majoration) is revalorisation_python.MajorationExceptionnelle
+    assert (majoration.date, majoration.theorique, majoration.plafond, majoration.retenue,
+            majoration.servie) == ("2023-09-01", 87.42, 847.57, 87.42, 87.42)
+    (regime,) = regimes
+    assert type(regime) is revalorisation_python.RegimeServi
+    assert regime.majoration == pytest.approx(majoration.a_l_echeance, rel=1e-12)
+
+
+def test_la_majoration_des_petites_pensions_refuse_ce_que_le_portage_ne_verrait_pas(
+        simulateur):
+    """La règle de chaque régime se lit sur le simulateur de la façade qui
+    tient le moteur : celle du moteur Python, ou d'un autre simulateur,
+    n'arriverait pas au portage. L'échéancier, la façade ne le sert pas."""
+    with pytest.raises(NonTransmissible, match="majorer_les_petites_pensions"):
+        _liquidation_unique_de_la_circulaire(
+            simulateur, revalorisation_python.PensionServie(simulateur_python.Simulateur()))
+    with pytest.raises(NonTransmissible, match="majorer_les_petites_pensions"):
+        _liquidation_unique_de_la_circulaire(simulateur, facade.PensionServie(Simulateur()))
+    with pytest.raises(NonTransmissible, match="échéancier"):
+        facade.Echeancier(simulateur)
+
+
+def _policier(simulateur, **options):
+    """Un policier né en 1970, parti à cinquante-quatre ans, ses primes au
+    quart de son traitement."""
+    return Carriere.depuis_parcours(
+        annee_naissance=1970, sexe="H", metiers=[Metier("fonctionnaire_etat_super_actif", 22.0)],
+        age_liquidation=54, macro=simulateur.macro, part_primes=0.25, **options)
+
+
+def test_les_departs_se_demandent_au_portage(simulateur):
+    """L'âge légal de qui est né en 1970 est de soixante-quatre ans (L. 161-17-2) ;
+    le policier touche sa pension à cinquante-quatre ans, et sa retraite
+    additionnelle attend l'âge légal (décret n° 2004-569, article 6). Les
+    départs reviennent sous le type du Python, et ses types de données se
+    lisent sur le module."""
+    moteur = simulateur.scenario_actuel
+    carriere = _policier(simulateur)
+    assert departs.age_legal(moteur, carriere) == 64.0
+    legal = carriere.date_de_l_age(64)
+    liste = departs.departs(moteur, carriere)
+    assert liste == (departs.Depart(carriere.date_liquidation, frozenset({"fonction_publique_etat"})),
+                     departs.Depart(legal, frozenset({"rafp"}), departs.MOTIF_OUVERTURE))
+    assert departs.Depart is departs_python.Depart
+    assert departs.demandes(moteur, carriere) == ()
+
+
+def test_les_demandes_de_pension_se_demandent_au_portage(simulateur):
+    """Une pension demandée dans un régime où la carrière n'a rien acquis ne
+    change rien, et la demande le dit."""
+    moteur = simulateur.scenario_actuel
+    carriere = _policier(simulateur, demandes_de_pension={"mines": 60})
+    liste, demandes = departs.departs_et_demandes(moteur, carriere)
+    assert liste == departs.departs(moteur, carriere)
+    assert demandes == (departs.DemandeExaminee("mines", carriere.date_de_l_age(60), None,
+                                                departs.SANS_PENSION),)
 
 
 def test_une_constante_d_un_module_du_droit_se_lit_sur_la_facade():
@@ -2050,7 +2135,7 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
     jumelle = getattr({"carriere": carriere_python, "commun": commun_python,
                        "completer": completer_python,
                        "compter": compter_python,
-                       "cultes": cultes_python, "foyer": foyer_python,
+                       "cultes": cultes_python, "departs": departs_python, "foyer": foyer_python,
                        "invalidite": invalidite_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
                        "releve": releve_python, "reversion": reversion_python,
                        "revalorisation": revalorisation_python}[module], regle)
@@ -2125,5 +2210,6 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "acquerir.acquerir", "compter.cumul_plafonne",
                               "compter.des_regimes", "droit.etapes",
                               "compter.trimestres_du_contrat", "compter.jours_par_annee",
-                              "revalorisation.faire_vivre", "commun.periode_de_liquidation")
+                              "revalorisation.faire_vivre", "commun.periode_de_liquidation",
+                              "revalorisation.majorer_les_petites_pensions")
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)

@@ -32,6 +32,7 @@ from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import compter as compter_python
 from retraite_notionnelle.droit import cultes as cultes_python
+from retraite_notionnelle.droit import departs as departs_python
 from retraite_notionnelle.droit import foyer as foyer_python
 from retraite_notionnelle.droit import invalidite as invalidite_python
 from retraite_notionnelle.droit import liquidation as liquidation_python
@@ -949,7 +950,36 @@ APPELS_DES_REGLES = [
      lambda s: (s.scenario_actuel, _pension("regime_general", False), "1972-02-01")),
     ("revalorisation", "majorations_forfaitaires",
      lambda s: (s.scenario_actuel, _pension("regime_general", True), "1980-02-01")),
+    # Les départs : le policier dont la retraite additionnelle attend l'âge
+    # légal, l'aide-soignante dont le régime général l'attend, la salariée
+    # venue du privé qui demande sa pension plus tard, ou dans un régime où
+    # elle n'a rien.
+    ("departs", "age_legal", lambda s: (s.scenario_actuel, _policier(s))),
+    ("departs", "departs", lambda s: (s.scenario_actuel, _policier(s))),
+    ("departs", "departs", lambda s: (s.scenario_actuel, _soignante(s))),
+    ("departs", "demandes", lambda s: (s.scenario_actuel, _venue_du_prive(s, arrco=59))),
+    ("departs", "departs_et_demandes",
+     lambda s: (s.scenario_actuel, _venue_du_prive(s, regime_general=67))),
+    ("departs", "departs_et_demandes",
+     lambda s: (s.scenario_actuel, _venue_du_prive(s, mines=64))),
 ]
+
+
+def _policier(s):
+    return s.carriere_parcours(1970, "H", [Metier("fonctionnaire_etat_super_actif", 22.0)], 54,
+                               part_primes=0.25)
+
+
+def _soignante(s):
+    return s.carriere_parcours(1965, "F", [Metier("salarie_prive_non_cadre", 20.0),
+                                           Metier("fonctionnaire_territorial_hospitalier_actif",
+                                                  30.0)], 57, jour_naissance=15)
+
+
+def _venue_du_prive(s, **demandes):
+    return s.carriere_parcours(1960, "F", [Metier("salarie_prive_non_cadre", 25.25),
+                                           Metier("fonctionnaire_etat", 38.25)], 62,
+                               demandes_de_pension=demandes)
 
 
 def test_chaque_regle_du_droit_servie_a_son_appel_confronte():
@@ -972,7 +1002,7 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
     modules = {"carriere": carriere_python, "commun": commun_python, "completer": completer_python,
                "compter": compter_python, "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
                "reversion": reversion_python, "revalorisation": revalorisation_python,
-               "cultes": cultes_python, "releve": releve_python,
+               "cultes": cultes_python, "departs": departs_python, "releve": releve_python,
                "invalidite": invalidite_python}
     ecarts = []
     for module, regle, arguments in APPELS_DES_REGLES:
@@ -1446,3 +1476,51 @@ def test_le_jumeau_rend_le_regime_unique_que_la_facade_lit(parametres):
     lu = facade.Simulateur(parametres).regime_fusionne
     refait = simulateur_python.Simulateur(parametres).regime_fusionne
     assert repr(lu) == repr(refait)
+
+
+def test_le_jumeau_majore_les_petites_pensions_que_la_facade_lit():
+    """Les exemples de la circulaire Cnav n° 2023-21 que
+    ``test_majoration_exceptionnelle.py`` rejoue — une liquidation unique, des
+    régimes d'avant elle, le plafond tous régimes : les mêmes régimes servis et
+    le même calcul de la caisse, au bit près du jumeau."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from types import SimpleNamespace
+
+    servi = facade.Simulateur()
+    jumeau = simulateur_python.Simulateur()
+    debut = datetime.date(2023, 8, 1)
+
+    def petite(regime, validee, cotisee, maximum, tous):
+        return completer_python.PetitePension(
+            regime=regime, taux_plein=True, cotisee=cotisee, validee=validee,
+            maximum=maximum, cotises_tous_regimes=tous)
+
+    cas = [
+        ([("regime_general", 710.94, "annuites")], [petite("regime_general", 170, 146, 167, 146)]),
+        ([("regime_general", 740.0, "annuites"), ("rsi", 250.0, "annuites"),
+          ("agirc_arrco", 250.0, "points"), ("rci", 40.0, "points")],
+         [petite("regime_general", 120, 115, 165, 165), petite("rsi", 55, 50, 165, 165)]),
+        ([("regime_general", 500.0, "annuites"), ("rsi", 300.0, "annuites"),
+          ("agirc_arrco", 502.23, "points")],
+         [petite("regime_general", 160, 96, 160, 144), petite("rsi", 160, 48, 160, 144)]),
+    ]
+    for pensions, petites in cas:
+        regimes = [PensionRegime(code, mensuel * 12.0, calcul, "", Fiabilite.CERTIFIEE)
+                   for code, mensuel, calcul in pensions]
+        datees = [(p, 2023, debut, p.montant) for p in regimes]
+        servis = [revalorisation_python.RegimeServi(p.regime, p.montant, 1.0, "regime_general",
+                                                    Fiabilite.CERTIFIEE) for p in regimes]
+        resultat = SimpleNamespace(petites_pensions=tuple(petites), avantages_appliques=[])
+        fin = datetime.date(2026, 12, 31)
+        lu = facade.majorer_les_petites_pensions(
+            servi.scenario_actuel, resultat, datees, servis, facade.PensionServie(servi), {},
+            None, fin)
+        refait = revalorisation_python.majorer_les_petites_pensions(
+            jumeau.scenario_actuel, resultat, datees, servis,
+            revalorisation_python.PensionServie(jumeau), {}, None, fin)
+        assert lu[1], pensions
+        assert not ecarts_d_ecriture(list(lu[0]), list(refait[0]),
+                                     tolerance=TOLERANCE_DU_MOTEUR_PYTHON), pensions
+        assert not ecarts_d_ecriture(list(lu[1]), list(refait[1]),
+                                     tolerance=TOLERANCE_DU_MOTEUR_PYTHON), pensions

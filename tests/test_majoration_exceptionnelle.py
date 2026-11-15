@@ -10,6 +10,9 @@ article 18, V ; décret n° 2023-754, article 3). La fiche
 ``majoration_exceptionnelle_2023`` dit la règle ; ces tests rejouent les
 exemples de la circulaire Cnav n° 2023-21, puis la servent à des carrières,
 dans les deux moteurs.
+
+Le fichier passe par la façade (action 161) : la majoration et « faire
+vivre » y sont servies par le portage.
 """
 
 from __future__ import annotations
@@ -28,11 +31,12 @@ from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit.commun import PensionRegime
 from retraite_notionnelle.droit.completer import PetitePension
-from retraite_notionnelle.echeancier import Echeancier
-from retraite_notionnelle.revalorisation import (
-    FICHE_DE_LA_MAJORATION, PensionServie, RegimeServi, faire_vivre,
-    majorer_les_petites_pensions)
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.revalorisation import FICHE_DE_LA_MAJORATION, RegimeServi
+
+import facade
+from facade import (Echeancier, PensionServie, Simulateur, faire_vivre,
+                    majorer_les_petites_pensions)
+from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -41,9 +45,9 @@ RACINE = Path(__file__).resolve().parents[1]
 JUSQU_EN_2026 = 1.053 * 1.022 * 1.009
 
 
-@pytest.fixture(scope="module")
-def simulateur() -> Simulateur:
-    return Simulateur()
+@pytest.fixture
+def simulateur(request) -> Simulateur:
+    return facade.simulateur_du_test(request)
 
 
 # -- la règle ------------------------------------------------------------------
@@ -223,6 +227,7 @@ def test_ni_la_pension_d_apres_ni_la_decotee_ni_la_courte_ne_le_sont(simulateur)
     assert all(p.cotises_tous_regimes < 120 for p in cas["courte"][1].petites_pensions)
 
 
+@pytest.mark.sur_le_moteur_python("l'échéancier, et un simulateur sans la fiche, que la façade ne sert pas")
 def test_l_echeancier_l_inscrit_a_sa_date_et_la_reversion_ne_la_lit_pas(simulateur):
     """Un début de composante, que la loi induit, le 1er septembre 2023 ; la
     pension de l'échéance la compte. La réversion du conjoint, elle, se
@@ -270,6 +275,7 @@ CAS = [
 ]
 
 
+@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait l'échéancier du portage")
 def test_les_deux_moteurs_servent_la_meme_majoration():
     """Le journal de l'échéancier — l'événement du 1er septembre 2023, sa
     composante, la pension de l'échéance — est le même en Python et en

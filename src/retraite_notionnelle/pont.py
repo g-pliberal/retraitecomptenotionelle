@@ -403,6 +403,9 @@ def _en_donnees(valeur):
                 for champ in dataclasses.fields(valeur)}
     if isinstance(valeur, (list, tuple)):
         return [_en_donnees(element) for element in valeur]
+    if isinstance(valeur, (set, frozenset)):
+        # Un ensemble, en liste triée, comme le portage écrit un ``Set``.
+        return sorted(_en_donnees(element) for element in valeur)
     if isinstance(valeur, dict):
         return {cle: _en_donnees(element) for cle, element in valeur.items()}
     return valeur
@@ -2099,6 +2102,14 @@ def lu_strictement(type_, valeur, chemin: str = "valeur"):
                              f"en a écrit {len(valeur)}")
         return origine(lu_strictement(sous_type, element, f"{chemin}[{rang}]")
                        for rang, (sous_type, element) in enumerate(zip(arguments, valeur)))
+    if origine is frozenset:
+        # Un ensemble, que le portage écrit en liste (``telQuel`` d'un ``Set``),
+        # lu dans l'ordre de ses éléments.
+        if not isinstance(valeur, list):
+            raise TypeError(f"{chemin} : suite attendue, le portage a écrit {valeur!r}")
+        (sous_type,) = typing.get_args(type_)
+        return frozenset(sorted(lu_strictement(sous_type, element, f"{chemin}[{rang}]")
+                                for rang, element in enumerate(valeur)))
     raise TypeError(f"{chemin} : la lecture ne connaît pas le type {type_!r}")
 
 
@@ -2416,6 +2427,18 @@ def regime_fusionne_des_donnees(fusionne: dict):
     return lu_strictement(RegimeFusionne, fusionne, "RegimeFusionne")
 
 
+def majorations_des_donnees(lu: dict) -> tuple[list, tuple]:
+    """Ce que rend la majoration exceptionnelle des petites pensions du
+    portage (``revalorisation.majorer_les_petites_pensions`` de ``pont.mjs``),
+    comme son jumeau : les régimes servis, chacun avec sa majoration, et le
+    calcul de la caisse, lus strictement sous les types du Python."""
+    from .revalorisation import MajorationExceptionnelle, RegimeServi
+
+    return (list(lu_strictement(tuple[RegimeServi, ...], lu["regimes"], "regimes")),
+            lu_strictement(tuple[MajorationExceptionnelle, ...], lu["majorations"],
+                           "majorations"))
+
+
 LECTURES_DE_LA_FACADE = {
     "simulateur.simuler": comparaison_des_donnees,
     "simulateur.carriere_simple": carriere_des_donnees,
@@ -2443,6 +2466,7 @@ LECTURES_DE_LA_FACADE = {
     "revalorisation.faire_vivre": lambda lu: _contenu_lu("revalorisation", lu, "Revalorisee"),
     "commun.periode_de_liquidation": lambda rang: lu_strictement(
         int | None, rang, "periode_de_liquidation"),
+    "revalorisation.majorer_les_petites_pensions": lambda lu: majorations_des_donnees(lu),
 }
 
 #: Le type que le Python donne à une erreur du portage, quand ce n'est pas
@@ -2751,6 +2775,9 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
                   "majoration_ouverte", "majoration_retraite_proportionnelle",
                   "pension_majoree", "plancher_du_regime", "points_rco_de_chef",
                   "selon_la_regle"),
+    # Les départs de chaque régime, l'âge légal qui les date, et ce que
+    # devient chaque date de demande que la carrière dit.
+    "departs": ("age_legal", "demandes", "departs", "departs_et_demandes"),
     # L'étape « foyer et net » entière : le portage rend le ``Foyer`` du
     # journal, que la façade lit sous le type du Python.
     "foyer": ("foyer_et_net",),
