@@ -70,54 +70,28 @@ from __future__ import annotations
 import argparse
 
 from retraite_notionnelle.somme import somme_ordonnee
-from retraite_notionnelle import Parametres
-from retraite_notionnelle.carriere import Affiliations
-from retraite_notionnelle.donnees.macro import DonneesMacro
-from retraite_notionnelle.donnees.regimes import CatalogueRegimes
-from retraite_notionnelle.remuneration import (
-    BlocRetraite,
-    ComposanteRetraite,
-    ConstructeurFiche,
-    Segment,
-    bloc_droit_en_vigueur,
-    bloc_taux_unique,
-    charger_prelevements,
-    smic_annuel,
-)
+from retraite_notionnelle import Parametres, pont
 
 NIVEAUX_PAR_DEFAUT = (1.0, 1.2, 1.5, 2.0, 3.0, 4.0)
 
+#: Le bloc retraite du droit en vigueur, nommé pour le pont.
+ACTUEL = "droit_en_vigueur"
 
-def bloc_propose(parametres: Parametres, part_salariale: float,
-                 part_salariale_capitalisation: float | None = None,
-                 ) -> BlocRetraite:
-    """Le bloc de la proposition, avec un partage propre au pilier capitalisé si demandé.
+
+def bloc_propose(part_salariale: float,
+                 part_salariale_capitalisation: float | None = None) -> dict:
+    """Le bloc de la proposition, nommé pour le pont (``pont.fiches_de_paie``),
+    qui le bâtit au portage : ses 18 points de répartition et ses 5 points
+    capitalisés partagés par ``part_salariale``, le pilier capitalisé par
+    ``part_salariale_capitalisation`` si elle est donnée, hors de la réduction
+    générale.
 
     Les cinq points VOLONTAIRES n'y sont pas, depuis l'action 55 : ils ne sont
     pas une retenue mais un placement pris sur le net, et ``--volontaire`` les
     retranche du net au lieu de les prélever sur le brut.
     """
-    bloc = bloc_taux_unique(
-        parametres.taux_cotisation_liberal,
-        parametres.taux_capitalisation_obligatoire,
-        part_salariale,
-    )
-    if part_salariale_capitalisation is None:
-        return bloc
-    taux = parametres.taux_capitalisation_obligatoire
-    composantes = []
-    for composante in bloc.composantes:
-        if composante.code == "capitalisation":
-            composante = ComposanteRetraite(
-                code=composante.code, libelle=composante.libelle,
-                salarie=(Segment(0.0, None, taux * part_salariale_capitalisation),),
-                employeur=(Segment(0.0, None,
-                                   taux * (1.0 - part_salariale_capitalisation)),),
-                dans_la_reduction_generale=False,
-            )
-        composantes.append(composante)
-    return BlocRetraite(libelle=bloc.libelle, composantes=tuple(composantes),
-                        remplace_les_contributions_d_equilibre=True)
+    return {"part_salariale": part_salariale,
+            "part_salariale_capitalisation": part_salariale_capitalisation}
 
 
 def _csg(fiche) -> float:
@@ -145,24 +119,22 @@ def main() -> None:
 
     parametres = Parametres()
     annee = parametres.annee_bascule
-    macro = DonneesMacro(parametres.racine_donnees, parametres.scenario_projection)
-    catalogue = CatalogueRegimes(parametres.racine_donnees)
-    affiliations = Affiliations(parametres.racine_donnees)
-    profil = charger_prelevements(parametres.racine_donnees).profil("salarie_prive")
-    constructeur = ConstructeurFiche(profil)
-    plafond = macro.plafond_securite_sociale(annee)
-    smic = smic_annuel(macro, annee)
     cadre = "cadre" in args.statut and "non_cadre" not in args.statut
-    actuel = bloc_droit_en_vigueur(catalogue, affiliations, args.statut, annee, 0.0, macro)
     taux_volontaire = (parametres.taux_capitalisation_volontaire
                        if args.volontaire else 0.0)
+
+    def lire(appels: list[tuple]) -> tuple[dict, list]:
+        return pont.fiches_de_paie(args.statut, annee, appels, parametres)
+
+    reperes, _ = lire([])
+    plafond, smic = reperes["plafond"], reperes["smic"]
 
     repartition = parametres.taux_cotisation_liberal
     capitalise = parametres.taux_capitalisation_obligatoire
     total = repartition + capitalise
 
     # Les parts d'aujourd'hui, lues sur la fiche de paie sous le plafond.
-    temoin = constructeur.fiche(annee, 1.5 * smic, plafond, smic, actuel, cadre)
+    (temoin,) = lire([("fiche", 1.5 * smic, ACTUEL, cadre)])[1]
     part_salarie = temoin.retraite_salarie / temoin.brut
     part_employeur = temoin.retraite_employeur / temoin.brut
 
@@ -191,21 +163,32 @@ def main() -> None:
     print("Montants mensuels en euros courants ; « jour 1 » à brut fixe, "
           "« long terme » à coût du travail fixe.\n")
 
-    for nom, part, part_cap in partages:
-        bloc = bloc_propose(parametres, part, part_cap)
-        salarie_pts = somme_ordonnee(s.taux for c in bloc.composantes for s in c.salarie) * 100
-        employeur_pts = somme_ordonnee(s.taux for c in bloc.composantes for s in c.employeur) * 100
+    # Toutes les fiches d'un lot par horizon : le jour 1 à brut fixe, puis le
+    # brut qui épuise le coût d'aujourd'hui, puis la fiche du long terme.
+    blocs = [bloc_propose(part, part_cap) for _, part, part_cap in partages]
+    bruts = [niveau * smic for niveau in args.niveaux]
+    lus = lire([("taux_du_bloc", bloc) for bloc in blocs]
+               + [("fiche", brut, ACTUEL, cadre) for brut in bruts]
+               + [("fiche", brut, bloc, cadre) for bloc in blocs for brut in bruts])[1]
+    taux = lus[:len(blocs)]
+    avants = lus[len(blocs):len(blocs) + len(bruts)]
+    jours_1 = lus[len(blocs) + len(bruts):]
+    bruts_lt = lire([("brut_a_cout_donne", avant.cout_du_travail, bloc, cadre)
+                     for bloc in blocs for avant in avants])[1]
+    longs_termes = lire([("fiche", brut_lt, bloc, cadre)
+                         for bloc, brut_lt in zip(
+                             (b for b in blocs for _ in bruts), bruts_lt)])[1]
+
+    for rang, (nom, part, part_cap) in enumerate(partages):
+        salarie_pts = somme_ordonnee(taux[rang]["salarie"]) * 100
+        employeur_pts = somme_ordonnee(taux[rang]["employeur"]) * 100
         print(f"=== {nom} — salarié {salarie_pts:.2f} pts, employeur {employeur_pts:.2f} pts")
         print(f"  {'SMIC':>5} {'brut':>6} {'net':>6} | {'J1 Δnet':>8} {'J1 Δcoût':>9} | "
               f"{'LT Δbrut':>9} {'LT Δnet':>8} | {'crédit J1':>9} {'crédit LT':>9}")
         detail = None
-        for niveau in args.niveaux:
-            brut = niveau * smic
-            avant = constructeur.fiche(annee, brut, plafond, smic, actuel, cadre)
-            jour_1 = constructeur.fiche(annee, brut, plafond, smic, bloc, cadre)
-            brut_lt = constructeur.brut_a_cout_donne(
-                avant.cout_du_travail, plafond, smic, bloc, cadre)
-            long_terme = constructeur.fiche(annee, brut_lt, plafond, smic, bloc, cadre)
+        for indice, (niveau, brut, avant) in enumerate(zip(args.niveaux, bruts, avants)):
+            lot = rang * len(bruts) + indice
+            jour_1, brut_lt, long_terme = jours_1[lot], bruts_lt[lot], longs_termes[lot]
             m = 12.0
             # Le placement volontaire est pris sur le net, sur l'assiette de la
             # proposition : il ne touche ni au brut, ni au coût du travail.

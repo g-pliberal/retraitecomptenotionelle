@@ -1883,6 +1883,89 @@ def indexation(appels: list[tuple], parametres=None, paquet: bytes | None = None
 # -- la fin de la revalorisation servie et de l'indexation ------------------------
 
 
+# -- la fiche de paie (action 161, étape 6e) --------------------------------------
+
+@dataclasses.dataclass(frozen=True)
+class LigneLue:
+    """Une ligne de la fiche que le portage rend : son poste, ce qu'en versent
+    l'assuré et l'employeur, en euros de l'année, et si elle est de la retraite."""
+    code: str
+    salarie: float
+    employeur: float
+    retraite: bool
+
+
+@dataclasses.dataclass(frozen=True)
+class FicheLue:
+    """Une fiche de paie annuelle que le portage rend (``FicheDePaie`` de
+    ``moteur/js/remuneration.js``) : ses montants, ses lignes, et ce que la
+    retraite en prélève de chaque côté, sommé comme le jumeau le somme."""
+    brut: float
+    net: float
+    cout_du_travail: float
+    reduction_generale: float
+    lignes: tuple[LigneLue, ...]
+
+    @property
+    def retraite_salarie(self) -> float:
+        from .somme import somme_ordonnee
+
+        return somme_ordonnee(ligne.salarie for ligne in self.lignes if ligne.retraite)
+
+    @property
+    def retraite_employeur(self) -> float:
+        from .somme import somme_ordonnee
+
+        return somme_ordonnee(ligne.employeur for ligne in self.lignes if ligne.retraite)
+
+
+def _fiche_lue(lue: dict) -> FicheLue:
+    return FicheLue(
+        brut=_flottant(lue["brut"]), net=_flottant(lue["net"]),
+        cout_du_travail=_flottant(lue["cout_du_travail"]),
+        reduction_generale=_flottant(lue["reduction_generale"]),
+        lignes=tuple(LigneLue(ligne["code"], _flottant(ligne["salarie"]),
+                              _flottant(ligne["employeur"]), bool(ligne["retraite"]))
+                     for ligne in lue["lignes"]))
+
+
+def _taux_du_bloc_lus(lus: dict) -> dict[str, tuple[float, ...]]:
+    return {cote: tuple(_flottant(taux) for taux in lus[cote]) for cote in ("salarie", "employeur")}
+
+
+#: Ce que rendent les lectures de la fiche de paie (``LECTURES_DE_LA_FICHE`` de
+#: ``pont.mjs``) : ``("fiche", brut, bloc, cadre)``, une :class:`FicheLue` ;
+#: ``("brut_a_cout_donne", coût, bloc, cadre)``, le brut qui épuise ce coût du
+#: travail ; ``("taux_du_bloc", bloc)``, les taux de chaque tranche de chaque
+#: étage, ``{"salarie": …, "employeur": …}``. Le bloc se nomme en données :
+#: ``"droit_en_vigueur"``, ou ``{"part_salariale": …,
+#: "part_salariale_capitalisation": … ou None}`` pour la proposition.
+LECTURES_DE_LA_FICHE = {
+    "fiche": _fiche_lue,
+    "brut_a_cout_donne": _flottant,
+    "taux_du_bloc": _taux_du_bloc_lus,
+}
+
+
+def fiches_de_paie(statut: str, annee: int, appels: list[tuple], parametres=None,
+                   profil: str = "salarie_prive", paquet: bytes | None = None,
+                   ) -> tuple[dict[str, float], list]:
+    """Les fiches de paie du profil ``profil`` sous le statut ``statut``, à
+    ``annee``, que le portage seul bâtit (``ConstructeurFiche`` de
+    ``moteur/js/remuneration.js``) sous ``parametres``, les réglages de
+    référence sans eux : les repères de l'année, ``{"plafond": …, "smic": …}``,
+    annuels, et ce que rend chaque appel (:data:`LECTURES_DE_LA_FICHE`), dans
+    l'ordre. Le lot part d'une seule demande."""
+    reponse, lus = _lectures_du_portage(
+        "fiches_de_paie", {"profil": profil, "statut": statut, "annee": annee},
+        appels, LECTURES_DE_LA_FICHE, parametres, paquet)
+    reperes = {nom: _flottant(valeur) for nom, valeur in reponse["reperes"].items()}
+    return reperes, lus
+
+
+# -- la fin de la fiche de paie ---------------------------------------------------
+
+
 # -- l'histoire du droit (action 161, note de décision 0007) ----------------------
 
 #: Ce que rendent les règles du moteur que l'histoire du droit appelle

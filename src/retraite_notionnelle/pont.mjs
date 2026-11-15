@@ -179,7 +179,10 @@ import {
   CritereTaux, REGLE_FUSION_DEFAUT, fusionner, tauxTotal,
 } from "../../moteur/js/fusion.js";
 import { BORNES_ASSIETTE, CarriereLongue } from "../../moteur/js/regimes.js";
-import { ficheDepuisBrut } from "../../moteur/js/remuneration.js";
+import {
+  BlocRetraite, ComposanteRetraite, ConstructeurFiche, blocDroitEnVigueur, blocTauxUnique,
+  ficheDepuisBrut, smicAnnuel,
+} from "../../moteur/js/remuneration.js";
 import { Restitution } from "../../moteur/js/restitution.js";
 import {
   derniereValeurPubliee, faireVivre, produit, RevalorisationServie, RevalorisationsPensions,
@@ -1688,13 +1691,104 @@ Object.assign(FONCTIONS_DU_DROIT, FONCTIONS_DE_L_HISTOIRE_DU_DROIT);
 
 // -- la fin de l'histoire du droit ----------------------------------------------
 
+// -- la fiche de paie (action 161, étape 6e) ------------------------------------
+
+/**
+ * Le bloc retraite qu'un appel nomme, en données : `"droit_en_vigueur"`, celui
+ * du statut à l'année (`blocDroitEnVigueur`, sans primes) ; ou le bloc de la
+ * proposition, `{part_salariale, part_salariale_capitalisation}`, ses deux
+ * taux pris aux paramètres — le pilier capitalisé partagé à part quand
+ * `part_salariale_capitalisation` n'est pas `null`, hors de la réduction
+ * générale, que `partage_taux_unique.py` compare.
+ */
+function blocDeLaFiche(simulateur, statut, annee, bloc) {
+  const { parametres, macro, catalogue, affiliations } = simulateur;
+  if (bloc === "droit_en_vigueur") {
+    return blocDroitEnVigueur(catalogue, affiliations, statut, annee, 0, macro);
+  }
+  const { part_salariale: part, part_salariale_capitalisation: partCapitalisee } = bloc;
+  const propose = blocTauxUnique(parametres.taux_cotisation_liberal,
+    parametres.taux_capitalisation_obligatoire, part);
+  if (partCapitalisee === null || partCapitalisee === undefined) return propose;
+  const taux = parametres.taux_capitalisation_obligatoire;
+  return new BlocRetraite({
+    libelle: propose.libelle,
+    composantes: propose.composantes.map((composante) => (
+      composante.code !== "capitalisation" ? composante : new ComposanteRetraite({
+        code: composante.code,
+        libelle: composante.libelle,
+        salarie: [{ bas: 0, haut: null, taux: taux * partCapitalisee }],
+        employeur: [{ bas: 0, haut: null, taux: taux * (1 - partCapitalisee) }],
+        dansLaReductionGenerale: false,
+      }))),
+    remplaceLesContributionsDEquilibre: true,
+  });
+}
+
+/** La fiche en données, sous les noms du Python : ses montants et ses lignes. */
+function ficheEnDonnees(fiche) {
+  return {
+    brut: fiche.brut,
+    net: fiche.net,
+    cout_du_travail: fiche.coutDuTravail,
+    reduction_generale: fiche.reductionGenerale,
+    lignes: fiche.lignes.map(({ code, salarie, employeur, retraite }) => (
+      { code, salarie, employeur, retraite })),
+  };
+}
+
+/**
+ * Les lectures de la fiche de paie que le pont fait appeler
+ * (`LECTURES_DE_LA_FICHE` de `pont.py`) : la fiche d'un brut, le brut qui
+ * épuise un coût du travail, et les taux de chaque étage d'un bloc.
+ */
+const LECTURES_DE_LA_FICHE = {
+  fiche: (lire, brut, bloc, cadre) => ficheEnDonnees(
+    lire.constructeur.fiche(lire.annee, brut, lire.plafond, lire.smic, lire.bloc(bloc), cadre)),
+  brut_a_cout_donne: (lire, cout, bloc, cadre) => (
+    lire.constructeur.brutACoutDonne(cout, lire.plafond, lire.smic, lire.bloc(bloc), cadre)),
+  taux_du_bloc: (lire, bloc) => {
+    const { composantes } = lire.bloc(bloc);
+    return {
+      salarie: composantes.flatMap((c) => c.salarie.map((s) => s.taux)),
+      employeur: composantes.flatMap((c) => c.employeur.map((s) => s.taux)),
+    };
+  },
+};
+
+/**
+ * Les fiches de paie d'un profil (`ConstructeurFiche` de `remuneration.js`,
+ * dont le Python garde le jumeau pour le coût) : sous `parametres`, à
+ * `annee`, au plafond de la Sécurité sociale et au Smic de l'année, qui
+ * reviennent avec la réponse, chaque appel `{cle, methode, arguments}` d'une
+ * lecture de la fiche, le bloc retraite nommé en données (`blocDeLaFiche`).
+ * `partage_taux_unique.py` le demande d'un lot.
+ */
+function fichesDePaie({ parametres, profil, statut, annee, appels }) {
+  lecturesConnues(appels, LECTURES_DE_LA_FICHE, "de la fiche de paie");
+  const simulateur = simulateurSous(parametres);
+  const lire = {
+    annee,
+    constructeur: new ConstructeurFiche(simulateur.baremePrelevements.profil(profil)),
+    plafond: simulateur.macro.plafond_securite_sociale.valeur(annee),
+    smic: smicAnnuel(simulateur.macro, annee),
+    bloc: (bloc) => blocDeLaFiche(simulateur, statut, annee, bloc),
+  };
+  const reponse = parCas(appels, ({ methode, arguments: valeurs }) => (
+    LECTURES_DE_LA_FICHE[methode](lire, ...valeurs)));
+  reponse.reperes = { plafond: lire.plafond, smic: lire.smic };
+  return reponse;
+}
+
+// -- la fin de la fiche de paie --------------------------------------------------
+
 const LECTURES = {
   carrieres, saisies, grille_du_cout: grilleDuCout, carrieres_des_saisies: carrieresDesSaisies,
   simulations, scenario_actuel: scenarioActuel, droit, ages_de_depart: agesDeDepart,
   carrieres_de_la_grille: carrieresDeLaGrille, avantages, departs_des_cas: departsDesCas,
   debuts_de_la_surcote: debutsDeLaSurcote, garantie: garantieDePopulation,
   impot: impotsDesFoyers, revalorisation_servie: revalorisationServie,
-  indexation: indexationDuCompte,
+  indexation: indexationDuCompte, fiches_de_paie: fichesDePaie,
 };
 
 // -- la façade des tests (action 161, note de décision 0007) -------------------
