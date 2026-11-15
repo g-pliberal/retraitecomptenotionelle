@@ -1,15 +1,17 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: vert
-sources: 17ee794be3311427181f85a1d8e997f3ce4c3b50
-date: 2026-11-15T17:03:45Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43736090890
-presomptions: vert
+sources: b08d316034552cff1163a77ae35c7b369597bd6e
+date: 2026-11-15T17:24:17Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43737955467
+presomptions: rouge
+presomptions_echecs:
+  - "FAILED tests/test_mortalite_population.py::test_les_capitaux_d_un_compte_passent_le_pont - AssertionError: test_mortalite_population.py::capitaux du compte n'est plus ce que le témoin des valeurs porte ; si le déplacement est voulu, le témoin se refait par python scripts/construire_temoins.py --valeurs"
 durees:
-  fabrique: 571
-  suite: 790
-  tranche_1: 355
-  tranche_2: 790
-  tranche_3: 554
-  tranche_4: 411
-  garde: 232
+  fabrique: 473
+  suite: 691
+  tranche_1: 637
+  tranche_2: 691
+  tranche_3: 566
+  tranche_4: 639
+  garde: 225
