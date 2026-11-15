@@ -13,9 +13,10 @@ from __future__ import annotations
 
 import pytest
 
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere
-from retraite_notionnelle.droit import liquider
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.carriere import AnneeCarriere
+from retraite_notionnelle.config import RACINE_PROJET
+
+from facade import Carriere, liquider, Simulateur
 
 
 @pytest.fixture(scope="module")
@@ -38,6 +39,34 @@ def _regle(**parametres) -> dict:
     return regle
 
 
+#: La moyenne du portage, ``moyenneSelonLaRegle``, sur des années à la main :
+#: les trimestres en ``Map``, les années validantes en ``Set``, comme le
+#: droit les lui passe.
+_MOYENNE_DU_PORTAGE = """
+import { moyenneSelonLaRegle } from "./moteur/js/droit/liquider.js";
+const [regle, valeurs, trimestres, validantes, nombre, soixante] = JSON.parse(process.argv[1]);
+process.stdout.write(JSON.stringify(moyenneSelonLaRegle(regle, valeurs,
+  new Map(trimestres), new Set(validantes), nombre, soixante)));
+"""
+
+
+def _moyenne_du_portage(regle: dict, valeurs, trimestres: dict, validantes: set,
+                        nombre: int, annee_soixante_ans: int) -> float:
+    import json
+    import shutil
+    import subprocess
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage ne se vérifie pas ici")
+    entree = [regle, valeurs, sorted(trimestres.items()), sorted(validantes), nombre,
+              annee_soixante_ans]
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _MOYENNE_DU_PORTAGE, json.dumps(entree)],
+        cwd=RACINE_PROJET, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr
+    return json.loads(execution.stdout)
+
+
 def test_la_moyenne_suit_la_version_de_la_date_d_effet():
     """Chaque version de la fiche `salaire_annuel_moyen`, sur les mêmes quatre
     années.
@@ -50,7 +79,7 @@ def test_la_moyenne_suit_la_version_de_la_date_d_effet():
     deux trimestres assimilés, rapportées à leurs trimestres cotisés — avant
     soixante ans, ou avant l'effet depuis juillet 1948 si c'est mieux.
     """
-    moyenne = liquider.moyenne_selon_la_regle
+    moyenne = _moyenne_du_portage
     depuis_2004 = _regle(annees_sans_trimestre="exclues")
     assert moyenne(depuis_2004, VALEURS, TRIMESTRES, VALIDANTES, 10, 9999) \
         == pytest.approx(8000.0 / 3)
@@ -344,29 +373,9 @@ def test_le_salaire_d_un_non_assujetti_n_entre_pas_au_salaire_annuel_moyen(simul
     assert sam(anciennes + lignes) == pytest.approx(sam(lignes))
 
 
-#: Le jumeau JavaScript du test précédent : les mêmes relevés, lus par le
-#: portage.
-_JUMEAU_RETENUE = """
-import { readFileSync } from "node:fs";
-import { Simulateur } from "./moteur/js/simulateur.js";
-const releves = JSON.parse(process.argv[1]);
-const simulateur = new Simulateur(JSON.parse(readFileSync("./moteur/donnees.json", "utf8")));
-process.stdout.write(JSON.stringify(releves.map((releve) => simulateur.carriereReleve({
-  annee_naissance: 1915, sexe: "H", releve, age_liquidation: 60,
-}).lignes.map((l) => [l.annee, l.trimestres_valides]))));
-"""
-
-
-def test_le_portage_javascript_lit_la_retenue_comme_le_modele(simulateur):
-    import json
-    import shutil
-    import subprocess
-    from pathlib import Path
-
+def test_la_retenue_se_lit_selon_le_statut_et_l_annee(simulateur):
     from retraite_notionnelle.carriere import LigneRelevee
 
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     releves = [[{"annee": annee, "affiliation": statut, "revenu": francs / 6.55957}
                 for annee in (1929, 1930, 1938, 1946)]
                for statut, francs in (("salarie_prive_cadre", 400.0),
@@ -376,12 +385,6 @@ def test_le_portage_javascript_lit_la_retenue_comme_le_modele(simulateur):
     attendus = [[[l.annee, l.trimestres_valides] for l in simulateur.carriere_releve(
                     1915, "H", [LigneRelevee(**ligne) for ligne in releve], 60.0).lignes]
                 for releve in releves]
-    execution = subprocess.run(
-        ["node", "--input-type=module", "-e", _JUMEAU_RETENUE, json.dumps(releves)],
-        cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
-        encoding="utf-8", check=False)
-    assert execution.returncode == 0, execution.stderr
-    assert json.loads(execution.stdout) == attendus
     # 1929, 1930, 1938, 1946 : le cadre à 400 F n'est assujetti qu'en 1946 ; le
     # non-cadre à 200 F dès que le plafond le dépasse ; 2 F de salaire valent
     # les deux trimestres de 1930, puis trop peu de retenue ; le fonctionnaire

@@ -62,7 +62,8 @@ FICHIERS = (
     "test_pont.py", "test_primes_soumises_a_retenue.py",
     "test_priorite_enfants.py",
     "test_retablissement.py",
-    "test_retraite_progressive.py", "test_revalorisation.py", "test_salaire_annuel_moyen.py",
+    "test_retraite_progressive.py",
+    "test_revalorisation.py",
     "test_sections_sante.py",
     "test_solde_fusion.py",
    

@@ -362,7 +362,7 @@ code:
     `test_le_salaire_d_un_non_assujetti_n_entre_pas_au_salaire_annuel_moyen` et
     `test_outre_mer_le_trimestre_se_valide_au_seuil_du_departement`
     (tests/test_salaire_annuel_moyen.py), et leurs jumeaux de tests/js/moteur.test.js ;
-    `test_avant_1946_la_retenue_ne_lit_que_les_assures_sociaux` et son jumeau
-    (`test_le_portage_javascript_lit_la_retenue_comme_le_modele`) ;
-    tests/test_outre_mer.py, le département dans la carrière, et son jumeau ; les
+    `test_avant_1946_la_retenue_ne_lit_que_les_assures_sociaux` et
+    `test_la_retenue_se_lit_selon_le_statut_et_l_annee`, sur le portage ;
+    tests/test_outre_mer.py, le département dans la carrière ; les
     contrôles du récupérateur (tests/test_verification.py).
