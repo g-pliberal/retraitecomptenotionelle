@@ -2727,6 +2727,7 @@ TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     # par sa marque (:data:`SALAIRE_MOYEN`).
     "grilles": ("forfait",),
     "annees_salaire_reference": ("annees",),
+    "baremes_trimestre": ("valeurs",),
     "carriere_longue": ("_portes", "cotises_reputes"),
     "complement_differentiel_rco": ("regle", "smic_net"),
     "coefficients_minoration": ("coefficient",),

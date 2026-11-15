@@ -58,7 +58,7 @@ FICHIERS = (
     "test_garantie_par_sexe.py", "test_grille_large.py", "test_indemnite_csg.py",
     "test_independants.py", "test_indexation_programme.py", "test_ines.py",
     "test_interpenetration.py", "test_ircec_auteurs.py",
-    "test_limite_age.py", "test_marins.py", "test_mayotte.py", "test_mines.py",
+    "test_limite_age.py", "test_marins.py", "test_mayotte.py",
     "test_minimum_pension_sncf.py", "test_moteur.py", "test_outre_mer.py",
     "test_parents_trois_enfants.py", "test_pcv_sante.py", "test_plafond_majoration_enfants.py",
     "test_pont.py", "test_prelevements_historiques.py", "test_primes_soumises_a_retenue.py",

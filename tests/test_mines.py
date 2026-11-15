@@ -33,7 +33,8 @@ import pytest
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.donnees.chargement import Fiabilite
-from retraite_notionnelle.simulateur import Simulateur
+
+from facade import Simulateur
 
 LEGISLATION = Path(RACINE_DONNEES) / "reference" / "legislation"
 
