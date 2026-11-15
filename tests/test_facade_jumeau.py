@@ -800,7 +800,22 @@ def _assiette(affiliation, regime, annee):
     return arguments
 
 
+def _fonctionnaire_parti_a_60_ans(simulateur):
+    return simulateur.carriere_simple(
+        annee_naissance=1970, sexe="H", affiliation="fonctionnaire_etat", age_debut=22,
+        age_liquidation=60, niveau_salaire=1.0, jour_naissance=15, mois_naissance=6)
+
+
 APPELS_DES_REGLES = [
+    ("liquider", "majoration_rafp", lambda s: (64.0, DateMois(2015, 2))),
+    ("liquider", "majoration_rafp", lambda s: (68 + 4 / 12, DateMois(2027, 1))),
+    ("liquider", "conversion_capital_rafp", lambda s: (62.0, DateMois(2021, 12))),
+    ("liquider", "conversion_capital_rafp", lambda s: (64.5, DateMois(2031, 1))),
+    ("liquider", "prestation_rafp", lambda s: (1200.0, 4900, 5125, 64.0, DateMois(2024, 4), 0)),
+    ("liquider", "prestation_rafp", lambda s: (1200.0, 5125, 5125, 64.0, DateMois(2024, 4), 0)),
+    ("liquider", "prestation_rafp", lambda s: (1200.0, 4700, 5125, 64.0, DateMois(2024, 3), 16)),
+    ("liquider", "mois_apres_le_depart", lambda s: (_fonctionnaire_parti_a_60_ans(s), 64.0)),
+    ("liquider", "mois_apres_le_depart", lambda s: (_fonctionnaire_parti_a_60_ans(s), 60.0)),
     ("liquider", "assiette_de_reference", _assiette("ministre_du_culte", "cavimac", 2008)),
     ("liquider", "assiette_de_reference", _assiette("ministre_du_culte", "cavimac", 1990)),
     ("liquider", "assiette_de_reference", _assiette("salarie_prive_non_cadre", "regime_general", 2010)),

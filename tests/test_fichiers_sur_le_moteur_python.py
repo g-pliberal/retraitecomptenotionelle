@@ -62,7 +62,7 @@ FICHIERS = (
     "test_minimum_pension_sncf.py", "test_moteur.py", "test_outre_mer.py",
     "test_parents_trois_enfants.py", "test_pcv_sante.py", "test_plafond_majoration_enfants.py",
     "test_pont.py", "test_prelevements_historiques.py", "test_primes_soumises_a_retenue.py",
-    "test_priorite_enfants.py", "test_rafp.py", "test_regle_de_chacun.py",
+    "test_priorite_enfants.py", "test_regle_de_chacun.py",
     "test_remuneration.py", "test_retablissement.py",
     "test_retraite_progressive.py", "test_revalorisation.py", "test_salaire_annuel_moyen.py",
     "test_scenarios_meres.py", "test_sections_juridiques.py", "test_sections_sante.py",

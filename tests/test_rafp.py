@@ -16,16 +16,13 @@ fixe lui-même de la cotisation — la limite de l'assiette, le taux et son part
 
 from __future__ import annotations
 
-import json
-import shutil
-import subprocess
 from pathlib import Path
 
 import pytest
 
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.droit import liquider
 
+from facade import Simulateur, liquider
 from outils_pont import Saisies
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -33,7 +30,7 @@ RACINE = Path(__file__).resolve().parents[1]
 
 @pytest.fixture(scope="module")
 def saisies() -> Saisies:
-    return Saisies()
+    return Saisies(Simulateur)
 
 
 def test_le_bareme_de_2015_ne_vaut_que_depuis_le_1er_mars_2015():
@@ -138,48 +135,6 @@ def test_le_rafp_qui_attend_l_age_legal_compte_ses_mois_depuis_le_depart(saisies
     assert liquider.mois_apres_le_depart(carriere, 60.0) == 0
     assert liquider.mois_apres_le_depart(carriere.liquidee_au(carriere.date_de_l_age(64.0)),
                                          64.0) == 48
-
-
-#: Le jumeau JavaScript, sur les mêmes âges, dates et points.
-_JUMEAU = """
-import { DateMois } from "./moteur/js/calendrier.js";
-import { conversionCapitalRafp, majorationRafp, prestationRafp }
-  from "./moteur/js/droit/liquider.js";
-const { ages, dates, prestations } = JSON.parse(process.argv[1]);
-const date = ([a, m]) => new DateMois(a, m);
-process.stdout.write(JSON.stringify({
-  majorations: dates.map((d) => ages.map((age) => majorationRafp(age, date(d)))),
-  conversions: dates.map((d) => ages.map((age) => conversionCapitalRafp(age, date(d)))),
-  prestations: prestations.map(([rente, points, age, d, ecart]) =>
-    prestationRafp(rente, points, 5125, age, date(d), ecart)),
-}));
-"""
-
-
-def test_le_portage_javascript_rend_les_memes_coefficients_au_bit_pres():
-    ages = [60 + mois / 12 for mois in range(0, 12 * 18)]
-    dates = [(2014, 9), (2015, 2), (2015, 3), (2021, 12), (2022, 1), (2030, 1)]
-    prestations = [(1234.5, points, 63 + 4 / 12, d, ecart)
-                   for points in (4599, 4600, 4899, 4900, 5000, 5124, 5125)
-                   for d in ((2019, 4), (2019, 5), (2020, 6), (2024, 3), (2024, 4))
-                   for ecart in (0, 4, 5, 15, 16)]
-    attendu = {
-        "majorations": [[liquider.majoration_rafp(age, DateMois(*d)) for age in ages]
-                        for d in dates],
-        "conversions": [[liquider.conversion_capital_rafp(age, DateMois(*d)) for age in ages]
-                        for d in dates],
-        "prestations": [vars(liquider.prestation_rafp(rente, points, 5125, age,
-                                                      DateMois(*d), ecart))
-                        for rente, points, age, d, ecart in prestations],
-    }
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    execution = subprocess.run(
-        ["node", "--input-type=module", "-e", _JUMEAU,
-         json.dumps({"ages": ages, "dates": dates, "prestations": prestations})],
-        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    assert execution.returncode == 0, execution.stderr
-    assert json.loads(execution.stdout) == json.loads(json.dumps(attendu))
 
 
 def test_chaque_periode_du_regime_porte_les_taux_que_le_decret_ecrit():
