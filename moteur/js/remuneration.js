@@ -180,6 +180,17 @@ function montantSalarie(poste, assiette, plafondAnnuel) {
   return montant(poste.salarie, assiette, plafondAnnuel);
 }
 
+/**
+ * Le dix-millième le plus proche de `valeur`, comme le décret arrondit le
+ * coefficient (D. 241-7, I) et comme `round(valeur, 4)` du Python. Jamais
+ * `Math.round(valeur * 1e4) / 1e4` : la multiplication arrondit déjà, et une
+ * valeur juste sous la moitié d'un dix-millième y montait. `toFixed` arrondit
+ * la valeur exacte du nombre ; une moitié exacte n'existe pas en binaire.
+ */
+export function arrondiAuDixMillieme(valeur) {
+  return Number(valeur.toFixed(4));
+}
+
 /** La réduction générale dégressive unique, et de quoi la recalculer. */
 export class ReductionGenerale {
   constructor(fiche) {
@@ -220,7 +231,7 @@ export class ReductionGenerale {
     const rapport = Math.max(
       0, 0.5 * ((this.plafond_en_smic * smicAnnuel) / brut - 1),
     );
-    const arrondi = Math.round(delta * pow(rapport, this.puissance) * 1e4) / 1e4;
+    const arrondi = arrondiAuDixMillieme(delta * pow(rapport, this.puissance));
     return Math.min(maximal, this.taux_minimum + arrondi);
   }
 }
@@ -255,10 +266,10 @@ export class BaremeLodeom {
       }
       debut = this.palier_jusqu_en_smic;
     }
-    const coefficient = Math.round(
+    const coefficient = arrondiAuDixMillieme(
       this.seuil_total * maximal / (this.seuil_de_sortie - debut)
-      * ((this.seuil_de_sortie * smicAnnuel) / brut - 1) * 1e4,
-    ) / 1e4;
+      * ((this.seuil_de_sortie * smicAnnuel) / brut - 1),
+    );
     return Math.min(maximal, coefficient) * brut;
   }
 }

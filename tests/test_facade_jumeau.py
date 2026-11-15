@@ -69,17 +69,6 @@ TYPES_DE_LA_COMPARAISON = {"Comparaison", "ResultatActuel", "ResultatNotionnel",
                            "AnneeComparee", "FicheDePaie", "PensionAujourdhui",
                            "Reversion", "Evenement", "Foyer", "Revalorisee"}
 
-#: Les témoins où le jumeau Python ne refait pas la fiche de paie que le
-#: portage calcule sous la proposition, certaines années à venir : son brut
-#: s'écarte du dernier chiffre, et la réduction générale des cotisations
-#: patronales, dont le coefficient s'arrondit, de quelques euros, le coût du
-#: travail avec elle. Le portage fait foi, et aucun témoin n'écrit ces
-#: années : l'écart, trouvé le 12 novembre 2026 par cette confrontation, part
-#: avec ``remuneration.py``. Un témoin qui n'en a plus quitte la liste.
-FICHES_QUE_LE_JUMEAU_NE_REFAIT_PAS = ("assimilee_apprenti_paye_peu",
-                                      "projection_cor_productivite_basse",
-                                      "rattachement_pension_smic", "salaire_0.55")
-
 
 def _a_plat(valeur, types: set[str]):
     """Un résultat en données, pour le comparer : un dataclass par ses champs
@@ -197,32 +186,22 @@ def test_le_jumeau_refait_la_comparaison_que_la_facade_sert_sur_un_temoin_sur_qu
 @pytest.mark.parametrize("part", range(PARTS))
 def test_le_jumeau_refait_la_comparaison_que_la_facade_sert_sur_chaque_temoin(part):
     """Tous les témoins, en :data:`PARTS` parts : quatre minutes de moteur
-    Python en tout. Seule s'écarte la fiche de paie de quatre témoins, où le
-    jumeau ne suit pas le portage (:data:`FICHES_QUE_LE_JUMEAU_NE_REFAIT_PAS`) ;
-    chacune s'y écarte encore, dans la part qui la porte."""
+    Python en tout. La fiche de paie de quatre témoins s'en écartait sous la
+    proposition, de 3 à 6 € de réduction générale : le portage arrondissait
+    mal son coefficient (``tests/js/reduction-generale.test.js``)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     ecarts, _, nombre = _ecarts(1, _comparaison, part, PARTS)
     assert nombre >= 900 // PARTS
-    connus = {nom: [ecart for ecart in ecarts
-                    if ecart.startswith(f"{nom}.remuneration.annees.")
-                    and ".proposition." in ecart]
-              for nom in FICHES_QUE_LE_JUMEAU_NE_REFAIT_PAS
-              if nom in _noms(1, part, PARTS)}
-    autres = [ecart for ecart in ecarts if not any(ecart in fiche for fiche in connus.values())]
-    assert not autres, f"{len(autres)} écart(s), dont : {autres[:5]}"
-    if not TOLERANCE_DU_MOTEUR_PYTHON:
-        assert all(connus.values()), [nom for nom, fiche in connus.items() if not fiche]
+    assert not ecarts, f"{len(ecarts)} écart(s), dont : {ecarts[:5]}"
 
 
 def test_les_parts_couvrent_chaque_temoin_une_fois():
-    """Les parts, réunies, sont tous les témoins, chacun une fois, et les
-    fiches que le jumeau ne refait pas en sont."""
+    """Les parts, réunies, sont tous les témoins, chacun une fois."""
     temoins = _noms(1)
     parts = [_noms(1, part, PARTS) for part in range(PARTS)]
     assert sorted(nom for part in parts for nom in part) == temoins
     assert len(temoins) >= 900
-    assert set(FICHES_QUE_LE_JUMEAU_NE_REFAIT_PAS) <= set(temoins)
 
 
 def test_la_facade_sert_chaque_type_sur_l_ensemble_des_temoins():
