@@ -100,13 +100,13 @@ from retraite_notionnelle.scenarios import actuel as _actuel
 DONNEES = frozenset({"catalogue", "affiliations"})
 
 
-#: Les quinze entrées du moteur Python que la façade sert, sous leurs noms.
+#: Les seize entrées du moteur Python que la façade sert, sous leurs noms.
 ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversion",
            "simulateur.carriere_simple", "simulateur.carriere_parcours",
            "simulateur.carriere_releve", "carriere.depuis_profil", "carriere.depuis_parcours",
            "releve.construire", "simulateur.regime_fusionne", "liquidation.liquider",
-           "coordonner.coordonner", "compter.compter", "acquerir.acquerir",
-           "compter.cumul_plafonne")
+           "liquidation.demande_de_depart", "coordonner.coordonner", "compter.compter",
+           "acquerir.acquerir", "compter.cumul_plafonne")
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
@@ -614,14 +614,35 @@ revalorisation = Regles("revalorisation", _revalorisation)
 
 class Liquidee(_Ferme):
     """La liquidation que le portage a calculée, par ce que les tests en
-    lisent : le taux de ses pensions (``pensions.taux``) et la pension de
-    chaque régime (``regimes``). Le reste — le relevé, l'ouverture, les
-    compléments, les mesures — ne passe pas le pont : la liquidation entière
-    tient son contexte, les tables du moteur."""
+    lisent : le taux de ses pensions (``pensions.taux``), la pension de chaque
+    régime (``regimes``), ses totaux, ses mesures et ses avantages, la demande
+    et le contexte qu'elle a reçus, les lignes du relevé qu'elle a lues
+    (``releve.lignes()``) et ce que le contrat C.6 en décrit (``donnees()``).
+    Le reste — le relevé entier, l'ouverture, les compléments — ne passe pas
+    le pont : la liquidation entière tient son contexte, les tables du
+    moteur."""
 
-    def __init__(self, lu: dict) -> None:
-        object.__setattr__(self, "pensions", _Taux(lu["taux"]))
-        object.__setattr__(self, "regimes", lu["regimes"])
+    def __init__(self, lu: dict, demande, contexte) -> None:
+        for nom, valeur in (("pensions", _Taux(lu["taux"])), ("regimes", lu["regimes"]),
+                            ("total", lu["total"]), ("hors_repartition", lu["hors_repartition"]),
+                            ("total_contributif", lu["total_contributif"]),
+                            ("mesures", lu["mesures"]), ("avantages", lu["avantages"]),
+                            ("demande", demande), ("contexte", contexte),
+                            ("releve", _Lignes(lu["lignes"])), ("_donnees", lu["donnees"])):
+            object.__setattr__(self, nom, valeur)
+
+    def donnees(self) -> dict:
+        return self._donnees
+
+
+class _Lignes(_Ferme):
+    """Le relevé d'une liquidation, par ses seules lignes, en données."""
+
+    def __init__(self, lignes: list[dict]) -> None:
+        object.__setattr__(self, "_lignes", lignes)
+
+    def lignes(self) -> list[dict]:
+        return self._lignes
 
 
 class _Taux(_Ferme):
@@ -631,25 +652,42 @@ class _Taux(_Ferme):
         object.__setattr__(self, "taux", taux)
 
 
+#: Les appels de ``liquider`` que les liquidations de la façade ont coûtés au
+#: portage, liquidations d'essai comprises.
+_APPELS = [0]
+
+
 class _Liquidation(_Ferme):
     """``droit.liquidation`` : ``liquider``, servie par le portage, sur une
     demande, l'état d'une carrière seule et le contexte du moteur d'un
-    simulateur de la façade, sans rien de plus ; ``Demande``, ``Etat`` et
-    ``Contexte``, les types du Python, qui portent ce qu'on lui passe. Le
-    journal, les pensions déjà servies, une pension provisoire, une
-    neutralisation, une date d'observation, une hypothèse n'arriveraient pas
-    au portage : la liquidation est refusée."""
+    simulateur de la façade, ses neutralisations comprises ;
+    ``demande_de_depart``, servie aussi ; ``appels``, ceux que les
+    liquidations de la façade ont coûtés au portage ; ``Demande``, ``Etat``,
+    ``Contexte`` et ``Mesure``, les types du Python, qui portent ce qu'on lui
+    passe, et ses constantes. Le journal, les pensions déjà servies, une
+    pension provisoire, une date d'observation, une hypothèse n'arriveraient
+    pas au portage : la liquidation est refusée."""
 
     Demande = _liquidation.Demande
     Etat = _liquidation.Etat
     Contexte = _liquidation.Contexte
+    Mesure = _liquidation.Mesure
 
     def __getattr__(self, nom):
         # Ce que le jumeau ne porte pas manque ici comme à un module : pytest
         # sonde ainsi ce qu'un fichier de tests importe.
         if nom.startswith("__") or not hasattr(_liquidation, nom):
             raise AttributeError(f"liquidation.{nom}")
+        # Une constante du module n'est pas une règle : elle se lit.
+        if nom.isupper():
+            return getattr(_liquidation, nom)
         return super().__getattr__(nom)
+
+    def appels(self) -> int:
+        return _APPELS[0]
+
+    def demande_de_depart(self, carriere, nature: str = "definitive"):
+        return _demander("liquidation.demande_de_depart", Parametres(), carriere, nature)
 
     def liquider(self, demande, etat, contexte) -> Liquidee:
         moteur = contexte.univers
@@ -662,17 +700,18 @@ class _Liquidation(_Ferme):
             raise NonTransmissible(
                 "liquidation.liquider : état qui porte plus que sa carrière (journal, pensions "
                 "servies, pensions provisoires, recalcul) — le portage ne le verrait pas")
-        if (contexte.neutralisations, contexte.observation, contexte.hypothese) != (
-                frozenset(), None, None):
+        if (contexte.observation, contexte.hypothese) != (None, None):
             raise NonTransmissible(
-                "liquidation.liquider : contexte qui porte plus que le moteur (neutralisation, "
-                "observation, hypothèse) — le portage ne le verrait pas")
+                "liquidation.liquider : contexte qui porte plus que le moteur et ses "
+                "neutralisations (observation, hypothèse) — le portage ne le verrait pas")
         donnees = {"personne": demande.personne, "dateEffet": demande.date_effet,
                    "evenement": demande.evenement, "dateEvenement": demande.date_evenement,
                    "motif": demande.motif, "nature": demande.nature,
                    "regimes": list(demande.regimes)}
-        return Liquidee(_demander("liquidation.liquider", moteur._simulateur.parametres,
-                                  pont.MOTEUR, donnees, etat.carriere))
+        lu = _demander("liquidation.liquider", moteur._simulateur.parametres, pont.MOTEUR,
+                       donnees, etat.carriere, sorted(contexte.neutralisations))
+        _APPELS[0] += lu["appels"]
+        return Liquidee(lu, demande, contexte)
 
 
 #: ``droit.liquidation``, sa liquidation servie par le portage.

@@ -738,19 +738,42 @@ def test_le_jumeau_rend_la_liquidation_que_la_facade_lit(parametres):
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     servi = facade.Simulateur(parametres)
     jumeau = simulateur_python.Simulateur(parametres)
-    for carriere in (_salarie, _agent, _artisan, _fonctionnaire, _mort_avant):
+    for carriere in (_salarie, _agent, _artisan, _fonctionnaire, _mort_avant, _mere_avpf):
         lue, refaite = carriere(servi), carriere(jumeau)
-        lu = facade.liquidation.liquider(
-            liquidation_python.demande_de_depart(lue), facade.liquidation.Etat(lue),
-            facade.liquidation.Contexte(servi.scenario_actuel))
-        refait = liquidation_python.liquider(
-            liquidation_python.demande_de_depart(refaite), liquidation_python.Etat(refaite),
-            liquidation_python.Contexte(jumeau.scenario_actuel))
         nom = carriere.__name__
-        assert lu.pensions.taux == refait.pensions.taux, nom
-        assert repr(lu.regimes) == repr(pont.lu_strictement(
-            tuple[PensionRegime, ...], json.loads(json.dumps(pont._en_donnees(refait.regimes))),
-            nom)), nom
+        demande = facade.liquidation.demande_de_depart(lue)
+        assert demande == liquidation_python.demande_de_depart(refaite), nom
+        for neutralisations in ((), ("avantages_non_contributifs",), ("avpf",),
+                                ("points_gratuits", "decote_surcote")):
+            avant, avant_jumeau = facade.liquidation.appels(), liquidation_python.appels()
+            lu = facade.liquidation.liquider(
+                demande, facade.liquidation.Etat(lue),
+                facade.liquidation.Contexte(servi.scenario_actuel, frozenset(neutralisations)))
+            refait = liquidation_python.liquider(
+                liquidation_python.demande_de_depart(refaite), liquidation_python.Etat(refaite),
+                liquidation_python.Contexte(jumeau.scenario_actuel, frozenset(neutralisations)))
+            cas = (nom, neutralisations)
+            assert lu.pensions.taux == refait.pensions.taux, cas
+            assert repr(lu.regimes) == repr(pont.lu_strictement(
+                tuple[PensionRegime, ...], json.loads(json.dumps(pont._en_donnees(refait.regimes))),
+                nom)), cas
+            assert lu.donnees() == _en_json(refait.donnees()), cas
+            assert lu.releve.lignes() == _en_json(refait.releve.lignes()), cas
+            assert (lu.total, lu.hors_repartition, lu.total_contributif) == (
+                refait.total, refait.hors_repartition, refait.total_contributif), cas
+            assert lu.mesures == refait.mesures, cas
+            assert lu.avantages == tuple(refait.avantages), cas
+            assert (facade.liquidation.appels() - avant
+                    == liquidation_python.appels() - avant_jumeau), cas
+
+
+def _mere_avpf(simulateur):
+    """Une salariée née en 1970, deux enfants et deux années d'éducation qui
+    ouvrent l'AVPF : la cascade mesure ses trimestres d'enfants, puis
+    l'AVPF."""
+    return simulateur.carriere_parcours(
+        1970, "F", [Metier("salarie_prive_non_cadre", 21.0)], 64, nombre_enfants=2,
+        interruptions={1998: "education_enfant", 1999: "education_enfant"})
 
 
 def _mort_avant(simulateur):

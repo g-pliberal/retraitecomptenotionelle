@@ -161,8 +161,10 @@ import * as cumul from "../../moteur/js/droit/cumul.js";
 import * as departs from "../../moteur/js/droit/departs.js";
 import { foyerEtNet } from "../../moteur/js/droit/foyer.js";
 import * as invalidite from "../../moteur/js/droit/invalidite.js";
-import { Contexte as ContexteDeLiquidation, Demande, Etat, appels, liquider as liquiderLaDemande }
-  from "../../moteur/js/droit/liquidation.js";
+import {
+  Contexte as ContexteDeLiquidation, Demande, Etat, appels, demandeDeDepart,
+  liquider as liquiderLaDemande,
+} from "../../moteur/js/droit/liquidation.js";
 import * as liquider from "../../moteur/js/droit/liquider.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import * as releve from "../../moteur/js/droit/releve.js";
@@ -1995,17 +1997,40 @@ ENTREES_DE_LA_FACADE["droit.regle"] = (simulateur, module, regle, ...valeurs) =>
 // La liquidation, par la façade : un bloc à part (action 161).
 
 /**
- * La liquidation d'une demande (`liquidation_de_la_facade` de `pont.py`),
- * dans l'état d'une carrière seule, sous le contexte du moteur sans rien de
- * plus : ce que les tests en lisent, le taux de ses pensions et la pension de
- * chaque régime, telle quelle (`telQuel`). La liquidation entière tient son
+ * La demande qu'un départ appelle (`demande_de_depart` du Python), ses champs
+ * sous les noms de la classe `Demande` du Python.
+ */
+ENTREES_DE_LA_FACADE["liquidation.demande_de_depart"] = (carriere, nature) => {
+  const demande = demandeDeDepart(carriere, nature);
+  return {
+    personne: demande.personne, date_effet: demande.dateEffet, evenement: demande.evenement,
+    date_evenement: demande.dateEvenement, motif: demande.motif, nature: demande.nature,
+    regimes: [...demande.regimes],
+  };
+};
+
+/**
+ * La liquidation d'une demande (`liquidation_des_donnees` de `pont.py`),
+ * dans l'état d'une carrière seule, sous le contexte du moteur et ses
+ * neutralisations : ce que les tests en lisent — le taux de ses pensions, la
+ * pension de chaque régime, ses totaux, ses mesures et ses avantages, les
+ * lignes du relevé qu'elle a lues, ce que le contrat C.6 en décrit
+ * (`donnees`), et les appels de `liquider` qu'elle a coûtés, liquidations
+ * d'essai comprises —, tel quel (`telQuel`). La liquidation entière tient son
  * contexte, les tables du moteur, et ne passe pas le pont
  * (`CONTENUS_QUI_NE_PASSENT_PAS`).
  */
-ENTREES_DE_LA_FACADE["liquidation.liquider"] = (moteur, demande, carriere) => {
+ENTREES_DE_LA_FACADE["liquidation.liquider"] = (moteur, demande, carriere, neutralisations) => {
+  const avant = appels();
   const liquidee = liquiderLaDemande(new Demande(demande), new Etat(carriere),
-    new ContexteDeLiquidation(moteur));
-  return { taux: liquidee.pensions.taux, regimes: telQuel(liquidee.regimes) };
+    new ContexteDeLiquidation(moteur, neutralisations));
+  return {
+    taux: liquidee.pensions.taux, regimes: telQuel(liquidee.regimes),
+    total: liquidee.total, hors_repartition: liquidee.horsRepartition,
+    total_contributif: liquidee.totalContributif, mesures: telQuel(liquidee.mesures),
+    avantages: telQuel(liquidee.avantages), lignes: telQuel(liquidee.releve.lignes()),
+    donnees: telQuel(liquidee.donnees()), appels: appels() - avant,
+  };
 };
 
 // -- la fin de la façade des tests ----------------------------------------------

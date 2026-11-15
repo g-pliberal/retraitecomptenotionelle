@@ -2215,12 +2215,34 @@ def liquidation_des_donnees(donnees: dict) -> dict:
     """La liquidation que le portage a écrite (``liquidation.liquider`` de
     ``pont.mjs``), par ce que les tests en lisent, lu strictement : ``taux``,
     le plus haut des taux de liquidation des régimes en annuités ;
-    ``regimes``, la pension de chaque régime, complétée, dans l'ordre."""
-    from .droit.commun import PensionRegime
+    ``regimes``, la pension de chaque régime, complétée, dans l'ordre ;
+    ``total``, ``hors_repartition`` et ``total_contributif`` ; ``mesures``,
+    ce que la cascade a mesuré, et ``avantages``, chaque avantage appliqué ;
+    ``lignes``, celles du relevé qu'elle a lues, et ``donnees``, ce que le
+    contrat C.6 en décrit, tels quels ; ``appels``, combien de fois
+    ``liquider`` a tourné, liquidations d'essai comprises."""
+    from .droit.commun import AvantageApplique, PensionRegime
+    from .droit.liquidation import Mesure
 
     return {"taux": lu_strictement(float, donnees["taux"], "liquidation.taux"),
             "regimes": lu_strictement(tuple[PensionRegime, ...], donnees["regimes"],
-                                      "liquidation.regimes")}
+                                      "liquidation.regimes"),
+            **{cle: lu_strictement(float, donnees[cle], f"liquidation.{cle}")
+               for cle in ("total", "hors_repartition", "total_contributif")},
+            "mesures": lu_strictement(tuple[Mesure, ...], donnees["mesures"],
+                                      "liquidation.mesures"),
+            "avantages": lu_strictement(tuple[AvantageApplique, ...], donnees["avantages"],
+                                        "liquidation.avantages"),
+            "lignes": donnees["lignes"], "donnees": donnees["donnees"],
+            "appels": lu_strictement(int, donnees["appels"], "liquidation.appels")}
+
+
+def demande_des_donnees(donnees: dict):
+    """La demande qu'un départ appelle (``liquidation.demande_de_depart`` de
+    ``pont.mjs``), lue strictement sous le type du Python (``Demande``)."""
+    from .droit.liquidation import Demande
+
+    return lu_strictement(Demande, donnees, "Demande")
 
 
 def durees_des_donnees(durees: dict) -> dict:
@@ -2329,6 +2351,7 @@ LECTURES_DE_LA_FACADE = {
     "releve.construire": releve_des_donnees,
     "simulateur.regime_fusionne": regime_fusionne_des_donnees,
     "liquidation.liquider": liquidation_des_donnees,
+    "liquidation.demande_de_depart": demande_des_donnees,
     "coordonner.coordonner": coordination_des_donnees,
     "compter.compter": durees_des_donnees,
     "acquerir.acquerir": droits_des_donnees,

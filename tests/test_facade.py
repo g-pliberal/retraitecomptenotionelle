@@ -1195,12 +1195,74 @@ def test_la_liquidation_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulate
     for etat, contexte, motif in [
             (Etat(carriere, servies=(object(),)), Contexte(moteur), "état"),
             (Etat(carriere, recalcul=False), Contexte(moteur), "état"),
-            (Etat(carriere), Contexte(moteur, frozenset({"avpf"})), "contexte"),
+            (Etat(carriere, journal=Journal()), Contexte(moteur), "état"),
             (Etat(carriere), Contexte(moteur, observation="2026-01-01"), "contexte"),
             (Etat(carriere), Contexte(simulateur_python.Simulateur().scenario_actuel),
              "moteur")]:
         with pytest.raises(NonTransmissible, match=motif):
             facade.liquidation.liquider(demande, etat, contexte)
+
+
+def _mere_de_deux_enfants(simulateur):
+    """Une salariée née en 1970, deux enfants, deux années d'éducation qui
+    ouvrent l'AVPF, partie à 64 ans : la cascade mesure ses trimestres
+    d'enfants (L. 351-4), puis l'AVPF."""
+    return facade.Carriere.depuis_parcours(
+        annee_naissance=1970, sexe="F", metiers=[Metier("salarie_prive_non_cadre", 21.0)],
+        age_liquidation=64, macro=simulateur.macro, nombre_enfants=2,
+        interruptions={1998: "education_enfant", 1999: "education_enfant"})
+
+
+def test_la_demande_de_depart_se_demande_au_portage(simulateur):
+    """La demande qu'un départ appelle : la date d'effet de la carrière, le
+    premier du mois qui suit ses 62 ans pour un salarié né en janvier 1958
+    parti à l'âge légal (L. 351-1, R. 351-37), sous la nature demandée."""
+    carriere = simulateur.carriere_simple(1958, "H", "salarie_prive_non_cadre", 20, 62)
+    demande = facade.liquidation.demande_de_depart(carriere)
+    assert type(demande) is liquidation_python.Demande
+    assert (demande.personne, demande.date_effet, demande.date_evenement, demande.nature) == (
+        carriere.personne, f"{carriere.date_liquidation.annee:04d}-"
+        f"{carriere.date_liquidation.mois:02d}-01", demande.date_effet, "definitive")
+    assert facade.liquidation.demande_de_depart(carriere, nature="fictive").nature == "fictive"
+
+
+def test_la_liquidation_rend_son_contrat_ses_mesures_et_ses_appels(simulateur):
+    """La liquidation entière, telle que le contrat C.6 la décrit, sous une
+    neutralisation du contexte : ses composantes, les lignes du relevé qu'elle
+    a lues, ses totaux, et la cascade — les trimestres des enfants mesurés par
+    une liquidation d'essai, l'AVPF par une autre qui ne trouve rien, trois
+    appels de ``liquider`` que la façade compte (§ 7.8). Les constantes du
+    module se lisent."""
+    carriere = _mere_de_deux_enfants(simulateur)
+    Etat, Contexte = facade.liquidation.Etat, facade.liquidation.Contexte
+    demande = facade.liquidation.demande_de_depart(carriere)
+    avant = facade.liquidation.appels()
+    liquidee = facade.liquidation.liquider(demande, Etat(carriere),
+                                           Contexte(simulateur.scenario_actuel))
+    assert facade.liquidation.appels() - avant == 3
+    donnees = liquidee.donnees()
+    assert donnees["demande"] == demande.donnees()
+    assert donnees["contexte"]["neutralisations"] == []
+    assert {c["id"] for c in donnees["composantes"]} >= {
+        "pension_regime_general", "pension_agirc_arrco"}
+    assert set(donnees["lignes_consommees"]) == {ligne["id"] for ligne in liquidee.releve.lignes()}
+    assert [(m.code, m.neutralisation) for m in liquidee.mesures] == [
+        ("majoration_duree_assurance", "avantages_non_contributifs")]
+    assert type(liquidee.mesures[0]) is liquidation_python.Mesure
+    montants = {a.code: a.montant for a in liquidee.avantages}
+    assert liquidee.mesures[0].montant == montants["majoration_duree_assurance"] > 0
+    assert type(liquidee.total) is float and liquidee.total >= liquidee.total_contributif > 0
+    assert liquidee.hors_repartition == 0.0
+    assert liquidee.contexte.donnees()["neutralisations"] == []
+    sans = facade.liquidation.liquider(
+        demande, Etat(carriere), Contexte(simulateur.scenario_actuel,
+                                          frozenset({"avantages_non_contributifs"})))
+    assert sans.donnees()["contexte"]["neutralisations"] == ["avantages_non_contributifs"]
+    # Le total contributif ne compte pas les trimestres des enfants : le même.
+    assert sans.mesures == () and sans.total_contributif == liquidee.total_contributif
+    assert sans.total < liquidee.total
+    assert facade.liquidation.APPELS_DECLARES == liquidation_python.APPELS_DECLARES
+    assert facade.liquidation.NEUTRALISATIONS == liquidation_python.NEUTRALISATIONS
 
 
 def test_une_regle_se_demande_sous_les_parametres_de_son_moteur(simulateur):
@@ -1318,7 +1380,7 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "simulateur.carriere_parcours", "simulateur.carriere_releve",
                               "carriere.depuis_profil", "carriere.depuis_parcours",
                               "releve.construire", "simulateur.regime_fusionne",
-                              "liquidation.liquider", "coordonner.coordonner",
-                              "compter.compter", "acquerir.acquerir",
-                              "compter.cumul_plafonne")
+                              "liquidation.liquider", "liquidation.demande_de_depart",
+                              "coordonner.coordonner", "compter.compter",
+                              "acquerir.acquerir", "compter.cumul_plafonne")
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)
