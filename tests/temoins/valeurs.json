@@ -95,6 +95,9 @@
  "test_mortalite_population.py::capitaux du compte": {
   "valeur": "328d1336286fdda1"
  },
+ "test_moteur.py::simulations des variantes": {
+  "valeur": "f0ddf0d2e5ce670e"
+ },
  "test_pont.py::carrières de la grille": {
   "valeur": "7905fa657ea4127f"
  },

@@ -1616,8 +1616,8 @@ def test_une_hypothese_d_esperance_de_vie_hors_de_l_insee_est_refusee(tmp_path):
         Population(RACINE_DONNEES).verifier_hypothese("basse")
 
 
-#: Trois carrières, que les deux moteurs simulent sous les hypothèses basse et
-#: haute : une salariée, un fonctionnaire, un artisan parti avant la bascule.
+#: Trois carrières, que le portage simule sous les hypothèses basse et haute :
+#: une salariée, un fonctionnaire, un artisan parti avant la bascule.
 CARRIERES_DES_VARIANTES = (
     (1975, "F", "salarie_prive_non_cadre", 22, 64),
     (1990, "H", "fonctionnaire_etat", 24, 62.5),
@@ -1650,58 +1650,19 @@ process.stdout.write(JSON.stringify(sortie));
 """
 
 
-def _simulations_des_variantes(carrieres) -> dict:
-    """La moitié Python du test jumeau : les carrières sous chaque variante."""
-    import json
-
-    resultats = {}
-    for hypothese in ("basse", "haute"):
-        simulateur = Simulateur(Parametres(hypothese_esperance_vie=hypothese))
-        resultats[hypothese] = [
-            json.loads(json.dumps(simulateur.simuler(simulateur.carriere_simple(*c))
-                                  .dictionnaire()))
-            for c in carrieres]
-    return resultats
-
-
-def _ecarts_au_portage(obtenu, attendu, chemin: str, ecarts: list[str]) -> None:
-    """Ce qui sépare la sortie JavaScript de la sortie Python, à un milliardième
-    près en relatif ; ``null`` vaut NaN, comme dans ``tests/js/comparer.mjs``."""
-    import math
-
-    if isinstance(attendu, dict):
-        for cle, valeur in attendu.items():
-            _ecarts_au_portage((obtenu or {}).get(cle) if isinstance(obtenu, dict) else None,
-                               valeur, f"{chemin}.{cle}", ecarts)
-    elif isinstance(attendu, list):
-        if not isinstance(obtenu, list) or len(obtenu) != len(attendu):
-            ecarts.append(f"{chemin} : {len(attendu)} éléments attendus")
-            return
-        for rang, (o, a) in enumerate(zip(obtenu, attendu)):
-            _ecarts_au_portage(o, a, f"{chemin}[{rang}]", ecarts)
-    elif isinstance(attendu, float) and math.isnan(attendu):
-        if obtenu is not None:
-            ecarts.append(f"{chemin} : python=NaN js={obtenu}")
-    elif isinstance(attendu, (int, float)) and not isinstance(attendu, bool):
-        if (isinstance(obtenu, bool) or not isinstance(obtenu, (int, float))
-                or abs(obtenu - attendu) > 1e-9 * max(abs(attendu), 1.0)):
-            ecarts.append(f"{chemin} : python={attendu} js={obtenu}")
-    elif obtenu != attendu:
-        ecarts.append(f"{chemin} : python={str(attendu)[:60]} js={str(obtenu)[:60]}")
-
-
 def test_le_portage_javascript_lit_les_memes_variantes():
-    """Les deux moteurs simulent trois carrières sous les hypothèses basse et
-    haute, et rendent les mêmes chiffres : le navigateur refait les deux
-    tables des écarts que le paquet porte (``quotientsProjetes``), et chaque
-    simulateur lit celle de ses paramètres. Une hypothèse inconnue y est
-    refusée comme en Python."""
+    """Le portage simule trois carrières sous les hypothèses basse et haute :
+    le navigateur refait les deux tables des écarts que le paquet porte
+    (``quotientsProjetes``), et chaque simulateur lit celle de ses paramètres.
+    Une hypothèse inconnue y est refusée comme en Python. Les simulations,
+    vues identiques à ce que le moteur Python rendait, sont figées au témoin
+    des valeurs (action 161, étape 8m)."""
     import json
     import shutil
     import subprocess
     from pathlib import Path
 
-    from outils_portage import moitie_python
+    from outils_valeurs import valeur_figee
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
@@ -1713,10 +1674,10 @@ def test_le_portage_javascript_lit_les_memes_variantes():
     assert execution.returncode == 0, execution.stderr[-2000:]
     sortie = json.loads(execution.stdout)
     assert "inconnue" in sortie["refus"]
-    attendus = moitie_python(_simulations_des_variantes, CARRIERES_DES_VARIANTES)
-    ecarts: list[str] = []
-    _ecarts_au_portage(sortie["simulations"], attendus, "", ecarts)
-    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
+    simulations = sortie["simulations"]
+    assert [len(simulations[h]) for h in ("basse", "haute")] == [3, 3]
+    assert simulations["basse"] != simulations["haute"]
+    assert valeur_figee("simulations des variantes", simulations) == simulations
 
 
 def test_le_taux_de_remplacement_rapporte_un_revenu_annualise(macro):
