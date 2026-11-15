@@ -7331,12 +7331,12 @@ de `contribution_etat`.
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Les tests y passent par une façade (`tests/facade.py`), qui sert les entrées
 du moteur, ses tables, trente-trois règles de `droit/`, trois constructeurs
-du compte, le compte entier compris, et le relevé des droits, rendu en
-données. Le propriétaire a tranché trois questions (note de décision 0008),
-et le code mort du moteur JavaScript est retiré. Reste, une étape par
-session, dans l'ordre. Les autres règles de `droit/` à la façade, puis les
-autres fichiers de tests : commencer par « Ce qui reste » de
-`2026-11-15-le-compte-entier-a-la-facade.md`.
+du compte, le compte entier et le régime unique compris, et le relevé des
+droits, rendu en données. Le propriétaire a tranché trois questions (note de
+décision 0008), et le code mort du moteur JavaScript est retiré. Reste, une
+étape par session, dans l'ordre. Les autres règles de `droit/` à la façade,
+puis les autres fichiers de tests : commencer par « Ce qui reste » de
+`2026-11-15-le-regime-unique-a-la-facade.md`.
 Puis quatre études : `scenarios_meres.py`, `cout_avantages.py --par-carriere`,
 `part_minimum_contributif.py`, `partage_taux_unique.py`. Puis la liste des
 fonctions gardées des deux côtés, le retrait, et les lignes du relevé des

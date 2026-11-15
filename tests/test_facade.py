@@ -874,6 +874,45 @@ def test_le_prelevement_porte_le_taux_entier_de_l_etat(simulateur):
     assert simulateur.constructeur is simulateur.constructeur
 
 
+def test_le_regime_unique_se_lit_sur_le_simulateur(simulateur):
+    """Le régime unique d'après la bascule, que le portage fusionne de son
+    catalogue : sous le type du Python, à l'année de bascule du modèle, sur
+    une assiette déplafonnée (``fusion.py``, ``_taux_total``), la fonction
+    publique de l'État parmi ce qu'il fusionne, et la part de l'assuré moindre
+    que le taux entier. Le même à chaque lecture."""
+    from retraite_notionnelle.moteur.fusion import RegimeFusionne
+
+    fusionne = simulateur.regime_fusionne
+    assert type(fusionne) is RegimeFusionne
+    assert fusionne.annee_bascule == simulateur.parametres.annee_bascule == 2026
+    assert fusionne.assiette == "deplafonnee"
+    assert "fonction_publique_etat" in fusionne.regimes_fusionnes
+    assert type(fusionne.regimes_fusionnes) is tuple
+    assert type(fusionne.fiabilite) is Fiabilite
+    assert 0 < fusionne.taux_cotisation_salarie < fusionne.taux_cotisation_retraite
+    assert simulateur.regime_fusionne is fusionne
+
+
+def test_le_compte_recoit_le_regime_unique_du_simulateur(simulateur):
+    """Une fonctionnaire de l'État née en 1975, liquidée en 2039 : passé la
+    bascule, son compte porte le taux entier du régime unique, plus la
+    pension civile. Un autre régime unique — retouché par le test — ne
+    parviendrait pas au portage : refusé."""
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1975, sexe="F", affiliation="fonctionnaire_etat",
+        age_debut=23, age_liquidation=64)
+    fusionne = simulateur.regime_fusionne
+    compte = simulateur.constructeur_employeur.construire(
+        carriere, carriere.annee_liquidation, regime_fusionne=fusionne)
+    par_annee = {cotisation.annee: cotisation for cotisation in compte.cotisations}
+    assert par_annee[2030].taux_effectif == pytest.approx(fusionne.taux_cotisation_retraite)
+    assert par_annee[2020].taux_effectif != pytest.approx(fusionne.taux_cotisation_retraite)
+    with pytest.raises(NonTransmissible, match="régime unique"):
+        simulateur.constructeur_employeur.construire(
+            carriere, carriere.annee_liquidation,
+            regime_fusionne=dataclasses.replace(fusionne, taux_cotisation_retraite=0.5))
+
+
 def test_le_constructeur_ne_sert_que_ce_qu_il_transmet(simulateur):
     """Une méthode que la façade ne déclare pas, un constructeur qu'elle ne
     sert pas, une retouche : refusés, au lieu de tourner en Python."""
@@ -1097,5 +1136,5 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "reversion.reversion", "simulateur.carriere_simple",
                               "simulateur.carriere_parcours", "simulateur.carriere_releve",
                               "carriere.depuis_profil", "carriere.depuis_parcours",
-                              "releve.construire")
+                              "releve.construire", "simulateur.regime_fusionne")
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)

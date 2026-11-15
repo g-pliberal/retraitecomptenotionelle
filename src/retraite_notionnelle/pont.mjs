@@ -1745,6 +1745,7 @@ const ENTREES_DE_LA_FACADE = {
   "reversion.reversion": (...valeurs) => FONCTIONS_DU_DROIT["reversion.reversion"](...valeurs),
   "releve.construire":
     (moteur, carriere) => releveEnDonnees(releve.construire(moteur, carriere), carriere),
+  "simulateur.regime_fusionne": (simulateur) => telQuel(simulateur.regimeFusionne),
 };
 
 /**
@@ -1808,8 +1809,9 @@ LECTURES.facade = facade;
 
 /**
  * Un argument d'une méthode de table ou d'une règle du droit que la façade
- * sert (`_argument_de_la_facade` de `pont.py`). Quatre passent par leur
- * marque : les séries du simulateur, `{"@": "series"}` ; une période du
+ * sert (`_argument_de_la_facade` de `pont.py`). Cinq passent par leur
+ * marque : les séries du simulateur, `{"@": "series"}` ; son régime unique,
+ * `{"@": "regime_fusionne"}`, à un constructeur seulement ; une période du
  * catalogue, `{"@": "periode", regime, rang, debut}`, celle de ce rang parmi
  * les périodes du régime, dont l'année de début est vérifiée ; une date au
  * mois, `{"@": "date_mois", annee, mois}`, une vraie `DateMois` ; une table,
@@ -1818,10 +1820,17 @@ LECTURES.facade = facade;
  * que le catalogue ne tient pas arrête la demande, au lieu de passer pour un
  * refus du moteur.
  */
-function argumentDeLaFacade({ macro, catalogue }, valeur) {
+function argumentDeLaFacade(porteur, valeur) {
+  const { macro, catalogue } = porteur;
   const marque = valeur !== null && typeof valeur === "object" && !Array.isArray(valeur)
     ? valeur["@"] : undefined;
   if (marque === "series") return macro;
+  if (marque === "regime_fusionne") {
+    if (!(porteur instanceof Simulateur)) {
+      throw new TypeError("régime unique passé à ce qui n'est pas un simulateur");
+    }
+    return porteur.regimeFusionne;
+  }
   if (marque === "date_mois") return new DateMois(valeur.annee, valeur.mois);
   if (marque === "table") return new Map(valeur.entrees);
   if (marque === "periode") {

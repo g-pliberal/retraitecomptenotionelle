@@ -43,7 +43,9 @@ objet du moteur — n'arriverait pas au portage : la règle est refusée.
 ``simulateur.constructeur_employeur``, ``simulateur.constructeur_prelevement``)
 sert ce que ``pont.CONSTRUCTEURS_DE_LA_FACADE`` déclare — la cotisation d'une
 année, le taux porté au compte, le compte entier —, ses arguments transmis
-comme ceux d'une table.
+comme ceux d'une table. Le régime unique d'après la bascule
+(``simulateur.regime_fusionne``) se lit sur le simulateur, et passe au
+constructeur par sa marque ; un autre ne passe pas.
 
 **Le relevé des droits** (``releve.construire``) revient en données, ce que
 les tests en lisent : ses durées, ses points et ses cotisations. Ses durées repassent au
@@ -80,6 +82,7 @@ from retraite_notionnelle.droit import ouvrir as _ouvrir
 from retraite_notionnelle.droit import releve as _releve
 from retraite_notionnelle.droit import reversion as _reversion
 from retraite_notionnelle.moteur import compte as _compte
+from retraite_notionnelle.moteur.fusion import RegimeFusionne
 from retraite_notionnelle.scenarios import actuel as _actuel
 
 #: Les données du simulateur Python que la façade laisse lire : des chargeurs,
@@ -87,11 +90,11 @@ from retraite_notionnelle.scenarios import actuel as _actuel
 DONNEES = frozenset({"catalogue", "affiliations"})
 
 
-#: Les neuf entrées du moteur Python que la façade sert, sous leurs noms.
+#: Les dix entrées du moteur Python que la façade sert, sous leurs noms.
 ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversion",
            "simulateur.carriere_simple", "simulateur.carriere_parcours",
            "simulateur.carriere_releve", "carriere.depuis_profil", "carriere.depuis_parcours",
-           "releve.construire")
+           "releve.construire", "simulateur.regime_fusionne")
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
@@ -208,6 +211,12 @@ def _argument_de_table(simulateur: Simulateur, valeur):
     que le test aurait faite ou retouchée, ne lui parviendrait pas."""
     if valeur is simulateur._donnees.macro:
         return pont.SERIES
+    if isinstance(valeur, RegimeFusionne):
+        if valeur is not simulateur._regime_fusionne:
+            raise NonTransmissible(
+                "régime unique passé en argument qui n'est pas celui du simulateur de la "
+                "façade (simulateur.regime_fusionne) : le portage ne le verrait pas")
+        return pont.REGIME_FUSIONNE
     if type(valeur) is datetime.date:
         return valeur.isoformat()
     if isinstance(valeur, PeriodeRegime):
@@ -285,6 +294,7 @@ class Simulateur(_Ferme):
         object.__setattr__(self, "_donnees", donnees)
         object.__setattr__(self, "scenario_actuel", ScenarioActuel(self))
         object.__setattr__(self, "_constructeurs", {})
+        object.__setattr__(self, "_regime_fusionne", None)
 
     @property
     def macro(self):
@@ -293,6 +303,16 @@ class Simulateur(_Ferme):
         macro = self._donnees.macro
         _SERIES[id(macro)] = (macro, self.parametres)
         return macro
+
+    @property
+    def regime_fusionne(self):
+        """Le régime unique d'après la bascule, que le portage fusionne de son
+        catalogue, sous les paramètres du simulateur : le même à chaque
+        lecture, et le seul qu'un constructeur du compte reçoive."""
+        if self._regime_fusionne is None:
+            object.__setattr__(self, "_regime_fusionne", _demander(
+                "simulateur.regime_fusionne", self.parametres, pont.SIMULATEUR))
+        return self._regime_fusionne
 
     def __getattr__(self, nom):
         if nom in DONNEES:

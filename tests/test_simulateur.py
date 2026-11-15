@@ -965,7 +965,6 @@ def test_le_scenario_5_reste_inferieur_au_scenario_4(entiere):
             < comparaison.notionnel_retroactif_employeur.pension_annuelle)
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.regime_fusionne")
 def test_le_regime_unique_herite_de_la_repartition_de_ses_pivots(simulateur):
     """Après la bascule, plus de fonction publique : un seul régime, un seul taux.
 

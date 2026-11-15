@@ -2237,6 +2237,15 @@ def releve_des_donnees(donnees: dict) -> dict:
     }
 
 
+def regime_fusionne_des_donnees(fusionne: dict):
+    """Le régime unique du simulateur, que le portage fusionne de son
+    catalogue (``regimeFusionne`` de ``moteur/js/simulateur.js``), lu
+    strictement sous le type du Python (``RegimeFusionne``)."""
+    from .moteur.fusion import RegimeFusionne
+
+    return lu_strictement(RegimeFusionne, fusionne, "RegimeFusionne")
+
+
 LECTURES_DE_LA_FACADE = {
     "simulateur.simuler": comparaison_des_donnees,
     "simulateur.carriere_simple": carriere_des_donnees,
@@ -2247,6 +2256,7 @@ LECTURES_DE_LA_FACADE = {
     "scenario_actuel.calculer": resultat_actuel_des_donnees,
     "reversion.reversion": reversion_des_donnees,
     "releve.construire": releve_des_donnees,
+    "simulateur.regime_fusionne": regime_fusionne_des_donnees,
 }
 
 #: Le type que le Python donne à une erreur du portage, quand ce n'est pas
@@ -2348,6 +2358,20 @@ class _Series:
 SERIES = _Series()
 
 
+class _RegimeFusionne:
+    """Le régime unique du simulateur, en argument d'une méthode de
+    constructeur (:func:`constructeur_du_compte`)."""
+
+    def __repr__(self) -> str:
+        return "pont.REGIME_FUSIONNE"
+
+
+#: Le régime unique du simulateur en argument d'une méthode de constructeur :
+#: le portage y met le sien (``simulateur.regimeFusionne``), sous les
+#: paramètres de la demande.
+REGIME_FUSIONNE = _RegimeFusionne()
+
+
 @dataclasses.dataclass(frozen=True)
 class PeriodeDuCatalogue:
     """Une période d'un régime du catalogue, en argument d'une méthode de
@@ -2438,14 +2462,16 @@ def constructeur_du_compte(constructeur: str, methode: str, type_rendu, *argumen
 def _argument_de_la_facade(argument, carrieres: list) -> dict:
     """Un argument d'une méthode de table ou d'une règle du droit que la façade
     sert, tel que ``pont.mjs`` le relit : comme celui d'un appel du droit
-    (:func:`_argument_du_droit`), sauf quatre, qui passent par leur marque — les
-    séries du simulateur, une période de son catalogue, une date au mois,
+    (:func:`_argument_du_droit`), sauf cinq, qui passent par leur marque — les
+    séries du simulateur, son régime unique, une période de son catalogue, une date au mois,
     dont le portage refait une ``DateMois``, et une :class:`Table`, dont il
     refait une ``Map``."""
     from .calendrier import DateMois
 
     if argument is SERIES:
         return {"valeur": {"@": "series"}}
+    if argument is REGIME_FUSIONNE:
+        return {"valeur": {"@": "regime_fusionne"}}
     if isinstance(argument, PeriodeDuCatalogue):
         return {"valeur": {"@": "periode", **dataclasses.asdict(argument)}}
     if isinstance(argument, DateMois):

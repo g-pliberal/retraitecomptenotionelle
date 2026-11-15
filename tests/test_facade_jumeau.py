@@ -667,6 +667,14 @@ def _compte_entier(carriere, annee_debut=None):
     return carriere, carriere.annee_liquidation, annee_debut
 
 
+def _apres_la_bascule(simulateur):
+    """Une fonctionnaire de l'État liquidée en 2039 : son compte passe au
+    régime unique en 2026."""
+    return simulateur.carriere_simple(
+        annee_naissance=1975, sexe="F", affiliation="fonctionnaire_etat", age_debut=23,
+        age_liquidation=64)
+
+
 #: Des appels de chaque méthode de constructeur que la façade sert
 #: (``pont.CONSTRUCTEURS_DE_LA_FACADE``) : ``(constructeur, méthode,
 #: arguments)``, bâtis sur le simulateur de chaque côté.
@@ -690,6 +698,10 @@ APPELS_DES_CONSTRUCTEURS = [
     ("constructeur_prelevement", "taux_effectif", lambda s: (
         "fonction_publique_etat", _periode_active("fonction_publique_etat", 2025)(s), 2025)),
     ("constructeur_prelevement", "construire", lambda s: _compte_entier(_fonctionnaire(s))),
+    ("constructeur", "construire", lambda s: (
+        *_compte_entier(_apres_la_bascule(s)), s.regime_fusionne)),
+    ("constructeur_employeur", "construire", lambda s: (
+        *_compte_entier(_apres_la_bascule(s)), s.regime_fusionne)),
 ]
 
 
@@ -717,3 +729,15 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_constructeurs(parametres):
         if repr(lu) != repr(refait):
             ecarts.append(f"{nom}.{methode} : la façade lit {lu!r}, le jumeau rend {refait!r}")
     assert not ecarts, "\n".join(ecarts)
+
+
+@pytest.mark.parametrize("parametres", [
+    Parametres(), Parametres(annee_bascule=2035)], ids=["reference", "bascule_2035"])
+def test_le_jumeau_rend_le_regime_unique_que_la_facade_lit(parametres):
+    """Le régime unique du simulateur, fusionné par le portage et par le
+    jumeau : le même, au bit près, sous les mêmes types."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    lu = facade.Simulateur(parametres).regime_fusionne
+    refait = simulateur_python.Simulateur(parametres).regime_fusionne
+    assert repr(lu) == repr(refait)
