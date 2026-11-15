@@ -453,9 +453,9 @@ def _apprenti_puis_salarie(simulateur, fin_du_salariat: int, age_liquidation: fl
     de 2017 à ``fin_du_salariat`` exclue. Le relevé porte les euros sans les
     trimestres : le modèle les valide du salaire, comme la caisse."""
     from retraite_notionnelle import chronologie
-    from retraite_notionnelle.carriere import LigneRelevee
-
-    from facade import Carriere
+    # Le bâtisseur du Python : ``test_pont.py`` passe ici un simulateur du
+    # moteur Python, dont la façade ne prendrait pas les séries.
+    from retraite_notionnelle.carriere import Carriere, LigneRelevee
 
     apprentissage = {2014: 400.0, 2015: 900.0, 2016: 900.0}
     salaires = {**apprentissage, **dict.fromkeys(range(2017, fin_du_salariat), 30000.0)}
