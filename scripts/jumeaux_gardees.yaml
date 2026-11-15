@@ -18,7 +18,9 @@
 # imports. Le test de confrontation, `tests/test_jumeaux_au_bit.py`, éprouve
 # chaque fonction gardée qui y a sa grille, au bit près, et la nomme en colonne
 # `test` ; les lecteurs de `mortalite.py`, `taux.py`, `patrimoine.py` et
-# `distribution.py` y ont été relus par leurs appels (étape 7b).
+# `distribution.py` y ont été relus par leurs appels (étape 7b), ceux
+# d'`assiette.py`, `tva.py`, `effectifs.py`, `depenses.py`, `vie_en_couple.py`
+# et `caracteristiques.py` à l'étape 7c.
 
 src/retraite_notionnelle/calendrier.py:
   gardees:
@@ -75,12 +77,13 @@ src/retraite_notionnelle/contributions_equilibre.py:
 
 src/retraite_notionnelle/donnees/assiette.py:
   gardees:
-    annee_de_reference: {lecteur: scripts/construire_donnees.py}
-    fiabilite: {lecteur: scripts/construire_donnees.py}
-    montant: {lecteur: scripts/construire_donnees.py}
-    part_pib: {lecteur: scripts/chiffrage_plf.py}
-    poste: {lecteur: scripts/chiffrage_plf.py}
-    taux_prelevement: {lecteur: scripts/mesures_prose.py}
+    annee_de_reference: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    montant: {lecteur: src/retraite_notionnelle/donnees/assiette.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    part_pib: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    taux_prelevement: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+  au_moteur:
+    - fiabilite
+    - poste
 
 src/retraite_notionnelle/donnees/bilan.py:
   gardees:
@@ -100,12 +103,12 @@ src/retraite_notionnelle/donnees/bilan.py:
 
 src/retraite_notionnelle/donnees/caracteristiques.py:
   gardees:
-    beneficiaires_minimum: {lecteur: scripts/garantie_par_sexe.py}
-    part_femmes: {lecteur: src/retraite_notionnelle/cout.py}
-    part_majorations: {lecteur: src/retraite_notionnelle/donnees/caracteristiques.py}
-    part_non_cotisee: {lecteur: src/retraite_notionnelle/donnees/caracteristiques.py}
-    rapport_deplacement: {lecteur: scripts/garantie_par_sexe.py}
-    valeur: {lecteur: scripts/bilan_compte.py}
+    beneficiaires_minimum: {lecteur: scripts/garantie_par_sexe.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    part_femmes: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    part_majorations: {lecteur: src/retraite_notionnelle/donnees/caracteristiques.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    part_non_cotisee: {lecteur: src/retraite_notionnelle/donnees/caracteristiques.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    rapport_deplacement: {lecteur: scripts/garantie_par_sexe.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    valeur: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
   au_moteur:
     - part_minimum_pension
 
@@ -118,14 +121,14 @@ src/retraite_notionnelle/donnees/chargement.py:
 
 src/retraite_notionnelle/donnees/depenses.py:
   gardees:
-    annees: {lecteur: scripts/age_depart_csp.py}
-    depense: {lecteur: scripts/chiffrage_plf.py}
-    depense_systeme: {lecteur: scripts/mesures_prose.py}
-    fiabilite: {lecteur: scripts/construire_donnees.py}
-    part_pib: {lecteur: scripts/chiffrage_plf.py}
-    part_repartition: {lecteur: src/retraite_notionnelle/cout.py}
-    repartition: {lecteur: scripts/mesures_prose.py}
-    reversion: {lecteur: scripts/construire_temoins.py}
+    annees: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    depense: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    depense_systeme: {lecteur: scripts/mesures_prose.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    fiabilite: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    part_pib: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    part_repartition: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    repartition: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    reversion: {lecteur: src/retraite_notionnelle/avantages.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
   au_moteur:
     - annees_ventilees
     - pensions_droit
@@ -136,10 +139,11 @@ src/retraite_notionnelle/donnees/distribution.py:
 
 src/retraite_notionnelle/donnees/effectifs.py:
   gardees:
-    caisses: {lecteur: scripts/construire_donnees.py}
-    effectif: {lecteur: scripts/construire_donnees.py}
-    fiabilite: {lecteur: scripts/construire_donnees.py}
-    serie: {lecteur: scripts/age_depart_csp.py}
+    caisses: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    effectif: {lecteur: src/retraite_notionnelle/castypes.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    serie: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+  au_moteur:
+    - fiabilite
 
 src/retraite_notionnelle/donnees/equilibre.py:
   gardees:
@@ -324,17 +328,17 @@ src/retraite_notionnelle/donnees/taux.py:
 
 src/retraite_notionnelle/donnees/tva.py:
   gardees:
-    assiettes: {lecteur: scripts/mesures_prose.py}
-    fiabilite: {lecteur: scripts/construire_donnees.py}
-    montant: {lecteur: scripts/construire_donnees.py}
-    part_pib: {lecteur: scripts/chiffrage_plf.py}
+    assiettes: {lecteur: src/retraite_notionnelle/donnees/tva.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    montant: {lecteur: src/retraite_notionnelle/donnees/tva.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    part_pib: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
   au_moteur:
+    - fiabilite
     - variation_prix
 
 src/retraite_notionnelle/donnees/vie_en_couple.py:
   gardees:
-    part: {lecteur: scripts/age_conjoncturel.py}
-    part_moyenne: {lecteur: scripts/garantie_par_sexe.py}
+    part: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    part_moyenne: {lecteur: scripts/garantie_par_sexe.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
 
 src/retraite_notionnelle/frontiere.py:
   gardees:

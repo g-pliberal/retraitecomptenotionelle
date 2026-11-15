@@ -1,5 +1,5 @@
 """Chaque fonction gardée des deux côtés rend la même valeur en Python et en
-JavaScript, au bit près (action 161, étape 7b).
+JavaScript, au bit près (action 161, étapes 7b et 7c).
 
 La liste ``scripts/jumeaux_gardees.yaml`` déclare, dans les paires qui restent
 après le retrait du moteur Python, les fonctions écrites des deux côtés que la
@@ -47,6 +47,12 @@ TAUX = "src/retraite_notionnelle/donnees/taux.py"
 MORTALITE = "src/retraite_notionnelle/donnees/mortalite.py"
 PATRIMOINE = "src/retraite_notionnelle/donnees/patrimoine.py"
 DISTRIBUTION = "src/retraite_notionnelle/donnees/distribution.py"
+ASSIETTE = "src/retraite_notionnelle/donnees/assiette.py"
+TVA = "src/retraite_notionnelle/donnees/tva.py"
+EFFECTIFS = "src/retraite_notionnelle/donnees/effectifs.py"
+DEPENSES = "src/retraite_notionnelle/donnees/depenses.py"
+COUPLE = "src/retraite_notionnelle/donnees/vie_en_couple.py"
+CARACTERISTIQUES = "src/retraite_notionnelle/donnees/caracteristiques.py"
 
 
 class _Racine:
@@ -59,6 +65,24 @@ class _Racine:
 #: À la place d'un argument : la racine des données en Python, le paquet
 #: dans le portage, pour une fonction de module qui lit l'une ou l'autre.
 SOURCE = _Racine()
+
+
+class Nommes(dict):
+    """Les arguments nommés d'un appel, en dernier dans son n-uplet : passés
+    par leur nom en Python, à la suite des autres et dans leur ordre au
+    portage, qui n'a que des arguments positionnels."""
+
+
+#: La classe Python de chaque genre d'objet bâti sur ``data/`` seul, et le
+#: module du portage où sa classe, du même nom, se bâtit sur le paquet.
+CLASSES = {
+    "assiette": ("assiette", "AssietteActivite"),
+    "tva": ("tva", "AssietteTva"),
+    "effectifs": ("effectifs", "EffectifsRetraites"),
+    "depenses": ("depenses", "DepensesRetraite"),
+    "couple": ("vie_en_couple", "VieEnCouple"),
+    "caracteristiques": ("caracteristiques", "CaracteristiquesRetraites"),
+}
 
 
 # -- les objets confrontés -------------------------------------------------------
@@ -77,6 +101,11 @@ def _python(nom: str):
         if not detail:
             return patrimoine.PatrimoineMenages(DATA)
         return _objet_python("patrimoine").distribution(detail)
+    if genre in CLASSES:
+        import importlib
+        module, classe = CLASSES[genre]
+        return getattr(importlib.import_module(
+            f"retraite_notionnelle.donnees.{module}"), classe)(DATA)
     if genre == "pensions":
         # Le paquet porte la distribution des retraités qui résident en
         # France, comme la fabrique la lit (``_distribution_pensions_sexes``).
@@ -97,6 +126,9 @@ def _javascript(nom: str):
         if not detail:
             return site_js.module("patrimoine").PatrimoineMenages(_paquet())
         return _objet_javascript("patrimoine").distribution(detail)
+    if genre in CLASSES:
+        module, classe = CLASSES[genre]
+        return getattr(site_js.module(module.replace("_", "-")), classe)(_paquet())
     if genre == "pensions":
         return site_js.module("distribution").DistributionPensions(_paquet(), detail)
     raise KeyError(nom)
@@ -175,6 +207,20 @@ def _grilles() -> dict[tuple[str, str], Grille]:
     par_population = tuple(f"patrimoine:{p}" for p in _populations_patrimoine())
     pensions = tuple(f"pensions:{sexe}" for sexe in ("ensemble", "F", "H"))
 
+    from retraite_notionnelle.donnees.depenses import CODES_SYSTEMES
+    annees = tuple((annee,) for annee in range(1945, 2081))
+    depenses = _objet_python("depenses")
+    annees_publiees = tuple((annee,) for annee in depenses.annees())
+    caisses = _objet_python("effectifs").caisses()
+    modes = sorted({mode for _, _, mode in _objet_python("couple")._parts})
+    survie = [math.exp(-0.0004 * rang ** 2) for rang in range(45)]
+    expositions = ([1.0], [0.0, 0.0], survie, [1.0, 0.75, 0.5, 0.25, 0.0])
+    # Le paquet ne porte que les indicateurs que le site lit, ceux que la
+    # fabrique y écrit : les grilles s'en tiennent à eux.
+    indicateurs = tuple(tuple(cle.split("|")) for cle in sorted(
+        _paquet()["caracteristiques_retraites"]["valeurs"])) if site_js.disponible() else ()
+    trois_sexes = (("F",), ("H",), ("ensemble",))
+
     return {
         # La courbe des taux : sans prime de terme, et avec celle du réglage
         # « primé » (0,6 point à trente ans).
@@ -246,6 +292,57 @@ def _grilles() -> dict[tuple[str, str], Grille]:
         # La distribution des pensions, par sexe.
         (DISTRIBUTION, "part_sous"): Grille(pensions, tuple(
             (montant,) for montant in _pas(0.0, 7000.0, 25.0) + [-10.0, 1e5])),
+
+        # L'assiette de l'activité, sur les années publiées et au-delà, où
+        # le taux de prélèvement se lit à la dernière année publiée.
+        (ASSIETTE, "annee_de_reference"): Grille(("assiette",), annees),
+        (ASSIETTE, "montant"): Grille(("assiette",), annees),
+        (ASSIETTE, "part_pib"): Grille(("assiette",), annees),
+        (ASSIETTE, "taux_prelevement"): Grille(("assiette",), tuple(
+            (ressources, annee) for ressources in (0.0, 0.1373, 0.14)
+            for (annee,) in annees)),
+
+        # L'assiette de la TVA, nette et brute.
+        (TVA, "assiettes"): Grille(("tva",), ((True,), (False,))),
+        (TVA, "montant"): Grille(("tva",), ((True,), (False,))),
+        (TVA, "part_pib"): Grille(("tva",), ((True,), (False,))),
+
+        # Les effectifs de retraités, par caisse.
+        (EFFECTIFS, "caisses"): Grille(("effectifs",), ((),)),
+        (EFFECTIFS, "serie"): Grille(("effectifs",), tuple((c,) for c in caisses),
+                                     champs=("nom", "interpolation",
+                                             "premiere_annee", "derniere_annee")),
+        (EFFECTIFS, "effectif"): Grille(("effectifs",), tuple(
+            (c, annee) for c in caisses for (annee,) in annees)),
+
+        # La dépense de retraite, son total, ses systèmes et sa réversion.
+        (DEPENSES, "annees"): Grille(("depenses",), ((),)),
+        (DEPENSES, "depense"): Grille(("depenses",), annees),
+        (DEPENSES, "depense_systeme"): Grille(("depenses",), tuple(
+            (code, annee) for code in CODES_SYSTEMES for (annee,) in annees_publiees)),
+        (DEPENSES, "fiabilite"): Grille(("depenses",), annees),
+        (DEPENSES, "part_pib"): Grille(("depenses",), annees_publiees),
+        (DEPENSES, "repartition"): Grille(("depenses",), annees_publiees),
+        (DEPENSES, "part_repartition"): Grille(("depenses",), annees),
+        (DEPENSES, "reversion"): Grille(("depenses",), annees),
+
+        # La vie en couple, par âge, et sa moyenne sur des expositions.
+        (COUPLE, "part"): Grille(("couple",), tuple(
+            (age, sexe, mode) for age in _pas(40.0, 110.0, 0.5)
+            for sexe in sexes for mode in modes)),
+        (COUPLE, "part_moyenne"): Grille(("couple",), tuple(
+            (sexe, exposition, debut, mode) for sexe in sexes
+            for exposition in expositions for debut in (60, 65, 70) for mode in modes)),
+
+        # Les caractéristiques des retraités de la DREES.
+        (CARACTERISTIQUES, "valeur"): Grille(("caracteristiques",), indicateurs),
+        (CARACTERISTIQUES, "part_femmes"): Grille(("caracteristiques",)),
+        (CARACTERISTIQUES, "part_non_cotisee"): Grille(("caracteristiques",), trois_sexes),
+        (CARACTERISTIQUES, "part_majorations"): Grille(("caracteristiques",), trois_sexes),
+        (CARACTERISTIQUES, "beneficiaires_minimum"): Grille(("caracteristiques",), tuple(
+            (sexe, Nommes(regime_principal=principal)) for (sexe,) in trois_sexes
+            for principal in (True, False))),
+        (CARACTERISTIQUES, "rapport_deplacement"): Grille(("caracteristiques",), ((),)),
     }
 
 
@@ -300,8 +397,9 @@ def ecarts(relu, attendu, chemin: str = "", tolerance: float = 0.0) -> list[str]
         if sorted(map(str, relu)) != sorted(map(str, attendu)):
             return [f"{chemin} : clés {sorted(map(str, relu))} au portage, "
                     f"{sorted(map(str, attendu))} en Python"]
+        relus = {str(cle): valeur for cle, valeur in relu.items()}
         return [e for cle in attendu
-                for e in ecarts(relu[str(cle)], attendu[cle], f"{chemin}.{cle}", tolerance)]
+                for e in ecarts(relus[str(cle)], attendu[cle], f"{chemin}.{cle}", tolerance)]
     if isinstance(attendu, list) and isinstance(relu, list):
         if len(relu) != len(attendu):
             return [f"{chemin} : {len(relu)} éléments au portage, {len(attendu)} en Python"]
@@ -316,6 +414,17 @@ def _champs(objet, champs: tuple[str, ...]):
     return {champ: getattr(objet, champ) for champ in champs}
 
 
+def _appeler(appeler, arguments: tuple, source, cote: str):
+    """Un appel de la grille : :data:`SOURCE` remplacée, :class:`Nommes`
+    passés par leur nom en Python, à leur rang au portage."""
+    positionnels = [source if a is SOURCE else a for a in arguments
+                    if not isinstance(a, Nommes)]
+    nommes = next((a for a in arguments if isinstance(a, Nommes)), Nommes())
+    if cote == "python":
+        return appeler(*positionnels, **nommes)
+    return appeler(*positionnels, *nommes.values())
+
+
 def _valeurs(fonction: str, grille: Grille, objet: str, cote: str):
     """Ce que rend, d'un côté, la fonction sur chaque point de sa grille."""
     if cote == "python":
@@ -326,11 +435,11 @@ def _valeurs(fonction: str, grille: Grille, objet: str, cote: str):
         valeurs = [getattr(porteur, nom)]
     else:
         appeler = getattr(porteur, nom)
-        valeurs = [appeler(*(source if a is SOURCE else a for a in arguments))
-                   for arguments in grille.appels]
+        valeurs = [_appeler(appeler, arguments, source, cote) for arguments in grille.appels]
     if grille.champs:
         valeurs = [_champs(valeur, grille.champs) for valeur in valeurs]
     return [_en_python(valeur) for valeur in valeurs]
+
 
 
 @pytest.mark.parametrize(("fichier", "fonction"), [
