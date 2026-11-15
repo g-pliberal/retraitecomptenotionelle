@@ -27,15 +27,12 @@ et la durée requise ne dépendent pas des lignes au-delà du départ.
 
 from __future__ import annotations
 
-import dataclasses
 from collections import defaultdict
 
 import pytest
 
-from retraite_notionnelle.carriere import Affiliations
-from retraite_notionnelle.config import RACINE_DONNEES
-from retraite_notionnelle.droit import ouvrir
-from retraite_notionnelle.simulateur import Simulateur
+from facade import Simulateur
+from retraite_notionnelle import pont
 
 #: De la plus ancienne génération vivante à la plus jeune en âge de travailler.
 GENERATIONS = range(1920, 2006)
@@ -200,24 +197,24 @@ PRESUMES = {
 def releve():
     """Pour chaque (régime, paramètre), les générations dont la règle change
     avec l'année du départ, et ces années ; et les départs sans période dans
-    un régime ouvert."""
+    un régime ouvert. Le portage lit chaque règle, en une demande
+    (``pont.droit``) : la carrière partie à soixante-dix ans, qu'il bâtit
+    une fois, portée à chaque âge de départ (``pont.CarriereSimple``,
+    ``depart``)."""
     simulateur = Simulateur()
-    scenario = simulateur.scenario_actuel
-    affiliations = Affiliations(RACINE_DONNEES)
+    affiliations = simulateur.affiliations
     # (régime, statut, génération) -> [(âge de départ, année, âge, durée)]
-    lu = defaultdict(list)
+    appels, departs = {}, {}
     lacunes = []
     for statut in affiliations.codes:
         periodes_du_statut = affiliations.periodes(statut)
         for generation in GENERATIONS:
-            partie_a_70 = simulateur.carriere_simple(
-                annee_naissance=generation, sexe="H", affiliation=statut,
-                age_debut=22, age_liquidation=70,
-            )
+            options = {"annee_naissance": generation, "sexe": "H", "affiliation": statut,
+                       "age_debut": 22, "age_liquidation": 70}
             for age_depart in AGES_DE_DEPART:
-                carriere = dataclasses.replace(partie_a_70,
-                                               age_liquidation=age_depart)
-                annee = carriere.annee_liquidation
+                carriere = pont.CarriereSimple(options, depart=age_depart)
+                # Né en janvier, parti au mois qui suit son anniversaire.
+                annee = generation + age_depart
                 codes = {code for p in periodes_du_statut
                          if p["debut"] <= annee <= (p.get("fin") or 9999)
                          for code in p["regimes"]}
@@ -230,18 +227,27 @@ def releve():
                         if regime.creation <= annee <= (regime.extinction or 9999):
                             lacunes.append((statut, code, generation, age_depart))
                         continue
+                    cle = f"{code}|{statut}|{generation}|{age_depart}"
+                    departs[cle] = (code, statut, generation, age_depart, annee)
+                    appels[cle + "|age"] = ("ouvrir.age_ouverture", pont.MOTEUR,
+                                            pont.Periode(code, annee), carriere)
                     # La durée d'une période qui liquide chaque annuité au
                     # taux de son année n'est que le dénominateur de ses
                     # annuités, qui pèsent chacune la durée de leur période
                     # (`annuites_au_taux_de_leur_annee`, la caisse du CESE) :
                     # la pension ne dépend plus de l'année du départ, et la
                     # durée de l'année de liquidation ne décide de rien.
-                    lu[(code, statut, generation)].append((
-                        age_depart, annee,
-                        round(ouvrir.age_ouverture(scenario, periode, carriere), 4),
-                        None if periode.annuites_au_taux_de_leur_annee
-                        else ouvrir.duree_requise(scenario, periode, carriere)[0],
-                    ))
+                    if not periode.annuites_au_taux_de_leur_annee:
+                        appels[cle + "|duree"] = ("ouvrir.duree_requise", pont.MOTEUR,
+                                                  pont.Periode(code, annee), carriere)
+    lus, echecs = pont.droit(appels)
+    assert not echecs, list(echecs.items())[:5]
+    lu = defaultdict(list)
+    for cle, (code, statut, generation, age_depart, annee) in departs.items():
+        duree = lus.get(cle + "|duree")
+        lu[(code, statut, generation)].append((
+            age_depart, annee, round(lus[cle + "|age"], 4),
+            None if duree is None else duree[0]))
     variations = defaultdict(lambda: defaultdict(set))
     for (code, statut, generation), departs in lu.items():
         # Les départs à l'âge d'ouverture ou après, dans l'ordre.
@@ -292,23 +298,23 @@ def test_l_annuite_du_cese_garde_le_taux_de_son_mandat():
     """Le règlement de la caisse du CESE compte chaque annuité au pourcentage
     de son mandat (article 17) : vingt ans de mandat, de 1990 à 2009, pèsent
     15 annuités sur 142 trimestres et 5 sur 149, que la liquidation tombe en
-    2004 ou en 2030, sur 142 ou sur 165 trimestres."""
-    from retraite_notionnelle.droit import liquider
-
-    simulateur = Simulateur()
-    carriere = simulateur.carriere_simple(
+    2004 ou en 2030, sur 142 ou sur 165 trimestres.
+    Le portage liquide les vingt ans de mandat d'un conseiller entré à quarante
+    ans, en 1990, et parti à soixante, sur les durées de son relevé
+    (``pont.droit``)."""
+    carriere = Simulateur().carriere_simple(
         annee_naissance=1950, sexe="H", affiliation="membre_cese",
-        age_debut=22, age_liquidation=64)
-
-    class Durees:
-        def cumul_plafonne(self, table, membres, annees):
-            return sum(4 for annee in range(1990, 2010) if annees(annee))
-
-    for proratisation in (142, 165):
-        trimestres = liquider.annuites_au_taux_de_leur_annee(
-            simulateur.scenario_actuel, "cese_membres", carriere, Durees(),
-            ("cese_membres",), proratisation, 80)
-        assert trimestres / proratisation == pytest.approx(60 / 142 + 20 / 149, abs=1e-4)
+        age_debut=40, age_liquidation=60)
+    assert {ligne.annee for ligne in carriere.lignes if ligne.trimestres_valides} <= set(
+        range(1990, 2011))
+    lus, echecs = pont.droit({
+        str(proratisation): ("liquider.annuites_au_taux_de_leur_annee", pont.MOTEUR, "cese_membres",
+                        carriere, pont.DureesDuReleve(carriere), ("cese_membres",),
+                        proratisation, 80)
+        for proratisation in (142, 165)})
+    assert not echecs, echecs
+    for proratisation, trimestres in lus.items():
+        assert trimestres / int(proratisation) == pytest.approx(60 / 142 + 20 / 149, abs=1e-4)
 
 
 def test_les_registres_ne_se_recouvrent_pas():

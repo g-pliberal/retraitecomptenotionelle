@@ -1178,9 +1178,13 @@ class CarriereSimple:
     """La carrière que ``simulateur.carriere_simple`` bâtit de ces options, en
     argument d'un appel du droit (:func:`droit`) : le portage la bâtit
     lui-même, sans qu'elle passe le pont, et le jumeau Python de même. Une
-    recherche qui essaie des carrières n'en fait passer que les résultats."""
+    recherche qui essaie des carrières n'en fait passer que les résultats.
+    ``depart``, un âge, porte la carrière bâtie à ce départ, ses lignes
+    gardées, comme ``dataclasses.replace(carriere, age_liquidation=…)`` : un
+    balayage des départs ne bâtit qu'une fois chaque carrière."""
 
     options: dict
+    depart: float | None = None
 
 
 @dataclasses.dataclass(frozen=True)
@@ -1315,10 +1319,12 @@ def majorations_des_donnees(majorations: list[dict]) -> tuple:
 #: node, au lieu que le type de ce qu'elle rend se devine.
 LECTURES_DU_DROIT = {
     "ouvrir.age_annulation_droit": float,
+    "ouvrir.age_ouverture": float,
     "ouvrir.age_ouverture_droit": float,
     "ouvrir.duree_requise": tuple[int, Fiabilite | None],
     "periode.capital_seuil_points": float | None,
     "liquider.duree_proratisation": tuple[int, Fiabilite | None],
+    "liquider.annuites_au_taux_de_leur_annee": float,
     "liquider.majoration_rafp": float,
     "liquider.mois_apres_le_depart": int,
     "liquider.nombre_d_annees_retenues": int,
@@ -1498,7 +1504,8 @@ def _argument_du_droit(argument, carrieres: list) -> dict:
     if argument is SIMULATEUR:
         return {"simulateur": "simulateur"}
     if isinstance(argument, CarriereSimple):
-        return {"carriere_simple": _en_donnees(argument.options)}
+        return {"carriere_simple": _en_donnees(argument.options),
+                **({} if argument.depart is None else {"depart": argument.depart})}
     if isinstance(argument, Periode):
         return {"periode": [argument.code, argument.annee]}
     if isinstance(argument, DureesDuReleve):

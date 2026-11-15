@@ -1016,10 +1016,12 @@ const FONCTIONS_DU_DROIT = {
   "carriere.date_de_l_age": (carriere, age) => carriere.dateDeLAge(age),
   "departs.age_legal": departs.ageLegal,
   "chronologie.valeur": (presomption) => valeurPresumee(presomption, contexte.paquet.presomptions),
+  "ouvrir.age_ouverture": ouvrir.ageOuverture,
   "ouvrir.age_ouverture_droit": ouvrir.ageOuvertureDroit,
   "ouvrir.duree_requise": ouvrir.dureeRequise,
   "periode.capital_seuil_points": (periode) => periode.capital_seuil_points ?? null,
   "liquider.duree_proratisation": liquider.dureeProratisation,
+  "liquider.annuites_au_taux_de_leur_annee": liquider.annuitesAuTauxDeLeurAnnee,
   // Le RAFP lit le rang de sa date d'effet : une vraie `DateMois`.
   "liquider.majoration_rafp":
     (age, { annee, mois }) => liquider.majorationRafp(age, new DateMois(annee, mois)),
@@ -1434,12 +1436,59 @@ function avantages({ parametres, cas }) {
  * de la demande, par son rang, la ligne d'une carrière de la demande, par
  * leurs rangs, ou une valeur.
  */
+/** Les carrières bâties d'options, par simulateur, sous leur texte. */
+const CARRIERES_BATIES = new WeakMap();
+
+/**
+ * La carrière que `simulateur.carriereSimple` bâtit de ces options, bâtie une
+ * fois par simulateur : un balayage des départs la porte à chacun.
+ */
+function carriereBatieUneFois(simulateur, options) {
+  if (!CARRIERES_BATIES.has(simulateur)) {
+    CARRIERES_BATIES.set(simulateur, new Map());
+  }
+  const baties = CARRIERES_BATIES.get(simulateur);
+  const cle = JSON.stringify(options);
+  if (!baties.has(cle)) {
+    baties.set(cle, simulateur.carriereSimple(optionsDeCarriere(options)));
+  }
+  return baties.get(cle);
+}
+
+/**
+ * La même carrière, ses lignes gardées, partie à `age` : ce que
+ * `dataclasses.replace(carriere, age_liquidation=age)` fait en Python
+ * (`CarriereSimple.depart`, `pont.py`).
+ */
+function auDepart(carriere, age) {
+  return new carriere.constructor({
+    annee_naissance: carriere.annee_naissance,
+    sexe: carriere.sexe,
+    lignes: carriere.lignes,
+    mois_naissance: carriere.mois_naissance,
+    age_liquidation: age,
+    jour_naissance: carriere.jour_naissance,
+    nombre_enfants: carriere.nombre_enfants,
+    naissances_enfants: carriere.naissances_enfants,
+    identifiant: carriere.identifiant,
+    dates_entree: { ...carriere.dates_entree },
+    chronologie: carriere.chronologie,
+    personne: carriere.personne,
+    lignes_apres_depart: carriere.lignes_apres_depart,
+    au_deces: carriere.au_deces,
+  });
+}
+
 function argumentDuDroit(simulateur, carrieres, argument) {
   if (Object.hasOwn(argument, "simulateur")) {
     return simulateur;
   }
   if (Object.hasOwn(argument, "carriere_simple")) {
-    return simulateur.carriereSimple(optionsDeCarriere(argument.carriere_simple));
+    if (argument.depart === undefined) {
+      return simulateur.carriereSimple(optionsDeCarriere(argument.carriere_simple));
+    }
+    return auDepart(carriereBatieUneFois(simulateur, argument.carriere_simple),
+      argument.depart);
   }
   if (Object.hasOwn(argument, "moteur")) {
     return moteurPretant(moteurNeutralise(simulateur, argument.neutralise),

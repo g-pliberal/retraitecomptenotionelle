@@ -62,7 +62,7 @@ FICHIERS = (
     "test_moteur.py", "test_outre_mer.py",
     "test_plafond_majoration_enfants.py",
     "test_pont.py", "test_primes_soumises_a_retenue.py",
-    "test_priorite_enfants.py", "test_regle_de_chacun.py",
+    "test_priorite_enfants.py",
     "test_remuneration.py", "test_retablissement.py",
     "test_retraite_progressive.py", "test_revalorisation.py", "test_salaire_annuel_moyen.py",
     "test_sections_juridiques.py", "test_sections_sante.py",
