@@ -53,6 +53,7 @@ EFFECTIFS = "src/retraite_notionnelle/donnees/effectifs.py"
 DEPENSES = "src/retraite_notionnelle/donnees/depenses.py"
 COUPLE = "src/retraite_notionnelle/donnees/vie_en_couple.py"
 CARACTERISTIQUES = "src/retraite_notionnelle/donnees/caracteristiques.py"
+CHARGEMENT = "src/retraite_notionnelle/donnees/chargement.py"
 
 
 class _Racine:
@@ -106,6 +107,8 @@ def _python(nom: str):
         module, classe = CLASSES[genre]
         return getattr(importlib.import_module(
             f"retraite_notionnelle.donnees.{module}"), classe)(DATA)
+    if genre == "serie":
+        return _serie(_objet_python, detail)
     if genre == "pensions":
         # Le paquet porte la distribution des retraités qui résident en
         # France, comme la fabrique la lit (``_distribution_pensions_sexes``).
@@ -129,9 +132,21 @@ def _javascript(nom: str):
     if genre in CLASSES:
         module, classe = CLASSES[genre]
         return getattr(site_js.module(module.replace("_", "-")), classe)(_paquet())
+    if genre == "serie":
+        return _serie(_objet_javascript, detail)
     if genre == "pensions":
         return site_js.module("distribution").DistributionPensions(_paquet(), detail)
     raise KeyError(nom)
+
+
+def _serie(objet, detail: str):
+    """Une série annuelle d'un objet de données, de chaque côté : « effectifs/
+    <caisse> », celle des retraités d'une caisse, mesurée (ponctuelle) ;
+    « depenses/total », la dépense publiée (en escalier)."""
+    porteur, _, nom = detail.partition("/")
+    if porteur == "effectifs":
+        return objet("effectifs").serie(nom)
+    return getattr(objet(porteur), nom)
 
 
 @lru_cache(maxsize=None)
@@ -220,6 +235,7 @@ def _grilles() -> dict[tuple[str, str], Grille]:
     indicateurs = tuple(tuple(cle.split("|")) for cle in sorted(
         _paquet()["caracteristiques_retraites"]["valeurs"])) if site_js.disponible() else ()
     trois_sexes = (("F",), ("H",), ("ensemble",))
+    series = ("serie:depenses/total", *(f"serie:effectifs/{c}" for c in caisses))
 
     return {
         # La courbe des taux : sans prime de terme, et avec celle du réglage
@@ -333,6 +349,16 @@ def _grilles() -> dict[tuple[str, str], Grille]:
         (COUPLE, "part_moyenne"): Grille(("couple",), tuple(
             (sexe, exposition, debut, mode) for sexe in sexes
             for exposition in expositions for debut in (60, 65, 70) for mode in modes)),
+
+        # La série annuelle, lue en ses années, avant, entre et après elles.
+        (CHARGEMENT, "brut"): Grille(series, annees, champs=("valeur", "fiabilite")),
+        (CHARGEMENT, "fiabilite"): Grille(series, annees),
+        (CHARGEMENT, "prolongee"): Grille(series, tuple(
+            (valeur, jusqu_a, fiabilite) for valeur in (0.0, 1234.5)
+            for jusqu_a in (1990, 2030, 2070) for fiabilite in (0, 2)),
+            # Le nom d'une série n'est qu'une étiquette des messages d'erreur,
+            # que le paquet ne porte pas : « total » au portage.
+            champs=("interpolation", "premiere_annee", "derniere_annee")),
 
         # Les caractéristiques des retraités de la DREES.
         (CARACTERISTIQUES, "valeur"): Grille(("caracteristiques",), indicateurs),
