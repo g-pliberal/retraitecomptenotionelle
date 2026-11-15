@@ -498,6 +498,10 @@ FLECHE_JS = re.compile(r"^(?:export\s+)?(?:const|let|var)\s+([\w$]+)\s*=\s*"
                        r"(?:async\s+)?(?:function\b|\([^)]*\)\s*=>|[\w$]+\s*=>)")
 CLASSE_JS = re.compile(r"^(?:export\s+)?(?:default\s+)?class\b")
 METHODE_JS = re.compile(r"^  (?:static\s+)?(?:async\s+)?(?:get\s+|set\s+)?\*?([A-Za-z_$][\w$]*)\s*\([^;]*\)\s*\{")
+#: Une méthode dont la signature se poursuit à la ligne suivante, ses
+#: arguments coupés après une virgule (``trimestresValides`` de ``macro.js``).
+METHODE_SUR_DEUX_LIGNES_JS = re.compile(
+    r"^  (?:static\s+)?(?:async\s+)?\*?([A-Za-z_$][\w$]*)\s*\([^;()]*,\s*$")
 MOTS_JS = {"constructor", "if", "for", "while", "switch", "catch", "return", "function"}
 
 
@@ -524,7 +528,7 @@ def fonctions_javascript(texte: str) -> set[str]:
             if ligne.startswith("}"):
                 dans_une_classe = False
                 continue
-            trouve = METHODE_JS.match(ligne)
+            trouve = METHODE_JS.match(ligne) or METHODE_SUR_DEUX_LIGNES_JS.match(ligne)
             if trouve and trouve.group(1) not in MOTS_JS:
                 noms.add(trouve.group(1))
             continue

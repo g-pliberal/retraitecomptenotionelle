@@ -21,6 +21,7 @@ où la libm du système déplace la dernière décimale de quelques flottants.
 from __future__ import annotations
 
 import dataclasses
+import datetime as dt
 import enum
 import math
 import sys
@@ -54,6 +55,11 @@ DEPENSES = "src/retraite_notionnelle/donnees/depenses.py"
 COUPLE = "src/retraite_notionnelle/donnees/vie_en_couple.py"
 CARACTERISTIQUES = "src/retraite_notionnelle/donnees/caracteristiques.py"
 CHARGEMENT = "src/retraite_notionnelle/donnees/chargement.py"
+CALENDRIER = "src/retraite_notionnelle/calendrier.py"
+CONFIG = "src/retraite_notionnelle/config.py"
+MACRO = "src/retraite_notionnelle/donnees/macro.py"
+HISTORIQUES = "src/retraite_notionnelle/donnees/prelevements_historiques.py"
+FRONTIERE = "src/retraite_notionnelle/frontiere.py"
 
 
 class _Racine:
@@ -66,6 +72,11 @@ class _Racine:
 #: À la place d'un argument : la racine des données en Python, le paquet
 #: dans le portage, pour une fonction de module qui lit l'une ou l'autre.
 SOURCE = _Racine()
+
+
+class Jour(str):
+    """Un jour, en date ISO : ``datetime.date`` en Python, la chaîne même au
+    portage, qui compare ses dates ISO comme des chaînes."""
 
 
 class Nommes(dict):
@@ -86,14 +97,45 @@ CLASSES = {
 }
 
 
+#: Les modules confrontés fonction par fonction : le module Python, et celui
+#: du portage.
+MODULES = {
+    "patrimoine": ("donnees.patrimoine", "patrimoine"),
+    "distribution": ("donnees.distribution", "distribution"),
+    "calendrier": ("calendrier", "calendrier"),
+    "frontiere": ("frontiere", "frontiere"),
+}
+
+
 # -- les objets confrontés -------------------------------------------------------
 
 def _python(nom: str):
     """L'objet Python d'un nom de :data:`OBJETS`, bâti sur le YAML."""
+    import importlib
     from retraite_notionnelle.donnees import distribution, mortalite, patrimoine, taux
     genre, _, detail = nom.partition(":")
     if genre == "module":
-        return {"patrimoine": patrimoine, "distribution": distribution}[detail]
+        return importlib.import_module(f"retraite_notionnelle.{MODULES[detail][0]}")
+    if genre == "date":
+        from retraite_notionnelle.calendrier import DateMois
+        return DateMois(*map(int, detail.split("-")))
+    if genre == "classe":
+        from retraite_notionnelle.calendrier import DateMois
+        return {"DateMois": DateMois}[detail]
+    if genre == "parametres":
+        from retraite_notionnelle.config import PARAMETRES_DEFAUT
+        return PARAMETRES_DEFAUT
+    if genre == "macro":
+        from retraite_notionnelle.donnees.macro import DonneesMacro
+        return DonneesMacro(DATA, detail or None)
+    if genre == "historiques":
+        from retraite_notionnelle.donnees.prelevements_historiques import (
+            charger_prelevements_historiques)
+        historiques = charger_prelevements_historiques(DATA)
+        if not detail:
+            return historiques
+        groupe, _, serie = detail.partition("/")
+        return getattr(historiques, groupe)[serie]
     if genre == "courbe":
         return taux.CourbeTauxSansRisque(DATA, float(detail))
     if genre == "mortalite":
@@ -120,7 +162,22 @@ def _javascript(nom: str):
     """L'objet du portage d'un nom de :data:`OBJETS`, bâti sur le paquet."""
     genre, _, detail = nom.partition(":")
     if genre == "module":
-        return site_js.module(detail)
+        return site_js.module(MODULES[detail][1])
+    if genre == "date":
+        return site_js.module("calendrier").DateMois(*map(int, detail.split("-")))
+    if genre == "classe":
+        return getattr(site_js.module("calendrier"), detail)
+    if genre == "parametres":
+        return site_js.module("config").PARAMETRES_DEFAUT
+    if genre == "macro":
+        return site_js.module("macro").DonneesMacro(_paquet(), detail or None)
+    if genre == "historiques":
+        historiques = site_js.module("prelevements-historiques").chargerPrelevementsHistoriques(
+            _paquet())
+        if not detail:
+            return historiques
+        groupe, _, serie = detail.partition("/")
+        return getattr(historiques, groupe)[serie]
     if genre == "courbe":
         return site_js.module("taux").CourbeTauxSansRisque(_paquet(), float(detail))
     if genre == "mortalite":
@@ -173,11 +230,20 @@ class Grille:
     ``objets`` : les objets qui la portent (:func:`_python`) ; ``appels`` : ses
     arguments, un n-uplet par appel, ou ``None`` pour une propriété ;
     ``champs`` : pour une valeur qui est un objet, les attributs qu'on en
-    compare."""
+    compare — « nom:a,b » lit les attributs ``a`` et ``b`` de l'objet, ou de
+    chaque objet de la liste, que porte ``nom`` ; ``sauf`` : les clés d'une
+    valeur qui est une table, ou de ses objets, que le portage n'a pas ;
+    ``module_js`` : au portage, la méthode est une fonction de ce module, qui
+    reçoit l'objet en premier argument et les arguments nommés en une table
+    (``avec`` des paramètres) ; ``en_liste`` : au portage, une table dont
+    ces clés, dans cet ordre, sont le n-uplet que rend le Python."""
 
     objets: tuple[str, ...]
     appels: tuple[tuple, ...] | None = None
     champs: tuple[str, ...] = ()
+    sauf: tuple[str, ...] = ()
+    module_js: str | None = None
+    en_liste: tuple[str, ...] = ()
 
 
 def _pas(debut: float, fin: float, pas: float) -> list[float]:
@@ -236,6 +302,20 @@ def _grilles() -> dict[tuple[str, str], Grille]:
         _paquet()["caracteristiques_retraites"]["valeurs"])) if site_js.disponible() else ()
     trois_sexes = (("F",), ("H",), ("ensemble",))
     series = ("serie:depenses/total", *(f"serie:effectifs/{c}" for c in caisses))
+
+    ages = tuple((age,) for age in _pas(0.0, 120.0, 0.0625)
+                 + [62.999, 63.0001, 64.58, 66.5 + 1 / 24, 67 - 1e-9])
+    macros = ("macro:", "macro:cor_productivite_basse", "macro:ocde_2025")
+    reperes = (1950, 1972, 1990, 2000, 2010, 2020, 2024, 2025, 2030, 2050, 2080)
+    paires_d_annees = tuple((de, a) for de in reperes for a in reperes)
+    jours = tuple((Jour(f"{annee}-{mois:02d}-01"),) for annee in range(1945, 2031)
+                  for mois in (1, 7)) + ((Jour("1991-01-31"),), (Jour("1991-02-01"),))
+    from retraite_notionnelle.donnees.prelevements_historiques import (
+        charger_prelevements_historiques)
+    historiques = charger_prelevements_historiques(DATA)
+    series_historiques = tuple(f"historiques:{groupe}/{serie}"
+                               for groupe in ("pensions", "salaires", "independants")
+                               for serie in getattr(historiques, groupe))
 
     return {
         # La courbe des taux : sans prime de terme, et avec celle du réglage
@@ -369,6 +449,51 @@ def _grilles() -> dict[tuple[str, str], Grille]:
             (sexe, Nommes(regime_principal=principal)) for (sexe,) in trois_sexes
             for principal in (True, False))),
         (CARACTERISTIQUES, "rapport_deplacement"): Grille(("caracteristiques",), ((),)),
+
+        # Le calendrier : les âges en années et mois, les mois en rangs.
+        (CALENDRIER, "decomposer"): Grille(("module:calendrier",), ages),
+        (CALENDRIER, "formater_age"): Grille(("module:calendrier",), ages),
+        (CALENDRIER, "depuis_rang"): Grille(("classe:DateMois",), tuple(
+            (rang,) for rang in range(1900 * 12, 2101 * 12, 7)), champs=("annee", "mois")),
+        (CALENDRIER, "rang"): Grille(tuple(
+            f"date:{annee}-{mois}" for annee in (1900, 1946, 1999, 2000, 2026, 2100)
+            for mois in range(1, 13))),
+
+        # Les paramètres : une copie modifiée, un champ ou plusieurs.
+        (CONFIG, "avec"): Grille(("parametres",), (
+            (Nommes(taux_cotisation_liberal=0.2),),
+            (Nommes(scenario_projection="cor_productivite_basse"),),
+            (Nommes(prime_terme_trente_ans=0.006, taux_capitalisation_obligatoire=0.05),),
+            (Nommes(),)), sauf=("racine_donnees",), module_js="config"),
+
+        # La macroéconomie, sous chaque scénario de projection : prix, salaire
+        # moyen, SMIC, revalorisation des salaires portés au compte.
+        (MACRO, "coefficient_prix"): Grille(macros, paires_d_annees),
+        (MACRO, "coefficient_salaire_moyen"): Grille(macros, paires_d_annees),
+        (MACRO, "smic_annuel"): Grille(macros, tuple((annee,) for annee in range(1950, 2081))),
+        (MACRO, "coefficient_revalorisation_salaires"): Grille(macros, paires_d_annees),
+        (MACRO, "coefficient_revalorisation_portee_au_compte"): Grille(macros, tuple(
+            (de, a, mois) for de, a in paires_d_annees for mois in (1, 4, 10))),
+        (MACRO, "coefficient_revalorisation_par_rapport"): Grille(macros, tuple(
+            (de, a, mois) for de, a in paires_d_annees for mois in (1, 4, 10))),
+        # Le portage rend la colonne avec sa date d'effet, que le Python ne
+        # rend pas : on en compare les coefficients et la dernière année.
+        (MACRO, "colonne_de_revalorisation_en_vigueur"): Grille(macros, tuple(
+            (annee, mois) for annee in range(1945, 2081, 3) for mois in (1, 4, 10)),
+            en_liste=("coefficients", "derniere")),
+
+        # Les prélèvements d'hier : chaque série, en chaque jour d'une grille.
+        (HISTORIQUES, "en_vigueur"): Grille(series_historiques, jours),
+        (HISTORIQUES, "valeur"): Grille(series_historiques, tuple(
+            (*jour, cle) for jour in jours for cle in ("taux", "deductible", "plafond"))),
+        (HISTORIQUES, "csg_deductible_pension"): Grille(("historiques",), tuple(
+            (*jour, taux) for jour in jours for taux in ("plein", "median", "reduit"))),
+
+        # La frontière contributive, chargée de chaque côté.
+        (FRONTIERE, "charger_frontiere"): Grille(("module:frontiere",), ((SOURCE,),), champs=(
+            "annees:annee,assiette_md,taux,total_md,salariale_md,patronale_md",
+            "tranches:nom,acquisitif,verse_sous_plafond,verse_au_dessus,part_sous_plafond",
+            "pourcentage_appel", "source_complementaire", "lu_le")),
     }
 
 
@@ -437,14 +562,33 @@ def ecarts(relu, attendu, chemin: str = "", tolerance: float = 0.0) -> list[str]
 
 
 def _champs(objet, champs: tuple[str, ...]):
-    return {champ: getattr(objet, champ) for champ in champs}
+    lus = {}
+    for champ in champs:
+        nom, _, sous = champ.partition(":")
+        valeur = getattr(objet, nom)
+        if sous:
+            noms = tuple(sous.split(","))
+            valeur = ([_champs(v, noms) for v in valeur] if isinstance(valeur, (list, tuple))
+                      else _champs(valeur, noms))
+        lus[nom] = valeur
+    return lus
+
+
+def _sans(valeur, sauf: tuple[str, ...]):
+    if isinstance(valeur, dict):
+        return {cle: _sans(v, sauf) for cle, v in valeur.items() if cle not in sauf}
+    if isinstance(valeur, list):
+        return [_sans(v, sauf) for v in valeur]
+    return valeur
 
 
 def _appeler(appeler, arguments: tuple, source, cote: str):
     """Un appel de la grille : :data:`SOURCE` remplacée, :class:`Nommes`
     passés par leur nom en Python, à leur rang au portage."""
-    positionnels = [source if a is SOURCE else a for a in arguments
-                    if not isinstance(a, Nommes)]
+    positionnels = [source if a is SOURCE else
+                    dt.date.fromisoformat(a) if isinstance(a, Jour) and cote == "python" else
+                    str(a) if isinstance(a, Jour) else a
+                    for a in arguments if not isinstance(a, Nommes)]
     nommes = next((a for a in arguments if isinstance(a, Nommes)), Nommes())
     if cote == "python":
         return appeler(*positionnels, **nommes)
@@ -459,12 +603,20 @@ def _valeurs(fonction: str, grille: Grille, objet: str, cote: str):
         porteur, nom, source = _objet_javascript(objet), en_camel(fonction), _paquet()
     if grille.appels is None:
         valeurs = [getattr(porteur, nom)]
+    elif grille.module_js and cote == "javascript":
+        fonction_js = getattr(site_js.module(grille.module_js), nom)
+        valeurs = [fonction_js(porteur, *[a for a in arguments if not isinstance(a, Nommes)],
+                               *[dict(a) for a in arguments if isinstance(a, Nommes)])
+                   for arguments in grille.appels]
     else:
         appeler = getattr(porteur, nom)
         valeurs = [_appeler(appeler, arguments, source, cote) for arguments in grille.appels]
     if grille.champs:
         valeurs = [_champs(valeur, grille.champs) for valeur in valeurs]
-    return [_en_python(valeur) for valeur in valeurs]
+    if grille.en_liste and cote == "javascript":
+        valeurs = [valeur if valeur is None else [valeur[cle] for cle in grille.en_liste]
+                   for valeur in valeurs]
+    return [_sans(_en_python(valeur), grille.sauf) for valeur in valeurs]
 
 
 

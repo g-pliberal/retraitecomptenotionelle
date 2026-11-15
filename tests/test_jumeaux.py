@@ -297,6 +297,20 @@ def test_les_fonctions_d_un_fichier_javascript():
         "survie", "_lire", "charger", "quantileNormal", "grille", "valeurDe", "premiereAnnee", "depuis"}
 
 
+def test_une_methode_javascript_dont_la_signature_tient_sur_deux_lignes():
+    """``trimestresValides`` de ``macro.js`` coupe ses arguments sur deux
+    lignes : la carte la manquait, et la liste ne la déclarait pas."""
+    texte = (
+        "export class DonneesMacro {\n"
+        "  trimestresValides(revenu, annee, outreMer = \"\", fraction = 1,\n"
+        "                    mayotte = false) {\n"
+        "    if (revenu <= 0) {\n      return 0;\n    }\n"
+        "  }\n"
+        "  appel(x) {\n    this.autre(x,\n      2);\n  }\n"
+        "}\n")
+    assert jumeaux.fonctions_javascript(texte) == {"trimestresValides", "appel"}
+
+
 def test_une_fonction_est_en_double_sous_le_meme_nom_au_passage_pres_en_camel():
     python = "def taux_de(a):\n    pass\ndef _calibrer():\n    pass\ndef seul():\n    pass\n"
     javascript = "export function tauxDe(a) {}\nfunction _calibrer() {}\nexport function autre() {}\n"

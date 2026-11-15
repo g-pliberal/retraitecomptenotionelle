@@ -26,11 +26,11 @@
 
 src/retraite_notionnelle/calendrier.py:
   gardees:
-    decomposer: {lecteur: scripts/cout_avantages.py}
-    depuis_rang: {lecteur: scripts/construire_donnees.py}
+    decomposer: {lecteur: scripts/cycle_de_vie.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    depuis_rang: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     en_mois: {lecteur: src/retraite_notionnelle/calendrier.py, test: tests/test_moteur.py::test_un_demi_mois_compte_le_mois_qui_suit_dans_les_deux_moteurs}
-    formater_age: {lecteur: scripts/cycle_de_vie.py}
-    rang: {lecteur: scripts/conservation.py}
+    formater_age: {lecteur: scripts/cycle_de_vie.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    rang: {lecteur: src/retraite_notionnelle/facteurs_depense.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
   au_moteur:
     - fraction_annee
     - mois_travailles
@@ -40,13 +40,13 @@ src/retraite_notionnelle/calendrier.py:
 
 src/retraite_notionnelle/config.py:
   gardees:
-    avec: {lecteur: scripts/construire_donnees.py}
-    taux_au: {lecteur: src/retraite_notionnelle/donnees/primes.py}
+    avec: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
   au_moteur:
     - frais_capitalisation
     - sous_regime_frais
     - sous_regime_taux
     - taux_capitalisation_applique
+    - taux_au
     - taux_capitalisation_volontaire_applique
     - taux_retraite_propose
 
@@ -70,12 +70,12 @@ src/retraite_notionnelle/contexte.py:
 
 src/retraite_notionnelle/contributions_equilibre.py:
   gardees:
-    bareme: {lecteur: scripts/construire_donnees.py}
+    bareme: {lecteur: src/retraite_notionnelle/integration_complementaires.py}
     charger_contributions_equilibre: {lecteur: scripts/construire_donnees.py}
-    prelevement: {lecteur: src/retraite_notionnelle/contributions_equilibre.py}
   au_moteur:
     - contributions_d_une_carriere
     - part_salariale_annualisee
+    - prelevement
 
 src/retraite_notionnelle/donnees/assiette.py:
   gardees:
@@ -191,28 +191,29 @@ src/retraite_notionnelle/donnees/indemnite_csg.py:
 
 src/retraite_notionnelle/donnees/macro.py:
   gardees:
-    _assujetti: {lecteur: src/retraite_notionnelle/donnees/macro.py}
-    _salaire_validant_du_departement: {lecteur: src/retraite_notionnelle/donnees/macro.py}
-    _trimestres_de_la_retenue: {lecteur: src/retraite_notionnelle/donnees/macro.py}
-    coefficient_prix: {lecteur: scripts/controle_eacr.py}
-    coefficient_revalorisation_par_rapport: {lecteur: src/retraite_notionnelle/donnees/macro.py}
-    coefficient_revalorisation_portee_au_compte: {lecteur: scripts/mesures_prose.py}
-    coefficient_revalorisation_salaires: {lecteur: scripts/mesures_prose.py}
-    coefficient_salaire_moyen: {lecteur: src/retraite_notionnelle/cout.py}
-    colonne_de_revalorisation_en_vigueur: {lecteur: src/retraite_notionnelle/donnees/macro.py}
-    seuil_d_un_trimestre: {lecteur: src/retraite_notionnelle/donnees/macro.py}
-    smic_annuel: {lecteur: scripts/grille_large.py}
-    smic_horaire_des_mois: {lecteur: src/retraite_notionnelle/donnees/macro.py}
-    smic_horaire_du_forfait: {lecteur: src/retraite_notionnelle/contributions_equilibre.py}
+    coefficient_prix: {lecteur: scripts/controle_eacr.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    coefficient_revalorisation_par_rapport: {lecteur: src/retraite_notionnelle/donnees/macro.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    coefficient_revalorisation_portee_au_compte: {lecteur: scripts/mesures_prose.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    coefficient_revalorisation_salaires: {lecteur: scripts/mesures_prose.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    coefficient_salaire_moyen: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    colonne_de_revalorisation_en_vigueur: {lecteur: src/retraite_notionnelle/donnees/macro.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    smic_annuel: {lecteur: scripts/grille_large.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
   au_moteur:
+    - _assujetti
+    - _salaire_validant_du_departement
+    - _trimestres_de_la_retenue
     - coefficient_smic
     - fiabilite_sur
     - plafond_de_cotisations
     - productivite_nominale
     - revenu_avpf
     - salaire_au_compte
+    - seuil_d_un_trimestre
     - smic_horaire_au_1er_juillet
     - smic_horaire_de
+    - smic_horaire_des_mois
+    - smic_horaire_du_forfait
+    - trimestres_valides
 
 src/retraite_notionnelle/donnees/mortalite.py:
   gardees:
@@ -252,9 +253,9 @@ src/retraite_notionnelle/donnees/patrimoine.py:
 src/retraite_notionnelle/donnees/prelevements_historiques.py:
   gardees:
     charger_prelevements_historiques: {lecteur: scripts/construire_donnees.py}
-    csg_deductible_pension: {lecteur: src/retraite_notionnelle/effet_retour.py}
-    en_vigueur: {lecteur: src/retraite_notionnelle/donnees/prelevements_historiques.py}
-    valeur: {lecteur: scripts/bilan_compte.py}
+    csg_deductible_pension: {lecteur: src/retraite_notionnelle/effet_retour.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    en_vigueur: {lecteur: src/retraite_notionnelle/donnees/prelevements_historiques.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    valeur: {lecteur: src/retraite_notionnelle/donnees/prelevements_historiques.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
   au_moteur:
     - bareme_independant
     - famille_de_la_fiche
@@ -343,7 +344,7 @@ src/retraite_notionnelle/donnees/vie_en_couple.py:
 
 src/retraite_notionnelle/frontiere.py:
   gardees:
-    charger_frontiere: {lecteur: scripts/construire_donnees.py}
+    charger_frontiere: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
   au_moteur:
     - derniere
 
