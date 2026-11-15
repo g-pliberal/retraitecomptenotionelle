@@ -7333,12 +7333,14 @@ Les tests y passent par une façade (`tests/facade.py`), qui sert le moteur
 entier ou presque, et des données retouchées en copie quand un test changeait
 une fonction du droit. La plupart des fichiers de tests n'ont plus de test sur
 le moteur Python, hors les confrontations des deux moteurs.
-Reste, une étape par session : les autres tests marqués qui ne sont pas des
-confrontations, chacun avec ce qui lui manque (« Ce qui reste » de
-`2026-11-15-les-departs-a-la-facade.md`).
-Puis quatre études, la liste des fonctions gardées des deux côtés, le
+Ne restent marqués que ces confrontations, le solveur du niveau de salaire
+d'une pension visée, et quinze garde-fous de `test_oracle.py`, que le
+propriétaire doit trancher.
+Reste, une étape par session : quatre études, à commencer par
+`scenarios_meres.py`, la liste des fonctions gardées des deux côtés, le
 retrait, et les périodes assimilées du relevé (table de
-`2026-11-13-les-decisions-du-proprietaire.md`).
+`2026-11-13-les-decisions-du-proprietaire.md`). Le détail :
+`2026-11-15-les-fins-de-charge-a-la-facade.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

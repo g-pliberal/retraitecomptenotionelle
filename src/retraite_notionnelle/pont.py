@@ -2923,7 +2923,8 @@ TABLES_DES_REGLES: dict[str, frozenset[str]] = {
 #: portage leur donne (:data:`CLASSES_EN_CHAMEAU`) : un éligible au minimum
 #: contributif, que ``droit/completer.js`` lit en chameau ; une pension de
 #: régime, que le portage écrit et lit sous les noms du Python.
-TYPES_DE_LA_FACADE = frozenset({"EligibleMinimum", "EligibleAgricole", "PensionRegime"})
+TYPES_DE_LA_FACADE = frozenset({"AvantageApplique", "EligibleMinimum", "EligibleAgricole",
+                                "PensionRegime"})
 CLASSES_EN_CHAMEAU |= {"EligibleMinimum", "DureesDesCultes", "PensionMajoree",
                        "RevenuDesPoints"}
 
@@ -2948,13 +2949,17 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     # Hors de ``droit/`` : ``carriere.js``, à la racine du portage — le relevé
     # prolongé jusqu'au départ, et le salaire moyen d'une année.
     "carriere": ("prolonger_releve", "salaire_moyen_annuel"),
-    "commun": ("date_d_effet", "ligne_cotisee", "majoration_du_conjoint"),
+    # Les parts de la majoration pour enfants à une date, et les étapes de
+    # deux majorations à charge réunies.
+    "commun": ("date_d_effet", "fusionner_les_charges", "ligne_cotisee",
+               "majoration_du_conjoint", "parts_de_la_majoration"),
     # Les trimestres des enfants et le régime qui les porte (R. 173-15).
     "compter": ("majoration_pour_enfants",),
     # Les deux fractions de la pension des cultes : la durée de chacune, sur
     # les durées du relevé, et la part de l'écart du V du décret n° 2006-1325.
     "cultes": ("durees", "part_de_l_ecart"),
     "completer": ("_taux_majoration_enfants", "avpf_retenue", "borne_avec_les_droits_d_avant_1973", "complement_minimum",
+                  "fins_de_charge",
                   "majoration_ouverte", "majoration_retraite_proportionnelle",
                   "pension_majoree", "plancher_du_regime", "points_rco_de_chef",
                   "selon_la_regle"),

@@ -971,6 +971,21 @@ def _demander_la_regle(module: str, regle: str, rendu, arguments: dict):
     return lu
 
 
+def _suite_simple(valeur) -> bool:
+    """Une valeur simple, ou une suite qui n'en tient que de telles, à toute
+    profondeur."""
+    if type(valeur) in (tuple, list):
+        return all(_suite_simple(element) for element in valeur)
+    return type(valeur) in _SIMPLES
+
+
+def _en_listes(valeur):
+    """Une suite simple, ses suites en listes, comme le portage les lit."""
+    if type(valeur) in (tuple, list):
+        return [_en_listes(element) for element in valeur]
+    return valeur
+
+
 def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, valeur,
                        carriere=None):
     """Un argument d'une règle du droit tel que le pont le transmet : le
@@ -1006,17 +1021,20 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
         return pont.RegimeDuCatalogue(valeur.code)
     if type(valeur) in _SIMPLES or isinstance(valeur, (_carriere.Carriere, DateMois)):
         return valeur
-    if type(valeur) in (tuple, list) and all(type(element) in _SIMPLES for element in valeur):
-        return list(valeur)
-    if type(valeur) in (tuple, list) and all(
-            type(element) in (tuple, list) and all(type(membre) in _SIMPLES for membre in element)
-            for element in valeur):
-        return [list(element) for element in valeur]
+    if type(valeur) in (tuple, list) and _suite_simple(valeur):
+        # Une suite de valeurs simples, ou de suites qui en sont, à toute
+        # profondeur : les étapes d'une majoration à charge.
+        return _en_listes(valeur)
     if type(valeur) is dict and all(type(cle) is str and type(element) in _SIMPLES
                                     for cle, element in valeur.items()):
         return dict(valeur)
     if dataclasses.is_dataclass(valeur) and type(valeur).__name__ in pont.TYPES_DE_LA_FACADE:
         return valeur
+    if type(valeur) in (tuple, list) and all(
+            dataclasses.is_dataclass(element) and type(element).__name__ in pont.TYPES_DE_LA_FACADE
+            for element in valeur):
+        # Des avantages appliqués, que le pont passe champ à champ.
+        return list(valeur)
     if type(valeur) in (tuple, list) and all(type(element) is _carriere.LigneRelevee
                                              for element in valeur):
         # Un relevé saisi, ses lignes de données, que le pont passe champ à champ.

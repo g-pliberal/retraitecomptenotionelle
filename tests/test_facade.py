@@ -2295,7 +2295,7 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
     """La façade passe les arguments par leur rang, ceux que le test tait à
     leur valeur par défaut du Python : le portage en attend autant, sous la
     même valeur par défaut — une table vide pour le ``None`` d'une table
-    (``pont.TABLES_DES_REGLES``). Deux noms seulement diffèrent d'un côté à
+    (``pont.TABLES_DES_REGLES``). Quatre noms seulement diffèrent d'un côté à
     l'autre."""
     jumelle = getattr({"acquerir": acquerir_python, "carriere": carriere_python,
                        "commun": commun_python,
@@ -2307,8 +2307,8 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
                        "revalorisation": revalorisation_python}[module], regle)
     attendus = [(nom, None if parametre.default is inspect.Parameter.empty else parametre.default)
                 for nom, parametre in inspect.signature(jumelle).parameters.items()]
-    autres_noms = {"annees": "anneesRetenues", "carriere": "carriereSaisie",
-                   "periode": "periodeLiquidation"}
+    autres_noms = {"a_charge": "avecACharge", "annees": "anneesRetenues",
+                   "carriere": "carriereSaisie", "periode": "periodeLiquidation"}
     portes = _parametres_du_portage(module, regle)
     assert len(portes) == len(attendus)
     for (nom, defaut), (porte, ecrit) in zip(attendus, portes):

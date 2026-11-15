@@ -634,6 +634,29 @@ def _en_couple(s, annee: int, conjoint: str | None = None):
             "invalidite": None})
 
 
+def _enfants_a_charge(simulateur):
+    """Un cadre né en 1943, parti en 2005, père de quatre enfants : l'un
+    majeur au départ, deux à charge, le dernier né après."""
+    return simulateur.carriere_simple(
+        annee_naissance=1943, sexe="H", affiliation="salarie_prive_cadre", age_debut=22.0,
+        age_liquidation=62.0, nombre_enfants=4,
+        naissances_enfants=("1985-01-01", "1990-06-01", "1992-11-01", "2006-01-01"))
+
+
+#: Les étapes de deux majorations pour enfants à charge, à réunir.
+_ETAPES_A_CHARGE = (("2010-01-01", (("arrco", 10.0),)), ("2012-06-01", (("arrco", 4.0),)),
+                    ("2015-01-01", ()))
+_AUTRES_ETAPES = (("2011-01-01", (("agirc", 2.0),)), ("2013-01-01", ()))
+
+
+def _majoration_a_charge():
+    from retraite_notionnelle.droit.commun import AvantageApplique
+
+    return AvantageApplique(code="majoration_enfants", libelle="", montant=30.0,
+                            par_regime=(("regime_general", 20.0), ("arrco", 10.0)),
+                            a_charge=_ETAPES_A_CHARGE)
+
+
 #: Des appels de chaque règle du droit que la façade sert
 #: (``pont.REGLES_DE_LA_FACADE``) : ``(module, règle, arguments)``, les
 #: arguments bâtis sur le simulateur de chaque côté — son moteur, une période
@@ -939,6 +962,14 @@ APPELS_DES_REGLES = [
      lambda s: (s.scenario_actuel, _DE_PREMIERE(s), ["regime_general"])),
     ("invalidite", "plancher_de_la_substitution",
      lambda s: (s.scenario_actuel, _salarie(s), ["regime_general"])),
+    ("completer", "fins_de_charge", lambda s: (_enfants_a_charge(s), {"age": 18}, "2005-04-01")),
+    ("completer", "fins_de_charge", lambda s: (_enfants_a_charge(s), {"age": 25}, "2015-04-01")),
+    ("commun", "parts_de_la_majoration", lambda s: ([_majoration_a_charge()],)),
+    ("commun", "parts_de_la_majoration", lambda s: ([_majoration_a_charge()], "2013-12-31")),
+    ("commun", "parts_de_la_majoration",
+     lambda s: ([_majoration_a_charge()], "2013-12-31", False)),
+    ("commun", "fusionner_les_charges", lambda s: (_ETAPES_A_CHARGE, _AUTRES_ETAPES)),
+    ("commun", "fusionner_les_charges", lambda s: ((), _AUTRES_ETAPES)),
     ("commun", "date_d_effet", lambda s: (_cadre_de_1925(s),)),
     ("commun", "date_d_effet", lambda s: (_salarie(s),)),
     ("commun", "majoration_du_conjoint",

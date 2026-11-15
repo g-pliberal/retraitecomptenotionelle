@@ -249,7 +249,7 @@ def parts_sans_anticipation(avantages) -> list[tuple[str, float]]:
             for part in avantage.par_regime_sans_anticipation]
 
 
-def fusionner_les_charges(une, autre):
+def fusionner_les_charges(une, autre) -> tuple[tuple[str, tuple[tuple[str, float], ...]], ...]:
     """Les étapes de deux majorations pour enfants à charge réunies, celles de
     deux départs que le scénario additionne : à chaque date de l'une ou de
     l'autre, la somme de leurs parts."""

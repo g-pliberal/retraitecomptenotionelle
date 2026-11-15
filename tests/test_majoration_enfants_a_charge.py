@@ -142,16 +142,15 @@ def test_la_plus_forte_des_deux_majorations_est_servie(saisies):
     assert "3 enfants à charge" in majoration.detail
 
 
-@pytest.mark.sur_le_moteur_python("fins_de_charge sur une carrière de fortune, que le pont ne passe pas")
-def test_seul_compte_l_enfant_a_charge_a_la_date_d_effet():
+def test_seul_compte_l_enfant_a_charge_a_la_date_d_effet(saisies):
     """L'enfant qui a dix-huit ans au départ n'est plus à charge, celui qui
     naît après ne l'est pas encore (article 93) ; chacun cesse de l'être à son
     anniversaire."""
-    class Carriere:
-        naissances_des_enfants = (("aine", "1985-01-01"), ("cadet", "1990-06-01"),
-                                  ("benjamin", "1992-11-01"), ("posthume", "2006-01-01"))
-
-    assert completer.fins_de_charge(Carriere, {"age": 18}, "2005-04-01") == [
+    _, carriere = saisies.lire({**CADRE, "naissance": "1943-03-15", "liquidation": "2005-04",
+                                "enfants": "4", "naissances": "1985-01,1990-06,1992-11,2006-01"})
+    assert [naissance for _, naissance in carriere.naissances_des_enfants] == [
+        "1985-01-01", "1990-06-01", "1992-11-01", "2006-01-01"]
+    assert completer.fins_de_charge(carriere, {"age": 18}, "2005-04-01") == [
         "2008-06-01", "2010-11-01"]
 
 
@@ -183,7 +182,6 @@ def test_la_majoration_cesse_avec_la_charge(saisies):
     assert servies[2020] == pytest.approx(0.0, abs=1e-9)
 
 
-@pytest.mark.sur_le_moteur_python("des avantages et des étapes imbriquées, que le pont ne passe pas")
 def test_les_parts_a_une_date_et_la_reunion_de_deux_departs():
     etapes = (("2010-01-01", (("arrco", 10.0),)), ("2012-06-01", (("arrco", 4.0),)),
               ("2015-01-01", ()))
