@@ -7335,12 +7335,12 @@ font refaire ce que le portage calcule, partent d'abord, chacune remplacée
 par une référence figée dans `tests/temoins/` : `servis.json`,
 `sorties.json`, `valeurs.json`, et `droit.json` pour chaque appel du droit
 par le pont. Plus aucun appel du droit ne se refait en Python, ni
-l'inversion, ni aucune carrière de la grille dans les tests. Restent les
-confrontations que la note énumère (`test_reversion.py`,
-`test_chronologie.py`, `test_age_conjoncturel.py`, `test_avantages.py`, les
+l'inversion, ni aucune carrière de la grille, ni la réversion dans les
+tests. Restent les confrontations que la note énumère
+(`test_chronologie.py`, `test_age_conjoncturel.py`, `test_avantages.py`, les
 `moitie_python`), puis cent fichiers de tests qui importent une règle
-Python. Une étape par session. Par quoi commencer : `test_reversion.py`. Le
-détail : `2026-11-15-les-carrieres-des-tests-au-portage.md`.
+Python. Une étape par session. Par quoi commencer : `test_chronologie.py`.
+Le détail : `2026-11-15-la-reversion-au-portage.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

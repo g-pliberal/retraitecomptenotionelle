@@ -149,9 +149,12 @@ def _chaines(requete: dict) -> dict[str, str]:
 
 class Saisies:
     """Ce que le contexte du site fait d'une requête, la carrière bâtie par le
-    portage, et un simulateur Python par jeu de paramètres, comme lui."""
+    portage, et un simulateur par jeu de paramètres, comme lui : celui du
+    moteur Python, ou celui que ``fabrique`` bâtit, le simulateur de la façade
+    des tests (``facade.Simulateur``), que le portage sert."""
 
-    def __init__(self) -> None:
+    def __init__(self, fabrique=Simulateur) -> None:
+        self._fabrique = fabrique
         self._simulateurs: dict[Parametres, Simulateur] = {}
 
     def lire(self, requete: dict, prolonger: bool = True):
@@ -177,7 +180,7 @@ class Saisies:
         parametres = (Parametres() if de is None
                       else self.parametres(de) if isinstance(de, dict) else de)
         if parametres not in self._simulateurs:
-            self._simulateurs[parametres] = Simulateur(parametres)
+            self._simulateurs[parametres] = self._fabrique(parametres)
         return self._simulateurs[parametres]
 
     def simuler(self, requete: dict) -> Comparaison:

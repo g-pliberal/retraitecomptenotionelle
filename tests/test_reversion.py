@@ -12,11 +12,7 @@ moteurs, eux, sont comparés par les témoins ``reversion_*`` des simulations.
 
 from __future__ import annotations
 
-import json
 import shutil
-import subprocess
-import sys
-import tempfile
 from datetime import date
 from pathlib import Path
 
@@ -2119,17 +2115,25 @@ CAS_DE_LA_MAJORATION_POUR_ENFANT = [
 ]
 
 
-def test_les_deux_moteurs_servent_la_meme_majoration_pour_enfant(saisies):
-    """Le résultat entier, des six scénarios, est le même en Python et en
-    JavaScript ; chaque cas sert la majoration du régime qu'il dit, et la voit
+def _simules(requetes: list[dict]) -> list[dict]:
+    """Chaque requête et le résultat entier que le portage en tire, comme le
+    site (``simuler.mjs``), confronté au témoin des sorties : il tient la place
+    du moteur Python qui le refaisait (action 161, étape 8h)."""
+    from outils_sorties import sortie_figee
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    return [{"requete": requete, "resultat": resultat}
+            for requete, resultat in zip(requetes, sortie_figee("simuler.mjs", requetes))]
+
+
+def test_les_deux_moteurs_servent_la_meme_majoration_pour_enfant():
+    """Le résultat entier, des six scénarios, est celui que le témoin des
+    sorties fige ; chaque cas sert la majoration du régime qu'il dit, et la voit
     croître après la date d'effet quand il le dit."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    racine = Path(__file__).resolve().parents[1]
-    sys.path.insert(0, str(racine / "scripts"))
-    from construire_temoins import _fini
-    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
-                for cas, _, _ in CAS_DE_LA_MAJORATION_POUR_ENFANT]
+    attendus = _simules([cas for cas, _, _ in CAS_DE_LA_MAJORATION_POUR_ENFANT])
     for attendu, (_, servant, croit) in zip(attendus, CAS_DE_LA_MAJORATION_POUR_ENFANT):
         lignes = attendu["resultat"]["reversion"]["regimes"]
         assert {r["regime"] for r in lignes if r["majoration_forfaitaire_enfants_etapes"]} == {
@@ -2138,17 +2142,6 @@ def test_les_deux_moteurs_servent_la_meme_majoration_pour_enfant(saisies):
         montants = [ligne["majoration_forfaitaire_enfants"]] + [
             etape["montant"] for etape in ligne["majoration_forfaitaire_enfants_etapes"]]
         assert any(apres > avant for avant, apres in zip(montants, montants[1:])) is croit, ligne
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        fichier.write(json.dumps(attendus, ensure_ascii=False))
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(racine / "tests" / "js" / "comparer.mjs"), chemin],
-            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
 
 
 def test_la_limite_de_cumul_s_applique_quand_sa_retraite_suit_la_reversion(simulateur):
@@ -3018,33 +3011,18 @@ CAS_DES_REVISIONS = [
 ]
 
 
-def test_les_deux_moteurs_revisent_la_reversion_avant_sa_retraite(saisies):
-    """Le résultat entier, des six scénarios, est le même en Python et en
-    JavaScript ; chaque cas révise la réversion du régime général aux jours
+def test_les_deux_moteurs_revisent_la_reversion_avant_sa_retraite():
+    """Le résultat entier, des six scénarios, est celui que le témoin des
+    sorties fige ; chaque cas révise la réversion du régime général aux jours
     qu'il dit, et la fige au jour qu'il dit."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    racine = Path(__file__).resolve().parents[1]
-    sys.path.insert(0, str(racine / "scripts"))
-    from construire_temoins import _fini
-    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
-                for cas, _, _ in CAS_DES_REVISIONS]
+    attendus = _simules([cas for cas, _, _ in CAS_DES_REVISIONS])
     for attendu, (_, revisions, derniere) in zip(attendus, CAS_DES_REVISIONS):
         ligne, = (r for r in attendu["resultat"]["reversion"]["regimes"]
                   if r["regime"] == "regime_general")
         assert ([r["date"] for r in ligne["revisions"]], ligne["derniere_revision"]) == (
             revisions, derniere), ligne
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        fichier.write(json.dumps(attendus, ensure_ascii=False))
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(racine / "tests" / "js" / "comparer.mjs"), chemin],
-            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
 
 
 #: Des saisies où la retraite du survivant suit la date d'effet de sa
@@ -3073,68 +3051,39 @@ CAS_DE_LA_REVISION = [
 ]
 
 
-def test_les_deux_moteurs_revoient_la_reversion_a_sa_retraite(saisies):
-    """Le résultat entier, des six scénarios, est le même en Python et en
-    JavaScript ; chaque cas revoit la réversion du régime général en dernier
+def test_les_deux_moteurs_revoient_la_reversion_a_sa_retraite():
+    """Le résultat entier, des six scénarios, est celui que le témoin des
+    sorties fige ; chaque cas revoit la réversion du régime général en dernier
     au jour qu'il dit, et la fige trois mois après sa retraite."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    racine = Path(__file__).resolve().parents[1]
-    sys.path.insert(0, str(racine / "scripts"))
-    from construire_temoins import _fini
-    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
-                for cas, _, _ in CAS_DE_LA_REVISION]
+    attendus = _simules([cas for cas, _, _ in CAS_DE_LA_REVISION])
     for attendu, (_, revision, derniere) in zip(attendus, CAS_DE_LA_REVISION):
         ligne, = (r for r in attendu["resultat"]["reversion"]["regimes"]
                   if r["regime"] == "regime_general")
         assert (ligne["revision_effet"], ligne["derniere_revision"]) == (
             revision, derniere), ligne
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        fichier.write(json.dumps(attendus, ensure_ascii=False))
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(racine / "tests" / "js" / "comparer.mjs"), chemin],
-            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
 
 
-def test_les_deux_moteurs_comptent_ses_retraites_entieres_avant_juillet_2010(saisies):
+def test_les_deux_moteurs_comptent_ses_retraites_entieres_avant_juillet_2010():
     """Au régime général, avant le 30 juin 2010, la révision qui suit la
     retraite du survivant la compte entière, « 3 mois de DP alors qu'un seul
     mois est servi » (circulaire RSI n° 2007/061, annexe 3, § 6.2), ce que les
     versions de la fiche disent (``retraites_entieres_a_la_revision``) et que
     le portage lit dans son paquet : la veuve de 2006, retraitée en janvier
     2008, voit sa réversion revue une seule fois, le 1er février, et figée le
-    1er avril, dans les deux moteurs. Le cas est du niveau ``complet`` : le
+    1er avril, au témoin des sorties. Le cas est du niveau ``complet`` : le
     paquet que GitHub refait le porte."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    racine = Path(__file__).resolve().parents[1]
-    sys.path.insert(0, str(racine / "scripts"))
-    from construire_temoins import _fini
     cas = {"naissance": "1945", "liquidation": "60", "conjoint": "1950-03",
            "deces": "2006-10", "ressources_conjoint": "14000", "conjoint_retraite": "2008-01"}
-    attendu = {"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
+    attendu, = _simules([cas])
     ligne, = (r for r in attendu["resultat"]["reversion"]["regimes"]
               if r["regime"] == "regime_general")
     assert [revision["date"] for revision in ligne["revisions"]] == ["2008-02-01"]
     assert [revision["ressources"] for revision in ligne["revisions"]] == [14000.0]
     assert ligne["derniere_revision"] == "2008-04-01"
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        fichier.write(json.dumps([attendu], ensure_ascii=False))
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(racine / "tests" / "js" / "comparer.mjs"), chemin],
-            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
 
 
 #: Des saisies où la date d'effet de la réversion du régime général retient
@@ -3156,35 +3105,20 @@ CAS_DE_LA_DATE_D_EFFET = [
 ]
 
 
-def test_les_deux_moteurs_retiennent_les_trois_ou_douze_mois_de_la_date_d_effet(saisies):
-    """Le résultat entier, des six scénarios, est le même en Python et en
-    JavaScript ; chaque cas retient, à la date d'effet de la réversion du régime
+def test_les_deux_moteurs_retiennent_les_trois_ou_douze_mois_de_la_date_d_effet():
+    """Le résultat entier, des six scénarios, est celui que le témoin des
+    sorties fige ; chaque cas retient, à la date d'effet de la réversion du régime
     général, les mois qu'il dit, et la révise aux jours qu'il dit. Le portage
     lit la période de référence dans les versions de son paquet : le cas est du
     niveau ``complet``, que GitHub joue sur le paquet qu'il refait."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    racine = Path(__file__).resolve().parents[1]
-    sys.path.insert(0, str(racine / "scripts"))
-    from construire_temoins import _fini
-    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
-                for cas, _, _ in CAS_DE_LA_DATE_D_EFFET]
+    attendus = _simules([cas for cas, _, _ in CAS_DE_LA_DATE_D_EFFET])
     for attendu, (_, mois, revisions) in zip(attendus, CAS_DE_LA_DATE_D_EFFET):
         ligne, = (r for r in attendu["resultat"]["reversion"]["regimes"]
                   if r["regime"] == "regime_general")
         assert (ligne["periode_de_reference"], [r["date"] for r in ligne["revisions"]]) == (
             mois, revisions), ligne
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        fichier.write(json.dumps(attendus, ensure_ascii=False))
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(racine / "tests" / "js" / "comparer.mjs"), chemin],
-            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
 
 
 #: Des saisies où la réversion du régime général d'avant juillet 2004 examine
@@ -3208,37 +3142,22 @@ CAS_DE_LA_DEMANDE = [
 ]
 
 
-def test_les_deux_moteurs_examinent_la_demande_puis_le_deces(saisies):
-    """Le résultat entier, des six scénarios, est le même en Python et en
-    JavaScript ; chaque cas examine les moments qu'il dit, retient les
+def test_les_deux_moteurs_examinent_la_demande_puis_le_deces():
+    """Le résultat entier, des six scénarios, est celui que le témoin des
+    sorties fige ; chaque cas examine les moments qu'il dit, retient les
     ressources du dernier, sur les mois qu'il dit, et en tire le motif qu'il
     dit. Le portage lit les moments
     dans les versions de son paquet : le cas est du niveau ``complet``, que
     GitHub joue sur le paquet qu'il refait."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    racine = Path(__file__).resolve().parents[1]
-    sys.path.insert(0, str(racine / "scripts"))
-    from construire_temoins import _fini
-    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
-                for cas, _, _, _ in CAS_DE_LA_DEMANDE]
+    attendus = _simules([cas for cas, _, _, _ in CAS_DE_LA_DEMANDE])
     for attendu, (_, moments, mois, motif) in zip(attendus, CAS_DE_LA_DEMANDE):
         ligne, = (r for r in attendu["resultat"]["reversion"]["regimes"]
                   if r["regime"] == "regime_general")
         assert (ligne["moments_examines"], ligne["ressources_examinees_au"],
                 ligne["periode_de_reference"], ligne["motif"]) == (
                     moments, moments[-1], mois, motif), ligne
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        fichier.write(json.dumps(attendus, ensure_ascii=False))
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(racine / "tests" / "js" / "comparer.mjs"), chemin],
-            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
 
 
 #: Des saisies où la ligne dit si son plafond est celui du ménage, à sa date
@@ -3267,32 +3186,17 @@ CAS_DU_MENAGE = [
 ]
 
 
-def test_les_deux_moteurs_disent_si_le_plafond_est_celui_du_menage(saisies):
-    """Le résultat entier, des six scénarios, est le même en Python et en
-    JavaScript ; chaque ligne qui a un plafond dit, comme le cas, s'il est
+def test_les_deux_moteurs_disent_si_le_plafond_est_celui_du_menage():
+    """Le résultat entier, des six scénarios, est celui que le témoin des
+    sorties fige ; chaque ligne qui a un plafond dit, comme le cas, s'il est
     celui du ménage, ce que la page ne recalcule pas."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    racine = Path(__file__).resolve().parents[1]
-    sys.path.insert(0, str(racine / "scripts"))
-    from construire_temoins import _fini
-    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
-                for cas, _ in CAS_DU_MENAGE]
+    attendus = _simules([cas for cas, _ in CAS_DU_MENAGE])
     for attendu, (_, menages) in zip(attendus, CAS_DU_MENAGE):
         regimes = attendu["resultat"]["reversion"]["regimes"]
         assert {r["regime"]: r["plafond_du_menage"] for r in regimes
                 if r["plafond"] > 0} == menages, regimes
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        fichier.write(json.dumps(attendus, ensure_ascii=False))
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(racine / "tests" / "js" / "comparer.mjs"), chemin],
-            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
 
 
 # -- les majorations forfaitaires des pensions d'avant 1975 ----------------------------
@@ -3370,36 +3274,22 @@ def test_la_reversion_suit_les_majorations_de_la_pension_du_defunt(saisies):
         ("1995-01-01", pytest.approx(calcule * 1.06 * 1.04 * 0.03846)))
 
 
-def test_les_deux_moteurs_relevent_le_maximum_de_la_reversion(saisies):
+def test_les_deux_moteurs_relevent_le_maximum_de_la_reversion():
     """Le cadre parti en 1990 et mort la même année laisse une réversion ramenée
     à 52 % du maximum des pensions, que la majoration de 1995 porte à 54 %
-    (circulaire Cnav n° 3/95, § 23 et § 241) : 3,846 % de ce maximum, les deux
-    moteurs au bit près."""
+    (circulaire Cnav n° 3/95, § 23 et § 241) : 3,846 % de ce maximum, au témoin
+    des sorties."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    racine = Path(__file__).resolve().parents[1]
-    sys.path.insert(0, str(racine / "scripts"))
-    from construire_temoins import _fini
     cas = {"naissance": "1925", "liquidation": "65", "conjoint": "1930", "salaire": "5",
            "statut": "salarie_prive_cadre", "deces": "1990-09"}
-    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}]
+    attendus = _simules([cas])
     ligne, = (r for r in attendus[0]["resultat"]["reversion"]["regimes"]
               if r["regime"] == "regime_general")
     assert ligne["motif"] == "maximum" and ligne["montant"] == pytest.approx(ligne["maximum"])
     majoration, = ligne["majorations_forfaitaires"]
     assert (majoration["date"], majoration["montant"]) == (
         "1995-01-01", pytest.approx(ligne["maximum"] * 0.03846))
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        fichier.write(json.dumps(attendus, ensure_ascii=False))
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(racine / "tests" / "js" / "comparer.mjs"), chemin],
-            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
 
 
 # -- ce qui n'est pas porté ----------------------------------------------------------
@@ -3595,7 +3485,9 @@ def test_l_adresse_garde_les_ressources_qui_varient():
 
 @pytest.fixture(scope="module")
 def saisies() -> Saisies:
-    return Saisies()
+    """Les saisies du site, simulées par le simulateur de la façade, que le
+    portage sert (action 161, étape 8h)."""
+    return Saisies(facade.Simulateur)
 
 
 def test_le_journal_inscrit_le_deces_puis_la_reversion(saisies):
@@ -3622,9 +3514,23 @@ MORT_AVANT = {"naissance": "1970", "liquidation": "64", "conjoint": "1972",
               "deces": "2024-05"}
 
 
-def _fictive(comparaison):
-    """La liquidation de la pension que le défunt eût obtenue, au journal."""
-    return next(e.contenu for e in comparaison.journal if e.id == "liquidation_deces_assure")
+def _fictive(requete: dict) -> dict:
+    """La liquidation de la pension que le défunt eût obtenue, telle que le
+    portage l'inscrit au journal (``comparer-liquidation.mjs``, au témoin des
+    sorties) : sa demande et ses composantes (``donnee``), son ouverture et
+    ses pensions, et la sorte des entrées du décès."""
+    from outils_sorties import sortie_figee
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    sortie, = sortie_figee("comparer-liquidation.mjs", [requete])
+    donnee = next(e["contenu"]["donnee"] for e in sortie["journal"]
+                  if e["id"] == "liquidation_deces_assure")
+    liquidee, = (l for l in sortie["liquidations"]
+                 if l["ouverture"]["date_effet"] == donnee["demande"]["date_effet"])
+    return {"donnee": donnee, **liquidee,
+            "sortes_du_deces": {e["contenu"]["sorte"] for e in sortie["journal"]
+                                if e["inscrite"]["evenement"] == "deces_assure"}}
 
 
 def test_mort_avant_son_depart_la_reversion_lit_la_pension_qu_il_eut_obtenue(saisies):
@@ -3640,21 +3546,21 @@ def test_mort_avant_son_depart_la_reversion_lit_la_pension_qu_il_eut_obtenue(sai
     sortie = comparaison.dictionnaire()["reversion"]
     assert (sortie["avant_le_depart"], sortie["deces"], sortie["annee"]) == (
         True, "2024-05-01", 2024)
-    fictive = _fictive(comparaison)
-    assert fictive.demande.donnees() == {
+    fictive = _fictive(MORT_AVANT)
+    assert {cle: valeur for cle, valeur in fictive["donnee"]["demande"].items()
+            if cle != "schema_version"} == {
         "personne": "assure", "date_effet": "2024-04-01",
         "evenement": {"sorte": "deces", "date": "2024-05-01"},
         "motif": "reversion", "nature": "fictive"}
-    assert fictive.carriere.au_deces and not fictive.ouverture.ouverte
-    assert fictive.pensions.taux == 0.5
+    assert fictive["ouverture"]["motif"] == "non_ouverte"
+    assert fictive["pensions"]["taux"] == 0.5
     general = next(l for l in sortie["regimes"] if l["regime"] == "regime_general")
-    pension = next(p for p in fictive.regimes if p.regime == "regime_general")
-    assert general["base"] == pytest.approx(pension.montant)
-    assert general["montant"] == pytest.approx(0.54 * pension.montant)
+    pension = next(p for p in fictive["pensions"]["regimes"] if p["regime"] == "regime_general")
+    assert general["base"] == pytest.approx(pension["montant"])
+    assert general["montant"] == pytest.approx(0.54 * pension["montant"])
     # Le conjoint, né en janvier 1972, a cinquante-cinq ans en janvier 2027.
     assert general["date_effet"] == "2027-02-01"
-    assert {e.sorte for e in comparaison.journal if e.evenement == "deces_assure"} == {
-        "evenement", "liquidation"}
+    assert fictive["sortes_du_deces"] == {"evenement", "liquidation"}
 
 
 @pytest.mark.parametrize("deces, effet, trimestres", [
@@ -3664,9 +3570,9 @@ def test_la_duree_s_arrete_au_trimestre_qui_precede_le_deces(saisies, deces, eff
     """« La durée d'assurance est arrêtée au dernier jour du trimestre civil qui
     précède le décès » (exposé de la Cnav) : mort en mars, l'assuré ne compte
     aucun trimestre de l'année ; en avril, le premier."""
-    fictive = _fictive(saisies.simuler({**MORT_AVANT, "deces": deces}))
-    assert fictive.demande.date_effet == effet
-    assert fictive.releve.durees.trimestres_par_regime["regime_general"] == trimestres
+    fictive = _fictive({**MORT_AVANT, "deces": deces})
+    assert fictive["donnee"]["demande"]["date_effet"] == effet
+    assert fictive["ouverture"]["trimestres_cotises"] == trimestres
 
 
 def test_sans_decote_ni_coefficient_d_anticipation(saisies, simulateur):
@@ -3676,13 +3582,22 @@ def test_sans_decote_ni_coefficient_d_anticipation(saisies, simulateur):
     points acquis sans coefficient."""
     from dataclasses import replace
 
-    fictive = _fictive(saisies.simuler(MORT_AVANT))
+    from retraite_notionnelle.chronologie import DateMois
+
+    fictive = _fictive(MORT_AVANT)
+    demande = liquidation.Demande(
+        personne="assure", date_effet="2024-04-01", evenement="deces",
+        date_evenement="2024-05-01", motif="reversion", nature="fictive")
+    au_deces = saisies.carriere(MORT_AVANT).arretee_au_deces(DateMois(2024, 4))
+    contexte = liquidation.Contexte(simulateur.scenario_actuel)
+    eue = liquidation.liquider(demande, liquidation.Etat(au_deces), contexte)
     vivant = liquidation.liquider(
-        fictive.demande, liquidation.Etat(replace(fictive.carriere, au_deces=False)),
-        liquidation.Contexte(simulateur.scenario_actuel))
-    assert vivant.pensions.taux < fictive.pensions.taux == 0.5
+        demande, liquidation.Etat(replace(au_deces, au_deces=False)), contexte)
+    assert {p.regime: p.montant for p in eue.regimes} == pytest.approx(
+        {p["regime"]: p["montant"] for p in fictive["pensions"]["regimes"]})
+    assert vivant.pensions.taux < eue.pensions.taux == 0.5
     sans = {p.regime: p.montant for p in vivant.regimes}
-    for pension in fictive.regimes:
+    for pension in eue.regimes:
         if pension.montant > 0:
             assert pension.montant > sans[pension.regime], pension.regime
 
@@ -3693,10 +3608,9 @@ def test_le_fonctionnaire_mort_en_activite_sans_coefficient_de_minoration(saisie
     pu bénéficier intervient après son décès » (L. 14, I, du code des
     pensions) : la pension civile se liquide au taux de 75 %, sur les services
     accomplis, et sa veuve en reçoit la moitié dès le mois qui suit."""
-    comparaison = saisies.simuler({
-        **MORT_AVANT, "statut": "fonctionnaire_etat"})
-    assert _fictive(comparaison).pensions.taux == 0.75
-    ligne, = comparaison.dictionnaire()["reversion"]["regimes"]
+    requete = {**MORT_AVANT, "statut": "fonctionnaire_etat"}
+    assert _fictive(requete)["pensions"]["taux"] == 0.75
+    ligne, = saisies.simuler(requete).dictionnaire()["reversion"]["regimes"]
     assert (ligne["regime"], ligne["taux"], ligne["motif"], ligne["date_effet"]) == (
         "fonction_publique_etat", 0.5, "servie", "2024-06-01")
 

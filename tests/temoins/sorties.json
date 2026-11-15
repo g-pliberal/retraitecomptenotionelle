@@ -803,6 +803,23 @@
   "script": "comparer-droit.mjs",
   "sortie": "1fe9e7a5004d557b"
  },
+ "0a42b1ab44e393fd": {
+  "entree": {
+   "conjoint": "1958-06",
+   "conjoint_retraite": "2020-07",
+   "conjoint_sexe": "H",
+   "deces": "2015-03",
+   "liquidation": "60",
+   "naissance": "1955",
+   "nouvelle_union": "mariage",
+   "nouvelle_union_depuis": "2020-08",
+   "ressources_conjoint": "18000",
+   "ressources_nouveau_conjoint": "12000",
+   "sexe": "F"
+  },
+  "script": "simuler.mjs",
+  "sortie": "731357f17850c750"
+ },
  "0b0e385ca1ac1691": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -904,6 +921,36 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "b16e488a7b259ed0"
  },
+ "0d82303a3f485508": {
+  "entree": {
+   "activite_conjoint": "15000",
+   "conjoint": "1958-06",
+   "conjoint_sexe": "H",
+   "deces": "2015-03",
+   "liquidation": "60",
+   "naissance": "1955",
+   "nouvelle_union": "mariage",
+   "nouvelle_union_depuis": "2018-05",
+   "ressources_conjoint": "15000",
+   "ressources_nouveau_conjoint": "20000",
+   "ressources_nouveau_conjoint_variations": "2020-01:12000",
+   "sexe": "F"
+  },
+  "script": "simuler.mjs",
+  "sortie": "fc12b9de1c5cee2d"
+ },
+ "0de729159e46dd71": {
+  "entree": {
+   "conjoint": "1955-01",
+   "deces": "2010-03",
+   "enfants": "2",
+   "liquidation": "60",
+   "naissance": "1950",
+   "naissances": "1998-05, 2003-02"
+  },
+  "script": "simuler.mjs",
+  "sortie": "c6fe92c716bf5559"
+ },
  "0e31748b405d164e": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -955,6 +1002,23 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "d7e7710176ee3087"
+ },
+ "0ee807bfd66c70c3": {
+  "entree": {
+   "activite_conjoint": "15000",
+   "conjoint": "1958-06",
+   "conjoint_sexe": "H",
+   "deces": "2015-03",
+   "liquidation": "60",
+   "naissance": "1955",
+   "nouvelle_union": "mariage",
+   "nouvelle_union_depuis": "2018-05",
+   "ressources_conjoint": "15000",
+   "ressources_nouveau_conjoint": "20000",
+   "sexe": "F"
+  },
+  "script": "simuler.mjs",
+  "sortie": "29dc1cbecc8e2f11"
  },
  "0eff4f35f3ff78b2": {
   "entree": {
@@ -1429,6 +1493,20 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "a78092bd0fd547d2"
+ },
+ "19505488292b9bcb": {
+  "entree": {
+   "conjoint": "1960",
+   "deces": "2023-05",
+   "liquidation": "62",
+   "naissance": "1958",
+   "nouvelle_union": "pacs",
+   "nouvelle_union_depuis": "2024-01",
+   "ressources_conjoint": "10000",
+   "ressources_nouveau_conjoint": "20000"
+  },
+  "script": "simuler.mjs",
+  "sortie": "3b23b2472951a144"
  },
  "195e4e7682922564": {
   "entree": {
@@ -2645,6 +2723,18 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "18f6a2e8dee581b3"
  },
+ "2a556740dd1d8d05": {
+  "entree": {
+   "conjoint": "1952-04-05",
+   "conjoint_retraite": "2015-04",
+   "deces": "2015-03-10",
+   "liquidation": "65",
+   "naissance": "1950",
+   "ressources_conjoint": "18000"
+  },
+  "script": "simuler.mjs",
+  "sortie": "2b8d6e54c709b3db"
+ },
  "2a623ebb06bf4d6d": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -3410,6 +3500,24 @@
   "script": "comparer-droit.mjs",
   "sortie": "c829d1d05906caf0"
  },
+ "338ebc13e010bcf8": {
+  "entree": {
+   "activite_conjoint": "25000",
+   "conjoint": "1958-06",
+   "conjoint_sexe": "H",
+   "deces": "2015-03",
+   "liquidation": "60",
+   "naissance": "1955",
+   "nouvelle_union": "pacs",
+   "nouvelle_union_depuis": "2015-09",
+   "nouvelle_union_fin": "2021-03",
+   "ressources_conjoint": "25000",
+   "ressources_nouveau_conjoint": "10000",
+   "sexe": "F"
+  },
+  "script": "simuler.mjs",
+  "sortie": "1cba112a4b1c1ab9"
+ },
  "3396ba707a2ad96c": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -3434,6 +3542,20 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "4eefd1f73a4b4872"
+ },
+ "3439e84505519f38": {
+  "entree": {
+   "conjoint": "1960-01",
+   "deces": "2019-03",
+   "enfants": "1",
+   "liquidation": "62",
+   "metier2_debut": "2000-01",
+   "metier2_statut": "salarie_agricole",
+   "naissance": "1955",
+   "naissances": "2008-01"
+  },
+  "script": "simuler.mjs",
+  "sortie": "589a4ac49d442c19"
  },
  "343dabea030b3ba8": {
   "entree": {
@@ -3845,6 +3967,19 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "661c7e909e12cb01"
+ },
+ "38ee93f976b85322": {
+  "entree": {
+   "activite_conjoint": "20000",
+   "activite_conjoint_fin": "2006-10-25",
+   "conjoint": "1953-09-15",
+   "deces": "2006-10-10",
+   "liquidation": "60",
+   "naissance": "1945",
+   "ressources_conjoint": "20000"
+  },
+  "script": "simuler.mjs",
+  "sortie": "88e9051d10aeace7"
  },
  "39328112b73f6b91": {
   "entree": {
@@ -4907,6 +5042,20 @@
   "script": "comparer-droit.mjs",
   "sortie": "f381f8ccc166acef"
  },
+ "4c2e0fd0cec97a36": {
+  "entree": {
+   "activite_conjoint": "3000",
+   "activite_conjoint_fin": "1972-06-30",
+   "conjoint": "1907-03-15",
+   "deces": "1972-06-10",
+   "liquidation": "65",
+   "mariage": "1930-05",
+   "naissance": "1905",
+   "ressources_conjoint": "3000"
+  },
+  "script": "simuler.mjs",
+  "sortie": "cc3a52137052d469"
+ },
  "4deca4bd17a96872": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -5353,6 +5502,20 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "d74942beadd6592a"
+ },
+ "53d4ff49e1ec6b3d": {
+  "entree": {
+   "conjoint": "1958-06",
+   "conjoint_retraite": "2020-07",
+   "conjoint_sexe": "H",
+   "deces": "2015-03",
+   "liquidation": "60",
+   "naissance": "1955",
+   "ressources_conjoint": "18000",
+   "sexe": "F"
+  },
+  "script": "simuler.mjs",
+  "sortie": "8847498f4ceca12b"
  },
  "53f2e8ff409aaa9f": {
   "entree": {
@@ -6158,6 +6321,18 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "75028b0f83b012bb"
+ },
+ "62ee9c09d7fab800": {
+  "entree": {
+   "conjoint": "1940-06",
+   "conjoint_retraite": "2008-03",
+   "deces": "1999-03",
+   "liquidation": "60",
+   "naissance": "1930",
+   "ressources_conjoint": "12000"
+  },
+  "script": "simuler.mjs",
+  "sortie": "5e392b0d3c0b9215"
  },
  "63289f465a50641e": {
   "entree": {
@@ -7112,6 +7287,21 @@
   "script": "comparer-droit.mjs",
   "sortie": "c32cfd92446c80bf"
  },
+ "70d39305cb1b2f61": {
+  "entree": {
+   "activite_conjoint": "15000",
+   "activite_conjoint_variations": "2018-03:25000",
+   "conjoint": "1958-06",
+   "conjoint_sexe": "H",
+   "deces": "2015-03",
+   "liquidation": "60",
+   "naissance": "1955",
+   "ressources_conjoint": "15000",
+   "sexe": "F"
+  },
+  "script": "simuler.mjs",
+  "sortie": "4cc4e4b962aa4eb3"
+ },
  "7161b6093f664162": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -7316,6 +7506,20 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "37cb07991adf1eed"
  },
+ "73fa7e87ad675b7b": {
+  "entree": {
+   "activite_conjoint": "5000",
+   "conjoint": "1938",
+   "deces": "1999-05",
+   "liquidation": "60",
+   "naissance": "1935",
+   "nouvelle_union": "mariage",
+   "ressources_conjoint": "5000",
+   "ressources_nouveau_conjoint": "50000"
+  },
+  "script": "simuler.mjs",
+  "sortie": "5c007659b382633c"
+ },
  "74394540a75b3ef0": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -7340,6 +7544,16 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "74f894aaef3c0381"
+ },
+ "74bb431ca12c5961": {
+  "entree": {
+   "conjoint": "1972",
+   "deces": "2024-05",
+   "liquidation": "64",
+   "naissance": "1970"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "2c285e74352cfe7c"
  },
  "751c0aebf3578d51": {
   "entree": {
@@ -7479,6 +7693,16 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "7cdae8cc2730739d"
  },
+ "77dd4b9c45ae5943": {
+  "entree": {
+   "conjoint": "1972",
+   "deces": "2024-03",
+   "liquidation": "64",
+   "naissance": "1970"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "7671608611da750e"
+ },
  "77ddf6af660f0066": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -7555,6 +7779,19 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "465948a471e16471"
+ },
+ "791ad1d627892ca5": {
+  "entree": {
+   "activite_conjoint": "10000",
+   "activite_conjoint_variations": "2011-05-01:40000",
+   "conjoint": "1956-06-10",
+   "deces": "2010-03-10",
+   "liquidation": "60",
+   "naissance": "1950",
+   "ressources_conjoint": "10000"
+  },
+  "script": "simuler.mjs",
+  "sortie": "7b6ed528957e188e"
  },
  "797e16036bf8d283": {
   "entree": {
@@ -8034,6 +8271,19 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "bfc6750eb7b88328"
+ },
+ "828e98e1d4a02961": {
+  "entree": {
+   "conjoint": "1960",
+   "deces": "2023-05",
+   "liquidation": "62",
+   "naissance": "1958",
+   "nouvelle_union": "pacs",
+   "ressources_conjoint": "10000",
+   "ressources_nouveau_conjoint": "20000"
+  },
+  "script": "simuler.mjs",
+  "sortie": "234566df7066b977"
  },
  "82f469da78932522": {
   "entree": {
@@ -8812,6 +9062,17 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "f7af419074d72d79"
  },
+ "8d9862149fc74b32": {
+  "entree": {
+   "activite_conjoint_variations": "2007-03:14000",
+   "conjoint": "1953-09",
+   "deces": "2006-10",
+   "liquidation": "60",
+   "naissance": "1945"
+  },
+  "script": "simuler.mjs",
+  "sortie": "a5a0013876a78e12"
+ },
  "8dc7bdbdb7ced6b2": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -8937,6 +9198,23 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "b7539aed9ae3debe"
+ },
+ "8eb6ee20b4173b3b": {
+  "entree": {
+   "conjoint": "1958-06",
+   "conjoint_retraite": "2020-07",
+   "conjoint_sexe": "H",
+   "deces": "2015-03",
+   "liquidation": "60",
+   "naissance": "1955",
+   "nouvelle_union": "mariage",
+   "nouvelle_union_depuis": "2018-05",
+   "ressources_conjoint": "18000",
+   "ressources_nouveau_conjoint": "12000",
+   "sexe": "F"
+  },
+  "script": "simuler.mjs",
+  "sortie": "9ab932ce65f398be"
  },
  "8ed54fa299cd5191": {
   "entree": {
@@ -9656,6 +9934,33 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "ff31cc185b48130f"
  },
+ "98ad7c98d70d8cf9": {
+  "entree": {
+   "conjoint": "1960",
+   "debut": "22",
+   "deces": "2026-05",
+   "liquidation": "62",
+   "naissance": "1958",
+   "nouvelle_union": "concubinage",
+   "ressources_conjoint": "10000",
+   "ressources_nouveau_conjoint": "20000",
+   "statut": "artisan"
+  },
+  "script": "simuler.mjs",
+  "sortie": "18e27e76a19c8124"
+ },
+ "98bcfc38a4362ea5": {
+  "entree": {
+   "conjoint": "1930",
+   "deces": "1990-09",
+   "liquidation": "65",
+   "naissance": "1925",
+   "salaire": "5",
+   "statut": "salarie_prive_cadre"
+  },
+  "script": "simuler.mjs",
+  "sortie": "0c41485c12afca39"
+ },
  "98ffc931b2b4b3c7": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -9710,6 +10015,18 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "3b7f326c1b04e630"
+ },
+ "995b3210e047f6a5": {
+  "entree": {
+   "conjoint": "1964-03",
+   "conjoint_retraite": "2030-01",
+   "deces": "2024-05",
+   "liquidation": "62",
+   "naissance": "1960",
+   "ressources_conjoint": "20000"
+  },
+  "script": "simuler.mjs",
+  "sortie": "914ec8d6a610f129"
  },
  "9965f9727023d7fd": {
   "entree": {
@@ -10022,6 +10339,19 @@
   "script": "comparer-droit.mjs",
   "sortie": "58b5ed80194f1c32"
  },
+ "9df5323119f8082a": {
+  "entree": {
+   "activite_conjoint": "14000",
+   "activite_conjoint_fin": "2008-02",
+   "conjoint": "1953-09",
+   "deces": "2006-10",
+   "liquidation": "60",
+   "naissance": "1945",
+   "ressources_conjoint": "14000"
+  },
+  "script": "simuler.mjs",
+  "sortie": "17f6e896f8508e69"
+ },
  "9f9adee202030843": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -10046,6 +10376,18 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "f83b66e5e3888ba6"
+ },
+ "a0735825567ebe53": {
+  "entree": {
+   "conjoint": "1957-01",
+   "deces": "2008-06",
+   "enfants": "1",
+   "liquidation": "64",
+   "naissance": "1960",
+   "naissances": "2008-12"
+  },
+  "script": "simuler.mjs",
+  "sortie": "34000bdda26f68ac"
  },
  "a0c023b12238b2f6": {
   "entree": {
@@ -10278,6 +10620,18 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "706f6f84cef74535"
  },
+ "a5a408cd33e0ee5e": {
+  "entree": {
+   "conjoint": "1950-03",
+   "conjoint_retraite": "2008-01",
+   "deces": "2006-10",
+   "liquidation": "60",
+   "naissance": "1945",
+   "ressources_conjoint": "14000"
+  },
+  "script": "simuler.mjs",
+  "sortie": "43d7fcde8fda0aee"
+ },
  "a5d394549c2966b9": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -10432,6 +10786,18 @@
   },
   "script": "comparer-droit.mjs",
   "sortie": "946ac685ac311503"
+ },
+ "a7fef2a1bb7d191f": {
+  "entree": {
+   "activite_conjoint": "14000",
+   "conjoint": "1953-09",
+   "deces": "2006-10",
+   "liquidation": "60",
+   "naissance": "1945",
+   "ressources_conjoint": "14000"
+  },
+  "script": "simuler.mjs",
+  "sortie": "62eb1a43e26b7cdb"
  },
  "a8145df550e974dd": {
   "entree": {
@@ -11167,6 +11533,16 @@
   "script": "comparer-droit.mjs",
   "sortie": "5d2a89a3988d1fd8"
  },
+ "b2884d82aefca784": {
+  "entree": {
+   "conjoint": "1972",
+   "deces": "2024-04",
+   "liquidation": "64",
+   "naissance": "1970"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "262df13f1971147c"
+ },
  "b346a3268f17eadc": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -11879,6 +12255,20 @@
   "script": "comparer-droit.mjs",
   "sortie": "c589c9716fb05b0d"
  },
+ "bf290c3006ef6c23": {
+  "entree": {
+   "conjoint": "1955-01",
+   "deces": "2010-03",
+   "enfants": "1",
+   "liquidation": "60",
+   "metier2_debut": "1995-01",
+   "metier2_statut": "artisan",
+   "naissance": "1950",
+   "naissances": "2000-01"
+  },
+  "script": "simuler.mjs",
+  "sortie": "aa9ea418736303ca"
+ },
  "bf46a9252228636b": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -12004,6 +12394,43 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "0fa1c16060fc9d85"
+ },
+ "c019657850646e89": {
+  "entree": {
+   "conjoint": "1972",
+   "deces": "2024-05",
+   "liquidation": "64",
+   "naissance": "1970",
+   "statut": "fonctionnaire_etat"
+  },
+  "script": "comparer-liquidation.mjs",
+  "sortie": "af38c828a6f210ac"
+ },
+ "c09312cd247656fa": {
+  "entree": {
+   "conjoint": "1930-01",
+   "deces": "1986-03",
+   "enfants": "1",
+   "liquidation": "60",
+   "naissance": "1925",
+   "naissances": "1975-02"
+  },
+  "script": "simuler.mjs",
+  "sortie": "dd04c8f5dc024176"
+ },
+ "c101cd7a8a900f7f": {
+  "entree": {
+   "activite_conjoint": "6000",
+   "activite_conjoint_variations": "2000-04-01:36000",
+   "conjoint": "1945-06-15",
+   "deces": "1996-03-10",
+   "liquidation": "60",
+   "mariage": "1965-05",
+   "naissance": "1935",
+   "ressources_conjoint": "6000"
+  },
+  "script": "simuler.mjs",
+  "sortie": "305b16fa552ff70f"
  },
  "c11063f6ed7564c1": {
   "entree": {
@@ -13597,6 +14024,19 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "c867c0b3272e5d59"
  },
+ "d9168ba5ccf53118": {
+  "entree": {
+   "conjoint": "1953-08",
+   "deces": "2010-03",
+   "liquidation": "60",
+   "naissance": "1945",
+   "nouvelle_union": "mariage",
+   "nouvelle_union_depuis": "2014-09",
+   "ressources_nouveau_conjoint": "28000"
+  },
+  "script": "simuler.mjs",
+  "sortie": "769733a2ee4eecd0"
+ },
  "d92eba019c75d5ad": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -14629,6 +15069,16 @@
   "script": "comparer-droit.mjs",
   "sortie": "8cc7ad2d410e7914"
  },
+ "e59cad1d8b99ff56": {
+  "entree": {
+   "conjoint": "1962",
+   "deces": "2023-05",
+   "liquidation": "62",
+   "naissance": "1960"
+  },
+  "script": "simuler.mjs",
+  "sortie": "39d0dbb54e8cc3a3"
+ },
  "e5eaf2b61644395a": {
   "entree": {
    "age_reference": "fixe_apres_bascule",
@@ -14678,6 +15128,18 @@
   },
   "script": "comparer-liquidation.mjs",
   "sortie": "315719e67b0de329"
+ },
+ "e732d3a4bdc899bc": {
+  "entree": {
+   "activite_conjoint_variations": "1997-01-01:30000",
+   "conjoint": "1945-06-15",
+   "deces": "1996-03-10",
+   "liquidation": "60",
+   "mariage": "1965-05",
+   "naissance": "1935"
+  },
+  "script": "simuler.mjs",
+  "sortie": "160669631bb2e4cc"
  },
  "e7bf354ebf7452d2": {
   "entree": {
