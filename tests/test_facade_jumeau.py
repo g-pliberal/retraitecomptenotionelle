@@ -19,6 +19,7 @@ from pathlib import Path
 
 import pytest
 
+from retraite_notionnelle import carriere as carriere_python
 from retraite_notionnelle import pont
 from retraite_notionnelle import revalorisation as revalorisation_python
 from retraite_notionnelle import simulateur as simulateur_python
@@ -594,7 +595,22 @@ def _point_de_la_fiche(annee):
     return arguments
 
 
+#: Un relevé de fonctionnaire qui finit en 2024 à 80 %, et un autre qui
+#: cumule un emploi et un chômage indemnisé, une ligne de trimestres
+#: fractionnaires.
+_RELEVE_A_80 = (LigneRelevee(2024, "fonctionnaire_etat", 16000.0, 4, quotite=0.8),)
+_RELEVE_CUMULE = (LigneRelevee(2023, "salarie_prive_cadre", 30000.0),
+                  LigneRelevee(2023, "salarie_prive_non_cadre", 5000.0, 1.5,
+                               type_periode="chomage_indemnise"))
+
 APPELS_DES_REGLES = [
+    ("carriere", "prolonger_releve",
+     lambda s: (list(_RELEVE_A_80), DateMois(2028, 1), s.macro, None, None, {2026: 0.5})),
+    ("carriere", "prolonger_releve",
+     lambda s: (list(_RELEVE_CUMULE), DateMois(2026, 7), s.macro, {2025: "chomage_indemnise"},
+                None, {2024: 0.6}, {2024: "apprenti"})),
+    ("carriere", "salaire_moyen_annuel", lambda s: (s.macro, 1990)),
+    ("carriere", "salaire_moyen_annuel", lambda s: (s.macro, 2030)),
     ("compter", "majoration_pour_enfants",
      lambda s: (s.scenario_actuel, _mere(s, "profession_liberale"), {"cnavpl": 160}, 2020)),
     ("compter", "majoration_pour_enfants",
@@ -821,7 +837,7 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     servi = facade.Simulateur(parametres)
     jumeau = simulateur_python.Simulateur(parametres)
-    modules = {"commun": commun_python, "completer": completer_python,
+    modules = {"carriere": carriere_python, "commun": commun_python, "completer": completer_python,
                "compter": compter_python, "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
                "reversion": reversion_python, "revalorisation": revalorisation_python,
                "cultes": cultes_python, "releve": releve_python}

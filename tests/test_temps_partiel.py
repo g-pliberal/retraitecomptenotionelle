@@ -22,13 +22,11 @@ import pytest
 
 from retraite_notionnelle import chronologie as chrono
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import (
-    Carriere, LigneRelevee, Metier, prolonger_releve, salaire_moyen_annuel,
-)
-from retraite_notionnelle.droit import releve
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.web.site import ErreurSite, module
 
+from facade import (Carriere, Simulateur, prolonger_releve, releve,
+                    salaire_moyen_annuel)
 from outils_pont import saisie_du_portage
 
 RACINE = Path(__file__).resolve().parents[1]

@@ -658,12 +658,21 @@ def _demander_la_regle(module: str, regle: str, rendu, arguments: dict):
                 "la façade (simulateur.catalogue), sous les paramètres du moteur — le "
                 "portage ne le verrait pas")
         simulateur = simulateur or du_regime
+    parametres = None if simulateur is None else simulateur.parametres
+    if "macro" in arguments:
+        # Les séries d'un simulateur de la façade : le portage prend les
+        # siennes, sous les paramètres de ce simulateur-là.
+        des_series = _parametres_des_series(arguments["macro"])
+        if parametres is not None and parametres != des_series:
+            raise NonTransmissible(
+                f"{module}.{regle} : séries d'un autre simulateur que celui du moteur")
+        parametres = des_series
     lu = pont.regle_du_droit(
         module, regle, rendu,
         *(_argument_de_regle(f"{module}.{regle}", simulateur, nom, valeur,
                              arguments.get("carriere"))
           for nom, valeur in arguments.items()),
-        parametres=None if simulateur is None else simulateur.parametres)
+        parametres=parametres)
     carriere = arguments.get("carriere")
     if (isinstance(lu, _carriere.Carriere) and isinstance(carriere, _carriere.Carriere)
             and pont.carriere_en_donnees(lu) == pont.carriere_en_donnees(carriere)):
@@ -688,6 +697,11 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
     n'arriverait pas au portage sous son type."""
     if nom == "moteur":
         return pont.MOTEUR
+    if nom == "macro":
+        # Les séries d'un simulateur de la façade, par leur marque
+        # (``_demander_la_regle`` en a pris les paramètres).
+        _parametres_des_series(valeur)
+        return pont.SERIES
     if nom in pont.TABLES_DES_REGLES.get(regle, ()):
         # Le portage lit l'argument en ``Map`` : il passe en table, ses clés
         # sous leur type ; ``None``, la table vide que le Python lui substitue.
@@ -715,6 +729,10 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
         return dict(valeur)
     if dataclasses.is_dataclass(valeur) and type(valeur).__name__ in pont.TYPES_DE_LA_FACADE:
         return valeur
+    if type(valeur) in (tuple, list) and all(type(element) is _carriere.LigneRelevee
+                                             for element in valeur):
+        # Un relevé saisi, ses lignes de données, que le pont passe champ à champ.
+        return list(valeur)
     if isinstance(valeur, _liquidation.Contexte):
         return pont.ContexteDuMoteur(tuple(_contexte_de_la_facade(
             regle, None if simulateur is None else simulateur.scenario_actuel, valeur)))
@@ -909,6 +927,12 @@ cultes = Regles("cultes", _cultes)
 #: ``revalorisation``, hors du droit : les majorations forfaitaires de 1972 à
 #: 1982, servies par le portage.
 revalorisation = Regles("revalorisation", _revalorisation)
+#: ``carriere``, hors du droit : le relevé prolongé jusqu'au départ et le
+#: salaire moyen d'une année, servis par le portage sur les séries d'un
+#: simulateur de la façade.
+carriere = Regles("carriere", _carriere)
+prolonger_releve = carriere.prolonger_releve
+salaire_moyen_annuel = carriere.salaire_moyen_annuel
 
 
 # -- la liquidation ---------------------------------------------------------------------
@@ -1406,7 +1430,9 @@ JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
            "regles_de_la_reversion": _reversion, "revalorisation": _revalorisation,
            "liquidation": _liquidation, "coordonner": _coordonner, "compter": _compter,
            "acquerir": _acquerir, "cultes": _cultes, "faire_vivre": _revalorisation.faire_vivre,
-           "ConstructeurCompte": _compte.ConstructeurCompte}
+           "ConstructeurCompte": _compte.ConstructeurCompte,
+           "prolonger_releve": _carriere.prolonger_releve,
+           "salaire_moyen_annuel": _carriere.salaire_moyen_annuel}
 
 #: Les simulateurs des tests, par fichier, par moteur et par paramètres.
 _SIMULATEURS: dict[tuple, object] = {}

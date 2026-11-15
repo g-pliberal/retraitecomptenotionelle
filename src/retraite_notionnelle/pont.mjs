@@ -138,7 +138,9 @@ import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
 
 import { DateMois, enMois, origineDesAges } from "../../moteur/js/calendrier.js";
-import { AnneeCarriere, Carriere, salaireMoyenAnnuel } from "../../moteur/js/carriere.js";
+import {
+  AnneeCarriere, Carriere, prolongerReleve, salaireMoyenAnnuel,
+} from "../../moteur/js/carriere.js";
 import { ConstructeurCapitalisation } from "../../moteur/js/capitalisation.js";
 import { valeur as valeurPresumee } from "../../moteur/js/chronologie.js";
 import { ConstructeurCompte } from "../../moteur/js/compte.js";
@@ -2017,6 +2019,8 @@ ENTREES_DE_LA_FACADE["simulateur.constructeur"] = (simulateur, constructeur, met
 
 /** Les modules du droit dont la façade sert des règles, sous leur nom. */
 const MODULES_DU_DROIT = {
+  // Hors du droit : le relevé prolongé et le salaire moyen d'une année.
+  carriere: { prolongerReleve, salaireMoyenAnnuel },
   commun,
   compter: compterEtape,
   // `pension_majoree` reçoit ses options par leur nom, que le Python passe

@@ -1986,6 +1986,19 @@ def _type_du_champ(type_, champ: str):
     return getattr(importlib.import_module(f"{__package__}.{module}"), nom)
 
 
+#: Les champs d'un dataclass qu'un nombre de l'un ou l'autre type remplit, et
+#: que JSON rend sous le sien : les trimestres d'une ligne de relevé, entiers
+#: quand ils le sont (:data:`FLOTTANTS_DE_LA_CHRONOLOGIE`), ``None`` quand le
+#: modèle les déduit du revenu.
+NOMBRES_TELS_QUELS = frozenset({("LigneRelevee", "trimestres")})
+
+
+def _nombre_tel_quel(valeur, chemin: str):
+    if valeur is not None and type(valeur) not in (int, float):
+        raise TypeError(f"{chemin} : nombre attendu, le portage a écrit {valeur!r}")
+    return valeur
+
+
 def _dataclass_lu(type_, valeur, chemin: str):
     """Un dataclass du résultat, de ce que le portage en a écrit : chacun de
     ses champs sous son type, celui qui est sans objet à son défaut
@@ -2007,8 +2020,10 @@ def _dataclass_lu(type_, valeur, chemin: str):
     if manquent:
         raise ValueError(f"{chemin} : {type_.__name__} : le portage n'écrit pas "
                          f"{', '.join(manquent)}")
-    return type_(**{champ.name: lu_strictement(_type_du_champ(type_, champ.name), valeur[nom],
-                                               f"{chemin}.{champ.name}")
+    return type_(**{champ.name: _nombre_tel_quel(valeur[nom], f"{chemin}.{champ.name}")
+                    if (type_.__name__, champ.name) in NOMBRES_TELS_QUELS
+                    else lu_strictement(_type_du_champ(type_, champ.name), valeur[nom],
+                                        f"{chemin}.{champ.name}")
                     for nom, champ in champs.items() if nom in valeur})
 
 
@@ -2694,6 +2709,7 @@ TABLES_DES_REGLES: dict[str, frozenset[str]] = {
     "compter.majoration_pour_enfants": frozenset({"trimestres_par_regime"}),
     "liquider.majorer_les_points_de_1952_a_1972": frozenset({"points"}),
     "liquider.repartir_les_annees": frozenset({"durees", "minimums"}),
+    "carriere.prolonger_releve": frozenset({"interruptions", "temps_partiel", "dispenses"}),
 }
 
 
@@ -2720,6 +2736,9 @@ CLASSES_EN_CHAMEAU |= {"EligibleMinimum", "DureesDesCultes", "PensionMajoree",
 #: un appel confronté au jumeau (``tests/test_facade_jumeau.py``). Une règle
 #: qui n'y est pas est refusée avant node.
 REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
+    # Hors de ``droit/`` : ``carriere.js``, à la racine du portage — le relevé
+    # prolongé jusqu'au départ, et le salaire moyen d'une année.
+    "carriere": ("prolonger_releve", "salaire_moyen_annuel"),
     "commun": ("ligne_cotisee",),
     # Les trimestres des enfants et le régime qui les porte (R. 173-15).
     "compter": ("majoration_pour_enfants",),

@@ -85,7 +85,7 @@ FICHIERS = (
     "test_services_fonction_publique.py", "test_simulateur.py",
     "test_sncf_ratp.py", "test_solde_fusion.py", "test_stock_age_legal.py", "test_taux_moyens.py",
     "test_taux_plein_a_soixante_cinq_ans.py", "test_taux_plein_par_categorie.py",
-    "test_temps_partiel.py", "test_trajectoire.py", "test_trimestres_enfants.py",
+    "test_trajectoire.py", "test_trimestres_enfants.py",
     "test_univers.py", "test_versements_uniques.py",
     "test_versions.py", "test_web.py", "test_web_saisie.py",
 )

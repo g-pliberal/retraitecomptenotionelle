@@ -697,8 +697,8 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     with pytest.raises(ValueError, match="ouvrir.ouvrir"):
         pont.regle_du_droit("ouvrir", "ouvrir", float)
     assert facade.REGLES is pont.REGLES_DE_LA_FACADE
-    assert set(facade.REGLES) == {"commun", "completer", "compter", "cultes", "foyer",
-                                  "liquider", "ouvrir", "releve", "reversion",
+    assert set(facade.REGLES) == {"carriere", "commun", "completer", "compter", "cultes",
+                                  "foyer", "liquider", "ouvrir", "releve", "reversion",
                                   "revalorisation"}
 
 
@@ -1614,6 +1614,32 @@ def test_les_regles_des_enfants_des_sections_liberales_se_demandent_au_portage(s
             simulateur_python.Simulateur().catalogue["fonction_publique_etat"], 4)
 
 
+def test_le_releve_se_prolonge_au_portage_au_rythme_du_salaire_moyen(simulateur):
+    """Un relevé qui finit en 2024 à 80 %, prolongé jusqu'au départ du
+    1er juillet 2026 (``prolonger_releve``) : sa dernière année se ramène au
+    temps plein, 20 000 €, que chaque année ajoutée avance au rythme du
+    salaire moyen ; 2026 n'en compte que six mois, à la quotité que le champ
+    lui donne. Des séries qui ne sont pas celles d'un simulateur de la façade,
+    une retraite progressive, n'arriveraient pas au portage."""
+    macro = simulateur.macro
+    lignes = facade.prolonger_releve(
+        [LigneRelevee(2024, "fonctionnaire_etat", 16000.0, 4, quotite=0.8)],
+        DateMois(2026, 7), macro, temps_partiel={2026: 0.5})
+    assert [type(ligne) for ligne in lignes] == [LigneRelevee] * 3
+    par_annee = {ligne.annee: ligne for ligne in lignes}
+    salaire = {annee: facade.salaire_moyen_annuel(macro, annee) for annee in (2024, 2025, 2026)}
+    assert type(salaire[2025]) is float and salaire[2025] > salaire[2024] > 0
+    assert (par_annee[2025].revenu, par_annee[2025].quotite, par_annee[2025].trimestres) == (
+        pytest.approx(20000.0 * salaire[2025] / salaire[2024]), 1.0, None)
+    assert (par_annee[2026].revenu, par_annee[2026].quotite) == (
+        pytest.approx(20000.0 * salaire[2026] / salaire[2024] * 6 / 12 * 0.5), 0.5)
+    with pytest.raises(NonTransmissible, match="séries"):
+        facade.salaire_moyen_annuel(simulateur_python.Simulateur().macro, 2024)
+    with pytest.raises(NonTransmissible, match="progressive"):
+        facade.prolonger_releve([LigneRelevee(2024, "fonctionnaire_etat", 16000.0)],
+                                DateMois(2026, 7), macro, progressive=(DateMois(2025, 1), 0.6))
+
+
 def _foyer_du_couple(simulateur, conjoint: str, mariage: str | None = None):
     """Un salarié né en 1955, parti à 66 ans, marié à une conjointe née en
     ``conjoint`` qui déclare 4 000 € de ressources."""
@@ -1806,7 +1832,7 @@ def _parametres_du_portage(module: str, regle: str) -> list[tuple[str, str | Non
     """Les paramètres de la règle dans le portage, et la valeur par défaut que
     chacun y prend, telle qu'elle est écrite."""
     dossier = RACINE_PROJET / "moteur" / "js"
-    source = (dossier / f"{module}.js" if module == "revalorisation"
+    source = (dossier / f"{module}.js" if module in ("carriere", "revalorisation")
               else dossier / "droit" / f"{module}.js").read_text(encoding="utf-8")
     # Une règle privée au Python s'exporte sans son tiret bas.
     nom = re.sub(r"_([a-z0-9])", lambda lettre: lettre.group(1).upper(), regle.lstrip("_"))
@@ -1835,7 +1861,8 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
     même valeur par défaut — une table vide pour le ``None`` d'une table
     (``pont.TABLES_DES_REGLES``). Deux noms seulement diffèrent d'un côté à
     l'autre."""
-    jumelle = getattr({"commun": commun_python, "completer": completer_python,
+    jumelle = getattr({"carriere": carriere_python, "commun": commun_python,
+                       "completer": completer_python,
                        "compter": compter_python,
                        "cultes": cultes_python, "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
                        "releve": releve_python, "reversion": reversion_python,
