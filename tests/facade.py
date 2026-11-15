@@ -71,8 +71,11 @@ from __future__ import annotations
 import dataclasses
 import datetime
 import inspect
+import os
+import shutil
 import sys
 import typing
+from pathlib import Path
 
 import pytest
 
@@ -1825,6 +1828,31 @@ JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
            "salaire_moyen_annuel": _carriere.salaire_moyen_annuel}
 
 #: Les simulateurs des tests, par fichier, par moteur et par paramètres.
+#: Les copies retouchées des données de ce processus, par retouches.
+_COPIES: dict[tuple, Path] = {}
+
+
+def donnees_retouchees(request, nom: tuple, retouches: dict) -> Path:
+    """Une copie des données du dépôt dont chaque fichier de ``retouches`` —
+    son chemin relatif à ``data/`` — est récrit par sa retouche, une fonction
+    du texte au texte : ce qu'un test remplaçait en Python, le portage le voit
+    ainsi, sur leur paquet. Les autres fichiers sont liés à ceux du dépôt. Une
+    copie par ``nom``, qui dit les retouches, et par processus."""
+    if nom not in _COPIES:
+        copie = request.getfixturevalue("tmp_path_factory").mktemp("donnees") / "data"
+        shutil.copytree(Path(__file__).resolve().parents[1] / "data", copie,
+                        copy_function=os.symlink)
+        for chemin, retoucher in retouches.items():
+            fichier = copie / chemin
+            texte = Path(os.readlink(fichier)).read_text(encoding="utf-8")
+            fichier.unlink()
+            retouche = retoucher(texte)
+            assert retouche != texte, f"{chemin} : la retouche ne change rien"
+            fichier.write_text(retouche, encoding="utf-8")
+        _COPIES[nom] = copie
+    return _COPIES[nom]
+
+
 _SIMULATEURS: dict[tuple, object] = {}
 
 

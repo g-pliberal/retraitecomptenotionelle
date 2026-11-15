@@ -20,7 +20,7 @@ from pathlib import Path
 import pytest
 
 import facade
-from facade import Simulateur, faire_vivre, liquider
+from facade import Parametres, Simulateur, faire_vivre, liquider
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -148,8 +148,7 @@ def test_le_maximum_suit_le_taux_acquis_au_31_mars_1983(simulateur):
     assert pension.montant == pytest.approx(0.55 * plafond)
 
 
-@pytest.mark.sur_le_moteur_python("le salaire de référence remplacé en Python, que le portage ne voit pas")
-def test_le_maximum_garde_le_taux_acquis_sous_la_surcote(simulateur, monkeypatch):
+def test_le_maximum_garde_le_taux_acquis_sous_la_surcote(request):
     """Né en 1917, parti en 2005 à quatre-vingt-huit ans et demi : le maximum
     garde le coefficient du taux acquis de 55 % — l'arrêté du 9 octobre 1986,
     article 2, qui le dit, est en vigueur —, et la surcote de 4,5 % s'applique
@@ -159,17 +158,10 @@ def test_le_maximum_garde_le_taux_acquis_sous_la_surcote(simulateur, monkeypatch
     Le cadre au plafond n'y arrive plus seul : ses années 1945 et 1946, payées
     au-delà du plafond d'assujettissement, ne sont plus au compte (action 138,
     étape 6), et ses autres salaires, revalorisés sur les prix depuis 1987, font
-    un salaire annuel moyen sous le plafond de 2005. Le test porte celui du
-    régime général au-dessus, pour que le maximum joue."""
-    plafond = simulateur.macro.plafond_securite_sociale(2005)
-    salaire_de_reference = liquider.salaire_de_reference
-
-    def au_dessus_du_plafond(moteur, code, *arguments, **options):
-        if code == "regime_general":
-            return 1.1 * plafond
-        return salaire_de_reference(moteur, code, *arguments, **options)
-
-    monkeypatch.setattr(liquider, "salaire_de_reference", au_dessus_du_plafond)
+    un salaire annuel moyen sous le plafond de 2005. Le test double les plafonds
+    d'avant 2005 d'une copie des données, et son salaire annuel moyen avec eux,
+    pour que le maximum joue."""
+    simulateur = _sur_des_plafonds_releves(request, 2005, 2.0)
     carriere, pension = _regime_general(simulateur, 1917, 88.5)
     plafond = simulateur.macro.plafond_securite_sociale(carriere.annee_liquidation)
     assert carriere.annee_liquidation == 2005
@@ -186,31 +178,42 @@ def test_la_pension_sous_le_maximum_ne_bouge_pas(simulateur):
 
 # -- les majorations forfaitaires de 1972 à 1982 ----------------------------------
 
-def _au_dessus_du_plafond(monkeypatch, simulateur, annee: int, facteur: float) -> None:
-    """Le salaire annuel moyen du régime général porté à ``facteur`` plafonds de
-    ``annee`` : aucune carrière du modèle ne passe le maximum avant 1975, leurs
+def _sur_des_plafonds_releves(request, annee: int, facteur: float) -> Simulateur:
+    """Le simulateur d'une copie des données dont les plafonds de la Sécurité
+    sociale d'avant ``annee`` sont multipliés par ``facteur`` : le salaire
+    annuel moyen du cadre au plafond, liquidé en ``annee``, l'est avec eux, et
+    le plafond de ``annee`` et des suivantes, qui fixe le maximum, ne bouge
+    pas. Aucune carrière du modèle ne passe le maximum avant 1975, leurs
     durées, comptées depuis 1945, restant loin de celles de leur date."""
-    plafond = simulateur.macro.plafond_securite_sociale(annee)
-    salaire_de_reference = liquider.salaire_de_reference
+    def relever(texte: str) -> str:
+        return "".join(_releve(ligne, annee, facteur) + "\n" for ligne in texte.splitlines())
 
-    def au_dessus(moteur, code, *arguments, **options):
-        if code == "regime_general":
-            return facteur * plafond
-        return salaire_de_reference(moteur, code, *arguments, **options)
-
-    monkeypatch.setattr(liquider, "salaire_de_reference", au_dessus)
+    copie = facade.donnees_retouchees(
+        request, ("plafonds relevés", annee, facteur),
+        {"reference/macro/plafond_securite_sociale.csv": relever})
+    return facade.simulateur_du_test(request, Parametres(racine_donnees=copie))
 
 
-@pytest.mark.sur_le_moteur_python("le salaire de référence remplacé en Python, que le portage ne voit pas")
-@pytest.mark.parametrize("facteur, au_maximum_de_1982", [
-    # 1,3 plafond : la pension calculée, 41,6 % du plafond de 1971, est ramenée à
-    # 40 % ; majorée de 6 %, elle reste sous le maximum de 1982 : servie entière.
-    (1.3, False),
-    # 3 plafonds : 96 % du plafond de 1971, majorés, passent le maximum de 1982.
-    (3.0, True),
+def _releve(ligne: str, annee: int, facteur: float) -> str:
+    """Une ligne de la table des plafonds, ``année,valeur,qualité`` : relevée
+    de ``facteur`` avant ``annee``."""
+    debut, valeur, reste = (ligne.split(",", 2) + ["", ""])[:3]
+    if not debut.isdigit() or int(debut) >= annee:
+        return ligne
+    return f"{debut},{float(valeur) * facteur:g},{reste}"
+
+
+@pytest.mark.parametrize("releve, au_maximum_de_1982", [
+    # Des plafonds d'avant 1971 relevés de moitié : la pension calculée, 42,6 %
+    # du plafond de 1971, est ramenée à 40 % ; majorée de 6 %, elle reste sous
+    # le maximum de 1982 : servie entière.
+    (1.5, False),
+    # Triplés et un peu plus : 97 % du plafond de 1971, majorés, passent le
+    # maximum de 1982.
+    (3.4, True),
 ])
 def test_la_pension_au_maximum_est_majoree_sur_son_montant_entier(
-        simulateur, monkeypatch, facteur, au_maximum_de_1982):
+        request, releve, au_maximum_de_1982):
     """« La majoration de 5 % s'applique à la pension principale non écrêtée »
     (circulaires Cnav n° 2/72, IV, A, n° 15/76 et n° 64/77, A), « avant
     comparaison au minimum et au maximum » (exposé « Montant de la retraite
@@ -220,11 +223,13 @@ def test_la_pension_au_maximum_est_majoree_sur_son_montant_entier(
     trimestres, ramené au maximum de 1971, reçoit les 6 % de décembre 1982
     (loi n° 82-599, article 1er) sur sa pension calculée, que le maximum de
     1982, la moitié du plafond, borne."""
-    _au_dessus_du_plafond(monkeypatch, simulateur, 1971, facteur)
+    simulateur = _sur_des_plafonds_releves(request, 1971, releve)
     carriere, pension = _regime_general(simulateur, 1906, 65)
     plafond = simulateur.macro.plafond_securite_sociale(1971)
-    calculee = facteur * plafond * 0.40 * 96 / 120
+    calculee = pension.montant + pension.ecretement_du_maximum
     assert (carriere.annee_liquidation, "× 96/120" in pension.detail) == (1971, True)
+    assert "ramenée au maximum des pensions" in pension.detail
+    assert calculee > 0.40 * plafond
     assert pension.montant == pytest.approx(0.40 * plafond)
     resultat = simulateur.scenario_actuel.calculer(carriere)
     servie, = [r for r in faire_vivre(simulateur, carriere, resultat, 1982).regimes

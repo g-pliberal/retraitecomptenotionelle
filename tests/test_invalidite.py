@@ -18,7 +18,7 @@ from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.web.site import ErreurSite
 
 import facade
-from facade import Carriere, Simulateur, faire_vivre, invalidite, ouvrir
+from facade import Carriere, Parametres, Simulateur, faire_vivre, invalidite, ouvrir
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 from outils_pont import RefusDuPortage, Saisies, refus_de_la_saisie, saisie_du_portage
 
@@ -672,8 +672,26 @@ def _revalorisee(simulateur, annee_d_effet: int, annee: int) -> float:
         date(annee_d_effet, 1, 1), date(annee, 12, 31), False, None)[0]
 
 
-@pytest.mark.sur_le_moteur_python("faire vivre un résultat retouché (sur_la_duree_maximum), que le portage ne refait pas")
-def test_les_majorations_de_1972_a_1977_ne_relevent_pas_la_pension_d_invalidite(simulateur):
+def _sur_la_duree_maximum(request) -> Simulateur:
+    """Le simulateur d'une copie des données où la période de 1951 à 1971 du
+    régime général retient au plus quatre-vingt-seize trimestres : une
+    carrière qui les a y est liquidée sur la durée maximum de sa date, que
+    les majorations forfaitaires de 1972 à 1982 lisent. Aucune carrière du
+    modèle, comptée au régime général depuis 1945, n'atteint avant 1975 les
+    cent vingt trimestres des données du dépôt."""
+    periode = "  - debut: 1951\n    fin: 1971\n"
+
+    def plafonner(texte: str) -> str:
+        assert texte.count(periode) == 1
+        return texte.replace(periode, periode + "    trimestres_retenus_maximum: 96\n")
+
+    copie = facade.donnees_retouchees(
+        request, ("96 trimestres retenus de 1951 à 1971",),
+        {"reference/regimes/regime_general.yaml": plafonner})
+    return facade.simulateur_du_test(request, Parametres(racine_donnees=copie))
+
+
+def test_les_majorations_de_1972_a_1977_ne_relevent_pas_la_pension_d_invalidite(request):
     """« La majoration forfaitaire de 5 % s'applique uniquement à la pension de
     vieillesse résultant des cotisations. En conséquence, pour les ex-invalides,
     une nouvelle comparaison devrait, en principe, être faite entre cette
@@ -683,19 +701,12 @@ def test_les_majorations_de_1972_a_1977_ne_relevent_pas_la_pension_d_invalidite(
     (quel que soit leur groupe) » (n° 79/82, B, 1°). Né en 1909, salarié au
     tiers du salaire moyen depuis 1945, invalide de 1960 à ses soixante ans : sa pension
     de vieillesse d'avril 1969 est portée à sa pension d'invalidité de deuxième
-    catégorie. Tenue pour liquidée sur la durée maximum de sa date — cent vingt
-    trimestres, qu'aucune carrière du modèle, comptée au régime général depuis
-    1945, n'atteint avant 1975 —, elle reçoit les trois 5 %, qui la laissent
-    sous son plancher : le plancher est servi, revalorisé sans eux ; puis les 6 %
+    catégorie. Liquidée sur la durée maximum de sa date — ici quatre-vingt-seize
+    trimestres, en copie des données (:func:`_sur_la_duree_maximum`) —, elle
+    reçoit les trois 5 %, qui la laissent sous son plancher : le plancher est servi, revalorisé sans eux ; puis les 6 %
     de 1982, qui le relèvent. Déclarée de première catégorie, à 30 %, la pension
     d'invalidité est sous la pension de vieillesse, qui reçoit les quatre."""
-    from dataclasses import replace
-
-    def au_maximum(resultat):
-        return replace(resultat, pensions_par_regime=[
-            replace(p, sur_la_duree_maximum=True) if p.regime == "regime_general" else p
-            for p in resultat.pensions_par_regime])
-
+    simulateur = _sur_la_duree_maximum(request)
     carriere = _ex_invalide(simulateur, 1909, 36.0, 0.3, range(1960, 1970), 60.0)
     resultat, general = _general(simulateur, carriere)
     assert carriere.date_liquidation == DateMois(1969, 4)
@@ -703,17 +714,19 @@ def test_les_majorations_de_1972_a_1977_ne_relevent_pas_la_pension_d_invalidite(
                  if a.libelle == "Plancher de la pension substituée")
     base = general.montant - plancher.montant
     trois = 1.05 * 1.05 * 1.05
+    assert general.sur_la_duree_maximum
     assert base * trois < general.montant
-    assert _servie(simulateur, carriere, au_maximum(resultat), 1978) == pytest.approx(
+    assert _servie(simulateur, carriere, resultat, 1978) == pytest.approx(
         general.montant * _revalorisee(simulateur, 1969, 1978))
-    assert _servie(simulateur, carriere, au_maximum(resultat), 1983) == pytest.approx(
+    assert _servie(simulateur, carriere, resultat, 1983) == pytest.approx(
         general.montant * 1.06 * _revalorisee(simulateur, 1969, 1983))
 
     premiere = _ex_invalide(simulateur, 1909, 36.0, 0.3, range(1960, 1970), 60.0,
                             declaree={"pension": 50 + 10 / 12, "categorie": 1})
     resultat, servie = _general(simulateur, premiere)
     assert "plancher" not in servie.detail
-    assert _servie(simulateur, premiere, au_maximum(resultat), 1983) == pytest.approx(
+    assert servie.sur_la_duree_maximum
+    assert _servie(simulateur, premiere, resultat, 1983) == pytest.approx(
         servie.montant * trois * 1.06 * _revalorisee(simulateur, 1969, 1983))
 
 
