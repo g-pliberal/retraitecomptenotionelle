@@ -1,15 +1,21 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: 5ff7e1015056e77a71ecc7e6b9397167517824c5
-date: 2026-11-15T13:32:24Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43717958889
-presomptions: vert
+etat: rouge
+sources: d312585b7d8a0da3a1578ec40931d1e1be011261
+date: 2026-11-15T13:49:08Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43718141737
+echecs:
+  - "FAILED tests/test_textes.py::test_la_liste_du_depot_tient_et_son_cliquet_est_juste - assert ['9226 rédact...rimetre.yaml'] == []"
+  - "FAILED tests/test_textes.py::test_le_controle_suit_une_liste_copiee - assert ['9226 rédact...rimetre.yaml'] == []"
+presomptions: rouge
+presomptions_echecs:
+  - "FAILED tests/test_textes.py::test_la_liste_du_depot_tient_et_son_cliquet_est_juste - assert ['9226 rédact...rimetre.yaml'] == []"
+  - "FAILED tests/test_textes.py::test_le_controle_suit_une_liste_copiee - assert ['9226 rédact...rimetre.yaml'] == []"
 durees:
-  fabrique: 474
-  suite: 531
-  tranche_1: 299
-  tranche_2: 411
-  tranche_3: 351
-  tranche_4: 531
-  garde: 137
+  fabrique: 360
+  suite: 569
+  tranche_1: 560
+  tranche_2: 465
+  tranche_3: 310
+  tranche_4: 569
+  garde: 218
