@@ -16,9 +16,9 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.droit import categories
-from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import ErreurSite
+
+from facade import Simulateur, categories
 
 from outils_pont import refus_de_la_saisie, saisie_du_portage
 

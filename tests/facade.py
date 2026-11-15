@@ -93,6 +93,7 @@ from retraite_notionnelle.donnees.mortalite import DonneesMortalite
 from retraite_notionnelle.donnees.regimes import PeriodeRegime, Regime
 from retraite_notionnelle.pont import NonTransmissible
 from retraite_notionnelle.droit import acquerir as _acquerir
+from retraite_notionnelle.droit import categories as _categories
 from retraite_notionnelle.droit import commun as _commun
 from retraite_notionnelle.droit import compter as _compter
 from retraite_notionnelle.droit import coordonner as _coordonner
@@ -886,8 +887,9 @@ class Regles(_Ferme):
         # sonde ainsi ce qu'un fichier de tests importe.
         if regle.startswith("__") or not hasattr(self._jumeau, regle):
             raise AttributeError(f"{self._nom}.{regle}")
-        if type(getattr(self._jumeau, regle)) in _SIMPLES:
-            # Une constante du module, une valeur simple : rien à calculer.
+        if _suite_simple(getattr(self._jumeau, regle)):
+            # Une constante du module, une valeur simple ou une suite de
+            # valeurs simples : rien à calculer.
             return getattr(self._jumeau, regle)
         if regle not in REGLES[self._nom]:
             raise NonTransmissible(
@@ -990,10 +992,25 @@ def _suite_simple(valeur) -> bool:
     return type(valeur) in _SIMPLES
 
 
+def _donnee_de_fiche(valeur) -> bool:
+    """Une valeur simple, ou une suite ou un dictionnaire sous des noms qui
+    n'en tiennent que de telles, à toute profondeur : ce qu'une version de
+    fiche écrit."""
+    if type(valeur) in (tuple, list):
+        return all(_donnee_de_fiche(element) for element in valeur)
+    if type(valeur) is dict:
+        return all(type(cle) is str and _donnee_de_fiche(element)
+                   for cle, element in valeur.items())
+    return type(valeur) in _SIMPLES
+
+
 def _en_listes(valeur):
-    """Une suite simple, ses suites en listes, comme le portage les lit."""
+    """Une suite simple, ses suites en listes, comme le portage les lit, et
+    les dictionnaires qu'elle tient, copiés."""
     if type(valeur) in (tuple, list):
         return [_en_listes(element) for element in valeur]
+    if type(valeur) is dict:
+        return {cle: _en_listes(element) for cle, element in valeur.items()}
     return valeur
 
 
@@ -1036,9 +1053,10 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
         # Une suite de valeurs simples, ou de suites qui en sont, à toute
         # profondeur : les étapes d'une majoration à charge.
         return _en_listes(valeur)
-    if type(valeur) is dict and all(type(cle) is str and type(element) in _SIMPLES
-                                    for cle, element in valeur.items()):
-        return dict(valeur)
+    if type(valeur) is dict and _donnee_de_fiche(valeur):
+        # La règle d'une fiche : des valeurs simples sous des noms, et des
+        # suites de telles règles (les paliers d'une version).
+        return _en_listes(valeur)
     if dataclasses.is_dataclass(valeur) and type(valeur).__name__ in pont.TYPES_DE_LA_FACADE:
         return valeur
     if type(valeur) in (tuple, list) and all(
@@ -1246,6 +1264,9 @@ regles_de_la_reversion = Regles("reversion", _reversion)
 #: ``droit.cultes`` : la durée de chaque fraction de la pension des cultes,
 #: sur les durées du relevé, et la part de l'écart de la génération.
 cultes = Regles("cultes", _cultes)
+#: ``droit.categories`` : l'âge légal de la génération, et l'âge du taux plein
+#: de l'ancien combattant ou prisonnier de guerre (D. 351-2).
+categories = Regles("categories", _categories)
 #: ``droit.invalidite`` : l'âge de l'ASPA de l'inapte, la catégorie de la
 #: pension d'invalidité et le plancher de la pension substituée.
 invalidite = Regles("invalidite", _invalidite)
@@ -1885,7 +1906,7 @@ JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
            "foyer": _foyer, "liquider": _liquider, "ouvrir": _ouvrir, "releve": _releve,
            "regles_de_la_reversion": _reversion, "revalorisation": _revalorisation,
            "liquidation": _liquidation, "coordonner": _coordonner, "compter": _compter,
-           "acquerir": _acquerir, "cultes": _cultes, "departs": _departs, "invalidite": _invalidite,
+           "acquerir": _acquerir, "categories": _categories, "cultes": _cultes, "departs": _departs, "invalidite": _invalidite,
            "faire_vivre": _revalorisation.faire_vivre,
            "actuel_aujourd_hui": _revalorisation.actuel_aujourd_hui,
            "PensionServie": _revalorisation.PensionServie,

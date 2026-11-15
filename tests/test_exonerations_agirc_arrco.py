@@ -24,8 +24,8 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.droit import categories
-from retraite_notionnelle.simulateur import Simulateur
+from facade import Simulateur, categories
+
 
 RACINE = Path(__file__).resolve().parents[1]
 FICHE = "coefficients_anticipation_agirc_arrco"

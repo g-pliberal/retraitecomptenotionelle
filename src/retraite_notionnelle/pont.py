@@ -3015,6 +3015,9 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     # Hors de ``droit/`` : ``carriere.js``, à la racine du portage — le relevé
     # prolongé jusqu'au départ, et le salaire moyen d'une année.
     "carriere": ("prolonger_releve", "salaire_moyen_annuel"),
+    # L'âge légal de la génération, et l'âge du taux plein de l'ancien
+    # combattant ou prisonnier de guerre (D. 351-2).
+    "categories": ("age_des_anciens_combattants", "age_legal"),
     # Les parts de la majoration pour enfants à une date, et les étapes de
     # deux majorations à charge réunies.
     "commun": ("date_d_effet", "fusionner_les_charges", "ligne_cotisee",

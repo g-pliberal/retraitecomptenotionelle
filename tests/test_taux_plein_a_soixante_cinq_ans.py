@@ -41,9 +41,9 @@ from __future__ import annotations
 import pytest
 
 from retraite_notionnelle import pont
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere
-from retraite_notionnelle.droit import categories
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.carriere import AnneeCarriere
+
+from facade import Carriere, Simulateur, categories
 
 #: Le IV de l'article 20 : « fixé à soixante-cinq ans ».
 DEROGATION = 65.0

@@ -29,6 +29,7 @@ from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.config import RACINE_PROJET, ContributionEtat, Parametres
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit import acquerir as acquerir_python
+from retraite_notionnelle.droit import categories as categories_python
 from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import compter as compter_python
@@ -809,7 +810,25 @@ def _fonctionnaire_parti_a_60_ans(simulateur):
         age_liquidation=60, niveau_salaire=1.0, jour_naissance=15, mois_naissance=6)
 
 
+def _ancien_combattant(date, naissance, mois):
+    """``categories.age_des_anciens_combattants`` : la règle datée de la fiche,
+    une carrière de salarié, les mois de captivité et de services."""
+    def arguments(simulateur):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=naissance, sexe="H", affiliation="salarie_prive_non_cadre",
+            age_debut=20, age_liquidation=62)
+        regle = simulateur.scenario_actuel.fiches_datees.regle(
+            "taux_plein_anciens_combattants_prisonniers", date)
+        return simulateur.scenario_actuel, regle, carriere, mois
+    return arguments
+
+
 APPELS_DES_REGLES = [
+    ("categories", "age_legal", lambda s: (s.scenario_actuel, _salarie(s))),
+    ("categories", "age_des_anciens_combattants", _ancien_combattant("1990-01-01", 1925, 18)),
+    ("categories", "age_des_anciens_combattants", _ancien_combattant("2020-01-01", 1955, 6)),
+    ("categories", "age_des_anciens_combattants", _ancien_combattant("2026-03-01", 1960, 42)),
+    ("categories", "age_des_anciens_combattants", _ancien_combattant("2026-03-01", 1960, 5)),
     ("liquider", "majoration_rafp", lambda s: (64.0, DateMois(2015, 2))),
     ("liquider", "majoration_rafp", lambda s: (68 + 4 / 12, DateMois(2027, 1))),
     ("liquider", "conversion_capital_rafp", lambda s: (62.0, DateMois(2021, 12))),
@@ -1158,7 +1177,7 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
                "compter": compter_python, "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
                "reversion": reversion_python, "revalorisation": revalorisation_python,
                "cultes": cultes_python, "departs": departs_python, "releve": releve_python,
-               "invalidite": invalidite_python}
+               "invalidite": invalidite_python, "categories": categories_python}
     ecarts = []
     for module, regle, arguments in APPELS_DES_REGLES:
         lu = getattr(facade.regles_de_la_reversion if module == "reversion"

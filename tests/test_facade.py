@@ -30,6 +30,7 @@ from retraite_notionnelle.config import (RACINE_PROJET, ContributionEtat, Neutra
                                          Parametres)
 from retraite_notionnelle.donnees.chargement import DonneeInsuffisante, Fiabilite
 from retraite_notionnelle.droit import acquerir as acquerir_python
+from retraite_notionnelle.droit import categories as categories_python
 from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import compter as compter_python
@@ -733,7 +734,8 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     with pytest.raises(ValueError, match="ouvrir.ouvrir"):
         pont.regle_du_droit("ouvrir", "ouvrir", float)
     assert facade.REGLES is pont.REGLES_DE_LA_FACADE
-    assert set(facade.REGLES) == {"acquerir", "carriere", "commun", "completer", "compter",
+    assert set(facade.REGLES) == {"acquerir", "carriere", "categories", "commun", "completer",
+                                  "compter",
                                   "cultes", "departs",
                                   "foyer", "invalidite", "liquider", "ouvrir", "releve",
                                   "reversion", "revalorisation"}
@@ -2298,6 +2300,7 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
     (``pont.TABLES_DES_REGLES``). Quatre noms seulement diffèrent d'un côté à
     l'autre."""
     jumelle = getattr({"acquerir": acquerir_python, "carriere": carriere_python,
+                       "categories": categories_python,
                        "commun": commun_python,
                        "completer": completer_python,
                        "compter": compter_python,

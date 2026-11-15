@@ -52,7 +52,7 @@ FICHIERS = (
     "test_donnees.py",
     "test_effet_retour.py", "test_emploi_retraite.py",
     "test_estimation_officielle.py", "test_etranger.py",
-    "test_exonerations_agirc_arrco.py", "test_facade.py", "test_facade_jumeau.py",
+    "test_facade.py", "test_facade_jumeau.py",
     "test_facteurs_depense.py", "test_fiche_date_d_entree.py", "test_fiche_des_liberaux.py",
     "test_flux_fonction_publique.py", "test_fonction_publique_etat.py",
     "test_garantie_par_sexe.py", "test_grille_large.py",
@@ -67,7 +67,7 @@ FICHIERS = (
     "test_retraite_progressive.py", "test_revalorisation.py", "test_salaire_annuel_moyen.py",
     "test_sections_juridiques.py", "test_sections_sante.py",
     "test_solde_fusion.py",
-    "test_taux_plein_a_soixante_cinq_ans.py", "test_taux_plein_par_categorie.py",
+   
     "test_univers.py", "test_versements_uniques.py",
     "test_web.py",
 )

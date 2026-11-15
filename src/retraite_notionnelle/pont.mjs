@@ -158,6 +158,7 @@ import * as acquerirEtape from "../../moteur/js/droit/acquerir.js";
 import * as compterEtape from "../../moteur/js/droit/compter.js";
 import * as coordonnerEtape from "../../moteur/js/droit/coordonner.js";
 import { REGIMES_CODE_DES_PENSIONS } from "../../moteur/js/droit/coordonner.js";
+import * as categories from "../../moteur/js/droit/categories.js";
 import * as commun from "../../moteur/js/droit/commun.js";
 import * as completer from "../../moteur/js/droit/completer.js";
 import * as cultes from "../../moteur/js/droit/cultes.js";
@@ -2207,6 +2208,7 @@ const MODULES_DU_DROIT = {
   // Hors du droit : le relevé prolongé et le salaire moyen d'une année.
   acquerir: acquerirEtape,
   carriere: { prolongerReleve, salaireMoyenAnnuel },
+  categories,
   commun,
   compter: compterEtape,
   // `pension_majoree` reçoit ses options par leur nom, que le Python passe
