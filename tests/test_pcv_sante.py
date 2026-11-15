@@ -19,9 +19,9 @@ import shutil
 
 import pytest
 
-from retraite_notionnelle.carriere import Carriere, Metier
+from facade import Carriere, Simulateur
+from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.config import PartCotisation
-from retraite_notionnelle.simulateur import Simulateur
 
 from outils_pont import simulations_du_portage
 from outils_valeurs import valeur_figee
@@ -31,6 +31,13 @@ from outils_valeurs import valeur_figee
 @pytest.fixture(scope="module")
 def simulateur() -> Simulateur:
     return Simulateur()
+
+
+def _constructeur(simulateur, part: PartCotisation):
+    """Le constructeur du compte sous cette part des cotisations : celui d'un
+    simulateur de la façade bâti sous ces paramètres, comme
+    ``Simulateur._constructeur_variante`` le dérivait."""
+    return Simulateur(simulateur.parametres.avec(part_cotisation=part)).constructeur
 
 
 def _carriere(simulateur, statut: str, niveau: float = 1.0) -> Carriere:
@@ -85,7 +92,7 @@ def test_la_part_de_l_assurance_maladie_est_au_compte(simulateur):
         carriere = _carriere(simulateur, statut)
         lignes = {}
         for part in (PartCotisation.SALARIALE, PartCotisation.TOTALE):
-            constructeur = simulateur._constructeur_variante(part_cotisation=part)
+            constructeur = _constructeur(simulateur, part)
             lignes[part] = constructeur.cotisation_annuelle(carriere, 2020)
         seule = dict(lignes[PartCotisation.SALARIALE].par_regime)[code]
         totale = dict(lignes[PartCotisation.TOTALE].par_regime)[code]
@@ -165,7 +172,7 @@ def test_le_medecin_de_secteur_2_paie_seul_ses_pcv(simulateur):
     for statut in ("medecin_liberal", "medecin_liberal_secteur_2"):
         carriere = _carriere(simulateur, statut)
         for part in (PartCotisation.SALARIALE, PartCotisation.TOTALE):
-            constructeur = simulateur._constructeur_variante(part_cotisation=part)
+            constructeur = _constructeur(simulateur, part)
             ligne = constructeur.cotisation_annuelle(carriere, 2020)
             cotisations[statut, part] = dict(ligne.par_regime)["asv_conventionnes"]
     secteur_1 = cotisations["medecin_liberal", PartCotisation.TOTALE]

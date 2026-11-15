@@ -60,7 +60,7 @@ FICHIERS = (
    
     "test_limite_age.py", "test_marins.py", "test_mayotte.py",
     "test_moteur.py", "test_outre_mer.py",
-    "test_pcv_sante.py", "test_plafond_majoration_enfants.py",
+    "test_plafond_majoration_enfants.py",
     "test_pont.py", "test_primes_soumises_a_retenue.py",
     "test_priorite_enfants.py", "test_regle_de_chacun.py",
     "test_remuneration.py", "test_retablissement.py",
