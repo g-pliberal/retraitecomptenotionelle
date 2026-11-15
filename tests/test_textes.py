@@ -377,3 +377,78 @@ def test_le_detail_d_une_fiche_montre_ses_redactions_en_vigueur_et_compte_les_pa
     assert script.detail("regle", vue, {}, toutes=True) == [
         entete, "", *vivantes,
         f"  css L351-1  2004-01-01 → 2023-09-01  {B}  [passée ; sans statut]"]
+
+
+ANI_2017 = "Accord national interprofessionnel du 17 novembre 2017 relatif au régime AGIRC-ARRCO de retraite complémentaire"
+K1, K2, K3, K4, K5 = (f"KALIARTI{n:012d}" for n in range(1, 6))
+
+
+def _kali():
+    """Une table ``doc`` de KALI, de poche : l'accord de 2017, un avenant, une
+    délibération, rangés sous l'accord, et un accord de branche hors du régime."""
+    import sqlite3
+
+    avenant = "Avenant n° 23 du 18 décembre 2024 à l'accord national interprofessionnel du 17 novembre 2017 relatif au régime AGIRC-ARRCO de retraite complémentaire"
+    deliberation = "Délibération n° 1 du 19 juin 2018 à l'accord national interprofessionnel du 17 novembre 2017 relatif aux modalités de mise en œuvre de l'article 32"
+    branche = "Avenant n° 5 du 3 décembre 2018 relatif au régime de prévoyance, frais de santé et retraite pour les salariés relevant de l'AGIRC"
+    db = sqlite3.connect(":memory:")
+    db.execute("CREATE TABLE doc (id TEXT, date TEXT, fin TEXT, nature TEXT, num TEXT, titre TEXT,"
+               " texte TEXT, etat TEXT, cid TEXT, idcc TEXT, convention TEXT)")
+    db.executemany("INSERT INTO doc VALUES (?, ?, ?, 'Article', ?, ?, '', ?, ?, ?, ?)", [
+        (K1, "2019-01-01", "2023-12-01", "92", ANI_2017, "REMPLACE", "KALITEXT000036731682", "", ANI_2017),
+        (K2, "2023-12-01", "2999-01-01", "92", ANI_2017, "VIGUEUR_ETEN", "KALITEXT000036731682", "", ANI_2017),
+        (K3, "2025-02-15", "2999-01-01", "1", avenant, "VIGUEUR_ETEN", "KALITEXT000051447618", "", ANI_2017),
+        (K4, "2018-09-12", "2021-04-03", "", deliberation, "MODIFIE", "KALITEXT000038184566", "", ANI_2017),
+        (K5, "2019-01-01", "2999-01-01", "1", branche, "VIGUEUR_ETEN", "KALITEXT000038683895", "1486", "Convention collective nationale des bureaux d'études techniques"),
+    ])
+    db.execute("INSERT INTO doc VALUES ('KALITEXT000036731682', '2019-01-01', '2999-01-01',"
+               " 'Texte', '', ?, '', '', '', '', '')", (ANI_2017,))
+    return db, avenant, deliberation
+
+
+def test_un_accord_agirc_arrco_entre_avec_ses_avenants():
+    """Les accords Agirc-Arrco ne sont pas dans LEGI : ils sont dans KALI, la
+    base des conventions collectives, sous l'accord national
+    interprofessionnel qui les porte. Un accord déclaré au périmètre apporte
+    tous ses articles, et ceux des avenants et délibérations rangés sous lui,
+    chaque texte sous sa clé datée ; un accord de branche qui nomme l'Agirc
+    n'entre pas (action 184)."""
+    script = _script()
+    db, avenant, deliberation = _kali()
+    perimetre = {"codes": [], "accords": [{"titre": ANI_2017, "pourquoi": "le régime entier"}]}
+    lignes, titres = script.selection_kali(db, perimetre)
+    assert titres == {"ani_2017_11_17": ANI_2017, "avenant_2024_12_18_n23": avenant,
+                      "deliberation_2018_06_19_n1": deliberation}
+    assert {i: (l["texte"], l["article"], l["debut"], l["fin"]) for i, l in lignes.items()} == {
+        K1: ("ani_2017_11_17", "92", "2019-01-01", "2023-12-01"),
+        K2: ("ani_2017_11_17", "92", "2023-12-01", ""),
+        K3: ("avenant_2024_12_18_n23", "1", "2025-02-15", ""),
+        K4: ("deliberation_2018_06_19_n1", "", "2018-09-12", "2021-04-03")}
+    deja = script.selection_kali(db, perimetre, {"accord_agirc_arrco": ANI_2017})[1]
+    assert deja["accord_agirc_arrco"] == ANI_2017 and "ani_2017_11_17" not in deja, \
+        "un texte déjà inscrit garde sa clé"
+
+
+def test_une_redaction_de_kali_recoit_son_statut_des_fiches(liste):
+    """Une fiche cite un article d'un accord par son identifiant KALIARTI comme
+    un article de loi par son LEGIARTI ; la liste admet l'un et l'autre."""
+    with (liste / "redactions.csv").open("a", encoding="utf-8") as flux:
+        flux.write(f"{K1},css,92,2019-01-01,,\n{K2},css,92,2019-01-01,,2026-11-15\n")
+    fiches = {**FICHES, "agirc": {"versions": [{"id": "v1", "textes": [{"id": K1}]}]}}
+    assert textes.statuts(liste, fiches)[K1] == "rattachee"
+    assert textes.controler(liste, fiches) == []
+
+
+def test_les_accords_agirc_arrco_sont_declares_et_inscrits():
+    """Le propriétaire l'a demandé le 15 novembre 2026 : les trois accords
+    nationaux interprofessionnels du régime Agirc-Arrco, sous le titre que
+    KALI leur donne, et leurs rédactions dans la liste."""
+    accords = textes.perimetre()["accords"]
+    titres = [accord["titre"] for accord in accords]
+    for date_ in ("17 novembre 2017", "10 mai 2019", "5 octobre 2023"):
+        assert [t for t in titres if t.startswith(f"Accord national interprofessionnel du {date_} ")], date_
+    for accord in accords:
+        assert len(str(accord["pourquoi"]).split()) >= 3, accord["titre"]
+    inscrites = {l["id"] for l in textes.redactions() if l["id"].startswith("KALIARTI")}
+    assert "KALIARTI000036731850" in inscrites, "l'article 92 de l'accord de 2017"
+    assert textes.titres()["ani_2017_11_17"] == ANI_2017

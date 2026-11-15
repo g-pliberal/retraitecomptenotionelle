@@ -84,7 +84,11 @@ récupère l'index (`python scripts/fetch/dila_index.py legi --recuperer`, puis
 `--mettre-a-jour`) et lance `--inscrire` elle-même. Un texte général, dont la
 retraite n'occupe que quelques articles, se déclare dans `perimetre.yaml`
 (`textes_generaux`) avant de l'inscrire : il n'entre alors que par les
-articles cités. Consulter les sources listées pour tout texte paru depuis la
+articles cités. Les accords Agirc-Arrco sont dans KALI, non dans LEGI :
+`--inscrire` les relit quand l'index de KALI est là
+(`python scripts/fetch/dila_index.py kali --recuperer`), avec leurs avenants,
+sous les accords que `perimetre.yaml` déclare (`accords`) ; GitHub, le lundi,
+ne le fait pas encore. Consulter les sources listées pour tout texte paru depuis la
 dernière date du journal : loi de financement de l'année et ses décrets,
 circulaires Cnav, dates « Vérifié le » des fiches service-public, décrets
 retraite au Journal officiel par l'index DILA. Ce que le script dit de la base

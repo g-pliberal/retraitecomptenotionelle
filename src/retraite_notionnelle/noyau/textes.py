@@ -1,8 +1,8 @@
 """La liste de contrôle des textes : chaque rédaction d'article, et son statut.
 
 ``docs/architecture.md``, § 6.6. La carte part des textes, pas de la mémoire :
-les articles qui touchent les retraites sont listés depuis l'index LEGI du
-dépôt, rédaction par rédaction, dans ``data/reference/textes/redactions.csv``
+les articles qui touchent les retraites sont listés depuis les index LEGI et
+KALI du dépôt, rédaction par rédaction, dans ``data/reference/textes/redactions.csv``
 (``scripts/textes.py`` la tient ; le périmètre est déclaré dans
 ``perimetre.yaml``). Chaque rédaction reçoit un statut, qu'on ne lui écrit
 pas : il se lit dans les fiches.
@@ -20,7 +20,8 @@ pas : il se lit dans les fiches.
     datée, en l'apportant de l'index après la pose de la liste.
 
 Une fiche cite une rédaction par son identifiant (``id``), ou le nomme dans
-une référence : ``LEGIARTI`` suivi de ses douze chiffres suffit. Une
+une référence : ``LEGIARTI`` suivi de ses douze chiffres suffit, ou
+``KALIARTI`` pour l'article d'un accord Agirc-Arrco, que KALI porte. Une
 déclaration « sans effet » ne vaut que pour la rédaction qu'elle déclare, non
 pour celles que son motif nomme, et que pour la fiche qui la fait : une autre
 fiche qui cite le même article garde la rédaction à lire, et le statut commun
@@ -42,7 +43,8 @@ from . import carte, vocabulaire
 
 TEXTES = RACINE_DONNEES / "reference" / "textes"
 COLONNES = ("id", "texte", "article", "debut", "fin", "inscrite_le")
-LEGIARTI = re.compile(r"LEGIARTI\d{12}")
+#: Un article de LEGI, ou de KALI, où sont les accords Agirc-Arrco.
+LEGIARTI = re.compile(r"(?:LEGI|KALI)ARTI\d{12}")
 
 #: Du plus établi au moins établi : une rédaction qu'une fiche nomme deux
 #: fois y prend le statut le plus établi.

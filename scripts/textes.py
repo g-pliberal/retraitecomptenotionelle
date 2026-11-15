@@ -26,7 +26,12 @@ datées du jour, et donc « à examiner » : le cliquet des rédactions sans sta
 ne monte jamais. Il met aussi à jour la fin des rédactions qu'une suivante a
 remplacées. Il lit l'index LEGI du dépôt (``scripts/fetch/dila_index.py legi
 --recuperer``, puis ``--mettre-a-jour``) ; les tests, eux, ne lisent que la
-liste.
+liste. Les accords Agirc-Arrco ne sont pas dans LEGI mais dans KALI, la base
+des conventions collectives : ``--inscrire`` lit aussi l'index de KALI s'il
+est là (``dila_index.py kali --recuperer``), et apporte les articles des
+accords que ``perimetre.yaml`` déclare, avec ceux des avenants rangés sous
+eux. Sans cet index, les rédactions de KALI déjà inscrites restent telles
+quelles.
 """
 
 from __future__ import annotations
@@ -85,6 +90,25 @@ def cle_libre(cle: str, titre: str, prises: dict[str, str]) -> str:
     return libre
 
 
+NATURES = {"accord_national_interprofessionnel": "ani", "avenant": "avenant",
+           "deliberation": "deliberation", "accord": "accord",
+           "protocole_d_accord": "protocole"}
+
+
+def cle_d_accord(titre: str) -> str:
+    """La clé d'un texte de KALI, tirée de son titre : ``ani_2017_11_17``,
+    ``avenant_2024_12_18_n23`` — quatre avenants du même jour se distinguent
+    par leur numéro."""
+    simple = _simple(titre)
+    trouve = re.match(r"(%s)(?:_n_(\w+?))?_du_(\d+)(?:er)?_([a-z]+)_(\d{4})"
+                      % "|".join(sorted(NATURES, key=len, reverse=True)), simple)
+    if not trouve or trouve.group(4) not in MOIS:
+        return cle_de(titre)
+    cle = (f"{NATURES[trouve.group(1)]}_{trouve.group(5)}_{MOIS[trouve.group(4)]:02d}"
+           f"_{int(trouve.group(3)):02d}")
+    return f"{cle}_n{trouve.group(2)}" if trouve.group(2) else cle
+
+
 def _cle_d_article(article: str):
     """L351-4 avant L351-10 : les nombres se comparent en nombres."""
     return [(0, int(x)) if x.isdigit() else (1, x) for x in re.split(r"(\d+)", article or "")]
@@ -136,7 +160,34 @@ def selection(db, perimetre: dict, fiches: dict[str, dict],
     return lignes, titres
 
 
-def ecrire(lignes: list[dict], titres: dict[str, str], source: str, jour: str) -> None:
+def selection_kali(db, perimetre: dict, connus: dict[str, str] | None = None
+                   ) -> tuple[dict[str, dict], dict[str, str]]:
+    """Les rédactions des accords que le périmètre déclare (``accords``), lues
+    dans l'index de KALI : chaque article rangé sous l'accord — le sien, et
+    ceux des avenants et délibérations qui le modifient —, chaque texte sous
+    sa clé. Un texte déjà inscrit garde la sienne."""
+    lignes: dict[str, dict] = {}
+    titres: dict[str, str] = {}
+    connus = connus or {}
+    cle_connue = {titre: cle for cle, titre in connus.items()}
+    requete = ("SELECT id, titre, num, date, fin FROM doc "
+               "WHERE id LIKE 'KALIARTI%' AND convention = ?")
+    for accord in perimetre.get("accords") or []:
+        for ident, titre, num, debut, fin in db.execute(requete, (accord["titre"],)):
+            cle = cle_connue.get(titre)
+            if cle is None:
+                cle = cle_d_accord(titre)
+                prises = {**connus, **titres}
+                if prises.get(cle, titre) != titre:
+                    cle = cle_libre(cle, titre, prises)
+                cle_connue[titre] = cle
+            titres[cle] = titre
+            lignes[ident] = _ligne(ident, cle, num, debut, fin)
+    return lignes, titres
+
+
+def ecrire(lignes: list[dict], titres: dict[str, str], source: str, jour: str,
+           kali: str | None = None) -> None:
     lignes = sorted(lignes, key=lambda l: (l["texte"], _cle_d_article(l["article"]),
                                            l["debut"], l["id"]))
     flux = io.StringIO()
@@ -153,7 +204,8 @@ def ecrire(lignes: list[dict], titres: dict[str, str], source: str, jour: str) -
         "# Écrit par scripts/textes.py : l'index LEGI sur lequel la liste a été lue\n"
         "# en dernier, et le jour de cette lecture.\n"
         f"index: \"{source}\"\n"
-        f"lu_le: {jour}\n", encoding="utf-8", newline="\n")
+        + (f"kali: \"{kali}\"\n" if kali else "")
+        + f"lu_le: {jour}\n", encoding="utf-8", newline="\n")
 
 
 def poser(db, source: str, jour: str) -> int:
@@ -168,10 +220,24 @@ def poser(db, source: str, jour: str) -> int:
     return 0
 
 
-def inscrire(db, source: str, jour: str) -> int:
+def inscrire(db, source: str, jour: str, kali=None, source_kali: str | None = None) -> int:
+    """``kali`` : l'index de KALI, où sont les accords Agirc-Arrco ; absent,
+    leurs rédactions inscrites restent telles quelles, et ``inscription.yaml``
+    garde la date de la dernière lecture de KALI."""
     actuelles = {l["id"]: l for l in textes.redactions()}
     connus = textes.titres()
     lignes, titres = selection(db, textes.perimetre(), carte.fiches(), connus)
+    if kali is not None:
+        de_kali, titres_kali = selection_kali(kali, textes.perimetre(), {**connus, **titres})
+        lignes.update(de_kali)
+        titres.update(titres_kali)
+    else:
+        lu = DOSSIER / "inscription.yaml"
+        trouve = re.search(r'^kali: "(.*)"$', lu.read_text(encoding="utf-8"), re.M) \
+            if lu.exists() else None
+        source_kali = trouve.group(1) if trouve else None
+        print("Index de KALI absent : les accords Agirc-Arrco ne sont pas relus "
+              "(python scripts/fetch/dila_index.py kali --recuperer)", file=sys.stderr)
     nouvelles = sorted(set(lignes) - set(actuelles))
     remplacees = 0
     for ident, ligne in lignes.items():
@@ -182,7 +248,7 @@ def inscrire(db, source: str, jour: str) -> int:
             actuelles[ident] = {**ligne, "inscrite_le": ancienne["inscrite_le"]}
         else:
             actuelles[ident] = {**ligne, "inscrite_le": jour}
-    ecrire(list(actuelles.values()), {**connus, **titres}, source, jour)
+    ecrire(list(actuelles.values()), {**connus, **titres}, source, jour, source_kali)
     print(f"{len(nouvelles)} rédactions nouvelles inscrites « à examiner », {remplacees} "
           f"dont les dates ont changé ; index lu : {source}")
     for ident in nouvelles[:20]:
@@ -306,16 +372,22 @@ def main(argv: list[str] | None = None) -> int:
                            help="avec --non-lues FICHE : ses rédactions passées aussi")
     analyseur.add_argument("--date", help="le jour de l'inscription (AAAA-MM-JJ)")
     analyseur.add_argument("--index", help="chemin de l'index LEGI")
+    analyseur.add_argument("--index-kali", help="chemin de l'index de KALI, où sont les "
+                                                "accords Agirc-Arrco")
     args = analyseur.parse_args(argv)
     if args.non_lues is not None:
         return non_lues(args.non_lues or None, args.index, args.toutes)
     if not (args.poser or args.inscrire):
         return etat(args.sans_statut)
-    from dila_index import ouvrir_lecture
+    from dila_index import chemin_index, ouvrir_lecture
 
     jour = args.date or date.today().isoformat()
     db, source = ouvrir_lecture("legi", args.index)
-    return poser(db, source, jour) if args.poser else inscrire(db, source, jour)
+    if args.poser:
+        return poser(db, source, jour)
+    kali, source_kali = (ouvrir_lecture("kali", args.index_kali)
+                         if chemin_index("kali", args.index_kali).exists() else (None, None))
+    return inscrire(db, source, jour, kali, source_kali)
 
 
 if __name__ == "__main__":

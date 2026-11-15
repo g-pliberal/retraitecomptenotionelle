@@ -24,8 +24,12 @@
 # ajoute entrent de la même façon. Le faire décroître, c'est donner un statut
 # à une rédaction dans la fiche qu'elle touche.
 #
-# Ce que la liste ne tient pas encore : les accords Agirc-Arrco et les statuts
-# des caisses, qui ne sont pas dans l'index ; les situations que décrivent les
+# Les accords Agirc-Arrco ne sont pas dans LEGI mais dans KALI, la base des
+# conventions collectives : ils entrent par les accords déclarés plus bas.
+#
+# Ce que la liste ne tient pas encore : les statuts des caisses, qui ne sont
+# pas dans les index ; les accords de l'Agirc (1947) et de l'Arrco (1961),
+# absents de KALI, que l'accord de 2017 a remplacés ; les situations que décrivent les
 # fiches service-public et les circulaires des caisses (§ 6.6), dont le dépôt
 # n'a pas de liste ; les prélèvements sur les pensions (L. 136-8, la CSG).
 
@@ -90,6 +94,26 @@ textes_generaux:
       la rémunération des agents publics, dont le barème des indices, récrit
       à chaque revalorisation ; la retraite n'y lit que la valeur du point et
       le traitement de l'indice 100 (articles 3 et 7)
+
+#: Les accords du régime Agirc-Arrco, lus dans KALI, chacun sous le titre de
+#: l'accord qui les porte : ses articles, et ceux des avenants et des
+#: délibérations rangés sous lui, avec toutes leurs rédactions. Le
+#: propriétaire l'a demandé le 15 novembre 2026 (action 184). Un accord de
+#: branche qui nomme l'Agirc, pour la prévoyance des cadres, n'en est pas.
+accords:
+  - titre: Accord national interprofessionnel du 17 novembre 2017 relatif au régime AGIRC-ARRCO de retraite complémentaire
+    pourquoi: >-
+      le régime unifié depuis le 1er janvier 2019 : cotisations, acquisition
+      et valeur des points, liquidation, coefficients, majorations, réversion ;
+      ses avenants, de 1 à 31, et les délibérations de son conseil
+  - titre: Accord national interprofessionnel du 10 mai 2019 relatif au régime AGIRC-ARRCO de retraite complémentaire
+    pourquoi: >-
+      le pilotage de la valeur d'achat et de la valeur de service du point
+      de 2019 à 2022, et ses deux avenants
+  - titre: Accord national interprofessionnel du 5 octobre 2023 relatif à la retraite complémentaire Agirc-Arrco
+    pourquoi: >-
+      le pilotage de 2023 à 2026 : la valeur du point, la fin du coefficient
+      de solidarité, les points acquis en cumul emploi-retraite
 
 cliquet:
   # Les rédactions sans aucun statut. Il ne peut que décroître.
