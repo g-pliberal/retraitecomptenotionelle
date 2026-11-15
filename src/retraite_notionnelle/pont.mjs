@@ -1768,8 +1768,16 @@ const ENTREES_DE_LA_FACADE = {
     const { coordination, durees } = etapes(moteur, carriere, bornee, avantages);
     return droitsEnDonnees(acquerirEtape.acquerir(moteur, coordination, durees, gratuits));
   },
-  "compter.cumul_plafonne": (moteur, carriere, bornee, avantages, table, membres) => etapes(
-    moteur, carriere, bornee, avantages).durees.cumulPlafonne(table, membres),
+  // `annees`, les années que le filtre du Python accepte, ou `null` sans filtre.
+  "compter.cumul_plafonne": (moteur, carriere, bornee, avantages, table, membres,
+    annees = null) => etapes(moteur, carriere, bornee, avantages).durees.cumulPlafonne(
+    table, membres, annees === null ? null : (annee) => annees.includes(annee)),
+  // Deux règles du compte des périodes assimilées, sur des jours depuis 1970 :
+  // ce qu'elles rendent, année par année, en couples.
+  "compter.trimestres_du_contrat": (debut, fin) => [
+    ...compterEtape.trimestresDuContrat(debut, fin)],
+  "compter.jours_par_annee": (debut, fin, jours) => [
+    ...compterEtape.joursParAnnee(debut, fin, jours)],
   "compter.des_regimes": (moteur, carriere, bornee, avantages, membres) => {
     const { durees } = etapes(moteur, carriere, bornee, avantages);
     return {

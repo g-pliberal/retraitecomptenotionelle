@@ -896,10 +896,74 @@ def test_les_emplois_classes_et_les_services_se_lisent_sur_les_durees(simulateur
     assert sans.emplois == () and sans.duree_hors_surcote == 0
 
 
+def _apprenti_de_2014(simulateur, salaires: dict[int, float]):
+    """L'apprenti né en 1998, sous contrat du 1er octobre 2014 au 30
+    septembre 2016, payé ``salaires`` ces années-là, puis salarié de 2020 à
+    son départ, à soixante-quatre ans (circulaire Cnav n° 2016-41, annexe,
+    exemple 4)."""
+    from retraite_notionnelle import chronologie
+
+    lignes = [LigneRelevee(annee=a, affiliation="salarie_prive_non_cadre", revenu=r)
+              for a, r in sorted(salaires.items())]
+    lignes += [LigneRelevee(annee=a, affiliation="salarie_prive_non_cadre", revenu=30000.0)
+               for a in range(2020, 2062)]
+    construite = chronologie.du_releve(annee_naissance=1998, sexe="H", age_liquidation=64.0,
+                                       releve=lignes)
+    for fait in construite["faits"]:
+        annee = int(fait["debut"][:4])
+        if fait["id"].startswith("releve_") and annee in salaires:
+            fait["attributs"]["apprentissage"] = True
+            fait["debut"] = "2014-10-01" if annee == 2014 else fait["debut"]
+            fait["fin"] = "2016-10-01" if annee == 2016 else fait["fin"]
+    return Carriere.depuis_chronologie(chronologie.completer(construite), simulateur.macro)
+
+
+def test_les_periodes_assimilees_se_lisent_sur_les_durees(simulateur):
+    """Exemple 4 de la circulaire Cnav n° 2016-41 : 1 110, 4 950 et 4 860
+    euros valident 0, 3 et 3 trimestres ; le contrat en garantit 1, 4 et 3
+    (D. 373-3) ; le complément de D. 373-4, 1 en 2014, 1 en 2015, à
+    l'apprentissage, au régime général. Les durées le disent ligne à ligne,
+    sans le texte, qui ne passe pas ; et, une année filtrée, l'assurance
+    validée, 1, 4 et 3, et les trimestres cotisés, 0, 3 et 3, que le portage
+    compte des années que le filtre accepte."""
+    carriere = _apprenti_de_2014(simulateur, {2014: 1110.0, 2015: 4950.0, 2016: 4860.0})
+    durees = facade.releve.construire(simulateur.scenario_actuel, carriere).durees
+    assert [(a.motif, a.regime, a.annee, a.trimestres) for a in durees.assimilees] == [
+        ("apprentissage", "regime_general", 2014, 1),
+        ("apprentissage", "regime_general", 2015, 1)]
+    with pytest.raises(NonTransmissible, match="texte"):
+        durees.assimilees[0].texte
+    general = ("regime_general",)
+    for table, attendus in (("assurance", {2014: 1, 2015: 4, 2016: 3}),
+                            ("cotises", {2014: 0, 2015: 3, 2016: 3})):
+        assert {annee: durees.cumul_plafonne(table, general, lambda a, annee=annee: a == annee)
+                for annee in attendus} == attendus, table
+    assert facade.releve.construire(simulateur.scenario_actuel, carriere,
+                                    avantages_non_contributifs=False).durees.assimilees == ()
+
+
+def test_le_contrat_d_apprentissage_et_les_jours_d_une_periode_se_comptent_au_portage():
+    """D. 373-3, circulaire Cnav n° 2016-41, exemple 3 : du 15 novembre 2014
+    au 14 février 2016, quatre trimestres en 2015, un en 2016. Du 1er novembre
+    2015 au 29 février 2016, 61 jours puis 60 ; cent jours déclarés, cinquante
+    et cinquante. Les fiches des périodes se lisent telles quelles."""
+    import datetime
+
+    jour = datetime.date
+    assert facade.compter.trimestres_du_contrat(jour(2014, 11, 15), jour(2016, 2, 15)) == {
+        2015: 4, 2016: 1}
+    assert facade.compter.trimestres_du_contrat(jour(2020, 1, 1), jour(2020, 3, 30)) == {}
+    assert facade.compter.jours_par_annee(jour(2015, 11, 1), jour(2016, 3, 1)) == {
+        2015: 61, 2016: 60}
+    assert facade.compter.jours_par_annee(jour(2015, 11, 1), jour(2016, 3, 1), 100) == {
+        2015: 50, 2016: 50}
+    assert facade.compter.FICHES_DES_ASSIMILEES["sportif_de_haut_niveau"] == (
+        "sportifs_haut_niveau")
+
+
 def test_une_etape_ne_sert_que_ce_qu_elle_transmet(simulateur):
     """Une coordination, des durées qui ne viennent pas de la façade, ou des
-    durées d'une autre coordination, un filtre d'années n'arriveraient pas au
-    portage : refusés."""
+    durées d'une autre coordination, n'arriveraient pas au portage : refusées."""
     actuel = simulateur.scenario_actuel
     carriere = simulateur.carriere_parcours(**ARTISAN_PUIS_SALARIE)
     coordination = facade.coordonner.coordonner(actuel, carriere)
@@ -909,8 +973,6 @@ def test_une_etape_ne_sert_que_ce_qu_elle_transmet(simulateur):
     with pytest.raises(NonTransmissible, match="durées"):
         facade.acquerir.acquerir(actuel, coordination, facade.compter.compter(actuel, autre))
     durees = facade.compter.compter(actuel, coordination)
-    with pytest.raises(NonTransmissible, match="annees"):
-        durees.cumul_plafonne("assurance", ("regime_general",), lambda annee: annee > 2000)
     with pytest.raises(NonTransmissible, match="drapeaux"):
         liquider.duree_du_regime_aligne(carriere, durees, ("regime_general",))
 
@@ -1535,5 +1597,6 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "liquidation.liquider", "liquidation.demande_de_depart",
                               "coordonner.coordonner", "compter.compter",
                               "acquerir.acquerir", "compter.cumul_plafonne",
-                              "compter.des_regimes", "droit.etapes")
+                              "compter.des_regimes", "droit.etapes",
+                              "compter.trimestres_du_contrat", "compter.jours_par_annee")
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)

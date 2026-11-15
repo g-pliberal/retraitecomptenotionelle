@@ -29,18 +29,20 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle import chronologie
-from retraite_notionnelle.carriere import Carriere, LigneRelevee
-from retraite_notionnelle.droit import compter, releve
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.carriere import LigneRelevee
+
+import facade
+from facade import Carriere, Simulateur, compter, releve
+from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 RACINE = Path(__file__).resolve().parents[1]
 SALARIE = "salarie_prive_non_cadre"
 REGIME = ("regime_general",)
 
 
-@pytest.fixture(scope="module")
-def simulateur() -> Simulateur:
-    return Simulateur()
+@pytest.fixture
+def simulateur(request) -> Simulateur:
+    return facade.simulateur_du_test(request)
 
 
 def _apprenti(debut: str, fin: str, salaires: dict[int, float]) -> dict:
@@ -188,6 +190,7 @@ def test_le_complement_de_l_apprenti_n_est_pas_cotise(simulateur):
     assert cotises == {2014: 0, 2015: 3, 2016: 3}
 
 
+@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait les durées du portage")
 def test_le_portage_rejoue_les_memes_exemples(simulateur):
     """Le portage écrit, pour chaque exemple, les durées du Python, et donc
     les trimestres de la circulaire."""

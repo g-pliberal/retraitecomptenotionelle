@@ -2403,6 +2403,10 @@ LECTURES_DE_LA_FACADE = {
     "compter.compter": durees_des_donnees,
     "acquerir.acquerir": droits_des_donnees,
     "compter.cumul_plafonne": lambda cumul: lu_strictement(int, cumul, "cumul_plafonne"),
+    "compter.trimestres_du_contrat": lambda lu: dict(lu_strictement(
+        tuple[tuple[int, int], ...], lu, "trimestres_du_contrat")),
+    "compter.jours_par_annee": lambda lu: dict(lu_strictement(
+        tuple[tuple[int, int], ...], lu, "jours_par_annee")),
     "compter.des_regimes": lambda lu: des_regimes_des_donnees(lu),
     "droit.etapes": etape_de_la_liquidation_des_donnees,
 }

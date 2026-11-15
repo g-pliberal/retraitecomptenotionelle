@@ -769,9 +769,37 @@ def test_le_jumeau_rend_le_releve_entier_et_ses_etapes_que_la_facade_lit(paramet
             tous = tuple(refaites.par_annee["assurance"])
             assert durees.cumul_plafonne("assurance", tous) == refaites.cumul_plafonne(
                 "assurance", tous), carriere.__name__
+            for table in ("assurance", "cotises"):
+                assert durees.cumul_plafonne(table, tous, lambda a: a % 3 == 0) == (
+                    refaites.cumul_plafonne(table, tous, lambda a: a % 3 == 0)), (
+                    carriere.__name__, table)
             droits = facade.acquerir.acquerir(servi.scenario_actuel, coordination, durees)
             assert droits.donnees() == _en_json(acquerir_python.acquerir(
                 jumeau.scenario_actuel, refaite, refaites).donnees()), carriere.__name__
+
+
+
+def test_le_jumeau_compte_les_contrats_et_les_jours_que_la_facade_lit():
+    """Les trimestres d'un contrat d'apprentissage et les jours d'une période,
+    année par année, pour des bornes de chaque sorte — un premier du mois ou
+    non, un trimestre civil entier ou non, un contrat court, des jours
+    déclarés ou non : les mêmes."""
+    import datetime
+
+    from retraite_notionnelle.droit import compter as compter_python
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    jour = datetime.date
+    bornes = [(jour(2014, 11, 15), jour(2016, 2, 15)), (jour(2020, 1, 1), jour(2020, 3, 30)),
+              (jour(2019, 9, 1), jour(2020, 9, 1)), (jour(2013, 7, 16), jour(2017, 1, 1)),
+              (jour(2015, 12, 20), jour(2017, 1, 10))]
+    for debut, fin in bornes:
+        assert facade.compter.trimestres_du_contrat(debut, fin) == (
+            compter_python.trimestres_du_contrat(debut, fin)), debut
+        for jours in (None, 37, 100):
+            assert facade.compter.jours_par_annee(debut, fin, jours) == (
+                compter_python.jours_par_annee(debut, fin, jours)), (debut, jours)
 
 
 # -- la liquidation ---------------------------------------------------------------------

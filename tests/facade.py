@@ -101,7 +101,7 @@ from retraite_notionnelle.scenarios import actuel as _actuel
 DONNEES = frozenset({"catalogue", "affiliations"})
 
 
-#: Les dix-sept entrées du moteur Python que la façade sert, sous leurs noms ;
+#: Les entrées du moteur Python que la façade sert, sous leurs noms ;
 #: ``droit.etapes``, les étapes de la liquidation, chacune seule.
 ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversion",
            "simulateur.carriere_simple", "simulateur.carriere_parcours",
@@ -109,7 +109,7 @@ ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversio
            "releve.construire", "simulateur.regime_fusionne", "liquidation.liquider",
            "liquidation.demande_de_depart", "coordonner.coordonner", "compter.compter",
            "acquerir.acquerir", "compter.cumul_plafonne", "compter.des_regimes",
-           "droit.etapes")
+           "droit.etapes", "compter.trimestres_du_contrat", "compter.jours_par_annee")
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
@@ -953,10 +953,21 @@ class _Emploi(_Ferme):
             object.__setattr__(self, nom, valeur)
 
 
+class _Assimilee(_Ferme):
+    """Ce qu'une période assimilée apporte dans une année
+    (``compter.TrimestresAssimiles``), tel que le schéma des durées le
+    décrit : ``motif``, ``regime``, ``annee``, ``fiche``, ``version``,
+    ``trimestres`` et ``fiabilite``, en son nom ; le texte n'en passe pas."""
+
+    def __init__(self, lu: dict) -> None:
+        for nom, valeur in lu.items():
+            object.__setattr__(self, nom, valeur)
+
+
 class Durees(_Lu):
     """Les durées d'une carrière (``compter.Durees``), lues du portage :
     ``par_annee``, ``trimestres_par_regime``, ``trimestres``, ``hors_annee``,
-    ``enfants``, ``emplois``, le plafond de chaque année de la carrière
+    ``enfants``, ``emplois``, ``assimilees``, le plafond de chaque année de la carrière
     (:meth:`plafond`), et, demandés au portage, le cumul plafonné de régimes
     nommés (:meth:`cumul_plafonne`), leurs services
     (:meth:`services_effectifs`, :meth:`services_liquidables`) et ce que leurs
@@ -972,6 +983,8 @@ class Durees(_Lu):
                            None if lu["enfants"] is None else _Enfants(lu["enfants"]))
         object.__setattr__(self, "emplois",
                            tuple(_Emploi(e) for e in lu["donnees"]["emplois"]))
+        object.__setattr__(self, "assimilees",
+                           tuple(_Assimilee(a) for a in lu["donnees"]["assimilees"]))
 
     def _des_regimes(self, membres: tuple[str, ...]) -> dict:
         source = self._source
@@ -1021,14 +1034,17 @@ class Durees(_Lu):
 
     def cumul_plafonne(self, table: str, membres: tuple[str, ...], annees=None) -> int:
         """Le cumul de ``membres`` dans ``table``, chaque année plafonnée,
-        refait par le portage ; un filtre d'années, une fonction, ne passe
-        pas le pont."""
-        if annees is not None:
-            raise NonTransmissible(
-                "Durees.cumul_plafonne : le filtre des annees, une fonction, ne passe pas le pont")
+        refait par le portage. Un filtre d'années, une fonction, ne passe
+        pas le pont : la façade lui soumet les années que ``membres`` ont dans
+        ``table``, les seules que le Python lui soumet, et passe celles qu'il
+        accepte."""
         source = self._source
+        acceptees = None if annees is None else sorted(
+            {annee for membre in membres for annee in self.par_annee[table].get(membre, {})
+             if annees(annee)})
         return source.demander("compter.cumul_plafonne", source.bornee,
-                               source.avantages_non_contributifs, table, list(membres))
+                               source.avantages_non_contributifs, table, list(membres),
+                               acceptees)
 
 
 class Droits(_Lu):
@@ -1078,6 +1094,10 @@ class _Module(_Ferme):
         constante = getattr(self._jumeau, nom)
         if type(constante) in _SIMPLES:
             return constante
+        # Une table de valeurs simples (``FICHES_DES_ASSIMILEES``), copiée.
+        if type(constante) is dict and all(
+                type(v) in _SIMPLES for v in (*constante, *constante.values())):
+            return dict(constante)
         return super().__getattr__(nom)
 
 
@@ -1129,9 +1149,24 @@ class _Coordonner(_Module):
 
 class _Compter(_Module):
     """``droit.compter`` : ``compter``, servi par le portage sur une
-    coordination de la façade."""
+    coordination de la façade ; ``trimestres_du_contrat`` et
+    ``jours_par_annee``, sur leurs dates, que le portage reçoit en jours
+    depuis 1970, sous les réglages de référence, qu'elles ne lisent pas."""
 
     _jumeau = _compter
+
+    @staticmethod
+    def _jours(jour: datetime.date) -> int:
+        return (jour - datetime.date(1970, 1, 1)).days
+
+    def trimestres_du_contrat(self, debut: datetime.date, fin: datetime.date) -> dict[int, int]:
+        return _demander("compter.trimestres_du_contrat", Parametres(), self._jours(debut),
+                         self._jours(fin))
+
+    def jours_par_annee(self, debut: datetime.date, fin: datetime.date,
+                        jours: int | None = None) -> dict[int, int]:
+        return _demander("compter.jours_par_annee", Parametres(), self._jours(debut),
+                         self._jours(fin), jours)
 
     def compter(self, moteur, coordination, avantages_non_contributifs: bool = True) -> Durees:
         _moteur_de_la_facade("compter.compter", moteur)

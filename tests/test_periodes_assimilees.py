@@ -21,17 +21,19 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle import chronologie
-from retraite_notionnelle.carriere import Carriere, LigneRelevee, Metier
-from retraite_notionnelle.droit import compter, releve
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.carriere import LigneRelevee, Metier
+
+import facade
+from facade import Carriere, Simulateur, compter, coordonner, releve
+from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 RACINE = Path(__file__).resolve().parents[1]
 SALARIE = "salarie_prive_non_cadre"
 
 
-@pytest.fixture(scope="module")
-def simulateur() -> Simulateur:
-    return Simulateur()
+@pytest.fixture
+def simulateur(request) -> Simulateur:
+    return facade.simulateur_du_test(request)
 
 
 def _apprenti(apprentissage: bool = True, niveau: float = 0.05) -> dict:
@@ -103,8 +105,6 @@ def _durees(simulateur: Simulateur, nom: str, avantages: bool = True):
     carriere = Carriere.depuis_chronologie(CHRONOLOGIES[nom], simulateur.macro)
     if avantages:
         return releve.construire(simulateur.scenario_actuel, carriere).durees
-    from retraite_notionnelle.droit import coordonner
-
     coordination = coordonner.coordonner(simulateur.scenario_actuel, carriere)
     return compter.compter(simulateur.scenario_actuel, coordination, False)
 
@@ -226,6 +226,7 @@ def test_les_durees_suivent_leur_schema(simulateur):
         assert [str(c) for c in constats if c.genre == "erreur"] == [], nom
 
 
+@pytest.mark.sur_le_moteur_python("confrontation : le jumeau refait les durées du portage")
 def test_le_portage_compte_les_memes_periodes(simulateur):
     """Les deux moteurs écrivent les mêmes durées pour chaque chronologie."""
     if shutil.which("node") is None:
