@@ -78,7 +78,7 @@ FICHIERS = (
     "test_retraite_progressive.py", "test_revalorisation.py",
     "test_salaire_annuel_moyen.py", "test_scenarios_meres.py",
     "test_sections_juridiques.py", "test_sections_sante.py",
-    "test_services_fonction_publique.py", "test_simulateur.py",
+    "test_services_fonction_publique.py",
     "test_sncf_ratp.py", "test_solde_fusion.py", "test_stock_age_legal.py", "test_taux_moyens.py",
     "test_taux_plein_a_soixante_cinq_ans.py", "test_taux_plein_par_categorie.py",
     "test_trajectoire.py", "test_trimestres_enfants.py",
@@ -96,8 +96,7 @@ RESTES = {"test_droit.py": 1, "test_invalidite.py": 3, "test_liquidation.py": 1,
           "test_minima_agricoles.py": 2,
           "test_oracle_periodes_assimilees.py": 1, "test_periodes_assimilees.py": 1,
           "test_periodes_assimilees_exemples_officiels.py": 1, "test_pension_maximale.py": 3,
-          "test_pension_minimum_avant_1983.py": 1,
-          "test_simulateur.py": 2}
+          "test_pension_minimum_avant_1983.py": 1}
 
 
 def _du_moteur(module: str) -> bool:

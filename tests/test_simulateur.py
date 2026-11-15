@@ -26,11 +26,10 @@ from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS
 
 # Les entrées du moteur passent par la façade des tests (action 161) : le
-# portage les calcule. Un test qui appelle encore une règle du moteur Python
-# le garde, sous la marque ``sur_le_moteur_python`` et sa raison.
+# portage les calcule, et aucun test n'entre plus dans le moteur Python : les
+# deux derniers, ceux du solveur de l'inversion, sont à ``tests/js/inversion.test.js``.
 import facade
 from facade import Carriere, Simulateur, completer, liquider, ouvrir, releve
-from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 #: Témoins versionnés : ce que des sources extérieures ont réellement publié.
 RACINE_TEMOINS = Path(__file__).resolve().parent / "temoins"
@@ -9150,11 +9149,17 @@ STATUTS_BALAYES = (
 )
 
 
+#: Les niveaux, en multiples du salaire moyen, sur lesquels la croissance de
+#: la pension se balaie : trente, de 0,1 à 10, les bornes de l'inversion.
+NIVEAUX_BALAYAGE = tuple(round(0.1 + rang * (10.0 - 0.1) / 29, 4) for rang in range(30))
+
+
 @pytest.mark.parametrize("affiliation", STATUTS_BALAYES)
 def test_la_pension_ne_decroit_jamais_quand_le_revenu_monte(simulateur, affiliation):
     """L'hypothèse sur laquelle toute l'inversion repose, vérifiée.
 
-    ``niveau_pour_pension`` cherche par dichotomie le plus petit niveau dont la
+    ``niveauPourPension`` (``moteur/js/simulateur.js``, éprouvé par
+    ``tests/js/inversion.test.js``) cherche par dichotomie le plus petit niveau dont la
     pension atteint une cible : le résultat n'a de sens que si la pension est
     CROISSANTE en ce niveau. C'est ce que le droit assure — cotiser plus n'a
     jamais acquis moins —, mais rien dans le code ne l'impose, et une règle
@@ -9166,8 +9171,6 @@ def test_la_pension_ne_decroit_jamais_quand_le_revenu_monte(simulateur, affiliat
     cherche pas à mesurer la courbe mais à attraper une inversion, et une
     inversion franche se voit à cette maille.
     """
-    from retraite_notionnelle.simulateur import NIVEAUX_BALAYAGE
-
     precedente = -1.0
     for niveau in NIVEAUX_BALAYAGE:
         carriere = simulateur.carriere_simple(
@@ -9180,73 +9183,6 @@ def test_la_pension_ne_decroit_jamais_quand_le_revenu_monte(simulateur, affiliat
             f"{niveau} — {precedente:.2f} puis {pension:.2f}"
         )
         precedente = pension
-
-
-@pytest.mark.sur_le_moteur_python("simulateur.niveau_pour_pension")
-def test_l_inversion_retrouve_le_niveau_dont_on_est_parti(simulateur):
-    """Le contrôle le plus direct : on part d'un revenu, on inverse sa pension.
-
-    Il ne passe par aucune page, aucun euro et aucun net : c'est le solveur
-    seul, sur la grandeur que le modèle calcule. Si celui-ci se trompait, tous
-    les contrôles de ``test_web.py`` se tromperaient avec lui — ils comparent
-    ce que la page affiche à ce qu'on y a tapé, et l'un comme l'autre passent
-    par l'inversion.
-    """
-    from retraite_notionnelle.simulateur import niveau_pour_pension
-
-    def pension_de_niveau(niveau: float) -> float:
-        return simulateur.scenario_actuel.calculer(simulateur.carriere_simple(
-            annee_naissance=1955, sexe="H",
-            affiliation="salarie_prive_non_cadre",
-            age_debut=20, age_liquidation=62, niveau_salaire=niveau,
-        )).pension_annuelle
-
-    for attendu in (0.6, 1.0, 1.7, 2.4):
-        cible = pension_de_niveau(attendu)
-        trouve = niveau_pour_pension(pension_de_niveau, cible, 0.1, 10.0)
-        assert trouve.atteinte
-        assert abs(trouve.niveau - attendu) < 1e-3, (
-            f"niveau {attendu} : l'inversion rend {trouve.niveau}"
-        )
-
-
-@pytest.mark.sur_le_moteur_python("simulateur.niveau_pour_pension")
-def test_l_inversion_avoue_ce_qu_aucune_carriere_ne_sert(simulateur):
-    """Les trois cas où la pension n'est pas inversible, et ils sont le droit.
-
-    Le saut est le plus instructif des trois : une année ne valide quatre
-    trimestres qu'à partir de 150 heures de SMIC, et la pension bondit au
-    franchissement du seuil. Il existe donc des pensions que NULLE carrière de
-    cette forme ne sert — et l'inversion doit le dire plutôt que de rendre le
-    bord du saut comme s'il était la réponse.
-    """
-    from retraite_notionnelle.simulateur import niveau_pour_pension
-
-    def pension_de_niveau(niveau: float) -> float:
-        return simulateur.scenario_actuel.calculer(simulateur.carriere_simple(
-            annee_naissance=1955, sexe="H",
-            affiliation="salarie_prive_non_cadre",
-            age_debut=20, age_liquidation=62, niveau_salaire=niveau,
-        )).pension_annuelle
-
-    plancher = pension_de_niveau(0.1)
-    plafond = pension_de_niveau(10.0)
-
-    trop_bas = niveau_pour_pension(pension_de_niveau, plancher / 2, 0.1, 10.0)
-    assert not trop_bas.atteinte and trop_bas.sous_le_plancher
-    assert trop_bas.niveau == 0.1
-
-    trop_haut = niveau_pour_pension(pension_de_niveau, plafond * 2, 0.1, 10.0)
-    assert not trop_haut.atteinte and trop_haut.au_dessus_du_plafond
-    assert trop_haut.niveau == 10.0
-
-    # Le saut : une pension prise au milieu de l'intervalle que le seuil des
-    # trimestres laisse vide. L'inversion la manque, et c'est le comportement
-    # attendu — elle encadre alors le trou au lieu de l'ignorer.
-    saut = niveau_pour_pension(pension_de_niveau, 6000.0, 0.1, 10.0)
-    assert not saut.atteinte
-    assert not saut.sous_le_plancher and not saut.au_dessus_du_plafond
-    assert saut.pension_dessous < saut.cible < saut.pension
 
 
 def test_les_ages_des_marins_suivent_la_duree_de_leurs_services(simulateur):
