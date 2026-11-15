@@ -2718,6 +2718,11 @@ TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "ages_annulation_decote": ("age",),
     "ages_categorie_active": ("derogation",),
     "ages_ouverture": ("age",),
+    "ages_regimes": ("ages",),
+    "ages_surcote_regimes_speciaux": ("age",),
+    "calendriers_duree_requise": ("trimestres",),
+    "decote_regimes_speciaux": ("parametres",),
+    "durees_requises_regimes": ("ligne",),
     # Le forfait de la catégorie d'un marin (R. 11), le salaire moyen passé
     # par sa marque (:data:`SALAIRE_MOYEN`).
     "grilles": ("forfait",),

@@ -443,6 +443,17 @@ APPELS_DES_TABLES = [
     ("rendements", "rendement", lambda s: ("msa_non_salaries", 2040)),
     ("minimum_garanti", "ratio_point_indice", lambda s: (2019, 2020)),
     ("minimum_garanti", "ratio_point_indice", lambda s: (2010, 2024)),
+    ("ages_regimes", "ages", lambda s: ("ieg_actif_2011", 1960.0)),
+    ("ages_regimes", "ages", lambda s: ("ieg_actif_2011", 1975.5)),
+    ("ages_regimes", "ages", lambda s: ("table_lunaire", 1960.0)),
+    ("ages_surcote_regimes_speciaux", "age", lambda s: (1965.0,)),
+    ("ages_surcote_regimes_speciaux", "age", lambda s: (1940.0,)),
+    ("calendriers_duree_requise", "trimestres", lambda s: ("regimes_speciaux_2008", 24120)),
+    ("calendriers_duree_requise", "trimestres", lambda s: ("regimes_speciaux_2008", 23000)),
+    ("decote_regimes_speciaux", "parametres", lambda s: (2012,)),
+    ("decote_regimes_speciaux", "parametres", lambda s: (2005,)),
+    ("durees_requises_regimes", "ligne", lambda s: ("ieg_2014", 1965.0, 24300)),
+    ("durees_requises_regimes", "ligne", lambda s: ("ieg_2014", 1963 + 10 / 12, 24234)),
 ]
 
 

@@ -55,7 +55,7 @@ FICHIERS = (
     "test_exonerations_agirc_arrco.py", "test_facade.py", "test_facade_jumeau.py",
     "test_facteurs_depense.py", "test_fiche_date_d_entree.py", "test_fiche_des_liberaux.py",
     "test_flux_fonction_publique.py", "test_fonction_publique_etat.py",
-    "test_garantie_par_sexe.py", "test_grille_large.py", "test_ieg.py", "test_indemnite_csg.py",
+    "test_garantie_par_sexe.py", "test_grille_large.py", "test_indemnite_csg.py",
     "test_independants.py", "test_indexation_programme.py", "test_ines.py",
     "test_interpenetration.py", "test_ircantec_minoration.py", "test_ircec_auteurs.py",
     "test_limite_age.py", "test_marins.py", "test_mayotte.py", "test_mines.py",

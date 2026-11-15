@@ -24,9 +24,8 @@ import yaml
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.noyau import carte
-from retraite_notionnelle.scenarios.actuel import (
-    AgesRegimes, AgesSurcoteRegimesSpeciaux, CalendriersDureeRequise,
-    DecoteRegimesSpeciaux, DureesRequisesRegimes)
+
+from facade import Simulateur
 
 PERIODES = yaml.safe_load((RACINE_DONNEES / "reference" / "regimes" / "ieg.yaml")
                           .read_text(encoding="utf-8"))["periodes"]
@@ -34,6 +33,12 @@ PERIODES = yaml.safe_load((RACINE_DONNEES / "reference" / "regimes" / "ieg.yaml"
 NAISSANCE = DateMois(1946, 6)
 #: La dernière année que les confrontations parcourent.
 HORIZON = 2050
+
+
+@pytest.fixture(scope="module")
+def tables():
+    """Les tables du moteur du scénario 1, servies par le portage (la façade)."""
+    return Simulateur().scenario_actuel
 
 
 def _versions(nom: str) -> list[dict]:
@@ -80,7 +85,7 @@ def _atteint(annee: int, generation: int, *ages: float) -> bool:
     return annee - generation + 1 > min(ages)
 
 
-def test_l_age_de_l_actif_et_celui_de_sa_surcote_sont_ceux_de_chaque_version():
+def test_l_age_de_l_actif_et_celui_de_sa_surcote_sont_ceux_de_chaque_version(tables):
     """`age_ouverture_ieg_actifs` : cinquante-cinq ans de 1946 au 21 mars 2011,
     puis le calendrier par génération du 2° du V de l'article 45, cinquante-sept
     ans pour 1967, que la rédaction de 2025 prolonge jusqu'à cinquante-neuf ans
@@ -89,8 +94,8 @@ def test_l_age_de_l_actif_et_celui_de_sa_surcote_sont_ceux_de_chaque_version():
     relève par génération jusqu'à soixante-quatre ans pour 1970. Chaque année
     qu'une version couvre en entier, la période du régime donne à toute
     génération qui peut y avoir l'âge l'âge que la version écrit."""
-    ages = AgesRegimes(RACINE_DONNEES)
-    surcote = AgesSurcoteRegimesSpeciaux(RACINE_DONNEES)
+    ages = tables.ages_regimes
+    surcote = tables.ages_surcote_regimes_speciaux
     confrontes = set()
     for version in _versions("age_ouverture_ieg_actifs"):
         lus = version["contenu"]["parametres"]
@@ -116,7 +121,7 @@ def test_l_age_de_l_actif_et_celui_de_sa_surcote_sont_ceux_de_chaque_version():
     assert confrontes == {v["id"] for v in _versions("age_ouverture_ieg_actifs")}
 
 
-def test_l_age_d_annulation_de_la_decote_est_celui_de_chaque_version():
+def test_l_age_d_annulation_de_la_decote_est_celui_de_chaque_version(tables):
     """`age_reference_decote_ieg` : aucune décote à qui réunit les conditions
     avant le 1er juillet 2010 ; puis l'âge minimum d'ouverture majoré de cinq
     ans, diminué de seize trimestres la première année, de deux de moins chaque
@@ -125,8 +130,8 @@ def test_l_age_d_annulation_de_la_decote_est_celui_de_chaque_version():
     pour l'actif né avant 1975. Le barème des régimes spéciaux, lu au mois où
     les conditions sont réunies (`liquider.millesime_du_bareme`), et les tables
     d'âges que nomment les périodes le portent."""
-    bareme = DecoteRegimesSpeciaux(RACINE_DONNEES)
-    ages = AgesRegimes(RACINE_DONNEES)
+    bareme = tables.decote_regimes_speciaux
+    ages = tables.ages_regimes
     for version in _versions("age_reference_decote_ieg"):
         lus = version["contenu"]["parametres"]
         bornes = version["bornes"]["ouverture_du_droit"]
@@ -152,7 +157,7 @@ def test_l_age_d_annulation_de_la_decote_est_celui_de_chaque_version():
                         lus["majoration_de_l_age_minimum"], abs=0.005), (table, generation)
 
 
-def test_la_duree_requise_est_celle_de_chaque_version():
+def test_la_duree_requise_est_celle_de_chaque_version(tables):
     """`duree_requise_ieg` : cent cinquante trimestres, trente-sept annuités et
     demie à 2 %, à qui réunit les conditions avant le 1er juillet 2008 ; puis le
     calendrier du I de l'article 45, de 151 trimestres à 166 en juillet 2018 ;
@@ -162,8 +167,8 @@ def test_la_duree_requise_est_celle_de_chaque_version():
     l'ancienne règle en deçà de sa première génération. Le pourcentage maximum
     est de 75 %. Le calendrier de 2008 et les tables du modèle le portent, au
     mois où les conditions sont réunies."""
-    calendriers = CalendriersDureeRequise(RACINE_DONNEES)
-    tables = DureesRequisesRegimes(RACINE_DONNEES)
+    calendriers = tables.calendriers_duree_requise
+    tables = tables.durees_requises_regimes
     for version in _versions("duree_requise_ieg"):
         lus = version["contenu"]["parametres"]
         bornes = version["bornes"]["ouverture_du_droit"]
