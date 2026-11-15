@@ -190,6 +190,7 @@ import {
 } from "../../moteur/js/revalorisation.js";
 import * as revalorisation from "../../moteur/js/revalorisation.js";
 import { Saisie } from "../../moteur/js/saisie.js";
+import { Fiabilite } from "../../moteur/js/serie.js";
 import { ScenarioActuel } from "../../moteur/js/scenario-actuel.js";
 import { Simulateur } from "../../moteur/js/simulateur.js";
 
@@ -1263,6 +1264,25 @@ function moteurPretant(moteur, prets) {
 }
 
 /**
+ * Une copie du moteur dont le minimum vieillesse sert le barème d'un autre
+ * modèle, `[seule, couple]` chaque année, sans les deux étages d'avant 2007
+ * (`Moteur.au_bareme_de_l_aspa` de `pont.py`) ; le moteur lui-même sans lui.
+ */
+function moteurAuBaremeDeLAspa(moteur, bareme) {
+  if (bareme === null) {
+    return moteur;
+  }
+  const [seule, couple] = bareme;
+  const copie = Object.create(moteur);
+  copie.minimumVieillesse = {
+    plafond: () => [seule, Fiabilite.HAUTE],
+    plafondCouple: () => [couple, Fiabilite.HAUTE],
+    deuxEtages: () => null,
+  };
+  return copie;
+}
+
+/**
  * Les fiches que retire chacune des neutralisations des bonifications de
  * service : celles des emplois classés, puis celle des militaires. Voir
  * `FICHES_RETIREES` d'`avantages.py`.
@@ -1491,8 +1511,8 @@ function argumentDuDroit(simulateur, carrieres, argument) {
       argument.depart);
   }
   if (Object.hasOwn(argument, "moteur")) {
-    return moteurPretant(moteurNeutralise(simulateur, argument.neutralise),
-      argument.prets ?? []);
+    return moteurAuBaremeDeLAspa(moteurPretant(moteurNeutralise(simulateur,
+      argument.neutralise), argument.prets ?? []), argument.bareme_aspa ?? null);
   }
   if (Object.hasOwn(argument, "periode")) {
     const [code, annee] = argument.periode;

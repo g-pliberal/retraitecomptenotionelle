@@ -57,7 +57,6 @@ import re
 import shutil
 import sys
 from pathlib import Path
-from types import SimpleNamespace
 
 import pytest
 
@@ -65,12 +64,12 @@ from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.donnees.prelevements_historiques import (
     charger_prelevements_historiques,
 )
-from retraite_notionnelle.droit import foyer
 from retraite_notionnelle.remuneration import charger_prelevements
-from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import module, site
 
+from facade import Simulateur
 from outils_pont import saisie_du_portage
+from retraite_notionnelle import pont
 
 RACINE = Path(__file__).resolve().parents[1]
 TEMOIN = RACINE / "tests" / "temoins" / "ines.json"
@@ -359,23 +358,14 @@ class _BaremeFixe:
     def __init__(self, seule: float, couple: float):
         self.seule, self.couple = seule, couple
 
-    def plafond(self, annee):
-        return self.seule, Fiabilite.HAUTE
-
-    def plafond_couple(self, annee):
-        return self.couple, Fiabilite.HAUTE
-
-    def deux_etages(self, annee):
-        return None
-
 
 def _aspa_du_depot(simulateur, annee: int, personnes: list[dict], bareme=None) -> float:
-    """L'ASPA que l'étape « foyer et net » sert à la première personne : ses
-    pensions, et le conjoint, ses ressources et son âge."""
-    actuel = simulateur.scenario_actuel
-    moteur = actuel if bareme is None else SimpleNamespace(
-        minimum_vieillesse=bareme, parametres=actuel.parametres, macro=actuel.macro,
-        carrieres_hors_de_france=actuel.carrieres_hors_de_france)
+    """L'ASPA que l'étape « foyer et net » du portage sert à la première
+    personne : ses pensions, et le conjoint, ses ressources et son âge ; sous
+    le barème d'un autre modèle, prêté au moteur
+    (``pont.Moteur.au_bareme_de_l_aspa``)."""
+    moteur = pont.MOTEUR if bareme is None else pont.MOTEUR.au_bareme_de_l_aspa(
+        bareme.seule, bareme.couple)
     assure = personnes[0]
     conjoint = None
     if len(personnes) == 2:
@@ -385,8 +375,11 @@ def _aspa_du_depot(simulateur, annee: int, personnes: list[dict], bareme=None) -
     carriere = simulateur.carriere_simple(
         annee_naissance=annee - assure["age"], sexe="H", affiliation="salarie_prive_non_cadre",
         age_liquidation=66.0, age_debut=20.0, niveau_salaire=0.3, conjoint=conjoint)
-    return foyer.foyer_et_net(moteur, carriere.personne, f"{annee}-12-31", annee,
-                              assure["pension_brute"], True, carriere=carriere).minimum_vieillesse
+    lus, echecs = pont.droit({"aspa": (
+        "foyer.foyer_et_net.minimum_vieillesse", moteur, carriere.personne, f"{annee}-12-31",
+        annee, assure["pension_brute"], True, None, carriere)})
+    assert not echecs, echecs
+    return lus["aspa"]
 
 
 def _bareme_d_ines(temoin, annee: int) -> _BaremeFixe:

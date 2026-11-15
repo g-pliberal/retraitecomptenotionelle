@@ -1133,6 +1133,8 @@ class Moteur:
     prets: tuple[tuple[str, str], ...] = ()
     #: L'avantage que la mesure retire de ce moteur, ou ``None``.
     neutralise: str | None = None
+    #: Le barème de l'ASPA d'un autre modèle, ``(seule, couple)``, ou ``None``.
+    bareme_aspa: tuple[float, float] | None = None
 
     def pretant(self, table: str, preteuse: str) -> Moteur:
         """Ce moteur, sa table ``table`` lisant ce que lit ``preteuse`` — celle
@@ -1148,11 +1150,20 @@ class Moteur:
         bâtie des leviers de ``moteur/js/regimes.js`` (action 161, étape 6)."""
         return dataclasses.replace(self, neutralise=code)
 
+    def au_bareme_de_l_aspa(self, seule: float, couple: float) -> Moteur:
+        """Ce moteur, le minimum vieillesse au barème d'un autre modèle — le
+        plafond d'une personne seule et celui d'un couple, chaque année, sans
+        les deux étages d'avant 2007 —, comme un test le prête au moteur
+        Python : le portage le prête à une copie du sien (``tests/test_ines.py``)."""
+        return dataclasses.replace(self, bareme_aspa=(seule, couple))
+
     def __repr__(self) -> str:
         return ("pont.MOTEUR"
                 + ("" if self.neutralise is None else f".neutralisant({self.neutralise!r})")
                 + "".join(f".pretant({table!r}, {preteuse!r})"
-                          for table, preteuse in self.prets))
+                          for table, preteuse in self.prets)
+                + ("" if self.bareme_aspa is None
+                   else f".au_bareme_de_l_aspa{self.bareme_aspa!r}"))
 
 
 #: Le moteur du scénario 1 en argument d'un appel du droit : le portage y met
@@ -1500,7 +1511,9 @@ def _argument_du_droit(argument, carrieres: list) -> dict:
 
     if isinstance(argument, Moteur):
         return {"moteur": "scenario_actuel", "prets": [list(pret) for pret in argument.prets],
-                **({} if argument.neutralise is None else {"neutralise": argument.neutralise})}
+                **({} if argument.neutralise is None else {"neutralise": argument.neutralise}),
+                **({} if argument.bareme_aspa is None
+                   else {"bareme_aspa": list(argument.bareme_aspa)})}
     if argument is SIMULATEUR:
         return {"simulateur": "simulateur"}
     if isinstance(argument, CarriereSimple):

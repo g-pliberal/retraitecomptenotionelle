@@ -56,7 +56,7 @@ FICHIERS = (
     "test_facteurs_depense.py",
     "test_flux_fonction_publique.py",
     "test_grille_large.py",
-    "test_independants.py", "test_indexation_programme.py", "test_ines.py",
+    "test_independants.py", "test_indexation_programme.py",
    
     "test_limite_age.py", "test_marins.py", "test_mayotte.py",
     "test_moteur.py", "test_outre_mer.py",
