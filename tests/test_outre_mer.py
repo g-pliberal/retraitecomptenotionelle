@@ -19,27 +19,14 @@ contre 3 630 F en métropole (200 fois 18,15 F) ; en 1985, 4 062,51 F et
 
 from __future__ import annotations
 
-import json
-import shutil
-import subprocess
-from pathlib import Path
-
 import pytest
 
 from retraite_notionnelle import chronologie as chrono
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import (
-    AnneeCarriere,
-    Carriere,
-    LigneRelevee,
-    Metier,
-    prolonger_releve,
-)
-from retraite_notionnelle.droit import liquider
-from retraite_notionnelle.droit.preparer import preparer
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.carriere import AnneeCarriere, LigneRelevee, Metier
 
-RACINE = Path(__file__).resolve().parents[1]
+from facade import Carriere, Simulateur, liquider, prolonger_releve
+
 STATUT = "salarie_prive_non_cadre"
 
 
@@ -69,7 +56,7 @@ def test_le_releve_le_porte_et_ses_trimestres_suivent_le_seuil(simulateur):
     en Guyane ni en métropole ; la dernière année prolongée garde son
     département, comme son statut."""
     trimestres = {}
-    for departement in ("reunion", "martinique", ""):
+    for departement in ("reunion", "martinique", "guyane", ""):
         releve = _releve(simulateur, departement)
         assert [ligne.annee for ligne in releve] == [1981, 1982, 1983, 1984, 1985]
         assert {ligne.outre_mer for ligne in releve} == {departement}
@@ -77,7 +64,7 @@ def test_le_releve_le_porte_et_ses_trimestres_suivent_le_seuil(simulateur):
         assert {ligne.outre_mer for ligne in carriere.lignes} == {departement}
         trimestres[departement] = _trimestres(carriere)
     assert trimestres["reunion"][1982] == 1
-    assert trimestres["martinique"][1982] == 0
+    assert trimestres["martinique"][1982] == trimestres["guyane"][1982] == 0
     assert trimestres[""][1982] == 0
     assert trimestres["reunion"][1981] == trimestres[""][1981] == 4
 
@@ -100,7 +87,7 @@ def _chronologie_du_parcours(metiers: list[tuple[Metier, str]], annee_naissance:
     for fait, (_, departement) in zip(emplois, metiers):
         if departement:
             fait["attributs"]["outre_mer"] = departement
-    return preparer(chronologie)
+    return chrono.completer(chronologie)
 
 
 def test_le_parcours_le_porte_et_l_annee_d_un_depart_le_garde_depuis_1972(simulateur):
@@ -124,6 +111,10 @@ def test_le_parcours_le_porte_et_l_annee_d_un_depart_le_garde_depuis_1972(simula
     seule = Carriere.depuis_chronologie(
         _chronologie_du_parcours([(reunion, ""), (metropole, "")], 1955, 62.0), macro)
     assert {ligne.annee: ligne.trimestres_valides for ligne in seule.lignes}[1982] == 0
+    deux = Carriere.depuis_chronologie(_chronologie_du_parcours(
+        [(reunion, "guadeloupe"), (metropole, "martinique")], 1955, 62.0), macro)
+    assert {ligne.annee: ligne.outre_mer for ligne in deux.lignes
+            if ligne.annee in (1981, 1983)} == {1981: "guadeloupe", 1983: "martinique"}
 
     avant = Carriere.depuis_chronologie(_chronologie_du_parcours(
         [(Metier(affiliation=STATUT, age_debut=20.0), "martinique"),
@@ -286,28 +277,10 @@ def test_l_abattement_de_moitie_ouvre_des_droits_sur_le_revenu_entier(simulateur
     assert pension("reunion") == pytest.approx(pension(""))
 
 
-#: Le jumeau JavaScript de l'exonération : les mêmes années, lues du relevé.
-_JUMEAU_EXONERATION = """
-import { readFileSync } from "node:fs";
-import { Simulateur } from "./moteur/js/simulateur.js";
-const cas = JSON.parse(process.argv[1]);
-const paquet = JSON.parse(readFileSync("./moteur/donnees.json", "utf8"));
-const simulateur = new Simulateur(paquet);
-const rendu = cas.map(({ annee, statut, revenu, departement }) => {
-  const carriere = simulateur.carriereReleve({
-    annee_naissance: 1960, sexe: "F", age_liquidation: 62,
-    releve: [{ annee, affiliation: statut, revenu, outre_mer: departement }],
-  });
-  const ligne = carriere.lignes.find((l) => l.annee === annee);
-  return [ligne.trimestres_valides, ligne.assiette_minimale_base, ligne.cotisations_versees];
-});
-process.stdout.write(JSON.stringify(rendu));
-"""
-
-
-def test_le_portage_javascript_exonere_les_memes_annees(simulateur):
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+def test_chaque_annee_cotise_ou_non_selon_son_departement_et_son_statut(simulateur):
+    """Les cas des deux tests qui précèdent, réunis : seules les années sous le
+    seuil d'un artisan ou d'un commerçant des DOM, depuis 1986, ne cotisent
+    pas."""
     cas = [(2010, ARTISAN, 300.0, "reunion"), (2010, ARTISAN, 390.0, "reunion"),
            (2010, ARTISAN, 391.0, "reunion"), (2010, ARTISAN, 300.0, ""),
            (2020, ARTISAN, 300.0, "guadeloupe"),
@@ -315,83 +288,6 @@ def test_le_portage_javascript_exonere_les_memes_annees(simulateur):
            (1990, "gerant_debit_tabac", _euros(2_600.0), "martinique"),
            (2010, "profession_liberale", 300.0, "reunion"),
            (1985, ARTISAN, _euros(2_400.0), "martinique")]
-    attendu = []
-    for annee, statut, revenu, departement in cas:
-        ligne = _annee_d_independant(simulateur, statut, annee, revenu, departement)
-        attendu.append([ligne.trimestres_valides, ligne.assiette_minimale_base,
-                        ligne.cotisations_versees])
-    assert [cotisees for *_, cotisees in attendu] == [False, False, True, True, False,
-                                                      False, True, True, True]
-    entree = [{"annee": annee, "statut": statut, "revenu": revenu, "departement": departement}
-              for annee, statut, revenu, departement in cas]
-    execution = subprocess.run(
-        ["node", "--input-type=module", "-e", _JUMEAU_EXONERATION, json.dumps(entree)],
-        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    assert execution.returncode == 0, execution.stderr
-    obtenu = json.loads(execution.stdout)
-    assert [[l[0], l[2]] for l in obtenu] == [[l[0], l[2]] for l in attendu]
-    assert [l[1] for l in obtenu] == pytest.approx([l[1] for l in attendu], abs=1e-6)
-
-
-#: Le jumeau JavaScript : les mêmes carrières, du relevé et du parcours.
-_JUMEAU = """
-import { readFileSync } from "node:fs";
-import { Carriere } from "./moteur/js/carriere.js";
-import { DonneesMacro } from "./moteur/js/macro.js";
-import { Simulateur } from "./moteur/js/simulateur.js";
-const { releves, chronologies } = JSON.parse(process.argv[1]);
-const paquet = JSON.parse(readFileSync("./moteur/donnees.json", "utf8"));
-const simulateur = new Simulateur(paquet);
-const lignes = (carriere) => carriere.lignes.map((l) =>
-  [l.annee, l.trimestres_valides, l.outre_mer, l.revenu]);
-const duReleve = releves.map((releve) => lignes(simulateur.carriereReleve({
-  annee_naissance: 1925, sexe: "F", releve, age_liquidation: 61,
-})));
-const duParcours = chronologies.map((chronologie) =>
-  lignes(Carriere.depuisChronologie(chronologie, new DonneesMacro(paquet))));
-process.stdout.write(JSON.stringify({ duReleve, duParcours }));
-"""
-
-
-def test_le_portage_javascript_rend_les_memes_carrieres(simulateur):
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    macro = simulateur.macro
-    releves = [_releve(simulateur, departement)
-               for departement in ("reunion", "martinique", "guyane", "")]
-    reunion = Metier(affiliation=STATUT, age_debut=20.0, niveau_salaire=0.045)
-    metropole = Metier(affiliation=STATUT, age_debut=27.25, niveau_salaire=0.045)
-    chronologies = [
-        _chronologie_du_parcours([(reunion, "reunion"), (metropole, "")], 1955, 62.0),
-        _chronologie_du_parcours([(reunion, "guadeloupe"), (metropole, "martinique")],
-                                 1955, 62.0),
-        _chronologie_du_parcours([(Metier(affiliation=STATUT, age_debut=20.0), "martinique"),
-                                  (Metier(affiliation=STATUT, age_debut=20.25), "")],
-                                 1930, 62.0),
-    ]
-
-    def lignes(carriere: Carriere) -> list:
-        return [[l.annee, l.trimestres_valides, l.outre_mer, l.revenu]
-                for l in carriere.lignes]
-
-    attendu_releves = [lignes(simulateur.carriere_releve(1925, "F", releve, 61.0))
-                       for releve in releves]
-    attendu_parcours = [lignes(Carriere.depuis_chronologie(chronologie, macro))
-                        for chronologie in chronologies]
-    entree = {
-        "releves": [[{"annee": l.annee, "affiliation": l.affiliation, "revenu": l.revenu,
-                      "outre_mer": l.outre_mer} for l in releve] for releve in releves],
-        "chronologies": chronologies,
-    }
-    execution = subprocess.run(
-        ["node", "--input-type=module", "-e", _JUMEAU, json.dumps(entree)],
-        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    assert execution.returncode == 0, execution.stderr
-    obtenu = json.loads(execution.stdout)
-    for rendues, attendues in ((obtenu["duReleve"], attendu_releves),
-                               (obtenu["duParcours"], attendu_parcours)):
-        assert len(rendues) == len(attendues)
-        for rendue, attendue in zip(rendues, attendues):
-            assert [l[:3] for l in rendue] == [l[:3] for l in attendue]
-            assert [l[3] for l in rendue] == pytest.approx([l[3] for l in attendue],
-                                                           abs=1e-6)
+    assert [_annee_d_independant(simulateur, statut, annee, revenu, departement)
+            .cotisations_versees for annee, statut, revenu, departement in cas] == [
+        False, False, True, True, False, False, True, True, True]

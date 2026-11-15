@@ -123,7 +123,7 @@ DONNEES = frozenset({"catalogue", "affiliations", "effectifs", "distribution",
 ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversion",
            "simulateur.carriere_simple", "simulateur.carriere_parcours",
            "simulateur.carriere_releve", "carriere.depuis_profil", "carriere.depuis_parcours",
-           "carriere.depuis_releve", "releve.construire", "simulateur.regime_fusionne", "liquidation.liquider",
+           "carriere.depuis_releve", "carriere.depuis_chronologie", "releve.construire", "simulateur.regime_fusionne", "liquidation.liquider",
            "liquidation.demande_de_depart", "coordonner.coordonner", "compter.compter",
            "acquerir.acquerir", "compter.cumul_plafonne", "compter.des_regimes",
            "droit.etapes", "compter.trimestres_du_contrat", "compter.jours_par_annee",
@@ -808,7 +808,7 @@ def ConstructeurCompte(macro, catalogue, affiliations, indexation, parametres) -
 
 
 class Carriere(_carriere.Carriere):
-    """``Carriere``, ses trois bâtisseurs servis par le portage : la carrière
+    """``Carriere``, ses quatre bâtisseurs servis par le portage : la carrière
     qu'ils rendent est une ``Carriere`` du Python, le type que le pont
     échange."""
 
@@ -825,6 +825,11 @@ class Carriere(_carriere.Carriere):
     @classmethod
     def depuis_releve(cls, *arguments, **options):
         return _batie("carriere.depuis_releve", _carriere.Carriere.depuis_releve,
+                      arguments, options)
+
+    @classmethod
+    def depuis_chronologie(cls, *arguments, **options):
+        return _batie("carriere.depuis_chronologie", _carriere.Carriere.depuis_chronologie,
                       arguments, options)
 
 

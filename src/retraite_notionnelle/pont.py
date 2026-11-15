@@ -2578,6 +2578,7 @@ LECTURES_DE_LA_FACADE = {
     "carriere.depuis_profil": carriere_des_donnees,
     "carriere.depuis_parcours": carriere_des_donnees,
     "carriere.depuis_releve": carriere_des_donnees,
+    "carriere.depuis_chronologie": carriere_des_donnees,
     "scenario_actuel.calculer": resultat_actuel_des_donnees,
     "reversion.reversion": reversion_des_donnees,
     "releve.construire": releve_des_donnees,

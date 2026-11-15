@@ -1966,6 +1966,10 @@ const ENTREES_DE_LA_FACADE = {
     Carriere.depuisParcours({ ...optionsDeLaFacade(options), macro: simulateur.macro })),
   "carriere.depuis_releve": (simulateur, options) => carriereEnDonnees(
     Carriere.depuisReleve({ ...options, macro: simulateur.macro })),
+  // La chronologie complétée, telle quelle : le portage en tire les années.
+  "carriere.depuis_chronologie": (simulateur, { chronologie, personne, identifiant }) =>
+    carriereEnDonnees(Carriere.depuisChronologie(chronologie, simulateur.macro, personne,
+      identifiant)),
   // Les drapeaux de `calculer` suivent la carrière, tous, dans l'ordre du jumeau.
   "scenario_actuel.calculer": (moteur, carriere, ...drapeaux) => telQuel(
     moteur.calculer(carriere, ...drapeaux)),

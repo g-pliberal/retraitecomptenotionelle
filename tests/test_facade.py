@@ -1339,6 +1339,23 @@ def test_la_carriere_d_un_releve_se_batit_au_portage(simulateur):
         macro=simulateur.macro)) == attendue
 
 
+def test_la_carriere_d_une_chronologie_se_batit_au_portage(simulateur):
+    """``Carriere.depuis_chronologie`` sur les séries du simulateur : la
+    chronologie complétée d'un relevé donne la carrière de ce relevé, que la
+    façade demande au portage, comme les trois autres bâtisseurs."""
+    from retraite_notionnelle import chronologie
+
+    releve = [LigneRelevee(1990, "salarie_prive_non_cadre", 15000.0),
+              LigneRelevee(1991, "salarie_prive_non_cadre", 16000.0, 3, "chomage_indemnise")]
+    attendue = pont.carriere_en_donnees(simulateur.carriere_releve(
+        annee_naissance=1965, sexe="H", releve=releve, age_liquidation=64))
+    assert "depuis_chronologie" in vars(Carriere)
+    construite = chronologie.completer(chronologie.du_releve(
+        annee_naissance=1965, sexe="H", releve=releve, age_liquidation=64))
+    assert pont.carriere_en_donnees(
+        Carriere.depuis_chronologie(construite, simulateur.macro)) == attendue
+
+
 def test_le_maximum_des_cultes_se_lit_dans_sa_table(simulateur):
     """Les arrêtés : rien avant la création du régime, 19 650 F en 1990
     (le fichier garde six décimales)."""
@@ -2376,7 +2393,8 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "reversion.reversion", "simulateur.carriere_simple",
                               "simulateur.carriere_parcours", "simulateur.carriere_releve",
                               "carriere.depuis_profil", "carriere.depuis_parcours",
-                              "carriere.depuis_releve", "releve.construire", "simulateur.regime_fusionne",
+                              "carriere.depuis_releve", "carriere.depuis_chronologie",
+                              "releve.construire", "simulateur.regime_fusionne",
                               "liquidation.liquider", "liquidation.demande_de_depart",
                               "coordonner.coordonner", "compter.compter",
                               "acquerir.acquerir", "compter.cumul_plafonne",
