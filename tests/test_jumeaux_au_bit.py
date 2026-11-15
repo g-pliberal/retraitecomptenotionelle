@@ -1,5 +1,5 @@
 """Chaque fonction gardée des deux côtés rend la même valeur en Python et en
-JavaScript, au bit près (action 161, étapes 7b et 7c).
+JavaScript, au bit près (action 161, étapes 7b à 7e).
 
 La liste ``scripts/jumeaux_gardees.yaml`` déclare, dans les paires qui restent
 après le retrait du moteur Python, les fonctions écrites des deux côtés que la
@@ -7,9 +7,10 @@ fabrique, le coût ou une étude lisent en Python pendant que le site les
 calcule en JavaScript. Les deux exemplaires ne doivent pas diverger : le
 Python les calcule sur le YAML (``data/``), le portage sur le paquet
 (``moteur/donnees.json``), et chacune se confronte ici sur une grille
-d'arguments déclarée avec elle (:data:`GRILLES`). Une fonction confrontée ici
-le dit dans la liste, colonne ``test`` ; une grille sans cette ligne, ou
-l'inverse, rougit.
+d'arguments déclarée avec elle (:data:`GRILLES`), ou, quand sa forme
+l'empêche, par la grille d'une fonction qui l'appelle (:data:`PAR_L_APPELANT`).
+Une fonction confrontée ici le dit dans la liste, colonne ``test`` ; une
+grille sans cette ligne, ou l'inverse, rougit.
 
 Le portage se lit par ``web/site.py`` : ses objets sont bâtis sur le paquet du
 contexte du site, que node garde, et leurs méthodes appelées une à une.
@@ -44,6 +45,8 @@ sys.path.insert(0, str(RACINE / "scripts"))
 from jumeaux import en_camel  # noqa: E402
 
 CE_TEST = "tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes"
+PAR_SON_APPELANT = ("tests/test_jumeaux_au_bit.py::"
+                    "test_la_fonction_gardee_se_confronte_par_son_appelant")
 
 TAUX = "src/retraite_notionnelle/donnees/taux.py"
 MORTALITE = "src/retraite_notionnelle/donnees/mortalite.py"
@@ -62,6 +65,10 @@ MACRO = "src/retraite_notionnelle/donnees/macro.py"
 HISTORIQUES = "src/retraite_notionnelle/donnees/prelevements_historiques.py"
 FRONTIERE = "src/retraite_notionnelle/frontiere.py"
 REGIMES = "src/retraite_notionnelle/donnees/regimes.py"
+EQUILIBRE = "src/retraite_notionnelle/donnees/equilibre.py"
+BILAN = "src/retraite_notionnelle/donnees/bilan.py"
+CONTEXTE = "src/retraite_notionnelle/contexte.py"
+CONTRIBUTIONS = "src/retraite_notionnelle/contributions_equilibre.py"
 
 
 class _Racine:
@@ -74,6 +81,12 @@ class _Racine:
 #: À la place d'un argument : la racine des données en Python, le paquet
 #: dans le portage, pour une fonction de module qui lit l'une ou l'autre.
 SOURCE = _Racine()
+
+
+class SousRacine(str):
+    """À la place d'un argument : ce dossier de ``data/`` en Python, le paquet
+    dans le portage — ``reference/macro``, d'où le Python lit les comptes du
+    COR que le paquet porte."""
 
 
 class Jour(str):
@@ -117,6 +130,8 @@ MODULES = {
     "calendrier": ("calendrier", "calendrier"),
     "frontiere": ("frontiere", "frontiere"),
     "regimes": ("donnees.regimes", "regimes"),
+    "equilibre": ("donnees.equilibre", "equilibre"),
+    "bilan": ("donnees.bilan", "bilan"),
 }
 
 
@@ -173,6 +188,23 @@ def _python(nom: str):
             f"retraite_notionnelle.donnees.{module}"), classe)(DATA)
     if genre == "serie":
         return _serie(_objet_python, detail)
+    if genre == "comptes":
+        from retraite_notionnelle.donnees.equilibre import ComptesRetraite
+        return ComptesRetraite(DATA, variante=detail)
+    if genre == "decomposition":
+        from retraite_notionnelle.donnees.equilibre import DecompositionDepense
+        return DecompositionDepense(DATA / "reference" / "macro")
+    if genre == "bilan":
+        from retraite_notionnelle.donnees.bilan import charger_bilan
+        bilan = charger_bilan(DATA)
+        return bilan.engagements if detail == "engagements" else bilan.assiette
+    if genre == "contexte":
+        from retraite_notionnelle.contexte import Contexte
+        return Contexte()
+    if genre == "contribution":
+        from retraite_notionnelle.contributions_equilibre import (
+            charger_contributions_equilibre)
+        return charger_contributions_equilibre(DATA)[detail]
     if genre == "pensions":
         # Le paquet porte la distribution des retraités qui résident en
         # France, comme la fabrique la lit (``_distribution_pensions_sexes``).
@@ -222,6 +254,19 @@ def _javascript(nom: str):
         return _serie(_objet_javascript, detail)
     if genre == "pensions":
         return site_js.module("distribution").DistributionPensions(_paquet(), detail)
+    if genre == "comptes":
+        return site_js.module("equilibre").ComptesRetraite(_paquet(), detail)
+    if genre == "decomposition":
+        return _objet_javascript("comptes:reference").decomposition
+    if genre == "bilan":
+        bilan = site_js.module("bilan").charger_bilan(_paquet()["bilan_equilibre"])
+        return bilan.engagements if detail == "engagements" else bilan.assiette
+    if genre == "contexte":
+        return site_js.site().contexte
+    if genre == "contribution":
+        lues = site_js.module("contributions-equilibre").charger_contributions_equilibre(
+            _paquet())
+        return next(c for c in lues["contributions"] if c["code"] == detail)
     raise KeyError(nom)
 
 
@@ -283,7 +328,10 @@ class Grille:
     ``module_js`` : au portage, la méthode est une fonction de ce module, qui
     reçoit l'objet en premier argument et les arguments nommés en une table
     (``avec`` des paramètres) ; ``en_liste`` : au portage, une table dont
-    ces clés, dans cet ordre, sont le n-uplet que rend le Python."""
+    ces clés, dans cet ordre, sont le n-uplet que rend le Python ;
+    ``nom_js`` : au portage, la fonction porte ce nom, et non celui du Python
+    mis à sa manière ; ``cle_du_paquet`` : au portage, :data:`SOURCE` est
+    cette clé du paquet, et non le paquet entier."""
 
     objets: tuple[str, ...]
     appels: tuple[tuple, ...] | None = None
@@ -292,6 +340,8 @@ class Grille:
     module_js: str | None = None
     en_liste: tuple[str, ...] = ()
     lire: Callable | None = None
+    nom_js: str | None = None
+    cle_du_paquet: str | None = None
 
 
 def _pas(debut: float, fin: float, pas: float) -> list[float]:
@@ -340,6 +390,75 @@ def _morceau(valeur, cote: str):
     lu = _champs(valeur, champs)
     lu["date_effet"] = getattr(valeur, "date_effet", None)
     return lu
+
+
+def _scenarios_du_bilan() -> list[str]:
+    """Les systèmes que la table du bilan porte, lus dans la table même."""
+    import json
+    brut = json.loads((DATA / "derive" / "equilibre.json").read_text(encoding="utf-8"))
+    return sorted(brut["annees"][0]["coefficients"])
+
+
+def _bilan(valeur, cote: str):
+    """Ce que le bilan chargé porte, champ par champ : ses années et leurs
+    tables par système, l'assiette, l'engagement acquis, les écarts médians
+    et les carrières d'exemple. Le Python se lit dans ses tables, que ses
+    accesseurs, partis avec le moteur, ne lisent plus ; le portage, par les
+    siens, où le nom privé d'une table est celui d'une méthode ou d'un
+    accesseur (``ressources``, ``sensibilite``)."""
+    scenarios = _scenarios_du_bilan()
+    tables = (("_coefficients", "coefficient"), ("_soldes", "solde"),
+              ("_ressources", "ressources_de"), ("_depenses", "depense"))
+
+    def par_systeme(ligne, table, accesseur):
+        if cote == "python":
+            return [getattr(ligne, table).get(s, 0.0) for s in scenarios]
+        return [getattr(ligne, accesseur)(s) for s in scenarios]
+
+    annees = [[ligne.annee, ligne.projete, ligne.part_contributive, ligne.pib,
+               *[par_systeme(ligne, *paire) for paire in tables]]
+              for ligne in valeur.annees]
+    acquis, ecarts = valeur.engagements, valeur.ecarts
+    sensibilite = acquis._sensibilite if cote == "python" else acquis.sensibilite()
+    return {
+        "annees": annees,
+        "bornes": [valeur.premiere_annee, valeur.derniere_annee,
+                   valeur.derniere_annee_observee, valeur.premiere_annee_projetee,
+                   valeur.pib, valeur.annee_pib],
+        "assiette": [valeur.assiette.derniere_annee,
+                     valeur.assiette.part_pib(valeur.assiette.derniere_annee)],
+        "engagements": [acquis.annee, acquis.horizon, acquis.retraites, acquis.actifs,
+                        acquis.hors_projection, acquis.publie, sensibilite],
+        "ecarts": [ecarts.a_venir, ecarts.a_venir_volontaire, ecarts.deja_liquidees,
+                   ecarts.cases_a_venir, ecarts.cases_deja_liquidees],
+        "exemples": [[dict(e.saisie), e.fiche.annee, e.fiche.brut, e.fiche.net,
+                      e.fiche.retraite_totale, e.fiche.retraite_employeur,
+                      e.coefficient_euros_constants, e.pension_actuel, e.pension_financee]
+                     for e in valeur.exemples],
+    }
+
+
+#: Les années où l'on lit ce qu'un accesseur du contexte rend.
+ANNEES_DU_CONTEXTE = tuple(range(2000, 2071, 5))
+
+
+def _par_annee(methode: str):
+    """Ce qu'une donnée rendue par le contexte dit, chaque année de
+    :data:`ANNEES_DU_CONTEXTE`, par une méthode déjà confrontée ici."""
+    def lire(valeur, cote: str):
+        return [getattr(valeur, methode)(annee) for annee in ANNEES_DU_CONTEXTE]
+    return lire
+
+
+def _comptes_du_contexte(valeur, cote: str):
+    return [valeur.variante, _par_annee("depense")(valeur, cote),
+            _par_annee("ressource")(valeur, cote)]
+
+
+def _parametres(valeur, cote: str):
+    """Les paramètres d'un simulateur : la racine des données n'est qu'au
+    Python."""
+    return _sans(_en_python(valeur.parametres), ("racine_donnees",))
 
 
 def _grilles() -> dict[tuple[str, str], Grille]:
@@ -399,6 +518,21 @@ def _grilles() -> dict[tuple[str, str], Grille]:
     series_historiques = tuple(f"historiques:{groupe}/{serie}"
                                for groupe in ("pensions", "salaires", "independants")
                                for serie in getattr(historiques, groupe))
+
+    from retraite_notionnelle.donnees.equilibre import (
+        ORGANISMES, POSTES, POSTES_TRANSFERTS, variantes_disponibles)
+    variantes = ("reference", *variantes_disponibles(DATA / "reference" / "macro"))
+    tous_les_comptes = tuple(f"comptes:{v}" for v in variantes)
+    comptes = _objet_python("comptes:reference")
+    annees_du_compte = tuple((annee,) for annee in comptes.annees())
+    decomposition = _objet_python("decomposition")
+    grandeurs = sorted({g for g, _ in decomposition.series})
+    groupes = sorted({g for _, g in decomposition.series})
+    reperes_cor = (2000, 2002, 2010, 2020, 2024, 2025, 2026, 2030, 2040, 2045, 2050, 2070, 2071)
+    taux_cor = sorted({g for taux in decomposition.croissances.values() for g in taux})
+    from retraite_notionnelle.contributions_equilibre import charger_contributions_equilibre
+    contributions = tuple(f"contribution:{c.code}"
+                          for c in charger_contributions_equilibre(DATA).contributions)
 
     return {
         # La courbe des taux : sans prime de terme, et avec celle du réglage
@@ -601,6 +735,79 @@ def _grilles() -> dict[tuple[str, str], Grille]:
             for annee in range(1940, 2081, 2) for militaire in (False, True)),
             lire=_contribution),
 
+
+        # Les comptes du COR, sous chaque variante : la dépense, la ressource,
+        # la structure des ressources, les transferts, les engagements.
+        (EQUILIBRE, "variantes_disponibles"): Grille(("module:equilibre",), (
+            (SousRacine("reference/macro"),),)),
+        (EQUILIBRE, "variante_du_scenario"): Grille(("module:equilibre",), tuple(
+            (scenario, SousRacine("reference/macro"))
+            for scenario in (None, "", "reference", "inconnu", *variantes))),
+        (EQUILIBRE, "annees"): Grille(tous_les_comptes, ((),)),
+        (EQUILIBRE, "depense"): Grille(tous_les_comptes, annees_du_compte),
+        (EQUILIBRE, "ressource"): Grille(tous_les_comptes, annees_du_compte),
+        (EQUILIBRE, "fiabilite"): Grille(tous_les_comptes, annees_du_compte),
+        (EQUILIBRE, "part"): Grille(tous_les_comptes, tuple(
+            (poste.code, annee) for poste in POSTES for (annee,) in annees_du_compte)),
+        (EQUILIBRE, "part_contributive"): Grille(tous_les_comptes, annees_du_compte),
+        (EQUILIBRE, "annees_engagements"): Grille(tous_les_comptes, ((),)),
+        (EQUILIBRE, "engagements"): Grille(tous_les_comptes, tuple(
+            (annee, regime) for annee in comptes.annees_engagements()
+            for regime in ("tous_regimes", "repartition"))),
+        (EQUILIBRE, "premiere_annee_transferts"): Grille(tous_les_comptes),
+        (EQUILIBRE, "derniere_annee_transferts"): Grille(tous_les_comptes),
+        (EQUILIBRE, "transfert"): Grille(tous_les_comptes, tuple(
+            (poste.code, annee) for poste in POSTES_TRANSFERTS
+            for annee in comptes.annees_transferts())),
+        (EQUILIBRE, "transfert_organisme"): Grille(tous_les_comptes, tuple(
+            (organisme.code, annee) for organisme in ORGANISMES
+            for annee in comptes.annees_transferts())),
+        (EQUILIBRE, "transfert_part_pib"): Grille(tous_les_comptes, tuple(
+            (organisme.code, annee) for organisme in ORGANISMES
+            for annee in comptes.annees_transferts())),
+        (EQUILIBRE, "transfert_supprime_part_pib"): Grille(tous_les_comptes, tuple(
+            (annee, Nommes(par_impot=par_impot, organisme=organisme))
+            for annee in comptes.annees_transferts() for par_impot in (None, True, False)
+            for organisme in (None, *(o.code for o in ORGANISMES)))),
+        # Ce qui fait la dépense chez le COR : les grandeurs par groupe, leurs
+        # indices, et les croissances par sous-période.
+        (EQUILIBRE, "valeur"): Grille(("decomposition",), tuple(
+            (grandeur, groupe, annee) for grandeur in (*grandeurs, "inconnue")
+            for groupe in groupes for annee in reperes_cor)),
+        (EQUILIBRE, "indice"): Grille(("decomposition",), tuple(
+            (grandeur, groupe, depuis, annee) for grandeur in grandeurs for groupe in groupes
+            for depuis in reperes_cor for annee in reperes_cor)),
+        (EQUILIBRE, "periodes"): Grille(("decomposition",), ((),)),
+        (EQUILIBRE, "indice_croissance"): Grille(("decomposition",), tuple(
+            (grandeur, depuis, annee) for grandeur in taux_cor
+            for depuis in reperes_cor for annee in reperes_cor)),
+
+        # Le bilan figé, chargé de chaque côté : du JSON du dépôt en Python, de
+        # la clé du paquet au portage ; l'engagement acquis qu'en lit la prose.
+        (BILAN, "charger_bilan"): Grille(("module:bilan",), ((SOURCE,),),
+                                         cle_du_paquet="bilan_equilibre", lire=_bilan),
+        (BILAN, "part_pib"): Grille(("bilan:engagements",), tuple(
+            (scenario,) for scenario in (*_scenarios_du_bilan(), "inconnu"))),
+        (BILAN, "ecart_pour"): Grille(("bilan:engagements",), tuple(
+            (cible,) for cible in _pas(0.0, 6.0, 0.01))),
+
+        # Le contexte de la fabrique : ce que rend chacun de ses accesseurs,
+        # lu par des méthodes que ces grilles confrontent déjà.
+        (CONTEXTE, "assiette"): Grille(("contexte",), ((),), lire=_par_annee("montant")),
+        (CONTEXTE, "depenses"): Grille(("contexte",), ((),), lire=_par_annee("depense")),
+        (CONTEXTE, "comptes"): Grille(("contexte",), ((),), lire=_comptes_du_contexte),
+        (CONTEXTE, "simulateur"): Grille(("contexte",), ((),), lire=_parametres),
+
+        # Les contributions d'équilibre, par ce qu'elles prélèvent : le barème
+        # de chaque mois, que le portage n'exporte pas, sur des règles que
+        # chaque côté charge à sa manière.
+        (CONTRIBUTIONS, "montant"): Grille(contributions, tuple(
+            (annee, assiette, 40000.0, cadre, salarie)
+            for annee in (1995, 2000, 2001, 2002, 2010, 2018, 2019, 2020, 2026)
+            for assiette in (0.0, 20000.0, 40000.0, 100000.0, 200000.0, 400000.0)
+            for cadre in (False, True) for salarie in (False, True)),
+            module_js="contributions-equilibre", nom_js="montantDeLaContribution"),
+
         # La frontière contributive, chargée de chaque côté.
         (FRONTIERE, "charger_frontiere"): Grille(("module:frontiere",), ((SOURCE,),), champs=(
             "annees:annee,assiette_md,taux,total_md,salariale_md,patronale_md",
@@ -611,6 +818,34 @@ def _grilles() -> dict[tuple[str, str], Grille]:
 
 GRILLES = _grilles()
 
+#: Les fonctions gardées que leur forme empêche de confronter seules, et la
+#: grille de la fonction qui les appelle des deux côtés, par laquelle elles se
+#: confrontent : un chargeur dont le portage rend des tables brutes, une
+#: fonction que le portage n'exporte pas, deux signatures qui diffèrent.
+#: La grille de l'appelant peut être celle d'une fonction qui n'est pas
+#: gardée, comme ``montant`` des contributions, que le portage écrit
+#: ``montantDeLaContribution``.
+PAR_L_APPELANT = {
+    (HISTORIQUES, "charger_prelevements_historiques"): (
+        (HISTORIQUES, "valeur"),
+        "le portage rend des tables, dont chaque série se lit par la grille de valeur"),
+    (CONTRIBUTIONS, "charger_contributions_equilibre"): (
+        (CONTRIBUTIONS, "montant"),
+        "le portage rend des tables brutes, que montantDeLaContribution lit"),
+    (CONTRIBUTIONS, "bareme"): (
+        (CONTRIBUTIONS, "montant"),
+        "contributions-equilibre.js ne l'exporte pas : le barème de chaque mois"),
+    (REGIMES, "_en_vigueur"): (
+        (REGIMES, "taux"),
+        "les deux côtés n'ont pas la même signature ; taux le lit à chaque année"),
+    (REGIMES, "dater_les_taux_moyens"): (
+        (REGIMES, "periode"),
+        "le catalogue aux taux moyens le fait courir sur chaque régime"),
+    (CONTEXTE, "_donnee"): (
+        (CONTEXTE, "comptes"),
+        "la mémoire des données du contexte, que comptes, assiette et dépenses lisent"),
+}
+
 #: Les fonctions dont les deux exemplaires ne disent pas la même chose, et
 #: pourquoi : leur confrontation est attendue rouge (``xfail`` strict), et
 #: rougit la suite le jour où ils se rejoignent, pour qu'on retire la ligne.
@@ -619,6 +854,10 @@ ECARTS_DECLARES = {
         "le paquet ne porte pas les populations publiées à plusieurs âges "
         "(cnav_*), dont seul le coût lit les facteurs par tranche d'âge : "
         "21 populations au portage, 24 en Python",
+    (BILAN, "ecart_pour"):
+        "l'interpolation ne s'associe pas de même : (Δécart × Δvaleur) / largeur "
+        "en Python, Δécart × (Δvaleur / largeur) au portage — un écart au dernier "
+        "bit, sur l'écart de taux que la prose cite et que le site n'écrit pas",
 }
 
 
@@ -705,6 +944,7 @@ def _appeler(appeler, arguments: tuple, source, cote: str):
         return (_objet_python if cote == "python" else _objet_javascript)(nom)
 
     positionnels = [source if a is SOURCE else
+                    (DATA / a if cote == "python" else _paquet()) if isinstance(a, SousRacine) else
                     objet(a) if isinstance(a, Objet) else
                     dt.date.fromisoformat(a) if isinstance(a, Jour) and cote == "python" else
                     str(a) if isinstance(a, Jour) else a
@@ -722,7 +962,9 @@ def _valeurs(fonction: str, grille: Grille, objet: str, cote: str):
     if cote == "python":
         porteur, nom, source = _objet_python(objet), fonction, DATA
     else:
-        porteur, nom, source = _objet_javascript(objet), en_camel(fonction), _paquet()
+        porteur, nom, source = (_objet_javascript(objet), grille.nom_js or en_camel(fonction),
+                                _paquet()[grille.cle_du_paquet] if grille.cle_du_paquet
+                                else _paquet())
     if grille.appels is None:
         valeurs = [getattr(porteur, nom)]
     elif grille.module_js and cote == "javascript":
@@ -766,19 +1008,50 @@ def test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes(fichier, fonction
     assert not tous, f"{len(tous)} écarts ; les premiers :\n" + "\n".join(tous[:15])
 
 
+@pytest.mark.parametrize(("fichier", "fonction"), [
+    pytest.param(fichier, nom, id=f"{Path(fichier).stem}.{nom}")
+    for fichier, nom in sorted(PAR_L_APPELANT)])
+def test_la_fonction_gardee_se_confronte_par_son_appelant(fichier, fonction):
+    """Une fonction gardée que sa forme empêche de confronter seule l'est par
+    la grille d'une fonction qui l'appelle des deux côtés, rejouée ici : le
+    Python l'appelle, et le portage aussi, sous son nom."""
+    appelant, _ = PAR_L_APPELANT[(fichier, fonction)]
+    assert appelant in GRILLES, appelant
+    # Elle est appelée en Python hors de sa définition : par l'appelant, ou,
+    # pour un chargeur, par les objets de ce test, que l'appelant confronte.
+    sources = (RACINE / fichier).read_text(encoding="utf-8") + Path(__file__).read_text(
+        encoding="utf-8")
+    assert f"{fonction}(" in sources.replace(f"def {fonction}(", ""), fonction
+    test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes(*appelant)
+
+
+def _declarees(liste: dict, test: str) -> set[tuple[str, str]]:
+    return {(fichier, nom) for fichier, paire in liste.items()
+            for nom, entree in ((paire or {}).get("gardees") or {}).items()
+            if (entree or {}).get("test") == test}
+
+
 def test_chaque_grille_est_declaree_dans_la_liste_et_reciproquement():
-    """La colonne ``test`` de la liste nomme ce test pour chaque fonction qui a
-    sa grille ici, et pour elles seules."""
+    """La colonne ``test`` de la liste nomme ce test pour chaque fonction
+    gardée qui a sa grille ici, et pour elles seules ; et le test de
+    l'appelant pour chaque fonction confrontée par son appelant. Une grille
+    qui n'est pas celle d'une fonction gardée est celle d'un appelant."""
     liste = yaml.safe_load(LISTE.read_text(encoding="utf-8")) or {}
-    declarees = {(fichier, nom) for fichier, paire in liste.items()
-                 for nom, entree in ((paire or {}).get("gardees") or {}).items()
-                 if (entree or {}).get("test") == CE_TEST}
     gardees = {(fichier, nom) for fichier, paire in liste.items()
                for nom in ((paire or {}).get("gardees") or {})}
-    assert set(GRILLES) <= gardees, sorted(set(GRILLES) - gardees)
-    assert declarees == set(GRILLES), {
-        "grille sans la ligne test": sorted(set(GRILLES) - declarees),
-        "ligne test sans grille": sorted(declarees - set(GRILLES))}
+    appelants = {appelant for appelant, _ in PAR_L_APPELANT.values()}
+    assert set(GRILLES) <= gardees | appelants, sorted(set(GRILLES) - gardees - appelants)
+    assert set(PAR_L_APPELANT) <= gardees, sorted(set(PAR_L_APPELANT) - gardees)
+    avec_grille = set(GRILLES) & gardees
+    declarees = _declarees(liste, CE_TEST)
+    assert declarees == avec_grille, {
+        "grille sans la ligne test": sorted(avec_grille - declarees),
+        "ligne test sans grille": sorted(declarees - avec_grille)}
+    par_l_appelant = _declarees(liste, PAR_SON_APPELANT)
+    assert par_l_appelant == set(PAR_L_APPELANT), {
+        "confrontée par son appelant sans la ligne test":
+            sorted(set(PAR_L_APPELANT) - par_l_appelant),
+        "ligne test sans appelant": sorted(par_l_appelant - set(PAR_L_APPELANT))}
 
 
 def test_l_ecart_d_un_bit_se_voit():

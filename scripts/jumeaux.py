@@ -575,7 +575,8 @@ def ecarts_de_la_liste(racine: Path, fichiers: list[str]) -> list[str]:
     déclarée qui n'en est pas une ; une fonction en double que la liste ne
     déclare pas, ou qu'elle déclare deux fois ; une entrée périmée ; un
     lecteur qui est un test, un jumeau du moteur, ou qui ne nomme pas la
-    fonction ; un test de confrontation qui n'existe pas."""
+    fonction ; une fonction gardée sans test qui la confronte à son double,
+    ou dont le test n'existe pas."""
     liste = lire_la_liste(racine)
     par_python = {paire.python: paire for paire in paires(racine, fichiers)[0]}
     moteur = set(par_python) - set(liste)
@@ -606,7 +607,9 @@ def ecarts_de_la_liste(racine: Path, fichiers: list[str]) -> list[str]:
             elif lecteur not in fichiers or not re.search(
                     rf"\b{re.escape(nom)}\b", _lire(racine, lecteur)):
                 ecarts.append(f"{python} : {nom} a pour lecteur {lecteur}, qui ne la nomme pas")
-            if test and not _le_test_existe(racine, test):
+            if not test:
+                ecarts.append(f"{python} : {nom} est gardée sans test qui la confronte à son double")
+            elif not _le_test_existe(racine, test):
                 ecarts.append(f"{python} : {nom} est confrontée par {test}, qui n'existe pas")
     return ecarts
 

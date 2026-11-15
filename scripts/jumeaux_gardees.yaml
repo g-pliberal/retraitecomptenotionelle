@@ -5,7 +5,7 @@
 #
 # - gardée (`gardees`) : le fichier Python qui la lit, ni test ni jumeau du
 #   moteur — ou son propre fichier, quand une fonction gardée l'appelle —, et
-#   le test qui confronte ses deux exemplaires, s'il existe déjà ;
+#   et le test qui confronte ses deux exemplaires, obligatoire ;
 # - ou une règle du moteur (`au_moteur`), que seuls le moteur Python et des
 #   tests lisent en Python : elle part avec lui.
 #
@@ -13,7 +13,7 @@
 # partent ou se tranchent. `tests/test_jumeaux.py` confronte la liste au
 # dépôt (`jumeaux.ecarts_de_la_liste`) : une fonction écrite des deux côtés
 # sans être déclarée, une entrée périmée, un lecteur qui part ou ne la nomme
-# pas, un test qui n'existe pas, rougissent. Dressée le 15 novembre 2026 par
+# pas, une fonction gardée sans test, un test qui n'existe pas, rougissent. Dressée le 15 novembre 2026 par
 # les noms que l'arbre syntaxique du lecteur emploie et la fermeture de ses
 # imports. Le test de confrontation, `tests/test_jumeaux_au_bit.py`, éprouve
 # chaque fonction gardée qui y a sa grille, au bit près, et la nomme en colonne
@@ -24,7 +24,11 @@
 # d'`indemnite_csg.py` et de `primes.py`, ces deux-là que seul le moteur
 # appelle ; ceux de `calendrier.py`, `config.py`, `macro.py`,
 # `prelevements_historiques.py`, `contributions_equilibre.py`, `frontiere.py`
-# et `regimes.py` à l'étape 7d.
+# et `regimes.py` à l'étape 7d ; ceux de `contexte.py`, `bilan.py` et
+# `equilibre.py` à l'étape 7e, où six fonctions que leur forme empêche de
+# confronter seules le sont par leur appelant, et trois de `contexte.py` par
+# `tests/test_agregats.py`, qui confronte le coût calculé à la table figée
+# que le portage lit.
 
 src/retraite_notionnelle/calendrier.py:
   gardees:
@@ -54,17 +58,17 @@ src/retraite_notionnelle/config.py:
 
 src/retraite_notionnelle/contexte.py:
   gardees:
-    _agregat: {lecteur: src/retraite_notionnelle/contexte.py}
-    _donnee: {lecteur: src/retraite_notionnelle/contexte.py}
-    assiette: {lecteur: scripts/construire_donnees.py}
-    avantages: {lecteur: scripts/construire_donnees.py}
-    bilan: {lecteur: scripts/bilan_compte.py}
-    comptes: {lecteur: scripts/construire_donnees.py}
-    cout: {lecteur: scripts/construire_donnees.py}
-    depenses: {lecteur: scripts/construire_donnees.py}
-    distribution: {lecteur: scripts/construire_donnees.py}
-    simulateur: {lecteur: scripts/bilan_compte.py}
+    _agregat: {lecteur: src/retraite_notionnelle/contexte.py, test: tests/test_agregats.py::test_le_solde_fige_est_celui_que_le_modele_calcule}
+    _donnee: {lecteur: src/retraite_notionnelle/contexte.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_se_confronte_par_son_appelant}
+    assiette: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    avantages: {lecteur: scripts/construire_donnees.py, test: tests/test_agregats.py::test_les_avantages_figes_sont_ceux_que_le_modele_calcule}
+    comptes: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    cout: {lecteur: scripts/construire_donnees.py, test: tests/test_agregats.py::test_le_solde_fige_est_celui_que_le_modele_calcule}
+    depenses: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    simulateur: {lecteur: scripts/bilan_compte.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
   au_moteur:
+    - bilan
+    - distribution
     - frontiere
     - inventaire_avantages
     - pour
@@ -72,8 +76,8 @@ src/retraite_notionnelle/contexte.py:
 
 src/retraite_notionnelle/contributions_equilibre.py:
   gardees:
-    bareme: {lecteur: src/retraite_notionnelle/integration_complementaires.py}
-    charger_contributions_equilibre: {lecteur: scripts/construire_donnees.py}
+    bareme: {lecteur: src/retraite_notionnelle/integration_complementaires.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_se_confronte_par_son_appelant}
+    charger_contributions_equilibre: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_se_confronte_par_son_appelant}
   au_moteur:
     - contributions_d_une_carriere
     - part_salariale_annualisee
@@ -91,18 +95,18 @@ src/retraite_notionnelle/donnees/assiette.py:
 
 src/retraite_notionnelle/donnees/bilan.py:
   gardees:
-    annee: {lecteur: scripts/bilan_compte.py}
-    charger_bilan: {lecteur: scripts/mesures_prose.py}
-    coefficient: {lecteur: scripts/construire_donnees.py}
-    depense: {lecteur: scripts/construire_donnees.py}
-    ecart_pour: {lecteur: scripts/mesures_prose.py}
-    exemple: {lecteur: scripts/mesures_prose.py}
-    part_pib: {lecteur: scripts/construire_donnees.py}
-    ressources: {lecteur: scripts/mesures_prose.py}
-    ressources_de: {lecteur: scripts/construire_donnees.py}
-    sensibilite: {lecteur: scripts/construire_donnees.py}
-    solde: {lecteur: scripts/construire_donnees.py}
+    charger_bilan: {lecteur: scripts/mesures_prose.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    ecart_pour: {lecteur: scripts/mesures_prose.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    part_pib: {lecteur: scripts/mesures_prose.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
   au_moteur:
+    - annee
+    - coefficient
+    - depense
+    - exemple
+    - ressources
+    - ressources_de
+    - sensibilite
+    - solde
     - solde_meur
 
 src/retraite_notionnelle/donnees/caracteristiques.py:
@@ -152,27 +156,26 @@ src/retraite_notionnelle/donnees/effectifs.py:
 
 src/retraite_notionnelle/donnees/equilibre.py:
   gardees:
-    annees: {lecteur: scripts/age_depart_csp.py}
-    annees_engagements: {lecteur: scripts/construire_donnees.py}
-    depense: {lecteur: scripts/chiffrage_plf.py}
-    derniere_annee_transferts: {lecteur: src/retraite_notionnelle/donnees/equilibre.py}
-    engagements: {lecteur: scripts/construire_donnees.py}
-    fiabilite: {lecteur: scripts/construire_donnees.py}
-    indice: {lecteur: scripts/construire_donnees.py}
-    indice_croissance: {lecteur: scripts/mesures_prose.py}
-    part: {lecteur: scripts/age_conjoncturel.py}
-    part_contributive: {lecteur: scripts/construire_donnees.py}
-    periodes: {lecteur: scripts/construire_donnees.py}
-    premiere_annee_transferts: {lecteur: src/retraite_notionnelle/donnees/equilibre.py}
-    ressource: {lecteur: src/retraite_notionnelle/cout.py}
-    solde: {lecteur: scripts/chiffrage_plf.py}
-    transfert: {lecteur: src/retraite_notionnelle/donnees/equilibre.py}
-    transfert_organisme: {lecteur: scripts/scenarios_meres.py}
-    transfert_part_pib: {lecteur: src/retraite_notionnelle/donnees/equilibre.py}
-    transfert_supprime_part_pib: {lecteur: src/retraite_notionnelle/donnees/equilibre.py}
-    valeur: {lecteur: scripts/bilan_compte.py}
-    variante_du_scenario: {lecteur: scripts/grille_large.py}
-    variantes_disponibles: {lecteur: scripts/construire_donnees.py}
+    annees: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    annees_engagements: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    depense: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    derniere_annee_transferts: {lecteur: src/retraite_notionnelle/donnees/equilibre.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    engagements: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    fiabilite: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    indice: {lecteur: scripts/mesures_prose.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    indice_croissance: {lecteur: scripts/mesures_prose.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    part: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    part_contributive: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    periodes: {lecteur: src/retraite_notionnelle/donnees/equilibre.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    premiere_annee_transferts: {lecteur: src/retraite_notionnelle/donnees/equilibre.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    ressource: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    transfert: {lecteur: src/retraite_notionnelle/donnees/equilibre.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    transfert_organisme: {lecteur: scripts/scenarios_meres.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    transfert_part_pib: {lecteur: src/retraite_notionnelle/donnees/equilibre.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    transfert_supprime_part_pib: {lecteur: src/retraite_notionnelle/donnees/equilibre.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    valeur: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    variante_du_scenario: {lecteur: scripts/grille_large.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    variantes_disponibles: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
   au_moteur:
     - annees_ventilees
     - depense_maximale_toutes_variantes
@@ -180,6 +183,7 @@ src/retraite_notionnelle/donnees/equilibre.py:
     - part_groupe
     - premiere_annee_eec
     - ressource_groupe
+    - solde
     - solde_eec
     - transfert_part_ressources
 
@@ -254,7 +258,7 @@ src/retraite_notionnelle/donnees/patrimoine.py:
 
 src/retraite_notionnelle/donnees/prelevements_historiques.py:
   gardees:
-    charger_prelevements_historiques: {lecteur: scripts/construire_donnees.py}
+    charger_prelevements_historiques: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_se_confronte_par_son_appelant}
     csg_deductible_pension: {lecteur: src/retraite_notionnelle/effet_retour.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     en_vigueur: {lecteur: src/retraite_notionnelle/donnees/prelevements_historiques.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     valeur: {lecteur: src/retraite_notionnelle/donnees/prelevements_historiques.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
@@ -285,10 +289,10 @@ src/retraite_notionnelle/donnees/primes.py:
 
 src/retraite_notionnelle/donnees/regimes.py:
   gardees:
-    _en_vigueur: {lecteur: src/retraite_notionnelle/donnees/regimes.py}
+    _en_vigueur: {lecteur: src/retraite_notionnelle/donnees/regimes.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_se_confronte_par_son_appelant}
     bornes_assiette_en_pass: {lecteur: scripts/solde_fusion.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     couvre: {lecteur: src/retraite_notionnelle/donnees/regimes.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
-    dater_les_taux_moyens: {lecteur: src/retraite_notionnelle/donnees/regimes.py}
+    dater_les_taux_moyens: {lecteur: src/retraite_notionnelle/donnees/regimes.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_se_confronte_par_son_appelant}
     effet: {lecteur: src/retraite_notionnelle/donnees/regimes.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     morceau_d_annees: {lecteur: src/retraite_notionnelle/donnees/regimes.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     periode: {lecteur: src/retraite_notionnelle/revalorisation_servie.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}

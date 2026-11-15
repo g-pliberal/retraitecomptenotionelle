@@ -356,6 +356,8 @@ def test_la_liste_des_fonctions_gardees_se_verifie_seule(tmp_path):
                       "lecteur: src/retraite_notionnelle/droit/liquider.py"): "droit/liquider.py",
         juste.replace("tests/test_taux.py::test_placement", "tests/test_taux.py::test_absent"):
             "test_absent",
+        # une fonction gardée qu'aucun test ne confronte à son double
+        juste.replace(", test: tests/test_taux.py::test_placement", ""): "sans test",
         # une paire déclarée qui n'en est pas une
         juste + "src/retraite_notionnelle/absent.py:\n  au_moteur: []\n": "absent.py",
     }
