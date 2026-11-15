@@ -45,7 +45,7 @@ ENTREES = frozenset({"Simulateur", "ScenarioActuel", "Carriere", "reversion"})
 FICHIERS = (
     "test_avantages.py",
     "test_capitalisation.py", "test_chronologie.py", "test_cnracl.py",
-    "test_coefficients_agirc_1947.py",
+   
     "test_controle_drees_panorama.py", "test_cout.py",
     "test_cout_age_depart.py",
     "test_cycle_de_vie_references.py", "test_cycle_de_vie_script.py",
@@ -54,13 +54,13 @@ FICHIERS = (
     "test_estimation_officielle.py", "test_etranger.py",
     "test_facade.py", "test_facade_jumeau.py",
     "test_facteurs_depense.py", "test_fiche_date_d_entree.py", "test_fiche_des_liberaux.py",
-    "test_flux_fonction_publique.py", "test_fonction_publique_etat.py",
+    "test_flux_fonction_publique.py",
     "test_garantie_par_sexe.py", "test_grille_large.py",
     "test_independants.py", "test_indexation_programme.py", "test_ines.py",
    
     "test_limite_age.py", "test_marins.py", "test_mayotte.py",
-    "test_minimum_pension_sncf.py", "test_moteur.py", "test_outre_mer.py",
-    "test_parents_trois_enfants.py", "test_pcv_sante.py", "test_plafond_majoration_enfants.py",
+    "test_moteur.py", "test_outre_mer.py",
+    "test_pcv_sante.py", "test_plafond_majoration_enfants.py",
     "test_pont.py", "test_prelevements_historiques.py", "test_primes_soumises_a_retenue.py",
     "test_priorite_enfants.py", "test_regle_de_chacun.py",
     "test_remuneration.py", "test_retablissement.py",

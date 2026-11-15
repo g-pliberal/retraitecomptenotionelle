@@ -22,9 +22,9 @@ from __future__ import annotations
 
 import pytest
 
-from retraite_notionnelle.carriere import Carriere, Metier
-from retraite_notionnelle.droit import ouvrir
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.carriere import Metier
+
+from facade import Carriere, Simulateur, ouvrir
 
 ETAT = "fonctionnaire_etat"
 HOSPITALIERE_ACTIVE = "fonctionnaire_hospitalier_actif"
@@ -51,7 +51,7 @@ def _carriere(simulateur: Simulateur, naissance: int, debut: float, liquidation:
 
 def _depart(simulateur: Simulateur, carriere: Carriere, regime: str = "fonction_publique_etat"):
     actuel = simulateur.scenario_actuel
-    periode = actuel.catalogue[regime].periode(carriere.annee_liquidation)
+    periode = simulateur.catalogue[regime].periode(carriere.annee_liquidation)
     return ouvrir.depart_parent_trois_enfants(actuel, periode, carriere)
 
 

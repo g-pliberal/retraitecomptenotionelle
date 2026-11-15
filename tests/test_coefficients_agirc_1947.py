@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import math
 import shutil
 import subprocess
 from pathlib import Path
@@ -21,8 +22,10 @@ from pathlib import Path
 import pytest
 import yaml
 
-from retraite_notionnelle.droit import liquider
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.droit.liquider import _COEFFICIENTS_CONVENTION_1947
+
+from facade import Simulateur, liquider
+
 
 RACINE = Path(__file__).resolve().parents[1]
 FICHE = RACINE / "data" / "reference" / "regles" / "coefficients_anticipation_agirc_1947.yaml"
@@ -56,7 +59,7 @@ def test_la_table_du_moteur_est_celle_que_la_fiche_cite():
     1,25, ce que les périodes de 1947 à 1954 servent par la majoration par âge
     seul."""
     parametres = _parametres()
-    assert liquider._COEFFICIENTS_CONVENTION_1947 == {
+    assert _COEFFICIENTS_CONVENTION_1947 == {
         int(age): coefficient for age, coefficient in parametres["anticipation"].items()}
     assert {int(age): coefficient for age, coefficient in parametres["ajournement"].items()} == {
         66: 1.05, 67: 1.10, 68: 1.15, 69: 1.20, 70: 1.25}
@@ -121,7 +124,7 @@ def test_le_paquet_porte_la_table_aux_seules_periodes_de_1947_a_1954():
             assert periode["surcote_points"] == "aucune"
 
 
-#: Le jumeau JavaScript, sur les mêmes âges.
+#: Le portage, sur les mêmes âges : la table seule, et par la période.
 _JUMEAU = """
 import { coefficientConvention1947, coefficientPourAge }
   from "./moteur/js/droit/liquider.js";
@@ -134,9 +137,14 @@ process.stdout.write(JSON.stringify({
 """
 
 
-def test_le_portage_javascript_rend_la_meme_table():
+def test_le_portage_javascript_rend_la_table_de_la_fiche():
+    """De cinquante à soixante-quinze ans, mois par mois : la ligne de l'âge
+    révolu, la première avant cinquante-cinq ans, un à soixante-cinq ans et
+    au-delà."""
+    anticipation = {int(age): c for age, c in _parametres()["anticipation"].items()}
     ages = [50 + mois / 12 for mois in range(0, 12 * 25)]
-    attendu = [liquider.coefficient_convention_1947(age) for age in ages]
+    attendu = [1.0 if math.floor(age + 1e-9) >= 65
+               else anticipation[max(55, math.floor(age + 1e-9))] for age in ages]
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     execution = subprocess.run(

@@ -31,9 +31,9 @@ from __future__ import annotations
 
 import pytest
 
-from retraite_notionnelle.carriere import Carriere, Metier
-from retraite_notionnelle.simulateur import Simulateur
-from retraite_notionnelle.droit import ouvrir
+from retraite_notionnelle.carriere import Metier
+
+from facade import Carriere, Simulateur, ouvrir
 
 
 @pytest.fixture(scope="module")

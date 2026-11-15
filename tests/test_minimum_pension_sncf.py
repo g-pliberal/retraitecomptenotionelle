@@ -31,10 +31,10 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import Carriere, Metier
+from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.droit.commun import date_d_effet
-from retraite_notionnelle.simulateur import Simulateur
+
+from facade import Carriere, Simulateur, commun
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -81,7 +81,7 @@ def test_la_pension_d_anciennete_est_portee_au_minimum(simulateur):
     cinquante-cinq ans en février 2010 : la pension d'ancienneté est portée au
     minimum, 3 379,38 € par trimestre revalorisés de 1 % au 1er avril 2009."""
     carriere, _, pensions, minimum = _liquider(simulateur, 1955, 55.0, _agent(20.0))
-    assert date_d_effet(carriere) == "2010-02-01"
+    assert commun.date_d_effet(carriere) == "2010-02-01"
     pension = pensions["sncf"]
     assert pension.montant == pytest.approx(MINIMUM_FEVRIER_2010, abs=0.01)
     assert minimum is not None and minimum.libelle == "Minimum de pension de la SNCF"
@@ -104,7 +104,7 @@ def test_avant_le_1er_juillet_2008_aucun_minimum_n_est_lu(simulateur):
     """Le règlement de retraites d'avant le décret de 2008, que l'index ne porte
     pas : aucun montant du minimum n'est lu, et le modèle n'en sert pas."""
     carriere, _, pensions, minimum = _liquider(simulateur, 1952, 55.0, _agent(20.0))
-    assert date_d_effet(carriere) == "2007-02-01"
+    assert commun.date_d_effet(carriere) == "2007-02-01"
     assert minimum is None
     assert pensions["sncf"].montant < MINIMUM_2008
 
@@ -114,7 +114,7 @@ def test_depuis_2017_la_pension_decotee_n_a_pas_de_minimum(simulateur):
     et un ans en février 2019, avec trente et un ans de services, sous la durée
     requise et sous l'âge d'annulation de la décote, il n'a pas de minimum."""
     carriere, resultat, pensions, minimum = _liquider(simulateur, 1968, 51.0, _agent(20.0))
-    assert date_d_effet(carriere) == "2019-02-01"
+    assert commun.date_d_effet(carriere) == "2019-02-01"
     assert resultat.taux_liquidation < 0.75
     assert minimum is None
     assert pensions["sncf"].montant < MINIMUM_FEVRIER_2019
@@ -124,7 +124,7 @@ def test_depuis_2017_l_age_d_annulation_de_la_decote_ouvre_le_minimum(simulateur
     """Le même agent parti à cinquante-six ans, en février 2024, au-delà de l'âge
     d'annulation de la décote : sa pension est portée au minimum."""
     carriere, _, pensions, minimum = _liquider(simulateur, 1968, 56.0, _agent(20.0))
-    assert date_d_effet(carriere) == "2024-02-01"
+    assert commun.date_d_effet(carriere) == "2024-02-01"
     assert minimum is not None
     assert pensions["sncf"].montant == pytest.approx(MINIMUM_FEVRIER_2024, abs=0.01)
 
@@ -136,7 +136,7 @@ def test_l_agent_qui_avait_l_age_avant_2017_garde_le_minimum_sans_le_taux_plein(
     garde l'article 15 d'avant 2011, et le minimum sans le taux plein (décret
     n° 2011-291, article 18, II)."""
     carriere, resultat, pensions, minimum = _liquider(simulateur, 1966, 51.0, _agent(20.0))
-    assert date_d_effet(carriere) == "2017-02-01"
+    assert commun.date_d_effet(carriere) == "2017-02-01"
     assert resultat.taux_liquidation < 0.75
     assert minimum is not None
     assert pensions["sncf"].montant == pytest.approx(MINIMUM_FEVRIER_2017, abs=0.01)
@@ -161,7 +161,7 @@ def test_vingt_cinq_ans_atteints_en_2019_demandent_vingt_six_ans(simulateur, pri
                Metier(affiliation="salarie_prive_non_cadre", age_debut=prive_depuis,
                       niveau_salaire=0.3)]
     carriere, _, pensions, minimum = _liquider(simulateur, 1967, 56.0, metiers)
-    assert date_d_effet(carriere) == "2023-02-01"
+    assert commun.date_d_effet(carriere) == "2023-02-01"
     assert carriere.date_de_service(["agent_sncf"], 25.0) == DateMois(2019, 6)
     assert carriere.duree_de_service(["agent_sncf"]) == pytest.approx(
         26.5 if porte else 25.5)
