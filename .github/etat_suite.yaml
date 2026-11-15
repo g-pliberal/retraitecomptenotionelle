@@ -1,17 +1,17 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: rouge
-sources: e828f952109a3edf0a86f8144ef85b167fbb5eaa
-date: 2026-11-15T22:24:36Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43767290269
+sources: 15fc996bb591738a4028f3b3be5bc721e658570d
+date: 2026-11-15T22:47:45Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43769421164
 echecs:
   - "FAILED tests/test_web_revues.py::test_la_methode_dit_comment_le_site_est_construit - AssertionError: href=\"https://github.com/g-pliberal/retraitecomptenotionelle/tree/main/src\""
 presomptions: vert
 durees:
-  fabrique: 186
-  suite: 618
-  tranche_1: 367
-  tranche_2: 256
-  tranche_3: 618
-  tranche_4: 414
-  garde: 201
+  fabrique: 641
+  suite: 463
+  tranche_1: 312
+  tranche_2: 288
+  tranche_3: 463
+  tranche_4: 458
+  garde: 129
