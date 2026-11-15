@@ -2432,7 +2432,7 @@ TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "durees_requises": ("trimestres",),
     "minimum_contributif": ("regle", "valeurs"),
     "minimum_garanti": ("montant", "reference"),
-    "minimum_vieillesse": ("plafond",),
+    "minimum_vieillesse": ("plafond", "plafond_couple"),
     "revalorisations_pensions": ("generale",),
     "reversions": ("fiche_du_regime", "limite_cumul", "majoration_enfant", "minimum",
                    "plafond_majoration", "version"),
@@ -2630,6 +2630,9 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "commun": ("ligne_cotisee",),
     "completer": ("avpf_retenue", "borne_avec_les_droits_d_avant_1973", "complement_minimum",
                   "majoration_ouverte", "plancher_du_regime", "selon_la_regle"),
+    # L'étape « foyer et net » entière : le portage rend le ``Foyer`` du
+    # journal, que la façade lit sous le type du Python.
+    "foyer": ("foyer_et_net",),
     "liquider": ("abattement_points", "age_de_la_duree_atteinte", "annees_au_prorata",
                  "borne_de_la_duree", "decote_opposable", "duree_du_regime_aligne",
                  "duree_proratisation", "majoration_des_points_de_1952_a_1972_d_avant_2026",

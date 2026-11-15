@@ -159,6 +159,7 @@ import * as commun from "../../moteur/js/droit/commun.js";
 import * as completer from "../../moteur/js/droit/completer.js";
 import * as cumul from "../../moteur/js/droit/cumul.js";
 import * as departs from "../../moteur/js/droit/departs.js";
+import * as foyerEtape from "../../moteur/js/droit/foyer.js";
 import { foyerEtNet } from "../../moteur/js/droit/foyer.js";
 import * as invalidite from "../../moteur/js/droit/invalidite.js";
 import {
@@ -1973,7 +1974,9 @@ ENTREES_DE_LA_FACADE["simulateur.constructeur"] = (simulateur, constructeur, met
 // Les règles du droit, par la façade : un bloc à part (action 161).
 
 /** Les modules du droit dont la façade sert des règles, sous leur nom. */
-const MODULES_DU_DROIT = { commun, completer, liquider, ouvrir, reversion, revalorisation };
+const MODULES_DU_DROIT = {
+  commun, completer, foyer: foyerEtape, liquider, ouvrir, reversion, revalorisation,
+};
 
 /**
  * Une règle du droit, sous les noms du Python (`regle_du_droit` de `pont.py`,

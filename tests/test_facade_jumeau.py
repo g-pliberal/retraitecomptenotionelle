@@ -29,6 +29,7 @@ from retraite_notionnelle.config import RACINE_PROJET, ContributionEtat, Paramet
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
+from retraite_notionnelle.droit import foyer as foyer_python
 from retraite_notionnelle.droit import liquidation as liquidation_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
@@ -316,6 +317,8 @@ APPELS_DES_TABLES = [
     ("minimum_garanti", "reference", lambda s: (2010, 7)),
     ("minimum_vieillesse", "plafond", lambda s: (2025,)),
     ("minimum_vieillesse", "plafond", lambda s: (1930,)),
+    ("minimum_vieillesse", "plafond_couple", lambda s: (2026,)),
+    ("minimum_vieillesse", "plafond_couple", lambda s: (1990,)),
     ("revalorisations_pensions", "generale",
      lambda s: (datetime.date(1986, 12, 31), datetime.date(1988, 12, 31), False, None)),
     ("revalorisations_pensions", "generale",
@@ -451,6 +454,17 @@ _POLYPENSIONNE = EligibleMinimum(
 _PERIODES_COTISEES = {"majoration": "periodes_cotisees", "seuil_trimestres_cotises": 120}
 
 
+def _en_couple(s, annee: int, conjoint: str | None = None):
+    """Un salarié qui a 66 ans en ``annee``, marié à une conjointe née en
+    ``conjoint`` qui déclare 4 000 € de ressources, ou seul."""
+    return s.carriere_simple(
+        annee_naissance=annee - 66, sexe="H", affiliation="salarie_prive_non_cadre",
+        age_liquidation=66.0, age_debut=20.0, niveau_salaire=0.3,
+        conjoint=None if conjoint is None else {
+            "naissance": conjoint, "sexe": "F", "mariage": None, "ressources": 4000.0,
+            "invalidite": None})
+
+
 #: Des appels de chaque règle du droit que la façade sert
 #: (``pont.REGLES_DE_LA_FACADE``) : ``(module, règle, arguments)``, les
 #: arguments bâtis sur le simulateur de chaque côté — son moteur, une période
@@ -573,6 +587,18 @@ APPELS_DES_REGLES = [
     ("completer", "selon_la_regle", lambda s: (_ARTISAN, {"majoration": "sans_distinction"}, 0)),
     ("completer", "selon_la_regle", lambda s: (_POLYPENSIONNE, _PERIODES_COTISEES, 24)),
     ("completer", "selon_la_regle", lambda s: (_ARTISAN, _PERIODES_COTISEES, 24)),
+    ("foyer", "foyer_et_net", lambda s: (s.scenario_actuel, "assure", "2026-06-01", 2026,
+                                         6000.0, True)),
+    ("foyer", "foyer_et_net", lambda s: (s.scenario_actuel, "assure", "2026-06-01", 2026,
+                                         6000.0, True, None, _en_couple(s, 2026, "1970"))),
+    ("foyer", "foyer_et_net", lambda s: (s.scenario_actuel, "assure", "2026-06-01", 2026,
+                                         1000.0, True, None, _en_couple(s, 2026, "1956"))),
+    ("foyer", "foyer_et_net", lambda s: (s.scenario_actuel, "assure", "1990-06-01", 1990,
+                                         0.0, True, None, _en_couple(s, 1990, "1940"))),
+    ("foyer", "foyer_et_net", lambda s: (s.scenario_actuel, "assure", "1970-06-01", 1970,
+                                         300.0, True, None, _en_couple(s, 1970))),
+    ("foyer", "foyer_et_net", lambda s: (s.scenario_actuel, "assure", None, 2026, 6000.0,
+                                         False)),
     ("reversion", "mois_de_mariage", lambda s: ("1990-06-15", "2000-03-15")),
     ("reversion", "mois_de_mariage", lambda s: ("2000-06-01", "1999-05-01")),
     ("reversion", "_cumuler",
@@ -610,7 +636,7 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
     servi = facade.Simulateur(parametres)
     jumeau = simulateur_python.Simulateur(parametres)
     modules = {"commun": commun_python, "completer": completer_python,
-               "liquider": liquider_python, "ouvrir": ouvrir_python,
+               "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
                "reversion": reversion_python, "revalorisation": revalorisation_python}
     ecarts = []
     for module, regle, arguments in APPELS_DES_REGLES:
@@ -618,8 +644,15 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
                      else getattr(facade, module), regle)(*arguments(servi))
         refait = getattr(modules[module], regle)(*arguments(jumeau))
         if dataclasses.is_dataclass(refait):
-            # Un éligible que le jumeau rend : le portage l'écrit sous ses noms,
-            # que la façade a lus ; il se compare champ à champ.
+            # Un éligible ou un foyer que le jumeau rend : le portage l'écrit
+            # sous ses noms, que la façade a lus ; il se compare champ à champ.
+            # Une somme vide du jumeau vaut l'entier 0, que la façade lit 0.0,
+            # sous le type que le champ annonce : la valeur seule se compare.
+            refait = dataclasses.replace(refait, **{
+                champ.name: float(getattr(refait, champ.name))
+                for champ in dataclasses.fields(refait)
+                if type(getattr(refait, champ.name)) is int
+                and type(getattr(lu, champ.name)) is float})
             if repr(lu) != repr(refait):
                 ecarts.append(f"{module}.{regle} : la façade lit {lu!r}, le jumeau rend "
                               f"{refait!r}")

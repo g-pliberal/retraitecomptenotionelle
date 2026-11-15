@@ -86,6 +86,7 @@ from retraite_notionnelle.droit import commun as _commun
 from retraite_notionnelle.droit import compter as _compter
 from retraite_notionnelle.droit import coordonner as _coordonner
 from retraite_notionnelle.droit import completer as _completer
+from retraite_notionnelle.droit import foyer as _foyer
 from retraite_notionnelle.droit import liquidation as _liquidation
 from retraite_notionnelle.droit import liquider as _liquider
 from retraite_notionnelle.droit import ouvrir as _ouvrir
@@ -600,6 +601,8 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
 #: ``droit.ouvrir``, leurs règles servies par le portage.
 commun = Regles("commun", _commun)
 completer = Regles("completer", _completer)
+#: ``droit.foyer`` : l'étape « foyer et net », rendue sous le type ``Foyer``.
+foyer = Regles("foyer", _foyer)
 liquider = Regles("liquider", _liquider)
 ouvrir = Regles("ouvrir", _ouvrir)
 #: Les règles du module de la réversion, sous un nom à elles : ``reversion``
@@ -1007,7 +1010,7 @@ MARQUE = "sur_le_moteur_python"
 #: Le jumeau Python de chaque entrée qu'un fichier basculé importe d'ici.
 JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
            "reversion": _reversion.reversion, "commun": _commun, "completer": _completer,
-           "liquider": _liquider, "ouvrir": _ouvrir, "releve": _releve,
+           "foyer": _foyer, "liquider": _liquider, "ouvrir": _ouvrir, "releve": _releve,
            "regles_de_la_reversion": _reversion, "revalorisation": _revalorisation,
            "liquidation": _liquidation, "coordonner": _coordonner, "compter": _compter,
            "acquerir": _acquerir}

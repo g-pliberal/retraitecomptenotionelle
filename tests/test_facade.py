@@ -30,6 +30,7 @@ from retraite_notionnelle.config import (RACINE_PROJET, ContributionEtat, Neutra
 from retraite_notionnelle.donnees.chargement import DonneeInsuffisante, Fiabilite
 from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
+from retraite_notionnelle.droit import foyer as foyer_python
 from retraite_notionnelle.droit import liquidation as liquidation_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
@@ -44,7 +45,7 @@ from retraite_notionnelle.scenarios.notionnel import ResultatNotionnel
 from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Comparaison
 
 import facade
-from facade import (Carriere, NonTransmissible, Simulateur, commun, completer, liquider,
+from facade import (Carriere, NonTransmissible, Simulateur, commun, completer, foyer, liquider,
                     ouvrir, regles_de_la_reversion, reversion)
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
@@ -684,8 +685,8 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     with pytest.raises(ValueError, match="ouvrir.ouvrir"):
         pont.regle_du_droit("ouvrir", "ouvrir", float)
     assert facade.REGLES is pont.REGLES_DE_LA_FACADE
-    assert set(facade.REGLES) == {"commun", "completer", "liquider", "ouvrir", "reversion",
-                                  "revalorisation"}
+    assert set(facade.REGLES) == {"commun", "completer", "foyer", "liquider", "ouvrir",
+                                  "reversion", "revalorisation"}
 
 
 def test_une_regle_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulateur):
@@ -1146,6 +1147,52 @@ def test_une_regle_privee_du_jumeau_se_demande_a_la_fonction_du_portage():
     assert montant == 1000.0 and limite == pytest.approx(60305.96)
 
 
+def _foyer_du_couple(simulateur, conjoint: str, mariage: str | None = None):
+    """Un salarié né en 1955, parti à 66 ans, marié à une conjointe née en
+    ``conjoint`` qui déclare 4 000 € de ressources."""
+    return simulateur.carriere_simple(
+        annee_naissance=1955, sexe="H", affiliation="salarie_prive_non_cadre",
+        age_liquidation=66.0, age_debut=20.0, niveau_salaire=0.3,
+        conjoint={"naissance": conjoint, "sexe": "F", "mariage": mariage,
+                  "ressources": 4000.0, "invalidite": None})
+
+
+def test_le_plafond_du_couple_se_lit_dans_la_table_du_minimum_vieillesse(simulateur):
+    """Le plafond de ressources d'un couple en 2026, que la Cnav publie :
+    19 442,21 € par an. Il revient sous le type que son jumeau annonce."""
+    table = simulateur.scenario_actuel.minimum_vieillesse
+    couple, fiabilite = table.plafond_couple(2026)
+    assert type(couple) is float and type(fiabilite) is Fiabilite
+    assert couple == 19442.21
+
+
+def test_le_foyer_se_demande_au_portage_et_revient_sous_son_type(simulateur):
+    """« Foyer et net » sur une carrière qui déclare sa conjointe : le barème
+    du couple, son plafond, les ressources de la conjointe ; ce que le portage
+    rend revient sous le type ``Foyer`` du Python, dont les méthodes se lisent.
+    Le mariage après la date rend le barème d'une personne seule."""
+    actuel = simulateur.scenario_actuel
+    lu = foyer.foyer_et_net(actuel, "assure", "2026-06-01", 2026, 6000.0, True,
+                            carriere=_foyer_du_couple(simulateur, "1970"))
+    assert type(lu) is foyer_python.Foyer and type(lu.fiabilite) is Fiabilite
+    assert (lu.bareme, lu.ressources_conjoint) == ("couple", 4000.0)
+    assert lu.plafond == actuel.minimum_vieillesse.plafond_couple(2026)[0]
+    assert lu.servie_avec(6000.0) == pytest.approx(6000.0 + lu.minimum_vieillesse)
+    avant = foyer.foyer_et_net(actuel, "assure", "2026-06-01", 2026, 6000.0, True,
+                               carriere=_foyer_du_couple(simulateur, "1956", "2026-09"))
+    assert (avant.bareme, avant.ressources_conjoint) == ("personne_seule", 0.0)
+    assert facade.JUMEAUX["foyer"] is foyer_python
+
+
+def test_le_foyer_ne_recoit_pas_le_contexte_d_une_liquidation(simulateur):
+    """Le contexte d'une liquidation, objet du moteur Python, n'arriverait pas
+    au portage : la règle est refusée."""
+    contexte = liquidation_python.Contexte(simulateur.scenario_actuel, frozenset())
+    with pytest.raises(NonTransmissible, match="contexte"):
+        foyer.foyer_et_net(simulateur.scenario_actuel, "assure", "2026-06-01", 2026, 6000.0,
+                           True, contexte)
+
+
 def test_les_majorations_forfaitaires_se_demandent_sur_une_pension_de_regime(simulateur):
     """La pension du régime général prise en février 1973 sur la durée
     maximum reçoit 5,5 % au 1er décembre 1982 : « en 1973 à 47,82 % (45,33 %
@@ -1311,7 +1358,7 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
     (``pont.TABLES_DES_REGLES``). Deux noms seulement diffèrent d'un côté à
     l'autre."""
     jumelle = getattr({"commun": commun_python, "completer": completer_python,
-                       "liquider": liquider_python, "ouvrir": ouvrir_python,
+                       "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
                        "reversion": reversion_python,
                        "revalorisation": revalorisation_python}[module], regle)
     attendus = [(nom, None if parametre.default is inspect.Parameter.empty else parametre.default)

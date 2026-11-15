@@ -28,20 +28,20 @@ from retraite_notionnelle import journal as _journal
 from retraite_notionnelle import pilote
 from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.castypes import CAS_TYPES
-from retraite_notionnelle.droit import foyer
 from retraite_notionnelle.noyau import contrats
 from retraite_notionnelle.revalorisation import actuel_aujourd_hui, faire_vivre
 
 import facade
-from facade import Carriere, Simulateur, completer, liquidation, liquider, ouvrir, releve
+from facade import (Carriere, Simulateur, completer, foyer, liquidation, liquider, ouvrir,
+                    releve)
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 from outils_portage import moitie_python
 
 RACINE = Path(__file__).resolve().parents[1]
 
 # Ce fichier passe à la façade (action 161) : la liquidation, sa demande, ses
-# neutralisations, ses mesures et ses appels se demandent au portage. Les
-# étapes seules, le foyer, le journal, l'échéancier, le pilote et la
+# neutralisations, ses mesures et ses appels, le foyer se demandent au
+# portage. Les étapes seules, le journal, l'échéancier, le pilote et la
 # confrontation des deux moteurs gardent le moteur Python, sous la marque
 # ``sur_le_moteur_python`` et sa raison.
 
@@ -124,7 +124,6 @@ def test_chaque_etape_de_la_liquidation_suit_son_schema(simulateur, nom):
     assert [p.regime for p in complements.regimes] == [p.regime for p in pensions.regimes]
 
 
-@pytest.mark.sur_le_moteur_python("foyer.foyer_et_net")
 def test_l_aspa_d_un_couple_suit_le_plafond_du_couple(simulateur):
     """Le barème du foyer (fiche minimum_vieillesse) : une personne seule a le
     sien ; qui a épousé le conjoint qu'il déclare a le plafond du couple, sur
@@ -167,7 +166,6 @@ def test_l_aspa_d_un_couple_suit_le_plafond_du_couple(simulateur):
         assert _erreurs(_etape("foyer_et_net").valider(foyer_.donnees(), "foyer")) == []
 
 
-@pytest.mark.sur_le_moteur_python("foyer.foyer_et_net")
 def test_avant_2007_le_minimum_vieillesse_tient_en_deux_etages(simulateur):
     """Action 138, étape 6. Jusqu'en 2006, le premier étage porte la pension à
     l'allocation aux vieux travailleurs salariés (L. 814-2) ; le second,
