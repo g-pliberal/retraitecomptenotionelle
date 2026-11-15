@@ -7336,12 +7336,12 @@ le moteur Python, hors les confrontations des deux moteurs.
 Ne restent marqués que ces confrontations, le solveur du niveau de salaire
 d'une pension visée, et quinze garde-fous de `test_oracle.py`, que le
 propriétaire doit trancher.
-L'étude des mères et le coût par carrière passent désormais par le pont.
-Reste, une étape par session : les deux études non instruites,
-à commencer par `cycle_de_vie.py`, la liste des fonctions gardées des deux
-côtés, le retrait, et les périodes assimilées du relevé (table de
-`2026-11-13-les-decisions-du-proprietaire.md`). Le détail :
-`2026-11-15-le-cout-par-carriere-par-le-portage.md`.
+Les études des mères, du coût par carrière et du cycle de vie passent par le pont.
+Reste, une étape par session : `part_minimum_contributif.py`, puis
+`partage_taux_unique.py`,
+la liste des fonctions gardées des deux côtés, le retrait, et les périodes
+assimilées du relevé (table de `2026-11-13-les-decisions-du-proprietaire.md`).
+Le détail : `2026-11-15-le-cycle-de-vie-deja-au-portage.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
