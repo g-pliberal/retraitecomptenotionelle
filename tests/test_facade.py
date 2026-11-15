@@ -520,8 +520,8 @@ def test_ce_que_la_facade_ne_sert_pas_ne_se_lit_pas_sur_son_simulateur(simulateu
     lieu de faire tourner le moteur Python. Ses données, elles, se lisent."""
     with pytest.raises(NonTransmissible, match="convertisseur"):
         simulateur.convertisseur
-    with pytest.raises(NonTransmissible, match="majorations_enfants"):
-        simulateur.scenario_actuel.majorations_enfants
+    with pytest.raises(NonTransmissible, match="surcote_parentale"):
+        simulateur.scenario_actuel.surcote_parentale
     assert simulateur.macro.plafond_securite_sociale(2024) == 46368.0
     assert "artisan" in simulateur.affiliations
     assert simulateur.scenario_actuel.macro is simulateur.macro

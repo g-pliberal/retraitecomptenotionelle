@@ -18,10 +18,11 @@ import datetime as dt
 import pytest
 
 from retraite_notionnelle import contributions_equilibre as ce
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+from retraite_notionnelle.carriere import AnneeCarriere
 from retraite_notionnelle.config import RACINE_DONNEES, Parametres
 from retraite_notionnelle.remuneration import _montant, charger_prelevements
-from retraite_notionnelle.simulateur import Simulateur
+
+from facade import Carriere, Simulateur
 
 
 @pytest.fixture(scope="module")

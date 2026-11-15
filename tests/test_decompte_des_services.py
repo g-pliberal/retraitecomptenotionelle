@@ -33,7 +33,7 @@ import pytest
 
 from retraite_notionnelle.web.site import ErreurSite
 
-from facade import compter
+from facade import Carriere, Simulateur, compter, liquidation
 from outils_pont import RefusDuPortage, Saisies, refus_de_la_saisie, saisie_du_portage
 
 #: Le décompte final du portage, servi par la façade.
@@ -95,7 +95,7 @@ CONSEIL_D_ETAT = {"naissance": "1946-08-01", "sexe": "H", "liquidation": "2006-0
 
 @pytest.fixture(scope="module")
 def saisies() -> Saisies:
-    return Saisies()
+    return Saisies(Simulateur)
 
 
 def _fonction_publique(saisies: Saisies, requete: dict):
@@ -135,8 +135,6 @@ def test_les_services_d_avant_1948_entrent_au_decompte_de_l_etat():
     trimestres. Le décompte au jour ne les comptait d'abord que dans les trois
     régimes de la fiche, et en perdait huit."""
     from retraite_notionnelle.carriere import Metier
-
-    from facade import Carriere, Simulateur, liquidation
 
     simulateur = Simulateur()
     carriere = Carriere.depuis_parcours(

@@ -20,9 +20,10 @@ from urllib.parse import parse_qsl
 
 import pytest
 
-from retraite_notionnelle.carriere import Carriere, Metier
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.web.site import ErreurSite, disponible, rendre
+
+from facade import Carriere, Simulateur
 
 from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage, servi_et_fige
 

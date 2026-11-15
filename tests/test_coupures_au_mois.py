@@ -32,10 +32,13 @@ import pytest
 import yaml
 
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import Carriere, Metier
+from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes
-from retraite_notionnelle.droit.commun import date_d_effet, periode_de_liquidation
-from retraite_notionnelle.simulateur import Simulateur
+
+from facade import Carriere, Simulateur, commun
+
+date_d_effet = commun.date_d_effet
+periode_de_liquidation = commun.periode_de_liquidation
 
 RACINE = Path(__file__).resolve().parents[1]
 RACINE_DONNEES = RACINE / "data"

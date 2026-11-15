@@ -17,7 +17,6 @@ from dataclasses import replace
 import pytest
 
 from retraite_notionnelle import Parametres
-from retraite_notionnelle.carriere import Affiliations
 from retraite_notionnelle.donnees.indemnite_csg import charger_indemnite_csg
 from retraite_notionnelle.donnees.macro import DonneesMacro
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes
@@ -30,7 +29,8 @@ from retraite_notionnelle.remuneration import (
     fiche_depuis_brut,
     smic_annuel,
 )
-from retraite_notionnelle.simulateur import Simulateur
+
+from facade import Simulateur
 
 PARAMETRES = Parametres()
 RACINE = PARAMETRES.racine_donnees
@@ -47,7 +47,8 @@ def pieces():
     return {
         "macro": DonneesMacro(RACINE, PARAMETRES.scenario_projection),
         "catalogue": CatalogueRegimes(RACINE),
-        "affiliations": Affiliations(RACINE),
+        # Les affiliations, des données, se lisent au simulateur de la façade.
+        "affiliations": Simulateur(PARAMETRES).affiliations,
     }
 
 
