@@ -86,6 +86,15 @@
  "test_grille_large.py::échantillon daté, bâti et simulé": {
   "valeur": "65e0e8dde05fc6d7"
  },
+ "test_independants.py::droits au conjoint": {
+  "valeur": "9d74fcc32a7feb9d"
+ },
+ "test_independants.py::points d'avant 1973": {
+  "valeur": "d25d5b326beeefc0"
+ },
+ "test_independants.py::points d'invalidité": {
+  "valeur": "f15ba18caf47a8a1"
+ },
  "test_lectures_decision_29.py::cas types sous le taux 0.1123": {
   "valeur": "d5927d688b7d32fe"
  },
@@ -97,6 +106,9 @@
  },
  "test_moteur.py::simulations des variantes": {
   "valeur": "f0ddf0d2e5ce670e"
+ },
+ "test_pcv_sante.py::pcv des professions de santé": {
+  "valeur": "e6813970552c4095"
  },
  "test_pont.py::carrières de la grille": {
   "valeur": "7905fa657ea4127f"
@@ -184,6 +196,9 @@
  },
  "test_pont.py::âges des cas types sous les paramètres de référence": {
   "valeur": "0e35c0f68a20ffa2"
+ },
+ "test_saisie_assimilees.py::périodes assimilées saisies": {
+  "valeur": "1fb8f5a7cd4222b6"
  },
  "test_solde_fusion.py::grille sous l'hypothèse B": {
   "valeur": "bfe2dad68e54bd4b"

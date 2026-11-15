@@ -787,25 +787,6 @@ def _requetes_au_hasard() -> list[dict]:
     return requetes
 
 
-#: Le portage simule chaque requête, ou dit qu'il la refuse.
-_HASARD_JS = """
-import { readFileSync } from "node:fs";
-import { Saisie } from "./moteur/js/saisie.js";
-import { Contexte } from "./moteur/js/contexte.js";
-const requetes = JSON.parse(readFileSync(process.argv[1], "utf8"));
-const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
-const sorties = requetes.map((requete) => {
-  try {
-    return { resultat: contexte.simuler(Saisie.depuisRequete(
-      requete, false, contexte.paquet.presomptions)).dictionnaire() };
-  } catch (erreur) {
-    return { refus: true };
-  }
-});
-process.stdout.write(JSON.stringify(sorties));
-"""
-
-
 def test_le_portage_javascript_concorde_sur_des_carrieres_tirees_au_hasard():
     """Les témoins figés couvrent des cas choisis ; celui-ci, des cas non prévus.
 
@@ -817,28 +798,14 @@ def test_le_portage_javascript_concorde_sur_des_carrieres_tirees_au_hasard():
     voit.
     """
     import shutil
-    import subprocess
-    import tempfile
 
+    from outils_pont import simulations_du_portage
     from outils_valeurs import valeur_figee
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
 
-    racine = Path(__file__).resolve().parents[1]
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        json.dump(_requetes_au_hasard(), fichier, ensure_ascii=False)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", "--input-type=module", "-e", _HASARD_JS, chemin],
-            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False,
-        )
-    finally:
-        Path(chemin).unlink(missing_ok=True)
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    sorties = json.loads(execution.stdout)
+    sorties = simulations_du_portage(_requetes_au_hasard())
     assert len(sorties) == 60
     calculees = sum("resultat" in sortie for sortie in sorties)
     assert 0 < calculees < 60, f"{calculees} carrières calculées sur 60"

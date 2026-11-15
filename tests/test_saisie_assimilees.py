@@ -9,12 +9,7 @@ tient la lecture, les refus, l'adresse réécrite, et les deux moteurs d'accord.
 
 from __future__ import annotations
 
-import json
 import shutil
-import subprocess
-import sys
-import tempfile
-from pathlib import Path
 from urllib.parse import parse_qsl
 
 import pytest
@@ -22,9 +17,11 @@ import pytest
 from retraite_notionnelle import chronologie as chrono
 from retraite_notionnelle.web.site import ErreurSite
 
-from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
+from outils_pont import (
+    Saisies, refus_de_la_saisie, saisie_du_portage, simulations_du_portage,
+)
+from outils_valeurs import valeur_figee
 
-RACINE = Path(__file__).resolve().parent.parent
 
 #: Une ancienne des TUC, entrée au régime général en 1987 ; la même, apprentie
 #: avant ; une stagiaire de la formation professionnelle, au jour près ; un
@@ -120,22 +117,11 @@ def test_la_saisie_refuse(requete, message):
 def test_les_deux_moteurs_lisent_les_memes_periodes():
     """Le résultat entier est le même en Python et en JavaScript, sur la
     carrière que la saisie du portage bâtit : ses refus, sans jumelle, ont
-    leur test plus haut."""
+    leur test plus haut. Ce que le portage en rend, vu identique à ce que le
+    moteur Python calculait, est figé au témoin des valeurs (action 161,
+    étape 8o)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    sys.path.insert(0, str(RACINE / "scripts"))
-    from construire_temoins import _fini
-    saisies = Saisies()
-    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
-                for cas in CAS]
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        fichier.write(json.dumps(attendus, ensure_ascii=False))
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(RACINE / "tests" / "js" / "comparer.mjs"), chemin],
-            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
+    sorties = simulations_du_portage(CAS)
+    assert all("resultat" in sortie for sortie in sorties)
+    assert valeur_figee("périodes assimilées saisies", sorties) == sorties

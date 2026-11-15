@@ -406,3 +406,45 @@ def saisie_du_portage(requete: dict):
     et les méthodes s'appellent depuis le Python (``site.py``) ; un refus
     lève ``ErreurSite``, avec son motif."""
     return module("saisie").Saisie.depuis_requete(_chaines(requete), False, _presomptions())
+
+
+#: Le portage simule chaque requête comme le site, ou dit qu'il la refuse.
+_SIMULER_JS = """
+import { readFileSync } from "node:fs";
+import { Saisie } from "./moteur/js/saisie.js";
+import { Contexte } from "./moteur/js/contexte.js";
+const requetes = JSON.parse(readFileSync(process.argv[1], "utf8"));
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const sorties = requetes.map((requete) => {
+  try {
+    return { resultat: contexte.simuler(Saisie.depuisRequete(
+      requete, false, contexte.paquet.presomptions)).dictionnaire() };
+  } catch (erreur) {
+    return { refus: true };
+  }
+});
+process.stdout.write(JSON.stringify(sorties));
+"""
+
+
+def simulations_du_portage(requetes: list[dict]) -> list[dict]:
+    """Ce que le portage rend de chaque requête, par node : ``{"resultat":
+    …}``, le dictionnaire des six scénarios, ou ``{"refus": True}``. Les
+    confrontations au moteur Python, qui passaient par ``comparer.mjs``, le
+    figent au témoin des valeurs (action 161, étapes 8n et 8o)."""
+    import subprocess
+    import tempfile
+
+    racine = Path(__file__).resolve().parents[1]
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        json.dump([_chaines(requete) for requete in requetes], fichier, ensure_ascii=False)
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", "--input-type=module", "-e", _SIMULER_JS, chemin],
+            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
+    finally:
+        Path(chemin).unlink(missing_ok=True)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    return json.loads(execution.stdout)

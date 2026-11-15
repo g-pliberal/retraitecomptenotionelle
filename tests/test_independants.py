@@ -41,7 +41,6 @@ import math
 import shutil
 import subprocess
 import sys
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -56,7 +55,8 @@ from retraite_notionnelle.remuneration import (
     ConstructeurFiche, bloc_droit_en_vigueur, charger_prelevements, smic_annuel)
 from retraite_notionnelle.simulateur import Simulateur
 
-from outils_pont import Saisies
+from outils_pont import simulations_du_portage
+from outils_valeurs import valeur_figee
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -492,27 +492,16 @@ CAS_AVANT_1973 = [
 
 def test_les_deux_moteurs_servent_les_memes_points_d_avant_1973():
     """Le résultat entier, des six scénarios, est le même en Python et en
-    JavaScript pour un artisan et un commerçant entrés avant 1973."""
+    JavaScript pour un artisan et un commerçant entrés avant 1973.
+    Ce que le portage en rend, vu identique à ce que le moteur Python
+    calculait, est figé au témoin des valeurs (action 161, étape 8o)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    sys.path.insert(0, str(RACINE / "scripts"))
-    from construire_temoins import _fini
-    saisies = Saisies()
-    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
-                for cas in CAS_AVANT_1973]
-    texte = json.dumps(attendus, ensure_ascii=False)
+    sorties = simulations_du_portage(CAS_AVANT_1973)
+    assert all("resultat" in sortie for sortie in sorties)
+    texte = json.dumps(sorties, ensure_ascii=False)
     assert "cancava_avant_1973" in texte and "organic_avant_1973" in texte
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        fichier.write(texte)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(RACINE / "tests" / "js" / "comparer.mjs"), chemin],
-            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
+    assert valeur_figee("points d'avant 1973", sorties) == sorties
 
 
 # --- Les points d'invalidité -------------------------------------------------
@@ -644,26 +633,15 @@ CAS_INVALIDITE = [
 
 def test_les_deux_moteurs_servent_les_memes_points_d_invalidite():
     """Le résultat entier, des six scénarios, est le même en Python et en
-    JavaScript pour trois indépendants invalides."""
+    JavaScript pour trois indépendants invalides.
+    Ce que le portage en rend, vu identique à ce que le moteur Python
+    calculait, est figé au témoin des valeurs (action 161, étape 8o)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    sys.path.insert(0, str(RACINE / "scripts"))
-    from construire_temoins import _fini
-    saisies = Saisies()
-    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
-                for cas in CAS_INVALIDITE]
-    texte = json.dumps(attendus, ensure_ascii=False)
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        fichier.write(texte)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(RACINE / "tests" / "js" / "comparer.mjs"), chemin],
-            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
+    sorties = simulations_du_portage(CAS_INVALIDITE)
+    assert all("resultat" in sortie for sortie in sorties)
+    texte = json.dumps(sorties, ensure_ascii=False)
+    assert valeur_figee("points d'invalidité", sorties) == sorties
 
 
 # --- Le conjoint collaborateur ------------------------------------------------
@@ -751,27 +729,16 @@ CAS_CONJOINT = [
 
 def test_les_deux_moteurs_servent_les_memes_droits_au_conjoint():
     """Le résultat entier, des six scénarios, est le même en Python et en
-    JavaScript pour deux conjoints collaborateurs, au forfait et à l'option."""
+    JavaScript pour deux conjoints collaborateurs, au forfait et à l'option.
+    Ce que le portage en rend, vu identique à ce que le moteur Python
+    calculait, est figé au témoin des valeurs (action 161, étape 8o)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    sys.path.insert(0, str(RACINE / "scripts"))
-    from construire_temoins import _fini
-    saisies = Saisies()
-    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
-                for cas in CAS_CONJOINT]
-    texte = json.dumps(attendus, ensure_ascii=False)
+    sorties = simulations_du_portage(CAS_CONJOINT)
+    assert all("resultat" in sortie for sortie in sorties)
+    texte = json.dumps(sorties, ensure_ascii=False)
     assert "rco_artisans" in texte and "nric" in texte
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        fichier.write(texte)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(RACINE / "tests" / "js" / "comparer.mjs"), chemin],
-            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
+    assert valeur_figee("droits au conjoint", sorties) == sorties
 
 
 # --- Les dispenses de l'assiette minimale ---------------------------------------

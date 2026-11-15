@@ -28,10 +28,10 @@ a bougé ne se garde pas. Un calcul écrit hors du modèle, dans un script ou un
 test, porte en plus dans sa clé son propre code et celui qu'il importe à côté
 de lui (:func:`_code_hors_du_modele`) : une retouche de ``scripts/`` ne refait
 que les calculs des scripts qu'elle touche. Un calcul qui lit un fichier hors
-des sources — la moitié Python d'une confrontation, le paquet du dépôt, sur
-lequel le pont gardé ouvert calcule (``tests/outils_portage.py``) — porte de
-même dans sa clé l'empreinte de son contenu (``fichiers_lus``), et ne se garde
-pas si l'un d'eux a bougé pendant qu'il se faisait. Il se relit d'abord du processus,
+des sources — le paquet du dépôt, sur lequel le pont gardé ouvert
+calcule — porte de même dans sa clé l'empreinte de son contenu
+(``fichiers_lus``), et ne se garde pas si l'un d'eux a bougé pendant qu'il
+se faisait. Il se relit d'abord du processus,
 puis de ``.cache/calculs/<empreinte>/``, que git ignore, dans le dépôt
 principal, que tous ses worktrees partagent (:func:`dossier_commun`) ; les
 seize empreintes les plus récentes y restent. Un calcul ne se fait

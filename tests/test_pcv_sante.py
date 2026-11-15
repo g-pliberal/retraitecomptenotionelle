@@ -16,10 +16,6 @@ from __future__ import annotations
 
 import json
 import shutil
-import subprocess
-import sys
-import tempfile
-from pathlib import Path
 
 import pytest
 
@@ -27,9 +23,9 @@ from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.config import PartCotisation
 from retraite_notionnelle.simulateur import Simulateur
 
-from outils_pont import Saisies
+from outils_pont import simulations_du_portage
+from outils_valeurs import valeur_figee
 
-RACINE = Path(__file__).resolve().parents[1]
 
 
 @pytest.fixture(scope="module")
@@ -197,27 +193,14 @@ CAS = [
 
 def test_les_deux_moteurs_servent_les_memes_pcv():
     """Le résultat entier — les pensions et les comptes des six scénarios, la
-    part des caisses comprise — est le même en Python et en JavaScript."""
+    part des caisses comprise — est le même en Python et en JavaScript.
+    Ce que le portage en rend, vu identique à ce que le moteur Python
+    calculait, est figé au témoin des valeurs (action 161, étape 8o)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    sys.path.insert(0, str(RACINE / "scripts"))
-    from construire_temoins import _fini
-    saisies = Saisies()
-    attendus = []
-    for cas in CAS:
-        attendus.append({"requete": cas,
-                         "resultat": _fini(saisies.simuler(cas).dictionnaire())})
-    texte = json.dumps(attendus, ensure_ascii=False)
+    sorties = simulations_du_portage(CAS)
+    assert all("resultat" in sortie for sortie in sorties)
+    texte = json.dumps(sorties, ensure_ascii=False)
     assert "asv_auxiliaires_medicaux" in texte and "asv_chirurgiens_dentistes" in texte
     assert "asv_sages_femmes" in texte and "asv_directeurs_laboratoire" in texte
-    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
-                                     delete=False) as fichier:
-        fichier.write(texte)
-        chemin = fichier.name
-    try:
-        execution = subprocess.run(
-            ["node", str(RACINE / "tests" / "js" / "comparer.mjs"), chemin],
-            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    finally:
-        Path(chemin).unlink()
-    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
+    assert valeur_figee("pcv des professions de santé", sorties) == sorties

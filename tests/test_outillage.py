@@ -1394,10 +1394,21 @@ def test_un_verrou_qui_ne_se_leve_pas_n_empeche_pas_de_calculer(monkeypatch, mem
         os.close(tenu)
 
 
+def _garder(memoire_, calcul, argument, fichiers_lus=()):
+    """``calcul(argument)`` par la mémoire des calculs, sous une clé qui porte
+    le module, le nom et l'argument du calcul, comme le faisait
+    ``moitie_python``, retirée avec ``tests/outils_portage.py`` (action 161,
+    étape 8o)."""
+    import functools
+
+    return memoire_.memoriser(
+        ("calcul_factice", calcul.__module__, calcul.__qualname__, (argument,)),
+        functools.partial(calcul, argument), fichiers_lus=fichiers_lus)
+
+
 def test_un_calcul_ecrit_hors_du_modele_se_garde_sous_son_code(
         monkeypatch, memoire_isolee, tmp_path):
-    """Un calcul écrit dans un test ou un script — ici par
-    ``outils_portage.moitie_python`` — porte son code dans sa clé : un même
+    """Un calcul écrit dans un test ou un script porte son code dans sa clé : un même
     calcul ne se refait pas ; un autre argument, son fichier récrit ou un
     fichier qu'il importe à côté de lui le refont ; retouché depuis le
     chargement du modèle, il se fait sans mémoire. Un calcul du modèle n'en
@@ -1405,7 +1416,6 @@ def test_un_calcul_ecrit_hors_du_modele_se_garde_sous_son_code(
     import time
 
     import retraite_notionnelle
-    from outils_portage import moitie_python
 
     monkeypatch.setattr(memoire_isolee, "_code_hors_du_modele", _CODE_HORS_DU_MODELE)
     monkeypatch.setattr(memoire_isolee, "empreinte", lambda: "e1")
@@ -1423,39 +1433,36 @@ def test_un_calcul_ecrit_hors_du_modele_se_garde_sous_son_code(
     texte = ("def calcul(x):\n    if False:\n        import outils_factices\n"
              "    FAITS.append(x)\n    return [x]\n")
     calcul = charger(texte)
-    assert moitie_python(calcul, 1) == [1]
+    assert _garder(memoire_isolee, calcul, 1) == [1]
     monkeypatch.setattr(memoire_isolee, "_EN_MEMOIRE", {})     # un autre processus
-    assert moitie_python(calcul, 1) == [1]
+    assert _garder(memoire_isolee, calcul, 1) == [1]
     assert faits == [1]
-    moitie_python(calcul, 2)
+    _garder(memoire_isolee, calcul, 2)
     assert faits == [1, 2]
     voisin.write_text("TAUX = 3\n", encoding="utf-8")            # ce qu'il importe
-    moitie_python(calcul, 1)
+    _garder(memoire_isolee, calcul, 1)
     assert faits == [1, 2, 1]
     calcul = charger(texte + "# retouché\n")                     # son propre texte
-    moitie_python(calcul, 1)
+    _garder(memoire_isolee, calcul, 1)
     assert faits == [1, 2, 1, 1]
     monkeypatch.setattr(retraite_notionnelle, "CHARGE_A", 0.0)  # retouché depuis le chargement
-    moitie_python(calcul, 3)
-    moitie_python(calcul, 3)
+    _garder(memoire_isolee, calcul, 3)
+    _garder(memoire_isolee, calcul, 3)
     assert faits == [1, 2, 1, 1, 3, 3]
     assert memoire_isolee._code_hors_du_modele(memoire_isolee.nom) == ()
 
 
-def test_une_moitie_python_se_garde_sous_le_paquet_que_le_pont_lit(
+def test_un_calcul_se_garde_sous_les_fichiers_qu_il_lit(
         monkeypatch, memoire_isolee, tmp_path):
-    """La moitié Python d'une confrontation bâtit souvent ses carrières par le
-    pont ouvert, sur le paquet du dépôt (``moteur/donnees.json``), que
-    l'empreinte de la mémoire ne lit pas : ``moitie_python`` en porte
-    l'empreinte dans sa clé. Le paquet refait, elle se refait ; rendu tel
-    qu'il était, elle se relit ; récrit pendant son calcul, elle ne se garde
-    pas (feuille de route, action 135)."""
-    import outils_portage
-    from outils_portage import moitie_python
+    """Un calcul qui lit un fichier hors des sources, que l'empreinte de la
+    mémoire ne lit pas — le paquet du dépôt, ``moteur/donnees.json``, sur
+    lequel le pont ouvert calcule —, en porte l'empreinte dans sa clé
+    (``fichiers_lus``). Le fichier refait, il se refait ; rendu tel qu'il
+    était, il se relit ; récrit pendant le calcul, il ne se garde pas
+    (feuille de route, action 135)."""
 
     paquet = tmp_path / "donnees.json"
     paquet.write_bytes(b'{"version": 1}')
-    monkeypatch.setattr(outils_portage, "PAQUET", paquet)
     monkeypatch.setattr(memoire_isolee, "empreinte", lambda: "e1")
     faits = []
 
@@ -1463,15 +1470,15 @@ def test_une_moitie_python_se_garde_sous_le_paquet_que_le_pont_lit(
         faits.append(x)
         return [x]
 
-    assert moitie_python(calcul, 1) == [1]
+    assert _garder(memoire_isolee, calcul, 1, (paquet,)) == [1]
     monkeypatch.setattr(memoire_isolee, "_EN_MEMOIRE", {})     # un autre processus
-    assert moitie_python(calcul, 1) == [1]
+    assert _garder(memoire_isolee, calcul, 1, (paquet,)) == [1]
     assert faits == [1]
     paquet.write_bytes(b'{"version": 2}')                      # la fabrique le refait
-    moitie_python(calcul, 1)
+    _garder(memoire_isolee, calcul, 1, (paquet,))
     assert faits == [1, 1]
     paquet.write_bytes(b'{"version": 1}')                      # rendu tel qu'il était
-    moitie_python(calcul, 1)
+    _garder(memoire_isolee, calcul, 1, (paquet,))
     assert faits == [1, 1]
 
     def recrit(x):
@@ -1480,9 +1487,9 @@ def test_une_moitie_python_se_garde_sous_le_paquet_que_le_pont_lit(
         return [x]
 
     paquet.write_bytes(b'{"version": 1}')
-    assert moitie_python(recrit, 2) == [2]
+    assert _garder(memoire_isolee, recrit, 2, (paquet,)) == [2]
     paquet.write_bytes(b'{"version": 1}')
-    moitie_python(recrit, 2)
+    _garder(memoire_isolee, recrit, 2, (paquet,))
     assert faits == [1, 1, 2, 2]
 
 
