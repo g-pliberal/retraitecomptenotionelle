@@ -50,13 +50,12 @@ FICHIERS = (
     "test_cycle_de_vie_references.py",
     "test_donnees.py",
     "test_effet_retour.py", "test_emploi_retraite.py",
-    "test_estimation_officielle.py", "test_etranger.py",
+    "test_etranger.py",
     "test_facade.py", "test_facade_jumeau.py",
     "test_facteurs_depense.py",
     "test_grille_large.py",
     "test_indexation_programme.py",
    
-    "test_mayotte.py",
     "test_moteur.py",
     "test_plafond_majoration_enfants.py",
     "test_pont.py", "test_primes_soumises_a_retenue.py",
@@ -64,7 +63,6 @@ FICHIERS = (
     "test_retablissement.py",
     "test_retraite_progressive.py",
     "test_revalorisation.py",
-    "test_sections_sante.py",
     "test_solde_fusion.py",
    
     "test_versements_uniques.py",

@@ -40,9 +40,9 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere, LigneRelevee
-from retraite_notionnelle.droit import liquider
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.carriere import AnneeCarriere, LigneRelevee
+
+from facade import Carriere, liquider, Simulateur
 
 RACINE = Path(__file__).resolve().parents[1]
 STATUT = "salarie_mayotte"

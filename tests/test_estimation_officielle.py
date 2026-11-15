@@ -104,7 +104,7 @@ def _le_temoin_des_servis_fige_chaque_depart(monkeypatch):
 @pytest.fixture(scope="module")
 def simulateur():
     from retraite_notionnelle.config import Parametres
-    from retraite_notionnelle.simulateur import Simulateur
+    from facade import Simulateur
 
     return Simulateur(Parametres())
 
@@ -355,13 +355,11 @@ def test_chaque_depart_se_sert_au_portage_sans_le_moteur_python(catalogue, monke
     confrontation fait servir chaque départ par le portage
     (``pont.scenario_actuel``), et le moteur Python, qu'on empêche ici de
     simuler, n'y entre pas — le rapport chiffre chaque départ."""
-    from retraite_notionnelle.simulateur import Simulateur
-
     def interdit(*_, **__):
         raise AssertionError("le moteur Python simule un départ")
 
     monkeypatch.setattr(pont, "scenario_actuel", SCENARIO_ACTUEL_DU_PORTAGE)
-    monkeypatch.setattr(Simulateur, "simuler", interdit)
+    monkeypatch.setattr("retraite_notionnelle.simulateur.Simulateur.simuler", interdit)
     texte = estimation_officielle.rapport(_confrontation(catalogue))
     assert texte.count("Départ le ") == 2
     assert re.search(r"= total\s+1 400\s+[\d ]+\s+[+-]", texte)
