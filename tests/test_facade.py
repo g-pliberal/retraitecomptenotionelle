@@ -30,6 +30,7 @@ from retraite_notionnelle.config import (RACINE_PROJET, ContributionEtat, Neutra
 from retraite_notionnelle.donnees.chargement import DonneeInsuffisante, Fiabilite
 from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
+from retraite_notionnelle.droit import cultes as cultes_python
 from retraite_notionnelle.droit import foyer as foyer_python
 from retraite_notionnelle.droit import liquidation as liquidation_python
 from retraite_notionnelle.droit import liquider as liquider_python
@@ -685,7 +686,7 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     with pytest.raises(ValueError, match="ouvrir.ouvrir"):
         pont.regle_du_droit("ouvrir", "ouvrir", float)
     assert facade.REGLES is pont.REGLES_DE_LA_FACADE
-    assert set(facade.REGLES) == {"commun", "completer", "foyer", "liquider", "ouvrir",
+    assert set(facade.REGLES) == {"commun", "completer", "cultes", "foyer", "liquider", "ouvrir",
                                   "reversion", "revalorisation"}
 
 
@@ -1210,6 +1211,81 @@ def test_le_constructeur_ne_sert_que_ce_qu_il_transmet(simulateur):
     assert facade.CONSTRUCTEURS is pont.CONSTRUCTEURS_DE_LA_FACADE
 
 
+
+#: Le franc de 1960 en euros (règlement (CE) n° 2866/98).
+FRANCS_PAR_EURO = 6.55957
+
+
+def _ministre_de_1940(simulateur):
+    """Né le 15 janvier 1940, ministre du culte de vingt à soixante-dix ans."""
+    return simulateur.carriere_simple(
+        annee_naissance=1940, sexe="H", affiliation="ministre_du_culte", mois_naissance=1,
+        jour_naissance=15, age_debut=20, age_liquidation=70, niveau_salaire=1.0,
+        profil_carriere="plat")
+
+
+def test_les_regles_des_cultes_se_demandent_au_portage(simulateur):
+    """Le V du décret n° 2006-1325 : rien avant 1939, 20 % de l'écart né en
+    1939, autant de plus chaque année, l'écart entier depuis 1943. Le ministre
+    né en 1940 : 76 trimestres d'avant 1979, validés gratuitement (D. 721-11
+    du code de 1985), 76 de 1979 à 1997, tous cotisés ; ses durées passent au
+    portage, qui les refait du relevé de leur carrière, et la fraction d'avant
+    1998 en proratise 152."""
+    from retraite_notionnelle.droit.cultes import DureesDesCultes
+
+    assert [facade.cultes.part_de_l_ecart(n) for n in range(1937, 1945)] == [
+        0.0, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.0]
+    durees = facade.releve.construire(simulateur.scenario_actuel,
+                                      _ministre_de_1940(simulateur)).durees
+    duree = facade.cultes.durees(durees, ("cavimac",), enfants=True)
+    assert type(duree) is DureesDesCultes
+    assert (duree.avant_1979, duree.de_1979_a_1997, duree.cotises_de_1979_a_1997,
+            duree.avant_1998) == (76, 76, 76, 152)
+    with pytest.raises(NonTransmissible, match="fraction_d_avant_1998"):
+        facade.cultes.fraction_d_avant_1998
+
+
+def test_le_maximum_des_cultes_se_lit_dans_sa_table(simulateur):
+    """Les arrêtés : rien avant la création du régime, 19 650 F en 1990
+    (le fichier garde six décimales)."""
+    maximum = simulateur.scenario_actuel.maximum_des_cultes
+    assert maximum.valeur(1978) is None
+    montant, fiabilite = maximum.valeur(1990)
+    assert montant == pytest.approx(19650 / FRANCS_PAR_EURO, abs=1e-6)
+    assert type(fiabilite) is Fiabilite
+
+
+def test_un_constructeur_du_compte_se_batit_sous_d_autres_parametres(simulateur):
+    """Les cotisations des arrêtés de 1990 à la CAVIMAC : 6 210 F de l'assuré,
+    1 000 F de solidarité de sa collectivité (décret n° 79-607, art. 24 et
+    25). Le compte n'en porte que la première sous la convention salariale,
+    les deux sous la totale : le constructeur bâti des données du simulateur
+    sous d'autres paramètres est celui du portage sous ceux-là."""
+    from retraite_notionnelle.config import PartCotisation
+
+    carriere = _ministre_de_1940(simulateur)
+
+    def constructeur(**modifications):
+        return facade.ConstructeurCompte(
+            simulateur.macro, simulateur.catalogue, simulateur.affiliations,
+            simulateur.indexation, simulateur.parametres.avec(**modifications))
+
+    for part, attendu in ((PartCotisation.SALARIALE, 6210), (PartCotisation.TOTALE, 7210)):
+        ligne = constructeur(part_cotisation=part).cotisation_annuelle(carriere, 1990)
+        assert dict(ligne.par_regime)["cavimac"] == pytest.approx(
+            attendu / FRANCS_PAR_EURO, abs=1e-5), part
+    # Des données que d'autres paramètres feraient autres ne passent pas.
+    with pytest.raises(NonTransmissible, match="conventions_cor"):
+        constructeur(conventions_cor=True)
+    autre = Simulateur()
+    with pytest.raises(NonTransmissible, match="catalogue"):
+        facade.ConstructeurCompte(simulateur.macro, autre.catalogue, simulateur.affiliations,
+                                  simulateur.indexation, simulateur.parametres)
+    with pytest.raises(NonTransmissible, match="indexation"):
+        facade.ConstructeurCompte(simulateur.macro, simulateur.catalogue,
+                                  simulateur.affiliations, object(), simulateur.parametres)
+
+
 #: Une mère née en 1962, au salaire bas, entrée à vingt ans, partie à
 #: soixante-quatre ans et demi, en 2027, qui a élevé ses enfants de 1985 à
 #: 2002 sous l'AVPF.
@@ -1525,7 +1601,7 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
     (``pont.TABLES_DES_REGLES``). Deux noms seulement diffèrent d'un côté à
     l'autre."""
     jumelle = getattr({"commun": commun_python, "completer": completer_python,
-                       "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
+                       "cultes": cultes_python, "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
                        "reversion": reversion_python,
                        "revalorisation": revalorisation_python}[module], regle)
     attendus = [(nom, None if parametre.default is inspect.Parameter.empty else parametre.default)

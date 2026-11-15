@@ -29,6 +29,7 @@ from retraite_notionnelle.config import RACINE_PROJET, ContributionEtat, Paramet
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
+from retraite_notionnelle.droit import cultes as cultes_python
 from retraite_notionnelle.droit import foyer as foyer_python
 from retraite_notionnelle.droit import liquidation as liquidation_python
 from retraite_notionnelle.droit import liquider as liquider_python
@@ -262,7 +263,7 @@ BATISSEURS = {
 
 @pytest.mark.parametrize("cas", sorted(BATISSEURS))
 def test_le_jumeau_batit_la_carriere_que_la_facade_sert(cas):
-    """Chaque bâtisseur du simulateur, et ceux de ``Carriere`` sur ses séries :
+    """Chaque batisseur du simulateur, et ceux de ``Carriere`` sur ses séries :
     la carrière du portage, relue, est celle que le Python bâtit des mêmes
     arguments, champ par champ."""
     if shutil.which("node") is None:
@@ -306,6 +307,10 @@ APPELS_DES_TABLES = [
     ("conversions_points", "fusion", lambda s: ("arrco", "agirc_arrco")),
     ("conversions_points", "fusion", lambda s: ("regime_general", "agirc_arrco")),
     ("durees_requises", "trimestres", lambda s: (1955,)),
+    ("maximum_des_cultes", "valeur", lambda s: (1978,)),
+    ("maximum_des_cultes", "valeur", lambda s: (1990,)),
+    ("maximum_des_cultes", "valeur", lambda s: (2002,)),
+    ("maximum_des_cultes", "valeur", lambda s: (2030,)),
     ("durees_requises", "trimestres", lambda s: (1965.75,)),
     ("minimum_contributif", "regle", lambda s: ("2026-01-01",)),
     ("minimum_contributif", "regle", lambda s: ("1990-01-01",)),
@@ -476,7 +481,31 @@ def _en_couple(s, annee: int, conjoint: str | None = None):
 #: (``pont.REGLES_DE_LA_FACADE``) : ``(module, règle, arguments)``, les
 #: arguments bâtis sur le simulateur de chaque côté — son moteur, une période
 #: de son catalogue, sa carrière.
+def _ministre(simulateur, naissance=1940, debut=20, depart=70, affiliation="ministre_du_culte"):
+    return simulateur.carriere_simple(
+        annee_naissance=naissance, sexe="H", affiliation=affiliation, mois_naissance=1,
+        jour_naissance=15, age_debut=debut, age_liquidation=depart, niveau_salaire=1.0,
+        profil_carriere="plat")
+
+
+def _durees_du_ministre(*options):
+    """Les durées du relevé d'un ministre du culte, sur le relevé de la
+    façade ou sur celui du jumeau, selon le simulateur."""
+    def durees(simulateur):
+        module = facade.releve if isinstance(simulateur, facade.Simulateur) else releve_python
+        return module.construire(simulateur.scenario_actuel,
+                                 _ministre(simulateur, *options)).durees
+    return durees
+
+
 APPELS_DES_REGLES = [
+    ("cultes", "part_de_l_ecart", lambda s: (1938,)),
+    ("cultes", "part_de_l_ecart", lambda s: (1941,)),
+    ("cultes", "part_de_l_ecart", lambda s: (1950,)),
+    ("cultes", "durees", lambda s: (_durees_du_ministre()(s), ("cavimac",), True)),
+    ("cultes", "durees", lambda s: (_durees_du_ministre(1975, 21, 64)(s), ("cavimac",), False)),
+    ("cultes", "durees", lambda s: (
+        _durees_du_ministre(1955, 30, 62, "membre_congregation")(s), ("cavimac",), True)),
     ("commun", "ligne_cotisee", _ligne_de(_mere_sous_l_avpf, 1984)),
     ("commun", "ligne_cotisee", _ligne_de(_mere_sous_l_avpf, 1990)),
     ("completer", "avpf_retenue",
@@ -653,7 +682,8 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
     jumeau = simulateur_python.Simulateur(parametres)
     modules = {"commun": commun_python, "completer": completer_python,
                "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
-               "reversion": reversion_python, "revalorisation": revalorisation_python}
+               "reversion": reversion_python, "revalorisation": revalorisation_python,
+               "cultes": cultes_python}
     ecarts = []
     for module, regle, arguments in APPELS_DES_REGLES:
         lu = getattr(facade.regles_de_la_reversion if module == "reversion"
@@ -1004,6 +1034,39 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_constructeurs(parametres):
         refait = getattr(getattr(jumeau, nom), methode)(*arguments(jumeau))
         if repr(lu) != repr(refait):
             ecarts.append(f"{nom}.{methode} : la façade lit {lu!r}, le jumeau rend {refait!r}")
+    assert not ecarts, "\n".join(ecarts)
+
+
+def test_le_jumeau_rend_ce_que_lit_un_constructeur_bati_sous_d_autres_parametres():
+    """Le constructeur du compte bâti des données d'un simulateur sous
+    d'autres paramètres — la part de la cotisation, la contribution de
+    l'État —, par le portage et par le jumeau : la même cotisation, le même
+    compte, au bit près."""
+    from retraite_notionnelle.config import PartCotisation
+    from retraite_notionnelle.moteur.compte import ConstructeurCompte
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    servi = facade.Simulateur()
+    jumeau = simulateur_python.Simulateur()
+    ecarts = []
+    for modifications in ({"part_cotisation": PartCotisation.TOTALE},
+                          {"part_cotisation": PartCotisation.SALARIALE},
+                          {"contribution_etat": ContributionEtat.ENTIERE}):
+        def bati(s, batisseur):
+            return batisseur(s.macro, s.catalogue, s.affiliations, s.indexation,
+                             s.parametres.avec(**modifications))
+        lu, refait = bati(servi, facade.ConstructeurCompte), bati(jumeau, ConstructeurCompte)
+        for carriere in (_ministre, _fonctionnaire):
+            for annee in (1970, 1990, 2000, 2010):
+                a, b = (lu.cotisation_annuelle(carriere(servi), annee),
+                        refait.cotisation_annuelle(carriere(jumeau), annee))
+                if repr(a) != repr(b):
+                    ecarts.append(f"{modifications} {annee} : {a!r} != {b!r}")
+            a = lu.construire(*_compte_entier(carriere(servi)))
+            b = refait.construire(*_compte_entier(carriere(jumeau)))
+            if repr(a) != repr(b):
+                ecarts.append(f"{modifications} construire : {a!r} != {b!r}")
     assert not ecarts, "\n".join(ecarts)
 
 

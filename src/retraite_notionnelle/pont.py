@@ -1930,6 +1930,9 @@ NOMS_DU_PORTAGE = {
 #: scénarios que la page énumère. La lecture le laisse.
 HORS_DU_TYPE = {
     "Comparaison": frozenset({"scenarios"}),
+    # La durée que la fraction d'avant 1998 proratise : une propriété du
+    # Python, que le portage tient en champ.
+    "DureesDesCultes": frozenset({"avant1998"}),
 }
 
 #: Le type des champs que le Python annonce ``object``, pour ne pas faire
@@ -2483,6 +2486,7 @@ TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "carriere_longue": ("cotises_reputes",),
     "conversions_points": ("echelle", "fusion"),
     "durees_requises": ("trimestres",),
+    "maximum_des_cultes": ("valeur",),
     "minimum_contributif": ("regle", "valeurs"),
     "minimum_garanti": ("montant", "reference"),
     "minimum_vieillesse": ("plafond", "plafond_couple"),
@@ -2665,7 +2669,7 @@ TABLES_DES_REGLES: dict[str, frozenset[str]] = {
 #: contributif, que ``droit/completer.js`` lit en chameau ; une pension de
 #: régime, que le portage écrit et lit sous les noms du Python.
 TYPES_DE_LA_FACADE = frozenset({"EligibleMinimum", "PensionRegime"})
-CLASSES_EN_CHAMEAU |= {"EligibleMinimum"}
+CLASSES_EN_CHAMEAU |= {"EligibleMinimum", "DureesDesCultes"}
 
 
 # -- les règles du droit, par la façade (action 161) ------------------------------
@@ -2683,6 +2687,9 @@ CLASSES_EN_CHAMEAU |= {"EligibleMinimum"}
 #: qui n'y est pas est refusée avant node.
 REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "commun": ("ligne_cotisee",),
+    # Les deux fractions de la pension des cultes : la durée de chacune, sur
+    # les durées du relevé, et la part de l'écart du V du décret n° 2006-1325.
+    "cultes": ("durees", "part_de_l_ecart"),
     "completer": ("avpf_retenue", "borne_avec_les_droits_d_avant_1973", "complement_minimum",
                   "majoration_ouverte", "plancher_du_regime", "selon_la_regle"),
     # L'étape « foyer et net » entière : le portage rend le ``Foyer`` du

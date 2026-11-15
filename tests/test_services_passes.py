@@ -11,19 +11,19 @@ from __future__ import annotations
 
 import pytest
 
-from retraite_notionnelle import Parametres
 from retraite_notionnelle.config import PartCotisation
-from retraite_notionnelle.droit import releve as _releve
-from retraite_notionnelle.moteur.compte import ConstructeurCompte
-from retraite_notionnelle.simulateur import Simulateur
+
+import facade
+from facade import ConstructeurCompte, Simulateur
+from facade import releve as _releve
 
 CALEDONIEN = "salarie_nouvelle_caledonie"
 SAINT_PIERRAIS = "salarie_saint_pierre_et_miquelon"
 
 
-@pytest.fixture(scope="module")
-def simulateur() -> Simulateur:
-    return Simulateur(Parametres())
+@pytest.fixture
+def simulateur(request) -> Simulateur:
+    return facade.simulateur_du_test(request)
 
 
 def _carriere(simulateur, affiliation, naissance):

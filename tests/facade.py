@@ -47,6 +47,9 @@ comme ceux d'une table. Le régime unique d'après la bascule
 (``simulateur.regime_fusionne``) se lit sur le simulateur, et passe au
 constructeur par sa marque ; un autre ne passe pas.
 
+Bâti à la main des données d'un simulateur de la façade, sous d'autres
+paramètres (``ConstructeurCompte``), il est celui du portage sous ceux-là.
+
 **Le relevé des droits** (``releve.construire``, ses drapeaux compris)
 revient en données, ce que les tests en lisent : ses lignes et ses groupes,
 sa coordination, ses durées, ses points et ses cotisations, et ce que chaque
@@ -86,6 +89,7 @@ from retraite_notionnelle.droit import commun as _commun
 from retraite_notionnelle.droit import compter as _compter
 from retraite_notionnelle.droit import coordonner as _coordonner
 from retraite_notionnelle.droit import completer as _completer
+from retraite_notionnelle.droit import cultes as _cultes
 from retraite_notionnelle.droit import foyer as _foyer
 from retraite_notionnelle.droit import liquidation as _liquidation
 from retraite_notionnelle.droit import liquider as _liquider
@@ -329,6 +333,12 @@ class Simulateur(_Ferme):
                 "simulateur.regime_fusionne", self.parametres, pont.SIMULATEUR))
         return self._regime_fusionne
 
+    @property
+    def indexation(self):
+        """L'indexation du simulateur, une marque : elle ne se lit pas, et ne
+        sert qu'à bâtir un constructeur du compte (:func:`ConstructeurCompte`)."""
+        return _Indexation(self)
+
     def __getattr__(self, nom):
         if nom in DONNEES:
             return getattr(self._donnees, nom)
@@ -413,6 +423,57 @@ class Constructeur(_Ferme):
                 parametres=simulateur.parametres)
 
         return servie
+
+
+class _Indexation(_Ferme):
+    """L'indexation d'un simulateur de la façade, que le portage refait sous
+    ses paramètres : une marque, qu'on ne lit pas."""
+
+    def __init__(self, simulateur: Simulateur) -> None:
+        object.__setattr__(self, "_simulateur", simulateur)
+
+
+#: Les réglages que lisent les données d'un simulateur que reçoit un
+#: constructeur du compte — ses séries, son catalogue, ses affiliations, son
+#: indexation (``simulateur.py``, ``moteur/indexation.py``).
+REGLAGES_DES_DONNEES = ("racine_donnees", "scenario_projection", "trajectoire_emploi",
+                        "conventions_cor", "lissage_indexation", "plancher_indexation",
+                        "mode_indexation")
+
+#: Les simulateurs de la façade que ``ConstructeurCompte`` a bâtis, par
+#: paramètres.
+_SOUS_D_AUTRES_PARAMETRES: dict[Parametres, Simulateur] = {}
+
+
+def ConstructeurCompte(macro, catalogue, affiliations, indexation, parametres) -> Constructeur:
+    """``ConstructeurCompte`` bâti des données d'un simulateur de la façade,
+    sous d'autres paramètres : le constructeur du portage sous ceux-là
+    (``Simulateur._constructeur_variante`` du Python le bâtit ainsi). Des
+    données d'un autre simulateur, ou que ces paramètres feraient autres
+    (:data:`REGLAGES_DES_DONNEES`), n'arriveraient pas au portage : refusées."""
+    if not isinstance(indexation, _Indexation):
+        raise NonTransmissible(
+            "ConstructeurCompte : indexation qui n'est pas celle d'un simulateur de la "
+            "façade (simulateur.indexation) — le portage refait la sienne")
+    simulateur = indexation._simulateur
+    donnees = simulateur._donnees
+    for nom, recue, sienne in (("séries", macro, donnees.macro),
+                               ("catalogue", catalogue, donnees.catalogue),
+                               ("affiliations", affiliations, donnees.affiliations)):
+        if recue is not sienne:
+            raise NonTransmissible(
+                f"ConstructeurCompte : {nom} d'un autre simulateur que celui de "
+                "l'indexation — le portage refait les siennes")
+    autres = [nom for nom in REGLAGES_DES_DONNEES
+              if getattr(parametres, nom) != getattr(simulateur.parametres, nom)]
+    if autres:
+        raise NonTransmissible(
+            f"ConstructeurCompte : paramètres qui changent les données reçues "
+            f"({', '.join(autres)}) — le constructeur se demande au simulateur de la façade "
+            "sous ces paramètres")
+    if parametres not in _SOUS_D_AUTRES_PARAMETRES:
+        _SOUS_D_AUTRES_PARAMETRES[parametres] = Simulateur(parametres)
+    return _SOUS_D_AUTRES_PARAMETRES[parametres].constructeur
 
 
 class Carriere(_carriere.Carriere):
@@ -525,7 +586,7 @@ def _demander_la_regle(module: str, regle: str, rendu, arguments: dict):
         # Le portage refait ces durées du relevé de leur carrière, sous les
         # paramètres du simulateur qui les a rendues : la règle les reçoit
         # avec cette carrière-là, et sur ce simulateur-là.
-        if arguments.get("carriere") is not durees._carriere:
+        if "carriere" in arguments and arguments["carriere"] is not durees._carriere:
             raise NonTransmissible(
                 f"{module}.{regle} : durées d'une autre carrière que celle de la règle — le "
                 "portage les refait du relevé de la carrière qu'il reçoit")
@@ -737,6 +798,9 @@ ouvrir = _Ouvrir("ouvrir", _ouvrir)
 #: Les règles du module de la réversion, sous un nom à elles : ``reversion``
 #: est l'entrée de la réversion, la fonction du module qui porte son nom.
 regles_de_la_reversion = Regles("reversion", _reversion)
+#: ``droit.cultes`` : la durée de chaque fraction de la pension des cultes,
+#: sur les durées du relevé, et la part de l'écart de la génération.
+cultes = Regles("cultes", _cultes)
 #: ``revalorisation``, hors du droit : les majorations forfaitaires de 1972 à
 #: 1982, servies par le portage.
 revalorisation = Regles("revalorisation", _revalorisation)
@@ -1224,7 +1288,8 @@ JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
            "foyer": _foyer, "liquider": _liquider, "ouvrir": _ouvrir, "releve": _releve,
            "regles_de_la_reversion": _reversion, "revalorisation": _revalorisation,
            "liquidation": _liquidation, "coordonner": _coordonner, "compter": _compter,
-           "acquerir": _acquerir}
+           "acquerir": _acquerir, "cultes": _cultes,
+           "ConstructeurCompte": _compte.ConstructeurCompte}
 
 #: Les simulateurs des tests, par fichier, par moteur et par paramètres.
 _SIMULATEURS: dict[tuple, object] = {}

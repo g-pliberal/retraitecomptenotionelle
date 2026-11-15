@@ -7331,14 +7331,14 @@ de `contribution_etat`.
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Les tests y passent par une façade (`tests/facade.py`), qui sert les entrées
 du moteur, la liquidation entière et chacune de ses étapes, ses tables,
-trente-neuf règles du droit, trois constructeurs du compte, et le relevé
-des droits entier, emplois classés, services et périodes assimilées compris.
-`test_reversion.py`, `test_droit.py`, et six fichiers du relevé, n'ont plus
-de test sur le moteur Python, hors une confrontation. Le propriétaire a
-tranché trois questions (note de décision 0008). Reste, une étape par
-session : les autres fichiers de tests, chacun avec ce qui lui
-manque (« Ce qui reste » de
-`2026-11-15-les-periodes-assimilees-a-la-facade.md`). Puis quatre études, la
+quarante et une règles du droit, les constructeurs du compte, sous d'autres
+paramètres compris, et le relevé des droits entier. `test_reversion.py`,
+`test_droit.py`, et huit fichiers du relevé, cultes et services passés
+compris, n'ont plus de test sur le moteur Python, hors une confrontation.
+Le propriétaire a tranché trois questions (note de décision 0008). Reste,
+une étape par session : les autres fichiers de tests, chacun avec ce qui
+lui manque (« Ce qui reste » de
+`2026-11-15-les-cultes-et-les-services-passes-a-la-facade.md`). Puis quatre études, la
 liste des fonctions gardées des deux côtés, le retrait, et les lignes du
 relevé des périodes assimilées (table de
 `2026-11-13-les-decisions-du-proprietaire.md`).

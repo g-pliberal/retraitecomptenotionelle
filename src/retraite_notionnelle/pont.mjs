@@ -157,6 +157,7 @@ import * as coordonnerEtape from "../../moteur/js/droit/coordonner.js";
 import { REGIMES_CODE_DES_PENSIONS } from "../../moteur/js/droit/coordonner.js";
 import * as commun from "../../moteur/js/droit/commun.js";
 import * as completer from "../../moteur/js/droit/completer.js";
+import * as cultes from "../../moteur/js/droit/cultes.js";
 import * as cumul from "../../moteur/js/droit/cumul.js";
 import * as departs from "../../moteur/js/droit/departs.js";
 import * as foyerEtape from "../../moteur/js/droit/foyer.js";
@@ -1999,7 +2000,7 @@ ENTREES_DE_LA_FACADE["simulateur.constructeur"] = (simulateur, constructeur, met
 
 /** Les modules du droit dont la façade sert des règles, sous leur nom. */
 const MODULES_DU_DROIT = {
-  commun, completer, foyer: foyerEtape, liquider, ouvrir, reversion, revalorisation,
+  commun, completer, cultes, foyer: foyerEtape, liquider, ouvrir, reversion, revalorisation,
 };
 
 /**
