@@ -1314,6 +1314,7 @@ def majorations_des_donnees(majorations: list[dict]) -> tuple:
 #: énumération, ni « 2.0 ». Une fonction qui n'y est pas est refusée avant
 #: node, au lieu que le type de ce qu'elle rend se devine.
 LECTURES_DU_DROIT = {
+    "ouvrir.age_annulation_droit": float,
     "ouvrir.age_ouverture_droit": float,
     "ouvrir.duree_requise": tuple[int, Fiabilite | None],
     "periode.capital_seuil_points": float | None,
@@ -3039,7 +3040,8 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
                  "trimestres_de_decote",
                  "trimestres_de_surcote_regimes_speciaux", "valeur_du_point",
                  "valeur_point_fiche"),
-    "ouvrir": ("age_ouverture", "age_ouverture_commun", "age_ouverture_droit", "age_surcote",
+    "ouvrir": ("age_annulation_droit", "age_ouverture", "age_ouverture_commun",
+               "age_ouverture_droit", "age_surcote",
                "age_taux_plein", "age_taux_plein_droit", "depart_parent_trois_enfants", "derogation_active",
                "duree_requise", "fin_indemnisation", "indemnisation_bornee",
                "ouverture_carriere_longue"),

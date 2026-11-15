@@ -951,6 +951,8 @@ APPELS_DES_REGLES = [
     ("invalidite", "rente_viagere_d_invalidite", lambda s: (900_000.0, 1.0, 40_000.0)),
     ("ouvrir", "age_taux_plein_droit", lambda s: (s.scenario_actuel, _handicape(s))),
     ("ouvrir", "age_taux_plein_droit", lambda s: (s.scenario_actuel, _salarie(s))),
+    ("ouvrir", "age_annulation_droit", lambda s: (s.scenario_actuel, _handicape(s))),
+    ("ouvrir", "age_annulation_droit", lambda s: (s.scenario_actuel, _salarie(s))),
     ("invalidite", "age_de_l_aspa", lambda s: (s.scenario_actuel, _salarie(s))),
     ("invalidite", "categorie_de_la_pension", lambda s: (s.scenario_actuel, _DE_1982(s))),
     ("invalidite", "categorie_de_la_pension", lambda s: (s.scenario_actuel, _DE_PREMIERE(s))),

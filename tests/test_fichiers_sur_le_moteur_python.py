@@ -51,7 +51,7 @@ FICHIERS = (
     "test_cycle_de_vie_references.py", "test_cycle_de_vie_script.py",
     "test_decompte_des_services.py", "test_diviseur_exemples_officiels.py", "test_donnees.py",
     "test_duree_lue_a_soixante_ans.py", "test_effet_retour.py", "test_emploi_retraite.py",
-    "test_estimation_du_site.py", "test_estimation_officielle.py", "test_etranger.py",
+    "test_estimation_officielle.py", "test_etranger.py",
     "test_exonerations_agirc_arrco.py", "test_facade.py", "test_facade_jumeau.py",
     "test_facteurs_depense.py", "test_fiche_date_d_entree.py", "test_fiche_des_liberaux.py",
     "test_flux_fonction_publique.py", "test_fonction_publique_etat.py",

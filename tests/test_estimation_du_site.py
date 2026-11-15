@@ -7,12 +7,12 @@ taux plein automatique — sont datés par le pilote du portage
 mensuel, étage par étage, le net en second, à côté du total que le lecteur
 recopie de son estimation (``estimationOfficielle``, ``moteur/js/pages.js``).
 Ils n'ont que cet exemplaire depuis l'action 161, étape 6. Ces tests tiennent
-chaque âge du portage à celui que l'étape « ouvrir le droit » du Python oppose
-à la carrière liquidée à cet âge, chaque départ à la liquidation que le Python
-simule de cette carrière, étage par étage posé à la main sur elle — le moteur
-garde ses deux exemplaires —, et la page à ce qu'elle promet. La saisie est
-celle du portage, la seule : le Python simule les carrières que le portage
-bâtit, par le pont. Les carrières sont fictives.
+chaque âge du pilote à celui que l'étape « ouvrir le droit » oppose à la
+carrière liquidée à cet âge, chaque départ à la liquidation que l'échéancier
+simule de cette carrière, étage par étage posé à la main sur elle, et la page
+à ce qu'elle promet. Règles et échéancier sont ceux du portage, que la façade
+des tests sert (action 161, étape 9b) : rien n'y tourne plus en Python. Les
+carrières sont fictives.
 """
 
 from __future__ import annotations
@@ -29,11 +29,11 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.droit import ouvrir
 from retraite_notionnelle.remuneration import assiette_maladie, charger_prelevements
 from retraite_notionnelle.web.site import ErreurSite, module, site
-from outils_pont import refus_de_la_saisie, saisie_du_portage
-from outils_web import montants_du_portage, page, saisies  # noqa: F401 — les fixtures partagées
+from facade import Simulateur, ouvrir
+from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
+from outils_web import montants_du_portage, page  # noqa: F401 — les fixtures partagées
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -109,6 +109,13 @@ REGLES = {"legal": ouvrir.age_ouverture_droit, "taux_plein": ouvrir.age_taux_ple
 DROITS = (None, "loi_2023_sans_suspension", "au_31_aout_2023")
 
 
+@pytest.fixture(scope="module")
+def saisies() -> Saisies:
+    """Les saisies du portage, et un simulateur de la façade, que le portage
+    sert : ces tests ne simulent plus rien au moteur Python (action 161)."""
+    return Saisies(Simulateur)
+
+
 def _au_depart(requete: dict, age: float) -> dict:
     """La requête liquidée à ``age`` : la saisie lit un âge nu, comme ceux des
     adresses d'avant le calendrier, à sa valeur exacte."""
@@ -180,9 +187,9 @@ def _parametres(saisies, requete: dict, droit: str | None = None):
     return parametres if droit is None else parametres.avec(droit_contrefactuel=droit)
 
 
-def _liquidation_du_python(saisies, requete: dict, depart: Depart,
-                           droit: str | None = None) -> dict:
-    """Ce que le Python simule de la carrière que le portage bâtit de la
+def _liquidation_de_l_echeancier(saisies, requete: dict, depart: Depart,
+                                 droit: str | None = None) -> dict:
+    """Ce que l'échéancier simule de la carrière que le portage bâtit de la
     requête à l'âge de ``depart`` : la liquidation de son échéancier sous le
     scénario 1, posée à la main étage par étage — la pension de chaque régime,
     minima compris, et la part qu'il sert de la majoration pour enfants, à
@@ -235,19 +242,19 @@ def _ecarts(obtenu, attendu, chemin: str, ecarts: list[str]) -> None:
             for rang, (o, a) in enumerate(zip(obtenu, attendu)):
                 _ecarts(o, a, f"{chemin}[{rang}]", ecarts)
         elif obtenu != attendu:
-            ecarts.append(f"{chemin} : python={str(attendu)[:80]} js={str(obtenu)[:80]}")
+            ecarts.append(f"{chemin} : echeancier={str(attendu)[:80]} pilote={str(obtenu)[:80]}")
         return
     if isinstance(obtenu, bool) or not isinstance(obtenu, (int, float)):
-        ecarts.append(f"{chemin} : python={attendu} js={obtenu}")
+        ecarts.append(f"{chemin} : echeancier={attendu} pilote={obtenu}")
         return
     if abs(obtenu - attendu) / max(abs(attendu), 1e-300) > 1e-9 and abs(obtenu - attendu) > 1e-12:
-        ecarts.append(f"{chemin} : python={attendu} js={obtenu}")
+        ecarts.append(f"{chemin} : echeancier={attendu} pilote={obtenu}")
 
 
 @pytest.mark.parametrize("droit", DROITS)
 def test_chaque_depart_est_a_l_age_que_le_droit_oppose_a_sa_carriere(saisies, droit):
     """Le pilote du portage date chaque départ au point fixe de sa règle : l'âge
-    que l'étape « ouvrir le droit » du Python oppose à la carrière que le
+    que l'étape « ouvrir le droit » oppose à la carrière que le
     portage bâtit à cet âge — au plus tôt, au taux plein, au taux plein
     automatique — est l'âge du départ, et les âges que le départ réunit, la
     page les confondant, y sont déjà atteints. Sous le droit qui s'applique et
@@ -264,11 +271,11 @@ def test_chaque_depart_est_a_l_age_que_le_droit_oppose_a_sa_carriere(saisies, dr
 
 
 @pytest.mark.parametrize("droit", DROITS)
-def test_chaque_depart_est_la_liquidation_que_le_python_simule_de_sa_carriere(
+def test_chaque_depart_est_la_liquidation_que_l_echeancier_simule_de_sa_carriere(
         saisies, droit):
-    """Chaque départ du portage est ce que le Python simule de la carrière que
-    le portage bâtit à cet âge (:func:`_liquidation_du_python`) : son mois, ses
-    trimestres et ceux que le droit requiert, ce qui l'ouvre, et sa pension
+    """Chaque départ du pilote est ce que l'échéancier simule de la carrière
+    que le portage bâtit à cet âge (:func:`_liquidation_de_l_echeancier`) : son
+    mois, ses trimestres et ceux que le droit requiert, ce qui l'ouvre, et sa pension
     étage par étage, à un milliardième près, comme les témoins. Sous chaque
     état du droit ; et les droits contrefactuels ne datent pas comme celui qui
     s'applique le né en 1968, que les deux lois ont touché : sa première
@@ -279,7 +286,7 @@ def test_chaque_depart_est_la_liquidation_que_le_python_simule_de_sa_carriere(
     for nom, requete in REQUETES.items():
         for rang, depart in enumerate(_departs(nom, droit)):
             obtenu = {cle: valeur for cle, valeur in asdict(depart).items() if cle != "quoi"}
-            _ecarts(obtenu, _liquidation_du_python(saisies, requete, depart, droit),
+            _ecarts(obtenu, _liquidation_de_l_echeancier(saisies, requete, depart, droit),
                     f"{nom}[{rang}]", ecarts)
     assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
     assert sum(len(_departs(nom, droit)) for nom in REQUETES) >= 15
@@ -413,15 +420,15 @@ def test_un_depart_que_la_saisie_refuse_ne_tait_pas_l_estimation():
     assert dits == attendus
 
 
-def test_la_carriere_longue_part_au_taux_plein_avant_l_age_legal(saisies):
+def test_la_carriere_longue_part_au_taux_plein_avant_l_age_legal():
+    """Né en février 1966, entré à dix-huit ans : la carrière longue ouvre son
+    premier départ, au taux plein, avant l'âge légal de sa génération, 63 ans
+    et 3 mois (L. 161-17-2, après la suspension de la loi n° 2025-1403,
+    article 105)."""
     premier, *_ = _departs("carriere_longue")
     assert premier.quoi == ("legal", "taux_plein")
     assert premier.motif_ouverture == "carriere_longue"
-    requete = REQUETES["carriere_longue"]
-    actuel = saisies.simulateur(requete).scenario_actuel
-    carriere = saisies.carriere(_au_depart(requete, premier.age))
-    assert premier.age < min(ouvrir.age_ouverture(actuel, periode, carriere)
-                             for _, periode in ouvrir.periodes_parcourues(actuel, carriere)[0])
+    assert premier.age < 63.25
 
 
 def test_un_depart_anticipe_se_dit_par_ce_qui_l_ouvre(page):
@@ -568,8 +575,8 @@ def test_plusieurs_ages_de_depart_cote_a_cote(saisies, page):
     ``balayageDeLEstimation`` (``contexte.js``), sous l'impôt d'une personne
     seule que la bulle dit ; rien pour qui n'a pas de départ à chiffrer. Le
     cycle de vie et le pilote de l'estimation n'ont qu'un exemplaire, le
-    portage (action 161) : le premier et le dernier âge se confrontent au
-    droit du Python, l'âge d'ouverture et celui du taux plein automatique que
+    portage (action 161) : le premier et le dernier âge se confrontent à
+    l'étape « ouvrir le droit », l'âge d'ouverture et celui du taux plein automatique que
     l'étape « ouvrir le droit » oppose à la carrière du pont liquidée à cet
     âge. La requête date la naissance au jour : aucune présomption n'y entre,
     et la saisie du portage se lit sans leur table."""
@@ -619,8 +626,8 @@ def test_les_departs_sous_trois_etats_du_droit(page):
     au plus tôt et au taux plein, l'âge, le mois et le net du premier mois de
     la carrière saisie sous le droit qui s'applique, sous la loi de 2023 sans
     la suspension et sous le droit au 31 août 2023, avec l'écart au premier,
-    et la durée requise : ceux que le portage date sous chaque droit, que le
-    droit du Python confronte. Le né en mai 1968 part au plus tôt à 63 ans
+    et la durée requise : ceux que le portage date sous chaque droit, que
+    l'étape « ouvrir le droit » confronte. Le né en mai 1968 part au plus tôt à 63 ans
     et 9 mois, 3 mois plus tard sans la suspension, 1 an et 9 mois plus tôt
     sans la réforme ; rien pour qui n'a pas de départ à chiffrer."""
     from retraite_notionnelle.calendrier import formater_age
