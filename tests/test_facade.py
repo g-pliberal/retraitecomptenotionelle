@@ -572,6 +572,38 @@ def test_la_valeur_de_service_d_un_point_se_lit_dans_sa_table(simulateur):
     assert simulateur.scenario_actuel.valeurs_point.service("regime_lunaire", 2026) is None
 
 
+def test_les_tables_par_generation_du_taux_plein_se_lisent(simulateur):
+    """Les dix meilleures années pour qui est né avant 1934, vingt-cinq dès
+    1948 (R. 351-29 du code de la sécurité sociale) ; 2,5 % de minoration par
+    trimestre manquant avant 1944, 1,25 % dès 1953 (R. 351-27), sous le type
+    que leur jumeau annonce."""
+    actuel = simulateur.scenario_actuel
+    annees, fiabilite = actuel.annees_salaire_reference.annees(1933)
+    assert (annees, type(annees), type(fiabilite)) == (10, int, Fiabilite)
+    assert actuel.annees_salaire_reference.annees(1948)[0] == 25
+    assert actuel.coefficients_minoration.coefficient(1943)[0] == pytest.approx(0.025)
+    assert actuel.coefficients_minoration.coefficient(1953)[0] == pytest.approx(0.0125)
+
+
+def test_les_points_et_leurs_rendements_se_lisent_dans_leurs_tables(simulateur):
+    """Les points Arrco et Agirc ne sont plus servis après 2018, la fusion les
+    convertissant (accord du 17 novembre 2017) ; le forfait de la garantie
+    minimale de points de 2004, 648 € (circulaire Agirc 2003-9-DRE du 5
+    décembre 2003) ; la majoration pour trois enfants de 5 % des points Arrco
+    de 1999 à 2011, de 10 % depuis (même accord, article 94) ; le rendement de
+    l'Ircantec des années 1970, 22,8 % (``rendements_points.csv``) ; le point
+    d'indice gelé de 2019 à 2020."""
+    actuel = simulateur.scenario_actuel
+    assert actuel.valeurs_point.derniere_annee_servie("arrco") == 2018
+    assert actuel.valeurs_point.derniere_annee_servie("regime_lunaire") is None
+    forfait, fiabilite = actuel.valeurs_point._en_vigueur("agirc", "cotisation_garantie", 2004)
+    assert (forfait, type(fiabilite)) == (648.0, Fiabilite)
+    assert actuel.majorations_enfants_points.taux("arrco", 2005, 3) == pytest.approx(0.05)
+    assert actuel.majorations_enfants_points.taux("agirc_arrco", 2022, 3) == pytest.approx(0.10)
+    assert actuel.rendements.rendement("ircantec", 1975)[0] == pytest.approx(0.228, abs=5e-4)
+    assert actuel.minimum_garanti.ratio_point_indice(2019, 2020) == pytest.approx(1.0)
+
+
 def test_la_version_d_une_reversion_se_lit_par_la_fiche_de_son_regime(simulateur):
     """« Le montant maximum de la pension principale de réversion [...] est égal
     à 54 % du maximum » (circulaire Cnav n° 3/95, § 13) : la version de la
@@ -1353,6 +1385,23 @@ def test_faire_vivre_se_demande_au_portage(simulateur):
     assert revision.annee_des_plans == 1997 and revision.points_servis > 0
     assert facade.faire_vivre(simulateur, carriere, resultat).annee == (
         simulateur.parametres.annee_courante)
+
+
+def test_le_systeme_1_servi_une_annee_se_demande_au_portage(simulateur):
+    """Le même chef, en 1997 : ses pensions, que « faire vivre » y a menées,
+    et l'ASPA différentielle que « foyer et net » leur ajoute, jusqu'au
+    minimum vieillesse d'une personne seule, 42 193 F par an au 1er janvier
+    1997, soit 6 432,28 €. Le portage rend l'``ActuelAujourdhui`` du
+    Python."""
+    carriere = _chef_parti_en_1995(simulateur)
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    servi = facade.actuel_aujourd_hui(simulateur, carriere, resultat, 1997)
+    assert type(servi) is revalorisation_python.ActuelAujourdhui
+    assert servi.regimes == facade.faire_vivre(simulateur, carriere, resultat, 1997).regimes
+    assert servi.minimum_vieillesse > 0
+    assert servi.pension_annuelle == pytest.approx(42_193 / 6.55957, abs=1.0)
+    with pytest.raises(NonTransmissible, match="actuel_aujourd_hui"):
+        facade.actuel_aujourd_hui(simulateur, _chef_parti_en_1995(simulateur), resultat, 1997)
 
 
 def test_faire_vivre_refuse_un_resultat_que_le_portage_ne_refait_pas(simulateur):
@@ -2211,5 +2260,6 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "compter.des_regimes", "droit.etapes",
                               "compter.trimestres_du_contrat", "compter.jours_par_annee",
                               "revalorisation.faire_vivre", "commun.periode_de_liquidation",
-                              "revalorisation.majorer_les_petites_pensions")
+                              "revalorisation.majorer_les_petites_pensions",
+                              "revalorisation.actuel_aujourd_hui")
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)

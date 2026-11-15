@@ -414,6 +414,23 @@ APPELS_DES_TABLES = [
     ("minimum_contributif", "avts", lambda s: (1950, 6)),
     ("valeurs_point", "service", lambda s: ("agirc_arrco", 2045)),
     ("valeurs_point", "service", lambda s: ("regime_lunaire", 2020)),
+    ("valeurs_point", "_en_vigueur", lambda s: ("agirc", "cotisation_garantie", 1996)),
+    ("valeurs_point", "_en_vigueur", lambda s: ("ircantec", "valeur_service", 2090)),
+    ("valeurs_point", "_en_vigueur", lambda s: ("agirc", "cotisation_garantie", 1950)),
+    ("valeurs_point", "derniere_annee_servie", lambda s: ("agirc",)),
+    ("valeurs_point", "derniere_annee_servie", lambda s: ("regime_lunaire",)),
+    ("annees_salaire_reference", "annees", lambda s: (1940,)),
+    ("annees_salaire_reference", "annees", lambda s: (1975,)),
+    ("coefficients_minoration", "coefficient", lambda s: (1948,)),
+    ("coefficients_minoration", "coefficient", lambda s: (1990,)),
+    ("majorations_enfants_points", "taux", lambda s: ("arrco", 1985, 3)),
+    ("majorations_enfants_points", "taux", lambda s: ("agirc", 2005, 4)),
+    ("majorations_enfants_points", "taux", lambda s: ("agirc_arrco", 2022, 3, 2030)),
+    ("majorations_enfants_points", "taux", lambda s: ("regime_lunaire", 2022, 3)),
+    ("rendements", "rendement", lambda s: ("ircantec", 1975)),
+    ("rendements", "rendement", lambda s: ("msa_non_salaries", 2040)),
+    ("minimum_garanti", "ratio_point_indice", lambda s: (2019, 2020)),
+    ("minimum_garanti", "ratio_point_indice", lambda s: (2010, 2024)),
 ]
 
 
@@ -1199,7 +1216,7 @@ def test_le_jumeau_fait_vivre_ce_que_la_facade_lit(parametres):
     """« Faire vivre » des chefs d'exploitation partis en 1995, 2005, 2015 et
     2019, d'une conjointe collaboratrice et d'un salarié, à plusieurs
     échéances : la même ``Revalorisee``, champ par champ, au bit près du
-    jumeau."""
+    jumeau ; et le même ``ActuelAujourdhui``, le système 1 servi."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     servi = facade.Simulateur(parametres)
@@ -1225,6 +1242,15 @@ def test_le_jumeau_fait_vivre_ce_que_la_facade_lit(parametres):
             ecart = ecarts_d_ecriture(lu, relue, tolerance=TOLERANCE_DU_MOTEUR_PYTHON)
             if ecart:
                 ecarts.append(f"{lue.annee_naissance}, {annee} : {ecart}")
+            # Et le système 1 servi cette année-là, l'ASPA d'aujourd'hui comprise.
+            lu = facade.actuel_aujourd_hui(servi, lue, resultat, annee)
+            refait = revalorisation_python.actuel_aujourd_hui(
+                jumeau, refaite, resultat_jumeau, annee)
+            relue = pont.lu_strictement(revalorisation_python.ActuelAujourdhui, json.loads(
+                json.dumps(pont._en_donnees(refait))), "ActuelAujourdhui")
+            ecart = ecarts_d_ecriture(lu, relue, tolerance=TOLERANCE_DU_MOTEUR_PYTHON)
+            if ecart:
+                ecarts.append(f"{lue.annee_naissance}, {annee}, aujourd'hui : {ecart}")
     assert not ecarts, "\n".join(ecarts)
 
 

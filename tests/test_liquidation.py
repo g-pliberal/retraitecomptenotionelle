@@ -29,11 +29,10 @@ from retraite_notionnelle import pilote
 from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.castypes import CAS_TYPES
 from retraite_notionnelle.noyau import contrats
-from retraite_notionnelle.revalorisation import actuel_aujourd_hui, faire_vivre
 
 import facade
-from facade import (Carriere, Simulateur, completer, foyer, liquidation, liquider, ouvrir,
-                    releve)
+from facade import (Carriere, Simulateur, actuel_aujourd_hui, completer, faire_vivre, foyer,
+                    liquidation, liquider, ouvrir, releve)
 from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 from outils_portage import moitie_python
 
@@ -351,7 +350,6 @@ def test_une_demande_fictive_se_liquide_et_le_dit(simulateur):
 
 # -- faire vivre, foyer et net ---------------------------------------------------
 
-@pytest.mark.sur_le_moteur_python("revalorisation.faire_vivre")
 def test_faire_vivre_suit_son_schema_et_ne_liquide_rien(simulateur):
     """« Faire vivre » mène les pensions à l'échéance sans relancer la
     liquidation, et « foyer et net » y revoit l'ASPA : chacune écrit ce que

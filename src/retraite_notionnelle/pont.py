@@ -2464,10 +2464,20 @@ LECTURES_DE_LA_FACADE = {
     "compter.des_regimes": lambda lu: des_regimes_des_donnees(lu),
     "droit.etapes": etape_de_la_liquidation_des_donnees,
     "revalorisation.faire_vivre": lambda lu: _contenu_lu("revalorisation", lu, "Revalorisee"),
+    "revalorisation.actuel_aujourd_hui": lambda lu: actuel_aujourd_hui_des_donnees(lu),
     "commun.periode_de_liquidation": lambda rang: lu_strictement(
         int | None, rang, "periode_de_liquidation"),
     "revalorisation.majorer_les_petites_pensions": lambda lu: majorations_des_donnees(lu),
 }
+
+def actuel_aujourd_hui_des_donnees(lu) -> object:
+    """Le système 1 servi une année (``actuelAujourdhui`` de
+    ``moteur/js/revalorisation.js``), sous le type du Python
+    (``ActuelAujourdhui``), lu strictement."""
+    from .revalorisation import ActuelAujourdhui
+
+    return lu_strictement(ActuelAujourdhui, lu, "actuel_aujourd_hui")
+
 
 #: Le type que le Python donne à une erreur du portage, quand ce n'est pas
 #: ``ValueError`` : par le début de son motif, ou par sa fin.
@@ -2541,21 +2551,26 @@ TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "ages_annulation_decote": ("age",),
     "ages_categorie_active": ("derogation",),
     "ages_ouverture": ("age",),
+    "annees_salaire_reference": ("annees",),
     "carriere_longue": ("_portes", "cotises_reputes"),
     "complement_differentiel_rco": ("regle", "smic_net"),
+    "coefficients_minoration": ("coefficient",),
     "conversions_points": ("echelle", "fusion"),
     "durees_requises": ("trimestres",),
     "fiches_datees": ("regle",),
     "invalidites": ("version",),
+    "majorations_enfants_points": ("taux",),
     "maximum_des_cultes": ("valeur",),
     "minimum_contributif": ("avts", "pension_minimum", "regle", "valeurs"),
-    "minimum_garanti": ("montant", "reference"),
+    "minimum_garanti": ("montant", "ratio_point_indice", "reference"),
     "minimum_vieillesse": ("deux_etages", "plafond", "plafond_couple"),
     "pension_majoree_reference": ("montant", "regle"),
+    "rendements": ("rendement",),
     "revalorisations_pensions": ("generale",),
     "reversions": ("fiche_du_regime", "limite_cumul", "majoration_enfant", "minimum",
                    "plafond_majoration", "version"),
-    "valeurs_point": ("achat", "achat_prolonge", "garantie", "regimes_convenus", "service"),
+    "valeurs_point": ("_en_vigueur", "achat", "achat_prolonge", "derniere_annee_servie", "garantie",
+                      "regimes_convenus", "service"),
 }
 
 # Ce que devient un point à une fusion (``conversions_points.fusion``) : le

@@ -1630,7 +1630,6 @@ def test_les_regimes_speciaux_majorent_par_enfant_au_dela_de_trois(simulateur):
     assert taux("mineur", 5, annee_naissance=1950)["mines"] == pytest.approx(0.10)
 
 
-@pytest.mark.sur_le_moteur_python("scenarios.actuel.MajorationsEnfantsPoints")
 def test_la_majoration_agirc_arrco_suit_la_periode_d_acquisition(simulateur):
     """Chaque point à son taux, celui de son année d'acquisition.
 
@@ -1648,9 +1647,7 @@ def test_la_majoration_agirc_arrco_suit_la_periode_d_acquisition(simulateur):
     la caisse, la présume — c'est la seule ligne de l'exemple qu'il ne peut pas
     rejouer, et il la sert au barème de l'accord.
     """
-    from retraite_notionnelle.scenarios.actuel import MajorationsEnfantsPoints
-
-    table = MajorationsEnfantsPoints(simulateur.scenario_actuel.parametres.racine_donnees)
+    table = simulateur.scenario_actuel.majorations_enfants_points
     point = 1.4386
     justine = [("arrco", 1985, 900), ("arrco", 2005, 1260),
                ("arrco", 2015, 720), ("agirc_arrco", 2022, 630)]
@@ -1945,7 +1942,6 @@ def test_les_complementaires_sont_calculees_en_points(simulateur, salarie_moyen)
     assert pensions["arrco"].montant > 0
 
 
-@pytest.mark.sur_le_moteur_python("scenarios.actuel.ValeursPoint")
 def test_les_points_d_un_regime_fusionne_sont_convertis(simulateur):
     """Un régime fermé ne sert plus ses points : son successeur les sert.
 
@@ -1961,9 +1957,7 @@ def test_les_points_d_un_regime_fusionne_sont_convertis(simulateur):
     2019, après la revalorisation de novembre, quand la conversion s'opère au
     1er janvier. Un pour cent de moins sur tous les points d'avant 2019.
     """
-    from retraite_notionnelle.scenarios.actuel import ValeursPoint
-
-    valeurs = ValeursPoint(simulateur.parametres.racine_donnees)
+    valeurs = simulateur.scenario_actuel.valeurs_point
     scenario = simulateur.scenario_actuel
     derniere_arrco = valeurs.derniere_annee_servie("arrco")
     assert derniere_arrco == 2018
@@ -2182,16 +2176,13 @@ def test_les_neutralisations_ne_commandent_rien(simulateur):
     )
 
 
-@pytest.mark.sur_le_moteur_python("scenarios.actuel.ValeursPoint")
 def test_rendement_instantane_reproduit_le_repere_publie(simulateur):
     """Agirc-Arrco 2025 : le régime publie un rendement de 5,61 %.
 
     C'est le seul chiffre que la caisse communique directement, et il enchaîne
     les trois grandeurs du fichier. S'il tombe juste, elles sont cohérentes.
     """
-    from retraite_notionnelle.scenarios.actuel import ValeursPoint
-
-    valeurs = ValeursPoint(simulateur.parametres.racine_donnees)
+    valeurs = simulateur.scenario_actuel.valeurs_point
     reference, taux_appel, _ = valeurs.achat("agirc_arrco", 2025)
     service, _ = valeurs.service("agirc_arrco", 2025)
     assert service / (reference * taux_appel) == pytest.approx(0.0561, abs=0.0002)
@@ -2217,7 +2208,6 @@ def test_un_regime_sans_valeur_de_point_garde_le_rendement(simulateur):
     assert pensions["msa_non_salaries"].montant > 0
 
 
-@pytest.mark.sur_le_moteur_python("scenarios.actuel.ValeursPoint")
 def test_le_prix_du_point_n_est_pas_prolonge_au_dela_du_publie(simulateur):
     """Un barème inconnu ne doit pas être supposé gelé.
 
@@ -2227,9 +2217,7 @@ def test_le_prix_du_point_n_est_pas_prolonge_au_dela_du_publie(simulateur):
     sur le prolongement qu'un texte écrit (le test suivant) — jamais sur le
     dernier prix recopié.
     """
-    from retraite_notionnelle.scenarios.actuel import ValeursPoint
-
-    valeurs = ValeursPoint(simulateur.parametres.racine_donnees)
+    valeurs = simulateur.scenario_actuel.valeurs_point
     assert valeurs.achat("agirc", 2018) is not None
     assert valeurs.achat("agirc", 2019) is None, "barème Agirc prolongé après sa fermeture"
     assert valeurs.achat_prolonge("agirc", 2019, simulateur.scenario_actuel.macro) is None
@@ -2307,7 +2295,6 @@ def test_le_prix_d_achat_agirc_arrco_suit_le_salaire_moyen_au_dela_du_bareme(sim
             rel=1e-12)
 
 
-@pytest.mark.sur_le_moteur_python("valeurs_point._en_vigueur")
 def test_l_ircantec_prolonge_le_rendement_de_son_dernier_bareme(simulateur):
     """Depuis 2018, la valeur de service, le salaire de référence et le
     rendement réel de l'Ircantec « sont fixés [...] en application de la règle
@@ -2461,7 +2448,6 @@ def test_les_baremes_d_avant_la_fusion_viennent_de_la_federation(simulateur):
         0.26 / 6.55957, abs=5e-7)
 
 
-@pytest.mark.sur_le_moteur_python("scenarios.actuel.ValeursPoint")
 def test_valeurs_du_point_des_avocats_sont_sourcees(simulateur):
     """Les barèmes de la CNBF, seule source qui porte la valeur du point des avocats.
 
@@ -2471,8 +2457,6 @@ def test_valeurs_du_point_des_avocats_sont_sourcees(simulateur):
     au rendement instantané effaçait les deux règles à la fois.
     """
     import csv
-
-    from retraite_notionnelle.scenarios.actuel import ValeursPoint
 
     chemin = (simulateur.parametres.racine_donnees / "reference" / "regimes"
               / "valeurs_point.csv")
@@ -2497,12 +2481,11 @@ def test_valeurs_du_point_des_avocats_sont_sourcees(simulateur):
     # Le catalogue porte ce code, et le prix d'achat lui est attaché — pas au
     # régime de base, qui n'a pas de point.
     assert "cnbf_complementaire" in simulateur.catalogue
-    valeurs_point = ValeursPoint(simulateur.parametres.racine_donnees)
+    valeurs_point = simulateur.scenario_actuel.valeurs_point
     assert valeurs_point.achat("cnbf", 2026) is None
     assert valeurs_point.achat("cnbf_complementaire", 2026) is not None
 
 
-@pytest.mark.sur_le_moteur_python("scenarios.actuel.ValeursPoint")
 def test_valeur_du_point_des_liberaux_est_sourcee(simulateur):
     """La CNAVPL publie sa valeur du point, et elle seule.
 
@@ -2518,8 +2501,6 @@ def test_valeur_du_point_des_liberaux_est_sourcee(simulateur):
     rendement instantané.
     """
     import csv
-
-    from retraite_notionnelle.scenarios.actuel import ValeursPoint
 
     chemin = (simulateur.parametres.racine_donnees / "reference" / "regimes"
               / "valeurs_point.csv")
@@ -2553,7 +2534,7 @@ def test_valeur_du_point_des_liberaux_est_sourcee(simulateur):
             if services[apres] == services[avant]] == [2014, 2016, 2018]
 
     # Faute de prix d'acquisition, le moteur doit rester sur le rendement.
-    assert ValeursPoint(simulateur.parametres.racine_donnees).achat("cnavpl", 2025) is None
+    assert simulateur.scenario_actuel.valeurs_point.achat("cnavpl", 2025) is None
 
 
 def test_valeur_du_point_agirc_arrco_est_recoupee_par_l_insee(simulateur):
@@ -2906,7 +2887,6 @@ def test_le_coefficient_de_revalorisation_s_ancre_sur_la_derniere_circulaire(
     )
 
 
-@pytest.mark.sur_le_moteur_python("minimum_garanti.ratio_point_indice")
 def test_le_dernier_traitement_ne_recoit_pas_les_coefficients_du_regime_general(
         simulateur):
     """Les arrêtés ne valent que pour un salaire PORTÉ AU COMPTE.
@@ -2919,8 +2899,6 @@ def test_le_dernier_traitement_ne_recoit_pas_les_coefficients_du_regime_general(
     c'est ce que la confrontation à OpenFisca-France-Pension a fait voir — le
     modèle passait par les prix, et s'en écartait de 0,5 à 0,8 %.
     """
-    from retraite_notionnelle.carriere import AnneeCarriere, Carriere, LigneRelevee, Metier
-
     lignes = [
         AnneeCarriere(annee=annee, revenu=30000.0,
                       affiliation="fonctionnaire_etat", trimestres_valides=4)
@@ -2955,7 +2933,6 @@ def test_le_dernier_traitement_ne_recoit_pas_les_coefficients_du_regime_general(
     )
 
 
-@pytest.mark.sur_le_moteur_python("scenarios.actuel.AnneesSalaireReference")
 def test_le_nombre_d_annees_du_salaire_de_reference_suit_la_generation(simulateur):
     """Dix à vingt-cinq années, à raison d'une par génération, de 1934 à 1948.
 
@@ -2963,9 +2940,7 @@ def test_le_nombre_d_annees_du_salaire_de_reference_suit_la_generation(simulateu
     assurés auxquels la loi n'en a jamais demandé plus de dix — et étendre la
     moyenne aux années les plus faibles ne peut que l'abaisser.
     """
-    from retraite_notionnelle.scenarios.actuel import AnneesSalaireReference
-
-    table = AnneesSalaireReference(simulateur.parametres.racine_donnees)
+    table = simulateur.scenario_actuel.annees_salaire_reference
     assert table.annees(1930)[0] == 10
     assert table.annees(1938)[0] == 15
     assert table.annees(1948)[0] == 25
@@ -2996,7 +2971,6 @@ def test_le_nombre_d_annees_du_salaire_de_reference_suit_la_generation(simulateu
     assert periode_recente.salaire_reference_par_generation
 
 
-@pytest.mark.sur_le_moteur_python("scenarios.actuel.CoefficientsMinoration")
 def test_le_coefficient_de_minoration_suit_la_generation(simulateur):
     """2,5 % par trimestre avant 1944, 1,25 % à partir de 1953.
 
@@ -3004,9 +2978,7 @@ def test_le_coefficient_de_minoration_suit_la_generation(simulateur):
     1,25 point retiré au taux de 50 %, soit 2,5 % de ce taux — que pour la
     montée en charge de la loi Fillon.
     """
-    from retraite_notionnelle.scenarios.actuel import CoefficientsMinoration
-
-    table = CoefficientsMinoration(simulateur.parametres.racine_donnees)
+    table = simulateur.scenario_actuel.coefficients_minoration
     assert table.coefficient(1940)[0] == pytest.approx(0.025)
     assert table.coefficient(1944)[0] == pytest.approx(0.02375)
     assert table.coefficient(1952)[0] == pytest.approx(0.01375)
@@ -3034,7 +3006,6 @@ def test_la_decote_est_plafonnee_a_vingt_trimestres(simulateur):
     assert resultats[62].taux_liquidation == pytest.approx(0.375)
 
 
-@pytest.mark.sur_le_moteur_python("scenarios.actuel.AgesAnnulationDecote")
 def test_l_age_d_annulation_de_la_decote_suit_la_generation(simulateur):
     """65 ans jusqu'à la génération 1950, 67 à partir de 1955.
 
@@ -3042,9 +3013,7 @@ def test_l_age_d_annulation_de_la_decote_suit_la_generation(simulateur):
     vigueur, opposant 67 ans à des générations auxquelles la loi n'a jamais
     demandé plus de 65.
     """
-    from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote
-
-    table = AgesAnnulationDecote(simulateur.parametres.racine_donnees)
+    table = simulateur.scenario_actuel.ages_annulation_decote
     assert table.age(1940)[0] == pytest.approx(65.0)
     # 66 ans et 2 mois (D. 161-2-1-9, 4°, et L. 351-8, 1°), au mois près.
     assert table.age(1953)[0] == pytest.approx(66 + 2 / 12, abs=1e-12)
@@ -5741,7 +5710,6 @@ process.stdout.write(JSON.stringify({
     return obtenu
 
 
-@pytest.mark.sur_le_moteur_python("droit.coordonner.regimes_interpenetres lit le moteur")
 def test_l_annee_ou_l_exploitant_cesse_reste_au_statut_du_1er_janvier(simulateur):
     """Les cotisations des non-salariés agricoles « sont fixées pour chaque
     année civile », la situation du chef « appréciée au premier jour de l'année
@@ -5771,7 +5739,6 @@ def test_l_annee_ou_l_exploitant_cesse_reste_au_statut_du_1er_janvier(simulateur
         "points": {"msa_non_salaries": 30.0, "msa_rco": 133.0}}
 
 
-@pytest.mark.sur_le_moteur_python("droit.coordonner.regimes_interpenetres lit le moteur")
 def test_l_annee_du_deces_du_chef_d_exploitation_se_cotise_au_prorata(simulateur):
     """En cas de décès du chef d'exploitation, les cotisations « dues au titre
     de l'année au cours de laquelle est survenu le décès sont calculées au
@@ -7084,7 +7051,6 @@ def _points_du_forfait_publie(simulateur, annee):
     return forfait / (appel * reference)
 
 
-@pytest.mark.sur_le_moteur_python("valeurs_point._en_vigueur")
 def test_la_garantie_est_proportionnelle_au_taux_de_l_entreprise(simulateur):
     """« Le participant peut bénéficier chaque année d'un nombre de points
     proportionnel au taux de cotisations de l'entreprise sur tranche B
@@ -7139,7 +7105,6 @@ def test_la_garantie_est_proportionnelle_au_taux_de_l_entreprise(simulateur):
     assert _tranche_b(simulateur, "agirc", 1997).points_garantis(1.0, 1.0) == 120
 
 
-@pytest.mark.sur_le_moteur_python("valeurs_point._en_vigueur")
 def test_la_garantie_se_fixait_avant_le_salaire_de_reference(simulateur):
     """Le forfait d'une année était fixé avant le salaire de référence qui
     achète ses points : « le montant des points à inscrire sera calculé sur la
@@ -7173,7 +7138,7 @@ def test_la_garantie_se_fixait_avant_le_salaire_de_reference(simulateur):
 
 def _cotisation_agirc(simulateur, carriere, annee, part):
     """Ce que le compte notionnel reçoit de l'Agirc une année, et la ligne."""
-    from retraite_notionnelle.moteur.compte import ConstructeurCompte
+    from facade import ConstructeurCompte
 
     constructeur = ConstructeurCompte(
         simulateur.macro, simulateur.catalogue, simulateur.affiliations,
@@ -7182,7 +7147,6 @@ def _cotisation_agirc(simulateur, carriere, annee, part):
     return dict(ligne.par_regime).get("agirc", 0.0), ligne
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.indexation")
 def test_la_cotisation_de_la_garantie_minimale_va_au_compte(simulateur):
     """Les 120 points de l'Agirc n'étaient pas gratuits : une cotisation
     forfaitaire les achetait, « en contrepartie de cotisations » (convention
@@ -7234,7 +7198,6 @@ def test_la_cotisation_de_la_garantie_minimale_va_au_compte(simulateur):
     assert _cotisation_agirc(simulateur, carriere(0.8), 2019, PartCotisation.TOTALE)[0] == 0
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.indexation")
 def test_la_garantie_minimale_se_proratise(simulateur):
     """La garantie est celle d'une année entière à temps plein : « En cas de
     travail à temps partiel, la GMP est proratisée » (Audiens Retraite Agirc,
@@ -7291,7 +7254,6 @@ def test_la_garantie_minimale_se_proratise(simulateur):
     assert moitie == pytest.approx(entiere / 2, rel=1e-9)
 
 
-@pytest.mark.sur_le_moteur_python("Simulateur.indexation")
 def test_la_garantie_minimale_vaut_pour_une_annee_de_chomage(simulateur):
     """L'Agirc valide une période que l'Unédic indemnise « sur la base du taux
     minimum applicable à chaque exercice, assorti de la GMP (garantie minimale
@@ -7393,7 +7355,6 @@ def test_le_prix_de_la_garantie_suit_les_montants_publies(simulateur, annee, men
     (2005, 55.33, 20.75, "circulaire Agirc 2004-7-DRE du 15 décembre 2004"),
     (2006, 56.83, 21.56, "circulaire Agirc 2006-2-DRE du 19 mai 2006"),
 ])
-@pytest.mark.sur_le_moteur_python("valeurs_point._en_vigueur")
 def test_la_garantie_suit_les_circulaires_de_l_agirc(simulateur, annee, mensuelle,
                                                      salariale, source):
     """Les forfaits d'avant 2008, que le barème IPP tient « de barèmes
@@ -8807,7 +8768,6 @@ def test_avant_novembre_2012_la_duree_d_assurance_passait_de_huit_trimestres_la_
     assert ouvrir.age_ouverture_droit(actuel, carriere) == pytest.approx(60.0)
 
 
-@pytest.mark.sur_le_moteur_python("carriere_longue._portes")
 def test_jusqu_en_juin_2011_les_fonctionnaires_gardaient_les_portes_de_l_ancien_l_25_bis(
         simulateur):
     """D. 16-1, la rédaction par génération que le décret n° 2010-1748 insère
@@ -9640,12 +9600,11 @@ def test_le_salaire_de_reference_des_cultes_est_fait_du_forfait(simulateur):
 # -- l'âge légal de la proposition -------------------------------------------
 
 
-@pytest.mark.sur_le_moteur_python("carriere.salaire_moyen_annuel")
 def test_la_carriere_prolongee_garde_le_passe_et_travaille_jusqu_a_l_age_legal(simulateur):
     """Rien de ce qui précède le départ initial ne bouge ; l'année du départ
     se complète, les suivantes s'ajoutent, et le salaire relatif se prolonge au
     rythme du salaire moyen. L'assuré est né le 1er janvier 1965."""
-    from retraite_notionnelle.carriere import salaire_moyen_annuel
+    from facade import salaire_moyen_annuel
 
     carriere = simulateur.carriere_simple(
         annee_naissance=1965, sexe="H", affiliation="salarie_prive_non_cadre",
@@ -9692,14 +9651,13 @@ def test_un_releve_qui_s_arrete_avant_le_depart_n_est_pas_prolonge(simulateur):
     assert prolongee.lignes == carriere.lignes
 
 
-@pytest.mark.sur_le_moteur_python("carriere.salaire_moyen_annuel")
 def test_la_prolongation_poursuit_aussi_l_activite_cumulee(simulateur):
     """Le salarié qui exerce aussi en libéral garde SES DEUX revenus pendant
     les années du report, l'activité principale en tête. Jusqu'au 23
     septembre 2026, seule la dernière ligne de l'année se prolongeait — la
     libérale — et le salaire disparaissait. L'assuré est né le 1er janvier
     1975."""
-    from retraite_notionnelle.carriere import salaire_moyen_annuel
+    from facade import salaire_moyen_annuel
 
     carriere = simulateur.carriere_parcours(
         annee_naissance=1975, sexe="H",

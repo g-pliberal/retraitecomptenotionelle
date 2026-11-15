@@ -3460,11 +3460,12 @@ export class ValeursPoint {
   }
 
   /**
-   * Dernière valeur publiée à l'année demandée, ou avant elle. Une valeur reste
+   * Dernière valeur publiée à l'année demandée, ou avant elle (`_en_vigueur`
+   * du Python, que la façade des tests sert sous ce nom). Une valeur reste
    * en vigueur jusqu'à sa modification : c'est la règle de lecture d'un barème.
    * Rien n'est renvoyé pour les années antérieures à la première publication.
    */
-  _enVigueur(regime, mesure, annee) {
+  enVigueur(regime, mesure, annee) {
     const table = this._table.get(`${regime}|${mesure}`);
     if (table === undefined) {
       return null;
@@ -3491,11 +3492,11 @@ export class ValeursPoint {
     if (table === undefined || annee > table.annees[table.annees.length - 1]) {
       return null;
     }
-    const reference = this._enVigueur(regime, "salaire_reference", annee);
+    const reference = this.enVigueur(regime, "salaire_reference", annee);
     if (reference === null || reference[0] <= 0) {
       return null;
     }
-    const appel = this._enVigueur(regime, "taux_appel", annee);
+    const appel = this.enVigueur(regime, "taux_appel", annee);
     const [taux, fiabiliteAppel] = appel !== null ? appel : [1.0, 1];
     return [reference[0], taux, Math.min(reference[1], fiabiliteAppel)];
   }
@@ -3561,7 +3562,7 @@ export class ValeursPoint {
     const forfaits = this._table.get(`${regime}|cotisation_garantie`);
     if (forfaits !== undefined && forfaits.annees[0] <= annee
         && annee <= forfaits.annees[forfaits.annees.length - 1]) {
-      const [forfait, fiabiliteForfait] = this._enVigueur(
+      const [forfait, fiabiliteForfait] = this.enVigueur(
         regime, "cotisation_garantie", annee);
       return [forfait * proportion * part * quotite, fiabiliteForfait];
     }
@@ -3585,7 +3586,7 @@ export class ValeursPoint {
   }
 
   service(regime, annee) {
-    return this._enVigueur(regime, "valeur_service", annee);
+    return this.enVigueur(regime, "valeur_service", annee);
   }
 
   /**

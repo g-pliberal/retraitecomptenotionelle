@@ -1776,6 +1776,10 @@ const ENTREES_DE_LA_FACADE = {
   // « Faire vivre », sur le scénario 1 que le portage refait de la carrière.
   "revalorisation.faire_vivre": (simulateur, carriere, annee) => telQuel(faireVivre(
     simulateur, carriere, simulateur.scenarioActuel.calculer(carriere), annee)),
+  // Le système 1 servi en `annee` : « faire vivre », puis « foyer et net ».
+  "revalorisation.actuel_aujourd_hui": (simulateur, carriere, annee) => telQuel(
+    revalorisation.actuelAujourdhui(
+      simulateur, carriere, simulateur.scenarioActuel.calculer(carriere), annee)),
   // Les étapes du relevé, chacune seule, refaites de la carrière : bornée, la
   // carrière est celle que le relevé lit (`indemnisationBornee`).
   "coordonner.coordonner": (moteur, carriere) => coordinationEnDonnees(

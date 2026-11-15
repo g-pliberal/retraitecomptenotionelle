@@ -118,7 +118,7 @@ ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversio
            "acquerir.acquerir", "compter.cumul_plafonne", "compter.des_regimes",
            "droit.etapes", "compter.trimestres_du_contrat", "compter.jours_par_annee",
            "revalorisation.faire_vivre", "commun.periode_de_liquidation",
-           "revalorisation.majorer_les_petites_pensions")
+           "revalorisation.majorer_les_petites_pensions", "revalorisation.actuel_aujourd_hui")
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
@@ -329,17 +329,33 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None):
     résultat doit être celui que le moteur de ce simulateur de la façade a
     rendu pour cette carrière, sous les drapeaux par défaut : un autre
     n'arriverait pas au portage."""
+    return _sur_le_scenario_1("revalorisation.faire_vivre", simulateur, carriere, resultat,
+                              annee)
+
+
+def actuel_aujourd_hui(simulateur, carriere, resultat, annee: int | None = None):
+    """``revalorisation.actuel_aujourd_hui`` : le système 1 servi en ``annee``
+    — « faire vivre », puis « foyer et net » —, servi par le portage sous le
+    type du Python (``ActuelAujourdhui``), sur le résultat que demande
+    :func:`faire_vivre`."""
+    return _sur_le_scenario_1("revalorisation.actuel_aujourd_hui", simulateur, carriere,
+                              resultat, annee)
+
+
+def _sur_le_scenario_1(entree: str, simulateur, carriere, resultat, annee: int | None):
+    """L'entrée, sur le scénario 1 que le portage refait de ``carriere`` : le
+    résultat doit être celui que le moteur de ce simulateur de la façade a
+    rendu pour cette carrière, sous les drapeaux par défaut."""
     calcule = _CALCULES.get(id(resultat))
     if (not isinstance(simulateur, Simulateur) or calcule is None
             or calcule[0] is not resultat or calcule[1] is not carriere
             or calcule[2] is not simulateur):
         raise NonTransmissible(
-            "revalorisation.faire_vivre : un résultat que le portage ne refait pas — il "
+            f"{entree} : un résultat que le portage ne refait pas — il "
             "refait le scénario 1 de la carrière, sous ses drapeaux par défaut, sur le "
             "moteur du simulateur de la façade qui l'a rendu (simulateur.scenario_actuel."
             "calculer(carriere))")
-    return _demander("revalorisation.faire_vivre", simulateur.parametres, pont.SIMULATEUR,
-                     carriere, annee)
+    return _demander(entree, simulateur.parametres, pont.SIMULATEUR, carriere, annee)
 
 
 class PensionServie(_Ferme):
@@ -1491,6 +1507,7 @@ JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
            "liquidation": _liquidation, "coordonner": _coordonner, "compter": _compter,
            "acquerir": _acquerir, "cultes": _cultes, "departs": _departs, "invalidite": _invalidite,
            "faire_vivre": _revalorisation.faire_vivre,
+           "actuel_aujourd_hui": _revalorisation.actuel_aujourd_hui,
            "PensionServie": _revalorisation.PensionServie,
            "majorer_les_petites_pensions": _revalorisation.majorer_les_petites_pensions,
            "Echeancier": _echeancier.Echeancier,
