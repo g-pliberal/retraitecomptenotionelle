@@ -14,18 +14,17 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere, Metier, salaire_moyen_annuel
-from retraite_notionnelle.droit import acquerir, compter, coordonner, liquider
+from retraite_notionnelle.carriere import AnneeCarriere, Metier
 from retraite_notionnelle.donnees.chargement import (
     charger_cotisation_micro,
     charger_validation_micro,
     charger_yaml,
     rapport_validation_micro,
 )
-from retraite_notionnelle.donnees.macro import DonneesMacro
-from retraite_notionnelle.moteur.compte import ConstructeurCompte
-from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import module
+
+from facade import (Carriere, ConstructeurCompte, Simulateur, acquerir, compter, coordonner,
+                    liquider, salaire_moyen_annuel)
 
 RACINE = Path(__file__).resolve().parents[1]
 DONNEES = RACINE / "data"
@@ -35,8 +34,10 @@ ABATTEMENTS_MICRO = charger_yaml(
 
 
 @pytest.fixture(scope="module")
-def macro():
-    return DonneesMacro(DONNEES)
+def macro(simulateur):
+    """Les séries du simulateur de la façade, que ``salaire_moyen_annuel`` et
+    les bâtisseurs de la carrière reçoivent du portage."""
+    return simulateur.macro
 
 
 def _ligne(macro, statut, micro, activite, chiffre_d_affaires, annee,

@@ -14,9 +14,9 @@ from __future__ import annotations
 import pytest
 
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import salaire_moyen_annuel
 from retraite_notionnelle.web.site import site
 
+from facade import Simulateur, salaire_moyen_annuel
 from outils_pont import Saisies, saisie_du_portage
 
 #: Né le 10 mars 1980, au régime général de 2002 à 2024 : 64 ans le 1er avril
@@ -41,7 +41,9 @@ def _ajoutees(**requete):
 
 
 def _macro(saisies, requete):
-    return saisies.simulateur(requete).macro
+    """Les séries du simulateur de la façade, sous les paramètres de la
+    saisie : celles que ``salaire_moyen_annuel`` reçoit du portage."""
+    return Simulateur(saisies.parametres(requete)).macro
 
 
 def _depart(requete) -> tuple[int, int]:

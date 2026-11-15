@@ -41,14 +41,14 @@ import pytest
 
 from retraite_notionnelle import Parametres
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import Affiliations, LigneRelevee, prolonger_releve
-from retraite_notionnelle.donnees.regimes import CatalogueRegimes
+from retraite_notionnelle.carriere import LigneRelevee
 from retraite_notionnelle.remuneration import (
     ConstructeurFiche,
     bloc_droit_en_vigueur,
     charger_prelevements,
 )
-from retraite_notionnelle.simulateur import Simulateur
+
+from facade import Simulateur, prolonger_releve
 
 RACINE = Path(__file__).resolve().parents[1]
 PARAMETRES = Parametres()
@@ -70,16 +70,17 @@ HORS_PERIMETRE = 0.0300 - 0.0049 + 0.0025 + 0.00016
 
 
 @pytest.fixture(scope="module")
-def pieces():
-    profil = charger_prelevements(PARAMETRES.racine_donnees).profil("salarie_prive")
-    bloc = bloc_droit_en_vigueur(CatalogueRegimes(PARAMETRES.racine_donnees),
-                                 Affiliations(PARAMETRES.racine_donnees), STATUT, ANNEE)
-    return {"profil": profil, "bloc": bloc}
+def simulateur() -> Simulateur:
+    return Simulateur()
 
 
 @pytest.fixture(scope="module")
-def simulateur() -> Simulateur:
-    return Simulateur()
+def pieces(simulateur):
+    """Le profil des prélèvements et le bloc du droit en vigueur, lus du
+    catalogue et des affiliations que le simulateur charge."""
+    profil = charger_prelevements(PARAMETRES.racine_donnees).profil("salarie_prive")
+    bloc = bloc_droit_en_vigueur(simulateur.catalogue, simulateur.affiliations, STATUT, ANNEE)
+    return {"profil": profil, "bloc": bloc}
 
 
 def _fiche(pieces, brut: float, lodeom: str = ""):
