@@ -58,7 +58,7 @@ FICHIERS = (
     "test_grille_large.py",
     "test_independants.py", "test_indexation_programme.py",
    
-    "test_limite_age.py", "test_marins.py", "test_mayotte.py",
+    "test_limite_age.py", "test_mayotte.py",
     "test_moteur.py", "test_outre_mer.py",
     "test_plafond_majoration_enfants.py",
     "test_pont.py", "test_primes_soumises_a_retenue.py",

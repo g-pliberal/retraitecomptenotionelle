@@ -3063,7 +3063,8 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     # La rente viagère d'invalidité du fonctionnaire (L. 28).
     "invalidite": ("age_de_l_aspa", "categorie_de_la_pension", "plancher_de_la_substitution",
                    "rente_viagere_d_invalidite"),
-    "liquider": ("_coefficient_anticipation", "abattement_points", "age_de_la_duree_atteinte", "annees_au_prorata",
+    "liquider": ("_coefficient_anticipation", "abattement_points", "abattre_au_dela_du_plafond",
+                 "age_de_la_duree_atteinte", "annees_au_prorata",
                  "assiette_de_reference", "conversion_capital_rafp", "majoration_rafp",
                  "mois_apres_le_depart", "prestation_rafp",
                  "borne_de_la_duree", "coefficient_surcote_datee", "decote_opposable",
@@ -3071,7 +3072,7 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
                  "duree_proratisation", "majoration_des_points_de_1952_a_1972_d_avant_2026",
                  "majorer_les_points_de_1952_a_1972", "maximum_des_pensions",
                  "moyenne_des_meilleures_annees", "nombre_d_annees_retenues",
-                 "pension_maximale", "repartir_les_annees", "retranche_decote", "revenu_des_cotisations_minimales", "salaire_de_reference",
+                 "pension_maximale", "plafond_du_salaire_de_reference", "repartir_les_annees", "retranche_decote", "revenu_des_cotisations_minimales", "salaire_de_reference",
                  "taux_acquis_l_emporte", "taux_de_majoration_de_1952_a_1972",
                  "trimestres_de_decote",
                  "trimestres_de_surcote_regimes_speciaux", "valeur_du_point",

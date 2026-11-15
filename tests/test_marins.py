@@ -309,7 +309,7 @@ def test_avant_le_5_novembre_1985_le_plafond_n_est_pas_lu_et_la_fiche_le_declare
 
 @pytest.fixture(scope="module")
 def simulateur():
-    from retraite_notionnelle.simulateur import Simulateur
+    from facade import Simulateur
 
     return Simulateur()
 
@@ -330,17 +330,17 @@ def simulateur():
 ])
 def test_le_plafond_est_huit_fois_le_traitement_de_l_indice_100_a_la_date_d_effet(
         simulateur, annee, mois, attendu):
-    from retraite_notionnelle.droit import liquider
+    from facade import liquider
 
     moteur = simulateur.scenario_actuel
-    periode = moteur.catalogue["marins"].periode(annee)
+    periode = simulateur.catalogue["marins"].periode(annee)
     plafond = liquider.plafond_du_salaire_de_reference(moteur, periode, annee, mois)
     if attendu is None:
         assert plafond is None
     else:
         assert plafond == pytest.approx(attendu, abs=1e-6)
     # Le régime général n'a pas de tel plafond.
-    general = moteur.catalogue["regime_general"].periode(annee)
+    general = simulateur.catalogue["regime_general"].periode(annee)
     assert liquider.plafond_du_salaire_de_reference(moteur, general, annee, mois) is None
 
 
@@ -348,7 +348,7 @@ def test_la_portion_au_dela_du_plafond_ne_compte_que_pour_moitie():
     """100 000 € au plafond de 2026 : 98 298,1376 + (100 000 − 98 298,1376) / 2
     = 99 149,0688 € ; la vingtième catégorie de 2026, sous le plafond, reste
     entière."""
-    from retraite_notionnelle.droit import liquider
+    from facade import liquider
 
     assert liquider.abattre_au_dela_du_plafond(100000.0, 98298.1376, 0.5) == pytest.approx(
         99149.0688, abs=1e-9)
@@ -361,15 +361,14 @@ def test_le_marin_qui_passe_le_plafond_liquide_un_salaire_abattu(simulateur):
     forfait, la grille de 2026 portée par le salaire moyen, passe le plafond, que
     le point, sans décret au-delà de 2027, garde à 98 298,1376 € : il liquide le
     plafond et la moitié de ce qui le dépasse, et le détail le dit."""
-    from retraite_notionnelle.carriere import salaire_moyen_annuel
+    from facade import SALAIRE_MOYEN
 
     carriere = simulateur.carriere_simple(
         annee_naissance=1990, sexe="H", affiliation="marin", age_debut=20,
         age_liquidation=55.5, niveau_salaire=4.0, profil_carriere="plat", jour_naissance=1)
     ligne = carriere.ligne(2045)
     forfait, categorie, _ = simulateur.scenario_actuel.grilles.forfait(
-        "marins", 2045, ligne.revenu_annualise,
-        lambda a: salaire_moyen_annuel(simulateur.macro, a))
+        "marins", 2045, ligne.revenu_annualise, SALAIRE_MOYEN)
     assert categorie == 20 and forfait > 98298.1376
     attendu = 98298.1376 + (forfait - 98298.1376) / 2
     pension = next(p for p in simulateur.scenario_actuel.calculer(carriere).pensions_par_regime
@@ -505,7 +504,7 @@ def test_sans_l_index_chaque_point_se_recoupe_dans_la_serie_que_le_modele_lit(si
     le 1er janvier 1986, de la même rédaction ; en 1994, la série porte la
     moyenne des deux points de l'article 3 (`POINTS_DE_1994`), convention que la
     fiche déclare."""
-    from retraite_notionnelle.droit import liquider
+    from facade import liquider
 
     points = {int(l["annee"]): float(l["valeur"])
               for l in _lignes("legislation/point_indice_fonction_publique.csv")}
@@ -518,7 +517,7 @@ def test_sans_l_index_chaque_point_se_recoupe_dans_la_serie_que_le_modele_lit(si
         lu = sum(map(_point, POINTS_DE_1994[legi])) / 2 if annee == 1994 else _point(ecrit)
         assert round(lu, 4) == points[annee], (jour, lu, points[annee])
         plafond = liquider.plafond_du_salaire_de_reference(
-            moteur, moteur.catalogue["marins"].periode(annee), annee, mois)
+            moteur, simulateur.catalogue["marins"].periode(annee), annee, mois)
         assert plafond == pytest.approx(8 * _indice_au(jour) * points[annee], abs=1e-6), jour
 
 
@@ -536,10 +535,10 @@ def test_en_1994_le_texte_ne_dit_pas_lequel_des_deux_points_fait_le_plafond_et_l
     Du 1er août au 30 novembre, le plafond du modèle est sous les deux lectures.
     La vingtième catégorie de la grille du modèle reste sous l'une et l'autre.
     La fiche déclare cette convention du modèle et son effet au plus."""
-    from retraite_notionnelle.droit import liquider
+    from facade import liquider
 
     moteur = simulateur.scenario_actuel
-    periode = moteur.catalogue["marins"].periode(1994)
+    periode = simulateur.catalogue["marins"].periode(1994)
     janvier, aout = POINTS_DE_1994.values()
     assert janvier[0] == POINT_DE_L_ARTICLE_3["1994-01-01"][0]
     general, derogation = (8 * _indice_au("1994-01-01") * _point(ecrit) for ecrit in janvier)
@@ -577,7 +576,7 @@ def _dixiemes(valeur: float, vers_le_haut: bool = False) -> str:
 def _forfait_estime(simulateur, annee: int, categorie: int) -> float:
     """Le forfait d'une catégorie une année que la grille ne publie pas : celui de
     2008, lu, ramené par le salaire moyen, tel que le moteur le range."""
-    from retraite_notionnelle.carriere import salaire_moyen_annuel
+    from facade import SALAIRE_MOYEN, salaire_moyen_annuel
     from retraite_notionnelle.donnees.chargement import Fiabilite
 
     moyen = lambda a: salaire_moyen_annuel(simulateur.macro, a)  # noqa: E731
@@ -587,7 +586,7 @@ def _forfait_estime(simulateur, annee: int, categorie: int) -> float:
                    and int(l["categorie"]) == categorie)
     estime = de_2008 * moyen(annee) / moyen(2008)
     forfait, rangee, fiabilite = simulateur.scenario_actuel.grilles.forfait(
-        "marins", annee, estime, moyen)
+        "marins", annee, estime, SALAIRE_MOYEN)
     assert rangee == categorie and forfait == pytest.approx(estime, rel=1e-12)
     assert fiabilite == Fiabilite.ESTIMEE
     return forfait

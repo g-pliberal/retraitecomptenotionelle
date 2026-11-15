@@ -909,6 +909,17 @@ APPELS_DES_REGLES = [
      lambda s: (s.scenario_actuel, "medecin_liberal", 2003, "base", 400, 4)),
     ("liquider", "valeur_point_fiche", _point_de_la_fiche(2002)),
     ("liquider", "valeur_point_fiche", _point_de_la_fiche(1995)),
+    # Le plafond du salaire de référence des marins (R. 11, 3°) : à l'indice
+    # 100 de 2026, avant le décret n° 85-1148, au régime général qui n'en a
+    # pas ; et la part au-delà de lui, comptée pour moitié.
+    ("liquider", "plafond_du_salaire_de_reference", lambda s: (
+        s.scenario_actuel, s.catalogue["marins"].periode(2026), 2026, 1)),
+    ("liquider", "plafond_du_salaire_de_reference", lambda s: (
+        s.scenario_actuel, s.catalogue["marins"].periode(1985), 1985, 10)),
+    ("liquider", "plafond_du_salaire_de_reference", lambda s: (
+        s.scenario_actuel, s.catalogue["regime_general"].periode(2008), 2008, 7)),
+    ("liquider", "abattre_au_dela_du_plafond", lambda s: (100000.0, 98298.1376, 0.5)),
+    ("liquider", "abattre_au_dela_du_plafond", lambda s: (76867.05, 98298.1376, 0.5)),
     ("ouvrir", "fin_indemnisation", lambda s: (s.scenario_actuel, _chomeur()(s))),
     ("ouvrir", "fin_indemnisation",
      lambda s: (s.scenario_actuel, _chomeur(1950, 30, 67, range(2008, 2018))(s))),
