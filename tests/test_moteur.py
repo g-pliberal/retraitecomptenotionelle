@@ -9,7 +9,6 @@ from retraite_notionnelle.config import (
     Parametres,
     RACINE_DONNEES,
     SourceCotisations,
-    TableConversion,
 )
 from retraite_notionnelle.donnees.macro import DonneesMacro
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite
@@ -643,89 +642,8 @@ def test_report_est_compte_negativement(mortalite):
 
 
 # -- conversion --------------------------------------------------------------
-
-
-def test_diviseur_decroit_avec_l_age_de_liquidation(mortalite):
-    convertisseur = Convertisseur(mortalite, Parametres())
-    precedent = None
-    for age in (55, 60, 62, 64, 67, 70):
-        diviseur = convertisseur.coefficient(age, 2026).diviseur
-        if precedent is not None:
-            assert diviseur < precedent, f"le diviseur ne baisse pas à {age} ans"
-        precedent = diviseur
-
-
-def test_anticipation_reduit_la_pension_sans_decote_administrative(mortalite):
-    """La sanction du départ anticipé est produite par le seul diviseur."""
-    convertisseur = Convertisseur(mortalite, Parametres())
-    rapport = convertisseur.effet_anticipation(59.0, 64.0, 2026)
-    assert rapport < 1.0
-    # Cinq ans d'anticipation coûtent de l'ordre de 15 % de pension annuelle,
-    # avant même de compter les cotisations non versées.
-    assert 0.75 < rapport < 0.92
-
-
-def test_diviseur_nul_de_taux_anticipe_vaut_esperance_de_vie(mortalite):
-    convertisseur = Convertisseur(mortalite, Parametres(taux_anticipe_conversion=0.0))
-    coefficient = convertisseur.coefficient(64, 2026)
-    assert coefficient.diviseur == pytest.approx(coefficient.esperance_residuelle, rel=1e-6)
-
-
-def test_taux_anticipe_positif_reduit_le_diviseur(mortalite):
-    sans = Convertisseur(mortalite, Parametres()).coefficient(64, 2026)
-    avec = Convertisseur(
-        mortalite, Parametres(taux_anticipe_conversion=0.015)
-    ).coefficient(64, 2026)
-    assert avec.diviseur < sans.diviseur
-
-
-def test_le_prefinancement_du_diviseur_se_rend_sur_la_pension_servie():
-    """Un diviseur actualisé à ν sert d'avance un rendement de ν par an : la
-    pension servie le rend, revalorisée au taux du compte divisé par 1 + ν,
-    comme la pension suédoise l'est à 1,6 %. Sans quoi elle dépassait ce que le
-    compte a financé, contre la promesse du diviseur (« à espérance de coût
-    inchangée ») ; au défaut, ν = 0, rien ne change."""
-    sans = Simulateur(Parametres()).revalorisation_servie
-    avec = Simulateur(Parametres(taux_anticipe_conversion=0.016)).revalorisation_servie
-    for liquidation, annee in ((2000, 2001), (2010, 2025), (1990, 2026)):
-        attendu = sans.coefficient(liquidation, annee) / 1.016 ** (annee - liquidation)
-        assert avec.coefficient(liquidation, annee) == pytest.approx(attendu, rel=1e-12)
-    assert avec.coefficient(2010, 2010) == 1.0
-
-
-def test_table_par_sexe_penalise_les_femmes(mortalite):
-    """Justification du choix unisexe par défaut : l'écart est loin d'être marginal."""
-    convertisseur = Convertisseur(
-        mortalite, Parametres(table_conversion=TableConversion.PAR_SEXE)
-    )
-    homme = convertisseur.coefficient(64, 2026, "H").diviseur
-    femme = convertisseur.coefficient(64, 2026, "F").diviseur
-    assert femme > homme
-    assert (femme / homme - 1) > 0.05
-
-
-def test_table_par_sexe_exige_le_sexe(mortalite):
-    convertisseur = Convertisseur(
-        mortalite, Parametres(table_conversion=TableConversion.PAR_SEXE)
-    )
-    with pytest.raises(ValueError, match="sexe non renseigné"):
-        convertisseur.coefficient(64, 2026, None)
-
-
-def test_la_table_d_une_population_allonge_le_diviseur(mortalite):
-    """Ce que le diviseur commun transfère (action 14) : à 64 ans, un
-    fonctionnaire civil de l'État a entre un et deux ans de rente de plus que
-    la population générale, et une table qui le saurait lui servirait 4 à 8 %
-    de moins par an à capital égal. La table commune reste le défaut."""
-    commun = Convertisseur(mortalite, Parametres()).coefficient(64, 2026)
-    corrige = Convertisseur(
-        mortalite, Parametres(population_conversion="fonctionnaires_civils_etat")
-    ).coefficient(64, 2026)
-    ecart = corrige.esperance_residuelle - commun.esperance_residuelle
-    assert 1.0 < ecart < 2.0
-    assert 0.04 < corrige.diviseur / commun.diviseur - 1 < 0.08
-    assert commun.table == "unisexe_generation"
-    assert corrige.table == "unisexe_generation_fonctionnaires_civils_etat"
+# Le diviseur, sa table, son taux anticipé et le mois du départ s'éprouvent
+# sur le portage : tests/js/conversion.test.js (action 161, quatrième vague).
 
 
 def test_la_population_ne_change_rien_au_scenario_1_et_baisse_les_notionnels():
@@ -784,27 +702,6 @@ def test_le_rattachement_par_la_pension_est_un_point_fixe():
     salaire = par_salaire.simuler(carriere).notionnel_retroactif_employeur
     assert salaire.conversion.table.endswith("niveau_de_vie_v04")
     assert resultat.pension_annuelle < salaire.pension_annuelle
-
-
-def test_le_diviseur_commun_transfere_des_modestes_vers_les_aises(mortalite):
-    """L'axe du revenu : à 64 ans en 2026, la table des 5 % les plus modestes
-    donne trois ans de rente de MOINS que la table commune, celle des 5 % les
-    plus aisés trois ans de PLUS. Un diviseur commun sert donc au premier une
-    pension calculée pour une vie qu'il n'aura pas, et au second l'inverse —
-    ce que mesure `scripts/mortalite_population.py --niveau-de-vie`."""
-    commun = Convertisseur(mortalite, Parametres()).coefficient(64, 2026)
-    modeste = Convertisseur(
-        mortalite, Parametres(population_conversion="niveau_de_vie_v01")
-    ).coefficient(64, 2026)
-    aise = Convertisseur(
-        mortalite, Parametres(population_conversion="niveau_de_vie_v20")
-    ).coefficient(64, 2026)
-    assert -4.5 < modeste.esperance_residuelle - commun.esperance_residuelle < -2.0
-    assert 2.0 < aise.esperance_residuelle - commun.esperance_residuelle < 4.5
-    assert modeste.diviseur < commun.diviseur < aise.diviseur
-
-
-# -- fusion ------------------------------------------------------------------
 
 
 def test_fusion_retient_les_ages_les_plus_eleves(catalogue):
@@ -1062,113 +959,8 @@ def test_un_releve_declarant_douze_mois_est_tronque_au_point_de_depart(macro):
     assert janvier.part_retenue(2026) == 0.0
 
 
-def test_le_diviseur_ne_fait_plus_de_marche_a_l_anniversaire(mortalite):
-    """Le mois de départ déplace le diviseur, et régulièrement.
-
-    ``survie_annuelle`` lisait ``quotients[int(age)]`` : la part OBSERVÉE de la
-    table était aveugle aux mois, et le diviseur d'un départ à 60 ans et onze
-    mois était celui d'un départ à 60 ans tout rond — puis tombait d'un coup à
-    l'anniversaire. La force de mortalité étant supposée constante entre deux
-    âges entiers, la décroissance est désormais lisse.
-    """
-    parametres = Parametres(racine_donnees=RACINE_DONNEES)
-    convertisseur = Convertisseur(mortalite, parametres)
-    # 2005 : les quotients observés couvrent la première moitié de la courbe,
-    # et c'est là que la marche se produisait.
-    diviseurs = [convertisseur.coefficient(60 + m / 12, 2005, "H").diviseur
-                 for m in range(13)]
-    ecarts = [avant - apres for avant, apres in zip(diviseurs, diviseurs[1:])]
-
-    assert diviseurs == sorted(diviseurs, reverse=True)
-    # Aucun pas ne pèse plus du double du plus petit : la marche d'un an valait
-    # près de la moitié de la baisse annuelle à elle seule.
-    assert max(ecarts) < 2 * min(ecarts)
-    # Et le douzième mois retombe exactement sur l'âge entier suivant.
-    assert diviseurs[12] == pytest.approx(
-        convertisseur.coefficient(61.0, 2005, "H").diviseur
-    )
-
-
-def test_le_diviseur_decroit_aussi_au_passage_du_1er_janvier(mortalite):
-    """Le millésime de la table ne doit pas sauter quand l'âge, lui, glisse.
-
-    L'âge avançait mois par mois et l'année civile d'un bloc au 1er janvier :
-    le diviseur REMONTAIT à cette date, et partir un mois plus tard rallongeait
-    la durée de service attendue. Le trajet d'une année de rente est désormais
-    découpé à ses deux franchissements — l'anniversaire, puis le 1er janvier —,
-    chaque tronçon recevant la force de mortalité de la cellule qu'il traverse.
-    """
-    parametres = Parametres(racine_donnees=RACINE_DONNEES)
-    convertisseur = Convertisseur(mortalite, parametres)
-
-    # Vingt-quatre mois consécutifs, à cheval sur deux 1er janvier.
-    diviseurs = []
-    for k in range(25):
-        annee, mois = 2037 + k // 12, k % 12 + 1
-        diviseurs.append(
-            convertisseur.coefficient(62 + k / 12, annee, "H", mois).diviseur
-        )
-    ecarts = [avant - apres for avant, apres in zip(diviseurs, diviseurs[1:])]
-
-    assert all(ecart > 0 for ecart in ecarts), diviseurs
-    # Le pas de janvier ne se distingue pas des autres : c'était le symptôme.
-    assert max(ecarts) < 2 * min(ecarts), ecarts
-
-    # Et douze mois de mois valent exactement un an d'âge, au même mois.
-    assert diviseurs[12] == pytest.approx(
-        convertisseur.coefficient(63.0, 2038, "H", 1).diviseur
-    )
-
-
-HYPOTHESES = ("basse", "centrale", "haute")
-
-
-def test_le_diviseur_absorbe_l_hypothese_d_esperance_de_vie():
-    """Sous les hypothèses d'espérance de vie basse et haute de l'INSEE, le
-    diviseur de qui part après 2026 encadre celui de la centrale, d'autant
-    plus largement que la génération est jeune, ses années projetées étant
-    plus nombreuses ; une génération éteinte avant 2026 — née en 1885, partie
-    en 1950 — a le même sous les trois, l'observé ne dépendant d'aucune
-    hypothèse (action 138, étape 7)."""
-    convertisseurs = {
-        hypothese: Convertisseur(
-            DonneesMortalite(RACINE_DONNEES, cache_disque=False, hypothese=hypothese),
-            Parametres(population_conversion=None))
-        for hypothese in HYPOTHESES}
-
-    def diviseurs(age: float, annee: int) -> list[float]:
-        return [convertisseurs[h].coefficient(age, annee).diviseur for h in HYPOTHESES]
-
-    assert len(set(diviseurs(65, 1950))) == 1
-    largeurs = []
-    for generation in (1960, 1975, 2000):
-        basse, centrale, haute = diviseurs(64, generation + 64)
-        assert basse < centrale < haute, generation
-        largeurs.append((haute - basse) / centrale)
-    assert largeurs == sorted(largeurs), largeurs
-
-
-def test_l_hypothese_d_esperance_de_vie_ne_touche_pas_au_capital_retroactif():
-    """Une carrière sous les trois hypothèses. Le système 1, où nulle
-    espérance de vie n'entre, sert la même pension ; le compte rétroactif
-    garde le même capital, et sa pension en est le quotient par le diviseur
-    de chaque hypothèse : la longévité gagnée ou perdue se règle en rente
-    annuelle, pas en capital. La simulation dit sous laquelle elle a couru."""
-    resultats = {}
-    for hypothese in HYPOTHESES:
-        simulateur = Simulateur(Parametres(hypothese_esperance_vie=hypothese))
-        carriere = simulateur.carriere_simple(1975, "F", "salarie_prive_non_cadre", 22, 64)
-        resultats[hypothese] = simulateur.simuler(carriere).dictionnaire()
-    actuel = {r["scenarios"]["actuel"]["pension_annuelle"] for r in resultats.values()}
-    assert len(actuel) == 1
-    retroactifs = {h: r["scenarios"]["notionnel_retroactif"] for h, r in resultats.items()}
-    assert len({r["capital_notionnel"] for r in retroactifs.values()}) == 1
-    for hypothese, resultat in resultats.items():
-        assert resultat["unite"]["hypothese_esperance_vie"] == hypothese
-        assert retroactifs[hypothese]["pension_annuelle"] == pytest.approx(
-            retroactifs[hypothese]["capital_notionnel"] / resultat["conversion"]["diviseur"])
-    pensions = [retroactifs[h]["pension_annuelle"] for h in HYPOTHESES]
-    assert pensions == sorted(pensions, reverse=True) and len(set(pensions)) == 3
+# Le diviseur sous les trois hypothèses d'espérance de vie, et le capital
+# rétroactif qu'elles ne touchent pas : tests/js/conversion.test.js.
 
 
 def test_une_hypothese_d_esperance_de_vie_hors_de_l_insee_est_refusee(tmp_path):

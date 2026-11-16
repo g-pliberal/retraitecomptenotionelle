@@ -7337,8 +7337,8 @@ fichiers font tourner le coût, qui veut encore un simulateur Python : ils
 attendent qu'il n'en lise plus. Par quoi commencer : les fichiers de la
 troisième vague que la note `2026-11-16-la-troisieme-vague-a-moitie.md`
 liste en dernier, `test_etranger.py` le premier. La quatrième vague en a
-sorti cinq ; restent `test_moteur.py`, dont l'indexation est partie,
-et `test_pont.py` (`2026-11-16-l-indexation-au-portage.md`).
+sorti cinq ; restent `test_moteur.py`, dont l'indexation et la conversion
+sont parties, et `test_pont.py` (`2026-11-16-la-conversion-au-portage.md`).
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
