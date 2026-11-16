@@ -1,4 +1,4 @@
-"""Tests du moteur : indexation, âge de référence, conversion, fusion, compte."""
+"""Tests du moteur, au portage : salaire moyen, passé, cas types, conversion, compte."""
 
 from __future__ import annotations
 
@@ -12,18 +12,22 @@ from retraite_notionnelle.config import (
 from retraite_notionnelle.donnees.macro import DonneesMacro
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite
 from retraite_notionnelle.donnees.population import Population
-from retraite_notionnelle.moteur.conversion import Convertisseur
-from retraite_notionnelle.carriere import (
-    Metier,
-    profil_salaire,
-)
-from retraite_notionnelle.moteur.compte import ConstructeurCompte
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.carriere import Metier
+from facade import Simulateur
+from retraite_notionnelle import pont
 
 
 @pytest.fixture(scope="module")
 def macro() -> DonneesMacro:
     return DonneesMacro(RACINE_DONNEES)
+
+
+def _du_portage(appels: dict, parametres: Parametres | None = None) -> dict:
+    """Ce que le portage rend de ces règles (``pont.droit``), sur le simulateur
+    des ``parametres``, ceux de référence sans eux."""
+    lus, refus = pont.droit(appels, parametres)
+    assert not refus, refus
+    return lus
 
 
 # -- indexation --------------------------------------------------------------
@@ -41,14 +45,15 @@ def test_le_salaire_moyen_refait_les_niveaux_que_l_insee_publie(macro):
     près des cinq décimales des croissances : un ancrage faux, ou des
     croissances tirées d'une autre source, l'en écarteraient du même coup.
     """
-    from retraite_notionnelle.carriere import ancrage_salaire_moyen, indice_salaire_moyen
-
     niveaux = macro.salaire_moyen_niveau
-    assert ancrage_salaire_moyen(macro) == (2024, niveaux(2024))
+    annees = list(niveaux.annees())
+    lus = _du_portage({"ancrage": ("carriere.ancrage_salaire_moyen", pont.SIMULATEUR),
+                       **{str(annee): ("carriere.salaire_moyen_annuel", pont.SIMULATEUR, annee)
+                          for annee in annees}})
+    assert lus["ancrage"] == (2024, niveaux(2024))
     assert niveaux(2024) == pytest.approx(40_897.0, abs=0.5)
-    indice = indice_salaire_moyen(macro, niveaux.premiere_annee, niveaux.derniere_annee)
-    for annee in niveaux.annees():
-        assert indice[annee] == pytest.approx(niveaux(annee), rel=1e-4), annee
+    for annee in annees:
+        assert lus[str(annee)] == pytest.approx(niveaux(annee), rel=1e-4), annee
 
 
 # -- cas types ------------------------------------------------------------------
@@ -307,130 +312,8 @@ def test_le_passe_ne_depend_pas_de_l_age_de_depart():
 # confrontation des deux jumeaux au bit près, dans test_facade_jumeau.py.
 
 
-#: Les noms que tout objet de JavaScript hérite de son prototype.
-NOMS_HERITES = ("constructor", "toString", "__proto__", "hasOwnProperty", "valueOf")
-
-_NOMS_HERITES_JS = """
-import { readFileSync } from "node:fs";
-import {
-  Carriere, bornesDeformation, chomageComplementaires, dispenseAssietteMinimale,
-  forfaitMicro, profilDeLAffiliation, profilSalaire,
-} from "./moteur/js/carriere.js";
-import { DonneesMacro } from "./moteur/js/macro.js";
-import { Affiliations } from "./moteur/js/regimes.js";
-const noms = JSON.parse(process.argv[1]);
-const paquet = JSON.parse(readFileSync("moteur/donnees.json", "utf8"));
-const macro = new DonneesMacro(paquet);
-const chomage = chomageComplementaires(paquet);
-const affiliations = new Affiliations(paquet);
-const lu = (calcul) => {
-  try {
-    const valeur = calcul();
-    return ["valeur", typeof valeur === "function" ? "une fonction" : valeur ?? null];
-  } catch (erreur) {
-    return ["refus", erreur.constructor.name === "TypeError" ? erreur.message : ""];
-  }
-};
-process.stdout.write(JSON.stringify(noms.map((nom) => ({
-  profil: lu(() => profilSalaire(paquet, nom, 30, 2000)),
-  bornes: lu(() => bornesDeformation(paquet, nom)),
-  groupe: lu(() => profilDeLAffiliation(nom)),
-  dispense: lu(() => dispenseAssietteMinimale(paquet, nom, "artisan", 2020)),
-  nature: lu(() => chomage.nature(nom, 2000)),
-  part: lu(() => chomage.partValidee(nom, 2000, nom)),
-  solidarite: lu(() => chomage.tauxSolidarite(nom, 2000, true)),
-  forfait: lu(() => forfaitMicro(macro, nom, 2020)),
-  releve: lu(() => Carriere.depuisReleve({
-    annee_naissance: 1960, sexe: "H", age_liquidation: 62, macro,
-    releve: [{ annee: 2000, affiliation: "salarie_prive_non_cadre", revenu: 20000,
-               trimestres: null, type_periode: "emploi" },
-             { annee: 2001, affiliation: "salarie_prive_non_cadre", revenu: 20000,
-               trimestres: null, type_periode: nom }],
-  }).lignes.map((ligne) => [ligne.trimestres_valides, ligne.services_fonction_publique,
-    ligne.services_plafond_trimestres_par_enfant, ligne.reputes_cotises_nature])),
-  libelle: lu(() => affiliations.libelle(nom)),
-  periodes: lu(() => affiliations.periodes(nom)),
-  regimes: lu(() => affiliations.regimes(nom, 2000)),
-}))));
-"""
-
-
-def _noms_herites_en_python(noms) -> list[dict]:
-    """Ce que le Python rend sous chacun de ces noms, comme le lit le portage :
-    une valeur, ou un refus — un ``ValueError`` ou un ``KeyError``, et jamais
-    une ``TypeError``, qui serait une faute de programme."""
-    from retraite_notionnelle.carriere import (
-        Affiliations, Carriere, LigneRelevee, bornes_deformation, profil_de_l_affiliation)
-    from retraite_notionnelle.donnees.chargement import (
-        charger_chomage_complementaires, charger_cotisation_micro,
-        charger_dispenses_assiette_minimale, dispense_assiette_minimale, forfait_micro)
-    from retraite_notionnelle.donnees.macro import DonneesMacro
-
-    macro = DonneesMacro(RACINE_DONNEES)
-    chomage = charger_chomage_complementaires(RACINE_DONNEES)
-    affiliations = Affiliations(RACINE_DONNEES)
-
-    def lu(calcul):
-        try:
-            return ["valeur", calcul()]
-        except (KeyError, ValueError):
-            return ["refus", ""]
-
-    def releve(nom):
-        lignes = [LigneRelevee(2000, "salarie_prive_non_cadre", 20000.0),
-                  LigneRelevee(2001, "salarie_prive_non_cadre", 20000.0, type_periode=nom)]
-        return [[ligne.trimestres_valides, ligne.services_fonction_publique,
-                 ligne.services_plafond_trimestres_par_enfant, ligne.reputes_cotises_nature]
-                for ligne in Carriere.depuis_releve(1960, "H", lignes, 62, macro).lignes]
-
-    return [{
-        "profil": lu(lambda: profil_salaire(RACINE_DONNEES, nom, 30, 2000)),
-        "bornes": lu(lambda: list(bornes_deformation(RACINE_DONNEES, nom))),
-        "groupe": lu(lambda: profil_de_l_affiliation(nom)),
-        "dispense": lu(lambda: dispense_assiette_minimale(
-            charger_dispenses_assiette_minimale(RACINE_DONNEES), nom, "artisan", 2020)),
-        "nature": lu(lambda: chomage.nature(nom, 2000)),
-        "part": lu(lambda: chomage.part_validee(nom, 2000, nom)),
-        "solidarite": lu(lambda: chomage.taux_solidarite(nom, 2000, True)),
-        "forfait": lu(lambda: forfait_micro(charger_cotisation_micro(RACINE_DONNEES), nom, 2020)),
-        "releve": lu(lambda: releve(nom)),
-        "libelle": lu(lambda: affiliations.libelle(nom)),
-        "periodes": lu(lambda: list(affiliations.periodes(nom))),
-        "regimes": lu(lambda: list(affiliations.regimes(nom, 2000))),
-    } for nom in noms]
-
-
-def test_un_nom_herite_du_prototype_n_est_dans_aucune_table_du_portage():
-    """Le portage lit ses tables dans des objets de JavaScript, qui héritent
-    de leur prototype : ``constructor`` ou ``toString`` y sont des clés, que
-    ``in`` et ``table[nom]`` trouvent ; le Python, qui lit des dictionnaires,
-    ne les connaît pas. Sous un tel nom, le portage calculait un profil au lieu
-    de le refuser, levait une ``TypeError`` sur une dispense, une part validée
-    du chômage ou le forfait d'un micro-entrepreneur, donnait au chômage une
-    nature qui est une fonction, et des trimestres NaN à l'année d'un relevé
-    que le Python tient sans activité ; une affiliation de ce nom avait un
-    libellé et des régimes. Aucune saisie n'y mène — la page ne laisse passer
-    que les noms de ses listes, que ``contient`` vérifie —, mais le jumeau qui
-    reste rend ce que rend le Python (action 161, étape 6)."""
-    import json
-    import shutil
-    import subprocess
-    from pathlib import Path
-
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    execution = subprocess.run(
-        ["node", "--input-type=module", "-e", _NOMS_HERITES_JS, json.dumps(NOMS_HERITES)],
-        cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
-        encoding="utf-8", check=False)
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    portage = json.loads(execution.stdout)
-    python = json.loads(json.dumps(_noms_herites_en_python(NOMS_HERITES)))
-    ecarts = [f"{nom}, {lecture} : python={python[rang][lecture]} portage={valeur}"
-              for rang, nom in enumerate(NOMS_HERITES)
-              for lecture, valeur in portage[rang].items()
-              if valeur != python[rang][lecture]]
-    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts)
+# Le test des noms hérités du prototype, qui confronte le portage au Python,
+# est dans test_facade_jumeau.py, qui part avec le jumeau.
 
 
 # -- âge de référence --------------------------------------------------------
@@ -451,12 +334,11 @@ def test_la_population_ne_change_rien_au_scenario_1_et_baisse_les_notionnels():
     ordre. Les scénarios notionnels, eux, voient leur pension baisser sous la
     table de la population, de l'ordre de l'écart de diviseur."""
     from retraite_notionnelle.castypes import CAS_TYPES
-    from retraite_notionnelle.simulateur import Simulateur
 
     cas = next(c for c in CAS_TYPES if c.code == "fonctionnaire_sedentaire")
     commun = Simulateur(Parametres(population_conversion=None))
     corrige = Simulateur(Parametres(population_conversion="fonctionnaires_civils_etat"))
-    carriere = cas.construire(commun, 1975)
+    carriere = _carrieres(commun, cas, [1975])[1975]
     avec, sans = commun.simuler(carriere), corrige.simuler(carriere)
     assert sans.actuel.pension_annuelle == avec.actuel.pension_annuelle
     rapport = (sans.notionnel_retroactif.pension_annuelle
@@ -478,25 +360,30 @@ def test_le_rattachement_par_la_pension_est_un_point_fixe():
     ceux qui vivent à l'étranger, dont la pension française est petite —
     c'est ce qui le faisait classer au sixième jusqu'au 23 septembre 2026."""
     from retraite_notionnelle.castypes import CAS_TYPES
-    from retraite_notionnelle.simulateur import Simulateur
 
     par_salaire = Simulateur(Parametres())
     par_pension = Simulateur(Parametres(rattachement_niveau_de_vie="pension"))
-    assert par_pension.convertisseur.rattache_par_pension
-    assert not par_salaire.convertisseur.rattache_par_pension
     cas = next(c for c in CAS_TYPES if c.code == "smic_carriere_complete")
-    carriere = cas.construire(par_salaire, 1975)
+    carriere = _carrieres(par_salaire, cas, [1975])[1975]
     resultat = par_pension.simuler(carriere).notionnel_retroactif_employeur
     retenue = resultat.conversion.table.split("_generation_")[1]
-    attendue = par_pension.convertisseur.population_par_pension(
-        resultat.pension_annuelle, carriere.annee_liquidation)
+    # Le vingtile de la pension servie, recalculé par sa définition : la
+    # pension mensuelle, ramenée aux euros du millésime de l'enquête au rythme
+    # du salaire moyen, rangée parmi les retraités de la DREES.
+    distribution = par_pension.distribution
+    annee = carriere.annee_liquidation
+    salaires = _du_portage({str(a): ("carriere.salaire_moyen_annuel", pont.SIMULATEUR, a)
+                            for a in {annee, distribution.millesime}})
+    ramenee = (resultat.pension_annuelle / 12.0 * salaires[str(distribution.millesime)]
+               / salaires[str(annee)])
+    attendue = f"niveau_de_vie_v{min(20, int(distribution.part_sous(ramenee) * 20.0) + 1):02d}"
     # Le point fixe peut osciller entre deux vingtiles voisins — la pension
     # du sixième retombe au cinquième, qui la renvoie au sixième — ; le
     # dernier tour est alors retenu. Ici il est atteint : le vingtile de la
     # pension servie est celui qui l'a servie.
     assert retenue == "niveau_de_vie_v05"
     assert attendue == retenue
-    assert par_pension.distribution.part_sous(1500.0) == pytest.approx(0.573, abs=0.005)
+    assert distribution.part_sous(1500.0) == pytest.approx(0.573, abs=0.005)
     salaire = par_salaire.simuler(carriere).notionnel_retroactif_employeur
     assert salaire.conversion.table.endswith("niveau_de_vie_v04")
     assert resultat.pension_annuelle < salaire.pension_annuelle
@@ -637,12 +524,13 @@ def test_le_compte_notionnel_se_recompose_a_la_main():
     fin = min(liquidation, carriere.derniere_annee)
     assert annees == list(range(carriere.premiere_annee, fin + 1))
 
-    indexation = simulateur.indexation
+    taux = _du_portage({str(annee): ("indexation.taux", pont.SIMULATEUR, annee)
+                        for annee in range(carriere.premiere_annee + 1, liquidation + 1)})
     attendu = 0.0
     for ligne in compte.cotisations:
         facteur = 1.0
         for annee in range(ligne.annee + 1, liquidation + 1):
-            facteur *= 1.0 + indexation.taux(annee).taux
+            facteur *= 1.0 + taux[str(annee)][0]
         attendu += ligne.cotisation * facteur
     assert compte.capital == pytest.approx(attendu, rel=1e-12)
     assert compte.capital > 0.0
@@ -653,13 +541,14 @@ def test_le_compte_notionnel_se_recompose_a_la_main():
     # l'espérance de vie résiduelle ; nul, il lui est égal.
     assert conversion.taux_anticipe >= 0.0
     assert conversion.diviseur <= conversion.esperance_residuelle + 1e-9
-    sans_actualisation = Convertisseur(
-        simulateur.mortalite,
-        Parametres(taux_anticipe_conversion=0.0),
-    ).coefficient(conversion.age_liquidation, conversion.annee_liquidation,
-                  None, carriere.mois_liquidation)
-    assert sans_actualisation.diviseur == pytest.approx(
-        sans_actualisation.esperance_residuelle)
+    # La sonde de l'espérance résiduelle ne lit que l'âge et l'année : le
+    # diviseur se demande à la même date.
+    date = (conversion.age_liquidation, conversion.annee_liquidation)
+    sans_actualisation = _du_portage({
+        "diviseur": ("conversion.coefficient.diviseur", pont.SIMULATEUR, *date),
+        "esperance": ("conversion.coefficient.esperance_residuelle", pont.SIMULATEUR, *date),
+    }, Parametres(taux_anticipe_conversion=0.0))
+    assert sans_actualisation["diviseur"] == pytest.approx(sans_actualisation["esperance"])
 
 
 @pytest.mark.parametrize("nom,source,cumul", [
@@ -677,7 +566,7 @@ def test_le_capital_se_partage_entre_ceux_qui_ont_encaisse(nom, source, cumul):
     seul régime unique. Un régime provisionné n'y est jamais : ce qu'il
     encaisse ne rejoint pas le compte.
     """
-    simulateur = Simulateur(Parametres())
+    simulateur = Simulateur(Parametres(source_cotisations=source))
     metiers = [Metier(affiliation="salarie_prive_cadre", age_debut=22.0,
                       niveau_salaire=1.4)]
     if cumul:
@@ -685,11 +574,8 @@ def test_le_capital_se_partage_entre_ceux_qui_ont_encaisse(nom, source, cumul):
                               niveau_salaire=0.8, cumul=True))
     carriere = simulateur.carriere_parcours(
         annee_naissance=1972, sexe="F", metiers=metiers, age_liquidation=65.0)
-    constructeur = ConstructeurCompte(
-        simulateur.macro, simulateur.catalogue, simulateur.affiliations,
-        simulateur.indexation, simulateur.parametres.avec(source_cotisations=source))
     fusionne = simulateur.regime_fusionne
-    compte = constructeur.construire(carriere, carriere.annee_liquidation,
+    compte = simulateur.constructeur.construire(carriere, carriere.annee_liquidation,
                                      carriere.premiere_annee, fusionne)
 
     for ligne in compte.cotisations:

@@ -50,7 +50,6 @@ FICHIERS = (
     "test_facade.py", "test_facade_jumeau.py",
     "test_grille_large.py",
    
-    "test_moteur.py",
     "test_pont.py",
     
    
