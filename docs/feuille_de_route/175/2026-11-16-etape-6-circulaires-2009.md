@@ -1,17 +1,5 @@
 # Étape 6, circulaires de 2009 : les 65 références sans thème de la seizième période, relues par l'API
 
-**Reprise, au 16 novembre 2026.** Trois natures de l'étape sont rangées ; la quatrième, les
-circulaires, lettres et instructions sans thème, l'est de 1936 à 2009 (cette note et celles
-des périodes d'avant). Une seconde lecture avance à rebours depuis 2026, avec son propre
-bloc (note de 2026 à rebours). Restent 371 circulaires, de 2010 à 2025 ; la lecture dans
-l'ordre reprend à 2010 (66), puis 2011 (68), 2012 (37), 2013 (44), et s'arrête où elle
-rejoint l'autre. Viennent ensuite, une session par nature : les 96 autres textes, les 74
-que la base nomme sans les servir, les 107 accords. Méthode : la base relue par l'API
-(`_reference` de `cnav_legislation.py`), les pièces PDF lues au site sous `/Pdf/<nom>`,
-chaque texte lu en entier, chaque citation vérifiée par script. 2009 n'a qu'un
-écart neuf, étroit : l'artisan pensionné pour incapacité à son seul métier, que le
-modèle présume inapte (ici).
-
 **Le 16 novembre 2026, ce qui est fait.**
 
 - *La période* : les références du registre sans thème et à lire dont le titre commence

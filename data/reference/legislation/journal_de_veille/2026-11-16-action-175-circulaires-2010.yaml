@@ -1,0 +1,38 @@
+date: "2026-11-16"
+session: "action 175, étape 6 : les 66 circulaires, lettres et instructions de 2010 que la base de la Cnav cite sans thème"
+consulte: >-
+  Les 66 références sans thème et à lire que le registre date de 2010 dont le titre
+  commence par « Circulaire », « Lettre », « Instruction », « Note d'information » ou
+  « Diffusion d'instructions », relues par l'API de la base le 16 novembre 2026 vers
+  13 h UTC (/reference/referencesByFileLeafRef/), toutes servies, 37 en page et 29 en PDF
+  lus au site (/Pdf/), aucun scanné ; toutes lues en entier, par quatre agents de la
+  session, un lot chacun, dont chaque citation d'un texte servi (204) a été retrouvée mot
+  pour mot. Pour les confronter : les fiches reversion, residence_et_minimum_vieillesse,
+  minimum_vieillesse, retraite_progressive, retablissement_fonction_publique,
+  rachats_et_versements, pension_proratisee, totalisation_des_periodes_etrangeres,
+  minimum_contributif_international, cotisation_maladie_des_non_residents,
+  service_civique, retrep_avantages_temporaires, revalorisation_des_pensions,
+  majoration_duree_assurance_enfants, cumul_emploi_retraite_et_retraite_progressive,
+  cotisation_vieillesse_independants, micro_social_abattement ; les séries
+  smic_horaire.csv, plafond_securite_sociale.csv, revalorisation_pensions.csv,
+  minimum_vieillesse.csv, plafond_majoration_reversion.csv, accords_internationaux.yaml ;
+  les limites docs/limites/3-systeme-actuel.md. Ni Légifrance, ni le Journal officiel, ni
+  l'index de la DILA.
+trouve: >-
+  Le registre range les 66 (38 limite, 28 hors_modele), sans raison neuve. Conformes : le
+  SMIC de 2010, les plafonds de 2004 à 2010, la revalorisation de 1,009 au 1er avril 2010,
+  l'ASPA à 708,95 € par mois, la réversion à 54 % et sa majoration de 11,1 % sous 800 €
+  par mois, la cotisation maladie des non-résidents de 3,2 %. Un écart neuf, étroit : le
+  plan d'apurement des indépendants d'outre-mer (loi n° 2009-594, article 32) abandonne
+  jusqu'à la moitié de leurs dettes de cotisations et minore leurs droits d'autant
+  (circulaire RSI n° 2010/014), quand le modèle tient les cotisations pour versées. Un
+  candidat d'avant confirmé : le cumul propre aux inaptes, abrogé au 1er janvier 2009
+  (n° 2010/013). Deux points ouverts : la surcote des trimestres des organisations
+  internationales, que la circulaire ministérielle n° 2010/85 admet et la Cnav exclut ;
+  l'enfant né sans vie dans la saisie. Deux textes mal datés au registre (n° 2009/191 et
+  lettre du 28 mars 2011). Note
+  docs/feuille_de_route/175/2026-11-16-etape-6-circulaires-2010.md.
+reste: >-
+  Les 278 circulaires de 2011 à 2021, par période, la lecture à rebours avançant depuis
+  2021 ; les autres natures de l'étape 6 ; l'article 32 de la loi n° 2009-594, R. 352-2 et
+  L. 161-19-1, à relire au Journal officiel.
