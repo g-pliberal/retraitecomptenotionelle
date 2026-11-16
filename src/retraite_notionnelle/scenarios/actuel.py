@@ -62,7 +62,7 @@ from __future__ import annotations
 import copy
 import csv
 from bisect import bisect_right
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, replace
 from datetime import date
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -84,15 +84,12 @@ from ..donnees.minimum_vieillesse import DeuxEtages, MinimumVieillesse  # noqa: 
 from ..donnees.prelevements_historiques import charger_prelevements_historiques
 from ..donnees.regimes import CatalogueRegimes, ClassesCotisation, SalairesForfaitaires
 from ..droit import coordonner
-from ..droit import completer as _completer
-from ..droit import cumul as _cumul
 from ..droit import departs as _departs
 from ..droit import foyer as _foyer
 from ..droit import invalidite as _invalidite
 from ..droit import limite_age as _limite_age
 from ..droit import liquidation as _liquidation
 from ..droit import progressive as _progressive
-from ..droit import seconde as _seconde
 # Ce que les étapes créent, que les appelants du scénario 1 lisent ici.
 from ..droit.commun import AvantageApplique, PensionRegime  # noqa: F401
 from ..droit.commun import date_d_effet, fusionner_les_charges
@@ -100,71 +97,11 @@ from ..noyau import versions
 from ..revalorisation import (DEBUT_REGLE_GENERALE_PUBLIC, RevalorisationsPensions,
                               mener_au_mois, produit)
 from ..somme import somme_ordonnee
+from ..types_du_pont.resultats import DepartServi, ProgressiveServie, ResultatActuel  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..droit.foyer import Foyer
     from ..droit.liquidation import Liquidation
-
-
-@dataclass(frozen=True)
-class DepartServi:
-    """Ce qu'un départ fait servir, quand les régimes liquident à des dates
-    différentes (:mod:`~retraite_notionnelle.droit.departs`)."""
-
-    #: La date d'effet (AAAA-MM-JJ), et ce qui la date : ``depart``,
-    #: ``ouverture``, ``sortie`` ou ``demande``.
-    date_effet: str
-    motif: str
-    regimes: tuple[str, ...]
-    #: Ce que ses pensions servent par an, majoration pour enfants comprise :
-    #: en euros du départ déclaré, puis à sa date d'effet, dans ses euros.
-    montant: float
-    montant_a_l_effet: float
-
-    def donnees(self) -> dict:
-        return {"date_effet": self.date_effet, "motif": self.motif,
-                "regimes": list(self.regimes), "montant": self.montant,
-                "montant_a_l_effet": self.montant_a_l_effet}
-
-
-@dataclass(frozen=True)
-class ProgressiveServie:
-    """Ce qu'une retraite progressive sert avant le départ
-    (:mod:`~retraite_notionnelle.droit.progressive`), ou ce qui la ferme."""
-
-    #: La date d'effet (AAAA-MM-JJ) et la quotité du temps partiel.
-    date_effet: str
-    quotite: float
-    #: ``ouverte``, ou ce qui la ferme : ``avant_1988``, ``activite``,
-    #: ``regimes``, ``quotite``, ``age``, ``duree``.
-    motif: str
-    #: La fraction servie, nulle quand la demande n'est pas ouverte.
-    fraction: float
-    regimes: tuple[str, ...]
-    #: La pension provisoire entière, et la fraction servie, par an, à sa
-    #: date d'effet et dans ses euros.
-    montant_provisoire: float
-    montant_servi: float
-    age_minimum: float | None
-    duree_requise: int | None
-    #: La durée d'assurance à sa date d'effet, tous régimes.
-    trimestres: int | None
-    #: La pension complète se recalcule-t-elle au départ ? Non avant le décret
-    #: du 8 juin 2006 : elle était la pension provisoire.
-    recalculee: bool = True
-
-    @property
-    def ouverte(self) -> bool:
-        return self.motif == _progressive.OUVERTE
-
-    def donnees(self) -> dict:
-        return {"date_effet": self.date_effet, "quotite": self.quotite,
-                "motif": self.motif, "fraction": self.fraction,
-                "regimes": list(self.regimes),
-                "montant_provisoire": self.montant_provisoire,
-                "montant_servi": self.montant_servi,
-                "age_minimum": self.age_minimum, "duree_requise": self.duree_requise,
-                "trimestres": self.trimestres, "recalculee": self.recalculee}
 
 
 def progressive_servie(moteur: ScenarioActuel, progressive: _progressive.Progressive,
@@ -181,85 +118,6 @@ def progressive_servie(moteur: ScenarioActuel, progressive: _progressive.Progres
         age_minimum=progressive.age_minimum, duree_requise=progressive.duree_requise,
         trimestres=progressive.trimestres,
         recalculee=_progressive.recalculee(moteur, depart))
-
-
-@dataclass
-class ResultatActuel:
-    pension_annuelle: float
-    pensions_par_regime: list[PensionRegime] = field(default_factory=list)
-    #: Avantages non contributifs effectivement appliqués, et leur effet.
-    avantages_appliques: list[AvantageApplique] = field(default_factory=list)
-    #: Total des pensions de régime avant tout avantage non contributif,
-    #: capitalisation déduite comme dans :attr:`pension_annuelle`.
-    total_contributif: float = 0.0
-    #: Rente des régimes PROVISIONNÉS — RAFP, anciennes assurances sociales —
-    #: retirée de :attr:`pension_annuelle` et servie à part. Ils ne relèvent pas
-    #: de la répartition : la réforme simulée ne les atteint pas, et les cinq
-    #: scénarios les servent donc à l'identique, hors comparaison.
-    pension_hors_repartition: float = 0.0
-    trimestres_valides: int = 0
-    #: Ceux d'entre eux que des périodes hors de France apportent, pour le
-    #: taux seulement (fiche ``totalisation_des_periodes_etrangeres``).
-    trimestres_etrangers: int = 0
-    trimestres_requis: int = 0
-    taux_liquidation: float = 0.0
-    minimum_applique: bool = False
-    #: Âge le plus précoce auquel le droit ouvre cette liquidation, tous
-    #: dispositifs compris. ``None`` quand aucun régime en annuités n'en fixe.
-    age_ouverture_opposable: float | None = None
-    #: La liquidation demandée est-elle ouverte par le droit à cet âge ?
-    #: Quand elle ne l'est pas, le montant reste calculé — il faut bien
-    #: comparer les scénarios sur la même carrière — mais il ne décrit aucune
-    #: pension que le système actuel servirait. C'est un contrefactuel, et le
-    #: modèle le dit maintenant au lieu de le laisser croire.
-    liquidation_ouverte: bool = True
-    #: Ce qui ouvre la liquidation : ``age_legal``, ``carriere_longue``, ou
-    #: ``non_ouverte``.
-    motif_ouverture: str = "age_legal"
-    fiabilite: Fiabilite = Fiabilite.ESTIMEE
-    #: Les départs, quand les régimes liquident à des dates différentes
-    #: (:func:`resultat_des_departs`) ; vide pour un départ unique. Les
-    #: montants du résultat sont alors ceux du départ déclaré : la pension
-    #: complète, chaque pension y étant menée ou ramenée.
-    departs: tuple[DepartServi, ...] = ()
-    #: Les pensions dont la carrière dit la date de demande, et la date où
-    #: chacune est servie (:class:`~retraite_notionnelle.droit.departs.DemandeExaminee`) ;
-    #: vide quand elle n'en dit aucune.
-    demandes: tuple[_departs.DemandeExaminee, ...] = ()
-    #: La retraite progressive que la carrière demande, ouverte ou non
-    #: (:class:`ProgressiveServie`) ; ``None`` sans demande. La pension du
-    #: résultat reste la pension complète, au départ.
-    retraite_progressive: ProgressiveServie | None = None
-    #: L'activité exercée après le départ, et ce que chaque pension en garde
-    #: pendant qu'elle dure (:mod:`~retraite_notionnelle.droit.cumul`) ;
-    #: ``None`` sans elle. La pension du résultat reste celle du départ,
-    #: entière : le cumul dit ce qui n'en est pas servi, et quand.
-    cumul: _cumul.Cumul | None = None
-    #: Les droits que cette activité ouvre, ou non, et la nouvelle pension
-    #: qu'elle constitue (:mod:`~retraite_notionnelle.droit.seconde`) ; hors
-    #: de la pension du résultat, qui reste celle du départ.
-    droits_apres_depart: _seconde.DroitsApresDepart | None = None
-    #: Le minimum contributif servi au départ, et ce que sa révision relit
-    #: quand une pension étrangère commence après lui (R. 173-8,
-    #: :func:`~retraite_notionnelle.revalorisation.faire_vivre`) ; ``None``
-    #: sans lui, ou quand les régimes liquident à des dates différentes.
-    minimum_ecrete: _completer.MinimumEcrete | None = None
-    #: Ce que la majoration exceptionnelle de septembre 2023 relit des
-    #: pensions que le minimum contributif regarde, celles de chaque départ
-    #: (:func:`~retraite_notionnelle.revalorisation.majorer_les_petites_pensions`).
-    petites_pensions: tuple[_completer.PetitePension, ...] = ()
-    #: Ce que le relèvement des exploitants de septembre 2023 relit
-    #: (:func:`~retraite_notionnelle.revalorisation.relever_les_exploitants`) ;
-    #: ``None`` sans RCO.
-    chef_d_exploitation: _completer.ChefDExploitation | None = None
-    #: Ce que la révision des pensions agricoles déjà liquidées relit
-    #: (:func:`~retraite_notionnelle.revalorisation.reviser_les_exploitants`) ;
-    #: ``None`` sans pension de base agricole.
-    exploitant_agricole: _completer.ExploitantAgricole | None = None
-
-    @property
-    def pension_mensuelle(self) -> float:
-        return self.pension_annuelle / 12.0
 
 
 def resultat_actuel(liquidation: Liquidation, foyer: Foyer) -> ResultatActuel:

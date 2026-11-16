@@ -113,30 +113,20 @@ from . import limite_age as _limite_age
 from . import ouvrir as _ouvrir
 from .commun import periode_de_liquidation
 from ..somme import somme_ordonnee
+from ..types_du_pont.droit import (INTEGRAL, LIBRE, NON_CALCULE, NON_DUE, PLAFONNEE, PRIORITE,
+                                   REDUITE, SEUIL_NON_PUBLIE, SUSPENDUE, Cumul, jour,
+                                   PensionEnCumul, TrancheDeCumul)  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
     from ..scenarios.actuel import ResultatActuel, ScenarioActuel
 
-#: Ce que le droit fait d'une pension, pour un mois d'activité.
-LIBRE = "libre"
-INTEGRAL = "integral"
-PLAFONNEE = "plafonnee"
-NON_DUE = "non_due"
-SUSPENDUE = "suspendue"
-REDUITE = "reduite"
-SEUIL_NON_PUBLIE = "seuil_non_publie"
-NON_CALCULE = "non_calcule"
 
 #: Le motif d'un mois de l'année du dépassement où la pension du non-salarié
 #: n'est pas suspendue : le dépassement en épuise moins que l'activité n'en
 #: compte (D. 634-11-5, D. 643-10-2).
 HORS_DES_MOIS_SUSPENDUS = "hors_des_mois_suspendus"
 
-#: L'ordre où se dit le statut d'un mois : celui de la pension la plus
-#: touchée.
-PRIORITE = (NON_DUE, SUSPENDUE, REDUITE, SEUIL_NON_PUBLIE, NON_CALCULE, PLAFONNEE,
-            INTEGRAL, LIBRE)
 
 #: Les versions des deux fiches.
 AVANT_1983 = "sans_condition_avant_1983"
@@ -424,111 +414,6 @@ def pension_militaire_servie(moteur: ScenarioActuel, carriere: Carriere
             carriere.duree_de_service({ligne.affiliation for ligne in services},
                                       carriere.annee_liquidation),
             _limite_age.limite_de_la_ligne(moteur, carriere, derniere))
-
-
-@dataclass(frozen=True)
-class PensionEnCumul:
-    """Ce que le droit fait d'une pension, des mois d'une tranche."""
-
-    regime: str
-    #: :data:`LIBRE`, :data:`INTEGRAL`, :data:`PLAFONNEE`, :data:`NON_DUE`,
-    #: :data:`SUSPENDUE`, :data:`REDUITE`, :data:`SEUIL_NON_PUBLIE` ou
-    #: :data:`NON_CALCULE`.
-    statut: str
-    #: La version de la fiche qui le dit, et pourquoi.
-    regle: str
-    motif: str
-    #: La pension du mois, et ce qui n'en est pas servi, en euros de l'année.
-    montant: float
-    reduction: float
-    #: Le plafond mensuel de la règle qui la touche, ou ``None``.
-    plafond: float | None = None
-
-    def donnees(self) -> dict:
-        return {"regime": self.regime, "statut": self.statut, "regle": self.regle,
-                "motif": self.motif, "montant": self.montant, "reduction": self.reduction,
-                "plafond": self.plafond}
-
-
-@dataclass(frozen=True)
-class TrancheDeCumul:
-    """Des mois consécutifs d'une même année, où le droit traite chaque pension
-    de la même façon. Les montants sont mensuels, en euros de l'année."""
-
-    debut: DateMois
-    #: Le premier mois qui n'en est plus.
-    fin: DateMois
-    #: Le revenu brut de l'activité, et toutes les pensions servies, avant
-    #: réduction.
-    revenu: float
-    pensions: float
-    #: Le plafond de la règle qui touche la pension, ou ``None``.
-    plafond: float | None
-    par_regime: tuple[PensionEnCumul, ...]
-
-    @property
-    def mois(self) -> int:
-        return self.fin.rang - self.debut.rang
-
-    @property
-    def reduction(self) -> float:
-        """Ce qui n'est pas servi, par mois."""
-        return somme_ordonnee(p.reduction for p in self.par_regime)
-
-    @property
-    def principale(self) -> PensionEnCumul | None:
-        """La pension qui dit le statut de la tranche : la plus touchée."""
-        return min(self.par_regime, key=lambda p: PRIORITE.index(p.statut), default=None)
-
-    @property
-    def statut(self) -> str:
-        principale = self.principale
-        return principale.statut if principale is not None else LIBRE
-
-    def donnees(self) -> dict:
-        principale = self.principale
-        return {"debut": jour(self.debut), "fin": jour(self.fin), "mois": self.mois,
-                "statut": self.statut,
-                "regle": principale.regle if principale is not None else None,
-                "motif": principale.motif if principale is not None else None,
-                "revenu": self.revenu, "pensions": self.pensions, "plafond": self.plafond,
-                "reduction": self.reduction,
-                "par_regime": [p.donnees() for p in self.par_regime]}
-
-
-@dataclass(frozen=True)
-class Cumul:
-    """L'activité exercée après le départ, et ce que chaque pension en garde."""
-
-    debut: DateMois
-    fin: DateMois
-    affiliation: str
-    #: ``dernier`` ou ``autre``.
-    employeur: str
-    #: Le groupe de régimes dont relève l'activité (:func:`groupe_de_l_activite`).
-    groupe: str | None
-    #: Le mois où le cumul devient intégral, s'il le devient pendant l'activité.
-    integral_depuis: DateMois | None
-    tranches: tuple[TrancheDeCumul, ...]
-
-    @property
-    def non_servi(self) -> float:
-        """Ce que l'activité fait perdre de pension, en tout, en euros de
-        chaque année."""
-        return somme_ordonnee(t.reduction * t.mois for t in self.tranches)
-
-    def donnees(self) -> dict:
-        return {"debut": jour(self.debut), "fin": jour(self.fin),
-                "affiliation": self.affiliation, "employeur": self.employeur,
-                "groupe": self.groupe,
-                "integral_depuis": (jour(self.integral_depuis)
-                                    if self.integral_depuis is not None else None),
-                "non_servi": self.non_servi,
-                "tranches": [t.donnees() for t in self.tranches]}
-
-
-def jour(date_mois: DateMois) -> str:
-    return f"{date_mois.annee:04d}-{date_mois.mois:02d}-01"
 
 
 def _mois_de(jour: str) -> DateMois:

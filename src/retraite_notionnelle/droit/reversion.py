@@ -172,7 +172,7 @@ Ce qu'elle écrit, :class:`Reversion`, se porte au journal. Son jumeau est
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import replace
 from datetime import date
 from typing import TYPE_CHECKING
 
@@ -182,6 +182,7 @@ from ..somme import somme_ordonnee
 from .coordonner import (REGIMES_ALIGNES, REGIMES_ALIGNES_TETE, lura_applicable, regimes_de,
                          tete_de_succession)
 from .liquider import maximum_des_pensions
+from ..types_du_pont.droit import SCHEMA_DE_LA_REVERSION, Reversion, ReversionRegime  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -190,7 +191,7 @@ if TYPE_CHECKING:
     from ..scenarios.actuel import ScenarioActuel
 
 #: La version du schéma que :meth:`Reversion.donnees` suit.
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = SCHEMA_DE_LA_REVERSION
 
 #: Ce que dit une ligne dont le montant est nul, ou qui n'est pas servie en
 #: entier.
@@ -252,205 +253,6 @@ MINIMA_REVERSES = ("minimum_contributif", "minimum_pension_sncf")
 
 #: La fiche de la majoration forfaitaire pour enfant à charge (L. 353-5).
 MAJORATION_FORFAITAIRE = "majoration_forfaitaire_reversion"
-
-
-@dataclass(frozen=True)
-class ReversionRegime:
-    """La réversion d'un régime du défunt."""
-
-    regime: str
-    #: La pension du défunt dans ce régime, à l'année des montants.
-    base: float
-    montant: float
-    motif: str
-    fiche: str | None = None
-    version: str | None = None
-    texte: str | None = None
-    taux: float = 0.0
-    #: La date d'effet (AAAA-MM-JJ) : le premier jour du mois qui suit le
-    #: décès, ou qui suit l'âge requis.
-    date_effet: str | None = None
-    fiabilite: Fiabilite = Fiabilite.ESTIMEE
-    #: La part du montant qui reverse la majoration pour enfants du défunt,
-    #: hors du taux : l'Agirc-Arrco la reverse en entier depuis 2019.
-    majoration: float = 0.0
-    #: Le minimum que D. 353-1 garantit à cette réversion du régime général ou
-    #: d'un régime aligné, soixantièmes et prorata faits, ou l'article 18 du
-    #: décret n° 2008-639 à celle de la SNCF, sa part faite ; 0 sans lui.
-    minimum: float = 0.0
-    #: La majoration de 10 % du survivant de trois enfants (L. 353-1, R. 353-2),
-    #: comprise dans le montant.
-    majoration_trois_enfants: float = 0.0
-    #: La majoration de 11,1 % du survivant aux petites retraites (L. 353-6),
-    #: et le jour où elle commence : comprise dans le montant quand elle
-    #: commence au plus tard à la date d'effet de la ligne, à part sinon.
-    majoration_petites_retraites: float = 0.0
-    majoration_petites_retraites_effet: str | None = None
-    #: La part de ``base`` que le minimum contributif y ajoute (L. 351-10) :
-    #: la réversion du régime général et des régimes alignés se calcule sans
-    #: elle, sur ``base - minimum_contributif``.
-    minimum_contributif: float = 0.0
-    #: Ce que le maximum des pensions avait retiré de ``base``, que la
-    #: réversion du régime général reprend, et le maximum de cette réversion :
-    #: son taux du maximum des pensions de l'année, l'ajournement d'avant 1983
-    #: le majorant, et de la surcote du défunt ; 0 sans lui.
-    ecretement_du_maximum: float = 0.0
-    maximum: float = 0.0
-    #: Le plafond de ressources auquel la réversion se mesure — celui d'une
-    #: personne seule ou du ménage au régime général, deux plafonds de la
-    #: Sécurité sociale à la complémentaire des indépendants —, et les
-    #: ressources qu'il retient à côté d'elle : celles du survivant, ses
-    #: revenus d'activité abattus, celles de son nouveau conjoint s'il vit en
-    #: couple, les réversions des autres régimes de base ; 0 sans plafond.
-    plafond: float = 0.0
-    ressources_retenues: float = 0.0
-    #: Ce plafond est-il celui du ménage : le survivant vit en couple au jour
-    #: qu'il mesure, et les ressources de son nouveau conjoint s'ajoutent aux
-    #: siennes, sous 1,6 fois le plafond d'une personne seule au régime
-    #: général, sous le même à la complémentaire des indépendants. Non quand
-    #: l'union se forme après ce jour — la révision qui suit la compte —, ni
-    #: avant juillet 2004, qui ne compte que ses ressources personnelles.
-    plafond_du_menage: bool = False
-    #: Les mois de la période de référence de ces ressources, à la date
-    #: d'effet (R. 353-1) : les trois mois civils qui la précèdent, les douze
-    #: quand celles des trois mois excèdent le quart du plafond ; 0 quand la
-    #: version les compare sur l'année, à leur montant de ce jour.
-    periode_de_reference: int = 0
-    #: Le moment que précèdent ces mois : la date d'effet (``date_d_effet``),
-    #: depuis juillet 2004 ; avant, la demande (``demande``), puis le décès
-    #: (``deces``) quand la condition n'est pas remplie à la demande — le
-    #: dernier examiné quand elle ne l'est à aucun. ``None`` sans plafond.
-    ressources_examinees_au: str | None = None
-    #: Les moments dont la version a examiné les ressources, dans l'ordre,
-    #: jusqu'à celui-là : aucun de ceux qui le précèdent ne remplissait la
-    #: condition — avant juillet 2004, la demande refusée, quand les ressources
-    #: retenues sont celles du décès. Vide quand ``ressources_examinees_au``
-    #: est ``None``.
-    moments_examines: tuple[str, ...] = ()
-    #: La part du survivant dans la réversion du régime, partagée avec les
-    #: précédents conjoints au prorata des mariages (L. 353-3) : 1 sans eux.
-    part: float = 1.0
-    #: Le jour où l'union nouvelle du survivant éteint la réversion
-    #: (``perte_au_remariage``), quand elle suit la date d'effet ; ``None``
-    #: sinon.
-    fin: str | None = None
-    #: La limite de cumul de la réversion d'avant juillet 2004 avec les
-    #: retraites personnelles du survivant (D. 355-1) : la plus haute de la
-    #: limite forfaitaire, de la limite calculée et de la réversion même ;
-    #: 0 sans elle.
-    limite_cumul: float = 0.0
-    #: La majoration forfaitaire pour enfant à charge (L. 353-5), comprise
-    #: dans le montant, et ce qu'elle devient ensuite : depuis chaque jour où
-    #: le nombre des enfants à charge change, ``(jour, montant)``, la dernière
-    #: étape nulle — le dernier enfant n'est plus à charge, ou le survivant a
-    #: sa propre retraite.
-    majoration_forfaitaire_enfants: float = 0.0
-    majoration_forfaitaire_enfants_etapes: tuple[tuple[str, float], ...] = ()
-    #: Les majorations forfaitaires qui relèvent la réversion après sa date
-    #: d'effet — 4 % au 1er décembre 1982, 3,846 % au 1er janvier 1995 —,
-    #: chacune ``(jour, montant)``, hors du montant.
-    majorations_forfaitaires: tuple[tuple[str, float], ...] = ()
-    #: Le jour où la retraite personnelle du survivant, qui suit la date
-    #: d'effet, revoit la réversion d'avant juillet 2004 par la limite de cumul
-    #: de ce jour (D. 355-1), et ce qu'elle en retire alors, majoration de 10 %
-    #: comprise, hors du montant : ``None`` et 0 sans elle. ``limite_cumul``
-    #: est alors la limite de ce jour.
-    cumul_effet: str | None = None
-    reduction_du_cumul: float = 0.0
-    #: Le jour de la dernière révision de la réversion sous le plafond de
-    #: ressources (R. 353-1-1) — le recalcul aux règles de 2004 qu'ouvre la
-    #: retraite du survivant quand elle les précède, la révision qui suit sa
-    #: retraite, le ménage qu'il forme ou ses cinquante-cinq ans sinon —, et ce
-    #: qu'elle en retire alors, majoration de 10 % comprise, négatif quand elle
-    #: y ajoute, hors du montant : ``None`` et 0 sans révision. ``revisions``
-    #: les dit toutes, ``(jour, ce qu'elle retire)``, dans l'ordre.
-    revision_effet: str | None = None
-    reduction_de_la_revision: float = 0.0
-    revisions: tuple[tuple[str, float], ...] = ()
-    #: Les ressources que chaque révision retient à côté de la réversion, par
-    #: an, ``(jour, ressources)`` dans l'ordre de ``revisions`` : celles des
-    #: trois mois qui la précèdent (:func:`_ressources_de_la_periode`), et les
-    #: réversions des autres régimes de base ce jour-là.
-    ressources_des_revisions: tuple[tuple[str, float], ...] = ()
-    #: Le jour d'où la réversion soumise aux règles de ressources n'est plus
-    #: révisable (R. 353-1-1) : trois mois après la retraite que le survivant
-    #: date ; sa date d'effet quand il a, sans la dater, des retraites ; le
-    #: mois qui suit son âge légal quand il n'a ni retraite ni activité ;
-    #: ``None`` quand il travaille sans retraite datée, et pour la réversion
-    #: d'avant juillet 2004 qu'aucune retraite n'a recalculée.
-    derniere_revision: str | None = None
-
-    def donnees(self) -> dict:
-        return {"regime": self.regime, "base": self.base, "taux": self.taux,
-                "montant": self.montant, "motif": self.motif,
-                "date_effet": self.date_effet, "fiche": self.fiche,
-                "version": self.version, "texte": self.texte,
-                "fiabilite": self.fiabilite.name.lower(),
-                "majoration": self.majoration, "minimum": self.minimum,
-                "majoration_trois_enfants": self.majoration_trois_enfants,
-                "majoration_petites_retraites": self.majoration_petites_retraites,
-                "majoration_petites_retraites_effet":
-                    self.majoration_petites_retraites_effet,
-                "minimum_contributif": self.minimum_contributif,
-                "ecretement_du_maximum": self.ecretement_du_maximum,
-                "maximum": self.maximum, "plafond": self.plafond,
-                "ressources_retenues": self.ressources_retenues,
-                "plafond_du_menage": self.plafond_du_menage,
-                "periode_de_reference": self.periode_de_reference,
-                "ressources_examinees_au": self.ressources_examinees_au,
-                "moments_examines": list(self.moments_examines), "part": self.part,
-                "fin": self.fin, "limite_cumul": self.limite_cumul,
-                "majoration_forfaitaire_enfants": self.majoration_forfaitaire_enfants,
-                "majoration_forfaitaire_enfants_etapes": [
-                    {"date": jour, "montant": montant}
-                    for jour, montant in self.majoration_forfaitaire_enfants_etapes],
-                "majorations_forfaitaires": [
-                    {"date": jour, "montant": montant}
-                    for jour, montant in self.majorations_forfaitaires],
-                "cumul_effet": self.cumul_effet,
-                "reduction_du_cumul": self.reduction_du_cumul,
-                "revision_effet": self.revision_effet,
-                "reduction_de_la_revision": self.reduction_de_la_revision,
-                "revisions": [{"date": jour, "reduction": reduction,
-                               "ressources": dict(self.ressources_des_revisions).get(jour)}
-                              for jour, reduction in self.revisions],
-                "derniere_revision": self.derniere_revision}
-
-
-@dataclass(frozen=True)
-class Reversion:
-    """Ce que la liquidation d'une réversion écrit : régime par régime."""
-
-    #: Le survivant, et le défunt dont les régimes servent la réversion.
-    personne: str
-    defunt: str
-    #: Le décès (AAAA-MM-JJ), et l'année dont les montants sont les euros.
-    deces: str
-    annee: int
-    #: Les ressources du survivant hors réversions, et si elles sont présumées.
-    ressources: float
-    ressources_presumees: bool
-    regimes: tuple[ReversionRegime, ...]
-    #: Le décès est-il supposé (présomption ``deces_apres_le_depart``) plutôt
-    #: que déclaré ?
-    deces_suppose: bool = False
-    #: Le défunt est-il mort avant son départ ? La réversion porte alors sur
-    #: la pension qu'il « eût obtenue » à son décès (R. 353-6).
-    avant_le_depart: bool = False
-
-    @property
-    def total(self) -> float:
-        return somme_ordonnee(r.montant for r in self.regimes)
-
-    def donnees(self) -> dict:
-        return {"schema_version": SCHEMA_VERSION, "personne": self.personne,
-                "defunt": self.defunt, "deces": self.deces,
-                "deces_suppose": self.deces_suppose,
-                "avant_le_depart": self.avant_le_depart, "annee": self.annee,
-                "ressources": self.ressources,
-                "ressources_presumees": self.ressources_presumees,
-                "total": self.total,
-                "regimes": [r.donnees() for r in self.regimes]}
 
 
 def mois_suivant(jour: str) -> str:

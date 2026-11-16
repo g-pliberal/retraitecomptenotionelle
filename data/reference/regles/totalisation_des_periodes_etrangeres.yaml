@@ -390,12 +390,12 @@ sources:
 code:
   python: >-
     droit/etranger.py : coordonner_les_periodes, compter_les_periodes,
-    famille_du_regime, famille_des_regimes, trimestres_etrangers ; droit/coordonner.py :
-    coordonner, Coordination ; droit/compter.py : compter, Durees.pour_le_taux ;
+    famille_du_regime, famille_des_regimes, trimestres_etrangers ; droit/coordonner.py
+    : coordonner, Coordination ; droit/compter.py : compter, Durees.pour_le_taux ;
     droit/liquider.py : liquider_chaque_regime ; droit/ouvrir.py : ouvrir,
     age_carriere_longue ; droit/departs.py : _carriere_longue_acquise ;
-    scenarios/actuel.py : CarrieresHorsDeFrance, CarriereLongue, ResultatActuel,
-    resultat_actuel, resultat_des_departs
+    scenarios/actuel.py : CarrieresHorsDeFrance, CarriereLongue, resultat_actuel,
+    resultat_des_departs ; types_du_pont/resultats.py : ResultatActuel
   javascript: >-
     moteur/js/droit/etranger.js : coordonnerLesPeriodes, compterLesPeriodes,
     familleDuRegime, familleDesRegimes, trimestresEtrangers ;

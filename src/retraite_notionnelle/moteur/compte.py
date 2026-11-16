@@ -19,7 +19,6 @@ Trois principes tiennent tout le reste :
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
 from functools import cached_property
 
 from ..carriere import Affiliations, Carriere, salaire_moyen_annuel
@@ -37,6 +36,7 @@ from ..droit.acquerir import (assiette_du_collaborateur, dispense_de_debut,
 from .fusion import RegimeFusionne
 from .indexation import Indexation
 from ..somme import somme_ordonnee
+from ..types_du_pont.moteur import CompteNotionnel, CotisationAnnuelle  # noqa: F401  (types du pont, action 161)
 
 
 #: Le seul régime dont la contribution employeur est un taux d'équilibre.
@@ -100,97 +100,6 @@ def verifier_bareme(bareme) -> None:
         if not nombre(haute) or haute <= basse:
             raise faute("les bornes croissent")
         basse = haute
-
-
-@dataclass(frozen=True)
-class CotisationAnnuelle:
-    """Détail des cotisations d'une année, régime par régime."""
-
-    annee: int
-    revenu: float
-    assiette_retenue: float
-    cotisation: float
-    regimes: tuple[str, ...]
-    taux_effectif: float
-    hors_repartition: float
-    fiabilite: Fiabilite
-    #: D'où vient la part employeur PUBLIQUE, cette année-là — celle des
-    #: régimes à ``perimetre_taux: agent_seul``, qu'aucune fiche ne porte. Vide
-    #: si l'année n'en compte aucun ;
-    #: ``appelee`` ou ``implicite`` si la contribution réellement versée a été
-    #: trouvée ; ``repli`` si elle ne l'a pas été et que le taux du statut pivot
-    #: privé lui a été substitué ; ``retraite_seule`` si c'est la part du taux
-    #: de l'État que la Cour des comptes rattache à la retraite de l'agent
-    #: (``ContributionEtat.RETRAITE_SEULE``). Ne vaut que dans les scénarios 4
-    #: et 5 — ailleurs, la question ne se pose pas.
-    origine_part_employeur: str = ""
-    #: Part de ``cotisation`` versée par l'employeur, en euros. Nulle sous
-    #: ``SALARIALE``, qui ne porte rien de lui au compte, et pour un
-    #: non-salarié, qui n'en a pas.
-    part_employeur: float = 0.0
-    #: ``cotisation``, régime par régime : ce que chacun a encaissé, dans
-    #: l'ordre où l'année les rencontre. Deux origines ne sont pas des
-    #: régimes : ``regime_unifie``, ce que l'on verse au régime unique après
-    #: la bascule, et ``taux_commun``, ce que prélève un taux d'acquisition
-    #: commun, qui réunit les assiettes avant de prélever et n'appartient à
-    #: aucun. Les régimes provisionnés n'y sont pas : ce qu'ils encaissent
-    #: est à ``hors_repartition``.
-    par_regime: tuple[tuple[str, float], ...] = ()
-
-    @property
-    def nulle(self) -> bool:
-        return self.cotisation <= 0
-
-
-@dataclass
-class CompteNotionnel:
-    """Résultat de l'accumulation sur une carrière."""
-
-    capital: float
-    capital_hors_repartition: float
-    annee_liquidation: int
-    cotisations: list[CotisationAnnuelle] = field(default_factory=list)
-    fiabilite: Fiabilite = Fiabilite.ESTIMEE
-    #: ``capital``, par origine des cotisations — les régimes et les deux
-    #: origines de :attr:`CotisationAnnuelle.par_regime` —, chaque versement
-    #: revalorisé comme dans ``capital``. La pension qu'une origine achète est
-    #: sa part du capital, divisée par le même coefficient de conversion.
-    capital_par_regime: dict[str, float] = field(default_factory=dict)
-
-    @property
-    def cotisations_versees(self) -> float:
-        """Somme des cotisations en euros courants, sans revalorisation."""
-        return somme_ordonnee(c.cotisation for c in self.cotisations)
-
-    @property
-    def annees_cotisees(self) -> int:
-        return somme_ordonnee(1 for c in self.cotisations if not c.nulle)
-
-    @property
-    def rendement_cumule(self) -> float:
-        """Rapport entre capital revalorisé et cotisations versées."""
-        versees = self.cotisations_versees
-        return self.capital / versees if versees else 0.0
-
-    @property
-    def cotisations_employeur(self) -> float:
-        """Part des cotisations versée par l'employeur, en euros courants."""
-        return somme_ordonnee(c.part_employeur for c in self.cotisations)
-
-    @property
-    def annees_part_employeur(self) -> dict[str, int]:
-        """Nombre d'années par origine de la part employeur publique.
-
-        Ce que les scénarios 4 et 5 doivent dire d'eux-mêmes : sur combien
-        d'années la contribution réellement versée a été trouvée, et sur combien
-        il a fallu l'estimer, faute de série.
-        """
-        decompte: dict[str, int] = {}
-        for cotisation in self.cotisations:
-            if cotisation.origine_part_employeur and not cotisation.nulle:
-                origine = cotisation.origine_part_employeur
-                decompte[origine] = decompte.get(origine, 0) + 1
-        return decompte
 
 
 class ConstructeurCompte:

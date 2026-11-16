@@ -45,6 +45,7 @@ from . import ouvrir as _ouvrir
 from . import releve as _releve
 from .commun import AvantageApplique, PensionRegime, date_d_effet
 from ..somme import somme_ordonnee
+from ..types_du_pont.droit import Demande, Mesure  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -92,34 +93,6 @@ NEUTRALISATION_MESUREE = {
     "avpf": "avpf",
     "points_gratuits_rco": "points_gratuits",
 }
-
-
-@dataclass(frozen=True)
-class Demande:
-    """La demande (contrat C.6, ``demande``)."""
-
-    personne: str
-    #: La date d'effet (AAAA-MM-JJ) ; ``None`` pour une carrière sans départ.
-    date_effet: str | None
-    #: L'événement qui l'appelle — sa sorte au vocabulaire — et sa date.
-    evenement: str = "depart"
-    date_evenement: str | None = None
-    motif: str = "vieillesse"
-    nature: str = "definitive"
-    #: Les régimes que la demande vise ; aucun : tous ceux où un droit est
-    #: acquis, quand ils liquident tous au même départ (:mod:`.departs`).
-    regimes: tuple[str, ...] = ()
-
-    def donnees(self) -> dict:
-        """La demande, telle que le contrat C.6 la décrit. Les régimes qu'elle
-        ne nomme pas encore sont un manque, que le tableau de bord compte."""
-        donnee = {"personne": self.personne, "date_effet": self.date_effet,
-                  "evenement": {"sorte": self.evenement,
-                                "date": self.date_evenement or self.date_effet},
-                  "motif": self.motif, "nature": self.nature}
-        if self.regimes:
-            donnee["regimes"] = list(self.regimes)
-        return donnee
 
 
 def demande_de_depart(carriere: Carriere, nature: str = "definitive") -> Demande:
@@ -186,15 +159,6 @@ class Contexte:
         return {"univers": "droit_reel", "observation": self.observation,
                 "hypothese": self.hypothese,
                 "neutralisations": sorted(self.neutralisations)}
-
-
-@dataclass(frozen=True)
-class Mesure:
-    """Ce qu'une liquidation d'essai mesure (contrat C.6, ``mesure``)."""
-
-    code: str
-    neutralisation: str
-    montant: float
 
 
 @dataclass(frozen=True, eq=False)

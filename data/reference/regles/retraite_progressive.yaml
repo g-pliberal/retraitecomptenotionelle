@@ -503,12 +503,13 @@ textes_sans_effet:
 code:
   python: >-
     droit/progressive.py : regle, examiner, fraction, age_minimum, duree_requise,
-    regimes_ouverts, regimes_liquides, liquider, avec_la_duree, recalculee, initiales ;
-    droit/departs.py : regimes_actifs, regimes_de_la_carriere, liquider_les_departs ;
-    droit/completer.py : completer ; droit/compter.py : services_a_temps_partiel ;
-    droit/liquider.py : salaire_de_reference ; carriere.py : AnneeCarriere ;
-    scenarios/actuel.py : ProgressiveServie, FichesDatees.regle ; echeancier.py :
-    Echeancier._progresser
+    regimes_ouverts, regimes_liquides, liquider, avec_la_duree, recalculee, initiales
+    ; droit/departs.py : regimes_actifs, regimes_de_la_carriere, liquider_les_departs
+    ; droit/completer.py : completer ; droit/compter.py : services_a_temps_partiel ;
+    droit/liquider.py : salaire_de_reference ; scenarios/actuel.py :
+    FichesDatees.regle ; echeancier.py : Echeancier._progresser ;
+    types_du_pont/carriere.py : AnneeCarriere ; types_du_pont/resultats.py :
+    ProgressiveServie
   javascript: >-
     moteur/js/droit/progressive.js : regle, examiner, fraction, ageMinimum,
     dureeRequise, regimesOuverts, regimesLiquides, liquider, avecLaDuree, recalculee,

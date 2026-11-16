@@ -2240,18 +2240,15 @@ code:
     _date_d_effet_du_regime_general, _cumuler, _retraites_au, _cumul_a_la_retraite,
     _annee_du_plafond, _servie_au, _revisions, _retraites_entieres, _en_mois, _percu,
     _ressources_de_la_periode, _mois_de_la_demande, _ressources_a_la_date_d_effet,
-    _trois_mois_apres,
-    _apres_les_trois_mois, _generation,
-    _derniere_revision, _venu, _activite_au, _apport_au,
-    _majorations_ulterieures, date_des_regles_de_la_pension_eue ;
-    scenarios/actuel.py : Reversions ; echeancier.py :
-    Echeancier._reverser, Echeancier._pensions_au_deces,
-    Echeancier._pensions_eues_au_deces, Echeancier._lire_pensions_eues ; carriere.py : Carriere.arretee_au_deces,
-    Carriere.ex_conjoints ; chronologie.py : ex_conjoints, debut_du_menage,
-    fin_du_menage, fin_d_activite, variations_d_activite, variations_du_menage,
-    _variations ;
-    droit/completer.py : completer ; droit/liquider.py : maximum_des_pensions ;
-    droit/commun.py : PensionRegime
+    _trois_mois_apres, _apres_les_trois_mois, _generation, _derniere_revision, _venu,
+    _activite_au, _apport_au, _majorations_ulterieures,
+    date_des_regles_de_la_pension_eue ; scenarios/actuel.py : Reversions ;
+    echeancier.py : Echeancier._reverser, Echeancier._pensions_au_deces,
+    Echeancier._pensions_eues_au_deces, Echeancier._lire_pensions_eues ; carriere.py :
+    Carriere.arretee_au_deces, Carriere.ex_conjoints ; chronologie.py : ex_conjoints,
+    debut_du_menage, fin_du_menage, fin_d_activite, variations_d_activite,
+    variations_du_menage, _variations ; droit/completer.py : completer ;
+    droit/liquider.py : maximum_des_pensions ; types_du_pont/droit.py : PensionRegime
   javascript: >-
     moteur/js/droit/reversion.js : reversion, aLAge, mariageDure, groupesDuMinimum,
     partDuMinimum,

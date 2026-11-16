@@ -50,7 +50,6 @@ Le jumeau de ce module est ``moteur/js/droit/seconde.js``.
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
@@ -62,7 +61,8 @@ from . import liquider as _liquider
 from .commun import date_d_effet
 from .completer import FICHE_DU_VERSEMENT_RCI, salaire_de_reference_points
 from .cumul import FONCTION_PUBLIQUE, Cumul, fonction_publique_quittee, jour
-from ..somme import somme_ordonnee
+from ..types_du_pont.droit import (DroitsApresDepart, NouvellePension, PensionDeRegimeNouveau,
+                                   PeriodeDeDroits)  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -117,95 +117,6 @@ RCI = "rci"
 #: Le groupe de l'activité des artisans, des commerçants et des
 #: micro-entrepreneurs (:func:`.cumul.groupe_de_l_activite`).
 INDEPENDANTS = "independants"
-
-
-@dataclass(frozen=True)
-class PeriodeDeDroits:
-    """Des mois consécutifs d'activité que le droit traite de même."""
-
-    debut: DateMois
-    fin: DateMois
-    #: :data:`NOUVELLE_PENSION`, :data:`ETEINTS`, :data:`DERNIER_EMPLOYEUR` ou
-    #: :data:`REGIMES_NON_LIQUIDES`.
-    motif: str
-    #: La version de la fiche ``droits_apres_la_premiere_pension``.
-    regle: str
-
-    def donnees(self) -> dict:
-        return {"debut": jour(self.debut), "fin": jour(self.fin), "motif": self.motif,
-                "regle": self.regle}
-
-
-@dataclass(frozen=True)
-class NouvellePension:
-    """La nouvelle pension d'un régime, ou la seconde retraite complémentaire."""
-
-    regime: str
-    date_effet: DateMois
-    #: Les trimestres validés et le salaire mensuel moyen de la période — le
-    #: revenu annuel moyen, pour l'indépendant —, en euros de l'année de la
-    #: date d'effet ; les points, pour l'Agirc-Arrco.
-    trimestres: int
-    salaire_mensuel: float
-    points: float
-    #: Par an, avant le plafond, le plafond, et le montant servi, en euros de
-    #: l'année de la date d'effet.
-    brute: float
-    plafond: float | None
-    montant: float
-    revenu_annuel_moyen: float = 0.0
-    #: Le versement forfaitaire unique qui la remplace, en euros de sa date
-    #: d'effet, ou ``None`` : la seconde pension du RCI de moins de quarante
-    #: points (fiche ``versement_unique_rci``) ; ``montant`` reste la pension
-    #: qu'il remplace.
-    capital: float | None = None
-
-    def donnees(self) -> dict:
-        return {"regime": self.regime, "date_effet": jour(self.date_effet),
-                "trimestres": self.trimestres, "salaire_mensuel": self.salaire_mensuel,
-                "revenu_annuel_moyen": self.revenu_annuel_moyen,
-                "points": self.points, "brute": self.brute, "plafond": self.plafond,
-                "montant": self.montant, "capital": self.capital}
-
-
-@dataclass(frozen=True)
-class PensionDeRegimeNouveau:
-    """La pension d'un régime que l'activité après le départ ouvre, liquidée à
-    sa date : par an, en euros de cette date."""
-
-    regime: str
-    date_effet: DateMois
-    montant: float
-    detail: str
-
-    def donnees(self) -> dict:
-        return {"regime": self.regime, "date_effet": jour(self.date_effet),
-                "montant": self.montant, "detail": self.detail}
-
-
-@dataclass(frozen=True)
-class DroitsApresDepart:
-    """Ce que l'activité après le départ ouvre de droits, mois par mois, et
-    les pensions nouvelles qu'elle constitue."""
-
-    periodes: tuple[PeriodeDeDroits, ...]
-    pensions: tuple[NouvellePension, ...]
-    #: Les régimes de base de l'activité dont le modèle ne calcule pas la
-    #: nouvelle pension.
-    non_calcules: tuple[str, ...]
-    #: Les pensions des régimes qui n'en servaient pas, que l'activité ouvre
-    #: (:func:`liquider_les_regimes_nouveaux`).
-    regimes_nouveaux: tuple[PensionDeRegimeNouveau, ...] = ()
-
-    @property
-    def montant(self) -> float:
-        return somme_ordonnee(p.montant for p in self.pensions)
-
-    def donnees(self) -> dict:
-        return {"periodes": [p.donnees() for p in self.periodes],
-                "pensions": [p.donnees() for p in self.pensions],
-                "non_calcules": list(self.non_calcules), "montant": self.montant,
-                "regimes_nouveaux": [p.donnees() for p in self.regimes_nouveaux]}
 
 
 def _motif(mois: DateMois, premiere: DateMois, integral: DateMois | None,

@@ -26,7 +26,6 @@ Ce que l'étape écrit, :class:`Foyer`, suit son schéma,
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
@@ -34,6 +33,8 @@ from ..donnees.chargement import Fiabilite
 from .commun import AvantageApplique
 from .etranger import pensions_etrangeres_servies
 from .invalidite import AGE_DE_L_ASPA
+from ..types_du_pont.droit import (COUPLE, DETAILS, DETAILS_DEUX_ETAGES, DEUX_ALLOCATAIRES,
+                                   PERSONNE_SEULE, SCHEMA_DU_FOYER, Foyer)  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import Carriere, Conjoint
@@ -41,95 +42,7 @@ if TYPE_CHECKING:
     from .liquidation import Contexte
 
 #: La version du schéma de l'étape que :meth:`Foyer.donnees` suit.
-SCHEMA_VERSION = 1
-
-#: Les trois barèmes de l'allocation : une personne seule ; un couple dont la
-#: personne est seule allocataire, au plus le montant d'une personne seule
-#: (D. 815-1, a) ; un couple dont les deux membres le sont, qui se partagent
-#: le montant du couple par moitié (D. 815-1, b).
-PERSONNE_SEULE = "personne_seule"
-COUPLE = "couple"
-DEUX_ALLOCATAIRES = "deux_allocataires"
-
-#: Ce que la cascade des avantages dit de chacun.
-DETAILS = {
-    PERSONNE_SEULE: "allocation différentielle, barème d'une personne seule",
-    COUPLE: ("allocation différentielle, plafond du couple, au plus le montant "
-             "d'une personne seule"),
-    DEUX_ALLOCATAIRES: ("allocation différentielle, barème d'un couple "
-                        "d'allocataires, servie par moitié"),
-}
-
-#: Ce qu'elle en dit avant 2007, quand le minimum tient en deux étages.
-DETAILS_DEUX_ETAGES = {
-    PERSONNE_SEULE: ("allocation aux vieux travailleurs salariés et allocation "
-                     "supplémentaire, sous le plafond d'une personne seule"),
-    COUPLE: ("allocation aux vieux travailleurs salariés et allocation "
-             "supplémentaire, sous le plafond du couple"),
-    DEUX_ALLOCATAIRES: ("allocation aux vieux travailleurs salariés et allocation "
-                        "supplémentaire du ménage, sous le plafond du couple, "
-                        "servie par moitié"),
-}
-
-
-@dataclass(frozen=True)
-class Foyer:
-    """Ce que l'étape « foyer et net » écrit, à une date."""
-
-    personne: str
-    #: La date à laquelle les ressources sont lues : l'effet de la
-    #: liquidation, ou l'échéance (AAAA-MM-JJ).
-    date: str | None
-    #: Toutes les pensions que le bénéficiaire reçoit, régimes provisionnés,
-    #: majorations et pensions étrangères compris.
-    ressources: float
-    #: L'ASPA : le complément jusqu'au barème, nul quand les ressources
-    #: l'atteignent — pour un couple d'allocataires, la part de la personne.
-    minimum_vieillesse: float
-    #: Le barème lu, quand l'allocation est ouverte : celui d'une personne
-    #: seule, ou le plafond du couple.
-    plafond: float | None
-    fiabilite: Fiabilite
-    #: Celles des ressources qu'un autre État sert, à part des pensions
-    #: françaises : l'allocation ne complète que ce qu'elles laissent.
-    etrangeres: float = 0.0
-    #: Le barème du foyer : :data:`PERSONNE_SEULE`, :data:`COUPLE` ou
-    #: :data:`DEUX_ALLOCATAIRES`.
-    bareme: str = PERSONNE_SEULE
-    #: Les ressources du conjoint, que le plafond du couple compte avec les
-    #: siennes : déclarées, nulles sinon ; nulles sans conjoint.
-    ressources_conjoint: float = 0.0
-    #: Avant 2007, le minimum à deux étages (:func:`avant_l_aspa`) : il ne
-    #: porte pas les ressources au plafond, qu'il ne fait que borner.
-    deux_etages: bool = False
-
-    def avantage(self) -> AvantageApplique:
-        """L'ASPA, sous la forme où la cascade des avantages la dit."""
-        return AvantageApplique(
-            code="minimum_vieillesse",
-            libelle="Minimum vieillesse (ASPA)",
-            montant=self.minimum_vieillesse,
-            detail=(DETAILS_DEUX_ETAGES if self.deux_etages else DETAILS)[self.bareme],
-        )
-
-    def servie_avec(self, pensions: float) -> float:
-        """Les pensions françaises de la personne et l'allocation, ensemble :
-        le barème d'une personne seule, moins ce que les pensions étrangères,
-        servies à part, en remplissent ; dans un couple, ses pensions et sa
-        part de l'allocation, que le barème ne dit plus ; avant 2007, ses
-        pensions et les deux étages, que le plafond borne sans les y porter."""
-        if self.bareme == PERSONNE_SEULE and not self.deux_etages:
-            return self.plafond - self.etrangeres
-        return pensions + self.minimum_vieillesse
-
-    def donnees(self) -> dict:
-        """Le foyer, tel que le schéma de l'étape le décrit."""
-        return {"schema_version": SCHEMA_VERSION, "personne": self.personne,
-                "date": self.date, "ressources": self.ressources,
-                "etrangeres": self.etrangeres, "bareme": self.bareme,
-                "ressources_conjoint": self.ressources_conjoint,
-                "minimum_vieillesse": self.minimum_vieillesse,
-                "fiabilite": self.fiabilite.name.lower()}
+SCHEMA_VERSION = SCHEMA_DU_FOYER
 
 
 def condition_de_residence(moteur: ScenarioActuel, residence: str | None, date: str,

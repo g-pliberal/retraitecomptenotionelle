@@ -413,10 +413,10 @@ sources:
 code:
   python: >-
     droit/seconde.py : droits, _revenus, _nouvelle_pension,
-    _seconde_retraite_complementaire, _prix_du_point, _seconde_retraite_rci, TAUX_PLEIN,
-    PLAFOND_EN_PASS, HEURES_PAR_TRIMESTRE, DROITS_2023, LIQUIDATION_2023, DROITS_RCI,
-    PREMIERE_2027 ; echeancier.py : Echeancier._constituer ; scenarios/actuel.py :
-    ResultatActuel
+    _seconde_retraite_complementaire, _prix_du_point, _seconde_retraite_rci,
+    TAUX_PLEIN, PLAFOND_EN_PASS, HEURES_PAR_TRIMESTRE, DROITS_2023, LIQUIDATION_2023,
+    DROITS_RCI, PREMIERE_2027 ; echeancier.py : Echeancier._constituer ;
+    types_du_pont/resultats.py : ResultatActuel
   javascript: >-
     moteur/js/droit/seconde.js : droits, revenus, nouvellePension,
     secondeRetraiteComplementaire, prixDuPoint, secondeRetraiteRci, TAUX_PLEIN,

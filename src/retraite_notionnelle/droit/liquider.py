@@ -44,6 +44,7 @@ from .commun import PensionRegime, date_d_effet, derniere_annee, periode_de_liqu
 from .etranger import famille_du_regime
 from .ouvrir import TRIMESTRES_DECOTE_MILITAIRE
 from ..somme import somme_ordonnee
+from ..types_du_pont.droit import EligiblePlafondEnfants  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -504,23 +505,6 @@ class EligibleMinimumDePension:
     #: Est-ce une pension d'ancienneté, et, depuis 2017, au taux plein ou de
     #: l'agent qui avait l'âge de liquidation de 2008 avant cette date ?
     ouvert: bool
-
-
-@dataclass(frozen=True)
-class EligiblePlafondEnfants:
-    """La pension d'un régime du code des pensions, dont le plafond de L. 18,
-    V, borne la majoration pour enfants au traitement qui l'a liquidée
-    (:func:`~.completer.majoration_sous_le_traitement`, fiche
-    ``majoration_enfants_plafond_fonction_publique``)."""
-
-    #: Indice de la pension dans :attr:`Pensions.regimes`.
-    indice: int
-    #: Le traitement ou la solde de L. 15, en euros par an à la date d'effet.
-    traitement: float
-    #: La part du montant que la surcote de L. 14, III, y ajoute, en euros :
-    #: depuis la décision du Conseil d'État du 29 décembre 2020, la pension se
-    #: compare au traitement sans elle.
-    surcote: float
 
 
 @dataclass(frozen=True)

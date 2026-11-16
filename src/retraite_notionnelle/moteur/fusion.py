@@ -39,9 +39,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 
-from ..donnees.chargement import Fiabilite
 from ..donnees.regimes import CatalogueRegimes, PeriodeRegime, Regime
 from ..somme import somme_ordonnee
+from ..types_du_pont.moteur import RegimeFusionne  # noqa: F401  (types du pont, action 161)
 
 #: Ordre des assiettes de salaire de référence, du plus avantageux pour
 #: l'assuré au moins avantageux. La carrière entière est la moins avantageuse :
@@ -72,42 +72,6 @@ class RegleFusion:
     regimes_pivot: tuple[str, ...] = ("regime_general", "agirc_arrco")
     #: Familles exclues de la fusion. La capitalisation reste à part.
     familles_exclues: tuple[str, ...] = ("additionnel_capitalise",)
-
-
-@dataclass(frozen=True)
-class RegimeFusionne:
-    """Régime unique issu de la fusion, et traçabilité de chaque paramètre."""
-
-    annee_bascule: int
-    age_ouverture: float
-    age_taux_plein: float
-    duree_requise_trimestres: int
-    salaire_reference: str
-    assiette: str
-    taux_cotisation_retraite: float
-    #: Part de ce taux supportée par l'assuré lui-même. Le régime unique hérite
-    #: de la répartition salarié/employeur de ses régimes pivots : elle n'est pas
-    #: une décision de la fusion, mais la conséquence de ce qui la compose.
-    taux_cotisation_salarie: float
-    avantages_non_contributifs: tuple[str, ...]
-    origines: dict[str, str]
-    regimes_fusionnes: tuple[str, ...]
-    fiabilite: Fiabilite
-
-    def resume(self) -> str:
-        lignes = [
-            f"Régime unique à compter de {self.annee_bascule}",
-            f"  {len(self.regimes_fusionnes)} régimes fusionnés",
-            f"  âge d'ouverture     : {self.age_ouverture:g} ans   (le plus élevé — {self.origines['age_ouverture']})",
-            f"  âge du taux plein   : {self.age_taux_plein:g} ans   (le plus élevé — {self.origines['age_taux_plein']})",
-            f"  durée requise       : {self.duree_requise_trimestres} trimestres   ({self.origines['duree_requise_trimestres']})",
-            f"  salaire de référence: {self.salaire_reference}   ({self.origines['salaire_reference']})",
-            f"  assiette            : {self.assiette}",
-            f"  taux de cotisation  : {self.taux_cotisation_retraite:.2%}   ({self.origines['taux_cotisation_retraite']})",
-            f"  dont part salariale : {self.taux_cotisation_salarie:.2%}",
-            f"  avantages non contributifs : aucun",
-        ]
-        return "\n".join(lignes)
 
 
 def _part_salariale_moyenne(candidats) -> float:

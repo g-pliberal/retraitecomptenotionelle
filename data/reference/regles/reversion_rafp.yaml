@@ -205,9 +205,9 @@ sources:
 code:
   python: >-
     droit/reversion.py : reversion, _part_du_survivant, _admis_ailleurs,
-    _jusqu_au_remariage ; droit/liquider.py : prestation_rafp ; droit/commun.py :
-    PensionRegime ; echeancier.py : Echeancier._pensions_au_deces,
-    Echeancier._pensions_eues_au_deces ; scenarios/actuel.py : Reversions
+    _jusqu_au_remariage ; droit/liquider.py : prestation_rafp ; echeancier.py :
+    Echeancier._pensions_au_deces, Echeancier._pensions_eues_au_deces ;
+    scenarios/actuel.py : Reversions ; types_du_pont/droit.py : PensionRegime
   javascript: >-
     moteur/js/droit/reversion.js : reversion, partDuSurvivant, admisAilleurs,
     jusquAuRemariage ; moteur/js/droit/liquider.js : prestationRafp ;

@@ -54,6 +54,8 @@ from .commun import (MAJORATION_ENFANTS, AvantageApplique, PensionRegime, date_d
                      ligne_cotisee, majoration_du_conjoint, periode_de_liquidation)
 from .compter import trimestres_de_la_ligne_entre as _trimestres_de_la_ligne_entre
 from ..somme import somme_ordonnee
+from ..types_du_pont.droit import (ChefDExploitation, ExploitantAgricole,
+                                   MajorationProportionnelle, MinimumEcrete, PetitePension)  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -618,31 +620,6 @@ def pension_majoree(moteur: ScenarioActuel, carriere: Carriere, eligible,
         complement=max(0.0, min(avant, plafond - ressources - reversion)),
         plafond=plafond, fiabilite=min(fiabilite, fiabilite_plafond),
         reduite=reduite, duree_reduite=duree_reduite, reversion=reversion)
-
-
-@dataclass(frozen=True)
-class MajorationProportionnelle:
-    """Ce que les plans de revalorisation de 1997 à 2008 ajoutent à la
-    retraite proportionnelle du chef d'exploitation
-    (:func:`majoration_retraite_proportionnelle`)."""
-
-    #: Le nombre minimal annuel moyen de points, A ou C, et le nombre annuel
-    #: moyen n de la pension, au plancher de seize.
-    minimum: float
-    moyenne: float
-    #: Les années retenues, DCE, trente-sept et demie au plus.
-    duree: float
-    #: Les points ajoutés, minorés et réduits à la part servie, ceux des
-    #: années de conjoint compris, et leur montant.
-    points: float
-    complement: float
-    fiabilite: Fiabilite
-    #: Ceux des années de conjoint et d'aide familial : le nombre minimal
-    #: annuel B (ou C), les années retenues, les points qu'elles ajoutent,
-    #: minorés (:func:`_points_des_conjoints`).
-    conjoint_minimum: float = 0.0
-    conjoint_annees: float = 0.0
-    conjoint_points: float = 0.0
 
 
 #: La fiche des plans de revalorisation de 1997 à 2008, que :class:`FichesDatees
@@ -1324,58 +1301,6 @@ def points_rco_de_chef(droits, carriere: Carriere) -> float:
     return gratuits + (acquis - gratuits) * de_chef / total
 
 
-@dataclass(frozen=True)
-class MinimumEcrete:
-    """Ce que la révision du minimum contributif relit après le départ : sa
-    majoration « est révisée lorsque le montant des avantages personnels de
-    retraite a varié », et le plafond auquel le total des pensions se compare
-    est celui de l'entrée en jouissance, « revalorisé [...] dans les
-    conditions prévues à l'article L. 161-23-1 » (R. 173-8). En euros de la
-    liquidation."""
-
-    #: Le complément de tous les régimes, avant l'écrêtement.
-    avant_ecretement: float
-    #: Ce qui sépare les pensions du plafond de l'article L. 173-2 : le
-    #: plafond, moins les pensions, celles d'autres départs et les pensions
-    #: étrangères qu'il compte ; négatif quand elles le dépassent.
-    marge: float
-    #: Le complément de chaque régime, après l'écrêtement.
-    par_regime: tuple[tuple[str, float], ...]
-
-
-@dataclass(frozen=True)
-class PetitePension:
-    """Ce que la majoration exceptionnelle des petites pensions relit d'une
-    pension de base liquidée avant le 1er septembre 2023 (loi n° 2023-270,
-    article 18, V ; décret n° 2023-754, article 3 ; circulaire Cnav
-    n° 2023-21) : :func:`~retraite_notionnelle.revalorisation.majorer_les_petites_pensions`
-    la calcule le mois où elle est due, sur ce que les pensions servent alors.
-    Ses régimes sont ceux qui portent le minimum contributif : le régime
-    général, les régimes des artisans et des commerçants qu'il a intégrés,
-    celui des salariés agricoles et celui des cultes. En euros de la date
-    d'effet de la pension."""
-
-    #: Le régime « concerné », qui sert la pension et doit la majoration.
-    regime: str
-    #: Liquidée au taux plein, par la durée, l'âge ou l'inaptitude
-    #: (circulaire, 2.2).
-    taux_plein: bool
-    #: Les durées cotisée et validée dans le régime, en trimestres, et la
-    #: durée d'assurance maximum de la génération (L. 351-1, troisième
-    #: alinéa), qui proratise la majoration sur la première et son plafond
-    #: sur la seconde (circulaire, 3.1 et 3.2.2).
-    cotisee: int
-    validee: int
-    maximum: int
-    #: Les trimestres cotisés tous régimes de base, français et étrangers,
-    #: quatre par an au plus, l'AVPF exclue : cent vingt ouvrent la majoration
-    #: (circulaire, 2.3).
-    cotises_tous_regimes: int
-    #: Ce que la surcote ajoute à la pension, que la comparaison aux plafonds
-    #: écarte (circulaire, 3.2.3).
-    surcote: float = 0.0
-
-
 def surcote_hors_minimum(montant: float, eligible, ajout: float,
                          date_effet: tuple[int, int]) -> float:
     """Ce que la surcote ajoute à ``montant``, la pension d'un régime que le
@@ -1437,62 +1362,6 @@ def trimestres_de_surcote_parentale(moteur: ScenarioActuel, carriere: Carriere,
                                 cotises_seulement=True),
         max(0, avant + valides_fenetre - requis),
     )
-
-
-@dataclass(frozen=True)
-class ChefDExploitation:
-    """Ce que le relèvement de septembre 2023 relit d'un chef d'exploitation
-    parti avant : le taux plein ouvre depuis les points gratuits et le
-    complément différentiel de la RCO à qui n'avait pas la durée requise tous
-    régimes (loi n° 2023-270, article 18, VI) ;
-    :func:`~retraite_notionnelle.revalorisation.relever_les_exploitants` les
-    calcule au 1er septembre 2023, sur ce que ses pensions servent alors."""
-
-    #: Le régime de base des non-salariés agricoles.
-    regime: str
-    #: Son taux plein, la durée requise, ses durées et sa durée de référence
-    #: (:class:`~retraite_notionnelle.droit.liquider.EligibleAgricole`).
-    eligible: object
-    #: Les points de RCO acquis à la liquidation au titre des années de chef,
-    #: par cotisation ou à titre gratuit : le N du complément (D. 732-166-4,
-    #: :func:`points_rco_de_chef`).
-    points: float
-    #: Les points gratuits que le taux plein ouvre, quand la durée requise ne
-    #: les avait pas ouverts à la liquidation (L. 732-56, D. 732-154).
-    gratuits: float
-    #: Le complément différentiel a-t-il été servi à la liquidation ?
-    complement: bool
-
-
-@dataclass(frozen=True)
-class ExploitantAgricole:
-    """Ce que la révision des pensions des non-salariés agricoles déjà
-    liquidées relit de leur liquidation : les plans de revalorisation de 1997
-    à 2008, servis chaque année à la règle des pensions dues cette année-là —
-    celles prises avant 1997 comprises —, puis la pension majorée de référence
-    que la loi n° 2008-1330 ouvre en 2009 aux pensions prises avant
-    (:func:`~retraite_notionnelle.revalorisation.reviser_les_exploitants`)."""
-
-    #: Le régime de base des non-salariés agricoles.
-    regime: str
-    #: La carrière du départ qui l'a liquidée, sa date d'effet comprise.
-    carriere: object
-    #: Son :class:`~retraite_notionnelle.droit.liquider.EligibleAgricole`.
-    eligible: object
-    #: Sa durée d'assurance, en trimestres.
-    trimestres: int
-    #: La pension de base avant les plans et la pension majorée de référence.
-    pension: PensionRegime
-    #: La majoration des plans servie à la liquidation (:class:`MajorationProportionnelle`).
-    plans: MajorationProportionnelle | None
-    #: La pension majorée de référence servie à la liquidation, en euros de
-    #: la date d'effet : celle d'une pension prise de 2009 à 2021 se refait
-    #: depuis 2022 à la règle unique (loi n° 2021-1679, article 1er, II).
-    pmr: float = 0.0
-    #: La durée de chef d'une pension prise avant 1997, en trimestres, que ses
-    #: points au compte reconstituent pour la pension majorée de référence de
-    #: 2009 (:func:`duree_de_chef_reconstituee`) ; ``None`` pour une autre.
-    chef_reconstitue: float | None = None
 
 
 @dataclass(frozen=True)

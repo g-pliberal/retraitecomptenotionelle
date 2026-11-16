@@ -43,13 +43,14 @@ encore, et part avec lui ; d'ici là,
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import replace
 from functools import cached_property
 
 from ..config import ModeIndexation, Parametres
 from ..donnees.chargement import Fiabilite
 from ..donnees.macro import DonneesMacro
 from ..somme import somme_ordonnee
+from ..types_du_pont.moteur import TauxIndexation  # noqa: F401  (types du pont, action 161)
 
 
 #: Modes qui comparent les trois taux tels qu'ils sont publiés — deux nominaux,
@@ -59,24 +60,6 @@ _MODES_TROIS_TAUX_REELS = frozenset({
     ModeIndexation.MEDIANE_TROIS_TAUX,
     ModeIndexation.MOYENNE_TROIS_TAUX,
 })
-
-
-@dataclass(frozen=True)
-class TauxIndexation:
-    """Taux retenu pour une année, avec le terme qui l'a emporté."""
-
-    annee: int
-    taux: float
-    terme_retenu: str
-    inflation: float
-    salaire_moyen: float
-    productivite: float
-    fiabilite: Fiabilite
-
-    @property
-    def taux_reel(self) -> float:
-        """Taux d'indexation net d'inflation."""
-        return (1 + self.taux) / (1 + self.inflation) - 1
 
 
 class Indexation:

@@ -37,7 +37,7 @@ Son jumeau est ``moteur/js/echeancier.js``.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import replace
 from datetime import date
 from typing import TYPE_CHECKING
 
@@ -62,6 +62,7 @@ from .revalorisation import (aujourd_hui, faire_vivre, foyer_a_l_echeance,
 from .scenarios.actuel import (etat_du_depart, progressive_servie, resultat_actuel,
                                resultat_des_departs)
 from .somme import somme_ordonnee
+from .types_du_pont.journal import SCHEMA_DE_L_EVENEMENT, Evenement  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from .carriere import Carriere
@@ -70,40 +71,12 @@ if TYPE_CHECKING:
     from .simulateur import Simulateur
 
 #: La version du contrat C.7 que :meth:`Evenement.donnees` suit.
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = SCHEMA_DE_L_EVENEMENT
 
 #: Ce que chaque sorte d'événement appelle : ``liquider``, avec quel motif et
 #: quelle nature (vocabulaire, liste ``sortes_d_evenement``).
 SORTES = {nom: dict(sorte) for nom, sorte in
           vocabulaire.valeurs()["listes"]["sortes_d_evenement"]["valeurs"].items()}
-
-
-@dataclass(frozen=True)
-class Evenement:
-    """Un événement (contrat C.7)."""
-
-    id: str
-    #: Sa date (AAAA-MM-JJ).
-    date: str
-    #: Les personnes concernées.
-    personnes: tuple[str, ...]
-    #: Ce qu'il vise : un régime, une liquidation, une allocation.
-    vise: dict
-    sorte: str = "depart"
-    #: ``acte``, ``simule``, ``observe``, ``induit`` ou ``publication``.
-    origine: str = "acte"
-    condition: object | None = None
-    #: L'ordre dans la journée.
-    rang: int = 0
-
-    def donnees(self) -> dict:
-        """L'événement, tel que le contrat C.7 le décrit."""
-        donnee = {"schema_version": SCHEMA_VERSION, "id": self.id, "date": self.date,
-                  "sorte": self.sorte, "personnes": list(self.personnes),
-                  "vise": self.vise, "origine": self.origine, "rang": self.rang}
-        if self.condition is not None:
-            donnee["condition"] = self.condition
-        return donnee
 
 
 def depart_de(carriere: Carriere) -> Evenement | None:

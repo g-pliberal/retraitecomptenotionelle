@@ -1296,7 +1296,7 @@ code:
     droit/acquerir.py : acquerir, assiette_minimale, revenu_de_l_annee,
     revenu_a_l_option, annees_deja_exercees ; donnees/chargement.py :
     assiette_minimale ; donnees/macro.py : base_mensuelle_prestations_familiales ;
-    carriere.py : AnneeCarriere, _ligne_annuelle
+    carriere.py : _ligne_annuelle ; types_du_pont/carriere.py : AnneeCarriere
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir, assietteMinimale, revenuDeLAnnee,
     revenuALOption, anneesDejaExercees ; moteur/js/macro.js : DonneesMacro ;

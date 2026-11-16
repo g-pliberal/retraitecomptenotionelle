@@ -68,6 +68,7 @@ from ..calendrier import DateMois
 from . import compter, coordonner, etranger, invalidite, limite_age, ouvrir
 from .commun import (SANS_LEUR_BASE, derniere_annee, ligne_cotisee,
                      periode_de_liquidation)
+from ..types_du_pont.droit import DemandeExaminee  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import AnneeCarriere, Carriere
@@ -137,30 +138,6 @@ class Depart:
     def unique(self) -> bool:
         """Le départ unique, où tous les régimes liquident ensemble."""
         return not self.regimes
-
-
-@dataclass(frozen=True)
-class DemandeExaminee:
-    """Une pension dont la personne dit la date de demande, et la date où le
-    modèle la sert : la demandée quand elle vient après la présumée, la
-    présumée sinon, avec sa raison."""
-
-    regime: str
-    demandee: DateMois
-    #: Le mois où la pension commence ; ``None`` sans pension de ce régime.
-    retenue: DateMois | None
-    #: ``demande`` : la date demandée ; ``depart``, ``ouverture``, ``sortie``,
-    #: ``invalidite``, ``radiation`` ou ``limite_d_age`` : la date présumée,
-    #: que la demande
-    #: n'avance pas ;
-    #: ``ensemble`` : celle de la pension que la loi lui attache ;
-    #: ``sans_pension`` : la carrière n'a pas de pension dans ce régime.
-    motif: str
-
-    def donnees(self) -> dict:
-        return {"regime": self.regime, "demandee": Depart(self.demandee).date_effet,
-                "retenue": None if self.retenue is None else Depart(self.retenue).date_effet,
-                "motif": self.motif}
 
 
 def _periode(moteur: ScenarioActuel, code: str, annee: int) -> PeriodeRegime | None:

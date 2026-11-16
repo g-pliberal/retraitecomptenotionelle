@@ -165,9 +165,10 @@ sources:
 textes_a_rattacher: []
 code:
   python: >-
-    droit/completer.py : PetitePension, surcote_hors_minimum, completer ;
-    revalorisation.py : majorer_les_petites_pensions, MajorationExceptionnelle,
-    faire_vivre ; echeancier.py : Echeancier._echeance
+    droit/completer.py : surcote_hors_minimum, completer ; revalorisation.py :
+    majorer_les_petites_pensions, faire_vivre ; echeancier.py : Echeancier._echeance ;
+    types_du_pont/droit.py : PetitePension ; types_du_pont/revalorisation.py :
+    MajorationExceptionnelle
   javascript: >-
     moteur/js/droit/completer.js : completer ; moteur/js/revalorisation.js :
     majorerLesPetitesPensions, faireVivre ; moteur/js/echeancier.js :

@@ -176,8 +176,8 @@ sources:
 code:
   python: >-
     droit/completer.py : verser_en_capital, salaire_de_reference_points,
-    FICHE_DU_VERSEMENT_RCI ; droit/seconde.py : _seconde_retraite_rci, NouvellePension ;
-    scenarios/actuel.py : FichesDatees
+    FICHE_DU_VERSEMENT_RCI ; droit/seconde.py : _seconde_retraite_rci ;
+    scenarios/actuel.py : FichesDatees ; types_du_pont/droit.py : NouvellePension
   javascript: >-
     moteur/js/droit/completer.js : verserEnCapital, salaireDeReferencePoints,
     FICHE_DU_VERSEMENT_RCI ; moteur/js/droit/seconde.js : secondeRetraiteRci,

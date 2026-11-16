@@ -587,16 +587,17 @@ textes_sans_effet:
    motif: "texte inchangé, de même : le plancher de 160 % du Smic sur 1 820 heures"}
 code:
   python: >-
-    droit/cumul.py : cumuler, groupe_de_l_activite, groupe_de_la_pension, assiette_csg,
-    duree_du_taux_plein, _Calcul.version, _Calcul.integral, _Calcul.plafond_salarie,
-    _Calcul.plafond_agirc_arrco, _Calcul._salarie, _Calcul._agirc_arrco,
-    _Calcul._non_salarie, _Calcul._seuil_non_salarie, _Calcul._suspension,
-    _Calcul._part_nette, _Calcul._regle_2027, LOI_1983, ARTISANS_1984, LOI_2004,
-    LOI_2009, REVALORISATION_2010, ORDRE_DES_AGES, PREMIERE_2015, REDUCTION_SALARIES,
-    REDUCTION_NON_SALARIES, LIBERAUX_2011, PREMIERE_2027, SIX_MOIS, HEURES_SMIC,
-    PART_SMIC_2004, PART_SMIC_2007, LOI_2007, ASSIETTES_CSG, SEUILS_NON_SALARIES,
-    HORS_DES_MOIS_SUSPENDUS ; echeancier.py : Echeancier._cumuler ; scenarios/actuel.py :
-    ResultatActuel ; carriere.py : _lignes_apres_depart, Carriere.emploi_retraite
+    droit/cumul.py : cumuler, groupe_de_l_activite, groupe_de_la_pension,
+    assiette_csg, duree_du_taux_plein, _Calcul.version, _Calcul.integral,
+    _Calcul.plafond_salarie, _Calcul.plafond_agirc_arrco, _Calcul._salarie,
+    _Calcul._agirc_arrco, _Calcul._non_salarie, _Calcul._seuil_non_salarie,
+    _Calcul._suspension, _Calcul._part_nette, _Calcul._regle_2027, LOI_1983,
+    ARTISANS_1984, LOI_2004, LOI_2009, REVALORISATION_2010, ORDRE_DES_AGES,
+    PREMIERE_2015, REDUCTION_SALARIES, REDUCTION_NON_SALARIES, LIBERAUX_2011,
+    PREMIERE_2027, SIX_MOIS, HEURES_SMIC, PART_SMIC_2004, PART_SMIC_2007, LOI_2007,
+    ASSIETTES_CSG, SEUILS_NON_SALARIES, HORS_DES_MOIS_SUSPENDUS ; echeancier.py :
+    Echeancier._cumuler ; carriere.py : _lignes_apres_depart, Carriere.emploi_retraite
+    ; types_du_pont/resultats.py : ResultatActuel
   javascript: >-
     moteur/js/droit/cumul.js : cumuler, groupeDeLActivite, groupeDeLaPension,
     assietteCsg, dureeDuTauxPlein, Calcul.version, Calcul.integral, Calcul.plafondSalarie,

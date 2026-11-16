@@ -514,12 +514,12 @@ textes_sans_effet:
     française. »
 code:
   python: >-
-    carriere.py : Metier, AnneeCarriere, revenu_cotise ; donnees/chargement.py :
+    carriere.py : Metier, revenu_cotise ; donnees/chargement.py :
     charger_validation_micro, charger_cotisation_micro, forfait_micro,
     charger_compensation_micro, validant_compense, charger_seuils_micro,
     trimestres_aux_seuils_micro ; moteur/compte.py :
     ConstructeurCompte._cotisation_ligne ; droit/liquider.py : assiette_de_reference ;
-    droit/acquerir.py : acquerir
+    droit/acquerir.py : acquerir ; types_du_pont/carriere.py : AnneeCarriere
   javascript: >-
     moteur/js/saisie.js : ACTIVITES_MICRO, MALADIE_MICRO, ABATTEMENTS_MICRO, Saisie.enChiffreDAffaires,
     Saisie.abattu, Saisie.parcours, Saisie.emploiRetraiteDeclare ; moteur/js/pages.js :

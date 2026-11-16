@@ -280,10 +280,11 @@ code:
     ménage dépassent le plafond, par moitié entre deux allocataires.
   python: >-
     droit/foyer.py : foyer_et_net, avant_l_aspa, conjoint_au_foyer,
-    conjoint_allocataire, condition_de_residence, Foyer ; droit/etranger.py :
+    conjoint_allocataire, condition_de_residence ; droit/etranger.py :
     pensions_etrangeres_servies ; donnees/minimum_vieillesse.py : MinimumVieillesse,
     MinimumVieillesse.plafond, MinimumVieillesse.plafond_couple,
-    MinimumVieillesse.deux_etages, MinimumVieillesse._en_vigueur, DeuxEtages
+    MinimumVieillesse.deux_etages, MinimumVieillesse._en_vigueur, DeuxEtages ;
+    types_du_pont/droit.py : Foyer
   javascript: >-
     moteur/js/droit/foyer.js : foyerEtNet, avantLAspa, conjointAuFoyer,
     conjointAllocataire, conditionDeResidence ; moteur/js/droit/etranger.js :

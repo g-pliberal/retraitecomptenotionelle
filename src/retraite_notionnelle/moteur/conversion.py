@@ -30,7 +30,6 @@ réduite » sans avoir besoin d'une décote administrative.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 
 from ..carriere import Carriere, salaire_moyen_annuel
 from ..config import (
@@ -39,11 +38,11 @@ from ..config import (
     Parametres,
     TableConversion,
 )
-from ..donnees.chargement import Fiabilite
 from ..donnees.distribution import DistributionPensions
 from ..donnees.macro import DonneesMacro
 from ..donnees.mortalite import DonneesMortalite
 from ..somme import somme_ordonnee
+from ..types_du_pont.moteur import CoefficientConversion  # noqa: F401  (types du pont, action 161)
 
 
 def niveau_relatif(carriere: Carriere, macro: DonneesMacro) -> float:
@@ -85,24 +84,6 @@ def diviseur_de_courbe(courbe, taux_anticipe: float = 0.0) -> float:
         survie_moyenne = 0.5 * (courbe[t] + courbe[t + 1])
         diviseur += survie_moyenne / ((1.0 + taux_anticipe) ** (t + 0.5))
     return diviseur
-
-
-@dataclass(frozen=True)
-class CoefficientConversion:
-    """Diviseur annuitaire et éléments qui l'expliquent."""
-
-    diviseur: float
-    age_liquidation: float
-    annee_liquidation: int
-    esperance_residuelle: float
-    table: str
-    taux_anticipe: float
-    fiabilite: Fiabilite
-
-    @property
-    def taux_de_rente(self) -> float:
-        """Fraction du capital notionnel servie chaque année."""
-        return 1.0 / self.diviseur if self.diviseur else 0.0
 
 
 class Convertisseur:

@@ -40,13 +40,13 @@ le signale.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 
 from ..config import ModeAgeReference, Parametres
 from ..donnees.chargement import Fiabilite, SerieAnnuelle, charger_serie_annuelle
 from ..donnees.mortalite import DonneesMortalite
+from ..types_du_pont.moteur import EcartAge  # noqa: F401  (types du pont, action 161)
 
 
 class ModeCoefficientEcart(str, Enum):
@@ -55,39 +55,6 @@ class ModeCoefficientEcart(str, Enum):
     ACTUARIEL = "actuariel"
     #: Décote explicite supplémentaire par année d'anticipation.
     EXPLICITE = "explicite"
-
-
-@dataclass(frozen=True)
-class EcartAge:
-    """Position d'une liquidation par rapport à l'âge de référence."""
-
-    age_liquidation: float
-    age_reference: float
-    annee_liquidation: int
-
-    @property
-    def ecart(self) -> float:
-        """Positif = départ anticipé, négatif = départ différé."""
-        return self.age_reference - self.age_liquidation
-
-    @property
-    def anticipe(self) -> bool:
-        return self.ecart > 0
-
-    def __str__(self) -> str:  # pragma: no cover - affichage
-        from ..calendrier import formater_age
-
-        if abs(self.ecart) < 1e-9:
-            return (
-                "liquidation à l'âge de référence "
-                f"({formater_age(self.age_reference)})"
-            )
-        sens = "anticipation" if self.anticipe else "report"
-        return (
-            f"{sens} de {formater_age(abs(self.ecart))} "
-            f"(liquidation à {formater_age(self.age_liquidation)}, "
-            f"référence {formater_age(self.age_reference)})"
-        )
 
 
 class AgeReference:

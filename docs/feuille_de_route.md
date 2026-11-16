@@ -7329,17 +7329,18 @@ de `contribution_etat`.
 
 **Reprise, au 16 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
-Plus rien hors des tests de la façade n'exécute une règle Python. L'inventaire
-de ce que la suppression des règles emporterait est fait
-(`2026-11-16-l-inventaire-du-retrait-des-regles.md`) : 39 fichiers, 38 163
-lignes. Avant de les supprimer, il faut sortir les types que le pont relit,
-donner à la façade des tests ses propres signatures, reloger les chargeurs,
-débrancher le Python seul qui appelle encore une règle, et ôter les
-noms des fichiers de règles des fiches et des gardes. La note propose cet
-ordre, une étape par session. Le propriétaire a choisi : les chargeurs se
-relogent tels quels sous `donnees/`, et les fiches cessent de nommer le code
-Python. Par quoi commencer : sortir les types du pont. La suppression attend
-son accord final.
+Plus rien hors des tests de la façade n'exécute une règle Python. Avant de
+supprimer les 39 fichiers de règles, l'inventaire
+(`2026-11-16-l-inventaire-du-retrait-des-regles.md`) fixe cinq étapes. La
+première est presque faite : 45 types que le pont relit logent sous
+`types_du_pont/`, que les fichiers de règles réimportent
+(`2026-11-16-les-types-du-pont-hors-des-regles.md`). Restent `Carriere`, qui
+porte des méthodes de règle à séparer du type, et `Comparaison`, qui la
+contient. Ensuite : donner à la façade des tests ses propres signatures,
+reloger tels quels les chargeurs sous `donnees/`, débrancher le Python seul
+qui appelle une règle, ôter des fiches le champ du code Python. Par quoi
+commencer : séparer `Carriere` de ses règles. La suppression attend l'accord
+final du propriétaire.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

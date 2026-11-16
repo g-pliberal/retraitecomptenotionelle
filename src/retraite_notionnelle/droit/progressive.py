@@ -61,14 +61,14 @@ from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
 from . import departs as _departs
+from ..types_du_pont.droit import OUVERTE  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
     from ..scenarios.actuel import ScenarioActuel
     from .liquidation import Contexte, Liquidation
 
-#: Ce qui ouvre la demande, ou ce qui la ferme.
-OUVERTE = "ouverte"
+#: Ce qui ouvre la demande, ou ce qui la ferme (``OUVERTE``, des types du pont).
 AVANT_1988 = "avant_1988"
 SANS_ACTIVITE = "activite"
 SANS_REGIME = "regimes"

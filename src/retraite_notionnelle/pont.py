@@ -483,7 +483,8 @@ def carriere_des_donnees(donnees: dict):
     """La carrière que le portage a bâtie, sous les types du Python : le chemin
     inverse de :func:`carriere_en_donnees`. Chacun de ses champs, chacune de
     ses lignes, et la chronologie dont elle est la vue, telle quelle."""
-    from .carriere import AnneeCarriere, Carriere
+    from .carriere import Carriere
+    from .types_du_pont.carriere import AnneeCarriere
 
     champs = {champ.name for champ in dataclasses.fields(Carriere)}
     if set(donnees) != champs:
@@ -1297,7 +1298,7 @@ def reversion_des_donnees(reversion: dict | None):
     ``droit/reversion.js``, dont les champs portent les noms du Python), sous
     le dataclass du Python, chacun de ses régimes compris ; ``None`` sans
     réversion. Le module de la réversion ne se charge qu'à la lecture."""
-    from .droit.reversion import Reversion
+    from .types_du_pont.droit import Reversion
 
     return None if reversion is None else _depuis_donnees(Reversion, reversion)
 
@@ -1307,7 +1308,7 @@ def cumul_des_donnees(cumul: dict | None):
     les champs portent les noms du Python), sous le dataclass du Python,
     chacune de ses tranches et ses mois compris ; ``None`` sans activité
     après le départ. Le module du cumul ne se charge qu'à la lecture."""
-    from .droit.cumul import Cumul
+    from .types_du_pont.droit import Cumul
 
     return None if cumul is None else _depuis_donnees(Cumul, cumul)
 
@@ -1317,7 +1318,7 @@ def majorations_des_donnees(majorations: list[dict]) -> tuple:
     a écrites, sous le dataclass du Python (``MajorationExceptionnelle``) : leur
     montant à l'échéance, que le Python en dérive, ne passe pas. Le module de
     la revalorisation ne se charge qu'à la lecture."""
-    from .revalorisation import MajorationExceptionnelle
+    from .types_du_pont.revalorisation import MajorationExceptionnelle
 
     return tuple(_depuis_donnees(MajorationExceptionnelle, majoration)
                  for majoration in majorations)
@@ -1752,7 +1753,7 @@ LECTURES_DE_LA_REVALORISATION_SERVIE = {
 def _taux_lu(lu: dict):
     """Le taux d'une année que le portage a écrit, sous le type du Python."""
     from .donnees.chargement import Fiabilite
-    from .moteur.indexation import TauxIndexation
+    from .types_du_pont.moteur import TauxIndexation
 
     return TauxIndexation(
         annee=_entier(lu["annee"], "annee"), taux=_flottant(lu["taux"]),
@@ -2137,7 +2138,7 @@ def lu_strictement(type_, valeur, chemin: str = "valeur"):
     l'arrêtent."""
     from .carriere import Carriere
     from .config import Parametres
-    from .journal import Journal
+    from .types_du_pont.journal import Journal
 
     origine = typing.get_origin(type_)
     if origine in (typing.Union, types.UnionType):
@@ -2251,10 +2252,10 @@ class ContenuNonLu:
 #: nom)``, ou ``None`` pour une composante, une donnée de son contrat, dont
 #: les montants sont des flottants (:data:`FLOTTANTS_DE_LA_COMPOSANTE`).
 CONTENUS_DU_JOURNAL = {
-    "evenement": ("echeancier", "Evenement"),
-    "reversion": ("droit.reversion", "Reversion"),
-    "foyer": ("droit.foyer", "Foyer"),
-    "revalorisation": ("revalorisation", "Revalorisee"),
+    "evenement": ("types_du_pont.journal", "Evenement"),
+    "reversion": ("types_du_pont.droit", "Reversion"),
+    "foyer": ("types_du_pont.droit", "Foyer"),
+    "revalorisation": ("types_du_pont.revalorisation", "Revalorisee"),
     "composante": None,
 }
 
@@ -2313,7 +2314,7 @@ def journal_des_donnees(entrees: list[dict], chemin: str = "journal"):
     entrées inscrites dans leur ordre, chacune avec ce qui la date et son
     contenu, sous le type de sa sorte (:data:`CONTENUS_DU_JOURNAL`) — ou
     illisible, quand il ne passe pas (:class:`ContenuNonLu`)."""
-    from .journal import Entree, Journal
+    from .types_du_pont.journal import Entree, Journal
 
     if not isinstance(entrees, list):
         raise TypeError(f"{chemin} : suite attendue, le portage a écrit {entrees!r}")
@@ -2343,7 +2344,7 @@ def comparaison_des_donnees(comparaison: dict):
 def resultat_notionnel_des_donnees(resultat: dict):
     """Le résultat d'un univers notionnel que le portage a écrit, sous le type
     du Python (``ResultatNotionnel``), lu strictement."""
-    from .scenarios.notionnel import ResultatNotionnel
+    from .types_du_pont.resultats import ResultatNotionnel
 
     return lu_strictement(ResultatNotionnel, resultat, "ResultatNotionnel")
 
@@ -2352,7 +2353,7 @@ def garantie_vieillesse_des_donnees(garantie: dict):
     """La garantie vieillesse de la proposition que le portage a écrite
     (``_garantieVieillesse`` du scénario 6), sous le type du Python
     (``GarantieVieillesse``), lue strictement."""
-    from .scenarios.notionnel import GarantieVieillesse
+    from .types_du_pont.resultats import GarantieVieillesse
 
     return lu_strictement(GarantieVieillesse, garantie, "GarantieVieillesse")
 
@@ -2361,7 +2362,7 @@ def resultat_actuel_des_donnees(actuel: dict):
     """Le résultat entier du scénario 1 que le portage a écrit, sous le type du
     Python (``ResultatActuel``), lu strictement. Le module du scénario ne se
     charge qu'à la lecture."""
-    from .scenarios.actuel import ResultatActuel
+    from .types_du_pont.resultats import ResultatActuel
 
     return lu_strictement(ResultatActuel, actuel, "ResultatActuel")
 
@@ -2387,10 +2388,9 @@ def liquidation_des_donnees(donnees: dict) -> dict:
     ``lignes``, celles du relevé qu'elle a lues, et ``donnees``, ce que le
     contrat C.6 en décrit, tels quels ; ``appels``, combien de fois
     ``liquider`` a tourné, liquidations d'essai comprises."""
-    from .droit.commun import AvantageApplique, PensionRegime
-    from .droit.liquidation import Mesure
+    from .types_du_pont.droit import AvantageApplique, Mesure, PensionRegime
     from .donnees.chargement import Fiabilite
-    from .droit.liquider import EligiblePlafondEnfants
+    from .types_du_pont.droit import EligiblePlafondEnfants
     from .calendrier import DateMois
 
     return {"taux": lu_strictement(float, donnees["taux"], "liquidation.taux"),
@@ -2441,7 +2441,7 @@ def etape_de_la_liquidation_des_donnees(donnees: dict) -> dict:
     l'ouverture, ``requis``, ``age``, ``motif`` et ``trimestres_cotises`` ;
     les pensions, ``regimes`` et ``taux`` ; les compléments, ``regimes`` et
     ``total`` ; chacune, ``donnees``, ce que son schéma décrit, tel quel."""
-    from .droit.commun import PensionRegime
+    from .types_du_pont.droit import PensionRegime
 
     etape = donnees["etape"]
     lectures = {
@@ -2458,7 +2458,7 @@ def etape_de_la_liquidation_des_donnees(donnees: dict) -> dict:
 def demande_des_donnees(donnees: dict):
     """La demande qu'un départ appelle (``liquidation.demande_de_depart`` de
     ``pont.mjs``), lue strictement sous le type du Python (``Demande``)."""
-    from .droit.liquidation import Demande
+    from .types_du_pont.droit import Demande
 
     return lu_strictement(Demande, donnees, "Demande")
 
@@ -2569,7 +2569,7 @@ def regime_fusionne_des_donnees(fusionne: dict):
     """Le régime unique du simulateur, que le portage fusionne de son
     catalogue (``regimeFusionne`` de ``moteur/js/simulateur.js``), lu
     strictement sous le type du Python (``RegimeFusionne``)."""
-    from .moteur.fusion import RegimeFusionne
+    from .types_du_pont.moteur import RegimeFusionne
 
     return lu_strictement(RegimeFusionne, fusionne, "RegimeFusionne")
 
@@ -2579,7 +2579,7 @@ def majorations_des_donnees(lu: dict) -> tuple[list, tuple]:
     portage (``revalorisation.majorer_les_petites_pensions`` de ``pont.mjs``),
     comme son jumeau : les régimes servis, chacun avec sa majoration, et le
     calcul de la caisse, lus strictement sous les types du Python."""
-    from .revalorisation import MajorationExceptionnelle, RegimeServi
+    from .types_du_pont.revalorisation import MajorationExceptionnelle, RegimeServi
 
     return (list(lu_strictement(tuple[RegimeServi, ...], lu["regimes"], "regimes")),
             lu_strictement(tuple[MajorationExceptionnelle, ...], lu["majorations"],
@@ -2590,7 +2590,7 @@ def _pensions_versees(lu: list) -> list:
     """Les pensions que le versement unique du portage
     (``completer.verser_en_capital`` de ``pont.mjs``) a laissées, ou
     remplacées par un capital, lues strictement sous le type du Python."""
-    from .droit.commun import PensionRegime
+    from .types_du_pont.droit import PensionRegime
 
     return list(lu_strictement(tuple[PensionRegime, ...], lu, "verser_en_capital.pensions"))
 
@@ -2673,7 +2673,7 @@ def evenement_des_donnees(lu) -> object:
     """Le départ que le portage tire d'une carrière (``departDe`` de
     ``moteur/js/echeancier.js``), sous le type du Python (``Evenement``), ou
     ``None``."""
-    from .echeancier import Evenement
+    from .types_du_pont.journal import Evenement
 
     return None if lu is None else lu_strictement(Evenement, lu, "Evenement")
 
@@ -2695,7 +2695,7 @@ def actuel_aujourd_hui_des_donnees(lu) -> object:
     """Le système 1 servi une année (``actuelAujourdhui`` de
     ``moteur/js/revalorisation.js``), sous le type du Python
     (``ActuelAujourdhui``), lu strictement."""
-    from .revalorisation import ActuelAujourdhui
+    from .types_du_pont.revalorisation import ActuelAujourdhui
 
     return lu_strictement(ActuelAujourdhui, lu, "actuel_aujourd_hui")
 
