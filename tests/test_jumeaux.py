@@ -444,6 +444,25 @@ def test_aucun_chiffre_ancre_ne_charge_un_fichier_de_regles(carte):
     assert not regles, {c: [(r.fichier, r.ligne) for r in carte.ancres[c]] for c in regles}
 
 
+#: Les fichiers qui chargent ou nomment encore un fichier de règles par son
+#: chemin : la sonde du moteur Python et le relevé de ce qui y entre, avec
+#: leurs tests, dont l'objet part avec les règles (action 161, étape 6).
+CHARGENT_ENCORE_UNE_REGLE = {"scripts/sonde_moteur_python.py",
+                             "scripts/entrees_du_moteur.py",
+                             "tests/test_sonde_moteur_python.py",
+                             "tests/test_entrees_du_moteur.py"}
+
+
+def test_aucun_chargement_par_chemin_ne_vise_un_fichier_de_regles(carte):
+    """Hors des outils qui mesurent le moteur Python et partent avec lui, aucun
+    script ni test ne charge ni ne nomme un fichier de règles par son chemin :
+    la suppression ne casserait aucune lecture (action 161, étape 5)."""
+    lecteurs = {(r.fichier, r.ligne, c) for c, renvois in carte.par_chemin.items()
+                if jumeaux.est_une_regle(c) for r in renvois
+                if r.fichier not in CHARGENT_ENCORE_UNE_REGLE}
+    assert not lecteurs, sorted(lecteurs)
+
+
 def test_la_carte_et_le_detail_d_une_paire_s_impriment(carte):
     assert jumeaux.imprimer_la_carte(carte)[0].startswith("La carte des jumeaux : ")
     ((rang, fiche),) = jumeaux.chercher(carte, "calendrier")

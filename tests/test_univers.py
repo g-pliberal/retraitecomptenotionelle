@@ -184,8 +184,7 @@ def test_le_compte_garde_les_regles_de_cotisation_qu_il_applique():
     from retraite_notionnelle.donnees.regimes import fichiers_de_regimes
 
     lus = ("assiette_plancher", "assiette_forfaitaire", "cotisation_par_classes")
-    source = (RACINE / "src" / "retraite_notionnelle" / "moteur" / "compte.py").read_text(
-        encoding="utf-8")
+    source = (RACINE / "moteur" / "js" / "compte.js").read_text(encoding="utf-8")
     assert all(re.search(rf"\b{champ}\b", source) for champ in lus)
     designees = {periode[champ] for _, donnee in fichiers_de_regimes(RACINE_DONNEES)
                  for periode in donnee.get("periodes") or () for champ in lus

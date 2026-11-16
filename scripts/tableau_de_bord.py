@@ -97,7 +97,7 @@ REGISTRES = {
     "data/reference/regimes/pivots.yaml",
 }
 #: Les étapes qui construisent le relevé des droits (docs/architecture.md, § 7.2) :
-#: leur module dans src/retraite_notionnelle/droit/, et ce qu'elles écrivent.
+#: leur module dans moteur/js/droit/, et ce qu'elles écrivent.
 ETAPES_ACQUISITION = [
     ("preparer_la_chronologie", "preparer", "la chronologie, présomptions posées (contrat C.1)"),
     ("coordonner_les_affiliations", "coordonner",
@@ -112,15 +112,15 @@ ETAPES_ACQUISITION = [
 #: liquider (docs/architecture.md, § 7.3 et 7.4) : chacune, son module et ce
 #: qu'elle écrit.
 ETAPES_LIQUIDATION = [
-    ("ouvrir_le_droit", "droit/ouvrir.py",
+    ("ouvrir_le_droit", "droit/ouvrir.js",
      "l'âge d'ouverture et son motif, la durée requise, les trimestres cotisés"),
-    ("liquider_chaque_regime", "droit/liquider.py",
+    ("liquider_chaque_regime", "droit/liquider.js",
      "la pension de chaque régime et sa formule, les régimes qui portent les minima"),
-    ("completer_tous_regimes", "droit/completer.py",
+    ("completer_tous_regimes", "droit/completer.js",
      "les minima, la surcote parentale, la majoration pour enfants"),
-    ("faire_vivre", "revalorisation.py",
+    ("faire_vivre", "revalorisation.js",
      "le coefficient de chaque pension, du départ à l'échéance"),
-    ("foyer_et_net", "droit/foyer.py", "l'ASPA, au départ puis à chaque échéance"),
+    ("foyer_et_net", "droit/foyer.js", "l'ASPA, au départ puis à chaque échéance"),
 ]
 
 #: Les fichiers que presque tout changement du moteur touche. Le registre de
@@ -128,6 +128,10 @@ ETAPES_LIQUIDATION = [
 #: (action 148), ni ``docs/limites.md`` depuis qu'il tient une partie par
 #: fichier, sous ``docs/limites/`` (action 135, étape 5 du contexte).
 LOURDS = ["docs/feuille_de_route.md", "README.md"]
+
+#: Les dossiers du moteur Python des règles, que les commits relevés par le
+#: coût du travail ont pu toucher avant son retrait (action 161).
+MOTEUR_PYTHON = ("src/retraite_notionnelle/droit/", "src/retraite_notionnelle/scenarios/")
 
 
 # --------------------------------------------------------------------------
@@ -453,8 +457,7 @@ def page() -> str:
     cas, releves, lignes, citant, versionnees = releves_des_cas_types()
     par_etape = carte.fiches_par_etape()
     w("**Le relevé des droits** (§ 7.2 et 7.6) : pour chaque demande, quatre étapes le "
-      "construisent, une par module dans `src/retraite_notionnelle/droit/` et son jumeau "
-      "`moteur/js/droit/`, chacune écrivant la donnée que son schéma décrit "
+      "construisent, une par module dans `moteur/js/droit/`, chacune écrivant la donnée que son schéma décrit "
       "(`data/reference/etapes/`) ; la liquidation du scénario 1 ne lit que lui. "
       f"Les relevés des {cas} cas types, à chacune de leurs générations — {releves} "
       f"relevés —, comptent {milliers(lignes)} lignes, dont "
@@ -466,7 +469,7 @@ def page() -> str:
     w("|---|---|---|---|")
     for etape, module, ecrit in ETAPES_ACQUISITION:
         fiches = ", ".join(f"`{f}`" for f in par_etape.get(etape, [])) or "aucune encore"
-        w(f"| `{etape}` | `droit/{module}.py` | {ecrit} | {fiches} |")
+        w(f"| `{etape}` | `droit/{module}.js` | {ecrit} | {fiches} |")
     w("")
     from retraite_notionnelle.noyau import budget
 
@@ -474,16 +477,16 @@ def page() -> str:
                          .read_text(encoding="utf-8"))
     appels = [t["appels_liquider"] for t in temoins.values()]
     # Le nombre déclaré vaut par départ, quand les régimes liquident à des
-    # dates différentes (droit/departs.py).
+    # dates différentes (droit/departs.js).
     par_depart = [t["appels_liquider"] / (len(t["resultat"]["scenarios"]["actuel"]
                                               .get("departs", ())) or 1)
                   for t in temoins.values()]
     w("**La liquidation** (§ 7.3, 7.4 et 7.7) : `liquider(demande, état, contexte)`, une "
-      "fonction pure (`src/retraite_notionnelle/droit/liquidation.py`, et son jumeau), "
+      "fonction pure (`moteur/js/droit/liquidation.js`), "
       "enchaîne l'acquisition et trois étapes, et mesure par des liquidations d'essai "
-      "ce qu'apporte chaque avantage. L'échéancier (`echeancier.py`) l'appelle au départ, "
+      "ce qu'apporte chaque avantage. L'échéancier (`moteur/js/echeancier.js`) l'appelle au départ, "
       "applique à l'échéance les deux étapes qui ne liquident rien, et inscrit tout à son "
-      "journal (`journal.py`) ; le pilote (`pilote.py`) date les départs des cas types "
+      "journal (`journal.js`) ; le pilote (`pilote.js`) date les départs des cas types "
       f"sans rien liquider. Les {len(appels)} témoins font chacun de {min(appels)} à "
       f"{max(appels)} appels de `liquider`, liquidations d'essai comprises, et au plus "
       f"{max(par_depart):g} par départ ; aucun ne dépasse les "
@@ -712,11 +715,12 @@ def cout(n: int = 400) -> str:
     if not changes:
         w("Aucun commit à relever.")
         return "\n".join(L) + "\n"
-    # Le moteur du scénario 1 : son module d'origine, et ses étapes depuis les
-    # phases 4 et 5 (docs/architecture.md, § 7).
+    # Le moteur du scénario 1 : son module et ses étapes (docs/architecture.md,
+    # § 7), dans le portage, qui fait foi ; les commits plus anciens touchaient
+    # son jumeau Python, que le retrait des règles supprime (action 161).
     moteur = [c for c in changes
-              if any(f == "src/retraite_notionnelle/scenarios/actuel.py"
-                     or f.startswith("src/retraite_notionnelle/droit/") for f in c)]
+              if any(f == "moteur/js/scenario-actuel.js" or f.startswith("moteur/js/droit/")
+                     or f.startswith(MOTEUR_PYTHON) for f in c)]
     w(f"Relevé sur les {len(changes)} derniers commits :")
     w("")
     w(f"- un commit touche en médiane {statistics.median(len(c) for c in changes):.0f} "
@@ -802,16 +806,12 @@ def taille() -> str:
     sys.path.insert(0, str(RACINE / "scripts"))
     from verifier_prose import sonde_lignes, sonde_tests
 
-    moteur = sonde_lignes("src/retraite_notionnelle/scenarios/actuel.py"
-                          " + src/retraite_notionnelle/droit/*.py")
     portage = sonde_lignes("moteur/js/*.js + moteur/js/droit/*.js")
     return "\n".join([
         "## La taille du dépôt",
         "",
-        f"- le moteur du scénario 1 : {milliers(moteur)} lignes dans "
-        "`src/retraite_notionnelle/scenarios/actuel.py` et `droit/`, et "
-        f"{milliers(portage)} dans le portage `moteur/js/` ; chaque changement du "
-        "modèle se paie des deux côtés, puis dans les témoins ;",
+        f"- le moteur : {milliers(portage)} lignes dans le portage `moteur/js/` ; "
+        "chaque changement du modèle s'y paie, puis dans les témoins ;",
         f"- la suite : {milliers(sonde_tests())} tests (`python -m pytest`).",
     ]) + "\n"
 

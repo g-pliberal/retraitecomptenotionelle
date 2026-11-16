@@ -7333,12 +7333,13 @@ Avant de supprimer les 40 fichiers de règles, l'inventaire
 (`2026-11-16-l-inventaire-du-retrait-des-regles.md`) fixe six étapes. Le
 coût, la fabrique, les fiches et les chiffres ancrés ne lisent plus aucune
 règle Python, hors de la carrière. La carte des jumeaux reconnaît elle-même
-les fichiers de règles, et sa liste des fonctions gardées les refuse
-(`2026-11-16-les-gardes-des-jumeaux.md`). Restent, avant la suppression : les
-chargements par chemin ; puis la carrière que le pont relit sous la classe
-des règles, que lisent 476 tests rapides. Par quoi commencer : les
-chargements par chemin. La suppression récrira les
-en-têtes des 35 JavaScript qui déclarent un jumeau de règle, et attend
+les fichiers de règles, et sa liste des fonctions gardées les refuse.
+Aucun script ni test ne charge plus un fichier de règles par son chemin,
+hors des deux sondes du moteur Python, qui partent avec lui
+(`2026-11-16-les-chargements-par-chemin.md`). Reste, avant la suppression :
+la carrière que le pont relit sous la classe des règles, que lisent 476
+tests rapides. Par quoi commencer : cette carrière. La suppression récrira
+les en-têtes des 35 JavaScript qui déclarent un jumeau de règle, et attend
 l'accord final du propriétaire.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je

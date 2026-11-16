@@ -186,7 +186,7 @@ def test_le_code_d_une_fiche_ne_nomme_plus_le_python():
     from outils_carte import ecarts
 
     fiche = {"id": "essai",
-             "code": {"python": "droit/reversion.py : reversion",
+             "code": {"python": "droit/chimere.py : reversion",
                       "javascript": "moteur/js/carriere.js : CONJOINTS_COLLABORATEURS",
                       "parametres": "aucun : rien à lire",
                       "tests": ["tests/test_reversion.py"]}}
