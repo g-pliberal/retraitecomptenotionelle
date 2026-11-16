@@ -1,14 +1,14 @@
 """Ce qu'une fiche mûre dit d'elle-même, confronté au dépôt.
 
 Le contrat C.2 (``data/reference/contrats/fiche.yaml``) demande à la fiche
-d'une règle modélisée son code : « les fonctions des deux moteurs, les
+d'une règle modélisée son code : « les fonctions du moteur JavaScript, les
 paramètres, les tests ». Une fiche mûre l'écrit sous une forme que ce module
 lit, et qu'il confronte à ce que le dépôt porte :
 
-- ``python`` et ``javascript`` : « fichier : fonction, Classe.méthode ; … »,
-  le fichier pris de ``src/retraite_notionnelle/`` pour le Python, de la
-  racine du dépôt pour le JavaScript ; un nom y est une fonction, une classe,
-  une méthode, un accesseur ou une constante de module ;
+- ``javascript`` : « fichier : fonction, Classe.méthode ; … », le fichier
+  pris de la racine du dépôt ; un nom y est une fonction, une classe, une
+  méthode, un accesseur ou une constante de module. Le Python des règles se
+  retire (action 161) : une clause ``python`` est refusée ;
 - ``parametres`` : des clauses que sépare « ; », chacune « source : a, b,
   … » — « contenu.parametres de chaque version : », tous ceux que ses
   versions portent et rien d'autre, clause qu'exige toute fiche dont les
@@ -41,13 +41,10 @@ from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.donnees.regimes import FICHIERS_HORS_REGIMES
 
 RACINE = Path(__file__).resolve().parents[1]
-#: Ce qui définit un nom dans chaque moteur — une fonction, une classe, une
+#: Ce qui définit un nom dans le moteur — une fonction, une classe, une
 #: méthode, un accesseur, une constante de module —, et le dossier d'où le
 #: champ ``code`` d'une fiche nomme ses fichiers.
 DEFINITIONS = {
-    "python": (RACINE / "src" / "retraite_notionnelle",
-               r"^[ \t]*(?:async[ \t]+)?(?:def|class)[ \t]+{0}\b"
-               r"|^{0}[ \t]*(?::[^=\n]*)?=(?!=)"),
     "javascript": (RACINE,
                    r"^[ \t]*(?:export[ \t]+)?(?:(?:async[ \t]+)?function|class)[ \t]+{0}\b"
                    r"|^[ \t]*(?:static[ \t]+)?(?:(?:get|set)[ \t]+)?{0}[ \t]*\([^)]*\)[ \t]*\{{"
@@ -70,6 +67,8 @@ def ecarts(fiche: dict) -> list[str]:
             sortie.append(f"{nom} : une approximation touche {sorted(set(touchees) - versions)}, "
                           "qui ne sont pas de ses versions")
     code = fiche.get("code") or {}
+    if "python" in code:
+        sortie.append(f"{nom} : son code nomme encore du Python, que le moteur des règles a quitté")
     for moteur, (dossier, motif) in DEFINITIONS.items():
         for cite in str(code.get(moteur) or "").split(";"):
             chemin, _, noms = (morceau.strip() for morceau in cite.partition(":"))

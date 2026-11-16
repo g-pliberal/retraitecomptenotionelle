@@ -488,11 +488,6 @@ textes_sans_effet:
 - {id: LEGIARTI000006750015, article: "R. 341-6 CSS", en_vigueur: 1986-10-01,
    motif: "la majoration pour tierce personne de la troisième catégorie, qui ne fait pas le plancher : elle s'ajoute à la pension de vieillesse (circulaire Cnav n° 2018-18, 1.3)"}
 code:
-  python: >-
-    droit/invalidite.py : substitution, plancher_de_la_substitution,
-    categorie_de_la_pension, pension_d_invalidite_servie ; droit/completer.py :
-    completer ; droit/departs.py : departs_et_demandes ; donnees/tables_du_droit.py :
-    Invalidites
   javascript: >-
     moteur/js/droit/invalidite.js : substitution, plancherDeLaSubstitution,
     categorieDeLaPension, pensionDInvaliditeServie ; moteur/js/droit/completer.js :

@@ -353,12 +353,6 @@ sources:
     url: https://www.cleiss.fr/particuliers/retraite/reglements.html
     date: 2026-10-01
 code:
-  python: >-
-    droit/etranger.py : coordonner_les_periodes, PeriodeCoordonnee,
-    compter_les_periodes, TrimestresEtrangers.compare ; droit/compter.py :
-    Durees.pour_le_taux ; droit/liquider.py : liquider_chaque_regime,
-    trimestres_etrangers_au_salaire_moyen, annees_des_regimes_alignes ;
-    droit/liquidation.py : liquider ; droit/completer.py : completer
   javascript: >-
     moteur/js/droit/etranger.js : coordonnerLesPeriodes, compterLesPeriodes,
     TrimestresEtrangers.compare ; moteur/js/droit/compter.js : Durees.pourLeTaux ;

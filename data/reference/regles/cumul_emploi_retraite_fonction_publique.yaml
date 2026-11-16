@@ -290,12 +290,6 @@ textes_sans_effet:
 - {id: LEGIARTI000053279653, article: "L. 86-1 CPCMR", en_vigueur: 2025-12-31,
    motif: "la liste des employeurs publics est inchangée ; le renvoi passe du deuxième alinéa de L. 84 au premier de L. 86"}
 code:
-  python: >-
-    droit/cumul.py : _Calcul._fonctionnaire, _deduction_fonction_publique,
-    _entiere_2027, _hors_des_ages_2027, fonction_publique_quittee,
-    pension_militaire_servie, PART_DE_LA_PENSION, ABATTEMENT_MINIMUM_GARANTI,
-    SERVICES_DU_NON_OFFICIER, FRANCHISE_1970, LIMITES_D_AGE_1970 ; droit/limite_age.py :
-    limite_de_la_ligne ; echeancier.py : Echeancier._cumuler
   javascript: >-
     moteur/js/droit/cumul.js : fonctionnaire, deductionFonctionPublique, entiere2027,
     horsDesAges2027, fonctionPubliqueQuittee, pensionMilitaireServie,

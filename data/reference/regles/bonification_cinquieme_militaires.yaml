@@ -456,11 +456,6 @@ textes_a_rattacher:
     loi n° 75-1000 du 30 octobre 1975, article créant le i de L. 12, dans sa rédaction
     votée (le dépôt n'a lu que le projet)
 code:
-  python: >-
-    donnees/tables_du_droit.py : FichesDatees ; droit/compter.py :
-    trimestres_des_emplois, trimestres_d_un_emploi, condition_d_un_emploi,
-    services_au_dela ; carriere.py : Carriere.duree_de_service_avant ; droit/liquider.py
-    : liquider_chaque_regime ; avantages.py : NEUTRALISATIONS
   javascript: >-
     moteur/js/regimes.js : FichesDatees ; moteur/js/droit/compter.js :
     trimestresDesEmplois, trimestresDUnEmploi, conditionDUnEmploi, servicesAuDela ;

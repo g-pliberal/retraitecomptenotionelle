@@ -198,11 +198,6 @@ sources:
     url: https://entreprendre.service-public.gouv.fr/vosdroits/F33841
     date: 2026-10-23
 code:
-  python: >-
-    donnees/regimes.py : PeriodeRegime.bornes_assiette_en_euros,
-    PeriodeRegime.bornes_de_l_annee ; droit/acquerir.py : acquerir ; moteur/compte.py :
-    ConstructeurCompte._bornes_proratisees ; remuneration.py : bloc_droit_en_vigueur,
-    Segment
   javascript: >-
     moteur/js/regimes.js : PeriodeRegime.bornesAssietteEnEuros,
     PeriodeRegime.bornesDeLAnnee ; moteur/js/droit/acquerir.js : acquerir ;

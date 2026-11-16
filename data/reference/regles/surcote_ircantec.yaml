@@ -258,10 +258,6 @@ code:
     fenêtre du 2° se compte au mois, et celle que l'âge du taux plein ferme garde son
     trimestre entamé (`liquider._fenetre_ircantec`). La période de l'Ircantec porte
     `surcote_points` depuis 2010.
-  python: >-
-    droit/liquider.py : liquider_chaque_regime, abattement_points, surcote_points,
-    surcote_ircantec, _fenetre_ircantec, _SURCOTE_IRCANTEC_AGE,
-    _SURCOTE_IRCANTEC_DUREE ; droit/ouvrir.py : age_taux_plein, age_ouverture_commun
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints, surcotePoints,
     surcoteIrcantec, fenetreIrcantec, SURCOTE_IRCANTEC_AGE, SURCOTE_IRCANTEC_DUREE ;

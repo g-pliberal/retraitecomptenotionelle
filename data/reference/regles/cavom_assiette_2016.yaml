@@ -432,11 +432,6 @@ code:
     notionnel (`ConstructeurCompte._cotisation_ligne`), sauf l'année que le RSA, la
     prime d'activité ou l'activité saisonnière dispense
     (`dispense_les_complementaires`).
-  python: >-
-    donnees/regimes.py : BORNES_ASSIETTE, PeriodeRegime.bornes_assiette_en_pass,
-    PeriodeRegime.assiette_minimale ; donnees/chargement.py :
-    dispense_les_complementaires ; droit/acquerir.py : acquerir ; moteur/compte.py :
-    ConstructeurCompte._cotisation_ligne
   javascript: >-
     moteur/js/regimes.js : BORNES_ASSIETTE, PeriodeRegime.bornesAssietteEnPass,
     PeriodeRegime.assietteMinimale ; moteur/js/carriere.js :

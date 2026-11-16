@@ -140,9 +140,6 @@ code:
     seul revenu, aucun, et l'année ne verse pas de cotisation
     (`cotisations_versees`), si bien que rien n'en va au salaire annuel moyen, aux
     points ni au compte notionnel.
-  python: >-
-    carriere.py : _ligne_annuelle ; donnees/chargement.py : ExonerationOutreMer.exonere,
-    charger_exonerations_outre_mer, exoneration_outre_mer
   javascript: >-
     moteur/js/carriere.js : ligneAnnuelle, exonereOutreMer
   parametres: >-

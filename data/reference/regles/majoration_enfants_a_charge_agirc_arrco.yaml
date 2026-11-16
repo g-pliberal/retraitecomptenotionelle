@@ -209,10 +209,6 @@ sources:
     url: https://www.agirc-arrco.fr/storage/2021/11/liste_accords_paritaires_Agirc_Arrco.pdf
     date: 2026-10-08
 code:
-  python: >-
-    droit/completer.py : majoration_pour_enfants_a_charge, completer ; droit/commun.py :
-    parts_de_la_majoration, fusionner_les_charges ; revalorisation.py : faire_vivre ;
-    droit/liquider.py : Pensions
   javascript: >-
     moteur/js/droit/completer.js : majorationPourEnfantsACharge, completer ;
     moteur/js/droit/commun.js : partsDeLaMajoration, fusionnerLesCharges ;

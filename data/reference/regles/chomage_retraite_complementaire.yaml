@@ -388,9 +388,6 @@ sources:
     Lire les « règles antérieures » au calcul sur le salaire journalier de référence, pour
     les périodes indemnisées avant 1997, que le guide de 2018 ne détaille pas.
 code:
-  python: >-
-    donnees/chargement.py : ChomageComplementaires ; carriere.py : _revenu_reference ;
-    droit/acquerir.py : acquerir ; donnees/tables_du_droit.py : ValeursPoint.garantie
   javascript: >-
     moteur/js/carriere.js : ChomageComplementaires, revenuReference ;
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js :

@@ -149,9 +149,6 @@ sources:
     url: https://www.impots.gouv.fr/la-reforme-de-lassiette-sociale
     date: 2026-10-13
 code:
-  python: >-
-    remuneration.py : AssietteAbattue, ProfilRemuneration.assiette_abattue,
-    ProfilRemuneration.revenu_avant_abattement
   javascript: >-
     moteur/js/remuneration.js : ProfilRemuneration.assietteAbattue,
     ProfilRemuneration.revenuAvantAbattement

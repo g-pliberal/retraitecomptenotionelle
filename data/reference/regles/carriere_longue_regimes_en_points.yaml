@@ -46,10 +46,6 @@ code:
     sur la durée acquise au départ déclaré (`_carriere_longue_acquise`) ; `ouvrir` ne
     lit les régimes en points et mixtes, dans sa seconde passe, que si la première n'a
     trouvé aucun régime en annuités.
-  python: >-
-    droit/ouvrir.py : age_ouverture_droit, age_taux_plein_droit, age_carriere_longue,
-    periodes_opposant_une_duree, sans_ages_propres, ouvrir ; droit/departs.py :
-    _ouverture, _carriere_longue_acquise
   javascript: >-
     moteur/js/droit/ouvrir.js : ageOuvertureDroit, ageTauxPleinDroit, ageCarriereLongue,
     periodesOpposantUneDuree, sansAgesPropres, ouvrir ; moteur/js/droit/departs.js :

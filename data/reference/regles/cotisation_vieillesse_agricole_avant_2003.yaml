@@ -1655,8 +1655,6 @@ textes_sans_effet:
     décret n° 2013-1290 la remplace le même jour, le 1er janvier 2014, par celle qui fixe
     1,94 % (LEGIARTI000028435889)
 code:
-  python: >-
-    droit/acquerir.py : acquerir ; moteur/compte.py : ConstructeurCompte.cotisation_annuelle
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/compte.js :
     ConstructeurCompte.cotisationAnnuelle

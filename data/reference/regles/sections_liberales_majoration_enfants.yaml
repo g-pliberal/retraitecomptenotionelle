@@ -495,9 +495,6 @@ code:
     chacune, minorée ou majorée par l'âge, à la période de liquidation
     (`periode_de_liquidation`). Le nombre d'enfants seul l'ouvre : ni l'éducation de
     neuf ans, ni les 5 % de la CAVAMAC par enfant handicapé ne sont portés.
-  python: >-
-    droit/completer.py : completer, _taux_majoration_enfants ; droit/commun.py :
-    periode_de_liquidation
   javascript: >-
     moteur/js/droit/completer.js : completer, tauxMajorationEnfants
   parametres: >-

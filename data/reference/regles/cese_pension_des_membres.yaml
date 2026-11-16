@@ -359,9 +359,6 @@ code:
     annuites_au_taux_de_leur_annee compte chaque année au taux de la sienne ; le statut
     membre_cese route les membres entrés depuis le 1er septembre 2023 au régime général
     et à l'Ircantec.
-  python: >-
-    donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime,
-    annuites_au_taux_de_leur_annee
   javascript: >-
     moteur/js/regimes.js : CatalogueRegimes ; moteur/js/droit/liquider.js :
     liquiderChaqueRegime, annuitesAuTauxDeLeurAnnee

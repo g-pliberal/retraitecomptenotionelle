@@ -99,10 +99,6 @@ sources:
       L. 161-22 (LEGIARTI000053279730), dans l'index LEGI à jour au 23 octobre 2026
     date: 2026-01-01
 code:
-  python: >-
-    droit/cumul.py : _Calcul._rco_agricole, _Calcul._complementaire_2027,
-    groupe_de_la_pension, GROUPES_COMPLEMENTAIRES_2027, RCO_AGRICOLE_2003, RCI_2027 ;
-    echeancier.py : Echeancier._cumuler
   javascript: >-
     moteur/js/droit/cumul.js : rcoAgricole, complementaire2027, groupeDeLaPension,
     GROUPES_COMPLEMENTAIRES_2027, RCO_AGRICOLE_2003, RCI_2027 ; moteur/js/echeancier.js :

@@ -86,9 +86,6 @@ code:
     régimes, ou, pour une pension prenant effet depuis septembre 2023, l'âge du taux
     plein du régime de base. `acquerir` les ajoute aux points cotisés ; la cascade les
     isole dans leur ligne, sous le nom de la fiche (`FICHE_POINTS_GRATUITS`).
-  python: >-
-    droit/acquerir.py : points_gratuits, acquerir ; droit/releve.py :
-    FICHE_POINTS_GRATUITS
   javascript: >-
     moteur/js/droit/acquerir.js : pointsGratuits, acquerir ; moteur/js/droit/releve.js :
     FICHE_POINTS_GRATUITS

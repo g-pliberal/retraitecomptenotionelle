@@ -93,9 +93,6 @@ textes_a_rattacher:
     le seuil reste 66 %, désormais d'incapacité permanente professionnelle
 - reference: L. 434-1 A CSS, qui sépare l'incapacité permanente professionnelle de la fonctionnelle
 code:
-  python: >-
-    carriere.py : _lignes_du_releve, _lignes_du_parcours ; donnees/chargement.py :
-    charger_periodes_non_travaillees
   javascript: >-
     moteur/js/carriere.js : lignesDuReleve, lignesDuParcours
   parametres: >-

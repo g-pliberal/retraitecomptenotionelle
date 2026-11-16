@@ -94,9 +94,6 @@ code:
     réversion servie, sans le minimum de l'article 19, II, ni l'assiette minimale de
     l'article 19, I ; elle entrera dans ces fonctions une fois décidé ce que valent, au
     départ, les ressources de l'année qui précède le versement (sources.a_relire)
-  python: >-
-    droit/liquider.py : liquider_chaque_regime ; droit/completer.py : completer ;
-    droit/reversion.py : reversion
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime ; moteur/js/droit/completer.js :
     completer ; moteur/js/droit/reversion.js : reversion

@@ -82,10 +82,6 @@ code:
     `liquider_chaque_regime` en tire la moyenne de `salaire_de_reference` ;
     `annees_des_regimes_alignes` et `pension_des_non_salaries_agricoles` répartissent ce
     total entre les régimes alignés et les non-salariés agricoles.
-  python: >-
-    droit/liquider.py : nombre_d_annees_retenues, liquider_chaque_regime,
-    salaire_de_reference, annees_des_regimes_alignes, pension_des_non_salaries_agricoles
-    ; droit/compter.py : Durees ; scenarios/actuel.py : ScenarioActuel
   javascript: >-
     moteur/js/droit/liquider.js : nombreDAnneesRetenues, liquiderChaqueRegime,
     salaireDeReference, anneesDesRegimesAlignes, pensionDesNonSalariesAgricoles ;

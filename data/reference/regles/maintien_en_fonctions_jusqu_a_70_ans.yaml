@@ -104,8 +104,6 @@ sources:
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F12395
     date: 2026-01-01
 code:
-  python: >-
-    droit/limite_age.py : radiation, _jusqu_a_la_limite, _limite
   javascript: >-
     moteur/js/droit/limite_age.js : radiation, jusquALaLimite, limiteDe
   parametres: >-

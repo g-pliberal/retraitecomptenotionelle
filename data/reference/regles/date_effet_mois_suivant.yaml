@@ -107,11 +107,6 @@ code:
     coupure au 1er d'un mois départage et pour le début d'un métier dit par un âge.
     La chronologie pose le jour déclaré (`precision: jour`) ou présumé ; la saisie
     compte le départ du même mois (`Saisie.date_de(age, depart=True)`).
-  python: >-
-    calendrier.py : origine_des_ages ; types_du_pont/carriere.py :
-    Carriere.origine_des_ages, Carriere.date_de_l_age, Carriere.age_au,
-    Carriere.mois_de_l_anniversaire ;
-    chronologie.py : completer
   javascript: >-
     moteur/js/calendrier.js : origineDesAges ; moteur/js/carriere.js :
     Carriere.origineDesAges, Carriere.dateDeLAge, Carriere.ageAu,

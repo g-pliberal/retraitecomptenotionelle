@@ -204,11 +204,6 @@ approximations:
     droits nouveaux toute l'activité déclarée, qui est une seule période
   effet: non mesuré
 code:
-  python: >-
-    droit/seconde.py : droits, _motif, liquider_les_regimes_nouveaux, PREMIERE_2015,
-    DROITS_2023, LIQUIDATION_2023, PREMIERE_2027 ; droit/cumul.py :
-    fonction_publique_quittee ; echeancier.py : Echeancier._constituer,
-    Echeancier._liquider_les_regimes_nouveaux
   javascript: >-
     moteur/js/droit/seconde.js : droits, motif, liquiderLesRegimesNouveaux,
     PREMIERE_2015, DROITS_2023, LIQUIDATION_2023, PREMIERE_2027 ;

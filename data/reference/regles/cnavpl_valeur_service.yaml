@@ -248,9 +248,6 @@ code:
     semestre de 2022 prend celle de juillet, 0,6027 €. Elle porte par les prix celle de
     2004 aux liquidations antérieures, et prolonge celle de 2026 par les prix de l'année
     précédente (`ValeursPoint.indice_convenu`), de fiabilité moyenne dans les deux cas.
-  python: >-
-    donnees/tables_du_droit.py : ValeursPoint.service, ValeursPoint.service_au,
-    ValeursPoint.indice_convenu ; droit/liquider.py : valeur_du_point
   javascript: >-
     moteur/js/regimes.js : ValeursPoint.service, ValeursPoint.serviceAu,
     ValeursPoint.indiceConvenu ; moteur/js/droit/liquider.js : valeurDuPoint

@@ -496,11 +496,6 @@ textes_sans_effet:
     champ du modèle
 textes_a_rattacher: []
 code:
-  python: >-
-    revalorisation.py : majorations_forfaitaires, plancher_non_majore,
-    maximum_du_jour, PensionServie.coefficient, faire_vivre ; droit/completer.py :
-    completer ; echeancier.py : Echeancier._pensions_au_deces ; droit/reversion.py :
-    reversion, _majorations_ulterieures ; types_du_pont/droit.py : PensionRegime
   javascript: >-
     moteur/js/revalorisation.js : majorationsForfaitaires, plancherNonMajore,
     maximumDuJour, PensionServie.coefficient, faireVivre ; moteur/js/droit/completer.js :

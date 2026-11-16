@@ -513,13 +513,6 @@ textes_sans_effet:
     présent arrêté, qui sera publié au Journal officiel de la République
     française. »
 code:
-  python: >-
-    carriere.py : revenu_cotise ; donnees/chargement.py :
-    charger_validation_micro, charger_cotisation_micro, forfait_micro,
-    charger_compensation_micro, validant_compense, charger_seuils_micro,
-    trimestres_aux_seuils_micro ; moteur/compte.py :
-    ConstructeurCompte._cotisation_ligne ; droit/liquider.py : assiette_de_reference ;
-    droit/acquerir.py : acquerir ; types_du_pont/carriere.py : AnneeCarriere, Metier
   javascript: >-
     moteur/js/saisie.js : ACTIVITES_MICRO, MALADIE_MICRO, ABATTEMENTS_MICRO, Saisie.enChiffreDAffaires,
     Saisie.abattu, Saisie.parcours, Saisie.emploiRetraiteDeclare ; moteur/js/pages.js :

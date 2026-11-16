@@ -227,9 +227,6 @@ sources:
     l'index du champ social ne porte pas, pour la limite d'âge des allocations d'assurance
     de 1967 à 1983.
 code:
-  python: >-
-    droit/ouvrir.py : fin_indemnisation, indemnisation_bornee ; droit/releve.py :
-    construire ; simulateur.py : Simulateur.simuler
   javascript: >-
     moteur/js/droit/ouvrir.js : finIndemnisation, indemnisationBornee ;
     moteur/js/droit/releve.js : construire ; moteur/js/simulateur.js :

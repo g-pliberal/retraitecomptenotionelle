@@ -1468,13 +1468,6 @@ code:
   moteur: >-
     `cotisation_par_classes` : c'est la forme de la Cipav d'avant 2023 : 1 527 € jusqu'à
     26 580 € de revenus, 3 055 € jusqu'à 49 280 €, et ainsi de huit paliers.
-  python: >-
-    droit/acquerir.py : acquerir ; donnees/regimes.py : ClassesCotisation,
-    ClassesCotisation._deplier_epoques, ClassesCotisation.annee_grille,
-    ClassesCotisation.grille, ClassesCotisation.revenu_retenu,
-    ClassesCotisation.cotisation ; moteur/compte.py :
-    ConstructeurCompte._cotisation_par_classes ; remuneration.py :
-    bloc_droit_en_vigueur, _classes_de_l_annee
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js : ClassesCotisation,
     ClassesCotisation.anneeGrille, ClassesCotisation.grille,

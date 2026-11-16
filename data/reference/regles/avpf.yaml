@@ -438,11 +438,6 @@ code:
     avril 1983 (`date_effet`), et en compte les trimestres avec les cotisés dans la
     moyenne d'avant juillet 1995 ; `liquider` en mesure l'effet, la ligne `avpf` de la
     cascade.
-  python: >-
-    carriere.py : _ligne_annuelle ; donnees/macro.py : DonneesMacro,
-    DonneesMacro.revenu_avpf, DonneesMacro.assiette_avpf,
-    DonneesMacro.smic_horaire_au_1er_juillet, ANNEE_CREATION_AVPF, ANNEE_AVPF_DES_HOMMES,
-    HEURES_AVPF_PAR_MOIS ; droit/liquider.py : salaire_de_reference ; droit/liquidation.py : liquider
   javascript: >-
     moteur/js/carriere.js : ligneAnnuelle ; moteur/js/macro.js : DonneesMacro,
     DonneesMacro.revenuAvpf, DonneesMacro.smicHoraireAu1erJuillet, ANNEE_CREATION_AVPF,

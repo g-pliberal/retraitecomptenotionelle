@@ -193,14 +193,6 @@ code:
     la durée d'assurance que L. 25 bis, puis D. 16-1, exigent de tous jusqu'en
     octobre 2012 est la colonne `trimestres_assurance_supplementaires` de
     `legislation/carriere_longue.csv` (`age_propose`).
-  python: >-
-    droit/ouvrir.py : duree_requise, duree_requise_avant_soixante_ans,
-    ouverture_carriere_longue, age_carriere_longue, duree_de_l_annee ;
-    droit/coordonner.py : REGIMES_CODE_DES_PENSIONS ; donnees/tables_du_droit.py
-    : DureesRequisesAvantSoixanteAns,
-    DureesRequisesAvantSoixanteAns.depuis_2023, CarriereLongue ;
-    droit/carriere_longue.py : portes_opposables, de_la_fonction_publique,
-    _requis, age_propose
   javascript: >-
     moteur/js/droit/ouvrir.js : dureeRequise, dureeRequiseAvantSoixanteAns,
     ouvertureCarriereLongue, ageCarriereLongue, dureeDeLAnnee ;

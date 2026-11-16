@@ -216,11 +216,6 @@ textes_sans_effet:
     de même, la contribution des employeurs « fixé à 43,65 % » au lieu de 40,65 %, pour
     les périodes d'emploi courant à compter du 1er janvier 2028 ; le reste mot pour mot
 code:
-  python: >-
-    donnees/primes.py : PrimesSoumises ; droit/primes.py : prime_de_la_pension ;
-    droit/liquider.py : liquider_chaque_regime ; droit/completer.py : completer ;
-    moteur/compte.py : ConstructeurCompte._cotisation_ligne ; remuneration.py :
-    bloc_droit_en_vigueur
   javascript: >-
     moteur/js/primes.js : PrimesSoumises ; moteur/js/droit/primes.js : primeDeLaPension
     ; moteur/js/droit/liquider.js : liquiderChaqueRegime ; moteur/js/droit/completer.js

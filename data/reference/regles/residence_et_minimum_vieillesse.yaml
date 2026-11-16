@@ -159,12 +159,6 @@ sources:
     url: http://publications.europa.eu/resource/celex/02004R0883-20190731
     date: 2026-10-01
 code:
-  python: >-
-    droit/foyer.py : foyer_et_net, condition_de_residence ; scenarios/actuel.py :
-    resultat_des_departs, ScenarioActuel.calculer ; echeancier.py : Echeancier._traiter,
-    Echeancier._partir ; revalorisation.py : foyer_a_l_echeance, pension_aujourd_hui ;
-    scenarios/notionnel.py : ScenarioNotionnel._garantie_vieillesse ; carriere.py :
-    Carriere.residence, Carriere.mois_en_france
   javascript: >-
     moteur/js/droit/foyer.js : foyerEtNet, conditionDeResidence ;
     moteur/js/scenario-actuel.js : resultatDesDeparts, ScenarioActuel._sousLeDroit ;

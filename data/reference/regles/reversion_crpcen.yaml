@@ -171,10 +171,6 @@ sources:
     date: 2026-10-05
     url: https://www.crpcen.fr/affilies/les-pensions-de-reversion-et-dorphelin
 code:
-  python: >-
-    donnees/tables_du_droit.py : Reversions ; droit/reversion.py : reversion,
-    MOITIE_SOUS_CONDITION_DE_MARIAGE, _mariage_suffit, _part_du_survivant,
-    _admis_ailleurs, _jusqu_au_remariage
   javascript: >-
     moteur/js/regimes.js : Reversions ; moteur/js/droit/reversion.js : reversion,
     MOITIE_SOUS_CONDITION_DE_MARIAGE, mariageSuffit, partDuSurvivant, admisAilleurs,

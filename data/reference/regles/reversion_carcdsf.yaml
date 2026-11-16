@@ -302,9 +302,6 @@ sources:
     date: 2026-11-14
     url: https://www.carcdsf.fr/images/pdf/Tbl_condattrib_RC_PCV_CD.pdf
 code:
-  python: >-
-    droit/reversion.py : reversion, _mariage_dure, _part_du_survivant, _admis_ailleurs,
-    _jusqu_au_remariage ; donnees/tables_du_droit.py : Reversions
   javascript: >-
     moteur/js/droit/reversion.js : reversion, mariageDure, partDuSurvivant,
     admisAilleurs, jusquAuRemariage ; moteur/js/regimes.js : Reversions

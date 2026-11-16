@@ -323,11 +323,6 @@ textes_sans_effet:
     n° 2026-418) ; « ne peut être supérieur à la valeur de 420 points jusqu'à l'exercice
     2021 » reste
 code:
-  python: >-
-    droit/acquerir.py : acquerir ; donnees/regimes.py : PeriodeRegime.ajustement_total,
-    PeriodeRegime.prise_en_charge ; droit/liquider.py : liquider_chaque_regime,
-    valeur_point_fiche ; moteur/compte.py : ConstructeurCompte._cotisation_ligne ;
-    remuneration.py : bloc_droit_en_vigueur
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js :
     PeriodeRegime.ajustementTotal, PeriodeRegime.priseEnCharge ; moteur/js/droit/liquider.js

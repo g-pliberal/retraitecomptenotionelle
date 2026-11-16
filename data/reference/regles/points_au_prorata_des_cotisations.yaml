@@ -312,8 +312,6 @@ code:
     points d'une année entière. Les quatorze périodes en points de la CNAVPL, de 2004 à
     aujourd'hui, renvoient à cette fiche ; celle d'avant 2004 porte cent points par
     trimestre validé (`points_par_trimestre_valide`).
-  python: >-
-    droit/acquerir.py : acquerir ; donnees/regimes.py : PeriodeRegime.repere_assiette
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js :
     PeriodeRegime.repereAssiette

@@ -183,11 +183,6 @@ sources:
     url: https://www.ircantec.retraites.fr/actif/dispositif-cumul-emploi-retraite
     date: 2026-08-01
 code:
-  python: >-
-    droit/cumul.py : _Calcul._ircantec, _Calcul._salarie, _Calcul._complementaire_2027,
-    groupe_de_la_pension, GROUPES_COMPLEMENTAIRES_2027, IRCANTEC_L_161_22,
-    IRCANTEC_SANS_REDUCTION, IRCANTEC_AVANT_2004, IRCANTEC_2004, IRCANTEC_2020, RCI_2027 ;
-    echeancier.py : Echeancier._cumuler
   javascript: >-
     moteur/js/droit/cumul.js : ircantec, salarie, complementaire2027, groupeDeLaPension,
     GROUPES_COMPLEMENTAIRES_2027, IRCANTEC_L_161_22, IRCANTEC_SANS_REDUCTION,

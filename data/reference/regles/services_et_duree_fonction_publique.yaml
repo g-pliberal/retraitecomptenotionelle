@@ -72,10 +72,6 @@ code:
     les régimes de la famille `fonction_publique` se proratisent sur eux
     (`liquider_chaque_regime`) ; la durée d'assurance, que la décote lit, garde toute la
     période.
-  python: >-
-    carriere.py : _ligne_annuelle ; donnees/chargement.py :
-    charger_periodes_non_travaillees ; droit/compter.py : compter ; droit/liquider.py :
-    liquider_chaque_regime
   javascript: >-
     moteur/js/carriere.js : ligneAnnuelle ; moteur/js/droit/compter.js : compter ;
     moteur/js/droit/liquider.js : liquiderChaqueRegime

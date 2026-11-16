@@ -195,9 +195,6 @@ sources:
       titre des périodes d'invalidité »
     date: 2026-10-16
 code:
-  python: >-
-    donnees/regimes.py : PointsInvalidite, PeriodeRegime ; droit/acquerir.py :
-    points_d_invalidite, arrondi_au_centieme
   javascript: >-
     moteur/js/droit/acquerir.js : pointsDInvalidite, arrondiAuCentieme
   parametres: >-

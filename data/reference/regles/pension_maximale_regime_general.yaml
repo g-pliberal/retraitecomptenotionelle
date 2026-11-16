@@ -420,9 +420,6 @@ sources:
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F21552
     date: 2026-09-01
 code:
-  python: >-
-    droit/liquider.py : pension_maximale, taux_acquis_l_emporte, liquider_chaque_regime
-    ; donnees/tables_du_droit.py : FichesDatees
   javascript: >-
     moteur/js/droit/liquider.js : pensionMaximale, tauxAcquisLEmporte,
     liquiderChaqueRegime ; moteur/js/regimes.js : FichesDatees

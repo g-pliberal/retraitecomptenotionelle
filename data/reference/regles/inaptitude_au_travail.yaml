@@ -216,14 +216,6 @@ approximations:
     durée, comme le texte le dit en deçà
   effet: non mesuré
 code:
-  python: >-
-    droit/invalidite.py : reconnu_inapte, age_d_inaptitude, taux_plein_de_l_inapte,
-    age_de_l_aspa ; scenarios/actuel.py : resultat_des_departs, ScenarioActuel.calculer
-    ; echeancier.py : Echeancier._traiter, Echeancier._partir ; revalorisation.py :
-    foyer_a_l_echeance ; droit/ouvrir.py : age_ouverture, ouvrir, age_taux_plein_droit ;
-    droit/liquider.py : liquider_chaque_regime, exonere_par_motif, eligible_agricole,
-    abattement_points, abattement_regime_de_base ; donnees/tables_du_droit.py :
-    Invalidites
   javascript: >-
     moteur/js/droit/invalidite.js : reconnuInapte, ageDInaptitude, tauxPleinDeLInapte,
     ageDeLAspa ; moteur/js/scenario-actuel.js : resultatDesDeparts,

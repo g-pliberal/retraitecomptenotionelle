@@ -236,9 +236,6 @@ code:
     pour le marin de `duree_maximum_levee_age`, cinquante-deux ans et demi, qui en
     réunit `duree_maximum_levee_trimestres`, cent cinquante. La période unique des
     marins les porte depuis 1930.
-  python: >-
-    droit/ouvrir.py : ouverture_par_services, services_dans_le_regime, age_ouverture ;
-    droit/liquider.py : liquider_chaque_regime
   javascript: >-
     moteur/js/droit/ouvrir.js : ouvertureParServices, servicesDansLeRegime,
     ageOuverture ; moteur/js/droit/liquider.js : liquiderChaqueRegime

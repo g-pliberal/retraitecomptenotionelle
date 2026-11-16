@@ -267,10 +267,6 @@ textes_a_rattacher:
 - {id: LEGIARTI000025076827, article: L. 40, en_vigueur: 2012-01-01, change: "la pension d'orphelin"}
 - {id: LEGIARTI000033814300, article: L. 50, en_vigueur: 2017-01-01, change: "la pension pour décès en service, que le modèle ne porte pas : au II, un 9° pour le militaire tué dans l'exercice de ses fonctions sur le territoire national, ou mort en service et cité à l'ordre de la Nation ou de l'armée ; au 5°, la citation à l'ordre de l'armée vaut celle à l'ordre de la Nation"}
 code:
-  python: >-
-    droit/reversion.py : reversion, _mariage_suffit, _part_du_survivant,
-    _admis_ailleurs, _fin_au_remariage, _jusqu_au_remariage ; donnees/tables_du_droit.py
-    : Reversions
   javascript: >-
     moteur/js/droit/reversion.js : reversion, mariageSuffit, partDuSurvivant,
     admisAilleurs, finAuRemariage, jusquAuRemariage ; moteur/js/regimes.js : Reversions

@@ -295,10 +295,6 @@ code:
     durée majorée ou le taux acquis sur la durée non majorée
     (`liquider.taux_acquis_au_31_mars_1983`). Le contexte qui neutralise la décote et la
     surcote neutralise aussi la majoration.
-  python: >-
-    droit/liquider.py : liquider_chaque_regime, duree_majoree_apres_taux_plein,
-    trimestres_d_ajournement, regimes_qui_bornent_la_duree_majoree,
-    taux_acquis_au_31_mars_1983 ; droit/ouvrir.py : age_taux_plein
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, dureeMajoreeApresTauxPlein,
     trimestresDAjournement, regimesQuiBornentLaDureeMajoree, tauxAcquisAu31Mars1983 ;

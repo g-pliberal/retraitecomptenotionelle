@@ -253,10 +253,6 @@ textes_a_rattacher:
 - reference: loi n° 89-1007 du 31 décembre 1989, article 5 (ingénieurs du contrôle de la navigation aérienne)
 - reference: loi n° 2003-1312 du 30 décembre 2003, article 93 (douaniers de la branche surveillance)
 code:
-  python: >-
-    donnees/tables_du_droit.py : FichesDatees ; droit/compter.py :
-    trimestres_des_emplois, trimestres_d_un_emploi, condition_d_un_emploi ;
-    droit/liquider.py : liquider_chaque_regime
   javascript: >-
     moteur/js/regimes.js : FichesDatees ; moteur/js/droit/compter.js :
     trimestresDesEmplois, trimestresDUnEmploi, conditionDUnEmploi ;

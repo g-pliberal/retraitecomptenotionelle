@@ -250,10 +250,6 @@ sources:
       2026
     date: 2026-11-05
 code:
-  python: >-
-    donnees/regimes.py : PeriodeRegime.taux_du_cotisant, charger_taux_annuels ;
-    donnees/macro.py : DonneesMacro.plafond_de_cotisations ; moteur/compte.py :
-    ConstructeurCompte._bornes_proratisees ; remuneration.py : bloc_droit_en_vigueur
   javascript: >-
     moteur/js/regimes.js : PeriodeRegime.tauxDuCotisant ; moteur/js/macro.js :
     DonneesMacro.plafondDeCotisations ; moteur/js/compte.js :

@@ -212,11 +212,6 @@ code:
     (`MinimumGaranti.reference`). La Banque de France le reçoit au même barème, sans
     le d ni la minoration. Ni l'écrêtement, sans décret, ni les périodes d'AVPF et
     d'aidant de 2023 ne sont portés.
-  python: >-
-    droit/liquider.py : liquider_chaque_regime, EligibleMinimumGaranti,
-    MINORATION_AGE_MINIMUM_GARANTI ; droit/compter.py : Durees.services_effectifs ;
-    droit/completer.py : completer ; donnees/tables_du_droit.py : MinimumGaranti,
-    MinimumGaranti.montant, MinimumGaranti.bareme, MinimumGaranti.reference
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, MINORATION_AGE_MINIMUM_GARANTI ;
     moteur/js/droit/compter.js : Durees.servicesEffectifs ;

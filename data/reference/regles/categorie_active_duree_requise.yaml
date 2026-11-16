@@ -168,11 +168,6 @@ code:
     2033, sa dernière ligne au-delà (lignes `l13_iii` de
     `legislation/duree_requise_avant_soixante_ans.csv`), et avant 2004 la durée que la
     période de cette année-là porte.
-  python: >-
-    droit/ouvrir.py : duree_requise, derogation_active, statut_dominant,
-    duree_requise_avant_soixante_ans, duree_de_l_annee ; donnees/tables_du_droit.py :
-    AgesCategorieActive, AgesCategorieActive.derogation, DureesRequisesAvantSoixanteAns,
-    DureesRequisesAvantSoixanteAns.par_annee, DureesRequisesFonctionPublique
   javascript: >-
     moteur/js/droit/ouvrir.js : dureeRequise, derogationActive, statutDominant,
     dureeRequiseAvantSoixanteAns, dureeDeLAnnee ; moteur/js/regimes.js :

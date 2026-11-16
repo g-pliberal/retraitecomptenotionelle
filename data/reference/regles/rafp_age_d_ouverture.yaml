@@ -78,8 +78,6 @@ sources:
       retraite additionnelle »
     date: 2026-09-29
 code:
-  python: >-
-    droit/departs.py : departs, age_legal, RAFP
   javascript: >-
     moteur/js/droit/departs.js : departs, ageLegal, RAFP
   parametres: >-

@@ -392,9 +392,12 @@ def test_chaque_paire_a_ses_deux_fichiers_et_sa_place_au_classement(carte):
     assert bloques == sorted(bloques)
 
 
-def test_le_cout_atteint_le_simulateur_que_le_site_charge_aussi(carte):
+def test_ni_le_cout_ni_la_fabrique_n_atteignent_plus_le_simulateur_python(carte):
+    """Depuis l'étape 4 du retrait (action 161), le coût et la fabrique se
+    chargent sans aucune règle Python : ils n'atteignent plus le simulateur
+    Python, dont le jumeau reste chargé par le site."""
     (fiche,) = [f for f in carte.classement() if f["python"].endswith("/simulateur.py")]
-    assert fiche["cote_python"]["cout"] and fiche["cote_python"]["fabrique"]
+    assert not fiche["cote_python"]["cout"] and not fiche["cote_python"]["fabrique"]
     assert fiche["cote_javascript"]["site"]
 
 

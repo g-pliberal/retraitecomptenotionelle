@@ -63,9 +63,6 @@ code:
     porte les trimestres reste telle quelle. `_lignes_du_releve` et
     `_lignes_du_parcours` l'appliquent aux lignes qu'elles bâtissent ; la table des
     périodes non travaillées donne quatre trimestres à l'année déclarée.
-  python: >-
-    carriere.py : limiter_chomage_non_indemnise, CHOMAGE_NON_INDEMNISE_PREMIERE,
-    CHOMAGE_NON_INDEMNISE_ULTERIEURE, _lignes_du_releve, _lignes_du_parcours
   javascript: >-
     moteur/js/carriere.js : limiterChomageNonIndemnise, CHOMAGE_NON_INDEMNISE_PREMIERE,
     CHOMAGE_NON_INDEMNISE_ULTERIEURE, lignesDuReleve, lignesDuParcours

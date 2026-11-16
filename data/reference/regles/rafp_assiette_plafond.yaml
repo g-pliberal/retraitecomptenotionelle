@@ -237,10 +237,6 @@ code:
     privée autorisée, la participation de l'employeur à la protection sociale
     complémentaire, l'activité hospitalière des hospitalo-universitaires — : la part
     de primes qu'elle demande est l'assiette avant la limite.
-  python: >-
-    donnees/regimes.py : PeriodeRegime.part_du_revenu ; droit/acquerir.py : acquerir,
-    part_soumise ; donnees/primes.py : PrimesSoumises.parts ; moteur/compte.py :
-    ConstructeurCompte._cotisation_ligne
   javascript: >-
     moteur/js/regimes.js : PeriodeRegime.partDuRevenu ; moteur/js/droit/acquerir.js :
     acquerir, partSoumise ; moteur/js/primes.js : PrimesSoumises.parts ;

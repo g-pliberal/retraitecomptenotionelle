@@ -229,10 +229,6 @@ sources:
       https://www.cor-retraites.fr/sites/default/files/2023-03/Doc_15_SG_Catégories%20actives_fonction%20publique.pdf
     date: 2023-03-23
 code:
-  python: >-
-    donnees/tables_du_droit.py : FichesDatees ; droit/compter.py :
-    trimestres_des_emplois, trimestres_d_un_emploi, condition_d_un_emploi ;
-    droit/liquider.py : liquider_chaque_regime
   javascript: >-
     moteur/js/regimes.js : FichesDatees ; moteur/js/droit/compter.js :
     trimestresDesEmplois, trimestresDUnEmploi, conditionDUnEmploi ;

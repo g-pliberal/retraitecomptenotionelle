@@ -1494,13 +1494,6 @@ code:
     d'assurance de tous les régimes les deux années d'avant, l'emploi avant la première
     année de l'interruption (`categories._remplit_pour_l_enfant_fonctionnaire`). Les
     trimestres de décote et le minimum garanti lisent cet âge sans autre changement.
-  python: >-
-    droit/categories.py : age_du_parent_de_trois_enfants, _remplit_pour_l_enfant,
-    age_du_fonctionnaire_parent_de_trois_enfants, _remplit_pour_l_enfant_fonctionnaire,
-    _regle_du_parent, FICHE_DES_SOIXANTE_CINQ_ANS ; droit/commun.py : ligne_cotisee ;
-    droit/liquider.py : decote_opposable,
-    _age_du_parent_sedentaire ; droit/ouvrir.py : age_taux_plein ; carriere.py :
-    Carriere.trimestres_par_annee
   javascript: >-
     moteur/js/droit/categories.js : ageDuParentDeTroisEnfants, remplitPourLEnfant,
     ageDuFonctionnaireParentDeTroisEnfants, remplitPourLEnfantFonctionnaire, regleDuParent,

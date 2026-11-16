@@ -83,10 +83,6 @@ code:
     ouvre la pension à cinquante ans à qui réunit trente ans de services
     (`age_ouverture_services`, `services_ouverture_annees`) : l'âge du fond, prêté à
     tout mineur de trente années, sans la bonification de l'article 138.
-  python: >-
-    droit/acquerir.py : acquerir ; droit/liquider.py : liquider_chaque_regime ;
-    donnees/tables_du_droit.py : BaremesTrimestre, BaremesTrimestre.valeurs ;
-    droit/ouvrir.py : ouverture_par_services
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
     liquiderChaqueRegime ; moteur/js/regimes.js : BaremesTrimestre,

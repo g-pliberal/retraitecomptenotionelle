@@ -51,8 +51,6 @@ code:
     barème commun de `_taux_majoration_enfants`, 10 % dès trois enfants, sur la pension
     de chacune ; aucune période du RACL ne la déclare. Le nombre d'enfants seul l'ouvre
     : la condition de neuf ans d'éducation avant seize ans n'est pas opposée.
-  python: >-
-    droit/completer.py : completer, _taux_majoration_enfants
   javascript: >-
     moteur/js/droit/completer.js : completer, tauxMajorationEnfants
   parametres: >-

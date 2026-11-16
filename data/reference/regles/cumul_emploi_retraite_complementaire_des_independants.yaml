@@ -237,11 +237,6 @@ sources:
     url: https://legislation.lassuranceretraite.fr/
     date: 2026-03-06
 code:
-  python: >-
-    droit/cumul.py : _Calcul._complementaire_des_independants, _Calcul._non_salarie,
-    _Calcul._regle_2027, groupe_de_la_pension, COMPLEMENTAIRES_DES_INDEPENDANTS,
-    COMPLEMENTAIRES_2009, SECTION_3_RCI, RCI_AVANT_2009, RCI_2009, RCI_2024, RCI_2027 ;
-    echeancier.py : Echeancier._cumuler
   javascript: >-
     moteur/js/droit/cumul.js : complementaireDesIndependants, nonSalarie, regle2027,
     groupeDeLaPension, COMPLEMENTAIRES_DES_INDEPENDANTS, COMPLEMENTAIRES_2009,

@@ -183,10 +183,6 @@ textes_a_rattacher:
 - reference: L. 131-9 du code de la sécurité sociale, les non-résidents
 - reference: CGI, article 194, le quotient familial
 code:
-  python: >-
-    remuneration.py : PrelevementsPension, PrelevementsPension.seuil,
-    PrelevementsPension.tranche, PrelevementsPension.taux_de_la_tranche,
-    PrelevementsPension.maladie_de_la_tranche, PrelevementsPension.revenu_fiscal_presume
   javascript: >-
     moteur/js/remuneration.js : PrelevementsPension ; moteur/js/contexte.js :
     Montants.duFoyer, netDUnDepart, revenuFiscalDuFoyer, partsDuFoyer,

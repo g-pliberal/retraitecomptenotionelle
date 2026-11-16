@@ -45,10 +45,6 @@ code:
     droit (2,5 % par trimestre) que pour la montée en charge de la loi Fillon (jusqu'à
     1,25 % à partir de la génération 1953) : elle se branche donc sur toutes les périodes
     des régimes alignés depuis 1983.
-  python: >-
-    droit/liquider.py : liquider_chaque_regime, decote_opposable, trimestres_de_decote,
-    _au_trimestre_superieur ; droit/ouvrir.py : age_taux_plein ;
-    donnees/tables_du_droit.py : CoefficientsMinoration
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, decoteOpposable,
     trimestresDeDecote, auTrimestreSuperieur ; moteur/js/droit/ouvrir.js :

@@ -267,9 +267,6 @@ textes_a_rattacher:
     points de retraite par trimestre » : la reconstitution de carrière et les points
     gratuits, que la fiche ne porte pas (`approximations`)
 code:
-  python: >-
-    droit/acquerir.py : acquerir ; droit/liquider.py : valeur_du_point,
-    abattement_regime_de_base
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
     valeurDuPoint, abattementRegimeDeBase

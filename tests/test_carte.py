@@ -130,7 +130,7 @@ def test_les_fiches_presque_mures_le_sont(fiches):
     """Rien ne manque plus aux quatre fiches presque mûres — leur code, leurs
     approximations, leurs versions, leur étape —, et ce qu'elles disent
     d'elles-mêmes tient : leurs approximations touchent leurs versions, leur
-    code nomme des fonctions que les deux moteurs définissent, des paramètres
+    code nomme des fonctions que le moteur JavaScript définit, des paramètres
     que leurs versions ou leurs fiches de régime portent, des tests qui
     existent (``outils_carte``)."""
     from outils_carte import ecarts
@@ -152,9 +152,7 @@ def test_le_code_d_une_fiche_se_confronte_au_depot():
 
     fiche = {"id": "essai", "regimes": ["agirc_arrco"],
              "versions": [{"id": "v", "contenu": {"parametres": {"taux": 0.5}}}],
-             "code": {"python": "carriere.py : CONJOINTS_COLLABORATEURS ; "
-                                "droit/reversion.py : reversion",
-                      "javascript": "moteur/js/carriere.js : CONJOINTS_COLLABORATEURS, "
+             "code": {"javascript": "moteur/js/carriere.js : CONJOINTS_COLLABORATEURS, "
                                     "Carriere.exConjoints",
                       "parametres": "contenu.parametres de chaque version : taux ; "
                                     "regimes/agirc_arrco.yaml : abattement_points ; "
@@ -178,6 +176,23 @@ def test_le_code_d_une_fiche_se_confronte_au_depot():
     assert any("« aucun »" in e for e in ecarts(fiche)), ecarts(fiche)
     fiche["versions"] = [{"id": "v", "contenu": {"parametres": "regimes/valeurs_point.csv, lignes agirc"}}]
     fiche["code"]["parametres"] = "regimes/valeurs_point.csv : agirc"
+    assert ecarts(fiche) == []
+
+
+def test_le_code_d_une_fiche_ne_nomme_plus_le_python():
+    """Le moteur Python des règles se retire (action 161, étape 5) : le code
+    d'une fiche ne nomme plus que les fonctions du moteur JavaScript, et une
+    clause ``python`` y est refusée, quoi qu'elle nomme."""
+    from outils_carte import ecarts
+
+    fiche = {"id": "essai",
+             "code": {"python": "droit/reversion.py : reversion",
+                      "javascript": "moteur/js/carriere.js : CONJOINTS_COLLABORATEURS",
+                      "parametres": "aucun : rien à lire",
+                      "tests": ["tests/test_reversion.py"]}}
+    assert ecarts(fiche) == ["essai : son code nomme encore du Python, que le moteur des "
+                             "règles a quitté"]
+    del fiche["code"]["python"]
     assert ecarts(fiche) == []
 
 

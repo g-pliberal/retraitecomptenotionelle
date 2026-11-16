@@ -171,10 +171,6 @@ textes_sans_effet:
     haut niveau sur la liste mentionnée au premier alinéa de l'article L. 221-2 du code
     du sport »
 code:
-  python: >-
-    droit/compter.py : trimestres_assimiles, trimestres_des_periodes, jours_par_annee,
-    version_ouverte, compter, Durees ; donnees/tables_du_droit.py :
-    FichesDatees.version_aux_dates
   javascript: >-
     moteur/js/droit/compter.js : trimestresAssimiles, trimestresDesPeriodes,
     joursParAnnee, versionOuverte, compter, Durees ; moteur/js/regimes.js :

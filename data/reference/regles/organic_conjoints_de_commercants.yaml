@@ -200,8 +200,6 @@ textes_sans_effet:
     TSSS2527351A) ; la « définition de la règle de cumul » que l'index porte est
     inchangée, mot pour mot
 code:
-  python: >-
-    droit/acquerir.py : acquerir
   javascript: "moteur/js/droit/acquerir.js : acquerir"
   parametres: >-
     regimes/organic_conjoints_batiment.yaml : assiette, taux_cotisation_retraite,

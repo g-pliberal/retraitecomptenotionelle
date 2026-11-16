@@ -65,9 +65,6 @@ code:
     durée requise, augmentée de ces seules bonifications, et leur rapport à elle au taux
     maximum bonifié sur le taux plein, 80 % sur 75 % (`taux_maximum_bonifie`,
     `taux_plein`), un sans bonification.
-  python: >-
-    droit/compter.py : compter, Durees, Durees.bonifications_des_emplois,
-    TrimestresEmploi ; droit/liquider.py : liquider_chaque_regime
   javascript: >-
     moteur/js/droit/compter.js : compter, Durees, Durees.bonificationsDesEmplois,
     TrimestresEmploi ; moteur/js/droit/liquider.js : liquiderChaqueRegime

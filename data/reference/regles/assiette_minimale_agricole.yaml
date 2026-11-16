@@ -321,10 +321,6 @@ code:
     `assiette_plancher` : l'assiette est relevée au repère (`assiette_repere_smic`) quand
     elle lui est inférieure. C'est l'assiette minimale de la complémentaire agricole,
     qui ouvre ses cent points même à un revenu plus faible.
-  python: >-
-    droit/acquerir.py : acquerir, points_msa, assiette_du_collaborateur ;
-    donnees/regimes.py : PeriodeRegime.repere_assiette ; moteur/compte.py :
-    ConstructeurCompte._cotisation_ligne
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir, pointsMsa, assietteDuCollaborateur ;
     moteur/js/regimes.js : PeriodeRegime.repereAssiette ; moteur/js/compte.js :

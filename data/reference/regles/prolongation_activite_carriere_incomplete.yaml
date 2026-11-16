@@ -141,8 +141,6 @@ sources:
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F12395
     date: 2026-01-01
 code:
-  python: >-
-    droit/limite_age.py : radiation, _prolongation_carriere_incomplete
   javascript: >-
     moteur/js/droit/limite_age.js : radiation, prolongationCarriereIncomplete
   parametres: >-

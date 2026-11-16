@@ -141,10 +141,6 @@ sources:
     url: https://www.budget.gouv.fr/documentation/fid-download/28951
     date: 2018-10-01
 code:
-  python: >-
-    donnees/primes.py : PrimesSoumises ; droit/primes.py : prime_de_la_pension ;
-    droit/liquider.py : liquider_chaque_regime ; moteur/compte.py :
-    ConstructeurCompte._cotisation_ligne ; remuneration.py : bloc_droit_en_vigueur
   javascript: >-
     moteur/js/primes.js : PrimesSoumises ; moteur/js/droit/primes.js : primeDeLaPension
     ; moteur/js/droit/liquider.js : liquiderChaqueRegime ; moteur/js/compte.js :

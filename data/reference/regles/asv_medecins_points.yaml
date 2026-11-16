@@ -649,11 +649,6 @@ textes_sans_effet:
   motif: exercice 2009, de même
 reformes: [asv_1972, asv_trois_enfants_1981, asv_part_caisses_1993, asv_2012, asv_2017, carmf_temps_choisi_2017, asv_2026]
 code:
-  python: >-
-    droit/acquerir.py : acquerir ; moteur/compte.py :
-    ConstructeurCompte._cotisation_ligne ; donnees/regimes.py :
-    PeriodeRegime.prise_en_charge ; droit/liquider.py : liquider_chaque_regime,
-    valeur_point_fiche, annees_d_exercice
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/compte.js :
     ConstructeurCompte._cotisationLigne ; moteur/js/regimes.js :

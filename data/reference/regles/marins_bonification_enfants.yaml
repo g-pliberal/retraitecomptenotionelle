@@ -167,8 +167,6 @@ code:
     lit avant le barème commun ; `completer` le sert dès deux enfants, seul barème du
     catalogue qui commence si tôt. Le nombre d'enfants seul l'ouvre : la condition de
     neuf ans d'éducation avant seize ans n'est pas opposée.
-  python: >-
-    droit/completer.py : completer, _taux_majoration_enfants
   javascript: >-
     moteur/js/droit/completer.js : completer, tauxMajorationEnfants
   parametres: >-

@@ -687,12 +687,6 @@ code:
     bornes, au premier jour du trimestre civil qui commence ce jour-là ou après (motif
     `trimestre_civil`) ; elle s'y liquide seule, après la base, aux conditions
     d'ouverture de celle-ci (`ouvrir`).
-  python: >-
-    droit/liquider.py : abattement_points, abattement_regime_de_base, decote_opposable,
-    trimestres_de_decote ; droit/ouvrir.py : age_taux_plein ; donnees/tables_du_droit.py
-    : AgesRegimes ; droit/completer.py : completer, _taux_majoration_enfants ;
-    droit/departs.py : _au_trimestre_civil, departs_et_demandes ; droit/ouvrir.py :
-    ouvrir, _references
   javascript: >-
     moteur/js/droit/liquider.js : abattementPoints, abattementRegimeDeBase,
     decoteOpposable, trimestresDeDecote ; moteur/js/droit/ouvrir.js : ageTauxPlein ;

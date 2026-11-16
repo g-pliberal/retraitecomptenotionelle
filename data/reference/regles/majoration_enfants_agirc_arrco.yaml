@@ -1130,12 +1130,6 @@ code:
     `regime_du_plafond`) : 1 000 € au titre de l'Arrco et autant au titre de l'Agirc au
     1er janvier 2012, suivis au point de chacun, pour les allocations de 2012 à 2018, le
     plafond du régime unifié depuis 2019, aux seules générations nées depuis 1952.
-  python: >-
-    droit/acquerir.py : acquerir ; donnees/tables_du_droit.py :
-    MajorationsEnfantsPoints, MajorationsEnfantsPoints.taux,
-    MajorationsEnfantsPoints.etapes, FichesDatees ; droit/completer.py : completer,
-    plafond_majoration, regime_du_plafond, regimes_sans_anticipation,
-    regimes_suivant_le_service
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js :
     MajorationsEnfantsPoints, MajorationsEnfantsPoints.taux,

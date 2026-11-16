@@ -300,10 +300,6 @@ code:
     du 1° du I de l'article 16 de l'annexe 3, dont le 1° du V de l'article 45 écrit le
     même calendrier que la SNCF et la RATP ; le moteur le lit dans la même table, `legislation/age_surcote_regimes_speciaux.csv`,
     que la fiche `age_surcote_sncf_ratp` décrit.
-  python: >-
-    droit/ouvrir.py : age_ouverture, age_ouverture_commun, age_surcote ;
-    droit/liquider.py : liquider_chaque_regime, trimestres_de_surcote_regimes_speciaux ;
-    donnees/tables_du_droit.py : AgesRegimes, AgesSurcoteRegimesSpeciaux
   javascript: >-
     moteur/js/droit/ouvrir.js : ageOuverture, ageOuvertureCommun, ageSurcote ;
     moteur/js/droit/liquider.js : liquiderChaqueRegime,

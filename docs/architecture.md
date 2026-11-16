@@ -2228,9 +2228,6 @@ sources:
     l'applique depuis le 22 septembre 2026 : la vue fabriquée le corrigera.
 
 code:
-  python: >-
-    donnees/tables_du_droit.py : MajorationsPourEnfants ;
-    droit/compter.py : majoration_pour_enfants, bonification_ouverte
   javascript: >-
     moteur/js/regimes.js : MajorationsPourEnfants ;
     moteur/js/droit/compter.js : bonificationOuverte

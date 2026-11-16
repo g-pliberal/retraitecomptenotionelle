@@ -193,12 +193,6 @@ historique:
   le 1er septembre 2023, que le modèle gardait au régime spécial, la carrière datant
   l'entrée du premier recrutement.
 code:
-  python: >-
-    carriere.py : Carriere.retours, INTERRUPTIONS_DE_RUPTURE ;
-    donnees/affiliations.py : Affiliations.maintien, Affiliations.date_entree ;
-    droit/coordonner.py : coordonner, regimes_de ; moteur/compte.py :
-    ConstructeurCompte._cotisation_ligne ; remuneration.py :
-    remuneration_de_la_carriere ; contributions_equilibre.py : _dues
   javascript: >-
     moteur/js/regimes.js : Affiliations.maintien, Affiliations.dateEntree ;
     moteur/js/carriere.js : Carriere.retours, INTERRUPTIONS_DE_RUPTURE ;

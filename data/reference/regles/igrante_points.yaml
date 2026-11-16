@@ -252,9 +252,6 @@ sources:
       13 octobre 2026
     date: 2026-10-13
 code:
-  python: >-
-    droit/acquerir.py : acquerir ; droit/liquider.py : valeur_du_point ;
-    donnees/tables_du_droit.py : ConversionsPoints
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
     valeurDuPoint ; moteur/js/regimes.js : ConversionsPoints

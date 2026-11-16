@@ -435,13 +435,6 @@ code:
     `mayotte_smig_et_plafond.csv` ; le statut `independant_mayotte`, routé à la caisse
     depuis 2012, sans employeur, ses trimestres au même seuil et, depuis 2019, son
     assiette minimale au Smic de Mayotte (`assiette_minimale_independants.csv`)
-  python: >-
-    donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime,
-    salaire_de_reference ; donnees/macro.py : REGIME_DE_MAYOTTE,
-    DonneesMacro.trimestres_valides, DonneesMacro.seuil_d_un_trimestre,
-    DonneesMacro.plafond_de_cotisations, DonneesMacro.smig_mayotte,
-    DonneesMacro.plafond_mayotte, DonneesMacro.statuts_de_mayotte,
-    DonneesMacro.smic_horaire_de ; carriere.py : _ligne_annuelle
   javascript: >-
     moteur/js/regimes.js : CatalogueRegimes ; moteur/js/droit/liquider.js :
     liquiderChaqueRegime, salaireDeReference ; moteur/js/macro.js : REGIME_DE_MAYOTTE,

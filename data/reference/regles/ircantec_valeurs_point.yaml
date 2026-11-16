@@ -286,10 +286,6 @@ sources:
     url: https://www.aefinfo.fr/depeche/742881-syndicats-et-employeurs-publics-saccordent-sur-le-plan-quadriennal-de-lircantec-2026-2029
     date: 2025-12-19
 code:
-  python: >-
-    donnees/tables_du_droit.py : ValeursPoint.achat, ValeursPoint.achat_prolonge,
-    Rendements.rendement ; droit/acquerir.py : acquerir ; droit/liquider.py :
-    liquider_chaque_regime
   javascript: >-
     moteur/js/regimes.js : ValeursPoint.achat, ValeursPoint.achatProlonge,
     Rendements.rendement ; moteur/js/droit/acquerir.js : acquerir ;

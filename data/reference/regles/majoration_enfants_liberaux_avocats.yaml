@@ -57,8 +57,6 @@ code:
     `_taux_majoration_enfants`, 10 % dès trois enfants, sur la pension de chacune. La
     maille est l'année : les pensions de base prenant effet de septembre à décembre 2023
     n'en ont pas.
-  python: >-
-    droit/completer.py : completer, _taux_majoration_enfants
   javascript: >-
     moteur/js/droit/completer.js : completer, tauxMajorationEnfants
   parametres: >-

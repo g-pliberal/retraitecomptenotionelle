@@ -74,11 +74,6 @@ code:
     `cotisation_par_classes` : de 1981 à 2015, le RAAP prélève le montant de sa classe
     (`classes_cotisation.csv`), et non un taux ; `assiette_forfaitaire` : l'assiette est
     le repère de la période, quel que soit le revenu.
-  python: >-
-    droit/acquerir.py : acquerir ; donnees/regimes.py : PeriodeRegime.repere_assiette,
-    ClassesCotisation.annee_grille, ClassesCotisation.cotisation ; moteur/compte.py :
-    ConstructeurCompte._cotisation_ligne, ConstructeurCompte._cotisation_par_classes ;
-    remuneration.py : bloc_droit_en_vigueur, _classes_de_l_annee
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js :
     PeriodeRegime.repereAssiette, ClassesCotisation.anneeGrille,

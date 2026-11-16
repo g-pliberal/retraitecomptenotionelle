@@ -181,9 +181,6 @@ sources:
     url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_MIN_21SS_21051976.aspx
     date: 1976-05-21
 code:
-  python: >-
-    droit/categories.py : taux_plein_par_categorie, remplit ; droit/liquider.py :
-    liquider_chaque_regime, abattement_points ; carriere.py : Carriere.travail_manuel
   javascript: >-
     moteur/js/droit/categories.js : tauxPleinParCategorie, remplit ;
     moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints ;

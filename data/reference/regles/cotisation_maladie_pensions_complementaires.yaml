@@ -126,8 +126,6 @@ textes_a_rattacher:
 - reference: L. 131-9 du code de la sécurité sociale, les non-résidents
 - reference: D. 242-9 du code de la sécurité sociale, l'exonération
 code:
-  python: >-
-    remuneration.py : PrelevementsPension, assiette_maladie
   javascript: >-
     moteur/js/remuneration.js : PrelevementsPension, assietteMaladie ;
     moteur/js/contexte.js : Montants ; moteur/js/pages.js : etagesActuels,

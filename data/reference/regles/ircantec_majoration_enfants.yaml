@@ -97,8 +97,6 @@ sources:
     les siens ; une pension prise avant 1971 suit les règlements de ces deux institutions,
     non lus, et le modèle ne la majore pas.
 code:
-  python: >-
-    droit/completer.py : _taux_majoration_enfants
   javascript: >-
     moteur/js/droit/completer.js : tauxMajorationEnfants
   parametres: >-

@@ -283,12 +283,6 @@ code:
     `liquider_chaque_regime` sert les cotisations revalorisées au rendement que
     `Rendements.rendement` lit à l'année de la liquidation, 5,49 % depuis 2026, 21,48 €
     de service pour 391 €.
-  python: >-
-    donnees/regimes.py : BORNES_ASSIETTE, PeriodeRegime.bornes_assiette_en_euros,
-    PeriodeRegime.assiette_minimale ; donnees/chargement.py :
-    dispense_les_complementaires ; droit/acquerir.py : acquerir ; droit/liquider.py :
-    liquider_chaque_regime ; donnees/tables_du_droit.py : Rendements.rendement ;
-    moteur/compte.py : ConstructeurCompte._cotisation_ligne
   javascript: >-
     moteur/js/regimes.js : BORNES_ASSIETTE, PeriodeRegime.bornesAssietteEnEuros,
     PeriodeRegime.assietteMinimale, Rendements.rendement ; moteur/js/carriere.js :

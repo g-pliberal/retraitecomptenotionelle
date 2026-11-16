@@ -236,10 +236,6 @@ textes_sans_effet:
     plafond de ressources « fixé chaque année par décision de l'instance délibérante »
     au lieu de « par décision l'instance délibérante » ; le reste mot pour mot
 code:
-  python: >-
-    droit/reversion.py : reversion, _part_du_survivant, _admis_ailleurs ;
-    donnees/tables_du_droit.py : Reversions ; echeancier.py :
-    Echeancier._pensions_eues_au_deces
   javascript: >-
     moteur/js/droit/reversion.js : reversion, partDuSurvivant, admisAilleurs ;
     moteur/js/regimes.js : Reversions ; moteur/js/echeancier.js :

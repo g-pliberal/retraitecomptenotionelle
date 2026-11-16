@@ -82,12 +82,6 @@ code:
   moteur: >-
     `surcote_bareme: fonction_publique` : 0,75 % dans la limite de vingt trimestres jusqu'en
     2008, 1,25 % depuis (L. 14 III).
-  python: >-
-    droit/liquider.py : liquider_chaque_regime, coefficient_surcote_datee ;
-    droit/ouvrir.py : age_surcote, age_ouverture_commun, derogation_active,
-    statut_dominant, droit_militaire, SURCOTE_EMPLOIS_CLASSES, AGE_SURCOTE_AVANT_2023 ;
-    droit/coordonner.py : REGIMES_CODE_DES_PENSIONS ; donnees/tables_du_droit.py :
-    SurcoteBaremes
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, coefficientSurcoteDatee ;
     moteur/js/droit/ouvrir.js : ageSurcote, ageOuvertureCommun, derogationActive,

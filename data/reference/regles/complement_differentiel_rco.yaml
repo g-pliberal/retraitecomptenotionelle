@@ -397,10 +397,6 @@ textes_a_rattacher:
 - reference: L. 732-63 code rural
 - reference: D. 732-166-1 à D. 732-166-6 code rural
 code:
-  python: >-
-    donnees/tables_du_droit.py : ComplementDifferentielRco,
-    ComplementDifferentielRco.regle, ComplementDifferentielRco.table ;
-    droit/completer.py : complement_differentiel, completer
   javascript: >-
     moteur/js/regimes.js : ComplementDifferentielRco, ComplementDifferentielRco.regle ;
     moteur/js/droit/completer.js : complementDifferentiel, completer

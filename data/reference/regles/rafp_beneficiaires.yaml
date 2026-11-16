@@ -147,9 +147,6 @@ code:
     régimes de chaque ligne, que `regimes_de` reprend pour la coordination : aucune
     ligne de l'ouvrier ne cotise au RAFP ni n'y acquiert de points, et aucune rente du
     RAFP ne s'ajoute à sa pension.
-  python: >-
-    donnees/affiliations.py : Affiliations.regimes ; droit/coordonner.py :
-    regimes_de
   javascript: >-
     moteur/js/regimes.js : Affiliations.regimes ; moteur/js/droit/coordonner.js :
     regimesDe

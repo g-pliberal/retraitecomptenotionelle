@@ -239,15 +239,6 @@ code:
     défunt d'avant 2009 ne sont touchés. Le conjoint survivant peut opter pour l'année
     entière des cotisations d'assurance vieillesse (D. 731-57-1), ce que le modèle ne lit
     pas ; les trimestres d'une année au prorata restent la question de R. 731-83.
-  python: >-
-    droit/liquider.py : liquider_chaque_regime, duree_proratisation,
-    duree_du_regime_aligne ; droit/compter.py : Durees.plafond, Durees.cumul_plafonne ;
-    carriere.py : Carriere.annee_entiere_agricole, Carriere.annee_de_cessation_agricole,
-    Carriere.trimestres_ecoules, Carriere.part_cotisee_ligne,
-    Carriere.statut_pris_apres_le_1er_janvier, Carriere._statuts_au_1er_janvier,
-    Carriere.qualite_agricole, Carriere.arretee_au_deces,
-    COTISATIONS_AU_PRORATA_DU_DECES_DEPUIS ; donnees/tables_du_droit.py :
-    DureesProratisation
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, dureeProratisation,
     dureeDuRegimeAligne ; moteur/js/droit/compter.js : Durees.plafond,

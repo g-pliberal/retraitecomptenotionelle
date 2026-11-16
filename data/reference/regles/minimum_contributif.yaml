@@ -748,13 +748,6 @@ textes_sans_effet:
     d'arrérages au cours duquel est survenu le décès du conjoint » ; la rédaction de 2001
     n'y change que « trimestre » en « mois »
 code:
-  python: >-
-    donnees/tables_du_droit.py : MinimumContributif.valeurs,
-    MinimumContributif.pension_minimum, MinimumContributif.regle ; droit/completer.py :
-    completer, plancher_national, plancher_d_avant_1983, complement_des_alignes,
-    borne_avec_les_droits_d_avant_1973, avpf_retenue, limiter_le_cumul,
-    complement_minimum ; droit/liquider.py : regimes_qui_bornent_le_minimum ;
-    types_du_pont/droit.py : EligibleMinimum
   javascript: >-
     moteur/js/regimes.js : MinimumContributif.valeurs,
     MinimumContributif.pensionMinimum, MinimumContributif.regle ;

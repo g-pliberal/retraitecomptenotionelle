@@ -168,8 +168,6 @@ code:
     puis de l'Agirc-Arrco, au taux de la fiche de régime, sur le forfait du SMIC, et
     prélèvent la contribution d'équilibre sur le même forfait ; un taux spécifique y
     entrera quand on saura ce qu'il achète
-  python: >-
-    droit/acquerir.py : acquerir ; contributions_equilibre.py : _forfait
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/contributions-equilibre.js : forfait
   parametres: >-

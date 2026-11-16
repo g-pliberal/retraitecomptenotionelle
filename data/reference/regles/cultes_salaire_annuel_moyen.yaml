@@ -600,11 +600,6 @@ code:
     2001, 1 820 depuis —, au SMIC de chaque mois depuis 1998 (`smic_du_mois` : la moyenne des
     douze mois, du barème de janvier et des relèvements en cours d'année), au prorata des
     mois.
-  python: >-
-    droit/liquider.py : assiette_de_reference, salaire_de_reference ;
-    donnees/regimes.py : PeriodeRegime.repere_assiette ; donnees/macro.py :
-    DonneesMacro.smic_horaire_des_mois, smic_horaire_du_forfait ; moteur/compte.py :
-    ConstructeurCompte._cotisation_ligne
   javascript: >-
     moteur/js/droit/liquider.js : assietteDeReference, salaireDeReference ;
     moteur/js/regimes.js : PeriodeRegime.repereAssiette ; moteur/js/macro.js :

@@ -1404,13 +1404,6 @@ code:
     que les autres motifs exonèrent sur ce que le moteur lit au régime des salariés :
     une asymétrie, déclarée à la fiche taux_plein_a_soixante_cinq_ans ;
     tests/test_taux_plein_a_soixante_cinq_ans.py.
-  python: >-
-    droit/liquider.py : liquider_chaque_regime, abattement_points, coefficient_pour_age,
-    _coefficient_anticipation, _PALIERS_ANTICIPATION,
-    _COEFFICIENT_ANTICIPATION_PLANCHER, exonerations_agirc_arrco, exonere_par_motif,
-    parent_au_taux_plein_du_regime_general, FICHE_DES_COEFFICIENTS_AGIRC_ARRCO ;
-    droit/categories.py : age_du_parent_de_trois_enfants ; droit/acquerir.py : acquerir, Droits ;
-    droit/ouvrir.py : age_taux_plein
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints,
     coefficientPourAge, coefficientAnticipation, PALIERS_ANTICIPATION,

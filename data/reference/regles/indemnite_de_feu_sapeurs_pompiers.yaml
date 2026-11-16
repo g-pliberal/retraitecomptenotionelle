@@ -206,10 +206,6 @@ sources:
     url: https://www.juris-cnracl.retraites.fr/cotisations/taux-de-cotisations/cotisations-supplementaires/les-sapeurs-pompiers-professionnels
     date: 2022-01-24
 code:
-  python: >-
-    donnees/primes.py : PrimesSoumises ; droit/primes.py : prime_de_la_pension,
-    proratiser ; droit/liquider.py : liquider_chaque_regime ; moteur/compte.py :
-    ConstructeurCompte._cotisation_ligne ; remuneration.py : bloc_droit_en_vigueur
   javascript: >-
     moteur/js/primes.js : PrimesSoumises ; moteur/js/droit/primes.js : primeDeLaPension,
     proratiser ; moteur/js/droit/liquider.js : liquiderChaqueRegime ;

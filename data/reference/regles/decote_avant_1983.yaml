@@ -489,11 +489,6 @@ code:
     `age_taux_plein_femmes`, `duree_taux_plein_femmes_trimestres` et
     `duree_taux_plein_femmes_regimes` des périodes de 1978 et de 1979 à 1982 annulent la
     décote des femmes qui réunissent la durée (`liquider.taux_plein_des_femmes`).
-  python: >-
-    droit/liquider.py : liquider_chaque_regime, decote_opposable, trimestres_de_decote,
-    ecart_au_taux_plein, taux_plein_des_femmes, taux_acquis_au_31_mars_1983,
-    taux_acquis_l_emporte, _trimestres_cotises_apres, ORDONNANCE_DU_26_MARS_1982 ;
-    droit/ouvrir.py : age_ouverture, age_taux_plein
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, decoteOpposable,
     trimestresDeDecote, ecartAuTauxPlein, tauxPleinDesFemmes, tauxAcquisAu31Mars1983,

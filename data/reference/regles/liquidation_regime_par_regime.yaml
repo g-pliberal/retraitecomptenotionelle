@@ -551,13 +551,6 @@ sources:
       liquidation anticipée (approximations). Aucun ne lie la complémentaire à la base
     date: 2026-11-05
 code:
-  python: >-
-    droit/departs.py : departs, departs_et_demandes, _au_trimestre_civil,
-    liquider_les_departs ; carriere.py : Carriere.demandes_de_pension ;
-    droit/liquidation.py : Etat ; droit/ouvrir.py : ouvrir ; droit/liquider.py :
-    liquider_chaque_regime ; droit/completer.py : completer ; scenarios/actuel.py :
-    resultat_des_departs ; echeancier.py : Echeancier._partir ; revalorisation.py :
-    mener_au_mois, faire_vivre ; types_du_pont/droit.py : DemandeExaminee, Demande
   javascript: >-
     moteur/js/droit/departs.js : departs, departsEtDemandes, auTrimestreCivil,
     DemandeExaminee, liquiderLesDeparts ; moteur/js/carriere.js : Carriere.demandesDePension ;

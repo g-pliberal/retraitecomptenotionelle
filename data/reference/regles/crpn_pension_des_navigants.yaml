@@ -442,9 +442,6 @@ code:
     table `crpn_2022` portent la version trente_annuites_duree_seule Ses données : des
     périodes en annuités, 1963, 1995, 2012, 2016, 2022 et 2026 ; trimestres_de_decote
     compte la décote à la durée seule.
-  python: >-
-    donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime,
-    trimestres_de_decote
   javascript: >-
     moteur/js/regimes.js : CatalogueRegimes ; moteur/js/droit/liquider.js :
     liquiderChaqueRegime, trimestresDeDecote

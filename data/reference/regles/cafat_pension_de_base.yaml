@@ -241,8 +241,6 @@ code:
     une fiche de régime en points, une période par année de la montée de 2023 à 2026,
     au rendement de chaque année de rendements_points.csv, servi à l'année de la
     liquidation
-  python: >-
-    donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime
   javascript: >-
     moteur/js/regimes.js : CatalogueRegimes ; moteur/js/droit/liquider.js :
     liquiderChaqueRegime

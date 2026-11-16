@@ -324,9 +324,6 @@ sources:
     Lire l'avenant n° 2 du 24 juillet 1992 à la convention du 1er janvier 1990, qui
     pourrait dater le précompte de 1,2 %.
 code:
-  python: >-
-    moteur/compte.py : ConstructeurCompte._cotisation_ligne,
-    ConstructeurCompte._versement_chomage
   javascript: >-
     moteur/js/compte.js : ConstructeurCompte._cotisationLigne,
     ConstructeurCompte._versementChomage

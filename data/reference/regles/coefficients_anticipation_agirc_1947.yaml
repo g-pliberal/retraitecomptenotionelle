@@ -200,9 +200,6 @@ code:
     par_age_seul`, avec 0,0125 par trimestre, au pas de quatre trimestres, de soixante-cinq
     à soixante-dix ans (agirc.yaml), sert la table d'ajournement : 5 % par année révolue,
     1,25 au plus, ce qu'elle écrit ligne pour ligne.
-  python: >-
-    droit/liquider.py : coefficient_convention_1947, coefficient_pour_age,
-    abattement_points, surcote_points, _COEFFICIENTS_CONVENTION_1947
   javascript: >-
     moteur/js/droit/liquider.js : coefficientConvention1947, coefficientPourAge,
     abattementPoints, surcotePoints, COEFFICIENTS_CONVENTION_1947

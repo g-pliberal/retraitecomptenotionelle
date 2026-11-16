@@ -134,10 +134,6 @@ code:
     d'un relevé. Les services de la famille fonction_publique la lisent déjà
     (`droit/compter.py`, `compter.js`), et la liquidation le traitement à temps
     plein (`droit/liquider.py`).
-  python: >-
-    chronologie.py : du_parcours, du_releve ; carriere.py : _quotite_de_l_annee ;
-    droit/compter.py : compter, services_a_temps_partiel ; droit/liquider.py :
-    salaire_de_reference
   javascript: >-
     moteur/js/saisie.js : Saisie.tempsPartielAnalyse ; moteur/js/chronologie.js :
     duParcours, duReleve ; moteur/js/carriere.js : quotiteDeLAnnee ;

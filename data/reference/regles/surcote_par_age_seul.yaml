@@ -2136,11 +2136,6 @@ code:
     plus quand la première est partielle (`liquider.premieres_annees_majorees`) : le
     coefficient affiché est celui de la pension entière, et le détail nomme les années
     majorées.
-  python: >-
-    droit/liquider.py : liquider_chaque_regime, abattement_points, surcote_points,
-    age_de_la_duree_atteinte, _trimestres_cotises_apres, premieres_annees_majorees,
-    _trimestre_civil_suivant ; droit/ouvrir.py : age_taux_plein, age_ouverture_commun ;
-    donnees/tables_du_droit.py : AgesRegimes.age_surcote_maximum
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints, surcotePoints,
     ageDeLaDureeAtteinte, trimestresCotisesApres, premieresAnneesMajorees,

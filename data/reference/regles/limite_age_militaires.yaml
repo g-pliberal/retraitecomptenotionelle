@@ -172,11 +172,6 @@ sources:
       décret n° 2011-2103 du 30 décembre 2011, articles 3 à 5, dans l'index JORF du dépôt
     date: 2026-10-10
 code:
-  python: >-
-    droit/limite_age.py : radiation, radier, emploi_de, classe_de, _limite, _morceaux,
-    _age_de_la_version ; droit/departs.py : departs_et_demandes ; scenarios/actuel.py :
-    ScenarioActuel.calculer ; donnees/tables_du_droit.py : FichesDatees ; echeancier.py
-    : Echeancier.parcourir
   javascript: >-
     moteur/js/droit/limite_age.js : radiation, radier, emploiDe, classeDe, limiteDe,
     morceaux, ageDeLaVersion ; moteur/js/droit/departs.js : departsEtDemandes ;

@@ -78,12 +78,6 @@ code:
     date d'effet ; la réversion impute un seul plafond de ressources à leurs réversions
     (`reversion`), et `plancher_de_la_substitution` prend le régime aligné de la
     liquidation unique.
-  python: >-
-    droit/coordonner.py : REGIMES_ALIGNES, REGIMES_ALIGNES_TETE,
-    LURA_PREMIERE_GENERATION, LURA_DATE_EFFET, lura_applicable, groupes_de_succession ;
-    droit/liquider.py : annees_des_regimes_alignes,
-    trimestres_etrangers_au_salaire_moyen ; droit/reversion.py : reversion ;
-    droit/invalidite.py : plancher_de_la_substitution
   javascript: >-
     moteur/js/droit/coordonner.js : REGIMES_ALIGNES, REGIMES_ALIGNES_TETE,
     LURA_PREMIERE_GENERATION, LURA_DATE_EFFET, luraApplicable, groupesDeSuccession ;

@@ -142,11 +142,6 @@ code:
     (`REGIMES_REGLE_GENERALE`) ou non. `faire_vivre` mène ainsi la pension de départ
     jusqu'à l'année demandée, et `pension_aujourd_hui` sert au simulateur la pension
     d'aujourd'hui.
-  python: >-
-    donnees/revalorisations.py : RevalorisationsPensions,
-    RevalorisationsPensions.generale ; revalorisation.py : PensionServie,
-    PensionServie.coefficient, PensionServie._fonction_publique, REGIMES_REGLE_GENERALE,
-    faire_vivre, pension_aujourd_hui ; revalorisation_servie.py : REGIMES_FONCTION_PUBLIQUE
   javascript: >-
     moteur/js/revalorisation.js : RevalorisationsPensions,
     RevalorisationsPensions.generale, PensionServie, PensionServie.coefficient,

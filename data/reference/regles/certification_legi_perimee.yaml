@@ -42,8 +42,6 @@ code:
     certifient : la fiabilité de chaque valeur, `certifiee` comprise
     (`Fiabilite.depuis_texte`, `fiabiliteDepuisTexte`), et, pour la page Méthode, les
     dates du journal (`journal_certification`).
-  python: >-
-    donnees/chargement.py : journal_certification, Fiabilite, Fiabilite.depuis_texte
   javascript: >-
     moteur/js/serie.js : Fiabilite, fiabiliteDepuisTexte, nomFiabilite
   parametres: >-

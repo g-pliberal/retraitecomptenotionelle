@@ -350,9 +350,6 @@ textes_sans_effet:
 - {id: LEGIARTI000037063369, en_vigueur: 2018-06-14, motif: renvoi mis à jour (L. 653-2)}
 - {id: LEGIARTI000045136636, en_vigueur: 2022-02-09, motif: renvoi d'alinéa}
 code:
-  python: >-
-    donnees/tables_du_droit.py : MajorationsPourEnfants ; droit/compter.py :
-    majoration_pour_enfants
   javascript: >-
     moteur/js/regimes.js : MajorationsPourEnfants ; moteur/js/droit/compter.js : majorationPourEnfants
   parametres: >-

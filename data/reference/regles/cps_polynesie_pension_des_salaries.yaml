@@ -140,8 +140,6 @@ code:
     deux fiches de régime : la tranche A en annuités, une période par année de la
     montée de 2020 à 2023 ; la tranche B en points, au rendement de
     rendements_points.csv
-  python: >-
-    donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime
   javascript: >-
     moteur/js/regimes.js : CatalogueRegimes ; moteur/js/droit/liquider.js :
     liquiderChaqueRegime

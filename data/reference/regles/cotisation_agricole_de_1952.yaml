@@ -189,8 +189,6 @@ sources:
       jour au 2 novembre 2026) et JORF (au 3 novembre 2026) du dépôt
     date: 2026-11-03
 code:
-  python: >-
-    droit/acquerir.py : acquerir ; moteur/compte.py : ConstructeurCompte.cotisation_annuelle
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/compte.js :
     ConstructeurCompte.cotisationAnnuelle

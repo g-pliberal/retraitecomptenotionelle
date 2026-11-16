@@ -64,10 +64,6 @@ code:
     `abattement_regime_de_base`, la pension d'un régime de base en points de la décote
     par trimestre manquant que sa fiche écrit, à qui part sans la durée et avant l'âge
     d'annulation.
-  python: >-
-    droit/ouvrir.py : periodes_opposant_une_duree, age_taux_plein_droit, ouvrir ;
-    droit/departs.py : _ouverture ; droit/liquider.py : abattement_points,
-    abattement_regime_de_base
   javascript: >-
     moteur/js/droit/ouvrir.js : periodesOpposantUneDuree, ageTauxPleinDroit, ouvrir ;
     moteur/js/droit/departs.js : ouvertureDe ; moteur/js/droit/liquider.js :

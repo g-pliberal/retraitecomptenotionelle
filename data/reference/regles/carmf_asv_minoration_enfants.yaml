@@ -590,11 +590,6 @@ code:
     14 novembre 2026, action 130, ligne 18 de la file ; du mois où l'âge est atteint
     jusque-là), au taux de `surcote_par_trimestre_apres_palier` du trimestre civil qui
     suit `surcote_palier_age`, jusqu'à celui qui suit `surcote_age_maximum`.
-  python: >-
-    droit/liquider.py : abattement_points, abattement_ircec, _ABATTEMENTS_IRCEC,
-    _ABATTEMENTS_PAR_ANNEE_AGE_SEUL, surcote_points ; droit/ouvrir.py : age_taux_plein ;
-    droit/completer.py : completer, _taux_majoration_enfants ; droit/departs.py :
-    _au_trimestre_civil, departs_et_demandes
   javascript: >-
     moteur/js/droit/liquider.js : abattementPoints, abattementIrcec, surcotePoints ;
     moteur/js/droit/ouvrir.js : ageTauxPlein ; moteur/js/droit/completer.js : completer,

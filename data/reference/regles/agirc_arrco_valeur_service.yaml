@@ -219,11 +219,6 @@ sources:
     date: 2016-04-13
     url: https://www.cor-retraites.fr/sites/default/files/2019-06/doc-3337.pdf
 code:
-  python: >-
-    donnees/tables_du_droit.py : ValeursPoint.service_au, ValeursPoint.millesime ;
-    droit/liquider.py : valeur_du_point ; revalorisation.py : PensionServie.coefficient
-    ; droit/completer.py : plafond_majoration ; droit/seconde.py :
-    _seconde_retraite_complementaire, _seconde_retraite_rci
   javascript: >-
     moteur/js/regimes.js : ValeursPoint.serviceAu, ValeursPoint.millesime ;
     moteur/js/droit/liquider.js : valeurDuPoint ; moteur/js/revalorisation.js :

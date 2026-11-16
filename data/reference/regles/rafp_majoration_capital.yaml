@@ -398,9 +398,6 @@ code:
     barème de conversion de la date d'effet, et son fractionnement
     (fractionnement_rafp), la date de la pension de base étant le départ déclaré
     (mois_apres_le_depart).
-  python: >-
-    droit/liquider.py : majoration_rafp, conversion_capital_rafp, fractionnement_rafp,
-    prestation_rafp, mois_apres_le_depart, surcote_points
   javascript: >-
     moteur/js/droit/liquider.js : majorationRafp, conversionCapitalRafp,
     fractionnementRafp, prestationRafp, moisApresLeDepart, surcotePoints

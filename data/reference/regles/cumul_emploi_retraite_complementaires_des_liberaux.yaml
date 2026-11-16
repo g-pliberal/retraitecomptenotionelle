@@ -219,13 +219,6 @@ sources:
     url: https://www.carmf.fr/page.php?page=cdrom/retr/retr-continuer.htm
     date: 2026-01-01
 code:
-  python: >-
-    droit/cumul.py : _Calcul._complementaire_des_liberaux, _Calcul._non_salarie,
-    _Calcul._complementaire_2027, groupe_de_la_pension, COMPLEMENTAIRES_DES_LIBERAUX,
-    GROUPES_COMPLEMENTAIRES_2027, REGLES_DES_SECTIONS, PROFESSIONS_DES_STATUTS,
-    A_LA_REPRISE, AVEC_LA_BASE, COMME_LA_BASE, APRES_LA_BASE, DEPASSEMENT_ENTIER,
-    SANS_SUSPENSION, NOTAIRE_LIBERAL, SECTIONS_STATUTS, RCI_2027 ; echeancier.py :
-    Echeancier._cumuler
   javascript: >-
     moteur/js/droit/cumul.js : complementaireDesLiberaux, nonSalarie, complementaire2027,
     groupeDeLaPension, COMPLEMENTAIRES_DES_LIBERAUX, GROUPES_COMPLEMENTAIRES_2027,

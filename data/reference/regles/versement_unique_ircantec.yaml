@@ -153,9 +153,6 @@ sources:
     url: https://www.ircantec.retraites.fr/deces/pension-reversion
     date: 2026-10-13
 code:
-  python: >-
-    droit/completer.py : verser_en_capital, salaire_de_reference_points, completer ;
-    donnees/tables_du_droit.py : FichesDatees
   javascript: >-
     moteur/js/droit/completer.js : verserEnCapital, salaireDeReferencePoints,
     completer ; moteur/js/regimes.js : FichesDatees

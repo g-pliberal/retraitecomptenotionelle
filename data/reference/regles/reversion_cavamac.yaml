@@ -254,9 +254,6 @@ sources:
     date: 2026-11-14
     url: https://www.cavamac.fr/je-suis-a-la-retraite/la-pension-de-reversion/
 code:
-  python: >-
-    droit/reversion.py : reversion, _mariage_dure, _part_du_survivant, _admis_ailleurs ;
-    donnees/tables_du_droit.py : Reversions
   javascript: >-
     moteur/js/droit/reversion.js : reversion, mariageDure, partDuSurvivant,
     admisAilleurs ; moteur/js/regimes.js : Reversions

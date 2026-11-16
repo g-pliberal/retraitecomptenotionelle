@@ -78,11 +78,6 @@ code:
     2003 (`FIN_PEREQUATION`, `MinimumGaranti.ratio_point_indice`), les décrets de 2004 à
     2008, L. 161-23-1 ensuite —, celle du jour de la mise en paiement comprise, celle du
     jour de la radiation non. Une mise en paiement d'avant 2004 garde le point.
-  python: >-
-    droit/liquider.py : salaire_de_reference ; droit/coordonner.py :
-    REGIMES_CODE_DES_PENSIONS ; revalorisation.py : coefficient_traitement_differe ;
-    donnees/revalorisations.py : RevalorisationsPensions ; revalorisation_servie.py :
-    FIN_PEREQUATION ; donnees/tables_du_droit.py : MinimumGaranti.ratio_point_indice
   javascript: >-
     moteur/js/droit/liquider.js : salaireDeReference ; moteur/js/droit/coordonner.js :
     REGIMES_CODE_DES_PENSIONS ; moteur/js/revalorisation.js :

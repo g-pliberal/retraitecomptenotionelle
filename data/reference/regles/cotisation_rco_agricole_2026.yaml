@@ -238,9 +238,6 @@ code:
     part ; `ConstructeurCompte._cotisation_ligne` l'ajoute à la cotisation que le compte
     du droit en vigueur reçoit. Le régime fusionné de la proposition, après la bascule,
     ne la prélève pas.
-  python: >-
-    droit/acquerir.py : seconde_part_de_rco, acquerir ; moteur/compte.py :
-    ConstructeurCompte._cotisation_ligne ; donnees/tables_du_droit.py : FichesDatees
   javascript: >-
     moteur/js/droit/acquerir.js : secondePartDeRco, acquerir ; moteur/js/compte.js :
     ConstructeurCompte._cotisationLigne ; moteur/js/regimes.js : FichesDatees

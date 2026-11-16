@@ -692,11 +692,6 @@ code:
     la rédaction de l'arrêté du 4 août 2023, article 16, depuis le 1er janvier 2024 ;
     ils disaient « différée » auparavant). Sans ce renvoi, le temps écoulé suffit, comme
     dans les autres sections.
-  python: >-
-    droit/liquider.py : abattement_points, abattement_ircec, abattement_regime_de_base,
-    decote_opposable, trimestres_de_decote, inapte_sans_coefficient,
-    categorie_sans_coefficient, surcote_points, _ABATTEMENTS_IRCEC,
-    _ABATTEMENTS_PAR_ANNEE_AGE_SEUL ; droit/ouvrir.py : age_taux_plein
   javascript: >-
     moteur/js/droit/liquider.js : abattementPoints, abattementIrcec,
     abattementRegimeDeBase, decoteOpposable, trimestresDeDecote, inapteSansCoefficient,

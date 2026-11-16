@@ -236,11 +236,6 @@ code:
     (`crpcen_calendrier_a_60`, `comedie_francaise_calendrier_a_60`), qui répond à qui
     réunit les conditions après soixante ans, avant le 1er juillet 2019 ou en deçà de la
     première génération de la table.
-  python: >-
-    droit/ouvrir.py : age_ouverture_commun, age_taux_plein, duree_requise, duree_propre,
-    mois_ouverture_des_droits ; donnees/tables_du_droit.py : AgesRegimes,
-    AgesRegimes.ages, DureesRequisesRegimes, DureesRequisesRegimes.ligne,
-    CalendriersDureeRequise, CalendriersDureeRequise.trimestres
   javascript: >-
     moteur/js/droit/ouvrir.js : ageOuvertureCommun, ageTauxPlein, dureeRequise,
     dureePropre, moisOuvertureDesDroits ; moteur/js/regimes.js : AgesRegimes,

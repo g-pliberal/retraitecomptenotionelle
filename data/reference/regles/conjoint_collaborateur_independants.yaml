@@ -213,9 +213,6 @@ textes_sans_effet:
     en vigueur du régime d'assurance vieillesse dont relève l'activité exercée par
     l'intéressé », un rachat de l'assuré volontaire
 code:
-  python: >-
-    carriere.py : CONJOINTS_COLLABORATEURS, assiette_du_conjoint_collaborateur,
-    _ligne_annuelle
   javascript: >-
     moteur/js/carriere.js : CONJOINTS_COLLABORATEURS, assietteDuConjointCollaborateur,
     ligneAnnuelle ; moteur/js/saisie.js : ASSIETTES_COLLABORATEUR, PARTS_COLLABORATEUR,

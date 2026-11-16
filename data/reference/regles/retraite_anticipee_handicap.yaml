@@ -317,15 +317,6 @@ approximations:
     pension majorée, quand la circulaire (3.8) la calcule sur la pension non majorée
   effet: non mesuré
 code:
-  python: >-
-    droit/invalidite.py : incapacite_reconnue, version_du_handicap,
-    trimestres_en_situation_de_handicap, exigences_du_handicap, age_du_handicap,
-    age_propose_du_handicap, sans_decote_du_fonctionnaire, coefficient_de_majoration,
-    annee_en_situation_de_handicap ; droit/ouvrir.py : ouvrir, age_ouverture_droit,
-    age_taux_plein_droit, age_handicap_propose ; droit/departs.py : _handicap_acquis ;
-    droit/liquider.py : liquider_chaque_regime, abattement_points,
-    abattement_regime_de_base ; donnees/tables_du_droit.py : Invalidites,
-    Invalidites.sans ; avantages.py : NEUTRALISATIONS
   javascript: >-
     moteur/js/droit/invalidite.js : incapaciteReconnue, versionDuHandicap,
     trimestresEnSituationDeHandicap, exigencesDuHandicap, ageDuHandicap,

@@ -893,11 +893,6 @@ code:
     `departs` la reporte au premier jour du trimestre civil qui commence ce jour-là ou
     après (motif `trimestre_civil`) : elle s'y liquide seule, sous la durée requise de
     la base (`ouvrir`). Les écarts au texte : voir `approximations`.
-  python: >-
-    donnees/tables_du_droit.py : AgesRegimes, AgesRegimes.ages ; droit/ouvrir.py :
-    ouvrir, age_taux_plein, age_ouverture_commun ; droit/liquider.py : decote_opposable,
-    trimestres_de_decote, surcote_points, age_de_la_duree_atteinte ; droit/departs.py :
-    _au_trimestre_civil, departs_et_demandes
   javascript: >-
     moteur/js/regimes.js : AgesRegimes, AgesRegimes.ages ; moteur/js/droit/ouvrir.js :
     ouvrir, ageTauxPlein, ageOuvertureCommun ; moteur/js/droit/liquider.js :

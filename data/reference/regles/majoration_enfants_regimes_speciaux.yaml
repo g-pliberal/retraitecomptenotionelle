@@ -65,8 +65,6 @@ code:
     chaque pension dont la période déclare `majoration_enfants`, sans la borner au
     traitement, que le plafond de L. 18 (fiche
     `majoration_enfants_plafond_fonction_publique`) ne vise pas.
-  python: >-
-    droit/completer.py : completer, _taux_majoration_enfants
   javascript: >-
     moteur/js/droit/completer.js : completer, tauxMajorationEnfants
   parametres: >-

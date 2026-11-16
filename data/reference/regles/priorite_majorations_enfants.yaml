@@ -313,9 +313,6 @@ textes_a_rattacher:
     6 ; décret n° 68-960, article 6 ; décret n° 62-766, articles 110 et 112 ; code
     des transports, L. 5552-11
 code:
-  python: >-
-    droit/compter.py : majoration_pour_enfants, droit_regime_special, bonification_ouverte,
-    dernieres_annees, choisir
   javascript: >-
     moteur/js/droit/compter.js : majorationPourEnfants, droitRegimeSpecial, bonificationOuverte,
     dernieresAnnees, choisir

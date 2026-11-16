@@ -303,8 +303,6 @@ code:
     (`cotisation_forfaitaire_euros`, `cotisation_forfaitaire_annee`), porté par les prix
     aux années qui n'en publient pas : de 2017 à 2024, celui de 2016. L'assiette est le
     revenu de l'année même, sans arrondi des points.
-  python: >-
-    droit/acquerir.py : acquerir ; donnees/regimes.py : PeriodeRegime.ajustement_total
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js :
     PeriodeRegime.ajustementTotal

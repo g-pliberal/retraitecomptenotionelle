@@ -209,14 +209,6 @@ code:
     le libéral pensionné de 2004 à 2015 ; les trois premiers écartent aussi l'assiette
     minimale en plafonds de la CARPIMKO et de la CAVOM, au scénario 1 comme au compte
     (`dispense_les_complementaires`).
-  python: >-
-    carriere.py : _ligne_annuelle ; donnees/macro.py : DonneesMacro.smic_horaire_de ;
-    donnees/chargement.py : AssietteMinimale.montant,
-    charger_assiettes_minimales, assiette_minimale, charger_dispenses_assiette_minimale,
-    dispense_assiette_minimale, dispense_les_complementaires ; droit/acquerir.py :
-    assiette_minimale, acquerir ; droit/liquider.py : salaire_de_reference ;
-    droit/seconde.py : _revenus ; moteur/compte.py :
-    ConstructeurCompte._cotisation_ligne
   javascript: >-
     moteur/js/carriere.js : ligneAnnuelle, assietteMinimale, montantAssietteMinimale ;
     moteur/js/macro.js : DonneesMacro.smicHoraireDe ; moteur/js/carriere.js :

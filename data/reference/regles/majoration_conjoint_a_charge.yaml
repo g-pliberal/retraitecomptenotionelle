@@ -267,11 +267,6 @@ sources:
     url: https://legislation.lassuranceretraite.fr/api/v1/baremes/baremesByFileLeafRef/ancienne_prestation_mc_montant_bar.aspx
     date: 2026-10-08
 code:
-  python: >-
-    droit/completer.py : majoration_pour_conjoint_a_charge, completer ;
-    droit/commun.py : majoration_du_conjoint ; revalorisation.py : faire_vivre ;
-    echeancier.py : Echeancier._pensions_eues_au_deces ; types_du_pont/droit.py :
-    PensionRegime ; types_du_pont/revalorisation.py : RegimeServi
   javascript: >-
     moteur/js/droit/completer.js : majorationPourConjointACharge, completer ;
     moteur/js/droit/commun.js : majorationDuConjoint ; moteur/js/revalorisation.js :

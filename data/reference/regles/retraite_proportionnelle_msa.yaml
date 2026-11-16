@@ -625,15 +625,6 @@ code:
     SMIC, un plateau à trente jusqu'à deux fois le minimum contributif, puis une pente
     jusqu'au maximum de l'année (R. 732-70 et R. 732-71 du code rural). La pension multiplie
     ensuite les points par 37,5 / la durée requise en années.
-  python: >-
-    droit/acquerir.py : acquerir, points_msa, points_msa_retenus, POINTS_MSA_MINIMUM,
-    assiette_du_collaborateur ; droit/liquider.py : liquider_chaque_regime,
-    valeur_point_fiche, annees_hors_forfait,
-    majoration_des_points_de_1952_a_1972_d_avant_2026,
-    taux_de_majoration_de_1952_a_1972, MAJORATION_DE_1952_A_1972_DEPUIS,
-    MAJORATION_DE_1952_A_1972_JUSQU_A, MAJORATION_DE_1952_A_1972_CODIFIEE_DEPUIS ;
-    droit/ouvrir.py : duree_requise ; donnees/tables_du_droit.py :
-    MinimumContributif.avts
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir, pointsMsa, pointsMsaRetenus,
     POINTS_MSA_MINIMUM, assietteDuCollaborateur ; moteur/js/droit/liquider.js :

@@ -151,9 +151,6 @@ textes_a_rattacher:
 - reference: règlement (CE) n° 883/2004, articles 23 à 25, les soins des titulaires de pension
 - reference: CGI, article 4 B, le domicile fiscal
 code:
-  python: >-
-    remuneration.py : PrelevementsPension, MaladieRegimeSpecial,
-    MaladieRegimeSpecial.cotisation
   javascript: >-
     moteur/js/contexte.js : couvertureFrancaise, reglementsEuropeens, Montants.duFoyer,
     pensionDuRegime ; moteur/js/remuneration.js : PrelevementsPension,

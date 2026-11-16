@@ -252,10 +252,6 @@ code:
     décalé de cinq générations que les décrets de la SNCF (article 37-1, IV) et de la
     RATP (article 51-1, II, 3°) écrivent, soixante-quatre ans à compter de la génération
     1970 —, et non au-delà de l'âge d'ouverture de la période.
-  python: >-
-    droit/ouvrir.py : age_surcote ; droit/liquider.py : liquider_chaque_regime,
-    trimestres_de_surcote_regimes_speciaux ; donnees/tables_du_droit.py :
-    AgesSurcoteRegimesSpeciaux
   javascript: >-
     moteur/js/droit/ouvrir.js : ageSurcote ; moteur/js/droit/liquider.js :
     liquiderChaqueRegime, trimestresDeSurcoteRegimesSpeciaux ; moteur/js/regimes.js :

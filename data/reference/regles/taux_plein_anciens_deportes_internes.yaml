@@ -168,9 +168,6 @@ sources:
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2024_29_30102024.pdf
     date: 2024-10-30
 code:
-  python: >-
-    droit/categories.py : taux_plein_par_categorie, remplit ; droit/liquider.py :
-    liquider_chaque_regime, abattement_points ; carriere.py : Carriere.deporte_ou_interne
   javascript: >-
     moteur/js/droit/categories.js : tauxPleinParCategorie, remplit ;
     moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints ;

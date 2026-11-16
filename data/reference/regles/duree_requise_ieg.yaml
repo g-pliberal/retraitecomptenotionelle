@@ -301,9 +301,6 @@ code:
     dans `legislation/duree_requise_regimes_speciaux.csv`. Les tables de cinq à
     quatorze ans, `ieg_actif_5` à `ieg_actif_14`, sont transcrites sans qu'aucune période
     ne les nomme.
-  python: >-
-    droit/ouvrir.py : duree_requise, duree_propre ; donnees/tables_du_droit.py :
-    DureesRequisesRegimes, DureesRequisesRegimes.ligne, CalendriersDureeRequise
   javascript: >-
     moteur/js/droit/ouvrir.js : dureeRequise, dureePropre ; moteur/js/regimes.js :
     DureesRequisesRegimes, DureesRequisesRegimes.ligne

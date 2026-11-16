@@ -75,11 +75,6 @@ code:
     entrés depuis vont au régime général et à l'Agirc-Arrco, ou à l'Ircantec pour le
     CESE (`entres_depuis`), et la saisie du portage refuse le statut fermé, qu'elle
     renvoie à celui qui le relève (`Affiliations.fermeture_entrants`, `statutFerme`).
-  python: >-
-    donnees/regimes.py : Regime.periode, Regime.periode_a_l_effet, Reforme,
-    charger_reformes, reformes_non_portees ; droit/commun.py :
-    periode_de_liquidation ; donnees/affiliations.py : Affiliations.regimes,
-    Affiliations._periode, Affiliations.fermeture_entrants
   javascript: >-
     moteur/js/regimes.js : Regime.periode, Regime.periodeALEffet, Affiliations.regimes,
     Affiliations._periode, Affiliations.fermetureEntrants ; moteur/js/droit/commun.js :

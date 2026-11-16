@@ -203,11 +203,6 @@ sources:
     date: 2026-10-05
     url: https://media.rafp.fr/s3fs-public/2022-12/2012-RAFP-Rapport-Annuel.pdf
 code:
-  python: >-
-    droit/reversion.py : reversion, _part_du_survivant, _admis_ailleurs,
-    _jusqu_au_remariage ; droit/liquider.py : prestation_rafp ; echeancier.py :
-    Echeancier._pensions_au_deces, Echeancier._pensions_eues_au_deces ;
-    donnees/tables_du_droit.py : Reversions ; types_du_pont/droit.py : PensionRegime
   javascript: >-
     moteur/js/droit/reversion.js : reversion, partDuSurvivant, admisAilleurs,
     jusquAuRemariage ; moteur/js/droit/liquider.js : prestationRafp ;

@@ -326,12 +326,6 @@ code:
     `age_carriere_longue` et `_carriere_longue_acquise` la lisent pour dater celui d'une
     carrière, `ouverture_carriere_longue` pour un fonctionnaire. `avant` la ramène aux
     décrets d'avant une date, pour un droit contrefactuel.
-  python: >-
-    donnees/tables_du_droit.py : CarriereLongue, CarriereLongue.avant ;
-    droit/carriere_longue.py : portes_opposables, de_la_fonction_publique,
-    _requis, _entree_precoce, age_de_depart, age_propose ; droit/ouvrir.py :
-    ouvrir, age_carriere_longue, duree_d_assurance, ouverture_carriere_longue ;
-    droit/departs.py : _carriere_longue_acquise
   javascript: >-
     moteur/js/regimes.js : CarriereLongue, CarriereLongue.portes,
     CarriereLongue.deLaFonctionPublique, CarriereLongue.requisDe,

@@ -127,9 +127,6 @@ code:
     point du régime, aux générations nées depuis 1952 et aux pensions prenant effet
     depuis 2012 (`PREMIER_PLAFOND_MAJORATION`) ; `regime_du_plafond` oppose aux points
     de l'Arrco et de l'Agirc servis depuis 2019 celui du régime unifié.
-  python: >-
-    droit/completer.py : completer, _taux_majoration_enfants, plafond_majoration,
-    regime_du_plafond, PREMIER_PLAFOND_MAJORATION
   javascript: >-
     moteur/js/droit/completer.js : completer, tauxMajorationEnfants, plafondMajoration,
     regimeDuPlafond, PREMIER_PLAFOND_MAJORATION

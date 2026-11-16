@@ -48,9 +48,6 @@ code:
     nul : le régime général et les non-salariés agricoles, dont le texte n'en a pas, le
     reçoivent comme les libéraux, les avocats et les fonctionnaires, dont le texte
     l'écrit.
-  python: >-
-    droit/liquider.py : trimestres_de_decote ; donnees/regimes.py :
-    CatalogueRegimes._construire, PeriodeRegime
   javascript: >-
     moteur/js/droit/liquider.js : trimestresDeDecote
   parametres: >-

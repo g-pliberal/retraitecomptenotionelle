@@ -49,11 +49,6 @@ code:
     pensions : le coefficient ET l'âge d'annulation y montent en charge de 2006 à 2020,
     ce dernier étant la LIMITE D'ÂGE du grade diminuée d'un nombre décroissant de trimestres
     (`legislation/decote_fonction_publique.csv`).
-  python: >-
-    droit/liquider.py : liquider_chaque_regime, decote_opposable, millesime_du_bareme,
-    trimestres_de_decote, _au_trimestre_superieur, _BAREMES_DECOTE_EN_TABLE ;
-    droit/ouvrir.py : age_taux_plein, annee_ouverture_des_droits, derogation_active ;
-    donnees/tables_du_droit.py : DecoteFonctionPublique
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, decoteOpposable,
     millesimeDuBareme, trimestresDeDecote, auTrimestreSuperieur,

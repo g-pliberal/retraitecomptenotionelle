@@ -292,10 +292,6 @@ sources:
     url: https://www.juris-cnracl.retraites.fr/pension-normale/les-accessoires-de-pension/majoration-pour-enfants/montant-de-la-majoration-pour-enfants-mise-en-paiement-et-regles-de-cumul
     date: 2022-11-29
 code:
-  python: >-
-    droit/liquider.py : Pensions ; droit/completer.py : majoration_sous_le_traitement,
-    completer ; donnees/tables_du_droit.py : FichesDatees ; types_du_pont/droit.py :
-    EligiblePlafondEnfants
   javascript: >-
     moteur/js/droit/liquider.js : Pensions ; moteur/js/droit/completer.js :
     majorationSousLeTraitement, completer ; moteur/js/regimes.js : FichesDatees

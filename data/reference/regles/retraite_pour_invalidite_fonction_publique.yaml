@@ -303,12 +303,6 @@ textes_sans_effet:
 - {id: LEGIARTI000049428940, article: "décret n° 2003-1306, article 37", en_vigueur: 2024-04-18,
    motif: "renvoi mis à jour : les articles L. 556-5 à L. 556-7 du code général de la fonction publique remplacent les articles 1er-1 à 1er-3 de la loi du 13 septembre 1984"}
 code:
-  python: >-
-    droit/invalidite.py : radiation_du_regime, retraite_pour_invalidite,
-    pension_du_fonctionnaire_invalide, rente_viagere_d_invalidite ; droit/departs.py :
-    departs_et_demandes, MOTIF_RADIATION ; droit/ouvrir.py : age_ouverture ;
-    droit/liquider.py : liquider_chaque_regime ; droit/coordonner.py : droit_a_pension ;
-    donnees/tables_du_droit.py : MinimumGaranti.valeur_d_un_indice
   javascript: >-
     moteur/js/droit/invalidite.js : radiationDuRegime, retraitePourInvalidite,
     pensionDuFonctionnaireInvalide, renteViagereDInvalidite ;

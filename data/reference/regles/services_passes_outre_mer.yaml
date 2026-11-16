@@ -229,9 +229,6 @@ sources:
     1983, agréé par un avis du 31 décembre 1987 (JORFTEXT000000888235), dont l'index ne
     porte que le titre.
 code:
-  python: >-
-    donnees/affiliations.py : Affiliations.services_passes ; droit/acquerir.py :
-    acquerir ; moteur/compte.py : ConstructeurCompte._cotisation_ligne
   javascript: >-
     moteur/js/regimes.js : Affiliations.servicesPasses ; moteur/js/droit/acquerir.js :
     acquerir ; moteur/js/compte.js : ConstructeurCompte._cotisationLigne

@@ -1090,14 +1090,6 @@ code:
     « par trimestre civil entier d'exercice libéral suivant le dernier jour du trimestre
     civil incluant l'âge » (statuts de 2011, article 19, I, c). Sans ce renvoi, le temps
     écoulé suffit, comme dans les autres sections.
-  python: >-
-    droit/liquider.py : abattement_points, abattement_ircec, abattement_regime_de_base,
-    decote_opposable, trimestres_de_decote, taux_plein_anticipe,
-    inapte_sans_coefficient, categorie_sans_coefficient, surcote_points,
-    trimestres_civils_d_exercice, _ABATTEMENTS_IRCEC, _ABATTEMENTS_PAR_ANNEE_AGE_SEUL ;
-    droit/categories.py : remplit_l_une_de ; droit/ouvrir.py : age_taux_plein ;
-    donnees/tables_du_droit.py : AgesRegimes ; droit/completer.py : completer,
-    _taux_majoration_enfants
   javascript: >-
     moteur/js/droit/liquider.js : abattementPoints, abattementIrcec,
     abattementRegimeDeBase, decoteOpposable, trimestresDeDecote, tauxPleinAnticipe,

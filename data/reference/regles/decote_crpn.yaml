@@ -66,10 +66,6 @@ code:
     décote est abaissée par la table `crpn_2022`
     (`legislation/duree_requise_regimes_speciaux.csv`), qui ne répond qu'à qui
     liquide à cinquante-cinq ans ou plus (colonne `age_minimum`).
-  python: >-
-    droit/liquider.py : liquider_chaque_regime, decote_opposable, trimestres_de_decote,
-    retranche_decote ; droit/ouvrir.py : age_taux_plein, duree_propre ;
-    donnees/tables_du_droit.py : DureesRequisesRegimes
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, decoteOpposable,
     trimestresDeDecote, retrancheDecote ; moteur/js/droit/ouvrir.js : ageTauxPlein,

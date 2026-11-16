@@ -72,10 +72,6 @@ code:
     général, `legislation/coefficient_minoration.csv`, à l'ANNÉE DE NAISSANCE, comme la
     fiche `decote_regime_general` le décrit ; R. 732-61 en donne les onze mêmes valeurs
     aux non-salariés agricoles.
-  python: >-
-    droit/liquider.py : liquider_chaque_regime, abattement_points,
-    abattement_regime_de_base, decote_opposable, trimestres_de_decote ; droit/ouvrir.py
-    : age_taux_plein ; donnees/tables_du_droit.py : CoefficientsMinoration
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints,
     abattementRegimeDeBase, decoteOpposable, trimestresDeDecote ;

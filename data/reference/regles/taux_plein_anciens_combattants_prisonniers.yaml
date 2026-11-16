@@ -319,10 +319,6 @@ textes_sans_effet:
     (21 décembre 1985) ; le b reste, « Soixante ans si l'entrée en jouissance se situe
     en 1975 ou postérieurement »
 code:
-  python: >-
-    droit/categories.py : taux_plein_par_categorie, age_des_anciens_combattants ;
-    droit/liquider.py : liquider_chaque_regime, abattement_points ; carriere.py :
-    Carriere.mois_de_guerre
   javascript: >-
     moteur/js/droit/categories.js : tauxPleinParCategorie, ageDesAnciensCombattants ;
     moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints ;

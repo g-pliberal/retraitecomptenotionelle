@@ -69,12 +69,6 @@ code:
     `bornes_en_euros`, font primer sur le plafond, et leurs taux : `acquerir` en achète
     les points, le compte et la fiche de paie en reçoivent les cotisations ; avant 2016,
     8 % sans plafond.
-  python: >-
-    droit/liquider.py : liquider_chaque_regime ; droit/commun.py :
-    periode_de_liquidation ; droit/acquerir.py : acquerir ; donnees/regimes.py :
-    PeriodeRegime.bornes_assiette_en_euros, PeriodeRegime.bornes_en_euros ;
-    moteur/compte.py : ConstructeurCompte._cotisation_ligne,
-    ConstructeurCompte._bornes_proratisees ; remuneration.py : bloc_droit_en_vigueur
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime ; moteur/js/droit/commun.js :
     periodeDeLiquidation ; moteur/js/droit/acquerir.js : acquerir ;

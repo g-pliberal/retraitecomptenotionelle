@@ -526,13 +526,6 @@ code:
     à quatre trimestres par année civile, ceux de l'activité qui en couvre le plus
     (`Carriere._plafonds_trimestres`), et `Carriere.trimestres_cumules` en fait la
     somme.
-  python: >-
-    carriere.py : _lignes_du_parcours, Carriere.trimestres_par_annee,
-    Carriere._plafonds_trimestres, Carriere.trimestres_cumules,
-    Carriere.trimestres_ecoules ; donnees/macro.py : DonneesMacro.trimestres_valides,
-    DonneesMacro.seuil_d_un_trimestre ; types_du_pont/carriere.py : Metier ;
-    droit/coordonner.py : ecarter_les_accessoires,
-    regimes_de
   javascript: >-
     moteur/js/carriere.js : lignesDuParcours, Carriere.trimestresParAnnee,
     Carriere.trimestresCumules, Carriere.trimestresEcoules ; moteur/js/macro.js :

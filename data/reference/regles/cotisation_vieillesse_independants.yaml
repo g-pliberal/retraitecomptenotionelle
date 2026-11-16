@@ -243,10 +243,6 @@ sources:
     url: https://legislation.lassuranceretraite.fr/#/infosupp?file_leaf_ref=ex_independant_regime_base_duree_assurance_trimestre_cotise_dac_ti_2015.aspx
     date: 2026-10-31
 code:
-  python: >-
-    donnees/regimes.py : PeriodeRegime.taux_du_cotisant, charger_taux_annuels ;
-    moteur/compte.py : ConstructeurCompte.taux_effectif ; remuneration.py :
-    bloc_droit_en_vigueur
   javascript: >-
     moteur/js/regimes.js : PeriodeRegime.tauxDuCotisant ; moteur/js/compte.js :
     ConstructeurCompte.tauxEffectif ; moteur/js/remuneration.js : blocDroitEnVigueur

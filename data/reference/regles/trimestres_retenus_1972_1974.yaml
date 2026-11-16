@@ -79,8 +79,6 @@ code:
     général et des salariés agricoles, borne les trimestres que la pension retient sans
     toucher au dénominateur de la proratisation, 150 : `liquider` et son portage prennent le
     plus petit des trimestres du régime et de ce plafond.
-  python: >-
-    droit/liquider.py : liquider_chaque_regime
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime
   parametres: >-

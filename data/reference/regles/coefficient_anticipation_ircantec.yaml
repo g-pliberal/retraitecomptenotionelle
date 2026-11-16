@@ -878,11 +878,6 @@ code:
     (`exoneration_des_femmes_de_1977`, 5°, jusqu'au 31 mars 1983 ;
     `exoneration_des_agents_de_soixante_trois_ans`, 6° a), jusqu'au 31 décembre 2003),
     l'agent encore en fonction par `agent_a_la_liquidation`.
-  python: >-
-    droit/liquider.py : liquider_chaque_regime, abattement_points, bareme_ircantec,
-    exonere_par_l_age_et_la_duree, agent_a_la_liquidation, coefficient_par_annee_d_age, coefficient_pour_age, _coefficient_anticipation, _PALIERS_ANTICIPATION,
-    _COEFFICIENT_ANTICIPATION_PLANCHER ; droit/ouvrir.py : age_taux_plein ;
-    droit/invalidite.py : taux_plein_de_l_inapte
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints, baremeIrcantec,
     exonereParLAgeEtLaDuree, agentALaLiquidation, coefficientParAnneeDAge, coefficientPourAge, coefficientAnticipation, PALIERS_ANTICIPATION,

@@ -222,9 +222,6 @@ code:
     coefficient de la surcote ordinaire — celui de L. 14 au code des pensions —, avant
     la majoration pour enfants ; la pension provisoire d'une retraite progressive qui
     l'emporte les efface.
-  python: >-
-    droit/completer.py : trimestres_de_surcote_parentale, completer ;
-    donnees/tables_du_droit.py : SurcoteParentale, SurcoteParentale.parametres
   javascript: >-
     moteur/js/droit/completer.js : trimestresDeSurcoteParentale, completer ;
     moteur/js/regimes.js : SurcoteParentale, SurcoteParentale.parametres

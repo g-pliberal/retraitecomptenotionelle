@@ -259,10 +259,6 @@ sources:
     url: https://questions.assemblee-nationale.fr/dyn/16/questions/QANR5L16QE9211.pdf
     date: 2023-09-12
 code:
-  python: >-
-    donnees/tables_du_droit.py : FichesDatees ; droit/compter.py :
-    trimestres_des_emplois, trimestres_d_un_emploi, condition_d_un_emploi ;
-    droit/liquider.py : liquider_chaque_regime
   javascript: >-
     moteur/js/regimes.js : FichesDatees ; moteur/js/droit/compter.js :
     trimestresDesEmplois, trimestresDUnEmploi, conditionDUnEmploi ;

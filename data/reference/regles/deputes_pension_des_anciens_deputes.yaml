@@ -197,8 +197,6 @@ code:
     une fiche de régime en annuités, dont l'âge se lit à la génération (`age_table:
     assemblee_nationale`) et la durée au mois de l'âge d'ouverture
     (`duree_requise_calendrier: assemblee_nationale`)
-  python: >-
-    donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime
   javascript: >-
     moteur/js/regimes.js : CatalogueRegimes ; moteur/js/droit/liquider.js :
     liquiderChaqueRegime

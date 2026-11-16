@@ -385,9 +385,6 @@ code:
   moteur: >-
     `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule pas la minoration,
     que seul l'âge efface.
-  python: >-
-    droit/liquider.py : abattement_points, abattement_regime_de_base, decote_opposable,
-    trimestres_de_decote ; droit/ouvrir.py : age_ouverture, age_taux_plein
   javascript: >-
     moteur/js/droit/liquider.js : abattementPoints, abattementRegimeDeBase,
     decoteOpposable, trimestresDeDecote ; moteur/js/droit/ouvrir.js : ageOuverture,

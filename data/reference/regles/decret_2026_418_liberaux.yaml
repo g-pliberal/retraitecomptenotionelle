@@ -607,10 +607,6 @@ code:
     de la Cipav, que `liquider_chaque_regime` étendait à tous les points jusqu'au
     14 novembre 2026 —,
     `sources.a_relire` le dit.
-  python: >-
-    droit/acquerir.py : acquerir, dispense_de_debut, exemption_passe_l_age ;
-    droit/liquider.py :
-    liquider_chaque_regime ; moteur/compte.py : ConstructeurCompte
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir, dispenseDeDebut, exemptionPasseLAge ;
     moteur/js/droit/liquider.js :

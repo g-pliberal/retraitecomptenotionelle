@@ -44,7 +44,7 @@ objets:
       textes_sans_effet: {porte: "les rédactions lues qui ne la changent pas", type: liste, de: {objet: texte}, defaut: []}
       textes_a_rattacher: {porte: "celles qui la changent sans être encore coupées en versions", type: liste, de: {objet: texte}, defaut: []}
       textes_a_relire: {porte: "celles dont l'effet reste à lire", type: liste, de: {objet: texte}, defaut: []}
-      code: {porte: "les fonctions des deux moteurs, les paramètres, les tests", type: libre, defaut: {}, obligatoire_sauf: {etat: [pas_encore_modelisee]}}
+      code: {porte: "les fonctions du moteur JavaScript, les paramètres, les tests", type: libre, defaut: {}, obligatoire_sauf: {etat: [pas_encore_modelisee]}}
       referents: {porte: "la correspondance avec chaque autre modèle, et les écarts justifiés", type: libre, defaut: {}}
       historique: {porte: "les récits qui la concernent, repris des registres", type: liste, de: texte, defaut: []}
       exemples: {porte: "les exemples officiels de la fiche tant que ses versions ne sont pas découpées", type: liste, de: identifiant, defaut: [], additif: "une fiche tirée d'un registre n'a pas encore de versions où les rattacher"}
