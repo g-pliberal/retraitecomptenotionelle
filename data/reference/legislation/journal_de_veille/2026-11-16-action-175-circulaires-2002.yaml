@@ -1,0 +1,35 @@
+date: "2026-11-16"
+session: "action 175, étape 6 : les 102 circulaires, lettres et instructions de 2002 que la base de la Cnav cite sans thème"
+consulte: >-
+  Les 102 références sans thème et à lire de 2002 dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », relues par l'API de la base le 16 novembre 2026 à 10 h 50 UTC
+  (/reference/referencesByFileLeafRef/), toutes servies, 60 en page et 42 en PDF, pièces
+  de circulaires, lues par leur texte au site (/Pdf/), et six scans en image ; toutes lues
+  en entier, par cinq agents de la session, un lot chacun, dont chaque citation a été
+  retrouvée mot pour mot dans le texte servi. Pour les confronter : les fiches reversion,
+  cotisation_maladie_des_non_residents, csg_des_pensions_selon_le_revenu,
+  cafat_pension_de_base, majoration_forfaitaire_reversion, minimum_vieillesse, avpf ; le
+  moteur de la réversion (src/retraite_notionnelle/droit/reversion.py) ; les séries
+  macro/plafond_securite_sociale.csv, macro/smic_horaire.csv,
+  legislation/assiette_avpf.csv, legislation/revalorisation_pensions.csv,
+  legislation/minimum_contributif.csv, legislation/revalorisation_salaires_anciennes.csv ;
+  la limite docs/limites/3-systeme-actuel.md. Ni Légifrance, ni le Journal officiel, ni
+  l'index de la DILA.
+trouve: >-
+  Le registre range les 102 (47 limite, 55 hors_modele), sans raison neuve. Conformes : le
+  plafond de 2002, l'assiette de l'AVPF de 2002, la revalorisation de 2003, le minimum
+  contributif, le versement forfaitaire unique, la majoration pour enfant de la réversion,
+  les coefficients des salaires et le salaire qui valide un trimestre en 2003. Un écart
+  neuf, chiffré : le plafond de ressources de la réversion se prend au SMIC en vigueur à
+  la date de la demande (circulaire Cnav n° 2002/44), le moteur au SMIC du 1er janvier,
+  332,80 € de moins par an pour une demande du second semestre 2002. Plus petits : la
+  pension calédonienne minimum par totalisation et le trimestre de 66 jours (circulaire
+  ministérielle n° 2002/620) ; la CSG du retraité parti de France qui y garde son domicile
+  fiscal, et celle du résident couvert par un autre État de l'Union ; avant 2002, les
+  vingt ans de cotisations du chômage non indemnisé comptés par la Cnav au seul régime
+  général. Note docs/feuille_de_route/175/2026-11-16-etape-6-circulaires-2002.md.
+reste: >-
+  Les 872 circulaires de 2003 à 2026, par période ; les autres natures de l'étape 6 ; les
+  textes que celles-ci appliquent, à relire au Journal officiel, dont le décret
+  n° 2002-1371 ; le cas de l'écart, à poser sur les moteurs.
