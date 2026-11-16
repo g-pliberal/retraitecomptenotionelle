@@ -51,7 +51,38 @@ def test_le_salaire_moyen_refait_les_niveaux_que_l_insee_publie(macro):
         assert indice[annee] == pytest.approx(niveaux(annee), rel=1e-4), annee
 
 
-def test_le_cas_type_au_smic_gagne_le_smic_de_chaque_annee():
+# -- cas types ------------------------------------------------------------------
+# Les cas types se datent et se bâtissent au portage, comme la grille du coût
+# (``castypes.departs_au_portage``) : le pilote du site fixe leur départ, la
+# façade bâtit leur carrière et la simule (action 161, quatrième vague).
+
+
+@pytest.fixture(scope="module")
+def portage():
+    """Le simulateur de la façade : celui du site, sous les noms du Python."""
+    import facade
+
+    return facade.Simulateur()
+
+
+def _carrieres(simulateur, cas, generations) -> dict:
+    """La carrière de ``cas`` née en chaque génération, partie à l'âge que le
+    pilote du portage lui fixe, et bâtie par le portage."""
+    from retraite_notionnelle.castypes import departs_au_portage
+
+    departs, refus = departs_au_portage(
+        simulateur, {str(generation): (cas, generation) for generation in generations})
+    assert not refus, refus
+    return {generation: simulateur.carriere_simple(**cas.options(
+        generation, departs[str(generation)][0])) for generation in generations}
+
+
+def _pension_du_regime_general(simulateur, carriere):
+    return next(pension for pension in simulateur.simuler(carriere).actuel.pensions_par_regime
+                if pension.regime == "regime_general")
+
+
+def test_le_cas_type_au_smic_gagne_le_smic_de_chaque_annee(portage):
     """Le cas type au SMIC gagne le salaire minimum, non une part du moyen.
 
     Il s'écrivait 0,55 fois le salaire moyen à toutes les années, quand le
@@ -61,25 +92,24 @@ def test_le_cas_type_au_smic_gagne_le_smic_de_chaque_annee():
     et le rattachement à un vingtile lit ce que cela fait en multiple du
     salaire moyen, comme le simulateur.
     """
+    from retraite_notionnelle import pont
     from retraite_notionnelle.carriere import PROFIL_SMIC
     from retraite_notionnelle.castypes import CAS_TYPES
-    from retraite_notionnelle.moteur.conversion import niveau_relatif
-    from retraite_notionnelle.simulateur import Simulateur
 
-    simulateur = Simulateur(Parametres())
+    simulateur = portage
     cas = next(c for c in CAS_TYPES if c.code == "smic_carriere_complete")
     assert (cas.profil_carriere, cas.niveau_salaire) == (PROFIL_SMIC, 1.0)
-    carriere = cas.construire(simulateur, 1955)
+    carriere = _carrieres(simulateur, cas, (1955,))[1955]
     entieres = [l for l in carriere.lignes if l.fraction_annee == 1.0]
     assert {l.annee for l in entieres} >= {1973, 1990, 2000, 2010}
     for ligne in entieres:
         assert ligne.revenu == pytest.approx(simulateur.macro.smic_annuel(ligne.annee))
-    niveau = cas.niveau_relatif(simulateur, 1955)
-    assert niveau == pytest.approx(niveau_relatif(carriere, simulateur.macro))
-    assert 0.45 < niveau < 0.55
+    lus, refus = pont.droit({"niveau": ("conversion.niveau_relatif", pont.SIMULATEUR, carriere)})
+    assert not refus, refus
+    assert 0.45 < lus["niveau"] < 0.55
 
 
-def test_la_carriere_heurtee_valide_ce_que_le_droit_donne_au_chomage():
+def test_la_carriere_heurtee_valide_ce_que_le_droit_donne_au_chomage(portage):
     """La carrière heurtée de la maquette Osiris de la DSS (étude d'impact du
     projet de loi instituant un système universel de retraite, 2020, p. 202 du
     PDF) : un non-cadre du privé au salaire du tiers inférieur, environ
@@ -97,15 +127,14 @@ def test_la_carriere_heurtee_valide_ce_que_le_droit_donne_au_chomage():
     né en 1955 ou après, soixante-cinq, né en 1950.
     """
     from retraite_notionnelle.castypes import CARRIERE_HEURTEE as cas
-    from retraite_notionnelle.simulateur import Simulateur
 
-    simulateur = Simulateur(Parametres())
     assert (cas.affiliation, cas.age_debut, cas.caisses) == (
         "salarie_prive_non_cadre", 22, ("cnav",))
     assert cas.niveau_salaire == pytest.approx(30_000 / 38_000, abs=0.01)
+    carrieres = _carrieres(portage, cas, (1950, 1960, 1980))
     for generation, depart, non_indemnise in ((1950, 65, 4), (1960, 67, 4),
                                               (1980, 67, 6)):
-        carriere = cas.construire(simulateur, generation)
+        carriere = carrieres[generation]
         assert carriere.age_liquidation == depart, generation
         par_periode: dict[str, list[int]] = {}
         trimestres: dict[str, int] = {}
@@ -128,7 +157,7 @@ def test_la_carriere_heurtee_valide_ce_que_le_droit_donne_au_chomage():
                               "inactivite": 0}, generation
 
 
-def test_l_inapte_de_la_cnav_part_au_taux_plein_des_l_age_legal():
+def test_l_inapte_de_la_cnav_part_au_taux_plein_des_l_age_legal(portage):
     """L'inapte de la grille du coût (action 138, étape 7) : les nouveaux
     retraités de 2021 pour inaptitude au travail hors ex-invalides, que la
     Cnav décrit (étude 2023-014, tableaux 2 à 4) — 19 358 anciens titulaires
@@ -158,14 +187,16 @@ def test_l_inapte_de_la_cnav_part_au_taux_plein_des_l_age_legal():
 
     from retraite_notionnelle.castypes import INAPTE_CNAV as cas
 
-    simulateur = Simulateur(Parametres())
+    simulateur = portage
     assert cas.inaptitude and cas.mortalite == "cnav_inaptitude"
     assert (cas.affiliation, cas.age_debut, cas.niveau_salaire, cas.caisses) == (
         "salarie_prive_non_cadre", 20, 0.9, ("cnav",))
-    sans = replace(cas, inaptitude=False)
+    generations = (1950, 1960, 1980)
+    carrieres = _carrieres(simulateur, cas, generations + (1959,))
+    sans = _carrieres(simulateur, replace(cas, inaptitude=False), generations)
     for generation, depart, annulation in ((1950, 60, 65), (1960, 62, 67),
                                            (1980, 62, 67)):
-        carriere = cas.construire(simulateur, generation)
+        carriere = carrieres[generation]
         assert carriere.age_liquidation == depart, generation
         assert carriere.inaptitude, generation
         trimestres: dict[str, int] = {}
@@ -174,17 +205,15 @@ def test_l_inapte_de_la_cnav_part_au_taux_plein_des_l_age_legal():
                 trimestres[ligne.type_periode] = (trimestres.get(ligne.type_periode, 0)
                                                   + ligne.trimestres_valides)
         assert trimestres == {"emploi": 76, "chomage_indemnise": 40}, generation
-        assert sans.construire(simulateur, generation).age_liquidation == annulation, generation
-    general = next(pension for pension in simulateur.simuler(
-        cas.construire(simulateur, 1959)).actuel.pensions_par_regime
-        if pension.regime == "regime_general")
+        assert sans[generation].age_liquidation == annulation, generation
+    general = _pension_du_regime_general(simulateur, carrieres[1959])
     salaire_annuel_moyen = float(re.search(r"SR ([\d,]+\.\d\d) €", general.detail)
                                  .group(1).replace(",", ""))
     assert salaire_annuel_moyen / 19_073.64 == pytest.approx(0.68, abs=0.01)
     assert "taux 50.000%" in general.detail
 
 
-def test_l_ex_invalide_de_la_cnav_part_au_taux_plein_des_l_age_legal():
+def test_l_ex_invalide_de_la_cnav_part_au_taux_plein_des_l_age_legal(portage):
     """L'ex-invalide de la grille du coût (action 138, étape 7) : les nouveaux
     retraités de 2021 dont la pension de vieillesse remplace la pension
     d'invalidité, que la Cnav décrit (étude 2023-014, tableaux 2 à 4 et
@@ -209,16 +238,19 @@ def test_l_ex_invalide_de_la_cnav_part_au_taux_plein_des_l_age_legal():
 
     from retraite_notionnelle.castypes import EX_INVALIDE_CNAV as cas, cas_type_affiche
 
-    simulateur = Simulateur(Parametres())
+    simulateur = portage
     assert not cas.inaptitude and cas.mortalite == "cnav_ex_invalide"
     assert cas_type_affiche(cas.code) == "smic_carriere_complete"
     assert (cas.affiliation, cas.age_debut, cas.niveau_salaire, cas.caisses) == (
         "salarie_prive_non_cadre", 18, 1.29, ("cnav",))
     inactif = replace(cas, interruptions_relatives=tuple(
         (decalage, "inactivite") for decalage, _ in cas.interruptions_relatives))
+    generations = (1950, 1955, 1980)
+    carrieres = _carrieres(simulateur, cas, generations + (1959,))
+    inactives = _carrieres(simulateur, inactif, generations)
     for generation, depart, invalides, annulation in ((1950, 60, 56, 65), (1955, 62, 64, 67),
                                                       (1980, 62, 64, 67)):
-        carriere = cas.construire(simulateur, generation)
+        carriere = carrieres[generation]
         assert carriere.age_liquidation == depart, generation
         invalidite = carriere.pension_d_invalidite
         assert invalidite is not None and invalidite.debut.annee == generation + 46, generation
@@ -228,10 +260,8 @@ def test_l_ex_invalide_de_la_cnav_part_au_taux_plein_des_l_age_legal():
                 trimestres[ligne.type_periode] = (trimestres.get(ligne.type_periode, 0)
                                                   + ligne.trimestres_valides)
         assert trimestres == {"emploi": 112, "invalidite": invalides}, generation
-        assert inactif.construire(simulateur, generation).age_liquidation == annulation, generation
-    general = next(pension for pension in simulateur.simuler(
-        cas.construire(simulateur, 1959)).actuel.pensions_par_regime
-        if pension.regime == "regime_general")
+        assert inactives[generation].age_liquidation == annulation, generation
+    general = _pension_du_regime_general(simulateur, carrieres[1959])
     salaire_annuel_moyen = float(re.search(r"SR ([\d,]+\.\d\d) €", general.detail)
                                  .group(1).replace(",", ""))
     assert salaire_annuel_moyen / 19_073.64 == pytest.approx(0.97, abs=0.01)
