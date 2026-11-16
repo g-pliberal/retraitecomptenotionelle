@@ -7335,12 +7335,11 @@ et `test_facade_jumeau.py`, qui partent avec lui. Une sonde
 Un simulateur de données seules (`donnees/simulateur.py`) sert le coût, la
 façade des tests et vingt-six scripts, chacun repassé à la sonde.
 Le propriétaire a décidé que les derniers lecteurs passent au JavaScript.
-`grille_large` est fait : il demande au portage l'âge de ses cas types
-(`2026-11-16-la-grille-large-sur-le-simulateur-de-donnees.md`).
-Restent `lectures_du_modele`, qui simule exprès pour relever ce que le
-moteur lit, à refaire sur ce que lit le moteur JavaScript, puis
-`contexte.simulateur`, que lisent la fabrique et le bilan du compte.
-Une étape par session. Par quoi commencer : `lectures_du_modele`.
+`grille_large` demande au portage l'âge de ses cas types, et
+`lectures_du_modele` relève ce que lit le moteur JavaScript
+(`2026-11-16-le-releve-des-lectures-au-moteur-javascript.md`).
+Reste `contexte.simulateur`, que lisent la fabrique et le bilan du compte.
+Une étape par session. Par quoi commencer : `contexte.simulateur`.
 Le retrait des règles attend l'accord du propriétaire.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je

@@ -1515,12 +1515,49 @@ def test_aucun_calcul_garde_ne_lit_ce_que_l_empreinte_ignore():
 
 def test_le_releve_des_lectures_se_passe_de_la_saisie_python():
     """La saisie n'a qu'un exemplaire, celui du portage (action 161,
-    étape 6) : le relevé simule au moteur Python les carrières que le portage
-    bâtit, et ne charge pas le contexte, réduit au centre du coût."""
+    étape 6) : le relevé fait simuler au portage les carrières qu'il bâtit, et
+    ne charge pas le contexte, réduit au centre du coût."""
     import lectures_du_modele
 
     releve = memoire.memoriser(("lectures_du_modele",), lectures_du_modele.relever)
     assert "src/retraite_notionnelle/contexte.py" not in releve["modules"]
+
+
+def test_le_releve_des_lectures_observe_le_moteur_javascript():
+    """Le relevé observe le moteur qui calcule, le JavaScript (action 161) :
+    il ne bâtit plus le simulateur Python (``tests/test_chargeurs_a_part.py``),
+    et fait simuler ses carrières au portage ; il note ce que la fabrique lit
+    pour bâtir chaque clé du paquet, et ne retient que les clés que le moteur
+    lit, les tables des carrières, non les crédits des ministères, que la seule
+    page Coût montre (``RELEVE_DU_PAQUET`` de ``pont.mjs``)."""
+    import lectures_du_modele
+
+    releve = memoire.memoriser(("lectures_du_modele",), lectures_du_modele.relever)
+    assert {"series", "regimes"} <= set(releve["paquet"]["lues"])
+    assert "credits_ministeres" in releve["paquet"]["non_lues"]
+    assert "data/reference/macro/credits_ministeres.csv" not in releve["lus"]
+
+
+def test_le_pont_releve_les_cles_du_paquet_que_le_moteur_lit(tmp_path, monkeypatch):
+    """Sous ``RELEVE_DU_PAQUET``, le portage écrit, une par ligne, chaque clé
+    du paquet que son moteur lit (``pont.mjs``) : le relevé des lectures du
+    modèle (``scripts/lectures_du_modele.py``) s'en sert pour ne retenir de la
+    fabrique que ce que le moteur JavaScript lit (action 161)."""
+    import shutil
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle import pont
+    from retraite_notionnelle.config import Parametres
+
+    fichier = tmp_path / "cles"
+    paquet = (RACINE / "moteur" / "donnees.json").read_bytes()
+    monkeypatch.setenv("RELEVE_DU_PAQUET", str(fichier))
+    pont.salaires_moyens([2000, 2020], Parametres(), paquet)
+    lues = fichier.read_text(encoding="utf-8").split()
+    assert lues and len(lues) == len(set(lues))
+    assert set(lues) <= set(json.loads(paquet))
+    assert "credits_ministeres" not in lues
 
 
 def test_le_budget_de_calcul_ne_mesure_que_le_portage(monkeypatch, capsys):

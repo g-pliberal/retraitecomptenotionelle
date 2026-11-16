@@ -132,7 +132,7 @@
  * étape 6).
  */
 
-import { readFileSync } from "node:fs";
+import { appendFileSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
@@ -224,6 +224,27 @@ function sousLaGarde(paquet) {
     presomptions[nom] = { ...presomptions[nom], valeur };
   }
   return { ...paquet, presomptions };
+}
+
+/**
+ * Le paquet, dont chaque clé que le moteur lit s'écrit, la première fois, sur
+ * sa ligne du fichier que nomme `RELEVE_DU_PAQUET`, quand elle est posée :
+ * le relevé des lectures du modèle (`scripts/lectures_du_modele.py`) ne
+ * retient de la fabrique que ce que lit le moteur JavaScript (action 161).
+ */
+function sousLeReleve(paquet) {
+  const fichier = process.env.RELEVE_DU_PAQUET;
+  if (!fichier) return paquet;
+  const lues = new Set();
+  return new Proxy(paquet, {
+    get(cible, cle, recepteur) {
+      if (typeof cle === "string" && Object.hasOwn(cible, cle) && !lues.has(cle)) {
+        lues.add(cle);
+        appendFileSync(fichier, `${cle}\n`);
+      }
+      return Reflect.get(cible, cle, recepteur);
+    },
+  });
 }
 
 /** Une erreur du programme, que le pont ne range pas parmi les refus. */
@@ -2645,7 +2666,7 @@ function repondre(demande) {
 }
 
 if (process.argv.includes("--servir")) {
-  contexte = new Contexte(sousLaGarde(paquetDuDepot()));
+  contexte = new Contexte(sousLeReleve(sousLaGarde(paquetDuDepot())));
   for await (const ligne of createInterface({ input: process.stdin, crlfDelay: Infinity })) {
     let sortie;
     try {
@@ -2657,6 +2678,6 @@ if (process.argv.includes("--servir")) {
   }
 } else {
   const { paquet, demande } = JSON.parse(readFileSync(0, "utf8"));
-  contexte = new Contexte(sousLaGarde(paquet ?? paquetDuDepot()));
+  contexte = new Contexte(sousLeReleve(sousLaGarde(paquet ?? paquetDuDepot())));
   process.stdout.write(JSON.stringify(repondre(demande)));
 }

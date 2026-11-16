@@ -7,10 +7,13 @@
 La mémoire des calculs (``retraite_notionnelle.memoire``) s'indexe sur ce que
 git voit sous ``src/`` et ``data/``, hors de ce qu'aucun calcul gardé ne lit
 (``HORS_DU_MODELE``). Ce script le relève : dans un processus neuf, sans
-mémoire, il simule deux carrières par statut d'affiliation, calcule le coût
-agrégé et le coût des avantages, et note chaque fichier du dépôt ouvert,
-chaque dossier listé et chaque module chargé, et, de chaque fiche de règles,
-les champs lus. Il échoue si l'un d'eux est hors du modèle, ou si un calcul lit
+mémoire, il bâtit le paquet des données par la fabrique, fait simuler au
+portage deux carrières par statut d'affiliation, calcule le coût agrégé et le
+coût des avantages, et note chaque fichier du dépôt ouvert, chaque dossier
+listé et chaque module chargé, et, de chaque fiche de règles, les champs lus.
+Le moteur qui calcule est le JavaScript, qui ne lit que le paquet : de la
+fabrique, le relevé ne retient que ce qu'elle lit pour bâtir les clés du
+paquet que le moteur lit (``RELEVE_DU_PAQUET`` de ``pont.mjs``, action 161). Il échoue si l'un d'eux est hors du modèle, ou si un calcul lit
 un champ documentaire d'une fiche, que l'empreinte ignore aussi
 (``CHAMPS_DOCUMENTAIRES``) ; ``tests/test_outillage.py`` l'exige aussi
 (feuille de route, action 135).
@@ -19,6 +22,7 @@ un champ documentaire d'une fiche, que l'empreinte ignore aussi
 from __future__ import annotations
 
 import argparse
+import ast
 import builtins
 import collections
 import io
@@ -26,6 +30,8 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
+import textwrap
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -112,22 +118,18 @@ def _sonder() -> dict[str, list[str]]:
     chargement.SUIVI = suivre
     from retraite_notionnelle import pont
     from retraite_notionnelle.config import Parametres
-    from retraite_notionnelle.simulateur import Simulateur
+    from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees
 
-    # Les carrières, le portage les bâtit de leurs requêtes (action 161,
-    # étape 6) ; le moteur Python les simule, et c'est ce qu'il lit qui compte.
-    simulateurs: dict = {}
-    requetes = [{"cle": f"{statut}_{naissance}",
-                 "requete": {"statut": statut, "naissance": naissance}}
-                for statut in Simulateur(Parametres()).affiliations.codes
-                for naissance in ("1950", "1975")]
-    for parametres, carriere in pont.carrieres_des_saisies(requetes)[0].values():
-        if parametres not in simulateurs:
-            simulateurs[parametres] = Simulateur(parametres)
-        try:
-            simulateurs[parametres].simuler(carriere)
-        except Exception:  # noqa: BLE001 — un refus ne lit pas moins
-            pass
+    releve_du_paquet = Path(tempfile.mkdtemp()) / "cles"
+    releve_du_paquet.touch()
+    os.environ["RELEVE_DU_PAQUET"] = str(releve_du_paquet)
+
+    # Les carrières, le portage les bâtit de leurs requêtes et les simule.
+    cas = [{"cle": f"{statut}_{naissance}",
+            "requete": {"statut": statut, "naissance": naissance}}
+           for statut in SimulateurDeDonnees(Parametres()).affiliations.codes
+           for naissance in ("1950", "1975")]
+    pont.simulations(cas, pont.paquet_des_donnees())
     memoire.cout(Parametres())
     memoire.avantages(Parametres())
     src = (racine / "src").resolve()
@@ -135,12 +137,55 @@ def _sonder() -> dict[str, list[str]]:
                for module in list(sys.modules.values())
                if getattr(module, "__file__", None)
                and Path(module.__file__).resolve().is_relative_to(src)}
+    # Le moteur ne lit que le paquet, et du paquet, les clés qu'il a notées :
+    # la fabrique les rebâtit ici, elles seules, et ce qu'elle lit pour elles
+    # se note comme le reste.
+    pont.fermer()
+    cles_lues = set(releve_du_paquet.read_text(encoding="utf-8").split())
+    cles = _construire_les_cles_lues(cles_lues)
     # Une fiche ouverte sans passer par ``charger_yaml`` a pu être lue en entier.
     for chemin in lus:
         if memoire.est_une_fiche(chemin) and chemin not in champs:
             champs[chemin].add(TOUT)
     return {"lus": sorted(lus), "listes": sorted(listes), "modules": sorted(modules),
-            "champs": {chemin: sorted(noms) for chemin, noms in sorted(champs.items())}}
+            "champs": {chemin: sorted(noms) for chemin, noms in sorted(champs.items())},
+            "paquet": {"lues": sorted(cles_lues), "non_lues": sorted(cles - cles_lues)}}
+
+
+def _construire_les_cles_lues(cles_lues: set[str]) -> set[str]:
+    """Les clés que la fabrique écrit au paquet (``construire`` de
+    ``scripts/construire_donnees.py``, sans le bilan ni les agrégats, comme
+    ``pont.paquet_des_donnees``), après avoir bâti, d'elles, celles que le
+    moteur lit, ``cles_lues``, et elles seules : une autre reste à ``None``,
+    sans que rien de ce qu'elle lirait ne se lise. Une valeur étalée (``**``)
+    se bâtit toujours, ses clés ne se sachant qu'après."""
+    import importlib.util
+
+    from retraite_notionnelle import pont
+
+    spec = importlib.util.spec_from_file_location("construire_donnees", pont.FABRIQUE)
+    fabrique = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = fabrique
+    spec.loader.exec_module(fabrique)
+    arbre = ast.parse(textwrap.dedent(_source(fabrique.construire)))
+    dictionnaire = next(noeud.value for noeud in ast.walk(arbre)
+                        if isinstance(noeud, ast.Assign) and isinstance(noeud.value, ast.Dict)
+                        and [c.id for c in noeud.targets if isinstance(c, ast.Name)] == ["paquet"])
+    ecrites = {cle.value for cle in dictionnaire.keys if isinstance(cle, ast.Constant)}
+    dictionnaire.values = [
+        valeur if cle is None or not isinstance(cle, ast.Constant) or cle.value in cles_lues
+        else ast.Constant(None)
+        for cle, valeur in zip(dictionnaire.keys, dictionnaire.values)]
+    ast.fix_missing_locations(arbre)
+    exec(compile(arbre, pont.FABRIQUE, "exec"), fabrique.__dict__)  # noqa: S102
+    paquet = json.loads(fabrique.construire(b"{}", b"{}"))
+    return ecrites | set(paquet)
+
+
+def _source(fonction) -> str:
+    import inspect
+
+    return inspect.getsource(fonction)
 
 
 #: Le champ noté quand une fiche est parcourue en entier.

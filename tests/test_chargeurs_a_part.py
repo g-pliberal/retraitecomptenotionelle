@@ -132,7 +132,7 @@ def test_la_facade_et_le_cout_de_la_memoire_prennent_le_simulateur_de_donnees():
 
 #: Les scripts que la sonde dit ne lire du simulateur que ses données (groupes
 #: 1 et 2 de ``2026-11-16-le-tri-des-scripts-et-des-modules.md``), hors de
-#: ``mesures_prose`` et de ``lectures_du_modele``, qui simulent encore.
+#: ``mesures_prose`` et de ``lectures_du_modele``, qui simulaient encore.
 SCRIPTS_SUR_LES_DONNEES = (
     "age_conjoncturel", "age_depart_csp", "controle_eacr", "cout_age_depart",
     "cout_avantages", "cycle_de_vie", "estimation_officielle", "facteurs_depense",
@@ -166,10 +166,11 @@ def test_les_scripts_de_donnees_batissent_le_simulateur_de_donnees():
 #: demandent leurs calculs au pont (``2026-11-16-les-derniers-lecteurs-du-
 #: simulateur-python.md``). ``scenarios_meres`` garde le type ``Comparaison``
 #: que la façade du pont rend ; ``grille_large`` demande au portage l'âge de
-#: ses cas types et le premier âge surcoté, ses jumeaux Python retirés.
+#: ses cas types et le premier âge surcoté, ses jumeaux Python retirés ;
+#: ``lectures_du_modele`` relève ce que lit le moteur JavaScript.
 SCRIPTS_QUI_NE_LISENT_QUE_DES_DONNEES = (
-    "fetch/trajectoire", "grille_large", "lectures_decision_29", "mesurer_surcote",
-    "mesures_prose", "recours_aspa", "scenarios_meres")
+    "fetch/trajectoire", "grille_large", "lectures_decision_29", "lectures_du_modele",
+    "mesurer_surcote", "mesures_prose", "recours_aspa", "scenarios_meres")
 
 
 def test_les_derniers_lecteurs_ne_batissent_plus_le_simulateur_python():
