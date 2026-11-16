@@ -99,6 +99,6 @@ Une étape par session, dans cet ordre :
 Chaque étape repasse ses scripts à la sonde, qui doit rendre `[]` hors des
 chargeurs du groupe 2.
 
-**Tests.** `tests/test_sonde_moteur_python.py` (5, sur un paquet factice, pour ne pas entrer lui-même dans le moteur) : vu rouge, puis vert. `python -m pytest -m rapide` : vert.
+**Tests.** `tests/test_sonde_moteur_python.py` (4, sur un paquet factice, pour ne pas entrer lui-même dans le moteur) : vu rouge, puis vert. `python -m pytest -m rapide` : vert.
 `test_outillage.py -k budget` : vu rouge (le script mesurait encore le
 Python), puis vert.
