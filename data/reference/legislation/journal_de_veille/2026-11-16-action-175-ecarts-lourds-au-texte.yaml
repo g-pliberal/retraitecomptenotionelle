@@ -1,0 +1,28 @@
+date: "2026-11-16"
+session: "action 175, étape 6, à part : les écarts les plus lourds des circulaires de 2002 à 2008, vérifiés au texte et chiffrés, sans toucher au moteur ni aux fiches"
+consulte: >-
+  L'index de la DILA (dila_cherche.py, à jour au 16 novembre 2026), JORF et LEGI :
+  R. 351-45 CSS (version 1995-2009), R. 351-6, L. 351-1 (version 2003-2010), D. 351-1-1
+  (version 2003-2011), l'article 5 de la loi n° 2003-775, l'article 4 du décret
+  n° 2008-1555, les articles 9 et 11 du décret n° 2010-1734, l'article 1er du décret
+  n° 2011-916 ; l'article 105 de la loi n° 2006-1640 et L. 161-22 (versions 2003-2010) ;
+  R. 352-2 (version 1986-2010) ; les titres des textes franco-tchécoslovaques (loi
+  n° 49-421, décret n° 70-84) ; le JORF de 2003 à 2006 pour le RETREP ; les articles 10
+  du décret n° 2004-857 et 3 du décret n° 2004-1447. Pour les confronter : ouvrir.js,
+  les fiches cumul_emploi_retraite_et_retraite_progressive et
+  retrep_avantages_temporaires, duree_assurance_requise.csv, les notes de 2002 à 2008.
+trouve: >-
+  Confirmés au texte : la durée de 160 trimestres pour toute pension prenant effet avant
+  2009 (R. 351-45, I ; décret n° 2008-1555), que le moteur ne donne pas aux nés de 1949 à
+  1952 partis en carrière longue ou au titre du handicap ; 164 trimestres pour les nés de
+  1953 et 1954 jusqu'au décret du 30 décembre 2010 ; le plafond du cumul à 160 % du SMIC
+  dès 2007 (LFSS 2007, art. 105) ; la suspension de la pension d'inapte avant 65 ans
+  au-delà de 50 % du SMIC sur 520 heures par trimestre (R. 352-2, jusqu'au 9 janvier
+  2010) ; les réversions des régimes de base hors des ressources jusqu'au 30 juin 2006
+  (décret n° 2004-857, art. 10). Non confirmables au JO : la convention
+  franco-tchécoslovaque (titres seuls dans l'index) et la tolérance RETREP de 2005.
+reste: >-
+  Corriger, dans l'ordre : la durée avant 2009 et celle des nés de 1953 à 1955, le cumul
+  de 2007-2008, puis déclarer ou modéliser l'inapte et la convention tchécoslovaque, puis
+  la réversion de 2004-2006. Lire la circulaire d'application du décret n° 2011-916 et le
+  texte de la convention du 12 octobre 1948.
