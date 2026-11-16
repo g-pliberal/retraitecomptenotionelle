@@ -12,8 +12,9 @@ exécuter. La sonde lance le script tel quel (``runpy``), sous
 s'exécute — ``droit/``, ``moteur/``, ``scenarios/``, ``echeancier.py``,
 ``journal.py``, ``pilote.py``, ``carriere.py``, ``revalorisation.py``,
 ``simulateur.py`` —, hors du code de leurs modules et de leurs classes, de ce qui s'exécute
-pendant qu'on les importe, et hors des chargeurs de
-données du simulateur (:data:`DONNEES_DU_SIMULATEUR`), qui restent.
+pendant qu'on les importe, et hors du constructeur du
+simulateur (:data:`DONNEES_DU_SIMULATEUR`) : ses chargeurs de données sont
+hors des règles, sous ``donnees/simulateur.py``.
 
 Elle imprime ces fonctions, une par ligne, ou « aucune règle du moteur
 Python » ; ``--json`` les écrit en liste. Chaque fonction ne se relève
@@ -38,17 +39,11 @@ DOSSIERS = ("droit", "moteur", "scenarios")
 FICHIERS = ("echeancier.py", "journal.py", "pilote.py", "carriere.py",
             "revalorisation.py", "simulateur.py")
 
-#: Ce que le simulateur Python fait sans règle : se bâtir, charger ses
-#: données et se refaire sous les conventions de projection. Ses autres
-#: méthodes calculent.
-DONNEES_DU_SIMULATEUR = frozenset({
-    "Simulateur.__init__", "Simulateur.macro", "Simulateur.mortalite",
-    "Simulateur.courbe_taux", "Simulateur.courbe_taux_pilier", "Simulateur.catalogue",
-    "Simulateur.effectifs", "Simulateur.cotisants", "Simulateur.distribution",
-    "Simulateur.distributions_par_sexe", "Simulateur.caracteristiques",
-    "Simulateur.patrimoine", "Simulateur.vie_en_couple", "Simulateur.financement_regimes",
-    "Simulateur.affiliations", "Simulateur.revalorisations",
-    "Simulateur.pour_la_projection"})
+#: Ce que le simulateur Python fait sans règle : se bâtir. Ses chargeurs de
+#: données, ses univers et sa projection sont ceux du simulateur de données
+#: seules (``donnees/simulateur.py``), dont il hérite, hors des fichiers de
+#: règles ; ses autres méthodes calculent.
+DONNEES_DU_SIMULATEUR = frozenset({"Simulateur.__init__"})
 
 _OUTIL = 4  # sys.monitoring.PROFILER_ID est 2, DEBUGGER_ID 0 ; 4 est libre.
 

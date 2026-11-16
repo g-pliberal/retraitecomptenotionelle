@@ -7330,17 +7330,15 @@ de `contribution_etat`.
 **Reprise, au 16 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Aucun fichier de tests n'exécute plus une règle Python, hors `test_facade.py`
-et `test_facade_jumeau.py`, qui partent avec lui. Les scripts et les modules
-qui bâtissent encore le simulateur Python sont classés : une sonde
-(`scripts/sonde_moteur_python.py`) dit ce que chacun exécute du moteur. La
-plupart n'en lisent que des chargeurs et des types, à passer sous `donnees/`
-avant la coupe. Les trois premiers points de leur liste sont faits. Le barème
-de l'ASPA et les revalorisations se lisent déjà sous `donnees/`
-(`2026-11-16-les-chargeurs-sous-donnees.md`).
-Une étape par session. Par quoi commencer : la fin du point 4 de « Ce qui
-reste », dans `2026-11-16-le-tri-des-scripts-et-des-modules.md` : les
-variantes d'étude du simulateur, puis un simulateur de données seules. Le
-retrait des règles attend l'accord du propriétaire.
+et `test_facade_jumeau.py`, qui partent avec lui. Une sonde
+(`scripts/sonde_moteur_python.py`) dit ce que chaque script exécute du moteur.
+Les chargeurs que le coût lit sont sortis des règles : un simulateur de
+données seules (`donnees/simulateur.py`), dont le simulateur Python hérite,
+sert le coût et la façade des tests
+(`2026-11-16-le-simulateur-de-donnees-seules.md`).
+Une étape par session. Par quoi commencer : faire bâtir ce simulateur de
+données aux scripts qui ne lisent que des données, chacun repassé à la sonde.
+Le retrait des règles attend l'accord du propriétaire.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

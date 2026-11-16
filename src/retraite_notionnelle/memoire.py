@@ -650,13 +650,13 @@ def grille_du_cout(parametres: Parametres | None = None, cas_types: tuple | None
     grille = tuple(cas_types) if cas_types is not None else GRILLE_DU_COUT
 
     def calcul():
-        from .simulateur import Simulateur
+        from .donnees.simulateur import SimulateurDeDonnees
 
         # Lue à l'appel dans le module, comme ``calculer_cout`` la lit : un
         # contexte qui la remplace fait taire la mémoire, et c'est la sienne
         # qui sert.
         return module._pensionnes(
-            simulateur if simulateur is not None else Simulateur(parametres),
+            simulateur if simulateur is not None else SimulateurDeDonnees(parametres),
             grille, liquidation)
 
     return memoriser_pour(parametres, ("grille_du_cout", parametres, grille, liquidation),
@@ -699,12 +699,12 @@ def cout(parametres: Parametres | None = None, *, comptes: bool = True,
         from .donnees.depenses import DepensesRetraite
         from .donnees.equilibre import ComptesRetraite, variante_du_scenario
         from .donnees.population import Population
-        from .simulateur import Simulateur
+        from .donnees.simulateur import SimulateurDeDonnees
 
         racine = parametres.racine_donnees
         variante = variante_du_scenario(parametres.scenario_projection,
                                         racine / "reference" / "macro")
-        simulateur = Simulateur(parametres)
+        simulateur = SimulateurDeDonnees(parametres)
         # La grille simulée ne dépend que des paramètres, des cas types et de
         # la liquidation : les variantes qui ne diffèrent que par la pondération,
         # les conventions, les comptes ou l'assiette la partagent.

@@ -170,7 +170,7 @@ from .noyau import univers as univers_de_droit
 from .revalorisation_servie import RevalorisationServie
 from .reversion_gardee import StockDeReversion
 from .donnees.minimum_vieillesse import MinimumVieillesse
-from .simulateur import Simulateur
+from .donnees.simulateur import SimulateurDeDonnees
 from .somme import somme_ordonnee
 
 if TYPE_CHECKING:
@@ -2391,7 +2391,7 @@ def _volet_brut(resultat, carriere) -> dict:
     }
 
 
-def _simulations(simulateur: Simulateur, cas: list[dict], comptes=(), capitaux=(),
+def _simulations(simulateur: SimulateurDeDonnees, cas: list[dict], comptes=(), capitaux=(),
                  ) -> tuple[dict[str, dict], dict[str, str]]:
     """Les cases de la grille simulées par le portage (``pont.grille_du_cout``),
     les lignes du compte des scénarios que ``comptes`` nomme et les capitaux de
@@ -2442,7 +2442,7 @@ def _propositions(parametres, carriere, prolongations: tuple, departs: tuple[int
 
 
 @dans_un_instantane
-def _grille_batie(simulateur: Simulateur, cas_types: tuple[CasType, ...],
+def _grille_batie(simulateur: SimulateurDeDonnees, cas_types: tuple[CasType, ...],
                   liquidation: str) -> tuple[dict, dict, dict, dict]:
     """La grille du coût bâtie, avant que rien ne se simule : la carrière de
     chaque case, sous ``(code, génération)``, partie à l'âge que le pilote lui
@@ -2496,7 +2496,7 @@ def _grille_batie(simulateur: Simulateur, cas_types: tuple[CasType, ...],
 
 
 @dans_un_instantane
-def _carrieres_du_cout(simulateur: Simulateur, cas_types: tuple[CasType, ...],
+def _carrieres_du_cout(simulateur: SimulateurDeDonnees, cas_types: tuple[CasType, ...],
                        liquidation: str) -> tuple[list[dict], dict, dict]:
     """Ce que le coût tire de sa grille bâtie (:func:`_grille_batie`), avant
     que rien ne se simule : chaque case, sa carrière et celles de ses
@@ -2518,7 +2518,7 @@ def _carrieres_du_cout(simulateur: Simulateur, cas_types: tuple[CasType, ...],
     return cas, departs, ecartees
 
 
-def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
+def _pensionnes(simulateur: SimulateurDeDonnees, cas_types: tuple[CasType, ...],
                 liquidation: str = "droit",
                 ) -> tuple[list[Pensionne], dict[str, int]]:
     """Simule la grille et en tire, pour chaque couple, sa pension par système.
@@ -2650,7 +2650,7 @@ def _departs(annee_liquidation: int, voisines: tuple) -> tuple[int, ...]:
                                               voisines, strict=True))
 
 
-def _nees_toute_l_annee(simulateur: Simulateur, cas_types: tuple[CasType, ...],
+def _nees_toute_l_annee(simulateur: SimulateurDeDonnees, cas_types: tuple[CasType, ...],
                         pensionnes: list[Pensionne], liquidation: str = "droit"
                         ) -> list[Pensionne]:
     """Les mêmes couples, leurs cohortes nées toute l'année
@@ -2679,7 +2679,7 @@ def _nees_toute_l_annee(simulateur: Simulateur, cas_types: tuple[CasType, ...],
     return nees
 
 
-def _survies(simulateur: Simulateur, population: str | None, generation: int,
+def _survies(simulateur: SimulateurDeDonnees, population: str | None, generation: int,
              departs: tuple[int, ...], propre: str = "") -> tuple[tuple[float, ...], ...]:
     """La survie des cinq cohortes d'un couple, rapportée à celle de la
     population générale, année par année depuis leur liquidation
@@ -2836,7 +2836,7 @@ def _volet(brut: dict, coefficient: float) -> VoletLiberal:
     )
 
 
-def _autre_volet(simulateur: Simulateur, carriere, propre: VoletLiberal, macro,
+def _autre_volet(simulateur: SimulateurDeDonnees, carriere, propre: VoletLiberal, macro,
                  annee_euros: int, bascule: int, pension_d_avant: float,
                  departs: tuple[int, ...], propositions: dict,
                  reporte: bool) -> VoletLiberal | None:
@@ -2900,7 +2900,7 @@ def _avant_la_bascule(volet: VoletLiberal, pension: float) -> VoletLiberal:
                    rente_pilier=(0.0, 0.0), rente_garantie=0.0)
 
 
-def _reporte(simulateur: Simulateur, en_emploi: VoletLiberal, propositions: dict,
+def _reporte(simulateur: SimulateurDeDonnees, en_emploi: VoletLiberal, propositions: dict,
              annee_euros: int) -> VoletLiberal:
     """Le volet d'un départ que l'âge légal reporte, pour toute la cohorte.
 
@@ -3510,7 +3510,7 @@ class GarantieDistribution:
         )
 
 
-def _garantie_distribution(simulateur: Simulateur, pensionnes: list[Pensionne],
+def _garantie_distribution(simulateur: SimulateurDeDonnees, pensionnes: list[Pensionne],
                            population: Population,
                            poids: Callable[[int], dict[str, float]],
                            revalorisation: "RevalorisationServie",
@@ -3920,7 +3920,7 @@ def _tetes_par_poids(pensionnes, population: Population) -> Callable[[int], dict
     return tetes
 
 
-def _ponderation(simulateur: Simulateur, mode: str,
+def _ponderation(simulateur: SimulateurDeDonnees, mode: str,
                  cas_types: tuple[CasType, ...],
                  cote: str = COTE_RETRAITES,
                  tetes: Callable[[int], dict[str, float]] | None = None
@@ -4205,7 +4205,7 @@ def _recouvrement(creance: float, patrimoines: Sequence[float], parametres,
     return immediat / nombre / creance, differe / nombre / creance
 
 
-def _garder_les_reversions(lignes: list[AvenirAnnuel], simulateur: Simulateur) -> None:
+def _garder_les_reversions(lignes: list[AvenirAnnuel], simulateur: SimulateurDeDonnees) -> None:
     """La part de la réversion que le scénario 6 sert, année par année.
 
     Le programme garde les réversions servies à la bascule jusqu'à leur
@@ -4233,7 +4233,7 @@ def _garder_les_reversions(lignes: list[AvenirAnnuel], simulateur: Simulateur) -
             if reversion > 0.0 else 0.0)
 
 
-def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
+def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: SimulateurDeDonnees,
                           garantie: GarantieDistribution) -> None:
     """Les avances de la garantie, leur intérêt, et ce que les successions rendent.
 
@@ -4575,7 +4575,7 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
 
 
 def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
-            population: Population, simulateur: Simulateur,
+            population: Population, simulateur: SimulateurDeDonnees,
             poids: Callable[[int], dict[str, float]],
             revalorisation: RevalorisationServie,
             reversion_servie: bool = False,
@@ -5035,7 +5035,7 @@ def _courbes_survie(mortalite, cohortes: set[int], depart: int,
     return courbes
 
 
-def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
+def calculer_engagements(simulateur: SimulateurDeDonnees, depenses: DepensesRetraite,
                          population: Population, annee: int,
                          scenarios: Sequence[str],
                          cas_types: tuple[CasType, ...] = GRILLE_DU_COUT,
@@ -5259,7 +5259,7 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
 MODES_SUIVANT_L_EMPLOI = (ModeIndexation.MASSE_SALARIALE, ModeIndexation.PIB_NOMINAL)
 
 
-def _facteur_emploi(simulateur: Simulateur,
+def _facteur_emploi(simulateur: SimulateurDeDonnees,
                     population: Population) -> Callable[[int], float] | None:
     """Ce qu'une variante démographique change, chaque année, à la masse
     salariale qui indexe la proposition : ses 20-64 ans sur ceux du central
@@ -5284,7 +5284,7 @@ def _cotisations_comptees(pensionne: Pensionne, decalage: int,
                          if annee <= liquidation and cotisation > 0.0]
 
 
-def _rendements_des_cotisations(simulateur: Simulateur, pensionnes: list[Pensionne],
+def _rendements_des_cotisations(simulateur: SimulateurDeDonnees, pensionnes: list[Pensionne],
                                 ) -> dict[tuple[int, int], float]:
     """Ce que l'indexation rend à une cotisation de chaque année jusqu'à
     chaque liquidation de la grille : ``{(année, liquidation): coefficient}``.
@@ -5335,7 +5335,7 @@ def _capitaux_sous_la_variante(pensionne: Pensionne, facteur: Callable[[int], fl
     return tuple(capitaux)
 
 
-def _sous_la_demographie(simulateur: Simulateur, pensionnes: list[Pensionne],
+def _sous_la_demographie(simulateur: SimulateurDeDonnees, pensionnes: list[Pensionne],
                          population: Population) -> list[Pensionne]:
     """La grille sous une variante démographique.
 
@@ -5371,7 +5371,7 @@ def _sous_la_demographie(simulateur: Simulateur, pensionnes: list[Pensionne],
             for pensionne in pensionnes]
 
 
-def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
+def calculer_cout(simulateur: SimulateurDeDonnees, depenses: DepensesRetraite,
                   population: Population,
                   comptes: ComptesRetraite | None = None,
                   cas_types: tuple[CasType, ...] = GRILLE_DU_COUT,

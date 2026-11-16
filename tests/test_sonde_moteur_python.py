@@ -59,7 +59,9 @@ def test_ce_qui_s_execute_a_l_import_n_est_pas_releve(tmp_path, monkeypatch):
 def test_les_donnees_du_simulateur_ne_sont_pas_des_regles():
     sonde = _sonde()
     assert sonde.est_une_regle(str(sonde.PAQUET / "simulateur.py"),
-                               "Simulateur.macro") is None
+                               "Simulateur.__init__") is None
+    assert sonde.est_une_regle(str(sonde.PAQUET / "donnees" / "simulateur.py"),
+                               "SimulateurDeDonnees.macro") is None
     assert sonde.est_une_regle(str(sonde.PAQUET / "simulateur.py"),
                                "Simulateur.simuler") == "simulateur.Simulateur.simuler"
     assert sonde.est_une_regle(str(sonde.PAQUET / "cout.py"), "calculer_cout") is None

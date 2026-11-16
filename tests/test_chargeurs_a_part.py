@@ -4,7 +4,11 @@
 (``RevalorisationsPensions``) se lisent sous ``donnees/``, et le nombre
 déclaré d'appels de ``liquider`` (``APPELS_DECLARES``) au noyau, sans importer
 un seul module du moteur Python. Les modules de règles les reprennent de là,
-les mêmes objets, tant qu'ils restent."""
+les mêmes objets, tant qu'ils restent.
+
+Le simulateur de données seules (``donnees/simulateur.py``) se bâtit et se lit
+de même, variantes d'une étude comprises : le ``Simulateur`` du moteur Python
+en hérite, la façade des tests et le coût de la mémoire le prennent seul."""
 
 from __future__ import annotations
 
@@ -69,3 +73,58 @@ def test_le_cout_et_la_fabrique_ne_les_prennent_plus_aux_regles():
     fautes = {f: m.group(0) for f in lecteurs
               for m in [anciens.search((RACINE / f).read_text(encoding="utf-8"))] if m}
     assert fautes == {}
+
+
+def test_le_simulateur_de_donnees_se_lit_sans_le_moteur_python():
+    """Bâti, lu, refait sous les conventions de projection, et ses variantes
+    d'une étude passées en demande : rien du moteur Python ne s'importe."""
+    assert _importes("\n".join((
+        "from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees",
+        "from retraite_notionnelle.noyau import univers",
+        "s = SimulateurDeDonnees()",
+        "for nom in ('macro', 'mortalite', 'courbe_taux', 'courbe_taux_pilier', 'catalogue',",
+        "            'effectifs', 'cotisants', 'distribution', 'distributions_par_sexe',",
+        "            'caracteristiques', 'patrimoine', 'vie_en_couple',",
+        "            'financement_regimes', 'revalorisations', 'univers'):",
+        "    getattr(s, nom)",
+        "assert s.univers_de_la_demande == {}",
+        "p = s.pour_la_projection()",
+        "assert type(p) is SimulateurDeDonnees and p.parametres.conventions_cor",
+        "assert p.pour_la_projection() is p and s.pour_la_projection() is p",
+        "lus = s.univers",
+        "cle = next(c for c, u in lus.items() if not u.est_le_droit_reel)",
+        "v = SimulateurDeDonnees(variantes={cle: lus[cle]})",
+        "assert list(v.univers_de_la_demande) == [cle]",
+        "assert v.pour_la_projection().variantes == v.variantes",
+    ))) == []
+
+
+def test_le_simulateur_python_herite_du_simulateur_de_donnees():
+    """Les mêmes chargeurs, une seule fois écrits : le simulateur Python ne
+    les redéfinit pas, et sa projection reste un simulateur Python."""
+    subprocess.run([sys.executable, "-c", "\n".join((
+        "from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees, DONNEES",
+        "from retraite_notionnelle.simulateur import Simulateur",
+        "assert issubclass(Simulateur, SimulateurDeDonnees)",
+        "assert not set(vars(Simulateur)) & (DONNEES | {'univers', 'univers_de_la_demande',",
+        "                                              'pour_la_projection'})",
+        "assert type(Simulateur().pour_la_projection()) is Simulateur",
+    ))], check=True, cwd=RACINE)
+
+
+def test_la_facade_et_le_cout_de_la_memoire_prennent_le_simulateur_de_donnees():
+    """La façade des tests lit ses données sur un simulateur de données seules,
+    et la mémoire en bâtit un pour le coût et sa grille : ni l'une ni l'autre
+    ne bâtit plus le simulateur Python."""
+    batit = re.compile(r"_simulateur\.Simulateur\(|from \.simulateur import Simulateur")
+    fautes = {}
+    for f, debut, fin in (("tests/facade.py", "class Simulateur(", "def __getattr__"),
+                          ("src/retraite_notionnelle/memoire.py", "def grille_du_cout(",
+                           "def avantages(")):
+        texte = (RACINE / f).read_text(encoding="utf-8")
+        texte = texte[texte.index(debut):texte.index(debut) + texte[texte.index(debut):]
+                      .index(fin)]
+        fautes.update({f: m.group(0) for m in [batit.search(texte)] if m})
+    assert fautes == {}
+    assert "from .simulateur import" not in (
+        RACINE / "src/retraite_notionnelle/cout.py").read_text(encoding="utf-8")

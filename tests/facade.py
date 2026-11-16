@@ -73,6 +73,7 @@ from __future__ import annotations
 
 import dataclasses
 import datetime
+import functools
 import inspect
 import os
 import shutil
@@ -97,6 +98,7 @@ from retraite_notionnelle.config import ContributionEtat, Parametres
 from retraite_notionnelle.donnees import mortalite as _mortalite_donnees
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite
 from retraite_notionnelle.donnees.regimes import PeriodeRegime, Regime
+from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees
 from retraite_notionnelle.pont import NonTransmissible
 from retraite_notionnelle.droit import acquerir as _acquerir
 from retraite_notionnelle.droit import categories as _categories
@@ -219,6 +221,16 @@ class _Ferme:
             "Python — le test la demande au pont (pont.droit), ou se porte à la main")
 
 
+@functools.cache
+def _type_de_la_table(parametres: Parametres, nom: str) -> type:
+    """Le type de la table ``nom`` au moteur du jumeau Python, sous ces
+    paramètres, d'où la façade lit la signature et le rendu d'une méthode : le
+    seul usage qu'elle fasse du simulateur Python, dont les données se lisent
+    sur un simulateur de données seules. Une table s'y recouvre selon les
+    paramètres (``TableRecouverte``) : son type se lit sur l'instance."""
+    return type(getattr(_simulateur.Simulateur(parametres).scenario_actuel, nom))
+
+
 class Table(_Ferme):
     """Une table du moteur d'un simulateur de la façade : celles de ses
     méthodes que la façade sert (:data:`TABLES`), appelées par le portage sur
@@ -235,8 +247,8 @@ class Table(_Ferme):
             raise NonTransmissible(
                 f"{self._nom}.{methode} : la façade ne sert pas cette méthode de la table "
                 "(pont.TABLES_DE_LA_FACADE) — le test la demande au pont, ou se porte à la main")
-        jumelle = getattr(type(getattr(self._moteur._simulateur._donnees.scenario_actuel,
-                                       self._nom)), methode)
+        jumelle = getattr(_type_de_la_table(self._moteur._simulateur.parametres, self._nom),
+                          methode)
         rendu = typing.get_type_hints(jumelle)["return"]
         simulateur = self._moteur._simulateur
 
@@ -545,14 +557,15 @@ class Journal(_Ferme):
 class Simulateur(_Ferme):
     """``Simulateur`` : ses bâtisseurs de carrière et son moteur du scénario 1
     servis par le portage, sous ses paramètres ; ses données lues par leurs
-    chargeurs Python."""
+    chargeurs Python, sur un simulateur de données seules
+    (:class:`SimulateurDeDonnees`)."""
 
     def __init__(self, parametres: Parametres | None = None, variantes=None) -> None:
         if variantes:
             raise NonTransmissible(
                 "variantes d'univers : la façade ne les transmet pas — une étude les passe "
                 "au pont dans sa demande (Simulateur.univers_de_la_demande)")
-        donnees = _simulateur.Simulateur(parametres)
+        donnees = SimulateurDeDonnees(parametres)
         object.__setattr__(self, "parametres", donnees.parametres)
         object.__setattr__(self, "_donnees", donnees)
         object.__setattr__(self, "scenario_actuel", ScenarioActuel(self))
