@@ -38,3 +38,13 @@ aucune donnée, aucun témoin n'a bougé. `test_capitalisation.py` quitte
 **Tests.** `test_capitalisation.py` (39), `node --test
 tests/js/capitalisation.test.js` (11), `test_fichiers_sur_le_moteur_python.py` :
 verts ; `python -m pytest -m rapide` avant l'envoi.
+
+## La suite rouge qui a suivi, et sa réparation
+
+`docs/methodologie.md` tient « à 0,01 € près » par
+`tenu(test_sous_les_anticipations_pures_l_echelle_est_sans_effet)`, que la
+vérification de la prose cherche dans les fichiers Python de `tests/` : le
+retrait du test a rougi la fabrique de GitHub. Le test revient dans
+`test_capitalisation.py`, sur le portage : les quatre allocations, décrites
+en données, passent au pont (`capitalisation.construire`), et leurs capitaux
+s'égalent à un centime près.

@@ -10,10 +10,12 @@ ensuite des ordres de grandeur.
 from __future__ import annotations
 
 import math
+import shutil
 
 import pytest
 import yaml
 
+from retraite_notionnelle import pont
 from retraite_notionnelle.config import (
     Parametres,
     RACINE_DONNEES,
@@ -94,9 +96,66 @@ def test_une_duree_nulle_est_refusee(courbe):
 
 # -- l'allocation des maturités -----------------------------------------------
 
-# L'adossement, et ce que l'allocation vaut sous les anticipations pures ou
-# sous une prime de terme, s'éprouvent sur le portage :
-# ``tests/js/capitalisation.test.js`` (action 161, quatrième vague).
+# L'adossement, et ce que l'allocation vaut sous une prime de terme,
+# s'éprouvent sur le portage : ``tests/js/capitalisation.test.js`` (action 161,
+# quatrième vague).
+
+
+def _repartitions(regle, horizons: int) -> dict[int, list[list[float]]]:
+    """Une allocation, décrite en données pour le pont : par horizon, ses
+    maturités et leurs poids."""
+    return {horizon: [[maturite, poids] for maturite, poids in regle(horizon)]
+            for horizon in range(1, horizons + 1)}
+
+
+def test_sous_les_anticipations_pures_l_echelle_est_sans_effet():
+    """Le capital ne dépend PAS de la façon dont les maturités coupent l'horizon.
+
+    C'est une identité, pas une approximation, et c'est elle qui a fait tomber
+    l'échelle glissante 2/10/30 : enchaîner des placements courts ou bloquer un
+    long accumule exactement ``exp(z(T)·T − z(t)·t)``, parce que c'est ce que
+    l'arbitrage impose au forward. Tant que ``prime_terme_trente_ans`` est nul,
+    toute règle qui pave l'horizon sans le dépasser donne le MÊME capital.
+
+    Le portage le vérifie (``capitalisation.construire``, par le pont) sur
+    quatre règles que tout sépare — l'adossement du moteur, l'ancienne
+    échelle, un roulement à un an, une moitié roulée et une moitié adossée —,
+    sur les 31 années de versement d'une assurée née en 1996, partie à 64 ans
+    en 2060."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+
+    def echelle_glissante(horizon: int) -> tuple[tuple[int, float], ...]:
+        """L'allocation par glide path, telle qu'elle servait jusqu'en 2026."""
+        borner = lambda v: min(1.0, max(0.0, v))  # noqa: E731
+        longue = 0.75 * borner((horizon - 10) / 20)
+        courte = 0.75 * borner((10 - horizon) / 8)
+        cumul: dict[int, float] = {}
+        for maturite, part in zip((2, 10, 30), (courte, 1.0 - courte - longue, longue)):
+            if part > 0:
+                effective = min(maturite, horizon)
+                cumul[effective] = cumul.get(effective, 0.0) + part
+        return tuple(sorted(cumul.items()))
+
+    def moitie_moitie(horizon: int) -> tuple[tuple[int, float], ...]:
+        if horizon == 1:
+            return ((1, 1.0),)
+        return ((1, 0.5), (min(horizon, MATURITE_MAXIMALE), 0.5))
+
+    assiettes = {annee: 30_000.0 for annee in range(2030, 2066)}
+    regles = {"adosse": None,
+              "echelle": _repartitions(echelle_glissante, 30),
+              "roule": _repartitions(lambda horizon: ((1, 1.0),), 30),
+              "moitie": _repartitions(moitie_moitie, 30)}
+    lus, refus = pont.droit({nom: ("capitalisation.construire", pont.SIMULATEUR, assiettes,
+                                   1996, 64.0, 2060, repartitions)
+                             for nom, repartitions in regles.items()}, Parametres())
+    assert refus == {}
+    assert lus["adosse"]["annees_cotisees"] == 31
+    assert lus["adosse"]["capital"] > 0
+    for nom in ("echelle", "roule", "moitie"):
+        assert lus[nom]["capital"] == pytest.approx(lus["adosse"]["capital"], abs=0.01), (
+            "sans prime de terme, l'allocation est un paramètre libre sans effet")
 
 
 def test_la_prime_de_terme_ne_retouche_pas_la_courbe_du_jour():

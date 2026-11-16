@@ -1855,7 +1855,7 @@ def _roulement(horizon: int) -> tuple[tuple[int, float], ...]:
 def _pilier_alloue(regle: str, prime: float):
     """Le pilier de la carrière témoin, sous une règle d'allocation et une prime.
 
-    La carrière de ``test_avec_une_prime_de_terme_l_adossement_domine`` : une
+    La carrière de ``tests/js/capitalisation.test.js`` (la prime de terme) : une
     assiette de 30 000 € par an à partir de 2030, née en 1996, partie à
     64 ans en 2060. Le moteur ne porte qu'une règle, l'adossement ; une autre
     se décrit en données, par horizon, au pilier que le portage bâtit
