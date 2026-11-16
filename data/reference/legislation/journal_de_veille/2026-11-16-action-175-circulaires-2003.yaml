@@ -1,0 +1,37 @@
+date: "2026-11-16"
+session: "action 175, étape 6 : les 54 circulaires, lettres et instructions de 2003 que la base de la Cnav cite sans thème"
+consulte: >-
+  Les 54 références sans thème et à lire de 2003 dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », relues par l'API de la base le 16 novembre 2026 à 11 h 05 UTC
+  (/reference/referencesByFileLeafRef/), toutes servies, 40 en page et 14 en PDF, pièces
+  de circulaires, lues par leur texte au site (/Pdf/) ; toutes lues en entier, par quatre
+  agents de la session, un lot chacun, dont chaque citation a été retrouvée mot pour mot
+  dans le texte servi. Pour les confronter : les fiches inaptitude_au_travail,
+  pension_d_invalidite_substituee, cumul_emploi_retraite_et_retraite_progressive,
+  pension_proratisee, reversion, minimum_vieillesse, csg_des_pensions_selon_le_revenu,
+  trimestres_avant_1972 ; le tableau legislation/accords_internationaux.yaml ; le moteur
+  des périodes étrangères (src/retraite_notionnelle/droit/etranger.py) ; les séries
+  macro/smic_horaire.csv, macro/smic_horaire_releves.csv, macro/plafond_securite_sociale.csv,
+  legislation/validation_trimestres.csv, legislation/revalorisation_pensions.csv,
+  legislation/csg_pensions_seuils.csv, legislation/minimum_vieillesse_avant_2007.csv,
+  legislation/duree_proratisation.csv ; les limites docs/limites/3-systeme-actuel.md et
+  docs/limites/ecarts-au-droit-positif.md. Ni Légifrance, ni le Journal officiel, ni
+  l'index de la DILA.
+trouve: >-
+  Le registre range les 54 (19 limite, 35 hors_modele), sans raison neuve. Conformes : le
+  SMIC du 1er juillet 2003, le plafond de la réversion à cette date, le trimestre de 2004,
+  la revalorisation de 2003, les plafonds des veuves de guerre, le seuil de la CSG de
+  2004, la durée maximum de 150 trimestres. Deux écarts neufs : la pension de l'inapte ou
+  substituée à une pension d'invalidité, avant 65 ans, n'est servie que sous un plafond de
+  revenus professionnels (R. 352-2, circulaire Cnav n° 2003/31, 1 869,40 € par trimestre),
+  que rien dans le dépôt ne porte ; la convention franco-tchécoslovaque impose la
+  totalisation-proratisation (circulaire ministérielle n° 2003/88, Cnav n° 2003/32), quand
+  le modèle, qui la tient pour non lue, sert la pension nationale sans prorata : 20 % de
+  trop au cas posé. Le plafond de la réversion au SMIC de la demande, donné pour neuf en
+  2002, était déjà déclaré dans la fiche reversion. Note
+  docs/feuille_de_route/175/2026-11-16-etape-6-circulaires-2003.md.
+reste: >-
+  Les 818 circulaires de 2004 à 2026, par période ; les autres natures de l'étape 6 ; les
+  textes que celles-ci appliquent, à relire au Journal officiel, dont l'article R. 352-2
+  dans ses versions ; les deux cas, à poser sur les moteurs.

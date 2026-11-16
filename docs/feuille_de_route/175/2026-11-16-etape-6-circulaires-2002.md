@@ -1,15 +1,5 @@
 # Étape 6, circulaires de 2002 : les 102 références sans thème de la neuvième période, relues par l'API
 
-**Reprise, au 16 novembre 2026.** Trois natures de l'étape sont rangées ; la quatrième, les
-circulaires, lettres et instructions sans thème, l'est de 1936 à 2002 (cette note et celles
-des périodes d'avant). Restent 872 circulaires, de 2003 à 2026, par période (54 en 2003, 73
-en 2004, 66 en 2005, 61 en 2006, 120 en 2007) ; puis, une session par nature : les 96
-autres textes, les 74 que la base nomme sans les servir, les 107 accords. Méthode : la
-base relue par l'API (`_reference` de `cnav_legislation.py`), les pièces PDF lues au site
-sous `/Pdf/`, chaque texte lu en entier, la citation d'un agent retrouvée par script dans
-le texte servi. Candidat neuf : le plafond de ressources de la réversion pris au SMIC du
-1er janvier, quand la caisse prend celui de la date de la demande (ici).
-
 **Le 16 novembre 2026, ce qui est fait.**
 
 - *La période* : les références du registre sans thème et à lire dont le titre commence
