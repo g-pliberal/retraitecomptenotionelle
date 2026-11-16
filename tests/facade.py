@@ -616,6 +616,13 @@ class Simulateur(_Ferme):
         """Le scénario 6, par sa garantie vieillesse seule."""
         return _ScenarioLiberal(self)
 
+    @property
+    def univers_de_la_demande(self) -> dict:
+        """``Simulateur.univers_de_la_demande`` : aucun univers à passer au
+        pont, la façade ne recevant pas de variante ; le portage calcule ceux
+        de son paquet."""
+        return {}
+
     def pour_la_projection(self) -> "Simulateur":
         """``Simulateur.pour_la_projection`` : le simulateur de la page Coût,
         sous les conventions du COR et sans le minimum vieillesse au scénario

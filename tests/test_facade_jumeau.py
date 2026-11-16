@@ -1899,6 +1899,10 @@ APPELS_DE_LA_MORTALITE = [
     ("survie_annuelle", (63 + 4 / 12, 2038.5, "F")),
     ("survie_annuelle", (85.0, 2060, "H")),
     ("survie_annuelle", (95.25, 2130, "F")),
+    ("courbe", (62.0, 2031.0, None, True, None)),
+    ("courbe", (66.0, 2045.0, None, True, "niveau_de_vie_v03")),
+    ("courbe", (60.5, 2028.25, "F", True, "fonctionnaires_civils_etat")),
+    ("courbe", (70.0, 2020.0, "H", False, None)),
 ]
 
 

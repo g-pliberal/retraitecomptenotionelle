@@ -2044,8 +2044,29 @@ def test_la_mortalite_du_simulateur_se_demande_au_portage(simulateur):
     mortalite = simulateur.mortalite
     assert mortalite.survie_annuelle(70, 1950, "H") == pytest.approx(1.0 - 0.051121)
     assert mortalite._quotients_observes[(1950, "H")][70] == pytest.approx(0.051121)
-    with pytest.raises(NonTransmissible, match="mortalite.courbe"):
-        mortalite.courbe
+    with pytest.raises(NonTransmissible, match="mortalite.esperance_residuelle"):
+        mortalite.esperance_residuelle
+
+
+def test_la_courbe_de_survie_se_demande_au_portage(simulateur):
+    """La courbe unisexe que le coût lit pour ses survies (``cout._survies``) :
+    à son premier terme, l'assuré est en vie ; d'une année à la suivante, il
+    survit au plus ; celle des fonctionnaires civils de l'État, qui vivent plus
+    longtemps que la population générale (``esperances_vie_populations.csv``),
+    passe au-dessus d'elle passé quelques années."""
+    mortalite = simulateur.mortalite
+    generale = mortalite.courbe(65.0, 2030.0, None, True, None)
+    civils = mortalite.courbe(65.0, 2030.0, None, True, "fonctionnaires_civils_etat")
+    assert generale[0] == pytest.approx(1.0)
+    assert all(b <= a for a, b in zip(generale, generale[1:]))
+    assert civils[20] > generale[20]
+
+
+def test_le_simulateur_de_la_facade_n_a_pas_d_univers_a_passer(simulateur):
+    """``Simulateur.univers_de_la_demande`` : ce qu'une étude passe au pont à
+    la place des univers du paquet. La façade ne reçoit pas de variante : elle
+    n'en passe aucun, et le portage calcule ceux de son paquet."""
+    assert simulateur.univers_de_la_demande == {}
 
 
 def _salarie_de(simulateur, naissance: int, age: float):

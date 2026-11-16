@@ -76,42 +76,42 @@ def test_chaque_hypothese_est_un_bareme_du_moteur(hypotheses):
         Simulateur(mal_forme).regime_fusionne
 
 
-def test_la_grille_se_simule_par_le_portage(hypotheses, monkeypatch):
+def test_la_grille_se_simule_par_le_portage(hypotheses):
     """Sous chaque barème, la grille du coût se simule par le portage, le
     barème dans les paramètres de la demande, et rend de chaque couple, avec ce
     que le coût en lit, ce que le compte du scénario 4 prélève et sur quels
     revenus (action 161) : ce que le témoin des valeurs porte (``outils_valeurs``,
-    étape 8d) — sans que le moteur Python ne calcule rien. Le prélèvement du régime unique y change après la
-    bascule, et non avant."""
+    étape 8d). Le simulateur est celui de la façade : la lecture de la grille
+    (``RegimeUniqueVariante._pensionnes``) se demande hors du contexte de la
+    variante, qui remplace des fonctions du coût, et que la façade, qui ne sert
+    que le modèle intact, refuserait. Le prélèvement du régime unique y change
+    après la bascule, et non avant."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne calcule pas ici")
-    from outils_pont import empecher_les_jumeaux_du_cout
     from outils_valeurs import valeur_figee
     from retraite_notionnelle.castypes import GRILLE_DU_COUT
-    # Le coût remplacé (``RegimeUniqueVariante``, ``monkeypatch``) : la façade,
-    # qui ne transmet pas un modèle modifié, ne lui servirait pas la mortalité
-    # de ses survies. Ses données restent celles du simulateur Python.
-    from retraite_notionnelle.simulateur import Simulateur as SimulateurPython
 
-    monkeypatch.setattr(C, "generations", lambda: (1965, 2000))
     grille = tuple(cas for cas in GRILLE_DU_COUT
                    if cas.code in ("salaire_moyen", "artisan", "fonctionnaire_sedentaire"))
     _, toutes = hypotheses
+    lire = solde_fusion.RegimeUniqueVariante._pensionnes(C._pensionnes)
     lus = {}
-    empecher_les_jumeaux_du_cout(monkeypatch)
     for lettre in "BC":
-        simulateur = SimulateurPython(solde_fusion.parametres_de(toutes[lettre], PARAMETRES))
-        with solde_fusion.RegimeUniqueVariante(toutes[lettre]):
-            lus[lettre] = valeur_figee(f"grille sous l'hypothèse {lettre}",
-                                       C._pensionnes(simulateur, grille, "droit"))
-        assert len(lus[lettre][0]) == len(grille) * 2, lettre
+        simulateur = Simulateur(solde_fusion.parametres_de(toutes[lettre], PARAMETRES))
+        lus[lettre] = valeur_figee(f"grille sous l'hypothèse {lettre}",
+                                   lire(simulateur, grille, "droit"))
+        assert {pensionne.code for pensionne in lus[lettre][0]} == {
+            cas.code for cas in grille}, lettre
     bascule = PARAMETRES.annee_bascule
     for b, c in zip(lus["B"][0], lus["C"][0], strict=True):
         assert b.cotisations[solde_fusion.REVENU] == c.cotisations[solde_fusion.REVENU]
         fusion_b, fusion_c = b.cotisations[solde_fusion.FUSION], c.cotisations[solde_fusion.FUSION]
         assert ({a: v for a, v in fusion_b.items() if a < bascule}
                 == {a: v for a, v in fusion_c.items() if a < bascule})
-        assert any(fusion_b[a] != fusion_c[a] for a in fusion_b if a >= bascule), b.code
+        apres = [a for a in fusion_b if a >= bascule and fusion_b[a] > 0.0]
+        # Les générations nées de 1965 à 2000 cotisent après la bascule.
+        assert apres or not 1965 <= b.generation <= 2000, (b.code, b.generation)
+        assert all(fusion_b[a] != fusion_c[a] for a in apres), (b.code, b.generation)
 
 
 def test_les_quatre_hypotheses_se_rangent_par_taux(hypotheses):
