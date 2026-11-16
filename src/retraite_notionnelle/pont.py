@@ -3056,6 +3056,9 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
                   "majoration_ouverte", "majoration_retraite_proportionnelle",
                   "pension_majoree", "plancher_du_regime", "points_rco_de_chef",
                   "selon_la_regle"),
+    # La part du salaire brut que la CSG retient, et le premier jour d'un
+    # mois, que le cumul emploi-retraite écrit à son journal.
+    "cumul": ("assiette_csg", "jour"),
     # Les départs de chaque régime, l'âge légal qui les date, et ce que
     # devient chaque date de demande que la carrière dit.
     "departs": ("age_legal", "demandes", "departs", "departs_et_demandes"),

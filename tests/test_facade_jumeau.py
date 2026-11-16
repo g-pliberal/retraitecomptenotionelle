@@ -34,6 +34,7 @@ from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import compter as compter_python
 from retraite_notionnelle.droit import cultes as cultes_python
+from retraite_notionnelle.droit import cumul as cumul_python
 from retraite_notionnelle.droit import departs as departs_python
 from retraite_notionnelle.droit import foyer as foyer_python
 from retraite_notionnelle.droit import invalidite as invalidite_python
@@ -1033,6 +1034,12 @@ APPELS_DES_REGLES = [
                                                  _salarie_agricole_de_1907(s))),
     ("liquider", "pension_maximale", lambda s: (s.scenario_actuel, "cnav_pl",
                                                  _cadre_de_1925(s))),
+    # La part du brut que retient la CSG, avant et après 2005 ; le premier jour
+    # d'un mois.
+    ("cumul", "assiette_csg", lambda s: (1998,)),
+    ("cumul", "assiette_csg", lambda s: (2012,)),
+    ("cumul", "assiette_csg", lambda s: (2025,)),
+    ("cumul", "jour", lambda s: (DateMois(2025, 2),)),
     # La radiation par limite d'âge : un sédentaire maintenu jusqu'à soixante-dix
     # ans, un actif, une carrière qui finit avant sa limite.
     ("limite_age", "radiation", lambda s: (s.scenario_actuel, _maintenu(s))),
@@ -1203,7 +1210,7 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
                "reversion": reversion_python, "revalorisation": revalorisation_python,
                "cultes": cultes_python, "departs": departs_python, "releve": releve_python,
                "invalidite": invalidite_python, "categories": categories_python,
-               "limite_age": limite_age_python}
+               "limite_age": limite_age_python, "cumul": cumul_python}
     ecarts = []
     for module, regle, arguments in APPELS_DES_REGLES:
         lu = getattr(facade.regles_de_la_reversion if module == "reversion"

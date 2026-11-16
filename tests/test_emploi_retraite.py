@@ -13,11 +13,12 @@ from __future__ import annotations
 import pytest
 
 from retraite_notionnelle import chronologie as chrono
+from retraite_notionnelle import pont
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import Carriere, Metier
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.web.site import ErreurSite
 
+from facade import Carriere, Simulateur
 from outils_pont import refus_de_la_saisie, saisie_du_portage
 
 
@@ -115,7 +116,7 @@ def test_la_carriere_garde_ses_annees_a_part(simulateur):
 
 # -- le cumul (droit/cumul.py) ------------------------------------------------------
 
-from retraite_notionnelle.droit import cumul  # noqa: E402
+from facade import cumul  # noqa: E402
 
 
 def _cumul(simulateur: Simulateur, naissance: int, depart: float, emploi: dict,
@@ -755,18 +756,39 @@ def test_la_premiere_pension_de_2027_reduit_les_complementaires_apres_les_bases(
 
 
 def test_les_regles_des_sections_sont_celles_de_leur_fiche():
-    """La table des sections que les deux moteurs redisent est celle de la fiche
+    """La table des sections que le portage redit (``REGLES_DES_SECTIONS`` de
+    ``droit/cumul.js``) est celle de la fiche
     ``cumul_emploi_retraite_complementaires_des_liberaux`` : chaque section, la
     règle de ses statuts et le premier mois où elle vaut."""
+    import json
+    import shutil
+    import subprocess
+
+    from retraite_notionnelle.config import RACINE_PROJET
     from retraite_notionnelle.noyau import carte
 
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage n'est pas vérifiable ici")
     fiche = carte.fiches()["cumul_emploi_retraite_complementaires_des_liberaux"]
     version, = [v for v in fiche["versions"] if v["id"] == cumul.SECTIONS_STATUTS]
     table = {regime: [(str(debut), regle) for debut, regle in regles]
              for regime, regles in version["contenu"]["parametres"]["sections"].items()}
-    assert table == {regime: [(f"{mois.annee:04d}-{mois.mois:02d}-01", regle)
-                              for mois, regle in regles]
-                     for regime, regles in cumul.REGLES_DES_SECTIONS.items()}
+    lecture = """
+import { DateMois } from "./moteur/js/calendrier.js";
+import { REGLES_DES_SECTIONS } from "./moteur/js/droit/cumul.js";
+console.log(JSON.stringify(Object.fromEntries(Object.entries(REGLES_DES_SECTIONS).map(
+  ([regime, regles]) => [regime, regles.map(([rang, regle]) => {
+    const mois = DateMois.depuisRang(rang);
+    return [`${String(mois.annee).padStart(4, "0")}-${String(mois.mois).padStart(2, "0")}-01`,
+      regle];
+  })]))));
+"""
+    execution = subprocess.run(["node", "--input-type=module", "-e", lecture],
+                               cwd=RACINE_PROJET, capture_output=True, text=True,
+                               encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr
+    assert table == {regime: [tuple(regle) for regle in regles]
+                     for regime, regles in json.loads(execution.stdout).items()}
 
 
 def test_le_journal_sert_la_pension_reduite_pendant_l_activite(simulateur):
@@ -800,15 +822,13 @@ def test_les_regles_du_cumul_sont_des_versions_des_fiches(simulateur):
                   "cumul_emploi_retraite_ircantec", "cumul_emploi_retraite_rco_agricole",
                   "cumul_emploi_retraite_complementaires_des_liberaux"):
         versions |= {v["id"] for v in toutes[fiche]["versions"]}
-    citees = {valeur for nom, valeur in vars(cumul).items()
-              if nom.isupper() and isinstance(valeur, str) and "_" in valeur
-              and nom in ("AVANT_1983", "RUPTURE_1983", "PLAFOND_2004", "LIBERALISE_2009",
+    citees = {getattr(cumul, nom) for nom in ("AVANT_1983", "RUPTURE_1983", "PLAFOND_2004", "LIBERALISE_2009",
                           "PREMIERES_2015", "REDUCTION_2015", "AGES_2027", "FP_1970",
                           "FP_2004", "FP_2009", "FP_2015", "FP_2027", "RCI_AVANT_2009",
                           "RCI_2009", "RCI_2024", "RCI_2027", "IRCANTEC_AVANT_2004",
                           "IRCANTEC_2004", "IRCANTEC_2020", "RCO_AGRICOLE_2003",
                           "SECTIONS_STATUTS")}
-    assert len(citees) == 21
+    assert len(citees) == 21 and all(isinstance(regle, str) for regle in citees)
     assert citees <= versions, citees - versions
     for fiche in ("cumul_emploi_retraite_ircantec", "cumul_emploi_retraite_rco_agricole",
                   "cumul_emploi_retraite_complementaires_des_liberaux"):
@@ -831,10 +851,13 @@ def _cumul_prete(simulateur: Simulateur, naissance: int, depart: float, metiers:
     carriere = replace(carriere, lignes_apres_depart=tuple(
         replace(ligne, revenu=revenus.get(ligne.annee, ligne.revenu))
         for ligne in carriere.lignes_apres_depart))
-    moteur = simulateur.scenario_actuel
-    return cumul.cumuler(moteur, carriere, moteur.calculer(carriere),
-                         lambda annee: (dict(pensions), 0.0),
-                         simulateur.parametres.annee_courante)
+    # Le portage refait le scénario 1 de la carrière, que le cumul lit, et
+    # chaque régime de ``pensions`` y sert chaque année la pension prêtée.
+    lus, refus = pont.droit({"cumul": (
+        "cumul.cumuler.pensions_pretees", pont.MOTEUR, carriere, carriere, dict(pensions),
+        simulateur.parametres.annee_courante)}, simulateur.parametres)
+    assert refus == {}, refus
+    return lus["cumul"]
 
 
 def _mois_par_mois(resultat, regime) -> dict:
@@ -1110,8 +1133,8 @@ def test_la_pension_d_invalidite_de_2027_se_cumule_entierement(simulateur):
 
 # -- les droits de l'activité et la nouvelle pension (droit/seconde.py) -------------
 
-from retraite_notionnelle.droit import liquider as _liquider  # noqa: E402
-from retraite_notionnelle.droit import seconde  # noqa: E402
+from facade import liquider as _liquider  # noqa: E402
+from facade import seconde  # noqa: E402
 
 
 def _droits(simulateur: Simulateur, naissance: int, depart: float, emploi: dict,
@@ -1449,7 +1472,8 @@ def test_l_activite_ouvre_une_pension_dans_le_regime_qui_n_en_servait_pas(simula
     liquidations = [e for e in echeancier.journal
                     if e.sorte == "liquidation" and "regimes_nouveaux" in e.id]
     assert len(liquidations) == 1
-    assert {p.regime for p in liquidations[0].contenu.regimes} >= {"regime_general", "arrco"}
+    assert set(liquidations[0].contenu.donnees()["demande"]["regimes"]) >= {
+        "regime_general", "arrco"}
     assert all(p.regime not in nouveaux for p in echeancier.au_depart.pensions_par_regime)
 
 

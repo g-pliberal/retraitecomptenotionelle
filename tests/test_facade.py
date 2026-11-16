@@ -35,6 +35,7 @@ from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import compter as compter_python
 from retraite_notionnelle.droit import cultes as cultes_python
+from retraite_notionnelle.droit import cumul as cumul_python
 from retraite_notionnelle.droit import departs as departs_python
 from retraite_notionnelle.droit import foyer as foyer_python
 from retraite_notionnelle.droit import invalidite as invalidite_python
@@ -737,7 +738,7 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
     assert facade.REGLES is pont.REGLES_DE_LA_FACADE
     assert set(facade.REGLES) == {"acquerir", "carriere", "categories", "commun", "completer",
                                   "compter",
-                                  "cultes", "departs",
+                                  "cultes", "cumul", "departs",
                                   "foyer", "invalidite", "limite_age", "liquider", "ouvrir",
                                   "releve",
                                   "reversion", "revalorisation"}
@@ -2323,7 +2324,8 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
                        "commun": commun_python,
                        "completer": completer_python,
                        "compter": compter_python,
-                       "cultes": cultes_python, "departs": departs_python, "foyer": foyer_python,
+                       "cultes": cultes_python, "cumul": cumul_python, "departs": departs_python,
+                       "foyer": foyer_python,
                        "invalidite": invalidite_python, "limite_age": limite_age_python,
                        "liquider": liquider_python, "ouvrir": ouvrir_python,
                        "releve": releve_python, "reversion": reversion_python,

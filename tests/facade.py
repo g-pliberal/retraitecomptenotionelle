@@ -99,6 +99,7 @@ from retraite_notionnelle.droit import compter as _compter
 from retraite_notionnelle.droit import coordonner as _coordonner
 from retraite_notionnelle.droit import completer as _completer
 from retraite_notionnelle.droit import cultes as _cultes
+from retraite_notionnelle.droit import cumul as _cumul
 from retraite_notionnelle.droit import departs as _departs
 from retraite_notionnelle.droit import foyer as _foyer
 from retraite_notionnelle.droit import invalidite as _invalidite
@@ -108,6 +109,7 @@ from retraite_notionnelle.droit import liquider as _liquider
 from retraite_notionnelle.droit import ouvrir as _ouvrir
 from retraite_notionnelle.droit import releve as _releve
 from retraite_notionnelle.droit import reversion as _reversion
+from retraite_notionnelle.droit import seconde as _seconde
 from retraite_notionnelle.moteur import compte as _compte
 from retraite_notionnelle.moteur.fusion import RegimeFusionne
 from retraite_notionnelle.scenarios import actuel as _actuel
@@ -897,7 +899,7 @@ class Regles(_Ferme):
             # Une constante du module, une valeur simple ou une suite de
             # valeurs simples : rien à calculer.
             return getattr(self._jumeau, regle)
-        if regle not in REGLES[self._nom]:
+        if regle not in REGLES.get(self._nom, ()):
             raise NonTransmissible(
                 f"{self._nom}.{regle} : la façade ne sert pas cette règle du droit "
                 "(pont.REGLES_DE_LA_FACADE) — le test reste sur le moteur Python, ou la "
@@ -1270,6 +1272,11 @@ regles_de_la_reversion = Regles("reversion", _reversion)
 #: ``droit.cultes`` : la durée de chaque fraction de la pension des cultes,
 #: sur les durées du relevé, et la part de l'écart de la génération.
 cultes = Regles("cultes", _cultes)
+#: Le cumul emploi-retraite : la part du brut que la CSG retient, le premier
+#: jour d'un mois, et ses constantes.
+cumul = Regles("cumul", _cumul)
+#: Les droits que l'activité ouvre après le départ : ses constantes seules.
+seconde = Regles("seconde", _seconde)
 #: ``droit.categories`` : l'âge légal de la génération, et l'âge du taux plein
 #: de l'ancien combattant ou prisonnier de guerre (D. 351-2).
 categories = Regles("categories", _categories)
