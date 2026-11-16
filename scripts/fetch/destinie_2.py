@@ -64,8 +64,7 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(RACINE / "src"))
 
-from retraite_notionnelle.carriere import salaire_moyen_annuel  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle import pont  # noqa: E402
 
 SORTIE = RACINE / "tests" / "temoins" / "destinie_2.json"
 SCRIPT_R = Path(__file__).resolve().with_suffix(".R")
@@ -303,20 +302,29 @@ CAS: tuple[Cas, ...] = (
 # Les revenus, en euros de chaque année
 # ---------------------------------------------------------------------------
 
-def revenus(personne: Personne, macro) -> dict[int, tuple[str, int]]:
+def salaires_des_cas(cas_: tuple[Cas, ...]) -> dict[int, float]:
+    """Le salaire moyen du dépôt de chaque année que les périodes des cas
+    couvrent, que le portage sert, en une demande (le pont)."""
+    return pont.salaires_moyens(
+        annee for individu in population(cas_)[0] for periode in individu.personne.periodes
+        for annee in range(periode.debut, periode.fin + 1))
+
+
+def revenus(personne: Personne, salaires: dict[int, float]) -> dict[int, tuple[str, int]]:
     """Le statut et le revenu brut de chaque année travaillée, en euros de
-    l'année : le niveau de la période fois le salaire moyen du dépôt."""
+    l'année : le niveau de la période fois le salaire moyen du dépôt
+    (:func:`salaires_des_cas`)."""
     annees: dict[int, tuple[str, int]] = {}
     for periode in personne.periodes:
         for annee in range(periode.debut, periode.fin + 1):
             if annee in annees:
                 raise ValueError(f"{annee} : deux périodes la couvrent")
             annees[annee] = (periode.statut,
-                             round(periode.niveau * salaire_moyen_annuel(macro, annee)))
+                             round(periode.niveau * salaires[annee]))
     return dict(sorted(annees.items()))
 
 
-def requete(cas: Cas, macro, ressources_conjoint: float | None = None) -> dict[str, str]:
+def requete(cas: Cas, salaires: dict[int, float], ressources_conjoint: float | None = None) -> dict[str, str]:
     """La requête du simulateur du dépôt : le relevé de carrière du formulaire,
     les enfants, le conjoint et le décès.
 
@@ -326,7 +334,7 @@ def requete(cas: Cas, macro, ressources_conjoint: float | None = None) -> dict[s
     non travaillée, elle est déclarée sans activité, sans quoi le dépôt
     prolongerait le relevé jusqu'au départ."""
     assure = cas.assure
-    annees = revenus(assure, macro)
+    annees = revenus(assure, salaires)
     annee_depart, mois_depart = int(cas.depart[:4]), int(cas.depart[5:7])
     lignes = []
     for annee, (statut, montant) in annees.items():
@@ -416,13 +424,13 @@ def population(cas_: tuple[Cas, ...]) -> tuple[list[Individu], dict[str, dict[st
     return individus, roles
 
 
-def tables(individus: list[Individu], cas_: tuple[Cas, ...], macro) -> dict[str, list[dict]]:
+def tables(individus: list[Individu], cas_: tuple[Cas, ...], salaires: dict[int, float]) -> dict[str, list[dict]]:
     """ech, emp, fam, union_base et union, triées comme Destinie les lit."""
     par_code = {cas.code: cas for cas in cas_}
     ech, emp, fam, union_base, union = [], [], [], [], []
     for individu in individus:
         personne = individu.personne
-        annees = revenus(personne, macro)
+        annees = revenus(personne, salaires)
         debut = min(annees) if annees else None
         findet = (debut - personne.annee) if debut else 20
         primes = personne.primes
@@ -594,7 +602,8 @@ def _servie(lignes: list[dict], annee: int) -> dict | None:
     return None
 
 
-def temoin(sorties: dict[str, dict], roles: dict[str, dict[str, int]], macro) -> dict:
+def temoin(sorties: dict[str, dict], roles: dict[str, dict[str, int]],
+           salaires: dict[int, float]) -> dict:
     base = sorties["base"]
     liquidations = {v: _par_id(s["liquidations"]) for v, s in sorties.items()}
     retraites = {v: _par_id(s["retraites"]) for v, s in sorties.items()}
@@ -623,7 +632,7 @@ def temoin(sorties: dict[str, dict], roles: dict[str, dict[str, int]], macro) ->
             # Les ressources du survivant, dans le dépôt : ses propres pensions,
             # celles que Destinie lui sert cette année-là.
             ressources = servie["pension"] if servie else 0.0
-        resultat["requete"] = requete(cas, macro, ressources)
+        resultat["requete"] = requete(cas, salaires, ressources)
         cas_temoins[cas.code] = resultat
     parametres = {str(ligne["annee"]): {cle: valeur for cle, valeur in ligne.items()
                                          if cle != "annee"}
@@ -680,11 +689,11 @@ def main(arguments: list[str] | None = None) -> int:
     lecteur.add_argument("--garder", action="store_true",
                          help="garde le dossier des tables et des sorties de R")
     options = lecteur.parse_args(arguments)
-    macro = Simulateur().macro
+    salaires = salaires_des_cas(CAS)
     if options.lister:
         for cas in CAS:
             print(f"{cas.code} : {cas.objet}")
-            print(f"    {json.dumps(requete(cas, macro), ensure_ascii=False)[:300]}…")
+            print(f"    {json.dumps(requete(cas, salaires), ensure_ascii=False)[:300]}…")
         return 0
     distribution = None if options.wsl in ("", "aucune") else options.wsl
     if distribution is None and shutil.which("Rscript") is None:
@@ -694,7 +703,7 @@ def main(arguments: list[str] | None = None) -> int:
     individus, roles = population(CAS)
     dossier = Path(tempfile.mkdtemp(prefix="destinie_2_"))
     try:
-        for nom, lignes in tables(individus, CAS, macro).items():
+        for nom, lignes in tables(individus, CAS, salaires).items():
             _ecrire_csv(dossier / f"{nom}.csv", lignes, COLONNES[nom])
         (dossier / "options.json").write_bytes(json.dumps({
             "anLeg": AN_LEG, "AN_MAX": AN_MAX, "comp": COMPORTEMENT,
@@ -707,7 +716,7 @@ def main(arguments: list[str] | None = None) -> int:
             print(f"Tables et sorties gardées dans {dossier}")
         else:
             shutil.rmtree(dossier, ignore_errors=True)
-    document = temoin(sorties, roles, macro)
+    document = temoin(sorties, roles, salaires)
     _ecrire(document)
     print(f"{SORTIE} : {len(document['cas'])} cas")
     return 0

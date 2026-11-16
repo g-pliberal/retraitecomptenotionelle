@@ -69,7 +69,6 @@ sys.path.insert(0, str(RACINE / "scripts" / "fetch"))
 from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import pont  # noqa: E402
 from retraite_notionnelle.calendrier import MOIS_PAR_AN  # noqa: E402
-from retraite_notionnelle.carriere import salaire_moyen_annuel  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 from retraite_notionnelle.web.site import module  # noqa: E402
@@ -524,6 +523,8 @@ class Confrontation:
         donnees = Simulateur(parametres)
         self.catalogue = donnees.catalogue
         self.macro = donnees.macro
+        self.parametres = parametres
+        self._salaires: dict[int, float] = {}
         self.releve = self._releve_corrige()
 
     def _naissance(self) -> str:
@@ -604,7 +605,16 @@ class Confrontation:
         if self.revenus_futurs == "prix":
             return (self.macro.coefficient_prix(depuis, annee)
                     * (1 + self.croissance / 100) ** (annee - depuis))
-        return salaire_moyen_annuel(self.macro, annee) / salaire_moyen_annuel(self.macro, depuis)
+        salaires = self.salaires_moyens(depuis, annee)
+        return salaires[annee] / salaires[depuis]
+
+    def salaires_moyens(self, *annees: int) -> dict[int, float]:
+        """Le salaire moyen brut de chaque année, que le portage sert (le
+        pont), gardé d'un appel à l'autre."""
+        manquantes = [annee for annee in annees if annee not in self._salaires]
+        if manquantes:
+            self._salaires.update(pont.salaires_moyens(manquantes, self.parametres))
+        return self._salaires
 
     def releve_prolonge(self, depart: dt.date) -> str:
         """Le relevé, et les années qui le séparent du départ : chaque emploi
@@ -613,6 +623,8 @@ class Confrontation:
         if self.revenus_futurs == "aucun":
             return self.releve
         emplois, depuis = self.revenus_a_venir()
+        if self.revenus_futurs != "prix":
+            self.salaires_moyens(depuis, *range(self.derniere_annee + 1, depart.year + 1))
         lignes = [self.releve]
         for annee in range(self.derniere_annee + 1, depart.year + 1):
             mois = MOIS_PAR_AN if annee < depart.year else depart.month - 1

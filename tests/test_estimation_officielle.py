@@ -259,7 +259,8 @@ def test_les_revenus_a_venir_poursuivent_la_derniere_annee(catalogue):
     y ajoute, l'année du départ au prorata de ses mois ; `aucun` l'arrête."""
     moyen = _confrontation(catalogue)
     macro, arrondi = moyen.macro, estimation_officielle.arrondi
-    salaire = estimation_officielle.salaire_moyen_annuel
+    salaires = pont.salaires_moyens(range(2025, 2028))
+    salaire = lambda macro, annee: salaires[annee]  # noqa: E731
     assert moyen.releve_prolonge(dt.date(2027, 6, 1)).split("\n")[-2:] == [
         f"2026:salarie_prive_non_cadre:"
         f"{arrondi(32_100 * salaire(macro, 2026) / salaire(macro, 2025))}",

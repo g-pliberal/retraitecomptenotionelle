@@ -1853,6 +1853,21 @@ def indexation(appels: list[tuple], parametres=None, paquet: bytes | None = None
                                 parametres, paquet)[1]
 
 
+def salaires_moyens(annees, parametres=None, paquet: bytes | None = None) -> dict[int, float]:
+    """Le salaire moyen brut de chaque année de ``annees``, en euros courants
+    de l'année (``carriere.salaire_moyen_annuel`` du portage), sur le
+    simulateur de ``parametres``, ceux de référence sans eux : toutes les
+    années en une demande, rendues dans l'ordre croissant."""
+    distinctes = sorted(set(annees))
+    if not distinctes:
+        return {}
+    lus, refus = droit({str(annee): ("carriere.salaire_moyen_annuel", SIMULATEUR, annee)
+                        for annee in distinctes}, parametres, paquet)
+    if refus:
+        raise ValueError(f"le portage refuse le salaire moyen : {refus}")
+    return {annee: lus[str(annee)] for annee in distinctes}
+
+
 # -- la fin de la revalorisation servie et de l'indexation ------------------------
 
 

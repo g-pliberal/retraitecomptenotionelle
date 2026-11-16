@@ -2403,3 +2403,29 @@ def test_les_regles_de_l_histoire_du_droit_sont_celles_du_jumeau_au_bit(monkeypa
     assert {servie.COEFFICIENT_GENERAL, servie.DECRETS_PUBLICS, servie.POINT_D_INDICE} in lots
     assert lots.count({servie.DERNIERE_VALEUR_PUBLIEE}) == 1
     assert lots.count({servie.VALEUR_DU_POINT, servie.ECHELLE_DU_POINT}) == len(lots) - 3
+
+
+def test_le_pont_rend_les_salaires_moyens_par_lot():
+    """Le salaire moyen d'une année, que les scripts lisaient dans
+    ``carriere.salaire_moyen_annuel`` du moteur Python, le pont le demande
+    au portage, pour toutes les années d'un lot en une demande (action 161,
+    étape 1 du tri). Les valeurs viennent de ``salaire_moyen_niveau.csv`` :
+    40 897,00 € en 2024, l'ancrage, rendu tel quel ; 39 845,61 € en 2023,
+    que le cumul des croissances refait à un dix-millième près."""
+    _sans_node()
+    lus = pont.salaires_moyens([2024, 2023, 2024])
+    assert list(lus) == [2023, 2024]
+    assert lus[2024] == 40897.00
+    assert lus[2023] == pytest.approx(39845.61, rel=1e-4)
+    assert pont.salaires_moyens([]) == {}
+
+
+def test_les_scripts_ne_lisent_plus_le_salaire_moyen_au_moteur_python():
+    """``scenarios_meres``, ``estimation_officielle`` et
+    ``fetch/destinie_2`` demandent le salaire moyen au pont
+    (:func:`pont.salaires_moyens`), non à ``carriere.py``."""
+    for nom in ("scenarios_meres.py", "estimation_officielle.py", "fetch/destinie_2.py"):
+        arbre = ast.parse((RACINE_PROJET / "scripts" / nom).read_text(encoding="utf-8"))
+        importes = {alias.name for noeud in ast.walk(arbre)
+                    if isinstance(noeud, ast.ImportFrom) for alias in noeud.names}
+        assert "salaire_moyen_annuel" not in importes, nom

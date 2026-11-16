@@ -78,7 +78,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import Parametres, pont  # noqa: E402
-from retraite_notionnelle.carriere import salaire_moyen_annuel  # noqa: E402
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
 from retraite_notionnelle.simulateur import Comparaison, Simulateur  # noqa: E402
 
@@ -224,11 +223,20 @@ class Grille:
         puis suivie du salaire moyen jusqu'à ``annee`` : une aide qui est une
         part constante du salaire, comme les cotisations qu'elle remplace.
         """
-        macro = self.simulateur.macro
         par_naissance = (self.comptes.transfert_organisme("famille", ANNEE_AIDE)
                          * 1e6 / NAISSANCES[ANNEE_AIDE])
-        return (par_naissance * salaire_moyen_annuel(macro, annee)
-                / salaire_moyen_annuel(macro, ANNEE_AIDE))
+        salaires = self._salaires_moyens(annee, ANNEE_AIDE)
+        return par_naissance * salaires[annee] / salaires[ANNEE_AIDE]
+
+    def _salaires_moyens(self, *annees: int) -> dict[int, float]:
+        """Le salaire moyen de chaque année, que le portage sert (le pont),
+        gardé d'un appel à l'autre."""
+        if not hasattr(self, "_salaires"):
+            self._salaires: dict[int, float] = {}
+        manquantes = [annee for annee in annees if annee not in self._salaires]
+        if manquantes:
+            self._salaires.update(pont.salaires_moyens(manquantes, self.simulateur.parametres))
+        return self._salaires
 
     def annees_de_naissance(self, situation: Situation) -> list[int]:
         return [self.generation + AGE_PREMIER_ENFANT + ECART_ENTRE_ENFANTS * i
