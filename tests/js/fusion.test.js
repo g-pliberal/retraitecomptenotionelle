@@ -19,7 +19,10 @@
  */
 
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 
 import { CritereTaux, REGLE_FUSION_DEFAUT, fusionner } from "../../moteur/js/fusion.js";
 import { CatalogueRegimes } from "../../moteur/js/regimes.js";
@@ -159,4 +162,76 @@ test("un régime pivot que le catalogue n'a pas est sauté, et aucun pivot est u
 
 test("une bascule d'avant tous les régimes est refusée", () => {
   assert.throws(() => fusionner(CATALOGUE, 1949), /aucun régime vivant en 1949 : fusion impossible/);
+});
+
+// -- le catalogue des fiches --------------------------------------------------
+// Les sept tests de `tests/test_moteur.py` qui fusionnaient le catalogue réel
+// du moteur Python, éprouvés sur celui du site (action 161, quatrième vague).
+// Les attendus viennent des fiches et de `docs/methodologie.md`, § 7 : des
+// bornes que chaque régime vivant doit respecter, la carrière entière comme
+// salaire de référence le moins avantageux, la somme des taux du statut
+// pivot relue période par période.
+
+const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+const paquet = JSON.parse(readFileSync(join(RACINE, "moteur", "donnees.json"), "utf8"));
+const FICHES = new CatalogueRegimes(paquet);
+
+/** Comme `pytest.approx` : 10⁻⁶ relatif, 10⁻¹² absolu. */
+const approx = (lu, attendu, quoi) => assert.ok(
+  Math.abs(lu - attendu) <= Math.max(1e-12, 1e-6 * Math.abs(attendu)),
+  `${quoi} : ${lu} au lieu de ${attendu}`);
+
+/** Les périodes de 2026 des régimes vivants en répartition. */
+const repartition2026 = () => [...FICHES]
+  .filter((regime) => !regime.hors_repartition && regime.vivant(2026))
+  .flatMap((regime) => regime.periodesActives(2026));
+
+test("les fiches : le régime unique retient les âges les plus élevés", () => {
+  const fusionne = fusionner(FICHES, 2026);
+  const periodes = repartition2026();
+  assert.ok(periodes.length > 0);
+  for (const periode of periodes) {
+    assert.ok(periode.age_ouverture <= fusionne.age_ouverture);
+    assert.ok(periode.age_taux_plein <= fusionne.age_taux_plein);
+  }
+});
+
+test("les fiches : la fusion supprime tous les avantages non contributifs", () => {
+  assert.deepEqual([...fusionner(FICHES, 2026).avantages_non_contributifs], []);
+});
+
+test("les fiches : le salaire de référence le moins avantageux est la carrière entière", () => {
+  assert.equal(fusionner(FICHES, 2026).salaire_reference, "carriere_entiere");
+});
+
+test("les fiches : l'assiette est déplafonnée", () => {
+  assert.equal(fusionner(FICHES, 2026).assiette, "deplafonnee");
+});
+
+test("les fiches : le taux somme le statut pivot, cotisation déplafonnée comprise", () => {
+  // L'assiette du régime unifié est déplafonnée : ce que le régime général
+  // prélève sur la totalité du salaire y porte sur la même base que la part
+  // plafonnée, et s'y ajoute. L'omettre faisait perdre au compte notionnel,
+  // après la bascule, ce que la séparation des deux taux y portait avant elle.
+  const fusionne = fusionner(FICHES, 2026);
+  const base = FICHES.obtenir("regime_general").periode(2026);
+  const tranches = FICHES.obtenir("agirc_arrco").periodesActives(2026);
+  const complementaire = tranches.reduce((retenue, p) =>
+    p.bornesAssietteEnPass()[0] < retenue.bornesAssietteEnPass()[0] ? p : retenue);
+  const attendu = base.taux_cotisation_retraite + base.taux_cotisation_deplafonnee
+    + complementaire.taux_cotisation_retraite + complementaire.taux_cotisation_deplafonnee;
+  approx(fusionne.taux_cotisation_retraite, attendu, "le taux");
+  assert.ok(base.taux_cotisation_deplafonnee > 0,
+    "sans déplafonnée au régime général, ce test ne prouve plus rien");
+});
+
+test("les fiches : la capitalisation n'est pas fusionnée", () => {
+  assert.ok(!fusionner(FICHES, 2026).regimes_fusionnes.includes("rafp"));
+});
+
+test("les fiches : « le plus élevé » retient le taux de la caisse la plus chère", () => {
+  const fusionne = fusionner(FICHES, 2026, sous(CritereTaux.LE_PLUS_ELEVE));
+  const maxima = Math.max(...repartition2026().map(
+    (p) => p.taux_cotisation_retraite + p.taux_cotisation_deplafonnee));
+  approx(fusionne.taux_cotisation_retraite, maxima, "le taux");
 });

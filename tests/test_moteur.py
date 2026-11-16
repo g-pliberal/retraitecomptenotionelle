@@ -12,9 +12,7 @@ from retraite_notionnelle.config import (
 from retraite_notionnelle.donnees.macro import DonneesMacro
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite
 from retraite_notionnelle.donnees.population import Population
-from retraite_notionnelle.donnees.regimes import CatalogueRegimes
 from retraite_notionnelle.moteur.conversion import Convertisseur
-from retraite_notionnelle.moteur.fusion import CritereTaux, RegleFusion, fusionner
 from retraite_notionnelle.carriere import (
     ANNEE_FORME_CATEGORIE,
     Metier,
@@ -30,11 +28,6 @@ from retraite_notionnelle.simulateur import Simulateur
 @pytest.fixture(scope="module")
 def macro() -> DonneesMacro:
     return DonneesMacro(RACINE_DONNEES)
-
-
-@pytest.fixture(scope="module")
-def catalogue() -> CatalogueRegimes:
-    return CatalogueRegimes(RACINE_DONNEES)
 
 
 # -- indexation --------------------------------------------------------------
@@ -632,67 +625,9 @@ def test_le_rattachement_par_la_pension_est_un_point_fixe():
     assert resultat.pension_annuelle < salaire.pension_annuelle
 
 
-def test_fusion_retient_les_ages_les_plus_eleves(catalogue):
-    fusionne = fusionner(catalogue, 2026)
-    for regime in catalogue:
-        if regime.hors_repartition or not regime.vivant(2026):
-            continue
-        for periode in regime.periodes_actives(2026):
-            assert periode.age_ouverture <= fusionne.age_ouverture
-            assert periode.age_taux_plein <= fusionne.age_taux_plein
-
-
-def test_fusion_supprime_tous_les_avantages_non_contributifs(catalogue):
-    assert fusionner(catalogue, 2026).avantages_non_contributifs == ()
-
-
-def test_fusion_retient_le_salaire_de_reference_le_moins_avantageux(catalogue):
-    assert fusionner(catalogue, 2026).salaire_reference == "carriere_entiere"
-
-
-def test_fusion_deplafonne_l_assiette(catalogue):
-    assert fusionner(catalogue, 2026).assiette == "deplafonnee"
-
-
-def test_fusion_somme_les_taux_du_statut_pivot(catalogue):
-    """Et la cotisation DÉPLAFONNÉE en fait partie.
-
-    L'assiette du régime unifié est déplafonnée : ce que le régime général
-    prélève sur la totalité du salaire — 2,41 % en moyenne sur la période de
-    la fiche, 2,51 % en 2026 — y porte donc sur la même base
-    que la part plafonnée, et s'y ajoute. L'omettre faisait perdre au compte
-    notionnel, après la bascule, exactement ce que la séparation des deux taux
-    venait d'y porter avant elle.
-    """
-    fusionne = fusionner(catalogue, 2026)
-    base = catalogue["regime_general"].periode(2026)
-    complementaire = min(catalogue["agirc_arrco"].periodes_actives(2026),
-                         key=lambda p: p.bornes_assiette_en_pass()[0])
-    attendu = (
-        base.taux_cotisation_retraite + base.taux_cotisation_deplafonnee
-        + complementaire.taux_cotisation_retraite
-        + complementaire.taux_cotisation_deplafonnee
-    )
-    assert fusionne.taux_cotisation_retraite == pytest.approx(attendu)
-    assert base.taux_cotisation_deplafonnee > 0, (
-        "sans déplafonnée au régime général, ce test ne prouve plus rien"
-    )
-
-
-def test_fusion_exclut_la_capitalisation(catalogue):
-    assert "rafp" not in fusionner(catalogue, 2026).regimes_fusionnes
-
-
-def test_fusion_variante_taux_le_plus_eleve(catalogue):
-    fusionne = fusionner(
-        catalogue, 2026, RegleFusion(critere_taux=CritereTaux.LE_PLUS_ELEVE)
-    )
-    maxima = max(
-        periode.taux_cotisation_retraite + periode.taux_cotisation_deplafonnee
-        for regime in catalogue if regime.vivant(2026) and not regime.hors_repartition
-        for periode in regime.periodes_actives(2026)
-    )
-    assert fusionne.taux_cotisation_retraite == pytest.approx(maxima)
+# -- fusion -----------------------------------------------------------------
+# La fusion des régimes s'éprouve sur le portage, catalogue des fiches
+# compris : tests/js/fusion.test.js (action 161, quatrième vague).
 
 
 # -- le mois -----------------------------------------------------------------
