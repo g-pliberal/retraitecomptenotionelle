@@ -1,0 +1,38 @@
+date: "2026-11-16"
+session: "action 175, étape 6 : les 60 circulaires, lettres et instructions de 2008 que la base de la Cnav cite sans thème"
+consulte: >-
+  Les 60 références sans thème et à lire de 2008 dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », relues par l'API de la base le 16 novembre 2026 vers 12 h 25 UTC
+  (/reference/referencesByFileLeafRef/), toutes servies, 44 en page et 16 en PDF lus au
+  site (/Pdf/), cinq scannés et lus à l'image ; toutes lues en entier, par quatre agents
+  de la session, un lot chacun, dont chaque citation d'un texte servi (120) a été
+  retrouvée mot pour mot. Pour les confronter : les fiches duree_requise_par_generation,
+  carriere_longue, cumul_emploi_retraite_et_retraite_progressive,
+  cumul_emploi_retraite_complementaire_des_independants, totalisation_des_periodes_etrangeres,
+  pension_proratisee, reversion, minimum_vieillesse, residence_et_minimum_vieillesse,
+  csg_des_pensions_selon_le_revenu, service_civique, micro_social_abattement,
+  abattement_rci, rachats_et_versements ; le code de ouvrir.js et ouvrir.py,
+  scenarios/actuel.py, reversion.py, carriere.py, saisie.js ; les séries
+  legislation/duree_assurance_requise.csv, csg_pensions_seuils.csv,
+  revalorisation_pensions.csv, macro/smic_horaire_releves.csv ; les limites
+  docs/limites/3-systeme-actuel.md. Ni Légifrance, ni le Journal officiel, ni l'index de
+  la DILA.
+trouve: >-
+  Le registre range les 60 (31 limite, 29 hors_modele), sans raison neuve. Conformes : le
+  SMIC de 2008, le trimestre de 2009 (1 742 €), le seuil de la CSG de 2009, la
+  revalorisation de 1,008 au 1er septembre 2008, les durées requises de 161 à 164. L'écart
+  candidat de 2007, la carrière longue partie avant 2009 à 160 trimestres, est confirmé par
+  la lettre ministérielle du 7 juillet 2008 et les circulaires RSI n° 2008/056 et
+  2008/059 (168 trimestres quel que soit l'âge de départ, de 2004 à 2008). Un écart neuf,
+  voisin : la même lettre garde aux générations 1953 et suivantes la durée de 1952,
+  164 trimestres, jusqu'au décret de leur génération (30 décembre 2010, 1er août 2011),
+  quand le moteur leur oppose 165 ou 166 dès 2009. Candidats plus étroits : le micro-social
+  de 2008 sans assiette minimale (circulaire RSI n° 2008/017), la complémentaire du tuteur
+  avant 2009 (n° 2008/013), le partage du dépassement de réversion (R. 173-17), la
+  résidence du conjoint pour l'ASPA (n° 2008/245). Note
+  docs/feuille_de_route/175/2026-11-16-etape-6-circulaires-2008.md.
+reste: >-
+  Les 438 circulaires de 2009 à 2026, par période ; les autres natures de l'étape 6 ; les
+  décrets du 30 décembre 2010 et du 1er août 2011, R. 173-17 et D. 634-13-2, à relire au
+  Journal officiel.
