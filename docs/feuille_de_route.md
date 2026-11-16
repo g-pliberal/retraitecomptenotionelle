@@ -8210,16 +8210,18 @@ les couleurs ; quatre étapes en prennent la mise en page :
 
 ### 191. Les fiches de la carte, exécutables : le moteur lit chaque règle dans les versions de sa fiche, domaine par domaine — `en cours`
 
-**Reprise, au 9 novembre 2026.** Étape 1 faite : la carte mesurée, le domaine
-`cumul` choisi, et sa première fiche convertie — `retraite_progressive`, que
-les deux moteurs lisent par le paquet (`fiches_datees`), ses constantes
-parties, témoins identiques. Sur 272 fiches, 80 sont lues par leurs versions,
-58 portent des paramètres que le moteur ne lit pas, 65 des versions sans
-paramètres, 69 n'ont pas de versions. Par quoi commencer : l'étape 2,
-`seconde_pension` et `droits_apres_la_premiere_pension` (`droit/seconde.py`
-et son jumeau), par `version_aux_dates`. Au propriétaire : l'écart déclaré
-des bornes du fonctionnaire de 2014 à 2023. Détail :
-`191/2026-11-09-etape-1-mesure-et-retraite-progressive.md`.
+**Reprise, au 16 novembre 2026.** La note de décision 0009, adoptée ce
+jour, dit comment l'action range le droit daté dans les versions des fiches,
+et dans quel ordre : les cinq cliquets qu'elle nomme ; l'âge légal ; l'âge
+du taux plein, la durée requise, la carrière longue et la surcote ; enfin les
+renvois des régimes. Une étape par session, sur Fable 5.2. Elle ne dit rien
+du domaine `cumul` : au propriétaire de dire ce qui vient d'abord. Étape 1
+faite : la carte mesurée, le domaine `cumul` choisi, `retraite_progressive`
+lue dans sa fiche par les deux moteurs (`fiches_datees`), témoins
+identiques. L'étape 2 du `cumul` attend : `seconde_pension` et
+`droits_apres_la_premiere_pension`, par `version_aux_dates`. Au propriétaire
+aussi : l'écart déclaré des bornes du fonctionnaire de 2014 à 2023. Détail :
+`191/2026-11-16-note-de-decision-0009.md`.
 
 **D'où elle vient.** Le 9 novembre 2026, le propriétaire demande de rendre
 les fiches de la carte des règles exécutables, domaine par domaine.

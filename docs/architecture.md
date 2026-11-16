@@ -1826,7 +1826,7 @@ viennent ensuite, un par un.
 | 3 | chronologie datée et réseau de personnes, présomptions actuelles par défaut | inchangés |
 | 4 | acquisition en étapes et relevé des droits | inchangés |
 | 5 | liquidation en fonction pure, journal, échéancier, pilote | inchangés |
-| 6 | un fichier par régime ; les interrupteurs deviennent des renvois aux fiches | inchangés |
+| 6 | un fichier par régime ; les interrupteurs deviennent des renvois aux fiches, datés au jour de leur texte, cités, sans valeur de repli (note 0009) | inchangés |
 | 7 | la proposition réécrite en univers de droit | inchangés |
 | 8 | texte du site écrit une fois | inchangés |
 | 9 et suivantes | un domaine à la fois | changent, commit par commit |
@@ -2430,7 +2430,7 @@ Ce que les deux fiches montrent :
 | `data/reference/legislation/frontiere_contributive.yaml` | ses bascules dans les versions et les faces des fiches ; le fichier devient une vue |
 | `data/reference/legislation/*.csv` | les tables datées, inchangées, avec deux colonnes facultatives de plus : la date de publication, la dernière valeur connue valable ; les fiches y renvoient. Une table qui ne dit que les versions d'une règle passe dans la fiche, que le moteur lit alors (§ 4.1) : `majoration_duree_assurance.csv`, au premier domaine, dans `majoration_duree_assurance_enfants` et `enfants_fonction_publique` |
 | `data/reference/legislation/reformes.yaml`, `data/reference/regimes/pivots.yaml` | inchangés, reliés aux versions |
-| `data/reference/regimes/*.yaml` (les fichiers de régimes) | un fichier par régime, calculé ou non, nommé de son code, depuis la phase 6 ; son `rang` garde l'ordre du catalogue, qui départage la fusion ; ses interrupteurs renvoient aux fiches, qui déclarent leur valeur (`code.interrupteurs`) et disent ce que le moteur en fait (`code.moteur`) |
+| `data/reference/regimes/*.yaml` (les fichiers de régimes) | un fichier par régime, calculé ou non, nommé de son code, depuis la phase 6 ; son `rang` garde l'ordre du catalogue, qui départage la fusion ; ses interrupteurs renvoient aux fiches, qui déclarent leur valeur (`code.interrupteurs`) et disent ce que le moteur en fait (`code.moteur`) ; un renvoi est le droit du régime à sa date : chaque renvoi, et chaque période de droit propre, prend la date du texte qui la fait, au jour, cite ce texte, et n'a pas de valeur de repli (note 0009) |
 | `data/reference/regimes/_schema.yaml` | réduit à la phase 6 : chaque interrupteur n'y garde que sa définition ; ce qu'il disait de chaque cas est passé dans la fiche à laquelle la période renvoie, et dix fiches sont nées pour les règles qu'aucune ne décrivait |
 | `data/reference/regimes/inventaire.yaml` | une vue de couverture, fabriquée depuis la phase 6 par `scripts/construire_inventaire.py`, depuis la ligne que chaque fichier de régime porte (le bloc `inventaire`) |
 | `data/reference/macro/`, `data/reference/mortalite/`, `data/sources.yaml` | inchangés : les séries, en tables datées, et leurs sources |
@@ -2547,7 +2547,7 @@ d'aujourd'hui, et elles s'allongent sans décision.
 | `presomptions`, `invariants` | — | aucun |
 | `sources` | lue le, prochaine relecture, lectures divergentes, questions à relire | — |
 | `textes_sans_effet`, `textes_a_rattacher`, `textes_a_relire` | les rédactions lues qui ne la changent pas, celles qui la changent sans être encore coupées en versions, et celles dont l'effet reste à lire | aucun |
-| `code`, `referents`, `historique` | fonctions et tests ; correspondance avec chaque autre modèle, et écarts justifiés (§ 3.4) ; récits | — |
+| `code`, `referents`, `historique` | les fonctions qui l'appliquent, par leur chemin et leur nom sous `moteur/js/`, et ses tests ; une fonction peut en appliquer plusieurs, une par branche, et une version qui change de formule nomme la sienne (note 0009 : un script y convertit d'un coup la prose d'aujourd'hui) ; correspondance avec chaque autre modèle, et écarts justifiés (§ 3.4) ; récits | — |
 
 Une **relation** porte en plus :
 
@@ -2569,14 +2569,28 @@ Une **relation** porte en plus :
 | `textes` | pour chacun : identifiant stable (ou référence de publication déclarée), article, entrée en vigueur, publication, citation exacte, date de lecture ; hors du *Journal officiel*, une copie datée ou son empreinte (§ 3.2) | publication : vide |
 | `nee_de` | le texte qui la fait naître : la version est connue à sa publication | son seul texte ; sans texte, connue à toute date d'observation |
 | `requis` | les textes sans lesquels elle est inapplicable (son décret) : tant qu'ils ne sont pas publiés à la date d'observation, la version qu'elle suspend continue | aucun |
-| `bornes` | un intervalle [début, fin) par date qui décide : le seul endroit où s'écrivent ses dates | — |
+| `bornes` | un intervalle [début, fin) par date qui décide : le seul endroit où s'écrivent ses dates, lues dans la disposition d'application de son texte, et non dans les dates de vigueur de LEGI | — |
 | `fermee_par` | pour une fin de borne, la version qui la ferme ; la borne ne vaut qu'une fois celle-ci connue | l'une des versions qui commencent là |
 | `vise` | les pensions qui prennent effet, ou les pensions servies ; l'étape qui l'applique en découle | pensions qui prennent effet |
 | `duree` | pour un effet temporaire | — |
 | `exception_de` | la version qu'elle prime, s'il y a chevauchement | — |
-| `contenu` | droit accordé ou exigé, bénéficiaire, conditions, défauts légaux, paramètres lus, chacun avec sa date qui décide | — |
+| `contenu` | ce que son texte écrit, et rien d'autre : droit accordé ou exigé, bénéficiaire, conditions, défauts légaux, paramètres lus, une table, une valeur, un renvoi à une autre fiche, qui nomme la fiche, son opération et la date qui choisit la version lue, ou un renvoi à sa propre rédaction antérieure ; chaque partie avec sa date qui décide et le texte qui la décide | — |
 | `unites` | unité, arrondi, ancrage | — |
-| `exemples` | les exemples officiels, chacun qui passe ou qui porte son écart connu (la valeur du modèle, l'explication), ou « aucun trouvé » | — |
+| `exemples` | les exemples officiels, chacun qui passe ou qui porte son écart connu (la valeur du modèle, l'explication), ou « aucun trouvé », avec ce qui a été cherché | — |
+
+**Le droit daté** (note 0009). Une règle que plusieurs textes réécrivent vit
+dans les versions de sa fiche : une version par réforme qui la réécrit, et
+par public qu'elle vise, non par rédaction d'article. Une version ne recopie
+pas ce que son texte renvoie ailleurs ; quand deux textes en vigueur se
+contredisent, chaque partie cite celui qui la décide, et la loi l'emporte sur
+le décret. La date qui la choisit est celle que nomme son texte : le plus
+souvent la date d'effet, l'échéance pour les pensions servies. Deux dates
+peuvent décider l'une dans l'autre : la date d'effet choisit la version, une
+autre date, la génération ou celle d'un trimestre, choisit sa ligne. Une
+version reprise a deux preuves, la certification, qui lit ses valeurs dans
+le texte, et l'exemple officiel, qui montre son application ; ou elle dit ce
+qui manque. Un scénario qui garde une loi passée la prolonge par une couche
+(C.4), sans table posée sur une autre.
 
 ### C.3 La table datée
 
@@ -2588,6 +2602,12 @@ Une **relation** porte en plus :
 | `valeurs` | pour chacune : sa date d'application, sa source, sa date de publication, et l'empreinte du fichier source | publication : vide |
 | `valable_jusqu_au` | jusqu'où la dernière valeur est connue valable ; au-delà, la reprendre est une hypothèse | — |
 | `origine` | texte, série publiée, autre modèle (lequel), prolongement supposé | — |
+
+**La ligne avec la version** (note 0009). Une table datée porte des valeurs
+qu'une date choisit, et se lit sans le code : la valeur du point, les
+coefficients de revalorisation. Une règle dont la forme change au point
+qu'une ligne ne se lit plus sans le code va dans les versions de sa fiche
+(C.2), quelle que soit la date qui les choisit.
 
 ### C.4 La couche et l'univers
 
