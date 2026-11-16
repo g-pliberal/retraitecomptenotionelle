@@ -3318,6 +3318,15 @@ def duree_proratisation(moteur, periode: PeriodeRegime, carriere: Carriere,
     périodes anciennes, dont la durée maximale est plus courte que
     150 trimestres — 120 sous les ordonnances de 1945 —, gardent la leur.
     """
+    # LA DURÉE QUE LA PÉRIODE ÉCRIT : la retraite forfaitaire des exploitants
+    # agricoles « est égal[e] à celui de l'allocation aux vieux travailleurs
+    # salariés pour les assurés qui justifient d'une durée d'exercice de
+    # l'activité non-salariée agricole au moins égale à : a) Trente-trois
+    # années et demie, lorsque la retraite prend effet au cours de l'année
+    # 1986 », trente-six et demie en 1989 (décret n° 80-808, article 1er,
+    # version du 14 mars 1986, LEGIARTI000006769191).
+    if periode.duree_proratisation_trimestres is not None:
+        return min(periode.duree_proratisation_trimestres, requis), None
     if not periode.duree_proratisation_par_generation:
         return requis, None
     par_generation = moteur.durees_proratisation.trimestres(carriere.generation)

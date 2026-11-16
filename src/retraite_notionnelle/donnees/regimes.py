@@ -354,6 +354,11 @@ class PeriodeRegime:
     #: alignés sur le code de la sécurité sociale : la fonction publique et les
     #: régimes spéciaux ont la leur, calendaire, non modélisée.
     duree_proratisation_par_generation: bool
+    #: Une durée de PRORATISATION écrite à la période, sous la durée requise :
+    #: la retraite forfaitaire des exploitants agricoles de 1986 à 1989, sur
+    #: trente-trois années et demie à trente-six et demie (décret n° 80-808,
+    #: article 1er, version du 14 mars 1986). ``None`` ailleurs.
+    duree_proratisation_trimestres: int | None
     #: Le nombre d'années retenues au salaire de référence suit-il la
     #: génération ? Vrai depuis la loi Balladur (dix à vingt-cinq années) ;
     #: ``"independants"`` pour les artisans et les commerçants, dont la table
@@ -2253,6 +2258,7 @@ class CatalogueRegimes:
                 duree_proratisation_par_generation=bool(
                     p.get("duree_proratisation_par_generation", False)
                 ),
+                duree_proratisation_trimestres=p.get("duree_proratisation_trimestres"),
                 salaire_reference_par_generation=(
                     p.get("salaire_reference_par_generation") or False
                 ),

@@ -144,11 +144,12 @@ periodes:
       5 juillet 1980 au 8 janvier 1986) donne « droit à la retraite à
       l'âge de soixante-cinq ans ou de soixante ans en cas d'inaptitude ».
   - debut: 1986
-    fin: 1989
+    fin: 1986
     type_calcul: mixte
-    age_ouverture: 60
+    age_ouverture: 64
     age_taux_plein: 65
     duree_requise_trimestres: 150
+    duree_proratisation_trimestres: 134
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee
@@ -187,7 +188,7 @@ periodes:
       rapport de trente-sept et demi sur » la durée) : à 172 trimestres,
       une même cotisation vaut 172/150 fois les points qu'elle vaut pour un
       départ de 1989.
-      SOIXANTE ANS DEPUIS LE 1ER JANVIER 1986 : la loi n° 86-19 du
+      SOIXANTE ANS AU TERME DE LA TRANSITION : la loi n° 86-19 du
       6 janvier 1986 « relative à l'abaissement à soixante ans de l'âge de
       la retraite des personnes non salariées des professions agricoles »
       (LEGITEXT000006068962) ouvre la pension à soixante ans aux
@@ -200,6 +201,98 @@ periodes:
       2,5 % par trimestre pour les assurés nés avant 1944.
       Le reste de la période reprend la précédente : barème d'avant 1990
       au rendement instantané, assiette bornée au plafond.
+      L'ÂGE ET LA DURÉE DE LA TRANSITION (action 175, écart lourd n° 3 des
+      circulaires) : l'article 1120-1 de l'ancien code rural, dans sa
+      version du 8 janvier 1986 (LEGIARTI000006581005), fixe l'âge minimum
+      « à soixante-quatre ans à compter du 1er janvier 1986, à
+      soixante-trois ans à compter du 1er janvier 1987, à soixante-deux ans
+      à compter du 1er janvier 1988 et à soixante et un ans à compter du
+      1er janvier 1989 », soixante ans le 1er janvier 1990 ; les inaptes et
+      les anciens combattants et déportés gardent soixante ans (article
+      1120-2). La retraite forfaitaire est entière pour « Trente-trois
+      années et demie, lorsque la retraite prend effet au cours de l'année
+      1986 », une de plus par an jusqu'à trente-six et demie en 1989, et
+      proportionnelle en deçà (décret n° 80-808, article 1er, version du
+      14 mars 1986, LEGIARTI000006769191, « en application du IV de
+      l'article 2 de la loi n° 86-19 ») : `duree_proratisation_trimestres`.
+      La minoration s'annule toujours à trente-sept années et demie tous
+      régimes (article 1121, LEGIARTI000006581009). La fiche ouvrait la
+      pension à soixante ans dès 1986, sur cent cinquante trimestres.
+      Approximation : un départ refusé lit l'âge minimum de l'année qu'il
+      demande, non la première date où l'assuré l'atteint ; né en 1926,
+      refusé à soixante ans en 1986, il lit soixante-quatre ans, quand un
+      départ à soixante-deux ans en 1988 lui est ouvert. Les inaptes et
+      les anciens combattants ne gardent soixante ans que si le modèle les
+      reconnaît tels par ailleurs.
+  - debut: 1987
+    fin: 1987
+    type_calcul: mixte
+    age_ouverture: 63
+    age_taux_plein: 65
+    duree_requise_trimestres: 150
+    duree_proratisation_trimestres: 138
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.085
+    valeur_point_euros: 4.589
+    valeur_point_annee: 2025
+    pension_forfaitaire_annuelle: 3628.98
+    pension_forfaitaire_annee: 2023
+    decote_par_trimestre: 0.025
+    decote_par_generation: bareme_minoration_regimes_en_points
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, minimum_vieillesse, reversion]
+    notes: >-
+      L'année 1987 de la transition de la loi n° 86-19 : voir l'année 1986,
+      dont cette période reprend tout, sauf l'âge minimum et la durée de la
+      retraite forfaitaire.
+  - debut: 1988
+    fin: 1988
+    type_calcul: mixte
+    age_ouverture: 62
+    age_taux_plein: 65
+    duree_requise_trimestres: 150
+    duree_proratisation_trimestres: 142
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.085
+    valeur_point_euros: 4.589
+    valeur_point_annee: 2025
+    pension_forfaitaire_annuelle: 3628.98
+    pension_forfaitaire_annee: 2023
+    decote_par_trimestre: 0.025
+    decote_par_generation: bareme_minoration_regimes_en_points
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, minimum_vieillesse, reversion]
+    notes: >-
+      L'année 1988 de la transition de la loi n° 86-19 : voir l'année 1986,
+      dont cette période reprend tout, sauf l'âge minimum et la durée de la
+      retraite forfaitaire.
+  - debut: 1989
+    fin: 1989
+    type_calcul: mixte
+    age_ouverture: 61
+    age_taux_plein: 65
+    duree_requise_trimestres: 150
+    duree_proratisation_trimestres: 146
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.085
+    valeur_point_euros: 4.589
+    valeur_point_annee: 2025
+    pension_forfaitaire_annuelle: 3628.98
+    pension_forfaitaire_annee: 2023
+    decote_par_trimestre: 0.025
+    decote_par_generation: bareme_minoration_regimes_en_points
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [majoration_enfants, minimum_vieillesse, reversion]
+    notes: >-
+      L'année 1989 de la transition de la loi n° 86-19 : voir l'année 1986,
+      dont cette période reprend tout, sauf l'âge minimum et la durée de la
+      retraite forfaitaire.
   - debut: 1990
     fin: 2002
     type_calcul: mixte

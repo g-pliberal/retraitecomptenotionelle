@@ -2475,6 +2475,12 @@ export function nombreDAnneesRetenues(moteur, periode, carriere, generation,
  * @returns {[number, number|null]} durée de proratisation, et fiabilité.
  */
 export function dureeProratisation(moteur, periode, carriere, requis) {
+  // La durée que la période écrit : la retraite forfaitaire des exploitants
+  // agricoles de 1986 à 1989. Voir le Python.
+  const ecrite = periode.duree_proratisation_trimestres ?? null;
+  if (ecrite !== null) {
+    return [Math.min(ecrite, requis), null];
+  }
   // La table est celle du CODE DE LA SÉCURITÉ SOCIALE, et la fiche dit qui la
   // suit : le régime général et les régimes alignés. La fonction publique et
   // les régimes spéciaux ont la leur, calendaire (article L. 13 du code des

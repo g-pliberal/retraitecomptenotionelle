@@ -3,13 +3,13 @@
   "valeur": "5a03835c17954b5b"
  },
  "test_age_conjoncturel.py::departs::trois_cas_types": {
-  "valeur": "ddb54be99d1de73c"
+  "valeur": "dab6c9a3438a4ab0"
  },
  "test_avantages.py::par_carriere::1960": {
   "valeur": "72236ae2bb92db18"
  },
  "test_cout.py::grille du coût bâtie": {
-  "valeur": "3368d56812f4a0cc"
+  "valeur": "ed4a8c8332c4ddce"
  },
  "test_cumul_activites.py::cumuls_tires_au_hasard": {
   "valeur": "80a8a69d5e189815"
@@ -207,10 +207,10 @@
   "valeur": "06e1ecff2ba1420a"
  },
  "test_pont.py::âges des cas types sous les paramètres de projection": {
-  "valeur": "0e35c0f68a20ffa2"
+  "valeur": "0357835c8b794874"
  },
  "test_pont.py::âges des cas types sous les paramètres de référence": {
-  "valeur": "0e35c0f68a20ffa2"
+  "valeur": "0357835c8b794874"
  },
  "test_saisie_assimilees.py::périodes assimilées saisies": {
   "valeur": "1fb8f5a7cd4222b6"

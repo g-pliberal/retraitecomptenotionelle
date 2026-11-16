@@ -3242,6 +3242,14 @@
   ],
   "rendu": "dd46abd8daeac32b"
  },
+ "83789a14b997d3b0": {
+  "fonctions": [
+   "liquider.duree_proratisation",
+   "ouvrir.age_ouverture",
+   "ouvrir.duree_requise"
+  ],
+  "rendu": "d889eeaaa088fbec"
+ },
  "838091d5e42466a9": {
   "fonctions": [
    "scenario_actuel.catalogue.etage"

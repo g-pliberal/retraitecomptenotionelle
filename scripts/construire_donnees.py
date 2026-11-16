@@ -773,6 +773,7 @@ def _regimes() -> list[dict]:
                     "age_surcote_regimes_speciaux": p.age_surcote_regimes_speciaux,
                     "duree_proratisation_par_generation":
                         p.duree_proratisation_par_generation,
+                    "duree_proratisation_trimestres": p.duree_proratisation_trimestres,
                     "age_ouverture_par_generation": p.age_ouverture_par_generation,
                     "taux_plein": p.taux_plein,
                     "taux_maximum_bonifie": p.taux_maximum_bonifie,
