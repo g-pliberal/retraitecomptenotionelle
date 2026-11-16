@@ -1,15 +1,5 @@
 # Étape 6, circulaires de 2026 : la lecture à rebours s'ouvre sur les deux références sans thème de l'année
 
-**Reprise, au 16 novembre 2026.** Une seconde lecture des circulaires sans thème
-avance à rebours, de 2026 vers le passé, pendant que la première avance depuis
-2008. Ce bloc est le sien ; celui de la note de 2007 reste à la lecture
-chronologique. 2026 est faite : deux circulaires, rangées en `limite`, sans écart
-neuf. Viennent ensuite 2025 (3 circulaires), 2024 (11), 2023 (7), 2022 (6),
-2021 (9), 2020 (7), 2019 (10), 2018 (8). Les deux lectures s'arrêtent où elles se
-rejoignent. Méthode : celle de la note de 2007, la base relue par l'API, chaque
-texte lu en entier, chaque citation retrouvée par script dans le texte servi.
-Détail ici.
-
 **Le 16 novembre 2026, ce qui est fait.**
 
 - *La période* : les références du registre sans thème et à lire dont le titre commence

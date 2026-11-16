@@ -1,0 +1,33 @@
+date: "2026-11-16"
+session: "action 175, étape 6 : lecture à rebours des circulaires sans thème, les années 2022 à 2025"
+consulte: >-
+  Les 27 références sans thème et à lire de 2022 à 2025 dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », relues par l'API de la base le 16 novembre 2026 vers 12 h 50 UTC
+  (/reference/referencesByFileLeafRef/), toutes servies en PDF et lues au site (/Pdf/)
+  par la session, deux instructions de déontologie par leur plan ; chaque citation
+  retrouvée mot pour mot. Pour les confronter : les fiches mayotte_pension_de_base,
+  pension_proratisee, reversion, carriere_longue_reputes_cotises_autres,
+  micro_social_abattement, assiette_minimale_independants, csg_des_pensions_selon_le_revenu,
+  stages_formation_professionnelle ; la fiche de régime cssm_mayotte ; le code de
+  liquider.js et liquider.py ; les séries legislation/revalorisation_pensions.csv,
+  csg_pensions_seuils.csv, minimum_contributif.csv ; les limites
+  docs/limites/3-systeme-actuel.md. Ni Légifrance, ni le Journal officiel, ni l'index de
+  la DILA.
+trouve: >-
+  Le registre range les 27 (17 limite, 10 hors_modele), avec une raison neuve, la
+  revalorisation des prestations d'invalidité, d'accident du travail et de décès.
+  Conformes : la revalorisation des pensions de 2024 à 2026, les seuils de la CSG de 2023
+  à 2026, l'assiette minimale des indépendants ; le minimum contributif de 2025 suit la
+  circulaire n° 2025/8, qui annule la n° 2024/40. Un écart neuf, à trancher : la
+  revalorisation exceptionnelle de 10 % des salaires portés au compte à Mayotte avant le
+  1er septembre 2023, pour les pensions prenant effet depuis cette date (circulaire Cnav
+  n° 2024/5 ; loi n° 2023-270, article 19, III), que ni les fiches ni le moteur ne
+  portent. Candidats plus étroits : la durée de référence de la réversion d'un assuré
+  mort avant son départ autour du 1er septembre 2023 (n° 2023/19, point 6.6) ; le
+  service national réputé cotisé en temps de guerre (n° 2022/25). Note
+  docs/feuille_de_route/175/2026-11-16-etape-6-circulaires-2022-2025-a-rebours.md.
+reste: >-
+  La lecture à rebours continue en 2021 (9 circulaires), 2020 (7), 2019 (10), 2018 (8),
+  jusqu'à rejoindre la lecture chronologique ; la loi n° 2023-270 (article 19, III) et le
+  décret n° 2023-966 sont à relire au Journal officiel.
