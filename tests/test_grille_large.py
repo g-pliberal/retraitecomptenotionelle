@@ -3761,8 +3761,7 @@ def _interdire_les_jumeaux(monkeypatch, cas_type) -> None:
                             "retraite_notionnelle.simulateur.Simulateur.echeancier",
                             "retraite_notionnelle.simulateur.Simulateur.simuler",
                             "retraite_notionnelle.simulateur.Simulateur.proposition",
-                            (G.CasTypeLarge, "_carriere"), (cas_type, "_carriere_entree_tardive"),
-                            (G, "_debut_de_la_surcote_en_python")))
+                            (G.CasTypeLarge, "_carriere"), (cas_type, "_carriere_entree_tardive")))
 
 
 def test_la_grille_large_se_date_et_se_bat_au_portage_sans_les_jumeaux(memoire_isolee,
@@ -3906,6 +3905,25 @@ def test_la_grille_large_lit_ses_ages_aux_donnees_et_le_salaire_moyen_au_pont():
     assert lus["au_smic"] == [0.5 < projection.macro.smic_annuel(annee) / salaires[annee]
                               for annee in annees]
     assert all(0.3 < smic < 0.7 for _generation, smic in lus["population"])
+
+
+def test_l_age_d_un_cas_type_large_se_demande_au_portage(simulateur, monkeypatch):
+    """L'âge d'un cas type de la grille élargie (``CasTypeLarge.age_liquidation_pour``)
+    est celui que le portage fixe, attente comprise, celle qui court du premier
+    âge surcoté aussi : le pilote Python et le premier âge surcoté cherché au
+    moteur Python, ses jumeaux, sont retirés (action 161)."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from outils_pont import interdire, jumeaux_qui_datent_et_batissent
+
+    assert not hasattr(G, "_debut_de_la_surcote_en_python")
+    echantillon = {cas.code: cas for cas in _echantillon_au_portage()}
+    cas = [echantillon[code] for code in ("essai~attente", "essai~surcote", "essai~inapte")]
+    attendus = {(c.code, generation): _age(simulateur, c, generation)
+                for c in cas for generation in (1950, 1965)}
+    interdire(monkeypatch, jumeaux_qui_datent_et_batissent())
+    assert {(c.code, generation): c.age_liquidation_pour(simulateur, generation)
+            for c in cas for generation in (1950, 1965)} == attendus
 
 
 def test_un_cas_type_que_le_portage_ne_date_pas_est_refuse():

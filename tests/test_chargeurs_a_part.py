@@ -165,10 +165,11 @@ def test_les_scripts_de_donnees_batissent_le_simulateur_de_donnees():
 #: données — la macro, la mortalité, les effectifs, les paramètres — et
 #: demandent leurs calculs au pont (``2026-11-16-les-derniers-lecteurs-du-
 #: simulateur-python.md``). ``scenarios_meres`` garde le type ``Comparaison``
-#: que la façade du pont rend.
+#: que la façade du pont rend ; ``grille_large`` demande au portage l'âge de
+#: ses cas types et le premier âge surcoté, ses jumeaux Python retirés.
 SCRIPTS_QUI_NE_LISENT_QUE_DES_DONNEES = (
-    "fetch/trajectoire", "lectures_decision_29", "mesurer_surcote", "mesures_prose",
-    "recours_aspa", "scenarios_meres")
+    "fetch/trajectoire", "grille_large", "lectures_decision_29", "mesurer_surcote",
+    "mesures_prose", "recours_aspa", "scenarios_meres")
 
 
 def test_les_derniers_lecteurs_ne_batissent_plus_le_simulateur_python():
