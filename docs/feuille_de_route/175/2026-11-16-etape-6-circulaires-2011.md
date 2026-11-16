@@ -1,16 +1,5 @@
 # Étape 6, circulaires de 2011 : les 68 références sans thème de la dix-huitième période, relues par l'API
 
-**Reprise, au 16 novembre 2026.** Trois natures de l'étape sont rangées ; la quatrième, les
-circulaires, lettres et instructions sans thème, l'est de 1936 à 2011 (cette note et celles
-d'avant). Une seconde lecture avance à rebours et a fait 2016 à 2026, avec son propre bloc
-(sa dernière note). Restent 131 circulaires, de 2012 à 2015 ; la lecture dans
-l'ordre reprend à 2012 (37), puis 2013 (44), 2014 (26), et s'arrête où elle rejoint
-l'autre. Viennent ensuite, une session par nature : les 96 autres textes, les 74 que la
-base nomme sans les servir, les 107 accords. Méthode : celle de la note de 2010, chaque
-texte lu en entier, chaque citation vérifiée par script. 2011 a
-deux écarts neufs : le cumul des retraités anticipés d'avant juillet 2011, et la
-génération de la réversion d'un assuré mort avant son départ, depuis juillet 2011 (ici).
-
 **Le 16 novembre 2026, ce qui est fait.**
 
 - *La période* : les références du registre sans thème et à lire dont le titre commence

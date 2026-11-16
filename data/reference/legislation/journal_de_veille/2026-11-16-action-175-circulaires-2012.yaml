@@ -1,0 +1,33 @@
+date: "2026-11-16"
+session: "action 175, étape 6 : les 37 circulaires, lettres et instructions de 2012 que la base de la Cnav cite sans thème"
+consulte: >-
+  Les 37 références sans thème et à lire que le registre date de 2012 dont le titre
+  commence par « Circulaire », « Lettre », « Instruction », « Note d'information » ou
+  « Diffusion d'instructions », relues par l'API de la base le 16 novembre 2026 vers
+  13 h 40 UTC (/reference/referencesByFileLeafRef/), toutes servies, 17 en page et 20 en
+  PDF lus au site (/Pdf/), dont deux scans lus à l'image ; toutes lues en entier par la
+  session, dont chaque citation d'un texte servi (63) a été retrouvée mot pour mot. Pour
+  les confronter : les fiches reversion, majoration_forfaitaire_reversion,
+  salaire_annuel_moyen, carriere_longue, cumul_emploi_retraite_et_retraite_progressive,
+  minimum_vieillesse, residence_et_minimum_vieillesse, rachats_et_versements,
+  inaptitude_invalidite_penibilite_amiante ; les séries smic_horaire.csv,
+  smic_horaire_releves.csv, plafond_securite_sociale.csv, minimum_reversion.csv,
+  revalorisation_pensions.csv, minimum_vieillesse.csv, carriere_longue.csv ; le code de
+  la réversion (src/retraite_notionnelle/droit/reversion.py) ; les limites docs/limites/.
+  Ni Légifrance, ni le Journal officiel, ni l'index de la DILA.
+trouve: >-
+  Le registre range les 37 (21 limite, 16 hors_modele), sans raison neuve. Conformes : le
+  SMIC de 2012, le trimestre à 1 844 €, les plafonds et le minimum de la réversion, la
+  revalorisation de 1,021 au 1er avril 2012, l'ASPA, la carrière longue au 1er novembre
+  2012, les âges de la majoration de réversion, de la majoration pour enfant et de la
+  dernière révision. Un écart neuf : la validation des périodes assimilées exige une
+  cotisation antérieure au régime général (lettre Cnav du 26 septembre 2012), que le
+  modèle n'exige pas. Deux candidats de 2011 précisés : la génération de la réversion
+  d'un assuré mort avant son départ, celle du défunt si son décret est paru à la date
+  d'effet, sinon celle des 57 ans l'année du décès (circulaire RSI n° 2012/008) ; le
+  cumul des retraités anticipés d'avant juillet 2011 aux âges de 60 et 65 ans (circulaire
+  Cnav n° 2012/27, point 33). Note
+  docs/feuille_de_route/175/2026-11-16-etape-6-circulaires-2012.md.
+reste: >-
+  Les 44 circulaires de 2013, dernière année de cette nature ; les autres natures de
+  l'étape 6 ; L. 351-3 et R. 634-5, à relire au Journal officiel.
