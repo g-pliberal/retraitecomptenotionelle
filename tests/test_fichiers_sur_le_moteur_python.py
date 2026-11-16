@@ -50,7 +50,6 @@ FICHIERS = (
     "test_cycle_de_vie_references.py",
     "test_donnees.py",
     "test_effet_retour.py",
-    "test_etranger.py",
     "test_facade.py", "test_facade_jumeau.py",
     "test_facteurs_depense.py",
     "test_grille_large.py",

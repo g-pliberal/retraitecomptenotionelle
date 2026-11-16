@@ -20,12 +20,13 @@ import pytest
 from retraite_notionnelle import chronologie as chrono
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import (
-    Carriere, LigneRelevee, Metier, PensionEtrangere, PeriodeALEtranger,
+    LigneRelevee, Metier, PensionEtrangere, PeriodeALEtranger,
 )
 from retraite_notionnelle.donnees.chargement import charger_accords_internationaux
 from retraite_notionnelle.donnees.mortalite import AGE_TERMINAL
-from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import ErreurSite
+
+from facade import Carriere, Simulateur, compter, coordonner, prolongee
 
 from outils_pont import RefusDuPortage, Saisies, refus_de_la_saisie, saisie_du_portage
 
@@ -277,9 +278,9 @@ def test_la_chronologie_porte_les_periodes_les_pensions_et_la_residence(simulate
     assert carriere.pensions_etrangeres == (PensionEtrangere("DE", DateMois(2032, 6), 250.0),)
     assert carriere.residence == "PT"
     # Une copie de travail garde la chronologie dont elle vient.
-    prolongee = carriere.prolongee(66.0, simulateur.macro)
-    assert prolongee.periodes_a_l_etranger == carriere.periodes_a_l_etranger
-    assert prolongee.residence == "PT"
+    copie = prolongee(carriere, 66.0, simulateur.macro)
+    assert copie.periodes_a_l_etranger == carriere.periodes_a_l_etranger
+    assert copie.residence == "PT"
 
 
 def test_un_releve_porte_aussi_la_carriere_hors_de_france(simulateur):
@@ -372,9 +373,9 @@ process.stdout.write(JSON.stringify(sortie));
 """
 
 
-def _lu_par_python(saisies: Saisies, requete: dict) -> dict:
-    """Ce que le moteur Python lit de la carrière que le portage bâtit, et
-    simule."""
+def _lu_par_le_pont(saisies: Saisies, requete: dict) -> dict:
+    """Ce que la carrière que le portage bâtit porte, une fois passée par le
+    pont, et simulée par la façade."""
     parametres, vue = saisies.lire(requete)
     saisies.simulateur(parametres).simuler(vue)
     mois = "{0.annee}-{0.mois:02d}".format
@@ -390,7 +391,8 @@ def _lu_par_python(saisies: Saisies, requete: dict) -> dict:
 
 
 def test_le_portage_lit_les_memes_faits(saisies):
-    """La carrière des deux moteurs lit les mêmes faits de la même adresse :
+    """La carrière lue par le site et celle que le pont rend portent les mêmes
+    faits de la même adresse :
     les années que l'étranger interrompt, les périodes, les pensions ramenées
     à leur date sur les mêmes prix, la résidence et les mois passés en
     France."""
@@ -406,7 +408,7 @@ def test_le_portage_lit_les_memes_faits(saisies):
         input=json.dumps(REQUETES), capture_output=True, text=True, encoding="utf-8",
         check=False)
     assert execution.returncode == 0, execution.stderr
-    attendus = [_lu_par_python(saisies, requete) for requete in REQUETES]
+    attendus = [_lu_par_le_pont(saisies, requete) for requete in REQUETES]
     assert json.loads(execution.stdout) == attendus
     # Chaque fait y est au moins une fois : une pension future, saisie en
     # euros d'aujourd'hui, grandit avec les prix d'ici sa date ; une pension
@@ -422,7 +424,7 @@ def test_le_portage_lit_les_memes_faits(saisies):
 
 @pytest.fixture(scope="module")
 def saisies() -> Saisies:
-    return Saisies()
+    return Saisies(Simulateur)
 
 
 def _actuel(saisies, **champs):
@@ -485,13 +487,24 @@ def test_les_fonctionnaires_ne_comptent_que_les_reglements_europeens(saisies):
     assert "taux 63.750%" in _pension(maroc, "fonction_publique_etat").detail
 
 
+def _trimestres_etrangers(simulateur, carriere) -> dict[str, dict[int, tuple[int, int]]]:
+    """Les trimestres étrangers que les durées retiennent, par famille et par
+    année : ceux du taux, et ceux d'entre eux qui comptent comme cotisés."""
+    actuel = simulateur.scenario_actuel
+    etranger = compter.compter(actuel, coordonner.coordonner(actuel, carriere)
+                               ).donnees()["etranger"]
+    lus = {"regime_general": {}, "fonction_publique": {}}
+    for ligne in (etranger or {}).get("trimestres", ()):
+        if ligne["trimestres"]:
+            lus[ligne["famille"]][ligne["annee"]] = (ligne["trimestres"], ligne["cotises"])
+    return lus
+
+
 def test_l_annee_ne_depasse_pas_quatre_trimestres(saisies, simulateur):
     """Les périodes étrangères complètent celles de la carrière française sans
     s'y superposer (R. 351-5) : huit mois au Maroc en 1990, l'année où la
     carrière française commence en septembre, n'en apportent que trois ; le
     trimestre de l'année du départ, au plus les trimestres civils écoulés."""
-    from retraite_notionnelle.droit import etranger
-
     carriere = Carriere.depuis_parcours(
         annee_naissance=1962, sexe="H", mois_naissance=3,
         metiers=[Metier("salarie_prive_non_cadre", 28.5)], age_liquidation=64.0,
@@ -499,19 +512,17 @@ def test_l_annee_ne_depasse_pas_quatre_trimestres(saisies, simulateur):
         etranger={"periodes": [{"pays": "MA", "debut": 18.0, "fin": 28.5,
                                 "activite": "salariee"}],
                   "pensions": [], "residence": None})
-    trimestres = etranger.trimestres_etrangers(simulateur.scenario_actuel, carriere)
-    assert trimestres.pour_le_taux[etranger.GENERALE][1980] == 4
-    assert trimestres.pour_le_taux[etranger.GENERALE][1990] == 3
-    assert trimestres.cotises[etranger.GENERALE] == trimestres.pour_le_taux[etranger.GENERALE]
-    assert trimestres.trimestres(etranger.FONCTIONNAIRES) == 0
+    trimestres = _trimestres_etrangers(simulateur, carriere)
+    assert trimestres["regime_general"][1980] == (4, 4)
+    assert trimestres["regime_general"][1990] == (3, 3)
+    assert all(taux == cotises for taux, cotises in trimestres["regime_general"].values())
+    assert trimestres["fonction_publique"] == {}
 
 
 def test_une_organisation_internationale_compte_pour_le_taux_seul(saisies, simulateur):
     """Depuis 2010, l'affiliation au régime d'une organisation internationale
     compte pour le taux, un trimestre par quatre-vingt-dix jours (R. 161-16-1),
     jamais comme durée cotisée ; avant 2010, rien."""
-    from retraite_notionnelle.droit import etranger
-
     def compte(liquidation: float):
         carriere = Carriere.depuis_parcours(
             annee_naissance=1955, sexe="F", mois_naissance=6,
@@ -520,14 +531,17 @@ def test_une_organisation_internationale_compte_pour_le_taux_seul(saisies, simul
             etranger={"periodes": [{"pays": "OI", "debut": 44.5, "fin": 51.0,
                                     "activite": "salariee"}],
                       "pensions": [], "residence": None})
-        return etranger.trimestres_etrangers(simulateur.scenario_actuel, carriere)
+        return _trimestres_etrangers(simulateur, carriere)
+
+    def somme(trimestres, rang=0):
+        return sum(valeurs[rang] for valeurs in trimestres.values())
 
     apres = compte(62.0)
-    assert apres.trimestres(etranger.GENERALE) == apres.trimestres(etranger.FONCTIONNAIRES) == 24
-    assert apres.trimestres_cotises(etranger.GENERALE) == 0
+    assert somme(apres["regime_general"]) == somme(apres["fonction_publique"]) == 24
+    assert somme(apres["regime_general"], 1) == 0
     # Liquidée en 2009 : avant que L. 161-19-1 ne s'applique.
     avant = compte(54.0)
-    assert avant.trimestres(etranger.GENERALE) == 0
+    assert somme(avant["regime_general"]) == 0
 
 
 def test_la_carriere_longue_compte_les_periodes_etrangeres(saisies):
@@ -548,7 +562,6 @@ def test_la_carriere_longue_compte_les_periodes_etrangeres(saisies):
 def test_les_etapes_disent_ce_que_la_coordination_fait_des_periodes(simulateur):
     """La coordination dit le titre de chaque période, les durées ce que
     chaque famille en retient : chacune suit le schéma de son étape."""
-    from retraite_notionnelle.droit import compter, coordonner
     from retraite_notionnelle.noyau import contrats
 
     carriere = Carriere.depuis_parcours(
@@ -572,8 +585,12 @@ def test_les_etapes_disent_ce_que_la_coordination_fait_des_periodes(simulateur):
         erreurs = [c for c in contrats.Validateur(etape, contrats.ETAPES).valider(valeur, objet)
                    if c.genre == "erreur"]
         assert erreurs == [], erreurs
-    assert durees.pour_le_taux("regime_general") == durees.trimestres + 43
-    assert durees.pour_le_taux(None) == durees.trimestres
+    # Les 43 trimestres du Maroc et de l'Allemagne s'ajoutent à la durée du
+    # taux de la famille des régimes de la carrière, le régime général.
+    etranger = durees.donnees()["etranger"]
+    assert etranger["famille"] == "regime_general"
+    assert sum(ligne["trimestres"] for ligne in etranger["trimestres"]
+               if ligne["famille"] == "regime_general") == 43
 
 
 # -- le moteur : la pension proratisée, la pension nationale, et leur minimum ------
@@ -848,23 +865,15 @@ def test_le_minimum_international_suit_les_trois_cas_de_sa_majoration():
     la part du régime ; la majoration proratisée sur la durée totale non
     limitée quand elle dépasse la durée requise, sur la durée totale limitée
     quand la durée cotisée n'atteint pas la durée maximum, sur la durée
-    cotisée du régime sinon. Le portage calcule de même."""
+    cotisée du régime sinon. Le portage le calcule."""
     import json
     import shutil
     import subprocess
-    from types import SimpleNamespace
 
-    from retraite_notionnelle.droit.completer import plancher_international
-
-    eligible = SimpleNamespace(proratisation=160, requis=160, duree_regime=80,
-                               cotisee_regime=70)
     cas = [(200, 180, True, 9000 * 80 / 200 + 2000 * 80 / 200),
            (150, 130, True, 9000 * 150 / 160 * 80 / 150 + 2000 * 130 / 160 * 80 / 150),
            (160, 160, True, 9000 * 80 / 160 + 2000 * 70 / 160),
            (200, 180, False, 9000 * 80 / 200)]
-    for duree, cotisee, ouverte, attendu in cas:
-        assert plancher_international(eligible, 9000, 11000, duree, cotisee,
-                                      ouverte) == pytest.approx(attendu)
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     script = """
@@ -982,7 +991,7 @@ def test_les_etats_tiers_suivent_la_liste_lue_a_la_date_d_effet(saisies, tiers, 
     assert actuel.trimestres_etrangers == trimestres
 
 
-#: Des carrières hors de France que les deux moteurs liquident.
+#: Des carrières hors de France que le site et la façade liquident.
 CARRIERES_HORS_DE_FRANCE = [
     {**NE_EN_1962, **AU_MAROC},
     {**NE_EN_1962, "etranger1_pays": "DZ", "etranger1_debut": "1980-01",
@@ -1076,7 +1085,8 @@ def _arrondi(montant: float) -> float:
 
 
 def test_le_portage_liquide_les_memes_carrieres_hors_de_france(saisies):
-    """Les deux moteurs comptent les mêmes trimestres étrangers et liquident
+    """Le site et la façade, par le pont, comptent les mêmes trimestres
+    étrangers et liquident
     les mêmes pensions, régime par régime, au centime et au mot près."""
     import json
     import shutil
