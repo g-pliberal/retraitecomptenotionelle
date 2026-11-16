@@ -12,7 +12,6 @@ droit réel qu'aucune couche ne décide (§ 4.8, § 6.7).
 from __future__ import annotations
 
 import dataclasses
-import importlib
 import re
 import shutil
 from pathlib import Path
@@ -161,18 +160,13 @@ def test_chaque_fiche_de_la_proposition_est_lue_et_datee():
 
 def test_chaque_fiche_de_la_proposition_dit_son_code():
     """« Chaque règle du code a sa fiche, et chaque fiche a son code » (§ 6.7) :
-    les fonctions Python existent, leurs jumelles JavaScript sont dans les
-    fichiers nommés, les paramètres sont ceux du simulateur, les tests
-    existent."""
+    le code est celui du moteur JavaScript, seul (note de décision 0009,
+    action 161) ; ses fonctions sont dans les fichiers nommés, les paramètres
+    sont ceux du simulateur, les tests existent."""
     champs = {f.name for f in dataclasses.fields(Parametres)}
     for nom, fiche in carte.fiches_de_la_proposition().items():
         code = fiche["code"]
-        for module, fonctions in code["python"].items():
-            objet_module = importlib.import_module(module)
-            for chemin in fonctions:
-                objet = objet_module
-                for morceau in chemin.split("."):
-                    objet = getattr(objet, morceau)
+        assert "python" not in code, f"{nom} : son code nomme encore du Python"
         for fichier, noms in code["javascript"].items():
             texte = (RACINE / fichier).read_text(encoding="utf-8")
             for fonction in noms:

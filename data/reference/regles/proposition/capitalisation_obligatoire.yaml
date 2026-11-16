@@ -60,9 +60,6 @@ sources:
     reference: README.md, le texte de la proposition
     date: 2026-09-27
 code:
-  python:
-    retraite_notionnelle.moteur.capitalisation: [ConstructeurCapitalisation.construire]
-    retraite_notionnelle.scenarios.notionnel: [ScenarioNotionnel._pilier_capitalise]
   javascript:
     moteur/js/capitalisation.js: [ConstructeurCapitalisation, construire]
     moteur/js/scenario-notionnel.js: [_pilierCapitalise]

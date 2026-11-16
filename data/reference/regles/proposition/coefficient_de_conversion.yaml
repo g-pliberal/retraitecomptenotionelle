@@ -78,8 +78,6 @@ sources:
     reference: README.md, le texte de la proposition
     date: 2026-09-27
 code:
-  python:
-    retraite_notionnelle.moteur.conversion: [Convertisseur.resoudre, Convertisseur.coefficient, diviseur_de_courbe]
   javascript:
     moteur/js/conversion.js: [Convertisseur, resoudre, coefficient, diviseurDeCourbe]
   parametres: [taux_anticipe_conversion, table_conversion, hypothese_esperance_vie]

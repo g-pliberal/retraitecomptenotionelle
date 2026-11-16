@@ -51,9 +51,6 @@ sources:
     reference: README.md, le texte de la proposition
     date: 2026-09-27
 code:
-  python:
-    retraite_notionnelle.moteur.fusion: [fusionner, RegimeFusionne]
-    retraite_notionnelle.moteur.compte: [ConstructeurCompte.taux_unifie]
   javascript:
     moteur/js/fusion.js: [fusionner]
     moteur/js/compte.js: [tauxUnifie]

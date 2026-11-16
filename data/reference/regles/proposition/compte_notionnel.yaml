@@ -63,9 +63,6 @@ sources:
     reference: README.md, le texte de la proposition
     date: 2026-09-27
 code:
-  python:
-    retraite_notionnelle.moteur.compte: [ConstructeurCompte.construire, ConstructeurCompte.cotisation_annuelle, ConstructeurCompte.taux_effectif, ConstructeurCompte.taux_unifie]
-    retraite_notionnelle.scenarios.notionnel: [ScenarioNotionnel.retroactif]
   javascript:
     moteur/js/compte.js: [ConstructeurCompte, construire, cotisationAnnuelle, tauxUnifie]
     moteur/js/scenario-notionnel.js: [ScenarioNotionnel, retroactif]

@@ -64,9 +64,6 @@ sources:
       l'invalidité et de l'inaptitude, qui y ajoute l'invalidité
     date: 2026-10-01
 code:
-  python:
-    retraite_notionnelle.simulateur: [Simulateur.carriere_proposition]
-    retraite_notionnelle.carriere: [Carriere.prolongee]
   javascript:
     moteur/js/simulateur.js: [carriereProposition]
     moteur/js/carriere.js: [prolongee]

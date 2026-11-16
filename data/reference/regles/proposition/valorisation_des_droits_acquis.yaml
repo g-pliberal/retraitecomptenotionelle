@@ -59,8 +59,6 @@ sources:
     reference: README.md, le texte de la proposition
     date: 2026-09-27
 code:
-  python:
-    retraite_notionnelle.scenarios.notionnel: [ScenarioNotionnel.prospectif, ScenarioNotionnel._droits_acquis, ScenarioNotionnel._deja_liquide, DroitsAcquis]
   javascript:
     moteur/js/scenario-notionnel.js: [prospectif, _droitsAcquis, _dejaLiquide]
   parametres: [annee_bascule, age_conversion_droits_acquis]
