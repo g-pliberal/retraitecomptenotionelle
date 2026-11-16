@@ -17,14 +17,28 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle import cout as C
-from retraite_notionnelle.castypes import CAS_TYPES
+from retraite_notionnelle.castypes import CAS_TYPES, departs_au_portage
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.simulateur import Simulateur
-from retraite_notionnelle.droit import ouvrir
+
+from facade import Simulateur, ouvrir
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 import cout_age_depart as CAD  # noqa: E402
+
+def _construite(simulateur, cas, generation: int):
+    """La carrière de ``cas``, né en ``generation``, partie à l'âge où le
+    pilote du portage la fait partir (``CasType.construire``, sans le pilote
+    Python)."""
+    return cas.carriere_a(simulateur, generation, _age(simulateur, cas, generation))
+
+
+def _age(simulateur, cas, generation: int) -> float:
+    """L'âge où le pilote du portage fait partir ``cas``, né en ``generation``."""
+    departs, refus = departs_au_portage(simulateur, {"cas": (cas, generation)})
+    assert not refus, refus
+    return departs["cas"][0]
+
 
 #: Les cas types que `cas_types_csp.yaml` laisse hors champ : le contrefactuel
 #: ne doit pas y toucher.
@@ -109,10 +123,10 @@ def test_une_carriere_tout_en_points_se_voit_opposer_sa_duree(simulateur):
 
     cas = next(c for c in CAS_TYPES if c.code == "exploitant_agricole")
     ouverture = ouvrir.age_ouverture_droit(simulateur.scenario_actuel,
-        cas.construire(simulateur, 1955, "droit"))
+        _construite(simulateur, cas, 1955))
 
-    tot = replace(cas, age_debut=20).age_liquidation_pour(simulateur, 1955)
-    tard = replace(cas, age_debut=28).age_liquidation_pour(simulateur, 1955)
+    tot = _age(simulateur, replace(cas, age_debut=20), 1955)
+    tard = _age(simulateur, replace(cas, age_debut=28), 1955)
     assert tot == pytest.approx(61.0)
     assert ouverture <= tot
     assert tard > tot + 0.9, "la durée manquante doit retarder le départ"
@@ -152,7 +166,7 @@ def test_la_carriere_longue_est_ouverte_aux_regimes_en_points(simulateur):
     """
     actuel = simulateur.scenario_actuel
     cas = next(c for c in CAS_TYPES if c.code == "exploitant_agricole")
-    carriere = cas.construire(simulateur, 2000, "droit")
+    carriere = _construite(simulateur, cas, 2000)
 
     assert ouvrir.age_taux_plein_droit(actuel, carriere) >= ouvrir.age_ouverture_droit(actuel, carriere)
     resultat = actuel.calculer(carriere)
@@ -342,7 +356,7 @@ def test_le_liberal_retrouve_le_cas_type_du_COR(simulateur):
     assert fiche.regle_liquidation == "taux_plein"
     assert fiche.ecart_liquidation == 0
 
-    carriere = fiche.construire(simulateur, 1960, "droit")
+    carriere = _construite(simulateur, fiche, 1960)
     assert ouvrir.age_ouverture_droit(actuel, carriere) == pytest.approx(62.0, abs=0.01)
     assert ouvrir.age_taux_plein_droit(actuel, carriere) == pytest.approx(66.75, abs=0.3)
 

@@ -46,7 +46,6 @@ FICHIERS = (
     "test_avantages.py",
    
     "test_controle_drees_panorama.py", "test_cout.py",
-    "test_cout_age_depart.py",
     "test_donnees.py",
     "test_facade.py", "test_facade_jumeau.py",
     "test_grille_large.py",
