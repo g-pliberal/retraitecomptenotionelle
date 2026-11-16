@@ -92,3 +92,13 @@ def test_la_sonde_tient_sans_sys_monitoring(tmp_path, monkeypatch):
              "BAREME = bareme()\n")
     chemin = tmp_path / "droit" / "table.py"
     assert sonde.sonder(lambda: _module(chemin, texte, "table_factice_311")) == []
+
+
+def test_une_regle_se_releve_a_chaque_sondage(tmp_path, monkeypatch):
+    """Une règle relevée par un sondage l'est encore au suivant : ce que
+    ``sys.monitoring.DISABLE`` tait le reste du sondage ne se tait pas au-delà."""
+    sonde = _paquet_factice(tmp_path, monkeypatch)
+    regle = _module(tmp_path / "moteur" / "regle.py",
+                    "def doubler(x):\n    return 2 * x\n", "regle_factice_deux")
+    premier = sonde.sonder(lambda: regle.doubler(3))
+    assert sonde.sonder(lambda: regle.doubler(3)) == premier == ["moteur.regle.doubler"]

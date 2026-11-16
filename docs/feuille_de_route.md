@@ -7335,10 +7335,12 @@ qui bâtissent encore le simulateur Python sont classés : une sonde
 (`scripts/sonde_moteur_python.py`) dit ce que chacun exécute du moteur. La
 plupart n'en lisent que des chargeurs et des types, à passer sous `donnees/`
 avant la coupe ; quelques-uns calculent encore. Le salaire moyen est
-demandé au pont (`2026-11-16-le-salaire-moyen-au-pont.md`). Une étape par
+demandé au pont, la grille large n'exécute plus de règle
+(`2026-11-16-la-grille-large-sans-le-moteur-python.md`). Une étape par
 session. Par quoi commencer : la liste « Ce qui reste » de
-`2026-11-16-le-tri-des-scripts-et-des-modules.md`, à son point 2, la grille
-large. Le retrait des règles attend l'accord du propriétaire.
+`2026-11-16-le-tri-des-scripts-et-des-modules.md`, à son point 3, les replis
+de `avantages` et de `castypes`. Le retrait des règles attend l'accord du
+propriétaire.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

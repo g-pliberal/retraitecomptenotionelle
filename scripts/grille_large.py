@@ -344,7 +344,7 @@ from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import cout as C  # noqa: E402
 from retraite_notionnelle import memoire, pont  # noqa: E402
 from retraite_notionnelle.carriere import (  # noqa: E402
-    PROFIL_SMIC, Metier, salaire_moyen_annuel,
+    PROFIL_SMIC, Metier,
 )
 from retraite_notionnelle.castypes import (  # noqa: E402
     CAS_TYPES, GRILLE_DU_COUT, CasType, age_lu, batie_au_portage, cas_type_affiche,
@@ -353,6 +353,9 @@ from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.controle_eacr import conditions_publiees  # noqa: E402
 from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
 from retraite_notionnelle.donnees.caracteristiques import CaracteristiquesRetraites  # noqa: E402
+from retraite_notionnelle.donnees.chargement import (  # noqa: E402
+    charger_table_par_generation, valeur_par_generation,
+)
 from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.distribution import (  # noqa: E402
     QUANTILES_PUBLIES, DistributionPensions, ResidenceRetraites,
@@ -1470,6 +1473,47 @@ QUARTILES = (("q1", 0.25), ("mediane", 0.50), ("q3", 0.75))
 QUINTILES_EQCC = ("q1", "q2", "q3", "q4", "q5")
 
 
+class TableDesAges:
+    """L'âge qu'une table de la législation donne à chaque génération, lu aux
+    données (``donnees.chargement``) comme le lit le chargeur du scénario 1
+    (``scenarios.actuel.TableParGeneration``), sans le moteur Python (action
+    161) : :meth:`age` rend ``(âge, fiabilité)``, ``None`` en deçà de la
+    première génération."""
+
+    def __init__(self, racine: Path, fichier: str) -> None:
+        self._table, self._generations = charger_table_par_generation(
+            racine / "reference" / "legislation" / fichier, "age")
+
+    def age(self, generation: float):
+        return valeur_par_generation(self._table, self._generations, generation)
+
+
+def ages_ouverture(racine: Path) -> TableDesAges:
+    """L'âge légal d'ouverture du droit, par génération."""
+    return TableDesAges(racine, "age_ouverture_requis.csv")
+
+
+def ages_annulation_decote(racine: Path) -> TableDesAges:
+    """L'âge d'annulation de la décote, par génération."""
+    return TableDesAges(racine, "age_annulation_decote.csv")
+
+
+#: Le salaire moyen de chaque année, que le portage sert, par paramètres
+#: (:func:`salaire_moyen`).
+_SALAIRES_MOYENS: dict[Parametres, dict[int, float]] = {}
+
+
+def salaire_moyen(parametres: Parametres, annee: int) -> float:
+    """Le salaire moyen brut de l'année, en euros courants, sur le simulateur
+    de ``parametres`` : demandé au pont (``pont.salaires_moyens``, action
+    161), pour toutes les années de 1900 à 2120 d'une demande, et gardé."""
+    lus = _SALAIRES_MOYENS.setdefault(parametres, {})
+    if annee not in lus:
+        lus.update(pont.salaires_moyens(range(min(1900, annee), max(2120, annee) + 1),
+                                        parametres))
+    return lus[annee]
+
+
 def _par_generation(paires: tuple[tuple[int, float], ...], generation: int,
                     defaut: float) -> float:
     """La valeur de ``generation`` dans des paires ``(génération, valeur)``
@@ -1672,9 +1716,8 @@ class CasTypeLarge(CasType):
         if not self.plancher_smic:
             return False
         annee = generation + AGE_DU_RANG
-        macro = simulateur.macro
-        return self.niveau_de(generation) < (macro.smic_annuel(annee)
-                                             / salaire_moyen_annuel(macro, annee))
+        return self.niveau_de(generation) < (
+            simulateur.macro.smic_annuel(annee) / salaire_moyen(simulateur.parametres, annee))
 
     def niveau_relatif(self, simulateur: Simulateur, generation: int) -> float:
         if self.niveaux:
@@ -2402,9 +2445,10 @@ def donnees_population(racine: Path) -> DonneesPopulation:
     # moyenne des années où le vingt-cinquième centile se publie par sexe, hors
     # de celles de l'activité partielle, fois la part qui y reste six ans.
     macro = DonneesMacro(racine)
+    parametres = Parametres(racine_donnees=racine)
 
     def smic(annee: int) -> float:
-        return macro.smic_annuel(annee) / salaire_moyen_annuel(macro, annee)
+        return macro.smic_annuel(annee) / salaire_moyen(parametres, annee)
 
     persistance = persistance_a_six_ans(racine)
     bas, poids_du_bas = CENTILES[0]
@@ -2467,9 +2511,8 @@ def entrees_des_carrieres_pleines(racine: Path) -> dict[str, tuple[tuple[int, fl
     génération, sexe par sexe : la durée des carrières pleines
     (:func:`durees_pleines`) avant l'âge légal de la génération, à l'année
     près, et à l'entrée du gabarit au plus tard."""
-    from retraite_notionnelle.scenarios.actuel import AgesOuverture
 
-    legaux = AgesOuverture(racine)
+    legaux = ages_ouverture(racine)
     gabarit = next(cas for cas in CAS_TYPES if cas.code == "salaire_moyen").age_debut
     sortie = {}
     for sexe, durees in durees_pleines(racine).items():
@@ -3644,17 +3687,16 @@ class Departs:
     (:meth:`CasTypeLarge.age_liquidation_pour`), et ce que l'échéancier lit à
     ce départ (:class:`AuDepart`).
 
-    Le portage les calcule tous, d'une demande, quand la grille s'y date
-    (``castypes.batie_au_portage``, action 161, étape 7) : ``ages``, ceux dont
+    Le portage les calcule tous, d'une demande (action 161, étape 7), et lui
+    seul : un cas type qu'il ne date pas (``castypes.batie_au_portage``) est
+    refusé (``ValueError``) ; ``ages``, ceux dont
     on ne lira que l'âge, et ``departs``, ceux dont on lira aussi le départ
     (``pont.departs_des_cas``) ; un départ qu'on ne lui a pas annoncé, d'une
     demande de plus. Sous ``du_jour``, sur le paquet des données du jour
     (``pont.paquet_des_donnees``), celui d'une mesure que la mémoire garde ;
     sans lui, sur ``moteur/donnees.json``, par le pont gardé ouvert, comme
-    ``castypes.cases_de_la_grille``. Le moteur Python, sinon, à la demande,
-    dans l'ordre où la mesure les lit. Un âge ou un départ que le modèle
-    refuse lève ``ValueError`` à sa lecture, là où son calcul le lève en
-    Python."""
+    ``castypes.cases_de_la_grille``. Un âge ou un départ que le modèle
+    refuse lève ``ValueError`` à sa lecture."""
 
     def __init__(self, simulateur: Simulateur, ages=(), departs=(), du_jour: bool = False
                  ) -> None:
@@ -3664,13 +3706,13 @@ class Departs:
         self._departs: dict[tuple[CasType, int], AuDepart] = {}
         self._refus: dict[tuple[CasType, int, str], str] = {}
         demandes = {**dict.fromkeys(ages, "age"), **dict.fromkeys(departs, "depart")}
-        self.au_portage = batie_au_portage(simulateur.parametres,
-                                           [cas for cas, _generation in demandes])
-        if self.au_portage and demandes:
+        if demandes:
             self._lire_au_portage(demandes)
 
     def _lire_au_portage(self, demandes: dict[tuple[CasType, int], str]) -> None:
         simulateur = self.simulateur
+        if not batie_au_portage(simulateur.parametres, [cas for cas, _generation in demandes]):
+            raise ValueError("un cas type que le portage ne date pas (castypes.batie_au_portage)")
         cles = {str(rang): couple for rang, couple in enumerate(demandes)}
         lus, refus = pont.departs_des_cas(
             [{"cle": cle, **cas.pour_le_portage(simulateur, generation),
@@ -3700,10 +3742,8 @@ class Departs:
         """L'âge où ce cas type part, étant né en ``generation``."""
         self._refuse(cas, generation, "age")
         if (cas, generation) not in self._ages:
-            if self.au_portage:
-                self._lire_au_portage({(cas, generation): "age"})
-                return self.age(cas, generation)
-            self._ages[(cas, generation)] = cas.age_liquidation_pour(self.simulateur, generation)
+            self._lire_au_portage({(cas, generation): "age"})
+            return self.age(cas, generation)
         return self._ages[(cas, generation)]
 
     def au_depart(self, cas: CasType, generation: int) -> AuDepart:
@@ -3712,18 +3752,8 @@ class Departs:
         self._refuse(cas, generation, "age")
         self._refuse(cas, generation, "depart")
         if (cas, generation) not in self._departs:
-            if self.au_portage:
-                self._lire_au_portage({(cas, generation): "depart"})
-                return self.au_depart(cas, generation)
-            simulateur = self.simulateur
-            actuel = simulateur.echeancier(
-                cas.carriere_a(simulateur, generation, self.age(cas, generation))).au_depart
-            self._departs[(cas, generation)] = AuDepart(
-                actuel.taux_liquidation, actuel.trimestres_requis, actuel.trimestres_valides,
-                actuel.motif_ouverture,
-                tuple((avantage.code, avantage.montant) for avantage in actuel.avantages_appliques),
-                tuple((pension.regime, pension.montant, pension.surcote)
-                      for pension in actuel.pensions_par_regime))
+            self._lire_au_portage({(cas, generation): "depart"})
+            return self.au_depart(cas, generation)
         return self._departs[(cas, generation)]
 
 
@@ -4048,11 +4078,10 @@ def _attentes_apres_l_age_legal(publies: dict, racine: Path, conditions
     triés : ceux de l'âge légal même ; ceux des :data:`PREMIERES_ANNEES`
     premières années ; les autres, jusqu'à l'âge d'annulation de la décote
     (:func:`attentes_des_decotes`)."""
-    from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
 
     generation = GENERATION_DES_DECOTES
-    legal = AgesOuverture(racine).age(generation)[0]
-    annulation = AgesAnnulationDecote(racine).age(generation)[0]
+    legal = ages_ouverture(racine).age(generation)[0]
+    annulation = ages_annulation_decote(racine).age(generation)[0]
     sortie = {}
     for sexe in ("F", "H"):
         poids = conditions(sexe)
@@ -4090,9 +4119,8 @@ def ages_legaux(racine: Path) -> tuple[tuple[int, float], ...]:
     """L'âge légal de chaque génération de la grille (``cout.generations``) qui
     en a un, paires ``(génération, âge)`` triées : celui d'où se compte
     l'attente d'un départ (:attr:`CasTypeLarge.attente`)."""
-    from retraite_notionnelle.scenarios.actuel import AgesOuverture
 
-    lus = AgesOuverture(racine)
+    lus = ages_ouverture(racine)
     return tuple((generation, lu[0]) for generation in C.generations()
                  if (lu := lus.age(generation)) is not None)
 
@@ -4105,9 +4133,8 @@ def echelles_des_attentes(racine: Path) -> tuple[tuple[int, float], ...]:
     son écart que ceux des nés en 1953 (:data:`DECOTE_ENTRE_LES_DEUX_AGES`).
     Les nés depuis 1970, de 64 à 67 ans, attendent trois cinquièmes de leurs
     attentes, et ne passent pas l'âge d'annulation."""
-    from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
 
-    legaux, annulations = AgesOuverture(racine), AgesAnnulationDecote(racine)
+    legaux, annulations = ages_ouverture(racine), ages_annulation_decote(racine)
 
     def ecart(generation: int) -> float | None:
         legal, annulation = legaux.age(generation), annulations.age(generation)
@@ -4219,7 +4246,6 @@ def durees_completees(variantes: list[Variante], racine: Path) -> dict[str, froz
     durée lui manque à l'âge légal, et où elle la complète avant l'âge
     d'annulation. Une génération que le modèle refuse de calculer n'en est
     pas. Gardées sous l'empreinte du modèle et le code de ce script."""
-    from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
 
     parametres = Parametres(racine_donnees=racine)
     legaux = ages_legaux(racine)
@@ -4230,7 +4256,7 @@ def durees_completees(variantes: list[Variante], racine: Path) -> dict[str, froz
         simulateur = Simulateur(parametres).pour_la_projection()
         departs = Departs(simulateur, [(cas, generation) for cas in cas_types
                                        for generation in generations], du_jour=True)
-        ouvertures, annulations = AgesOuverture(racine), AgesAnnulationDecote(racine)
+        ouvertures, annulations = ages_ouverture(racine), ages_annulation_decote(racine)
         sortie = {}
         for cas in cas_types:
             siennes = []
@@ -4334,11 +4360,10 @@ def attentes_des_surcotes(publies: dict, racine: Path) -> dict[str, list[tuple[f
     l'année de l'âge légal, l'âge et demi ensuite, « 67 ans et plus » pris pour
     67 ans, le dernier que l'enquête voie ; chaque attente au milieu de ses
     âges, pondéré, et pesant leur part. Nul ne surcote avant l'âge légal."""
-    from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
 
     generation = GENERATION_DES_SURCOTES
-    legal = AgesOuverture(racine).age(generation)[0]
-    annulation = AgesAnnulationDecote(racine).age(generation)[0]
+    legal = ages_ouverture(racine).age(generation)[0]
+    annulation = ages_annulation_decote(racine).age(generation)[0]
     sortie = {}
     for sexe in ("F", "H"):
         groupes: dict[int, list[float]] = {}
@@ -4368,9 +4393,8 @@ def ages_legaux(racine: Path) -> tuple[tuple[int, float], ...]:
     paires ``(génération, âge)`` triées : celui d'où un départ avec surcote du
     salariat compte son attente, et qui dit si la surcote existait
     (:data:`ANNEE_DE_LA_SURCOTE`)."""
-    from retraite_notionnelle.scenarios.actuel import AgesOuverture
 
-    lus = AgesOuverture(racine)
+    lus = ages_ouverture(racine)
     return tuple((generation, lu[0]) for generation in C.generations()
                  if (lu := lus.age(generation)) is not None)
 
@@ -4431,10 +4455,8 @@ def surcotes_des_fonctionnaires_selon_la_generation(
     celle de 2025, l'année où la génération atteint son âge légal
     (:func:`surcote_du_jaune_en`) ; une au plus. Par affiliation, paires
     ``(naissance, part)`` triées, des années de naissance dont l'âge légal se
-    lit (``scenarios.actuel.AgesOuverture``)."""
-    from retraite_notionnelle.scenarios.actuel import AgesOuverture
-
-    lus = AgesOuverture(racine)
+    lit (:func:`ages_ouverture`)."""
+    lus = ages_ouverture(racine)
     annees = [(naissance, naissance + lu[0]) for naissance in naissances_simulees()
               if (lu := lus.age(naissance)) is not None]
     sortie = {}
@@ -4600,17 +4622,17 @@ def debut_de_la_surcote(simulateur: Simulateur, cas: CasType, generation: int,
     portage la cherche, quand la grille s'y date (``castypes.batie_au_portage``,
     ``pont.debuts_de_la_surcote``, action 161, étape 7), sur
     ``moteur/donnees.json``, par le pont gardé ouvert, comme
-    ``castypes.cases_de_la_grille`` ; le moteur Python sinon
-    (:func:`_debut_de_la_surcote_en_python`)."""
-    if batie_au_portage(simulateur.parametres, (cas,)):
-        lus, refus = pont.debuts_de_la_surcote(
-            [{"cle": "debut", **cas.pour_le_portage(simulateur, generation), "plein": plein,
-              "recherche": TRIMESTRES_DE_RECHERCHE}],
-            simulateur.parametres, primes_projetees_en_donnees(simulateur))
-        if refus:
-            raise ValueError(refus["debut"])
-        return lus["debut"]
-    return _debut_de_la_surcote_en_python(simulateur, cas, generation, plein)
+    ``castypes.cases_de_la_grille`` ; un cas type qu'il ne date pas est
+    refusé (``ValueError``)."""
+    if not batie_au_portage(simulateur.parametres, (cas,)):
+        raise ValueError("un cas type que le portage ne date pas (castypes.batie_au_portage)")
+    lus, refus = pont.debuts_de_la_surcote(
+        [{"cle": "debut", **cas.pour_le_portage(simulateur, generation), "plein": plein,
+          "recherche": TRIMESTRES_DE_RECHERCHE}],
+        simulateur.parametres, primes_projetees_en_donnees(simulateur))
+    if refus:
+        raise ValueError(refus["debut"])
+    return lus["debut"]
 
 
 def _debut_de_la_surcote_en_python(simulateur: Simulateur, cas: CasType, generation: int,
@@ -4889,9 +4911,8 @@ def ecarts_des_femmes(variantes: list[Variante], effectifs,
     génération par génération (:data:`DUREE_DES_FEMMES_SELON_LA_GENERATION`) :
     celles qui portent leur durée moyenne (:func:`duree_moyenne_des_femmes`) à
     celle de l'EIR (:func:`durees_d_assurance`), par bissection."""
-    from retraite_notionnelle.scenarios.actuel import AgesOuverture
 
-    legaux = AgesOuverture(racine)
+    legaux = ages_ouverture(racine)
     publiees = durees_d_assurance(racine)
     serie = tuple(sorted((g, d) for (g, sexe), d in publiees.items() if sexe == "F"))
     entrees = entrees_des_carrieres_pleines(racine)["F"]
@@ -4922,9 +4943,8 @@ def femmes_selon_la_generation(variantes: list[Variante], effectifs,
     salariat privé dont les années ne tiennent pas entre son entrée et l'âge
     légal entre à l'âge légal moins ses années, à l'année près, chaque
     génération ; les autres variantes telles quelles."""
-    from retraite_notionnelle.scenarios.actuel import AgesOuverture
 
-    legaux = AgesOuverture(racine)
+    legaux = ages_ouverture(racine)
     ecarts = ecarts_des_femmes(variantes, effectifs, source, racine)
     pleines = entrees_des_carrieres_pleines(racine)["F"]
     sortie = []
@@ -5854,7 +5874,6 @@ def condition_au_depart(simulateur: Simulateur, cas: CasType, generation: int,
     d'annulation de la décote, ou après lui, sans la durée requise ; au taux
     plein, autrement. Les générations que la mesure lit partent après 2004 :
     la loi leur sert la surcote de tout trimestre qui passe l'un et l'autre."""
-    from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
 
     racine = simulateur.parametres.racine_donnees
     if departs is None:
@@ -5865,8 +5884,8 @@ def condition_au_depart(simulateur: Simulateur, cas: CasType, generation: int,
         return age, "carriere_longue"
     if avec_decote(simulateur, cas, generation, actuel.taux_liquidation, departs):
         return age, "decote"
-    legal = AgesOuverture(racine).age(generation)[0]
-    annulation = AgesAnnulationDecote(racine).age(generation)[0]
+    legal = ages_ouverture(racine).age(generation)[0]
+    annulation = ages_annulation_decote(racine).age(generation)[0]
     if (cas.regle_liquidation != "services" and not cas.inaptitude
             and age > legal + TOLERANCE_DE_PLACE):
         if age > departs.age(au_taux_plein(cas), generation) + 1e-6:
@@ -5970,10 +5989,9 @@ def departs(parametres: Parametres, tetes: GrilleEnTetes, publies: dict,
     que la page lui donne cette année-là et de sa survie propre, à nombre de
     décès égal (``cout._survies_alignees``), et de ce que la génération donne à
     son poids (:meth:`GrilleEnTetes.part_de`)."""
-    from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
 
     racine = parametres.racine_donnees
-    legaux, annulations = AgesOuverture(racine), AgesAnnulationDecote(racine)
+    legaux, annulations = ages_ouverture(racine), ages_annulation_decote(racine)
     cas_par_code = {cas.code: cas for cas in tetes.cas_types}
     couples = {(cas_par_code[pensionne.code], pensionne.generation)
                for pensionne in tetes.pensionnes

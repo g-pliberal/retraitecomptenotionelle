@@ -3868,3 +3868,60 @@ def test_les_mesures_de_la_grille_large_passent_par_le_portage_sans_les_jumeaux(
     assert any(au_portage["decote"]) and any(au_portage["avance"])
     assert {condition for _age, condition in au_portage["condition"]} >= {
         "carriere_longue", "decote", "surcote", "taux_plein_autre"}
+
+
+def test_la_grille_large_lit_ses_ages_aux_donnees_et_le_salaire_moyen_au_pont():
+    """Les âges légaux et d'annulation de la décote que la grille élargie lit
+    se lisent aux tables de la législation (``donnees.chargement``), et le
+    salaire moyen qui situe le Smic se demande au pont (``pont.salaires_moyens``)
+    : la sonde du retrait (action 161) n'y relève aucune règle du moteur
+    Python."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    import sonde_moteur_python as sonde
+    from retraite_notionnelle import pont
+
+    parametres = Parametres()
+    racine = parametres.racine_donnees
+    projection = Simulateur(parametres).pour_la_projection()
+    du_depot = {cas.code: cas for cas in GRILLE_DU_COUT}
+    bas = G.elargi(du_depot["salaire_moyen"], code="essai~smic", plancher_smic=True,
+                   niveaux=((1900, 0.5),))
+    publies = G.departs_publies(racine)
+    lus = {}
+    assert sonde.sonder(lambda: lus.update(
+        legaux=dict(G.ages_legaux(racine)), entrees=G.entrees_des_carrieres_pleines(racine),
+        attentes=G.attentes_des_decotes(publies, racine),
+        en_1953=(G.ages_ouverture(racine).age(1953)[0],
+                 G.ages_annulation_decote(racine).age(1953)[0]),
+        au_smic=[bas.au_smic(projection, generation) for generation in (1950, 1990)],
+        population=G.donnees_population(racine).smic)) == []
+
+    # Loi du 9 novembre 2010 : 60 ans pour les nés en 1950, 62 ans en 1955 ;
+    # 61 ans et 2 mois, et la décote annulée à 66 ans et 2 mois, en 1953.
+    assert (lus["legaux"][1950], lus["legaux"][1955]) == (60.0, 62.0)
+    assert lus["en_1953"] == (61 + 2 / 12, 66 + 2 / 12)
+    annees = [generation + G.AGE_DU_RANG for generation in (1950, 1990)]
+    salaires = pont.salaires_moyens(annees, projection.parametres)
+    assert lus["au_smic"] == [0.5 < projection.macro.smic_annuel(annee) / salaires[annee]
+                              for annee in annees]
+    assert all(0.3 < smic < 0.7 for _generation, smic in lus["population"])
+
+
+def test_un_cas_type_que_le_portage_ne_date_pas_est_refuse():
+    """Les départs et le premier âge surcoté de la grille élargie se lisent au
+    portage seul (action 161) : un cas type qui récrirait sa carrière sans
+    récrire ce qu'il passe au portage (``castypes.decrit_au_portage``) est
+    refusé, au lieu de se dater au moteur Python."""
+
+    class Recrite(G.CasTypeLarge):
+        def _carriere(self, simulateur, generation, age_liquidation):
+            return super()._carriere(simulateur, generation, age_liquidation)
+
+    cas = Recrite(**{f.name: getattr(G.elargi(GRILLE_DU_COUT[0]), f.name)
+                     for f in G.fields(G.CasTypeLarge)})
+    projection = Simulateur(Parametres()).pour_la_projection()
+    with pytest.raises(ValueError, match="portage"):
+        G.Departs(projection, ages=((cas, 1950),))
+    with pytest.raises(ValueError, match="portage"):
+        G.debut_de_la_surcote(projection, cas, 1950, 62.0)

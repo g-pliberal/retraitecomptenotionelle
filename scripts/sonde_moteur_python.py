@@ -112,6 +112,7 @@ def sonder(fonction: Callable[[], object]) -> list[str]:
         finally:
             monitoring.set_events(_OUTIL, 0)
             monitoring.register_callback(_OUTIL, monitoring.events.PY_START, None)
+            monitoring.restart_events()  # ce que DISABLE a tu se relève au sondage suivant
     finally:
         monitoring.free_tool_id(_OUTIL)
     return sorted(relevees)
