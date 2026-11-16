@@ -86,6 +86,8 @@ from retraite_notionnelle import journal as _journal
 from retraite_notionnelle import memoire, pont
 from retraite_notionnelle import pilote as _pilote
 from retraite_notionnelle import revalorisation as _revalorisation
+from retraite_notionnelle.revalorisation_servie import (
+    RevalorisationServie as _RevalorisationServie)
 from retraite_notionnelle import simulateur as _simulateur
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import ContributionEtat, Parametres
@@ -132,6 +134,7 @@ ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversio
            "droit.etapes", "compter.trimestres_du_contrat", "compter.jours_par_annee",
            "revalorisation.faire_vivre", "commun.periode_de_liquidation",
            "revalorisation.majorer_les_petites_pensions", "revalorisation.actuel_aujourd_hui",
+           "pension_servie.coefficient",
            "simulateur.proposition", "simulateur.carriere_proposition", "carriere.prolongee",
            "simulateur.garantie_vieillesse", "echeancier.parcourir", "simulateur.echeancier",
            "echeancier.depart_de", "echeancier.sortes", "journal.operer",
@@ -391,6 +394,18 @@ class PensionServie(_Ferme):
     def __init__(self, simulateur: Simulateur) -> None:
         object.__setattr__(self, "_simulateur", simulateur)
 
+    def coefficient(self, pension, annee_liquidation: int, depart: datetime.date,
+                    jusqu_a: datetime.date, mensuel_2019: float | None):
+        """``PensionServie.coefficient`` : le coefficient nominal d'une pension
+        de régime, de ``depart`` à ``jusqu_a``, sa règle et sa fiabilité,
+        servis par le portage. La pension n'y passe que par son régime et son
+        type de calcul, ce que la règle en lit."""
+        return _demander("pension_servie.coefficient", self._simulateur.parametres,
+                         pont.SIMULATEUR,
+                         {"regime": pension.regime, "type_calcul": pension.type_calcul},
+                         annee_liquidation, depart.isoformat(), jusqu_a.isoformat(),
+                         mensuel_2019)
+
 
 def majorer_les_petites_pensions(moteur, resultat, datees, regimes, servie, a_l_effet,
                                  mensuel_2019, fin):
@@ -561,6 +576,16 @@ class Simulateur(_Ferme):
         """Les données de mortalité du simulateur : ses quotients lus par
         leur chargeur, ses méthodes servies par le portage."""
         return _Mortalite(self)
+
+    @property
+    def revalorisation_servie(self):
+        """``Simulateur.revalorisation_servie`` : la règle que les systèmes
+        notionnels prêtent aux pensions servies, de la première année de la
+        répartition à l'année courante. Le portage seul la calcule
+        (:class:`RevalorisationServie`, qui lui en demande les séries) : elle
+        ne lit du simulateur que ses données."""
+        return _RevalorisationServie(self, self.parametres.annee_debut_repartition,
+                                     self.parametres.annee_courante)
 
     @property
     def indexation(self):

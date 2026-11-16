@@ -2605,6 +2605,8 @@ LECTURES_DE_LA_FACADE = {
     "commun.periode_de_liquidation": lambda rang: lu_strictement(
         int | None, rang, "periode_de_liquidation"),
     "revalorisation.majorer_les_petites_pensions": lambda lu: majorations_des_donnees(lu),
+    "pension_servie.coefficient": lambda lu: lu_strictement(
+        tuple[float, str, Fiabilite], lu, "PensionServie.coefficient"),
     "echeancier.parcourir": lambda lu: echeancier_des_donnees(lu),
     "simulateur.echeancier": lambda lu: echeancier_des_donnees(lu),
     "echeancier.depart_de": lambda lu: evenement_des_donnees(lu),

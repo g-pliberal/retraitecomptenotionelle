@@ -2439,6 +2439,19 @@ ENTREES_DE_LA_FACADE["revalorisation.majorer_les_petites_pensions"] = (simulateu
   };
 };
 
+// La règle de chaque régime, par la façade (action 161, étape 9h).
+
+/**
+ * Le coefficient nominal d'une pension de régime (`PensionServie.coefficient`
+ * du Python), de `depart` à `jusqua` (AAAA-MM-JJ), sous la règle de chaque
+ * régime du simulateur : la pension n'y passe que par son régime et son type
+ * de calcul.
+ */
+ENTREES_DE_LA_FACADE["pension_servie.coefficient"] = (simulateur, pension,
+  anneeLiquidation, depart, jusqua, mensuel2019) => telQuel(
+  new revalorisation.PensionServie(simulateur).coefficient(
+    pension, anneeLiquidation, depart, jusqua, mensuel2019));
+
 // Les étapes de la liquidation, chacune seule, par la façade : un bloc à part
 // (action 161).
 

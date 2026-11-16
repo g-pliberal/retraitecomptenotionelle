@@ -34,12 +34,11 @@ from retraite_notionnelle.revalorisation import (
     REGLE_GENERALE,
     REGLE_POINT,
     REGLE_REGIME_SPECIAL,
-    PensionServie,
     RevalorisationsPensions,
 )
 from retraite_notionnelle.config import RACINE_DONNEES
-from retraite_notionnelle.simulateur import Simulateur
-from retraite_notionnelle.droit import liquider
+
+from facade import PensionServie, Simulateur, liquider
 
 TEMOINS = Path(__file__).resolve().parent / "temoins"
 
