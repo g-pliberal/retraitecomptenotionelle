@@ -84,6 +84,12 @@ REGLES = "data/reference/regles/"
 COUT = "src/retraite_notionnelle/cout.py"
 REGENERER = "scripts/regenerer.py"
 MESURE = RACINE / ".cache" / "jumeaux" / "couverture.json"
+#: Les fichiers de règles du moteur Python, que le retrait supprime (action 161,
+#: étape 6) : ses trois dossiers, et six fichiers à la racine du paquet. Une
+#: paire dont le Python en est un part avec le moteur.
+DOSSIERS_DE_REGLES = ("droit", "moteur", "scenarios")
+FICHIERS_DE_REGLES = ("echeancier.py", "journal.py", "pilote.py", "carriere.py",
+                      "revalorisation.py", "simulateur.py")
 #: Les tests pytest de concordance : ceux qui confrontent les deux moteurs se
 #: nomment ainsi (``test_le_portage_javascript_…``) ; ceux de ce script, non.
 TESTS_DE_CONCORDANCE = "(javascript or portage or jumeau) and not test_jumeaux"
@@ -409,6 +415,14 @@ class Paire:
         return court(self.python)
 
 
+def est_une_regle(chemin: str) -> bool:
+    """Le chemin d'un fichier de règles du moteur Python, existant ou non."""
+    if not (chemin.startswith(PAQUET) and chemin.endswith(".py")):
+        return False
+    relatif = chemin[len(PAQUET):]
+    return relatif.split("/")[0] in DOSSIERS_DE_REGLES or relatif in FICHIERS_DE_REGLES
+
+
 def court(chemin: str) -> str:
     """Un chemin sans le préfixe de son dossier : ``droit/liquider.py``, ``droit/releve.js``."""
     for prefixe in (PAQUET, PORTAGE):
@@ -572,9 +586,11 @@ def _le_test_existe(racine: Path, reference: str) -> bool:
 
 def ecarts_de_la_liste(racine: Path, fichiers: list[str]) -> list[str]:
     """Ce qui sépare la liste des fonctions gardées du dépôt : une paire
-    déclarée qui n'en est pas une ; une fonction en double que la liste ne
+    déclarée qui n'en est pas une, ou dont le Python est un fichier de règles ;
+    une fonction en double que la liste ne
     déclare pas, ou qu'elle déclare deux fois ; une entrée périmée ; un
-    lecteur qui est un test, un jumeau du moteur, ou qui ne nomme pas la
+    lecteur qui est un test, un jumeau ou un fichier de règles du moteur, ou
+    qui ne nomme pas la
     fonction ; une fonction gardée sans test qui la confronte à son double,
     ou dont le test n'existe pas."""
     liste = lire_la_liste(racine)
@@ -583,6 +599,9 @@ def ecarts_de_la_liste(racine: Path, fichiers: list[str]) -> list[str]:
     ecarts = []
     for python, declaree in liste.items():
         declaree = declaree or {}
+        if est_une_regle(python):
+            ecarts.append(f"{python} : est un fichier de règles, qui part avec le moteur")
+            continue
         if python not in par_python:
             ecarts.append(f"{python} : déclaré, mais n'est pas une paire")
             continue
@@ -602,7 +621,7 @@ def ecarts_de_la_liste(racine: Path, fichiers: list[str]) -> list[str]:
             lecteur, test = entree.get("lecteur"), entree.get("test")
             if not lecteur:
                 ecarts.append(f"{python} : {nom} est gardée sans lecteur")
-            elif lecteur.startswith("tests/") or lecteur in moteur:
+            elif lecteur.startswith("tests/") or lecteur in moteur or est_une_regle(lecteur):
                 ecarts.append(f"{python} : {nom} a pour lecteur {lecteur}, qui part ou n'est qu'un test")
             elif lecteur not in fichiers or not re.search(
                     rf"\b{re.escape(nom)}\b", _lire(racine, lecteur)):
@@ -789,6 +808,11 @@ class Carte:
                     self.par_node[atteint].add(source)
         self.lignes = {c: _nombre_de_lignes(_lire(racine, c)) for c in jumeaux}
         self.mesure = lire_la_mesure()
+
+    def paires_du_moteur(self) -> list[Paire]:
+        """Les paires qui partent avec le moteur Python : leur Python est un
+        fichier de règles."""
+        return [p for p in self.paires if est_une_regle(p.python)]
 
     def python_seul(self) -> list[str]:
         apparies = {p.python for p in self.paires}

@@ -327,6 +327,7 @@ def _depot_de_la_liste(racine: Path, liste: str) -> list[str]:
         "src/retraite_notionnelle/droit/liquider.py": "from .donnees.taux import revenu_avpf\n",
         "moteur/js/droit/liquider.js": "/**\n * Portage de `droit/liquider.py`.\n */\n",
         "src/retraite_notionnelle/cout.py": "x = placement(1)\n",
+        "src/retraite_notionnelle/moteur/compte.py": "x = placement(1)\n",
         "tests/test_taux.py": "def test_placement():\n    placement(1)\n",
         "scripts/jumeaux_gardees.yaml": liste,
     })
@@ -358,6 +359,13 @@ def test_la_liste_des_fonctions_gardees_se_verifie_seule(tmp_path):
             "test_absent",
         # une fonction gardée qu'aucun test ne confronte à son double
         juste.replace(", test: tests/test_taux.py::test_placement", ""): "sans test",
+        # un lecteur qui est un fichier de règles, sans jumeau JavaScript : il
+        # part avec le moteur (action 161, étape 5)
+        juste.replace("lecteur: src/retraite_notionnelle/cout.py",
+                      "lecteur: src/retraite_notionnelle/moteur/compte.py"): "moteur/compte.py",
+        # une paire du moteur que la liste garderait : elle part avec lui
+        juste + "src/retraite_notionnelle/droit/liquider.py:\n  au_moteur: []\n":
+            "fichier de règles",
         # une paire déclarée qui n'en est pas une
         juste + "src/retraite_notionnelle/absent.py:\n  au_moteur: []\n": "absent.py",
     }
@@ -392,30 +400,53 @@ def test_chaque_paire_a_ses_deux_fichiers_et_sa_place_au_classement(carte):
     assert bloques == sorted(bloques)
 
 
-def test_ni_le_cout_ni_la_fabrique_n_atteignent_plus_le_simulateur_python(carte):
+def test_un_fichier_de_regles_se_reconnait_a_son_chemin():
+    """Les fichiers de règles du moteur Python, que le retrait supprime (action
+    161, étape 6) : ses trois dossiers et six fichiers du paquet. La carte les
+    nomme elle-même, sans lire la sonde, qui part avec eux."""
+    paquet = "src/retraite_notionnelle/"
+    for chemin in ("droit/liquider.py", "droit/__init__.py", "moteur/compte.py",
+                   "scenarios/actuel.py", "simulateur.py", "carriere.py"):
+        assert jumeaux.est_une_regle(paquet + chemin), chemin
+    for chemin in (paquet + "calendrier.py", paquet + "donnees/simulateur.py",
+                   paquet + "cout.py", "moteur/js/droit/liquider.js", "scripts/carriere.py"):
+        assert not jumeaux.est_une_regle(chemin), chemin
+
+
+def test_la_carte_et_la_sonde_disent_les_memes_fichiers_de_regles():
+    """Tant que la sonde du moteur Python est là, elle et la carte s'accordent."""
+    sonde = pytest.importorskip("sonde_moteur_python")
+    assert (jumeaux.DOSSIERS_DE_REGLES, jumeaux.FICHIERS_DE_REGLES) == (sonde.DOSSIERS, sonde.FICHIERS)
+
+
+#: Les fichiers de règles que le coût et la fabrique atteignent encore, par la
+#: carrière que le pont relit sous la classe des règles (action 161, dernière
+#: étape avant la suppression). La liste ne peut que rétrécir.
+REGLES_ENCORE_ATTEINTES = {"src/retraite_notionnelle/carriere.py",
+                           "src/retraite_notionnelle/droit/__init__.py",
+                           "src/retraite_notionnelle/droit/preparer.py"}
+
+
+def test_ni_le_cout_ni_la_fabrique_n_atteignent_d_autre_regle_que_la_carriere(carte):
     """Depuis l'étape 4 du retrait (action 161), le coût et la fabrique se
-    chargent sans aucune règle Python : ils n'atteignent plus le simulateur
-    Python, dont le jumeau reste chargé par le site."""
-    (fiche,) = [f for f in carte.classement() if f["python"].endswith("/simulateur.py")]
-    assert not fiche["cote_python"]["cout"] and not fiche["cote_python"]["fabrique"]
-    assert fiche["cote_javascript"]["site"]
+    chargent sans règle Python, hors de la carrière que le pont relit ; le
+    simulateur Python n'en est plus, et son jumeau reste chargé par le site."""
+    for atteints in (carte.cout, carte.fabrique):
+        assert {c for c in atteints if jumeaux.est_une_regle(c)} <= REGLES_ENCORE_ATTEINTES
+    assert "moteur/js/simulateur.js" in carte.js.site
 
 
 def test_aucun_chiffre_ancre_ne_charge_un_fichier_de_regles(carte):
     """Les chiffres ancrés lisent les constantes du droit au portage, qui fait
     foi, et non dans les fichiers de règles du moteur Python, que le retrait
     supprimera (action 161, étape 5)."""
-    from sonde_moteur_python import DOSSIERS, FICHIERS
-
-    paquet = "src/retraite_notionnelle/"
-    regles = {c for c in carte.ancres if c.startswith(paquet) and (
-        c[len(paquet):].split("/")[0] in DOSSIERS or c[len(paquet):] in FICHIERS)}
+    regles = {c for c in carte.ancres if jumeaux.est_une_regle(c)}
     assert not regles, {c: [(r.fichier, r.ligne) for r in carte.ancres[c]] for c in regles}
 
 
 def test_la_carte_et_le_detail_d_une_paire_s_impriment(carte):
     assert jumeaux.imprimer_la_carte(carte)[0].startswith("La carte des jumeaux : ")
-    ((rang, fiche),) = jumeaux.chercher(carte, "simulateur")
+    ((rang, fiche),) = jumeaux.chercher(carte, "calendrier")
     assert "Côté Python" in jumeaux.imprimer_une_paire(carte, fiche, rang)
 
 
@@ -425,3 +456,15 @@ def test_les_fonctions_gardees_des_deux_cotes_sont_declarees_et_tenues():
     Python qui la lit, ni test ni jumeau du moteur — ou part avec le moteur."""
     ecarts = jumeaux.ecarts_de_la_liste(RACINE, jumeaux.fichiers_suivis())
     assert not ecarts, "\n".join(ecarts)
+
+
+def test_les_paires_du_moteur_sont_celles_dont_le_python_est_une_regle(carte):
+    """Les paires qui partent avec le moteur Python : leur Python est un fichier
+    de règles. Aucune n'est dans la liste des fonctions gardées, et toutes les
+    autres restent ; à la suppression, l'en-tête de chacun de leurs JavaScript
+    cesse de déclarer son jumeau (action 161, étape 6)."""
+    du_moteur = carte.paires_du_moteur()
+    assert du_moteur and all(jumeaux.est_une_regle(p.python) for p in du_moteur)
+    assert not {p.python for p in du_moteur} & set(jumeaux.lire_la_liste())
+    restent = set(carte.paires) - set(du_moteur)
+    assert restent and not any(jumeaux.est_une_regle(p.python) for p in restent)

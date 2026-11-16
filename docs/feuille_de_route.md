@@ -7331,16 +7331,15 @@ de `contribution_etat`.
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Avant de supprimer les 40 fichiers de règles, l'inventaire
 (`2026-11-16-l-inventaire-du-retrait-des-regles.md`) fixe six étapes. Le
-coût, ses cas types, la mesure des avantages et la fiche de paie se chargent
-sans aucune règle Python. Aucune fiche, ni du droit ni de la proposition,
-ne nomme plus de code Python, et les tests des fiches le refusent.
-Aucun chiffre ancré de la documentation ne lit plus un fichier de règles
-Python : tous lisent le moteur JavaScript, et un test le garde
-(`2026-11-16-les-chiffres-ancres-au-portage.md`). Restent, avant la
-suppression : les gardes des jumeaux ; puis
-la carrière que le pont relit sous la classe des règles, que lisent 476
-tests rapides. Par quoi commencer : les gardes des jumeaux. La suppression
-attend l'accord final du propriétaire.
+coût, la fabrique, les fiches et les chiffres ancrés ne lisent plus aucune
+règle Python, hors de la carrière. La carte des jumeaux reconnaît elle-même
+les fichiers de règles, et sa liste des fonctions gardées les refuse
+(`2026-11-16-les-gardes-des-jumeaux.md`). Restent, avant la suppression : les
+chargements par chemin ; puis la carrière que le pont relit sous la classe
+des règles, que lisent 476 tests rapides. Par quoi commencer : les
+chargements par chemin. La suppression récrira les
+en-têtes des 35 JavaScript qui déclarent un jumeau de règle, et attend
+l'accord final du propriétaire.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
