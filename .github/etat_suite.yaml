@@ -1,19 +1,20 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: rouge
-sources: 29fb6ceca839f569aedec1a71083a709a9ea0ffc
-date: 2026-11-16T15:20:59Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43891957786
+sources: 8b4ed80e03d75239c36e65230c25ad48a9b2fc75
+date: 2026-11-16T15:41:46Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43894070337
 echecs:
   - "FAILED tests/test_regle_de_chacun.py::test_une_generation_garde_sa_regle_quelle_que_soit_l_annee_de_son_depart - AssertionError: L'âge d'ouverture ou la durée requise d'une génération change avec l'année de son départ, sans que le texte du régime soit déclaré le vouloir : {('msa_non_salaries', 'age'): (1986, 1986, [1986, 1987, 1988, 1989, 1990])}"
+  - "FAILED tests/test_jumeaux.py::test_les_fonctions_gardees_des_deux_cotes_sont_declarees_et_tenues - AssertionError: src/retraite_notionnelle/donnees/macro.py : smic_horaire_en_vigueur est écrite des deux côtés, et la liste ne la déclare pas"
 presomptions: rouge
 presomptions_echecs:
   - "FAILED tests/test_mayotte.py::test_une_pension_de_mayotte_d_avant_septembre_2023_n_est_pas_revalorisee - assert (2023, 1) == (2023, 2)"
 durees:
-  fabrique: 521
-  suite: 572
-  tranche_1: 357
-  tranche_2: 572
-  tranche_3: 437
-  tranche_4: 508
+  fabrique: 599
+  suite: 471
+  tranche_1: 337
+  tranche_2: 471
+  tranche_3: 440
+  tranche_4: 415
   garde: 135
