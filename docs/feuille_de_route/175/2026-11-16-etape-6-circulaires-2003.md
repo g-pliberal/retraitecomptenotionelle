@@ -1,16 +1,5 @@
 # Étape 6, circulaires de 2003 : les 54 références sans thème de la dixième période, relues par l'API
 
-**Reprise, au 16 novembre 2026.** Trois natures de l'étape sont rangées ; la quatrième, les
-circulaires, lettres et instructions sans thème, l'est de 1936 à 2003 (cette note et celles
-des périodes d'avant). Restent 818 circulaires, de 2004 à 2026, par période (73 en 2004, 66
-en 2005, 61 en 2006, 120 en 2007, 60 en 2008) ; puis, une session par nature : les 96
-autres textes, les 74 que la base nomme sans les servir, les 107 accords. Méthode : la
-base relue par l'API (`_reference` de `cnav_legislation.py`), les pièces PDF lues au site
-sous `/Pdf/<nom>`, chaque texte lu en entier, la citation d'un agent retrouvée par script
-dans le texte servi. Candidats neufs : la pension de l'inapte suspendue au-delà d'un plafond
-de revenus d'activité ; la convention franco-tchécoslovaque, sans prorata dans le modèle
-(ici).
-
 **Le 16 novembre 2026, ce qui est fait.**
 
 - *La période* : les références du registre sans thème et à lire dont le titre commence
