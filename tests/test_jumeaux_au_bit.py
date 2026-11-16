@@ -349,14 +349,25 @@ def _pas(debut: float, fin: float, pas: float) -> list[float]:
 
 
 def _populations_mortalite() -> list[tuple[str, str]]:
-    """Les populations et les sexes que le paquet porte : celles qu'une seule
-    espérance publiée cale. Une population publiée à plusieurs âges n'a ses
-    facteurs par tranche d'âge que pour le coût, en Python."""
+    """Les populations et les sexes qu'une seule espérance publiée cale, et
+    qui ont un facteur unique. Celles publiées à plusieurs âges — les types de
+    pension de la Cnav — ont leurs facteurs par tranche d'âge
+    (:func:`_populations_par_age`)."""
     from retraite_notionnelle.donnees.mortalite import DonneesMortalite
     mortalite = DonneesMortalite(DATA)
     return [(population, sexe) for population in mortalite.populations
             for sexe in DonneesMortalite.SEXES
             if not mortalite._publiee_par_age(population, sexe)]
+
+
+def _populations_par_age() -> list[tuple[str, str]]:
+    """Les populations et les sexes publiés à plusieurs âges (action 161,
+    étape 9l) : les types de pension de la Cnav."""
+    from retraite_notionnelle.donnees.mortalite import DonneesMortalite
+    mortalite = DonneesMortalite(DATA)
+    return [(population, sexe) for population in mortalite.populations
+            for sexe in DonneesMortalite.SEXES
+            if mortalite._publiee_par_age(population, sexe)]
 
 
 def _populations_patrimoine() -> list[str]:
@@ -477,7 +488,9 @@ def _grilles() -> dict[tuple[str, str], Grille]:
     departs = [(age, annee) for age in (55.0, 60.0, 62.5, 65.0, 67.25, 80.0)
                for annee in (1990.0, 2010.0, 2025.0, 2041.5, 2070.0)]
     generations = (True, False)
-    choix_populations = (None, autres[0], niveaux[0], niveaux[-1])
+    par_age = _populations_par_age()
+    cnav = sorted({p for p, _ in par_age})
+    choix_populations = (None, autres[0], niveaux[0], niveaux[-1], cnav[0], cnav[-1])
 
     tous = ("patrimoine",)
     par_population = tuple(f"patrimoine:{p}" for p in _populations_patrimoine())
@@ -549,8 +562,8 @@ def _grilles() -> dict[tuple[str, str], Grille]:
             champs=("taux", "differe", "duree", "fiabilite")),
 
         # La mortalité : les lois, les cellules, les courbes et les populations.
-        # Le paquet ne porte pas les populations publiées à plusieurs âges,
-        # que seul le coût lit : elles n'entrent pas dans les grilles.
+        # Les populations publiées à plusieurs âges ont leurs facteurs par
+        # tranche d'âge (action 161, étape 9l).
         (MORTALITE, "loi"): Grille(mortalite, tuple(
             (annee, sexe) for annee in range(1940, 2131, 5) for sexe in sexes),
             champs=("a", "b", "k", "annee", "sexe", "fiabilite")),
@@ -582,6 +595,14 @@ def _grilles() -> dict[tuple[str, str], Grille]:
         (MORTALITE, "_reference_population"): Grille(mortalite, tuple(populations)),
         (MORTALITE, "cible_population"): Grille(mortalite, tuple(populations)),
         (MORTALITE, "facteur_population"): Grille(mortalite, tuple(populations)),
+        (MORTALITE, "facteurs_par_age"): Grille(mortalite, tuple(populations + par_age)),
+        (MORTALITE, "_publiee_par_age"): Grille(mortalite, tuple(populations + par_age)),
+        # La bissection, dès l'âge seul ou sous des tranches plus âgées déjà
+        # calées, comme le portage la refait quand le paquet n'a pas les
+        # facteurs par tranche.
+        (MORTALITE, "_caler"): Grille(mortalite, (
+            (65.0, 2017, "H", 16.5), (62.0, 2017, "F", 23.4, ((65, 0.95), (80, 1.1))),
+            (80.0, 2017, "H", 8.5, ((85, 0.9),)))),
         (MORTALITE, "population_niveau_de_vie"): Grille(mortalite, tuple(
             (rapport,) for rapport in _pas(0.0, 4.0, 0.05))),
         (MORTALITE, "population_niveau_de_vie_euros"): Grille(mortalite, tuple(
@@ -855,10 +876,6 @@ PAR_L_APPELANT = {
 #: pourquoi : leur confrontation est attendue rouge (``xfail`` strict), et
 #: rougit la suite le jour où ils se rejoignent, pour qu'on retire la ligne.
 ECARTS_DECLARES = {
-    (MORTALITE, "populations"):
-        "le paquet ne porte pas les populations publiées à plusieurs âges "
-        "(cnav_*), dont seul le coût lit les facteurs par tranche d'âge : "
-        "21 populations au portage, 24 en Python",
     (BILAN, "ecart_pour"):
         "l'interpolation ne s'associe pas de même : (Δécart × Δvaleur) / largeur "
         "en Python, Δécart × (Δvaleur / largeur) au portage — un écart au dernier "

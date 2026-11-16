@@ -580,9 +580,9 @@ class DonneesMortalite:
     def facteurs_populations(self) -> dict[str, float]:
         """Tous les facteurs uniques, sous la clé ``population|sexe`` — ce que
         le paquet de données transporte pour que le navigateur ne recalibre
-        rien. Les populations publiées à plusieurs âges n'y sont pas : le
-        portage ne sert qu'un facteur par population, celui du diviseur, et
-        seul le coût, que le navigateur ne calcule pas, fait vivre les types de
+        rien. Les populations publiées à plusieurs âges n'y sont pas : leurs
+        facteurs par tranche (:meth:`facteurs_par_age`) vont au paquet sous une
+        clé à eux, que le coût lit au portage pour faire vivre les types de
         pension de la Cnav (``CasType.mortalite``)."""
         return {
             f"{population}|{sexe}": self.facteur_population(population, sexe)

@@ -1901,7 +1901,9 @@ def test_le_jumeau_majore_les_petites_pensions_que_la_facade_lit():
 
 
 #: Les appels de la mortalité du simulateur : un quotient observé, un âge et
-#: une date fractionnaires, une année projetée, une année au-delà des tables.
+#: une date fractionnaires, une année projetée, une année au-delà des tables ;
+#: et les types de pension de la Cnav, publiés à plusieurs âges, dont les
+#: facteurs sont par tranche d'âge (``facteurs_par_age``).
 APPELS_DE_LA_MORTALITE = [
     ("survie_annuelle", (70, 1950, "H")),
     ("survie_annuelle", (63 + 4 / 12, 2038.5, "F")),
@@ -1911,6 +1913,9 @@ APPELS_DE_LA_MORTALITE = [
     ("courbe", (66.0, 2045.0, None, True, "niveau_de_vie_v03")),
     ("courbe", (60.5, 2028.25, "F", True, "fonctionnaires_civils_etat")),
     ("courbe", (70.0, 2020.0, "H", False, None)),
+    ("courbe", (62.0, 2017.0, "H", False, "cnav_inaptitude")),
+    ("courbe", (63 + 4 / 12, 2030.5, None, True, "cnav_ex_invalide")),
+    ("courbe", (58.75, 2024.25, "F", True, "cnav_pension_normale")),
 ]
 
 

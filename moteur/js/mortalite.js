@@ -25,6 +25,22 @@
 import { Fiabilite, SerieAnnuelle } from "./serie.js";
 import { exp, log, pow } from "./libm.js";
 
+/**
+ * Le facteur de la tranche où tombe ``age``, dans des facteurs par tranche
+ * d'âge ``[[âge, facteur], …]`` : celui du dernier âge de début qui ne le
+ * dépasse pas, le premier en deçà. Portage de `_facteur_de_l_age`.
+ */
+function facteurDeLAge(facteurs, age) {
+  let retenu = facteurs[0][1];
+  for (const [debut, facteur] of facteurs.slice(1)) {
+    if (age < debut) {
+      break;
+    }
+    retenu = facteur;
+  }
+  return retenu;
+}
+
 /** Mortalité « accidentelle », indépendante de l'âge (terme de Makeham). */
 export const MORTALITE_ACCIDENTELLE = 0.0005;
 
@@ -272,21 +288,30 @@ export class DonneesMortalite {
     // Les populations particulières : facteurs calibrés par
     // `construire_donnees.py` et espérances publiées, sous la clé
     // `population|sexe`. Le navigateur lit, il ne recalibre qu'à défaut. Les
-    // populations publiées à plusieurs âges n'y sont pas : leurs facteurs par
-    // tranche d'âge (`facteurs_par_age`) ne servent qu'au coût.
+    // populations publiées à plusieurs âges — les types de pension de la
+    // Cnav — ont leurs espérances et leurs facteurs par tranche d'âge sous
+    // des clés à elles (`facteurs_par_age`), que le coût lit.
     const populations = paquet.populations || {};
     this._facteursPaquet = populations.facteurs || {};
     this._esperancesPubliees = populations.esperances || {};
+    this._esperancesParAge = populations.esperances_par_age || {};
+    this._facteursParAgePaquet = populations.facteurs_par_age || {};
     this._niveauxDeVie = populations.niveaux_de_vie || {};
     this._facteurs = new Map();
+    this._facteursParAge = new Map();
   }
 
   // -- populations particulières ---------------------------------------------
 
   /** Les populations dont une espérance de vie est publiée, triées. */
   get populations() {
-    return [...new Set(Object.keys(this._esperancesPubliees).map((cle) => cle.split("|")[0]))]
+    return [...new Set([...Object.keys(this._esperancesPubliees),
+      ...Object.keys(this._esperancesParAge)].map((cle) => cle.split("|")[0]))]
       .sort();
+  }
+
+  _publieeParAge(population, sexe) {
+    return this._esperancesParAge[`${population}|${sexe}`] !== undefined;
   }
 
   _referencePopulation(population, sexe) {
@@ -358,7 +383,9 @@ export class DonneesMortalite {
    * Le facteur sur la force de mortalité qui donne à cette population son
    * espérance de vie publiée : la survie de chaque cellule est élevée à cette
    * puissance. Calé sur la table du moment de l'année observée, tenu constant
-   * ailleurs. Portage de `facteur_population`.
+   * ailleurs. Portage de `facteur_population`. Une population publiée à
+   * plusieurs âges n'a pas de facteur unique : elle en a un par tranche
+   * d'âge (`facteursParAge`).
    */
   facteurPopulation(population, sexe) {
     const cle = `${population}|${sexe}`;
@@ -366,31 +393,83 @@ export class DonneesMortalite {
     if (memorise !== undefined) {
       return memorise;
     }
+    if (this._publieeParAge(population, sexe)) {
+      throw new Error(
+        `population ${population} publiée à plusieurs âges pour le sexe ${sexe} : `
+        + "ses facteurs sont par tranche d'âge (facteursParAge)",
+      );
+    }
     const [annee, cible] = this.ciblePopulation(population, sexe);
     let facteur = this._facteursPaquet[cle];
     if (facteur === undefined) {
-      const esperance = (f) => {
-        const courbe = this._courbeBrute(65.0, annee, sexe, false, f);
-        let total = 0.0;
-        for (let t = 0; t < courbe.length - 1; t += 1) {
-          total += 0.5 * (courbe[t] + courbe[t + 1]);
-        }
-        return total;
-      };
-      let bas = 0.05;
-      let haut = 8.0;
-      for (let i = 0; i < 60; i += 1) {
-        const milieu = Math.sqrt(bas * haut);
-        if (esperance(milieu) > cible) {
-          bas = milieu;
-        } else {
-          haut = milieu;
-        }
-      }
-      facteur = Math.sqrt(bas * haut);
+      facteur = this._caler(65.0, annee, sexe, cible);
     }
     this._facteurs.set(cle, facteur);
     return facteur;
+  }
+
+  /**
+   * Le facteur qui rend ``cible`` comme espérance à ``age`` sur la table du
+   * moment de ``annee`` : dès ``age``, ou jusqu'à la première tranche de
+   * ``plusAges``, déjà calées. Une bissection sur une fonction monotone :
+   * plus le facteur est petit, plus on vit longtemps. Portage de `_caler`.
+   */
+  _caler(age, annee, sexe, cible, plusAges = []) {
+    const esperance = (f) => {
+      const facteurs = plusAges.length > 0 ? [[0, f], ...plusAges] : f;
+      const courbe = this._courbeBrute(age, annee, sexe, false, facteurs);
+      let total = 0.0;
+      for (let t = 0; t < courbe.length - 1; t += 1) {
+        total += 0.5 * (courbe[t] + courbe[t + 1]);
+      }
+      return total;
+    };
+    let bas = 0.05;
+    let haut = 8.0;
+    for (let i = 0; i < 60; i += 1) {
+      const milieu = Math.sqrt(bas * haut);
+      if (esperance(milieu) > cible) {
+        bas = milieu;
+      } else {
+        haut = milieu;
+      }
+    }
+    return Math.sqrt(bas * haut);
+  }
+
+  /**
+   * Les facteurs sur la force de mortalité d'une population, par tranche
+   * d'âge : ``[[âge, facteur], …]``, chacun valant de son âge au suivant, le
+   * premier dès la naissance. Une population publiée à 65 ans seul n'a
+   * qu'une tranche, son facteur ; une population publiée à plusieurs âges —
+   * les types de pension de la Cnav — a une tranche par âge publié, calées
+   * de la plus âgée à la plus jeune sur la table du moment de l'année
+   * observée, lues au paquet ou recalibrées à défaut. Portage de
+   * `facteurs_par_age`.
+   */
+  facteursParAge(population, sexe) {
+    const cle = `${population}|${sexe}`;
+    const memorises = this._facteursParAge.get(cle);
+    if (memorises !== undefined) {
+      return memorises;
+    }
+    let facteurs;
+    if (!this._publieeParAge(population, sexe)) {
+      facteurs = [[0, this.facteurPopulation(population, sexe)]];
+    } else if (this._facteursParAgePaquet[cle] !== undefined) {
+      facteurs = this._facteursParAgePaquet[cle].map(([age, f]) => [age, f]);
+    } else {
+      const [annee, esperances] = this._esperancesParAge[cle];
+      const ages = Object.keys(esperances).map(Number).sort((a, b) => a - b);
+      facteurs = [];
+      for (let rang = ages.length - 1; rang >= 0; rang -= 1) {
+        const age = ages[rang];
+        const facteur = this._caler(age, annee, sexe, esperances[String(age)], facteurs);
+        facteurs = [[rang === 0 ? 0 : age, facteur], ...facteurs];
+      }
+    }
+    this._facteursParAge.set(cle, facteurs);
+    return facteurs;
   }
 
   // -- tables du moment ------------------------------------------------------
@@ -474,9 +553,13 @@ export class DonneesMortalite {
     const partAge = age - ageEntier;
     const anneeEntiere = Math.floor(annee);
     const partAnnee = annee - anneeEntiere;
+    // Par tranche d'âge (`facteursParAge`), chaque cellule reçoit le facteur
+    // de son âge.
+    const parAge = Array.isArray(facteur);
     if (partAge <= 1e-9 && partAnnee <= 1e-9) {
       const cellule = this._survieCellule(ageEntier, anneeEntiere, sexe);
-      return facteur === 1.0 ? cellule : pow(cellule, facteur);
+      const retenu = parAge ? facteurDeLAge(facteur, ageEntier) : facteur;
+      return retenu === 1.0 ? cellule : pow(cellule, retenu);
     }
 
     // Les deux coordonnées avancent à la même vitesse : le trajet franchit
@@ -491,14 +574,16 @@ export class DonneesMortalite {
       const debut = bornes[i];
       const fin = bornes[i + 1];
       const milieu = 0.5 * (debut + fin);
+      const ageCellule = ageEntier + Math.floor(partAge + milieu);
       const cellule = this._survieCellule(
-        ageEntier + Math.floor(partAge + milieu),
+        ageCellule,
         anneeEntiere + Math.floor(partAnnee + milieu),
         sexe,
       );
-      cumul += (fin - debut) * -log(Math.max(cellule, 1e-300));
+      const force = (fin - debut) * -log(Math.max(cellule, 1e-300));
+      cumul += parAge ? force * facteurDeLAge(facteur, ageCellule) : force;
     }
-    return exp(-cumul * facteur);
+    return parAge ? exp(-cumul) : exp(-cumul * facteur);
   }
 
   // -- tables de génération --------------------------------------------------
@@ -517,7 +602,12 @@ export class DonneesMortalite {
     if (memorisee !== undefined) {
       return memorisee;
     }
-    const facteur = population === null ? 1.0 : this.facteurPopulation(population, sexe);
+    let facteur = 1.0;
+    if (population !== null) {
+      facteur = this._publieeParAge(population, sexe)
+        ? this.facteursParAge(population, sexe)
+        : this.facteurPopulation(population, sexe);
+    }
     const probabilites = this._courbeBrute(ageDebut, anneeDebut, sexe, generation, facteur);
     this._courbes.set(cle, probabilites);
     return probabilites;

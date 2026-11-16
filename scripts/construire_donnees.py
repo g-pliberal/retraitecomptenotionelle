@@ -709,7 +709,8 @@ def _calibrations() -> dict:
 
 def _populations() -> dict:
     """Les facteurs de mortalité des populations particulières, calibrés une
-    fois pour toutes : le navigateur les lit, il ne recalibre rien."""
+    fois pour toutes, uniques ou par tranche d'âge : le navigateur les lit,
+    il ne recalibre rien."""
     donnees = DonneesMortalite(DONNEES, cache_disque=False)
     return {
         "facteurs": donnees.facteurs_populations(),
@@ -721,6 +722,19 @@ def _populations() -> dict:
         },
         "niveaux_de_vie": {str(v): n for v, n in sorted(donnees._niveaux_de_vie.items())},
         "annee_niveaux_de_vie": donnees.annee_niveaux_de_vie,
+        # Les populations publiées à plusieurs âges — les types de pension de
+        # la Cnav —, leurs espérances et leurs facteurs par tranche d'âge
+        # (action 161, étape 9l) : le coût les lit au portage.
+        "esperances_par_age": {
+            f"{population}|{sexe}": [annee, {str(age): e for age, e in sorted(esperances.items())}]
+            for population, sexes in sorted(donnees._esperances_par_age.items())
+            for sexe, (annee, esperances) in sorted(sexes.items())
+        },
+        "facteurs_par_age": {
+            f"{population}|{sexe}": [list(t) for t in donnees.facteurs_par_age(population, sexe)]
+            for population, sexes in sorted(donnees._esperances_par_age.items())
+            for sexe in sorted(sexes)
+        },
     }
 
 

@@ -223,7 +223,9 @@ src/retraite_notionnelle/donnees/macro.py:
 
 src/retraite_notionnelle/donnees/mortalite.py:
   gardees:
+    _caler: {lecteur: src/retraite_notionnelle/donnees/mortalite.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     _courbe_brute: {lecteur: src/retraite_notionnelle/donnees/mortalite.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    _publiee_par_age: {lecteur: src/retraite_notionnelle/donnees/mortalite.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     _reference_population: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     _survie_cellule: {lecteur: src/retraite_notionnelle/donnees/mortalite.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     cible_population: {lecteur: src/retraite_notionnelle/donnees/mortalite.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
@@ -232,6 +234,7 @@ src/retraite_notionnelle/donnees/mortalite.py:
     courbe_survie_unisexe: {lecteur: src/retraite_notionnelle/donnees/mortalite.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     esperance_residuelle: {lecteur: scripts/mesures_prose.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     facteur_population: {lecteur: scripts/mortalite_population.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
+    facteurs_par_age: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     loi: {lecteur: src/retraite_notionnelle/donnees/mortalite.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     population_niveau_de_vie: {lecteur: scripts/mesures_prose.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     population_niveau_de_vie_euros: {lecteur: src/retraite_notionnelle/cout.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
