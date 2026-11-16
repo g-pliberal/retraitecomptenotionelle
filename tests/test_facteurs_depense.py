@@ -176,7 +176,7 @@ def _decomposition(scenario_projection: str, scenario: str):
     système, et ses années — sur le coût de la page, gardé en mémoire."""
     from retraite_notionnelle import Parametres, memoire
     from retraite_notionnelle.donnees.population import Population
-    from retraite_notionnelle.simulateur import Simulateur
+    from facade import Simulateur
 
     parametres = Parametres(scenario_projection=scenario_projection)
     cout = memoire.cout(parametres)

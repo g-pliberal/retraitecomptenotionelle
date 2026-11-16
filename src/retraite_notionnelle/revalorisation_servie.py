@@ -119,8 +119,9 @@ class RevalorisationServie:
         self._index: dict[int, float] = series.index
         self._points: dict[str, dict[int, float]] = series.points
         self._convenus: dict[str, str | None] = series.convenus
-        actuel = simulateur.scenario_actuel
-        self._catalogue = actuel.catalogue
+        #: Le catalogue des régimes : une donnée du simulateur, que le moteur
+        #: du scénario 1 reçoit tel quel.
+        self._catalogue = simulateur.catalogue
         #: La dernière année publiée de chaque barème : voir
         #: :meth:`_derniere_valeur_publiee`. Lue à la demande.
         self._publiees: dict[str, int | None] | None = None

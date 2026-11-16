@@ -323,7 +323,7 @@ def test_une_voie_a_calibrer_ne_se_calcule_pas():
 def projection():
     from retraite_notionnelle.config import Parametres
     from retraite_notionnelle.revalorisation_servie import RevalorisationServie
-    from retraite_notionnelle.simulateur import Simulateur
+    from facade import Simulateur
 
     simulateur = Simulateur(Parametres()).pour_la_projection()
     return simulateur, RevalorisationServie(simulateur, 1990, 2070)

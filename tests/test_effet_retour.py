@@ -20,7 +20,7 @@ from retraite_notionnelle.effet_retour import (
     complement_minimum,
     tranche_csg,
 )
-from retraite_notionnelle.simulateur import Simulateur
+from facade import Simulateur
 from retraite_notionnelle.somme import somme_ordonnee
 
 from outils_garantie import cout_garantie_par_sexe, pension_moyenne

@@ -104,6 +104,7 @@ from .donnees.distribution import Tranche
 from .donnees.impot_revenu import FRANC, charger_baremes_impot_revenu
 from .donnees.prelevements_historiques import charger_prelevements_historiques
 from .remuneration import charger_prelevements
+from .scenarios.actuel import MinimumVieillesse
 from .somme import somme_ordonnee
 
 #: Les scénarios dont l'effet retour se chiffre : les quatre comptes
@@ -219,7 +220,9 @@ class EffetRetour:
         self.taux_recours_aspa = parametres.taux_recours_aspa
         self.distribution = garantie.distribution
         self.millesime = self.distribution.millesime
-        self.minimum_vieillesse = simulateur.scenario_actuel.minimum_vieillesse
+        #: Le barème de l'ASPA, lu des données du simulateur : ses plafonds
+        #: seuls, sans rien demander à son moteur.
+        self.minimum_vieillesse = MinimumVieillesse(racine, self.macro)
         self.prelevements = charger_prelevements(racine).pensions
         self.historiques = charger_prelevements_historiques(racine)
         self.seuils_csg = charger_seuils_csg(racine)

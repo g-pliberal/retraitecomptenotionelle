@@ -121,12 +121,13 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle import pont
-from retraite_notionnelle.castypes import CAS_TYPES, CasType
+from retraite_notionnelle.castypes import CAS_TYPES, CasType, departs_au_portage
 from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.donnees.mortalite import DonneesMortalite
 from retraite_notionnelle.donnees.prelevements_historiques import (
     charger_prelevements_historiques,
 )
-from retraite_notionnelle.simulateur import Simulateur
+from facade import Simulateur
 
 RACINE = Path(__file__).resolve().parents[1]
 TEMOINS = RACINE / "tests" / "temoins"
@@ -202,7 +203,9 @@ def test_l_esperance_de_vie_a_60_ans_des_generations_est_celle_de_l_insee(cor, s
     0,1 an près avant, où ses quotients observés, calculés comme ceux de
     l'INSEE sur les décès et les populations d'Eurostat depuis le 10 octobre
     2026, ne sont pas exactement ceux que l'INSEE retient."""
-    mortalite = simulateur.mortalite
+    # Les tables de génération du simulateur, lues par leur chargeur.
+    mortalite = DonneesMortalite(simulateur.parametres.racine_donnees,
+                                 hypothese=simulateur.parametres.hypothese_esperance_vie)
     esperances = cor["duree_retraite"]["esperance_60"]
     for generation in range(1940, 2001):
         for sexe, qui in (("H", "hommes"), ("F", "femmes")):
@@ -376,11 +379,13 @@ def generation_2000(simulateur, portage) -> dict[str, dict[str, float]]:
     l'Agirc-Arrco la règle de ``niveauxActuels``, les prix aussi sous le
     simulateur individuel, qui n'a pas la valeur de service que le COR
     projette (``Parametres.conventions_cor``)."""
-    cas = []
-    for code in ("salaire_moyen", "cadre"):
-        type_ = next(c for c in CAS_TYPES if c.code == code)
-        cas.append({"cle": code,
-                    "options": type_.options(2000, type_.age_liquidation_pour(simulateur, 2000))})
+    types = {code: next(c for c in CAS_TYPES if c.code == code)
+             for code in ("salaire_moyen", "cadre")}
+    departs, refus = departs_au_portage(
+        simulateur, {code: (type_, 2000) for code, type_ in types.items()})
+    assert not refus
+    cas = [{"cle": code, "options": type_.options(2000, departs[code][0])}
+           for code, type_ in types.items()]
     return _au_portage(rendements_par_regime={
         "cas": cas, "agirc_arrco": sorted(REGIMES_AGIRC_ARRCO)})["rendements_par_regime"]
 
@@ -781,7 +786,9 @@ def test_le_salarie_de_l_ocde_part_au_taux_plein_a_l_age_qu_elle_lui_donne(ocde,
     partir au taux plein."""
     cas = CasType(code="ocde", libelle="Salarié de l'OCDE", affiliation="salarie_prive_non_cadre",
                   age_debut=22, age_liquidation=64, niveau_salaire=1.0, profil_carriere="plat")
-    assert cas.age_liquidation_pour(simulateur_ocde, 2002) == ocde["age_de_depart"]["futur"]["hommes"]
+    departs, refus = departs_au_portage(simulateur_ocde, {"ocde": (cas, 2002)})
+    assert not refus
+    assert departs["ocde"][0] == ocde["age_de_depart"]["futur"]["hommes"]
 
 
 def _part_complementaire(comparaison) -> float:

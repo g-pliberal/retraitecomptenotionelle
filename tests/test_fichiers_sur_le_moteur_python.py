@@ -47,13 +47,9 @@ FICHIERS = (
    
     "test_controle_drees_panorama.py", "test_cout.py",
     "test_cout_age_depart.py",
-    "test_cycle_de_vie_references.py",
     "test_donnees.py",
-    "test_effet_retour.py",
     "test_facade.py", "test_facade_jumeau.py",
-    "test_facteurs_depense.py",
     "test_grille_large.py",
-    "test_indexation_programme.py",
    
     "test_moteur.py",
     "test_plafond_majoration_enfants.py",
