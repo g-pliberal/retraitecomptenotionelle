@@ -2765,6 +2765,7 @@ TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "pension_majoree_reference": ("montant", "regle"),
     "rendements": ("rendement",),
     "revalorisations_pensions": ("generale",),
+    "services_ouvrant_pension": ("annees",),
     "surcote_baremes": ("coefficient", "connait"),
     "reversions": ("fiche_du_regime", "limite_cumul", "majoration_enfant", "minimum",
                    "plafond_majoration", "version"),
@@ -3045,7 +3046,8 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "commun": ("date_d_effet", "fusionner_les_charges", "ligne_cotisee",
                "majoration_du_conjoint", "parts_de_la_majoration"),
     # Les trimestres des enfants et le régime qui les porte (R. 173-15).
-    "compter": ("arrondir_les_services", "majoration_pour_enfants"),
+    "compter": ("arrondir_les_services", "bonification_ouverte", "droit_regime_special",
+                "majoration_pour_enfants"),
     # Les deux fractions de la pension des cultes : la durée de chacune, sur
     # les durées du relevé, et la part de l'écart du V du décret n° 2006-1325.
     "cultes": ("durees", "part_de_l_ecart"),

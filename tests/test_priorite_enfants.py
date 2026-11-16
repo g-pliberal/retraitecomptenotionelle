@@ -26,10 +26,10 @@ from __future__ import annotations
 
 import pytest
 
-from retraite_notionnelle.carriere import Carriere, Metier
+from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.donnees.chargement import Fiabilite
-from retraite_notionnelle.droit import compter
-from retraite_notionnelle.simulateur import Simulateur
+
+from facade import Carriere, compter, Simulateur
 
 
 @pytest.fixture(scope="module")
@@ -50,16 +50,15 @@ def _carriere(simulateur: Simulateur, naissance: int, metiers: list[tuple[str, f
 
 def _regimes(simulateur: Simulateur, carriere: Carriere) -> dict[str, int]:
     """Les régimes que la carrière traverse, comme :meth:`calculer` les route."""
-    actuel = simulateur.scenario_actuel
     regimes: dict[str, int] = {}
     for ligne in carriere.lignes:
         if ligne.annee > carriere.annee_liquidation:
             continue
-        for code in actuel.affiliations.regimes(
+        for code in simulateur.affiliations.regimes(
                 ligne.affiliation, ligne.annee, carriere.date_entree(ligne.affiliation),
                 revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
-                plafond=actuel.macro.plafond_securite_sociale(ligne.annee)):
-            if code in actuel.catalogue:
+                plafond=simulateur.macro.plafond_securite_sociale(ligne.annee)):
+            if code in simulateur.catalogue:
                 regimes[code] = regimes.get(code, 0) + 4
     return regimes
 
@@ -325,7 +324,7 @@ def test_l_enfant_ne_apres_la_radiation(simulateur):
     carriere = _carriere(simulateur, 1962, [("fonctionnaire_etat", 22),
                                             ("salarie_prive_non_cadre", 23)], 64)
     actuel = simulateur.scenario_actuel
-    periode = actuel.catalogue["fonction_publique_etat"].periode(2026)
+    periode = simulateur.catalogue["fonction_publique_etat"].periode(2026)
     pension, ouvert, _ = compter.droit_regime_special(
         actuel, periode, carriere, 2026, "ne_avant_radiation", 1992)
     assert not ouvert and not pension

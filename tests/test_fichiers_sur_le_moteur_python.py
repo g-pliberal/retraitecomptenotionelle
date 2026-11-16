@@ -59,7 +59,7 @@ FICHIERS = (
     "test_moteur.py",
     "test_plafond_majoration_enfants.py",
     "test_pont.py", "test_primes_soumises_a_retenue.py",
-    "test_priorite_enfants.py",
+    
     "test_retablissement.py",
     "test_retraite_progressive.py",
     "test_revalorisation.py",
