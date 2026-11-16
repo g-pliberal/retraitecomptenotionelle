@@ -1143,13 +1143,33 @@ async function jouerUneCourse(course) {
 
 // -- le style de chaque page -------------------------------------------------
 
-/** Chaque élément de la page : sa boîte, et ce que le style décide de lui. */
+/**
+ * Chaque élément de la page : sa boîte, et ce que le style décide de lui.
+ *
+ * Un élément en ligne sans décor — ni fond, ni bordure, ni marge intérieure ou
+ * extérieure, ni contour — ne peint rien de lui-même : sa boîte est celle de
+ * ce qu'il porte, mesurée sur son contenu. Le cadre que Chromium lui rend en
+ * dépend sinon : sans boîte à lui, celui de ses enfants ; avec, la hauteur de
+ * sa police, un point de moins sous le pointillé d'un mot du glossaire. Et
+ * Chromium la lui donne ou non selon le chargement, ce qui rougissait la suite
+ * une fois sur dix, la page peinte pareil.
+ */
 const INSTANTANE = `(() => {
   const proprietes = ["display", "visibility", "color", "background-color", "font-size",
     "font-weight", "font-family", "line-height", "text-transform"];
+  const nul = (style, ...cles) => cles.every((cle) => parseFloat(style.getPropertyValue(cle)) === 0);
+  const sansDecor = (style) => style.display === "inline" && style.outlineStyle === "none"
+    && style.backgroundImage === "none" && /^rgba\\(.*, 0\\)$/.test(style.backgroundColor)
+    && ["top", "right", "bottom", "left"].every((cote) => nul(style,
+      \`padding-\${cote}\`, \`margin-\${cote}\`, \`border-\${cote}-width\`));
   return [...document.querySelectorAll("body *")].map((el) => {
-    const boite = el.getBoundingClientRect();
     const style = getComputedStyle(el);
+    let boite = el.getBoundingClientRect();
+    if (sansDecor(style) && el.firstChild) {
+      const contenu = document.createRange();
+      contenu.selectNodeContents(el);
+      boite = contenu.getBoundingClientRect();
+    }
     const classes = typeof el.className === "string" && el.className.trim()
       ? "." + el.className.trim().split(/\\s+/).join(".") : "";
     return [el.tagName.toLowerCase() + (el.id ? "#" + el.id : "") + classes,
@@ -1172,7 +1192,24 @@ const FEUILLE_EFFECTIVE = `new Promise((resoudre) => {
   sonder();
 })`;
 
-async function mesurerLeStyle({ route, largeur, hauteur, sans_onload: sansOnload }) {
+/**
+ * Donne sa propre boîte à chaque mot du glossaire, élément en ligne sans décor,
+ * comme Chromium le fait parfois de lui-même en chargeant une page : un contour
+ * posé puis ôté suffit, la boîte reste. Rend le nombre de mots dont le cadre a
+ * bougé.
+ */
+const FORCER_LES_BOITES = `(() => {
+  const enLigne = [...document.querySelectorAll("span.mot")];
+  const avant = enLigne.map((el) => el.getBoundingClientRect().height);
+  enLigne.forEach((el) => { el.style.outline = "1px solid"; });
+  document.body.offsetHeight;
+  enLigne.forEach((el) => { el.style.outline = ""; if (!el.style.length) { el.removeAttribute("style"); } });
+  document.body.offsetHeight;
+  return enLigne.filter((el, i) => el.getBoundingClientRect().height !== avant[i]).length;
+})()`;
+
+async function mesurerLeStyle({ route, largeur, hauteur, sans_onload: sansOnload,
+  boites_forcees: boitesForcees }) {
   await poserLEcran({ largeur, hauteur });
   if (sansOnload) {
     await page("Fetch.enable", { patterns: [{ urlPattern: "*", resourceType: "Document",
@@ -1196,6 +1233,7 @@ async function mesurerLeStyle({ route, largeur, hauteur, sans_onload: sansOnload
   let seule;
   try {
     await ouvrir(route);
+    if (boitesForcees) { boitesForcees = await evaluer(FORCER_LES_BOITES); }
     seule = await evaluer(INSTANTANE);
   } finally {
     await page("Fetch.disable");
@@ -1207,7 +1245,7 @@ async function mesurerLeStyle({ route, largeur, hauteur, sans_onload: sansOnload
   for (let i = 0; i < Math.min(seule.length, entiere.length) && ecarts.length < 6; i += 1) {
     if (seule[i] !== entiere[i]) { ecarts.push(`seul : ${seule[i]} — entière : ${entiere[i]}`); }
   }
-  return { route, largeur, media, elements: entiere.length, ecarts };
+  return { route, largeur, media, elements: entiere.length, ecarts, boites_forcees: boitesForcees };
 }
 
 // -- la visite ---------------------------------------------------------------

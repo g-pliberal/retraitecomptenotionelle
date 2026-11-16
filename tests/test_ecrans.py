@@ -754,6 +754,23 @@ def test_chaque_page_se_peint_avec_son_seul_style():
     assert not fautes, "\n".join(fautes)
 
 
+def test_le_style_d_une_page_ne_tient_pas_aux_boites_que_chromium_donne_aux_mots():
+    """Un élément en ligne sans décor, le mot du glossaire, n'a pas de boîte à
+    lui : son cadre est celui de ce qu'il porte, le mot souligné de pointillé.
+    Chromium lui en donne parfois une en chargeant la page, et la garde ; son
+    cadre perd alors le point du pointillé. La suite rougissait ainsi une fois
+    sur dix, un point sur Coût ou sur Carrières types, la page peinte pareil.
+    Le pilote force ici ces boîtes sur la page au seul style : la comparaison
+    doit n'y rien voir, et le forçage avoir bougé au moins un cadre."""
+    cas = jouer({"ecrans": [], "routes": [], "chargements": [], "adresses": [],
+                 "styles": [{"route": route, "largeur": 390, "hauteur": 800,
+                             "boites_forcees": True}
+                            for route in ("cas-types/", "cout/")]})["styles"]
+    for page in cas:
+        assert page["boites_forcees"] > 0, f"{page['route']} : aucune boîte forcée n'a bougé"
+        assert not page["ecarts"], f"{page['route']} : " + " ; ".join(page["ecarts"])
+
+
 def test_la_feuille_entiere_devient_effective_meme_sans_son_onload():
     """Déclarée pour l'impression, la feuille entière ne bloque pas l'affichage ;
     son ``onload`` la rend effective une fois chargée. Une politique de sécurité
