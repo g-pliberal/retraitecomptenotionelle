@@ -2,8 +2,8 @@
 
 **Reprise, au 16 novembre 2026.** Trois natures de l'étape sont rangées ; la quatrième, les
 circulaires, lettres et instructions sans thème, l'est de 1936 à 2011 (cette note et celles
-d'avant). Une seconde lecture avance à rebours et a fait 2018 à 2026, avec son propre bloc
-(note de 2018 à 2021 à rebours). Restent 176 circulaires, de 2012 à 2017 ; la lecture dans
+d'avant). Une seconde lecture avance à rebours et a fait 2016 à 2026, avec son propre bloc
+(sa dernière note). Restent 131 circulaires, de 2012 à 2015 ; la lecture dans
 l'ordre reprend à 2012 (37), puis 2013 (44), 2014 (26), et s'arrête où elle rejoint
 l'autre. Viennent ensuite, une session par nature : les 96 autres textes, les 74 que la
 base nomme sans les servir, les 107 accords. Méthode : celle de la note de 2010, chaque
