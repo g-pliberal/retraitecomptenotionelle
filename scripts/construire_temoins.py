@@ -2096,6 +2096,12 @@ def _cas() -> list[dict]:
         **avant_le_depart, "sexe": "F", "conjoint_sexe": "H", "enfants": "3"}))
     cas.append(("reversion_fonctionnaire_mort_en_activite", {
         **avant_le_depart, "statut": "fonctionnaire_etat", "primes": "0.2"}))
+    # Le 16 novembre 2026 (action 175, écart lourd n° 2 des circulaires), le
+    # salarié mort en février 1972, dont la veuve a cinquante-cinq ans en 1976 :
+    # sa pension se liquide aux règles de la date d'effet de la réversion
+    # (R. 353-3), ramenée aux montants de 1972.
+    cas.append(("reversion_deces_avant_le_depart_regles_de_l_effet", {
+        "naissance": "1913", "liquidation": "65", "conjoint": "1921", "deces": "1972-02"}))
     # Le même jour, le partage entre conjoints et le remariage : le salarié marié
     # deux fois avant son dernier mariage laisse à sa veuve sa part de chaque
     # réversion, au prorata des mariages, le premier précédent conjoint, remarié,

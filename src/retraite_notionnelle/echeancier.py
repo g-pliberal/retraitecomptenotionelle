@@ -38,6 +38,7 @@ Son jumeau est ``moteur/js/echeancier.js``.
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+from datetime import date
 from typing import TYPE_CHECKING
 
 from . import chronologie as chrono
@@ -51,6 +52,7 @@ from .droit import liquidation as _liquidation
 from .droit import progressive as _progressive
 from .droit import reversion as _reversion
 from .droit import seconde as _seconde
+from .donnees.chargement import Fiabilite
 from .droit.commun import (MAJORATION_ENFANTS, date_d_effet, majoration_du_conjoint,
                            parts_de_la_majoration, parts_sans_anticipation)
 from .journal import Entree, Journal
@@ -63,7 +65,6 @@ from .somme import somme_ordonnee
 
 if TYPE_CHECKING:
     from .carriere import Carriere
-    from .donnees.chargement import Fiabilite
     from .revalorisation import ActuelAujourdhui
     from .scenarios.actuel import ResultatActuel
     from .simulateur import Simulateur
@@ -372,36 +373,88 @@ class Echeancier:
         l'année du décès ; rien n'a été versé en capital."""
         annee, mois = int(carriere.deces[:4]), int(carriere.deces[5:7])
         debut = DateMois(annee, 3 * ((mois - 1) // 3) + 1)
-        demande = _liquidation.Demande(
-            personne=carriere.personne, date_effet=f"{annee:04d}-{debut.mois:02d}-01",
-            evenement="deces", date_evenement=carriere.deces, motif="reversion",
-            nature="fictive")
-        liquidation = _liquidation.liquider(
-            demande, _liquidation.Etat(carriere.arretee_au_deces(debut), self.journal),
-            _liquidation.Contexte(self.moteur))
-        self._inscrire(deces, f"liquidation_{deces.id}", "liquidation", liquidation,
-                       deces.date)
-        # La réversion lit la pension sans la majoration pour conjoint à charge.
-        pensions = [(p.regime, p.montant - majoration_du_conjoint(p.conjoint, demande.date_effet),
-                     p.fiabilite) for p in liquidation.regimes]
+        au_deces = f"{annee:04d}-{debut.mois:02d}-01"
+
+        def liquider_au(date_effet: str, ident: str, arretee: Carriere):
+            demande = _liquidation.Demande(
+                personne=carriere.personne, date_effet=date_effet, evenement="deces",
+                date_evenement=carriere.deces, motif="reversion", nature="fictive")
+            liquidation = _liquidation.liquider(
+                demande, _liquidation.Etat(arretee, self.journal),
+                _liquidation.Contexte(self.moteur))
+            self._inscrire(deces, ident, "liquidation", liquidation, deces.date)
+            return liquidation
+
+        eues = self._lire_pensions_eues(
+            liquider_au(au_deces, f"liquidation_{deces.id}", carriere.arretee_au_deces(debut)),
+            au_deces, annee, 1.0, Fiabilite.CERTIFIEE)
+        # Du 1er janvier 1974 au 30 juin 2004, la pension principale du régime
+        # général se prend aux règles de la date d'effet de la réversion, et non
+        # du décès, sur la même carrière, au même taux de l'inaptitude (décret
+        # n° 45-0179, article 81 b ; R. 353-3) : liquidée à cette date, elle est
+        # ramenée aux montants du décès par la revalorisation des pensions qui
+        # les sépare.
+        regles = _reversion.date_des_regles_de_la_pension_eue(self.moteur, carriere)
+        if regles is not None and regles > au_deces:
+            coefficient, fiabilite = self.moteur.revalorisations_pensions.generale(
+                date.fromisoformat(au_deces), date.fromisoformat(regles), False, None)
+            a_l_effet = self._lire_pensions_eues(
+                liquider_au(regles, f"liquidation_regles_{deces.id}",
+                            carriere.arretee_au_deces(
+                                debut, DateMois(int(regles[:4]), int(regles[5:7])))),
+                regles, annee, coefficient, fiabilite)
+            table = self.moteur.reversions
+
+            def generale(regime: str) -> bool:
+                return (table.fiche_du_regime(regime) or {}).get("id") == "reversion"
+
+            a_la_date = {pension[0]: pension for pension in a_l_effet["pensions"]}
+            eues["pensions"] = [a_la_date[pension[0]] if generale(pension[0])
+                                and pension[0] in a_la_date else pension
+                                for pension in eues["pensions"]]
+            for cle in ("majorations", "minima", "maxima", "durees", "apres",
+                        "sans_anticipation"):
+                gardees = {regime: valeur for regime, valeur in eues[cle].items()
+                           if not generale(regime)}
+                gardees.update({regime: valeur for regime, valeur in a_l_effet[cle].items()
+                                if generale(regime)})
+                eues[cle] = gardees
+        return (annee, eues["pensions"], frozenset(), eues["majorations"], eues["minima"],
+                eues["maxima"], eues["durees"], eues["apres"], eues["sans_anticipation"])
+
+    def _lire_pensions_eues(self, liquidation, date_effet: str, annee: int,
+                            coefficient: float, fiabilite: Fiabilite) -> dict:
+        """Ce que la réversion lit d'une liquidation fictive datée
+        ``date_effet`` : ses pensions, sans la majoration pour conjoint à
+        charge, la part de sa majoration pour enfants, de son minimum et de son
+        maximum dans chacune, ses durées, les majorations forfaitaires venues
+        après jusqu'à l'année des montants, sa majoration sans coefficient
+        d'anticipation ; les montants divisés par ``coefficient``."""
+        pensions = [(p.regime, (p.montant - majoration_du_conjoint(p.conjoint, date_effet))
+                     / coefficient, min(p.fiabilite, fiabilite))
+                    for p in liquidation.regimes]
 
         def parts(entrees) -> dict[str, float]:
             cumul: dict[str, float] = {}
             for regime, part in entrees:
-                cumul[regime] = cumul.get(regime, 0.0) + part
+                cumul[regime] = cumul.get(regime, 0.0) + part / coefficient
             return {regime: part for regime, part in cumul.items() if part}
 
-        majorations = parts(parts_de_la_majoration(liquidation.avantages, a_charge=False))
-        minima = parts(part for avantage in liquidation.avantages
-                       if avantage.code in _reversion.MINIMA_REVERSES
-                       for part in avantage.par_regime)
-        maxima = {p.regime: (p.ecretement_du_maximum, p.surcote, p.coefficient_du_maximum)
-                  for p in liquidation.regimes
-                  if p.ecretement_du_maximum or p.surcote or p.coefficient_du_maximum != 1.0}
-        return (annee, pensions, frozenset(), majorations, minima, maxima,
-                dict(liquidation.releve.durees.trimestres_par_regime),
-                _majorations_apres(self.moteur, liquidation.regimes, demande.date_effet, annee),
-                parts(parts_sans_anticipation(liquidation.avantages)))
+        return {
+            "pensions": pensions,
+            "majorations": parts(parts_de_la_majoration(liquidation.avantages, a_charge=False)),
+            "minima": parts(part for avantage in liquidation.avantages
+                            if avantage.code in _reversion.MINIMA_REVERSES
+                            for part in avantage.par_regime),
+            "maxima": {p.regime: (p.ecretement_du_maximum / coefficient,
+                                  p.surcote / coefficient, p.coefficient_du_maximum)
+                       for p in liquidation.regimes
+                       if p.ecretement_du_maximum or p.surcote
+                       or p.coefficient_du_maximum != 1.0},
+            "durees": dict(liquidation.releve.durees.trimestres_par_regime),
+            "apres": _majorations_apres(self.moteur, liquidation.regimes, date_effet, annee),
+            "sans_anticipation": parts(parts_sans_anticipation(liquidation.avantages)),
+        }
 
     def _pensions_au_deces(self, carriere: Carriere, deces: str) -> tuple[
             int, list[tuple[str, float, Fiabilite]], frozenset[str], dict[str, float],

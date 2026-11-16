@@ -26,6 +26,7 @@
 import { DateMois } from "./calendrier.js";
 import * as chrono from "./chronologie.js";
 import { formatFixe } from "./format.js";
+import { Fiabilite } from "./serie.js";
 import {
   MAJORATION_ENFANTS, dateDEffet, majorationDuConjoint, partsDeLaMajoration,
   partsSansAnticipation,
@@ -37,7 +38,9 @@ import { ageDeLAspa } from "./droit/invalidite.js";
 import * as limiteAge from "./droit/limite_age.js";
 import * as liquidation from "./droit/liquidation.js";
 import * as lesProgressives from "./droit/progressive.js";
-import { MINIMA_REVERSES, moisSuivant, reversion } from "./droit/reversion.js";
+import {
+  MINIMA_REVERSES, dateDesReglesDeLaPensionEue, moisSuivant, reversion,
+} from "./droit/reversion.js";
 import * as laSeconde from "./droit/seconde.js";
 import { Entree, Journal } from "./journal.js";
 import {
@@ -395,43 +398,95 @@ export class Echeancier {
     const annee = Number(carriere.deces.slice(0, 4));
     const mois = Number(carriere.deces.slice(5, 7));
     const debut = new DateMois(annee, 3 * Math.floor((mois - 1) / 3) + 1);
-    const demande = new liquidation.Demande({
-      personne: carriere.personne,
-      dateEffet: `${String(annee).padStart(4, "0")}-${String(debut.mois).padStart(2, "0")}-01`,
-      evenement: "deces", dateEvenement: carriere.deces, motif: "reversion",
-      nature: "fictive",
-    });
-    const resultat = liquidation.liquider(
-      demande, new liquidation.Etat(carriere.arreteeAuDeces(debut), this.journal),
-      new liquidation.Contexte(this.moteur));
-    this._inscrire(deces, `liquidation_${deces.id}`, "liquidation", resultat, deces.date);
-    // La réversion lit la pension sans la majoration pour conjoint à charge.
+    const auDeces = `${String(annee).padStart(4, "0")}-${String(debut.mois).padStart(2, "0")}-01`;
+    const liquiderAu = (dateEffet, id, arretee) => {
+      const demande = new liquidation.Demande({
+        personne: carriere.personne, dateEffet, evenement: "deces",
+        dateEvenement: carriere.deces, motif: "reversion", nature: "fictive",
+      });
+      const resultat = liquidation.liquider(
+        demande, new liquidation.Etat(arretee, this.journal),
+        new liquidation.Contexte(this.moteur));
+      this._inscrire(deces, id, "liquidation", resultat, deces.date);
+      return resultat;
+    };
+    const eues = this._lirePensionsEues(liquiderAu(auDeces, `liquidation_${deces.id}`,
+      carriere.arreteeAuDeces(debut)),
+      auDeces, annee, 1.0, Fiabilite.CERTIFIEE);
+    // Du 1er janvier 1974 au 30 juin 2004, la pension principale du régime
+    // général se prend aux règles de la date d'effet de la réversion, et non du
+    // décès, sur la même carrière, au même taux de l'inaptitude (décret
+    // n° 45-0179, article 81 b ; R. 353-3) : liquidée à cette date, elle est
+    // ramenée aux montants du décès par la revalorisation des pensions qui les
+    // sépare. Voir le Python.
+    const regles = dateDesReglesDeLaPensionEue(this.moteur, carriere);
+    if (regles !== null && regles > auDeces) {
+      const [coefficient, fiabilite] = this.moteur.revalorisationsPensions.generale(
+        auDeces, regles, false, null);
+      const aLEffet = this._lirePensionsEues(
+        liquiderAu(regles, `liquidation_regles_${deces.id}`,
+          carriere.arreteeAuDeces(debut, new DateMois(Number(regles.slice(0, 4)),
+            Number(regles.slice(5, 7))))),
+        regles, annee, coefficient, fiabilite);
+      const table = this.moteur.reversions;
+      const generale = (regime) => table.ficheDuRegime(regime)?.id === "reversion";
+      const aLaDate = new Map(aLEffet.pensions.map((pension) => [pension[0], pension]));
+      eues.pensions = eues.pensions.map((pension) => (generale(pension[0])
+        && aLaDate.has(pension[0]) ? aLaDate.get(pension[0]) : pension));
+      for (const cle of ["majorations", "minima", "maxima", "durees", "apres",
+        "sansAnticipation"]) {
+        for (const regime of Object.keys(eues[cle])) {
+          if (generale(regime)) delete eues[cle][regime];
+        }
+        for (const [regime, valeur] of Object.entries(aLEffet[cle])) {
+          if (generale(regime)) eues[cle][regime] = valeur;
+        }
+      }
+    }
+    return [annee, eues.pensions, new Set(), eues.majorations, eues.minima, eues.maxima,
+      eues.durees, eues.apres, eues.sansAnticipation];
+  }
+
+  /**
+   * Ce que la réversion lit d'une liquidation fictive datée `dateEffet` : ses
+   * pensions, sans la majoration pour conjoint à charge, la part de sa
+   * majoration pour enfants, de son minimum et de son maximum dans chacune,
+   * ses durées, les majorations forfaitaires venues après jusqu'à l'année des
+   * montants, sa majoration sans coefficient d'anticipation ; les montants
+   * divisés par `coefficient`. Voir `_lire_pensions_eues` du Python.
+   */
+  _lirePensionsEues(resultat, dateEffet, annee, coefficient, fiabilite) {
     const pensions = resultat.regimes.map((p) => [p.regime,
-      p.montant - majorationDuConjoint(p.conjoint, demande.dateEffet), p.fiabilite]);
+      (p.montant - majorationDuConjoint(p.conjoint, dateEffet)) / coefficient,
+      Math.min(p.fiabilite, fiabilite)]);
     const parts = (entrees) => {
       const cumul = new Map();
       for (const [regime, part] of entrees) {
-        cumul.set(regime, (cumul.get(regime) ?? 0.0) + part);
+        cumul.set(regime, (cumul.get(regime) ?? 0.0) + part / coefficient);
       }
       return Object.fromEntries([...cumul].filter(([, part]) => part));
     };
-    const majorations = parts(partsDeLaMajoration(resultat.avantages, null, false));
-    const minima = parts(resultat.avantages
-      .filter((avantage) => MINIMA_REVERSES.includes(avantage.code))
-      .flatMap((avantage) => avantage.par_regime ?? []));
     const maxima = {};
     for (const p of resultat.regimes) {
       const ecretement = p.ecretement_du_maximum ?? 0.0;
       const surcote = p.surcote ?? 0.0;
-      const coefficient = p.coefficient_du_maximum ?? 1.0;
-      if (ecretement || surcote || coefficient !== 1.0) {
-        maxima[p.regime] = [ecretement, surcote, coefficient];
+      const coefficientDuMaximum = p.coefficient_du_maximum ?? 1.0;
+      if (ecretement || surcote || coefficientDuMaximum !== 1.0) {
+        maxima[p.regime] = [ecretement / coefficient, surcote / coefficient,
+          coefficientDuMaximum];
       }
     }
-    return [annee, pensions, new Set(), majorations, minima, maxima,
-      Object.fromEntries(resultat.releve.durees.trimestresParRegime),
-      majorationsApres(this.moteur, resultat.regimes, demande.dateEffet, annee),
-      parts(partsSansAnticipation(resultat.avantages))];
+    return {
+      pensions,
+      majorations: parts(partsDeLaMajoration(resultat.avantages, null, false)),
+      minima: parts(resultat.avantages
+        .filter((avantage) => MINIMA_REVERSES.includes(avantage.code))
+        .flatMap((avantage) => avantage.par_regime ?? [])),
+      maxima,
+      durees: Object.fromEntries(resultat.releve.durees.trimestresParRegime),
+      apres: majorationsApres(this.moteur, resultat.regimes, dateEffet, annee),
+      sansAnticipation: parts(partsSansAnticipation(resultat.avantages)),
+    };
   }
 
   /**

@@ -1,0 +1,19 @@
+date: "2026-11-16"
+session: "action 175, à part : la réversion d'un assuré mort avant son départ, liquidée aux règles de la date d'effet de 1974 à juin 2004 (écart lourd n° 2), corrigée dans les deux moteurs"
+consulte: >-
+  python scripts/veille_droit.py. Les textes que la note du jour sur les cinq écarts
+  lourds cite et a lus dans l'index de la DILA : décret n° 45-0179, article 81 b,
+  version du 30 décembre 1973 (LEGIARTI000006760626) ; R. 353-3, version du
+  21 décembre 1985 (LEGIARTI000006749406). Les revalorisations des pensions et des
+  salaires de 1971 à 1976 du dépôt (legislation/revalorisation_pensions.csv,
+  revalorisation_salaires_anciennes.csv).
+trouve: >-
+  Une correction du scénario 1 : la pension que l'assuré mort avant son départ eût
+  obtenue se liquide, au régime général et dans les régimes alignés, aux règles de
+  la date d'effet de la réversion quand celle-ci tombe du 1er janvier 1974 au 30 juin
+  2004, sur la carrière arrêtée au décès, ramenée aux montants du décès. Détail :
+  docs/feuille_de_route/175/2026-11-16-reversion-de-l-assure-mort-avant-son-depart.md.
+reste: >-
+  L'exposé de la Cnav « Retraite de l'assuré décédé », dont la date a changé le
+  10 novembre 2026, à relire. Les règles de la date d'effet que la caisse prend depuis
+  juillet 2004, déclarées dans la fiche reversion.

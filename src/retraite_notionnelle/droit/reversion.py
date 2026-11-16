@@ -712,6 +712,28 @@ def _premiere_date_d_effet(table, fiche: dict, conjoint: Conjoint, lendemain: st
     return min(possibles, default=lendemain)
 
 
+def date_des_regles_de_la_pension_eue(moteur, carriere: "Carriere") -> str | None:
+    """La date d'effet de la réversion du régime général d'un assuré mort avant
+    son départ, quand sa version y prend la pension que le défunt « eût
+    obtenue » aux règles de cette date, non de son décès
+    (``pension_eue_aux_regles_de_la_date_d_effet``) : « il est fait
+    application, pour déterminer le montant de la pension principale servant de
+    base au calcul de la pension de réversion des dispositions en vigueur à la
+    date d'effet de cette dernière pension » (décret n° 45-0179, article 81 b,
+    version du 30 décembre 1973 ; R. 353-3, version du 21 décembre 1985), du
+    1er janvier 1974 au 30 juin 2004 ; ``None`` sinon."""
+    conjoint, deces = carriere.conjoint, carriere.deces
+    table = moteur.reversions
+    fiche = table.fiche("reversion")
+    if conjoint is None or deces is None or fiche is None:
+        return None
+    date_effet = _premiere_date_d_effet(table, fiche, conjoint, mois_suivant(deces), deces)
+    version = table.version(fiche, date_effet, deces)
+    depuis = (version or {}).get("parametres", {}).get(
+        "pension_eue_aux_regles_de_la_date_d_effet")
+    return date_effet if depuis is not None and depuis <= date_effet else None
+
+
 def _cumuler(parametres: dict, montant: float, retraites: float, principale: float,
              forfaitaire: float | None, reversions: int) -> tuple[float, float]:
     """La réversion d'avant juillet 2004 qu'il reste quand le survivant a ses

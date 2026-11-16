@@ -193,6 +193,7 @@ versions:
       retraites_entieres_a_la_revision: null
       periodes_de_reference: [3, 12]
       ressources_examinees: [deces]
+      pension_eue_aux_regles_de_la_date_d_effet: "1974-01-01"
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: avant_1982
@@ -254,6 +255,7 @@ versions:
       retraites_entieres_a_la_revision: null
       periodes_de_reference: [3, 12]
       ressources_examinees: [demande, deces]
+      pension_eue_aux_regles_de_la_date_d_effet: "1974-01-01"
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: taux_52
@@ -315,6 +317,7 @@ versions:
       retraites_entieres_a_la_revision: null
       periodes_de_reference: [3, 12]
       ressources_examinees: [demande, deces]
+      pension_eue_aux_regles_de_la_date_d_effet: "1974-01-01"
       fiabilite: haute
   exemples: aucun trouvé
 - id: taux_54
@@ -366,6 +369,7 @@ versions:
       retraites_entieres_a_la_revision: null
       periodes_de_reference: [3, 12]
       ressources_examinees: [demande, deces]
+      pension_eue_aux_regles_de_la_date_d_effet: "1974-01-01"
       fiabilite: haute
   exemples: aucun trouvé
 - id: reforme_2004
@@ -1161,20 +1165,25 @@ approximations:
     plafond, pour une réversion qui prend effet au second semestre
 - ecart: >-
     la pension que l'assuré mort avant son départ eût obtenue se liquide au premier
-    jour du trimestre civil de son décès, sous les règles de ce jour. Pour une
-    réversion prenant effet du 1er janvier 1974 au 30 juin 2004, le droit prend
-    toutes celles de sa date d'effet : « Dans le cas où l'assuré n'était pas
+    jour du trimestre civil de son décès, sous les règles de ce jour, sauf au
+    régime général et dans les régimes alignés pour une réversion prenant effet du
+    1er janvier 1974 au 30 juin 2004 : « Dans le cas où l'assuré n'était pas
     titulaire d'une pension de vieillesse ou d'une rente à la date de son décès, il
     est fait application, pour déterminer le montant de la pension principale
     servant de base au calcul de la pension de réversion des dispositions en
     vigueur à la date d'effet de cette dernière pension » (décret n° 45-0179,
     article 81 b, version du 30 décembre 1973, LEGIARTI000006760626 ; R. 353-3,
     version du 21 décembre 1985, LEGIARTI000006749406 ; lettre de la Cnav du
-    3 juillet 1974) ; un défunt de 150 trimestres mort en février 1972, dont la
-    réversion part en 1976, a sa pension sur 128 trimestres au modèle, sur 150
-    au droit, − 14,7 % (action 175, écart lourd n° 2 des circulaires, confirmé au
-    texte le 16 novembre 2026 et non corrigé : le modèle liquide la pension et
-    compte la réversion aux montants de l'année du décès). Depuis, la caisse
+    3 juillet 1974) : elle s'y liquide à la date d'effet de la réversion
+    (pension_eue_aux_regles_de_la_date_d_effet), sur la carrière arrêtée au
+    décès, au taux de l'inaptitude, puis se ramène aux montants de l'année du
+    décès par les revalorisations des pensions qui les séparent, la réversion se
+    comptant à ces montants (action 175, écart lourd n° 2 des circulaires,
+    corrigé le 16 novembre 2026 : le salarié né en 1913, mort en février 1972,
+    dont la veuve a sa réversion en février 1976, a sa pension sur les dix
+    meilleures années du salaire annuel moyen, règle de 1976, et non sur les
+    dix dernières, règle de 1972, + 20 %) ; les complémentaires gardent la
+    pension du décès. Depuis, la caisse
     prend celles de la date d'effet de la réversion pour les majorations de durée
     pour enfants, la surcote et le salaire annuel moyen des polypensionnés, et, pour
     un décès du 1er juillet 2004 au 30 juin 2011, le nombre d'années du salaire
@@ -2234,9 +2243,10 @@ code:
     _trois_mois_apres,
     _apres_les_trois_mois, _generation,
     _derniere_revision, _venu, _activite_au, _apport_au,
-    _majorations_ulterieures ; scenarios/actuel.py : Reversions ; echeancier.py :
+    _majorations_ulterieures, date_des_regles_de_la_pension_eue ;
+    scenarios/actuel.py : Reversions ; echeancier.py :
     Echeancier._reverser, Echeancier._pensions_au_deces,
-    Echeancier._pensions_eues_au_deces ; carriere.py : Carriere.arretee_au_deces,
+    Echeancier._pensions_eues_au_deces, Echeancier._lire_pensions_eues ; carriere.py : Carriere.arretee_au_deces,
     Carriere.ex_conjoints ; chronologie.py : ex_conjoints, debut_du_menage,
     fin_du_menage, fin_d_activite, variations_d_activite, variations_du_menage,
     _variations ;
@@ -2253,10 +2263,11 @@ code:
     ressourcesALaDateDEffet,
     troisMoisApres,
     apresLesTroisMois, generationDe, derniereRevision, venu, activiteAu, apportAu,
-    majorationsUlterieures ;
+    majorationsUlterieures, dateDesReglesDeLaPensionEue ;
     moteur/js/regimes.js : Reversions ;
     moteur/js/echeancier.js : Echeancier._reverser, Echeancier._pensionsAuDeces,
-    Echeancier._pensionsEuesAuDeces ; moteur/js/carriere.js : Carriere.arreteeAuDeces,
+    Echeancier._pensionsEuesAuDeces, Echeancier._lirePensionsEues ;
+    moteur/js/carriere.js : Carriere.arreteeAuDeces,
     Carriere.exConjoints ; moteur/js/chronologie.js : exConjoints, debutDuMenage,
     finDuMenage, finDActivite, variationsDActivite, variationsDuMenage, variations ;
     moteur/js/saisie.js : Saisie.variationsAnalysees ;
@@ -2270,7 +2281,7 @@ code:
     majoration_enfants_minimum, age_inaptitude, cumul, cumul_taux, droits_d_avant_1973,
     minimum_avec_les_droits_d_avant_1973, majorations_forfaitaires,
     retraites_entieres_a_la_revision, periodes_de_reference, ressources_examinees,
-    fiabilite ;
+    pension_eue_aux_regles_de_la_date_d_effet, fiabilite ;
     macro/smic_horaire.csv ; legislation/minimum_reversion.csv,
     legislation/plafond_majoration_reversion.csv, legislation/limite_cumul_reversion.csv
     ; legislation/age_annulation_decote.csv ; macro/plafond_securite_sociale.csv

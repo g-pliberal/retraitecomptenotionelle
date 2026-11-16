@@ -2038,7 +2038,8 @@ class Carriere:
         return replace(self, lignes=list(self.lignes), age_liquidation=self.age_au(date),
                        dates_entree=dict(self.dates_entree))
 
-    def arretee_au_deces(self, date: DateMois) -> "Carriere":
+    def arretee_au_deces(self, date: DateMois,
+                         liquidee_le: DateMois | None = None) -> "Carriere":
         """La même carrière, arrêtée au premier jour de ``date``, pour la
         pension que la personne « eût obtenue » à son décès (:attr:`au_deces`).
 
@@ -2048,8 +2049,31 @@ class Carriere:
         l'activité d'après un départ qui n'a pas eu lieu. La date est le
         premier jour du trimestre civil du décès : la durée d'assurance « est
         arrêtée au dernier jour du trimestre civil qui précède le décès »
-        (exposé de la Cnav, « Retraite de l'assuré décédé »)."""
-        return replace(self, lignes=list(self.lignes), age_liquidation=self.age_au(date),
+        (exposé de la Cnav, « Retraite de l'assuré décédé »).
+
+        Liquidée à une date plus tardive, ``liquidee_le``, celle de la
+        réversion qui en prend les règles (R. 353-3), elle perd ses lignes
+        d'après ``date``, et celle de l'année de ``date`` ses mois d'après : la
+        durée reste celle du décès."""
+        lignes = list(self.lignes)
+        if liquidee_le is not None:
+            mois = date.mois - 1
+
+            def coupee(ligne: AnneeCarriere) -> AnneeCarriere:
+                avant = round(ligne.fraction_annee * MOIS_PAR_AN)
+                if ligne.annee < date.annee or avant <= mois:
+                    return ligne
+                part = mois / avant
+                return replace(
+                    ligne, fraction_annee=mois / MOIS_PAR_AN, revenu=ligne.revenu * part,
+                    revenu_reference=ligne.revenu_reference * part,
+                    revenu_avpf=ligne.revenu_avpf * part,
+                    revenu_retabli=ligne.revenu_retabli * part,
+                    trimestres_valides=min(ligne.trimestres_valides, trimestres_civils(mois)))
+
+            lignes = [coupee(ligne) for ligne in lignes
+                      if ligne.annee < date.annee or (ligne.annee == date.annee and mois > 0)]
+        return replace(self, lignes=lignes, age_liquidation=self.age_au(liquidee_le or date),
                        dates_entree=dict(self.dates_entree), lignes_apres_depart=(),
                        au_deces=True)
 

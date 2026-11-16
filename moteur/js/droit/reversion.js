@@ -631,6 +631,28 @@ function premiereDateDEffet(table, fiche, conjoint, lendemain, deces) {
 }
 
 /**
+ * La date d'effet de la réversion du régime général d'un assuré mort avant son
+ * départ, quand sa version y prend la pension que le défunt « eût obtenue »
+ * aux règles de cette date, non de son décès
+ * (`pension_eue_aux_regles_de_la_date_d_effet`, décret n° 45-0179, article
+ * 81 b, puis R. 353-3, du 1er janvier 1974 au 30 juin 2004) ; `null` sinon.
+ * Voir `date_des_regles_de_la_pension_eue` du Python.
+ */
+export function dateDesReglesDeLaPensionEue(moteur, carriere) {
+  const conjoint = carriere.conjoint;
+  const deces = carriere.deces;
+  const table = moteur.reversions;
+  const fiche = table.fiche("reversion");
+  if (conjoint === null || deces === null || fiche === null || fiche === undefined) {
+    return null;
+  }
+  const dateEffet = premiereDateDEffet(table, fiche, conjoint, moisSuivant(deces), deces);
+  const version = table.version(fiche, dateEffet, deces);
+  const depuis = version?.parametres.pension_eue_aux_regles_de_la_date_d_effet ?? null;
+  return depuis !== null && depuis <= dateEffet ? dateEffet : null;
+}
+
+/**
  * La réversion d'avant juillet 2004 qu'il reste quand le survivant a ses
  * propres retraites, et la limite de cumul : `[montant, limite]` (D. 355-1).
  * Voir `_cumuler` du Python, que la façade des tests demande ici.

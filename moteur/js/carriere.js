@@ -1515,15 +1515,37 @@ export class Carriere {
    * La même carrière, arrêtée au premier jour de `date` — celui du trimestre
    * civil du décès —, pour la pension que la personne « eût obtenue » à son
    * décès (`au_deces`) : la vue que lit la réversion d'un assuré mort avant son
-   * départ. Voir `carriere.py`.
+   * départ. Liquidée à une date plus tardive, `liquideeLe`, celle de la
+   * réversion qui en prend les règles, elle perd ses lignes d'après `date`, et
+   * celle de l'année de `date` ses mois d'après : la durée reste celle du décès.
+   * Voir `carriere.py`.
    */
-  arreteeAuDeces(date) {
+  arreteeAuDeces(date, liquideeLe = null) {
+    let lignes = [...this.lignes];
+    if (liquideeLe !== null) {
+      const mois = date.mois - 1;
+      lignes = lignes
+        .filter((ligne) => ligne.annee < date.annee || (ligne.annee === date.annee && mois > 0))
+        .map((ligne) => {
+          const avant = Math.round(ligne.fraction_annee * MOIS_PAR_AN);
+          if (ligne.annee < date.annee || avant <= mois) {
+            return ligne;
+          }
+          const part = mois / avant;
+          return new AnneeCarriere({
+            ...ligne, fraction_annee: mois / MOIS_PAR_AN, revenu: ligne.revenu * part,
+            revenu_reference: ligne.revenu_reference * part,
+            revenu_avpf: ligne.revenu_avpf * part, revenu_retabli: ligne.revenu_retabli * part,
+            trimestres_valides: Math.min(ligne.trimestres_valides, trimestresCivils(mois)),
+          });
+        });
+    }
     return new Carriere({
       annee_naissance: this.annee_naissance,
       sexe: this.sexe,
-      lignes: [...this.lignes],
+      lignes,
       mois_naissance: this.mois_naissance,
-      age_liquidation: this.ageAu(date),
+      age_liquidation: this.ageAu(liquideeLe ?? date),
       jour_naissance: this.jour_naissance,
       nombre_enfants: this.nombre_enfants,
       naissances_enfants: this.naissances_enfants,

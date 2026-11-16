@@ -3659,6 +3659,79 @@ def test_la_cessation_d_activite_du_fonctionnaire_mort_en_activite_est_son_deces
     assert ligne["motif"] == motif
 
 
+#: Un salarié né en 1913, mort en février 1972 ; son épouse, née en janvier 1921,
+#: a cinquante-cinq ans en janvier 1976.
+MORT_EN_1972 = {"naissance": "1913", "liquidation": "65", "conjoint": "1921",
+                "deces": "1972-02"}
+
+#: Les revalorisations des pensions de vieillesse du 1er avril 1972 au
+#: 1er janvier 1976 (arrêtés du 14 mars 1972 au 4 juillet 1975, décret
+#: n° 73-1212) : ce qui sépare les montants du décès de ceux de la réversion.
+REVALORISATIONS_1972_1976 = (1.115, 1.109, 1.082, 1.067, 1.063, 1.096, 1.083)
+
+
+def test_la_pension_eue_prend_les_regles_de_la_date_d_effet_de_la_reversion(saisies):
+    """« Dans le cas où l'assuré n'était pas titulaire d'une pension de vieillesse
+    ou d'une rente à la date de son décès, il est fait application, pour
+    déterminer le montant de la pension principale servant de base au calcul de
+    la pension de réversion des dispositions en vigueur à la date d'effet de
+    cette dernière pension » (décret n° 45-0179, article 81 b, version du
+    30 décembre 1973 ; R. 353-3, version du 21 décembre 1985). Mort en 1972, le
+    défunt voit sa pension liquidée au 1er février 1976, date d'effet de la
+    réversion de sa veuve, sur sa carrière arrêtée au décès — les mêmes
+    trimestres —, au taux de l'inaptitude, sans que l'âge plus élevé ne joue ;
+    la réversion la lit aux montants de 1972, que les revalorisations
+    publiées séparent de ceux de 1976. Les règles de 1976 prennent les dix
+    meilleures années du salaire annuel moyen (décret n° 72-1229), celles de
+    1972 les dix dernières : la pension principale du régime général n'est plus
+    celle du décès."""
+    from outils_sorties import sortie_figee
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    sortie = saisies.simuler(MORT_EN_1972).dictionnaire()["reversion"]
+    assert (sortie["avant_le_depart"], sortie["annee"]) == (True, 1972)
+    general = next(l for l in sortie["regimes"] if l["regime"] == "regime_general")
+    assert general["date_effet"] == "1976-02-01"
+    figee, = sortie_figee("comparer-liquidation.mjs", [MORT_EN_1972])
+    liquidations = {l["ouverture"]["date_effet"]: l for l in figee["liquidations"]}
+    au_deces, aux_regles = liquidations["1972-01-01"], liquidations["1976-02-01"]
+    assert {e["id"] for e in figee["journal"]} >= {
+        "liquidation_deces_assure", "liquidation_regles_deces_assure"}
+    assert aux_regles["ouverture"]["trimestres_cotises"] == au_deces["ouverture"][
+        "trimestres_cotises"]
+    assert aux_regles["pensions"]["taux"] == 0.5
+
+    def pension(liquidee, regime):
+        return next(p["montant"] for p in liquidee["pensions"]["regimes"]
+                    if p["regime"] == regime)
+
+    coefficient = 1.0
+    for revalorisation in REVALORISATIONS_1972_1976:
+        coefficient *= revalorisation
+    assert general["base"] == pytest.approx(pension(aux_regles, "regime_general") / coefficient)
+    assert general["base"] > 1.15 * pension(au_deces, "regime_general")
+    # Les complémentaires, que le texte ne vise pas, gardent la pension du décès.
+    arrco = next(l for l in sortie["regimes"] if l["regime"] == "arrco")
+    assert arrco["base"] == pytest.approx(pension(au_deces, "arrco"))
+
+
+def test_avant_1974_la_pension_eue_reste_celle_du_deces(saisies):
+    """Le texte de 1973 ne vaut que pour les réversions qui prennent effet à
+    partir du 1er janvier 1974 : celle qui part en 1973, sous les règles du
+    décès de 1972, garde la pension que le défunt eût obtenue à son décès. Sa
+    veuve, née en janvier 1917, a cinquante-cinq ans en janvier 1972, l'âge que
+    la réversion requiert depuis le 1er janvier 1973."""
+    requete = {**MORT_EN_1972, "conjoint": "1917"}
+    sortie = saisies.simuler(requete).dictionnaire()["reversion"]
+    general = next(l for l in sortie["regimes"] if l["regime"] == "regime_general")
+    assert general["date_effet"] < "1974-01-01"
+    fictive = _fictive(requete)
+    assert general["base"] == pytest.approx(next(
+        p["montant"] for p in fictive["pensions"]["regimes"]
+        if p["regime"] == "regime_general"))
+
+
 def test_la_page_dit_la_reversion_d_un_assure_mort_avant_son_depart():
     """La carte dit le décès avant le départ, et que la réversion se calcule
     sur la pension que l'assuré aurait obtenue à son décès, sans décote."""
