@@ -94,9 +94,12 @@ def test_le_jargon_du_relecteur_porte_sa_definition():
     assert {"trimestres", "décote", "surcote", "taux plein", "répartition",
             "25 meilleures années"} <= termes(accueil)
     cout = rendre("/cout", {})[1]
-    assert {"répartition", "part du PIB", "comptes notionnels",
-            "taux de remplacement"} <= termes(cout)
-    assert "réglage annuel" in termes(rendre("/cas-types", {})[1])
+    # Coût s'ouvre sans « répartition » ni « comptes notionnels » depuis le 16
+    # novembre 2026 (action 189, étape 2) ; Cas types dit son réglage annuel
+    # dans la bulle « Et le niveau général ? », en toutes lettres.
+    assert {"part du PIB", "taux de remplacement"} <= termes(cout)
+    cas_types = rendre("/cas-types", {})[1]
+    assert "réglage annuel" in cas_types[cas_types.index("Et le niveau général ?"):]
 
 # L'âge de référence ne se règle plus, et sa note n'existe plus : la
 # conversion des droits acquis était propre aux deux variantes « dès la
@@ -403,12 +406,12 @@ def test_la_cle_de_lecture_des_cas_types_precede_les_chiffres():
     démentir, un clic plus loin, ce que l'accueil affirme.
     """
     corps = rendre("/cas-types", {})[1]
-    cle = corps.index("Ces pourcentages se lisent contre une")
+    cle = corps.index("Ces pourcentages comparent deux promesses")
     assert cle < corps.index('<div class="fiches reperes">')
     assert cle < corps.index('<div class="panneaux">')
     assert "Pour la proposition, ce facteur est " in corps
     assert 'data-vers="cout-equilibre"' in corps
-    assert "Ces pourcentages se lisent contre une" in _hors_depliants(corps)
+    assert "Ces pourcentages comparent deux promesses" in _hors_depliants(corps)
     assert "ne sont pas des baisses" not in corps
 
 
@@ -545,11 +548,14 @@ def test_la_phrase_du_reglage_tient_quel_que_soit_le_signe():
     # La page telle qu'elle est, sa branche remplacée par la plus longue.
     affichee = pages._lecture_reglage_proposition(
         pages._reglage_proposition(site().contexte.cout().solde))
-    visible = _hors_depliants(rendre("/cas-types", {})[1])
-    assert affichee in visible
+    # Depuis le 16 novembre 2026, elle est dans la bulle « Et le niveau
+    # général ? » (action 189, étape 2) : sa longueur ne pèse plus sur le
+    # budget de la page.
+    corps = rendre("/cas-types", {})[1]
+    visible = _hors_depliants(corps)
+    assert affichee in corps and affichee not in visible
     prose = _mots(re.sub(r"<table\b.*?</table>", " ", visible, flags=re.S))
-    plus_longue = max(_mots(phrase) for phrase in phrases.values())
-    assert prose - _mots(affichee) + plus_longue <= BUDGETS_DE_LECTURE["/cas-types"][0]
+    assert prose <= BUDGETS_DE_LECTURE["/cas-types"][0]
 
 
 def test_le_README_donne_le_solde_que_la_page_cout_calcule(contexte):
@@ -674,7 +680,7 @@ def test_les_pages_techniques_s_ouvrent_en_langage_courant():
     Données — et elles se lisent sans rien déplier."""
     for chemin, phrase in (
         ("/cout", "ont coûté un peu plus qu&#x27;elles n&#x27;ont rapporté"),
-        ("/methode", "Votre pension serait votre\ncompte divisé par le nombre d&#x27;années"),
+        ("/methode", "Votre pension sera votre\ncompte divisé par le nombre d&#x27;années"),
     ):
         corps = rendre(chemin, {})[1]
         resume = re.search(r'<div class="note resume"><strong>En clair\.</strong>(.*?)</div>',
@@ -836,6 +842,117 @@ def test_l_accueil_dit_son_principe_puis_six_arguments_sans_jargon():
     assert "chaque pension vaut ce qui a été cotisé" in description
     for jargon in ("notionnel", "18 %", "répartition", "scénario", "actuariel"):
         assert jargon not in description, jargon
+
+
+#: Ce que chaque page autre que l'accueil et Partager dit d'abord, mot pour
+#: mot, tel que le propriétaire l'a approuvé le 16 novembre 2026 (action 189,
+#: étape 2) : le titre, le chapeau, puis la note « En clair » quand la page en
+#: a une. Les chiffres en sont retirés (``…``) : ils restent calculés.
+CHAPEAUX_DES_PAGES = {
+    "/simuler": ("Votre retraite, calculée en quelques secondes.",
+                 "Ce que les règles d'aujourd'hui vous donnent, et ce que notre "
+                 "compte vous donnerait. Le calcul se fait sur votre appareil : "
+                 "rien n'est envoyé.", None),
+    "/cas-types": ("Treize carrières, sept générations.",
+                   "Pour chaque métier et chaque année de naissance, la pension "
+                   "avec notre proposition, comparée à celle d'aujourd'hui. "
+                   "Rouge : moins. Vert : plus.", None),
+    "/cout": ("Ce qui rentre, ce qui sort, ce qui manque.",
+              "Vos cotisations ne sont pas mises de côté : elles paient tout de "
+              "suite les pensions des retraités d'aujourd'hui.",
+              "En clair. En …, les retraites ont coûté un peu plus qu'elles "
+              "n'ont rapporté. L'argent vient surtout des cotisations, et de "
+              "plus en plus de l'impôt. Sans rien changer, il manquerait … de "
+              "la facture en …. Notre compte ne dépenserait pas moins : il "
+              "verserait le même argent, partagé autrement, et s'ajusterait "
+              "chaque année au lieu d'attendre une réforme."),
+    "/risque": ("Ce que la retraite vous prend, et ce qu'elle ne rendra pas.",
+                "… par mois prélevés sur un salaire moyen, pour une promesse "
+                "que la loi révise à la baisse depuis trente ans.",
+                "En clair. La retraite ne met rien de côté : votre pension "
+                "dépendra des cotisations de vos enfants, et ils seront moins "
+                "nombreux. Le système ne cessera pas de payer : il paiera "
+                "moins, comme il le fait depuis trente ans sans le dire, en "
+                "augmentant les pensions moins vite que les salaires."),
+    "/avantages": ("Ce que la retraite verse sans que personne l'ait cotisé.",
+                   "Un compte à votre nom ne verse que ce qui a été cotisé. Le "
+                   "système actuel verse bien davantage, sous des noms connus : "
+                   "minimum contributif, trimestres gratuits, départ anticipé, "
+                   "réversion.",
+                   "En clair. Le système actuel compte … dispositifs qui "
+                   "ajoutent à une pension sans qu'aucune cotisation les ait "
+                   "payés. En …, il n'y en avait qu'un. Nous en chiffrons …, "
+                   "réversion comprise, et à part les pensions versées avant "
+                   "l'âge légal. Ces montants sont des minimums : le coût réel "
+                   "est plus élevé."),
+    "/methode": ("Comment c'est calculé, en trois opérations.",
+                 "Ce compte n'est pas une épargne : les cotisations de l'année "
+                 "paient les pensions de l'année. Ce qui change, c'est la façon "
+                 "de calculer votre pension.",
+                 "En clair. Votre pension sera votre compte divisé par le nombre "
+                 "d'années qu'il vous reste à vivre, en moyenne. Chaque euro "
+                 "cotisé compte, et rien d'autre : ni trimestres, ni majoration. "
+                 "Chaque année, le compte grossit comme l'ensemble des "
+                 "salaires : le pays peut le tenir sans promettre plus qu'il "
+                 "n'a."),
+    "/saviez-vous": ("Douze règles du système actuel, textes à l'appui.",
+                     "Chaque carte cite la loi qui la fonde, telle qu'elle "
+                     "s'applique au 4 octobre 2026. Un bouton suffit pour la "
+                     "partager.", None),
+}
+
+#: Les mots de spécialiste que le premier écran d'une page ne porte plus.
+JARGON = ("notionnel", "répartition", "scénario", "contrefactuel", "actuariel",
+          "solde")
+
+
+@pytest.mark.parametrize("route", sorted(CHAPEAUX_DES_PAGES))
+def test_chaque_page_s_ouvre_pour_l_electeur(route):
+    """« On est trop technique, trop long, trop nerd » : le propriétaire, le 9
+    novembre 2026. L'accueil récrit, il approuve le 16 novembre le texte des
+    sept autres pages, Partager mise à part (action 189, étape 2) : le titre,
+    le chapeau et la note « En clair » de chacune, dans leurs mots, et sans un
+    mot de spécialiste, pas plus que la description que lisent les moteurs de
+    recherche. Les chiffres, eux, restent calculés."""
+    titre, chapeau, en_clair = CHAPEAUX_DES_PAGES[route]
+    corps = rendre(route, {})[1]
+    affiche = re.search(r'<div class="affiche">(.*?)</div>', corps, re.S).group(1)
+    sans_chiffres = lambda texte: re.sub(r"\d+(?:[  ]\d{3})*(?:,\d+)?(?:[  ]?(?:%|€))?", "…", texte)
+    assert _en_clair(re.search(r"<h1>(.*?)</h1>", affiche, re.S).group(1)) == titre
+    lu = _en_clair(re.search(r'<p class="chapeau">(.*?)</p>', affiche, re.S).group(1))
+    assert (lu if route == "/saviez-vous" else sans_chiffres(lu)) == chapeau
+    premier_ecran = affiche
+    if en_clair is not None:
+        note = re.search(r'<div class="note resume">(.*?)</div>', corps, re.S).group(1)
+        assert sans_chiffres(_en_clair(note)) == en_clair
+        premier_ecran += note
+    if route == "/simuler":
+        premier_ecran += corps[:corps.index("</h2>")]
+    for jargon in JARGON:
+        assert jargon not in _en_clair(premier_ecran).lower(), jargon
+    description = module("pages").DESCRIPTIONS[route].lower()
+    for jargon in JARGON:
+        assert jargon not in description, (route, jargon)
+
+
+def test_les_trois_gestes_de_la_methode_sont_ceux_de_l_accueil():
+    """La page Méthode dit les deux derniers gestes du calcul dans les mots de
+    l'accueil, sans formule ni « solde » (action 189, étape 2)."""
+    corps = rendre("/methode", {})[1]
+    texte = _en_clair(corps)
+    assert "Chaque année, le compte grossit au rythme des salaires du pays." in texte
+    assert ("Au départ, le compte est divisé par les années qu'il reste à vivre, "
+            "en moyenne, aux gens de votre génération. C'est votre pension.") in texte
+    assert "espérance de vie restante" not in texte
+
+
+def test_la_note_du_saviez_vous_dit_les_memes_droits_pour_tous():
+    """« Les mêmes règles pour tous » ne vaut pas tant que la complémentaire du
+    privé garde les siennes (décision 48) : la note dit, comme l'accueil,
+    « 1 € cotisé, les mêmes droits pour tous » (action 189, étape 2)."""
+    texte = _en_clair(rendre("/saviez-vous", {})[1])
+    assert "1 € cotisé, les mêmes droits pour tous." in texte
+    assert "mêmes règles pour tous" not in texte
 
 
 def test_le_formulaire_dit_que_l_exemple_est_rempli(page):

@@ -4213,7 +4213,9 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # Serrée le 24 octobre 2026 (action 173, étape 7), de 700 mots à 640 : le
     # chapeau de l'affiche redisait les « textes à l'appui » de son titre, et
     # celui de la réversion énumérait ce que ses trois cartes disent.
-    "/saviez-vous": (640, 0, 0, 0),
+    # Desserrée de 5 mots le 16 novembre 2026 (action 189, étape 2) : la note
+    # finale dit « 1 € cotisé, les mêmes droits pour tous », comme l'accueil.
+    "/saviez-vous": (645, 0, 0, 0),
     # Cas types et Données ont gagné, à la revue de septembre 2026, ce qu'un
     # lecteur doit lire AVANT les chiffres : la clé de lecture des grilles et
     # la trajectoire du système actuel pour l'une, le résumé en langage

@@ -332,8 +332,8 @@ tête, dans cet ordre :
 | | |
 |---|---|
 | Prélevé chaque mois sur un salaire moyen | <!--chiffre:mesure(repere?chemin=/risque&rang=1)-->967<!--/--> €, cotisation salariale et patronale réunies |
-| Promis au-delà de ce que VOS cotisations achèteraient | <!--chiffre:mesure(repere?chemin=/risque&rang=2)-->33<!--/--> % de VOTRE pension, à la charge de quelqu'un d'autre |
-| Que les recettes du SYSTÈME ne couvriront pas en <!--chiffre:mesure(repere?chemin=/risque&rang=3&quoi=etiquette)-->2070<!--/--> | <!--chiffre:mesure(repere?chemin=/risque&rang=3)-->16<!--/--> % des pensions dues cette année-là |
+| De votre pension promise, que vos cotisations ne paient pas | <!--chiffre:mesure(repere?chemin=/risque&rang=2)-->33<!--/--> %, à la charge de quelqu'un d'autre |
+| Des pensions de <!--chiffre:mesure(repere?chemin=/risque&rang=3&quoi=etiquette)-->2070<!--/-->, sans recettes pour les payer | <!--chiffre:mesure(repere?chemin=/risque&rang=3)-->16<!--/--> % |
 
 Le <!--chiffre:mesure(repere?chemin=/risque&rang=1)-->967<!--/--> € est le chiffre qui porte : c'est le premier poste de la fiche de
 paie, avant l'impôt sur le revenu et avant la maladie, et plus de quatre cent

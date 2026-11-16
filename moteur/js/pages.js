@@ -264,24 +264,20 @@ export const DESCRIPTIONS = {
     + "pension vaut ce qui a été cotisé, sur un compte à votre nom, en euros, "
     + "avec un plancher pour chacun dès 65 ans — et le simulateur qui le "
     + "chiffre, carrière par carrière.",
-  "/simuler": "Votre carrière calculée de quatre façons : le système actuel, et "
-    + "les comptes notionnels appliqués depuis 1941 ou à partir de la "
-    + "bascule. Tout se calcule dans votre navigateur, rien n'est envoyé.",
-  "/cas-types": "Treize carrières types sur sept générations : ce que chaque "
-    + "pension deviendrait, par rapport à aujourd'hui, sous la "
-    + "proposition et sous quatre contrefactuels.",
-  "/cout": "Ce que la retraite coûte, d'où vient l'argent, et ce qui manque, "
-    + "de 1959 à 2070 — et ce que chacun des quatre systèmes coûterait.",
-  "/risque": "Votre retraite sera-t-elle payée ? Ce que la recherche "
-    + "universitaire sait du risque de défaut d'une retraite par "
-    + "répartition, et ce que les comptes du COR en disent pour la "
-    + "France.",
-  "/avantages": "Tous les avantages non contributifs du système actuel : "
-    + "lesquels, depuis quand, et ce que le modèle sait en chiffrer.",
-  "/methode": "Comment une pension en comptes notionnels se calcule, en trois "
-    + "opérations, pourquoi la règle de revalorisation décide de "
-    + "presque tout, et d'où viennent les chiffres du site, série par "
-    + "série et régime par régime.",
+  "/simuler": "Votre retraite selon les règles d'aujourd'hui, et selon notre "
+    + "proposition. Le calcul se fait dans votre navigateur : rien n'est "
+    + "envoyé.",
+  "/cas-types": "Treize métiers, sept générations : ce que chaque pension "
+    + "deviendrait avec notre proposition, comparée à celle d'aujourd'hui.",
+  "/cout": "Ce que la retraite coûte, qui la paie et ce qui manque, de 1959 à "
+    + "2070, aujourd'hui et avec notre proposition.",
+  "/risque": "Votre retraite sera-t-elle payée ? Ce que la recherche sait d'un "
+    + "système qui ne met rien de côté, et ce que les comptes du COR en "
+    + "disent pour la France.",
+  "/avantages": "Ce que la retraite verse sans que personne l'ait cotisé : "
+    + "quels droits, depuis quand, et combien ils coûtent.",
+  "/methode": "Comment votre pension se calcule avec notre compte, en trois "
+    + "opérations, et d'où viennent les chiffres du site.",
   "/partager": "Les chiffres du programme au format des réseaux sociaux, "
     + `1200 × 675, en filigrane ${g.SIGNATURE} : le plancher, le taux, `
     + "le déficit, la SNCF et la RATP, les factures d'énergie, et l'appel au "
@@ -655,10 +651,9 @@ function messageErreur(message) {
 function bulleDuTitre(saisie) {
   return g.bulle(
     "Ce que ce formulaire calcule",
-    "Votre carrière, calculée de quatre façons : le système actuel, et les "
-    + `<a href="${g.lien("/")}">comptes notionnels</a> — appliqués depuis 1941, `
-    + `ou à partir de ${saisie.bascule}. Tout se calcule dans votre navigateur : `
-    + "rien n'est envoyé nulle part.",
+    "Votre carrière, calculée de quatre façons : les règles d'aujourd'hui, "
+    + `<a href="${g.lien("/")}">notre compte</a> depuis 1941 ou à partir de `
+    + `${saisie.bascule}, et notre proposition entière. Rien n'est envoyé.`,
   );
 }
 
@@ -1069,11 +1064,11 @@ export function formulaire(saisie, contexte, comparaison = null) {
 
   const tete = g.affiche(
     "Le simulateur",
-    "Votre carrière, calculée "
-    + '<span class="cle-texte">quatre fois.</span>',
-    "Le système actuel, les comptes notionnels appliqués depuis 1941 ou à "
-    + "partir de la bascule, et notre proposition. Tout se calcule et se "
-    + "garde dans votre navigateur : rien n'en sort.",
+    "Votre retraite, calculée "
+    + '<span class="cle-texte">en quelques secondes.</span>',
+    "Ce que les règles d'aujourd'hui vous donnent, et ce que notre compte "
+    + "vous donnerait. Le calcul se fait sur votre appareil : rien n'est "
+    + "envoyé.",
   );
   // Le formulaire porte TOUT ce dont il dépend, et pas seulement ce qu'il
   // montre : la situation et ce qu'on saisit décident des champs affichés, et
@@ -3528,8 +3523,8 @@ function saviezVous() {
     "Le saviez-vous ?",
     "Douze règles du système actuel, "
     + '<span class="cle-texte">textes à l\'appui.</span>',
-    "Textes lus dans leur version en vigueur le 4 octobre 2026 ; chaque carte "
-    + "se partage d'un bouton.",
+    "Chaque carte cite la loi qui la fonde, telle qu'elle s'applique au 4 "
+    + "octobre 2026. Un bouton suffit pour la partager.",
   );
 
   return `
@@ -3538,7 +3533,8 @@ ${tete}
 ${sections}
 
 <div class="note"><strong>Notre proposition.</strong> Un compte à votre nom,
-en euros, où chaque cotisation est inscrite, avec les mêmes règles pour tous.
+en euros, où chaque cotisation est inscrite : 1 € cotisé, les mêmes droits
+pour tous.
 Pas de trimestres, pas de barèmes, pas de surprise.
 <a href="${g.lien("/")}">Le programme</a> le détaille, et
 <a href="${g.lien("/simuler")}">le simulateur</a> l'applique à votre
@@ -9093,31 +9089,30 @@ salarié du privé.</p>`);
   const tete = g.affiche(
     "Carrières types",
     'Treize carrières, <span class="cle-texte">sept générations.</span>',
-    "Chaque case dit ce que la pension deviendrait, par rapport à "
-    + "aujourd'hui, pour la même carrière. <strong>Rouge : moins "
-    + "qu'aujourd'hui. Vert : plus.</strong>",
+    "Pour chaque métier et chaque année de naissance, la pension avec "
+    + "notre proposition, comparée à celle d'aujourd'hui. <strong>Rouge : "
+    + "moins. Vert : plus.</strong>",
   );
 
   return `
 ${tete}
 
-<div class="note"><strong>Ces pourcentages se lisent contre une
-promesse</strong>, celle que le système actuel fait à la même carrière. Ce que
-la grille mesure le plus sûrement est l'écart entre ses lignes : ce qu'un
-militaire touche de plus ou de moins qu'un artisan, à cotisation égale. Le
-niveau général dépend aussi d'un
-${g.terme("réglage annuel", "coefficient d'équilibre")} que le modèle
-calcule mais n'applique jamais — et <strong>chaque système a le sien</strong>.\
-${g.bulle("Ce qu'un coefficient appliqué déplacerait", `Un facteur commun laisserait ces cases inchangées, une case
+<div class="note"><strong>Ces pourcentages comparent deux promesses</strong>,
+pour la même carrière. Le plus sûr est l'écart entre les lignes : à cotisation
+égale, ce qu'un militaire touche de plus ou de moins qu'un artisan.\
+${g.bulle("Et le niveau général ?", `Il dépend aussi d'un réglage annuel : le
+facteur commun qui, chaque année, ramènerait toutes les pensions à ce que les
+cotisations permettent de payer. Le modèle le calcule mais ne l'applique
+jamais, et chaque système a le sien. Un facteur commun laisserait ces cases inchangées, une case
 étant déjà un rapport de deux pensions. Mais il y a quatre coefficients, un par
 système : les ramener chacun à SON équilibre déplacerait les écarts, de ${g.nombre(deplacement * 100, 0)}
 points en médiane sur les ${cases} cases de cette grille, et bien plus sur les
 générations déjà liquidées, où la proposition encaisse plusieurs fois ce
 qu'elle verse. Le simulateur montre, carrière par carrière, ce que les recettes
-de chaque système paient de la pension qu'il promet.`)}
+de chaque système paient de la pension qu'il promet.
 ${lectureReglageProposition(reglage)}
 <a href="${g.lien("/cout", "cout-equilibre")}" data-vers="cout-equilibre">La page Coût le
-chiffre</a>.</div>
+chiffre</a>.`)}</div>
 
 <div class="fiches reperes">${reperes}</div>
 
@@ -9509,21 +9504,19 @@ plus large que les cartes).
     "Le coût",
     'Ce qui rentre, ce qui sort, '
     + '<span class="cle-texte">ce qui manque.</span>',
-    "Vos cotisations ne sont pas mises de côté. Elles paient aussitôt les "
-    + "pensions de ceux qui sont déjà retraités : c'est la "
-    + g.terme("répartition") + ".",
+    "Vos cotisations ne sont pas mises de côté : elles paient tout de suite "
+    + "les pensions des retraités d'aujourd'hui.",
   );
 
   return `
 ${tete}
 
 <div class="note resume"><strong>En clair.</strong> En ${obs}, les retraites
-ont coûté un peu plus qu'elles n'ont rapporté. L'argent vient des cotisations
-pour l'essentiel, et de plus en plus
-de l'impôt. Sans rien changer, il manquerait en ${solde.derniereAnnee}
+ont coûté un peu plus qu'elles n'ont rapporté. L'argent vient surtout des
+cotisations, et de plus en plus de l'impôt. Sans rien changer, il manquerait
 ${g.pourcentage(Math.abs(horizon.solde("actuel") / horizon.depense("actuel")), false, 0)}
-de la facture. Un système en comptes notionnels ne dépenserait pas moins : il
-servirait le même argent, réparti autrement, et se réglerait chaque année au
+de la facture en ${solde.derniereAnnee}. Notre compte ne dépenserait pas moins :
+il verserait le même argent, partagé autrement, et s'ajusterait chaque année au
 lieu d'attendre une réforme.</div>
 
 <div class="fiches reperes">${reperes}</div>
@@ -9536,8 +9529,8 @@ ${carteProvenance}
 
 ${carteFlux}
 ${nonCotise}
-<div class="note"><strong>Dépenser moins n'est pas économiser.</strong> Un
-système en ${g.terme("comptes notionnels", "compte notionnel")} ne laisse pas d'argent
+<div class="note"><strong>Dépenser moins n'est pas économiser.</strong> Notre
+compte ne laisse pas d'argent
 dormir : il remonte les pensions jusqu'à l'équilibre. La courbe en pointillés
 ne dit donc pas « on dépenserait moins ». Elle dit : <em>avec le même argent,
 on servirait autant, mais réparti autrement entre les carrières</em>.</div>
@@ -10007,8 +10000,8 @@ le droit de l'époque disait à l'heure.`,
     "Les droits non cotisés",
     'Ce que la retraite verse <span class="cle-texte">sans que personne '
     + "l'ait cotisé.</span>",
-    "Un compte notionnel ne sert que ce qui a été versé. Le système actuel "
-    + "sert bien davantage, et ce qui les sépare porte des noms : minimum "
+    "Un compte à votre nom ne verse que ce qui a été cotisé. Le système "
+    + "actuel verse bien davantage, sous des noms connus : minimum "
     + "contributif, trimestres gratuits, départ anticipé, réversion.",
   );
 
@@ -10017,10 +10010,9 @@ ${tete}
 
 <div class="note resume"><strong>En clair.</strong> Le système actuel compte
 ${enVigueur} dispositifs qui ajoutent à une pension sans qu'aucune cotisation
-les ait payés, contre un seul en ${premiereFrise}. Le modèle en chiffre
-${chiffres}, dont la réversion, lue et non calculée. Il mesure à part les
-pensions servies avant l'âge légal, que nulle décote ne rattrape. Les deux sont
-des planchers, et cette page dit de combien.</div>
+les ait payés. En ${premiereFrise}, il n'y en avait qu'un. Nous en chiffrons
+${chiffres}, réversion comprise, et à part les pensions versées avant l'âge
+légal. Ces montants sont des minimums : le coût réel est plus élevé.</div>
 
 <div class="fiches reperes">${reperes}</div>
 
@@ -14437,13 +14429,12 @@ function risque(contexte) {
     g.euros(verseMensuel),
     "cotisation salariale et patronale réunies",
   ) + g.fiche(
-    "Promis au-delà de ce que VOS cotisations achèteraient",
+    "De votre pension promise, que vos cotisations ne paient pas",
     g.pourcentage(partPromise, false, 0),
-    "de VOTRE pension, à la charge de quelqu'un d'autre",
+    "à la charge de quelqu'un d'autre",
   ) + g.fiche(
-    `Que les recettes du SYSTÈME ne couvriront pas en ${fin}`,
+    `Des pensions de ${fin}, sans recettes pour les payer`,
     g.pourcentage(partHorizon, false, 0),
-    "des pensions dues cette année-là",
   );
 
   const cartePrelevement = g.cle(
@@ -14505,19 +14496,16 @@ simulateur</a>.`,
 ${tete}
 
 <div class="note resume"><strong>En clair.</strong> La retraite ne met rien de
-côté : elle verse aussitôt ce qu'elle encaisse, et votre pension attendra les
-cotisations de vos enfants. Or ils seront moins nombreux, et ce qu'on vous
-promet dépasse déjà ce que vos cotisations financent. Le système ne cessera
-pas de payer : il paiera moins, comme depuis trente ans sans le dire, en
-revalorisant les pensions moins vite que les salaires.</div>
+côté : votre pension dépendra des cotisations de vos enfants, et ils seront
+moins nombreux. Le système ne cessera pas de payer : il paiera moins, comme il
+le fait depuis trente ans sans le dire, en augmentant les pensions moins vite
+que les salaires.</div>
 
 <div class="fiches reperes">${reperes}</div>
 
-<p class="discret"><strong>Ces deux pourcentages ne s'additionnent
-pas.</strong> Les ${g.pourcentage(partPromise, false, 0)} comparent une
-pension aux cotisations de cet assuré ; les
-${g.pourcentage(partHorizon, false, 0)}, les dépenses du système à ses
-recettes.${g.bulle("Pourquoi ces deux parts diffèrent", `La première est une question de justice : ce que cet assuré
+<p class="discret"><strong>Les deux ne s'additionnent pas</strong> :
+${g.pourcentage(partPromise, false, 0)} regarde votre pension,
+${g.pourcentage(partHorizon, false, 0)} tout le système.${g.bulle("Pourquoi ces deux parts diffèrent", `La première est une question de justice : ce que cet assuré
 reçoit au-delà de ce que ses propres cotisations achèteraient. La seconde est
 une question de solvabilité : ce que le système doit verser au-delà de ce
 qu'il encaisse, une année donnée. La première est la plus grosse parce qu'elle
@@ -15117,10 +15105,10 @@ function methode(contexte) {
       "Chaque cotisation retraite réellement versée, au premier euro et sans "
       + "plafond."],
     ["2. On revalorise",
-      "Chaque année, le solde croît du taux que fixe la règle collective."],
+      "Chaque année, le compte grossit au rythme des salaires du pays."],
     ["3. On divise",
-      "Au départ, <code>pension = solde ÷ espérance de vie restante</code>, "
-      + "lue sur la table de votre génération."],
+      "Au départ, le compte est divisé par les années qu'il reste à vivre, en "
+      + "moyenne, aux gens de votre génération. C'est votre pension."],
   ]);
 
   const tableauIndexation = g.tableau(
@@ -15149,21 +15137,19 @@ un clic, dans ses options.`,
     "Méthode et sources",
     "Comment c'est calculé, "
     + '<span class="cle-texte">en trois opérations.</span>',
-    "Un compte notionnel est un compte <em>virtuel</em> : rien n'est "
-    + "placé, les cotisations de l'année paient les pensions de l'année. "
-    + "Ce qui change, c'est le calcul du droit.",
+    "Ce compte n'est pas une épargne : les cotisations de l'année paient "
+    + "les pensions de l'année. Ce qui change, c'est la façon de calculer "
+    + "votre pension.",
   );
 
   return `
 ${tete}
 
-<div class="note resume"><strong>En clair.</strong> Votre pension serait votre
+<div class="note resume"><strong>En clair.</strong> Votre pension sera votre
 compte divisé par le nombre d'années qu'il vous reste à vivre, en moyenne.
-Chaque euro cotisé compte, et rien d'autre : ni trimestres, ni minimum, ni
-majoration. Le compte grossit chaque année comme la masse des salaires, ce que
-la répartition peut promettre sans mentir. Le système actuel, lui, est
-recalculé règle par règle sur la même carrière, pour servir de point de
-comparaison.</div>
+Chaque euro cotisé compte, et rien d'autre : ni trimestres, ni majoration.
+Chaque année, le compte grossit comme l'ensemble des salaires : le pays peut le
+tenir sans promettre plus qu'il n'a.</div>
 
 ${calcul}
 

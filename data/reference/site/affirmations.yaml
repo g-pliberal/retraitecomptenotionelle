@@ -977,7 +977,7 @@ affirmations:
 
   - id: cas_types.rouge_vert
     page: /cas-types
-    extrait: "Rouge : moins qu'aujourd'hui. Vert : plus."
+    extrait: "Rouge : moins. Vert : plus."
     porte: la teinte d'une case suit le signe de l'écart
     etat: verifiee
     controle: legende_rouge_vert
@@ -988,7 +988,7 @@ affirmations:
   # plus loin. Elle dit contre quoi les cases se lisent.
   - id: cas_types.contre_une_promesse
     page: /cas-types
-    extrait: "Ces pourcentages se lisent contre une promesse"
+    extrait: "Ces pourcentages comparent deux promesses"
     porte: >-
       chaque case rapporte ce qu'un système servirait à la pension que la règle
       du système actuel promet à la même carrière, sans coefficient
@@ -2250,7 +2250,7 @@ affirmations:
   # entrée au catalogue avec eux, le 20 septembre 2026.
   - id: risque.deux_parts_ne_s_additionnent_pas
     page: /risque
-    extrait: "Ces deux pourcentages ne s'additionnent pas."
+    extrait: "Les deux ne s'additionnent pas"
     porte: la part non financée d'une pension et le solde annuel du système sont deux grandeurs distinctes, qui ne se somment pas
     etat: verifiee
     controle: deux_parts_non_financees_distinctes
