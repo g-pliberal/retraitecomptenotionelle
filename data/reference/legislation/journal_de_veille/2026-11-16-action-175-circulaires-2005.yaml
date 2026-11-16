@@ -1,0 +1,32 @@
+date: "2026-11-16"
+session: "action 175, étape 6 : les 66 circulaires, lettres et instructions de 2005 que la base de la Cnav cite sans thème"
+consulte: >-
+  Les 66 références sans thème et à lire de 2005 dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », relues par l'API de la base le 16 novembre 2026 à 11 h 34 UTC
+  (/reference/referencesByFileLeafRef/), toutes servies, 54 en page et 12 en PDF lus au
+  site (/Pdf/), l'un scanné et lu à l'image ; toutes lues en entier, par quatre agents de
+  la session, un lot chacun, dont chaque citation d'un texte servi a été retrouvée mot pour
+  mot. Pour les confronter : les fiches retrep_avantages_temporaires,
+  cumul_emploi_retraite_et_retraite_progressive, retraite_progressive,
+  cotisation_maladie_des_non_residents, priorite_majorations_enfants,
+  csg_des_pensions_selon_le_revenu, reversion, inaptitude_au_travail, minimum_contributif ;
+  les séries legislation/duree_proratisation.csv, carriere_longue.csv,
+  validation_trimestres.csv, revalorisation_pensions.csv, csg_pensions_seuils.csv,
+  macro/smic_horaire_releves.csv, macro/plafond_securite_sociale.csv ; la limite
+  docs/limites/3-systeme-actuel.md. Ni Légifrance, ni le Journal officiel, ni l'index de
+  la DILA.
+trouve: >-
+  Le registre range les 66 (32 limite, 34 hors_modele), sans raison neuve. Conformes : le
+  SMIC de juillet 2005, le trimestre de 2006, le plafond de 2005, la CSG et ses seuils de
+  2006, la revalorisation de 2006, le minimum contributif, le minimum et le plafond de la
+  réversion, la carrière longue à 56 ans, la cotisation maladie des non-résidents. Un
+  écart neuf, à trancher : la lettre ministérielle du 4 avril 2005 garde une durée de
+  proratisation de 150 trimestres aux maîtres du privé dont l'avantage temporaire a pris
+  effet avant 2004, que ni le modèle ni la fiche retrep_avantages_temporaires ne disent.
+  Aucun texte ne dit la fin de la suspension de la réversion de 2004 ; la n° 2005/54
+  applique les plafonds de la réforme en décembre 2005. Note
+  docs/feuille_de_route/175/2026-11-16-etape-6-circulaires-2005.md.
+reste: >-
+  Les 679 circulaires de 2006 à 2026, par période ; les autres natures de l'étape 6 ; les
+  décrets de la réversion de 2004, à relire au Journal officiel.
