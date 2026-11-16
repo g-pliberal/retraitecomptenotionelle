@@ -7329,17 +7329,17 @@ de `contribution_etat`.
 
 **Reprise, au 16 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
-Aucun fichier de tests n'exécute plus une règle Python, hors `test_facade.py`
-et `test_facade_jumeau.py`, qui partent avec lui. Une sonde
-(`scripts/sonde_moteur_python.py`) dit ce que chaque script exécute du moteur.
-Un simulateur de données seules (`donnees/simulateur.py`) sert le coût, la
-façade des tests, vingt-six scripts et le contexte de la fabrique : plus
-rien hors des tests de la façade ne bâtit le simulateur Python
-(`2026-11-16-la-fabrique-sur-le-simulateur-de-donnees.md`). La fabrique
-n'exécute plus que des chargeurs logés dans les fichiers du droit.
-Une étape par session. Par quoi commencer : l'inventaire de ce que
-retirerait la suppression des règles Python, sans rien supprimer.
-Le retrait des règles attend l'accord du propriétaire.
+Plus rien hors des tests de la façade n'exécute une règle Python. L'inventaire
+de ce que la suppression des règles emporterait est fait
+(`2026-11-16-l-inventaire-du-retrait-des-regles.md`) : 39 fichiers, 38 163
+lignes. Avant de les supprimer, il faut sortir les types que le pont relit,
+donner à la façade des tests ses propres signatures, reloger les chargeurs,
+débrancher le peu de Python seul qui appelle encore une règle, et ôter les
+noms des fichiers de règles des fiches et des gardes. La note propose cet
+ordre, une étape par session, et pose deux questions au propriétaire, sur
+les chargeurs du droit en vigueur et sur les fiches. Par quoi commencer :
+sortir les types du pont. Rien ne se supprime
+sans l'accord final du propriétaire.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
