@@ -1352,6 +1352,7 @@ limite_age = Regles("limite_age", _limite_age)
 #: ``revalorisation``, hors du droit : les majorations forfaitaires de 1972 à
 #: 1982, servies par le portage.
 revalorisation = Regles("revalorisation", _revalorisation)
+compte = Regles("compte", _compte)
 #: ``carriere``, hors du droit : le relevé prolongé jusqu'au départ et le
 #: salaire moyen d'une année, servis par le portage sur les séries d'un
 #: simulateur de la façade.

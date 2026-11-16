@@ -143,7 +143,7 @@ import {
 } from "../../moteur/js/carriere.js";
 import { ConstructeurCapitalisation } from "../../moteur/js/capitalisation.js";
 import { valeur as valeurPresumee } from "../../moteur/js/chronologie.js";
-import { ConstructeurCompte } from "../../moteur/js/compte.js";
+import { ConstructeurCompte, tauxDuBareme } from "../../moteur/js/compte.js";
 import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
 import { niveauRelatif } from "../../moteur/js/conversion.js";
 import { Contexte } from "../../moteur/js/contexte.js";
@@ -2283,6 +2283,8 @@ const MODULES_DU_DROIT = {
   acquerir: acquerirEtape,
   carriere: { prolongerReleve, salaireMoyenAnnuel },
   categories,
+  // Le barème par tranches du régime unique.
+  compte: { tauxDuBareme },
   commun,
   compter: compterEtape,
   // `pension_majoree` reçoit ses options par leur nom, que le Python passe

@@ -16,12 +16,11 @@ import pytest
 from retraite_notionnelle import cout as C
 from retraite_notionnelle import memoire, pont
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.moteur.compte import ConstructeurCompte, taux_du_bareme
-from retraite_notionnelle.simulateur import Simulateur
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 import solde_fusion  # noqa: E402
+from facade import Simulateur, compte  # noqa: E402
 
 PARAMETRES = Parametres()
 
@@ -52,28 +51,29 @@ def test_le_bareme_par_tranches_se_lit_tranche_par_tranche(hypotheses):
     bareme = toutes["B"].bareme
     (_, taux_1, _), (_, taux_2, _), (_, taux_3, _) = bareme
     pass_annuel = 47_100.0
-    assert taux_du_bareme(bareme, 0.5 * pass_annuel, pass_annuel)[0] == pytest.approx(taux_1)
-    assert taux_du_bareme(bareme, 2 * pass_annuel, pass_annuel)[0] == pytest.approx((taux_1 + taux_2) / 2)
-    assert taux_du_bareme(bareme, 10 * pass_annuel, pass_annuel)[0] == pytest.approx(
+    assert compte.taux_du_bareme(bareme, 0.5 * pass_annuel, pass_annuel)[0] == pytest.approx(taux_1)
+    assert compte.taux_du_bareme(bareme, 2 * pass_annuel, pass_annuel)[0] == pytest.approx((taux_1 + taux_2) / 2)
+    assert compte.taux_du_bareme(bareme, 10 * pass_annuel, pass_annuel)[0] == pytest.approx(
         (taux_1 + 7 * taux_2 + 2 * taux_3) / 10)
-    assert taux_du_bareme(bareme, 0.0, pass_annuel) == (0.0, 0.0)
+    assert compte.taux_du_bareme(bareme, 0.0, pass_annuel) == (0.0, 0.0)
 
 
 def test_chaque_hypothese_est_un_bareme_du_moteur(hypotheses):
     """Une hypothèse de l'étude est le barème du régime unique que le moteur
     applique (``Parametres.bareme_regime_unique``) : l'étude ne remplace plus
     aucune fonction du moteur le temps d'un calcul. A, le régime unique du
-    modèle, n'en pose aucun ; le moteur tient les trois autres pour bien
-    formés."""
+    modèle, n'en pose aucun ; le portage tient les trois autres pour bien
+    formés : il bâtit leur simulateur, quand un barème mal formé l'arrête."""
     _, toutes = hypotheses
     assert solde_fusion.parametres_de(toutes["A"], PARAMETRES) == PARAMETRES
     for lettre in "BCD":
         parametres = solde_fusion.parametres_de(toutes[lettre], PARAMETRES)
         assert parametres == replace(PARAMETRES, bareme_regime_unique=toutes[lettre].bareme)
-        assert Simulateur(parametres).constructeur.parametres.bareme_regime_unique is not None
-    taux_unifie = ConstructeurCompte.taux_unifie
-    with solde_fusion.RegimeUniqueVariante(toutes["C"]):
-        assert ConstructeurCompte.taux_unifie is taux_unifie
+        assert Simulateur(parametres).regime_fusionne is not None
+    (haute, taux, _), *suite = toutes["B"].bareme
+    mal_forme = replace(PARAMETRES, bareme_regime_unique=((haute, taux, 2 * taux), *suite))
+    with pytest.raises(Exception, match="mal formé"):
+        Simulateur(mal_forme).regime_fusionne
 
 
 def test_la_grille_se_simule_par_le_portage(hypotheses, monkeypatch):
@@ -88,6 +88,10 @@ def test_la_grille_se_simule_par_le_portage(hypotheses, monkeypatch):
     from outils_pont import empecher_les_jumeaux_du_cout
     from outils_valeurs import valeur_figee
     from retraite_notionnelle.castypes import GRILLE_DU_COUT
+    # Le coût remplacé (``RegimeUniqueVariante``, ``monkeypatch``) : la façade,
+    # qui ne transmet pas un modèle modifié, ne lui servirait pas la mortalité
+    # de ses survies. Ses données restent celles du simulateur Python.
+    from retraite_notionnelle.simulateur import Simulateur as SimulateurPython
 
     monkeypatch.setattr(C, "generations", lambda: (1965, 2000))
     grille = tuple(cas for cas in GRILLE_DU_COUT
@@ -96,7 +100,7 @@ def test_la_grille_se_simule_par_le_portage(hypotheses, monkeypatch):
     lus = {}
     empecher_les_jumeaux_du_cout(monkeypatch)
     for lettre in "BC":
-        simulateur = Simulateur(solde_fusion.parametres_de(toutes[lettre], PARAMETRES))
+        simulateur = SimulateurPython(solde_fusion.parametres_de(toutes[lettre], PARAMETRES))
         with solde_fusion.RegimeUniqueVariante(toutes[lettre]):
             lus[lettre] = valeur_figee(f"grille sous l'hypothèse {lettre}",
                                        C._pensionnes(simulateur, grille, "droit"))

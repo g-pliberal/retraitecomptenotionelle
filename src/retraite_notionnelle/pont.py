@@ -3101,6 +3101,9 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "reversion": ("_cumuler", "mois_de_mariage"),
     # Hors de ``droit/`` : ``revalorisation.js``, à la racine du portage.
     "revalorisation": ("majorations_forfaitaires",),
+    # Le barème par tranches du régime unique, que ``scripts/solde_fusion.py``
+    # chiffre : ``compte.js``, à la racine du portage.
+    "compte": ("taux_du_bareme",),
 }
 
 

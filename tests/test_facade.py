@@ -34,6 +34,7 @@ from retraite_notionnelle.droit import categories as categories_python
 from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
 from retraite_notionnelle.droit import compter as compter_python
+from retraite_notionnelle.moteur import compte as compte_python
 from retraite_notionnelle.droit import cultes as cultes_python
 from retraite_notionnelle.droit import cumul as cumul_python
 from retraite_notionnelle.droit import departs as departs_python
@@ -737,7 +738,7 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
         pont.regle_du_droit("ouvrir", "ouvrir", float)
     assert facade.REGLES is pont.REGLES_DE_LA_FACADE
     assert set(facade.REGLES) == {"acquerir", "carriere", "categories", "commun", "completer",
-                                  "compter",
+                                  "compte", "compter",
                                   "cultes", "cumul", "departs",
                                   "foyer", "invalidite", "limite_age", "liquider", "ouvrir",
                                   "releve",
@@ -2290,7 +2291,7 @@ def _parametres_du_portage(module: str, regle: str) -> list[tuple[str, str | Non
     """Les paramètres de la règle dans le portage, et la valeur par défaut que
     chacun y prend, telle qu'elle est écrite."""
     dossier = RACINE_PROJET / "moteur" / "js"
-    source = (dossier / f"{module}.js" if module in ("carriere", "revalorisation")
+    source = (dossier / f"{module}.js" if module in ("carriere", "compte", "revalorisation")
               else dossier / "droit" / f"{module}.js").read_text(encoding="utf-8")
     # Une règle privée au Python s'exporte sans son tiret bas.
     nom = re.sub(r"_([a-z0-9])", lambda lettre: lettre.group(1).upper(), regle.lstrip("_"))
@@ -2322,7 +2323,7 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
     jumelle = getattr({"acquerir": acquerir_python, "carriere": carriere_python,
                        "categories": categories_python,
                        "commun": commun_python,
-                       "completer": completer_python,
+                       "completer": completer_python, "compte": compte_python,
                        "compter": compter_python,
                        "cultes": cultes_python, "cumul": cumul_python, "departs": departs_python,
                        "foyer": foyer_python,
