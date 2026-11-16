@@ -670,6 +670,11 @@ def _grilles() -> dict[tuple[str, str], Grille]:
         # Le calendrier : les âges en années et mois, les mois en rangs.
         (CALENDRIER, "decomposer"): Grille(("module:calendrier",), ages),
         (CALENDRIER, "formater_age"): Grille(("module:calendrier",), ages),
+        # L'arrondi au mois, au demi-mois exact surtout, qui compte le mois
+        # qui suit des deux côtés (fiche `date_effet_mois_suivant`).
+        (CALENDRIER, "en_mois"): Grille(("module:calendrier",), tuple((age,) for age in sorted(
+            {n + k / 24 for n in range(16, 80) for k in range(24)}
+            | {n / 8 for n in range(800)} | {0.1 * n for n in range(1000)}))),
         (CALENDRIER, "depuis_rang"): Grille(("classe:DateMois",), tuple(
             (rang,) for rang in range(1900 * 12, 2101 * 12, 7)), champs=("annee", "mois")),
         (CALENDRIER, "rang"): Grille(tuple(

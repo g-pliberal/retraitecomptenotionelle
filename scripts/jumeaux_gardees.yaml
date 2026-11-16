@@ -34,7 +34,7 @@ src/retraite_notionnelle/calendrier.py:
   gardees:
     decomposer: {lecteur: scripts/cycle_de_vie.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     depuis_rang: {lecteur: scripts/construire_donnees.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
-    en_mois: {lecteur: src/retraite_notionnelle/calendrier.py, test: tests/test_moteur.py::test_un_demi_mois_compte_le_mois_qui_suit_dans_les_deux_moteurs}
+    en_mois: {lecteur: src/retraite_notionnelle/calendrier.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     formater_age: {lecteur: scripts/cycle_de_vie.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
     rang: {lecteur: src/retraite_notionnelle/facteurs_depense.py, test: tests/test_jumeaux_au_bit.py::test_la_fonction_gardee_rend_la_meme_valeur_des_deux_cotes}
   au_moteur:
