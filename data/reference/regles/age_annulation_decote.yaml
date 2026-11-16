@@ -62,8 +62,8 @@ code:
     et 2 mois, l'âge de D. 161-2-1-9, 4°, le droit lui était refusé (relecture
     R-L-bis, action 130).
   python: >-
-    droit/ouvrir.py : age_taux_plein ; scenarios/actuel.py : AgesAnnulationDecote ;
-    donnees/chargement.py : au_mois
+    droit/ouvrir.py : age_taux_plein ; donnees/tables_du_droit.py : AgesAnnulationDecote
+    ; donnees/chargement.py : au_mois
   javascript: >-
     moteur/js/droit/ouvrir.js : ageTauxPlein ; moteur/js/regimes.js :
     AgesAnnulationDecote

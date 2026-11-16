@@ -209,8 +209,8 @@ code:
     le coefficient de sa surcote.
   python: >-
     droit/compter.py : majoration_pour_enfants ; droit/completer.py :
-    trimestres_de_surcote_parentale, completer ; scenarios/actuel.py : SurcoteParentale,
-    SurcoteParentale.parametres
+    trimestres_de_surcote_parentale, completer ; donnees/tables_du_droit.py :
+    SurcoteParentale, SurcoteParentale.parametres
   javascript: >-
     moteur/js/droit/compter.js : majorationPourEnfants ; moteur/js/droit/completer.js :
     trimestresDeSurcoteParentale, completer ; moteur/js/regimes.js : SurcoteParentale,

@@ -303,7 +303,7 @@ code:
   python: >-
     droit/ouvrir.py : age_ouverture, age_ouverture_commun, age_surcote ;
     droit/liquider.py : liquider_chaque_regime, trimestres_de_surcote_regimes_speciaux ;
-    scenarios/actuel.py : AgesRegimes, AgesSurcoteRegimesSpeciaux
+    donnees/tables_du_droit.py : AgesRegimes, AgesSurcoteRegimesSpeciaux
   javascript: >-
     moteur/js/droit/ouvrir.js : ageOuverture, ageOuvertureCommun, ageSurcote ;
     moteur/js/droit/liquider.js : liquiderChaqueRegime,

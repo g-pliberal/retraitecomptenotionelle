@@ -45,7 +45,7 @@ code:
     comme dans les trois régimes du code des pensions ; la majoration pour enfant
     handicapé, que le modèle ne sert pas, n'y entre pas.
   python: >-
-    scenarios/actuel.py : CarriereLongue, CarriereLongue.cotises_reputes ;
+    donnees/tables_du_droit.py : CarriereLongue, CarriereLongue.cotises_reputes ;
     droit/ouvrir.py : ouvrir, age_carriere_longue ; droit/departs.py :
     _carriere_longue_acquise ; droit/compter.py : majoration_pour_enfants
   javascript: >-

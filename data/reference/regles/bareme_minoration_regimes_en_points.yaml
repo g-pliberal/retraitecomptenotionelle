@@ -74,8 +74,8 @@ code:
     aux non-salariés agricoles.
   python: >-
     droit/liquider.py : liquider_chaque_regime, abattement_points,
-    abattement_regime_de_base, decote_opposable, trimestres_de_decote ;
-    droit/ouvrir.py : age_taux_plein ; scenarios/actuel.py : CoefficientsMinoration
+    abattement_regime_de_base, decote_opposable, trimestres_de_decote ; droit/ouvrir.py
+    : age_taux_plein ; donnees/tables_du_droit.py : CoefficientsMinoration
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints,
     abattementRegimeDeBase, decoteOpposable, trimestresDeDecote ;

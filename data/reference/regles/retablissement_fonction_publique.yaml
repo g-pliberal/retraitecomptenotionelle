@@ -120,7 +120,7 @@ code:
   python: >-
     droit/coordonner.py : retablir, _retablir, droit_a_pension, regimes_de,
     REGIMES_RETABLIS, RETABLISSEMENT_DEPUIS, STATUTS_DU_RETABLISSEMENT ;
-    scenarios/actuel.py : ServicesOuvrantPension, ServicesOuvrantPension.annees ;
+    donnees/tables_du_droit.py : ServicesOuvrantPension, ServicesOuvrantPension.annees ;
     droit/liquider.py : assiette_de_reference ; droit/acquerir.py : acquerir
   javascript: >-
     moteur/js/droit/coordonner.js : retablir, retablirEnDetail, droitAPension,

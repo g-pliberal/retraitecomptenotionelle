@@ -47,7 +47,7 @@ code:
   python: >-
     droit/liquider.py : liquider_chaque_regime, coefficient_surcote_datee,
     surcote_points, _trimestres_cotises_apres ; droit/ouvrir.py : age_surcote,
-    age_ouverture_commun ; scenarios/actuel.py : SurcoteBaremes
+    age_ouverture_commun ; donnees/tables_du_droit.py : SurcoteBaremes
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, coefficientSurcoteDatee,
     surcotePoints, trimestresCotisesApres ; moteur/js/droit/ouvrir.js : ageSurcote,

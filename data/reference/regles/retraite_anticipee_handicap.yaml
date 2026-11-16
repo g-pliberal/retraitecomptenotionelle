@@ -324,8 +324,8 @@ code:
     annee_en_situation_de_handicap ; droit/ouvrir.py : ouvrir, age_ouverture_droit,
     age_taux_plein_droit, age_handicap_propose ; droit/departs.py : _handicap_acquis ;
     droit/liquider.py : liquider_chaque_regime, abattement_points,
-    abattement_regime_de_base ; scenarios/actuel.py : Invalidites, Invalidites.sans ;
-    avantages.py : NEUTRALISATIONS, scenarios_neutralises
+    abattement_regime_de_base ; donnees/tables_du_droit.py : Invalidites,
+    Invalidites.sans ; avantages.py : NEUTRALISATIONS, scenarios_neutralises
   javascript: >-
     moteur/js/droit/invalidite.js : incapaciteReconnue, versionDuHandicap,
     trimestresEnSituationDeHandicap, exigencesDuHandicap, ageDuHandicap,

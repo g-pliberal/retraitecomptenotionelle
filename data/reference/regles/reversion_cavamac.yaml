@@ -256,7 +256,7 @@ sources:
 code:
   python: >-
     droit/reversion.py : reversion, _mariage_dure, _part_du_survivant, _admis_ailleurs ;
-    scenarios/actuel.py : Reversions
+    donnees/tables_du_droit.py : Reversions
   javascript: >-
     moteur/js/droit/reversion.js : reversion, mariageDure, partDuSurvivant,
     admisAilleurs ; moteur/js/regimes.js : Reversions

@@ -240,7 +240,7 @@ code:
     ne la prélève pas.
   python: >-
     droit/acquerir.py : seconde_part_de_rco, acquerir ; moteur/compte.py :
-    ConstructeurCompte._cotisation_ligne ; scenarios/actuel.py : FichesDatees
+    ConstructeurCompte._cotisation_ligne ; donnees/tables_du_droit.py : FichesDatees
   javascript: >-
     moteur/js/droit/acquerir.js : secondePartDeRco, acquerir ; moteur/js/compte.js :
     ConstructeurCompte._cotisationLigne ; moteur/js/regimes.js : FichesDatees

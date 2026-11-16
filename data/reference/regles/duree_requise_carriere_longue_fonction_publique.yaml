@@ -196,7 +196,7 @@ code:
   python: >-
     droit/ouvrir.py : duree_requise, duree_requise_avant_soixante_ans,
     ouverture_carriere_longue, age_carriere_longue, duree_de_l_annee ;
-    droit/coordonner.py : REGIMES_CODE_DES_PENSIONS ; scenarios/actuel.py :
+    droit/coordonner.py : REGIMES_CODE_DES_PENSIONS ; donnees/tables_du_droit.py :
     DureesRequisesAvantSoixanteAns, DureesRequisesAvantSoixanteAns.depuis_2023,
     CarriereLongue, CarriereLongue._portes, CarriereLongue.de_la_fonction_publique,
     CarriereLongue._requis, CarriereLongue.age_propose

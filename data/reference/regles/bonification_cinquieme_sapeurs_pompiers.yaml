@@ -260,9 +260,9 @@ sources:
     date: 2023-09-12
 code:
   python: >-
-    scenarios/actuel.py : FichesDatees ; droit/compter.py : trimestres_des_emplois,
-    trimestres_d_un_emploi, condition_d_un_emploi ; droit/liquider.py :
-    liquider_chaque_regime
+    donnees/tables_du_droit.py : FichesDatees ; droit/compter.py :
+    trimestres_des_emplois, trimestres_d_un_emploi, condition_d_un_emploi ;
+    droit/liquider.py : liquider_chaque_regime
   javascript: >-
     moteur/js/regimes.js : FichesDatees ; moteur/js/droit/compter.js :
     trimestresDesEmplois, trimestresDUnEmploi, conditionDUnEmploi ;

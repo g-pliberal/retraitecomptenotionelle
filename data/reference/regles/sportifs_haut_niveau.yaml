@@ -173,7 +173,7 @@ textes_sans_effet:
 code:
   python: >-
     droit/compter.py : trimestres_assimiles, trimestres_des_periodes, jours_par_annee,
-    version_ouverte, compter, Durees ; scenarios/actuel.py :
+    version_ouverte, compter, Durees ; donnees/tables_du_droit.py :
     FichesDatees.version_aux_dates
   javascript: >-
     moteur/js/droit/compter.js : trimestresAssimiles, trimestresDesPeriodes,

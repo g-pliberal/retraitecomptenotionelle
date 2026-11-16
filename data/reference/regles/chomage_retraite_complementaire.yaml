@@ -390,7 +390,7 @@ sources:
 code:
   python: >-
     donnees/chargement.py : ChomageComplementaires ; carriere.py : _revenu_reference ;
-    droit/acquerir.py : acquerir ; scenarios/actuel.py : ValeursPoint.garantie
+    droit/acquerir.py : acquerir ; donnees/tables_du_droit.py : ValeursPoint.garantie
   javascript: >-
     moteur/js/carriere.js : ChomageComplementaires, revenuReference ;
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js :

@@ -442,7 +442,7 @@ code:
     trimestres_de_decote, borne_de_la_duree, retranche_decote, _au_trimestre_superieur,
     _BAREMES_DECOTE_EN_TABLE, _BAREMES_REGIMES_SPECIAUX ; droit/ouvrir.py :
     age_taux_plein, age_ouverture, mois_ouverture_des_droits, duree_propre ;
-    droit/compter.py : trimestres_de_la_ligne_entre ; scenarios/actuel.py :
+    droit/compter.py : trimestres_de_la_ligne_entre ; donnees/tables_du_droit.py :
     DecoteRegimesSpeciaux, AgesRegimes, DureesRequisesRegimes
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, decoteOpposable,

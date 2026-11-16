@@ -400,7 +400,8 @@ code:
   python: >-
     droit/reversion.py : reversion, _majoration_forfaitaire_enfants, _jours_a_charge,
     _parts_de_l_enfant, _regime_de_la_majoration ; chronologie.py :
-    prolongations_de_la_charge ; scenarios/actuel.py : Reversions.majoration_enfant
+    prolongations_de_la_charge ; donnees/tables_du_droit.py :
+    Reversions.majoration_enfant
   javascript: >-
     moteur/js/droit/reversion.js : reversion, majorationForfaitaireEnfants,
     joursACharge, partsDeLEnfant, regimeDeLaMajoration ; moteur/js/chronologie.js :

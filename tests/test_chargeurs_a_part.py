@@ -200,3 +200,63 @@ def test_le_contexte_de_la_fabrique_batit_le_simulateur_de_donnees():
     fautes = {f: m.group(0) for f in fichiers
               for m in [python.search((RACINE / f).read_text(encoding="utf-8"))] if m}
     assert fautes == {}
+
+
+#: Les tables du droit en vigueur que ``scenarios/actuel.py`` gardait, et que
+#: lisent la fabrique du paquet et le coût des avantages : 43 classes, leurs
+#: deux aides et leurs six constantes, relogées telles quelles sous
+#: ``donnees/tables_du_droit.py`` (action 161, étape 3 de l'inventaire du
+#: retrait des règles).
+TABLES_DU_DROIT = (
+    "Rendements", "TableParGeneration", "DureesRequises", "DureesRequisesAvantSuspension",
+    "DureesRequisesAvantReforme2023", "_rang_mois", "DureesRequisesRegimes",
+    "CalendriersDureeRequise", "_age_ou_rien", "AgesRegimes", "DureesRequisesFonctionPublique",
+    "DureesRequisesAvantSoixanteAns", "DureesProratisation", "AgesOuverture",
+    "AgesOuvertureAvantReforme2023", "AgesOuvertureAvantSuspension", "TableRecouverte",
+    "AgesSurcoteRegimesSpeciaux", "AgesAnnulationDecote", "AgesCategorieActive",
+    "DureesServicesMilitaires", "DureesServicesActifs", "AgesJouissanceMilitaire",
+    "CoefficientsMinoration", "AnneesSalaireReference", "AnneesRevenuAnnuelMoyenIndependants",
+    "FichesDatees", "MajorationsPourEnfants", "Reversions", "Invalidites",
+    "CarrieresHorsDeFrance", "ServicesOuvrantPension", "SurcoteParentale",
+    "MajorationsEnfantsPoints", "DecoteFonctionPublique", "DecoteRegimesSpeciaux",
+    "MaximumDesCultes", "CarriereLongue", "SurcoteBaremes", "MinimumGaranti",
+    "BaremesTrimestre", "ConversionsPoints", "ValeursPoint", "PENSION_MINIMUM",
+    "REGLE_DU_MINIMUM_EN_VIGUEUR", "MinimumContributif", "SANS_PENSION_MAJOREE",
+    "PMR_SUR_LES_PRIX", "PensionMajoreeReference", "SANS_COMPLEMENT_DIFFERENTIEL",
+    "ComplementDifferentielRco",
+)
+
+
+def test_les_tables_du_droit_se_lisent_sans_le_moteur_python():
+    assert _importes("from retraite_notionnelle.donnees.tables_du_droit import "
+                     + ", ".join(TABLES_DU_DROIT)) == []
+
+
+def test_le_scenario_actuel_reprend_les_memes_tables():
+    """Dans un interpréteur à part, comme les autres reprises."""
+    subprocess.run([sys.executable, "-c", "\n".join((
+        "from retraite_notionnelle.donnees import tables_du_droit as t",
+        "from retraite_notionnelle.scenarios import actuel as a",
+        f"for nom in {TABLES_DU_DROIT!r}:",
+        "    assert getattr(a, nom) is getattr(t, nom), nom",
+        "    assert getattr(t, nom, None) is not None, nom",
+        "classes = [n for n in vars(a) if isinstance(getattr(a, n), type)",
+        "           and getattr(a, n).__module__ == a.__name__]",
+        "assert set(classes) & set(" + repr(TABLES_DU_DROIT) + ") == set(), classes",
+    ))], check=True, cwd=RACINE)
+
+
+def test_la_fabrique_et_les_avantages_prennent_les_tables_a_leur_place():
+    """La fabrique du paquet et le coût des avantages lisent les tables sous
+    ``donnees/`` ; des règles, le coût des avantages ne garde que
+    ``ScenarioActuel``."""
+    import ast
+
+    fautes = {}
+    for f in ("scripts/construire_donnees.py", "src/retraite_notionnelle/avantages.py"):
+        arbre = ast.parse((RACINE / f).read_text(encoding="utf-8"))
+        pris = {a.name for n in ast.walk(arbre) if isinstance(n, ast.ImportFrom)
+                and (n.module or "").endswith("scenarios.actuel") for a in n.names}
+        if pris & set(TABLES_DU_DROIT):
+            fautes[f] = sorted(pris & set(TABLES_DU_DROIT))
+    assert fautes == {}

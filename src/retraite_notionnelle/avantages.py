@@ -62,7 +62,8 @@ from .donnees.depenses import DepensesRetraite
 from .donnees.population import Population
 from .droit.compter import (FICHE_DE_L_APPRENTISSAGE, FICHE_DES_MILITAIRES,
                             FICHES_DES_EMPLOIS, _contrats)
-from .scenarios.actuel import CarriereLongue, FichesDatees, ScenarioActuel
+from .donnees.tables_du_droit import CarriereLongue, FichesDatees
+from .scenarios.actuel import ScenarioActuel
 from .donnees.simulateur import SimulateurDeDonnees
 from .somme import somme_ordonnee
 

@@ -153,7 +153,7 @@ code:
     droit/liquider.py : liquider_chaque_regime, decote_opposable, millesime_du_bareme,
     trimestres_de_decote, borne_de_la_duree, _BAREMES_DECOTE_EN_TABLE,
     _BAREMES_REGIMES_SPECIAUX ; droit/ouvrir.py : age_ouverture, age_taux_plein,
-    mois_ouverture_des_droits ; scenarios/actuel.py : DecoteRegimesSpeciaux
+    mois_ouverture_des_droits ; donnees/tables_du_droit.py : DecoteRegimesSpeciaux
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, decoteOpposable,
     millesimeDuBareme, trimestresDeDecote, borneDeLaDuree, BAREMES_DECOTE_EN_TABLE,

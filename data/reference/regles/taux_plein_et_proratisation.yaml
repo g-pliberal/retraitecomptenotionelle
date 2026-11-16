@@ -246,7 +246,8 @@ code:
     Carriere.trimestres_ecoules, Carriere.part_cotisee_ligne,
     Carriere.statut_pris_apres_le_1er_janvier, Carriere._statuts_au_1er_janvier,
     Carriere.qualite_agricole, Carriere.arretee_au_deces,
-    COTISATIONS_AU_PRORATA_DU_DECES_DEPUIS ; scenarios/actuel.py : DureesProratisation
+    COTISATIONS_AU_PRORATA_DU_DECES_DEPUIS ; donnees/tables_du_droit.py :
+    DureesProratisation
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, dureeProratisation,
     dureeDuRegimeAligne ; moteur/js/droit/compter.js : Durees.plafond,

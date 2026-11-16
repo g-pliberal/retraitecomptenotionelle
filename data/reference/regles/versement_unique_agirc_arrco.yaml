@@ -359,7 +359,8 @@ sources:
     date: 2014-02-01
 code:
   python: >-
-    droit/completer.py : verser_en_capital, completer ; scenarios/actuel.py : FichesDatees
+    droit/completer.py : verser_en_capital, completer ; donnees/tables_du_droit.py :
+    FichesDatees
   javascript: >-
     moteur/js/droit/completer.js : verserEnCapital, completer ; moteur/js/regimes.js :
     FichesDatees

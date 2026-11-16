@@ -297,7 +297,7 @@ textes_a_rattacher:
 - reference: D. 634-1 CSS, VI
 code:
   python: >-
-    scenarios/actuel.py : CarriereLongue, CarriereLongue.cotises_reputes,
+    donnees/tables_du_droit.py : CarriereLongue, CarriereLongue.cotises_reputes,
     CarriereLongue._reputes_assimiles, CarriereLongue.fiches
   javascript: >-
     moteur/js/regimes.js : CarriereLongue, CarriereLongue.cotisesReputes,

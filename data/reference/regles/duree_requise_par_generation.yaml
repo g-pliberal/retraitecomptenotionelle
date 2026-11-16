@@ -193,9 +193,9 @@ code:
     droit/ouvrir.py : duree_requise, REFORME_2023_EFFET, GENERATION_REFORME_2023,
     SUSPENSION_2026_EFFET, GENERATIONS_SUSPENSION, DUREE_UNIQUE_2003,
     DUREE_UNIQUE_2003_EFFET, GENERATION_DECEMBRE_1942, DUREE_PAR_GENERATION_EFFET,
-    DUREES_AVANT_LE_DECRET ; scenarios/actuel.py :
-    DureesRequises, DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension,
-    TableRecouverte, ScenarioActuel._sous_le_droit
+    DUREES_AVANT_LE_DECRET ; scenarios/actuel.py : ScenarioActuel._sous_le_droit ;
+    donnees/tables_du_droit.py : DureesRequises, DureesRequisesAvantReforme2023,
+    DureesRequisesAvantSuspension, TableRecouverte
   javascript: >-
     moteur/js/droit/ouvrir.js : dureeRequise ; moteur/js/regimes.js : DureesRequises,
     DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension, TableRecouverte,

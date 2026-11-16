@@ -308,7 +308,7 @@ code:
     pension_du_fonctionnaire_invalide, rente_viagere_d_invalidite ; droit/departs.py :
     departs_et_demandes, MOTIF_RADIATION ; droit/ouvrir.py : age_ouverture ;
     droit/liquider.py : liquider_chaque_regime ; droit/coordonner.py : droit_a_pension ;
-    scenarios/actuel.py : MinimumGaranti.valeur_d_un_indice
+    donnees/tables_du_droit.py : MinimumGaranti.valeur_d_un_indice
   javascript: >-
     moteur/js/droit/invalidite.js : radiationDuRegime, retraitePourInvalidite,
     pensionDuFonctionnaireInvalide, renteViagereDInvalidite ;

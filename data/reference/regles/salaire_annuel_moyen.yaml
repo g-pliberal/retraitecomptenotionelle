@@ -315,9 +315,10 @@ code:
     salaire_reference_par_generation: true
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
   python: >-
-    scenarios/actuel.py : FichesDatees ; droit/liquider.py : salaire_de_reference,
-    moyenne_selon_la_regle, nombre_d_annees_retenues, annees_des_regimes_alignes,
-    annees_au_prorata ; donnees/macro.py : colonne_de_revalorisation_en_vigueur
+    donnees/tables_du_droit.py : FichesDatees ; droit/liquider.py :
+    salaire_de_reference, moyenne_selon_la_regle, nombre_d_annees_retenues,
+    annees_des_regimes_alignes, annees_au_prorata ; donnees/macro.py :
+    colonne_de_revalorisation_en_vigueur
   javascript: >-
     moteur/js/regimes.js : FichesDatees ; moteur/js/droit/liquider.js :
     salaireDeReference, moyenneSelonLaRegle, nombreDAnneesRetenues,

@@ -335,7 +335,7 @@ code:
     autres agents, à soixante-deux ans, n'y sont pas.
   python: >-
     droit/ouvrir.py : age_taux_plein ; droit/liquider.py : decote_opposable,
-    millesime_du_bareme ; scenarios/actuel.py : AgesRegimes, AgesRegimes.ages,
+    millesime_du_bareme ; donnees/tables_du_droit.py : AgesRegimes, AgesRegimes.ages,
     DecoteRegimesSpeciaux
   javascript: >-
     moteur/js/droit/ouvrir.js : ageTauxPlein ; moteur/js/droit/liquider.js :

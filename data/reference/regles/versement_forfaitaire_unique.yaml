@@ -325,9 +325,8 @@ sources:
     date: 2020-05-25
 code:
   python: >-
-    droit/completer.py : verser_en_capital, completer ; droit/departs.py :
-    PensionServie ; droit/liquidation.py : liquider ; scenarios/actuel.py :
-    FichesDatees
+    droit/completer.py : verser_en_capital, completer ; droit/departs.py : PensionServie
+    ; droit/liquidation.py : liquider ; donnees/tables_du_droit.py : FichesDatees
   javascript: >-
     moteur/js/droit/completer.js : verserEnCapital, completer ;
     moteur/js/droit/liquidation.js : liquider ; moteur/js/regimes.js : FichesDatees ;

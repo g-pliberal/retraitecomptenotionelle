@@ -576,10 +576,10 @@ code:
     pension s'y liquide seule, après la base.
   python: >-
     droit/liquider.py : abattement_points, abattement_ircec, inapte_sans_coefficient,
-    trimestres_de_decote,
-    surcote_points, _ABATTEMENTS_IRCEC, _ABATTEMENTS_PAR_ANNEE_AGE_SEUL ;
-    droit/ouvrir.py : age_ouverture, age_taux_plein ; scenarios/actuel.py : AgesRegimes ;
-    droit/departs.py : _au_trimestre_civil, departs_et_demandes
+    trimestres_de_decote, surcote_points, _ABATTEMENTS_IRCEC,
+    _ABATTEMENTS_PAR_ANNEE_AGE_SEUL ; droit/ouvrir.py : age_ouverture, age_taux_plein ;
+    donnees/tables_du_droit.py : AgesRegimes ; droit/departs.py : _au_trimestre_civil,
+    departs_et_demandes
   javascript: >-
     moteur/js/droit/liquider.js : abattementPoints, abattementIrcec,
     inapteSansCoefficient, trimestresDeDecote,

@@ -86,7 +86,7 @@ code:
     droit/liquider.py : liquider_chaque_regime, coefficient_surcote_datee ;
     droit/ouvrir.py : age_surcote, age_ouverture_commun, derogation_active,
     statut_dominant, droit_militaire, SURCOTE_EMPLOIS_CLASSES, AGE_SURCOTE_AVANT_2023 ;
-    droit/coordonner.py : REGIMES_CODE_DES_PENSIONS ; scenarios/actuel.py :
+    droit/coordonner.py : REGIMES_CODE_DES_PENSIONS ; donnees/tables_du_droit.py :
     SurcoteBaremes
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, coefficientSurcoteDatee ;

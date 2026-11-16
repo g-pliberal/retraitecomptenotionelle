@@ -499,11 +499,11 @@ code:
     taux du régime général. La fiche du régime porte l'âge de soixante-cinq ans jusqu'en
     2006 (age_ouverture, age_taux_plein).
   python: >-
-    droit/cultes.py : durees, part_de_l_ecart, fraction_d_avant_1998 ;
-    droit/liquider.py : liquider_chaque_regime ; droit/completer.py : completer ;
-    scenarios/actuel.py : MaximumDesCultes ; donnees/regimes.py : CotisationsDesCultes ;
-    carriere.py : Affiliations.validee_sans_cotisation ; droit/compter.py : compter ;
-    droit/ouvrir.py : ouvrir
+    droit/cultes.py : durees, part_de_l_ecart, fraction_d_avant_1998 ; droit/liquider.py
+    : liquider_chaque_regime ; droit/completer.py : completer ;
+    donnees/tables_du_droit.py : MaximumDesCultes ; donnees/regimes.py :
+    CotisationsDesCultes ; carriere.py : Affiliations.validee_sans_cotisation ;
+    droit/compter.py : compter ; droit/ouvrir.py : ouvrir
   javascript: >-
     moteur/js/droit/cultes.js : durees, partDeLEcart, fractionDAvant1998 ;
     moteur/js/droit/liquider.js : liquiderChaqueRegime ; moteur/js/droit/completer.js :

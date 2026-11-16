@@ -828,7 +828,7 @@ textes_sans_effet:
     pour mot
 code:
   python: >-
-    scenarios/actuel.py : PensionMajoreeReference, PensionMajoreeReference.regle,
+    donnees/tables_du_droit.py : PensionMajoreeReference, PensionMajoreeReference.regle,
     PensionMajoreeReference.montant ; droit/completer.py : pension_majoree,
     reversion_agricole_servie, duree_de_chef_reconstituee, completer ; droit/liquider.py
     : EligibleAgricole, annees_hors_forfait ; revalorisation.py :

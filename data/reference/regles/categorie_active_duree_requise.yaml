@@ -170,7 +170,7 @@ code:
     période de cette année-là porte.
   python: >-
     droit/ouvrir.py : duree_requise, derogation_active, statut_dominant,
-    duree_requise_avant_soixante_ans, duree_de_l_annee ; scenarios/actuel.py :
+    duree_requise_avant_soixante_ans, duree_de_l_annee ; donnees/tables_du_droit.py :
     AgesCategorieActive, AgesCategorieActive.derogation, DureesRequisesAvantSoixanteAns,
     DureesRequisesAvantSoixanteAns.par_annee, DureesRequisesFonctionPublique
   javascript: >-

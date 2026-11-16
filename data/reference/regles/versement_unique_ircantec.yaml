@@ -155,7 +155,7 @@ sources:
 code:
   python: >-
     droit/completer.py : verser_en_capital, salaire_de_reference_points, completer ;
-    scenarios/actuel.py : FichesDatees
+    donnees/tables_du_droit.py : FichesDatees
   javascript: >-
     moteur/js/droit/completer.js : verserEnCapital, salaireDeReferencePoints,
     completer ; moteur/js/regimes.js : FichesDatees

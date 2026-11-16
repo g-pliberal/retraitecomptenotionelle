@@ -92,8 +92,8 @@ code:
     génération à toutes les suivantes (`ScenarioActuel._sous_le_droit`).
   python: >-
     droit/ouvrir.py : age_ouverture, age_ouverture_commun ; scenarios/actuel.py :
-    AgesOuverture, AgesOuvertureAvantReforme2023, AgesOuvertureAvantSuspension,
-    TableRecouverte, ScenarioActuel._sous_le_droit
+    ScenarioActuel._sous_le_droit ; donnees/tables_du_droit.py : AgesOuverture,
+    AgesOuvertureAvantReforme2023, AgesOuvertureAvantSuspension, TableRecouverte
   javascript: >-
     moteur/js/droit/ouvrir.js : ageOuverture, ageOuvertureCommun ;
     moteur/js/regimes.js : AgesOuverture, AgesOuvertureAvantReforme2023,

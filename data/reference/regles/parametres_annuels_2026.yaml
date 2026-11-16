@@ -41,8 +41,9 @@ code:
   python: >-
     donnees/macro.py : DonneesMacro.plafond_securite_sociale, DonneesMacro.smic_horaire,
     DonneesMacro.seuil_d_un_trimestre, DonneesMacro.trimestres_valides,
-    DonneesMacro.coefficient_revalorisation_portee_au_compte ; scenarios/actuel.py :
-    MinimumContributif, ValeursPoint.service_au, ValeursPoint.achat
+    DonneesMacro.coefficient_revalorisation_portee_au_compte ;
+    donnees/tables_du_droit.py : MinimumContributif, ValeursPoint.service_au,
+    ValeursPoint.achat
   javascript: >-
     moteur/js/macro.js : DonneesMacro, DonneesMacro.seuilDUnTrimestre,
     DonneesMacro.trimestresValides, DonneesMacro.coefficientRevalorisationPorteeAuCompte ;

@@ -15,7 +15,7 @@ Son jumeau est ``moteur/js/droit/commun.js``.
 from __future__ import annotations
 
 
-from ..calendrier import DateMois
+from ..calendrier import DateMois, date_d_effet  # noqa: F401  (logée au calendrier, action 161)
 from ..types_du_pont.droit import AvantageApplique, PensionRegime  # noqa: F401  (types du pont, action 161)
 
 
@@ -69,15 +69,6 @@ def periode_de_liquidation(regime, date: DateMois):
     if date.annee > derniere:
         return regime.periode(derniere)
     return regime.periode_a_l_effet(f"{date.annee:04d}-{date.mois:02d}-01")
-
-
-def date_d_effet(carriere) -> str | None:
-    """La date d'effet d'une demande (AAAA-MM-JJ) : le premier jour du mois de
-    la liquidation, ou ``None`` pour une carrière sans départ."""
-    if carriere.age_liquidation is None:
-        return None
-    date = carriere.date_liquidation
-    return f"{date.annee:04d}-{date.mois:02d}-01"
 
 
 def ligne_cotisee(moteur, carriere, ligne) -> bool:

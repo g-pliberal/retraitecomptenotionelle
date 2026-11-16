@@ -69,7 +69,7 @@ code:
   python: >-
     droit/liquider.py : liquider_chaque_regime, decote_opposable, trimestres_de_decote,
     retranche_decote ; droit/ouvrir.py : age_taux_plein, duree_propre ;
-    scenarios/actuel.py : DureesRequisesRegimes
+    donnees/tables_du_droit.py : DureesRequisesRegimes
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, decoteOpposable,
     trimestresDeDecote, retrancheDecote ; moteur/js/droit/ouvrir.js : ageTauxPlein,

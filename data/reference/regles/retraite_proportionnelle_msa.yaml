@@ -631,8 +631,9 @@ code:
     valeur_point_fiche, annees_hors_forfait,
     majoration_des_points_de_1952_a_1972_d_avant_2026,
     taux_de_majoration_de_1952_a_1972, MAJORATION_DE_1952_A_1972_DEPUIS,
-    MAJORATION_DE_1952_A_1972_JUSQU_A, MAJORATION_DE_1952_A_1972_CODIFIEE_DEPUIS ; droit/ouvrir.py : duree_requise ;
-    scenarios/actuel.py : MinimumContributif.avts
+    MAJORATION_DE_1952_A_1972_JUSQU_A, MAJORATION_DE_1952_A_1972_CODIFIEE_DEPUIS ;
+    droit/ouvrir.py : duree_requise ; donnees/tables_du_droit.py :
+    MinimumContributif.avts
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir, pointsMsa, pointsMsaRetenus,
     POINTS_MSA_MINIMUM, assietteDuCollaborateur ; moteur/js/droit/liquider.js :

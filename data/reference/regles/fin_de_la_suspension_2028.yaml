@@ -99,8 +99,9 @@ code:
     un changement du calendrier se porterait dans ces tables.
   python: >-
     droit/ouvrir.py : SUSPENSION_2026_EFFET, GENERATIONS_SUSPENSION, duree_requise ;
-    scenarios/actuel.py : AgesOuvertureAvantSuspension, DureesRequisesAvantSuspension,
-    TableRecouverte, DROITS_CONTREFACTUELS, ScenarioActuel._sous_le_droit
+    scenarios/actuel.py : DROITS_CONTREFACTUELS, ScenarioActuel._sous_le_droit ;
+    donnees/tables_du_droit.py : AgesOuvertureAvantSuspension,
+    DureesRequisesAvantSuspension, TableRecouverte
   javascript: >-
     moteur/js/regimes.js : SUSPENSION_2026_EFFET, GENERATIONS_SUSPENSION,
     AgesOuvertureAvantSuspension, DureesRequisesAvantSuspension, TableRecouverte ;

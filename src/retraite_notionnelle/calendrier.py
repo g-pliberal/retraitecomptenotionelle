@@ -163,3 +163,12 @@ def trimestres_civils(mois: int) -> int:
     montant, comme le veut l'article R. 351-9.
     """
     return mois // 3
+
+
+def date_d_effet(carriere) -> str | None:
+    """La date d'effet d'une demande (AAAA-MM-JJ) : le premier jour du mois de
+    la liquidation, ou ``None`` pour une carrière sans départ."""
+    if carriere.age_liquidation is None:
+        return None
+    date = carriere.date_liquidation
+    return f"{date.annee:04d}-{date.mois:02d}-01"

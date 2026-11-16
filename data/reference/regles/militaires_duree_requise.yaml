@@ -136,9 +136,9 @@ code:
     170 en 2025, 171 en 2027, 172 à compter de 2028.
   python: >-
     droit/ouvrir.py : duree_requise, duree_requise_avant_soixante_ans, droit_militaire,
-    duree_de_l_annee ; scenarios/actuel.py : DureesRequisesAvantSoixanteAns,
-    DureesRequisesAvantSoixanteAns.par_annee, DureesRequisesAvantSoixanteAns.depuis_2023,
-    DureesRequisesFonctionPublique
+    duree_de_l_annee ; donnees/tables_du_droit.py : DureesRequisesAvantSoixanteAns,
+    DureesRequisesAvantSoixanteAns.par_annee,
+    DureesRequisesAvantSoixanteAns.depuis_2023, DureesRequisesFonctionPublique
   javascript: >-
     moteur/js/droit/ouvrir.js : dureeRequise, dureeRequiseAvantSoixanteAns,
     droitMilitaire, dureeDeLAnnee ; moteur/js/regimes.js :

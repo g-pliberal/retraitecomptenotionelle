@@ -314,7 +314,7 @@ textes_a_relire:
 code:
   python: >-
     droit/acquerir.py : acquerir ; droit/liquider.py : valeur_du_point ;
-    scenarios/actuel.py : ConversionsPoints
+    donnees/tables_du_droit.py : ConversionsPoints
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
     valeurDuPoint ; moteur/js/regimes.js : ConversionsPoints

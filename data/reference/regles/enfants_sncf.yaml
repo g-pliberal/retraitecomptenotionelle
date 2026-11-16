@@ -143,7 +143,7 @@ sources:
     url: https://www.senat.fr/rap/r09-732/r09-7322.html
 code:
   python: >-
-    scenarios/actuel.py : MajorationsPourEnfants ; droit/compter.py :
+    donnees/tables_du_droit.py : MajorationsPourEnfants ; droit/compter.py :
     majoration_pour_enfants, bonification_ouverte
   javascript: >-
     moteur/js/regimes.js : MajorationsPourEnfants ; moteur/js/droit/compter.js : majorationPourEnfants,

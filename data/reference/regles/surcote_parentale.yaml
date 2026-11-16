@@ -224,7 +224,7 @@ code:
     l'emporte les efface.
   python: >-
     droit/completer.py : trimestres_de_surcote_parentale, completer ;
-    scenarios/actuel.py : SurcoteParentale, SurcoteParentale.parametres
+    donnees/tables_du_droit.py : SurcoteParentale, SurcoteParentale.parametres
   javascript: >-
     moteur/js/droit/completer.js : trimestresDeSurcoteParentale, completer ;
     moteur/js/regimes.js : SurcoteParentale, SurcoteParentale.parametres

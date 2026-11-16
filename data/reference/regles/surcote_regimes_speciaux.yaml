@@ -131,7 +131,7 @@ code:
     coefficient_surcote_regimes_speciaux, SURCOTE_REGIMES_SPECIAUX_DEPUIS,
     SURCOTE_AU_TAUX_DE_2009_DEPUIS, _BAREMES_REGIMES_SPECIAUX ; droit/compter.py :
     trimestres_de_la_ligne_entre ; droit/ouvrir.py : age_surcote, age_ouverture_commun ;
-    scenarios/actuel.py : AgesSurcoteRegimesSpeciaux
+    donnees/tables_du_droit.py : AgesSurcoteRegimesSpeciaux
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime,
     trimestresDeSurcoteRegimesSpeciaux, coefficientSurcoteRegimesSpeciaux,

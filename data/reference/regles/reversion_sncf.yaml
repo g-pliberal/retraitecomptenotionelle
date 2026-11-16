@@ -307,8 +307,9 @@ sources:
     url: https://www.cprpf.fr/retraites/veuvage-et-reversion/la-pension-de-reversion-regime-special/
 code:
   python: >-
-    scenarios/actuel.py : Reversions ; droit/reversion.py : reversion, _mariage_sncf,
-    _sans_jouissance_au_deces, _part_du_survivant, _admis_ailleurs, _minimum_de_pension
+    donnees/tables_du_droit.py : Reversions ; droit/reversion.py : reversion,
+    _mariage_sncf, _sans_jouissance_au_deces, _part_du_survivant, _admis_ailleurs,
+    _minimum_de_pension
   javascript: >-
     moteur/js/regimes.js : Reversions ; moteur/js/droit/reversion.js : reversion,
     mariageSncf, sansJouissanceAuDeces, partDuSurvivant, admisAilleurs,

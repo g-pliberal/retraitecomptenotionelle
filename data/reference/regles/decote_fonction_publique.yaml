@@ -53,7 +53,7 @@ code:
     droit/liquider.py : liquider_chaque_regime, decote_opposable, millesime_du_bareme,
     trimestres_de_decote, _au_trimestre_superieur, _BAREMES_DECOTE_EN_TABLE ;
     droit/ouvrir.py : age_taux_plein, annee_ouverture_des_droits, derogation_active ;
-    scenarios/actuel.py : DecoteFonctionPublique
+    donnees/tables_du_droit.py : DecoteFonctionPublique
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, decoteOpposable,
     millesimeDuBareme, trimestresDeDecote, auTrimestreSuperieur,

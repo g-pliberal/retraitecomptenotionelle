@@ -257,8 +257,8 @@ approximations:
 code:
   python: >-
     droit/compter.py : trimestres_assimiles, trimestres_de_l_apprentissage,
-    trimestres_du_contrat, version_ouverte, compter, Durees ; scenarios/actuel.py :
-    FichesDatees.version_aux_dates
+    trimestres_du_contrat, version_ouverte, compter, Durees ; donnees/tables_du_droit.py
+    : FichesDatees.version_aux_dates
   javascript: >-
     moteur/js/droit/compter.js : trimestresAssimiles, trimestresDeLApprentissage,
     trimestresDuContrat, versionOuverte, compter, Durees ; moteur/js/regimes.js :

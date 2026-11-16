@@ -415,8 +415,9 @@ sources:
 code:
   python: >-
     droit/reversion.py : reversion, _age_agirc_arrco, _a_l_age, _part_du_survivant,
-    _admis_ailleurs, _entiere_au_conjoint, _jusqu_au_remariage ; scenarios/actuel.py :
-    Reversions ; echeancier.py : Echeancier._pensions_au_deces
+    _admis_ailleurs, _entiere_au_conjoint, _jusqu_au_remariage ;
+    donnees/tables_du_droit.py : Reversions ; echeancier.py :
+    Echeancier._pensions_au_deces
   javascript: >-
     moteur/js/droit/reversion.js : reversion, ageAgircArrco, aLAge, partDuSurvivant,
     admisAilleurs, entiereAuConjoint, jusquAuRemariage ; moteur/js/regimes.js :

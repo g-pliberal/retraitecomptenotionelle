@@ -327,12 +327,12 @@ code:
     carrière, `ouverture_carriere_longue` pour un fonctionnaire. `avant` la ramène aux
     décrets d'avant une date, pour un droit contrefactuel.
   python: >-
-    scenarios/actuel.py : CarriereLongue, CarriereLongue._portes,
+    donnees/tables_du_droit.py : CarriereLongue, CarriereLongue._portes,
     CarriereLongue.de_la_fonction_publique, CarriereLongue._requis,
     CarriereLongue._entree_precoce, CarriereLongue.age_de_depart,
     CarriereLongue.age_propose, CarriereLongue.avant ; droit/ouvrir.py : ouvrir,
-    age_carriere_longue, duree_d_assurance, ouverture_carriere_longue ; droit/departs.py :
-    _carriere_longue_acquise
+    age_carriere_longue, duree_d_assurance, ouverture_carriere_longue ; droit/departs.py
+    : _carriere_longue_acquise
   javascript: >-
     moteur/js/regimes.js : CarriereLongue, CarriereLongue.portes,
     CarriereLongue.deLaFonctionPublique, CarriereLongue.requisDe,

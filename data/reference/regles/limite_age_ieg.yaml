@@ -285,8 +285,8 @@ code:
     droit/limite_age.py : radiation, radier, emploi_de, _limite, _morceaux,
     _age_de_la_version, _au_terme_des_services, _exceptions,
     _prolongation_carriere_incomplete ; droit/departs.py : departs_et_demandes ;
-    scenarios/actuel.py : FichesDatees, ScenarioActuel.calculer ; echeancier.py :
-    Echeancier.parcourir
+    scenarios/actuel.py : ScenarioActuel.calculer ; donnees/tables_du_droit.py :
+    FichesDatees ; echeancier.py : Echeancier.parcourir
   javascript: >-
     moteur/js/droit/limite_age.js : radiation, radier, emploiDe, limiteDe, morceaux,
     ageDeLaVersion, auTermeDesServices, exceptions, prolongationCarriereIncomplete ;

@@ -141,26 +141,28 @@ def les_tests_dans_le_moteur(source: str) -> dict[str, str]:
 
 
 def test_ce_qui_fait_entrer_dans_le_moteur_python_se_lit_dans_les_imports():
-    """Le simulateur, un module du droit, une fonction de règle et une table du
-    moteur y font entrer ; un type de données, une constante, un chargeur de
-    données et la façade, non."""
+    """Le simulateur, un module du droit, une fonction de règle et le moteur
+    du scénario 1 y font entrer ; un type de données, une constante, un
+    chargeur de données, même repris par un module de règles, et la façade,
+    non."""
     assert entrees_dans_le_moteur(
         "from retraite_notionnelle import Parametres, pont\n"
         "from retraite_notionnelle.simulateur import Simulateur\n"
         "from retraite_notionnelle.droit import liquider\n"
         "def test():\n"
         "    from retraite_notionnelle.droit.reversion import Reversion, reversion\n"
-        "    from retraite_notionnelle.scenarios.actuel import AgesOuverture, ResultatActuel\n"
+        "    from retraite_notionnelle.scenarios.actuel import ScenarioActuel, ResultatActuel\n"
         "    import retraite_notionnelle.pilote\n"
     ) == {"retraite_notionnelle.simulateur.Simulateur", "retraite_notionnelle.droit.liquider",
           "retraite_notionnelle.droit.reversion.reversion",
-          "retraite_notionnelle.scenarios.actuel.AgesOuverture", "retraite_notionnelle.pilote"}
+          "retraite_notionnelle.scenarios.actuel.ScenarioActuel", "retraite_notionnelle.pilote"}
     assert entrees_dans_le_moteur(
         "from retraite_notionnelle.carriere import LigneRelevee, Metier\n"
         "from retraite_notionnelle.config import Parametres\n"
         "from retraite_notionnelle.donnees.chargement import Fiabilite\n"
         "from retraite_notionnelle.droit.commun import PensionRegime\n"
         "from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Comparaison\n"
+        "from retraite_notionnelle.scenarios.actuel import AgesOuverture\n"
         "from facade import Carriere, Simulateur, reversion\n"
     ) == set()
     assert entrees_dans_le_moteur("from retraite_notionnelle.carriere import Carriere\n") == {

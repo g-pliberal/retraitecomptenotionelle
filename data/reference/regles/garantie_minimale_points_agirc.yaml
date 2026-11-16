@@ -878,7 +878,7 @@ sources:
     url: https://www.agirc-arrco.fr/wp-content/uploads/2021/10/2019-1-DRJ_Reglementation__applicable_aux_entreprises.pdf
 code:
   python: >-
-    scenarios/actuel.py : ValeursPoint.garantie ; donnees/regimes.py :
+    donnees/tables_du_droit.py : ValeursPoint.garantie ; donnees/regimes.py :
     PeriodeRegime.points_garantis ; droit/acquerir.py : acquerir ; moteur/compte.py :
     ConstructeurCompte._assiette_garantie, ConstructeurCompte._cotisation_ligne
   javascript: >-

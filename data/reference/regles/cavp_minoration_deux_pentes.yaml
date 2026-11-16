@@ -689,8 +689,8 @@ code:
     d'ouverture de celle-ci (`ouvrir`).
   python: >-
     droit/liquider.py : abattement_points, abattement_regime_de_base, decote_opposable,
-    trimestres_de_decote ; droit/ouvrir.py : age_taux_plein ; scenarios/actuel.py :
-    AgesRegimes ; droit/completer.py : completer, _taux_majoration_enfants ;
+    trimestres_de_decote ; droit/ouvrir.py : age_taux_plein ; donnees/tables_du_droit.py
+    : AgesRegimes ; droit/completer.py : completer, _taux_majoration_enfants ;
     droit/departs.py : _au_trimestre_civil, departs_et_demandes ; droit/ouvrir.py :
     ouvrir, _references
   javascript: >-

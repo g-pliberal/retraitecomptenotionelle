@@ -491,7 +491,7 @@ code:
   python: >-
     droit/invalidite.py : substitution, plancher_de_la_substitution,
     categorie_de_la_pension, pension_d_invalidite_servie ; droit/completer.py :
-    completer ; droit/departs.py : departs_et_demandes ; scenarios/actuel.py :
+    completer ; droit/departs.py : departs_et_demandes ; donnees/tables_du_droit.py :
     Invalidites
   javascript: >-
     moteur/js/droit/invalidite.js : substitution, plancherDeLaSubstitution,

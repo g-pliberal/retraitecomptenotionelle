@@ -215,7 +215,7 @@ code:
   python: >-
     droit/liquider.py : liquider_chaque_regime, EligibleMinimumGaranti,
     MINORATION_AGE_MINIMUM_GARANTI ; droit/compter.py : Durees.services_effectifs ;
-    droit/completer.py : completer ; scenarios/actuel.py : MinimumGaranti,
+    droit/completer.py : completer ; donnees/tables_du_droit.py : MinimumGaranti,
     MinimumGaranti.montant, MinimumGaranti.bareme, MinimumGaranti.reference
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, MINORATION_AGE_MINIMUM_GARANTI ;

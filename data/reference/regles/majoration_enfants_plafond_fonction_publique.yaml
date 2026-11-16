@@ -294,7 +294,7 @@ sources:
 code:
   python: >-
     droit/liquider.py : Pensions ; droit/completer.py : majoration_sous_le_traitement,
-    completer ; scenarios/actuel.py : FichesDatees ; types_du_pont/droit.py :
+    completer ; donnees/tables_du_droit.py : FichesDatees ; types_du_pont/droit.py :
     EligiblePlafondEnfants
   javascript: >-
     moteur/js/droit/liquider.js : Pensions ; moteur/js/droit/completer.js :

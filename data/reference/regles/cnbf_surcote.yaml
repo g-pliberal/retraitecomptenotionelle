@@ -48,7 +48,7 @@ code:
     au 30 juin 2010, 1,25 % depuis le 1er juillet 2010 (R. 653-3).
   python: >-
     droit/liquider.py : liquider_chaque_regime, coefficient_surcote_datee ;
-    droit/ouvrir.py : age_surcote, age_ouverture_commun ; scenarios/actuel.py :
+    droit/ouvrir.py : age_surcote, age_ouverture_commun ; donnees/tables_du_droit.py :
     SurcoteBaremes
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, coefficientSurcoteDatee ;

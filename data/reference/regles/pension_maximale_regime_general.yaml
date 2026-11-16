@@ -422,7 +422,7 @@ sources:
 code:
   python: >-
     droit/liquider.py : pension_maximale, taux_acquis_l_emporte, liquider_chaque_regime
-    ; scenarios/actuel.py : FichesDatees
+    ; donnees/tables_du_droit.py : FichesDatees
   javascript: >-
     moteur/js/droit/liquider.js : pensionMaximale, tauxAcquisLEmporte,
     liquiderChaqueRegime ; moteur/js/regimes.js : FichesDatees

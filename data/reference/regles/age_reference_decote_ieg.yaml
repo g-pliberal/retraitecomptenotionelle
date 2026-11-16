@@ -260,7 +260,7 @@ code:
     réunit ensuite a soixante-deux ans (`ieg_actif_2023`), sans diminution.
   python: >-
     droit/ouvrir.py : age_taux_plein, mois_ouverture_des_droits ; droit/liquider.py :
-    decote_opposable, millesime_du_bareme ; scenarios/actuel.py : AgesRegimes,
+    decote_opposable, millesime_du_bareme ; donnees/tables_du_droit.py : AgesRegimes,
     DecoteRegimesSpeciaux
   javascript: >-
     moteur/js/droit/ouvrir.js : ageTauxPlein, moisOuvertureDesDroits ;

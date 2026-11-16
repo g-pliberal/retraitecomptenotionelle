@@ -254,7 +254,7 @@ code:
     1970 —, et non au-delà de l'âge d'ouverture de la période.
   python: >-
     droit/ouvrir.py : age_surcote ; droit/liquider.py : liquider_chaque_regime,
-    trimestres_de_surcote_regimes_speciaux ; scenarios/actuel.py :
+    trimestres_de_surcote_regimes_speciaux ; donnees/tables_du_droit.py :
     AgesSurcoteRegimesSpeciaux
   javascript: >-
     moteur/js/droit/ouvrir.js : ageSurcote ; moteur/js/droit/liquider.js :

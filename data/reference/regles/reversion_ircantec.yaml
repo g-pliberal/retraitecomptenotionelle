@@ -337,7 +337,7 @@ code:
   python: >-
     droit/reversion.py : reversion, _age_ircantec, _mariage_ircantec,
     _enfants_de_moins_de, _part_du_survivant, _admis_ailleurs, _jusqu_au_remariage ;
-    scenarios/actuel.py : Reversions
+    donnees/tables_du_droit.py : Reversions
   javascript: >-
     moteur/js/droit/reversion.js : reversion, ageIrcantec, mariageIrcantec,
     enfantsDeMoinsDe, partDuSurvivant, admisAilleurs, jusquAuRemariage ;

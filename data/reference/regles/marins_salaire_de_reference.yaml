@@ -555,9 +555,9 @@ code:
     non au semestre.
   python: >-
     droit/liquider.py : salaire_de_reference, assiette_de_reference,
-    plafond_du_salaire_de_reference, abattre_au_dela_du_plafond ;
-    donnees/regimes.py : SalairesForfaitaires, SalairesForfaitaires.forfait ;
-    scenarios/actuel.py : MinimumGaranti.traitement_de_l_indice_100
+    plafond_du_salaire_de_reference, abattre_au_dela_du_plafond ; donnees/regimes.py :
+    SalairesForfaitaires, SalairesForfaitaires.forfait ; donnees/tables_du_droit.py :
+    MinimumGaranti.traitement_de_l_indice_100
   javascript: >-
     moteur/js/droit/liquider.js : salaireDeReference, assietteDeReference,
     plafondDuSalaireDeReference, abattreAuDelaDuPlafond ;

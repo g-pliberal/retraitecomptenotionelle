@@ -184,7 +184,7 @@ code:
     salaire_reference_par_generation: independants
     regles_du_salaire_annuel_moyen: revenu_annuel_moyen_independants
   python: >-
-    scenarios/actuel.py : FichesDatees, AnneesRevenuAnnuelMoyenIndependants ;
+    donnees/tables_du_droit.py : FichesDatees, AnneesRevenuAnnuelMoyenIndependants ;
     droit/liquider.py : salaire_de_reference, nombre_d_annees_retenues
   javascript: >-
     moteur/js/regimes.js : FichesDatees, AnneesRevenuAnnuelMoyenIndependants ;

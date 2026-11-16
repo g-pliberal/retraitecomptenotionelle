@@ -631,7 +631,7 @@ code:
   python: >-
     droit/liquider.py : abattement_points, abattement_regime_de_base, decote_opposable,
     trimestres_de_decote ; droit/ouvrir.py : age_ouverture, age_taux_plein ;
-    scenarios/actuel.py : AgesRegimes ; droit/completer.py : completer,
+    donnees/tables_du_droit.py : AgesRegimes ; droit/completer.py : completer,
     _taux_majoration_enfants
   javascript: >-
     moteur/js/droit/liquider.js : abattementPoints, abattementRegimeDeBase,

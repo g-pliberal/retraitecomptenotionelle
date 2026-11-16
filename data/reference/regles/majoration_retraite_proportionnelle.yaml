@@ -1472,7 +1472,8 @@ textes_sans_effet:
 code:
   python: >-
     droit/completer.py : majoration_retraite_proportionnelle, completer ;
-    revalorisation.py : reviser_les_exploitants ; scenarios/actuel.py : FichesDatees
+    revalorisation.py : reviser_les_exploitants ; donnees/tables_du_droit.py :
+    FichesDatees
   javascript: >-
     moteur/js/droit/completer.js : majorationRetraiteProportionnelle, completer ;
     moteur/js/revalorisation.js : reviserLesExploitants

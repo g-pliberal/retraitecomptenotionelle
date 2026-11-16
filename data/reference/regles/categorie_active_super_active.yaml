@@ -89,7 +89,7 @@ code:
   python: >-
     carriere.py : Affiliations.classements_actifs ; droit/ouvrir.py : derogation_active,
     statut_dominant, _age_ouverture_de_droit_commun, age_taux_plein ; droit/compter.py :
-    services_actifs_requis ; scenarios/actuel.py : AgesCategorieActive,
+    services_actifs_requis ; donnees/tables_du_droit.py : AgesCategorieActive,
     AgesCategorieActive.derogation, DureesServicesActifs
   javascript: >-
     moteur/js/regimes.js : Affiliations.classementsActifs, AgesCategorieActive,

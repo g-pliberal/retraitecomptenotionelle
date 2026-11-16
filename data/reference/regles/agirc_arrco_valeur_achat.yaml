@@ -402,11 +402,11 @@ sources:
     url: https://www.info-retraite.fr/portail-services/sir
 code:
   python: >-
-    donnees/macro.py : DonneesMacro.coefficient_salaire_moyen ; scenarios/actuel.py :
-    ValeursPoint.achat_prolonge, ValeursPoint.indice_convenu ; droit/acquerir.py :
-    acquerir ; droit/seconde.py : _prix_du_point ; droit/liquider.py : valeur_du_point ;
-    revalorisation_servie.py : RevalorisationServie.coefficient_points ; cout.py :
-    coefficient_actuel
+    donnees/macro.py : DonneesMacro.coefficient_salaire_moyen ;
+    donnees/tables_du_droit.py : ValeursPoint.achat_prolonge,
+    ValeursPoint.indice_convenu ; droit/acquerir.py : acquerir ; droit/seconde.py :
+    _prix_du_point ; droit/liquider.py : valeur_du_point ; revalorisation_servie.py :
+    RevalorisationServie.coefficient_points ; cout.py : coefficient_actuel
   javascript: >-
     moteur/js/macro.js : coefficientSalaireMoyen ; moteur/js/regimes.js :
     ValeursPoint.achatProlonge, ValeursPoint.indiceConvenu ; moteur/js/droit/acquerir.js

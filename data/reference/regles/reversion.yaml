@@ -2242,7 +2242,7 @@ code:
     _ressources_de_la_periode, _mois_de_la_demande, _ressources_a_la_date_d_effet,
     _trois_mois_apres, _apres_les_trois_mois, _generation, _derniere_revision, _venu,
     _activite_au, _apport_au, _majorations_ulterieures,
-    date_des_regles_de_la_pension_eue ; scenarios/actuel.py : Reversions ;
+    date_des_regles_de_la_pension_eue ; donnees/tables_du_droit.py : Reversions ;
     echeancier.py : Echeancier._reverser, Echeancier._pensions_au_deces,
     Echeancier._pensions_eues_au_deces, Echeancier._lire_pensions_eues ; carriere.py :
     Carriere.arretee_au_deces, Carriere.ex_conjoints ; chronologie.py : ex_conjoints,

@@ -394,9 +394,9 @@ textes_a_rattacher:
     l'État (lu le 12 novembre 2026, action 184, étape 6)
 code:
   python: >-
-    scenarios/actuel.py : FichesDatees ; droit/ouvrir.py : depart_parent_trois_enfants,
-    age_ouverture, annee_ouverture_des_droits, duree_requise, duree_de_l_annee ;
-    droit/liquider.py : liquider_chaque_regime
+    donnees/tables_du_droit.py : FichesDatees ; droit/ouvrir.py :
+    depart_parent_trois_enfants, age_ouverture, annee_ouverture_des_droits,
+    duree_requise, duree_de_l_annee ; droit/liquider.py : liquider_chaque_regime
   javascript: >-
     moteur/js/regimes.js : FichesDatees ; moteur/js/droit/ouvrir.js :
     departParentTroisEnfants, ageOuverture, anneeOuvertureDesDroits, dureeRequise,

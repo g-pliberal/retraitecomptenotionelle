@@ -82,8 +82,7 @@ code:
     droit/liquider.py : salaire_de_reference ; droit/coordonner.py :
     REGIMES_CODE_DES_PENSIONS ; revalorisation.py : coefficient_traitement_differe ;
     donnees/revalorisations.py : RevalorisationsPensions ; revalorisation_servie.py :
-    FIN_PEREQUATION ;
-    scenarios/actuel.py : MinimumGaranti.ratio_point_indice
+    FIN_PEREQUATION ; donnees/tables_du_droit.py : MinimumGaranti.ratio_point_indice
   javascript: >-
     moteur/js/droit/liquider.js : salaireDeReference ; moteur/js/droit/coordonner.js :
     REGIMES_CODE_DES_PENSIONS ; moteur/js/revalorisation.js :

@@ -457,10 +457,10 @@ textes_a_rattacher:
     votée (le dépôt n'a lu que le projet)
 code:
   python: >-
-    scenarios/actuel.py : FichesDatees ; droit/compter.py : trimestres_des_emplois,
-    trimestres_d_un_emploi, condition_d_un_emploi, services_au_dela ; carriere.py :
-    Carriere.duree_de_service_avant ; droit/liquider.py : liquider_chaque_regime ;
-    avantages.py : NEUTRALISATIONS, FICHES_RETIREES
+    donnees/tables_du_droit.py : FichesDatees ; droit/compter.py :
+    trimestres_des_emplois, trimestres_d_un_emploi, condition_d_un_emploi,
+    services_au_dela ; carriere.py : Carriere.duree_de_service_avant ; droit/liquider.py
+    : liquider_chaque_regime ; avantages.py : NEUTRALISATIONS, FICHES_RETIREES
   javascript: >-
     moteur/js/regimes.js : FichesDatees ; moteur/js/droit/compter.js :
     trimestresDesEmplois, trimestresDUnEmploi, conditionDUnEmploi, servicesAuDela ;

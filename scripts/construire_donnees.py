@@ -90,7 +90,7 @@ from retraite_notionnelle.donnees.regimes import (  # noqa: E402
     charger_taux_moyens,
 )
 from retraite_notionnelle.noyau.calcul_notionnel import calcul_notionnel  # noqa: E402
-from retraite_notionnelle.scenarios.actuel import (  # noqa: E402
+from retraite_notionnelle.donnees.tables_du_droit import (  # noqa: E402
     AgesAnnulationDecote,
     AgesJouissanceMilitaire,
     AgesOuverture,
@@ -1300,7 +1300,7 @@ def _conversions_points() -> list:
     d'unité. Une ligne : régime, année d'effet, successeur, coefficient,
     fiabilité — le successeur étant vide pour un changement d'échelle interne.
     """
-    from retraite_notionnelle.scenarios.actuel import ConversionsPoints
+    from retraite_notionnelle.donnees.tables_du_droit import ConversionsPoints
 
     conversions = ConversionsPoints(DONNEES)
     lignes = [
@@ -1714,7 +1714,7 @@ def _ages_regimes() -> dict:
     """Âges propres à un régime, par génération : ouverture, taux plein,
     fiabilité et, quand la table en écrit un, coefficient de minoration et âge
     au-delà duquel la majoration ne court plus."""
-    from retraite_notionnelle.scenarios.actuel import AgesRegimes
+    from retraite_notionnelle.donnees.tables_du_droit import AgesRegimes
 
     ages = AgesRegimes(DONNEES)
     return {
@@ -1732,7 +1732,7 @@ def _ages_regimes() -> dict:
 
 def _categorie_active() -> dict:
     """Âges de la catégorie active et de la super-active, par génération."""
-    from retraite_notionnelle.scenarios.actuel import AgesCategorieActive
+    from retraite_notionnelle.donnees.tables_du_droit import AgesCategorieActive
 
     table = AgesCategorieActive(DONNEES)._table
     return {
@@ -1752,7 +1752,7 @@ def _categorie_active() -> dict:
 def _durees_services_militaires(classe=None) -> dict:
     """Durée qui ouvre la pension militaire, par année d'atteinte ; ou, de
     ``classe``, l'âge anticipé ou minoré des emplois classés."""
-    from retraite_notionnelle.scenarios.actuel import DureesServicesMilitaires
+    from retraite_notionnelle.donnees.tables_du_droit import DureesServicesMilitaires
 
     table = (classe or DureesServicesMilitaires)(DONNEES)._table
     return {
@@ -1770,7 +1770,7 @@ def _minimum_contributif() -> dict:
     plafond, à chaque date de revalorisation, et la fiche dont le moteur lit la
     règle de la date d'effet."""
     from retraite_notionnelle.donnees.macro import DonneesMacro
-    from retraite_notionnelle.scenarios.actuel import MinimumContributif
+    from retraite_notionnelle.donnees.tables_du_droit import MinimumContributif
 
     minimum = MinimumContributif(DONNEES, DonneesMacro(DONNEES))
     return {
@@ -1786,7 +1786,7 @@ def _pension_majoree_reference() -> dict:
     agricoles et des plafonds de son écrêtement, et la fiche dont le moteur lit
     la règle de la date d'effet."""
     from retraite_notionnelle.donnees.macro import DonneesMacro
-    from retraite_notionnelle.scenarios.actuel import PensionMajoreeReference
+    from retraite_notionnelle.donnees.tables_du_droit import PensionMajoreeReference
 
     pmr = PensionMajoreeReference(DONNEES, DonneesMacro(DONNEES))
     return {
@@ -1801,7 +1801,7 @@ def _complement_differentiel_rco() -> dict:
     """Le SMIC net agricole horaire de chaque 1er janvier, que le complément
     différentiel de la RCO lit, et la fiche de sa règle."""
     from retraite_notionnelle.donnees.macro import DonneesMacro
-    from retraite_notionnelle.scenarios.actuel import ComplementDifferentielRco
+    from retraite_notionnelle.donnees.tables_du_droit import ComplementDifferentielRco
 
     complement = ComplementDifferentielRco(DONNEES, DonneesMacro(DONNEES))
     return {
@@ -1816,7 +1816,7 @@ def _durees_requises_regimes() -> dict:
     avec le mois (rang) à compter duquel chaque table vaut, l'âge auquel une
     table se lit et l'âge de liquidation à partir duquel elle vaut, quand
     elle en porte."""
-    from retraite_notionnelle.scenarios.actuel import DureesRequisesRegimes
+    from retraite_notionnelle.donnees.tables_du_droit import DureesRequisesRegimes
 
     tables = DureesRequisesRegimes(DONNEES)
     return {
@@ -1839,7 +1839,7 @@ def _durees_requises_regimes() -> dict:
 
 def _calendriers_duree_requise() -> dict:
     """Durée requise lue au mois où les conditions sont réunies (rang)."""
-    from retraite_notionnelle.scenarios.actuel import CalendriersDureeRequise
+    from retraite_notionnelle.donnees.tables_du_droit import CalendriersDureeRequise
 
     return {
         nom: [[depuis, trimestres, int(fiabilite)]
@@ -1849,7 +1849,7 @@ def _calendriers_duree_requise() -> dict:
 
 def _durees_requises_fonction_publique() -> dict:
     """Durée de services de la fonction publique, 2004-2008, par année d'ouverture."""
-    from retraite_notionnelle.scenarios.actuel import DureesRequisesFonctionPublique
+    from retraite_notionnelle.donnees.tables_du_droit import DureesRequisesFonctionPublique
 
     return {
         str(annee): [trimestres, int(fiabilite)]
@@ -1860,7 +1860,7 @@ def _durees_requises_fonction_publique() -> dict:
 
 def _durees_requises_avant_soixante_ans() -> dict:
     """Durée des droits ouverts avant soixante ans, par règle et rang de mois."""
-    from retraite_notionnelle.scenarios.actuel import DureesRequisesAvantSoixanteAns
+    from retraite_notionnelle.donnees.tables_du_droit import DureesRequisesAvantSoixanteAns
 
     return {
         regle: {str(rang): [trimestres, int(fiabilite)]
@@ -1872,7 +1872,7 @@ def _durees_requises_avant_soixante_ans() -> dict:
 
 def _decote_fonction_publique() -> dict:
     """Barème de décote de l'article L. 14, par année d'ouverture du droit."""
-    from retraite_notionnelle.scenarios.actuel import DecoteFonctionPublique
+    from retraite_notionnelle.donnees.tables_du_droit import DecoteFonctionPublique
 
     return {
         str(annee): [trimestres, coefficient, int(fiabilite)]
@@ -1883,7 +1883,7 @@ def _decote_fonction_publique() -> dict:
 
 def _decote_regimes_speciaux() -> dict:
     """Barème de décote des régimes spéciaux, par année d'ouverture du droit."""
-    from retraite_notionnelle.scenarios.actuel import DecoteRegimesSpeciaux
+    from retraite_notionnelle.donnees.tables_du_droit import DecoteRegimesSpeciaux
 
     return {
         str(annee): [trimestres, coefficient, int(fiabilite)]
@@ -1895,7 +1895,7 @@ def _decote_regimes_speciaux() -> dict:
 def _minimum_garanti() -> dict:
     """Barème de l'article L. 17, point d'indice et montants servis."""
     from retraite_notionnelle.donnees.macro import DonneesMacro
-    from retraite_notionnelle.scenarios.actuel import MinimumGaranti
+    from retraite_notionnelle.donnees.tables_du_droit import MinimumGaranti
 
     minimum = MinimumGaranti(DONNEES, DonneesMacro(DONNEES))
     return {
@@ -1921,7 +1921,7 @@ def _baremes_trimestre() -> dict:
     """Valeur du trimestre et coefficient de majoration, par date d'effet."""
     from retraite_notionnelle.calendrier import DateMois
     from retraite_notionnelle.donnees.macro import DonneesMacro
-    from retraite_notionnelle.scenarios.actuel import BaremesTrimestre
+    from retraite_notionnelle.donnees.tables_du_droit import BaremesTrimestre
 
     baremes = BaremesTrimestre(DONNEES, DonneesMacro(DONNEES))
     return {
@@ -1937,7 +1937,7 @@ def _maximum_des_cultes() -> dict:
     """Les ancres du maximum de la pension des cultes, indexées par année."""
     from retraite_notionnelle.donnees.macro import DonneesMacro
     from retraite_notionnelle.donnees.revalorisations import RevalorisationsPensions
-    from retraite_notionnelle.scenarios.actuel import MaximumDesCultes
+    from retraite_notionnelle.donnees.tables_du_droit import MaximumDesCultes
 
     table = MaximumDesCultes(DONNEES, DonneesMacro(DONNEES),
                              RevalorisationsPensions(DONNEES))._table
@@ -2067,7 +2067,7 @@ def _surcote_parentale() -> list:
 def _majoration_enfants_points() -> dict:
     """Majoration pour enfants des points, par régime, période d'acquisition et
     années de service."""
-    from retraite_notionnelle.scenarios.actuel import MajorationsEnfantsPoints
+    from retraite_notionnelle.donnees.tables_du_droit import MajorationsEnfantsPoints
 
     return {
         code: [[debut, fin, list(bareme), int(fiabilite), servi_debut, servi_fin]
@@ -2103,7 +2103,7 @@ def _sans_zeros(valeur: float) -> str:
 
 def _surcote_baremes() -> list:
     """Barème daté de la surcote : une ligne par taux, par barème."""
-    from retraite_notionnelle.scenarios.actuel import SurcoteBaremes
+    from retraite_notionnelle.donnees.tables_du_droit import SurcoteBaremes
 
     return [
         [bareme, debut, fin, rang, int(apres_65), taux, maximum, int(fiabilite)]

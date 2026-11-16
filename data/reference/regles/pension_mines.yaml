@@ -85,7 +85,7 @@ code:
     tout mineur de trente années, sans la bonification de l'article 138.
   python: >-
     droit/acquerir.py : acquerir ; droit/liquider.py : liquider_chaque_regime ;
-    scenarios/actuel.py : BaremesTrimestre, BaremesTrimestre.valeurs ;
+    donnees/tables_du_droit.py : BaremesTrimestre, BaremesTrimestre.valeurs ;
     droit/ouvrir.py : ouverture_par_services
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :

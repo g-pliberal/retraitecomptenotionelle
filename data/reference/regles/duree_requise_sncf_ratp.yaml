@@ -348,8 +348,8 @@ code:
     de 2008 (`duree_requise_calendrier`), lu au même mois.
   python: >-
     droit/ouvrir.py : duree_requise, duree_propre, mois_ouverture_des_droits ;
-    droit/liquider.py : retranche_decote ; scenarios/actuel.py : DureesRequisesRegimes,
-    DureesRequisesRegimes.ligne, CalendriersDureeRequise
+    droit/liquider.py : retranche_decote ; donnees/tables_du_droit.py :
+    DureesRequisesRegimes, DureesRequisesRegimes.ligne, CalendriersDureeRequise
   javascript: >-
     moteur/js/droit/ouvrir.js : dureeRequise, dureePropre, moisOuvertureDesDroits ;
     moteur/js/droit/liquider.js : retrancheDecote ; moteur/js/regimes.js :

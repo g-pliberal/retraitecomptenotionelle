@@ -37,7 +37,7 @@ code:
     nomme pas : ses cotisations d'après 2026 se servent au rendement de 6,20 % que
     `Rendements.rendement` lit depuis 2024, dans `liquider_chaque_regime`.
   python: >-
-    scenarios/actuel.py : ValeursPoint.achat, ValeursPoint.achat_prolonge,
+    donnees/tables_du_droit.py : ValeursPoint.achat, ValeursPoint.achat_prolonge,
     ValeursPoint.service, Rendements.rendement ; droit/acquerir.py : acquerir ;
     droit/liquider.py : valeur_du_point, liquider_chaque_regime
   javascript: >-

@@ -255,7 +255,7 @@ sources:
     url: https://cor-retraites.fr/sites/default/files/2024-07/Fiche_CPRPF%20%28SNCF%29.pdf
 code:
   python: >-
-    scenarios/actuel.py : FichesDatees, Reversions.minimum_pension_sncf ;
+    donnees/tables_du_droit.py : FichesDatees, Reversions.minimum_pension_sncf ;
     droit/liquider.py : minimum_de_pension_ouvert, EligibleMinimumDePension ;
     droit/completer.py : minimum_de_pension_sncf, completer
   javascript: >-

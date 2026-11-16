@@ -749,7 +749,7 @@ textes_sans_effet:
     n'y change que « trimestre » en « mois »
 code:
   python: >-
-    scenarios/actuel.py : MinimumContributif.valeurs,
+    donnees/tables_du_droit.py : MinimumContributif.valeurs,
     MinimumContributif.pension_minimum, MinimumContributif.regle ; droit/completer.py :
     completer, plancher_national, plancher_d_avant_1983, complement_des_alignes,
     borne_avec_les_droits_d_avant_1973, avpf_retenue, limiter_le_cumul,
