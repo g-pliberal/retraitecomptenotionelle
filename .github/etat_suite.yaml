@@ -1,17 +1,15 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: rouge
-sources: 6289ff5fa218f476f016e53680f4fbaca0f542c6
-date: 2026-11-16T00:34:07Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43779127330
-echecs:
-  - "FAILED tests/test_ecrans.py::test_chaque_page_se_peint_avec_son_seul_style - AssertionError: cas-types/ à 1440 points : seul : span.mot | 988 | 453 | 105 | 17 | inline | visible | rgb(15, 41, 48) | rgba(0, 0, 0, 0) | 15px | 400 | \"Public Sans\", system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif | 24px | none — entière : span.mot | 988 | 453 | 105 | 18 | inline | visible | rgb(15, 41, 48) | rgba(0, 0, 0, 0) | 15px | 400 | \"Public Sans\", system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif | 24px | none"
+etat: vert
+sources: c141c0bbd372fc56e13d0127d846a0b6f5fdd8b4
+date: 2026-11-16T00:54:00Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43780776218
 presomptions: vert
 durees:
-  fabrique: 425
-  suite: 428
-  tranche_1: 310
-  tranche_2: 368
-  tranche_3: 428
-  tranche_4: 423
-  garde: 208
+  fabrique: 643
+  suite: 470
+  tranche_1: 344
+  tranche_2: 470
+  tranche_3: 347
+  tranche_4: 436
+  garde: 128
