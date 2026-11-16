@@ -1,0 +1,35 @@
+date: "2026-11-16"
+session: "action 175, étape 6 : les 61 circulaires, lettres et instructions de 2006 que la base de la Cnav cite sans thème"
+consulte: >-
+  Les 61 références sans thème et à lire de 2006 dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », relues par l'API de la base le 16 novembre 2026 vers 11 h 50 UTC
+  (/reference/referencesByFileLeafRef/), toutes servies, 48 en page et 13 en PDF lus au
+  site (/Pdf/), trois scannés et lus à l'image ; toutes lues en entier, par quatre agents
+  de la session, un lot chacun, dont chaque citation d'un texte servi a été retrouvée mot
+  pour mot. Pour les confronter : les fiches
+  cumul_emploi_retraite_et_retraite_progressive, salaire_annuel_moyen, reversion,
+  retraite_anticipee_handicap, retablissement_fonction_publique,
+  csg_des_pensions_selon_le_revenu, pension_maximale_regime_general, minimum_vieillesse,
+  carriere_longue_reputes_cotises_autres, totalisation_des_periodes_etrangeres ; le code
+  de liquider.py ; les séries legislation/validation_trimestres.csv,
+  csg_pensions_seuils.csv, revalorisation_pensions.csv, minimum_vieillesse_avant_2007.csv,
+  macro/smic_horaire_releves.csv, macro/plafond_securite_sociale.csv ; les limites
+  docs/limites/3-systeme-actuel.md et ecarts-au-droit-positif.md. Ni Légifrance, ni le
+  Journal officiel, ni l'index de la DILA.
+trouve: >-
+  Le registre range les 61 (30 limite, 31 hors_modele), sans raison neuve. Conformes : le
+  SMIC de 2006 et 2007, les plafonds de 2006 et 2007, le trimestre de 2007, les plafonds
+  de la réversion de 2007, les seuils de la CSG, la revalorisation de 2005, l'AVTS de
+  2006. Un écart neuf, à trancher : la lettre ministérielle du 26 décembre 2006 applique
+  dès le 1er janvier 2007 le plancher de 160 % du SMIC au plafond du cumul
+  emploi-retraite (loi n° 2006-1640, article 105), que le modèle n'applique qu'en 2009.
+  Trois candidats plus étroits : la réversion de 2004 à 2006 sans les réversions des
+  « régimes visés » (annexe 1 de la circulaire Cnav n° 2006/37) ; la retraite anticipée
+  des assurés handicapés portée au minimum après sa majoration (circulaire RSI
+  n° 2006/055), que le code fait avant ; le fonctionnaire révoqué avant 2004. La même
+  annexe dit la période transitoire de la réversion, du 1er juillet 2004 au 29 mars 2005
+  au régime général. Note docs/feuille_de_route/175/2026-11-16-etape-6-circulaires-2006.md.
+reste: >-
+  Les 618 circulaires de 2007 à 2026, par période ; les autres natures de l'étape 6 ; la
+  loi n° 2006-1640 et le décret n° 2004-858, à relire au Journal officiel.
