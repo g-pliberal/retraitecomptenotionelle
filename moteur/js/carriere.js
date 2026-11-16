@@ -2793,7 +2793,7 @@ const TRANCHE_SECTEUR_JEUNE = "Y_LT30";
 const TRANCHE_SECTEUR_AGEE = "Y_GE50";
 
 /** De combien la pente d'un secteur s'écarte de celle de l'économie. */
-function facteurSecteur(paquet, affiliation) {
+export function facteurSecteur(paquet, affiliation) {
   const section = propre(PROFIL_SECTEUR_PAR_AFFILIATION, affiliation);
   if (section === undefined) {
     return 1.0;

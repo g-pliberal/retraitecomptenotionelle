@@ -14,11 +14,7 @@ from retraite_notionnelle.donnees.mortalite import DonneesMortalite
 from retraite_notionnelle.donnees.population import Population
 from retraite_notionnelle.moteur.conversion import Convertisseur
 from retraite_notionnelle.carriere import (
-    ANNEE_FORME_CATEGORIE,
     Metier,
-    _facteur_secteur,
-    TRANCHES_CATEGORIE,
-    TRANCHES_SERIE,
     profil_salaire,
 )
 from retraite_notionnelle.moteur.compte import ConstructeurCompte
@@ -275,159 +271,10 @@ def test_le_passe_ne_depend_pas_de_l_age_de_depart():
         assert all(p == pytest.approx(passes[0]) for p in passes), profil
 
 
-def test_le_profil_salarial_suit_la_generation():
-    """Chaque génération a vécu sa propre pente, et le modèle la lit.
-
-    La prime à l'âge n'a pas été la même à toutes les époques : l'INSEE la
-    mesure à 1,19 entre les 51-60 ans et les 26-30 ans en 1962, 1,47 en 2000,
-    1,35 en 2024. Celui qui est né en 1940 est entré dans la vie active au
-    salaire moyen de son temps, celui qui est né en 1960 à 86 % du sien.
-
-    Le modèle appliquait auparavant la MÊME droite à toutes les générations.
-    Il lit maintenant la série longue, et retrouve les pentes observées à
-    quelques centièmes près : ×1,23 contre ×1,25 pour la génération 1940,
-    ×1,37 contre ×1,38 pour celle de 1960.
-    """
-    def pente(generation, profil="ascendant"):
-        jeune = profil_salaire(RACINE_DONNEES, profil, 26, generation + 26)
-        agee = profil_salaire(RACINE_DONNEES, profil, 55, generation + 55)
-        return agee / jeune
-
-    assert pente(1940) < pente(1950) < pente(1960)
-    assert pente(1940) == pytest.approx(1.25, abs=0.05)
-    assert pente(1960) == pytest.approx(1.38, abs=0.05)
-    # Le profil plat ne doit RIEN à la génération : c'est la convention qui ne
-    # suppose rien, et elle doit le rester.
-    assert pente(1940, "plat") == pytest.approx(1.0)
-    assert pente(1975, "plat") == pytest.approx(1.0)
-
-
-def test_le_profil_salarial_ne_doit_rien_a_une_droite_inventee():
-    """Les pentes servies sont celles de l'INSEE, catégorie par catégorie.
-
-    Le modèle appliquait ×1,69 de 26 à 55 ans en profil ascendant et ×2,42 en
-    fortement ascendant, sans source. L'INSEE observe ×1,30 pour un employé et
-    ×1,86 pour un cadre en 2024 — un tiers de moins dans les deux cas. Ce test
-    tient l'année de référence, la seule où la modulation vaut un et où la
-    forme lue doit donc se retrouver telle quelle.
-    """
-    def pente(profil):
-        jeune = profil_salaire(RACINE_DONNEES, profil, 26, ANNEE_FORME_CATEGORIE)
-        agee = profil_salaire(RACINE_DONNEES, profil, 54.5, ANNEE_FORME_CATEGORIE)
-        return agee / jeune
-
-    assert pente("ascendant") == pytest.approx(1.30, abs=0.02)
-    assert pente("fortement_ascendant") == pytest.approx(1.86, abs=0.03)
-
-
-def test_le_facteur_de_secteur_ne_touche_que_les_regimes_speciaux():
-    """L'hypothèse la plus forte du profil salarial, tenue à sa place.
-
-    Aucune source française ne ventile le salaire par âge pour les régimes
-    spéciaux. L'enquête européenne le fait par SECTION d'activité, et deux
-    sections tombent sur un périmètre de régime : l'électricité-gaz est le champ
-    du statut des IEG, les transports celui où sont la SNCF et la RATP. Mais
-    elle est agrégée, donc le modèle n'en prend qu'un rapport de pentes — ce qui
-    suppose ce rapport identique en intra-catégorie et en agrégé.
-
-    Ce test garde les deux bornes de cette hypothèse : elle ne touche QUE les
-    affiliations nommées, et elle n'est pas retenue là où elle ne tient pas
-    d'une vague à l'autre — les mines et les spectacles.
-    """
-    assert _facteur_secteur(RACINE_DONNEES, "agent_ieg") == pytest.approx(1.38, abs=0.03)
-    assert _facteur_secteur(RACINE_DONNEES, "agent_sncf") == pytest.approx(0.93, abs=0.02)
-
-    # Tout le reste est à un : le facteur ne déborde pas sur le privé, ni sur le
-    # public, ni sur les régimes dont le secteur n'est que du bruit.
-    for affiliation in ("salarie_prive_non_cadre", "salarie_prive_cadre",
-                        "fonctionnaire_etat", "contractuel_public", "artisan",
-                        "mineur", "personnel_opera", "personnel_comedie_francaise"):
-        assert _facteur_secteur(RACINE_DONNEES, affiliation) == 1.0, affiliation
-
-
-def test_le_profil_s_interpole_entre_les_valeurs_publiees():
-    """Entre deux milieux de tranche, le profil est l'interpolation linéaire des
-    valeurs que l'INSEE publie. Posée à la main pour une profession
-    intermédiaire de 33 ans, l'année de la forme, où la modulation et le
-    facteur de secteur valent un :
-    0,7909 + (0,9922 − 0,7909) × (33 − 26) / (34,5 − 26) = 0,956 676 470 588 235 29…,
-    dont le flottant le plus proche s'écrit 0.9566764705882352.
-
-    Le Python multipliait l'écart des deux valeurs par la distance à la
-    première tranche avant de diviser par la largeur, et rendait le flottant
-    d'après, …354 ; le portage, qui divise d'abord, rend le plus proche. Aucune
-    des deux écritures n'arrondit au plus près partout — à 31 ans, l'agent de
-    l'État reçoit du portage le flottant voisin —, mais celle du portage le
-    fait au moins aussi souvent : sur les onze profils publiés, aux âges
-    entiers de 14 à 80 ans, deux fois chacune contre les décimales publiées,
-    trois contre une contre les flottants qu'on en lit ; aux demi-années, cinq
-    contre deux. C'est elle que les deux jumeaux gardent (action 161,
-    étape 6).
-    """
-    from fractions import Fraction
-
-    exact = (Fraction("0.7909") + (Fraction("0.9922") - Fraction("0.7909"))
-             * (33 - 26) / (Fraction("34.5") - 26))
-    assert float(exact) == 0.9566764705882352
-    assert profil_salaire(RACINE_DONNEES, "profession_intermediaire", 33,
-                          ANNEE_FORME_CATEGORIE) == float(exact)
-
-
-_PROFILS_JS = """
-import { readFileSync } from "node:fs";
-import { bornesDeformation, profilSalaire } from "./moteur/js/carriere.js";
-const [profils, ages, annees] = JSON.parse(process.argv[1]);
-const paquet = JSON.parse(readFileSync("moteur/donnees.json", "utf8"));
-process.stdout.write(JSON.stringify(profils.map(([profil, affiliation]) => [
-  bornesDeformation(paquet, profil, affiliation),
-  annees.map((annee) => ages.map((age) => profilSalaire(paquet, profil, age, annee, affiliation))),
-])));
-"""
-
-
-def test_les_deux_jumeaux_lisent_le_meme_profil_au_bit_pres():
-    """Le profil de chaque métier, chaque année d'une carrière : le Python le
-    lit pour les carrières types du coût, le portage pour celles du site. Ils
-    l'écrivaient de deux façons, qui différaient au dernier bit à quatre âges
-    entiers (le test précédent), et une ligne de revenu d'autant. Ils rendent
-    les mêmes flottants à chaque demi-année de 14 à 80 ans, sous la modulation
-    de huit années, pour chaque profil nommé et le profil déduit de chaque
-    affiliation que les tables nomment, et les bornes que la page affiche."""
-    import json
-    import shutil
-    import subprocess
-    from pathlib import Path
-
-    from retraite_notionnelle.carriere import (
-        PROFIL_AUTOMATIQUE, PROFIL_PAR_AFFILIATION, PROFIL_SECTEUR_PAR_AFFILIATION,
-        PROFILS_CATEGORIE, bornes_deformation)
-
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    profils = [(nom, None) for nom in PROFILS_CATEGORIE] + [
-        (PROFIL_AUTOMATIQUE, affiliation) for affiliation in sorted(
-            {*PROFIL_PAR_AFFILIATION, *PROFIL_SECTEUR_PAR_AFFILIATION,
-             "salarie_prive_non_cadre"})]
-    ages = [demi / 2 for demi in range(28, 162)]
-    annees = [1950, 1962, 1975, 1993, 2000, 2010, 2024, 2040]
-    execution = subprocess.run(
-        ["node", "--input-type=module", "-e", _PROFILS_JS,
-         json.dumps([profils, ages, annees])],
-        cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
-        encoding="utf-8", check=False)
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    ecarts = []
-    for (profil, affiliation), (bornes, par_annee) in zip(
-            profils, json.loads(execution.stdout), strict=True):
-        if list(bornes_deformation(RACINE_DONNEES, profil, affiliation)) != bornes:
-            ecarts.append(f"bornes de {profil} ({affiliation})")
-        for annee, valeurs in zip(annees, par_annee, strict=True):
-            for age, valeur in zip(ages, valeurs, strict=True):
-                attendu = profil_salaire(RACINE_DONNEES, profil, age, annee, affiliation)
-                if valeur != attendu:
-                    ecarts.append(f"{profil} ({affiliation}), {age} ans en {annee} : "
-                                  f"python={attendu!r} portage={valeur!r}")
-    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:12])
+# -- profil de rémunération -------------------------------------------------
+# `profil_salaire` et `_facteur_secteur` s'éprouvent sur le portage :
+# tests/js/profil-salaire.test.js (action 161, quatrième vague) ; la
+# confrontation des deux jumeaux au bit près, dans test_facade_jumeau.py.
 
 
 #: Les noms que tout objet de JavaScript hérite de son prototype.

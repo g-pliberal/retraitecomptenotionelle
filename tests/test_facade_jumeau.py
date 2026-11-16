@@ -2064,3 +2064,60 @@ def test_le_jumeau_date_le_depart_que_le_pilote_de_la_facade_lit(parametres):
                 assert facade.pilote.age_de_depart(servi, cas, generation, variante) == (
                     pilote_python.age_de_depart(jumeau, cas, generation, variante)), (
                     cas.code, generation, variante)
+
+
+# -- le profil de rémunération ----------------------------------------------------------
+
+_PROFILS_JS = """
+import { readFileSync } from "node:fs";
+import { bornesDeformation, profilSalaire } from "./moteur/js/carriere.js";
+const [profils, ages, annees] = JSON.parse(process.argv[1]);
+const paquet = JSON.parse(readFileSync("moteur/donnees.json", "utf8"));
+process.stdout.write(JSON.stringify(profils.map(([profil, affiliation]) => [
+  bornesDeformation(paquet, profil, affiliation),
+  annees.map((annee) => ages.map((age) => profilSalaire(paquet, profil, age, annee, affiliation))),
+])));
+"""
+
+
+def test_les_deux_jumeaux_lisent_le_meme_profil_au_bit_pres():
+    """Le profil de chaque métier, chaque année d'une carrière : le Python le
+    lit pour les carrières types du coût, le portage pour celles du site. Ils
+    l'écrivaient de deux façons, qui différaient au dernier bit à quatre âges
+    entiers (`tests/js/profil-salaire.test.js`), et une ligne de revenu d'autant. Ils rendent
+    les mêmes flottants à chaque demi-année de 14 à 80 ans, sous la modulation
+    de huit années, pour chaque profil nommé et le profil déduit de chaque
+    affiliation que les tables nomment, et les bornes que la page affiche."""
+    import subprocess
+
+    from retraite_notionnelle.carriere import (
+        PROFIL_AUTOMATIQUE, PROFIL_PAR_AFFILIATION, PROFIL_SECTEUR_PAR_AFFILIATION,
+        PROFILS_CATEGORIE, bornes_deformation, profil_salaire)
+    from retraite_notionnelle.config import RACINE_DONNEES
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    profils = [(nom, None) for nom in PROFILS_CATEGORIE] + [
+        (PROFIL_AUTOMATIQUE, affiliation) for affiliation in sorted(
+            {*PROFIL_PAR_AFFILIATION, *PROFIL_SECTEUR_PAR_AFFILIATION,
+             "salarie_prive_non_cadre"})]
+    ages = [demi / 2 for demi in range(28, 162)]
+    annees = [1950, 1962, 1975, 1993, 2000, 2010, 2024, 2040]
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _PROFILS_JS,
+         json.dumps([profils, ages, annees])],
+        cwd=RACINE_PROJET, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    ecarts = []
+    for (profil, affiliation), (bornes, par_annee) in zip(
+            profils, json.loads(execution.stdout), strict=True):
+        if list(bornes_deformation(RACINE_DONNEES, profil, affiliation)) != bornes:
+            ecarts.append(f"bornes de {profil} ({affiliation})")
+        for annee, valeurs in zip(annees, par_annee, strict=True):
+            for age, valeur in zip(ages, valeurs, strict=True):
+                attendu = profil_salaire(RACINE_DONNEES, profil, age, annee, affiliation)
+                if valeur != attendu:
+                    ecarts.append(f"{profil} ({affiliation}), {age} ans en {annee} : "
+                                  f"python={attendu!r} portage={valeur!r}")
+    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:12])
