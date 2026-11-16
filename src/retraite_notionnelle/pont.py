@@ -483,13 +483,16 @@ def carriere_des_donnees(donnees: dict):
     """La carrière que le portage a bâtie, sous les types du Python : le chemin
     inverse de :func:`carriere_en_donnees`. Chacun de ses champs, chacune de
     ses lignes, et la chronologie dont elle est la vue, telle quelle."""
+    # Lue sous le type nu, bâtie sous la carrière des règles, que les appelants
+    # Python interrogent encore (action 161, étape 1 bis) : elle en hérite.
     from .carriere import Carriere
     from .types_du_pont.carriere import AnneeCarriere
+    from .types_du_pont.carriere import Carriere as CarriereNue
 
-    champs = {champ.name for champ in dataclasses.fields(Carriere)}
+    champs = {champ.name for champ in dataclasses.fields(CarriereNue)}
     if set(donnees) != champs:
         raise ValueError(f"Carriere : le portage écrit les champs {sorted(donnees)}")
-    indices = _indices(Carriere)
+    indices = _indices(CarriereNue)
     speciaux = {
         "dates_entree": {statut: DateMois(annee, mois)
                          for statut, (annee, mois) in donnees["dates_entree"].items()},
@@ -1508,7 +1511,7 @@ def _argument_du_droit(argument, carrieres: list) -> dict:
     moteur du scénario 1 et les tables qu'on lui prête, la période d'un
     régime, une carrière — passée une fois en données, puis par son rang —, ou
     une valeur."""
-    from .carriere import Carriere
+    from .types_du_pont.carriere import Carriere
 
     if isinstance(argument, Moteur):
         return {"moteur": "scenario_actuel", "prets": [list(pret) for pret in argument.prets],
@@ -2050,7 +2053,7 @@ HORS_DU_TYPE = {
 OBJETS_DU_RESULTAT = {
     ("ChefDExploitation", "eligible"): ("droit.liquider", "EligibleAgricole"),
     ("ExploitantAgricole", "eligible"): ("droit.liquider", "EligibleAgricole"),
-    ("ExploitantAgricole", "carriere"): ("carriere", "Carriere"),
+    ("ExploitantAgricole", "carriere"): ("types_du_pont.carriere", "Carriere"),
 }
 
 #: Les nombres que JSON n'écrit pas, et que le portage écrit par leur nom
@@ -2136,8 +2139,8 @@ def lu_strictement(type_, valeur, chemin: str = "valeur"):
     en tuple ou en liste, un dictionnaire clé par clé, une année en entier.
     Ce qui n'a pas le type attendu, et un type que la lecture ne connaît pas,
     l'arrêtent."""
-    from .carriere import Carriere
     from .config import Parametres
+    from .types_du_pont.carriere import Carriere
     from .types_du_pont.journal import Journal
 
     origine = typing.get_origin(type_)
@@ -2165,7 +2168,7 @@ def lu_strictement(type_, valeur, chemin: str = "valeur"):
         except ValueError:
             raise ValueError(f"{chemin} : {type_.__name__} attendu, le portage a écrit "
                              f"{valeur!r}") from None
-    if type_ is Carriere:
+    if isinstance(type_, type) and issubclass(type_, Carriere):
         return carriere_des_donnees(valeur)
     if type_ is Parametres:
         return parametres_des_donnees(valeur)
@@ -2336,7 +2339,7 @@ def comparaison_des_donnees(comparaison: dict):
     reviennent sans la racine des données, dont le paquet tenait lieu : le
     client y remet les siens. Le module du simulateur ne se charge qu'à la
     lecture."""
-    from .simulateur import Comparaison
+    from .types_du_pont.comparaison import Comparaison
 
     return lu_strictement(Comparaison, comparaison, "Comparaison")
 

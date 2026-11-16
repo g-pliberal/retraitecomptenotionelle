@@ -5,8 +5,9 @@ Le pont relit ce que calcule le moteur JavaScript sous des types Python. Ils
 logeaient dans les fichiers de règles, que le retrait supprimera : ils ont
 désormais leur module, ``types_du_pont``, qui ne charge aucun fichier de
 règles, et les fichiers de règles les réimportent le temps du retrait.
-``Carriere`` et ``Comparaison``, qui portent encore des méthodes de règle,
-sortiront à une étape à eux.
+``Carriere`` y loge nue, ses champs et ses lectures du calendrier : ses
+règles restent dans ``carriere.py``, sur une classe qui en hérite, le temps
+du retrait (étape 1 bis).
 """
 
 import importlib
@@ -46,6 +47,7 @@ TYPES = {
                        "RevisionAgricole"],
     "scenarios.actuel": ["ResultatActuel", "DepartServi", "ProgressiveServie"],
     "scenarios.notionnel": ["GarantieVieillesse", "ResultatNotionnel", "DroitsAcquis"],
+    "simulateur": ["Comparaison", "ContributionEmployeur"],
 }
 
 #: Les fichiers de règles que le retrait supprimera (note de l'inventaire,
@@ -81,3 +83,37 @@ def test_le_pont_relit_le_journal_sous_les_types_du_pont():
     for declare in CONTENUS_DU_JOURNAL.values():
         if declare is not None:
             assert declare[0].startswith("types_du_pont."), declare
+
+
+#: Ce que la carrière nue porte, hors de ses champs : des lectures de ses
+#: lignes, du calendrier et de sa chronologie, aucune règle du droit.
+LECTURES_DE_LA_CARRIERE = {
+    "__post_init__", "premiere_annee", "derniere_annee", "date_naissance",
+    "jour_de_naissance", "origine_des_ages", "date_de_l_age", "mois_de_l_anniversaire",
+    "age_au", "generation", "date_liquidation", "annee_liquidation", "mois_liquidation",
+    "fraction_annee_liquidation", "annees_cotisees", "_lignes_par_annee", "lignes_de",
+    "ligne", "affiliations_utilisees",
+}
+
+
+def test_la_carriere_nue_loge_hors_des_regles_et_ne_porte_aucune_regle():
+    carriere = importlib.import_module(f"{PAQUET}.carriere")
+    from retraite_notionnelle.types_du_pont import carriere as nue
+
+    assert issubclass(carriere.Carriere, nue.Carriere)
+    assert carriere.Carriere is not nue.Carriere
+    propres = {nom for nom in vars(nue.Carriere)
+               if not nom.startswith("__") or nom == "__post_init__"}
+    champs = set(nue.Carriere.__dataclass_fields__)
+    assert propres - champs - {"__dataclass_fields__", "__dataclass_params__",
+                               "__match_args__"} == LECTURES_DE_LA_CARRIERE
+
+
+def test_le_pont_relit_la_carriere_sous_le_type_nu():
+    import typing
+
+    from retraite_notionnelle.types_du_pont import carriere as nue
+    from retraite_notionnelle.types_du_pont.comparaison import Comparaison
+
+    indices = typing.get_type_hints(Comparaison)
+    assert indices["carriere"] is nue.Carriere

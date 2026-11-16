@@ -26,7 +26,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Iterable
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, replace
 from functools import cached_property
 from pathlib import Path
 
@@ -55,6 +55,7 @@ from . import chronologie as chrono
 from .droit.preparer import preparer
 from .somme import somme_ordonnee
 from .types_du_pont.carriere import AnneeCarriere  # noqa: F401  (types du pont, action 161)
+from .types_du_pont.carriere import Carriere as _CarriereNue
 
 #: Le profil que le modèle résout lui-même sur l'affiliation. C'est le défaut,
 #: et le seul que le site propose : les autres noms restent pour la grille de
@@ -75,7 +76,6 @@ from .calendrier import (
     en_mois,
     fraction_annee,
     mois_travailles,
-    origine_des_ages,
     trimestres_civils,
 )
 
@@ -808,125 +808,20 @@ class Retour:
     suspendu: bool
 
 
-@dataclass
-class Carriere:
-    """Carrière complète d'un assuré.
-
-    **Une ligne par année ET PAR ACTIVITÉ.** Une année ne porte d'ordinaire
-    qu'une ligne ; celle où l'assuré a exercé deux activités à la fois en porte
-    une par statut, et deux lignes de la même année ne partagent jamais leur
-    statut. La première ligne d'une année est l'activité PRINCIPALE — celle du
-    parcours, ou la première du relevé —, et c'est elle que :meth:`ligne` rend.
-    Ce que le droit compte par régime se lit ligne par ligne ; ce qu'il compte
-    TOUS RÉGIMES — la durée d'assurance, la durée cotisée — ne dépasse jamais
-    quatre trimestres par année civile, et se lit par :meth:`trimestres_cumules`.
-    """
-
-    annee_naissance: int
-    sexe: str  # "H" ou "F"
-    lignes: list[AnneeCarriere] = field(default_factory=list)
-    #: Mois de naissance, 1 à 12. Le droit coupe deux générations en cours
-    #: d'année — au 1er juillet 1951 et au 1er septembre 1961 — et l'âge à la
-    #: liquidation ne se lit qu'à partir de lui. Janvier par défaut : c'est la
-    #: convention qui fait commencer l'année de carrière avec l'année civile.
-    #: L'âge entier ne tombe au 1er janvier que pour qui est né le 1er : sans
-    #: jour dit, présumé le 15, on part au 1er février (R. 351-37).
-    mois_naissance: int = 1
-    #: Âge de liquidation effectif (réel pour un retraité, souhaité pour un actif).
-    age_liquidation: float | None = None
-    #: Jour de naissance déclaré, 1 à 31 ; ``None`` quand la saisie ne le dit
-    #: pas, et la chronologie le présume (``jour_de_naissance``, § 5.6). Il
-    #: décide du mois d'où les âges se comptent (:attr:`origine_des_ages`),
-    #: jamais de la génération. Le jour qui compte est celui de la chronologie :
-    #: :attr:`jour_de_naissance`.
-    jour_naissance: int | None = None
-    #: Nombre d'enfants — sans effet dans les scénarios notionnels, utilisé par
-    #: le seul scénario « système actuel » (majorations, MDA).
-    nombre_enfants: int = 0
-    #: Les naissances déclarées des premiers enfants, dans l'ordre (AAAA,
-    #: AAAA-MM ou AAAA-MM-JJ) : celles des autres sont présumées. Elles
-    #: n'entrent que dans la chronologie qu'une carrière construite ligne à
-    #: ligne reçoit ; une carrière tirée d'une chronologie les y lit.
-    naissances_enfants: tuple[str, ...] = ()
-    identifiant: str = "assuré"
-    #: Mois d'entrée dans chaque statut, tel que le parcours le date. Les
-    #: lignes ne connaissent que l'année, et l'année d'un changement de métier
-    #: revient au métier qui en occupe le plus de mois : l'agent recruté à la
-    #: RATP en octobre 2022 n'y a sa première LIGNE qu'en 2023, quand le régime
-    #: est fermé aux recrutés depuis septembre 2023. C'est la date qui décide
-    #: de la clause du grand-père, pas la première ligne.
-    dates_entree: dict[str, DateMois] = field(default_factory=dict)
-    #: La chronologie dont la carrière est la vue, complétée par les
-    #: présomptions (:mod:`chronologie`). Une carrière construite ligne à ligne
-    #: en reçoit une, tirée de ses champs : sa naissance, ses enfants et son
-    #: départ. Une copie de travail — rétablie, prolongée — garde celle dont
-    #: elle vient : ce que le moteur en fait n'est pas un fait de la personne.
-    chronologie: dict | None = field(default=None, compare=False, repr=False)
-    #: La personne de la chronologie dont la carrière est la vue.
-    personne: str = field(default=chrono.ASSURE, compare=False, repr=False)
-    #: Les années de l'activité exercée APRÈS le départ, le cumul
-    #: emploi-retraite (:attr:`emploi_retraite`) : hors des lignes, que le
-    #: départ arrête et que la première liquidation lit toutes. Ce que le
-    #: droit en fait — la pension servie pendant qu'elle dure, les droits
-    #: qu'elle ouvre ou non —, c'est :mod:`~retraite_notionnelle.droit.cumul`
-    #: qui le dit.
-    lignes_apres_depart: tuple = ()
-    #: La carrière arrêtée au décès de la personne, pour la pension qu'elle
-    #: « eût obtenue » et que sa réversion lit quand elle meurt avant son
-    #: départ (:meth:`arretee_au_deces`) : aucun régime ne lui oppose de décote
-    #: ni de coefficient d'anticipation — le régime général la calcule au taux
-    #: de l'inaptitude, quel que soit l'âge au décès (R. 353-6), le code des
-    #: pensions et les régimes spéciaux sans « coefficient de minoration »
-    #: (L. 14, I), les complémentaires sur les points acquis.
-    au_deces: bool = False
+class Carriere(_CarriereNue):
+    """La carrière et ses règles : le type nu que le pont échange
+    (:class:`~retraite_notionnelle.types_du_pont.carriere.Carriere`), ses
+    champs et ses lectures, et ce que le droit en lit — durées, trimestres,
+    statuts, prolongation, constructeurs. Les règles partiront avec ce fichier
+    (action 161) ; le type reste."""
 
     def __post_init__(self) -> None:
-        if self.sexe not in ("H", "F"):
-            raise ValueError(f"sexe attendu 'H' ou 'F', reçu {self.sexe!r}")
-        if not 1 <= self.mois_naissance <= 12:
-            raise ValueError(
-                f"mois de naissance attendu entre 1 et 12, reçu {self.mois_naissance}"
-            )
-        if self.jour_naissance is not None and not 1 <= self.jour_naissance <= 31:
-            raise ValueError(
-                f"jour de naissance attendu entre 1 et 31, reçu {self.jour_naissance}"
-            )
-        # Tri STABLE : l'activité principale, donnée la première, le reste.
-        self.lignes.sort(key=lambda ligne: ligne.annee)
-        vues: set[tuple[int, str]] = set()
-        for ligne in self.lignes:
-            cle = (ligne.annee, ligne.affiliation)
-            if cle in vues:
-                raise ValueError(
-                    f"{self.identifiant} : deux lignes de {ligne.annee} sous le "
-                    f"même statut {ligne.affiliation!r} — deux emplois du même "
-                    "statut font une seule ligne, dont le revenu est la somme"
-                )
-            vues.add(cle)
+        super().__post_init__()
         if self.chronologie is None:
             object.__setattr__(self, "chronologie", preparer(chrono.du_resume(
                 self.annee_naissance, self.sexe, self.mois_naissance,
                 self.age_liquidation, self.nombre_enfants,
                 self.naissances_enfants, self.jour_naissance)))
-
-    # -- dates ---------------------------------------------------------------
-
-    @property
-    def premiere_annee(self) -> int:
-        return min(ligne.annee for ligne in self.lignes)
-
-    @property
-    def derniere_annee(self) -> int:
-        return max(ligne.annee for ligne in self.lignes)
-
-    # Mémorisées : la construction des témoins appelait `date_liquidation` un
-    # million trois cent mille fois pour recalculer la même date. Les champs
-    # dont elles dépendent ne sont jamais réaffectés après le constructeur —
-    # la classe s'appuie déjà sur ce contrat pour ses autres `cached_property`.
-    @cached_property
-    def date_naissance(self) -> DateMois:
-        """Le mois de naissance, tel que l'état civil le porte."""
-        return DateMois(self.annee_naissance, self.mois_naissance)
 
     @cached_property
     def annees_declarees(self) -> frozenset[int]:
@@ -939,48 +834,6 @@ class Carriere:
         return frozenset(chrono.annee_de(periode["debut"])
                          for periode in chrono.periodes(self.chronologie, self.personne)
                          if periode["attributs"].get("trimestres") is not None)
-
-    @cached_property
-    def jour_de_naissance(self) -> int:
-        """Le jour de naissance que la chronologie porte : déclaré, ou posé par
-        la présomption ``jour_de_naissance``."""
-        return chrono.jour_de(chrono.naissance(self.chronologie, self.personne)["debut"])
-
-    @cached_property
-    def origine_des_ages(self) -> DateMois:
-        """Le mois d'où les âges se comptent (:func:`origine_des_ages`).
-
-        **Trois lectures de la naissance, et il ne faut pas les confondre.**
-        La GÉNÉRATION se lit au vrai mois (:attr:`generation`) : la loi coupe
-        au 1er juillet 1951 et au 1er septembre 1961 des assurés nés avant ou
-        après. L'ANNIVERSAIRE tombe dans le mois de naissance
-        (:meth:`mois_de_l_anniversaire`) : c'est lui qu'une coupure au premier
-        d'un mois départage, et c'est dans ce mois qu'un métier commence à
-        l'âge dit. L'ÂGE RÉVOLU se compte d'ici (:meth:`date_de_l_age`,
-        :meth:`age_au`) : une date d'effet, un décompte de trimestres après un
-        âge, l'âge à une date.
-        """
-        return origine_des_ages(self.date_naissance, self.jour_de_naissance)
-
-    def date_de_l_age(self, age: float) -> DateMois:
-        """Le premier mois au premier jour duquel l'assuré a cet âge : la date
-        d'effet au plus tôt d'une pension ouverte à cet âge, et le premier mois
-        entier vécu au-delà."""
-        return self.origine_des_ages.plus_mois(en_mois(age))
-
-    def mois_de_l_anniversaire(self, age: float) -> DateMois:
-        """Le mois où tombe l'anniversaire de cet âge.
-
-        C'est lui, et non :meth:`date_de_l_age`, qui se compare à une coupure
-        tombant un premier du mois — l'assuré né le 15 juin 1957 a soixante ans
-        avant le 1er juillet 2017 —, qui donne l'année où l'âge est atteint, et
-        où tombe un début d'activité dit par un âge.
-        """
-        return self.date_naissance.plus_mois(en_mois(age))
-
-    def age_au(self, date: DateMois) -> float:
-        """L'âge, en mois révolus, au premier jour de ce mois."""
-        return (date.rang - self.origine_des_ages.rang) / MOIS_PAR_AN
 
     @cached_property
     def retraite_progressive(self) -> "tuple[DateMois, float] | None":
@@ -1265,60 +1118,6 @@ class Carriere:
             naissances.append((enfant, naissance["debut"]))
         return tuple(naissances)
 
-    @property
-    def generation(self) -> float:
-        """Génération, mois compris — la clé des tables par génération.
-
-        Deux textes ne coupent pas au 1er janvier : la loi du 9 novembre 2010
-        vise les assurés nés à compter du 1er juillet 1951, celle du 14 avril
-        2023 ceux nés à compter du 1er septembre 1961. Une génération s'écrit
-        donc en années décimales, et le mois de naissance décide de quel côté
-        de la coupure l'assuré tombe.
-
-        **L'ARRONDI À TROIS DÉCIMALES N'EST PAS COSMÉTIQUE, et son absence
-        coûtait un mois entier de chaque coupure de septembre.** Les tables
-        écrivent le 1er septembre `1961.667` — trois décimales, comme le veut
-        leur convention —, quand huit douzièmes valent 1961,666 666… Le premier
-        étant plus grand que le second, la lecture en escalier rendait à
-        l'assuré né en SEPTEMBRE 1961 la marche d'août : 168 trimestres au lieu
-        de 169, et un âge d'ouverture de 62 ans au lieu de 62 ans et trois mois,
-        pour le mois-même que la loi du 14 avril 2023 désigne. Le même trou
-        s'ouvrait sur `1963.667`, `1966.667` et `1971.667`. Lire la génération à
-        la précision où la table est écrite le referme.
-        """
-        return round(self.annee_naissance + (self.mois_naissance - 1) / 12, 3)
-
-    @cached_property
-    def date_liquidation(self) -> DateMois:
-        """Mois où la pension prend effet.
-
-        L'âge de liquidation est compté en mois depuis le mois d'où les âges
-        se comptent (:attr:`origine_des_ages`) : né en mars 1962, parti à
-        soixante-quatre ans et six mois, l'assuré liquide en septembre 2026.
-        Le modèle arrondissait auparavant ``naissance + âge`` à l'année la plus
-        proche, ce qui déplaçait la liquidation d'un semestre et, l'arrondi
-        étant au pair, la déplaçait différemment selon la parité du millésime.
-        """
-        if self.age_liquidation is None:
-            raise ValueError(
-                f"{self.identifiant} : âge de liquidation non renseigné"
-            )
-        return self.date_de_l_age(self.age_liquidation)
-
-    @property
-    def annee_liquidation(self) -> int:
-        """Année civile où la pension prend effet."""
-        return self.date_liquidation.annee
-
-    @property
-    def mois_liquidation(self) -> int:
-        return self.date_liquidation.mois
-
-    @property
-    def fraction_annee_liquidation(self) -> float:
-        """Part de l'année de liquidation qui précède le point de départ."""
-        return (self.mois_liquidation - 1) / 12
-
     # -- agrégats ------------------------------------------------------------
 
     @cached_property
@@ -1390,13 +1189,6 @@ class Carriere:
             return self.dates_entree[affiliation]
         annee = self._entrees.get(affiliation)
         return None if annee is None else DateMois(annee, 1)
-
-    @cached_property
-    def annees_cotisees(self) -> tuple[int, ...]:
-        # Une année de deux activités reste UNE année cotisée.
-        return tuple(dict.fromkeys(
-            ligne.annee for ligne in self.lignes if ligne.cotise
-        ))
 
     def _lignes_de_service(self, affiliations: Iterable[str],
                            jusqu_a: int | None = None
@@ -1743,17 +1535,6 @@ class Carriere:
         confondues. Quatre pour une année pleine."""
         return self._plafonds_trimestres.get(annee, 4)
 
-    @cached_property
-    def _lignes_par_annee(self) -> dict[int, tuple[AnneeCarriere, ...]]:
-        par_annee: dict[int, list[AnneeCarriere]] = {}
-        for ligne in self.lignes:
-            par_annee.setdefault(ligne.annee, []).append(ligne)
-        return {annee: tuple(lignes) for annee, lignes in par_annee.items()}
-
-    def lignes_de(self, annee: int) -> tuple[AnneeCarriere, ...]:
-        """Toutes les lignes d'une année, l'activité principale en tête."""
-        return self._lignes_par_annee.get(annee, ())
-
     def outre_mer(self, annee: int) -> str:
         """Le département d'outre-mer où l'assuré a travaillé dans l'année, s'il
         y a travaillé : une seule de ses activités suffit (R. 351-9)."""
@@ -1838,15 +1619,6 @@ class Carriere:
         if part <= 0 or self.statut_pris_apres_le_1er_janvier(ligne):
             return 0
         return min(ligne.trimestres_valides, trimestres_civils(round(part * 12)))
-
-    def ligne(self, annee: int) -> AnneeCarriere | None:
-        """La ligne de l'activité PRINCIPALE de l'année, ``None`` s'il n'y en a
-        pas. Les activités cumulées se lisent par :meth:`lignes_de`."""
-        lignes = self._lignes_par_annee.get(annee)
-        return lignes[0] if lignes else None
-
-    def affiliations_utilisees(self) -> tuple[str, ...]:
-        return tuple(dict.fromkeys(ligne.affiliation for ligne in self.lignes))
 
     # -- prolongation --------------------------------------------------------
 
