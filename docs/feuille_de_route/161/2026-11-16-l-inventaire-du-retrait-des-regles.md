@@ -154,11 +154,18 @@ témoins identiques à l'octet) et par `python -m pytest -m rapide` :
 6. **La suppression** des 39 fichiers, avec `test_facade.py` et
    `test_facade_jumeau.py`, sur l'accord final du propriétaire.
 
-## Deux questions pour le propriétaire
+## Les deux choix du propriétaire
 
-- Les chargeurs de `scenarios/actuel.py` : les reloger tels quels sous
-  `donnees/` (note 0006), ou attendre la décision qui remplacera la note 0009 ?
-- Le champ `code.python` des fiches : le retirer, ou le garder pour nommer
-  ce qui reste en Python (chargeurs, types) ?
+Il a tranché le 16 novembre 2026, en suivant les deux recommandations de
+cette note (« On applique tes recommandations ») :
+
+- **Les chargeurs de `scenarios/actuel.py`** se relogent tels quels sous
+  `donnees/`, comme le veut la note 0006, sans attendre la décision qui
+  remplacera la note 0009. Aucune donnée ne bouge : le paquet reste
+  identique à l'octet.
+- **Le champ `code.python` des fiches** se retire, avec la confrontation
+  que `tests/test_carte.py` en fait.
+
+La suppression finale des fichiers de règles attend toujours son accord.
 
 **Tests.** Aucun code n'a changé ; aucun test neuf.

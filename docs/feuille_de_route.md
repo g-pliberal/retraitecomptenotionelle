@@ -7334,12 +7334,12 @@ de ce que la suppression des règles emporterait est fait
 (`2026-11-16-l-inventaire-du-retrait-des-regles.md`) : 39 fichiers, 38 163
 lignes. Avant de les supprimer, il faut sortir les types que le pont relit,
 donner à la façade des tests ses propres signatures, reloger les chargeurs,
-débrancher le peu de Python seul qui appelle encore une règle, et ôter les
+débrancher le Python seul qui appelle encore une règle, et ôter les
 noms des fichiers de règles des fiches et des gardes. La note propose cet
-ordre, une étape par session, et pose deux questions au propriétaire, sur
-les chargeurs du droit en vigueur et sur les fiches. Par quoi commencer :
-sortir les types du pont. Rien ne se supprime
-sans l'accord final du propriétaire.
+ordre, une étape par session. Le propriétaire a choisi : les chargeurs se
+relogent tels quels sous `donnees/`, et les fiches cessent de nommer le code
+Python. Par quoi commencer : sortir les types du pont. La suppression attend
+son accord final.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
