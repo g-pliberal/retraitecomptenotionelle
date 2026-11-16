@@ -108,7 +108,7 @@ def age_de_depart(simulateur: Simulateur, cas: CasType, generation: int,
     propose : il manque le départ plus précoce que le droit ouvre sans le
     proposer. Le droit date la durée cotisée de la carrière longue comme celle
     du taux plein, comme si la carrière cotisait encore
-    (:meth:`~retraite_notionnelle.scenarios.actuel.CarriereLongue.age_propose`) :
+    (:func:`~retraite_notionnelle.droit.carriere_longue.age_propose`) :
     sans activité depuis qu'elle a sa durée, liquidée à tout âge, elle la
     réunit à l'âge même du départ, et le point fixe reste là d'où il part — né
     en 1966, entré à seize ans et sans activité depuis ses 59 ans, un salarié

@@ -31,6 +31,7 @@ from typing import TYPE_CHECKING
 
 from ..calendrier import MOIS_PAR_AN, DateMois, en_mois, trimestres_civils
 from ..donnees.chargement import Fiabilite, charger_chomage_complementaires
+from . import carriere_longue as regles_carriere_longue
 from . import categories, compter, coordonner, etranger, invalidite
 from .commun import SANS_LEUR_BASE, date_d_effet, ligne_cotisee, periode_de_liquidation
 from ..somme import somme_ordonnee
@@ -292,7 +293,7 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
     # un assuré au taux plein liquide sa complémentaire sans abattement,
     # quel que soit son âge. Les régimes qui l'opposent : ceux des
     # fonctionnaires ont leurs portes de la carrière longue
-    # (:meth:`CarriereLongue.de_la_fonction_publique`). Âge d'ouverture des
+    # (:func:`~.carriere_longue.de_la_fonction_publique`). Âge d'ouverture des
     # droits : le plus précoce parmi les régimes de base que la demande
     # liquide. Un polypensionné liquide chaque pension à l'âge de son régime
     # (:mod:`.departs`) ; quand tous liquident au même départ, c'est l'âge du
@@ -370,14 +371,14 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
         age_ouverture_reference = (handicap if age_ouverture_reference is None
                                    else min(age_ouverture_reference, handicap))
     elif age_ouverture_reference is not None and age_liquidation < age_ouverture_reference:
-        anticipe = moteur.carriere_longue.age_de_depart(
-            carriere, annee_liquidation,
-            moteur.carriere_longue.cotises_reputes(
-                carriere, trimestres_cotises,
+        anticipe = regles_carriere_longue.age_de_depart(
+            moteur.carriere_longue, carriere, annee_liquidation,
+            regles_carriere_longue.cotises_reputes(
+                moteur.carriere_longue, carriere, trimestres_cotises,
                 majoration_enfants.trimestres if majoration_enfants is not None else 0,
             ),
             requis_reference, etrangers,
-            moteur.carriere_longue.de_la_fonction_publique(opposants),
+            regles_carriere_longue.de_la_fonction_publique(opposants),
             # La durée d'assurance que le taux lit, tous régimes : celle que
             # les rédactions d'avant novembre 2012 opposent aussi.
             durees.pour_le_taux(famille),
@@ -1305,14 +1306,15 @@ def age_carriere_longue(moteur, carriere: Carriere,
     majoration = compter.majoration_pour_enfants(moteur, 
         carriere, {code: cotises for code, _ in periodes}, annee_liquidation
     )
-    cotises = moteur.carriere_longue.cotises_reputes(
-        carriere, cotises + etrangers.trimestres_cotises(famille),
+    cotises = regles_carriere_longue.cotises_reputes(
+        moteur.carriere_longue, carriere, cotises + etrangers.trimestres_cotises(famille),
         majoration.trimestres if majoration is not None else 0
     )
-    return moteur.carriere_longue.age_propose(
-        carriere, annee_liquidation, cotises, requis, carriere.age_liquidation,
+    return regles_carriere_longue.age_propose(
+        moteur.carriere_longue, carriere, annee_liquidation, cotises, requis,
+        carriere.age_liquidation,
         etrangers.cotises[famille],
-        moteur.carriere_longue.de_la_fonction_publique(code for code, _ in periodes),
+        regles_carriere_longue.de_la_fonction_publique(code for code, _ in periodes),
         duree_d_assurance(carriere, majoration, etrangers.trimestres(famille)),
         trimestres_agricoles(moteur, carriere),
     )
@@ -1322,7 +1324,7 @@ def trimestres_agricoles(moteur, carriere: Carriere) -> dict[int, int]:
     """Les trimestres que le régime des non-salariés agricoles valide, année
     par année : ceux des lignes qu'il reçoit. Quatre d'entre eux à la fin de
     l'année de la borne valent début d'activité (D. 732-40 du code rural,
-    :meth:`~retraite_notionnelle.scenarios.actuel.CarriereLongue._entree_precoce`)."""
+    :func:`~retraite_notionnelle.droit.carriere_longue._entree_precoce`)."""
     par_annee: dict[int, int] = {}
     for ligne in carriere.lignes:
         if ligne.trimestres_valides > 0 and (
@@ -1340,7 +1342,7 @@ def duree_d_assurance(carriere: Carriere, majoration, etrangers: int) -> int:
     :func:`compter.majoration_pour_enfants`) et les ``etrangers`` que la
     famille retient — la lecture de :func:`age_taux_plein_droit`. La
     carrière longue l'oppose jusqu'en octobre 2012
-    (:meth:`~retraite_notionnelle.scenarios.actuel.CarriereLongue.age_de_depart`)."""
+    (:func:`~retraite_notionnelle.droit.carriere_longue.age_de_depart`)."""
     annee_liquidation = carriere.annee_liquidation
     return (carriere.trimestres_cumules(
         ligne for ligne in carriere.lignes if ligne.annee <= annee_liquidation)

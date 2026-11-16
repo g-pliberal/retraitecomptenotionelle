@@ -374,10 +374,10 @@ code:
     retraite complémentaire obligatoire des cultes » (circulaire n° 2025/01). Les affiliations ne routent le régime qu'au statut `ministre_du_culte`, depuis
     2006, et les points sont ceux du régime que nomme `points_de`.
   python: >-
-    carriere.py : Affiliations.regimes ; droit/acquerir.py : acquerir ;
-    donnees/regimes.py : PeriodeRegime.repere_assiette ; moteur/compte.py :
-    ConstructeurCompte._cotisation_ligne ; contributions_equilibre.py :
-    contributions_d_une_carriere, _forfait
+    donnees/affiliations.py : Affiliations.regimes ; droit/acquerir.py :
+    acquerir ; donnees/regimes.py : PeriodeRegime.repere_assiette ;
+    moteur/compte.py : ConstructeurCompte._cotisation_ligne ;
+    contributions_equilibre.py : contributions_d_une_carriere, _forfait
   javascript: >-
     moteur/js/regimes.js : Affiliations.regimes, PeriodeRegime.repereAssiette ;
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/compte.js :

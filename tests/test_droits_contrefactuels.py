@@ -88,7 +88,7 @@ def test_l_age_legal_et_la_duree_de_chaque_etat_du_droit(du_portage, naissance, 
     assert moteur.calculer(carriere).trimestres_requis == trimestres
 
 
-def test_les_ages_de_la_carriere_longue_suivent_l_etat_du_droit(saisies):
+def test_les_ages_de_la_carriere_longue_suivent_l_etat_du_droit(du_portage):
     """Un né en février 1966 entré à dix-neuf ans, en mars 1985 : il a ses
     cinq trimestres avant la fin de l'année de ses vingt ans, non de ses
     dix-huit. Le décret n° 2026-345 du 7 mai 2026 lui ouvre la porte des vingt
@@ -97,16 +97,16 @@ def test_les_ages_de_la_carriere_longue_suivent_l_etat_du_droit(saisies):
     6 mois, diminué de deux ans et six mois : soixante et un ans ; celui du
     2 juillet 2012, en vigueur au 31 août 2023, à soixante ans, quelle que soit
     la génération. La durée cotisée, ici, ne manque pas."""
-    parametres, carriere = saisies.lire({"naissance": "1966-02-01", "debut": "1985-03",
+    parametres, carriere = du_portage.lire({"naissance": "1966-02-01", "debut": "1985-03",
                                          "liquidation": "2027-02"})
     attendus = {None: 60.75, SANS_SUSPENSION: 61.0, AU_31_AOUT_2023: 60.0}
     for droit, age in attendus.items():
-        porte = _moteur(saisies, parametres, droit).carriere_longue.age_de_depart(
+        porte = _moteur(du_portage, parametres, droit).carriere_longue.age_de_depart(
             carriere, carriere.annee_liquidation, trimestres_cotises=180, requis=172)
         assert porte is not None and porte[0] == pytest.approx(age), droit
 
 
-def test_au_31_aout_2023_la_porte_des_dix_sept_ans_reste_aux_nes_de_1952_et_1953(saisies):
+def test_au_31_aout_2023_la_porte_des_dix_sept_ans_reste_aux_nes_de_1952_et_1953(du_portage):
     """Le décret du 2 juillet 2012, que le droit au 31 août 2023 applique à
     toute date, ne donne sa porte des débuts avant dix-sept ans qu'aux nés de
     1952, à cinquante-neuf ans et quatre mois, et de 1953, à cinquante-neuf
@@ -117,10 +117,10 @@ def test_au_31_aout_2023_la_porte_des_dix_sept_ans_reste_aux_nes_de_1952_et_1953
     ans et huit mois, que le moteur lui ouvrait en étendant la porte de 1953
     aux générations suivantes. Sous les décrets de 2023 et de 2026, la porte
     des dix-huit ans lui donne aussi soixante ans."""
-    parametres, carriere = saisies.lire({"naissance": "1966-02-01", "debut": "1982-03",
+    parametres, carriere = du_portage.lire({"naissance": "1966-02-01", "debut": "1982-03",
                                          "liquidation": "2026-02"})
     for droit in (None, SANS_SUSPENSION, AU_31_AOUT_2023):
-        porte = _moteur(saisies, parametres, droit).carriere_longue.age_de_depart(
+        porte = _moteur(du_portage, parametres, droit).carriere_longue.age_de_depart(
             carriere, carriere.annee_liquidation, trimestres_cotises=180, requis=172)
         assert porte is not None and porte[0] == pytest.approx(60.0), droit
 

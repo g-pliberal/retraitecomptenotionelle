@@ -143,8 +143,10 @@ def test_le_retour_garde_le_regime_que_le_maintien_couvre(simulateur, nom):
 
 def test_l_entree_est_celle_du_retour_que_rien_ne_maintient(simulateur):
     """La date d'entrée qui décide du régime : le premier recrutement tant que
-    l'affiliation dure, le retour qui la rouvre quand elle s'est rompue."""
-    affiliations = simulateur.affiliations
+    l'affiliation dure, le retour qui la rouvre quand elle s'est rompue. Le
+    portage la date (``Affiliations.dateEntree``), que la façade sert comme
+    une méthode de la table du routage."""
+    affiliations = simulateur.scenario_actuel.affiliations
     statut, segments, _, _ = CAS["clerc-prive-en-2024"]
     carriere = _carriere(statut, segments)
     assert affiliations.date_entree(carriere, statut, 2023) == DateMois(2010, 1)

@@ -62,9 +62,10 @@ code:
     (`ConstructeurCompte._cotisation_ligne`). Le taux vaut pour tout le revenu de ces
     deux statuts, qui le portent entier au RACD ou au RACL.
   python: >-
-    carriere.py : Affiliations.regimes ; droit/acquerir.py : acquerir ;
-    droit/liquider.py : liquider_chaque_regime ; donnees/tables_du_droit.py :
-    Rendements.rendement ; moteur/compte.py : ConstructeurCompte._cotisation_ligne
+    donnees/affiliations.py : Affiliations.regimes ; droit/acquerir.py :
+    acquerir ; droit/liquider.py : liquider_chaque_regime ;
+    donnees/tables_du_droit.py : Rendements.rendement ; moteur/compte.py :
+    ConstructeurCompte._cotisation_ligne
   javascript: >-
     moteur/js/regimes.js : Affiliations.regimes, Rendements.rendement ;
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :

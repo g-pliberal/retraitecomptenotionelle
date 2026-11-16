@@ -14,7 +14,6 @@ lisent à la demande.
 
 from __future__ import annotations
 
-import typing
 from functools import cached_property
 
 from ..config import Parametres
@@ -28,13 +27,12 @@ from .financement_regimes import StructureFinancement
 from .macro import DonneesMacro
 from .mortalite import DonneesMortalite
 from .patrimoine import PatrimoineMenages
+from .affiliations import Affiliations
 from .regimes import CatalogueRegimes
 from .revalorisations import RevalorisationsPensions
 from .taux import CourbeTauxSansRisque
 from .vie_en_couple import VieEnCouple
 
-if typing.TYPE_CHECKING:
-    from ..carriere import Affiliations
 
 #: Les données que le simulateur charge, chacune par son chargeur : ce que la
 #: façade des tests lit sur lui, et que le ``Simulateur`` ne redéfinit pas.
@@ -222,10 +220,7 @@ class SimulateurDeDonnees:
 
     @cached_property
     def affiliations(self) -> Affiliations:
-        """Le routage des statuts, logé avec ses règles dans ``carriere.py`` :
-        le lire importe ce module, que le coût n'atteint pas."""
-        from ..carriere import Affiliations
-
+        """Le routage des statuts (``donnees/affiliations.py``)."""
         return Affiliations(self.parametres.racine_donnees)
 
     @cached_property

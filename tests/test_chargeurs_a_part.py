@@ -260,3 +260,67 @@ def test_la_fabrique_et_les_avantages_prennent_les_tables_a_leur_place():
         if pris & set(TABLES_DU_DROIT):
             fautes[f] = sorted(pris & set(TABLES_DU_DROIT))
     assert fautes == {}
+
+
+# -- les deux derniers chargeurs logés dans les règles ----------------------------
+#
+# Les âges légaux (``_charger_ages``, de ``moteur/age_reference.py``) et le
+# routage des statuts (``Affiliations``, de ``carriere.py``), que la fabrique
+# du paquet, celle des témoins et le simulateur de données lisent : relogés
+# sous ``donnees/`` (action 161, fin de l'étape 3 de l'inventaire du retrait
+# des règles), tels quels : la date d'entrée que le maintien d'une affiliation
+# décide vient avec le routage, que la fiche de paie et les contributions
+# d'équilibre lisent aussi.
+
+
+def test_les_ages_legaux_se_lisent_sans_le_moteur_python():
+    assert _importes("from retraite_notionnelle.donnees.tables_du_droit import "
+                     "charger_ages") == []
+
+
+def test_le_routage_des_statuts_se_lit_sans_le_moteur_python():
+    """Lu, et le simulateur de données le bâtit, sans rien du moteur Python."""
+    assert _importes("\n".join((
+        "from retraite_notionnelle.donnees.affiliations import (",
+        "    Affiliations, FAMILLES_STATUT, rang_borne)",
+        "from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees",
+        "a = SimulateurDeDonnees().affiliations",
+        "assert type(a) is Affiliations and a.regimes('agent_ieg', 2000) == ('ieg',)",
+    ))) == []
+
+
+def test_les_regles_reprennent_le_meme_routage():
+    subprocess.run([sys.executable, "-c", "\n".join((
+        "from retraite_notionnelle.donnees import affiliations as d, tables_du_droit as t",
+        "from retraite_notionnelle import carriere as c",
+        "from retraite_notionnelle.moteur import age_reference as r",
+        "for nom in ('Affiliations', 'FAMILLES_STATUT', 'rang_borne'):",
+        "    assert getattr(c, nom) is getattr(d, nom), nom",
+        "assert r.charger_ages is t.charger_ages and not hasattr(r, '_charger_ages')",
+    ))], check=True, cwd=RACINE)
+
+
+def test_la_fabrique_ne_prend_plus_ses_chargeurs_aux_regles():
+    """Le paquet, les témoins : leurs chargeurs sous ``donnees/``."""
+    anciens = re.compile(r"from retraite_notionnelle\.(moteur\.age_reference import"
+                         r" _charger_ages|carriere import Affiliations)")
+    fautes = {f: m.group(0) for f in ("scripts/construire_donnees.py",
+                                       "scripts/construire_temoins.py")
+              for m in [anciens.search((RACINE / f).read_text(encoding="utf-8"))] if m}
+    assert fautes == {}
+
+
+def test_la_table_de_la_carriere_longue_ne_porte_plus_ses_regles():
+    """La table ne garde que son chargement, ses fiches et sa variante datée
+    (``avant``) ; les portes, la durée réputée cotisée et les âges sont des
+    règles du moteur Python, sous ``droit/carriere_longue.py``."""
+    subprocess.run([sys.executable, "-c", "\n".join((
+        "from retraite_notionnelle.donnees.tables_du_droit import CarriereLongue",
+        "from retraite_notionnelle.droit import carriere_longue as r",
+        "methodes = {n for n, v in vars(CarriereLongue).items()",
+        "            if callable(v) or isinstance(v, staticmethod)}",
+        "assert methodes == {'__init__', 'fiches', 'avant', '_annee_decimale'}, methodes",
+        "for n in ('portes_opposables', 'de_la_fonction_publique', 'cotises_reputes',",
+        "          'age_de_depart', 'age_propose'):",
+        "    assert callable(getattr(r, n)), n",
+    ))], check=True, cwd=RACINE)

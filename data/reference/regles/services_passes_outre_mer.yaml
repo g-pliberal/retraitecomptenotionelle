@@ -230,8 +230,8 @@ sources:
     porte que le titre.
 code:
   python: >-
-    carriere.py : Affiliations.services_passes ; droit/acquerir.py : acquerir ;
-    moteur/compte.py : ConstructeurCompte._cotisation_ligne
+    donnees/affiliations.py : Affiliations.services_passes ; droit/acquerir.py :
+    acquerir ; moteur/compte.py : ConstructeurCompte._cotisation_ligne
   javascript: >-
     moteur/js/regimes.js : Affiliations.servicesPasses ; moteur/js/droit/acquerir.js :
     acquerir ; moteur/js/compte.js : ConstructeurCompte._cotisationLigne

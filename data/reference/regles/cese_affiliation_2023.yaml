@@ -66,9 +66,9 @@ code:
     membre entré avant en gagne un pour ses années depuis 2024, celles du régime
     général et de l'Ircantec, quand le scénario 1 le garde à la caisse du Conseil.
   python: >-
-    carriere.py : Affiliations.regimes, Affiliations._periode,
-    Affiliations.fermeture_entrants, Affiliations.releve_par ; moteur/compte.py :
-    ConstructeurCompte.a_un_employeur
+    donnees/affiliations.py : Affiliations.regimes, Affiliations._periode,
+    Affiliations.fermeture_entrants, Affiliations.releve_par ; moteur/compte.py
+    : ConstructeurCompte.a_un_employeur
   javascript: >-
     moteur/js/regimes.js : Affiliations.regimes, Affiliations._periode,
     Affiliations.fermetureEntrants, Affiliations.relevePar ; moteur/js/contexte.js :

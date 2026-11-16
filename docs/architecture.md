@@ -1130,8 +1130,9 @@ les deux moteurs.
 **Ce qui reste en Python** (note de décision 0006). Un jumeau du moteur
 n'est pas fait que de règles : il porte les chargeurs dont la fabrique bâtit
 le paquet — les tables du droit en vigueur, sorties de `scenarios/actuel.py`
-vers `donnees/tables_du_droit.py`,
-`RevalorisationsPensions`, `_charger_ages`… — et les types que le pont
+vers `donnees/tables_du_droit.py`, avec les âges légaux (`charger_ages`), le
+routage des statuts, sorti de `carriere.py` vers `donnees/affiliations.py`,
+`RevalorisationsPensions`… — et les types que le pont
 échange — `Parametres`, `Carriere`, `AnneeCarriere`, `DateMois`, les
 énumérations des réglages —, dans lesquels le coût et les études décrivent ce
 qu'ils confient au portage. Son retrait coupe le fichier : les règles ne
@@ -2445,7 +2446,7 @@ Ce que les deux fiches montrent :
 
 | Aujourd'hui | Demain |
 |---|---|
-| `src/retraite_notionnelle/scenarios/actuel.py` | découpé en étapes dans `src/retraite_notionnelle/droit/` : l'acquisition depuis la phase 4 (`coordonner`, `compter`, `acquerir`, `releve`), la liquidation depuis la phase 5 (`ouvrir`, `liquider`, `completer`, `foyer`, et `liquidation`, qui les enchaîne) ; il ne garde que le moteur, `ScenarioActuel`, et reprend les tables du droit en vigueur de `src/retraite_notionnelle/donnees/tables_du_droit.py` (action 161) ; ses commentaires suivent leur code |
+| `src/retraite_notionnelle/scenarios/actuel.py` | découpé en étapes dans `src/retraite_notionnelle/droit/` : l'acquisition depuis la phase 4 (`coordonner`, `compter`, `acquerir`, `releve`), la liquidation depuis la phase 5 (`ouvrir`, `liquider`, `completer`, `foyer`, et `liquidation`, qui les enchaîne) ; il ne garde que le moteur, `ScenarioActuel`, et reprend les tables du droit en vigueur de `src/retraite_notionnelle/donnees/tables_du_droit.py` (action 161), dont les règles de la carrière longue sont détachées sous `droit/carriere_longue.py` ; ses commentaires suivent leur code |
 | `src/retraite_notionnelle/scenarios/notionnel.py`, `moteur/` (compte, conversion, capitalisation, fusion, indexation, âge de référence), `garantie.py`, `restitution.py` | les fiches et les couches des univers de la proposition, depuis la phase 7 : les univers dans `data/reference/univers/`, les couches dans `data/reference/couches/`, les fiches de la proposition dans `data/reference/regles/proposition/`, qui citent son texte et nomment leur code ; `noyau/univers.py` tient la pile, `noyau/calcul_notionnel.py` dit ce que le moteur en tire, et le code reste où il est. `restitution.py` n'a pas encore sa fiche |
 | `src/retraite_notionnelle/carriere.py` | la chronologie datée et le réseau de personnes : `chronologie.py` depuis la phase 3, dont la carrière n'est plus que la vue — celle que les étapes de l'acquisition lisent encore (phase 4), jusqu'à ce qu'elles lisent la chronologie elle-même ; le lecteur du relevé, `moteur/js/releve-lu.js`, continue de l'alimenter |
 | `src/retraite_notionnelle/calendrier.py` | inchangé : le mois et ses arrondis (§ 4.6) |

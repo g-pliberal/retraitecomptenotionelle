@@ -623,6 +623,11 @@ class _Table_baremes_trimestre:
     def valeurs(self, nom, date) -> tuple[float, float, Fiabilite] | None: ...
 
 
+class _Table_affiliations:
+    """``Affiliations``."""
+    def date_entree(self, carriere, affiliation, annee) -> DateMois | None: ...
+
+
 class _Table_carriere_longue:
     """``CarriereLongue``."""
     def _portes(
@@ -630,6 +635,17 @@ class _Table_carriere_longue:
             carriere,
             fonction_publique=False,
     ) -> list[tuple[int, int, float, int, Fiabilite, int | None]] | None: ...
+    def age_de_depart(
+            self,
+            carriere,
+            annee_liquidation,
+            trimestres_cotises,
+            requis,
+            etrangers=None,
+            fonction_publique=False,
+            trimestres_assurance=None,
+            agricoles=None,
+    ) -> tuple[float, Fiabilite] | None: ...
     def cotises_reputes(self, carriere, trimestres_cotises, trimestres_enfants) -> int: ...
 
 
@@ -780,7 +796,7 @@ class _Table_valeurs_point:
 
 
 #: Les tables, par leur nom sur le moteur.
-TABLES = {"ages_annulation_decote": _Table_ages_annulation_decote, "ages_categorie_active": _Table_ages_categorie_active, "ages_jouissance_militaire": _Table_ages_jouissance_militaire, "ages_ouverture": _Table_ages_ouverture, "ages_regimes": _Table_ages_regimes, "ages_surcote_regimes_speciaux": _Table_ages_surcote_regimes_speciaux, "calendriers_duree_requise": _Table_calendriers_duree_requise, "decote_regimes_speciaux": _Table_decote_regimes_speciaux, "durees_requises_regimes": _Table_durees_requises_regimes, "durees_services_actifs": _Table_durees_services_actifs, "durees_services_militaires": _Table_durees_services_militaires, "grilles": _Table_grilles, "annees_salaire_reference": _Table_annees_salaire_reference, "baremes_trimestre": _Table_baremes_trimestre, "carriere_longue": _Table_carriere_longue, "complement_differentiel_rco": _Table_complement_differentiel_rco, "coefficients_minoration": _Table_coefficients_minoration, "conversions_points": _Table_conversions_points, "durees_requises": _Table_durees_requises, "fiches_datees": _Table_fiches_datees, "invalidites": _Table_invalidites, "majorations_enfants": _Table_majorations_enfants, "majorations_enfants_points": _Table_majorations_enfants_points, "maximum_des_cultes": _Table_maximum_des_cultes, "minimum_contributif": _Table_minimum_contributif, "minimum_garanti": _Table_minimum_garanti, "minimum_vieillesse": _Table_minimum_vieillesse, "pension_majoree_reference": _Table_pension_majoree_reference, "rendements": _Table_rendements, "revalorisations_pensions": _Table_revalorisations_pensions, "services_ouvrant_pension": _Table_services_ouvrant_pension, "surcote_baremes": _Table_surcote_baremes, "reversions": _Table_reversions, "valeurs_point": _Table_valeurs_point}
+TABLES = {"affiliations": _Table_affiliations, "ages_annulation_decote": _Table_ages_annulation_decote, "ages_categorie_active": _Table_ages_categorie_active, "ages_jouissance_militaire": _Table_ages_jouissance_militaire, "ages_ouverture": _Table_ages_ouverture, "ages_regimes": _Table_ages_regimes, "ages_surcote_regimes_speciaux": _Table_ages_surcote_regimes_speciaux, "calendriers_duree_requise": _Table_calendriers_duree_requise, "decote_regimes_speciaux": _Table_decote_regimes_speciaux, "durees_requises_regimes": _Table_durees_requises_regimes, "durees_services_actifs": _Table_durees_services_actifs, "durees_services_militaires": _Table_durees_services_militaires, "grilles": _Table_grilles, "annees_salaire_reference": _Table_annees_salaire_reference, "baremes_trimestre": _Table_baremes_trimestre, "carriere_longue": _Table_carriere_longue, "complement_differentiel_rco": _Table_complement_differentiel_rco, "coefficients_minoration": _Table_coefficients_minoration, "conversions_points": _Table_conversions_points, "durees_requises": _Table_durees_requises, "fiches_datees": _Table_fiches_datees, "invalidites": _Table_invalidites, "majorations_enfants": _Table_majorations_enfants, "majorations_enfants_points": _Table_majorations_enfants_points, "maximum_des_cultes": _Table_maximum_des_cultes, "minimum_contributif": _Table_minimum_contributif, "minimum_garanti": _Table_minimum_garanti, "minimum_vieillesse": _Table_minimum_vieillesse, "pension_majoree_reference": _Table_pension_majoree_reference, "rendements": _Table_rendements, "revalorisations_pensions": _Table_revalorisations_pensions, "services_ouvrant_pension": _Table_services_ouvrant_pension, "surcote_baremes": _Table_surcote_baremes, "reversions": _Table_reversions, "valeurs_point": _Table_valeurs_point}
 
 
 # -- les constructeurs du compte (pont.CONSTRUCTEURS_DE_LA_FACADE) -------------------

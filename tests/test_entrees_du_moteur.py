@@ -34,10 +34,9 @@ import regenerer  # noqa: E402
 ENTREES_DE_LA_FABRIQUE: dict[str, dict[str, tuple[str, ...]]] = {
     "construire_inventaire.py": {},
     "construire_regimes_md.py": {},
-    # Le chargeur des âges de référence, que le paquet écrit : il passe sous
-    # ``donnees/`` au retrait de son jumeau (note de décision 0006).
-    "construire_donnees.py": {
-        "scripts/construire_donnees.py": ("moteur/age_reference.py:_charger_ages",)},
+    # Le chargeur des âges de référence, que le paquet écrit, est passé sous
+    # ``donnees/tables_du_droit.py`` (action 161, étape 3).
+    "construire_donnees.py": {},
     "mesures_accueil.py": {},
     "construire_temoins.py": {},
     "construire_pages.py": {},

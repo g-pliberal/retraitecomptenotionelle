@@ -63,7 +63,7 @@ RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle import pont  # noqa: E402
-from retraite_notionnelle.carriere import Affiliations  # noqa: E402
+from retraite_notionnelle.donnees.affiliations import Affiliations  # noqa: E402
 from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
 from retraite_notionnelle.lignes import html_en_morceaux  # noqa: E402
 from retraite_notionnelle.web.site import module, rendre  # noqa: E402

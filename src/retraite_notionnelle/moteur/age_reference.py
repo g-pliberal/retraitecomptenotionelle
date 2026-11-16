@@ -44,8 +44,9 @@ from enum import Enum
 from pathlib import Path
 
 from ..config import ModeAgeReference, Parametres
-from ..donnees.chargement import Fiabilite, SerieAnnuelle, charger_serie_annuelle
+from ..donnees.chargement import Fiabilite, charger_serie_annuelle
 from ..donnees.mortalite import DonneesMortalite
+from ..donnees.tables_du_droit import charger_ages
 from ..types_du_pont.moteur import EcartAge  # noqa: F401  (types du pont, action 161)
 
 
@@ -65,8 +66,8 @@ class AgeReference:
         self.parametres = parametres
         self.mortalite = mortalite
         chemin = racine / "reference" / "legislation" / "ages_reference.csv"
-        self._legal = _charger_ages(chemin, "age_taux_plein_legal")
-        self._cliquet = _charger_ages(chemin, "age_reference")
+        self._legal = charger_ages(chemin, "age_taux_plein_legal")
+        self._cliquet = charger_ages(chemin, "age_reference")
 
     def age(self, annee: int) -> float:
         """Âge de référence applicable à une liquidation de l'année ``annee``."""
@@ -130,28 +131,3 @@ class AgeReference:
 
     def fiabilite(self, annee: int) -> Fiabilite:
         return self._legal.fiabilite(annee)
-
-
-def _charger_ages(chemin: Path, colonne: str) -> SerieAnnuelle:
-    """Charge une colonne d'âges du fichier législatif.
-
-    Le fichier ne comporte pas de colonne ``fiabilite`` : les âges légaux sont
-    des données de droit, lues dans les textes. On les qualifie donc de
-    ``haute`` — « certifiée » reste réservé à ce qui a été recontrôlé
-    automatiquement contre la source.
-    """
-    import csv
-
-    valeurs = {}
-    with chemin.open(encoding="utf-8") as flux:
-        lignes = (l for l in flux if not l.lstrip().startswith("#"))
-        for ligne in csv.DictReader(lignes):
-            annee = int(ligne["annee"])
-            valeurs[annee] = _valeur(annee, float(ligne[colonne]))
-    return SerieAnnuelle(valeurs, f"{colonne}", interpolation="escalier")
-
-
-def _valeur(annee: int, valeur: float):
-    from ..donnees.chargement import ValeurAnnuelle
-
-    return ValeurAnnuelle(annee=annee, valeur=valeur, fiabilite=Fiabilite.HAUTE)

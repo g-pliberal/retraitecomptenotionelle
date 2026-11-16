@@ -148,7 +148,8 @@ code:
     ligne de l'ouvrier ne cotise au RAFP ni n'y acquiert de points, et aucune rente du
     RAFP ne s'ajoute à sa pension.
   python: >-
-    carriere.py : Affiliations.regimes ; droit/coordonner.py : regimes_de
+    donnees/affiliations.py : Affiliations.regimes ; droit/coordonner.py :
+    regimes_de
   javascript: >-
     moteur/js/regimes.js : Affiliations.regimes ; moteur/js/droit/coordonner.js :
     regimesDe

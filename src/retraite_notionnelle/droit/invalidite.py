@@ -608,7 +608,7 @@ def age_propose_du_handicap(moteur: ScenarioActuel, carriere: Carriere, requis: 
                             ) -> float | None:
     """L'âge le plus précoce que le départ anticipé des assurés handicapés
     ouvrirait à qui continue de cotiser en situation de handicap, ou ``None`` —
-    la même projection que :meth:`~retraite_notionnelle.scenarios.actuel.CarriereLongue.age_propose` :
+    la même projection que :func:`~retraite_notionnelle.droit.carriere_longue.age_propose` :
     il manque à chaque âge abaissé ``exigé − accompli`` trimestres, qu'une
     année de cotisation réduit de quatre, la soustraction étant signée, à
     compter du départ, ou de la reconnaissance de l'incapacité quand elle le

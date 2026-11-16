@@ -77,9 +77,9 @@ code:
     renvoie à celui qui le relève (`Affiliations.fermeture_entrants`, `statutFerme`).
   python: >-
     donnees/regimes.py : Regime.periode, Regime.periode_a_l_effet, Reforme,
-    charger_reformes, reformes_non_portees ; droit/commun.py : periode_de_liquidation ;
-    carriere.py : Affiliations.regimes, Affiliations._periode,
-    Affiliations.fermeture_entrants
+    charger_reformes, reformes_non_portees ; droit/commun.py :
+    periode_de_liquidation ; donnees/affiliations.py : Affiliations.regimes,
+    Affiliations._periode, Affiliations.fermeture_entrants
   javascript: >-
     moteur/js/regimes.js : Regime.periode, Regime.periodeALEffet, Affiliations.regimes,
     Affiliations._periode, Affiliations.fermetureEntrants ; moteur/js/droit/commun.js :

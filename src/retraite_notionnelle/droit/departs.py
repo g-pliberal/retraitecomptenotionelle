@@ -65,6 +65,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
+from . import carriere_longue as regles_carriere_longue
 from . import compter, coordonner, etranger, invalidite, limite_age, ouvrir
 from .commun import (SANS_LEUR_BASE, derniere_annee, ligne_cotisee,
                      periode_de_liquidation)
@@ -224,7 +225,7 @@ def _ouverture_sous(moteur: ScenarioActuel, carriere: Carriere,
     carrière longue, ou du départ des assurés handicapés, quand la durée
     COTISÉE au départ déclaré l'ouvre plus tôt. Après ce départ, l'assuré ne
     cotise plus : ni l'une ni l'autre ne se projette, elles se lisent acquises
-    (:meth:`CarriereLongue.age_de_depart`, :func:`~.invalidite.age_du_handicap`).
+    (:func:`~.carriere_longue.age_de_depart`, :func:`~.invalidite.age_du_handicap`).
     """
     annuites = [(c, p) for c, p in periodes if p.type_calcul == "annuites"]
     autres = [(c, p) for c, p in periodes if p.type_calcul != "annuites"]
@@ -307,12 +308,13 @@ def _carriere_longue_acquise(moteur: ScenarioActuel, carriere: Carriere,
     etrangers = etranger.trimestres_etrangers(moteur, carriere)
     majoration = compter.majoration_pour_enfants(
         moteur, carriere, {code: cotises for code, _ in periodes}, annee_liquidation)
-    cotises = moteur.carriere_longue.cotises_reputes(
-        carriere, cotises + etrangers.trimestres_cotises(famille),
+    cotises = regles_carriere_longue.cotises_reputes(
+        moteur.carriere_longue, carriere, cotises + etrangers.trimestres_cotises(famille),
         majoration.trimestres if majoration is not None else 0)
-    anticipe = moteur.carriere_longue.age_de_depart(
-        carriere, annee_liquidation, cotises, requis, etrangers.cotises[famille],
-        moteur.carriere_longue.de_la_fonction_publique(code for code, _ in periodes),
+    anticipe = regles_carriere_longue.age_de_depart(
+        moteur.carriere_longue, carriere, annee_liquidation, cotises, requis,
+        etrangers.cotises[famille],
+        regles_carriere_longue.de_la_fonction_publique(code for code, _ in periodes),
         ouvrir.duree_d_assurance(carriere, majoration, etrangers.trimestres(famille)),
         ouvrir.trimestres_agricoles(moteur, carriere))
     return None if anticipe is None else anticipe[0]

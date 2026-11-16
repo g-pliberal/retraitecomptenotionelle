@@ -13,6 +13,7 @@ from __future__ import annotations
 import dataclasses
 import datetime
 import enum
+import functools
 import importlib
 import inspect
 import json
@@ -34,6 +35,7 @@ from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.config import RACINE_PROJET, ContributionEtat, Parametres
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit import acquerir as acquerir_python
+from retraite_notionnelle.droit import carriere_longue as carriere_longue_python
 from retraite_notionnelle.droit import categories as categories_python
 from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
@@ -313,6 +315,38 @@ def _tranche_b(simulateur, annee: int):
     return periode
 
 
+def _clerc_revenu(simulateur, depart: int):
+    """Un clerc de notaire recruté en 2000, parti fin ``depart`` au privé,
+    revenu en 2025 : la date d'entrée que le maintien de son affiliation
+    décide (``Affiliations.date_entree``)."""
+    statuts = [(annee, "clerc_de_notaire" if annee <= depart or annee >= 2025
+                else "salarie_prive_non_cadre") for annee in range(2000, 2030)]
+    lignes = [carriere_python.AnneeCarriere(
+        annee=annee, affiliation=statut, trimestres_valides=4, revenu=40_000.0,
+        type_periode="emploi", cotisations_versees=True) for annee, statut in statuts]
+    batir = facade.Carriere if isinstance(simulateur, facade.Simulateur) else CarrierePython
+    return batir(annee_naissance=1978, sexe="H", age_liquidation=95, lignes=lignes)
+
+
+#: Les méthodes de table que le jumeau a détachées en règles (action 161,
+#: étape 3 de l'inventaire du retrait des règles) : sa table passe en premier
+#: argument.
+REGLES_DETACHEES = {
+    ("carriere_longue", "_portes"): carriere_longue_python.portes_opposables,
+    ("carriere_longue", "age_de_depart"): carriere_longue_python.age_de_depart,
+    ("carriere_longue", "cotises_reputes"): carriere_longue_python.cotises_reputes,
+}
+
+
+def _methode_du_jumeau(moteur, table: str, methode: str):
+    """La méthode ``methode`` de la table ``table`` du moteur Python, ou la
+    règle qui l'a remplacée, liée à la table."""
+    regle = REGLES_DETACHEES.get((table, methode))
+    if regle is None:
+        return getattr(getattr(moteur, table), methode)
+    return functools.partial(regle, getattr(moteur, table))
+
+
 #: Des appels de chaque méthode de table que la façade sert
 #: (``pont.TABLES_DE_LA_FACADE``) : ``(table, méthode, arguments)``, les
 #: arguments bâtis sur le simulateur de chaque côté — sa carrière, ses séries,
@@ -326,6 +360,11 @@ def _salaire_moyen(simulateur):
 
 
 APPELS_DES_TABLES = [
+    ("affiliations", "date_entree", lambda s: (_clerc_revenu(s, 2014), "clerc_de_notaire", 2026)),
+    ("affiliations", "date_entree", lambda s: (_clerc_revenu(s, 2015), "clerc_de_notaire", 2026)),
+    ("affiliations", "date_entree", lambda s: (_clerc_revenu(s, 2015), "clerc_de_notaire", 2010)),
+    ("affiliations", "date_entree",
+     lambda s: (_clerc_revenu(s, 2015), "salarie_prive_non_cadre", 2020)),
     ("grilles", "forfait", lambda s: ("marins", 2024, 40000.0, _salaire_moyen(s))),
     ("grilles", "forfait", lambda s: ("marins", 2040, 52000.0, _salaire_moyen(s))),
     ("grilles", "forfait", lambda s: ("marins", 2001, 15000.0, _salaire_moyen(s))),
@@ -350,6 +389,10 @@ APPELS_DES_TABLES = [
     ("ages_ouverture", "age", lambda s: (1930.0,)),
     ("invalidites", "version", lambda s: ("inaptitude", "2024-03-01")),
     ("invalidites", "version", lambda s: ("inaptitude", "1960-01-01")),
+    ("carriere_longue", "age_de_depart",
+     lambda s: (_entre_a_quinze_ans(s), 2014, 182, 174, None, True)),
+    ("carriere_longue", "age_de_depart", lambda s: (_entre_a_seize_ans(s), 2005, 170, 160)),
+    ("carriere_longue", "age_de_depart", lambda s: (_parti_en_2000(s), 2000, 170, 160)),
     ("carriere_longue", "cotises_reputes", lambda s: (_mere_partie_tot(s), 160, 8)),
     ("carriere_longue", "cotises_reputes", lambda s: (_mere_partie_tot(s), 160, 0)),
     ("conversions_points", "echelle", lambda s: ("agirc", 1990, 2026)),
@@ -502,7 +545,7 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_dans_les_tables_du_moteur(parametre
     ecarts = []
     for table, methode, arguments in APPELS_DES_TABLES:
         lu = getattr(getattr(servi.scenario_actuel, table), methode)(*arguments(servi))
-        refait = getattr(getattr(jumeau.scenario_actuel, table), methode)(*arguments(jumeau))
+        refait = _methode_du_jumeau(jumeau.scenario_actuel, table, methode)(*arguments(jumeau))
         if lu != refait or (not isinstance(refait, dict) and repr(lu) != repr(refait)):
             ecarts.append(f"{table}.{methode} : la façade lit {lu!r}, le jumeau rend {refait!r}")
     assert not ecarts, "\n".join(ecarts)
@@ -2500,13 +2543,28 @@ def moteur_python():
     return Simulateur(Parametres()).scenario_actuel
 
 
+def _comme_methode(regle):
+    """Une règle détachée de sa table, vue comme la méthode qu'elle était :
+    son premier argument, la table, s'appelle ``self``."""
+    signature = inspect.signature(regle)
+    premier, *autres = signature.parameters.values()
+
+    def methode(*arguments, **nommes): ...
+    methode.__signature__ = signature.replace(parameters=[premier.replace(name="self"), *autres])
+    methode.__annotations__ = dict(regle.__annotations__)
+    methode.__module__ = regle.__module__
+    return methode
+
+
 @pytest.mark.parametrize("table, methode", [(table, methode)
                                             for table, methodes in pont.TABLES_DE_LA_FACADE.items()
                                             for methode in methodes])
 def test_chaque_methode_de_table_a_le_contrat_de_son_jumeau(contrats, moteur_python, table,
                                                             methode):
     from retraite_notionnelle.scenarios.actuel import TableRecouverte
-    jumelles = [getattr(type(getattr(moteur_python, table)), methode)]
+    regle = REGLES_DETACHEES.get((table, methode))
+    jumelles = [getattr(type(getattr(moteur_python, table)), methode) if regle is None
+                else _comme_methode(regle)]
     if hasattr(TableRecouverte, methode) and table in ("ages_ouverture", "durees_requises"):
         # Sous un droit contrefactuel, la table se recouvre : même contrat.
         jumelles.append(getattr(TableRecouverte, methode))

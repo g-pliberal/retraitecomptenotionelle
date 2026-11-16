@@ -194,9 +194,10 @@ historique:
   l'entrée du premier recrutement.
 code:
   python: >-
-    carriere.py : Affiliations.maintien, Affiliations.date_entree, Carriere.retours,
-    INTERRUPTIONS_DE_RUPTURE ; droit/coordonner.py : coordonner, regimes_de ;
-    moteur/compte.py : ConstructeurCompte._cotisation_ligne ; remuneration.py :
+    carriere.py : Carriere.retours, INTERRUPTIONS_DE_RUPTURE ;
+    donnees/affiliations.py : Affiliations.maintien, Affiliations.date_entree ;
+    droit/coordonner.py : coordonner, regimes_de ; moteur/compte.py :
+    ConstructeurCompte._cotisation_ligne ; remuneration.py :
     remuneration_de_la_carriere ; contributions_equilibre.py : _dues
   javascript: >-
     moteur/js/regimes.js : Affiliations.maintien, Affiliations.dateEntree ;

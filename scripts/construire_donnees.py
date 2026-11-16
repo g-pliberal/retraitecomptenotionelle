@@ -40,7 +40,7 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
-from retraite_notionnelle.carriere import Affiliations  # noqa: E402
+from retraite_notionnelle.donnees.affiliations import Affiliations  # noqa: E402
 from retraite_notionnelle.donnees.caracteristiques import CaracteristiquesRetraites  # noqa: E402
 from retraite_notionnelle.donnees.credits_ministeres import CreditsMinisteres  # noqa: E402
 from retraite_notionnelle.donnees.assiette import POSTES_ASSIETTE  # noqa: E402
@@ -100,6 +100,7 @@ from retraite_notionnelle.donnees.tables_du_droit import (  # noqa: E402
     AnneesRevenuAnnuelMoyenIndependants,
     AnneesSalaireReference,
     CarriereLongue,
+    charger_ages,
     CarrieresHorsDeFrance,
     FichesDatees,
     CoefficientsMinoration,
@@ -243,10 +244,8 @@ def _series() -> dict:
             )
     # Les âges légaux n'ont pas de colonne de fiabilité : le modèle les qualifie
     # de « haute ». On passe par le même chargeur que lui pour ne pas diverger.
-    from retraite_notionnelle.moteur.age_reference import _charger_ages
-
-    series["age_taux_plein_legal"] = _charger_ages(ages, "age_taux_plein_legal")
-    series["age_reference"] = _charger_ages(ages, "age_reference")
+    series["age_taux_plein_legal"] = charger_ages(ages, "age_taux_plein_legal")
+    series["age_reference"] = charger_ages(ages, "age_reference")
 
     return {nom: _serie(serie) for nom, serie in sorted(series.items())}
 

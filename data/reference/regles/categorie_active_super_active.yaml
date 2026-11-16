@@ -87,9 +87,10 @@ code:
     vingt-sept selon l'année où elle est atteinte
     (`legislation/duree_services_actifs.csv`) ; sans eux, l'agent reste au droit commun.
   python: >-
-    carriere.py : Affiliations.classements_actifs ; droit/ouvrir.py : derogation_active,
-    statut_dominant, _age_ouverture_de_droit_commun, age_taux_plein ; droit/compter.py :
-    services_actifs_requis ; donnees/tables_du_droit.py : AgesCategorieActive,
+    donnees/affiliations.py : Affiliations.classements_actifs ; droit/ouvrir.py
+    : derogation_active, statut_dominant, _age_ouverture_de_droit_commun,
+    age_taux_plein ; droit/compter.py : services_actifs_requis ;
+    donnees/tables_du_droit.py : AgesCategorieActive,
     AgesCategorieActive.derogation, DureesServicesActifs
   javascript: >-
     moteur/js/regimes.js : Affiliations.classementsActifs, AgesCategorieActive,

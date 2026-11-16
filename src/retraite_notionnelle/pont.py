@@ -2774,6 +2774,9 @@ def facade(entree: str, *arguments, parametres=None, paquet: bytes | None = None
 #: jumeau (``tests/test_facade_jumeau.py``). Une méthode qui n'y est pas est
 #: refusée avant node.
 TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
+    # La date d'entrée qui décide des régimes d'un statut, que le maintien
+    # d'une affiliation fixe (``donnees/affiliations.py``).
+    "affiliations": ("date_entree",),
     "ages_annulation_decote": ("age",),
     "ages_categorie_active": ("derogation",),
     "ages_jouissance_militaire": ("age",),
@@ -2790,7 +2793,7 @@ TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "grilles": ("forfait",),
     "annees_salaire_reference": ("annees",),
     "baremes_trimestre": ("valeurs",),
-    "carriere_longue": ("_portes", "cotises_reputes"),
+    "carriere_longue": ("_portes", "age_de_depart", "cotises_reputes"),
     "complement_differentiel_rco": ("regle", "smic_net"),
     "coefficients_minoration": ("coefficient",),
     "conversions_points": ("echelle", "fusion"),
