@@ -1523,22 +1523,28 @@ def test_le_releve_des_lectures_se_passe_de_la_saisie_python():
     assert "src/retraite_notionnelle/contexte.py" not in releve["modules"]
 
 
-def test_le_budget_de_calcul_mesure_les_carrieres_que_le_portage_batit(monkeypatch):
-    """Le budget de calcul (``docs/architecture.md``, § 7.8) se mesure sur les
-    carrières des témoins : le portage les bâtit de leurs requêtes (action 161,
-    étape 6), la saisie n'ayant que son exemplaire, une par requête, sous un
-    simulateur par jeu de paramètres."""
-    import budget_calcul
-    import construire_temoins
+def test_le_budget_de_calcul_ne_mesure_que_le_portage(monkeypatch, capsys):
+    """Le budget de calcul (``docs/architecture.md``, § 7.8) se mesure dans le
+    seul moteur qui reste, le JavaScript (``scripts/budget_calcul.mjs``) : le
+    moteur Python se retire (action 161), et le script n'en exécute aucune
+    règle (``scripts/sonde_moteur_python.py``)."""
+    import subprocess
+    import types
 
-    monkeypatch.setattr(construire_temoins, "_cas", lambda: [
-        {"nom": nom, "requete": {"statut": statut, "naissance": "1970"}}
-        for nom, statut in (("a", "salarie_prive_non_cadre"), ("b", "artisan"))])
-    saisies = budget_calcul.carrieres()
-    assert len(saisies) == 2
-    assert saisies[0][0] is saisies[1][0]
-    assert [type(carriere).__name__ for _, carriere in saisies] == ["Carriere", "Carriere"]
-    assert all(carriere.lignes for _, carriere in saisies)
+    import budget_calcul
+    import sonde_moteur_python
+
+    lances = []
+
+    def lancer(commande, **options):
+        lances.append(commande)
+        return types.SimpleNamespace(stdout="JavaScript, 2 carrières : 4,5 ms\n")
+
+    monkeypatch.setattr(subprocess, "run", lancer)
+    monkeypatch.setattr(sys, "argv", ["budget_calcul.py"])
+    assert sonde_moteur_python.sonder(budget_calcul.main) == []
+    assert [Path(commande[1]).name for commande in lances] == ["budget_calcul.mjs"]
+    assert capsys.readouterr().out == "JavaScript, 2 carrières : 4,5 ms\n"
 
 
 def test_le_routeur_du_site_est_hors_de_l_empreinte():

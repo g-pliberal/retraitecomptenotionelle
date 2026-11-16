@@ -1507,7 +1507,7 @@ et le nombre déclaré est `APPELS_DECLARES`, dans
 les régimes liquident à des dates différentes (§ 7.4), chaque départ ouvre ses
 pensions et mesure les siennes, ce qui n'est pas reliquider à un événement
 qui n'ouvre aucun droit. Chaque phase
-refait la mesure dans les deux moteurs (`scripts/budget_calcul.py`), et celle
+refait la mesure dans le moteur du site (`scripts/budget_calcul.py`), et celle
 de la suite de tests ; une phase qui les dégrade s'arrête le temps de les
 ramener. Le paquet du site se
 découpe par domaine et se charge à la demande : le premier chargement ne
