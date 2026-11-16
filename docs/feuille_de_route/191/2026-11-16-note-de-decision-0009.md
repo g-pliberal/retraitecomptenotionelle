@@ -24,12 +24,24 @@ requise, la carrière longue et la surcote ; les renvois des régimes, en
 commençant par les dix dates de bascule qui peuvent changer un résultat.
 Aucun résultat ne doit bouger.
 
-**Ce qui reste ouvert.** Avant de migrer la surcote, lire la disposition
-d'application du décret n° 2006-1611. Lu dans LEGI, D. 351-1-4 donne depuis
-2006 un taux de 1 % au cinquième trimestre accompli dès 2004, et de 1,25 %
-après soixante-cinq ans ; le barème du dépôt garde 0,75 % à tous les
-trimestres de 2004 à 2006. C'est une question du scénario 1. Le droit d'avant
-1985 reste un chantier de données : 100 versions y sont `supposée`.
+**Ce qui reste ouvert.** Le droit d'avant 1985 reste un chantier de
+données : 100 versions y sont `supposée`.
+
+**Le rectificatif du même jour.** Relue par un avis extérieur, la note a reçu
+à sa fin un rectificatif, que le propriétaire a adopté. Trois phrases y sont
+corrigées. Le champ `code` est déjà confronté au dépôt, dans un sens
+(`tests/outils_carte.py`). legiretraite a un fichier par paramètre, et non
+par loi. La surcote des trimestres de 2004 à 2006 est tranchée : l'article 3
+du décret n° 2006-1611 vise les pensions prenant effet à compter du
+1er janvier 2007, auxquelles le dépôt sert 0,75 % là où le texte donne 1 % ou
+1,25 %. Sa correction déplace des résultats : elle attend l'accord du
+propriétaire, et passe avant l'étape de la surcote, qui n'en déplace aucun.
+Cinq précisions s'y ajoutent : le renvoi daté et le renvoi à une version
+nommée, dont la forme s'écrit au début de l'étape de l'âge légal ; l'arrêt du
+calcul sur un renvoi sans cible ou qui boucle ; la recherche bornée du
+premier départ ; la fin de l'étape de l'âge légal, avec un vrai consommateur,
+un scénario qui garde une loi passée et une réforme fictive ; la table
+fusionnée, fabriquée et jamais écrite à la main.
 
 **Ce que la note ne dit pas.** Si le domaine `cumul`, dont l'étape 2 attend,
 passe avant ou après cet ordre : au propriétaire.

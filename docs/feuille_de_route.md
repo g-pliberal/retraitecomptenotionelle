@@ -8208,18 +8208,19 @@ les couleurs ; quatre étapes en prennent la mise en page :
 
 ### 191. Les fiches de la carte, exécutables : le moteur lit chaque règle dans les versions de sa fiche, domaine par domaine — `en cours`
 
-**Reprise, au 16 novembre 2026.** La note de décision 0009, adoptée ce
-jour, dit comment l'action range le droit daté dans les versions des fiches,
-et dans quel ordre : les cinq cliquets qu'elle nomme ; l'âge légal ; l'âge
-du taux plein, la durée requise, la carrière longue et la surcote ; enfin les
-renvois des régimes. Une étape par session, sur Fable 5.2. Elle ne dit rien
-du domaine `cumul` : au propriétaire de dire ce qui vient d'abord. Étape 1
-faite : la carte mesurée, le domaine `cumul` choisi, `retraite_progressive`
-lue dans sa fiche par les deux moteurs (`fiches_datees`), témoins
-identiques. L'étape 2 du `cumul` attend : `seconde_pension` et
-`droits_apres_la_premiere_pension`, par `version_aux_dates`. Au propriétaire
-aussi : l'écart déclaré des bornes du fonctionnaire de 2014 à 2023. Détail :
-`191/2026-11-16-note-de-decision-0009.md`.
+**Reprise, au 16 novembre 2026.** La note de décision 0009, adoptée ce jour
+avec son rectificatif, dit comment l'action range le droit daté dans les
+versions des fiches, et dans quel ordre : les cinq cliquets qu'elle nomme ;
+l'âge légal ; l'âge du taux plein, la durée requise, la carrière longue et
+la surcote ; enfin les renvois des régimes. Une étape par session, sur
+Fable 5.2. La surcote des trimestres de 2004 à 2006 est fausse : sa
+correction, qui déplace des résultats, attend le propriétaire et passe avant
+l'étape de la surcote. Au propriétaire aussi : si le domaine `cumul` vient
+d'abord, et l'écart déclaré des bornes du fonctionnaire de 2014 à 2023.
+Étape 1 faite : la carte mesurée, `retraite_progressive` lue dans sa fiche
+(`fiches_datees`), témoins identiques. L'étape 2 du `cumul` attend :
+`seconde_pension` et `droits_apres_la_premiere_pension`, par
+`version_aux_dates`. Détail : `191/2026-11-16-note-de-decision-0009.md`.
 
 **D'où elle vient.** Le 9 novembre 2026, le propriétaire demande de rendre
 les fiches de la carte des règles exécutables, domaine par domaine.

@@ -2548,7 +2548,7 @@ d'aujourd'hui, et elles s'allongent sans décision.
 | `presomptions`, `invariants` | — | aucun |
 | `sources` | lue le, prochaine relecture, lectures divergentes, questions à relire | — |
 | `textes_sans_effet`, `textes_a_rattacher`, `textes_a_relire` | les rédactions lues qui ne la changent pas, celles qui la changent sans être encore coupées en versions, et celles dont l'effet reste à lire | aucun |
-| `code`, `referents`, `historique` | les fonctions qui l'appliquent, par leur chemin et leur nom sous `moteur/js/`, et ses tests ; une fonction peut en appliquer plusieurs, une par branche, et une version qui change de formule nomme la sienne (note 0009 : un script y convertit d'un coup la prose d'aujourd'hui) ; correspondance avec chaque autre modèle, et écarts justifiés (§ 3.4) ; récits | — |
+| `code`, `referents`, `historique` | les fonctions qui l'appliquent, par leur chemin et leur nom sous `moteur/js/`, et ses tests ; une fonction peut en appliquer plusieurs, une par branche, et une version qui change de formule nomme la sienne (note 0009 : sous la forme « fichier : nom » que lit `tests/outils_carte.py`) ; correspondance avec chaque autre modèle, et écarts justifiés (§ 3.4) ; récits | — |
 
 Une **relation** porte en plus :
 

@@ -377,3 +377,63 @@ L'ordre :
 Chaque étape est finie quand ses copies et ses classes par loi sont parties,
 qu'aucun résultat n'a bougé, et que chaque version porte ses deux preuves ou
 dit ce qui manque.
+
+## Rectificatif du 16 novembre 2026
+
+Le jour de son adoption, la note a été relue par un avis extérieur, confronté
+aux textes et au dépôt. Trois de ses phrases étaient fausses, et cinq
+précisions s'y ajoutent. Sa direction tient.
+
+**Ce qui était faux.**
+
+- **Le champ `code` est déjà vérifié, dans un sens.** Il n'est pas « en
+  prose, que rien ne vérifie » : 240 des 241 fiches qui ont un code nomment
+  leurs fonctions sous la forme « fichier : nom » que lit
+  `tests/outils_carte.py`, et `test_le_code_de_chaque_fiche_tient` échoue sur
+  un fichier ou un nom qui n'existe pas ; une seule fiche reste en prose
+  (`EN_PROSE`). Aucun script n'a donc à le convertir. Ce que la note ajoute
+  tient : l'étiquette de chaque fonction de règle, le test dans l'autre sens,
+  la fonction de chaque version qui change de formule.
+- **legiretraite n'a pas un fichier par loi.** Le relevé du dépôt
+  (`docs/archives/releve_des_autres_modeles/drees.yaml`) lui donne un fichier
+  par paramètre (`aod.csv`, `dureeRequise.csv`), par génération, caisse et
+  catégorie. La solution écartée, un fichier par loi, est celle de l'âge
+  légal du dépôt (`age_ouverture_requis.csv` et ses deux copies d'avant
+  réforme), et non celle de legiretraite ou de la DREES.
+- **La surcote des trimestres de 2004 à 2006 est tranchée.** L'article 3 du
+  décret n° 2006-1611 du 15 décembre 2006 le rend applicable « aux pensions
+  prenant effet à compter du 1er janvier 2007 », et l'exemple 3 de la
+  circulaire Cnav 2007/5 du 16 janvier 2007 l'applique. Pour ces pensions,
+  les trimestres accomplis depuis 2004 prennent 1 % à partir du cinquième,
+  et 1,25 % après soixante-cinq ans : le dépôt, qui leur garde 0,75 %, a
+  tort, à compter du 1er janvier 2007 et non du 17 décembre 2006. La forme
+  que la note prévoit est la bonne : la version se choisit à la date
+  d'effet, la ligne à la date du trimestre. La correction déplace des
+  résultats : elle se fait en étape à part, sur l'accord du propriétaire,
+  avant que l'étape 3 migre la surcote sans rien déplacer.
+
+**Ce qui se précise.**
+
+- **Deux renvois.** Un renvoi daté nomme la fiche, son opération et la date
+  qui choisit la version. Un renvoi à une rédaction antérieure nomme la
+  version par son identifiant, qui ne bouge pas quand une version s'insère
+  ou que des bornes se corrigent. Le contrat de la fiche laisse encore
+  `contenu` libre : la forme des deux renvois s'y écrit, et se teste, au
+  début de l'étape 2, la première qui en porte un.
+- **Un renvoi qui ne trouve aucune version, ou qui boucle, arrête le
+  calcul** et nomme ses fiches. Les trous et les chevauchements des versions
+  sont déjà refusés (`noyau/partage.py`, `moteur/js/versions.js`).
+- **La recherche du premier départ** essaie chaque premier du mois, de l'âge
+  le plus bas que porte une version au plus haut, et dit quand aucune date
+  n'ouvre le droit.
+- **L'étape 2 finit** quand un vrai consommateur lit l'âge légal par ses
+  versions, qu'un scénario garde une loi passée, et qu'un test ajoute une
+  réforme fictive et vérifie qu'elle ne change qu'une version.
+- **Une table fusionnée peut se fabriquer** depuis les versions, pour
+  l'affichage ou la comparaison, et jamais s'écrire à la main.
+
+Faute d'exemple officiel, un cas calculé à la main tient le code, et se
+déclare comme tel : il éprouve le code contre la lecture, non la lecture
+contre le texte, et l'erreur de la surcote y aurait survécu. Contre le
+rangement d'OpenFisca-France-Pension, l'argument est qu'une loi nouvelle
+touche chaque génération, et non le nombre de ses lignes.
