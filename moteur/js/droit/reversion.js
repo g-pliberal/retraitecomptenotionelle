@@ -1034,12 +1034,12 @@ function moisDeLaDemande(dateEffet) {
  * Voir `_ressources_a_la_date_d_effet` du Python.
  */
 function ressourcesALaDateDEffet(parametres, conjoint, ressources, retraites, dateEffet, deces,
-  regime, smic, reversions, auDeces = null) {
+  regime, smic, reversions, auDeces = null, smicAu = null) {
   const periodes = parametres.periodes_de_reference ?? [];
   if (periodes.length === 0) {
     const [retenues, facteur, menage] = ressourcesDuPlafond(parametres, conjoint, ressources,
       dateEffet);
-    return [retenues, facteur, menage, 0, ["date_d_effet"]];
+    return [retenues, facteur, menage, 0, ["date_d_effet"], smic];
   }
   let examinees = null;
   const examines = [];
@@ -1051,13 +1051,15 @@ function ressourcesALaDateDEffet(parametres, conjoint, ressources, retraites, da
     const jour = { date_d_effet: dateEffet, demande: moisDeLaDemande(dateEffet),
       deces: `${deces.slice(0, 8)}01` }[moment];
     const entieres = retraitesEntieres(regles, regime, jour);
+    const smicDuMoment = smicAu === null ? smic : smicAu(jour, regles);
     const propres = regles.periodes_de_reference ?? [];
     for (const periode of propres.length > 0 ? propres : periodes) {
       const mois = Math.trunc(Number(periode));
       const [retenues, facteur, menage] = ressourcesDeLaPeriode(regles, conjoint, retraites,
         jour, entieres, deces, mois);
-      examinees = [retenues, facteur, menage, mois, [...examines]];
-      if (retenues + reversions <= facteur * Number(regles.plafond_smic_heures) * smic) {
+      examinees = [retenues, facteur, menage, mois, [...examines], smicDuMoment];
+      if (retenues + reversions
+          <= facteur * Number(regles.plafond_smic_heures) * smicDuMoment) {
         return examinees;
       }
     }
@@ -1941,15 +1943,21 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     const ecretable = parametres.ressources === "ecretement";
     const sansSesRetraites = (parametres.cumul ?? null) !== null;
     const auDeces = table.version(fiche, deces, deces);
-    const [personnelles, facteur, menage, periode, examines] = ressourcesALaDateDEffet(
+    // Avant juillet 2004, le SMIC en vigueur au moment examiné, s'il tombe dans
+    // l'année des montants ; celui du 1er janvier sinon. Voir le Python.
+    const smicAu = (jour, regles) => (
+      (regles.ressources_examinees ?? []).includes("demande")
+        && Number(jour.slice(0, 4)) === annee
+        ? moteur.macro.smicHoraireEnVigueur(annee, Number(jour.slice(5, 7)))
+        : moteur.macro.smic_horaire.valeur(annee));
+    const [personnelles, facteur, menage, periode, examines, smic] = ressourcesALaDateDEffet(
       parametres, conjoint,
       sansSesRetraites ? ressources - retraitesPersonnelles
         : ressources - (retraitesPersonnelles - retraites),
       sansSesRetraites ? 0.0 : retraitesPersonnelles, dateEffet, deces, regime,
       moteur.macro.smic_horaire.valeur(annee), ecretable ? basesDesAutres : 0.0,
-      auDeces === null || auDeces === undefined ? null : auDeces.parametres);
-    const plafondAnnuel = facteur * Number(parametres.plafond_smic_heures)
-      * moteur.macro.smic_horaire.valeur(annee);
+      auDeces === null || auDeces === undefined ? null : auDeces.parametres, smicAu);
+    const plafondAnnuel = facteur * Number(parametres.plafond_smic_heures) * smic;
     const reversions = ecretable ? autresBases : 0.0;
     const disponible = plafondAnnuel - personnelles - reversions;
     const retenues = personnelles + reversions;

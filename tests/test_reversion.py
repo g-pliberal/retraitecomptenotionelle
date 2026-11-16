@@ -2927,6 +2927,31 @@ def test_avant_juillet_2004_la_demande_retient_les_douze_mois_qui_la_precedent(s
     assert ligne.ressources_retenues == pytest.approx(11000.0)
 
 
+def test_avant_juillet_2004_le_plafond_est_au_smic_en_vigueur_a_la_demande(simulateur):
+    """Le survivant « ne dispose pas, à la date de la demande de pension de
+    réversion, de ressources personnelles dépassant le montant annuel du salaire
+    minimum de croissance », « calculé sur la base de 2 080 fois le montant
+    horaire » (R. 353-1, rédaction du 30 novembre 1990, LEGIARTI000006749452) :
+    le SMIC en vigueur à la demande, et non celui du 1er janvier. Circulaire
+    Cnav n° 2002/44 : « Le montant horaire du SMIC ayant été porté à 6,83 euros à
+    compter du 1er juillet 2002 [...] le plafond annuel de ressources à retenir à
+    partir de cette date est le suivant : 6,83 euros x 2080 = 14 206,40 euros »
+    (action 175, écart lourd n° 4 des circulaires). La veuve de 2002, née en
+    1940, gagne 14 000 € par an ; son mari meurt le 10 août, sa demande est
+    d'août : ses trois mois, 3 500 €, passent le quart du plafond de janvier,
+    2 080 fois 6,67 €, et ses douze le plafond entier ; ils restent sous le quart
+    de celui de juillet. Sa réversion est servie, quand le modèle la refusait."""
+    carriere = _carriere(simulateur, 1938, 65.0, "1940-06-15", "2002-08-10",
+                         mariage="1962-05-01", ressources=14000.0, activite=14000.0)
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2002)["regime_general"]
+    assert 14000.0 / 4 > 2080 * 6.67 / 4 and 14000.0 > 2080 * 6.67
+    assert 14000.0 / 4 <= 2080 * 6.83 / 4
+    assert (ligne.version, ligne.date_effet) == ("taux_54", "2002-09-01")
+    assert (ligne.ressources_examinees_au, ligne.periode_de_reference) == ("demande", 3)
+    assert (round(ligne.montant, 2), ligne.motif) == (5400.0, "servie")
+
+
 def test_avant_juillet_1974_les_ressources_s_apprecient_au_deces(simulateur):
     """« Pour l'ouverture du droit à pension de réversion [...], est
     considéré comme à charge le conjoint dont les ressources personnelles,
@@ -3125,7 +3150,8 @@ def test_les_deux_moteurs_retiennent_les_trois_ou_douze_mois_de_la_date_d_effet(
 #: les ressources de la demande, puis celles du décès (R. 353-1) : la veuve de
 #: 1996 qui prend une activité après le décès, que le décès ouvre ; celle dont
 #: le salaire sextuple deux mois avant sa demande, que les douze mois de sa
-#: demande ouvrent ; la veuve de 1972, que les ressources de son décès ferment.
+#: demande ouvrent ; la veuve de 1972, que les ressources de son décès ferment ;
+#: la veuve de 2002, que le SMIC de sa demande ouvre.
 #: Chacune avec les moments examinés, le dernier celui de ses ressources — la
 #: demande refusée avant le décès —, les mois de leur période, et le motif de
 #: sa réversion.
@@ -3139,6 +3165,11 @@ CAS_DE_LA_DEMANDE = [
     ({"naissance": "1905", "liquidation": "65", "conjoint": "1907-03-15", "mariage": "1930-05",
       "deces": "1972-06-10", "ressources_conjoint": "3000", "activite_conjoint": "3000",
       "activite_conjoint_fin": "1972-06-30"}, ["deces"], 12, "ressources"),
+    # La veuve de 2002 sous le plafond du SMIC d'août, 6,83 €, et non de
+    # janvier, 6,67 € (R. 353-1, rédaction de 1990 ; circulaire Cnav n° 2002/44).
+    ({"naissance": "1938", "liquidation": "65", "conjoint": "1940-06-15", "mariage": "1962-05",
+      "deces": "2002-08-10", "ressources_conjoint": "14000", "activite_conjoint": "14000"},
+     ["demande"], 3, "servie"),
 ]
 
 

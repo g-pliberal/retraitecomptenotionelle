@@ -642,6 +642,21 @@ export class DonneesMacro {
   }
 
   /**
+   * Le SMIC horaire en vigueur le 1er du mois `mois` de `annee` : celui du
+   * 1er janvier, ou le dernier relèvement de l'année qui l'a remplacé avant ce
+   * jour. Voir le Python.
+   */
+  smicHoraireEnVigueur(annee, mois) {
+    let courant = this.smic_horaire.valeur(annee);
+    for (const [date, valeur] of this._smicReleves) {
+      if (Number(date.slice(0, 4)) === annee && Number(date.slice(5, 7)) <= mois) {
+        courant = valeur;
+      }
+    }
+    return courant;
+  }
+
+  /**
    * La moyenne du SMIC horaire EN VIGUEUR chaque mois de l'année : celui du
    * 1er janvier, puis chaque relèvement en cours d'année à compter de son mois.
    * Douze fois elle, fois les heures du mois, fait la base forfaitaire des

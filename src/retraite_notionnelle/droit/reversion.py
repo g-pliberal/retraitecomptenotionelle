@@ -1134,8 +1134,8 @@ def _mois_de_la_demande(date_effet: str) -> str:
 def _ressources_a_la_date_d_effet(parametres: dict, conjoint: Conjoint, ressources: float,
                                   retraites: float, date_effet: str, deces: str,
                                   regime: str, smic: float, reversions: float,
-                                  au_deces: dict | None = None
-                                  ) -> tuple[float, float, bool, int, tuple[str, ...]]:
+                                  au_deces: dict | None = None, smic_au=None
+                                  ) -> tuple[float, float, bool, int, tuple[str, ...], float]:
     """Les ressources du survivant que la date d'effet ``date_effet`` retient
     sous le plafond de la version, par an, le facteur qui multiplie ce
     plafond, s'il est celui du ménage, les mois de leur période de référence
@@ -1170,12 +1170,19 @@ def _ressources_a_la_date_d_effet(parametres: dict, conjoint: Conjoint, ressourc
     date d'effet (:func:`_mois_de_la_demande`). Quand aucun moment ne remplit
     la condition, ceux du dernier examiné. La version qui ne dit pas de mois
     compare sur l'année ses ``ressources`` de ce jour
-    (:func:`_ressources_du_plafond`) : 0 mois."""
+    (:func:`_ressources_du_plafond`) : 0 mois.
+
+    Le plafond est de ``smic`` horaire, sauf au moment qu'une version d'avant
+    juillet 2004 examine (``ressources_examinees`` porte la demande) : le SMIC
+    « en vigueur » ce jour-là (R. 353-1, rédactions de 1985 et de 1990 ;
+    circulaire Cnav n° 2002/44), que ``smic_au`` rend du jour et des règles ;
+    le dernier élément rendu est le SMIC du moment retenu (action 175, écart
+    lourd n° 4 des circulaires)."""
     periodes = parametres.get("periodes_de_reference")
     if not periodes:
         retenues, facteur, menage = _ressources_du_plafond(parametres, conjoint, ressources,
                                                            date_effet)
-        return retenues, facteur, menage, 0, ("date_d_effet",)
+        return retenues, facteur, menage, 0, ("date_d_effet",), smic
     examinees = None
     moments: tuple[str, ...] = ()
     for moment in parametres.get("ressources_examinees") or ("date_d_effet",):
@@ -1184,11 +1191,13 @@ def _ressources_a_la_date_d_effet(parametres: dict, conjoint: Conjoint, ressourc
         jour = {"date_d_effet": date_effet, "demande": _mois_de_la_demande(date_effet),
                 "deces": deces[:8] + "01"}[moment]
         entieres = _retraites_entieres(regles, regime, jour)
+        smic_du_moment = smic if smic_au is None else smic_au(jour, regles)
         for mois in regles.get("periodes_de_reference") or periodes:
             retenues, facteur, menage = _ressources_de_la_periode(
                 regles, conjoint, retraites, jour, entieres, deces, int(mois))
-            examinees = (retenues, facteur, menage, int(mois), moments)
-            if retenues + reversions <= facteur * float(regles["plafond_smic_heures"]) * smic:
+            examinees = (retenues, facteur, menage, int(mois), moments, smic_du_moment)
+            if (retenues + reversions
+                    <= facteur * float(regles["plafond_smic_heures"]) * smic_du_moment):
                 return examinees
     return examinees
 
@@ -2064,15 +2073,23 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         ecretable = parametres["ressources"] == "ecretement"
         sans_ses_retraites = parametres.get("cumul") is not None
         au_deces = table.version(fiche, deces, deces)
-        retenues, facteur, menage, periode, examines = _ressources_a_la_date_d_effet(
+
+        def smic_au(jour: str, regles: dict, annee: int = annee) -> float:
+            # Avant juillet 2004, le SMIC en vigueur au moment examiné, s'il
+            # tombe dans l'année des montants ; celui du 1er janvier sinon.
+            if ("demande" in (regles.get("ressources_examinees") or ())
+                    and int(jour[:4]) == annee):
+                return moteur.macro.smic_horaire_en_vigueur(annee, int(jour[5:7]))
+            return moteur.macro.smic_horaire(annee)
+
+        retenues, facteur, menage, periode, examines, smic = _ressources_a_la_date_d_effet(
             parametres, conjoint,
             ressources - retraites_personnelles if sans_ses_retraites
             else ressources - (retraites_personnelles - retraites),
             0.0 if sans_ses_retraites else retraites_personnelles, date_effet, deces, regime,
             moteur.macro.smic_horaire(annee), bases_des_autres if ecretable else 0.0,
-            au_deces["parametres"] if au_deces is not None else None)
-        plafond_annuel = (facteur * float(parametres["plafond_smic_heures"])
-                          * moteur.macro.smic_horaire(annee))
+            au_deces["parametres"] if au_deces is not None else None, smic_au)
+        plafond_annuel = facteur * float(parametres["plafond_smic_heures"]) * smic
         reversions = autres_bases if ecretable else 0.0
         disponible = plafond_annuel - retenues - reversions
         retenues += reversions

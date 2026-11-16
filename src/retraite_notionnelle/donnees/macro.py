@@ -481,6 +481,17 @@ class DonneesMacro:
             somme += courant
         return somme / 12
 
+    def smic_horaire_en_vigueur(self, annee: int, mois: int) -> float:
+        """Le SMIC horaire en vigueur le 1er du mois ``mois`` de ``annee`` : celui
+        du 1er janvier, ou le dernier relèvement de l'année qui l'a remplacé
+        avant ce jour (``smic_horaire_releves.csv``). Jumeau de
+        ``smicHoraireEnVigueur``."""
+        courant = self.smic_horaire(annee)
+        for date_effet, valeur in self.smic_horaire_releves:
+            if int(date_effet[:4]) == annee and int(date_effet[5:7]) <= mois:
+                courant = valeur
+        return courant
+
     def smic_horaire_du_forfait(self, annee: int, du_mois: bool) -> float:
         """Le SMIC horaire d'un repère d'assiette en heures de SMIC : celui des
         mois (``du_mois``, le drapeau ``smic_du_mois`` de la période), sinon
