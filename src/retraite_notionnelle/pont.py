@@ -2758,12 +2758,15 @@ def facade(entree: str, *arguments, parametres=None, paquet: bytes | None = None
 TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "ages_annulation_decote": ("age",),
     "ages_categorie_active": ("derogation",),
+    "ages_jouissance_militaire": ("age",),
     "ages_ouverture": ("age",),
     "ages_regimes": ("ages",),
     "ages_surcote_regimes_speciaux": ("age",),
     "calendriers_duree_requise": ("trimestres",),
     "decote_regimes_speciaux": ("parametres",),
     "durees_requises_regimes": ("ligne",),
+    "durees_services_actifs": ("annees_requises", "duree_de_base"),
+    "durees_services_militaires": ("annees_requises", "duree_de_base"),
     # Le forfait de la catégorie d'un marin (R. 11), le salaire moyen passé
     # par sa marque (:data:`SALAIRE_MOYEN`).
     "grilles": ("forfait",),

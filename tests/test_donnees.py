@@ -1297,10 +1297,34 @@ def test_le_chargeur_refuse_un_rang_pris_ou_un_fichier_mal_nomme(tmp_path):
 # deux successions désignant des régimes absents du catalogue.
 
 
-def _affiliations():
-    from retraite_notionnelle.carriere import Affiliations
+def _simulateur():
+    """Le simulateur de la façade : ses données lues par leurs chargeurs
+    Python, les tables du moteur servies par le portage (action 161)."""
+    from facade import Simulateur
+    from retraite_notionnelle.config import Parametres
+    return Simulateur(Parametres())
 
-    return Affiliations(RACINE_DONNEES)
+
+def _affiliations():
+    return _simulateur().affiliations
+
+
+def _rang_borne(borne: int | str) -> int:
+    """Une borne d'entrée du routage en rang de mois : ``2020`` se lit janvier
+    2020, ``"2023-09"`` septembre 2023."""
+    from retraite_notionnelle.calendrier import DateMois
+    if isinstance(borne, int):
+        return DateMois(borne, 1).rang
+    annee, mois = str(borne).split("-")
+    return DateMois(int(annee), int(mois)).rang
+
+
+def _cles_de_la_legislation(fichier: str, colonne: str) -> set[str]:
+    """Les clés d'une table de ``reference/legislation/``, lues dans le fichier."""
+    chemin = RACINE_DONNEES / "reference" / "legislation" / fichier
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = (ligne for ligne in flux if not ligne.lstrip().startswith("#"))
+        return {ligne[colonne] for ligne in csv.DictReader(lignes)}
 
 
 def test_chaque_statut_a_sa_famille_dans_le_menu():
@@ -1380,7 +1404,6 @@ def test_un_statut_ferme_dit_qui_le_releve_et_ne_route_rien_d_autre():
     d'autre.
     """
     from retraite_notionnelle.calendrier import DateMois
-    from retraite_notionnelle.carriere import rang_borne
 
     affiliations = _affiliations()
     ecarts = []
@@ -1396,7 +1419,7 @@ def test_un_statut_ferme_dit_qui_le_releve_et_ne_route_rien_d_autre():
                         or (isinstance(borne, str)
                             and len(borne) == 7 and borne[4] == "-")):
                     ecarts.append(f"{statut}.{cle} : borne illisible {borne!r}")
-                rang_borne(borne)
+                _rang_borne(borne)
         if fermeture is None:
             # Un statut dont les régimes changent pour les nouveaux entrants
             # sans qu'il cesse d'exister : il doit router quelque chose à qui
@@ -1405,7 +1428,7 @@ def test_un_statut_ferme_dit_qui_le_releve_et_ne_route_rien_d_autre():
             bornes = [periode["entres_avant"] for periode in affiliations.periodes(statut)
                       if periode.get("entres_avant") is not None]
             for borne in bornes:
-                entree = DateMois.depuis_rang(rang_borne(borne))
+                entree = DateMois.depuis_rang(_rang_borne(borne))
                 if not affiliations.regimes(statut, entree.annee, entree):
                     ecarts.append(
                         f"{statut} : entré en {entree}, ne route rien — "
@@ -1922,10 +1945,9 @@ def test_deux_complementaires_du_prive_ne_couvrent_pas_la_meme_part(catalogue):
     complémentaire de sa section couvrent légitimement la même part — c'est même
     la règle chez les libéraux et les non-salariés.
     """
-    from retraite_notionnelle.carriere import Affiliations
     from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
 
-    affiliations = Affiliations(RACINE_DONNEES)
+    affiliations = _affiliations()
     #: Assiettes qui ne se comparent pas en plafonds : elles découpent la
     #: rémunération autrement (primes, traitement indiciaire, forfait).
     sans_borne = {"hors_primes", "primes_uniquement", "sans_objet", "forfaitaire"}
@@ -3134,9 +3156,8 @@ def test_les_statuts_sans_employeur_sont_marques():
     Le taux y est le bon, la répartition ne l'est pas : c'est le STATUT qui dit
     qu'il n'a pas d'employeur, pas le régime.
     """
-    from retraite_notionnelle.carriere import Affiliations
 
-    affiliations = Affiliations(RACINE_DONNEES)
+    affiliations = _affiliations()
     sans = {code for code in affiliations.codes
             if affiliations.sans_employeur(code)}
     assert sans == {"artisan", "commercant", "profession_liberale", "avocat",
@@ -3168,9 +3189,8 @@ def test_les_statuts_a_part_salariale_seule_sont_les_auteurs():
     salarié, et c'est le statut qui dit que cette répartition est à moitié
     fausse pour eux.
     """
-    from retraite_notionnelle.carriere import Affiliations
 
-    affiliations = Affiliations(RACINE_DONNEES)
+    affiliations = _affiliations()
     seule = {code for code in affiliations.codes
              if affiliations.part_salariale_seule(code)}
     assert seule == {"artiste_auteur", "auteur_dramatique", "auteur_lyrique"}
@@ -3187,9 +3207,8 @@ def test_les_statuts_classes_et_militaires_sont_ceux_qu_on_attend():
     STATUT, comme `sans_employeur`, et la liste ci-dessous en est le contrat :
     l'ajouter ailleurs, ou le retirer d'ici, doit se voir.
     """
-    from retraite_notionnelle.carriere import Affiliations
 
-    affiliations = Affiliations(RACINE_DONNEES)
+    affiliations = _affiliations()
     assert affiliations.classements_actifs == {
         "fonctionnaire_etat_actif": "active",
         "fonctionnaire_etat_super_actif": "super_active",
@@ -3237,9 +3256,8 @@ def test_les_statuts_classes_atteignent_un_regime_qui_sert_la_categorie_active(
     part ailleurs : c'est la garde qui empêche un statut classé d'emporter son
     âge anticipé dans un régime qui n'en connaît pas.
     """
-    from retraite_notionnelle.carriere import Affiliations
 
-    affiliations = Affiliations(RACINE_DONNEES)
+    affiliations = _affiliations()
     particuliers = (set(affiliations.classements_actifs)
                     | set(affiliations.categories_militaires))
     for statut in sorted(particuliers):
@@ -3260,24 +3278,20 @@ def test_les_tables_de_la_categorie_active_et_des_militaires_sont_completes():
     statut inerte — l'assuré choisirait « catégorie active » et se verrait
     opposer l'âge du sédentaire, sans que rien ne le dise.
     """
-    from retraite_notionnelle.carriere import Affiliations
-    from retraite_notionnelle.scenarios.actuel import (
-        AgesCategorieActive,
-        AgesJouissanceMilitaire,
-        DureesServicesActifs,
-        DureesServicesMilitaires,
-    )
+    simulateur = _simulateur()
+    affiliations = simulateur.affiliations
+    actuel = simulateur.scenario_actuel
+    actifs = actuel.durees_services_actifs
+    ages = actuel.ages_categorie_active
+    durees = actuel.durees_services_militaires
+    jouissance = actuel.ages_jouissance_militaire
+    classements = _cles_de_la_legislation("categorie_active.csv", "classement")
+    categories = _cles_de_la_legislation("duree_services_militaires.csv", "categorie")
 
-    affiliations = Affiliations(RACINE_DONNEES)
-    actifs = DureesServicesActifs(RACINE_DONNEES)
-    ages = AgesCategorieActive(RACINE_DONNEES)
-    durees = DureesServicesMilitaires(RACINE_DONNEES)
-    jouissance = AgesJouissanceMilitaire(RACINE_DONNEES)
+    assert classements == set(affiliations.classements_actifs.values())
+    assert categories == set(affiliations.categories_militaires.values())
 
-    assert set(ages.classements) == set(affiliations.classements_actifs.values())
-    assert set(durees.categories) == set(affiliations.categories_militaires.values())
-
-    for classement in ages.classements:
+    for classement in sorted(classements):
         for generation in (1900, 1955, 1960, 1966.75, 1975, 2005):
             derogation = ages.derogation(classement, generation)
             assert derogation is not None, (classement, generation)
@@ -3297,7 +3311,7 @@ def test_les_tables_de_la_categorie_active_et_des_militaires_sont_completes():
     assert durees.duree_de_base("non_officier") == pytest.approx(15.0)
     assert durees.duree_de_base("officier") == pytest.approx(25.0)
     # Les mêmes marches pour les emplois classés (article 6 du même décret).
-    assert set(actifs.categories) == set(ages.classements)
+    assert _cles_de_la_legislation("duree_services_actifs.csv", "classement") == classements
     assert actifs.annees_requises("active", 2011.0)[0] == pytest.approx(15.0)
     assert actifs.annees_requises("active", 2012.5)[0] == pytest.approx(15.75)
     assert actifs.annees_requises("active", 2020)[0] == pytest.approx(17.0)
@@ -3515,9 +3529,8 @@ def test_le_seuil_d_affiliation_de_l_elu_local_est_lu():
     """L. 382-31 : le régime général n'est dû qu'au-dessus de la moitié du
     plafond ; en deçà, l'élu n'a que l'Ircantec. Sans revenu, la liste des
     régimes POSSIBLES est rendue, celle que l'inventaire attend."""
-    from retraite_notionnelle.carriere import Affiliations
 
-    affiliations = Affiliations(RACINE_DONNEES)
+    affiliations = _affiliations()
     assert affiliations.regimes("elu_local", 2020) == ("regime_general", "ircantec")
     assert affiliations.regimes("elu_local", 2020, revenu=16_000.0, plafond=41_136.0) == (
         "ircantec",
@@ -3609,9 +3622,8 @@ def test_tout_regime_calcule_a_ses_articles_pivots(catalogue, pivots):
 def test_la_tranche_2_arrco_est_routee_aux_non_cadres_des_1961(catalogue):
     """L'accord de 1961 assied la cotisation jusqu'à trois plafonds : la tranche
     2 des non-cadres existe dès l'origine, et jamais pour un cadre."""
-    from retraite_notionnelle.carriere import Affiliations
 
-    affiliations = Affiliations(RACINE_DONNEES)
+    affiliations = _affiliations()
     for statut in ("salarie_prive_non_cadre", "salarie_agricole"):
         for annee in range(1961, 2019):
             assert "arrco_tranche_2" in affiliations.regimes(statut, annee), (statut, annee)
@@ -3648,9 +3660,7 @@ def test_les_taux_des_complementaires_sont_contractuel_fois_appel(catalogue):
     """Chaque période porte « taux contractuel × taux d'appel », le taux
     d'appel étant celui de regimes/valeurs_point.csv que le moteur retire :
     le quotient doit retomber sur un taux contractuel à quatre décimales."""
-    from retraite_notionnelle.scenarios.actuel import ValeursPoint
-
-    valeurs = ValeursPoint(RACINE_DONNEES)
+    valeurs = _simulateur().scenario_actuel.valeurs_point
     verifiees = 0
     for code in ("agirc", "arrco", "arrco_tranche_2"):
         for periode in catalogue[code].periodes:
@@ -3668,9 +3678,8 @@ def test_les_precurseurs_de_l_ircantec_ne_se_recouvrent_pas(catalogue):
     """IPACTE au-dessus du plafond (décret 51-1445, art. 7), IGRANTE sous le
     plafond pour le même agent (décret 59-1569, art. 2) : le statut
     `contractuel_public` route les deux de 1960 à 1970 sur deux assiettes."""
-    from retraite_notionnelle.carriere import Affiliations
 
-    affiliations = Affiliations(RACINE_DONNEES)
+    affiliations = _affiliations()
     assert list(affiliations.regimes("contractuel_public", 1951)) == ["regime_general", "ipacte"]
     assert list(affiliations.regimes("contractuel_public", 1965)) == [
         "regime_general", "ipacte", "igrante"]
@@ -3684,9 +3693,8 @@ def test_les_entreprises_nouvelles_ont_leur_bareme_et_leurs_statuts(catalogue):
     """L'Agirc a imposé 12 % dès 1983 aux entreprises créées après 1981, l'Arrco
     14 % de tranche 2 dès 1997 à celles créées après 1997 : deux fiches
     parallèles, deux statuts, et rien avant la création de l'entreprise."""
-    from retraite_notionnelle.carriere import Affiliations
 
-    affiliations = Affiliations(RACINE_DONNEES)
+    affiliations = _affiliations()
     nouvelles = catalogue["agirc_entreprises_nouvelles"]
     anciennes = catalogue["agirc"]
     assert nouvelles.periode(1985).points_de == "agirc"
