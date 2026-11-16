@@ -16,11 +16,14 @@ import json
 import pytest
 
 from retraite_notionnelle.avantages import carriere_variante
-from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS, calculer_cas_types
+from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.donnees import agregats
 from retraite_notionnelle.web.site import ErreurSite, disponible, module
+
+from facade import Simulateur, pilote
+from outils_grille import grille_a_la_facade
 
 #: Les systèmes que le site compare au système actuel, ceux que la table porte.
 COMPARES = ("notionnel_retroactif", "notionnel_retroactif_employeur", "notionnel_liberal")
@@ -41,8 +44,15 @@ def contexte():
 
 
 @pytest.fixture(scope="module")
-def grille(contexte):
-    return calculer_cas_types(contexte.simulateur())
+def simulateur():
+    """Le simulateur de la façade : le contexte ne bâtit plus que celui des
+    données seules, et la grille se date et se simule au portage."""
+    return Simulateur()
+
+
+@pytest.fixture(scope="module")
+def grille(simulateur):
+    return grille_a_la_facade(simulateur)
 
 
 # -- les carrières types -------------------------------------------------------
@@ -68,17 +78,16 @@ def test_la_grille_figee_est_celle_que_le_modele_calcule(table, grille):
                     == comparaison.carriere_de(scenario).annee_liquidation), (cle, scenario)
 
 
-def test_les_cas_figes_sont_ceux_du_modele(table, contexte):
+def test_les_cas_figes_sont_ceux_du_modele(table, simulateur):
     figee = table.cas_types
     assert [cas.code for cas in figee.cas] == [cas.code for cas in CAS_TYPES]
-    simulateur = contexte.simulateur()
     for cas in CAS_TYPES:
         fige = figee.cas_type(cas.code)
         assert (fige.libelle, fige.commentaire, tuple(fige.caisses)) == (
             cas.libelle, cas.commentaire, tuple(cas.caisses))
         for generation in GENERATIONS:
-            assert fige.age_liquidation(generation) == cas.age_liquidation_pour(
-                simulateur, generation), (cas.code, generation)
+            assert fige.age_liquidation(generation) == pilote.age_de_depart(
+                simulateur, cas, generation), (cas.code, generation)
 
 
 def test_la_table_ne_rend_pas_ce_qu_elle_ne_porte_pas(table):
@@ -136,14 +145,13 @@ def test_la_nomenclature_figee_est_celle_du_modele(table):
 # -- le classement de l'emploi --------------------------------------------------
 
 
-def test_les_departs_compares_sont_ceux_que_le_modele_simule(table, contexte):
+def test_les_departs_compares_sont_ceux_que_le_modele_simule(table, simulateur):
     """Les deux départs que Droits non cotisés compare, tels que la page les
     choisit (``CLASSEMENT_COMPARE``)."""
     choisis = table.classement
     assert dict(module("pages").CLASSEMENT_COMPARE) == {
         "cas": choisis.cas, "age": choisis.age, "declassement": choisis.declassement,
         "generations": list(choisis.generations)}
-    simulateur = contexte.simulateur()
     cas = next(cas for cas in CAS_TYPES if cas.code == choisis.cas)
     for generation in choisis.generations:
         for depart, affiliation in zip(choisis.departs(generation),

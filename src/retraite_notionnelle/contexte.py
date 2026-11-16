@@ -29,9 +29,9 @@ from .donnees.depenses import DepensesRetraite
 from .donnees.distribution import DistributionPensions
 from .donnees.equilibre import ComptesRetraite, variante_du_scenario
 from .donnees.population import Population
+from .donnees.simulateur import SimulateurDeDonnees
 from .frontiere import charger_frontiere
 from .restitution import Restitution
-from .simulateur import Simulateur
 
 #: Combien d'agrégats le contexte garde en mémoire, tous jeux de règles
 #: confondus. Trois par jeu — la restitution, le coût et les avantages —, donc
@@ -58,8 +58,8 @@ class Contexte:
     """
 
     base: Parametres = field(default_factory=Parametres)
-    #: Un simulateur par jeu de paramètres rencontré.
-    _instances: dict[Parametres, Simulateur] = field(default_factory=dict)
+    #: Un simulateur de données seules par jeu de paramètres rencontré.
+    _instances: dict[Parametres, SimulateurDeDonnees] = field(default_factory=dict)
     #: Ce qui ne dépend d'AUCUN paramètre : dépense observée, comptes du COR,
     #: population, distribution des pensions, assiette, inventaire des
     #: avantages. Ces séries sont lues, jamais calculées : un changement de
@@ -99,10 +99,13 @@ class Contexte:
             self._agregats[cle] = fabrique()
         return self._agregats[cle]
 
-    def simulateur(self, parametres: Parametres | None = None) -> Simulateur:
+    def simulateur(self, parametres: Parametres | None = None) -> SimulateurDeDonnees:
+        """Le simulateur de données seules (``donnees/simulateur.py``) : la
+        fabrique et le bilan du compte n'en lisent que les données, et
+        demandent leurs calculs au portage, par le pont (action 161)."""
         parametres = parametres or self.base
         if parametres not in self._instances:
-            self._instances[parametres] = Simulateur(parametres)
+            self._instances[parametres] = SimulateurDeDonnees(parametres)
         return self._instances[parametres]
 
     def depenses(self) -> DepensesRetraite:

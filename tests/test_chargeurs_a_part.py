@@ -181,3 +181,22 @@ def test_les_derniers_lecteurs_ne_batissent_plus_le_simulateur_python():
               for m in [python.search((RACINE / f"scripts/{s}.py").read_text(
                   encoding="utf-8"))] if m}
     assert fautes == {}
+
+
+
+def test_le_contexte_de_la_fabrique_batit_le_simulateur_de_donnees():
+    """Le simulateur du contexte, que lisent la fabrique du paquet et le bilan
+    du compte, n'en sert que les données : c'est le simulateur de données
+    seules, et ni le contexte, ni le bilan du compte, ni les deux scripts
+    n'importent le ``Simulateur`` du moteur Python
+    (``2026-11-16-la-fabrique-sur-le-simulateur-de-donnees.md``)."""
+    from retraite_notionnelle.contexte import Contexte
+    from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees
+
+    assert type(Contexte().simulateur()) is SimulateurDeDonnees
+    python = re.compile(r"\bimport\b[^\n]*\bSimulateur\b|\bSimulateur\(|from \.simulateur import")
+    fichiers = ("src/retraite_notionnelle/contexte.py", "src/retraite_notionnelle/bilan_compte.py",
+                "scripts/construire_donnees.py", "scripts/bilan_compte.py")
+    fautes = {f: m.group(0) for f in fichiers
+              for m in [python.search((RACINE / f).read_text(encoding="utf-8"))] if m}
+    assert fautes == {}

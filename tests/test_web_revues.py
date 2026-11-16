@@ -2675,9 +2675,12 @@ def test_la_colonne_aspa_de_l_accueil_sert_le_bareme_de_l_aspa():
     en recevrait 1 000 ; la personne seule à 300 €, 744 € contre 750."""
     from retraite_notionnelle.contexte import Contexte
 
+    from retraite_notionnelle.donnees.minimum_vieillesse import MinimumVieillesse
+
     contexte = Contexte()
     annee = contexte.base.annee_euros_garantie_vieillesse
-    minimum = contexte.simulateur().scenario_actuel.minimum_vieillesse
+    simulateur = contexte.simulateur()
+    minimum = MinimumVieillesse(simulateur.parametres.racine_donnees, simulateur.macro)
     seul = minimum.plafond(annee)[0] / 12
     couple = minimum.plafond_couple(annee)[0] / 12
     # Au centime : le couple porte l'annuel du texte, 19 442,21 €, dont le

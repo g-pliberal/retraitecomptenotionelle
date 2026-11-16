@@ -47,7 +47,7 @@ import yaml
 
 from retraite_notionnelle.avantages import LIGNES_LUES
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.castypes import GENERATIONS, calculer_cas_types
+from retraite_notionnelle.castypes import GENERATIONS
 from retraite_notionnelle.config import (
     ModeIndexation,
     Parametres,
@@ -68,6 +68,7 @@ from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.web.site import ErreurSite, disponible, module, site
 
 from outils_garantie import cout_garantie, cout_garantie_par_sexe
+from outils_grille import grille_a_la_facade
 from facade import Simulateur, liquider
 from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
 
@@ -259,8 +260,9 @@ class Modele:
 
     @cached_property
     def grille_cas_types(self):
-        """Les treize carrières croisées avec sept générations, une fois."""
-        return calculer_cas_types(self.contexte.simulateur())
+        """Les treize carrières croisées avec sept générations, une fois,
+        datées et simulées au portage, par la façade."""
+        return grille_a_la_facade(self.sim)
 
     @cached_property
     def avantages(self):
