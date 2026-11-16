@@ -105,7 +105,7 @@ from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.donnees.distribution import (  # noqa: E402
     DistributionPensions,
 )
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
 
 #: Les rapports parcourus. Un est l'ANCIENNE convention — un facteur unique
 #: pour tous —, gardée comme repère ; en deçà, les pensions des femmes tombent
@@ -150,7 +150,7 @@ def calculer(parametres: Parametres | None = None,
              rapports: tuple[float, ...] = RAPPORTS) -> list[Lecture]:
     """Le coût de la garantie à l'année de l'enquête, rapport par rapport."""
     parametres = parametres or Parametres()
-    simulateur = Simulateur(parametres)
+    simulateur = SimulateurDeDonnees(parametres)
     racine = parametres.racine_donnees
     # Les mêmes entrées que la page Coût : le facteur de déplacement doit être
     # celui qu'elle affiche, sans quoi la colonne « r = 1 » ne la redonnerait
@@ -287,7 +287,7 @@ def minima(parametres: Parametres | None = None) -> list[Minima]:
     courte.
     """
     parametres = parametres or Parametres()
-    simulateur = Simulateur(parametres)
+    simulateur = SimulateurDeDonnees(parametres)
     caracteristiques = simulateur.caracteristiques
     millesime = caracteristiques.millesime
     avantages = memoire.avantages(parametres)
@@ -395,7 +395,7 @@ def main(argv: list[str] | None = None) -> int:
     lectures_minima = minima(parametres)
     print(tableau_minima(
         lectures_minima,
-        Simulateur(parametres).caracteristiques.rapport_deplacement(),
+        SimulateurDeDonnees(parametres).caracteristiques.rapport_deplacement(),
     ))
     if arguments.json:
         arguments.json.write_text(json.dumps({

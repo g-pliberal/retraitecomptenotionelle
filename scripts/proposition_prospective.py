@@ -60,7 +60,7 @@ from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
 from retraite_notionnelle.noyau import univers  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
 
 LIBERAL = "notionnel_liberal"
 #: La variante, le scénario 5 à 18 % : son univers, sous
@@ -74,14 +74,14 @@ CAS_AFFICHES: tuple[str, ...] = (
 GENERATIONS_AFFICHEES: tuple[int, ...] = (1965, 1975, 1985, 2000)
 
 
-def simulateur(parametres: Parametres) -> Simulateur:
+def simulateur(parametres: Parametres) -> SimulateurDeDonnees:
     """Le simulateur de l'étude : la proposition prospective à la place du
     scénario 6, lue sous les données de ``parametres``. Le pont passe son
-    calcul au portage dans la demande (``Simulateur.univers_de_la_demande``)."""
+    calcul au portage dans la demande (``SimulateurDeDonnees.univers_de_la_demande``)."""
     reference = parametres.racine_donnees / "reference"
     variante = univers.charger(reference / "variantes", reference / "couches",
                                reference / "regles")[PROSPECTIVE]
-    return Simulateur(parametres, variantes={LIBERAL: variante})
+    return SimulateurDeDonnees(parametres, variantes={LIBERAL: variante})
 
 
 class PropositionProspective:
@@ -146,7 +146,7 @@ def cout(parametres: Parametres) -> C.Cout:
     return memoire.memoriser_pour(parametres, ("cout_prospectif", parametres), calcul)
 
 
-def ecarts_des_cas_types(etude: Simulateur) -> dict[str, dict[str, float]]:
+def ecarts_des_cas_types(etude: SimulateurDeDonnees) -> dict[str, dict[str, float]]:
     """L'écart de pension de chaque système au système actuel, par cas type et
     génération affichés, sous les univers du simulateur ``etude`` : le
     portage date les cas types et les simule, la variante dans la demande
@@ -171,7 +171,7 @@ def calculer(prospective: bool, parametres: Parametres) -> Resultat:
     """Les lectures d'une variante, sur les données du dépôt."""
     agrege = cout(parametres) if prospective else memoire.cout(parametres)
     ecarts = ecarts_des_cas_types(simulateur(parametres) if prospective
-                                  else Simulateur(parametres))
+                                  else SimulateurDeDonnees(parametres))
     contexte = PropositionProspective() if prospective else None
     if contexte is not None:
         contexte.__enter__()

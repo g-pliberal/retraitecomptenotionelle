@@ -68,7 +68,7 @@ from retraite_notionnelle.donnees.equilibre import (  # noqa: E402
     ComptesRetraite,
 )
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
 
 LIBERAL = "notionnel_liberal"
 ANNEES_AFFICHEES: tuple[int, ...] = (2030, 2040, 2050, 2060, 2070)
@@ -115,7 +115,7 @@ def lire(dimension: str, variante: str, scenario: str, libelle: str,
     depenses, population, assiette = donnees
     comptes = ComptesRetraite(racine, variante=variante)
     cout = calculer_cout(
-        Simulateur(Parametres().avec(scenario_projection=scenario)),
+        SimulateurDeDonnees(Parametres().avec(scenario_projection=scenario)),
         depenses, population, comptes, assiette=assiette)
     lignes = {ligne.annee: ligne for ligne in cout.solde.annees}
     retenues = [a for a in ANNEES_AFFICHEES if a in lignes]

@@ -318,10 +318,8 @@ def test_le_minimum_se_mesure_au_portage_sans_le_moteur_python(monkeypatch):
 
     empecher_les_jumeaux_du_cout(monkeypatch)
 
-    def interdit(*_, **__):
-        raise AssertionError("le moteur Python simule la mesure du minimum")
-
-    monkeypatch.setattr(P.Simulateur, "echeancier", interdit)
+    # Le script bâtit le simulateur de données seules, qui ne simule rien.
+    assert not hasattr(P.SimulateurDeDonnees, "echeancier")
     cas = {c.code: c for c in CAS_TYPES}
     larges = G.reference()[::7]
     morceau = tuple(

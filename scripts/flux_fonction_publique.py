@@ -17,7 +17,7 @@ en regard ce que le modèle lui sert et ce que le jaune publie.
 
 Le cas type est mesuré tel que la page Coût le pèse, celle où il porte sa
 caisse : sous les conventions de projection du COR
-(:meth:`~retraite_notionnelle.simulateur.Simulateur.pour_la_projection`), qui
+(:meth:`~retraite_notionnelle.donnees.simulateur.SimulateurDeDonnees.pour_la_projection`), qui
 font entrer les fonctionnaires civils dans leur régime après quelques années
 sous un autre statut. La page Cas types en montre la carrière d'un seul
 statut : le droit d'une carrière, non le retraité moyen d'une caisse.
@@ -98,7 +98,7 @@ from retraite_notionnelle.castypes import (  # noqa: E402
 from retraite_notionnelle.cout import _DEMI_TRANCHE, _pensionnes  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
 from retraite_notionnelle.somme import somme_ordonnee  # noqa: E402
 
 REFERENCE = RACINE / "data" / "reference" / "macro" / "caracteristiques_fonction_publique.csv"
@@ -235,7 +235,7 @@ class Departs:
     l'origine de la répartition, un régime qui n'existait pas encore — ou que
     le modèle refuse lève ``ValueError``, avec son motif, à sa lecture."""
 
-    def __init__(self, simulateur: Simulateur) -> None:
+    def __init__(self, simulateur: SimulateurDeDonnees) -> None:
         self.simulateur = simulateur
         self._lus: dict[tuple[str, int], Depart | str] = {}
 
@@ -322,7 +322,7 @@ def mesures_du_cas(depart: Depart, point: float) -> dict[str, float]:
 VOISINES = 2
 
 
-def departs_annonces(simulateur: Simulateur, cas_types, annees) -> Departs:
+def departs_annonces(simulateur: SimulateurDeDonnees, cas_types, annees) -> Departs:
     """Les départs de ces cas types, ceux des générations d'où la recherche
     de chaque année peut passer (:data:`VOISINES`) lus d'une seule demande."""
     departs = Departs(simulateur)
@@ -333,7 +333,7 @@ def departs_annonces(simulateur: Simulateur, cas_types, annees) -> Departs:
     return departs
 
 
-def mesurer_le_modele(simulateur: Simulateur) -> dict[str, tuple[int, dict[str, float]]]:
+def mesurer_le_modele(simulateur: SimulateurDeDonnees) -> dict[str, tuple[int, dict[str, float]]]:
     """Ce que le modèle dit de chaque cas type statutaire parti en 2025 : sa
     génération, et ses cinq mesures."""
     point = point_annuel()
@@ -361,7 +361,7 @@ def confronter(modele: dict[str, tuple[int, dict[str, float]]],
     return mesures
 
 
-def mesurer(simulateur: Simulateur) -> list[Mesure]:
+def mesurer(simulateur: SimulateurDeDonnees) -> list[Mesure]:
     """Le tableau, sur ce simulateur."""
     return confronter(mesurer_le_modele(simulateur), referents_publies())
 
@@ -374,7 +374,7 @@ def mesures_du_depot(parametres: Parametres) -> list[Mesure]:
     pas qu'il a changé."""
     modele = memoire.memoriser_pour(
         parametres, ("flux_fonction_publique", parametres),
-        lambda: mesurer_le_modele(Simulateur(parametres).pour_la_projection()))
+        lambda: mesurer_le_modele(SimulateurDeDonnees(parametres).pour_la_projection()))
     return confronter(modele, referents_publies())
 
 
@@ -399,7 +399,7 @@ class MesureAnnuelle:
         return self.modele / self.jaune - 1.0
 
 
-def mesurer_les_annees(simulateur: Simulateur, annees: tuple[int, ...] = ANNEES
+def mesurer_les_annees(simulateur: SimulateurDeDonnees, annees: tuple[int, ...] = ANNEES
                        ) -> dict[str, dict[int, tuple[int, dict[str, float]]]]:
     """Chaque cas type statutaire, parti chacune de ces années : sa génération
     et ses mesures. Une année où le droit ne fait partir aucune génération —
@@ -441,11 +441,11 @@ def mesures_annuelles_du_depot(parametres: Parametres) -> list[MesureAnnuelle]:
     garde dans la mémoire des calculs."""
     modele = memoire.memoriser_pour(
         parametres, ("flux_fonction_publique_annees", parametres),
-        lambda: mesurer_les_annees(Simulateur(parametres).pour_la_projection()))
+        lambda: mesurer_les_annees(SimulateurDeDonnees(parametres).pour_la_projection()))
     return confronter_les_annees(modele, referents_publies())
 
 
-def stock_pese_comme_la_page(simulateur: Simulateur, annees: tuple[int, ...] = ANNEES
+def stock_pese_comme_la_page(simulateur: SimulateurDeDonnees, annees: tuple[int, ...] = ANNEES
                              ) -> dict[str, dict[int, float]]:
     """La pension mensuelle moyenne que la page « Coût » sert, chaque année,
     aux retraités de chaque cas type statutaire, au titre de son régime
@@ -491,7 +491,7 @@ def stock_du_depot(parametres: Parametres) -> dict[str, dict[int, float]]:
     """Le stock pesé comme la page, sur les données du dépôt, gardé dans la
     mémoire des calculs : la grille de la page prend quelques secondes."""
     return memoire.memoriser_pour(parametres, ("stock_fonction_publique", parametres),
-                                  lambda: stock_pese_comme_la_page(Simulateur(parametres)))
+                                  lambda: stock_pese_comme_la_page(SimulateurDeDonnees(parametres)))
 
 
 def stock_publie(code: str, publies: dict[tuple[str, str, str, str, str], float]

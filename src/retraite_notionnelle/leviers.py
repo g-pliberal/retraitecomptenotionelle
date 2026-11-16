@@ -317,7 +317,7 @@ def leviers_du_modele(parametres, scenario: str = "actuel",
     from .donnees.assiette import AssietteActivite
     from .donnees.equilibre import DecompositionDepense
     from .donnees.population import Population
-    from .simulateur import Simulateur
+    from .donnees.simulateur import SimulateurDeDonnees
 
     cout = memoire.cout(parametres)
     racine = parametres.racine_donnees
@@ -327,7 +327,7 @@ def leviers_du_modele(parametres, scenario: str = "actuel",
         "cotisants_par_retraite", "ensemble", ANNEE_ANCRAGE)
     if rapport is None:
         raise ValueError(f"le COR ne publie pas de cotisants par retraité en {ANNEE_ANCRAGE}")
-    demographie = demographie_du_modele(cout.avenir, Simulateur(parametres).macro, rapport)
+    demographie = demographie_du_modele(cout.avenir, SimulateurDeDonnees(parametres).macro, rapport)
     population = Population(racine, parametres.hypothese_esperance_vie)
     annuels = leviers(cout.solde, scenario, part_assiette, demographie, population, annees,
                       part_en_emploi=parametres.part_reportes_en_emploi)

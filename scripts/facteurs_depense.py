@@ -341,12 +341,12 @@ def modele(projection: str, scenario: str = "actuel", droit: str | None = None) 
     et, avec ``droit``, sous ce droit contrefactuel (:func:`parametres`)."""
     from retraite_notionnelle import memoire
     from retraite_notionnelle.donnees.population import Population
-    from retraite_notionnelle.simulateur import Simulateur
+    from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees
 
     sous = parametres(projection, droit)
     annees = annees_du_modele(memoire.cout(sous).avenir,
                               Population(sous.racine_donnees),
-                              Simulateur(sous).macro, scenario)
+                              SimulateurDeDonnees(sous).macro, scenario)
     decomposition = decomposer(annees)
     couverture = None
     if scenario == "actuel":

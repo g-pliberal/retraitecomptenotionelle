@@ -73,7 +73,7 @@ from retraite_notionnelle.castypes import (  # noqa: E402
 )
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.cout import generations  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
 
 SERIE = RACINE / "data" / "reference" / "macro" / "age_conjoncturel_depart.csv"
 
@@ -111,7 +111,7 @@ def age_conjoncturel_publie(sexe: str = SEXE) -> dict[int, float]:
 
 
 def departs_de_la_grille(
-    simulateur: Simulateur,
+    simulateur: SimulateurDeDonnees,
     cas_types: tuple[CasType, ...] = CAS_TYPES,
     generations_retenues: tuple[int, ...] | None = None,
 ) -> dict[str, list[tuple[int, float]]]:
@@ -153,7 +153,7 @@ def age_interpole(points: list[tuple[int, float]], annee: int) -> float | None:
     return points[-1][1]
 
 
-def mesurer(simulateur: Simulateur,
+def mesurer(simulateur: SimulateurDeDonnees,
             cas_types: tuple[CasType, ...] = CAS_TYPES) -> list[Annee]:
     """Le tableau, année par année, sur la fenêtre que la DREES publie.
 
@@ -189,7 +189,7 @@ def mesures_du_depot(parametres: Parametres) -> list[Annee]:
     entière, une demi-minute de simulations, gardée par la mémoire des calculs
     (``retraite_notionnelle/memoire.py``)."""
     return memoire.memoriser_pour(parametres, ("age_conjoncturel", parametres),
-                                  lambda: mesurer(Simulateur(parametres)))
+                                  lambda: mesurer(SimulateurDeDonnees(parametres)))
 
 
 def imprimer(mesures: list[Annee]) -> None:
@@ -210,7 +210,7 @@ def main(argv: list[str] | None = None) -> int:
     analyseur.add_argument("--json", help="écrit le tableau dans ce fichier")
     arguments = analyseur.parse_args(argv)
 
-    mesures = mesurer(Simulateur(Parametres()))
+    mesures = mesurer(SimulateurDeDonnees(Parametres()))
     if not mesures:
         print("aucune année comparable", file=sys.stderr)
         return 1

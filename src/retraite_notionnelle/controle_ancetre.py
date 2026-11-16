@@ -156,10 +156,10 @@ def controle(parametres=None) -> tuple[dict[str, float], dict[str, float]]:
     from . import cout as module
     from .castypes import GRILLE_DU_COUT
     from .donnees.population import Population
-    from .simulateur import Simulateur
+    from .donnees.simulateur import SimulateurDeDonnees
 
     parametres = parametres if parametres is not None else Parametres()
-    simulateur = Simulateur(parametres)
+    simulateur = SimulateurDeDonnees(parametres)
     # La clé de ``memoire.cout`` pour sa grille : la même mémoire sert aux deux.
     pensionnes, _ = memoire.memoriser_pour(
         parametres, ("grille_du_cout", parametres, GRILLE_DU_COUT, "droit"),

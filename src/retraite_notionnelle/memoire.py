@@ -741,10 +741,10 @@ def avantages(parametres: Parametres | None = None, **options):
     def calcul():
         from .donnees.depenses import DepensesRetraite
         from .donnees.population import Population
-        from .simulateur import Simulateur
+        from .donnees.simulateur import SimulateurDeDonnees
 
         racine = parametres.racine_donnees
-        return calculer_avantages(Simulateur(parametres), DepensesRetraite(racine),
+        return calculer_avantages(SimulateurDeDonnees(parametres), DepensesRetraite(racine),
                                   Population(racine, parametres.hypothese_esperance_vie), **reglages)
 
     return memoriser_pour(parametres, ("avantages", parametres, tuple(sorted(reglages.items()))),

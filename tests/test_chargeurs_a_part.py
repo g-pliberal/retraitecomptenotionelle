@@ -128,3 +128,34 @@ def test_la_facade_et_le_cout_de_la_memoire_prennent_le_simulateur_de_donnees():
     assert fautes == {}
     assert "from .simulateur import" not in (
         RACINE / "src/retraite_notionnelle/cout.py").read_text(encoding="utf-8")
+
+
+#: Les scripts que la sonde dit ne lire du simulateur que ses données (groupes
+#: 1 et 2 de ``2026-11-16-le-tri-des-scripts-et-des-modules.md``), hors de
+#: ``mesures_prose`` et de ``lectures_du_modele``, qui simulent encore.
+SCRIPTS_SUR_LES_DONNEES = (
+    "age_conjoncturel", "age_depart_csp", "controle_eacr", "cout_age_depart",
+    "cout_avantages", "cycle_de_vie", "estimation_officielle", "facteurs_depense",
+    "flux_fonction_publique", "garantie_par_sexe", "indexation_scenario_6",
+    "mesures_accueil", "mortalite_population", "part_minimum_contributif",
+    "proposition_prospective", "sensibilite_comptes", "solde_fusion",
+    "stock_age_legal", "tableau_de_bord")
+
+#: Les modules de ``src/`` que ces scripts appellent, et qui bâtissaient le
+#: simulateur Python pour n'en lire que les données.
+MODULES_SUR_LES_DONNEES = ("avantages", "controle_ancetre", "controle_eacr",
+                           "facteurs_depense", "leviers")
+
+
+def test_les_scripts_de_donnees_batissent_le_simulateur_de_donnees():
+    """Ni ces scripts ni les modules qu'ils appellent n'importent plus le
+    simulateur Python ; la mémoire bâtit le simulateur de données pour le
+    coût des avantages aussi."""
+    python = re.compile(r"retraite_notionnelle\.simulateur import|from \.simulateur import")
+    fichiers = ([f"scripts/{s}.py" for s in SCRIPTS_SUR_LES_DONNEES]
+                + [f"src/retraite_notionnelle/{m}.py" for m in MODULES_SUR_LES_DONNEES])
+    fautes = {f: m.group(0) for f in fichiers
+              for m in [python.search((RACINE / f).read_text(encoding="utf-8"))] if m}
+    assert fautes == {}
+    memoire = (RACINE / "src/retraite_notionnelle/memoire.py").read_text(encoding="utf-8")
+    assert "from .simulateur import" not in memoire

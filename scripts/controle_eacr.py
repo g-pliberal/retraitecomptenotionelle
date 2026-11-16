@@ -88,12 +88,12 @@ def population(processus: int) -> tuple[list[M.Cohorte], dict[str, float]]:
     retraités du régime général partis avec une décote, en flux et en stock."""
     import grille_large as G
     from retraite_notionnelle.config import Parametres
-    from retraite_notionnelle.simulateur import Simulateur
+    from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees
 
     parametres = Parametres()
     racine = parametres.racine_donnees
     _, valeurs = G.centiles(racine)
-    variantes = G.grille("population", Simulateur(parametres).effectifs, G.eir(racine),
+    variantes = G.grille("population", SimulateurDeDonnees(parametres).effectifs, G.eir(racine),
                          G.multiplicateurs(valeurs))
     tetes = G.en_tetes(parametres, variantes, processus, alleges=True)
     lot = cohortes_de_la_population(tetes)

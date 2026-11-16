@@ -66,7 +66,7 @@ from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.castypes import CAS_TYPES, poids_effectifs  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
 
 from age_conjoncturel import age_interpole, departs_de_la_grille  # noqa: E402
 
@@ -115,7 +115,7 @@ def _moyenne(valeurs: list[float]) -> float:
     return somme_ordonnee(valeurs) / len(valeurs)
 
 
-def confronter(simulateur: Simulateur) -> tuple[list[Confrontation], dict[str, str]]:
+def confronter(simulateur: SimulateurDeDonnees) -> tuple[list[Confrontation], dict[str, str]]:
     """Le tableau des cas types comparables, et les motifs des autres."""
     table = correspondance()
     annees, par_groupe = ages_par_groupe()
@@ -191,7 +191,7 @@ def confrontations_du_depot(
     """``confronter`` sur un simulateur neuf et les données du dépôt, gardé
     par la mémoire des calculs (``retraite_notionnelle/memoire.py``)."""
     return memoire.memoriser_pour(parametres, ("confrontations_csp", parametres),
-                                  lambda: confronter(Simulateur(parametres)))
+                                  lambda: confronter(SimulateurDeDonnees(parametres)))
 
 
 def imprimer(confrontations: list[Confrontation], hors_champ: dict[str, str],
@@ -232,7 +232,7 @@ def main(argv: list[str] | None = None) -> int:
     arguments = analyseur.parse_args(argv)
 
     annees, _ = ages_par_groupe()
-    confrontations, hors_champ = confronter(Simulateur(Parametres()))
+    confrontations, hors_champ = confronter(SimulateurDeDonnees(Parametres()))
     imprimer(confrontations, hors_champ, annees)
     if arguments.json:
         Path(arguments.json).write_text(

@@ -69,7 +69,7 @@ from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
 from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
 
 VARIANTES: tuple[str, ...] = ("reference", "droit_commun", "tout_droit", "acquis")
 RETROACTIFS: tuple[str, ...] = (
@@ -124,7 +124,7 @@ def calculer(variante: str, parametres: Parametres) -> Resultat:
                                   lambda: _calculer(variante, etude))
 
 
-def pensions_des_cas(etude: Simulateur) -> dict[str, dict[str, float]]:
+def pensions_des_cas(etude: SimulateurDeDonnees) -> dict[str, dict[str, float]]:
     """La pension de chaque système, en euros constants, par cas type et
     génération de ``CAS_STOCK``, dans son ordre : le portage date les cas
     types et les simule, sous les paramètres de l'étude, que la demande au
@@ -149,7 +149,7 @@ def _calculer(variante: str, parametres: Parametres) -> Resultat:
     racine = parametres.racine_donnees
     depenses, population = DepensesRetraite(racine), Population(racine)
     comptes, assiette = ComptesRetraite(racine), AssietteActivite(racine)
-    simulateur = Simulateur(parametres)
+    simulateur = SimulateurDeDonnees(parametres)
     cout = C.calculer_cout(simulateur, depenses, population, comptes, assiette=assiette)
     pensions = pensions_des_cas(simulateur)
     solde = cout.solde

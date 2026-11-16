@@ -199,9 +199,9 @@ def releves_des_cas_types() -> tuple[int, int, int, int, int]:
     from retraite_notionnelle import pont
     from retraite_notionnelle.castypes import (CAS_TYPES, GENERATIONS,
                                                primes_projetees_en_donnees)
-    from retraite_notionnelle.simulateur import Simulateur
+    from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees
 
-    simulateur = Simulateur()
+    simulateur = SimulateurDeDonnees()
     baties, _ = pont.carrieres_de_la_grille(
         [{"cle": f"{cas.code}|{generation}", **cas.pour_le_portage(simulateur, generation),
           "rendre": "carriere"} for cas in CAS_TYPES for generation in GENERATIONS],

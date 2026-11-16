@@ -33,7 +33,7 @@ carrières de la grille « ensemble » de ``scripts/grille_large.py``, qui les
 déclinent aux parts que l'échantillon interrégimes de 2020 donne aux femmes,
 aux polypensionnés, aux carrières courtes, aux périodes assimilées et aux
 salaires. Le script passe chaque carrière au scénario 1, sous les conventions
-de la page (``Simulateur.pour_la_projection``), et compte, parmi celles qui
+de la page (``SimulateurDeDonnees.pour_la_projection``), et compte, parmi celles qui
 liquident une pension du régime général, celles dont le minimum contributif la
 relève, chacune à son poids de personnes de 2020 (``grille_large.composition``).
 
@@ -96,7 +96,7 @@ import grille_large as G  # noqa: E402
 from retraite_notionnelle import memoire, pont  # noqa: E402
 from retraite_notionnelle.castypes import primes_projetees_en_donnees  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
 from retraite_notionnelle.somme import somme_ordonnee  # noqa: E402
 
 #: Les grilles mesurées par défaut : celle de la page, et la plus large.
@@ -239,9 +239,9 @@ def _mesurer(parametres: Parametres, morceau: tuple, regime: str = REGIME) -> li
     Le portage date, bâtit et simule chaque carrière, d'une demande
     (``pont.departs_des_cas``, sous ``"lire": "minimum"``, action 161,
     étape 6d), sous les conventions de la page Coût
-    (``Simulateur.pour_la_projection``).
+    (``SimulateurDeDonnees.pour_la_projection``).
     """
-    simulateur = Simulateur(parametres).pour_la_projection()
+    simulateur = SimulateurDeDonnees(parametres).pour_la_projection()
     lus, refus = pont.departs_des_cas(
         [{"cle": str(rang), **cas.pour_le_portage(simulateur, generation), "lire": "minimum"}
          for rang, (_indice, cas, generation) in enumerate(morceau)],
@@ -452,7 +452,7 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
     source = G.eir(racine)
     _, valeurs = G.centiles(racine)
     points = G.multiplicateurs(valeurs)
-    simulateur = Simulateur(parametres)
+    simulateur = SimulateurDeDonnees(parametres)
     effectifs = simulateur.effectifs
     generations = generations_requises(annees)
     coefficient_prix = simulateur.macro.coefficient_prix
@@ -543,7 +543,7 @@ def mesurer_artisans(processus: int = 1, parametres: Parametres | None = None) -
     racine = parametres.racine_donnees
     source = G.eir(racine)
     _, valeurs = G.centiles(racine)
-    simulateur = Simulateur(parametres)
+    simulateur = SimulateurDeDonnees(parametres)
     effectifs = simulateur.effectifs
     debut = time.time()
     variantes = G.grille("population", effectifs, source, G.multiplicateurs(valeurs))

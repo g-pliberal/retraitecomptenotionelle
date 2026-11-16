@@ -58,7 +58,7 @@ def mesures() -> dict[str, float]:
     from retraite_notionnelle import memoire
     from retraite_notionnelle.config import RACINE_DONNEES, Parametres
     from retraite_notionnelle.donnees.tva import AssietteTva
-    from retraite_notionnelle.simulateur import Simulateur
+    from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees
     from retraite_notionnelle.somme import somme_ordonnee
 
     liberal = "notionnel_liberal"
@@ -66,7 +66,7 @@ def mesures() -> dict[str, float]:
     reference = memoire.cout(parametres)
     solde, dette = reference.solde, reference.dette
     plus_bas = min(solde.projetees(), key=lambda ligne: ligne.coefficient(liberal))
-    simulateur = Simulateur(parametres).pour_la_projection()
+    simulateur = SimulateurDeDonnees(parametres).pour_la_projection()
     fusion = solde_fusion.calculer(
         solde_fusion.hypotheses(simulateur, 2026)["A"], parametres)
     lectures = fusion.lectures[C.CONVENTION_ASSIETTE]

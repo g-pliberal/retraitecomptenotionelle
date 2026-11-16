@@ -241,10 +241,10 @@ def controle(parametres=None) -> list[Cohorte]:
     from . import cout as module
     from .castypes import GRILLE_DU_COUT
     from .donnees.population import Population
-    from .simulateur import Simulateur
+    from .donnees.simulateur import SimulateurDeDonnees
 
     parametres = parametres if parametres is not None else Parametres()
-    simulateur = Simulateur(parametres)
+    simulateur = SimulateurDeDonnees(parametres)
     pensionnes, _ = memoire.memoriser_pour(
         parametres, ("grille_du_cout", parametres, GRILLE_DU_COUT, "droit"),
         lambda: module._pensionnes(simulateur, GRILLE_DU_COUT, "droit"))

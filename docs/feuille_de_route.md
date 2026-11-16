@@ -7332,12 +7332,12 @@ profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Aucun fichier de tests n'exécute plus une règle Python, hors `test_facade.py`
 et `test_facade_jumeau.py`, qui partent avec lui. Une sonde
 (`scripts/sonde_moteur_python.py`) dit ce que chaque script exécute du moteur.
-Les chargeurs que le coût lit sont sortis des règles : un simulateur de
-données seules (`donnees/simulateur.py`), dont le simulateur Python hérite,
-sert le coût et la façade des tests
-(`2026-11-16-le-simulateur-de-donnees-seules.md`).
-Une étape par session. Par quoi commencer : faire bâtir ce simulateur de
-données aux scripts qui ne lisent que des données, chacun repassé à la sonde.
+Un simulateur de données seules (`donnees/simulateur.py`) sert le coût, la
+façade des tests, le coût des avantages et les dix-neuf scripts qui ne lisent
+que des données, chacun repassé à la sonde, sorties identiques
+(`2026-11-16-les-scripts-sur-le-simulateur-de-donnees.md`).
+Une étape par session. Par quoi commencer : les scripts qui calculent encore
+en Python, dans l'ordre de la note du tri des scripts.
 Le retrait des règles attend l'accord du propriétaire.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je

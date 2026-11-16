@@ -63,7 +63,7 @@ from .donnees.population import Population
 from .droit.compter import (FICHE_DE_L_APPRENTISSAGE, FICHE_DES_MILITAIRES,
                             FICHES_DES_EMPLOIS, _contrats)
 from .scenarios.actuel import CarriereLongue, FichesDatees, ScenarioActuel
-from .simulateur import Simulateur
+from .donnees.simulateur import SimulateurDeDonnees
 from .somme import somme_ordonnee
 
 #: Les quatre états possibles du modèle à l'égard d'un avantage. Vocabulaire
@@ -481,7 +481,7 @@ FICHES_RETIREES: dict[str, tuple[str, ...]] = {
 }
 
 
-def statuts_des_emplois(simulateur: Simulateur, code: str) -> frozenset[str]:
+def statuts_des_emplois(simulateur: SimulateurDeDonnees, code: str) -> frozenset[str]:
     """Les statuts qu'une version des fiches que cette neutralisation retire
     bonifie (:data:`FICHES_RETIREES`) : les seules carrières que le retrait
     peut toucher."""
@@ -530,7 +530,7 @@ def _catalogue_sans(catalogue, code: str | None = None):
     return variante
 
 
-def scenarios_neutralises(simulateur: Simulateur) -> dict[str, ScenarioActuel]:
+def scenarios_neutralises(simulateur: SimulateurDeDonnees) -> dict[str, ScenarioActuel]:
     """Un scénario 1 par avantage retiré, construit une fois pour toute la grille.
 
     Les trois cent quarante-deux couples de la grille partagent ces variantes :
@@ -595,7 +595,7 @@ def scenarios_neutralises(simulateur: Simulateur) -> dict[str, ScenarioActuel]:
     return variantes
 
 
-def carriere_variante(simulateur: Simulateur, cas: CasType, generation: int,
+def carriere_variante(simulateur: SimulateurDeDonnees, cas: CasType, generation: int,
                       age: float, affiliation: str | None = None,
                       interruptions: dict[int, str] | None = None):
     """La carrière d'un cas type, avec une variante possible.
@@ -703,7 +703,7 @@ def _ecarts(cas: CasType, pension: float, requis: int, avpf: float,
     return parts, refus
 
 
-def recalculer(simulateur: Simulateur, cas: CasType, generation: int,
+def recalculer(simulateur: SimulateurDeDonnees, cas: CasType, generation: int,
                age: float, reelle,
                variantes: dict[str, ScenarioActuel] | None = None,
                ) -> tuple[dict[str, float], dict[str, str]]:
@@ -883,7 +883,7 @@ class CoutAvantages:
         return self.annees[-1] if self.annees else None
 
 
-def decomposer(simulateur: Simulateur, liquidation: str = "droit"
+def decomposer(simulateur: SimulateurDeDonnees, liquidation: str = "droit"
                ) -> tuple[list[Pensionne], dict[str, str]]:
     """La pension de chaque couple (cas type, génération), part par part.
 
@@ -968,7 +968,8 @@ class _Liquidee:
         return somme_ordonnee(montant for code, montant in self.avantages if code == "avpf")
 
 
-def _decomposees_au_portage(simulateur: Simulateur, liquidation: str = "droit") -> list[tuple]:
+def _decomposees_au_portage(simulateur: SimulateurDeDonnees, liquidation: str = "droit"
+                            ) -> list[tuple]:
     """Chaque case de la grille que le droit n'écarte pas, ``(cas type,
     génération, âge, liquidation, mesures et refus, départ des cinq
     cohortes)``, que le portage date, bâtit et liquide (action 161, étape 6),
@@ -1026,7 +1027,7 @@ def _departs_des_cohortes(carriere, voisines: tuple
     return tuple(departs), tuple(ages)
 
 
-def _departs_au_portage(simulateur: Simulateur, cas_types: tuple[CasType, ...],
+def _departs_au_portage(simulateur: SimulateurDeDonnees, cas_types: tuple[CasType, ...],
                         liquidation: str = "droit") -> tuple[dict, dict]:
     """L'âge de chaque case de la grille que le droit n'écarte pas, sous
     ``(code, génération)``, et le départ de ses cinq cohortes, ``(âge,
@@ -1082,7 +1083,7 @@ def masses(pensionnes: list[Pensionne], population: Population, annee: int,
     return total
 
 
-def ages_legaux(simulateur: Simulateur, pensionnes: list[Pensionne]
+def ages_legaux(simulateur: SimulateurDeDonnees, pensionnes: list[Pensionne]
                 ) -> Callable[[int], tuple[float, Fiabilite] | None]:
     """L'âge légal de droit commun de chaque génération, ``(âge, fiabilité)``
     ou ``None`` : celui que :func:`masses_anticipees` oppose aux cohortes de
@@ -1103,7 +1104,7 @@ def ages_legaux(simulateur: Simulateur, pensionnes: list[Pensionne]
     return lambda generation: lus[str(generation)]
 
 
-def masses_anticipees(pensionnes: list[Pensionne], simulateur: Simulateur,
+def masses_anticipees(pensionnes: list[Pensionne], simulateur: SimulateurDeDonnees,
                       population: Population, annee: int,
                       poids_cas: dict[str, float],
                       ages: Callable[[int], tuple[float, Fiabilite] | None] | None = None,
@@ -1176,7 +1177,7 @@ def masses_anticipees(pensionnes: list[Pensionne], simulateur: Simulateur,
     return totale, par_motif
 
 
-def calculer_avantages(simulateur: Simulateur, depenses: DepensesRetraite,
+def calculer_avantages(simulateur: SimulateurDeDonnees, depenses: DepensesRetraite,
                        population: Population, ponderation: str = "effectifs",
                        liquidation: str = "droit") -> CoutAvantages:
     """Les deux séries, année par année, sur la fenêtre des dépenses publiées.

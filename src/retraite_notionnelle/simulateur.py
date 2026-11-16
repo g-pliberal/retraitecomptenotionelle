@@ -29,7 +29,7 @@ from .carriere import (
 from .config import ContributionEtat, Parametres, PartCotisation
 from .donnees.chargement import DonneeInsuffisante, Fiabilite, dans_un_instantane
 from .donnees.macro import DonneesMacro
-from .donnees.simulateur import SimulateurDeDonnees
+from .donnees.simulateur import SCENARIOS_NOTIONNELS, SimulateurDeDonnees
 from .droit.ouvrir import indemnisation_bornee
 from .droit.reversion import Reversion
 from .echeancier import Echeancier
@@ -51,24 +51,6 @@ from .scenarios.actuel import ResultatActuel, ScenarioActuel
 from .scenarios.notionnel import ResultatNotionnel, ScenarioNotionnel
 from .noyau.calcul_notionnel import CalculNotionnel, calcul_notionnel
 from .somme import somme_ordonnee
-
-
-#: Les cinq scénarios notionnels, dans l'ordre où ils s'affichent, avec le
-#: numéro et le titre sous lesquels le tableau, la page et l'API les citent :
-#: les univers de la proposition (``data/reference/univers/``, § 4.8), dont
-#: chacun est une pile de couches posée sur le droit réel.
-#:
-#: Deux paires, puis un sixième. 2 et 3 ne portent au compte que la part
-#: SALARIALE de la cotisation, 4 et 5 y ajoutent la couche de la part
-#: PATRONALE. À l'intérieur de chaque paire, l'un est rétroactif et l'autre
-#: prospectif, par la transition de la bascule. Rien d'autre ne les sépare, et
-#: c'est ce qui les rend comparables deux à deux : 4 se lit contre 2, 5 contre
-#: 3, et l'écart mesure exactement ce que l'employeur verse. Le 6 se lit contre
-#: le 4 : même compte rétroactif, cotisation entière aux taux réels jusqu'à la
-#: bascule, puis un taux unique de 18 % pour tous à compter d'elle, et une
-#: garantie vieillesse individualisée, financée par l'impôt, par-dessus.
-SCENARIOS_NOTIONNELS = tuple((u.id, u.numero, u.nom)
-                             for u in univers_de_droit.de_la_proposition())
 
 
 @dataclass(frozen=True)

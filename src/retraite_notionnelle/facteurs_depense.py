@@ -709,9 +709,9 @@ def dates_des_departs(parametres, entree_depuis: int | None = None,
     from . import cout as module
     from . import pont
     from .castypes import GRILLE_DU_COUT, departs_au_portage, exiger_le_portage
-    from .simulateur import Simulateur
+    from .donnees.simulateur import SimulateurDeDonnees
 
-    simulateur = Simulateur(parametres).pour_la_projection()
+    simulateur = SimulateurDeDonnees(parametres).pour_la_projection()
     cas_types = GRILLE_DU_COUT if cas_types is None else cas_types
     generations = module.generations() if generations is None else generations
     medianes = (None if entree_depuis is None
@@ -810,11 +810,11 @@ def grille_ponderee(parametres) -> tuple[list, object, Callable[[int], dict[str,
     from .castypes import GRILLE_DU_COUT
     from .donnees.equilibre import ComptesRetraite, variante_du_scenario
     from .donnees.population import Population
+    from .donnees.simulateur import SimulateurDeDonnees
     from .revalorisation_servie import RevalorisationServie
-    from .simulateur import Simulateur
 
     racine = parametres.racine_donnees
-    simulateur = Simulateur(parametres)
+    simulateur = SimulateurDeDonnees(parametres)
     grille = GRILLE_DU_COUT
     pensionnes, _ = memoire.memoriser_pour(
         parametres, ("grille_du_cout", parametres, grille, "droit"),

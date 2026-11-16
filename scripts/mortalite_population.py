@@ -128,7 +128,10 @@ from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle.castypes import (  # noqa: E402
     CAS_TYPES, GENERATIONS, GRILLE_DU_COUT, primes_projetees_en_donnees)
 from retraite_notionnelle.config import Parametres  # noqa: E402
-from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Simulateur  # noqa: E402
+from retraite_notionnelle.donnees.simulateur import (  # noqa: E402
+    SCENARIOS_NOTIONNELS,
+    SimulateurDeDonnees,
+)
 
 POPULATION_DEFAUT = "fonctionnaires_civils_etat"
 
@@ -150,13 +153,13 @@ def cas_types_de(population: str):
     return [cas for cas in CAS_TYPES if any(c in caisses for c in cas.caisses)]
 
 
-_SIMULATEURS: dict[str | None, Simulateur] = {}
+_SIMULATEURS: dict[str | None, SimulateurDeDonnees] = {}
 
 
-def _simulateur(population: str | None) -> Simulateur:
+def _simulateur(population: str | None) -> SimulateurDeDonnees:
     """Un simulateur par population, gardé : ses données se chargent une fois."""
     if population not in _SIMULATEURS:
-        _SIMULATEURS[population] = Simulateur(Parametres(population_conversion=population))
+        _SIMULATEURS[population] = SimulateurDeDonnees(Parametres(population_conversion=population))
     return _SIMULATEURS[population]
 
 
@@ -186,7 +189,7 @@ def _batie(cas_type, generation: int) -> dict:
     return _BATIES[cle]
 
 
-def _simulee(simulateur: Simulateur, carriere) -> dict:
+def _simulee(simulateur: SimulateurDeDonnees, carriere) -> dict:
     """Ce que la mesure lit d'une carrière que le portage simule sous les
     paramètres de ``simulateur``, sa table de mortalité comprise
     (``pont.grille_du_cout``) : la pension de chaque scénario en euros

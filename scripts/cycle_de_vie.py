@@ -89,7 +89,7 @@ from retraite_notionnelle.castypes import (  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.donnees.chargement import charger_yaml  # noqa: E402
 from retraite_notionnelle.donnees.impot_revenu import INDEXATIONS  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
 
 #: Les indicateurs imprimés, leur titre et leur unité : ``%`` pour un taux
 #: affiché en pour cent, ``x`` pour un rapport, ``ans`` pour une durée.
@@ -147,7 +147,7 @@ def _sans_echec(reponse: dict) -> None:
         raise RuntimeError("; ".join(f"{cle} : {motif}" for cle, motif in echecs.items()))
 
 
-def options(simulateur: Simulateur, cas, generation: int, age: float) -> dict:
+def options(simulateur: SimulateurDeDonnees, cas, generation: int, age: float) -> dict:
     """Les options de la carrière du cas type ``cas`` né en ``generation``,
     liquidée à ``age``, celles que le portage reçoit. Sous
     ``Parametres.conventions_cor``, que le script n'allume jamais, la carrière
@@ -167,20 +167,20 @@ def productivites(racine_donnees) -> tuple[str, ...]:
     return tuple(sorted(scenarios, key=lambda nom: float(scenarios[nom]["productivite_reelle"])))
 
 
-def _paquet(simulateur: Simulateur) -> bytes:
+def _paquet(simulateur: SimulateurDeDonnees) -> bytes:
     """Le paquet sur lequel le portage date les cases : celui des données du
     jour (``pont.paquet_des_donnees``), que le pilote Python lisait."""
     return pont.paquet_des_donnees(simulateur.parametres.racine_donnees)
 
 
-def _ages(simulateur: Simulateur, cas_types, generations) -> dict[tuple[str, int], float]:
+def _ages(simulateur: SimulateurDeDonnees, cas_types, generations) -> dict[tuple[str, int], float]:
     """L'âge où le pilote du portage fait partir chaque cas type né en chaque
     génération, sous ``(code, génération)`` (``castypes.ages_de_la_grille``)."""
     return ages_de_la_grille(simulateur, tuple(cas_types), tuple(generations),
                              paquet=_paquet(simulateur))
 
 
-def _cases(simulateur: Simulateur) -> list[dict]:
+def _cases(simulateur: SimulateurDeDonnees) -> list[dict]:
     """Les cases de la grille, ``"<code>|<génération>"`` et les options de leur
     carrière, que le portage date ; une case que le droit écarte
     (``castypes.cases_de_la_grille``) n'y est pas."""
@@ -189,7 +189,7 @@ def _cases(simulateur: Simulateur) -> list[dict]:
             for code, generation in sorted(datees)]
 
 
-def calculer(simulateur: Simulateur, cor: bool = False, impot: str | None = None) -> dict:
+def calculer(simulateur: SimulateurDeDonnees, cor: bool = False, impot: str | None = None) -> dict:
     """Les indicateurs de chaque case de la grille, système par système, sous
     ``"<code>|<génération>"`` ; après impôt avec ``impot``, l'indexation du
     barème. Une case que le droit écarte (``castypes.cases_de_la_grille``) ou
@@ -198,7 +198,7 @@ def calculer(simulateur: Simulateur, cor: bool = False, impot: str | None = None
                                "impot": impot}})["resultats"]
 
 
-def etages(simulateur: Simulateur, impot: str | None = None) -> dict:
+def etages(simulateur: SimulateurDeDonnees, impot: str | None = None) -> dict:
     """La pension du départ de chaque case de la grille, système par système,
     étage par étage, et ses taux de remplacement (``pensionParEtage``), sous
     ``"<code>|<génération>"`` ; après impôt avec ``impot``. Les cases comme
@@ -295,7 +295,7 @@ def tableaux_des_etages(resultats: dict, scenario: str) -> list[str]:
 
 
 def _imprimer_les_etages(arguments, scenarios: list[str]) -> None:
-    resultats = etages(Simulateur(Parametres()), impot=arguments.impot)
+    resultats = etages(SimulateurDeDonnees(Parametres()), impot=arguments.impot)
     titre = "La pension du départ par étage"
     if arguments.impot is not None:
         titre = _titre_des_conventions(False, True, arguments.impot).split(" ; ")[1]
@@ -374,7 +374,7 @@ def balayer(cas_types: list, generations: list[int], productivites: list[str],
     (``balayageDUneCarriere``)."""
     cas, libelles = [], {}
     for productivite in productivites:
-        simulateur = Simulateur(Parametres(scenario_projection=productivite))
+        simulateur = SimulateurDeDonnees(Parametres(scenario_projection=productivite))
         libelles[productivite] = simulateur.macro.projection["libelle"]
         ages = _ages(simulateur, cas_types, generations)
         for type_ in cas_types:
@@ -445,7 +445,7 @@ TABLEAUX_EQUILIBRE = (
 )
 
 
-def equilibres(simulateur: Simulateur, generations, generations_des_cas) -> dict:
+def equilibres(simulateur: SimulateurDeDonnees, generations, generations_des_cas) -> dict:
     """La référence du compte ; les âges d'équilibre de chaque génération de
     ``generations``, sur la table commune ; ceux de chaque cas type né en une
     génération de ``generations_des_cas``, sur la mortalité de la population
@@ -472,7 +472,7 @@ def _mois(age: float) -> str:
 def _imprimer_l_equilibre(arguments) -> None:
     choisies = ([int(g) for g in arguments.generations.split(",") if g]
                 if arguments.generations else None)
-    resultats = equilibres(Simulateur(Parametres()), choisies or GENERATIONS_EQUILIBRE,
+    resultats = equilibres(SimulateurDeDonnees(Parametres()), choisies or GENERATIONS_EQUILIBRE,
                            choisies or GENERATIONS)
     reference, communs = resultats["reference"], resultats["table_commune"]
     cas_types = resultats["cas_types"]
@@ -548,7 +548,8 @@ def main(argv: list[str] | None = None) -> int:
         _imprimer_les_etages(arguments, scenarios)
         return 0
 
-    resultats = calculer(Simulateur(Parametres()), cor=arguments.cor, impot=arguments.impot)
+    resultats = calculer(SimulateurDeDonnees(Parametres()), cor=arguments.cor,
+                         impot=arguments.impot)
     print(_titre_des_conventions(arguments.cor, arguments.impot is not None, arguments.impot))
     for indicateur in indicateurs:
         for scenario in scenarios:

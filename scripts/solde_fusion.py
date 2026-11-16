@@ -89,7 +89,7 @@ from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
 from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
 
 #: Les scénarios dont le régime unique fixe le taux après la bascule.
 SCENARIOS_FUSION: tuple[str, ...] = (
@@ -127,7 +127,7 @@ class Hypothese:
         return self.bareme[0][1] if self.bareme else 0.0
 
 
-def hypotheses(simulateur: Simulateur, annee: int) -> dict[str, Hypothese]:
+def hypotheses(simulateur: SimulateurDeDonnees, annee: int) -> dict[str, Hypothese]:
     """Les quatre barèmes, lus dans le catalogue du simulateur, l'année de la
     bascule. Le régime unique du modèle et la moyenne des régimes sont ce que
     la fusion rend : le portage la calcule, sous les paramètres du simulateur
@@ -359,7 +359,7 @@ def _calculer(hypothese: Hypothese, parametres: Parametres,
     racine = parametres.racine_donnees
     depenses, population = DepensesRetraite(racine), Population(racine)
     comptes, assiette = ComptesRetraite(racine), AssietteActivite(racine)
-    simulateur = Simulateur(parametres_de(hypothese, parametres))
+    simulateur = SimulateurDeDonnees(parametres_de(hypothese, parametres))
     with RegimeUniqueVariante(hypothese) as variante:
         cout = C.calculer_cout(simulateur, depenses, population, comptes,
                                assiette=assiette)
@@ -462,8 +462,8 @@ def main(argv: list[str] | None = None) -> int:
 
     parametres = Parametres()
     # Les barèmes de la page Coût, sous ses conventions : l'Agirc-Arrco y cotise
-    # au taux moyen des entreprises (``Simulateur.pour_la_projection``).
-    toutes = hypotheses(Simulateur(parametres).pour_la_projection(),
+    # au taux moyen des entreprises (``SimulateurDeDonnees.pour_la_projection``).
+    toutes = hypotheses(SimulateurDeDonnees(parametres).pour_la_projection(),
                         parametres.annee_bascule)
 
     resultats = []

@@ -70,7 +70,7 @@ from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import pont  # noqa: E402
 from retraite_notionnelle.calendrier import MOIS_PAR_AN  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
 from retraite_notionnelle.web.site import module  # noqa: E402
 
 #: Les étages d'une pension du système 1, dans l'ordre où le site les écrit
@@ -520,7 +520,7 @@ class Confrontation:
         # premier suffisent. Le scénario 1 ne se simule qu'au portage
         # (`scenario_actuel`).
         parametres, _ = self._lue(estimation.departs[0].date)
-        donnees = Simulateur(parametres)
+        donnees = SimulateurDeDonnees(parametres)
         self.catalogue = donnees.catalogue
         self.macro = donnees.macro
         self.parametres = parametres
@@ -807,7 +807,7 @@ def main(arguments: list[str] | None = None) -> int:
         chemin = hors_du_depot(options.estimation)
         estimation = lire_estimation(
             yaml.safe_load(chemin.read_text(encoding="utf-8")),
-            Simulateur(Parametres()).catalogue)
+            SimulateurDeDonnees(Parametres()).catalogue)
         print(rapport(Confrontation(lire(releve), estimation, options.revenus_futurs,
                                     options.croissance)))
         return 0

@@ -73,7 +73,7 @@ from retraite_notionnelle import memoire  # noqa: E402
 from retraite_notionnelle.castypes import CAS_TYPES, CasType  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
 
 import age_depart_csp as ACSP  # noqa: E402
 from age_conjoncturel import (  # noqa: E402
@@ -138,7 +138,7 @@ def _distance(age: float, basse: float, haute: float) -> float:
     return 0.0
 
 
-def _depart_moyen(simulateur: Simulateur, cas: CasType,
+def _depart_moyen(simulateur: SimulateurDeDonnees, cas: CasType,
                   annees: tuple[int, ...]) -> float | None:
     """L'âge de départ moyen de ce cas type sur la fenêtre de la source."""
     points = departs_de_la_grille(
@@ -149,7 +149,7 @@ def _depart_moyen(simulateur: Simulateur, cas: CasType,
     return somme_ordonnee(ages) / len(ages)
 
 
-def chercher_decalages(simulateur: Simulateur) -> list[Decalage]:
+def chercher_decalages(simulateur: SimulateurDeDonnees) -> list[Decalage]:
     """Pour chaque cas type comparable, l'âge d'entrée le plus proche du couloir."""
     annees, par_groupe = ACSP.ages_par_groupe()
     fiches = {cas.code: cas for cas in CAS_TYPES}
@@ -207,7 +207,7 @@ def decalages_du_depot(parametres: Parametres) -> list[Decalage]:
     minute de simulations, gardée par la mémoire des calculs
     (``retraite_notionnelle/memoire.py``)."""
     return memoire.memoriser_pour(parametres, ("decalages_csp", parametres),
-                                  lambda: chercher_decalages(Simulateur(parametres)))
+                                  lambda: chercher_decalages(SimulateurDeDonnees(parametres)))
 
 
 def grille_contrefactuelle(decalages: list[Decalage]) -> tuple[CasType, ...]:
@@ -246,7 +246,7 @@ def trajectoire(parametres: Parametres, cas_types: tuple[CasType, ...],
     }
 
 
-def concordance(simulateur: Simulateur,
+def concordance(simulateur: SimulateurDeDonnees,
                 cas_types: tuple[CasType, ...]) -> float:
     """L'écart moyen à l'âge conjoncturel TOUS RÉGIMES, sous cette grille.
 
@@ -262,7 +262,7 @@ def concordance_du_depot(parametres: Parametres, cas_types: tuple[CasType, ...])
     """``concordance`` sur un simulateur neuf et les données du dépôt, gardée."""
     return memoire.memoriser_pour(
         parametres, ("concordance_csp", parametres, tuple(cas_types)),
-        lambda: concordance(Simulateur(parametres), cas_types))
+        lambda: concordance(SimulateurDeDonnees(parametres), cas_types))
 
 
 def imprimer(decalages: list[Decalage], reference: dict[str, float],

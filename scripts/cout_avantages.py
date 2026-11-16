@@ -84,7 +84,7 @@ from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
 from retraite_notionnelle.cout import _ponderation, _tetes_par_poids  # noqa: E402
 from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
 
 #: La dose d'interruption appliquée par ``--par-carriere`` à des carrières qui
 #: n'en portent aucune. Cinq ans, c'est-à-dire vingt trimestres : l'ordre de
@@ -125,7 +125,7 @@ def libelles() -> dict[str, str]:
     return {ligne: " / ".join(sorted(parts)) for ligne, parts in noms.items()}
 
 
-def par_carriere(simulateur: Simulateur, generation: int):
+def par_carriere(simulateur: SimulateurDeDonnees, generation: int):
     """Ce que chaque avantage vaut à un assuré, cas type par cas type.
 
     C'est le chiffre qui a un sens quand l'agrégat n'en a pas — et c'est ici le
@@ -261,7 +261,7 @@ def main() -> int:
     options = analyseur.parse_args()
 
     parametres = Parametres()
-    simulateur = Simulateur(parametres)
+    simulateur = SimulateurDeDonnees(parametres)
 
     if options.par_carriere:
         lignes = par_carriere(simulateur, options.generation)
