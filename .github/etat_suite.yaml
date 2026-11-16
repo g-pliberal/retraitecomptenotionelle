@@ -1,15 +1,17 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: vert
-sources: 85d556a0f3c1f28b5e820b3486f83e11eb603e13
-date: 2026-11-16T14:39:11Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43882400493
-presomptions: vert
+sources: 13c1c08a82ea048f96090251ceec0b3f179fc060
+date: 2026-11-16T14:56:13Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43887989132
+presomptions: rouge
+presomptions_echecs:
+  - "FAILED tests/test_mayotte.py::test_une_pension_de_mayotte_d_avant_septembre_2023_n_est_pas_revalorisee - assert (2023, 1) == (2023, 2)"
 durees:
-  fabrique: 690
-  suite: 710
-  tranche_1: 409
-  tranche_2: 710
+  fabrique: 453
+  suite: 449
+  tranche_1: 367
+  tranche_2: 392
   tranche_3: 378
-  tranche_4: 656
-  garde: 235
+  tranche_4: 449
+  garde: 141
