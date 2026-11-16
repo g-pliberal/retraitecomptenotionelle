@@ -103,6 +103,27 @@ export const DUREE_UNIQUE_2003_EFFET = [2003, 1];
 export const GENERATION_DECEMBRE_1942 = 1942.917;
 
 /**
+ * La même durée unique tient jusqu'au 31 décembre 2008, aux générations dont
+ * la table dit davantage : la durée par génération n'entre au code qu'avec le
+ * décret n° 2008-1555, article 4, en vigueur le 1er janvier 2009 (circulaire
+ * Cnav 2008/41, § 211). Première date d'effet de la table — portage du Python.
+ */
+export const DUREE_PAR_GENERATION_EFFET = [2009, 1];
+
+/**
+ * Les nés de 1953 à 1955 partis avant le décret de leur génération : la durée
+ * de la génération 1952 pour une demande d'avant 2011, que le modèle, sans
+ * date de demande, lit jusqu'à une pension prenant effet au 1er juin 2011
+ * (circulaire Cnav 2011/25) ; 165 aux nés en 1955 jusqu'au décret n° 2011-916,
+ * en vigueur le 3 août 2011. [première génération, génération suivante, dernière
+ * date d'effet, trimestres], lus dans l'ordre — portage du Python.
+ */
+export const DUREES_AVANT_LE_DECRET = [
+  [1953, 1956, [2011, 6], 164],
+  [1955, 1956, [2011, 8], 165],
+];
+
+/**
  * Durée requise propre à un régime spécial, par génération.
  *
  * La SNCF, la RATP et les IEG écrivent chacune leur table dans leur texte, et la

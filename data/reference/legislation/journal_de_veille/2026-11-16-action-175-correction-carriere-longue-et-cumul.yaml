@@ -1,0 +1,22 @@
+date: "2026-11-16"
+session: "action 175, à part : la durée de 160 trimestres avant 2009 et le cumul à 160 % du SMIC dès 2007, corrigés dans le moteur"
+consulte: >-
+  python scripts/veille_droit.py (rien de neuf pour ces règles). L'index JORF du
+  16 novembre 2026 : décret n° 2011-916 (JORFTEXT000024419259), entrée en vigueur
+  « le lendemain de la publication ». La circulaire commune Agirc-Arrco 2009-7-DRE
+  du 26 mars 2009 (agirc-arrco.fr), § 1.2. Les textes de la note des écarts lourds
+  du même jour : R. 351-45, décret n° 2008-1555, circulaires Cnav 2008/41, 2011/25
+  et 2007/34, loi n° 2006-1640, article 105.
+trouve: >-
+  Deux corrections du scénario 1. La durée requise vaut 160 trimestres pour toute
+  pension prenant effet avant 2009, et 164 (165 pour les nés en 1955 jusqu'au
+  1er août 2011) aux nés de 1953 à 1955 jusqu'à une pension prenant effet le
+  1er juin 2011, la date d'effet tenant lieu de la date de demande que la
+  circulaire 2011/25 fait décider. Le plafond du cumul emploi-retraite passe à
+  160 % du SMIC dès janvier 2007, pour la base et l'Agirc-Arrco. Le détail est
+  dans docs/feuille_de_route/175/2026-11-16-correction-carriere-longue-et-cumul-avant-2009.md.
+reste: >-
+  La circulaire Agirc-Arrco 2007-7-DRE du 10 avril 2007, pour sa date d'effet et la
+  moyenne des dix dernières années, que le modèle n'applique qu'en 2009. La
+  circulaire Cnav 2011/24, jumelle de la 2011/25 pour la carrière longue. Les
+  écarts 3 à 6 de la note des écarts lourds.

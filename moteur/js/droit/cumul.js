@@ -54,6 +54,7 @@ export const PRIORITE = [NON_DUE, SUSPENDUE, REDUITE, SEUIL_NON_PUBLIE, NON_CALC
 export const AVANT_1983 = "sans_condition_avant_1983";
 export const RUPTURE_1983 = "rupture_avec_l_employeur_1983";
 export const PLAFOND_2004 = "plafond_du_dernier_salaire_2004";
+export const PLAFOND_160_SMIC_2007 = "plafond_a_160_pour_cent_du_smic_2007";
 export const LIBERALISE_2009 = "cumul_liberalise_2009";
 export const PREMIERES_2015 = "premieres_pensions_de_2015";
 export const REDUCTION_2015 = "reduction_du_depassement_2015";
@@ -84,6 +85,11 @@ const rang = (annee, mois) => new DateMois(annee, mois).rang;
 export const LOI_1983 = rang(1983, 4);
 export const ARTISANS_1984 = rang(1984, 7);
 export const LOI_2004 = rang(2004, 1);
+/**
+ * Loi n° 2006-1640, article 105, I : le plafond de L. 161-22 passe à 160 % du
+ * SMIC, pour les arrérages de janvier 2007 (circulaire Cnav 2007/34).
+ */
+export const LOI_2007 = rang(2007, 1);
 export const LOI_2009 = rang(2009, 1);
 export const REVALORISATION_2010 = rang(2010, 1);
 export const ORDRE_DES_AGES = rang(2014, 2);
@@ -138,7 +144,7 @@ export const PROFESSIONS_DES_STATUTS = {
 export const SIX_MOIS = 6;
 export const HEURES_SMIC = 1820;
 export const PART_SMIC_2004 = 1.0;
-export const PART_SMIC_2009 = 1.6;
+export const PART_SMIC_2007 = 1.6;
 export const ASSIETTES_CSG = [[1991, 0.95], [2005, 0.97], [2012, 0.9825]];
 export const SEUILS_NON_SALARIES = { independants: 0.5, liberaux: 1.0 };
 export const PART_DE_LA_PENSION = 1.0 / 3.0;
@@ -539,7 +545,7 @@ class Calcul {
       const [mensuel, sonAnnee] = this.dernier;
       dernier = mensuel * assietteCsg(sonAnnee) * this.revalorisation(mois);
     }
-    const part = mois.rang >= LOI_2009 ? PART_SMIC_2009 : PART_SMIC_2004;
+    const part = mois.rang >= LOI_2007 ? PART_SMIC_2007 : PART_SMIC_2004;
     return Math.max(dernier, part * annee.smic);
   }
 
@@ -555,7 +561,10 @@ class Calcul {
   version(mois, dateEffet) {
     if (dateEffet < LOI_1983) return AVANT_1983;
     if (this.premiere >= PREMIERE_2027) return AGES_2027;
-    if (mois.rang < LOI_2009) return dateEffet < LOI_2004 ? RUPTURE_1983 : PLAFOND_2004;
+    if (mois.rang < LOI_2009) {
+      if (dateEffet < LOI_2004) return RUPTURE_1983;
+      return mois.rang < LOI_2007 ? PLAFOND_2004 : PLAFOND_160_SMIC_2007;
+    }
     if (this.premiere < PREMIERE_2015) return LIBERALISE_2009;
     return mois.rang < REDUCTION_SALARIES ? PREMIERES_2015 : REDUCTION_2015;
   }
@@ -688,7 +697,8 @@ class Calcul {
       return [NON_CALCULE, "", "regle_non_lue", 0.0, null];
     }
     let regle;
-    if (mois.rang < LOI_2009) regle = PLAFOND_2004;
+    if (mois.rang < LOI_2007) regle = PLAFOND_2004;
+    else if (mois.rang < LOI_2009) regle = PLAFOND_160_SMIC_2007;
     else if (this.premiere < PREMIERE_2015) regle = LIBERALISE_2009;
     else if (mois.rang < REDUCTION_NON_SALARIES) regle = PREMIERES_2015;
     else regle = REDUCTION_2015;

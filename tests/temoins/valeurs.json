@@ -69,10 +69,10 @@
   "valeur": "a19cb7825a7b5b8a"
  },
  "test_grille_large.py::mesure condition de l'échantillon": {
-  "valeur": "002472d97ee53d7a"
+  "valeur": "2b49d5d1212c2ca2"
  },
  "test_grille_large.py::mesure conditions de l'échantillon": {
-  "valeur": "af40855d8ebae38f"
+  "valeur": "cf7207e0c484f559"
  },
  "test_grille_large.py::mesure debut de l'échantillon": {
   "valeur": "7c51c3783cb9a40d"
@@ -84,13 +84,13 @@
   "valeur": "4c7875340e43be87"
  },
  "test_grille_large.py::mesure proratisations de l'échantillon": {
-  "valeur": "a933d8242c415a84"
+  "valeur": "097843eeadeebd97"
  },
  "test_grille_large.py::mesure surcote de l'échantillon": {
   "valeur": "7e51ed63f14e9c4c"
  },
  "test_grille_large.py::échantillon daté, bâti et simulé": {
-  "valeur": "65e0e8dde05fc6d7"
+  "valeur": "60a6c4e0808fdaaa"
  },
  "test_independants.py::droits au conjoint": {
   "valeur": "9d74fcc32a7feb9d"
@@ -162,13 +162,13 @@
   "valeur": "5813bac47b09279c"
  },
  "test_pont.py::coût des avantages": {
-  "valeur": "110f08db48990224"
+  "valeur": "70496d886768e56a"
  },
  "test_pont.py::dates des départs des facteurs de la dépense": {
   "valeur": "ba0be432d7e404a9"
  },
  "test_pont.py::décomposition des avantages": {
-  "valeur": "ec9d7e5980c67fd0"
+  "valeur": "5e10c705901cb546"
  },
  "test_pont.py::grille d'essai du coût": {
   "valeur": "1dc5f605c90472e6"

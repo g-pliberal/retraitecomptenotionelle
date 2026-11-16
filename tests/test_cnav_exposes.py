@@ -238,6 +238,67 @@ def test_la_duree_requise_des_nes_avant_1943_est_de_160_trimestres_depuis_2003()
     assert {cle: lu[0] for cle, lu in lus.items()} == attendus
 
 
+#: Les nés de 1949 à 1955, partis avant que la durée de leur génération soit
+#: en vigueur (action 175, note du 16 novembre 2026 sur les écarts lourds des
+#: circulaires). R. 351-45, I, version du 10 mai 1995 au 1er janvier 2009
+#: (LEGIARTI000006749450) : 160 trimestres « aux pensions prenant effet
+#: postérieurement au 31 décembre 2002, quelle que soit la date de naissance » ;
+#: la durée par génération n'entre au code qu'avec le décret n° 2008-1555,
+#: article 4, en vigueur le 1er janvier 2009 ; circulaire Cnav 2008/41, § 211 et
+#: 213 : les durées « évoluent à compter du 1er janvier 2009 ». Puis la
+#: circulaire Cnav 2011/25 : pour les nés en 1953, 1954 « et suivantes », « 164
+#: ou 165 trimestres selon que la date de demande [...] se situe avant ou après
+#: le 1er janvier 2011 », les attestations d'avant 2011 « pour des dates d'effet
+#: de pension jusqu'au 1er juin 2011 au plus tard » restant acquises : le modèle,
+#: qui ne connaît pas la date de la demande, lit 164 jusqu'à cette date d'effet,
+#: 165 au-delà. Les nés en 1955 n'ont leurs 166 trimestres qu'au décret
+#: n° 2011-916 du 1er août 2011 (JORFTEXT000024419259), en vigueur « le lendemain
+#: de la publication », le 3 août : 165 à une pension prenant effet au plus
+#: tard le 1er août 2011.
+DUREE_REQUISE_AVANT_LE_DECRET_DE_LA_GENERATION = (
+    (1952, 3, 56.0, 2008, 4, 160),       # R. 351-45, I : carrière longue à 56 ans
+    (1949, 6, 59.0, 2008, 7, 160),
+    (1950, 11, 58.0, 2008, 12, 160),     # le dernier mois de R. 351-45
+    (1951, 12, 57.0, 2009, 1, 163),      # le décret n° 2008-1555
+    (1953, 3, 55.0, 2008, 4, 160),       # handicap à 55 ans
+    (1953, 6, 56.0, 2009, 7, 164),       # 2011/25 : demande d'avant 2011
+    (1954, 1, 56.0, 2010, 2, 164),
+    (1954, 4, 57.0, 2011, 5, 164),
+    (1954, 6, 57.0, 2011, 7, 165),       # après le 1er juin 2011
+    (1955, 4, 56.0, 2011, 5, 164),
+    (1955, 6, 56.0, 2011, 7, 165),
+    (1955, 7, 56.0, 2011, 8, 165),       # avant le décret n° 2011-916
+    (1955, 8, 56.0, 2011, 9, 166),
+)
+
+
+def test_la_duree_requise_avant_le_decret_de_la_generation():
+    from outils_pont import droit_et_fige
+
+    from facade import Carriere
+    from retraite_notionnelle import pont
+    from retraite_notionnelle.carriere import AnneeCarriere
+
+    appels, attendus = {}, {}
+    for (annee, mois, age, effet, mois_effet,
+         trimestres) in DUREE_REQUISE_AVANT_LE_DECRET_DE_LA_GENERATION:
+        carriere = Carriere(
+            annee_naissance=annee, mois_naissance=mois, jour_naissance=15, sexe="H",
+            age_liquidation=age, identifiant=f"né le 15/{mois}/{annee}",
+            lignes=[AnneeCarriere(annee=an, revenu=20_000.0, trimestres_valides=4,
+                                  affiliation="salarie_prive_non_cadre")
+                    for an in range(annee + 16, effet)])
+        assert (carriere.annee_liquidation, carriere.mois_liquidation) == (effet, mois_effet)
+        cle = f"{mois}/{annee}, effet {mois_effet}/{effet}"
+        for regime in ("regime_general", "arrco"):
+            appels[f"{regime}, {cle}"] = ("ouvrir.duree_requise", pont.MOTEUR,
+                                          pont.Periode(regime, effet), carriere)
+            attendus[f"{regime}, {cle}"] = trimestres
+    lus, refus = droit_et_fige(appels)
+    assert refus == {}, refus
+    assert {cle: lu[0] for cle, lu in lus.items()} == attendus
+
+
 @pytest.mark.parametrize("naissance, trimestres", DUREE_REQUISE)
 def test_la_duree_requise_de_la_caisse_est_celle_de_la_serie(naissance, trimestres):
     serie = _en_escalier("duree_assurance_requise", "trimestres", _generation(naissance))

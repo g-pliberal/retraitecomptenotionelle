@@ -20,6 +20,7 @@ import {
   GENERATIONS_SUSPENSION, SUSPENSION_2026_EFFET,
   GENERATION_REFORME_2023, REFORME_2023_EFFET,
   DUREE_UNIQUE_2003, DUREE_UNIQUE_2003_EFFET, GENERATION_DECEMBRE_1942,
+  DUREE_PAR_GENERATION_EFFET, DUREES_AVANT_LE_DECRET,
 } from "../regimes.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import * as categories from "./categories.js";
@@ -413,6 +414,28 @@ export function dureeRequise(moteur, periode, carriere) {
             && carriere.anneeLiquidation === anneeUnique
             && carriere.moisLiquidation === moisUnique)) {
         return [DUREE_UNIQUE_2003, parGeneration[1]];
+      }
+      // ET LA TABLE NE VAUT, AU-DESSUS DE 160, QU'À COMPTER DE 2009 (R. 351-45,
+      // I, jusqu'au décret n° 2008-1555) ; les nés de 1953 à 1955 gardent
+      // jusqu'au décret de leur génération la durée que la caisse leur
+      // opposait (circulaire Cnav 2011/25). Voir le Python.
+      if (parGeneration[0] > DUREE_UNIQUE_2003
+          && carriere.age_liquidation !== null && carriere.age_liquidation !== undefined) {
+        const effet = carriere.anneeLiquidation * 12 + carriere.moisLiquidation;
+        const [anneeTable, moisTable] = DUREE_PAR_GENERATION_EFFET;
+        if (effet < anneeTable * 12 + moisTable) {
+          return [DUREE_UNIQUE_2003, parGeneration[1]];
+        }
+        for (const [premiere, suivante, [annee, mois], trimestres] of DUREES_AVANT_LE_DECRET) {
+          if (carriere.generation >= premiere && carriere.generation < suivante
+              && effet <= annee * 12 + mois && trimestres < parGeneration[0]) {
+            // La date de la demande, que le modèle n'a pas, décide en 2011.
+            const fiabilite = carriere.anneeLiquidation >= 2011
+              ? Math.min(parGeneration[1] ?? Fiabilite.MOYENNE, Fiabilite.MOYENNE)
+              : parGeneration[1];
+            return [trimestres, fiabilite];
+          }
+        }
       }
       return parGeneration;
     }

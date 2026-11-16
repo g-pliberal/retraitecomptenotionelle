@@ -88,7 +88,7 @@ versions:
   - {id: LEGIARTI000019661799, article: "D. 643-10 CSS", en_vigueur: 2008-10-19}
   bornes:
     liquidation.date_effet: [2004-01-01, null]
-    periode.debut: [null, 2009-01-01]
+    periode.debut: [null, 2007-01-01]
   contenu:
     droit: >-
       pour les pensions prenant effet depuis le 1er janvier 2004, la reprise est
@@ -117,6 +117,58 @@ versions:
     parametres:
       plafond: dernier_salaire_au_moins_le_smic
       part_du_smic: 1.0
+      depassement: suspension
+      seuil_independants_en_pass: 0.5
+      seuil_liberaux_en_pass: 1.0
+      seuil_liberaux: annuel
+      suspension_independants: nombre_de_mois
+      suspension_liberaux: chaque_mois
+  exemples: aucun trouvé
+- id: plafond_a_160_pour_cent_du_smic_2007
+  statut: lue
+  textes:
+  - {id: JORFARTI000001688673, article: "loi n° 2006-1640 du 21 décembre 2006, article 105",
+     publie_le: 2006-12-22}
+  - {id: LEGIARTI000006741561, article: "L. 161-22 CSS", en_vigueur: 2006-12-22}
+  - {id: LEGIARTI000006735313, article: "D. 161-2-7 CSS", en_vigueur: 2004-10-22}
+  - {id: LEGIARTI000006735315, article: "D. 161-2-9 CSS", en_vigueur: 2004-10-22}
+  - {id: LEGIARTI000006735323, article: "D. 161-2-15 CSS", en_vigueur: 2004-10-22}
+  - {id: LEGIARTI000006735324, article: "D. 161-2-16 CSS", en_vigueur: 2004-10-22}
+  - {id: LEGIARTI000006743959, article: "L. 634-6 CSS", en_vigueur: 2003-08-22}
+  - {id: LEGIARTI000006737985, article: "D. 634-11-2 CSS", en_vigueur: 2004-08-03}
+  - {id: LEGIARTI000006737989, article: "D. 634-11-5 CSS", en_vigueur: 2004-08-03}
+  - {id: LEGIARTI000006743797, article: "L. 643-6 CSS", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006738159, article: "D. 643-10 CSS", en_vigueur: 2005-08-24}
+  - {id: LEGIARTI000019661799, article: "D. 643-10 CSS", en_vigueur: 2008-10-19}
+  nee_de: JORFARTI000001688673
+  bornes:
+    liquidation.date_effet: [2004-01-01, null]
+    periode.debut: [2007-01-01, 2009-01-01]
+  contenu:
+    droit: >-
+      la loi n° 2006-1640 (LFSS pour 2007), article 105, I, insère dans L. 161-22, après
+      « sont inférieurs », les mots « à 160 % du salaire minimum de croissance ou » : la
+      reprise est permise si les revenus, « ajoutés aux pensions [...], sont inférieurs à
+      160 % du salaire minimum de croissance ou au dernier salaire d'activité », le plus
+      haut des deux ; la loi prime le plancher du SMIC de D. 161-2-9, que le décret ne
+      porte à 160 % qu'en 2010. La circulaire Cnav 2007/34 du 30 avril 2007 « porte la
+      limite minimum de cumul à 1,6 fois le SMIC mensuel, soit 2007,00 euros », « pour les
+      arrérages dus à partir de la mensualité de janvier 2007 ». L'Agirc et l'Arrco ont la
+      même limite (circulaire Agirc-Arrco 2007-7-DRE du 10 avril 2007, que rappelle la
+      2009-7-DRE du 26 mars 2009 : « 160 % du Smic ou du dernier salaire ou du salaire
+      moyen des 10 dernières années »). Le reste de la version de 2004 demeure : six mois
+      chez le dernier employeur, pension « pas due pour le mois civil » au-delà
+    non_salaries: >-
+      inchangé : la loi de 2006 ne touche ni L. 634-6 ni L. 643-6 ; l'artisan et le
+      commerçant gardent la moitié du plafond de la sécurité sociale, le libéral le
+      plafond entier, et la suspension de la version de 2004
+    ecart_connu: >-
+      le salaire moyen des dix dernières années, troisième limite de l'Agirc et de l'Arrco
+      depuis la circulaire 2007-7-DRE, n'est appliqué qu'à compter de 2009, faute d'avoir
+      lu la date d'effet de cette circulaire
+    parametres:
+      plafond: dernier_salaire_ou_160_smic
+      part_du_smic: 1.6
       depassement: suspension
       seuil_independants_en_pass: 0.5
       seuil_liberaux_en_pass: 1.0
@@ -378,7 +430,7 @@ approximations:
     tous
   effet: non mesuré
 sources:
-  lu_le: 2026-11-12
+  lu_le: 2026-11-16
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -533,7 +585,7 @@ code:
     _Calcul._part_nette, _Calcul._regle_2027, LOI_1983, ARTISANS_1984, LOI_2004,
     LOI_2009, REVALORISATION_2010, ORDRE_DES_AGES, PREMIERE_2015, REDUCTION_SALARIES,
     REDUCTION_NON_SALARIES, LIBERAUX_2011, PREMIERE_2027, SIX_MOIS, HEURES_SMIC,
-    PART_SMIC_2004, PART_SMIC_2009, ASSIETTES_CSG, SEUILS_NON_SALARIES,
+    PART_SMIC_2004, PART_SMIC_2007, LOI_2007, ASSIETTES_CSG, SEUILS_NON_SALARIES,
     HORS_DES_MOIS_SUSPENDUS ; echeancier.py : Echeancier._cumuler ; scenarios/actuel.py :
     ResultatActuel ; carriere.py : _lignes_apres_depart, Carriere.emploi_retraite
   javascript: >-
@@ -543,7 +595,7 @@ code:
     Calcul.seuilNonSalarie, Calcul.suspension, Calcul.partNette, Calcul.regle2027,
     LOI_1983, ARTISANS_1984, LOI_2004, LOI_2009, REVALORISATION_2010, ORDRE_DES_AGES,
     PREMIERE_2015, REDUCTION_SALARIES, REDUCTION_NON_SALARIES, LIBERAUX_2011,
-    PREMIERE_2027, SIX_MOIS, HEURES_SMIC, PART_SMIC_2004, PART_SMIC_2009, ASSIETTES_CSG,
+    PREMIERE_2027, SIX_MOIS, HEURES_SMIC, PART_SMIC_2004, PART_SMIC_2007, LOI_2007, ASSIETTES_CSG,
     SEUILS_NON_SALARIES, HORS_DES_MOIS_SUSPENDUS ; moteur/js/echeancier.js :
     Echeancier._cumuler ; moteur/js/carriere.js : lignesApresDepart,
     Carriere.emploiRetraite ; moteur/js/saisie.js : Saisie.emploiRetraiteDeclare ;

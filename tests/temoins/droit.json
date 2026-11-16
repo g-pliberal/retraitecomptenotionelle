@@ -4433,6 +4433,12 @@
   ],
   "rendu": "079c9fb107e688f6"
  },
+ "b2b9be3ff6427678": {
+  "fonctions": [
+   "ouvrir.duree_requise"
+  ],
+  "rendu": "bde6f4e04fa7a858"
+ },
  "b32dd5bba24a2a1c": {
   "fonctions": [
    "compte.cotisation_annuelle.par_regime"

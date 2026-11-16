@@ -822,17 +822,51 @@ def test_les_regles_du_cumul_sont_des_versions_des_fiches(simulateur):
                   "cumul_emploi_retraite_ircantec", "cumul_emploi_retraite_rco_agricole",
                   "cumul_emploi_retraite_complementaires_des_liberaux"):
         versions |= {v["id"] for v in toutes[fiche]["versions"]}
-    citees = {getattr(cumul, nom) for nom in ("AVANT_1983", "RUPTURE_1983", "PLAFOND_2004", "LIBERALISE_2009",
+    citees = {getattr(cumul, nom) for nom in ("AVANT_1983", "RUPTURE_1983", "PLAFOND_2004", "PLAFOND_160_SMIC_2007",
+                          "LIBERALISE_2009",
                           "PREMIERES_2015", "REDUCTION_2015", "AGES_2027", "FP_1970",
                           "FP_2004", "FP_2009", "FP_2015", "FP_2027", "RCI_AVANT_2009",
                           "RCI_2009", "RCI_2024", "RCI_2027", "IRCANTEC_AVANT_2004",
                           "IRCANTEC_2004", "IRCANTEC_2020", "RCO_AGRICOLE_2003",
                           "SECTIONS_STATUTS")}
-    assert len(citees) == 21 and all(isinstance(regle, str) for regle in citees)
+    assert len(citees) == 22 and all(isinstance(regle, str) for regle in citees)
     assert citees <= versions, citees - versions
     for fiche in ("cumul_emploi_retraite_ircantec", "cumul_emploi_retraite_rco_agricole",
                   "cumul_emploi_retraite_complementaires_des_liberaux"):
         assert cumul.RCI_2027 in {v["id"] for v in toutes[fiche]["versions"]}, fiche
+
+
+def test_le_plafond_passe_a_160_pour_cent_du_smic_des_2007(simulateur):
+    """Loi n° 2006-1640 (LFSS pour 2007), article 105, I : L. 161-22 permet la
+    reprise si les revenus, « ajoutés aux pensions [...], sont inférieurs à
+    160 % du salaire minimum de croissance ou au dernier salaire d'activité » ;
+    la circulaire Cnav 2007/34 porte « la limite minimum de cumul à 1,6 fois le
+    SMIC mensuel, soit 2007,00 euros », « pour les arrérages dus à partir de la
+    mensualité de janvier 2007 ». L'Agirc et l'Arrco ont la même limite
+    (circulaire Agirc-Arrco 2007-7-DRE du 10 avril 2007, que rappelle la
+    2009-7-DRE). La retraitée de 2005, au dernier salaire sous le SMIC, sert
+    800 € de pensions par mois et reprend à 700 € : 1 479 € à l'assiette de la
+    CSG. En 2006, au-delà du SMIC, 1 254 € : rien n'est servi ; en 2007 et
+    2008, sous 160 % du SMIC, tout l'est (note du 16 novembre 2026, action 175)."""
+    resultat = _cumul_prete(
+        simulateur, 1944, 61.0, [Metier("salarie_prive_non_cadre", 20.0, 0.4)],
+        _emploi(62.0, 65.0), {"regime_general": 6000.0, "arrco": 3600.0},
+        {annee: 8400.0 for annee in (2006, 2007, 2008)})
+    for regime in ("regime_general", "arrco"):
+        sorts = _mois_par_mois(resultat, regime)
+        assert {DateMois(a, m) for a in (2007, 2008) for m in range(1, 13)} <= set(sorts)
+        assert any(mois.annee == 2006 for mois in sorts), regime
+        for mois, (statut, motif, reduction) in sorts.items():
+            if mois.annee == 2006:
+                assert (statut, motif) == (cumul.SUSPENDUE, "depassement"), (regime, mois)
+            elif mois.annee < 2009:
+                assert (statut, motif, reduction) == (
+                    cumul.PLAFONNEE, "sous_le_plafond", 0.0), (regime, mois)
+    regles = {(t.debut.annee, p.regle) for t in resultat.tranches for p in t.par_regime
+              if p.regime == "regime_general"}
+    assert {regle for annee, regle in regles if annee == 2006} == {cumul.PLAFOND_2004}
+    assert {regle for annee, regle in regles if 2006 < annee < 2009} == {
+        cumul.PLAFOND_160_SMIC_2007}
 
 
 # -- la suspension de la base des non-salariés, et la durée requise du libéral -----

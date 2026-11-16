@@ -33,11 +33,19 @@ effet: >-
   159 trimestres à toute date d'effet, quand R. 351-45 ne le leur oppose que pour une
   pension prenant effet avant 2003 : depuis, 160 trimestres, sauf au né en décembre 1942
   parti le 1er janvier 2003 — jusqu'à neuf trimestres de décote en moins, de 2003 à
-  leurs soixante-cinq ans.
+  leurs soixante-cinq ans. Et jusqu'au 16 novembre 2026, il opposait 161 à 164 trimestres
+  aux nés de 1949 à 1952 partis avant 2009, quand R. 351-45, I, leur en demande 160 :
+  un départ en carrière longue refusé à qui avait 168 trimestres, et un prorata réduit
+  de 0,6 à 2,4 % ; et 165 ou 166 aux nés de 1953 à 1955 partis avant le décret de leur
+  génération, à qui la caisse en opposait 164, ou 165 aux nés en 1955 de juin à août 2011.
 sources:
-  lu_le: 2026-11-03
+  lu_le: 2026-11-16
   prochaine_relecture: 2026-12-31
   a_relire:
+  - >-
+    La circulaire Cnav 2011/24, jumelle de la 2011/25 pour la carrière longue des nés
+    de 1953 et après, n'a pas été lue : la règle de la date de demande y est présumée
+    la même.
   - >-
     La clause de sauvegarde de l'article 8 du décret n° 2023-436 — la carrière longue
     aux conditions d'avant septembre 2023 pour les nés de septembre 1961 à 1963
@@ -108,6 +116,39 @@ sources:
       fixé le 01/01/2003 » ; ses tableaux, confrontés aux séries par
       tests/test_cnav_exposes.py (action 175, étape 4)
     date: 2026-09-15
+  - type: legifrance
+    reference: >-
+      décret n° 2008-1555 du 31 décembre 2008, article 4 (JORFARTI000020021132), en
+      vigueur le 1er janvier 2009 (article 5) : il remplace au 1° de R. 351-27 « 160
+      trimestres » par la limite « résultant de l'article 5 de la loi n° 2003-775 », et
+      abroge la section qui portait R. 351-45 ; loi n° 2003-775, article 5, III
+      (JORFARTI000001914387) : la durée est « majorée d'un trimestre par année » « à
+      compter de 2009 ». Avant 2009, 160 trimestres à toute génération
+    date: 2026-11-16
+  - type: circulaire_cnav
+    reference: >-
+      2008/41 du 25 juillet 2008, § 211 et 213 : les durées totale et cotisée « évoluent
+      à compter du 1er janvier 2009 » ; les demandes « pour des dates d'effet
+      postérieures au 1er décembre 2008 » se liquident aux nouvelles durées
+    date: 2008-07-25
+  - type: circulaire_cnav
+    reference: >-
+      2011/25 du 17 mars 2011 : « La durée d'assurance à retenir pour les assurés nés au
+      cours des années 1953, 1954 et suivantes est donc de 164 ou 165 trimestres selon
+      que la date de demande [...] se situe avant ou après le 1er janvier 2011 », pour
+      l'ouverture du droit « de même que pour procéder au calcul de la pension » ; les
+      attestations d'avant 2011 « pour des dates d'effet de pension jusqu'au 1er juin
+      2011 au plus tard ne doivent pas être remises en cause ». Le modèle, qui n'a pas
+      de date de demande, lit 164 jusqu'à une pension prenant effet le 1er juin 2011,
+      165 au-delà, la fiabilité ramenée à moyenne pour les pensions de 2011
+    date: 2011-03-17
+  - type: legifrance
+    reference: >-
+      décret n° 2011-916 du 1er août 2011 (JORFTEXT000024419259), article 1er : 166
+      trimestres « pour les assurés nés en 1955 » ; entrée en vigueur « le lendemain de
+      la publication », le 3 août 2011 : 165 aux nés en 1955 jusqu'à une pension
+      prenant effet le 1er août 2011
+    date: 2026-11-16
 textes_a_rattacher:
 - reference: L. 161-17-3 CSS (réécrit par la loi n° 2025-1403, article 105)
 - reference: loi n° 2025-1403, article 105 VI
@@ -142,11 +183,15 @@ code:
     qui vaut alors aussi pour les pensions d'avant septembre 2026. L'escalier des nés
     de 1934 à 1942 ne vaut que pour une pension prenant effet avant 2003 : depuis, la
     table cède la place à 160 trimestres (`DUREE_UNIQUE_2003`), sauf à la génération
-    de décembre 1942 partie le 1er janvier 2003 (R. 351-45, I à III).
+    de décembre 1942 partie le 1er janvier 2003 (R. 351-45, I à III). Et la table
+    ne vaut, au-dessus de 160, que pour une pension prenant effet depuis 2009
+    (`DUREE_PAR_GENERATION_EFFET`) ; les nés de 1953 à 1955 gardent jusqu'au décret
+    de leur génération 164 ou 165 trimestres (`DUREES_AVANT_LE_DECRET`).
   python: >-
     droit/ouvrir.py : duree_requise, REFORME_2023_EFFET, GENERATION_REFORME_2023,
     SUSPENSION_2026_EFFET, GENERATIONS_SUSPENSION, DUREE_UNIQUE_2003,
-    DUREE_UNIQUE_2003_EFFET, GENERATION_DECEMBRE_1942 ; scenarios/actuel.py :
+    DUREE_UNIQUE_2003_EFFET, GENERATION_DECEMBRE_1942, DUREE_PAR_GENERATION_EFFET,
+    DUREES_AVANT_LE_DECRET ; scenarios/actuel.py :
     DureesRequises, DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension,
     TableRecouverte, ScenarioActuel._sous_le_droit
   javascript: >-
@@ -154,7 +199,8 @@ code:
     DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension, TableRecouverte,
     REFORME_2023_EFFET, GENERATION_REFORME_2023, SUSPENSION_2026_EFFET,
     GENERATIONS_SUSPENSION, DUREE_UNIQUE_2003, DUREE_UNIQUE_2003_EFFET,
-    GENERATION_DECEMBRE_1942 ; moteur/js/scenario-actuel.js : ScenarioActuel._sousLeDroit
+    GENERATION_DECEMBRE_1942, DUREE_PAR_GENERATION_EFFET, DUREES_AVANT_LE_DECRET ;
+    moteur/js/scenario-actuel.js : ScenarioActuel._sousLeDroit
   parametres: >-
     legislation/duree_assurance_requise.csv,
     legislation/duree_requise_avant_reforme_2023.csv,

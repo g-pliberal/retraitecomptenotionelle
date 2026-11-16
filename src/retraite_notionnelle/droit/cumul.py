@@ -142,6 +142,7 @@ PRIORITE = (NON_DUE, SUSPENDUE, REDUITE, SEUIL_NON_PUBLIE, NON_CALCULE, PLAFONNE
 AVANT_1983 = "sans_condition_avant_1983"
 RUPTURE_1983 = "rupture_avec_l_employeur_1983"
 PLAFOND_2004 = "plafond_du_dernier_salaire_2004"
+PLAFOND_160_SMIC_2007 = "plafond_a_160_pour_cent_du_smic_2007"
 LIBERALISE_2009 = "cumul_liberalise_2009"
 PREMIERES_2015 = "premieres_pensions_de_2015"
 REDUCTION_2015 = "reduction_du_depassement_2015"
@@ -170,6 +171,9 @@ SECTIONS_STATUTS = "statuts_des_sections"
 LOI_1983 = DateMois(1983, 4)
 ARTISANS_1984 = DateMois(1984, 7)
 LOI_2004 = DateMois(2004, 1)
+#: Loi n° 2006-1640, article 105, I : le plafond de L. 161-22 passe à 160 % du
+#: SMIC, pour les arrérages de janvier 2007 (circulaire Cnav 2007/34).
+LOI_2007 = DateMois(2007, 1)
 LOI_2009 = DateMois(2009, 1)
 #: D. 161-2-8 : le dernier salaire se revalorise pour les périodes d'après 2009.
 REVALORISATION_2010 = DateMois(2010, 1)
@@ -239,10 +243,11 @@ PROFESSIONS_DES_STATUTS = {A_LA_REPRISE: "chirurgien_dentiste_ou_sage_femme",
 
 #: D. 161-2-15 : la reprise chez le dernier employeur, dans les six mois.
 SIX_MOIS = 6
-#: D. 161-2-9 : le SMIC mensuel, sur 1 820 heures par an ; 160 % depuis 2009.
+#: D. 161-2-9 : le SMIC mensuel, sur 1 820 heures par an ; 160 % depuis 2007
+#: (L. 161-22 de la loi n° 2006-1640, qui prime le plancher du décret).
 HEURES_SMIC = 1820
 PART_SMIC_2004 = 1.0
-PART_SMIC_2009 = 1.6
+PART_SMIC_2007 = 1.6
 #: L'assiette de la CSG sur les salaires, que D. 161-2-7 et D. 161-2-10
 #: retiennent : l'abattement pour frais professionnels, 5 % de 1991 à 2004,
 #: 3 % jusqu'en 2011, 1,75 % depuis. Avant 1991, les cotisations familiales,
@@ -705,7 +710,7 @@ class _Calcul:
         if self.dernier is not None:
             mensuel, son_annee = self.dernier
             dernier = mensuel * assiette_csg(son_annee) * self._revalorisation(mois)
-        part = PART_SMIC_2009 if mois >= LOI_2009 else PART_SMIC_2004
+        part = PART_SMIC_2007 if mois >= LOI_2007 else PART_SMIC_2004
         return max(dernier, part * annee.smic)
 
     def plafond_agirc_arrco(self, mois: DateMois, annee: _Annee) -> float:
@@ -725,7 +730,9 @@ class _Calcul:
         if self.premiere >= PREMIERE_2027:
             return AGES_2027
         if mois < LOI_2009:
-            return RUPTURE_1983 if date_effet < LOI_2004 else PLAFOND_2004
+            if date_effet < LOI_2004:
+                return RUPTURE_1983
+            return PLAFOND_2004 if mois < LOI_2007 else PLAFOND_160_SMIC_2007
         if self.premiere < PREMIERE_2015:
             return LIBERALISE_2009
         return PREMIERES_2015 if mois < REDUCTION_SALARIES else REDUCTION_2015
@@ -877,8 +884,10 @@ class _Calcul:
                 return LIBRE, RUPTURE_1983, "autre_entreprise", 0.0, None
         if date_effet < LOI_2004 and mois < LOI_2009:
             return NON_CALCULE, "", "regle_non_lue", 0.0, None
-        if mois < LOI_2009:
+        if mois < LOI_2007:
             regle = PLAFOND_2004
+        elif mois < LOI_2009:
+            regle = PLAFOND_160_SMIC_2007
         elif self.premiere < PREMIERE_2015:
             regle = LIBERALISE_2009
         elif mois < REDUCTION_NON_SALARIES:

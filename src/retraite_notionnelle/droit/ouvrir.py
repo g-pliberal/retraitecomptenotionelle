@@ -66,6 +66,23 @@ DUREE_UNIQUE_2003 = 160
 DUREE_UNIQUE_2003_EFFET = (2003, 1)
 GENERATION_DECEMBRE_1942 = 1942.917
 
+#: La même durée unique tient jusqu'au 31 décembre 2008, aux générations dont
+#: la table dit davantage : la durée par génération n'entre au code qu'avec le
+#: décret n° 2008-1555, article 4, en vigueur le 1er janvier 2009 (circulaire
+#: Cnav 2008/41, § 211). Première date d'effet de la table.
+DUREE_PAR_GENERATION_EFFET = (2009, 1)
+
+#: Les nés de 1953 à 1955 partis avant le décret de leur génération : la durée
+#: de la génération 1952 pour une demande d'avant 2011, que le modèle, sans
+#: date de demande, lit jusqu'à une pension prenant effet au 1er juin 2011
+#: (circulaire Cnav 2011/25) ; 165 aux nés en 1955 jusqu'au décret
+#: n° 2011-916, en vigueur le 3 août 2011. (première génération, génération
+#: suivante, dernière date d'effet, trimestres), lus dans l'ordre.
+DUREES_AVANT_LE_DECRET = (
+    (1953, 1956, (2011, 6), 164),
+    (1955, 1956, (2011, 8), 165),
+)
+
 #: Durée minimale de services qui ouvre une pension militaire, même différée :
 #: « lorsqu'ils ont accompli […] moins de quinze ans de services effectifs »,
 #: dit le 5° de l'article L. 25, la pension n'est due qu'à l'âge légal.
@@ -524,6 +541,27 @@ def duree_requise(moteur, periode: PeriodeRegime,
                              and (carriere.annee_liquidation, carriere.mois_liquidation)
                              == DUREE_UNIQUE_2003_EFFET)):
                 return DUREE_UNIQUE_2003, par_generation[1]
+            # ET LA TABLE NE VAUT, AU-DESSUS DE 160, QU'À COMPTER DE 2009
+            # (R. 351-45, I, jusqu'au décret n° 2008-1555) : le module opposait
+            # 161 à 164 trimestres aux nés de 1949 à 1952 partis avant 2009, à
+            # qui la caisse en demandait 160. Les nés de 1953 à 1955 gardent
+            # jusqu'au décret de leur génération la durée que la caisse leur
+            # opposait (circulaire Cnav 2011/25).
+            if (par_generation[0] > DUREE_UNIQUE_2003
+                    and carriere.age_liquidation is not None):
+                effet = (carriere.annee_liquidation, carriere.mois_liquidation)
+                if effet < DUREE_PAR_GENERATION_EFFET:
+                    return DUREE_UNIQUE_2003, par_generation[1]
+                for premiere, suivante, limite, trimestres in DUREES_AVANT_LE_DECRET:
+                    if (premiere <= carriere.generation < suivante
+                            and effet <= limite and trimestres < par_generation[0]):
+                        # La date de la demande, que le modèle n'a pas,
+                        # décide en 2011.
+                        fiabilite = par_generation[1]
+                        if carriere.annee_liquidation >= 2011:
+                            fiabilite = min(fiabilite if fiabilite is not None
+                                            else Fiabilite.MOYENNE, Fiabilite.MOYENNE)
+                        return trimestres, fiabilite
             return par_generation
     return requis, None
 
