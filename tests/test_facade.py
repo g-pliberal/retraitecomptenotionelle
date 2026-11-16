@@ -164,6 +164,15 @@ def test_une_classe_que_le_portage_ecrit_en_casse_de_chameau_se_relit_sous_ses_n
         pont.lu_strictement(EligibleAgricole, {"taux_plein": True})
 
 
+def test_les_cotisants_se_lisent_par_leur_chargeur(simulateur):
+    """Les effectifs de cotisants, la pondération du côté des recettes, sont
+    une donnée : la façade les laisse lire à leur chargeur Python, comme les
+    effectifs de retraités (note de décision 0006)."""
+    from retraite_notionnelle.donnees.cotisants import EffectifsCotisants
+    assert isinstance(simulateur.cotisants, EffectifsCotisants)
+    assert simulateur.cotisants is simulateur._donnees.cotisants
+
+
 # -- les bâtisseurs de carrière ----------------------------------------------------
 
 #: Un salarié né en 1965, entré à 23 ans, parti à 64 ans.

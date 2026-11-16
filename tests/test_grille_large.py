@@ -24,9 +24,9 @@ import pytest
 
 from retraite_notionnelle import cout as C
 from retraite_notionnelle import memoire
-from retraite_notionnelle.castypes import GRILLE_DU_COUT, poids_effectifs
+from retraite_notionnelle.castypes import GRILLE_DU_COUT, departs_au_portage, poids_effectifs
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.simulateur import Simulateur
+from facade import Simulateur
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
@@ -53,15 +53,45 @@ def points(parametres):
     return G.multiplicateurs(G.centiles(parametres.racine_donnees)[1])
 
 
+def _age(simulateur, cas, generation: int) -> float:
+    """L'âge où le pilote du portage fait partir ``cas``, né en ``generation``,
+    attente comprise (``CasTypeLarge.age_liquidation_pour``, sans le pilote
+    Python)."""
+    departs, refus = departs_au_portage(simulateur, {"cas": (cas, generation)})
+    assert not refus, refus
+    return departs["cas"][0]
+
+
+def _construite(simulateur, cas, generation: int):
+    """La carrière de ``cas``, né en ``generation``, partie à l'âge où le
+    pilote du portage la fait partir (``CasType.construire``, sans le pilote
+    Python)."""
+    return cas.carriere_a(simulateur, generation, _age(simulateur, cas, generation))
+
+
 @pytest.fixture
-def sans_le_reperage_des_decotes(monkeypatch):
+def reglages():
+    """``monkeypatch``, pour les réglages du script seuls — ses constantes,
+    ``G.CLASSES_DE_NATURE`` et les autres —, sous lesquels la mémoire des
+    calculs se tait (``CALCULS_SANS_MEMOIRE``) sans que le modèle passe pour
+    modifié : le portage reçoit ce qu'ils changent dans les cas types qu'on
+    lui demande (``CasTypeLarge.pour_le_portage``), et la façade le sert. Une
+    fonction du modèle ne se remplace pas ainsi : ``monkeypatch`` s'en
+    charge, et la façade refuse."""
+    with pytest.MonkeyPatch.context() as reglages:
+        reglages.setenv(memoire.SANS_MEMOIRE, "1")
+        yield reglages
+
+
+@pytest.fixture
+def sans_le_reperage_des_decotes(reglages):
     """La population sans le repérage des carrières qui peuvent décoter
     (``DECOTE_DES_CARRIERES_QUI_LE_PEUVENT``), pour les tests qui la
     reconstruisent sous ``monkeypatch`` sans regarder la décote : le repérage
     demande au droit une vingtaine de secondes à chaque construction, que la
     mémoire des calculs, muette sous ``monkeypatch``, ne garde pas. Il ne
     change que les parts des jumelles, jamais une carrière ni son poids."""
-    monkeypatch.setattr(G, "DECOTE_DES_CARRIERES_QUI_LE_PEUVENT", False)
+    reglages.setattr(G, "DECOTE_DES_CARRIERES_QUI_LE_PEUVENT", False)
 
 
 def _poids(variantes, effectifs, annee):
@@ -160,7 +190,7 @@ def test_une_carriere_courte_s_arrete_a_la_duree_de_sa_tranche(simulateur, sourc
     courte = next(v for v in variantes if v.cas.code == "salaire_moyen~h~20_30")
     assert courte.duree == 25 and courte.assimilees == round(
         G.part_assimilee(source, "H") * 25)
-    carriere = courte.cas.construire(simulateur, 1980)
+    carriere = _construite(simulateur, courte.cas, 1980)
     types = [ligne.type_periode for ligne in carriere.lignes]
     assert types.count("emploi") + types.count("chomage_indemnise") == 25
     assert types.count("chomage_indemnise") == courte.assimilees
@@ -280,7 +310,7 @@ def test_une_carriere_resserre_la_coupe_sans_toucher_a_sa_moyenne():
         G.DISPERSION_DE_CARRIERE * ecart)
 
 
-def test_la_carriere_d_un_independant_garde_moins_de_sa_coupe(monkeypatch, parametres):
+def test_la_carriere_d_un_independant_garde_moins_de_sa_coupe(reglages, parametres):
     """La part passagère du revenu des indépendants, en variante
     (``PART_PASSAGERE_DES_INDEPENDANTS``, action 138, étape 14) : entre 2003
     et 2021, le rang d'un indépendant dans l'échelle des revenus se corrèle à
@@ -302,7 +332,7 @@ def test_la_carriere_d_un_independant_garde_moins_de_sa_coupe(monkeypatch, param
         G.DISPERSION_DES_INDEPENDANTS * math.log(relatifs["p99"] / relatifs["p10"]))
     racine = parametres.racine_donnees
     debrayee = {nom: m for nom, _, m in G.dispersion_des_independants(racine)["F"]}
-    monkeypatch.setattr(G, "PART_PASSAGERE_DES_INDEPENDANTS", True)
+    reglages.setattr(G, "PART_PASSAGERE_DES_INDEPENDANTS", True)
     embrayee = {nom: m for nom, _, m in G.dispersion_des_independants(racine)["F"]}
     assert debrayee["p10"] / debrayee["p50"] == pytest.approx(
         (640.0 / 2760.0) ** G.DISPERSION_DE_CARRIERE)
@@ -608,7 +638,7 @@ def test_l_age_du_premier_trimestre_se_lit_dans_le_fichier_certifie(parametres):
 
 @pytest.mark.usefixtures("sans_le_reperage_des_decotes")
 def test_les_carrieres_pleines_entrent_au_premier_trimestre_de_leur_cinquieme(
-        simulateur, source, monkeypatch):
+        simulateur, source, reglages):
     """Sous ``ENTREE_AU_PREMIER_TRIMESTRE``, chaque carrière pleine du
     salariat privé, hors des départs avec surcote, se décline en cinq
     cinquièmes, rangés par l'âge où leur génération cotise son premier
@@ -651,7 +681,7 @@ def test_les_carrieres_pleines_entrent_au_premier_trimestre_de_leur_cinquieme(
     assert par_code[surcotee].debut_de(1950) == 16.0
     assert par_code[surcotee].debut_de(1955) == 17.0
     assert par_code[f"{G.GABARIT}~h~30_40~p50"].debut_de(1950) == 21
-    monkeypatch.setattr(G, "ENTREE_AU_PREMIER_TRIMESTRE", False)
+    reglages.setattr(G, "ENTREE_AU_PREMIER_TRIMESTRE", False)
     avant = G.grille("population", simulateur.effectifs, source, ())
     assert _poids(avant, simulateur.effectifs, source.millesime)[pleine] == pytest.approx(total)
 
@@ -702,7 +732,7 @@ def test_le_premier_trimestre_valide_precede_le_premier_cotise(parametres):
 
 @pytest.mark.usefixtures("sans_le_reperage_des_decotes")
 def test_le_dernier_cinquieme_des_hommes_fait_son_service_avant_de_cotiser(
-        simulateur, source, monkeypatch):
+        simulateur, source, reglages):
     """Sous ``SERVICE_AVANT_LE_PREMIER_TRIMESTRE``, le cinquième d'une
     carrière pleine d'homme dont la génération valide son premier trimestre
     avant d'en cotiser un fait son service national les années qui les
@@ -731,7 +761,7 @@ def test_le_dernier_cinquieme_des_hommes_fait_son_service_avant_de_cotiser(
     assert not any(v.cas.service_de(generation)
                    for v in variantes if v.cas.sexe == "F" and isinstance(v.cas, G.CasTypeLarge)
                    for generation in (1942, 1946, 1950, 1970))
-    monkeypatch.setattr(G, "SERVICE_AVANT_LE_PREMIER_TRIMESTRE", False)
+    reglages.setattr(G, "SERVICE_AVANT_LE_PREMIER_TRIMESTRE", False)
     avant = {v.cas.code: v.cas for v in G.grille("population", simulateur.effectifs,
                                                  source, ())}
     assert G.condition_au_depart(projection, avant[f"{pleine}~entree5"], 1950) == (
@@ -769,7 +799,7 @@ def test_la_part_assimilee_suit_le_quintile_de_la_classe(parametres):
 
 @pytest.mark.usefixtures("sans_le_reperage_des_decotes")
 def test_la_carriere_pleine_d_une_femme_du_haut_part_en_carriere_longue(
-        simulateur, source, monkeypatch):
+        simulateur, source, reglages):
     """Sous ``ASSIMILEES_SELON_LE_RANG``, la femme née en 1953 d'une carrière
     pleine du salariat privé de la classe p95, entrée à 17 ans, ne compte plus
     qu'une année assimilée sur ses 43 (1/39 de l'EIR), et non cinq (4/32) :
@@ -783,7 +813,7 @@ def test_la_carriere_pleine_d_une_femme_du_haut_part_en_carriere_longue(
     (``NATURES_A_LEUR_PART``), qui donne leur nature aux années assimilées
     des femmes, en est ôtée."""
     assert G.ASSIMILEES_SELON_LE_RANG
-    monkeypatch.setattr(G, "NATURES_A_LEUR_PART", False)
+    reglages.setattr(G, "NATURES_A_LEUR_PART", False)
     variantes = {v.cas.code: v for v in G.grille("population", simulateur.effectifs,
                                                   source, ())}
     projection = simulateur.pour_la_projection()
@@ -793,7 +823,7 @@ def test_la_carriere_pleine_d_une_femme_du_haut_part_en_carriere_longue(
     assert G.condition_au_depart(projection, haute.cas, 1953) == (
         pytest.approx(60.0), "carriere_longue")
     assert variantes[f"{G.GABARIT}~f~40_plus~p10~bas1"].assimilees == 8
-    monkeypatch.setattr(G, "ASSIMILEES_SELON_LE_RANG", False)
+    reglages.setattr(G, "ASSIMILEES_SELON_LE_RANG", False)
     avant = {v.cas.code: v for v in G.grille("population", simulateur.effectifs,
                                               source, ())}
     assert avant[f"{G.GABARIT}~f~40_plus~p95"].assimilees == 5
@@ -837,7 +867,7 @@ def test_la_population_lit_les_quatre_natures_a_60_ans_au_plus(parametres):
     assert hommes["service_national"][1976] == (42.3, 1.4)
 
 
-def test_les_classes_de_nature_rendent_les_parts_de_l_echantillon(parametres, monkeypatch):
+def test_les_classes_de_nature_rendent_les_parts_de_l_echantillon(parametres, reglages):
     """Chaque cinquième d'une carrière pleine d'homme se décline en cinq classes
     de nature de poids égal, chacune au milieu de son rang. Le cinquième qui
     sert avant d'entrer (``SERVICE_AVANT_LE_PREMIER_TRIMESTRE``) a son
@@ -851,7 +881,7 @@ def test_les_classes_de_nature_rendent_les_parts_de_l_echantillon(parametres, mo
     hommes ont ainsi une année de service, 20 % de la maladie ; le dernier
     cinquième ne sert pas deux fois. Le test dit la version seule : les classes
     plus fines de la vingt-sixième (``CLASSES_DE_NATURE``) en sont ôtées."""
-    monkeypatch.setattr(G, "CLASSES_DE_NATURE", 5)
+    reglages.setattr(G, "CLASSES_DE_NATURE", 5)
     racine = parametres.racine_donnees
     regle = G.entrees_des_carrieres_pleines(racine)["H"]
     entrees = G.classes_d_entree(regle, G.premiers_trimestres(racine)["H"],
@@ -877,7 +907,7 @@ def test_les_classes_de_nature_rendent_les_parts_de_l_echantillon(parametres, mo
 
 @pytest.mark.usefixtures("sans_le_reperage_des_decotes")
 def test_le_service_et_la_maladie_rendent_la_carriere_longue_aux_hommes_de_1950(
-        simulateur, source, monkeypatch):
+        simulateur, source, reglages):
     """Sous ``NATURES_SELON_LA_GENERATION``, l'homme né en 1950 d'une carrière
     pleine du salariat privé de la classe p50, entré à 16 ans, compte trois
     années assimilées sur 43, au milieu de sa carrière, de 36 à 38 ans. Dans la
@@ -894,8 +924,8 @@ def test_le_service_et_la_maladie_rendent_la_carriere_longue_aux_hommes_de_1950(
     (``NATURES_A_LEUR_PART``) en est ôtée, et les classes plus fines de la
     vingt-sixième (``CLASSES_DE_NATURE``)."""
     assert G.NATURES_SELON_LA_GENERATION
-    monkeypatch.setattr(G, "NATURES_A_LEUR_PART", False)
-    monkeypatch.setattr(G, "CLASSES_DE_NATURE", 5)
+    reglages.setattr(G, "NATURES_A_LEUR_PART", False)
+    reglages.setattr(G, "CLASSES_DE_NATURE", 5)
     variantes = {v.cas.code: v.cas for v in G.grille("population", simulateur.effectifs,
                                                       source, ())}
     projection = simulateur.pour_la_projection()
@@ -917,7 +947,7 @@ def test_le_service_et_la_maladie_rendent_la_carriere_longue_aux_hommes_de_1950(
         pytest.approx(59.0), "carriere_longue")
     assert G.condition_au_depart(projection, sans, 1950) == (
         pytest.approx(59.5), "carriere_longue")
-    monkeypatch.setattr(G, "NATURES_SELON_LA_GENERATION", False)
+    reglages.setattr(G, "NATURES_SELON_LA_GENERATION", False)
     avant = {v.cas.code: v.cas for v in G.grille("population", simulateur.effectifs,
                                                   source, ())}
     assert f"{pleine}~nature1" not in avant
@@ -946,7 +976,7 @@ def test_le_chomage_et_l_avpf_se_lisent_generation_par_generation(parametres):
     assert G.part_et_duree(femmes["avpf"], 1960) == pytest.approx((0.455, 12.3 / 0.455 / 4))
 
 
-def test_les_natures_vont_a_leur_part_et_a_leurs_annees_sous_la_masse(parametres, monkeypatch):
+def test_les_natures_vont_a_leur_part_et_a_leurs_annees_sous_la_masse(parametres, reglages):
     """Sous ``NATURES_A_LEUR_PART``, chaque classe de nature d'un cinquième
     compte les années de ses natures, chacune à la part de sa génération — le
     service et l'AVPF du bas des rangs, le chômage et la maladie du haut — et
@@ -968,8 +998,8 @@ def test_les_natures_vont_a_leur_part_et_a_leurs_annees_sous_la_masse(parametres
     ôtée, et les classes plus fines de la vingt-sixième
     (``CLASSES_DE_NATURE``)."""
     racine = parametres.racine_donnees
-    monkeypatch.setattr(G, "MALADIE_INDEPENDANTE", False)
-    monkeypatch.setattr(G, "CLASSES_DE_NATURE", 5)
+    reglages.setattr(G, "MALADIE_INDEPENDANTE", False)
+    reglages.setattr(G, "CLASSES_DE_NATURE", 5)
 
     def classes(sexe: str, assimilees: int) -> list:
         regle = G.entrees_des_carrieres_pleines(racine)[sexe]
@@ -1014,7 +1044,7 @@ def test_les_natures_vont_a_leur_part_et_a_leurs_annees_sous_la_masse(parametres
 
 @pytest.mark.usefixtures("sans_le_reperage_des_decotes")
 def test_le_chomage_a_sa_part_rend_la_carriere_longue_aux_hommes_qui_n_en_ont_pas(
-        simulateur, source, monkeypatch):
+        simulateur, source, reglages):
     """Sous ``NATURES_A_LEUR_PART``, l'homme né en 1950 d'une carrière pleine du
     salariat privé de la classe p50, entré à 16 ans, du premier cinquième : sa
     classe de centiles compte trois années assimilées, au milieu de sa
@@ -1034,9 +1064,9 @@ def test_le_chomage_a_sa_part_rend_la_carriere_longue_aux_hommes_qui_n_en_ont_pa
     (``CLASSES_DE_NATURE``), et la pente des hommes de la trente-quatrième
     (``NATURES_DES_HOMMES_SELON_LE_RANG``)."""
     assert G.NATURES_A_LEUR_PART
-    monkeypatch.setattr(G, "MALADIE_INDEPENDANTE", False)
-    monkeypatch.setattr(G, "CLASSES_DE_NATURE", 5)
-    monkeypatch.setattr(G, "NATURES_DES_HOMMES_SELON_LE_RANG", False)
+    reglages.setattr(G, "MALADIE_INDEPENDANTE", False)
+    reglages.setattr(G, "CLASSES_DE_NATURE", 5)
+    reglages.setattr(G, "NATURES_DES_HOMMES_SELON_LE_RANG", False)
     variantes = {v.cas.code: v.cas for v in G.grille("population", simulateur.effectifs,
                                                       source, ())}
     projection = simulateur.pour_la_projection()
@@ -1060,14 +1090,14 @@ def test_le_chomage_a_sa_part_rend_la_carriere_longue_aux_hommes_qui_n_en_ont_pa
                          (malade, (60.0, "taux_plein_autre"))):
         age, condition = G.condition_au_depart(projection, cas, 1950)
         assert (age, condition) == (pytest.approx(attendu[0]), attendu[1]), cas.code
-    monkeypatch.setattr(G, "NATURES_A_LEUR_PART", False)
+    reglages.setattr(G, "NATURES_A_LEUR_PART", False)
     avant = {v.cas.code: v.cas for v in G.grille("population", simulateur.effectifs,
                                                   source, ())}
     assert G.condition_au_depart(projection, avant[pleine], 1950) == (
         pytest.approx(59.5), "carriere_longue")
 
 
-def test_les_malades_sont_au_chomage_a_la_part_des_autres(parametres, monkeypatch):
+def test_les_malades_sont_au_chomage_a_la_part_des_autres(parametres, reglages):
     """Sous ``MALADIE_INDEPENDANTE``, la maladie a son propre rang :
     l'échantillon publie la part des affiliés qui ont chaque nature, non celle
     de ceux qui en ont deux, et la vingt-quatrième version, qui mettait le
@@ -1094,7 +1124,7 @@ def test_les_malades_sont_au_chomage_a_la_part_des_autres(parametres, monkeypatc
     en sont ôtées."""
     racine = parametres.racine_donnees
     assert G.MALADIE_INDEPENDANTE
-    monkeypatch.setattr(G, "CLASSES_DE_NATURE", 5)
+    reglages.setattr(G, "CLASSES_DE_NATURE", 5)
 
     def premier_cinquieme_en_1950(sexe: str, assimilees: int
                                   ) -> tuple[dict[tuple, float], dict[tuple, set]]:
@@ -1137,7 +1167,7 @@ def test_les_malades_sont_au_chomage_a_la_part_des_autres(parametres, monkeypatc
 
 
 @pytest.mark.usefixtures("sans_le_reperage_des_decotes")
-def test_le_malade_sans_chomage_part_en_carriere_longue(simulateur, source, monkeypatch):
+def test_le_malade_sans_chomage_part_en_carriere_longue(simulateur, source, reglages):
     """Sous ``MALADIE_INDEPENDANTE``, l'homme né en 1955 d'une carrière pleine
     du salariat privé de la classe p50, du premier cinquième, entré à 17 ans :
     sa classe de centiles compte trois années assimilées, de 37 à 39 ans. Son
@@ -1157,7 +1187,7 @@ def test_le_malade_sans_chomage_part_en_carriere_longue(simulateur, source, monk
     la version seule : les classes plus fines de la vingt-sixième
     (``CLASSES_DE_NATURE``) en sont ôtées."""
     assert G.MALADIE_INDEPENDANTE
-    monkeypatch.setattr(G, "CLASSES_DE_NATURE", 5)
+    reglages.setattr(G, "CLASSES_DE_NATURE", 5)
     variantes = {v.cas.code: v.cas for v in G.grille("population", simulateur.effectifs,
                                                       source, ())}
     projection = simulateur.pour_la_projection()
@@ -1457,7 +1487,7 @@ def test_une_carriere_courte_de_la_population_s_etale_sur_la_vie_active(simulate
     assert courte.duree == 15 and courte.assimilees == round(
         G.parts_assimilees_des_classes(quintiles, "H", "10_20")["p50"] * 15)
     generation = 1960
-    carriere = courte.cas.construire(simulateur, generation)
+    carriere = _construite(simulateur, courte.cas, generation)
     validees = [ligne.annee - generation for ligne in carriere.lignes
                 if ligne.type_periode in ("emploi", "chomage_indemnise")]
     attendues = [int(courte.cas.age_debut) + d for d in G.annees_etalees(
@@ -1496,7 +1526,7 @@ def test_les_carrieres_des_femmes_suivent_la_duree_de_leur_generation(simulateur
     assert G.annees_incompletes(courte, 40.0, 60.0) == 60.0 - courte.cas.age_debut
     validees = {}
     for generation in (1935, 1965):
-        carriere = courte.cas.construire(simulateur, generation)
+        carriere = _construite(simulateur, courte.cas, generation)
         validees[generation] = sum(1 for ligne in carriere.lignes
                                    if ligne.type_periode in ("emploi", "chomage_indemnise"))
         assert validees[generation] == round(
@@ -1506,7 +1536,7 @@ def test_les_carrieres_des_femmes_suivent_la_duree_de_leur_generation(simulateur
 
 @pytest.mark.usefixtures("sans_le_reperage_des_decotes")
 def test_les_carrieres_allongees_entrent_comme_les_pleines(simulateur, source, parametres,
-                                                           monkeypatch):
+                                                           reglages):
     """Sous ``ALLONGEES_COMME_LES_PLEINES``, la carrière incomplète d'une femme
     du salariat privé dont les années de sa génération ne tiennent pas entre
     21 ans, l'entrée du gabarit, et l'âge légal entre plus tôt : à l'âge légal
@@ -1565,7 +1595,7 @@ def test_les_carrieres_allongees_entrent_comme_les_pleines(simulateur, source, p
     par_code = {v.cas.code: v.cas for v in variantes}
     assert par_code[f"{G.GABARIT}~f~10_20~p50"].debut_de(1955) == 21
     assert par_code[f"{G.GABARIT}~h~30_40~p95"].debut_de(1955) == 21
-    monkeypatch.setattr(G, "ALLONGEES_COMME_LES_PLEINES", False)
+    reglages.setattr(G, "ALLONGEES_COMME_LES_PLEINES", False)
     avant = {v.cas.code: v for v in G.grille("population", simulateur.effectifs, source, ())}
     assert avant[trente].cas.debut_de(1955) == 21
     assert G._par_generation(avant[trente].cas.cibles, 1955, 0.0) == 41.0
@@ -1616,7 +1646,7 @@ def test_le_rang_selon_la_duree_tient_les_marges_et_garde_l_association_de_l_eir
         assert rangs[sexe]["moins_10"]["p10"] > 2 * rangs[sexe]["40_plus"]["p10"]
 
 
-def test_les_retraites_au_minimum_se_rangent_au_premier_quintile(monkeypatch):
+def test_les_retraites_au_minimum_se_rangent_au_premier_quintile(reglages):
     """Sous ``MINIMUM_AU_PREMIER_QUINTILE``, la part de chaque quintile au
     minimum rejoint, avec ses tranches, la bande du premier. Cinq quintiles
     égaux, le premier de carrières courtes, les autres de longues, la moitié
@@ -1637,7 +1667,7 @@ def test_les_retraites_au_minimum_se_rangent_au_premier_quintile(monkeypatch):
     assert tableau["40_plus"]["p10"] == pytest.approx(0.1 * bas / 0.3)
     for nom, part in G.CENTILES:
         assert sum(cases[nom] for cases in tableau.values()) == pytest.approx(part)
-    monkeypatch.setattr(G, "MINIMUM_AU_PREMIER_QUINTILE", False)
+    reglages.setattr(G, "MINIMUM_AU_PREMIER_QUINTILE", False)
     assert G.association_rang_duree(quintiles, "F")["40_plus"]["p10"] == 0.0
 
 
@@ -2015,7 +2045,7 @@ def test_une_part_des_carrieres_incompletes_part_avec_une_decote(simulateur, sou
     projection = simulateur.pour_la_projection()
 
     def decotee(cas, generation):
-        taux = projection.echeancier(cas.construire(projection, generation)
+        taux = projection.echeancier(_construite(projection, cas, generation)
                                      ).au_depart.taux_liquidation
         return G.avec_decote(projection, cas, generation, taux)
 
@@ -2098,7 +2128,7 @@ def _decotes_attendues(racine: Path, generations: tuple[int, ...],
 
 
 def test_la_part_des_departs_avec_decote_suit_la_generation(simulateur, source, parametres,
-                                                           monkeypatch):
+                                                           reglages):
     """Sous ``DECOTE_SELON_LA_GENERATION``, la part des départs avec décote suit
     la génération, sexe par sexe, parmi tous les retraités du sexe : celle que
     l'EIR mesure aux nés en 1950 — 7,9 % des femmes, 5,6 % des hommes — et aux
@@ -2119,8 +2149,8 @@ def test_la_part_des_departs_avec_decote_suit_la_generation(simulateur, source, 
     (``DECOTE_DES_RESIDENTS``), qui a le sien, ni la surcote selon la
     génération (``SURCOTE_SELON_LA_GENERATION``), qui donne aussi des parts
     aux carrières complètes qui surcotent, et a le sien."""
-    monkeypatch.setattr(G, "DECOTE_DES_RESIDENTS", False)
-    monkeypatch.setattr(G, "SURCOTE_SELON_LA_GENERATION", False)
+    reglages.setattr(G, "DECOTE_DES_RESIDENTS", False)
+    reglages.setattr(G, "SURCOTE_SELON_LA_GENERATION", False)
     racine = parametres.racine_donnees
     residents = G.quintiles_eqcc(racine, residents=True)
     attendues = _decotes_attendues(racine, (1925, 1949, 1950, 1952, 1953, 1955, 1958, 1960,
@@ -2145,7 +2175,7 @@ def test_la_part_des_departs_avec_decote_suit_la_generation(simulateur, source, 
                 sum(siennes.values()), sum(poids[v.cas.code] for v in du_sexe))
 
     assert G.DECOTE_SELON_LA_GENERATION
-    monkeypatch.setattr(G, "DECOTE_DES_CARRIERES_QUI_LE_PEUVENT", False)
+    reglages.setattr(G, "DECOTE_DES_CARRIERES_QUI_LE_PEUVENT", False)
     variantes = G.grille("population", simulateur.effectifs, source, ())
     poids = _poids(variantes, simulateur.effectifs, source.millesime)
     for sexe, parts in attendues.items():
@@ -2154,7 +2184,7 @@ def test_la_part_des_departs_avec_decote_suit_la_generation(simulateur, source, 
             assert decotees / toutes == pytest.approx(attendue, rel=1e-6), (sexe, g)
             assert toutes == pytest.approx(sans_part, rel=1e-9), (sexe, g)
     assert all(v.part_de_la_generation(1952) == 1.0 for v in variantes if not G.incomplete(v))
-    monkeypatch.setattr(G, "DECOTE_SELON_LA_GENERATION", False)
+    reglages.setattr(G, "DECOTE_SELON_LA_GENERATION", False)
     sans = G.grille("population", simulateur.effectifs, source, ())
     assert all(v.part_de_la_generation(g) == 1.0 for v in sans for g in (1925, 1955, 1980))
     poids = _poids(sans, simulateur.effectifs, source.millesime)
@@ -2199,7 +2229,7 @@ def test_une_carriere_decote_a_l_ouverture_quand_le_droit_l_y_ouvre_avant_son_ta
 
 
 def test_la_decote_d_avant_1950_se_lit_au_stock_des_residents_selon_l_age(parametres,
-                                                                         monkeypatch):
+                                                                         reglages):
     """Sous ``DECOTE_DES_RESIDENTS``, la part des départs avec décote de chaque
     génération est celle des seuls résidents en France, que la population et
     le stock de 2020 comptent seuls : nés en 1950, 7,5 % des femmes et 4,5 %
@@ -2230,7 +2260,7 @@ def test_la_decote_d_avant_1950_se_lit_au_stock_des_residents_selon_l_age(parame
         for n, attendue in parts.items():
             assert G._par_generation(decotes[sexe], n, 0.0) == pytest.approx(
                 attendue, rel=1e-9), (sexe, n)
-    monkeypatch.setattr(G, "DECOTE_DES_RESIDENTS", False)
+    reglages.setattr(G, "DECOTE_DES_RESIDENTS", False)
     sans = G.decotes_des_generations(racine)
     assert G._par_generation(sans["F"], 1925, 0.0) == pytest.approx(0.083, abs=5e-4)
     assert G._par_generation(sans["H"], 1925, 0.0) == pytest.approx(0.036, abs=5e-4)
@@ -2270,7 +2300,7 @@ def test_la_part_des_departs_avec_decote_se_rapporte_aux_carrieres_qui_peuvent_d
     for generation in generations:
         decotent = set()
         for v in agents:
-            depart = projection.echeancier(v.cas.construire(projection, generation)).au_depart
+            depart = projection.echeancier(_construite(projection, v.cas, generation)).au_depart
             if G.avec_decote(projection, v.cas, generation, depart.taux_liquidation):
                 decotent.add(v.cas.code)
         assert decotent == (set() if generation < 1965 else {v.cas.code for v in agents})
@@ -2354,17 +2384,17 @@ def test_l_inaptitude_avance_le_depart_au_taux_plein_des_l_age_legal(
     homme = par_code[f"{G.GABARIT}~h~20_30~p50"]
     femme = par_code[f"{G.GABARIT}~f~30_40~p50"]
     inapte = replace(homme, inaptitude=True)
-    assert homme.age_liquidation_pour(projection, 1955) == 67.0
-    assert inapte.age_liquidation_pour(projection, 1955) == 62.0
-    depart = projection.echeancier(inapte.construire(projection, 1955)).au_depart
+    assert _age(projection, homme, 1955) == 67.0
+    assert _age(projection, inapte, 1955) == 62.0
+    depart = projection.echeancier(_construite(projection, inapte, 1955)).au_depart
     assert depart.trimestres_valides == 100
     assert depart.taux_liquidation == pytest.approx(0.5)
     assert G.condition_au_depart(projection, inapte, 1955) == (62.0, "taux_plein_autre")
     assert G.avance_par_l_inaptitude(projection, homme, 1955)
     assert G.avance_par_l_inaptitude(projection, inapte, 1955)
     assert not G.avance_par_l_inaptitude(projection, femme, 1955)
-    assert femme.age_liquidation_pour(projection, 1965) == 62.75
-    assert replace(femme, inaptitude=True).age_liquidation_pour(projection, 1965) == 62.0
+    assert _age(projection, femme, 1965) == 62.75
+    assert _age(projection, replace(femme, inaptitude=True), 1965) == 62.0
     assert G.avance_par_l_inaptitude(projection, femme, 1965)
 
 
@@ -2525,13 +2555,13 @@ def test_un_inapte_qui_attend_part_apres_l_age_de_son_taux_plein(simulateur, sou
         assert jumelle.cas.attente == attente
         assert G.condition_au_depart(projection, jumelle.cas, 1955) == (
             pytest.approx(62.0 + attente), "taux_plein_autre")
-        depart = projection.echeancier(jumelle.cas.construire(projection, 1955)).au_depart
+        depart = projection.echeancier(_construite(projection, jumelle.cas, 1955)).au_depart
         assert depart.trimestres_valides == 100
         assert depart.taux_liquidation == pytest.approx(0.5)
         assert all(pension.surcote == 0.0 for pension in depart.pensions_par_regime)
-        assert jumelle.cas.age_liquidation_pour(projection, 1965) == pytest.approx(
+        assert _age(projection, jumelle.cas, 1965) == pytest.approx(
             62.0 + attente)
-        assert jumelle.cas.age_liquidation_pour(projection, 1940) == pytest.approx(
+        assert _age(projection, jumelle.cas, 1940) == pytest.approx(
             60.0 + attente)
     assert [round(a, 2) for a, _ in attentes] == [0.0, 1.13, 3.39]
 
@@ -2650,11 +2680,11 @@ def test_un_depart_avec_decote_qui_attend_decote_moins(simulateur, source, param
                            else code]
         assert G.condition_au_depart(projection, jumelle.cas, 1955) == (
             pytest.approx(62.0 + attente), "decote")
-        depart = projection.echeancier(jumelle.cas.construire(projection, 1955)).au_depart
+        depart = projection.echeancier(_construite(projection, jumelle.cas, 1955)).au_depart
         valides.add(depart.trimestres_valides)
         assert depart.taux_liquidation == pytest.approx(
             0.5 - 0.00625 * math.ceil(4.0 * (5.0 - attente)))
-        assert jumelle.cas.age_liquidation_pour(projection, 1940) == pytest.approx(
+        assert _age(projection, jumelle.cas, 1940) == pytest.approx(
             60.0 + attente)
     assert len(valides) == 1 and valides.pop() < 146
     assert [round(a, 2) for a, _ in attentes] == [0.0, 1.14, 3.4]
@@ -2681,7 +2711,7 @@ def test_l_attente_d_un_depart_avec_decote_suit_l_ecart_des_deux_ages(
                            else code]
         assert G.condition_au_depart(projection, jumelle.cas, 1970) == (
             pytest.approx(64.0 + attente * 3.0 / 5.0), "decote")
-        assert jumelle.cas.age_liquidation_pour(projection, 1955) == pytest.approx(
+        assert _age(projection, jumelle.cas, 1955) == pytest.approx(
             62.0 + attente)
 
 
@@ -2730,13 +2760,13 @@ def test_une_femme_qui_complete_sa_duree_part_entre_les_deux_ages(simulateur, so
         pytest.approx(67.0), "taux_plein_age")
     assert G.condition_au_depart(projection, jumelle.cas, 1955) == (
         pytest.approx(62.0 + manquants / 4.0), "taux_plein_autre")
-    assert projection.echeancier(jumelle.cas.construire(projection, 1955)
+    assert projection.echeancier(_construite(projection, jumelle.cas, 1955)
                                  ).au_depart.trimestres_valides == 166
-    assert projection.echeancier(soeur.cas.construire(projection, 1955)
+    assert projection.echeancier(_construite(projection, soeur.cas, 1955)
                                  ).au_depart.trimestres_valides == 166 - manquants
     assert jumelle.cas.decalages_de(1940) == soeur.cas.decalages_de(1940)
-    assert jumelle.cas.age_liquidation_pour(projection, 1940) == pytest.approx(
-        soeur.cas.age_liquidation_pour(projection, 1940))
+    assert _age(projection, jumelle.cas, 1940) == pytest.approx(
+        _age(projection, soeur.cas, 1940))
     assert not any(v.complete for v in variantes if v.cas.sexe == "H")
 
 
@@ -2854,12 +2884,12 @@ def test_une_part_des_agents_part_a_son_taux_plein(simulateur, source, parametre
     assert agent.part_de_la_generation(1950) == pytest.approx(1.0 / parts["H"])
     assert soeur.part_de_la_generation(1950) == 0.0
     projection = simulateur.pour_la_projection()
-    a_l_ouverture = projection.echeancier(agent.cas.construire(projection, 1965)).au_depart
-    au_taux_plein = projection.echeancier(soeur.cas.construire(projection, 1965)).au_depart
-    assert agent.cas.age_liquidation_pour(projection, 1965) == pytest.approx(50.0)
+    a_l_ouverture = projection.echeancier(_construite(projection, agent.cas, 1965)).au_depart
+    au_taux_plein = projection.echeancier(_construite(projection, soeur.cas, 1965)).au_depart
+    assert _age(projection, agent.cas, 1965) == pytest.approx(50.0)
     assert a_l_ouverture.taux_liquidation == pytest.approx(0.75 * (1 - 10 * 0.0125 * 5 / 10))
     assert G.avec_decote(projection, agent.cas, 1965, a_l_ouverture.taux_liquidation)
-    assert soeur.cas.age_liquidation_pour(projection, 1965) > 50.0
+    assert _age(projection, soeur.cas, 1965) > 50.0
     assert au_taux_plein.taux_liquidation == pytest.approx(0.75)
     assert not G.avec_decote(projection, soeur.cas, 1965, au_taux_plein.taux_liquidation)
 
@@ -3039,8 +3069,8 @@ def test_un_depart_avec_surcote_attend_apres_l_age_legal(simulateur, source):
     femme = surcotee("F", "30_40")
     assert G.condition_au_depart(projection, femme.cas, 1955) == (
         pytest.approx(62.0 + attentes["F"][0][0]), "surcote")
-    assert (homme.cas.age_liquidation_pour(projection, 1940)
-            == sans.cas.age_liquidation_pour(projection, 1940))
+    assert (_age(projection, homme.cas, 1940)
+            == _age(projection, sans.cas, 1940))
 
 
 @pytest.fixture(scope="module")
@@ -3189,7 +3219,7 @@ def test_un_fonctionnaire_civil_qui_surcote_part_avec_la_surcote_moyenne_de_sa_c
         for sexe in ("F", "H"):
             for poly in (False, True):
                 cas = jumelle(affiliation, sexe, poly).cas
-                plein = G.au_taux_plein(cas).age_liquidation_pour(projection, 1960)
+                plein = _age(projection, G.au_taux_plein(cas), 1960)
                 age, trimestres = _depart_et_surcote(projection, cas, 1960)
                 assert age > plein, (affiliation, sexe, poly)
                 assert (math.floor(4 * attente) <= round(trimestres)
@@ -3197,7 +3227,7 @@ def test_un_fonctionnaire_civil_qui_surcote_part_avec_la_surcote_moyenne_de_sa_c
                 assert G.condition_au_depart(projection, cas, 1960) == (
                     pytest.approx(age), "surcote")
     sedentaire = jumelle("fonctionnaire_etat", "H", False).cas
-    assert sedentaire.age_liquidation_pour(projection, 1960) == pytest.approx(
+    assert _age(projection, sedentaire, 1960) == pytest.approx(
         22 + 167 / 4 + surcotes["fonctionnaire_etat"][1])
     assert G.debut_de_la_surcote(projection, sedentaire, 1960, 65.0) == pytest.approx(
         22 + 167 / 4)
@@ -3254,7 +3284,7 @@ def test_la_surcote_des_fonctionnaires_suit_l_annee_ou_leur_generation_atteint_l
 
 
 def test_la_surcote_du_salariat_se_prend_sans_celle_des_statutaires(
-        simulateur, source, parametres, population, monkeypatch):
+        simulateur, source, parametres, population, reglages):
     """Sous ``SURCOTE_SELON_LA_GENERATION``, tous les retraités de chaque sexe
     surcotent, année de naissance par année de naissance, la part que l'EIR
     mesure aux résidents de leur génération — nés en 1950 : 11,2 % des
@@ -3305,7 +3335,7 @@ def test_la_surcote_du_salariat_se_prend_sans_celle_des_statutaires(
             assert 0.0 < du_salariat / salariat < 1.0, (sexe, naissance)
             if (sexe, naissance) == ("F", 1955):
                 assert du_salariat / salariat < base["F"] == pytest.approx(0.142 * 87.4 / 57.3)
-    monkeypatch.setattr(G, "SURCOTE_SELON_LA_GENERATION", False)
+    reglages.setattr(G, "SURCOTE_SELON_LA_GENERATION", False)
     sans = G.grille("population", simulateur.effectifs, source, ())
     assert [v.cas for v in sans] == [v.cas for v in population]
     assert [v.retraites for v in sans] == [v.retraites for v in population]
@@ -3523,7 +3553,7 @@ def test_la_mesure_de_la_surcote_lit_ses_sources_annee_par_annee():
         1_482 / 24_219)
 
 
-def test_la_mesure_de_la_surcote_construit_la_version_la_constante_allumee(monkeypatch):
+def test_la_mesure_de_la_surcote_construit_la_version_la_constante_allumee(reglages):
     """Relecture R-I-bis, point 1 : sur la grille de la page, qui n'a pas de
     jumelle, rien ne distingue les deux pesées, et les permuter ne se voyait
     pas. Ici, chaque grille porte la valeur de la constante sous laquelle elle
@@ -3535,7 +3565,7 @@ def test_la_mesure_de_la_surcote_construit_la_version_la_constante_allumee(monke
         return [replace(premiere, parts_des_generations=(
             (1900, 1.0 if G.SURCOTE_SELON_LA_GENERATION else 0.5),))]
 
-    monkeypatch.setattr(G, "reference", reference)
+    reglages.setattr(G, "reference", reference)
     grilles = S.les_deux_grilles("reference", Parametres(), "SURCOTE_SELON_LA_GENERATION")
     assert grilles["version"][0].parts_des_generations == ((1900, 1.0),)
     assert grilles["eteinte"][0].parts_des_generations == ((1900, 0.5),)
@@ -3719,6 +3749,22 @@ def _echantillon_au_portage() -> tuple:
     )
 
 
+def _interdire_les_jumeaux(monkeypatch, cas_type) -> None:
+    """Les jumeaux Python qui datent, bâtissent et simulent la grille, empêchés
+    de calculer (``outils_pont.interdire``) : le simulateur du test est celui
+    de la façade, mais le script en bâtit lui-même du moteur Python, sous les
+    seuls paramètres."""
+    from outils_pont import interdire, jumeaux_qui_datent_et_batissent
+
+    interdire(monkeypatch, (*jumeaux_qui_datent_et_batissent(),
+                            "retraite_notionnelle.scenarios.actuel.ScenarioActuel.calculer",
+                            "retraite_notionnelle.simulateur.Simulateur.echeancier",
+                            "retraite_notionnelle.simulateur.Simulateur.simuler",
+                            "retraite_notionnelle.simulateur.Simulateur.proposition",
+                            (G.CasTypeLarge, "_carriere"), (cas_type, "_carriere_entree_tardive"),
+                            (G, "_debut_de_la_surcote_en_python")))
+
+
 def test_la_grille_large_se_date_et_se_bat_au_portage_sans_les_jumeaux(memoire_isolee,
                                                                       monkeypatch):
     """La grille élargie se date et se bâtit au portage, comme celle du dépôt
@@ -3738,10 +3784,8 @@ def test_la_grille_large_se_date_et_se_bat_au_portage_sans_les_jumeaux(memoire_i
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     from retraite_notionnelle import castypes
     from retraite_notionnelle.castypes import CasType
-    from retraite_notionnelle.scenarios.actuel import ScenarioActuel
 
     from outils_valeurs import valeur_figee
-    from test_pont import _interdire, _jumeaux_qui_datent_et_batissent
 
     echantillon = _echantillon_au_portage()
     generations = (1950, 1965, 1980)
@@ -3755,11 +3799,7 @@ def test_la_grille_large_se_date_et_se_bat_au_portage_sans_les_jumeaux(memoire_i
                 C._grille_batie(reference.pour_la_projection(), echantillon, "droit"),
                 C._pensionnes(reference, echantillon, "droit"))
 
-    _interdire(monkeypatch, (*_jumeaux_qui_datent_et_batissent(), (ScenarioActuel, "calculer"),
-                             (Simulateur, "echeancier"), (Simulateur, "simuler"),
-                             (Simulateur, "proposition"), (G.CasTypeLarge, "_carriere"),
-                             (CasType, "_carriere_entree_tardive"),
-                             (G, "_debut_de_la_surcote_en_python")))
+    _interdire_les_jumeaux(monkeypatch, CasType)
     au_portage = valeur_figee("échantillon daté, bâti et simulé",
                               tout(Simulateur(Parametres())))
     assert len(au_portage[3][0]) == len(echantillon) * 2
@@ -3783,10 +3823,8 @@ def test_les_mesures_de_la_grille_large_passent_par_le_portage_sans_les_jumeaux(
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     from retraite_notionnelle.castypes import CasType
-    from retraite_notionnelle.scenarios.actuel import ScenarioActuel
 
     from outils_valeurs import valeur_figee
-    from test_pont import _interdire, _jumeaux_qui_datent_et_batissent
 
     monkeypatch.setattr(C, "generations", lambda: (1950, 1965))
     du_depot = {cas.code: cas for cas in GRILLE_DU_COUT}
@@ -3821,10 +3859,7 @@ def test_les_mesures_de_la_grille_large_passent_par_le_portage_sans_les_jumeaux(
                         for generation in (1950, 1965)],
         }
 
-    _interdire(monkeypatch, (*_jumeaux_qui_datent_et_batissent(), (ScenarioActuel, "calculer"),
-                             (Simulateur, "echeancier"), (G.CasTypeLarge, "_carriere"),
-                             (CasType, "_carriere_entree_tardive"),
-                             (G, "_debut_de_la_surcote_en_python")))
+    _interdire_les_jumeaux(monkeypatch, CasType)
     au_portage = mesures()
     for mesure, valeur in au_portage.items():
         valeur_figee(f"mesure {mesure} de l'échantillon", valeur)
