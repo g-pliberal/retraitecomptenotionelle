@@ -7337,7 +7337,7 @@ commencer : la note `2026-11-16-le-retablissement-et-le-plafond-de-l-18.md`,
 qui liste ce qui reste de la troisième vague, `test_retraite_progressive.py`
 en tête. La quatrième vague garde
 `test_moteur.py` et `test_pont.py`
-(`2026-11-16-la-conversion-au-portage.md`) ; `test_avantages.py` sort de
+(`2026-11-16-l-age-de-reference-au-portage.md`) ; `test_avantages.py` sort de
 la liste quand `test_pont.py` bâtit son apprenti lui-même.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
