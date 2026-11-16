@@ -13,10 +13,10 @@ ordre.
 | # | Écart | Au texte | Qui | Effet sur un cas | Déclaré ? | Corriger ? |
 |---|---|---|---|---|---|---|
 | 1 | Carrière longue et handicap avant 2009 : 160 trimestres, non 161 à 164 | confirmé | nés 1949-1952, pension avant 2009 | départ refusé jusqu'à deux ans ; ou pension réduite de 0,6 à 2,4 % | non | **oui, d'abord** |
-| 1 bis | Nés 1953-1955 avant le décret de leur génération : 164 trimestres | confirmé pour 1953-1954, probable pour 1955 | départs anticipés 2009-2010 (1955 : 2011) | un trimestre de trop, mêmes effets en plus petit | non | oui, avec le 1 |
+| 1 bis | Nés 1953-1955 avant le décret de leur génération : 164 trimestres (165 pour 1955) | confirmé (circulaire Cnav n° 2011/25) | demandes avant 2011 (1955 : avant août 2011) | un trimestre de trop, mêmes effets en plus petit | non | oui, avec le 1 |
 | 2 | Cumul emploi-retraite plafonné à 160 % du SMIC dès 2007 | confirmé | reprises d'activité 2007-2008, pensions depuis 2004 | pension suspendue à tort chaque mois où pension et revenus passent un SMIC | non | **oui** |
-| 3 | Pension d'inapte ou d'ex-invalide suspendue avant 65 ans au-delà de 50 % du SMIC × 520 h par trimestre | confirmé | inaptes de 60 à 64 ans qui travaillent, jusqu'au 9 janvier 2010 | pension entière servie à tort, chaque trimestre de dépassement | non | oui, plus tard (rare) |
-| 4 | Convention franco-tchécoslovaque : totalisation-proratisation | confirmé par la circulaire ministérielle, convention non lue au JO | périodes tchécoslovaques, pensions avant le 1er mai 2004 | le modèle sert 20 % de trop sur le cas de la note de 2003 | en partie (`calcul: non_lu`) | oui, plus tard (rare) |
+| 3 | Pension d'inapte ou d'ex-invalide suspendue avant 65 ans au-delà de 50 % du SMIC × 520 h par trimestre | confirmé | inaptes de 60 à 64 ans qui travaillent, jusqu'au 19 décembre 2008 | pension entière servie à tort, chaque trimestre de dépassement | non | oui, plus tard (rare) |
+| 4 | Convention franco-tchécoslovaque : totalisation-proratisation | confirmé (article 13 de 1967, rapport du Sénat) | périodes tchécoslovaques, surtout pensions avant le 21 février 2003 | le modèle sert 20 % de trop sur le cas de la note de 2003 | en partie (`calcul: non_lu`) | oui, plus tard (rare) |
 | 5 | RETREP : proratisation sur 150 trimestres | tolérance ministérielle, sans texte au JO | maîtres du privé, avantage avant 2004 | aucun aujourd'hui : régime non modélisé, absent de la saisie | fiche non modélisée | non, à noter dans la fiche |
 | 6 | Réversion juillet 2004 - juin 2006 : réversions des autres régimes de base hors des ressources | confirmé | survivants à plusieurs réversions de base, 2004-2006 | quelques centaines d'euros par an, au plus deux ans | non | oui, petit |
 
@@ -224,6 +224,103 @@ la plus haute des deux, sur neuf mois de décès. Effet faible, non chiffré.
 
 ## Ce qui n'a pas été fait
 
-Aucun texte de la convention franco-tchécoslovaque n'a été lu. Les cas sont posés à la
-main, non passés au moteur. La circulaire qui applique le décret n° 2011-916 aux départs
-de 2011 n'a pas été lue (1 bis, génération 1955).
+Les cas sont posés à la main, non passés au moteur. La circulaire Cnav n° 2011/24 (carrière
+longue des nés de 1953 et après) et la circulaire de 1990 sur la convention
+tchécoslovaque n'ont pas été lues. Voir la contre-vérification, plus bas, qui corrige le
+1 bis et la fin du 3.
+
+## Contre-vérification, le même jour : ce qui confirme, ce qui contredit
+
+À la demande du propriétaire, chaque écart a été confronté à ce qui pourrait le
+contredire : textes ultérieurs ou rétroactifs, doctrine de la Cnav, réponses
+ministérielles au Parlement, rapports, chiffres publics. Sources lues en entier : les
+circulaires Cnav n° 2007/34 (30 avril 2007), 2008/41 (25 juillet 2008) et 2011/25
+(17 mars 2011), dans les copies de documents.gereso.com ; les réponses aux questions
+écrites AN n° 39666, 100263 et 54631 (13e législature) et n° 334, 94754 ; le rapport du
+Sénat n° 27 (1969-1970) sur l'avenant franco-tchécoslovaque de 1967 ; LEGI pour L. 352-1
+et les articles 10 et 18 des décrets n° 2004-857 et 2004-858. Aucune décision de justice
+trouvée sur ces points (recherche web, sans accès à Légifrance JURI).
+
+**1. Carrière longue avant 2009 — confirmé, certitude haute, droit et calcul.**
+Confirment : la circulaire Cnav n° 2008/41, § 211 : les durées totale et cotisée
+« évoluent à compter du 1er janvier 2009 » ; « A compter du 1er janvier 2009 [...] Les
+durées d'assurance pour l'ouverture du droit et le calcul sont déterminées en fonction de
+la génération » ; § 213, les demandes « pour des dates d'effet postérieures au
+1er décembre 2008 » se liquident aux nouvelles durées. La circulaire DSS n° 2007/396
+(note de 2007) : « la durée d'assurance à retenir pour le calcul demeure fixée à 160
+trimestres ». Les réponses AN n° 39666 et 100263 : les nés en 1952 partent à 56 ans avec
+168 trimestres jusqu'à une date d'effet au 1er décembre 2008, 172 au-delà ; la mesure
+« dépasse les deux milliards d'euros par an », « plus de 100 000 assurés par an ». La
+DREES : 21 % de la génération 1952 du régime général est partie en carrière longue.
+Pourrait contredire : la n° 2008/41, § 1, dit l'allongement « applicable à la génération
+à laquelle appartient l'assuré quelle que soit la date d'effet de sa pension » ; mais ce
+paragraphe vise la pension à 60 ans et au-delà, qui ne peut prendre effet avant 2009
+pour ces générations, et le § 211 tranche pour l'anticipée. Rien ne rend rétroactif le
+décret n° 2008-1555. L'enjeu est de masse : les générations 1949 à 1952 forment le gros
+des 100 000 départs annuels de 2005 à 2008.
+
+**1 bis. Nés de 1953 à 1955 — confirmé, et précisé : la date de la demande décide.**
+La circulaire Cnav n° 2011/25 : « La durée d'assurance à retenir pour les assurés nés au
+cours des années 1953, 1954 et suivantes est donc de 164 ou 165 trimestres selon que la
+date de demande [...] se situe avant ou après le 1er janvier 2011 », pour l'ouverture du
+droit « de même que pour procéder au calcul de la pension » ; les attestations délivrées
+avant 2011 « pour des dates d'effet de pension jusqu'au 1er juin 2011 au plus tard ne
+doivent pas être remises en cause ». Pour les nés de 1955 et après, « dans l'attente », la
+durée de 1953 et 1954, 165, non 164 : la note ci-dessus est corrigée sur ce point, le
+modèle oppose 166 au lieu de 165 aux départs de 1955 antérieurs au décret du 1er août
+2011. Certitude haute pour le handicap, que la n° 2011/25 traite ; la circulaire jumelle
+de la carrière longue (n° 2011/24) n'a pas été lue. Le critère de la demande n'est pas
+dans le modèle, qui ne connaît que la date d'effet : la date d'effet au plus tard le
+1er juin 2011 en est l'approche la plus sûre.
+
+**2. Cumul à 160 % du SMIC dès 2007 — confirmé, certitude haute.** La circulaire Cnav
+n° 2007/34 : « La Loi de financement de la sécurité sociale pour 2007 porte la limite
+minimum de cumul à 1,6 fois le SMIC mensuel, soit 2007,00 euros », « pour les arrérages
+dus à partir de la mensualité de janvier 2007 », avec un exemple chiffré. La réponse AN
+n° 334 le redit (« 1,61 fois » le SMIC, coquille du ministère). Rien de contraire trouvé.
+
+**3. L'inapte avant 65 ans — confirmé, la fin à corriger.** La base légale est L. 352-1
+(version de 1985 au 19 décembre 2008), que la LFSS pour 2009 abroge (art. 88, II ;
+réponse AN n° 54631 : elle « autorisai[t] l'exercice d'une activité professionnelle par
+les personnes titulaires d'une pension de retraite allouée au titre de l'inaptitude sous
+réserve que le revenu tiré de cette activité n'excède la moitié du [SMIC] »). R. 352-2 ne
+disparaît qu'au 9 janvier 2010, sans loi qui le porte depuis décembre 2008 : la fin à
+retenir est le 19 décembre 2008, non 2010 (certitude moyenne sur la date exacte,
+haute sur la règle). La Cnav en a publié le plafond chaque année (n° 2003/31, 2006/40,
+2007/49, 2008/28) : elle l'appliquait.
+
+**4. Convention franco-tchécoslovaque — confirmé au texte, portée plus étroite.** Le
+rapport du Sénat n° 27 (1969-1970) reproduit l'article 13 de la convention, dans la
+rédaction de l'avenant du 17 octobre 1967 : totalisation des périodes, puis « les
+avantages [...] sont déterminés, en principe, en réduisant le montant des avantages
+auxquels il aurait droit si la totalité des périodes [...] avait été effectuée sous le
+régime correspondant français [...] et ce, au prorata de la durée des périodes accomplies
+sous ce régime ». Aucune option de calcul national. Ce qui réduit l'écart : depuis 1990,
+l'assuré résidant en France qui a 150 trimestres français est payé sans prorata (le
+modèle aussi, sans écart) ; depuis le 21 février 2003, à 65 ans ou au taux plein, la
+caisse sert la plus haute de la pension proratisée et de la pension des seules périodes
+françaises, que le modèle égale ou dépasse peu. L'écart de 20 % du cas de la note de 2003
+vaut donc pour les pensions prises avant le 21 février 2003 et, jusqu'au 1er mai 2004,
+pour les départs avant 65 ans sans taux plein au titre des seules périodes françaises.
+Certitude haute sur la règle, moyenne sur la portée (la circulaire de 1990 n'a pas été
+relue).
+
+**5. RETREP — rien de contraire, contexte précisé.** Les réponses AN de 2005 (n° 63505,
+82062 et voisines) disent que le ministère a fait liquider dès 2005 les avantages
+temporaires sur 160 trimestres, la lettre du 4 avril 2005 gardant 150 à ceux pris avant
+2004. Toujours sans effet sur le modèle, qui ne connaît pas le régime.
+
+**6. Réversion de juillet 2004 à juin 2006 — confirmé, certitude haute.** La réponse AN
+n° 94754 (19 décembre 2006) lit l'article 3 du décret n° 2004-1447 comme rendant
+permanente l'exclusion des seules réversions complémentaires ; le texte (JORFARTI000001653734)
+ne supprime de l'article 10, II, que les mots qui les visaient : l'exclusion des
+réversions des régimes de base y reste jusqu'au 30 juin 2006, et LEGI garde l'article dans
+cette rédaction depuis le 30 décembre 2004 (LEGIARTI000006233640). Même dérogation pour
+les salariés agricoles (décret n° 2004-858, art. 18, versions jusqu'au 22 avril 2005 et
+depuis). La Cnav l'appliquait (annexe de la n° 2006/37, « PR V1 [...] exclusion des PR des
+régimes visés »).
+
+**Bilan.** Aucun des six n'est infirmé. Deux sont précisés : les nés de 1953 à 1955
+(critère de la demande ; 165 et non 164 pour 1955) et l'inapte (fin au 19 décembre
+2008). Un est rétréci : la convention tchécoslovaque, surtout avant février 2003. L'ordre
+des corrections ne change pas.
