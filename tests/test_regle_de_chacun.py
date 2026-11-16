@@ -103,10 +103,12 @@ A_L_ANNEE_D_EFFET = {
         "fiche de 2008, celle de l'ancien régime ; de 2009 à 2012, la même "
         "bascule, au premier départ que le règlement ouvre aux nés de 1949 à "
         "1952")),
-    ("msa_non_salaries", "age"): (1986, 1986, (
-        "loi n° 86-19 du 6 janvier 1986, article 11 (LEGIARTI000006757038) : "
-        "soixante ans pour les pensions « prenant effet postérieurement au "
-        "1er janvier 1986 », soixante-cinq avant (lu le 14 octobre 2026)")),
+    ("msa_non_salaries", "age"): (1986, 1990, (
+        "ancien code rural, article 1120-1, version du 8 janvier 1986 "
+        "(LEGIARTI000006581005), qu'écrit la loi n° 86-19 : l'âge minimum « à "
+        "soixante-quatre ans à compter du 1er janvier 1986 », un an de moins chaque "
+        "1er janvier jusqu'à soixante ans le 1er janvier 1990 (action 175, écart "
+        "lourd n° 3 des circulaires, lu le 16 novembre 2026)")),
     ("cnbf", "age"): (2004, 2004, (
         "loi n° 2003-775, article 97, II (JORFARTI000002429604) : L. 723-10-1, "
         "l'âge de L. 351-1 et la durée du taux plein, « entrent en vigueur le "

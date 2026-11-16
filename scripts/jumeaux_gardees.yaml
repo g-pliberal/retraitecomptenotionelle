@@ -219,6 +219,7 @@ src/retraite_notionnelle/donnees/macro.py:
     - smic_horaire_de
     - smic_horaire_des_mois
     - smic_horaire_du_forfait
+    - smic_horaire_en_vigueur
     - trimestres_valides
 
 src/retraite_notionnelle/donnees/mortalite.py:

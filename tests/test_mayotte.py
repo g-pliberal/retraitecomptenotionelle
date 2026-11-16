@@ -240,9 +240,11 @@ def test_les_salaires_de_mayotte_d_avant_septembre_2023_gagnent_dix_pour_cent(si
 
 
 def test_une_pension_de_mayotte_d_avant_septembre_2023_n_est_pas_revalorisee(simulateur):
-    """La même, partie à soixante-deux ans en février 2023 : rien ne bouge."""
+    """La même, partie à soixante-deux ans au début de 2023 : rien ne bouge."""
     carriere = _salariee_a_8_000_euros(62)
-    assert (carriere.annee_liquidation, carriere.mois_liquidation) == (2023, 2)
+    # Le mois du départ suit la présomption du mois de naissance : avant
+    # septembre, quel qu'il soit.
+    assert carriere.annee_liquidation == 2023 and carriere.mois_liquidation < 9
     attendu = _sam_attendu(simulateur.macro, carriere, lambda annee: 1.0)
     periode = simulateur.catalogue["cssm_mayotte"].periode(2023)
     assert liquider.salaire_de_reference(
