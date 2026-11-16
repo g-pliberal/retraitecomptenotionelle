@@ -7330,13 +7330,13 @@ de `contribution_etat`.
 **Reprise, au 16 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Ses règles s'importent toutes les unes les autres : le retrait se fera par le
-haut, une fois le moteur Python plus exécuté. Restent 9 fichiers de tests
+haut, une fois le moteur Python plus exécuté. Restent 8 fichiers de tests
 qui importent une règle Python ; leur liste est dans
-`test_fichiers_sur_le_moteur_python.py`. Une étape par session. Par quoi
-commencer : la note `2026-11-16-les-donnees-et-le-solde-a-la-facade.md`,
-qui dit ce que demande le dernier fichier de la troisième vague,
-`test_controle_drees_panorama.py` : d'abord porter les populations de la
-Cnav par âge à la mortalité du site. La quatrième vague garde
+`test_fichiers_sur_le_moteur_python.py`. Une étape par session. La
+troisième vague est finie (`2026-11-16-les-populations-cnav-au-portage.md`) :
+ce qui reste attend que le coût ne lise plus le moteur Python, ou part avec
+lui. Par quoi commencer : la note
+`2026-11-16-la-quatrieme-vague-a-mi-chemin.md`. La quatrième vague garde
 `test_moteur.py` et `test_pont.py`
 (`2026-11-16-les-cas-types-au-portage.md`) ; `test_avantages.py` sort de
 la liste quand `test_pont.py` bâtit son apprenti lui-même.
