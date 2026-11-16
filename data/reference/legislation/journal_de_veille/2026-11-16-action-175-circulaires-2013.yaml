@@ -1,0 +1,33 @@
+date: "2026-11-16"
+session: "action 175, étape 6 : les 44 circulaires, lettres et instructions de 2013 que la base de la Cnav cite sans thème, dernière année de cette nature"
+consulte: >-
+  Les 44 références sans thème et à lire que le registre date de 2013 dont le titre
+  commence par « Circulaire », « Lettre », « Instruction », « Note d'information » ou
+  « Diffusion d'instructions », relues par l'API de la base le 16 novembre 2026 vers
+  14 h UTC (/reference/referencesByFileLeafRef/), toutes servies, 10 en page et 34 en
+  PDF lus au site (/Pdf/textes/), dont deux scans lus à l'image ; lues en entier par la
+  session, sauf deux textes longs sans règle de pension lus par leur plan et une
+  recherche (le contrat de génération, le guide du secret professionnel) ; 28 citations
+  retrouvées mot pour mot. Pour les confronter : les fiches reversion, service_civique,
+  minimum_vieillesse, cumul_emploi_retraite_et_retraite_progressive,
+  rachats_et_versements, inaptitude_invalidite_penibilite_amiante,
+  csg_des_pensions_selon_le_revenu ; les séries smic_horaire.csv,
+  plafond_securite_sociale.csv, affiliations.yaml, prelevements_historiques.yaml,
+  micro_social.yaml ; le code de la réversion et du cumul (moteur/js/droit/reversion.js,
+  src/retraite_notionnelle/droit/cumul.py) ; les limites docs/limites/. Ni Légifrance,
+  ni le Journal officiel, ni l'index de la DILA.
+trouve: >-
+  Le registre range les 44 (20 limite, 24 hors_modele), sans raison neuve. Conformes : le
+  SMIC de 2013 et les plafonds de la réversion, le seuil d'affiliation des élus locaux à
+  la moitié du plafond, la CASA au 1er avril 2013, le trimestre du service civique, la
+  pension entière de l'élu en cumul. Aucun écart neuf : la lettre Cnav du 5 décembre
+  2013 confirme l'écart de 2012 sur la qualité d'assuré social des périodes assimilées ;
+  un point non tranché, la valeur des avantages viagers dans les ressources de la
+  réversion sur douze mois (lettre ministérielle du 7 mars 2013). La nature des
+  circulaires est finie ; ses écarts candidats sont classés par poids dans
+  docs/feuille_de_route/175/2026-11-16-etape-6-circulaires-recapitulatif-des-ecarts.md.
+  Note docs/feuille_de_route/175/2026-11-16-etape-6-circulaires-2013.md.
+reste: >-
+  Les trois autres natures de l'étape 6 : les 96 autres textes sans thème, les 74
+  références nommées sans être servies, les 107 accords ; R. 815-29 à relire au Journal
+  officiel.

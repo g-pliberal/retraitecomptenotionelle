@@ -1,15 +1,5 @@
 # Étape 6, circulaires de 2012 : les 37 références sans thème de la dix-neuvième période, relues par l'API
 
-**Reprise, au 16 novembre 2026.** Trois natures de l'étape sont rangées. La
-quatrième, les circulaires, lettres et instructions sans thème, l'est de 1936 à 2012
-par une lecture dans l'ordre, et de 2026 à 2014 par une lecture à rebours, qui s'est
-arrêtée là. Il n'en reste qu'une année : 2013, 44 circulaires, que la lecture dans
-l'ordre prend ; avec elle, cette nature est finie. Viennent ensuite, une session par
-nature : les 96 autres textes, les 74 que la base nomme sans les servir, les 107
-accords. Méthode : celle de la note de 2010, chaque texte lu en entier, chaque citation
-vérifiée par script. 2012 a un écart neuf, la qualité d'assuré social qu'exigent les
-périodes assimilées, et précise celui de 2011 sur la génération de la réversion (ici).
-
 **Le 16 novembre 2026, ce qui est fait.**
 
 - *La période* : les références du registre sans thème et à lire dont le titre commence
