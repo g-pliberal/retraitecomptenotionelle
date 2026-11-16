@@ -7330,15 +7330,15 @@ de `contribution_etat`.
 **Reprise, au 16 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Ses règles s'importent toutes les unes les autres : le retrait se fera par le
-haut, une fois le moteur Python plus exécuté. Restent 23 fichiers de tests
+haut, une fois le moteur Python plus exécuté. Restent 17 fichiers de tests
 qui importent une règle Python ; leur liste est dans
-`test_fichiers_sur_le_moteur_python.py`. Une étape par session. Plusieurs
-fichiers font tourner le coût, qui veut encore un simulateur Python : ils
-attendent qu'il n'en lise plus. Par quoi commencer : les fichiers de la
-troisième vague que la note `2026-11-16-la-troisieme-vague-a-moitie.md`
-liste en dernier, `test_etranger.py` le premier. La quatrième vague en a
-sorti cinq ; restent `test_moteur.py`, dont l'indexation et la conversion
-sont parties, et `test_pont.py` (`2026-11-16-la-conversion-au-portage.md`).
+`test_fichiers_sur_le_moteur_python.py`. Une étape par session. Le coût
+prend désormais un simulateur de la façade : ses études n'attendent plus.
+Par quoi commencer : la note `2026-11-16-le-cout-sur-la-facade.md`, qui
+liste ce qui reste de la troisième vague, `test_revalorisation.py` le
+premier. La quatrième vague garde `test_moteur.py` et `test_pont.py`
+(`2026-11-16-la-conversion-au-portage.md`) ; `test_avantages.py` sort de
+la liste quand `test_pont.py` bâtit son apprenti lui-même.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
