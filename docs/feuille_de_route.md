@@ -7330,16 +7330,15 @@ de `contribution_etat`.
 **Reprise, au 16 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Ses règles s'importent toutes les unes les autres : le retrait se fera par le
-haut, une fois le moteur Python plus exécuté. Restent 3 fichiers de tests
-qui importent une règle Python ; leur liste est dans
-`test_fichiers_sur_le_moteur_python.py`. Une étape par session. La
-quatrième vague a sorti `test_moteur.py`, `test_pont.py` et
-`test_avantages.py` (`2026-11-16-le-pont-a-la-facade.md`), puis les tests
-du coût et de la grille large
-(`2026-11-16-la-grille-large-a-la-facade.md`). Reste l'espion de la
-décote, `test_cout_age_depart.py`, par quoi commencer : la section « Ce qui
-reste » de cette note. `test_facade.py` et `test_facade_jumeau.py` partent
-avec le moteur Python.
+haut, une fois le moteur Python plus exécuté. Aucun fichier de tests
+n'importe plus une règle Python, hors `test_facade.py` et
+`test_facade_jumeau.py`, qui partent avec lui ; leur liste est dans
+`test_fichiers_sur_le_moteur_python.py`. Une étape par session. Le dernier
+sorti est l'espion de la décote
+(`2026-11-16-la-decote-sans-plafond-en-donnees.md`). Reste le retrait
+lui-même : des scripts et des modules de `src/` bâtissent encore le
+simulateur Python. Par quoi commencer : la section « Ce qui reste » de
+cette note, les classer.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

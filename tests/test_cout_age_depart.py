@@ -11,12 +11,14 @@ le § 5 ter de `limites.md` laisse ouvert.
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
 import pytest
 
 from retraite_notionnelle import cout as C
+from retraite_notionnelle import pont
 from retraite_notionnelle.castypes import CAS_TYPES, departs_au_portage
 from retraite_notionnelle.config import Parametres
 
@@ -260,7 +262,28 @@ def test_les_deux_criteres_d_age_tirent_en_sens_contraire(mesure, simulateur):
     assert contrefactuel < 0.0 < fiches
 
 
-def test_le_plafond_de_decote_ne_mord_sur_aucune_liquidation_ouverte():
+def _paquet_au_plafond(plafond: int | None) -> bytes:
+    """Le paquet du portage, chaque période qui plafonne la décote plafonnée à
+    ``plafond`` trimestres — ``None`` : sans plafond. La variante s'écrit en
+    données, que le portage lit (note de décision 0006)."""
+    donnees = json.loads((Path(__file__).resolve().parents[1] / "moteur" / "donnees.json")
+                         .read_bytes())
+    for regime in donnees["regimes"]:
+        for periode in regime["periodes"]:
+            if periode.get("decote_trimestres_maximum") is not None:
+                periode["decote_trimestres_maximum"] = plafond
+    return json.dumps(donnees).encode("utf-8")
+
+
+def _liquidations(appels: dict, paquet: bytes | None = None) -> dict:
+    """Le scénario 1 de chaque carrière de ``appels``, liquidée par le portage
+    sur ``paquet``."""
+    resultats, refus = pont.droit(appels, paquet=paquet)
+    assert not refus, refus
+    return resultats
+
+
+def test_le_plafond_de_decote_ne_mord_sur_aucune_liquidation_ouverte(simulateur):
     """Le plafond de vingt trimestres est l'arithmétique des deux âges.
 
     Il est écrit là où le droit a voulu l'écrire — R. 643-7 pour les libéraux,
@@ -271,54 +294,34 @@ def test_le_plafond_de_decote_ne_mord_sur_aucune_liquidation_ouverte():
     d'après 1968. Sur toute liquidation que le droit ouvre, le décompte par
     l'âge est donc borné par construction.
 
-    Ce test le vérifie plutôt que de le supposer : il rejoue chaque décote en
-    ôtant le plafond, et refuse qu'une seule liquidation OUVERTE en soit
-    changée. S'il tombe un jour, c'est que les âges ont bougé, et le plafond
-    cessera d'être invisible.
+    Ce test le vérifie plutôt que de le supposer : il liquide chaque carrière
+    une seconde fois sur un paquet dont la décote n'a plus de plafond, et
+    refuse qu'une seule liquidation OUVERTE en soit changée. S'il tombe un
+    jour, c'est que les âges ont bougé, et le plafond cessera d'être
+    invisible. Le même balayage, sous un plafond de quatre trimestres, voit
+    mordre : la comparaison n'est pas aveugle.
+
+    Il épiait la décote du moteur Python jusqu'au 16 novembre 2026 ; la
+    décote sans plafond s'écrit désormais en données, et c'est le portage qui
+    liquide (action 161).
     """
-    import dataclasses
+    appels = {f"{cas.code}, {generation}, à {quarts / 4} ans":
+              ("scenario_actuel.calculer", pont.MOTEUR,
+               cas._carriere(simulateur, generation, quarts / 4))
+              for cas in CAS_TYPES
+              for generation in (1950, 1970, 1990)
+              for quarts in range(232, 272)}   # 58,0 à 68,0 ans, au trimestre
+    plafonnees = _liquidations(appels)
+    ouvertes = [cle for cle, resultat in plafonnees.items() if resultat["liquidation_ouverte"]]
+    assert len(ouvertes) > 500, "le balayage doit voir des liquidations ouvertes"
 
-    # L'espion se glisse dans la décote du moteur Python, que le portage ne
-    # voit pas : ce test reste sur lui, seul du fichier, jusqu'à ce que la
-    # décote sans plafond s'écrive en données.
-    from retraite_notionnelle.droit import liquider as L
-    from retraite_notionnelle.simulateur import Simulateur as SimulateurPython
+    libres = _liquidations(appels, _paquet_au_plafond(None))
+    mordues = [cle for cle in ouvertes if libres[cle] != plafonnees[cle]]
+    assert not mordues, f"le plafond a mordu : {mordues[:5]}"
 
-    simulateur = SimulateurPython(Parametres())
-
-    original = L.trimestres_de_decote
-    mordu = {"oui": False}
-
-    def espion(moteur, periode, carriere, trimestres, requis, age_liquidation,
-               age_annulation):
-        borne = original(moteur, periode, carriere, trimestres, requis,
-                         age_liquidation, age_annulation)
-        if periode.decote_trimestres_maximum is None or borne <= 0:
-            return borne
-        libre = dataclasses.replace(periode, decote_trimestres_maximum=None)
-        if original(moteur, libre, carriere, trimestres, requis, age_liquidation,
-                    age_annulation) > borne + 1e-9:
-            mordu["oui"] = True
-        return borne
-
-    L.trimestres_de_decote = espion
-    try:
-        ouvertes = 0
-        for cas in CAS_TYPES:
-            for generation in (1950, 1970, 1990):
-                for quarts in range(232, 272):   # 58,0 à 68,0 ans, au trimestre
-                    mordu["oui"] = False
-                    resultat = simulateur.scenario_actuel.calculer(
-                        cas._carriere(simulateur, generation, quarts / 4))
-                    if not resultat.liquidation_ouverte:
-                        continue
-                    ouvertes += 1
-                    assert not mordu["oui"], (
-                        f"{cas.code}, génération {generation}, départ à "
-                        f"{quarts / 4} ans : le plafond a mordu")
-    finally:
-        L.trimestres_de_decote = original
-    assert ouvertes > 500, "le balayage doit voir des liquidations ouvertes"
+    serrees = _liquidations(appels, _paquet_au_plafond(4))
+    assert [cle for cle in ouvertes if serrees[cle] != plafonnees[cle]], (
+        "un plafond de quatre trimestres doit mordre : la comparaison serait aveugle")
 
 
 def test_l_ecart_des_deux_ages_ne_depasse_jamais_vingt_trimestres(simulateur):
