@@ -273,19 +273,9 @@ class Liquidation:
 #: Le nombre d'appels de :func:`liquider`, liquidations d'essai comprises.
 _appels = 0
 
-#: Le nombre déclaré (docs/architecture.md, § 7.8) : les appels de
-#: :func:`liquider` qu'une simulation des six scénarios s'accorde PAR DÉPART,
-#: liquidations d'essai comprises. Le départ en fait un, et un par avantage que
-#: la cascade mesure — les trimestres des enfants, l'AVPF, les points
-#: gratuits ; la valorisation des droits acquis, un par scénario prospectif ;
-#: et, pour qui est déjà parti à la bascule, les scénarios notionnels refont la
-#: liquidation du départ. Quand les régimes liquident à des dates différentes
-#: (:mod:`.departs`), chaque départ ouvre ses pensions et fait les siens : le
-#: nombre vaut pour chacun, comme pour la pension qu'un assuré mort avant son
-#: départ « eût obtenue », liquidée à son décès (:mod:`..echeancier`). Chaque témoin écrit les siens
-#: (``tests/temoins/simulations.json``), le portage les refait, et un test
-#: refuse qu'un seul dépasse ce nombre, par départ.
-APPELS_DECLARES = 6
+#: Le nombre déclaré d'appels de :func:`liquider` par départ (§ 7.8) :
+#: :data:`..noyau.budget.APPELS_DECLARES`.
+from ..noyau.budget import APPELS_DECLARES  # noqa: E402,F401
 
 
 def appels() -> int:

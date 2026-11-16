@@ -1361,7 +1361,7 @@ def _revalorisation_pensions() -> dict:
     (``null`` ailleurs), fiabilité. Les références des textes restent dans les
     fichiers : la page ne les cite pas.
     """
-    from retraite_notionnelle.revalorisation import RevalorisationsPensions
+    from retraite_notionnelle.donnees.revalorisations import RevalorisationsPensions
 
     revalorisations = RevalorisationsPensions(DONNEES)
 
@@ -1935,7 +1935,7 @@ def _baremes_trimestre() -> dict:
 def _maximum_des_cultes() -> dict:
     """Les ancres du maximum de la pension des cultes, indexées par année."""
     from retraite_notionnelle.donnees.macro import DonneesMacro
-    from retraite_notionnelle.revalorisation import RevalorisationsPensions
+    from retraite_notionnelle.donnees.revalorisations import RevalorisationsPensions
     from retraite_notionnelle.scenarios.actuel import MaximumDesCultes
 
     table = MaximumDesCultes(DONNEES, DonneesMacro(DONNEES),
@@ -1960,7 +1960,7 @@ def _minimum_vieillesse_avant_2007() -> dict:
     personne seule et d'un couple (``null`` quand le barème n'en a pas), et la
     fiabilité."""
     from retraite_notionnelle.donnees.macro import DonneesMacro
-    from retraite_notionnelle.scenarios.actuel import MinimumVieillesse
+    from retraite_notionnelle.donnees.minimum_vieillesse import MinimumVieillesse
 
     table = MinimumVieillesse(DONNEES, DonneesMacro(DONNEES))._deux_etages
     return {str(annee): [e.avts, e.supplementaire, e.supplementaire_menage, e.plafond,
@@ -1971,7 +1971,7 @@ def _minimum_vieillesse_avant_2007() -> dict:
 def _minimum_vieillesse(couple: bool = False) -> dict:
     """Barème de l'ASPA par année : personne seule, ou couple d'allocataires."""
     from retraite_notionnelle.donnees.macro import DonneesMacro
-    from retraite_notionnelle.scenarios.actuel import MinimumVieillesse
+    from retraite_notionnelle.donnees.minimum_vieillesse import MinimumVieillesse
 
     minimum = MinimumVieillesse(DONNEES, DonneesMacro(DONNEES))
     table = minimum._table_couple if couple else minimum._table

@@ -281,7 +281,7 @@ code:
   python: >-
     droit/foyer.py : foyer_et_net, avant_l_aspa, conjoint_au_foyer,
     conjoint_allocataire, condition_de_residence, Foyer ; droit/etranger.py :
-    pensions_etrangeres_servies ; scenarios/actuel.py : MinimumVieillesse,
+    pensions_etrangeres_servies ; donnees/minimum_vieillesse.py : MinimumVieillesse,
     MinimumVieillesse.plafond, MinimumVieillesse.plafond_couple,
     MinimumVieillesse.deux_etages, MinimumVieillesse._en_vigueur, DeuxEtages
   javascript: >-

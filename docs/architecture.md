@@ -1503,7 +1503,7 @@ Chaque témoin compte donc ses appels de `liquider`, liquidations d'essai
 comprises, et un test refuse qu'il dépasse le nombre déclaré : les témoins
 écrivent les leurs (`tests/temoins/simulations.json`), le portage les refait,
 et le nombre déclaré est `APPELS_DECLARES`, dans
-`src/retraite_notionnelle/droit/liquidation.py`. Il vaut par départ : quand
+`src/retraite_notionnelle/noyau/budget.py`. Il vaut par départ : quand
 les régimes liquident à des dates différentes (§ 7.4), chaque départ ouvre ses
 pensions et mesure les siennes, ce qui n'est pas reliquider à un événement
 qui n'ouvre aucun droit. Chaque phase

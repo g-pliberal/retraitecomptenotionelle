@@ -468,7 +468,7 @@ def page() -> str:
         fiches = ", ".join(f"`{f}`" for f in par_etape.get(etape, [])) or "aucune encore"
         w(f"| `{etape}` | `droit/{module}.py` | {ecrit} | {fiches} |")
     w("")
-    from retraite_notionnelle.droit import liquidation
+    from retraite_notionnelle.noyau import budget
 
     temoins = json.loads((RACINE / "tests" / "temoins" / "simulations.json")
                          .read_text(encoding="utf-8"))
@@ -487,7 +487,7 @@ def page() -> str:
       f"sans rien liquider. Les {len(appels)} témoins font chacun de {min(appels)} à "
       f"{max(appels)} appels de `liquider`, liquidations d'essai comprises, et au plus "
       f"{max(par_depart):g} par départ ; aucun ne dépasse les "
-      f"{liquidation.APPELS_DECLARES} par départ que le nombre déclaré accorde (§ 7.8).")
+      f"{budget.APPELS_DECLARES} par départ que le nombre déclaré accorde (§ 7.8).")
     w("")
     w("| Étape | Module | Ce qu'elle écrit | Fiches qui disent l'appliquer |")
     w("|---|---|---|---|")

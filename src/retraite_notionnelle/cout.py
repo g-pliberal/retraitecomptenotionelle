@@ -169,7 +169,7 @@ from .donnees.population import CarrieresIncompletes, Population
 from .noyau import univers as univers_de_droit
 from .revalorisation_servie import RevalorisationServie
 from .reversion_gardee import StockDeReversion
-from .scenarios.actuel import MinimumVieillesse
+from .donnees.minimum_vieillesse import MinimumVieillesse
 from .simulateur import Simulateur
 from .somme import somme_ordonnee
 

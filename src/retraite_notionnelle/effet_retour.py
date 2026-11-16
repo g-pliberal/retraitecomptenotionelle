@@ -104,7 +104,7 @@ from .donnees.distribution import Tranche
 from .donnees.impot_revenu import FRANC, charger_baremes_impot_revenu
 from .donnees.prelevements_historiques import charger_prelevements_historiques
 from .remuneration import charger_prelevements
-from .scenarios.actuel import MinimumVieillesse
+from .donnees.minimum_vieillesse import MinimumVieillesse
 from .somme import somme_ordonnee
 
 #: Les scénarios dont l'effet retour se chiffre : les quatre comptes

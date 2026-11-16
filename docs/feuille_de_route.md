@@ -7334,13 +7334,13 @@ et `test_facade_jumeau.py`, qui partent avec lui. Les scripts et les modules
 qui bâtissent encore le simulateur Python sont classés : une sonde
 (`scripts/sonde_moteur_python.py`) dit ce que chacun exécute du moteur. La
 plupart n'en lisent que des chargeurs et des types, à passer sous `donnees/`
-avant la coupe ; quelques-uns calculent encore. Le salaire moyen est
-demandé au pont, la grille large n'exécute plus de règle, les replis
-Python de la grille sont retirés (`2026-11-16-les-replis-python-retires.md`).
-Une étape par session. Par quoi commencer : la liste « Ce qui reste » de
-`2026-11-16-le-tri-des-scripts-et-des-modules.md`, à son point 4, les
-chargeurs sous `donnees/`. Le retrait des règles attend l'accord du
-propriétaire.
+avant la coupe. Les trois premiers points de leur liste sont faits. Le barème
+de l'ASPA et les revalorisations se lisent déjà sous `donnees/`
+(`2026-11-16-les-chargeurs-sous-donnees.md`).
+Une étape par session. Par quoi commencer : la fin du point 4 de « Ce qui
+reste », dans `2026-11-16-le-tri-des-scripts-et-des-modules.md` : les
+variantes d'étude du simulateur, puis un simulateur de données seules. Le
+retrait des règles attend l'accord du propriétaire.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
