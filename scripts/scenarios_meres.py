@@ -73,13 +73,17 @@ import sys
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import Parametres, pont  # noqa: E402
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
-from retraite_notionnelle.simulateur import Comparaison, Simulateur  # noqa: E402
+from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
+
+if TYPE_CHECKING:
+    from retraite_notionnelle.simulateur import Comparaison
 
 LIBERAL = "notionnel_liberal"
 
@@ -197,12 +201,12 @@ class Grille:
     exemplaire, en JavaScript (action 161) : la grille lui demande, par le pont,
     l'âge de référence, l'âge que le scénario 1 oppose à une carrière, la
     carrière, sa simulation et la revalorisation du compte. Le simulateur
-    Python ne lui prête que ses données — les séries, les comptes de la
+    de données seules ne lui prête que ses données — les séries, les comptes de la
     retraite."""
 
     def __init__(self, generation: int, niveau: float, affiliation: str,
                  age_debut: float, parametres: Parametres | None = None) -> None:
-        self.simulateur = Simulateur(parametres or Parametres())
+        self.simulateur = SimulateurDeDonnees(parametres or Parametres())
         self.parametres = self.simulateur.parametres
         self.generation = generation
         self.niveau = niveau

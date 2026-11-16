@@ -159,3 +159,23 @@ def test_les_scripts_de_donnees_batissent_le_simulateur_de_donnees():
     assert fautes == {}
     memoire = (RACINE / "src/retraite_notionnelle/memoire.py").read_text(encoding="utf-8")
     assert "from .simulateur import" not in memoire
+
+
+#: Les scripts qui gardaient le simulateur Python pour n'en lire que des
+#: données — la macro, la mortalité, les effectifs, les paramètres — et
+#: demandent leurs calculs au pont (``2026-11-16-les-derniers-lecteurs-du-
+#: simulateur-python.md``). ``scenarios_meres`` garde le type ``Comparaison``
+#: que la façade du pont rend.
+SCRIPTS_QUI_NE_LISENT_QUE_DES_DONNEES = (
+    "fetch/trajectoire", "lectures_decision_29", "mesurer_surcote", "mesures_prose",
+    "recours_aspa", "scenarios_meres")
+
+
+def test_les_derniers_lecteurs_ne_batissent_plus_le_simulateur_python():
+    """Aucun de ces scripts n'importe ni ne bâtit le ``Simulateur`` du moteur
+    Python ; ils bâtissent le simulateur de données seules."""
+    python = re.compile(r"\bimport\b[^\n]*\bSimulateur\b|\bSimulateur\(")
+    fautes = {s: m.group(0) for s in SCRIPTS_QUI_NE_LISENT_QUE_DES_DONNEES
+              for m in [python.search((RACINE / f"scripts/{s}.py").read_text(
+                  encoding="utf-8"))] if m}
+    assert fautes == {}

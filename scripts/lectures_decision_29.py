@@ -393,9 +393,9 @@ def pensions_des_cas_types(taux: float) -> dict[tuple[str, int], dict]:
     from retraite_notionnelle import pont
     from retraite_notionnelle.castypes import GRILLE_DU_COUT, primes_projetees_en_donnees
     from retraite_notionnelle.config import Parametres
-    from retraite_notionnelle.simulateur import Simulateur
+    from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees
 
-    simulateur = Simulateur(Parametres().avec(taux_cotisation_liberal=taux))
+    simulateur = SimulateurDeDonnees(Parametres().avec(taux_cotisation_liberal=taux))
     parametres = simulateur.parametres
     paquet = pont.paquet_des_donnees(parametres.racine_donnees)
     cases = {f"{code}|{generation}": (next(c for c in GRILLE_DU_COUT if c.code == code),

@@ -417,16 +417,17 @@ def mesurer(processus: int, annees: tuple[int, ...] = ANNEES) -> dict:
     année."""
     import grille_large as G
     from retraite_notionnelle.config import Parametres
-    from retraite_notionnelle.simulateur import Simulateur
+    from retraite_notionnelle.donnees.minimum_vieillesse import MinimumVieillesse
+    from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees
 
     parametres = Parametres()
     racine = parametres.racine_donnees
     _, valeurs = G.centiles(racine)
-    simulateur = Simulateur(parametres)
+    simulateur = SimulateurDeDonnees(parametres)
     variantes = G.grille("population", simulateur.effectifs, G.eir(racine),
                          G.multiplicateurs(valeurs))
     tetes = G.en_tetes(parametres, variantes, processus, alleges=True)
-    minimum = simulateur.scenario_actuel.minimum_vieillesse
+    minimum = MinimumVieillesse(racine, simulateur.macro)
     resultat = {"echecs": somme_ordonnee(tetes.echecs.values()), "annees": {}}
     for annee in annees:
         bareme = (minimum.plafond(annee)[0] / 12.0, minimum.plafond_couple(annee)[0] / 12.0)

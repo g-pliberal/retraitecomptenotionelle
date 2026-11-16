@@ -94,9 +94,9 @@ def _parametres(indexation: str = "", lissage: str = "", contribution_etat: str 
 
 @lru_cache(maxsize=None)
 def _simulateur(parametres):
-    from retraite_notionnelle.simulateur import Simulateur
+    from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees
 
-    return Simulateur(parametres)
+    return SimulateurDeDonnees(parametres)
 
 
 def _pont():

@@ -71,7 +71,7 @@ sys.path.insert(0, str(RACINE / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import destinie_2  # noqa: E402  (les carrières du dépôt, écrites une fois)
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
 
 SORTIE = RACINE / "tests" / "temoins" / "trajectoire.json"
 SCRIPT_R = Path(__file__).resolve().with_suffix(".R")
@@ -559,7 +559,7 @@ def temoin(tables: dict[str, list[dict]], versions: dict) -> dict:
             "requete": requete,
             "requete_reserves": reserves,
         }
-    macro = Simulateur().macro
+    macro = SimulateurDeDonnees().macro
     for cas in CARRIERES:
         cas_temoins[cas.code] = {
             "objet": cas.objet,
@@ -632,7 +632,7 @@ def main(arguments: list[str] | None = None) -> int:
     lecteur.add_argument("--sorties", type=Path, metavar="DOSSIER",
                          help="relit les sorties d'une exécution gardée, sans relancer R")
     options = lecteur.parse_args(arguments)
-    macro = Simulateur().macro
+    macro = SimulateurDeDonnees().macro
     if options.lister:
         for cas in CARRIERES:
             print(f"{cas.code} : {cas.objet}")

@@ -84,7 +84,7 @@ import controle_eacr as E  # noqa: E402
 import grille_large as G  # noqa: E402
 from retraite_notionnelle import controle_eacr as M  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
 from retraite_notionnelle.somme import somme_ordonnee  # noqa: E402
 
 #: Les affiliations des fonctionnaires civils de chaque caisse du jaune
@@ -508,7 +508,7 @@ def construire(grille: str, parametres: Parametres, constante: str,
             return G.reference()
         racine = parametres.racine_donnees
         _, valeurs = G.centiles(racine)
-        return G.grille("population", Simulateur(parametres).effectifs, G.eir(racine),
+        return G.grille("population", SimulateurDeDonnees(parametres).effectifs, G.eir(racine),
                         G.multiplicateurs(valeurs))
 
 
