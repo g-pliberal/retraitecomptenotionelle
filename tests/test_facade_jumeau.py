@@ -32,6 +32,7 @@ from retraite_notionnelle.droit import acquerir as acquerir_python
 from retraite_notionnelle.droit import categories as categories_python
 from retraite_notionnelle.droit import commun as commun_python
 from retraite_notionnelle.droit import completer as completer_python
+from retraite_notionnelle.moteur import compte as compte_python
 from retraite_notionnelle.droit import compter as compter_python
 from retraite_notionnelle.droit import cultes as cultes_python
 from retraite_notionnelle.droit import cumul as cumul_python
@@ -895,6 +896,26 @@ APPELS_DES_REGLES = [
     ("completer", "_taux_majoration_enfants",
      lambda s: (s.catalogue["fonction_publique_etat"], 5)),
     ("completer", "_taux_majoration_enfants", lambda s: (s.catalogue["regime_general"], 2)),
+    # Le versement unique : le seuil du régime général à sa date, avant et après
+    # le premier ; le coefficient de l'Agirc-Arrco à l'âge révolu, dans la table
+    # et au-delà.
+    ("completer", "_seuil_a_la_date",
+     lambda s: (s.scenario_actuel.fiches_datees.regle(
+         "versement_forfaitaire_unique", "2015-09-01")["seuils"], "2015-10-01")),
+    ("completer", "_seuil_a_la_date", lambda s: ([["1974-07-01", 26.68]], "1974-06-01")),
+    ("completer", "coefficient_du_versement",
+     lambda s: (s.scenario_actuel.fiches_datees.regle(
+         "versement_unique_agirc_arrco", "2026-03-01"), 65.75)),
+    ("completer", "coefficient_du_versement",
+     lambda s: (s.scenario_actuel.fiches_datees.regle(
+         "versement_unique_agirc_arrco", "2026-03-01"), 104.0)),
+    # Le barème par tranches du régime unique, sous, entre et au-delà de ses
+    # bornes, et sur un revenu nul.
+    ("compte", "taux_du_bareme",
+     lambda s: (((1.0, 0.2, 0.1), (8.0, 0.1, 0.05), (None, 0.05, 0.02)), 20_000.0, 47_100.0)),
+    ("compte", "taux_du_bareme",
+     lambda s: (((1.0, 0.2, 0.1), (8.0, 0.1, 0.05), (None, 0.05, 0.02)), 900_000.0, 47_100.0)),
+    ("compte", "taux_du_bareme", lambda s: (((None, 0.2, 0.1),), 0.0, 47_100.0)),
     ("completer", "majoration_retraite_proportionnelle", _plans(1942, 60)),
     ("completer", "majoration_retraite_proportionnelle", _plans(1930, 65)),
     ("completer", "majoration_retraite_proportionnelle", _plans(1942, 60, "2005-01-01")),
@@ -1206,7 +1227,7 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
     servi = facade.Simulateur(parametres)
     jumeau = simulateur_python.Simulateur(parametres)
     modules = {"acquerir": acquerir_python, "carriere": carriere_python, "commun": commun_python, "completer": completer_python,
-               "compter": compter_python, "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
+               "compte": compte_python, "compter": compter_python, "foyer": foyer_python, "liquider": liquider_python, "ouvrir": ouvrir_python,
                "reversion": reversion_python, "revalorisation": revalorisation_python,
                "cultes": cultes_python, "departs": departs_python, "releve": releve_python,
                "invalidite": invalidite_python, "categories": categories_python,

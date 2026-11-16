@@ -2570,6 +2570,15 @@ def majorations_des_donnees(lu: dict) -> tuple[list, tuple]:
                            "majorations"))
 
 
+def _pensions_versees(lu: list) -> list:
+    """Les pensions que le versement unique du portage
+    (``completer.verser_en_capital`` de ``pont.mjs``) a laissées, ou
+    remplacées par un capital, lues strictement sous le type du Python."""
+    from .droit.commun import PensionRegime
+
+    return list(lu_strictement(tuple[PensionRegime, ...], lu, "verser_en_capital.pensions"))
+
+
 LECTURES_DE_LA_FACADE = {
     "simulateur.simuler": comparaison_des_donnees,
     "simulateur.carriere_simple": carriere_des_donnees,
@@ -2605,6 +2614,9 @@ LECTURES_DE_LA_FACADE = {
     "commun.periode_de_liquidation": lambda rang: lu_strictement(
         int | None, rang, "periode_de_liquidation"),
     "revalorisation.majorer_les_petites_pensions": lambda lu: majorations_des_donnees(lu),
+    "completer.verser_en_capital": lambda lu: {
+        "fiabilite": lu_strictement(Fiabilite | None, lu["fiabilite"], "verser_en_capital"),
+        "pensions": _pensions_versees(lu["pensions"])},
     "pension_servie.coefficient": lambda lu: lu_strictement(
         tuple[float, str, Fiabilite], lu, "PensionServie.coefficient"),
     "echeancier.parcourir": lambda lu: echeancier_des_donnees(lu),
@@ -3053,7 +3065,8 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     # Les deux fractions de la pension des cultes : la durée de chacune, sur
     # les durées du relevé, et la part de l'écart du V du décret n° 2006-1325.
     "cultes": ("durees", "part_de_l_ecart"),
-    "completer": ("_taux_majoration_enfants", "avpf_retenue", "borne_avec_les_droits_d_avant_1973", "complement_minimum",
+    "completer": ("_seuil_a_la_date", "_taux_majoration_enfants", "avpf_retenue", "borne_avec_les_droits_d_avant_1973", "coefficient_du_versement",
+                  "complement_minimum",
                   "fins_de_charge",
                   "majoration_ouverte", "majoration_retraite_proportionnelle",
                   "pension_majoree", "plancher_du_regime", "points_rco_de_chef",

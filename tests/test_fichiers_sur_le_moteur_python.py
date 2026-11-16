@@ -59,7 +59,6 @@ FICHIERS = (
     "test_retraite_progressive.py",
     "test_solde_fusion.py",
    
-    "test_versements_uniques.py",
 )
 
 

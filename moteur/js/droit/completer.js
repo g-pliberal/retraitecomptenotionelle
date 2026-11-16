@@ -2296,7 +2296,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
  * Le seuil d'une date d'effet : le dernier du barème, `[[AAAA-MM-JJ, euros], ...]`,
  * dont la date ne la passe pas ; null avant le premier.
  */
-function seuilALaDate(seuils, dateEffet) {
+export function seuilALaDate(seuils, dateEffet) {
   let retenu = null;
   for (const [debut, seuil] of seuils) {
     if (String(debut) <= dateEffet) {

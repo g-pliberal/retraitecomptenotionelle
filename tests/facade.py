@@ -134,7 +134,7 @@ ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversio
            "droit.etapes", "compter.trimestres_du_contrat", "compter.jours_par_annee",
            "revalorisation.faire_vivre", "commun.periode_de_liquidation",
            "revalorisation.majorer_les_petites_pensions", "revalorisation.actuel_aujourd_hui",
-           "pension_servie.coefficient",
+           "pension_servie.coefficient", "completer.verser_en_capital",
            "simulateur.proposition", "simulateur.carriere_proposition", "carriere.prolongee",
            "simulateur.garantie_vieillesse", "echeancier.parcourir", "simulateur.echeancier",
            "echeancier.depart_de", "echeancier.sortes", "journal.operer",
@@ -1256,6 +1256,27 @@ class _Completer(Regles):
                 f"{entree} : pensions d'une autre ouverture que celle de l'étape")
         return _etape(entree, moteur, releve, chaine + (("completer", {
             "neutralisations": _contexte_de_la_facade(entree, moteur, contexte)}),))
+
+    def verser_en_capital(self, moteur, carriere, pensions: list, avantages: list,
+                          points_acquis: dict, nature: str = "definitive",
+                          premiere_retraite: str | None = None):
+        """``completer.verser_en_capital`` : le versement unique des petites
+        pensions, servi par le portage sur le moteur d'un simulateur de la
+        façade. Comme son jumeau, il remplace dans ``pensions`` celles qu'il
+        verse en une fois, et rend sa fiabilité, ou ``None``. Des avantages
+        appliqués n'arriveraient pas au portage."""
+        entree = "completer.verser_en_capital"
+        if not isinstance(moteur, ScenarioActuel):
+            raise NonTransmissible(
+                f"{entree} : le moteur d'un simulateur de la façade "
+                "(simulateur.scenario_actuel)")
+        if list(avantages):
+            raise NonTransmissible(f"{entree} : des avantages appliqués, que la façade ne "
+                                   "transmet pas au portage")
+        lu = _demander(entree, moteur._simulateur.parametres, pont.MOTEUR, carriere,
+                       list(pensions), [], dict(points_acquis), nature, premiere_retraite)
+        pensions[:] = lu["pensions"]
+        return lu["fiabilite"]
 
 
 def _simulateur_du_regime(regime: Regime):

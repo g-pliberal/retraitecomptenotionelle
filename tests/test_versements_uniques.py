@@ -23,13 +23,14 @@ import pytest
 from retraite_notionnelle.carriere import LigneRelevee
 from retraite_notionnelle.droit.commun import PensionRegime
 from retraite_notionnelle.donnees.chargement import Fiabilite
-from retraite_notionnelle.droit.completer import (
-    FICHE_DU_VERSEMENT_AGIRC_ARRCO, FICHE_DU_VERSEMENT_FORFAITAIRE,
-    FICHE_DU_VERSEMENT_IRCANTEC, FICHE_DU_VERSEMENT_RCI, _seuil_a_la_date,
-    coefficient_du_versement, verser_en_capital)
-from retraite_notionnelle.simulateur import Simulateur
 
+from facade import Simulateur, completer
 from outils_pont import Saisies
+
+FICHE_DU_VERSEMENT_AGIRC_ARRCO = completer.FICHE_DU_VERSEMENT_AGIRC_ARRCO
+FICHE_DU_VERSEMENT_FORFAITAIRE = completer.FICHE_DU_VERSEMENT_FORFAITAIRE
+FICHE_DU_VERSEMENT_IRCANTEC = completer.FICHE_DU_VERSEMENT_IRCANTEC
+FICHE_DU_VERSEMENT_RCI = completer.FICHE_DU_VERSEMENT_RCI
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -66,15 +67,15 @@ def test_le_seuil_du_regime_general_suit_le_bareme_de_la_cnav(simulateur):
     depuis 2016, seulement à qui a pris une retraite avant."""
     premiere = _regle(simulateur, FICHE_DU_VERSEMENT_FORFAITAIRE, "1974-07-01")
     assert (premiere["multiple"], premiere["regimes"]) == (15, ["regime_general"])
-    assert _seuil_a_la_date(premiere["seuils"], "1974-07-01") == pytest.approx(
+    assert completer._seuil_a_la_date(premiere["seuils"], "1974-07-01") == pytest.approx(
         CENT_SOIXANTE_QUINZE_FRANCS, abs=5e-5)
     avant_2016 = _regle(simulateur, FICHE_DU_VERSEMENT_FORFAITAIRE, "2015-09-01")
-    assert _seuil_a_la_date(avant_2016["seuils"], "2015-09-01") == 156.09
-    assert _seuil_a_la_date(avant_2016["seuils"], "2015-10-01") == 156.24
+    assert completer._seuil_a_la_date(avant_2016["seuils"], "2015-09-01") == 156.09
+    assert completer._seuil_a_la_date(avant_2016["seuils"], "2015-10-01") == 156.24
     assert "premiere_retraite_avant" not in avant_2016
     depuis = _regle(simulateur, FICHE_DU_VERSEMENT_FORFAITAIRE, "2026-03-01")
     assert depuis["premiere_retraite_avant"] == "2016-01-01"
-    assert _seuil_a_la_date(depuis["seuils"], "2026-03-01") == 183.01
+    assert completer._seuil_a_la_date(depuis["seuils"], "2026-03-01") == 183.01
     assert not _regle(simulateur, FICHE_DU_VERSEMENT_FORFAITAIRE, "1974-06-01")["existe"]
 
 
@@ -86,14 +87,14 @@ def test_les_coefficients_de_l_agirc_arrco_sont_ceux_de_l_age_revolu(simulateur)
     assert avant["mesure"] == "points"
     assert [(a["seuil_points"], a["seuil_compris"]) for a in avant["allocations"]] == [
         (100, True), (500, False)]
-    assert coefficient_du_versement(avant, 65.75) == (17.0, 65)
-    assert coefficient_du_versement(_regle(
+    assert completer.coefficient_du_versement(avant, 65.75) == (17.0, 65)
+    assert completer.coefficient_du_versement(_regle(
         simulateur, FICHE_DU_VERSEMENT_AGIRC_ARRCO, "2020-06-01"), 60.0)[0] == 29.6
-    assert coefficient_du_versement(_regle(
+    assert completer.coefficient_du_versement(_regle(
         simulateur, FICHE_DU_VERSEMENT_AGIRC_ARRCO, "2023-06-01"), 60.0)[0] == 31.2
     depuis = _regle(simulateur, FICHE_DU_VERSEMENT_AGIRC_ARRCO, "2026-03-01")
     assert (depuis["mesure"], depuis["allocations"][0]["point"]) == ("montant", "agirc_arrco")
-    assert [coefficient_du_versement(depuis, age)[0] for age in (60.0, 65.0, 104.0)] == [
+    assert [completer.coefficient_du_versement(depuis, age)[0] for age in (60.0, 65.0, 104.0)] == [
         31.6, 26.4, 2.7]
     assert not _regle(simulateur, FICHE_DU_VERSEMENT_AGIRC_ARRCO, "2003-12-01")["existe"]
 
@@ -219,7 +220,7 @@ def test_la_base_de_l_artisan_versee_en_une_fois_emporte_le_rci(simulateur):
         releve=[LigneRelevee(annee=2010, affiliation="artisan", revenu=4000.0)])
     pensions = [PensionRegime("rsi", 100.0, "annuites", "", Fiabilite.HAUTE),
                 PensionRegime("rci", 1000 * 1.178, "points", "", Fiabilite.HAUTE)]
-    verser_en_capital(simulateur.scenario_actuel, carriere, pensions, [], {"rci": 1000.0})
+    completer.verser_en_capital(simulateur.scenario_actuel, carriere, pensions, [], {"rci": 1000.0})
     assert pensions[0].capital == pytest.approx(1500.0)
     assert pensions[1].capital is not None
     assert "sa pension de base versée en une fois" in pensions[1].detail
@@ -292,7 +293,7 @@ def test_quand_la_base_est_versee_en_une_fois_le_rci_l_est_aussi(simulateur):
         pensions = [PensionRegime("regime_general", 100.0, "annuites", "", Fiabilite.HAUTE,
                                   capital=capital_de_la_base),
                     PensionRegime("rci", 1000 * 1.221, "points", "", Fiabilite.HAUTE)]
-        verser_en_capital(moteur, carriere, pensions, [], {"rci": 1000.0})
+        completer.verser_en_capital(moteur, carriere, pensions, [], {"rci": 1000.0})
         assert pensions[1].capital == (None if attendu is None else pytest.approx(attendu))
     # Avant la liquidation unique, la pension du régime général n'est pas celle
     # de l'artisan : son versement ne fait pas celui du RCI.
@@ -303,7 +304,7 @@ def test_quand_la_base_est_versee_en_une_fois_le_rci_l_est_aussi(simulateur):
                               capital=1500.0),
                 PensionRegime("rsi", 100.0, "annuites", "", Fiabilite.HAUTE),
                 PensionRegime("rci", 1000 * 1.178, "points", "", Fiabilite.HAUTE)]
-    verser_en_capital(moteur, ancienne, pensions, [], {"rci": 1000.0})
+    completer.verser_en_capital(moteur, ancienne, pensions, [], {"rci": 1000.0})
     assert pensions[2].capital is None
 
 
@@ -316,10 +317,10 @@ def test_la_retraite_progressive_n_est_jamais_versee_en_capital(simulateur):
         releve=[LigneRelevee(annee=1978, affiliation="salarie_prive_non_cadre", revenu=2000.0)])
     pensions = [PensionRegime("arrco", 30.0, "points", "", Fiabilite.HAUTE)]
     moteur = simulateur.scenario_actuel
-    assert verser_en_capital(moteur, carriere, pensions, [], {"arrco": 27.0},
+    assert completer.verser_en_capital(moteur, carriere, pensions, [], {"arrco": 27.0},
                              nature="provisoire") is None
     assert pensions[0].capital is None
-    assert verser_en_capital(moteur, carriere, pensions, [], {"arrco": 27.0}) is not None
+    assert completer.verser_en_capital(moteur, carriere, pensions, [], {"arrco": 27.0}) is not None
     assert pensions[0].capital == pytest.approx(30.0 * 26.1)
 
 

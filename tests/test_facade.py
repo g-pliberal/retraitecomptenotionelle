@@ -2406,7 +2406,7 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "revalorisation.faire_vivre", "commun.periode_de_liquidation",
                               "revalorisation.majorer_les_petites_pensions",
                               "revalorisation.actuel_aujourd_hui",
-                              "pension_servie.coefficient",
+                              "pension_servie.coefficient", "completer.verser_en_capital",
                               "simulateur.proposition", "simulateur.carriere_proposition",
                               "carriere.prolongee", "simulateur.garantie_vieillesse",
                               "echeancier.parcourir", "simulateur.echeancier",

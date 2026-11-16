@@ -2441,6 +2441,21 @@ ENTREES_DE_LA_FACADE["revalorisation.majorer_les_petites_pensions"] = (simulateu
   };
 };
 
+// Le versement unique des petites pensions, par la façade (action 161, étape 9h).
+
+/**
+ * Le versement unique des petites pensions (`verser_en_capital` du Python)
+ * sur des pensions que le test a posées : la fiabilité qu'il rend, et les
+ * pensions telles qu'il les laisse, chacune remplacée ou non par un capital.
+ */
+ENTREES_DE_LA_FACADE["completer.verser_en_capital"] = (moteur, carriere, pensions,
+  avantages, pointsAcquis, nature, premiereRetraite) => {
+  const laissees = pensions.map((pension) => ({ ...pension }));
+  const fiabilite = completer.verserEnCapital(moteur, carriere, laissees, avantages,
+    new Map(Object.entries(pointsAcquis)), nature, premiereRetraite);
+  return { fiabilite: fiabilite ?? null, pensions: laissees.map(telQuel) };
+};
+
 // La règle de chaque régime, par la façade (action 161, étape 9h).
 
 /**
