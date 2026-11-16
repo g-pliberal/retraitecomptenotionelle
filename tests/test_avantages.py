@@ -297,13 +297,13 @@ def test_le_recalcul_rend_un_montant_positif_et_conserve_la_pension(script_cout)
     """
     from retraite_notionnelle import Parametres
     from retraite_notionnelle.castypes import CAS_TYPES
-    from retraite_notionnelle.simulateur import Simulateur
+    from facade import Simulateur
 
     simulateur = Simulateur(Parametres())
     generation = 1960
     porteurs = ("carriere_interrompue", "fonctionnaire_actif")
     for cas in (c for c in CAS_TYPES if c.code in porteurs):
-        age = cas.age_liquidation_pour(simulateur, generation)
+        age = _age(simulateur, cas, generation)
         carriere = script_cout.carriere_variante(simulateur, cas, generation, age)
         actuel = simulateur.scenario_actuel.calculer(carriere)
         parts, _ = script_cout.recalculer(simulateur, cas, generation, age, actuel)
@@ -336,7 +336,7 @@ def test_les_deux_mesures_de_la_categorie_active_coincident(script_cout):
     """
     from retraite_notionnelle import Parametres
     from retraite_notionnelle.castypes import CAS_TYPES
-    from retraite_notionnelle.simulateur import Simulateur
+    from facade import Simulateur
 
     simulateur = Simulateur(Parametres())
     variantes = script_cout.scenarios_neutralises(simulateur)
@@ -344,7 +344,7 @@ def test_les_deux_mesures_de_la_categorie_active_coincident(script_cout):
     temoin = script_cout.SEDENTAIRE[cas.affiliation][0]
     compares = 0
     for generation in (1955, 1960, 1970, 1975, 1985):
-        age = cas.age_liquidation_pour(simulateur, generation)
+        age = _age(simulateur, cas, generation)
         reelle = simulateur.scenario_actuel.calculer(
             script_cout.carriere_variante(simulateur, cas, generation, age))
         par_catalogue = reelle.pension_annuelle - variantes["categorie_active"].calculer(
@@ -428,13 +428,13 @@ def test_les_variantes_ne_changent_que_ce_qu_elles_retirent(script_cout):
     """
     from retraite_notionnelle import Parametres
     from retraite_notionnelle.castypes import CAS_TYPES
-    from retraite_notionnelle.simulateur import Simulateur
+    from facade import Simulateur
 
     simulateur = Simulateur(Parametres())
     variantes = script_cout.scenarios_neutralises(simulateur)
     cas = next(c for c in CAS_TYPES if c.code == "cadre")
     generation = 1955
-    age = cas.age_liquidation_pour(simulateur, generation)
+    age = _age(simulateur, cas, generation)
     carriere = script_cout.carriere_variante(simulateur, cas, generation, age)
     reelle = simulateur.scenario_actuel.calculer(carriere).pension_annuelle
     for code in ("categorie_active", "carriere_longue", "bonification_cinquieme_militaires",
@@ -444,6 +444,15 @@ def test_les_variantes_ne_changent_que_ce_qu_elles_retirent(script_cout):
             f"le retrait de {code} déplace la pension d'un cadre du privé "
             f"de {reelle - obtenue:.2f} €"
         )
+
+
+def _age(simulateur, cas, generation: int) -> float:
+    """L'âge où le pilote du portage fait partir ``cas``, né en ``generation``."""
+    from retraite_notionnelle.castypes import departs_au_portage
+
+    departs, refus = departs_au_portage(simulateur, {"cas": (cas, generation)})
+    assert not refus, refus
+    return departs["cas"][0]
 
 
 def _apprenti_puis_salarie(simulateur, fin_du_salariat: int, age_liquidation: float):
@@ -830,7 +839,7 @@ def test_chaque_cohorte_part_l_annee_que_lui_donne_le_droit_de_sa_generation(scr
 
     from retraite_notionnelle import Parametres
     from retraite_notionnelle.donnees.population import Population
-    from retraite_notionnelle.simulateur import Simulateur
+    from facade import Simulateur
 
     parts = {script_cout.CONTRIBUTIF: 1.0, "periodes_assimilees": 0.25}
     grille = script_cout.Pensionne(code="x", generation=1965, annee_liquidation=2026,
@@ -859,8 +868,10 @@ def test_chaque_cohorte_part_l_annee_que_lui_donne_le_droit_de_sa_generation(scr
         {cle: parties * montant for cle, montant in parts.items()}, rel=1e-12)
     # Le total, puis sa ventilation : `pytest.approx` refuse, depuis pytest
     # 9.2, un dictionnaire dans un tuple.
+    # L'âge légal de chaque génération, que le portage lit, comme au coût.
+    ages = script_cout.ages_legaux(simulateur, [datee])
     total, par_motif = script_cout.masses_anticipees([datee], simulateur, population, 2024,
-                                                     {"x": 1.0})
+                                                     {"x": 1.0}, ages)
     assert total == pytest.approx(1.25 * parties, rel=1e-12)
     assert par_motif == pytest.approx(
         {"carriere_longue": 1.25 * (effectif(1963, 2024) + 0.25 * effectif(1964, 2024)),
@@ -875,12 +886,12 @@ def test_chaque_cohorte_part_l_annee_que_lui_donne_le_droit_de_sa_generation(scr
     # la première n'y passait rien, la seconde trois trimestres.
     toutes = sum(effectif(1965 + d, 2029) for d in decalages)
     totale, par_motif = script_cout.masses_anticipees([datee], simulateur, population,
-                                                      2029, {"x": 1.0})
+                                                      2029, {"x": 1.0}, ages)
     assert totale == pytest.approx(1.25 * toutes, rel=1e-12)
     assert par_motif["carriere_longue"] == pytest.approx(
         1.25 * (0.25 * effectif(1966, 2029) + effectif(1967, 2029)), rel=1e-12)
     _, par_motif = script_cout.masses_anticipees([grille], simulateur, population, 2029,
-                                                 {"x": 1.0})
+                                                 {"x": 1.0}, ages)
     assert par_motif["carriere_longue"] == pytest.approx(
         1.25 * 0.75 * effectif(1967, 2029), rel=1e-12)
 
@@ -891,8 +902,9 @@ def test_chaque_cohorte_part_l_annee_que_lui_donne_le_droit_de_sa_generation(scr
         code="x", generation=1960, annee_liquidation=2022, age_liquidation=62.0,
         parts=parts, motif="regime_special", departs=(2020, 2021, 2022, 2023, 2024),
         ages_depart=(62.0, 62.0, 62.0, 62.0, 62.5))
-    totale, par_motif = script_cout.masses_anticipees([a_l_heure], simulateur, population,
-                                                      2024, {"x": 1.0})
+    totale, par_motif = script_cout.masses_anticipees(
+        [a_l_heure], simulateur, population, 2024, {"x": 1.0},
+        script_cout.ages_legaux(simulateur, [a_l_heure]))
     assert totale == pytest.approx(1.25 * sum(effectif(1960 + d, 2024) for d in decalages),
                                    rel=1e-12)
     assert par_motif == {"carriere_longue": 0.0, "classement": 0.0, "regime_special": 0.0}
@@ -942,15 +954,16 @@ def test_le_cout_par_carriere_passe_par_le_portage_sans_le_moteur_python(monkeyp
     from outils_pont import empecher_les_jumeaux_du_cout
     from outils_valeurs import valeur_figee
     from retraite_notionnelle import Parametres, avantages
-    from retraite_notionnelle.simulateur import Simulateur
+    from facade import Simulateur
 
     empecher_les_jumeaux_du_cout(monkeypatch)
 
     def interdit(*_, **__):
         raise AssertionError("le moteur Python liquide le coût par carrière")
 
+    # Le simulateur de la façade ne fait rien calculer au moteur Python : seul
+    # le recalcul du coût pourrait encore y passer.
     monkeypatch.setattr(avantages, "recalculer", interdit)
-    monkeypatch.setattr(Simulateur, "scenario_actuel", property(interdit))
     lignes = cout_avantages.par_carriere(Simulateur(Parametres()), 1960)
     assert valeur_figee("par_carriere::1960", lignes) == lignes
     # Ce que l'option montre : des cas types datés, et la dose qui fait

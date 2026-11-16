@@ -63,7 +63,7 @@ from .donnees.depenses import DepensesRetraite
 from .donnees.population import Population
 from .droit.compter import (FICHE_DE_L_APPRENTISSAGE, FICHE_DES_MILITAIRES,
                             FICHES_DES_EMPLOIS, _contrats)
-from .scenarios.actuel import CarriereLongue, ScenarioActuel
+from .scenarios.actuel import CarriereLongue, FichesDatees, ScenarioActuel
 from .simulateur import Simulateur
 from .somme import somme_ordonnee
 
@@ -486,7 +486,8 @@ def statuts_des_emplois(simulateur: Simulateur, code: str) -> frozenset[str]:
     """Les statuts qu'une version des fiches que cette neutralisation retire
     bonifie (:data:`FICHES_RETIREES`) : les seules carrières que le retrait
     peut toucher."""
-    fiches = simulateur.scenario_actuel.fiches_datees.fiches()
+    # Les fiches, des données que leur chargeur lit, sans le moteur.
+    fiches = FichesDatees(simulateur.parametres.racine_donnees).fiches()
     return frozenset(statut for nom in FICHES_RETIREES[code] if nom in fiches
                      for version in fiches[nom]["versions"]
                      for statut in version["parametres"].get("statuts") or ())
