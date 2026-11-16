@@ -337,7 +337,7 @@ approximations:
     non mesuré ; les pensions prenant effet depuis 2028, dont les paramètres de
     convergence ne sont pas encore fixés
 sources:
-  lu_le: 2026-11-12
+  lu_le: 2026-11-16
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-

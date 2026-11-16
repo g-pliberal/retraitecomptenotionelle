@@ -1,0 +1,24 @@
+date: "2026-11-16"
+session: "action 175, à part : les cinq écarts lourds du récapitulatif des circulaires, vérifiés au texte ; quatre corrigés dans le moteur, un déclaré"
+consulte: >-
+  python scripts/veille_droit.py (rien de neuf pour ces règles). L'index LEGI et JORF
+  de la DILA du 16 novembre 2026 : loi n° 2023-270, article 19 ; décret n° 2023-966,
+  article 2 ; décret n° 45-0179, articles 81 a et 81 b ; R. 353-1, R. 353-3,
+  D. 353-1-1 ; ancien code rural, articles 1120-1, 1120-2, 1121, 1142-5 ; décret
+  n° 80-808, article 1er ; loi n° 2010-1330, article 118 ; L. 161-22 ; L. 84 du code
+  des pensions. La circulaire Cnav n° 2024/5, relue en PDF au site de la caisse.
+trouve: >-
+  Quatre corrections du scénario 1 : les salaires de Mayotte d'avant septembre 2023
+  revalorisés de 10 % pour les pensions depuis septembre 2023 ; l'âge des exploitants
+  agricoles de 64 à 61 ans de 1986 à 1989, et leur retraite forfaitaire sur 33,5 à
+  36,5 années ; le plafond de la réversion d'avant juillet 2004 au SMIC en vigueur à
+  la demande ou au décès ; le cumul intégral à 60 et 65 ans des retraités anticipés
+  d'avant juillet 2011, hors fonction publique. La réversion d'un assuré mort avant
+  son départ, aux règles de la date d'effet de 1974 à juin 2004, est confirmée et
+  déclarée, non corrigée. Le détail est dans
+  docs/feuille_de_route/175/2026-11-16-correction-des-cinq-ecarts-lourds.md.
+reste: >-
+  La réversion d'un assuré mort avant son départ (R. 353-3 de 1973 à 2004), par une
+  étape qui remanie la liquidation fictive de l'échéancier. Ce que le service des
+  retraites de l'État faisait du cumul de ses retraités anticipés d'avant juillet
+  2011. La première date d'ouverture d'un exploitant agricole refusé de 1986 à 1989.
