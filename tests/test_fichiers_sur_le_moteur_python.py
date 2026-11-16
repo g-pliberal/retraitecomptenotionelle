@@ -52,7 +52,6 @@ FICHIERS = (
     "test_grille_large.py",
    
     "test_moteur.py",
-    "test_plafond_majoration_enfants.py",
     "test_pont.py",
     
     "test_retraite_progressive.py",

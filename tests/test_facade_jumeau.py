@@ -402,6 +402,11 @@ APPELS_DES_TABLES = [
     ("fiches_datees", "regle", lambda s: ("pension_maximale_regime_general", "2026-01-01")),
     ("fiches_datees", "regle", lambda s: ("majoration_conjoint_a_charge", "1990-01-01")),
     ("fiches_datees", "regle", lambda s: ("fiche_lunaire", "2026-01-01")),
+    ("fiches_datees", "version",
+     lambda s: ("majoration_enfants_plafond_fonction_publique", "1963-12-01")),
+    ("fiches_datees", "version",
+     lambda s: ("majoration_enfants_plafond_fonction_publique", "2021-01-01")),
+    ("fiches_datees", "version", lambda s: ("fiche_lunaire", "2026-01-01")),
     ("minimum_contributif", "pension_minimum", lambda s: (1983, 3)),
     ("minimum_contributif", "pension_minimum", lambda s: (1970, 1)),
     ("minimum_contributif", "pension_minimum", lambda s: (1944, 12)),
@@ -903,6 +908,11 @@ APPELS_DES_REGLES = [
      lambda s: (s.scenario_actuel.fiches_datees.regle(
          "versement_forfaitaire_unique", "2015-09-01")["seuils"], "2015-10-01")),
     ("completer", "_seuil_a_la_date", lambda s: ([["1974-07-01", 26.68]], "1974-06-01")),
+    # Le plafond de L. 18 : la surcote dans le plafond, puis hors de lui.
+    ("completer", "majoration_sous_le_traitement",
+     lambda s: (104.0, 10.4, 100.0, 24.0, False)),
+    ("completer", "majoration_sous_le_traitement",
+     lambda s: (104.0, 10.4, 100.0, 24.0, True)),
     ("completer", "coefficient_du_versement",
      lambda s: (s.scenario_actuel.fiches_datees.regle(
          "versement_unique_agirc_arrco", "2026-03-01"), 65.75)),

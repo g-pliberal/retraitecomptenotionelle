@@ -18,11 +18,12 @@ from __future__ import annotations
 
 import pytest
 
-from retraite_notionnelle.carriere import Carriere, Metier
-from retraite_notionnelle.droit import completer, liquidation
+import facade
+from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.noyau import contrats
-from retraite_notionnelle.scenarios.actuel import ScenarioActuel
-from retraite_notionnelle.simulateur import Simulateur
+
+from facade import Carriere, Simulateur, completer, liquidation
 
 ETAT = "fonction_publique_etat"
 
@@ -32,23 +33,26 @@ def simulateur() -> Simulateur:
     return Simulateur()
 
 
-def _liquider(simulateur: Simulateur, naissance: int, debut: float, depart: float,
-              enfants: int, sexe: str = "F", statut: str = "fonctionnaire_etat",
-              moteur=None) -> liquidation.Liquidation:
-    """La liquidation d'une carrière entière dans un statut, les enfants nés
-    tous les deux ans depuis les vingt-deux ans du parent."""
-    simulateur_moteur = moteur or simulateur.scenario_actuel
-    carriere = Carriere.depuis_parcours(
+def _carriere(simulateur: Simulateur, naissance: int, debut: float, depart: float,
+              enfants: int, sexe: str = "F", statut: str = "fonctionnaire_etat"):
+    """Une carrière entière dans un statut, les enfants nés tous les deux ans
+    depuis les vingt-deux ans du parent."""
+    return Carriere.depuis_parcours(
         annee_naissance=naissance, sexe=sexe, metiers=[Metier(statut, debut, 1.0)],
         age_liquidation=depart, macro=simulateur.macro, mois_naissance=1,
         part_primes=0.15, nombre_enfants=enfants,
         naissances_enfants=tuple(str(naissance + 22 + 2 * rang) for rang in range(enfants)))
+
+
+def _liquider(simulateur: Simulateur, *carriere, **options) -> facade.Liquidee:
+    """La liquidation de cette carrière (:func:`_carriere`)."""
+    carriere = _carriere(simulateur, *carriere, **options)
     return liquidation.liquider(liquidation.demande_de_depart(carriere),
                                 liquidation.Etat(carriere),
-                                liquidation.Contexte(simulateur_moteur, frozenset()))
+                                liquidation.Contexte(simulateur.scenario_actuel, frozenset()))
 
 
-def _mesure(liquidee: liquidation.Liquidation, regime: str = ETAT):
+def _mesure(liquidee: facade.Liquidee, regime: str = ETAT):
     """La pension du régime, sa majoration pour enfants, le traitement qui l'a
     liquidée et ce que la surcote lui ajoute."""
     indice, pension = next((i, p) for i, p in enumerate(liquidee.complements.regimes)
@@ -189,33 +193,43 @@ def test_les_versions_se_lisent_a_la_date_d_effet(simulateur, date_effet, versio
                                          else "dans_le_plafond")
 
 
-def test_sans_la_fiche_la_majoration_n_est_pas_bornee(simulateur):
-    """Retirer la fiche (la contrefactuelle du module des avantages) rend la
-    majoration entière : 108 % du traitement pour huit enfants."""
-    sans = ScenarioActuel(simulateur.macro, simulateur.catalogue,
-                          simulateur.affiliations, simulateur.parametres)
-    sans.fiches_datees = sans.fiches_datees.sans(completer.FICHE_DU_PLAFOND_L18)
-    liquidee = _liquider(simulateur, 1955, 22.0, 62.0, 8, moteur=sans)
+def _sous_la_fiche_retouchee(request, nom: str, retoucher) -> Simulateur:
+    """Le simulateur d'une copie des données où la fiche du plafond est
+    récrite par ``retoucher`` : le portage la lit ainsi, sur leur paquet."""
+    copie = facade.donnees_retouchees(
+        request, (nom,),
+        {f"reference/regles/{completer.FICHE_DU_PLAFOND_L18}.yaml": retoucher})
+    return Simulateur(Parametres(racine_donnees=copie))
+
+
+def test_sans_la_fiche_la_majoration_n_est_pas_bornee(request):
+    """Une fiche qui ne borne plus rien, à aucune date (la contrefactuelle du
+    module des avantages, qui la retire), rend la majoration entière : 108 %
+    du traitement pour huit enfants."""
+    sans = _sous_la_fiche_retouchee(request, "le plafond de L. 18 qui n'existe pas",
+                                    lambda texte: texte.replace("existe: true", "existe: false"))
+    liquidee = _liquider(sans, 1955, 22.0, 62.0, 8)
     pension, majoration, traitement, _ = _mesure(liquidee)
     assert pension + majoration == pytest.approx(1.08 * traitement)
 
 
-def test_un_plafond_inconnu_arrete_le_calcul(simulateur, monkeypatch):
+def test_un_plafond_inconnu_arrete_le_calcul(request):
     """Un plafond ou une surcote que le moteur ne connaît pas l'arrête."""
-    actuel = simulateur.scenario_actuel
-    fiche = actuel.fiches_datees.fiches()[completer.FICHE_DU_PLAFOND_L18]
-    derniere = fiche["versions"][-1]
-    monkeypatch.setitem(derniere, "parametres", {**derniere["parametres"], "surcote": "moitie"})
+    inconnue = _sous_la_fiche_retouchee(
+        request, "la surcote de L. 18 inconnue",
+        lambda texte: texte.replace("surcote: hors_du_plafond", "surcote: moitie"))
     with pytest.raises(ValueError, match="surcote inconnue"):
-        _liquider(simulateur, 1955, 22.0, 67.0, 8)
+        _liquider(inconnue, 1955, 22.0, 67.0, 8)
 
 
 def test_la_liquidation_ecrit_le_traitement_dans_son_schema(simulateur):
     """Ce que le plafond lit, l'étape de la liquidation l'écrit sous son
     schéma : le traitement de la pension civile et ce que la surcote y
     ajoute ; le RAFP, qui n'est pas du code des pensions, n'en porte pas."""
-    liquidee = _liquider(simulateur, 1955, 22.0, 67.0, 8)
-    donnees = liquidee.pensions.donnees()
+    moteur = simulateur.scenario_actuel
+    releve = facade.releve.construire(moteur, _carriere(simulateur, 1955, 22.0, 67.0, 8))
+    donnees = facade.liquider.liquider_chaque_regime(
+        moteur, releve, facade.ouvrir.ouvrir(moteur, releve)).donnees()
     validateur = contrats.Validateur("liquider_chaque_regime", contrats.ETAPES)
     assert [str(c) for c in validateur.valider(donnees, "pensions")
             if c.genre == "erreur"] == []

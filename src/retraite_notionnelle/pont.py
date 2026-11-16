@@ -2768,7 +2768,7 @@ TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "coefficients_minoration": ("coefficient",),
     "conversions_points": ("echelle", "fusion"),
     "durees_requises": ("trimestres",),
-    "fiches_datees": ("regle",),
+    "fiches_datees": ("regle", "version"),
     "invalidites": ("version",),
     "majorations_enfants": ("par_enfant",),
     "majorations_enfants_points": ("taux",),
@@ -3069,6 +3069,7 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
                   "complement_minimum",
                   "fins_de_charge",
                   "majoration_ouverte", "majoration_retraite_proportionnelle",
+                  "majoration_sous_le_traitement",
                   "pension_majoree", "plancher_du_regime", "points_rco_de_chef",
                   "selon_la_regle"),
     # La part du salaire brut que la CSG retient, et le premier jour d'un
