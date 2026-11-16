@@ -31,14 +31,17 @@ from dataclasses import fields, replace
 import pytest
 
 from retraite_notionnelle import Parametres, pont
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+from retraite_notionnelle.carriere import AnneeCarriere
 from retraite_notionnelle.castypes import (
     CAS_TYPES, GENERATIONS, GRILLE_DU_COUT, cases_de_la_grille)
 from retraite_notionnelle.config import RACINE_DONNEES, RACINE_PROJET
-from retraite_notionnelle.simulateur import Simulateur
 
-from outils_pont import (TOLERANCE_DU_MOTEUR_PYTHON, ecarts_d_ecriture,
-                         empecher_les_jumeaux_du_cout)
+from facade import Carriere, Simulateur
+from outils_pont import ecarts_d_ecriture, empecher_les_jumeaux_du_cout
+# Les gardes qui empêchent les jumeaux Python de calculer, que
+# ``test_grille_large.py`` importe d'ici sous ces noms.
+from outils_pont import interdire as _interdire
+from outils_pont import jumeaux_qui_datent_et_batissent as _jumeaux_qui_datent_et_batissent
 from outils_valeurs import valeur_figee
 
 SCENARIOS = ("notionnel_retroactif", "notionnel_retroactif_employeur", "notionnel_liberal")
@@ -102,13 +105,17 @@ def test_le_pont_rend_des_cases_ce_que_le_temoin_des_valeurs_porte():
                        for nombre in lu["aujourd_hui"]["pensions_totales"].values())
 
 
-def _variantes() -> dict:
+def _univers_des_variantes() -> dict:
     """La proposition prospective, à la place du scénario 6
-    (``scripts/proposition_prospective.py``, action 161)."""
+    (``scripts/proposition_prospective.py``, action 161), telle que le pont la
+    passe au portage dans la demande : son calcul tel que la fabrication le
+    résout (``Simulateur.univers_de_la_demande``), la façade ne recevant pas de
+    variante."""
     from retraite_notionnelle.noyau import univers
+    from retraite_notionnelle.noyau.calcul_notionnel import calcul_notionnel
 
-    return {"notionnel_liberal":
-            univers.charger(univers.VARIANTES)["notionnel_liberal_prospectif"]}
+    prospective = univers.charger(univers.VARIANTES)["notionnel_liberal_prospectif"]
+    return {"notionnel_liberal": calcul_notionnel(prospective, None).donnees()}
 
 
 def test_une_variante_passe_au_portage_dans_la_demande():
@@ -120,10 +127,8 @@ def test_une_variante_passe_au_portage_dans_la_demande():
     partiront."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    simulateur = Simulateur(Parametres(), variantes=_variantes())
-    demandes = _demandes_des_cases(simulateur)
-    resultats, echecs = pont.carrieres(demandes, SCENARIOS,
-                                       univers=simulateur.univers_de_la_demande)
+    demandes = _demandes_des_cases(Simulateur(Parametres()))
+    resultats, echecs = pont.carrieres(demandes, SCENARIOS, univers=_univers_des_variantes())
     assert not echecs
     valeur_figee("cases sous la proposition prospective", resultats)
     sans, _ = pont.carrieres(demandes, SCENARIOS)
@@ -175,14 +180,11 @@ def test_le_bareme_du_regime_unique_passe_au_portage_dans_la_demande():
     paramètres de la demande, et en revient sous les types du Python : sous
     chaque barème, le portage rend de chaque case ce que le témoin des valeurs
     porte, et autre chose que sans lui, dans les scénarios
-    du régime unique. Un barème mal formé arrête le compte du jumeau, comme
-    celui du portage."""
+    du régime unique. Qu'un barème mal formé arrête le compte du jumeau, comme
+    celui du portage, ``test_facade_jumeau.py`` le tient."""
     sous_un_bareme = replace(Parametres(), bareme_regime_unique=BAREMES[0])
     assert pont.parametres_des_donnees(
         _comme_node(pont.parametres_en_donnees(sous_un_bareme))) == sous_un_bareme
-    with pytest.raises(ValueError, match="bareme_regime_unique"):
-        Simulateur(replace(Parametres(), bareme_regime_unique=(
-            (2.0, 0.25, 0.125), (1.0, 0.125, 0.0625)))).constructeur
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     sans = None
@@ -366,7 +368,8 @@ def test_le_portage_bat_les_carrieres_de_la_grille():
             continue
         bati = lus[f"{cle}|carriere"]
         carriere = bati["carriere"]
-        assert type(carriere) is Carriere
+        # La classe du Python, dont celle de la façade dérive.
+        assert type(carriere) is Carriere.__base__
         assert bati["age"] == float(carriere.age_liquidation), cle
         assert (bati["reportee"] is None) == (bati["attente"] is None), cle
         assert lus[f"{cle}|depart"] == {"age": bati["age"], "annee": carriere.annee_liquidation,
@@ -376,29 +379,6 @@ def test_le_portage_bat_les_carrieres_de_la_grille():
     batis = [lu for cle, lu in lus.items() if cle.endswith("|carriere")]
     assert any(len({ligne.affiliation for ligne in lu["carriere"].lignes}) > 1 for lu in batis)
     assert {lu["reportee"] is None for lu in batis} == {True, False}
-
-
-#: Les jumeaux Python par lesquels une grille se datait et se bâtissait : le
-#: pilote, l'ouverture du droit qu'il interroge, les constructeurs de
-#: carrières, leurs prolongations, la projection des primes.
-def _jumeaux_qui_datent_et_batissent():
-    from retraite_notionnelle import castypes, pilote
-    from retraite_notionnelle.droit import ouvrir
-
-    return ((pilote, "age_de_depart"), (pilote, "point_fixe"), (pilote, "descendre"),
-            (ouvrir, "age_ouverture_droit"), (ouvrir, "age_taux_plein_droit"),
-            (ouvrir, "age_annulation_droit"), (Simulateur, "carriere_simple"),
-            (Simulateur, "carriere_parcours"), (Carriere, "prolongee"),
-            (castypes, "primes_projetees"))
-
-
-def _interdire(monkeypatch, jumeaux) -> None:
-    """Les jumeaux Python nommés, ``(objet, nom)``, qu'on empêche de calculer."""
-    def interdit(*_, **__):
-        raise AssertionError("un jumeau Python date ou bâtit ce que le portage doit rendre")
-
-    for objet, nom in jumeaux:
-        monkeypatch.setattr(objet, nom, interdit)
 
 
 def test_la_grille_des_carrieres_types_se_date_au_portage_sans_les_jumeaux(memoire_isolee,
@@ -455,6 +435,11 @@ def test_les_departs_des_facteurs_de_la_depense_se_datent_au_portage_sans_les_ju
     assert len(au_portage[0]) < len(cas) * 3 * 5
 
 
+#: Le scénario 1 du moteur Python, que les gardes empêchent de calculer, nommé
+#: sans être importé.
+SCENARIO_ACTUEL_PYTHON = "retraite_notionnelle.scenarios.actuel.ScenarioActuel"
+
+
 def _grille_des_avantages() -> tuple:
     """Une grille d'essai du coût des avantages, où passe ce que la
     décomposition mesure : les périodes non travaillées et le salaire de
@@ -489,19 +474,16 @@ def test_le_cout_des_avantages_liquide_sa_grille_au_portage_sans_les_jumeaux(mem
     from retraite_notionnelle.config import RACINE_DONNEES
     from retraite_notionnelle.donnees.depenses import DepensesRetraite
     from retraite_notionnelle.donnees.population import Population
-    from retraite_notionnelle.scenarios.actuel import ScenarioActuel
 
     monkeypatch.setattr(avantages, "CAS_TYPES", _grille_des_avantages())
     monkeypatch.setattr(avantages, "generations", lambda: (1885, 1910, 1955, 1965, 1975))
     depenses = DepensesRetraite(RACINE_DONNEES)
     population = Population(RACINE_DONNEES, Parametres().hypothese_esperance_vie)
-    def interdit(*_, **__):
-        raise AssertionError("un jumeau Python date, bâtit ou liquide le coût des avantages")
-
-    _interdire(monkeypatch, (*_jumeaux_qui_datent_et_batissent(), (ScenarioActuel, "__init__"),
-                             (ScenarioActuel, "calculer"), (avantages, "scenarios_neutralises"),
+    _interdire(monkeypatch, (*_jumeaux_qui_datent_et_batissent(),
+                             f"{SCENARIO_ACTUEL_PYTHON}.__init__",
+                             f"{SCENARIO_ACTUEL_PYTHON}.calculer",
+                             (avantages, "scenarios_neutralises"),
                              (cout, "_carrieres_voisines"), (avantages, "_carrieres_voisines")))
-    monkeypatch.setattr(Simulateur, "scenario_actuel", property(interdit))
     au_portage = valeur_figee("décomposition des avantages",
                               avantages.decomposer(Simulateur(Parametres())))
     valeur_figee("coût des avantages", avantages.calculer_avantages(
@@ -750,74 +732,6 @@ def _carriere_d_openfisca(profil: dict) -> Carriere:
                     identifiant=profil["code"])
 
 
-def test_le_pont_fait_appeler_les_fonctions_du_droit_au_bit_pres_de_leur_jumeau():
-    """Les exemples d'OpenFisca et des caisses (``tests/test_oracle.py``)
-    éprouvent le droit fonction par fonction, sur des carrières bâties à la
-    main : le pont les fait appeler au portage (:func:`pont.droit`), la carrière
-    passée en données, le moteur du scénario 1 et la période d'un régime
-    désignés, et rend ce que chacune rend sous le type de son jumeau Python
-    (:data:`pont.LECTURES_DU_DROIT`) — au bit près de lui sous Linux x86_64,
-    sur chaque profil d'OpenFisca au régime général. Une fonction que le pont
-    ne sait pas relire est refusée avant node."""
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from outils_pont import actuel_en_donnees
-    from retraite_notionnelle.donnees.chargement import Fiabilite
-    from retraite_notionnelle.droit import liquider, ouvrir
-
-    profils = json.loads((RACINE_PROJET / "tests" / "temoins" / "openfisca_regime_general.json")
-                         .read_text(encoding="utf-8"))["profils"]
-    simulateur = Simulateur(Parametres())
-    scenario = simulateur.scenario_actuel
-    for code, temoin in profils.items():
-        profil = temoin["profil"]
-        carriere, depart = _carriere_d_openfisca(profil), profil["liquidation"]
-        age = float(depart - profil["naissance"])
-        periode = simulateur.catalogue["regime_general"].periode(depart)
-        requis, _ = ouvrir.duree_requise(scenario, periode, carriere)
-        _, annulation, _ = liquider.decote_opposable(scenario, periode, carriere, depart)
-        resultat = scenario.calculer(carriere)
-        # Ce que rend chaque jumeau Python, relu sous le type que le pont
-        # déclare : « 2 » que le jumeau rend pour des trimestres de décote,
-        # flottants, s'y relit « 2.0 », comme le zéro d'une somme vide des témoins.
-        attendus = {cle: pont.relu_du_droit(fonction, rendu) for cle, (fonction, rendu) in {
-            "requis": ("ouvrir.duree_requise", ouvrir.duree_requise(scenario, periode, carriere)),
-            "proratisation": ("liquider.duree_proratisation", liquider.duree_proratisation(
-                scenario, periode, carriere, requis)),
-            "decote": ("liquider.decote_opposable", liquider.decote_opposable(
-                scenario, periode, carriere, depart)),
-            "salaire": ("liquider.salaire_de_reference", liquider.salaire_de_reference(
-                scenario, "regime_general", carriere, periode, depart, True,
-                profil["naissance"], True)),
-            "manquants": ("liquider.trimestres_de_decote", liquider.trimestres_de_decote(
-                scenario, periode, carriere, resultat.trimestres_valides, requis, age,
-                annulation)),
-            "resultat": ("scenario_actuel.calculer", actuel_en_donnees(resultat)),
-        }.items()}
-        rg = pont.Periode("regime_general", depart)
-        lus, echecs = pont.droit({
-            "requis": ("ouvrir.duree_requise", pont.MOTEUR, rg, carriere),
-            "proratisation": ("liquider.duree_proratisation", pont.MOTEUR, rg, carriere, requis),
-            "decote": ("liquider.decote_opposable", pont.MOTEUR, rg, carriere, depart),
-            "salaire": ("liquider.salaire_de_reference", pont.MOTEUR, "regime_general", carriere,
-                        rg, depart, True, profil["naissance"], True),
-            "manquants": ("liquider.trimestres_de_decote", pont.MOTEUR, rg, carriere,
-                          resultat.trimestres_valides, requis, age, annulation),
-            "resultat": ("scenario_actuel.calculer", pont.MOTEUR, carriere),
-        })
-        assert echecs == {}, code
-        for cle, attendu in attendus.items():
-            assert ecarts_d_ecriture(lus[cle], attendu,
-                                     tolerance=TOLERANCE_DU_MOTEUR_PYTHON) == [], (code, cle)
-        assert type(lus["requis"]) is tuple and type(lus["requis"][0]) is int
-        assert lus["requis"][1] is None or type(lus["requis"][1]) is Fiabilite
-        assert type(lus["decote"][1]) is float and type(lus["salaire"]) is float
-        assert type(lus["manquants"]) is float
-        assert lus["resultat"]["trimestres_valides"] == attendus["resultat"]["trimestres_valides"]
-    with pytest.raises(ValueError, match="liquider.inconnue"):
-        pont.droit({"a": ("liquider.inconnue", pont.MOTEUR)})
-
-
 def test_le_pont_rend_ce_que_chaque_ligne_du_releve_cite():
     """Le tableau de bord compte, sur les relevés des cas types, les lignes
     qui citent leur fiche et la version qu'elles appliquent (contrat C.5) : le
@@ -882,19 +796,16 @@ def test_le_pont_bat_une_carriere_de_ses_options_sans_la_faire_passer():
     assert lus["par_options"] == par_donnees["resultat"]
 
 
-def test_le_pont_prete_une_table_au_moteur_du_portage(monkeypatch):
-    """Un test prête au moteur Python une de ses tables par une autre
-    (``monkeypatch.setattr``) — celle des indépendants par celle du régime
-    général, pour lire ce que la règle des artisans ajoute à leur pension : le
-    pont prête la même au moteur du portage (``pont.MOTEUR.pretant``), sur
-    une copie, au bit près du moteur Python sous le même prêt ; le moteur sans
-    prêt n'en garde rien, et une table que le moteur ne porte pas arrête
-    l'appel. L'artisan né en 1949 en est la mesure : vingt et une années
+def test_le_pont_prete_une_table_au_moteur_du_portage():
+    """Un test prête au moteur du portage une de ses tables par une autre
+    (``pont.MOTEUR.pretant``) — celle des indépendants par celle du régime
+    général, pour lire ce que la règle des artisans ajoute à leur pension —,
+    sur une copie : le moteur sans prêt n'en garde rien, et une table que le
+    moteur ne porte pas arrête l'appel. Que le prêt rende ce que le moteur
+    Python rend sous le même prêt, ``test_facade_jumeau.py`` le tient. L'artisan né en 1949 en est la mesure : vingt et une années
     retenues (R. 634-1-1), vingt-cinq au régime général."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from outils_pont import actuel_en_donnees
-
     carriere = Carriere(
         annee_naissance=1949, sexe="H", age_liquidation=62.0, identifiant="artisan_1949",
         lignes=[AnneeCarriere(annee=annee, revenu=12_000.0 + 900.0 * (annee - 1973),
@@ -907,13 +818,6 @@ def test_le_pont_prete_une_table_au_moteur_du_portage(monkeypatch):
         "apres": ("scenario_actuel.calculer", pont.MOTEUR, carriere),
     })
     assert echecs == {}
-    actuel = Simulateur(Parametres()).scenario_actuel
-    sans = pont.relu_du_droit("scenario_actuel.calculer", actuel_en_donnees(actuel.calculer(carriere)))
-    monkeypatch.setattr(actuel, "annees_revenu_independants", actuel.annees_salaire_reference)
-    prete = pont.relu_du_droit("scenario_actuel.calculer",
-                               actuel_en_donnees(actuel.calculer(carriere)))
-    assert ecarts_d_ecriture(lus["prete"], prete, tolerance=TOLERANCE_DU_MOTEUR_PYTHON) == []
-    assert ecarts_d_ecriture(lus["sans"], sans, tolerance=TOLERANCE_DU_MOTEUR_PYTHON) == []
     assert lus["apres"] == lus["sans"]
     assert lus["prete"]["pension_annuelle"] < lus["sans"]["pension_annuelle"]
     _, echecs = pont.droit({"inconnue": (
@@ -1476,9 +1380,15 @@ def test_le_cout_d_une_variante_simule_sa_grille_par_le_portage(memoire_isolee, 
     from retraite_notionnelle import cout
 
     monkeypatch.setattr(cout, "generations", lambda: (1950, 2000))
-    simulateur = Simulateur(Parametres(), variantes=_variantes())
-    par_le_portage = valeur_figee("grille d'essai du coût sous la proposition prospective",
-                                  cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit"))
+    # La façade ne reçoit pas de variante : le coût lit celle de la demande
+    # sur son simulateur, et le pont la passe au portage.
+    with monkeypatch.context() as sous_la_variante:
+        univers = _univers_des_variantes()
+        sous_la_variante.setattr(Simulateur, "univers_de_la_demande",
+                                 property(lambda simulateur: univers))
+        par_le_portage = valeur_figee("grille d'essai du coût sous la proposition prospective",
+                                      cout._pensionnes(Simulateur(Parametres()), GRILLE_D_ESSAI,
+                                                       "droit"))
     du_scenario_6 = cout._pensionnes(Simulateur(Parametres()), GRILLE_D_ESSAI, "droit")[0]
     for generation in (1950, 2000):
         assert any(p.propre != q.propre for p, q in zip(par_le_portage[0], du_scenario_6)
@@ -2143,36 +2053,6 @@ JEUX_DE_L_INDEXATION = (
 )
 
 
-def test_l_indexation_du_portage_est_celle_du_jumeau_au_bit():
-    """La confrontation qui tient lieu de relecture de l'indexation (note de
-    décision 0007) : le taux de chaque année de 1941 à 2070 — le taux, le
-    terme retenu, les trois séries, la fiabilité —, et le rendement cumulé
-    d'une grille de cotisations, les mêmes au bit dans les deux exemplaires,
-    sous chaque jeu de :data:`JEUX_DE_L_INDEXATION`. Elle ne dit pas que la
-    règle est juste — :func:`test_le_pont_rend_les_taux_de_l_indexation` et
-    ``tests/test_moteur.py`` le disent —, mais que le jumeau Python, que le
-    moteur d'une carrière lit jusqu'à son retrait, fait le même calcul."""
-    _sans_node()
-    annees = range(1941, 2071)
-    paires = [(depart, arrivee) for depart in range(1938, 2074, 4)
-              for arrivee in range(1940, 2076, 5)]
-    appels = [*(("taux", annee) for annee in annees),
-              *(("coefficient", *paire) for paire in paires)]
-    compares = 0
-    for jeu in JEUX_DE_L_INDEXATION:
-        parametres = _regles(**jeu)
-        jumeau = Simulateur(parametres).indexation
-        lus = pont.indexation(appels, parametres)
-        attendus = [*(jumeau.taux(annee) for annee in annees),
-                    *(jumeau.coefficient(*paire) for paire in paires)]
-        ecarts = [(appel, repr(lu), repr(attendu))
-                  for appel, lu, attendu in zip(appels, lus, attendus, strict=True)
-                  if lu != attendu or type(lu) is not type(attendu)]
-        assert ecarts == [], f"sous {jeu} : {ecarts[:3]}"
-        compares += len(appels)
-    assert compares == len(JEUX_DE_L_INDEXATION) * (130 + len(paires))
-
-
 def test_les_lectures_python_de_la_revalorisation_servie_sont_celles_du_portage():
     """La confrontation qui tient lieu de relecture de la revalorisation
     servie (note de décision 0007). Avant que la classe Python cesse de
@@ -2195,7 +2075,7 @@ def test_les_lectures_python_de_la_revalorisation_servie_sont_celles_du_portage(
         parametres = _regles(**jeu)
         simulateur = Simulateur(parametres)
         lectrice = RevalorisationServie(simulateur, 1941, 2070)
-        codes = [*simulateur.scenario_actuel.catalogue.codes, "regime_inconnu"]
+        codes = [*simulateur.catalogue.codes, "regime_inconnu"]
         regimes = [*lectrice._points, "regime_general"]
         appels = [
             *(("coefficient", *case) for case in grille),
@@ -2229,7 +2109,6 @@ def test_la_classe_python_lit_les_series_du_portage_sans_repli(monkeypatch):
     d'une réforme prospective, et garde d'une rétroactive ce qu'elle valait à
     la bascule, 2."""
     _sans_node()
-    from retraite_notionnelle.moteur.indexation import Indexation
     from retraite_notionnelle.revalorisation_servie import RevalorisationServie
 
     simulateur = Simulateur(Parametres(annee_bascule=2021, **SOUS_LE_COR))
@@ -2252,7 +2131,7 @@ def test_la_classe_python_lit_les_series_du_portage_sans_repli(monkeypatch):
         raise AssertionError("la classe Python ne calcule plus l'index du compte")
 
     monkeypatch.setattr(pont, "series_servies", series)
-    monkeypatch.setattr(Indexation, "taux", calcule)
+    monkeypatch.setattr("retraite_notionnelle.moteur.indexation.Indexation.taux", calcule)
     servie = RevalorisationServie(simulateur, 2020, 2022)
     assert demandes == [(simulateur.parametres, 2020, 2022)]
     assert (servie.premiere_annee, servie.derniere_annee) == (2020, 2022)
@@ -2434,11 +2313,7 @@ def test_l_histoire_du_droit_demande_ses_regles_au_portage_par_lot(monkeypatch):
     décision 0008) : la classe ne lit plus ni les valeurs ni les fusions des
     points."""
     _sans_node()
-    from retraite_notionnelle.droit import liquider
-    from retraite_notionnelle.revalorisation import RevalorisationsPensions
     from retraite_notionnelle.revalorisation_servie import RevalorisationServie
-    from retraite_notionnelle.scenarios.actuel import (ConversionsPoints, MinimumGaranti,
-                                                       ValeursPoint)
 
     simulateur = Simulateur(Parametres())
     servie = RevalorisationServie(simulateur, 1990, 2030)
@@ -2448,11 +2323,15 @@ def test_l_histoire_du_droit_demande_ses_regles_au_portage_par_lot(monkeypatch):
     def calcule(*arguments, **options):
         raise AssertionError("l'histoire du droit n'appelle plus le moteur Python")
 
-    for porteur, regle in ((liquider, "valeur_du_point"), (RevalorisationsPensions, "generale"),
-                           (RevalorisationsPensions, "retenues"),
-                           (MinimumGaranti, "ratio_point_indice"), (ConversionsPoints, "echelle"),
-                           (ConversionsPoints, "fusion"), (ValeursPoint, "derniere_annee_servie")):
-        monkeypatch.setattr(porteur, regle, calcule)
+    # Les règles du moteur Python, nommées sans être importées.
+    for regle in ("droit.liquider.valeur_du_point",
+                  "revalorisation.RevalorisationsPensions.generale",
+                  "revalorisation.RevalorisationsPensions.retenues",
+                  "scenarios.actuel.MinimumGaranti.ratio_point_indice",
+                  "scenarios.actuel.ConversionsPoints.echelle",
+                  "scenarios.actuel.ConversionsPoints.fusion",
+                  "scenarios.actuel.ValeursPoint.derniere_annee_servie"):
+        monkeypatch.setattr(f"retraite_notionnelle.{regle}", calcule)
     lots = []
     droit = pont.droit
 
@@ -2516,7 +2395,7 @@ def test_les_regles_de_l_histoire_du_droit_sont_celles_du_jumeau_au_bit(monkeypa
     monkeypatch.setattr(pont, "droit", confronte)
     simulateur = Simulateur(Parametres()).pour_la_projection()
     servie = RevalorisationServie(simulateur, 1941, 2070)
-    for code in simulateur.scenario_actuel.catalogue.codes:
+    for code in simulateur.catalogue.codes:
         for liquidation in range(1949, 2026, 4):
             assert servie.coefficient_historique(code, liquidation, 2024) > 0.0
     assert len(lots) == len(servie._nominaux) + 1 > 10

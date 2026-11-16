@@ -2281,3 +2281,155 @@ def test_un_nom_herite_du_prototype_n_est_dans_aucune_table_du_portage():
               for lecture, valeur in portage[rang].items()
               if valeur != python[rang][lecture]]
     assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts)
+
+
+# -- le pont confronté au jumeau, venu de test_pont.py (action 161) -------------
+
+
+def _carriere_d_openfisca(profil: dict) -> CarrierePython:
+    """La carrière exacte d'un profil d'OpenFisca au régime général, bâtie à
+    la main comme tests/test_oracle.py la bâtit (_notre_calcul)."""
+    lignes = [carriere_python.AnneeCarriere(
+        annee=annee, revenu=profil["salaire"], affiliation="salarie_prive_non_cadre",
+        trimestres_valides=4) for annee in range(profil["debut"], profil["liquidation"])]
+    return CarrierePython(annee_naissance=profil["naissance"], sexe="H", lignes=lignes,
+                          age_liquidation=float(profil["liquidation"] - profil["naissance"]),
+                          identifiant=profil["code"])
+
+
+def test_le_pont_fait_appeler_les_fonctions_du_droit_au_bit_pres_de_leur_jumeau():
+    """Les exemples d'OpenFisca et des caisses (``tests/test_oracle.py``)
+    éprouvent le droit fonction par fonction, sur des carrières bâties à la
+    main : le pont les fait appeler au portage (:func:`pont.droit`), la carrière
+    passée en données, le moteur du scénario 1 et la période d'un régime
+    désignés, et rend ce que chacune rend sous le type de son jumeau Python
+    (:data:`pont.LECTURES_DU_DROIT`) — au bit près de lui sous Linux x86_64,
+    sur chaque profil d'OpenFisca au régime général. Une fonction que le pont
+    ne sait pas relire est refusée avant node."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from outils_pont import actuel_en_donnees
+
+    liquider, ouvrir = liquider_python, ouvrir_python
+
+    profils = json.loads((RACINE_PROJET / "tests" / "temoins" / "openfisca_regime_general.json")
+                         .read_text(encoding="utf-8"))["profils"]
+    simulateur = simulateur_python.Simulateur(Parametres())
+    scenario = simulateur.scenario_actuel
+    for code, temoin in profils.items():
+        profil = temoin["profil"]
+        carriere, depart = _carriere_d_openfisca(profil), profil["liquidation"]
+        age = float(depart - profil["naissance"])
+        periode = simulateur.catalogue["regime_general"].periode(depart)
+        requis, _ = ouvrir.duree_requise(scenario, periode, carriere)
+        _, annulation, _ = liquider.decote_opposable(scenario, periode, carriere, depart)
+        resultat = scenario.calculer(carriere)
+        # Ce que rend chaque jumeau Python, relu sous le type que le pont
+        # déclare : « 2 » que le jumeau rend pour des trimestres de décote,
+        # flottants, s'y relit « 2.0 », comme le zéro d'une somme vide des témoins.
+        attendus = {cle: pont.relu_du_droit(fonction, rendu) for cle, (fonction, rendu) in {
+            "requis": ("ouvrir.duree_requise", ouvrir.duree_requise(scenario, periode, carriere)),
+            "proratisation": ("liquider.duree_proratisation", liquider.duree_proratisation(
+                scenario, periode, carriere, requis)),
+            "decote": ("liquider.decote_opposable", liquider.decote_opposable(
+                scenario, periode, carriere, depart)),
+            "salaire": ("liquider.salaire_de_reference", liquider.salaire_de_reference(
+                scenario, "regime_general", carriere, periode, depart, True,
+                profil["naissance"], True)),
+            "manquants": ("liquider.trimestres_de_decote", liquider.trimestres_de_decote(
+                scenario, periode, carriere, resultat.trimestres_valides, requis, age,
+                annulation)),
+            "resultat": ("scenario_actuel.calculer", actuel_en_donnees(resultat)),
+        }.items()}
+        rg = pont.Periode("regime_general", depart)
+        lus, echecs = pont.droit({
+            "requis": ("ouvrir.duree_requise", pont.MOTEUR, rg, carriere),
+            "proratisation": ("liquider.duree_proratisation", pont.MOTEUR, rg, carriere, requis),
+            "decote": ("liquider.decote_opposable", pont.MOTEUR, rg, carriere, depart),
+            "salaire": ("liquider.salaire_de_reference", pont.MOTEUR, "regime_general", carriere,
+                        rg, depart, True, profil["naissance"], True),
+            "manquants": ("liquider.trimestres_de_decote", pont.MOTEUR, rg, carriere,
+                          resultat.trimestres_valides, requis, age, annulation),
+            "resultat": ("scenario_actuel.calculer", pont.MOTEUR, carriere),
+        })
+        assert echecs == {}, code
+        for cle, attendu in attendus.items():
+            assert ecarts_d_ecriture(lus[cle], attendu,
+                                     tolerance=TOLERANCE_DU_MOTEUR_PYTHON) == [], (code, cle)
+        assert type(lus["requis"]) is tuple and type(lus["requis"][0]) is int
+        assert lus["requis"][1] is None or type(lus["requis"][1]) is Fiabilite
+        assert type(lus["decote"][1]) is float and type(lus["salaire"]) is float
+        assert type(lus["manquants"]) is float
+        assert lus["resultat"]["trimestres_valides"] == attendus["resultat"]["trimestres_valides"]
+    with pytest.raises(ValueError, match="liquider.inconnue"):
+        pont.droit({"a": ("liquider.inconnue", pont.MOTEUR)})
+
+
+def test_l_indexation_du_portage_est_celle_du_jumeau_au_bit():
+    """La confrontation qui tient lieu de relecture de l'indexation (note de
+    décision 0007) : le taux de chaque année de 1941 à 2070 — le taux, le
+    terme retenu, les trois séries, la fiabilité —, et le rendement cumulé
+    d'une grille de cotisations, les mêmes au bit dans les deux exemplaires,
+    sous chaque jeu de :data:`JEUX_DE_L_INDEXATION`. Elle ne dit pas que la
+    règle est juste — :func:`test_le_pont_rend_les_taux_de_l_indexation` et
+    ``tests/test_moteur.py`` le disent —, mais que le jumeau Python, que le
+    moteur d'une carrière lit jusqu'à son retrait, fait le même calcul."""
+    from test_pont import JEUX_DE_L_INDEXATION, _regles, _sans_node
+
+    _sans_node()
+    annees = range(1941, 2071)
+    paires = [(depart, arrivee) for depart in range(1938, 2074, 4)
+              for arrivee in range(1940, 2076, 5)]
+    appels = [*(("taux", annee) for annee in annees),
+              *(("coefficient", *paire) for paire in paires)]
+    compares = 0
+    for jeu in JEUX_DE_L_INDEXATION:
+        parametres = _regles(**jeu)
+        jumeau = simulateur_python.Simulateur(parametres).indexation
+        lus = pont.indexation(appels, parametres)
+        attendus = [*(jumeau.taux(annee) for annee in annees),
+                    *(jumeau.coefficient(*paire) for paire in paires)]
+        ecarts = [(appel, repr(lu), repr(attendu))
+                  for appel, lu, attendu in zip(appels, lus, attendus, strict=True)
+                  if lu != attendu or type(lu) is not type(attendu)]
+        assert ecarts == [], f"sous {jeu} : {ecarts[:3]}"
+        compares += len(appels)
+    assert compares == len(JEUX_DE_L_INDEXATION) * (130 + len(paires))
+
+
+def test_le_pret_d_une_table_au_portage_est_celui_du_jumeau_au_bit(monkeypatch):
+    """Un test prête au moteur Python une de ses tables par une autre
+    (monkeypatch.setattr) — celle des indépendants par celle du régime
+    général : le pont prête la même au moteur du portage
+    (pont.MOTEUR.pretant), au bit près du moteur Python sous le même prêt,
+    et sans prêt de même. L'artisan né en 1949 en est la mesure."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from outils_pont import actuel_en_donnees
+
+    carriere = CarrierePython(
+        annee_naissance=1949, sexe="H", age_liquidation=62.0, identifiant="artisan_1949",
+        lignes=[carriere_python.AnneeCarriere(
+            annee=annee, revenu=12_000.0 + 900.0 * (annee - 1973), affiliation="artisan",
+            trimestres_valides=4) for annee in range(1973, 2011)])
+    pretant = pont.MOTEUR.pretant("annees_revenu_independants", "annees_salaire_reference")
+    lus, echecs = pont.droit({
+        "sans": ("scenario_actuel.calculer", pont.MOTEUR, carriere),
+        "prete": ("scenario_actuel.calculer", pretant, carriere),
+    })
+    assert echecs == {}
+    actuel = simulateur_python.Simulateur(Parametres()).scenario_actuel
+    sans = pont.relu_du_droit("scenario_actuel.calculer", actuel_en_donnees(actuel.calculer(carriere)))
+    monkeypatch.setattr(actuel, "annees_revenu_independants", actuel.annees_salaire_reference)
+    prete = pont.relu_du_droit("scenario_actuel.calculer",
+                               actuel_en_donnees(actuel.calculer(carriere)))
+    assert ecarts_d_ecriture(lus["prete"], prete, tolerance=TOLERANCE_DU_MOTEUR_PYTHON) == []
+    assert ecarts_d_ecriture(lus["sans"], sans, tolerance=TOLERANCE_DU_MOTEUR_PYTHON) == []
+
+
+def test_un_bareme_du_regime_unique_mal_forme_arrete_le_compte_du_jumeau():
+    """Un barème du régime unique mal formé, ses plafonds décroissants,
+    arrête le compte du jumeau, comme celui du portage."""
+    with pytest.raises(ValueError, match="bareme_regime_unique"):
+        simulateur_python.Simulateur(dataclasses.replace(Parametres(), bareme_regime_unique=(
+            (2.0, 0.25, 0.125), (1.0, 0.125, 0.0625)))).constructeur

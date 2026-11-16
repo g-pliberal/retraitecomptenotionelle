@@ -107,6 +107,36 @@ def empecher_les_jumeaux_du_cout(monkeypatch) -> None:
         monkeypatch.setattr(objets[objet], nom, interdit)
 
 
+#: Les jumeaux Python par lesquels une grille se datait et se bâtissait : le
+#: pilote, l'ouverture du droit qu'il interroge, les constructeurs de
+#: carrières, leurs prolongations, la projection des primes. Une garde : les
+#: tests qui les nomment les empêchent de calculer (:func:`interdire`), et
+#: n'en exécutent aucun.
+def jumeaux_qui_datent_et_batissent():
+    from retraite_notionnelle import castypes, pilote
+    from retraite_notionnelle.carriere import Carriere
+    from retraite_notionnelle.droit import ouvrir
+
+    return ((pilote, "age_de_depart"), (pilote, "point_fixe"), (pilote, "descendre"),
+            (ouvrir, "age_ouverture_droit"), (ouvrir, "age_taux_plein_droit"),
+            (ouvrir, "age_annulation_droit"), (Simulateur, "carriere_simple"),
+            (Simulateur, "carriere_parcours"), (Carriere, "prolongee"),
+            (castypes, "primes_projetees"))
+
+
+def interdire(monkeypatch, jumeaux) -> None:
+    """Les jumeaux Python nommés, ``(objet, nom)`` ou un chemin pointé,
+    qu'on empêche de calculer."""
+    def interdit(*_, **__):
+        raise AssertionError("un jumeau Python date ou bâtit ce que le portage doit rendre")
+
+    for jumeau in jumeaux:
+        if isinstance(jumeau, str):
+            monkeypatch.setattr(jumeau, interdit)
+        else:
+            monkeypatch.setattr(*jumeau, interdit)
+
+
 def actuel_en_donnees(actuel) -> dict:
     """Le résultat du scénario 1 du moteur Python (``ResultatActuel``) tel que
     le portage écrit le sien (``actuelEnDonnees`` de ``pont.mjs``), avant sa

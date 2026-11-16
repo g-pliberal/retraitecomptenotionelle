@@ -43,13 +43,11 @@ ENTREES = frozenset({"Simulateur", "ScenarioActuel", "Carriere", "reversion"})
 #: Les fichiers de tests qui entrent encore dans le moteur Python. Elle ne fait
 #: que décroître.
 FICHIERS = (
-    "test_avantages.py",
    
     "test_cout_age_depart.py",
     "test_facade.py", "test_facade_jumeau.py",
     "test_grille_large.py",
    
-    "test_pont.py",
     
    
 )
