@@ -1,25 +1,15 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: rouge
-sources: 8cc07e8116d10b8540e608381e917b2626ac42de
-date: 2026-11-16T04:57:42Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43804504285
-echecs:
-  - "FAILED tests/test_ecrans.py::test_chaque_page_se_peint_avec_son_seul_style - AssertionError: cout/ à 390 points : seul : span.mot | 123 | 6810 | 136 | 18 | inline | visible | rgb(15, 41, 48) | rgba(0, 0, 0, 0) | 15px | 400 | \"Public Sans\", system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif | 24px | none — entière : span.mot | 123 | 6810 | 136 | 17 | inline | visible | rgb(15, 41, 48) | rgba(0, 0, 0, 0) | 15px | 400 | \"Public Sans\", system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif | 24px | none"
-  - "FAILED tests/test_outillage.py::test_le_budget_de_calcul_ne_mesure_que_le_portage - AttributeError: module 'sys' has no attribute 'monitoring'"
-  - "FAILED tests/test_sonde_moteur_python.py::test_une_regle_executee_est_relevee - AttributeError: module 'sys' has no attribute 'monitoring'"
-  - "FAILED tests/test_sonde_moteur_python.py::test_ce_qui_s_execute_a_l_import_n_est_pas_releve - AttributeError: module 'sys' has no attribute 'monitoring'"
-  - "FAILED tests/test_sonde_moteur_python.py::test_la_sonde_lance_un_script - subprocess.CalledProcessError: Command '['/opt/hostedtoolcache/Python/3.11.18/x64/bin/python', '/home/runner/work/retraitecomptenotionelle/retraitecomptenotionelle/scripts/sonde_moteur_python.py', '--json', '/tmp/pytest-of-runner/pytest-0/popen-gw2/test_la_sonde_lance_un_script0/etude.py']' returned non-zero exit status 1."
-presomptions: rouge
-presomptions_echecs:
-  - "FAILED tests/test_sonde_moteur_python.py::test_une_regle_executee_est_relevee - AttributeError: module 'sys' has no attribute 'monitoring'"
-  - "FAILED tests/test_sonde_moteur_python.py::test_ce_qui_s_execute_a_l_import_n_est_pas_releve - AttributeError: module 'sys' has no attribute 'monitoring'"
-  - "FAILED tests/test_sonde_moteur_python.py::test_la_sonde_lance_un_script - subprocess.CalledProcessError: Command '['/opt/hostedtoolcache/Python/3.11.18/x64/bin/python', '/home/runner/work/retraitecomptenotionelle/retraitecomptenotionelle/scripts/sonde_moteur_python.py', '--json', '/tmp/pytest-of-runner/pytest-0/popen-gw3/test_la_sonde_lance_un_script0/etude.py']' returned non-zero exit status 1."
+etat: vert
+sources: 8f813d826bf45de79802f68673ad37280497a107
+date: 2026-11-16T05:18:54Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43807060748
+presomptions: vert
 durees:
-  fabrique: 191
-  suite: 545
-  tranche_1: 545
-  tranche_2: 364
-  tranche_3: 531
-  tranche_4: 261
-  garde: 142
+  fabrique: 447
+  suite: 732
+  tranche_1: 400
+  tranche_2: 373
+  tranche_3: 732
+  tranche_4: 309
+  garde: 138
