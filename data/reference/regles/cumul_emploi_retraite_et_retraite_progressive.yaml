@@ -193,6 +193,7 @@ versions:
   - {id: LEGIARTI000023441985, article: "D. 643-10 CSS", en_vigueur: 2011-01-17}
   - {id: LEGIARTI000023431338, article: "D. 643-10-1 CSS", en_vigueur: 2011-01-17}
   - {id: LEGIARTI000023431324, article: "D. 643-10-2 CSS", en_vigueur: 2011-01-17}
+  - {id: LEGIARTI000023024205, article: "loi n° 2010-1330, article 118", en_vigueur: 2010-11-11}
   bornes:
     liquidation.date_effet: [1983-04-01, null]
     liquidation.premiere_pension_de_base: [null, 2015-01-01]
@@ -208,7 +209,15 @@ versions:
       avec la durée requise ; le délai de six mois n'est pas « applicable aux assurés
       remplissant, lors de la reprise d'activité, les conditions » du cumul intégral
       (D. 161-2-15). La première pension d'avant 2015 garde cette rédaction, et la
-      suspension, que les rédactions de 2015 ne visent pas
+      suspension, que les rédactions de 2015 ne visent pas. Les âges de la loi
+      n° 2010-1330 ne valent que pour les pensions prenant effet à compter du
+      1er juillet 2011 (article 118, II, LEGIARTI000023024205) : pour une première
+      pension d'avant, « Il convient de retenir les âges en vigueur à la date
+      d'effet de la retraite anticipée, c'est-à-dire 60 ans (âge légal) ou 65 ans
+      (âge d'obtention du taux plein) » (circulaires Cnav n° 2011/61 et 2012/27,
+      point 33). Le fonctionnaire garde dans le modèle ceux de sa génération :
+      L. 84 du code des pensions renvoie aux mêmes articles, mais aucun texte lu
+      ne dit ce que le service des retraites de l'État en fait
     non_salaries: >-
       l'artisan, le commerçant et le libéral cumulent entièrement aux mêmes conditions
       (L. 634-6, L. 643-6 de 2008), la durée « au moins égale à la limite » de L. 351-1

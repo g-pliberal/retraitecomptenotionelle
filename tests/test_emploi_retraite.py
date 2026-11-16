@@ -152,6 +152,43 @@ def test_le_cumul_integral_sert_la_pension_entiere(simulateur):
     assert resultat.non_servi == 0
 
 
+def test_le_retraite_anticipe_d_avant_juillet_2011_cumule_entierement_a_60_ans(simulateur):
+    """Les âges de la loi n° 2010-1330 ne valent que pour les pensions prenant
+    effet à compter du 1er juillet 2011 (article 118, II, LEGIARTI000023024205) :
+    pour une pension d'avant, l'âge de L. 351-1 et celui du 1° de L. 351-8, que
+    L. 161-22 nomme pour le cumul intégral, sont soixante et soixante-cinq ans.
+    Circulaires Cnav n° 2011/61 et 2012/27, point 33 : « Il convient de retenir
+    les âges en vigueur à la date d'effet de la retraite anticipée, c'est-à-dire
+    60 ans (âge légal) ou 65 ans (âge d'obtention du taux plein) » (action 175,
+    écart lourd n° 5 des circulaires). Née le 15 janvier 1953, au travail dès
+    quatorze ans, partie en carrière longue à cinquante-huit ans, en février
+    2011 : elle cumule entièrement dès sa reprise, à soixante ans et demi, quand
+    l'âge de sa génération, soixante et un ans et deux mois, l'aurait plafonnée
+    jusqu'en mars 2014."""
+    resultat, echeancier = _cumul(simulateur, 1953, 58.0, _emploi(60.5, 62),
+                                  [Metier("salarie_prive_non_cadre", 14.0)])
+    assert echeancier.au_depart.liquidation_ouverte
+    assert resultat.integral_depuis == resultat.debut
+    assert {p.statut for t in resultat.tranches for p in t.par_regime} == {cumul.INTEGRAL}
+
+
+def test_le_portage_cumule_entierement_le_retraite_anticipe_d_avant_juillet_2011():
+    """La même, saisie au simulateur : le portage la fait cumuler entièrement dès
+    sa reprise d'août 2013, avant les soixante et un ans et deux mois de sa
+    génération (le résultat entier est celui que le témoin des sorties fige)."""
+    import shutil
+
+    from outils_sorties import sortie_figee
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage n'est pas vérifiable ici")
+    resultat, = sortie_figee("simuler.mjs", [{
+        "sexe": "F", "naissance": "1953-01-15", "debut": "14", "liquidation": "58",
+        "emploi_retraite": "2013-08", "emploi_retraite_fin": "2015-01"}])
+    cumul_du_portage = resultat["scenarios"]["actuel"]["cumul"]
+    assert cumul_du_portage["integral_depuis"] == "2013-08-01", cumul_du_portage["integral_depuis"]
+
+
 def test_le_cumul_plafonne_reduit_chaque_pension_de_base_du_depassement(simulateur):
     """Première pension de 2022 sans la durée : les pensions et le revenu, à son
     assiette de CSG, passent le plafond ; la pension du régime général perd le

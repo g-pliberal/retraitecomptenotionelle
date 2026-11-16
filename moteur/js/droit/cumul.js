@@ -93,6 +93,8 @@ export const LOI_2007 = rang(2007, 1);
 export const LOI_2009 = rang(2009, 1);
 export const REVALORISATION_2010 = rang(2010, 1);
 export const ORDRE_DES_AGES = rang(2014, 2);
+/** Loi n° 2010-1330, article 118, II : ses âges, pour les pensions de juillet 2011. */
+export const AGES_DE_2010 = rang(2011, 7);
 export const PREMIERE_2015 = rang(2015, 1);
 export const REDUCTION_SALARIES = rang(2017, 4);
 export const REDUCTION_NON_SALARIES = rang(2017, 1);
@@ -415,6 +417,13 @@ class Calcul {
     this.ageLegal = lesDeparts.ageLegal(moteur, carriere);
     const automatique = moteur.agesAnnulationDecote.age(carriere.generation);
     this.ageAutomatique = automatique !== null ? automatique[0] : 65.0;
+    if (this.premiere < AGES_DE_2010
+        && !this.pensions.some(([, , groupe]) => groupe === "fonction_publique")) {
+      // La première pension d'avant le 1er juillet 2011 : les âges de sa date
+      // d'effet, soixante et soixante-cinq ans. Voir le Python.
+      this.ageLegal = Math.min(this.ageLegal, 60.0);
+      this.ageAutomatique = Math.min(this.ageAutomatique, 65.0);
+    }
     // La durée du cumul intégral : celle des régimes en annuités, ou, à une
     // carrière tout en points, celle de L. 351-1.
     const requis = resultat.trimestres_requis || dureeDuTauxPlein(moteur, carriere);

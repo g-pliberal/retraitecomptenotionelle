@@ -5472,6 +5472,18 @@
   "script": "comparer-liquidation.mjs",
   "sortie": "f023c9b2b429b3b6"
  },
+ "4a568f98ab877754": {
+  "entree": {
+   "debut": "14",
+   "emploi_retraite": "2013-08",
+   "emploi_retraite_fin": "2015-01",
+   "liquidation": "58",
+   "naissance": "1953-01-15",
+   "sexe": "F"
+  },
+  "script": "simuler.mjs",
+  "sortie": "5cf01dc160bbf9a6"
+ },
  "4a56cbf8bce1295d": {
   "entree": {
    "age_reference": "fixe_apres_bascule",

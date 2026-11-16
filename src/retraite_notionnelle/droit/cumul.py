@@ -180,6 +180,9 @@ REVALORISATION_2010 = DateMois(2010, 1)
 #: Loi n° 2014-40, article 20, III : la pension d'un régime qui ouvre après
 #: l'âge légal n'est pas attendue pour le cumul intégral.
 ORDRE_DES_AGES = DateMois(2014, 2)
+#: Loi n° 2010-1330, article 118, II : ses âges ne valent que pour les
+#: pensions prenant effet à compter du 1er juillet 2011.
+AGES_DE_2010 = DateMois(2011, 7)
 PREMIERE_2015 = DateMois(2015, 1)
 #: Décret n° 2017-416 : la réduction du dépassement, pour les activités
 #: exercées depuis le 1er avril 2017 (D. 161-2-16), et depuis le 1er janvier
@@ -580,6 +583,19 @@ class _Calcul:
         self.age_legal = _departs.age_legal(moteur, carriere)
         automatique = moteur.ages_annulation_decote.age(carriere.generation)
         self.age_automatique = automatique[0] if automatique is not None else 65.0
+        if self.premiere < AGES_DE_2010 and not any(
+                groupe == "fonction_publique" for _, _, groupe in self.pensions):
+            # LA PREMIÈRE PENSION D'AVANT LE 1ER JUILLET 2011 : les âges de
+            # L. 351-1 et du 1° de L. 351-8 que L. 161-22 nomme sont ceux de sa
+            # date d'effet, soixante et soixante-cinq ans (loi n° 2010-1330,
+            # article 118, II ; circulaires Cnav n° 2011/61 et 2012/27, point
+            # 33 : « Il convient de retenir les âges en vigueur à la date
+            # d'effet de la retraite anticipée »). Le fonctionnaire garde ceux
+            # de sa génération : L. 84 du code des pensions renvoie aux mêmes
+            # articles, mais aucun texte lu ne dit ce que le service des
+            # retraites de l'État en fait.
+            self.age_legal = min(self.age_legal, 60.0)
+            self.age_automatique = min(self.age_automatique, 65.0)
         # La durée du cumul intégral : celle que les régimes en annuités
         # opposent, ou, à une carrière tout en points, qu'aucun ne compte, celle
         # de L. 351-1.
