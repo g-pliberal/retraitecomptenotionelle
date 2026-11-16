@@ -87,7 +87,9 @@ def _a_l_import(cadre) -> bool:
 
 def sonder(fonction: Callable[[], object]) -> list[str]:
     """Les règles du moteur Python que ``fonction()`` exécute, triées."""
-    monitoring = sys.monitoring
+    monitoring = getattr(sys, "monitoring", None)
+    if monitoring is None:  # Python 3.11, celui de GitHub
+        return _sonder_par_profil(fonction)
     relevees: set[str] = set()
 
     def au_debut(code, _decalage):
@@ -112,6 +114,40 @@ def sonder(fonction: Callable[[], object]) -> list[str]:
             monitoring.register_callback(_OUTIL, monitoring.events.PY_START, None)
     finally:
         monitoring.free_tool_id(_OUTIL)
+    return sorted(relevees)
+
+
+def _sonder_par_profil(fonction: Callable[[], object]) -> list[str]:
+    """La même sonde sous ``sys.setprofile``, sans ``sys.monitoring`` : plus
+    lente, chaque appel passant par elle."""
+    relevees: set[str] = set()
+    ecartes: set[object] = set()
+
+    def au_debut(cadre, evenement, _argument):
+        if evenement != "call":
+            return
+        code = cadre.f_code
+        if code in ecartes:
+            return
+        nom = getattr(code, "co_qualname", code.co_name)
+        if not code.co_flags & _CO_OPTIMIZED:
+            ecartes.add(code)
+            return
+        regle = est_une_regle(code.co_filename, nom)
+        if regle is None:
+            ecartes.add(code)
+            return
+        if _a_l_import(cadre.f_back):
+            return
+        relevees.add(regle)
+        ecartes.add(code)
+
+    precedent = sys.getprofile()
+    sys.setprofile(au_debut)
+    try:
+        fonction()
+    finally:
+        sys.setprofile(precedent)
     return sorted(relevees)
 
 

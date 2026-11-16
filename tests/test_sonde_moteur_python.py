@@ -74,3 +74,21 @@ def test_la_sonde_lance_un_script(tmp_path):
     sortie = subprocess.run([sys.executable, str(SCRIPT), "--json", str(script)],
                             capture_output=True, text=True, check=True)
     assert sortie.stdout.strip() == '["moteur.capitalisation.repartition"]'
+
+
+def test_la_sonde_tient_sans_sys_monitoring(tmp_path, monkeypatch):
+    """GitHub lance la suite sous Python 3.11, qui n'a pas ``sys.monitoring``
+    (3.12) : la sonde se rabat alors sur ``sys.setprofile``, et relève les
+    mêmes règles, hors de l'import."""
+    sonde = _paquet_factice(tmp_path, monkeypatch)
+    monkeypatch.delattr(sys, "monitoring", raising=False)
+    regle = _module(tmp_path / "moteur" / "regle.py",
+                    "def doubler(x):\n    return 2 * x\n", "regle_factice_311")
+    cout = _module(tmp_path / "cout.py",
+                   "def calculer(f):\n    return f(3)\n", "cout_factice_311")
+    assert sonde.sonder(lambda: cout.calculer(regle.doubler)) == ["moteur.regle.doubler"]
+    texte = ("def bareme():\n    return (1, 2)\n\n"
+             "class Table:\n    ligne = bareme()\n\n"
+             "BAREME = bareme()\n")
+    chemin = tmp_path / "droit" / "table.py"
+    assert sonde.sonder(lambda: _module(chemin, texte, "table_factice_311")) == []
