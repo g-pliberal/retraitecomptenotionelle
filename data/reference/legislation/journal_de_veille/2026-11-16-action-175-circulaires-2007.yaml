@@ -1,0 +1,38 @@
+date: "2026-11-16"
+session: "action 175, étape 6 : les 120 circulaires, lettres et instructions de 2007 que la base de la Cnav cite sans thème"
+consulte: >-
+  Les 120 références sans thème et à lire de 2007 dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », relues par l'API de la base le 16 novembre 2026 vers 12 h 10 UTC
+  (/reference/referencesByFileLeafRef/), toutes servies, 59 en page et 61 en PDF lus au
+  site (/Pdf/), trois scannés et lus à l'image ; toutes lues en entier, par six agents de
+  la session, un lot chacun, dont chaque citation d'un texte servi (108) a été retrouvée
+  mot pour mot. Pour les confronter : les fiches duree_requise_par_generation,
+  carriere_longue, cumul_emploi_retraite_et_retraite_progressive,
+  cumul_emploi_retraite_complementaire_des_independants, totalisation_des_periodes_etrangeres,
+  accords_internationaux, reversion, minimum_vieillesse, conjoint_collaborateur_independants,
+  majoration_conjoint_a_charge, service_civique, micro_social_abattement ; le code de
+  ouvrir.js et ouvrir.py, reversion.py, carriere.py ; les séries
+  legislation/duree_assurance_requise.csv, validation_trimestres.csv,
+  csg_pensions_seuils.csv, minimum_vieillesse.csv, minimum_vieillesse_couple.csv,
+  macro/smic_horaire_releves.csv, macro/plafond_securite_sociale.csv ; les limites
+  docs/limites/3-systeme-actuel.md. Ni Légifrance, ni le Journal officiel, ni l'index de
+  la DILA.
+trouve: >-
+  Le registre range les 120 (34 limite, 86 hors_modele), avec une raison neuve,
+  l'indemnité de départ des commerçants et des artisans. Conformes : le SMIC de 2007, les
+  plafonds de 2007 et 2008, le trimestre de 2008, les plafonds de la réversion de 2008, les
+  seuils de la CSG de 2008, la majoration pour conjoint à charge ; l'ASPA d'un couple de
+  2007 est à un centime de la série, non déclaré. Un écart neuf, à trancher : les
+  circulaires ministérielles n° 2007/396 et la diffusion n° 2007/9 gardent à 160 trimestres
+  la durée des pensions prenant effet avant 2009, quelle que soit la génération (R. 351-45,
+  I), quand le moteur oppose 161 à 164 trimestres aux nés de 1949 à 1952 partis avant 2009
+  en carrière longue ou au titre du handicap. Candidats plus étroits : la complémentaire
+  des artisans et commerçants pendant le cumul avant 2009 (circulaire RSI n° 2007/109),
+  la fraction de trimestre étrangère tronquée avant 2010 (règlement n° 574/72), la
+  réversion de 2004 à 2006 et le partage du dépassement entre régimes (circulaire RSI
+  n° 2007/061). Note docs/feuille_de_route/175/2026-11-16-etape-6-circulaires-2007.md.
+reste: >-
+  Les 498 circulaires de 2008 à 2026, par période ; les autres natures de l'étape 6 ;
+  R. 351-45 dans sa rédaction de 2008 et le règlement n° 574/72, à relire au Journal
+  officiel.
