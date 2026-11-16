@@ -1,14 +1,5 @@
 # Étape 6, circulaires de 2022 à 2025 : la lecture à rebours range les 27 références sans thème de ces quatre années
 
-**Reprise, au 16 novembre 2026.** Une seconde lecture des circulaires sans thème
-avance à rebours, de 2026 vers le passé, pendant que la première avance depuis
-2008. Ce bloc est le sien ; celui de la lecture chronologique reste sous sa note.
-2026 à 2022 sont faites : 29 références, un écart neuf, la revalorisation de 10 %
-des salaires de Mayotte. Viennent ensuite 2021 (9 circulaires), 2020 (7), 2019
-(10), 2018 (8), 2017 (30). Les deux lectures s'arrêtent où elles se rejoignent.
-Méthode : celle de la note de 2007, la base relue par l'API, chaque texte lu en
-entier, chaque citation retrouvée par script dans le texte servi. Détail ici.
-
 **Le 16 novembre 2026, ce qui est fait.**
 
 - *La période* : les références du registre sans thème et à lire dont le titre commence

@@ -1,0 +1,28 @@
+date: "2026-11-16"
+session: "action 175, étape 6 : lecture à rebours des circulaires sans thème, les années 2018 à 2021"
+consulte: >-
+  Les 34 références sans thème et à lire de 2018 à 2021 dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », relues par l'API de la base le 16 novembre 2026
+  (/reference/referencesByFileLeafRef/), toutes servies en PDF et lues au site (/Pdf/)
+  par la session, la circulaire n° 2018/6 par son plan et par recherche ; chaque
+  citation retrouvée mot pour mot. Pour les confronter : les fiches
+  droits_apres_la_premiere_pension, cotisation_maladie_des_non_residents,
+  sportifs_haut_niveau, chomage_non_indemnise, totalisation_des_periodes_etrangeres,
+  residence_et_minimum_vieillesse ; les séries legislation/revalorisation_pensions.csv et
+  csg_pensions_seuils.csv ; les limites docs/limites/3-systeme-actuel.md. Ni Légifrance,
+  ni le Journal officiel, ni l'index de la DILA.
+trouve: >-
+  Le registre range les 34 (15 limite, 19 hors_modele, dont 16 circulaires de taux de
+  change), sans raison neuve. Conformes : la revalorisation de 2019 (1,003) et de 2020
+  (1,01 jusqu'à 2 000 € par mois), les seuils de la CSG de 2022. Aucun écart neuf.
+  Candidats plus étroits : le maintien transitoire, après le 1er juillet 2019, de la
+  prise en charge des soins des pensionnés résidant à l'étranger qui avaient plus de dix
+  ans d'assurance (instruction n° DSS/DACI/2019/173), que la fiche
+  cotisation_maladie_des_non_residents ne lit pas ; la fin de la surcote à la première
+  pension (circulaire Cnav n° 2018/19, point 2.3), texte que la fiche
+  droits_apres_la_premiere_pension garde à lire. Note
+  docs/feuille_de_route/175/2026-11-16-etape-6-circulaires-2018-2021-a-rebours.md.
+reste: >-
+  La lecture à rebours continue en 2017 (30 circulaires), dans une session neuve,
+  jusqu'à rejoindre la lecture chronologique.
