@@ -26,16 +26,17 @@ traitement. Le jumeau JavaScript se compare aux témoins de chaque statut
 from __future__ import annotations
 
 import datetime as dt
+import functools
 import re
 
 import pytest
 
 from retraite_notionnelle import Parametres
-from retraite_notionnelle.carriere import Affiliations, Carriere, LigneRelevee, Metier
+from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.donnees.primes import charger_primes_soumises
-from retraite_notionnelle.donnees.regimes import CatalogueRegimes
 from retraite_notionnelle.remuneration import bloc_droit_en_vigueur
-from retraite_notionnelle.simulateur import Simulateur
+
+from facade import Carriere, Simulateur
 
 PARAMETRES = Parametres()
 POLICIER = "policier"
@@ -143,12 +144,19 @@ def test_le_rafp_plafonne_les_primes_au_cinquieme_du_seul_traitement(simulateur,
 # -- la retenue ----------------------------------------------------------------
 
 
+@functools.cache
+def _donnees() -> Simulateur:
+    """Le catalogue et les affiliations, des données, que le simulateur de la
+    façade lit par leurs chargeurs."""
+    return Simulateur(PARAMETRES)
+
+
 def _taux_salarie(statut: str, annee: int, part_primes: float = 0.0) -> float:
     """Ce que le droit en vigueur retient au salarié pour sa retraite, en part
     de sa rémunération entière, hors de la RAFP, que la fiche prélève à part
     sur les autres primes."""
-    bloc = bloc_droit_en_vigueur(CatalogueRegimes(PARAMETRES.racine_donnees),
-                                 Affiliations(PARAMETRES.racine_donnees), statut, annee,
+    donnees = _donnees()
+    bloc = bloc_droit_en_vigueur(donnees.catalogue, donnees.affiliations, statut, annee,
                                  part_primes)
     return sum(segment.taux for composante in bloc.composantes
                if not composante.hors_repartition
