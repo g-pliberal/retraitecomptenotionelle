@@ -84,7 +84,7 @@ Scénario                                                          Courants   Co
 > statuts qui cotisaient plus descendent, ceux qui cotisaient moins remontent.
 > Un plancher — la seule
 > ligne des scénarios notionnels qui ne vienne pas d'une cotisation —, servi à
-> partir de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans comme l'ASPA, mais **individualisé** : à <!--chiffre:illustration()-->300<!--/--> € et <!--chiffre:illustration()-->1 500<!--/--> €
+> partir de <!--chiffre:mesure(constante?de=moteur/js/regimes.js&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans comme l'ASPA, mais **individualisé** : à <!--chiffre:illustration()-->300<!--/--> € et <!--chiffre:illustration()-->1 500<!--/--> €
 > dans un couple, l'ASPA ne sert rien, la garantie sert <!--chiffre:mesure(garantie_complement?pension=300)-->500<!--/--> € au premier. La
 > page de simulation détaille la garantie étape par étape, et la page Coût
 > compte à part ce que l'impôt en finance.

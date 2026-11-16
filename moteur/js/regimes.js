@@ -3438,7 +3438,7 @@ export class ConversionsPoints {
 //: Taux contractuel de tranche B auquel la garantie minimale de points est
 //: écrite : 144 points pour 16 % (accord du 8 décembre 1988), 120 points pour
 //: 16 % (accord du 25 avril 1996, art. 7). Voir scenarios/actuel.py.
-const TAUX_DE_LA_GARANTIE = 0.16;
+export const TAUX_DE_LA_GARANTIE = 0.16;
 
 
 export class ValeursPoint {

@@ -7333,13 +7333,14 @@ Avant de supprimer les 40 fichiers de règles, l'inventaire
 (`2026-11-16-l-inventaire-du-retrait-des-regles.md`) fixe six étapes. Le
 coût, ses cas types, la mesure des avantages et la fiche de paie se chargent
 sans aucune règle Python. Aucune fiche, ni du droit ni de la proposition,
-ne nomme plus de code Python, et les tests des fiches le refusent
-(`2026-11-16-les-fiches-de-la-proposition-sans-python.md`). Restent, avant
-la suppression : les 22 chiffres ancrés et les gardes des jumeaux, qui
-nomment encore les fichiers de règles ; puis la carrière que le pont relit
-sous la classe des règles, que lisent 476 tests rapides. Par quoi commencer :
-les 22 chiffres ancrés. La suppression attend l'accord final du
-propriétaire.
+ne nomme plus de code Python, et les tests des fiches le refusent.
+Aucun chiffre ancré de la documentation ne lit plus un fichier de règles
+Python : tous lisent le moteur JavaScript, et un test le garde
+(`2026-11-16-les-chiffres-ancres-au-portage.md`). Restent, avant la
+suppression : les gardes des jumeaux ; puis
+la carrière que le pont relit sous la classe des règles, que lisent 476
+tests rapides. Par quoi commencer : les gardes des jumeaux. La suppression
+attend l'accord final du propriétaire.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

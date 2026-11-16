@@ -196,7 +196,7 @@ net :
 | 4. La proposition | <!--chiffre:mesure(simulateur?systeme=4&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->1 318<!--/--> € | <!--chiffre:mesure(simulateur?systeme=4&quoi=ecart&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->1,4<!--/--> % |
 
 À montrer avec le plancher en tête : la garantie vieillesse, <!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle+allocation_isolement_mensuelle)-->1 050<!--/--> € brut
-pour une personne seule dès <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans. Sous la proposition, cette carrière part
+pour une personne seule dès <!--chiffre:mesure(constante?de=moteur/js/regimes.js&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans. Sous la proposition, cette carrière part
 à <!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans, avec une année de cotisation en plus et un diviseur plus petit, et
 sa pension passe au-dessus du plancher : la garantie ne lui sert rien. Le
 dépliant « Le système 4 : un taux pour tous, et une garantie payée par
@@ -412,7 +412,7 @@ vérifiez plutôt que de nous croire.
   <!--chiffre:mesure(coefficient?scenario=6&quoi=minimum&en=manque)-->5<!--/--> % en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2026<!--/-->. Le système actuel, lui, est projeté en déficit de <!--chiffre:mesure(coefficient?scenario=1&en=manque)-->16<!--/--> % de
   la facture en <!--chiffre:mesure(coefficient?scenario=1&quoi=annee)-->2070<!--/-->, sans règle qui le règle.
 - **« Et les petites pensions ? »** Le plancher : <!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle)-->800<!--/--> € par personne plus
-  <!--chiffre:mesure(parametre?nom=allocation_isolement_mensuelle)-->250<!--/--> € pour qui vit seul, dès <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, individualisé, payé par l'impôt.
+  <!--chiffre:mesure(parametre?nom=allocation_isolement_mensuelle)-->250<!--/--> € pour qui vit seul, dès <!--chiffre:mesure(constante?de=moteur/js/regimes.js&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, individualisé, payé par l'impôt.
   Programme, tableau du plancher, et Coût, dépliant « Ce que coûte la
   garantie vieillesse ».
 - **« Pourquoi le fonctionnaire gagne ? »** Parce que l'État cotise pour lui

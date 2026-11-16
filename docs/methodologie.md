@@ -591,7 +591,7 @@ ligne :
 |---|---|
 | minimum contributif | oui, réservé au taux plein, deux prorata, écrêté |
 | minimum garanti | oui, barème de l'article L. 17 |
-| ASPA | oui, à partir de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, barème d'une personne seule ou du couple quand un conjoint est déclaré, ligne séparée |
+| ASPA | oui, à partir de <!--chiffre:mesure(constante?de=moteur/js/regimes.js&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, barème d'une personne seule ou du couple quand un conjoint est déclaré, ligne séparée |
 | PMR (retraite agricole) | oui, depuis 2009, au taux plein, au prorata de la durée agricole, écrêtée au plafond de toutes les pensions ; et, depuis 2015, le complément différentiel de la complémentaire agricole |
 | majoration pour trois enfants | oui, plafonnée en euros à la complémentaire |
 | majoration de durée d'assurance | oui, attribuée dans un régime |
@@ -607,7 +607,7 @@ ligne :
 n'est pas gratuite.** Le scénario 1 la sert de 1989 à 2018 : les points
 qu'achète, au prix de tout autre point, la cotisation forfaitaire que la caisse
 publiait chaque année — l'objectif était de <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.debut=1989;assiette=tranche_b.points_minimum_annuels)-->144<!--/--> points par an
-jusqu'en 1996, de <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.debut=1997;assiette=tranche_b.points_minimum_annuels)-->120<!--/--> ensuite, pour un taux contractuel de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=ValeursPoint.TAUX_DE_LA_GARANTIE&echelle=100)-->16<!--/--> % —,
+jusqu'en 1996, de <!--chiffre:partout(data/reference/regimes/agirc*.yaml:periodes.debut=1997;assiette=tranche_b.points_minimum_annuels)-->120<!--/--> ensuite, pour un taux contractuel de <!--chiffre:mesure(constante?de=moteur/js/regimes.js&nom=TAUX_DE_LA_GARANTIE&echelle=100)-->16<!--/--> % —,
 proratisés sur le taux de l'entreprise, que le modèle prend au minimum (la moitié
 des points jusqu'en 1993), sur la durée de présence et sur la quotité du temps
 partiel ; une
@@ -1097,7 +1097,7 @@ précédent, et le modèle en prenait deux à l'envers.
    les ressources des deux — la moitié de ce qui manque à chacun quand le
    conjoint a lui aussi l'âge de l'allocation, tout ce qui manque sinon, au
    plus le montant d'une personne seule (D. 815-1, D. 815-2). Servie à
-   partir de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, et toujours affichée comme une ligne séparée : ce n'est pas
+   partir de <!--chiffre:mesure(constante?de=moteur/js/regimes.js&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, et toujours affichée comme une ligne séparée : ce n'est pas
    une pension mais une aide sociale, soumise à condition de ressources du
    foyer, à demande, et récupérable sur les successions. Le paramètre
    `minimum_vieillesse_dans_le_scenario_actuel` la retire d'un seul geste.
@@ -1469,7 +1469,7 @@ d'autant plus que la carrière est récente.
 
 **Une garantie vieillesse, avancée par l'impôt.** Elle remplace l'ASPA et en
 garde le principe — une allocation sous condition de ressources, qui les
-porte à un plancher — et l'âge, <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans. Elle en change trois choses. La première est
+porte à un plancher — et l'âge, <!--chiffre:mesure(constante?de=moteur/js/regimes.js&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans. Elle en change trois choses. La première est
 que le plancher est **individualisé** : chaque personne est comparée au sien,
 sans que la pension du conjoint entre dans le calcul.
 
@@ -1550,7 +1550,7 @@ est une avance comme le reste, reprise sur la succession ; à
 elle redevient différentielle.
 
 Une réserve, et une méthode. Le modèle liquide et s'arrête : un assuré parti à
-<!--chiffre:illustration()-->62<!--/--> ans avant la bascule avec une petite pension reçoit la garantie à <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, et la page de
+<!--chiffre:illustration()-->62<!--/--> ans avant la bascule avec une petite pension reçoit la garantie à <!--chiffre:mesure(constante?de=moteur/js/regimes.js&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, et la page de
 simulation dit l'année et le montant. Mais une allocation de ce genre ne se
 chiffre pas sur <!--chiffre:mesure(grille?quoi=cas_types)-->13<!--/--> carrières, parce que son coût est tout entier celui de
 la queue basse de la distribution des pensions, et une grille choisie pour
@@ -1559,7 +1559,7 @@ page Coût n'est donc pas tirée des cas types : le barème est appliqué, anné
 par année, à la distribution que publie l'échantillon interrégimes de retraités
 de la DREES, et la grille ne sert qu'à dire de combien cette distribution
 bouge — la pension moyenne que la garantie regarde, compte notionnel et rente
-capitalisée réunis à partir de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, rapportée à la pension moyenne du
+capitalisée réunis à partir de <!--chiffre:mesure(constante?de=moteur/js/regimes.js&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, rapportée à la pension moyenne du
 système actuel l'année de l'enquête, un rapport par sexe, les femmes perdant
 davantage de droits non cotisés (`GarantieDistribution` dans `cout.py`,
 `rapport_deplacement_sexe` dans les paramètres). La forme de la distribution
@@ -1667,7 +1667,7 @@ Ce qu'elle suppose doit être dit : prendre le forward pour le taux futur est
 l'**hypothèse des anticipations pures**, qui néglige la prime de terme. Quand
 la courbe monte, le forward excède le taux futur moyen attendu, et le pilier
 s'en trouve légèrement flatté. Au-delà de la dernière maturité publiée
-(<!--chiffre:mesure(constante?de=retraite_notionnelle.moteur.capitalisation&nom=MATURITE_MAXIMALE)-->30<!--/--> ans), le taux zéro-coupon est prolongé à plat, et tout placement qui
+(<!--chiffre:mesure(constante?de=moteur/js/capitalisation.js&nom=MATURITE_MAXIMALE)-->30<!--/--> ans), le taux zéro-coupon est prolongé à plat, et tout placement qui
 en dépend est déclaré `estimee`.
 
 Elle a un second effet, moins visible et décisif pour ce qui suit : sous les
@@ -1733,8 +1733,8 @@ trente ans.
 
 | Années avant le départ | Maturité achetée |
 |---:|---|
-| 40 | le bout de courbe, <!--chiffre:mesure(constante?de=retraite_notionnelle.moteur.capitalisation&nom=MATURITE_MAXIMALE)-->30<!--/--> ans, puis ce qui reste à l'échéance |
-| <!--chiffre:mesure(constante?de=retraite_notionnelle.moteur.capitalisation&nom=MATURITE_MAXIMALE)-->30<!--/--> | <!--chiffre:mesure(constante?de=retraite_notionnelle.moteur.capitalisation&nom=MATURITE_MAXIMALE)-->30<!--/--> ans, qui tombe l'année du départ |
+| 40 | le bout de courbe, <!--chiffre:mesure(constante?de=moteur/js/capitalisation.js&nom=MATURITE_MAXIMALE)-->30<!--/--> ans, puis ce qui reste à l'échéance |
+| <!--chiffre:mesure(constante?de=moteur/js/capitalisation.js&nom=MATURITE_MAXIMALE)-->30<!--/--> | <!--chiffre:mesure(constante?de=moteur/js/capitalisation.js&nom=MATURITE_MAXIMALE)-->30<!--/--> ans, qui tombe l'année du départ |
 | 20 | <!--chiffre:illustration()-->20<!--/--> ans, qui tombe l'année du départ |
 | 10 | <!--chiffre:illustration()-->10<!--/--> ans, qui tombe l'année du départ |
 | 5 | <!--chiffre:illustration()-->5<!--/--> ans, qui tombe l'année du départ |
@@ -2608,8 +2608,8 @@ Deux conventions le bornent, l'une et l'autre imposées par la maille des donné
     sien.
 
   **Le public a son propre fichier**, `profil_salaire_statut_public.csv`, lu
-  dans le seul jeu de l'INSEE qui croise l'âge et le statut : ×1,11 de <!--chiffre:mesure(constante?de=retraite_notionnelle.carriere&nom=TRANCHES_CATEGORIE.Y_LT30)-->26<!--/--> à
-  <!--chiffre:mesure(constante?de=retraite_notionnelle.carriere&nom=TRANCHES_CATEGORIE.Y50T59)-->54,5<!--/--> ans — les centres de ses tranches extrêmes — pour un catégorie C, ×1,22 pour un catégorie B, ×1,56 pour un
+  dans le seul jeu de l'INSEE qui croise l'âge et le statut : ×1,11 de <!--chiffre:mesure(constante?de=moteur/js/carriere.js&nom=TRANCHES_CATEGORIE.Y_LT30)-->26<!--/--> à
+  <!--chiffre:mesure(constante?de=moteur/js/carriere.js&nom=TRANCHES_CATEGORIE.Y50T59)-->54,5<!--/--> ans — les centres de ses tranches extrêmes — pour un catégorie C, ×1,22 pour un catégorie B, ×1,56 pour un
   catégorie A, là où le profil du privé qu'on leur servait valait ×1,30.
 
   **Les régimes spéciaux portent en plus un facteur de secteur**, lu dans

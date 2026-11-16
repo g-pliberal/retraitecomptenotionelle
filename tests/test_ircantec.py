@@ -133,7 +133,7 @@ def _periodes(code: str, annee: int) -> list[dict]:
 
 def _constante(nom: str):
     """Une constante du portage, sa valeur littérale."""
-    trouve = re.search(rf"^const {nom} = (.+);$", PORTAGE.read_text(encoding="utf-8"), re.M)
+    trouve = re.search(rf"^(?:export )?const {nom} = (.+);$", PORTAGE.read_text(encoding="utf-8"), re.M)
     assert trouve, f"le portage ne définit plus {nom}"
     return json.loads(trouve.group(1))
 

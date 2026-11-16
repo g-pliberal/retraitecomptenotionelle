@@ -401,6 +401,18 @@ def test_ni_le_cout_ni_la_fabrique_n_atteignent_plus_le_simulateur_python(carte)
     assert fiche["cote_javascript"]["site"]
 
 
+def test_aucun_chiffre_ancre_ne_charge_un_fichier_de_regles(carte):
+    """Les chiffres ancrés lisent les constantes du droit au portage, qui fait
+    foi, et non dans les fichiers de règles du moteur Python, que le retrait
+    supprimera (action 161, étape 5)."""
+    from sonde_moteur_python import DOSSIERS, FICHIERS
+
+    paquet = "src/retraite_notionnelle/"
+    regles = {c for c in carte.ancres if c.startswith(paquet) and (
+        c[len(paquet):].split("/")[0] in DOSSIERS or c[len(paquet):] in FICHIERS)}
+    assert not regles, {c: [(r.fichier, r.ligne) for r in carte.ancres[c]] for c in regles}
+
+
 def test_la_carte_et_le_detail_d_une_paire_s_impriment(carte):
     assert jumeaux.imprimer_la_carte(carte)[0].startswith("La carte des jumeaux : ")
     ((rang, fiche),) = jumeaux.chercher(carte, "simulateur")

@@ -45,8 +45,8 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   professions libérales, celui des avocats, et celui des exploitants
   agricoles. La SURCOTE de l'Ircantec, elle, en est sortie : le IV de
   l'article 16 de l'arrêté du 30 décembre 1970 est servi depuis le
-  1er janvier 2010, à ses deux taux — <!--chiffre:mesure(constante?de=retraite_notionnelle.droit.liquider&nom=_SURCOTE_IRCANTEC_AGE&echelle=100)-->0,75<!--/--> % par trimestre entier écoulé
-  au-delà de l'âge du taux plein, <!--chiffre:mesure(constante?de=retraite_notionnelle.droit.liquider&nom=_SURCOTE_IRCANTEC_DUREE&echelle=100)-->0,625<!--/--> % par trimestre cotisé au-delà de la
+  1er janvier 2010, à ses deux taux — <!--chiffre:mesure(constante?de=moteur/js/droit/liquider.js&nom=SURCOTE_IRCANTEC_AGE&echelle=100)-->0,75<!--/--> % par trimestre entier écoulé
+  au-delà de l'âge du taux plein, <!--chiffre:mesure(constante?de=moteur/js/droit/liquider.js&nom=SURCOTE_IRCANTEC_DUREE&echelle=100)-->0,625<!--/--> % par trimestre cotisé au-delà de la
   durée requise en deçà de cet âge —, et le coefficient d'un régime en points
   peut désormais dépasser un, des deux côtés du portage. Les neuf autres
   régimes en points dont la fiche écrit une surcote la servent aussi depuis

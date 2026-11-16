@@ -407,7 +407,7 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   grade et applique donc à tous le barème du II —, et la limite de durée de
   services, qui l'ouvre de la même façon. Conséquence : un officier supérieur
   radié par limite d'âge peut être déclaré non ouvert quand le droit l'ouvre, et
-  la décote d'un militaire parti très tôt est au plus de <!--chiffre:mesure(constante?de=retraite_notionnelle.droit.ouvrir&nom=TRIMESTRES_DECOTE_MILITAIRE&echelle=1.25)-->12,5<!--/--> %, jamais de <!--chiffre:illustration()-->25<!--/--> %.
+  la décote d'un militaire parti très tôt est au plus de <!--chiffre:mesure(constante?de=moteur/js/droit/ouvrir.js&nom=TRIMESTRES_DECOTE_MILITAIRE&echelle=1.25)-->12,5<!--/--> %, jamais de <!--chiffre:illustration()-->25<!--/--> %.
 - **Les minima des exploitants agricoles, en partie.** La pension majorée de
   référence est servie depuis le 7 octobre 2026 aux pensions de non-salarié
   agricole qui prennent effet depuis 2009, au taux plein, au prorata de la

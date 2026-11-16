@@ -790,9 +790,10 @@ def constante(**reglages: str) -> float:
     lissage la plus longue, l'âge d'entrée de la carrière de référence. Le
     module se nomme depuis ``src/`` (``retraite_notionnelle.config``), depuis
     ``scripts/`` (``construire_tableaux_md``), ou dans le portage
-    (``moteur/js/saisie.js``, ``moteur/js/pages.js``) pour une constante qui
-    ne s'écrit qu'en JavaScript, celles de la saisie et du texte du site, et
-    se lit par node.
+    (``moteur/js/saisie.js``, ``moteur/js/droit/liquider.js``) pour une
+    constante qui ne s'écrit qu'en JavaScript — celles de la saisie, du texte
+    du site, et du moteur d'une carrière, qui y fait foi (action 161) —, et se
+    lit par node.
     """
     import importlib
 

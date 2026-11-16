@@ -655,9 +655,9 @@ ce qui a été cotisé avant la bascule y est porté aux mêmes taux, et estimé
 où le 4 l'estime. Il en ajoute d'autres, que les paragraphes suivants
 prennent une à une.
 
-**La garantie est ouverte à <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, et le modèle sert désormais ce qu'elle
-doit à qui est parti plus tôt.** *Corrigé le 19 septembre 2026.* Avant <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans
-on ne touche pas le minimum vieillesse ; à partir de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans on le touche, même
+**La garantie est ouverte à <!--chiffre:mesure(constante?de=moteur/js/regimes.js&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, et le modèle sert désormais ce qu'elle
+doit à qui est parti plus tôt.** *Corrigé le 19 septembre 2026.* Avant <!--chiffre:mesure(constante?de=moteur/js/regimes.js&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans
+on ne touche pas le minimum vieillesse ; à partir de <!--chiffre:mesure(constante?de=moteur/js/regimes.js&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans on le touche, même
 si l'on a liquidé à <!--chiffre:illustration()-->62<!--/-->. Le complément est donc CALCULÉ dans tous les cas, et il
 n'entre dans la pension affichée que lorsqu'il est dû dès le départ ; la page
 de simulation dit l'année où il s'ouvre, et le montant qu'il vaudra.
@@ -720,7 +720,7 @@ Ce que cette méthode suppose, et qui reste une limite : la FORME de la
 distribution est celle de 2020, déplacée sans être déformée, le passé comme
 l'avenir ; le déplacement est proportionnel et uniforme, quand le scénario ne
 déplace pas toutes les carrières du même rapport ; et les retraités de moins
-de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, qui attendent la garantie, sont supposés répartis comme les autres.
+de <!--chiffre:mesure(constante?de=moteur/js/regimes.js&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, qui attendent la garantie, sont supposés répartis comme les autres.
 Une seule méthode sur toute la série, plutôt qu'une falaise entre deux.
 
 **Ce que la garantie n'est plus : une dépense du compte des cotisants.** Elle

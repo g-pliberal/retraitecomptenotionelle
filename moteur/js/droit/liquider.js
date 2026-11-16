@@ -3938,14 +3938,14 @@ const COEFFICIENTS_CONVENTION_1947 = new Map([
  * liquidation — le 1° du IV de l'article 16 de l'arrêté du 30 décembre 1970.
  * Aucune condition de durée : c'est le temps qui compte.
  */
-const SURCOTE_IRCANTEC_AGE = 0.0075;
+export const SURCOTE_IRCANTEC_AGE = 0.0075;
 
 /**
  * Majoration par trimestre COTISÉ au-delà de la durée requise, entre l'âge
  * légal et l'âge du taux plein — le 2° du même IV. « En aucun cas une même
  * période ne peut donner lieu à la fois » aux deux.
  */
-const SURCOTE_IRCANTEC_DUREE = 0.00625;
+export const SURCOTE_IRCANTEC_DUREE = 0.00625;
 
 /**
  * Coefficient d'anticipation pour un nombre de trimestres manquants.
