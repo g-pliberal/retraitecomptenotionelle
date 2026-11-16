@@ -374,8 +374,10 @@ def test_la_saisie_n_est_gardee_que_par_le_navigateur():
         assert autre not in script
 
     _, corps = rendre("/simuler", {})
-    assert "Tout se calcule et se garde dans votre navigateur : rien n'en sort." \
-        in corps
+    # Le chapeau dit que rien n'est envoyé ; la bulle du titre, que la saisie
+    # se garde dans le navigateur (action 189, étape 2).
+    assert "rien n'est envoyé" in corps
+    assert "votre saisie ne se garde que dans votre navigateur" in corps
     assert '<button type="button" class="second oublier" hidden>Réinitialiser</button>' \
         in corps
     assert 'closest?.("button.oublier")' in script and "oublierMemoire();" in script

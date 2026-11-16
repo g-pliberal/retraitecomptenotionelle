@@ -29,3 +29,10 @@ quittent « notionnel », « répartition », « scénario », « contrefactuel 
 gardée, la décision 89, les pensions qui montent, « En bref », la carte « Le
 taux » et le texte prêt à coller de Partager ; le nom du site, « Retraite à
 comptes notionnels », sur le bandeau. Puis l'étape 3, la copie du parti.
+
+**La suite rouge qui a suivi.** GitHub a rougi deux tests que les fichiers de
+la zone ne lancent pas : `test_formulaire.py` cherchait l'ancien chapeau du
+simulateur, qui disait que la saisie se garde dans le navigateur ; la bulle du
+titre le dit désormais. `test_ecrans.py` forçait les boîtes du mot du
+glossaire sur Carrières types, qui n'en montre plus : Pourquoi changer la
+remplace.

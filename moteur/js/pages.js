@@ -653,7 +653,8 @@ function bulleDuTitre(saisie) {
     "Ce que ce formulaire calcule",
     "Votre carrière, calculée de quatre façons : les règles d'aujourd'hui, "
     + `<a href="${g.lien("/")}">notre compte</a> depuis 1941 ou à partir de `
-    + `${saisie.bascule}, et notre proposition entière. Rien n'est envoyé.`,
+    + `${saisie.bascule}, et notre proposition entière. Rien n'est envoyé, et `
+    + "votre saisie ne se garde que dans votre navigateur.",
   );
 }
 
