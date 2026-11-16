@@ -7327,16 +7327,16 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 15 novembre 2026.** Le moteur Python d'une carrière se retire au
+**Reprise, au 16 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Ses règles s'importent toutes les unes les autres : le retrait se fera par le
-haut, une fois le moteur Python plus exécuté. Plus aucun test ne lui fait
-refaire ce que le portage calcule. Restent 36 fichiers de tests qui importent
-une règle Python, rangés en vagues du plus court au plus long. Une étape par
-session. Par quoi commencer : la troisième vague, par `test_outre_mer.py` ;
-l'effet retour attend que le coût ne lise plus le moteur Python. Le détail :
-`2026-11-15-les-univers-hors-du-moteur-python.md`, et les vagues dans
-`2026-11-15-les-temoins-sans-jumeau-et-l-inventaire.md`.
+haut, une fois le moteur Python plus exécuté. Restent 23 fichiers de tests
+qui importent une règle Python ; leur liste est dans
+`test_fichiers_sur_le_moteur_python.py`. Une étape par session. Plusieurs
+fichiers font tourner le coût, qui veut encore un simulateur Python : ils
+attendent qu'il n'en lise plus. Par quoi commencer : les fichiers de la
+troisième vague que la note `2026-11-16-la-troisieme-vague-a-moitie.md`
+liste en dernier, `test_etranger.py` le premier.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
