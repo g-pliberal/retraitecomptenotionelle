@@ -7331,15 +7331,14 @@ de `contribution_etat`.
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Plus rien hors des tests de la façade n'exécute une règle Python. Avant de
 supprimer les 39 fichiers de règles, l'inventaire
-(`2026-11-16-l-inventaire-du-retrait-des-regles.md`) fixe cinq étapes. La
-première est faite : les types que le pont relit logent sous `types_du_pont/`,
-`Carriere` nue et `Comparaison` compris ; les règles de la carrière restent
-dans `carriere.py`, sur une classe qui en hérite
-(`2026-11-16-la-carriere-nue-hors-des-regles.md`). Par quoi commencer :
-l'étape 2, donner à la façade des tests ses propres signatures. Ensuite :
-reloger tels quels les chargeurs sous `donnees/`, débrancher le Python seul
-qui appelle une règle, ôter des fiches le champ du code Python. La
-suppression attend l'accord final du propriétaire.
+(`2026-11-16-l-inventaire-du-retrait-des-regles.md`) fixe cinq étapes. Les
+deux premières sont faites : les types que le pont relit logent sous
+`types_du_pont/` ; la façade des tests lit la signature et le type rendu de
+ce qu'elle sert dans `tests/contrats_de_la_facade.py`, sans le jumeau
+(`2026-11-16-la-facade-porte-ses-contrats.md`). Par quoi commencer :
+l'étape 3, reloger tels quels les chargeurs sous `donnees/`. Ensuite :
+débrancher le Python seul qui appelle une règle, ôter des fiches le champ du
+code Python. La suppression attend l'accord final du propriétaire.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

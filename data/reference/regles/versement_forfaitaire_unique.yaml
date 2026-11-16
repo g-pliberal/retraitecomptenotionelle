@@ -326,7 +326,7 @@ sources:
 code:
   python: >-
     droit/completer.py : verser_en_capital, completer ; droit/departs.py :
-    PensionServie.date_effet ; droit/liquidation.py : liquider ; scenarios/actuel.py :
+    PensionServie ; droit/liquidation.py : liquider ; scenarios/actuel.py :
     FichesDatees
   javascript: >-
     moteur/js/droit/completer.js : verserEnCapital, completer ;

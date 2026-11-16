@@ -45,6 +45,7 @@ from .etranger import famille_du_regime
 from .ouvrir import TRIMESTRES_DECOTE_MILITAIRE
 from ..somme import somme_ordonnee
 from ..types_du_pont.droit import EligiblePlafondEnfants  # noqa: F401  (types du pont, action 161)
+from ..types_du_pont.droit import EligibleMinimum, PrestationRafp  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -332,20 +333,6 @@ def fractionnement_rafp(points: float, date_effet: DateMois,
     return retenu
 
 
-@dataclass(frozen=True)
-class PrestationRafp:
-    """La prestation du RAFP, telle que l'ERAFP la verse : une rente à partir
-    de 5 125 points, un capital en deçà, versé en une fois ou en deux.
-    ``premiere_fraction`` et ``mois_du_solde`` ne valent que pour le second."""
-
-    forme: str  # « rente », « capital » ou « capital_fractionne »
-    capital: float | None = None
-    conversion: float | None = None
-    premiere_fraction: float | None = None
-    mois_du_solde: int | None = None
-    seuil_du_fractionnement: int | None = None
-
-
 def prestation_rafp(rente: float, points: float, seuil: float, age: float,
                     date_effet: DateMois, mois_apres_la_base: int) -> PrestationRafp:
     """La forme de la prestation du RAFP et ses montants : ``rente`` est la
@@ -425,57 +412,6 @@ _BAREMES_DECOTE_EN_TABLE = frozenset(
 #: 1er juillet (:func:`millesime_du_bareme`), et leur décompte par la durée a
 #: sa borne (:func:`borne_de_la_duree`).
 _BAREMES_REGIMES_SPECIAUX = frozenset({"regimes_speciaux", "regimes_speciaux_age_fixe"})
-
-
-@dataclass(frozen=True)
-class EligibleMinimum:
-    """Régime de base susceptible d'être porté au minimum contributif.
-
-    Quatre grandeurs, et pas une seule, parce que le droit en demande quatre :
-    la pension à relever, les deux fractions de durée qui proratisent le
-    montant de base et sa majoration, la condition de taux plein qui ouvre le
-    droit, et le coefficient de surcote qu'il faut retirer avant de comparer
-    au plancher puis rendre après.
-    """
-
-    #: Indice de la pension dans :attr:`Pensions.regimes`.
-    indice: int
-    #: Durée d'assurance acquise dans le régime / durée requise, bornée à 1.
-    prorata_assurance: float
-    #: Durée COTISÉE acquise dans le régime / durée requise, bornée à 1.
-    prorata_cotise: float
-    #: La pension est-elle liquidée au taux plein dans ce régime ?
-    taux_plein: bool
-    #: Coefficient de surcote déjà incorporé au montant de la pension.
-    surcote: float = 1.0
-    #: Ce que le minimum d'une pension proratisée lit en plus (fiche
-    #: ``minimum_contributif_international``) : les durées d'assurance et
-    #: cotisée du régime, non bornées, sa durée maximum, qui proratise, et
-    #: la durée requise pour le taux plein.
-    duree_regime: int = 0
-    cotisee_regime: int = 0
-    proratisation: int = 0
-    requis: int = 0
-    #: La part du montant que le minimum ne relève pas : la fraction d'avant
-    #: 1998 des cultes, qui a ses propres majorations (:mod:`.cultes`).
-    hors_minimum: float = 0.0
-    #: Ce que le minimum d'un polypensionné lit depuis 2004 (fiche
-    #: ``minimum_contributif``) : la durée d'assurance et la durée cotisée
-    #: tous régimes de base, celles du régime comprises, sommées régime par
-    #: régime sans limite de quatre trimestres par an.
-    duree_tous_regimes: int = 0
-    cotisee_tous_regimes: int = 0
-    #: Le régime valide-t-il l'AVPF et l'AVA, que la majoration compte depuis
-    #: septembre 2023 ? Le régime général, seul.
-    porte_avpf: bool = False
-    #: Les régimes dont la pension s'ajoute à celle-ci, et la durée à sa durée,
-    #: sous le minimum qui borne leur total : les droits d'avant 1973 des
-    #: artisans et des commerçants (D. 634-6), que nomme la période de chacun
-    #: des membres liquidés ensemble ; vide ailleurs.
-    bornee_avec: tuple[str, ...] = ()
-    #: La borne est-elle le minimum entier, et non le minimum au prorata de la
-    #: durée totale ? De 1983 à 1989 (décret n° 73-937, article 7).
-    bornee_au_minimum_entier: bool = False
 
 
 @dataclass(frozen=True)

@@ -64,6 +64,7 @@ from ..calendrier import DateMois, en_mois
 from ..donnees.chargement import Fiabilite
 from .commun import date_d_effet, ligne_cotisee
 from ..somme import somme_ordonnee
+from ..types_du_pont.droit import PlancherDeLaSubstitution  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -396,27 +397,6 @@ def pension_d_invalidite_servie(moteur: ScenarioActuel, carriere: Carriere, regi
     coefficient, fiabilite = moteur.revalorisations_pensions.generale(
         dt.date(debut.annee, 1, 1), dt.date(effet.annee, effet.mois, 1), False, math.inf)
     return taux * salaire * coefficient, fiabilite
-
-
-@dataclass(frozen=True)
-class PlancherDeLaSubstitution:
-    """Le plancher de la pension de vieillesse qui remplace la pension
-    d'invalidité, à sa date d'effet, en euros par an : le montant entier de
-    l'allocation aux vieux travailleurs salariés, ou la pension d'invalidité
-    liquidée avant le 31 mai 1983 quand elle est plus haute (L. 341-15)."""
-
-    #: Le régime dont la pension se compare au plancher.
-    regime: str
-    montant: float
-    avts: float
-    #: La pension d'invalidité d'avant juin 1983, revalorisée ; ``None`` quand
-    #: elle n'est pas un plancher.
-    pension_d_invalidite: float | None
-    #: Sa catégorie, et la présomption qui la pose.
-    categorie: int | None
-    presomption: str | None
-    version: str
-    fiabilite: Fiabilite
 
 
 def plancher_de_la_substitution(moteur: ScenarioActuel, carriere: Carriere,

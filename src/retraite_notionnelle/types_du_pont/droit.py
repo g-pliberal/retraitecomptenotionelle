@@ -8,7 +8,7 @@ sont ceux de ``moteur/js/droit/``.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
@@ -848,3 +848,415 @@ class DroitsApresDepart:
                 "pensions": [p.donnees() for p in self.pensions],
                 "non_calcules": list(self.non_calcules), "montant": self.montant,
                 "regimes_nouveaux": [p.donnees() for p in self.regimes_nouveaux]}
+
+
+#: Le motif d'un départ daté au départ déclaré (``droit/departs.py``).
+MOTIF_DEPART = "depart"
+
+#: La fiche de la limite d'âge de la fonction publique (``droit/limite_age.py``).
+FICHE_DE_LA_LIMITE = "limite_age_fonction_publique"
+
+
+@dataclass(frozen=True)
+class DureesDesCultes:
+    """Les trimestres de la CAVIMAC, rangés par fraction ; chaque année
+    plafonnée à ses trimestres civils, comme toute durée d'un régime."""
+
+    #: Les trimestres d'avant 1979, validés gratuitement.
+    avant_1979: int
+    #: Les trimestres d'assurance de 1979 à 1997, assimilés compris.
+    de_1979_a_1997: int
+    #: Ceux de ces derniers qui ont porté cotisation.
+    cotises_de_1979_a_1997: int
+    #: Les trimestres d'assurance depuis 1998, enfants compris.
+    depuis_1998: int
+    #: Ceux de ces derniers qui ont porté cotisation.
+    cotises_depuis_1998: int
+
+    @property
+    def avant_1998(self) -> int:
+        """La durée que la fraction d'avant 1998 proratise."""
+        return self.avant_1979 + self.de_1979_a_1997
+
+
+@dataclass(frozen=True)
+class PrestationRafp:
+    """La prestation du RAFP, telle que l'ERAFP la verse : une rente à partir
+    de 5 125 points, un capital en deçà, versé en une fois ou en deux.
+    ``premiere_fraction`` et ``mois_du_solde`` ne valent que pour le second."""
+
+    forme: str  # « rente », « capital » ou « capital_fractionne »
+    capital: float | None = None
+    conversion: float | None = None
+    premiere_fraction: float | None = None
+    mois_du_solde: int | None = None
+    seuil_du_fractionnement: int | None = None
+
+
+@dataclass(frozen=True)
+class EligibleMinimum:
+    """Régime de base susceptible d'être porté au minimum contributif.
+
+    Quatre grandeurs, et pas une seule, parce que le droit en demande quatre :
+    la pension à relever, les deux fractions de durée qui proratisent le
+    montant de base et sa majoration, la condition de taux plein qui ouvre le
+    droit, et le coefficient de surcote qu'il faut retirer avant de comparer
+    au plancher puis rendre après.
+    """
+
+    #: Indice de la pension dans :attr:`Pensions.regimes`.
+    indice: int
+    #: Durée d'assurance acquise dans le régime / durée requise, bornée à 1.
+    prorata_assurance: float
+    #: Durée COTISÉE acquise dans le régime / durée requise, bornée à 1.
+    prorata_cotise: float
+    #: La pension est-elle liquidée au taux plein dans ce régime ?
+    taux_plein: bool
+    #: Coefficient de surcote déjà incorporé au montant de la pension.
+    surcote: float = 1.0
+    #: Ce que le minimum d'une pension proratisée lit en plus (fiche
+    #: ``minimum_contributif_international``) : les durées d'assurance et
+    #: cotisée du régime, non bornées, sa durée maximum, qui proratise, et
+    #: la durée requise pour le taux plein.
+    duree_regime: int = 0
+    cotisee_regime: int = 0
+    proratisation: int = 0
+    requis: int = 0
+    #: La part du montant que le minimum ne relève pas : la fraction d'avant
+    #: 1998 des cultes, qui a ses propres majorations (:mod:`.cultes`).
+    hors_minimum: float = 0.0
+    #: Ce que le minimum d'un polypensionné lit depuis 2004 (fiche
+    #: ``minimum_contributif``) : la durée d'assurance et la durée cotisée
+    #: tous régimes de base, celles du régime comprises, sommées régime par
+    #: régime sans limite de quatre trimestres par an.
+    duree_tous_regimes: int = 0
+    cotisee_tous_regimes: int = 0
+    #: Le régime valide-t-il l'AVPF et l'AVA, que la majoration compte depuis
+    #: septembre 2023 ? Le régime général, seul.
+    porte_avpf: bool = False
+    #: Les régimes dont la pension s'ajoute à celle-ci, et la durée à sa durée,
+    #: sous le minimum qui borne leur total : les droits d'avant 1973 des
+    #: artisans et des commerçants (D. 634-6), que nomme la période de chacun
+    #: des membres liquidés ensemble ; vide ailleurs.
+    bornee_avec: tuple[str, ...] = ()
+    #: La borne est-elle le minimum entier, et non le minimum au prorata de la
+    #: durée totale ? De 1983 à 1989 (décret n° 73-937, article 7).
+    bornee_au_minimum_entier: bool = False
+
+
+@dataclass(frozen=True)
+class PensionMajoree:
+    """Ce que la pension majorée de référence ajoute à la pension de base des
+    non-salariés agricoles, et ce qu'elle a lu (:func:`pension_majoree`)."""
+
+    #: La PMR entière de la date d'effet, en euros par an.
+    entiere: float
+    #: La durée retenue et la durée de référence, en trimestres.
+    duree: int
+    reference: int
+    #: La majoration avant l'écrêtement, et après.
+    avant_ecretement: float
+    complement: float
+    #: Le plafond de l'écrêtement.
+    plafond: float
+    fiabilite: Fiabilite
+    #: De 2009 à 2021, le montant réduit, PMR2, et les trimestres qui le
+    #: reçoivent, DM2 : ceux du conjoint collaborateur et de l'aide familial
+    #: (D. 732-111) ; ``duree`` les compte aussi.
+    reduite: float | None = None
+    duree_reduite: int = 0
+    #: La réversion que le régime sert, par an, retranchée de la PMR et
+    #: comptée au plafond (D. 732-112, D. 732-114).
+    reversion: float = 0.0
+
+
+@dataclass(frozen=True)
+class TrimestresEnfant:
+    """Ce qu'un enfant ouvre, et le régime qui le porte."""
+
+    #: L'enfant, tel que la chronologie le nomme.
+    enfant: str
+    #: Sa naissance (AAAA-MM-JJ), déclarée ou présumée.
+    naissance: str
+    #: Code du régime dans lequel le droit attribue ses trimestres.
+    regime: str
+    #: Dispositif qui les accorde : ``mda``, ``bonifications``, ou celui d'un
+    #: régime spécial qui a sa fiche (``enfants_sncf``, ``enfants_ratp``,
+    #: ``enfants_ieg``, ``enfants_crpcen``).
+    dispositif: str
+    #: La fiche et la version appliquées, et le texte qui fait naître celle-ci.
+    fiche: str
+    version: str
+    texte: str | None
+    #: Trimestres accordés pour cet enfant. Ils jouent sur la durée
+    #: d'assurance tous régimes, donc sur la décote et la surcote.
+    trimestres: int
+    #: Ceux d'entre eux qui entrent dans les SERVICES du régime, et relèvent
+    #: donc son prorata. Une bonification en est ; la majoration de durée
+    #: d'assurance de L. 12 bis n'en est pas.
+    services: int
+    fiabilite: Fiabilite
+
+
+@dataclass(frozen=True)
+class MajorationEnfants:
+    """Trimestres dus au titre des enfants, enfant par enfant.
+
+    Chaque enfant a son régime : la priorité entre régimes (R. 173-15) se lit
+    pour chacun, et le régime général accorde ceux qu'un régime spécial
+    n'ouvre pas — « si un ou plusieurs enfants n'ouvrent pas droit à
+    majoration » (circulaire Cnav 2017-01, fiches n° 6.2a et 6.2b, point 3).
+    """
+
+    #: Les enfants qui ouvrent un droit, dans l'ordre de leurs filiations.
+    enfants: tuple[TrimestresEnfant, ...]
+
+    @property
+    def trimestres(self) -> int:
+        """Trimestres accordés au total, tous enfants confondus."""
+        return somme_ordonnee(enfant.trimestres for enfant in self.enfants)
+
+    @property
+    def services(self) -> int:
+        """Ceux d'entre eux qui entrent aux services, tous enfants confondus."""
+        return somme_ordonnee(enfant.services for enfant in self.enfants)
+
+    @property
+    def fiabilite(self) -> Fiabilite:
+        """La fiabilité la plus basse des enfants."""
+        return min(enfant.fiabilite for enfant in self.enfants)
+
+    def par_regime(self) -> dict[str, tuple[int, int]]:
+        """Les trimestres et les services que porte chaque régime, dans l'ordre
+        de son premier enfant."""
+        sommes: dict[str, tuple[int, int]] = {}
+        for enfant in self.enfants:
+            trimestres, services = sommes.get(enfant.regime, (0, 0))
+            sommes[enfant.regime] = (trimestres + enfant.trimestres,
+                                     services + enfant.services)
+        return sommes
+
+    @property
+    def regimes(self) -> list[str]:
+        """Les régimes qui portent des trimestres d'enfants."""
+        return list(self.par_regime())
+
+    @property
+    def dispositifs(self) -> list[str]:
+        """Les dispositifs qui les accordent, dans l'ordre des enfants."""
+        return list(dict.fromkeys(enfant.dispositif for enfant in self.enfants))
+
+
+@dataclass(frozen=True)
+class PlancherDeLaSubstitution:
+    """Le plancher de la pension de vieillesse qui remplace la pension
+    d'invalidité, à sa date d'effet, en euros par an : le montant entier de
+    l'allocation aux vieux travailleurs salariés, ou la pension d'invalidité
+    liquidée avant le 31 mai 1983 quand elle est plus haute (L. 341-15)."""
+
+    #: Le régime dont la pension se compare au plancher.
+    regime: str
+    montant: float
+    avts: float
+    #: La pension d'invalidité d'avant juin 1983, revalorisée ; ``None`` quand
+    #: elle n'est pas un plancher.
+    pension_d_invalidite: float | None
+    #: Sa catégorie, et la présomption qui la pose.
+    categorie: int | None
+    presomption: str | None
+    version: str
+    fiabilite: Fiabilite
+
+
+@dataclass(frozen=True)
+class Recul:
+    """Une exception qui recule ou prolonge la limite : de quel âge à quel âge
+    elle garde l'agent en fonctions, la version de sa fiche, et si le modèle
+    la présume demandée et accordée (``presumee``) ou si elle est de droit."""
+
+    nom: str
+    fiche: str
+    version: str
+    depuis: float
+    jusqu_a: float
+    presumee: bool
+
+
+@dataclass(frozen=True)
+class Radiation:
+    """La radiation des cadres par limite d'âge d'une carrière.
+
+    ``date`` est le premier mois de la pension, celui qui suit l'anniversaire ;
+    ``limite``, la limite de l'emploi, avant tout recul ; ``reculs``, les
+    exceptions qui la reculent jusqu'à la radiation, dans l'ordre de la loi.
+    ``forcee`` dit que la radiation précède la fin des services que la saisie
+    déclare : les services s'arrêtent là, et la pension part de ce jour ;
+    sinon, l'agent quitte le service avant la limite que les exceptions lui
+    ouvrent, et la radiation est sa sortie. ``fiche`` est celle de la limite :
+    la radiation n'arrête que les services de son emploi."""
+
+    date: DateMois
+    age: float
+    limite: float
+    classe: str
+    affiliation: str
+    version: str
+    regimes: frozenset[str]
+    reculs: tuple[Recul, ...]
+    forcee: bool
+    fiche: str = FICHE_DE_LA_LIMITE
+
+    @property
+    def presumees(self) -> tuple[Recul, ...]:
+        """Les exceptions que le modèle présume demandées et accordées."""
+        return tuple(recul for recul in self.reculs if recul.presumee)
+
+
+@dataclass(frozen=True)
+class DepartParentTroisEnfants:
+    """Ce que le départ anticipé du parent de trois enfants ouvre à un
+    fonctionnaire, une fois sa carrière lue (:func:`depart_parent_trois_enfants`)."""
+
+    #: L'âge où les conditions sont réunies — quinze ans de services, le
+    #: troisième enfant —, d'où la pension s'ouvre à tout âge.
+    age_ouverture: float
+    #: L'année à laquelle se lisent la durée requise et le barème de décote :
+    #: celle des conditions réunies, ou, hors de l'ancien calcul, celle des
+    #: soixante ans, ou de l'âge de la catégorie active.
+    annee_des_parametres: int
+    #: Vrai quand l'ancien calcul demeure (loi n° 2010-1330, article 44, IV, 1°
+    #: et 2°) : l'assuré garde aussi l'article L. 17 d'avant cette loi, le
+    #: minimum garanti sans condition.
+    ancien_calcul: bool
+    #: La version de la fiche qui vaut.
+    version: str
+    fiabilite: Fiabilite
+
+
+@dataclass(frozen=True)
+class Progressive:
+    """Une demande de retraite progressive, et ce que le droit en fait."""
+
+    #: Le mois où elle prend effet, et la quotité du temps partiel gardé.
+    date: DateMois
+    quotite: float
+    #: ``ouverte``, ou ce qui la ferme : ``avant_1988``, ``activite``,
+    #: ``regimes``, ``quotite``, ``age``, ``duree``.
+    motif: str
+    #: La fraction servie ; nulle quand la demande n'est pas ouverte.
+    fraction: float = 0.0
+    #: Les régimes qui liquident à titre provisoire : de base, puis les
+    #: complémentaires qui les suivent.
+    bases: frozenset[str] = frozenset()
+    complementaires: frozenset[str] = frozenset()
+    age_minimum: float | None = None
+    duree_requise: int | None = None
+    trimestres: int | None = None
+
+    @property
+    def ouverte(self) -> bool:
+        return self.motif == OUVERTE
+
+    @property
+    def date_effet(self) -> str:
+        return jour(self.date)
+
+    @property
+    def regimes(self) -> frozenset[str]:
+        return self.bases | self.complementaires
+
+
+@dataclass(frozen=True)
+class RevenuDesPoints:
+    """Le revenu que des points supposent."""
+
+    #: Le revenu entier le plus bas, en euros de l'année, dont l'étage crédite
+    #: au moins les points lus.
+    revenu: int
+    #: Les points sont le plus haut que le barème ouvre : tout revenu au-delà
+    #: de ``revenu`` aurait ouvert les mêmes, et celui de l'assuré a pu le
+    #: dépasser.
+    au_plafond: bool
+
+
+@dataclass(frozen=True)
+class DerogationActive:
+    """Ce que le classement d'un emploi déplace, pour une génération."""
+
+    #: Âge anticipé (catégorie active) ou minoré (super-active) : L. 24, I, 1°.
+    age_ouverture: float
+    #: Âge d'annulation de la décote : limite d'âge du grade jusqu'en 2023,
+    #: article L. 14 bis ensuite.
+    age_annulation: float
+    #: Années de services classés d'avant la loi de 2010 — quinze, vingt-cinq
+    #: en super-active —, que ``DureesServicesActifs`` relève selon l'année où
+    #: elles sont atteintes ; sans la durée relevée, rien de tout cela ne vaut.
+    services_requis: float
+    #: Durée de services et bonifications requise, quand le classement en a une
+    #: qui lui soit propre — « par dérogation à l'article L. 13 ». ``None``
+    #: avant les marches de 2023 (septembre 1966, septembre 1971) : la durée
+    #: est alors celle de l'année d'ouverture du droit, que
+    #: ``DureesRequisesAvantSoixanteAns`` porte.
+    duree_requise: int | None
+    fiabilite: Fiabilite
+
+
+@dataclass(frozen=True)
+class TrimestresAccordes:
+    """Ce qu'une version de fiche accorde pour UN enfant, et ce qu'elle exige.
+
+    ``trimestres`` joue sur la durée d'assurance ; ``services``, qui en est un
+    sous-ensemble, entre au prorata du régime qui les porte. ``condition``
+    compare la naissance de l'enfant au recrutement et à la radiation, dans un
+    régime spécial ; ``compter.bonification_ouverte`` la lit.
+    """
+
+    fiche: str
+    version: str
+    texte: str | None
+    trimestres: int
+    services: int
+    condition: str
+    fiabilite: Fiabilite
+
+
+@dataclass(frozen=True)
+class ConversionPoint:
+    """Ce que devient un point à une fusion, ou à un changement d'unité."""
+
+    annee_effet: int
+    #: Régime qui reprend les points, ou ``None`` pour un changement d'échelle
+    #: interne au régime lui-même.
+    successeur: str | None
+    #: Un point d'origine vaut ce nombre de points d'arrivée.
+    coefficient: float
+    fiabilite: Fiabilite
+
+
+@dataclass(frozen=True)
+class Depart:
+    """Un départ : le mois où il prend effet, et les régimes qui y liquident."""
+
+    date: DateMois
+    #: Les régimes qui liquident ce mois-là ; vide pour le départ unique, où
+    #: tous liquident ensemble.
+    regimes: frozenset[str] = field(default_factory=frozenset)
+    #: ``depart``, au départ déclaré ; ``ouverture``, un régime qui n'ouvrait
+    #: pas encore ; ``sortie``, la pension militaire, demandée à la sortie de
+    #: l'armée ; ``demande``, la date que la personne demande ;
+    #: ``invalidite``, la pension de vieillesse qui remplace la pension
+    #: d'invalidité ; ``radiation``, la pension du fonctionnaire radié des
+    #: cadres pour invalidité ; ``limite_d_age``, celle du fonctionnaire ou du
+    #: militaire radié par limite d'âge ; ``trimestre_civil``, la
+    #: complémentaire que son texte sert au trimestre civil qui suit.
+    motif: str = MOTIF_DEPART
+
+    @property
+    def date_effet(self) -> str:
+        """La date d'effet (AAAA-MM-JJ) : le premier jour du mois."""
+        return f"{self.date.annee:04d}-{self.date.mois:02d}-01"
+
+    @property
+    def unique(self) -> bool:
+        """Le départ unique, où tous les régimes liquident ensemble."""
+        return not self.regimes

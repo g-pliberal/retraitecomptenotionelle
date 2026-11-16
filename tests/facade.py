@@ -29,7 +29,9 @@ affiliations — se lisent, par leurs chargeurs Python, qui restent.
 **Les tables du moteur** se lisent par leur nom et leur méthode
 (``simulateur.scenario_actuel.reversions.minimum(2025)``) : le portage appelle
 la méthode de sa table, parmi celles que ``pont.TABLES_DE_LA_FACADE`` déclare,
-et ce qu'elle rend revient sous le type que la méthode du jumeau annonce. Une
+et ce qu'elle rend revient sous le type que son contrat annonce
+(``contrats_de_la_facade.py``, la signature et le type rendu de chaque
+entrée servie, qui ne chargent aucun fichier de règles). Une
 règle du moteur Python à qui un test passe le moteur de la façade n'y lit
 rien : elle tournerait en Python sur les tables du portage.
 
@@ -73,7 +75,6 @@ from __future__ import annotations
 
 import dataclasses
 import datetime
-import functools
 import inspect
 import os
 import shutil
@@ -83,6 +84,7 @@ from pathlib import Path
 
 import pytest
 
+import contrats_de_la_facade as _contrats
 from retraite_notionnelle import carriere as _carriere
 from retraite_notionnelle import castypes as _castypes
 from retraite_notionnelle import echeancier as _echeancier
@@ -120,9 +122,7 @@ from retraite_notionnelle.droit import releve as _releve
 from retraite_notionnelle.droit import reversion as _reversion
 from retraite_notionnelle.droit import seconde as _seconde
 from retraite_notionnelle.moteur import compte as _compte
-from retraite_notionnelle.moteur import conversion as _conversion
 from retraite_notionnelle.moteur.fusion import RegimeFusionne
-from retraite_notionnelle.scenarios import actuel as _actuel
 
 #: Les données du simulateur Python que la façade laisse lire : des chargeurs,
 #: qui restent en Python (note de décision 0006), et aucune règle.
@@ -183,11 +183,13 @@ def _demander(entree: str, parametres: Parametres, *arguments):
     return pont.facade(entree, *arguments, parametres=parametres)
 
 
-def _options(batisseur, *arguments, **options) -> dict:
-    """Les arguments d'un bâtisseur de carrière, par leur nom, liés comme le
-    Python les lie — un argument inconnu ou en double est une ``TypeError`` —,
-    sans les séries, que le portage a."""
-    lies = inspect.signature(batisseur).bind(*arguments, **options).arguments
+def _options(batisseur: str, *arguments, **options) -> dict:
+    """Les arguments d'un bâtisseur de carrière (``carriere.depuis_profil``),
+    par leur nom, liés comme le Python les lie, selon son contrat — un
+    argument inconnu ou en double est une ``TypeError`` —, sans les séries,
+    que le portage a."""
+    contrat = _contrats.contrat_de_l_entree(batisseur)
+    lies = inspect.signature(contrat).bind(*arguments, **options).arguments
     return {nom: valeur for nom, valeur in lies.items() if nom != "macro"}
 
 
@@ -221,16 +223,6 @@ class _Ferme:
             "Python — le test la demande au pont (pont.droit), ou se porte à la main")
 
 
-@functools.cache
-def _type_de_la_table(parametres: Parametres, nom: str) -> type:
-    """Le type de la table ``nom`` au moteur du jumeau Python, sous ces
-    paramètres, d'où la façade lit la signature et le rendu d'une méthode : le
-    seul usage qu'elle fasse du simulateur Python, dont les données se lisent
-    sur un simulateur de données seules. Une table s'y recouvre selon les
-    paramètres (``TableRecouverte``) : son type se lit sur l'instance."""
-    return type(getattr(_simulateur.Simulateur(parametres).scenario_actuel, nom))
-
-
 class Table(_Ferme):
     """Une table du moteur d'un simulateur de la façade : celles de ses
     méthodes que la façade sert (:data:`TABLES`), appelées par le portage sur
@@ -247,13 +239,12 @@ class Table(_Ferme):
             raise NonTransmissible(
                 f"{self._nom}.{methode} : la façade ne sert pas cette méthode de la table "
                 "(pont.TABLES_DE_LA_FACADE) — le test la demande au pont, ou se porte à la main")
-        jumelle = getattr(_type_de_la_table(self._moteur._simulateur.parametres, self._nom),
-                          methode)
-        rendu = typing.get_type_hints(jumelle)["return"]
+        contrat = _contrats.contrat_de_la_table(self._nom, methode)
+        rendu = typing.get_type_hints(contrat)["return"]
         simulateur = self._moteur._simulateur
 
         def servie(*arguments, **nommes):
-            lies = inspect.signature(jumelle).bind(None, *arguments, **nommes)
+            lies = inspect.signature(contrat).bind(None, *arguments, **nommes)
             lies.apply_defaults()
             _, *valeurs = lies.arguments.values()
             return _demander_la_table(simulateur, self._nom, methode, rendu, valeurs)
@@ -342,8 +333,8 @@ class ScenarioActuel(_Ferme):
     def calculer(self, carriere, *drapeaux, **nommes):
         """``ScenarioActuel.calculer`` : le résultat entier du scénario 1, ses
         drapeaux liés comme le Python les lie."""
-        lies = inspect.signature(_actuel.ScenarioActuel.calculer).bind(
-            self, carriere, *drapeaux, **nommes)
+        contrat = _contrats.contrat_de_l_entree("scenario_actuel.calculer")
+        lies = inspect.signature(contrat).bind(self, carriere, *drapeaux, **nommes)
         lies.apply_defaults()
         _, _, *valeurs = lies.arguments.values()
         resultat = _demander("scenario_actuel.calculer", self._simulateur.parametres,
@@ -694,18 +685,18 @@ class Simulateur(_Ferme):
     def carriere_simple(self, annee_naissance, sexe, affiliation, age_debut, age_liquidation,
                         **options):
         return _demander("simulateur.carriere_simple", self.parametres, pont.SIMULATEUR, _options(
-            _carriere.Carriere.depuis_profil, annee_naissance=annee_naissance, sexe=sexe,
+            "carriere.depuis_profil", annee_naissance=annee_naissance, sexe=sexe,
             affiliation=affiliation, age_debut=age_debut, age_liquidation=age_liquidation,
             macro=None, **options))
 
     def carriere_parcours(self, annee_naissance, sexe, metiers, age_liquidation, **options):
         return _demander("simulateur.carriere_parcours", self.parametres, pont.SIMULATEUR, _options(
-            _carriere.Carriere.depuis_parcours, annee_naissance=annee_naissance, sexe=sexe,
+            "carriere.depuis_parcours", annee_naissance=annee_naissance, sexe=sexe,
             metiers=list(metiers), age_liquidation=age_liquidation, macro=None, **options))
 
     def carriere_releve(self, annee_naissance, sexe, releve, age_liquidation, **options):
         return _demander("simulateur.carriere_releve", self.parametres, pont.SIMULATEUR, _options(
-            _carriere.Carriere.depuis_releve, annee_naissance=annee_naissance, sexe=sexe,
+            "carriere.depuis_releve", annee_naissance=annee_naissance, sexe=sexe,
             releve=list(releve), age_liquidation=age_liquidation, macro=None, **options))
 
 
@@ -781,8 +772,8 @@ class _Mortalite(_Ferme):
                 f"mortalite.{methode} : la façade ne sert pas cette méthode de la mortalité "
                 "(pont.MORTALITE_DE_LA_FACADE) — le test la demande au pont, ou se porte à "
                 "la main")
-        jumelle = getattr(DonneesMortalite, methode)
-        rendu = typing.get_type_hints(jumelle)["return"]
+        contrat = _contrats.contrat_de_la_mortalite(methode)
+        rendu = typing.get_type_hints(contrat)["return"]
         simulateur = self._simulateur
 
         def servie(*arguments, **nommes):
@@ -790,7 +781,7 @@ class _Mortalite(_Ferme):
                 raise NonTransmissible(
                     f"mortalite.{methode} : mortalité remplacée (monkeypatch) — le "
                     "portage ne le voit pas")
-            lies = inspect.signature(jumelle).bind(None, *arguments, **nommes)
+            lies = inspect.signature(contrat).bind(None, *arguments, **nommes)
             lies.apply_defaults()
             _, *valeurs = lies.arguments.values()
             return pont.mortalite_du_simulateur(methode, rendu, *valeurs,
@@ -817,14 +808,12 @@ class Constructeur(_Ferme):
                 f"{self._nom}.{methode} : la façade ne sert pas cette méthode du constructeur "
                 "(pont.CONSTRUCTEURS_DE_LA_FACADE) — le test la demande au pont, ou se porte "
                 "à la main")
-        module, classe = ((_conversion, _conversion.Convertisseur) if self._nom == "convertisseur"
-                          else (_compte, _compte.ConstructeurCompte))
-        jumelle = getattr(classe, methode)
-        rendu = typing.get_type_hints(jumelle, vars(module))["return"]
+        contrat = _contrats.contrat_du_constructeur(self._nom, methode)
+        rendu = typing.get_type_hints(contrat)["return"]
         simulateur = self._simulateur
 
         def servie(*arguments, **nommes):
-            lies = inspect.signature(jumelle).bind(None, *arguments, **nommes)
+            lies = inspect.signature(contrat).bind(None, *arguments, **nommes)
             lies.apply_defaults()
             _, *valeurs = lies.arguments.values()
             if not memoire.modele_intact():
@@ -898,23 +887,19 @@ class Carriere(_carriere.Carriere):
 
     @classmethod
     def depuis_profil(cls, *arguments, **options):
-        return _batie("carriere.depuis_profil", _carriere.Carriere.depuis_profil,
-                      arguments, options)
+        return _batie("carriere.depuis_profil", arguments, options)
 
     @classmethod
     def depuis_parcours(cls, *arguments, **options):
-        return _batie("carriere.depuis_parcours", _carriere.Carriere.depuis_parcours,
-                      arguments, options)
+        return _batie("carriere.depuis_parcours", arguments, options)
 
     @classmethod
     def depuis_releve(cls, *arguments, **options):
-        return _batie("carriere.depuis_releve", _carriere.Carriere.depuis_releve,
-                      arguments, options)
+        return _batie("carriere.depuis_releve", arguments, options)
 
     @classmethod
     def depuis_chronologie(cls, *arguments, **options):
-        return _batie("carriere.depuis_chronologie", _carriere.Carriere.depuis_chronologie,
-                      arguments, options)
+        return _batie("carriere.depuis_chronologie", arguments, options)
 
 
 def ligne_de(carriere, ligne) -> pont.LigneDeCarriere:
@@ -927,13 +912,14 @@ def ligne_de(carriere, ligne) -> pont.LigneDeCarriere:
     return pont.LigneDeCarriere(carriere, rang)
 
 
-def _batie(entree: str, batisseur, arguments: tuple, options: dict):
+def _batie(entree: str, arguments: tuple, options: dict):
     """La carrière d'un bâtisseur de ``Carriere``, sous les paramètres du
     simulateur dont on lui passe les séries."""
-    lies = inspect.signature(batisseur).bind(*arguments, **options).arguments
+    contrat = _contrats.contrat_de_l_entree(entree)
+    lies = inspect.signature(contrat).bind(*arguments, **options).arguments
     parametres = _parametres_des_series(lies["macro"])
     return _demander(entree, parametres, pont.SIMULATEUR,
-                     _options(batisseur, *arguments, **options))
+                     _options(entree, *arguments, **options))
 
 
 def reversion(moteur, pensions, carriere, annee, *arguments, **options):
@@ -944,7 +930,8 @@ def reversion(moteur, pensions, carriere, annee, *arguments, **options):
         raise NonTransmissible(
             "moteur passé en argument que la façade ne sait pas transmettre : la réversion "
             "se calcule sur le moteur d'un simulateur de la façade (simulateur.scenario_actuel)")
-    lies = inspect.signature(_reversion.reversion).bind(
+    contrat = _contrats.contrat_de_l_entree("reversion.reversion")
+    lies = inspect.signature(contrat).bind(
         moteur, pensions, carriere, annee, *arguments, **options)
     lies.apply_defaults()
     valeurs = dict(lies.arguments)
@@ -986,27 +973,15 @@ class Regles(_Ferme):
                 f"{self._nom}.{regle} : la façade ne sert pas cette règle du droit "
                 "(pont.REGLES_DE_LA_FACADE) — le test reste sur le moteur Python, ou la "
                 "demande au pont")
-        jumelle = getattr(self._jumeau, regle)
-        rendu = _type_rendu(jumelle, vars(self._jumeau))
+        contrat = _contrats.contrat_de_la_regle(self._nom, regle)
+        rendu = typing.get_type_hints(contrat)["return"]
 
         def servie(*arguments, **nommes):
-            lies = inspect.signature(jumelle).bind(*arguments, **nommes)
+            lies = inspect.signature(contrat).bind(*arguments, **nommes)
             lies.apply_defaults()
             return _demander_la_regle(self._nom, regle, rendu, lies.arguments)
 
         return servie
-
-
-def _type_rendu(jumelle, noms: dict):
-    """Le type que la règle du jumeau annonce rendre, lu seul : ceux de ses
-    arguments nomment des types que son module n'importe que pour les
-    annoncer. Un type rendu que le module n'importe que pour l'annoncer
-    (``DerogationActive``) se lit dans le module du moteur qui le tient."""
-    from retraite_notionnelle.scenarios import actuel
-
-    def porteur(): ...
-    porteur.__annotations__ = {"return": jumelle.__annotations__["return"]}
-    return typing.get_type_hints(porteur, globalns={**vars(actuel), **noms})["return"]
 
 
 def _demander_la_regle(module: str, regle: str, rendu, arguments: dict):
@@ -1935,7 +1910,8 @@ class Releves(_Module):
         return super().__getattr__(nom)
 
     def construire(self, moteur, carriere, **drapeaux) -> Releve:
-        lies = inspect.signature(_releve.construire).bind(moteur, carriere, **drapeaux)
+        contrat = _contrats.contrat_de_l_entree("releve.construire")
+        lies = inspect.signature(contrat).bind(moteur, carriere, **drapeaux)
         lies.apply_defaults()
         _moteur_de_la_facade("releve.construire", moteur)
         source = _Source(moteur, carriere, True, lies.arguments["avantages_non_contributifs"],

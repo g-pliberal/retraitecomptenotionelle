@@ -13,12 +13,17 @@ from __future__ import annotations
 import dataclasses
 import datetime
 import enum
+import importlib
+import inspect
 import json
 import shutil
+import sys
+import typing
 from pathlib import Path
 
 import pytest
 
+import contrats_de_la_facade
 from retraite_notionnelle import carriere as carriere_python
 from retraite_notionnelle import pont
 from retraite_notionnelle import revalorisation as revalorisation_python
@@ -1332,7 +1337,8 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
                               f"{refait!r}")
             continue
         if repr(lu) != repr(pont.lu_strictement(
-                facade._type_rendu(getattr(modules[module], regle), vars(modules[module])),
+                typing.get_type_hints(contrats_de_la_facade.contrat_de_la_regle(
+                    module, regle))["return"],
                 json.loads(json.dumps(pont._en_donnees(refait))), f"{module}.{regle}")):
             ecarts.append(f"{module}.{regle} : la façade lit {lu!r}, le jumeau rend {refait!r}")
     assert not ecarts, "\n".join(ecarts)
@@ -2433,3 +2439,111 @@ def test_un_bareme_du_regime_unique_mal_forme_arrete_le_compte_du_jumeau():
     with pytest.raises(ValueError, match="bareme_regime_unique"):
         simulateur_python.Simulateur(dataclasses.replace(Parametres(), bareme_regime_unique=(
             (2.0, 0.25, 0.125), (1.0, 0.125, 0.0625)))).constructeur
+
+
+# -- les contrats de la façade (contrats_de_la_facade.py), confrontés au jumeau ----------
+
+def _sans_annotations(signature: inspect.Signature) -> inspect.Signature:
+    return signature.replace(
+        parameters=[parametre.replace(annotation=inspect.Parameter.empty)
+                    for parametre in signature.parameters.values()],
+        return_annotation=inspect.Signature.empty)
+
+
+def _rendu_du_jumeau(jumelle, noms: dict | None = None):
+    """Le type que le jumeau annonce rendre, lu comme la façade le lisait."""
+    from retraite_notionnelle.scenarios import actuel
+
+    def porteur(): ...
+    porteur.__annotations__ = {"return": jumelle.__annotations__["return"]}
+    return typing.get_type_hints(porteur, globalns={**vars(actuel), **(noms or {})})["return"]
+
+
+def _confronter(contrat, jumelle, noms: dict | None = None, rendu: bool = True) -> None:
+    """Même signature, aux annotations des arguments près ; même type rendu,
+    une carrière sous la carrière nue, que le pont relit en carrière du
+    moteur Python."""
+    from retraite_notionnelle import carriere
+    from retraite_notionnelle.types_du_pont.carriere import Carriere as CarriereNue
+
+    assert _sans_annotations(inspect.signature(contrat)) == \
+        _sans_annotations(inspect.signature(jumelle))
+    if rendu:
+        attendu = _rendu_du_jumeau(jumelle, noms)
+        attendu = CarriereNue if attendu is carriere.Carriere else attendu
+        assert typing.get_type_hints(contrat)["return"] == attendu
+    else:
+        assert "return" not in contrat.__annotations__
+
+
+@pytest.fixture(scope="module")
+def contrats():
+    return contrats_de_la_facade
+
+
+@pytest.mark.parametrize("module, regle", [(module, regle)
+                                           for module, regles in pont.REGLES_DE_LA_FACADE.items()
+                                           for regle in regles])
+def test_chaque_regle_a_le_contrat_de_son_jumeau(contrats, module, regle):
+    chemin = {"reversion": "droit.reversion", "carriere": "carriere",
+              "revalorisation": "revalorisation", "compte": "moteur.compte"}.get(
+                  module, f"droit.{module}")
+    jumeau = importlib.import_module(f"retraite_notionnelle.{chemin}")
+    _confronter(contrats.contrat_de_la_regle(module, regle), getattr(jumeau, regle),
+                vars(jumeau))
+
+
+@pytest.fixture(scope="module")
+def moteur_python():
+    from retraite_notionnelle.config import Parametres
+    from retraite_notionnelle.simulateur import Simulateur
+    return Simulateur(Parametres()).scenario_actuel
+
+
+@pytest.mark.parametrize("table, methode", [(table, methode)
+                                            for table, methodes in pont.TABLES_DE_LA_FACADE.items()
+                                            for methode in methodes])
+def test_chaque_methode_de_table_a_le_contrat_de_son_jumeau(contrats, moteur_python, table,
+                                                            methode):
+    from retraite_notionnelle.scenarios.actuel import TableRecouverte
+    jumelles = [getattr(type(getattr(moteur_python, table)), methode)]
+    if hasattr(TableRecouverte, methode) and table in ("ages_ouverture", "durees_requises"):
+        # Sous un droit contrefactuel, la table se recouvre : même contrat.
+        jumelles.append(getattr(TableRecouverte, methode))
+    for jumelle in jumelles:
+        _confronter(contrats.contrat_de_la_table(table, methode), jumelle,
+                    vars(sys.modules[jumelle.__module__]))
+
+
+@pytest.mark.parametrize("nom, methode", [(nom, methode)
+                                          for nom, methodes in
+                                          pont.CONSTRUCTEURS_DE_LA_FACADE.items()
+                                          for methode in methodes])
+def test_chaque_constructeur_a_le_contrat_de_son_jumeau(contrats, nom, methode):
+    from retraite_notionnelle.moteur import compte, conversion
+    module, classe = ((conversion, conversion.Convertisseur) if nom == "convertisseur"
+                      else (compte, compte.ConstructeurCompte))
+    _confronter(contrats.contrat_du_constructeur(nom, methode), getattr(classe, methode),
+                vars(module))
+
+
+@pytest.mark.parametrize("methode", pont.MORTALITE_DE_LA_FACADE)
+def test_chaque_methode_de_la_mortalite_a_le_contrat_de_son_jumeau(contrats, methode):
+    from retraite_notionnelle.donnees import mortalite
+    _confronter(contrats.contrat_de_la_mortalite(methode),
+                getattr(mortalite.DonneesMortalite, methode), vars(mortalite))
+
+
+def test_les_entrees_ont_le_contrat_de_leur_jumeau(contrats):
+    from retraite_notionnelle import carriere
+    from retraite_notionnelle.droit import releve, reversion
+    from retraite_notionnelle.scenarios import actuel
+    jumelles = {"scenario_actuel.calculer": actuel.ScenarioActuel.calculer,
+                "reversion.reversion": reversion.reversion,
+                "releve.construire": releve.construire,
+                **{f"carriere.{nom}": getattr(carriere.Carriere, nom)
+                   for nom in ("depuis_profil", "depuis_parcours", "depuis_releve",
+                               "depuis_chronologie")}}
+    for entree, jumelle in jumelles.items():
+        # Ce qu'une entrée rend, le pont le lit : son contrat n'en dit rien.
+        _confronter(contrats.contrat_de_l_entree(entree), jumelle, rendu=False)

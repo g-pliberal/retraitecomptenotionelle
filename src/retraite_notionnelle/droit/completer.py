@@ -56,6 +56,7 @@ from .compter import trimestres_de_la_ligne_entre as _trimestres_de_la_ligne_ent
 from ..somme import somme_ordonnee
 from ..types_du_pont.droit import (ChefDExploitation, ExploitantAgricole,
                                    MajorationProportionnelle, MinimumEcrete, PetitePension)  # noqa: F401  (types du pont, action 161)
+from ..types_du_pont.droit import PensionMajoree  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -480,32 +481,6 @@ def plancher_international(eligible, montant_base: float, montant_majore: float,
         else:
             plancher += majoration * min(eligible.cotisee_regime, maximum) / maximum
     return plancher
-
-
-@dataclass(frozen=True)
-class PensionMajoree:
-    """Ce que la pension majorée de référence ajoute à la pension de base des
-    non-salariés agricoles, et ce qu'elle a lu (:func:`pension_majoree`)."""
-
-    #: La PMR entière de la date d'effet, en euros par an.
-    entiere: float
-    #: La durée retenue et la durée de référence, en trimestres.
-    duree: int
-    reference: int
-    #: La majoration avant l'écrêtement, et après.
-    avant_ecretement: float
-    complement: float
-    #: Le plafond de l'écrêtement.
-    plafond: float
-    fiabilite: Fiabilite
-    #: De 2009 à 2021, le montant réduit, PMR2, et les trimestres qui le
-    #: reçoivent, DM2 : ceux du conjoint collaborateur et de l'aide familial
-    #: (D. 732-111) ; ``duree`` les compte aussi.
-    reduite: float | None = None
-    duree_reduite: int = 0
-    #: La réversion que le régime sert, par an, retranchée de la PMR et
-    #: comptée au plafond (D. 732-112, D. 732-114).
-    reversion: float = 0.0
 
 
 def reversion_agricole_servie(moteur: ScenarioActuel, carriere: Carriere,

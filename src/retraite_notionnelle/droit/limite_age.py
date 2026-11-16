@@ -84,19 +84,18 @@ que le scénario 1 liquide, et que l'étape des départs lit
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
 from ..noyau import versions
 from . import ouvrir
 from .commun import periode_de_liquidation
+from ..types_du_pont.droit import FICHE_DE_LA_LIMITE, Radiation, Recul  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
     from ..scenarios.actuel import ScenarioActuel
 
-FICHE_DE_LA_LIMITE = "limite_age_fonction_publique"
 FICHE_DES_MILITAIRES = "limite_age_militaires"
 FICHE_DES_ENFANTS = "recul_limite_age_enfants"
 FICHE_DE_LA_CARRIERE_INCOMPLETE = "prolongation_activite_carriere_incomplete"
@@ -173,50 +172,6 @@ TOUTES = frozenset({ENFANTS, INCOMPLETE, ACTIF_JUSQU_AUX_SEDENTAIRES, JUSQU_A_70
 INTERET_DU_SERVICE = "interet_du_service"
 
 MOIS_PAR_AN = 12
-
-
-@dataclass(frozen=True)
-class Recul:
-    """Une exception qui recule ou prolonge la limite : de quel âge à quel âge
-    elle garde l'agent en fonctions, la version de sa fiche, et si le modèle
-    la présume demandée et accordée (``presumee``) ou si elle est de droit."""
-
-    nom: str
-    fiche: str
-    version: str
-    depuis: float
-    jusqu_a: float
-    presumee: bool
-
-
-@dataclass(frozen=True)
-class Radiation:
-    """La radiation des cadres par limite d'âge d'une carrière.
-
-    ``date`` est le premier mois de la pension, celui qui suit l'anniversaire ;
-    ``limite``, la limite de l'emploi, avant tout recul ; ``reculs``, les
-    exceptions qui la reculent jusqu'à la radiation, dans l'ordre de la loi.
-    ``forcee`` dit que la radiation précède la fin des services que la saisie
-    déclare : les services s'arrêtent là, et la pension part de ce jour ;
-    sinon, l'agent quitte le service avant la limite que les exceptions lui
-    ouvrent, et la radiation est sa sortie. ``fiche`` est celle de la limite :
-    la radiation n'arrête que les services de son emploi."""
-
-    date: DateMois
-    age: float
-    limite: float
-    classe: str
-    affiliation: str
-    version: str
-    regimes: frozenset[str]
-    reculs: tuple[Recul, ...]
-    forcee: bool
-    fiche: str = FICHE_DE_LA_LIMITE
-
-    @property
-    def presumees(self) -> tuple[Recul, ...]:
-        """Les exceptions que le modèle présume demandées et accordées."""
-        return tuple(recul for recul in self.reculs if recul.presumee)
 
 
 def _fiche(moteur: ScenarioActuel, nom: str) -> dict | None:

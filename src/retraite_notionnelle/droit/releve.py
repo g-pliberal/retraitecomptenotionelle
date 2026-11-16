@@ -43,6 +43,7 @@ from . import coordonner as _coordonner
 from . import ouvrir as _ouvrir
 from .commun import date_d_effet as _date_d_effet
 from .commun import ligne_cotisee as _ligne_cotisee
+from ..types_du_pont.droit import RevenuDesPoints  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -293,19 +294,6 @@ DEMI_POINT = 0.5
 
 #: Le bruit du calcul en virgule flottante, en points.
 EPSILON_POINTS = 1e-6
-
-
-@dataclass(frozen=True)
-class RevenuDesPoints:
-    """Le revenu que des points supposent."""
-
-    #: Le revenu entier le plus bas, en euros de l'année, dont l'étage crédite
-    #: au moins les points lus.
-    revenu: int
-    #: Les points sont le plus haut que le barème ouvre : tout revenu au-delà
-    #: de ``revenu`` aurait ouvert les mêmes, et celui de l'assuré a pu le
-    #: dépasser.
-    au_plafond: bool
 
 
 def points_de_l_annee(moteur: ScenarioActuel, statut: str, annee: int, etage: str,

@@ -405,3 +405,51 @@ class Carriere:
 
     def affiliations_utilisees(self) -> tuple[str, ...]:
         return tuple(dict.fromkeys(ligne.affiliation for ligne in self.lignes))
+
+
+@dataclass(frozen=True)
+class LigneRelevee:
+    """Une ligne de relevé de carrière, telle que l'assuré la recopie.
+
+    C'est la saisie la plus exacte que le modèle accepte : elle ne suppose
+    aucun profil de rémunération, aucune progression, aucun niveau de revenu
+    relatif. L'assuré dit ce qu'il a gagné, année par année, et sous quel
+    statut ; le modèle n'a plus rien à deviner.
+
+    Le revenu est celui de l'année, EN EUROS COURANTS DE CETTE ANNÉE-LÀ —
+    l'unité du relevé, et celle d':class:`AnneeCarriere`. Sur une année non
+    cotisée, il ne s'agit plus d'un revenu perçu mais du salaire de référence
+    d'avant l'interruption, sur lequel les régimes complémentaires continuent
+    d'acquérir des points : la ligne elle-même ne cotise rien.
+    """
+
+    annee: int
+    affiliation: str
+    revenu: float
+    #: Trimestres validés cette année-là, tels que le relevé les porte : ceux
+    #: de la fonction publique, qui compte ses services au jour, avec leur
+    #: fraction (« 3.33 » pour dix mois). ``None`` laisse le modèle les
+    #: recalculer du revenu, comme il le fait d'une carrière paramétrique.
+    trimestres: int | float | None = None
+    #: Nature de la période, au sens de ``PERIODES_NON_COTISEES``.
+    type_periode: str = "emploi"
+    #: La quotité de l'année travaillée à temps partiel, entre zéro et un : le
+    #: revenu que porte la ligne en est déjà réduit (fiche
+    #: ``temps_partiel_fonction_publique``).
+    quotite: float = 1.0
+    #: Le motif qui dispense l'indépendant de l'assiette minimale cette année :
+    #: ``rsa``, ``prime_activite``, ``activite_saisonniere``,
+    #: ``activite_non_principale``, ``pensionne``
+    #: (``legislation/dispenses_assiette_minimale.yaml``). Vide : aucun.
+    dispense_assiette_minimale: str = ""
+    #: Le barème de la Lodeom de l'employeur, en Guadeloupe, en Guyane, en
+    #: Martinique ou à La Réunion : ``competitivite``,
+    #: ``competitivite_renforcee``, ``innovation_et_croissance``
+    #: (``legislation/prelevements_remuneration.yaml``). Vide : la réduction
+    #: générale. Seule la fiche de paie le lit.
+    lodeom: str = ""
+    #: Le département d'outre-mer où l'assuré a travaillé cette année :
+    #: ``guadeloupe``, ``guyane``, ``martinique``, ``reunion``. Vide : la
+    #: métropole. Il donne leur seuil aux trimestres que la ligne ne déclare
+    #: pas (R. 753-21, R. 351-9).
+    outre_mer: str = ""

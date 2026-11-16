@@ -56,12 +56,12 @@ Le jumeau de ce module est ``moteur/js/droit/progressive.js``.
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
 from . import departs as _departs
 from ..types_du_pont.droit import OUVERTE  # noqa: F401  (types du pont, action 161)
+from ..types_du_pont.droit import Progressive  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -90,39 +90,6 @@ TOUS = "tous"
 
 def _jour(date: DateMois) -> str:
     return f"{date.annee:04d}-{date.mois:02d}-01"
-
-
-@dataclass(frozen=True)
-class Progressive:
-    """Une demande de retraite progressive, et ce que le droit en fait."""
-
-    #: Le mois où elle prend effet, et la quotité du temps partiel gardé.
-    date: DateMois
-    quotite: float
-    #: ``ouverte``, ou ce qui la ferme : ``avant_1988``, ``activite``,
-    #: ``regimes``, ``quotite``, ``age``, ``duree``.
-    motif: str
-    #: La fraction servie ; nulle quand la demande n'est pas ouverte.
-    fraction: float = 0.0
-    #: Les régimes qui liquident à titre provisoire : de base, puis les
-    #: complémentaires qui les suivent.
-    bases: frozenset[str] = frozenset()
-    complementaires: frozenset[str] = frozenset()
-    age_minimum: float | None = None
-    duree_requise: int | None = None
-    trimestres: int | None = None
-
-    @property
-    def ouverte(self) -> bool:
-        return self.motif == OUVERTE
-
-    @property
-    def date_effet(self) -> str:
-        return _jour(self.date)
-
-    @property
-    def regimes(self) -> frozenset[str]:
-        return self.bases | self.complementaires
 
 
 def regle(moteur: ScenarioActuel, date: DateMois) -> dict:

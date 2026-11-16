@@ -43,6 +43,7 @@ from typing import TYPE_CHECKING
 from ..donnees.chargement import Fiabilite
 from ..somme import somme_ordonnee
 from .commun import date_d_effet
+from ..types_du_pont.droit import DureesDesCultes  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -74,28 +75,6 @@ DECRET_DE_2010 = (2010, 2)
 #: Le V : la part de l'écart que reçoivent les générations de la montée en
 #: charge ; rien avant 1939, l'écart entier après 1942.
 PART_DE_L_ECART = {1939: 0.2, 1940: 0.4, 1941: 0.6, 1942: 0.8}
-
-
-@dataclass(frozen=True)
-class DureesDesCultes:
-    """Les trimestres de la CAVIMAC, rangés par fraction ; chaque année
-    plafonnée à ses trimestres civils, comme toute durée d'un régime."""
-
-    #: Les trimestres d'avant 1979, validés gratuitement.
-    avant_1979: int
-    #: Les trimestres d'assurance de 1979 à 1997, assimilés compris.
-    de_1979_a_1997: int
-    #: Ceux de ces derniers qui ont porté cotisation.
-    cotises_de_1979_a_1997: int
-    #: Les trimestres d'assurance depuis 1998, enfants compris.
-    depuis_1998: int
-    #: Ceux de ces derniers qui ont porté cotisation.
-    cotises_depuis_1998: int
-
-    @property
-    def avant_1998(self) -> int:
-        """La durée que la fraction d'avant 1998 proratise."""
-        return self.avant_1979 + self.de_1979_a_1997
 
 
 def durees(releve_durees: Durees, membres: tuple[str, ...],

@@ -45,6 +45,7 @@ from . import coordonner
 from .commun import ligne_cotisee, periode_de_liquidation
 from .etranger import TrimestresEtrangers, compter_les_periodes, famille_des_regimes
 from ..somme import somme_ordonnee
+from ..types_du_pont.droit import MajorationEnfants, TrimestresEnfant  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -183,83 +184,6 @@ DECOMPTES_DES_ASSIMILEES = ("duree_du_contrat", "jours_dans_l_annee", "periodes_
 #: Les jours d'exécution du contrat en mois civils incomplets qui font un mois
 #: (D. 373-3, 2°).
 JOURS_PAR_MOIS_DE_CONTRAT = 30
-
-
-@dataclass(frozen=True)
-class TrimestresEnfant:
-    """Ce qu'un enfant ouvre, et le régime qui le porte."""
-
-    #: L'enfant, tel que la chronologie le nomme.
-    enfant: str
-    #: Sa naissance (AAAA-MM-JJ), déclarée ou présumée.
-    naissance: str
-    #: Code du régime dans lequel le droit attribue ses trimestres.
-    regime: str
-    #: Dispositif qui les accorde : ``mda``, ``bonifications``, ou celui d'un
-    #: régime spécial qui a sa fiche (``enfants_sncf``, ``enfants_ratp``,
-    #: ``enfants_ieg``, ``enfants_crpcen``).
-    dispositif: str
-    #: La fiche et la version appliquées, et le texte qui fait naître celle-ci.
-    fiche: str
-    version: str
-    texte: str | None
-    #: Trimestres accordés pour cet enfant. Ils jouent sur la durée
-    #: d'assurance tous régimes, donc sur la décote et la surcote.
-    trimestres: int
-    #: Ceux d'entre eux qui entrent dans les SERVICES du régime, et relèvent
-    #: donc son prorata. Une bonification en est ; la majoration de durée
-    #: d'assurance de L. 12 bis n'en est pas.
-    services: int
-    fiabilite: Fiabilite
-
-
-@dataclass(frozen=True)
-class MajorationEnfants:
-    """Trimestres dus au titre des enfants, enfant par enfant.
-
-    Chaque enfant a son régime : la priorité entre régimes (R. 173-15) se lit
-    pour chacun, et le régime général accorde ceux qu'un régime spécial
-    n'ouvre pas — « si un ou plusieurs enfants n'ouvrent pas droit à
-    majoration » (circulaire Cnav 2017-01, fiches n° 6.2a et 6.2b, point 3).
-    """
-
-    #: Les enfants qui ouvrent un droit, dans l'ordre de leurs filiations.
-    enfants: tuple[TrimestresEnfant, ...]
-
-    @property
-    def trimestres(self) -> int:
-        """Trimestres accordés au total, tous enfants confondus."""
-        return somme_ordonnee(enfant.trimestres for enfant in self.enfants)
-
-    @property
-    def services(self) -> int:
-        """Ceux d'entre eux qui entrent aux services, tous enfants confondus."""
-        return somme_ordonnee(enfant.services for enfant in self.enfants)
-
-    @property
-    def fiabilite(self) -> Fiabilite:
-        """La fiabilité la plus basse des enfants."""
-        return min(enfant.fiabilite for enfant in self.enfants)
-
-    def par_regime(self) -> dict[str, tuple[int, int]]:
-        """Les trimestres et les services que porte chaque régime, dans l'ordre
-        de son premier enfant."""
-        sommes: dict[str, tuple[int, int]] = {}
-        for enfant in self.enfants:
-            trimestres, services = sommes.get(enfant.regime, (0, 0))
-            sommes[enfant.regime] = (trimestres + enfant.trimestres,
-                                     services + enfant.services)
-        return sommes
-
-    @property
-    def regimes(self) -> list[str]:
-        """Les régimes qui portent des trimestres d'enfants."""
-        return list(self.par_regime())
-
-    @property
-    def dispositifs(self) -> list[str]:
-        """Les dispositifs qui les accordent, dans l'ordre des enfants."""
-        return list(dict.fromkeys(enfant.dispositif for enfant in self.enfants))
 
 
 @dataclass(frozen=True)

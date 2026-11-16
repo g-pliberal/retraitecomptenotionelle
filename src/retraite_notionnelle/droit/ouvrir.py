@@ -34,6 +34,7 @@ from ..donnees.chargement import Fiabilite, charger_chomage_complementaires
 from . import categories, compter, coordonner, etranger, invalidite
 from .commun import SANS_LEUR_BASE, date_d_effet, ligne_cotisee, periode_de_liquidation
 from ..somme import somme_ordonnee
+from ..types_du_pont.droit import DepartParentTroisEnfants  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -148,27 +149,6 @@ class DroitMilitaire:
     trimestres_cible: int
     #: Vrai quand la pension n'est due qu'à l'âge différé, faute de la durée.
     jouissance_differee: bool
-    fiabilite: Fiabilite
-
-
-@dataclass(frozen=True)
-class DepartParentTroisEnfants:
-    """Ce que le départ anticipé du parent de trois enfants ouvre à un
-    fonctionnaire, une fois sa carrière lue (:func:`depart_parent_trois_enfants`)."""
-
-    #: L'âge où les conditions sont réunies — quinze ans de services, le
-    #: troisième enfant —, d'où la pension s'ouvre à tout âge.
-    age_ouverture: float
-    #: L'année à laquelle se lisent la durée requise et le barème de décote :
-    #: celle des conditions réunies, ou, hors de l'ancien calcul, celle des
-    #: soixante ans, ou de l'âge de la catégorie active.
-    annee_des_parametres: int
-    #: Vrai quand l'ancien calcul demeure (loi n° 2010-1330, article 44, IV, 1°
-    #: et 2°) : l'assuré garde aussi l'article L. 17 d'avant cette loi, le
-    #: minimum garanti sans condition.
-    ancien_calcul: bool
-    #: La version de la fiche qui vaut.
-    version: str
     fiabilite: Fiabilite
 
 

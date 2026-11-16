@@ -19,18 +19,25 @@ import pytest
 PAQUET = "retraite_notionnelle"
 
 #: Chaque type que le pont relit, ou qu'un type qu'il relit porte dans ses
-#: champs, sous le fichier de règles qui le définissait : il y reste
+#: champs — ceux que rendent les règles que la façade sert compris (étape 2), sous le fichier de règles qui le définissait : il y reste
 #: accessible, et c'est le même objet.
 TYPES = {
-    "carriere": ["AnneeCarriere"],
+    "carriere": ["AnneeCarriere", "LigneRelevee"],
     "droit.commun": ["PensionRegime", "AvantageApplique"],
     "droit.completer": ["MinimumEcrete", "PetitePension", "ChefDExploitation",
-                        "ExploitantAgricole", "MajorationProportionnelle"],
+                        "ExploitantAgricole", "MajorationProportionnelle", "PensionMajoree"],
+    "droit.compter": ["MajorationEnfants", "TrimestresEnfant"],
     "droit.cumul": ["Cumul", "TrancheDeCumul", "PensionEnCumul"],
-    "droit.departs": ["DemandeExaminee"],
+    "droit.cultes": ["DureesDesCultes"],
+    "droit.departs": ["DemandeExaminee", "Depart"],
     "droit.foyer": ["Foyer"],
     "droit.liquidation": ["Demande", "Mesure"],
-    "droit.liquider": ["EligiblePlafondEnfants"],
+    "droit.invalidite": ["PlancherDeLaSubstitution"],
+    "droit.limite_age": ["Radiation", "Recul"],
+    "droit.liquider": ["EligiblePlafondEnfants", "EligibleMinimum", "PrestationRafp"],
+    "droit.ouvrir": ["DepartParentTroisEnfants"],
+    "droit.progressive": ["Progressive"],
+    "droit.releve": ["RevenuDesPoints"],
     "droit.reversion": ["Reversion", "ReversionRegime"],
     "droit.seconde": ["DroitsApresDepart", "PeriodeDeDroits", "NouvellePension",
                       "PensionDeRegimeNouveau"],
@@ -45,7 +52,8 @@ TYPES = {
     "revalorisation": ["ActuelAujourdhui", "RegimeServi", "MajorationExceptionnelle",
                        "PensionAujourdhui", "Revalorisee", "RelevementAgricole",
                        "RevisionAgricole"],
-    "scenarios.actuel": ["ResultatActuel", "DepartServi", "ProgressiveServie"],
+    "scenarios.actuel": ["ResultatActuel", "DepartServi", "ProgressiveServie", "ConversionPoint",
+                         "DerogationActive", "TrimestresAccordes"],
     "scenarios.notionnel": ["GarantieVieillesse", "ResultatNotionnel", "DroitsAcquis"],
     "simulateur": ["Comparaison", "ContributionEmployeur"],
 }

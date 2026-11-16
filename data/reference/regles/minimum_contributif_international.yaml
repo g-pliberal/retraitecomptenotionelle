@@ -213,9 +213,9 @@ sources:
 code:
   python: >-
     droit/completer.py : completer, plancher_international, _minimum_international ;
-    droit/liquider.py : EligibleMinimum ; droit/etranger.py : pensions_a_l_ecretement
+    droit/etranger.py : pensions_a_l_ecretement
     ; revalorisation.py : reviser_le_minimum, faire_vivre ; types_du_pont/droit.py :
-    MinimumEcrete
+    MinimumEcrete, EligibleMinimum
   javascript: >-
     moteur/js/droit/completer.js : completer, plancherInternational,
     minimumInternational ; moteur/js/droit/liquider.js : liquiderChaqueRegime ;

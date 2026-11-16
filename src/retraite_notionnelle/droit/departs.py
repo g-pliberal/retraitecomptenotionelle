@@ -61,7 +61,7 @@ servies. Le jumeau de ce module est ``moteur/js/droit/departs.js``.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
@@ -69,6 +69,7 @@ from . import compter, coordonner, etranger, invalidite, limite_age, ouvrir
 from .commun import (SANS_LEUR_BASE, derniere_annee, ligne_cotisee,
                      periode_de_liquidation)
 from ..types_du_pont.droit import DemandeExaminee  # noqa: F401  (types du pont, action 161)
+from ..types_du_pont.droit import Depart, MOTIF_DEPART  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import AnneeCarriere, Carriere
@@ -85,7 +86,6 @@ RAFP = "rafp"
 
 
 #: Ce qui date un départ, par rapport au départ déclaré.
-MOTIF_DEPART = "depart"
 MOTIF_OUVERTURE = "ouverture"
 MOTIF_SORTIE = "sortie"
 #: Une date que la personne demande, plus tardive que la présumée.
@@ -109,35 +109,6 @@ MOTIF_TRIMESTRE = "trimestre_civil"
 #: régime de base d'une complémentaire —, ou sans pension de ce régime.
 ENSEMBLE = "ensemble"
 SANS_PENSION = "sans_pension"
-
-
-@dataclass(frozen=True)
-class Depart:
-    """Un départ : le mois où il prend effet, et les régimes qui y liquident."""
-
-    date: DateMois
-    #: Les régimes qui liquident ce mois-là ; vide pour le départ unique, où
-    #: tous liquident ensemble.
-    regimes: frozenset[str] = field(default_factory=frozenset)
-    #: ``depart``, au départ déclaré ; ``ouverture``, un régime qui n'ouvrait
-    #: pas encore ; ``sortie``, la pension militaire, demandée à la sortie de
-    #: l'armée ; ``demande``, la date que la personne demande ;
-    #: ``invalidite``, la pension de vieillesse qui remplace la pension
-    #: d'invalidité ; ``radiation``, la pension du fonctionnaire radié des
-    #: cadres pour invalidité ; ``limite_d_age``, celle du fonctionnaire ou du
-    #: militaire radié par limite d'âge ; ``trimestre_civil``, la
-    #: complémentaire que son texte sert au trimestre civil qui suit.
-    motif: str = MOTIF_DEPART
-
-    @property
-    def date_effet(self) -> str:
-        """La date d'effet (AAAA-MM-JJ) : le premier jour du mois."""
-        return f"{self.date.annee:04d}-{self.date.mois:02d}-01"
-
-    @property
-    def unique(self) -> bool:
-        """Le départ unique, où tous les régimes liquident ensemble."""
-        return not self.regimes
 
 
 def _periode(moteur: ScenarioActuel, code: str, annee: int) -> PeriodeRegime | None:

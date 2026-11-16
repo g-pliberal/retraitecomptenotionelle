@@ -62,7 +62,7 @@ from __future__ import annotations
 import copy
 import csv
 from bisect import bisect_right
-from dataclasses import dataclass, replace
+from dataclasses import replace
 from datetime import date
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -98,6 +98,7 @@ from ..revalorisation import (DEBUT_REGLE_GENERALE_PUBLIC, RevalorisationsPensio
                               mener_au_mois, produit)
 from ..somme import somme_ordonnee
 from ..types_du_pont.resultats import DepartServi, ProgressiveServie, ResultatActuel  # noqa: F401  (types du pont, action 161)
+from ..types_du_pont.droit import ConversionPoint, DerogationActive, TrimestresAccordes  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..droit.foyer import Foyer
@@ -877,28 +878,6 @@ class AgesAnnulationDecote(TableParGeneration):
         return self.valeur(generation)
 
 
-@dataclass(frozen=True)
-class DerogationActive:
-    """Ce que le classement d'un emploi déplace, pour une génération."""
-
-    #: Âge anticipé (catégorie active) ou minoré (super-active) : L. 24, I, 1°.
-    age_ouverture: float
-    #: Âge d'annulation de la décote : limite d'âge du grade jusqu'en 2023,
-    #: article L. 14 bis ensuite.
-    age_annulation: float
-    #: Années de services classés d'avant la loi de 2010 — quinze, vingt-cinq
-    #: en super-active —, que ``DureesServicesActifs`` relève selon l'année où
-    #: elles sont atteintes ; sans la durée relevée, rien de tout cela ne vaut.
-    services_requis: float
-    #: Durée de services et bonifications requise, quand le classement en a une
-    #: qui lui soit propre — « par dérogation à l'article L. 13 ». ``None``
-    #: avant les marches de 2023 (septembre 1966, septembre 1971) : la durée
-    #: est alors celle de l'année d'ouverture du droit, que
-    #: ``DureesRequisesAvantSoixanteAns`` porte.
-    duree_requise: int | None
-    fiabilite: Fiabilite
-
-
 class AgesCategorieActive:
     """Âges de la catégorie active et de la super-active, par génération.
 
@@ -1207,25 +1186,6 @@ class FichesDatees:
             return None
         return versions.applicable(fiche, {cle: valeur for cle, valeur in dates.items()
                                            if cle in fiche["dates_qui_decident"]})
-
-
-@dataclass(frozen=True)
-class TrimestresAccordes:
-    """Ce qu'une version de fiche accorde pour UN enfant, et ce qu'elle exige.
-
-    ``trimestres`` joue sur la durée d'assurance ; ``services``, qui en est un
-    sous-ensemble, entre au prorata du régime qui les porte. ``condition``
-    compare la naissance de l'enfant au recrutement et à la radiation, dans un
-    régime spécial ; ``compter.bonification_ouverte`` la lit.
-    """
-
-    fiche: str
-    version: str
-    texte: str | None
-    trimestres: int
-    services: int
-    condition: str
-    fiabilite: Fiabilite
 
 
 class MajorationsPourEnfants:
@@ -2718,19 +2678,6 @@ class BaremesTrimestre:
                 / (1.0 + self.macro.inflation(annee - 1)),
             )
         return valeur, coefficient, Fiabilite.ESTIMEE
-
-
-@dataclass(frozen=True)
-class ConversionPoint:
-    """Ce que devient un point à une fusion, ou à un changement d'unité."""
-
-    annee_effet: int
-    #: Régime qui reprend les points, ou ``None`` pour un changement d'échelle
-    #: interne au régime lui-même.
-    successeur: str | None
-    #: Un point d'origine vaut ce nombre de points d'arrivée.
-    coefficient: float
-    fiabilite: Fiabilite
 
 
 class ConversionsPoints:
