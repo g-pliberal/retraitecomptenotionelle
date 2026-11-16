@@ -44,6 +44,7 @@ from retraite_notionnelle.droit import limite_age as limite_age_python
 from retraite_notionnelle.droit import liquidation as liquidation_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
+from retraite_notionnelle.droit import progressive as progressive_python
 from retraite_notionnelle.droit import releve as releve_python
 from retraite_notionnelle.droit import reversion as reversion_python
 from retraite_notionnelle import revalorisation as revalorisation_python
@@ -741,7 +742,7 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
                                   "compte", "compter",
                                   "cultes", "cumul", "departs",
                                   "foyer", "invalidite", "limite_age", "liquider", "ouvrir",
-                                  "releve",
+                                  "progressive", "releve",
                                   "reversion", "revalorisation"}
 
 
@@ -2329,6 +2330,7 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
                        "foyer": foyer_python,
                        "invalidite": invalidite_python, "limite_age": limite_age_python,
                        "liquider": liquider_python, "ouvrir": ouvrir_python,
+                       "progressive": progressive_python,
                        "releve": releve_python, "reversion": reversion_python,
                        "revalorisation": revalorisation_python}[module], regle)
     attendus = [(nom, None if parametre.default is inspect.Parameter.empty else parametre.default)
@@ -2411,7 +2413,8 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "carriere.prolongee", "simulateur.garantie_vieillesse",
                               "echeancier.parcourir", "simulateur.echeancier",
                               "echeancier.depart_de", "echeancier.sortes", "journal.operer",
-                              "pilote.age_de_depart", "departs.liquider_les_departs")
+                              "pilote.age_de_depart", "departs.liquider_les_departs",
+                              "progressive.liquider", "progressive.initiales")
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)
 
 

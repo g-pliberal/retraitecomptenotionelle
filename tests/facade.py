@@ -109,6 +109,7 @@ from retraite_notionnelle.droit import limite_age as _limite_age
 from retraite_notionnelle.droit import liquidation as _liquidation
 from retraite_notionnelle.droit import liquider as _liquider
 from retraite_notionnelle.droit import ouvrir as _ouvrir
+from retraite_notionnelle.droit import progressive as _progressive
 from retraite_notionnelle.droit import releve as _releve
 from retraite_notionnelle.droit import reversion as _reversion
 from retraite_notionnelle.droit import seconde as _seconde
@@ -138,7 +139,8 @@ ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversio
            "simulateur.proposition", "simulateur.carriere_proposition", "carriere.prolongee",
            "simulateur.garantie_vieillesse", "echeancier.parcourir", "simulateur.echeancier",
            "echeancier.depart_de", "echeancier.sortes", "journal.operer",
-           "pilote.age_de_depart", "departs.liquider_les_departs")
+           "pilote.age_de_depart", "departs.liquider_les_departs",
+           "progressive.liquider", "progressive.initiales")
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
@@ -1399,7 +1401,7 @@ class Liquidee(_Ferme):
     def __init__(self, lu: dict, demande, contexte) -> None:
         pensions = _Pensions(lu["taux"], lu["pensions"], lu["plafonds"])
         complements = _Complements(lu["complements"], lu["avantages_des_complements"],
-                                   lu["minimum_applique"])
+                                   lu["minimum_applique"], lu["plancher"])
         for nom, valeur in (("pensions", pensions), ("complements", complements),
                             ("regimes", lu["regimes"]),
                             ("total", lu["total"]), ("hors_repartition", lu["hors_repartition"]),
@@ -1439,12 +1441,15 @@ class _Pensions(_Ferme):
 
 class _Complements(_Ferme):
     """Les compléments d'une liquidation : la pension de chaque régime
-    complétée, et les avantages que l'étape « compléter » sert."""
+    complétée, les avantages que l'étape « compléter » sert, et ce que le
+    relèvement à la pension provisoire ajoute (``plancher``)."""
 
-    def __init__(self, regimes: tuple, avantages: tuple, minimum_applique: bool) -> None:
+    def __init__(self, regimes: tuple, avantages: tuple, minimum_applique: bool,
+                 plancher: float) -> None:
         object.__setattr__(self, "regimes", regimes)
         object.__setattr__(self, "avantages", avantages)
         object.__setattr__(self, "minimum_applique", minimum_applique)
+        object.__setattr__(self, "plancher", plancher)
 
 
 #: Les appels de ``liquider`` que les liquidations de la façade ont coûtés au
@@ -1460,9 +1465,10 @@ class _Liquidation(_Ferme):
     liquidations de la façade ont coûtés au portage ; ``Demande``, ``Etat``,
     ``Contexte`` et ``Mesure``, les types du Python, qui portent ce qu'on lui
     passe, et ses constantes. Les pensions déjà servies
-    (``departs.PensionServie``) passent ; le journal, une pension provisoire,
-    une date d'observation, une hypothèse n'arriveraient pas au portage : la
-    liquidation est refusée."""
+    (``departs.PensionServie``) et les pensions provisoires que la pension
+    complète ne peut descendre sous (``initiales``) passent ; le journal, le
+    recalcul refusé, une date d'observation, une hypothèse n'arriveraient pas
+    au portage : la liquidation est refusée."""
 
     Demande = _liquidation.Demande
     Etat = _liquidation.Etat
@@ -1497,12 +1503,14 @@ class _Liquidation(_Ferme):
             raise NonTransmissible(
                 "liquidation.liquider : journal qui n'est pas un journal vide de la façade — "
                 "le portage ne verrait pas ses entrées")
-        if (etat.initiales, etat.recalcul) != ((), True) or not all(
-                type(servie) is _departs.PensionServie for servie in etat.servies):
+        if not etat.recalcul or not all(
+                type(servie) is _departs.PensionServie for servie in etat.servies) or not all(
+                type(regime) is str and type(montant) in (int, float)
+                for regime, montant in etat.initiales):
             raise NonTransmissible(
-                "liquidation.liquider : état qui porte plus que sa carrière, un journal vide "
-                "et des pensions servies (departs.PensionServie) — pensions provisoires, "
-                "recalcul — le portage ne le verrait pas")
+                "liquidation.liquider : état qui porte plus que sa carrière, un journal vide, "
+                "des pensions servies (departs.PensionServie) et des pensions provisoires "
+                "(régime, montant) — le recalcul refusé, le portage ne le verrait pas")
         if (contexte.observation, contexte.hypothese) != (None, None):
             raise NonTransmissible(
                 "liquidation.liquider : contexte qui porte plus que le moteur et ses "
@@ -1514,7 +1522,8 @@ class _Liquidation(_Ferme):
         lu = _demander("liquidation.liquider", moteur._simulateur.parametres, pont.MOTEUR,
                        donnees, etat.carriere, sorted(contexte.neutralisations),
                        journal is not None,
-                       [dataclasses.asdict(servie) for servie in etat.servies])
+                       [dataclasses.asdict(servie) for servie in etat.servies],
+                       [[regime, montant] for regime, montant in etat.initiales])
         _APPELS[0] += lu["appels"]
         # Ce que la liquidation a écrit au journal du portage, que le journal
         # de la façade reprend : rien, qu'elle est pure.
@@ -1525,6 +1534,66 @@ class _Liquidation(_Ferme):
 
 #: ``droit.liquidation``, sa liquidation servie par le portage.
 liquidation = _Liquidation()
+
+
+class _Progressive(Regles):
+    """``droit.progressive`` : ses règles (:data:`REGLES`), servies comme
+    celles d'un module du droit, ``examiner`` comprise, qui rend le type du
+    Python (``Progressive``) ; ``liquider``, la liquidation provisoire d'une
+    demande, servie par le portage sur le moteur d'un simulateur de la façade,
+    sous son contexte et ses neutralisations ; ``initiales``, de cette
+    liquidation-là, que le portage refait. Un journal, une liquidation
+    provisoire qui ne vient pas de la façade n'arriveraient pas au portage."""
+
+    Progressive = _progressive.Progressive
+
+    @staticmethod
+    def _demande(entree: str, moteur, progressive, contexte=None) -> dict:
+        if not isinstance(moteur, ScenarioActuel) or (
+                contexte is not None and contexte.univers is not moteur):
+            raise NonTransmissible(
+                f"{entree} : moteur que la façade ne sait pas transmettre — la retraite "
+                "progressive se liquide sur le moteur d'un simulateur de la façade, sous son "
+                "contexte")
+        if not isinstance(progressive, _progressive.Progressive):
+            raise NonTransmissible(f"{entree} : ce n'est pas une Progressive")
+        champs = dataclasses.asdict(progressive)
+        return {**champs, "date": [progressive.date.annee, progressive.date.mois],
+                "bases": sorted(progressive.bases),
+                "complementaires": sorted(progressive.complementaires)}
+
+    def liquider(self, moteur, carriere, contexte, progressive, journal=None) -> Liquidee:
+        entree = "progressive.liquider"
+        demande = self._demande(entree, moteur, progressive, contexte)
+        if journal is not None or (contexte.observation, contexte.hypothese) != (None, None):
+            raise NonTransmissible(
+                f"{entree} : un journal, une observation, une hypothèse, que le portage ne "
+                "verrait pas")
+        neutralisations = sorted(contexte.neutralisations)
+        lu = _demander(entree, moteur._simulateur.parametres, pont.MOTEUR, carriere, demande,
+                       neutralisations)
+        _APPELS[0] += lu["appels"]
+        liquidee = Liquidee(lu, lu["demande"], contexte)
+        object.__setattr__(liquidee, "_de_la_progressive",
+                           (moteur, carriere, progressive, neutralisations))
+        return liquidee
+
+    def initiales(self, moteur, progressive, provisoire, date, regimes=None):
+        entree = "progressive.initiales"
+        demande = self._demande(entree, moteur, progressive)
+        origine = getattr(provisoire, "_de_la_progressive", None)
+        if origine is None or origine[0] is not moteur or origine[2] != progressive:
+            raise NonTransmissible(
+                f"{entree} : une liquidation provisoire que la façade n'a pas rendue de cette "
+                "demande sur ce moteur (progressive.liquider) — le portage la refait")
+        return _demander(entree, moteur._simulateur.parametres, pont.MOTEUR, origine[1],
+                         demande, origine[3], [date.annee, date.mois],
+                         None if regimes is None else sorted(regimes))
+
+
+#: ``droit.progressive``, ses règles et sa liquidation provisoire servies par
+#: le portage.
+progressive = _Progressive("progressive", _progressive)
 
 
 # -- le relevé des droits et ses étapes -----------------------------------------------
@@ -1995,7 +2064,8 @@ _COPIES: dict[tuple, Path] = {}
 def donnees_retouchees(request, nom: tuple, retouches: dict) -> Path:
     """Une copie des données du dépôt dont chaque fichier de ``retouches`` —
     son chemin relatif à ``data/`` — est récrit par sa retouche, une fonction
-    du texte au texte : ce qu'un test remplaçait en Python, le portage le voit
+    du texte au texte, ou retiré si elle rend ``None`` : ce qu'un test
+    remplaçait en Python, le portage le voit
     ainsi, sur leur paquet. Les autres fichiers sont liés à ceux du dépôt. Une
     copie par ``nom``, qui dit les retouches, et par processus."""
     if nom not in _COPIES:
@@ -2008,7 +2078,8 @@ def donnees_retouchees(request, nom: tuple, retouches: dict) -> Path:
             fichier.unlink()
             retouche = retoucher(texte)
             assert retouche != texte, f"{chemin} : la retouche ne change rien"
-            fichier.write_text(retouche, encoding="utf-8")
+            if retouche is not None:
+                fichier.write_text(retouche, encoding="utf-8")
         _COPIES[nom] = copie
     return _COPIES[nom]
 

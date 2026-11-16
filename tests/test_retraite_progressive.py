@@ -14,20 +14,20 @@ se lit à temps plein.
 from __future__ import annotations
 
 import json
-import shutil
-import subprocess
 
 import pytest
 
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import Carriere, Metier
-from retraite_notionnelle.droit import liquidation, liquider, progressive
-from retraite_notionnelle.droit.compter import services_a_temps_partiel
-from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.donnees.chargement import charger_yaml
+from retraite_notionnelle.noyau import versions
 from retraite_notionnelle.web.site import ErreurSite
 
-from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
-from test_liquidation import RACINE, _ecarts
+import facade
+from facade import Carriere, Simulateur, compter, departs, liquidation, liquider, progressive
+from outils_pont import refus_de_la_saisie, saisie_du_portage
+from test_liquidation import RACINE
 
 
 @pytest.fixture(scope="module")
@@ -65,7 +65,7 @@ def _salariee(simulateur: Simulateur, age: float | None = 60.75, quotite: float 
 def test_l_age_qui_ouvre_la_retraite_progressive(simulateur, date, attendu):
     moteur = simulateur.scenario_actuel
     carriere = _salariee(simulateur)
-    legal = progressive._departs.age_legal(moteur, carriere)
+    legal = departs.age_legal(moteur, carriere)
     valeur = progressive.age_minimum(moteur, carriere, date)
     if attendu == "legal":
         assert valeur == legal
@@ -122,31 +122,39 @@ def test_la_fraction_servie(simulateur, date, quotite, fonctionnaire, fraction):
     assert trouvee == (None if fraction is None else pytest.approx(fraction))
 
 
-def _sous_la_fiche_retouchee(moteur, version: str, **parametres):
-    """Le moteur, une version de la fiche de la retraite progressive retouchée
-    dans une copie de ses fiches."""
-    from copy import copy, deepcopy
-
-    fiches = deepcopy(moteur.fiches_datees.fiches())
-    [visee] = [v for v in fiches[progressive.FICHE]["versions"] if v["id"] == version]
-    visee["parametres"].update(parametres)
-    retouche = copy(moteur)
-    retouche.fiches_datees = copy(moteur.fiches_datees)
-    retouche.fiches_datees._fiches = fiches
-    return retouche
+_FICHE = f"reference/regles/{progressive.FICHE}.yaml"
 
 
-def test_la_regle_se_lit_dans_la_fiche_et_nulle_part_ailleurs(simulateur):
+def _sous_la_fiche_retouchee(request, version: str, parametre: str, avant, apres):
+    """Le moteur d'une copie des données où un paramètre d'une version de la
+    fiche de la retraite progressive est récrit : le portage la lit ainsi, sur
+    leur paquet."""
+    def retoucher(texte: str) -> str:
+        debut = texte.index(f"- id: {version}\n")
+        fin = texte.find("\n- id: ", debut + 1)
+        fin = len(texte) if fin < 0 else fin
+        bloc = texte[debut:fin]
+        retouche = bloc.replace(f"      {parametre}: {avant}\n", f"      {parametre}: {apres}\n")
+        assert retouche.count("\n") == bloc.count("\n") and retouche != bloc, (version, parametre)
+        return texte[:debut] + retouche + texte[fin:]
+
+    copie = facade.donnees_retouchees(request, (version, parametre, apres), {_FICHE: retoucher})
+    return Simulateur(Parametres(racine_donnees=copie)).scenario_actuel
+
+
+def test_la_regle_se_lit_dans_la_fiche_et_nulle_part_ailleurs(request, simulateur):
     """Action 191 : le moteur lit les dates et les valeurs de la règle dans
     les versions de sa fiche. Une version retouchée déplace ce qu'il rend, et
     le module n'écrit plus ni date ni valeur."""
     moteur = simulateur.scenario_actuel
     assert not progressive.regle(moteur, DateMois(1988, 4))["existe"]
     assert progressive.regle(moteur, DateMois(1988, 6))["existe"]
-    autre = _sous_la_fiche_retouchee(moteur, "cent_soixante_trimestres_1993", duree_requise=170)
+    autre = _sous_la_fiche_retouchee(request, "cent_soixante_trimestres_1993",
+                                     "duree_requise", 160, 170)
     assert progressive.duree_requise(autre, DateMois(2000, 1)) == 170
     assert progressive.duree_requise(autre, DateMois(2010, 1)) == 150
-    autre = _sous_la_fiche_retouchee(moteur, "soixante_ans_2025", quotite_maximum=0.7)
+    autre = _sous_la_fiche_retouchee(request, "soixante_ans_2025", "quotite_maximum",
+                                     "0.80", "0.70")
     assert progressive.fraction(autre, DateMois(2026, 1), 0.8, False) is None
     assert progressive.fraction(moteur, DateMois(2026, 1), 0.8, False) == pytest.approx(0.2)
     # D. 351-15 : la pension complète se recalcule depuis le 8 juin 2006.
@@ -158,24 +166,22 @@ def test_la_regle_se_lit_dans_la_fiche_et_nulle_part_ailleurs(simulateur):
         assert not hasattr(progressive, nom), nom
 
 
-def test_sans_la_fiche_le_calcul_s_arrete(simulateur):
+def test_sans_la_fiche_le_calcul_s_arrete(request):
     """Un paquet périmé, sans la fiche, ne refuse pas le droit par défaut : le
     calcul s'arrête et le dit."""
-    from copy import copy
-
-    moteur = copy(simulateur.scenario_actuel)
-    moteur.fiches_datees = moteur.fiches_datees.sans(progressive.FICHE)
+    copie = facade.donnees_retouchees(request, ("sans la fiche",), {_FICHE: lambda texte: None})
+    moteur = Simulateur(Parametres(racine_donnees=copie)).scenario_actuel
     with pytest.raises(LookupError, match="retraite_progressive"):
         progressive.regle(moteur, DateMois(2024, 1))
 
 
-def test_le_paquet_porte_la_fiche_que_le_moteur_lit(simulateur):
-    """Une seule source : la fiche, que le paquet du site porte telle que le
-    moteur Python la prépare."""
+def test_le_paquet_porte_la_fiche_que_le_moteur_lit():
+    """Une seule source : la fiche, que le paquet du site porte telle que la
+    fabrique la prépare."""
     paquet = json.loads((RACINE / "moteur" / "donnees.json").read_text(encoding="utf-8"))
-    fiches = simulateur.scenario_actuel.fiches_datees.fiches()
-    assert paquet["fiches_datees"][progressive.FICHE] == fiches[progressive.FICHE]
-    assert len(fiches[progressive.FICHE]["versions"]) == 8
+    preparee = versions.preparer(charger_yaml(RACINE / "data" / _FICHE))
+    assert paquet["fiches_datees"][progressive.FICHE] == preparee
+    assert len(preparee["versions"]) == 8
 
 
 # -- la carrière à temps partiel --------------------------------------------------
@@ -197,7 +203,7 @@ def test_les_annees_de_retraite_progressive_portent_leur_quotite(simulateur):
 ])
 def test_les_services_d_un_temps_partiel_comptent_leur_duree_reelle(
         trimestres, quotite, services):
-    assert services_a_temps_partiel(trimestres, quotite) == services
+    assert compter.services_a_temps_partiel(trimestres, quotite) == services
 
 
 def _pension_de_l_etat(moteur, carriere: Carriere):
@@ -344,7 +350,7 @@ def test_la_decote_de_la_pension_provisoire_ne_depasse_pas_25_pour_cent(
     a_soixante = carriere.liquidee_au(DateMois(naissance + 60, 2))
     assert "2014-12-18" <= f"{naissance + 60}-02-01" < "2023-09-01"
     for code in progressive.regimes_ouverts(moteur, DateMois(naissance + 60, 2)):
-        periode = moteur.catalogue[code].periode(naissance + 60)
+        periode = simulateur.catalogue[code].periode(naissance + 60)
         if periode is None or not periode.decote_par_trimestre:
             continue
         decote, _, _ = liquider.decote_opposable(moteur, periode, a_soixante, naissance + 60)
@@ -440,70 +446,6 @@ def test_le_plancher_se_compare_a_la_pension_qui_porte_la_surcote_parentale(simu
     assert relevee.total == pytest.approx(libre.total + 1000.0)
 
 
-_LIQUIDER_EN_JAVASCRIPT = """
-import { readFileSync } from "node:fs";
-import { Contexte } from "./moteur/js/contexte.js";
-import { Saisie } from "./moteur/js/saisie.js";
-import { Contexte as ContexteDeLiquidation, Etat, demandeDeDepart, liquider }
-  from "./moteur/js/droit/liquidation.js";
-const [requete, cas] = JSON.parse(process.argv[1]);
-const contexte = new Contexte(JSON.parse(readFileSync("./moteur/donnees.json", "utf8")));
-const saisie = Saisie.depuisRequete(requete, false, contexte.paquet.presomptions);
-const moteur = contexte.simulateur(saisie.parametres(contexte.base)).scenarioActuel;
-const carriere = contexte.carriere(saisie);
-process.stdout.write(JSON.stringify(cas.map((initiales) => {
-  const liquidee = liquider(demandeDeDepart(carriere), new Etat(carriere, null, [], initiales),
-    new ContexteDeLiquidation(moteur));
-  return { liquidation: liquidee.donnees(), complements: liquidee.complements.donnees(),
-    total: liquidee.total, total_contributif: liquidee.totalContributif };
-})));
-"""
-
-
-def test_les_deux_moteurs_comparent_le_plancher_a_la_pension_qui_porte_la_surcote_parentale():
-    """Le jumeau JavaScript de l'étape qui complète compare comme le Python la
-    pension provisoire à la pension complète qui porte sa surcote parentale :
-    la mère de deux enfants, libre, puis sa pension provisoire posée entre la
-    pension complète et la même sans surcote parentale, puis au-dessus."""
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    requete = {"naissance": "1969", "naissance_mois": "1", "sexe": "F", "enfants": "2",
-               "statut": "salarie_prive_non_cadre", "debut": "18", "liquidation": "64",
-               "unite_revenu": "moyen", "salaire": "1"}
-    saisies = Saisies()
-    parametres, carriere = saisies.lire(requete)
-    moteur = saisies.simulateur(parametres).scenario_actuel
-
-    def liquider_en_python(initiales):
-        liquidee = liquidation.liquider(
-            liquidation.demande_de_depart(carriere),
-            liquidation.Etat(carriere, initiales=tuple(map(tuple, initiales))),
-            liquidation.Contexte(moteur))
-        return {"liquidation": liquidee.donnees(), "complements": liquidee.complements.donnees(),
-                "total": liquidee.total, "total_contributif": liquidee.total_contributif}
-
-    libre = liquidation.liquider(liquidation.demande_de_depart(carriere),
-                                 liquidation.Etat(carriere), liquidation.Contexte(moteur))
-    [complete] = [p for p in libre.regimes if p.regime == "regime_general"]
-    parentale = next(a.montant for a in libre.complements.avantages
-                     if a.code == "surcote_parentale")
-    avant = complete.montant - parentale
-    cas = [[], [["regime_general", avant + parentale / 2]],
-           [["regime_general", complete.montant + 1000.0]]]
-    attendus = json.loads(json.dumps([liquider_en_python(initiales) for initiales in cas]))
-    servis = [{d["code"] for d in attendu["complements"]["dispositifs"]} for attendu in attendus]
-    assert ["surcote_parentale" in codes for codes in servis] == [True, True, False]
-    execution = subprocess.run(
-        ["node", "--input-type=module", "-e", _LIQUIDER_EN_JAVASCRIPT,
-         json.dumps([requete, cas])],
-        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    ecarts: list[str] = []
-    for rang, (obtenu, attendu) in enumerate(zip(json.loads(execution.stdout), attendus)):
-        _ecarts(obtenu, attendu, f"cas {rang}", ecarts)
-    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
-
-
 def test_avant_2006_la_pension_complete_est_la_provisoire(simulateur):
     """Avant le décret du 8 juin 2006, la pension complète ne se recalcule
     pas : le temps partiel n'y ajoute rien."""
@@ -522,10 +464,10 @@ def test_l_echeancier_inscrit_la_fraction_puis_la_pension_complete(simulateur):
     entrees = {e.id: e for e in journal}
     evenement = entrees["retraite_progressive_assure"].contenu
     assert evenement.sorte == "retraite_progressive" and evenement.date == "2025-11-01"
-    provisoire = entrees["liquidation_retraite_progressive_assure"].contenu
-    assert provisoire.demande.nature == "provisoire"
+    provisoire = entrees["liquidation_retraite_progressive_assure"].contenu.donnees()
+    assert provisoire["demande"]["nature"] == "provisoire"
     servie = entrees["progressive_pension_regime_general"].contenu
-    entiere = next(c for c in provisoire.composantes() if c["id"] == "pension_regime_general")
+    entiere = next(c for c in provisoire["composantes"] if c["id"] == "pension_regime_general")
     assert servie["montant"]["annuel"] == pytest.approx(0.4 * entiere["montant"]["annuel"])
     assert entrees["pension_regime_general"].remplace == "progressive_pension_regime_general"
     assert entrees["depart_assure"].contenu.sorte == "pension_definitive"

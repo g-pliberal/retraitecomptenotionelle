@@ -54,7 +54,6 @@ FICHIERS = (
     "test_moteur.py",
     "test_pont.py",
     
-    "test_retraite_progressive.py",
     "test_solde_fusion.py",
    
 )

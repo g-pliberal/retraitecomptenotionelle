@@ -174,6 +174,7 @@ import {
 } from "../../moteur/js/droit/liquidation.js";
 import * as liquider from "../../moteur/js/droit/liquider.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
+import * as progressive from "../../moteur/js/droit/progressive.js";
 import * as releve from "../../moteur/js/droit/releve.js";
 import * as reversion from "../../moteur/js/droit/reversion.js";
 import { ageDeDepart } from "../../moteur/js/pilote.js";
@@ -2297,7 +2298,7 @@ const MODULES_DU_DROIT = {
       { quand, regle, tauxPleinRequis, surcoteComprise }),
   },
   cultes, cumul, departs, foyer: foyerEtape, invalidite, limite_age: limiteAge, liquider, ouvrir,
-  releve, reversion,
+  progressive, releve, reversion,
   revalorisation,
 };
 
@@ -2362,12 +2363,49 @@ ENTREES_DE_LA_FACADE["liquidation.demande_de_depart"] = (carriere, nature) => {
  * (`CONTENUS_QUI_NE_PASSENT_PAS`).
  */
 ENTREES_DE_LA_FACADE["liquidation.liquider"] = (moteur, demande, carriere, neutralisations,
-  avecJournal = false, servies = []) => {
+  avecJournal = false, servies = [], initiales = []) => {
   const avant = appels();
   const journal = avecJournal ? new Journal() : null;
-  const liquidee = liquiderLaDemande(new Demande(demande), new Etat(carriere, journal, servies),
+  const liquidee = liquiderLaDemande(new Demande(demande),
+    new Etat(carriere, journal, servies, initiales),
     new ContexteDeLiquidation(moteur, neutralisations));
   return liquidationTelleQuelle(liquidee, appels() - avant, journal);
+};
+
+/** Une demande de retraite progressive (`Progressive` du Python), de ses champs. */
+function progressiveDeLaFacade({ date: [annee, mois], bases, complementaires, ...champs }) {
+  return new progressive.Progressive({
+    date: new DateMois(annee, mois), quotite: champs.quotite, motif: champs.motif,
+    fraction: champs.fraction, bases: new Set(bases), complementaires: new Set(complementaires),
+    ageMinimum: champs.age_minimum, dureeRequise: champs.duree_requise,
+    trimestres: champs.trimestres,
+  });
+}
+
+/**
+ * La liquidation provisoire de la retraite progressive (`progressive.liquider`
+ * du Python), sur la carrière arrêtée à sa date, sous le contexte du moteur et
+ * ses neutralisations : ce que les tests en lisent, comme d'une liquidation.
+ */
+ENTREES_DE_LA_FACADE["progressive.liquider"] = (moteur, carriere, demande, neutralisations) => {
+  const avant = appels();
+  const liquidee = progressive.liquider(moteur, carriere,
+    new ContexteDeLiquidation(moteur, neutralisations), progressiveDeLaFacade(demande));
+  return liquidationTelleQuelle(liquidee, appels() - avant, null);
+};
+
+/**
+ * Les pensions provisoires que la pension complète ne peut descendre sous
+ * (`progressive.initiales` du Python), de la liquidation provisoire de cette
+ * demande, refaite : elle est pure. `[[régime, montant], …]`.
+ */
+ENTREES_DE_LA_FACADE["progressive.initiales"] = (moteur, carriere, demande, neutralisations,
+  [annee, mois], regimes = null) => {
+  const lue = progressiveDeLaFacade(demande);
+  const provisoire = progressive.liquider(moteur, carriere,
+    new ContexteDeLiquidation(moteur, neutralisations), lue);
+  return progressive.initiales(moteur, lue, provisoire, new DateMois(annee, mois),
+    regimes === null ? null : new Set(regimes));
 };
 
 /**
@@ -2383,6 +2421,7 @@ function liquidationTelleQuelle(liquidee, lesAppels, journal) {
     complements: telQuel(liquidee.complements.regimes),
     avantages_des_complements: telQuel(liquidee.complements.avantages),
     minimum_applique: liquidee.complements.minimumApplique,
+    plancher: liquidee.complements.plancher,
     total: liquidee.total, hors_repartition: liquidee.horsRepartition,
     total_contributif: liquidee.totalContributif, mesures: telQuel(liquidee.mesures),
     avantages: telQuel(liquidee.avantages), lignes: telQuel(liquidee.releve.lignes()),

@@ -43,6 +43,7 @@ from retraite_notionnelle.droit import limite_age as limite_age_python
 from retraite_notionnelle.droit import liquidation as liquidation_python
 from retraite_notionnelle.droit import liquider as liquider_python
 from retraite_notionnelle.droit import ouvrir as ouvrir_python
+from retraite_notionnelle.droit import progressive as progressive_python
 from retraite_notionnelle.droit import reversion as reversion_python
 from retraite_notionnelle.droit import releve as releve_python
 from retraite_notionnelle.droit.commun import PensionRegime
@@ -883,6 +884,27 @@ APPELS_DES_REGLES = [
     ("compter", "arrondir_les_services", lambda s: (20 * 360 + 45, {"unite_jours": 90, "seuil_jours": 45})),
     ("compter", "arrondir_les_services", lambda s: (180 + 89, {"unite_jours": 180, "seuil_jours": 90})),
     ("compter", "bonification_ouverte", lambda s: ("tout_enfant", 1990, 2000, 2010)),
+    ("compter", "services_a_temps_partiel", lambda s: (4, 0.625)),
+    ("compter", "services_a_temps_partiel", lambda s: (2, 0.5)),
+    ("progressive", "regle", lambda s: (s.scenario_actuel, DateMois(2024, 3))),
+    ("progressive", "regle", lambda s: (s.scenario_actuel, DateMois(1988, 4))),
+    ("progressive", "age_minimum",
+     lambda s: (s.scenario_actuel, _progressive(s), DateMois(2014, 6))),
+    ("progressive", "age_minimum",
+     lambda s: (s.scenario_actuel, _progressive(s), DateMois(2024, 3))),
+    ("progressive", "duree_requise", lambda s: (s.scenario_actuel, DateMois(2000, 1))),
+    ("progressive", "duree_requise", lambda s: (s.scenario_actuel, DateMois(1988, 4))),
+    ("progressive", "regimes_ouverts", lambda s: (s.scenario_actuel, DateMois(2023, 9))),
+    ("progressive", "regimes_liquides", lambda s: (s.scenario_actuel, DateMois(1990, 1))),
+    ("progressive", "regimes_liquides", lambda s: (s.scenario_actuel, DateMois(2023, 9))),
+    ("progressive", "fraction", lambda s: (s.scenario_actuel, DateMois(2000, 1), 0.5, False)),
+    ("progressive", "fraction", lambda s: (s.scenario_actuel, DateMois(2020, 1), 0.625, False)),
+    ("progressive", "fraction", lambda s: (s.scenario_actuel, DateMois(2024, 1), 0.45, True)),
+    ("progressive", "recalculee", lambda s: (s.scenario_actuel, DateMois(2006, 6))),
+    ("progressive", "recalculee", lambda s: (s.scenario_actuel, DateMois(2006, 7))),
+    ("progressive", "examiner", lambda s: (s.scenario_actuel, _progressive(s))),
+    ("progressive", "examiner", lambda s: (s.scenario_actuel, _progressive(s, quotite=0.9))),
+    ("progressive", "examiner", lambda s: (s.scenario_actuel, _progressive(s, demande=None))),
     ("compter", "bonification_ouverte", lambda s: ("ne_avant_radiation", 2012, 1984, 2010)),
     ("compter", "droit_regime_special",
      _du_regime("fonction_publique_etat", 2022, _fonctionnaire, 2022, "ne_avant_radiation", 1992)),
@@ -1202,6 +1224,15 @@ APPELS_DES_REGLES = [
 ]
 
 
+def _progressive(s, quotite=0.6, demande="2025-11"):
+    """La salariée née le 15 janvier 1965, partie à soixante-quatre ans, qui
+    demande la retraite progressive en novembre 2025, à cette quotité, ou ne
+    la demande pas."""
+    return s.carriere_parcours(
+        1965, "F", [Metier("salarie_prive_non_cadre", 20.0)], 64, jour_naissance=15,
+        retraite_progressive=None if demande is None else {"age": 60.75, "quotite": quotite})
+
+
 def _policier(s):
     return s.carriere_parcours(1970, "H", [Metier("fonctionnaire_etat_super_actif", 22.0)], 54,
                                part_primes=0.25)
@@ -1217,6 +1248,14 @@ def _venue_du_prive(s, **demandes):
     return s.carriere_parcours(1960, "F", [Metier("salarie_prive_non_cadre", 25.25),
                                            Metier("fonctionnaire_etat", 38.25)], 62,
                                demandes_de_pension=demandes)
+
+
+def _ensembles_tries(objet):
+    """Le dataclass, ses ensembles en suites triées."""
+    return dataclasses.replace(objet, **{
+        champ.name: tuple(sorted(getattr(objet, champ.name)))
+        for champ in dataclasses.fields(objet)
+        if isinstance(getattr(objet, champ.name), frozenset)})
 
 
 def test_chaque_regle_du_droit_servie_a_son_appel_confronte():
@@ -1241,7 +1280,8 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
                "reversion": reversion_python, "revalorisation": revalorisation_python,
                "cultes": cultes_python, "departs": departs_python, "releve": releve_python,
                "invalidite": invalidite_python, "categories": categories_python,
-               "limite_age": limite_age_python, "cumul": cumul_python}
+               "limite_age": limite_age_python, "cumul": cumul_python,
+               "progressive": progressive_python}
     ecarts = []
     for module, regle, arguments in APPELS_DES_REGLES:
         lu = getattr(facade.regles_de_la_reversion if module == "reversion"
@@ -1270,7 +1310,16 @@ def test_le_jumeau_rend_ce_que_la_facade_lit_des_regles_du_droit(parametres):
                 for champ in dataclasses.fields(refait)
                 if type(getattr(refait, champ.name)) is int
                 and type(getattr(lu, champ.name)) is float})
-            if repr(lu) != repr(refait):
+            # Un ensemble (``Progressive.bases``) s'écrit dans l'ordre de son
+            # hachage, qui change d'un processus à l'autre : il se compare trié.
+            if repr(_ensembles_tries(lu)) != repr(_ensembles_tries(refait)):
+                ecarts.append(f"{module}.{regle} : la façade lit {lu!r}, le jumeau rend "
+                              f"{refait!r}")
+            continue
+        if type(refait) is dict:
+            # La règle d'une fiche (``progressive.regle``) : un dictionnaire,
+            # que le pont rend sous ses clés triées ; l'ordre ne compte pas.
+            if json.dumps(lu, sort_keys=True) != json.dumps(refait, sort_keys=True):
                 ecarts.append(f"{module}.{regle} : la façade lit {lu!r}, le jumeau rend "
                               f"{refait!r}")
             continue
@@ -1524,6 +1573,67 @@ def test_le_jumeau_rend_la_liquidation_que_la_facade_lit(parametres):
             assert lu.complements.avantages == tuple(refait.complements.avantages), cas
             assert (facade.liquidation.appels() - avant
                     == liquidation_python.appels() - avant_jumeau), cas
+
+
+def test_le_jumeau_rend_la_retraite_progressive_que_la_facade_lit():
+    """La liquidation provisoire de la retraite progressive, les pensions
+    provisoires que la pension complète ne peut descendre sous, et la pension
+    complète relevée à l'une d'elles : la salariée devenue fonctionnaire, puis
+    la mère de deux enfants, dont la surcote parentale se compare au plancher.
+    Les mêmes pensions, au bit près."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    servi, jumeau = facade.Simulateur(), simulateur_python.Simulateur()
+
+    def regimes(liquidee):
+        return pont.lu_strictement(tuple[PensionRegime, ...],
+                                   json.loads(json.dumps(pont._en_donnees(liquidee.regimes))),
+                                   "regimes")
+
+    def fonctionnaire(s):
+        return s.carriere_parcours(1963, "F", [Metier("salarie_prive_non_cadre", 23.0),
+                                               Metier("fonctionnaire_etat", 35.0)], 64,
+                                   jour_naissance=15, part_primes=0.2,
+                                   retraite_progressive={"age": 61.0, "quotite": 0.7})
+    lue, refaite = fonctionnaire(servi), fonctionnaire(jumeau)
+    examinee = facade.progressive.examiner(servi.scenario_actuel, lue)
+    assert examinee == progressive_python.examiner(jumeau.scenario_actuel, refaite)
+    provisoire = facade.progressive.liquider(
+        servi.scenario_actuel, lue, facade.liquidation.Contexte(servi.scenario_actuel), examinee)
+    refait = progressive_python.liquider(
+        jumeau.scenario_actuel, refaite, liquidation_python.Contexte(jumeau.scenario_actuel),
+        examinee)
+    assert repr(provisoire.regimes) == repr(regimes(refait))
+    assert provisoire.donnees() == _en_json(refait.donnees())
+    for regimes_du_depart in (None, frozenset({"regime_general"})):
+        assert facade.progressive.initiales(
+            servi.scenario_actuel, examinee, provisoire, lue.date_liquidation,
+            regimes_du_depart) == progressive_python.initiales(
+            jumeau.scenario_actuel, examinee, refait, refaite.date_liquidation, regimes_du_depart)
+
+    def mere(s):
+        return s.carriere_simple(annee_naissance=1969, mois_naissance=1, jour_naissance=1,
+                                 sexe="F", affiliation="salarie_prive_non_cadre", age_debut=18,
+                                 age_liquidation=64, nombre_enfants=2)
+    lue, refaite = mere(servi), mere(jumeau)
+    libre = liquidation_python.liquider(
+        liquidation_python.demande_de_depart(refaite), liquidation_python.Etat(refaite),
+        liquidation_python.Contexte(jumeau.scenario_actuel))
+    [complete] = [p for p in libre.regimes if p.regime == "regime_general"]
+    for initiales in ((("regime_general", complete.montant - 1.0),),
+                      (("regime_general", complete.montant + 1000.0),)):
+        lu = facade.liquidation.liquider(
+            facade.liquidation.demande_de_depart(lue),
+            facade.liquidation.Etat(lue, initiales=initiales),
+            facade.liquidation.Contexte(servi.scenario_actuel))
+        refait = liquidation_python.liquider(
+            liquidation_python.demande_de_depart(refaite),
+            liquidation_python.Etat(refaite, initiales=initiales),
+            liquidation_python.Contexte(jumeau.scenario_actuel))
+        assert repr(lu.regimes) == repr(regimes(refait)), initiales
+        assert lu.complements.plancher == refait.complements.plancher, initiales
+        assert (lu.total, lu.total_contributif) == (refait.total, refait.total_contributif)
+        assert lu.donnees() == _en_json(refait.donnees()), initiales
 
 
 @pytest.mark.parametrize("parametres", [Parametres(), Parametres(conventions_cor=True)],

@@ -2365,8 +2365,8 @@ def liquidation_des_donnees(donnees: dict) -> dict:
     ``regimes``, la pension de chaque régime, complétée, dans l'ordre ;
     ``pensions`` et ``plafonds``, les pensions de l'étape « liquider », avant
     les compléments, et ce que le plafond de L. 18 en écarte ;
-    ``complements`` et ``avantages_des_complements``, ce que l'étape
-    « compléter » écrit ;
+    ``complements``, ``avantages_des_complements`` et ``plancher``, ce que
+    l'étape « compléter » écrit, le relèvement à la pension provisoire compris ;
     ``total``, ``hors_repartition`` et ``total_contributif`` ; ``mesures``,
     ce que la cascade a mesuré, et ``avantages``, chaque avantage appliqué ;
     ``lignes``, celles du relevé qu'elle a lues, et ``donnees``, ce que le
@@ -2403,6 +2403,7 @@ def liquidation_des_donnees(donnees: dict) -> dict:
                         else journal_des_donnees(donnees["journal"], "liquidation.journal")),
             "minimum_applique": lu_strictement(bool, donnees["minimum_applique"],
                                                "liquidation.minimum_applique"),
+            "plancher": lu_strictement(float, donnees["plancher"], "liquidation.plancher"),
             "demande": demande_des_donnees(donnees["demande"]),
             "date_liquidation": DateMois(*lu_strictement(
                 tuple[int, int], donnees["date_liquidation"], "liquidation.date_liquidation")),
@@ -2597,6 +2598,9 @@ LECTURES_DE_LA_FACADE = {
     "carriere.prolongee": lambda lu: None if lu is None else carriere_des_donnees(lu),
     "simulateur.garantie_vieillesse": garantie_vieillesse_des_donnees,
     "liquidation.liquider": liquidation_des_donnees,
+    "progressive.liquider": liquidation_des_donnees,
+    "progressive.initiales": lambda lu: lu_strictement(
+        tuple[tuple[str, float], ...], lu, "progressive.initiales"),
     "liquidation.demande_de_depart": demande_des_donnees,
     "departs.liquider_les_departs": departs_liquides_des_donnees,
     "coordonner.coordonner": coordination_des_donnees,
@@ -2687,6 +2691,8 @@ ERREURS_DU_PORTAGE = (
     ("affiliation inconnue", "", KeyError),
     ("présomption inconnue", "", KeyError),
     ("", "la fiche manque aux fiches datées du moteur", LookupError),
+    # Le portage de la retraite progressive le dit à sa façon.
+    ("retraite_progressive : la fiche manque au paquet", "", LookupError),
 )
 
 
@@ -3029,7 +3035,7 @@ TABLES_DES_REGLES: dict[str, frozenset[str]] = {
 TYPES_DE_LA_FACADE = frozenset({"AvantageApplique", "EligibleMinimum", "EligibleAgricole",
                                 "PensionRegime"})
 CLASSES_EN_CHAMEAU |= {"EligibleMinimum", "DureesDesCultes", "PensionMajoree",
-                       "RevenuDesPoints"}
+                       "RevenuDesPoints", "Progressive"}
 
 
 # -- les règles du droit, par la façade (action 161) ------------------------------
@@ -3061,7 +3067,7 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
                "majoration_du_conjoint", "parts_de_la_majoration"),
     # Les trimestres des enfants et le régime qui les porte (R. 173-15).
     "compter": ("arrondir_les_services", "bonification_ouverte", "droit_regime_special",
-                "majoration_pour_enfants"),
+                "majoration_pour_enfants", "services_a_temps_partiel"),
     # Les deux fractions de la pension des cultes : la durée de chacune, sur
     # les durées du relevé, et la part de l'écart du V du décret n° 2006-1325.
     "cultes": ("durees", "part_de_l_ecart"),
@@ -3108,6 +3114,10 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
                "age_taux_plein", "age_taux_plein_droit", "depart_parent_trois_enfants", "derogation_active",
                "duree_requise", "fin_indemnisation", "indemnisation_bornee", "mois_ouverture_des_droits",
                "ouverture_carriere_longue"),
+    # La retraite progressive : la règle de sa fiche à une date, ce qu'elle
+    # ouvre et sert, et la demande que la carrière dit, examinée.
+    "progressive": ("age_minimum", "duree_requise", "examiner", "fraction", "recalculee",
+                    "regimes_liquides", "regimes_ouverts", "regle"),
     # Le relevé à rebours : les points qu'un revenu ouvre, et le revenu que
     # des points supposent (action 138, étape 11).
     "releve": ("points_de_l_annee", "revenu_des_points"),
