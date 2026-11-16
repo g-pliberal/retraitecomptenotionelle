@@ -2798,6 +2798,23 @@ def abattre_au_dela_du_plafond(salaire: float, plafond: float, part: float) -> f
     return plafond + part * (salaire - plafond)
 
 
+def revalorisation_exceptionnelle_de_mayotte(mahorais: bool, annee: int,
+                                             annee_effet: int, mois_effet: int) -> float:
+    """Le coefficient de la revalorisation exceptionnelle des salaires de
+    Mayotte (action 175, écart lourd n° 1 des circulaires). « Les salaires
+    portés au compte avant le 1er septembre 2023 servant au calcul du salaire
+    annuel de base [...] sont revalorisés à titre exceptionnel pour les
+    pensions prenant effet à compter du 1er septembre 2023 » (loi n° 2023-270,
+    article 19, III, LEGIARTI000047447830), « de 10 % » (décret n° 2023-966,
+    article 2, III, LEGIARTI000048237957). Le régime mahorais seul. Le modèle
+    n'a que le salaire de l'année entière : celui de 2023 se revalorise pour
+    ses huit mois d'avant septembre, ce qui rend l'exemple de la circulaire
+    Cnav n° 2024/5 (2 350 € en 2023, écrêtés à 2 394 € de part et d'autre)."""
+    if not mahorais or annee_effet * 12 + mois_effet < 2023 * 12 + 9 or annee > 2023:
+        return 1.0
+    return 1.1 if annee < 2023 else 1 + 0.1 * 8 / 12
+
+
 def salaire_de_reference(moteur, code: str, carriere: Carriere,
                          periode: PeriodeRegime,
                          annee_liquidation: int, plafonner: bool,
@@ -3059,6 +3076,11 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
     annees_des_revenus: list[int] = []
     for annee in sorted(par_annee):
         revenu, fraction, _ = par_annee[annee]
+        # LA REVALORISATION EXCEPTIONNELLE DE MAYOTTE, avant l'écrêtement au
+        # plafond de la caisse, que le salaire relevé ne passe pas (circulaire
+        # Cnav n° 2024/5, § 2).
+        revenu *= revalorisation_exceptionnelle_de_mayotte(
+            mahorais, annee, annee_liquidation, mois_liquidation)
         revenus.append(borner(revenu, annee, fraction) * revaloriser(annee, annee_liquidation))
         annees_des_revenus.append(annee)
 

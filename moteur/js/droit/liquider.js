@@ -2082,6 +2082,20 @@ export function abattreAuDelaDuPlafond(salaire, plafond, part) {
  * régime général, et n'entrent qu'une fois dans un seul salaire annuel
  * moyen. Voir `groupesDeSuccession`.
  */
+/**
+ * Le coefficient de la revalorisation exceptionnelle des salaires de Mayotte
+ * (loi n° 2023-270, article 19, III ; décret n° 2023-966, article 2, III :
+ * 10 %) : 1,1 pour une année d'avant 2023, 1 + 0,1 × 8/12 pour 2023, dont le
+ * modèle n'a que le salaire de l'année entière, et 1 ensuite ou pour une
+ * pension prenant effet avant le 1er septembre 2023. Voir le Python.
+ */
+export function revalorisationExceptionnelleDeMayotte(mahorais, annee, anneeEffet, moisEffet) {
+  if (!mahorais || anneeEffet * 12 + moisEffet < 2023 * 12 + 9 || annee > 2023) {
+    return 1.0;
+  }
+  return annee < 2023 ? 1.1 : 1 + 0.1 * 8 / 12;
+}
+
 export function salaireDeReference(moteur, code, carriere, periode, anneeLiquidation, plafonner,
   generation = null, avpf = true, membres = null, enfantsMajores = 0,
   depuis = null, anneesRetenues = null, plancher = false, affilieAvant2016 = false) {
@@ -2254,11 +2268,17 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
     return revenu;
   };
 
+  // LA REVALORISATION EXCEPTIONNELLE DE MAYOTTE : 10 % sur les salaires
+  // portés au compte avant le 1er septembre 2023, pour une pension prenant
+  // effet depuis, avant l'écrêtement au plafond de la caisse. Voir le Python.
+  const exceptionnelle = (annee) => revalorisationExceptionnelleDeMayotte(
+    mahorais, annee, anneeLiquidation, moisLiquidation);
   const revenus = [];
   const anneesDesRevenus = [];
   for (const annee of [...parAnnee.keys()].sort((a, b) => a - b)) {
     const [revenu, fraction] = parAnnee.get(annee);
-    revenus.push(borner(revenu, annee, fraction) * revaloriser(annee, anneeLiquidation));
+    revenus.push(borner(revenu * exceptionnelle(annee), annee, fraction)
+      * revaloriser(annee, anneeLiquidation));
     anneesDesRevenus.push(annee);
   }
 

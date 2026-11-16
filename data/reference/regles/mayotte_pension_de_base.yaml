@@ -167,6 +167,8 @@ versions:
   - {id: LEGIARTI000026513336, article: "décret n° 2003-589 du 1er juillet 2003, article 32", en_vigueur: 2012-10-21}
   - {id: LEGIARTI000038680068, article: "décret n° 2011-2085 du 30 décembre 2011, article 4-2", en_vigueur: 2019-06-25}
   - {id: LEGIARTI000053297541, article: "décret n° 2011-2085 du 30 décembre 2011, article 4-2", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000047447830, article: "loi n° 2023-270 du 14 avril 2023, article 19", en_vigueur: 2023-04-16}
+  - {id: LEGIARTI000048237957, article: "décret n° 2023-966 du 20 octobre 2023, article 2", en_vigueur: 2023-10-22}
   nee_de: LEGIARTI000033155445
   bornes:
     liquidation.date_effet: [2018-01-01, 2028-01-01]
@@ -197,6 +199,14 @@ versions:
       (article 7), revalorisé chaque année comme le plafond de la métropole « majoré de
       cinq points et un dixième » (article 21) : 3 022 € par mois en 2026 au barème de
       la Cnav
+    revalorisation_exceptionnelle: >-
+      « Les salaires portés au compte avant le 1er septembre 2023 servant au calcul du
+      salaire annuel de base [...] sont revalorisés à titre exceptionnel pour les
+      pensions prenant effet à compter du 1er septembre 2023 » (loi n° 2023-270,
+      article 19, III), « de 10 % » (décret n° 2023-966, article 2, III) ; la
+      revalorisation « ne doit donc pas avoir pour effet de retenir un salaire annuel
+      qui soit supérieur audit plafond », et « ne doit pas conduire à valider des
+      trimestres d'assurance supplémentaires » (circulaire Cnav n° 2024/5)
     minimum: >-
       au taux plein, un minimum de 54,9212 % de 151,67 heures du SMIC de Mayotte au 1er
       janvier 2024, majoré jusqu'à 10 170,86 € par an au 1er novembre 2023 pour cent
@@ -307,6 +317,16 @@ approximations:
     les non-salariés de Mayotte de 2026 dont la cotisation tombe entre 150 € et 250 € par
     trimestre : le modèle leur valide un à trois trimestres de plus que le barème, trois
     à l'assiette minimale quand le barème en donnerait un
+- version: duree_a_la_generation
+  ecart: >-
+    La revalorisation exceptionnelle de 10 % ne vaut que pour les salaires portés au
+    compte avant le 1er septembre 2023 ; le modèle n'a que le salaire de l'année
+    entière, et revalorise celui de 2023 pour huit douzièmes, comme si l'assuré l'avait
+    gagné également sur l'année. L'exemple de la circulaire Cnav n° 2024/5 (2 350 € en
+    2023, écrêtés à 2 394 €) en sort le même.
+  effet: >-
+    l'année 2023 des pensions de Mayotte prenant effet depuis le 1er septembre 2023,
+    quand son salaire n'est pas uniforme sur l'année ; au plus 3,3 % de ce seul salaire
 - version: code_de_la_securite_sociale_2028
   ecart: >-
     La fiche de régime prolonge le régime de Mayotte après 2027 ; le droit le fond dans

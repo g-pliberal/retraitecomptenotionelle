@@ -196,6 +196,68 @@ def test_les_deux_moteurs_plafonnent_au_plafond_de_la_caisse(deux_moteurs):
         for annee in PLAFONDS_DE_LA_CAISSE]}])
 
 
+#: La revalorisation exceptionnelle des salaires de Mayotte (action 175,
+#: écart lourd n° 1 des circulaires) : « Les salaires portés au compte avant le
+#: 1er septembre 2023 servant au calcul du salaire annuel de base [...] sont
+#: revalorisés à titre exceptionnel pour les pensions prenant effet à compter
+#: du 1er septembre 2023 » (loi n° 2023-270, article 19, III,
+#: LEGIARTI000047447830), « de 10 % » (décret n° 2023-966, article 2, III,
+#: LEGIARTI000048237957) ; sans dépasser le plafond de la caisse (circulaire
+#: Cnav n° 2024/5, § 2). Le modèle n'a que des salaires annuels : celui de
+#: 2023 se revalorise pour ses huit mois d'avant septembre.
+SALAIRES_DE_8_000_EUROS = (2010, 2015, 2020, 2022, 2023, 2024)
+
+
+def _salariee_a_8_000_euros(age: float) -> Carriere:
+    return Carriere.depuis_lignes(
+        1961, "F", [AnneeCarriere(annee=annee, revenu=8_000.0, affiliation=STATUT,
+                                  trimestres_valides=4) for annee in SALAIRES_DE_8_000_EUROS],
+        age_liquidation=age)
+
+
+def _sam_attendu(macro, carriere, revalorisation) -> float:
+    liquidation = carriere.annee_liquidation
+    annees = [a for a in SALAIRES_DE_8_000_EUROS if a < liquidation]
+    return sum(
+        min(8_000.0 * revalorisation(annee), macro.plafond_de_cotisations(annee, mayotte=True))
+        * macro.coefficient_revalorisation_portee_au_compte(
+            annee, liquidation, carriere.mois_liquidation)
+        for annee in annees) / len(annees)
+
+
+def test_les_salaires_de_mayotte_d_avant_septembre_2023_gagnent_dix_pour_cent(simulateur):
+    """Partie en 2025 : les années jusqu'en 2022 gagnent 10 %, celle de 2023 les
+    huit douzièmes de 10 %, celle de 2024 rien ; chacune sous le plafond de sa
+    caisse, 8 000 € × 1,1 l'étant toujours ici depuis 2010."""
+    carriere = _salariee_a_8_000_euros(64)
+    assert carriere.annee_liquidation == 2025
+    attendu = _sam_attendu(simulateur.macro, carriere, lambda annee: (
+        1.1 if annee < 2023 else 1 + 0.1 * 8 / 12 if annee == 2023 else 1.0))
+    periode = simulateur.catalogue["cssm_mayotte"].periode(2025)
+    assert liquider.salaire_de_reference(
+        simulateur.scenario_actuel, "cssm_mayotte", carriere, periode, 2025,
+        True, 1961) == pytest.approx(attendu, rel=1e-12)
+
+
+def test_une_pension_de_mayotte_d_avant_septembre_2023_n_est_pas_revalorisee(simulateur):
+    """La même, partie à soixante-deux ans en février 2023 : rien ne bouge."""
+    carriere = _salariee_a_8_000_euros(62)
+    assert (carriere.annee_liquidation, carriere.mois_liquidation) == (2023, 2)
+    attendu = _sam_attendu(simulateur.macro, carriere, lambda annee: 1.0)
+    periode = simulateur.catalogue["cssm_mayotte"].periode(2023)
+    assert liquider.salaire_de_reference(
+        simulateur.scenario_actuel, "cssm_mayotte", carriere, periode, 2023,
+        True, 1961) == pytest.approx(attendu, rel=1e-12)
+
+
+def test_les_deux_moteurs_revalorisent_les_salaires_de_mayotte(deux_moteurs):
+    """La salariée partie en 2025, sur son relevé : le portage rend le même
+    résultat entier."""
+    deux_moteurs([{"naissance": 1961, "age": 64.0, "releve": [
+        {"annee": annee, "affiliation": STATUT, "revenu": 8_000.0}
+        for annee in SALAIRES_DE_8_000_EUROS]}])
+
+
 def test_l_independant_de_mayotte_valide_ses_trimestres_au_smic_de_mayotte(
         deux_moteurs, simulateur):
     """« Les résidents à Mayotte ayant la qualité de travailleurs non salariés
