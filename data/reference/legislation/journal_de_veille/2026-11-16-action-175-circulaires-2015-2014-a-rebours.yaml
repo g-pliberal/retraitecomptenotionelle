@@ -1,0 +1,19 @@
+date: "2026-11-16"
+session: "action 175, étape 6 : lecture à rebours des circulaires sans thème, les années 2015 et 2014"
+consulte: >-
+  Les 50 références sans thème et à lire de 2015 (24) et 2014 (26) dont le titre
+  commence par « Circulaire » ou « Lettre », relues par l'API de
+  legislation.lassuranceretraite.fr et lues en entier : les PDF par leur texte, les
+  pages aspx par le HTML de leur fiche, la lettre ministérielle n° 2015/1490 en image.
+trouve: >-
+  33 rangées en limite, 17 hors modèle (taux de change, conventions bilatérales,
+  garantie de paiement, prescription, recouvrement, impôt). Aucun écart neuf. Les
+  montants relus sont conformes : durées de 167 à 172 trimestres, âges de la
+  carrière longue, plafonds de 2014 et 2015, allocation de solidarité, seuils de la
+  CSG pour 2016, coefficient de 1,001, assiette minimale RSI de 7,70 %. La circulaire
+  n° 2015/38 est celle que demande la fiche chomage_non_indemnise.yaml : elle écrête
+  à six trimestres en les comptant dans l'ordre chronologique. Détail :
+  docs/feuille_de_route/175/2026-11-16-etape-6-circulaires-2015-2014-a-rebours.md.
+reste: >-
+  La lecture à rebours continue en 2013 (44 circulaires), où elle rejoint la lecture
+  chronologique, qui en est à 2011 et 2012.
