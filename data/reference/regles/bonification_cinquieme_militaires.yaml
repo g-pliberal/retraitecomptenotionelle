@@ -460,7 +460,7 @@ code:
     donnees/tables_du_droit.py : FichesDatees ; droit/compter.py :
     trimestres_des_emplois, trimestres_d_un_emploi, condition_d_un_emploi,
     services_au_dela ; carriere.py : Carriere.duree_de_service_avant ; droit/liquider.py
-    : liquider_chaque_regime ; avantages.py : NEUTRALISATIONS, FICHES_RETIREES
+    : liquider_chaque_regime ; avantages.py : NEUTRALISATIONS
   javascript: >-
     moteur/js/regimes.js : FichesDatees ; moteur/js/droit/compter.js :
     trimestresDesEmplois, trimestresDUnEmploi, conditionDUnEmploi, servicesAuDela ;
@@ -474,7 +474,7 @@ code:
   tests: [tests/test_bonifications_emplois.py, tests/test_oracle.py]
   moteur: >-
     liquider_chaque_regime ajoute la bonification aux services au-delà du maximum ; le
-    coût la neutralise (NEUTRALISATIONS, FICHES_RETIREES), sans jumeau. Le paquet du
+    coût la neutralise (NEUTRALISATIONS), sans jumeau. Le paquet du
     site porte ses versions.
 referents:
   trajectoire:

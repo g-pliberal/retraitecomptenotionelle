@@ -7329,15 +7329,16 @@ de `contribution_etat`.
 
 **Reprise, au 16 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
-Plus rien hors des tests de la façade n'exécute une règle Python. Avant de
-supprimer les 40 fichiers de règles, l'inventaire
+Avant de supprimer les 40 fichiers de règles, l'inventaire
 (`2026-11-16-l-inventaire-du-retrait-des-regles.md`) fixe cinq étapes. Les
-trois premières sont faites : les chargeurs sont sous `donnees/`, et la
-table de la carrière longue n'a plus de règle
-(`2026-11-16-les-derniers-chargeurs-sous-donnees.md`). Par quoi commencer :
-l'étape 4, débrancher le Python seul qui appelle encore une règle (la
-section 4 de l'inventaire). Ensuite, l'étape 5 : ôter des fiches le champ du
-code Python. La suppression attend l'accord final du propriétaire.
+quatre premières sont presque faites : le coût, ses cas types, la mesure des
+avantages et la fiche de paie se chargent sans aucune règle Python
+(`2026-11-16-le-python-seul-debranche.md`). Il reste un point de l'étape 4 :
+le pont relit encore chaque carrière sous la classe des règles, et 476 tests
+rapides, dans 48 fichiers, lisent ses propriétés de règle. Par quoi
+commencer : l'étape 5, ôter des fiches le champ du code Python ; la carrière
+relue par le pont se traite avant la suppression, fichier de tests par
+fichier. La suppression attend l'accord final du propriétaire.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

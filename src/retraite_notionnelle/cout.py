@@ -2632,7 +2632,7 @@ def _departs(annee_liquidation: int, voisines: tuple) -> tuple[int, ...]:
     que la génération de la grille représente, partie elle en
     ``annee_liquidation`` (:attr:`Pensionne.departs`) : celle que le droit de
     SA génération donne au cas type, comme la grille la donne à la génération
-    qu'elle simule (:func:`~.castypes.carriere_de_la_grille`), sous le
+    qu'elle simule (:func:`~.castypes.cases_de_la_grille`), sous le
     simulateur de la projection — le départ de chaque cohorte voisine,
     ``(année, mois)``, que la grille bâtie porte (:func:`_grille_batie`).
 

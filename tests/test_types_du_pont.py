@@ -22,7 +22,7 @@ PAQUET = "retraite_notionnelle"
 #: champs — ceux que rendent les règles que la façade sert compris (étape 2), sous le fichier de règles qui le définissait : il y reste
 #: accessible, et c'est le même objet.
 TYPES = {
-    "carriere": ["AnneeCarriere", "LigneRelevee"],
+    "carriere": ["AnneeCarriere", "LigneRelevee", "Metier"],
     "droit.commun": ["PensionRegime", "AvantageApplique"],
     "droit.completer": ["MinimumEcrete", "PetitePension", "ChefDExploitation",
                         "ExploitantAgricole", "MajorationProportionnelle", "PensionMajoree"],

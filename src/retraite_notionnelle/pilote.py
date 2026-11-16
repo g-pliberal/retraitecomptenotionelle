@@ -37,6 +37,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable
 
+from .castypes import VARIANTES_LIQUIDATION  # noqa: F401  (action 161, étape 4)
 from .droit import ouvrir
 
 if TYPE_CHECKING:
@@ -44,14 +45,6 @@ if TYPE_CHECKING:
     from .simulateur import Simulateur
 
 
-#: Les deux façons de dater le départ d'un cas type.
-#:
-#: ``droit`` est celle des résultats affichés : chaque génération liquide à
-#: l'âge que SON droit lui ouvre. ``absolu`` est l'ancienne, gardée non comme
-#: repli mais comme variante — l'âge écrit dans la grille, le même pour toutes
-#: les générations, qui faisait partir la génération 1940 à soixante-quatre ans
-#: en 2004 alors que la loi ne les lui a jamais demandés.
-VARIANTES_LIQUIDATION: tuple[str, ...] = ("droit", "absolu")
 
 #: Nombre de fois que l'âge de liquidation est rapproché de l'âge d'ouverture.
 #: Il en faut plus d'une : l'âge qu'une fiche de régime oppose dépend de

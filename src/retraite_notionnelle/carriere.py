@@ -50,25 +50,17 @@ from .donnees.chargement import (
     validant_compense,
 )
 from .donnees.macro import ANNEE_AVPF_DES_HOMMES, DEPARTEMENTS_D_OUTRE_MER, DonneesMacro
+from .donnees.salaire_moyen import (  # noqa: F401  (chargeurs, action 161)
+    ANNEE_ANCRAGE_SALAIRE_MOYEN, ancrage_salaire_moyen, indice_salaire_moyen,
+    salaire_moyen_annuel)
 from . import chronologie as chrono
 from .droit.preparer import preparer
 from .somme import somme_ordonnee
 from .types_du_pont.carriere import AnneeCarriere  # noqa: F401  (types du pont, action 161)
+from .types_du_pont.carriere import (  # noqa: F401  (types du pont, action 161)
+    PROFIL_AUTOMATIQUE, PROFIL_SMIC, Metier)
 from .types_du_pont.carriere import Carriere as _CarriereNue
 
-#: Le profil que le modèle résout lui-même sur l'affiliation. C'est le défaut,
-#: et le seul que le site propose : les autres noms restent pour la grille de
-#: cas types et pour qui veut mesurer une variante.
-PROFIL_AUTOMATIQUE = "auto"
-
-#: Le profil du salarié payé au SMIC : son revenu est le salaire minimum de
-#: chaque année, à temps complet
-#: (:meth:`~retraite_notionnelle.donnees.macro.DonneesMacro.smic_annuel`), et
-#: son niveau en est un MULTIPLE, non un multiple du salaire moyen. Le cas
-#: type au SMIC s'écrivait 0,55 fois le salaire moyen à toutes les années,
-#: quand le minimum en a valu 0,40 en 1970 et 0,52 en 2024 (action 147,
-#: étape 16). Le site ne le propose pas : on y saisit son salaire.
-PROFIL_SMIC = "smic"
 from .calendrier import (
     MOIS_PAR_AN,
     DateMois,
@@ -266,65 +258,6 @@ class ReversionAgricole:
     #: Son montant brut mensuel, en euros de ce mois, nul quand les ressources
     #: l'absorbent.
     mensuel: float
-
-
-@dataclass(frozen=True)
-class Metier:
-    """Un métier de la carrière : un statut, un niveau de revenu, une date.
-
-    On faisait autrefois le même métier toute sa vie, et le modèle n'a longtemps
-    su décrire que celui-là. Aujourd'hui la carrière se compose : un salarié
-    devient artisan, un contractuel passe fonctionnaire, un indépendant revient
-    au salariat. Chaque changement fait basculer l'assuré d'un régime à un autre,
-    donc d'un taux de cotisation et d'un barème à un autre — c'est exactement ce
-    que les comptes notionnels mesurent.
-
-    Le métier court de ``age_debut`` jusqu'au début du suivant ; le dernier
-    jusqu'à la liquidation.
-
-    **Une activité CUMULÉE ne remplace pas, elle s'ajoute.** Le salarié qui
-    ouvre un cabinet le soir, le fonctionnaire qui a une activité accessoire,
-    le médecin hospitalier qui consulte en libéral : deux statuts à la fois,
-    deux régimes qui encaissent chacun sur leur revenu. ``cumul`` le dit, et
-    c'est à l'assuré de le dire — le modèle ne le devine jamais, et un métier
-    qui ne le déclare pas succède au précédent comme il l'a toujours fait. Une
-    activité cumulée court de ``age_debut`` à ``age_fin``, ou jusqu'à la
-    liquidation si ``age_fin`` est absent ; elle ne touche pas à la suite des
-    métiers principaux, qui continuent de couvrir la carrière bout à bout.
-    """
-
-    #: Statut d'affiliation (clé de ``legislation/affiliations.yaml``).
-    affiliation: str
-    #: Âge auquel ce métier commence, en années décimales.
-    age_debut: float
-    #: Niveau de revenu, en multiples du salaire moyen par tête de l'année.
-    niveau_salaire: float = 1.0
-    #: Vrai si ce métier s'AJOUTE à l'activité principale au lieu de lui
-    #: succéder. Faux par défaut : rien n'est supposé.
-    cumul: bool = False
-    #: Âge auquel une activité cumulée s'arrête ; ``None`` la mène jusqu'à la
-    #: liquidation. Sans objet pour un métier principal, que le suivant clôt.
-    age_fin: float | None = None
-    #: L'activité du micro-entrepreneur dont le niveau est le revenu abattu
-    #: (``saisie.ACTIVITES_MICRO``), qui valide ses trimestres sur le revenu
-    #: que sa cotisation achète ; vide sinon.
-    micro: str = ""
-    #: Vrai si ce micro-entrepreneur ne relève pas de la maladie du RSI, ou en
-    #: relève mais touche le RSA socle : en 2014 et en 2015, il valide son
-    #: premier trimestre plus tôt (circulaire RSI n° 2016/010, point 1 ;
-    #: ``seuils_hors_maladie_rsi``). Faux par défaut : le modèle le présume au
-    #: RSI, comme la caisse le cas le plus courant.
-    maladie_hors_rsi: bool = False
-    #: Vrai si ce métier est un contrat d'apprentissage, de ses dates de début
-    #: et de fin : un emploi salarié, que la chronologie porte comme tel
-    #: (attribut ``apprentissage``), et non une période assimilée. Faux par
-    #: défaut (présomption ``pas_de_periode_assimilee``) ; aucune étape ne le
-    #: lit encore (action 130, sixième domaine).
-    apprentissage: bool = False
-    #: Le barème de la Lodeom de l'employeur d'outre-mer
-    #: (``saisie.BAREMES_LODEOM``), que la chronologie porte (attribut
-    #: ``lodeom``) et que seule la fiche de paie lit ; vide sinon.
-    lodeom: str = ""
 
 
 #: Article R. 351-12, 4°, d, du code de la sécurité sociale : le chômage NON
@@ -2830,75 +2763,6 @@ def bornes_deformation(racine: Path, profil: str,
         return 1.0, 1.0
     return (profil_salaire(racine, profil, 25.0, ANNEE_FORME_CATEGORIE, affiliation),
             profil_salaire(racine, profil, 60.0, ANNEE_FORME_CATEGORIE, affiliation))
-
-
-#: L'année dont le NIVEAU du salaire moyen par tête ancre tous les autres :
-#: celle où le coût agrégé ancre aussi la masse des pensions, et celle que le
-#: site donne pour repère. Le niveau, lui, n'est pas écrit ici : voir
-#: :func:`ancrage_salaire_moyen`.
-ANNEE_ANCRAGE_SALAIRE_MOYEN = 2024
-
-
-def ancrage_salaire_moyen(macro: DonneesMacro) -> tuple[int, float]:
-    """Le point d'où se cumulent les croissances du salaire moyen : son année
-    et son niveau, en euros bruts annuels courants.
-
-    Le niveau est LU dans la série certifiée de l'INSEE
-    (``macro/salaire_moyen_niveau.csv``) — les salaires et traitements bruts
-    (D11) sur l'emploi salarié intérieur, base 2020 —, le rapport même dont
-    ``macro/salaire_moyen.csv`` garde les croissances. Il était écrit à la
-    main, 40 000 € en 2024, un arrondi de 2,2 % qui plaçait tous les cas types
-    trop bas face au plafond et aux minima (action 147, étapes 15 et 16).
-    Il est ici, en un seul endroit, parce que le site l'affiche — dire
-    « 1 = salaire moyen » sans dire combien cela fait d'euros laissait toute la
-    saisie dans le flou.
-    """
-    annee = ANNEE_ANCRAGE_SALAIRE_MOYEN
-    return annee, macro.salaire_moyen_niveau(annee)
-
-
-def salaire_moyen_annuel(macro: DonneesMacro, annee: int) -> float:
-    """Salaire moyen par tête d'une année, en euros BRUTS courants de cette année."""
-    return indice_salaire_moyen(macro, annee, annee)[annee]
-
-
-def indice_salaire_moyen(macro: DonneesMacro, debut: int, fin: int) -> dict[int, float]:
-    """Salaire moyen par tête reconstitué en euros courants de chaque année.
-
-    Le montant est un salaire **BRUT** : la série de comptes nationaux dont il
-    dérive est celle des salaires et traitements bruts (D11) rapportés à
-    l'emploi salarié, c'est-à-dire avant cotisations salariales, avant CSG et
-    avant impôt sur le revenu, cotisations patronales exclues. C'est la même
-    assiette que celle sur laquelle les régimes appellent leurs cotisations :
-    le niveau de revenu saisi, les cotisations versées et les pensions
-    calculées sont donc tous bruts, et se comparent directement.
-
-    Les CROISSANCES de la série se cumulent à partir du niveau d'une année,
-    lu dans la même source (:func:`ancrage_salaire_moyen`) : les niveaux
-    qu'elle publie, le cumul les refait à moins d'un dix-millième près, l'écart
-    des cinq décimales auxquelles les croissances sont écrites. Ce niveau
-    déplace proportionnellement tous les revenus reconstitués en multiples du
-    salaire moyen, mais presque pas les RAPPORTS entre scénarios, qui sont
-    l'objet du modèle : seuls le plafond de la Sécurité sociale et les minima,
-    qui ne le suivent pas, en tirent de petits écarts.
-
-    Ce n'est pas le « SMPT » des cas types du COR, que lit TRAJECTOiRE : un
-    revenu moyen par tête, revenu mixte des non-salariés compris, rapporté à
-    l'emploi total, qui croît moins vite depuis 2000. L'écart des deux
-    croissances tient à ce concept, non à la série (action 147, étape 12).
-    """
-    ancrage_annee, ancrage_valeur = ancrage_salaire_moyen(macro)
-    valeurs = {ancrage_annee: ancrage_valeur}
-
-    borne_haute = max(fin, ancrage_annee)
-    for annee in range(ancrage_annee + 1, borne_haute + 1):
-        valeurs[annee] = valeurs[annee - 1] * (1 + macro.salaire_moyen(annee))
-
-    borne_basse = min(debut, ancrage_annee)
-    for annee in range(ancrage_annee - 1, borne_basse - 1, -1):
-        valeurs[annee] = valeurs[annee + 1] / (1 + macro.salaire_moyen(annee + 1))
-
-    return valeurs
 
 
 def formater_borne(borne: DateMois) -> str:

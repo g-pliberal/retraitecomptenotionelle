@@ -343,7 +343,7 @@ sys.path.insert(0, str(RACINE / "src"))
 from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import cout as C  # noqa: E402
 from retraite_notionnelle import memoire, pont  # noqa: E402
-from retraite_notionnelle.carriere import (  # noqa: E402
+from retraite_notionnelle.types_du_pont.carriere import (  # noqa: E402
     PROFIL_SMIC, Metier,
 )
 from retraite_notionnelle.castypes import (  # noqa: E402
@@ -1712,11 +1712,6 @@ class CasTypeLarge(CasType):
         annee = generation + AGE_DU_RANG
         return self.niveau_de(generation) < (
             simulateur.macro.smic_annuel(annee) / salaire_moyen(simulateur.parametres, annee))
-
-    def niveau_relatif(self, simulateur: SimulateurDeDonnees, generation: int) -> float:
-        if self.niveaux:
-            return self.niveau_de(generation)
-        return super().niveau_relatif(simulateur, generation)
 
     def _temps_partiel(self, generation: int, interruptions: dict[int, str]
                        ) -> dict[int, float] | None:

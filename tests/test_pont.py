@@ -481,8 +481,7 @@ def test_le_cout_des_avantages_liquide_sa_grille_au_portage_sans_les_jumeaux(mem
     population = Population(RACINE_DONNEES, Parametres().hypothese_esperance_vie)
     _interdire(monkeypatch, (*_jumeaux_qui_datent_et_batissent(),
                              f"{SCENARIO_ACTUEL_PYTHON}.__init__",
-                             f"{SCENARIO_ACTUEL_PYTHON}.calculer",
-                             (avantages, "scenarios_neutralises")))
+                             f"{SCENARIO_ACTUEL_PYTHON}.calculer"))
     au_portage = valeur_figee("décomposition des avantages",
                               avantages.decomposer(Simulateur(Parametres())))
     valeur_figee("coût des avantages", avantages.calculer_avantages(

@@ -19,6 +19,8 @@ import re
 import pytest
 import yaml
 
+import jumeau_des_avantages as jumeau
+
 from retraite_notionnelle import memoire
 from retraite_notionnelle.config import RACINE_DONNEES, Neutralisations
 
@@ -304,9 +306,9 @@ def test_le_recalcul_rend_un_montant_positif_et_conserve_la_pension(script_cout)
     porteurs = ("carriere_interrompue", "fonctionnaire_actif")
     for cas in (c for c in CAS_TYPES if c.code in porteurs):
         age = _age(simulateur, cas, generation)
-        carriere = script_cout.carriere_variante(simulateur, cas, generation, age)
+        carriere = jumeau.carriere_variante(simulateur, cas, generation, age)
         actuel = simulateur.scenario_actuel.calculer(carriere)
-        parts, _ = script_cout.recalculer(simulateur, cas, generation, age, actuel)
+        parts, _ = jumeau.recalculer(simulateur, cas, generation, age, actuel)
         assert parts, f"{cas.code} devrait porter un avantage recalculé"
         for ligne, montant in parts.items():
             assert montant > 0.0, f"{cas.code} : {ligne} mesuré négatif ({montant})"
@@ -339,19 +341,19 @@ def test_les_deux_mesures_de_la_categorie_active_coincident(script_cout):
     from facade import Simulateur
 
     simulateur = Simulateur(Parametres())
-    variantes = script_cout.scenarios_neutralises(simulateur)
+    variantes = jumeau.scenarios_neutralises(simulateur)
     cas = next(c for c in CAS_TYPES if c.code == "fonctionnaire_actif")
     temoin = script_cout.SEDENTAIRE[cas.affiliation][0]
     compares = 0
     for generation in (1955, 1960, 1970, 1975, 1985):
         age = _age(simulateur, cas, generation)
         reelle = simulateur.scenario_actuel.calculer(
-            script_cout.carriere_variante(simulateur, cas, generation, age))
+            jumeau.carriere_variante(simulateur, cas, generation, age))
         par_catalogue = reelle.pension_annuelle - variantes["categorie_active"].calculer(
-            script_cout.carriere_variante(simulateur, cas, generation, age)
+            jumeau.carriere_variante(simulateur, cas, generation, age)
         ).pension_annuelle
         par_statut = reelle.pension_annuelle - simulateur.scenario_actuel.calculer(
-            script_cout.carriere_variante(
+            jumeau.carriere_variante(
                 simulateur, cas, generation, age, affiliation=temoin)
         ).pension_annuelle
         assert par_catalogue == pytest.approx(par_statut, abs=1e-6), (
@@ -431,11 +433,11 @@ def test_les_variantes_ne_changent_que_ce_qu_elles_retirent(script_cout):
     from facade import Simulateur
 
     simulateur = Simulateur(Parametres())
-    variantes = script_cout.scenarios_neutralises(simulateur)
+    variantes = jumeau.scenarios_neutralises(simulateur)
     cas = next(c for c in CAS_TYPES if c.code == "cadre")
     generation = 1955
     age = _age(simulateur, cas, generation)
-    carriere = script_cout.carriere_variante(simulateur, cas, generation, age)
+    carriere = jumeau.carriere_variante(simulateur, cas, generation, age)
     reelle = simulateur.scenario_actuel.calculer(carriere).pension_annuelle
     for code in ("categorie_active", "carriere_longue", "bonification_cinquieme_militaires",
                  "apprentissage"):
@@ -503,7 +505,7 @@ def test_le_retrait_de_l_apprentissage_ne_retire_que_le_complement(script_cout):
     from facade import Simulateur
 
     simulateur = Simulateur(Parametres())
-    variante = script_cout.scenarios_neutralises(simulateur)["apprentissage"]
+    variante = jumeau.scenarios_neutralises(simulateur)["apprentissage"]
 
     complete = _apprenti_puis_salarie(simulateur, 2062, 64.0)
     reelle, sans = simulateur.scenario_actuel.calculer(complete), variante.calculer(complete)
@@ -958,12 +960,10 @@ def test_le_cout_par_carriere_passe_par_le_portage_sans_le_moteur_python(monkeyp
 
     empecher_les_jumeaux_du_cout(monkeypatch)
 
-    def interdit(*_, **__):
-        raise AssertionError("le moteur Python liquide le coût par carrière")
-
-    # Le simulateur de la façade ne fait rien calculer au moteur Python : seul
-    # le recalcul du coût pourrait encore y passer.
-    monkeypatch.setattr(avantages, "recalculer", interdit)
+    # Le simulateur de la façade ne fait rien calculer au moteur Python, et le
+    # recalcul du coût n'est plus au modèle : son jumeau loge parmi les tests
+    # (``tests/jumeau_des_avantages.py``, action 161, étape 4).
+    assert not hasattr(avantages, "recalculer")
     lignes = cout_avantages.par_carriere(Simulateur(Parametres()), 1960)
     assert valeur_figee("par_carriere::1960", lignes) == lignes
     # Ce que l'option montre : des cas types datés, et la dose qui fait

@@ -90,9 +90,9 @@ def test_la_sonde_ne_retient_que_ce_qui_entre_du_dehors(tmp_path, par_trace):
 
 def test_la_sonde_nomme_le_module_du_modele_qui_entre_pour_le_script(tmp_path, par_trace):
     """Un cas type qui bâtit sa carrière en Python (``CasType.construire``)
-    demande son âge au pilote, puis sa carrière au simulateur : le script n'a
-    nommé aucune fonction du moteur, et la sonde dit que ``castypes.py`` y
-    entre pour lui, par ces deux portes."""
+    demande son âge au portage (action 161, étape 4), puis sa carrière au
+    simulateur : le script n'a nommé aucune fonction du moteur, et la sonde dit
+    que ``castypes.py`` y entre pour lui, par cette seule porte."""
     script = tmp_path / "essai.py"
     script.write_text(textwrap.dedent('''\
         from retraite_notionnelle.castypes import CAS_TYPES
@@ -102,14 +102,15 @@ def test_la_sonde_nomme_le_module_du_modele_qui_entre_pour_le_script(tmp_path, p
         '''), encoding="utf-8")
     assert entrees_du_moteur.relever(script, par_trace=par_trace) == {
         "src/retraite_notionnelle/castypes.py": [
-            "pilote.py:age_de_depart", "simulateur.py:Simulateur.carriere_simple"]}
+            "simulateur.py:Simulateur.carriere_simple"]}
 
 
 def test_la_sonde_retient_les_regles_des_fichiers_meles_declarees_portes(tmp_path, par_trace):
     """Dans un fichier où le moteur se mêle aux chargeurs et aux types, une
-    règle appelée directement ne se relève que déclarée porte : le salaire
-    moyen d'une année, le partage de la restitution et la fiche de paie d'une
-    simulation, que les sondes de la prose appelaient, le sont."""
+    règle appelée directement ne se relève que déclarée porte : le partage de
+    la restitution et la fiche de paie d'une simulation, que les sondes de la
+    prose appelaient, le sont. Le salaire moyen d'une année, qui l'était, se lit
+    sous ``donnees/`` (action 161, étape 4) : il ne se relève plus."""
     script = tmp_path / "essai.py"
     script.write_text(textwrap.dedent('''\
         from retraite_notionnelle.carriere import salaire_moyen_annuel
@@ -125,7 +126,6 @@ def test_la_sonde_retient_les_regles_des_fichiers_meles_declarees_portes(tmp_pat
         simulateur.simuler(carriere).remuneration.reference.gain_net
         '''), encoding="utf-8")
     assert entrees_du_moteur.relever(script, par_trace=par_trace) == {"essai.py": [
-        "carriere.py:salaire_moyen_annuel",
         "remuneration.py:AnneeComparee.gain_net", "remuneration.py:RemunerationActif.reference",
         "restitution.py:Restitution.part_du_poste",
         "simulateur.py:Simulateur.carriere_simple", "simulateur.py:Simulateur.simuler"]}

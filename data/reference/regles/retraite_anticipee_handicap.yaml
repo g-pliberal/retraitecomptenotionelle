@@ -325,7 +325,7 @@ code:
     age_taux_plein_droit, age_handicap_propose ; droit/departs.py : _handicap_acquis ;
     droit/liquider.py : liquider_chaque_regime, abattement_points,
     abattement_regime_de_base ; donnees/tables_du_droit.py : Invalidites,
-    Invalidites.sans ; avantages.py : NEUTRALISATIONS, scenarios_neutralises
+    Invalidites.sans ; avantages.py : NEUTRALISATIONS
   javascript: >-
     moteur/js/droit/invalidite.js : incapaciteReconnue, versionDuHandicap,
     trimestresEnSituationDeHandicap, exigencesDuHandicap, ageDuHandicap,
@@ -344,7 +344,7 @@ code:
     dans les deux moteurs
   moteur: >-
     La décote, la majoration et le minimum contributif du handicap se jouent dans
-    liquider_chaque_regime ; le coût retire la fiche (scenarios_neutralises), sans
+    liquider_chaque_regime ; le coût retire la fiche (NEUTRALISATIONS), sans
     jumeau, le coût n'en ayant pas.
 sources:
   lu_le: 2026-11-11

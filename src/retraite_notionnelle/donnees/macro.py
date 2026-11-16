@@ -264,7 +264,7 @@ class DonneesMacro:
 
         Le même rapport que :attr:`salaire_moyen`, qui n'en garde que les
         variations : le modèle les cumule à partir du niveau d'une année, lu
-        ici (:func:`~retraite_notionnelle.carriere.ancrage_salaire_moyen`).
+        ici (:func:`~retraite_notionnelle.donnees.salaire_moyen.ancrage_salaire_moyen`).
         """
         return charger_serie_annuelle(
             self.racine / "reference" / "macro" / "salaire_moyen_niveau.csv",

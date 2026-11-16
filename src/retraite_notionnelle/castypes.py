@@ -18,15 +18,25 @@ from dataclasses import asdict, dataclass, field, replace
 
 from typing import TYPE_CHECKING
 
-from .carriere import PROFIL_AUTOMATIQUE, PROFIL_SMIC, Carriere, Metier
 from .donnees.chargement import dans_un_instantane
-from .simulateur import Comparaison, Simulateur
-from . import pilote, pont
-from .pilote import VARIANTES_LIQUIDATION
+from . import pont
 from .somme import somme_ordonnee
+from .types_du_pont.carriere import PROFIL_AUTOMATIQUE, PROFIL_SMIC, Carriere, Metier
+from .types_du_pont.comparaison import Comparaison
 
 if TYPE_CHECKING:  # pragma: no cover - annotation seulement
     from .donnees.effectifs import EffectifsRetraites
+    from .donnees.simulateur import SimulateurDeDonnees as Simulateur
+
+
+#: Les deux façons de dater le départ d'un cas type.
+#:
+#: ``droit`` est celle des résultats affichés : chaque génération liquide à
+#: l'âge que SON droit lui ouvre. ``absolu`` est l'ancienne, gardée non comme
+#: repli mais comme variante — l'âge écrit dans la grille, le même pour toutes
+#: les générations, qui faisait partir la génération 1940 à soixante-quatre ans
+#: en 2004 alors que la loi ne les lui a jamais demandés.
+VARIANTES_LIQUIDATION: tuple[str, ...] = ("droit", "absolu")
 
 
 @dataclass(frozen=True)
@@ -126,27 +136,14 @@ class CasType:
     #: (:func:`~retraite_notionnelle.cout._survies`). Vide, celle du diviseur.
     mortalite: str = ""
 
-    def niveau_relatif(self, simulateur: Simulateur, generation: int) -> float:
-        """Son salaire en multiples du salaire moyen : ce qui le RATTACHE à un
-        vingtile de niveau de vie hors du simulateur
-        (``DonneesMortalite.population_niveau_de_vie``).
-
-        Le niveau écrit, sauf sous :data:`~retraite_notionnelle.carriere.PROFIL_SMIC`,
-        dont le niveau est un multiple du SMIC : c'est alors celui de la
-        carrière construite, tel que le simulateur le lit
-        (:func:`~retraite_notionnelle.moteur.conversion.niveau_relatif`).
-        """
-        if self.profil_carriere != PROFIL_SMIC:
-            return self.niveau_salaire
-        from .moteur.conversion import niveau_relatif
-
-        return niveau_relatif(self.construire(simulateur, generation), simulateur.macro)
-
     def age_liquidation_pour(self, simulateur: Simulateur, generation: int,
                              variante: str = "droit") -> float:
         """L'âge auquel ce cas type liquide, étant né en ``generation`` : le
-        pilote le fixe (:func:`~retraite_notionnelle.pilote.age_de_depart`)."""
-        return pilote.age_de_depart(simulateur, self, generation, variante)
+        portage le fixe (:func:`ages_de_la_grille`, ``ageDeDepart`` de
+        ``moteur/js/pilote.js``) : le pilote Python, son jumeau, n'est plus
+        appelé (action 161, étape 4)."""
+        return ages_de_la_grille(simulateur, (self,), (generation,), variante)[
+            (self.code, generation)]
 
     def construire(self, simulateur: Simulateur, generation: int,
                    variante: str = "droit") -> Carriere:
@@ -949,54 +946,6 @@ class ResultatCasTypes:
 
 
 @dans_un_instantane
-def calculer_cas_types(
-    simulateur: Simulateur,
-    cas_types: tuple[CasType, ...] = CAS_TYPES,
-    generations: tuple[int, ...] = GENERATIONS,
-    liquidation: str = "droit",
-) -> ResultatCasTypes:
-    """Calcule la grille complète cas type × génération.
-
-    Les combinaisons impossibles — un régime qui n'existait pas encore, une
-    liquidation avant l'origine de la répartition — sont écartées avec leur
-    motif plutôt que de faire échouer l'ensemble.
-
-    ``liquidation`` choisit à quel âge chaque cas type part : ``droit``, celui
-    que le droit de sa génération lui ouvre, ou ``absolu``, l'âge écrit dans la
-    grille. Le second n'existe que pour mesurer ce que le premier a déplacé.
-    """
-    if liquidation not in VARIANTES_LIQUIDATION:
-        raise ValueError(
-            f"variante de liquidation inconnue : {liquidation!r} "
-            f"(attendu : {VARIANTES_LIQUIDATION})"
-        )
-    resultat = ResultatCasTypes()
-    for cas in cas_types:
-        for generation in generations:
-            cle = (cas.code, generation)
-            try:
-                carriere = carriere_de_la_grille(simulateur, cas, generation, liquidation)
-                resultat.resultats[cle] = simulateur.simuler(carriere)
-            except (ValueError, KeyError) as erreur:
-                resultat.echecs[cle] = str(erreur)
-    return resultat
-
-
-def carriere_de_la_grille(simulateur: Simulateur, cas: CasType, generation: int,
-                          liquidation: str = "droit") -> Carriere:
-    """La carrière d'une case de la grille, ou ``ValueError`` portant le motif
-    qui l'écarte : une liquidation avant l'origine de la répartition, un
-    régime qui n'existait pas encore (:func:`calculer_cas_types`)."""
-    carriere = cas.construire(simulateur, generation, liquidation)
-    if carriere.annee_liquidation <= simulateur.parametres.annee_debut_repartition:
-        raise ValueError("liquidation antérieure à la répartition")
-    if not any(simulateur.affiliations.regimes(cas.affiliation, ligne.annee)
-               for ligne in carriere.lignes):
-        raise ValueError("aucun régime actif sur la période")
-    return carriere
-
-
-@dans_un_instantane
 def cases_de_la_grille(
     simulateur: Simulateur,
     cas_types: tuple[CasType, ...] = CAS_TYPES,
@@ -1007,7 +956,8 @@ def cases_de_la_grille(
     """Les cases de la grille que le portage simule (``pont.carrieres``,
     action 161, étape 5) : les options de la carrière d'un seul statut de
     chacune, partie à l'âge que le pilote lui fixe ; puis les motifs des cases
-    que le droit écarte (:func:`carriere_de_la_grille`). Le portage les date
+    que le droit écarte, une liquidation avant l'origine de la répartition
+    ou aucun régime actif sur la période. Le portage les date
     et les écarte, sur ``paquet`` ou sur ``moteur/donnees.json``
     (:func:`departs_au_portage`, étape 6), et lui seul : un cas type qu'il
     ne date pas est refusé (:func:`exiger_le_portage`). Sous les conventions
@@ -1095,7 +1045,7 @@ def departs_au_portage(simulateur: Simulateur, cohortes: Mapping[str, tuple[CasT
                        liquidation: str = "droit", paquet: bytes | None = None,
                        ) -> tuple[dict[str, tuple[float, int, int]], dict[str, str]]:
     """Le départ de chaque cohorte, ``{clé: (cas type, génération)}``, que le
-    portage date et bâtit comme :func:`carriere_de_la_grille`
+    portage date et bâtit comme une case de la grille
     (``pont.carrieres_de_la_grille``), sur ``paquet`` ou, sans lui, sur
     ``moteur/donnees.json``, comme le pont : sous sa clé, ``(âge, année, mois)``, l'âge
     sous le type du Python (:func:`age_lu`) ; puis, sous leur clé, les motifs

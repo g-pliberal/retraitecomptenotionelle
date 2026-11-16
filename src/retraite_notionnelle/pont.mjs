@@ -89,7 +89,7 @@
  *   fonctionnaire de chaque cas type, cherché autour de `plein`.
  * - `avantages` : `{cas: [{cle, options, carriere, scenario}], parametres}` —
  *   chaque case du coût des avantages non contributifs, bâtie de ses options
- *   (`carriere_variante` d'`avantages.py`), écartée comme le droit l'écarte,
+ *   (`carriere_variante` de `tests/jumeau_des_avantages.py`), écartée comme le droit l'écarte,
  *   liquidée au scénario 1 : ce que la décomposition en lit ; et la pension
  *   et la durée requise de chaque contrefactuelle demandée — ses périodes non
  *   travaillées changées (`carriere`), un scénario neutralisé (`scenario`,
@@ -1308,7 +1308,7 @@ function moteurAuBaremeDeLAspa(moteur, bareme) {
 /**
  * Les fiches que retire chacune des neutralisations des bonifications de
  * service : celles des emplois classés, puis celle des militaires. Voir
- * `FICHES_RETIREES` d'`avantages.py`.
+ * `FICHES_RETIREES` de `tests/jumeau_des_avantages.py`.
  */
 const FICHES_RETIREES = {
   bonification_cinquieme_services_actifs: FICHES_DES_EMPLOIS
@@ -1321,7 +1321,7 @@ const NEUTRALISES = new WeakMap();
 
 /**
  * Un scénario 1 par avantage retiré, que la mesure des avantages non
- * contributifs liquide (`scenarios_neutralises` d'`avantages.py`, son jumeau,
+ * contributifs liquide (`scenarios_neutralises` de `tests/jumeau_des_avantages.py`, son jumeau,
  * action 161, étape 6) : celui du simulateur, bâti sur un catalogue privé de
  * la déclaration du classement de l'emploi, que la jouissance militaire
  * partage ; la règle du salaire de référence des parents repoussée hors de
@@ -1378,7 +1378,7 @@ function moteurNeutralise(simulateur, code) {
 /**
  * Les statuts que bonifie une version des fiches que la neutralisation `code`
  * retire (`FICHES_RETIREES`) : les seules carrières que le retrait peut
- * toucher. Voir `statuts_des_emplois` d'`avantages.py`.
+ * toucher. Voir `statuts_des_emplois` de `tests/jumeau_des_avantages.py`.
  */
 function statutsDesEmplois(moteur, code) {
   const fiches = moteur.fichesDatees.fiches();
@@ -1390,7 +1390,7 @@ function statutsDesEmplois(moteur, code) {
  * La carrière que bâtissent ces options n'a-t-elle rien à perdre au retrait de
  * l'avantage `code` ? Qu'aucune fiche retirée ne bonifie son statut, qu'elle ne
  * déclare aucune incapacité, aucun contrat d'apprentissage : les gardes de
- * `recalculer` d'`avantages.py`, que le Python ne peut tenir sans le moteur ni
+ * `recalculer` de `tests/jumeau_des_avantages.py`, que le Python ne peut tenir sans le moteur ni
  * la carrière bâtie. Rien à perdre, la carrière n'est pas liquidée ; sinon, la
  * voici, bâtie comme le Python la rebâtit pour chaque retrait.
  */

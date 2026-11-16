@@ -763,7 +763,7 @@ def carrieres_de_la_grille(cas: list[dict], parametres, primes: dict[int, float]
     proposition en dérive, poursuivie jusqu'à lui (``reportee``) ou attendue
     sans activité (``attente``), ``None`` quand il ne la reporte pas. Puis,
     sous leur clé, les motifs des cases que le droit écarte
-    (``castypes.carriere_de_la_grille``) ou que le portage refuse."""
+    (``castypes.cases_de_la_grille``) ou que le portage refuse."""
     reponse = _demander({"carrieres_de_la_grille": {
         "parametres": parametres_en_donnees(parametres), "variante": variante,
         "primes": primes, "cas": cas}}, _paquet_de(parametres, paquet))
@@ -883,9 +883,9 @@ def avantages(cas: list[dict], parametres, paquet: bytes | None = None,
     sa clé, ce que la décomposition lit de sa liquidation (``"liquidee"``,
     les champs de ``avantages._Liquidee``) et, sous ``"sans"``, la pension et
     la durée requise de chaque contrefactuelle que les gardes de
-    ``avantages.recalculer`` laissent, ``(pension, durée)`` sous son code.
+    ``recalculer`` laissent (son jumeau, ``tests/jumeau_des_avantages.py``), ``(pension, durée)`` sous son code.
     Puis, sous leur clé, les motifs des cases que le droit écarte
-    (``castypes.carriere_de_la_grille``) ou que le portage refuse."""
+    (``castypes.cases_de_la_grille``) ou que le portage refuse."""
     reponse = _demander({"avantages": {
         "parametres": parametres_en_donnees(parametres), "cas": cas}},
         _paquet_de(parametres, paquet))
@@ -1149,7 +1149,7 @@ class Moteur:
 
     def neutralisant(self, code: str) -> Moteur:
         """Ce moteur, l'avantage ``code`` retiré comme la mesure des avantages
-        non contributifs le retire (``avantages.scenarios_neutralises``) : le
+        non contributifs le retire (``scenarios_neutralises``, ``tests/jumeau_des_avantages.py``) : le
         portage prend sa variante (``scenariosNeutralises`` de ``pont.mjs``),
         bâtie des leviers de ``moteur/js/regimes.js`` (action 161, étape 6)."""
         return dataclasses.replace(self, neutralise=code)

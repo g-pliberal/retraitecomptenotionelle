@@ -15,7 +15,7 @@ import json
 
 import pytest
 
-from retraite_notionnelle.avantages import carriere_variante
+from retraite_notionnelle.avantages import _options_de_la_variante
 from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.contexte import Contexte
@@ -156,8 +156,8 @@ def test_les_departs_compares_sont_ceux_que_le_modele_simule(table, simulateur):
     for generation in choisis.generations:
         for depart, affiliation in zip(choisis.departs(generation),
                                        (None, choisis.declassement)):
-            actuel = simulateur.simuler(carriere_variante(
-                simulateur, cas, generation, choisis.age, affiliation)).actuel
+            actuel = simulateur.simuler(simulateur.carriere_simple(**_options_de_la_variante(
+                cas, generation, choisis.age, affiliation))).actuel
             assert (depart.pension_annuelle, depart.trimestres_requis) == (
                 actuel.pension_annuelle, actuel.trimestres_requis), (generation, affiliation)
 

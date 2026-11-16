@@ -4,7 +4,9 @@ règles Python), que ``carriere.py`` réimporte le temps du retrait, et la carri
 calendrier et de sa chronologie, sans aucune règle du droit. Les règles de la
 carrière restent dans ``carriere.py``, sur une classe qui hérite de celle-ci,
 le temps du retrait : elle seule remplit la chronologie d'une carrière bâtie
-ligne à ligne.
+ligne à ligne. Le métier d'une carrière (``Metier``) et les noms de ses profils
+de rémunération l'ont rejointe à l'étape 4 : les cas types les donnent au
+portage sans charger les règles.
 """
 
 from __future__ import annotations
@@ -405,6 +407,80 @@ class Carriere:
 
     def affiliations_utilisees(self) -> tuple[str, ...]:
         return tuple(dict.fromkeys(ligne.affiliation for ligne in self.lignes))
+
+
+#: Le profil que le modèle résout lui-même sur l'affiliation. C'est le défaut,
+#: et le seul que le site propose : les autres noms restent pour la grille de
+#: cas types et pour qui veut mesurer une variante.
+PROFIL_AUTOMATIQUE = "auto"
+
+#: Le profil du salarié payé au SMIC : son revenu est le salaire minimum de
+#: chaque année, à temps complet
+#: (:meth:`~retraite_notionnelle.donnees.macro.DonneesMacro.smic_annuel`), et
+#: son niveau en est un MULTIPLE, non un multiple du salaire moyen. Le cas
+#: type au SMIC s'écrivait 0,55 fois le salaire moyen à toutes les années,
+#: quand le minimum en a valu 0,40 en 1970 et 0,52 en 2024 (action 147,
+#: étape 16). Le site ne le propose pas : on y saisit son salaire.
+PROFIL_SMIC = "smic"
+
+
+@dataclass(frozen=True)
+class Metier:
+    """Un métier de la carrière : un statut, un niveau de revenu, une date.
+
+    On faisait autrefois le même métier toute sa vie, et le modèle n'a longtemps
+    su décrire que celui-là. Aujourd'hui la carrière se compose : un salarié
+    devient artisan, un contractuel passe fonctionnaire, un indépendant revient
+    au salariat. Chaque changement fait basculer l'assuré d'un régime à un autre,
+    donc d'un taux de cotisation et d'un barème à un autre — c'est exactement ce
+    que les comptes notionnels mesurent.
+
+    Le métier court de ``age_debut`` jusqu'au début du suivant ; le dernier
+    jusqu'à la liquidation.
+
+    **Une activité CUMULÉE ne remplace pas, elle s'ajoute.** Le salarié qui
+    ouvre un cabinet le soir, le fonctionnaire qui a une activité accessoire,
+    le médecin hospitalier qui consulte en libéral : deux statuts à la fois,
+    deux régimes qui encaissent chacun sur leur revenu. ``cumul`` le dit, et
+    c'est à l'assuré de le dire — le modèle ne le devine jamais, et un métier
+    qui ne le déclare pas succède au précédent comme il l'a toujours fait. Une
+    activité cumulée court de ``age_debut`` à ``age_fin``, ou jusqu'à la
+    liquidation si ``age_fin`` est absent ; elle ne touche pas à la suite des
+    métiers principaux, qui continuent de couvrir la carrière bout à bout.
+    """
+
+    #: Statut d'affiliation (clé de ``legislation/affiliations.yaml``).
+    affiliation: str
+    #: Âge auquel ce métier commence, en années décimales.
+    age_debut: float
+    #: Niveau de revenu, en multiples du salaire moyen par tête de l'année.
+    niveau_salaire: float = 1.0
+    #: Vrai si ce métier s'AJOUTE à l'activité principale au lieu de lui
+    #: succéder. Faux par défaut : rien n'est supposé.
+    cumul: bool = False
+    #: Âge auquel une activité cumulée s'arrête ; ``None`` la mène jusqu'à la
+    #: liquidation. Sans objet pour un métier principal, que le suivant clôt.
+    age_fin: float | None = None
+    #: L'activité du micro-entrepreneur dont le niveau est le revenu abattu
+    #: (``saisie.ACTIVITES_MICRO``), qui valide ses trimestres sur le revenu
+    #: que sa cotisation achète ; vide sinon.
+    micro: str = ""
+    #: Vrai si ce micro-entrepreneur ne relève pas de la maladie du RSI, ou en
+    #: relève mais touche le RSA socle : en 2014 et en 2015, il valide son
+    #: premier trimestre plus tôt (circulaire RSI n° 2016/010, point 1 ;
+    #: ``seuils_hors_maladie_rsi``). Faux par défaut : le modèle le présume au
+    #: RSI, comme la caisse le cas le plus courant.
+    maladie_hors_rsi: bool = False
+    #: Vrai si ce métier est un contrat d'apprentissage, de ses dates de début
+    #: et de fin : un emploi salarié, que la chronologie porte comme tel
+    #: (attribut ``apprentissage``), et non une période assimilée. Faux par
+    #: défaut (présomption ``pas_de_periode_assimilee``) ; aucune étape ne le
+    #: lit encore (action 130, sixième domaine).
+    apprentissage: bool = False
+    #: Le barème de la Lodeom de l'employeur d'outre-mer
+    #: (``saisie.BAREMES_LODEOM``), que la chronologie porte (attribut
+    #: ``lodeom``) et que seule la fiche de paie lit ; vide sinon.
+    lodeom: str = ""
 
 
 @dataclass(frozen=True)

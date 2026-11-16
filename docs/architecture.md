@@ -1132,8 +1132,9 @@ n'est pas fait que de règles : il porte les chargeurs dont la fabrique bâtit
 le paquet — les tables du droit en vigueur, sorties de `scenarios/actuel.py`
 vers `donnees/tables_du_droit.py`, avec les âges légaux (`charger_ages`), le
 routage des statuts, sorti de `carriere.py` vers `donnees/affiliations.py`,
+le salaire moyen d'une année, vers `donnees/salaire_moyen.py`,
 `RevalorisationsPensions`… — et les types que le pont
-échange — `Parametres`, `Carriere`, `AnneeCarriere`, `DateMois`, les
+échange — `Parametres`, `Carriere`, `AnneeCarriere`, `Metier`, `DateMois`, les
 énumérations des réglages —, dans lesquels le coût et les études décrivent ce
 qu'ils confient au portage. Son retrait coupe le fichier : les règles ne
 restent qu'en JavaScript ; les chargeurs passent sous `donnees/`, sans

@@ -65,17 +65,18 @@ REGLES = ("droit/", "moteur/", "scenarios/notionnel.py", "echeancier.py", "pilot
 #: Les fichiers du moteur qui mêlent des règles à des chargeurs et à des types
 #: que le pont échange, et les portes de chacun : ce par quoi une carrière se
 #: bâtit, se liquide, se simule ; et les règles que les sondes de la prose y
-#: appelaient directement, le 12 novembre 2026 — le salaire moyen d'une
-#: année, la fiche de paie d'une simulation, la pension d'aujourd'hui, le
-#: partage de la restitution, qui part avec le moteur (note de décision 0007).
+#: appelaient directement, le 12 novembre 2026 — la fiche de paie d'une
+#: simulation, la pension d'aujourd'hui, le partage de la restitution, qui part
+#: avec le moteur (note de décision 0007). Le salaire moyen d'une année, qui en
+#: était, se lit sous ``donnees/salaire_moyen.py`` depuis l'étape 4 du retrait
+#: des règles (action 161) : il n'entre plus dans le moteur.
 PORTES = {
     "simulateur.py": ("Simulateur.simuler", "Simulateur.carriere_simple",
                       "Simulateur.carriere_parcours", "Simulateur.carriere_releve",
                       "Simulateur.carriere_proposition"),
     "scenarios/actuel.py": ("ScenarioActuel.calculer",),
     "carriere.py": ("Carriere.depuis_releve", "Carriere.depuis_profil",
-                    "Carriere.depuis_parcours", "Carriere.depuis_chronologie",
-                    "salaire_moyen_annuel"),
+                    "Carriere.depuis_parcours", "Carriere.depuis_chronologie"),
     "chronologie.py": (),
     "remuneration.py": ("RemunerationActif.reference",
                         "RemunerationActif.indemnite_csg_mensuelle", "AnneeComparee.gain_net",

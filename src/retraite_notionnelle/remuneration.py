@@ -2172,7 +2172,7 @@ def indemnite_stylisee(macro, catalogue, affiliations, statut: str, annee: int,
     gagne ``revenu`` l'année ``annee`` : un agent du même statut, payé fin
     2017, dont la rémunération a suivi le salaire moyen. Une fonction du
     revenu, ou ``None`` quand le statut n'y a pas droit."""
-    from .carriere import salaire_moyen_annuel
+    from .donnees.salaire_moyen import salaire_moyen_annuel
 
     table = _table_indemnite(catalogue)
     if annee < table.debut or not beneficiaire_indemnite_csg(
