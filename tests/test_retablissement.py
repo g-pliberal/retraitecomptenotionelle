@@ -32,10 +32,9 @@ from __future__ import annotations
 
 import pytest
 
-from retraite_notionnelle.carriere import Carriere, Metier
-from retraite_notionnelle.droit import coordonner
-from retraite_notionnelle.simulateur import Simulateur
-from retraite_notionnelle.droit import liquider
+from retraite_notionnelle.carriere import Metier
+
+from facade import Carriere, Simulateur, coordonner, liquider
 
 
 @pytest.fixture(scope="module")
@@ -193,11 +192,11 @@ def test_le_regime_general_porte_le_dernier_traitement(simulateur):
     actuel = simulateur.scenario_actuel
     retablie = coordonner.retablir(actuel, carriere)
     annee_liquidation = carriere.annee_liquidation
-    periode = actuel.catalogue["regime_general"].periode(annee_liquidation)
+    periode = simulateur.catalogue["regime_general"].periode(annee_liquidation)
     attendus = sorted((
         min(ligne.revenu_retabli,
-            actuel.macro.plafond_securite_sociale(ligne.annee) * ligne.fraction_annee)
-        * actuel.macro.coefficient_revalorisation_portee_au_compte(
+            simulateur.macro.plafond_securite_sociale(ligne.annee) * ligne.fraction_annee)
+        * simulateur.macro.coefficient_revalorisation_portee_au_compte(
             ligne.annee, annee_liquidation, carriere.mois_liquidation)
         for ligne in retablies), reverse=True)
     reference = liquider.salaire_de_reference(actuel,
@@ -212,10 +211,11 @@ def test_les_annees_retablies_quittent_le_regime_special(simulateur):
     carriere = _carriere(simulateur, [
         ("salarie_prive_non_cadre", 22), ("fonctionnaire_etat", 30),
         ("salarie_prive_non_cadre", 31)], naissance=1985)
-    actuel = simulateur.scenario_actuel
-    ligne = next(l for l in coordonner.retablir(actuel, carriere).lignes if l.revenu_retabli > 0)
+    coordination = coordonner.coordonner(simulateur.scenario_actuel, carriere)
+    ligne, regimes = next((l, r) for l, r in zip(coordination.carriere.lignes,
+                                                 coordination.regimes) if l.revenu_retabli > 0)
     assert ligne.affiliation == "fonctionnaire_etat"
-    assert set(coordonner.regimes_de(actuel, ligne, ligne.annee)) == {"regime_general", "ircantec", "rafp"}
+    assert set(regimes) == {"regime_general", "ircantec", "rafp"}
 
 
 def test_les_primes_restent_au_rafp(simulateur):

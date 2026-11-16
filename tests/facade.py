@@ -1824,7 +1824,7 @@ class Releves(_Module):
 
 
 class _Coordonner(_Module):
-    """``droit.coordonner`` : ``coordonner``, servi par le portage."""
+    """``droit.coordonner`` : ``coordonner`` et ``retablir``, servis par le portage."""
 
     _jumeau = _coordonner
 
@@ -1832,6 +1832,13 @@ class _Coordonner(_Module):
         source = _Source(_moteur_de_la_facade("coordonner.coordonner", moteur), carriere,
                          bornee=False)
         return Coordination(source, source.demander("coordonner.coordonner"))
+
+    def retablir(self, moteur, carriere):
+        """La carrière que le scénario 1 liquide, rétablissement fait : celle
+        de la coordination du portage, qui rend la carrière reçue elle-même
+        quand rien n'est rétabli ni écarté, comme son jumeau."""
+        _moteur_de_la_facade("coordonner.retablir", moteur)
+        return self.coordonner(moteur, carriere).carriere
 
 
 class _Compter(_Module):

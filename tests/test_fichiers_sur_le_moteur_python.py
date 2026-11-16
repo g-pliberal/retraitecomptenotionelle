@@ -55,7 +55,6 @@ FICHIERS = (
     "test_plafond_majoration_enfants.py",
     "test_pont.py",
     
-    "test_retablissement.py",
     "test_retraite_progressive.py",
     "test_solde_fusion.py",
    
