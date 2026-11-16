@@ -1,0 +1,17 @@
+date: "2026-11-16"
+session: "action 175, étape 6 : lecture à rebours des circulaires sans thème, l'année 2016"
+consulte: >-
+  Les 15 références sans thème et à lire de 2016 dont le titre commence par
+  « Circulaire », relues par l'API de legislation.lassuranceretraite.fr et lues en
+  entier : quatorze en PDF, la circulaire ministérielle n° 86/7004 du 14 mars 1986
+  par le HTML de sa fiche.
+trouve: >-
+  11 rangées en limite, 4 hors modèle (les taux de change). Un écart neuf : la
+  circulaire n° 86/7004 abaisse l'âge de la retraite des exploitants agricoles
+  d'un an par an, de soixante-quatre ans en 1986 à soixante ans en 1990, et
+  proratise leur retraite forfaitaire sur 33,5 à 37,5 ans selon l'année ; la fiche
+  msa_non_salaries.yaml met soixante ans et 150 trimestres dès 1986. Les montants
+  relus sont conformes. Détail : docs/feuille_de_route/175/2026-11-16-etape-6-circulaires-2016-a-rebours.md.
+reste: >-
+  Relire la loi n° 86-19 au Journal officiel avant de corriger la fiche agricole ;
+  la lecture à rebours continue en 2015 (24 circulaires), puis 2014.
