@@ -1,15 +1,5 @@
 # Étape 6, circulaires de 2015 et 2014 : la lecture à rebours range les 50 références sans thème des deux années
 
-**Reprise, au 16 novembre 2026.** Une seconde lecture des circulaires sans thème
-avance à rebours, de 2026 vers le passé, pendant que la première avance depuis
-2008. Ce bloc est le sien ; celui de la lecture chronologique reste sous sa note.
-2026 à 2014 sont faites : 158 références. Deux écarts neufs en tout, aucun en
-2015 ni en 2014 : la revalorisation de 10 % des salaires de Mayotte, et l'âge de
-la retraite des exploitants agricoles de 1986 à 1989 (note de 2016). Vient
-ensuite 2013 : 44 circulaires. La lecture chronologique en est à 2011 et 2012 :
-les deux lectures se rejoignent là, et la dernière s'arrête où l'autre a fini.
-Méthode : celle de la note de 2017. Détail ici.
-
 **Le 16 novembre 2026, ce qui est fait.**
 
 - *La période* : les références du registre sans thème et à lire dont le titre commence
