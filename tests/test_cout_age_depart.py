@@ -260,7 +260,7 @@ def test_les_deux_criteres_d_age_tirent_en_sens_contraire(mesure, simulateur):
     assert contrefactuel < 0.0 < fiches
 
 
-def test_le_plafond_de_decote_ne_mord_sur_aucune_liquidation_ouverte(simulateur):
+def test_le_plafond_de_decote_ne_mord_sur_aucune_liquidation_ouverte():
     """Le plafond de vingt trimestres est l'arithmétique des deux âges.
 
     Il est écrit là où le droit a voulu l'écrire — R. 643-7 pour les libéraux,
@@ -278,7 +278,13 @@ def test_le_plafond_de_decote_ne_mord_sur_aucune_liquidation_ouverte(simulateur)
     """
     import dataclasses
 
+    # L'espion se glisse dans la décote du moteur Python, que le portage ne
+    # voit pas : ce test reste sur lui, seul du fichier, jusqu'à ce que la
+    # décote sans plafond s'écrive en données.
     from retraite_notionnelle.droit import liquider as L
+    from retraite_notionnelle.simulateur import Simulateur as SimulateurPython
+
+    simulateur = SimulateurPython(Parametres())
 
     original = L.trimestres_de_decote
     mordu = {"oui": False}
