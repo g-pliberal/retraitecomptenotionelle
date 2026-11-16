@@ -1,16 +1,5 @@
 # Étape 6, circulaires de 2008 : les 60 références sans thème de la quinzième période, relues par l'API
 
-**Reprise, au 16 novembre 2026.** Trois natures de l'étape sont rangées ; la quatrième, les
-circulaires, lettres et instructions sans thème, l'est de 1936 à 2008 (cette note et celles
-des périodes d'avant). Restent 438 circulaires, de 2009 à 2026, par période (65 en 2009,
-66 en 2010, 68 en 2011, 37 en 2012, 44 en 2013) ; puis, une session par nature : les 96
-autres textes, les 74 que la base nomme sans les servir, les 107 accords. Méthode : la
-base relue par l'API (`_reference` de `cnav_legislation.py`), les pièces PDF lues au site
-sous `/Pdf/<nom>`, chaque texte lu en entier, la citation d'un agent retrouvée par script
-dans le texte servi. Le candidat de 2007, la carrière longue partie avant 2009 à 160
-trimestres, est confirmé par quatre textes de 2008 ; un candidat voisin, neuf, pour les
-nés de 1953 à 1955 (ici).
-
 **Le 16 novembre 2026, ce qui est fait.**
 
 - *La période* : les références du registre sans thème et à lire dont le titre commence

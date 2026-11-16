@@ -1,0 +1,37 @@
+date: "2026-11-16"
+session: "action 175, étape 6 : les 65 circulaires, lettres et instructions de 2009 que la base de la Cnav cite sans thème"
+consulte: >-
+  Les 65 références sans thème et à lire de 2009 dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », relues par l'API de la base le 16 novembre 2026 vers 12 h 40 UTC
+  (/reference/referencesByFileLeafRef/), toutes servies, 49 en page et 16 en PDF lus au
+  site (/Pdf/), un scanné et lu à l'image ; toutes lues en entier, par quatre agents de
+  la session, un lot chacun, dont chaque citation d'un texte servi (144) a été retrouvée
+  mot pour mot. Pour les confronter : les fiches reversion, surcote_regime_general,
+  revalorisation_des_pensions, minimum_contributif, retraite_anticipee_handicap,
+  cumul_emploi_retraite_et_retraite_progressive,
+  cumul_emploi_retraite_complementaire_des_independants, retraite_progressive,
+  rachats_et_versements, retablissement_fonction_publique, inaptitude_au_travail,
+  pension_d_invalidite_substituee, points_invalidite_independants, minimum_vieillesse,
+  csg_des_pensions_selon_le_revenu, stages_formation_professionnelle,
+  micro_social_abattement ; le code de invalidite.py et liquider.py ; les séries
+  legislation/minimum_contributif.csv, plafond_majoration_reversion.csv,
+  duree_assurance_requise.csv, accords_internationaux.yaml ; les limites
+  docs/limites/3-systeme-actuel.md. Ni Légifrance, ni le Journal officiel, ni l'index de
+  la DILA.
+trouve: >-
+  Le registre range les 65 (31 limite, 34 hors_modele), sans raison neuve. Conformes : le
+  SMIC de 2009 et 2010, le trimestre de 2009 (1 742 €) et de 2010 (1 772 €), les plafonds
+  de la réversion, la surcote de 1,25 %, la majoration de réversion de 11,1 % sous
+  2 400 € par trimestre ; le minimum contributif de 2009 à un ou deux centimes près de la
+  série (circulaire RSI n° 2009/031), non tranché. Un écart neuf, étroit : le RSI ne
+  présume pas inapte l'artisan pensionné pour incapacité à son seul métier (circulaire RSI
+  n° 2009/032), quand le modèle tient pour inapte toute pension d'invalidité déclarée.
+  Deux candidats d'avant, datés ou reconduits : la majoration des handicapés hors du
+  minimum contributif depuis le 1er avril 2009 seulement (n° 2009/031) ; le tuteur sans
+  sa complémentaire, douze mois de cumul (n° 2009/017). Note
+  docs/feuille_de_route/175/2026-11-16-etape-6-circulaires-2009.md.
+reste: >-
+  Les 371 circulaires de 2010 à 2025, par période, la lecture à rebours avançant depuis
+  2026 ; les autres natures de l'étape 6 ; D. 634-13-2, le règlement invalidité-décès des
+  artisans et le décret du minimum contributif de 2009, à relire au Journal officiel.
