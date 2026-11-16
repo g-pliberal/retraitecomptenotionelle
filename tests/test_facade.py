@@ -2044,8 +2044,8 @@ def test_la_mortalite_du_simulateur_se_demande_au_portage(simulateur):
     mortalite = simulateur.mortalite
     assert mortalite.survie_annuelle(70, 1950, "H") == pytest.approx(1.0 - 0.051121)
     assert mortalite._quotients_observes[(1950, "H")][70] == pytest.approx(0.051121)
-    with pytest.raises(NonTransmissible, match="mortalite.esperance_residuelle"):
-        mortalite.esperance_residuelle
+    with pytest.raises(NonTransmissible, match="mortalite.fiabilite"):
+        mortalite.fiabilite
 
 
 def test_la_courbe_de_survie_se_demande_au_portage(simulateur):

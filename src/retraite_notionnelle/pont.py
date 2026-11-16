@@ -2955,7 +2955,8 @@ def constructeur_du_compte(constructeur: str, methode: str, type_rendu, *argumen
 #: portage (``moteur/js/mortalite.js``), et un appel confronté au jumeau
 #: (``tests/test_facade_jumeau.py``). Une méthode qui n'y est pas est refusée
 #: avant node.
-MORTALITE_DE_LA_FACADE: tuple[str, ...] = ("survie_annuelle", "courbe")
+MORTALITE_DE_LA_FACADE: tuple[str, ...] = (
+    "survie_annuelle", "courbe", "survie", "esperance_residuelle")
 
 
 def mortalite_du_simulateur(methode: str, type_rendu, *arguments, parametres=None,

@@ -44,13 +44,12 @@ from retraite_notionnelle import controle_eacr
 from retraite_notionnelle.castypes import GRILLE_DU_COUT
 from retraite_notionnelle.config import RACINE_DONNEES, Parametres
 from retraite_notionnelle.donnees.population import CarrieresIncompletes
-from retraite_notionnelle.droit import liquider
-from retraite_notionnelle.simulateur import Simulateur
 
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "scripts"))
 sys.path.insert(0, str(RACINE / "scripts" / "fetch"))
 import cycle_de_vie  # noqa: E402
+from facade import Simulateur, liquider  # noqa: E402
 import lecture_xlsx  # noqa: E402
 import source_locale  # noqa: E402
 
@@ -517,20 +516,46 @@ MINIMA_DE_PENSION = frozenset({"minimum_contributif", "minimum_garanti",
                                "minimum_pension_sncf"})
 
 
+#: Les générations que les confrontations datent hors de la grille, qui va de
+#: cinq en cinq : celles qui partent en 2024 (le militaire né en 1975 en est),
+#: celle de 1953, celles de 1950 et 1954 de la fiche 12.
+GENERATIONS_DATEES = range(1940, 1981)
+
+
 @pytest.fixture(scope="module")
-def au_minimum(simulateur):
+def datees(simulateur) -> dict:
+    """La carrière de chaque cas type de la grille, à chaque génération de
+    :data:`GENERATIONS_DATEES`, sous ``(code, génération)``, telle que le
+    portage date et bâtit celles de la page Coût, au scénario 1 de la page
+    (``Simulateur.pour_la_projection``) : partie à l'âge que le pilote lui
+    fixe, déformée par les conventions du COR (``pont.carrieres_de_la_grille``,
+    comme ``cout._grille_batie`` la demande ; action 161, étape 9l)."""
+    from retraite_notionnelle import pont
+    from retraite_notionnelle.castypes import primes_projetees_en_donnees
+
+    projection = simulateur.pour_la_projection()
+    lus, _ = pont.carrieres_de_la_grille(
+        [{"cle": f"{cas.code}|{generation}", **cas.pour_le_portage(projection, generation),
+          "rendre": "carriere"}
+         for cas in GRILLE_DU_COUT for generation in GENERATIONS_DATEES],
+        projection.parametres, primes_projetees_en_donnees(projection), "droit",
+        pont.paquet_des_donnees(projection.parametres.racine_donnees))
+    return {tuple((cle.split("|")[0], int(cle.split("|")[1]))): lu["carriere"]
+            for cle, lu in lus.items()}
+
+
+@pytest.fixture(scope="module")
+def au_minimum(simulateur, datees):
     """Si la pension d'un cas type de la grille, à une génération de la grille,
     est portée à un minimum, au scénario 1 de la page
     (``Simulateur.pour_la_projection``), comme ``scripts/part_minimum_contributif.py``
     le lit."""
     projection = simulateur.pour_la_projection()
-    cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
     lus: dict[tuple[str, int], bool] = {}
 
     def lire(code: str, generation: int) -> bool:
         if (code, generation) not in lus:
-            depart = projection.echeancier(
-                cas_types[code].construire(projection, generation)).au_depart
+            depart = projection.echeancier(datees[(code, generation)]).au_depart
             lus[(code, generation)] = any(avantage.code in MINIMA_DE_PENSION
                                           for avantage in depart.avantages_appliques)
         return lus[(code, generation)]
@@ -719,6 +744,18 @@ def test_la_completude_de_la_grille_passe_le_coefficient_de_proratisation(temoin
     assert _publie(temoin, "11_graphique_2", "1953") < 70
 
 
+def _ouverture(generation: int) -> float:
+    """L'âge d'ouverture des droits d'une génération entière, lu dans sa table
+    (``age_ouverture_requis.csv``), au mois près : la table l'écrit au
+    centième, 61,17 ans pour 61 ans et 2 mois."""
+    chemin = LEGISLATION / "age_ouverture_requis.csv"
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = (ligne for ligne in flux if not ligne.lstrip().startswith("#"))
+        age = next(float(ligne["age"]) for ligne in csv.DictReader(lignes)
+                   if float(ligne["generation"]) == generation)
+    return round(age * 12) / 12
+
+
 def _nes_en(grille: list, annee: int) -> list:
     """Les cohortes de la grille nées en ``annee``, vivantes en 2024, à leurs
     têtes de 2024 (``controle_eacr.controle``)."""
@@ -732,7 +769,7 @@ def _moyenne_des_tetes(lot: list, valeur) -> float:
 # --- Fiche 12 : les débuts de carrière ---------------------------------------
 
 
-def test_la_grille_commence_ses_carrieres_trop_tard(grille, simulateur, temoin):
+def test_la_grille_commence_ses_carrieres_trop_tard(grille, datees, temoin):
     """Graphique 1 de la fiche 12 (EIC de 2021) : les affiliés nés en 1950 ont
     validé leur première année complète à 19,1 ans en moyenne, ceux nés en
     1954 à 19,5 ans, l'âge étant la différence des millésimes ; à 30 ans, ils
@@ -750,7 +787,6 @@ def test_la_grille_commence_ses_carrieres_trop_tard(grille, simulateur, temoin):
     ans, ses années d'éducation des enfants comprises, sont à moins d'un
     demi-trimestre des 40,4 et 40,1 publiés. Les valeurs attendues sont les
     cellules du classeur ; le test n'asserte que le sens de l'écart."""
-    projection = simulateur.pour_la_projection()
     cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
     groupes = {"ensemble": lambda code: True,
                "femmes": lambda code: cas_types[code].sexe == "F",
@@ -761,7 +797,7 @@ def test_la_grille_commence_ses_carrieres_trop_tard(grille, simulateur, temoin):
         debut: dict[str, int] = {}
         a_30_ans: dict[str, int] = {}
         for code in {c.code for c in nes}:
-            carriere = cas_types[code].construire(projection, annee)
+            carriere = datees[(code, annee)]
             par_annee = carriere.trimestres_par_annee(carriere.lignes)
             completes = [an for an, trimestres in par_annee.items() if trimestres >= 4]
             assert completes, code
@@ -941,11 +977,10 @@ def test_la_grille_part_a_l_age_des_agents_apres_neutralisation_et_non_a_celui_d
     publie avant l'AOD, 8,1 % + 12,8 % + 13,3 % des fonctionnaires civils
     avant 60 ans (tableau 2, colonnes « moins de 55 », « 55 » et « 56-59 »)."""
     from retraite_notionnelle.controle_ancetre import REGIME_PRINCIPAL
-    from retraite_notionnelle.scenarios.actuel import AgesOuverture
 
     cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
     nes = _nes_en(grille, 1953)
-    ouverture = AgesOuverture(Parametres().racine_donnees).age(1953)[0]
+    ouverture = _ouverture(1953)
     assert ouverture == pytest.approx(61 + 2 / 12)
     assert any("61 ans et 2 mois pour la génération née en 1953" in phrase
                for phrase in temoin["citations"]["16_tableau_2"]["textes"])
@@ -1226,11 +1261,10 @@ def test_la_grille_part_a_l_age_des_hommes_de_chaque_regime_et_de_sa_seule_femme
     principal est celui de plus de la moitié de la carrière, non la caisse du
     dernier départ ; la grille n'a aucun polypensionné."""
     from retraite_notionnelle.controle_ancetre import REGIME_PRINCIPAL
-    from retraite_notionnelle.scenarios.actuel import AgesOuverture
 
     cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
     nes = _nes_en(grille, 1953)
-    ouverture = AgesOuverture(Parametres().racine_donnees).age(1953)[0]
+    ouverture = _ouverture(1953)
     assert ouverture == pytest.approx(61 + 2 / 12)
     publie = temoin["valeurs"]["16_tableau_2_compl"]
     femmes = [c for c in nes if cas_types[c.code].sexe == "F"]

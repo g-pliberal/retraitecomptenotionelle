@@ -1916,6 +1916,11 @@ APPELS_DE_LA_MORTALITE = [
     ("courbe", (62.0, 2017.0, "H", False, "cnav_inaptitude")),
     ("courbe", (63 + 4 / 12, 2030.5, None, True, "cnav_ex_invalide")),
     ("courbe", (58.75, 2024.25, "F", True, "cnav_pension_normale")),
+    ("survie", (62.0, 2030, 15, "H")),
+    ("survie", (64.5, 2041, 40, "F", False)),
+    ("esperance_residuelle", (60.0, 2024.0)),
+    ("esperance_residuelle", (62.0, 2017.0, "H", False, "cnav_inaptitude")),
+    ("esperance_residuelle", (65.25, 2035.5, "F", True, "fonctionnaires_civils_etat")),
 ]
 
 
