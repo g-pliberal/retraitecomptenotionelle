@@ -1,0 +1,25 @@
+date: "2026-11-16"
+session: "action 175, étape 6 : lecture à rebours des circulaires sans thème, l'année 2026"
+consulte: >-
+  Les deux références sans thème et à lire de 2026 dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions » : les circulaires Cnav n° 2026/15 du 17 avril et 2026/17 du 12 juin,
+  relues par l'API de la base le 16 novembre 2026 vers 12 h 40 UTC
+  (/reference/referencesByFileLeafRef/), servies en PDF et lues au site (/Pdf/), en
+  entier, par la session ; chaque citation retrouvée mot pour mot. Pour les confronter :
+  les fiches carriere_longue, carriere_longue_reputes_cotises_autres,
+  carriere_longue_enfants_reputes_cotises, service_civique, minimum_vieillesse ; les
+  séries legislation/carriere_longue.csv et legislation/duree_assurance_requise.csv ; les
+  limites docs/limites/3-systeme-actuel.md. Ni Légifrance, ni le Journal officiel, ni
+  l'index de la DILA.
+trouve: >-
+  Le registre range les deux en limite. Les plafonds des veuves de guerre au 1er avril
+  2026 (n° 2026/15) sont hors du modèle, déclarés (R. 815-26). La circulaire de la
+  carrière longue au 1er septembre 2026 (n° 2026/17), annulée par la n° 2026/29, a les
+  âges et les durées des séries ; seul lui manque le point des trimestres pour enfant
+  réputés cotisés, que la n° 2026/29 ajoute. Aucun écart neuf. Note
+  docs/feuille_de_route/175/2026-11-16-etape-6-circulaires-2026-a-rebours.md.
+reste: >-
+  La lecture à rebours continue en 2025 (3 circulaires), puis 2024 (11), jusqu'à
+  rejoindre la lecture chronologique ; le décret n° 2026-345 n'a pas été relu au
+  Journal officiel.
