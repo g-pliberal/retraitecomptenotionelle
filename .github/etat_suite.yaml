@@ -1,17 +1,18 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: rouge
-sources: 305c233638671e56551e30dadf579474dfa0bb2a
-date: 2026-11-16T13:14:53Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43869747774
+sources: 17a1e5463210bb4c5335505771f361cb47bef443
+date: 2026-11-16T13:39:09Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43873333386
 echecs:
   - "FAILED tests/test_ecrans.py::test_le_style_d_une_page_ne_tient_pas_aux_boites_que_chromium_donne_aux_mots - AssertionError: cas-types/ : aucune boîte forcée n'a bougé"
+  - "FAILED tests/test_formulaire.py::test_la_saisie_n_est_gardee_que_par_le_navigateur - assert \"Tout se calcule et se garde dans votre navigateur : rien n'en sort.\" in '<div class=\"affiche\"><p class=\"surtitre\">Le simulateur</p><h1>Votre retraite, calculée <span class=\"cle-texte\">en que... quatre systèmes</button>\n  <button type=\"button\" class=\"second oublier\" hidden>Réinitialiser</button></p>\n</form>\n'"
 presomptions: vert
 durees:
-  fabrique: 449
-  suite: 618
-  tranche_1: 330
-  tranche_2: 618
-  tranche_3: 501
-  tranche_4: 426
-  garde: 142
+  fabrique: 623
+  suite: 763
+  tranche_1: 458
+  tranche_2: 763
+  tranche_3: 352
+  tranche_4: 639
+  garde: 136
