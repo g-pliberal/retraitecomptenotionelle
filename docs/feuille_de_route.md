@@ -7330,14 +7330,15 @@ de `contribution_etat`.
 **Reprise, au 16 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Ses règles s'importent toutes les unes les autres : le retrait se fera par le
-haut, une fois le moteur Python plus exécuté. Restent 7 fichiers de tests
+haut, une fois le moteur Python plus exécuté. Restent 6 fichiers de tests
 qui importent une règle Python ; leur liste est dans
 `test_fichiers_sur_le_moteur_python.py`. Une étape par session. La
-troisième vague est finie : ce qui reste attend que le coût ne lise plus le
-moteur Python, ou part avec lui. La quatrième vague a sorti `test_moteur.py`
-(`2026-11-16-la-fin-du-moteur-au-portage.md`) ; reste `test_pont.py`, par
-quoi commencer, d'après la note
-`2026-11-16-la-quatrieme-vague-a-mi-chemin.md`. `test_avantages.py` sort de
+quatrième vague a sorti `test_moteur.py`
+(`2026-11-16-la-fin-du-moteur-au-portage.md`) ; reste `test_pont.py`
+(`2026-11-16-la-quatrieme-vague-a-mi-chemin.md`). Les tests du coût sont
+passés au moteur JavaScript (`2026-11-16-le-cout-a-la-facade.md`) ; la
+grille large et l'espion de la décote restent : la section « Ce qui reste »
+de cette note dit par quoi commencer. `test_avantages.py` sort de
 la liste quand `test_pont.py` bâtit son apprenti lui-même.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je

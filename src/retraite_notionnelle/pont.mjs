@@ -2248,7 +2248,7 @@ ENTREES_DE_LA_FACADE["scenario_actuel.table"] = (moteur, table, methode, ...vale
  */
 ENTREES_DE_LA_FACADE["simulateur.constructeur"] = (simulateur, constructeur, methode,
   ...valeurs) => {
-  const tenu = constructeur.startsWith("constructeur")
+  const tenu = constructeur.startsWith("constructeur") || constructeur === "convertisseur"
     ? simulateur[enChameau(constructeur)] : undefined;
   const nom = enChameau(methode);
   if (tenu === null || typeof tenu !== "object" || typeof tenu[nom] !== "function"

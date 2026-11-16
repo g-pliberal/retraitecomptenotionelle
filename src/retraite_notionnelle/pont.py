@@ -2930,6 +2930,9 @@ CONSTRUCTEURS_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "constructeur": ("cotisation_annuelle", "taux_effectif", "construire"),
     "constructeur_employeur": ("cotisation_annuelle", "taux_effectif", "construire"),
     "constructeur_prelevement": ("cotisation_annuelle", "taux_effectif", "construire"),
+    # La population dont la mortalité sert au diviseur d'une carrière, que le
+    # coût lit (``moteur/js/conversion.js``).
+    "convertisseur": ("population_de",),
 }
 
 
@@ -2956,7 +2959,8 @@ def constructeur_du_compte(constructeur: str, methode: str, type_rendu, *argumen
 #: (``tests/test_facade_jumeau.py``). Une méthode qui n'y est pas est refusée
 #: avant node.
 MORTALITE_DE_LA_FACADE: tuple[str, ...] = (
-    "survie_annuelle", "courbe", "survie", "esperance_residuelle")
+    "survie_annuelle", "courbe", "survie", "esperance_residuelle", "courbe_survie",
+    "population_niveau_de_vie_euros")
 
 
 def mortalite_du_simulateur(methode: str, type_rendu, *arguments, parametres=None,

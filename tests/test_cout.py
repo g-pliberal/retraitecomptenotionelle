@@ -35,6 +35,7 @@ from retraite_notionnelle.castypes import (
     PART_INAPTES_CNAV,
     PART_SUPER_ACTIVE_ETAT,
     cas_type_affiche,
+    departs_au_portage,
     parts_des_caisses,
     poids_effectifs,
     poids_egaux,
@@ -104,10 +105,23 @@ from retraite_notionnelle.donnees.equilibre import (
 )
 from retraite_notionnelle.donnees.population import Population
 from retraite_notionnelle.revalorisation_servie import RevalorisationServie
-from retraite_notionnelle.simulateur import Simulateur
-from retraite_notionnelle.droit import ouvrir
-
+from facade import Simulateur, ouvrir
 from outils_garantie import cout_garantie, cout_garantie_par_sexe
+
+
+def _age(simulateur, cas, generation: int, variante: str = "droit") -> float:
+    """L'âge où le pilote du portage fait partir ``cas``, né en ``generation``
+    (``CasType.age_liquidation_pour``, sans le pilote Python)."""
+    departs, refus = departs_au_portage(simulateur, {"cas": (cas, generation)}, variante)
+    assert not refus, refus
+    return departs["cas"][0]
+
+
+def _construite(simulateur, cas, generation: int):
+    """La carrière de ``cas``, né en ``generation``, partie à l'âge où le
+    pilote du portage la fait partir (``CasType.construire``, sans le pilote
+    Python)."""
+    return cas.carriere_a(simulateur, generation, _age(simulateur, cas, generation))
 
 
 @pytest.fixture(scope="module")
@@ -1634,7 +1648,7 @@ def test_l_inapte_vit_au_rythme_des_inaptes_de_la_cnav():
     assert (inapte.survie(0, inapte.annee_liquidation + 25)
             < smic_1960.survie(0, smic_1960.annee_liquidation + 25) < 1.0)
     assert simulateur.convertisseur.population_de(
-        INAPTE_CNAV.construire(simulateur, 1960)).startswith("niveau_de_vie_v")
+        _construite(simulateur, INAPTE_CNAV, 1960)).startswith("niveau_de_vie_v")
     commune = Simulateur(Parametres(population_conversion=None))
     pensionnes, _ = _pensionnes(commune, (INAPTE_CNAV,), "droit")
     assert pensionnes and not any(p.survies for p in pensionnes)
@@ -1674,7 +1688,7 @@ def test_l_ex_invalide_vit_au_rythme_des_ex_invalides_de_la_cnav():
     assert (ex_invalide.survie(0, 2047) < inapte.survie(0, 2047)
             < smic_1960.survie(0, smic_1960.annee_liquidation + 25) < 1.0)
     assert simulateur.convertisseur.population_de(
-        EX_INVALIDE_CNAV.construire(simulateur, 1960)).startswith("niveau_de_vie_v")
+        _construite(simulateur, EX_INVALIDE_CNAV, 1960)).startswith("niveau_de_vie_v")
     commune = Simulateur(Parametres(population_conversion=None))
     pensionnes, _ = _pensionnes(commune, (EX_INVALIDE_CNAV,), "droit")
     assert pensionnes and not any(p.survies for p in pensionnes)
@@ -1713,8 +1727,8 @@ def test_les_fonctionnaires_civils_entrent_tard_dans_leur_regime():
     projection = individuel.pour_la_projection()
     for cas in (c for c in CAS_TYPES if c.affiliation_avant_entree):
         for generation in (1945, 1980, 2000):
-            seul = cas.construire(individuel, generation)
-            tard = cas.construire(projection, generation)
+            seul = _construite(individuel, cas, generation)
+            tard = _construite(projection, cas, generation)
             assert {ligne.affiliation for ligne in seul.lignes} == {cas.affiliation}
             assert tard.annee_liquidation == seul.annee_liquidation, (cas.code, generation)
             avant = [ligne for ligne in tard.lignes
@@ -1738,8 +1752,6 @@ def test_la_page_ne_sert_pas_le_minimum_vieillesse():
     (``part_repartition``), et la masse du système actuel qu'elle lui oppose
     ne le compte pas davantage. Jusqu'au 11 octobre 2026, elle le comptait, et
     l'économie des années observées en était grossie."""
-    from retraite_notionnelle.castypes import calculer_cas_types
-
     individuel = Simulateur(Parametres())
     projection = individuel.pour_la_projection()
     assert projection.pour_la_projection() is projection
@@ -1747,10 +1759,11 @@ def test_la_page_ne_sert_pas_le_minimum_vieillesse():
     cas_types = tuple(c for c in CAS_TYPES if c.code in ("artisan", "exploitant_agricole"))
 
     def servie(simulateur) -> dict:
-        grille = calculer_cas_types(simulateur, cas_types, (1905, 1920))
-        return {cle: sum(a.montant for a in comparaison.actuel.avantages_appliques
-                         if a.code == "minimum_vieillesse")
-                for cle, comparaison in grille.resultats.items()}
+        return {(cas.code, generation): sum(
+                    a.montant for a in simulateur.simuler(
+                        _construite(simulateur, cas, generation)).actuel.avantages_appliques
+                    if a.code == "minimum_vieillesse")
+                for cas in cas_types for generation in (1905, 1920)}
 
     assert any(servie(individuel).values())
     assert not any(servie(projection).values())
@@ -2159,7 +2172,7 @@ def test_les_civils_de_l_etat_se_partagent_entre_leurs_trois_departs():
     assert {cas_type_affiche(code) for code in codes} == {"fonctionnaire_sedentaire"}
     projection = Simulateur(Parametres()).pour_la_projection()
     sedentaire = next(cas for cas in CAS_TYPES if cas.code == "fonctionnaire_sedentaire")
-    ages = [cas.age_liquidation_pour(projection, 1963)
+    ages = [_age(projection, cas, 1963)
             for cas in (FONCTIONNAIRE_SUPER_ACTIF_ETAT, FONCTIONNAIRE_ACTIF_ETAT, sedentaire)]
     assert ages == sorted(ages) and ages[0] < ages[1] < ages[2]
 
@@ -2487,7 +2500,7 @@ def test_chaque_generation_liquide_sous_son_propre_droit():
     simulateur = Simulateur(Parametres())
     par_code = {cas.code: cas for cas in CAS_TYPES}
     ages = {
-        code: [par_code[code].age_liquidation_pour(simulateur, generation)
+        code: [_age(simulateur, par_code[code], generation)
                for generation in GENERATIONS]
         for code in ("salaire_moyen", "cadre", "fonctionnaire_actif")
     }
@@ -2510,7 +2523,7 @@ def test_le_militaire_part_a_une_duree_et_non_a_un_age():
     simulateur = Simulateur(Parametres())
     militaire = next(cas for cas in CAS_TYPES if cas.code == "militaire")
     assert militaire.regle_liquidation == "services"
-    ages = {militaire.age_liquidation_pour(simulateur, generation)
+    ages = {_age(simulateur, militaire, generation)
             for generation in GENERATIONS}
     assert ages == {militaire.age_debut + militaire.ecart_liquidation}
 
@@ -2527,17 +2540,17 @@ def test_un_regime_ferme_rend_ses_generations_au_droit_commun():
     simulateur = Simulateur(Parametres())
     sncf = next(cas for cas in CAS_TYPES if cas.code == "agent_sncf_conduite")
     moyen = next(cas for cas in CAS_TYPES if cas.code == "salaire_moyen")
-    assert sncf.age_liquidation_pour(simulateur, 1960) < 55
+    assert _age(simulateur, sncf, 1960) < 55
     # Même âge qu'un salarié du privé entré comme lui à vingt ans : c'est
     # soixante-trois ans, par la porte des vingt et un ans de la carrière
     # longue, et non les soixante-quatre du salarié entré à vingt et un.
     entre_a_vingt = replace(moyen, age_debut=sncf.age_debut)
-    assert (sncf.age_liquidation_pour(simulateur, 2000)
-            == entre_a_vingt.age_liquidation_pour(simulateur, 2000)
+    assert (_age(simulateur, sncf, 2000)
+            == _age(simulateur, entre_a_vingt, 2000)
             == pytest.approx(63.0))
-    assert moyen.age_liquidation_pour(simulateur, 2000) == pytest.approx(64.0)
+    assert _age(simulateur, moyen, 2000) == pytest.approx(64.0)
     # La variante garde l'ancien comportement intact : c'est à cela qu'elle sert.
-    assert sncf.age_liquidation_pour(simulateur, 2000, "absolu") == 52
+    assert _age(simulateur, sncf, 2000, "absolu") == 52
 
 
 def test_la_carriere_longue_date_le_depart_du_cas_type_qui_y_a_droit():
@@ -2556,8 +2569,8 @@ def test_la_carriere_longue_date_le_depart_du_cas_type_qui_y_a_droit():
     # 61 ans. Le test attendait 60 ans et 9 mois, sous une règle pas encore
     # applicable à cette date.
     for generation, attendu in ((1955, 60.0), (1960, 60.0), (1965, 61.0), (1975, 62.0)):
-        assert smic.age_liquidation_pour(simulateur, generation) == pytest.approx(attendu)
-        resultat = actuel.calculer(smic.construire(simulateur, generation))
+        assert _age(simulateur, smic, generation) == pytest.approx(attendu)
+        resultat = actuel.calculer(_construite(simulateur, smic, generation))
         assert resultat.liquidation_ouverte
         assert resultat.motif_ouverture == "carriere_longue"
         assert resultat.taux_liquidation == pytest.approx(0.5)
@@ -2574,8 +2587,8 @@ def test_les_trimestres_pour_enfants_datent_le_taux_plein():
     cas = next(c for c in CAS_TYPES if c.code == "carriere_interrompue")
     assert cas.nombre_enfants == 2
     for generation in (1950, 1960, 1965, 1975):
-        age = cas.age_liquidation_pour(simulateur, generation)
-        carriere = cas.construire(simulateur, generation)
+        age = _age(simulateur, cas, generation)
+        carriere = _construite(simulateur, cas, generation)
         assert age == pytest.approx(ouvrir.age_ouverture_droit(actuel, carriere))
         resultat = actuel.calculer(carriere)
         assert resultat.liquidation_ouverte
@@ -2595,7 +2608,7 @@ def test_la_variante_absolue_reproduit_l_ancienne_grille():
     simulateur = Simulateur(Parametres())
     for cas in CAS_TYPES:
         for generation in GENERATIONS:
-            assert (cas.age_liquidation_pour(simulateur, generation, "absolu")
+            assert (_age(simulateur, cas, generation, "absolu")
                     == cas.age_liquidation)
     absolu = memoire.cout(Parametres(), comptes=False, assiette=False, liquidation="absolu")
     droit = memoire.cout(Parametres(), comptes=False, assiette=False)

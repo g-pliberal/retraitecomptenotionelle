@@ -523,8 +523,10 @@ def test_ce_que_la_facade_ne_sert_pas_ne_se_lit_pas_sur_son_simulateur(simulateu
     """Les règles du simulateur Python — le compte, la conversion,
     l'indexation — ne sont pas des entrées de la façade : les lire échoue, au
     lieu de faire tourner le moteur Python. Ses données, elles, se lisent."""
-    with pytest.raises(NonTransmissible, match="convertisseur"):
-        simulateur.convertisseur
+    with pytest.raises(NonTransmissible, match="convertisseur_rente_capitalisee"):
+        simulateur.convertisseur_rente_capitalisee
+    with pytest.raises(NonTransmissible, match="convertisseur.coefficient"):
+        simulateur.convertisseur.coefficient
     with pytest.raises(NonTransmissible, match="surcote_parentale"):
         simulateur.scenario_actuel.surcote_parentale
     assert simulateur.macro.plafond_securite_sociale(2024) == 46368.0
@@ -1163,6 +1165,19 @@ def test_le_constructeur_du_compte_rend_la_cotisation_d_une_annee(simulateur):
         assert type(cotisation) is CotisationAnnuelle
         assert dict(cotisation.par_regime) == {"msa_non_salaries": 4.25}
         assert type(cotisation.fiabilite) is Fiabilite
+
+
+def test_le_convertisseur_rend_la_population_d_une_carriere(simulateur):
+    """La population dont la mortalité sert au diviseur : sous le réglage par
+    défaut, le vingtile de niveau de vie où le salaire range la carrière ;
+    sous une population nommée, celle-là pour tous ; sous la table commune,
+    aucune (``population_conversion``)."""
+    carriere = simulateur.carriere_simple(**SALARIE)
+    assert simulateur.convertisseur.population_de(carriere).startswith("niveau_de_vie_v")
+    nommee = facade.Simulateur(Parametres(population_conversion="cnav_inaptitude"))
+    assert nommee.convertisseur.population_de(carriere) == "cnav_inaptitude"
+    commune = facade.Simulateur(Parametres(population_conversion=None))
+    assert commune.convertisseur.population_de(carriere) is None
 
 
 def test_le_constructeur_du_compte_rend_le_taux_effectif_d_une_periode(simulateur):
@@ -2046,6 +2061,38 @@ def test_la_mortalite_du_simulateur_se_demande_au_portage(simulateur):
     assert mortalite._quotients_observes[(1950, "H")][70] == pytest.approx(0.051121)
     with pytest.raises(NonTransmissible, match="mortalite.fiabilite"):
         mortalite.fiabilite
+
+
+def test_les_niveaux_de_vie_de_la_mortalite_se_lisent_et_se_demandent(simulateur):
+    """L'Insee publie les espérances de vie par vingtile de niveau de vie sur
+    2020-2024, en euros de 2022, le vingtile le plus aisé à 6 427 € par mois
+    (``esperances_vie_niveau_de_vie.csv``) : l'année se lit par le chargeur
+    Python, une donnée ; le vingtile d'un montant se demande au portage, comme
+    la courbe de survie que le coût en tire."""
+    mortalite = simulateur.mortalite
+    assert mortalite.annee_niveaux_de_vie == 2022
+    assert mortalite.population_niveau_de_vie_euros(6427.0) == "niveau_de_vie_v20"
+    courbe = mortalite.courbe_survie(65, 2025, "F", True, "niveau_de_vie_v20")
+    assert courbe[0] == 1.0 and all(a >= b for a, b in zip(courbe, courbe[1:]))
+
+
+def test_sous_un_cout_modifie_la_mortalite_se_demande_encore(simulateur, monkeypatch):
+    """Un test qui remplace une fonction du coût (``monkeypatch``) ne touche
+    pas la mortalité que le coût lit : la façade la sert, la même. Elle refuse
+    dès que la mortalité elle-même est remplacée, que le portage ne verrait
+    pas."""
+    from retraite_notionnelle import cout
+    from retraite_notionnelle.donnees import mortalite as mortalite_python
+
+    with memoire.modele_modifie():
+        servie = simulateur.mortalite.courbe(62.0, 2031.0, None, True, None)
+    assert servie == simulateur.mortalite.courbe(62.0, 2031.0, None, True, None)
+    monkeypatch.setattr(cout, "_pensionnes", lambda *arguments: None)
+    assert simulateur.mortalite.courbe(62.0, 2031.0, None, True, None) == servie
+    monkeypatch.setattr(mortalite_python.DonneesMortalite, "facteur_population",
+                        lambda *arguments: 1.0)
+    with pytest.raises(NonTransmissible, match="mortalité remplacée"):
+        simulateur.mortalite.courbe(62.0, 2031.0, None, True, None)
 
 
 def test_la_courbe_de_survie_se_demande_au_portage(simulateur):

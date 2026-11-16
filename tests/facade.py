@@ -19,7 +19,9 @@ les entrées du Python.
 le modèle intact, et le test verdirait à tort. Sont refusés : une série qui
 n'est pas celle d'un simulateur de la façade ; un moteur qui n'est pas le
 sien ; une retouche de son simulateur ou de son moteur ; tout appel sous un
-modèle modifié (``memoire.modele_modifie``, que ``monkeypatch`` ouvre) ; des
+modèle modifié (``memoire.modele_modifie``, que ``monkeypatch`` ouvre), sauf
+celui de la mortalité, que le coût lit, tant qu'elle n'est pas remplacée
+elle-même ; des
 variantes d'univers ; et la lecture, sur son simulateur, d'une règle qu'elle
 ne sert pas. Les données du simulateur — ses séries, son catalogue, ses
 affiliations — se lisent, par leurs chargeurs Python, qui restent.
@@ -42,7 +44,8 @@ objet du moteur — n'arriverait pas au portage : la règle est refusée.
 **Le constructeur du compte** (``simulateur.constructeur``,
 ``simulateur.constructeur_employeur``, ``simulateur.constructeur_prelevement``)
 sert ce que ``pont.CONSTRUCTEURS_DE_LA_FACADE`` déclare — la cotisation d'une
-année, le taux porté au compte, le compte entier —, ses arguments transmis
+année, le taux porté au compte, le compte entier —, comme le convertisseur
+(``simulateur.convertisseur``) la population du diviseur d'une carrière, ses arguments transmis
 comme ceux d'une table. Le régime unique d'après la bascule
 (``simulateur.regime_fusionne``) se lit sur le simulateur, et passe au
 constructeur par sa marque ; un autre ne passe pas.
@@ -91,6 +94,7 @@ from retraite_notionnelle.revalorisation_servie import (
 from retraite_notionnelle import simulateur as _simulateur
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import ContributionEtat, Parametres
+from retraite_notionnelle.donnees import mortalite as _mortalite_donnees
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite
 from retraite_notionnelle.donnees.regimes import PeriodeRegime, Regime
 from retraite_notionnelle.pont import NonTransmissible
@@ -114,6 +118,7 @@ from retraite_notionnelle.droit import releve as _releve
 from retraite_notionnelle.droit import reversion as _reversion
 from retraite_notionnelle.droit import seconde as _seconde
 from retraite_notionnelle.moteur import compte as _compte
+from retraite_notionnelle.moteur import conversion as _conversion
 from retraite_notionnelle.moteur.fusion import RegimeFusionne
 from retraite_notionnelle.scenarios import actuel as _actuel
 
@@ -715,6 +720,27 @@ def prolongee(carriere, age_liquidation: float, macro, attente_travaillee: bool 
     return carriere if prolongee_ is None else prolongee_
 
 
+def _fonctions_de_la_mortalite() -> dict:
+    """Les fonctions et les classes des données de mortalité du Python, et les
+    attributs de :class:`DonneesMortalite` : ce qu'un test remplacerait pour
+    changer la mortalité."""
+    return {**{("classe", nom): valeur for nom, valeur in vars(DonneesMortalite).items()},
+            **{("module", nom): valeur for nom, valeur in vars(_mortalite_donnees).items()
+               if callable(valeur) and not nom.startswith("__")}}
+
+
+_MORTALITE_INTACTE = _fonctions_de_la_mortalite()
+
+
+def _mortalite_remplacee() -> bool:
+    """Une fonction de la mortalité du Python est remplacée : le portage, qui
+    calcule sur la sienne, ne le verrait pas. Un remplacement du coût ou d'une
+    étude (``memoire.modele_modifie``) ne la touche pas : le coût la lit."""
+    lues = _fonctions_de_la_mortalite()
+    return lues.keys() != _MORTALITE_INTACTE.keys() or any(
+        lues[cle] is not valeur for cle, valeur in _MORTALITE_INTACTE.items())
+
+
 class _Mortalite(_Ferme):
     """``Simulateur.mortalite`` : ses quotients observés, des données, lus
     par leur chargeur Python ; celles de ses méthodes que la façade sert
@@ -727,6 +753,12 @@ class _Mortalite(_Ferme):
     @property
     def _quotients_observes(self):
         return self._simulateur._donnees.mortalite._quotients_observes
+
+    @property
+    def annee_niveaux_de_vie(self):
+        """L'année dont les niveaux de vie des vingtiles sont les euros : une
+        donnée, lue par son chargeur Python."""
+        return self._simulateur._donnees.mortalite.annee_niveaux_de_vie
 
     def __getattr__(self, methode):
         if methode.startswith("__"):
@@ -741,10 +773,10 @@ class _Mortalite(_Ferme):
         simulateur = self._simulateur
 
         def servie(*arguments, **nommes):
-            if not memoire.modele_intact():
+            if _mortalite_remplacee():
                 raise NonTransmissible(
-                    f"mortalite.{methode} : modèle modifié (monkeypatch, "
-                    "memoire.modele_modifie) — le portage ne le voit pas")
+                    f"mortalite.{methode} : mortalité remplacée (monkeypatch) — le "
+                    "portage ne le voit pas")
             lies = inspect.signature(jumelle).bind(None, *arguments, **nommes)
             lies.apply_defaults()
             _, *valeurs = lies.arguments.values()
@@ -772,8 +804,10 @@ class Constructeur(_Ferme):
                 f"{self._nom}.{methode} : la façade ne sert pas cette méthode du constructeur "
                 "(pont.CONSTRUCTEURS_DE_LA_FACADE) — le test la demande au pont, ou se porte "
                 "à la main")
-        jumelle = getattr(_compte.ConstructeurCompte, methode)
-        rendu = typing.get_type_hints(jumelle, vars(_compte))["return"]
+        module, classe = ((_conversion, _conversion.Convertisseur) if self._nom == "convertisseur"
+                          else (_compte, _compte.ConstructeurCompte))
+        jumelle = getattr(classe, methode)
+        rendu = typing.get_type_hints(jumelle, vars(module))["return"]
         simulateur = self._simulateur
 
         def servie(*arguments, **nommes):

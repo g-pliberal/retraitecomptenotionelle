@@ -45,7 +45,6 @@ ENTREES = frozenset({"Simulateur", "ScenarioActuel", "Carriere", "reversion"})
 FICHIERS = (
     "test_avantages.py",
    
-    "test_cout.py",
     "test_cout_age_depart.py",
     "test_facade.py", "test_facade_jumeau.py",
     "test_grille_large.py",

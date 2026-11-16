@@ -1778,6 +1778,9 @@ APPELS_DES_CONSTRUCTEURS = [
         *_compte_entier(_apres_la_bascule(s)), s.regime_fusionne)),
     ("constructeur_employeur", "construire", lambda s: (
         *_compte_entier(_apres_la_bascule(s)), s.regime_fusionne)),
+    ("convertisseur", "population_de", lambda s: (_salarie(s),)),
+    ("convertisseur", "population_de", lambda s: (_fonctionnaire(s),)),
+    ("convertisseur", "population_de", lambda s: (None,)),
 ]
 
 
@@ -1921,6 +1924,11 @@ APPELS_DE_LA_MORTALITE = [
     ("esperance_residuelle", (60.0, 2024.0)),
     ("esperance_residuelle", (62.0, 2017.0, "H", False, "cnav_inaptitude")),
     ("esperance_residuelle", (65.25, 2035.5, "F", True, "fonctionnaires_civils_etat")),
+    ("courbe_survie", (65, 2025, "F", True, None)),
+    ("courbe_survie", (62.5, 2031.25, "H", True, "niveau_de_vie_v07")),
+    ("courbe_survie", (60.0, 2017.0, "H", False, "cnav_inaptitude")),
+    ("population_niveau_de_vie_euros", (1450.0,)),
+    ("population_niveau_de_vie_euros", (0.0,)),
 ]
 
 
