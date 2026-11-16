@@ -55,9 +55,8 @@ from pathlib import Path
 
 from . import pont
 from .calendrier import DateMois
-from .castypes import CAS_TYPES, CasType, batie_au_portage, departs_au_portage
-from .cout import (_DEMI_TRANCHE, _carrieres_voisines, _ponderation, _tetes_par_poids,
-                   generations)
+from .castypes import CAS_TYPES, CasType, departs_au_portage, exiger_le_portage
+from .cout import _DEMI_TRANCHE, _ponderation, _tetes_par_poids, generations
 from .donnees.chargement import Fiabilite, charger_yaml
 from .donnees.depenses import DepensesRetraite
 from .donnees.population import Population
@@ -910,19 +909,15 @@ def decomposer(simulateur: Simulateur, liquidation: str = "droit"
     coût ; sa pension, et ce qu'elle porte d'avantages, restent ceux de la
     génération simulée.
 
-    LE PORTAGE DATE, BÂTIT ET LIQUIDE LA GRILLE quand elle s'y date
-    (:func:`~.castypes.batie_au_portage`, action 161, étape 6) : chaque case et
-    ses cinq cohortes, sa liquidation au scénario 1 et ses contrefactuelles
-    (:func:`_decomposees_au_portage`) ; le moteur Python sinon
-    (:func:`_decomposees_en_python`). L'un et l'autre rendent ce que la
-    décomposition lit de chaque case, et ce qui suit n'en sait rien.
+    LE PORTAGE DATE, BÂTIT ET LIQUIDE LA GRILLE (action 161, étape 6), et lui
+    seul : chaque case et ses cinq cohortes, sa liquidation au scénario 1 et
+    ses contrefactuelles (:func:`_decomposees_au_portage`) ; un cas type qu'il
+    ne date pas est refusé (:func:`~.castypes.exiger_le_portage`).
     """
     macro = simulateur.macro
     annee_euros = simulateur.parametres.annee_euros_constants
-    if batie_au_portage(simulateur.parametres, CAS_TYPES):
-        decomposees = _decomposees_au_portage(simulateur, liquidation)
-    else:
-        decomposees = _decomposees_en_python(simulateur, liquidation)
+    exiger_le_portage(simulateur.parametres, CAS_TYPES)
+    decomposees = _decomposees_au_portage(simulateur, liquidation)
     pensionnes: list[Pensionne] = []
     refus: dict[str, str] = {}
     for cas, generation, age, liquidee, (mesures, refuses), voisines in decomposees:
@@ -973,51 +968,11 @@ class _Liquidee:
         return somme_ordonnee(montant for code, montant in self.avantages if code == "avpf")
 
 
-def _decomposees_en_python(simulateur: Simulateur, liquidation: str = "droit") -> list[tuple]:
-    """Chaque case de la grille que le droit n'écarte pas, datée, bâtie et
-    liquidée par le moteur Python, là où la grille ne se date pas au portage :
-    ``(cas type, génération, âge, liquidation, mesures et refus, départ des
-    cinq cohortes)``. Les deux garde-fous de ``calculer_cas_types`` sont
-    repris tels quels : une liquidation antérieure à la répartition et une
-    carrière dont aucun régime n'était actif sont écartées plutôt que de faire
-    échouer l'ensemble."""
-    debut = simulateur.parametres.annee_debut_repartition
-    # Les variantes sont construites UNE FOIS pour les trois cent quarante-deux
-    # couples : par couple, elles rechargeraient les tables autant de fois.
-    variantes = scenarios_neutralises(simulateur)
-    decomposees = []
-    for cas in CAS_TYPES:
-        for generation in generations():
-            try:
-                age = cas.age_liquidation_pour(simulateur, generation, liquidation)
-                carriere = carriere_variante(simulateur, cas, generation, age)
-                if carriere.annee_liquidation <= debut:
-                    continue
-                if not any(simulateur.affiliations.regimes(cas.affiliation, ligne.annee)
-                           for ligne in carriere.lignes):
-                    continue
-                actuel = simulateur.scenario_actuel.calculer(carriere)
-            except (ValueError, KeyError):
-                continue
-            liquidee = _Liquidee(
-                annee_liquidation=carriere.annee_liquidation,
-                age_liquidation=carriere.age_liquidation,
-                pension_annuelle=actuel.pension_annuelle,
-                total_contributif=actuel.total_contributif,
-                trimestres_requis=actuel.trimestres_requis,
-                motif_ouverture=actuel.motif_ouverture,
-                avantages=tuple((avantage.code, avantage.montant)
-                                for avantage in actuel.avantages_appliques))
-            decomposees.append((cas, generation, age, liquidee,
-                                recalculer(simulateur, cas, generation, age, actuel, variantes),
-                                _voisines_en_python(simulateur, cas, generation, liquidation)))
-    return decomposees
-
-
 def _decomposees_au_portage(simulateur: Simulateur, liquidation: str = "droit") -> list[tuple]:
-    """Chaque case de la grille que le droit n'écarte pas, comme
-    :func:`_decomposees_en_python` la rend, que le portage date, bâtit et
-    liquide (action 161, étape 6), sur le paquet des données du jour : il date
+    """Chaque case de la grille que le droit n'écarte pas, ``(cas type,
+    génération, âge, liquidation, mesures et refus, départ des cinq
+    cohortes)``, que le portage date, bâtit et liquide (action 161, étape 6),
+    sur le paquet des données du jour : il date
     chaque case et ses cinq cohortes (:func:`_departs_au_portage`), puis bâtit
     sa carrière (:func:`_options_de_la_variante`), la liquide au scénario 1 et
     sous chaque contrefactuelle qu'elle demande (:func:`_variantes_demandees`),
@@ -1071,22 +1026,12 @@ def _departs_des_cohortes(carriere, voisines: tuple
     return tuple(departs), tuple(ages)
 
 
-def _voisines_en_python(simulateur: Simulateur, cas: CasType, generation: int,
-                        liquidation: str = "droit") -> tuple:
-    """Le départ de chacune des cinq cohortes d'une case, ``(âge, année)``, que
-    le moteur Python date et bâtit (``cout._carrieres_voisines``), ou ``None``
-    pour la génération de la grille et pour une cohorte que la grille ne sait
-    pas simuler : là où la grille ne se date pas au portage."""
-    return tuple(None if voisine is None else (voisine.age_liquidation, voisine.annee_liquidation)
-                 for _decalage, voisine in _carrieres_voisines(simulateur, cas, generation,
-                                                               liquidation))
-
-
 def _departs_au_portage(simulateur: Simulateur, cas_types: tuple[CasType, ...],
                         liquidation: str = "droit") -> tuple[dict, dict]:
     """L'âge de chaque case de la grille que le droit n'écarte pas, sous
-    ``(code, génération)``, et le départ de ses cinq cohortes
-    (:func:`_voisines_en_python`), que le portage date et bâtit d'une seule
+    ``(code, génération)``, et le départ de ses cinq cohortes, ``(âge,
+    année)``, ou ``None`` pour la génération de la grille et pour une cohorte
+    que la grille ne sait pas simuler, que le portage date et bâtit d'une seule
     demande (``castypes.departs_au_portage``, action 161, étape 6), sur le
     paquet des données du jour, comme la grille du coût."""
     decalages = range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)
@@ -1143,11 +1088,10 @@ def ages_legaux(simulateur: Simulateur, pensionnes: list[Pensionne]
     ou ``None`` : celui que :func:`masses_anticipees` oppose aux cohortes de
     ces pensionnés. Le portage le lit (``pont.droit``,
     ``scenario_actuel.ages_ouverture.age``), une fois pour toutes leurs
-    générations, sur le paquet des données du jour, quand la grille s'y date
-    (:func:`~.castypes.batie_au_portage`, action 161, étape 6) ; le moteur
-    Python sinon."""
-    if not batie_au_portage(simulateur.parametres, CAS_TYPES):
-        return simulateur.scenario_actuel.ages_ouverture.age
+    générations, sur le paquet des données du jour (action 161, étape 6) ;
+    un cas type qu'il ne date pas est refusé
+    (:func:`~.castypes.exiger_le_portage`)."""
+    exiger_le_portage(simulateur.parametres, CAS_TYPES)
     cohortes = sorted({pensionne.generation + decalage for pensionne in pensionnes
                        for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)})
     lus, refus = pont.droit(

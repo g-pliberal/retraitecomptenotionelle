@@ -142,9 +142,7 @@ from .castypes import (
     GRILLE_DU_COUT,
     VARIANTES_LIQUIDATION,
     CasType,
-    batie_au_portage,
-    carriere_de_la_grille,
-    carrieres_de_la_grille,
+    exiger_le_portage,
     poids_effectifs,
     poids_egaux,
     primes_projetees_en_donnees,
@@ -2443,59 +2441,31 @@ def _propositions(parametres, carriere, prolongations: tuple, departs: tuple[int
     return propositions
 
 
-def _prolongations(simulateur: Simulateur, carriere) -> tuple:
-    """Les deux carrières que l'âge légal de la proposition dérive de
-    ``carriere``, par le moteur Python : poursuivie jusqu'à lui, et attendue
-    sans activité ; ``(None, None)`` quand il ne la reporte pas. Ce que le
-    portage rend de chaque case (``pont.carrieres_de_la_grille``)."""
-    age_legal = simulateur.parametres.age_legal_liberal
-    if age_legal is None:
-        return None, None
-    reportee = carriere.prolongee(age_legal, simulateur.macro)
-    if reportee is carriere:
-        return None, None
-    return reportee, carriere.prolongee(age_legal, simulateur.macro, attente_travaillee=False)
-
-
 @dans_un_instantane
 def _grille_batie(simulateur: Simulateur, cas_types: tuple[CasType, ...],
                   liquidation: str) -> tuple[dict, dict, dict, dict]:
     """La grille du coût bâtie, avant que rien ne se simule : la carrière de
     chaque case, sous ``(code, génération)``, partie à l'âge que le pilote lui
     fixe et déformée, sous les conventions du COR, comme le COR projette ses
-    cas types (``castypes.carrieres_de_la_grille``) ; les motifs des cases que
+    cas types ; les motifs des cases que
     le droit écarte ; de chaque case, le départ de chacune de ses cinq
     cohortes sous le droit de sa génération, ``(année, mois)``, ou ``None``
     pour celle de la grille et pour une cohorte que la grille ne sait pas
-    simuler (:func:`_carrieres_voisines`) ; et les deux carrières que l'âge
-    légal de la proposition en dérive (:func:`_prolongations`).
+    simuler ; et les deux carrières que l'âge légal de la proposition en
+    dérive.
 
     Le portage la date et la bâtit, d'une seule demande
     (``pont.carrieres_de_la_grille``, action 161, étape 6) : le Python ne lui
     passe que ce que chaque cas type décrit (``CasType.pour_le_portage``) et
-    la part des primes que les conventions du COR projettent. Le moteur Python
-    ne la bâtit plus que là où le portage ne la refait pas
-    (``castypes.batie_au_portage``)."""
+    la part des primes que les conventions du COR projettent. Un cas type
+    qu'il ne date pas est refusé (``castypes.exiger_le_portage``)."""
     if liquidation not in VARIANTES_LIQUIDATION:
         raise ValueError(
             f"variante de liquidation inconnue : {liquidation!r} "
             f"(attendu : {VARIANTES_LIQUIDATION})"
         )
     decalages = range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)
-    if not batie_au_portage(simulateur.parametres, cas_types):
-        carrieres, ecartees = carrieres_de_la_grille(simulateur, cas_types, generations(),
-                                                     liquidation)
-        cas_de = {cas.code: cas for cas in cas_types}
-        voisines = {
-            (code, generation): tuple(
-                None if voisine is None else (voisine.annee_liquidation, voisine.mois_liquidation)
-                for _decalage, voisine in _carrieres_voisines(simulateur, cas_de[code],
-                                                              generation, liquidation))
-            for code, generation in carrieres
-        }
-        prolongations = {cle: _prolongations(simulateur, carriere)
-                         for cle, carriere in carrieres.items()}
-        return carrieres, ecartees, voisines, prolongations
+    exiger_le_portage(simulateur.parametres, cas_types)
 
     def cle(cas: CasType, generation: int, decalage: int) -> str:
         return f"{cas.code}|{generation}|{decalage}"
@@ -2680,37 +2650,19 @@ def _departs(annee_liquidation: int, voisines: tuple) -> tuple[int, ...]:
                                               voisines, strict=True))
 
 
-def _carrieres_voisines(simulateur: Simulateur, cas: CasType, generation: int,
-                        liquidation: str = "droit"):
-    """Chacune des cinq cohortes que la génération ``generation`` de la grille
-    représente, du ``-_DEMI_TRANCHE`` au ``+_DEMI_TRANCHE`` : son décalage, et
-    sa carrière sous le droit de sa génération (:func:`_departs`) — ``None``
-    pour la génération de la grille, que l'appelant a déjà, et pour une
-    cohorte que la grille ne sait pas simuler."""
-    for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-        carriere = None
-        if decalage:
-            try:
-                carriere = carriere_de_la_grille(simulateur, cas, generation + decalage,
-                                                 liquidation)
-            except (ValueError, KeyError):
-                pass
-        yield decalage, carriere
-
-
 def _nees_toute_l_annee(simulateur: Simulateur, cas_types: tuple[CasType, ...],
                         pensionnes: list[Pensionne], liquidation: str = "droit"
                         ) -> list[Pensionne]:
     """Les mêmes couples, leurs cohortes nées toute l'année
     (:data:`NAISSANCES_TOUTE_L_ANNEE`, :attr:`Pensionne.mois`) : le mois où
     part la part née en janvier de chacune, celui de la carrière que le droit
-    de sa génération lui donne (:func:`_carrieres_voisines`), ou celui de la
+    de sa génération lui donne (:func:`_grille_batie`), ou celui de la
     génération de la grille pour une cohorte qu'elle ne sait pas simuler ; et
     ceux où elle atteint l'âge légal de la proposition et 65 ans. Les
     carrières se refont sans rien simuler, sous les conventions de la grille
     (:func:`_pensionnes`) : un couple ne garde que l'année de chaque départ.
     La grille se rebâtit comme le coût la bâtit (:func:`_grille_batie`), au
-    portage, sauf là où le Python la bâtit."""
+    portage."""
     simulateur = simulateur.pour_la_projection()
     carrieres, _ecartees, voisines, _ = _grille_batie(simulateur, cas_types, liquidation)
     age_legal = simulateur.parametres.age_legal_liberal

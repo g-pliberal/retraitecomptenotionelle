@@ -997,36 +997,6 @@ def carriere_de_la_grille(simulateur: Simulateur, cas: CasType, generation: int,
 
 
 @dans_un_instantane
-def carrieres_de_la_grille(
-    simulateur: Simulateur,
-    cas_types: tuple[CasType, ...] = CAS_TYPES,
-    generations: tuple[int, ...] = GENERATIONS,
-    liquidation: str = "droit",
-) -> tuple[dict[tuple[str, int], Carriere], dict[tuple[str, int], str]]:
-    """Les carrières de la grille, chacune partie à l'âge que le pilote lui
-    fixe, et déformée, sous les conventions de projection du COR, comme le COR
-    projette ses cas types (:func:`primes_projetees`, l'entrée tardive) ; puis
-    les motifs des cases que le droit écarte (:func:`carriere_de_la_grille`).
-    Le coût ne bâtit plus ainsi sa grille que là où le portage ne la bâtit
-    pas (``cout._grille_batie``, action 161, étape 6)."""
-    if liquidation not in VARIANTES_LIQUIDATION:
-        raise ValueError(
-            f"variante de liquidation inconnue : {liquidation!r} "
-            f"(attendu : {VARIANTES_LIQUIDATION})"
-        )
-    carrieres: dict[tuple[str, int], Carriere] = {}
-    echecs: dict[tuple[str, int], str] = {}
-    for cas in cas_types:
-        for generation in generations:
-            try:
-                carrieres[(cas.code, generation)] = carriere_de_la_grille(
-                    simulateur, cas, generation, liquidation)
-            except (ValueError, KeyError) as erreur:
-                echecs[(cas.code, generation)] = str(erreur)
-    return carrieres, echecs
-
-
-@dans_un_instantane
 def cases_de_la_grille(
     simulateur: Simulateur,
     cas_types: tuple[CasType, ...] = CAS_TYPES,
@@ -1039,30 +1009,26 @@ def cases_de_la_grille(
     chacune, partie à l'âge que le pilote lui fixe ; puis les motifs des cases
     que le droit écarte (:func:`carriere_de_la_grille`). Le portage les date
     et les écarte, sur ``paquet`` ou sur ``moteur/donnees.json``
-    (:func:`departs_au_portage`, étape 6), quand la grille s'y date
-    (:func:`batie_au_portage`) ; le Python sinon. Sous les conventions de
-    projection du COR, la carrière d'un cas type se déforme
+    (:func:`departs_au_portage`, étape 6), et lui seul : un cas type qu'il
+    ne date pas est refusé (:func:`exiger_le_portage`). Sous les conventions
+    de projection du COR, la carrière d'un cas type se déforme
     (:func:`primes_projetees`, l'entrée tardive) : ses options ne la disent
-    plus, et elle passe en données (:func:`carrieres_de_la_grille`)."""
+    plus, et elle passe en données (``pont.carrieres_de_la_grille``)."""
     if simulateur.parametres.conventions_cor:
         raise ValueError("les conventions de projection du COR ne passent pas au portage")
-    if batie_au_portage(simulateur.parametres, cas_types):
-        if liquidation not in VARIANTES_LIQUIDATION:
-            raise ValueError(
-                f"variante de liquidation inconnue : {liquidation!r} "
-                f"(attendu : {VARIANTES_LIQUIDATION})"
-            )
-        cohortes = {f"{cas.code}|{generation}": (cas, generation)
-                    for cas in cas_types for generation in generations}
-        departs, refus = departs_au_portage(simulateur, cohortes, liquidation, paquet)
-        return ({(cas.code, generation): cas.options(generation, departs[cle][0])
-                 for cle, (cas, generation) in cohortes.items() if cle in departs},
-                {(cas.code, generation): refus[cle]
-                 for cle, (cas, generation) in cohortes.items() if cle in refus})
-    carrieres, echecs = carrieres_de_la_grille(simulateur, cas_types, generations, liquidation)
-    cas_de = {cas.code: cas for cas in cas_types}
-    return ({(code, generation): cas_de[code].options(generation, carriere.age_liquidation)
-             for (code, generation), carriere in carrieres.items()}, echecs)
+    exiger_le_portage(simulateur.parametres, cas_types)
+    if liquidation not in VARIANTES_LIQUIDATION:
+        raise ValueError(
+            f"variante de liquidation inconnue : {liquidation!r} "
+            f"(attendu : {VARIANTES_LIQUIDATION})"
+        )
+    cohortes = {f"{cas.code}|{generation}": (cas, generation)
+                for cas in cas_types for generation in generations}
+    departs, refus = departs_au_portage(simulateur, cohortes, liquidation, paquet)
+    return ({(cas.code, generation): cas.options(generation, departs[cle][0])
+             for cle, (cas, generation) in cohortes.items() if cle in departs},
+            {(cas.code, generation): refus[cle]
+             for cle, (cas, generation) in cohortes.items() if cle in refus})
 
 
 def batie_au_portage(parametres, cas_types: Iterable[CasType]) -> bool:
@@ -1072,6 +1038,16 @@ def batie_au_portage(parametres, cas_types: Iterable[CasType]) -> bool:
     ``scripts/grille_large.py``, qui récrit sa carrière et son âge, et ce qu'il
     en passe au portage (étape 7)."""
     return all(decrit_au_portage(type(cas)) for cas in cas_types)
+
+
+def exiger_le_portage(parametres, cas_types: Iterable[CasType]) -> None:
+    """``ValueError`` si l'un de ces cas types ne se date pas au portage
+    (:func:`batie_au_portage`) : la grille ne se date, ne se bâtit et ne se
+    liquide plus qu'au portage, et le moteur Python ne la refait plus en repli
+    (action 161)."""
+    if not batie_au_portage(parametres, cas_types):
+        raise ValueError("un cas type que le portage ne date pas (castypes.decrit_au_portage) : "
+                         "la grille ne se date plus qu'au portage")
 
 
 #: Ce qui date et bâtit la carrière d'un cas type, et que
@@ -1146,12 +1122,9 @@ def ages_de_la_grille(
     celles que le droit écarte comprises : celui qu'écrit la table
     (``figer_cas_types``). Le portage le fixe (``pont.ages_de_depart``), sous
     le type du Python (:func:`age_lu`), sur ``paquet`` ou sur
-    ``moteur/donnees.json``, quand la grille s'y date (:func:`batie_au_portage`) ; le
-    pilote Python sinon (:meth:`CasType.age_liquidation_pour`)."""
-    if not batie_au_portage(simulateur.parametres, cas_types):
-        return {(cas.code, generation): cas.age_liquidation_pour(simulateur, generation,
-                                                                 liquidation)
-                for cas in cas_types for generation in generations}
+    ``moteur/donnees.json`` ; un cas type qu'il ne date pas est refusé
+    (:func:`exiger_le_portage`)."""
+    exiger_le_portage(simulateur.parametres, cas_types)
     cases = {f"{cas.code}|{generation}": (cas, generation)
              for cas in cas_types for generation in generations}
     ages, attendus, refus = pont.ages_de_depart(

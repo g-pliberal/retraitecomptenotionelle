@@ -686,7 +686,7 @@ def dates_des_departs(parametres, entree_depuis: int | None = None,
     """Le mois où part, née en janvier comme la grille, chacune des cinq
     cohortes de chaque couple de la grille du coût, par ``(code, generation,
     decalage)`` (:func:`compter_retraites`) : celui de la carrière que le droit
-    de sa génération lui donne, comme ``cout._carrieres_voisines`` la refait,
+    de sa génération lui donne, comme ``cout._grille_batie`` la date,
     ou celui de la génération de la grille, décalé d'autant d'années, pour une
     cohorte qu'elle ne sait pas simuler. Les carrières se refont sans rien
     simuler : ``Pensionne`` ne garde que l'année.
@@ -704,12 +704,11 @@ def dates_des_departs(parametres, entree_depuis: int | None = None,
     vient après (``regle_liquidation="ouverture"``).
 
     Le portage date et bâtit chaque cohorte (``castypes.departs_au_portage`` ;
-    action 161, étape 6), quand la grille s'y date
-    (``castypes.batie_au_portage``) ; le moteur Python sinon."""
+    action 161, étape 6), et lui seul : un cas type qu'il ne date pas est
+    refusé (``castypes.exiger_le_portage``)."""
     from . import cout as module
     from . import pont
-    from .castypes import (GRILLE_DU_COUT, batie_au_portage, carriere_de_la_grille,
-                           carrieres_de_la_grille, departs_au_portage)
+    from .castypes import GRILLE_DU_COUT, departs_au_portage, exiger_le_portage
     from .simulateur import Simulateur
 
     simulateur = Simulateur(parametres).pour_la_projection()
@@ -734,46 +733,30 @@ def dates_des_departs(parametres, entree_depuis: int | None = None,
             propre = replace(propre, regle_liquidation="ouverture")
         return propre
 
-    if batie_au_portage(simulateur.parametres, cas_types):
-        cohortes = {}
-        for cas in cas_types:
-            for generation in generations:
-                cohortes[f"{cas.code}|{generation}"] = (cas, generation)
-                for decalage in decalages:
-                    propre = propre_de(cas, generation + decalage)
-                    if decalage or propre is not cas:
-                        cohortes[f"{cas.code}|{generation}|{decalage}"] = (
-                            propre, generation + decalage)
-        departs, _refus = departs_au_portage(
-            simulateur, cohortes, "droit",
-            pont.paquet_des_donnees(simulateur.parametres.racine_donnees))
-        dates = {}
-        for cas in cas_types:
-            for generation in generations:
-                grille = departs.get(f"{cas.code}|{generation}")
-                if grille is None:
-                    continue
-                for decalage in decalages:
-                    cohorte = departs.get(f"{cas.code}|{generation}|{decalage}")
-                    dates[(cas.code, generation, decalage)] = (
-                        DateMois(grille[1] + decalage, grille[2]) if cohorte is None
-                        else DateMois(cohorte[1], cohorte[2]))
-        return dates
-    cas_de = {cas.code: cas for cas in cas_types}
-    carrieres, _ecartees = carrieres_de_la_grille(simulateur, cas_types, generations, "droit")
+    exiger_le_portage(simulateur.parametres, cas_types)
+    cohortes = {}
+    for cas in cas_types:
+        for generation in generations:
+            cohortes[f"{cas.code}|{generation}"] = (cas, generation)
+            for decalage in decalages:
+                propre = propre_de(cas, generation + decalage)
+                if decalage or propre is not cas:
+                    cohortes[f"{cas.code}|{generation}|{decalage}"] = (
+                        propre, generation + decalage)
+    departs, _refus = departs_au_portage(
+        simulateur, cohortes, "droit",
+        pont.paquet_des_donnees(simulateur.parametres.racine_donnees))
     dates = {}
-    for (code, generation), carriere in carrieres.items():
-        cas = cas_de[code]
-        for decalage in decalages:
-            propre = propre_de(cas, generation + decalage)
-            date = DateMois(carriere.annee_liquidation + decalage, carriere.mois_liquidation)
-            if decalage or propre is not cas:
-                try:
-                    date = carriere_de_la_grille(simulateur, propre, generation + decalage,
-                                                 "droit").date_liquidation
-                except (ValueError, KeyError):
-                    pass
-            dates[(code, generation, decalage)] = date
+    for cas in cas_types:
+        for generation in generations:
+            grille = departs.get(f"{cas.code}|{generation}")
+            if grille is None:
+                continue
+            for decalage in decalages:
+                cohorte = departs.get(f"{cas.code}|{generation}|{decalage}")
+                dates[(cas.code, generation, decalage)] = (
+                    DateMois(grille[1] + decalage, grille[2]) if cohorte is None
+                    else DateMois(cohorte[1], cohorte[2]))
     return dates
 
 
@@ -791,17 +774,25 @@ def dates_a_l_age_legal(parametres, entree_depuis: int | None = None,
     catégories actives, que leur classement ouvre plus tôt, gardent leur
     départ, comme ceux qui ont le taux plein dès l'ouverture, carrières
     longues et inaptes, et ceux qui partent à un âge ou après leurs
-    services."""
-    from .simulateur import Simulateur
+    services. L'âge légal se lit au portage (``pont.droit``,
+    ``scenario_actuel.ages_ouverture.age``), une fois pour toutes les
+    cohortes, sur le paquet des données du jour."""
+    from . import pont
 
-    ages_legaux = Simulateur(parametres).scenario_actuel.ages_ouverture
     taux_plein = dates_des_departs(parametres, entree_depuis, cas_types, generations,
                                    durees=durees)
     ouvertures = dates_des_departs(parametres, entree_depuis, cas_types, generations,
                                    a_l_ouverture=True, durees=durees)
+    cohortes = sorted({generation + decalage for _code, generation, decalage in ouvertures})
+    ages_legaux, refus = pont.droit(
+        {str(cohorte): ("scenario_actuel.ages_ouverture.age", pont.MOTEUR, cohorte)
+         for cohorte in cohortes},
+        parametres, pont.paquet_des_donnees(parametres.racine_donnees))
+    if refus:
+        raise ValueError(f"le portage ne lit pas l'âge légal de ces générations : {refus}")
     legales = {}
     for (code, generation, decalage), date in ouvertures.items():
-        legal = ages_legaux.age(generation + decalage)
+        legal = ages_legaux[str(generation + decalage)]
         mois_atteints = (date.annee - generation - decalage) * 12 + date.mois - 1
         if (legal is not None and date.rang < taux_plein[(code, generation, decalage)].rang
                 and mois_atteints >= round(legal[0] * 12)):

@@ -470,7 +470,7 @@ def test_le_cout_des_avantages_liquide_sa_grille_au_portage_sans_les_jumeaux(mem
     chaque nombre sous son type, chaque refus sous sa raison."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from retraite_notionnelle import avantages, cout
+    from retraite_notionnelle import avantages
     from retraite_notionnelle.config import RACINE_DONNEES
     from retraite_notionnelle.donnees.depenses import DepensesRetraite
     from retraite_notionnelle.donnees.population import Population
@@ -482,8 +482,7 @@ def test_le_cout_des_avantages_liquide_sa_grille_au_portage_sans_les_jumeaux(mem
     _interdire(monkeypatch, (*_jumeaux_qui_datent_et_batissent(),
                              f"{SCENARIO_ACTUEL_PYTHON}.__init__",
                              f"{SCENARIO_ACTUEL_PYTHON}.calculer",
-                             (avantages, "scenarios_neutralises"),
-                             (cout, "_carrieres_voisines"), (avantages, "_carrieres_voisines")))
+                             (avantages, "scenarios_neutralises")))
     au_portage = valeur_figee("décomposition des avantages",
                               avantages.decomposer(Simulateur(Parametres())))
     valeur_figee("coût des avantages", avantages.calculer_avantages(
