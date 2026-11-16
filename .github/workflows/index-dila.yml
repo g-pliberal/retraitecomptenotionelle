@@ -10,7 +10,7 @@
 #   (quelques minutes). Cocher « reconstruire » pour repartir du dump global
 #   (une heure et demie pour le JORF, une heure pour LEGI), ce qui est aussi
 #   ce qui se passe tant qu'aucun index n'est publié.
-# - Chaque lundi à 4 h UTC : la mise à jour seule.
+# - Chaque lundi à 4 h 17 UTC (non à heure pile, que GitHub retarde) : la mise à jour seule.
 #
 # KALI, la base des conventions collectives (action 184, étape 5), suit le
 # même chemin : entière, elle se construit en quelques minutes, et sa mise à
@@ -34,7 +34,7 @@ on:
         type: boolean
         default: false
   schedule:
-    - cron: "0 4 * * 1"
+    - cron: "17 4 * * 1"
 
 permissions:
   contents: write

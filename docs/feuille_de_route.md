@@ -7946,18 +7946,18 @@ dire si la copie de l'UNSA est la sienne.
 
 ### 184. L'histoire d'un article de loi, lue dans l'index de la DILA : ce que le dépôt lexifina/global-law fait mieux, repris, et ce qu'il fait mal, écarté — `en cours`
 
-**Reprise, au 15 novembre 2026.** L'histoire d'un article se lit dans l'index,
+**Reprise, au 16 novembre 2026.** L'histoire d'un article se lit dans l'index,
 lois et conventions collectives, GitHub inscrit chaque lundi les rédactions
 nouvelles des lois, et les cent rédactions en vigueur que les fiches
 n'avaient pas lues sont classées. Les accords Agirc-Arrco sont entrés dans la
 liste des textes le 15 novembre : 319 rédactions de 42 textes, lues dans la
-base des conventions collectives, toutes « à examiner ». Aucune étape n'est
-en cours. Restent : faire relire ces accords par GitHub chaque lundi, ce qui
-touche le workflow et attend l'accord du propriétaire ; rattacher ces
-rédactions aux fiches de la retraite complémentaire ; le lundi 16 novembre,
-vérifier que GitHub a commité l'inscription et lancé la suite ; le texte qui
-a écrit chaque version, remis à la loi de financement pour 2027. La note :
-`184/2026-11-15-accords-agirc-arrco.md`.
+base des conventions collectives, toutes « à examiner ». Le 16 novembre,
+GitHub a inscrit 68 rédactions et lancé la suite ; il part désormais à 4 h 17
+UTC. Aucune étape n'est en cours. Restent : faire relire ces accords par
+GitHub chaque lundi, ce qui touche le workflow et attend l'accord du
+propriétaire ; rattacher ces rédactions aux fiches de la retraite
+complémentaire ; le texte qui a écrit chaque version, remis à la loi de
+financement pour 2027. La note : `184/2026-11-15-accords-agirc-arrco.md`.
 
 **D'où elle vient.** Le 3 novembre 2026, le propriétaire signale
 `https://github.com/lexifina/global-law` : « Je crois qu'on fait la même chose

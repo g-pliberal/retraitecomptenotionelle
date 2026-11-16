@@ -403,7 +403,8 @@ def test_le_workflow_publie_kali_chaque_lundi_comme_les_autres_bases():
     travail = flux["jobs"]["index"]
     assert sorted(travail["strategy"]["matrix"]["base"]) == sorted(index.BASES)
     # PyYAML lit la clé `on` comme le booléen vrai.
-    assert flux[True]["schedule"] == [{"cron": "0 4 * * 1"}]
+    # 4 h 17, non 4 h pile : GitHub retarde les tâches planifiées à heure ronde.
+    assert flux[True]["schedule"] == [{"cron": "17 4 * * 1"}]
     for commande in ("--recuperer", "--mettre-a-jour", "--publier"):
         etape = next(e for e in travail["steps"] if commande in e.get("run", ""))
         assert "if" not in etape, commande
