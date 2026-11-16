@@ -140,7 +140,9 @@ sources:
       attestations d'avant 2011 « pour des dates d'effet de pension jusqu'au 1er juin
       2011 au plus tard ne doivent pas être remises en cause ». Le modèle, qui n'a pas
       de date de demande, lit 164 jusqu'à une pension prenant effet le 1er juin 2011,
-      165 au-delà, la fiabilité ramenée à moyenne pour les pensions de 2011
+      165 au-delà, la fiabilité ramenée à moyenne pour les pensions de 2011. La
+      circulaire est celle de la caisse : la fonction publique garde la table de la
+      génération, comme OpenFisca (tests/test_oracle_carriere_longue_fonction_publique.py)
     date: 2011-03-17
   - type: legifrance
     reference: >-

@@ -426,7 +426,11 @@ export function dureeRequise(moteur, periode, carriere) {
         if (effet < anneeTable * 12 + moisTable) {
           return [DUREE_UNIQUE_2003, parGeneration[1]];
         }
-        for (const [premiere, suivante, [annee, mois], trimestres] of DUREES_AVANT_LE_DECRET) {
+        // La circulaire Cnav 2011/25 ne vaut que pour la caisse : la fonction
+        // publique garde la table (OpenFisca de même, test de l'oracle).
+        const avantLeDecret = periode.bareme_decote === "fonction_publique"
+          ? [] : DUREES_AVANT_LE_DECRET;
+        for (const [premiere, suivante, [annee, mois], trimestres] of avantLeDecret) {
           if (carriere.generation >= premiere && carriere.generation < suivante
               && effet <= annee * 12 + mois && trimestres < parGeneration[0]) {
             // La date de la demande, que le modèle n'a pas, décide en 2011.

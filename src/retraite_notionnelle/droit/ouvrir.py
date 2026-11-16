@@ -552,7 +552,11 @@ def duree_requise(moteur, periode: PeriodeRegime,
                 effet = (carriere.annee_liquidation, carriere.mois_liquidation)
                 if effet < DUREE_PAR_GENERATION_EFFET:
                     return DUREE_UNIQUE_2003, par_generation[1]
-                for premiere, suivante, limite, trimestres in DUREES_AVANT_LE_DECRET:
+                # La circulaire Cnav 2011/25 ne vaut que pour la caisse : la
+                # fonction publique garde la table (OpenFisca de même).
+                avant_le_decret = (() if periode.bareme_decote == "fonction_publique"
+                                   else DUREES_AVANT_LE_DECRET)
+                for premiere, suivante, limite, trimestres in avant_le_decret:
                     if (premiere <= carriere.generation < suivante
                             and effet <= limite and trimestres < par_generation[0]):
                         # La date de la demande, que le modèle n'a pas,

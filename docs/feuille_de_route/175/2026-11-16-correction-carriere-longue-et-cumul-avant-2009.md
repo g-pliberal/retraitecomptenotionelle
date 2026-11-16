@@ -93,6 +93,18 @@ suspendait 800 € par mois, il les sert désormais : 19 200 € sur les deux an
 dernières années, troisième limite de l'Agirc-Arrco depuis la 2007-7-DRE, ne vaut dans
 le modèle qu'à compter de 2009, faute d'avoir lu la date d'effet de cette circulaire.
 
+## Correctif du même jour : la fonction publique hors de la circulaire 2011/25
+
+La suite de GitHub a rougi sur `test_oracle_carriere_longue_fonction_publique.py` : le
+fonctionnaire de l'État né en 1953, parti en carrière longue en 2010 avec 172
+trimestres, s'ouvrait avec 164 + 8 trimestres, quand OpenFisca lui oppose 165 + 8
+(D. 16-1, II, du code des pensions, et le décret n° 2010-1734, article 9, qui vise
+aussi les fonctionnaires). La circulaire 2011/25 est celle de la Cnav ; aucun texte lu
+ne dit que le service des retraites de l'État appliquait la même tolérance. La règle
+des nés de 1953 à 1955 ne vaut donc plus que hors de la fonction publique, qui garde
+la table de sa génération. Ce que le service des retraites de l'État faisait de ces
+départs reste à lire.
+
 ## Ce qui reste
 
 La circulaire 2007-7-DRE de l'Agirc-Arrco, pour sa date d'effet et la moyenne des
