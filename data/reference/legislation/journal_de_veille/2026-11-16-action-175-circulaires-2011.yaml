@@ -1,0 +1,40 @@
+date: "2026-11-16"
+session: "action 175, étape 6 : les 68 circulaires, lettres et instructions de 2011 que la base de la Cnav cite sans thème"
+consulte: >-
+  Les 68 références sans thème et à lire que le registre date de 2011 dont le titre
+  commence par « Circulaire », « Lettre », « Instruction », « Note d'information » ou
+  « Diffusion d'instructions », relues par l'API de la base le 16 novembre 2026 vers
+  13 h 15 UTC (/reference/referencesByFileLeafRef/), toutes servies, 31 en page et 37 en
+  PDF lus au site (/Pdf/), dont deux scans lus à l'image ; toutes lues en entier, par cinq
+  agents de la session, un lot chacun, dont chaque citation d'un texte servi (177) a été
+  retrouvée mot pour mot. Pour les confronter : les fiches reversion, age_legal_par_generation,
+  age_annulation_decote, duree_requise_par_generation, carriere_longue,
+  retraite_anticipee_handicap, inaptitude_invalidite_penibilite_amiante,
+  fin_indemnisation_chomage, residence_et_minimum_vieillesse, minimum_vieillesse,
+  cumul_emploi_retraite_et_retraite_progressive, rachats_et_versements,
+  totalisation_des_periodes_etrangeres, pension_proratisee, revalorisation_des_pensions,
+  csg_des_pensions_selon_le_revenu, cotisation_maladie_des_non_residents, service_civique,
+  micro_social_abattement, abattement_rci ; les séries smic_horaire.csv,
+  validation_trimestres.csv, revalorisation_pensions.csv, age_ouverture_requis.csv,
+  age_annulation_decote.csv, duree_assurance_requise.csv, carriere_longue.csv,
+  accords_internationaux.yaml, micro_social.yaml ; le code du cumul
+  (src/retraite_notionnelle/droit/cumul.py) ; les limites docs/limites/. Ni Légifrance, ni
+  le Journal officiel, ni l'index de la DILA.
+trouve: >-
+  Le registre range les 68 (32 limite, 36 hors_modele), sans raison neuve. Conformes : le
+  SMIC de 9 €, les plafonds de la réversion de 2011, le trimestre à 1 800 €, la
+  revalorisation du 1er avril 2011, les âges et durées des nés de 1951 à 1954 et depuis
+  1956, la carrière longue, la retraite des handicapés. Les âges à quatre mois par
+  génération des circulaires de 2011 sont périmés par l'accélération de décembre 2011, que
+  le dépôt suit. Deux écarts neufs : le cumul total des retraités anticipés d'avant le
+  1er juillet 2011 s'ouvre à 60 et 65 ans (circulaire Cnav n° 2011/61, point 33), quand
+  le modèle prend les âges de la génération ; la réversion d'un assuré mort avant son
+  départ prend, depuis le 1er juillet 2011, la génération des 57 ans l'année du décès
+  (R. 353-3, décret n° 2011-620 ; circulaire RSI n° 2011/017), que reversion.yaml ne
+  déclare pas. Un candidat d'avant confirmé : 164 ou 165 trimestres provisoires pour les
+  nés de 1953 à 1956 partis avant le décret de leur génération. Note
+  docs/feuille_de_route/175/2026-11-16-etape-6-circulaires-2011.md.
+reste: >-
+  Les 176 circulaires de 2012 à 2017, par période, la lecture à rebours avançant depuis
+  2017 ; les autres natures de l'étape 6 ; R. 353-3 et le fondement du point 33 de la
+  n° 2011/61, à relire au Journal officiel.

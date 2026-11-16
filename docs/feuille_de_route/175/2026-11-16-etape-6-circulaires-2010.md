@@ -1,17 +1,5 @@
 # Étape 6, circulaires de 2010 : les 66 références sans thème de la dix-septième période, relues par l'API
 
-**Reprise, au 16 novembre 2026.** Trois natures de l'étape sont rangées ; la quatrième, les
-circulaires, lettres et instructions sans thème, l'est de 1936 à 2010 (cette note et celles
-d'avant). Une seconde lecture avance à rebours et a fait 2022 à 2026, avec son propre bloc
-(note de 2022 à 2025 à rebours). Restent 278 circulaires, de 2011 à 2021 ; la lecture dans
-l'ordre reprend à 2011 (68), puis 2012 (37), 2013 (44), et s'arrête où elle rejoint
-l'autre. Viennent ensuite, une session par nature : les 96 autres textes, les 74 que la
-base nomme sans les servir, les 107 accords. Méthode : la base relue par l'API
-(`_reference` de `cnav_legislation.py`), les PDF lus au site sous `/Pdf/<nom>`, chaque
-texte lu en entier, chaque citation vérifiée par script. 2010 n'a qu'un écart neuf,
-étroit : l'abandon de cotisations des indépendants d'outre-mer, qui minore leurs droits
-(ici).
-
 **Le 16 novembre 2026, ce qui est fait.**
 
 - *La période* : les références du registre sans thème et à lire dont le titre commence
