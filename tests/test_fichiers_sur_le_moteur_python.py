@@ -55,7 +55,7 @@ FICHIERS = (
     "test_facade.py", "test_facade_jumeau.py",
     "test_facteurs_depense.py",
     "test_grille_large.py",
-    "test_independants.py", "test_indexation_programme.py",
+    "test_indexation_programme.py",
    
     "test_mayotte.py",
     "test_moteur.py", "test_outre_mer.py",

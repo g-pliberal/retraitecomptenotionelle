@@ -46,16 +46,13 @@ from types import SimpleNamespace
 
 import pytest
 
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere, LigneRelevee, Metier
+from retraite_notionnelle.carriere import AnneeCarriere, LigneRelevee, Metier
 from retraite_notionnelle.config import RACINE_DONNEES
-from retraite_notionnelle.donnees import regimes
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes
-from retraite_notionnelle.droit import acquerir, compter, coordonner
-from retraite_notionnelle.moteur.compte import ConstructeurCompte
 from retraite_notionnelle.remuneration import (
     ConstructeurFiche, bloc_droit_en_vigueur, charger_prelevements, smic_annuel)
-from retraite_notionnelle.simulateur import Simulateur
 
+from facade import Carriere, ConstructeurCompte, Simulateur, acquerir, compter, coordonner
 from outils_pont import simulations_du_portage
 from outils_valeurs import valeur_figee
 
@@ -162,14 +159,25 @@ def _pension_rci(simulateur, niveau: float) -> float:
     return {p.regime: p for p in resultat.pensions_par_regime}["rci"].montant
 
 
-def test_les_points_du_rci_suivent_le_plafond_propre(simulateur, monkeypatch):
+def test_les_points_du_rci_suivent_le_plafond_propre(simulateur, request):
     """Au-dessus du plafond propre, le point de cotisation de plus achète des
     points : la pension RCI d'un artisan né en 1960 gagne quelques millièmes ;
-    sous lui, rien ne bouge."""
+    sous lui, rien ne bouge. Sans plafond propre, la fiche du RCI coupe ses
+    deux tranches au plafond de la Sécurité sociale de l'année."""
+    import re
+
+    import facade
+    from retraite_notionnelle.config import Parametres
+
+    def au_plafond_de_l_annee(texte: str) -> str:
+        return re.sub(r"    borne_(?:basse|haute)_par_annee:\n(?:      \d+: \d+\n)+", "", texte)
+
+    copie = facade.donnees_retouchees(
+        request, ("le RCI sans plafond propre",),
+        {"reference/regimes/rci.yaml": au_plafond_de_l_annee})
+    sans_plafond_propre = Simulateur(Parametres(racine_donnees=copie))
     propre = {niveau: _pension_rci(simulateur, niveau) for niveau in (0.8, 2.0)}
-    monkeypatch.setattr(regimes.PeriodeRegime, "bornes_de_l_annee",
-                        lambda self, annee: (None, None))
-    au_plafond = {niveau: _pension_rci(Simulateur(), niveau) for niveau in (0.8, 2.0)}
+    au_plafond = {niveau: _pension_rci(sans_plafond_propre, niveau) for niveau in (0.8, 2.0)}
     assert propre[0.8] == pytest.approx(au_plafond[0.8])
     assert 1.001 < propre[2.0] / au_plafond[2.0] < 1.01
 
@@ -431,7 +439,7 @@ def test_les_annees_d_avant_1973_ont_leur_regime():
     """L'artisan et le commerçant de 1949 à 1972 relèvent des droits en points ;
     la CANCAVA et l'ORGANIC alignées commencent en 1973."""
     catalogue = CatalogueRegimes(RACINE_DONNEES)
-    affiliations = Simulateur().scenario_actuel.affiliations
+    affiliations = Simulateur().affiliations
     for statut, avant, apres in (("artisan", "cancava_avant_1973", "cancava"),
                                  ("commercant", "organic_avant_1973", "organic")):
         assert affiliations.regimes(statut, 1972) == (avant,)
@@ -684,8 +692,7 @@ def test_le_conjoint_route_ses_regimes():
     """Le régime de base des artisans ou des commerçants dès l'assurance
     volontaire de 1983, la complémentaire de sa profession depuis 2007, le RCI
     depuis 2013, le régime général depuis 2018."""
-    from retraite_notionnelle.carriere import Affiliations
-    affiliations = Affiliations(RACINE_DONNEES)
+    affiliations = Simulateur().affiliations
     attendus = {"conjoint_collaborateur_artisan": {
                     1983: ["cancava"], 2006: ["rsi"], 2007: ["rsi", "rco_artisans"],
                     2013: ["rsi", "rci"], 2018: ["regime_general", "rci"]},
