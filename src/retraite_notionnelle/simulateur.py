@@ -463,6 +463,7 @@ class Simulateur(SimulateurDeDonnees):
         # versionné, dont `scripts/construire_donnees.py` est le seul écrivain.
         comparaison = Comparaison(
             carriere=carriere,
+            trimestres_actuels=carriere.trimestres_actuels,
             actuel=actuel,
             **notionnels,
             regime_fusionne=self.regime_fusionne,

@@ -4,10 +4,10 @@ et qui a payé le compte notionnel, sous leurs types, et leur présentation,
 sans aucun corps de règle. ``simulateur.py`` les réimporte le temps du
 retrait.
 
-Le résumé de la carrière (:meth:`Comparaison.dictionnaire`) lit encore ses
-trimestres validés (``trimestres_actuels``), une règle que seule la carrière
-de ``carriere.py`` porte : le pont, qui la bâtit, la sert ; la carrière nue
-n'en a pas.
+Le résumé de la carrière (:meth:`Comparaison.dictionnaire`) dit ses
+trimestres validés (``trimestres_actuels``) tels que le simulateur les a
+comptés, et que la comparaison tient en champ : la carrière nue n'en a pas
+la règle.
 """
 
 from __future__ import annotations
@@ -85,6 +85,10 @@ class Comparaison:
     """Les six résultats, côte à côte, pour une même carrière."""
 
     carriere: Carriere
+    #: Les trimestres validés de la carrière au sens du droit en vigueur, tels
+    #: que le simulateur les a comptés (``trimestresActuels`` du portage) :
+    #: une règle, que la carrière nue ne porte pas (action 161).
+    trimestres_actuels: int
     actuel: ResultatActuel
     notionnel_retroactif: ResultatNotionnel
     notionnel_prospectif: ResultatNotionnel
@@ -288,7 +292,7 @@ class Comparaison:
             f"Assuré : {c.identifiant} — né(e) en {c.date_naissance}, sexe {c.sexe}",
             f"Carrière : {c.premiere_annee}-{c.derniere_annee}, "
             f"{len(c.annees_cotisees)} années cotisées, "
-            f"{c.trimestres_actuels} trimestres au sens actuel",
+            f"{self.trimestres_actuels} trimestres au sens actuel",
             f"Liquidation : {formater_age(c.age_liquidation)}, "
             f"en {c.date_liquidation}",
             f"Âge de référence : {ecart.age_reference:g} ans -> {ecart}",
@@ -460,7 +464,7 @@ class Comparaison:
                 "annee_liquidation": self.carriere.annee_liquidation,
                 "mois_liquidation": self.carriere.mois_liquidation,
                 "annees_cotisees": len(self.carriere.annees_cotisees),
-                "trimestres_actuels": self.carriere.trimestres_actuels,
+                "trimestres_actuels": self.trimestres_actuels,
                 "affiliations": list(self.carriere.affiliations_utilisees()),
             },
             "age_reference": {

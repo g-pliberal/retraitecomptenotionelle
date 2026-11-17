@@ -1950,7 +1950,12 @@ const CONTENUS_QUI_NE_PASSENT_PAS = new Set(["liquidation"]);
  * et son contenu, quand il passe.
  */
 function comparaisonTelleQuelle({ journal, ...comparaison }) {
-  return { ...telQuel(comparaison), journal: journalTelQuel(journal) };
+  return {
+    ...telQuel(comparaison),
+    // Une règle de la carrière, que la carrière nue du Python ne porte pas.
+    trimestres_actuels: comparaison.carriere.trimestresActuels,
+    journal: journalTelQuel(journal),
+  };
 }
 
 /**

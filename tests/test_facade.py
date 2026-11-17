@@ -354,6 +354,26 @@ def test_le_depart_que_la_proposition_reporte_revient_avec_sa_carriere(simulateu
     assert comparaison.carriere_liberal.annee_liquidation == 2030
 
 
+def _nue(carriere):
+    """La carrière des règles recopiée champ à champ sous le type nu du pont."""
+    return CarriereNue(**{champ.name: getattr(carriere, champ.name)
+                          for champ in dataclasses.fields(CarriereNue)})
+
+
+def test_la_comparaison_tient_ses_trimestres_du_portage(simulateur):
+    """Le résumé de la carrière dit les trimestres validés tels que le portage
+    les compte (``trimestresActuels``), sans les redemander à la carrière, qui
+    peut être la nue (action 161) : né en janvier 1965, salarié de 23 à
+    64 ans, quarante et une années pleines, de 1988 à 2028, à quatre
+    trimestres, et le seul mois de janvier 2029, qui n'en valide aucun :
+    164."""
+    comparaison = simulateur.simuler(simulateur.carriere_simple(**SALARIE))
+    nue = dataclasses.replace(comparaison, carriere=_nue(comparaison.carriere),
+                              carriere_liberal=_nue(comparaison.carriere_liberal))
+    assert nue.dictionnaire()["assure"]["trimestres_actuels"] == 164
+    assert "164 trimestres au sens actuel" in nue.tableau()
+
+
 def test_les_neutralisations_declarees_reviennent_avec_la_comparaison(simulateur):
     """Les neutralisations déclarent ce que les scénarios notionnels retirent,
     sans rien commander (``tests/test_simulateur.py``) : le portage sert les
