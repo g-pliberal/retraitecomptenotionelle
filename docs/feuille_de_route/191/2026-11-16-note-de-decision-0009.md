@@ -44,4 +44,7 @@ un scénario qui garde une loi passée et une réforme fictive ; la table
 fusionnée, fabriquée et jamais écrite à la main.
 
 **Ce que la note ne dit pas.** Si le domaine `cumul`, dont l'étape 2 attend,
-passe avant ou après cet ordre : au propriétaire.
+passe avant ou après cet ordre : au propriétaire. Il a tranché le 17 novembre,
+ni avant ni après : l'étape 2 du `cumul` se mène en parallèle, chacune dans sa
+session, sur Fable 5.2, une fois la suite verte, avec des sources officielles
+seulement ; et la correction de la surcote de 2004 à 2006 est approuvée.
