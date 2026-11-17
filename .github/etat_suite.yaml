@@ -1,46 +1,15 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: rouge
-sources: 10dd6cc3a5fd3508a24d4bffb99c32a84a377dc8
-date: 2026-11-17T05:51:46Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44025222159
-echecs:
-  - "FAILED tests/test_controle_drees_panorama.py::test_la_grille_commence_ses_carrieres_trop_tard - AttributeError: 'Carriere' object has no attribute 'trimestres_par_annee'"
-  - "FAILED tests/test_web.py::test_simulation_en_dictionnaire - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web.py::test_un_statut_ferme_est_refuse_a_qui_y_entre_apres_la_fermeture - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web.py::test_la_fermeture_se_lit_au_mois_et_sur_la_date_d_entree - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web.py::test_le_menu_des_statuts_est_date - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_avantages.py::test_le_recalcul_rend_un_montant_positif_et_conserve_la_pension - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "FAILED tests/test_avantages.py::test_les_deux_mesures_de_la_categorie_active_coincident - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "FAILED tests/test_avantages.py::test_les_variantes_ne_changent_que_ce_qu_elles_retirent - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "FAILED tests/test_avantages.py::test_le_retrait_de_l_apprentissage_ne_retire_que_le_complement - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "FAILED tests/test_web.py::test_la_complementaire_de_l_artisan_est_reduite_comme_sa_base_depuis_juillet_2024 - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "FAILED tests/test_web.py::test_la_complementaire_d_une_premiere_pension_de_2027_perd_ce_que_la_base_n_absorbe_pas - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web.py::test_la_complementaire_est_servie_entiere_quand_la_base_absorbe_la_reduction - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web.py::test_l_allocation_de_l_ircantec_est_reduite_comme_la_base_puis_servie_entiere - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "FAILED tests/test_web.py::test_un_depassement_qui_n_epuise_pas_un_mois_ne_suspend_rien - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "FAILED tests/test_web.py::test_la_seconde_retraite_du_rci_de_moins_de_quarante_points_est_versee_en_une_fois - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "FAILED tests/test_web.py::test_la_seconde_retraite_du_rci_se_dit_en_points - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "FAILED tests/test_web_revues.py::test_la_page_risque_chiffre_le_prelevement_depuis_le_modele - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web.py::test_le_sexe_ne_change_rien_par_defaut - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web_revues.py::test_le_simulateur_dit_la_garantie_degressive - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "FAILED tests/test_web.py::test_la_formule_affichee_retrouve_la_pension_du_regime[d\xe9part \xe0 l'\xe2ge de r\xe9f\xe9rence-champs0] - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web.py::test_la_formule_affichee_retrouve_la_pension_du_regime[d\xe9part anticip\xe9 de deux ans-champs1] - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web.py::test_la_formule_affichee_retrouve_la_pension_du_regime[d\xe9part tr\xe8s anticip\xe9-champs2] - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web.py::test_la_formule_affichee_retrouve_la_pension_du_regime[bas salaire-champs3] - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "FAILED tests/test_web.py::test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web.py::test_les_pages_au_hasard_calculent_et_refusent_comme_le_modele - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "FAILED tests/test_web.py::test_les_refus_de_saisie_disent_le_mot_du_modele - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web.py::test_le_tableau_par_origine_s_additionne_colonne_par_colonne[carri\xe8re ordinaire-champs0] - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web.py::test_le_tableau_par_origine_s_additionne_colonne_par_colonne[cadre-champs1] - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web.py::test_le_tableau_par_origine_s_additionne_colonne_par_colonne[fonctionnaire, rente RAFP-champs2] - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "FAILED tests/test_web.py::test_le_tableau_par_origine_s_additionne_colonne_par_colonne[m\xe8re de trois enfants-champs3] - AttributeError: 'Carriere' object has no attribute 'prolongee'"
+etat: vert
+sources: 8f09f4b0e7e9b0f340df07fb1431cdb75bc897af
+date: 2026-11-17T06:11:15Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44025722444
 presomptions: vert
 durees:
-  fabrique: 451
-  suite: 411
-  tranche_1: 282
-  tranche_2: 408
-  tranche_3: 411
-  tranche_4: 400
+  fabrique: 450
+  suite: 622
+  tranche_1: 395
+  tranche_2: 622
+  tranche_3: 397
+  tranche_4: 420
   garde: 135
