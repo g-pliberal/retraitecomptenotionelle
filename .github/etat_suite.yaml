@@ -1,17 +1,18 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: vert
-sources: 682ab5e943394d8a14cb55f5cd094ad6baf257bd
-date: 2026-11-17T01:21:44Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43991442682
+sources: 51d5e8b139687aef6a200b0f288d485c9c9ec99d
+date: 2026-11-17T01:41:02Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/43994895651
 presomptions: rouge
 presomptions_echecs:
   - "FAILED tests/test_facade.py::test_ce_que_la_carriere_compte_se_demande_au_portage - AssertionError: assert 'mars 2024' == 'avril 2024'"
+  - "FAILED tests/test_facade.py::test_les_copies_et_les_services_de_la_carriere_se_demandent_au_portage - assert [0.8333333333...1.0, 1.0, ...] == approx([0.833...25 ± 2.5e-07])"
 durees:
-  fabrique: 438
-  suite: 575
-  tranche_1: 324
-  tranche_2: 388
-  tranche_3: 575
-  tranche_4: 478
-  garde: 142
+  fabrique: 417
+  suite: 670
+  tranche_1: 599
+  tranche_2: 313
+  tranche_3: 670
+  tranche_4: 526
+  garde: 168
