@@ -18,6 +18,7 @@ from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.web.site import ErreurSite
 
+import facade
 from facade import Carriere, Simulateur
 from outils_pont import refus_de_la_saisie, saisie_du_portage
 
@@ -93,7 +94,7 @@ def test_la_chronologie_date_l_activite_apres_le_depart(simulateur):
     assert fait["sorte"] == chrono.EMPLOI and fait["attributs"]["apres_depart"]
     assert (fait["debut"], fait["fin"]) == ("2023-02-01", "2025-02-01")
     assert fait not in chrono.periodes(carriere.chronologie, carriere.personne)
-    assert carriere.emploi_retraite == {
+    assert facade.fait(carriere, "emploi_retraite") == {
         "debut": DateMois(2023, 2), "fin": DateMois(2025, 2),
         "affiliation": "salarie_prive_non_cadre", "employeur": "autre"}
 
@@ -107,8 +108,9 @@ def test_la_carriere_garde_ses_annees_a_part(simulateur):
     premiere = avec.lignes_apres_depart[0]
     assert premiere.fraction_annee == pytest.approx(11 / 12)
     assert premiere.trimestres_valides <= 3
-    assert avec.liquidee_au(DateMois(2023, 1)).lignes_apres_depart == avec.lignes_apres_depart
-    assert avec.avec_lignes(avec.lignes).lignes_apres_depart == avec.lignes_apres_depart
+    assert (facade.liquidee_au(avec, DateMois(2023, 1)).lignes_apres_depart
+            == avec.lignes_apres_depart)
+    assert facade.avec_lignes(avec, avec.lignes).lignes_apres_depart == avec.lignes_apres_depart
     moteur = simulateur.scenario_actuel
     assert (moteur.calculer(avec).pension_annuelle
             == pytest.approx(moteur.calculer(sans).pension_annuelle))

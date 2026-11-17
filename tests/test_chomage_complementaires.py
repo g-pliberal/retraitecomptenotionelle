@@ -284,7 +284,7 @@ def test_moins_de_trente_jours_avant_1974_ne_valent_rien(simulateur):
             annee_naissance=1945, sexe="H", affiliation="salarie_prive_non_cadre",
             mois_naissance=1, age_debut=19, age_liquidation=60, niveau_salaire=1.0,
             profil_carriere="plat", interruptions={annee: "chomage_indemnise"})
-        return carriere.avec_lignes([
+        return facade.avec_lignes(carriere, [
             replace(ligne, fraction_annee=fraction,
                     revenu_reference=ligne.revenu_reference * fraction)
             if ligne.annee == annee else ligne for ligne in carriere.lignes])
@@ -420,7 +420,7 @@ def test_la_coupure_respecte_le_releve(simulateur):
     carriere = Carriere.depuis_releve(
         annee_naissance=1958, sexe="H", releve=releve, age_liquidation=66,
         macro=simulateur.macro)
-    assert carriere.annees_declarees >= set(range(2016, 2024))
+    assert facade.fait(carriere, "annees_declarees") >= set(range(2016, 2024))
     assert indemnisation_bornee(simulateur.scenario_actuel, carriere) is carriere
 
 

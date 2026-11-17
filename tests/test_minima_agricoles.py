@@ -384,7 +384,8 @@ def test_le_forfait_que_les_plans_retranchent_ne_compte_pas_les_annees_secondair
     carriere = _chef(simulateur, 1940, 65, metiers=metiers)
     par_annee = releve.construire(simulateur.scenario_actuel, carriere).durees.par_annee[
         "assurance"]["msa_non_salaries"]
-    secondaires = [a for a in par_annee if carriere.qualite_agricole(a) == "chef_secondaire"]
+    qualites = facade.qualites_agricoles(carriere, par_annee)
+    secondaires = [a for a in par_annee if qualites[a] == "chef_secondaire"]
     assert secondaires == list(range(1982, 1986)) and min(par_annee) == 1982
     resultat, avantages, _ = _resultat(simulateur, carriere)
     exploitant = resultat.exploitant_agricole
@@ -669,7 +670,8 @@ def test_la_duree_reconstituee_perd_quinze_points_par_annee_secondaire(simulateu
     assert carriere.annee_liquidation == 1996
     par_annee = releve.construire(simulateur.scenario_actuel, carriere).durees.par_annee[
         "assurance"]["msa_non_salaries"]
-    secondaires = [a for a in par_annee if carriere.qualite_agricole(a) == "chef_secondaire"]
+    qualites = facade.qualites_agricoles(carriere, par_annee)
+    secondaires = [a for a in par_annee if qualites[a] == "chef_secondaire"]
     assert secondaires == list(range(1982, 1987)) and min(par_annee) == 1982
     resultat, _, _ = _resultat(simulateur, carriere)
     points = _points_au_compte(simulateur, resultat,
@@ -1237,8 +1239,8 @@ def test_la_revision_prend_effet_le_mois_qui_suit_la_modification(simulateur):
     carriere = _chef(simulateur, 1952, 64, sexe="F", metiers=[
         Metier("collaborateur_agricole", 20.0, niveau_salaire=0.3)],
         etranger={"pensions": [{"pays": "DE", "age": 65 + 11 / 12, "mensuel": 500.0}]})
-    assert [(p.debut.annee, p.debut.mois) for p in carriere.pensions_etrangeres] == [
-        (2017, 12)]
+    assert [(p.debut.annee, p.debut.mois)
+            for p in facade.fait(carriere, "pensions_etrangeres")] == [(2017, 12)]
     resultat, _, _ = _resultat(simulateur, carriere)
     exploitant = resultat.exploitant_agricole
     assert exploitant.pmr > 0
@@ -1439,8 +1441,8 @@ def test_le_complement_ne_retranche_que_les_points_de_chef(simulateur):
     carriere = _chef(simulateur, 1962, 64, metiers=metiers)
     resultat, avantages, _ = _resultat(simulateur, carriere)
     droits = releve.construire(simulateur.scenario_actuel, carriere).droits
-    qualite = carriere.qualite_agricole
     credits = [(annee, p) for code, annee, p, _ in droits.points if code == completer.RCO]
+    qualite = facade.qualites_agricoles(carriere, {annee for annee, _ in credits}).get
     de_chef = sum(p for annee, p in credits if qualite(annee) == "chef")
     du_collaborateur = sum(p for annee, p in credits if qualite(annee) == "collaborateur")
     gratuits = droits.gratuits[completer.RCO][0]
@@ -1465,9 +1467,10 @@ def test_le_chef_a_titre_secondaire_ne_compte_que_depuis_2026(simulateur):
         metiers = [Metier("salarie_prive_non_cadre", 20.0, niveau_salaire=0.3),
                    Metier("exploitant_agricole", 30.0, niveau_salaire=0.1, cumul=True)]
         carriere = _chef(simulateur, naissance, liquidation, metiers=metiers)
-        annees = [a for a in range(carriere.lignes[0].annee, carriere.annee_liquidation)
-                  if carriere.qualite_agricole(a) == "chef_secondaire"]
-        assert annees and all(carriere.qualite_agricole(a) != "chef" for a in annees)
+        qualites = facade.qualites_agricoles(
+            carriere, range(carriere.lignes[0].annee, carriere.annee_liquidation))
+        annees = [a for a, qualite in qualites.items() if qualite == "chef_secondaire"]
+        assert annees and all(qualites[a] != "chef" for a in annees)
         resultat, avantages, _ = _resultat(simulateur, carriere)
         eligible = resultat.chef_d_exploitation.eligible
         assert eligible.chef == eligible.duree

@@ -185,7 +185,7 @@ def test_les_stages_comptent_cinquante_jours_par_trimestre(simulateur):
                                   ("stage_de_formation_professionnelle", 2016): 1}
     sans = Carriere.depuis_chronologie(chronologie.completer(_releve(1990, range(2020, 2054))),
                                        simulateur.macro)
-    assert stages.trimestres == sans.trimestres_actuels + 4
+    assert stages.trimestres == facade.trimestres_actuels(sans) + 4
 
 
 def test_les_tuc_ne_comptent_que_pour_les_pensions_de_septembre_2023(simulateur):

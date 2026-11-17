@@ -2598,6 +2598,65 @@ def _pensions_versees(lu: list) -> list:
     return list(lu_strictement(tuple[PensionRegime, ...], lu, "verser_en_capital.pensions"))
 
 
+def _emploi_retraite_des_donnees(lu, chemin: str) -> dict | None:
+    """L'activité après le départ (``Carriere.emploi_retraite``) : ses deux
+    mois lus en :class:`DateMois`, son statut et son employeur en texte."""
+    if lu is None:
+        return None
+    return {"debut": lu_strictement(DateMois, lu["debut"], f"{chemin}.debut"),
+            "fin": lu_strictement(DateMois, lu["fin"], f"{chemin}.fin"),
+            "affiliation": lu_strictement(str, lu["affiliation"], f"{chemin}.affiliation"),
+            "employeur": lu_strictement(str, lu["employeur"], f"{chemin}.employeur")}
+
+
+def _types_des_faits() -> dict:
+    """Le type de chaque fait que la carrière lit de sa chronologie, sous son
+    nom de lecture (``carriere.fait`` de la façade)."""
+    from .types_du_pont.carriere import (Conjoint, ExConjoint, IncapacitePermanente,
+                                         PensionDInvalidite, PensionEtrangere,
+                                         PeriodeALEtranger, RadiationPourInvalidite,
+                                         ReversionAgricole)
+
+    return {
+        "pension_d_invalidite": PensionDInvalidite | None,
+        "radiation_pour_invalidite": RadiationPourInvalidite | None,
+        "incapacite_permanente": IncapacitePermanente | None,
+        "inaptitude": bool,
+        "periodes_a_l_etranger": tuple[PeriodeALEtranger, ...],
+        "pensions_etrangeres": tuple[PensionEtrangere, ...],
+        "residence": str | None,
+        "mois_en_france": int | None,
+        "reversion_agricole": ReversionAgricole | None,
+        "emploi_retraite": _emploi_retraite_des_donnees,
+        "retraite_progressive": tuple[DateMois, float] | None,
+        "naissances_des_enfants": tuple[tuple[str, str], ...],
+        "annees_declarees": frozenset[int],
+        "conjoint": Conjoint | None,
+        "ex_conjoints": tuple[ExConjoint, ...],
+        "deces": str | None,
+    }
+
+
+#: Les faits que la carrière lit de sa chronologie, que la façade demande au
+#: portage (``carriere.fait``), sous le nom de leur lecture Python.
+FAITS_DE_LA_CARRIERE = frozenset(("pension_d_invalidite", "radiation_pour_invalidite",
+                                  "incapacite_permanente", "inaptitude",
+                                  "periodes_a_l_etranger", "pensions_etrangeres", "residence",
+                                  "mois_en_france", "reversion_agricole", "emploi_retraite",
+                                  "retraite_progressive", "naissances_des_enfants",
+                                  "annees_declarees", "conjoint", "ex_conjoints", "deces"))
+
+
+def fait_des_donnees(nom: str, lu):
+    """Un fait de la carrière (``carriere.fait``), lu sous le type que le
+    Python lui donne."""
+    type_ = _types_des_faits()[nom]
+    chemin = f"carriere.fait.{nom}"
+    if type_ is _emploi_retraite_des_donnees:
+        return type_(lu, chemin)
+    return lu_strictement(type_, lu, chemin)
+
+
 LECTURES_DE_LA_FACADE = {
     "simulateur.simuler": comparaison_des_donnees,
     "simulateur.carriere_simple": carriere_des_donnees,
@@ -2622,6 +2681,18 @@ LECTURES_DE_LA_FACADE = {
         int | None, lu, "carriere.annee_de_cessation_agricole"),
     "carriere.date_entree": lambda lu: lu_strictement(
         DateMois | None, lu, "carriere.date_entree"),
+    "carriere.fait": lambda lu: fait_des_donnees(lu["nom"], lu["valeur"]),
+    "carriere.parts_retenues": lambda lu: list(lu_strictement(
+        tuple[float, ...], lu, "carriere.parts_retenues")),
+    "carriere.qualites_agricoles": lambda lu: list(lu_strictement(
+        tuple[str | None, ...], lu, "carriere.qualites_agricoles")),
+    "carriere.duree_de_service": lambda lu: lu_strictement(
+        float, lu, "carriere.duree_de_service"),
+    "carriere.date_de_service": lambda lu: lu_strictement(
+        DateMois | None, lu, "carriere.date_de_service"),
+    "carriere.liquidee_au": lambda lu: None if lu is None else carriere_des_donnees(lu),
+    "carriere.arretee_au_deces": carriere_des_donnees,
+    "carriere.avec_lignes": carriere_des_donnees,
     "simulateur.garantie_vieillesse": garantie_vieillesse_des_donnees,
     "liquidation.liquider": liquidation_des_donnees,
     "progressive.liquider": liquidation_des_donnees,

@@ -3342,7 +3342,7 @@ def test_avant_2013_la_reversion_de_la_rci_n_est_pas_portee(simulateur):
 def test_sans_conjoint_pas_de_reversion(simulateur):
     carriere = Carriere.depuis_profil(1957, "H", "salarie_prive_non_cadre", 21.0, 62.0,
                                       simulateur.macro)
-    assert carriere.conjoint is None and carriere.deces is None
+    assert facade.fait(carriere, "conjoint") is None and facade.fait(carriere, "deces") is None
     assert reversion(simulateur.scenario_actuel, [("regime_general", 1.0, HAUTE)],
                      carriere, 2022) is None
 
@@ -3619,7 +3619,7 @@ def test_sans_decote_ni_coefficient_d_anticipation(saisies, simulateur):
     demande = liquidation.Demande(
         personne="assure", date_effet="2024-04-01", evenement="deces",
         date_evenement="2024-05-01", motif="reversion", nature="fictive")
-    au_deces = saisies.carriere(MORT_AVANT).arretee_au_deces(DateMois(2024, 4))
+    au_deces = facade.arretee_au_deces(saisies.carriere(MORT_AVANT), DateMois(2024, 4))
     contexte = liquidation.Contexte(simulateur.scenario_actuel)
     eue = liquidation.liquider(demande, liquidation.Etat(au_deces), contexte)
     vivant = liquidation.liquider(

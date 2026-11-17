@@ -177,16 +177,17 @@ def test_la_chronologie_porte_deux_decisions_medicales_et_une_radiation(simulate
     assert radiation["debut"] == "2015-06-01"
     assert radiation["attributs"] == {"motif": "invalidite", "age": 50.0,
                                       "imputable": True, "taux": 70}
-    assert carriere.pension_d_invalidite.debut == DateMois(2020, 6)
-    assert carriere.pension_d_invalidite.presomption is None
-    assert carriere.pension_d_invalidite.affiliations == ("salarie_prive_non_cadre",)
-    assert carriere.inaptitude
-    assert carriere.radiation_pour_invalidite.date == DateMois(2015, 6)
+    pension = facade.fait(carriere, "pension_d_invalidite")
+    assert pension.debut == DateMois(2020, 6)
+    assert pension.presomption is None
+    assert pension.affiliations == ("salarie_prive_non_cadre",)
+    assert facade.fait(carriere, "inaptitude")
+    radiation = facade.fait(carriere, "radiation_pour_invalidite")
+    assert radiation.date == DateMois(2015, 6)
     # Juin 2015 : l'année du changement d'emploi va au salarié, qui en
     # occupe sept mois ; l'emploi que la radiation clôt porte 2014.
-    assert carriere.radiation_pour_invalidite.affiliations == (
-        "salarie_prive_non_cadre", "fonctionnaire_etat")
-    assert carriere.radiation_pour_invalidite.taux == 70
+    assert radiation.affiliations == ("salarie_prive_non_cadre", "fonctionnaire_etat")
+    assert radiation.taux == 70
 
 
 def test_une_carriere_qui_finit_en_invalidite_presume_la_pension(simulateur):
@@ -195,12 +196,13 @@ def test_une_carriere_qui_finit_en_invalidite_presume_la_pension(simulateur):
     carriere = _carriere(
         simulateur, [Metier("salarie_prive_non_cadre", 21.0)],
         interruptions={annee: "invalidite" for annee in range(2019, 2028)})
-    assert carriere.pension_d_invalidite.debut == DateMois(2019, 1)
-    assert carriere.pension_d_invalidite.presomption == "pension_d_invalidite_de_la_periode"
+    pension = facade.fait(carriere, "pension_d_invalidite")
+    assert pension.debut == DateMois(2019, 1)
+    assert pension.presomption == "pension_d_invalidite_de_la_periode"
     # Le régime qui la sert : celui de l'emploi qu'elle a interrompu.
-    assert carriere.pension_d_invalidite.affiliations == ("salarie_prive_non_cadre",)
-    assert not carriere.inaptitude
-    assert carriere.radiation_pour_invalidite is None
+    assert pension.affiliations == ("salarie_prive_non_cadre",)
+    assert not facade.fait(carriere, "inaptitude")
+    assert facade.fait(carriere, "radiation_pour_invalidite") is None
 
 
 def test_une_invalidite_suivie_d_une_reprise_a_pris_fin(simulateur):
@@ -209,7 +211,7 @@ def test_une_invalidite_suivie_d_une_reprise_a_pris_fin(simulateur):
     carriere = _carriere(
         simulateur, [Metier("salarie_prive_non_cadre", 21.0)],
         interruptions={annee: "invalidite" for annee in range(2005, 2008)})
-    assert carriere.pension_d_invalidite is None
+    assert facade.fait(carriere, "pension_d_invalidite") is None
 
 
 # -- ce que le contexte refuse ---------------------------------------------------
@@ -291,19 +293,20 @@ def _lu_par_python(saisies: Saisies, requete: dict) -> dict:
     simule."""
     parametres, vue = saisies.lire(requete)
     _simulateur(saisies, requete).simuler(vue)
-    pension, radiation = vue.pension_d_invalidite, vue.radiation_pour_invalidite
+    pension = facade.fait(vue, "pension_d_invalidite")
+    radiation = facade.fait(vue, "radiation_pour_invalidite")
+    incapacite = facade.fait(vue, "incapacite_permanente")
     mois = "{0.annee}-{0.mois:02d}".format
     return {
         "pension": None if pension is None else {
             "debut": mois(pension.debut), "presomption": pension.presomption,
             "affiliations": list(pension.affiliations), "categorie": pension.categorie},
-        "inaptitude": vue.inaptitude,
+        "inaptitude": facade.fait(vue, "inaptitude"),
         "radiation": None if radiation is None else {
             "date": mois(radiation.date), "affiliations": list(radiation.affiliations),
             "imputable": radiation.imputable, "taux": radiation.taux},
-        "incapacite": None if vue.incapacite_permanente is None else {
-            "debut": mois(vue.incapacite_permanente.debut),
-            "taux": vue.incapacite_permanente.taux},
+        "incapacite": None if incapacite is None else {
+            "debut": mois(incapacite.debut), "taux": incapacite.taux},
     }
 
 
@@ -534,7 +537,7 @@ def test_l_ex_invalide_est_porte_a_l_avts(simulateur):
     58 trimestres, une pension et un minimum contributif sous l'AVTS, servie
     entière le 1er avril 2022."""
     carriere = _ex_invalide(simulateur, 1960, 47.5, 0.5, range(2009, 2023), 62.0)
-    assert carriere.pension_d_invalidite.debut == DateMois(2009, 1)
+    assert facade.fait(carriere, "pension_d_invalidite").debut == DateMois(2009, 1)
     resultat, general = _general(simulateur, carriere)
     assert carriere.date_liquidation == DateMois(2022, 4)
     assert general.montant == pytest.approx(AVTS_JANVIER_2022, abs=0.01)
@@ -568,8 +571,9 @@ def test_la_pension_d_invalidite_d_avant_juin_1983_reste_un_plancher(simulateur)
     assert "plancher de la pension substituée" in general.detail
     premiere = _ex_invalide(simulateur, 1942, 20.0, 1.0, range(1982, 2003), 60.0,
                             declaree={"pension": 39 + 10 / 12, "categorie": 1})
-    assert premiere.pension_d_invalidite.debut == DateMois(1982, 1)
-    assert premiere.pension_d_invalidite.categorie == 1
+    pension = facade.fait(premiere, "pension_d_invalidite")
+    assert pension.debut == DateMois(1982, 1)
+    assert pension.categorie == 1
     _, servie = _general(simulateur, premiere)
     assert "plancher" not in servie.detail
     assert _pension_d_invalidite_a_la_main(

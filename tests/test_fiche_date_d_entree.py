@@ -40,6 +40,7 @@ from retraite_notionnelle.remuneration import (
     salaire_net_depuis_brut)
 from retraite_notionnelle.web.site import ErreurSite, module, site
 
+import facade
 from facade import Carriere, ConstructeurCompte, Simulateur
 from outils_pont import refus_de_la_saisie, saisie_du_portage
 
@@ -237,7 +238,7 @@ def test_un_releve_date_l_entree_de_sa_premiere_annee_d_emploi(
     régimes de cette date."""
     carriere = Carriere.depuis_releve(1985, "H", _releve_du_liberal(installe_en_2018), 64,
                                       simulateur.macro)
-    assert carriere.date_entree(LIBERAL) == DateMois(entree, 1)
+    assert facade.date_entree(carriere, LIBERAL) == DateMois(entree, 1)
     compte = ConstructeurCompte(
         simulateur.macro, simulateur.catalogue, simulateur.affiliations,
         simulateur.indexation, PARAMETRES.avec(part_cotisation=PartCotisation.SALARIALE))
@@ -353,8 +354,8 @@ def test_le_portage_date_l_entree_d_un_releve_comme_le_modele(simulateur, instal
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     lignes = _releve_du_liberal(installe_en_2018)
-    attendue = Carriere.depuis_releve(1985, "H", lignes, 64, simulateur.macro).date_entree(
-        LIBERAL)
+    attendue = facade.date_entree(
+        Carriere.depuis_releve(1985, "H", lignes, 64, simulateur.macro), LIBERAL)
     saisie = _saisie_du_releve(lignes)
     for lue in (site().contexte.carriere(saisie).date_entree(LIBERAL),
                 saisie.date_entree(LIBERAL)):

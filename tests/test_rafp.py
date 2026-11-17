@@ -22,6 +22,7 @@ import pytest
 
 from retraite_notionnelle.calendrier import DateMois
 
+import facade
 from facade import Simulateur, liquider
 from outils_pont import Saisies
 
@@ -133,8 +134,8 @@ def test_le_rafp_qui_attend_l_age_legal_compte_ses_mois_depuis_le_depart(saisies
                                  "debut": "1992-09", "liquidation": "60"})
     assert liquider.mois_apres_le_depart(carriere, 64.0) == 48
     assert liquider.mois_apres_le_depart(carriere, 60.0) == 0
-    assert liquider.mois_apres_le_depart(carriere.liquidee_au(carriere.date_de_l_age(64.0)),
-                                         64.0) == 48
+    assert liquider.mois_apres_le_depart(
+        facade.liquidee_au(carriere, carriere.date_de_l_age(64.0)), 64.0) == 48
 
 
 def test_chaque_periode_du_regime_porte_les_taux_que_le_decret_ecrit():

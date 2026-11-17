@@ -23,6 +23,7 @@ import pytest
 from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.web.site import ErreurSite, disponible, rendre
 
+import facade
 from facade import Carriere, Simulateur
 
 from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage, servi_et_fige
@@ -67,7 +68,7 @@ def test_l_activite_cumulee_s_ajoute_sans_rien_deplacer(simulateur):
     ajoutees = [l for l in cumulee.lignes if l.affiliation == "artisan"]
     assert [l.annee for l in ajoutees] == list(range(2002, 2012))
     assert all(l.revenu > 0 for l in ajoutees)
-    assert cumulee.date_entree("artisan").annee == 2002
+    assert facade.date_entree(cumulee, "artisan").annee == 2002
 
 
 def test_la_duree_tous_regimes_ne_depasse_pas_quatre_trimestres(simulateur):
@@ -75,7 +76,7 @@ def test_la_duree_tous_regimes_ne_depasse_pas_quatre_trimestres(simulateur):
     seule = _carriere(simulateur)
     cumulee = _carriere(simulateur, Metier(
         affiliation="artisan", age_debut=40.0, niveau_salaire=0.5, cumul=True))
-    assert cumulee.trimestres_actuels == seule.trimestres_actuels
+    assert facade.trimestres_actuels(cumulee) == facade.trimestres_actuels(seule)
     resultat = simulateur.scenario_actuel.calculer(cumulee)
     assert resultat.trimestres_valides == (
         simulateur.scenario_actuel.calculer(seule).trimestres_valides)

@@ -347,7 +347,7 @@ def test_la_decote_de_la_pension_provisoire_ne_depasse_pas_25_pour_cent(
     moteur = simulateur.scenario_actuel
     carriere = _carriere(simulateur, [Metier("salarie_prive_non_cadre", 28.0)],
                          naissance=naissance, liquidation=63)
-    a_soixante = carriere.liquidee_au(DateMois(naissance + 60, 2))
+    a_soixante = facade.liquidee_au(carriere, DateMois(naissance + 60, 2))
     assert "2014-12-18" <= f"{naissance + 60}-02-01" < "2023-09-01"
     for code in progressive.regimes_ouverts(moteur, DateMois(naissance + 60, 2)):
         periode = simulateur.catalogue[code].periode(naissance + 60)

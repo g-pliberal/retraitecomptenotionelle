@@ -16,6 +16,7 @@ import pytest
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.web.site import site
 
+import facade
 from facade import Simulateur, salaire_moyen_annuel
 from outils_pont import Saisies, saisie_du_portage
 
@@ -116,7 +117,8 @@ def test_la_retraite_progressive_met_les_annees_ajoutees_a_temps_partiel(saisies
     assert quotites[2043] == pytest.approx(0.6)
     assert quotites[2044] == pytest.approx(0.6)
     # La chronologie la date du même mois que la prolongation.
-    assert saisies.carriere(requete).retraite_progressive == (DateMois(2042, 4), 0.6)
+    assert (facade.fait(saisies.carriere(requete), "retraite_progressive")
+            == (DateMois(2042, 4), 0.6))
 
 
 def test_la_radiation_pour_invalidite_arrete_l_emploi_qu_elle_clot(saisies):
@@ -132,7 +134,7 @@ def test_la_radiation_pour_invalidite_arrete_l_emploi_qu_elle_clot(saisies):
         DERNIER_REVENU * salaire_moyen_annuel(macro, 2030)
         / salaire_moyen_annuel(macro, 2024) * 5 / 12)
     carriere = saisies.carriere(requete)
-    assert carriere.radiation_pour_invalidite.date == DateMois(2030, 6)
+    assert facade.fait(carriere, "radiation_pour_invalidite").date == DateMois(2030, 6)
     assert not carriere.lignes_de(2031)
     assert saisies.simuler(requete).actuel.pension_annuelle > 0
 

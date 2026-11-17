@@ -19,6 +19,7 @@ import pytest
 
 from retraite_notionnelle.droit.commun import AvantageApplique
 
+import facade
 from facade import Simulateur, commun, completer, faire_vivre
 from outils_sorties import sortie_figee
 from outils_pont import Saisies
@@ -145,7 +146,7 @@ def test_seul_compte_l_enfant_a_charge_a_la_date_d_effet(saisies):
     anniversaire."""
     _, carriere = saisies.lire({**CADRE, "naissance": "1943-03-15", "liquidation": "2005-04",
                                 "enfants": "4", "naissances": "1985-01,1990-06,1992-11,2006-01"})
-    assert [naissance for _, naissance in carriere.naissances_des_enfants] == [
+    assert [naissance for _, naissance in facade.fait(carriere, "naissances_des_enfants")] == [
         "1985-01-01", "1990-06-01", "1992-11-01", "2006-01-01"]
     assert completer.fins_de_charge(carriere, {"age": 18}, "2005-04-01") == [
         "2008-06-01", "2010-11-01"]

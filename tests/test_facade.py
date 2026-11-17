@@ -26,6 +26,7 @@ from retraite_notionnelle import memoire, pont
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle import simulateur as simulateur_python
 from retraite_notionnelle.carriere import LigneRelevee, Metier
+from retraite_notionnelle.types_du_pont.carriere import PensionDInvalidite
 from retraite_notionnelle.config import (RACINE_PROJET, ContributionEtat, Neutralisations,
                                          Parametres)
 from retraite_notionnelle.donnees.chargement import DonneeInsuffisante, Fiabilite
@@ -2225,6 +2226,86 @@ def test_ce_que_la_carriere_compte_se_demande_au_portage(simulateur):
     assert facade.date_entree(salarie, "exploitant_agricole") is None
 
 
+
+def test_les_faits_de_la_carriere_se_demandent_au_portage(simulateur):
+    """Né le 15 juin 1965, salarié dès vingt et un ans, invalide de 2019 à son
+    départ : la pension d'invalidité se présume du 1er janvier 2019, servie
+    par le régime de l'emploi qu'elle interrompt ; ses deux enfants, nés en
+    1990 et en juin 1993, au premier jour du mois qu'il déclare. Rien
+    d'autre n'est dit : ni radiation, ni inaptitude, ni étranger, ni
+    réversion agricole, ni emploi après le départ, ni retraite progressive.
+    Chaque lecture est celle de la carrière du portage."""
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=1965, sexe="H", mois_naissance=6, jour_naissance=15,
+        metiers=[Metier("salarie_prive_non_cadre", 21.0)], age_liquidation=62.0,
+        macro=simulateur.macro, nombre_enfants=2, naissances_enfants=["1990", "1993-06"],
+        interruptions={annee: "invalidite" for annee in range(2019, 2028)})
+    assert facade.fait(carriere, "pension_d_invalidite") == PensionDInvalidite(
+        debut=DateMois(2019, 1), presomption="pension_d_invalidite_de_la_periode",
+        affiliations=("salarie_prive_non_cadre",))
+    assert facade.fait(carriere, "naissances_des_enfants") == (
+        ("enfant_1", "1990-01-01"), ("enfant_2", "1993-06-01"))
+    assert facade.fait(carriere, "radiation_pour_invalidite") is None
+    assert facade.fait(carriere, "inaptitude") is False
+    assert facade.fait(carriere, "periodes_a_l_etranger") == ()
+    assert facade.fait(carriere, "pensions_etrangeres") == ()
+    assert facade.fait(carriere, "residence") is None
+    assert facade.fait(carriere, "mois_en_france") is None
+    assert facade.fait(carriere, "reversion_agricole") is None
+    assert facade.fait(carriere, "emploi_retraite") is None
+    assert facade.fait(carriere, "retraite_progressive") is None
+    assert facade.fait(carriere, "conjoint") is None
+    assert facade.fait(carriere, "ex_conjoints") == ()
+    assert facade.fait(carriere, "deces") is None
+    with pytest.raises(ValueError, match="nom_inconnu"):
+        facade.fait(carriere, "nom_inconnu")
+
+
+def test_les_copies_et_les_services_de_la_carriere_se_demandent_au_portage(simulateur):
+    """Né en mars 1962, entré à vingt et un ans, en mars 1983, parti à
+    soixante-deux en avril 2024 : sa première année retient dix mois, les
+    quarante suivantes l'année entière, 2024 les trois mois d'avant la date
+    d'effet ; fonctionnaire, il sert donc 41 ans et un mois, et ses vingt-cinq
+    ans en février 2008, son trois-centième mois servi depuis mars 1983. Exploitant agricole
+    seul, il est chef chaque année. Liquidée au 1er janvier 2023, la carrière
+    part à 60 ans et 9 mois, l'âge se comptant du mois qui suit la naissance,
+    comme ses soixante-deux ans d'avril 2024 ; arrêtée au décès du 1er janvier 2020, elle
+    perd l'activité d'après un départ qui n'a pas eu lieu. Chaque copie et
+    chaque durée sont celles du portage."""
+    def de(affiliation):
+        return simulateur.carriere_simple(
+            annee_naissance=1962, mois_naissance=3, sexe="H", affiliation=affiliation,
+            age_debut=21, age_liquidation=62.0)
+
+    salarie, fonctionnaire = de("salarie_prive_non_cadre"), de("fonctionnaire_etat")
+    exploitant = de("exploitant_agricole")
+    assert facade.parts_retenues(salarie) == pytest.approx([10 / 12] + [1.0] * 40 + [3 / 12])
+    assert facade.duree_de_service(fonctionnaire, ["fonctionnaire_etat"]) == pytest.approx(
+        41 + 1 / 12)
+    assert facade.duree_de_service(fonctionnaire, ["fonctionnaire_etat"], 1992) == (
+        pytest.approx(9 + 10 / 12))
+    assert facade.duree_de_service(salarie, ["fonctionnaire_etat"]) == 0.0
+    assert facade.date_de_service(fonctionnaire, ["fonctionnaire_etat"], 25.0) == DateMois(
+        2008, 2)
+    assert facade.date_de_service(fonctionnaire, ["fonctionnaire_etat"], 50.0) is None
+    assert facade.qualites_agricoles(exploitant, [1990, 2000]) == {1990: "chef", 2000: "chef"}
+    assert facade.qualites_agricoles(salarie, [1990]) == {1990: None}
+    liquidee = facade.liquidee_au(salarie, DateMois(2023, 1))
+    assert liquidee.date_liquidation == DateMois(2023, 1)
+    assert liquidee.age_liquidation == pytest.approx(60 + 9 / 12)
+    assert liquidee.lignes == salarie.lignes
+    assert facade.liquidee_au(salarie, DateMois(2024, 4)) is salarie
+    arretee = facade.arretee_au_deces(salarie, DateMois(2020, 1))
+    assert arretee.au_deces is True and arretee.date_liquidation == DateMois(2020, 1)
+    assert arretee.lignes_apres_depart == ()
+    coupee = facade.arretee_au_deces(salarie, DateMois(2020, 4), DateMois(2021, 1))
+    assert [l.annee for l in coupee.lignes][-1] == 2020
+    assert coupee.lignes[-1].fraction_annee == pytest.approx(3 / 12)
+    autres = facade.avec_lignes(salarie, salarie.lignes[:10])
+    assert autres.lignes == salarie.lignes[:10]
+    assert (autres.chronologie, autres.age_liquidation) == (
+        salarie.chronologie, salarie.age_liquidation)
+
 def test_le_coefficient_d_anticipation_agirc_arrco_se_demande_au_portage():
     """L'exemple de l'Agirc-Arrco : douze trimestres manquants valent 0,88 ;
     trois ans et dix mois d'anticipation par l'âge, seize trimestres
@@ -2558,6 +2639,10 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "carriere.prolongee", "carriere.trimestres_retenus",
                               "carriere.trimestres_cumules",
                               "carriere.annee_de_cessation_agricole", "carriere.date_entree",
+                              "carriere.fait", "carriere.parts_retenues",
+                              "carriere.qualites_agricoles", "carriere.duree_de_service",
+                              "carriere.date_de_service", "carriere.liquidee_au",
+                              "carriere.arretee_au_deces", "carriere.avec_lignes",
                               "simulateur.garantie_vieillesse",
                               "echeancier.parcourir", "simulateur.echeancier",
                               "echeancier.depart_de", "echeancier.sortes", "journal.operer",

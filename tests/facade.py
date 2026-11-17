@@ -146,7 +146,10 @@ ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversio
            "pension_servie.coefficient", "completer.verser_en_capital",
            "simulateur.proposition", "simulateur.carriere_proposition", "carriere.prolongee",
            "carriere.trimestres_retenus", "carriere.trimestres_cumules",
-           "carriere.annee_de_cessation_agricole", "carriere.date_entree",
+           "carriere.annee_de_cessation_agricole", "carriere.date_entree", "carriere.fait",
+           "carriere.parts_retenues", "carriere.qualites_agricoles",
+           "carriere.duree_de_service", "carriere.date_de_service", "carriere.liquidee_au",
+           "carriere.arretee_au_deces", "carriere.avec_lignes",
            "simulateur.garantie_vieillesse", "echeancier.parcourir", "simulateur.echeancier",
            "echeancier.depart_de", "echeancier.sortes", "journal.operer",
            "pilote.age_de_depart", "departs.liquider_les_departs",
@@ -762,6 +765,59 @@ def annee_de_cessation_agricole(carriere) -> int | None:
 def date_entree(carriere, affiliation: str) -> DateMois | None:
     """``Carriere.date_entree`` d'un statut, par le portage."""
     return _demander("carriere.date_entree", None, carriere, affiliation)
+
+
+def fait(carriere, nom: str):
+    """Ce que la carrière lit de sa chronologie sous ce nom
+    (``Carriere.pension_d_invalidite``, ``Carriere.naissances_des_enfants``…),
+    par le portage (:data:`pont.FAITS_DE_LA_CARRIERE`)."""
+    if nom not in pont.FAITS_DE_LA_CARRIERE:
+        raise ValueError(f"fait de la carrière que la façade ne sert pas : {nom} "
+                         "(pont.FAITS_DE_LA_CARRIERE)")
+    return _demander("carriere.fait", None, carriere, nom)
+
+
+def parts_retenues(carriere) -> list[float]:
+    """``Carriere.part_retenue_ligne`` de chaque ligne de ``carriere``, dans
+    leur ordre, par le portage."""
+    return _demander("carriere.parts_retenues", None, carriere)
+
+
+def qualites_agricoles(carriere, annees) -> dict[int, str | None]:
+    """``Carriere.qualite_agricole`` de chacune de ces années, par le
+    portage."""
+    annees = list(annees)
+    return dict(zip(annees, _demander("carriere.qualites_agricoles", None, carriere, annees)))
+
+
+def duree_de_service(carriere, affiliations, jusqu_a: int | None = None) -> float:
+    """``Carriere.duree_de_service`` de ces statuts, par le portage."""
+    return _demander("carriere.duree_de_service", None, carriere, list(affiliations), jusqu_a)
+
+
+def date_de_service(carriere, affiliations, annees: float) -> DateMois | None:
+    """``Carriere.date_de_service`` : le mois où ces statuts comptent
+    ``annees`` de services, par le portage."""
+    return _demander("carriere.date_de_service", None, carriere, list(affiliations), annees)
+
+
+def liquidee_au(carriere, date: DateMois):
+    """``Carriere.liquidee_au`` : la carrière liquidée au premier jour de
+    ``date``, par le portage ; elle-même quand c'est déjà sa date."""
+    liquidee = _demander("carriere.liquidee_au", None, carriere, date)
+    return carriere if liquidee is None else liquidee
+
+
+def arretee_au_deces(carriere, date: DateMois, liquidee_le: DateMois | None = None):
+    """``Carriere.arretee_au_deces``, par le portage."""
+    return _demander("carriere.arretee_au_deces", None, carriere, date, liquidee_le)
+
+
+def avec_lignes(carriere, lignes):
+    """``Carriere.avec_lignes`` : la même carrière portant ``lignes``, par le
+    portage, qui les lit sur une seconde carrière, la première les portant."""
+    porteuse = dataclasses.replace(carriere, lignes=list(lignes))
+    return _demander("carriere.avec_lignes", None, carriere, porteuse)
 
 
 def _fonctions_de_la_mortalite() -> dict:

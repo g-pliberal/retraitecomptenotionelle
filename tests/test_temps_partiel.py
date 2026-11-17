@@ -25,6 +25,7 @@ from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.web.site import ErreurSite, module
 
+import facade
 from facade import (Carriere, Simulateur, prolonger_releve, releve,
                     salaire_moyen_annuel)
 from outils_pont import saisie_du_portage
@@ -265,8 +266,8 @@ def test_les_services_comptent_la_quotite_et_la_duree_d_assurance_non(simulateur
     assert (_services(simulateur, plein), _services(simulateur, partiel)) == (156, 148)
     assert (moteur.calculer(partiel).trimestres_valides
             == moteur.calculer(plein).trimestres_valides)
-    assert (partiel.duree_de_service(["fonctionnaire_etat"])
-            == plein.duree_de_service(["fonctionnaire_etat"]))
+    assert (facade.duree_de_service(partiel, ["fonctionnaire_etat"])
+            == facade.duree_de_service(plein, ["fonctionnaire_etat"]))
     assert (_pension_de_l_etat(simulateur, partiel).montant
             / _pension_de_l_etat(simulateur, plein).montant) == pytest.approx(148 / 156, abs=1e-6)
 

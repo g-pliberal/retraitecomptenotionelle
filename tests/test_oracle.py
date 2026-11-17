@@ -79,6 +79,8 @@ import pytest
 from outils_pont import droit_et_fige
 from retraite_notionnelle import pont
 from retraite_notionnelle.calendrier import DateMois
+
+import facade
 from facade import Carriere
 from retraite_notionnelle.carriere import AnneeCarriere
 from retraite_notionnelle.config import Parametres
@@ -2377,7 +2379,7 @@ def _mesurer(exemple: dict, carriere, resultat, cle: str, droit=droit_et_fige):
         # du paquet, ne passe pas le pont.
         c = exemple["carriere"]
         traitement = 12.0 * float(c["traitement_mensuel"])
-        radiation = carriere.radiation_pour_invalidite
+        radiation = facade.fait(carriere, "radiation_pour_invalidite")
         servie = _rendu(
             droit, "invalidite.retraite_pour_invalidite.pension_du_fonctionnaire_invalide",
             pont.MOTEUR, "fonction_publique_etat", carriere,

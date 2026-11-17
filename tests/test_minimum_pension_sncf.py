@@ -34,6 +34,7 @@ import pytest
 from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.calendrier import DateMois
 
+import facade
 from facade import Carriere, Simulateur, commun
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -95,7 +96,7 @@ def test_la_pension_proportionnelle_n_a_pas_de_minimum(simulateur):
     d'ancienneté : la pension proportionnelle de l'article 3 reste ce qu'elle
     est."""
     carriere, _, pensions, minimum = _liquider(simulateur, 1955, 55.0, _agent(32.0))
-    assert carriere.duree_de_service(["agent_sncf"]) < 25
+    assert facade.duree_de_service(carriere, ["agent_sncf"]) < 25
     assert minimum is None
     assert 0 < pensions["sncf"].montant < MINIMUM_FEVRIER_2010
 
@@ -162,8 +163,8 @@ def test_vingt_cinq_ans_atteints_en_2019_demandent_vingt_six_ans(simulateur, pri
                       niveau_salaire=0.3)]
     carriere, _, pensions, minimum = _liquider(simulateur, 1967, 56.0, metiers)
     assert commun.date_d_effet(carriere) == "2023-02-01"
-    assert carriere.date_de_service(["agent_sncf"], 25.0) == DateMois(2019, 6)
-    assert carriere.duree_de_service(["agent_sncf"]) == pytest.approx(
+    assert facade.date_de_service(carriere, ["agent_sncf"], 25.0) == DateMois(2019, 6)
+    assert facade.duree_de_service(carriere, ["agent_sncf"]) == pytest.approx(
         26.5 if porte else 25.5)
     assert (minimum is not None) == porte
     if porte:

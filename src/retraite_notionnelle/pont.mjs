@@ -1971,6 +1971,29 @@ function journalTelQuel(journal) {
 }
 
 /**
+ * Les faits que la carrière lit de sa chronologie et que la façade sert
+ * (`carriere.fait`) : le nom de la lecture du jumeau, celui du portage.
+ */
+const FAITS_DE_LA_CARRIERE = Object.freeze({
+  pension_d_invalidite: "pensionDInvalidite",
+  radiation_pour_invalidite: "radiationPourInvalidite",
+  incapacite_permanente: "incapacitePermanente",
+  inaptitude: "inaptitude",
+  periodes_a_l_etranger: "periodesALEtranger",
+  pensions_etrangeres: "pensionsEtrangeres",
+  residence: "residence",
+  mois_en_france: "moisEnFrance",
+  reversion_agricole: "reversionAgricole",
+  emploi_retraite: "emploiRetraite",
+  retraite_progressive: "retraiteProgressive",
+  naissances_des_enfants: "naissancesDesEnfants",
+  annees_declarees: "anneesDeclarees",
+  conjoint: "conjoint",
+  ex_conjoints: "exConjoints",
+  deces: "deces",
+});
+
+/**
  * Les entrées du moteur que les tests appellent, sous le nom de leur jumeau
  * Python (`tests/facade.py`) : la comparaison entière d'une carrière ; les
  * bâtisseurs de carrière, du simulateur — qui vérifient l'affiliation — et de
@@ -2036,6 +2059,36 @@ const ENTREES_DE_LA_FACADE = {
     rangs.map((rang) => carriere.lignes[rang])),
   "carriere.annee_de_cessation_agricole": (carriere) => carriere.anneeDeCessationAgricole,
   "carriere.date_entree": (carriere, affiliation) => carriere.dateEntree(affiliation),
+  // Ce que la carrière lit de sa chronologie, par le nom de la lecture du
+  // jumeau (`FAITS_DE_LA_CARRIERE` de `pont.py`) : son nom, et ce qu'elle rend.
+  "carriere.fait": (carriere, nom) => {
+    if (!Object.hasOwn(FAITS_DE_LA_CARRIERE, nom)) {
+      throw new Error(`carriere.fait : fait inconnu, ${nom}`);
+    }
+    return { nom, valeur: telQuel(carriere[FAITS_DE_LA_CARRIERE[nom]]) };
+  },
+  // Ce que la carrière retient de chaque ligne, dans leur ordre ; la qualité
+  // de l'exploitant agricole, année par année ; les services d'un statut.
+  "carriere.parts_retenues": (carriere) => carriere.lignes.map(
+    (ligne) => carriere.partRetenueLigne(ligne)),
+  "carriere.qualites_agricoles": (carriere, annees) => annees.map(
+    (annee) => carriere.qualiteAgricole(annee)),
+  "carriere.duree_de_service": (carriere, affiliations, jusquA) => carriere.dureeDeService(
+    affiliations, jusquA),
+  "carriere.date_de_service": (carriere, affiliations, annees) => carriere.dateDeService(
+    affiliations, annees),
+  // Les copies de travail de la carrière : liquidée à une autre date, arrêtée
+  // au décès, portant d'autres lignes — celles d'une seconde carrière, qui
+  // les transmet ; `null` quand c'est la même.
+  "carriere.liquidee_au": (carriere, { annee, mois }) => {
+    const liquidee = carriere.liquideeAu(new DateMois(annee, mois));
+    return liquidee === carriere ? null : carriereEnDonnees(liquidee);
+  },
+  "carriere.arretee_au_deces": (carriere, date, liquideeLe) => carriereEnDonnees(
+    carriere.arreteeAuDeces(new DateMois(date.annee, date.mois), liquideeLe === null
+      ? null : new DateMois(liquideeLe.annee, liquideeLe.mois))),
+  "carriere.avec_lignes": (carriere, porteuse) => carriereEnDonnees(
+    carriere.avecLignes(porteuse.lignes)),
   // La période qui liquide la pension, par son rang parmi celles du régime.
   "commun.periode_de_liquidation": (simulateur, code, annee, mois) => {
     const regime = simulateur.catalogue.obtenir(code);

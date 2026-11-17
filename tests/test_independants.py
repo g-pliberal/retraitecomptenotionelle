@@ -52,6 +52,7 @@ from retraite_notionnelle.donnees.regimes import CatalogueRegimes
 from retraite_notionnelle.remuneration import (
     ConstructeurFiche, bloc_droit_en_vigueur, charger_prelevements, smic_annuel)
 
+import facade
 from facade import Carriere, ConstructeurCompte, Simulateur, acquerir, compter, coordonner
 from outils_pont import simulations_du_portage
 from outils_valeurs import valeur_figee
@@ -565,7 +566,7 @@ def test_le_rci_porte_le_quotient_des_points_cotises_par_les_mois(simulateur):
     cotises = sum(points * {"rci": 1.0, "rco_artisans": 0.2778}[regime]
                   for regime, annee, points, _ in droits.points
                   if regime in ("rci", "rco_artisans") and annee < 2016)
-    mois = sum(carriere.part_retenue_ligne(ligne) * 12 for ligne in carriere.lignes
+    mois = sum(part * 12 for ligne, part in zip(carriere.lignes, facade.parts_retenues(carriere))
                if ligne.cotise and ligne.annee < 2016)
     par_mois = math.floor(cotises / math.floor(mois) * 100 + 0.5) / 100
     assert 5 < par_mois < 20
@@ -582,7 +583,7 @@ def test_le_commercant_d_avant_2013_a_deux_points_par_mois(simulateur):
         annee: pytest.approx(24.0) for annee in range(2008, 2013)}
     cotises = sum(points for regime, annee, points, _ in droits.points
                   if regime == "nric" and annee < 2008)
-    mois = sum(carriere.part_retenue_ligne(ligne) * 12 for ligne in carriere.lignes
+    mois = sum(part * 12 for ligne, part in zip(carriere.lignes, facade.parts_retenues(carriere))
                if ligne.cotise and 2004 <= ligne.annee < 2008)
     par_mois = math.floor(cotises / math.floor(mois) * 100 + 0.5) / 100
     assert _credites(droits, "rci", range(2013, 2020)) == {
@@ -597,7 +598,7 @@ def test_l_artisan_d_avant_2013_a_le_quotient_par_trimestre(simulateur):
     cotises = sum(points for regime, annee, points, _ in droits.points
                   if regime == "rco_artisans" and annee < 1995)
     trimestres = math.floor(sum(
-        carriere.part_retenue_ligne(ligne) * 12 for ligne in carriere.lignes
+        part * 12 for ligne, part in zip(carriere.lignes, facade.parts_retenues(carriere))
         if ligne.cotise and 1979 <= ligne.annee < 1995)) // 3
     par_trimestre = math.floor(cotises / trimestres * 100 + 0.5) / 100
     assert _credites(droits, "rco_artisans", range(1995, 2013)) == {

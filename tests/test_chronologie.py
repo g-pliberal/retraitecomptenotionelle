@@ -14,6 +14,7 @@ from retraite_notionnelle import chronologie
 from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.noyau import vocabulaire
 
+import facade
 from facade import Carriere, Simulateur, compter
 
 PARCOURS = dict(
@@ -405,9 +406,9 @@ def test_la_carriere_porte_la_chronologie_dont_elle_est_la_vue(macro):
     assert carriere.chronologie == _complete()
     assert (carriere.annee_naissance, carriere.mois_naissance, carriere.sexe) == (1965, 3, "F")
     assert (carriere.age_liquidation, carriere.nombre_enfants) == (64.25, 2)
-    assert carriere.naissances_des_enfants == (("enfant_1", _enfant_presume()),
+    assert facade.fait(carriere, "naissances_des_enfants") == (("enfant_1", _enfant_presume()),
                                                ("enfant_2", _enfant_presume()))
-    assert carriere.date_entree("fonctionnaire_etat").mois == 3
+    assert facade.date_entree(carriere, "fonctionnaire_etat").mois == 3
 
 
 def test_les_periodes_assimilees_ont_leur_motif_et_la_carriere_ne_les_lit_pas(macro):
@@ -524,7 +525,7 @@ def test_une_carriere_construite_ligne_a_ligne_recoit_sa_chronologie():
     présomptions qui les complètent."""
     carriere = Carriere(annee_naissance=1980, sexe="F", nombre_enfants=3, age_liquidation=64.0)
     assert chronologie.enfants(carriere.chronologie, "assure") == ["enfant_1", "enfant_2", "enfant_3"]
-    assert {naissance for _, naissance in carriere.naissances_des_enfants} == {
+    assert {naissance for _, naissance in facade.fait(carriere, "naissances_des_enfants")} == {
         _au_jour_presume(1980 + _presume("naissance_des_enfants"), 1)}
     assert Carriere(annee_naissance=1980, sexe="H").naissances_des_enfants == ()
 
@@ -537,7 +538,7 @@ def test_une_naissance_declaree_remplace_la_presomption(macro):
         brute["faits"].append(chronologie.fait(f"naissance_{enfant}", enfant, "naissance",
                                                "2002-05-01"))
     carriere = Carriere.depuis_chronologie(chronologie.completer(brute), macro)
-    assert carriere.naissances_des_enfants == (("enfant_1", "2002-05-01"),
+    assert facade.fait(carriere, "naissances_des_enfants") == (("enfant_1", "2002-05-01"),
                                                ("enfant_2", "2002-05-01"))
     assert chronologie.presomptions_employees(carriere.chronologie) == ["jour_de_naissance"]
 
@@ -550,7 +551,7 @@ def test_chaque_enfant_garde_sa_date(macro):
     brute["faits"].append(chronologie.fait("naissance_enfant_1", "enfant_1", "naissance",
                                            "1993-07-14"))
     carriere = Carriere.depuis_chronologie(chronologie.completer(brute), macro)
-    assert carriere.naissances_des_enfants == (("enfant_1", "1993-07-14"),
+    assert facade.fait(carriere, "naissances_des_enfants") == (("enfant_1", "1993-07-14"),
                                                ("enfant_2", _enfant_presume()))
     assert chronologie.presomptions_employees(carriere.chronologie) == [
         "jour_de_naissance", "naissance_des_enfants"]
@@ -574,13 +575,15 @@ def test_la_saisie_declare_la_naissance_des_premiers_enfants(macro):
     assert chronologie.controler(complete) == []
     carriere = Carriere.depuis_parcours(macro=macro, **{**PARCOURS, "nombre_enfants": 3},
                                         naissances_enfants=["1990", "1993-06"])
-    assert carriere.naissances_des_enfants == (
+    assert facade.fait(carriere, "naissances_des_enfants") == (
         ("enfant_1", "1990-01-01"), ("enfant_2", "1993-06-01"), ("enfant_3", _enfant_presume()))
     assert carriere.naissances_enfants == ("1990-01-01", "1993-06-01")
-    assert carriere.avec_lignes(carriere.lignes).naissances_des_enfants == carriere.naissances_des_enfants
+    copie = facade.avec_lignes(carriere, carriere.lignes)
+    assert (facade.fait(copie, "naissances_des_enfants")
+            == facade.fait(carriere, "naissances_des_enfants"))
     ligne_a_ligne = Carriere(annee_naissance=1965, sexe="F", nombre_enfants=2,
                              naissances_enfants=("1991-02-03",), age_liquidation=64.0)
-    assert ligne_a_ligne.naissances_des_enfants == (
+    assert facade.fait(ligne_a_ligne, "naissances_des_enfants") == (
         ("enfant_1", "1991-02-03"),
         ("enfant_2", _au_jour_presume(1965 + _presume("naissance_des_enfants"), 1)))
 
@@ -768,11 +771,11 @@ def test_la_carriere_lit_le_jour_que_la_chronologie_porte(macro):
     copies de travail le gardent."""
     declare = Carriere.depuis_parcours(macro=macro, **PARCOURS, jour_naissance=15)
     assert (declare.jour_naissance, declare.jour_de_naissance) == (15, 15)
-    assert declare.avec_lignes(declare.lignes).jour_de_naissance == 15
+    assert facade.avec_lignes(declare, declare.lignes).jour_de_naissance == 15
     presume = Carriere.depuis_parcours(macro=macro, **PARCOURS)
     valeur = vocabulaire.presomptions()["jour_de_naissance"]["valeur"]
     assert (presume.jour_naissance, presume.jour_de_naissance) == (None, valeur)
-    assert presume.prolongee(66.0, macro).jour_de_naissance == valeur
+    assert facade.prolongee(presume, 66.0, macro).jour_de_naissance == valeur
     ligne_a_ligne = Carriere(annee_naissance=1980, sexe="F", jour_naissance=31)
     assert ligne_a_ligne.jour_de_naissance == 31
     with pytest.raises(ValueError, match="jour de naissance attendu entre 1 et 31"):

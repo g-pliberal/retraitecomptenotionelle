@@ -2035,6 +2035,80 @@ def test_le_jumeau_rend_la_proposition_que_la_facade_lit():
                                                    rel=TOLERANCE_DU_MOTEUR_PYTHON)
 
 
+def test_le_jumeau_lit_les_faits_de_la_carriere_comme_la_facade():
+    """Chaque fait que la carrière lit de sa chronologie (invalidité,
+    étranger, enfants…) : ce que le portage en lit, le jumeau le lit sur la
+    même carrière, recopiée sous la classe des règles."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    servi = facade.Simulateur(Parametres())
+    commun = dict(annee_naissance=1965, sexe="H", mois_naissance=6, jour_naissance=15,
+                  metiers=[Metier("salarie_prive_non_cadre", 21.0)], macro=servi.macro)
+    carrieres = [
+        servi.carriere_simple(annee_naissance=1962, sexe="F",
+                              affiliation="salarie_prive_non_cadre", age_debut=22,
+                              age_liquidation=62.0),
+        facade.Carriere.depuis_parcours(
+            **commun, age_liquidation=62.0, nombre_enfants=2,
+            naissances_enfants=["1990", "1993-06"],
+            interruptions={annee: "invalidite" for annee in range(2019, 2028)}),
+        facade.Carriere.depuis_parcours(
+            **commun, age_liquidation=64.0,
+            interruptions={1999: "sans_activite", 2000: "sans_activite",
+                           2001: "sans_activite"},
+            etranger={"periodes": [{"pays": "MA", "debut": 15.0, "fin": 21.0,
+                                    "activite": "salariee"}],
+                      "pensions": [{"pays": "DE", "age": 67.0, "mensuel": 250.0}],
+                      "residence": "PT"}),
+    ]
+    for carriere in carrieres:
+        jumeau = CarrierePython(**{champ.name: getattr(carriere, champ.name)
+                                   for champ in dataclasses.fields(carriere) if champ.init})
+        for nom in sorted(pont.FAITS_DE_LA_CARRIERE):
+            assert facade.fait(carriere, nom) == getattr(jumeau, nom), nom
+
+def _champs(carriere) -> dict:
+    """Les champs d'une carrière, quelle que soit sa classe."""
+    return {champ.name: getattr(carriere, champ.name) for champ in dataclasses.fields(carriere)
+            if champ.init}
+
+
+def test_le_jumeau_copie_et_compte_les_services_comme_la_facade():
+    """Ce que la carrière retient de chaque ligne, la qualité de l'exploitant
+    agricole, les services d'un statut et la date où ils atteignent une
+    durée, et les copies de travail — liquidée à une autre date, arrêtée au
+    décès, portant d'autres lignes : ce que le portage rend, le jumeau le rend
+    sur la même carrière."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    servi = facade.Simulateur(Parametres())
+    for naissance, mois, affiliation, age in ((1962, 3, "fonctionnaire_etat", 62.0),
+                                              (1958, 11, "exploitant_agricole", 62.5),
+                                              (1966, 7, "salarie_prive_non_cadre", 63.25)):
+        carriere = servi.carriere_simple(annee_naissance=naissance, sexe="F",
+                                         affiliation=affiliation, age_debut=22,
+                                         age_liquidation=age, mois_naissance=mois)
+        jumeau = CarrierePython(**_champs(carriere))
+        assert facade.parts_retenues(carriere) == [
+            jumeau.part_retenue_ligne(ligne) for ligne in jumeau.lignes]
+        annees = [ligne.annee for ligne in carriere.lignes]
+        assert facade.qualites_agricoles(carriere, annees) == {
+            annee: jumeau.qualite_agricole(annee) for annee in annees}
+        for jusqu_a in (None, naissance + 40):
+            assert (facade.duree_de_service(carriere, [affiliation], jusqu_a)
+                    == jumeau.duree_de_service([affiliation], jusqu_a))
+        for duree in (0.5, 15.0, 25.0, 60.0):
+            assert (facade.date_de_service(carriere, [affiliation], duree)
+                    == jumeau.date_de_service([affiliation], duree)), duree
+        date = DateMois(naissance + 60, 1)
+        assert _champs(facade.liquidee_au(carriere, date)) == _champs(jumeau.liquidee_au(date))
+        for liquidee_le in (None, DateMois(naissance + 61, 1)):
+            assert (_champs(facade.arretee_au_deces(carriere, date, liquidee_le))
+                    == _champs(jumeau.arretee_au_deces(date, liquidee_le)))
+        moitie = carriere.lignes[::2]
+        assert _champs(facade.avec_lignes(carriere, moitie)) == _champs(
+            jumeau.avec_lignes(jumeau.lignes[::2]))
+
 def test_le_jumeau_compte_la_carriere_comme_la_facade_la_lit():
     """Les trimestres retenus de chaque ligne, leur cumul, l'année où
     l'exploitant agricole cesse et la date d'entrée de chaque statut : ce que

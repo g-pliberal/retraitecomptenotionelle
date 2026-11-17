@@ -6,7 +6,9 @@ carrière restent dans ``carriere.py``, sur une classe qui hérite de celle-ci,
 le temps du retrait : elle seule remplit la chronologie d'une carrière bâtie
 ligne à ligne. Le métier d'une carrière (``Metier``) et les noms de ses profils
 de rémunération l'ont rejointe à l'étape 4 : les cas types les donnent au
-portage sans charger les règles.
+portage sans charger les règles. Les faits que la carrière lit de sa
+chronologie (``PensionDInvalidite``, ``Conjoint``…) l'ont rejointe à leur tour :
+la façade des tests les lit au portage sous ces types.
 """
 
 from __future__ import annotations
@@ -17,6 +19,162 @@ from functools import cached_property
 from .. import chronologie as chrono
 from ..calendrier import MOIS_PAR_AN, DateMois, en_mois, origine_des_ages
 
+
+
+@dataclass(frozen=True)
+class PensionDInvalidite:
+    """La pension d'invalidité de la Sécurité sociale qu'une personne touche
+    (fiche ``pension_d_invalidite_substituee``)."""
+
+    #: Le mois où elle a commencé.
+    debut: DateMois
+    #: La présomption qui la pose, quand elle n'est pas déclarée.
+    presomption: str | None = None
+    #: Les affiliations de l'année où elle commence puis de l'année d'avant,
+    #: l'activité principale de chacune en tête : le régime qui la sert est
+    #: celui dont la personne relevait quand l'invalidité est survenue.
+    affiliations: tuple[str, ...] = ()
+    #: Sa catégorie, quand elle se déclare (L. 341-4) ; sinon, le plancher de
+    #: la pension substituée la présume (``droit/invalidite.py``).
+    categorie: int | None = None
+
+
+@dataclass(frozen=True)
+class RadiationPourInvalidite:
+    """La radiation des cadres pour invalidité d'un fonctionnaire (fiche
+    ``retraite_pour_invalidite_fonction_publique``)."""
+
+    #: Le mois où elle tombe : celui où la pension prend effet.
+    date: DateMois
+    #: Les affiliations de l'année où elle tombe puis de l'année d'avant,
+    #: l'activité principale de chacune en tête : l'emploi qu'elle clôt est
+    #: le premier de fonctionnaire civil qu'elles portent. Radié en juin, et
+    #: salarié ensuite, l'emploi clos ne porte plus que l'année d'avant.
+    affiliations: tuple[str, ...] = ()
+    #: L'invalidité est-elle imputable au service (L. 27, L. 28) ?
+    imputable: bool = False
+    #: Le taux d'invalidité reconnu, en pour cent, s'il est dit.
+    taux: float | None = None
+
+
+@dataclass(frozen=True)
+class IncapacitePermanente:
+    """L'incapacité permanente qu'une personne déclare (fiche
+    ``retraite_anticipee_handicap``) : réputée continue jusqu'au départ."""
+
+    #: Le mois depuis lequel elle atteint son taux.
+    debut: DateMois
+    #: Le taux qu'elle atteint au moins, en pour cent.
+    taux: int
+
+
+@dataclass(frozen=True)
+class PeriodeALEtranger:
+    """Une période passée hors de France (fiche
+    ``totalisation_des_periodes_etrangeres``)."""
+
+    #: Le code de l'État, celui du tableau des accords, ou ``autre``.
+    pays: str
+    #: Le mois où elle commence, et celui où elle finit, exclu.
+    debut: DateMois
+    fin: DateMois
+    #: ``salariee`` ou ``non_salariee`` : une convention ne coordonne souvent
+    #: que les salariés.
+    activite: str = "salariee"
+
+
+@dataclass(frozen=True)
+class PensionEtrangere:
+    """Une pension que le régime d'un autre État sert : une liquidation
+    observée (docs/architecture.md, § 5.5 ; fiche
+    ``minimum_contributif_international``)."""
+
+    #: Le code de l'État qui la sert, ou ``autre``.
+    pays: str
+    #: Le mois où elle commence.
+    debut: DateMois
+    #: Son montant brut mensuel, en euros de ce mois.
+    mensuel: float
+
+
+@dataclass(frozen=True)
+class ReversionAgricole:
+    """La réversion que le régime des non-salariés agricoles sert à la
+    personne, veuve ou veuf d'un de ses assurés (L. 732-41 à L. 732-46) : un
+    acte de sa caisse, que la pension majorée de référence lit (D. 732-110,
+    II, 2° ; D. 732-112 ; D. 732-114)."""
+
+    #: Le mois où elle commence.
+    debut: DateMois
+    #: Son montant brut mensuel, en euros de ce mois, nul quand les ressources
+    #: l'absorbent.
+    mensuel: float
+
+
+@dataclass(frozen=True)
+class Conjoint:
+    """Le conjoint d'une personne, tel que la chronologie le porte : ce que la
+    réversion lit du survivant (docs/architecture.md, § 5.1)."""
+
+    personne: str
+    #: Sa naissance (AAAA-MM-JJ).
+    naissance: str
+    sexe: str
+    #: La date du mariage (AAAA-MM-JJ), déclarée ou présumée.
+    mariage: str
+    mariage_presume: bool
+    #: Ses ressources annuelles, s'il les déclare ; ``None`` laisse la
+    #: présomption ``ressources_du_survivant`` s'appliquer.
+    ressources: float | None
+    #: La date (AAAA-MM-JJ) où son invalidité est reconnue, s'il la déclare :
+    #: elle lève l'âge de la réversion de l'Agirc-Arrco (fiche
+    #: ``reversion_agirc_arrco``).
+    invalidite: str | None = None
+    #: La part de ``ressources`` que son activité lui rapporte, s'il la dit :
+    #: le plafond de la réversion l'abat après cinquante-cinq ans (R. 353-1).
+    revenus_d_activite: float | None = None
+    #: Le jour où cette activité cesse (AAAA-MM-JJ), s'il le dit : ses
+    #: revenus ne comptent plus, et sa réversion se révise le mois qui suit.
+    fin_d_activite: str | None = None
+    #: Ses revenus annuels d'activité qui varient ensuite, s'il le dit —
+    #: un salaire qui change, une activité reprise, rien quand elle cesse :
+    #: ``(jour, montant)`` à partir de chaque jour, dans l'ordre ; sa réversion
+    #: se révise le mois qui suit chacun.
+    variations_d_activite: tuple[tuple[str, float], ...] = ()
+    #: La forme de l'union où il vit après le décès — mariage, pacs ou
+    #: concubinage —, et les ressources annuelles que son nouveau conjoint y
+    #: apporte, s'il les dit : le plafond de la réversion lit alors le
+    #: ménage. ``None`` laisse la présomption ``survivant_seul`` s'appliquer.
+    nouvelle_union: str | None = None
+    ressources_du_nouveau_conjoint: float | None = None
+    #: Le jour où commence ce ménage (AAAA-MM-JJ) : celui qu'il dit, ou le
+    #: décès.
+    nouvelle_union_depuis: str | None = None
+    #: Le jour où il se défait (AAAA-MM-JJ), s'il le dit : il revit seul.
+    nouvelle_union_fin: str | None = None
+    #: Les ressources annuelles de son nouveau conjoint qui varient pendant
+    #: leur union, s'il le dit : ``(jour, montant)`` à partir de chaque jour,
+    #: dans l'ordre ; sa réversion se révise le mois qui suit chacun.
+    variations_du_nouveau_conjoint: tuple[tuple[str, float], ...] = ()
+    #: Le jour où sa propre retraite prend effet (AAAA-MM-JJ), s'il le dit :
+    #: ses ressources hors de ses revenus d'activité, que le modèle tient pour
+    #: ses retraites personnelles, ne commencent qu'alors. ``None`` laisse la
+    #: présomption ``retraites_du_survivant_servies`` les tenir pour servies
+    #: dès la date d'effet de la réversion.
+    retraite: str | None = None
+
+
+@dataclass(frozen=True)
+class ExConjoint:
+    """Un précédent conjoint de la personne, divorcé, tel que la chronologie le
+    porte : ce que le partage de la réversion lit (L. 353-3)."""
+
+    personne: str
+    #: Le mariage et le divorce qui l'a clos (AAAA-MM-JJ).
+    mariage: str
+    divorce: str
+    #: Son remariage (AAAA-MM-JJ), s'il le dit.
+    remariage: str | None = None
 
 
 @dataclass(frozen=True)

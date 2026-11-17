@@ -26,6 +26,7 @@ from retraite_notionnelle.donnees.chargement import charger_accords_internationa
 from retraite_notionnelle.donnees.mortalite import AGE_TERMINAL
 from retraite_notionnelle.web.site import ErreurSite
 
+import facade
 from facade import Carriere, Simulateur, compter, coordonner, prolongee
 
 from outils_pont import RefusDuPortage, Saisies, refus_de_la_saisie, saisie_du_portage
@@ -272,15 +273,17 @@ def test_la_chronologie_porte_les_periodes_les_pensions_et_la_residence(simulate
     # Aucun autre fait ne dit son territoire : la métropole, le défaut du contrat.
     assert {f.get("territoire") for f in carriere.chronologie["faits"]} == {
         None, "MA", "DE", "PT"}
-    assert carriere.periodes_a_l_etranger == (
+    assert facade.fait(carriere, "periodes_a_l_etranger") == (
         PeriodeALEtranger("MA", DateMois(1980, 6), DateMois(1986, 6), "salariee"),
         PeriodeALEtranger("DE", DateMois(1998, 12), DateMois(2001, 12), "non_salariee"))
-    assert carriere.pensions_etrangeres == (PensionEtrangere("DE", DateMois(2032, 6), 250.0),)
-    assert carriere.residence == "PT"
+    assert facade.fait(carriere, "pensions_etrangeres") == (
+        PensionEtrangere("DE", DateMois(2032, 6), 250.0),)
+    assert facade.fait(carriere, "residence") == "PT"
     # Une copie de travail garde la chronologie dont elle vient.
     copie = prolongee(carriere, 66.0, simulateur.macro)
-    assert copie.periodes_a_l_etranger == carriere.periodes_a_l_etranger
-    assert copie.residence == "PT"
+    assert (facade.fait(copie, "periodes_a_l_etranger")
+            == facade.fait(carriere, "periodes_a_l_etranger"))
+    assert facade.fait(copie, "residence") == "PT"
 
 
 def test_un_releve_porte_aussi_la_carriere_hors_de_france(simulateur):
@@ -291,16 +294,18 @@ def test_un_releve_porte_aussi_la_carriere_hors_de_france(simulateur):
         etranger={"periodes": [{"pays": "TN", "debut": 18.0, "fin": 27.0,
                                 "activite": "salariee"}],
                   "pensions": [], "residence": None})
-    assert carriere.periodes_a_l_etranger == (
+    assert facade.fait(carriere, "periodes_a_l_etranger") == (
         PeriodeALEtranger("TN", DateMois(1980, 1), DateMois(1989, 1), "salariee"),)
-    assert carriere.pensions_etrangeres == () and carriere.residence is None
+    assert facade.fait(carriere, "pensions_etrangeres") == ()
+    assert facade.fait(carriere, "residence") is None
 
 
 def test_sans_carriere_hors_de_france_la_carriere_n_en_dit_rien(simulateur):
     carriere = Carriere.depuis_profil(1965, "H", "salarie_prive_non_cadre", 21.0, 64.0,
                                       simulateur.macro)
-    assert carriere.periodes_a_l_etranger == () and carriere.pensions_etrangeres == ()
-    assert carriere.residence is None
+    assert facade.fait(carriere, "periodes_a_l_etranger") == ()
+    assert facade.fait(carriere, "pensions_etrangeres") == ()
+    assert facade.fait(carriere, "residence") is None
 
 
 @pytest.mark.parametrize("etranger, erreur", [
@@ -383,10 +388,11 @@ def _lu_par_le_pont(saisies: Saisies, requete: dict) -> dict:
         "sans_activite": [ligne.annee for ligne in vue.lignes
                           if ligne.type_periode == "sans_activite"],
         "periodes": [[p.pays, mois(p.debut), mois(p.fin), p.activite]
-                     for p in vue.periodes_a_l_etranger],
-        "pensions": [[p.pays, mois(p.debut), p.mensuel] for p in vue.pensions_etrangeres],
-        "residence": vue.residence,
-        "mois_en_france": vue.mois_en_france,
+                     for p in facade.fait(vue, "periodes_a_l_etranger")],
+        "pensions": [[p.pays, mois(p.debut), p.mensuel]
+                     for p in facade.fait(vue, "pensions_etrangeres")],
+        "residence": facade.fait(vue, "residence"),
+        "mois_en_france": facade.fait(vue, "mois_en_france"),
     }
 
 

@@ -7331,14 +7331,14 @@ de `contribution_etat`.
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Avant de supprimer les 40 fichiers de règles, il reste une chose : le pont
 rend encore chaque carrière sous la classe des règles Python. Rendue sous le
-type nu, elle ferait échouer 63 tests rapides, et non plus 476. Les deux plus
-gros fichiers lisent ce que la carrière compte au portage
-(`2026-11-17-ce-que-la-carriere-compte-au-portage.md`). Reste une traîne de
-un à six tests par fichier, dans 23 fichiers, puis la bascule, que décrit
-`2026-11-17-la-facade-transmet-la-carriere-nue.md`. Par quoi commencer :
-mesurer par la recette de cette note, puis passer les fichiers un à un à la
-façade. La suppression récrira les en-têtes des 35 JavaScript qui déclarent
-un jumeau de règle, et attend l'accord final du propriétaire.
+type nu, elle ferait échouer 11 tests rapides, et non plus 476 : la traîne
+lit la carrière au portage (`2026-11-17-la-traine-au-portage.md`). Restent
+la bascule, que décrit `2026-11-17-la-facade-transmet-la-carriere-nue.md`, et
+ses huit échecs (cinq épingles de la classe, trois tests du jumeau), et un
+test de `test_chronologie.py` qui vérifie une identité, que le propriétaire
+tranche. Par quoi commencer : la bascule. La suppression récrira les en-têtes
+des 35 JavaScript qui déclarent un jumeau de règle, et attend l'accord final
+du propriétaire.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

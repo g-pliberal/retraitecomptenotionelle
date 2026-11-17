@@ -121,13 +121,13 @@ def test_les_trois_chemins_de_la_carriere_portent_la_reversion(saisies):
     saisie bâtit porte la réversion déclarée ; sans elle, aucune
     (présomption ``pas_de_reversion_agricole``)."""
     attendue = ReversionAgricole(debut=DateMois(2010, 3), mensuel=150.0)
-    assert saisies.carriere({**VEUVE, **REVERSION}).reversion_agricole == attendue
+    assert facade.fait(saisies.carriere({**VEUVE, **REVERSION}), "reversion_agricole") == attendue
     releve = {**VEUVE, **REVERSION, "releve": "2014:collaborateur_agricole:3000\n"
                                               "2015:collaborateur_agricole:3000"}
-    assert saisies.carriere(releve).reversion_agricole == attendue
+    assert facade.fait(saisies.carriere(releve), "reversion_agricole") == attendue
     inverse = saisies.simuler({**PAR_PENSION, **REVERSION})
-    assert inverse.carriere.reversion_agricole == attendue
-    assert saisies.carriere(VEUVE).reversion_agricole is None
+    assert facade.fait(inverse.carriere, "reversion_agricole") == attendue
+    assert facade.fait(saisies.carriere(VEUVE), "reversion_agricole") is None
 
 
 def test_la_veuve_saisie_recoit_la_pmr_que_sa_reversion_ouvre_et_reduit(saisies):
@@ -177,7 +177,7 @@ def _lu_par_python(saisies: Saisies, requete: dict) -> dict:
     """Ce que le moteur Python lit de la carrière que le portage bâtit, et
     sert."""
     comparaison = saisies.simuler(requete)
-    reversion = comparaison.carriere.reversion_agricole
+    reversion = facade.fait(comparaison.carriere, "reversion_agricole")
     pmr = next((avantage for avantage in comparaison.actuel.avantages_appliques
                 if avantage.code == "pension_majoree_reference"), None)
     return {

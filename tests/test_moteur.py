@@ -13,6 +13,8 @@ from retraite_notionnelle.donnees.macro import DonneesMacro
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite
 from retraite_notionnelle.donnees.population import Population
 from retraite_notionnelle.carriere import Metier
+
+import facade
 from facade import Simulateur
 from retraite_notionnelle import pont
 
@@ -203,7 +205,7 @@ def test_l_inapte_de_la_cnav_part_au_taux_plein_des_l_age_legal(portage):
                                            (1980, 62, 67)):
         carriere = carrieres[generation]
         assert carriere.age_liquidation == depart, generation
-        assert carriere.inaptitude, generation
+        assert facade.fait(carriere, "inaptitude"), generation
         trimestres: dict[str, int] = {}
         for ligne in carriere.lignes:
             if ligne.annee <= carriere.annee_liquidation and ligne.trimestres_valides:
@@ -257,7 +259,7 @@ def test_l_ex_invalide_de_la_cnav_part_au_taux_plein_des_l_age_legal(portage):
                                                       (1980, 62, 64, 67)):
         carriere = carrieres[generation]
         assert carriere.age_liquidation == depart, generation
-        invalidite = carriere.pension_d_invalidite
+        invalidite = facade.fait(carriere, "pension_d_invalidite")
         assert invalidite is not None and invalidite.debut.annee == generation + 46, generation
         trimestres: dict[str, int] = {}
         for ligne in carriere.lignes:
