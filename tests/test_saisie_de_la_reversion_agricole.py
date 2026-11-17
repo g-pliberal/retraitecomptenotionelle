@@ -26,6 +26,7 @@ from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import ReversionAgricole
 from retraite_notionnelle.web.site import ErreurSite
 
+import facade
 from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -58,7 +59,7 @@ PAR_PENSION = {
 
 @pytest.fixture(scope="module")
 def saisies() -> Saisies:
-    return Saisies()
+    return Saisies(facade.Simulateur)
 
 
 def _pmr(comparaison):

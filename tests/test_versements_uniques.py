@@ -334,7 +334,7 @@ def test_le_capital_verse_a_l_assure_ne_laisse_pas_de_reversion(ligne, regime):
     l'Ircantec, il « supprime tout droit pour le conjoint » (article 25) ; au RCI,
     il « fait obstacle à l'attribution d'une pension de réversion » (règlement,
     article 41, II)."""
-    sortie = Saisies().simuler({
+    sortie = Saisies(Simulateur).simuler({
         **REQUETE, "naissance": "1958", "liquidation": "64", "releve": ligne,
         "conjoint": "1960", "deces": "2023-05"}).dictionnaire()
     directe, = [p for p in sortie["scenarios"]["actuel"]["par_regime"]

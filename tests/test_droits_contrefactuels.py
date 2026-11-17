@@ -125,18 +125,18 @@ def test_au_31_aout_2023_la_porte_des_dix_sept_ans_reste_aux_nes_de_1952_et_1953
         assert porte is not None and porte[0] == pytest.approx(60.0), droit
 
 
-def test_un_depart_d_avant_septembre_2026_a_la_duree_de_l_etat_du_droit(saisies):
+def test_un_depart_d_avant_septembre_2026_a_la_duree_de_l_etat_du_droit(du_portage):
     """Un né en juin 1964 qui part en juillet 2026, par la carrière longue :
     le droit en vigueur lui oppose 171 trimestres, la durée de la loi de 2023
     que le VI de l'article 105 de la loi du 30 décembre 2025 garde aux pensions
     prenant effet avant le 1er septembre 2026 (circulaire Cnav 2026-07, point
     2.1) ; la loi de 2023 sans la suspension, de même ; le droit au 31 août
     2023, les 169 trimestres de la version de 2014 de L. 161-17-3."""
-    parametres, carriere = saisies.lire({"naissance": "1964-06-01", "debut": "1982-09",
-                                         "liquidation": "2026-07"})
+    parametres, carriere = du_portage.lire({"naissance": "1964-06-01", "debut": "1982-09",
+                                            "liquidation": "2026-07"})
     attendus = {None: 171, SANS_SUSPENSION: 171, AU_31_AOUT_2023: 169}
     for droit, trimestres in attendus.items():
-        assert _moteur(saisies, parametres, droit).calculer(carriere).trimestres_requis \
+        assert _moteur(du_portage, parametres, droit).calculer(carriere).trimestres_requis \
             == trimestres, droit
 
 

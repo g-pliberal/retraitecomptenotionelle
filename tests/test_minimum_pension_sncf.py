@@ -222,7 +222,7 @@ def test_la_reversion_d_une_pension_portee_au_minimum_en_garde_54_pour_cent():
     le décret de 2015 écrit au 1er octobre 2014."""
     from outils_pont import Saisies
 
-    sortie = Saisies().simuler({
+    sortie = Saisies(Simulateur).simuler({
         **REQUETE, "conjoint": "1957", "mariage": "1980-06", "deces": "2023-05",
     }).dictionnaire()["reversion"]
     ligne, = [ligne for ligne in sortie["regimes"] if ligne["regime"] == "sncf"]

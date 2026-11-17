@@ -29,7 +29,7 @@ DERNIER_REVENU = 20_000 + 600 * (2024 - 2002)
 
 @pytest.fixture(scope="module")
 def saisies() -> Saisies:
-    return Saisies()
+    return Saisies(Simulateur)
 
 
 def _ajoutees(**requete):

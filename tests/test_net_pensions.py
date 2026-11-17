@@ -27,6 +27,7 @@ from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.remuneration import assiette_maladie, charger_prelevements
 from retraite_notionnelle.web.site import module, site
 
+import facade
 from outils_pont import Saisies, saisie_du_portage
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -133,7 +134,7 @@ def test_la_majoration_pour_enfants_reste_hors_de_l_assiette(pensions):
     """L. 131-2, 1° exclut de l'assiette « les bonifications ou majorations pour
     enfants » : la majoration de l'Agirc-Arrco ne paie pas le 1 %. Le moteur la
     compte à côté des lignes des régimes, que l'assiette seule additionne."""
-    actuel = Saisies().simuler({**PRIVE, "enfants": "3"}).actuel
+    actuel = Saisies(facade.Simulateur).simuler({**PRIVE, "enfants": "3"}).actuel
     majorations = [a for a in actuel.avantages_appliques if a.code == "majoration_enfants"]
     assert sum(part for a in majorations for code, part in a.par_regime
                if code in pensions.regimes_maladie) > 0

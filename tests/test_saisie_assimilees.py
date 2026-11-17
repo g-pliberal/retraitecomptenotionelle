@@ -17,6 +17,7 @@ import pytest
 from retraite_notionnelle import chronologie as chrono
 from retraite_notionnelle.web.site import ErreurSite
 
+import facade
 from outils_pont import (
     Saisies, refus_de_la_saisie, saisie_du_portage, simulations_du_portage,
 )
@@ -102,7 +103,7 @@ def test_l_apprentissage_se_pose_sur_sa_ligne_de_carriere():
 def test_les_periodes_comptent():
     """Les TUC de 1985-1986 ajoutent des trimestres à la carrière qui les
     déclare : ce que la fiche valide, la saisie le fait jouer."""
-    saisies = Saisies()
+    saisies = Saisies(facade.Simulateur)
     sans = saisies.simuler(BASE).actuel.trimestres_valides
     avec = saisies.simuler(CAS[0]).actuel.trimestres_valides
     assert avec > sans

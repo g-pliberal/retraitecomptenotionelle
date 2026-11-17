@@ -26,6 +26,7 @@ from retraite_notionnelle import chronologie as chrono
 from retraite_notionnelle.remuneration import charger_prelevements
 from retraite_notionnelle.web.site import module
 
+import facade
 from outils_pont import Saisies, saisie_du_portage
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -60,7 +61,7 @@ PARCOURS = {
 
 @pytest.fixture(scope="module")
 def saisies() -> Saisies:
-    return Saisies()
+    return Saisies(facade.Simulateur)
 
 
 # -- la saisie ----------------------------------------------------------------------

@@ -7331,14 +7331,14 @@ de `contribution_etat`.
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Avant de supprimer les 40 fichiers de règles, il reste une chose : le pont
 rend encore chaque carrière sous la classe des règles Python. Rendue sous le
-type nu, elle ferait échouer 137 tests rapides, et non plus 476 : la façade
-transmet la carrière nue, la comparaison tient ses trimestres du portage
-(`2026-11-17-la-comparaison-tient-ses-trimestres.md`). Restent trois des
-quatre morceaux que décrit `2026-11-17-la-facade-transmet-la-carriere-nue.md`,
-une session chacun. Par quoi commencer : le simulateur Python lui-même
-(`prolongee`, `date_entree`). La suppression récrira les en-têtes des 35
-JavaScript qui déclarent un jumeau de règle, et attend l'accord final du
-propriétaire.
+type nu, elle ferait échouer 125 tests rapides, et non plus 476. Les tests
+qui simulaient une saisie sur le moteur Python passent sur la façade
+(`2026-11-17-les-saisies-sur-la-facade.md`). Restent deux des quatre
+morceaux que décrit `2026-11-17-la-facade-transmet-la-carriere-nue.md`, une
+session chacun. Par quoi commencer : les tests qui lisent une propriété de
+règle sur la carrière, `test_simulateur.py` puis `test_priorite_enfants.py`.
+La suppression récrira les en-têtes des 35 JavaScript qui déclarent un
+jumeau de règle, et attend l'accord final du propriétaire.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
