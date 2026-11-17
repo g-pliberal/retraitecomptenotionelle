@@ -4673,7 +4673,7 @@ def coefficient_surcote_datee(moteur, periode: PeriodeRegime, carriere: Carriere
         return 1.0, None
     if not moteur.surcote_baremes.connait(periode.surcote_bareme or ""):
         return 1.0 + (periode.surcote_par_trimestre or 0.0) * len(dates), None
-    return moteur.surcote_baremes.coefficient(periode.surcote_bareme, dates)
+    return moteur.surcote_baremes.coefficient(periode.surcote_bareme, dates, fin)
 
 
 def surcote_points(moteur, periode: PeriodeRegime, carriere: Carriere,

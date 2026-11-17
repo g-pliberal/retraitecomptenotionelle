@@ -2105,8 +2105,8 @@ def _surcote_baremes() -> list:
     from retraite_notionnelle.donnees.tables_du_droit import SurcoteBaremes
 
     return [
-        [bareme, debut, fin, rang, int(apres_65), taux, maximum, int(fiabilite)]
-        for bareme, debut, fin, rang, apres_65, taux, maximum, fiabilite
+        [bareme, debut, fin, rang, int(apres_65), taux, maximum, int(fiabilite), effet_depuis]
+        for bareme, debut, fin, rang, apres_65, taux, maximum, fiabilite, effet_depuis
         in SurcoteBaremes(DONNEES)._lignes
     ]
 

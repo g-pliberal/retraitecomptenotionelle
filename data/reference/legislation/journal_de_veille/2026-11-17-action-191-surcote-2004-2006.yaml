@@ -1,0 +1,19 @@
+date: "2026-11-17"
+session: "action 191 : la surcote des trimestres de 2004 à 2006, corrigée au texte"
+consulte: >-
+  Le décret n° 2006-1611 du 15 décembre 2006 au Journal officiel du 17
+  (JORFTEXT000000821803, articles 1er et 3), par l'index JORF du dépôt ; les
+  cinq rédactions de D. 351-1-4 et les trois de L. 351-1-2, par l'index LEGI ;
+  la circulaire Cnav n° 2007/5 du 16 janvier 2007 (points 1, 13 et 5) ; la
+  circulaire Cnav 2018-04 du 1er février 2018 (point 3).
+trouve: >-
+  Pour une pension prenant effet à compter du 1er janvier 2007, les
+  trimestres de surcote accomplis depuis le 1er janvier 2004 prennent 1 % à
+  partir du cinquième et 1,25 % après soixante-cinq ans ; le dépôt leur
+  gardait 0,75 % jusqu'à la fin de 2006. Corrigé dans le barème et les deux
+  moteurs ; la référence de reformes.yaml datait le décret du 19 décembre.
+  Détail : docs/feuille_de_route/191/2026-11-17-surcote-2004-2006.md.
+reste: >-
+  La priorité au taux de 1,25 % l'année du soixante-cinquième anniversaire
+  (circulaire 2007/5, point 112), que le moteur ne sert pas quand l'année est
+  incomplète.

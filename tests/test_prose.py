@@ -819,11 +819,11 @@ def test_les_sondes_de_csv_lisent_les_tables_de_droit():
 
 def test_une_cellule_doit_etre_designee_sans_ambiguite():
     """Deux lignes pour une cellule, c'est une désignation qui se croit
-    précise : le barème de la surcote porte trois lignes pour 2007, et les
-    confondre donnerait le taux d'une autre règle."""
+    précise : le barème de la surcote porte trois lignes qui partent de 2004,
+    et les confondre donnerait le taux d'une autre règle."""
     surcote = "data/reference/legislation/surcote_baremes.csv:taux"
     with pytest.raises(ValueError):
-        verifier_prose.sonde_cellule(f"{surcote}?bareme=regime_general&debut=2007")
+        verifier_prose.sonde_cellule(f"{surcote}?bareme=regime_general&debut=2004")
     with pytest.raises(ValueError):
         verifier_prose.sonde_cellule(f"{surcote}?bareme=nexiste_pas")
 

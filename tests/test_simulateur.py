@@ -3448,7 +3448,8 @@ def test_le_bareme_2007_de_la_surcote_majore_au_dela_de_65_ans(simulateur):
     with chemin.open(encoding="utf-8") as flux:
         lignes = (ligne for ligne in flux if not ligne.lstrip().startswith("#"))
         bareme = [l for l in csv.DictReader(lignes)
-                  if l["bareme"] == "regime_general" and l["debut"] == "2007"]
+                  if l["bareme"] == "regime_general" and float(l["debut"]) <= 2007
+                  and float(l["fin"]) >= 2008.917]
     majores = [l for l in bareme if l["apres_65_ans"] == "1"]
     assert [l["taux"] for l in majores] == ["0.0125"], (
         "le barème de 2007-2008 doit porter une ligne, et une seule, pour les "

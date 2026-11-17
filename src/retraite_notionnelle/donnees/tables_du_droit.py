@@ -1627,10 +1627,12 @@ class SurcoteBaremes:
     sociale, article L. 14 III du code des pensions.
 
     Chaque trimestre de surcote garde le taux en vigueur à la date où il a été
-    ACCOMPLI : 0,75 % de 2004 à 2006 ; en 2007 et 2008, 0,75 % pour les
-    quatre premiers trimestres, 1 % à compter du cinquième et 1,25 % pour les
-    trimestres postérieurs au soixante-cinquième anniversaire ; 1,25 % pour
-    tout trimestre accompli depuis le 1er janvier 2009. La fonction publique
+    ACCOMPLI, et, de 2004 à 2008, à la date d'effet de la pension : 0,75 %
+    pour une pension prenant effet avant 2007 ; à compter de 2007 (décret
+    n° 2006-1611, articles 1er et 3), 0,75 % pour les quatre premiers
+    trimestres accomplis depuis 2004, 1 % à compter du cinquième et 1,25 %
+    pour les trimestres postérieurs au soixante-cinquième anniversaire ;
+    1,25 % pour tout trimestre accompli depuis le 1er janvier 2009. La fonction publique
     servait 0,75 % dans la limite de vingt trimestres jusqu'en 2008. Le
     modèle appliquait à tous les trimestres le taux de l'année du départ,
     ce qui servait 1,25 % à des trimestres de 2005 et 0,75 % à un cinquième
@@ -1640,7 +1642,7 @@ class SurcoteBaremes:
 
     def __init__(self, racine: Path) -> None:
         self._lignes: list[tuple[str, float, float, int, bool, float,
-                                 int | None, Fiabilite]] = []
+                                 int | None, Fiabilite, float | None]] = []
         chemin = racine / "reference" / "legislation" / "surcote_baremes.csv"
         if not chemin.exists():
             return
@@ -1656,21 +1658,24 @@ class SurcoteBaremes:
                     float(ligne["taux"]),
                     int(ligne["trimestres_maximum"]) if ligne["trimestres_maximum"].strip() else None,
                     Fiabilite.depuis_texte(ligne["fiabilite"]),
+                    float(ligne["effet_depuis"]) if ligne["effet_depuis"].strip() else None,
                 ))
 
     def connait(self, bareme: str) -> bool:
         return any(ligne[0] == bareme for ligne in self._lignes)
 
-    def coefficient(self, bareme: str,
-                    trimestres: list[tuple[DateMois, bool]]) -> tuple[float, Fiabilite | None]:
+    def coefficient(self, bareme: str, trimestres: list[tuple[DateMois, bool]],
+                    effet: DateMois | None = None) -> tuple[float, Fiabilite | None]:
         """Coefficient de majoration pour ces trimestres de surcote, datés.
 
         ``trimestres`` donne, dans l'ordre chronologique, le premier mois de
         chaque trimestre civil de surcote et s'il est postérieur au
         soixante-cinquième anniversaire. Pour chaque trimestre, la ligne la
         plus favorable qui lui convient l'emporte, sous le plafond de
-        trimestres qu'elle porte le cas échéant.
+        trimestres qu'elle porte le cas échéant. Une ligne qui porte une date
+        d'effet ne vaut que pour une pension ``effet`` prenant effet depuis.
         """
+        au = None if effet is None else effet.annee + (effet.mois - 1) / 12.0
         servis: dict[int, int] = {}
         total = 0.0
         fiabilite: Fiabilite | None = None
@@ -1678,8 +1683,10 @@ class SurcoteBaremes:
             valeur = date.annee + (date.mois - 1) / 12.0
             meilleure = None
             for indice, (code, debut, fin, rang_minimum, condition_65, taux,
-                         maximum, fiab) in enumerate(self._lignes):
+                         maximum, fiab, depuis) in enumerate(self._lignes):
                 if code != bareme or not debut - 1e-9 <= valeur <= fin + 1e-9:
+                    continue
+                if depuis is not None and (au is None or au < depuis - 1e-9):
                     continue
                 if rang < rang_minimum or (condition_65 and not apres_65):
                     continue

@@ -2246,7 +2246,8 @@ CarriereLongue.FICHE_DES_REPUTES = "carriere_longue_reputes_cotises_autres";
  */
 export class SurcoteBaremes {
   constructor(paquet) {
-    // [barème, début, fin, rang minimum, après 65 ans, taux, plafond, fiabilité]
+    // [barème, début, fin, rang minimum, après 65 ans, taux, plafond, fiabilité,
+    //  date d'effet depuis laquelle la ligne vaut]
     this._lignes = paquet.surcote_baremes ?? [];
   }
 
@@ -2260,9 +2261,13 @@ export class SurcoteBaremes {
    * @param {Array<[DateMois, boolean]>} trimestres premier mois de chaque
    *   trimestre civil de surcote, dans l'ordre, et s'il suit le
    *   soixante-cinquième anniversaire.
+   * @param {DateMois|null} effet date d'effet de la pension : une ligne qui
+   *   porte une date d'effet ne vaut que pour une pension prenant effet depuis
+   *   (décret n° 2006-1611, article 3).
    * @returns {[number, number|null]} coefficient et fiabilité.
    */
-  coefficient(bareme, trimestres) {
+  coefficient(bareme, trimestres, effet = null) {
+    const au = effet === null || effet === undefined ? null : effet.annee + (effet.mois - 1) / 12.0;
     const servis = new Map();
     let total = 0.0;
     let fiabilite = null;
@@ -2271,8 +2276,11 @@ export class SurcoteBaremes {
       const valeur = date.annee + (date.mois - 1) / 12.0;
       let meilleure = null;
       this._lignes.forEach((ligne, numero) => {
-        const [code, debut, fin, rangMinimum, condition65, taux, maximum, fiab] = ligne;
+        const [code, debut, fin, rangMinimum, condition65, taux, maximum, fiab, depuis] = ligne;
         if (code !== bareme || !(debut - 1e-9 <= valeur && valeur <= fin + 1e-9)) {
+          return;
+        }
+        if (depuis !== null && depuis !== undefined && (au === null || au < depuis - 1e-9)) {
           return;
         }
         if (rang < rangMinimum || (condition65 && !apres65)) {

@@ -1100,7 +1100,7 @@ reformes:
 
   - code: surcote_2007
     date: 2007-01-01
-    texte: {reference: "décret n° 2006-1611 du 19 décembre 2006 (surcote : 1 % à compter du cinquième trimestre et 1,25 % après soixante-cinq ans, pour les trimestres accomplis à compter du 1er janvier 2007 — D. 351-1-4)", id: null}
+    texte: {reference: "décret n° 2006-1611 du 15 décembre 2006, JO du 17 (surcote : 1 % à compter du cinquième trimestre et 1,25 % après soixante-cinq ans, pour chaque trimestre accompli à compter du 1er janvier 2004, aux pensions prenant effet à compter du 1er janvier 2007 — D. 351-1-4)", id: JORFTEXT000000821803}
     parametres: [surcote_par_trimestre]
     regimes: [regime_general, msa_salaries, rsi, cavimac]
     absorbee_par: [surcote_bareme]

@@ -3591,7 +3591,7 @@ export function coefficientSurcoteDatee(moteur, periode, carriere, trimestres, r
   if (!moteur.surcoteBaremes.connait(periode.surcote_bareme ?? "")) {
     return [1.0 + (periode.surcote_par_trimestre ?? 0.0) * dates.length, null];
   }
-  return moteur.surcoteBaremes.coefficient(periode.surcote_bareme, dates);
+  return moteur.surcoteBaremes.coefficient(periode.surcote_bareme, dates, fin);
 }
 
 export function surcotePoints(moteur, periode, carriere, trimestres, requis, ageLiquidation,
