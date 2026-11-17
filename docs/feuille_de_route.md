@@ -7327,20 +7327,17 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 16 novembre 2026.** Le moteur Python d'une carrière se retire au
+**Reprise, au 17 novembre 2026.** Le moteur Python d'une carrière se retire au
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
-Avant de supprimer les 40 fichiers de règles, l'inventaire
-(`2026-11-16-l-inventaire-du-retrait-des-regles.md`) fixe six étapes. Le
-coût, la fabrique, les fiches et les chiffres ancrés ne lisent plus aucune
-règle Python, hors de la carrière. La carte des jumeaux reconnaît elle-même
-les fichiers de règles, et sa liste des fonctions gardées les refuse.
-Aucun script ni test ne charge plus un fichier de règles par son chemin,
-hors des deux sondes du moteur Python, qui partent avec lui
-(`2026-11-16-les-chargements-par-chemin.md`). Reste, avant la suppression :
-la carrière que le pont relit sous la classe des règles, que lisent 476
-tests rapides. Par quoi commencer : cette carrière. La suppression récrira
-les en-têtes des 35 JavaScript qui déclarent un jumeau de règle, et attend
-l'accord final du propriétaire.
+Avant de supprimer les 40 fichiers de règles, il reste une chose : le pont
+rend encore chaque carrière sous la classe des règles Python. Rendue sous le
+type nu, elle ferait échouer 170 tests rapides, et non plus 476 : la façade
+des tests transmet désormais la carrière nue au portage. Les 170 se partagent
+en quatre morceaux, une session chacun, que décrit la note
+`2026-11-17-la-facade-transmet-la-carriere-nue.md`. Par quoi commencer : le
+dictionnaire de la comparaison, qui lit le nombre de trimestres sur la
+carrière. La suppression récrira les en-têtes des 35 JavaScript qui déclarent
+un jumeau de règle, et attend l'accord final du propriétaire.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

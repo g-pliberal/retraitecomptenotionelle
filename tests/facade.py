@@ -102,6 +102,7 @@ from retraite_notionnelle.donnees.mortalite import DonneesMortalite
 from retraite_notionnelle.donnees.regimes import PeriodeRegime, Regime
 from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees
 from retraite_notionnelle.pont import NonTransmissible
+from retraite_notionnelle.types_du_pont.carriere import Carriere as _CarriereNue
 from retraite_notionnelle.droit import acquerir as _acquerir
 from retraite_notionnelle.droit import categories as _categories
 from retraite_notionnelle.droit import commun as _commun
@@ -1040,7 +1041,7 @@ def _demander_la_regle(module: str, regle: str, rendu, arguments: dict):
           for nom, valeur in arguments.items()),
         parametres=parametres)
     carriere = arguments.get("carriere")
-    if (isinstance(lu, _carriere.Carriere) and isinstance(carriere, _carriere.Carriere)
+    if (isinstance(lu, _CarriereNue) and isinstance(carriere, _CarriereNue)
             and pont.carriere_en_donnees(lu) == pont.carriere_en_donnees(carriere)):
         # Une règle qui rend la carrière qu'elle reçoit, intacte
         # (``ouvrir.indemnisation_bornee``), la rend elle-même, comme le
@@ -1112,7 +1113,7 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
         return _periode_du_catalogue(simulateur, valeur)
     if isinstance(valeur, Regime) and simulateur is not None:
         return pont.RegimeDuCatalogue(valeur.code)
-    if type(valeur) in _SIMPLES or isinstance(valeur, (_carriere.Carriere, DateMois)):
+    if type(valeur) in _SIMPLES or isinstance(valeur, (_CarriereNue, DateMois)):
         return valeur
     if type(valeur) in (tuple, list) and _suite_simple(valeur):
         # Une suite de valeurs simples, ou de suites qui en sont, à toute

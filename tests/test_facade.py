@@ -55,6 +55,7 @@ from retraite_notionnelle.remuneration import AnneeComparee, FicheDePaie, Remune
 from retraite_notionnelle.scenarios.actuel import ResultatActuel
 from retraite_notionnelle.scenarios.notionnel import ResultatNotionnel
 from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Comparaison
+from retraite_notionnelle.types_du_pont.carriere import Carriere as CarriereNue
 
 import facade
 from facade import (Carriere, NonTransmissible, Simulateur, acquerir, commun, completer, departs,
@@ -698,6 +699,24 @@ def test_une_regle_du_droit_se_demande_par_son_module_et_son_nom(simulateur):
         moteur, complementaire, parti_tot, 100, 172, 57.0, 2022) == pytest.approx(0.43)
     assert liquider.abattement_points(
         moteur, complementaire, parti_tot, 172, 172, 57.0, 2022) == 1.0
+
+
+def test_une_regle_recoit_la_carriere_nue_comme_celle_des_regles(simulateur):
+    """La façade transmet au portage la carrière nue, le type du pont
+    (``types_du_pont.carriere.Carriere``), comme celle des règles Python, qui
+    en hérite : le portage ne lit que ses champs. Avant le retrait des règles,
+    la carrière que le pont rend sera la nue (action 161) ; la règle rend
+    alors, sur elle, ce qu'elle rend sur l'autre — 166 trimestres requis et
+    l'ouverture à soixante-deux ans pour un assuré né en 1955."""
+    moteur = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(**NE_EN_1955)
+    nue = CarriereNue(**{champ.name: getattr(carriere, champ.name)
+                         for champ in dataclasses.fields(CarriereNue)})
+    assert type(nue) is CarriereNue
+    periode = simulateur.catalogue["regime_general"].periode(2017)
+    assert ouvrir.duree_requise(moteur, periode, nue) == ouvrir.duree_requise(
+        moteur, periode, carriere)
+    assert ouvrir.age_ouverture(moteur, periode, nue) == 62.0
 
 
 def test_les_arguments_d_une_regle_se_lient_comme_le_python_les_lie(simulateur):
