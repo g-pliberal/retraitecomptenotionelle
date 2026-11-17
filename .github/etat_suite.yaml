@@ -1,27 +1,18 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: rouge
-sources: cac13c7bdec1a23a177e968e03fda42d9468d725
-date: 2026-11-17T05:25:36Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44021501260
+sources: 10dd6cc3a5fd3508a24d4bffb99c32a84a377dc8
+date: 2026-11-17T05:51:46Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44025222159
 echecs:
   - "FAILED tests/test_controle_drees_panorama.py::test_la_grille_commence_ses_carrieres_trop_tard - AttributeError: 'Carriere' object has no attribute 'trimestres_par_annee'"
-  - "ERROR tests/test_trajectoire.py::test_l_ecart_du_salaire_annuel_moyen_est_celui_des_coefficients - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "ERROR tests/test_trajectoire.py::test_les_points_du_depot_sont_ceux_de_trajectoire_aux_taux_minimaux - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "ERROR tests/test_trajectoire.py::test_la_valeur_du_point_de_trajectoire_est_celle_du_jour - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "ERROR tests/test_trajectoire.py::test_le_scenario_1_concorde_avec_trajectoire_ou_son_ecart_est_explique - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "ERROR tests/test_trajectoire.py::test_un_ecart_declare_en_est_un - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "ERROR tests/test_trajectoire.py::test_la_carriere_longue_et_le_minimum_contributif_concordent - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "FAILED tests/test_affirmations.py::test_le_controle_passe[simuler.retraite_progressive_fermee] - AttributeError: 'Carriere' object has no attribute 'retraite_progressive'"
-  - "FAILED tests/test_web_revues.py::test_la_page_risque_chiffre_le_prelevement_depuis_le_modele - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web_revues.py::test_le_simulateur_dit_la_garantie_degressive - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "FAILED tests/test_avantages.py::test_le_recalcul_rend_un_montant_positif_et_conserve_la_pension - AttributeError: 'Carriere' object has no attribute 'date_entree'"
   - "FAILED tests/test_web.py::test_simulation_en_dictionnaire - AttributeError: 'Carriere' object has no attribute 'prolongee'"
   - "FAILED tests/test_web.py::test_un_statut_ferme_est_refuse_a_qui_y_entre_apres_la_fermeture - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_avantages.py::test_les_deux_mesures_de_la_categorie_active_coincident - AttributeError: 'Carriere' object has no attribute 'date_entree'"
   - "FAILED tests/test_web.py::test_la_fermeture_se_lit_au_mois_et_sur_la_date_d_entree - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_avantages.py::test_les_variantes_ne_changent_que_ce_qu_elles_retirent - AttributeError: 'Carriere' object has no attribute 'date_entree'"
   - "FAILED tests/test_web.py::test_le_menu_des_statuts_est_date - AttributeError: 'Carriere' object has no attribute 'prolongee'"
+  - "FAILED tests/test_avantages.py::test_le_recalcul_rend_un_montant_positif_et_conserve_la_pension - AttributeError: 'Carriere' object has no attribute 'date_entree'"
+  - "FAILED tests/test_avantages.py::test_les_deux_mesures_de_la_categorie_active_coincident - AttributeError: 'Carriere' object has no attribute 'date_entree'"
+  - "FAILED tests/test_avantages.py::test_les_variantes_ne_changent_que_ce_qu_elles_retirent - AttributeError: 'Carriere' object has no attribute 'date_entree'"
   - "FAILED tests/test_avantages.py::test_le_retrait_de_l_apprentissage_ne_retire_que_le_complement - AttributeError: 'Carriere' object has no attribute 'date_entree'"
   - "FAILED tests/test_web.py::test_la_complementaire_de_l_artisan_est_reduite_comme_sa_base_depuis_juillet_2024 - AttributeError: 'Carriere' object has no attribute 'date_entree'"
   - "FAILED tests/test_web.py::test_la_complementaire_d_une_premiere_pension_de_2027_perd_ce_que_la_base_n_absorbe_pas - AttributeError: 'Carriere' object has no attribute 'prolongee'"
@@ -30,17 +21,26 @@ echecs:
   - "FAILED tests/test_web.py::test_un_depassement_qui_n_epuise_pas_un_mois_ne_suspend_rien - AttributeError: 'Carriere' object has no attribute 'date_entree'"
   - "FAILED tests/test_web.py::test_la_seconde_retraite_du_rci_de_moins_de_quarante_points_est_versee_en_une_fois - AttributeError: 'Carriere' object has no attribute 'date_entree'"
   - "FAILED tests/test_web.py::test_la_seconde_retraite_du_rci_se_dit_en_points - AttributeError: 'Carriere' object has no attribute 'date_entree'"
-  - "FAILED tests/test_web_saisie.py::test_l_enfant_ne_apres_le_depart_compte_a_la_majoration_de_la_reversion - AttributeError: 'Carriere' object has no attribute 'naissances_des_enfants'"
-  - "FAILED tests/test_web_saisie.py::test_le_releve_remplace_la_carriere_parametrique - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web_saisie.py::test_les_trimestres_declares_l_emportent_sur_le_montant - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web_saisie.py::test_l_annee_du_depart_est_tronquee_par_la_liquidation - AttributeError: 'Carriere' object has no attribute 'prolongee'"
-  - "FAILED tests/test_web_saisie.py::test_les_interruptions_valent_encore_sur_un_releve - AttributeError: 'Carriere' object has no attribute 'date_entree'"
+  - "FAILED tests/test_web_revues.py::test_la_page_risque_chiffre_le_prelevement_depuis_le_modele - AttributeError: 'Carriere' object has no attribute 'prolongee'"
+  - "FAILED tests/test_web.py::test_le_sexe_ne_change_rien_par_defaut - AttributeError: 'Carriere' object has no attribute 'prolongee'"
+  - "FAILED tests/test_web_revues.py::test_le_simulateur_dit_la_garantie_degressive - AttributeError: 'Carriere' object has no attribute 'date_entree'"
+  - "FAILED tests/test_web.py::test_la_formule_affichee_retrouve_la_pension_du_regime[d\xe9part \xe0 l'\xe2ge de r\xe9f\xe9rence-champs0] - AttributeError: 'Carriere' object has no attribute 'prolongee'"
+  - "FAILED tests/test_web.py::test_la_formule_affichee_retrouve_la_pension_du_regime[d\xe9part anticip\xe9 de deux ans-champs1] - AttributeError: 'Carriere' object has no attribute 'prolongee'"
+  - "FAILED tests/test_web.py::test_la_formule_affichee_retrouve_la_pension_du_regime[d\xe9part tr\xe8s anticip\xe9-champs2] - AttributeError: 'Carriere' object has no attribute 'prolongee'"
+  - "FAILED tests/test_web.py::test_la_formule_affichee_retrouve_la_pension_du_regime[bas salaire-champs3] - AttributeError: 'Carriere' object has no attribute 'date_entree'"
+  - "FAILED tests/test_web.py::test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne - AttributeError: 'Carriere' object has no attribute 'prolongee'"
+  - "FAILED tests/test_web.py::test_les_pages_au_hasard_calculent_et_refusent_comme_le_modele - AttributeError: 'Carriere' object has no attribute 'date_entree'"
+  - "FAILED tests/test_web.py::test_les_refus_de_saisie_disent_le_mot_du_modele - AttributeError: 'Carriere' object has no attribute 'prolongee'"
+  - "FAILED tests/test_web.py::test_le_tableau_par_origine_s_additionne_colonne_par_colonne[carri\xe8re ordinaire-champs0] - AttributeError: 'Carriere' object has no attribute 'prolongee'"
+  - "FAILED tests/test_web.py::test_le_tableau_par_origine_s_additionne_colonne_par_colonne[cadre-champs1] - AttributeError: 'Carriere' object has no attribute 'prolongee'"
+  - "FAILED tests/test_web.py::test_le_tableau_par_origine_s_additionne_colonne_par_colonne[fonctionnaire, rente RAFP-champs2] - AttributeError: 'Carriere' object has no attribute 'date_entree'"
+  - "FAILED tests/test_web.py::test_le_tableau_par_origine_s_additionne_colonne_par_colonne[m\xe8re de trois enfants-champs3] - AttributeError: 'Carriere' object has no attribute 'prolongee'"
 presomptions: vert
 durees:
-  fabrique: 431
-  suite: 703
-  tranche_1: 380
-  tranche_2: 375
-  tranche_3: 478
-  tranche_4: 703
-  garde: 139
+  fabrique: 451
+  suite: 411
+  tranche_1: 282
+  tranche_2: 408
+  tranche_3: 411
+  tranche_4: 400
+  garde: 135
