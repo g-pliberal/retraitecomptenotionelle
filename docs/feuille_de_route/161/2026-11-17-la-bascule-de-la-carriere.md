@@ -35,5 +35,15 @@ code Python n'est supprimé.
   `avec_lignes`. Verts ensuite : `-m rapide` (5 702), le pont, la façade, le
   simulateur, le cycle de vie, les confrontations légères (1 128).
 
+- **La suite complète, rouge après la bascule** (52 échecs hors de la suite
+  rapide, dans sept fichiers) : des tests confiaient au moteur Python la
+  carrière nue du pont. `outils_pont.Saisies`, quand son simulateur est celui
+  du Python, et `jumeau_des_avantages.py` (ses scénarios neutralisés, ses
+  carrières de variante) la recopient sous la classe des règles
+  (`outils_pont.des_regles`) ; `test_affirmations.py` lit la retraite
+  progressive par `facade.fait`, et `test_controle_drees_panorama.py` les
+  trimestres de chaque année par `facade.trimestres_cumules`. Valeurs
+  inchangées ; suite complète verte, en local (9 213) et à GitHub.
+
 **Ce qui reste** : la suppression des fichiers de règles, qui attend l'accord
 final du propriétaire.
