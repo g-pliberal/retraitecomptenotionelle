@@ -2198,7 +2198,7 @@ def test_la_carriere_prolongee_se_demande_au_portage(simulateur):
 
 
 def test_ce_que_la_carriere_compte_se_demande_au_portage(simulateur):
-    """Né en mars 1962, entré à vingt et un ans, en mars 1983, parti à
+    """Né le 15 mars 1962, entré à vingt et un ans, en mars 1983, parti à
     soixante-deux en avril 2024 : les trois trimestres que sa première année
     valide (dix mois), quarante années pleines de 1984 à 2023, et un seul
     trimestre civil écoulé en 2024, avant la date d'effet. L'exploitant
@@ -2207,8 +2207,8 @@ def test_ce_que_la_carriere_compte_se_demande_au_portage(simulateur):
     portage."""
     def de(affiliation):
         return simulateur.carriere_simple(
-            annee_naissance=1962, mois_naissance=3, sexe="H", affiliation=affiliation,
-            age_debut=21, age_liquidation=62.0)
+            annee_naissance=1962, mois_naissance=3, jour_naissance=15, sexe="H",
+            affiliation=affiliation, age_debut=21, age_liquidation=62.0)
 
     salarie, exploitant = de("salarie_prive_non_cadre"), de("exploitant_agricole")
     assert str(salarie.date_liquidation) == "avril 2024"
@@ -2262,7 +2262,7 @@ def test_les_faits_de_la_carriere_se_demandent_au_portage(simulateur):
 
 
 def test_les_copies_et_les_services_de_la_carriere_se_demandent_au_portage(simulateur):
-    """Né en mars 1962, entré à vingt et un ans, en mars 1983, parti à
+    """Né le 15 mars 1962, entré à vingt et un ans, en mars 1983, parti à
     soixante-deux en avril 2024 : sa première année retient dix mois, les
     quarante suivantes l'année entière, 2024 les trois mois d'avant la date
     d'effet ; fonctionnaire, il sert donc 41 ans et un mois, et ses vingt-cinq
@@ -2274,8 +2274,8 @@ def test_les_copies_et_les_services_de_la_carriere_se_demandent_au_portage(simul
     chaque durée sont celles du portage."""
     def de(affiliation):
         return simulateur.carriere_simple(
-            annee_naissance=1962, mois_naissance=3, sexe="H", affiliation=affiliation,
-            age_debut=21, age_liquidation=62.0)
+            annee_naissance=1962, mois_naissance=3, jour_naissance=15, sexe="H",
+            affiliation=affiliation, age_debut=21, age_liquidation=62.0)
 
     salarie, fonctionnaire = de("salarie_prive_non_cadre"), de("fonctionnaire_etat")
     exploitant = de("exploitant_agricole")

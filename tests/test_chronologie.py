@@ -676,8 +676,8 @@ def test_les_deux_lecteurs_lisent_les_memes_dates_declarees():
 
 def test_les_copies_de_travail_gardent_leur_chronologie(macro):
     carriere = Carriere.depuis_parcours(macro=macro, **PARCOURS)
-    assert carriere.avec_lignes(carriere.lignes).chronologie is carriere.chronologie
-    assert carriere.prolongee(66.0, macro).chronologie is carriere.chronologie
+    assert facade.avec_lignes(carriere, carriere.lignes).chronologie == carriere.chronologie
+    assert facade.prolongee(carriere, 66.0, macro).chronologie == carriere.chronologie
 
 
 def test_un_releve_et_un_parcours_ne_se_melent_pas(macro):

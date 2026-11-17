@@ -65,9 +65,17 @@ ni donnée : aucun résultat, aucun témoin ne peut bouger.
    proposition), où le simulateur Python reçoit la carrière du portage et
    lit `prolongee` et `date_entree` sur elle : le jumeau la recopie sous la
    classe des règles, comme le font déjà les tests de cette note.
-2. **Une question au propriétaire** :
+2. **Tranché par le propriétaire, le 17 novembre** :
    `test_chronologie.py`, `test_les_copies_de_travail_gardent_leur_chronologie`,
-   vérifie que la copie garde la chronologie elle-même (`is`). Passée par le
-   portage, la copie en porte une relue, égale et non identique : le test
-   ne peut plus vérifier que l'égalité. Le passer à `==`, ou le laisser
-   partir avec les règles, change ce qu'il vérifie : laissé tel quel.
+   vérifiait que la copie garde la chronologie elle-même (`is`) ; passée par
+   le portage, la copie en porte une relue, égale et non identique. Le
+   propriétaire a choisi l'égalité : le test passe au portage et vérifie
+   `==`. Il passe sous la carrière nue.
+
+**La garde des présomptions**, rouge sur la course de GitHub : les deux
+tests de la façade, celui de la note précédente et celui d'ici, comptaient
+sur le jour de naissance présumé (né en mars 1962, parti en avril 2024). Ils
+déclarent désormais le 15 mars : les valeurs attendues ne changent pas, et la
+garde, lancée ici (`PRESOMPTIONS_DECALEES=1`), passe.
+
+Sous la carrière nue, restent les huit échecs de la bascule.
