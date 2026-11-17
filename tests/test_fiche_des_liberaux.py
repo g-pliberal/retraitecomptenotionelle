@@ -31,7 +31,7 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle import Parametres
-from retraite_notionnelle.carriere import AnneeCarriere
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 from retraite_notionnelle.config import PartCotisation
 from retraite_notionnelle.donnees.prelevements_historiques import (
     charger_prelevements_historiques, famille_de_la_fiche)

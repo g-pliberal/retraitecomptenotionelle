@@ -21,7 +21,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from retraite_notionnelle.carriere import LigneRelevee
+from retraite_notionnelle.types_du_pont.carriere import LigneRelevee
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.contributions_equilibre import charger_contributions_equilibre
 from retraite_notionnelle.donnees.impot_revenu import charger_baremes_impot_revenu

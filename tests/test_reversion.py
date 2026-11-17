@@ -18,7 +18,7 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.types_du_pont.carriere import Metier
 from retraite_notionnelle.chronologie import fait
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.web.site import ErreurSite
@@ -3233,7 +3233,7 @@ def test_les_deux_moteurs_disent_si_le_plafond_est_celui_du_menage():
 # -- les majorations forfaitaires des pensions d'avant 1975 ----------------------------
 
 def _pension(regime: str = "regime_general", maximum: bool = True):
-    from retraite_notionnelle.droit.commun import PensionRegime
+    from retraite_notionnelle.types_du_pont.droit import PensionRegime
     return PensionRegime(regime=regime, montant=1000.0, type_calcul="annuites", detail="",
                          fiabilite=HAUTE, sur_la_duree_maximum=maximum)
 

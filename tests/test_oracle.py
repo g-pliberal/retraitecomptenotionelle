@@ -82,7 +82,7 @@ from retraite_notionnelle.calendrier import DateMois
 
 import facade
 from facade import Carriere
-from retraite_notionnelle.carriere import AnneeCarriere
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes
 from retraite_notionnelle.donnees.chargement import Fiabilite, SerieAnnuelle
@@ -2205,7 +2205,7 @@ def _mesurer(exemple: dict, carriere, resultat, cle: str, droit=droit_et_fige):
         # (`releve`, année : salaire), la grandeur les points de chaque régime,
         # une valeur par période qui en crédite — la tranche 1, puis la 2. Le
         # portage bâtit la carrière du relevé, qui revient en Python.
-        from retraite_notionnelle.carriere import LigneRelevee
+        from retraite_notionnelle.types_du_pont.carriere import LigneRelevee
 
         c = exemple["carriere"]
         annee = int(exemple["attendu"][cle]["annee"])

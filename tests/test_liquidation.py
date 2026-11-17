@@ -22,7 +22,7 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle import pont
-from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.types_du_pont.carriere import Metier
 from retraite_notionnelle.castypes import CAS_TYPES
 from retraite_notionnelle.noyau import contrats
 

@@ -17,7 +17,7 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.droit.commun import AvantageApplique
+from retraite_notionnelle.types_du_pont.droit import AvantageApplique
 
 import facade
 from facade import Simulateur, commun, completer, faire_vivre

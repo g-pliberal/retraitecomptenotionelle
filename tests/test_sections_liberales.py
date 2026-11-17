@@ -30,7 +30,7 @@ from __future__ import annotations
 
 import pytest
 
-from retraite_notionnelle.carriere import LigneRelevee, Metier
+from retraite_notionnelle.types_du_pont.carriere import LigneRelevee, Metier
 
 from facade import (Carriere, Simulateur, acquerir, commun, completer, compter, coordonner,
                     releve)
@@ -640,7 +640,7 @@ def test_chaque_version_de_la_majoration_pour_enfants_des_sections_est_portee():
     que la période de liquidation de chaque section déclare
     (``majoration_enfants`` dans ``avantages_non_contributifs``, que
     ``_taux_majoration_enfants`` sert à 10 %), sans écart."""
-    from retraite_notionnelle.carriere import DateMois
+    from retraite_notionnelle.calendrier import DateMois
     from retraite_notionnelle.noyau import carte
 
     catalogue = Simulateur().catalogue
@@ -811,7 +811,7 @@ def test_la_cipav_cotise_aux_deux_tranches_du_decret_dans_les_deux_moteurs(
     from outils_pont import droit_et_fige
 
     from retraite_notionnelle import pont
-    from retraite_notionnelle.carriere import AnneeCarriere
+    from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 
     lus, refus = droit_et_fige({"fiche": (
         "remuneration.fiche_depuis_brut.lignes_de_retraite", pont.SIMULATEUR,
@@ -1374,7 +1374,7 @@ def test_les_points_d_une_annee_incomplete_suivent_sa_cotisation(simulateur):
     import subprocess
     from pathlib import Path
 
-    from retraite_notionnelle.carriere import AnneeCarriere
+    from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 
     def lignes():
         return [dict(annee=annee, revenu=40_000.0, affiliation="profession_liberale")

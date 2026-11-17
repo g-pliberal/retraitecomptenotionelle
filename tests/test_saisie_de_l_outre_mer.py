@@ -24,7 +24,7 @@ from urllib.parse import parse_qs
 import pytest
 
 from retraite_notionnelle import chronologie as chrono
-from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.types_du_pont.carriere import Metier
 from retraite_notionnelle.web.site import ErreurSite, module, rendre
 
 from outils_pont import Saisies, saisie_du_portage

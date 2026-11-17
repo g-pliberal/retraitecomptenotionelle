@@ -410,7 +410,7 @@ def test_la_coupure_respecte_le_releve(simulateur):
     """Un relevé de carrière qui porte des trimestres de chômage après le
     taux plein fait foi : la caisse les a validés, l'indemnisation a donc
     couru, et le modèle n'y retouche pas."""
-    from retraite_notionnelle.carriere import LigneRelevee
+    from retraite_notionnelle.types_du_pont.carriere import LigneRelevee
 
     indemnisation_bornee = ouvrir.indemnisation_bornee
 

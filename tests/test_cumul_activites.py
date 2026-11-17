@@ -20,7 +20,7 @@ from urllib.parse import parse_qsl
 
 import pytest
 
-from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.types_du_pont.carriere import Metier
 from retraite_notionnelle.web.site import ErreurSite, disponible, rendre
 
 import facade

@@ -123,7 +123,7 @@ from retraite_notionnelle.droit import releve as _releve
 from retraite_notionnelle.droit import reversion as _reversion
 from retraite_notionnelle.droit import seconde as _seconde
 from retraite_notionnelle.moteur import compte as _compte
-from retraite_notionnelle.moteur.fusion import RegimeFusionne
+from retraite_notionnelle.types_du_pont.moteur import RegimeFusionne
 
 #: Les données du simulateur Python que la façade laisse lire : des chargeurs,
 #: qui restent en Python (note de décision 0006), et aucune règle.

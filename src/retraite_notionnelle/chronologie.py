@@ -100,7 +100,7 @@ from .noyau import vocabulaire
 if TYPE_CHECKING:  # pragma: no cover - annotations seulement
     from collections.abc import Callable
 
-    from .carriere import LigneRelevee, Metier
+    from .types_du_pont.carriere import LigneRelevee, Metier
 
 #: La version du contrat C.1 que la chronologie suit.
 SCHEMA_VERSION = 1

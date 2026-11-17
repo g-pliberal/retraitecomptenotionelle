@@ -1734,7 +1734,8 @@ def ecart_openfisca(**reglages: str) -> float:
     """
     import json
 
-    from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+    from retraite_notionnelle.carriere import Carriere
+    from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 
     pont = _pont()
     temoin = json.loads((RACINE / "tests" / "temoins" / "openfisca_regime_general.json")

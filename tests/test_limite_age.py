@@ -21,7 +21,7 @@ from __future__ import annotations
 import pytest
 
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.types_du_pont.carriere import Metier
 from retraite_notionnelle.noyau import carte
 
 from facade import Carriere, Simulateur, departs, limite_age

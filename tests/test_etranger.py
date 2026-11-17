@@ -19,9 +19,8 @@ import pytest
 
 from retraite_notionnelle import chronologie as chrono
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import (
-    LigneRelevee, Metier, PensionEtrangere, PeriodeALEtranger,
-)
+from retraite_notionnelle.types_du_pont.carriere import (
+    LigneRelevee, Metier, PensionEtrangere, PeriodeALEtranger)
 from retraite_notionnelle.donnees.chargement import charger_accords_internationaux
 from retraite_notionnelle.donnees.mortalite import AGE_TERMINAL
 from retraite_notionnelle.web.site import ErreurSite

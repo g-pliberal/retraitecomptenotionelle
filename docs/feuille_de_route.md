@@ -7327,16 +7327,16 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 17 novembre 2026.** Le moteur Python d'une carrière se retire au
-profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
-Le pont rend désormais chaque carrière sous le type nu, sans la classe des
-règles Python : aucun test rapide n'en dépend plus
-(`2026-11-17-la-bascule-de-la-carriere.md`). Seul le simulateur Python, que
-le jumeau confronte encore au portage, reçoit une copie sous la classe des
-règles. Reste la suppression des 40 fichiers de règles, qui récrira aussi les
-en-têtes des 35 JavaScript qui déclarent un jumeau de règle. Elle attend
-l'accord final du propriétaire. Par quoi commencer : le lui demander, avec la
-liste de ce qui part.
+**Reprise, au 17 novembre 2026.** Le propriétaire a accepté la
+suppression des 40 fichiers de règles Python. Un essai à blanc l'a faite dans
+un worktree jetable : 137 fichiers de tests ne se chargent plus. Les types et
+les constantes que les règles reprennent d'ailleurs s'importent désormais de
+leur module ; il ne reste que 13 fichiers qui importent des règles, dont la
+façade des tests et ses outils, par où cassent presque tous les autres.
+Restent quatre lots, une session chacun : les constantes que seules les
+règles tiennent, les outils du pont, la façade, puis la suppression.
+Par quoi commencer : le premier lot, que décrit
+`2026-11-17-l-essai-a-blanc-de-la-suppression.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

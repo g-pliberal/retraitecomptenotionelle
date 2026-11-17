@@ -31,7 +31,7 @@ from pathlib import Path
 import pytest
 
 from facade import Carriere, Simulateur, liquider, ouvrir, releve
-from retraite_notionnelle.carriere import AnneeCarriere
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 from retraite_notionnelle.config import Parametres
 
 TEMOINS = Path(__file__).resolve().parent / "temoins"

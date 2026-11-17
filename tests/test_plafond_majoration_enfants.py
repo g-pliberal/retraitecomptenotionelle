@@ -19,7 +19,7 @@ from __future__ import annotations
 import pytest
 
 import facade
-from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.types_du_pont.carriere import Metier
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.noyau import contrats
 

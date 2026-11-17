@@ -18,7 +18,7 @@ import datetime as dt
 import pytest
 
 from retraite_notionnelle import contributions_equilibre as ce
-from retraite_notionnelle.carriere import AnneeCarriere
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 from retraite_notionnelle.config import RACINE_DONNEES, Parametres
 from retraite_notionnelle.remuneration import _montant, charger_prelevements
 

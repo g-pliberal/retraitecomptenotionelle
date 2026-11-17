@@ -20,7 +20,7 @@ import shutil
 import pytest
 
 from facade import Carriere, Simulateur
-from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.types_du_pont.carriere import Metier
 from retraite_notionnelle.config import PartCotisation
 
 from outils_pont import simulations_du_portage

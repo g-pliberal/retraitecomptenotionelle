@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import AnneeCarriere, Metier
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere, Metier
 from retraite_notionnelle.donnees.chargement import (
     charger_cotisation_micro,
     charger_validation_micro,

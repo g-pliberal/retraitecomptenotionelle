@@ -41,7 +41,7 @@ from datetime import date
 
 import pytest
 
-from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.types_du_pont.carriere import Metier
 from retraite_notionnelle.config import RACINE_PROJET
 
 from facade import Carriere, Simulateur, ligne_de, liquider

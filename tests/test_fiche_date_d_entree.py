@@ -33,7 +33,7 @@ import pytest
 
 from retraite_notionnelle import Parametres
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import AnneeCarriere, LigneRelevee
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere, LigneRelevee
 from retraite_notionnelle.config import PartCotisation
 from retraite_notionnelle.remuneration import (
     famille_du_statut, fiche_depuis_brut, profil_de_la_fiche, salaire_brut_depuis_net,

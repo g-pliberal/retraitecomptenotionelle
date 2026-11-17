@@ -31,7 +31,7 @@ from dataclasses import fields, replace
 import pytest
 
 from retraite_notionnelle import Parametres, pont
-from retraite_notionnelle.carriere import AnneeCarriere
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 from retraite_notionnelle.castypes import (
     CAS_TYPES, GENERATIONS, GRILLE_DU_COUT, cases_de_la_grille)
 from retraite_notionnelle.config import RACINE_DONNEES, RACINE_PROJET
@@ -2006,7 +2006,7 @@ def test_le_pont_rend_les_taux_de_l_indexation():
     productivité ; son plancher, s'il passe au-dessus, le remplace."""
     _sans_node()
     from retraite_notionnelle.donnees.chargement import Fiabilite
-    from retraite_notionnelle.moteur.indexation import TauxIndexation
+    from retraite_notionnelle.types_du_pont.moteur import TauxIndexation
 
     taux, deux_ans, meme_annee, a_rebours = pont.indexation([
         ("taux", 2023), ("coefficient", 2021, 2023), ("coefficient", 2023, 2023),

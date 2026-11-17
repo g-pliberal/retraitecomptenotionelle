@@ -134,7 +134,7 @@ def test_les_services_d_avant_1948_entrent_au_decompte_de_l_etat():
     civiles d'avant 1948, que le régime de l'État liquide avec les siens : 136
     trimestres. Le décompte au jour ne les comptait d'abord que dans les trois
     régimes de la fiche, et en perdait huit."""
-    from retraite_notionnelle.carriere import Metier
+    from retraite_notionnelle.types_du_pont.carriere import Metier
 
     simulateur = Simulateur()
     carriere = Carriere.depuis_parcours(

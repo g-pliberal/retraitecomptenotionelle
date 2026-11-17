@@ -32,7 +32,7 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import AnneeCarriere
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 from retraite_notionnelle.config import Parametres
 
 from facade import Carriere, Simulateur, liquider

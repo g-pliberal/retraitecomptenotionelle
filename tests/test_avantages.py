@@ -464,7 +464,7 @@ def _apprenti_puis_salarie(simulateur, fin_du_salariat: int, age_liquidation: fl
     de 2017 à ``fin_du_salariat`` exclue. Le relevé porte les euros sans les
     trimestres : le modèle les valide du salaire, comme la caisse."""
     from retraite_notionnelle import chronologie
-    from retraite_notionnelle.carriere import LigneRelevee
+    from retraite_notionnelle.types_du_pont.carriere import LigneRelevee
 
     from facade import Carriere
 

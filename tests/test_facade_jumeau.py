@@ -32,7 +32,7 @@ from retraite_notionnelle import simulateur as simulateur_python
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import Carriere as CarrierePython
 from retraite_notionnelle.types_du_pont.carriere import Carriere as CarriereNue
-from retraite_notionnelle.carriere import LigneRelevee, Metier
+from retraite_notionnelle.types_du_pont.carriere import LigneRelevee, Metier
 from retraite_notionnelle.config import RACINE_PROJET, ContributionEtat, Parametres
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit import acquerir as acquerir_python
@@ -54,9 +54,9 @@ from retraite_notionnelle.droit import ouvrir as ouvrir_python
 from retraite_notionnelle.droit import progressive as progressive_python
 from retraite_notionnelle.droit import reversion as reversion_python
 from retraite_notionnelle.droit import releve as releve_python
-from retraite_notionnelle.droit.commun import PensionRegime
-from retraite_notionnelle.droit.liquider import EligibleMinimum
-from retraite_notionnelle.journal import Journal
+from retraite_notionnelle.types_du_pont.droit import PensionRegime
+from retraite_notionnelle.types_du_pont.droit import EligibleMinimum
+from retraite_notionnelle.types_du_pont.journal import Journal
 
 import facade
 from outils_pont import TOLERANCE_DU_MOTEUR_PYTHON, ecarts_d_ecriture
@@ -745,7 +745,7 @@ _AUTRES_ETAPES = (("2011-01-01", (("agirc", 2.0),)), ("2013-01-01", ()))
 
 
 def _majoration_a_charge():
-    from retraite_notionnelle.droit.commun import AvantageApplique
+    from retraite_notionnelle.types_du_pont.droit import AvantageApplique
 
     return AvantageApplique(code="majoration_enfants", libelle="", montant=30.0,
                             par_regime=(("regime_general", 20.0), ("arrco", 10.0)),
@@ -1788,7 +1788,8 @@ def _periode_active(regime: str, annee: int):
 def _cumul(simulateur):
     """Un salarié du privé qui est aussi artisan en 2010 : deux activités la
     même année, que ``cotisation_annuelle`` additionne."""
-    from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+    from retraite_notionnelle.carriere import Carriere
+    from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 
     return Carriere(annee_naissance=1970, sexe="H", age_liquidation=64.0, lignes=[
         AnneeCarriere(annee=2010, revenu=30000.0, affiliation="salarie_prive_non_cadre"),
@@ -2286,8 +2287,9 @@ def test_les_deux_jumeaux_lisent_le_meme_profil_au_bit_pres():
     import subprocess
 
     from retraite_notionnelle.carriere import (
-        PROFIL_AUTOMATIQUE, PROFIL_PAR_AFFILIATION, PROFIL_SECTEUR_PAR_AFFILIATION,
-        PROFILS_CATEGORIE, bornes_deformation, profil_salaire)
+        PROFIL_PAR_AFFILIATION, PROFIL_SECTEUR_PAR_AFFILIATION, PROFILS_CATEGORIE,
+        bornes_deformation, profil_salaire)
+    from retraite_notionnelle.types_du_pont.carriere import PROFIL_AUTOMATIQUE
     from retraite_notionnelle.config import RACINE_DONNEES
 
     if shutil.which("node") is None:
@@ -2373,8 +2375,9 @@ def _noms_herites_en_python(noms) -> list[dict]:
     """Ce que le Python rend sous chacun de ces noms, comme le lit le portage :
     une valeur, ou un refus — un ``ValueError`` ou un ``KeyError``, et jamais
     une ``TypeError``, qui serait une faute de programme."""
-    from retraite_notionnelle.carriere import (
-        Affiliations, Carriere, LigneRelevee, bornes_deformation, profil_de_l_affiliation)
+    from retraite_notionnelle.carriere import Carriere, bornes_deformation, profil_de_l_affiliation
+    from retraite_notionnelle.donnees.affiliations import Affiliations
+    from retraite_notionnelle.types_du_pont.carriere import LigneRelevee
     from retraite_notionnelle.donnees.chargement import (
         charger_chomage_complementaires, charger_cotisation_micro,
         charger_dispenses_assiette_minimale, dispense_assiette_minimale, forfait_micro)
@@ -2677,7 +2680,7 @@ def _comme_methode(regle):
                                             for methode in methodes])
 def test_chaque_methode_de_table_a_le_contrat_de_son_jumeau(contrats, moteur_python, table,
                                                             methode):
-    from retraite_notionnelle.scenarios.actuel import TableRecouverte
+    from retraite_notionnelle.donnees.tables_du_droit import TableRecouverte
     regle = REGLES_DETACHEES.get((table, methode))
     jumelles = [getattr(type(getattr(moteur_python, table)), methode) if regle is None
                 else _comme_methode(regle)]

@@ -31,7 +31,7 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.types_du_pont.carriere import Metier
 from retraite_notionnelle.calendrier import DateMois
 
 import facade

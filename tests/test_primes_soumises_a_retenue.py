@@ -32,7 +32,7 @@ import re
 import pytest
 
 from retraite_notionnelle import Parametres
-from retraite_notionnelle.carriere import LigneRelevee, Metier
+from retraite_notionnelle.types_du_pont.carriere import LigneRelevee, Metier
 from retraite_notionnelle.donnees.primes import charger_primes_soumises
 from retraite_notionnelle.remuneration import bloc_droit_en_vigueur
 

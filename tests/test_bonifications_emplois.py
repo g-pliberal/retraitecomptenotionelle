@@ -32,7 +32,7 @@ from __future__ import annotations
 import pytest
 
 from facade import Carriere, Simulateur, releve
-from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.types_du_pont.carriere import Metier
 
 POLICIER = "fonctionnaire_etat_super_actif"
 ETAT = ("fonction_publique_etat",)

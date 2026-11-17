@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import pytest
 
-from retraite_notionnelle.carriere import AnneeCarriere
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 from retraite_notionnelle.config import RACINE_PROJET
 
 from facade import Carriere, liquider, Simulateur
@@ -328,7 +328,7 @@ def test_avant_1946_la_retenue_ne_lit_que_les_assures_sociaux(simulateur):
     assurances sociales et ne valide rien ; le même traitement d'un
     fonctionnaire de l'État, dont la pension civile compte les services, en
     valide quatre ; 2 F de salaire, 0,08 F de retenue, aucun."""
-    from retraite_notionnelle.carriere import LigneRelevee
+    from retraite_notionnelle.types_du_pont.carriere import LigneRelevee
 
     def francs(montant: float) -> float:
         return montant / 6.55957
@@ -374,7 +374,7 @@ def test_le_salaire_d_un_non_assujetti_n_entre_pas_au_salaire_annuel_moyen(simul
 
 
 def test_la_retenue_se_lit_selon_le_statut_et_l_annee(simulateur):
-    from retraite_notionnelle.carriere import LigneRelevee
+    from retraite_notionnelle.types_du_pont.carriere import LigneRelevee
 
     releves = [[{"annee": annee, "affiliation": statut, "revenu": francs / 6.55957}
                 for annee in (1929, 1930, 1938, 1946)]

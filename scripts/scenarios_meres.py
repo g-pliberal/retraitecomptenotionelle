@@ -83,7 +83,7 @@ from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
 
 if TYPE_CHECKING:
-    from retraite_notionnelle.simulateur import Comparaison
+    from retraite_notionnelle.types_du_pont.comparaison import Comparaison
 
 LIBERAL = "notionnel_liberal"
 

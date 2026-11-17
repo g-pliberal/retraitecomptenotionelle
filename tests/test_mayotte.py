@@ -40,7 +40,7 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import AnneeCarriere, LigneRelevee
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere, LigneRelevee
 
 from facade import Carriere, liquider, Simulateur
 

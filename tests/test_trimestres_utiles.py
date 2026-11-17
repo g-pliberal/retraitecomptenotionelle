@@ -39,7 +39,7 @@ from dataclasses import dataclass
 import pytest
 
 from facade import Carriere, Simulateur, liquider, ouvrir, releve
-from retraite_notionnelle.carriere import AnneeCarriere
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 from retraite_notionnelle.config import Parametres
 
 PRIVE = "salarie_prive_non_cadre"

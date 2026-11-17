@@ -117,7 +117,7 @@ def test_le_menu_des_statuts_est_groupe_par_famille(page):
     option reste une option : le script qui grise les statuts fermés les
     parcourt par ``menu.options``, que les groupes ne cachent pas.
     """
-    from retraite_notionnelle.carriere import FAMILLES_STATUT
+    from retraite_notionnelle.donnees.affiliations import FAMILLES_STATUT
 
     texte = page("/simuler")
     premier = re.search(r'<select id="statut".*?</select>', texte, re.S).group(0)

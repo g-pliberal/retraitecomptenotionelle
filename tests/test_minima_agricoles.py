@@ -22,9 +22,9 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.types_du_pont.carriere import Metier
 from retraite_notionnelle.donnees.chargement import Fiabilite
-from retraite_notionnelle.droit.commun import PensionRegime
+from retraite_notionnelle.types_du_pont.droit import PensionRegime
 
 import facade
 from facade import (Carriere, Echeancier, Simulateur, commun, completer, faire_vivre, liquider,

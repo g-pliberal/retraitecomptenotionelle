@@ -239,3 +239,88 @@ def test_dans_un_fichier_passe_a_la_facade_seuls_les_tests_marques_restent_sur_l
     passes = {fichier.name for fichier in ici.glob("test_*.py")
               if "entrees_du_test" in fichier.read_text(encoding="utf-8")}
     assert passes - {"test_facade.py", Path(__file__).name} == set(RESTES)
+
+
+# -- ce qui importe encore des fichiers de règles, même un type ou une constante -------
+
+#: Les fichiers, hors des fichiers de règles, qui en importent encore quelque
+#: chose : la façade et ses outils, les confrontations au jumeau, et ce qui lit
+#: une constante que seul un fichier de règles tient. Un type ou une constante
+#: que le fichier de règles reprend d'ailleurs s'importe de son module, sous
+#: ``types_du_pont`` ou ``donnees`` : la suppression des règles (action 161,
+#: étape 6 de l'inventaire) n'aura plus à le chercher. La liste ne fait que
+#: décroître.
+IMPORTEURS_DES_REGLES = (
+    "scripts/mesures_prose.py",
+    "tests/facade.py",
+    "tests/jumeau_des_avantages.py",
+    "tests/outils_pont.py",
+    "tests/test_capitalisation.py",
+    "tests/test_coefficients_agirc_1947.py",
+    "tests/test_facade.py",
+    "tests/test_facade_jumeau.py",
+    "tests/test_fonction_publique_etat.py",
+    "tests/test_ircantec_minoration.py",
+    "tests/test_majoration_exceptionnelle.py",
+    "tests/test_oracle_minima.py",
+    "tests/test_revalorisation.py",
+)
+
+
+#: Les fichiers de règles : ceux du moteur Python, et ``revalorisation.py``.
+FICHIERS_DE_REGLES = (*MOTEUR_PYTHON, "retraite_notionnelle.revalorisation")
+
+
+def _une_regle(module: str) -> bool:
+    return any(module == racine or module.startswith(racine + ".") for racine in FICHIERS_DE_REGLES)
+
+
+def _module_absolu(chemin: str, noeud: ast.ImportFrom) -> str:
+    if not noeud.level:
+        return noeud.module or ""
+    paquet = chemin[len("src/"):-len(".py")].split("/")[:-1]
+    paquet = paquet[:len(paquet) - (noeud.level - 1)]
+    return ".".join(paquet + ([noeud.module] if noeud.module else []))
+
+
+def importe_des_regles(chemin: str, source: str) -> bool:
+    """Le fichier ``chemin`` importe-t-il quoi que ce soit d'un fichier de
+    règles — module, règle, type, constante ?"""
+    for noeud in ast.walk(ast.parse(source)):
+        if isinstance(noeud, ast.Import):
+            if any(_une_regle(alias.name) for alias in noeud.names):
+                return True
+        elif isinstance(noeud, ast.ImportFrom):
+            if noeud.level and not chemin.startswith("src/"):
+                continue
+            module = _module_absolu(chemin, noeud)
+            if _une_regle(module):
+                return True
+            if module == "retraite_notionnelle" and any(
+                    _une_regle(f"{module}.{alias.name}") for alias in noeud.names):
+                return True
+    return False
+
+
+def test_hors_des_regles_un_type_ou_une_constante_s_importe_de_son_module():
+    """Hors des fichiers de règles, seuls les fichiers de
+    :data:`IMPORTEURS_DES_REGLES` en importent encore quelque chose."""
+    racine = Path(__file__).parents[1]
+    paquet = racine / "src" / "retraite_notionnelle"
+    importeurs = set()
+    for fichier in [*racine.glob("tests/**/*.py"), *racine.glob("scripts/**/*.py"),
+                    *paquet.glob("**/*.py")]:
+        chemin = fichier.relative_to(racine).as_posix()
+        if chemin.startswith("src/"):
+            module = chemin[len("src/"):-len(".py")].replace("/", ".").removesuffix(".__init__")
+            if _une_regle(module):
+                continue
+        if importe_des_regles(chemin, fichier.read_text(encoding="utf-8")):
+            importeurs.add(chemin)
+    de_plus = sorted(importeurs - set(IMPORTEURS_DES_REGLES))
+    assert not de_plus, (
+        f"{', '.join(de_plus)} : importe(nt) d'un fichier de règles — un type ou une "
+        "constante s'importe de son module (types_du_pont, donnees)")
+    de_moins = sorted(set(IMPORTEURS_DES_REGLES) - importeurs)
+    assert not de_moins, f"{', '.join(de_moins)} : n'importe plus des règles — le retirer"
+    assert list(IMPORTEURS_DES_REGLES) == sorted(IMPORTEURS_DES_REGLES)

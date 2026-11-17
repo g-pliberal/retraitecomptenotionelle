@@ -29,7 +29,7 @@ from pathlib import Path
 import pytest
 
 from facade import Carriere, Simulateur, liquider
-from retraite_notionnelle.carriere import AnneeCarriere
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.droit.liquider import MINORATION_AGE_MINIMUM_GARANTI
 from test_oracle_familles import AFFILIATIONS, PRECISION_OPENFISCA, _notre_calcul

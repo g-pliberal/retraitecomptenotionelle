@@ -26,9 +26,10 @@ import pytest
 
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.donnees.chargement import Fiabilite
-from retraite_notionnelle.droit.commun import PensionRegime
-from retraite_notionnelle.droit.completer import PetitePension
-from retraite_notionnelle.revalorisation import FICHE_DE_LA_MAJORATION, RegimeServi
+from retraite_notionnelle.types_du_pont.droit import PensionRegime
+from retraite_notionnelle.types_du_pont.droit import PetitePension
+from retraite_notionnelle.revalorisation import FICHE_DE_LA_MAJORATION
+from retraite_notionnelle.types_du_pont.revalorisation import RegimeServi
 
 import facade
 from facade import (Echeancier, Parametres, PensionServie, Simulateur, faire_vivre,

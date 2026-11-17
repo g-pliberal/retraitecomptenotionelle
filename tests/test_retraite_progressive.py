@@ -18,7 +18,7 @@ import json
 import pytest
 
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.types_du_pont.carriere import Metier
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.chargement import charger_yaml
 from retraite_notionnelle.noyau import versions

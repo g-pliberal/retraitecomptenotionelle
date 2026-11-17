@@ -34,7 +34,7 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle import chronologie
-from retraite_notionnelle.carriere import LigneRelevee
+from retraite_notionnelle.types_du_pont.carriere import LigneRelevee
 from retraite_notionnelle.config import Parametres
 
 from facade import Carriere, Simulateur, liquider, releve

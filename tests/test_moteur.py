@@ -12,7 +12,7 @@ from retraite_notionnelle.config import (
 from retraite_notionnelle.donnees.macro import DonneesMacro
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite
 from retraite_notionnelle.donnees.population import Population
-from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.types_du_pont.carriere import Metier
 
 import facade
 from facade import Simulateur
@@ -100,7 +100,7 @@ def test_le_cas_type_au_smic_gagne_le_smic_de_chaque_annee(portage):
     salaire moyen, comme le simulateur.
     """
     from retraite_notionnelle import pont
-    from retraite_notionnelle.carriere import PROFIL_SMIC
+    from retraite_notionnelle.types_du_pont.carriere import PROFIL_SMIC
     from retraite_notionnelle.castypes import CAS_TYPES
 
     simulateur = portage

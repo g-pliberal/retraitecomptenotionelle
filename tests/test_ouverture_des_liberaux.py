@@ -52,7 +52,7 @@ import re
 import pytest
 
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.types_du_pont.carriere import Metier
 
 from facade import Carriere, Simulateur, departs, ouvrir
 from outils_pont import servi_et_fige

@@ -218,7 +218,7 @@ def test_la_duree_requise_des_nes_avant_1943_est_de_160_trimestres_depuis_2003()
 
     from facade import Carriere
     from retraite_notionnelle import pont
-    from retraite_notionnelle.carriere import AnneeCarriere
+    from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 
     appels, attendus = {}, {}
     for annee, mois, age, effet, mois_effet, trimestres in DUREE_REQUISE_SELON_LA_DATE_D_EFFET:
@@ -277,7 +277,7 @@ def test_la_duree_requise_avant_le_decret_de_la_generation():
 
     from facade import Carriere
     from retraite_notionnelle import pont
-    from retraite_notionnelle.carriere import AnneeCarriere
+    from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 
     appels, attendus = {}, {}
     for (annee, mois, age, effet, mois_effet,

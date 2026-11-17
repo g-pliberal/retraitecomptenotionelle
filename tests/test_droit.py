@@ -18,7 +18,7 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle import chronologie
-from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.types_du_pont.carriere import Metier
 from retraite_notionnelle.noyau import contrats
 
 import facade
@@ -231,7 +231,7 @@ def test_le_releve_d_une_annee_interrompue_cite_l_interruption(simulateur):
 def test_le_releve_d_un_releve_de_carriere_est_observe(simulateur):
     """Les trimestres d'un relevé de carrière déposé font foi : leurs lignes
     sont observées, non calculées."""
-    from retraite_notionnelle.carriere import LigneRelevee
+    from retraite_notionnelle.types_du_pont.carriere import LigneRelevee
 
     carriere = simulateur.carriere_releve(
         1970, "H", [LigneRelevee(annee, "salarie_prive_non_cadre", 20000.0, 4)

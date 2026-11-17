@@ -23,7 +23,7 @@ from urllib.parse import parse_qs
 import pytest
 
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import ReversionAgricole
+from retraite_notionnelle.types_du_pont.carriere import ReversionAgricole
 from retraite_notionnelle.web.site import ErreurSite
 
 import facade

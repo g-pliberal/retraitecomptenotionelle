@@ -25,7 +25,7 @@ from retraite_notionnelle import carriere as carriere_python
 from retraite_notionnelle import memoire, pont
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle import simulateur as simulateur_python
-from retraite_notionnelle.carriere import LigneRelevee, Metier
+from retraite_notionnelle.types_du_pont.carriere import LigneRelevee, Metier
 from retraite_notionnelle.types_du_pont.carriere import PensionDInvalidite
 from retraite_notionnelle.config import (RACINE_PROJET, ContributionEtat, Neutralisations,
                                          Parametres)
@@ -49,13 +49,15 @@ from retraite_notionnelle.droit import progressive as progressive_python
 from retraite_notionnelle.droit import releve as releve_python
 from retraite_notionnelle.droit import reversion as reversion_python
 from retraite_notionnelle import revalorisation as revalorisation_python
-from retraite_notionnelle.droit.commun import PensionRegime
-from retraite_notionnelle.droit.liquider import EligibleAgricole, EligibleMinimum
-from retraite_notionnelle.journal import Journal
+from retraite_notionnelle.types_du_pont.droit import PensionRegime
+from retraite_notionnelle.droit.liquider import EligibleAgricole
+from retraite_notionnelle.types_du_pont.droit import EligibleMinimum
+from retraite_notionnelle.types_du_pont.journal import Journal
 from retraite_notionnelle.remuneration import AnneeComparee, FicheDePaie, RemunerationActif
-from retraite_notionnelle.scenarios.actuel import ResultatActuel
-from retraite_notionnelle.scenarios.notionnel import ResultatNotionnel
-from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Comparaison
+from retraite_notionnelle.types_du_pont.resultats import ResultatActuel
+from retraite_notionnelle.types_du_pont.resultats import ResultatNotionnel
+from retraite_notionnelle.donnees.simulateur import SCENARIOS_NOTIONNELS
+from retraite_notionnelle.types_du_pont.comparaison import Comparaison
 from retraite_notionnelle.types_du_pont.carriere import Carriere as CarriereNue
 
 import facade
@@ -445,7 +447,7 @@ def test_le_journal_de_la_comparaison_revient_entree_par_entree(simulateur):
 def test_la_reversion_du_deces_declare_revient_avec_la_comparaison(simulateur):
     """Le décès déclaré ouvre la réversion au conjoint : l'échéancier
     l'inscrit, et la comparaison la porte."""
-    from retraite_notionnelle.droit.reversion import Reversion
+    from retraite_notionnelle.types_du_pont.droit import Reversion
 
     comparaison = simulateur.simuler(simulateur.carriere_simple(
         annee_naissance=1958, sexe="H", affiliation="salarie_prive_non_cadre", age_debut=21,
@@ -475,7 +477,7 @@ def test_une_donnee_insuffisante_reste_une_donnee_insuffisante():
 def test_la_reversion_revient_sous_le_type_du_python(simulateur, deces, attendu):
     """Décret n° 82-1035 : 52 % pour les réversions prenant effet à compter du
     1er décembre 1982, 50 % avant (``tests/test_reversion.py``)."""
-    from retraite_notionnelle.droit.reversion import Reversion
+    from retraite_notionnelle.types_du_pont.droit import Reversion
 
     carriere = Carriere.depuis_profil(
         1920, "H", "salarie_prive_non_cadre", 21.0, 60.0, simulateur.macro,
@@ -1203,7 +1205,7 @@ CHEF_DE_1952 = dict(annee_naissance=1925, mois_naissance=1, jour_naissance=15, s
 
 
 def _chef_de_1952():
-    from retraite_notionnelle.carriere import AnneeCarriere
+    from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 
     return Carriere(**CHEF_DE_1952, lignes=[
         AnneeCarriere(annee=annee, revenu=100.0, affiliation="exploitant_agricole")
@@ -1230,7 +1232,7 @@ def test_le_constructeur_du_compte_rend_la_cotisation_d_une_annee(simulateur):
     """Le même chef : son compte reçoit pour 1952 la moitié de la cotisation
     annuelle, 4,25 €, sous le constructeur du scénario 2 comme sous celui des
     scénarios 4 et 5. Ce qu'il rend revient sous le type du Python."""
-    from retraite_notionnelle.moteur.compte import CotisationAnnuelle
+    from retraite_notionnelle.types_du_pont.moteur import CotisationAnnuelle
 
     for constructeur in (simulateur.constructeur, simulateur.constructeur_employeur):
         cotisation = constructeur.cotisation_annuelle(_chef_de_1952(), 1952)
@@ -1272,7 +1274,7 @@ def test_le_constructeur_du_compte_rend_un_compte_entier(simulateur):
     cotisation annuelle (décret n° 52-1166, article 45), la suivante à 8,50 €,
     les 8,5 % de 100 € ; un seul régime au capital. Il revient sous le type du
     Python, ses cotisations comprises."""
-    from retraite_notionnelle.moteur.compte import CompteNotionnel, CotisationAnnuelle
+    from retraite_notionnelle.types_du_pont.moteur import CompteNotionnel, CotisationAnnuelle
 
     compte = simulateur.constructeur.construire(_chef_de_1952(), 1990, annee_debut=1952)
     assert type(compte) is CompteNotionnel
@@ -1307,7 +1309,7 @@ def test_le_regime_unique_se_lit_sur_le_simulateur(simulateur):
     une assiette déplafonnée (``fusion.py``, ``_taux_total``), la fonction
     publique de l'État parmi ce qu'il fusionne, et la part de l'assuré moindre
     que le taux entier. Le même à chaque lecture."""
-    from retraite_notionnelle.moteur.fusion import RegimeFusionne
+    from retraite_notionnelle.types_du_pont.moteur import RegimeFusionne
 
     fusionne = simulateur.regime_fusionne
     assert type(fusionne) is RegimeFusionne
@@ -1374,7 +1376,7 @@ def test_les_regles_des_cultes_se_demandent_au_portage(simulateur):
     du code de 1985), 76 de 1979 à 1997, tous cotisés ; ses durées passent au
     portage, qui les refait du relevé de leur carrière, et la fraction d'avant
     1998 en proratise 152."""
-    from retraite_notionnelle.droit.cultes import DureesDesCultes
+    from retraite_notionnelle.types_du_pont.droit import DureesDesCultes
 
     assert [facade.cultes.part_de_l_ecart(n) for n in range(1937, 1945)] == [
         0.0, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.0]

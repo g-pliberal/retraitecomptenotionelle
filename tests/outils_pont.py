@@ -33,7 +33,8 @@ from pathlib import Path
 
 from retraite_notionnelle import pont
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.simulateur import Comparaison, Simulateur
+from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.types_du_pont.comparaison import Comparaison
 from retraite_notionnelle.web.site import module, site
 
 #: La confrontation du moteur Python au portage, qui fait foi (note de

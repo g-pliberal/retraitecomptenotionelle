@@ -23,7 +23,7 @@ import pytest
 
 from retraite_notionnelle import chronologie as chrono
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import AnneeCarriere, LigneRelevee, Metier
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere, LigneRelevee, Metier
 
 from facade import Carriere, Simulateur, liquider, prolonger_releve
 

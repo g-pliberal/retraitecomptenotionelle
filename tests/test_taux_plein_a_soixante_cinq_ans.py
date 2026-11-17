@@ -41,7 +41,7 @@ from __future__ import annotations
 import pytest
 
 from retraite_notionnelle import pont
-from retraite_notionnelle.carriere import AnneeCarriere
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 
 from facade import Carriere, Simulateur, categories
 

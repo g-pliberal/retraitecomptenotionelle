@@ -20,8 +20,8 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import LigneRelevee
-from retraite_notionnelle.droit.commun import PensionRegime
+from retraite_notionnelle.types_du_pont.carriere import LigneRelevee
+from retraite_notionnelle.types_du_pont.droit import PensionRegime
 from retraite_notionnelle.donnees.chargement import Fiabilite
 
 from facade import Simulateur, completer

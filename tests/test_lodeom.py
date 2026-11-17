@@ -41,7 +41,7 @@ import pytest
 
 from retraite_notionnelle import Parametres
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import LigneRelevee
+from retraite_notionnelle.types_du_pont.carriere import LigneRelevee
 from retraite_notionnelle.remuneration import (
     ConstructeurFiche,
     bloc_droit_en_vigueur,

@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import AnneeCarriere, LigneRelevee, Metier
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere, LigneRelevee, Metier
 from retraite_notionnelle.config import (
     RACINE_DONNEES,
     AgeConversionDroitsAcquis,
@@ -23,7 +23,7 @@ from retraite_notionnelle.config import (
     SourceCotisations,
 )
 from retraite_notionnelle.donnees.chargement import Fiabilite
-from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS
+from retraite_notionnelle.donnees.simulateur import SCENARIOS_NOTIONNELS
 
 # Les entrées du moteur passent par la façade des tests (action 161) : le
 # portage les calcule, et aucun test n'entre plus dans le moteur Python : les
@@ -4041,7 +4041,7 @@ def test_la_regle_du_minimum_suit_la_date_d_effet(simulateur):
 def _eligible(regime: int, cotisee_regime: int, proratisation: int, requis: int,
               autres: int = 0, cotisee_autres: int = 0):
     """Un régime porteur du minimum, tel que la circulaire le décrit."""
-    from retraite_notionnelle.droit.liquider import EligibleMinimum
+    from retraite_notionnelle.types_du_pont.droit import EligibleMinimum
 
     return EligibleMinimum(
         indice=0, prorata_assurance=regime / proratisation,
@@ -4176,7 +4176,7 @@ def test_le_salaire_de_reference_ne_retient_que_les_annees_du_regime(simulateur)
     prorata de durée, lui, restait celui du régime. Le modèle rapportait donc
     une part de carrière publique à une assiette qui ne l'était pas.
     """
-    from retraite_notionnelle.carriere import AnneeCarriere
+    from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
     from facade import Carriere
 
     publiques = [AnneeCarriere(annee=a, revenu=20_000.0,
@@ -4221,7 +4221,7 @@ def test_les_annees_posterieures_a_la_liquidation_n_ouvrent_rien(simulateur):
     années postérieures achetaient des points et validaient des trimestres,
     ce qui annulait jusqu'à la décote de qui, précisément, part tôt.
     """
-    from retraite_notionnelle.carriere import AnneeCarriere
+    from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
     from facade import Carriere
 
     avant = [AnneeCarriere(annee=a, revenu=40_000.0,
@@ -4570,7 +4570,7 @@ def test_la_crpcen_liquide_les_dix_meilleures_annees_ecretees(simulateur):
     pour moitié pour la part excédant trois fois le plafond », et pour rien
     au-delà de sept. La fiche liquidait les six derniers mois, sans plafond.
     """
-    from retraite_notionnelle.carriere import LigneRelevee
+    from retraite_notionnelle.types_du_pont.carriere import LigneRelevee
 
     scenario = simulateur.scenario_actuel
     macro = simulateur.macro
@@ -5073,7 +5073,7 @@ def test_sans_annees_d_avant_1973_la_borne_ne_joue_pas():
     import shutil
     import subprocess
 
-    from retraite_notionnelle.droit.liquider import EligibleMinimum
+    from retraite_notionnelle.types_du_pont.droit import EligibleMinimum
 
     base, majore = 7_831.22, 8_557.38
     eligible = EligibleMinimum(
@@ -9296,7 +9296,7 @@ def test_les_ages_des_marins_suivent_la_duree_de_leurs_services(simulateur):
     Les cinq règles ont été lues le 22 septembre 2026 dans l'index LEGI et sur
     les pages de l'ENIM.
     """
-    from retraite_notionnelle.carriere import Metier
+    from retraite_notionnelle.types_du_pont.carriere import Metier
 
     scenario = simulateur.scenario_actuel
 

@@ -29,13 +29,10 @@ import pytest
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import Parametres, RevalorisationStock
 from retraite_notionnelle.donnees.chargement import Fiabilite
-from retraite_notionnelle.revalorisation import (
-    REGLE_FONCTION_PUBLIQUE,
-    REGLE_GENERALE,
-    REGLE_POINT,
-    REGLE_REGIME_SPECIAL,
-    RevalorisationsPensions,
-)
+from retraite_notionnelle.revalorisation import REGLE_REGIME_SPECIAL
+from retraite_notionnelle.revalorisation_servie import (
+    REGLE_FONCTION_PUBLIQUE, REGLE_GENERALE, REGLE_POINT)
+from retraite_notionnelle.donnees.revalorisations import RevalorisationsPensions
 from retraite_notionnelle.config import RACINE_DONNEES
 
 from facade import PensionServie, Simulateur, liquider

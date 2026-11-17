@@ -32,7 +32,7 @@ import pytest
 
 from retraite_notionnelle import Parametres
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import AnneeCarriere
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 from retraite_notionnelle.config import PartCotisation
 from retraite_notionnelle.web.site import module, site
 

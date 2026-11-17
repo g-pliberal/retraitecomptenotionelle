@@ -31,7 +31,7 @@ from __future__ import annotations
 
 import pytest
 
-from retraite_notionnelle.carriere import Metier
+from retraite_notionnelle.types_du_pont.carriere import Metier
 
 from facade import Carriere, Simulateur, ouvrir
 

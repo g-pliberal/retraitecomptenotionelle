@@ -1336,7 +1336,7 @@ def test_chaque_statut_a_sa_famille_dans_le_menu():
     chargement refuse ; ce test dit en plus qu'aucune famille n'est vide, et
     que la table des libellés n'a pas de clé que le YAML n'emploie pas.
     """
-    from retraite_notionnelle.carriere import FAMILLES_STATUT
+    from retraite_notionnelle.donnees.affiliations import FAMILLES_STATUT
 
     affiliations = _affiliations()
     par_famille = {famille: [] for famille in FAMILLES_STATUT}

@@ -123,7 +123,7 @@ RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle import pont  # noqa: E402
-from retraite_notionnelle.carriere import PROFIL_SMIC  # noqa: E402
+from retraite_notionnelle.types_du_pont.carriere import PROFIL_SMIC  # noqa: E402
 from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle.castypes import (  # noqa: E402
     CAS_TYPES, GENERATIONS, GRILLE_DU_COUT, primes_projetees_en_donnees)

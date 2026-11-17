@@ -76,7 +76,7 @@ def test_les_six_scenarios_sont_six_univers(tous):
     """Le droit réel, puis les cinq univers de la proposition, dans l'ordre de
     leurs numéros ; la liste que le tableau, la page et l'API citent en est
     tirée."""
-    from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS
+    from retraite_notionnelle.donnees.simulateur import SCENARIOS_NOTIONNELS
 
     assert list(tous) == ["actuel", *PROPOSITION]
     assert [u.numero for u in tous.values()] == [1, 2, 3, 4, 5, 6]
@@ -502,7 +502,7 @@ def test_les_deux_moteurs_tirent_la_meme_chose_des_univers(calculs):
     l'ajoute. Il
     rangeait aussi les mêmes univers parmi les prospectifs de la page Coût,
     jusqu'au 11 octobre 2026 : le coût n'est plus porté (action 150)."""
-    from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS
+    from retraite_notionnelle.donnees.simulateur import SCENARIOS_NOTIONNELS
 
     lu = _node(
         'import { readFileSync } from "node:fs";'

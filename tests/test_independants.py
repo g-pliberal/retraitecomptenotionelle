@@ -46,7 +46,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from retraite_notionnelle.carriere import AnneeCarriere, LigneRelevee, Metier
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere, LigneRelevee, Metier
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes
 from retraite_notionnelle.remuneration import (
