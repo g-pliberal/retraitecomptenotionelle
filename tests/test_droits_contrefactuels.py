@@ -142,7 +142,8 @@ def test_un_depart_d_avant_septembre_2026_a_la_duree_de_l_etat_du_droit(du_porta
 
 def test_un_droit_que_le_moteur_ne_connait_pas_est_refuse(saisies):
     """Le moteur refuse ce qu'il ne sait pas calculer : un état du droit qu'il
-    ne connaît pas l'arrête, au lieu de rendre le droit en vigueur."""
-    parametres = saisies.parametres({})
-    with pytest.raises(ValueError, match="au_1er_janvier_2011"):
-        _moteur(saisies, parametres, "au_1er_janvier_2011")
+    ne connaît pas l'arrête, au lieu de rendre le droit en vigueur. Le refus
+    vient du portage, au calcul (``ScenarioActuel._sousLeDroit``)."""
+    parametres, carriere = saisies.lire({})
+    with pytest.raises(RuntimeError, match="droit contrefactuel inconnu : 'au_1er_janvier_2011'"):
+        _moteur(saisies, parametres, "au_1er_janvier_2011").calculer(carriere)

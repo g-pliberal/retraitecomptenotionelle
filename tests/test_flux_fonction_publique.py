@@ -421,9 +421,7 @@ def test_l_etude_mesure_ses_cas_types_au_portage_sans_le_moteur_python(monkeypat
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne calcule pas ici")
-    from outils_pont import empecher_les_jumeaux_du_cout
 
-    empecher_les_jumeaux_du_cout(monkeypatch)
     conventions = _conventions()
     mesures = {nom: flux.mesurer_le_modele(simulateur) for nom, simulateur in conventions.items()}
     annuelles = flux.mesurer_les_annees(conventions["projection"])

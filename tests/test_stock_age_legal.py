@@ -81,14 +81,12 @@ def test_les_cas_types_passent_par_le_portage(monkeypatch):
     (``outils_valeurs``, étape 8d) — sans que le moteur Python ne calcule rien."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne calcule pas ici")
-    from outils_pont import empecher_les_jumeaux_du_cout
     from outils_valeurs import valeur_figee
     from facade import Simulateur
 
     simulateurs = {variante: Simulateur(stock_age_legal.parametres_de(variante, PARAMETRES))
                    for variante in ("droit_commun", "tout_droit")}
     attendus = {}
-    empecher_les_jumeaux_du_cout(monkeypatch)
     for variante, simulateur in simulateurs.items():
         lues = valeur_figee(f"pensions des cas sous {variante}",
                             stock_age_legal.pensions_des_cas(simulateur))

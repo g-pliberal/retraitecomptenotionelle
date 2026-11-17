@@ -156,6 +156,35 @@ def _ecarts(pas: int, entree, part: int = 0,
     return ecarts, types, len(carrieres)
 
 
+def actuel_en_donnees(actuel) -> dict:
+    """Le résultat du scénario 1 du moteur Python (``ResultatActuel``) tel que
+    le portage écrit le sien (``actuelEnDonnees`` de ``pont.mjs``), avant sa
+    relecture sous les types du pont (:func:`pont.actuel_des_donnees`)."""
+    return {
+        "pension_annuelle": actuel.pension_annuelle,
+        "pension_hors_repartition": actuel.pension_hors_repartition,
+        "pensions_par_regime": [
+            {"regime": pension.regime, "montant": pension.montant,
+             "type_calcul": pension.type_calcul, "detail": pension.detail}
+            for pension in actuel.pensions_par_regime],
+        "avantages_appliques": [
+            {"code": avantage.code, "montant": avantage.montant, "detail": avantage.detail,
+             "par_regime": [[regime, part] for regime, part in avantage.par_regime],
+             "par_regime_sans_anticipation": [
+                 [regime, part] for regime, part in avantage.par_regime_sans_anticipation],
+             "a_charge": [[depuis, [[regime, part] for regime, part in parts]]
+                          for depuis, parts in avantage.a_charge]}
+            for avantage in actuel.avantages_appliques],
+        "trimestres_valides": actuel.trimestres_valides,
+        "trimestres_requis": actuel.trimestres_requis,
+        "taux_liquidation": actuel.taux_liquidation,
+        "liquidation_ouverte": actuel.liquidation_ouverte,
+        "motif_ouverture": actuel.motif_ouverture,
+        "departs": [{"date_effet": depart.date_effet, "motif": depart.motif}
+                    for depart in actuel.departs],
+    }
+
+
 def _des_regles(carriere):
     """La carrière nue que rend le pont, recopiée champ à champ sous la classe
     des règles, que le simulateur Python interroge (``prolongee``,
@@ -2485,7 +2514,6 @@ def test_le_pont_fait_appeler_les_fonctions_du_droit_au_bit_pres_de_leur_jumeau(
     ne sait pas relire est refusée avant node."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from outils_pont import actuel_en_donnees
 
     liquider, ouvrir = liquider_python, ouvrir_python
 
@@ -2582,7 +2610,6 @@ def test_le_pret_d_une_table_au_portage_est_celui_du_jumeau_au_bit(monkeypatch):
     et sans prêt de même. L'artisan né en 1949 en est la mesure."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from outils_pont import actuel_en_donnees
 
     carriere = CarrierePython(
         annee_naissance=1949, sexe="H", age_liquidation=62.0, identifiant="artisan_1949",

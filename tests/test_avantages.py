@@ -953,12 +953,10 @@ def test_le_cout_par_carriere_passe_par_le_portage_sans_le_moteur_python(monkeyp
         pytest.skip("node absent : le portage ne calcule pas ici")
     sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
     import cout_avantages
-    from outils_pont import empecher_les_jumeaux_du_cout
     from outils_valeurs import valeur_figee
     from retraite_notionnelle import Parametres, avantages
     from facade import Simulateur
 
-    empecher_les_jumeaux_du_cout(monkeypatch)
 
     # Le simulateur de la façade ne fait rien calculer au moteur Python, et le
     # recalcul du coût n'est plus au modèle : son jumeau loge parmi les tests

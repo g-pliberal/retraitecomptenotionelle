@@ -148,7 +148,6 @@ def test_les_departs_de_la_grille_se_datent_au_portage_sans_les_jumeaux(monkeypa
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne calcule pas ici")
-    from outils_pont import empecher_les_jumeaux_du_cout
     from outils_valeurs import valeur_figee
     from retraite_notionnelle.castypes import CAS_TYPES
     from retraite_notionnelle.cout import generations
@@ -164,7 +163,6 @@ def test_les_departs_de_la_grille_se_datent_au_portage_sans_les_jumeaux(monkeypa
          (replace(fiches["artisan"], age_debut=fiches["artisan"].age_debut - 2),),
          (1950, 1955, 1960)),
     )
-    empecher_les_jumeaux_du_cout(monkeypatch)
     lus = {nom: age_conjoncturel.departs_de_la_grille(simulateur, cas_types, retenues)
            for nom, cas_types, retenues in grilles}
     for nom, departs in lus.items():

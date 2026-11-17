@@ -253,7 +253,6 @@ def test_dans_un_fichier_passe_a_la_facade_seuls_les_tests_marques_restent_sur_l
 IMPORTEURS_DES_REGLES = (
     "tests/facade.py",
     "tests/jumeau_des_avantages.py",
-    "tests/outils_pont.py",
     "tests/test_facade.py",
     "tests/test_facade_jumeau.py",
 )
@@ -328,3 +327,18 @@ def test_le_pont_ne_lit_aucun_type_par_son_nom_dans_un_fichier_de_regles():
         f"{module}.{nom}" for module, nom in pont.OBJETS_DU_RESULTAT.values()
         if _une_regle(f"retraite_notionnelle.{module}"))
     assert not dans_les_regles, f"{', '.join(dans_les_regles)} : à loger sous types_du_pont"
+
+
+def test_les_saisies_des_tests_simulent_par_la_facade_sur_la_carriere_nue():
+    """Les saisies des tests (``outils_pont.Saisies``) ne passent plus par le
+    simulateur Python (action 161, lot 2) : leur simulateur est, par défaut,
+    celui de la façade, que le portage sert, et leur carrière la carrière nue
+    du pont, sans la classe des règles."""
+    import facade
+    from outils_pont import Saisies
+    from retraite_notionnelle.types_du_pont.carriere import Carriere as CarriereNue
+
+    saisies = Saisies()
+    requete = {"naissance": "1965-03-15", "liquidation": "2029-04"}
+    assert isinstance(saisies.simulateur(requete), facade.Simulateur)
+    assert type(saisies.carriere(requete)) is CarriereNue

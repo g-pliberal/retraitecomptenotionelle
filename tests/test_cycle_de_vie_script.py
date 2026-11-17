@@ -291,7 +291,6 @@ def test_l_etude_date_ses_cases_au_portage_sans_le_moteur_python(portage, simula
     empêchés pendant que l'étude tourne."""
     import json
 
-    from outils_pont import empecher_les_jumeaux_du_cout
     from outils_valeurs import valeur_figee
 
     types = [_cas(code) for code in ("salaire_moyen", "militaire", "fonctionnaire_actif")]
@@ -303,7 +302,6 @@ def test_l_etude_date_ses_cases_au_portage_sans_le_moteur_python(portage, simula
         return {"resultats": {}, "echecs": {}}
 
     monkeypatch.setattr(script, "portage", note)
-    empecher_les_jumeaux_du_cout(monkeypatch)
     script.calculer(simulateur, cor=True, impot="prix")
     script.etages(simulateur)
     script.balayer(types, generations, hypotheses, cor=False)

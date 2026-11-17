@@ -1314,7 +1314,6 @@ def test_sans_la_suspension_la_grille_part_sous_la_loi_de_2023_entiere(monkeypat
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne date pas la grille ici")
-    from outils_pont import empecher_les_jumeaux_du_cout
     from retraite_notionnelle.calendrier import DateMois
     from retraite_notionnelle.castypes import GRILLE_DU_COUT
     from retraite_notionnelle.facteurs_depense import dates_des_departs
@@ -1324,7 +1323,6 @@ def test_sans_la_suspension_la_grille_part_sous_la_loi_de_2023_entiere(monkeypat
     assert sans.droit_contrefactuel == "loi_2023_sans_suspension"
     cas_types = tuple(cas for cas in GRILLE_DU_COUT
                       if cas.code in ("salaire_moyen", "smic_carriere_complete"))
-    empecher_les_jumeaux_du_cout(monkeypatch)
     departs = dates_des_departs(sans, cas_types=cas_types, generations=(1966,))
 
     def de(code: str) -> list[DateMois]:

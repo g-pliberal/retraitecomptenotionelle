@@ -14,6 +14,7 @@ avec les règles Python.
 from __future__ import annotations
 
 import copy
+import dataclasses
 from dataclasses import replace
 from pathlib import Path
 
@@ -23,6 +24,7 @@ from retraite_notionnelle.avantages import (
     _variantes_demandees,
 )
 from retraite_notionnelle.calendrier import DateMois
+from retraite_notionnelle.carriere import Carriere as CarriereDesRegles
 from retraite_notionnelle.castypes import CasType
 from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees
 from retraite_notionnelle.donnees.tables_du_droit import CarriereLongue, FichesDatees
@@ -31,7 +33,15 @@ from retraite_notionnelle.droit.compter import (FICHE_DE_L_APPRENTISSAGE, FICHE_
 from retraite_notionnelle.scenarios.actuel import ScenarioActuel
 from retraite_notionnelle.somme import somme_ordonnee
 
-from outils_pont import des_regles
+
+def des_regles(carriere):
+    """La carrière nue que rend le pont, recopiée champ à champ sous la classe
+    des règles, que le moteur Python interroge (``prolongee``,
+    ``date_entree``…)."""
+    if isinstance(carriere, CarriereDesRegles):
+        return carriere
+    return CarriereDesRegles(**{champ.name: getattr(carriere, champ.name)
+                               for champ in dataclasses.fields(carriere) if champ.init})
 
 
 #: Les fiches que retire chacune des neutralisations des bonifications de

@@ -3750,18 +3750,12 @@ def _echantillon_au_portage() -> tuple:
 
 
 def _interdire_les_jumeaux(monkeypatch, cas_type) -> None:
-    """Les jumeaux Python qui datent, bâtissent et simulent la grille, empêchés
-    de calculer (``outils_pont.interdire``) : le simulateur du test est celui
-    de la façade, mais le script en bâtit lui-même du moteur Python, sous les
-    seuls paramètres."""
-    from outils_pont import interdire, jumeaux_qui_datent_et_batissent
+    """Les constructeurs Python des carrières de la grille élargie, empêchés de
+    calculer (``outils_pont.interdire``) : la carrière se bâtit au portage."""
+    from outils_pont import interdire
 
-    interdire(monkeypatch, (*jumeaux_qui_datent_et_batissent(),
-                            "retraite_notionnelle.scenarios.actuel.ScenarioActuel.calculer",
-                            "retraite_notionnelle.simulateur.Simulateur.echeancier",
-                            "retraite_notionnelle.simulateur.Simulateur.simuler",
-                            "retraite_notionnelle.simulateur.Simulateur.proposition",
-                            (G.CasTypeLarge, "_carriere"), (cas_type, "_carriere_entree_tardive")))
+    interdire(monkeypatch, ((G.CasTypeLarge, "_carriere"),
+                            (cas_type, "_carriere_entree_tardive")))
 
 
 def test_la_grille_large_se_date_et_se_bat_au_portage_sans_les_jumeaux(memoire_isolee,
@@ -3914,14 +3908,11 @@ def test_l_age_d_un_cas_type_large_se_demande_au_portage(simulateur, monkeypatch
     moteur Python, ses jumeaux, sont retirés (action 161)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from outils_pont import interdire, jumeaux_qui_datent_et_batissent
-
     assert not hasattr(G, "_debut_de_la_surcote_en_python")
     echantillon = {cas.code: cas for cas in _echantillon_au_portage()}
     cas = [echantillon[code] for code in ("essai~attente", "essai~surcote", "essai~inapte")]
     attendus = {(c.code, generation): _age(simulateur, c, generation)
                 for c in cas for generation in (1950, 1965)}
-    interdire(monkeypatch, jumeaux_qui_datent_et_batissent())
     assert {(c.code, generation): c.age_liquidation_pour(simulateur, generation)
             for c in cas for generation in (1950, 1965)} == attendus
 

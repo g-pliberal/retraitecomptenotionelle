@@ -3,8 +3,8 @@ exemplaire, le JavaScript (action 161, étape 6).
 
 Un test qui éprouve une règle du moteur par une saisie en demande la carrière
 au pont (:func:`retraite_notionnelle.pont.carrieres_des_saisies`) : le portage
-lit la requête comme le site, en bâtit la carrière et les paramètres, et le
-moteur Python la simule, qui garde son jumeau. C'est le chemin des témoins
+lit la requête comme le site, en bâtit la carrière nue et les paramètres, et
+le simulateur de la façade des tests la simule, que le portage sert. C'est le chemin des témoins
 (``scripts/construire_temoins.py``), sur le même paquet, celui du dépôt : une
 donnée retouchée n'y entre qu'à la fabrique suivante
 (``python scripts/regenerer.py``). Un test qui éprouve la saisie elle-même —
@@ -33,7 +33,6 @@ from pathlib import Path
 
 from retraite_notionnelle import pont
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.types_du_pont.comparaison import Comparaison
 from retraite_notionnelle.web.site import module, site
 
@@ -80,91 +79,18 @@ def ecarts_d_ecriture(relu, attendu, chemin: tuple = (), tolerance: float = 0.0)
             f"lu {json.dumps(relu)[:60]}"]
 
 
-#: Les jumeaux Python qui datent, bâtissent et simulent la grille du coût : le
-#: pilote, l'ouverture du droit qu'il interroge, les constructeurs de
-#: carrières, la projection des primes et le moteur Python.
-JUMEAUX_DU_COUT = (("pilote", "age_de_depart"), ("pilote", "point_fixe"),
-                   ("pilote", "descendre"), ("ouvrir", "age_ouverture_droit"),
-                   ("ouvrir", "age_taux_plein_droit"), ("ouvrir", "age_annulation_droit"),
-                   ("Simulateur", "carriere_simple"), ("Simulateur", "carriere_parcours"),
-                   ("Simulateur", "simuler"), ("Simulateur", "proposition"),
-                   ("Carriere", "prolongee"), ("castypes", "primes_projetees"))
-
-
-def empecher_les_jumeaux_du_cout(monkeypatch) -> None:
-    """Les jumeaux de :data:`JUMEAUX_DU_COUT` empêchés de calculer : ce que le
-    coût demande de sa grille, seul le portage peut le rendre."""
-    from retraite_notionnelle import castypes, pilote
-    from retraite_notionnelle.carriere import Carriere
-    from retraite_notionnelle.droit import ouvrir
-
-    objets = {"pilote": pilote, "ouvrir": ouvrir, "Simulateur": Simulateur,
-              "Carriere": Carriere, "castypes": castypes}
-
+def interdire(monkeypatch, cibles) -> None:
+    """Les fonctions nommées, ``(objet, nom)`` ou un chemin pointé, qu'on
+    empêche de calculer : ce qu'un test attend du portage, elles ne le
+    rendent pas en douce."""
     def interdit(*_, **__):
-        raise AssertionError("un jumeau Python date, bâtit ou simule la grille du coût")
+        raise AssertionError("une fonction interdite calcule ce que le portage doit rendre")
 
-    for objet, nom in JUMEAUX_DU_COUT:
-        monkeypatch.setattr(objets[objet], nom, interdit)
-
-
-#: Les jumeaux Python par lesquels une grille se datait et se bâtissait : le
-#: pilote, l'ouverture du droit qu'il interroge, les constructeurs de
-#: carrières, leurs prolongations, la projection des primes. Une garde : les
-#: tests qui les nomment les empêchent de calculer (:func:`interdire`), et
-#: n'en exécutent aucun.
-def jumeaux_qui_datent_et_batissent():
-    from retraite_notionnelle import castypes, pilote
-    from retraite_notionnelle.carriere import Carriere
-    from retraite_notionnelle.droit import ouvrir
-
-    return ((pilote, "age_de_depart"), (pilote, "point_fixe"), (pilote, "descendre"),
-            (ouvrir, "age_ouverture_droit"), (ouvrir, "age_taux_plein_droit"),
-            (ouvrir, "age_annulation_droit"), (Simulateur, "carriere_simple"),
-            (Simulateur, "carriere_parcours"), (Carriere, "prolongee"),
-            (castypes, "primes_projetees"))
-
-
-def interdire(monkeypatch, jumeaux) -> None:
-    """Les jumeaux Python nommés, ``(objet, nom)`` ou un chemin pointé,
-    qu'on empêche de calculer."""
-    def interdit(*_, **__):
-        raise AssertionError("un jumeau Python date ou bâtit ce que le portage doit rendre")
-
-    for jumeau in jumeaux:
-        if isinstance(jumeau, str):
-            monkeypatch.setattr(jumeau, interdit)
+    for cible in cibles:
+        if isinstance(cible, str):
+            monkeypatch.setattr(cible, interdit)
         else:
-            monkeypatch.setattr(*jumeau, interdit)
-
-
-def actuel_en_donnees(actuel) -> dict:
-    """Le résultat du scénario 1 du moteur Python (``ResultatActuel``) tel que
-    le portage écrit le sien (``actuelEnDonnees`` de ``pont.mjs``), avant sa
-    relecture sous les types du pont (:func:`pont.actuel_des_donnees`)."""
-    return {
-        "pension_annuelle": actuel.pension_annuelle,
-        "pension_hors_repartition": actuel.pension_hors_repartition,
-        "pensions_par_regime": [
-            {"regime": pension.regime, "montant": pension.montant,
-             "type_calcul": pension.type_calcul, "detail": pension.detail}
-            for pension in actuel.pensions_par_regime],
-        "avantages_appliques": [
-            {"code": avantage.code, "montant": avantage.montant, "detail": avantage.detail,
-             "par_regime": [[regime, part] for regime, part in avantage.par_regime],
-             "par_regime_sans_anticipation": [
-                 [regime, part] for regime, part in avantage.par_regime_sans_anticipation],
-             "a_charge": [[depuis, [[regime, part] for regime, part in parts]]
-                          for depuis, parts in avantage.a_charge]}
-            for avantage in actuel.avantages_appliques],
-        "trimestres_valides": actuel.trimestres_valides,
-        "trimestres_requis": actuel.trimestres_requis,
-        "taux_liquidation": actuel.taux_liquidation,
-        "liquidation_ouverte": actuel.liquidation_ouverte,
-        "motif_ouverture": actuel.motif_ouverture,
-        "departs": [{"date_effet": depart.date_effet, "motif": depart.motif}
-                    for depart in actuel.departs],
-    }
+            monkeypatch.setattr(*cible, interdit)
 
 
 class RefusDuPortage(Exception):
@@ -178,27 +104,17 @@ def _chaines(requete: dict) -> dict[str, str]:
     return {str(cle): str(valeur) for cle, valeur in requete.items() if valeur is not None}
 
 
-def des_regles(carriere):
-    """La carrière nue que rend le pont, recopiée champ à champ sous la classe
-    des règles, que le moteur Python interroge (``prolongee``,
-    ``date_entree``…) : la façade la reçoit aussi, qui en hérite."""
-    from retraite_notionnelle.carriere import Carriere as CarrierePython
-
-    if isinstance(carriere, CarrierePython):
-        return carriere
-    return CarrierePython(**{champ.name: getattr(carriere, champ.name)
-                             for champ in dataclasses.fields(carriere) if champ.init})
-
-
 class Saisies:
-    """Ce que le contexte du site fait d'une requête, la carrière bâtie par le
-    portage, et un simulateur par jeu de paramètres, comme lui : celui du
-    moteur Python, ou celui que ``fabrique`` bâtit, le simulateur de la façade
-    des tests (``facade.Simulateur``), que le portage sert."""
+    """Ce que le contexte du site fait d'une requête, la carrière nue que
+    bâtit le portage, et un simulateur par jeu de paramètres, comme lui :
+    celui que ``fabrique`` bâtit, par défaut le simulateur de la façade des
+    tests (``facade.Simulateur``), que le portage sert."""
 
-    def __init__(self, fabrique=Simulateur) -> None:
+    def __init__(self, fabrique=None) -> None:
+        if fabrique is None:
+            from facade import Simulateur as fabrique
         self._fabrique = fabrique
-        self._simulateurs: dict[Parametres, Simulateur] = {}
+        self._simulateurs: dict[Parametres, object] = {}
 
     def lire(self, requete: dict, prolonger: bool = True):
         """Les paramètres de la saisie, et la carrière que le site simulerait ;
@@ -209,9 +125,7 @@ class Saisies:
         lus, refus = pont.carrieres_des_saisies([cas])
         if refus:
             raise RefusDuPortage(refus["saisie"])
-        parametres, carriere = lus["saisie"]
-        # Le moteur Python lit la carrière sous la classe des règles.
-        return parametres, (des_regles(carriere) if self._fabrique is Simulateur else carriere)
+        return lus["saisie"]
 
     def parametres(self, requete: dict) -> Parametres:
         return self.lire(requete)[0]
@@ -219,7 +133,7 @@ class Saisies:
     def carriere(self, requete: dict, prolonger: bool = True):
         return self.lire(requete, prolonger)[1]
 
-    def simulateur(self, de: dict | Parametres | None = None) -> Simulateur:
+    def simulateur(self, de: dict | Parametres | None = None):
         """Le simulateur des paramètres d'une requête, de ``de`` lui-même, ou
         des réglages de référence."""
         parametres = (Parametres() if de is None

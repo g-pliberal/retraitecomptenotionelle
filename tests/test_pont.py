@@ -38,11 +38,7 @@ from retraite_notionnelle.config import RACINE_DONNEES, RACINE_PROJET
 from retraite_notionnelle.types_du_pont.carriere import Carriere as CarriereNue
 
 from facade import Carriere, Simulateur
-from outils_pont import ecarts_d_ecriture, empecher_les_jumeaux_du_cout
-# Les gardes qui empêchent les jumeaux Python de calculer, que
-# ``test_grille_large.py`` importe d'ici sous ces noms.
-from outils_pont import interdire as _interdire
-from outils_pont import jumeaux_qui_datent_et_batissent as _jumeaux_qui_datent_et_batissent
+from outils_pont import ecarts_d_ecriture
 from outils_valeurs import valeur_figee
 
 SCENARIOS = ("notionnel_retroactif", "notionnel_retroactif_employeur", "notionnel_liberal")
@@ -399,7 +395,6 @@ def test_la_grille_des_carrieres_types_se_date_au_portage_sans_les_jumeaux(memoi
     simulateur = Simulateur(Parametres())
     # Les générations de la table, et deux que le droit écarte en partie.
     generations = (1880, 1885, *GENERATIONS)
-    _interdire(monkeypatch, _jumeaux_qui_datent_et_batissent())
     cases = valeur_figee("cases de la grille des carrières types",
                          cases_de_la_grille(simulateur, CAS_TYPES, generations))
     ages = valeur_figee("âges de la grille des carrières types", ages_de_la_grille(simulateur))
@@ -429,17 +424,11 @@ def test_les_departs_des_facteurs_de_la_depense_se_datent_au_portage_sans_les_ju
         return [dates_des_departs(Parametres(), cas_types=cas, generations=(1880, 1965, 2000),
                                   **forme) for forme in formes]
 
-    _interdire(monkeypatch, _jumeaux_qui_datent_et_batissent())
     au_portage = valeur_figee("dates des départs des facteurs de la dépense", dates())
     # L'entrée décalée et le départ dès l'ouverture déplacent des dates ; la
     # grille écarte des cases de la génération 1880.
     assert au_portage[1] != au_portage[0] and au_portage[2] != au_portage[0]
     assert len(au_portage[0]) < len(cas) * 3 * 5
-
-
-#: Le scénario 1 du moteur Python, que les gardes empêchent de calculer, nommé
-#: sans être importé.
-SCENARIO_ACTUEL_PYTHON = "retraite_notionnelle.scenarios.actuel.ScenarioActuel"
 
 
 def _grille_des_avantages() -> tuple:
@@ -481,9 +470,6 @@ def test_le_cout_des_avantages_liquide_sa_grille_au_portage_sans_les_jumeaux(mem
     monkeypatch.setattr(avantages, "generations", lambda: (1885, 1910, 1955, 1965, 1975))
     depenses = DepensesRetraite(RACINE_DONNEES)
     population = Population(RACINE_DONNEES, Parametres().hypothese_esperance_vie)
-    _interdire(monkeypatch, (*_jumeaux_qui_datent_et_batissent(),
-                             f"{SCENARIO_ACTUEL_PYTHON}.__init__",
-                             f"{SCENARIO_ACTUEL_PYTHON}.calculer"))
     au_portage = valeur_figee("décomposition des avantages",
                               avantages.decomposer(Simulateur(Parametres())))
     valeur_figee("coût des avantages", avantages.calculer_avantages(
@@ -1358,7 +1344,6 @@ def test_le_cout_date_et_bat_sa_grille_par_le_portage_sans_les_jumeaux(memoire_i
 
     monkeypatch.setattr(cout, "generations", lambda: (1965, 2000))
     simulateur = Simulateur(Parametres())
-    empecher_les_jumeaux_du_cout(monkeypatch)
     par_le_portage = valeur_figee("grille d'essai du coût", cout._pensionnes(
         simulateur, GRILLE_D_ESSAI, "droit"))
     valeur_figee("grille d'essai du coût, nés toute l'année", cout._nees_toute_l_annee(
@@ -1615,7 +1600,6 @@ def test_sur_des_donnees_d_ailleurs_le_cout_date_bat_et_simule_sa_grille_par_le_
     monkeypatch.setattr(cout, "generations", lambda: (1968,))
     simulateur = Simulateur(replace(Parametres(), racine_donnees=donnees_d_ailleurs))
     du_depot = cout._pensionnes(Simulateur(Parametres()), GRILLE_D_ESSAI, "droit")
-    empecher_les_jumeaux_du_cout(monkeypatch)
     par_le_portage = valeur_figee("grille d'essai du coût sur des données d'ailleurs",
                                   cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit"))
 

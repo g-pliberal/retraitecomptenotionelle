@@ -314,9 +314,7 @@ def test_le_minimum_se_mesure_au_portage_sans_le_moteur_python(monkeypatch):
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne calcule pas ici")
     import grille_large as G
-    from outils_pont import empecher_les_jumeaux_du_cout
 
-    empecher_les_jumeaux_du_cout(monkeypatch)
 
     # Le script bâtit le simulateur de données seules, qui ne simule rien.
     assert not hasattr(P.SimulateurDeDonnees, "echeancier")

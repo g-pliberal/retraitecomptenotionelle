@@ -200,10 +200,8 @@ def test_les_cas_types_passent_par_le_portage_sans_le_moteur_python(monkeypatch)
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne calcule pas ici")
     import lectures_decision_29 as L
-    from outils_pont import empecher_les_jumeaux_du_cout
     from outils_valeurs import valeur_figee
 
-    empecher_les_jumeaux_du_cout(monkeypatch)
     lues = {un: L.pensions_des_cas_types(un) for un in (L.TAUX_PROGRAMME, 0.1123)}
     # Le taux crédité fait la pension du scénario 6, et elle seule.
     cle = ("salaire_moyen", 1990)

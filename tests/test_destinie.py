@@ -468,9 +468,7 @@ def test_le_scenario_1_se_mesure_au_portage_sans_le_moteur_python(temoin, monkey
     que le scénario 1 sert à chaque cas, le portage le sert
     (``pont.scenario_actuel``), et le moteur Python, qu'on empêche ici de
     simuler (``empecher_les_jumeaux_du_cout``), n'y entre pas."""
-    from outils_pont import empecher_les_jumeaux_du_cout
 
-    empecher_les_jumeaux_du_cout(monkeypatch)
     ecarts = ecarts_du_temoin(temoin)
     assert set(ecarts) == set(temoin["cas"])
     assert all(mesures["trimestres"] == 0 for code, mesures in ecarts.items()

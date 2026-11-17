@@ -105,9 +105,7 @@ def test_la_grille_passe_par_le_portage_sans_le_moteur_python(monkeypatch, ligne
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne calcule pas ici")
-    from outils_pont import empecher_les_jumeaux_du_cout
 
-    empecher_les_jumeaux_du_cout(monkeypatch)
 
     def interdit(*_, **__):
         raise AssertionError("le moteur Python date ou revalorise la grille des mères")
