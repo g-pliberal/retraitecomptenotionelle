@@ -79,8 +79,8 @@ Pologne et de la Lettonie.
 La barre du haut range ses onglets en trois groupes : ceux de l'électeur
 (Programme, Simuler, Coût, Pourquoi changer), ceux qui font connaître le
 programme (Partager, Le saviez-vous ?), puis, derrière l'étiquette « Pour
-vérifier » — un bouton, sur un téléphone —, ceux qui prouvent (Les
-caisses, Carrières types, Droits non cotisés, Méthode et sources). Le parcours ci-dessous en
+vérifier » — un bouton, sur un téléphone —, ceux qui prouvent (Carrières
+types, Droits non cotisés, Méthode et sources). Le parcours ci-dessous en
 montre six, dans l'ordre, et laisse les autres pour les questions.
 
 ### 1. Programme — trois minutes

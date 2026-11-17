@@ -1970,6 +1970,8 @@ INCISES_MAXIMUM = {
     # message de refus du garde-fou, et une énumération de choix que le dépôt
     # refuse de trancher à la place du lecteur.
     "/avantages": 3,
+    # Écrite le 17 novembre 2026 sans aucune (action 193).
+    "/caisses": 0,
 }
 
 

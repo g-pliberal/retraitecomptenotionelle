@@ -119,19 +119,24 @@ export const GROUPES_NAVIGATION = [
   // redisait un dépliant des résultats, et « Sources » est devenue la fin de la
   // page Méthode. Leurs adresses mènent là où leur contenu est allé — voir
   // `ANCIENNES_ROUTES` dans `pages.js`.
-  // « Les caisses » le 17 novembre 2026 (action 193) : comment marche chaque
-  // caisse de retraite, pour qui veut comprendre le système avant de le juger.
-  ["Pour vérifier", [["/caisses", "Les caisses"], ["/cas-types", "Carrières types"],
+  ["Pour vérifier", [["/cas-types", "Carrières types"],
     ["/avantages", "Droits non cotisés"], ["/methode", "Méthode et sources"]]],
 ];
 
 /** Le groupe dont l'étiquette SE VOIT, et dont les pages parlent plus bas. */
 export const GROUPE_SECONDAIRE = "Pour vérifier";
 
+/**
+ * Les pages fabriquées comme les autres, mais sans onglet : « Les caisses »
+ * (action 193), comment marche chaque caisse de retraite. Un treizième onglet
+ * faisait passer le bandeau sur deux rangées au bureau ; le pied y mène.
+ */
+export const PAGES_HORS_BANDEAU = ["/caisses"];
+
 export const LIENS = GROUPES_NAVIGATION.flatMap(([, liens]) => liens);
 
 /** Les pages du site, dans l'ordre du bandeau : leurs routes. */
-export const PAGES = LIENS.map(([chemin]) => chemin);
+export const PAGES = [...LIENS.map(([chemin]) => chemin), ...PAGES_HORS_BANDEAU];
 
 /**
  * Le dossier d'une page, relatif à la racine du site (action 174) : l'accueil
@@ -615,7 +620,8 @@ export function pied() {
     <p><strong>Ce simulateur n'a aucune valeur officielle.</strong> Il n'émane
     d'aucune caisse et ne vaut ni relevé de carrière, ni estimation de vos droits.
     Seule votre caisse fait foi
-    (<a href="https://www.info-retraite.fr/">info-retraite.fr</a>).</p></div>
+    (<a href="https://www.info-retraite.fr/">info-retraite.fr</a>).
+    Comment marche chaque caisse : <a href="${route("/caisses")}">les caisses</a>.</p></div>
     <div class="colonne"><h2>Modèle ouvert</h2>
     <p>Code et données sur <a href="${DEPOT}">GitHub</a> (code sous licence
     Apache 2.0, infographies et textes sous

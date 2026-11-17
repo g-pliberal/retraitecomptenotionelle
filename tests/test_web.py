@@ -4216,6 +4216,9 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # Desserrée de 5 mots le 16 novembre 2026 (action 189, étape 2) : la note
     # finale dit « 1 € cotisé, les mêmes droits pour tous », comme l'accueil.
     "/saviez-vous": (645, 0, 0, 0),
+    # Les caisses (action 193) : une affiche, ses bulles et une note, 184 mots
+    # le 17 novembre 2026 ; chaque caisse se lit dans sa fiche, repliée.
+    "/caisses": (200, 0, 0, 0),
     # Cas types et Données ont gagné, à la revue de septembre 2026, ce qu'un
     # lecteur doit lire AVANT les chiffres : la clé de lecture des grilles et
     # la trajectoire du système actuel pour l'une, le résumé en langage

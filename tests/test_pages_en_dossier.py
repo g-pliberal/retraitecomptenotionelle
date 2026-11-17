@@ -33,9 +33,9 @@ pytestmark = pytest.mark.skipif(not disponible(),
 #: Les neuf pages en dossier, avec leur titre — l'accueil est la racine.
 DOSSIERS = {
     "simuler": "Simuler", "cout": "Coût", "risque": "Pourquoi changer",
-    "partager": "Partager", "saviez-vous": "Le saviez-vous ?", "caisses": "Les caisses",
+    "partager": "Partager", "saviez-vous": "Le saviez-vous ?",
     "cas-types": "Carrières types", "avantages": "Droits non cotisés",
-    "methode": "Méthode et sources",
+    "methode": "Méthode et sources", "caisses": "Les caisses",
 }
 
 #: Le titre de l'onglet de l'accueil : celui qu'un moteur de recherche affiche.
