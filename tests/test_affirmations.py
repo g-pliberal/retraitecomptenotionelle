@@ -69,7 +69,7 @@ from retraite_notionnelle.web.site import ErreurSite, disponible, module, site
 
 from outils_garantie import cout_garantie, cout_garantie_par_sexe
 from outils_grille import grille_a_la_facade
-from facade import Simulateur, liquider
+from facade import Simulateur, fait, liquider
 from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
 
 #: Le texte du site n'est écrit qu'une fois, en JavaScript : ses constantes et
@@ -1580,7 +1580,7 @@ def _(m: Modele):
     assert progressive.motif == "age" and progressive.fraction == 0.0
     assert progressive.montant_servi == 0.0
     assert progressive.age_minimum > comparaison.carriere.age_au(
-        comparaison.carriere.retraite_progressive[0])
+        fait(comparaison.carriere, "retraite_progressive")[0])
 
 
 @controle("demande_de_pension_non_retenue")

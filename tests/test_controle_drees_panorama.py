@@ -49,7 +49,7 @@ RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "scripts"))
 sys.path.insert(0, str(RACINE / "scripts" / "fetch"))
 import cycle_de_vie  # noqa: E402
-from facade import Simulateur, liquider  # noqa: E402
+from facade import Simulateur, liquider, trimestres_cumules  # noqa: E402
 import lecture_xlsx  # noqa: E402
 import source_locale  # noqa: E402
 
@@ -798,7 +798,11 @@ def test_la_grille_commence_ses_carrieres_trop_tard(grille, datees, temoin):
         a_30_ans: dict[str, int] = {}
         for code in {c.code for c in nes}:
             carriere = datees[(code, annee)]
-            par_annee = carriere.trimestres_par_annee(carriere.lignes)
+            # Les trimestres de chaque année, plafonnés comme la durée tous
+            # régimes les compte, que le portage cumule sur ses seules lignes.
+            par_annee = {an: trimestres for an in sorted({l.annee for l in carriere.lignes})
+                         if (trimestres := trimestres_cumules(
+                             carriere, [l for l in carriere.lignes if l.annee == an])) > 0}
             completes = [an for an, trimestres in par_annee.items() if trimestres >= 4]
             assert completes, code
             debut[code] = min(completes) - annee

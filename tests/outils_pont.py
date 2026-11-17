@@ -177,6 +177,18 @@ def _chaines(requete: dict) -> dict[str, str]:
     return {str(cle): str(valeur) for cle, valeur in requete.items() if valeur is not None}
 
 
+def des_regles(carriere):
+    """La carrière nue que rend le pont, recopiée champ à champ sous la classe
+    des règles, que le moteur Python interroge (``prolongee``,
+    ``date_entree``…) : la façade la reçoit aussi, qui en hérite."""
+    from retraite_notionnelle.carriere import Carriere as CarrierePython
+
+    if isinstance(carriere, CarrierePython):
+        return carriere
+    return CarrierePython(**{champ.name: getattr(carriere, champ.name)
+                             for champ in dataclasses.fields(carriere) if champ.init})
+
+
 class Saisies:
     """Ce que le contexte du site fait d'une requête, la carrière bâtie par le
     portage, et un simulateur par jeu de paramètres, comme lui : celui du
@@ -196,7 +208,9 @@ class Saisies:
         lus, refus = pont.carrieres_des_saisies([cas])
         if refus:
             raise RefusDuPortage(refus["saisie"])
-        return lus["saisie"]
+        parametres, carriere = lus["saisie"]
+        # Le moteur Python lit la carrière sous la classe des règles.
+        return parametres, (des_regles(carriere) if self._fabrique is Simulateur else carriere)
 
     def parametres(self, requete: dict) -> Parametres:
         return self.lire(requete)[0]

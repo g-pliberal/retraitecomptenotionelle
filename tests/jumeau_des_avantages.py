@@ -31,6 +31,8 @@ from retraite_notionnelle.droit.compter import (FICHE_DE_L_APPRENTISSAGE, FICHE_
 from retraite_notionnelle.scenarios.actuel import ScenarioActuel
 from retraite_notionnelle.somme import somme_ordonnee
 
+from outils_pont import des_regles
+
 
 #: Les fiches que retire chacune des neutralisations des bonifications de
 #: service : celles des emplois classés, puis celle des militaires.
@@ -77,6 +79,14 @@ def _catalogue_sans(catalogue, code: str | None = None):
     return variante
 
 
+class _ScenarioDuJumeau(ScenarioActuel):
+    """Le scénario 1 du moteur Python, qui lit la carrière sous la classe des
+    règles : celle que le pont rend, nue, y est recopiée."""
+
+    def calculer(self, carriere, *args, **kwargs):
+        return super().calculer(des_regles(carriere), *args, **kwargs)
+
+
 def scenarios_neutralises(simulateur: SimulateurDeDonnees) -> dict[str, ScenarioActuel]:
     """Un scénario 1 par avantage retiré, construit une fois pour toute la grille.
 
@@ -97,25 +107,25 @@ def scenarios_neutralises(simulateur: SimulateurDeDonnees) -> dict[str, Scenario
     # la carrière qui dit laquelle des deux lignes l'écart renseigne.
     catalogues["age_jouissance_militaire"] = catalogues["categorie_active"]
     for code, catalogue in catalogues.items():
-        variantes[code] = ScenarioActuel(
+        variantes[code] = _ScenarioDuJumeau(
             simulateur.macro, catalogue, simulateur.affiliations,
             simulateur.parametres,
         )
-    parents = ScenarioActuel(simulateur.macro, simulateur.catalogue,
+    parents = _ScenarioDuJumeau(simulateur.macro, simulateur.catalogue,
                              simulateur.affiliations, simulateur.parametres)
     # La date d'entrée en vigueur, repoussée hors de portée : la branche qui
     # retire une ou deux années au salaire de référence ne s'exécute plus.
     parents.PARENTS_MEILLEURES_ANNEES_DEPUIS = DateMois(2999, 1)
     variantes["salaire_de_reference_des_parents"] = parents
 
-    longue = ScenarioActuel(simulateur.macro, simulateur.catalogue,
+    longue = _ScenarioDuJumeau(simulateur.macro, simulateur.catalogue,
                             simulateur.affiliations, simulateur.parametres)
     # Un barème lu sur un fichier absent est un barème vide, et le constructeur
     # le prévoit : aucune porte ne s'ouvre plus avant l'âge légal.
     longue.carriere_longue = CarriereLongue(Path("barème-vidé-pour-la-mesure"))
     variantes["carriere_longue"] = longue
 
-    handicap = ScenarioActuel(simulateur.macro, simulateur.catalogue,
+    handicap = _ScenarioDuJumeau(simulateur.macro, simulateur.catalogue,
                               simulateur.affiliations, simulateur.parametres)
     # La fiche du départ anticipé des assurés handicapés, retirée : ses régimes
     # n'ouvrent plus rien à ce titre. Seule une carrière qui déclare une
@@ -124,7 +134,7 @@ def scenarios_neutralises(simulateur: SimulateurDeDonnees) -> dict[str, Scenario
     variantes["retraite_anticipee_handicap"] = handicap
 
     for code, noms in FICHES_RETIREES.items():
-        emplois = ScenarioActuel(simulateur.macro, simulateur.catalogue,
+        emplois = _ScenarioDuJumeau(simulateur.macro, simulateur.catalogue,
                                  simulateur.affiliations, simulateur.parametres)
         # Les fiches des bonifications des emplois classés, ou celle des
         # militaires, retirées : seule une carrière servie dans un emploi
@@ -132,7 +142,7 @@ def scenarios_neutralises(simulateur: SimulateurDeDonnees) -> dict[str, Scenario
         emplois.fiches_datees = emplois.fiches_datees.sans(*noms)
         variantes[code] = emplois
 
-    apprentissage = ScenarioActuel(simulateur.macro, simulateur.catalogue,
+    apprentissage = _ScenarioDuJumeau(simulateur.macro, simulateur.catalogue,
                                    simulateur.affiliations, simulateur.parametres)
     # La fiche de l'apprentissage retirée : le contrat ne valide plus que ce
     # que ses salaires portent. Seule une carrière qui déclare un contrat y
@@ -152,8 +162,8 @@ def carriere_variante(simulateur: SimulateurDeDonnees, cas: CasType, generation:
     non travaillées. L'âge de liquidation est PASSÉ et non recalculé — c'est ce
     qui tient les deux pensions comparables.
     """
-    return simulateur.carriere_simple(**_options_de_la_variante(
-        cas, generation, age, affiliation, interruptions))
+    return des_regles(simulateur.carriere_simple(**_options_de_la_variante(
+        cas, generation, age, affiliation, interruptions)))
 
 
 def recalculer(simulateur: SimulateurDeDonnees, cas: CasType, generation: int,
