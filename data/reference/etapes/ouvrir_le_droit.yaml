@@ -8,8 +8,7 @@
 # d'ouverture ou de taux plein : `age_ouverture_droit` et
 # `age_taux_plein_droit`, sur une carrière, sans rien liquider.
 #
-# src/retraite_notionnelle/droit/ouvrir.py, et son jumeau
-# moteur/js/droit/ouvrir.js.
+# Le code : moteur/js/droit/ouvrir.js.
 
 etape: ouvrir_le_droit
 schema_version: 1

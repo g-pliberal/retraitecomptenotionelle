@@ -5,8 +5,8 @@ Pour lier les arguments d'une entrée qu'elle sert et relire ce que le portage
 calcule, la façade (``tests/facade.py``) lit une signature et un type rendu.
 Elle les lisait sur le jumeau Python ; elle les lit désormais dans
 ``tests/contrats_de_la_facade.py``, des signatures sans corps, qui ne chargent
-aucun fichier de règles. Tant que le jumeau vit, chaque contrat se confronte
-au sien, dans ``test_facade_jumeau.py`` : ces confrontations partent avec lui.
+aucun fichier de règles. Chaque contrat se confrontait à son jumeau, que le
+retrait a supprimé (action 161) : les contrats font foi.
 """
 
 import ast

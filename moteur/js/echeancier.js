@@ -1,7 +1,7 @@
 /**
  * L'échéancier (docs/architecture.md, § 7.4).
  *
- * Jumeau de `src/retraite_notionnelle/echeancier.py`. Il parcourt les
+ * Il parcourt les
  * ÉVÉNEMENTS dans l'ordre des dates, et ceux d'une même date dans l'ordre de
  * leur rang. Aux événements qui ouvrent, révisent ou transforment un droit, il
  * appelle `liquider` : le vocabulaire dit, pour chaque sorte, si elle

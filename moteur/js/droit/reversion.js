@@ -2,8 +2,7 @@
  * La réversion : la pension du survivant, dans les régimes du défunt
  * (docs/architecture.md, § 7.3).
  *
- * Jumeau de `src/retraite_notionnelle/droit/reversion.py`, fonction pour
- * fonction. « La réversion n'est pas une étape. C'est `liquider` pour le
+ * « La réversion n'est pas une étape. C'est `liquider` pour le
  * survivant, de motif « réversion », dans les régimes du défunt. » Elle lit la
  * liquidation du défunt — son départ, mené jusqu'à son décès par « faire
  * vivre » — et applique à chaque régime la version de sa fiche que les dates

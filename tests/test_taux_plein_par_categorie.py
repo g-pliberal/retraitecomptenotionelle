@@ -5,7 +5,7 @@ travailleur manuel d'avant 1983 (décret n° 45-0179, article 70-2, a) et
 l'ancien combattant ou prisonnier de guerre (5° ; D. 351-2) ont le taux plein
 sans la durée requise — avant le 1er avril 1983, le taux de soixante-cinq ans
 dès soixante ans —, et leurs complémentaires suivent (fiches ``taux_plein_*`` ;
-:mod:`retraite_notionnelle.droit.categories`).
+``moteur/js/droit/categories.js``).
 """
 
 from __future__ import annotations

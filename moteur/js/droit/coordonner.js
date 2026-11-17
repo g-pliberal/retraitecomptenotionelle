@@ -1,8 +1,7 @@
 /**
  * Coordonner les affiliations (docs/architecture.md, § 7.2).
  *
- * Jumeau de `src/retraite_notionnelle/droit/coordonner.py`, fonction pour
- * fonction : le rétablissement de l'agent parti de la fonction publique sans
+ * Le rétablissement de l'agent parti de la fonction publique sans
  * droit à pension (`retablir`), le routage de chaque ligne vers les régimes
  * qui la reçoivent (`regimesDe`), et les groupes de régimes que le droit fait
  * liquider ensemble (`groupesDeSuccession`), que le relevé écrit une fois les

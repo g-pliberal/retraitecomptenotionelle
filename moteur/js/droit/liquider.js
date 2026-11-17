@@ -1,8 +1,7 @@
 /**
  * Liquider chaque régime (docs/architecture.md, § 7.3).
  *
- * Jumeau de `src/retraite_notionnelle/droit/liquider.py`, fonction pour
- * fonction : chaque régime liquide sa pension sous ses propres règles, sur ce
+ * Chaque régime liquide sa pension sous ses propres règles, sur ce
  * que le relevé lui a acquis. En annuités, un salaire de référence
  * (`salaireDeReference`) ou un forfait, un taux — décote et surcote faites
  * (`decoteOpposable`, `trimestresDeDecote`, `coefficientSurcoteDatee`) — et

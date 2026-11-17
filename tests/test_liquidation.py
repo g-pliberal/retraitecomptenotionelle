@@ -621,9 +621,9 @@ PAS = 5
 
 def _requetes() -> list[dict]:
     """Une requête sur cinq des témoins, et toutes celles dont les régimes
-    liquident à des dates différentes (:mod:`~retraite_notionnelle.droit.departs`),
+    liquident à des dates différentes (``moteur/js/droit/departs.js``),
     qui disent la date d'une pension, ou qui travaillent après leur départ
-    (:mod:`~retraite_notionnelle.droit.cumul`) : ce sont les seules qui passent
+    (``moteur/js/droit/cumul.js``) : ce sont les seules qui passent
     par ces chemins."""
     temoins = json.loads((RACINE / "tests" / "temoins" / "simulations.json")
                          .read_text(encoding="utf-8"))

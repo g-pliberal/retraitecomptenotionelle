@@ -19,9 +19,7 @@ import re
 import pytest
 import yaml
 
-import jumeau_des_avantages as jumeau
-
-from retraite_notionnelle import memoire
+from retraite_notionnelle import memoire, pont
 from retraite_notionnelle.config import RACINE_DONNEES, Neutralisations
 
 CHEMIN = RACINE_DONNEES / "reference" / "legislation" / "avantages_non_contributifs.yaml"
@@ -298,26 +296,38 @@ def test_le_recalcul_rend_un_montant_positif_et_conserve_la_pension(script_cout)
     porte chacun des deux avantages.
     """
     from retraite_notionnelle import Parametres
+    from retraite_notionnelle.avantages import (_ecarts, _options_de_la_variante,
+                                                _variantes_demandees)
     from retraite_notionnelle.castypes import CAS_TYPES
     from facade import Simulateur
 
     simulateur = Simulateur(Parametres())
     generation = 1960
     porteurs = ("carriere_interrompue", "fonctionnaire_actif")
+    demandes = {}
     for cas in (c for c in CAS_TYPES if c.code in porteurs):
-        age = _age(simulateur, cas, generation)
-        carriere = jumeau.carriere_variante(simulateur, cas, generation, age)
-        actuel = simulateur.scenario_actuel.calculer(carriere)
-        parts, _ = jumeau.recalculer(simulateur, cas, generation, age, actuel)
+        de_carriere, de_scenario = _variantes_demandees(cas, generation)
+        demandes[cas.code] = (cas, {
+            "cle": cas.code, "carriere": de_carriere, "scenario": list(de_scenario),
+            "options": _options_de_la_variante(cas, generation,
+                                               _age(simulateur, cas, generation))})
+    lues, ecartees = pont.avantages([demande for _, demande in demandes.values()],
+                                    simulateur.parametres)
+    assert not ecartees, ecartees
+    for code, (cas, _) in demandes.items():
+        actuel = lues[code]["liquidee"]
+        avpf = sum(montant for ligne, montant in actuel["avantages"] if ligne == "avpf")
+        parts, _ = _ecarts(cas, actuel["pension_annuelle"], actuel["trimestres_requis"], avpf,
+                           lues[code]["sans"])
         assert parts, f"{cas.code} devrait porter un avantage recalculé"
         for ligne, montant in parts.items():
             assert montant > 0.0, f"{cas.code} : {ligne} mesuré négatif ({montant})"
-            assert montant < actuel.pension_annuelle, (
+            assert montant < actuel["pension_annuelle"], (
                 f"{cas.code} : {ligne} dépasse la pension entière"
             )
-        total = (actuel.total_contributif
-                 + sum(a.montant for a in actuel.avantages_appliques))
-        assert total == pytest.approx(actuel.pension_annuelle), (
+        total = (actuel["total_contributif"]
+                 + sum(montant for _, montant in actuel["avantages"]))
+        assert total == pytest.approx(actuel["pension_annuelle"]), (
             f"{cas.code} : la cascade ne somme plus à la pension"
         )
 
@@ -337,25 +347,26 @@ def test_les_deux_mesures_de_la_categorie_active_coincident(script_cout):
     existe un, ce qui n'est pas le cas des régimes spéciaux.
     """
     from retraite_notionnelle import Parametres
+    from retraite_notionnelle.avantages import _options_de_la_variante
     from retraite_notionnelle.castypes import CAS_TYPES
     from facade import Simulateur
 
     simulateur = Simulateur(Parametres())
-    variantes = jumeau.scenarios_neutralises(simulateur)
     cas = next(c for c in CAS_TYPES if c.code == "fonctionnaire_actif")
     temoin = script_cout.SEDENTAIRE[cas.affiliation][0]
+    sans_classement = pont.MOTEUR.neutralisant("categorie_active")
     compares = 0
     for generation in (1955, 1960, 1970, 1975, 1985):
         age = _age(simulateur, cas, generation)
-        reelle = simulateur.scenario_actuel.calculer(
-            jumeau.carriere_variante(simulateur, cas, generation, age))
-        par_catalogue = reelle.pension_annuelle - variantes["categorie_active"].calculer(
-            jumeau.carriere_variante(simulateur, cas, generation, age)
-        ).pension_annuelle
-        par_statut = reelle.pension_annuelle - simulateur.scenario_actuel.calculer(
-            jumeau.carriere_variante(
-                simulateur, cas, generation, age, affiliation=temoin)
-        ).pension_annuelle
+        options = _options_de_la_variante(cas, generation, age)
+        lues = _liquidee({
+            "reelle": (pont.MOTEUR, pont.CarriereSimple(options)),
+            "catalogue": (sans_classement, pont.CarriereSimple(options)),
+            "statut": (pont.MOTEUR, pont.CarriereSimple(
+                _options_de_la_variante(cas, generation, age, affiliation=temoin)))})
+        reelle = lues["reelle"]["pension_annuelle"]
+        par_catalogue = reelle - lues["catalogue"]["pension_annuelle"]
+        par_statut = reelle - lues["statut"]["pension_annuelle"]
         assert par_catalogue == pytest.approx(par_statut, abs=1e-6), (
             f"génération {generation} : {par_catalogue:.2f} € par le catalogue, "
             f"{par_statut:.2f} € par le statut"
@@ -429,23 +440,36 @@ def test_les_variantes_ne_changent_que_ce_qu_elles_retirent(script_cout):
     fois, et l'erreur passerait pour un résultat.
     """
     from retraite_notionnelle import Parametres
+    from retraite_notionnelle.avantages import _options_de_la_variante
     from retraite_notionnelle.castypes import CAS_TYPES
     from facade import Simulateur
 
     simulateur = Simulateur(Parametres())
-    variantes = jumeau.scenarios_neutralises(simulateur)
     cas = next(c for c in CAS_TYPES if c.code == "cadre")
     generation = 1955
-    age = _age(simulateur, cas, generation)
-    carriere = jumeau.carriere_variante(simulateur, cas, generation, age)
-    reelle = simulateur.scenario_actuel.calculer(carriere).pension_annuelle
-    for code in ("categorie_active", "carriere_longue", "bonification_cinquieme_militaires",
-                 "apprentissage"):
-        obtenue = variantes[code].calculer(carriere).pension_annuelle
+    carriere = pont.CarriereSimple(_options_de_la_variante(
+        cas, generation, _age(simulateur, cas, generation)))
+    codes = ("categorie_active", "carriere_longue", "bonification_cinquieme_militaires",
+             "apprentissage")
+    lues = _liquidee({"reelle": (pont.MOTEUR, carriere),
+                      **{code: (pont.MOTEUR.neutralisant(code), carriere) for code in codes}})
+    reelle = lues["reelle"]["pension_annuelle"]
+    for code in codes:
+        obtenue = lues[code]["pension_annuelle"]
         assert obtenue == pytest.approx(reelle), (
             f"le retrait de {code} déplace la pension d'un cadre du privé "
             f"de {reelle - obtenue:.2f} €"
         )
+
+
+def _liquidee(appels: dict) -> dict:
+    """Chaque liquidation au scénario 1, ``(moteur, carrière)`` sous sa clé,
+    demandée au portage (``pont.droit``) : ``pont.MOTEUR``, ou sa variante que
+    la mesure des avantages neutralise (``pont.MOTEUR.neutralisant``)."""
+    lus, refus = pont.droit({cle: ("scenario_actuel.calculer", moteur, carriere)
+                             for cle, (moteur, carriere) in appels.items()})
+    assert not refus, refus
+    return lus
 
 
 def _age(simulateur, cas, generation: int) -> float:
@@ -505,21 +529,26 @@ def test_le_retrait_de_l_apprentissage_ne_retire_que_le_complement(script_cout):
     from facade import Simulateur
 
     simulateur = Simulateur(Parametres())
-    variante = jumeau.scenarios_neutralises(simulateur)["apprentissage"]
+    sans_la_fiche = pont.MOTEUR.neutralisant("apprentissage")
 
     complete = _apprenti_puis_salarie(simulateur, 2062, 64.0)
-    reelle, sans = simulateur.scenario_actuel.calculer(complete), variante.calculer(complete)
-    assert reelle.trimestres_requis == sans.trimestres_requis == 172
-    assert (reelle.trimestres_valides, sans.trimestres_valides) == (190, 180)
-    assert sans.pension_annuelle == pytest.approx(reelle.pension_annuelle)
+    lues = _liquidee({"reelle": (pont.MOTEUR, complete), "sans": (sans_la_fiche, complete)})
+    reelle, sans = lues["reelle"], lues["sans"]
+    assert reelle["trimestres_requis"] == sans["trimestres_requis"] == 172
+    assert (reelle["trimestres_valides"], sans["trimestres_valides"]) == (190, 180)
+    assert sans["pension_annuelle"] == pytest.approx(reelle["pension_annuelle"])
 
     incomplete = _apprenti_puis_salarie(simulateur, 2048, 67.0)
-    reelle, sans = simulateur.scenario_actuel.calculer(incomplete), variante.calculer(incomplete)
-    assert (reelle.trimestres_valides, sans.trimestres_valides) == (134, 124)
-    assert reelle.taux_liquidation == sans.taux_liquidation
-    assert not reelle.minimum_applique and not sans.minimum_applique
-    avec = {pension.regime: pension.montant for pension in reelle.pensions_par_regime}
-    sans_complement = {pension.regime: pension.montant for pension in sans.pensions_par_regime}
+    lues = _liquidee({"reelle": (pont.MOTEUR, incomplete), "sans": (sans_la_fiche, incomplete)})
+    reelle, sans = lues["reelle"], lues["sans"]
+    assert (reelle["trimestres_valides"], sans["trimestres_valides"]) == (134, 124)
+    assert reelle["taux_liquidation"] == sans["taux_liquidation"]
+    assert not simulateur.scenario_actuel.calculer(incomplete).minimum_applique
+    assert not any(ligne["code"].startswith("minimum")
+                   for liquidee in (reelle, sans) for ligne in liquidee["avantages_appliques"])
+    avec = {pension["regime"]: pension["montant"] for pension in reelle["pensions_par_regime"]}
+    sans_complement = {pension["regime"]: pension["montant"]
+                       for pension in sans["pensions_par_regime"]}
     assert avec.pop("regime_general") / sans_complement.pop("regime_general") == (
         pytest.approx(134 / 124))
     assert avec == pytest.approx(sans_complement)
@@ -958,9 +987,8 @@ def test_le_cout_par_carriere_passe_par_le_portage_sans_le_moteur_python(monkeyp
     from facade import Simulateur
 
 
-    # Le simulateur de la façade ne fait rien calculer au moteur Python, et le
-    # recalcul du coût n'est plus au modèle : son jumeau loge parmi les tests
-    # (``tests/jumeau_des_avantages.py``, action 161, étape 4).
+    # Le recalcul du coût n'est plus au modèle : le portage le fait
+    # (``pont.avantages``), et son jumeau Python est parti (action 161).
     assert not hasattr(avantages, "recalculer")
     lignes = cout_avantages.par_carriere(Simulateur(Parametres()), 1960)
     assert valeur_figee("par_carriere::1960", lignes) == lignes

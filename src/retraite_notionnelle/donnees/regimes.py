@@ -461,7 +461,7 @@ class PeriodeRegime:
     #: cinquième anniversaire », arrondie au trimestre supérieur, pour qui
     #: n'a pas la durée (décret n° 45-0179, article 70-6 ; R. 351-7 ; décret
     #: n° 50-1225, article 55-6, aux salariés agricoles). Voir
-    #: :func:`~retraite_notionnelle.droit.liquider.duree_majoree_apres_taux_plein`.
+    #: ``dureeMajoreeApresTauxPlein`` de ``moteur/js/droit/liquider.js``.
     duree_majoree_apres_taux_plein: bool
     #: Depuis le 1er janvier 2004, la durée qui déclenche et borne la
     #: majoration est celle de TOUS les régimes de base, et la majoration se
@@ -533,7 +533,7 @@ class PeriodeRegime:
     #: convention du 14 mars 1947, par année d'âge révolue, de 0,40 à
     #: cinquante-cinq ans à 0,93 à soixante-quatre, que l'Agirc a servie
     #: jusqu'en 1955. Voir
-    #: :func:`~retraite_notionnelle.droit.liquider.coefficient_convention_1947`.
+    #: ``coefficientConvention1947`` de ``moteur/js/droit/liquider.js``.
     bareme_anticipation: str | None
     #: Les points acquis dans la période gardent-ils le coefficient
     #: d'anticipation POUR ÂGE, même au taux plein ? Les points de l'Agirc
@@ -542,7 +542,7 @@ class PeriodeRegime:
     #: rémunérations » (accords du 13 novembre 2003 et du 18 mars 2011), et
     #: l'annexe V de la convention de 1947 « n'est pas applicable aux droits
     #: constitués jusqu'au 31 décembre 2015 sur la tranche C ». Voir
-    #: :func:`~retraite_notionnelle.droit.liquider.coefficient_des_points_abattus`.
+    #: ``abattusALAge`` dans ``liquiderChaqueRegime`` de ``moteur/js/droit/liquider.js``.
     points_abattus_a_l_age: bool
     #: Barème de MAJORATION des régimes en points liquidés APRÈS le taux
     #: plein. ``aucune`` quand la fiche n'en écrit pas ; ``regime_general``
@@ -728,7 +728,7 @@ class PeriodeRegime:
     #: seule durée d'avant 2016 (2°, a), et la moyenne des points des
     #: meilleures années d'avant 2016, multipliée par le nombre de ces années
     #: (2°, b), le nombre d'années étant réparti par R. 173-3-2. Voir
-    #: :func:`~retraite_notionnelle.droit.liquider.pension_des_non_salaries_agricoles`.
+    #: ``pensionDesNonSalariesAgricoles`` de ``moteur/js/droit/liquider.js``.
     meilleures_annees_non_salaries: bool
     #: Le calcul PROVISOIRE des pensions prenant effet en 2026 et en 2027 :
     #: l'ancienne section, la moyenne des points d'avant 2016 en plus (décret
@@ -856,7 +856,7 @@ class PeriodeRegime:
     #: LA PENSION DES CULTES EN DEUX FRACTIONS : celle des périodes d'avant
     #: 1998 aux règles du 31 décembre 1997, adaptées en 2006, et celle des
     #: suivantes aux règles du régime général (L. 382-27). Voir
-    #: :mod:`~retraite_notionnelle.droit.cultes`.
+    #: ``moteur/js/droit/cultes.js``.
     fractions_des_cultes: bool = False
     #: POINTS GRATUITS attribués à la liquidation pour les années d'avant la
     #: création du régime : voir :class:`PointsGratuits`. ``None`` partout

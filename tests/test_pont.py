@@ -177,8 +177,7 @@ def test_le_bareme_du_regime_unique_passe_au_portage_dans_la_demande():
     paramètres de la demande, et en revient sous les types du Python : sous
     chaque barème, le portage rend de chaque case ce que le témoin des valeurs
     porte, et autre chose que sans lui, dans les scénarios
-    du régime unique. Qu'un barème mal formé arrête le compte du jumeau, comme
-    celui du portage, ``test_facade_jumeau.py`` le tient."""
+    du régime unique."""
     sous_un_bareme = replace(Parametres(), bareme_regime_unique=BAREMES[0])
     assert pont.parametres_des_donnees(
         _comme_node(pont.parametres_en_donnees(sous_un_bareme))) == sous_un_bareme
@@ -787,8 +786,7 @@ def test_le_pont_prete_une_table_au_moteur_du_portage():
     (``pont.MOTEUR.pretant``) — celle des indépendants par celle du régime
     général, pour lire ce que la règle des artisans ajoute à leur pension —,
     sur une copie : le moteur sans prêt n'en garde rien, et une table que le
-    moteur ne porte pas arrête l'appel. Que le prêt rende ce que le moteur
-    Python rend sous le même prêt, ``test_facade_jumeau.py`` le tient. L'artisan né en 1949 en est la mesure : vingt et une années
+    moteur ne porte pas arrête l'appel. L'artisan né en 1949 en est la mesure : vingt et une années
     retenues (R. 634-1-1), vingt-cinq au régime général."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
@@ -2111,11 +2109,7 @@ def test_la_classe_python_lit_les_series_du_portage_sans_repli(monkeypatch):
             convenus={"arrco": "agirc_arrco", "agirc_arrco": "agirc_arrco",
                       "regime_general": None})
 
-    def calcule(self, annee):
-        raise AssertionError("la classe Python ne calcule plus l'index du compte")
-
     monkeypatch.setattr(pont, "series_servies", series)
-    monkeypatch.setattr("retraite_notionnelle.moteur.indexation.Indexation.taux", calcule)
     servie = RevalorisationServie(simulateur, 2020, 2022)
     assert demandes == [(simulateur.parametres, 2020, 2022)]
     assert (servie.premiere_annee, servie.derniere_annee) == (2020, 2022)
@@ -2275,8 +2269,7 @@ def test_le_pont_sert_la_derniere_annee_publiee_d_un_point():
 def test_l_histoire_du_droit_demande_ses_regles_au_portage_par_lot(monkeypatch):
     """``RevalorisationServie.coefficient_historique`` — ce que le droit a
     servi à une pension liquidée, à la moyenne de chaque année, en euros
-    constants — reste au coût, en Python, mais n'appelle plus une règle du
-    moteur Python : il demande au portage, d'un seul lot par règle de
+    constants — reste au coût, en Python, et demande au portage, d'un seul lot par règle de
     revalorisation, chaque mois de son histoire, et les changements d'unité
     d'un point avec ses valeurs, sous les paramètres de son simulateur. Une
     règle déjà lue ne se redemande pas, et sans node la lecture s'arrête, sans
@@ -2304,18 +2297,6 @@ def test_l_histoire_du_droit_demande_ses_regles_au_portage_par_lot(monkeypatch):
     sans_node = RevalorisationServie(simulateur, 1990, 2030)
     assert simulateur.scenario_actuel is not None
 
-    def calcule(*arguments, **options):
-        raise AssertionError("l'histoire du droit n'appelle plus le moteur Python")
-
-    # Les règles du moteur Python, nommées sans être importées.
-    for regle in ("droit.liquider.valeur_du_point",
-                  "revalorisation.RevalorisationsPensions.generale",
-                  "revalorisation.RevalorisationsPensions.retenues",
-                  "scenarios.actuel.MinimumGaranti.ratio_point_indice",
-                  "scenarios.actuel.ConversionsPoints.echelle",
-                  "scenarios.actuel.ConversionsPoints.fusion",
-                  "scenarios.actuel.ValeursPoint.derniere_annee_servie"):
-        monkeypatch.setattr(f"retraite_notionnelle.{regle}", calcule)
     lots = []
     droit = pont.droit
 

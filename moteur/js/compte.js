@@ -1,7 +1,7 @@
 /**
  * Compte notionnel : accumulation des cotisations et liquidation.
  *
- * Portage de ``src/retraite_notionnelle/moteur/compte.py``. Le compte notionnel
+ * Le compte notionnel
  * est un compte virtuel : on y inscrit chaque année les cotisations retraite
  * réellement versées, on le revalorise au taux d'indexation retenu, et on
  * divise le solde final par un coefficient de conversion actuariel. Aucun

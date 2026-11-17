@@ -1,7 +1,7 @@
 /**
  * Le pilote (docs/architecture.md, § 7.7) : ce que le droit ne décide pas.
  *
- * Portage d'une partie de `src/retraite_notionnelle/pilote.py`. Le moteur ne
+ * Le moteur ne
  * devine rien : il liquide la demande qu'on lui fait. Hors de lui, un pilote
  * fixe le reste — LES COMPORTEMENTS : partir au taux plein, à l'âge où le
  * droit s'ouvre. Il interroge le moteur, au besoin plusieurs fois, jusqu'à un

@@ -401,9 +401,9 @@ def test_chaque_paire_a_ses_deux_fichiers_et_sa_place_au_classement(carte):
 
 
 def test_un_fichier_de_regles_se_reconnait_a_son_chemin():
-    """Les fichiers de règles du moteur Python, que le retrait supprime (action
-    161, étape 6) : ses trois dossiers et six fichiers du paquet. La carte les
-    nomme elle-même, sans lire la sonde, qui part avec eux."""
+    """Les fichiers de règles du moteur Python, que le retrait a supprimés
+    (action 161) : ses trois dossiers et six fichiers du paquet. La carte les
+    nomme elle-même."""
     paquet = "src/retraite_notionnelle/"
     for chemin in ("droit/liquider.py", "droit/__init__.py", "moteur/compte.py",
                    "scenarios/actuel.py", "simulateur.py", "carriere.py"):
@@ -413,26 +413,21 @@ def test_un_fichier_de_regles_se_reconnait_a_son_chemin():
         assert not jumeaux.est_une_regle(chemin), chemin
 
 
-def test_la_carte_et_la_sonde_disent_les_memes_fichiers_de_regles():
-    """Tant que la sonde du moteur Python est là, elle et la carte s'accordent."""
-    sonde = pytest.importorskip("sonde_moteur_python")
-    assert (jumeaux.DOSSIERS_DE_REGLES, jumeaux.FICHIERS_DE_REGLES) == (sonde.DOSSIERS, sonde.FICHIERS)
+def test_aucun_fichier_de_regles_ne_reste():
+    """La suppression (action 161, quatrième lot) : aucun fichier suivi n'est
+    un fichier de règles, aucune paire n'a son Python parmi eux, et aucun
+    en-tête JavaScript ne déclare plus un jumeau parti."""
+    carte = jumeaux.Carte()
+    assert not [c for c in carte.fichiers if jumeaux.est_une_regle(c)]
+    assert not carte.paires_du_moteur()
+    assert not carte.declarations_mortes, carte.declarations_mortes
 
 
-#: Les fichiers de règles que le coût et la fabrique atteignent encore, par la
-#: carrière que le pont relit sous la classe des règles (action 161, dernière
-#: étape avant la suppression). La liste ne peut que rétrécir.
-REGLES_ENCORE_ATTEINTES = {"src/retraite_notionnelle/carriere.py",
-                           "src/retraite_notionnelle/droit/__init__.py",
-                           "src/retraite_notionnelle/droit/preparer.py"}
-
-
-def test_ni_le_cout_ni_la_fabrique_n_atteignent_d_autre_regle_que_la_carriere(carte):
-    """Depuis l'étape 4 du retrait (action 161), le coût et la fabrique se
-    chargent sans règle Python, hors de la carrière que le pont relit ; le
-    simulateur Python n'en est plus, et son jumeau reste chargé par le site."""
+def test_ni_le_cout_ni_la_fabrique_n_atteignent_une_regle(carte):
+    """Le coût et la fabrique se chargent sans règle Python, et le site charge
+    le simulateur JavaScript."""
     for atteints in (carte.cout, carte.fabrique):
-        assert {c for c in atteints if jumeaux.est_une_regle(c)} <= REGLES_ENCORE_ATTEINTES
+        assert not {c for c in atteints if jumeaux.est_une_regle(c)}
     assert "moteur/js/simulateur.js" in carte.js.site
 
 
@@ -444,22 +439,11 @@ def test_aucun_chiffre_ancre_ne_charge_un_fichier_de_regles(carte):
     assert not regles, {c: [(r.fichier, r.ligne) for r in carte.ancres[c]] for c in regles}
 
 
-#: Les fichiers qui chargent ou nomment encore un fichier de règles par son
-#: chemin : la sonde du moteur Python et le relevé de ce qui y entre, avec
-#: leurs tests, dont l'objet part avec les règles (action 161, étape 6).
-CHARGENT_ENCORE_UNE_REGLE = {"scripts/sonde_moteur_python.py",
-                             "scripts/entrees_du_moteur.py",
-                             "tests/test_sonde_moteur_python.py",
-                             "tests/test_entrees_du_moteur.py"}
-
-
 def test_aucun_chargement_par_chemin_ne_vise_un_fichier_de_regles(carte):
-    """Hors des outils qui mesurent le moteur Python et partent avec lui, aucun
-    script ni test ne charge ni ne nomme un fichier de règles par son chemin :
-    la suppression ne casserait aucune lecture (action 161, étape 5)."""
+    """Aucun script ni test ne charge ni ne nomme un fichier de règles par son
+    chemin : la suppression n'a cassé aucune lecture (action 161)."""
     lecteurs = {(r.fichier, r.ligne, c) for c, renvois in carte.par_chemin.items()
-                if jumeaux.est_une_regle(c) for r in renvois
-                if r.fichier not in CHARGENT_ENCORE_UNE_REGLE}
+                if jumeaux.est_une_regle(c) for r in renvois}
     assert not lecteurs, sorted(lecteurs)
 
 
@@ -475,15 +459,3 @@ def test_les_fonctions_gardees_des_deux_cotes_sont_declarees_et_tenues():
     Python qui la lit, ni test ni jumeau du moteur — ou part avec le moteur."""
     ecarts = jumeaux.ecarts_de_la_liste(RACINE, jumeaux.fichiers_suivis())
     assert not ecarts, "\n".join(ecarts)
-
-
-def test_les_paires_du_moteur_sont_celles_dont_le_python_est_une_regle(carte):
-    """Les paires qui partent avec le moteur Python : leur Python est un fichier
-    de règles. Aucune n'est dans la liste des fonctions gardées, et toutes les
-    autres restent ; à la suppression, l'en-tête de chacun de leurs JavaScript
-    cesse de déclarer son jumeau (action 161, étape 6)."""
-    du_moteur = carte.paires_du_moteur()
-    assert du_moteur and all(jumeaux.est_une_regle(p.python) for p in du_moteur)
-    assert not {p.python for p in du_moteur} & set(jumeaux.lire_la_liste())
-    restent = set(carte.paires) - set(du_moteur)
-    assert restent and not any(jumeaux.est_une_regle(p.python) for p in restent)

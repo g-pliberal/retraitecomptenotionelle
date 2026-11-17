@@ -72,17 +72,14 @@ def test_la_decomposition_des_avantages_refuse_un_cas_type_hors_du_portage(monke
 
 
 def test_l_age_legal_des_departs_decotes_se_lit_au_portage():
-    """``dates_a_l_age_legal`` n'exécute aucune règle du moteur Python (la
-    sonde du retrait), et oppose l'âge légal de la loi de 2010 : le salarié né
+    """``dates_a_l_age_legal`` se lit au portage, et oppose l'âge légal de la loi de 2010 : le salarié né
     en janvier 1960, au taux plein après 62 ans, part à 62 ans, sa pension
     prenant effet le premier jour du mois qui suit (février 2022)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    import sonde_moteur_python as sonde
-
     salarie = next(cas for cas in GRILLE_DU_COUT if cas.code == "salaire_moyen")
     lues = {}
-    assert sonde.sonder(lambda: lues.update(facteurs_depense.dates_a_l_age_legal(
-        Parametres(), cas_types=(salarie,), generations=(1960,)))) == []
+    lues.update(facteurs_depense.dates_a_l_age_legal(
+        Parametres(), cas_types=(salarie,), generations=(1960,)))
     date = lues[("salaire_moyen", 1960, 0)]
     assert (date.annee, date.mois) == (2022, 2)

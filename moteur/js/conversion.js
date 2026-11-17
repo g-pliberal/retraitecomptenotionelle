@@ -1,7 +1,7 @@
 /**
  * Coefficient de conversion du capital notionnel en rente viagère.
  *
- * Portage de ``src/retraite_notionnelle/moteur/conversion.py``. La pension
+ * La pension
  * annuelle vaut ``capital_notionnel / diviseur``, où le diviseur est
  * l'espérance de vie résiduelle actualisée :
  *

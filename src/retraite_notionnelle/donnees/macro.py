@@ -336,7 +336,7 @@ class DonneesMacro:
         de la valeur ajoutée vers les revenus non salariaux, que la masse
         salariale subit. C'est celle que l'Italie retient pour revaloriser les
         comptes notionnels, lissée sur cinq ans — le lissage est appliqué par
-        :class:`~retraite_notionnelle.moteur.indexation.Indexation`, pas ici.
+        ``Indexation`` de ``moteur/js/indexation.js``, pas ici.
         """
         serie = charger_serie_annuelle(
             self.racine / "reference" / "macro" / "pib_nominal.csv",

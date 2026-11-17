@@ -7,13 +7,14 @@ Chaque règle qu'une sonde appelait une à une se demande au portage par le
 pont (``pont.droit``), sous le nom de son jumeau Python ; ce fichier dit ce
 que chacune rend, par le chiffre que la prose publie ou que le texte fixe, et
 :func:`outils_pont.droit_et_fige` confronte ce qu'elle rend au témoin du
-droit. Puis il fait tourner les sondes sous le relevé de
-``scripts/entrees_du_moteur.py`` : plus aucune n'entre dans le moteur Python.
+droit. Puis il fait tourner les sondes dans un processus neuf : le moteur
+Python retiré (action 161), elles ne tournent que sur le portage.
 """
 
 from __future__ import annotations
 
 import shutil
+import subprocess
 import sys
 import textwrap
 from dataclasses import replace
@@ -28,7 +29,6 @@ from retraite_notionnelle.config import (PRIME_TERME_MILIEU, ModeIndexation, Par
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "scripts"))
 
-import entrees_du_moteur  # noqa: E402
 from outils_pont import droit_et_fige  # noqa: E402
 
 pytestmark = pytest.mark.skipif(shutil.which("node") is None,
@@ -294,9 +294,13 @@ SONDES = (
     "allocation?quoi=annees",
 )
 
-def _entrees_des_sondes(tmp_path, sondes) -> dict[str, list[str]]:
-    """Ce qui entre dans le moteur Python quand ces sondes tournent, chacune
-    une fois, dans un processus neuf (``entrees_du_moteur.relever``)."""
+def _lancer(script: Path) -> None:
+    """Fait tourner ``script`` dans un processus neuf, depuis la racine."""
+    subprocess.run([sys.executable, str(script)], check=True, cwd=RACINE)
+
+
+def _faire_tourner_les_sondes(tmp_path, sondes) -> None:
+    """Fait tourner ces sondes, chacune une fois, dans un processus neuf."""
     script = tmp_path / "sondes.py"
     script.write_text(textwrap.dedent(f'''\
         import sys
@@ -306,15 +310,14 @@ def _entrees_des_sondes(tmp_path, sondes) -> dict[str, list[str]]:
         for sonde in {list(sondes)!r}:
             mesures_prose.mesurer(sonde)
         '''), encoding="utf-8")
-    return entrees_du_moteur.relever(script)
+    _lancer(script)
 
 
-def test_les_sondes_n_entrent_plus_dans_le_moteur_python(tmp_path):
+def test_les_sondes_tournent_sur_le_portage_seul(tmp_path):
     """Chaque sonde de la prose qui appelait une règle du moteur Python — une
     carrière bâtie et simulée, ou une règle appelée seule — la demande au
-    portage : le relevé de ses entrées est vide, les règles des fichiers
-    mêlés que les sondes appelaient comprises (``entrees_du_moteur.PORTES``)."""
-    assert _entrees_des_sondes(tmp_path, SONDES) == {}
+    portage, et tourne le moteur Python retiré."""
+    _faire_tourner_les_sondes(tmp_path, SONDES)
 
 
 # -- les mesures de l'accueil --------------------------------------------------------
@@ -324,8 +327,8 @@ def test_les_baremes_de_la_fusion_se_lisent_sans_le_moteur_python(tmp_path):
     """Les quatre barèmes que le solde de la fusion compare
     (``solde_fusion.hypotheses``, d'où l'accueil tire le taux du régime
     unique) : le régime unique du modèle et la moyenne des régimes s'y
-    demandent au portage, sous les conventions du simulateur reçu, et rien
-    n'entre plus dans le moteur Python. Le modèle retient le taux du statut
+    demandent au portage, sous les conventions du simulateur reçu, sur un
+    simulateur de données seules. Le modèle retient le taux du statut
     pivot du privé : 25,83 % au taux contractuel de l'Agirc-Arrco, et
     davantage sous les conventions de la page Coût, où elle cotise au taux
     moyen des entreprises ; la moyenne de tous les régimes est plus basse."""
@@ -336,16 +339,16 @@ def test_les_baremes_de_la_fusion_se_lisent_sans_le_moteur_python(tmp_path):
         sys.path.insert(0, {str(RACINE / "scripts")!r})
         import solde_fusion
         from retraite_notionnelle.config import Parametres
-        from retraite_notionnelle.simulateur import Simulateur
+        from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees
 
-        simulateur = Simulateur(Parametres())
+        simulateur = SimulateurDeDonnees(Parametres())
         lus = {{}}
         for nom, sous in (("contractuel", simulateur), ("cout", simulateur.pour_la_projection())):
             toutes = solde_fusion.hypotheses(sous, 2026)
             lus[nom] = {{lettre: [h.libelle, h.bareme] for lettre, h in toutes.items()}}
         json.dump(lus, open({str(tmp_path / "baremes.json")!r}, "w"))
         '''), encoding="utf-8")
-    assert entrees_du_moteur.relever(script) == {}
+    _lancer(script)
     import json
 
     lus = json.loads((tmp_path / "baremes.json").read_text())

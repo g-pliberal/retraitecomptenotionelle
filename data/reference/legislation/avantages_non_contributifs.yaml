@@ -20,8 +20,8 @@
 #      (data/reference/regimes/*.yaml) — seize codes, DATÉS et par régime,
 #      que le moteur lit vraiment, mais dont six ne commandent aucun calcul.
 #   3. La cascade `AvantageApplique`
-#      (src/retraite_notionnelle/droit/liquidation.py, completer.py et
-#      foyer.py) — dix codes, et les
+#      (moteur/js/droit/liquidation.js, completer.js et
+#      foyer.js) — dix codes, et les
 #      seuls CHIFFRÉS en euros : c'est la seule des trois qui réponde à
 #      « combien ».
 #

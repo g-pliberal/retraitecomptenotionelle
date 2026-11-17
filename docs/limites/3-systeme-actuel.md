@@ -1100,8 +1100,7 @@ lecture qu'il aurait de lui.
 
 Le simulateur montre à qui est déjà parti la pension qu'il touche cette année,
 et non plus celle de son premier mois ramenée par l'indice des prix. Chaque
-régime la revalorise par son texte (`src/retraite_notionnelle/revalorisation.py`,
-porté dans `moteur/js/revalorisation.js`). L'écart n'est pas un détail : le
+régime la revalorise par son texte (`moteur/js/revalorisation.js`). L'écart n'est pas un détail : le
 salarié non cadre du cas type, parti en janvier 2012, touche en 2026
 <!--chiffre:mesure(aujourd_hui?generation=1950&niveau=0.8)-->−2,5<!--/--> % de
 moins que sa pension de départ ramenée par les prix — ce que la page lui

@@ -51,7 +51,7 @@ L'ancre
 
 Un chiffre ancré porte, autour de lui, la sonde qui le recalcule ::
 
-    `actuel.py` fait <!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes
+    `pont.py` fait <!--chiffre:lignes(src/retraite_notionnelle/pont.py)-->4 251<!--/--> lignes
 
 C'est le geste de ``construire_regimes_md.py``, qui écrit ``docs/regimes.md``
 entre deux repères — en plus fin : le repère tient dans une phrase au lieu

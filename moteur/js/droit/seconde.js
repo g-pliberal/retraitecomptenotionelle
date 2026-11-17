@@ -2,8 +2,7 @@
  * Les droits de l'activité exercée après le départ (docs/architecture.md,
  * § 7.4 ; fiches `droits_apres_la_premiere_pension` et `seconde_pension`).
  *
- * Jumeau de `src/retraite_notionnelle/droit/seconde.py`, fonction pour
- * fonction. Après une première pension de base, l'activité n'ouvre plus aucun
+ * Après une première pension de base, l'activité n'ouvre plus aucun
  * droit, pour qui la prend depuis 2015, puis pour tous depuis 2023, sauf, en
  * cumul intégral, une nouvelle pension dans le régime de base de l'activité
  * — au taux plein, plafonnée à 5 % du plafond de la sécurité sociale avant les

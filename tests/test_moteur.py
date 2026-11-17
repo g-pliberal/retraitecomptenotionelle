@@ -310,12 +310,8 @@ def test_le_passe_ne_depend_pas_de_l_age_de_depart():
 
 # -- profil de rémunération -------------------------------------------------
 # `profil_salaire` et `_facteur_secteur` s'éprouvent sur le portage :
-# tests/js/profil-salaire.test.js (action 161, quatrième vague) ; la
-# confrontation des deux jumeaux au bit près, dans test_facade_jumeau.py.
-
-
-# Le test des noms hérités du prototype, qui confronte le portage au Python,
-# est dans test_facade_jumeau.py, qui part avec le jumeau.
+# tests/js/profil-salaire.test.js (action 161, quatrième vague) ; leur jumeau
+# Python est parti (action 161).
 
 
 # -- âge de référence --------------------------------------------------------

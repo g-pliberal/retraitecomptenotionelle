@@ -32,9 +32,7 @@ affiliations — se lisent, par leurs chargeurs Python, qui restent.
 la méthode de sa table, parmi celles que ``pont.TABLES_DE_LA_FACADE`` déclare,
 et ce qu'elle rend revient sous le type que son contrat annonce
 (``contrats_de_la_facade.py``, la signature et le type rendu de chaque
-entrée servie, qui ne chargent aucun fichier de règles). Une
-règle du moteur Python à qui un test passe le moteur de la façade n'y lit
-rien : elle tournerait en Python sur les tables du portage.
+entrée servie).
 
 **Les règles du droit** se demandent par leur module et leur nom
 (``ouvrir.duree_requise(moteur, periode, carriere)``), que le fichier importe
@@ -74,7 +72,6 @@ import datetime
 import inspect
 import os
 import shutil
-import sys
 import typing
 from pathlib import Path
 
@@ -288,14 +285,6 @@ class ScenarioActuel(_Ferme):
     def __getattr__(self, nom):
         if nom.startswith("__"):
             raise AttributeError(nom)
-        # Qui lit : une règle du moteur Python à qui le test a passé ce moteur
-        # tournerait en Python sur les tables du portage.
-        if sys._getframe(1).f_globals.get("__name__", "").startswith("retraite_notionnelle."):
-            raise NonTransmissible(
-                f"ScenarioActuel.{nom}, lu par une règle du moteur Python "
-                f"({sys._getframe(1).f_globals['__name__']}.{sys._getframe(1).f_code.co_name}) : "
-                "le moteur de la façade ne sert pas le moteur Python — le test reste sur le "
-                "moteur Python, ou demande la règle au pont (pont.droit)")
         if nom in TABLES:
             return Table(self, nom)
         return super().__getattr__(nom)

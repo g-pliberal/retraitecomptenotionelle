@@ -4,8 +4,7 @@
 # pose, jamais à la place d'un fait déclaré — et normalise ses dates.
 #
 # Elle lit une chronologie et en écrit une : son schéma est celui du contrat
-# C.1, qui la décrit déjà. src/retraite_notionnelle/droit/preparer.py, et son
-# jumeau moteur/js/droit/preparer.js.
+# C.1, qui la décrit déjà. moteur/js/droit/preparer.js.
 
 etape: preparer_la_chronologie
 schema_version: 1

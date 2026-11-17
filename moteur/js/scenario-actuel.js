@@ -1,7 +1,7 @@
 /**
  * Scénario 1 — le système actuel, tel qu'il est.
  *
- * Portage de ``src/retraite_notionnelle/scenarios/actuel.py``. Ce scénario sert
+ * Ce scénario sert
  * d'étalon : c'est la pension que l'assuré perçoit ou percevra en droit
  * constant. Il conserve tout ce que les scénarios notionnels retirent — minima,
  * majorations, trimestres gratuits, décote et surcote, bonifications.

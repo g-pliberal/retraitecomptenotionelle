@@ -106,13 +106,6 @@ def test_la_grille_passe_par_le_portage_sans_le_moteur_python(monkeypatch, ligne
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne calcule pas ici")
 
-
-    def interdit(*_, **__):
-        raise AssertionError("le moteur Python date ou revalorise la grille des mères")
-
-    simulateur = "retraite_notionnelle.simulateur.Simulateur"
-    monkeypatch.setattr(f"{simulateur}.age_reference", property(interdit))
-    monkeypatch.setattr(f"{simulateur}.indexation", property(interdit))
     grille = scenarios_meres.Grille(1966, 0.9, "salarie_prive_non_cadre", 21)
     assert [grille.calculer(s) for s in scenarios_meres.SITUATIONS] == lignes
 

@@ -1,8 +1,6 @@
 /**
  * Scénarios 2 à 6 — les comptes notionnels.
  *
- * Portage de ``src/retraite_notionnelle/scenarios/notionnel.py``.
- *
  * **Scénario 2, rétroactif.** Le compte est ouvert à l'entrée dans la vie
  * active, ou à l'année d'origine de la répartition si la carrière a commencé
  * avant. Toute la carrière est recalculée sur les seules cotisations versées.

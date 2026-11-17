@@ -1,7 +1,6 @@
 /**
  * La pension d'aujourd'hui : ce que devient une pension une fois liquidée.
  *
- * Portage de `revalorisation.py`, dont le raisonnement est écrit en entier.
  * En deux phrases : le moteur calcule une pension au jour de la liquidation, et
  * un retraité touche ce qu'elle est devenue depuis, date d'effet après date
  * d'effet ; la page lui montrait la première, ramenée en euros d'aujourd'hui

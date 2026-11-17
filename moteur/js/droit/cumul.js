@@ -6,8 +6,7 @@
  * `cumul_emploi_retraite_ircantec`, `cumul_emploi_retraite_rco_agricole` et
  * `cumul_emploi_retraite_complementaires_des_liberaux`).
  *
- * Jumeau de `src/retraite_notionnelle/droit/cumul.py`, fonction pour
- * fonction. Le retraité qui travaille garde sa pension, entière ou non, selon
+ * Le retraité qui travaille garde sa pension, entière ou non, selon
  * le droit du MOIS où il travaille, la date de sa pension et celle de sa
  * première pension de base : le salarié (L. 161-22 — la rupture avec le
  * dernier employeur de 1983, le plafond du dernier salaire de 2004, le cumul

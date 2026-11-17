@@ -6,8 +6,8 @@ servies par le portage sous leurs noms (action 161, note de décision 0007).
 types du Python, champ par champ, et rien ne s'y devine. Les valeurs attendues
 ici sont celles de la source — le texte, que les tests du moteur citaient
 déjà —, ou posées à la main ; ce que la façade rend ne s'y compare pas à ce
-que le portage rend par une autre voie. La confrontation au jumeau Python,
-tant qu'il vit, est à part (``tests/test_facade_jumeau.py``).
+que le portage rend par une autre voie. La confrontation au jumeau Python
+est partie avec lui (action 161).
 """
 
 from __future__ import annotations
@@ -22,46 +22,32 @@ from types import SimpleNamespace
 
 import pytest
 
-from retraite_notionnelle import carriere as carriere_python
 from retraite_notionnelle import memoire, pont
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle import simulateur as simulateur_python
 from retraite_notionnelle.types_du_pont.carriere import LigneRelevee, Metier
 from retraite_notionnelle.types_du_pont.carriere import PensionDInvalidite
 from retraite_notionnelle.config import (RACINE_PROJET, ContributionEtat, Neutralisations,
                                          Parametres)
 from retraite_notionnelle.donnees.chargement import DonneeInsuffisante, Fiabilite
-from retraite_notionnelle.droit import acquerir as acquerir_python
-from retraite_notionnelle.droit import categories as categories_python
-from retraite_notionnelle.droit import commun as commun_python
-from retraite_notionnelle.droit import completer as completer_python
-from retraite_notionnelle.droit import compter as compter_python
-from retraite_notionnelle.moteur import compte as compte_python
-from retraite_notionnelle.droit import cultes as cultes_python
-from retraite_notionnelle.droit import cumul as cumul_python
-from retraite_notionnelle.droit import departs as departs_python
-from retraite_notionnelle.droit import foyer as foyer_python
-from retraite_notionnelle.droit import invalidite as invalidite_python
-from retraite_notionnelle.droit import limite_age as limite_age_python
-from retraite_notionnelle.droit import liquidation as liquidation_python
-from retraite_notionnelle.droit import liquider as liquider_python
-from retraite_notionnelle.droit import ouvrir as ouvrir_python
-from retraite_notionnelle.droit import progressive as progressive_python
-from retraite_notionnelle.droit import releve as releve_python
-from retraite_notionnelle.droit import reversion as reversion_python
-from retraite_notionnelle import revalorisation as revalorisation_python
 from retraite_notionnelle.types_du_pont.droit import PensionRegime
-from retraite_notionnelle.droit.liquider import EligibleAgricole
+from retraite_notionnelle.types_du_pont.droit import EligibleAgricole
 from retraite_notionnelle.types_du_pont.droit import EligibleMinimum
 from retraite_notionnelle.types_du_pont.journal import Journal
 from retraite_notionnelle.remuneration import AnneeComparee, FicheDePaie, RemunerationActif
 from retraite_notionnelle.types_du_pont.resultats import ResultatActuel
 from retraite_notionnelle.types_du_pont.resultats import ResultatNotionnel
-from retraite_notionnelle.donnees.simulateur import SCENARIOS_NOTIONNELS
+from retraite_notionnelle.donnees.simulateur import SCENARIOS_NOTIONNELS, SimulateurDeDonnees
+from retraite_notionnelle.noyau.budget import APPELS_DECLARES
+from retraite_notionnelle.types_du_pont import carriere as TC
+from retraite_notionnelle.types_du_pont import droit as TD
+from retraite_notionnelle.types_du_pont import revalorisation as TR
+from retraite_notionnelle.types_du_pont.droit import Contexte as ContexteDeLiquidation
+from retraite_notionnelle.types_du_pont.droit import Depart
 from retraite_notionnelle.types_du_pont.comparaison import Comparaison
 from retraite_notionnelle.types_du_pont.carriere import Carriere as CarriereNue
 
 import facade
+from contrats_de_la_facade import contrat_de_l_entree, contrat_de_la_regle
 from facade import (Carriere, NonTransmissible, Simulateur, acquerir, commun, completer, departs,
                     foyer, invalidite, liquider, ouvrir, regles_de_la_reversion, reversion)
 
@@ -242,20 +228,21 @@ def test_la_carriere_du_releve_porte_les_revenus_de_ses_lignes(simulateur):
         "artisan", 18000.0, 3)
 
 
-@pytest.mark.parametrize("batisseur, signature_python", [
-    ("depuisParcours", carriere_python.Carriere.depuis_parcours),
-    ("depuisReleve", carriere_python.Carriere.depuis_releve),
+@pytest.mark.parametrize("batisseur, entree", [
+    ("depuisParcours", "carriere.depuis_parcours"),
+    ("depuisReleve", "carriere.depuis_releve"),
 ])
-def test_le_portage_connait_chaque_option_que_la_facade_lui_passe(batisseur, signature_python):
+def test_le_portage_connait_chaque_option_que_la_facade_lui_passe(batisseur, entree):
     """Le portage lit ses options par leur nom, et ignorerait sans rien dire
-    celle qu'il ne connaît pas : chaque argument du bâtisseur Python a le
-    sien dans le portage. ``depuis_profil`` passe par ``depuisParcours``."""
+    celle qu'il ne connaît pas : chaque argument du contrat du bâtisseur
+    (``tests/contrats_de_la_facade.py``) a le sien dans le portage.
+    ``depuis_profil`` passe par ``depuisParcours``."""
     source = (RACINE_PROJET / "moteur" / "js" / "carriere.js").read_text(encoding="utf-8")
     options = re.search(r"static %s\(\{(.*?)\}\) \{" % batisseur, source, re.DOTALL).group(1)
     connues = set(re.findall(r"^\s*([a-z_]+)(?: = [^\n]*)?,?$", options, re.MULTILINE))
     assert {"annee_naissance", "macro"} <= connues
-    assert set(inspect.signature(signature_python).parameters) <= connues
-    assert set(inspect.signature(carriere_python.Carriere.depuis_profil).parameters) <= (
+    assert set(inspect.signature(contrat_de_l_entree(entree)).parameters) <= connues
+    assert set(inspect.signature(contrat_de_l_entree("carriere.depuis_profil")).parameters) <= (
         connues | {"affiliation", "age_debut", "niveau_salaire"}) or batisseur != "depuisParcours"
 
 
@@ -527,7 +514,7 @@ def test_une_serie_qui_n_est_pas_celle_d_un_simulateur_de_la_facade_est_refusee(
         Carriere.depuis_profil(**SALARIE, macro=SimpleNamespace(coefficient_prix=lambda *_: 1.0))
     with pytest.raises(NonTransmissible, match="série"):
         Carriere.depuis_parcours(1965, "H", [Metier("artisan", 23)], 64,
-                                 simulateur_python.Simulateur().macro)
+                                 SimulateurDeDonnees().macro)
 
 
 def test_les_series_d_un_simulateur_portent_ses_parametres():
@@ -542,8 +529,6 @@ def test_les_series_d_un_simulateur_portent_ses_parametres():
 def test_un_moteur_qui_n_est_pas_celui_de_la_facade_est_refuse(simulateur):
     carriere = simulateur.carriere_simple(**SALARIE)
     pensions = [("regime_general", 5000.0, HAUTE)]
-    with pytest.raises(NonTransmissible, match="moteur"):
-        reversion(simulateur_python.Simulateur().scenario_actuel, pensions, carriere, 2030)
     with pytest.raises(NonTransmissible, match="moteur"):
         reversion(object(), pensions, carriere, 2030)
 
@@ -704,19 +689,6 @@ def test_une_table_de_la_facade_ne_se_modifie_pas(simulateur, monkeypatch):
         table.minimum(2025)
 
 
-def test_une_regle_du_moteur_python_ne_lit_pas_une_table_de_la_facade(simulateur):
-    """Une règle du moteur Python à qui un test passe le moteur de la façade
-    tournerait en Python sur les tables du portage : le test verdirait sans
-    éprouver le portage. Elle est refusée ; le test reste sur le moteur
-    Python, ou demande la règle au pont."""
-    from retraite_notionnelle.droit import ouvrir
-
-    carriere = simulateur.carriere_simple(**SALARIE)
-    periode = simulateur.catalogue["regime_general"].periode(2029)
-    with pytest.raises(NonTransmissible, match="règle du moteur Python"):
-        ouvrir.duree_requise(simulateur.scenario_actuel, periode, carriere)
-
-
 # -- les règles du droit --------------------------------------------------------------
 
 NE_EN_1955 = dict(annee_naissance=1955, sexe="H", affiliation="salarie_prive_non_cadre",
@@ -824,14 +796,12 @@ def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
 
 def test_une_regle_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulateur):
     """Le moteur d'un simulateur de la façade, une période de son catalogue,
-    une carrière, une date, des valeurs simples. Le moteur Python, une période
+    une carrière, une date, des valeurs simples. Un autre moteur, une période
     que le test a retouchée, un objet du moteur — les durées d'un relevé —
     n'arriveraient pas au portage : la règle est refusée."""
     moteur = simulateur.scenario_actuel
     carriere = simulateur.carriere_simple(**NE_EN_1955)
     periode = simulateur.catalogue["regime_general"].periode(2017)
-    with pytest.raises(NonTransmissible, match="moteur"):
-        ouvrir.duree_requise(simulateur_python.Simulateur().scenario_actuel, periode, carriere)
     with pytest.raises(NonTransmissible, match="moteur"):
         ouvrir.duree_requise(None, periode, carriere)
     retouchee = dataclasses.replace(periode, age_taux_plein=65.0)
@@ -909,7 +879,7 @@ def test_le_releve_ne_sert_que_ce_qu_il_transmet(simulateur):
     with pytest.raises(NonTransmissible, match="drapeaux"):
         liquider.duree_du_regime_aligne(carriere, sans.durees, ("regime_general",))
     with pytest.raises(NonTransmissible, match="moteur"):
-        facade.releve.construire(simulateur_python.Simulateur().scenario_actuel, carriere)
+        facade.releve.construire(object(), carriere)
     durees = facade.releve.construire(simulateur.scenario_actuel, carriere).durees
     with pytest.raises(NonTransmissible, match="membres"):
         durees.plafond("assurance", 2016, ("regime_general",))
@@ -1120,8 +1090,8 @@ SALARIE_A_62_ANS = dict(annee_naissance=1960, sexe="H", affiliation="salarie_pri
 
 
 def _contexte(simulateur, *neutralisations, **champs):
-    return liquidation_python.Contexte(simulateur.scenario_actuel, frozenset(neutralisations),
-                                       **champs)
+    return ContexteDeLiquidation(simulateur.scenario_actuel, frozenset(neutralisations),
+                                 **champs)
 
 
 def test_les_etapes_de_la_liquidation_se_servent_l_une_apres_l_autre(simulateur):
@@ -1184,7 +1154,7 @@ def test_une_etape_de_la_liquidation_ne_sert_que_ce_qu_elle_transmet(simulateur)
         liquider.liquider_chaque_regime(actuel, releve, ouverture,
                                         _contexte(simulateur, observation="2030-01-01"))
     with pytest.raises(NonTransmissible, match="contexte"):
-        liquider.liquider_chaque_regime(actuel, releve, ouverture, liquidation_python.Contexte(
+        liquider.liquider_chaque_regime(actuel, releve, ouverture, ContexteDeLiquidation(
             Simulateur().scenario_actuel))
     pensions = liquider.liquider_chaque_regime(actuel, releve, ouverture)
     with pytest.raises(NonTransmissible, match="pensions"):
@@ -1494,7 +1464,7 @@ def test_faire_vivre_se_demande_au_portage(simulateur):
     carriere = _chef_parti_en_1995(simulateur)
     resultat = simulateur.scenario_actuel.calculer(carriere)
     en_1996 = facade.faire_vivre(simulateur, carriere, resultat, 1996)
-    assert type(en_1996) is revalorisation_python.Revalorisee
+    assert type(en_1996) is TR.Revalorisee
     assert en_1996.annee == 1996 and en_1996.exploitant is None
     revision = facade.faire_vivre(simulateur, carriere, resultat, 1997).exploitant
     assert revision.annee_des_plans == 1997 and revision.points_servis > 0
@@ -1511,7 +1481,7 @@ def test_le_systeme_1_servi_une_annee_se_demande_au_portage(simulateur):
     carriere = _chef_parti_en_1995(simulateur)
     resultat = simulateur.scenario_actuel.calculer(carriere)
     servi = facade.actuel_aujourd_hui(simulateur, carriere, resultat, 1997)
-    assert type(servi) is revalorisation_python.ActuelAujourdhui
+    assert type(servi) is TR.ActuelAujourdhui
     assert servi.regimes == facade.faire_vivre(simulateur, carriere, resultat, 1997).regimes
     assert servi.minimum_vieillesse > 0
     assert servi.pension_annuelle == pytest.approx(42_193 / 6.55957, abs=1.0)
@@ -1541,10 +1511,10 @@ def _liquidation_unique_de_la_circulaire(simulateur, servie):
     710,94 € par mois."""
     pension = PensionRegime("regime_general", 710.94 * 12.0, "annuites", "",
                             Fiabilite.CERTIFIEE)
-    petite = completer_python.PetitePension(
+    petite = TD.PetitePension(
         regime="regime_general", taux_plein=True, cotisee=146, validee=170, maximum=167,
         cotises_tous_regimes=146)
-    servi = revalorisation_python.RegimeServi("regime_general", pension.montant, 1.0,
+    servi = TR.RegimeServi("regime_general", pension.montant, 1.0,
                                               "regime_general", Fiabilite.CERTIFIEE)
     resultat = SimpleNamespace(petites_pensions=(petite,), avantages_appliques=[])
     return facade.majorer_les_petites_pensions(
@@ -1560,27 +1530,23 @@ def test_la_majoration_des_petites_pensions_se_demande_au_portage(simulateur):
     regimes, majorations = _liquidation_unique_de_la_circulaire(
         simulateur, facade.PensionServie(simulateur))
     (majoration,) = majorations
-    assert type(majoration) is revalorisation_python.MajorationExceptionnelle
+    assert type(majoration) is TR.MajorationExceptionnelle
     assert (majoration.date, majoration.theorique, majoration.plafond, majoration.retenue,
             majoration.servie) == ("2023-09-01", 87.42, 847.57, 87.42, 87.42)
     (regime,) = regimes
-    assert type(regime) is revalorisation_python.RegimeServi
+    assert type(regime) is TR.RegimeServi
     assert regime.majoration == pytest.approx(majoration.a_l_echeance, rel=1e-12)
 
 
 def test_la_majoration_des_petites_pensions_refuse_ce_que_le_portage_ne_verrait_pas(
         simulateur):
     """La règle de chaque régime se lit sur le simulateur de la façade qui
-    tient le moteur : celle du moteur Python, ou d'un autre simulateur,
-    n'arriverait pas au portage. L'échéancier, de même, ne se sert que sur un
-    simulateur de la façade."""
-    with pytest.raises(NonTransmissible, match="majorer_les_petites_pensions"):
-        _liquidation_unique_de_la_circulaire(
-            simulateur, revalorisation_python.PensionServie(simulateur_python.Simulateur()))
+    tient le moteur : celle d'un autre simulateur n'arriverait pas au portage.
+    L'échéancier, de même, ne se sert que sur un simulateur de la façade."""
     with pytest.raises(NonTransmissible, match="majorer_les_petites_pensions"):
         _liquidation_unique_de_la_circulaire(simulateur, facade.PensionServie(Simulateur()))
     with pytest.raises(NonTransmissible, match="échéancier"):
-        facade.Echeancier(simulateur_python.Simulateur())
+        facade.Echeancier(SimulateurDeDonnees())
 
 
 def _policier(simulateur, **options):
@@ -1604,7 +1570,7 @@ def test_les_departs_se_demandent_au_portage(simulateur):
     liste = departs.departs(moteur, carriere)
     assert liste == (departs.Depart(carriere.date_liquidation, frozenset({"fonction_publique_etat"})),
                      departs.Depart(legal, frozenset({"rafp"}), departs.MOTIF_OUVERTURE))
-    assert departs.Depart is departs_python.Depart
+    assert departs.Depart is Depart
     assert departs.demandes(moteur, carriere) == ()
 
 
@@ -1645,14 +1611,12 @@ def test_les_regles_des_minima_agricoles_se_demandent_au_portage(simulateur):
     exploitant = resultat.exploitant_agricole
     plans = completer.majoration_retraite_proportionnelle(
         moteur, chef, exploitant.eligible, exploitant.pension, exploitant.trimestres)
-    assert type(plans) is completer_python.MajorationProportionnelle
+    assert type(plans) is TD.MajorationProportionnelle
     assert plans == exploitant.plans and plans.points > 0
     regime = simulateur.catalogue[exploitant.regime]
     periode = commun.periode_de_liquidation(regime, chef.date_liquidation)
-    assert periode is commun_python.periode_de_liquidation(regime, chef.date_liquidation)
-    assert liquider.valeur_point_fiche(moteur, periode, 2002) == pytest.approx(
-        liquider_python.valeur_point_fiche(
-            simulateur_python.Simulateur().scenario_actuel, periode, 2002), abs=1e-12)
+    assert periode in regime.periodes and periode.couvre(2002)
+    assert liquider.valeur_point_fiche(moteur, periode, 2002) > 0
     parti_en_2019 = Carriere.depuis_parcours(
         annee_naissance=1955, sexe="H", jour_naissance=15,
         metiers=[Metier("exploitant_agricole", 20.0, niveau_salaire=0.3)],
@@ -1662,7 +1626,7 @@ def test_les_regles_des_minima_agricoles_se_demandent_au_portage(simulateur):
         "pmr_chef", 2019, parti_en_2019.mois_liquidation)
     presque_rien = PensionRegime("msa_non_salaries", 0.0001, "annuites", "", HAUTE)
     majoree = completer.pension_majoree(moteur, parti_en_2019, eligible, presque_rien, 0.0)
-    assert type(majoree) is completer_python.PensionMajoree
+    assert type(majoree) is TD.PensionMajoree
     retenue = min(eligible.duree, eligible.reference)
     assert majoree.avant_ecretement == pytest.approx(
         pleine * retenue / eligible.reference, abs=1e-3)
@@ -1683,7 +1647,7 @@ def test_le_releve_dit_les_points_d_une_annee_et_le_revenu_qu_ils_supposent(simu
     revient sous le type du Python."""
     moteur = simulateur.scenario_actuel
     au_plafond = facade.releve.revenu_des_points(moteur, "medecin_liberal", 2015, "base", 550, 4)
-    assert type(au_plafond) is releve_python.RevenuDesPoints and au_plafond.au_plafond
+    assert type(au_plafond) is TD.RevenuDesPoints and au_plafond.au_plafond
     assert au_plafond.revenu == round(5 * moteur.macro.plafond_securite_sociale(2015))
     assert facade.releve.points_de_l_annee(
         moteur, "medecin_liberal", 2015, "base", au_plafond.revenu, 4) == pytest.approx(550)
@@ -1860,7 +1824,7 @@ def test_les_regles_des_enfants_des_sections_liberales_se_demandent_au_portage(s
     # Un régime d'un autre catalogue n'arriverait pas au portage.
     with pytest.raises(NonTransmissible, match="catalogue d'un simulateur de la façade"):
         completer._taux_majoration_enfants(
-            simulateur_python.Simulateur().catalogue["fonction_publique_etat"], 4)
+            SimulateurDeDonnees().catalogue["fonction_publique_etat"], 4)
 
 
 def test_le_releve_se_prolonge_au_portage_au_rythme_du_salaire_moyen(simulateur):
@@ -1883,7 +1847,7 @@ def test_le_releve_se_prolonge_au_portage_au_rythme_du_salaire_moyen(simulateur)
     assert (par_annee[2026].revenu, par_annee[2026].quotite) == (
         pytest.approx(20000.0 * salaire[2026] / salaire[2024] * 6 / 12 * 0.5), 0.5)
     with pytest.raises(NonTransmissible, match="séries"):
-        facade.salaire_moyen_annuel(simulateur_python.Simulateur().macro, 2024)
+        facade.salaire_moyen_annuel(SimulateurDeDonnees().macro, 2024)
     with pytest.raises(NonTransmissible, match="progressive"):
         facade.prolonger_releve([LigneRelevee(2024, "fonctionnaire_etat", 16000.0)],
                                 DateMois(2026, 7), macro, progressive=(DateMois(2025, 1), 0.6))
@@ -1926,7 +1890,7 @@ def test_les_ages_et_l_inaptitude_se_lisent_dans_leurs_tables(simulateur):
 def _fonctionnaire(naissance: int, debut: int, liquidation: int) -> Carriere:
     """Un fonctionnaire de l'État, quatre trimestres par an de ``debut`` à la
     veille de ``liquidation``, né un 1er janvier."""
-    lignes = [carriere_python.AnneeCarriere(annee=annee, revenu=30000.0,
+    lignes = [TC.AnneeCarriere(annee=annee, revenu=30000.0,
                                             affiliation="fonctionnaire_etat",
                                             trimestres_valides=4)
               for annee in range(debut, liquidation)]
@@ -2101,7 +2065,7 @@ def test_la_categorie_et_le_plancher_de_l_invalide_se_demandent_au_portage(simul
                                invalidite={"pension": 48 + 10 / 12, "categorie": 3})
     assert invalidite.categorie_de_la_pension(moteur, dite) == (3, None)
     plancher = invalidite.plancher_de_la_substitution(moteur, invalide, ["regime_general"])
-    assert isinstance(plancher, invalidite_python.PlancherDeLaSubstitution)
+    assert isinstance(plancher, TD.PlancherDeLaSubstitution)
     assert plancher.regime == "regime_general"
     assert plancher.montant == pytest.approx(3_566.43, abs=0.01)
     assert plancher.pension_d_invalidite is None and isinstance(plancher.fiabilite, Fiabilite)
@@ -2154,14 +2118,14 @@ def test_sous_un_cout_modifie_la_mortalite_se_demande_encore(simulateur, monkeyp
     dès que la mortalité elle-même est remplacée, que le portage ne verrait
     pas."""
     from retraite_notionnelle import cout
-    from retraite_notionnelle.donnees import mortalite as mortalite_python
+    from retraite_notionnelle.donnees import mortalite as mortalite_donnees
 
     with memoire.modele_modifie():
         servie = simulateur.mortalite.courbe(62.0, 2031.0, None, True, None)
     assert servie == simulateur.mortalite.courbe(62.0, 2031.0, None, True, None)
     monkeypatch.setattr(cout, "_pensionnes", lambda *arguments: None)
     assert simulateur.mortalite.courbe(62.0, 2031.0, None, True, None) == servie
-    monkeypatch.setattr(mortalite_python.DonneesMortalite, "facteur_population",
+    monkeypatch.setattr(mortalite_donnees.DonneesMortalite, "facteur_population",
                         lambda *arguments: 1.0)
     with pytest.raises(NonTransmissible, match="mortalité remplacée"):
         simulateur.mortalite.courbe(62.0, 2031.0, None, True, None)
@@ -2360,7 +2324,7 @@ def test_le_foyer_se_demande_au_portage_et_revient_sous_son_type(simulateur):
     actuel = simulateur.scenario_actuel
     lu = foyer.foyer_et_net(actuel, "assure", "2026-06-01", 2026, 6000.0, True,
                             carriere=_foyer_du_couple(simulateur, "1970"))
-    assert type(lu) is foyer_python.Foyer and type(lu.fiabilite) is Fiabilite
+    assert type(lu) is TD.Foyer and type(lu.fiabilite) is Fiabilite
     assert (lu.bareme, lu.ressources_conjoint) == ("couple", 4000.0)
     assert lu.plafond == actuel.minimum_vieillesse.plafond_couple(2026)[0]
     assert lu.servie_avec(6000.0) == pytest.approx(6000.0 + lu.minimum_vieillesse)
@@ -2389,7 +2353,7 @@ def _depart_a_taux_plein(simulateur):
     168 trimestres passent les 167 requis, sa pension est au taux plein, sans
     surcote."""
     carriere = simulateur.carriere_simple(1958, "H", "salarie_prive_non_cadre", 20, 62)
-    return liquidation_python.demande_de_depart(carriere), carriere
+    return facade.liquidation.demande_de_depart(carriere), carriere
 
 
 def test_la_liquidation_se_demande_au_portage(simulateur):
@@ -2418,7 +2382,7 @@ def test_la_liquidation_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulate
     """L'état d'une carrière seule et d'un journal vide de la façade, le
     contexte du moteur de la façade sans rien de plus : le journal du Python,
     un journal qui tient des entrées, les pensions déjà servies, une date
-    d'observation, le moteur Python n'arriveraient pas au portage."""
+    d'observation, un autre moteur n'arriveraient pas au portage."""
     demande, carriere = _depart_a_taux_plein(simulateur)
     Etat, Contexte = facade.liquidation.Etat, facade.liquidation.Contexte
     moteur = simulateur.scenario_actuel
@@ -2428,7 +2392,7 @@ def test_la_liquidation_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulate
             (Etat(carriere, journal=Journal()), Contexte(moteur), "journal"),
             (Etat(carriere, journal=_journal_d_une_entree()), Contexte(moteur), "journal"),
             (Etat(carriere), Contexte(moteur, observation="2026-01-01"), "contexte"),
-            (Etat(carriere), Contexte(simulateur_python.Simulateur().scenario_actuel),
+            (Etat(carriere), Contexte(object()),
              "moteur")]:
         with pytest.raises(NonTransmissible, match=motif):
             facade.liquidation.liquider(demande, etat, contexte)
@@ -2438,7 +2402,7 @@ def test_la_liquidation_ne_recoit_que_ce_que_la_facade_sait_transmettre(simulate
 def test_les_departs_se_liquident_au_portage_sans_journal_ni_retraite_progressive(simulateur):
     """``departs.liquider_les_departs`` se demande au portage : le départ
     unique d'un salarié parti à l'âge légal, ouvert, liquidé au mois de son
-    départ. Un journal, une retraite progressive, le moteur Python
+    départ. Un journal, une retraite progressive, un autre moteur
     n'arriveraient pas au portage."""
     demande, carriere = _depart_a_taux_plein(simulateur)
     moteur = simulateur.scenario_actuel
@@ -2453,7 +2417,7 @@ def test_les_departs_se_liquident_au_portage_sans_journal_ni_retraite_progressiv
             facade.departs.liquider_les_departs(moteur, carriere, contexte, **options)
     with pytest.raises(NonTransmissible, match="moteur"):
         facade.departs.liquider_les_departs(
-            simulateur_python.Simulateur().scenario_actuel, carriere, contexte)
+            object(), carriere, contexte)
 
 def _mere_de_deux_enfants(simulateur):
     """Une salariée née en 1970, deux enfants, deux années d'éducation qui
@@ -2471,7 +2435,7 @@ def test_la_demande_de_depart_se_demande_au_portage(simulateur):
     parti à l'âge légal (L. 351-1, R. 351-37), sous la nature demandée."""
     carriere = simulateur.carriere_simple(1958, "H", "salarie_prive_non_cadre", 20, 62)
     demande = facade.liquidation.demande_de_depart(carriere)
-    assert type(demande) is liquidation_python.Demande
+    assert type(demande) is TD.Demande
     assert (demande.personne, demande.date_effet, demande.date_evenement, demande.nature) == (
         carriere.personne, f"{carriere.date_liquidation.annee:04d}-"
         f"{carriere.date_liquidation.mois:02d}-01", demande.date_effet, "definitive")
@@ -2500,7 +2464,7 @@ def test_la_liquidation_rend_son_contrat_ses_mesures_et_ses_appels(simulateur):
     assert set(donnees["lignes_consommees"]) == {ligne["id"] for ligne in liquidee.releve.lignes()}
     assert [(m.code, m.neutralisation) for m in liquidee.mesures] == [
         ("majoration_duree_assurance", "avantages_non_contributifs")]
-    assert type(liquidee.mesures[0]) is liquidation_python.Mesure
+    assert type(liquidee.mesures[0]) is TD.Mesure
     montants = {a.code: a.montant for a in liquidee.avantages}
     assert liquidee.mesures[0].montant == montants["majoration_duree_assurance"] > 0
     assert type(liquidee.total) is float and liquidee.total >= liquidee.total_contributif > 0
@@ -2513,8 +2477,8 @@ def test_la_liquidation_rend_son_contrat_ses_mesures_et_ses_appels(simulateur):
     # Le total contributif ne compte pas les trimestres des enfants : le même.
     assert sans.mesures == () and sans.total_contributif == liquidee.total_contributif
     assert sans.total < liquidee.total
-    assert facade.liquidation.APPELS_DECLARES == liquidation_python.APPELS_DECLARES
-    assert facade.liquidation.NEUTRALISATIONS == liquidation_python.NEUTRALISATIONS
+    assert facade.liquidation.APPELS_DECLARES == APPELS_DECLARES
+    assert facade.liquidation.NEUTRALISATIONS == TD.NEUTRALISATIONS
 
 
 def test_une_regle_se_demande_sous_les_parametres_de_son_moteur(simulateur):
@@ -2561,24 +2525,14 @@ DEFAUTS_DU_PORTAGE = {"null": None, "true": True, "false": False, "[]": ()}
 @pytest.mark.parametrize("module, regle", [
     (module, regle) for module, regles in sorted(pont.REGLES_DE_LA_FACADE.items())
     for regle in regles])
-def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(module, regle):
+def test_chaque_regle_servie_a_les_arguments_de_son_contrat_dans_leur_ordre(module, regle):
     """La façade passe les arguments par leur rang, ceux que le test tait à
-    leur valeur par défaut du Python : le portage en attend autant, sous la
+    leur valeur par défaut du contrat de la règle
+    (``tests/contrats_de_la_facade.py``) : le portage en attend autant, sous la
     même valeur par défaut — une table vide pour le ``None`` d'une table
     (``pont.TABLES_DES_REGLES``). Quatre noms seulement diffèrent d'un côté à
     l'autre."""
-    jumelle = getattr({"acquerir": acquerir_python, "carriere": carriere_python,
-                       "categories": categories_python,
-                       "commun": commun_python,
-                       "completer": completer_python, "compte": compte_python,
-                       "compter": compter_python,
-                       "cultes": cultes_python, "cumul": cumul_python, "departs": departs_python,
-                       "foyer": foyer_python,
-                       "invalidite": invalidite_python, "limite_age": limite_age_python,
-                       "liquider": liquider_python, "ouvrir": ouvrir_python,
-                       "progressive": progressive_python,
-                       "releve": releve_python, "reversion": reversion_python,
-                       "revalorisation": revalorisation_python}[module], regle)
+    jumelle = contrat_de_la_regle(module, regle)
     attendus = [(nom, None if parametre.default is inspect.Parameter.empty else parametre.default)
                 for nom, parametre in inspect.signature(jumelle).parameters.items()]
     autres_noms = {"a_charge": "avecACharge", "annees": "anneesRetenues",

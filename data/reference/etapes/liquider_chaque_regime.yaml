@@ -14,8 +14,7 @@
 # pension qu'une prime soumise à retenue ouvre ; pour chaque pension de la
 # SNCF, si le minimum de pension de l'article 15 du décret n° 2008-639 la relève.
 #
-# src/retraite_notionnelle/droit/liquider.py, et son jumeau
-# moteur/js/droit/liquider.js.
+# Le code : moteur/js/droit/liquider.js.
 
 etape: liquider_chaque_regime
 schema_version: 1

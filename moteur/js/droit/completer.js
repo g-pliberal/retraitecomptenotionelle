@@ -1,8 +1,7 @@
 /**
  * Compléter tous régimes (docs/architecture.md, § 7.3).
  *
- * Jumeau de `src/retraite_notionnelle/droit/completer.py`, fonction pour
- * fonction : ce que le droit ajoute aux pensions de régime en les regardant
+ * Ce que le droit ajoute aux pensions de régime en les regardant
  * toutes ensemble, dans l'ordre où il l'applique — le minimum contributif et
  * son écrêtement (`complementMinimum`), le minimum garanti de la fonction
  * publique, la surcote parentale, la majoration pour enfants, plafonnée en

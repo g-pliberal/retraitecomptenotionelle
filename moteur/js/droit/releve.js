@@ -1,7 +1,7 @@
 /**
  * Le relevé des droits (docs/architecture.md, § 7.2 et 7.6).
  *
- * Jumeau de `src/retraite_notionnelle/droit/releve.py` : `construire` enchaîne
+ * `construire` enchaîne
  * les étapes de l'acquisition — coordonner les affiliations, compter les
  * durées, acquérir les droits —, puis réunit en groupes les régimes où un
  * droit est acquis ; la liquidation du scénario 1 lit ce qu'il rend. Le relevé

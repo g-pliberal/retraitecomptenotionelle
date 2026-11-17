@@ -48,7 +48,7 @@ class MinimumVieillesse:
     """
 
     #: Âge d'ouverture de droit commun. L'inapte l'a plus tôt : voir
-    #: :func:`~retraite_notionnelle.droit.invalidite.age_de_l_aspa`.
+    #: ``ageDeLAspa`` de ``moteur/js/droit/invalidite.js``.
     AGE_OUVERTURE = 65
 
     def __init__(self, racine: Path, macro: DonneesMacro) -> None:

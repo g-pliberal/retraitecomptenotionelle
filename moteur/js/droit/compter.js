@@ -1,8 +1,7 @@
 /**
  * Compter les durées (docs/architecture.md, § 7.2).
  *
- * Jumeau de `src/retraite_notionnelle/droit/compter.py`, fonction pour
- * fonction : les trimestres de chaque compte — l'assurance, périodes
+ * Les trimestres de chaque compte — l'assurance, périodes
  * assimilées comprises ; les services, qui proratisent la pension de la
  * fonction publique ; la durée cotisée —, régime par régime et année par
  * année, et les trimestres des enfants, dans le régime que la priorité entre

@@ -1,7 +1,7 @@
 /**
  * Préparer la chronologie (docs/architecture.md, § 7.2).
  *
- * Jumeau de `src/retraite_notionnelle/droit/preparer.py` : la première des
+ * La première des
  * quatre étapes qui construisent le relevé des droits. Ce que la saisie ne dit
  * pas, une présomption le pose, en son nom, sans jamais remplacer un fait
  * déclaré (§ 5.6). Son schéma est le contrat C.1

@@ -14,9 +14,8 @@
 # périodes passées hors de France : le titre auquel chacune compte — un
 # accord, une organisation internationale, l'équivalence de l'activité
 # d'avant 1983 —, et les familles de régimes qui la retiennent
-# (src/retraite_notionnelle/droit/etranger.py).
-# src/retraite_notionnelle/droit/coordonner.py, et son jumeau
-# moteur/js/droit/coordonner.js.
+# (moteur/js/droit/etranger.js).
+# Le code : moteur/js/droit/coordonner.js.
 
 etape: coordonner_les_affiliations
 schema_version: 2

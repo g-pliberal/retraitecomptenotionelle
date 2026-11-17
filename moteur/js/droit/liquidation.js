@@ -1,7 +1,7 @@
 /**
  * Liquider : `liquider(demande, état, contexte)` (docs/architecture.md, § 7.3).
  *
- * Jumeau de `src/retraite_notionnelle/droit/liquidation.py` : une FONCTION
+ * Une FONCTION
  * PURE, qui ne lit rien d'autre que ses trois entrées — la demande, l'état (la
  * chronologie par sa vue, la carrière, et le journal de l'échéancier), le
  * contexte (l'univers, dont le moteur du scénario 1 tient les tables, et ce

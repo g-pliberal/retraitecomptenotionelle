@@ -1563,13 +1563,11 @@ def test_le_pont_releve_les_cles_du_paquet_que_le_moteur_lit(tmp_path, monkeypat
 def test_le_budget_de_calcul_ne_mesure_que_le_portage(monkeypatch, capsys):
     """Le budget de calcul (``docs/architecture.md``, § 7.8) se mesure dans le
     seul moteur qui reste, le JavaScript (``scripts/budget_calcul.mjs``) : le
-    moteur Python se retire (action 161), et le script n'en exécute aucune
-    règle (``scripts/sonde_moteur_python.py``)."""
+    moteur Python s'est retiré (action 161)."""
     import subprocess
     import types
 
     import budget_calcul
-    import sonde_moteur_python
 
     lances = []
 
@@ -1579,7 +1577,7 @@ def test_le_budget_de_calcul_ne_mesure_que_le_portage(monkeypatch, capsys):
 
     monkeypatch.setattr(subprocess, "run", lancer)
     monkeypatch.setattr(sys, "argv", ["budget_calcul.py"])
-    assert sonde_moteur_python.sonder(budget_calcul.main) == []
+    budget_calcul.main()
     assert [Path(commande[1]).name for commande in lances] == ["budget_calcul.mjs"]
     assert capsys.readouterr().out == "JavaScript, 2 carrières : 4,5 ms\n"
 

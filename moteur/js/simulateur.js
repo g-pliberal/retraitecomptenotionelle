@@ -1,7 +1,7 @@
 /**
  * Simulateur : assemble les données, le moteur et les six scénarios.
  *
- * Portage de ``src/retraite_notionnelle/simulateur.py``. C'est le point d'entrée
+ * C'est le point d'entrée
  * unique : une instance charge les données une fois et simule ensuite autant de
  * carrières que voulu.
  */

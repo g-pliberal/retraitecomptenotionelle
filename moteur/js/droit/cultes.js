@@ -7,9 +7,6 @@
  * validées gratuitement —, adaptées depuis le 1er novembre 2006 par le décret
  * n° 2006-1325 (art. 2) : décote à taux minoré, surcote et majorations
  * jusqu'au minimum contributif au taux plein.
- *
- * Jumeau de `src/retraite_notionnelle/droit/cultes.py`, qui documente chaque
- * règle.
  */
 
 import { formatFixe, formatPourcentage } from "../format.js";

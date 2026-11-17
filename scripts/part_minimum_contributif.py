@@ -121,7 +121,7 @@ AGES_DE_DEPART = (55, 70)
 GENERATIONS_IMPRIMEES = (1950, 1955, 1960, 1965, 1970, 1975, 1980, 1985, 1990)
 
 #: Ce que le détail du minimum dit quand sa majoration est servie
-#: (:func:`retraite_notionnelle.droit.completer.completer`).
+#: (``completer`` de ``moteur/js/droit/completer.js``).
 MAJORATION = "majoration des périodes cotisées comprise"
 
 #: Les euros constants des tableaux de TRAJECTOiRE.

@@ -268,7 +268,7 @@ class AnneeCarriere:
     services_plafond_trimestres_par_enfant: int = 0
     #: Nature de cette année au sens de l'article D. 351-1-2, qui la RÉPUTE
     #: COTISÉE pour la carrière longue sous la limite que sa rédaction à la
-    #: date d'effet fixe (:class:`~retraite_notionnelle.scenarios.actuel.CarriereLongue`).
+    #: date d'effet fixe (``CarriereLongue`` de ``moteur/js/scenario-actuel.js``).
     #: Vide : jamais réputée cotisée.
     reputes_cotises_nature: str = ""
     #: Salaire porté au compte du régime général quand l'année est RÉTABLIE :
@@ -284,7 +284,7 @@ class AnneeCarriere:
     #: pensions compte ses services au jour et ne les arrondit qu'au décompte
     #: final (R. 26) : « 3.33 » dit dix mois. ``None`` hors d'un relevé qui
     #: les déclare : les mois de la ligne font alors ses jours
-    #: (:func:`~retraite_notionnelle.droit.compter.jours_de_la_ligne`).
+    #: (``joursDeLaLigne`` de ``moteur/js/droit/compter.js``).
     jours_de_services: int | None = None
     #: L'activité du MICRO-ENTREPRENEUR dont la ligne lit le revenu abattu
     #: (``saisie.ACTIVITES_MICRO``) ; vide hors du micro-social. Ses trimestres
@@ -297,7 +297,7 @@ class AnneeCarriere:
     #: tiers du plafond, faute d'assiette saisie (D. 633-19-2, 1° ;
     #: :func:`assiette_du_conjoint_collaborateur`) ? Sa complémentaire n'est
     #: assise sur l'avant-dernière année qu'à l'option, une fraction du revenu
-    #: du chef (D. 635-10-2 ; :func:`~retraite_notionnelle.droit.acquerir.revenu_a_l_option`).
+    #: du chef (D. 635-10-2 ; ``revenuALOption`` de ``moteur/js/droit/acquerir.js``).
     forfait_conjoint: bool = False
     #: La ligne d'une activité que l'assuré déclare CUMULÉE à l'activité
     #: principale de l'année (:attr:`Metier.cumul`), que bâtit
@@ -308,7 +308,7 @@ class AnneeCarriere:
     #: elle n'ouvre aucun droit au régime général (D. 171-4, rédaction du
     #: 21 décembre 1985). Faux partout ailleurs : seul le scénario 1 la marque,
     #: sur sa propre copie de la carrière
-    #: (:func:`~retraite_notionnelle.droit.coordonner.ecarter_les_accessoires`).
+    #: (``ecarterLesAccessoires`` de ``moteur/js/droit/coordonner.js``).
     accessoire_d_un_regime_special: bool = False
 
     @property
@@ -388,7 +388,7 @@ class Carriere:
     #: emploi-retraite (:attr:`emploi_retraite`) : hors des lignes, que le
     #: départ arrête et que la première liquidation lit toutes. Ce que le
     #: droit en fait — la pension servie pendant qu'elle dure, les droits
-    #: qu'elle ouvre ou non —, c'est :mod:`~retraite_notionnelle.droit.cumul`
+    #: qu'elle ouvre ou non —, c'est ``moteur/js/droit/cumul.js``
     #: qui le dit.
     lignes_apres_depart: tuple = ()
     #: La carrière arrêtée au décès de la personne, pour la pension qu'elle

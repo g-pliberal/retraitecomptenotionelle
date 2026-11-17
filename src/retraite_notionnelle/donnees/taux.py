@@ -52,7 +52,7 @@ conséquences, et ce sont elles qui font travailler le paramètre :
    forward, et c'est pourquoi l'échelle de maturités n'avait aucun effet sur
    le capital. Avec une prime croissante, bloquer la maturité de l'horizon la
    capte une fois pour toutes, là où le roulement la rachète à chaque échéance
-   au prix du jour. Voir :mod:`~retraite_notionnelle.moteur.capitalisation`.
+   au prix du jour. Voir ``moteur/js/capitalisation.js``.
 
 ``prime_terme`` vaut zéro par défaut : le modèle publie ses chiffres sous les
 anticipations pures, et le paramètre sert à mesurer ce que cette hypothèse

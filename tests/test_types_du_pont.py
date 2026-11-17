@@ -1,13 +1,9 @@
-"""Les types que le pont échange, hors des fichiers de règles (action 161,
-étape 1 du retrait des règles Python).
+"""Les types que le pont échange, sous ``types_du_pont`` (action 161).
 
 Le pont relit ce que calcule le moteur JavaScript sous des types Python. Ils
-logeaient dans les fichiers de règles, que le retrait supprimera : ils ont
-désormais leur module, ``types_du_pont``, qui ne charge aucun fichier de
-règles, et les fichiers de règles les réimportent le temps du retrait.
-``Carriere`` y loge nue, ses champs et ses lectures du calendrier : ses
-règles restent dans ``carriere.py``, sur une classe qui en hérite, le temps
-du retrait (étape 1 bis).
+logeaient dans les fichiers de règles Python, que le retrait a supprimés :
+ils ont leur module, ``types_du_pont``, qui ne charge aucun fichier de
+règles. ``Carriere`` y loge nue, ses champs et ses lectures du calendrier.
 """
 
 import importlib
@@ -19,46 +15,33 @@ import pytest
 PAQUET = "retraite_notionnelle"
 
 #: Chaque type que le pont relit, ou qu'un type qu'il relit porte dans ses
-#: champs — ceux que rendent les règles que la façade sert compris (étape 2), sous le fichier de règles qui le définissait : il y reste
-#: accessible, et c'est le même objet.
+#: champs — ceux que rendent les règles que la façade sert compris —, sous son
+#: module de ``types_du_pont``.
 TYPES = {
     "carriere": ["AnneeCarriere", "LigneRelevee", "Metier"],
-    "droit.commun": ["PensionRegime", "AvantageApplique"],
-    "droit.completer": ["MinimumEcrete", "PetitePension", "ChefDExploitation",
-                        "ExploitantAgricole", "MajorationProportionnelle", "PensionMajoree"],
-    "droit.compter": ["MajorationEnfants", "TrimestresEnfant"],
-    "droit.cumul": ["Cumul", "TrancheDeCumul", "PensionEnCumul"],
-    "droit.cultes": ["DureesDesCultes"],
-    "droit.departs": ["DemandeExaminee", "Depart"],
-    "droit.foyer": ["Foyer"],
-    "droit.liquidation": ["Demande", "Mesure"],
-    "droit.invalidite": ["PlancherDeLaSubstitution"],
-    "droit.limite_age": ["Radiation", "Recul"],
-    "droit.liquider": ["EligiblePlafondEnfants", "EligibleMinimum", "PrestationRafp"],
-    "droit.ouvrir": ["DepartParentTroisEnfants"],
-    "droit.progressive": ["Progressive"],
-    "droit.releve": ["RevenuDesPoints"],
-    "droit.reversion": ["Reversion", "ReversionRegime"],
-    "droit.seconde": ["DroitsApresDepart", "PeriodeDeDroits", "NouvellePension",
-                      "PensionDeRegimeNouveau"],
-    "echeancier": ["Evenement"],
-    "journal": ["Entree", "Journal"],
-    "moteur.age_reference": ["EcartAge"],
-    "moteur.capitalisation": ["Capitalisation", "AnneeCapitalisation"],
-    "moteur.compte": ["CompteNotionnel", "CotisationAnnuelle"],
-    "moteur.conversion": ["CoefficientConversion"],
-    "moteur.fusion": ["RegimeFusionne"],
-    "moteur.indexation": ["TauxIndexation"],
+    "comparaison": ["Comparaison", "ContributionEmployeur"],
+    "droit": ["PensionRegime", "AvantageApplique", "MinimumEcrete", "PetitePension",
+              "ChefDExploitation", "ExploitantAgricole", "MajorationProportionnelle",
+              "PensionMajoree", "MajorationEnfants", "TrimestresEnfant", "Cumul",
+              "TrancheDeCumul", "PensionEnCumul", "DureesDesCultes", "DemandeExaminee", "Depart",
+              "Foyer", "Demande", "Mesure", "PlancherDeLaSubstitution", "Radiation", "Recul",
+              "EligiblePlafondEnfants", "EligibleMinimum", "PrestationRafp",
+              "DepartParentTroisEnfants", "Progressive", "RevenuDesPoints", "Reversion",
+              "ReversionRegime", "DroitsApresDepart", "PeriodeDeDroits", "NouvellePension",
+              "PensionDeRegimeNouveau", "ConversionPoint", "DerogationActive",
+              "TrimestresAccordes", "EligibleAgricole"],
+    "journal": ["Evenement", "Entree", "Journal"],
+    "moteur": ["EcartAge", "Capitalisation", "AnneeCapitalisation", "CompteNotionnel",
+               "CotisationAnnuelle", "CoefficientConversion", "RegimeFusionne",
+               "TauxIndexation"],
+    "resultats": ["ResultatActuel", "DepartServi", "ProgressiveServie", "GarantieVieillesse",
+                  "ResultatNotionnel", "DroitsAcquis"],
     "revalorisation": ["ActuelAujourdhui", "RegimeServi", "MajorationExceptionnelle",
                        "PensionAujourdhui", "Revalorisee", "RelevementAgricole",
                        "RevisionAgricole"],
-    "scenarios.actuel": ["ResultatActuel", "DepartServi", "ProgressiveServie", "ConversionPoint",
-                         "DerogationActive", "TrimestresAccordes"],
-    "scenarios.notionnel": ["GarantieVieillesse", "ResultatNotionnel", "DroitsAcquis"],
-    "simulateur": ["Comparaison", "ContributionEmployeur"],
 }
 
-#: Les fichiers de règles que le retrait supprimera (note de l'inventaire,
+#: Les fichiers de règles que le retrait a supprimés (note de l'inventaire,
 #: « Le périmètre »).
 REGLES = ("droit", "moteur", "scenarios", "carriere", "revalorisation", "simulateur",
           "echeancier", "pilote", "journal")
@@ -66,9 +49,9 @@ REGLES = ("droit", "moteur", "scenarios", "carriere", "revalorisation", "simulat
 
 @pytest.mark.parametrize("module, nom", [(module, nom) for module, noms in TYPES.items()
                                          for nom in noms])
-def test_chaque_type_du_pont_loge_hors_des_regles(module, nom):
-    type_ = getattr(importlib.import_module(f"{PAQUET}.{module}"), nom)
-    assert type_.__module__.startswith(f"{PAQUET}.types_du_pont."), type_.__module__
+def test_chaque_type_du_pont_loge_sous_types_du_pont(module, nom):
+    type_ = getattr(importlib.import_module(f"{PAQUET}.types_du_pont.{module}"), nom)
+    assert type_.__module__ == f"{PAQUET}.types_du_pont.{module}", type_.__module__
 
 
 def test_les_types_du_pont_ne_chargent_aucun_fichier_de_regles():
@@ -104,12 +87,9 @@ LECTURES_DE_LA_CARRIERE = {
 }
 
 
-def test_la_carriere_nue_loge_hors_des_regles_et_ne_porte_aucune_regle():
-    carriere = importlib.import_module(f"{PAQUET}.carriere")
+def test_la_carriere_nue_ne_porte_aucune_regle():
     from retraite_notionnelle.types_du_pont import carriere as nue
 
-    assert issubclass(carriere.Carriere, nue.Carriere)
-    assert carriere.Carriere is not nue.Carriere
     propres = {nom for nom in vars(nue.Carriere)
                if not nom.startswith("__") or nom == "__post_init__"}
     champs = set(nue.Carriere.__dataclass_fields__)

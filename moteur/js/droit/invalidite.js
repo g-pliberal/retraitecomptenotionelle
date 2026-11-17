@@ -2,8 +2,7 @@
  * L'invalidité et l'inaptitude (docs/architecture.md, § 11) : ce que les
  * étapes du droit lisent des fiches du domaine, que `Invalidites` prépare.
  *
- * Jumeau de `src/retraite_notionnelle/droit/invalidite.py`, fonction pour
- * fonction. L'assuré reconnu inapte au travail — et l'ex-invalide, dont la
+ * L'assuré reconnu inapte au travail — et l'ex-invalide, dont la
  * pension de vieillesse est celle « allouée en cas d'inaptitude au travail »
  * (L. 341-15) — a le taux plein quelle que soit sa durée, dans les régimes de
  * la fiche `inaptitude_au_travail`, à l'âge que la version dit. La pension

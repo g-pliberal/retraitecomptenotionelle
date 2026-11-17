@@ -1,7 +1,7 @@
 /**
  * Le journal de l'échéancier (docs/architecture.md, § 7.4 et annexe C.8).
  *
- * Jumeau de `src/retraite_notionnelle/journal.py`. LE JOURNAL EST L'ÉTAT. On
+ * LE JOURNAL EST L'ÉTAT. On
  * y ajoute, on n'efface jamais, et chaque entrée porte deux dates : son
  * INSCRIPTION — l'événement qui l'a écrite, et sa date — et sa période
  * d'EFFET, [début, fin). Une entrée contient un événement traité, une

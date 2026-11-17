@@ -7,9 +7,6 @@
  * Et l'âge du 1° de L. 351-8 que le IV de l'article 20 de la loi n° 2010-1330
  * fixe à soixante-cinq ans au parent de trois enfants né du 1er juillet 1951
  * au 31 décembre 1955 (fiche `taux_plein_a_soixante_cinq_ans`).
- *
- * Jumeau de `src/retraite_notionnelle/droit/categories.py`, fonction pour
- * fonction.
  */
 
 import * as chrono from "../chronologie.js";

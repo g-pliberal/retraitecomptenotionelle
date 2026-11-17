@@ -8,8 +8,7 @@
 # prélèvements selon le revenu du foyer n'y sont pas encore : le modèle
 # compare des pensions brutes.
 #
-# src/retraite_notionnelle/droit/foyer.py, et son jumeau
-# moteur/js/droit/foyer.js.
+# Le code : moteur/js/droit/foyer.js.
 
 etape: foyer_et_net
 schema_version: 1

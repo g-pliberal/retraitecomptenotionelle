@@ -1,7 +1,7 @@
 /**
  * Description d'une carrière individuelle.
  *
- * Portage de ``src/retraite_notionnelle/carriere.py``. Deux niveaux d'entrée :
+ * Deux niveaux d'entrée :
  * une ligne par année, telle qu'on la lit sur un relevé de carrière
  * ({@link Carriere.depuisReleve} — le chemin le plus exact, le seul qui ne
  * suppose ni profil ni progression), ou la suite des métiers exercés — statut,

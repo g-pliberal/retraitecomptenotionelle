@@ -19,7 +19,7 @@ page ou une couche de plus, et ce test demande à la carte de suivre.
 | Zone | Où | Ce qu'on y trouve |
 |---|---|---|
 | Données | `data/` | Ce que le modèle sait du droit et de l'économie : les fiches de règles, les régimes, les séries, les scénarios. En YAML et en CSV, chaque valeur rattachée à sa source. Consignes : `data/CLAUDE.md`. |
-| Modèle | `src/` | Le coût, que seule la fabrique calcule, en Python ; ce que le Python garde du moteur, les chargeurs du paquet et les types du pont (note de décision 0006) ; et les jumeaux Python des règles du moteur d'une carrière, qui suivent le JavaScript au bit près jusqu'à leur retrait. Consignes : `src/CLAUDE.md`. |
+| Modèle | `src/` | Le coût, que seule la fabrique calcule, en Python ; ce que le Python garde du moteur, les chargeurs du paquet et les types du pont (note de décision 0006) ; les règles du moteur d'une carrière n'y sont plus, le JavaScript seul les écrit (action 161). Consignes : `src/CLAUDE.md`. |
 | Site | `index.html` et un dossier par page (`cout/`…), `moteur/` | Les neuf pages toutes faites, le moteur d'une carrière en JavaScript, qui fait foi, le texte des pages, la feuille de style : des fichiers servis tels quels, sans rien à construire. Consignes : `moteur/CLAUDE.md`. |
 | Atelier | `scripts/`, `tests/`, `.github/` | Ce qui fabrique et vérifie : le paquet de données, les témoins, les tests, la publication. |
 | Hors du dépôt | | Les sources officielles, les visiteurs du site, et les sessions Claude qui font le travail. |
@@ -34,7 +34,7 @@ dépôt.
 flowchart LR
   sources["Sources officielles<br/>Légifrance, INSEE, DREES,<br/>COR, CNAV, OpenFisca…"]
   donnees["Données de référence<br/>data/<br/>règles, régimes, séries,<br/>univers et couches"]
-  python["Modèle Python<br/>src/<br/>le coût, les jumeaux"]
+  python["Modèle Python<br/>src/<br/>le coût, les chargeurs"]
   paquet["Paquet de données<br/>moteur/donnees.json<br/>coût calculé d'avance compris"]
   temoins["Témoins et tests<br/>tests/temoins/"]
   jumeau["Moteur JavaScript<br/>moteur/js/<br/>il fait foi"]
@@ -48,8 +48,7 @@ flowchart LR
   paquet -->|"chargé une fois"| site
   jumeau -->|"simule les témoins, par le pont"| temoins
   pages -->|"figées elles aussi"| temoins
-  temoins -->|"vérifient les jumeaux"| python
-  jumeau -.->|"suivi à la main, au bit près"| python
+  temoins -->|"lus par les tests"| python
   jumeau -->|"calcule"| pages
   pages -->|"écrites d'avance"| toutes
   toutes -->|"servies"| site
@@ -71,15 +70,11 @@ Le modèle Python lit les données et fabrique le paquet que charge le site,
 `moteur/donnees.json`
 (<!--chiffre:poids(moteur/donnees.json)-->6 103<!--/--> Ko, par
 `scripts/construire_donnees.py`). Les témoins, dans `tests/temoins/`, le
-moteur JavaScript les simule, par le pont (`scripts/construire_temoins.py`),
-et le moteur Python doit les refaire tant qu'il garde ses jumeaux.
-
-Le suivi, seul trait en pointillé, se fait à la main, règle par règle et
-JavaScript d'abord (note de décision 0005), sous les mêmes noms d'étapes des
-deux côtés, jusqu'au retrait de chaque jumeau Python. Les témoins le
-tiennent :
+moteur JavaScript les simule, par le pont (`scripts/construire_temoins.py`).
+Le moteur d'une carrière n'a plus qu'un exemplaire, en JavaScript : ses
+jumeaux Python sont partis (action 161). Les témoins le tiennent :
 <!--chiffre:entrees(tests/temoins/simulations.json:)-->934<!--/--> simulations
-complètes, que le moteur Python refait au bit près (`tests/test_pont.py`), et
+complètes, que le portage refait à l'octet (`tests/test_pont.py`), et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->86<!--/--> pages figées, que
 `node --test` rejoue ;
 <!--chiffre:portage(valeurs)-->175 713<!--/--> nombres comparés, dont
@@ -231,10 +226,9 @@ flowchart LR
 À gauche, le droit en vigueur : on construit le relevé des droits, puis on
 liquide, en lisant à chaque étape les fiches de la carte des règles
 (`data/reference/regles/`) dans leur version en vigueur. Chaque étape est un
-module, sous le même nom en Python (`src/retraite_notionnelle/droit/`) et en
-JavaScript (`moteur/js/droit/`). À droite, le compte notionnel : ce qui a été
-cotisé, revalorisé, puis divisé par l'espérance de vie au départ
-(`src/retraite_notionnelle/moteur/`, `moteur/js/compte.js`). La garantie du
+module du JavaScript (`moteur/js/droit/`). À droite, le compte notionnel : ce
+qui a été cotisé, revalorisé, puis divisé par l'espérance de vie au départ
+(`moteur/js/compte.js`). La garantie du
 scénario 6 vient s'y ajouter.
 
 ## 4. D'une session à la mise en ligne

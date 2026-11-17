@@ -64,7 +64,7 @@ class DateMois:
 
     def __str__(self) -> str:
         """« janvier 2000 » : la page, et le détail d'une pension datée
-        (:mod:`~retraite_notionnelle.droit.departs`), l'écrivent ainsi."""
+        (``moteur/js/droit/departs.js``), l'écrivent ainsi."""
         return f"{NOMS_DE_MOIS[self.mois - 1]} {self.annee}"
 
 

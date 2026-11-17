@@ -1,7 +1,7 @@
 /**
  * Règle d'indexation : le « triple lock inversé ».
  *
- * Portage de ``src/retraite_notionnelle/moteur/indexation.py``. Le triple lock
+ * Le triple lock
  * britannique retient le MAXIMUM entre l'inflation, la croissance des salaires
  * et un plancher de 2,5 %. La règle demandée ici en est l'exact opposé : on
  * retient le MINIMUM entre l'inflation, la croissance du salaire moyen et la

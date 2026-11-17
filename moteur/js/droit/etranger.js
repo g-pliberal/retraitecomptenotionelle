@@ -3,8 +3,7 @@
  * du droit lisent des fiches du domaine et du tableau des accords, que
  * `CarrieresHorsDeFrance` prépare.
  *
- * Jumeau de `src/retraite_notionnelle/droit/etranger.py`, fonction pour
- * fonction : « coordonner les affiliations » dit à quel titre chaque période
+ * « coordonner les affiliations » dit à quel titre chaque période
  * passée hors de France compte, et pour quelles familles de régimes
  * (`coordonnerLesPeriodes`) ; « compter les durées » en fait des trimestres,
  * année par année, sans dépasser quatre avec ceux de la carrière française

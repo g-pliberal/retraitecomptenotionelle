@@ -12,8 +12,7 @@
 # L'échéancier l'applique à l'échéance qu'on lui demande, sur toutes les
 # pensions du bénéficiaire, après les liquidations du jour.
 #
-# src/retraite_notionnelle/revalorisation.py (`faire_vivre`), et son jumeau
-# moteur/js/revalorisation.js.
+# Le code : moteur/js/revalorisation.js.
 
 etape: faire_vivre
 schema_version: 1

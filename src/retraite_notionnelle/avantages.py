@@ -134,7 +134,7 @@ RECALCULS: tuple[str, ...] = (
 #: Les militaires y figurent sous leur propre ligne : ce n'est pas un classement
 #: d'emploi, c'est une pension qui s'ouvre à une DURÉE DE SERVICES et non à un
 #: âge. Leur contrefactuelle est le fonctionnaire d'État, qui relève des mêmes
-#: régimes qu'eux — et elle est refusée, voir ``recalculer`` (``tests/jumeau_des_avantages.py``).
+#: régimes qu'eux — et elle est refusée, voir :func:`_ecarts`.
 SEDENTAIRE: dict[str, tuple[str, str]] = {
     "fonctionnaire_etat_actif": ("fonctionnaire_etat", "categorie_active"),
     "fonctionnaire_etat_super_actif": ("fonctionnaire_etat", "categorie_active"),
@@ -483,7 +483,7 @@ _MOTIFS_NEUTRALISES: dict[str, tuple[frozenset[str] | None, str]] = {
 def _options_de_la_variante(cas: CasType, generation: int, age: float,
                             affiliation: str | None = None,
                             interruptions: dict[int, str] | None = None) -> dict:
-    """Les options de ``carriere_variante`` (``tests/jumeau_des_avantages.py``), celles de ``carriere_simple``,
+    """Les options de la carrière d'un seul statut, celles de ``carriere_simple``,
     du simulateur et de son portage : le portage bâtit les carrières du coût
     des avantages de celles-ci (``pont.avantages``)."""
     return {
@@ -515,11 +515,11 @@ def _variantes_demandees(cas: CasType, generation: int
     de :data:`NEUTRALISATIONS`, selon ce que le cas type dit de lui : ses
     périodes non travaillées, changées par chaque retrait dans la carrière qui
     en vise une, sous son code ; puis les codes des scénarios neutralisés sous
-    lesquels la liquider (``scenarios_neutralises``, ``tests/jumeau_des_avantages.py``). La jouissance
+    lesquels la liquider (``scenariosNeutralises`` de ``pont.mjs``). La jouissance
     militaire et le classement de l'emploi partagent leur déclaration dans les
     fiches ; l'affiliation dit laquelle des deux lignes l'écart renseigne, et
     l'autre n'est pas même calculée. Les gardes qui lisent le moteur ou la
-    carrière bâtie sont dans le portage, et dans ``recalculer``, son jumeau (``tests/jumeau_des_avantages.py``)."""
+    carrière bâtie sont dans le portage (``carriereQuiPerd`` de ``pont.mjs``)."""
     reelles = _interruptions_reelles(cas, generation)
     militaire = cas.affiliation in MILITAIRES
     de_carriere: dict[str, dict[int, str]] = {}
@@ -775,7 +775,7 @@ def _decomposees_au_portage(simulateur: SimulateurDeDonnees, liquidation: str = 
     chaque case et ses cinq cohortes (:func:`_departs_au_portage`), puis bâtit
     sa carrière (:func:`_options_de_la_variante`), la liquide au scénario 1 et
     sous chaque contrefactuelle qu'elle demande (:func:`_variantes_demandees`),
-    sauf celles que les gardes de ``recalculer`` (``tests/jumeau_des_avantages.py``), qu'il porte, disent sans
+    sauf celles que ses gardes (``carriereQuiPerd``) disent sans
     rien à perdre (``pont.avantages``). L'écart de chacune, et le refus du
     garde-fou, se mesurent ici (:func:`_ecarts`)."""
     ages, voisines = _departs_au_portage(simulateur, CAS_TYPES, liquidation)

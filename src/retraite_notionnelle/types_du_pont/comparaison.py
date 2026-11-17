@@ -118,7 +118,7 @@ class Comparaison:
     #: courante : le système 1 revalorisé comme le droit l'a fait, les autres
     #: comme leur règle le veut. ``None`` pour qui part cette année ou plus
     #: tard, dont la pension du départ est la seule qu'il y ait à dire. Voir
-    #: :mod:`retraite_notionnelle.revalorisation`.
+    #: ``moteur/js/revalorisation.js``.
     aujourd_hui: PensionAujourdhui | None = None
     #: Passage des euros de l'année courante aux euros constants de
     #: ``parametres.annee_euros_constants`` : le pendant, pour les montants

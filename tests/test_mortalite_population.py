@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import inspect
 import shutil
+import subprocess
 import sys
 import textwrap
 from dataclasses import replace
@@ -35,7 +36,6 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
-import entrees_du_moteur  # noqa: E402
 import mortalite_population as M  # noqa: E402
 from outils_pont import droit_et_fige  # noqa: E402
 from outils_valeurs import valeur_figee  # noqa: E402
@@ -453,15 +453,14 @@ def test_la_mesure_sert_la_proposition_sur_l_esperance_de_son_depart():
 
 
 @sans_node
-def test_l_etude_n_entre_plus_dans_le_moteur_python(tmp_path):
+def test_l_etude_tourne_sur_le_portage_seul(tmp_path):
     """Ce que l'étude fait calculer d'une carrière se demande au portage : la
     mesure d'un cas type sous deux tables, par la sonde de la prose qui la
     lit, le niveau de salaire du salarié au SMIC, qui le range dans son
     vingtile, et, pour le déficit, le vingtile et la part ouverte à la bascule
-    de chaque couple de la grille. Le relevé de ce qui entre dans le moteur
-    Python (``entrees_du_moteur.relever``) est vide ; jusqu'au 12 novembre
-    2026, l'étude y simulait, et les cas types y bâtissaient leur carrière
-    pour elle (``tests/test_entrees_du_moteur.py``)."""
+    de chaque couple de la grille. Elle tourne dans un processus neuf, le
+    moteur Python retiré (action 161) ; jusqu'au 12 novembre 2026, l'étude y
+    simulait, et les cas types y bâtissaient leur carrière pour elle."""
     script = tmp_path / "etude.py"
     script.write_text(textwrap.dedent(f'''\
         import sys
@@ -478,4 +477,4 @@ def test_l_etude_n_entre_plus_dans_le_moteur_python(tmp_path):
         M._vingtiles(M._simulateur(None), grille, "droit")
         M._parts_ouvertes(M._simulateur(None), grille, "droit")
         '''), encoding="utf-8")
-    assert entrees_du_moteur.relever(script) == {}
+    subprocess.run([sys.executable, str(script)], check=True)

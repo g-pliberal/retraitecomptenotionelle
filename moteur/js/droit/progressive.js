@@ -2,8 +2,7 @@
  * La retraite progressive (docs/architecture.md, § 7.4 ; fiche
  * `retraite_progressive`).
  *
- * Jumeau de `src/retraite_notionnelle/droit/progressive.py`, fonction pour
- * fonction. L'assuré qui garde en fin de carrière une activité à temps partiel
+ * L'assuré qui garde en fin de carrière une activité à temps partiel
  * peut demander la liquidation PROVISOIRE de ses pensions et le service d'une
  * fraction : la différence entre 100 % et sa quotité depuis le 18 décembre
  * 2014, 30, 50 ou 70 % selon la tranche de sa quotité avant. Au départ, la

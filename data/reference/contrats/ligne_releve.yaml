@@ -5,7 +5,7 @@
 #
 # La phase 4 y ajoute, par la règle additive, l'enveloppe : le relevé d'une
 # demande, que les quatre étapes de l'acquisition construisent
-# (src/retraite_notionnelle/droit/, et son jumeau moteur/js/droit/). Le droit
+# (moteur/js/droit/). Le droit
 # d'une ligne porte sa quantité, son unité (`unites_de_droit`), son régime et,
 # pour une durée, son compte (`comptes_de_duree`).
 

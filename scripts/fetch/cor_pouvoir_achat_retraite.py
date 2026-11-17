@@ -6,7 +6,7 @@
 
 POURQUOI CE TÉMOIN. Le simulateur montre à un retraité la pension qu'il touche
 AUJOURD'HUI, et non plus celle de son départ : il revalorise chaque régime
-comme son texte l'a fait (``src/retraite_notionnelle/revalorisation.py``).
+comme son texte l'a fait (``moteur/js/revalorisation.js``).
 Relire ce calcul avec la main qui l'a écrit ne prouverait rien. Le Conseil
 d'orientation des retraites, lui, publie chaque année l'évolution du pouvoir
 d'achat de la pension nette de deux cas types — un non-cadre et un cadre du

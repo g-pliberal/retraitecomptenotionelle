@@ -882,7 +882,7 @@ def avantages(cas: list[dict], parametres, paquet: bytes | None = None,
     sa clé, ce que la décomposition lit de sa liquidation (``"liquidee"``,
     les champs de ``avantages._Liquidee``) et, sous ``"sans"``, la pension et
     la durée requise de chaque contrefactuelle que les gardes de
-    ``recalculer`` laissent (son jumeau, ``tests/jumeau_des_avantages.py``), ``(pension, durée)`` sous son code.
+    ``carriereQuiPerd`` de ``pont.mjs`` laissent, ``(pension, durée)`` sous son code.
     Puis, sous leur clé, les motifs des cases que le droit écarte
     (``castypes.cases_de_la_grille``) ou que le portage refuse."""
     reponse = _demander({"avantages": {
@@ -1148,7 +1148,7 @@ class Moteur:
 
     def neutralisant(self, code: str) -> Moteur:
         """Ce moteur, l'avantage ``code`` retiré comme la mesure des avantages
-        non contributifs le retire (``scenarios_neutralises``, ``tests/jumeau_des_avantages.py``) : le
+        non contributifs le retire : le
         portage prend sa variante (``scenariosNeutralises`` de ``pont.mjs``),
         bâtie des leviers de ``moteur/js/regimes.js`` (action 161, étape 6)."""
         return dataclasses.replace(self, neutralise=code)
@@ -2852,8 +2852,8 @@ def facade(entree: str, *arguments, parametres=None, paquet: bytes | None = None
 
 #: Les méthodes des tables du moteur que la façade sert, sous les noms du
 #: Python : ``{table: méthodes}``. Chacune a les mêmes arguments, dans le même
-#: ordre, dans le portage (``moteur/js/regimes.js``), et un appel confronté au
-#: jumeau (``tests/test_facade_jumeau.py``). Une méthode qui n'y est pas est
+#: ordre, dans le portage (``moteur/js/regimes.js``) et dans son contrat
+#: (``tests/contrats_de_la_facade.py``). Une méthode qui n'y est pas est
 #: refusée avant node.
 TABLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     # La date d'entrée qui décide des régimes d'un statut, que le maintien
@@ -3026,9 +3026,9 @@ def _methode_servie(entree: str, porteur, nom: str, methode: str, type_rendu, ar
 
 #: Les méthodes des constructeurs du compte que la façade sert, sous les noms
 #: du Python : ``{constructeur: méthodes}``. Chacune a les mêmes arguments,
-#: dans le même ordre, dans le portage (``moteur/js/compte.js``), et un appel
-#: confronté au jumeau (``tests/test_facade_jumeau.py``). Une méthode qui n'y
-#: est pas est refusée avant node.
+#: dans le même ordre, dans le portage (``moteur/js/compte.js``) et dans son
+#: contrat (``tests/contrats_de_la_facade.py``). Une méthode qui n'y est pas
+#: est refusée avant node.
 CONSTRUCTEURS_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     "constructeur": ("cotisation_annuelle", "taux_effectif", "construire"),
     "constructeur_employeur": ("cotisation_annuelle", "taux_effectif", "construire"),
@@ -3058,9 +3058,9 @@ def constructeur_du_compte(constructeur: str, methode: str, type_rendu, *argumen
 
 #: Les méthodes des données de mortalité du simulateur que la façade sert,
 #: sous les noms du Python : les mêmes arguments, dans le même ordre, dans le
-#: portage (``moteur/js/mortalite.js``), et un appel confronté au jumeau
-#: (``tests/test_facade_jumeau.py``). Une méthode qui n'y est pas est refusée
-#: avant node.
+#: portage (``moteur/js/mortalite.js``) et dans son contrat
+#: (``tests/contrats_de_la_facade.py``). Une méthode qui n'y est pas est
+#: refusée avant node.
 MORTALITE_DE_LA_FACADE: tuple[str, ...] = (
     "survie_annuelle", "courbe", "survie", "esperance_residuelle", "courbe_survie",
     "population_niveau_de_vie_euros")
@@ -3160,8 +3160,8 @@ CLASSES_EN_CHAMEAU |= {"EligibleMinimum", "DureesDesCultes", "PensionMajoree",
 #: ``{module: règles}``. Chacune a les mêmes arguments, dans le même ordre et
 #: sous les mêmes valeurs par défaut, dans le portage
 #: (``moteur/js/droit/<module>.js`` ; ``tests/test_facade.py`` le vérifie), et
-#: un appel confronté au jumeau (``tests/test_facade_jumeau.py``). Une règle
-#: qui n'y est pas est refusée avant node.
+#: dans son contrat (``tests/contrats_de_la_facade.py``). Une règle qui n'y
+#: est pas est refusée avant node.
 REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     # L'escalier de la retraite proportionnelle agricole (R. 732-71) et son
     # plancher de seize points (R. 732-73).

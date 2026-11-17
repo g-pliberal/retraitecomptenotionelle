@@ -6,7 +6,7 @@ réversions, conversions et valeurs du point —, et que lisent la fabrique du
 paquet (``scripts/construire_donnees.py``) et le coût des avantages. Relogé
 ici tel quel, sans changer une donnée (action 161, étape 3 de l'inventaire
 du retrait des règles ; note de décision 0006) : le moteur du scénario 1,
-:class:`~retraite_notionnelle.scenarios.actuel.ScenarioActuel`, les reprend
+``ScenarioActuel`` de ``moteur/js/scenario-actuel.js``, les reprend
 d'ici, les mêmes objets, tant qu'il reste. Rien ici n'importe un module de
 règles du moteur Python.
 """
@@ -816,7 +816,7 @@ class FichesDatees:
     que ``completer.majoration_retraite_proportionnelle`` lit, et la limite
     d'âge des agents publics et ses exceptions, que ``limite_age.radiation``
     lit au jour où la limite est atteinte (date ``age_atteint``,
-    :data:`~retraite_notionnelle.droit.limite_age.FICHES`), et le minimum de
+    ``FICHES`` de ``moteur/js/droit/limite_age.js``), et le minimum de
     pension de la SNCF, que ``liquider.minimum_de_pension_ouvert`` lit, et la
     retraite progressive, que ``progressive.regle`` lit, et la seconde part de
     la cotisation de retraite complémentaire du chef d'exploitation agricole,
@@ -2255,7 +2255,7 @@ class ValeursPoint:
         2026, le salaire moyen du modèle la porte, avec un an de retard (fiche
         ``agirc_arrco_valeur_achat``). Les points de ces années s'achètent donc
         plus cher que les prix ne le feraient, et la valeur de service, qui les
-        sert, suit les prix (:func:`~retraite_notionnelle.droit.liquider.valeur_du_point`).
+        sert, suit les prix (``valeurDuPoint`` de ``moteur/js/droit/liquider.js``).
         Un régime sans prolongement n'a pas de prix au-delà de son dernier
         barème : ses cotisations passent par le rendement instantané.
         """
@@ -2605,7 +2605,7 @@ class PensionMajoreeReference:
     moteur lit la version de la date d'effet : rien avant 2009, deux montants
     et une durée minimale jusqu'en 2021, un seul depuis, relevé de cent euros
     par mois en septembre 2023, et le plafond de l'article L. 173-2 depuis
-    2026 (:func:`~retraite_notionnelle.droit.completer.pension_majoree`).
+    2026 (``pensionMajoree`` de ``moteur/js/droit/completer.js``).
     """
 
     def __init__(self, racine: Path, macro: DonneesMacro) -> None:
@@ -2689,7 +2689,7 @@ class ComplementDifferentielRco:
     **La règle** est celle de la fiche ``complement_differentiel_rco`` : rien
     avant 2015, 73, 74 puis 75 % d'une carrière complète, 85 % et un plafond
     tous régimes depuis novembre 2021, le taux plein suffisant depuis
-    septembre 2023 (:func:`~retraite_notionnelle.droit.completer.complement_differentiel`).
+    septembre 2023 (``complementDifferentiel`` de ``moteur/js/droit/completer.js``).
     """
 
     def __init__(self, racine: Path, macro: DonneesMacro) -> None:

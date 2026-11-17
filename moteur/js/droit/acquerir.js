@@ -1,8 +1,7 @@
 /**
  * Acquérir les droits (docs/architecture.md, § 7.2).
  *
- * Jumeau de `src/retraite_notionnelle/droit/acquerir.py`, fonction pour
- * fonction : ce que chaque année verse aux régimes qui la reçoivent — des
+ * Ce que chaque année verse aux régimes qui la reçoivent — des
  * points, chacun avec le taux de majoration pour enfants de son année
  * d'acquisition, ou des cotisations revalorisées aux prix de l'année de
  * liquidation —, la durée qu'un régime plafonne, et les points attribués

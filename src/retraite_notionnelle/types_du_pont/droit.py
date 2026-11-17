@@ -37,7 +37,7 @@ class PensionRegime:
     detail: str
     fiabilite: Fiabilite
     #: Quand les régimes liquident à des dates différentes
-    #: (:mod:`~retraite_notionnelle.droit.departs`) : la date d'effet de cette
+    #: (``moteur/js/droit/departs.js``) : la date d'effet de cette
     #: pension (AAAA-MM-JJ), et son montant à cette date, dans ses euros. Le
     #: champ ``montant`` est alors celui du départ déclaré — la pension servie
     #: avant lui y est menée, celle qui commence après y est ramenée par les
@@ -170,7 +170,7 @@ class PetitePension:
     """Ce que la majoration exceptionnelle des petites pensions relit d'une
     pension de base liquidée avant le 1er septembre 2023 (loi n° 2023-270,
     article 18, V ; décret n° 2023-754, article 3 ; circulaire Cnav
-    n° 2023-21) : :func:`~retraite_notionnelle.revalorisation.majorer_les_petites_pensions`
+    n° 2023-21) : ``majorerLesPetitesPensions`` de ``moteur/js/revalorisation.js``
     la calcule le mois où elle est due, sur ce que les pensions servent alors.
     Ses régimes sont ceux qui portent le minimum contributif : le régime
     général, les régimes des artisans et des commerçants qu'il a intégrés,
@@ -202,13 +202,13 @@ class PetitePension:
 class EligibleAgricole:
     """La pension des non-salariés agricoles, que la pension majorée de
     référence relève et dont le complément différentiel de la RCO lit les
-    durées (:func:`~retraite_notionnelle.droit.completer.pension_majoree`,
-    :func:`~retraite_notionnelle.droit.completer.complement_differentiel`).
+    durées (``pensionMajoree`` de ``moteur/js/droit/completer.js``,
+    ``complementDifferentiel`` de ``moteur/js/droit/completer.js``).
 
     Les deux minima ne comptent, avant 2026, que les périodes accomplies « à
     titre exclusif ou principal » ; depuis, aussi celles à titre secondaire
     (D. 732-110, D. 732-166-1). La qualité de chef se lit année par année
-    (:meth:`~retraite_notionnelle.carriere.Carriere.qualite_agricole`).
+    (``Carriere.qualiteAgricole`` de ``moteur/js/carriere.js``).
     """
 
     #: Indice de la pension dans :attr:`Pensions.regimes`.
@@ -246,7 +246,7 @@ class EligibleAgricole:
     #: minimum de points (D. 732-123, D. 732-145) ; ``chef`` ne la compte pas.
     conjoint_avant_1999: int = 0
     #: Les trimestres et les années de chef à titre secondaire que la retraite
-    #: forfaitaire ne compte pas (:func:`~retraite_notionnelle.droit.liquider.annees_hors_forfait`) : la retraite
+    #: forfaitaire ne compte pas (``anneesHorsForfait`` de ``moteur/js/droit/liquider.js``) : la retraite
     #: proportionnelle est la pension moins le forfait des autres, et la durée
     #: de chef reconstituée d'une pension prise avant 1997 se minore de quinze
     #: points par année (D. 732-110, III).
@@ -260,7 +260,7 @@ class ChefDExploitation:
     parti avant : le taux plein ouvre depuis les points gratuits et le
     complément différentiel de la RCO à qui n'avait pas la durée requise tous
     régimes (loi n° 2023-270, article 18, VI) ;
-    :func:`~retraite_notionnelle.revalorisation.relever_les_exploitants` les
+    ``releverLesExploitants`` de ``moteur/js/revalorisation.js`` les
     calcule au 1er septembre 2023, sur ce que ses pensions servent alors."""
 
     #: Le régime de base des non-salariés agricoles.
@@ -286,7 +286,7 @@ class ExploitantAgricole:
     à 2008, servis chaque année à la règle des pensions dues cette année-là —
     celles prises avant 1997 comprises —, puis la pension majorée de référence
     que la loi n° 2008-1330 ouvre en 2009 aux pensions prises avant
-    (:func:`~retraite_notionnelle.revalorisation.reviser_les_exploitants`)."""
+    (``reviserLesExploitants`` de ``moteur/js/revalorisation.js``)."""
 
     #: Le régime de base des non-salariés agricoles.
     regime: str

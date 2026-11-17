@@ -3,8 +3,6 @@
  * année d'un régime, la période qui liquide une pension à sa date d'effet,
  * la date d'effet d'une demande, ce qu'est une année
  * cotisée, les parts de la majoration pour enfants à une date.
- *
- * Jumeau de `src/retraite_notionnelle/droit/commun.py`.
  */
 
 /**

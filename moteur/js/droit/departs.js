@@ -1,8 +1,7 @@
 /**
  * Le départ de chaque régime (docs/architecture.md, § 7.4).
  *
- * Jumeau de `src/retraite_notionnelle/droit/departs.py`, fonction pour
- * fonction. Le droit ne connaît pas de départ « tous régimes » : chaque régime
+ * Le droit ne connaît pas de départ « tous régimes » : chaque régime
  * sert sa pension quand l'assuré la demande et remplit SES conditions (fiche
  * `liquidation_regime_par_regime`). Cette étape dit, pour une carrière et son
  * départ déclaré, QUAND chaque régime liquide : une UNITÉ est un régime de

@@ -8,8 +8,7 @@
 # gratuits, chacun sous une neutralisation de plus (`neutralisations`) —, et,
 # pour chaque composante, le régime qui la sert, la formule que la page en
 # écrit, et si elle est servie hors de la répartition.
-# src/retraite_notionnelle/droit/liquidation.py, et son jumeau
-# moteur/js/droit/liquidation.js.
+# Le code : moteur/js/droit/liquidation.js.
 
 contrat: liquidation
 schema_version: 1

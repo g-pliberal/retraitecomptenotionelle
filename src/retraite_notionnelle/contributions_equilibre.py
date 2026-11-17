@@ -17,7 +17,7 @@ contributions, et non des cotisations —, ni le scénario 1, qu'elles
 n'ouvrent à aucun droit.
 
 Ce que verse une carrière se lit ligne à ligne, comme le compte le lit
-(:class:`~retraite_notionnelle.moteur.compte.ConstructeurCompte`) : sur le
+(``ConstructeurCompte`` de ``moteur/js/compte.js``) : sur le
 revenu d'une année travaillée, tronqué l'année du départ, sous un plafond
 proratisé sur les mois de l'activité, pour les régimes que le statut de la
 ligne rend dus cette année-là, ses services passés retirés. Une année de

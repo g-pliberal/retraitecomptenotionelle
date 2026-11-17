@@ -710,7 +710,7 @@ class Parametres:
     #: non au taux minimal de ses fiches (``regimes/taux_moyens_agirc_arrco.csv``,
     #: action 147, étape 10). La page Coût les suit — c'est
     #: contre le COR qu'on la lit, et ``calculer_cout`` les allume
-    #: (:meth:`~retraite_notionnelle.simulateur.Simulateur.pour_la_projection`)
+    #: (:meth:`~retraite_notionnelle.donnees.simulateur.SimulateurDeDonnees.pour_la_projection`)
     #: —, le simulateur individuel non : il compte les points à leur valeur
     #: d'aujourd'hui, revalorisée comme les prix, la convention de « Mon
     #: estimation retraite », à laquelle un visiteur le compare. Décision du
@@ -775,7 +775,7 @@ class Parametres:
     #: LIGNE SÉPARÉE de la cascade, de sorte qu'on puisse la retrancher d'un
     #: coup d'œil. Mettre ce paramètre à ``False`` la retire du calcul. La
     #: page Coût la retire toujours
-    #: (:meth:`~retraite_notionnelle.simulateur.Simulateur.pour_la_projection`) :
+    #: (:meth:`~retraite_notionnelle.donnees.simulateur.SimulateurDeDonnees.pour_la_projection`) :
     #: la dépense qu'elle multiplie ne compte pas le minimum vieillesse.
     minimum_vieillesse_dans_le_scenario_actuel: bool = True
 

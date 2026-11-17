@@ -1,7 +1,7 @@
 /**
  * Foyer et net (docs/architecture.md, § 7.4).
  *
- * Jumeau de `src/retraite_notionnelle/droit/foyer.py` : ce que le droit sert
+ * Ce que le droit sert
  * en regardant toutes les ressources du bénéficiaire, et non une pension —
  * l'ASPA. Elle vient en DERNIER : elle est différentielle, et complète tout le
  * reste, majorations comprises, jusqu'au barème du foyer — d'une personne

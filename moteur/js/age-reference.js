@@ -1,7 +1,7 @@
 /**
  * Âge de référence et écart d'anticipation.
  *
- * Portage de ``src/retraite_notionnelle/moteur/age_reference.py``. Le DÉFAUT
+ * Le DÉFAUT
  * fixe l'âge de référence à 65 ans — l'âge légal de départ de la proposition,
  * `age_legal_liberal` — à partir de l'année de bascule, et garde le cliquet
  * avant elle. Le cliquet

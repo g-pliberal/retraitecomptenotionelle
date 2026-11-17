@@ -13,8 +13,7 @@
 #
 # L'ASPA n'en est pas : c'est l'étape « foyer et net » (§ 7.4).
 #
-# src/retraite_notionnelle/droit/completer.py, et son jumeau
-# moteur/js/droit/completer.js.
+# Le code : moteur/js/droit/completer.js.
 
 etape: completer_tous_regimes
 schema_version: 1

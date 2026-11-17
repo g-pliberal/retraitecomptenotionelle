@@ -1,9 +1,7 @@
 /**
  * Le pilier de capitalisation : accumulation, rente, transmission.
  *
- * Portage de ``src/retraite_notionnelle/moteur/capitalisation.py``, dont il
- * reproduit les conventions au centime — les témoins de `tests/temoins/` le
- * vérifient.
+ * Les témoins de `tests/temoins/` en tiennent les conventions au centime.
  *
  * Ce compartiment n'est PAS un compte notionnel. Le compte notionnel est
  * virtuel : rien n'y est placé, la revalorisation est une règle collective, et

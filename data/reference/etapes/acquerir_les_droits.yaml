@@ -5,8 +5,7 @@
 # jusqu'à la phase 5, calculés par la liquidation du régime, qui en choisit
 # l'assiette : ils ne sont pas encore une donnée de l'étape.
 #
-# src/retraite_notionnelle/droit/acquerir.py, et son jumeau
-# moteur/js/droit/acquerir.js.
+# Le code : moteur/js/droit/acquerir.js.
 
 etape: acquerir_les_droits
 schema_version: 1

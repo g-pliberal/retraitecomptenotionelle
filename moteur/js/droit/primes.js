@@ -1,10 +1,7 @@
 /**
  * Ce que la pension fait de la prime soumise à retenue, à sa date d'effet :
  * le traitement majoré (le policier, le sapeur-pompier professionnel), ou un
- * supplément de pension (l'aide-soignant). Voir le module Python.
- *
- * Jumeau de `src/retraite_notionnelle/droit/primes.py`, qui le suit (note de
- * décision 0005).
+ * supplément de pension (l'aide-soignant).
  */
 
 import { formatFixe, formatPourcentage } from "../format.js";

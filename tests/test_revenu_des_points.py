@@ -5,7 +5,7 @@ Un relevé chiffre en points, et non en euros, les années d'un régime qui comp
 en points et celles que seule la complémentaire chiffre. Le revenu rendu est le
 plus bas qui ouvre ces points : il les ouvre, et un euro de moins ne les ouvre
 pas. Les deux règles sont servies par le portage (`tests/facade.py`, action
-161) ; leur jumeau Python leur est confronté par `test_facade_jumeau.py`.
+161).
 """
 
 from __future__ import annotations

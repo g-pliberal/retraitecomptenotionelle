@@ -354,13 +354,9 @@ def test_chaque_regime_porte_sa_part_et_le_tout_fait_la_pension(catalogue):
 def test_chaque_depart_se_sert_au_portage_sans_le_moteur_python(catalogue, monkeypatch):
     """Le moteur qui fait foi est le JavaScript (note de décision 0005) : la
     confrontation fait servir chaque départ par le portage
-    (``pont.scenario_actuel``), et le moteur Python, qu'on empêche ici de
-    simuler, n'y entre pas — le rapport chiffre chaque départ."""
-    def interdit(*_, **__):
-        raise AssertionError("le moteur Python simule un départ")
-
+    (``pont.scenario_actuel``), le moteur Python retiré (action 161) — le
+    rapport chiffre chaque départ."""
     monkeypatch.setattr(pont, "scenario_actuel", SCENARIO_ACTUEL_DU_PORTAGE)
-    monkeypatch.setattr("retraite_notionnelle.simulateur.Simulateur.simuler", interdit)
     texte = estimation_officielle.rapport(_confrontation(catalogue))
     assert texte.count("Départ le ") == 2
     assert re.search(r"= total\s+1 400\s+[\d ]+\s+[+-]", texte)

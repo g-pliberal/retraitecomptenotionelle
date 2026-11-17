@@ -2,7 +2,7 @@
 
 Un relevé s'arrête à sa dernière année. Le site le poursuit jusqu'au départ
 (``releveProlonge`` du contexte, ``moteur/js/contexte.js``), à la
-convention de :meth:`~retraite_notionnelle.carriere.Carriere.prolongee` — la
+convention de ``Carriere.prolongee`` de ``moteur/js/carriere.js`` — la
 dernière année se prolonge —, comme le dernier métier d'un parcours court
 jusqu'à lui et comme « Mon estimation retraite » prolonge les revenus. Qui ne
 travaille plus le déclare dans « Interruptions ». Décidé par le propriétaire le

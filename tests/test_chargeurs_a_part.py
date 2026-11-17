@@ -20,8 +20,8 @@ from pathlib import Path
 
 RACINE = Path(__file__).resolve().parents[1]
 
-#: Les modules du moteur Python, ceux que la sonde appelle des fichiers de
-#: règles (``scripts/sonde_moteur_python.py``).
+#: Les modules du moteur Python, les fichiers de règles que le retrait a
+#: supprimés (action 161) : aucun ne doit plus se charger.
 REGLES = re.compile(r"^retraite_notionnelle\.(droit|moteur|scenarios|echeancier|journal"
                     r"|pilote|carriere|revalorisation|simulateur)(\.|$)")
 
@@ -47,20 +47,6 @@ def test_les_revalorisations_se_lisent_sans_le_moteur_python():
 
 def test_le_nombre_declare_se_lit_sans_le_moteur_python():
     assert _importes("from retraite_notionnelle.noyau.budget import APPELS_DECLARES") == []
-
-
-def test_les_regles_reprennent_les_memes_objets():
-    """Dans un interpréteur à part : ce fichier n'entre pas dans le moteur
-    Python (``test_fichiers_sur_le_moteur_python.py``)."""
-    subprocess.run([sys.executable, "-c", "\n".join((
-        "import importlib",
-        "m = lambda nom: importlib.import_module('retraite_notionnelle.' + nom)",
-        "aspa, reval = m('donnees.minimum_vieillesse'), m('donnees.revalorisations')",
-        "assert m('scenarios.actuel').MinimumVieillesse is aspa.MinimumVieillesse",
-        "assert m('scenarios.actuel').DeuxEtages is aspa.DeuxEtages",
-        "assert m('revalorisation').RevalorisationsPensions is reval.RevalorisationsPensions",
-        "assert m('droit.liquidation').APPELS_DECLARES == m('noyau.budget').APPELS_DECLARES == 6",
-    ))], check=True, cwd=RACINE)
 
 
 def test_le_cout_et_la_fabrique_ne_les_prennent_plus_aux_regles():
@@ -97,19 +83,6 @@ def test_le_simulateur_de_donnees_se_lit_sans_le_moteur_python():
         "assert list(v.univers_de_la_demande) == [cle]",
         "assert v.pour_la_projection().variantes == v.variantes",
     ))) == []
-
-
-def test_le_simulateur_python_herite_du_simulateur_de_donnees():
-    """Les mêmes chargeurs, une seule fois écrits : le simulateur Python ne
-    les redéfinit pas, et sa projection reste un simulateur Python."""
-    subprocess.run([sys.executable, "-c", "\n".join((
-        "from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees, DONNEES",
-        "from retraite_notionnelle.simulateur import Simulateur",
-        "assert issubclass(Simulateur, SimulateurDeDonnees)",
-        "assert not set(vars(Simulateur)) & (DONNEES | {'univers', 'univers_de_la_demande',",
-        "                                              'pour_la_projection'})",
-        "assert type(Simulateur().pour_la_projection()) is Simulateur",
-    ))], check=True, cwd=RACINE)
 
 
 def test_la_facade_et_le_cout_de_la_memoire_prennent_le_simulateur_de_donnees():
@@ -232,20 +205,6 @@ def test_les_tables_du_droit_se_lisent_sans_le_moteur_python():
                      + ", ".join(TABLES_DU_DROIT)) == []
 
 
-def test_le_scenario_actuel_reprend_les_memes_tables():
-    """Dans un interpréteur à part, comme les autres reprises."""
-    subprocess.run([sys.executable, "-c", "\n".join((
-        "from retraite_notionnelle.donnees import tables_du_droit as t",
-        "from retraite_notionnelle.scenarios import actuel as a",
-        f"for nom in {TABLES_DU_DROIT!r}:",
-        "    assert getattr(a, nom) is getattr(t, nom), nom",
-        "    assert getattr(t, nom, None) is not None, nom",
-        "classes = [n for n in vars(a) if isinstance(getattr(a, n), type)",
-        "           and getattr(a, n).__module__ == a.__name__]",
-        "assert set(classes) & set(" + repr(TABLES_DU_DROIT) + ") == set(), classes",
-    ))], check=True, cwd=RACINE)
-
-
 def test_la_fabrique_et_les_avantages_prennent_les_tables_a_leur_place():
     """La fabrique du paquet et le coût des avantages lisent les tables sous
     ``donnees/`` ; des règles, le coût des avantages ne garde que
@@ -289,17 +248,6 @@ def test_le_routage_des_statuts_se_lit_sans_le_moteur_python():
     ))) == []
 
 
-def test_les_regles_reprennent_le_meme_routage():
-    subprocess.run([sys.executable, "-c", "\n".join((
-        "from retraite_notionnelle.donnees import affiliations as d, tables_du_droit as t",
-        "from retraite_notionnelle import carriere as c",
-        "from retraite_notionnelle.moteur import age_reference as r",
-        "for nom in ('Affiliations', 'FAMILLES_STATUT', 'rang_borne'):",
-        "    assert getattr(c, nom) is getattr(d, nom), nom",
-        "assert r.charger_ages is t.charger_ages and not hasattr(r, '_charger_ages')",
-    ))], check=True, cwd=RACINE)
-
-
 def test_la_fabrique_ne_prend_plus_ses_chargeurs_aux_regles():
     """Le paquet, les témoins : leurs chargeurs sous ``donnees/``."""
     anciens = re.compile(r"from retraite_notionnelle\.(moteur\.age_reference import"
@@ -313,14 +261,10 @@ def test_la_fabrique_ne_prend_plus_ses_chargeurs_aux_regles():
 def test_la_table_de_la_carriere_longue_ne_porte_plus_ses_regles():
     """La table ne garde que son chargement, ses fiches et sa variante datée
     (``avant``) ; les portes, la durée réputée cotisée et les âges sont des
-    règles du moteur Python, sous ``droit/carriere_longue.py``."""
+    règles, que seul le portage écrit (``moteur/js/regimes.js``)."""
     subprocess.run([sys.executable, "-c", "\n".join((
         "from retraite_notionnelle.donnees.tables_du_droit import CarriereLongue",
-        "from retraite_notionnelle.droit import carriere_longue as r",
         "methodes = {n for n, v in vars(CarriereLongue).items()",
         "            if callable(v) or isinstance(v, staticmethod)}",
         "assert methodes == {'__init__', 'fiches', 'avant', '_annee_decimale'}, methodes",
-        "for n in ('portes_opposables', 'de_la_fonction_publique', 'cotises_reputes',",
-        "          'age_de_depart', 'age_propose'):",
-        "    assert callable(getattr(r, n)), n",
     ))], check=True, cwd=RACINE)

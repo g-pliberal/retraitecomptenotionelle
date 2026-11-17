@@ -7327,15 +7327,14 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 17 novembre 2026.** Le propriétaire a accepté la
-suppression des 40 fichiers de règles Python. Elle se prépare par lots, une
-session chacun. Trois sont faits : les constantes, les outils du pont des
-tests, et la façade des tests, qui n'importe plus aucun fichier de règles :
-sa carrière hérite de la carrière nue, et ce que les tests en lisaient se
-demande au portage. Reste le quatrième lot, la suppression elle-même, avec
-les confrontations au jumeau de `test_facade.py`, `test_facade_jumeau.py`
-et `jumeau_des_avantages.py`. Par quoi commencer : la note de l'essai à
-blanc de la suppression, puis `2026-11-17-la-carriere-de-la-facade-nue.md`.
+**Reprise, au 17 novembre 2026.** Les 40 fichiers de règles Python sont
+supprimés, avec tout ce qui les confrontait au portage : le moteur d'une
+carrière n'a plus qu'un exemplaire, en JavaScript. Reste à nettoyer. D'abord
+les 121 fonctions que `scripts/jumeaux_gardees.yaml` déclare `au_moteur` :
+mortes depuis la suppression, elles partent avec leur entrée de la liste.
+Puis les consignes de `src/` et de `moteur/`, et l'architecture, qui parlent
+encore des jumeaux du moteur au présent. Par quoi commencer : la note
+`2026-11-17-la-suppression-des-regles-python.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

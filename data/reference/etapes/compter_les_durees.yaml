@@ -34,8 +34,7 @@
 # stage, d'inscription des sportifs de haut niveau et de congé supplémentaire
 # de naissance, à l'assurance de leur régime seule, ni cotisés ni services.
 #
-# src/retraite_notionnelle/droit/compter.py, et son jumeau
-# moteur/js/droit/compter.js.
+# Le code : moteur/js/droit/compter.js.
 
 etape: compter_les_durees
 schema_version: 6

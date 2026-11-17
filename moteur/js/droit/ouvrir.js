@@ -1,8 +1,7 @@
 /**
  * Ouvrir le droit (docs/architecture.md, § 7.3).
  *
- * Jumeau de `src/retraite_notionnelle/droit/ouvrir.py`, fonction pour
- * fonction : à quel âge le droit ouvre-t-il la liquidation demandée, et à
+ * À quel âge le droit ouvre-t-il la liquidation demandée, et à
  * quelle durée la sert-il au taux plein ? L'âge qu'un régime spécial a en
  * propre, celui que la catégorie active ou la jouissance militaire ouvrent,
  * l'âge légal de la génération (`ageOuverture`) ; la durée requise

@@ -5,7 +5,7 @@ Le coût, ses cas types, celui des avantages et la fiche de paie se chargent
 sans un seul module du moteur Python : les cas types se datent au portage, le
 code mort qui simulait la grille en Python est parti, les scénarios
 neutralisés de la mesure des avantages, que seuls les tests liquidaient en
-Python, sont passés aux tests (``tests/jumeau_des_avantages.py``), le métier
+Python, sont passés aux tests, puis partis avec le moteur Python, le métier
 d'une carrière et les noms de ses profils logent parmi les types du pont, et
 le salaire moyen d'une année se lit sous ``donnees/``.
 """
@@ -22,8 +22,8 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[1]
 SOURCES = RACINE / "src" / "retraite_notionnelle"
 
-#: Les modules du moteur Python, ceux que la sonde appelle des fichiers de
-#: règles (``scripts/sonde_moteur_python.py``).
+#: Les modules du moteur Python, les fichiers de règles que le retrait a
+#: supprimés (action 161) : aucun ne doit plus se charger.
 REGLES = re.compile(r"^retraite_notionnelle\.(droit|moteur|scenarios|echeancier|journal"
                     r"|pilote|carriere|revalorisation|simulateur)(\.|$)")
 
@@ -85,16 +85,3 @@ def test_le_salaire_moyen_se_lit_sans_le_moteur_python():
         "assert ancrage_salaire_moyen(macro)[0] == ANNEE_ANCRAGE_SALAIRE_MOYEN",
         "assert salaire_moyen_annuel(macro, 2000) == indice_salaire_moyen(macro, 2000, 2000)[2000]",
     ))) == []
-
-
-def test_les_regles_reprennent_le_meme_salaire_moyen_et_le_meme_metier():
-    subprocess.run([sys.executable, "-c", "\n".join((
-        "from retraite_notionnelle.donnees import salaire_moyen as d",
-        "from retraite_notionnelle.types_du_pont import carriere as t",
-        "from retraite_notionnelle import carriere as c",
-        "for nom in ('ANNEE_ANCRAGE_SALAIRE_MOYEN', 'ancrage_salaire_moyen',",
-        "            'indice_salaire_moyen', 'salaire_moyen_annuel'):",
-        "    assert getattr(c, nom) is getattr(d, nom), nom",
-        "for nom in ('Metier', 'PROFIL_AUTOMATIQUE', 'PROFIL_SMIC'):",
-        "    assert getattr(c, nom) is getattr(t, nom), nom",
-    ))], check=True, cwd=RACINE)

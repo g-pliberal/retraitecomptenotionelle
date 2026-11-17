@@ -2702,8 +2702,8 @@ seule, la validation de l'Ircantec demandée — sont au même vocabulaire
 elles s'appliquent encore dans le code, jusqu'à l'étape qui posera leur fait.
 
 **Le relevé des droits.** Pour une liquidation, quatre étapes construisent le
-relevé des droits qu'elle fait valoir (`src/retraite_notionnelle/droit/`, et
-son jumeau JavaScript ; `docs/architecture.md`, § 7.2 et 7.6) : la
+relevé des droits qu'elle fait valoir (`moteur/js/droit/` ;
+`docs/architecture.md`, § 7.2 et 7.6) : la
 chronologie préparée ; les affiliations coordonnées — l'agent parti de la
 fonction publique sans droit à pension rétabli au régime général et à
 l'Ircantec, chaque ligne routée vers les régimes qui la reçoivent, puis les
@@ -2722,8 +2722,8 @@ par régime ou groupe par groupe. Les salaires portés au compte restent
 choisis par la liquidation du régime, qui en fixe l'assiette.
 
 **La liquidation, puis l'échéancier.** La liquidation est une fonction pure,
-`liquider(demande, état, contexte)` (`src/retraite_notionnelle/droit/liquidation.py`,
-et son jumeau JavaScript ; `docs/architecture.md`, § 7.3, 7.4 et 7.7) : elle ne lit
+`liquider(demande, état, contexte)` (`moteur/js/droit/liquidation.js` ;
+`docs/architecture.md`, § 7.3, 7.4 et 7.7) : elle ne lit
 que la demande — la personne, la date d'effet, le motif, la nature —, l'état
 — la carrière, et le journal — et le contexte — les tables du droit en
 vigueur, et ce que le calcul neutralise. Après le relevé, trois étapes :

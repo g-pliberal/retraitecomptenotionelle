@@ -1,7 +1,7 @@
 /**
  * Fusion de tous les régimes sur le cas le plus défavorable.
  *
- * Portage de ``src/retraite_notionnelle/moteur/fusion.py``. À compter de
+ * À compter de
  * l'année de bascule, les régimes disparaissent au profit d'un régime unique
  * dont chaque paramètre est, paramètre par paramètre, le plus défavorable à
  * l'assuré : âge d'ouverture et âge du taux plein les plus élevés, durée

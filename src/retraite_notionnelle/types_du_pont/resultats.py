@@ -18,7 +18,7 @@ from .moteur import Capitalisation, CoefficientConversion, CompteNotionnel, Ecar
 @dataclass(frozen=True)
 class DepartServi:
     """Ce qu'un départ fait servir, quand les régimes liquident à des dates
-    différentes (:mod:`~retraite_notionnelle.droit.departs`)."""
+    différentes (``moteur/js/droit/departs.js``)."""
 
     #: La date d'effet (AAAA-MM-JJ), et ce qui la date : ``depart``,
     #: ``ouverture``, ``sortie`` ou ``demande``.
@@ -39,7 +39,7 @@ class DepartServi:
 @dataclass(frozen=True)
 class ProgressiveServie:
     """Ce qu'une retraite progressive sert avant le départ
-    (:mod:`~retraite_notionnelle.droit.progressive`), ou ce qui la ferme."""
+    (``moteur/js/droit/progressive.js``), ou ce qui la ferme."""
 
     #: La date d'effet (AAAA-MM-JJ) et la quotité du temps partiel.
     date_effet: str
@@ -116,7 +116,7 @@ class ResultatActuel:
     #: complète, chaque pension y étant menée ou ramenée.
     departs: tuple[DepartServi, ...] = ()
     #: Les pensions dont la carrière dit la date de demande, et la date où
-    #: chacune est servie (:class:`~retraite_notionnelle.droit.departs.DemandeExaminee`) ;
+    #: chacune est servie (``DemandeExaminee`` de ``moteur/js/droit/departs.js``) ;
     #: vide quand elle n'en dit aucune.
     demandes: tuple[DemandeExaminee, ...] = ()
     #: La retraite progressive que la carrière demande, ouverte ou non
@@ -124,29 +124,29 @@ class ResultatActuel:
     #: résultat reste la pension complète, au départ.
     retraite_progressive: ProgressiveServie | None = None
     #: L'activité exercée après le départ, et ce que chaque pension en garde
-    #: pendant qu'elle dure (:mod:`~retraite_notionnelle.droit.cumul`) ;
+    #: pendant qu'elle dure (``moteur/js/droit/cumul.js``) ;
     #: ``None`` sans elle. La pension du résultat reste celle du départ,
     #: entière : le cumul dit ce qui n'en est pas servi, et quand.
     cumul: Cumul | None = None
     #: Les droits que cette activité ouvre, ou non, et la nouvelle pension
-    #: qu'elle constitue (:mod:`~retraite_notionnelle.droit.seconde`) ; hors
+    #: qu'elle constitue (``moteur/js/droit/seconde.js``) ; hors
     #: de la pension du résultat, qui reste celle du départ.
     droits_apres_depart: DroitsApresDepart | None = None
     #: Le minimum contributif servi au départ, et ce que sa révision relit
     #: quand une pension étrangère commence après lui (R. 173-8,
-    #: :func:`~retraite_notionnelle.revalorisation.faire_vivre`) ; ``None``
+    #: ``faireVivre`` de ``moteur/js/revalorisation.js``) ; ``None``
     #: sans lui, ou quand les régimes liquident à des dates différentes.
     minimum_ecrete: MinimumEcrete | None = None
     #: Ce que la majoration exceptionnelle de septembre 2023 relit des
     #: pensions que le minimum contributif regarde, celles de chaque départ
-    #: (:func:`~retraite_notionnelle.revalorisation.majorer_les_petites_pensions`).
+    #: (``majorerLesPetitesPensions`` de ``moteur/js/revalorisation.js``).
     petites_pensions: tuple[PetitePension, ...] = ()
     #: Ce que le relèvement des exploitants de septembre 2023 relit
-    #: (:func:`~retraite_notionnelle.revalorisation.relever_les_exploitants`) ;
+    #: (``releverLesExploitants`` de ``moteur/js/revalorisation.js``) ;
     #: ``None`` sans RCO.
     chef_d_exploitation: ChefDExploitation | None = None
     #: Ce que la révision des pensions agricoles déjà liquidées relit
-    #: (:func:`~retraite_notionnelle.revalorisation.reviser_les_exploitants`) ;
+    #: (``reviserLesExploitants`` de ``moteur/js/revalorisation.js``) ;
     #: ``None`` sans pension de base agricole.
     exploitant_agricole: ExploitantAgricole | None = None
 
