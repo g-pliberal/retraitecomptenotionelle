@@ -527,7 +527,7 @@ def test_une_carriere_construite_ligne_a_ligne_recoit_sa_chronologie():
     assert chronologie.enfants(carriere.chronologie, "assure") == ["enfant_1", "enfant_2", "enfant_3"]
     assert {naissance for _, naissance in facade.fait(carriere, "naissances_des_enfants")} == {
         _au_jour_presume(1980 + _presume("naissance_des_enfants"), 1)}
-    assert Carriere(annee_naissance=1980, sexe="H").naissances_des_enfants == ()
+    assert facade.fait(Carriere(annee_naissance=1980, sexe="H"), "naissances_des_enfants") == ()
 
 
 def test_une_naissance_declaree_remplace_la_presomption(macro):

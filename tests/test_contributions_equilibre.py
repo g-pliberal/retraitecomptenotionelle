@@ -22,6 +22,7 @@ from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 from retraite_notionnelle.config import RACINE_DONNEES, Parametres
 from retraite_notionnelle.remuneration import _montant, charger_prelevements
 
+import facade
 from facade import Carriere, Simulateur
 
 
@@ -124,7 +125,7 @@ def test_une_annee_qui_change_de_bareme_preleve_ses_mois(simulateur):
     l'AGFF 2,00 % d'avril à décembre : l'année en prélève la moyenne."""
     plafond = simulateur.macro.plafond_securite_sociale(2001)
     revenu = 0.8 * plafond
-    verse = ce.contributions_d_une_carriere(
+    verse = facade.contributions_d_une_carriere(
         simulateur, _carriere("salarie_prive_non_cadre", {2000: revenu, 2001: revenu}))
     assert verse[2001] == pytest.approx(revenu * (3 * 0.0196 + 9 * 0.0200) / 12)
     assert verse[2000] == pytest.approx(revenu * 0.0196)
@@ -137,9 +138,9 @@ def test_le_cadre_verse_la_cet_de_l_agirc_sur_toute_sa_remuneration(simulateur):
     plafond = simulateur.macro.plafond_securite_sociale(2010)
     revenu = 2.0 * plafond
     agff = plafond * 0.0200 + plafond * 0.0220
-    cadre = ce.contributions_d_une_carriere(
+    cadre = facade.contributions_d_une_carriere(
         simulateur, _carriere("salarie_prive_cadre", {2010: revenu}))
-    non_cadre = ce.contributions_d_une_carriere(
+    non_cadre = facade.contributions_d_une_carriere(
         simulateur, _carriere("salarie_prive_non_cadre", {2010: revenu}))
     assert cadre[2010] == pytest.approx(agff + revenu * 0.0035)
     assert non_cadre[2010] == pytest.approx(agff)
@@ -150,7 +151,7 @@ def test_la_cet_n_est_due_qu_au_dela_du_plafond(simulateur):
     plafond, mais l'est alors dès le premier euro."""
     plafond = simulateur.macro.plafond_securite_sociale(2023)
     sous, dessus = 0.99 * plafond, 1.01 * plafond
-    verse = {revenu: ce.contributions_d_une_carriere(
+    verse = {revenu: facade.contributions_d_une_carriere(
         simulateur, _carriere("salarie_prive_non_cadre", {2023: revenu}))[2023]
         for revenu in (sous, dessus)}
     assert verse[sous] == pytest.approx(sous * 0.0215)
@@ -163,7 +164,7 @@ def test_qui_n_est_pas_a_l_agirc_arrco_n_en_verse_aucune(simulateur, affiliation
     """Le fonctionnaire, le contractuel public, à l'Ircantec, et l'artisan
     n'en versent aucune."""
     revenus = {annee: 30_000.0 for annee in (1990, 2010, 2020)}
-    assert ce.contributions_d_une_carriere(simulateur, _carriere(affiliation, revenus)) == {}
+    assert facade.contributions_d_une_carriere(simulateur, _carriere(affiliation, revenus)) == {}
 
 
 def test_les_statuts_que_l_asf_ecarte_n_en_versent_pas(simulateur):
@@ -171,7 +172,7 @@ def test_les_statuts_que_l_asf_ecarte_n_en_versent_pas(simulateur):
     (convention du 1er janvier 1994, art. 7, § 2) ; la Nouvelle-Calédonie a
     la CAFAT. Les deux versent l'AGFF, en salariés de l'Arrco."""
     for affiliation in ("salarie_saint_pierre_et_miquelon", "salarie_nouvelle_caledonie"):
-        verse = ce.contributions_d_une_carriere(
+        verse = facade.contributions_d_une_carriere(
             simulateur, _carriere(affiliation, {1998: 20_000.0, 2005: 20_000.0}))
         assert 1998 not in verse, affiliation
         assert verse[2005] == pytest.approx(20_000.0 * 0.0200), affiliation
@@ -181,7 +182,7 @@ def test_le_ministre_du_culte_verse_la_ceg_sur_son_forfait_depuis_2019(simulateu
     """La CAVIMAC appelle depuis 2019 un « taux de base » de 10,02 % sur le
     forfait de la cotisation, le SMIC, dont les 2,15 % de la CEG ; le revenu
     déclaré n'y entre pas. Aucun texte lu ne lui fait verser l'AGFF."""
-    verse = ce.contributions_d_une_carriere(
+    verse = facade.contributions_d_une_carriere(
         simulateur, _carriere("ministre_du_culte", {2015: 5_000.0, 2022: 5_000.0}))
     # Au SMIC de chaque mois : 10,57 € (décret n° 2021-1741), 10,85 € au 1er mai
     # et 11,07 € au 1er août 2022 (arrêtés des 19 avril et 29 juillet 2022).
@@ -193,7 +194,7 @@ def test_le_ministre_du_culte_verse_la_ceg_sur_son_forfait_depuis_2019(simulateu
 def test_une_annee_de_chomage_n_en_verse_aucune(simulateur):
     """L'assurance chômage paie à l'Agirc-Arrco des cotisations, que le
     compte porte ; aucune paie ne supporte de contribution."""
-    verse = ce.contributions_d_une_carriere(simulateur, _carriere(
+    verse = facade.contributions_d_une_carriere(simulateur, _carriere(
         "salarie_prive_non_cadre", {2009: 25_000.0, 2010: 25_000.0},
         {2010: {"type_periode": "chomage_indemnise", "cotisations_versees": False}}))
     assert 2010 not in verse and verse[2009] > 0.0
@@ -208,7 +209,7 @@ def test_l_annee_du_depart_ne_porte_que_ses_mois(simulateur):
               for annee in (2023, 2024)]
     carriere = Carriere(annee_naissance=1962, sexe="H", lignes=lignes,
                         age_liquidation=62.5, jour_naissance=1)
-    assert carriere.part_retenue(2024) == pytest.approx(0.5)
-    verse = ce.contributions_d_une_carriere(simulateur, carriere)
+    assert facade.parts_retenues(carriere)[-1] == pytest.approx(0.5)
+    verse = facade.contributions_d_une_carriere(simulateur, carriere)
     demi = 0.5 * plafond
     assert verse[2024] == pytest.approx(demi * 0.0215 + demi * 0.0270 + plafond * 0.0035)

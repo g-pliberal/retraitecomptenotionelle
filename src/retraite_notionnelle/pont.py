@@ -2683,6 +2683,10 @@ LECTURES_DE_LA_FACADE = {
     "carriere.fait": lambda lu: fait_des_donnees(lu["nom"], lu["valeur"]),
     "carriere.parts_retenues": lambda lu: list(lu_strictement(
         tuple[float, ...], lu, "carriere.parts_retenues")),
+    "carriere.parts_cotisees": lambda lu: list(lu_strictement(
+        tuple[float, ...], lu, "carriere.parts_cotisees")),
+    "contributions.d_une_carriere": lambda lu: dict(lu_strictement(
+        tuple[tuple[int, float], ...], lu, "contributions.d_une_carriere")),
     "carriere.qualites_agricoles": lambda lu: list(lu_strictement(
         tuple[str | None, ...], lu, "carriere.qualites_agricoles")),
     "carriere.duree_de_service": lambda lu: lu_strictement(

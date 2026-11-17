@@ -5641,11 +5641,12 @@ def _annee_agricole_en_deux_moteurs(simulateur, naissance: dict, lignes: list[di
     import subprocess
 
     carriere = Carriere(**naissance, lignes=[AnneeCarriere(**ligne) for ligne in lignes])
+    de_l_annee = [rang for rang, ligne in enumerate(carriere.lignes) if ligne.annee == annee]
+    parts, trimestres = facade.parts_cotisees(carriere), facade.trimestres_retenus(carriere)
     obtenu = {
-        "parts": [round(carriere.part_cotisee_ligne(ligne), 6)
-                  for ligne in carriere.lignes_de(annee)],
-        "trimestres": [carriere.trimestres_retenus(ligne) for ligne in carriere.lignes_de(annee)],
-        "qualite": carriere.qualite_agricole(annee),
+        "parts": [round(parts[rang], 6) for rang in de_l_annee],
+        "trimestres": [trimestres[rang] for rang in de_l_annee],
+        "qualite": facade.qualites_agricoles(carriere, [annee])[annee],
         "points": _points_agricoles_de_l_annee(
             releve.construire(simulateur.scenario_actuel, carriere).droits.points, annee),
     }
@@ -5702,7 +5703,7 @@ def test_l_annee_ou_l_exploitant_cesse_reste_au_statut_du_1er_janvier(simulateur
                       fraction_annee=4 / 12, trimestres_valides=1)])
     carriere = Carriere(**naissance, lignes=[AnneeCarriere(**ligne) for ligne in lignes])
     assert str(carriere.date_liquidation) == "août 2024"
-    assert carriere.annee_de_cessation_agricole == 2024
+    assert facade.annee_de_cessation_agricole(carriere) == 2024
     assert _annee_agricole_en_deux_moteurs(simulateur, naissance, lignes, 2024) == {
         "parts": [1.0, 0.0], "trimestres": [4, 0], "qualite": "chef",
         "points": {"msa_non_salaries": 30.0, "msa_rco": 133.0}}
@@ -5736,7 +5737,7 @@ def test_l_annee_du_deces_du_chef_d_exploitation_se_cotise_au_prorata(simulateur
         vivante = Carriere(annee_naissance=1962, sexe="H", jour_naissance=15,
                            age_liquidation=64.0,
                            lignes=[AnneeCarriere(**ligne) for ligne in lignes])
-        arretee = vivante.arretee_au_deces(DateMois(annee, 7))
+        arretee = facade.arretee_au_deces(vivante, DateMois(annee, 7))
         assert str(arretee.date_liquidation) == f"juillet {annee}"
         return dict(annee_naissance=1962, sexe="H", jour_naissance=15,
                     age_liquidation=arretee.age_liquidation, au_deces=True), lignes
@@ -5747,7 +5748,7 @@ def test_l_annee_du_deces_du_chef_d_exploitation_se_cotise_au_prorata(simulateur
     for nom, (annee, affiliation) in cas.items():
         naissance, lignes = au_deces(annee, affiliation)
         carriere = Carriere(**naissance, lignes=[AnneeCarriere(**ligne) for ligne in lignes])
-        obtenus[nom] = (carriere.annee_de_cessation_agricole,
+        obtenus[nom] = (facade.annee_de_cessation_agricole(carriere),
                         _annee_agricole_en_deux_moteurs(simulateur, naissance, lignes, annee))
     assert obtenus["chef 2024"] == (None, {
         "parts": [0.5], "trimestres": [2], "qualite": "chef",
@@ -5880,7 +5881,8 @@ def test_l_exploitant_installe_apres_le_1er_janvier_ne_cotise_rien_pour_l_annee(
                         lignes=[AnneeCarriere(**ligne) for ligne in entree["lignes"]])
 
     carrieres = {nom: carriere(entree) for nom, entree in cas.items()}
-    trimestres = {nom: [c.trimestres_retenus(ligne) for ligne in c.lignes_de(cas[nom]["annee"])]
+    trimestres = {nom: [retenus for ligne, retenus in zip(c.lignes, facade.trimestres_retenus(c))
+                        if ligne.annee == cas[nom]["annee"]]
                   for nom, c in carrieres.items()}
     attendus = {"2010": [2, 0], "1984": [2, 2]}
     assert trimestres == attendus
@@ -6438,7 +6440,7 @@ def test_l_annee_ou_l_exploitant_cesse_avant_son_depart_compte_entiere(simulateu
                       fraction_annee=0.5, trimestres_valides=2)])
     carriere = Carriere(**naissance, lignes=[AnneeCarriere(**ligne) for ligne in lignes])
     assert str(carriere.date_liquidation) == "août 2024"
-    assert carriere.annee_de_cessation_agricole is None
+    assert facade.annee_de_cessation_agricole(carriere) is None
     durees = releve.construire(simulateur.scenario_actuel, carriere).durees
     assert durees.trimestres_par_regime.get("msa_non_salaries") == 124
     assert _annee_agricole_en_deux_moteurs(simulateur, naissance, lignes, 2020) == {

@@ -147,6 +147,7 @@ import { ConstructeurCompte, tauxDuBareme } from "../../moteur/js/compte.js";
 import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
 import { niveauRelatif } from "../../moteur/js/conversion.js";
 import { Contexte } from "../../moteur/js/contexte.js";
+import { contributionsDUneCarriere } from "../../moteur/js/contributions-equilibre.js";
 import { Echeancier, departDe } from "../../moteur/js/echeancier.js";
 import { Entree, Journal } from "../../moteur/js/journal.js";
 import * as garantie from "../../moteur/js/garantie.js";
@@ -2034,6 +2035,10 @@ const ENTREES_DE_LA_FACADE = {
   "simulateur.regime_fusionne": (simulateur) => telQuel(simulateur.regimeFusionne),
   // Ce que la garantie vieillesse de la proposition ajoute à une pension
   // obligatoire, sur cette carrière (scénario 6).
+  // Les contributions d'équilibre de l'Agirc-Arrco que verse la carrière, par
+  // année : des paires [année, montant], dans l'ordre des années.
+  "contributions.d_une_carriere": (simulateur, carriere) => [
+    ...contributionsDUneCarriere(simulateur, carriere)].sort(([a], [b]) => a - b),
   "simulateur.garantie_vieillesse": (simulateur, carriere, pension, rente) => telQuel(
     simulateur.scenarioLiberal._garantieVieillesse(carriere, pension, rente)),
   // Le scénario 6 sur une carrière telle quelle, et la carrière que la
@@ -2072,6 +2077,9 @@ const ENTREES_DE_LA_FACADE = {
   // de l'exploitant agricole, année par année ; les services d'un statut.
   "carriere.parts_retenues": (carriere) => carriere.lignes.map(
     (ligne) => carriere.partRetenueLigne(ligne)),
+  // La part de l'année que cotise chaque ligne, dans leur ordre.
+  "carriere.parts_cotisees": (carriere) => carriere.lignes.map(
+    (ligne) => carriere.partCotiseeLigne(ligne)),
   "carriere.qualites_agricoles": (carriere, annees) => annees.map(
     (annee) => carriere.qualiteAgricole(annee)),
   "carriere.duree_de_service": (carriere, affiliations, jusquA) => carriere.dureeDeService(

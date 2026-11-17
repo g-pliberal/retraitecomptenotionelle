@@ -80,7 +80,7 @@ from pathlib import Path
 
 import contrats_de_la_facade as _contrats
 from retraite_notionnelle import castypes as _castypes
-from retraite_notionnelle import carriere as _carriere
+from retraite_notionnelle import chronologie as _chronologie
 from retraite_notionnelle import memoire, pont
 from retraite_notionnelle.revalorisation_servie import (
     RevalorisationServie as _RevalorisationServie)
@@ -121,13 +121,13 @@ ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversio
            "simulateur.proposition", "simulateur.carriere_proposition", "carriere.prolongee",
            "carriere.trimestres_retenus", "carriere.trimestres_cumules",
            "carriere.annee_de_cessation_agricole", "carriere.date_entree", "carriere.fait",
-           "carriere.parts_retenues", "carriere.qualites_agricoles",
+           "carriere.parts_retenues", "carriere.parts_cotisees", "carriere.qualites_agricoles",
            "carriere.duree_de_service", "carriere.date_de_service", "carriere.liquidee_au",
            "carriere.arretee_au_deces", "carriere.avec_lignes",
            "simulateur.garantie_vieillesse", "echeancier.parcourir", "simulateur.echeancier",
            "echeancier.depart_de", "echeancier.sortes", "journal.operer",
            "pilote.age_de_depart", "departs.liquider_les_departs",
-           "progressive.liquider", "progressive.initiales")
+           "progressive.liquider", "progressive.initiales", "contributions.d_une_carriere")
 
 #: Les méthodes des tables du moteur que la façade sert, par table.
 TABLES = pont.TABLES_DE_LA_FACADE
@@ -757,6 +757,20 @@ def parts_retenues(carriere) -> list[float]:
     return _demander("carriere.parts_retenues", None, carriere)
 
 
+def parts_cotisees(carriere) -> list[float]:
+    """``Carriere.part_cotisee_ligne`` de chaque ligne de ``carriere``, dans
+    leur ordre, par le portage."""
+    return _demander("carriere.parts_cotisees", None, carriere)
+
+
+def contributions_d_une_carriere(simulateur, carriere) -> dict[int, float]:
+    """Les contributions d'équilibre de l'Agirc-Arrco que verse ``carriere``,
+    par année, sous les paramètres de ``simulateur``, par le portage
+    (``contributionsDUneCarriere``)."""
+    return _demander("contributions.d_une_carriere", simulateur.parametres,
+                     pont.SIMULATEUR, carriere)
+
+
 def qualites_agricoles(carriere, annees) -> dict[int, str | None]:
     """``Carriere.qualite_agricole`` de chacune de ces années, par le
     portage."""
@@ -950,13 +964,23 @@ def ConstructeurCompte(macro, catalogue, affiliations, indexation, parametres) -
     return _SOUS_D_AUTRES_PARAMETRES[parametres].constructeur
 
 
-class Carriere(_carriere.Carriere):
+class Carriere(_CarriereNue):
     """``Carriere``, ses quatre bâtisseurs servis par le portage, et
-    ``depuis_lignes``, qui ne fait que la poser : la carrière qu'ils rendent
-    est la carrière nue, le type que le pont échange. Bâtie à la main, elle est
-    encore celle des règles : ce que les tests et ``contributions_equilibre``
-    en lisent (``part_retenue_ligne``, ``date_entree``…) se lit sur elle, en
-    Python — le dernier import d'un fichier de règles (action 161)."""
+    ``depuis_lignes``, qui ne fait que la poser : la carrière nue, le type que
+    le pont échange. Bâtie à la main, elle reçoit la chronologie de ses
+    champs, complétée des présomptions ; ce qu'elle compte (``date_entree``,
+    ``parts_retenues``…) se demande au portage par les aides de la façade."""
+
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        if self.chronologie is None:
+            # La chronologie de ses champs, complétée des présomptions : celle
+            # que la carrière des règles se donnait.
+            object.__setattr__(self, "chronologie", _chronologie.completer(
+                _chronologie.du_resume(
+                    self.annee_naissance, self.sexe, self.mois_naissance,
+                    self.age_liquidation, self.nombre_enfants,
+                    self.naissances_enfants, self.jour_naissance)))
 
     @classmethod
     def depuis_lignes(cls, annee_naissance: int, sexe: str, lignes, **options) -> Carriere:

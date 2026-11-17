@@ -7330,14 +7330,12 @@ de `contribution_etat`.
 **Reprise, au 17 novembre 2026.** Le propriétaire a accepté la
 suppression des 40 fichiers de règles Python. Elle se prépare par lots, une
 session chacun. Trois sont faits : les constantes, les outils du pont des
-tests, et la façade des tests, qui ne lit plus rien sur les modules de
-règles. Il lui reste un import : la classe `Carriere` des règles, dont sa
-carrière hérite. Une carrière bâtie à la main dans un test est encore lue
-en Python par ses méthodes ; 19 tests rapides cassent sans elle. Par quoi
-commencer : recenser ces lectures sur la suite complète, les passer au
-portage, puis faire hériter la carrière de la façade de la carrière nue.
-Ensuite vient la suppression. Le détail est dans
-`2026-11-17-la-facade-sans-les-modules-de-regles.md`.
+tests, et la façade des tests, qui n'importe plus aucun fichier de règles :
+sa carrière hérite de la carrière nue, et ce que les tests en lisaient se
+demande au portage. Reste le quatrième lot, la suppression elle-même, avec
+les confrontations au jumeau de `test_facade.py`, `test_facade_jumeau.py`
+et `jumeau_des_avantages.py`. Par quoi commencer : la note de l'essai à
+blanc de la suppression, puis `2026-11-17-la-carriere-de-la-facade-nue.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

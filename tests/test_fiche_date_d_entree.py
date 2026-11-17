@@ -120,7 +120,7 @@ def test_la_fiche_de_qui_garde_son_regime_preleve_ce_que_le_compte_recoit(
         recu = dict(compte.cotisation_annuelle(carriere, an).par_regime)
         preleve = {ligne.code: ligne.salarie
                    for ligne in _fiche(simulateur, statut, an, REVENU,
-                                       carriere.date_entree(statut)).lignes
+                                       facade.date_entree(carriere, statut)).lignes
                    if ligne.retraite}
         for code in sorted(set(recu) | set(preleve)):
             if abs(recu.get(code, 0.0) - preleve.get(code, 0.0)) > 0.01:

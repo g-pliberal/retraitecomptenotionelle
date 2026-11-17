@@ -251,7 +251,6 @@ def test_dans_un_fichier_passe_a_la_facade_seuls_les_tests_marques_restent_sur_l
 #: étape 6 de l'inventaire) n'aura plus à le chercher. La liste ne fait que
 #: décroître.
 IMPORTEURS_DES_REGLES = (
-    "tests/facade.py",
     "tests/jumeau_des_avantages.py",
     "tests/test_facade.py",
     "tests/test_facade_jumeau.py",

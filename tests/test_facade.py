@@ -2640,6 +2640,7 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "carriere.trimestres_cumules",
                               "carriere.annee_de_cessation_agricole", "carriere.date_entree",
                               "carriere.fait", "carriere.parts_retenues",
+                              "carriere.parts_cotisees",
                               "carriere.qualites_agricoles", "carriere.duree_de_service",
                               "carriere.date_de_service", "carriere.liquidee_au",
                               "carriere.arretee_au_deces", "carriere.avec_lignes",
@@ -2647,7 +2648,8 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "echeancier.parcourir", "simulateur.echeancier",
                               "echeancier.depart_de", "echeancier.sortes", "journal.operer",
                               "pilote.age_de_depart", "departs.liquider_les_departs",
-                              "progressive.liquider", "progressive.initiales")
+                              "progressive.liquider", "progressive.initiales",
+                              "contributions.d_une_carriere")
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)
 
 
@@ -2679,9 +2681,9 @@ def test_les_noms_du_droit_que_lisaient_les_tests_se_lisent_au_portage():
 
 def test_la_facade_ne_charge_aucun_fichier_de_regles():
     """La façade des tests (action 161, troisième lot de la suppression) ne
-    tient plus rien des fichiers de règles Python, que la classe des règles
-    de la carrière : ses types viennent de ``types_du_pont``, ses constantes
-    du portage, et elle n'a plus de jumeau à rendre à un test marqué."""
+    tient plus rien des fichiers de règles Python : ses types viennent de
+    ``types_du_pont``, ses constantes du portage, sa carrière est la carrière
+    nue, et elle n'a plus de jumeau à rendre à un test marqué."""
     assert not hasattr(facade, "JUMEAUX") and not hasattr(facade, "entrees_du_test")
     assert facade.liquidation.Contexte.__module__ == "retraite_notionnelle.types_du_pont.droit"
     assert facade.departs.PensionServie.__module__ == "retraite_notionnelle.types_du_pont.droit"
@@ -2695,9 +2697,9 @@ def test_la_facade_ne_charge_aucun_fichier_de_regles():
         "pilote", "revalorisation"))
     regles = sorted(module for module in importes if any(
         module == racine or module.startswith(racine + ".") for racine in fichiers_de_regles))
-    # La classe des règles de la carrière reste, que ce qu'on bâtit à la main
-    # lit encore : le prochain pas de la suppression.
-    assert regles == ["retraite_notionnelle.carriere"]
+    assert regles == []
+    assert [classe.__module__ for classe in facade.Carriere.__mro__[1:-1]] == [
+        "retraite_notionnelle.types_du_pont.carriere"]
 
 
 def test_les_tables_et_les_noms_du_droit_se_lisent_au_portage():
