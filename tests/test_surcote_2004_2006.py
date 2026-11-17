@@ -54,7 +54,7 @@ def test_une_pension_prenant_effet_avant_2007_garde_0_75_pour_cent(simulateur):
 
 
 def test_la_liquidation_de_2007_date_la_surcote_de_2004_a_2006(simulateur):
-    """Né en avril 1941, salarié à temps plein depuis ses dix-huit ans, le
+    """Né le 15 avril 1941 (la date entière, que le test déclare), salarié à temps plein depuis ses dix-huit ans, le
     taux plein acquis bien avant 2004, il part le 1er avril 2007 : treize
     trimestres de surcote, du 1er janvier 2004 au 31 mars 2007. Soixante-cinq
     ans au deuxième trimestre 2006 : les trimestres de juillet et d'octobre
@@ -62,7 +62,7 @@ def test_la_liquidation_de_2007_date_la_surcote_de_2004_a_2006(simulateur):
     premiers 0,75 %, les six suivants 1 %. Calcul posé sur D. 351-1-4 dans
     sa rédaction du décret n° 2006-1611 : 3 + 6 + 3,75 = 12,75 %."""
     carriere = simulateur.carriere_simple(
-        annee_naissance=1941, mois_naissance=4, sexe="H",
+        annee_naissance=1941, mois_naissance=4, jour_naissance=15, sexe="H",
         affiliation="salarie_prive_non_cadre", age_debut=18,
         age_liquidation=65 + 11 / 12)
     assert carriere.date_liquidation == DateMois(2007, 4)

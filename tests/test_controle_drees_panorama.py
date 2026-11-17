@@ -2439,10 +2439,13 @@ def test_la_decote_et_la_surcote_du_panorama_sont_celles_du_depot(regles):
     publique = {int(l["annee"]): float(l["coefficient"]) for l in _csv("decote_fonction_publique.csv")}
     assert min(publique) == 2006 and publique[2006] == 0.00125 and publique[2015] == 0.0125
     surcote = [l for l in _csv("surcote_baremes.csv") if l["bareme"] == "regime_general"]
-    taux = {(l["debut"], l["rang_minimum"], l["apres_65_ans"]): float(l["taux"]) for l in surcote}
-    assert taux == {("2004", "1", "0"): 0.0075, ("2007", "1", "0"): 0.0075,
-                    ("2007", "5", "0"): 0.01, ("2007", "1", "1"): 0.0125,
-                    ("2009", "1", "0"): 0.0125}
+    # Les taux de 1 % et de 1,25 % valent pour les trimestres accomplis depuis
+    # 2004, aux pensions prenant effet depuis 2007 (décret n° 2006-1611).
+    taux = {(l["debut"], l["rang_minimum"], l["apres_65_ans"], l["effet_depuis"]): float(l["taux"])
+            for l in surcote}
+    assert taux == {("2004", "1", "0", ""): 0.0075, ("2007", "1", "0", ""): 0.0075,
+                    ("2004", "5", "0", "2007"): 0.01, ("2004", "1", "1", "2007"): 0.0125,
+                    ("2009", "1", "0", ""): 0.0125}
     parentale = _csv("surcote_parentale.csv")[0]
     assert float(parentale["age_ouverture"]) == 63
     assert float(parentale["taux_par_trimestre"]) * int(parentale["trimestres_maximum"]) == 0.05
