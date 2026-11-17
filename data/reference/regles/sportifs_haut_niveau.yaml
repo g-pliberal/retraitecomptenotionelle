@@ -25,11 +25,17 @@ dates_qui_decident:
 - liquidation.date_effet
 versions:
 - id: avant_2012
-  statut: supposee
-  hypothese: >-
-    avant le 7° de L. 351-3, qui ne vise que les périodes d'inscription postérieures au
-    31 décembre 2011, l'inscription sur la liste ne valide rien par elle-même
-  fiabilite: haute, le texte borne lui-même les périodes qu'il vise
+  statut: lue
+  textes:
+  - id: LEGIARTI000025014498
+    article: "CSS, L. 351-3, rédaction du 23 décembre 2011"
+    en_vigueur: 2011-12-23
+    lu_le: 2026-11-17
+    citation: >-
+      « Cet article est applicable aux périodes d'inscription postérieures au 31 décembre
+      2011 sur la liste des sportifs de haut niveau mentionnée au premier alinéa de
+      l'article L. 221-2 du code du sport. »
+  nee_de: LEGIARTI000025014498
   bornes:
     periode.debut: [null, 2012-01-01]
   contenu:

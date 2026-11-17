@@ -31,17 +31,25 @@ dates_qui_decident:
 # décide des points ; le revenu qui l'asseoit est celui de l'avant-dernière année.
 versions:
 - id: avant_l_ajustement
-  statut: supposee
-  hypothese: >-
-    avant l'exercice 2012, l'ASV ne sert que les points de la cotisation forfaitaire
-    (`asv_medecins_points`) : le décret n° 2011-1644 « est applicable, à l'exception du
-    dernier alinéa de l'article 2, à compter du 1er janvier 2012 » (article 9), et les
-    décrets annuels n° 2007-1901, 2008-1439, 2009-1741 et 2010-1675, lus, ne nomment
-    aucune cotisation d'ajustement ; des décrets n° 2004-1452 et 2005-1775, l'index n'a
-    que le titre
-  fiabilite: >-
-    moyenne : nul texte lu ne fonde de points d'ajustement avant 2012, mais deux décrets
-    annuels ne se lisent qu'en titre
+  statut: lue
+  textes:
+  - id: JORFTEXT000024851756
+    article: "décret n° 2011-1644 du 25 novembre 2011, notice"
+    publie_le: 2011-11-26
+    lu_le: 2026-11-17
+    citation: >-
+      « Entrée en vigueur : le 1er janvier 2012, à l'exception du dernier alinéa de
+      l'article 2 [...] Une cotisation proportionnelle d'ajustement ouvrant droit à des
+      points supplémentaires est par ailleurs instituée. »
+  - id: JORFARTI000001486998
+    article: "décret n° 2005-1775, article 1er (de même le décret n° 2004-1452, JORFARTI000001075133)"
+    publie_le: 2005-12-31
+    lu_le: 2026-11-17
+    citation: >-
+      « Au 1° de l'article D. 645-2 du code de la sécurité sociale, les mots : « au titre
+      de l'exercice 2004 » sont remplacés par les mots : « au titre de l'exercice 2005 ».
+      »
+  nee_de: JORFTEXT000024851756
   bornes:
     revenu.annee: [null, 2012-01-01]
   contenu:

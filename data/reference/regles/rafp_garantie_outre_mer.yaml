@@ -21,9 +21,19 @@ dates_qui_decident:
 - liquidation.date_effet
 versions:
 - id: avant_2024
-  statut: supposee
-  hypothese: l'article 76 bis, créé par la loi n° 2023-1322, ne vaut que pour les pensions prenant effet depuis le 1er janvier 2024
-  fiabilite: haute, le IV de l'article le dit
+  statut: lue
+  textes:
+  - id: LEGIARTI000048805651
+    article: "loi n° 2003-775, article 76 bis, IV, première rédaction"
+    en_vigueur: 2023-12-31
+    lu_le: 2026-11-17
+    citation: >-
+      « IV. - Le II est applicable : 1° Aux pensionnés relevant du code des pensions
+      militaires d'invalidité et des victimes de guerre dont la pension prend effet à
+      compter du 1er janvier 2024 [...] ; 2° Aux agents relevant du code des pensions
+      civiles et militaires de retraite dont la pension prend effet à compter du 1er
+      janvier 2024. »
+  nee_de: LEGIARTI000048805651
   bornes:
     liquidation.date_effet: [null, 2024-01-01]
   contenu:

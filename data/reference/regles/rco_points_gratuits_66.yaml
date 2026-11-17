@@ -23,12 +23,22 @@ dates_qui_decident:
 - pension.echeance
 versions:
 - id: avant_2014
-  statut: supposee
-  hypothese: >-
-    avant les V et VI de L. 732-56, créés par l'article 34 de la loi n° 2014-40, seuls
-    les chefs aux dix-sept ans et demi reçoivent des points gratuits, les cent de
-    D. 732-154
-  fiabilite: haute, L. 732-56 n'a pas de V de ce contenu avant le 22 janvier 2014 dans l'index
+  statut: lue
+  textes:
+  - id: LEGIARTI000023034502
+    article: "code rural, L. 732-56, rédaction du 11 novembre 2010 au 22 janvier 2014"
+    en_vigueur: 2010-11-11
+    lu_le: 2026-11-17
+    citation: >-
+      « IV.-Sont affiliées au régime de l'assurance vieillesse complémentaire obligatoire
+      les personnes ayant, à compter du 1er janvier 2011 ou postérieurement à cette date,
+      la qualité d'aide familial telle que définie au 2° de l'article L. 722-10 ou la
+      qualité de collaborateur d'exploitation ou d'entreprise agricole telle que définie à
+      l'article L. 321-5. » (dernier paragraphe de la rédaction, sans V)
+  - id: LEGIARTI000028498813
+    article: "code rural, L. 732-56, V, rédaction du 22 janvier 2014, la première qui le porte"
+    en_vigueur: 2014-01-22
+    lu_le: 2026-11-17
   bornes:
     pension.echeance: [null, 2014-02-01]
   contenu:

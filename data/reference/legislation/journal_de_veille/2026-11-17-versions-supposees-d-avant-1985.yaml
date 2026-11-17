@@ -1,0 +1,19 @@
+date: "2026-11-17"
+session: "action 191, à part : les versions supposées qui couvrent des pensions d'avant le 21 décembre 1985, vérifiées aux sources officielles"
+consulte: >-
+  python scripts/veille_droit.py --sans-cnav. Les index JORF et LEGI de la DILA, à
+  jour au 16 novembre 2026, et KALI, récupéré ce jour : décrets n° 2011-1644,
+  2005-1775, 2004-1452, 2003-1036, 2008-539, 2008-964, 2009-1065, 2026-18, loi
+  n° 97-1239, article 46, loi n° 2003-775, article 76 bis, L. 351-3 et R. 351-12 du
+  code de la sécurité sociale, L. 732-56 du code rural, L. 122-15 du code du service
+  national. Légifrance (403 à la session ; le fac-similé des textes anciens servi par
+  un script) et la base de législation de la Cnav (502) n'ont pas pu être lus.
+trouve: >-
+  Neuf versions supposées passent à lue, le texte qui crée le dispositif et dit à
+  quoi il s'applique cité ; aucune n'est démentie. Détail :
+  docs/feuille_de_route/191/2026-11-17-versions-supposees-d-avant-1985.md.
+reste: >-
+  113 versions supposées qui couvrent des pensions d'avant 1985 : statuts et
+  règlements des caisses, textes d'avant 1990 dont l'index n'a que l'analyse, et
+  des dispositifs que des circulaires de la Cnav datent. Le fac-similé du Journal
+  officiel et la base de la Cnav sont les sources à lire.

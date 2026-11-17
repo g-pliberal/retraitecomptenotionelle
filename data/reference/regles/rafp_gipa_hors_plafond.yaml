@@ -17,9 +17,23 @@ dates_qui_decident:
 - revenu.annee
 versions:
 - id: avant_2008
-  statut: supposee
-  hypothese: la GIPA n'existe pas avant le décret n° 2008-539 du 6 juin 2008
-  fiabilite: haute, le décret n° 2008-964 la dit « instituée » par celui-ci
+  statut: lue
+  textes:
+  - id: JORFARTI000018934156
+    article: "décret n° 2008-539 du 6 juin 2008 relatif à l'instauration d'une indemnité dite de garantie individuelle du pouvoir d'achat, article 4"
+    publie_le: 2008-06-07
+    lu_le: 2026-11-17
+    citation: >-
+      « Pour la mise en œuvre de la garantie en 2008, la période de référence est fixée du
+      31 décembre 2003 au 31 décembre 2007. »
+  - id: JORFARTI000019491877
+    article: "décret n° 2008-964, article 1er"
+    publie_le: 2008-09-17
+    lu_le: 2026-11-17
+    citation: >-
+      « l'indemnité dite de garantie individuelle du pouvoir d'achat instituée par le
+      décret n° 2008-539 du 6 juin 2008 »
+  nee_de: JORFARTI000018934156
   bornes:
     revenu.annee: [null, 2008-01-01]
   contenu:

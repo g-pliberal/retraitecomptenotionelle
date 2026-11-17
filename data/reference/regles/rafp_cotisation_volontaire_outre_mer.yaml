@@ -20,11 +20,15 @@ dates_qui_decident:
 - periode.debut
 versions:
 - id: avant_2024
-  statut: supposee
-  hypothese: >-
-    l'article 76 bis n'existe pas avant la loi n° 2023-1322 ; les majorations
-    outre-mer cotisent au RAFP comme toute prime, dans la limite de 20 %
-  fiabilite: haute, l'article est créé par l'article 201 de la loi de finances pour 2024
+  statut: lue
+  textes:
+  - id: LEGIARTI000048805651
+    article: "loi n° 2003-775, article 76 bis, III, première rédaction"
+    en_vigueur: 2023-12-31
+    lu_le: 2026-11-17
+    citation: >-
+      « III. - Le I est applicable à compter du 1er avril 2024. »
+  nee_de: LEGIARTI000048805651
   bornes:
     periode.debut: [null, 2024-04-01]
   contenu:

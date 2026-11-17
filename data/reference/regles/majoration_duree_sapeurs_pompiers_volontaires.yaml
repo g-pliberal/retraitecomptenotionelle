@@ -30,14 +30,16 @@ dates_qui_decident:
 - liquidation.date_effet
 versions:
 - id: avant_le_decret_de_2026
-  statut: supposee
-  hypothese: >-
-    L. 173-1-5, créé par l'article 24 de la loi n° 2023-270 du 14 avril 2023, renvoie
-    ses conditions et ses limites à un décret en Conseil d'État ; ce décret, le
-    n° 2026-18 du 20 janvier 2026, ne s'applique qu'aux pensions prenant effet à
-    compter du 1er juillet 2026 (son article 9) : aucune caisse n'attribue la
-    majoration avant, et la circulaire Cnav n° 2026-22 l'écrit sans rétroactivité
-  fiabilite: haute, le décret borne lui-même les pensions qu'il vise
+  statut: lue
+  textes:
+  - id: JORFARTI000053388247
+    article: "décret n° 2026-18 du 20 janvier 2026, article 9"
+    publie_le: 2026-01-21
+    lu_le: 2026-11-17
+    citation: >-
+      « Les dispositions du présent décret, à l'exception de celles prévues à l'article 7,
+      s'appliquent aux pensions prenant effet à compter du 1 er juillet 2026. »
+  nee_de: JORFARTI000053388247
   bornes:
     liquidation.date_effet: [null, 2026-07-01]
   contenu:

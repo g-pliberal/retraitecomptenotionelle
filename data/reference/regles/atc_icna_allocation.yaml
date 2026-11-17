@@ -25,11 +25,21 @@ dates_qui_decident:
 - radiation
 versions:
 - id: avant_1998
-  statut: supposee
-  hypothese: >-
-    avant l'article 46 de la loi n° 97-1239, qui crée l'article 6-1 de la loi
-    n° 89-1007, l'ingénieur radié n'a que sa pension civile
-  fiabilite: haute, l'article 6-1 n'a pas de rédaction antérieure au 30 décembre 1997 dans l'index
+  statut: lue
+  textes:
+  - id: JORFARTI000001613345
+    article: "loi n° 97-1239 du 29 décembre 1997, article 46"
+    publie_le: 1997-12-30
+    lu_le: 2026-11-17
+    citation: >-
+      « Il est inséré, dans la loi n° 89-1007 du 31 décembre 1989 relative au corps des
+      ingénieurs du contrôle de la navigation aérienne, deux articles 6-1 et 6-2 ainsi
+      rédigés »
+  - id: LEGIARTI000006450772
+    article: "loi n° 89-1007, article 6-1, première rédaction de LEGI"
+    en_vigueur: 1997-12-30
+    lu_le: 2026-11-17
+  nee_de: JORFARTI000001613345
   bornes:
     radiation: [null, 1997-12-30]
   contenu:

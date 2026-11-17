@@ -37,12 +37,20 @@ dates_qui_decident:
 # maternite, chomage (b et c du 4° de R. 351-12), invalidite, avpf.
 versions:
 - id: avant_la_carriere_longue
-  statut: supposee
-  hypothese: >-
-    l'article naît du décret n° 2003-1036 du 30 octobre 2003, dont les dispositions
-    « sont applicables aux pensions prenant effet postérieurement au 31-12-2003 » :
-    avant, aucun départ pour carrière longue, rien n'est réputé cotisé
-  fiabilite: haute
+  statut: lue
+  textes:
+  - id: JORFARTI000001667141
+    article: "décret n° 2003-1036 du 30 octobre 2003, article 7"
+    publie_le: 2003-10-31
+    lu_le: 2026-11-17
+    citation: >-
+      « Les dispositions du présent décret sont applicables aux pensions prenant effet
+      postérieurement au 31 décembre 2003. »
+  - id: LEGIARTI000006736522
+    article: "CSS, D. 351-1-2, première rédaction de LEGI"
+    en_vigueur: 2003-10-31
+    lu_le: 2026-11-17
+  nee_de: JORFARTI000001667141
   bornes:
     liquidation.date_effet: [null, 2004-01-01]
   contenu:
