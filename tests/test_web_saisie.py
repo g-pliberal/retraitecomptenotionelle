@@ -22,6 +22,7 @@ from retraite_notionnelle import chronologie
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.chargement import charger_periodes_non_travaillees
 from retraite_notionnelle.web.site import ErreurSite, disponible, module, rendre, site
+import facade
 from outils_pont import refus_de_la_saisie, saisie_du_portage
 from outils_web import (
     _echelle, _prose, contexte, montants_du_portage, page, pages, saisies,
@@ -165,7 +166,7 @@ def test_l_enfant_ne_apres_le_depart_compte_a_la_majoration_de_la_reversion(sais
     des montants d'un décès à venir, jusqu'au mois qui suit sa majorité, le
     1er juin 2041 (R. 161-4)."""
     carriere = saisies.carriere(_NE_APRES_LE_DEPART)
-    assert carriere.naissances_des_enfants == (("enfant_1", "2023-05-01"),)
+    assert facade.fait(carriere, "naissances_des_enfants") == (("enfant_1", "2023-05-01"),)
     reversion = saisies.simuler(_NE_APRES_LE_DEPART).dictionnaire()["reversion"]
     ligne = next(ligne for ligne in reversion["regimes"] if ligne["regime"] == "regime_general")
     assert (reversion["annee"], ligne["date_effet"]) == (2026, "2035-07-01")
