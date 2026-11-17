@@ -61,7 +61,6 @@ servies. Le jumeau de ce module est ``moteur/js/droit/departs.js``.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
@@ -71,6 +70,7 @@ from .commun import (SANS_LEUR_BASE, derniere_annee, ligne_cotisee,
                      periode_de_liquidation)
 from ..types_du_pont.droit import DemandeExaminee  # noqa: F401  (types du pont, action 161)
 from ..types_du_pont.droit import Depart, MOTIF_DEPART  # noqa: F401  (types du pont, action 161)
+from ..types_du_pont.droit import PensionServie  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import AnneeCarriere, Carriere
@@ -560,18 +560,6 @@ def _examiner(demandees: dict[str, DateMois], par_regime: dict[str, tuple[DateMo
             motif = ENSEMBLE
         examens.append(DemandeExaminee(code, demandee, retenue, motif))
     return tuple(examens)
-
-
-@dataclass(frozen=True)
-class PensionServie:
-    """Une pension déjà liquidée, que les départs suivants voient servie : ce
-    qu'elle vaut au mois de leur date d'effet, son régime, et sa propre date
-    d'effet (AAAA-MM-JJ), que le versement forfaitaire unique lit : il ne
-    reste, depuis 2016, qu'à qui a pris sa première retraite avant."""
-
-    regime: str
-    montant: float
-    date_effet: str | None = None
 
 
 def liquider_les_departs(moteur: ScenarioActuel, carriere: Carriere,

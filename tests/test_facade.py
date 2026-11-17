@@ -16,6 +16,7 @@ import dataclasses
 import datetime
 import inspect
 import math
+import ast
 import re
 from types import SimpleNamespace
 
@@ -63,7 +64,6 @@ from retraite_notionnelle.types_du_pont.carriere import Carriere as CarriereNue
 import facade
 from facade import (Carriere, NonTransmissible, Simulateur, acquerir, commun, completer, departs,
                     foyer, invalidite, liquider, ouvrir, regles_de_la_reversion, reversion)
-from facade import entrees_du_test  # noqa: F401 — la fixture d'un fichier basculé
 
 HAUTE = Fiabilite.CERTIFIEE
 
@@ -799,15 +799,15 @@ def test_une_date_passe_a_la_regle_au_mois_pres(simulateur):
 
 
 def test_une_regle_que_la_facade_ne_sert_pas_est_refusee(simulateur):
-    """Une règle servie se déclare (``pont.REGLES_DE_LA_FACADE``) : une autre,
-    une règle privée, une classe du module sont refusées, au lieu que le type
-    de ce qu'elles rendent se devine. Ce que le jumeau ne porte pas manque,
-    comme à un module."""
-    with pytest.raises(NonTransmissible, match="completer.complement_differentiel"):
+    """Une règle servie se déclare (``pont.REGLES_DE_LA_FACADE``), une
+    constante aussi (``pont.CONSTANTES_DE_LA_FACADE``) : une autre règle, une
+    règle privée, une classe du module manquent, comme à un module, au lieu
+    que le type de ce qu'elles rendent se devine."""
+    with pytest.raises(AttributeError, match="completer.complement_differentiel"):
         completer.complement_differentiel
-    with pytest.raises(NonTransmissible, match="liquider._au_trimestre_superieur"):
+    with pytest.raises(AttributeError, match="liquider._au_trimestre_superieur"):
         liquider._au_trimestre_superieur
-    with pytest.raises(NonTransmissible, match="liquider.EligibleMinimum"):
+    with pytest.raises(AttributeError, match="liquider.EligibleMinimum"):
         liquider.EligibleMinimum
     with pytest.raises(AttributeError, match="ouvrir.regle_lunaire"):
         ouvrir.regle_lunaire
@@ -1386,7 +1386,7 @@ def test_les_regles_des_cultes_se_demandent_au_portage(simulateur):
     assert type(duree) is DureesDesCultes
     assert (duree.avant_1979, duree.de_1979_a_1997, duree.cotises_de_1979_a_1997,
             duree.avant_1998) == (76, 76, 76, 152)
-    with pytest.raises(NonTransmissible, match="fraction_d_avant_1998"):
+    with pytest.raises(AttributeError, match="fraction_d_avant_1998"):
         facade.cultes.fraction_d_avant_1998
 
 
@@ -1620,12 +1620,11 @@ def test_les_demandes_de_pension_se_demandent_au_portage(simulateur):
 
 
 def test_une_constante_d_un_module_du_droit_se_lit_sur_la_facade():
-    """Une constante du module, une valeur simple, se lit telle quelle : le
-    portage n'a rien à en calculer. Une règle que la façade ne sert pas
-    reste refusée."""
-    assert completer.RCO == completer_python.RCO == "msa_rco"
-    assert completer.HEURES_DU_COMPLEMENT == completer_python.HEURES_DU_COMPLEMENT
-    with pytest.raises(NonTransmissible, match="complement_differentiel"):
+    """Une constante du module, une valeur simple, se lit au portage, qui
+    l'exporte sous le même nom. Une règle que la façade ne sert pas manque."""
+    assert completer.RCO == "msa_rco"
+    assert completer.HEURES_DU_COMPLEMENT == 1820
+    with pytest.raises(AttributeError, match="complement_differentiel"):
         completer.complement_differentiel
 
 
@@ -1818,7 +1817,6 @@ def test_les_regles_de_la_reversion_se_demandent_sous_un_nom_a_elles():
     (R. 353-4) : du 15 juin 1990 au 10 mars 2000, 116 mois."""
     duree = regles_de_la_reversion.mois_de_mariage("1990-06-15", "2000-03-10")
     assert (duree, type(duree)) == (116, int)
-    assert facade.JUMEAUX["regles_de_la_reversion"] is reversion_python
 
 
 def test_une_regle_privee_du_jumeau_se_demande_a_la_fonction_du_portage():
@@ -2369,7 +2367,6 @@ def test_le_foyer_se_demande_au_portage_et_revient_sous_son_type(simulateur):
     avant = foyer.foyer_et_net(actuel, "assure", "2026-06-01", 2026, 6000.0, True,
                                carriere=_foyer_du_couple(simulateur, "1956", "2026-09"))
     assert (avant.bareme, avant.ressources_conjoint) == ("personne_seule", 0.0)
-    assert facade.JUMEAUX["foyer"] is foyer_python
 
 
 def test_les_majorations_forfaitaires_se_demandent_sur_une_pension_de_regime(simulateur):
@@ -2383,7 +2380,6 @@ def test_les_majorations_forfaitaires_se_demandent_sur_une_pension_de_regime(sim
     assert facade.revalorisation.majorations_forfaitaires(
         simulateur.scenario_actuel, dataclasses.replace(pension, sur_la_duree_maximum=False),
         "1973-02-01") == ()
-    assert facade.JUMEAUX["revalorisation"] is revalorisation_python
 
 
 # -- la liquidation ---------------------------------------------------------------------
@@ -2408,7 +2404,6 @@ def test_la_liquidation_se_demande_au_portage(simulateur):
     montants = {pension.regime: pension.montant for pension in liquidee.regimes}
     assert set(montants) >= {"regime_general", "agirc_arrco"}
     assert all(type(montant) is float and montant > 0 for montant in montants.values())
-    assert facade.JUMEAUX["liquidation"] is liquidation_python
 
 
 def _journal_d_une_entree():
@@ -2601,11 +2596,11 @@ def test_chaque_regle_servie_a_les_arguments_de_son_jumeau_dans_leur_ordre(modul
         assert type(lu) is not str or type(defaut) in (int, float), (regle, nom, ecrit)
 
 
-# -- un test resté sur le moteur Python ------------------------------------------------
+# -- le simulateur d'un test -----------------------------------------------------------
 
-def test_un_test_sans_marque_passe_par_la_facade(request):
-    """Dans un fichier basculé, les entrées sont celles de la façade, et le
-    simulateur du test est le sien, le même d'un test à l'autre."""
+def test_le_simulateur_du_test_est_celui_de_la_facade(request):
+    """Les entrées sont celles de la façade, et le simulateur du test est le
+    sien, le même d'un test à l'autre de son fichier."""
     assert Simulateur is facade.Simulateur and reversion is facade.reversion
     assert liquider is facade.liquider and ouvrir is facade.ouvrir
     simulateur = facade.simulateur_du_test(request, Parametres())
@@ -2614,26 +2609,6 @@ def test_un_test_sans_marque_passe_par_la_facade(request):
     assert facade.simulateur_du_test(request) is simulateur
     autre = facade.simulateur_du_test(request, Parametres(annee_courante=2030))
     assert autre is not simulateur and autre.parametres.annee_courante == 2030
-
-
-@pytest.mark.sur_le_moteur_python("essai de la marque")
-def test_un_test_marque_reste_sur_le_moteur_python(request):
-    """Un test que la façade ne sait pas encore servir garde le moteur Python,
-    tel qu'il était : sous sa marque, les entrées de son fichier sont celles
-    du Python, et son simulateur aussi."""
-    assert Simulateur is simulateur_python.Simulateur
-    assert Carriere is carriere_python.Carriere
-    assert reversion.__module__ == "retraite_notionnelle.droit.reversion"
-    assert liquider is liquider_python and ouvrir is ouvrir_python
-    simulateur = facade.simulateur_du_test(request, Parametres())
-    assert type(simulateur) is simulateur_python.Simulateur
-    assert facade.simulateur_du_test(request, Parametres()) is simulateur
-
-
-def test_apres_un_test_marque_les_entrees_sont_de_nouveau_celles_de_la_facade():
-    assert Simulateur is facade.Simulateur and Carriere is facade.Carriere
-    assert reversion is facade.reversion
-    assert liquider is facade.liquider and ouvrir is facade.ouvrir
 
 
 def test_des_variantes_d_univers_sont_refusees():
@@ -2684,6 +2659,45 @@ def test_l_age_majore_de_la_surcote_se_lit_au_portage():
     assert liquider.SURCOTE_AGE_MAJORE == 65
     with pytest.raises(ValueError, match="liquider.SURCOTE_INCONNUE"):
         pont.constante_du_droit("liquider", "SURCOTE_INCONNUE")
+
+
+def test_les_noms_du_droit_que_lisaient_les_tests_se_lisent_au_portage():
+    """Les noms qu'un test lisait sur le module de règles Python (les fiches,
+    les statuts, les motifs), la façade les lit au portage, qui les exporte
+    sous les mêmes noms (``pont.CONSTANTES_DE_LA_FACADE``) : une liste revient
+    en tuple, comme le Python l'écrivait. ``droit.seconde`` y entre."""
+    assert pont.constante_du_droit("seconde", "LOI_2014") == "loi_2014"
+    assert pont.constante_du_droit("categories", "FICHES_DES_CATEGORIES") == (
+        "taux_plein_anciens_deportes_internes", "taux_plein_meres_de_famille_ouvrieres",
+        "taux_plein_travailleurs_manuels", "taux_plein_anciens_combattants_prisonniers")
+    fiches = pont.constante_du_droit("limite_age", "FICHES")
+    assert len(fiches) == 15 and fiches[:2] == ("limite_age_fonction_publique",
+                                                "limite_age_militaires")
+    assert facade.cumul.LIBRE == "libre"
+    assert facade.limite_age.FICHES == fiches
+
+
+def test_la_facade_ne_charge_aucun_fichier_de_regles():
+    """La façade des tests (action 161, troisième lot de la suppression) ne
+    tient plus rien des fichiers de règles Python, que la classe des règles
+    de la carrière : ses types viennent de ``types_du_pont``, ses constantes
+    du portage, et elle n'a plus de jumeau à rendre à un test marqué."""
+    assert not hasattr(facade, "JUMEAUX") and not hasattr(facade, "entrees_du_test")
+    assert facade.liquidation.Contexte.__module__ == "retraite_notionnelle.types_du_pont.droit"
+    assert facade.departs.PensionServie.__module__ == "retraite_notionnelle.types_du_pont.droit"
+    importes = {noeud.module if noeud.module != "retraite_notionnelle" else
+                f"{noeud.module}.{alias.name}"
+                for noeud in ast.walk(ast.parse(inspect.getsource(facade)))
+                if isinstance(noeud, ast.ImportFrom) and noeud.module
+                for alias in noeud.names}
+    fichiers_de_regles = tuple(f"retraite_notionnelle.{racine}" for racine in (
+        "droit", "moteur", "scenarios", "simulateur", "carriere", "echeancier", "journal",
+        "pilote", "revalorisation"))
+    regles = sorted(module for module in importes if any(
+        module == racine or module.startswith(racine + ".") for racine in fichiers_de_regles))
+    # La classe des règles de la carrière reste, que ce qu'on bâtit à la main
+    # lit encore : le prochain pas de la suppression.
+    assert regles == ["retraite_notionnelle.carriere"]
 
 
 def test_les_tables_et_les_noms_du_droit_se_lisent_au_portage():

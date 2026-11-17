@@ -10,9 +10,10 @@ calcule sous les types du Python, lus strictement (``pont.lu_strictement``).
 Un fichier de tests y passe en changeant ses imports, ses tests inchangés :
 ce qu'il éprouve alors est le moteur du site, contre la même valeur.
 
-La façade vit dans un module à elle tant que le jumeau Python vit : les
-confrontations, qui font refaire au jumeau ce que le portage calcule, gardent
-les entrées du Python.
+La façade ne charge aucun fichier de règles Python (action 161, troisième
+lot de la suppression) : ce qu'un module de règles sert, elle le tient du
+portage et de ses contrats (``contrats_de_la_facade.py``), ses constantes
+comprises ; ses types, de ``types_du_pont``.
 
 **Ce que la façade ne sait pas transmettre, elle le refuse**
 (:class:`NonTransmissible`), au lieu de l'ignorer : le portage calculerait sur
@@ -64,11 +65,6 @@ refaites par le portage de la carrière et des drapeaux dont elles viennent.
 Ses durées repassent au portage, qui les refait du relevé de leur carrière,
 quand une règle les reçoit (``liquider.duree_du_regime_aligne``) : celles
 du relevé sous ses drapeaux par défaut seulement.
-
-**Un test resté sur le moteur Python**, dans un fichier basculé, porte la
-marque ``sur_le_moteur_python`` et sa raison : le temps de ce test, les
-entrées de son fichier et son simulateur redeviennent ceux du Python
-(:func:`entrees_du_test`, :func:`simulateur_du_test`).
 """
 
 from __future__ import annotations
@@ -82,47 +78,25 @@ import sys
 import typing
 from pathlib import Path
 
-import pytest
-
 import contrats_de_la_facade as _contrats
-from retraite_notionnelle import carriere as _carriere
 from retraite_notionnelle import castypes as _castypes
-from retraite_notionnelle import echeancier as _echeancier
-from retraite_notionnelle import journal as _journal
+from retraite_notionnelle import carriere as _carriere
 from retraite_notionnelle import memoire, pont
-from retraite_notionnelle import pilote as _pilote
-from retraite_notionnelle import revalorisation as _revalorisation
 from retraite_notionnelle.revalorisation_servie import (
     RevalorisationServie as _RevalorisationServie)
-from retraite_notionnelle import simulateur as _simulateur
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import ContributionEtat, Parametres
+from retraite_notionnelle.noyau.budget import APPELS_DECLARES as _APPELS_DECLARES
 from retraite_notionnelle.donnees import mortalite as _mortalite_donnees
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite
 from retraite_notionnelle.donnees.regimes import PeriodeRegime, Regime
 from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees
 from retraite_notionnelle.pont import NonTransmissible
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere, LigneRelevee
 from retraite_notionnelle.types_du_pont.carriere import Carriere as _CarriereNue
-from retraite_notionnelle.droit import acquerir as _acquerir
-from retraite_notionnelle.droit import categories as _categories
-from retraite_notionnelle.droit import commun as _commun
-from retraite_notionnelle.droit import compter as _compter
-from retraite_notionnelle.droit import coordonner as _coordonner
-from retraite_notionnelle.droit import completer as _completer
-from retraite_notionnelle.droit import cultes as _cultes
-from retraite_notionnelle.droit import cumul as _cumul
-from retraite_notionnelle.droit import departs as _departs
-from retraite_notionnelle.droit import foyer as _foyer
-from retraite_notionnelle.droit import invalidite as _invalidite
-from retraite_notionnelle.droit import limite_age as _limite_age
-from retraite_notionnelle.droit import liquidation as _liquidation
-from retraite_notionnelle.droit import liquider as _liquider
-from retraite_notionnelle.droit import ouvrir as _ouvrir
-from retraite_notionnelle.droit import progressive as _progressive
-from retraite_notionnelle.droit import releve as _releve
-from retraite_notionnelle.droit import reversion as _reversion
-from retraite_notionnelle.droit import seconde as _seconde
-from retraite_notionnelle.moteur import compte as _compte
+from retraite_notionnelle.types_du_pont import droit as _types_du_droit
+from retraite_notionnelle.types_du_pont.journal import Entree as _Entree
+from retraite_notionnelle.types_du_pont.journal import Evenement as _Evenement
 from retraite_notionnelle.types_du_pont.moteur import RegimeFusionne
 
 #: Les données du simulateur Python que la façade laisse lire : des chargeurs,
@@ -316,7 +290,7 @@ class ScenarioActuel(_Ferme):
             raise AttributeError(nom)
         # Qui lit : une règle du moteur Python à qui le test a passé ce moteur
         # tournerait en Python sur les tables du portage.
-        if sys._getframe(1).f_globals.get("__name__", "").startswith(_carriere.__package__ + "."):
+        if sys._getframe(1).f_globals.get("__name__", "").startswith("retraite_notionnelle."):
             raise NonTransmissible(
                 f"ScenarioActuel.{nom}, lu par une règle du moteur Python "
                 f"({sys._getframe(1).f_globals['__name__']}.{sys._getframe(1).f_code.co_name}) : "
@@ -522,7 +496,7 @@ class Journal(_Ferme):
         return _demander("journal.operer", Parametres(), datees, operation, list(valeurs))
 
     def inscrire(self, entree):
-        if not isinstance(entree, _journal.Entree):
+        if not isinstance(entree, _Entree):
             raise NonTransmissible("journal.inscrire : ce n'est pas une Entree du journal")
         self._operer([*self._entrees, entree], "inscrire")
         self._entrees.append(entree)
@@ -977,9 +951,17 @@ def ConstructeurCompte(macro, catalogue, affiliations, indexation, parametres) -
 
 
 class Carriere(_carriere.Carriere):
-    """``Carriere``, ses quatre bâtisseurs servis par le portage : la carrière
-    qu'ils rendent est une ``Carriere`` du Python, le type que le pont
-    échange."""
+    """``Carriere``, ses quatre bâtisseurs servis par le portage, et
+    ``depuis_lignes``, qui ne fait que la poser : la carrière qu'ils rendent
+    est la carrière nue, le type que le pont échange. Bâtie à la main, elle est
+    encore celle des règles : ce que les tests et ``contributions_equilibre``
+    en lisent (``part_retenue_ligne``, ``date_entree``…) se lit sur elle, en
+    Python — le dernier import d'un fichier de règles (action 161)."""
+
+    @classmethod
+    def depuis_lignes(cls, annee_naissance: int, sexe: str, lignes, **options) -> Carriere:
+        """La carrière de ces lignes, telles quelles, sans rien calculer."""
+        return cls(annee_naissance=annee_naissance, sexe=sexe, lignes=list(lignes), **options)
 
     @classmethod
     def depuis_profil(cls, *arguments, **options):
@@ -1043,32 +1025,40 @@ def reversion(moteur, pensions, carriere, annee, *arguments, **options):
 _SIMPLES = (bool, int, float, str, type(None))
 
 
-class Regles(_Ferme):
-    """Un module de règles du droit, sous le nom de son jumeau : celles de ses
-    règles que la façade sert (:data:`REGLES`), appelées par le portage, et
-    ses constantes, des valeurs simples, telles quelles."""
+#: Les constantes du droit déjà lues au portage, par module et par nom.
+_CONSTANTES_LUES: dict[tuple[str, str], object] = {}
 
-    def __init__(self, nom: str, jumeau) -> None:
+
+def _constante(module: str, nom: str):
+    """La constante ``nom`` du module du droit ``module``, lue une fois au
+    portage (:data:`CONSTANTES`) ; une table, copiée."""
+    if (module, nom) not in _CONSTANTES_LUES:
+        _CONSTANTES_LUES[(module, nom)] = pont.constante_du_droit(module, nom)
+    valeur = _CONSTANTES_LUES[(module, nom)]
+    return dict(valeur) if isinstance(valeur, dict) else valeur
+
+
+def _absente(module: str, nom: str) -> AttributeError:
+    """Ce que la façade ne sert pas manque ici comme à un module : pytest sonde
+    ainsi ce qu'un fichier de tests importe."""
+    return AttributeError(
+        f"{module}.{nom} : ni une règle (pont.REGLES_DE_LA_FACADE) ni une constante "
+        "(pont.CONSTANTES_DE_LA_FACADE) que la façade serve — la demander au pont")
+
+
+class Regles(_Ferme):
+    """Un module de règles du droit, sous son nom : celles de ses règles que la
+    façade sert (:data:`REGLES`), appelées par le portage, et ses constantes
+    (:data:`CONSTANTES`), lues au portage."""
+
+    def __init__(self, nom: str) -> None:
         object.__setattr__(self, "_nom", nom)
-        object.__setattr__(self, "_jumeau", jumeau)
 
     def __getattr__(self, regle):
         if regle in CONSTANTES.get(self._nom, ()):
-            # Une constante du portage, que le jumeau tient ailleurs ou pas.
-            return pont.constante_du_droit(self._nom, regle)
-        # Ce que le jumeau ne porte pas manque ici comme à un module : pytest
-        # sonde ainsi ce qu'un fichier de tests importe.
-        if regle.startswith("__") or not hasattr(self._jumeau, regle):
-            raise AttributeError(f"{self._nom}.{regle}")
-        if _suite_simple(getattr(self._jumeau, regle)):
-            # Une constante du module, une valeur simple ou une suite de
-            # valeurs simples : rien à calculer.
-            return getattr(self._jumeau, regle)
-        if regle not in REGLES.get(self._nom, ()):
-            raise NonTransmissible(
-                f"{self._nom}.{regle} : la façade ne sert pas cette règle du droit "
-                "(pont.REGLES_DE_LA_FACADE) — le test reste sur le moteur Python, ou la "
-                "demande au pont")
+            return _constante(self._nom, regle)
+        if regle.startswith("__") or regle not in REGLES.get(self._nom, ()):
+            raise _absente(self._nom, regle)
         contrat = _contrats.contrat_de_la_regle(self._nom, regle)
         rendu = typing.get_type_hints(contrat)["return"]
 
@@ -1225,11 +1215,11 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
             for element in valeur):
         # Des avantages appliqués, que le pont passe champ à champ.
         return list(valeur)
-    if type(valeur) in (tuple, list) and all(type(element) is _carriere.LigneRelevee
+    if type(valeur) in (tuple, list) and all(type(element) is LigneRelevee
                                              for element in valeur):
         # Un relevé saisi, ses lignes de données, que le pont passe champ à champ.
         return list(valeur)
-    if isinstance(valeur, _liquidation.Contexte):
+    if isinstance(valeur, _types_du_droit.Contexte):
         return pont.ContexteDuMoteur(tuple(_contexte_de_la_facade(
             regle, None if simulateur is None else simulateur.scenario_actuel, valeur)))
     if isinstance(valeur, pont.DureesPosees):
@@ -1251,7 +1241,7 @@ def _argument_de_regle(regle: str, simulateur: Simulateur | None, nom: str, vale
     if isinstance(valeur, pont.LigneDeCarriere):
         # Une ligne et sa carrière, que le test a nommées (``ligne_de``).
         return valeur
-    if isinstance(valeur, _carriere.AnneeCarriere):
+    if isinstance(valeur, AnneeCarriere):
         # Le portage relit la ligne, par son rang, dans la carrière que la
         # règle reçoit : une ligne qui n'en est pas n'y arriverait pas.
         rang = next((rang for rang, ligne in enumerate(getattr(carriere, "lignes", ()))
@@ -1284,7 +1274,7 @@ def _contexte_de_la_facade(entree: str, moteur, contexte):
     ``None`` sans contexte."""
     if contexte is None:
         return None
-    if not isinstance(contexte, _liquidation.Contexte) or contexte.univers is not moteur:
+    if not isinstance(contexte, _types_du_droit.Contexte) or contexte.univers is not moteur:
         raise NonTransmissible(
             f"{entree} : contexte d'un autre moteur que celui de l'étape — le portage le "
             "refait sur le moteur du simulateur de la façade (simulateur.scenario_actuel)")
@@ -1433,38 +1423,38 @@ class _Commun(Regles):
 #: ``droit.commun``, ``droit.completer``, ``droit.liquider`` et
 #: ``droit.ouvrir``, leurs règles servies par le portage, et les étapes des
 #: trois derniers.
-commun = _Commun("commun", _commun)
-completer = _Completer("completer", _completer)
+commun = _Commun("commun")
+completer = _Completer("completer")
 #: ``droit.foyer`` : l'étape « foyer et net », rendue sous le type ``Foyer``,
 #: le contexte d'une liquidation par ses neutralisations.
-foyer = Regles("foyer", _foyer)
-liquider = _Liquider("liquider", _liquider)
-ouvrir = _Ouvrir("ouvrir", _ouvrir)
+foyer = Regles("foyer")
+liquider = _Liquider("liquider")
+ouvrir = _Ouvrir("ouvrir")
 #: Les règles du module de la réversion, sous un nom à elles : ``reversion``
 #: est l'entrée de la réversion, la fonction du module qui porte son nom.
-regles_de_la_reversion = Regles("reversion", _reversion)
+regles_de_la_reversion = Regles("reversion")
 #: ``droit.cultes`` : la durée de chaque fraction de la pension des cultes,
 #: sur les durées du relevé, et la part de l'écart de la génération.
-cultes = Regles("cultes", _cultes)
+cultes = Regles("cultes")
 #: Le cumul emploi-retraite : la part du brut que la CSG retient, le premier
 #: jour d'un mois, et ses constantes.
-cumul = Regles("cumul", _cumul)
+cumul = Regles("cumul")
 #: Les droits que l'activité ouvre après le départ : ses constantes seules.
-seconde = Regles("seconde", _seconde)
+seconde = Regles("seconde")
 #: ``droit.categories`` : l'âge légal de la génération, et l'âge du taux plein
 #: de l'ancien combattant ou prisonnier de guerre (D. 351-2).
-categories = Regles("categories", _categories)
+categories = Regles("categories")
 #: ``droit.invalidite`` : l'âge de l'ASPA de l'inapte, la catégorie de la
 #: pension d'invalidité et le plancher de la pension substituée.
-invalidite = Regles("invalidite", _invalidite)
+invalidite = Regles("invalidite")
 class _Departs(Regles):
     """``droit.departs`` : ses règles servies, et ``Depart`` et
     ``DemandeExaminee``, les types du Python, que ses règles rendent et que
     les tests bâtissent pour les comparer."""
 
-    Depart = _departs.Depart
-    DemandeExaminee = _departs.DemandeExaminee
-    PensionServie = _departs.PensionServie
+    Depart = _types_du_droit.Depart
+    DemandeExaminee = _types_du_droit.DemandeExaminee
+    PensionServie = _types_du_droit.PensionServie
 
     def liquider_les_departs(self, moteur, carriere, contexte, nature: str = "definitive",
                              liste=None, journal=None, progressive=None) -> list:
@@ -1494,17 +1484,17 @@ class _Departs(Regles):
                 for liquidee in lu["liquidations"]]
 
 
-departs = _Departs("departs", _departs)
+departs = _Departs("departs")
 #: La radiation des cadres par limite d'âge, et la carrière qu'elle arrête.
-limite_age = Regles("limite_age", _limite_age)
+limite_age = Regles("limite_age")
 #: ``revalorisation``, hors du droit : les majorations forfaitaires de 1972 à
 #: 1982, servies par le portage.
-revalorisation = Regles("revalorisation", _revalorisation)
-compte = Regles("compte", _compte)
+revalorisation = Regles("revalorisation")
+compte = Regles("compte")
 #: ``carriere``, hors du droit : le relevé prolongé jusqu'au départ et le
 #: salaire moyen d'une année, servis par le portage sur les séries d'un
 #: simulateur de la façade.
-carriere = Regles("carriere", _carriere)
+carriere = Regles("carriere")
 prolonger_releve = carriere.prolonger_releve
 salaire_moyen_annuel = carriere.salaire_moyen_annuel
 
@@ -1595,20 +1585,19 @@ class _Liquidation(_Ferme):
     recalcul refusé, une date d'observation, une hypothèse n'arriveraient pas
     au portage : la liquidation est refusée."""
 
-    Demande = _liquidation.Demande
-    Etat = _liquidation.Etat
-    Contexte = _liquidation.Contexte
-    Mesure = _liquidation.Mesure
+    Demande = _types_du_droit.Demande
+    Etat = _types_du_droit.Etat
+    Contexte = _types_du_droit.Contexte
+    Mesure = _types_du_droit.Mesure
 
     def __getattr__(self, nom):
-        # Ce que le jumeau ne porte pas manque ici comme à un module : pytest
-        # sonde ainsi ce qu'un fichier de tests importe.
-        if nom.startswith("__") or not hasattr(_liquidation, nom):
-            raise AttributeError(f"liquidation.{nom}")
-        # Une constante du module n'est pas une règle : elle se lit.
-        if nom.isupper():
-            return getattr(_liquidation, nom)
-        return super().__getattr__(nom)
+        # Ses deux constantes : le budget d'appels de ``liquider`` par départ,
+        # que le noyau tient, et les neutralisations du vocabulaire.
+        if nom == "APPELS_DECLARES":
+            return _APPELS_DECLARES
+        if nom == "NEUTRALISATIONS":
+            return _types_du_droit.NEUTRALISATIONS
+        raise _absente("liquidation", nom)
 
     def appels(self) -> int:
         return _APPELS[0]
@@ -1629,7 +1618,7 @@ class _Liquidation(_Ferme):
                 "liquidation.liquider : journal qui n'est pas un journal vide de la façade — "
                 "le portage ne verrait pas ses entrées")
         if not etat.recalcul or not all(
-                type(servie) is _departs.PensionServie for servie in etat.servies) or not all(
+                type(servie) is _types_du_droit.PensionServie for servie in etat.servies) or not all(
                 type(regime) is str and type(montant) in (int, float)
                 for regime, montant in etat.initiales):
             raise NonTransmissible(
@@ -1670,7 +1659,7 @@ class _Progressive(Regles):
     liquidation-là, que le portage refait. Un journal, une liquidation
     provisoire qui ne vient pas de la façade n'arriveraient pas au portage."""
 
-    Progressive = _progressive.Progressive
+    Progressive = _types_du_droit.Progressive
 
     @staticmethod
     def _demande(entree: str, moteur, progressive, contexte=None) -> dict:
@@ -1680,7 +1669,7 @@ class _Progressive(Regles):
                 f"{entree} : moteur que la façade ne sait pas transmettre — la retraite "
                 "progressive se liquide sur le moteur d'un simulateur de la façade, sous son "
                 "contexte")
-        if not isinstance(progressive, _progressive.Progressive):
+        if not isinstance(progressive, _types_du_droit.Progressive):
             raise NonTransmissible(f"{entree} : ce n'est pas une Progressive")
         champs = dataclasses.asdict(progressive)
         return {**champs, "date": [progressive.date.annee, progressive.date.mois],
@@ -1718,7 +1707,7 @@ class _Progressive(Regles):
 
 #: ``droit.progressive``, ses règles et sa liquidation provisoire servies par
 #: le portage.
-progressive = _Progressive("progressive", _progressive)
+progressive = _Progressive("progressive")
 
 
 # -- le relevé des droits et ses étapes -----------------------------------------------
@@ -1952,28 +1941,14 @@ class Releve(_Ferme):
 
 
 class _Module(_Ferme):
-    """Un module du droit sous le nom de son jumeau : ses constantes, telles
-    quelles ; ce qu'il sert, par le portage ; le reste, refusé."""
+    """Un module du droit sous son nom : ses constantes et ses règles que la
+    façade sert, par le portage, comme celles de :class:`Regles` ; ses
+    entrées, par les méthodes de chaque sous-classe ; le reste manque."""
 
-    _jumeau = None
+    _nom = ""
 
     def __getattr__(self, nom):
-        # Ce que le jumeau ne porte pas manque ici comme à un module : pytest
-        # sonde ainsi ce qu'un fichier de tests importe.
-        if nom.startswith("__") or not hasattr(self._jumeau, nom):
-            raise AttributeError(f"{self._jumeau.__name__}.{nom}")
-        constante = getattr(self._jumeau, nom)
-        if type(constante) in _SIMPLES:
-            return constante
-        # Une table de valeurs simples (``FICHES_DES_ASSIMILEES``), copiée.
-        if type(constante) is dict and all(
-                type(v) in _SIMPLES for v in (*constante, *constante.values())):
-            return dict(constante)
-        # Une règle du module que la façade sert (``acquerir.points_msa_retenus``).
-        module = self._jumeau.__name__.rsplit(".", 1)[-1]
-        if nom in REGLES.get(module, ()):
-            return getattr(Regles(module, self._jumeau), nom)
-        return super().__getattr__(nom)
+        return Regles(self._nom).__getattr__(nom)
 
 
 def _moteur_de_la_facade(entree: str, moteur) -> ScenarioActuel:
@@ -1994,16 +1969,11 @@ def _coordination_de_la_facade(entree: str, coordination) -> Coordination:
 
 
 class Releves(_Module):
-    """``droit.releve``, sous le nom de son jumeau : ``construire``, servi
+    """``droit.releve``, sous son nom : ``construire``, servi
     par le portage, ses drapeaux compris ; ses règles (:data:`REGLES`), le
     relevé à rebours, servies comme celles d'un module du droit."""
 
-    _jumeau = _releve
-
-    def __getattr__(self, nom):
-        if nom in REGLES["releve"]:
-            return Regles("releve", _releve).__getattr__(nom)
-        return super().__getattr__(nom)
+    _nom = "releve"
 
     def construire(self, moteur, carriere, **drapeaux) -> Releve:
         contrat = _contrats.contrat_de_l_entree("releve.construire")
@@ -2021,7 +1991,7 @@ class Releves(_Module):
 class _Coordonner(_Module):
     """``droit.coordonner`` : ``coordonner`` et ``retablir``, servis par le portage."""
 
-    _jumeau = _coordonner
+    _nom = "coordonner"
 
     def coordonner(self, moteur, carriere) -> Coordination:
         source = _Source(_moteur_de_la_facade("coordonner.coordonner", moteur), carriere,
@@ -2043,12 +2013,7 @@ class _Compter(_Module):
     depuis 1970, sous les réglages de référence, qu'elles ne lisent pas ; ses
     règles (:data:`REGLES`), servies comme celles d'un module du droit."""
 
-    _jumeau = _compter
-
-    def __getattr__(self, nom):
-        if nom in REGLES["compter"]:
-            return Regles("compter", _compter).__getattr__(nom)
-        return super().__getattr__(nom)
+    _nom = "compter"
 
     @staticmethod
     def _jours(jour: datetime.date) -> int:
@@ -2076,7 +2041,7 @@ class _Acquerir(_Module):
     """``droit.acquerir`` : ``acquerir``, servi par le portage sur une
     coordination de la façade et les durées qu'elle a comptées."""
 
-    _jumeau = _acquerir
+    _nom = "acquerir"
 
     def acquerir(self, moteur, coordination, durees, avec_points_gratuits: bool = True) -> Droits:
         _moteur_de_la_facade("acquerir.acquerir", moteur)
@@ -2100,9 +2065,9 @@ class _Echeanciers(_Module):
     appelle, tel que le paquet du portage le tient, sans ce qui la dit ; et
     ``Evenement``, le type du Python."""
 
-    _jumeau = _echeancier
+    _nom = "echeancier"
     Echeancier = Echeancier
-    Evenement = _echeancier.Evenement
+    Evenement = _Evenement
 
     def depart_de(self, carriere):
         return _demander("echeancier.depart_de", Parametres(), carriere)
@@ -2116,9 +2081,9 @@ class _Journaux(_Module):
     """``journal`` : le journal (:class:`Journal`) et ``Entree``, le type du
     Python."""
 
-    _jumeau = _journal
+    _nom = "journal"
     Journal = Journal
-    Entree = _journal.Entree
+    Entree = _Entree
 
 
 class _Pilote(_Module):
@@ -2128,7 +2093,7 @@ class _Pilote(_Module):
     la projette (``castypes.primes_projetees_en_donnees``). Ses appels de
     ``liquider`` se comptent dans ``liquidation.appels()``."""
 
-    _jumeau = _pilote
+    _nom = "pilote"
 
     def age_de_depart(self, simulateur, cas, generation: int, variante: str = "droit") -> float:
         if not isinstance(simulateur, Simulateur):
@@ -2154,35 +2119,6 @@ compter = _Compter()
 acquerir = _Acquerir()
 
 
-# -- un test resté sur le moteur Python ----------------------------------------------
-#
-# Dans un fichier basculé, un test que la façade ne sait pas encore servir —
-# il appelle une règle du moteur Python, ou lit ce que la façade refuse — garde
-# le moteur Python, tel qu'il était, sous la marque ``sur_le_moteur_python`` et
-# sa raison. Les tests marqués se comptent, et leur nombre ne fait que
-# décroître (``tests/test_fichiers_sur_le_moteur_python.py``).
-
-#: La marque d'un test resté sur le moteur Python.
-MARQUE = "sur_le_moteur_python"
-
-#: Le jumeau Python de chaque entrée qu'un fichier basculé importe d'ici.
-JUMEAUX = {"Simulateur": _simulateur.Simulateur, "Carriere": _carriere.Carriere,
-           "reversion": _reversion.reversion, "commun": _commun, "completer": _completer,
-           "foyer": _foyer, "liquider": _liquider, "ouvrir": _ouvrir, "releve": _releve,
-           "regles_de_la_reversion": _reversion, "revalorisation": _revalorisation,
-           "liquidation": _liquidation, "coordonner": _coordonner, "compter": _compter,
-           "acquerir": _acquerir, "categories": _categories, "cultes": _cultes, "departs": _departs, "invalidite": _invalidite,
-           "faire_vivre": _revalorisation.faire_vivre,
-           "actuel_aujourd_hui": _revalorisation.actuel_aujourd_hui,
-           "PensionServie": _revalorisation.PensionServie,
-           "majorer_les_petites_pensions": _revalorisation.majorer_les_petites_pensions,
-           "Echeancier": _echeancier.Echeancier, "echeancier": _echeancier,
-           "journal": _journal, "pilote": _pilote,
-           "ConstructeurCompte": _compte.ConstructeurCompte,
-           "prolonger_releve": _carriere.prolonger_releve,
-           "salaire_moyen_annuel": _carriere.salaire_moyen_annuel}
-
-#: Les simulateurs des tests, par fichier, par moteur et par paramètres.
 #: Les copies retouchées des données de ce processus, par retouches.
 _COPIES: dict[tuple, Path] = {}
 
@@ -2213,33 +2149,11 @@ def donnees_retouchees(request, nom: tuple, retouches: dict) -> Path:
 _SIMULATEURS: dict[tuple, object] = {}
 
 
-def _marque(request) -> bool:
-    return request.node.get_closest_marker(MARQUE) is not None
-
-
-def simulateur_du_test(request, parametres: Parametres | None = None):
-    """Le simulateur d'un test, sous ``parametres`` : celui de la façade, ou
-    celui du moteur Python pour un test marqué. Le même pour tous les tests
-    d'un fichier, comme une fixture de module."""
+def simulateur_du_test(request, parametres: Parametres | None = None) -> Simulateur:
+    """Le simulateur de la façade d'un test, sous ``parametres`` : le même
+    pour tous les tests d'un fichier, comme une fixture de module."""
     parametres = Parametres() if parametres is None else parametres
-    cle = (request.module.__name__, _marque(request), parametres)
+    cle = (request.module.__name__, parametres)
     if cle not in _SIMULATEURS:
-        _SIMULATEURS[cle] = (_simulateur.Simulateur if _marque(request) else Simulateur)(parametres)
+        _SIMULATEURS[cle] = Simulateur(parametres)
     return _SIMULATEURS[cle]
-
-
-@pytest.fixture(autouse=True)
-def entrees_du_test(request):
-    """La fixture qu'un fichier basculé importe avec ses entrées : le temps
-    d'un test marqué, celles qu'il tient de la façade redeviennent leur jumeau
-    Python, pour ses aides comme pour lui."""
-    module = request.module
-    remplacees = [nom for nom, jumeau in JUMEAUX.items()
-                  if _marque(request) and getattr(module, nom, None) is globals()[nom]]
-    for nom in remplacees:
-        setattr(module, nom, JUMEAUX[nom])
-    try:
-        yield
-    finally:
-        for nom in remplacees:
-            setattr(module, nom, globals()[nom])

@@ -7328,15 +7328,16 @@ de `contribution_etat`.
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
 **Reprise, au 17 novembre 2026.** Le propriétaire a accepté la
-suppression des 40 fichiers de règles Python. Un essai à blanc l'a faite dans
-un worktree jetable ; ce qui cassait se règle en quatre lots, une session
-chacun. Les deux premiers sont faits : les tests lisent au portage les
-constantes des règles, et les outils du pont des tests ne passent plus par
-le simulateur Python. Il ne reste que quatre fichiers qui importent des
-règles : la façade des tests et les confrontations au jumeau. Restent la
-façade, puis la suppression. Par quoi commencer : le troisième lot, la
-façade, que décrit `2026-11-17-l-essai-a-blanc-de-la-suppression.md` ; le
-deuxième, dans `2026-11-17-les-outils-du-pont-sans-le-simulateur-python.md`.
+suppression des 40 fichiers de règles Python. Elle se prépare par lots, une
+session chacun. Trois sont faits : les constantes, les outils du pont des
+tests, et la façade des tests, qui ne lit plus rien sur les modules de
+règles. Il lui reste un import : la classe `Carriere` des règles, dont sa
+carrière hérite. Une carrière bâtie à la main dans un test est encore lue
+en Python par ses méthodes ; 19 tests rapides cassent sans elle. Par quoi
+commencer : recenser ces lectures sur la suite complète, les passer au
+portage, puis faire hériter la carrière de la façade de la carrière nue.
+Ensuite vient la suppression. Le détail est dans
+`2026-11-17-la-facade-sans-les-modules-de-regles.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

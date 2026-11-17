@@ -8,11 +8,16 @@ sont ceux de ``moteur/js/droit/``.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
+from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
 from ..donnees.chargement import Fiabilite
+from ..noyau import vocabulaire
 from ..somme import somme_ordonnee
+
+if TYPE_CHECKING:
+    from .carriere import Carriere
 
 #: La version du schéma de l'étape que :meth:`Foyer.donnees` suit.
 SCHEMA_DU_FOYER = 1
@@ -1316,3 +1321,79 @@ class Depart:
     def unique(self) -> bool:
         """Le départ unique, où tous les régimes liquident ensemble."""
         return not self.regimes
+
+
+#: Ce qu'un calcul peut neutraliser : la liste ``neutralisations`` du
+#: vocabulaire, que le contexte refuse de dépasser.
+NEUTRALISATIONS = frozenset(vocabulaire.liste("neutralisations"))
+
+
+@dataclass(frozen=True)
+class PensionServie:
+    """Une pension déjà liquidée, que les départs suivants voient servie : ce
+    qu'elle vaut au mois de leur date d'effet, son régime, et sa propre date
+    d'effet (AAAA-MM-JJ), que le versement forfaitaire unique lit : il ne
+    reste, depuis 2016, qu'à qui a pris sa première retraite avant."""
+
+    regime: str
+    montant: float
+    date_effet: str | None = None
+
+
+@dataclass(frozen=True)
+class Etat:
+    """L'état que la liquidation lit : la chronologie du réseau, par sa vue,
+    la carrière, et le journal de l'échéancier (§ 7.4) ; et les pensions que
+    les départs précédents servent déjà, menées jusqu'à la date d'effet
+    (:class:`PensionServie`) : le minimum contributif s'écrête sur
+    elles aussi (L. 173-2, R. 173-7).
+
+    Après une retraite progressive (``droit/progressive``), ``initiales`` porte
+    la pension provisoire de chacun de ses régimes de base, menée jusqu'à la
+    date d'effet : la pension complète ne peut descendre sous elle ; elle
+    l'est, quand ``recalcul`` est faux, avant le décret du 8 juin 2006."""
+
+    carriere: Carriere
+    journal: object | None = None
+    servies: tuple = ()
+    initiales: tuple = ()
+    recalcul: bool = True
+
+    @property
+    def total_servi(self) -> float:
+        """Ce que les pensions déjà servies valent, par an, à la date d'effet."""
+        return somme_ordonnee(servie.montant for servie in self.servies)
+
+
+@dataclass(frozen=True)
+class Contexte:
+    """Le contexte d'une liquidation (§ 7.3) : l'univers, la date
+    d'observation, l'hypothèse, et ce qu'une couche d'un seul calcul
+    neutralise (liste ``neutralisations`` du vocabulaire)."""
+
+    #: L'univers : aujourd'hui le droit réel, dont le moteur du scénario 1
+    #: tient les tables, jusqu'aux fiches (phase 6) ; dans les tests, celui
+    #: d'un simulateur de la façade.
+    univers: object
+    neutralisations: frozenset[str] = frozenset()
+    #: La date d'observation : ``None``, celle de la fabrication des données.
+    observation: str | None = None
+    hypothese: object | None = None
+
+    def __post_init__(self) -> None:
+        inconnues = self.neutralisations - NEUTRALISATIONS
+        if inconnues:
+            raise ValueError(f"neutralisations inconnues du vocabulaire : {sorted(inconnues)}")
+
+    def neutralise(self, nom: str) -> bool:
+        return nom in self.neutralisations
+
+    def neutralisant(self, *noms: str) -> Contexte:
+        """Le même contexte, qui neutralise aussi ``noms`` : celui d'une
+        liquidation d'essai."""
+        return replace(self, neutralisations=self.neutralisations | frozenset(noms))
+
+    def donnees(self) -> dict:
+        return {"univers": "droit_reel", "observation": self.observation,
+                "hypothese": self.hypothese,
+                "neutralisations": sorted(self.neutralisations)}

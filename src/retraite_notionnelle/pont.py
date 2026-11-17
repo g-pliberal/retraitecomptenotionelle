@@ -3248,12 +3248,45 @@ CONSTANTES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     # la table d'anticipation de la convention de 1947 et le plancher de
     # l'Ircantec, que leurs tests lisent.
     "liquider": ("SURCOTE_AGE_MAJORE", "MINORATION_AGE_MINIMUM_GARANTI",
-                 "COEFFICIENTS_CONVENTION_1947", "COEFFICIENT_ANTICIPATION_PLANCHER"),
+                 "COEFFICIENTS_CONVENTION_1947", "COEFFICIENT_ANTICIPATION_PLANCHER",
+                 # La fiche de la pension maximale, que ses tests lisent.
+                 "FICHE_DE_LA_PENSION_MAXIMALE"),
     # La plus longue maturité de la courbe de la BCE.
     "capitalisation": ("MATURITE_MAXIMALE",),
     # La fiche de la majoration exceptionnelle de 2023, la règle des régimes
     # spéciaux.
     "revalorisation": ("FICHE_DE_LA_MAJORATION", "REGLE_REGIME_SPECIAL"),
+    # Les noms que les tests lisaient sur les modules de règles Python — les
+    # fiches, les statuts, les motifs, les versions —, que le portage exporte
+    # sous les mêmes noms (action 161, troisième lot de la suppression).
+    "categories": ("AGE_LEGAL", "FICHES_DES_CATEGORIES", "FICHE_DES_ANCIENS_COMBATTANTS",
+                   "FICHE_DES_DEPORTES", "FICHE_DES_MERES_OUVRIERES",
+                   "FICHE_DES_SOIXANTE_CINQ_ANS", "FICHE_DES_TRAVAILLEURS_MANUELS"),
+    "completer": ("FICHE_DES_ENFANTS_A_CHARGE", "FICHE_DU_CONJOINT", "FICHE_DU_PLAFOND_L18",
+                  "FICHE_DU_VERSEMENT_AGIRC_ARRCO", "FICHE_DU_VERSEMENT_FORFAITAIRE",
+                  "FICHE_DU_VERSEMENT_IRCANTEC", "FICHE_DU_VERSEMENT_RCI",
+                  "HEURES_DU_COMPLEMENT", "RCO"),
+    "compter": ("FICHES_DES_ASSIMILEES",),
+    "cumul": ("AGES_2027", "AVANT_1983", "FP_1970", "FP_2004", "FP_2009", "FP_2015", "FP_2027",
+              "HORS_DES_MOIS_SUSPENDUS", "INTEGRAL", "IRCANTEC_2004", "IRCANTEC_2020",
+              "IRCANTEC_AVANT_2004", "LIBERALISE_2009", "LIBRE", "NON_CALCULE", "NON_DUE",
+              "PLAFOND_160_SMIC_2007", "PLAFOND_2004", "PLAFONNEE", "PREMIERES_2015",
+              "RCI_2009", "RCI_2024", "RCI_2027", "RCI_AVANT_2009", "RCO_AGRICOLE_2003",
+              "REDUCTION_2015", "REDUITE", "RUPTURE_1983", "SECTIONS_STATUTS",
+              "SEUIL_NON_PUBLIE", "SUSPENDUE"),
+    "departs": ("ENSEMBLE", "MOTIF_DEMANDE", "MOTIF_DEPART", "MOTIF_LIMITE", "MOTIF_OUVERTURE",
+                "MOTIF_SORTIE", "SANS_PENSION"),
+    "limite_age": ("CARRIERE_INCOMPLETE", "FICHES", "FICHE_BANQUE_DE_FRANCE",
+                   "FICHE_DES_CONTRACTUELS", "FICHE_DES_OUVRIERS", "FICHE_IEG", "FICHE_MINES",
+                   "FICHE_OPERA", "FICHE_SEITA", "FICHE_SNCF_RATP", "MAINTIEN",
+                   "MAINTIEN_DANS_L_INTERET_DU_SERVICE", "POLICE_PENITENTIAIRE",
+                   "PROLONGATION_ACTIVE", "RECUL_ENFANTS", "RECUL_PARENT_DE_TROIS"),
+    "progressive": ("AGE", "AVANT_1988", "DUREE", "FICHE", "OUVERTE", "QUOTITE",
+                    "SANS_ACTIVITE", "SANS_REGIME"),
+    "releve": ("FICHE_POINTS_GRATUITS",),
+    "seconde": ("DERNIER_EMPLOYEUR", "ETEINTS", "LFSS_2026", "LOI_2014", "LOI_2023",
+                "NOUVELLE_PENSION", "PENSION_MILITAIRE", "REGIMES_NON_LIQUIDES",
+                "REGIME_LIQUIDE", "SANS_REGLE_GENERALE"),
 }
 
 
@@ -3261,7 +3294,8 @@ def constante_du_droit(module: str, nom: str, paquet: bytes | None = None):
     """La constante ``nom`` du module ``module`` du droit, telle que le portage
     l'exporte : une valeur simple. Une constante que
     :data:`CONSTANTES_DE_LA_FACADE` ne déclare pas est refusée avant node.
-    Une table revient en dictionnaire, ses clés numériques en entiers."""
+    Une table revient en dictionnaire, ses clés numériques en entiers ; une
+    liste, en tuple."""
     from .config import Parametres
 
     if nom not in CONSTANTES_DE_LA_FACADE.get(module, ()):
@@ -3277,6 +3311,8 @@ def constante_du_droit(module: str, nom: str, paquet: bytes | None = None):
     rendu = reponse["rendu"]
     if isinstance(rendu, dict):
         return {int(cle) if cle.isdigit() else cle: valeur for cle, valeur in rendu.items()}
+    if isinstance(rendu, list):
+        return tuple(rendu)
     return rendu
 
 

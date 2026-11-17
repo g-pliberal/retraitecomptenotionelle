@@ -37,7 +37,6 @@ from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
 
 from ..donnees.chargement import Fiabilite
-from ..noyau import vocabulaire
 from . import completer as _completer
 from . import etranger as _etranger
 from . import liquider as _liquider
@@ -46,10 +45,11 @@ from . import releve as _releve
 from .commun import AvantageApplique, PensionRegime, date_d_effet
 from ..somme import somme_ordonnee
 from ..types_du_pont.droit import Demande, Mesure  # noqa: F401  (types du pont, action 161)
+from ..types_du_pont.droit import Contexte, Etat  # noqa: F401  (types du pont, action 161)
+from ..types_du_pont.droit import NEUTRALISATIONS  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
-    from ..scenarios.actuel import ScenarioActuel
     from .completer import Complements
     from .liquider import Pensions
     from .ouvrir import Ouverture
@@ -57,10 +57,6 @@ if TYPE_CHECKING:
 
 #: La version du contrat C.6 que :meth:`Liquidation.donnees` suit.
 SCHEMA_VERSION = 1
-
-#: Ce qu'un calcul peut neutraliser : la liste ``neutralisations`` du
-#: vocabulaire, que le contexte refuse de dépasser.
-NEUTRALISATIONS = frozenset(vocabulaire.liste("neutralisations"))
 
 #: Ce que chaque dispositif s'appelle dans la cascade des avantages.
 _LIBELLE_MAJORATION = {
@@ -101,64 +97,6 @@ def demande_de_depart(carriere: Carriere, nature: str = "definitive") -> Demande
     date = date_d_effet(carriere)
     return Demande(personne=carriere.personne, date_effet=date, date_evenement=date,
                    nature=nature)
-
-
-@dataclass(frozen=True)
-class Etat:
-    """L'état que la liquidation lit : la chronologie du réseau, par sa vue,
-    la carrière, et le journal de l'échéancier (§ 7.4) ; et les pensions que
-    les départs précédents servent déjà, menées jusqu'à la date d'effet
-    (:class:`~.departs.PensionServie`) : le minimum contributif s'écrête sur
-    elles aussi (L. 173-2, R. 173-7).
-
-    Après une retraite progressive (:mod:`.progressive`), ``initiales`` porte
-    la pension provisoire de chacun de ses régimes de base, menée jusqu'à la
-    date d'effet : la pension complète ne peut descendre sous elle ; elle
-    l'est, quand ``recalcul`` est faux, avant le décret du 8 juin 2006."""
-
-    carriere: Carriere
-    journal: object | None = None
-    servies: tuple = ()
-    initiales: tuple = ()
-    recalcul: bool = True
-
-    @property
-    def total_servi(self) -> float:
-        """Ce que les pensions déjà servies valent, par an, à la date d'effet."""
-        return somme_ordonnee(servie.montant for servie in self.servies)
-
-
-@dataclass(frozen=True)
-class Contexte:
-    """Le contexte d'une liquidation (§ 7.3) : l'univers, la date
-    d'observation, l'hypothèse, et ce qu'une couche d'un seul calcul
-    neutralise (liste ``neutralisations`` du vocabulaire)."""
-
-    #: L'univers : aujourd'hui le droit réel, dont le moteur du scénario 1
-    #: tient les tables, jusqu'aux fiches (phase 6).
-    univers: ScenarioActuel
-    neutralisations: frozenset[str] = frozenset()
-    #: La date d'observation : ``None``, celle de la fabrication des données.
-    observation: str | None = None
-    hypothese: object | None = None
-
-    def __post_init__(self) -> None:
-        inconnues = self.neutralisations - NEUTRALISATIONS
-        if inconnues:
-            raise ValueError(f"neutralisations inconnues du vocabulaire : {sorted(inconnues)}")
-
-    def neutralise(self, nom: str) -> bool:
-        return nom in self.neutralisations
-
-    def neutralisant(self, *noms: str) -> Contexte:
-        """Le même contexte, qui neutralise aussi ``noms`` : celui d'une
-        liquidation d'essai."""
-        return replace(self, neutralisations=self.neutralisations | frozenset(noms))
-
-    def donnees(self) -> dict:
-        return {"univers": "droit_reel", "observation": self.observation,
-                "hypothese": self.hypothese,
-                "neutralisations": sorted(self.neutralisations)}
 
 
 @dataclass(frozen=True, eq=False)

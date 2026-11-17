@@ -48,6 +48,12 @@ export const FICHE_OPERA = "limite_age_opera";
 export const FICHE_SEITA = "limite_age_seita";
 export const FICHE_BANQUE_DE_FRANCE = "limite_age_banque_de_france";
 export const FICHE_MINES = "limite_age_mines";
+/** Les fiches que le module lit, et que le paquet du site porte (`FichesDatees`). */
+export const FICHES = Object.freeze([FICHE_DE_LA_LIMITE, FICHE_DES_MILITAIRES, FICHE_DES_ENFANTS,
+  FICHE_DE_LA_CARRIERE_INCOMPLETE, FICHE_DE_L_ACTIF, FICHE_DU_MAINTIEN,
+  FICHE_DU_PLAFOND, FICHE_DES_CONTRACTUELS, FICHE_DES_OUVRIERS,
+  FICHE_SNCF_RATP, FICHE_IEG, FICHE_OPERA, FICHE_SEITA,
+  FICHE_BANQUE_DE_FRANCE, FICHE_MINES]);
 /** Les fiches du code des pensions, fonctionnaires et militaires. */
 export const FICHES_DU_CODE_DES_PENSIONS = new Set([FICHE_DE_LA_LIMITE, FICHE_DES_MILITAIRES]);
 

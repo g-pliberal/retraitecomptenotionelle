@@ -2194,7 +2194,10 @@ def test_chaque_constante_du_droit_lue_au_portage_est_celle_du_jumeau():
     assert pont.constante_du_droit("liquider", "SURCOTE_AGE_MAJORE") == (
         ScenarioActuel.SURCOTE_AGE_MAJORE)
     jumeaux = {"liquider": "droit.liquider", "capitalisation": "moteur.capitalisation",
-               "revalorisation": "revalorisation"}
+               "revalorisation": "revalorisation",
+               **{module: f"droit.{module}" for module in (
+                   "categories", "completer", "compter", "cumul", "departs", "limite_age",
+                   "progressive", "releve", "seconde")}}
     for module, noms in pont.CONSTANTES_DE_LA_FACADE.items():
         jumeau = importlib.import_module(f"retraite_notionnelle.{jumeaux[module]}")
         for nom in (n for n in noms if n != "SURCOTE_AGE_MAJORE"):

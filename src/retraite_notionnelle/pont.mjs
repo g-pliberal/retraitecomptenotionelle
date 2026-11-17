@@ -177,6 +177,7 @@ import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import * as progressive from "../../moteur/js/droit/progressive.js";
 import * as releve from "../../moteur/js/droit/releve.js";
 import * as reversion from "../../moteur/js/droit/reversion.js";
+import * as seconde from "../../moteur/js/droit/seconde.js";
 import { ageDeDepart } from "../../moteur/js/pilote.js";
 import {
   CritereTaux, REGLE_FUSION_DEFAUT, fusionner, tauxTotal,
@@ -2389,7 +2390,7 @@ const MODULES_DU_DROIT = {
   },
   cultes, cumul, departs, foyer: foyerEtape, invalidite, limite_age: limiteAge, liquider, ouvrir,
   progressive, releve, reversion,
-  revalorisation,
+  revalorisation, seconde,
 };
 
 /**
@@ -2423,6 +2424,10 @@ ENTREES_DE_LA_FACADE["droit.constante"] = (simulateur, module, nom) => {
   const simple = (v) => ["number", "string", "boolean"].includes(typeof v);
   if (simple(valeur)) {
     return valeur;
+  }
+  // Une liste de valeurs simples (`FICHES`), que le Python lit en tuple.
+  if (Array.isArray(valeur) && valeur.every(simple)) {
+    return [...valeur];
   }
   const table = valeur instanceof Map ? Object.fromEntries(valeur)
     : valeur !== null && Object.getPrototypeOf(valeur ?? 0) === Object.prototype ? { ...valeur }
