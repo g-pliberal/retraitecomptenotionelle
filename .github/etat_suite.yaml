@@ -1,20 +1,17 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: rouge
-sources: f7eff45cbbdf29a68a44d62789a14b9fce5e9b57
-date: 2026-11-17T09:44:02Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44055547033
+sources: 234c86d8900baf5bebbe02ceac3297a4cc689fcd
+date: 2026-11-17T10:25:40Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44061912857
 echecs:
-  - "FAILED tests/test_web.py::test_aucune_page_ne_depasse_son_budget_de_lecture[/caisses] - KeyError: '/caisses'"
-  - "FAILED tests/test_web_revues.py::test_la_navigation_met_l_electeur_d_abord - AssertionError: assert [['../', '../...../methode/']] == [['../', '../...../methode/']]"
-  - "FAILED tests/test_web_revues.py::test_les_incises_en_tiret_restent_rares[/caisses] - KeyError: '/caisses'"
-  - "FAILED tests/test_ecrans.py::test_les_schemas_qu_une_carte_compare_se_voient_ensemble - AssertionError: 1 schémas loin l'un de l'autre :"
+  - "FAILED tests/test_web_revues.py::test_la_navigation_met_l_electeur_d_abord - AssertionError: assert {'/': 'Progra...changer', ...} == {'/': 'Progra...'Les caisses'}"
 presomptions: vert
 durees:
-  fabrique: 455
-  suite: 540
-  tranche_1: 314
-  tranche_2: 540
-  tranche_3: 318
-  tranche_4: 411
-  garde: 131
+  fabrique: 441
+  suite: 544
+  tranche_1: 335
+  tranche_2: 544
+  tranche_3: 419
+  tranche_4: 339
+  garde: 130
