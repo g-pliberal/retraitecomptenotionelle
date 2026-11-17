@@ -31,6 +31,7 @@ from retraite_notionnelle import revalorisation as revalorisation_python
 from retraite_notionnelle import simulateur as simulateur_python
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import Carriere as CarrierePython
+from retraite_notionnelle.types_du_pont.carriere import Carriere as CarriereNue
 from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.config import RACINE_PROJET, ContributionEtat, Parametres
 from retraite_notionnelle.donnees.chargement import Fiabilite
@@ -87,7 +88,7 @@ def _a_plat(valeur, types: set[str]):
     par sa valeur ; chaque nombre en flottant — le jumeau rend « 0 », entier,
     le zéro d'une somme vide là où le type dit un flottant, que la lecture
     stricte rend « 0.0 ». ``types`` reçoit le nom de chaque type rencontré."""
-    if isinstance(valeur, CarrierePython):
+    if isinstance(valeur, CarriereNue):
         return pont.carriere_en_donnees(valeur)
     if isinstance(valeur, Journal):
         # Le contenu d'une liquidation ne passe pas le pont : ce qui la date,
@@ -148,11 +149,19 @@ def _ecarts(pas: int, entree, part: int = 0,
     ecarts, types = [], set()
     for nom, (parametres, carriere) in carrieres.items():
         servi = entree(facade.Simulateur(parametres), carriere)
-        refait = entree(simulateur_python.Simulateur(parametres), carriere)
+        refait = entree(simulateur_python.Simulateur(parametres), _des_regles(carriere))
         assert type(servi) is type(refait)
         ecarts += ecarts_d_ecriture(_a_plat(refait, set()), _a_plat(servi, types), (nom,),
                                     tolerance=TOLERANCE_DU_MOTEUR_PYTHON)
     return ecarts, types, len(carrieres)
+
+
+def _des_regles(carriere):
+    """La carrière nue que rend le pont, recopiée champ à champ sous la classe
+    des règles, que le simulateur Python interroge (``prolongee``,
+    ``date_entree``…)."""
+    return CarrierePython(**{champ.name: getattr(carriere, champ.name)
+                             for champ in dataclasses.fields(carriere) if champ.init})
 
 
 def _scenario_1(simulateur, carriere):
@@ -2021,14 +2030,15 @@ def test_le_jumeau_rend_la_proposition_que_la_facade_lit():
                                     age_liquidation=62.5, mois_naissance=7)
     ecarts = []
     reportee = servi.carriere_proposition(precoce)
-    ecarts.append(_ecart_des_carrieres(reportee, jumeau.carriere_proposition(precoce)))
+    ecarts.append(_ecart_des_carrieres(reportee,
+                                       jumeau.carriere_proposition(_des_regles(precoce))))
     for attente in (True, False):
         ecarts.append(_ecart_des_carrieres(
             facade.prolongee(precoce, 64.25, servi.macro, attente),
-            precoce.prolongee(64.25, jumeau.macro, attente)))
+            _des_regles(precoce).prolongee(64.25, jumeau.macro, attente)))
     assert [e for e in ecarts if e] == []
     lu = servi.proposition(reportee)
-    refait = jumeau.proposition(reportee)
+    refait = jumeau.proposition(_des_regles(reportee))
     assert lu.pension_annuelle == pytest.approx(refait.pension_annuelle,
                                                 rel=TOLERANCE_DU_MOTEUR_PYTHON)
     assert lu.conversion.diviseur == pytest.approx(refait.conversion.diviseur,

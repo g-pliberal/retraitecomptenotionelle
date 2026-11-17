@@ -35,6 +35,7 @@ from retraite_notionnelle.carriere import AnneeCarriere
 from retraite_notionnelle.castypes import (
     CAS_TYPES, GENERATIONS, GRILLE_DU_COUT, cases_de_la_grille)
 from retraite_notionnelle.config import RACINE_DONNEES, RACINE_PROJET
+from retraite_notionnelle.types_du_pont.carriere import Carriere as CarriereNue
 
 from facade import Carriere, Simulateur
 from outils_pont import ecarts_d_ecriture, empecher_les_jumeaux_du_cout
@@ -368,8 +369,9 @@ def test_le_portage_bat_les_carrieres_de_la_grille():
             continue
         bati = lus[f"{cle}|carriere"]
         carriere = bati["carriere"]
-        # La classe du Python, dont celle de la façade dérive.
-        assert type(carriere) is Carriere.__base__
+        # Le type nu du pont, dont la classe des règles, puis celle de la
+        # façade, dérivent.
+        assert type(carriere) is CarriereNue
         assert bati["age"] == float(carriere.age_liquidation), cle
         assert (bati["reportee"] is None) == (bati["attente"] is None), cle
         assert lus[f"{cle}|depart"] == {"age": bati["age"], "annee": carriere.annee_liquidation,

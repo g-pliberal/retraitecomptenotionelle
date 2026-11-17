@@ -483,9 +483,8 @@ def carriere_des_donnees(donnees: dict):
     """La carrière que le portage a bâtie, sous les types du Python : le chemin
     inverse de :func:`carriere_en_donnees`. Chacun de ses champs, chacune de
     ses lignes, et la chronologie dont elle est la vue, telle quelle."""
-    # Lue sous le type nu, bâtie sous la carrière des règles, que les appelants
-    # Python interrogent encore (action 161, étape 1 bis) : elle en hérite.
-    from .carriere import Carriere
+    # Lue et bâtie sous le type nu (action 161, la bascule) : ce que les tests
+    # en lisent de plus se demande au portage, par la façade.
     from .types_du_pont.carriere import AnneeCarriere
     from .types_du_pont.carriere import Carriere as CarriereNue
 
@@ -500,7 +499,7 @@ def carriere_des_donnees(donnees: dict):
                                      for ligne in donnees["lignes_apres_depart"]),
         "chronologie": _chronologie_des_donnees(donnees["chronologie"]),
     }
-    return Carriere(**{nom: speciaux[nom] if nom in speciaux
+    return CarriereNue(**{nom: speciaux[nom] if nom in speciaux
                        else _depuis_donnees(indices[nom], valeur)
                        for nom, valeur in donnees.items()})
 

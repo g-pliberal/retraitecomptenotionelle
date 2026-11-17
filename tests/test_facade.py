@@ -183,11 +183,11 @@ SALARIE = dict(annee_naissance=1965, sexe="H", affiliation="salarie_prive_non_ca
 
 
 def test_la_carriere_simple_revient_sous_le_type_du_python(simulateur):
-    """La carrière que le portage bâtit est une ``Carriere`` du Python : née en
+    """La carrière que le portage bâtit est la ``Carriere`` nue du pont : née en
     1965, entrée à 23 ans, en 1988, partie à 64 ans, en 2029, salariée chaque
     année."""
     carriere = simulateur.carriere_simple(**SALARIE)
-    assert type(carriere) is carriere_python.Carriere
+    assert type(carriere) is CarriereNue
     assert (carriere.annee_naissance, carriere.sexe, carriere.age_liquidation) == (1965, "H", 64.0)
     assert carriere.premiere_annee == 1988
     assert carriere.annee_liquidation == 2029
@@ -233,7 +233,7 @@ def test_la_carriere_du_releve_porte_les_revenus_de_ses_lignes(simulateur):
     releve = [LigneRelevee(1990, "salarie_prive_non_cadre", 15000.0),
               LigneRelevee(1991, "artisan", 18000.0, trimestres=3)]
     carriere = simulateur.carriere_releve(1965, "F", releve, 64)
-    assert type(carriere) is carriere_python.Carriere
+    assert type(carriere) is CarriereNue
     lues = {ligne.annee: ligne for ligne in carriere.lignes}
     assert (lues[1990].affiliation, lues[1990].revenu) == ("salarie_prive_non_cadre", 15000.0)
     assert (lues[1991].affiliation, lues[1991].revenu, lues[1991].trimestres_valides) == (
@@ -350,7 +350,7 @@ def test_le_depart_que_la_proposition_reporte_revient_avec_sa_carriere(simulateu
     comparaison = simulateur.simuler(simulateur.carriere_simple(**SALARIE))
     assert simulateur.parametres.age_legal_liberal == 65.0
     assert comparaison.depart_reporte is True
-    assert type(comparaison.carriere_liberal) is carriere_python.Carriere
+    assert type(comparaison.carriere_liberal) is CarriereNue
     assert comparaison.carriere_liberal.age_liquidation == 65.0
     assert comparaison.carriere_liberal.annee_liquidation == 2030
 
@@ -1385,7 +1385,7 @@ def test_la_coupure_du_chomage_se_demande_au_portage(simulateur):
     tardive = _cadre_au_chomage(simulateur, range(2008, 2018), 1950, 30, 67)
     assert tardive.age_au(facade.ouvrir.fin_indemnisation(moteur, tardive)) == 65
     bornee = facade.ouvrir.indemnisation_bornee(moteur, chomee)
-    assert type(bornee) is carriere_python.Carriere and bornee is not chomee
+    assert type(bornee) is CarriereNue and bornee is not chomee
     assert {l.annee: l.type_periode for l in bornee.lignes if l.annee in (2020, 2021)} == {
         2020: "chomage_indemnise", 2021: "sans_activite"}
     jeune = _cadre_au_chomage(simulateur, (2000,))
