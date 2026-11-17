@@ -1,30 +1,24 @@
 # Consignes de `src/` : le modèle
 
 Claude Code les charge à la première lecture d'un fichier de `src/`, en plus
-de `CLAUDE.md`. Le moteur d'une carrière fait foi dans `moteur/js/`, dont
-`src/` garde des jumeaux jusqu'à leur retrait ; le coût n'est qu'ici, et les
-données sont dans `data/`, qui ont leurs consignes. Ne s'écrivent pas ici : le
-texte du site, qui s'écrit en JavaScript (`moteur/CLAUDE.md`), ni une variante
+de `CLAUDE.md`. Le moteur d'une carrière fait foi dans `moteur/js/`, son
+seul exemplaire depuis la suppression des règles Python (action 161) ; le
+coût n'est qu'ici, et les données sont dans `data/`, qui ont leurs
+consignes. Ne s'écrivent pas ici : le texte du site, qui s'écrit en
+JavaScript (`moteur/CLAUDE.md`), ni une variante
 de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
 
-- **Le JavaScript de `moteur/js/` fait foi pour chaque étape du moteur qui a
-  encore son jumeau ici** (principe 4, notes de décision 0003 et 0005) : une
-  règle nouvelle ou modifiée s'y écrit d'abord, avec son test tiré de la
-  source ; son jumeau Python la suit dans le même commit, ligne pour ligne,
-  jusqu'à refaire chaque nombre des témoins au bit près — les témoins, que le
-  portage calcule (`scripts/construire_temoins.py`), le confrontent
-  (`tests/test_pont.py`, les tests du moteur Python qui les « refait »), et
-  un témoin de plus couvre la règle quand la confrontation ne rougit pas sans
-  lui. Le Python ne cesse de suivre qu'au retrait de sa paire (action 161) :
-  le coût date, bâtit et simule sa grille au portage, la table y date ses
-  carrières types, le coût des avantages y date, bâtit et liquide la sienne,
-  sous ses scénarios neutralisés, la grille large s'y date et s'y bâtit, et
-  ses mesures s'y lisent, comme le coût sous un modèle modifié, ses variantes
-  écrites en données ; mais les confrontations refont au jumeau ce que le
-  portage calcule, et une règle portée d'un seul côté rougirait la suite ou
-  les ferait mentir.
-  `python scripts/jumeaux.py <nom>` dit si une étape a son jumeau et tout ce
-  qui en dépend. Un code neuf
+- **Le moteur d'une carrière n'a qu'un exemplaire, en JavaScript**
+  (principe 4, notes de décision 0003 et 0005, action 161) : une règle
+  nouvelle ou modifiée s'écrit dans `moteur/js/`, avec son test tiré de la
+  source ; le Python ne la recopie pas, et la demande au portage par le pont
+  (`pont.py`), une carrière ou un lot. Les témoins, que le portage calcule
+  (`scripts/construire_temoins.py`), gardent ses nombres. Restent écrites
+  des deux côtés quelques fonctions des chargeurs, que la fabrique lit en
+  Python et le site en JavaScript : `scripts/jumeaux_gardees.yaml` les
+  déclare, et `tests/test_jumeaux_au_bit.py` confronte leurs deux
+  exemplaires au bit près ; l'une change, l'autre la suit dans le même
+  commit. Un code neuf
   s'écrit une fois, dans le langage de l'endroit où il tourne : ici, ce que
   seule la fabrique calcule, comme le coût, qui ne se calcule qu'ici : le
   coût agrégé, celui des avantages, les carrières types et leurs départs,
@@ -53,8 +47,9 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   données — acquérir, certifier, lire le YAML, fabriquer le paquet —, ce qui
   calcule une population, un agrégat ou une étude sous les réglages de
   référence, ce qui fait tourner node, la carte des règles et ses contrats,
-  les tests et l'outillage ; et, dans chaque jumeau du moteur, ses chargeurs
-  du paquet et les types que le pont échange (`Parametres`, `Carriere`,
+  les tests et l'outillage ; et, de l'ancien moteur Python, les chargeurs
+  du paquet, sous `donnees/`, et les types que le pont échange
+  (`types_du_pont/` : `Parametres`, `Carriere`,
   `AnneeCarriere`, `DateMois`…). Les accesseurs qui lisent le YAML pour la
   fabrique, le coût ou les études restent ici. Un calcul agrégé que le coût
   fait et que le site refait ne s'écrit qu'en JavaScript si le lecteur peut
@@ -98,14 +93,10 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   depuis le texte —, sur le portage : un essai de `tests/js/`, ou un test qui
   le fait tourner par le pont ; le JavaScript, jusqu'au vert ;
   `python scripts/construire_temoins.py`, qui fait calculer les témoins au
-  portage ; puis son jumeau Python, s'il en a un
-  (`python scripts/jumeaux.py <nom>`) : sa confrontation aux témoins vue
-  rouge (`python -m pytest tests/test_pont.py -k refait`), au besoin par un
-  témoin de plus, le Python porté ligne pour ligne, la confrontation verte,
-  au bit près ; un nombre nouveau du résultat (`dictionnaire()`) déclare son
+  portage ; un nombre nouveau du résultat (`dictionnaire()`) déclare son
   type dans la table de `pont.py` (`ENTIERS_DU_RESULTAT`,
-  `FLOTTANTS_DU_RESULTAT`). Ce qui n'a pas de jumeau — le coût, les carrières
-  types — s'écrit en Python seul, son test d'abord. Puis le
+  `FLOTTANTS_DU_RESULTAT`). Ce que seule la fabrique calcule — le coût, les
+  carrières types — s'écrit en Python seul, son test d'abord. Puis le
   paquet et les témoins, une fois chacun (`python scripts/construire_donnees.py`,
   `python scripts/construire_temoins.py`), et
   `python scripts/resumer_temoins.py`,
@@ -125,16 +116,12 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   par `pont.droit` (action 161). Le
   coût et ses confrontations (`test_cout.py`, `test_facteurs_depense.py`,
   `test_affirmations.py` : huit minutes sans mémoire) restent à GitHub.
-- **Un retrait de jumeau** (action 161) : la méthode des notes de décision
-  0003 et 0005, de `python scripts/jumeaux.py <nom>` aux dépendants branchés
-  sur le portage ; puis, dans un commit à lui, le fichier coupé (note 0006) :
-  les règles partent ; les chargeurs passent sous `donnees/`, sans méthode de
-  règle ; les types du pont restent ; une étude qui appelait une fonction du
-  moteur hors du simulateur la demande au pont, par lot, et celle qui en
-  remplaçait une le temps d'une variante l'a d'abord écrite en données, une
-  couche ou un paramètre de la demande. Le paquet refait
-  (`python scripts/construire_donnees.py`) reste identique à l'octet, comme
-  les témoins et les agrégats.
+- **Une fonction écrite des deux côtés** (`scripts/jumeaux_gardees.yaml`) :
+  la liste nomme, pour chacune, le fichier Python qui la lit et le test qui
+  confronte ses deux exemplaires (`tests/test_jumeaux_au_bit.py`) ; une
+  fonction de plus écrite des deux côtés s'y déclare, avec son lecteur et son
+  test, et celle que plus rien ne lit en Python part, avec son entrée
+  (`tests/test_jumeaux.py`, `jumeaux.ecarts_de_la_liste`).
 - **Un défaut corrigé dans une règle** : la classe, pas le cas. Avant le
   commit, chercher la même erreur dans les autres régimes et les autres
   générations, et la corriger avec lui ou l'inscrire à la feuille de route

@@ -7328,13 +7328,13 @@ de `contribution_etat`.
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
 **Reprise, au 17 novembre 2026.** Les 40 fichiers de règles Python sont
-supprimés, avec tout ce qui les confrontait au portage : le moteur d'une
-carrière n'a plus qu'un exemplaire, en JavaScript. Reste à nettoyer. D'abord
-les 121 fonctions que `scripts/jumeaux_gardees.yaml` déclare `au_moteur` :
-mortes depuis la suppression, elles partent avec leur entrée de la liste.
-Puis les consignes de `src/` et de `moteur/`, et l'architecture, qui parlent
-encore des jumeaux du moteur au présent. Par quoi commencer : la note
-`2026-11-17-la-suppression-des-regles-python.md`.
+supprimés, et les consignes de `src/` à jour. Les 121 fonctions `au_moteur`
+de `scripts/jumeaux_gardees.yaml` ne sont pas toutes mortes : huit n'ont aucun
+lecteur, une quarantaine ne sont lues que par des tests, d'autres le sont
+encore par du code vivant (`remuneration.py`, `chronologie.py`…). Par quoi
+commencer : supprimer les huit, puis relire les tests de la quarantaine ;
+ensuite `moteur/CLAUDE.md` et l'architecture. Le relevé :
+`2026-11-17-les-fonctions-au-moteur-pas-toutes-mortes.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
