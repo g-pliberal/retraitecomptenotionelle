@@ -305,7 +305,9 @@ def primes_projetees(carriere: Carriere, macro) -> Carriere:
     ]
     if all(nouvelle is ancienne for nouvelle, ancienne in zip(lignes, carriere.lignes)):
         return carriere
-    return carriere.avec_lignes(lignes)
+    # Les seules lignes changent, comme ``Carriere.avec_lignes`` les change :
+    # la carrière nue que rend le pont n'a pas cette méthode des règles.
+    return replace(carriere, lignes=lignes)
 
 
 #: Les années dont le portage reçoit le traitement relatif

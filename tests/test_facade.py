@@ -355,6 +355,29 @@ def test_le_depart_que_la_proposition_reporte_revient_avec_sa_carriere(simulateu
     assert comparaison.carriere_liberal.annee_liquidation == 2030
 
 
+def test_les_primes_des_cas_types_se_projettent_sur_la_carriere_du_pont(simulateur):
+    """Sous les conventions du COR, la part des primes d'une fonctionnaire se
+    projette sur la carrière que le pont rend, sous le type nu : chaque ligne
+    à primes porte ``1 - (1 - part) * traitement indiciaire relatif`` de son
+    année, le reste de la carrière inchangé."""
+    from retraite_notionnelle import castypes
+
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1990, sexe="F", affiliation="fonctionnaire_etat", age_debut=22,
+        age_liquidation=64, part_primes=0.2)
+    assert type(carriere) is CarriereNue
+    macro = simulateur.macro
+    projetee = castypes.primes_projetees(carriere, macro)
+    assert type(projetee) is CarriereNue
+    assert any(macro.traitement_indiciaire_relatif(l.annee) != 1.0 for l in carriere.lignes)
+    for avant, apres in zip(carriere.lignes, projetee.lignes, strict=True):
+        relatif = macro.traitement_indiciaire_relatif(avant.annee)
+        assert apres.part_primes == (1.0 - (1.0 - 0.2) * relatif if relatif != 1.0 else 0.2)
+        assert dataclasses.replace(apres, part_primes=avant.part_primes) == avant
+    assert projetee.chronologie is carriere.chronologie
+    assert projetee.dates_entree == carriere.dates_entree
+
+
 def _nue(carriere):
     """La carrière des règles recopiée champ à champ sous le type nu du pont."""
     return CarriereNue(**{champ.name: getattr(carriere, champ.name)

@@ -26,10 +26,14 @@ code Python n'est supprimé.
   `test_pont.py`, `test_facade.py`, `test_jumeaux.py`, `test_chronologie.py` :
   verts (402) ; `test_simulateur.py`, les confrontations légères et les
   tests du cycle de vie : verts (798).
-- **À surveiller à GitHub** : `castypes.primes_projetees` appelle
-  `avec_lignes`, une méthode des règles, sur la carrière des cas types sous
-  `conventions_cor`. Sur le simulateur Python, la carrière reste celle des
-  règles ; aucun test lancé ici ne lui passe une carrière du pont.
+- **La projection des primes des cas types** (`castypes.primes_projetees`,
+  sous `conventions_cor`) appelait `avec_lignes`, une méthode des règles, et
+  levait `AttributeError` sur une carrière du pont. Le test
+  `test_les_primes_des_cas_types_se_projettent_sur_la_carriere_du_pont`
+  (`test_facade.py`), à la formule de la docstring, vu rouge ; la projection
+  passe par `dataclasses.replace`, qui recopie les mêmes champs qu'
+  `avec_lignes`. Verts ensuite : `-m rapide` (5 702), le pont, la façade, le
+  simulateur, le cycle de vie, les confrontations légères (1 128).
 
 **Ce qui reste** : la suppression des fichiers de règles, qui attend l'accord
 final du propriétaire.
