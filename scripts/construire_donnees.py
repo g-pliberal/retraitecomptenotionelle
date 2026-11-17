@@ -41,6 +41,7 @@ RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle.donnees.affiliations import Affiliations  # noqa: E402
+from retraite_notionnelle.donnees import caisses_du_site  # noqa: E402
 from retraite_notionnelle.donnees.caracteristiques import CaracteristiquesRetraites  # noqa: E402
 from retraite_notionnelle.donnees.credits_ministeres import CreditsMinisteres  # noqa: E402
 from retraite_notionnelle.donnees.assiette import POSTES_ASSIETTE  # noqa: E402
@@ -137,7 +138,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 44
+VERSION = 45
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -2822,6 +2823,9 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "population": _population(),
         "effectifs_retraites": _effectifs_retraites(),
         "effectifs_cotisants": _effectifs_cotisants(),
+        # La page « Les caisses » (action 193) : effectifs, financement,
+        # réserves et point de chaque grande caisse.
+        "caisses": caisses_du_site.lire(DONNEES),
         "distribution_pensions": _distribution_pensions(),
         "patrimoine_menages": _patrimoine_menages(),
         "distribution_pensions_sexes": _distribution_pensions_sexes(),

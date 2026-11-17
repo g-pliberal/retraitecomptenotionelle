@@ -1964,7 +1964,7 @@ def test_lighthouse_audite_les_routes_que_visitent_les_ecrans():
     assert lighthouse.ROUTES == test_ecrans.ROUTES
     assert [lighthouse.nom_de_route(route) for route in lighthouse.ROUTES] == [
         "accueil", "simuler", "resultats", "cout", "risque", "partager",
-        "saviez-vous", "cas-types", "avantages", "methode"]
+        "saviez-vous", "caisses", "cas-types", "avantages", "methode"]
 
 
 def test_lighthouse_se_lance_a_sa_version_figee():

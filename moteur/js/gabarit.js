@@ -119,7 +119,9 @@ export const GROUPES_NAVIGATION = [
   // redisait un dépliant des résultats, et « Sources » est devenue la fin de la
   // page Méthode. Leurs adresses mènent là où leur contenu est allé — voir
   // `ANCIENNES_ROUTES` dans `pages.js`.
-  ["Pour vérifier", [["/cas-types", "Carrières types"],
+  // « Les caisses » le 17 novembre 2026 (action 193) : comment marche chaque
+  // caisse de retraite, pour qui veut comprendre le système avant de le juger.
+  ["Pour vérifier", [["/caisses", "Les caisses"], ["/cas-types", "Carrières types"],
     ["/avantages", "Droits non cotisés"], ["/methode", "Méthode et sources"]]],
 ];
 

@@ -69,7 +69,7 @@ flowchart LR
 
 Le modèle Python lit les données et fabrique le paquet que charge le site,
 `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->6 099<!--/--> Ko, par
+(<!--chiffre:poids(moteur/donnees.json)-->6 103<!--/--> Ko, par
 `scripts/construire_donnees.py`). Les témoins, dans `tests/temoins/`, le
 moteur JavaScript les simule, par le pont (`scripts/construire_temoins.py`),
 et le moteur Python doit les refaire tant qu'il garde ses jumeaux.
@@ -80,7 +80,7 @@ deux côtés, jusqu'au retrait de chaque jumeau Python. Les témoins le
 tiennent :
 <!--chiffre:entrees(tests/temoins/simulations.json:)-->934<!--/--> simulations
 complètes, que le moteur Python refait au bit près (`tests/test_pont.py`), et
-<!--chiffre:entrees(tests/temoins/pages.json:)-->85<!--/--> pages figées, que
+<!--chiffre:entrees(tests/temoins/pages.json:)-->86<!--/--> pages figées, que
 `node --test` rejoue ;
 <!--chiffre:portage(valeurs)-->175 713<!--/--> nombres comparés, dont
 <!--chiffre:portage(identiques)-->100,0<!--/--> % identiques au bit près.
@@ -100,7 +100,7 @@ flowchart LR
   routeur["Routeur<br/>moteur/js/routeur.js, puis<br/>rendre() de pages.js"]
   simuler["Simuler<br/>saisie.js lit et vérifie"]
   agregees["Coût, Carrières types,<br/>Droits non cotisés"]
-  texte["Programme, Pourquoi changer,<br/>Partager, Le saviez-vous ?,<br/>Méthode et sources"]
+  texte["Programme, Pourquoi changer,<br/>Partager, Le saviez-vous ?,<br/>Les caisses, Méthode et sources"]
   simulateur["Simulateur<br/>simulateur.js, six scénarios"]
   agregats["Tables du coût<br/>agregats.js, lues sans recalcul"]
   ecran["Page affichée<br/>gabarit.js, style.css"]
@@ -160,6 +160,7 @@ rien envoyer.
 | Pourquoi changer | `risque/` | Votre retraite sera-t-elle payée, et ce qu'en sait la recherche. | texte et paquet |
 | Partager | `partager/` | Les chiffres du programme, en cartes à partager en image. | texte et paquet |
 | Le saviez-vous ? | `saviez-vous/` | Des règles du système actuel, chacune avec son texte officiel. | texte et paquet |
+| Les caisses | `caisses/` | Chaque caisse de retraite : qui paie pour qui, comment on y gagne des droits, d'où vient son argent, qui décide. | texte et paquet |
 | Carrières types | `cas-types/` | La grille des carrières types, génération par génération. | précalculé |
 | Droits non cotisés | `avantages/` | Ce que le système donne sans cotisation, et ce qu'on paie sans rien recevoir. | précalculé |
 | Méthode et sources | `methode/` | Comment le calcul se fait, la fiabilité des séries, les licences. | texte et paquet |

@@ -85,9 +85,9 @@ def test_le_routeur_ne_lit_les_adresses_que_par_leur_module():
     assert 'from "./adresses.js"' in routeur
 
 
-#: Les neuf pages du site, dans l'ordre du bandeau.
+#: Les dix pages du site, dans l'ordre du bandeau.
 PAGES = ["/", "/simuler", "/cout", "/risque", "/partager", "/saviez-vous",
-         "/cas-types", "/avantages", "/methode"]
+         "/caisses", "/cas-types", "/avantages", "/methode"]
 
 
 def test_les_pages_du_site_sont_celles_du_bandeau():
@@ -99,7 +99,7 @@ def test_les_pages_du_site_sont_celles_du_bandeau():
 
 @pytest.mark.parametrize("page, dossier", [
     ("/", ""), ("/simuler", "simuler/"), ("/cout", "cout/"), ("/risque", "risque/"),
-    ("/partager", "partager/"), ("/saviez-vous", "saviez-vous/"),
+    ("/partager", "partager/"), ("/saviez-vous", "saviez-vous/"), ("/caisses", "caisses/"),
     ("/cas-types", "cas-types/"), ("/avantages", "avantages/"), ("/methode", "methode/"),
 ])
 def test_une_page_a_son_dossier(page, dossier):

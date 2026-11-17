@@ -2618,3 +2618,22 @@ affirmations:
     porte: les deux unités existent, le lecteur choisit, et le défaut est le net
     etat: verifiee
     controle: montants_au_net_ou_au_brut
+
+  # ------------------------------------------------------------------------
+  # Les caisses (action 193)
+  # ------------------------------------------------------------------------
+
+  - id: caisses.rendement_du_point
+    page: /caisses
+    extrait: "de pension par an, à vie"
+    porte: >-
+      ce que rapportent 100 euros cotisés dans une caisse en points, au prix,
+      à la valeur et au taux d'appel du point que le simulateur applique en 2026
+    etat: verifiee
+    controle: rendement_du_point_des_caisses
+
+  - id: caisses.d_ou_viennent_les_chiffres
+    page: /caisses
+    extrait: "D'où viennent les chiffres."
+    porte: l'intertitre de la note des sources
+    etat: sans_portee

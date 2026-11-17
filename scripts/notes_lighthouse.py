@@ -62,7 +62,7 @@ RESULTATS = (
     "&stock=prix&frais=paliers&taux=forwards&bascule=2026&euros=2026"
 )
 ROUTES = ["./", "simuler/", RESULTATS, "cout/", "risque/", "partager/",
-          "saviez-vous/", "cas-types/", "avantages/", "methode/"]
+          "saviez-vous/", "caisses/", "cas-types/", "avantages/", "methode/"]
 
 #: Les deux profils : le mobile, celui de Lighthouse sans préréglage, et le
 #: bureau, son préréglage ``desktop``.

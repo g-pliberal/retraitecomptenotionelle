@@ -8324,3 +8324,31 @@ les articles qu'aucune fiche ne cite
 **Ce qui n'en fait pas partie.** Les 2 431 rédactions passées que les fiches
 n'ont pas lues : la passe ne portait que sur celles en vigueur ou à venir, et
 ce stock est d'une autre taille. Il attend une décision du propriétaire.
+
+### 193. Les caisses de retraite, une par une, sur le site : comment chacune marche — `en cours`
+
+**Reprise, au 17 novembre 2026.** La page « Les caisses » est en ligne
+(`caisses/`), au menu sous « Pour vérifier ». Elle montre dix-huit caisses en
+bulles, de la taille de leurs retraités ; chaque bulle ouvre la fiche de sa
+caisse, en cinq questions : qui paie pour qui, comment on gagne des droits,
+comment la pension se calcule, d'où vient l'argent, qui décide. Les chiffres
+viennent du paquet, le texte de `pages.js`. Restent, par quoi commencer : les
+curseurs de la maquette, qui chiffrent sa pension à chaque lecteur ; puis ce
+que chaque caisse verse par an ; puis, si le propriétaire le veut, l'histoire
+« Où va votre argent ? » en porte d'entrée. Note :
+`193/2026-11-17-etape-1-la-page.md`.
+
+**D'où elle vient.** Le 17 novembre 2026, le propriétaire : « J'aimerais que
+le site présente les grands ensembles de la retraite en France », puis, sur
+les maquettes, « dans le fond, je veux les fonctionnements de chaque caisse ».
+Il a validé la maquette des caisses et choisi de l'intégrer au site.
+
+**Les étapes :**
+
+1. la page, toute faite, ses données au paquet (faite le 17 novembre) ;
+2. les curseurs : la pension d'un salaire choisi, et ce que rapportent les
+   cotisations d'une caisse en points, animés par le routeur ;
+3. ce que chaque caisse verse par an, à saisir aux sources (DREES, COR,
+   budget de l'État) pour celles que le dépôt n'a pas ;
+4. l'histoire « Où va votre argent ? », en porte d'entrée de la page, sur
+   décision du propriétaire.

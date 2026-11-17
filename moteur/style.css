@@ -2583,3 +2583,50 @@ body.calcul-en-cours::after {
   .mot > .bulle { display: none; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.85em; }
 }
+
+/* -- Les caisses (action 193) ------------------------------------------------
+   La carte des bulles, une par caisse, de la taille de ses retraités ; puis
+   la fiche de chaque caisse, en cinq questions. */
+.carte-des-caisses { display: grid; gap: 1.25rem; }
+.famille-de-caisses h2 { font-size: 1rem; margin: 0 0 0.5rem; color: var(--texte-doux); letter-spacing: 0.04em; }
+.bulles { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.bulle-caisse {
+  width: var(--diametre); height: var(--diametre); border-radius: 50%;
+  display: grid; place-content: center; text-align: center; padding: 0.3rem;
+  background: var(--petrole); color: var(--bandeau-texte); text-decoration: none;
+  font-weight: 700; font-size: 0.74rem; line-height: 1.1; overflow-wrap: anywhere;
+}
+.bulle-caisse.grande { font-size: 1rem; }
+.bulle-caisse small { display: block; font-weight: 400; font-size: 0.68rem; color: var(--bandeau-doux); margin-top: 0.15rem; }
+.bulle-caisse:hover, .bulle-caisse:focus-visible { background: var(--safran); color: var(--petrole); }
+.bulle-caisse:hover small, .bulle-caisse:focus-visible small { color: var(--petrole); }
+.caisse-pour { color: var(--texte-doux); }
+.caisse-question { background: var(--fond-carte); border-radius: var(--rayon); padding: 1rem 1.1rem; margin-top: 0.75rem; }
+.caisse-question h3 { display: flex; gap: 0.6rem; align-items: center; margin: 0 0 0.6rem; font-size: 1.1rem; }
+.caisse-question h3 span {
+  flex: none; width: 1.8rem; height: 1.8rem; border-radius: 50%; display: grid; place-items: center;
+  background: var(--petrole); color: var(--safran); font-size: 0.9rem;
+}
+.caisse-chiffre { font-size: 3rem; font-weight: 800; line-height: 1; color: var(--accent); margin: 0; }
+.caisse-gens { width: 100%; max-width: 26rem; height: auto; display: block; margin-top: 0.5rem; }
+.caisse-gens .actif { fill: var(--accent); }
+.caisse-gens .retraite { fill: var(--safran); }
+.caisse-gens .vide { fill: var(--trait); }
+.caisse-gens text { fill: var(--texte-doux); font-size: 20px; font-weight: 800; }
+.caisse-note { font-size: 0.85rem; color: var(--texte-doux); }
+.caisse-mode b { background: var(--accent); color: var(--fond-carte); border-radius: 999px; padding: 0.1rem 0.6rem; }
+.caisse-billet { display: flex; height: 5.5rem; border-radius: var(--rayon-petit); overflow: hidden; border: 0.15rem solid var(--trait); }
+.caisse-billet span { display: grid; align-content: end; padding: 0.35rem; min-width: 0; color: var(--petrole-fonce); }
+.caisse-billet b { font-size: 1.1rem; white-space: nowrap; }
+.caisse-legende { list-style: none; margin: 0.6rem 0 0; padding: 0; display: grid; gap: 0.25rem; font-size: 0.92rem; }
+.caisse-legende li { display: flex; gap: 0.5rem; align-items: baseline; }
+.caisse-legende i { flex: none; width: 0.8rem; height: 0.8rem; border-radius: 0.2rem; transform: translateY(0.1rem); }
+.poste-cotisations { background: var(--turquoise); }
+.poste-impots { background: var(--safran); }
+.poste-etat { background: #6aa9d8; }
+.poste-autres_caisses { background: #9bb8bd; }
+.poste-placements_et_divers { background: #d3dfe1; }
+.poste-non_finance { background: var(--manque); }
+.caisse-rendement { background: var(--fond-appui); border-radius: var(--rayon-petit); padding: 0.75rem 0.9rem; }
+.caisse-fait { background: var(--safran); color: var(--petrole); border-radius: var(--rayon); padding: 1rem 1.1rem; margin-top: 0.75rem; }
+.caisse-fait b { display: block; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; }

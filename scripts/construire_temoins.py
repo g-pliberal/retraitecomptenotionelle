@@ -2800,6 +2800,7 @@ def _pages() -> dict:
         ("risque", "/risque", {}),
         ("partager", "/partager", {}),
         ("saviez_vous", "/saviez-vous", {}),
+        ("caisses", "/caisses", {}),
     ]
     inconnues = FORMULAIRE_ENTIER - {nom for nom, _, _ in demandes}
     assert not inconnues, f"FORMULAIRE_ENTIER nomme des pages sans témoin : {inconnues}"

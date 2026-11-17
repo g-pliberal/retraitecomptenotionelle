@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fabrique les neuf pages du site, toutes faites (action 174).
+"""Fabrique les dix pages du site, toutes faites (action 174).
 
     python scripts/construire_pages.py             # écrit les pages
     python scripts/construire_pages.py --verifier  # n'écrit rien : échoue si l'une est périmée
@@ -39,7 +39,7 @@ Ce qu'il écrit
 * **Le style de la page**, en tête : les règles de ``moteur/style.css`` qui
   peuvent la toucher (``scripts/feuille_de_page.py``). La page se peint sans
   attendre la feuille entière, qui suit sans retenir l'affichage.
-* **Le plan du site**, ``sitemap.xml``, qui liste les neuf adresses de la copie
+* **Le plan du site**, ``sitemap.xml``, qui liste les dix adresses de la copie
   du parti : celles que les moteurs de recherche retiennent.
 
 Ce qui les rafraîchit
@@ -248,7 +248,7 @@ def page(route: str, gabarit: str | None = None) -> str:
 
 
 def plan_du_site() -> str:
-    """``sitemap.xml`` : les neuf adresses de la copie du parti."""
+    """``sitemap.xml`` : les dix adresses de la copie du parti."""
     g = module("gabarit")
     adresses = [f"{g.ADRESSE_CANONIQUE}{g.dossierDe(route)}" for route in g.PAGES]
     lignes = "".join(f"  <url><loc>{adresse}</loc></url>\n" for adresse in adresses)

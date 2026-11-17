@@ -44,7 +44,8 @@ ETAPES: dict[str, tuple[str, ...]] = {
     "chiffrage": ("src", "data", "scripts", "moteur/js", ":(exclude)moteur/js/pages.js",
                   "docs/chiffrage_plf.md", "docs/chiffrage_plf.csv"),
     "pages": ("src", "data", "scripts", "moteur", "index.html", "simuler", "cout", "risque",
-              "partager", "saviez-vous", "cas-types", "avantages", "methode", "sitemap.xml"),
+              "partager", "saviez-vous", "caisses", "cas-types", "avantages", "methode",
+              "sitemap.xml"),
     "prose": ("src", "data", "scripts", "moteur", "index.html", "tests", "docs",
               "README.md", "CLAUDE.md", ".claude/rules"),
 }

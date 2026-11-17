@@ -59,7 +59,7 @@ RESULTATS = f"simuler/#{REQUETE}"
 #: chaque page dans son dossier (action 174), les résultats entre le
 #: formulaire vierge et la page Coût.
 ROUTES = ["./", "simuler/", RESULTATS, "cout/", "risque/", "partager/",
-          "saviez-vous/", "cas-types/", "avantages/", "methode/"]
+          "saviez-vous/", "caisses/", "cas-types/", "avantages/", "methode/"]
 
 #: La fenêtre qu'on rétrécit sans changer de page, au large, sur une page qui
 #: pose des schémas de front, d'un écran à l'autre : du bureau à la tablette en

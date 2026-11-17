@@ -1,0 +1,1223 @@
+<!doctype html>
+<!-- Page fabriquée par scripts/construire_pages.py, depuis moteur/page.html : ne la retouchez pas, refaites-la. -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#003340">
+<title>Les caisses — Retraite en comptes notionnels</title>
+<meta name="description" content="Chaque caisse de retraite, comment elle marche : qui paie pour qui, comment on y gagne des droits, comment la pension se calcule, d'où vient son argent et qui décide.">
+<link rel="canonical" href="https://partiliberalfrancais.fr/retraite/caisses/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="Retraite à comptes notionnels">
+<meta property="og:url" content="https://partiliberalfrancais.fr/retraite/caisses/">
+<meta property="og:title" content="Les caisses — Retraite en comptes notionnels">
+<meta property="og:description" content="Chaque caisse de retraite, comment elle marche : qui paie pour qui, comment on y gagne des droits, comment la pension se calcule, d'où vient son argent et qui décide.">
+<meta property="og:image" content="https://partiliberalfrancais.fr/retraite/moteur/apercu.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="« Chaque pension vaut ce qui a été cotisé. » Le programme du Parti libéral français pour les retraites, et son simulateur.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../moteur/icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../moteur/icone.svg">
+
+<link rel="preload" href="../moteur/polices/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../moteur/polices/jost-latin.woff2" as="font" type="font/woff2" crossorigin>
+<script>(function () {
+  try {
+    var choix = JSON.parse(localStorage.getItem("retraite-notionnelle.affichage") || "{}");
+    var admis = { taille: ["grand", "tres-grand"], police: ["lisible"], interligne: ["large"] };
+    for (var nom in admis) {
+      if (admis[nom].indexOf(choix[nom]) >= 0) { document.documentElement.dataset[nom] = choix[nom]; }
+    }
+    if (choix.police === "lisible") {
+      ["400", "700"].forEach(function (graisse) {
+        var lien = document.createElement("link");
+        lien.rel = "preload"; lien.as = "font"; lien.type = "font/woff2"; lien.crossOrigin = "";
+        lien.href = "../moteur/polices/atkinson-hyperlegible-" + graisse + ".woff2";
+        document.head.appendChild(lien);
+      });
+    }
+  } catch (erreur) { /* pas de stockage : les réglages par défaut */ }
+})();</script>
+<style>
+@font-face {
+  font-family: "Public Sans"; font-style: normal; font-weight: 100 900;
+  font-display: swap; src: url(../moteur/polices/public-sans-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Public Sans"; font-style: normal; font-weight: 100 900;
+  font-display: swap; src: url(../moteur/polices/public-sans-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Jost"; font-style: normal; font-weight: 400 800;
+  font-display: swap; src: url(../moteur/polices/jost-latin.woff2) format("woff2");
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible"; font-style: normal; font-weight: 400;
+  font-display: swap; src: url(../moteur/polices/atkinson-hyperlegible-400.woff2) format("woff2");
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible"; font-style: normal; font-weight: 700;
+  font-display: swap; src: url(../moteur/polices/atkinson-hyperlegible-700.woff2) format("woff2");
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible"; font-style: italic; font-weight: 400;
+  font-display: swap; src: url(../moteur/polices/atkinson-hyperlegible-400-italic.woff2) format("woff2");
+}
+:root {
+  
+  color-scheme: light;
+  
+  --fond: #f4f7f7;
+  --fond-carte: #ffffff;
+  --fond-appui: #e9f0f1;
+  
+  --fond-defilant: var(--fond);
+  
+  --texte: #0f2930;
+  --texte-doux: #44606a;
+  --texte-tres-doux: #557079;
+  --trait: #c3d3d6;
+  
+  --surlignage: #fdf4d2;
+  
+  --trait-champ: #6b858c;
+  
+  --petrole: #003340;
+  --petrole-fonce: #00242e;
+  
+  --lueur: #0a5a62;
+  --turquoise: #05c1ad;
+  --safran: #e9c53d;
+  
+  --accent: #00695f;
+  --accent-doux: #e3f4f1;
+  
+  --info-fond: #e3f4f1;
+  --info-bord: #00695f;
+  --alerte-fond: #fff6db;
+  --alerte-bord: #b8860b;
+  
+  --lueur-appel: #0f6f72;
+  
+  --or: #e9c53d;
+  --or-texte: #003340;
+  --sur-or: #00242e;
+  --titre: #003340;
+  --lien: #00695f;
+  
+  --focus: #9a6a00;
+  
+  --creme: #ffffff;
+  --sur-creme: #0f2930;
+  --sur-creme-doux: #44606a;
+  --sur-creme-accent: #00695f;
+  --creme-trait: #c3d3d6;
+  --bandeau: #003340;
+  --bandeau-texte: #ffffff;
+  --bandeau-doux: #cfe7e9;
+  --bandeau-vif: #e9c53d;
+  
+  --rayon: 14px;
+  --rayon-petit: 8px;
+  --ombre: 0 1px 2px rgb(0 36 46 / 0.06), 0 4px 16px rgb(0 36 46 / 0.07);
+  
+  --actuel: #2936b7;
+  --retroactif: #1a93b6;
+  --retroactif-employeur: #902731;
+  --liberal: #ac7d1b;
+  
+  --alerte: #855c00;
+  
+  --manque: #e0605e;
+  --manque-texte: #b42318;
+  --reste: #5c9e31;
+  
+  --serie-1: #5a6b70;
+  --serie-2: #c25a00;
+  --serie-3: #0b84c9;
+  --serie-4: #c03a7a;
+  --serie-5: #007d70;
+  --serie-6: #b8860b;
+  --serie-7: #2e7d32;
+  --serie-8: #8a6a58;
+  --serie-9: #7458d6;
+  
+  --echelle: 1;
+  --point: calc(1rem / var(--echelle));
+  
+  --marge: clamp(1.125 * var(--point), 5vw, 2.5 * var(--point));
+  
+  --largeur: calc(80 * var(--point));
+  
+  --t-meta: 0.8125rem;
+  --t-petit: 0.9375rem;
+  --t-texte: 1.0625rem;
+  --t-lead: 1.25rem;
+  --t-serif: clamp(1.25rem, 2vw, 1.5rem);
+  --t-intertitre: clamp(1.625rem, 3vw, 2.25rem);
+  --t-chiffre: clamp(2.25rem, 4.5vw, 3rem);
+  --t-titre: clamp(2.25rem, 5vw, 3.5rem);
+  
+  --jost: "Jost", "Futura", "Century Gothic", "Avenir Next", system-ui, sans-serif;
+  --titres: var(--jost);
+  --serif: var(--titres);
+  
+  --police: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+:root[data-taille] { font-size: calc(100% * var(--echelle)); }
+:root[data-taille="grand"] { --echelle: 1.17647; }
+:root[data-taille="tres-grand"] { --echelle: 1.41176; }
+:root[data-taille] header.bandeau { position: relative; }
+:root[data-police="lisible"] {
+  --police: "Atkinson Hyperlegible", system-ui, sans-serif;
+  --titres: "Atkinson Hyperlegible", system-ui, sans-serif;
+}
+:root[data-interligne="large"] body {
+  line-height: 1.9; letter-spacing: 0.02em; word-spacing: 0.08em;
+}
+:root[data-interligne="large"] :is(svg, .carte-partage) { letter-spacing: 0; word-spacing: 0; }
+:root[data-police="lisible"] .carte-partage { --titres: var(--jost); }
+header.bandeau, .affiche, .carte-partage, .carte-appel, .zone-petrole {
+  color-scheme: dark;
+  --fond: #003340;
+  --fond-carte: #00242e;
+  --fond-appui: #0a3f4c;
+  --fond-defilant: #003340;
+  --texte: #ffffff;
+  --texte-doux: #cfe7e9;
+  --texte-tres-doux: #b3d0d4;
+  --trait: #1d5664;
+  --trait-champ: #6f9ca6;
+  --accent: #e9c53d;
+  --accent-doux: #0a4a57;
+  --or-texte: #e9c53d;
+  --titre: #ffffff;
+  --lien: #ffffff;
+  --focus: #e9c53d;
+  background-color: var(--fond);
+  color: var(--texte);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--fond);
+  color: var(--texte);
+  font-family: var(--police);
+  
+  font-size: var(--t-texte);
+  line-height: 1.6;
+  
+  font-synthesis-weight: none;
+  
+  overflow-x: hidden;
+}
+main { max-width: var(--largeur); margin: 0 auto; padding: 0 var(--marge); }
+strong, b { font-weight: 600; }
+th { font-weight: 500; }
+.evitement {
+  position: absolute; left: 0.5rem; top: -4rem; z-index: 30;
+  background: var(--or); color: var(--sur-or);
+  border: 1px solid var(--or); border-radius: 0 0 4px 4px;
+  padding: 0.5rem 1rem; font-size: var(--t-petit); font-weight: 500;
+  text-decoration: none; transition: top 0.15s;
+}
+.evitement:focus { top: 0; }
+main:focus { outline: none; }
+header.bandeau {
+  background: var(--bandeau);
+  color: var(--bandeau-texte);
+  padding: 0;
+  margin-bottom: 0;
+  position: sticky; top: 0; z-index: 20;
+}
+header.bandeau::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(90deg, var(--petrole) 40%, var(--lueur));
+}
+header.bandeau .interieur {
+  max-width: var(--largeur); margin: 0 auto; padding: 0 var(--marge);
+  display: flex; flex-wrap: wrap; gap: 0 1rem;
+  align-items: center; justify-content: space-between;
+}
+header.bandeau .nom {
+  margin: 0; line-height: 1.2; flex: 1 1 0%;
+  display: flex; align-items: center; min-height: 4rem; min-width: 0;
+}
+header.bandeau .nom a {
+  color: inherit; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 0.75rem; min-width: 0;
+}
+header.bandeau .nom .logo { width: auto; height: 2.5rem; flex: none; }
+header.bandeau .nom .marque { display: flex; flex-direction: column; min-width: 0; }
+header.bandeau .nom .parti {
+  font-family: var(--titres); font-size: var(--t-lead); font-weight: 700;
+}
+header.bandeau .nom .site { font-size: var(--t-meta); color: var(--bandeau-doux); }
+header.bandeau .nom a:hover .parti { color: var(--or); }
+header.bandeau nav {
+  display: flex; flex-wrap: wrap; gap: 0.25rem; width: 100%;
+  padding: 0.5rem 0; border-top: 1px solid rgb(255 255 255 / 0.12);
+}
+nav .groupe { display: contents; }
+nav .etiquette {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+nav .liens { display: contents; }
+nav .groupe.secondaire { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem; }
+nav .groupe.secondaire .etiquette {
+  position: static; width: auto; height: auto; margin: 0 0 0 0.5rem;
+  overflow: visible; clip-path: none; white-space: nowrap;
+  display: inline-flex; align-items: center;
+  padding: 0 0.25rem 0 0.75rem; border-left: 1px solid var(--trait-champ);
+  font-size: var(--t-meta); font-weight: 500; color: var(--texte-tres-doux);
+}
+nav .deplier { display: none; }
+@media (max-width: 48rem) {
+  nav .groupe.secondaire { display: contents; }
+  nav .groupe.secondaire .etiquette { display: none; }
+  nav .deplier {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    min-height: 2.75rem; margin: 0; padding: 0 0.75rem;
+    background: none; border: 0; border-radius: var(--rayon-petit);
+    font: inherit; font-size: var(--t-petit); font-weight: 500;
+    white-space: nowrap; color: var(--texte-doux); cursor: pointer;
+  }
+  nav .deplier:hover { color: var(--bandeau-texte); }
+  nav .deplier .icone { transition: transform 0.15s; }
+  nav .deplier[aria-expanded="true"] .icone { transform: rotate(180deg); }
+  nav .deplier[aria-expanded="false"] + .liens { display: none; }
+}
+header.bandeau nav a {
+  color: var(--bandeau-texte); text-decoration: none;
+  font-size: var(--t-petit); font-weight: 600; white-space: nowrap;
+  display: inline-flex; align-items: center; min-height: 2.75rem;
+  padding: 0 0.75rem; border-radius: var(--rayon-petit);
+  background: var(--petrole-fonce); border-bottom: 4px solid transparent;
+  transition: color 0.15s, background-color 0.15s;
+}
+header.bandeau nav a:hover { color: var(--or); }
+header.bandeau nav a[aria-current="page"] {
+  color: var(--sur-or); background: var(--or);
+  border-bottom-color: var(--sur-or);
+}
+header.bandeau .affichage {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  flex: none; min-height: 2.75rem; min-width: 2.75rem; margin: 0; padding: 0 0.75rem;
+  background: none; border: 2px solid rgb(255 255 255 / 0.55);
+  border-radius: var(--rayon-petit); color: var(--texte);
+  font: inherit; font-size: var(--t-petit); font-weight: 600; line-height: 1.2;
+  cursor: pointer;
+}
+header.bandeau .affichage:hover { background: rgb(255 255 255 / 0.1); border-color: #fff; opacity: 1; }
+header.bandeau .affichage .icone { width: 1.25em; height: 1.25em; }
+#affichage {
+  border: 0; padding: 0; width: 32rem; max-width: calc(100vw - 2rem);
+  max-height: calc(100dvh - 2rem);
+  border-radius: var(--rayon); background: var(--fond-carte); color: var(--texte);
+  box-shadow: 0 20px 60px rgb(0 0 0 / 0.35);
+}
+#affichage::backdrop { background: rgb(0 20 26 / 0.55); backdrop-filter: blur(3px); }
+#affichage .reglages { padding: 1.25rem 1.5rem 1.5rem; }
+#affichage .tete {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+  gap: 0.5rem 1rem;
+}
+#affichage h2 {
+  margin: 0; font-family: var(--titres); font-size: var(--t-serif); font-weight: 700;
+  line-height: 1.2; color: var(--titre);
+}
+#affichage fieldset { border: 0; padding: 0; margin: 1.25rem 0 0; min-width: 0; }
+#affichage legend { padding: 0; margin-bottom: 0.5rem; font-weight: 700; }
+#affichage .pastilles { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+#affichage label {
+  position: relative; display: inline-flex; align-items: center; min-height: 2.75rem;
+  margin: 0; padding: 0.25rem 1rem; font-size: var(--t-petit); font-weight: 600;
+  line-height: 1.2; color: var(--texte); cursor: pointer;
+  border: 2px solid var(--trait-champ); border-radius: 999px; background: var(--fond-carte);
+}
+#affichage label input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+#affichage label:hover { border-color: var(--accent); }
+#affichage label:has(input:checked) {
+  background: var(--petrole); color: #fff; border-color: var(--petrole);
+}
+#affichage label:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 3px; }
+#affichage button {
+  min-height: 2.75rem; padding: 0.25rem 1rem; font-size: var(--t-petit); font-weight: 600;
+  line-height: 1.2; background: transparent; color: var(--texte);
+  border: 2px solid var(--trait-champ); border-radius: var(--rayon-petit);
+}
+#affichage button:hover { border-color: var(--accent); opacity: 1; }
+#affichage p { margin: 1.25rem 0 0; max-width: none; }
+#affichage p.ou { margin-top: 1rem; font-size: var(--t-petit); color: var(--texte-doux); }
+header.bandeau .menu { display: none; }
+@media (max-width: 48rem) {
+  header.bandeau .menu {
+    display: inline-flex; align-items: center; gap: 0.5rem; align-self: center;
+    min-height: 2.75rem; min-width: 2.75rem; margin: 0; padding: 0 0.75rem;
+    justify-content: center;
+    background: none; border: 2px solid rgb(255 255 255 / 0.55);
+    border-radius: var(--rayon-petit); color: var(--texte);
+    font: inherit; font-size: var(--t-petit); font-weight: 600; cursor: pointer;
+  }
+  header.bandeau .menu:hover,
+  header.bandeau .menu[aria-expanded="true"] {
+    background: rgb(255 255 255 / 0.1); border-color: #fff;
+  }
+  header.bandeau .menu[aria-expanded="false"] + nav { display: none; }
+  header.bandeau .nom { flex: 1 1 0%; min-height: 3.5rem; }
+  header.bandeau .nom .logo { height: 2rem; }
+  header.bandeau .nom .parti { font-size: var(--t-texte); }
+  header.bandeau .menu { flex: none; }
+  header.bandeau nav { flex-direction: column; align-items: stretch; }
+}
+@media (max-width: 36rem) {
+  header.bandeau .menu, header.bandeau .affichage { padding: 0; }
+  header.bandeau .interieur { gap: 0 0.5rem; }
+  header.bandeau .menu span, header.bandeau .affichage span {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+  }
+}
+h1, h2, h3, h4 { text-wrap: balance; }
+h1 {
+  margin: 0; font-family: var(--titres); color: var(--titre);
+  font-size: var(--t-titre); line-height: 1.1;
+  font-weight: 700; letter-spacing: -0.005em;
+}
+h2 {
+  font-family: var(--titres); font-size: var(--t-intertitre); line-height: 1.15;
+  margin: 3rem 0 1rem; font-weight: 700; color: var(--titre);
+}
+h3 { font-size: var(--t-lead); margin: 2rem 0 0.5rem; font-weight: 700; }
+.serif {
+  font-family: var(--titres);
+  font-weight: 500; text-transform: none; letter-spacing: 0;
+  line-height: 1.15;
+}
+:is(h2, h3).serif { font-weight: 700; }
+p { margin: 0.75rem 0; max-width: 46rem; }
+a {
+  color: var(--lien); text-decoration-color: var(--trait-champ);
+  text-underline-offset: 0.2em; transition: text-decoration-color 0.15s;
+}
+a:hover { text-decoration-color: var(--or); }
+.surtitre {
+  margin: 0 0 0.5rem; font-family: var(--titres); font-size: var(--t-petit);
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--accent); line-height: 1.3;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.surtitre::before {
+  content: ""; flex: none; width: 1.5rem; height: 4px;
+  background: var(--or); border-radius: 2px;
+}
+.surtitre + h2 { margin-top: 0; }
+.chapeau {
+  font-size: var(--t-lead); line-height: 1.5;
+  color: var(--texte-doux); max-width: 46rem; margin: 1.25rem 0 0;
+}
+.chapeau strong, .chapeau .cle-texte { color: var(--or-texte); font-weight: 600; }
+.affiche {
+  padding: 2.5rem 0 3rem; margin-bottom: 2rem;
+  position: relative; isolation: isolate;
+}
+.affiche::before {
+  content: ""; position: absolute; z-index: -1;
+  top: 0; bottom: 0; left: calc(50% - 50vw); right: calc(50% - 50vw);
+  background:
+    linear-gradient(to bottom, rgb(0 51 64 / 0), var(--petrole)),
+    linear-gradient(90deg, var(--petrole) 40%, var(--lueur));
+}
+.affiche .surtitre { letter-spacing: 0.1em; color: var(--or-texte); }
+.tranche {
+  position: relative; isolation: isolate;
+  padding: clamp(2rem, 6vw, 3rem) 0;
+}
+.tranche.alt {
+  background-color: var(--fond-appui); --fond-defilant: var(--fond-appui);
+}
+.tranche.alt::before {
+  content: ""; position: absolute; z-index: -1;
+  top: 0; bottom: 0; left: calc(50% - 50vw); right: calc(50% - 50vw);
+  background-color: var(--fond-appui);
+}
+:not(.tranche, .affiche) + .tranche { margin-top: clamp(2rem, 6vw, 3rem); }
+.tranche > :first-child { margin-top: 0; }
+.tranche > :last-child { margin-bottom: 0; }
+.affiche + .tranche:not(.alt) { padding-top: 0; }
+.affiche:has(+ .tranche.alt) { margin-bottom: 0; }
+main:has(> .tranche:last-child) + footer { margin-top: 0; }
+.affiche h1 .cle-texte {
+  color: inherit; font-weight: inherit;
+  background: linear-gradient(transparent 62%, rgb(233 197 61 / 0.55) 62%);
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.cle-texte, strong.cle-texte { color: var(--or-texte); font-weight: 600; }
+h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
+.carte {
+  background: var(--fond-carte); border: 1px solid var(--trait);
+  border-radius: var(--rayon); padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+  box-shadow: var(--ombre);
+}
+.note {
+  border-left: 5px solid var(--info-bord); background: var(--info-fond);
+  padding: 0.75rem 1rem; margin: 1.5rem 0; font-size: var(--t-petit);
+  border-radius: 0 var(--rayon-petit) var(--rayon-petit) 0;
+  --fond-defilant: var(--info-fond);
+}
+.simulateur-court .tete {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.25rem;
+}
+.simulateur-court .tete h2 { margin: 0; }
+.simulateur-court .tete .etiquette {
+  font-size: var(--t-petit); font-weight: 500; color: var(--sur-creme-accent);
+}
+.simulateur-court .grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(10.625rem, 100%), 1fr));
+  
+  gap: 1rem; align-items: start;
+}
+.simulateur-court .grille button {
+  white-space: nowrap; min-height: 2.75rem; padding: 0.5rem 1.25rem;
+}
+form .grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+  gap: 1rem 1.5rem;
+}
+form .grille > div { display: grid; grid-template-rows: subgrid; grid-row: span 3; row-gap: 0; }
+@supports not (grid-template-rows: subgrid) {
+  form .grille > div { display: flex; flex-direction: column; }
+  form .grille > div > label { flex: 1 0 auto; }
+}
+form .grille > div[hidden] { display: none; }
+form .grille > .action { display: grid; grid-template-rows: subgrid; grid-row: span 3; }
+form .grille > .action > button { grid-row: 2; }
+label {
+  display: block; font-size: var(--t-petit); font-weight: 500; line-height: 1.2;
+  color: var(--texte); margin-bottom: 0.5rem;
+}
+.calcul {
+  display: block; font-size: var(--t-petit); color: var(--texte-doux);
+  margin-top: 0.25rem;
+}
+input, select, textarea {
+  width: 100%; padding: 0.75rem; font: inherit; font-size: var(--t-texte);
+  color: var(--texte); background: var(--fond-carte); border: 2px solid var(--trait-champ);
+  border-radius: var(--rayon-petit);
+}
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select {
+  
+  height: 2.75rem; padding: 0.5rem 0.75rem;
+}
+textarea {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88rem; line-height: 1.45; resize: vertical;
+}
+:focus-visible {
+  outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 0;
+}
+input:focus, select:focus, textarea:focus {
+  outline: 3px solid var(--focus); outline-offset: 2px;
+}
+button {
+  font: inherit; font-size: var(--t-texte); font-weight: 600;
+  padding: 1rem 1.5rem; min-height: 3rem; cursor: pointer;
+  color: var(--sur-or); background: var(--or);
+  border: 2px solid var(--or); border-radius: var(--rayon-petit);
+}
+button:hover { opacity: 0.88; }
+a.bouton {
+  display: inline-flex; align-items: center; min-height: 3rem;
+  text-decoration: none;
+  color: var(--sur-or); background: var(--or);
+  border: 2px solid var(--or); border-radius: var(--rayon-petit);
+  padding: 0.75rem 1.5rem; font-size: var(--t-texte); font-weight: 600;
+}
+a.bouton:hover { opacity: 0.88; }
+form .memoire {
+  margin: 0.3rem 0 0; padding: 0.55rem 0.85rem; font-size: 0.92rem;
+  border-left: 3px solid var(--or); background: var(--fond-appui);
+}
+.metiers { display: grid; gap: 0.9rem; margin: 0.9rem 0 0; }
+.metier, .ligne-etrangere {
+  border: 1px solid var(--creme-trait); border-radius: 4px; padding: 0.9rem 1rem;
+  
+  margin: 0; min-width: 0;
+}
+.metier.facultatif, .ligne-etrangere.facultatif { border-style: dashed; }
+button.retirer { padding: 0.45rem 0.9rem; min-height: 2.75rem; font-size: 0.9rem; }
+.metier > .rang, .ligne-etrangere > .rang {
+  margin: 0; padding: 0 0.35rem; font-size: 0.78rem; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--texte-doux); font-weight: 700;
+}
+.icone {
+  width: 1.05em; height: 1.05em; flex: none; vertical-align: -0.16em;
+}
+details { margin-top: 1.25rem; }
+summary {
+  cursor: pointer; color: var(--texte-doux); font-size: var(--t-petit);
+  display: flex; align-items: center; gap: 0.5rem; list-style: none;
+  min-height: 2.75rem;
+}
+summary::-webkit-details-marker { display: none; }
+summary::marker { content: ""; }
+summary > .icone { color: var(--texte-doux); transition: transform 0.15s; }
+details[open] > summary > .icone { transform: rotate(180deg); }
+summary:hover { color: var(--texte); }
+details > .grille { margin-top: 1rem; }
+.depot {
+  border: 1px dashed var(--trait); border-radius: 4px;
+  padding: 1rem 1.1rem; margin-top: 1rem; background: var(--fond-carte);
+}
+.depot.survol { border-style: solid; border-color: var(--or); }
+.depot > :first-child { margin-top: 0; }
+.depot > :last-child { margin-bottom: 0; }
+.depot input[type="file"] { font: inherit; font-size: 0.88rem; max-width: 100%; }
+.rapport-releve:empty { display: none; }
+.rapport-releve {
+  border-left: 3px solid var(--reste); padding: 0.1rem 0 0.1rem 0.8rem;
+  font-size: 0.92rem; margin: 1rem 0 0;
+}
+.rapport-releve.echec { border-left-color: var(--manque); }
+.rapport-releve ul { margin: 0.4rem 0 0; padding-left: 1.1rem; }
+.rapport-releve li { margin: 0.2rem 0; color: var(--texte-doux); }
+.rapport-releve code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.85em;
+}
+details.section { margin: 0; border-top: 1px solid var(--trait); }
+details.section:last-of-type { border-bottom: 1px solid var(--trait); }
+details.section > summary {
+  color: var(--texte); font-size: var(--t-texte); font-weight: 500;
+  padding: 0.75rem 0.25rem; gap: 0.5rem;
+}
+details.section > summary:hover { color: var(--or-texte); }
+details.section > .dedans { padding: 0 0 1.25rem 1.75rem; }
+details.section > .dedans > :first-child { margin-top: 0; }
+.defilant {
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  
+  container-type: inline-size;
+}
+.defilant {
+  background:
+    linear-gradient(to right, var(--fond-defilant) 30%, transparent) left center,
+    linear-gradient(to left, var(--fond-defilant) 30%, transparent) right center,
+    radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, 0.4), transparent) left center,
+    radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, 0.4), transparent) right center;
+  background-repeat: no-repeat;
+  background-size: 2.5rem 100%, 2.5rem 100%, 0.9rem 100%, 0.9rem 100%;
+  background-attachment: local, local, scroll, scroll;
+  
+  border: 1px solid var(--trait); border-radius: var(--rayon-petit);
+  background-color: var(--fond-carte); --fond-defilant: var(--fond-carte);
+}
+.carte, .plan, .erreur, .cadre-carte, section.cle {
+  --fond-defilant: var(--fond-carte);
+}
+table { border-collapse: collapse; width: 100%; font-size: var(--t-texte);
+        font-variant-numeric: tabular-nums; }
+tbody th { font-weight: 500; }
+tbody th .dont { font-weight: 400; color: var(--texte-doux); padding-left: 1.2rem; display: inline-block; }
+table { --retrait-case: clamp(0.375rem, 2.5vw - 1px, 0.75rem); }
+th, td { text-align: right; padding: 0.75rem var(--retrait-case);
+         border-bottom: 1px solid var(--trait); }
+th:first-child, td:first-child { text-align: left; }
+thead th {
+  font-size: var(--t-petit); color: var(--texte); font-weight: 700;
+  background: var(--fond-appui);
+}
+tbody tr:hover { background: var(--surlignage); }
+tbody tr:last-child :is(th, td) { border-bottom: none; }
+td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
+td.nombre, td.date, th.date { white-space: nowrap; }
+td.texte, th.texte { text-align: left; }
+th > .tri {
+  
+  font: inherit; color: inherit; background: none; border: none;
+  padding: 0.25rem 0; min-height: 1.5rem;
+  text-transform: inherit; letter-spacing: inherit;
+  cursor: pointer; border-bottom: 1px dotted currentColor;
+}
+th > .tri:hover { color: var(--or-texte); }
+th[aria-sort="ascending"] > .tri::after { content: " \2191"; }
+th[aria-sort="descending"] > .tri::after { content: " \2193"; }
+.filtres {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr));
+  gap: 0.8rem 1.2rem; margin: 1rem 0 0.5rem;
+}
+.filtres + .compte { margin: 0.2rem 0 0.8rem; }
+tbody tr[hidden] { display: none; }
+table[data-plie], table[data-plie] > :is(thead, tbody) { display: block; min-width: 0; }
+table[data-plie] { padding: 0 var(--retrait-case); box-sizing: border-box; }
+table[data-plie] thead th { background: none; }
+table[data-pli="rangee"][data-plie] tr:not([hidden]) {
+  display: grid; grid-template-columns: repeat(var(--colonnes), minmax(0, 1fr));
+  column-gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid var(--trait);
+}
+table[data-pli="rangee"][data-plie] thead tr { border-bottom: 1px solid var(--texte-tres-doux); }
+table[data-pli="rangee"][data-plie] tbody tr:last-child { border-bottom: 0; }
+table[data-pli="rangee"][data-plie] :is(th, td) {
+  padding: 0.1rem 0; border: 0; min-width: 0; overflow-wrap: anywhere;
+}
+table[data-pli="rangee"][data-plie] tr > :first-child { grid-column: 1 / -1; }
+table[data-pli="rangee"][data-plie] thead tr > :first-child:empty { display: none; }
+table[data-pli="rangee"][data-plie] thead th { font-size: var(--t-meta); }
+table[data-pli="fiche"][data-plie] thead:not(:has(.tri)) {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+table[data-pli="fiche"][data-plie] thead tr {
+  display: flex; flex-wrap: wrap; gap: 0 1rem; border-bottom: 1px solid var(--texte-tres-doux);
+}
+table[data-pli="fiche"][data-plie] thead th { border: 0; padding: 0.25rem 0; min-width: 0; }
+table[data-pli="fiche"][data-plie] tbody tr:not([hidden]) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(calc(50% - 0.5rem), 8.5rem), 1fr));
+  gap: 0.4rem 1rem; padding: 0.65rem 0; border-bottom: 1px solid var(--trait);
+}
+table[data-pli="fiche"][data-plie]:not(:has(tr > :nth-child(4))) tbody tr:not([hidden]) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+table[data-grille][data-pli="rangee"][data-plie] tr:not([hidden]) { column-gap: 0.3rem; }
+table[data-grille][data-pli="fiche"][data-plie] tbody tr:not([hidden]) {
+  grid-template-columns: repeat(auto-fill, minmax(3.5rem, 1fr));
+  
+  column-gap: 0.5rem;
+}
+table[data-pli="fiche"][data-plie] tbody tr:last-child { border-bottom: 0; }
+table[data-pli="fiche"][data-plie] tbody :is(th, td) {
+  padding: 0; border: 0; text-align: left; min-width: 0; white-space: normal;
+  overflow-wrap: anywhere;
+}
+table[data-pli="fiche"][data-plie] tbody tr > :first-child,
+table[data-pli="fiche"][data-plie] tbody .pleine { grid-column: 1 / -1; }
+table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
+  content: attr(data-titre) / ""; display: block;
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--texte-doux);
+  hyphens: auto; hyphenate-limit-chars: 12 5 5;
+}
+.bascule {
+  display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.4rem;
+  
+  margin: 0.9rem 1.25rem 0 0; max-width: calc(100% - 1.25rem);
+}
+.scenario { margin: 0; padding: 1.125rem 0; border-bottom: 1px solid var(--trait); }
+.scenario:first-of-type { border-top: 1px solid var(--trait); }
+.scenario .entete { display: flex; justify-content: space-between; gap: 0.2rem 1rem;
+                    align-items: baseline; flex-wrap: wrap; }
+.scenario .titre { flex: 1 1 14rem; font-size: 1.0625rem; font-weight: 700; }
+.scenario .montant { display: flex; justify-content: flex-end; align-items: baseline;
+                     gap: 1.1rem; flex-wrap: nowrap; margin-left: auto;
+                     font-variant-numeric: tabular-nums; }
+.scenario .chiffre { display: flex; flex-direction: column; align-items: flex-end;
+                     white-space: nowrap; }
+.scenario .chiffre .somme { line-height: 1.2; }
+.scenario .chiffre .unite { font-size: 0.8rem; color: var(--texte-doux); }
+.scenario .chiffre .categorie {
+  font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--texte-doux); line-height: 1.4;
+}
+.scenario .principal .somme {
+  font-family: var(--titres);
+  font-size: 1.875rem; font-weight: 600; letter-spacing: -0.01em;
+}
+@media (max-width: 48rem) {
+  .scenario .montant { flex-wrap: wrap; justify-content: flex-start;
+                       gap: 0.4rem 1.1rem; }
+}
+.scenarios {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 1rem; margin: 0.75rem 0 0.5rem;
+}
+@media (min-width: 48rem) {
+  .scenarios { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.scenarios > .scenario {
+  display: grid; grid-row: span 6; grid-template-rows: subgrid; row-gap: 0.4rem;
+  align-content: start; padding: 0.7rem 0 0.8rem; border-top: 1px solid var(--trait);
+  border-bottom: 0; min-width: 0;
+}
+.scenarios > .scenario > .entete, .scenarios .scenario .montant { display: contents; }
+.scenarios .scenario .titre {
+  grid-row: 1; font-size: 0.9375rem; line-height: 1.3; max-width: none;
+}
+.scenarios .scenario .principal { grid-row: 3; }
+.scenarios .scenario .barre { grid-row: 5; margin-top: 0.15rem; align-self: end; }
+.scenarios .scenario .chiffre {
+  display: block; white-space: normal; min-width: 0; padding: 0; box-shadow: none;
+  border: 0; line-height: 1.25;
+}
+.scenarios .scenario .chiffre .categorie {
+  display: block; font-size: 0.6875rem; letter-spacing: 0.1em;
+}
+.scenarios .scenario .chiffre .unite { margin-left: 0.25em; white-space: nowrap; }
+.scenarios .scenario :is(.salaire, .principal) .somme { font-size: 1.5rem; }
+.barre { height: 14px; background: var(--fond-carte); margin-top: 0.75rem;
+         display: flex; align-items: center; }
+.barre > span { display: block; height: 10px; }
+.fiche .valeur { font-size: 1.25rem; font-variant-numeric: tabular-nums;
+                 font-weight: 700; }
+.fiche .etiquette { font-size: 0.85rem; color: var(--texte-doux); }
+.points { display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
+          gap: 1.5rem; margin: 2rem 0; }
+.points .point {
+  background: var(--fond-carte); border: 1px solid var(--trait);
+  border-top: 4px solid var(--or); border-radius: var(--rayon);
+  box-shadow: var(--ombre); padding: 1.25rem 1.5rem;
+}
+.points .point > h2 {
+  margin: 0 0 0.5rem; font-family: var(--titres); font-size: 1.25rem;
+  font-weight: 700; line-height: 1.25;
+}
+.points .point > p { margin: 0; font-size: 1rem; color: var(--texte-doux); }
+section.cle {
+  background: var(--fond-carte); border: 1px solid var(--trait);
+  border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+  padding: 1.5rem clamp(1.25 * var(--point), 3vw, 1.75 * var(--point)) 1.25rem;
+  margin: 2.5rem 0;
+}
+section.cle > :is(h2, h3) {
+  margin: 0; font-family: var(--titres); font-size: clamp(1.375rem, 3vw, 1.75rem);
+  font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; color: var(--titre);
+}
+section.cle > .reponse {
+  font-size: 1.1875rem; line-height: 1.5; max-width: 46rem; margin: 0.5rem 0 0.2rem;
+  color: var(--texte-doux);
+}
+section.cle > .source {
+  font-size: 0.875rem; color: var(--texte-tres-doux); margin: 0.2rem 0 0;
+}
+.partage {
+  margin: 1.25rem 0 0; padding-top: 1.125rem;
+  border-top: 3px solid var(--or);
+  display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
+}
+.partage > .partager,
+.partage > .partager-x {
+  font: inherit; font-size: 0.9375rem; cursor: pointer;
+  min-height: 3rem; padding: 0.85rem 1.125rem;
+  border-radius: var(--rayon-petit); display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.partage > .partager {
+  font-weight: 600;
+  color: var(--sur-or); background: var(--or); border: 2px solid var(--or);
+}
+.partage > .partager-x {
+  font-weight: 600; color: var(--texte); background: transparent;
+  border: 2px solid var(--trait-champ);
+}
+.partage > .partager:hover { opacity: 0.88; }
+.partage > .partager-x:hover { border-color: var(--or); }
+.partage > .etat {
+  font-size: 0.9375rem; line-height: 1.35; color: var(--texte-doux);
+  min-width: 0; flex: 1 1 8rem;
+}
+.partage > .etat:empty { display: none; }
+.partage > .repli {
+  flex: 1 1 100%; margin: 0; font-family: inherit; font-size: 0.9375rem;
+  background: var(--fond); color: var(--texte); border: 2px solid var(--or);
+}
+.partage > .repli[hidden] { display: none; }
+section.cle > .partage { max-width: none; border-top: 1px solid var(--trait); }
+.mot > .terme {
+  
+  font: inherit; color: inherit; background: none; border: none;
+  border-bottom: 1px dotted var(--trait-champ); border-radius: 0;
+  padding: 0; margin: 0; min-height: 0; cursor: help;
+  text-transform: inherit; letter-spacing: inherit;
+  
+  text-align: inherit;
+}
+.mot > .terme:hover, .mot > .terme[aria-expanded="true"] { color: var(--or-texte); }
+.mot > .terme[aria-expanded="true"] { border-bottom-style: solid; }
+.mot > .bulle {
+  position: fixed; inset: auto 0.75rem 0.75rem; margin: 0;
+  width: auto; max-width: none; overflow: visible;
+  background: var(--fond-carte); color: var(--texte);
+  border: 1px solid var(--trait-champ); border-radius: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  padding: 0.9rem 1rem; font-size: 1rem; line-height: 1.45;
+  
+  font-weight: 400; font-style: normal; text-align: left; white-space: normal;
+  font-family: "Public Sans", system-ui, sans-serif; text-transform: none;
+  letter-spacing: 0;
+}
+@supports not selector(:popover-open) {
+  .mot > .bulle { display: none; }
+}
+@supports (position-anchor: --mot-ouvert) {
+  @media (width > 34rem) {
+  .mot > .terme[aria-expanded="true"] { anchor-name: --mot-ouvert; }
+  .mot > .bulle {
+      position-anchor: --mot-ouvert; inset: auto;
+      top: anchor(bottom); left: anchor(left); margin: 0.5rem 0;
+      width: max(14rem, min(22rem, 70vw));
+      padding: 0.75rem 1rem; font-size: var(--t-petit);
+      position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+    }
+}
+}
+.graphique { margin: 1.5rem 0 1.75rem; position: relative; }
+.graphique svg { display: block; width: 100%; height: auto; overflow: visible;
+                 touch-action: pan-y; }
+.graphique:has(> figcaption) {
+  display: flex; flex-direction: column; gap: 0.6rem;
+}
+.graphique:has(> figcaption) > svg { flex: none; }
+.graphique > figcaption { order: -1; min-width: 0; }
+.graphique:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+.graphique .survol .guide { stroke: var(--texte); stroke-width: 1; }
+.graphique .survol .point { stroke-width: 3; fill: var(--fond); }
+.graphique .lecture {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+.graphique .lecture[hidden] { display: none; }
+.graphique .annee-lue {
+  font-family: inherit; font-size: 13px; font-weight: 800;
+  fill: var(--or-texte); paint-order: stroke; stroke: var(--fond); stroke-width: 6px;
+  stroke-linejoin: round;
+}
+.graphique .grille { stroke: var(--trait); stroke-width: 1; }
+.graphique .courbe {
+  fill: none; stroke-width: 3;
+  stroke-linejoin: round; stroke-linecap: round;
+}
+.graphique .graduation {
+  fill: var(--texte-tres-doux); font-family: inherit; font-size: 13px;
+  font-weight: 600; font-variant-numeric: tabular-nums;
+}
+.cascade { margin: 1.5rem 0 1.75rem; }
+.cascade svg { display: block; width: 100%; height: auto; }
+.cascade:has(> figcaption) { display: flex; flex-direction: column; gap: 0.6rem; }
+.cascade > svg { flex: none; min-width: 0; }
+.cascade > figcaption { order: -1; min-width: 0; }
+.cascade:has(> figcaption) > .lecture { order: 1; }
+.cascade:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+.cascade .grille { stroke: var(--trait); stroke-width: 1; }
+.cascade .marche.total { fill: var(--serie-9); }
+.cascade .graduation {
+  fill: var(--texte-tres-doux); font-family: inherit; font-size: 12px;
+  font-weight: 600; font-variant-numeric: tabular-nums;
+}
+.cascade :is(.valeur, .etiquette) {
+  paint-order: stroke; stroke: var(--fond-defilant); stroke-width: 4px;
+  stroke-linejoin: round;
+}
+.cascade .valeur {
+  fill: var(--texte); font-family: inherit; font-size: 14px; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.cascade .etiquette {
+  fill: var(--texte-doux); font-family: inherit; font-size: 13px;
+}
+.cascade .etiquette.total { fill: var(--texte); font-weight: 700; }
+.cascade .survol .cadre {
+  fill: none; stroke: var(--texte); stroke-width: 2;
+}
+.cascade:has(.survol .cadre) .marche { opacity: 0.55; }
+.cascade:has(.survol .cadre) .marche.visee { opacity: 1; }
+.cascade .lecture {
+  margin-top: 0.5rem; font-size: 0.9375rem; font-weight: 600;
+  color: var(--texte); min-height: 1.5rem;
+}
+.cascade .lecture[hidden] { display: none; }
+.cascade .lecture .part { color: var(--texte-doux); font-weight: 400; }
+.cascade .defilant:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+.sankey { margin: 1.75rem 0 1.5rem; }
+.sankey > figcaption {
+  margin: 0 0 0.35rem; font-size: 1.0625rem; font-weight: 800; color: var(--texte);
+}
+.sankey .defilant { padding-bottom: 0.25rem; }
+.sankey svg { display: block; width: 100%; max-width: 56rem; height: auto; }
+.sankey .defilant:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+.sankey .nom {
+  fill: var(--texte); font-family: inherit; font-size: 13px; font-weight: 700;
+}
+.sankey .montant {
+  fill: var(--texte-doux); font-family: inherit; font-size: 13px; font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.sankey .colonne {
+  fill: var(--texte-tres-doux); font-family: inherit; font-size: 12px;
+  font-weight: 600;
+}
+.de-front {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 1.5rem; align-items: start;
+}
+.de-front > * { min-width: 0; }
+.pastille {
+  display: inline-block; flex: none;
+  width: 0.75rem; height: 0.75rem; border-radius: 0;
+}
+.cadre-carte {
+  container-type: inline-size;
+  background: var(--fond-carte); padding: 0.5rem; min-width: 0;
+}
+.carte-partage {
+  aspect-ratio: 1200 / 675; box-sizing: border-box;
+  background: var(--fond); color: var(--texte); padding: 4.667cqw;
+  display: flex; flex-direction: column; justify-content: space-between;
+  font-family: "Public Sans", system-ui, sans-serif;
+}
+.carte-partage .surtitre {
+  margin: 0; font-family: inherit; font-size: 13px; font-size: 2.167cqw; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--or-texte);
+  line-height: 1;
+}
+.carte-partage .chiffre {
+  font-size: 75px; font-size: 12.5cqw; line-height: 0.85; font-weight: 900;
+  letter-spacing: -0.05em; color: var(--or-texte);
+}
+.carte-partage .phrase {
+  margin-top: 1.833cqw; font-family: var(--titres);
+  font-size: 26px; font-size: 4.333cqw; line-height: 1.12; color: var(--texte);
+}
+.carte-partage .detail {
+  margin-top: 1.667cqw; max-width: 83.333cqw;
+  font-size: 14px; font-size: 2.333cqw; line-height: 1.45;
+  color: var(--texte-doux);
+}
+.carte-partage .pied {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 2cqw; border-top: 1px solid var(--trait); padding-top: 2.167cqw;
+  font-size: 16px; font-size: 2.667cqw; font-weight: 700;
+}
+.carte-partage .pied .compte { color: var(--or-texte); }
+.carte-partage .pied .adresse {
+  color: var(--texte-tres-doux); font-weight: 400;
+  font-size: 13px; font-size: 2.167cqw;
+}
+footer {
+  color-scheme: dark;
+  --texte: #d7e9eb; --lien: #05c1ad; --focus: #e9c53d; --trait-champ: #5f8f99;
+  margin-top: 3rem; padding: 2rem 0;
+  background: var(--petrole-fonce); color: var(--texte);
+  font-size: var(--t-petit);
+}
+footer .interieur { max-width: var(--largeur); margin: 0 auto; padding: 0 var(--marge); }
+footer .colonnes {
+  display: grid; gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+}
+footer h2 {
+  margin: 0 0 0.5rem; font-size: var(--t-texte); font-weight: 700;
+  color: var(--safran);
+}
+footer p { margin: 0; max-width: none; }
+footer a:hover { color: var(--safran); }
+footer .retour-site {
+  margin-top: 1.5rem; padding-top: 1rem;
+  border-top: 1px solid rgb(255 255 255 / 0.15);
+}
+.erreur {
+  border-left: 3px solid var(--manque); background: var(--fond-carte);
+  padding: 0.85rem 1.1rem; margin: 1.5rem 0;
+}
+.chargement { text-align: center; padding: 4rem 1rem; color: var(--texte-doux); }
+.chargement .jauge {
+  height: 6px; width: min(24rem, 80%); margin: 1.5rem auto 0;
+  background: var(--fond-carte); overflow: hidden;
+}
+.chargement .jauge > span {
+  display: block; height: 100%; width: 30%; background: var(--or);
+  animation: glisse 1.4s ease-in-out infinite;
+}
+body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
+body.calcul-en-cours::after {
+  content: ""; position: fixed; top: 0; left: 0; z-index: 30;
+  width: 30%; height: 3px; background: var(--or);
+  animation: glisse 1.4s ease-in-out infinite;
+}
+.hors-ecran {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+@media (max-width: 34rem) {
+  body { font-size: 1rem; }
+  header.bandeau { position: relative; }
+  header.bandeau nav { margin-left: -0.5rem; margin-right: -0.5rem; }
+  .carte { padding: 1rem 0.85rem; }
+  .scenarios { column-gap: 0.75rem; }
+  .scenarios > .scenario { row-gap: 0.3rem; padding: 0.6rem 0 0.6rem; }
+  .scenarios .scenario :is(.salaire, .principal) .somme { font-size: 1.375rem; }
+  .affiche { padding: 2rem 0 1.5rem; }
+  .scenario .entete { flex-direction: column; gap: 0.15rem; }
+  .scenario .titre { flex: 0 1 auto; max-width: 100%; }
+  .scenario .montant { justify-content: flex-start; flex-wrap: wrap;
+                       column-gap: 0.9rem; row-gap: 0.3rem; max-width: 100%;
+                       margin-left: 0; }
+  .scenario .chiffre { align-items: flex-start; white-space: normal;
+                       min-width: 0; max-width: 100%; }
+  .scenario .chiffre .somme { white-space: nowrap; }
+  table { font-size: 0.9rem; }
+  th, td { padding: 0.5rem 0.45rem; }
+  details.section > .dedans { padding-left: 0.6rem; }
+  h2 { margin-top: 2.25rem; }
+  section.cle { padding: 1.25rem 1rem 1rem; }
+  .partage > .partager,
+  .partage > .partager-x { flex: 1 1 100%; justify-content: center; }
+  .partage > .etat { flex: 1 1 100%; }
+  form .grille { gap: 0.9rem; }
+}
+.cadre-carte.en-image { min-width: 36rem; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .chargement .jauge > span { width: 100%; }
+  body.calcul-en-cours::after { width: 100%; }
+}
+.variante-etroite { display: none; }
+@media (max-width: 799.98px) {
+  .variante-etroite { display: block; }
+}
+.carte-des-caisses { display: grid; gap: 1.25rem; }
+.famille-de-caisses h2 { font-size: 1rem; margin: 0 0 0.5rem; color: var(--texte-doux); letter-spacing: 0.04em; }
+.bulles { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.bulle-caisse {
+  width: var(--diametre); height: var(--diametre); border-radius: 50%;
+  display: grid; place-content: center; text-align: center; padding: 0.3rem;
+  background: var(--petrole); color: var(--bandeau-texte); text-decoration: none;
+  font-weight: 700; font-size: 0.74rem; line-height: 1.1; overflow-wrap: anywhere;
+}
+.bulle-caisse.grande { font-size: 1rem; }
+.bulle-caisse small { display: block; font-weight: 400; font-size: 0.68rem; color: var(--bandeau-doux); margin-top: 0.15rem; }
+.bulle-caisse:hover, .bulle-caisse:focus-visible { background: var(--safran); color: var(--petrole); }
+.bulle-caisse:hover small, .bulle-caisse:focus-visible small { color: var(--petrole); }
+.caisse-pour { color: var(--texte-doux); }
+.caisse-question { background: var(--fond-carte); border-radius: var(--rayon); padding: 1rem 1.1rem; margin-top: 0.75rem; }
+.caisse-question h3 { display: flex; gap: 0.6rem; align-items: center; margin: 0 0 0.6rem; font-size: 1.1rem; }
+.caisse-question h3 span {
+  flex: none; width: 1.8rem; height: 1.8rem; border-radius: 50%; display: grid; place-items: center;
+  background: var(--petrole); color: var(--safran); font-size: 0.9rem;
+}
+.caisse-chiffre { font-size: 3rem; font-weight: 800; line-height: 1; color: var(--accent); margin: 0; }
+.caisse-gens { width: 100%; max-width: 26rem; height: auto; display: block; margin-top: 0.5rem; }
+.caisse-gens .actif { fill: var(--accent); }
+.caisse-gens .retraite { fill: var(--safran); }
+.caisse-gens .vide { fill: var(--trait); }
+.caisse-gens text { fill: var(--texte-doux); font-size: 20px; font-weight: 800; }
+.caisse-note { font-size: 0.85rem; color: var(--texte-doux); }
+.caisse-mode b { background: var(--accent); color: var(--fond-carte); border-radius: 999px; padding: 0.1rem 0.6rem; }
+.caisse-billet { display: flex; height: 5.5rem; border-radius: var(--rayon-petit); overflow: hidden; border: 0.15rem solid var(--trait); }
+.caisse-billet span { display: grid; align-content: end; padding: 0.35rem; min-width: 0; color: var(--petrole-fonce); }
+.caisse-billet b { font-size: 1.1rem; white-space: nowrap; }
+.caisse-legende { list-style: none; margin: 0.6rem 0 0; padding: 0; display: grid; gap: 0.25rem; font-size: 0.92rem; }
+.caisse-legende li { display: flex; gap: 0.5rem; align-items: baseline; }
+.caisse-legende i { flex: none; width: 0.8rem; height: 0.8rem; border-radius: 0.2rem; transform: translateY(0.1rem); }
+.poste-cotisations { background: var(--turquoise); }
+.poste-impots { background: var(--safran); }
+.poste-etat { background: #6aa9d8; }
+.poste-autres_caisses { background: #9bb8bd; }
+.poste-placements_et_divers { background: #d3dfe1; }
+.poste-non_finance { background: var(--manque); }
+.caisse-rendement { background: var(--fond-appui); border-radius: var(--rayon-petit); padding: 0.75rem 0.9rem; }
+.caisse-fait { background: var(--safran); color: var(--petrole); border-radius: var(--rayon); padding: 1rem 1.1rem; margin-top: 0.75rem; }
+.caisse-fait b { display: block; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; }
+@keyframes glisse {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(333%); }
+}
+</style>
+<link rel="stylesheet" href="../moteur/style.css" media="print" onload="this.media='all'" data-feuille>
+<noscript><link rel="stylesheet" href="../moteur/style.css"></noscript>
+</head>
+<body>
+
+<p id="annonce" class="hors-ecran" role="status" aria-live="polite"></p>
+<noscript><div class="erreur">Le calcul se fait dans votre navigateur et a besoin de JavaScript : les pages se lisent sans, mais le simulateur ne calcule pas.</div></noscript>
+<div id="entete"><a class="evitement" href="#contenu">Aller au contenu</a>
+<header class="bandeau"><div class="interieur">
+  <p class="nom"><a href="../"><img class="logo" src="../moteur/logo-plf.svg" alt="" width="566" height="378"><span class="marque"><span class="parti">Parti Libéral Français</span><span class="site">Retraite à comptes notionnels</span></span></a></p>
+  <button type="button" class="affichage" aria-haspopup="dialog" aria-controls="affichage"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /><circle cx="12" cy="12" r="3" /></svg><span>Affichage</span></button>
+  <button type="button" class="menu" aria-expanded="false" aria-controls="navigation"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" /></svg><span>Menu</span></button>
+  <nav id="navigation" aria-label="Navigation principale"><span class="groupe"><span class="etiquette">L&#x27;essentiel</span><span class="liens"><a href="../">Programme</a><a href="../simuler/">Simuler</a><a href="../cout/">Coût</a><a href="../risque/">Pourquoi changer</a></span></span><span class="groupe"><span class="etiquette">Faire connaître</span><span class="liens"><a href="../partager/">Partager</a><a href="../saviez-vous/">Le saviez-vous ?</a></span></span><span class="groupe secondaire"><span class="etiquette">Pour vérifier</span><button type="button" class="deplier" aria-expanded="true" aria-controls="pages-a-verifier">Pour vérifier<svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg></button><span class="liens" id="pages-a-verifier"><a href="./" aria-current="page">Les caisses</a><a href="../cas-types/">Carrières types</a><a href="../avantages/">Droits non cotisés</a><a href="../methode/">Méthode et sources</a></span></span></nav>
+</div></header></div>
+<main id="contenu" tabindex="-1" data-prerendu="/caisses">
+<div class="affiche"><p class="surtitre">Les caisses</p><h1>Une vingtaine de caisses. <span class="cle-texte">Chacune ses règles.</span></h1><p class="chapeau">Chaque bulle est une caisse de retraite. Plus elle est grosse, plus elle paie de retraités. Touchez-en une pour voir comment elle marche.</p></div>
+
+<div class="tranche"><div class="carte-des-caisses"><div class="famille-de-caisses"><h2>Salariés du privé</h2><ul class="bulles"><li><a class="bulle-caisse grande" style="--diametre:9.50rem" href="./#caisse-cnav" data-vers="caisse-cnav">Assurance retraite<small>14,8 M retraités</small></a></li><li><a class="bulle-caisse grande" style="--diametre:8.84rem" href="./#caisse-agirc_arrco" data-vers="caisse-agirc_arrco">Agirc-Arrco<small>12,9 M retraités</small></a></li></ul></div><div class="famille-de-caisses"><h2>Fonction publique</h2><ul class="bulles"><li><a class="bulle-caisse" style="--diametre:5.20rem" href="./#caisse-fpe" data-vers="caisse-fpe">État<small>2,0 M retraités</small></a></li><li><a class="bulle-caisse" style="--diametre:5.20rem" href="./#caisse-cnracl" data-vers="caisse-cnracl">CNRACL<small>1,4 M retraités</small></a></li><li><a class="bulle-caisse" style="--diametre:5.20rem" href="./#caisse-ircantec" data-vers="caisse-ircantec">Ircantec<small>2,1 M retraités</small></a></li><li><a class="bulle-caisse" style="--diametre:5.20rem" href="./#caisse-rafp" data-vers="caisse-rafp">RAFP<small>664 k retraités</small></a></li></ul></div><div class="famille-de-caisses"><h2>Indépendants et libéraux</h2><ul class="bulles"><li><a class="bulle-caisse" style="--diametre:5.20rem" href="./#caisse-rci" data-vers="caisse-rci">RCI<small>1,2 M retraités</small></a></li><li><a class="bulle-caisse" style="--diametre:5.20rem" href="./#caisse-cnavpl" data-vers="caisse-cnavpl">Libéraux<small>458 k retraités</small></a></li><li><a class="bulle-caisse" style="--diametre:5.20rem" href="./#caisse-cnbf" data-vers="caisse-cnbf">Avocats<small>20 k retraités</small></a></li></ul></div><div class="famille-de-caisses"><h2>Agriculture</h2><ul class="bulles"><li><a class="bulle-caisse" style="--diametre:5.20rem" href="./#caisse-msa_exploitants" data-vers="caisse-msa_exploitants">Exploitants<small>1,1 M retraités</small></a></li><li><a class="bulle-caisse" style="--diametre:5.20rem" href="./#caisse-msa_salaries" data-vers="caisse-msa_salaries">Salariés agricoles<small>1,7 M retraités</small></a></li></ul></div><div class="famille-de-caisses"><h2>Régimes spéciaux</h2><ul class="bulles"><li><a class="bulle-caisse" style="--diametre:5.20rem" href="./#caisse-sncf" data-vers="caisse-sncf">SNCF<small>159 k retraités</small></a></li><li><a class="bulle-caisse" style="--diametre:5.20rem" href="./#caisse-ratp" data-vers="caisse-ratp">RATP<small>36 k retraités</small></a></li><li><a class="bulle-caisse" style="--diametre:5.20rem" href="./#caisse-cnieg" data-vers="caisse-cnieg">Énergie<small>140 k retraités</small></a></li><li><a class="bulle-caisse" style="--diametre:5.20rem" href="./#caisse-enim" data-vers="caisse-enim">Marins<small>64 k retraités</small></a></li><li><a class="bulle-caisse" style="--diametre:5.20rem" href="./#caisse-mines" data-vers="caisse-mines">Mines<small>90 k retraités</small></a></li><li><a class="bulle-caisse" style="--diametre:5.20rem" href="./#caisse-banque_de_france" data-vers="caisse-banque_de_france">Banque de France<small>15 k retraités</small></a></li><li><a class="bulle-caisse" style="--diametre:5.20rem" href="./#caisse-crpcen" data-vers="caisse-crpcen">Notaires<small>70 k retraités</small></a></li></ul></div></div></div>
+
+<div class="tranche alt"><details class="section" id="caisse-cnav"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>L&#x27;Assurance retraite (Cnav)</span></summary><div class="dedans"><p class="caisse-pour">Salariés du privé, contractuels du public, artisans et commerçants : la retraite de base de presque tout le monde.</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">1,5</p><p>cotisant pour un retraité</p><svg class="caisse-gens" viewBox="0 0 200 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><g class="vide"><circle cx="50" cy="14" r="9"/><rect x="38" y="26" width="24" height="32" rx="10"/></g><clipPath id="part-cnav-actif"><rect x="38" y="0" width="12.3" height="60"/></clipPath><g class="actif" clip-path="url(#part-cnav-actif)"><circle cx="50" cy="14" r="9"/><rect x="38" y="26" width="24" height="32" rx="10"/></g><text x="72" y="40">pour</text><g class="retraite"><circle cx="142" cy="14" r="9"/><rect x="130" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">22 410 157 cotisants, 14 830 231 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>trimestres</b></p><p>Vous validez un trimestre chaque fois que vous gagnez l'équivalent de 150 heures au Smic, quatre au plus par an. Le chômage, la maladie ou la maternité en donnent aussi.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Pension = salaire moyen de vos 25 meilleures années × 50 % × (vos trimestres ÷ les trimestres exigés pour votre année de naissance). Le salaire compte jusqu'au plafond de la Sécurité sociale. S'il vous manque des trimestres, une décote s'ajoute, sauf si vous partez à 67 ans.</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-cotisations" style="flex:64"><b>64 €</b></span><span class="poste-impots" style="flex:15"><b>15 €</b></span><span class="poste-autres_caisses" style="flex:18"><b>18 €</b></span><span class="poste-placements_et_divers" style="flex:2"></span><span class="poste-non_finance" style="flex:1"></span></div><ul class="caisse-legende"><li><i class="poste-cotisations"></i>64 € : Cotisations</li><li><i class="poste-impots"></i>15 € : Impôts et taxes</li><li><i class="poste-autres_caisses"></i>18 € : Les autres caisses</li><li><i class="poste-placements_et_divers"></i>2 € : Placements et divers</li><li><i class="poste-non_finance"></i>1 € : Personne : non financé</li></ul><p>Aucune réserve : ce qui entre dans l'année est versé dans l'année.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>Le Parlement fixe les règles et l'âge ; le gouvernement revalorise les pensions chaque 1er janvier.</p></div><p class="caisse-fait"><b>À retenir</b>Depuis 2025, elle paie aussi les déficits des régimes spéciaux fermés (SNCF, RATP, mines…), et l'État la rembourse.</p></div></details>
+<details class="section" id="caisse-agirc_arrco"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>L&#x27;Agirc-Arrco</span></summary><div class="dedans"><p class="caisse-pour">Tous les salariés du privé : c'est leur retraite complémentaire, le deuxième étage.</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">1,6</p><p>cotisant pour un retraité</p><svg class="caisse-gens" viewBox="0 0 200 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><g class="vide"><circle cx="50" cy="14" r="9"/><rect x="38" y="26" width="24" height="32" rx="10"/></g><clipPath id="part-agirc_arrco-actif"><rect x="38" y="0" width="13.7" height="60"/></clipPath><g class="actif" clip-path="url(#part-agirc_arrco-actif)"><circle cx="50" cy="14" r="9"/><rect x="38" y="26" width="24" height="32" rx="10"/></g><text x="72" y="40">pour</text><g class="retraite"><circle cx="142" cy="14" r="9"/><rect x="130" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">20 196 422 cotisants, 12 851 834 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>points</b></p><p>Chaque euro cotisé achète des points. On paie davantage que ce qui achète des points (le « taux d'appel ») : ce surplus finance le régime sans ouvrir de droits.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Pension annuelle = vos points × la valeur du point. Les syndicats et le patronat fixent le prix et la valeur du point chaque automne.</p><p class="caisse-rendement">En 2026, un point coûte 20,19 € et rapporte 1,4587 € de pension par an, et l'on paie 27 % de plus que ce qui achète des points. <strong>100 € cotisés rapportent 5,69 € de pension par an, à vie</strong> : il faut 17,6 ans de retraite pour récupérer sa mise, hors revalorisation.</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-cotisations" style="flex:84"><b>84 €</b></span><span class="poste-impots" style="flex:7"></span><span class="poste-autres_caisses" style="flex:6"></span><span class="poste-placements_et_divers" style="flex:2"></span></div><ul class="caisse-legende"><li><i class="poste-cotisations"></i>84 € : Cotisations</li><li><i class="poste-impots"></i>7 € : Impôts et taxes</li><li><i class="poste-autres_caisses"></i>6 € : Les autres caisses</li><li><i class="poste-placements_et_divers"></i>2 € : Placements et divers</li></ul><p>113,6 milliards d'euros de réserves fin 2025, soit 14 mois de pensions.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>Les syndicats et le patronat seuls, par accord. L'État n'y décide rien.</p></div><p class="caisse-fait"><b>À retenir</b>Ses règles l'obligent à garder au moins six mois de pensions en réserve. Elle n'a aucune dette.</p></div></details>
+<details class="section" id="caisse-fpe"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Les fonctionnaires de l&#x27;État</span></summary><div class="dedans"><p class="caisse-pour">Enseignants, policiers, militaires, agents des ministères : une seule pension, base et complémentaire réunies.</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">1,0</p><p>cotisant pour un retraité</p><svg class="caisse-gens" viewBox="0 0 200 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><text x="42" y="40">pour</text><g class="retraite"><circle cx="112" cy="14" r="9"/><rect x="100" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">2 035 575 cotisants, 2 029 511 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>trimestres</b></p><p>Chaque trimestre de service compte. Les primes n'ouvrent presque pas de droits ici : elles vont à la RAFP.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Pension = traitement indiciaire des 6 derniers mois × 75 % × (vos trimestres ÷ les trimestres exigés). Pas de moyenne sur 25 ans : c'est la fin de carrière qui compte.</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-cotisations" style="flex:12"><b>12 €</b></span><span class="poste-etat" style="flex:86"><b>86 €</b></span><span class="poste-autres_caisses" style="flex:2"></span></div><ul class="caisse-legende"><li><i class="poste-cotisations"></i>12 € : Cotisations</li><li><i class="poste-etat"></i>86 € : Budget de l'État</li><li><i class="poste-autres_caisses"></i>2 € : Les autres caisses</li></ul><p>Aucune réserve : ce qui entre dans l'année est versé dans l'année.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>Le Parlement, par la loi. Les pensions sont payées par le budget de l'État.</p></div><p class="caisse-fait"><b>À retenir</b>Il n'y a pas de caisse : l'État paie les pensions de ses anciens agents, et verse pour cela une contribution sur le traitement de ses agents actifs, fixée pour équilibrer le compte.</p></div></details>
+<details class="section" id="caisse-cnracl"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>La CNRACL</span></summary><div class="dedans"><p class="caisse-pour">Fonctionnaires des mairies, des départements, des régions et des hôpitaux.</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">1,6</p><p>cotisant pour un retraité</p><svg class="caisse-gens" viewBox="0 0 200 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><g class="vide"><circle cx="50" cy="14" r="9"/><rect x="38" y="26" width="24" height="32" rx="10"/></g><clipPath id="part-cnracl-actif"><rect x="38" y="0" width="14.0" height="60"/></clipPath><g class="actif" clip-path="url(#part-cnracl-actif)"><circle cx="50" cy="14" r="9"/><rect x="38" y="26" width="24" height="32" rx="10"/></g><text x="72" y="40">pour</text><g class="retraite"><circle cx="142" cy="14" r="9"/><rect x="130" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">2 194 281 cotisants, 1 387 162 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>trimestres</b></p><p>Les mêmes règles que les fonctionnaires de l'État : des trimestres de service.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Pension = traitement des 6 derniers mois × 75 % × (vos trimestres ÷ les trimestres exigés).</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-cotisations" style="flex:88"><b>88 €</b></span><span class="poste-autres_caisses" style="flex:2"></span><span class="poste-non_finance" style="flex:7"></span></div><ul class="caisse-legende"><li><i class="poste-cotisations"></i>88 € : Cotisations</li><li><i class="poste-autres_caisses"></i>2 € : Les autres caisses</li><li><i class="poste-non_finance"></i>7 € : Personne : non financé</li></ul><p>Aucune de réserves fin 2025.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>Le Parlement et le gouvernement. Elle est gérée par la Caisse des dépôts.</p></div><p class="caisse-fait"><b>À retenir</b>Elle n'a plus de réserves et l'État ne la renfloue pas : 7 € sur 100 de ses dépenses n'avaient pas de financement en 2023.</p></div></details>
+<details class="section" id="caisse-ircantec"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>L&#x27;Ircantec</span></summary><div class="dedans"><p class="caisse-pour">Les contractuels de l'État, des collectivités et des hôpitaux, et les élus locaux : leur complémentaire.</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">1,5</p><p>cotisant pour un retraité</p><svg class="caisse-gens" viewBox="0 0 200 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><g class="vide"><circle cx="50" cy="14" r="9"/><rect x="38" y="26" width="24" height="32" rx="10"/></g><clipPath id="part-ircantec-actif"><rect x="38" y="0" width="12.4" height="60"/></clipPath><g class="actif" clip-path="url(#part-ircantec-actif)"><circle cx="50" cy="14" r="9"/><rect x="38" y="26" width="24" height="32" rx="10"/></g><text x="72" y="40">pour</text><g class="retraite"><circle cx="142" cy="14" r="9"/><rect x="130" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">3 170 319 cotisants, 2 091 322 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>points</b></p><p>Comme à l'Agirc-Arrco, les cotisations achètent des points, avec un taux d'appel.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Pension annuelle = vos points × la valeur du point.</p><p class="caisse-rendement">En 2026, un point coûte 5,79 € et rapporte 0,5605 € de pension par an, et l'on paie 27 % de plus que ce qui achète des points. <strong>100 € cotisés rapportent 7,63 € de pension par an, à vie</strong> : il faut 13,1 ans de retraite pour récupérer sa mise, hors revalorisation.</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-cotisations" style="flex:82"><b>82 €</b></span><span class="poste-autres_caisses" style="flex:4"></span><span class="poste-placements_et_divers" style="flex:10"><b>10 €</b></span></div><ul class="caisse-legende"><li><i class="poste-cotisations"></i>82 € : Cotisations</li><li><i class="poste-autres_caisses"></i>4 € : Les autres caisses</li><li><i class="poste-placements_et_divers"></i>10 € : Placements et divers</li></ul><p>19,2 milliards d'euros de réserves fin 2025, soit 50 mois de pensions.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>Son conseil d'administration propose, l'État décide par décret.</p></div><p class="caisse-fait"><b>À retenir</b>4 ans de pensions en réserve.</p></div></details>
+<details class="section" id="caisse-rafp"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>La RAFP</span></summary><div class="dedans"><p class="caisse-pour">Tous les fonctionnaires : une petite retraite en plus, sur leurs primes.</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">7,5</p><p>cotisants pour un retraité</p><svg class="caisse-gens" viewBox="0 0 352 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><g class="actif"><circle cx="50" cy="14" r="9"/><rect x="38" y="26" width="24" height="32" rx="10"/></g><g class="actif"><circle cx="80" cy="14" r="9"/><rect x="68" y="26" width="24" height="32" rx="10"/></g><g class="actif"><circle cx="110" cy="14" r="9"/><rect x="98" y="26" width="24" height="32" rx="10"/></g><g class="actif"><circle cx="140" cy="14" r="9"/><rect x="128" y="26" width="24" height="32" rx="10"/></g><g class="actif"><circle cx="170" cy="14" r="9"/><rect x="158" y="26" width="24" height="32" rx="10"/></g><g class="actif"><circle cx="200" cy="14" r="9"/><rect x="188" y="26" width="24" height="32" rx="10"/></g><g class="vide"><circle cx="230" cy="14" r="9"/><rect x="218" y="26" width="24" height="32" rx="10"/></g><clipPath id="part-rafp-actif"><rect x="218" y="0" width="12.1" height="60"/></clipPath><g class="actif" clip-path="url(#part-rafp-actif)"><circle cx="230" cy="14" r="9"/><rect x="218" y="26" width="24" height="32" rx="10"/></g><text x="252" y="40">pour</text><g class="retraite"><circle cx="322" cy="14" r="9"/><rect x="310" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">4 980 800 cotisants, 663 851 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>points</b></p><p>10 % des primes (5 % payés par l'agent, 5 % par l'employeur, sur des primes allant jusqu'à 20 % du traitement) achètent des points. L'argent est placé.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Pension annuelle = vos points × la valeur du point. Sous 5 125 points, elle est versée en une fois.</p><p class="caisse-rendement">En 2026, un point coûte 1,46 € et rapporte 0,0567 € de pension par an. <strong>100 € cotisés rapportent 3,89 € de pension par an, à vie</strong> : il faut 25,7 ans de retraite pour récupérer sa mise, hors revalorisation.</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-cotisations" style="flex:66"><b>66 €</b></span><span class="poste-placements_et_divers" style="flex:34"><b>34 €</b></span></div><ul class="caisse-legende"><li><i class="poste-cotisations"></i>66 € : Cotisations</li><li><i class="poste-placements_et_divers"></i>34 € : Placements et divers</li></ul><p>Aucune réserve : ce qui entre dans l'année est versé dans l'année.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>Un établissement public, l'ERAFP, sous la tutelle de l'État.</p></div><p class="caisse-fait"><b>À retenir</b>Le seul régime public obligatoire qui place l'argent de ses cotisants : 34 € sur 100 de ses recettes viennent des placements.</p></div></details>
+<details class="section" id="caisse-rci"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>La complémentaire des indépendants (RCI)</span></summary><div class="dedans"><p class="caisse-pour">Artisans et commerçants : leur deuxième étage. Leur base est l'Assurance retraite.</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">1,5</p><p>cotisant pour un retraité</p><svg class="caisse-gens" viewBox="0 0 200 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><g class="vide"><circle cx="50" cy="14" r="9"/><rect x="38" y="26" width="24" height="32" rx="10"/></g><clipPath id="part-rci-actif"><rect x="38" y="0" width="11.6" height="60"/></clipPath><g class="actif" clip-path="url(#part-rci-actif)"><circle cx="50" cy="14" r="9"/><rect x="38" y="26" width="24" height="32" rx="10"/></g><text x="72" y="40">pour</text><g class="retraite"><circle cx="142" cy="14" r="9"/><rect x="130" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">1 745 428 cotisants, 1 175 071 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>points</b></p><p>Les cotisations, prélevées par l'Urssaf, achètent des points.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Pension annuelle = vos points × la valeur du point.</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-cotisations" style="flex:85"><b>85 €</b></span><span class="poste-impots" style="flex:1"></span><span class="poste-placements_et_divers" style="flex:15"><b>15 €</b></span></div><ul class="caisse-legende"><li><i class="poste-cotisations"></i>85 € : Cotisations</li><li><i class="poste-impots"></i>1 € : Impôts et taxes</li><li><i class="poste-placements_et_divers"></i>15 € : Placements et divers</li></ul><p>23,4 milliards d'euros de réserves fin 2025, soit 107 mois de pensions.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>Le Conseil de la protection sociale des travailleurs indépendants (CPSTI), formé de représentants des artisans et commerçants.</p></div><p class="caisse-fait"><b>À retenir</b>9 ans de pensions en réserve : l'une des caisses les mieux dotées.</p></div></details>
+<details class="section" id="caisse-cnavpl"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Les caisses des professions libérales (CNAVPL)</span></summary><div class="dedans"><p class="caisse-pour">Médecins, kinés, pharmaciens, architectes, experts-comptables… Une base commune, puis une complémentaire par métier (CARMF, CARPIMKO, CIPAV…).</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">2,0</p><p>cotisants pour un retraité</p><svg class="caisse-gens" viewBox="0 0 200 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><g class="actif"><circle cx="50" cy="14" r="9"/><rect x="38" y="26" width="24" height="32" rx="10"/></g><text x="72" y="40">pour</text><g class="retraite"><circle cx="142" cy="14" r="9"/><rect x="130" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">936 708 cotisants, 458 244 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>points</b></p><p>La base est en points, achetés par une cotisation sur le revenu. Chaque profession a ensuite ses propres règles.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Pension de base annuelle = vos points × la valeur du point. La complémentaire dépend de la caisse de votre métier.</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-cotisations" style="flex:89"><b>89 €</b></span><span class="poste-impots" style="flex:2"></span><span class="poste-autres_caisses" style="flex:4"></span><span class="poste-placements_et_divers" style="flex:5"></span></div><ul class="caisse-legende"><li><i class="poste-cotisations"></i>89 € : Cotisations</li><li><i class="poste-impots"></i>2 € : Impôts et taxes</li><li><i class="poste-autres_caisses"></i>4 € : Les autres caisses</li><li><i class="poste-placements_et_divers"></i>5 € : Placements et divers</li></ul><p>43,1 milliards d'euros de réserves fin 2025.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>Chaque caisse est gérée par des élus de sa profession ; l'État valide les règles.</p></div><p class="caisse-fait"><b>À retenir</b>43,1 milliards d'euros de réserves, presque tous dans les caisses de métier.</p></div></details>
+<details class="section" id="caisse-cnbf"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>La caisse des avocats (CNBF)</span></summary><div class="dedans"><p class="caisse-pour">Les avocats, base et complémentaire.</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">3,7</p><p>cotisants pour un retraité</p><svg class="caisse-gens" viewBox="0 0 232 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><g class="actif"><circle cx="50" cy="14" r="9"/><rect x="38" y="26" width="24" height="32" rx="10"/></g><g class="actif"><circle cx="80" cy="14" r="9"/><rect x="68" y="26" width="24" height="32" rx="10"/></g><g class="vide"><circle cx="110" cy="14" r="9"/><rect x="98" y="26" width="24" height="32" rx="10"/></g><clipPath id="part-cnbf-actif"><rect x="98" y="0" width="17.9" height="60"/></clipPath><g class="actif" clip-path="url(#part-cnbf-actif)"><circle cx="110" cy="14" r="9"/><rect x="98" y="26" width="24" height="32" rx="10"/></g><text x="132" y="40">pour</text><g class="retraite"><circle cx="202" cy="14" r="9"/><rect x="190" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">73 497 cotisants, 19 611 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>forfait</b></p><p>Une base forfaitaire selon la durée d'exercice, et une complémentaire en points.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Base : un montant fixe pour une carrière complète, quel que soit le revenu. Complémentaire : vos points × leur valeur.</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-cotisations" style="flex:64"><b>64 €</b></span><span class="poste-impots" style="flex:11"><b>11 €</b></span><span class="poste-placements_et_divers" style="flex:25"><b>25 €</b></span></div><ul class="caisse-legende"><li><i class="poste-cotisations"></i>64 € : Cotisations</li><li><i class="poste-impots"></i>11 € : Impôts et taxes</li><li><i class="poste-placements_et_divers"></i>25 € : Placements et divers</li></ul><p>3,4 milliards d'euros de réserves fin 2025.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>Les avocats élisent son conseil.</p></div><p class="caisse-fait"><b>À retenir</b>3,7 avocats en activité pour un retraité : la profession est jeune.</p></div></details>
+<details class="section" id="caisse-msa_exploitants"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>La MSA, exploitants agricoles</span></summary><div class="dedans"><p class="caisse-pour">Agriculteurs, viticulteurs, éleveurs à leur compte.</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">1</p><p>cotisant pour 2,5 retraités</p><svg class="caisse-gens" viewBox="0 0 202 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><text x="42" y="40">pour</text><g class="retraite"><circle cx="112" cy="14" r="9"/><rect x="100" y="26" width="24" height="32" rx="10"/></g><g class="retraite"><circle cx="142" cy="14" r="9"/><rect x="130" y="26" width="24" height="32" rx="10"/></g><g class="vide"><circle cx="172" cy="14" r="9"/><rect x="160" y="26" width="24" height="32" rx="10"/></g><clipPath id="part-msa_exploitants-retraite"><rect x="160" y="0" width="11.2" height="60"/></clipPath><g class="retraite" clip-path="url(#part-msa_exploitants-retraite)"><circle cx="172" cy="14" r="9"/><rect x="160" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">425 916 cotisants, 1 050 563 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>trimestres</b></p><p>Des trimestres, et des points proportionnels au revenu agricole.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Pension = une part forfaitaire + une part en points, puis une complémentaire obligatoire en points. Une carrière complète garantit au moins 85 % du Smic net.</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-cotisations" style="flex:19"><b>19 €</b></span><span class="poste-impots" style="flex:36"><b>36 €</b></span><span class="poste-autres_caisses" style="flex:40"><b>40 €</b></span><span class="poste-placements_et_divers" style="flex:4"></span></div><ul class="caisse-legende"><li><i class="poste-cotisations"></i>19 € : Cotisations</li><li><i class="poste-impots"></i>36 € : Impôts et taxes</li><li><i class="poste-autres_caisses"></i>40 € : Les autres caisses</li><li><i class="poste-placements_et_divers"></i>4 € : Placements et divers</li></ul><p>Aucune réserve : ce qui entre dans l'année est versé dans l'année.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>Le Parlement et le gouvernement ; la MSA gère.</p></div><p class="caisse-fait"><b>À retenir</b>Sur 100 € de pension, 19 € seulement viennent des cotisations des agriculteurs.</p></div></details>
+<details class="section" id="caisse-msa_salaries"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>La MSA, salariés agricoles</span></summary><div class="dedans"><p class="caisse-pour">Ouvriers agricoles, salariés des coopératives et du Crédit agricole.</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">1</p><p>cotisant pour 2,2 retraités</p><svg class="caisse-gens" viewBox="0 0 202 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><text x="42" y="40">pour</text><g class="retraite"><circle cx="112" cy="14" r="9"/><rect x="100" y="26" width="24" height="32" rx="10"/></g><g class="retraite"><circle cx="142" cy="14" r="9"/><rect x="130" y="26" width="24" height="32" rx="10"/></g><g class="vide"><circle cx="172" cy="14" r="9"/><rect x="160" y="26" width="24" height="32" rx="10"/></g><clipPath id="part-msa_salaries-retraite"><rect x="160" y="0" width="4.5" height="60"/></clipPath><g class="retraite" clip-path="url(#part-msa_salaries-retraite)"><circle cx="172" cy="14" r="9"/><rect x="160" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">783 816 cotisants, 1 713 107 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>trimestres</b></p><p>Les mêmes règles que le régime général, et l'Agirc-Arrco en complémentaire.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Pension = salaire moyen des 25 meilleures années × 50 % × (trimestres ÷ trimestres exigés).</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-cotisations" style="flex:46"><b>46 €</b></span><span class="poste-impots" style="flex:3"></span><span class="poste-autres_caisses" style="flex:48"><b>48 €</b></span><span class="poste-placements_et_divers" style="flex:3"></span></div><ul class="caisse-legende"><li><i class="poste-cotisations"></i>46 € : Cotisations</li><li><i class="poste-impots"></i>3 € : Impôts et taxes</li><li><i class="poste-autres_caisses"></i>48 € : Les autres caisses</li><li><i class="poste-placements_et_divers"></i>3 € : Placements et divers</li></ul><p>Aucune réserve : ce qui entre dans l'année est versé dans l'année.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>Le Parlement et le gouvernement ; la MSA gère.</p></div><p class="caisse-fait"><b>À retenir</b>48 € sur 100 viennent des autres caisses, par la compensation entre régimes.</p></div></details>
+<details class="section" id="caisse-sncf"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>La caisse de la SNCF</span></summary><div class="dedans"><p class="caisse-pour">Les cheminots embauchés au statut avant 2020.</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">1</p><p>cotisant pour 1,5 retraités</p><svg class="caisse-gens" viewBox="0 0 200 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><text x="42" y="40">pour</text><g class="retraite"><circle cx="112" cy="14" r="9"/><rect x="100" y="26" width="24" height="32" rx="10"/></g><g class="vide"><circle cx="142" cy="14" r="9"/><rect x="130" y="26" width="24" height="32" rx="10"/></g><clipPath id="part-sncf-retraite"><rect x="130" y="0" width="11.3" height="60"/></clipPath><g class="retraite" clip-path="url(#part-sncf-retraite)"><circle cx="142" cy="14" r="9"/><rect x="130" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">107 988 cotisants, 159 041 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>trimestres</b></p><p>Des trimestres de service, comme les fonctionnaires.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Pension = salaire des 6 derniers mois × 75 % × (trimestres ÷ trimestres exigés).</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-cotisations" style="flex:36"><b>36 €</b></span><span class="poste-etat" style="flex:61"><b>61 €</b></span><span class="poste-autres_caisses" style="flex:2"></span><span class="poste-placements_et_divers" style="flex:1"></span></div><ul class="caisse-legende"><li><i class="poste-cotisations"></i>36 € : Cotisations</li><li><i class="poste-etat"></i>61 € : Budget de l'État</li><li><i class="poste-autres_caisses"></i>2 € : Les autres caisses</li><li><i class="poste-placements_et_divers"></i>1 € : Placements et divers</li></ul><p>Aucune réserve : ce qui entre dans l'année est versé dans l'année.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>Le gouvernement, par décret.</p></div><p class="caisse-fait"><b>À retenir</b>Fermée aux embauchés depuis 2020. Sur 100 € de pension, 61 € viennent de l'État.</p></div></details>
+<details class="section" id="caisse-ratp"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>La caisse de la RATP</span></summary><div class="dedans"><p class="caisse-pour">Les agents embauchés avant septembre 2023.</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">1,1</p><p>cotisant pour un retraité</p><svg class="caisse-gens" viewBox="0 0 200 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><g class="vide"><circle cx="50" cy="14" r="9"/><rect x="38" y="26" width="24" height="32" rx="10"/></g><clipPath id="part-ratp-actif"><rect x="38" y="0" width="2.5" height="60"/></clipPath><g class="actif" clip-path="url(#part-ratp-actif)"><circle cx="50" cy="14" r="9"/><rect x="38" y="26" width="24" height="32" rx="10"/></g><text x="72" y="40">pour</text><g class="retraite"><circle cx="142" cy="14" r="9"/><rect x="130" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">39 334 cotisants, 35 557 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>trimestres</b></p><p>Des trimestres de service.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Pension = salaire des 6 derniers mois × 75 % × (trimestres ÷ trimestres exigés).</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-cotisations" style="flex:39"><b>39 €</b></span><span class="poste-etat" style="flex:61"><b>61 €</b></span><span class="poste-placements_et_divers" style="flex:1"></span></div><ul class="caisse-legende"><li><i class="poste-cotisations"></i>39 € : Cotisations</li><li><i class="poste-etat"></i>61 € : Budget de l'État</li><li><i class="poste-placements_et_divers"></i>1 € : Placements et divers</li></ul><p>Aucune réserve : ce qui entre dans l'année est versé dans l'année.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>Le gouvernement, par décret.</p></div><p class="caisse-fait"><b>À retenir</b>Fermée aux embauchés depuis septembre 2023 : ils cotisent au régime général et à l'Agirc-Arrco.</p></div></details>
+<details class="section" id="caisse-cnieg"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>La caisse des industries électriques et gazières (CNIEG)</span></summary><div class="dedans"><p class="caisse-pour">Les agents d'EDF, d'Engie, d'Enedis, de GRDF… embauchés avant septembre 2023.</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">1</p><p>cotisant pour 1,0 retraités</p><svg class="caisse-gens" viewBox="0 0 200 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><text x="42" y="40">pour</text><g class="retraite"><circle cx="112" cy="14" r="9"/><rect x="100" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">134 057 cotisants, 140 057 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>trimestres</b></p><p>Des trimestres de service.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Pension = salaire des 6 derniers mois × 75 % × (trimestres ÷ trimestres exigés).</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-cotisations" style="flex:39"><b>39 €</b></span><span class="poste-impots" style="flex:20"><b>20 €</b></span><span class="poste-autres_caisses" style="flex:40"><b>40 €</b></span><span class="poste-placements_et_divers" style="flex:1"></span></div><ul class="caisse-legende"><li><i class="poste-cotisations"></i>39 € : Cotisations</li><li><i class="poste-impots"></i>20 € : Impôts et taxes</li><li><i class="poste-autres_caisses"></i>40 € : Les autres caisses</li><li><i class="poste-placements_et_divers"></i>1 € : Placements et divers</li></ul><p>Aucune réserve : ce qui entre dans l'année est versé dans l'année.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>Le gouvernement, par décret.</p></div><p class="caisse-fait"><b>À retenir</b>Une taxe sur vos factures d'électricité et de gaz, la contribution tarifaire d'acheminement, paie une part de ces pensions.</p></div></details>
+<details class="section" id="caisse-enim"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>La caisse des marins (ENIM)</span></summary><div class="dedans"><p class="caisse-pour">Les marins de commerce et de pêche.</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">1</p><p>cotisant pour 2,1 retraités</p><svg class="caisse-gens" viewBox="0 0 202 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><text x="42" y="40">pour</text><g class="retraite"><circle cx="112" cy="14" r="9"/><rect x="100" y="26" width="24" height="32" rx="10"/></g><g class="retraite"><circle cx="142" cy="14" r="9"/><rect x="130" y="26" width="24" height="32" rx="10"/></g><g class="vide"><circle cx="172" cy="14" r="9"/><rect x="160" y="26" width="24" height="32" rx="10"/></g><clipPath id="part-enim-retraite"><rect x="160" y="0" width="3.1" height="60"/></clipPath><g class="retraite" clip-path="url(#part-enim-retraite)"><circle cx="172" cy="14" r="9"/><rect x="160" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">29 825 cotisants, 63 525 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>trimestres</b></p><p>Des trimestres de navigation.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Pension calculée sur un salaire forfaitaire, selon la catégorie du marin, et la durée de navigation.</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-cotisations" style="flex:12"><b>12 €</b></span><span class="poste-impots" style="flex:4"></span><span class="poste-etat" style="flex:76"><b>76 €</b></span><span class="poste-autres_caisses" style="flex:7"></span><span class="poste-placements_et_divers" style="flex:2"></span></div><ul class="caisse-legende"><li><i class="poste-cotisations"></i>12 € : Cotisations</li><li><i class="poste-impots"></i>4 € : Impôts et taxes</li><li><i class="poste-etat"></i>76 € : Budget de l'État</li><li><i class="poste-autres_caisses"></i>7 € : Les autres caisses</li><li><i class="poste-placements_et_divers"></i>2 € : Placements et divers</li></ul><p>Aucune réserve : ce qui entre dans l'année est versé dans l'année.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>Le gouvernement.</p></div><p class="caisse-fait"><b>À retenir</b>L'État paie 76 € sur 100.</p></div></details>
+<details class="section" id="caisse-mines"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>La caisse des mines (CANSSM)</span></summary><div class="dedans"><p class="caisse-pour">Les anciens mineurs et leurs veuves.</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">1</p><p>cotisant pour 117,0 retraités</p><svg class="caisse-gens" viewBox="0 0 352 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><text x="42" y="40">pour</text><g class="retraite"><circle cx="112" cy="14" r="9"/><rect x="100" y="26" width="24" height="32" rx="10"/></g><g class="retraite"><circle cx="142" cy="14" r="9"/><rect x="130" y="26" width="24" height="32" rx="10"/></g><g class="retraite"><circle cx="172" cy="14" r="9"/><rect x="160" y="26" width="24" height="32" rx="10"/></g><g class="retraite"><circle cx="202" cy="14" r="9"/><rect x="190" y="26" width="24" height="32" rx="10"/></g><g class="retraite"><circle cx="232" cy="14" r="9"/><rect x="220" y="26" width="24" height="32" rx="10"/></g><g class="retraite"><circle cx="262" cy="14" r="9"/><rect x="250" y="26" width="24" height="32" rx="10"/></g><g class="retraite"><circle cx="292" cy="14" r="9"/><rect x="280" y="26" width="24" height="32" rx="10"/></g><g class="retraite"><circle cx="322" cy="14" r="9"/><rect x="310" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">765 cotisants, 89 513 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>trimestres</b></p><p>Des trimestres de travail à la mine.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Pension selon la durée de service et des barèmes propres à la profession.</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-etat" style="flex:81"><b>81 €</b></span><span class="poste-autres_caisses" style="flex:17"><b>17 €</b></span><span class="poste-placements_et_divers" style="flex:1"></span></div><ul class="caisse-legende"><li><i class="poste-etat"></i>81 € : Budget de l'État</li><li><i class="poste-autres_caisses"></i>17 € : Les autres caisses</li><li><i class="poste-placements_et_divers"></i>1 € : Placements et divers</li></ul><p>Aucune réserve : ce qui entre dans l'année est versé dans l'année.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>Le gouvernement.</p></div><p class="caisse-fait"><b>À retenir</b>765 cotisants pour 89 513 retraités : les mines ont fermé, et l'État paie.</p></div></details>
+<details class="section" id="caisse-banque_de_france"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>La caisse de la Banque de France</span></summary><div class="dedans"><p class="caisse-pour">Les agents de la Banque de France embauchés avant septembre 2023.</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">1</p><p>cotisant pour 2,2 retraités</p><svg class="caisse-gens" viewBox="0 0 202 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><text x="42" y="40">pour</text><g class="retraite"><circle cx="112" cy="14" r="9"/><rect x="100" y="26" width="24" height="32" rx="10"/></g><g class="retraite"><circle cx="142" cy="14" r="9"/><rect x="130" y="26" width="24" height="32" rx="10"/></g><g class="vide"><circle cx="172" cy="14" r="9"/><rect x="160" y="26" width="24" height="32" rx="10"/></g><clipPath id="part-banque_de_france-retraite"><rect x="160" y="0" width="5.1" height="60"/></clipPath><g class="retraite" clip-path="url(#part-banque_de_france-retraite)"><circle cx="172" cy="14" r="9"/><rect x="160" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">6 665 cotisants, 14 754 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>trimestres</b></p><p>Des trimestres de service.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Pension = salaire des 6 derniers mois × 75 % × (trimestres ÷ trimestres exigés).</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-cotisations" style="flex:3"></span><span class="poste-etat" style="flex:39"><b>39 €</b></span><span class="poste-autres_caisses" style="flex:1"></span><span class="poste-placements_et_divers" style="flex:57"><b>57 €</b></span></div><ul class="caisse-legende"><li><i class="poste-cotisations"></i>3 € : Cotisations</li><li><i class="poste-etat"></i>39 € : Budget de l'État</li><li><i class="poste-autres_caisses"></i>1 € : Les autres caisses</li><li><i class="poste-placements_et_divers"></i>57 € : Placements et divers</li></ul><p>13,4 milliards d'euros de réserves fin 2025, soit 277 mois de pensions.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>La Banque de France et le gouvernement.</p></div><p class="caisse-fait"><b>À retenir</b>13,4 milliards de réserves : 23 ans de pensions.</p></div></details>
+<details class="section" id="caisse-crpcen"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>La caisse des clercs et employés de notaire (CRPCEN)</span></summary><div class="dedans"><p class="caisse-pour">Les salariés des études de notaire embauchés avant septembre 2023.</p><div class="caisse-question"><h3><span>1</span>Qui paie pour qui ?</h3><p class="caisse-chiffre">1,0</p><p>cotisant pour un retraité</p><svg class="caisse-gens" viewBox="0 0 200 60" aria-hidden="true"><g class="actif"><circle cx="20" cy="14" r="9"/><rect x="8" y="26" width="24" height="32" rx="10"/></g><text x="42" y="40">pour</text><g class="retraite"><circle cx="112" cy="14" r="9"/><rect x="100" y="26" width="24" height="32" rx="10"/></g></svg><p class="caisse-note">71 544 cotisants, 70 348 retraités en 2024.</p></div><div class="caisse-question"><h3><span>2</span>Comment on gagne des droits</h3><p class="caisse-mode">Compte en <b>trimestres</b></p><p>Des trimestres.</p></div><div class="caisse-question"><h3><span>3</span>Comment la pension est calculée</h3><p>Pension selon le salaire et la durée, avec ses règles propres.</p></div><div class="caisse-question"><h3><span>4</span>D'où vient son argent, sur 100 €</h3><div class="caisse-billet" role="img" aria-label="D'où viennent 100 € de pension"><span class="poste-cotisations" style="flex:89"><b>89 €</b></span><span class="poste-autres_caisses" style="flex:2"></span><span class="poste-placements_et_divers" style="flex:8"></span></div><ul class="caisse-legende"><li><i class="poste-cotisations"></i>89 € : Cotisations</li><li><i class="poste-autres_caisses"></i>2 € : Les autres caisses</li><li><i class="poste-placements_et_divers"></i>8 € : Placements et divers</li></ul><p>2,3 milliards d'euros de réserves fin 2025, soit 27 mois de pensions.</p></div><div class="caisse-question"><h3><span>5</span>Qui décide</h3><p>Le gouvernement, avec un conseil d'administration de la profession.</p></div><p class="caisse-fait"><b>À retenir</b>Un régime spécial qui vit de ses cotisations : 89 € sur 100.</p></div></details></div>
+
+<div class="note"><strong>D'où viennent les chiffres.</strong> Cotisants et
+retraités de 2024, et d'où vient l'argent de chaque caisse en 2023 : Conseil
+d'orientation des retraites, compléments du rapport annuel de juin 2024.
+Réserves au 31 décembre 2025 : rapport annuel du COR de juin 2026, tableau
+2.3. Prix et valeur des points en 2026 : barèmes de chaque caisse.
+<a href="../simuler/">Le simulateur</a> calcule votre retraite
+caisse par caisse.</div>
+</main>
+<footer>
+<div class="interieur">
+  <div class="colonnes">
+    <div class="colonne"><h2>Retraite à comptes notionnels</h2>
+    <p><strong>Ce simulateur n'a aucune valeur officielle.</strong> Il n'émane
+    d'aucune caisse et ne vaut ni relevé de carrière, ni estimation de vos droits.
+    Seule votre caisse fait foi
+    (<a href="https://www.info-retraite.fr/">info-retraite.fr</a>).</p></div>
+    <div class="colonne"><h2>Modèle ouvert</h2>
+    <p>Code et données sur <a href="https://github.com/g-pliberal/retraitecomptenotionelle">GitHub</a> (code sous licence
+    Apache 2.0, infographies et textes sous
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">CC BY-SA 4.0</a>).</p></div>
+    <div class="colonne"><h2>Avant de citer un chiffre</h2>
+    <p>Pensions et salaires s'affichent au net ou au brut, à votre choix, par la
+    bascule « Montants » ; le tout en euros constants de l'année de référence.
+    Les séries d'avant 1950 et les paramètres de régime restent saisis à la main :
+    <a href="https://github.com/g-pliberal/retraitecomptenotionelle/blob/main/docs/limites.md">lire les limites</a>.</p></div>
+  </div>
+  <p class="retour-site">Un outil du <a href="https://partiliberalfrancais.fr/" target="_top">Parti libéral français</a>.</p>
+</div>
+</footer>
+<dialog id="affichage" closedby="any" aria-labelledby="titre-affichage"><div class="reglages">
+<div class="tete"><h2 id="titre-affichage">Affichage</h2><button type="button" data-fermer>Fermer</button></div>
+<fieldset><legend>Taille du texte</legend><div class="pastilles"><label><input type="radio" name="taille" value="normal" checked>Normale</label><label><input type="radio" name="taille" value="grand">Grande</label><label><input type="radio" name="taille" value="tres-grand">Très grande</label></div></fieldset>
+<fieldset><legend>Police de caractères</legend><div class="pastilles"><label><input type="radio" name="police" value="standard" checked>Standard</label><label><input type="radio" name="police" value="lisible">Très lisible</label></div></fieldset>
+<fieldset><legend>Espacement du texte</legend><div class="pastilles"><label><input type="radio" name="interligne" value="normal" checked>Normal</label><label><input type="radio" name="interligne" value="large">Aéré</label></div></fieldset>
+<p><button type="button" data-retablir>Rétablir les réglages par défaut</button></p>
+<p class="ou">Ces choix restent dans votre navigateur : rien n'en sort.</p>
+</div></dialog>
+<script type="module" src="../moteur/js/routeur.js"></script>
+</body>
+</html>

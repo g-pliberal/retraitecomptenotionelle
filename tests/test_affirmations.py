@@ -3201,3 +3201,28 @@ def test_aucun_controle_orphelin():
     """Un contrôle que plus aucune entrée ne nomme est du code mort."""
     nommes = {e["controle"] for e in AFFIRMATIONS if "controle" in e}
     assert set(CONTROLES) == nommes, sorted(set(CONTROLES) ^ nommes)
+
+
+# .. les caisses (action 193) ................................................
+
+@controle("rendement_du_point_des_caisses")
+def _(m: Modele):
+    """Le prix, la valeur et le taux d'appel du point que la page « Les
+    caisses » chiffre sont ceux que le simulateur applique en 2026."""
+    import json
+    paquet = json.loads((Path(__file__).resolve().parents[1] / "moteur" / "donnees.json")
+                        .read_text(encoding="utf-8"))
+    serie = paquet["valeurs_point"]
+
+    def en_2026(code: str, mesure: str, defaut: float | None = None) -> float:
+        valeurs = serie.get(f"{code}|{mesure}")
+        if not valeurs:
+            return defaut
+        return valeurs[max(a for a in valeurs if int(a) <= 2026)][0]
+
+    for ident, code in (("agirc_arrco", "agirc_arrco"), ("ircantec", "ircantec"),
+                        ("rafp", "rafp")):
+        point = paquet["caisses"][ident]["point"]
+        assert _proche(point["prix"], en_2026(code, "salaire_reference")), ident
+        assert _proche(point["valeur"], en_2026(code, "valeur_service")), ident
+        assert _proche(point["appel"], en_2026(code, "taux_appel", 1.0)), ident

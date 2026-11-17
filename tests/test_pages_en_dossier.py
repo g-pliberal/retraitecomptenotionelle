@@ -30,10 +30,10 @@ import regenerer  # noqa: E402
 pytestmark = pytest.mark.skipif(not disponible(),
                                 reason="node absent : les pages du site ne se lisent pas sans lui")
 
-#: Les huit pages en dossier, avec leur titre — l'accueil est la racine.
+#: Les neuf pages en dossier, avec leur titre — l'accueil est la racine.
 DOSSIERS = {
     "simuler": "Simuler", "cout": "Coût", "risque": "Pourquoi changer",
-    "partager": "Partager", "saviez-vous": "Le saviez-vous ?",
+    "partager": "Partager", "saviez-vous": "Le saviez-vous ?", "caisses": "Les caisses",
     "cas-types": "Carrières types", "avantages": "Droits non cotisés",
     "methode": "Méthode et sources",
 }

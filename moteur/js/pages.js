@@ -285,6 +285,9 @@ export const DESCRIPTIONS = {
   "/saviez-vous": "Douze règles du système de retraite actuel en une carte "
     + "chacune : les seuils, les cotisations sans droits, la réversion, les "
     + "caisses à part. Chaque carte cite le texte officiel qui la fonde.",
+  "/caisses": "Chaque caisse de retraite, comment elle marche : qui paie pour "
+    + "qui, comment on y gagne des droits, comment la pension se calcule, "
+    + "d'où vient son argent et qui décide.",
 };
 
 export const TITRES = {
@@ -294,6 +297,7 @@ export const TITRES = {
   "/risque": "Pourquoi changer",
   "/partager": "Partager",
   "/saviez-vous": "Le saviez-vous ?",
+  "/caisses": "Les caisses",
   "/cas-types": "Carrières types",
   "/avantages": "Droits non cotisés",
   "/methode": "Méthode et sources",
@@ -347,6 +351,9 @@ export function rendre(contexte, cheminDemande, parametres = null, largeur = nul
   }
   if (chemin === "/saviez-vous") {
     return [TITRES[chemin], saviezVous()];
+  }
+  if (chemin === "/caisses") {
+    return [TITRES[chemin], caissesDeRetraite(contexte)];
   }
   if (chemin in PAGES_AGREGEES) {
     return [TITRES[chemin], refus + agregee(chemin, contexte, regles, requete)];
@@ -3274,6 +3281,404 @@ ${g.tranche(`<div class="paire">
  * l'image porte la référence du texte ; le lien, sous la barre de partage,
  * mène au texte lui-même.
  */
+// -- Les caisses (action 193) -------------------------------------------------
+//
+// Chaque grande caisse de retraite, comment elle marche : demandée par le
+// propriétaire le 17 novembre 2026, sur la maquette qu'il a validée. Les
+// chiffres viennent du paquet (`paquet.caisses`, fabriqué par
+// `donnees/caisses_du_site.py`) : effectifs de 2024 et financement de 2023 du
+// COR, réserves de fin 2025, point de 2026. Le texte, lui, est ici : ce que
+// chaque caisse couvre, comment on y gagne des droits, comment la pension se
+// calcule, qui décide.
+
+/** Les postes du financement, dans l'ordre du billet, leur nom et leur classe. */
+const POSTES_FINANCEMENT = [
+  ["cotisations", "Cotisations"],
+  ["impots", "Impôts et taxes"],
+  ["etat", "Budget de l'État"],
+  ["autres_caisses", "Les autres caisses"],
+  ["placements_et_divers", "Placements et divers"],
+  ["non_finance", "Personne : non financé"],
+];
+
+/**
+ * Ce que la page dit de chaque caisse, dans l'ordre du paquet. `mode` dit
+ * comment on y compte ses droits ; `fait` reçoit les chiffres de la caisse.
+ */
+const TEXTE_DES_CAISSES = {
+  cnav: {
+    famille: "Salariés du privé", court: "Assurance retraite",
+    nom: "L'Assurance retraite (Cnav)",
+    pour: "Salariés du privé, contractuels du public, artisans et commerçants : "
+      + "la retraite de base de presque tout le monde.",
+    mode: "trimestres",
+    droits: "Vous validez un trimestre chaque fois que vous gagnez l'équivalent "
+      + "de 150 heures au Smic, quatre au plus par an. Le chômage, la maladie "
+      + "ou la maternité en donnent aussi.",
+    calcul: "Pension = salaire moyen de vos 25 meilleures années × 50 % × "
+      + "(vos trimestres ÷ les trimestres exigés pour votre année de "
+      + "naissance). Le salaire compte jusqu'au plafond de la Sécurité "
+      + "sociale. S'il vous manque des trimestres, une décote s'ajoute, sauf "
+      + "si vous partez à 67 ans.",
+    decide: "Le Parlement fixe les règles et l'âge ; le gouvernement "
+      + "revalorise les pensions chaque 1er janvier.",
+    fait: () => "Depuis 2025, elle paie aussi les déficits des régimes "
+      + "spéciaux fermés (SNCF, RATP, mines…), et l'État la rembourse.",
+  },
+  agirc_arrco: {
+    famille: "Salariés du privé", court: "Agirc-Arrco", nom: "L'Agirc-Arrco",
+    pour: "Tous les salariés du privé : c'est leur retraite complémentaire, le "
+      + "deuxième étage.",
+    mode: "points",
+    droits: "Chaque euro cotisé achète des points. On paie davantage que ce "
+      + "qui achète des points (le « taux d'appel ») : ce surplus finance le "
+      + "régime sans ouvrir de droits.",
+    calcul: "Pension annuelle = vos points × la valeur du point. Les "
+      + "syndicats et le patronat fixent le prix et la valeur du point chaque "
+      + "automne.",
+    decide: "Les syndicats et le patronat seuls, par accord. L'État n'y décide "
+      + "rien.",
+    fait: () => "Ses règles l'obligent à garder au moins six mois de pensions "
+      + "en réserve. Elle n'a aucune dette.",
+  },
+  fpe: {
+    famille: "Fonction publique", court: "État",
+    nom: "Les fonctionnaires de l'État",
+    pour: "Enseignants, policiers, militaires, agents des ministères : une "
+      + "seule pension, base et complémentaire réunies.",
+    mode: "trimestres",
+    droits: "Chaque trimestre de service compte. Les primes n'ouvrent presque "
+      + "pas de droits ici : elles vont à la RAFP.",
+    calcul: "Pension = traitement indiciaire des 6 derniers mois × 75 % × "
+      + "(vos trimestres ÷ les trimestres exigés). Pas de moyenne sur 25 ans : "
+      + "c'est la fin de carrière qui compte.",
+    decide: "Le Parlement, par la loi. Les pensions sont payées par le budget "
+      + "de l'État.",
+    fait: () => "Il n'y a pas de caisse : l'État paie les pensions de ses "
+      + "anciens agents, et verse pour cela une contribution sur le "
+      + "traitement de ses agents actifs, fixée pour équilibrer le compte.",
+  },
+  cnracl: {
+    famille: "Fonction publique", court: "CNRACL", nom: "La CNRACL",
+    pour: "Fonctionnaires des mairies, des départements, des régions et des "
+      + "hôpitaux.",
+    mode: "trimestres",
+    droits: "Les mêmes règles que les fonctionnaires de l'État : des trimestres "
+      + "de service.",
+    calcul: "Pension = traitement des 6 derniers mois × 75 % × (vos trimestres "
+      + "÷ les trimestres exigés).",
+    decide: "Le Parlement et le gouvernement. Elle est gérée par la Caisse des "
+      + "dépôts.",
+    fait: (c) => "Elle n'a plus de réserves et l'État ne la renfloue pas : "
+      + `${parts(c.financement.non_finance)} € sur 100 de ses dépenses `
+      + "n'avaient pas de financement en 2023.",
+  },
+  ircantec: {
+    famille: "Fonction publique", court: "Ircantec", nom: "L'Ircantec",
+    pour: "Les contractuels de l'État, des collectivités et des hôpitaux, et "
+      + "les élus locaux : leur complémentaire.",
+    mode: "points",
+    droits: "Comme à l'Agirc-Arrco, les cotisations achètent des points, avec "
+      + "un taux d'appel.",
+    calcul: "Pension annuelle = vos points × la valeur du point.",
+    decide: "Son conseil d'administration propose, l'État décide par décret.",
+    fait: (c) => `${g.nombre(c.reserves.mois / 12, 0)} ans de pensions en `
+      + "réserve.",
+  },
+  rafp: {
+    famille: "Fonction publique", court: "RAFP", nom: "La RAFP",
+    pour: "Tous les fonctionnaires : une petite retraite en plus, sur leurs "
+      + "primes.",
+    mode: "points",
+    droits: "10 % des primes (5 % payés par l'agent, 5 % par l'employeur, sur "
+      + "des primes allant jusqu'à 20 % du traitement) achètent des points. "
+      + "L'argent est placé.",
+    calcul: "Pension annuelle = vos points × la valeur du point. Sous 5 125 "
+      + "points, elle est versée en une fois.",
+    decide: "Un établissement public, l'ERAFP, sous la tutelle de l'État.",
+    fait: (c) => "Le seul régime public obligatoire qui place l'argent de ses "
+      + `cotisants : ${parts(c.financement.placements_et_divers)} € sur 100 de `
+      + "ses recettes viennent des placements.",
+  },
+  rci: {
+    famille: "Indépendants et libéraux", court: "RCI",
+    nom: "La complémentaire des indépendants (RCI)",
+    pour: "Artisans et commerçants : leur deuxième étage. Leur base est "
+      + "l'Assurance retraite.",
+    mode: "points",
+    droits: "Les cotisations, prélevées par l'Urssaf, achètent des points.",
+    calcul: "Pension annuelle = vos points × la valeur du point.",
+    decide: "Le Conseil de la protection sociale des travailleurs "
+      + "indépendants (CPSTI), formé de représentants des artisans et "
+      + "commerçants.",
+    fait: (c) => `${g.nombre(c.reserves.mois / 12, 0)} ans de pensions en `
+      + "réserve : l'une des caisses les mieux dotées.",
+  },
+  cnavpl: {
+    famille: "Indépendants et libéraux", court: "Libéraux",
+    nom: "Les caisses des professions libérales (CNAVPL)",
+    pour: "Médecins, kinés, pharmaciens, architectes, experts-comptables… Une "
+      + "base commune, puis une complémentaire par métier (CARMF, CARPIMKO, "
+      + "CIPAV…).",
+    mode: "points",
+    droits: "La base est en points, achetés par une cotisation sur le revenu. "
+      + "Chaque profession a ensuite ses propres règles.",
+    calcul: "Pension de base annuelle = vos points × la valeur du point. La "
+      + "complémentaire dépend de la caisse de votre métier.",
+    decide: "Chaque caisse est gérée par des élus de sa profession ; l'État "
+      + "valide les règles.",
+    fait: (c) => `${g.nombre(c.reserves.montant_md, 1)} milliards d'euros de `
+      + "réserves, presque tous dans les caisses de métier.",
+  },
+  cnbf: {
+    famille: "Indépendants et libéraux", court: "Avocats",
+    nom: "La caisse des avocats (CNBF)", pour: "Les avocats, base et complémentaire.",
+    mode: "forfait",
+    droits: "Une base forfaitaire selon la durée d'exercice, et une "
+      + "complémentaire en points.",
+    calcul: "Base : un montant fixe pour une carrière complète, quel que soit "
+      + "le revenu. Complémentaire : vos points × leur valeur.",
+    decide: "Les avocats élisent son conseil.",
+    fait: (c) => `${g.nombre(c.cotisants / c.retraites, 1)} avocats en `
+      + "activité pour un retraité : la profession est jeune.",
+  },
+  msa_exploitants: {
+    famille: "Agriculture", court: "Exploitants", nom: "La MSA, exploitants agricoles",
+    pour: "Agriculteurs, viticulteurs, éleveurs à leur compte.",
+    mode: "trimestres",
+    droits: "Des trimestres, et des points proportionnels au revenu agricole.",
+    calcul: "Pension = une part forfaitaire + une part en points, puis une "
+      + "complémentaire obligatoire en points. Une carrière complète garantit "
+      + "au moins 85 % du Smic net.",
+    decide: "Le Parlement et le gouvernement ; la MSA gère.",
+    fait: (c) => `Sur 100 € de pension, ${parts(c.financement.cotisations)} € `
+      + "seulement viennent des cotisations des agriculteurs.",
+  },
+  msa_salaries: {
+    famille: "Agriculture", court: "Salariés agricoles",
+    nom: "La MSA, salariés agricoles",
+    pour: "Ouvriers agricoles, salariés des coopératives et du Crédit agricole.",
+    mode: "trimestres",
+    droits: "Les mêmes règles que le régime général, et l'Agirc-Arrco en "
+      + "complémentaire.",
+    calcul: "Pension = salaire moyen des 25 meilleures années × 50 % × "
+      + "(trimestres ÷ trimestres exigés).",
+    decide: "Le Parlement et le gouvernement ; la MSA gère.",
+    fait: (c) => `${parts(c.financement.autres_caisses)} € sur 100 viennent `
+      + "des autres caisses, par la compensation entre régimes.",
+  },
+  sncf: {
+    famille: "Régimes spéciaux", court: "SNCF", nom: "La caisse de la SNCF",
+    pour: "Les cheminots embauchés au statut avant 2020.",
+    mode: "trimestres", droits: "Des trimestres de service, comme les fonctionnaires.",
+    calcul: "Pension = salaire des 6 derniers mois × 75 % × (trimestres ÷ "
+      + "trimestres exigés).",
+    decide: "Le gouvernement, par décret.",
+    fait: (c) => "Fermée aux embauchés depuis 2020. Sur 100 € de pension, "
+      + `${parts(c.financement.etat)} € viennent de l'État.`,
+  },
+  ratp: {
+    famille: "Régimes spéciaux", court: "RATP", nom: "La caisse de la RATP",
+    pour: "Les agents embauchés avant septembre 2023.",
+    mode: "trimestres", droits: "Des trimestres de service.",
+    calcul: "Pension = salaire des 6 derniers mois × 75 % × (trimestres ÷ "
+      + "trimestres exigés).",
+    decide: "Le gouvernement, par décret.",
+    fait: () => "Fermée aux embauchés depuis septembre 2023 : ils cotisent au "
+      + "régime général et à l'Agirc-Arrco.",
+  },
+  cnieg: {
+    famille: "Régimes spéciaux", court: "Énergie",
+    nom: "La caisse des industries électriques et gazières (CNIEG)",
+    pour: "Les agents d'EDF, d'Engie, d'Enedis, de GRDF… embauchés avant "
+      + "septembre 2023.",
+    mode: "trimestres", droits: "Des trimestres de service.",
+    calcul: "Pension = salaire des 6 derniers mois × 75 % × (trimestres ÷ "
+      + "trimestres exigés).",
+    decide: "Le gouvernement, par décret.",
+    fait: () => "Une taxe sur vos factures d'électricité et de gaz, la "
+      + "contribution tarifaire d'acheminement, paie une part de ces pensions.",
+  },
+  enim: {
+    famille: "Régimes spéciaux", court: "Marins", nom: "La caisse des marins (ENIM)",
+    pour: "Les marins de commerce et de pêche.",
+    mode: "trimestres", droits: "Des trimestres de navigation.",
+    calcul: "Pension calculée sur un salaire forfaitaire, selon la catégorie "
+      + "du marin, et la durée de navigation.",
+    decide: "Le gouvernement.",
+    fait: (c) => `L'État paie ${parts(c.financement.etat)} € sur 100.`,
+  },
+  mines: {
+    famille: "Régimes spéciaux", court: "Mines", nom: "La caisse des mines (CANSSM)",
+    pour: "Les anciens mineurs et leurs veuves.",
+    mode: "trimestres", droits: "Des trimestres de travail à la mine.",
+    calcul: "Pension selon la durée de service et des barèmes propres à la "
+      + "profession.",
+    decide: "Le gouvernement.",
+    fait: (c) => `${g.nombre(c.cotisants, 0)} cotisants pour `
+      + `${g.nombre(c.retraites, 0)} retraités : les mines ont fermé, et `
+      + "l'État paie.",
+  },
+  banque_de_france: {
+    famille: "Régimes spéciaux", court: "Banque de France",
+    nom: "La caisse de la Banque de France",
+    pour: "Les agents de la Banque de France embauchés avant septembre 2023.",
+    mode: "trimestres", droits: "Des trimestres de service.",
+    calcul: "Pension = salaire des 6 derniers mois × 75 % × (trimestres ÷ "
+      + "trimestres exigés).",
+    decide: "La Banque de France et le gouvernement.",
+    fait: (c) => `${g.nombre(c.reserves.montant_md, 1)} milliards de `
+      + `réserves : ${g.nombre(c.reserves.mois / 12, 0)} ans de pensions.`,
+  },
+  crpcen: {
+    famille: "Régimes spéciaux", court: "Notaires",
+    nom: "La caisse des clercs et employés de notaire (CRPCEN)",
+    pour: "Les salariés des études de notaire embauchés avant septembre 2023.",
+    mode: "trimestres", droits: "Des trimestres.",
+    calcul: "Pension selon le salaire et la durée, avec ses règles propres.",
+    decide: "Le gouvernement, avec un conseil d'administration de la profession.",
+    fait: (c) => `Un régime spécial qui vit de ses cotisations : `
+      + `${parts(c.financement.cotisations)} € sur 100.`,
+  },
+};
+
+/** Une part du financement, en euros sur cent, arrondie. */
+function parts(part) {
+  return Math.round((part || 0) * 100);
+}
+
+/** Les petits personnages : cotisants pour un retraité, ou l'inverse. */
+function personnagesDeLaCaisse(ident, c) {
+  const rapport = c.cotisants / c.retraites;
+  const figure = (x, classe, part, rang) => {
+    const corps = `<circle cx="${x}" cy="14" r="9"/>`
+      + `<rect x="${x - 12}" y="26" width="24" height="32" rx="10"/>`;
+    if (part >= 0.95) return `<g class="${classe}">${corps}</g>`;
+    const id = `part-${ident}-${rang}`;
+    return `<g class="vide">${corps}</g><clipPath id="${id}">`
+      + `<rect x="${x - 12}" y="0" width="${g.nombreBrut(24 * part, 1)}" height="60"/>`
+      + `</clipPath><g class="${classe}" clip-path="url(#${id})">${corps}</g>`;
+  };
+  const rangee = (n, x0, classe, prefixe) => {
+    const borne = Math.min(n, 8);
+    let dessin = "";
+    let k = 0;
+    for (; k < Math.floor(borne); k += 1) dessin += figure(x0 + k * 30, classe, 1, "");
+    const reste = borne - Math.floor(borne);
+    if (reste > 0.05) { dessin += figure(x0 + k * 30, classe, reste, prefixe); k += 1; }
+    return [dessin, k];
+  };
+  const [actifs, nActifs] = rangee(rapport >= 1 ? rapport : 1, 20, "actif", "actif");
+  const xPour = 12 + nActifs * 30;
+  const x0 = xPour + 70;
+  const [retraites, nRetraites] = rangee(rapport >= 1 ? 1 : 1 / rapport, x0, "retraite", "retraite");
+  const largeur = Math.max(x0 + nRetraites * 30, 200);
+  const grand = rapport >= 1 ? g.nombre(rapport, 1) : "1";
+  const phrase = rapport >= 1
+    ? `cotisant${rapport >= 2 ? "s" : ""} pour un retraité`
+    : `cotisant pour ${g.nombre(1 / rapport, 1)} retraités`;
+  return `<p class="caisse-chiffre">${grand}</p><p>${phrase}</p>`
+    + `<svg class="caisse-gens" viewBox="0 0 ${largeur} 60" aria-hidden="true">`
+    + `${actifs}<text x="${xPour}" y="40">pour</text>${retraites}</svg>`
+    + `<p class="caisse-note">${g.nombre(c.cotisants, 0)} cotisants, `
+    + `${g.nombre(c.retraites, 0)} retraités en 2024.</p>`;
+}
+
+/** Le billet de 100 € : d'où vient l'argent de la caisse. */
+function billetDeLaCaisse(c) {
+  const postes = POSTES_FINANCEMENT
+    .map(([cle, libelle]) => [cle, libelle, parts(c.financement[cle])])
+    .filter(([, , euros]) => euros > 0);
+  const barre = postes.map(([cle, , euros]) => (
+    `<span class="poste-${cle}" style="flex:${euros}">`
+    + `${euros >= 9 ? `<b>${g.euros(euros)}</b>` : ""}</span>`)).join("");
+  const legende = postes.map(([cle, libelle, euros]) => (
+    `<li><i class="poste-${cle}"></i>${g.euros(euros)} : ${libelle}</li>`)).join("");
+  return `<div class="caisse-billet" role="img" aria-label="D'où viennent 100 € `
+    + `de pension">${barre}</div><ul class="caisse-legende">${legende}</ul>`;
+}
+
+/** Ce que rapportent 100 € cotisés, dans une caisse en points. */
+function rendementDuPoint(point) {
+  const rente = 100 / point.appel / point.prix * point.valeur;
+  return `<p class="caisse-rendement">En 2026, un point coûte `
+    + `${g.nombre(point.prix, 2)} € et rapporte ${g.nombre(point.valeur, 4)} € `
+    + "de pension par an"
+    + (point.appel > 1 ? `, et l'on paie ${g.nombre((point.appel - 1) * 100, 0)} % `
+      + "de plus que ce qui achète des points" : "")
+    + `. <strong>100 € cotisés rapportent ${g.nombre(rente, 2)} € de `
+    + "pension par an, à vie</strong> : il faut "
+    + `${g.nombre(100 / rente, 1)} ans de retraite pour récupérer sa mise, `
+    + "hors revalorisation.</p>";
+}
+
+function ficheDeLaCaisse(ident, c) {
+  const t = TEXTE_DES_CAISSES[ident];
+  const reserves = c.reserves
+    ? `${c.reserves.montant_md ? `${g.nombre(c.reserves.montant_md, 1)} milliards d'euros`
+      : "Aucune"} de réserves fin 2025`
+      + (c.reserves.mois ? `, soit ${c.reserves.mois} mois de pensions.` : ".")
+    : "Aucune réserve : ce qui entre dans l'année est versé dans l'année.";
+  const question = (rang, titre, corps) => `<div class="caisse-question">`
+    + `<h3><span>${rang}</span>${titre}</h3>${corps}</div>`;
+  return g.depliant(t.nom, `<p class="caisse-pour">${t.pour}</p>`
+    + question(1, "Qui paie pour qui ?", personnagesDeLaCaisse(ident, c))
+    + question(2, "Comment on gagne des droits",
+      `<p class="caisse-mode">Compte en <b>${t.mode}</b></p><p>${t.droits}</p>`)
+    + question(3, "Comment la pension est calculée",
+      `<p>${t.calcul}</p>${c.point ? rendementDuPoint(c.point) : ""}`)
+    + question(4, "D'où vient son argent, sur 100 €",
+      `${billetDeLaCaisse(c)}<p>${reserves}</p>`)
+    + question(5, "Qui décide", `<p>${t.decide}</p>`)
+    + `<p class="caisse-fait"><b>À retenir</b>${t.fait(c)}</p>`, `caisse-${ident}`);
+}
+
+function caissesDeRetraite(contexte) {
+  const donnees = contexte.paquet.caisses;
+  // L'ordre de la page est celui du texte, par famille, et non celui du
+  // paquet, dont les clés sont rangées par ordre alphabétique.
+  const idents = Object.keys(TEXTE_DES_CAISSES).filter((ident) => ident in donnees);
+  const plusGrande = Math.max(...idents.map((ident) => donnees[ident].retraites));
+  const familles = [...new Set(idents.map((ident) => TEXTE_DES_CAISSES[ident].famille))];
+  const carte = familles.map((famille) => {
+    const bulles = idents.filter((ident) => TEXTE_DES_CAISSES[ident].famille === famille)
+      .map((ident) => {
+        const c = donnees[ident];
+        const diametre = Math.max(5.2, Math.sqrt(c.retraites / plusGrande) * 9.5);
+        const effectif = c.retraites >= 1e6
+          ? `${g.nombre(c.retraites / 1e6, 1)} M` : `${g.nombre(c.retraites / 1e3, 0)} k`;
+        return `<li><a class="bulle-caisse${diametre > 6 ? " grande" : ""}" `
+          + `style="--diametre:${g.nombreBrut(diametre, 2)}rem" `
+          + `href="${g.lien("/caisses", `caisse-${ident}`)}" data-vers="caisse-${ident}">`
+          + `${TEXTE_DES_CAISSES[ident].court}<small>${effectif} retraités</small></a></li>`;
+      }).join("");
+    return `<div class="famille-de-caisses"><h2>${famille}</h2><ul class="bulles">${bulles}</ul></div>`;
+  }).join("");
+
+  const tete = g.affiche(
+    "Les caisses",
+    "Une vingtaine de caisses. <span class=\"cle-texte\">Chacune ses règles.</span>",
+    "Chaque bulle est une caisse de retraite. Plus elle est grosse, plus elle "
+    + "paie de retraités. Touchez-en une pour voir comment elle marche.",
+  );
+  const fiches = idents.map((ident) => ficheDeLaCaisse(ident, donnees[ident])).join("\n");
+  return `
+${tete}
+
+${g.tranche(`<div class="carte-des-caisses">${carte}</div>`)}
+
+${g.tranche(fiches, true)}
+
+<div class="note"><strong>D'où viennent les chiffres.</strong> Cotisants et
+retraités de 2024, et d'où vient l'argent de chaque caisse en 2023 : Conseil
+d'orientation des retraites, compléments du rapport annuel de juin 2024.
+Réserves au 31 décembre 2025 : rapport annuel du COR de juin 2026, tableau
+2.3. Prix et valeur des points en 2026 : barèmes de chaque caisse.
+<a href="${g.lien("/simuler")}">Le simulateur</a> calcule votre retraite
+caisse par caisse.</div>
+`;
+}
+
 function saviezVous() {
   const article = (base, id) => `https://www.legifrance.gouv.fr/${base}/article_lc/${id}`;
   const code = (id) => article("codes", id);

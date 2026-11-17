@@ -92,7 +92,8 @@ TEMOINS = Etape("témoins", "construire_temoins.py", (), ("--verifier",),
 #: les témoins : après eux.
 PAGES = Etape("pages", "construire_pages.py", (), ("--verifier",),
               "index.html, simuler/index.html, cout/index.html, risque/index.html, "
-              "partager/index.html, saviez-vous/index.html, cas-types/index.html, "
+              "partager/index.html, saviez-vous/index.html, caisses/index.html, "
+              "cas-types/index.html, "
               "avantages/index.html, methode/index.html, sitemap.xml")
 CHIFFRAGE = Etape("chiffrage", "chiffrage_plf.py", (), ("--verifier",),
                   "docs/chiffrage_plf.md, docs/chiffrage_plf.csv")
