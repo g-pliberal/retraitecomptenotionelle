@@ -1734,8 +1734,8 @@ def ecart_openfisca(**reglages: str) -> float:
     """
     import json
 
-    from retraite_notionnelle.carriere import Carriere
-    from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
+    from retraite_notionnelle import chronologie as chrono
+    from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere, Carriere
 
     pont = _pont()
     temoin = json.loads((RACINE / "tests" / "temoins" / "openfisca_regime_general.json")
@@ -1743,14 +1743,17 @@ def ecart_openfisca(**reglages: str) -> float:
     ecarts = []
     for entree in temoin["profils"].values():
         profil = entree["profil"]
+        age = float(profil["liquidation"] - profil["naissance"])
         carriere = Carriere(
             annee_naissance=profil["naissance"], sexe="H",
+            # La chronologie que la carrière nue ne bâtit pas : son résumé,
+            # complété par les présomptions du vocabulaire.
+            chronologie=chrono.completer(chrono.du_resume(profil["naissance"], "H", 1, age)),
             lignes=[AnneeCarriere(annee=annee, revenu=profil["salaire"],
                                   affiliation="salarie_prive_non_cadre",
                                   trimestres_valides=4)
                     for annee in range(profil["debut"], profil["liquidation"])],
-            age_liquidation=float(profil["liquidation"] - profil["naissance"]),
-            identifiant=profil["code"])
+            age_liquidation=age, identifiant=profil["code"])
         nous = _regle("liquider.salaire_de_reference", pont.MOTEUR,
                       "regime_general", carriere,
                       pont.Periode("regime_general", profil["liquidation"]),

@@ -46,6 +46,7 @@ from .ouvrir import TRIMESTRES_DECOTE_MILITAIRE
 from ..somme import somme_ordonnee
 from ..types_du_pont.droit import EligiblePlafondEnfants  # noqa: F401  (types du pont, action 161)
 from ..types_du_pont.droit import EligibleMinimum, PrestationRafp  # noqa: F401  (types du pont, action 161)
+from ..types_du_pont.droit import EligibleAgricole  # noqa: F401  (types du pont, action 161)
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -458,62 +459,6 @@ class EligibleSupplement:
     detail: str
     #: La fiche qui l'ouvre.
     fiche: str
-
-
-@dataclass(frozen=True)
-class EligibleAgricole:
-    """La pension des non-salariés agricoles, que la pension majorée de
-    référence relève et dont le complément différentiel de la RCO lit les
-    durées (:func:`~.completer.pension_majoree`,
-    :func:`~.completer.complement_differentiel`).
-
-    Les deux minima ne comptent, avant 2026, que les périodes accomplies « à
-    titre exclusif ou principal » ; depuis, aussi celles à titre secondaire
-    (D. 732-110, D. 732-166-1). La qualité de chef se lit année par année
-    (:meth:`~retraite_notionnelle.carriere.Carriere.qualite_agricole`).
-    """
-
-    #: Indice de la pension dans :attr:`Pensions.regimes`.
-    indice: int
-    #: Liquidée au taux plein dans le régime : durée requise, âge du taux
-    #: plein, inaptitude ou handicap (L. 732-54-1, L. 732-63 depuis 2023).
-    taux_plein: bool
-    #: La durée tous régimes atteint-elle la durée requise ? Ce que le
-    #: complément de la RCO demandait jusqu'en août 2023 (L. 732-63, I, 2°).
-    duree_requise_atteinte: bool
-    #: Coefficient de surcote déjà incorporé au montant, que la PMR retire
-    #: avant de comparer (D. 732-111, D. 732-112).
-    surcote: float
-    #: Durée d'assurance non salariée agricole, en trimestres : celle des
-    #: années, sans les trimestres pour enfants.
-    duree: int
-    #: Celle des années de chef d'exploitation, DCE : le reste de ``duree``
-    #: est celui du conjoint collaborateur ou de l'aide familial, que la PMR
-    #: servait à un montant réduit de 2009 à 2021, hors
-    #: ``collaborateur_regularise``, et que le complément
-    #: différentiel ne compte pas (D. 732-111, D. 732-166-1, II).
-    chef: int
-    #: Les trimestres pour enfants que le régime porte, que les durées
-    #: comptent depuis 2026 (D. 732-110, D. 732-166-3).
-    enfants: int
-    #: La durée de référence DR, en trimestres : celle de la retraite
-    #: forfaitaire (R. 732-61, 1°), 150 au moins (D. 732-111, D. 732-166-4).
-    reference: int
-    #: Celle des années de collaborateur de 1999 à 2008, que la PMR de 2009 à
-    #: 2021 sert au montant du chef, présumées cotisées par qui a régularisé sa
-    #: situation (D. 732-110, II, 3° ; D. 732-111) ; ``chef`` ne la compte pas.
-    collaborateur_regularise: int = 0
-    #: Celle des années de collaborateur d'avant 1999, du conjoint participant
-    #: aux travaux, que les plans de revalorisation de 1998 à 2008 portent à un
-    #: minimum de points (D. 732-123, D. 732-145) ; ``chef`` ne la compte pas.
-    conjoint_avant_1999: int = 0
-    #: Les trimestres et les années de chef à titre secondaire que la retraite
-    #: forfaitaire ne compte pas (:func:`annees_hors_forfait`) : la retraite
-    #: proportionnelle est la pension moins le forfait des autres, et la durée
-    #: de chef reconstituée d'une pension prise avant 1997 se minore de quinze
-    #: points par année (D. 732-110, III).
-    hors_forfait: int = 0
-    annees_hors_forfait: int = 0
 
 
 @dataclass(frozen=True)

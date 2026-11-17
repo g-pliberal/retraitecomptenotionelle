@@ -7329,14 +7329,15 @@ de `contribution_etat`.
 
 **Reprise, au 17 novembre 2026.** Le propriétaire a accepté la
 suppression des 40 fichiers de règles Python. Un essai à blanc l'a faite dans
-un worktree jetable : 137 fichiers de tests ne se chargent plus. Les types et
-les constantes que les règles reprennent d'ailleurs s'importent désormais de
-leur module ; il ne reste que 13 fichiers qui importent des règles, dont la
-façade des tests et ses outils, par où cassent presque tous les autres.
-Restent quatre lots, une session chacun : les constantes que seules les
-règles tiennent, les outils du pont, la façade, puis la suppression.
-Par quoi commencer : le premier lot, que décrit
-`2026-11-17-l-essai-a-blanc-de-la-suppression.md`.
+un worktree jetable ; ce qui cassait se règle en quatre lots, une session
+chacun. Le premier est fait : les tests qui lisaient une constante des
+règles la lisent au portage, et plus aucun type n'y est lu. Il ne reste que
+cinq fichiers qui importent des règles : la façade des tests, ses outils du
+pont, et les confrontations au jumeau. Le deuxième lot, les outils du pont,
+est mené en même temps dans une autre session. Restent ensuite la façade,
+puis la suppression. Par quoi commencer : le troisième lot, une fois le
+deuxième publié, que décrit `2026-11-17-l-essai-a-blanc-de-la-suppression.md` ;
+le premier, dans `2026-11-17-les-constantes-au-portage.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

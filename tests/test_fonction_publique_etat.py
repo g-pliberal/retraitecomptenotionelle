@@ -134,9 +134,9 @@ def test_l_age_du_minimum_est_minore_pendant_la_montee_en_charge(simulateur):
     décote diminué de neuf trimestres. Parti à 63 ans avec une décote, il
     reçoit le minimum ; le même parti deux ans et demi plus tôt, non.
     """
-    from retraite_notionnelle.droit.liquider import MINORATION_AGE_MINIMUM_GARANTI
+    from retraite_notionnelle import pont
 
-    assert MINORATION_AGE_MINIMUM_GARANTI == {
+    assert pont.constante_du_droit("liquider", "MINORATION_AGE_MINIMUM_GARANTI") == {
         2011: 9, 2012: 7, 2013: 5, 2014: 3, 2015: 1}
     metiers = [Metier("fonctionnaire_etat", 40.0, 0.4)]
     _, resultat, pensions = _calculer(

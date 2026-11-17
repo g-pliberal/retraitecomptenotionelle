@@ -29,7 +29,7 @@ import pytest
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.config import Parametres, RevalorisationStock
 from retraite_notionnelle.donnees.chargement import Fiabilite
-from retraite_notionnelle.revalorisation import REGLE_REGIME_SPECIAL
+from retraite_notionnelle import pont
 from retraite_notionnelle.revalorisation_servie import (
     REGLE_FONCTION_PUBLIQUE, REGLE_GENERALE, REGLE_POINT)
 from retraite_notionnelle.donnees.revalorisations import RevalorisationsPensions
@@ -188,7 +188,7 @@ def test_un_regime_special_parti_avant_2009_est_estime(simulateur):
     comparaison = _retraite(simulateur, annee_naissance=1955, sexe="H",
                             affiliation="agent_sncf", age_debut=20, age_liquidation=52)
     sncf = next(r for r in comparaison.aujourd_hui.actuel.regimes if r.regime == "sncf")
-    assert sncf.regle == REGLE_REGIME_SPECIAL
+    assert sncf.regle == pont.constante_du_droit("revalorisation", "REGLE_REGIME_SPECIAL")
     assert sncf.fiabilite == Fiabilite.ESTIMEE
 
 

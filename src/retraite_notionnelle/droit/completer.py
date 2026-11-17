@@ -533,7 +533,7 @@ def pension_majoree(moteur: ScenarioActuel, carriere: Carriere, eligible,
     l'assuré et les majorations pour enfants qui leur sont rattachées, celles
     que d'autres départs servent et les pensions étrangères (L. 732-54-3,
     D. 732-114). ``eligible`` est l'
-    :class:`~retraite_notionnelle.droit.liquider.EligibleAgricole` du régime.
+    :class:`~retraite_notionnelle.types_du_pont.droit.EligibleAgricole` du régime.
 
     Une pension déjà liquidée (:func:`~retraite_notionnelle.revalorisation.reviser_les_exploitants`)
     passe la ``regle`` des pensions qu'elle sert et le jour ``quand`` des
@@ -860,7 +860,7 @@ def duree_de_chef_reconstituee(moteur: ScenarioActuel, carriere: Carriere, eligi
     II depuis le décret n° 2021-1919). Les points sont ceux que la pension de
     la liquidation porte hors son forfait, à la valeur du point de la
     liquidation, comme les plans les lisent (:func:`_points_d_avant_1997`).
-    ``eligible`` est l':class:`~retraite_notionnelle.droit.liquider.EligibleAgricole`
+    ``eligible`` est l':class:`~retraite_notionnelle.types_du_pont.droit.EligibleAgricole`
     du régime ; ``trimestres``, sa durée d'assurance."""
     date_effet = date_d_effet(carriere)
     if date_effet is None or date_effet >= PLANS_DE_1997 or pension.montant <= 0.0:
@@ -952,7 +952,7 @@ def majoration_retraite_proportionnelle(
     titre secondaire (:func:`_retraite_proportionnelle`), en points de la
     liquidation par année de la durée agricole, trente-sept et demie au plus
     (fiche ``majoration_retraite_proportionnelle``).
-    ``eligible`` est l':class:`~retraite_notionnelle.droit.liquider.EligibleAgricole`
+    ``eligible`` est l':class:`~retraite_notionnelle.types_du_pont.droit.EligibleAgricole`
     du régime ; ``trimestres``, sa durée d'assurance.
 
     ``quand`` (AAAA-01-01), la révision d'une pension déjà liquidée : la règle

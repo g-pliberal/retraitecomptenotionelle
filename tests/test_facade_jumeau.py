@@ -2158,11 +2158,20 @@ def test_chaque_constante_du_droit_lue_au_portage_est_celle_du_jumeau():
     moteur Python du scénario 1 tient."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
+    import importlib
+
     from retraite_notionnelle.scenarios.actuel import ScenarioActuel
 
-    assert pont.CONSTANTES_DE_LA_FACADE == {"liquider": ("SURCOTE_AGE_MAJORE",)}
     assert pont.constante_du_droit("liquider", "SURCOTE_AGE_MAJORE") == (
         ScenarioActuel.SURCOTE_AGE_MAJORE)
+    jumeaux = {"liquider": "droit.liquider", "capitalisation": "moteur.capitalisation",
+               "revalorisation": "revalorisation"}
+    for module, noms in pont.CONSTANTES_DE_LA_FACADE.items():
+        jumeau = importlib.import_module(f"retraite_notionnelle.{jumeaux[module]}")
+        for nom in (n for n in noms if n != "SURCOTE_AGE_MAJORE"):
+            python = getattr(jumeau, nom, None)
+            python = getattr(jumeau, f"_{nom}") if python is None else python
+            assert pont.constante_du_droit(module, nom) == python, f"{module}.{nom}"
 
 
 @pytest.mark.parametrize("parametres", [Parametres(), Parametres(conventions_cor=True)],

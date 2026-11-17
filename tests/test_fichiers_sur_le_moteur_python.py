@@ -251,19 +251,11 @@ def test_dans_un_fichier_passe_a_la_facade_seuls_les_tests_marques_restent_sur_l
 #: étape 6 de l'inventaire) n'aura plus à le chercher. La liste ne fait que
 #: décroître.
 IMPORTEURS_DES_REGLES = (
-    "scripts/mesures_prose.py",
     "tests/facade.py",
     "tests/jumeau_des_avantages.py",
     "tests/outils_pont.py",
-    "tests/test_capitalisation.py",
-    "tests/test_coefficients_agirc_1947.py",
     "tests/test_facade.py",
     "tests/test_facade_jumeau.py",
-    "tests/test_fonction_publique_etat.py",
-    "tests/test_ircantec_minoration.py",
-    "tests/test_majoration_exceptionnelle.py",
-    "tests/test_oracle_minima.py",
-    "tests/test_revalorisation.py",
 )
 
 
@@ -324,3 +316,15 @@ def test_hors_des_regles_un_type_ou_une_constante_s_importe_de_son_module():
     de_moins = sorted(set(IMPORTEURS_DES_REGLES) - importeurs)
     assert not de_moins, f"{', '.join(de_moins)} : n'importe plus des règles — le retirer"
     assert list(IMPORTEURS_DES_REGLES) == sorted(IMPORTEURS_DES_REGLES)
+
+
+def test_le_pont_ne_lit_aucun_type_par_son_nom_dans_un_fichier_de_regles():
+    """Les types que le pont lit par leur nom (``pont.OBJETS_DU_RESULTAT``),
+    sans import que l'arbre syntaxique voie, logent hors des fichiers de
+    règles, sous ``types_du_pont``."""
+    from retraite_notionnelle import pont
+
+    dans_les_regles = sorted(
+        f"{module}.{nom}" for module, nom in pont.OBJETS_DU_RESULTAT.values()
+        if _une_regle(f"retraite_notionnelle.{module}"))
+    assert not dans_les_regles, f"{', '.join(dans_les_regles)} : à loger sous types_du_pont"

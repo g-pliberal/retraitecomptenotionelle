@@ -24,7 +24,6 @@ from retraite_notionnelle.config import (
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.donnees.frais import FraisEpargneRetraite
 from retraite_notionnelle.donnees.taux import CourbeTauxSansRisque
-from retraite_notionnelle.moteur.capitalisation import MATURITE_MAXIMALE
 
 from facade import Simulateur
 
@@ -55,7 +54,7 @@ def test_la_courbe_lue_est_la_plus_recente_publiee(courbe):
     assert courbe.date.startswith("20")
     assert courbe.annee == int(courbe.date[:4])
     assert courbe.maturites[0] == 1
-    assert courbe.maturite_maximale >= MATURITE_MAXIMALE
+    assert courbe.maturite_maximale >= pont.constante_du_droit("capitalisation", "MATURITE_MAXIMALE")
     assert courbe.fiabilite_publiee == Fiabilite.CERTIFIEE
 
 
@@ -137,10 +136,12 @@ def test_sous_les_anticipations_pures_l_echelle_est_sans_effet():
                 cumul[effective] = cumul.get(effective, 0.0) + part
         return tuple(sorted(cumul.items()))
 
+    maturite_maximale = pont.constante_du_droit("capitalisation", "MATURITE_MAXIMALE")
+
     def moitie_moitie(horizon: int) -> tuple[tuple[int, float], ...]:
         if horizon == 1:
             return ((1, 1.0),)
-        return ((1, 0.5), (min(horizon, MATURITE_MAXIMALE), 0.5))
+        return ((1, 0.5), (min(horizon, maturite_maximale), 0.5))
 
     assiettes = {annee: 30_000.0 for annee in range(2030, 2066)}
     regles = {"adosse": None,

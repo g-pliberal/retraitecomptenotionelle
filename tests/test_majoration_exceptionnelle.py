@@ -28,7 +28,7 @@ from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.types_du_pont.droit import PensionRegime
 from retraite_notionnelle.types_du_pont.droit import PetitePension
-from retraite_notionnelle.revalorisation import FICHE_DE_LA_MAJORATION
+from retraite_notionnelle import pont
 from retraite_notionnelle.types_du_pont.revalorisation import RegimeServi
 
 import facade
@@ -55,10 +55,11 @@ def test_la_fiche_porte_les_parametres_du_decret(simulateur):
     dus depuis le 1er septembre 2023, aux pensions qui ont pris effet avant ;
     aucune majoration pour les autres, qui ont le minimum relevé."""
     fiches = simulateur.scenario_actuel.fiches_datees
-    avant = fiches.regle(FICHE_DE_LA_MAJORATION, "2023-08-01")
+    fiche = pont.constante_du_droit("revalorisation", "FICHE_DE_LA_MAJORATION")
+    avant = fiches.regle(fiche, "2023-08-01")
     assert avant == {"existe": True, "due_le": "2023-09-01", "montant": 1200.0,
                      "trimestres_cotises": 120, "plafond": 10170.86}
-    assert not fiches.regle(FICHE_DE_LA_MAJORATION, "2023-09-01")["existe"]
+    assert not fiches.regle(fiche, "2023-09-01")["existe"]
 
 
 # -- les exemples de la circulaire --------------------------------------------
@@ -235,7 +236,8 @@ def _sans_la_majoration(request) -> Simulateur:
 
     copie = facade.donnees_retouchees(
         request, ("sans la majoration exceptionnelle",),
-        {f"reference/regles/{FICHE_DE_LA_MAJORATION}.yaml": retirer})
+        {f"reference/regles/{pont.constante_du_droit('revalorisation', 'FICHE_DE_LA_MAJORATION')}.yaml":
+         retirer})
     return facade.simulateur_du_test(request, Parametres(racine_donnees=copie))
 
 

@@ -2686,6 +2686,26 @@ def test_l_age_majore_de_la_surcote_se_lit_au_portage():
         pont.constante_du_droit("liquider", "SURCOTE_INCONNUE")
 
 
+def test_les_tables_et_les_noms_du_droit_se_lisent_au_portage():
+    """Ce que les tests lisaient des fichiers de règles Python, lu au portage
+    (``pont.CONSTANTES_DE_LA_FACADE``) : le tableau de l'article 3 du décret
+    n° 2010-1744, la table d'anticipation de l'article 6 de l'annexe I de la
+    convention du 14 mars 1947, le plancher de l'article 16 de l'arrêté du
+    30 décembre 1970, le bout de la courbe de la BCE, trente ans, et deux
+    noms que les données portent. Une table revient en dictionnaire, ses
+    années et ses âges en entiers."""
+    assert pont.constante_du_droit("liquider", "MINORATION_AGE_MINIMUM_GARANTI") == {
+        2011: 9, 2012: 7, 2013: 5, 2014: 3, 2015: 1}
+    assert pont.constante_du_droit("liquider", "COEFFICIENTS_CONVENTION_1947") == {
+        55: 0.40, 56: 0.47, 57: 0.54, 58: 0.61, 59: 0.66,
+        60: 0.72, 61: 0.76, 62: 0.81, 63: 0.87, 64: 0.93}
+    assert pont.constante_du_droit("liquider", "COEFFICIENT_ANTICIPATION_PLANCHER") == 0.43
+    assert pont.constante_du_droit("capitalisation", "MATURITE_MAXIMALE") == 30
+    assert pont.constante_du_droit("revalorisation", "FICHE_DE_LA_MAJORATION") == (
+        "majoration_exceptionnelle_2023")
+    assert pont.constante_du_droit("revalorisation", "REGLE_REGIME_SPECIAL") == "regime_special"
+
+
 def test_le_forfait_du_marin_se_demande_au_portage(simulateur):
     """R. 11 du code des pensions de retraite des marins : la catégorie dont
     le forfait est le plus proche du revenu. L'arrêté de 2024 fixe la

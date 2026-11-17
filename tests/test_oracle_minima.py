@@ -31,7 +31,7 @@ import pytest
 from facade import Carriere, Simulateur, liquider
 from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.droit.liquider import MINORATION_AGE_MINIMUM_GARANTI
+from retraite_notionnelle import pont
 from test_oracle_familles import AFFILIATIONS, PRECISION_OPENFISCA, _notre_calcul
 
 TEMOIN = Path(__file__).resolve().parent / "temoins" / "openfisca_minima.json"
@@ -231,7 +231,8 @@ def test_la_minoration_transitoire_est_l_ecart_d_openfisca(temoin, nous, simulat
     assert eux["decote_trimestres"] == moi["decote_trimestres"] > 0
     assert eux["minimum_garanti"] == 0 and eux["pension_brute"] == eux["pension_avant_minimum"]
     assert moi["pension"] > moi["pension_avant_minimum"]
-    assert MINORATION_AGE_MINIMUM_GARANTI[2011] == 9
+    minoration = pont.constante_du_droit("liquider", "MINORATION_AGE_MINIMUM_GARANTI")[2011]
+    assert minoration == 9
     periode = simulateur.catalogue[profil["regime"]].periode(profil["liquidation"])
     lignes = [AnneeCarriere(annee=annee, revenu=profil["traitement"],
                             affiliation=AFFILIATIONS[profil["regime"]], trimestres_valides=4)
@@ -242,7 +243,7 @@ def test_la_minoration_transitoire_est_l_ecart_d_openfisca(temoin, nous, simulat
     _, annulation, _ = liquider.decote_opposable(
         simulateur.scenario_actuel, periode, carriere, profil["liquidation"])
     age = profil["liquidation"] - profil["naissance"]
-    assert annulation - MINORATION_AGE_MINIMUM_GARANTI[2011] / 4 <= age < annulation
+    assert annulation - minoration / 4 <= age < annulation
 
 
 def test_sans_le_taux_plein_aucun_minimum_apres_2015(temoin, nous):

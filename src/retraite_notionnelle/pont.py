@@ -2050,8 +2050,8 @@ HORS_DU_TYPE = {
 #: Le type des champs que le Python annonce ``object``, pour ne pas faire
 #: dépendre un module d'un autre : ``{(type, champ): (module, nom)}``.
 OBJETS_DU_RESULTAT = {
-    ("ChefDExploitation", "eligible"): ("droit.liquider", "EligibleAgricole"),
-    ("ExploitantAgricole", "eligible"): ("droit.liquider", "EligibleAgricole"),
+    ("ChefDExploitation", "eligible"): ("types_du_pont.droit", "EligibleAgricole"),
+    ("ExploitantAgricole", "eligible"): ("types_du_pont.droit", "EligibleAgricole"),
     ("ExploitantAgricole", "carriere"): ("types_du_pont.carriere", "Carriere"),
 }
 
@@ -3243,15 +3243,25 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
 #: ``moteur/js/droit/<module>.js`` ; une constante qui n'y est pas est refusée
 #: avant node.
 CONSTANTES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
-    # L'âge du barème de 2007-2008 au-delà duquel la surcote est majorée.
-    "liquider": ("SURCOTE_AGE_MAJORE",),
+    # L'âge du barème de 2007-2008 au-delà duquel la surcote est majorée ; la
+    # minoration de l'âge du minimum garanti (décret n° 2010-1744, article 3) ;
+    # la table d'anticipation de la convention de 1947 et le plancher de
+    # l'Ircantec, que leurs tests lisent.
+    "liquider": ("SURCOTE_AGE_MAJORE", "MINORATION_AGE_MINIMUM_GARANTI",
+                 "COEFFICIENTS_CONVENTION_1947", "COEFFICIENT_ANTICIPATION_PLANCHER"),
+    # La plus longue maturité de la courbe de la BCE.
+    "capitalisation": ("MATURITE_MAXIMALE",),
+    # La fiche de la majoration exceptionnelle de 2023, la règle des régimes
+    # spéciaux.
+    "revalorisation": ("FICHE_DE_LA_MAJORATION", "REGLE_REGIME_SPECIAL"),
 }
 
 
 def constante_du_droit(module: str, nom: str, paquet: bytes | None = None):
     """La constante ``nom`` du module ``module`` du droit, telle que le portage
     l'exporte : une valeur simple. Une constante que
-    :data:`CONSTANTES_DE_LA_FACADE` ne déclare pas est refusée avant node."""
+    :data:`CONSTANTES_DE_LA_FACADE` ne déclare pas est refusée avant node.
+    Une table revient en dictionnaire, ses clés numériques en entiers."""
     from .config import Parametres
 
     if nom not in CONSTANTES_DE_LA_FACADE.get(module, ()):
@@ -3264,7 +3274,10 @@ def constante_du_droit(module: str, nom: str, paquet: bytes | None = None):
     }}, _paquet_de(None, paquet))
     if "refus" in reponse:
         raise erreur_du_portage(**reponse["refus"])
-    return reponse["rendu"]
+    rendu = reponse["rendu"]
+    if isinstance(rendu, dict):
+        return {int(cle) if cle.isdigit() else cle: valeur for cle, valeur in rendu.items()}
+    return rendu
 
 
 def regle_du_droit(module: str, regle: str, type_rendu, *arguments, parametres=None,

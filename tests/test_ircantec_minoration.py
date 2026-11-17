@@ -28,7 +28,7 @@ from __future__ import annotations
 
 import pytest
 
-from retraite_notionnelle.droit.liquider import _COEFFICIENT_ANTICIPATION_PLANCHER
+from retraite_notionnelle import pont
 
 from facade import liquider
 
@@ -91,7 +91,7 @@ def test_le_modele_rend_le_coefficient_publie(age: float, attendu: float):
     trimestres = (AGE_NORMAL - age) * 4
     coefficient = _coefficient_anticipation(trimestres, 40)
     if coefficient is None:  # au-delà de la dernière ligne de la table
-        coefficient = _COEFFICIENT_ANTICIPATION_PLANCHER
+        coefficient = pont.constante_du_droit("liquider", "COEFFICIENT_ANTICIPATION_PLANCHER")
     assert coefficient == pytest.approx(attendu, abs=5e-5), (
         f"{age:g} ans : l'annexe donne {attendu}, le modèle {coefficient}")
 
@@ -113,7 +113,8 @@ def test_les_trois_marches_sont_bien_celles_de_l_arrete():
 
 def test_le_plancher_est_atteint_a_dix_ans_d_anticipation():
     """« Au plus tôt dix ans avant » : la table s'arrête, elle ne continue pas."""
-    assert TABLE_PUBLIEE[57.0] == _COEFFICIENT_ANTICIPATION_PLANCHER
+    assert TABLE_PUBLIEE[57.0] == pont.constante_du_droit(
+        "liquider", "COEFFICIENT_ANTICIPATION_PLANCHER")
     assert _coefficient_anticipation(40, 40) == pytest.approx(0.43, abs=5e-5)
     assert _coefficient_anticipation(41, 40) is None
 

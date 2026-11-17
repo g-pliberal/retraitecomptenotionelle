@@ -63,7 +63,7 @@ const BAREMES_REGIMES_SPECIAUX = new Set(["regimes_speciaux", "regimes_speciaux_
  * atteint : article 3 du décret n° 2010-1744 du 30 décembre 2010. Aucun à
  * partir de 2016.
  */
-const MINORATION_AGE_MINIMUM_GARANTI = { 2011: 9, 2012: 7, 2013: 5, 2014: 3, 2015: 1 };
+export const MINORATION_AGE_MINIMUM_GARANTI = { 2011: 9, 2012: 7, 2013: 5, 2014: 3, 2015: 1 };
 
 /**
  * La fiche du maximum des pensions du régime général, que `FichesDatees` lit
@@ -3920,7 +3920,7 @@ export function surcoteIrcantec(moteur, periode, carriere, trimestres, requis, a
 const PALIERS_ANTICIPATION = [[12, 0.01], [20, 0.0125], [40, 0.0175]];
 
 /** Dernière ligne de la table des âges : dix ans d'anticipation. */
-const COEFFICIENT_ANTICIPATION_PLANCHER = 0.43;
+export const COEFFICIENT_ANTICIPATION_PLANCHER = 0.43;
 
 /**
  * La table d'anticipation de l'article 6 de l'annexe I de la convention du
@@ -3928,7 +3928,7 @@ const COEFFICIENT_ANTICIPATION_PLANCHER = 0.43;
  * Son ajournement est la majoration par âge seul de la période. Voir
  * `liquider._COEFFICIENTS_CONVENTION_1947`.
  */
-const COEFFICIENTS_CONVENTION_1947 = new Map([
+export const COEFFICIENTS_CONVENTION_1947 = new Map([
   [55, 0.40], [56, 0.47], [57, 0.54], [58, 0.61], [59, 0.66],
   [60, 0.72], [61, 0.76], [62, 0.81], [63, 0.87], [64, 0.93],
 ]);

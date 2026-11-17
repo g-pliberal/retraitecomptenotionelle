@@ -445,7 +445,7 @@ ECARTS_DE_L_ANTICIPATION = (
 
 def _constante_du_portage(nom: str):
     """Une constante de `liquider.js`, sa valeur littérale."""
-    trouve = re.search(rf"^const {nom} = (.+);$", LIQUIDER.read_text(encoding="utf-8"), re.M)
+    trouve = re.search(rf"^(?:export )?const {nom} = (.+);$", LIQUIDER.read_text(encoding="utf-8"), re.M)
     assert trouve, f"le portage ne définit plus {nom}"
     return json.loads(trouve.group(1))
 

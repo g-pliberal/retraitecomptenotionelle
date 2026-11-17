@@ -22,7 +22,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from retraite_notionnelle.droit.liquider import _COEFFICIENTS_CONVENTION_1947
+from retraite_notionnelle import pont
 
 from facade import Simulateur, liquider
 
@@ -59,7 +59,7 @@ def test_la_table_du_moteur_est_celle_que_la_fiche_cite():
     1,25, ce que les périodes de 1947 à 1954 servent par la majoration par âge
     seul."""
     parametres = _parametres()
-    assert _COEFFICIENTS_CONVENTION_1947 == {
+    assert pont.constante_du_droit("liquider", "COEFFICIENTS_CONVENTION_1947") == {
         int(age): coefficient for age, coefficient in parametres["anticipation"].items()}
     assert {int(age): coefficient for age, coefficient in parametres["ajournement"].items()} == {
         66: 1.05, 67: 1.10, 68: 1.15, 69: 1.20, 70: 1.25}

@@ -141,7 +141,7 @@ import { DateMois, enMois, origineDesAges } from "../../moteur/js/calendrier.js"
 import {
   AnneeCarriere, Carriere, ancrageSalaireMoyen, prolongerReleve, salaireMoyenAnnuel,
 } from "../../moteur/js/carriere.js";
-import { ConstructeurCapitalisation } from "../../moteur/js/capitalisation.js";
+import { ConstructeurCapitalisation, MATURITE_MAXIMALE } from "../../moteur/js/capitalisation.js";
 import { valeur as valeurPresumee } from "../../moteur/js/chronologie.js";
 import { ConstructeurCompte, tauxDuBareme } from "../../moteur/js/compte.js";
 import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
@@ -2371,6 +2371,8 @@ const MODULES_DU_DROIT = {
   // Hors du droit : le relevé prolongé et le salaire moyen d'une année.
   acquerir: acquerirEtape,
   carriere: { prolongerReleve, salaireMoyenAnnuel },
+  // La plus longue maturité achetable, que les tests de la capitalisation lisent.
+  capitalisation: { MATURITE_MAXIMALE },
   categories,
   // Le barème par tranches du régime unique.
   compte: { tauxDuBareme },
@@ -2411,17 +2413,24 @@ ENTREES_DE_LA_FACADE["droit.regle"] = (simulateur, module, regle, ...valeurs) =>
 
 /**
  * Une constante du droit, sous son nom (`constante_du_droit` de `pont.py`,
- * qui déclare celles que la façade lit) : une valeur simple, telle quelle.
- * Ce que le module n'exporte pas, ou qui n'est pas une valeur simple, arrête
- * la demande.
+ * qui déclare celles que la façade lit) : une valeur simple, telle quelle, ou
+ * une table de valeurs simples — un `Map` ou un objet —, en objet. Ce que le
+ * module n'exporte pas, ou qui n'est ni l'une ni l'autre, arrête la demande.
  */
 ENTREES_DE_LA_FACADE["droit.constante"] = (simulateur, module, nom) => {
   const valeur = Object.hasOwn(MODULES_DU_DROIT, module) ? MODULES_DU_DROIT[module][nom]
     : undefined;
-  if (!["number", "string", "boolean"].includes(typeof valeur)) {
+  const simple = (v) => ["number", "string", "boolean"].includes(typeof v);
+  if (simple(valeur)) {
+    return valeur;
+  }
+  const table = valeur instanceof Map ? Object.fromEntries(valeur)
+    : valeur !== null && Object.getPrototypeOf(valeur ?? 0) === Object.prototype ? { ...valeur }
+      : null;
+  if (table === null || !Object.values(table).every(simple)) {
     throw new TypeError(`constante que le droit ne tient pas : ${module}.${nom}`);
   }
-  return valeur;
+  return table;
 };
 
 // La liquidation, par la façade : un bloc à part (action 161).
