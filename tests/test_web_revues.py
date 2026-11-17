@@ -1604,9 +1604,13 @@ def test_la_navigation_met_l_electeur_d_abord():
         "/", "/simuler", "/cout", "/risque", "/partager", "/saviez-vous",
         "/cas-types", "/avantages", "/methode"]
     # Le titre de chaque page est le libellé de son onglet : c'est lui que
-    # l'onglet du navigateur affiche.
-    assert dict(g.LIENS) == TITRES
-    assert list(TITRES) == [chemin for chemin, _ in g.LIENS]
+    # l'onglet du navigateur affiche. Les pages hors du bandeau, que le pied
+    # mène (« Les caisses », action 193), ont leur titre sans onglet.
+    au_bandeau = {chemin: titre for chemin, titre in TITRES.items()
+                  if chemin not in g.PAGES_HORS_BANDEAU}
+    assert dict(g.LIENS) == au_bandeau
+    assert list(au_bandeau) == [chemin for chemin, _ in g.LIENS]
+    assert list(TITRES) == g.PAGES
     # L'étiquette est masquée à l'œil, pas à l'oreille ; celle du groupe
     # secondaire, elle, se voit.
     assert "nav .etiquette" in FEUILLE_DE_STYLE
