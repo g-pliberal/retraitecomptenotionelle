@@ -1,19 +1,20 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: rouge
-sources: 09e3728812bebdecf9fead35d485a532f302f3ee
-date: 2026-11-17T07:07:39Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44032949237
+sources: 6acd0b96c38cbec9d598ee42a287028b774c6bdc
+date: 2026-11-17T07:27:08Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44036488869
 echecs:
+  - "FAILED tests/test_web_saisie.py::test_l_enfant_ne_apres_le_depart_compte_a_la_majoration_de_la_reversion - AttributeError: 'Carriere' object has no attribute 'naissances_des_enfants'"
   - "FAILED tests/test_controle_drees_panorama.py::test_la_decote_et_la_surcote_du_panorama_sont_celles_du_depot - AssertionError: assert {('2004', '1'...: 0.0125, ...} == {('2004', '1'...: 0.0125, ...}"
 presomptions: rouge
 presomptions_echecs:
   - "FAILED tests/test_surcote_2004_2006.py::test_la_liquidation_de_2007_date_la_surcote_de_2004_a_2006 - AssertionError: assert DateMois(annee=2007, mois=3) == DateMois(annee=2007, mois=4)"
 durees:
-  fabrique: 430
-  suite: 483
-  tranche_1: 333
-  tranche_2: 398
-  tranche_3: 483
-  tranche_4: 331
-  garde: 141
+  fabrique: 453
+  suite: 526
+  tranche_1: 375
+  tranche_2: 452
+  tranche_3: 401
+  tranche_4: 526
+  garde: 171
