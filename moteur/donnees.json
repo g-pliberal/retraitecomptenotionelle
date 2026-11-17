@@ -27816,7 +27816,7 @@ null
 "dates_qui_decident":["periode.debut","liquidation.date_effet"],
 "id":"sportifs_haut_niveau",
 "versions":[
-{"bornes":{"periode.debut":[null,"2012-01-01"]},"exception_de":null,"id":"avant_2012","parametres":{"existe":false,"fiabilite":"haute"},"texte":null},
+{"bornes":{"periode.debut":[null,"2012-01-01"]},"exception_de":null,"id":"avant_2012","parametres":{"existe":false,"fiabilite":"haute"},"texte":"LEGIARTI000025014498"},
 {
 "bornes":{"liquidation.date_effet":[null,"2023-09-01"],"periode.debut":["2012-01-01",null]},
 "exception_de":null,
@@ -232000,7 +232000,7 @@ null
 "dates_qui_decident":["liquidation.date_effet"],
 "id":"carriere_longue_reputes_cotises_autres",
 "versions":[
-{"bornes":{"liquidation.date_effet":[null,"2004-01-01"]},"exception_de":null,"id":"avant_la_carriere_longue","parametres":{"fiabilite":"haute","limites":[]},"texte":null},
+{"bornes":{"liquidation.date_effet":[null,"2004-01-01"]},"exception_de":null,"id":"avant_la_carriere_longue","parametres":{"fiabilite":"haute","limites":[]},"texte":"JORFARTI000001667141"},
 {
 "bornes":{"liquidation.date_effet":["2004-01-01","2012-11-01"]},
 "exception_de":null,

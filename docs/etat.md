@@ -31,18 +31,18 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 - Citées dans le code par leur identifiant : **130 sur 267**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **50 sur 267**, par 2 573 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **194 sur 267**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
-- Découpées en versions : **197 sur 267**, soit 829 versions, dont 162 supposées ; le partage des versions se contrôle sur chacune.
+- Découpées en versions : **197 sur 267**, soit 829 versions, dont 153 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 126, dont 10 déclarées non appliquées.
 
 **La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 18 012 rédactions d'articles, de 325 textes, lues le 2026-11-16 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20261116-104909). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
 
 | Statut | Rédactions |
 |---|---|
-| rattachées à une version | 1 973 |
+| rattachées à une version | 1 974 |
 | sans effet | 145 |
 | à rattacher | 655 |
 | à examiner | 6 015 |
-| sans statut | 9 224 |
+| sans statut | 9 223 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 32 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
@@ -417,7 +417,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `approximations` | 14 |
   | `regimes` | 1 |
 
-- **Les textes** : 655 rédactions à rattacher à une version de la fiche qui les cite, 6 015 à examiner, et 9 224 sans statut, que le cliquet tient à 9 224 au plus. Les textes qui en ont le plus : `css` 4 737, `decret_46_2769` 938, `rural` 837, `cpcmr` 561, `decret_90_1215` 319 (`python scripts/textes.py`).
+- **Les textes** : 655 rédactions à rattacher à une version de la fiche qui les cite, 6 015 à examiner, et 9 223 sans statut, que le cliquet tient à 9 223 au plus. Les textes qui en ont le plus : `css` 4 737, `decret_46_2769` 938, `rural` 836, `cpcmr` 561, `decret_90_1215` 319 (`python scripts/textes.py`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`agirc_arrco_valeur_achat`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 
