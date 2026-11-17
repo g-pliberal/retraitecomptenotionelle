@@ -647,7 +647,7 @@ def test_un_temps_tres_partiel_ne_valide_pas_quatre_trimestres(simulateur):
             affiliation="salarie_prive_non_cadre", age_debut=22,
             age_liquidation=64, niveau_salaire=niveau, profil_carriere="plat",
         )
-        trimestres[niveau] = carriere.trimestres_actuels
+        trimestres[niveau] = facade.trimestres_actuels(carriere)
     assert trimestres[0.10] < trimestres[0.20] < trimestres[1.0]
     # Une carrière au salaire moyen valide bien quatre trimestres par an.
     assert trimestres[1.0] == 4 * 42
@@ -2122,8 +2122,9 @@ def test_les_trimestres_de_decote_sont_des_entiers(simulateur):
             _, age_annulation, _ = liquider.decote_opposable(scenario,
                 periode, carriere, carriere.annee_liquidation
             )
+            actuels = facade.trimestres_actuels(carriere)
             retenus = liquider.trimestres_de_decote(scenario,
-                periode, carriere, carriere.trimestres_actuels, 168, age_depart,
+                periode, carriere, actuels, 168, age_depart,
                 age_annulation,
             )
             assert retenus == int(retenus), (generation, age_depart, retenus)
@@ -2131,7 +2132,7 @@ def test_les_trimestres_de_decote_sont_des_entiers(simulateur):
             # l'entier inférieur, ou au plus proche, passait le test
             # d'intégrité seul jusqu'au 23 septembre 2026.
             par_age = math.ceil(round((age_annulation - age_depart) * 4, 6))
-            par_duree = max(0, 168 - carriere.trimestres_actuels)
+            par_duree = max(0, 168 - actuels)
             attendu = max(0, min(par_age, par_duree))
             if periode.decote_trimestres_maximum is not None:
                 attendu = min(attendu, periode.decote_trimestres_maximum)
@@ -4118,10 +4119,10 @@ def test_la_majoration_compte_l_avpf_depuis_septembre_2023(simulateur):
         age_debut=20, age_liquidation=64.5, niveau_salaire=0.3, profil_carriere="plat",
         interruptions={annee: "education_enfant" for annee in range(1985, 2003)},
     )
-    cotises = carriere.trimestres_cumules(
+    cotises = facade.trimestres_cumules(carriere, [
         ligne for ligne in carriere.lignes
         if facade.commun.ligne_cotisee(moteur, carriere, ligne)
-        and ligne.annee <= carriere.annee_liquidation)
+        and ligne.annee <= carriere.annee_liquidation])
     assert completer.avpf_retenue(moteur, carriere, 24) == 24
     assert completer.avpf_retenue(moteur, carriere, 0) == 0
     assert cotises < 120 <= cotises + 24
@@ -5428,7 +5429,7 @@ def test_l_exploitant_agricole_compte_les_quatre_trimestres_de_l_annee_ou_il_ces
                    _exploitant_parti_en_aout_2024(depuis=2024)]
     carrieres = [Carriere.depuis_chronologie(c, simulateur.macro) for c in construites]
     assert str(carrieres[0].date_liquidation) == "août 2024"
-    assert [c.annee_de_cessation_agricole for c in carrieres] == [2024, None, None]
+    assert [facade.annee_de_cessation_agricole(c) for c in carrieres] == [2024, None, None]
     durees = [releve.construire(simulateur.scenario_actuel, c).durees for c in carrieres]
     assert durees[0].plafond("assurance", 2024) == 4
     attendu = [[d.trimestres_par_regime.get("msa_non_salaries", 0),
@@ -5506,7 +5507,7 @@ def test_r_173_3_2_arrete_les_regimes_alignes_au_trimestre_civil_l_annee_ou_l_ex
     construite = _exploitant_en_stage_l_annee_ou_il_cesse()
     carriere = Carriere.depuis_chronologie(construite, simulateur.macro)
     assert str(carriere.date_liquidation) == "juin 2030"
-    assert carriere.annee_de_cessation_agricole == 2030
+    assert facade.annee_de_cessation_agricole(carriere) == 2030
     durees = releve.construire(simulateur.scenario_actuel, carriere).durees
     assert durees.par_annee["assurance"]["regime_general"][2030] == 3
     attendu = [durees.trimestres_par_regime["regime_general"],
@@ -5597,7 +5598,7 @@ def test_l_annee_ou_l_exploitant_agricole_cesse_lui_vaut_les_points_d_une_annee(
     construites = [_agricole_parti_en_aout_2024("exploitant_agricole"),
                    _agricole_parti_en_aout_2024("collaborateur_agricole")]
     carrieres = [Carriere.depuis_chronologie(c, simulateur.macro) for c in construites]
-    assert [c.annee_de_cessation_agricole for c in carrieres] == [2024, 2024]
+    assert [facade.annee_de_cessation_agricole(c) for c in carrieres] == [2024, 2024]
     attendu = [{"msa_non_salaries": 30.0, "msa_rco": 133.0},
                {"msa_non_salaries": 16.0, "msa_rco": 88.0}]
     assert [_points_agricoles_de_l_annee(
@@ -5794,7 +5795,7 @@ def test_le_revenu_de_l_annee_ou_l_exploitant_cesse_entre_dans_sa_moyenne(simula
     construites = [_exploitant_parti_en_aout_2028(revenu) for revenu in (21000.0, 24500.0)]
     carrieres = [Carriere.depuis_chronologie(c, simulateur.macro) for c in construites]
     assert [str(c.date_liquidation) for c in carrieres] == ["août 2028"] * 2
-    assert [c.annee_de_cessation_agricole for c in carrieres] == [2028, 2028]
+    assert [facade.annee_de_cessation_agricole(c) for c in carrieres] == [2028, 2028]
     details = [next(p.detail for p in simulateur.scenario_actuel.calculer(c).pensions_par_regime
                     if p.regime == "msa_non_salaries") for c in carrieres]
     assert all("× 52/170" in d and "8 meilleures années depuis 2016" in d for d in details)
@@ -8561,6 +8562,13 @@ process.stdout.write(JSON.stringify(JSON.parse(process.argv[1]).map((construite)
     return motifs
 
 
+def _trimestres_cotises(carriere) -> int:
+    """Les trimestres que les lignes cotisées de ``carriere`` font entrer dans
+    la durée d'assurance, ligne par ligne, retenus par le portage."""
+    retenus = facade.trimestres_retenus(carriere)
+    return sum(n for ligne, n in zip(carriere.lignes, retenus, strict=True) if ligne.cotise)
+
+
 def test_le_debut_d_activite_compte_les_periodes_assimilees(simulateur):
     """D. 351-1-3 pose la condition de début d'activité sur « une durée
     d'assurance d'au moins cinq trimestres », et non sur la durée cotisée que
@@ -8588,7 +8596,7 @@ def test_le_debut_d_activite_compte_les_periodes_assimilees(simulateur):
     assert [(l.type_periode, l.cotise, l.trimestres_valides)
             for l in service.lignes if l.annee in (1984, 1985)] == [
         ("emploi", True, 1), ("service_militaire", False, 4)]
-    cotises = sum(service.trimestres_retenus(l) for l in service.lignes if l.cotise)
+    cotises = _trimestres_cotises(service)
     assert cotises == 167
     assert simulateur.scenario_actuel.carriere_longue.cotises_reputes(
         service, cotises, 0) == 171
@@ -8677,7 +8685,7 @@ def test_l_artisan_ne_au_dernier_trimestre_a_l_option_des_quatre_trimestres_a_di
         assert str(carriere.date_liquidation) == effet
         assert {annee: sum(l.trimestres_valides for l in carriere.lignes if l.annee == annee)
                 for annee in (1968, 1969)} == {1968: 0, 1969: 4}
-        assert sum(carriere.trimestres_retenus(l) for l in carriere.lignes if l.cotise) == 171
+        assert _trimestres_cotises(carriere) == 171
 
     assert _motifs_d_ouverture_en_deux_moteurs(simulateur, construites) == [
         "carriere_longue"] * 3 + ["non_ouverte"]
@@ -8741,8 +8749,7 @@ def test_le_non_salarie_agricole_debute_avec_quatre_trimestres_a_son_regime(simu
             # Quatre trimestres à la fin de l'année de la borne, aucun avant.
             assert sum(l.trimestres_valides for l in carriere.lignes
                        if l.annee <= annee_de_la_borne) == 4
-            assert sum(carriere.trimestres_retenus(l) for l in carriere.lignes
-                       if l.cotise) == 172
+            assert _trimestres_cotises(carriere) == 172
             construites.append(parcours)
 
     assert _motifs_d_ouverture_en_deux_moteurs(simulateur, construites) == [
@@ -8799,7 +8806,7 @@ def test_les_portes_de_2012_ne_valent_que_pour_les_generations_que_le_texte_nomm
     cotises = []
     for construite, _ in cas:
         carriere = Carriere.depuis_chronologie(construite, simulateur.macro)
-        cotises.append((sum(carriere.trimestres_retenus(l) for l in carriere.lignes if l.cotise),
+        cotises.append((_trimestres_cotises(carriere),
                         actuel.calculer(carriere).trimestres_requis))
     assert cotises == [(175, 166), (176, 166), (174, 165), (173, 166), (171, 166), (167, 167)]
     assert _motifs_d_ouverture_en_deux_moteurs(simulateur, [c for c, _ in cas]) == [
@@ -8835,7 +8842,7 @@ def test_avant_novembre_2012_la_duree_d_assurance_passait_de_huit_trimestres_la_
     for construite in (sans_rien, au_chomage):
         carriere = Carriere.depuis_chronologie(construite, simulateur.macro)
         assert str(carriere.date_liquidation) == "avril 2009"
-        durees.append((sum(carriere.trimestres_retenus(l) for l in carriere.lignes if l.cotise),
+        durees.append((_trimestres_cotises(carriere),
                        actuel.calculer(carriere).trimestres_requis,
                        actuel.calculer(carriere).trimestres_valides))
     assert durees == [(164, 162, 164), (164, 162, 172)]
@@ -8870,7 +8877,7 @@ def test_jusqu_en_juin_2011_les_fonctionnaires_gardaient_les_portes_de_l_ancien_
         carriere = Carriere.depuis_chronologie(construite, simulateur.macro)
         resultat = actuel.calculer(carriere)
         assert str(carriere.date_liquidation) == "juin 2011"
-        assert sum(carriere.trimestres_retenus(l) for l in carriere.lignes if l.cotise) == 172
+        assert _trimestres_cotises(carriere) == 172
         assert resultat.trimestres_valides == 172
         assert sorted(porte[2] for porte in actuel.carriere_longue._portes(carriere, True)) == [
             56.0, 58.0, 59.0]
@@ -8923,8 +8930,7 @@ def _cotises(simulateur, interruptions: dict[int, str], annee_naissance: int = 1
              age_liquidation: float = 60.0) -> tuple[int, int]:
     """Durée réellement cotisée, puis celle que la carrière longue oppose."""
     carriere = _carriere_hachee(simulateur, interruptions, annee_naissance, age_liquidation)
-    cotises = sum(carriere.trimestres_retenus(ligne)
-                  for ligne in carriere.lignes if ligne.cotise)
+    cotises = _trimestres_cotises(carriere)
     dispositif = simulateur.scenario_actuel.carriere_longue
     return cotises, dispositif.cotises_reputes(carriere, cotises, 0)
 
@@ -9105,8 +9111,7 @@ def test_le_portage_lit_la_redaction_a_la_date_d_effet(simulateur):
     rendus = []
     for rang, construite in enumerate(construites):
         carriere = Carriere.depuis_chronologie(construite, simulateur.macro)
-        cotises = sum(carriere.trimestres_retenus(ligne)
-                      for ligne in carriere.lignes if ligne.cotise)
+        cotises = _trimestres_cotises(carriere)
         rendus.append([actuel.carriere_longue.cotises_reputes(carriere, cotises, 0) - cotises,
                        actuel.calculer(carriere).motif_ouverture
                        if attendus[rang][1] is not None else None])
@@ -9623,7 +9628,7 @@ def test_la_carriere_prolongee_garde_le_passe_et_travaille_jusqu_a_l_age_legal(s
     carriere = simulateur.carriere_simple(
         annee_naissance=1965, sexe="H", affiliation="salarie_prive_non_cadre",
         age_debut=21, age_liquidation=62.5, jour_naissance=1)
-    prolongee = carriere.prolongee(65.0, simulateur.macro)
+    prolongee = facade.prolongee(carriere, 65.0, simulateur.macro)
 
     assert prolongee.age_liquidation == 65.0
     assert str(prolongee.date_liquidation) == "janvier 2030"
@@ -9650,8 +9655,8 @@ def test_la_carriere_n_est_prolongee_que_vers_un_depart_plus_tardif(simulateur):
     carriere = simulateur.carriere_simple(
         annee_naissance=1965, sexe="F", affiliation="salarie_prive_non_cadre",
         age_debut=21, age_liquidation=66.0)
-    assert carriere.prolongee(65.0, simulateur.macro) is carriere
-    assert carriere.prolongee(66.0, simulateur.macro) is carriere
+    assert facade.prolongee(carriere, 65.0, simulateur.macro) is carriere
+    assert facade.prolongee(carriere, 66.0, simulateur.macro) is carriere
 
 
 def test_un_releve_qui_s_arrete_avant_le_depart_n_est_pas_prolonge(simulateur):
@@ -9660,7 +9665,7 @@ def test_un_releve_qui_s_arrete_avant_le_depart_n_est_pas_prolonge(simulateur):
     releve = [LigneRelevee(annee=annee, affiliation="salarie_prive_non_cadre",
                            revenu=30_000.0) for annee in range(1990, 2020)]
     carriere = simulateur.carriere_releve(1965, "H", releve, age_liquidation=63.0)
-    prolongee = carriere.prolongee(65.0, simulateur.macro)
+    prolongee = facade.prolongee(carriere, 65.0, simulateur.macro)
     assert prolongee.age_liquidation == 65.0
     assert prolongee.lignes == carriere.lignes
 
@@ -9680,7 +9685,7 @@ def test_la_prolongation_poursuit_aussi_l_activite_cumulee(simulateur):
                         niveau_salaire=0.8, cumul=True)],
         age_liquidation=64.0, jour_naissance=1)
     assert str(carriere.date_liquidation) == "janvier 2039"
-    prolongee = carriere.prolongee(65.0, simulateur.macro)
+    prolongee = facade.prolongee(carriere, 65.0, simulateur.macro)
     assert str(prolongee.date_liquidation) == "janvier 2040"
     avant = carriere.lignes_de(2038)
     apres = prolongee.lignes_de(2039)
@@ -9703,7 +9708,7 @@ def test_une_activite_cumulee_arretee_avant_le_depart_ne_reprend_pas(simulateur)
         age_liquidation=64.0)
     assert [l.affiliation for l in carriere.lignes_de(2038)] == [
         "salarie_prive_non_cadre", "medecin_liberal"]
-    prolongee = carriere.prolongee(65.0, simulateur.macro)
+    prolongee = facade.prolongee(carriere, 65.0, simulateur.macro)
     assert [l.affiliation for l in prolongee.lignes_de(2039)] == [
         "salarie_prive_non_cadre"]
 
@@ -9722,8 +9727,8 @@ def test_la_prolongation_d_un_releve_ne_depend_pas_de_l_ordre_des_lignes(simulat
                                           jour_naissance=1)
 
     activites = [("fonctionnaire_etat", 40_000.0), ("salarie_prive_non_cadre", 2_000.0)]
-    un = releve(activites).prolongee(65.0, simulateur.macro)
-    autre = releve(activites[::-1]).prolongee(65.0, simulateur.macro)
+    un = facade.prolongee(releve(activites), 65.0, simulateur.macro)
+    autre = facade.prolongee(releve(activites[::-1]), 65.0, simulateur.macro)
     for annee in (2027, 2028, 2029):
         assert len(un.lignes_de(annee)) == 2
         assert (sum(l.revenu for l in un.lignes_de(annee))

@@ -2196,6 +2196,35 @@ def test_la_carriere_prolongee_se_demande_au_portage(simulateur):
     assert facade.prolongee(carriere, 62.0, simulateur.macro) is carriere
 
 
+def test_ce_que_la_carriere_compte_se_demande_au_portage(simulateur):
+    """Né en mars 1962, entré à vingt et un ans, en mars 1983, parti à
+    soixante-deux en avril 2024 : les trois trimestres que sa première année
+    valide (dix mois), quarante années pleines de 1984 à 2023, et un seul
+    trimestre civil écoulé en 2024, avant la date d'effet. L'exploitant
+    agricole compte les quatre de l'année où il cesse (L. 731-10-1 du code
+    rural), le salarié non. Chaque lecture est celle de la carrière du
+    portage."""
+    def de(affiliation):
+        return simulateur.carriere_simple(
+            annee_naissance=1962, mois_naissance=3, sexe="H", affiliation=affiliation,
+            age_debut=21, age_liquidation=62.0)
+
+    salarie, exploitant = de("salarie_prive_non_cadre"), de("exploitant_agricole")
+    assert str(salarie.date_liquidation) == "avril 2024"
+    retenus = facade.trimestres_retenus(salarie)
+    assert [l.annee for l in salarie.lignes] == list(range(1983, 2025))
+    assert retenus == [3] + [4] * 40 + [1]
+    assert facade.trimestres_retenus(exploitant)[-1] == 4
+    assert facade.trimestres_cumules(salarie, salarie.lignes) == 164
+    assert facade.trimestres_cumules(salarie, salarie.lignes[:10]) == 39
+    assert facade.trimestres_actuels(salarie) == 164
+    assert facade.trimestres_actuels(exploitant) == 167
+    assert facade.annee_de_cessation_agricole(salarie) is None
+    assert facade.annee_de_cessation_agricole(exploitant) == 2024
+    assert facade.date_entree(salarie, "salarie_prive_non_cadre") == DateMois(1983, 3)
+    assert facade.date_entree(salarie, "exploitant_agricole") is None
+
+
 def test_le_coefficient_d_anticipation_agirc_arrco_se_demande_au_portage():
     """L'exemple de l'Agirc-Arrco : douze trimestres manquants valent 0,88 ;
     trois ans et dix mois d'anticipation par l'âge, seize trimestres
@@ -2526,7 +2555,10 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
                               "revalorisation.actuel_aujourd_hui",
                               "pension_servie.coefficient", "completer.verser_en_capital",
                               "simulateur.proposition", "simulateur.carriere_proposition",
-                              "carriere.prolongee", "simulateur.garantie_vieillesse",
+                              "carriere.prolongee", "carriere.trimestres_retenus",
+                              "carriere.trimestres_cumules",
+                              "carriere.annee_de_cessation_agricole", "carriere.date_entree",
+                              "simulateur.garantie_vieillesse",
                               "echeancier.parcourir", "simulateur.echeancier",
                               "echeancier.depart_de", "echeancier.sortes", "journal.operer",
                               "pilote.age_de_depart", "departs.liquider_les_departs",

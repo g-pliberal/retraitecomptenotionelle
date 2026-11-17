@@ -29,7 +29,7 @@ import pytest
 from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.donnees.chargement import Fiabilite
 
-from facade import Carriere, compter, Simulateur
+from facade import Carriere, compter, date_entree, Simulateur
 
 
 @pytest.fixture(scope="module")
@@ -51,11 +51,13 @@ def _carriere(simulateur: Simulateur, naissance: int, metiers: list[tuple[str, f
 def _regimes(simulateur: Simulateur, carriere: Carriere) -> dict[str, int]:
     """Les régimes que la carrière traverse, comme :meth:`calculer` les route."""
     regimes: dict[str, int] = {}
+    entrees = {affiliation: date_entree(carriere, affiliation)
+               for affiliation in {ligne.affiliation for ligne in carriere.lignes}}
     for ligne in carriere.lignes:
         if ligne.annee > carriere.annee_liquidation:
             continue
         for code in simulateur.affiliations.regimes(
-                ligne.affiliation, ligne.annee, carriere.date_entree(ligne.affiliation),
+                ligne.affiliation, ligne.annee, entrees[ligne.affiliation],
                 revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
                 plafond=simulateur.macro.plafond_securite_sociale(ligne.annee)):
             if code in simulateur.catalogue:

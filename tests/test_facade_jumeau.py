@@ -2035,6 +2035,38 @@ def test_le_jumeau_rend_la_proposition_que_la_facade_lit():
                                                    rel=TOLERANCE_DU_MOTEUR_PYTHON)
 
 
+def test_le_jumeau_compte_la_carriere_comme_la_facade_la_lit():
+    """Les trimestres retenus de chaque ligne, leur cumul, l'année où
+    l'exploitant agricole cesse et la date d'entrée de chaque statut : ce que
+    le portage lit sur la carrière, le jumeau le lit sur la même."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    servi = facade.Simulateur(Parametres())
+    carrieres = [servi.carriere_simple(annee_naissance=naissance, sexe="F",
+                                       affiliation=affiliation, age_debut=22,
+                                       age_liquidation=age, mois_naissance=mois)
+                 for naissance, mois, affiliation, age in (
+                     (1962, 3, "salarie_prive_non_cadre", 62.0),
+                     (1958, 11, "exploitant_agricole", 62.5),
+                     (1966, 7, "fonctionnaire_etat", 63.25),
+                     (1955, 1, "artisan", 61.0))]
+    for carriere in carrieres:
+        # La même carrière, recopiée champ à champ sous la classe des règles.
+        jumeau = CarrierePython(**{champ.name: getattr(carriere, champ.name)
+                                   for champ in dataclasses.fields(carriere) if champ.init})
+        moitie = carriere.lignes[::2]
+        assert facade.trimestres_retenus(carriere) == [
+            jumeau.trimestres_retenus(ligne) for ligne in jumeau.lignes]
+        assert facade.trimestres_cumules(carriere, moitie) == jumeau.trimestres_cumules(
+            jumeau.lignes[::2])
+        assert facade.trimestres_actuels(carriere) == jumeau.trimestres_actuels
+        assert (facade.annee_de_cessation_agricole(carriere)
+                == jumeau.annee_de_cessation_agricole)
+        for affiliation in {ligne.affiliation for ligne in carriere.lignes} | {"artisan"}:
+            assert (facade.date_entree(carriere, affiliation)
+                    == jumeau.date_entree(affiliation)), affiliation
+
+
 def test_chaque_constante_du_droit_lue_au_portage_est_celle_du_jumeau():
     """Une constante que la façade lit au portage
     (``pont.CONSTANTES_DE_LA_FACADE``) : la même que celle du jumeau, que le

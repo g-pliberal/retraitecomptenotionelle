@@ -2027,6 +2027,15 @@ const ENTREES_DE_LA_FACADE = {
     const prolongee = carriere.prolongee(age, simulateur.macro, attenteTravaillee);
     return prolongee === carriere ? null : carriereEnDonnees(prolongee);
   },
+  // Ce que la carrière compte : les trimestres que chaque ligne fait entrer
+  // dans la durée d'assurance, leur cumul sur des lignes données par leur
+  // rang, l'année où l'exploitant agricole cesse, la date d'entrée d'un statut.
+  "carriere.trimestres_retenus": (carriere) => carriere.lignes.map(
+    (ligne) => carriere.trimestresRetenus(ligne)),
+  "carriere.trimestres_cumules": (carriere, rangs) => carriere.trimestresCumules(
+    rangs.map((rang) => carriere.lignes[rang])),
+  "carriere.annee_de_cessation_agricole": (carriere) => carriere.anneeDeCessationAgricole,
+  "carriere.date_entree": (carriere, affiliation) => carriere.dateEntree(affiliation),
   // La période qui liquide la pension, par son rang parmi celles du régime.
   "commun.periode_de_liquidation": (simulateur, code, annee, mois) => {
     const regime = simulateur.catalogue.obtenir(code);

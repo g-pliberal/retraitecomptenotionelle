@@ -2614,6 +2614,14 @@ LECTURES_DE_LA_FACADE = {
     "simulateur.proposition": lambda lu: resultat_notionnel_des_donnees(lu),
     "simulateur.carriere_proposition": lambda lu: None if lu is None else carriere_des_donnees(lu),
     "carriere.prolongee": lambda lu: None if lu is None else carriere_des_donnees(lu),
+    "carriere.trimestres_retenus": lambda lu: list(lu_strictement(
+        tuple[int, ...], lu, "carriere.trimestres_retenus")),
+    "carriere.trimestres_cumules": lambda lu: lu_strictement(
+        int, lu, "carriere.trimestres_cumules"),
+    "carriere.annee_de_cessation_agricole": lambda lu: lu_strictement(
+        int | None, lu, "carriere.annee_de_cessation_agricole"),
+    "carriere.date_entree": lambda lu: lu_strictement(
+        DateMois | None, lu, "carriere.date_entree"),
     "simulateur.garantie_vieillesse": garantie_vieillesse_des_donnees,
     "liquidation.liquider": liquidation_des_donnees,
     "progressive.liquider": liquidation_des_donnees,

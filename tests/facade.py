@@ -145,6 +145,8 @@ ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversio
            "revalorisation.majorer_les_petites_pensions", "revalorisation.actuel_aujourd_hui",
            "pension_servie.coefficient", "completer.verser_en_capital",
            "simulateur.proposition", "simulateur.carriere_proposition", "carriere.prolongee",
+           "carriere.trimestres_retenus", "carriere.trimestres_cumules",
+           "carriere.annee_de_cessation_agricole", "carriere.date_entree",
            "simulateur.garantie_vieillesse", "echeancier.parcourir", "simulateur.echeancier",
            "echeancier.depart_de", "echeancier.sortes", "journal.operer",
            "pilote.age_de_depart", "departs.liquider_les_departs",
@@ -723,6 +725,43 @@ def prolongee(carriere, age_liquidation: float, macro, attente_travaillee: bool 
     prolongee_ = _demander("carriere.prolongee", parametres, pont.SIMULATEUR, carriere,
                            age_liquidation, attente_travaillee)
     return carriere if prolongee_ is None else prolongee_
+
+
+def _rangs(carriere, lignes) -> list[int]:
+    """Le rang de chaque ligne dans ``carriere`` : le portage relit les
+    siennes par lui."""
+    rangs = {id(ligne): rang for rang, ligne in enumerate(carriere.lignes)}
+    if any(id(ligne) not in rangs for ligne in lignes):
+        raise NonTransmissible("trimestres_cumules : une ligne qui n'est pas de cette carrière")
+    return [rangs[id(ligne)] for ligne in lignes]
+
+
+def trimestres_retenus(carriere) -> list[int]:
+    """``Carriere.trimestres_retenus`` de chaque ligne de ``carriere``, dans
+    leur ordre, par le portage."""
+    return _demander("carriere.trimestres_retenus", None, carriere)
+
+
+def trimestres_cumules(carriere, lignes) -> int:
+    """``Carriere.trimestres_cumules`` de ces lignes de ``carriere``, par le
+    portage."""
+    return _demander("carriere.trimestres_cumules", None, carriere,
+                     _rangs(carriere, list(lignes)))
+
+
+def trimestres_actuels(carriere) -> int:
+    """``Carriere.trimestres_actuels`` : le cumul de toutes ses lignes."""
+    return trimestres_cumules(carriere, carriere.lignes)
+
+
+def annee_de_cessation_agricole(carriere) -> int | None:
+    """``Carriere.annee_de_cessation_agricole``, par le portage."""
+    return _demander("carriere.annee_de_cessation_agricole", None, carriere)
+
+
+def date_entree(carriere, affiliation: str) -> DateMois | None:
+    """``Carriere.date_entree`` d'un statut, par le portage."""
+    return _demander("carriere.date_entree", None, carriere, affiliation)
 
 
 def _fonctions_de_la_mortalite() -> dict:
