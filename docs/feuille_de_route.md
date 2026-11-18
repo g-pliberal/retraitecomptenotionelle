@@ -8326,16 +8326,17 @@ ce stock est d'une autre taille. Il attend une décision du propriétaire.
 
 ### 193. Les caisses de retraite, une par une, sur le site : comment chacune marche — `en cours`
 
-**Reprise, au 17 novembre 2026.** La page « Les caisses » est en ligne
-(`caisses/`), au menu sous « Pour vérifier ». Elle montre dix-huit caisses en
+**Reprise, au 18 novembre 2026.** La page « Les caisses » est en ligne
+(`caisses/`), au menu sous « Pour vérifier », onglets resserrés pour tenir sur
+une rangée au bureau. Elle montre dix-huit caisses en
 bulles, de la taille de leurs retraités ; chaque bulle ouvre la fiche de sa
 caisse, en cinq questions : qui paie pour qui, comment on gagne des droits,
 comment la pension se calcule, d'où vient l'argent, qui décide. Les chiffres
 viennent du paquet, le texte de `pages.js`. Restent, par quoi commencer : les
 curseurs de la maquette, qui chiffrent sa pension à chaque lecteur ; puis ce
 que chaque caisse verse par an ; puis, si le propriétaire le veut, l'histoire
-« Où va votre argent ? » en porte d'entrée. Note :
-`193/2026-11-17-etape-1-la-page.md`.
+« Où va votre argent ? » en porte d'entrée. Notes :
+`193/2026-11-17-etape-1-la-page.md`, `193/2026-11-18-l-onglet-revient.md`.
 
 **D'où elle vient.** Le 17 novembre 2026, le propriétaire : « J'aimerais que
 le site présente les grands ensembles de la retraite en France », puis, sur

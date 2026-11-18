@@ -120,13 +120,12 @@ def test_la_page_montre_chaque_caisse_et_son_fonctionnement():
 
 
 @pytest.mark.skipif(not disponible(), reason="node absent")
-def test_la_page_est_au_pied_et_non_au_bandeau():
-    # Au bandeau, un onglet de plus le faisait passer sur deux rangées au
-    # bureau, et la carte des flux de Coût sortait de l'écran : la page est
-    # fabriquée comme les autres, et le pied de chaque page y mène.
+def test_la_page_est_au_menu():
+    # Le propriétaire veut voir la page : un onglet du bandeau, au groupe
+    # « Pour vérifier », et le pied de chaque page y mène aussi.
     g = module("gabarit")
     assert "/caisses" in g.PAGES
-    assert "/caisses" not in [chemin for chemin, _ in g.LIENS]
+    assert "/caisses" in [chemin for chemin, _ in g.LIENS]
     # Le lien est relatif à la page rendue : « caisses/ », « ../caisses/ »,
     # ou « ./ » sur la page elle-même.
     assert re.search(r'href="(\.\./caisses/|caisses/|\./)">les caisses</a>', g.pied())

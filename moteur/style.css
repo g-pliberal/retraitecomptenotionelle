@@ -374,7 +374,7 @@ body.plf-embedded footer .retour-site { display: none; }
    son libellé, qui se voit en niveaux de gris, ET `aria-current="page"`. Les règles sont ancrées sur `header.bandeau` : le
    plan d'une page longue est un `<nav>` lui aussi. */
 header.bandeau nav {
-  display: flex; flex-wrap: wrap; gap: 0.25rem; width: 100%;
+  display: flex; flex-wrap: wrap; gap: 0.125rem; width: 100%;
   padding: 0.5rem 0; border-top: 1px solid rgb(255 255 255 / 0.12);
 }
 nav .groupe { display: contents; }
@@ -391,12 +391,12 @@ nav .liens { display: contents; }
 /* La seconde voix du bandeau : les pages qui PROUVENT, pour qui veut
    vérifier, derrière une étiquette qui se voit. Le groupe se replie d'un
    bloc : l'étiquette ne reste jamais seule au bout d'une ligne. */
-nav .groupe.secondaire { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem; }
+nav .groupe.secondaire { display: flex; flex-wrap: wrap; align-items: center; gap: 0.125rem; }
 nav .groupe.secondaire .etiquette {
-  position: static; width: auto; height: auto; margin: 0 0 0 0.5rem;
+  position: static; width: auto; height: auto; margin: 0 0 0 0.25rem;
   overflow: visible; clip-path: none; white-space: nowrap;
   display: inline-flex; align-items: center;
-  padding: 0 0.25rem 0 0.75rem; border-left: 1px solid var(--trait-champ);
+  padding: 0 0 0 0.5rem; border-left: 1px solid var(--trait-champ);
   font-size: var(--t-meta); font-weight: 500; color: var(--texte-tres-doux);
 }
 /* Le bouton qui replie le groupe sur un téléphone. Il n'existe pas au-delà. */
@@ -417,12 +417,13 @@ nav .deplier { display: none; }
   nav .deplier[aria-expanded="false"] + .liens { display: none; }
 }
 /* Un onglet : une pastille pétrole foncé, en casse normale, de 44 points de
-   haut (WCAG 2.5.8). */
+   haut (WCAG 2.5.8). Resserrée le 18 novembre 2026, pour que les dix onglets,
+   « Les caisses » compris, tiennent sur une rangée au bureau. */
 header.bandeau nav a {
   color: var(--bandeau-texte); text-decoration: none;
   font-size: var(--t-petit); font-weight: 600; white-space: nowrap;
   display: inline-flex; align-items: center; min-height: 2.75rem;
-  padding: 0 0.75rem; border-radius: var(--rayon-petit);
+  padding: 0 0.5rem; border-radius: var(--rayon-petit);
   background: var(--petrole-fonce); border-bottom: 4px solid transparent;
   transition: color 0.15s, background-color 0.15s;
 }

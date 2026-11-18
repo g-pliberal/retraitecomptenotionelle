@@ -119,24 +119,19 @@ export const GROUPES_NAVIGATION = [
   // redisait un dépliant des résultats, et « Sources » est devenue la fin de la
   // page Méthode. Leurs adresses mènent là où leur contenu est allé — voir
   // `ANCIENNES_ROUTES` dans `pages.js`.
-  ["Pour vérifier", [["/cas-types", "Carrières types"],
+  // « Les caisses » le 17 novembre 2026 (action 193) : comment marche chaque
+  // caisse de retraite, pour qui veut comprendre le système avant de le juger.
+  ["Pour vérifier", [["/caisses", "Les caisses"], ["/cas-types", "Carrières types"],
     ["/avantages", "Droits non cotisés"], ["/methode", "Méthode et sources"]]],
 ];
 
 /** Le groupe dont l'étiquette SE VOIT, et dont les pages parlent plus bas. */
 export const GROUPE_SECONDAIRE = "Pour vérifier";
 
-/**
- * Les pages fabriquées comme les autres, mais sans onglet : « Les caisses »
- * (action 193), comment marche chaque caisse de retraite. Un treizième onglet
- * faisait passer le bandeau sur deux rangées au bureau ; le pied y mène.
- */
-export const PAGES_HORS_BANDEAU = ["/caisses"];
-
 export const LIENS = GROUPES_NAVIGATION.flatMap(([, liens]) => liens);
 
 /** Les pages du site, dans l'ordre du bandeau : leurs routes. */
-export const PAGES = [...LIENS.map(([chemin]) => chemin), ...PAGES_HORS_BANDEAU];
+export const PAGES = LIENS.map(([chemin]) => chemin);
 
 /**
  * Le dossier d'une page, relatif à la racine du site (action 174) : l'accueil

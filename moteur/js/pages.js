@@ -297,11 +297,10 @@ export const TITRES = {
   "/risque": "Pourquoi changer",
   "/partager": "Partager",
   "/saviez-vous": "Le saviez-vous ?",
+  "/caisses": "Les caisses",
   "/cas-types": "Carrières types",
   "/avantages": "Droits non cotisés",
   "/methode": "Méthode et sources",
-  // Hors du bandeau, le pied y mène (`PAGES_HORS_BANDEAU`, action 193).
-  "/caisses": "Les caisses",
 };
 
 /**

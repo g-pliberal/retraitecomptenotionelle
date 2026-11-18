@@ -1593,24 +1593,20 @@ def test_la_navigation_met_l_electeur_d_abord():
     # publier, ce qu'on fait APRÈS avoir lu, et non un cinquième onglet en tête.
     assert pages == [["../", "../simuler/", "./", "../risque/"],
                      ["../partager/", "../saviez-vous/"],
-                     ["../cas-types/", "../avantages/", "../methode/"]]
+                     ["../caisses/", "../cas-types/", "../avantages/", "../methode/"]]
     libelles = [re.findall(r">([^<]+)</a>", liens) for _, _, liens in groupes]
     assert libelles == [["Programme", "Simuler", "Coût", "Pourquoi changer"],
                         ["Partager", "Le saviez-vous ?"],
-                        ["Carrières types", "Droits non cotisés",
+                        ["Les caisses", "Carrières types", "Droits non cotisés",
                          "Méthode et sources"]]
     assert 'href="./" aria-current="page"' in entete
     assert [chemin for chemin, _ in g.LIENS] == [
         "/", "/simuler", "/cout", "/risque", "/partager", "/saviez-vous",
-        "/cas-types", "/avantages", "/methode"]
+        "/caisses", "/cas-types", "/avantages", "/methode"]
     # Le titre de chaque page est le libellé de son onglet : c'est lui que
-    # l'onglet du navigateur affiche. Les pages hors du bandeau, que le pied
-    # mène (« Les caisses », action 193), ont leur titre sans onglet.
-    au_bandeau = {chemin: titre for chemin, titre in TITRES.items()
-                  if chemin not in g.PAGES_HORS_BANDEAU}
-    assert dict(g.LIENS) == au_bandeau
-    assert list(au_bandeau) == [chemin for chemin, _ in g.LIENS]
-    assert list(TITRES) == g.PAGES
+    # l'onglet du navigateur affiche.
+    assert dict(g.LIENS) == TITRES
+    assert list(TITRES) == [chemin for chemin, _ in g.LIENS]
     # L'étiquette est masquée à l'œil, pas à l'oreille ; celle du groupe
     # secondaire, elle, se voit.
     assert "nav .etiquette" in FEUILLE_DE_STYLE

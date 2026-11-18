@@ -85,17 +85,15 @@ def test_le_routeur_ne_lit_les_adresses_que_par_leur_module():
     assert 'from "./adresses.js"' in routeur
 
 
-#: Les dix pages du site : celles du bandeau, dans son ordre, puis celle que
-#: le pied seul nomme.
+#: Les dix pages du site, dans l'ordre du bandeau.
 PAGES = ["/", "/simuler", "/cout", "/risque", "/partager", "/saviez-vous",
-         "/cas-types", "/avantages", "/methode", "/caisses"]
+         "/caisses", "/cas-types", "/avantages", "/methode"]
 
 
 def test_les_pages_du_site_sont_celles_du_bandeau():
-    """Une seule liste des pages : celle du bandeau, puis les pages hors du
-    bandeau, que les titres suivent."""
+    """Une seule liste des pages : celle du bandeau, que les titres suivent."""
     g = module("gabarit")
-    assert g.PAGES == [chemin for chemin, _ in g.LIENS] + g.PAGES_HORS_BANDEAU == PAGES
+    assert g.PAGES == [chemin for chemin, _ in g.LIENS] == PAGES
     assert list(module("pages").TITRES) == PAGES
 
 

@@ -1135,6 +1135,10 @@ BANDEAU_DE_L_AFFICHAGE = """(() => {
     marque: boite("header.bandeau .nom a"),
     menu: boite("header.bandeau button.menu"),
     navigation: boite("header.bandeau nav"),
+    // Les rangées d'onglets : une par hauteur distincte des liens du bandeau.
+    rangees: new Set([...document.querySelectorAll("header.bandeau nav a")]
+      .filter((a) => a.getBoundingClientRect().width)
+      .map((a) => Math.round(a.getBoundingClientRect().top))).size,
     nom: bouton ? bouton.textContent.trim() : null,
     pictogramme: Boolean(bouton && bouton.querySelector("svg.icone")),
     motVisible: Boolean(mot) && getComputedStyle(mot).clipPath === "none"
@@ -1203,6 +1207,17 @@ def _affichages() -> tuple:
     resultat = jouer({"ecrans": [], "routes": [], "chargements": [],
                       "courses": [_course_de_l_affichage(l, h) for l, h in CHARGEMENTS]})
     return tuple(resultat["courses"])
+
+
+def test_les_onglets_tiennent_sur_une_rangee_au_bureau():
+    """Le 18 novembre 2026, le propriétaire veut voir « Les caisses » au
+    bandeau (action 193). Ses dix onglets tiennent sur une rangée au bureau :
+    sur deux, le bandeau poussait la carte des flux de Coût hors de l'écran."""
+    for course in _affichages():
+        bandeau = course["notes"]["bandeau"]
+        if bandeau["menu"]:  # un téléphone : les onglets sont derrière « Menu »
+            continue
+        assert bandeau["rangees"] == 1, f"{course['nom']} : {bandeau['rangees']} rangées d'onglets"
 
 
 def test_le_bandeau_ouvre_le_panneau_affichage():
