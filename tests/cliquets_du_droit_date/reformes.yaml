@@ -1,0 +1,119 @@
+# Les réformes que déclare une fiche sans qu'une de ses versions commence à
+# leur date (note de décision 0009, sixième cliquet, amendement du 19 novembre
+# 2026 ; tests/test_carte.py, `test_chaque_reforme_declaree_a_sa_version_ou_dit_ou_elle_est_portee`).
+#
+# Chaque couple « fiche / réforme » dit sa classe :
+#
+#   portee        une version porte la réforme à une autre date : `version`
+#                 nomme son identifiant, `texte` le texte qui dit cette date ;
+#   sans_version  la réforme ne fait naître aucune version de la fiche, pour
+#                 la `raison` dite ;
+#   a_faire       à classer, après lecture de la fiche et du texte qu'elle cite.
+#
+# Un couple que la liste ne classe pas fait échouer la suite, comme une entrée
+# dont le couple n'est plus à classer : déclarer une réforme dans une fiche
+# oblige à dire où elle est portée. Le nombre des `a_faire` ne peut que
+# baisser. Posée le 19 novembre 2026 sans lecture : tout y est `a_faire`, la
+# session qui la pose n'ayant lu aucun des textes. `commentaire` dit, pour
+# guider la lecture, ce que la fiche a : aucune version (la migration de la
+# note 0009 la découpera), ou les débuts de ses versions la même année.
+
+cliquet_a_faire: 96
+
+couples:
+  "age_annulation_decote / reforme_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "age_legal_par_generation / lfss_2026_suspension": {classe: a_faire, commentaire: "fiche sans version"}
+  "age_legal_par_generation / reforme_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "age_ouverture_ieg_actifs / lfss_2026_suspension": {classe: a_faire, commentaire: "réforme du 2026-09-01 ; aucune version ne commence cette année-là"}
+  "age_ouverture_ieg_actifs / reforme_2023": {classe: a_faire, commentaire: "réforme du 2023-09-01 ; aucune version ne commence cette année-là"}
+  "age_ouverture_ieg_actifs / speciaux_bornes_2017": {classe: a_faire, commentaire: "réforme du 2017-01-01 ; aucune version ne commence cette année-là"}
+  "age_reference_decote_ieg / reforme_2023": {classe: a_faire, commentaire: "réforme du 2023-09-01 ; aucune version ne commence cette année-là"}
+  "age_reference_decote_ieg / regimes_speciaux_2008": {classe: a_faire, commentaire: "réforme du 2008-07-01 ; aucune version ne commence cette année-là"}
+  "age_reference_decote_sncf_ratp / reforme_2023": {classe: a_faire, commentaire: "réforme du 2023-09-01 ; aucune version ne commence cette année-là"}
+  "age_reference_decote_sncf_ratp / woerth_2010": {classe: a_faire, commentaire: "réforme du 2011-07-01 ; aucune version ne commence cette année-là"}
+  "age_surcote_sncf_ratp / reforme_2023": {classe: a_faire, commentaire: "réforme du 2023-09-01 ; aucune version ne commence cette année-là"}
+  "age_surcote_sncf_ratp / woerth_2010": {classe: a_faire, commentaire: "réforme du 2011-07-01 ; une version commence le 2011-03-21"}
+  "asv_medecins_points / asv_1972": {classe: a_faire, commentaire: "réforme du 1972-10-27 ; une version commence le 1972-07-01"}
+  "asv_medecins_points / asv_2017": {classe: a_faire, commentaire: "réforme du 2016-09-05 ; aucune version ne commence cette année-là"}
+  "asv_medecins_points / asv_part_caisses_1993": {classe: a_faire, commentaire: "réforme du 1993-03-30 ; aucune version ne commence cette année-là"}
+  "asv_medecins_points / asv_trois_enfants_1981": {classe: a_faire, commentaire: "réforme du 1981-01-01 ; aucune version ne commence cette année-là"}
+  "asv_medecins_points / carmf_temps_choisi_2017": {classe: a_faire, commentaire: "réforme du 2017-01-01 ; aucune version ne commence cette année-là"}
+  "carcdsf_minoration_age_seul / carcdsf_2024": {classe: a_faire, commentaire: "réforme du 2024-01-09 ; une version commence le 2024-01-10"}
+  "carcdsf_minoration_age_seul / carcdsf_bornes_2012": {classe: a_faire, commentaire: "réforme du 2012-07-21 ; une version commence le 2012-07-22"}
+  "carcdsf_minoration_age_seul / carcdsf_statuts_2007": {classe: a_faire, commentaire: "réforme du 2007-10-10 ; une version commence le 2007-10-11"}
+  "carcdsf_minoration_age_seul / carcdsf_statuts_2011": {classe: a_faire, commentaire: "réforme du 2011-04-27 ; une version commence le 2011-07-01"}
+  "carmf_asv_minoration_enfants / asv_trois_enfants_1981": {classe: a_faire, commentaire: "réforme du 1981-01-01 ; aucune version ne commence cette année-là"}
+  "carmf_asv_minoration_enfants / carmf_trois_enfants_1964": {classe: a_faire, commentaire: "réforme du 1964-02-02 ; aucune version ne commence cette année-là"}
+  "carpimko_ages_2015 / carpimko_2024": {classe: a_faire, commentaire: "réforme du 2024-01-09 ; une version commence le 2024-01-10"}
+  "carpimko_ages_2015 / carpimko_report_2015": {classe: a_faire, commentaire: "réforme du 2015-10-02 ; une version commence le 2015-10-03"}
+  "carpv_minoration_age_seul / carpv_statuts_2021": {classe: a_faire, commentaire: "réforme du 2021-10-19 ; aucune version ne commence cette année-là"}
+  "carriere_longue / lfss_2026_suspension": {classe: a_faire, commentaire: "fiche sans version"}
+  "carriere_longue / reforme_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "carriere_longue_enfants_reputes_cotises / lfss_2026_suspension": {classe: a_faire, commentaire: "fiche sans version"}
+  "categorie_active_duree_requise / lfss_2026_suspension": {classe: a_faire, commentaire: "fiche sans version"}
+  "categorie_active_super_active / lfss_2026_suspension": {classe: a_faire, commentaire: "fiche sans version"}
+  "categorie_active_super_active / reforme_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "cavec_minoration_age_seul / cavec_report_2008": {classe: a_faire, commentaire: "réforme du 2008-03-01 ; une version commence le 2008-03-02"}
+  "cavec_minoration_age_seul / cavec_report_2026": {classe: a_faire, commentaire: "réforme du 2026-07-17 ; une version commence le 2026-07-18"}
+  "cavec_minoration_age_seul / reforme_2023": {classe: a_faire, commentaire: "réforme du 2023-09-01 ; aucune version ne commence cette année-là"}
+  "cavec_minoration_age_seul / woerth_2010": {classe: a_faire, commentaire: "réforme du 2011-07-01 ; aucune version ne commence cette année-là"}
+  "cavp_minoration_deux_pentes / cavp_report_2011": {classe: a_faire, commentaire: "réforme du 2011-06-29 ; une version commence le 2011-06-30"}
+  "cavp_minoration_deux_pentes / cavp_statuts_2009": {classe: a_faire, commentaire: "réforme du 2009-06-06 ; une version commence le 2009-06-07"}
+  "cese_affiliation_2023 / cese_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "cultes_retraite_complementaire / cultes_arrco_2006": {classe: a_faire, commentaire: "réforme du 2006-01-01 ; aucune version ne commence cette année-là"}
+  "decote_fonction_publique / reforme_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "depart_anticipe_parents_trois_enfants / fillon_2003": {classe: a_faire, commentaire: "réforme du 2004-01-01 ; une version commence le 2004-12-31"}
+  "depart_anticipe_parents_trois_enfants / woerth_2010": {classe: a_faire, commentaire: "réforme du 2011-07-01 ; une version commence le 2011-01-01"}
+  "deputes_pension_des_anciens_deputes / deputes_2018": {classe: a_faire, commentaire: "réforme du 2018-01-01 ; aucune version ne commence cette année-là"}
+  "duree_requise_carriere_longue_fonction_publique / reforme_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "duree_requise_ieg / lfss_2026_suspension": {classe: a_faire, commentaire: "réforme du 2026-09-01 ; aucune version ne commence cette année-là"}
+  "duree_requise_ieg / reforme_2023": {classe: a_faire, commentaire: "réforme du 2023-09-01 ; aucune version ne commence cette année-là"}
+  "duree_requise_ieg / touraine_2014": {classe: a_faire, commentaire: "réforme du 2014-01-22 ; aucune version ne commence cette année-là"}
+  "duree_requise_par_generation / lfss_2026_suspension": {classe: a_faire, commentaire: "fiche sans version"}
+  "duree_requise_par_generation / reforme_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "duree_requise_sncf_ratp / lfss_2026_suspension": {classe: a_faire, commentaire: "réforme du 2026-09-01 ; aucune version ne commence cette année-là"}
+  "duree_requise_sncf_ratp / reforme_2023": {classe: a_faire, commentaire: "réforme du 2023-09-01 ; aucune version ne commence cette année-là"}
+  "duree_requise_sncf_ratp / touraine_2014": {classe: a_faire, commentaire: "réforme du 2014-01-22 ; aucune version ne commence cette année-là"}
+  "fin_de_la_suspension_2028 / lfss_2026_suspension": {classe: a_faire, commentaire: "fiche sans version"}
+  "ipacte_points / ipacte_1951": {classe: a_faire, commentaire: "réforme du 1951-12-18 ; aucune version ne commence cette année-là"}
+  "majoration_duree_assurance_enfants / parents_2026": {classe: a_faire, commentaire: "réforme du 2026-09-01 ; aucune version ne commence cette année-là"}
+  "majoration_enfants_liberaux_avocats / cnbf_complementaire_enfants_2024": {classe: a_faire, commentaire: "fiche sans version"}
+  "majoration_enfants_liberaux_avocats / majoration_enfants_liberaux_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "majoration_enfants_plafond_fonction_publique / fillon_2003": {classe: a_faire, commentaire: "réforme du 2004-01-01 ; aucune version ne commence cette année-là"}
+  "majoration_enfants_plafond_fonction_publique / woerth_2010": {classe: a_faire, commentaire: "réforme du 2011-07-01 ; aucune version ne commence cette année-là"}
+  "militaires_duree_requise / lfss_2026_suspension": {classe: a_faire, commentaire: "fiche sans version"}
+  "militaires_duree_requise / reforme_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "pension_non_salaries_agricoles_2026 / agricole_2025": {classe: a_faire, commentaire: "fiche sans version"}
+  "raap_classe_speciale / ircec_1981_classes": {classe: a_faire, commentaire: "fiche sans version"}
+  "raap_taux_amenage_racd_racl / ircec_2016": {classe: a_faire, commentaire: "fiche sans version"}
+  "ravgdt_allocation_viagere / ravgdt_1963": {classe: a_faire, commentaire: "réforme du 1963-11-21 ; une version commence le 1963-01-01"}
+  "regimes_speciaux_et_non_salaries / agricole_2025": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_et_non_salaries / assiette_liberaux_2026": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_et_non_salaries / asv_2026": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_et_non_salaries / avenant_17_2024": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_et_non_salaries / caledonie_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_et_non_salaries / cavec_report_2026": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_et_non_salaries / cese_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_et_non_salaries / clr_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_et_non_salaries / cnavpl_surcote_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_et_non_salaries / cprn_report_2024": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_et_non_salaries / mayotte_2024": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_et_non_salaries / mayotte_2026": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_et_non_salaries / mayotte_2026_taux_plein": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_et_non_salaries / polynesie_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_et_non_salaries / rafep_2024": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_et_non_salaries / spm_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_et_non_salaries / spm_2026": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_par_generation / crpcen_2008": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_par_generation / reforme_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_par_generation / regimes_speciaux_2008": {classe: a_faire, commentaire: "fiche sans version"}
+  "regimes_speciaux_par_generation / speciaux_bornes_2017": {classe: a_faire, commentaire: "fiche sans version"}
+  "sam_parents_24_23 / parents_2026": {classe: a_faire, commentaire: "fiche sans version"}
+  "sections_liberales_majoration_enfants / cavec_majoration_enfants_2025": {classe: a_faire, commentaire: "réforme du 2025-07-06 ; une version commence le 2025-07-07"}
+  "surcote_fonction_publique / lfss_2009_surcote": {classe: a_faire, commentaire: "fiche sans version"}
+  "surcote_par_age_seul / cavec_report_2025": {classe: a_faire, commentaire: "réforme du 2025-07-06 ; une version commence le 2025-07-07"}
+  "surcote_parentale / reforme_2023": {classe: a_faire, commentaire: "fiche sans version"}
+  "surcote_regime_general / lfss_2009_surcote": {classe: a_faire, commentaire: "fiche sans version"}
+  "surcote_regime_general / surcote_2007": {classe: a_faire, commentaire: "fiche sans version"}
+  "surcote_regimes_speciaux / regimes_speciaux_2008": {classe: a_faire, commentaire: "fiche sans version"}
+  "versement_forfaitaire_unique / touraine_2014": {classe: a_faire, commentaire: "réforme du 2014-01-22 ; aucune version ne commence cette année-là"}

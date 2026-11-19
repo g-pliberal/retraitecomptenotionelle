@@ -34,7 +34,7 @@ from __future__ import annotations
 
 import csv
 import re
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 from ..config import RACINE_DONNEES
@@ -187,6 +187,113 @@ def non_lues(dossier: Path = TEXTES, fiches: dict[str, dict] | None = None,
         vue.sort(key=lambda r: r["id"], reverse=True)
         vue.sort(key=lambda r: (r["vivante"], r["debut"]), reverse=True)
     return {nom: sortie[nom] for nom in sorted(sortie) if sortie[nom]}
+
+
+#: Le délai, en jours, qu'une fiche a pour répondre à une rédaction que
+#: l'index apporte après la pose du cliquet (note de décision 0009,
+#: amendement du 19 novembre 2026) : l'inscription du lundi est commitée par
+#: GitHub, et sans lui ``main`` rougirait sans qu'aucune session y soit pour rien.
+DELAI_DE_REPONSE = 14
+
+#: Ce qui répond à une rédaction, pour la fiche qui la donne.
+REPONSES = ("rattachee", "sans_effet")
+
+
+def sans_reponse(dossier: Path = TEXTES, fiches: dict[str, dict] | None = None,
+                 jour: date | None = None) -> dict[str, list[dict]]:
+    """Pour chaque fiche, les rédactions en vigueur au ``jour`` dit ou à venir
+    des articles qu'elle cite, auxquelles elle n'a pas répondu (note de
+    décision 0009, sixième cliquet) : ni comptées parmi les textes d'une de
+    ses versions, ni déclarées par elle sans effet. La réponse d'une fiche ne
+    vaut que pour elle : qu'une autre la rattache n'y change rien. Comme dans
+    ``non_lues``, un article sans numéro ne se suit pas, deux rédactions du
+    même numéro en vigueur ensemble s'écartent, et une rédaction jamais
+    entrée en vigueur aussi.
+
+    Chaque rédaction porte ``dit``, ce que la fiche en dit sans répondre (« à
+    rattacher », « à examiner », ou ``None`` si elle n'en dit rien), et
+    ``echeance``, pour une rédaction inscrite après la pose du cliquet
+    (``cliquet.pose_le`` de ``perimetre.yaml``), le dernier jour avant que la
+    suite échoue ; ``None`` pour une rédaction d'avant la pose, qui est de la
+    dette."""
+    if fiches is None:
+        fiches = carte.fiches()
+    jour_dit = (jour or date.today()).isoformat()
+    pose = (perimetre(dossier).get("cliquet") or {}).get("pose_le")
+    pose = str(pose) if pose else None
+    cite = citations(fiches)
+    par_article: dict[tuple[str, str], list[dict]] = {}
+    for redaction in redactions(dossier):
+        if redaction["article"].strip():
+            par_article.setdefault((redaction["texte"], redaction["article"]), []).append(redaction)
+    sortie: dict[str, list[dict]] = {}
+    for groupe in par_article.values():
+        lectrices = {nom for r in groupe for nom in cite.get(r["id"], {})}
+        for r in groupe:
+            if not _vit(r) or (r["fin"] and r["fin"] <= jour_dit):
+                continue
+            if any(_ensemble(r, autre) for autre in groupe if autre is not r):
+                continue
+            apres = bool(pose and r["inscrite_le"] and r["inscrite_le"] > pose)
+            echeance = (date.fromisoformat(r["inscrite_le"]) + timedelta(DELAI_DE_REPONSE)
+                        if apres else None)
+            for nom in lectrices:
+                dit = cite.get(r["id"], {}).get(nom)
+                if dit not in REPONSES:
+                    sortie.setdefault(nom, []).append({**r, "dit": dit, "echeance": echeance})
+    for vue in sortie.values():
+        vue.sort(key=lambda r: (r["debut"], r["id"]), reverse=True)
+    return {nom: sortie[nom] for nom in sorted(sortie)}
+
+
+def alarme(dossier: Path = TEXTES, fiches: dict[str, dict] | None = None,
+           jour: date | None = None) -> list[str]:
+    """L'alarme « loi modifiée » : ce qui fait échouer la suite. Une rédaction
+    inscrite après la pose qu'une fiche qui cite son article laisse sans
+    réponse plus de ``DELAI_DE_REPONSE`` jours ; et la dette d'avant la pose,
+    comptée au jour de la pose, en deux nombres qui ne peuvent que baisser :
+    les rédactions que la fiche cite sans y répondre (``citees_sans_reponse``)
+    et celles dont elle ne dit rien (``sans_un_mot``)."""
+    if fiches is None:
+        fiches = carte.fiches()
+    jour = jour or date.today()
+    cliquet = perimetre(dossier).get("cliquet") or {}
+    if not cliquet.get("pose_le"):
+        return ["perimetre.yaml : le sixième cliquet n'est pas posé (cliquet.pose_le)"]
+    erreurs = []
+    titre = titres(dossier)
+    for nom, vue in sans_reponse(dossier, fiches, jour).items():
+        for r in vue:
+            if r["echeance"] is not None and jour > r["echeance"]:
+                erreurs.append(
+                    f"{nom} : l'article {r['texte']} {r['article']} "
+                    f"({titre.get(r['texte'], r['texte'])}) a une rédaction {r['id']}, du "
+                    f"{r['debut']}, inscrite le {r['inscrite_le']}, sans réponse depuis plus "
+                    f"de {DELAI_DE_REPONSE} jours. Deux réponses possibles : une des "
+                    "versions de la fiche la compte parmi ses textes (versions[].textes), "
+                    "ou la fiche la déclare sans effet sur elle, avec le mot à mot qui le "
+                    "montre (textes_sans_effet).")
+    dette = [r for vue in sans_reponse(dossier, fiches, date.fromisoformat(
+        str(cliquet["pose_le"]))).values() for r in vue if r["echeance"] is None]
+    for cle, quoi, reel in (
+            ("citees_sans_reponse", ("rédaction citée sans réponse",
+                                     "rédactions citées sans réponse"),
+             len([r for r in dette if r["dit"] is not None])),
+            ("sans_un_mot", ("rédaction dont la fiche ne dit rien",
+                             "rédactions dont la fiche ne dit rien"),
+             len([r for r in dette if r["dit"] is None]))):
+        quoi = quoi[reel > 1]
+        inscrit = cliquet.get(cle)
+        if inscrit is None:
+            erreurs.append(f"perimetre.yaml : le cliquet {cle} n'est pas posé ({cle}: {reel})")
+        elif reel > inscrit:
+            erreurs.append(f"{reel} {quoi} d'avant la pose (couples d'une fiche et d'une "
+                           f"rédaction), le cliquet {cle} en admet {inscrit} : il ne peut "
+                           "que baisser")
+        elif reel < inscrit:
+            erreurs.append(f"{reel} {quoi} d'avant la pose, et le cliquet {cle} en admet "
+                           f"encore {inscrit} : l'abaisser à {reel} dans perimetre.yaml")
+    return erreurs
 
 
 def controler(dossier: Path = TEXTES, fiches: dict[str, dict] | None = None) -> list[str]:

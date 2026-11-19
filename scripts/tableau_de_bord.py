@@ -219,6 +219,29 @@ def releves_des_cas_types() -> tuple[int, int, int, int, int]:
             somme_ordonnee(1 for _, _, version in citations if version))
 
 
+def loi_modifiee(sans_reponse: dict[str, list[dict]], cliquet: dict) -> str:
+    """La ligne de l'alarme « loi modifiée » (note de décision 0009, sixième
+    cliquet) : les rédactions inscrites après la pose qui attendent une
+    réponse, et la dette d'avant la pose."""
+    tout = [r for vue in sans_reponse.values() for r in vue]
+    nouvelles = [r for r in tout if r["echeance"] is not None]
+    muettes = len([r for r in tout if r["echeance"] is None and r["dit"] is None])
+    citees = len([r for r in tout if r["echeance"] is None and r["dit"] is not None])
+    if nouvelles:
+        tete = (f"{len(nouvelles)} rédaction{'s' * (len(nouvelles) > 1)} inscrite"
+                f"{'s' * (len(nouvelles) > 1)} depuis la pose attend"
+                f"{'ent' if len(nouvelles) > 1 else ''} la réponse d'une fiche, la suite échoue "
+                f"après le {min(r['echeance'] for r in nouvelles)}")
+    else:
+        tete = "aucune rédaction inscrite depuis la pose n'attend la réponse d'une fiche"
+    return (f"- **La loi modifiée** (note de décision 0009, sixième cliquet) : {tete} ; et, "
+            f"d'avant la pose, {milliers(muettes)} dont la fiche ne dit rien et "
+            f"{milliers(citees)} qu'elle cite sans y répondre, que le cliquet tient à "
+            f"{milliers(cliquet.get('sans_un_mot') or 0)} et "
+            f"{milliers(cliquet.get('citees_sans_reponse') or 0)} au plus "
+            "(`python scripts/textes.py --sans-reponse`).")
+
+
 def page() -> str:
     """``docs/etat.md``, tel que les registres le disent aujourd'hui."""
     # Les règles suivies en veille sont les fiches de la carte (§ 6).
@@ -657,6 +680,8 @@ def page() -> str:
       + ", ".join(f"`{cle}` {milliers(n)}" for cle, n in
                   sorted(sans_statut_par_cle.items(), key=lambda x: (-x[1], x[0]))[:5])
       + " (`python scripts/textes.py`).")
+    w(loi_modifiee(textes.sans_reponse(), lire_yaml("data/reference/textes/perimetre.yaml")
+                   .get("cliquet") or {}))
     w("- **Les relectures prévues les plus proches** : "
       + " ; ".join(f"{quand} (`{nom}`)" for quand, nom in prochaines[:5]) + ".")
     w(f"- **Les régimes hors champ** : {len(hors_champ)}, chacun avec sa raison dans "

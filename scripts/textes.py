@@ -329,6 +329,53 @@ def detail(fiche: str, vue: list[dict], titres: dict[str, str], db=None,
     return lignes
 
 
+def reponses_dues(fiche: str, vue: list[dict], titres: dict[str, str], db=None) -> list[str]:
+    """Les rédactions sans réponse d'une fiche (``textes.sans_reponse``,
+    note de décision 0009, sixième cliquet), en lignes, chacune suivie de son
+    mot à mot quand l'index est là."""
+    apres = len([r for r in vue if r["echeance"] is not None])
+    lignes = [f"{fiche} : {len(vue)} rédaction{'s' * (len(vue) > 1)} en vigueur ou à venir "
+              f"sans réponse de la fiche, dont {apres} inscrite{'s' * (apres > 1)} après la "
+              "pose du cliquet.", ""]
+    rien = "la fiche n'en dit rien"
+    for r in vue:
+        quand = (f"inscrite le {r['inscrite_le']}, la suite échoue après le {r['echeance']}"
+                 if r["echeance"] is not None else "d'avant la pose")
+        lignes.append(f"  {r['texte']} {r['article']}  {r['debut']} → {r['fin'] or 'en vigueur'}  "
+                      f"{r['id']}  [{quand} ; {r['dit'] or rien}]")
+        if db is not None:
+            lignes.append("      " + mot_a_mot(db, titres.get(r["texte"], ""), r["article"], r["id"]))
+    return lignes + ["", "Deux réponses possibles : une version qui la compte parmi ses textes, "
+                         "ou une déclaration sans effet, avec le mot à mot qui le montre "
+                         "(textes_sans_effet)."]
+
+
+def sans_reponse(fiche: str | None, index: str | None) -> int:
+    """Sans fiche : le compte par fiche des rédactions sans réponse, celles
+    que la veille montre d'abord. Avec : leur détail, et leur mot à mot si
+    l'index est là."""
+    vues = textes.sans_reponse()
+    if fiche is None:
+        compte = {nom: (len([r for r in vue if r["echeance"] is not None or r["dit"] is None]),
+                        len(vue)) for nom, vue in vues.items()}
+        print(f"{somme_ordonnee(n for _, n in compte.values())} rédactions en vigueur ou à venir "
+              f"sans réponse, sur {len(vues)} fiches ; la veille en montre "
+              f"{len([d for d, _ in compte.values() if d])}, celles qui ne disent rien d'une "
+              "rédaction ou en doivent une inscrite après la pose :")
+        for nom, (dues, tout) in sorted(compte.items(), key=lambda x: (-x[1][0], -x[1][1], x[0])):
+            print(f"  {nom:<52} {dues:>3} montrées, {tout:>4} en tout")
+        print("\nLe détail d'une fiche : python scripts/textes.py --sans-reponse <fiche>")
+        return 0
+    from dila_index import chemin_index, ouvrir_lecture
+
+    db = None
+    if chemin_index("legi", index).exists():
+        db, source = ouvrir_lecture("legi", index)
+        print(f"Mot à mot lu dans l'{source}.")
+    print("\n".join(reponses_dues(fiche, vues.get(fiche, []), textes.titres(), db)))
+    return 0
+
+
 def non_lues(fiche: str | None, index: str | None, toutes: bool = False) -> int:
     """Sans fiche : celles qui ont des rédactions non lues, les plus exposées
     d'abord. Avec : ses rédactions non lues en vigueur ou à venir, les passées
@@ -368,6 +415,9 @@ def main(argv: list[str] | None = None) -> int:
     analyseur.add_argument("--non-lues", metavar="FICHE", nargs="?", const="",
                            help="les rédactions qu'une fiche n'a pas lues des articles "
                                 "qu'elle cite ; sans fiche, le compte par fiche")
+    analyseur.add_argument("--sans-reponse", metavar="FICHE", nargs="?", const="",
+                           help="les rédactions en vigueur ou à venir auxquelles une fiche "
+                                "n'a pas répondu ; sans fiche, le compte par fiche")
     analyseur.add_argument("--toutes", action="store_true",
                            help="avec --non-lues FICHE : ses rédactions passées aussi")
     analyseur.add_argument("--date", help="le jour de l'inscription (AAAA-MM-JJ)")
@@ -375,6 +425,8 @@ def main(argv: list[str] | None = None) -> int:
     analyseur.add_argument("--index-kali", help="chemin de l'index de KALI, où sont les "
                                                 "accords Agirc-Arrco")
     args = analyseur.parse_args(argv)
+    if args.sans_reponse is not None:
+        return sans_reponse(args.sans_reponse or None, args.index)
     if args.non_lues is not None:
         return non_lues(args.non_lues or None, args.index, args.toutes)
     if not (args.poser or args.inscrire):

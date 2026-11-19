@@ -64,14 +64,18 @@ def journal(dossier: Path = JOURNAL) -> dict[str, dict]:
 
 
 def a_relire(aujourd_hui: date, jours: int, non_lues: dict[str, list[dict]],
-             dossier: Path = carte.REGLES) -> list[list[str]]:
+             dossier: Path = carte.REGLES,
+             sans_reponse: dict[str, list[dict]] | None = None) -> list[list[str]]:
     """Les fiches à relire, chacune en lignes : son nom, son état et ses
     raisons, puis ses questions ouvertes. Une fiche qui n'est là que pour une
     rédaction non lue ne redit pas les siennes : elles n'en disent rien, et la
-    commande que sa raison nomme montre la rédaction (action 184)."""
+    commande que sa raison nomme montre la rédaction (action 184). De même
+    pour une fiche qui doit une réponse à une rédaction (``sans_reponse``,
+    sixième cliquet de la note de décision 0009)."""
     pour_autre_chose = {fiche["id"] for fiche, _ in carte.a_relire(aujourd_hui, jours, dossier)}
     blocs = []
-    for fiche, raisons in carte.a_relire(aujourd_hui, jours, dossier, non_lues=non_lues):
+    for fiche, raisons in carte.a_relire(aujourd_hui, jours, dossier, non_lues=non_lues,
+                                          sans_reponse=sans_reponse):
         bloc = [f"  - {fiche['id']} [{fiche['etat']}] : {', '.join(raisons)}"]
         if fiche["id"] in pour_autre_chose:
             bloc += [f"      → {' '.join(str(question).split())}"
@@ -102,7 +106,10 @@ def main(argv: list[str] | None = None) -> int:
           + f". Dernière veille consignée : {derniere}.")
     print()
 
-    revoir = a_relire(aujourd_hui, args.jours, textes.non_lues(jour=aujourd_hui))
+    # Les rédactions sans réponse (note de décision 0009, sixième cliquet)
+    # comprennent les rédactions non lues en vigueur ou à venir de l'action 184.
+    revoir = a_relire(aujourd_hui, args.jours, {},
+                      sans_reponse=textes.sans_reponse(jour=aujourd_hui))
     if revoir:
         print(f"À RELIRE ({len(revoir)}) :")
         for bloc in revoir:

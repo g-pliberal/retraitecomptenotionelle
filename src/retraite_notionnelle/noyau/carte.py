@@ -172,14 +172,20 @@ def _date(valeur) -> date | None:
 
 
 def a_relire(aujourd_hui: date, jours: int = 120, dossier: Path = REGLES,
-             non_lues: dict[str, list[dict]] | None = None) -> list[tuple[dict, list[str]]]:
+             non_lues: dict[str, list[dict]] | None = None,
+             sans_reponse: dict[str, list[dict]] | None = None) -> list[tuple[dict, list[str]]]:
     """La veille, vue de la carte : les fiches à relire, et pourquoi.
 
     Une fiche à vérifier, ou dont la règle manque au modèle ; une fiche lue il
     y a plus de ``jours`` jours, ou jamais ; une fiche dont la date de
     relecture est passée ; une fiche dont un article cité a une rédaction en
     vigueur ou à venir qu'elle n'a pas lue, quand ``non_lues`` les donne
-    (``textes.non_lues``, action 184). Dans l'ordre des états, puis des noms.
+    (``textes.non_lues``, action 184) ; une fiche qui doit sa réponse à une
+    rédaction inscrite après la pose du sixième cliquet, avec le jour où la
+    suite échouera, ou ne dit rien d'une rédaction en vigueur ou à venir d'un
+    article qu'elle cite, quand ``sans_reponse`` les donne
+    (``textes.sans_reponse``, note de décision 0009). Dans l'ordre des états,
+    puis des noms.
     """
     rang = {etat: i for i, etat in enumerate(etats())}
     sortie = []
@@ -202,6 +208,14 @@ def a_relire(aujourd_hui: date, jours: int = 120, dossier: Path = REGLES,
             raisons.append(f"{vivantes} rédaction{'s' * (vivantes > 1)} en vigueur ou à venir "
                            f"non lue{'s' * (vivantes > 1)} "
                            f"(python scripts/textes.py --non-lues {fiche['id']})")
+        dues = [r for r in (sans_reponse or {}).get(fiche["id"], [])
+                if r["echeance"] is not None or r["dit"] is None]
+        if dues:
+            echeances = [r["echeance"] for r in dues if r["echeance"] is not None]
+            raisons.append(f"{len(dues)} rédaction{'s' * (len(dues) > 1)} en vigueur ou à "
+                           f"venir sans réponse"
+                           + (f", la suite échoue après le {min(echeances)}" if echeances else "")
+                           + f" (python scripts/textes.py --sans-reponse {fiche['id']})")
         if raisons:
             sortie.append((fiche, raisons))
     return sorted(sortie, key=lambda x: (rang.get(x[0].get("etat"), len(rang)), x[0]["id"]))

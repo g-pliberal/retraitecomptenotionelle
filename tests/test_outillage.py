@@ -2121,3 +2121,26 @@ def test_lighthouse_trouve_le_chromium_des_sessions(tmp_path, monkeypatch):
     monkeypatch.setenv("CHROME_PATH", "/celui/de/lighthouse")
     assert lighthouse.navigateur() == "/celui/de/lighthouse"
 
+
+
+def test_le_tableau_de_bord_compte_les_reponses_dues_aux_lois_modifiees():
+    """Sixième cliquet de la note de décision 0009 : le tableau de bord donne
+    le compte des rédactions sans réponse — celles inscrites après la pose,
+    avec la première échéance, et la dette d'avant la pose, que le cliquet
+    tient en deux nombres."""
+    from datetime import date
+
+    import tableau_de_bord
+
+    muette = {"dit": None, "echeance": None}
+    citee = {"dit": "a_rattacher", "echeance": None}
+    nouvelle = {"dit": None, "echeance": date(2026, 12, 7)}
+    sans_reponse = {"a": [muette, citee, nouvelle], "b": [citee, {**nouvelle,
+                                                                   "echeance": date(2026, 12, 14)}]}
+    cliquet = {"citees_sans_reponse": 435, "sans_un_mot": 83}
+    assert tableau_de_bord.loi_modifiee(sans_reponse, cliquet) == (
+        "- **La loi modifiée** (note de décision 0009, sixième cliquet) : 2 rédactions "
+        "inscrites depuis la pose attendent la réponse d'une fiche, la suite échoue après "
+        "le 2026-12-07 ; et, d'avant la pose, 1 dont la fiche ne dit rien et 2 qu'elle "
+        "cite sans y répondre, que le cliquet tient à 83 et 435 au plus "
+        "(`python scripts/textes.py --sans-reponse`).")

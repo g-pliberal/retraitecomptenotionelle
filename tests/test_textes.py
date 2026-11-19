@@ -452,3 +452,136 @@ def test_les_accords_agirc_arrco_sont_declares_et_inscrits():
     inscrites = {l["id"] for l in textes.redactions() if l["id"].startswith("KALIARTI")}
     assert "KALIARTI000036731850" in inscrites, "l'article 92 de l'accord de 2017"
     assert textes.titres()["ani_2017_11_17"] == ANI_2017
+
+
+# --- L'alarme « loi modifiée » (note de décision 0009, sixième cliquet) -----
+
+N, P, Q = (f"LEGIARTI{n:012d}" for n in range(10, 13))
+
+
+@pytest.fixture
+def loi_modifiee(tmp_path):
+    """L. 351-1 en deux rédactions : N, d'avant la pose du cliquet, que la
+    fiche cite, et P, qui la remplace, que le script inscrit le 23 novembre
+    2026, après la pose du 19. L. 351-2 en une rédaction Q, d'avant la pose,
+    en vigueur."""
+    (tmp_path / "textes.csv").write_text("texte,titre\ncss,Code de la sécurité sociale\n",
+                                         encoding="utf-8")
+    lignes = ["id,texte,article,debut,fin,inscrite_le",
+              f"{N},css,L351-1,2004-01-01,2026-12-01,",
+              f"{P},css,L351-1,2026-12-01,,2026-11-23",
+              f"{Q},css,L351-2,2004-01-01,,"]
+    (tmp_path / "redactions.csv").write_text("\n".join(lignes) + "\n", encoding="utf-8")
+    (tmp_path / "perimetre.yaml").write_text(
+        yaml.safe_dump({"codes": [], "cliquet": {
+            "pose_le": "2026-11-19", "redactions_sans_statut": 0,
+            "citees_sans_reponse": 0, "sans_un_mot": 0}}),
+        encoding="utf-8")
+    return tmp_path
+
+
+CITE_L_ANCIENNE = {"regle": {"versions": [{"id": "v1", "textes": [{"id": N}]}]}}
+
+
+def _sans_reponse(dossier, fiches, jour=date(2026, 11, 24)):
+    return {nom: [(r["id"], r["dit"]) for r in vue]
+            for nom, vue in textes.sans_reponse(dossier, fiches, jour).items()}
+
+
+def test_une_redaction_nouvelle_est_sans_reponse_de_la_fiche_qui_cite_l_ancienne(loi_modifiee):
+    """La fiche cite l'ancienne rédaction dans une version ; la nouvelle,
+    inscrite après la pose, attend sa réponse."""
+    assert _sans_reponse(loi_modifiee, CITE_L_ANCIENNE) == {"regle": [(P, None)]}
+    (entree,) = textes.sans_reponse(loi_modifiee, CITE_L_ANCIENNE, date(2026, 11, 24))["regle"]
+    assert entree["echeance"] == date(2026, 12, 7), "quatorze jours après l'inscription"
+
+
+def test_une_version_ou_une_declaration_sans_effet_repondent(loi_modifiee):
+    """La fiche compte la rédaction dans une version, ou la déclare sans effet
+    sur elle : elle a répondu."""
+    version = {"regle": {"versions": [{"id": "v1", "textes": [{"id": N}]},
+                                      {"id": "v2", "textes": [{"id": P}]}]}}
+    assert _sans_reponse(loi_modifiee, version) == {}
+    sans_effet = {"regle": {**CITE_L_ANCIENNE["regle"],
+                            "textes_sans_effet": [{"id": P, "motif": "renvoi d'alinéa"}]}}
+    assert _sans_reponse(loi_modifiee, sans_effet) == {}
+
+
+def test_la_reponse_d_une_autre_fiche_ne_vaut_pas_pour_elle(loi_modifiee):
+    """Une autre fiche rattache la rédaction : la première reste sans réponse,
+    là où la vue des rédactions non lues la cachait."""
+    fiches = {**CITE_L_ANCIENNE, "autre": {"versions": [{"id": "v1", "textes": [{"id": P}]}]}}
+    assert _sans_reponse(loi_modifiee, fiches)["regle"] == [(P, None)]
+    assert "regle" not in textes.non_lues(loi_modifiee, fiches, date(2026, 11, 24))
+
+
+@pytest.mark.parametrize("champ, statut", [
+    ("textes_a_rattacher", "a_rattacher"), ("lectures", "a_rattacher"),
+    ("textes_a_relire", "a_examiner")])
+def test_nommer_la_redaction_sans_la_trancher_n_est_pas_repondre(loi_modifiee, champ, statut):
+    """La fiche ne la nomme que parmi ses textes à rattacher, ses lectures ou
+    ses textes à relire : elle l'a vue, elle n'a pas répondu."""
+    nommee = [{"id": P, "reference": "L. 351-1", "date": "2026-11-24"}]
+    fiche = dict(CITE_L_ANCIENNE["regle"])
+    if champ == "lectures":
+        fiche["sources"] = {"lectures": nommee}
+    else:
+        fiche[champ] = nommee
+    assert _sans_reponse(loi_modifiee, {"regle": fiche}) == {"regle": [(P, statut)]}
+
+
+def test_l_alarme_sonne_quatorze_jours_apres_l_inscription(loi_modifiee):
+    """Inscrite depuis treize jours, la rédaction se montre et la suite passe ;
+    depuis quinze, la suite échoue, et le message dit la fiche, l'article, la
+    rédaction et les deux réponses possibles."""
+    assert textes.alarme(loi_modifiee, CITE_L_ANCIENNE, date(2026, 12, 6)) == []
+    assert _sans_reponse(loi_modifiee, CITE_L_ANCIENNE, date(2026, 12, 6)) == {"regle": [(P, None)]}
+    (erreur,) = textes.alarme(loi_modifiee, CITE_L_ANCIENNE, date(2026, 12, 8))
+    for attendu in ("regle", "css L351-1", P, "2026-11-23", "versions", "textes_sans_effet"):
+        assert attendu in erreur, (attendu, erreur)
+
+
+def test_les_redactions_d_avant_la_pose_font_une_dette_qui_ne_peut_que_baisser(loi_modifiee):
+    """Avant la pose, deux nombres : les rédactions que la fiche cite sans y
+    répondre, celles dont elle ne dit rien. Ils ne montent pas, et
+    s'abaissent quand ils baissent."""
+    fiches = {"regle": {"versions": [{"id": "v1", "textes": [{"id": N}, {"id": P}]}],
+                        "textes_a_rattacher": [{"id": Q}]}}
+    erreurs = textes.alarme(loi_modifiee, fiches, date(2026, 11, 24))
+    assert any("1 rédaction citée sans réponse" in e and "en admet 0" in e for e in erreurs), erreurs
+    fiches["regle"]["textes_sans_effet"] = [{"id": Q, "motif": "renvoi"}]
+    assert textes.alarme(loi_modifiee, fiches, date(2026, 11, 24)) == []
+    muette = {"regle": fiches["regle"], "voisine": {"versions": [{"id": "v1", "textes": [{"id": P}]}]}}
+    erreurs = textes.alarme(loi_modifiee, muette, date(2026, 11, 24))
+    assert any("1 rédaction dont la fiche ne dit rien" in e for e in erreurs), erreurs
+    perimetre = yaml.safe_load((loi_modifiee / "perimetre.yaml").read_text(encoding="utf-8"))
+    perimetre["cliquet"]["sans_un_mot"] = 2
+    (loi_modifiee / "perimetre.yaml").write_text(yaml.safe_dump(perimetre), encoding="utf-8")
+    erreurs = textes.alarme(loi_modifiee, muette, date(2026, 11, 24))
+    assert any("l'abaisser à 1" in e for e in erreurs), erreurs
+
+
+def test_aucune_loi_modifiee_n_attend_sa_reponse_au_dela_de_quatorze_jours():
+    """Sur le dépôt : aucune rédaction inscrite après la pose n'attend la
+    réponse d'une fiche au-delà de quatorze jours, et la dette d'avant la
+    pose est celle que le cliquet admet."""
+    assert textes.alarme(jour=date.today()) == []
+
+
+def test_le_script_montre_les_reponses_qu_une_fiche_doit(loi_modifiee):
+    """``python scripts/textes.py --sans-reponse <fiche>``, que la veille
+    nomme : chaque rédaction sans réponse de la fiche, le jour où la suite
+    échouera pour une rédaction inscrite après la pose, et ce que la fiche en
+    dit."""
+    fiches = {"regle": {**CITE_L_ANCIENNE["regle"], "textes_a_rattacher": [{"id": Q}]}}
+    vue = textes.sans_reponse(loi_modifiee, fiches, date(2026, 11, 24))["regle"]
+    assert _script().reponses_dues("regle", vue, {}) == [
+        "regle : 2 rédactions en vigueur ou à venir sans réponse de la fiche, "
+        "dont 1 inscrite après la pose du cliquet.",
+        "",
+        f"  css L351-1  2026-12-01 → en vigueur  {P}  "
+        "[inscrite le 2026-11-23, la suite échoue après le 2026-12-07 ; la fiche n'en dit rien]",
+        f"  css L351-2  2004-01-01 → en vigueur  {Q}  [d'avant la pose ; a_rattacher]",
+        "",
+        "Deux réponses possibles : une version qui la compte parmi ses textes, ou une "
+        "déclaration sans effet, avec le mot à mot qui le montre (textes_sans_effet)."]

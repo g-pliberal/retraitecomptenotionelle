@@ -96,6 +96,84 @@ def test_toute_reforme_recente_a_sa_fiche(fiches, reformes):
     assert not inconnues, sorted(inconnues)
 
 
+#: La liste des couples d'une fiche et d'une réforme qu'aucune version ne
+#: fait commencer à la date de la réforme (sixième cliquet de la note 0009).
+REFORMES_PORTEES = RACINE / "tests" / "cliquets_du_droit_date" / "reformes.yaml"
+
+#: Les classes de la liste : la réforme portée par une version à une autre
+#: date, selon un texte ; sans version, pour une raison dite ; à faire.
+CLASSES_DE_REFORME = ("portee", "sans_version", "a_faire")
+
+
+def _reformes_sans_version_a_leur_date(fiches: dict[str, dict], dates: dict[str, str]) -> list[str]:
+    """Les couples « fiche / réforme » dont la fiche déclare la réforme sans
+    qu'une borne d'une de ses versions commence à sa date : au jour sur un
+    axe daté, à l'année sur un axe d'année."""
+    restants = []
+    for nom, fiche in fiches.items():
+        debuts = {str(borne[0]) for version in fiche.get("versions") or []
+                  if isinstance(version, dict)
+                  for borne in (version.get("bornes") or {}).values()
+                  if isinstance(borne, list) and borne and borne[0] is not None}
+        for code in fiche.get("reformes") or []:
+            jour = dates[code]
+            if jour not in debuts and jour[:4] not in debuts:
+                restants.append(f"{nom} / {code}")
+    return sorted(restants)
+
+
+def test_une_reforme_declaree_est_portee_par_une_version_qui_commence_a_sa_date():
+    """Au jour sur un axe daté, à l'année sur un axe d'année ; une version
+    qui commence la même année, un autre jour, ne suffit pas : la réforme
+    peut s'appliquer plus tard dans un régime, et la liste dit où."""
+    dates = {"r2023": "2023-09-01", "r2010": "2010-11-10"}
+    fiches = {
+        "au_jour": {"reformes": ["r2023"],
+                    "versions": [{"id": "v", "bornes": {"liquidation.date_effet":
+                                                        [date(2023, 9, 1), None]}}]},
+        "a_l_annee": {"reformes": ["r2010"],
+                      "versions": [{"id": "v", "bornes": {"revenu.annee": [2010, None]}}]},
+        "autre_jour": {"reformes": ["r2023"],
+                       "versions": [{"id": "v", "bornes": {"liquidation.date_effet":
+                                                           [date(2023, 1, 1), None]}}]},
+        "sans_version": {"reformes": ["r2010"]}}
+    assert _reformes_sans_version_a_leur_date(fiches, dates) == [
+        "autre_jour / r2023", "sans_version / r2010"]
+
+
+def test_chaque_reforme_declaree_a_sa_version_ou_dit_ou_elle_est_portee(fiches, reformes):
+    """Sixième cliquet de la note de décision 0009 : une fiche qui déclare
+    une réforme a une version qui commence à sa date, ou la liste classe le
+    couple — ``portee``, avec la version et le texte qui dit sa date ;
+    ``sans_version``, avec sa raison ; ``a_faire``. Un couple non classé fait
+    échouer la suite, une entrée dont le couple n'est plus à classer aussi ;
+    le nombre des ``a_faire`` ne peut que baisser."""
+    liste = yaml.safe_load(REFORMES_PORTEES.read_text(encoding="utf-8"))
+    couples = liste["couples"] or {}
+    restants = _reformes_sans_version_a_leur_date(
+        fiches, {reforme.code: str(reforme.date) for reforme in reformes})
+    non_classes = sorted(set(restants) - set(couples))
+    assert not non_classes, (
+        "à classer dans tests/cliquets_du_droit_date/reformes.yaml : la version qui porte "
+        "la réforme et le texte qui dit sa date (portee), la raison pour laquelle elle "
+        f"n'en fait naître aucune (sans_version), ou a_faire : {non_classes}")
+    partis = sorted(set(couples) - set(restants))
+    assert not partis, f"ces couples ne sont plus à classer, retirer leur entrée : {partis}"
+    for couple, entree in couples.items():
+        assert entree.get("classe") in CLASSES_DE_REFORME, (couple, entree)
+        if entree["classe"] == "portee":
+            nom = couple.split(" / ")[0]
+            versions = {v["id"] for v in fiches[nom].get("versions") or [] if isinstance(v, dict)}
+            assert entree.get("version") in versions, (couple, "version inconnue")
+            assert entree.get("texte"), (couple, "le texte qui dit sa date")
+        if entree["classe"] == "sans_version":
+            assert entree.get("raison"), (couple, "sa raison")
+    a_faire = sum(1 for entree in couples.values() if entree["classe"] == "a_faire")
+    pose = liste["cliquet_a_faire"]
+    assert a_faire <= pose, f"{a_faire} réformes à porter, le cliquet en admet {pose}"
+    assert a_faire == pose, f"{a_faire} réformes à porter, le cliquet en admet {pose} : l'abaisser"
+
+
 def test_ce_qui_manque_se_compte_fiche_par_fiche(fiches):
     """Un manque nomme un champ que le contrat exige ; une fiche qui n'en a
     pas est mûre, et n'apparaît pas."""
@@ -373,6 +451,34 @@ def test_la_veille_compte_les_redactions_en_vigueur_qu_une_fiche_n_a_pas_lues(tm
     assert carte.a_relire(date(2026, 9, 26), jours=120, dossier=tmp_path) == []
 
 
+def test_la_veille_montre_des_l_inscription_la_fiche_qui_doit_une_reponse(tmp_path):
+    """Sixième cliquet de la note 0009 : une fiche fraîche est à relire dès
+    qu'une rédaction inscrite après la pose attend sa réponse, avec le jour où
+    la suite échouera, et quand elle ne dit rien d'une rédaction d'avant la
+    pose (``textes.sans_reponse``). Celle qu'elle cite sans l'avoir coupée en
+    version est la dette de la migration : elle n'en fait pas une fiche à
+    relire."""
+    fiche = yaml.safe_load((carte.REGLES / "reversion.yaml").read_text(encoding="utf-8"))
+    fiche = {**fiche, "id": "fraiche", "etat": "conforme",
+             "sources": {**fiche["sources"], "lu_le": date(2026, 9, 1),
+                         "prochaine_relecture": date(2027, 3, 31)}}
+    _ecrire(tmp_path, fiche)
+    _ecrire(tmp_path, {**fiche, "id": "muette"})
+    _ecrire(tmp_path, {**fiche, "id": "en_dette"})
+    nouvelle = {"dit": "a_rattacher", "echeance": date(2026, 12, 7)}
+    muette = {"dit": None, "echeance": None}
+    citee = {"dit": "a_rattacher", "echeance": None}
+    sans_reponse = {"fraiche": [nouvelle, muette, citee], "muette": [muette],
+                    "en_dette": [citee]}
+    vue = carte.a_relire(date(2026, 11, 24), jours=120, dossier=tmp_path,
+                         sans_reponse=sans_reponse)
+    assert [(f["id"], r) for f, r in vue] == [
+        ("fraiche", ["2 rédactions en vigueur ou à venir sans réponse, la suite échoue "
+                     "après le 2026-12-07 (python scripts/textes.py --sans-reponse fraiche)"]),
+        ("muette", ["1 rédaction en vigueur ou à venir sans réponse "
+                    "(python scripts/textes.py --sans-reponse muette)"])]
+
+
 def _veille_du_droit():
     """`scripts/veille_droit.py`, chargé comme un module."""
     import importlib.util
@@ -404,6 +510,21 @@ def test_la_veille_ne_redit_ses_questions_que_d_une_fiche_a_relire_pour_autre_ch
         ["  - douteuse [a_verifier] : a_verifier, 1 rédaction en vigueur ou à venir non lue "
          "(python scripts/textes.py --non-lues douteuse)",
          "      → Une question qui attend."]]
+
+
+def test_la_veille_du_droit_montre_les_reponses_dues(tmp_path):
+    """``scripts/veille_droit.py`` range parmi les fiches à relire celle qui
+    doit une réponse à une rédaction (sixième cliquet de la note 0009), en
+    une ligne, comme une rédaction non lue."""
+    fiche = yaml.safe_load((carte.REGLES / "reversion.yaml").read_text(encoding="utf-8"))
+    _ecrire(tmp_path, {**fiche, "id": "fraiche", "etat": "conforme",
+                       "sources": {**fiche["sources"], "lu_le": date(2026, 9, 1),
+                                   "prochaine_relecture": date(2027, 3, 31)}})
+    sans_reponse = {"fraiche": [{"dit": None, "echeance": date(2026, 12, 7)}]}
+    assert _veille_du_droit().a_relire(date(2026, 11, 24), 120, {}, tmp_path,
+                                       sans_reponse=sans_reponse) == [
+        ["  - fraiche [conforme] : 1 rédaction en vigueur ou à venir sans réponse, la suite "
+         "échoue après le 2026-12-07 (python scripts/textes.py --sans-reponse fraiche)"]]
 
 
 def test_une_fiche_ne_lit_que_des_presomptions_nommees(tmp_path):

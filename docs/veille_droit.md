@@ -52,7 +52,8 @@ jour n'écrivent plus au même endroit.
 imprime les fiches à relire — état `a_verifier` ou `manquante`, lecture de
 plus de cent vingt jours, date de relecture passée — et la liste des sources.
 Chacune y vient avec ses questions ouvertes, sauf celle qui n'est à relire
-que pour une rédaction non lue (étape 4, plus bas), qui tient en une ligne.
+que pour une rédaction sans réponse (étape 4, plus bas), qui tient en une
+ligne.
 `--tout` imprime tout, `--strict` rend 1 s'il reste quelque chose à relire.
 Il compare aussi la base de législation de la Cnav à son registre,
 `data/reference/legislation/cnav/` (`scripts/fetch/cnav_veille.py`, action
@@ -117,14 +118,27 @@ avec.
    version, sans effet avec le mot à mot qui le montre (`dila_cherche.py legi
    --num <article> --diff`), ou à rattacher. C'est
    ce qui fait baisser le cliquet des textes (`python scripts/textes.py`).
-   Les rédactions en vigueur ou à venir que la fiche n'a pas lues des
-   articles qu'elle cite, et leur mot à mot, sont dans `python
-   scripts/textes.py --non-lues <fiche>`, les passées avec `--toutes` ;
-   une rédaction « (texte inchangé) » s'y déclare sans effet. Celle qu'une
-   autre fiche a déclarée sans effet y reste, marquée `sans_effet` : la
-   déclaration ne vaut que pour la fiche qui la fait. La veille
-   compte parmi les fiches à relire celles qui en ont une en vigueur ou à
-   venir.
+   **L'alarme « loi modifiée »** (note de décision 0009, sixième cliquet) :
+   toute rédaction en vigueur ou à venir d'un article que la fiche cite a sa
+   réponse dans cette fiche, une version qui la compte parmi ses textes ou
+   une déclaration sans effet. La réponse d'une autre fiche ne vaut pas pour
+   elle, et la nommer à rattacher, à relire ou dans une lecture n'est pas
+   répondre. Les rédactions sans réponse d'une fiche, et leur mot à mot,
+   sont dans `python scripts/textes.py --sans-reponse <fiche>` ; sans fiche,
+   le compte par fiche. Une rédaction « (texte inchangé) » s'y déclare sans
+   effet. Une rédaction que l'inscription du lundi apporte après la pose du
+   cliquet (`cliquet.pose_le` de `data/reference/textes/perimetre.yaml`)
+   fait échouer la suite quatorze jours après son inscription, tant qu'une
+   fiche qui cite son article n'a pas répondu
+   (`test_aucune_loi_modifiee_n_attend_sa_reponse_au_dela_de_quatorze_jours`) ;
+   d'ici là, la veille la montre dès l'inscription, avec le jour de
+   l'échec, et le tableau de bord la compte. Les rédactions d'avant la pose
+   font une dette, en deux nombres du même fichier qui ne peuvent que
+   baisser, et qu'on abaisse quand ils baissent : celles que la fiche cite
+   sans y répondre (`citees_sans_reponse`), celles dont elle ne dit rien
+   (`sans_un_mot`) ; la veille montre les fiches qui ont des secondes. Les
+   rédactions non lues de l'action 184 restent dans `--non-lues <fiche>`,
+   les passées avec `--toutes`.
 5. Donner à la donnée le niveau de fiabilité qu'elle mérite (`certifiee` si
    recontrôlée automatiquement, `haute` si lue, `moyenne` si lue mais
    susceptible d'être dépassée avant recontrôle), et laisser ce niveau
