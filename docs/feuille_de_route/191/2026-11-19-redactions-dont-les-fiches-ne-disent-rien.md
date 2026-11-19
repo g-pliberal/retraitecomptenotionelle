@@ -1,17 +1,5 @@
 # Les rédactions dont les fiches ne disaient rien : quatre-vingt-deux lues, une question
 
-**Reprise, au 19 novembre 2026.** Le sixième cliquet de la note de décision
-0009 comptait 83 cas où une fiche ne disait rien d'une rédaction en vigueur
-d'un article qu'elle cite. Quatre-vingt-deux sont lus : aucune rédaction ne
-change la règle que sa fiche porte, et chaque fiche le déclare, mot à mot à
-l'appui. Le cliquet est à 1. Reste un cas, que le propriétaire doit trancher :
-L. 173-2 du code de la sécurité sociale ne nomme plus le régime des cultes
-depuis 2018, et la fiche `minimum_contributif` écrête encore son minimum.
-Reste aussi une lecture à faire, hors du cliquet : la fiche
-`carpimko_ages_2015` dit ouvrir la complémentaire au départ pour carrière
-longue depuis 2024, quand ses statuts renvoient au départ des assurés
-handicapés. Aucun résultat n'a bougé. Le détail est plus bas.
-
 Le 19 novembre 2026, sur l'accord du propriétaire, la session lit les
 dix-huit rédactions de 2026 et après dont trente-deux couples d'une fiche et
 d'une rédaction ne disaient rien. Chacune est lue dans l'index LEGI, à jour au

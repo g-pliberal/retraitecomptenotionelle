@@ -726,6 +726,24 @@ textes_a_rattacher:
 - reference: D. 351-2-1 CSS, dernier alinéa (décret n° 2008-1509, articles 6 et 8)
 - reference: L. 173-2 CSS
 textes_sans_effet:
+- id: LEGIARTI000036391874
+  article: L. 173-2 CSS, rédaction du 1er janvier 2018
+  en_vigueur: 2018-01-01
+  motif: >-
+    la loi n° 2017-1836 du 30 décembre 2017, article 15, 20°, qui supprime le régime
+    social des indépendants, récrit le début du premier alinéa : « Dans le cas où l'assuré
+    a relevé du régime général de sécurité sociale, du régime des salariés agricoles ou du
+    régime social des indépendants », à la place des régimes « mentionnés aux articles
+    L. 200-2 et L. 382-15 et au 2° de l'article L. 611-1 du présent code ou à l'article
+    L. 722-20 du code rural et de la pêche maritime » ; le reste « sans changement ». Le
+    régime des cultes n'est plus nommé, mais il n'en sort pas : les ministres des cultes
+    « relèvent du régime général de sécurité sociale » (L. 382-15, LEGIARTI000031686004),
+    et L. 382-27 leur sert le minimum de L. 351-10. La Cnav l'applique ainsi : « Le
+    dépassement peut être réparti entre les régimes suivants : le régime général ; le
+    régime social des indépendants ; le régime des salariés agricoles ; le régime des
+    cultes » (exposé « Minimum contributif », depuis 2012, mis à jour le 24 octobre 2025,
+    lu le 19 novembre 2026). Ce que la Cavimac publie n'en dit rien : la lecture du
+    texte est une déduction, que l'exposé de la Cnav confirme
 - id: LEGIARTI000006737999
   motif: >-
     D. 634-6 du 8 mai 1988 au 31 décembre 1989 : « Les dispositions des articles R. 353-9 à

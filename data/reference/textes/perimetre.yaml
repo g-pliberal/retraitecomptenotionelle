@@ -130,4 +130,4 @@ cliquet:
   # rédaction sans l'avoir coupée en version :
   citees_sans_reponse: 433
   # La fiche n'en dit rien, à lire d'abord :
-  sans_un_mot: 1
+  sans_un_mot: 0
