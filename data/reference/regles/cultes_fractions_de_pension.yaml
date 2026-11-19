@@ -159,7 +159,7 @@ versions:
       la base forfaitaire prévue à l'article R. 721-30. »
     lu_le: 2026-10-03
   bornes:
-    liquidation.date_effet: [1998-01-01, 2006-11-01]
+    liquidation.date_effet: [1998-01-01, 2006-11-02]
   contenu:
     fraction_d_avant_1998: >-
       celle du régime forfaitaire, le maximum revalorisé comme les pensions du régime
@@ -230,7 +230,7 @@ versions:
       d'assurance est fixée à : 150 trimestres pour les assurés nés avant 1944 »
     lu_le: 2026-11-05
   bornes:
-    liquidation.date_effet: [2006-11-01, 2010-02-01]
+    liquidation.date_effet: [2006-11-02, 2010-02-01]
   contenu:
     age: >-
       l'âge légal pour qui a la durée requise tous régimes (I) ; sinon à cet âge avec le

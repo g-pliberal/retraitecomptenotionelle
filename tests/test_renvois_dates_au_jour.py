@@ -145,3 +145,26 @@ def test_la_cavimac_ouvre_a_soixante_ans_des_le_2_novembre_2006(simulateur):
     decembre = _carriere(simulateur, "ministre_du_culte", 1946, 11, 60.0)
     assert date_d_effet(decembre) == "2006-12-01"
     assert _ouverture(simulateur, "cavimac", decembre) == pytest.approx(60.0)
+
+
+def _pension_cavimac(simulateur, carriere):
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    return next(p for p in resultat.pensions_par_regime if p.regime == "cavimac")
+
+
+def test_la_pension_du_1er_novembre_2006_garde_la_formule_d_avant_le_decret(simulateur):
+    """Le décret n° 2006-1325, en vigueur le 2 novembre 2006, crée au V de son
+    article 2 la majoration de la pension d'avant 1998 des générations 1939 à
+    1942. La pension qui prend effet le 1er novembre lui échappe : elle se
+    calcule comme celle du 1er octobre, le maximum par cent cinquantièmes
+    (D. 721-7 du code de 1985), sans majoration. Le dépôt la lui donnait."""
+    octobre = _carriere(simulateur, "ministre_du_culte", 1941, 9, 65.0, debut=22.0)
+    novembre = _carriere(simulateur, "ministre_du_culte", 1941, 10, 65.0, debut=22.0)
+    decembre = _carriere(simulateur, "ministre_du_culte", 1941, 11, 65.0, debut=22.0)
+    assert date_d_effet(novembre) == "2006-11-01"
+    assert date_d_effet(decembre) == "2006-12-01"
+    majoration = "trimestres cotisés de 1979 à 1997"
+    assert majoration not in _pension_cavimac(simulateur, novembre).detail
+    assert _pension_cavimac(simulateur, novembre).montant == pytest.approx(
+        _pension_cavimac(simulateur, octobre).montant)
+    assert majoration in _pension_cavimac(simulateur, decembre).detail

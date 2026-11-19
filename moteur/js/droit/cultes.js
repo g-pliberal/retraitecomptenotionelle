@@ -4,7 +4,7 @@
  * 31 décembre 1997 aux règles du régime général (L. 382-27), celle des
  * périodes antérieures aux règles du 31 décembre 1997 — le maximum de l'année
  * au prorata de la durée, les années d'activité cultuelle d'avant 1979
- * validées gratuitement —, adaptées depuis le 1er novembre 2006 par le décret
+ * validées gratuitement —, adaptées depuis le 2 novembre 2006 par le décret
  * n° 2006-1325 (art. 2) : décote à taux minoré, surcote et majorations
  * jusqu'au minimum contributif au taux plein.
  */
@@ -26,8 +26,12 @@ export const CREATION = 1979;
 export const DUREE_DU_MAXIMUM = 150;
 export const DUREE_MINIMALE = 8;
 
-/** Le décret n° 2006-1325, puis son V bis : dates d'effet [année, mois]. */
-export const DECRET_DE_2006 = [2006, 11];
+/**
+ * Le décret n° 2006-1325, puis son V bis : dates d'effet [année, mois]. Le
+ * décret, publié le 1er novembre 2006 sans date propre, entre en vigueur le 2 :
+ * la première pension qu'il régit prend effet le 1er décembre.
+ */
+export const DECRET_DE_2006 = [2006, 12];
 export const DECRET_DE_2010 = [2010, 2];
 
 /** Le V : la part de l'écart des générations de la montée en charge. */
