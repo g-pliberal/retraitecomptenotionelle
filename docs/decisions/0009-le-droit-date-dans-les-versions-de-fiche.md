@@ -437,3 +437,161 @@ déclare comme tel : il éprouve le code contre la lecture, non la lecture
 contre le texte, et l'erreur de la surcote y aurait survécu. Contre le
 rangement d'OpenFisca-France-Pension, l'argument est qu'une loi nouvelle
 touche chaque génération, et non le nombre de ses lignes.
+
+## Rectificatif du 19 novembre 2026
+
+Le 18 novembre, le propriétaire a fait évaluer la note de nouveau, par un avis
+indépendant, mené sans lire aucune évaluation antérieure. Ses comptes ont été
+refaits sur le dépôt, ses textes relus dans l'index LEGI, et la recherche du
+premier départ essayée sur chaque jour de naissance de 1923 à 1975. Sa
+direction tient, et les affirmations de droit relues tiennent toutes. Deux de
+ses phrases étaient fausses, et neuf précisions s'y ajoutent, dans l'ordre des
+étapes qu'elles précèdent : au 18 novembre, ni les cliquets ni l'âge légal
+n'étaient commencés. L'évaluation et les scripts de ses comptes sont sous
+`docs/decisions/0009/`. Le corps de la note, gelé, garde les phrases que ses
+deux rectificatifs corrigent : elle se lit avec eux.
+
+**Ce qui était faux.**
+
+- **« Aucun résultat chiffré ne bouge » ne tient pas à l'étape 4.** Dater un
+  renvoi au jour de son texte déplace les pensions qui prennent effet entre ce
+  jour et la coupure d'année du fichier. La note le sait, dont l'étape 4
+  commence par « les dix dates de bascule qui peuvent changer un résultat » ;
+  elle promet pourtant qu'aucun ne bouge, en fait la fin de chaque étape, et
+  laisse « inchangés » à la ligne 6 du chemin. Relues au texte le 17 novembre,
+  cinq de ces dix dates étaient fausses, et l'une cachait une erreur de
+  règle : la décote de la Banque de France n'est pas celle de la fonction
+  publique. L'étape 4 a donc deux sortes de commits. Le rangement ne déplace
+  rien : un texte cité, une valeur de repli que plus rien ne lit, une date au
+  jour qui tombe où le fichier coupait déjà. La correction déplace des
+  résultats : elle a son test tiré du texte et l'accord du propriétaire, comme
+  le premier rectificatif le demande pour la surcote. « Aucun résultat n'a
+  bougé » ne clôt que le rangement, et la ligne 6 du chemin le dit désormais.
+- **L'étape 2 ne finit pas `TableRecouverte`.** L'ordre de la migration lui
+  donne « la fin des deux copies et de `TableRecouverte` ». Or `_sousLeDroit`
+  pose aussi cette classe sur la durée requise, qui ne migre qu'à l'étape 3.
+  L'étape 2 retire les deux copies de l'âge légal et leurs deux classes ;
+  `TableRecouverte` part à l'étape 3, avec les deux copies de la durée
+  requise.
+
+**Ce qui se précise.**
+
+- **Le cinquième cliquet se relève, il ne se choisit pas.** Une liste de
+  chiffres « nommés un à un » ne garde que ce qu'elle nomme. Un test relève
+  donc, dans le moteur hors du site, toute constante nommée dont la valeur
+  porte une année ou une date, et toute année écrite en clair dans le code :
+  131 constantes au 18 novembre, dont 77 dans le code des règles
+  (`moteur/js/droit/`, `regimes.js`, `scenario-actuel.js`). Une liste dit de
+  chacune si elle est du droit à migrer, et vers quelle fiche, ou pourquoi
+  elle n'en est pas. Le nombre des premières ne peut que baisser, et une
+  constante neuve que la liste ne classe pas fait échouer le test. Les
+  chiffres de la loi sans date, un âge, un taux, s'y ajoutent à la main, comme
+  la note le prévoyait.
+- **La table d'une version reste lue dans LEGI, par le récupérateur.** La note
+  dit ce qu'une version porte, non qui l'écrit. La table de l'âge légal n'est
+  pas saisie : `scripts/fetch/dila_legi_parametres_retraite.py` la lit dans
+  LEGI, rédaction par rédaction. Il lit déjà la date d'application en tête de
+  chacune (`date_effet`), et résout déjà le renvoi de 2023 de la carrière
+  longue contre l'âge légal de la date d'effet ; il ne lui reste qu'à ne plus
+  fusionner (`_par_version`). La table d'une version tient donc dans un
+  fichier indexé par version, comme `carriere_longue.csv` l'est par date
+  d'effet et par génération ; celle que LEGI ne porte pas y entre lue à la
+  main, à son niveau de fiabilité. La fiche déclare la version, ses bornes,
+  ses textes, son statut et ses renvois, et désigne ses lignes. Aucune table
+  ne se recopie à la main dans une fiche : la certification reculerait, et
+  trois fiches dépassent déjà 100 000 octets. Ce récupérateur et
+  `scripts/verifier_donnees.py`, qui certifie ses tables, sont dans le
+  périmètre de l'étape 2 ; les deux copies d'avant réforme, lues à la main,
+  passent ainsi sous leur contrôle.
+- **Un renvoi nomme une valeur, et se contrôle à la fabrication.** L. 351-8 ne
+  lit pas l'âge légal de l'assuré : depuis 2023, il lit « l'âge prévu au
+  premier alinéa de l'article L. 161-17-2 », 64 ans quelle que soit la
+  génération. Un renvoi nomme donc la valeur qu'il lit dans la version, non la
+  fiche entière. Son opération ajoute une durée ou en retranche une, ce qui
+  suffit aux quatre essais ; toute autre passe par une fonction que nomme le
+  champ `code`, sans quoi le format devient un langage. Un renvoi se contrôle
+  quand les données se fabriquent, d'une fiche à l'autre : sur toute l'étendue
+  des bornes de sa version, la fiche lue a une version et une seule, et aucune
+  chaîne ne boucle. Le contrôle d'aujourd'hui ne regarde qu'une fiche à la
+  fois (`noyau/partage.py`) ; celui-ci entre par ce rectificatif (§ 13.4).
+  L'arrêt du calcul, que pose le premier rectificatif, ne reste que comme
+  ceinture : sur un site statique, il laisse au lecteur une page qui ne répond
+  plus.
+- **L'étape 2 se mène en trois sessions, et finit sur un point d'arrêt.**
+  Chacune laisse les résultats identiques. La première fait des versions la
+  source : le récupérateur les écrit, la fiche les déclare, et la table
+  fusionnée comme les deux copies deviennent des vues fabriquées depuis elles,
+  aux mêmes valeurs, sans toucher au moteur. C'est la règle du chemin : ce qui
+  passe dans une fiche devient une vue fabriquée dans le même commit. La
+  deuxième fait lire l'âge légal au moteur par ses versions, avec la recherche
+  du premier départ. La troisième fait des deux droits contrefactuels des
+  couches, et retire les deux copies. À la fin de l'étape 2, on compte ce
+  qu'elle a coûté, en sessions et en commits, et le propriétaire décide de
+  l'étape 3 : la note n'avait ni estimation ni règle d'arrêt.
+- **Une couche garde une réforme, non une fiche.** Les deux droits
+  contrefactuels ne changent aujourd'hui que trois règles, l'âge légal, la
+  durée requise et la carrière longue (`_sousLeDroit`), quand dix-neuf fiches
+  déclarent la réforme de 2023 et douze la suspension, par leur champ
+  `reformes`. L'âge du taux plein est de ces dix-neuf. Sa table par
+  génération, qu'aucun des deux droits ne recouvre, donne 67 ans sous les
+  trois états du droit ; ses versions seront des renvois, l'âge légal plus
+  cinq ans, puis celui du premier alinéa plus trois. Si la couche du 31 août
+  2023 ne garde que l'âge légal de 2011, la version de 2023 y lira 62 ans plus
+  trois, soit 65 ans. Un univers qui écarte une réforme garde donc, dans
+  chaque fiche qu'elle a réécrite, la version d'avant : c'est « remplacer une
+  version » (C.4), depuis la date d'effet de la réforme, et non une opération
+  de plus. La liste des fiches se calcule depuis leur champ `reformes` :
+  chacune est gardée, ou déclarée hors de la couche avec sa raison, pour que
+  rien n'y reste par oubli. Le test de l'âge du taux plein sous les trois
+  états du droit s'écrit avant le premier commit de l'étape 2 : le fichier qui
+  tient ces deux droits, `tests/test_droits_contrefactuels.py`, ne contrôle
+  pas cet âge.
+- **La recherche du premier départ vaut pour toute règle qui ouvre un droit.**
+  Pour l'âge légal, elle rend la date de la table : aucun écart sur les 19 358
+  jours de naissance de 1923 à 1975, aucun droit ouvert puis refermé. Pour les
+  portes de la carrière longue, elle compte. Le moteur lit la porte dans le
+  texte de la date déclarée (`CarriereLongue.portes`), et le décret
+  n° 2026-345 abaisse d'un trimestre la porte des vingt ans des générations
+  1966 à 1970, pour les pensions prenant effet à compter du 1er septembre
+  2026. Sur la table du dépôt, hors du moteur et la durée supposée acquise,
+  pour un départ déclaré le mois qui précède cette bascule, la porte s'ouvre
+  plus tôt par la recherche que par l'âge du texte de la date déclarée à 1 856
+  jours de naissance sur les 2 617 essayés ; à la bascule de 2023, l'écart va
+  dans l'autre sens. L'étape 3 commence par vérifier ce que le moteur rend
+  pour un départ déclaré avant une bascule : un résultat qui bouge là est une
+  correction, non une régression. Elle dit aussi à quelle date se comptent les
+  durées pendant la recherche, aujourd'hui celle du départ déclaré. La
+  recherche peut ne s'arrêter qu'aux dates où une version change, comme
+  `ouvertureDe` le fait déjà pour les périodes de régime ; l'essai de chaque
+  premier du mois, que décrit le premier rectificatif, sert alors d'oracle au
+  test.
+- **L'étape 4 se compte et s'ordonne avant de commencer.** La note compte les
+  45 dates de bascule des renvois aux deux fiches d'âge. Tous renvois
+  confondus, les 80 fichiers de régime portent 216 changements de renvoi après
+  la première période d'un régime : 173 débuts, 41 fins et 2 changements de
+  cible. 180 tombent sur une frontière coupée à l'année, et 38 périodes sur
+  873 seulement sont datées au jour. L'étape relève d'abord ceux dont le texte
+  n'est pas dans l'index, puis avance par poids dans les résultats, les
+  régimes les plus peuplés et les dates d'effet récentes d'abord, dans un
+  budget que fixe le propriétaire. Une valeur de repli ne se retire qu'une
+  fois montrée morte : celle de l'âge légal l'est, sa table commençant à la
+  génération 1900 ; celle de l'âge du taux plein répond encore avant la
+  génération 1930.
+- **Les corrections n'attendent pas la migration.** Le moteur date déjà une
+  période au jour (`date_effet`, `periodeALEffet`). Les cinq renvois que la
+  relecture du 17 novembre a trouvés faux, à la Banque de France, à la Cavimac
+  et dans les régimes d'artisans et de commerçants d'avant 1973, peuvent donc
+  se corriger dès l'accord du propriétaire, en parallèle des étapes 1 à 3,
+  comme la surcote l'a été le 17 novembre.
+- **Sans exemple officiel, une seconde lecture.** Une version sans exemple n'a
+  qu'une preuve, et le premier rectificatif dit pourquoi un cas calculé à la
+  main n'en fait pas une seconde. L'erreur de la surcote passait tous les
+  tests : c'est une relecture qui l'a trouvée. Quand une telle version décide
+  de pensions dans un régime peuplé ou à des dates d'effet récentes, son texte
+  est relu par une session qui n'a pas vu la première lecture, et la fiche le
+  note à ses sources.
+
+Contre le tout en tables datées, l'argument n'est pas qu'une table n'a qu'une
+date qui décide : `carriere_longue.csv` en a deux, et c'est la forme que prend
+la table d'une version. Il est celui de la ligne de partage : une table porte
+des valeurs, non un renvoi ni une règle dont la forme change.

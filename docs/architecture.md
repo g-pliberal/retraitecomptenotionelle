@@ -1818,8 +1818,9 @@ Python 3.12.
 
 ## 11. Le chemin
 
-Les phases 0 à 8 réorganisent sans changer un seul résultat ; les domaines
-viennent ensuite, un par un.
+Les phases 0 à 8 réorganisent sans changer un seul résultat, hors ce que la
+phase 6 corrige en relisant ses dates au texte ; les domaines viennent
+ensuite, un par un.
 
 | Phase | Contenu | Résultats |
 |---|---|---|
@@ -1829,7 +1830,7 @@ viennent ensuite, un par un.
 | 3 | chronologie datée et réseau de personnes, présomptions actuelles par défaut | inchangés |
 | 4 | acquisition en étapes et relevé des droits | inchangés |
 | 5 | liquidation en fonction pure, journal, échéancier, pilote | inchangés |
-| 6 | un fichier par régime ; les interrupteurs deviennent des renvois aux fiches, datés au jour de leur texte, cités, sans valeur de repli (note 0009) | inchangés |
+| 6 | un fichier par régime ; les interrupteurs deviennent des renvois aux fiches, datés au jour de leur texte, cités, sans valeur de repli (note 0009) | inchangés par le rangement ; changent quand une date ou une valeur que le texte dément se corrige, à part, avec son test et l'accord du propriétaire |
 | 7 | la proposition réécrite en univers de droit | inchangés |
 | 8 | texte du site écrit une fois | inchangés |
 | 9 et suivantes | un domaine à la fois | changent, commit par commit |
@@ -2574,7 +2575,7 @@ Une **relation** porte en plus :
 | `vise` | les pensions qui prennent effet, ou les pensions servies ; l'étape qui l'applique en découle | pensions qui prennent effet |
 | `duree` | pour un effet temporaire | — |
 | `exception_de` | la version qu'elle prime, s'il y a chevauchement | — |
-| `contenu` | ce que son texte écrit, et rien d'autre : droit accordé ou exigé, bénéficiaire, conditions, défauts légaux, paramètres lus, une table, une valeur, un renvoi à une autre fiche, qui nomme la fiche, son opération et la date qui choisit la version lue, ou un renvoi à sa propre rédaction antérieure ; chaque partie avec sa date qui décide et le texte qui la décide | — |
+| `contenu` | ce que son texte écrit, et rien d'autre : droit accordé ou exigé, bénéficiaire, conditions, défauts légaux, paramètres lus, une table, une valeur, un renvoi à une autre fiche, qui nomme la fiche, la valeur qu'il y lit, son opération et la date qui choisit la version lue, ou un renvoi à sa propre rédaction antérieure ; chaque partie avec sa date qui décide et le texte qui la décide | — |
 | `unites` | unité, arrondi, ancrage | — |
 | `exemples` | les exemples officiels, chacun qui passe ou qui porte son écart connu (la valeur du modèle, l'explication), ou « aucun trouvé », avec ce qui a été cherché | — |
 
@@ -2589,8 +2590,17 @@ peuvent décider l'une dans l'autre : la date d'effet choisit la version, une
 autre date, la génération ou celle d'un trimestre, choisit sa ligne. Une
 version reprise a deux preuves, la certification, qui lit ses valeurs dans
 le texte, et l'exemple officiel, qui montre son application ; ou elle dit ce
-qui manque. Un scénario qui garde une loi passée la prolonge par une couche
-(C.4), sans table posée sur une autre.
+qui manque. La table d'une version tient dans un fichier indexé par version,
+que la fiche désigne, et ne se recopie pas dans la fiche : le récupérateur
+l'écrit quand LEGI porte son texte. Un renvoi ajoute une durée à la valeur
+qu'il lit, ou l'en retranche ; toute autre opération passe par une fonction
+que nomme le champ `code`. Il se contrôle quand les données se fabriquent,
+d'une fiche à l'autre : sur toute l'étendue des bornes de sa version, la
+fiche lue a une version et une seule, et aucune chaîne ne boucle. Un scénario
+qui garde une loi passée la prolonge par une couche (C.4), sans table posée
+sur une autre. La couche garde une réforme, non une fiche : dans chaque fiche
+que la réforme écartée a réécrite, elle remplace la version née de cette
+réforme par celle d'avant, ou déclare pourquoi elle la laisse.
 
 ### C.3 La table datée
 
