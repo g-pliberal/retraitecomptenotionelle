@@ -71,7 +71,7 @@ periodes:
     assiette: hors_primes
     taux_cotisation_retraite: 0.0785
     perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
+    bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -107,8 +107,12 @@ periodes:
       règlement, relu le 2 novembre 2026, abrogé au 1er janvier 2025) : la
       table de 2018 se lit pour lui à leur génération (âge de lecture de
       `banque_de_france_2014`), 167 trimestres et non 168 à l'agent né en
-      janvier 1961 qui réunit les conditions en janvier 2020. L'âge d'annulation
-      de la décote reste celui de la fonction publique, non relu.
+      janvier 1961 qui réunit les conditions en janvier 2020. LA DÉCOTE EST CELLE
+      DU RÈGLEMENT, non celle de la fonction publique (relue le 19 novembre
+      2026) : l'article 70 n'en oppose aucune à l'agent susceptible de
+      liquider jusqu'au 31 décembre 2008, puis monte de 0,125 % en 2009 à
+      1,25 % en 2018, l'âge d'annulation de 61 ans à la limite d'âge du
+      statut (fiche `decote_banque_de_france`).
       LE RÈGLEMENT VAUT À L'ANNÉE D'EFFET. Il entre en vigueur au printemps
       2007 (son article 69 compte encore « jusqu'au 31 mars 2007 ») ; la fiche
       le fait commencer avec sa période de 2008, et garde avant les cinquante-
@@ -131,7 +135,7 @@ periodes:
     assiette: hors_primes
     taux_cotisation_retraite: 0.0785
     perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
+    bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -156,7 +160,7 @@ periodes:
     assiette: hors_primes
     taux_cotisation_retraite: 0.0785
     perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
+    bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -194,7 +198,7 @@ periodes:
     assiette: hors_primes
     taux_cotisation_retraite: 0.0812
     perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
+    bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -232,7 +236,7 @@ periodes:
     assiette: hors_primes
     taux_cotisation_retraite: 0.0854
     perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
+    bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -270,7 +274,7 @@ periodes:
     assiette: hors_primes
     taux_cotisation_retraite: 0.0886
     perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
+    bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -308,7 +312,7 @@ periodes:
     assiette: hors_primes
     taux_cotisation_retraite: 0.0928
     perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
+    bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -346,7 +350,7 @@ periodes:
     assiette: hors_primes
     taux_cotisation_retraite: 0.0965
     perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
+    bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -384,7 +388,7 @@ periodes:
     assiette: hors_primes
     taux_cotisation_retraite: 0.0997
     perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
+    bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -422,7 +426,7 @@ periodes:
     assiette: hors_primes
     taux_cotisation_retraite: 0.1029
     perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
+    bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -460,7 +464,7 @@ periodes:
     assiette: hors_primes
     taux_cotisation_retraite: 0.1056
     perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
+    bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -498,7 +502,7 @@ periodes:
     assiette: hors_primes
     taux_cotisation_retraite: 0.1083
     perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
+    bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -536,7 +540,7 @@ periodes:
     assiette: hors_primes
     taux_cotisation_retraite: 0.1110
     perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
+    bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -572,7 +576,7 @@ periodes:
     assiette: hors_primes
     taux_cotisation_retraite: 0.1110
     perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
+    bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
@@ -605,7 +609,7 @@ periodes:
     assiette: hors_primes
     taux_cotisation_retraite: 0.111
     perimetre_taux: agent_seul
-    bareme_decote: decote_fonction_publique
+    bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]

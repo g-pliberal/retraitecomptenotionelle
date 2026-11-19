@@ -212,6 +212,22 @@ function ageDeLaVersion(carriere, parametres, classe) {
   return ancienne + plus;
 }
 
+/**
+ * La limite d'âge, en années, que le tableau d'une fiche écrit pour cet
+ * assuré et cette classe d'emploi, dans la version en vigueur ce jour
+ * (AAAA-MM-JJ), sans recul ni prolongation ; `null` sans version ou sans
+ * limite. La décote de la Banque de France s'en retranche ses trimestres
+ * (`liquider.decoteBanqueDeFrance`).
+ */
+export function limiteDuTableau(moteur, carriere, nom, classe, jour) {
+  const version = versionAu(moteur, nom, jour);
+  if (version === null) {
+    return null;
+  }
+  const enMois = ageDeLaVersion(carriere, version.parametres, classe);
+  return enMois === null ? null : enMois / MOIS_PAR_AN;
+}
+
 function morceaux(carriere, version, classe) {
   const [debut, fin] = version.bornes.age_atteint ?? [null, null];
   const parametres = version.parametres;

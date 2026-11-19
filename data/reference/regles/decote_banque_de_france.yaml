@@ -1,0 +1,286 @@
+schema_version: 1
+id: decote_banque_de_france
+intitule: >-
+  La décote de l'agent titulaire de la Banque de France est celle de son règlement :
+  aucune à l'agent susceptible de liquider sa pension jusqu'au 31 décembre 2008 ; puis
+  un taux par trimestre manquant qui monte de 0,125 % en 2009 à 1,25 % en 2018, et un
+  âge d'annulation qui monte de 61 ans à la limite d'âge (article 70 du règlement
+  annexé au décret n° 2007-262) ; depuis le 9 mai 2012, le tableau se lit à la période
+  de naissance, pour les agents nés avant 1963, l'âge étant la limite d'âge du statut
+  diminuée d'un à sept trimestres ; aux autres, 1,25 % jusqu'à la limite d'âge
+  (article 32).
+domaine: decote_surcote
+regimes: [banque_de_france]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- >-
+  la date d'effet de la pension, qui choisit le tableau : celui de 2007, par période, ou
+  celui de 2012, par naissance
+- >-
+  le mois où l'agent est susceptible de liquider sa pension, celui où il atteint l'âge
+  d'ouverture de son droit, ou son départ s'il part plus tôt (tableau de 2007)
+- sa date de naissance (tableau de 2012)
+- >-
+  la limite d'âge que le statut du personnel écrit pour sa période de naissance, colonne
+  « Limite d'âge » (`limite_age_banque_de_france`)
+ecrit:
+- >-
+  le taux du coefficient de minoration par trimestre manquant, et l'âge auquel il
+  s'annule, d'où se comptent les trimestres manquants par l'âge (1° de l'article 32)
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: avant_le_reglement_de_2007
+  statut: supposee
+  hypothese: >-
+    aucune décote avant le règlement annexé au décret n° 2007-262, entré en vigueur le
+    1er avril 2007 : le règlement d'avant, que l'index LEGI ne porte pas, n'est pas lu ;
+    le tableau de 2007 écrit « Sans objet » jusqu'au 31 décembre 2008, ce qui n'en
+    suppose aucune avant lui
+  fiabilite: faible
+  textes: []
+  bornes:
+    liquidation.date_effet: [null, 2007-04-01]
+  contenu:
+    parametres:
+      lecture: null
+      table: []
+    droit: >-
+      aucune décote au modèle
+  exemples: aucun trouvé
+- id: tableau_par_periode_de_liquidation
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006778516, article: "décret n° 2007-262 du 27 février 2007, règlement annexé, articles 32 et 70, rédaction d'origine", en_vigueur: 2007-02-28, publie_le: 2007-02-28}
+  - {id: LEGIARTI000020085558, article: "même règlement, mêmes articles, au mot près", en_vigueur: 2009-01-01}
+  nee_de: LEGIARTI000006778516
+  bornes:
+    liquidation.date_effet: [2007-04-01, 2012-05-09]
+  contenu:
+    parametres:
+      lecture: ouverture_du_droit
+      table:
+      - {depuis: "2009-01-01", coefficient: 0.00125, age_annulation: 61.0, age_annulation_a_55_ans: 56.0}
+      - {depuis: "2009-07-01", coefficient: 0.00125, age_annulation: 61.25, age_annulation_a_55_ans: 56.25}
+      - {depuis: "2010-01-01", coefficient: 0.0025, age_annulation: 61.5, age_annulation_a_55_ans: 56.5}
+      - {depuis: "2010-07-01", coefficient: 0.0025, age_annulation: 61.75, age_annulation_a_55_ans: 56.75}
+      - {depuis: "2011-01-01", coefficient: 0.00375, age_annulation: 62.0, age_annulation_a_55_ans: 57.0}
+      - {depuis: "2011-07-01", coefficient: 0.00375, age_annulation: 62.25, age_annulation_a_55_ans: 57.25}
+      - {depuis: "2012-01-01", coefficient: 0.005, age_annulation: 62.25, age_annulation_a_55_ans: 57.25}
+      - {depuis: "2012-07-01", coefficient: 0.005, age_annulation: 62.5, age_annulation_a_55_ans: 57.5}
+      - {depuis: "2013-01-01", coefficient: 0.00625, age_annulation: 62.5, age_annulation_a_55_ans: 57.5}
+      - {depuis: "2013-07-01", coefficient: 0.00625, age_annulation: 62.75, age_annulation_a_55_ans: 57.75}
+      - {depuis: "2014-01-01", coefficient: 0.0075, age_annulation: 62.75, age_annulation_a_55_ans: 58.75}
+      - {depuis: "2014-07-01", coefficient: 0.0075, age_annulation: 63.0, age_annulation_a_55_ans: 58.0}
+      - {depuis: "2015-01-01", coefficient: 0.00875, age_annulation: 63.0, age_annulation_a_55_ans: 58.0}
+      - {depuis: "2015-07-01", coefficient: 0.00875, age_annulation: 63.25, age_annulation_a_55_ans: 58.25}
+      - {depuis: "2016-01-01", coefficient: 0.01, age_annulation: 63.25, age_annulation_a_55_ans: 58.25}
+      - {depuis: "2016-07-01", coefficient: 0.01, age_annulation: 63.5, age_annulation_a_55_ans: 58.5}
+      - {depuis: "2017-01-01", coefficient: 0.01125, age_annulation: 63.5, age_annulation_a_55_ans: 58.5}
+      - {depuis: "2017-07-01", coefficient: 0.01125, age_annulation: 63.75, age_annulation_a_55_ans: 58.75}
+      - {depuis: "2018-01-01", coefficient: 0.0125, age_annulation: 63.75, age_annulation_a_55_ans: 58.75}
+      - {depuis: "2018-07-01", coefficient: 0.0125, age_annulation: 64.0, age_annulation_a_55_ans: 59.0}
+      - {depuis: "2019-07-01", coefficient: 0.0125, age_annulation: 64.25, age_annulation_a_55_ans: 59.25}
+      - {depuis: "2020-07-01", coefficient: 0.0125, age_annulation: 64.5, age_annulation_a_55_ans: 59.5}
+      - {depuis: "2021-07-01", coefficient: 0.0125, age_annulation: 64.75, age_annulation_a_55_ans: 59.75}
+    droit: >-
+      article 32 : « Sous réserve des dispositions transitoires de l'article 70, […] un
+      coefficient de minoration calculé sur la base de 1,25 % par trimestre manquant
+      s'applique au montant de la pension […] dans la limite de vingt trimestres », les
+      trimestres manquants étant le plus petit de ceux qui séparent « l'âge auquel la
+      pension est liquidée de la limite d'âge du grade » et de ceux qui manquent à la
+      durée ; article 70 : « Jusqu'au 30 juin 2022, sont fixés comme indiqué dans le
+      tableau suivant : 1° Le taux du coefficient de minoration, par dérogation aux
+      dispositions de l'article 32 ; 2° L'âge auquel s'annule le coefficient de
+      minoration », par « période au cours de laquelle l'agent est susceptible de liquider
+      sa pension (art. 26) » : « Jusqu'au 31 décembre 2008. Sans objet » ; « Du 1er
+      janvier 2009 au 30 juin 2009. 0,125 % 61 ans 56 ans » ; par semestre jusqu'au
+      « 1er janvier 2018 au 30 juin 2018. 1,250 % 63 ans et 3 trimestres », puis par an
+      jusqu'au « 1er juillet 2021 au 30 juin 2022. 1,250 % 64 ans et 3 trimestres 59 ans
+      et 3 trimestres » ; la dernière colonne vaut « pour les agents dont les droits sont
+      ouverts à l'âge de 55 ans »
+    conditions: >-
+      la ligne se lit au mois où l'agent atteint l'âge d'ouverture de son droit, au plus
+      tard à son départ : qui pouvait partir en 2008 n'a pas de décote, même parti en
+      2010. Le tableau écrit « 58 ans et 3 trimestres » à la colonne des agents à 55 ans
+      du premier semestre 2014, entre 57 ans et 3 trimestres et 58 ans : transcrit tel
+      quel, et hors d'atteinte, la version s'arrêtant au 8 mai 2012. Au-delà du 30 juin
+      2022, l'article 32 seul
+  exemples: aucun trouvé
+- id: tableau_par_periode_de_naissance
+  statut: lue
+  textes:
+  - {id: LEGIARTI000025882187, article: "même règlement, articles 32 et 70, rédaction du décret n° 2012-701 du 7 mai 2012, article 36", en_vigueur: 2012-05-09, publie_le: 2012-05-08}
+  - {id: JORFARTI000025824249, article: "décret n° 2012-701 du 7 mai 2012, article 36", en_vigueur: 2012-05-09, publie_le: 2012-05-08}
+  - {id: LEGIARTI000047909725, article: "même règlement, article 70, rédaction du 1er janvier 2025 : les lignes des nés avant 1956 retirées du premier tableau, les autres au mot près", en_vigueur: 2025-01-01}
+  nee_de: LEGIARTI000025882187
+  bornes:
+    liquidation.date_effet: [2012-05-09, null]
+  contenu:
+    parametres:
+      lecture: naissance
+      limite_d_age:
+        fiche: limite_age_banque_de_france
+        classe: sedentaire
+        lue_depuis: "2012-07-26"
+      table:
+      - {depuis: "1949-01-01", coefficient: 0.00125, trimestres_avant_limite: 3}
+      - {depuis: "1949-07-01", coefficient: 0.00125, trimestres_avant_limite: 3}
+      - {depuis: "1950-01-01", coefficient: 0.0025, trimestres_avant_limite: 3}
+      - {depuis: "1950-07-01", coefficient: 0.0025, trimestres_avant_limite: 3}
+      - {depuis: "1951-01-01", coefficient: 0.00375, trimestres_avant_limite: 3}
+      - {depuis: "1951-07-01", coefficient: 0.00375, trimestres_avant_limite: 3}
+      - {depuis: "1952-01-01", coefficient: 0.005, trimestres_avant_limite: 4}
+      - {depuis: "1952-07-01", coefficient: 0.005, trimestres_avant_limite: 4}
+      - {depuis: "1953-01-01", coefficient: 0.00625, trimestres_avant_limite: 5}
+      - {depuis: "1953-07-01", coefficient: 0.00625, trimestres_avant_limite: 5}
+      - {depuis: "1954-01-01", coefficient: 0.0075, trimestres_avant_limite: 6}
+      - {depuis: "1954-07-01", coefficient: 0.0075, trimestres_avant_limite: 6}
+      - {depuis: "1955-01-01", coefficient: 0.00875, trimestres_avant_limite: 7}
+      - {depuis: "1955-07-01", coefficient: 0.00875, trimestres_avant_limite: 7}
+      - {depuis: "1956-01-01", coefficient: 0.01, trimestres_avant_limite: 7}
+      - {depuis: "1956-07-01", coefficient: 0.01, trimestres_avant_limite: 6}
+      - {depuis: "1957-01-01", coefficient: 0.01125, trimestres_avant_limite: 6}
+      - {depuis: "1957-07-01", coefficient: 0.01125, trimestres_avant_limite: 5}
+      - {depuis: "1958-01-01", coefficient: 0.0125, trimestres_avant_limite: 5}
+      - {depuis: "1958-07-01", coefficient: 0.0125, trimestres_avant_limite: 4}
+      - {depuis: "1959-01-01", coefficient: 0.0125, trimestres_avant_limite: 4}
+      - {depuis: "1959-07-01", coefficient: 0.0125, trimestres_avant_limite: 3}
+      - {depuis: "1960-01-01", coefficient: 0.0125, trimestres_avant_limite: 3}
+      - {depuis: "1960-07-01", coefficient: 0.0125, trimestres_avant_limite: 2}
+      - {depuis: "1961-01-01", coefficient: 0.0125, trimestres_avant_limite: 2}
+      - {depuis: "1961-07-01", coefficient: 0.0125, trimestres_avant_limite: 1}
+      - {depuis: "1962-01-01", coefficient: 0.0125, trimestres_avant_limite: 1}
+      - {depuis: "1963-01-01", coefficient: 0.0125, trimestres_avant_limite: 0}
+    droit: >-
+      article 70 : « Pour les agents nés avant le 1er janvier 1963, sont fixés comme
+      indiqué dans le tableau suivant : 1° Le taux du coefficient de minoration […] ; 2°
+      L'âge auquel s'annule le coefficient de minoration, exprimé par rapport à la limite
+      d'âge », par « période de naissance » : « Jusqu'au 2e semestre 1948 Sans objet » ;
+      « 1er semestre 1949 0,125 % Lim. âge - 3 trimestres » ; « 1er semestre 1952 0,500 %
+      Lim. âge - 4 trimestres » ; « 1er semestre 1955 0,875 % Lim. âge - 7 trimestres » ;
+      « 1er semestre 1958 1,250 % Lim. âge - 5 trimestres » ; jusqu'au « 1er semestre
+      1962 1,250 % Lim. âge - 1 trimestre ». « Pour les agents appartenant à une des
+      catégories visées au quatrième alinéa de l'article 26, l'âge visé au 2° est minoré
+      de 20 trimestres. » Un second tableau donne leur âge aux « personnels de direction
+      à partir du quatrième degré nés avant le 1er janvier 1956 ». Aux agents nés depuis
+      1963, l'article 32 : 1,25 % par trimestre, jusqu'à la limite d'âge
+    conditions: >-
+      le décret n° 2012-701 entre en vigueur le lendemain de sa publication, et son
+      article 41 ne réserve pas l'article 36 aux pensions de 2016 : le tableau vaut pour
+      les pensions prenant effet depuis le 9 mai 2012. Il ne change pas le droit des nés
+      de 1949 à 1955 : la limite d'âge du statut diminuée de ses trimestres est l'âge que
+      le tableau de 2007 écrivait au semestre de leurs soixante ans
+      (`tests/test_decote_banque_de_france.py`). La limite d'âge est celle du tableau de
+      l'article 241 du statut du personnel, publié le 26 juillet 2012, lu aussi pour les
+      pensions des onze semaines qui le précèdent (PRÉSOMPTION : le décret n° 2012-697
+      du même jour la relève, et le tableau de l'article 70 la suppose)
+  exemples: aucun trouvé
+textes_sans_effet:
+- id: LEGIARTI000026140060
+  reference: décret n° 2007-262, règlement annexé, rédaction du 4 juillet 2012
+  motif: >-
+    les articles 32 et 70 y sont ceux du 9 mai 2012, au mot près
+- id: LEGIARTI000028435924
+  reference: décret n° 2007-262, règlement annexé, rédaction du 1er janvier 2014
+  motif: >-
+    les articles 32 et 70 y sont ceux du 9 mai 2012, au mot près
+- id: LEGIARTI000029138467
+  reference: décret n° 2007-262, règlement annexé, rédaction du 26 juin 2014
+  motif: >-
+    les articles 32 et 70 y sont ceux du 9 mai 2012, au mot près
+- id: LEGIARTI000029924596
+  reference: décret n° 2007-262, règlement annexé, rédaction du 20 décembre 2014
+  motif: >-
+    les articles 32 et 70 y sont ceux du 9 mai 2012, au mot près
+- id: LEGIARTI000030059031
+  reference: décret n° 2007-262, règlement annexé, rédaction du 1er janvier 2015
+  motif: >-
+    les articles 32 et 70 y sont ceux du 9 mai 2012, à l'espacement près de « 1,25 % » et de « Lim. âge-3 trimestres »
+- id: LEGIARTI000026151447
+  reference: décret n° 2007-262, règlement annexé, rédaction du 1er janvier 2016, jamais en vigueur
+  motif: >-
+    l'article 70 y est celui du 9 mai 2012 au mot près, l'article 32 à l'espacement de « 1,25 % » près
+- id: LEGIARTI000031800060
+  reference: décret n° 2007-262, règlement annexé, rédaction du 1er janvier 2016
+  motif: >-
+    l'article 70 y est celui du 9 mai 2012 au mot près, l'article 32 à l'espacement de « 1,25 % » près
+- id: LEGIARTI000033105072
+  reference: décret n° 2007-262, règlement annexé, rédaction du 10 septembre 2016
+  motif: >-
+    l'article 70 y est celui du 9 mai 2012 au mot près, l'article 32 à l'espacement de « 1,25 % » près
+- id: LEGIARTI000042384599
+  reference: décret n° 2007-262, règlement annexé, rédaction du 2 octobre 2020
+  motif: >-
+    l'article 70 y est celui du 9 mai 2012 au mot près, l'article 32 à l'espacement de « 1,25 % » près
+- id: LEGIARTI000047909413
+  reference: décret n° 2007-262, règlement annexé, rédaction du 1er septembre 2023
+  motif: >-
+    l'article 70 y est celui du 9 mai 2012 au mot près, l'article 32 à l'espacement de « 1,25 % » près
+approximations:
+- version: [tableau_par_periode_de_liquidation, tableau_par_periode_de_naissance]
+  ecart: >-
+    la saisie ne dit ni le niveau de l'agent ni sa catégorie : le modèle prend la colonne
+    de droit commun. Ne sont pas servis l'âge des agents dont le droit s'ouvre à 55 ans
+    (vingt trimestres de moins), celui des personnels de direction du quatrième au
+    septième degré nés avant 1956, ni l'exemption du c de l'article 32, depuis le 9 mai
+    2012, pour l'agent d'au moins soixante-cinq ans qui a élevé un enfant handicapé
+  effet: non mesuré
+effet: >-
+  Le dépôt opposait à l'agent le barème de l'article L. 14 du code des pensions, lu à
+  l'année où son droit s'ouvre : en avance de trois ans sur le règlement, et sur une
+  limite d'âge de 65 puis 67 ans au lieu de celle du statut. Un agent né en janvier 1948
+  parti à 60 ans avec cinq trimestres manquants perdait 1,875 % de sa pension : il n'en
+  perd rien. Né en janvier 1949 et parti à 60 ans, il perdait 0,5 % par trimestre sur
+  sept trimestres, 3,5 % : il perd 0,125 % sur quatre, 0,5 %. Né en janvier 1958 et
+  parti à 62 ans avec dix-neuf trimestres manquants, il perdait 23,75 % : il en perd
+  15 %, sa décote s'annulant à 65 ans et non à 67.
+sources:
+  lu_le: 2026-11-19
+  prochaine_relecture: 2027-11-19
+  a_relire:
+  - >-
+    Un exemple chiffré publié par la Banque de France, qui montrerait la ligne lue pour un
+    agent parti après la période où son droit s'est ouvert : aucun trouvé.
+  - >-
+    Le règlement d'avant le 1er avril 2007, que l'index LEGI ne porte pas : la version
+    `avant_le_reglement_de_2007` suppose qu'il n'avait pas de décote.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2007-262 du 27 février 2007, règlement annexé, articles 32 et 70, dans les
+      quatorze rédactions de l'annexe que porte l'index LEGI du dépôt : l'article 70 a
+      trois textes — l'origine (LEGIARTI000006778516, reprise au mot près le 1er janvier
+      2009), celui du 9 mai 2012 (LEGIARTI000025882187, repris au mot près jusqu'au 31
+      décembre 2024, à l'espacement de « Lim. âge-3 » près le 1er janvier 2015) et celui
+      du 1er janvier 2025 (LEGIARTI000047909725)
+    date: 2026-11-19
+  - type: jorf
+    reference: >-
+      décret n° 2012-701 du 7 mai 2012, notice, articles 36 et 41 (JORFTEXT000025824107,
+      JORFARTI000025824249, JORFARTI000025824269), lus dans l'index JORF du dépôt
+    date: 2026-11-19
+historique:
+- >-
+  2026-11-19 — née de la relecture des dix renvois sensibles (action 191) : le régime
+  renvoyait à `decote_fonction_publique` ; trois versions sur la date d'effet, les deux
+  tableaux de l'article 70 transcrits.
+reformes: []
+code:
+  interrupteurs:
+    bareme_decote: banque_de_france
+  moteur: >-
+    `bareme_decote: banque_de_france` lit le taux et l'âge d'annulation dans la version de
+    cette fiche que choisit la date d'effet : la ligne de la période où le droit s'ouvre,
+    ou celle de la naissance, dont les trimestres se retranchent de la limite d'âge du
+    statut ; sans ligne, aucune décote.
+  javascript: >-
+    moteur/js/droit/liquider.js : decoteOpposable, decoteBanqueDeFrance ;
+    moteur/js/droit/limite_age.js : limiteDuTableau ; moteur/js/droit/ouvrir.js :
+    moisOuvertureDesDroits
+  parametres: >-
+    contenu.parametres de chaque version : lecture, table, limite_d_age ;
+    regimes/banque_de_france.yaml : bareme_decote
+  tests: [tests/test_decote_banque_de_france.py]

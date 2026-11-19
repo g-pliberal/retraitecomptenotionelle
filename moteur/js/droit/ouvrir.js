@@ -309,6 +309,14 @@ export function ouvrir(moteur, releve, regimes = null) {
   });
 }
 
+/**
+ * Les barèmes de décote dont la période lit sa durée requise comme la
+ * fonction publique : la Banque de France a sa décote à elle depuis le
+ * 19 novembre 2026 (fiche `decote_banque_de_france`), et garde ici les
+ * lectures de la durée qu'elle avait, que cette étape n'a pas relues.
+ */
+const DUREE_DE_LA_FONCTION_PUBLIQUE = new Set(["fonction_publique", "banque_de_france"]);
+
 /** @returns {[number, number|null]} durée requise opposable, et fiabilité. */
 export function dureeRequise(moteur, periode, carriere) {
   // UN RÉGIME SPÉCIAL QUI ÉCRIT SES TABLES PASSE AVANT LA TABLE COMMUNE : la
@@ -320,7 +328,7 @@ export function dureeRequise(moteur, periode, carriere) {
   }
   // La fonction publique a sa propre montée en charge, 2004-2008, lue à
   // l'année d'ouverture du droit ; elle passe avant la table par génération.
-  if (periode.bareme_decote === "fonction_publique") {
+  if (DUREE_DE_LA_FONCTION_PUBLIQUE.has(periode.bareme_decote)) {
     const ouverture = anneeOuvertureDesDroits(
       moteur, periode, carriere,
       (carriere.age_liquidation !== null && carriere.age_liquidation !== undefined)
@@ -427,7 +435,7 @@ export function dureeRequise(moteur, periode, carriere) {
         }
         // La circulaire Cnav 2011/25 ne vaut que pour la caisse : la fonction
         // publique garde la table (OpenFisca de même, test de l'oracle).
-        const avantLeDecret = periode.bareme_decote === "fonction_publique"
+        const avantLeDecret = DUREE_DE_LA_FONCTION_PUBLIQUE.has(periode.bareme_decote)
           ? [] : DUREES_AVANT_LE_DECRET;
         for (const [premiere, suivante, [annee, mois], trimestres] of avantLeDecret) {
           if (carriere.generation >= premiere && carriere.generation < suivante
@@ -462,7 +470,7 @@ export function dureeRequise(moteur, periode, carriere) {
  * @returns {[number, number|null] | null}
  */
 export function dureeRequiseAvantSoixanteAns(moteur, periode, carriere, derogation) {
-  if (periode.bareme_decote !== "fonction_publique") {
+  if (!DUREE_DE_LA_FONCTION_PUBLIQUE.has(periode.bareme_decote)) {
     return null;
   }
   const militaire = droitMilitaire(moteur, periode, carriere);

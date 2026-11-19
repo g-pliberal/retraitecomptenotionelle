@@ -5,7 +5,7 @@ intitule: >-
   d'ouverture du droit, montée en charge 2006-2020, limite d'âge du grade ; la durée
   d'assurance qu'elle lit se compte au jour, sans arrondi, ses trimestres manquants
   arrondis à l'entier supérieur (fiche decompte_des_services_fonction_publique).
-regimes: [banque_de_france, cnracl, fonction_publique_etat, fspoeie]
+regimes: [cnracl, fonction_publique_etat, fspoeie]
 etat: conforme
 effet: Fonctionnaires liquidant avant le taux plein.
 sources:
@@ -56,7 +56,7 @@ code:
     anneeOuvertureDesDroits, derogationActive ; moteur/js/regimes.js :
     DecoteFonctionPublique
   parametres: >-
-    regimes/banque_de_france.yaml, regimes/cnracl.yaml,
+    regimes/cnracl.yaml,
     regimes/fonction_publique_etat.yaml, regimes/fspoeie.yaml : age_taux_plein,
     age_ouverture, duree_requise_trimestres ; legislation/decote_fonction_publique.csv :
     trimestres_avant_limite, coefficient

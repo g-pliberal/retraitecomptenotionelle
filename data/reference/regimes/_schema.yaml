@@ -546,7 +546,7 @@ champs_periode:
       dans la fiche à laquelle la période renvoie.
     renvoi: true
     valeurs: ["regime_aligne", "fonction_publique", "regimes_speciaux",
-              "regimes_speciaux_age_fixe"]
+              "regimes_speciaux_age_fixe", "banque_de_france"]
     defaut: regime_aligne
 
   decote_annulee_par_la_duree:

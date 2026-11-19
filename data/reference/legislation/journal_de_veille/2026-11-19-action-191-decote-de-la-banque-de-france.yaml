@@ -1,0 +1,20 @@
+date: "2026-11-19"
+session: "action 191 : la décote de la Banque de France, lue dans son règlement"
+consulte: >-
+  Le règlement annexé au décret n° 2007-262 du 27 février 2007, articles 26,
+  32 et 70, dans ses quatorze rédactions de l'index LEGI (de
+  LEGIARTI000006778516 à LEGIARTI000047909725) ; le décret n° 2012-701 du
+  7 mai 2012, notice, articles 36 et 41, par l'index JORF
+  (JORFTEXT000025824107) ; la fiche limite_age_banque_de_france.
+trouve: >-
+  L'article 70 donne à la Banque de France sa propre décote : aucune à
+  l'agent susceptible de liquider jusqu'au 31 décembre 2008, puis de 0,125 %
+  en 2009 à 1,25 % en 2018, l'âge d'annulation de 61 ans à la limite d'âge ;
+  depuis le 9 mai 2012, par période de naissance, pour les nés avant 1963.
+  Le dépôt lui opposait le barème de L. 14 du code des pensions. Corrigé :
+  fiche decote_banque_de_france, à laquelle le régime renvoie depuis 2008.
+  Détail : docs/feuille_de_route/191/2026-11-19-decote-de-la-banque-de-france.md.
+reste: >-
+  Un exemple chiffré publié par la Banque ; le règlement d'avant le 1er avril
+  2007, absent de LEGI ; les colonnes des agents à 55 ans et des personnels
+  de direction, que la saisie ne distingue pas.
