@@ -104,12 +104,6 @@ constantes:
   "moteur/js/droit/primes.js : 2004": {classe: droit, fiches: [], lignes: 1}
   "moteur/js/droit/reversion.js : DEBUT_DE_LA_MAJORATION": {classe: droit, fiches: []}
   "moteur/js/droit/reversion.js : PRINCIPALE_REVALORISEE_DEPUIS": {classe: droit, fiches: []}
-  "moteur/js/droit/seconde.js : DROITS_2023": {classe: droit, fiches: [droits_apres_la_premiere_pension, seconde_pension]}
-  "moteur/js/droit/seconde.js : DROITS_RCI": {classe: droit, fiches: [seconde_pension]}
-  "moteur/js/droit/seconde.js : LIQUIDATION_2023": {classe: droit, fiches: [droits_apres_la_premiere_pension, seconde_pension]}
-  "moteur/js/droit/seconde.js : LIQUIDATION_AGIRC_ARRCO": {classe: droit, fiches: []}
-  "moteur/js/droit/seconde.js : PREMIERE_2015": {classe: droit, fiches: [droits_apres_la_premiere_pension]}
-  "moteur/js/droit/seconde.js : PREMIERE_2027": {classe: droit, fiches: [droits_apres_la_premiere_pension, seconde_pension]}
   "moteur/js/impot-revenu.js : 1971": {classe: hors, raison: impot, lignes: 1}
   "moteur/js/impot-revenu.js : 1972": {classe: hors, raison: impot, lignes: 2}
   "moteur/js/impot-revenu.js : 1973": {classe: hors, raison: impot, lignes: 1}

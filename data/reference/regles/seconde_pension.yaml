@@ -34,7 +34,15 @@ versions:
     raison: >-
       la nouvelle pension naît de l'article 26 de la loi n° 2023-270, qui entre en
       vigueur le 1er septembre 2023 (XII)
+    parametres:
+      existe: false
   exemples: aucun trouvé
+  exemples_cherches: >-
+    le 19 novembre 2026 : la fiche F13243 de service-public.gouv.fr, vérifiée le
+    12 novembre 2026, et, dans la base de législation de la Cnav, l'exposé
+    « Retraite personnelle issue d'un cumul emploi retraite » (28 septembre 2026),
+    qui ne cite aucune circulaire : ni l'une ni l'autre ne donne d'exemple d'une
+    activité achevée avant le 1er septembre 2023
 - id: loi_2023
   statut: lue
   textes:
@@ -157,8 +165,11 @@ versions:
       meilleures années retenues ÷ Nombre d'années correspondant » (exposé « Revenu
       annuel moyen »)
     parametres:
+      existe: true
       taux_plein: true
       plafond_en_pass: 0.05
+      agirc_arrco_effet_au_plus_tot: 2024-01-01
+      rci_droits_depuis: 2025-01-01
   exemples: [sp_f13243_nouvelle_pension_plafond]
 - id: lfss_2026
   statut: lue
@@ -181,9 +192,19 @@ versions:
       du A du III de l'article L. 161-22 du code de la sécurité sociale sont réunies,
       l'assuré se constitue de nouveaux droits à pension au titre du présent régime »
     parametres:
+      existe: true
       taux_plein: true
       plafond_en_pass: null
+      agirc_arrco_effet_au_plus_tot: 2024-01-01
+      rci_droits_depuis: 2025-01-01
   exemples: aucun trouvé
+  exemples_cherches: >-
+    le 19 novembre 2026 : la fiche F13243 de service-public.gouv.fr, vérifiée le
+    12 novembre 2026, qui annonce la nouvelle pension des retraites prises à partir
+    du 1er janvier 2027 sans la chiffrer ; dans la base de législation de la Cnav,
+    l'exposé « Retraite personnelle issue d'un cumul emploi retraite » (28 septembre
+    2026) et la fenêtre « Réforme du cumul emploi retraite » (27 février 2026),
+    sans exemple. Aucune pension ne relève encore de cette version
 approximations:
 - ecart: >-
     le modèle calcule la nouvelle pension du régime général et des salariés agricoles,
@@ -412,21 +433,24 @@ sources:
     date: 2026-10-13
 code:
   javascript: >-
-    moteur/js/droit/seconde.js : droits, revenus, nouvellePension,
-    secondeRetraiteComplementaire, prixDuPoint, secondeRetraiteRci, TAUX_PLEIN,
-    PLAFOND_EN_PASS, HEURES_PAR_TRIMESTRE, DROITS_2023, LIQUIDATION_2023, DROITS_RCI,
-    PREMIERE_2027 ; moteur/js/echeancier.js : Echeancier._constituer ;
+    moteur/js/droit/seconde.js : droits, revenus, regleDeLaNouvellePension,
+    effetDeLaNouvellePension, nouvellePension, secondeRetraiteComplementaire,
+    prixDuPoint, secondeRetraiteRci, TAUX_PLEIN, HEURES_PAR_TRIMESTRE ;
+    moteur/js/echeancier.js : Echeancier._constituer ;
     moteur/js/pages.js : droitsDuCumul
   parametres: >-
-    contenu.parametres de chaque version : taux_plein, plafond_en_pass
+    contenu.parametres de chaque version : existe, taux_plein, plafond_en_pass,
+    agirc_arrco_effet_au_plus_tot, rci_droits_depuis
   tests: >-
     tests/test_emploi_retraite.py ; les témoins seconde_pension_* des simulations et
     simuler_seconde_pension des pages ; l'exemple sp_f13243_nouvelle_pension_plafond
   moteur: >-
-    Le taux plein, le plafond en part du plafond annuel de la sécurité sociale, les
-    heures de SMIC d'un trimestre et les dates de 2023, de 2025 et de 2027 sont des
-    constantes de droit/seconde.py et de son jumeau. ResultatActuel porte les droits
-    ouverts après le départ (droits_apres_depart).
+    Le moteur lit la version qui vaut à la date d'effet de la nouvelle pension et à
+    celle de la première (fiches_datees) : le plafond, les dates de 2024 et de 2025,
+    et, par la borne de la version sans droit, la date d'effet au plus tôt (action
+    191, étape 2 du cumul). Il ne lit pas taux_plein : le taux de 50 % et les heures
+    de SMIC d'un trimestre restent des constantes de droit/seconde.js.
+    ResultatActuel porte les droits ouverts après le départ (droits_apres_depart).
 historique:
 - >-
   2026-09-29 — née avec le domaine des départs multiples, de la fiche
@@ -453,6 +477,14 @@ historique:
   ils ont cotisé (D. 633-2), et le RCI leur ouvre une seconde retraite sur les
   périodes de 2025 et après (règlement du RCI, articles 4 et 27), dans les deux
   moteurs (action 138, étape 12).
+- >-
+  2026-11-19 — le moteur lit le plafond et les dates de la règle dans les versions de
+  la fiche, à la date d'effet de la nouvelle pension et à celle de la première
+  (action 191, étape 2 du cumul) : chaque version dit si le droit existe, et porte
+  la date d'effet au plus tôt de la deuxième pension de l'Agirc-Arrco (accord du 17
+  novembre 2017, article 91, KALIARTI000049290254) et celle des droits du RCI
+  (règlement, article 27, LEGIARTI000054906651), relues dans les index KALI et
+  LEGI ; aucun résultat ne bouge.
 effet: >-
   Les retraités en cumul intégral depuis 2023 : leurs cotisations, jusque-là à fonds
   perdus, leur ouvrent une seconde pension, au plus 5 % du plafond de la sécurité

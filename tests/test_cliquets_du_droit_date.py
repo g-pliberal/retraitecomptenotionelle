@@ -34,11 +34,11 @@ COPIES_D_AVANT_REFORME = (
     "duree_requise_avant_suspension.csv",
 )
 #: Les versions que le moteur lit, sans leurs deux preuves ni ce qui manque.
-VERSIONS_SANS_PREUVES = 238
+VERSIONS_SANS_PREUVES = 237
 #: Les constantes du moteur qui sont du droit à migrer, et celles d'entre
 #: elles dont la fiche reste à désigner.
-CONSTANTES_A_MIGRER = 119
-CONSTANTES_SANS_FICHE = 68
+CONSTANTES_A_MIGRER = 113
+CONSTANTES_SANS_FICHE = 67
 
 #: Les tables de ``data/reference/`` dont le nom porte ``_avant_`` et qui
 #: sont du droit, non une copie posée sur une autre table : le droit d'avant
@@ -178,12 +178,42 @@ def _a_ses_deux_preuves(version: dict) -> bool:
 
 
 def _dit_ce_qui_manque(version: dict) -> bool:
-    """« Aucun trouvé », avec ce qui a été cherché. Au 19 novembre 2026, le
-    contrat de la fiche n'admet pour ``exemples`` que des identifiants ou le
-    seul « aucun trouvé » (``data/reference/contrats/fiche.yaml``) : aucune
-    version ne peut dire ce qui a été cherché. L'étape qui reprend la première
-    fiche lui en donne la place, et la lit ici."""
-    return False
+    """Ce qui manque à l'une ou l'autre preuve, dit par la version. « Une
+    version cite ce qu'elle a, et son statut ce qui manque » (note 0009, « Ce
+    qui reste ouvert ») : faute du texte, elle est ``supposee`` et son
+    hypothèse le dit ; faute d'exemple, elle écrit « aucun trouvé » et ce qui
+    a été cherché, où et quand, dans ``exemples_cherches``, que le contrat de
+    la fiche porte depuis l'étape 2 du domaine du cumul, la première à
+    reprendre des fiches (``data/reference/contrats/fiche.yaml``). Une
+    version qui ne dit rien de l'une des deux reste comptée."""
+    def dit(texte) -> bool:
+        return isinstance(texte, str) and bool(texte.strip())
+
+    lue = version.get("statut", "lue") == "lue" and bool(version.get("textes"))
+    exemples = version.get("exemples")
+    exemple = isinstance(exemples, list) and bool(exemples)
+    le_texte = lue or (version.get("statut") == "supposee" and dit(version.get("hypothese")))
+    l_exemple = exemple or (exemples == "aucun trouvé" and dit(version.get("exemples_cherches")))
+    return le_texte and l_exemple and not (lue and exemple)
+
+
+def test_une_version_sans_exemple_dit_ce_qui_a_ete_cherche():
+    """« Aucun trouvé » ne suffit pas : la version dit aussi ce qui a été
+    cherché. Un exemple officiel et un texte lu font les deux preuves."""
+    sans_rien = {"statut": "lue", "textes": [{"id": "LEGIARTI000000000001"}],
+                 "exemples": "aucun trouvé"}
+    assert not _a_ses_deux_preuves(sans_rien) and not _dit_ce_qui_manque(sans_rien)
+    assert not _dit_ce_qui_manque({**sans_rien, "exemples_cherches": "  "})
+    assert _dit_ce_qui_manque({**sans_rien, "exemples_cherches": "la fiche F13243, le 19 novembre 2026"})
+    assert _a_ses_deux_preuves({**sans_rien, "exemples": ["un_exemple"]})
+    # Une version supposée dit par son hypothèse ce qui manque au texte ; il
+    # lui faut encore son exemple, ou ce qui a été cherché.
+    supposee = {"statut": "supposee", "hypothese": "aucun texte général avant 2014",
+                "exemples": "aucun trouvé"}
+    assert not _dit_ce_qui_manque(supposee)
+    assert _dit_ce_qui_manque({**supposee, "exemples": ["un_exemple"]})
+    assert _dit_ce_qui_manque({**supposee, "exemples_cherches": "la circulaire Cnav 2015/8"})
+    assert not _dit_ce_qui_manque({**supposee, "hypothese": "", "exemples": ["un_exemple"]})
 
 
 def test_les_versions_lues_par_le_moteur_sans_leurs_preuves_ne_peuvent_que_baisser():

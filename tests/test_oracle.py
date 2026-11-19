@@ -2370,6 +2370,14 @@ def _mesurer(exemple: dict, carriere, resultat, cle: str, droit=droit_et_fige):
         if pensions is None:
             return "aucune activité après le départ"
         return {regime: plafond for regime, plafond in pensions if plafond is not None}
+    if cle == "regles_des_droits_apres_le_depart":
+        # Ce que le droit fait de l'activité après le départ, période après
+        # période, et la version de la fiche qui le dit.
+        periodes = _rendu(droit, "echeancier.parcourir.au_depart.droits_apres_depart.periodes",
+                          pont.SIMULATEUR, carriere)
+        if periodes is None:
+            return "aucune activité après le départ"
+        return [list(periode) for periode in periodes]
     if cle == "pension_et_rente_d_invalidite_sur_traitement":
         # L'exemple donne le traitement et le taux de la pension, non la
         # carrière : le test les prête au calcul de la retraite pour
@@ -2568,6 +2576,8 @@ def _concorde(cle: str, mesure, valeur) -> bool:
         return all(mesure[part] == pytest.approx(valeur[part], abs=1e-6) for part in valeur)
     if cle == "mois_sans_pension_du_cumul":
         return mesure == [str(mois) for mois in valeur]
+    if cle == "regles_des_droits_apres_le_depart":
+        return mesure == [list(periode) for periode in valeur]
     if cle == "prestation_rafp":
         # Seules se comparent les grandeurs que l'ERAFP publie ou que son
         # simulateur affiche : la forme à l'égalité, les coefficients et l'âge

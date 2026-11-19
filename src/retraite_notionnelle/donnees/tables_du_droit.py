@@ -820,7 +820,12 @@ class FichesDatees:
     pension de la SNCF, que ``liquider.minimum_de_pension_ouvert`` lit, et la
     retraite progressive, que ``progressive.regle`` lit, et la seconde part de
     la cotisation de retraite complémentaire du chef d'exploitation agricole,
-    que ``acquerir.seconde_part_de_rco`` lit à l'année de la cotisation.
+    que ``acquerir.seconde_part_de_rco`` lit à l'année de la cotisation, et
+    les droits de l'activité exercée après la première pension, que
+    ``seconde.versionDesDroits`` lit à la date de cette pension et à celle du
+    mois d'activité, et la seconde pension, que
+    ``seconde.regleDeLaNouvellePension`` lit à sa date d'effet et à celle de la
+    première.
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
@@ -855,7 +860,8 @@ class FichesDatees:
             "limite_age_mines", "apprentissage", "stages_formation_professionnelle",
             "sportifs_haut_niveau", "conge_supplementaire_naissance",
             "minimum_pension_sncf", "retraite_progressive",
-            "cotisation_rco_agricole_2026", "decote_banque_de_france")
+            "cotisation_rco_agricole_2026", "decote_banque_de_france",
+            "droits_apres_la_premiere_pension", "seconde_pension")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

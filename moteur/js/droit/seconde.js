@@ -7,8 +7,11 @@
  * cumul intégral, une nouvelle pension dans le régime de base de l'activité
  * — au taux plein, plafonnée à 5 % du plafond de la sécurité sociale avant les
  * premières pensions de 2027 —, une seconde retraite de l'Agirc-Arrco, sur
- * les points de la tranche 1, et une du RCI, sur les périodes de 2025 et après :
- * voir le Python, qui dit les textes.
+ * les points de la tranche 1, et une du RCI, sur les périodes de 2025 et après.
+ *
+ * Les dates et le plafond de ces règles ne s'écrivent pas ici : le module lit,
+ * dans le paquet (`fiches_datees`), la version de chaque fiche qui vaut aux
+ * dates qui décident (action 191, étape 2 du domaine du cumul).
  */
 
 import { DateMois } from "../calendrier.js";
@@ -30,27 +33,29 @@ export const REGIMES_NON_LIQUIDES = "regimes_non_liquides";
 export const REGIME_LIQUIDE = "regime_liquide";
 export const PENSION_MILITAIRE = "pension_militaire";
 
+/** Les deux fiches que le module lit, et que le paquet porte (`fiches_datees`). */
+export const FICHE_DES_DROITS = "droits_apres_la_premiere_pension";
+export const FICHE_DE_LA_SECONDE_PENSION = "seconde_pension";
+
 /** Les versions de la fiche `droits_apres_la_premiere_pension`. */
 export const SANS_REGLE_GENERALE = "sans_regle_generale";
 export const LOI_2014 = "loi_2014";
 export const LOI_2023 = "loi_2023";
 export const LFSS_2026 = "lfss_2026";
 
-/** Les dates qui découpent la règle, en rang de mois. */
-const rang = (annee, mois) => new DateMois(annee, mois).rang;
-export const PREMIERE_2015 = rang(2015, 1);
-export const DROITS_2023 = rang(2023, 1);
-export const LIQUIDATION_2023 = rang(2023, 9);
-// La seconde retraite de l'Agirc-Arrco « prend effet, au plus tôt, le 1er
-// janvier 2024 » (avenant n° 16 ; voir seconde.py).
-export const LIQUIDATION_AGIRC_ARRCO = rang(2024, 1);
-// Le RCI n'ouvre de droits au retraité en cumul intégral que depuis le 1er
-// janvier 2025 (règlement du RCI, articles 4 et 27 ; voir seconde.py).
-export const DROITS_RCI = rang(2025, 1);
-export const PREMIERE_2027 = rang(2027, 1);
+/** Les dates qui décident des versions des deux fiches. */
+const DATE_PREMIERE_PENSION = "liquidation.premiere_pension_de_base";
+const DATE_DU_DROIT = "droit_acquis";
+const DATE_D_EFFET = "liquidation.date_effet";
+
+/** Ce que les versions de la fiche des droits disent des droits nouveaux. */
+const SELON_LE_REGIME = "selon_le_regime";
+const AUCUN = "aucun";
+/** Les exceptions qui ouvrent une nouvelle pension, et celle du militaire. */
+const CUMULS_QUI_OUVRENT = ["cumul_integral", "cumul_entier"];
+const EXCEPTION_MILITAIRE = "pension_militaire";
 
 export const TAUX_PLEIN = 0.5;
-export const PLAFOND_EN_PASS = 0.05;
 export const HEURES_PAR_TRIMESTRE = 150;
 export const REGIMES_CALCULES = new Set(["regime_general", "msa_salaries"]);
 export const AGIRC_ARRCO = "agirc_arrco";
@@ -141,19 +146,105 @@ export class DroitsApresDepart {
   }
 }
 
-/** Ce que le droit fait d'un mois d'activité, et la version qui le dit. */
-function motif(mois, premiere, integral, sixMois, militaire, nouveaux) {
+/** Le mois d'un jour AAAA-MM-JJ, que porte une borne ou un paramètre de fiche. */
+const moisDuJour = (texte) => new DateMois(Number(texte.slice(0, 4)), Number(texte.slice(5, 7)));
+
+/**
+ * La fiche `nom`, telle que le paquet la porte. Sans elle, le paquet est
+ * périmé et le calcul s'arrête : un droit ne s'ouvre ni ne se refuse par
+ * défaut.
+ */
+function fiche(moteur, nom) {
+  const fiches = moteur.fichesDatees.fiches();
+  if (!(nom in fiches)) {
+    throw new Error(`${nom} : la fiche manque au paquet, que `
+      + "scripts/construire_donnees.py refait");
+  }
+  return fiches[nom];
+}
+
+/**
+ * La version de la fiche des droits qui vaut pour une première pension de
+ * base prise à `premiere` et un mois d'activité `mois` : ses deux dates qui
+ * décident. Aucune version à ces dates arrête le calcul.
+ */
+export function versionDesDroits(moteur, premiere, mois) {
+  fiche(moteur, FICHE_DES_DROITS);
+  const version = moteur.fichesDatees.versionAuxDates(FICHE_DES_DROITS,
+    { [DATE_PREMIERE_PENSION]: jour(premiere), [DATE_DU_DROIT]: jour(mois) });
+  if (version === null) {
+    throw new Error(`${FICHE_DES_DROITS} : aucune version pour une première pension du `
+      + `${jour(premiere)} et un droit du ${jour(mois)}`);
+  }
+  return version;
+}
+
+/**
+ * Ce que le droit fait d'un mois d'activité, et la version qui le dit : celle
+ * de la fiche des droits qui vaut ce mois-là pour cette première pension,
+ * dont les paramètres disent si l'activité ouvre des droits, et par quelles
+ * exceptions.
+ *
+ * La pension militaire garde ses droits sous toutes les versions. Le moteur
+ * nomme la règle de ses mois par la seule date du droit, `loi_2014` avant
+ * celle où commence `loi_2023`, quelle que soit la date de la première
+ * pension : écart gardé, que la fiche déclare à ses approximations.
+ */
+export function motif(moteur, mois, premiere, integral, sixMois, militaire, nouveaux) {
   if (militaire) {
-    return [PENSION_MILITAIRE, mois.rang < DROITS_2023 ? LOI_2014 : LOI_2023];
+    const depuis = fiche(moteur, FICHE_DES_DROITS).versions
+      .find((v) => v.id === LOI_2023).bornes[DATE_DU_DROIT][0];
+    return [PENSION_MILITAIRE, jour(mois) < depuis ? LOI_2014 : LOI_2023];
   }
-  if (mois.rang < DROITS_2023) {
-    if (premiere.rang >= PREMIERE_2015) return [ETEINTS, LOI_2014];
-    return [nouveaux ? REGIMES_NON_LIQUIDES : REGIME_LIQUIDE, SANS_REGLE_GENERALE];
+  const version = versionDesDroits(moteur, premiere, mois);
+  const { droits_nouveaux: droitsNouveaux, exceptions = [] } = version.parametres;
+  if (droitsNouveaux === SELON_LE_REGIME) {
+    return [nouveaux ? REGIMES_NON_LIQUIDES : REGIME_LIQUIDE, version.id];
   }
-  const regle = premiere.rang >= PREMIERE_2027 ? LFSS_2026 : LOI_2023;
-  if (sixMois) return [DERNIER_EMPLOYEUR, regle];
-  if (integral !== null && mois.rang >= integral.rang) return [NOUVELLE_PENSION, regle];
-  return [ETEINTS, regle];
+  if (droitsNouveaux !== AUCUN) {
+    throw new Error(`${FICHE_DES_DROITS} : droits nouveaux « ${droitsNouveaux} » `
+      + "inconnus du moteur");
+  }
+  if (!CUMULS_QUI_OUVRENT.some((exception) => exceptions.includes(exception))) {
+    return [ETEINTS, version.id];
+  }
+  if (sixMois) return [DERNIER_EMPLOYEUR, version.id];
+  if (integral !== null && mois.rang >= integral.rang) return [NOUVELLE_PENSION, version.id];
+  return [ETEINTS, version.id];
+}
+
+/**
+ * La règle de la nouvelle pension qui prend effet à `dateEffet`, pour une
+ * première pension de base prise à `premiere` : les paramètres de la version
+ * de sa fiche qui vaut à ces deux dates ; sans version, aucun droit.
+ */
+export function regleDeLaNouvellePension(moteur, dateEffet, premiere) {
+  fiche(moteur, FICHE_DE_LA_SECONDE_PENSION);
+  const version = moteur.fichesDatees.versionAuxDates(FICHE_DE_LA_SECONDE_PENSION,
+    { [DATE_D_EFFET]: jour(dateEffet), [DATE_PREMIERE_PENSION]: jour(premiere) });
+  return version === null ? { existe: false } : { ...version.parametres };
+}
+
+/**
+ * La date d'effet de la nouvelle pension d'une activité qui cesse à `fin` :
+ * cette date, ou la première qui la suit dont la version ouvre le droit — la
+ * fin de la version sans droit, que la fiche borne. `null` si aucune ne
+ * l'ouvre.
+ */
+export function effetDeLaNouvellePension(moteur, fin, premiere) {
+  fiche(moteur, FICHE_DE_LA_SECONDE_PENSION);
+  const dates = (effet) => (
+    { [DATE_D_EFFET]: jour(effet), [DATE_PREMIERE_PENSION]: jour(premiere) });
+  let effet = fin;
+  for (;;) {
+    const version = moteur.fichesDatees.versionAuxDates(FICHE_DE_LA_SECONDE_PENSION,
+      dates(effet));
+    if (version === null) return null;
+    if (version.parametres.existe) return effet;
+    const suivante = version.bornes[DATE_D_EFFET]?.[1] ?? null;
+    if (suivante === null) return null;
+    effet = moisDuJour(suivante);
+  }
 }
 
 /**
@@ -177,8 +268,8 @@ export function droits(moteur, carriere, resultat, cumul) {
   const ouverts = [];
   for (let r = cumul.debut.rang; r < cumul.fin.rang; r += 1) {
     const mois = DateMois.depuisRang(r);
-    const [leMotif, regle] = motif(mois, premiere, cumul.integral_depuis, sixMois, militaire,
-      nouveaux(mois.annee));
+    const [leMotif, regle] = motif(moteur, mois, premiere, cumul.integral_depuis, sixMois,
+      militaire, nouveaux(mois.annee));
     if (leMotif === NOUVELLE_PENSION) ouverts.push(mois);
     const derniere = periodes[periodes.length - 1];
     if (derniere !== undefined && derniere.motif === leMotif && derniere.regle === regle) {
@@ -190,9 +281,14 @@ export function droits(moteur, carriere, resultat, cumul) {
   }
   const pensions = [];
   const nonCalcules = new Set();
-  if (ouverts.length > 0) {
-    const dateEffet = cumul.fin.rang >= LIQUIDATION_2023 ? cumul.fin
-      : DateMois.depuisRang(LIQUIDATION_2023);
+  const dateEffet = ouverts.length > 0
+    ? effetDeLaNouvellePension(moteur, cumul.fin, premiere) : null;
+  if (dateEffet !== null) {
+    const regle = regleDeLaNouvellePension(moteur, dateEffet, premiere);
+    const auPlusTot = (texte) => {
+      const borne = moisDuJour(texte);
+      return dateEffet.rang >= borne.rang ? dateEffet : borne;
+    };
     const lignes = carriere.lignes_apres_depart;
     const activite = new Map();
     for (let r = cumul.debut.rang; r < cumul.fin.rang; r += 1) {
@@ -220,19 +316,22 @@ export function droits(moteur, carriere, resultat, cumul) {
         continue;
       }
       const pension = nouvellePension(moteur, code, salaires(code), periode, dateEffet,
-        resultat.trimestres_requis, premiere.rang < PREMIERE_2027,
-        cumul.groupe === INDEPENDANTS);
+        resultat.trimestres_requis, regle, cumul.groupe === INDEPENDANTS);
       if (pension !== null) pensions.push(pension);
     }
     if (regimes.has(AGIRC_ARRCO)) {
+      // La deuxième pension de l'Agirc-Arrco « prend effet, au plus tôt », à la
+      // date que porte la version (accord du 17 novembre 2017, article 91).
       const pension = secondeRetraiteComplementaire(moteur, salaires(), periode,
-        dateEffet.rang >= LIQUIDATION_AGIRC_ARRCO ? dateEffet
-          : DateMois.depuisRang(LIQUIDATION_AGIRC_ARRCO));
+        auPlusTot(regle.agirc_arrco_effet_au_plus_tot));
       if (pension !== null) pensions.push(pension);
     }
     if (regimes.has(RCI)) {
+      // Le RCI n'ouvre de droits au retraité en cumul intégral que depuis la
+      // date que porte la version (règlement du RCI, articles 4 et 27).
+      const depuis = moisDuJour(regle.rci_droits_depuis);
       const pension = secondeRetraiteRci(moteur, lignes, activite, periode,
-        dateEffet.rang >= DROITS_RCI ? dateEffet : DateMois.depuisRang(DROITS_RCI));
+        auPlusTot(regle.rci_droits_depuis), depuis.annee);
       if (pension !== null) pensions.push(pension);
     }
   }
@@ -266,11 +365,13 @@ function revenus(moteur, lignes, code = null) {
 /**
  * La nouvelle pension d'un régime aligné : le salaire mensuel moyen des années
  * qui valident un trimestre (R. 351-29, III), revalorisé et écrêté au plafond,
- * au taux plein, proratisé par la durée requise. `annuel` : celle de
- * l'indépendant, sur le revenu annuel moyen de ces années, l'année de l'effet
- * comprise (R. 634-1, puis D. 634-3) : voir le Python.
+ * au taux plein, proratisé par la durée requise, et écrêté au plafond que
+ * porte `regle`, les paramètres de la version de la fiche
+ * (`regleDeLaNouvellePension`). `annuel` : celle de l'indépendant, sur le
+ * revenu annuel moyen de ces années, l'année de l'effet comprise (R. 634-1,
+ * puis D. 634-3).
  */
-function nouvellePension(moteur, code, salaires, periode, dateEffet, requis, plafonnee,
+export function nouvellePension(moteur, code, salaires, periode, dateEffet, requis, regle,
   annuel = false) {
   const macro = moteur.macro;
   let trimestres = 0;
@@ -294,8 +395,9 @@ function nouvellePension(moteur, code, salaires, periode, dateEffet, requis, pla
   const revenuAnnuelMoyen = annuel ? total / annees : 0.0;
   const base = annuel ? revenuAnnuelMoyen : salaireMensuel * 12.0;
   const brute = base * TAUX_PLEIN * Math.min(1.0, trimestres / requis);
-  const plafond = plafonnee
-    ? PLAFOND_EN_PASS * macro.plafond_securite_sociale.valeur(dateEffet.annee) : null;
+  const enPass = regle.plafond_en_pass ?? null;
+  const plafond = enPass === null
+    ? null : enPass * macro.plafond_securite_sociale.valeur(dateEffet.annee);
   const montant = plafond === null ? brute : Math.min(brute, plafond);
   return new NouvellePension({ regime: code, dateEffet, trimestres, salaireMensuel,
     points: 0.0, brute, plafond, montant, revenuAnnuelMoyen });
@@ -345,15 +447,14 @@ function secondeRetraiteComplementaire(moteur, salaires, periode, dateEffet) {
 
 /**
  * La seconde retraite du RCI : les points que les cotisations des mois de
- * cumul intégral achètent depuis le 1er janvier 2025, servis sans coefficient,
+ * cumul intégral achètent depuis `anneeDesDroits`, servis sans coefficient,
  * à la date de la nouvelle pension de base (règlement du RCI, article 27) ;
  * ceux de la première pension, sur le revenu déclaré, ou la part
  * complémentaire du forfait du micro-entrepreneur ; sous quarante points, un
  * versement forfaitaire unique la remplace (article 39). Voir seconde.py.
  */
-function secondeRetraiteRci(moteur, lignes, activite, periode, dateEffet) {
+function secondeRetraiteRci(moteur, lignes, activite, periode, dateEffet, anneeDesDroits) {
   const macro = moteur.macro;
-  const anneeDesDroits = DateMois.depuisRang(DROITS_RCI).annee;
   let points = 0.0;
   for (const ligne of lignes) {
     const annee = ligne.annee;

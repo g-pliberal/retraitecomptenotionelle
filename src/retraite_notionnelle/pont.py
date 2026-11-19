@@ -1395,6 +1395,10 @@ LECTURES_DU_DROIT = {
     "echeancier.parcourir.reversion": reversion_des_donnees,
     "echeancier.parcourir.au_depart.droits_apres_depart.pensions":
         tuple[tuple[str, float | None], ...] | None,
+    # Ce que le droit fait de l'activité après le départ, période après
+    # période, et la version de la fiche qui le dit : ``(motif, regle)``.
+    "echeancier.parcourir.au_depart.droits_apres_depart.periodes":
+        tuple[tuple[str, str], ...] | None,
     "scenario_actuel.ages_annulation_decote.age": tuple[float, Fiabilite] | None,
     # L'âge légal de droit commun d'une génération, que le coût des avantages
     # oppose à ses départs (``avantages.ages_legaux``).

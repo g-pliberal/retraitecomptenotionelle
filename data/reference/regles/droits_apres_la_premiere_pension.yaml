@@ -51,7 +51,7 @@ versions:
       l'ont pas liquidée, selon leurs propres règles
     parametres:
       droits_nouveaux: selon_le_regime
-  exemples: aucun trouvé
+  exemples: [cnav_2015_08_exemple_6_premiere_retraite_d_avant_2015]
 - id: loi_2014
   statut: lue
   textes:
@@ -79,7 +79,7 @@ versions:
     parametres:
       droits_nouveaux: aucun
       exceptions: [retraite_progressive, pension_militaire, marins_avant_2018]
-  exemples: aucun trouvé
+  exemples: [cnav_2015_08_exemple_7_premiere_retraite_de_2015]
 - id: loi_2023
   statut: lue
   textes:
@@ -109,7 +109,7 @@ versions:
     parametres:
       droits_nouveaux: aucun
       exceptions: [retraite_progressive, cumul_integral, pension_militaire]
-  exemples: aucun trouvé
+  exemples: [sp_f13243_nouvelle_pension_plafond, sp_f13243_cumul_dernier_employeur]
 - id: lfss_2026
   statut: lue
   textes:
@@ -136,6 +136,13 @@ versions:
       exceptions: [retraite_progressive, cumul_entier, marins, ballet_de_l_opera,
                    mineurs, pension_militaire, pension_d_invalidite]
   exemples: aucun trouvé
+  exemples_cherches: >-
+    le 19 novembre 2026 : la fiche F13243 de service-public.gouv.fr, vérifiée le
+    12 novembre 2026, qui annonce la règle de 2027 sans exemple ; dans la base de
+    législation de la Cnav, l'exposé « Fin d'acquisition de droits à retraite » (24
+    novembre 2025) et la fenêtre « Réforme du cumul emploi retraite » (27 février
+    2026), sans exemple. Aucune circulaire de la Cnav n'applique encore la
+    rédaction de 2026
 sources:
   lu_le: 2026-09-30
   prochaine_relecture: 2027-03-31
@@ -151,8 +158,30 @@ sources:
     d'activité y couvre-t-elle l'activité poursuivie dans un autre régime après la
     première pension, que la rédaction de 2023 vise en toutes lettres (« la reprise
     ou la poursuite ») ? Et la version supposée d'avant 2015 : un régime qui a
-    liquidé acquiert-il sur une reprise d'activité ?
+    liquidé acquiert-il sur une reprise d'activité ? Lue le 19 novembre 2026, la
+    circulaire Cnav 2015/8 répond aux deux pour le régime général (lectures) ; les
+    autres régimes restent à lire.
+  - >-
+    Le XII de l'article 26 de la loi n° 2023-270 fait entrer l'article en vigueur
+    le 1er septembre 2023, et ne remonte au 1er janvier 2023 que pour « les droits en
+    vue d'une nouvelle pension » du cumul intégral (3°). La fiche éteint dès le
+    1er janvier 2023 les droits de l'activité de qui a pris sa première pension
+    avant 2015 : ses mois de janvier à août 2023 relèvent-ils encore des règles
+    d'avant ? Question relevée le 19 novembre 2026 (action 191, étape 2 du cumul),
+    à trancher par une lecture à part ; la borne n'a pas bougé.
   lectures:
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2015/8 du 6 février 2015, « La cessation d'activité et le
+      cumul emploi retraite à compter du 01-01-2015 », point 3, lu en entier dans la
+      base de législation de la Cnav : « la notion de reprise d'activité non
+      génératrice de droits, comprend également la poursuite d'une activité dans le
+      cadre des dérogations à la cessation d'activité » (3.1) ; la reprise au régime
+      général par son retraité « ne permet pas d'acquérir de nouveaux droits au
+      régime général », son compte étant arrêté (3.2) ; pour une première retraite
+      d'avant 2015, « ce sont les règles en vigueur avant la loi du 20 janvier 2014
+      qui sont mises en œuvre » (3.6) ; exemples 6, 7 et 8
+    date: 2026-11-19
   - type: service_public
     reference: >-
       fiche F13243, « Cumul emploi-retraite du salarié », vérifiée le 1er janvier 2026 :
@@ -203,10 +232,19 @@ approximations:
     la reprise chez le dernier employeur dans les six mois de la pension ferme aux
     droits nouveaux toute l'activité déclarée, qui est une seule période
   effet: non mesuré
+- ecart: >-
+    le titulaire d'une pension militaire garde ses droits sous toutes les versions,
+    mais le moteur nomme toujours loi_2014 la règle de ses mois d'avant 2023 et
+    loi_2023 celle des suivants : pour une première pension d'avant 2015, la version
+    qui vaut est sans_regle_generale, et pour une première pension de 2027,
+    lfss_2026. Seul le nom de la règle diffère, non les droits ouverts ; l'écart,
+    trouvé en faisant lire la fiche au moteur (action 191, étape 2 du cumul), est
+    gardé tel quel
+  effet: non mesuré
 code:
   javascript: >-
-    moteur/js/droit/seconde.js : droits, motif, liquiderLesRegimesNouveaux,
-    PREMIERE_2015, DROITS_2023, LIQUIDATION_2023, PREMIERE_2027 ;
+    moteur/js/droit/seconde.js : droits, versionDesDroits, motif,
+    liquiderLesRegimesNouveaux ;
     moteur/js/echeancier.js : Echeancier._liquiderLesRegimesNouveaux ;
     moteur/js/pages.js : sansNouveauxDroits, droitsDuCumul
   parametres: >-
@@ -215,8 +253,10 @@ code:
     tests/test_emploi_retraite.py ; les témoins seconde_pension_* et droits_* des
     simulations
   moteur: >-
-    Les dates qui découpent la règle, de 2015, 2023 et 2027, sont des constantes des
-    deux moteurs.
+    Le moteur lit la version qui vaut à la date de la première pension et à celle
+    du mois d'activité (fiches_datees) : les dates de 2015, 2023 et 2027 sont les
+    bornes des versions (action 191, étape 2 du cumul) ; le délai de six mois chez
+    le dernier employeur reste un nombre de droit/seconde.js.
 textes_a_relire:
 - {id: LEGIARTI000047960984, article: "R. 161-19-4 CSS", en_vigueur: 2023-09-01,
    question: "les droits supplémentaires des marins, du ballet et des mineurs, qui s'arrêtent après la seconde pension"}
@@ -231,6 +271,12 @@ historique:
   2026-09-30 — les droits que l'activité ouvre dans les régimes qui n'ont pas
   liquidé — première pension d'avant 2015, pension militaire — se liquident, comme
   un départ induit.
+- >-
+  2026-11-19 — le moteur lit la règle dans les versions de la fiche, aux deux dates
+  qui décident, et n'écrit plus celles de 2015, 2023 et 2027 (action 191, étape 2
+  du cumul) ; aucun résultat ne bouge. Trois versions prennent leurs exemples
+  officiels, ceux de la circulaire Cnav 2015/8 et de la fiche F13243, et la
+  quatrième dit ce qui a été cherché.
 effet: >-
   Toute personne qui travaille après sa première pension, dans le même régime ou dans
   un autre : le fonctionnaire de catégorie active parti à cinquante-sept ans et passé

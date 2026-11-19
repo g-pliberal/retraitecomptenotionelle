@@ -1088,6 +1088,12 @@ const FONCTIONS_DU_DROIT = {
     return droits === null ? null
       : droits.pensions.map(({ regime, plafond }) => [regime, plafond ?? null]);
   },
+  // Ce que le droit fait de l'activité après le départ, période après
+  // période, et la version de la fiche qui le dit : `[motif, regle]`.
+  "echeancier.parcourir.au_depart.droits_apres_depart.periodes": (simulateur, carriere) => {
+    const droits = parcourue(simulateur, carriere).auDepart.droits_apres_depart;
+    return droits === null ? null : droits.periodes.map(({ motif, regle }) => [motif, regle]);
+  },
   "scenario_actuel.ages_annulation_decote.age":
     (moteur, generation) => moteur.agesAnnulationDecote.age(generation),
   "scenario_actuel.ages_ouverture.age": (moteur, generation) => moteur.agesOuverture.age(generation),

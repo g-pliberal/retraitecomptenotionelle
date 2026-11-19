@@ -100,6 +100,10 @@
 #     un centime près ;
 #   cumul_integral_depuis — le mois (année-mois) où le cumul emploi-retraite
 #     devient intégral pendant l'activité exercée après le départ ;
+#   regles_des_droits_apres_le_depart — ce que le droit fait de l'activité
+#     exercée après le départ, période après période : `[motif, version]`, la
+#     version étant celle de la fiche droits_apres_la_premiere_pension qui
+#     vaut pour ces mois ;
 #   pension_et_rente_d_invalidite_sur_traitement — la pension du
 #     fonctionnaire radié pour invalidité, sa rente viagère d'invalidité et
 #     leur total, en parts du traitement. L'exemple donne le traitement et le
@@ -450,7 +454,11 @@ exemples:
       liquidation: "2026-03"
       trimestres_valides: 150
       emploi_retraite: {debut: "2026-05", fin: "2026-07", employeur: dernier}
-    attendu: {mois_sans_pension_du_cumul: ["2026-05", "2026-06"]}
+    # « Si ce délai n'est pas respecté, votre nouvelle activité ne vous génèrera
+    # jamais de nouveau droit » (même fiche, vérifiée le 12 novembre 2026).
+    attendu:
+      mois_sans_pension_du_cumul: ["2026-05", "2026-06"]
+      regles_des_droits_apres_le_depart: [[dernier_employeur, loi_2023]]
 
   - id: sp_f13243_cumul_plafond_du_smic
     source: {editeur: "service-public.gouv.fr", reference: "fiche F13243, Cumul emploi-retraite du salarié", verifie_le: "2026-01-01"}
@@ -483,7 +491,52 @@ exemples:
       liquidation: "2022-01"
       age_debut: 20
       emploi_retraite: {debut: "2023-01", fin: "2026-07"}
-    attendu: {plafonds_des_nouvelles_pensions: {regime_general: 2403.0}}
+    attendu:
+      plafonds_des_nouvelles_pensions: {regime_general: 2403.0}
+      regles_des_droits_apres_le_depart: [[nouvelle_pension, loi_2023]]
+
+  # ---- Cnav, circulaire 2015/8 du 6 février 2015 -------------------------
+  # « La cessation d'activité et le cumul emploi retraite à compter du
+  # 01-01-2015 », point 3 : la non-acquisition de droits après une première
+  # retraite dont la date d'effet est fixée à compter du 1er janvier 2015
+  # (L. 161-22-1 A). Lue le 19 novembre 2026 dans la base de législation de
+  # la Cnav.
+  - id: cnav_2015_08_exemple_6_premiere_retraite_d_avant_2015
+    source: {editeur: "Cnav", reference: "circulaire n° 2015/8 du 6 février 2015, La cessation d'activité et le cumul emploi retraite à compter du 01-01-2015, point 3.3, exemple 6", verifie_le: "2026-11-19"}
+    enonce: >-
+      « Les nouvelles dispositions de l'article L. 161-22-1 A CSS ne s'appliquent
+      pas. » Assuré affilié au régime général et à l'Arrco, dont les retraites
+      prennent effet le 1er janvier 2014 ; il reprend, à compter d'avril 2015,
+      une activité relevant du régime des professions libérales : « Cette
+      reprise d'activité est génératrice de droit auprès de la CNAVPL. »
+      L'exemple lui donne aussi une retraite du RSI au 1er janvier 2015, que le
+      témoin ne rejoue pas ; il ne dit ni la naissance ni la fin de l'activité,
+      posées ici.
+    carriere:
+      naissance: "1952-01-01"
+      sexe: H
+      affiliation: salarie_prive_non_cadre
+      liquidation: "2014-01"
+      age_debut: 20
+      emploi_retraite: {debut: "2015-04", fin: "2016-04", affiliation: profession_liberale}
+    attendu: {regles_des_droits_apres_le_depart: [[regimes_non_liquides, sans_regle_generale]]}
+
+  - id: cnav_2015_08_exemple_7_premiere_retraite_de_2015
+    source: {editeur: "Cnav", reference: "circulaire n° 2015/8 du 6 février 2015, La cessation d'activité et le cumul emploi retraite à compter du 01-01-2015, point 3.4, exemple 7", verifie_le: "2026-11-19"}
+    enonce: >-
+      Assuré affilié au régime général et à l'Arrco, dont les retraites prennent
+      effet le 1er mars 2015. Il reprend ensuite une activité relevant du RSI :
+      « Cette reprise d'activité n'ouvre aucun droit à retraite personnelle
+      et/ou de réversion auprès du RSI. » L'exemple ne dit ni la naissance ni
+      les dates de l'activité, posées ici.
+    carriere:
+      naissance: "1953-01-01"
+      sexe: H
+      affiliation: salarie_prive_non_cadre
+      liquidation: "2015-03"
+      age_debut: 20
+      emploi_retraite: {debut: "2015-06", fin: "2016-06", affiliation: artisan}
+    attendu: {regles_des_droits_apres_le_depart: [[eteints, loi_2014]]}
 
   # ---- RSI, circulaire 2010/013 du 18 mars 2010 -------------------------
   # La pension de l'artisan ou du commerçant que le dépassement suspend l'est

@@ -78,6 +78,7 @@ objets:
       contenu: {porte: "droit accordé ou exigé, bénéficiaire, conditions, défauts légaux, paramètres lus", type: libre, obligatoire: true}
       unites: {porte: "unité, arrondi, ancrage", type: libre, defaut: {}}
       exemples: {porte: "les exemples officiels, ou « aucun trouvé »", type: exemples, obligatoire: true}
+      exemples_cherches: {porte: "quand aucun exemple officiel n'a été trouvé, ce qui a été cherché, et quand", type: texte, defaut: null, additif: "la note de décision 0009 demande à « aucun trouvé » de dire ce qui a été cherché"}
 
   texte:
     # Un texte cité : par son identifiant stable, ou, à défaut, par sa
