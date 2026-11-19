@@ -1,17 +1,15 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: vert
-sources: 1beb2a84ccef855ba99d3333fc003b7c8123c8c4
-date: 2026-11-19T19:20:29Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44592836001
-presomptions: rouge
-presomptions_echecs:
-  - "FAILED tests/test_surcote_banque_de_france.py::test_chaque_trimestre_d_apres_le_1er_avril_2007_a_le_taux_de_sa_date[1947-12-62-4-4] - assert 0.07500000000000018 == 0.08 ± 8.0e-08"
+sources: a223e3c5db76d6f699884935c20f535f8953495b
+date: 2026-11-19T20:02:10Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44601287550
+presomptions: vert
 durees:
-  fabrique: 664
-  suite: 584
-  tranche_1: 393
-  tranche_2: 584
-  tranche_3: 533
-  tranche_4: 525
-  garde: 120
+  fabrique: 680
+  suite: 362
+  tranche_1: 271
+  tranche_2: 333
+  tranche_3: 362
+  tranche_4: 351
+  garde: 182
