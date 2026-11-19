@@ -1,0 +1,23 @@
+date: "2026-11-19"
+session: "action 191 : la règle des mois du titulaire d'une pension militaire, nommée par la version qui vaut pour sa première pension"
+consulte: >-
+  Rien de neuf : les textes sont ceux que l'étape 2 du cumul a relus le même
+  jour dans les index de la DILA (entrée
+  2026-11-19-action-191-etape-2-du-cumul.yaml), le VIII de l'article 19 de la
+  loi n° 2014-40 (JORFARTI000028493657), L. 161-22-1-1 dans sa rédaction de
+  2026 (LEGIARTI000053279747) et L. 84 du code des pensions civiles et
+  militaires de retraite (LEGIARTI000028498621). La veille du jour
+  (scripts/veille_droit.py) ne signale rien sur ces textes.
+trouve: >-
+  Aucune règle ne change. Sur l'accord du propriétaire, le moteur nomme la
+  règle des mois du titulaire d'une pension militaire par la version de
+  droits_apres_la_premiere_pension qui vaut : sans_regle_generale avant 2023
+  pour une première pension d'avant 2015, lfss_2026 pour une première pension
+  de 2027. Le motif, pension_militaire, et les droits ouverts restent les
+  mêmes ; un témoin sur 934 bouge, par ce seul nom. Détail :
+  docs/feuille_de_route/191/2026-11-19-regle-des-mois-du-militaire.md.
+reste: >-
+  La question de lecture de l'étape 2 : la loi n° 2023-270 entre en vigueur
+  le 1er septembre 2023, et la fiche éteint dès le 1er janvier 2023 les droits
+  de qui a pris sa première pension avant 2015. Sa relecture, approuvée par
+  le propriétaire, se fait par une session qui n'a pas vu celle-ci.

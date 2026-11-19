@@ -185,18 +185,13 @@ export function versionDesDroits(moteur, premiere, mois) {
  * dont les paramètres disent si l'activité ouvre des droits, et par quelles
  * exceptions.
  *
- * La pension militaire garde ses droits sous toutes les versions. Le moteur
- * nomme la règle de ses mois par la seule date du droit, `loi_2014` avant
- * celle où commence `loi_2023`, quelle que soit la date de la première
- * pension : écart gardé, que la fiche déclare à ses approximations.
+ * Le titulaire d'une pension militaire garde ses droits sous toutes les
+ * versions : la règle de ses mois est, comme pour tous, celle qui vaut pour
+ * sa première pension.
  */
 export function motif(moteur, mois, premiere, integral, sixMois, militaire, nouveaux) {
-  if (militaire) {
-    const depuis = fiche(moteur, FICHE_DES_DROITS).versions
-      .find((v) => v.id === LOI_2023).bornes[DATE_DU_DROIT][0];
-    return [PENSION_MILITAIRE, jour(mois) < depuis ? LOI_2014 : LOI_2023];
-  }
   const version = versionDesDroits(moteur, premiere, mois);
+  if (militaire) return [PENSION_MILITAIRE, version.id];
   const { droits_nouveaux: droitsNouveaux, exceptions = [] } = version.parametres;
   if (droitsNouveaux === SELON_LE_REGIME) {
     return [nouveaux ? REGIMES_NON_LIQUIDES : REGIME_LIQUIDE, version.id];

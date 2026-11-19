@@ -123,6 +123,26 @@ test("la pension militaire n'éteint pas les droits (L. 84 du code des pensions)
     ["pension_militaire", "loi_2023"]);
 });
 
+test("la règle du militaire est la version qui vaut pour sa première pension", () => {
+  const militaire = { militaire: true };
+  // L. 161-22-1 A n'est « applicable [qu']aux assurés dont la première pension
+  // prend effet à compter du 1er janvier 2015 » (loi n° 2014-40, article 19,
+  // VIII) : avant, aucune règle générale, et non celle de 2014.
+  assert.deepEqual(motif(moteur, mois(2012, 6), mois(2010, 1), militaire),
+    ["pension_militaire", "sans_regle_generale"]);
+  assert.deepEqual(motif(moteur, mois(2022, 12), mois(2014, 12), militaire),
+    ["pension_militaire", "sans_regle_generale"]);
+  assert.deepEqual(motif(moteur, mois(2023, 1), mois(2014, 12), militaire),
+    ["pension_militaire", "loi_2023"]);
+  // La rédaction de la loi n° 2025-1403 vaut pour qui entre « en jouissance de
+  // [sa] première pension de vieillesse de base à compter du 1er janvier 2027 »
+  // (article 102, XI).
+  assert.deepEqual(motif(moteur, mois(2026, 12), mois(2026, 12), militaire),
+    ["pension_militaire", "loi_2023"]);
+  assert.deepEqual(motif(moteur, mois(2028, 3), mois(2027, 1), militaire),
+    ["pension_militaire", "lfss_2026"]);
+});
+
 test("la fiche des droits pilote : ses bornes retouchées déplacent la règle", () => {
   // Une réforme fictive : la règle de 2014 ne vaut qu'à compter de 2016.
   const copie = structuredClone(paquet);

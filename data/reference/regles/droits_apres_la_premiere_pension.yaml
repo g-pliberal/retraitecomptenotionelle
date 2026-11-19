@@ -232,15 +232,6 @@ approximations:
     la reprise chez le dernier employeur dans les six mois de la pension ferme aux
     droits nouveaux toute l'activité déclarée, qui est une seule période
   effet: non mesuré
-- ecart: >-
-    le titulaire d'une pension militaire garde ses droits sous toutes les versions,
-    mais le moteur nomme toujours loi_2014 la règle de ses mois d'avant 2023 et
-    loi_2023 celle des suivants : pour une première pension d'avant 2015, la version
-    qui vaut est sans_regle_generale, et pour une première pension de 2027,
-    lfss_2026. Seul le nom de la règle diffère, non les droits ouverts ; l'écart,
-    trouvé en faisant lire la fiche au moteur (action 191, étape 2 du cumul), est
-    gardé tel quel
-  effet: non mesuré
 code:
   javascript: >-
     moteur/js/droit/seconde.js : droits, versionDesDroits, motif,
@@ -277,6 +268,13 @@ historique:
   du cumul) ; aucun résultat ne bouge. Trois versions prennent leurs exemples
   officiels, ceux de la circulaire Cnav 2015/8 et de la fiche F13243, et la
   quatrième dit ce qui a été cherché.
+- >-
+  2026-11-19 — sur l'accord du propriétaire, la règle des mois du titulaire d'une
+  pension militaire est la version qui vaut pour sa première pension :
+  sans_regle_generale avant 2023 pour une première pension d'avant 2015, et non
+  plus loi_2014 ; lfss_2026 pour une première pension de 2027, et non plus
+  loi_2023. Seul ce nom change dans les résultats, pour ces deux cas : les droits
+  ouverts sont les mêmes.
 effet: >-
   Toute personne qui travaille après sa première pension, dans le même régime ou dans
   un autre : le fonctionnaire de catégorie active parti à cinquante-sept ans et passé
