@@ -1052,6 +1052,20 @@ La carte part des textes, pas de la mémoire.
   nouvelle ne fait donc jamais monter le cliquet, elle allonge ce qui reste à
   faire (§ 9.2). Le dépôt fait déjà ainsi pour les réformes, avec
   `reformes.yaml`.
+- **L'alarme.** Compter ne suffit pas à voir une loi modifiée : une rédaction
+  neuve remplace celle qu'elle abroge, et le nombre ne bouge pas. La note de
+  décision 0009, par son amendement, demande donc une réponse fiche par
+  fiche : toute rédaction en vigueur ou à venir d'un article qu'une fiche
+  cite est comptée parmi les textes d'une de ses versions, ou déclarée par
+  elle sans effet. La réponse d'une fiche ne vaut que pour elle. Une
+  rédaction que l'index apporte après la pose de ce contrôle n'a pas de dette
+  admise : quatorze jours après son inscription, la suite échoue tant qu'une
+  fiche qui cite son article n'a pas répondu, et d'ici là la veille la
+  montre. Celles d'avant la pose font une dette, qui ne peut que baisser. De
+  même, une fiche qui déclare une réforme a une version qui commence à sa
+  date, ou une liste dit où la réforme est portée. Ce contrôle se pose à la
+  première étape de la migration de la note ; il ne voit ni l'article neuf
+  qu'aucune fiche ne cite, ni le texte hors du périmètre.
 - **Où elle vit.** Depuis la phase 2, la liste des rédactions est dans
   `data/reference/textes/` : son périmètre déclaré (`perimetre.yaml`, où se
   tient le cliquet), la liste elle-même (`redactions.csv`), et ce que

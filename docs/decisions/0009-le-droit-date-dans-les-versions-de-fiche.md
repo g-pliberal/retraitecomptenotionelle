@@ -595,3 +595,74 @@ Contre le tout en tables datées, l'argument n'est pas qu'une table n'a qu'une
 date qui décide : `carriere_longue.csv` en a deux, et c'est la forme que prend
 la table d'une version. Il est celui de la ligne de partage : une table porte
 des valeurs, non un renvoi ni une règle dont la forme change.
+
+## Amendement du 19 novembre 2026 : un sixième cliquet
+
+Le 19 novembre, le propriétaire a demandé que le dépôt fasse mieux que les
+autres modèles, et d'abord qu'il s'aperçoive seul d'une loi modifiée. Un
+sixième cliquet s'ajoute aux cinq, à l'étape 1 ; il entre par cette note
+(§ 13.4). Ses comptes sont ceux du 19 novembre, sur la liste des
+rédactions lue dans l'index LEGI le 16 ; le script qui les refait est sous
+`docs/decisions/0009/sixieme-cliquet/`.
+
+**Ce que le dépôt faisait déjà.** Depuis l'action 184, GitHub met à jour
+l'index LEGI chaque lundi et inscrit « à examiner » toute rédaction nouvelle
+du périmètre, et la veille range parmi les fiches à relire celle dont un
+article cité a une rédaction en vigueur ou à venir qu'elle n'a pas lue. Deux
+trous y restaient. Rien n'échouait : c'était une ligne de la veille, que ne
+lit que la session qui touche au scénario 1. Et une rédaction qu'une fiche
+avait rattachée ne se montrait plus aux autres fiches qui citent le même
+article : la veille montrait une fiche, quand 83 couples d'une fiche et d'une
+rédaction en vigueur ou à venir étaient sans un mot de la fiche, 48 rédactions
+pour 51 fiches, dont 18 rédactions qui commencent en 2026 ou après.
+
+**L'alarme « loi modifiée ».** Toute rédaction en vigueur ou à venir d'un
+article qu'une fiche cite a sa réponse dans cette fiche : une de ses versions
+la compte parmi ses textes, ou la fiche la déclare sans effet sur elle, avec
+le mot à mot qui le montre (`textes_sans_effet`). C'est la suite de la
+décision : une version par réforme qui réécrit la règle, et non par
+rédaction ; une rédaction qui ne change rien se dit donc telle. La réponse
+d'une fiche ne vaut que pour elle. Une rédaction que l'index apporte après la
+pose du cliquet n'a pas de dette admise : quatorze jours après son
+inscription, la suite échoue tant qu'une fiche qui cite son article n'a pas
+répondu ; d'ici là, la veille et le tableau de bord la montrent. Le délai
+tient à ce que l'inscription du lundi est commitée par GitHub : sans lui,
+`main` rougirait sans qu'aucune session y soit pour rien, et la première
+venue aurait à lire une loi avant son travail. Les rédactions d'avant la pose
+font une dette, en deux nombres qui ne peuvent que baisser : 435 couples où
+la fiche cite la rédaction sans l'avoir coupée en version, dont 269 dans les
+70 fiches encore sans version, que la migration résorbe ; 83 où elle n'en dit
+rien, à lire d'abord. Un compte seul ne suffirait pas : une rédaction neuve
+remplace celle qu'elle abroge, et le nombre ne bouge pas. L'alarme tient donc
+à la date d'inscription, non au compte.
+
+**Chaque réforme déclarée a sa version.** Une fiche qui déclare une réforme
+(`reformes`) a une version dont une borne commence à la date de cette
+réforme. Sinon une liste dit, couple par couple, quelle version la porte à
+une autre date, et selon quel texte ; pourquoi elle n'en fait naître aucune ;
+ou qu'elle reste à faire. Le nombre des « à faire » ne peut que baisser, et un
+couple que la liste ne classe pas fait échouer la suite : déclarer une
+réforme dans une fiche oblige à dire où elle est portée. Au 19 novembre,
+65 fiches déclarent 136 couples : 40 ont leur version à la date ; 49 sont
+dans 23 fiches sans version, dont l'âge légal et la carrière longue, que les
+étapes 2 et 3 migrent ; 47 sont dans une fiche dont aucune version ne
+commence ce jour-là. L'égalité des dates ne suffit pas à faire la règle :
+`age_ouverture_ieg_actifs` déclare la réforme de 2023, que le calendrier date
+du 1er septembre 2023, et fait commencer sa version le 1er janvier 2025.
+`test_toute_reforme_recente_a_sa_fiche` reste, qui tient l'autre sens : une
+réforme récente a une fiche.
+
+**Ce que l'alarme ne voit pas.** Un article neuf qu'aucune fiche ne cite
+encore : il entre « à examiner », parmi 6 015 rédactions. Une disposition non
+codifiée d'un texte hors du périmètre. Une circulaire, que tient la veille de
+la base de la Cnav (action 175). Deux rédactions du même numéro en vigueur
+ensemble, que la liste ne départage pas. Un avenant de l'Agirc-Arrco, tant
+que GitHub ne met pas à jour KALI le lundi. Elle a le retard de l'index, une
+semaine au plus, ajouté à celui que LEGI met à consolider un texte paru. Et
+elle dit qu'un texte a changé, non que la fiche l'a bien lu : une déclaration
+« sans effet » se relit comme toute lecture, et l'alarme n'en dispense pas.
+
+**L'ordre.** L'étape 1 pose six cliquets. Le sixième n'écrit dans aucune
+fiche et ne change aucune règle. Les 83 rédactions sans un mot se lisent
+ensuite, dans une session à elles, les plus récentes et les régimes les plus
+peuplés d'abord : chaque réponse est une lecture du droit, sur Fable 5.2.
