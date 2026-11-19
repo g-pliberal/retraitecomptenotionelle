@@ -124,6 +124,7 @@ periodes:
       génération, comme au régime général ; la minoration reste de 2,5 %.
   - debut: 2004
     fin: 2012
+    date_effet: [2004-01-01, 2012-10-07]
     type_calcul: points
     age_ouverture: 60
     age_taux_plein: 65
@@ -140,10 +141,16 @@ periodes:
       Rédaction du 19 février 2004 (LEGIARTI000006765819) : 160 trimestres
       « quelle que soit la date de naissance de l'assuré », et la minoration
       descend de 2,5 % pour les nés avant 1944 à 1,25 % pour les nés après
-      1952, la table de R. 351-27. Coupée à l'année : la rédaction suivante
-      prend effet le 7 octobre 2012.
+      1952, la table de R. 351-27. La période liquide les pensions qui
+      prennent effet jusqu'au 6 octobre 2012 (`date_effet`) : la rédaction
+      suivante entre en vigueur le 7, le décret n° 2012-1129, publié le 6
+      (JORFTEXT000026460585), valant « le lendemain de sa publication ». Le
+      décret n° 2010-1734 voulait cet âge dès le 1er juillet 2011 (articles
+      8, II, et 11), mais visait l'article 1er, qui ne le porte pas ; ce que
+      la caisse a appliqué d'ici là ne se lit pas dans l'index.
   - debut: 2013
     fin: null
+    date_effet: [2012-10-07, null]
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation

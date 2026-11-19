@@ -191,7 +191,13 @@ def test_les_dates_d_effet_partagent_les_annees_sans_trou_ni_doublon():
                        # 2011, le 1er juillet 2011
                        "carcdsf_complementaire",
                        # arrêté du 31 juillet 2015, en vigueur le 3 octobre 2015
-                       "carpimko_complementaire"}
+                       "carpimko_complementaire",
+                       # règlement de 2007, « à compter du 1er avril 2007 »
+                       "banque_de_france",
+                       # décret n° 2012-1129, en vigueur le 7 octobre 2012
+                       "organic_avant_1973", "cancava_avant_1973",
+                       # décret n° 2006-1325, en vigueur le 2 novembre 2006
+                       "cavimac"}
 
 
 @pytest.mark.parametrize("bornes,message", [

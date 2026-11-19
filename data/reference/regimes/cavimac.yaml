@@ -296,6 +296,7 @@ periodes:
       DEUX FRACTIONS, ET SOIXANTE-CINQ ANS : voir la période de 1998.
   - debut: 2006
     fin: 2006
+    date_effet: [2006-01-01, 2006-11-02]
     type_calcul: annuites
     age_ouverture: 65
     age_taux_plein: 65
@@ -326,14 +327,21 @@ periodes:
       cotisation mise à la charge des salariés affiliés au régime
       général ». Assiette forfaitaire égale au SMIC mensuel, soit
       1820 heures de SMIC par an (151,67 heures par mois).
-      L'ANNÉE DE LA BASCULE. L. 382-27 ouvre la fraction d'après 1997 à
-      l'âge légal dès le 20 décembre 2005 ; le décret n° 2006-1325 n'abaisse
-      celui de la fraction d'avant qu'à compter du 1er novembre 2006. Le
-      modèle, qui lit la période à l'année et ne liquide pas une fraction
-      sans l'autre, garde soixante-cinq ans toute l'année : c'est l'âge de
-      la fraction qui porte l'essentiel de la pension de ces générations.
+      L'ANNÉE DE LA BASCULE, COUPÉE AU JOUR (relue le 19 novembre 2026).
+      L. 382-27 ouvre la fraction d'après 1997 à l'âge légal dès la loi
+      n° 2005-1579 du 19 décembre 2005 (article 75, JORFARTI000002070677) ;
+      le décret n° 2006-1325, publié le 1er novembre 2006 sans date propre
+      (JORFARTI000001085913), n'abaisse celui de la fraction d'avant qu'au
+      lendemain. La période liquide les pensions qui prennent effet jusqu'au
+      1er novembre 2006 (`date_effet`), et la suivante prend le relais le 2.
+      RESTE UN ÉCART DÉCLARÉ : de janvier à novembre 2006, la fraction
+      d'après 1997 pouvait se liquider seule dès soixante ans ; le modèle,
+      qui ne liquide pas une fraction sans l'autre, garde soixante-cinq ans,
+      l'âge de la fraction qui porte l'essentiel de la pension de ces
+      générations.
   - debut: 2007
     fin: 2008
+    date_effet: [2006-11-02, 2009-01-01]
     type_calcul: annuites
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -374,7 +382,8 @@ periodes:
       1,25 % dès 1979 : un ministre du culte parti en 1996 avec plus que
       la durée requise voyait sa pension majorée de dix pour cent que
       personne ne lui devait.
-      L'ÂGE LÉGAL POUR LES DEUX FRACTIONS depuis le 1er novembre 2006 : l'âge
+      L'ÂGE LÉGAL POUR LES DEUX FRACTIONS depuis le 2 novembre 2006, date
+      depuis laquelle la période liquide (`date_effet`) : l'âge
       de celle d'avant 1998 « est également abaissé à soixante ans » pour qui
       a la durée requise, et elle est servie décotée aux autres (décret
       n° 2006-1325, art. 2, I et II).

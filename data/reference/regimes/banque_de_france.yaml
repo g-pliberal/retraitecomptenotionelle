@@ -39,7 +39,8 @@ inventaire:
 # prêté. Barème `taux_majoration_enfants` de chaque période.
 periodes:
   - debut: 1930
-    fin: 2007
+    fin: 2006
+    date_effet: [1930-01-01, 2007-04-01]
     type_calcul: annuites
     age_ouverture: 55
     age_taux_plein: 55
@@ -53,7 +54,53 @@ periodes:
     surcote_par_trimestre: null
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
     avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
-    notes: Aligné sur le code des pensions civiles à compter de 2007.
+    notes: >-
+      Aligné sur le code des pensions civiles à compter de 2007. La période
+      liquide les pensions qui prennent effet jusqu'au 31 mars 2007
+      (`date_effet`) : le règlement annexé au décret n° 2007-262 vaut « à
+      compter du 1er avril 2007 » (article 1er, JORFARTI000001483411).
+  - debut: 2007
+    fin: 2007
+    date_effet: [2007-04-01, 2008-01-01]
+    type_calcul: annuites
+    age_ouverture: 60
+    age_table: banque_de_france
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 65
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 160
+    duree_requise_par_generation: duree_requise_par_generation
+    duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
+    duree_requise_calendrier: banque_de_france_2007
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0785
+    perimetre_taux: agent_seul
+    bareme_decote: decote_banque_de_france
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
+    avantages_non_contributifs:
+      [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
+    notes: >-
+      LE RÈGLEMENT DE 2007, DU 1ER AVRIL AU 31 DÉCEMBRE 2007 (décret
+      n° 2007-262, article 1er, JORFARTI000001483411, relu le 19 novembre
+      2026 : « fixé à compter du 1er avril 2007 par le règlement annexé »).
+      La période liquide les pensions qui prennent effet depuis ce jour
+      (`date_effet`) : soixante ans (article 26 a, LEGIARTI000006778516), la
+      durée du calendrier de l'article 69, 151 trimestres au deuxième
+      trimestre 2007 et 152 au second semestre, aucune décote avant 2009
+      (article 70). La fiche gardait jusqu'en décembre les cinquante-cinq ans
+      et les 150 trimestres de l'ancien régime. Le reste est celui de la
+      période de 2008, dont la note dit les sources.
+      LA SURCOTE N'EST PAS SERVIE, ET C'EST UN ÉCART DÉCLARÉ. L'article 33 ne
+      majore que les trimestres « effectués après le 1er avril 2007, au-delà
+      de l'âge de soixante ans » et en sus de la durée : deux au plus pour une
+      pension de 2007, soit 1,5 %. Le taux plat de la fiche les compterait
+      depuis soixante ans, jusqu'à vingt : la période n'en sert aucun, faute
+      d'un barème daté, qui reste à écrire — et qui manque aussi aux périodes
+      suivantes, où le taux plat compte les trimestres d'avant avril 2007.
   - debut: 2008
     fin: 2008
     type_calcul: annuites
@@ -113,11 +160,10 @@ periodes:
       liquider jusqu'au 31 décembre 2008, puis monte de 0,125 % en 2009 à
       1,25 % en 2018, l'âge d'annulation de 61 ans à la limite d'âge du
       statut (fiche `decote_banque_de_france`).
-      LE RÈGLEMENT VAUT À L'ANNÉE D'EFFET. Il entre en vigueur au printemps
-      2007 (son article 69 compte encore « jusqu'au 31 mars 2007 ») ; la fiche
-      le fait commencer avec sa période de 2008, et garde avant les cinquante-
-      cinq ans et les 150 trimestres de l'ancien régime, que l'index LEGI ne
-      porte pas et que le dépôt n'a pas relus.
+      LE RÈGLEMENT VAUT DEPUIS LE 1ER AVRIL 2007 : la période de 2007 liquide
+      les pensions d'avril à décembre 2007, celle-ci celles de 2008. Avant,
+      les cinquante-cinq ans et les 150 trimestres de l'ancien régime, que
+      l'index LEGI ne porte pas et que le dépôt n'a pas relus.
   - debut: 2009
     fin: 2010
     type_calcul: annuites
