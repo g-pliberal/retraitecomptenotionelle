@@ -279,3 +279,12 @@ effet: >-
   rétroactifs d'un artisan à deux fois le salaire moyen baissent de 0,6 à 0,8 %,
   et sa fiche de paie du droit en vigueur prélève 331 € de moins en 2019 sur
   60 000 € de revenu.
+textes_sans_effet:
+- id: LEGIARTI000048683707
+  article: L. 131-6 CSS
+  en_vigueur: 2023-12-28
+  motif: >-
+    la loi n° 2023-1250 assied les cotisations sur « l'assiette définie à l'article L.
+    136-3 », pour les périodes courant à compter du 1er janvier 2025 ; la fiche ne tient
+    de l'article que le jour où il a rendu la cotisation provisionnelle, le 30 décembre
+    1999 ; la fiche assiette_sociale_independants la rattache

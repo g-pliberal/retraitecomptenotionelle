@@ -500,6 +500,14 @@ textes_a_rattacher:
 - {id: LEGIARTI000048238069, article: "décret n° 2008-639, article 6 bis (SNCF)", en_vigueur: 2023-10-22, change: "la retraite progressive ouverte aux agents de la SNCF"}
 textes_sans_effet:
 - {id: LEGIARTI000053327980, article: "R. 351-39 CSS", en_vigueur: 2026-01-01, motif: "l'article, qui portait les cent cinquante trimestres de la retraite progressive jusqu'au 1er septembre 2023 (R. 161-19-5 depuis), est rétabli pour autre chose : « Pour les assurés dont les pensions n'ont pas pris effet au 1er janvier 2026 alors qu'à cette date ils avaient plus de soixante-quinze ans », les règles d'avant le décret n° 2025-1409 « demeurent applicables » — ce que lit la fiche trimestres_avant_1972"}
+- id: LEGIARTI000052046924
+  article: annexe 3 au statut national des IEG
+  en_vigueur: 2025-08-06
+  motif: >-
+    la rédaction retire « sans aucune interruption » de la condition faite aux agents
+    recrutés avant le 1er septembre 2023, qui remplissent depuis « les conditions
+    d'affiliation à ce régime prévues au I de l'article 16 de la loi du 9 août 2004 » ;
+    le reste, mot pour mot, dont l'article 21-1, que la fiche lit
 code:
   javascript: >-
     moteur/js/droit/progressive.js : regle, examiner, fraction, ageMinimum,

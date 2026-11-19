@@ -2231,6 +2231,26 @@ textes_sans_effet:
     2004 à 2007 : les organismes « peuvent faire procéder, à toute époque, à toute
     vérification des ressources des requérants ou à tout contrôle des ressources des
     bénéficiaires » — un contrôle, de même
+- id: LEGIARTI000048697787
+  article: L. 351-10 CSS
+  en_vigueur: 2023-12-28
+  motif: >-
+    la rédaction retire de la première phrase les périodes des fonctionnaires, des
+    magistrats et des militaires affiliés à un régime spécial, et renvoie à un décret «
+    les conditions dans lesquelles des trimestres validés dans un autre régime au même
+    titre que les trimestres validés en application des articles L. 381-1 et L. 381-2
+    sont pris en compte dans l'appréciation de ce seuil » ; le minimum, sa majoration au
+    titre des périodes cotisées et son seuil n'y changent pas ; la phrase que la fiche
+    lit, la pension au taux plein « assortie, le cas échéant, d'une majoration
+    permettant de porter cette prestation », y reste
+- id: LEGIARTI000048844775
+  article: L. 14 CPCMR
+  en_vigueur: 2023-12-31
+  motif: >-
+    la rédaction dit « aux majorations de durée d'assurance mentionnées à l'article L.
+    12 quater du présent code et à l'article 78 de la loi », là où celle d'avant ne
+    nommait que la majoration de l'article 78 ; le reste, mot pour mot, dont « Le
+    coefficient de minoration n'est pas applicable aux pensions de réversion »
 code:
   javascript: >-
     moteur/js/droit/reversion.js : reversion, aLAge, mariageDure, groupesDuMinimum,

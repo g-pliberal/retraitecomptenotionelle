@@ -483,3 +483,13 @@ effet: >-
   leur pension est simulée à la caisse de Mayotte, leurs trimestres au revenu cotisé et,
   depuis 2019, à l'assiette minimale, trois trimestres pour l'artisan qui déclare
   1 000 € ; leur cotisation, au taux du régime général.
+textes_sans_effet:
+- id: LEGIARTI000051284545
+  article: ordonnance n° 96-1122 du 20 décembre 1996, article 28-1
+  en_vigueur: 2025-02-28
+  motif: >-
+    la rédaction ne touche que le II, les revenus des travailleurs indépendants, «
+    assujettis dans les conditions prévues à l'article L. 136-3 du code de la sécurité
+    sociale » ; le plafond de cotisations de sécurité sociale à Mayotte, que la fiche
+    lit, n'y change pas ; la fiche cotisation_vieillesse_independants_mayotte la
+    rattache

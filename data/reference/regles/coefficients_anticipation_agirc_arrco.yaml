@@ -1381,6 +1381,35 @@ textes_sans_effet:
     aucun de ses articles ne touche l'abattement, l'âge de l'article 3 de l'accord du 18
     mars 2011 ni ses exonérations ; ses signataires « se réuniront également au cours du
     second semestre 2018 pour traiter du devenir de l'AGFF au-delà de 2018 »
+- id: LEGIARTI000047634502
+  article: code de la sécurité sociale, D. 161-2-1-9
+  en_vigueur: 2023-09-01
+  motif: >-
+    le décret n° 2023-436 ajoute les âges des assurés nés du 1er septembre 1961 à 1967,
+    de « Soixante-deux ans et trois mois » à « Soixante-trois ans et neuf mois », et
+    soixante-quatre ans à ceux nés à compter du 1er janvier 1968, pour les pensions
+    prenant effet à compter du 1er septembre 2023 ; les 1° à 5°, les âges des assurés
+    nés avant 1955, mot pour mot ; la fiche n'en lit que les âges des générations 1951 à
+    1955, et compte ses coefficients de l'âge du 1° de L. 351-8, qu'elle ne fixe pas
+- id: LEGIARTI000053280889
+  article: code de la sécurité sociale, L. 161-17-2
+  en_vigueur: 2025-12-31
+  motif: >-
+    la loi n° 2025-1403 écrit dans l'article les âges des assurés nés du 1er septembre
+    1961 à 1968, de « Soixante-deux ans et trois mois » à « Soixante-trois ans et neuf
+    mois », et garde soixante-quatre ans à ceux nés à compter du 1er janvier 1969, pour
+    les pensions prenant effet à compter du 1er septembre 2026 ; la fiche compte ses
+    coefficients de l'âge du 1° de L. 351-8, soixante-sept ans, que la rédaction ne
+    touche pas
+- id: LEGIARTI000051289852
+  article: code de la sécurité sociale, L. 351-8
+  en_vigueur: 2025-02-28
+  motif: >-
+    la loi n° 2025-199 ajoute un 6°, le taux plein à soixante-cinq ans de l'assuré qui a
+    des trimestres de la majoration de L. 351-4-1 ou qui a aidé son enfant handicapé,
+    pour les pensions prenant effet à compter du 1er janvier 2026 ; le reste, mot pour
+    mot, dont le 1°, d'où la fiche compte ses coefficients ; le 6° est nommé par la
+    fiche taux_plein_a_soixante_cinq_ans
 code:
   interrupteurs:
     abattement_points: agirc_arrco

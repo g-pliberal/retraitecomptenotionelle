@@ -121,3 +121,14 @@ effet: >-
   la passe est maintenu jusqu'à ce départ, soixante-dix ans au plus, puis radié : né en
   1990, il touche à tout départ saisi au-delà de 70 ans la pension d'un départ à 70 ans.
   L'autorisation, que l'employeur peut refuser, est présumée accordée.
+textes_sans_effet:
+- id: LEGIARTI000006362690
+  article: L. 10 CPCMR
+  en_vigueur: 2004-01-01
+  motif: >-
+    la rédaction de 2004 retourne la phrase : les services accomplis postérieurement à
+    la limite d'âge « dans les conditions prévues par la loi sont pris en compte dans la
+    pension », là où celle de 1964 disait qu'ils « ne peuvent être pris en compte dans
+    une pension, sauf dans les cas exceptionnels prévus par une loi » ; jusqu'au 14 juin
+    2023 la loi ne prévoit aucun maintien de droit commun, et celui de L. 556-1, depuis,
+    est l'une de ces conditions : rien de ce que la fiche porte

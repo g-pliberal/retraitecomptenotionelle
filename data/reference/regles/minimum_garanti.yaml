@@ -169,6 +169,16 @@ textes_a_rattacher:
 - reference: R. 31-1 CPCMR (LEGIARTI000047961873) ; décret n° 2023-752 du 10 août 2023
 - reference: >-
     décret n° 2010-1744 du 30 décembre 2010, article 3 (JORFARTI000023334941)
+textes_sans_effet:
+- id: LEGIARTI000050941662
+  article: décret n° 2003-1306, article 22
+  en_vigueur: 2025-01-02
+  motif: >-
+    la rédaction retire les périodes « validées en application des articles L. 381-1 et
+    L. 381-2 du code de la sécurité sociale » de celles qui comptent comme services
+    effectifs, et n'y laisse que celles où le fonctionnaire en remplissait les
+    conditions en restant affilié à un régime spécial ; le barème du minimum, mot pour
+    mot ; ces périodes, le modèle ne les porte pas, et la fiche le déclare
 historique:
 - >-
   2026-10-08 — action 138, étape 17, sur l'écart que la confrontation à TRAJECTOiRE

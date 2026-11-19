@@ -238,6 +238,14 @@ textes_sans_effet:
     jusqu'en 2003, mais la section qui liquide : « ses droits à l'assurance vieillesse
     de base sont liquidés par la section professionnelle à laquelle elle a été affiliée
     en dernier lieu »
+- id: LEGIARTI000049904642
+  article: code de la sécurité sociale, D. 643-1
+  en_vigueur: 2024-07-07
+  motif: >-
+    l'article ne fixe plus la valeur de service du point, que la fiche y lit pour 2004
+    et 2005, mais les points que la cotisation ouvre, que le décret n° 2024-688 porte à
+    « 557 points de retraite » pour la première tranche, pour les périodes courant à
+    compter du 1er janvier 2025 ; la fiche points_au_prorata_des_cotisations la rattache
 code:
   moteur: >-
     `ValeursPoint.service` lit dans `regimes/valeurs_point.csv` la valeur de service de

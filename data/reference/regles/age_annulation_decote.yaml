@@ -39,6 +39,27 @@ sources:
     date: 2026-11-05
 textes_a_rattacher:
 - reference: L. 351-8 1° CSS
+textes_sans_effet:
+- id: LEGIARTI000047634502
+  article: D. 161-2-1-9 CSS
+  en_vigueur: 2023-09-01
+  motif: >-
+    le décret n° 2023-436 ajoute les âges des assurés nés du 1er septembre 1961 à 1967,
+    de « Soixante-deux ans et trois mois » à « Soixante-trois ans et neuf mois », et
+    soixante-quatre ans à ceux nés à compter du 1er janvier 1968, pour les pensions
+    prenant effet à compter du 1er septembre 2023 ; les 1° à 5°, les âges des assurés
+    nés avant 1955, mot pour mot ; depuis cette date, l'âge du 1° de L. 351-8 se compte
+    du premier alinéa de L. 161-17-2, soixante-quatre ans, augmenté de trois années : 67
+    ans, que la table porte depuis la génération 1955
+- id: LEGIARTI000051289852
+  article: L. 351-8 CSS
+  en_vigueur: 2025-02-28
+  motif: >-
+    la loi n° 2025-199 ajoute un 6°, le taux plein à soixante-cinq ans de l'assuré qui a
+    des trimestres de la majoration de L. 351-4-1 ou qui a aidé son enfant handicapé,
+    pour les pensions prenant effet à compter du 1er janvier 2026 ; le reste, mot pour
+    mot, dont le 1°, « l'âge prévu au premier alinéa de l'article L. 161-17-2 augmenté
+    de trois années »
 exemples:
 - sp_f19666_decote
 - sp_f21552_67_ans_158

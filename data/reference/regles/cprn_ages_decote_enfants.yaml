@@ -543,6 +543,25 @@ textes_sans_effet:
     « Soixante et un ans et quatre mois pour les assurés nés en 1954 » : la rédaction
     que celle du 31 décembre 2011 (LEGIARTI000025089933) remplace avant le 1er janvier
     2014, où les statuts renvoient pour la première fois à L. 161-17-2
+- id: LEGIARTI000047634502
+  article: code de la sécurité sociale, D. 161-2-1-9
+  en_vigueur: 2023-09-01
+  motif: >-
+    le décret n° 2023-436 ajoute les âges des assurés nés du 1er septembre 1961 à 1967,
+    de « Soixante-deux ans et trois mois » à « Soixante-trois ans et neuf mois », et
+    soixante-quatre ans à ceux nés à compter du 1er janvier 1968, pour les pensions
+    prenant effet à compter du 1er septembre 2023 ; les 1° à 5°, les âges des assurés
+    nés avant 1955, mot pour mot ; la fiche renvoie à l'âge légal sans le fixer : le
+    moteur le lit à la table de l'âge légal
+- id: LEGIARTI000053280889
+  article: code de la sécurité sociale, L. 161-17-2
+  en_vigueur: 2025-12-31
+  motif: >-
+    la loi n° 2025-1403 écrit dans l'article les âges des assurés nés du 1er septembre
+    1961 à 1968, de « Soixante-deux ans et trois mois » à « Soixante-trois ans et neuf
+    mois », et garde soixante-quatre ans à ceux nés à compter du 1er janvier 1969, pour
+    les pensions prenant effet à compter du 1er septembre 2026 ; la fiche renvoie à
+    l'âge légal sans le fixer : le moteur le lit à la table de l'âge légal
 reformes:
 - cprn_report_2014
 - cprn_report_2024

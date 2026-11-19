@@ -455,6 +455,16 @@ textes_a_rattacher:
 - reference: >-
     loi n° 75-1000 du 30 octobre 1975, article créant le i de L. 12, dans sa rédaction
     votée (le dépôt n'a lu que le projet)
+textes_sans_effet:
+- id: LEGIARTI000048844775
+  article: L. 14
+  en_vigueur: 2023-12-31
+  motif: >-
+    la rédaction dit « aux majorations de durée d'assurance mentionnées à l'article L.
+    12 quater du présent code et à l'article 78 de la loi », là où celle d'avant ne
+    nommait que la majoration de l'article 78 ; le reste, mot pour mot ; la fiche ne lit
+    de L. 14 que sa rédaction de 1964, le maximum porté à quarante annuités, que L. 12
+    et L. 13 portent depuis 2004
 code:
   javascript: >-
     moteur/js/regimes.js : FichesDatees ; moteur/js/droit/compter.js :

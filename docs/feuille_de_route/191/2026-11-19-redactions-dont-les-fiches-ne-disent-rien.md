@@ -1,15 +1,16 @@
-# Les rédactions dont les fiches ne disaient rien : celles de 2026 et après, lues
+# Les rédactions dont les fiches ne disaient rien : quatre-vingt-deux lues, une question
 
 **Reprise, au 19 novembre 2026.** Le sixième cliquet de la note de décision
 0009 comptait 83 cas où une fiche ne disait rien d'une rédaction en vigueur
-d'un article qu'elle cite. Les 32 cas dont la rédaction commence en 2026 ou
-après sont lus : aucune ne change la règle que sa fiche porte, et chaque
-fiche le déclare, mot à mot à l'appui. Le cliquet est à 51. Restent ces 51
-cas, de rédactions d'avant 2026, que le propriétaire a demandé de lire
-ensuite. Par quoi commencer :
-`python docs/decisions/0009/sixieme-cliquet/mesures.py`, puis
-`python scripts/textes.py --sans-reponse <fiche>`, l'index LEGI récupéré.
-Aucun résultat n'a bougé.
+d'un article qu'elle cite. Quatre-vingt-deux sont lus : aucune rédaction ne
+change la règle que sa fiche porte, et chaque fiche le déclare, mot à mot à
+l'appui. Le cliquet est à 1. Reste un cas, que le propriétaire doit trancher :
+L. 173-2 du code de la sécurité sociale ne nomme plus le régime des cultes
+depuis 2018, et la fiche `minimum_contributif` écrête encore son minimum.
+Reste aussi une lecture à faire, hors du cliquet : la fiche
+`carpimko_ages_2015` dit ouvrir la complémentaire au départ pour carrière
+longue depuis 2024, quand ses statuts renvoient au départ des assurés
+handicapés. Aucun résultat n'a bougé. Le détail est plus bas.
 
 Le 19 novembre 2026, sur l'accord du propriétaire, la session lit les
 dix-huit rédactions de 2026 et après dont trente-deux couples d'une fiche et
@@ -60,10 +61,62 @@ d'une rédaction ne disaient rien. Chacune est lue dans l'index LEGI, à jour au
   quarante points, le modèle ne le porte pas : la fiche
   `versement_unique_rci` le déclarait déjà, et rattache la rédaction.
 
+**Les rédactions d'avant 2026, lues le même jour.** Le propriétaire a demandé
+d'enchaîner : trente rédactions, cinquante et un couples. Ce sont les
+rédactions en vigueur d'articles que les fiches citent dans une rédaction
+plus ancienne. Cinquante couples reçoivent leur déclaration sans effet, dans
+trente fiches, et se rangent en quatre familles.
+
+- *La fiche renvoie à un âge qu'elle ne fixe pas.* L. 161-17-2 dans sa
+  rédaction du 31 décembre 2025, D. 161-2-1-9 dans celle du 1er septembre
+  2023, L. 351-8 dans celle du 28 février 2025, L. 643-3 dans celle du
+  31 décembre 2025, D. 351-2 : les fiches des complémentaires — notaires,
+  auxiliaires médicaux, agents d'assurance, Agirc-Arrco — et celle de l'âge
+  où la décote s'annule disent « l'âge de L. 161-17-2 » ou « celui du 1° de
+  L. 351-8 », que le moteur lit à la table de l'âge légal. Seize couples.
+- *La fiche s'arrête avant la rédaction.* L'assiette de la complémentaire des
+  artisans et des commerçants finit aux revenus de 2015, et cinq rédactions
+  de 2020 à 2024 n'y touchent pas ; de même l'allocation des professions
+  libérales d'avant 2004, la valeur de service de 2004, le maximum des
+  militaires de 1964, la limite d'âge des industries électriques de 1946.
+- *L'article a changé ailleurs que là où la fiche lit.* L. 24 et L. 17 du
+  code des pensions, L. 351-10, l'article 16 de l'arrêté de l'Ircantec,
+  l'article 26 du décret de la caisse des navigants, les articles 22 et 25 du
+  décret de la CNRACL, les articles 6 et 51 du règlement de la RATP,
+  l'annexe 3 du statut des industries électriques : la clause que la fiche
+  cite s'y retrouve mot pour mot.
+- *La rédaction dit ce que la fiche disait déjà, ou ce qu'elle déclare ne
+  pas porter.* L. 10 du code des pensions compte depuis 2004 les services
+  d'après la limite d'âge ; les périodes d'assurance vieillesse des parents
+  au foyer retirées du minimum garanti, que le modèle ne compte pas ; les
+  indemnités journalières de maternité d'avant 2012, que la fiche du salaire
+  annuel moyen déclare absentes.
+
+**La question laissée au propriétaire.** L. 173-2 du code de la sécurité
+sociale, qui écrête le minimum contributif sur l'ensemble des pensions,
+nommait de 2012 à 2017 les régimes de L. 200-2, de L. 382-15 — les cultes —,
+du 2° de L. 611-1 et des salariés agricoles. Sa rédaction du 1er janvier 2018
+(LEGIARTI000036391874) ne nomme plus que le régime général, les salariés
+agricoles et le régime social des indépendants. La fiche
+`minimum_contributif` compte la Cavimac parmi ses régimes. La session n'a
+pas établi si la caisse écrête encore le minimum des cultes, par L. 382-27,
+ni ce que le moteur fait : le couple reste sans réponse, et le cliquet à 1.
+
+**Une lecture à faire, trouvée en passant.** La fiche `carpimko_ages_2015`,
+version `statuts_de_2024`, écrit que la complémentaire s'ouvre « dès l'âge du
+III de L. 643-3 à qui part en carrière longue à la base ». Le III de L. 643-3
+est le départ des assurés handicapés ; la carrière longue est au II, que les
+statuts ne nomment pas. Si le moteur sert la complémentaire sans abattement
+au départ pour carrière longue depuis 2024, c'est un écart au texte, et sa
+correction changerait des résultats : à instruire à part, sur l'accord du
+propriétaire.
+
 **Ce qui est posé.** Trente-deux déclarations `textes_sans_effet`, dans
 vingt-deux fiches, chacune avec ce que la rédaction change et ce que la fiche
 tient de l'article ; les citations sont vérifiées contre le texte de l'index.
-`sans_un_mot` passe de 83 à 51 dans `data/reference/textes/perimetre.yaml`.
+Pour les rédactions d'avant 2026, cinquante de plus, dans trente fiches.
+`sans_un_mot` passe de 83 à 1 dans `data/reference/textes/perimetre.yaml`,
+en deux commits.
 Aucune règle, aucun paramètre, aucun fichier de régime ne change.
 
 **À savoir.** Chacune des dix-huit rédactions était déjà rattachée par une

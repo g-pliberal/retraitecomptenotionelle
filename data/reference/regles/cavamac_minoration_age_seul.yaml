@@ -492,6 +492,32 @@ textes_sans_effet:
   article: arrêté du 8 juillet 2025, annexe, I
   publie_le: 2025-07-16
   motif: l'article 24, le paiement de la réversion jusqu'à la fin du mois du décès
+- id: LEGIARTI000053280388
+  article: code de la sécurité sociale, article L. 643-3
+  en_vigueur: 2025-12-31
+  motif: >-
+    la loi n° 2025-1403 récrit le II, le départ pour carrière longue, par renvoi : «
+    L'âge prévu au premier alinéa du I est abaissé dans les conditions définies à
+    l'article L. 351-1-1 », pour les pensions prenant effet à compter du 1er septembre
+    2026 ; le reste, mot pour mot, dont le III et le IV, auxquels les statuts renvoient
+- id: LEGIARTI000049917724
+  article: code de la sécurité sociale, article D. 351-2
+  en_vigueur: 2024-07-09
+  motif: >-
+    le décret n° 2024-755 compte les âges de l'ancien combattant ou prisonnier de guerre
+    depuis « L'âge prévu au 1° de l'article L. 351-8 », minoré d'un à quatre ans, ou
+    depuis l'âge de L. 161-17-2, là où la rédaction d'avant les fixait de soixante à
+    soixante-quatre ans, pour les pensions prenant effet à compter du 8 juillet 2024 ;
+    la fiche n'y renvoie que pour dire ce que le modèle sert, et la fiche
+    taux_plein_anciens_combattants_prisonniers la rattache
+- id: LEGIARTI000051289852
+  article: code de la sécurité sociale, article L. 351-8
+  en_vigueur: 2025-02-28
+  motif: >-
+    la loi n° 2025-199 ajoute un 6°, le taux plein à soixante-cinq ans de l'assuré qui a
+    des trimestres de la majoration de L. 351-4-1 ou qui a aidé son enfant handicapé,
+    pour les pensions prenant effet à compter du 1er janvier 2026 ; le reste, mot pour
+    mot, dont le 1° et le 5°, que la fiche lit
 exemples:
 - cavamac_rco_decote_cinq_trimestres
 reformes:

@@ -104,6 +104,15 @@ textes_a_rattacher:
     code des pensions civiles et militaires de retraite, L. 14, III (LEGIARTI000006362704,
     LEGIARTI000019959691)
 - reference: loi n° 2008-1330 du 17 décembre 2008, article 89, III (JORFARTI000019943457)
+textes_sans_effet:
+- id: LEGIARTI000048844775
+  article: code des pensions civiles et militaires de retraite, L. 14
+  en_vigueur: 2023-12-31
+  motif: >-
+    la rédaction dit « aux majorations de durée d'assurance mentionnées à l'article L.
+    12 quater du présent code et à l'article 78 de la loi », là où celle d'avant ne
+    nommait que la majoration de l'article 78 ; le reste, mot pour mot, dont le III, le
+    coefficient de majoration
 reformes:
 - regimes_speciaux_2008
 code:

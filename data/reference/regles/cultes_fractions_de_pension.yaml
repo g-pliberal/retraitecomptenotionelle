@@ -323,6 +323,26 @@ textes_sans_effet:
     pour mot ; 1,25 % est le coefficient des assurés nés après 1952, les seuls qu'une
     décote atteigne encore en août 2026, ceux d'avant ayant tous passé l'âge où elle
     s'annule
+- id: LEGIARTI000047961314
+  article: code de la sécurité sociale, D. 351-2-1
+  en_vigueur: 2023-09-01
+  motif: >-
+    le décret n° 2023-754 porte le minimum à « 8 509,61 euros par an au 1er septembre
+    2023 » et le minimum majoré à 10 170,86 euros, pour les pensions prenant effet à
+    compter de cette date, et retire l'alinéa de leur revalorisation ; la fiche renvoie
+    au minimum majoré de L. 351-10, dont les montants sont à la fiche
+    minimum_contributif, qui la rattache
+- id: LEGIARTI000048697787
+  article: code de la sécurité sociale, L. 351-10
+  en_vigueur: 2023-12-28
+  motif: >-
+    la rédaction retire de la première phrase les périodes des fonctionnaires, des
+    magistrats et des militaires affiliés à un régime spécial, et renvoie à un décret «
+    les conditions dans lesquelles des trimestres validés dans un autre régime au même
+    titre que les trimestres validés en application des articles L. 381-1 et L. 381-2
+    sont pris en compte dans l'appréciation de ce seuil » ; le minimum, sa majoration au
+    titre des périodes cotisées et son seuil n'y changent pas ; la fiche
+    minimum_contributif la rattache
 approximations:
 - version: [regime_forfaitaire, alignement_de_1998]
   ecart: >-

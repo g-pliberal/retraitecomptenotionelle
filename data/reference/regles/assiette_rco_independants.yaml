@@ -1274,6 +1274,48 @@ textes_sans_effet:
     titulaire d'une pension d'invalidité dans le régime institués par l'article L. 632-1
     est exonéré du paiement de toute cotisation d'assurance vieillesse complémentaire » ;
     le RCI est hors de cette fiche depuis 2013, et son minimum depuis 2016
+- id: LEGIARTI000041966711
+  article: code de la sécurité sociale, D. 633-19-2
+  en_vigueur: 2020-05-25
+  motif: >-
+    la rédaction renvoie au « premier alinéa de l'article L. 241-3 » et au « revenu
+    d'activité du chef d'entreprise », et remplace les 4° et 5°, les fractions du revenu
+    partagé, par un renvoi au 3° de l'article L. 662-1 ; la fiche s'arrête aux revenus
+    de 2015, le RCI étant hors d'elle depuis 2016 ; la fiche
+    conjoint_collaborateur_independants la rattache
+- id: LEGIARTI000048683707
+  article: code de la sécurité sociale, L. 131-6
+  en_vigueur: 2023-12-28
+  motif: >-
+    la loi n° 2023-1250 assied les cotisations sur « l'assiette définie à l'article L.
+    136-3 », pour les périodes courant à compter du 1er janvier 2025 ; la fiche s'arrête
+    aux revenus de 2015, le RCI étant hors d'elle depuis 2016 ; la fiche
+    assiette_sociale_independants la rattache
+- id: LEGIARTI000048683699
+  article: code de la sécurité sociale, L. 131-6-2
+  en_vigueur: 2023-12-28
+  motif: >-
+    la loi n° 2023-1250 dit « l'assiette de cotisations prévue à l'article L. 131-6 » là
+    où la rédaction d'avant disait le revenu d'activité, pour les périodes courant à
+    compter du 1er janvier 2025 ; la provision et la régularisation demeurent ; la fiche
+    s'arrête aux revenus de 2015, le RCI étant hors d'elle depuis 2016
+- id: LEGIARTI000048838330
+  article: code de la sécurité sociale, D. 633-2
+  en_vigueur: 2023-12-31
+  motif: >-
+    le décret n° 2023-1352 fixe l'assiette minimale à « 450 fois le montant horaire du
+    salaire minimum de croissance en vigueur le 1er janvier de l'année considérée », à
+    la place de 11,5 % du plafond, « à compter des cotisations annuelles dues au titre
+    de l'année 2023 » ; la fiche ne lit le revenu minimum de D. 633-2 que pour le
+    minimum de la complémentaire, supprimé en 2016
+- id: LEGIARTI000049904623
+  article: code de la sécurité sociale, D. 635-7
+  en_vigueur: 2024-07-07
+  motif: >-
+    l'article porte aujourd'hui les taux du RCI, que le décret n° 2024-688 fixe à « 8,1
+    % » et « 9,1 % » de « l'assiette de cotisations », pour les périodes courant à
+    compter du 1er janvier 2025 ; la fiche n'en lit que les rédactions d'avant 2013, le
+    forfait de l'artisan qui commence ; la fiche rci_seuil_premiere_tranche la rattache
 code:
   moteur: >-
     `assiette_annee_de_revenu`, une table du statut au décalage, et `assiette_de_debut`,

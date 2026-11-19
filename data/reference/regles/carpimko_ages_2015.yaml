@@ -714,6 +714,24 @@ textes_sans_effet:
   motif: >-
     les articles 6 à 9, 20 et 21 des statuts : la cotisation, que lit
     `carpimko_assiette_2026`, aucun âge ni coefficient
+- id: LEGIARTI000053280388
+  article: code de la sécurité sociale, L. 643-3
+  en_vigueur: 2025-12-31
+  motif: >-
+    la loi n° 2025-1403 récrit le II, le départ pour carrière longue, par renvoi : «
+    L'âge prévu au premier alinéa du I est abaissé dans les conditions définies à
+    l'article L. 351-1-1 », pour les pensions prenant effet à compter du 1er septembre
+    2026 ; le reste, mot pour mot, dont le III et le IV, auxquels les statuts renvoient
+- id: LEGIARTI000047634502
+  article: code de la sécurité sociale, D. 161-2-1-9
+  en_vigueur: 2023-09-01
+  motif: >-
+    le décret n° 2023-436 ajoute les âges des assurés nés du 1er septembre 1961 à 1967,
+    de « Soixante-deux ans et trois mois » à « Soixante-trois ans et neuf mois », et
+    soixante-quatre ans à ceux nés à compter du 1er janvier 1968, pour les pensions
+    prenant effet à compter du 1er septembre 2023 ; les 1° à 5°, les âges des assurés
+    nés avant 1955, mot pour mot ; la fiche n'en lit que l'âge des assurés nés en 1954,
+    et renvoie pour les générations d'après 1960 à l'âge légal, sans le fixer
 reformes:
 - carpimko_report_2015
 - carpimko_2024

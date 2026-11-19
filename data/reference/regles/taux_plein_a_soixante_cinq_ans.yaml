@@ -1490,6 +1490,43 @@ textes_sans_effet:
     article 90) ; le reste, mot pour mot ; les périodes des 3° et 5°, que la règle des
     parents de trois enfants nés de 1951 à 1955 écarte, restent les mêmes, et ces
     assurés ont tous passé soixante-sept ans
+- id: LEGIARTI000047452804
+  article: L. 24 du code des pensions civiles et militaires de retraite
+  en_vigueur: 2023-09-01
+  motif: >-
+    la loi n° 2023-270 récrit le 1° du I — l'âge de L. 161-17-2, les âges anticipé et
+    minoré des services actifs et super-actifs —, abaisse l'âge du fonctionnaire
+    handicapé « d'une durée pouvant aller jusqu'à neuf ans » et ajoute un 6°, « Par
+    atteinte de la limite d'âge », pour les pensions prenant effet à compter du 1er
+    septembre 2023 ; la fiche n'en tient qu'un renvoi, celui de la loi n° 2003-775,
+    article 66, à l'année où sont réunies les conditions du I et du II, et ne fixe aucun
+    de ces âges
+- id: LEGIARTI000048065521
+  article: arrêté du 30 décembre 1970 (Ircantec), article 16
+  en_vigueur: 2023-09-14
+  motif: >-
+    la rédaction écrit « 62 ans » et « 64 ans » là où celle d'avant renvoyait à l'âge de
+    L. 161-17-2 et à cet âge augmenté de deux années, et porte l'inapte du 2° au g du 1°
+    ; le d du 3° du I, les agents « nés entre le 1er juillet 1951 et le 31 décembre 1955
+    inclus ayant eu ou élevé au moins trois enfants », que la fiche lit, y reste
+- id: LEGIARTI000048697797
+  article: L. 17 du code des pensions civiles et militaires de retraite
+  en_vigueur: 2023-12-28
+  motif: >-
+    la rédaction retire du dernier alinéa les périodes « validées en application des
+    articles L. 381-1 et L. 381-2 », et n'y laisse que celles où le fonctionnaire en
+    remplissait les conditions en restant affilié à un régime spécial ; le premier
+    alinéa, l'âge où le minimum garanti s'ouvre, que la fiche lit, mot pour mot
+- id: LEGIARTI000053280889
+  article: L. 161-17-2 du code de la sécurité sociale
+  en_vigueur: 2025-12-31
+  motif: >-
+    la loi n° 2025-1403 écrit dans l'article les âges des assurés nés du 1er septembre
+    1961 à 1968, de « Soixante-deux ans et trois mois » à « Soixante-trois ans et neuf
+    mois », et garde soixante-quatre ans à ceux nés à compter du 1er janvier 1969, pour
+    les pensions prenant effet à compter du 1er septembre 2026 ; la fiche ne lit
+    l'article que pour les générations de 1951 à 1955, dont l'âge reste « celui
+    applicable en application du présent article dans sa rédaction antérieure »
 code:
   moteur: >-
     L'âge du 1° de L. 351-8 que lit tout le moteur (`ouvrir.age_taux_plein`) est, dans les

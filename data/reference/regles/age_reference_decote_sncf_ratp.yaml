@@ -349,3 +349,11 @@ code:
     tests/test_simulateur.py, test_la_decote_des_regimes_speciaux_arrive_quatre_ans_apres,
     cinquante-sept ans en 2025 comme en 2034 ; aucun témoin ne liquide une pension que
     cet âge change, et aucun cas n'y confronte le portage
+textes_sans_effet:
+- id: LEGIARTI000052292971
+  article: décret n° 2008-637 (RATP), article 51
+  en_vigueur: 2025-09-27
+  motif: >-
+    la rédaction écrit « 151 trimestres » au I, ôte le III abrogé et le renvoi au décret
+    n° 2023-690, et espace ses chiffres romains ; le II, le coefficient de minoration
+    que la fiche lit, mot pour mot

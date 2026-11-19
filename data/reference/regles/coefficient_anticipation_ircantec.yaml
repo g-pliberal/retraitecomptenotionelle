@@ -858,6 +858,13 @@ textes_sans_effet:
     les paragraphes 1 et 2 de 2004, mot pour mot, aux espaces près (« 0, 43 ») ; la
     rédaction ajoute les majorations du paragraphe 4, « A compter du 1er janvier 2010 »
     (fiche surcote_ircantec)
+- id: LEGIARTI000041969453
+  article: décret n° 70-1277 du 23 décembre 1970, article 2
+  en_vigueur: 2020-05-25
+  motif: >-
+    la rédaction ne change que des renvois au code de la sécurité sociale, de R. 623-3 à
+    R. 623-10 vers « R. 139-2 », « R. 139-5 », « R. 139-7 » et « R. 139-10 » ;
+    l'institution que la fiche y lit reste la même
 code:
   interrupteurs:
     abattement_points: ircantec

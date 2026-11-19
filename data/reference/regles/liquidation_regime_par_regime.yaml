@@ -605,3 +605,31 @@ effet: >-
   ne lui ouvre qu'à soixante-deux ans et neuf mois ; un militaire de dix-sept ans de
   services passé au privé jusqu'à soixante-quatre ans voyait sa pension militaire
   commencer à soixante-quatre ans au lieu de trente-cinq.
+textes_sans_effet:
+- id: LEGIARTI000044496248
+  article: décret n° 2011-1500 du 10 novembre 2011, article 26
+  en_vigueur: 2021-12-16
+  motif: >-
+    le décret n° 2021-1637 récrit le III par génération, de « 21 annuités pour les
+    personnes nées jusqu'au 31 décembre 1962 » à « 29 annuités pour les personnes nées
+    en 1970 », pour les pensions prenant effet à compter du 1er janvier 2022, et abroge
+    le VII ; le I, les annuités de 2012 à 2019 que la fiche lit (« à 17 annuités » en
+    2014), mot pour mot ; la fiche crpn_pension_des_navigants la rattache
+- id: LEGIARTI000047453110
+  article: L. 351-1-3 CSS
+  en_vigueur: 2023-09-01
+  motif: >-
+    la loi n° 2023-270 retire « tout ou partie de » : la durée exigée de l'assuré
+    handicapé est toute cotisée, pour les pensions prenant effet à compter du 1er
+    septembre 2023 ; « une incapacité permanente d'au moins 50 % », que la fiche lit, y
+    reste ; la fiche retraite_anticipee_handicap la rattache
+- id: LEGIARTI000048065521
+  article: arrêté du 30 décembre 1970 (Ircantec), article 16
+  en_vigueur: 2023-09-14
+  motif: >-
+    la rédaction écrit « 62 ans » et « 64 ans » là où celle d'avant renvoyait à l'âge de
+    L. 161-17-2 et à cet âge augmenté de deux années, et porte l'inapte du 2° au g du 1°
+    ; « L'allocation de retraite est normalement liquidée à l'âge prévu au 1° de
+    l'article L. 351-8 du code de la sécurité sociale » et l'anticipation « au plus tôt
+    dix ans » avant, que la fiche lit, mot pour mot ; les fiches
+    coefficient_anticipation_ircantec et surcote_ircantec la rattachent
