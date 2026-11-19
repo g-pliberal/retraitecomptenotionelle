@@ -1469,6 +1469,27 @@ textes_sans_effet:
     présence parentale (« le congé peut être renouvelé une fois ») ; le 5°, « Aux congés de
     maternité et liés aux charges parentales », est celui de la rédaction précédente, et la
     fiche ne lit que le congé de maternité du parent né de 1951 à 1955, pris avant 2023
+- id: LEGIARTI000054589995
+  article: code de la sécurité sociale, R. 351-27
+  en_vigueur: 2026-08-01
+  motif: >-
+    la rédaction finit le 2° par « le coefficient de minoration à appliquer au " taux
+    plein " est 1,25 % », à la place de « 2,5 % pour les pensions ayant pris effet avant
+    le 1er janvier 2004 », et retire le renvoi au décret n° 2025-1409 ; le reste, mot
+    pour mot ; 1,25 % est le coefficient des assurés nés après 1952, les seuls qu'une
+    décote atteigne encore en août 2026, ceux d'avant ayant tous passé l'âge où elle
+    s'annule ; le soixante-cinquième anniversaire de qui remplit « les conditions
+    prévues au 1° bis ou 6° de l'article L. 351-8 » y reste
+- id: LEGIARTI000054425288
+  article: code de la sécurité sociale, R. 351-12
+  en_vigueur: 2026-11-01
+  motif: >-
+    la rédaction ajoute un mot au 5°, « une rente pour une incapacité permanente
+    professionnelle au moins égale à 66 % », et date son entrée en vigueur du 1er
+    novembre 2026 (décret n° 2026-354 du 7 mai 2026, article 3 ; loi n° 2025-199,
+    article 90) ; le reste, mot pour mot ; les périodes des 3° et 5°, que la règle des
+    parents de trois enfants nés de 1951 à 1955 écarte, restent les mêmes, et ces
+    assurés ont tous passé soixante-sept ans
 code:
   moteur: >-
     L'âge du 1° de L. 351-8 que lit tout le moteur (`ouvrir.age_taux_plein`) est, dans les

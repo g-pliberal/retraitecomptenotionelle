@@ -157,6 +157,18 @@ textes_a_rattacher:
 - reference: L. 161-17-3 CSS, version du 22 janvier 2014 (LEGIARTI000028494794)
 - reference: loi n° 2023-270, article 10, XXX, B
 - reference: L. 351-1 CSS
+textes_sans_effet:
+- id: LEGIARTI000054589995
+  article: code de la sécurité sociale, R. 351-27
+  en_vigueur: 2026-08-01
+  motif: >-
+    la rédaction finit le 2° par « le coefficient de minoration à appliquer au " taux
+    plein " est 1,25 % », à la place de « 2,5 % pour les pensions ayant pris effet avant
+    le 1er janvier 2004 », et retire le renvoi au décret n° 2025-1409 ; le reste, mot
+    pour mot ; 1,25 % est le coefficient des assurés nés après 1952, les seuls qu'une
+    décote atteigne encore en août 2026, ceux d'avant ayant tous passé l'âge où elle
+    s'annule ; le 1°, qui renvoie depuis le 1er janvier 2026 à « la limite prévue à
+    l'article L. 161-17-3 », n'y change pas
 exemples:
 - cnav_2026_07_age_legal_1964
 - cnav_2026_07_age_legal_1965_apres_avril

@@ -193,3 +193,15 @@ historique:
 effet: >-
   L'artisane de 2020 qui a déclaré 4 000 € : 15,83 points, servis 19,33 € par an ; partie
   en 2022, elle reçoit à la place 284,19 € en une fois, et sa réversion n'en sert rien.
+textes_sans_effet:
+- id: LEGIARTI000054908896
+  article: règlement du RCI, article 27
+  en_vigueur: 2027-01-01
+  motif: >-
+    l'arrêté du 21 septembre 2026 renvoie aux « articles L. 161-22 et L. 634-6-1 du code
+    de la sécurité sociale » et aux conditions du « 3° du A du III de l'article L.
+    161-22 », à la place de la section du code et des « alinéas 3 à 6 de l'article L.
+    634-6 » ; « La seconde pension de vieillesse est calculée, liquidée et servie dans
+    les conditions applicables à la pension de vieillesse du présent régime », que la
+    fiche lit, mot pour mot ; la fiche seconde_pension la rattache, avec le cumul de
+    2027

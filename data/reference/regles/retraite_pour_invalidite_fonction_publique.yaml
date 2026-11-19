@@ -302,6 +302,15 @@ textes_sans_effet:
    motif: "le conseil médical remplace la commission de réforme"}
 - {id: LEGIARTI000049428940, article: "décret n° 2003-1306, article 37", en_vigueur: 2024-04-18,
    motif: "renvoi mis à jour : les articles L. 556-5 à L. 556-7 du code général de la fonction publique remplacent les articles 1er-1 à 1er-3 de la loi du 13 septembre 1984"}
+- id: LEGIARTI000054590030
+  article: décret n° 2003-1306, article 20
+  en_vigueur: 2026-08-01
+  motif: >-
+    la rédaction écrit au I « sous réserve des bonifications et majorations mentionnées
+    à l'article 15 », là où celle d'avant disait « des bonifications », et espace ses
+    chiffres romains (« I. - La ») ; le reste, mot pour mot, dont le coefficient de
+    minoration qui « n'est pas applicable » aux fonctionnaires mis à la retraite pour
+    invalidité
 code:
   javascript: >-
     moteur/js/droit/invalidite.js : radiationDuRegime, retraitePourInvalidite,

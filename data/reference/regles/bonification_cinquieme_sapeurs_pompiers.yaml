@@ -288,3 +288,13 @@ historique:
 effet: >-
   Le sapeur-pompier professionnel qui réunit ses durées : vingt trimestres à qui a servi
   vingt-cinq ans en cette qualité, sous le maximum de 75 %.
+textes_sans_effet:
+- id: LEGIARTI000054978195
+  article: décret n° 2003-1306, article 15
+  en_vigueur: 2026-10-14
+  motif: >-
+    la rédaction ajoute au I un 10°, « La majoration accordée aux élus locaux en
+    application de l'article L. 161-21-2 du code de la sécurité sociale », pour les
+    pensions prenant effet à compter du 1er janvier 2027 (décret n° 2026-948 du 12
+    octobre 2026, article 8) ; le reste, mot pour mot ; cette majoration a sa fiche,
+    majoration_duree_elus_locaux : rien de la bonification du cinquième ni de sa limite

@@ -45,6 +45,25 @@ textes_a_rattacher:
 - reference: L. 13 CPCMR
 - reference: décret n° 2003-1306, article 15 III (CNRACL)
 - reference: décret n° 2004-1056, article 12 II (FSPOEIE)
+textes_sans_effet:
+- id: LEGIARTI000054978195
+  article: décret n° 2003-1306, article 15
+  en_vigueur: 2026-10-14
+  motif: >-
+    la rédaction ajoute au I un 10°, « La majoration accordée aux élus locaux en
+    application de l'article L. 161-21-2 du code de la sécurité sociale », pour les
+    pensions prenant effet à compter du 1er janvier 2027 (décret n° 2026-948 du 12
+    octobre 2026, article 8) ; le reste, mot pour mot ; cette majoration a sa fiche,
+    majoration_duree_elus_locaux : le III, la clause du taux maximum, n'y change pas
+- id: LEGIARTI000054978200
+  article: décret n° 2004-1056, article 12
+  en_vigueur: 2026-10-14
+  motif: >-
+    la rédaction ajoute au I un 9°, « La majoration accordée aux élus locaux en
+    application de l'article L. 161-21-2 du code de la sécurité sociale », pour les
+    pensions prenant effet à compter du 1er janvier 2027 (décret n° 2026-948 du 12
+    octobre 2026, article 8) ; le reste, mot pour mot ; cette majoration a sa fiche,
+    majoration_duree_elus_locaux : le II, la clause du taux maximum, n'y change pas
 referents:
   trajectoire:
     equivalent: >-

@@ -230,3 +230,54 @@ effet: >-
   cent-soixante-douzième, 0,58 %, au prorata d'une durée requise de cent soixante-douze
   trimestres ; sans effet sur l'âge, faute d'être cotisé. Le modèle ne connaît pas
   l'engagement et ne la sert pas.
+textes_sans_effet:
+- id: LEGIARTI000054978170
+  article: code rural et de la pêche maritime, R. 732-61
+  en_vigueur: 2026-10-14
+  motif: >-
+    la rédaction ajoute « L. 161-21-2, » à la liste des majorations de durée
+    d'assurance, « prévues aux articles L. 161-21-2, L. 173-1-5, L. 351-4, L. 351-4-1 »,
+    pour les pensions prenant effet à compter du 1er janvier 2027 (décret n° 2026-948 du
+    12 octobre 2026, article 8) ; le reste, mot pour mot ; la majoration des élus locaux
+    a sa fiche, majoration_duree_elus_locaux : celle des sapeurs-pompiers volontaires,
+    de L. 173-1-5, y reste
+- id: LEGIARTI000054978195
+  article: décret n° 2003-1306, article 15
+  en_vigueur: 2026-10-14
+  motif: >-
+    la rédaction ajoute au I un 10°, « La majoration accordée aux élus locaux en
+    application de l'article L. 161-21-2 du code de la sécurité sociale », pour les
+    pensions prenant effet à compter du 1er janvier 2027 (décret n° 2026-948 du 12
+    octobre 2026, article 8) ; le reste, mot pour mot ; cette majoration a sa fiche,
+    majoration_duree_elus_locaux : le 9°, la majoration des sapeurs-pompiers
+    volontaires, y reste
+- id: LEGIARTI000054978200
+  article: décret n° 2004-1056, article 12
+  en_vigueur: 2026-10-14
+  motif: >-
+    la rédaction ajoute au I un 9°, « La majoration accordée aux élus locaux en
+    application de l'article L. 161-21-2 du code de la sécurité sociale », pour les
+    pensions prenant effet à compter du 1er janvier 2027 (décret n° 2026-948 du 12
+    octobre 2026, article 8) ; le reste, mot pour mot ; cette majoration a sa fiche,
+    majoration_duree_elus_locaux : le 8°, la majoration des sapeurs-pompiers
+    volontaires, y reste
+- id: LEGIARTI000054978160
+  article: code des pensions de retraite des marins, R. 8-1
+  en_vigueur: 2026-10-14
+  motif: >-
+    la rédaction joint à la majoration de L. 173-1-5 celle des élus locaux : « Lorsque
+    la majoration de durée d'assurance prévue à l'article L. 161-21-2 du code de la
+    sécurité sociale et celle prévue à l'article L. 173-1-5 du même code sont
+    attribuées, en application des articles R. 161-17-1 et R. 173-4-6 », pour les
+    pensions prenant effet à compter du 1er janvier 2027 (décret n° 2026-948, article 8)
+    ; ce que le trimestre des sapeurs-pompiers volontaires vaut chez les marins n'y
+    change pas ; la fiche majoration_duree_elus_locaux la rattache
+- id: LEGIARTI000054978205
+  article: décret n° 2017-1000, article 3
+  en_vigueur: 2026-10-14
+  motif: >-
+    la rédaction ajoute un 2° bis, « Au IV de l'article R. 161-17-1, après la référence
+    : “R. 173-15” sont ajoutés les mots : “, dans sa version applicable à
+    Saint-Pierre-et-Miquelon.” », pour la majoration des élus locaux et les pensions
+    prenant effet à compter du 1er janvier 2027 (décret n° 2026-948, article 8) ; le
+    reste, R. 173-4-6 compris, mot pour mot

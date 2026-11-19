@@ -1462,6 +1462,16 @@ textes_sans_effet:
   motif: >-
     « six classes de cotisation » et mêmes montants qu'en 1985 ; seul le revenu devient
     celui « tel que défini à l'article L. 131-6 du code de la sécurité sociale »
+- id: LEGIARTI000054168526
+  article: décret n° 79-262, article 2
+  en_vigueur: 2026-07-01
+  motif: >-
+    le décret n° 2026-418 dit « affiliés » pour « adhérents », limite le calcul du I «
+    aux deux premières années d'activité », renvoie pour L. 613-7 « aux articles L.
+    613-7 à L. 613-9 et D. 613-4 » et ajoute au III « Le nombre de points obtenus est
+    arrondi à la décimale la plus proche » ; la Cipav n'a plus de classes depuis 2023,
+    et ses deux tranches sont hors de cette fiche : la fiche cipav_seconde_tranche la
+    rattache
 code:
   interrupteurs:
     cotisation_par_classes: true

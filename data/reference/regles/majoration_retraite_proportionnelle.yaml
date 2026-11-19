@@ -1469,6 +1469,17 @@ textes_sans_effet:
     défunt », et non plus ses « annuités ». La fiche ne lisait l'article que pour les
     réversions des plans de 1997 à 2008 ; le modèle ne connaît de la réversion du régime
     que celle que l'assuré déclare
+- id: LEGIARTI000053365740
+  article: code rural et de la pêche maritime, D. 732-114
+  en_vigueur: 2026-01-01
+  motif: >-
+    l'article ne porte plus la révision des points des pensions d'avant 1997, que la
+    fiche lit dans sa rédaction de 2005, mais l'écrêtement de la majoration de pension
+    de L. 732-54-1 ; la rédaction l'écrête à l'année, « Lorsque le montant annuel de la
+    majoration de pension [...] excède le plafond fixé aux I et II de l'article D.
+    732-113 », là où celle d'avant disait « mensuel » et « le douzième du plafond », et
+    y ajoute le plafond du III ; la fiche pension_majoree_reference la rattache : rien
+    de la majoration des retraites proportionnelles
 code:
   javascript: >-
     moteur/js/droit/completer.js : majorationRetraiteProportionnelle, completer ;

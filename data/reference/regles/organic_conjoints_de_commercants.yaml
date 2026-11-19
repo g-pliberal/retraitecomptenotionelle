@@ -199,6 +199,18 @@ textes_sans_effet:
     seule s'ajoute la note d'entrée en vigueur de l'arrêté du 6 octobre 2025 (NOR
     TSSS2527351A) ; la « définition de la règle de cumul » que l'index porte est
     inchangée, mot pour mot
+- id: LEGIARTI000054908882
+  article: règlement du RCI, article 41
+  en_vigueur: 2027-01-01
+  motif: >-
+    la rédaction touche le seul I, le versement unique de la réversion de moins de
+    quarante points : « conjoint survivant ou divorcé », le revenu de référence « visé à
+    l'article D. 635-9 » seul, et sa valeur « au jour de la date d'effet de la pension
+    du conjoint survivant ou divorcé », non plus « de l'assuré » ; le II et le III, mot
+    pour mot ; « Les points de réversion de l'ancien régime des conjoints de commerçants
+    sont pris en compte pour la détermination du versement forfaitaire unique », que la
+    fiche lit, y reste ; le modèle ne verse pas la réversion en une fois (fiche
+    versement_unique_rci, qui la rattache)
 code:
   javascript: "moteur/js/droit/acquerir.js : acquerir"
   parametres: >-

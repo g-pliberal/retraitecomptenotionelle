@@ -304,6 +304,25 @@ textes_sans_effet:
     l'ancien II aux assurés de plus de soixante-quinze ans au 1er janvier 2026, dont
     ceux nés en 1947 : la durée maximale que lit la fraction d'avant 1998 ne change pour
     personne
+- id: LEGIARTI000054589231
+  article: code de la sécurité sociale, D. 351-2-2
+  en_vigueur: 2026-08-01
+  motif: >-
+    la rédaction ajoute au III un 4°, « De l'article L. 634-4 du code général de la
+    fonction publique et de l'article L. 4138-6-1 du code de la défense », aux
+    trimestres validés qui comptent sous le plafond du I, et retire le renvoi au décret
+    n° 2023-754 ; le II, la durée de « 120 trimestres » que la fiche lit, mot pour mot ;
+    la fiche minimum_contributif la rattache
+- id: LEGIARTI000054589995
+  article: code de la sécurité sociale, R. 351-27
+  en_vigueur: 2026-08-01
+  motif: >-
+    la rédaction finit le 2° par « le coefficient de minoration à appliquer au " taux
+    plein " est 1,25 % », à la place de « 2,5 % pour les pensions ayant pris effet avant
+    le 1er janvier 2004 », et retire le renvoi au décret n° 2025-1409 ; le reste, mot
+    pour mot ; 1,25 % est le coefficient des assurés nés après 1952, les seuls qu'une
+    décote atteigne encore en août 2026, ceux d'avant ayant tous passé l'âge où elle
+    s'annule
 approximations:
 - version: [regime_forfaitaire, alignement_de_1998]
   ecart: >-

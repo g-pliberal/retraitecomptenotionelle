@@ -616,6 +616,16 @@ textes_sans_effet:
     élèves des établissements d'enseignement technique et de formation professionnelle
     agricoles », intervertis en 2005 ; les 60°, 65° et 78°, qui abrogent les décrets
     n° 80-808, n° 81-790 et n° 86-1084, sont ceux de 2005, mot pour mot
+- id: LEGIARTI000054978170
+  article: code rural et de la pêche maritime, R. 732-61
+  en_vigueur: 2026-10-14
+  motif: >-
+    la rédaction ajoute « L. 161-21-2, » à la liste des majorations de durée
+    d'assurance, « prévues aux articles L. 161-21-2, L. 173-1-5, L. 351-4, L. 351-4-1 »,
+    pour les pensions prenant effet à compter du 1er janvier 2027 (décret n° 2026-948 du
+    12 octobre 2026, article 8) ; le reste, mot pour mot ; la majoration des élus locaux
+    a sa fiche, majoration_duree_elus_locaux : rien de la durée par génération que la
+    fiche lit dans la rédaction de 2017
 code:
   interrupteurs:
     bareme_points: msa_proportionnelle

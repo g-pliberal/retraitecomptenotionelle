@@ -494,6 +494,26 @@ textes_sans_effet:
     [...] au titre des périodes courant à compter du 1er janvier 2026 » (article 6,
     JORFARTI000049888606) ; la MSA applique encore 2,24 % en 2025 : sans effet sur les
     années de 2016 à 2025
+- id: LEGIARTI000053296666
+  article: code rural et de la pêche maritime, D. 731-121
+  en_vigueur: 2026-01-01
+  motif: >-
+    la rédaction remplace les taux par année, de « 3,21 % pour l'année 2012 » à « 3,32 %
+    à compter de l'année 2016 », par ceux du « I de l'article D. 633-3 du code de la
+    sécurité sociale », pour les « cotisations dues au titre des périodes courant à
+    compter » du 1er janvier 2026 (décret n° 2025-1417, article 5) ; la fiche ne tire de
+    l'article que le taux des cotisations de 2016 à 2025, d'où elle remonte au revenu :
+    rien n'en change
+- id: LEGIARTI000054978170
+  article: code rural et de la pêche maritime, R. 732-61
+  en_vigueur: 2026-10-14
+  motif: >-
+    la rédaction ajoute « L. 161-21-2, » à la liste des majorations de durée
+    d'assurance, « prévues aux articles L. 161-21-2, L. 173-1-5, L. 351-4, L. 351-4-1 »,
+    pour les pensions prenant effet à compter du 1er janvier 2027 (décret n° 2026-948 du
+    12 octobre 2026, article 8) ; le reste, mot pour mot ; la majoration des élus locaux
+    a sa fiche, majoration_duree_elus_locaux : rien de ce que la fiche tire de la
+    rédaction du 9 mai 2026
 reformes:
 - agricole_2025
 code:

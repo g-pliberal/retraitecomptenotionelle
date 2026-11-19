@@ -176,6 +176,14 @@ textes_sans_effet:
     régime de base pendant lesquelles une personne a été inscrite en tant que sportif de
     haut niveau sur la liste mentionnée au premier alinéa de l'article L. 221-2 du code
     du sport »
+- id: LEGIARTI000054425288
+  article: code de la sécurité sociale, R. 351-12
+  en_vigueur: 2026-11-01
+  motif: >-
+    la rédaction ajoute un mot au 5°, « une rente pour une incapacité permanente
+    professionnelle au moins égale à 66 % », et date son entrée en vigueur du 1er
+    novembre 2026 (décret n° 2026-354 du 7 mai 2026, article 3 ; loi n° 2025-199,
+    article 90) ; le reste, mot pour mot, dont le 9° et sa limite de 32 trimestres
 code:
   javascript: >-
     moteur/js/droit/compter.js : trimestresAssimiles, trimestresDesPeriodes,

@@ -493,3 +493,13 @@ effet: >-
   507 € par an au régime général et 187 € à l'Agirc-Arrco. Le commerçant au même
   revenu, de février 2023 à juillet 2025, se constitue 631 € sur son revenu annuel
   moyen, quand la salariée en aurait 757 €, et 61 € au RCI sur ses mois de 2025.
+textes_sans_effet:
+- id: LEGIARTI000054908885
+  article: règlement du RCI, article 39
+  en_vigueur: 2027-01-01
+  motif: >-
+    l'arrêté du 21 septembre 2026 ne vise plus que le revenu de référence « visé à
+    l'article D. 635-9 », là où la rédaction d'avant disait « aux articles D. 635-7 et
+    D. 635-9 » ; le seuil de « moins de 40 points » et la valeur « au jour de la date
+    d'effet de la pension de l'assuré », mot pour mot ; la fiche versement_unique_rci la
+    rattache

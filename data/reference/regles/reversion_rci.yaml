@@ -235,6 +235,17 @@ textes_sans_effet:
     la note d'entrée en vigueur de l'arrêté du 6 octobre 2025 et un mot de grammaire, le
     plafond de ressources « fixé chaque année par décision de l'instance délibérante »
     au lieu de « par décision l'instance délibérante » ; le reste mot pour mot
+- id: LEGIARTI000054908882
+  article: arrêté du 9 février 2012, règlement, article 41
+  en_vigueur: 2027-01-01
+  motif: >-
+    la rédaction touche le seul I, le versement unique de la réversion de moins de
+    quarante points : « conjoint survivant ou divorcé », le revenu de référence « visé à
+    l'article D. 635-9 » seul, et sa valeur « au jour de la date d'effet de la pension
+    du conjoint survivant ou divorcé », non plus « de l'assuré » ; le II et le III, mot
+    pour mot, dont l'obstacle du II à la réversion après un versement unique, que la
+    fiche lit ; le modèle ne verse pas la réversion en une fois (fiche
+    versement_unique_rci, qui la rattache)
 code:
   javascript: >-
     moteur/js/droit/reversion.js : reversion, partDuSurvivant, admisAilleurs ;
