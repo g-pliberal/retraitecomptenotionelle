@@ -556,6 +556,66 @@ def test_la_loi_de_2025_recouvre_le_decret_de_2023_au_mois_pres():
     assert seul[1964] == 63.0 and seul[1968] == 64.0 and 1965.25 not in seul
 
 
+#: L. 161-17-2 dans sa rédaction de la loi n° 2023-270 (LEGIARTI000047452768),
+#: et dans celle de la loi n° 2025-199 (LEGIARTI000051289659), qui n'en retire
+#: que l'article du code rural : les mêmes âges.
+L161_17_2_DE_2023 = (
+    "Conformément au B du XXX de l'article 10 de la loi n° 2023-270 du 14 avril "
+    "2023, ces dispositions s'appliquent aux pensions prenant effet à compter du "
+    "1er septembre 2023. L'âge d'ouverture du droit à une pension de retraite "
+    "mentionné au premier alinéa de l'article L. 351-1 du présent code, à "
+    "l'article L. 732-18 du code rural et de la pêche maritime, au 1° du I de "
+    "l'article L. 24 et au 1° de l'article L. 25 du code des pensions civiles et "
+    "militaires de retraite est fixé à soixante-quatre ans pour les assurés nés à "
+    "compter du 1er janvier 1968. Cet âge est fixé par décret dans la limite de "
+    "l'âge mentionné au premier alinéa pour les assurés nés avant le 1er janvier "
+    "1968 et, pour ceux nés entre le 1er septembre 1961 et le 31 décembre 1967, "
+    "de manière croissante, à raison de trois mois par génération."
+)
+L161_17_2_DE_FEVRIER_2025 = (
+    "Conformément au C du VIII de l'article 87 de la loi n° 2025-199 du "
+    "28 février 2025, les F et İ du I de l'article précité s'appliquent aux "
+    "pensions prenant effet à compter du 1er janvier 2026. "
+    + L161_17_2_DE_2023.split("2023. ", 1)[1].replace(
+        "à l'article L. 732-18 du code rural et de la pêche maritime, ", ""))
+
+
+def test_chaque_redaction_ecrit_sa_table_sans_fusion():
+    """La table d'une version est ce que ses rédactions écrivent, et rien de
+    ce qu'elles laissent à une autre (note de décision 0009, second
+    rectificatif) : le récupérateur les rend une à une, à leur date d'effet,
+    chaque ligne de la génération qu'elle ouvre à la première qu'elle ne vise
+    plus. La loi de 2025 n'écrit rien des nés avant le 1er septembre 1961, et
+    le décret de 2023 garde ses 63 ans de 1964 : c'est la fiche qui dit
+    laquelle décide. Une rédaction qui ne change aucun âge, celle de février
+    2025, n'ouvre pas de date d'effet."""
+    module = _charger_script("dila_legi_parametres_retraite", "scripts", "fetch",
+                             "dila_legi_parametres_retraite.py")
+    lignes = module.age_ouverture_par_version({
+        "L161-17-2": [("2025-12-31", L161_17_2_DE_2025), ("2023-09-01", L161_17_2_DE_2023),
+                      ("2025-02-28", L161_17_2_DE_FEVRIER_2025)],
+        "D161-2-1-9": [("2023-09-01", D161_2_1_9_DE_2023)],
+    })
+    table = {(l["entree_en_vigueur"], l["article"], l["generation"]):
+             (l["generation_fin"], l["age"]) for l in lignes}
+    assert len(table) == len(lignes)
+    assert {(effet, article) for effet, article, _ in table} == {
+        ("2023-09-01", "L161-17-2"), ("2023-09-01", "D161-2-1-9"),
+        ("2026-09-01", "L161-17-2")}
+    # La loi de 2023 ne porte que sa cible ; celle de 2025, sa table, des nés
+    # du 1er septembre 1961 à la génération 1969, sans fin.
+    assert table[("2023-09-01", "L161-17-2", 1968)] == (2100, 64.0)
+    loi = {g: v for (effet, article, g), v in table.items()
+           if (effet, article) == ("2026-09-01", "L161-17-2")}
+    assert loi == {1961.667: (1962, 62.25), 1962: (1963, 62.5), 1963: (1965.25, 62.75),
+                   1965.25: (1966, 63.0), 1966: (1967, 63.25), 1967: (1968, 63.5),
+                   1968: (1969, 63.75), 1969: (2100, 64.0)}
+    # Le décret, resserré ici à huit alinéas, garde ce qu'il écrit.
+    decret = {g: v for (effet, article, g), v in table.items() if article == "D161-2-1-9"}
+    assert decret[1900] == (1951.5, 60.0) and decret[1955] == (1961.667, 62.0)
+    assert decret[1964] == (1965, 63.0) and decret[1968] == (2100, 64.0)
+
+
 def test_une_version_ne_recouvre_que_les_mois_qu_elle_nomme():
     """Une version qui ne parle que de janvier-février ne réécrit pas l'année.
 

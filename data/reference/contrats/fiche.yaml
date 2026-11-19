@@ -75,10 +75,55 @@ objets:
       vise: {porte: "les pensions qui prennent effet, ou les pensions servies", type: valeur, valeurs: vise, defaut: pensions_qui_prennent_effet}
       duree: {porte: "pour un effet temporaire, sa durée", type: texte, defaut: null}
       exception_de: {porte: "la version qu'elle prime, s'il y a chevauchement", type: identifiant, defaut: null}
-      contenu: {porte: "droit accordé ou exigé, bénéficiaire, conditions, défauts légaux, paramètres lus", type: libre, obligatoire: true}
+      # Libre, sauf trois parties qui ont leur forme (note de décision 0009 et
+      # ses rectificatifs) : la table que la version désigne, ses renvois
+      # datés à d'autres fiches, son renvoi à sa rédaction antérieure.
+      contenu: {porte: "droit accordé ou exigé, bénéficiaire, conditions, défauts légaux, paramètres lus", type: libre, obligatoire: true, formes: {table: {type: objet, objet: table}, renvois: {type: liste, de: {objet: renvoi}}, redaction_anterieure: {type: objet, objet: redaction_anterieure}}}
       unites: {porte: "unité, arrondi, ancrage", type: libre, defaut: {}}
       exemples: {porte: "les exemples officiels, ou « aucun trouvé »", type: exemples, obligatoire: true}
       exemples_cherches: {porte: "quand aucun exemple officiel n'a été trouvé, ce qui a été cherché, et quand", type: texte, defaut: null, additif: "la note de décision 0009 demande à « aucun trouvé » de dire ce qui a été cherché"}
+
+  table:
+    # La table qu'un texte écrit ne se recopie pas dans la fiche : elle tient
+    # dans un fichier indexé par version, que le récupérateur écrit quand LEGI
+    # porte son texte, et la version y désigne ses lignes (note 0009, second
+    # rectificatif).
+    champs:
+      fichier: {porte: "le fichier indexé par version, sous data/reference/", type: texte, obligatoire: true}
+      lignes: {porte: "ses lignes dans ce fichier : pour chaque colonne qui les désigne, les valeurs qui sont les siennes", type: libre, obligatoire: true}
+      cle: {porte: "la colonne qui choisit la ligne, la génération ou la date d'un trimestre", type: identifiant, obligatoire: true}
+      valeur: {porte: "la colonne de la valeur, par laquelle un renvoi la nomme", type: identifiant, obligatoire: true}
+
+  renvoi:
+    # Un renvoi daté : la version lit une valeur dans la version d'une autre
+    # fiche, que choisit la date qu'il nomme. Son opération ajoute une durée
+    # ou en retranche une ; toute autre passe par une fonction, que `code`
+    # nomme. `noyau/renvois.py` le contrôle d'une fiche à l'autre.
+    champs:
+      fiche: {porte: "la fiche lue", type: identifiant, obligatoire: true}
+      valeur: {porte: "la valeur lue dans la version : un de ses paramètres, ou la colonne de sa table", type: identifiant, obligatoire: true}
+      de: {porte: "de qui elle est lue : l'assuré, le conjoint survivant", type: valeur, valeurs: personnes_lues, obligatoire: true}
+      date: {porte: "la date qui choisit la version lue", type: date_nommee, obligatoire: true}
+      ajoute: {porte: "la durée que l'opération ajoute à la valeur lue", type: objet, objet: duree, defaut: null}
+      retranche: {porte: "la durée que l'opération en retranche", type: objet, objet: duree, defaut: null}
+      code: {porte: "pour toute autre opération, la fonction qui l'applique : « fichier : nom »", type: texte, defaut: null}
+      texte: {porte: "le texte qui écrit le renvoi, quand la version en cite plusieurs", type: texte, defaut: null}
+    au_plus_un_de: [ajoute, retranche, code]
+
+  duree:
+    champs:
+      ans: {porte: "le nombre d'années de la durée", type: entier, defaut: 0}
+      mois: {porte: "le nombre de mois de la durée", type: entier, defaut: 0}
+      trimestres: {porte: "le nombre de trimestres de la durée", type: entier, defaut: 0}
+
+  redaction_anterieure:
+    # Ce que le texte laisse à sa rédaction antérieure : la version est nommée
+    # par son identifiant, qui ne bouge pas quand une version s'insère ou que
+    # des bornes se corrigent.
+    champs:
+      version: {porte: "la version de la même fiche qui porte la rédaction antérieure", type: identifiant, obligatoire: true}
+      naissance: {porte: "les naissances que le texte lui laisse, [début, fin)", type: intervalle, defaut: null}
+      texte: {porte: "le texte qui écrit le renvoi, quand la version en cite plusieurs", type: texte, defaut: null}
 
   texte:
     # Un texte cité : par son identifiant stable, ou, à défaut, par sa

@@ -18,12 +18,10 @@
 # guider la lecture, ce que la fiche a : aucune version (la migration de la
 # note 0009 la découpera), ou les débuts de ses versions la même année.
 
-cliquet_a_faire: 96
+cliquet_a_faire: 94
 
 couples:
   "age_annulation_decote / reforme_2023": {classe: a_faire, commentaire: "fiche sans version"}
-  "age_legal_par_generation / lfss_2026_suspension": {classe: a_faire, commentaire: "fiche sans version"}
-  "age_legal_par_generation / reforme_2023": {classe: a_faire, commentaire: "fiche sans version"}
   "age_ouverture_ieg_actifs / lfss_2026_suspension": {classe: a_faire, commentaire: "réforme du 2026-09-01 ; aucune version ne commence cette année-là"}
   "age_ouverture_ieg_actifs / reforme_2023": {classe: a_faire, commentaire: "réforme du 2023-09-01 ; aucune version ne commence cette année-là"}
   "age_ouverture_ieg_actifs / speciaux_bornes_2017": {classe: a_faire, commentaire: "réforme du 2017-01-01 ; aucune version ne commence cette année-là"}

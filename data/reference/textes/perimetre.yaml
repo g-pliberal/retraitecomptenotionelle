@@ -117,7 +117,7 @@ accords:
 
 cliquet:
   # Les rédactions sans aucun statut. Il ne peut que décroître.
-  redactions_sans_statut: 9214
+  redactions_sans_statut: 9212
   # Le sixième cliquet de la note de décision 0009, l'alarme « loi modifiée »
   # (src/retraite_notionnelle/noyau/textes.py, `alarme`). Toute rédaction en
   # vigueur ou à venir d'un article qu'une fiche cite a sa réponse dans cette
@@ -128,6 +128,6 @@ cliquet:
   # Les couples d'une fiche et d'une rédaction d'avant la pose, sans réponse,
   # comptés au jour de la pose. Ils ne peuvent que décroître. La fiche cite la
   # rédaction sans l'avoir coupée en version :
-  citees_sans_reponse: 435
+  citees_sans_reponse: 433
   # La fiche n'en dit rien, à lire d'abord :
   sans_un_mot: 1

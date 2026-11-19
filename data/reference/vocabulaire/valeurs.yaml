@@ -821,3 +821,12 @@ listes:
       sans_effet: lue mot à mot, et sans effet sur la fiche qu'elle touche
       a_rattacher: elle change une fiche, qui ne l'a pas encore coupée en version
       a_examiner: inscrite par le script qui suit l'index, et pas encore lue
+
+  personnes_lues:
+    fermee: true
+    # De qui un renvoi daté lit la valeur (note de décision 0009, contrat C.2,
+    # objet `renvoi`) : « l'âge légal » d'une pension de réversion n'est pas
+    # celui de l'assuré décédé, et un renvoi qui ne le dit pas laisse choisir.
+    valeurs:
+      assure: l'assuré dont le droit se calcule
+      conjoint_survivant: le conjoint survivant, pour le droit qu'il tient de l'assuré

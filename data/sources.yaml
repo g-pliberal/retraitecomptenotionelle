@@ -4558,6 +4558,12 @@ institutions:
           Seize valeurs, elles aussi identiques à la saisie.
           Lu dans l'index LEGI du dépôt, en une minute, comme toutes les
           passes LEGI depuis le 17 septembre 2026 ; `--dump` garde le dump.
+          Depuis le 19 novembre 2026 (note de décision 0009, étape 2), il écrit
+          aussi ce que chaque rédaction de L. 161-17-2 et de D. 161-2-1-9 dit
+          elle-même, sans fusion (`legislation/age_legal_par_version.csv`) :
+          les versions de la fiche `age_legal_par_generation` y désignent leurs
+          lignes, et la table fusionnée de l'âge légal comme ses deux copies
+          d'avant réforme s'en fabriquent.
 
       - id: dila_legi_smic
         titre: SMIC horaire, décrets de relèvement, 1997-2017

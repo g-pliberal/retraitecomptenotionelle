@@ -477,12 +477,76 @@ def age_ouverture(versions: list[tuple[str, str]]) -> dict[float, float]:
     charge jusqu'en 2025 ; depuis, la loi porte la table et le décret n'est
     plus lu que pour les générations qu'elle ne nomme pas.
     """
-    def lire(texte: str) -> dict[float, float]:
-        alineas = [(age_en_lettres(a), a) for a in _alineas(texte)]
-        return table_par_generation(
-            [(v, a) for v, a in alineas if v is not None and 55.0 <= v <= 70.0],
-            mois=True)
-    return _par_version(versions, lire)
+    return _par_version(versions, _ages_d_une_redaction)
+
+
+def _ages_d_une_redaction(texte: str) -> dict[int, dict[int, float]]:
+    """L'âge que la rédaction écrit elle-même, mois de naissance par mois."""
+    alineas = [(age_en_lettres(a), a) for a in _alineas(texte)]
+    return table_par_generation(
+        [(v, a) for v, a in alineas if v is not None and 55.0 <= v <= 70.0],
+        mois=True)
+
+
+def _etendues(par_mois: dict[int, dict[int, float]]) -> list[tuple[float, float, float]]:
+    """Une valeur par mois rendue en étendues : la génération qui l'ouvre, la
+    première qu'elle ne vise plus, la valeur. Une étendue se ferme quand la
+    valeur change ou que les mois cessent de se suivre ; celle qui court
+    jusqu'à la dernière génération du modèle est sans fin
+    (:data:`GENERATION_SANS_FIN`), comme la porte d'une carrière longue."""
+    etendues: list[tuple[float, float, float]] = []
+    debut = precedent = valeur = None
+    for rang, v in sorted((annee * 12 + m - 1, v) for annee, mois in par_mois.items()
+                          for m, v in mois.items()):
+        if debut is not None and (rang != precedent + 1 or v != valeur):
+            etendues.append((debut, precedent + 1, valeur))
+            debut = None
+        if debut is None:
+            debut, valeur = rang, v
+        precedent = rang
+    if debut is not None:
+        etendues.append((debut, precedent + 1, valeur))
+    sans_fin = (DERNIERE_GENERATION + 1) * 12
+    return [(generation_decimale(d // 12, d % 12 + 1),
+             GENERATION_SANS_FIN if f == sans_fin else generation_decimale(f // 12, f % 12 + 1),
+             v) for d, f, v in etendues]
+
+
+def age_ouverture_par_version(
+        versions: dict[str, list[tuple[str, str]]]) -> list[dict]:
+    """L'âge d'ouverture que chaque rédaction écrit, sans fusion — la table de
+    chaque version de la fiche ``age_legal_par_generation`` (note de décision
+    0009, second rectificatif).
+
+    :func:`age_ouverture` fusionne, la rédaction la plus récente l'emportant :
+    c'est effacer la loi d'avant, dont ont besoin les pensions liquidées sous
+    elle, les droits contrefactuels qui la gardent et les renvois qui la
+    lisent à leur date. Ici chaque rédaction garde ce qu'elle écrit, à sa date
+    d'effet et sous son article, et rien de ce qu'elle laisse à une autre : la
+    loi de 2025 n'y dit rien des nés avant le 1er septembre 1961, qu'elle
+    renvoie à « sa rédaction antérieure », et le décret de 2023 y garde les
+    63 ans de la génération 1964, que la loi dément. C'est la fiche qui
+    déclare les versions, désigne leurs lignes ici et dit quel texte décide.
+
+    Une rédaction qui n'écrit aucun âge de plus ni de moins que la précédente
+    du même article — celle de la loi n° 2025-199, qui ne retire de
+    L. 161-17-2 que l'article du code rural — n'ouvre pas de date d'effet,
+    comme pour les portes de la carrière longue.
+    """
+    lignes = []
+    for article, redactions in versions.items():
+        precedente = None
+        for date_debut, texte in sorted(redactions,
+                                        key=lambda v: (date_effet(v[0], v[1]), v[0])):
+            par_mois = _ages_d_une_redaction(texte)
+            if not par_mois or par_mois == precedente:
+                continue
+            precedente = par_mois
+            for generation, generation_fin, age in _etendues(par_mois):
+                lignes.append({"entree_en_vigueur": date_effet(date_debut, texte),
+                               "article": article, "generation": generation,
+                               "generation_fin": generation_fin, "age": age})
+    return lignes
 
 
 def duree_requise(versions: list[tuple[str, str]]) -> dict[float, float]:
@@ -1143,6 +1207,8 @@ def main(arguments: list[str] | None = None) -> int:
         return 1
 
     versions_age = versions["L161-17-2"] + versions["D161-2-1-9"]
+    ages_par_version = age_ouverture_par_version(
+        {article: versions[article] for article in ("L161-17-2", "D161-2-1-9")})
     tables = {
         "age_ouverture": age_ouverture(versions_age),
         "duree_requise": duree_requise(versions["L161-17-3"]),
@@ -1161,6 +1227,15 @@ def main(arguments: list[str] | None = None) -> int:
     if not (ages and min(ages.values()) >= 60.0 and max(ages.values()) == 64.0):
         print(f"\nÉCHEC   âges d'ouverture invraisemblables : "
               f"{sorted(set(ages.values()))}", file=sys.stderr)
+        return 1
+    # Les rédactions lues une à une disent la même chose que leur fusion :
+    # la dernière loi, et avant ses premières générations le dernier décret.
+    lois = [l for l in ages_par_version if l["article"] == "L161-17-2"]
+    derniere = [l for l in lois
+                if l["entree_en_vigueur"] == max(x["entree_en_vigueur"] for x in lois)]
+    if not derniere or any(ages.get(l["generation"]) != l["age"] for l in derniere):
+        print("\nÉCHEC   la dernière rédaction de L. 161-17-2, lue seule, ne dit pas "
+              "l'âge de la table fusionnée", file=sys.stderr)
         return 1
     durees = tables["duree_requise"]
     if not (durees and max(durees.values()) == 172.0):
@@ -1233,7 +1308,9 @@ def main(arguments: list[str] | None = None) -> int:
                     "qu'elles ne visent plus (2100 : sans fin), la durée "
                     "d'assurance que le chapeau exige au-delà de la durée "
                     "requise (null depuis 2012) et la date d'effet de la "
-                    "version qui les fixe",
+                    "version qui les fixe ; l'âge d'ouverture par version garde "
+                    "ce que chaque rédaction écrit, à sa date d'effet et sous "
+                    "son article, sans fusion",
             "serie": {
                 f"{nom}|{cle}": valeur
                 for nom in ("age_ouverture", "duree_requise",
@@ -1244,6 +1321,7 @@ def main(arguments: list[str] | None = None) -> int:
                 for cle, valeur in tables[nom].items()
             },
             "carriere_longue": portes,
+            "age_ouverture_par_version": ages_par_version,
         }, ensure_ascii=False, indent=1),
         encoding="utf-8",
     )

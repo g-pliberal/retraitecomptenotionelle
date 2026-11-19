@@ -13,8 +13,19 @@ regimes: [agirc, agirc_arrco, agirc_entreprises_nouvelles, arrco, arrco_cultes,
   fspoeie, ircantec, ircec_raap, ircec_raap_taux_amenage, ircec_racd, ircec_racl,
   msa_non_salaries, msa_rco, msa_salaries, nric, organic, organic_avant_1973,
   organic_conjoints_batiment, rafp, rci, rco_artisans, regime_general, rsi]
+domaine: age
 etat: conforme
 etape: ouvrir_le_droit
+lit:
+- l'année et le mois de naissance de l'assuré
+- liquidation.date_effet
+ecrit:
+- >-
+  l'âge d'ouverture du droit à pension de l'assuré, dans les régimes qui renvoient à
+  l'âge légal commun (`age_ouverture_par_generation`), d'où se comptent l'ouverture
+  du droit et la surcote
+dates_qui_decident:
+- liquidation.date_effet
 effet: >-
   Toute liquidation. Les soixante-dix-neuf segments de la table sont certifiés :
   lus dans L. 161-17-2 et D. 161-2-1-9, chaque version à sa date d'effet (action
@@ -22,10 +33,25 @@ effet: >-
   10) posent sur elle l'âge des versions qu'ils gardent : celui du 31 août 2023,
   62 ans dès 1955 (`age_ouverture_avant_reforme_2023.csv`) ; la loi de 2023 sans
   la suspension, 63 ans pour 1964 et 64 ans dès 1968 (`age_ouverture_avant_suspension.csv`).
+  Depuis le 19 novembre 2026 (note de décision 0009, étape 2), ces trois tables sont
+  des vues fabriquées depuis les versions de la fiche, aux mêmes valeurs : la table
+  du droit en vigueur est celle de la dernière version, les deux autres celles des
+  versions de 2011 et de 2023. Le moteur lit encore les trois vues ; il lira les
+  versions à la date d'effet de la pension à la session suivante de l'étape.
 sources:
-  lu_le: 2026-10-19
+  lu_le: 2026-11-19
   prochaine_relecture: 2026-12-31
   lectures:
+  - type: legifrance
+    reference: >-
+      Pour le découpage en versions, lues dans l'index LEGI à jour au 19 novembre
+      2026 : les cinq rédactions de L. 161-17-2 CSS (LEGIARTI000023030935,
+      LEGIARTI000025014605, LEGIARTI000047452768, LEGIARTI000051289659,
+      LEGIARTI000053280889), les trois de D. 161-2-1-9 (LEGIARTI000023388636,
+      LEGIARTI000025089933, LEGIARTI000047634502) et les deux de R. 351-2
+      (LEGIARTI000006749340, LEGIARTI000024113000), chacune avec la disposition
+      d'application que LEGI porte en tête
+    date: 2026-11-19
   - type: autre
     reference: >-
       Conseil constitutionnel, décision n° 2023-849 DC du 14 avril 2023 : le report de
@@ -66,20 +92,286 @@ sources:
   - type: service_public
     reference: actualité A18825, suspension de la réforme
     date: 2026-02-27
-textes_a_rattacher:
-- reference: L. 161-17-2 CSS (réécrit par la loi n° 2025-1403, article 105)
-- reference: >-
-    D. 161-2-1-9 CSS (version 2023, que la loi laisse valoir pour les nés avant
-    le 1er septembre 1961)
-exemples:
-- cnav_2026_07_age_legal_1964
-- cnav_2026_07_age_legal_1965_premier_trimestre
-- cnav_2026_07_age_legal_1965_apres_avril
-- sp_f19643_surcote
-- sp_f16494_surcote_fonction_publique
 reformes:
 - reforme_2023
 - lfss_2026_suspension
+versions:
+- id: avant_la_codification_de_1985
+  statut: supposee
+  hypothese: >-
+    soixante ans, l'âge que R. 351-2 écrit à la codification du 21 décembre 1985, et
+    que la table du dépôt donnait déjà à toute pension d'un assuré né avant le 1er
+    juillet 1951 ; les textes d'avant le code de 1985, l'ordonnance n° 82-270 du 26
+    mars 1982 et l'ancien code de la sécurité sociale, ne sont pas dans l'index LEGI
+    et n'ont pas été lus
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [null, 1985-12-21]
+  contenu:
+    droit: >-
+      l'âge d'ouverture du droit est de soixante ans, quelle que soit la génération
+    parametres:
+      age: 60
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 19 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun de ceux dont l'attendu ou
+    l'énoncé porte l'âge légal ne prend effet avant le 1er juillet 2011
+- id: soixante_ans
+  statut: lue
+  nee_de: LEGIARTI000006749340
+  textes:
+  - id: LEGIARTI000006749340
+    article: R. 351-2 du code de la sécurité sociale, rédaction du 21 décembre 1985
+    en_vigueur: 1985-12-21
+    citation: >-
+      « L'âge prévu au premier alinéa de l'article L. 351-1, est fixé à soixante
+      ans. »
+    lu_le: 2026-11-19
+  bornes:
+    liquidation.date_effet: [1985-12-21, 2011-07-01]
+  contenu:
+    droit: >-
+      l'âge d'ouverture du droit est de soixante ans, quelle que soit la génération
+    conditions: >-
+      la rédaction de R. 351-2 du 3 juin 2011 renvoie à L. 161-17-2, dont la
+      première rédaction ne vaut que pour les pensions prenant effet à compter du
+      1er juillet 2011 : aucune pension ne prend effet entre les deux, faute d'un
+      premier du mois, et soixante ans valent jusqu'au 30 juin 2011
+    parametres:
+      age: 60
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 19 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun de ceux dont l'attendu ou
+    l'énoncé porte l'âge légal ne prend effet avant le 1er juillet 2011 ; les
+    circulaires de la Cnav d'avant 2011 n'ont pas été cherchées
+- id: loi_de_2010
+  statut: lue
+  nee_de: LEGIARTI000023030935
+  textes:
+  - id: LEGIARTI000023030935
+    article: >-
+      L. 161-17-2 du code de la sécurité sociale, rédaction de la loi n° 2010-1330
+      du 9 novembre 2010 (article 18), que son article 118, II, applique « aux
+      pensions prenant effet à compter du 1er juillet 2011 »
+    en_vigueur: 2011-07-01
+    citation: >-
+      « est fixé à soixante-deux ans pour les assurés nés à compter du 1er janvier
+      1956. Cet âge est fixé par décret, de manière croissante à raison de quatre
+      mois par génération et dans la limite de l'âge mentionné au premier alinéa du
+      présent article, pour les assurés nés avant le 1er janvier 1956. »
+    lu_le: 2026-11-19
+  - id: LEGIARTI000023388636
+    article: >-
+      D. 161-2-1-9, rédaction du décret n° 2010-1734 du 30 décembre 2010, que son
+      article 11 applique « aux pensions prenant effet à compter du 1er juillet
+      2011 »
+    en_vigueur: 2011-07-01
+    citation: >-
+      « 1° Soixante ans pour les assurés nés avant le 1er juillet 1951 ; 2° Soixante
+      ans et quatre mois pour les assurés nés entre le 1er juillet 1951 et le 31
+      décembre 1951 inclus ; 3° Soixante ans et huit mois pour les assurés nés en
+      1952 ; 4° Soixante et un ans pour les assurés nés en 1953 ; 5° Soixante et un
+      ans et quatre mois pour les assurés nés en 1954 ; 6° Soixante et un ans et
+      huit mois pour les assurés nés en 1955 ; 7° Soixante deux ans pour les assurés
+      nés à compter du 1er janvier 1956. »
+    lu_le: 2026-11-19
+  - id: LEGIARTI000024113000
+    article: R. 351-2, rédaction du 3 juin 2011, qui renvoie le régime général à cet âge
+    en_vigueur: 2011-06-03
+    citation: >-
+      « L'âge prévu au premier alinéa de l'article L. 351-1 est l'âge prévu par
+      l'article L. 161-17-2. »
+    lu_le: 2026-11-19
+  bornes:
+    liquidation.date_effet: [2011-07-01, 2011-12-23]
+  contenu:
+    droit: >-
+      l'âge d'ouverture du droit monte de quatre mois par génération, de soixante
+      ans pour les assurés nés avant le 1er juillet 1951 à soixante-deux ans pour
+      ceux nés à compter du 1er janvier 1956 ; la loi écrit la cible, le décret la
+      montée, et la génération de l'assuré choisit la ligne
+    table:
+      fichier: legislation/age_legal_par_version.csv
+      lignes:
+        entree_en_vigueur: ['2011-07-01']
+      cle: generation
+      valeur: age
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 19 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne prend effet du 1er juillet
+    au 22 décembre 2011 ; les circulaires de la Cnav de 2011 que le registre de sa
+    base rattache à la fiche (2011/24, 2011/41, 2011/61, 2011/69) n'ont pas été
+    relues pour leurs exemples. Les assurés que cette version relève sans que la
+    suivante les reprenne, nés de 1952 à 1955, ne pouvaient partir avant septembre
+    2012 : aucune pension n'a pris effet à ses âges propres
+- id: loi_de_2011
+  statut: lue
+  nee_de: LEGIARTI000025014605
+  textes:
+  - id: LEGIARTI000025014605
+    article: L. 161-17-2, rédaction en vigueur le 23 décembre 2011
+    en_vigueur: 2011-12-23
+    citation: >-
+      « est fixé à soixante-deux ans pour les assurés nés à compter du 1er janvier
+      1955. Cet âge est fixé par décret dans la limite de l'âge mentionné au premier
+      alinéa pour les assurés nés avant le 1er janvier 1955 et, pour ceux nés entre
+      le 1er juillet 1951 et le 31 décembre 1954, de manière croissante : 1° A
+      raison de quatre mois par génération pour les assurés nés entre le 1er juillet
+      1951 et le 31 décembre 1951 ; 2° A raison de cinq mois par génération pour les
+      assurés nés entre le 1er janvier 1952 et le 31 décembre 1954. »
+    lu_le: 2026-11-19
+  - id: LEGIARTI000025089933
+    article: D. 161-2-1-9, rédaction en vigueur le 31 décembre 2011
+    en_vigueur: 2011-12-31
+    citation: >-
+      « 1° Soixante ans pour les assurés nés avant le 1er juillet 1951 ; 2° Soixante
+      ans et quatre mois pour les assurés nés entre le 1er juillet 1951 et le 31
+      décembre 1951 inclus ; 3° Soixante ans et neuf mois pour les assurés nés en
+      1952 ; 4° Soixante et un ans et deux mois pour les assurés nés en 1953 ; 5°
+      Soixante et un ans et sept mois pour les assurés nés en 1954 ; 6° Soixante
+      deux ans pour les assurés nés à compter du 1er janvier 1955. »
+    lu_le: 2026-11-19
+  bornes:
+    liquidation.date_effet: [2011-12-23, 2023-09-01]
+  contenu:
+    droit: >-
+      la montée passe à cinq mois par génération pour les assurés nés de 1952 à
+      1954, et soixante-deux ans valent dès la génération 1955 ; la loi écrit la
+      cible, le décret la montée, et la génération de l'assuré choisit la ligne
+    conditions: >-
+      LEGI ne porte aucune disposition d'application en tête de ces deux
+      rédactions : la version commence à l'entrée en vigueur de la loi, le 23
+      décembre 2011, et son décret entre en vigueur le 31 ; aucune pension ne prend
+      effet entre les deux, faute d'un premier du mois, et aucun des assurés
+      qu'elle relève, nés de 1952 à 1955, ne pouvait partir avant septembre 2012
+      sous la version précédente
+    table:
+      fichier: legislation/age_legal_par_version.csv
+      lignes:
+        entree_en_vigueur: ['2011-12-23', '2011-12-31']
+      cle: generation
+      valeur: age
+  exemples:
+  - cnav_2012_27_inapte
+- id: loi_de_2023
+  statut: lue
+  nee_de: LEGIARTI000047452768
+  textes:
+  - id: LEGIARTI000047452768
+    article: >-
+      L. 161-17-2, rédaction de la loi n° 2023-270 du 14 avril 2023 (article 10),
+      dont le B du XXX l'applique « aux pensions prenant effet à compter du 1er
+      septembre 2023 »
+    en_vigueur: 2023-09-01
+    citation: >-
+      « est fixé à soixante-quatre ans pour les assurés nés à compter du 1er janvier
+      1968. Cet âge est fixé par décret dans la limite de l'âge mentionné au premier
+      alinéa pour les assurés nés avant le 1er janvier 1968 et, pour ceux nés entre
+      le 1er septembre 1961 et le 31 décembre 1967, de manière croissante, à raison
+      de trois mois par génération. »
+    lu_le: 2026-11-19
+  - id: LEGIARTI000047634502
+    article: >-
+      D. 161-2-1-9, rédaction du décret n° 2023-436 du 3 juin 2023, que son article
+      9 applique « aux pensions prenant effet à compter du 1er septembre 2023 »
+    en_vigueur: 2023-09-01
+    citation: >-
+      « 6° Soixante-deux ans pour les assurés nés entre le 1er janvier 1955 et le 31
+      août 1961 inclus ; 7° Soixante-deux ans et trois mois pour les assurés nés
+      entre le 1er septembre 1961 et le 31 décembre 1961 inclus ; 8° Soixante-deux
+      ans et six mois pour les assurés nés en 1962 ; 9° Soixante-deux ans et neuf
+      mois pour les assurés nés en 1963 ; 10° Soixante-trois ans pour les assurés
+      nés en 1964 ; 11° Soixante-trois ans et trois mois pour les assurés nés en
+      1965 ; 12° Soixante-trois ans et six mois pour les assurés nés en 1966 ; 13°
+      Soixante-trois ans et neuf mois pour les assurés nés en 1967 ; 14°
+      Soixante-quatre ans pour les assurés nés à compter du 1er janvier 1968. »
+    lu_le: 2026-11-19
+  - id: LEGIARTI000051289659
+    article: >-
+      L. 161-17-2, rédaction de la loi n° 2025-199 du 28 février 2025 (article 87),
+      qui n'en retire que la mention de l'article L. 732-18 du code rural et de la
+      pêche maritime, pour les pensions prenant effet à compter du 1er janvier
+      2026 : les mêmes âges
+    en_vigueur: 2025-02-28
+    citation: >-
+      « est fixé à soixante-quatre ans pour les assurés nés à compter du 1er janvier
+      1968 »
+    lu_le: 2026-11-19
+  bornes:
+    liquidation.date_effet: [2023-09-01, 2026-09-01]
+  contenu:
+    droit: >-
+      l'âge monte de trois mois par génération pour les assurés nés à compter du
+      1er septembre 1961, jusqu'à soixante-quatre ans pour ceux nés à compter du 1er
+      janvier 1968 ; la loi écrit la cible, le décret la montée et reprend les âges
+      des générations d'avant, et la génération de l'assuré choisit la ligne
+    table:
+      fichier: legislation/age_legal_par_version.csv
+      lignes:
+        entree_en_vigueur: ['2023-09-01']
+      cle: generation
+      valeur: age
+  exemples:
+  - cnav_2026_07_decote_1961
+  - cnracl_surcote_ne_un_1er
+- id: suspension_de_2025
+  statut: lue
+  nee_de: LEGIARTI000053280889
+  textes:
+  - id: LEGIARTI000053280889
+    article: >-
+      L. 161-17-2, rédaction de la loi n° 2025-1403 du 30 décembre 2025 (article
+      105), dont le VI l'applique « aux pensions prenant effet à compter du 1 er
+      septembre 2026 »
+    en_vigueur: 2025-12-31
+    citation: >-
+      « est fixé à soixante-quatre ans pour les assurés nés à compter du 1 er
+      janvier 1969. Cet âge est fixé à : 1° Soixante-deux ans et trois mois, pour
+      les assurés nés entre le 1 er septembre 1961 et le 31 décembre 1961 ; 2°
+      Soixante-deux ans et six mois, pour les assurés nés en 1962 ; 3°
+      Soixante-deux ans et neuf mois, pour les assurés nés entre le 1 er janvier
+      1963 et le 31 mars 1965 ; 4° Soixante-trois ans, pour les assurés nés entre le
+      1 er avril et le 31 décembre 1965 ; 5° Soixante-trois ans et trois mois, pour
+      les assurés nés en 1966 ; 6° Soixante-trois ans et six mois, pour les assurés
+      nés en 1967 ; 7° Soixante-trois ans et neuf mois, pour les assurés nés en
+      1968. Pour les assurés nés avant le 1 er septembre 1961, il est celui
+      applicable en application du présent article dans sa rédaction antérieure à
+      la loi n° 2025-1403 du 30 décembre 2025 de financement de la sécurité sociale
+      pour 2026. »
+    lu_le: 2026-11-19
+  bornes:
+    liquidation.date_effet: [2026-09-01, null]
+  contenu:
+    droit: >-
+      la montée de la loi de 2023 est décalée d'un trimestre : soixante-deux ans et
+      neuf mois pour les assurés nés du 1er janvier 1963 au 31 mars 1965,
+      soixante-quatre ans à compter de la génération 1969 ; la loi écrit elle-même
+      la table des assurés nés à compter du 1er septembre 1961, et la génération de
+      l'assuré choisit la ligne
+    conditions: >-
+      la loi l'emporte sur le décret : D. 161-2-1-9, qu'elle n'a pas réécrit
+      (LEGIARTI000047634502, en vigueur), dit encore soixante-trois ans pour les
+      assurés nés en 1964 ; il n'est plus lu que par le renvoi de la loi à sa
+      rédaction antérieure, pour les assurés nés avant le 1er septembre 1961
+    table:
+      fichier: legislation/age_legal_par_version.csv
+      lignes:
+        entree_en_vigueur: ['2026-09-01']
+      cle: generation
+      valeur: age
+    redaction_anterieure:
+      version: loi_de_2023
+      naissance: [null, 1961-09-01]
+      texte: LEGIARTI000053280889
+  exemples:
+  - cnav_2026_07_age_legal_1964
+  - cnav_2026_07_age_legal_1965_premier_trimestre
+  - cnav_2026_07_age_legal_1965_apres_avril
+  - sp_f19643_surcote
+  - sp_f16494_surcote_fonction_publique
 code:
   interrupteurs:
     age_ouverture_par_generation: true
@@ -96,9 +388,12 @@ code:
     AgesOuvertureAvantSuspension, TableRecouverte ; moteur/js/scenario-actuel.js :
     ScenarioActuel._sousLeDroit
   parametres: >-
+    contenu.parametres de chaque version : age ;
+    legislation/age_legal_par_version.csv : entree_en_vigueur, article, generation,
+    generation_fin, age ;
     legislation/age_ouverture_requis.csv,
     legislation/age_ouverture_avant_reforme_2023.csv,
     legislation/age_ouverture_avant_suspension.csv : generation, age
-  tests: [tests/test_simulateur.py, tests/test_donnees.py,
+  tests: [tests/test_tables_de_version.py, tests/test_simulateur.py, tests/test_donnees.py,
     tests/test_droits_contrefactuels.py, tests/test_oracle.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]

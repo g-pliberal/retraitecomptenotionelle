@@ -602,7 +602,12 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "minimum_contributif": "legislation/minimum_contributif.csv",
         # Entre les ancres du code, ce que la Cnav a servi, date par date.
         "minimum_contributif_cnav": "legislation/minimum_contributif.csv",
+        # La table de chaque version de l'âge légal, et ses trois vues (note de
+        # décision 0009, étape 2).
+        "age_legal_par_version": "legislation/age_legal_par_version.csv",
         "age_ouverture_requis": "legislation/age_ouverture_requis.csv",
+        "age_ouverture_avant_reforme_2023": "legislation/age_ouverture_avant_reforme_2023.csv",
+        "age_ouverture_avant_suspension": "legislation/age_ouverture_avant_suspension.csv",
         "duree_assurance_requise": "legislation/duree_assurance_requise.csv",
         "duree_assurance_requise_decrets":
             "legislation/duree_assurance_requise.csv",

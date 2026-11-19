@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-11-07",
+ "dernier_passage_le": "2026-11-19",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -45,6 +45,39 @@
    "valeurs": 56,
    "verifiee_le": "2026-09-21"
   },
+  "age_legal_par_version": {
+   "ajoutees": 0,
+   "colonne": "age",
+   "corrigees": 0,
+   "empreinte": "6c5885e3d90cb30b",
+   "identiques": 38,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code de la sécurité sociale L. 161-17-2 et D. 161-2-1-9, rédaction par rédaction",
+   "valeurs": 38,
+   "verifiee_le": "2026-11-19"
+  },
+  "age_ouverture_avant_reforme_2023": {
+   "ajoutees": 0,
+   "colonne": "age",
+   "corrigees": 0,
+   "empreinte": "d29c0008504189c8",
+   "identiques": 1,
+   "niveau": "haute",
+   "source": "la version de 2011 de la fiche age_legal_par_generation (age_legal_par_version.csv)",
+   "valeurs": 1,
+   "verifiee_le": "2026-11-19"
+  },
+  "age_ouverture_avant_suspension": {
+   "ajoutees": 0,
+   "colonne": "age",
+   "corrigees": 0,
+   "empreinte": "247f3fddfd7f8793",
+   "identiques": 5,
+   "niveau": "haute",
+   "source": "la version de 2023 de la fiche age_legal_par_generation (age_legal_par_version.csv)",
+   "valeurs": 5,
+   "verifiee_le": "2026-11-19"
+  },
   "age_ouverture_requis": {
    "ajoutees": 0,
    "colonne": "age",
@@ -52,9 +85,9 @@
    "empreinte": "9c1a62966d5febe6",
    "identiques": 79,
    "niveau": "certifiee",
-   "source": "DILA, base LEGI, code de la sécurité sociale L. 161-17-2 et D. 161-2-1-9",
+   "source": "DILA, base LEGI, code de la sécurité sociale L. 161-17-2 et D. 161-2-1-9, par les versions de la fiche age_legal_par_generation",
    "valeurs": 79,
-   "verifiee_le": "2026-09-17"
+   "verifiee_le": "2026-11-19"
   },
   "allocation_supplementaire_cnav": {
    "ajoutees": 0,
@@ -109,7 +142,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 634-1-1",
    "valeurs": 21,
-   "verifiee_le": "2026-10-05"
+   "verifiee_le": "2026-11-19"
   },
   "annees_salaire_reference": {
    "ajoutees": 0,
@@ -120,7 +153,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-29-1",
    "valeurs": 16,
-   "verifiee_le": "2026-09-17"
+   "verifiee_le": "2026-11-19"
   },
   "arrivees_tardives": {
    "ajoutees": 0,
@@ -263,7 +296,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale L. 351-1-1 et D. 351-1-1 (I et II)",
    "valeurs": 80,
-   "verifiee_le": "2026-10-24"
+   "verifiee_le": "2026-11-19"
   },
   "coefficient_minoration": {
    "ajoutees": 0,
@@ -274,7 +307,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-27",
    "valeurs": 76,
-   "verifiee_le": "2026-09-17"
+   "verifiee_le": "2026-11-19"
   },
   "comptes_complementaires": {
    "ajoutees": 1617,
@@ -582,7 +615,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale L. 161-17-3",
    "valeurs": 20,
-   "verifiee_le": "2026-09-17"
+   "verifiee_le": "2026-11-19"
   },
   "duree_assurance_requise_1993": {
    "ajoutees": 0,
@@ -593,7 +626,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-45 II",
    "valeurs": 9,
-   "verifiee_le": "2026-09-17"
+   "verifiee_le": "2026-11-19"
   },
   "duree_assurance_requise_decrets": {
    "ajoutees": 0,
@@ -626,7 +659,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-6 II",
    "valeurs": 5,
-   "verifiee_le": "2026-09-17"
+   "verifiee_le": "2026-11-19"
   },
   "duree_requise_fonction_publique_openfisca": {
    "ajoutees": 0,
@@ -901,7 +934,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-11-05"
+   "verifiee_le": "2026-11-19"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -2210,7 +2243,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-11-05"
+   "verifiee_le": "2026-11-19"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -2408,7 +2441,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
    "valeurs": 29,
-   "verifiee_le": "2026-11-05"
+   "verifiee_le": "2026-11-19"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -2441,7 +2474,7 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-11-05"
+   "verifiee_le": "2026-11-19"
   },
   "valeurs_point_msa": {
    "ajoutees": 1,
@@ -2518,7 +2551,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-9",
    "valeurs": 2,
-   "verifiee_le": "2026-09-17"
+   "verifiee_le": "2026-11-19"
   },
   "volume_travail": {
    "ajoutees": 0,

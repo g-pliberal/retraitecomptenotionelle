@@ -28,7 +28,7 @@ from pathlib import Path
 
 from ..config import RACINE_DONNEES
 from ..donnees.chargement import charger_yaml
-from . import contrats, partage, vocabulaire
+from . import contrats, partage, renvois, vocabulaire
 
 REGLES = RACINE_DONNEES / "reference" / "regles"
 #: Les fiches de la proposition, que les couches de ses univers ajoutent.
@@ -140,6 +140,12 @@ def _controler(dossier: Path, toutes: dict[str, dict], reliables: dict[str, dict
                                "vocabulaire ne nomme pas")
         if nom in a_partager:
             erreurs += partage.controler(fiche)
+    # Les renvois, d'une fiche à l'autre (note de décision 0009) : une fiche
+    # du dossier peut lire toute fiche qu'elle peut relier.
+    lisibles = {nom: fiche for nom, fiche in reliables.items()
+                if nom not in toutes or nom in a_partager}
+    erreurs += [e for e in renvois.controler(lisibles)
+                if e.split(".")[0] in toutes or e.startswith("les renvois bouclent")]
     return erreurs
 
 

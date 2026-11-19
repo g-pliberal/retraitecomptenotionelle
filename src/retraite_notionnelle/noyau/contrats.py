@@ -125,6 +125,9 @@ class Validateur:
         un_des = spec.get("un_des")
         if un_des and not any(donnee.get(c) for c in un_des):
             constats.append(Constat(chemin, "erreur", f"il faut l'un de {un_des}"))
+        au_plus = spec.get("au_plus_un_de")
+        if au_plus and len([c for c in au_plus if donnee.get(c) is not None]) > 1:
+            constats.append(Constat(chemin, "erreur", f"au plus un de {au_plus}"))
         return constats
 
     @staticmethod
@@ -212,7 +215,14 @@ class Validateur:
                 return []
             return [Constat(chemin, "erreur", "des identifiants d'exemples, ou « aucun trouvé »")]
         if genre == "libre":
-            return []
+            # Libre, sauf les parties dont le champ fixe la forme (``formes``) :
+            # elles suivent leur type quand la valeur les porte.
+            constats = []
+            for partie, forme in (champ.get("formes") or {}).items():
+                if isinstance(valeur, dict) and valeur.get(partie) is not None:
+                    constats += self._valeur(valeur[partie], {**forme, "obligatoire": True},
+                                             f"{chemin}.{partie}")
+            return constats
         return [Constat(chemin, "erreur", f"type inconnu : {genre}")]
 
 
@@ -274,6 +284,11 @@ def _controler_champs(nom: str, tous: dict[str, dict], listes: set[str]) -> list
             cible = c.get("objet") or (de.get("objet") if isinstance(de, dict) else None)
             if cible and cible not in tous:
                 erreurs.append(f"{ou} : objet « {cible} » inconnu du contrat")
+            for partie, forme in (c.get("formes") or {}).items():
+                vise = forme.get("objet") or (forme.get("de") or {}).get("objet")
+                if c.get("type") != "libre" or forme.get("type") not in TYPES or vise not in tous:
+                    erreurs.append(f"{ou} : la forme de « {partie} » est celle d'un "
+                                   "objet du contrat, dans un champ libre")
             if c.get("type") == "liste" and not (isinstance(de, str) and de in TYPES or cible):
                 erreurs.append(f"{ou} : une liste dit de quoi, un type ou un objet")
             if c.get("type") == "objet" and not c.get("objet"):

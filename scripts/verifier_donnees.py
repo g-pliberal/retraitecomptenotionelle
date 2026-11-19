@@ -52,6 +52,7 @@ from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
 from typing import Callable
+from retraite_notionnelle.donnees import tables_de_version
 from retraite_notionnelle.somme import somme_ordonnee
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -4198,8 +4199,67 @@ def source_age_ouverture() -> dict[tuple, float]:
     conclusion fausse. La base LEGI de la DILA est ouverte, et le texte
     juridique EST la table : « Soixante-deux ans et trois mois pour les assurés
     nés entre le 1er septembre 1961 et le 31 décembre 1961 inclus. »
+
+    Depuis le 19 novembre 2026 (note de décision 0009, étape 2), cette table
+    est une VUE : les versions de la fiche `age_legal_par_generation` sont la
+    source de l'âge légal, chacune désignant ses lignes dans
+    `age_legal_par_version.csv`, que :func:`source_age_legal_par_version`
+    certifie rédaction par rédaction. La table du droit en vigueur est celle
+    de la dernière version, résolue (`donnees/tables_de_version.py`) ; elle ne
+    se confronte plus à la fusion du récupérateur, mais à ce que les versions
+    fabriquent, et `--appliquer` l'écrit.
     """
-    return _table_legi("age_ouverture")
+    return _vue_de_l_age_legal("age_ouverture_requis.csv")
+
+
+def _vue_de_l_age_legal(nom: str) -> dict[tuple, float]:
+    try:
+        vues = tables_de_version.vues_de_l_age_legal()
+    except FileNotFoundError as absent:
+        raise SourceAbsente(f"{absent.filename} absent (la table des versions "
+                            "s'écrit d'abord : --appliquer)") from absent
+    return {(generation,): age for generation, age in vues[nom]}
+
+
+def source_age_ouverture_avant_reforme_2023() -> dict[tuple, float]:
+    """L'âge légal du droit en vigueur au 31 août 2023 : la table de la
+    version de 2011 de la fiche, depuis la première génération que la loi de
+    2023 déplace. Lue à la main jusqu'au 19 novembre 2026, elle se fabrique
+    depuis les lignes que le récupérateur lit dans LEGI."""
+    return _vue_de_l_age_legal("age_ouverture_avant_reforme_2023.csv")
+
+
+def source_age_ouverture_avant_suspension() -> dict[tuple, float]:
+    """L'âge légal de la loi de 2023 sans la suspension : la table de la
+    version de 2023 de la fiche, depuis la première génération que la loi de
+    2025 déplace. Fabriquée de même."""
+    return _vue_de_l_age_legal("age_ouverture_avant_suspension.csv")
+
+
+def source_age_legal_par_version() -> dict[tuple, float]:
+    """L'âge d'ouverture que chaque rédaction de L. 161-17-2 et de
+    D. 161-2-1-9 écrit, sans fusion : la table de chaque version de la fiche
+    `age_legal_par_generation` (note de décision 0009, second rectificatif).
+
+    Clé : la date d'effet de la rédaction, lue dans la disposition
+    d'application que LEGI porte en tête ; son article ; la génération qui
+    ouvre la ligne et la première qu'elle ne vise plus (`2100` sans fin). La
+    fiche déclare les versions et désigne ici leurs lignes ; aucune table ne
+    se recopie à la main dans une fiche.
+    """
+    brut = _lire_json("dila_legi_parametres_retraite.json",
+                      "scripts/fetch/dila_legi_parametres_retraite.py")
+    if "age_ouverture_par_version" not in brut:
+        raise SourceAbsente("data/brut/dila_legi_parametres_retraite.json d'avant le "
+                            "19 novembre 2026 (relancer "
+                            "scripts/fetch/dila_legi_parametres_retraite.py)")
+    return {
+        (str(ligne["entree_en_vigueur"]), str(ligne["article"]),
+         tables_de_version.cle(tables_de_version.rang(ligne["generation"])),
+         tables_de_version.cle(tables_de_version.rang(ligne["generation_fin"]))):
+        float(ligne["age"])
+        for ligne in brut["age_ouverture_par_version"]
+    }
 
 
 def source_duree_requise() -> dict[tuple, float]:
@@ -5623,6 +5683,42 @@ class Certification:
         }
         return messages, journal
 
+
+ENTETE_AGE_LEGAL_PAR_VERSION = (
+    "# Âge légal d'ouverture des droits, VERSION PAR VERSION",
+    "# ------------------------------------------------------",
+    "# source_id: dila_legi_parametres_retraite",
+    "#",
+    "# La table de chaque version de la fiche `age_legal_par_generation` (note de",
+    "# décision 0009, étape 2) : ce que chaque rédaction de L. 161-17-2 et de",
+    "# D. 161-2-1-9 du code de la sécurité sociale écrit elle-même, SANS FUSION.",
+    "# Le récupérateur (`scripts/fetch/dila_legi_parametres_retraite.py`,",
+    "# `age_ouverture_par_version`) lit chaque rédaction dans l'index LEGI, et",
+    "# `scripts/verifier_donnees.py --appliquer` écrit ce fichier : aucune ligne",
+    "# ne s'y saisit à la main.",
+    "#",
+    "# `entree_en_vigueur` est la date d'effet de la rédaction, lue dans la",
+    "# disposition d'application que LEGI porte en tête (« s'appliquent aux",
+    "# pensions prenant effet à compter du 1er septembre 2026 »), à défaut son",
+    "# entrée en vigueur. `generation` ouvre la ligne, `generation_fin` est la",
+    "# première génération qu'elle ne vise plus (`2100` : sans fin) ; une coupure",
+    "# en cours d'année porte des décimales, `1961.667` pour le 1er septembre",
+    "# 1961. Une rédaction qui n'écrit aucun âge de plus ni de moins que la",
+    "# précédente du même article n'ouvre pas de date d'effet : celle de la loi",
+    "# n° 2025-199, qui ne retire de L. 161-17-2 que l'article du code rural.",
+    "#",
+    "# Ce que le fichier NE DIT PAS, et que la fiche dit : quelles rédactions",
+    "# font une version, de quelle date d'effet à quelle autre elle vaut, et quel",
+    "# texte décide quand deux se contredisent. La loi de 2025 n'écrit rien ici",
+    "# des assurés nés avant le 1er septembre 1961, qu'elle renvoie à « sa",
+    "# rédaction antérieure » ; le décret de 2023, qu'elle n'a pas réécrit, y",
+    "# garde les 63 ans de la génération 1964, que la loi dément.",
+    "#",
+    "# Les trois tables que le moteur lit — `age_ouverture_requis.csv`,",
+    "# `age_ouverture_avant_reforme_2023.csv`, `age_ouverture_avant_suspension.csv`",
+    "# — sont des vues fabriquées depuis ces lignes et les versions de la fiche",
+    "# (`src/retraite_notionnelle/donnees/tables_de_version.py`).",
+)
 
 CERTIFICATIONS = (
     Certification(
@@ -10227,6 +10323,21 @@ CERTIFICATIONS = (
         tolerance=5e-7,
         niveau="estimee",
     ),
+    # L'âge légal : la table de chaque version d'abord, lue dans LEGI, puis
+    # les trois vues qui s'en fabriquent (note de décision 0009, étape 2).
+    Certification(
+        nom="age_legal_par_version",
+        chemin=REFERENCE / "legislation" / "age_legal_par_version.csv",
+        cles=("entree_en_vigueur", "article", "generation", "generation_fin"),
+        colonne="age",
+        source=source_age_legal_par_version,
+        origine="DILA, base LEGI, code de la sécurité sociale L. 161-17-2 "
+                "et D. 161-2-1-9, rédaction par rédaction",
+        decimales=2,
+        tolerance=0.005,
+        unite=" ans",
+        entete=ENTETE_AGE_LEGAL_PAR_VERSION,
+    ),
     Certification(
         nom="age_ouverture_requis",
         chemin=REFERENCE / "legislation" / "age_ouverture_requis.csv",
@@ -10234,10 +10345,40 @@ CERTIFICATIONS = (
         colonne="age",
         source=source_age_ouverture,
         origine="DILA, base LEGI, code de la sécurité sociale L. 161-17-2 "
-                "et D. 161-2-1-9",
+                "et D. 161-2-1-9, par les versions de la fiche "
+                "age_legal_par_generation",
         decimales=2,
         tolerance=0.005,
         unite=" ans",
+    ),
+    # Les deux copies gardent le niveau `haute` qu'elles avaient, lues à la
+    # main : le relever déplacerait la fiabilité que les droits
+    # contrefactuels affichent, ce qui se décide à part.
+    Certification(
+        nom="age_ouverture_avant_reforme_2023",
+        chemin=REFERENCE / "legislation" / "age_ouverture_avant_reforme_2023.csv",
+        cles=("generation",),
+        colonne="age",
+        source=source_age_ouverture_avant_reforme_2023,
+        origine="la version de 2011 de la fiche age_legal_par_generation "
+                "(age_legal_par_version.csv)",
+        decimales=2,
+        tolerance=0.005,
+        unite=" ans",
+        niveau="haute",
+    ),
+    Certification(
+        nom="age_ouverture_avant_suspension",
+        chemin=REFERENCE / "legislation" / "age_ouverture_avant_suspension.csv",
+        cles=("generation",),
+        colonne="age",
+        source=source_age_ouverture_avant_suspension,
+        origine="la version de 2023 de la fiche age_legal_par_generation "
+                "(age_legal_par_version.csv)",
+        decimales=2,
+        tolerance=0.005,
+        unite=" ans",
+        niveau="haute",
     ),
     Certification(
         nom="duree_assurance_requise",

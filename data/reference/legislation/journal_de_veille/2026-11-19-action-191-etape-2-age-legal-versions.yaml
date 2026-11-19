@@ -1,0 +1,25 @@
+date: "2026-11-19"
+session: "action 191 : étape 2 de la note 0009, les versions de l'âge légal deviennent la source"
+consulte: >-
+  Index LEGI de la DILA, à jour au 19 novembre 2026 : L. 161-17-2 du code de
+  la sécurité sociale (LEGIARTI000023030935, LEGIARTI000025014605,
+  LEGIARTI000047452768, LEGIARTI000051289659, LEGIARTI000053280889) ;
+  D. 161-2-1-9 (LEGIARTI000023388636, LEGIARTI000025089933,
+  LEGIARTI000047634502) ; R. 351-2 (LEGIARTI000006749340,
+  LEGIARTI000024113000) ; loi n° 2010-1330, article 118 ; loi n° 2023-270,
+  article 10 ; loi n° 2025-1403, article 105.
+trouve: >-
+  Aucune valeur ne change. La fiche age_legal_par_generation porte six
+  versions, choisies par la date d'effet de la pension : avant le
+  21 décembre 1985 (supposée), soixante ans jusqu'au 30 juin 2011, la loi de
+  2010 du 1er juillet au 22 décembre 2011, celle de 2011 jusqu'au 31 août
+  2023, celle de 2023 jusqu'au 31 août 2026, la suspension ensuite. La
+  rédaction du 28 février 2025 de L. 161-17-2 ne change aucun âge : elle ôte
+  le renvoi au code rural. La table en vigueur et les deux copies d'avant
+  réforme se fabriquent depuis ces versions, identiques. Détail dans
+  docs/feuille_de_route/191/2026-11-19-etape-2-age-legal-les-versions-deviennent-la-source.md.
+reste: >-
+  Faire lire ces versions au moteur ; une seconde lecture des versions de
+  1985 à 2011, sans exemple officiel ; les textes d'avant la codification de
+  1985, hors de l'index ; D. 161-2-1-9, que le décret n'a pas récrit depuis
+  la suspension et qui dit encore 63 ans pour 1964.
