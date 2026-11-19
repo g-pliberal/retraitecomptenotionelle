@@ -5036,6 +5036,12 @@ function aupresDe(catalogue, code) {
  * proposition qui suit « votre activité ».
  */
 function sansNouveauxDroits(periode) {
+  // La pension militaire garde ses droits sous toutes les versions (L. 84 du
+  // code des pensions) : sa phrase ne tient pas au nom de la règle.
+  if (periode.motif === "pension_militaire") {
+    return "ouvre des droits dans les régimes qui ne vous servent pas encore de pension : "
+      + "votre pension militaire n'éteint pas vos droits";
+  }
   switch (`${periode.motif}/${periode.regle}`) {
     case "eteints/loi_2014":
       return "n'ouvre aucun droit à retraite : depuis 2015, la reprise d'activité après "
@@ -5053,10 +5059,6 @@ function sansNouveauxDroits(periode) {
     case "regime_liquide/sans_regle_generale":
       return "relève du régime qui vous sert déjà votre pension, définitive : elle n'y "
         + "ouvre rien";
-    case "pension_militaire/loi_2014":
-    case "pension_militaire/loi_2023":
-      return "ouvre des droits dans les régimes qui ne vous servent pas encore de pension : "
-        + "votre pension militaire n'éteint pas vos droits";
     default:
       return "ouvre des droits dans les régimes qui ne vous servent pas encore de pension";
   }

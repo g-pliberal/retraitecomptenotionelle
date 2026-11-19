@@ -5853,6 +5853,22 @@ def test_la_page_dit_le_plafond_de_la_pension_militaire_de_2027(page):
     assert "seuil de votre régime" not in note and "n'a pas encore lu" not in note
 
 
+@pytest.mark.parametrize("requete", [
+    {},
+    {"naissance": "1968", "emploi_retraite": "2014-02", "emploi_retraite_fin": "2016-02",
+     "emploi_retraite_statut": "salarie_prive_non_cadre"},
+], ids=["premiere_pension_de_2027", "premiere_pension_de_2013"])
+def test_la_page_dit_que_la_pension_militaire_n_eteint_pas_les_droits(page, requete):
+    """L. 84 du code des pensions civiles et militaires de retraite retire au
+    titulaire d'une pension militaire les articles qui éteignent les droits de
+    l'activité, et L. 161-22-1-2 lui garde, pour une première pension de 2027,
+    « la constitution de droits supplémentaires ». La page le lui dit quelle
+    que soit la version qui vaut pour sa première pension, `lfss_2026` en 2027
+    comme `sans_regle_generale` en 2013, et non la seule phrase générale."""
+    note, _ = _note_du_cumul(page, {**_CUMUL_MILITAIRE_2027, **requete})
+    assert "votre pension militaire n'éteint pas vos droits" in note
+
+
 def test_la_page_dit_le_cumul_entier_du_non_officier_de_moins_de_vingt_cinq_ans(page):
     """L. 86, 1° : « Le titulaire d'une pension militaire non officier
     rémunérant moins de vingt-cinq années de services » cumule entièrement,

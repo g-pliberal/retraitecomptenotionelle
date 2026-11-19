@@ -47,6 +47,18 @@ DILA ; aucun n'a été relu une seconde fois.
   `test_cliquets_du_droit_date.py` ; les 268 essais de `tests/js/`. La suite
   complète est à GitHub.
 
+## La phrase de la page, rétablie le même soir
+
+La page du simulateur choisissait la phrase du militaire par le couple du
+motif et du nom de la règle (`sansNouveauxDroits`, dans `moteur/js/pages.js`),
+`pension_militaire/loi_2014` ou `pension_militaire/loi_2023`. Le nom corrigé,
+les deux cas retombaient sur la phrase générale, sans « votre pension
+militaire n'éteint pas vos droits » : aucun témoin de page ne les portait, et
+le premier envoi ne l'a pas vu. Un second commit la rend au motif seul, par
+un essai de `tests/test_web.py` vu rouge sur les deux cas, la première
+pension de 2027 et celle de 2013. Aucun témoin ne bouge ;
+`python -m pytest -m site` et `tests/test_web.py` sont verts.
+
 ## Ce qui reste
 
 - Le cas de janvier 2023 pour une première pension d'avant 2015 suit la
