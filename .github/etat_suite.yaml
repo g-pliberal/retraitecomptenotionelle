@@ -1,20 +1,20 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: rouge
-sources: afeab67098b07bbe4bd68945f881398089286bb9
-date: 2026-11-19T18:20:28Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44581806882
+sources: ceae32ef154fe2576ccdaa5f45cedb6dc5c52216
+date: 2026-11-19T18:38:04Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44587201607
 echecs:
-  - "FAILED tests/test_regle_de_chacun.py::test_une_generation_garde_sa_regle_quelle_que_soit_l_annee_de_son_depart - AssertionError: L'âge d'ouverture ou la durée requise d'une génération change avec l'année de son départ, sans que le texte du régime soit déclaré le vouloir : {('banque_de_france', 'age'): (2008, 2012, [2007, 2008, 2009, 2010, 2011])}"
   - "FAILED tests/test_cliquets_du_droit_date.py::test_les_valeurs_de_repli_des_renvois_ne_peuvent_que_baisser - AssertionError: 1445 valeurs de repli à côté d'un renvoi, le cliquet en admet 1442 : il ne peut que baisser"
+  - "FAILED tests/test_regle_de_chacun.py::test_une_generation_garde_sa_regle_quelle_que_soit_l_annee_de_son_depart - AssertionError: L'âge d'ouverture ou la durée requise d'une génération change avec l'année de son départ, sans que le texte du régime soit déclaré le vouloir : {('banque_de_france', 'age'): (2008, 2012, [2007, 2008, 2009, 2010, 2011])}"
 presomptions: rouge
 presomptions_echecs:
   - "FAILED tests/test_cliquets_du_droit_date.py::test_les_valeurs_de_repli_des_renvois_ne_peuvent_que_baisser - AssertionError: 1445 valeurs de repli à côté d'un renvoi, le cliquet en admet 1442 : il ne peut que baisser"
 durees:
-  fabrique: 684
-  suite: 583
-  tranche_1: 543
-  tranche_2: 583
-  tranche_3: 456
-  tranche_4: 463
-  garde: 216
+  fabrique: 373
+  suite: 463
+  tranche_1: 346
+  tranche_2: 368
+  tranche_3: 463
+  tranche_4: 366
+  garde: 160
