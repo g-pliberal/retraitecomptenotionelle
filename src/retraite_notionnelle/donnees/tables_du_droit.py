@@ -862,7 +862,7 @@ class FichesDatees:
             "minimum_pension_sncf", "retraite_progressive",
             "cotisation_rco_agricole_2026", "decote_banque_de_france",
             "droits_apres_la_premiere_pension", "seconde_pension",
-            "surcote_banque_de_france")
+            "surcote_banque_de_france", "age_ouverture_banque_de_france_actifs")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

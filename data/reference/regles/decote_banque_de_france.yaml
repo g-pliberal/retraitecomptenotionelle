@@ -25,6 +25,11 @@ lit:
 - >-
   la limite d'âge que le statut du personnel écrit pour sa période de naissance, colonne
   « Limite d'âge » (`limite_age_banque_de_france`)
+- >-
+  l'emploi que l'agent déclare (`banque`) : celui des catégories du quatrième alinéa de
+  l'article 26, dont le droit s'ouvre cinq ans plus tôt
+  (`age_ouverture_banque_de_france_actifs`), prend la dernière colonne du tableau de 2007,
+  puis un âge minoré de vingt trimestres
 ecrit:
 - >-
   le taux du coefficient de minoration par trimestre manquant, et l'âge auquel il
@@ -125,6 +130,7 @@ versions:
         fiche: limite_age_banque_de_france
         classe: sedentaire
         lue_depuis: "2012-07-26"
+      trimestres_de_moins_des_emplois_classes: 20
       table:
       - {depuis: "1949-01-01", coefficient: 0.00125, trimestres_avant_limite: 3}
       - {depuis: "1949-07-01", coefficient: 0.00125, trimestres_avant_limite: 3}
@@ -173,7 +179,15 @@ versions:
       les pensions prenant effet depuis le 9 mai 2012. Il ne change pas le droit des nés
       de 1949 à 1955 : la limite d'âge du statut diminuée de ses trimestres est l'âge que
       le tableau de 2007 écrivait au semestre de leurs soixante ans
-      (`tests/test_decote_banque_de_france.py`). La limite d'âge est celle du tableau de
+      (`tests/test_decote_banque_de_france.py`). Il change celui des agents des catégories
+      du quatrième alinéa de l'article 26 : né au premier semestre 1955, l'agent avait, à
+      la ligne de ses cinquante-cinq ans, 0,25 % et 56 ans et 2 trimestres ; il a 0,875 %
+      et la limite d'âge moins sept trimestres, minorée de vingt, 58 ans — transcrit tel
+      quel (`trimestres_de_moins_des_emplois_classes`). Le dernier alinéa de l'article 32,
+      qui minore de même la limite d'âge des agents nés depuis 1963, ne vaut que pour les
+      pensions prenant effet depuis le 1er janvier 2016 (décret n° 2012-701, articles 25
+      et 41, I), ce que ces agents, qui n'ont cinquante-cinq ans qu'en 2018, ne peuvent
+      devancer. La limite d'âge est celle du tableau de
       l'article 241 du statut du personnel, publié le 26 juillet 2012, lu aussi pour les
       pensions des onze semaines qui le précèdent (PRÉSOMPTION : le décret n° 2012-697
       du même jour la relève, et le tableau de l'article 70 la suppose)
@@ -222,11 +236,14 @@ textes_sans_effet:
 approximations:
 - version: [tableau_par_periode_de_liquidation, tableau_par_periode_de_naissance]
   ecart: >-
-    la saisie ne dit ni le niveau de l'agent ni sa catégorie : le modèle prend la colonne
-    de droit commun. Ne sont pas servis l'âge des agents dont le droit s'ouvre à 55 ans
-    (vingt trimestres de moins), celui des personnels de direction du quatrième au
-    septième degré nés avant 1956, ni l'exemption du c de l'article 32, depuis le 9 mai
-    2012, pour l'agent d'au moins soixante-cinq ans qui a élevé un enfant handicapé
+    la saisie ne dit pas le niveau de l'agent. Ne sont pas servis le second tableau de
+    l'article 70, celui des personnels de direction du quatrième au septième degré nés
+    avant 1956, dont la limite d'âge, plus haute, n'est pas servie non plus
+    (`limite_age_banque_de_france`) : sur les lignes que cette fiche cite, leur limite
+    diminuée de leurs trimestres est l'âge de la colonne de droit commun ; ni l'exemption
+    du c de l'article 32, pour les pensions prenant effet depuis le 1er janvier 2016
+    (décret n° 2012-701, articles 25 et 41, I), de l'agent d'au moins soixante-cinq ans
+    qui a élevé un enfant handicapé ou l'a aidé
   effet: non mesuré
 effet: >-
   Le dépôt opposait à l'agent le barème de l'article L. 14 du code des pensions, lu à
@@ -267,6 +284,11 @@ historique:
   2026-11-19 — née de la relecture des dix renvois sensibles (action 191) : le régime
   renvoyait à `decote_fonction_publique` ; trois versions sur la date d'effet, les deux
   tableaux de l'article 70 transcrits.
+- >-
+  2026-11-19 — la saisie déclare l'emploi de l'agent (`banque`) : celui des catégories du
+  quatrième alinéa de l'article 26 prend la colonne des agents à 55 ans du tableau de
+  2007, puis l'âge minoré de vingt trimestres ; l'exemption du c de l'article 32, que
+  l'approximation datait du 9 mai 2012, l'est des pensions de 2016.
 reformes: []
 code:
   interrupteurs:
@@ -275,12 +297,15 @@ code:
     `bareme_decote: banque_de_france` lit le taux et l'âge d'annulation dans la version de
     cette fiche que choisit la date d'effet : la ligne de la période où le droit s'ouvre,
     ou celle de la naissance, dont les trimestres se retranchent de la limite d'âge du
-    statut ; sans ligne, aucune décote.
+    statut ; sans ligne, aucune décote. L'agent qui déclare un emploi des catégories du
+    quatrième alinéa de l'article 26 prend la colonne `age_annulation_a_55_ans`, puis
+    retranche encore `trimestres_de_moins_des_emplois_classes`.
   javascript: >-
     moteur/js/droit/liquider.js : decoteOpposable, decoteBanqueDeFrance ;
     moteur/js/droit/limite_age.js : limiteDuTableau ; moteur/js/droit/ouvrir.js :
     moisOuvertureDesDroits
   parametres: >-
-    contenu.parametres de chaque version : lecture, table, limite_d_age ;
+    contenu.parametres de chaque version : lecture, table, limite_d_age,
+    trimestres_de_moins_des_emplois_classes ;
     regimes/banque_de_france.yaml : bareme_decote
-  tests: [tests/test_decote_banque_de_france.py]
+  tests: [tests/test_decote_banque_de_france.py, tests/test_categorie_active_banque_de_france.py]

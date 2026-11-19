@@ -351,6 +351,20 @@ export const TRAVAUX_MANUELS = [
  * `categorie_de_la_pension_d_invalidite` la pose, selon que l'invalide
  * travaille ou non quand la pension de vieillesse la remplace.
  */
+/**
+ * L'emploi de l'agent titulaire de la Banque de France (fiches
+ * `age_ouverture_banque_de_france_actifs` et `decote_banque_de_france`) : celui
+ * qui « appartient à l'une des catégories dont la nomenclature est fixée par
+ * délibération du conseil général » ouvre son droit cinq ans plus tôt, et sa
+ * décote s'annule cinq ans plus tôt (règlement annexé au décret n° 2007-262,
+ * articles 26, 32, 70 et 72). Le vide dit l'agent de droit commun.
+ */
+export const EMPLOIS_BANQUE = [
+  ["", "de droit commun"],
+  ["active", "ouvre le départ cinq ans plus tôt"],
+];
+export const STATUT_BANQUE = "agent_banque_de_france";
+
 export const CATEGORIES_INVALIDITE = [
   ["", "présumée selon votre activité"],
   ["1", "première : capable d'une activité rémunérée"],
@@ -818,6 +832,9 @@ export const DEFAUTS = Object.freeze({
   deporte: false,
   mois_de_guerre: null,
   travail_manuel: "",
+  //: L'emploi de l'agent de la Banque de France (`EMPLOIS_BANQUE`) : `active`,
+  //: celui qui ouvre le droit cinq ans plus tôt ; vide, le droit commun.
+  banque: "",
   //: L'activité du micro-entrepreneur, qui fait lire le revenu de ses lignes
   //: comme un chiffre d'affaires (`ACTIVITES_MICRO`) ; vide, comme un revenu
   //: déjà abattu.
@@ -1083,6 +1100,7 @@ export class Saisie {
       mois_de_guerre: [undefined, null, ""].includes(parametres.guerre) ? null
         : entier(parametres, "guerre", 0),
       travail_manuel: parmi(parametres, "travail_manuel", TRAVAUX_MANUELS, ""),
+      banque: parmi(parametres, "banque", EMPLOIS_BANQUE, ""),
       micro: parmi(parametres, "micro", ACTIVITES_MICRO, ""),
       maladie: parmi(parametres, "maladie", MALADIE_MICRO, ""),
       indice: parmi(parametres, "indice", INDICES, ""),
@@ -2737,13 +2755,14 @@ export class Saisie {
    * invalidité d'un fonctionnaire — son
    * âge, son imputabilité, son taux en pour cent —, et l'âge depuis lequel
    * l'incapacité permanente atteint 50 % (`handicap`) ; et les autres titres au
-   * taux plein de L. 351-8 (`deporte`, `mois_de_guerre`, `travail_manuel`).
+   * taux plein de L. 351-8 (`deporte`, `mois_de_guerre`, `travail_manuel`), et
+   * l'emploi de l'agent de la Banque de France (`banque`).
    * `null` quand rien n'est dit.
    */
   invaliditeDeclaree() {
     if (this.invalidite === null && !this.inaptitude && this.radiation_invalidite === null
         && this.handicap === null && !this.deporte && this.mois_de_guerre === null
-        && !this.travail_manuel) {
+        && !this.travail_manuel && !this.banque) {
       return null;
     }
     const radiation = this.radiation_invalidite === null ? null : {
@@ -2762,7 +2781,8 @@ export class Saisie {
     }
     // Les autres titres, seulement quand ils sont dits.
     for (const [nom, valeur] of [["deporte", this.deporte || null],
-      ["mois_de_guerre", this.mois_de_guerre], ["travail_manuel", this.travail_manuel || null]]) {
+      ["mois_de_guerre", this.mois_de_guerre], ["travail_manuel", this.travail_manuel || null],
+      ["banque", this.banque || null]]) {
       if (valeur !== null) {
         declaree[nom] = valeur;
       }
@@ -3496,6 +3516,7 @@ export class Saisie {
         ["deporte", this.deporte ? OUI : null],
         ["guerre", this.mois_de_guerre],
         ["travail_manuel", this.travail_manuel || null],
+        ["banque", this.banque || null],
       ].filter(([, valeur]) => valeur !== null)),
       ...(this.micro ? { micro: this.micro } : {}),
       ...(this.maladie ? { maladie: this.maladie } : {}),

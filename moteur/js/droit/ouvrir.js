@@ -860,6 +860,38 @@ export function ageOuverture(moteur, periode, carriere, invaliditeComprise = tru
   return age;
 }
 
+/** La fiche de l'âge des emplois classés de la Banque de France (articles 26 et 72). */
+export const FICHE_AGE_BANQUE_DE_FRANCE_ACTIFS = "age_ouverture_banque_de_france_actifs";
+
+/**
+ * L'âge auquel l'agent de la Banque de France ouvre son droit quand il déclare
+ * un emploi des catégories que le conseil général nomme (fiche
+ * `age_ouverture_banque_de_france_actifs`), ou `null` : la date d'effet choisit
+ * la rédaction — la dernière, sans départ daté —, et la date de naissance la
+ * ligne. Sans ligne, l'âge du régime.
+ */
+export function ageDesEmploisClassesDeLaBanque(moteur, periode, carriere) {
+  if (periode.regime !== "banque_de_france" || carriere.emploiDeLaBanque !== "active") {
+    return null;
+  }
+  const version = moteur.fichesDatees.versionAuxDates(FICHE_AGE_BANQUE_DE_FRANCE_ACTIFS,
+    { "liquidation.date_effet": dateDEffet(carriere) ?? "9999-12-31" });
+  if (version === null) {
+    return null;
+  }
+  const deux = (n) => String(n).padStart(2, "0");
+  const naissance = carriere.dateNaissance;
+  const jour = `${String(naissance.annee).padStart(4, "0")}-${deux(naissance.mois)}-`
+    + deux(carriere.jourDeNaissance);
+  let age = null;
+  for (const ligne of version.parametres.table ?? []) {
+    if (jour >= ligne.depuis) {
+      age = ligne.age;
+    }
+  }
+  return age;
+}
+
 /** `ageOuverture`, sans l'invalidité ni l'inaptitude. */
 function ageOuvertureDeDroitCommun(moteur, periode, carriere) {
   const militaire = droitMilitaire(moteur, periode, carriere);
@@ -869,6 +901,10 @@ function ageOuvertureDeDroitCommun(moteur, periode, carriere) {
   const derogation = derogationActive(moteur, periode, carriere);
   if (derogation !== null) {
     return derogation.ageOuverture;
+  }
+  const banque = ageDesEmploisClassesDeLaBanque(moteur, periode, carriere);
+  if (banque !== null) {
+    return banque;
   }
   const commun = ageOuvertureCommun(moteur, periode, carriere);
   const speciale = ouverturePensionSpeciale(moteur, periode, carriere);

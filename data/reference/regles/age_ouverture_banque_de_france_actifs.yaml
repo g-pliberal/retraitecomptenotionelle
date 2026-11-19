@@ -1,0 +1,317 @@
+schema_version: 1
+id: age_ouverture_banque_de_france_actifs
+intitule: >-
+  L'agent titulaire de la Banque de France dont l'emploi appartient à l'une des catégories
+  que le conseil général nomme ouvre son droit à pension cinq ans avant les autres : à
+  cinquante-cinq ans depuis le règlement de 2007 ; depuis le 9 mai 2012, à cinquante-sept
+  ans, l'âge étant relevé de trois mois par semestre pour les agents nés depuis 1956,
+  puis, depuis le 26 juin 2014, pour ceux nés depuis 1961 ; pour les pensions de 2025 et
+  après, à l'âge de L. 161-17-2 abaissé de cinq années, cinquante-neuf ans, relevé de trois
+  mois par génération pour les agents nés depuis 1968 (articles 26 et 72 du règlement
+  annexé au décret n° 2007-262).
+domaine: age
+regimes: [banque_de_france]
+etape: ouvrir_le_droit
+face: droit
+etat: approchee
+lit:
+- >-
+  l'appartenance de l'agent à l'une de ces catégories, que la saisie déclare (`banque`),
+  à son départ
+- sa date de naissance, au semestre
+- la date d'effet de la pension, qui désigne la rédaction du règlement
+ecrit:
+- >-
+  l'âge d'ouverture du droit à pension de l'agent, d'où partent le mois où son droit
+  s'ouvre et la ligne de sa décote (`decote_banque_de_france`)
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: avant_le_reglement_de_2007
+  statut: supposee
+  hypothese: >-
+    aucun âge propre à ces catégories avant le règlement annexé au décret n° 2007-262,
+    entré en vigueur le 1er avril 2007 : le règlement d'avant, que l'index LEGI ne porte
+    pas, n'est pas lu, et le régime ouvre alors le droit de tout agent à cinquante-cinq
+    ans au modèle
+  fiabilite: faible
+  textes: []
+  bornes:
+    liquidation.date_effet: [null, 2007-04-01]
+  contenu:
+    parametres:
+      table: []
+    droit: >-
+      aucun âge propre au modèle
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    recherche sur le web du 19 novembre 2026 — la page « Retraite des agents titulaires de
+    la Banque de France » de la-retraite-en-clair.fr, qui dit les âges de 55 et 57 ans
+    sans cas chiffré, la fiche du Conseil d'orientation des retraites sur le régime
+    (juillet 2024), le site de la Banque de France : aucun exemple chiffré d'un agent de
+    ces catégories
+- id: reglement_de_2007
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006778516, article: "décret n° 2007-262 du 27 février 2007, règlement annexé, article 26, rédaction d'origine", en_vigueur: 2007-02-28, publie_le: 2007-02-28}
+  - {id: LEGIARTI000020085558, article: "même règlement, même article, au mot près", en_vigueur: 2009-01-01}
+  nee_de: LEGIARTI000006778516
+  bornes:
+    liquidation.date_effet: [2007-04-01, 2012-05-09]
+  contenu:
+    parametres:
+      table:
+      - {depuis: "1800-01-01", age: 55.0}
+    droit: >-
+      article 26 : « La liquidation de la pension intervient : a) Lorsque l'agent est admis
+      à la retraite par limite d'âge, ou s'il a atteint, à la date de l'admission à la
+      retraite : - au moins l'âge de soixante ans ; - ou au moins l'âge de cinquante-cinq
+      ans s'il appartient à l'une des catégories dont la nomenclature est fixée par
+      délibération du conseil général approuvée par le ministère de l'économie et des
+      finances »
+    conditions: >-
+      le règlement n'exige aucune durée de services dans ces emplois ; la nomenclature du
+      conseil général, qui peut en dire une, n'est pas lue
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    recherche sur le web du 19 novembre 2026 — la page « Retraite des agents titulaires de
+    la Banque de France » de la-retraite-en-clair.fr, qui dit les âges de 55 et 57 ans
+    sans cas chiffré, la fiche du Conseil d'orientation des retraites sur le régime
+    (juillet 2024), le site de la Banque de France : aucun exemple chiffré d'un agent de
+    ces catégories
+- id: decret_de_2012
+  statut: lue
+  textes:
+  - {id: LEGIARTI000025882187, article: "même règlement, articles 26 et 72, rédaction du décret n° 2012-701 du 7 mai 2012, articles 18 et 38", en_vigueur: 2012-05-09, publie_le: 2012-05-08}
+  - {id: JORFARTI000025824175, article: "décret n° 2012-701 du 7 mai 2012, article 18", en_vigueur: 2012-05-09, publie_le: 2012-05-08}
+  - {id: JORFARTI000025824260, article: "décret n° 2012-701 du 7 mai 2012, article 38", en_vigueur: 2012-05-09, publie_le: 2012-05-08}
+  nee_de: LEGIARTI000025882187
+  bornes:
+    liquidation.date_effet: [2012-05-09, 2014-06-26]
+  contenu:
+    parametres:
+      table:
+      - {depuis: "1800-01-01", age: 55.0}
+      - {depuis: "1956-01-01", age: 55.25}
+      - {depuis: "1956-07-01", age: 55.5}
+      - {depuis: "1957-01-01", age: 55.75}
+      - {depuis: "1957-07-01", age: 56.0}
+      - {depuis: "1958-01-01", age: 56.25}
+      - {depuis: "1958-07-01", age: 56.5}
+      - {depuis: "1959-01-01", age: 56.75}
+      - {depuis: "1959-07-01", age: 57.0}
+    droit: >-
+      article 26 : « - ou au moins l'âge de cinquante-sept ans s'il appartient à l'une des
+      catégories dont la nomenclature est fixée par délibération du conseil général » ;
+      article 72, I, 2° : « L'âge d'ouverture du droit à pension de cinquante-sept ans
+      mentionné au quatrième et au dixième alinéas de l'article 26 s'applique aux agents
+      nés à compter du 1er juillet 1959. Pour les agents nés antérieurement à cette date,
+      cet âge est abaissé : a) A cinquante-cinq ans pour les agents nés avant le 1er
+      janvier 1956 ; b) A cinquante-cinq ans et trois mois pour les agents nés au premier
+      semestre 1956 ; c) A cinquante-cinq ans et six mois pour les agents nés au deuxième
+      semestre 1956 ; d) A cinquante-cinq ans et neuf mois pour les agents nés au premier
+      semestre 1957 ; e) A cinquante-six ans pour les agents nés au deuxième semestre
+      1957 ; f) A cinquante-six ans et trois mois pour les agents nés au premier semestre
+      1958 ; g) A cinquante-six ans et six mois pour les agents nés au deuxième semestre
+      1958 ; h) A cinquante six ans et neuf mois pour les agents nés au premier semestre
+      1959 »
+    conditions: >-
+      le décret entre en vigueur le lendemain de sa publication, et son article 41 ne
+      diffère ni son article 18 ni le I de l'article 72 : ces âges valent pour les
+      pensions prenant effet depuis le 9 mai 2012
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    recherche sur le web du 19 novembre 2026 — la page « Retraite des agents titulaires de
+    la Banque de France » de la-retraite-en-clair.fr, qui dit les âges de 55 et 57 ans
+    sans cas chiffré, la fiche du Conseil d'orientation des retraites sur le régime
+    (juillet 2024), le site de la Banque de France : aucun exemple chiffré d'un agent de
+    ces catégories
+- id: decret_de_2014
+  statut: lue
+  textes:
+  - {id: LEGIARTI000029138467, article: "même règlement, article 72, rédaction du décret n° 2014-669 du 23 juin 2014, article 16", en_vigueur: 2014-06-26, publie_le: 2014-06-25}
+  - {id: JORFARTI000029130773, article: "décret n° 2014-669 du 23 juin 2014, article 16", en_vigueur: 2014-06-26, publie_le: 2014-06-25}
+  nee_de: LEGIARTI000029138467
+  bornes:
+    liquidation.date_effet: [2014-06-26, 2025-01-01]
+  contenu:
+    parametres:
+      table:
+      - {depuis: "1800-01-01", age: 55.0}
+      - {depuis: "1961-01-01", age: 55.25}
+      - {depuis: "1961-07-01", age: 55.5}
+      - {depuis: "1962-01-01", age: 55.75}
+      - {depuis: "1962-07-01", age: 56.0}
+      - {depuis: "1963-01-01", age: 56.25}
+      - {depuis: "1963-07-01", age: 56.5}
+      - {depuis: "1964-01-01", age: 56.75}
+      - {depuis: "1964-07-01", age: 57.0}
+    droit: >-
+      article 72, I, 2° : « L'âge d'ouverture du droit à pension de cinquante-sept ans
+      mentionné au quatrième alinéa de l'article 26 s'applique aux agents nés à compter du
+      1er juillet 1964. Pour les agents nés antérieurement à cette date, cet âge est
+      abaissé : a) A cinquante-cinq ans pour les agents nés avant le 1er janvier 1961 ;
+      b) A cinquante-cinq ans et trois mois pour les agents nés au premier semestre 1961 ;
+      c) A cinquante-cinq ans et six mois pour les agents nés au second semestre 1961 ;
+      d) A cinquante-cinq ans et neuf mois pour les agents nés au premier semestre 1962 ;
+      e) A cinquante-six ans pour les agents nés au second semestre 1962 ; f) A
+      cinquante-six ans et trois mois pour les agents nés au premier semestre 1963 ; g) A
+      cinquante-six ans et six mois pour les agents nés au second semestre 1963 ; h) A
+      cinquante-six ans et neuf mois pour les agents nés au premier semestre 1964 »
+    conditions: >-
+      « le texte entre en vigueur le lendemain de sa publication » (notice du décret,
+      JORFTEXT000029130717), le 26 juin 2014, sans disposition propre à son article 16.
+      L'agent né de 1956 à 1960 retrouve cinquante-cinq ans, que le décret de 2012 avait
+      relevés pour lui
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    recherche sur le web du 19 novembre 2026 — la page « Retraite des agents titulaires de
+    la Banque de France » de la-retraite-en-clair.fr, qui dit les âges de 55 et 57 ans
+    sans cas chiffré, la fiche du Conseil d'orientation des retraites sur le régime
+    (juillet 2024), le site de la Banque de France : aucun exemple chiffré d'un agent de
+    ces catégories
+- id: decret_de_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047909725, article: "même règlement, articles 26 et 72, rédaction du décret n° 2023-693 du 28 juillet 2023, pour les pensions prenant effet depuis le 1er janvier 2025", en_vigueur: 2025-01-01}
+  - {id: JORFARTI000047903427, article: "décret n° 2023-693 du 28 juillet 2023, article 3", en_vigueur: 2023-09-01, publie_le: 2023-07-30}
+  nee_de: LEGIARTI000047909725
+  bornes:
+    liquidation.date_effet: [2025-01-01, null]
+  contenu:
+    parametres:
+      table:
+      - {depuis: "1800-01-01", age: 57.0}
+      - {depuis: "1968-01-01", age: 57.25}
+      - {depuis: "1969-01-01", age: 57.5}
+      - {depuis: "1970-01-01", age: 57.75}
+      - {depuis: "1971-01-01", age: 58.0}
+      - {depuis: "1972-01-01", age: 58.25}
+      - {depuis: "1973-01-01", age: 58.5}
+      - {depuis: "1974-01-01", age: 58.75}
+      - {depuis: "1975-01-01", age: 59.0}
+    droit: >-
+      article 26 : « - au moins l'âge mentionné au premier alinéa de l'article L. 161-17-2
+      du code de la sécurité sociale ; - ou au moins cet âge abaissé de cinq années s'il
+      appartient à l'une des catégories dont la nomenclature est fixée par délibération du
+      conseil général » ; article 72, I, 2° : « L'âge d'ouverture du droit à pension
+      mentionné au quatrième alinéa de l'article 26 s'applique aux agents nés à compter du
+      1er janvier 1975. Pour les agents nés antérieurement à cette date, cet âge est
+      abaissé : a) A cinquante-sept ans pour les agents nés avant le 1er janvier 1968 ;
+      b) A cinquante-sept ans et trois mois pour les agents nés en 1968 ; c) A
+      cinquante-sept ans et six mois pour les agents nés en 1969 ; d) A cinquante-sept ans
+      et neuf mois pour les agents nés en 1970 ; e) A cinquante-huit ans pour les agents
+      nés en 1971 ; f) A cinquante-huit ans et trois mois pour les agents nés en 1972 ;
+      g) A cinquante-huit ans et six mois pour les agents nés en 1973 ; h) A
+      cinquante-huit ans et neuf mois pour les agents nés en 1974 »
+    conditions: >-
+      « ces dispositions s'appliquent aux pensions prenant effet à compter du 1er janvier
+      2025 » (III de l'article 3 du décret n° 2023-693). L'âge du premier alinéa de
+      L. 161-17-2 est de soixante-quatre ans : abaissé de cinq années, cinquante-neuf ans,
+      que la table écrit en clair pour les agents nés depuis 1975. Aucune rédaction
+      postérieure du règlement n'est à l'index au 16 novembre 2026
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    recherche sur le web du 19 novembre 2026 — la page « Retraite des agents titulaires de
+    la Banque de France » de la-retraite-en-clair.fr, qui dit les âges de 55 et 57 ans
+    sans cas chiffré, la fiche du Conseil d'orientation des retraites sur le régime
+    (juillet 2024), le site de la Banque de France : aucun exemple chiffré d'un agent de
+    ces catégories
+textes_sans_effet:
+- id: LEGIARTI000026140060
+  reference: décret n° 2007-262, règlement annexé, rédaction du 4 juillet 2012
+  motif: >-
+    l'article 26 et le I de l'article 72 y sont ceux du 9 mai 2012, au mot près
+- id: LEGIARTI000028435924
+  reference: décret n° 2007-262, règlement annexé, rédaction du 1er janvier 2014
+  motif: >-
+    l'article 26 et le I de l'article 72 y sont ceux du 9 mai 2012, au mot près
+- id: LEGIARTI000029924596
+  reference: décret n° 2007-262, règlement annexé, rédaction du 20 décembre 2014
+  motif: >-
+    l'article 26 y est celui du 9 mai 2012 et le I de l'article 72 celui du 26 juin 2014, au mot près
+- id: LEGIARTI000030059031
+  reference: décret n° 2007-262, règlement annexé, rédaction du 1er janvier 2015
+  motif: >-
+    l'article 26 y est celui du 9 mai 2012 et le I de l'article 72 celui du 26 juin 2014, à l'espacement près des tirets et de « I.-1° »
+- id: LEGIARTI000026151447
+  reference: décret n° 2007-262, règlement annexé, rédaction du 1er janvier 2016, jamais en vigueur
+  motif: >-
+    l'article 26 y est celui du 9 mai 2012 et le I de l'article 72 celui du 26 juin 2014, au mot près
+- id: LEGIARTI000031800060
+  reference: décret n° 2007-262, règlement annexé, rédaction du 1er janvier 2016
+  motif: >-
+    l'article 26 y est celui du 9 mai 2012 et le I de l'article 72 celui du 26 juin 2014, au mot près
+- id: LEGIARTI000033105072
+  reference: décret n° 2007-262, règlement annexé, rédaction du 10 septembre 2016
+  motif: >-
+    l'article 26 y est celui du 9 mai 2012 et le I de l'article 72 celui du 26 juin 2014, au mot près
+- id: LEGIARTI000042384599
+  reference: décret n° 2007-262, règlement annexé, rédaction du 2 octobre 2020
+  motif: >-
+    l'article 26 y est celui du 9 mai 2012 et le I de l'article 72 celui du 26 juin 2014, au mot près
+- id: LEGIARTI000047909413
+  reference: décret n° 2007-262, règlement annexé, rédaction du 1er septembre 2023
+  motif: >-
+    l'article 26 y est celui du 9 mai 2012 et le I de l'article 72 celui du 26 juin 2014, au mot près
+approximations:
+- version: [reglement_de_2007, decret_de_2012, decret_de_2014, decret_de_2023]
+  ecart: >-
+    la nomenclature des catégories, arrêtée par délibération du conseil général, n'est pas
+    lue : le modèle croit la saisie, et n'exige aucune durée de services dans ces emplois
+  effet: non mesuré
+- version: [reglement_de_2007, decret_de_2012, decret_de_2014, decret_de_2023]
+  ecart: >-
+    l'âge des autres agents reste au modèle celui du droit commun des salariés, que le
+    règlement de la Banque relève plus tard (article 72, I, 1°) : l'écart, relevé le 17
+    novembre 2026, attend sa correction
+  effet: non mesuré
+effet: >-
+  L'agent qui déclare un emploi de ces catégories liquide sa pension de la Banque dès son
+  départ, cinq ans avant les autres : né en janvier 1962 et parti à cinquante-sept ans en
+  2019, il la reçoit aussitôt, avec dix-neuf trimestres de décote à 1,25 %, là où le
+  modèle la repoussait à l'âge de droit commun. Sans cette déclaration, rien ne change.
+sources:
+  lu_le: 2026-11-19
+  prochaine_relecture: 2027-11-19
+  a_relire:
+  - >-
+    La délibération du conseil général qui fixe la nomenclature des catégories, et la
+    durée de services qu'elle exigerait : non trouvée.
+  - >-
+    Un exemple chiffré publié par la Banque de France : aucun trouvé.
+  - >-
+    Comment la caisse applique ces âges — la Caisse des dépôts liquide les pensions depuis
+    le décret n° 2016-1207 — : aucune notice lue ; la-retraite-en-clair.fr cite les
+    chauffeurs-convoyeurs parmi ces emplois.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2007-262 du 27 février 2007, règlement annexé, articles 26 et 72, dans les
+      quatorze rédactions de l'annexe que porte l'index LEGI du dépôt : quatre textes —
+      l'origine (LEGIARTI000006778516), celui du 9 mai 2012 (LEGIARTI000025882187), celui
+      du 26 juin 2014 (LEGIARTI000029138467) et celui du 1er janvier 2025
+      (LEGIARTI000047909725)
+    date: 2026-11-19
+  - type: jorf
+    reference: >-
+      décret n° 2012-701 du 7 mai 2012, articles 18, 38 et 41 ; décret n° 2014-669 du 23
+      juin 2014, notice et article 16 ; décret n° 2023-693 du 28 juillet 2023, article 3.
+      Lus dans l'index JORF du dépôt
+    date: 2026-11-19
+historique:
+- >-
+  2026-11-19 — née avec la question du formulaire sur l'emploi de l'agent (action 191) :
+  quatre rédactions sur la date d'effet, lues par le moteur.
+reformes: []
+code:
+  moteur: >-
+    l'agent qui déclare l'une de ces catégories ouvre son droit à l'âge que la version de
+    cette fiche choisie par la date d'effet écrit pour sa date de naissance ; sans départ
+    daté, la dernière version. Sans déclaration, ou sans ligne, l'âge du régime.
+  javascript: >-
+    moteur/js/droit/ouvrir.js : ageDesEmploisClassesDeLaBanque, ageOuverture ;
+    moteur/js/carriere.js : emploiDeLaBanque ; moteur/js/chronologie.js : invaliditeDeclaree
+  parametres: >-
+    contenu.parametres de chaque version : table
+  tests: [tests/test_categorie_active_banque_de_france.py]

@@ -714,6 +714,13 @@ def _invalidite(assure: dict, age_liquidation: float | None, invalidite: dict) -
         faits.append(fait(f"travail_manuel_{ASSURE}", ASSURE, "exposition", _jour(depart),
                           attributs={"exposition": "travail_manuel",
                                      "nature": invalidite["travail_manuel"]}))
+    # L'emploi de l'agent de la Banque de France qui ouvre son droit cinq ans
+    # plus tôt (règlement annexé au décret n° 2007-262, article 26, a), que la
+    # caisse constate de même au départ.
+    if invalidite.get("banque"):
+        faits.append(fait(f"emploi_de_la_banque_{ASSURE}", ASSURE, "titre", _jour(depart),
+                          attributs={"titre": "emploi_de_la_banque_de_france",
+                                     "categorie": invalidite["banque"]}))
     return faits
 
 

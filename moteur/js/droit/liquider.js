@@ -2653,6 +2653,8 @@ function ligneDepuis(table, jour) {
  * liquider sa pension », et écrit l'âge d'annulation en clair ; celui du
  * 9 mai 2012 se lit à la période de naissance, et retranche ses trimestres de
  * la limite d'âge du statut. Sans ligne — « Sans objet » —, aucune décote.
+ * L'agent dont l'emploi ouvre le droit cinq ans plus tôt (`emploiDeLaBanque`)
+ * a la dernière colonne du premier, et vingt trimestres de moins au second.
  *
  * @returns {[number|null, number, number|null]} coefficient, âge, fiabilité.
  */
@@ -2666,11 +2668,18 @@ export function decoteBanqueDeFrance(moteur, periode, carriere, anneeLiquidation
   }
   const parametres = version.parametres;
   const deux = (n) => String(n).padStart(2, "0");
+  const classe = carriere.emploiDeLaBanque === "active";
   if (parametres.lecture === "ouverture_du_droit") {
     const ouverture = DateMois.depuisRang(ouvrir.moisOuvertureDesDroits(moteur, periode, carriere));
     const ligne = ligneDepuis(parametres.table,
       `${String(ouverture.annee).padStart(4, "0")}-${deux(ouverture.mois)}-01`);
-    return ligne === null ? [null, repli, null] : [ligne.coefficient, ligne.age_annulation, null];
+    if (ligne === null) {
+      return [null, repli, null];
+    }
+    // « Pour les agents dont les droits sont ouverts à l'âge de 55 ans », la
+    // dernière colonne du tableau.
+    return [ligne.coefficient,
+      classe ? ligne.age_annulation_a_55_ans : ligne.age_annulation, null];
   }
   if (parametres.lecture === "naissance") {
     const naissance = carriere.dateNaissance;
@@ -2683,7 +2692,12 @@ export function decoteBanqueDeFrance(moteur, periode, carriere, anneeLiquidation
     const renvoi = parametres.limite_d_age;
     const limite = limiteAge.limiteDuTableau(moteur, carriere, renvoi.fiche, renvoi.classe,
       effet < renvoi.lue_depuis ? renvoi.lue_depuis : effet);
-    return [ligne.coefficient, (limite ?? repli) - ligne.trimestres_avant_limite / 4.0, null];
+    // « Pour les agents appartenant à une des catégories visées au quatrième
+    // alinéa de l'article 26, l'âge visé au 2° est minoré de 20 trimestres »
+    // (article 70), comme la limite d'âge de l'article 32.
+    const deMoins = classe ? parametres.trimestres_de_moins_des_emplois_classes ?? 0 : 0;
+    return [ligne.coefficient,
+      (limite ?? repli) - (ligne.trimestres_avant_limite + deMoins) / 4.0, null];
   }
   return [null, repli, null];
 }

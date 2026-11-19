@@ -95,6 +95,7 @@ import {
   ABATTEMENTS_MICRO, ACTIVITES_MICRO, MALADIE_MICRO, STATUT_MICRO, BAREMES_LODEOM,
   DEPARTEMENTS_OUTRE_MER,
   ASSIETTES_COLLABORATEUR, PARTS_COLLABORATEUR, INDICES, STATUTS_A_L_INDICE,
+  EMPLOIS_BANQUE, STATUT_BANQUE,
   nombreBrut, parmi, reel, refus,
 } from "./saisie.js";
 import {
@@ -1097,7 +1098,7 @@ export function formulaire(saisie, contexte, comparaison = null) {
   ${desaccordDeSituation(saisie, contexte)}
   <div class="grille">${identite}</div>
   <h3>La carrière, période par période${bulleDesPeriodes()}</h3>
-  ${metiersFormulaire(saisie, affiliations, echelle)}${microFormulaire(saisie, contexte.paquet)}${indiceFormulaire(saisie, echelle)}${collaborateurFormulaire(saisie)}${reversionAgricoleFormulaire(saisie)}
+  ${metiersFormulaire(saisie, affiliations, echelle)}${microFormulaire(saisie, contexte.paquet)}${indiceFormulaire(saisie, echelle)}${banqueFormulaire(saisie)}${collaborateurFormulaire(saisie)}${reversionAgricoleFormulaire(saisie)}
   ${blocPension(saisie)}
   ${lienAutreSaisie(saisie)}
   ${saisie.parPension ? "" : basculeUnite(saisie, echelle)}
@@ -2341,6 +2342,29 @@ function indiceFormulaire(saisie, echelle) {
     + `${echelle.annee} (décret n° 85-1148 du 24 octobre 1985, article 3). Vos primes `
     + "s'y ajoutent, à la part que vous en dites dans les options de modélisation ; "
     + "sans elle, le modèle n'en compte aucune.")}</div>`;
+}
+
+/**
+ * L'emploi de l'agent titulaire de la Banque de France (action 191) : celui des
+ * catégories que le conseil général nomme ouvre le droit cinq ans plus tôt. Le
+ * menu ne paraît qu'avec une période d'agent de la Banque, ou une réponse déjà
+ * dite.
+ */
+function banqueFormulaire(saisie) {
+  const agent = saisie.lignesCarriere.some((ligne) => ligne.statut === STATUT_BANQUE)
+    || (saisie.releveActif && saisie.releve.split(/[\n,;]/)
+      .some((morceau) => (morceau.split(":")[1] ?? "").trim() === STATUT_BANQUE));
+  if (!agent && !saisie.banque) {
+    return "";
+  }
+  return `<div class="grille">${g.liste("banque", "Agent de la Banque de France, votre emploi",
+    EMPLOIS_BANQUE, saisie.banque, "selon la liste du conseil général de la Banque", {},
+    "Certains emplois, dont le conseil général de la Banque arrête la liste, ouvrent "
+    + "le droit à pension cinq ans avant les autres : à 55 ans, puis à un âge relevé "
+    + "par génération, 57 ans pour les agents nés de juillet 1964 à 1967, 59 ans "
+    + "pour ceux nés depuis 1975. La décote s'y annule cinq ans plus tôt aussi "
+    + "(règlement annexé au décret n° 2007-262 du 27 février 2007, articles 26, 32, "
+    + "70 et 72). Le simulateur vous croit : il ne connaît pas cette liste.")}</div>`;
 }
 
 /**

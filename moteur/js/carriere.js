@@ -1163,6 +1163,18 @@ export class Carriere {
     return fait === null ? null : fait.attributs.nature;
   }
 
+  /**
+   * L'emploi que l'agent titulaire de la Banque de France déclare : `active`,
+   * l'une des catégories qui ouvrent le droit cinq ans plus tôt (règlement
+   * annexé au décret n° 2007-262, article 26, a) ; `null` sans déclaration.
+   */
+  get emploiDeLaBanque() {
+    const fait = this.chronologie
+      ? chrono.titre(this.chronologie, this.personne, "emploi_de_la_banque_de_france")
+      : null;
+    return fait === null ? null : fait.attributs.categorie;
+  }
+
   /** La personne déclare-t-elle un titre au taux plein de L. 351-8 ? */
   get titresAuTauxPlein() {
     return this.deporteOuInterne || this.moisDeGuerre > 0 || this.travailManuel !== null;

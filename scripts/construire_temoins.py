@@ -1158,6 +1158,13 @@ def _cas() -> list[dict]:
         "naissance": "1960-03-15", "sexe": "F", "debut": "1990-09",
         "liquidation": "2022-04", "enfants": "3", "travail_manuel": "ouvrier",
     }))
+    # L'AGENT DE LA BANQUE DE FRANCE DONT L'EMPLOI OUVRE LE DROIT CINQ ANS PLUS
+    # TÔT (action 191 ; fiche ``age_ouverture_banque_de_france_actifs``) : né en
+    # 1962, parti à cinquante-sept ans en 2019, dix-neuf trimestres de décote.
+    cas.append(("banque_de_france_emploi_classe", {
+        "statut": "agent_banque_de_france", "naissance": "1962-01-15",
+        "debut": "1990-02", "liquidation": "2019-02", "banque": "active",
+    }))
     # LE MICRO-ENTREPRENEUR SAISI PAR SON CHIFFRE D'AFFAIRES (action 138,
     # étape 12) : abattu de 71, 50 ou 34 % selon l'activité (L. 613-7, II), en
     # euros, en net, où il passe tel quel, et en multiples ; la Cipav routée
