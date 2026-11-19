@@ -22,8 +22,9 @@ l'agent parti à 63 ans en février 2008, quand le texte en compte trois.
 Les valeurs attendues sont posées à la main depuis le texte : le taux est de
 75 %, majoré du taux de chaque trimestre entier compris entre le 1er avril
 2007, ou le mois qui suit les soixante ans s'il vient après, et la date
-d'effet. Les carrières commencent à vingt ans, sauf mention : la durée est
-acquise à soixante ans.
+d'effet. Les agents sont nés le 15 du mois : l'âge est révolu au mois qui
+suit, et la pension prend effet ce mois-là. Les carrières commencent à vingt
+ans, sauf mention : la durée est acquise à soixante ans.
 """
 
 from __future__ import annotations
@@ -48,7 +49,7 @@ def simulateur() -> Simulateur:
 def _majoration(simulateur: Simulateur, naissance: int, depart: float,
                 debut: int = 20, mois: int = 1) -> float:
     carriere = simulateur.carriere_simple(
-        annee_naissance=naissance, mois_naissance=mois, sexe="H",
+        annee_naissance=naissance, mois_naissance=mois, jour_naissance=15, sexe="H",
         affiliation="agent_banque_de_france", age_debut=debut, age_liquidation=depart)
     return simulateur.scenario_actuel.calculer(carriere).taux_liquidation / 0.75 - 1.0
 
