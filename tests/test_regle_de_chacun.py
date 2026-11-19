@@ -88,19 +88,20 @@ A_L_ANNEE_D_EFFET = {
         "12 mars 2002 (LEGIARTI000006765539) : quarante ans pour tout le ballet "
         "dès le 14 mars 2002, quarante-cinq avant pour les hommes, sans "
         "disposition transitoire sur l'âge d'ouverture (lu le 14 octobre 2026)")),
-    ("banque_de_france", "age"): (2008, 2012, (
+    ("banque_de_france", "age"): (2007, 2012, (
         "règlement annexé au décret n° 2007-262, article 26 "
-        "(LEGIARTI000006778516) : soixante ans pour les pensions qu'il régit, à "
-        "compter du printemps 2007, que la fiche fait commencer en 2008 ; avant, "
-        "les cinquante-cinq ans de l'ancien régime, non relus. Puis la table de "
+        "(LEGIARTI000006778516) : soixante ans pour les pensions qu'il régit, « à "
+        "compter du 1er avril 2007 » (article 1er du décret, "
+        "JORFARTI000001483411), jour depuis lequel la fiche le fait liquider ; "
+        "avant, les cinquante-cinq ans de l'ancien régime, non relus. Puis la table de "
         "l'article 72, par génération (lu le 14 octobre 2026). Les nés de 1949 "
         "à 1952, qui partaient à cinquante-cinq ans, ne peuvent plus partir "
         "avant soixante : leur premier départ sous le règlement tombe de 2009 "
         "à 2012")),
     ("banque_de_france", "duree"): (2008, 2012, (
         "même règlement, article 69 : la durée lue à la date où l'agent est "
-        "susceptible de liquider, 150 trimestres jusqu'en mars 2007 ; avant la "
-        "fiche de 2008, celle de l'ancien régime ; de 2009 à 2012, la même "
+        "susceptible de liquider, 150 trimestres jusqu'en mars 2007 ; avant le "
+        "1er avril 2007, celle de l'ancien régime ; de 2009 à 2012, la même "
         "bascule, au premier départ que le règlement ouvre aux nés de 1949 à "
         "1952")),
     ("msa_non_salaries", "age"): (1986, 1990, (

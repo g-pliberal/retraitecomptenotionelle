@@ -65,11 +65,8 @@ periodes:
     type_calcul: annuites
     age_ouverture: 60
     age_table: banque_de_france
-    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 65
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 160
-    duree_requise_par_generation: duree_requise_par_generation
     duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
     duree_requise_calendrier: banque_de_france_2007
     taux_plein: 0.75
@@ -93,7 +90,10 @@ periodes:
       trimestre 2007 et 152 au second semestre, aucune décote avant 2009
       (article 70). La fiche gardait jusqu'en décembre les cinquante-cinq ans
       et les 150 trimestres de l'ancien régime. Le reste est celui de la
-      période de 2008, dont la note dit les sources.
+      période de 2008, dont la note dit les sources. La période ne renvoie
+      à aucune fiche de génération : pour une pension de 2007, le règlement
+      écrit lui-même soixante ans, la limite d'âge de soixante-cinq ans et le
+      calendrier de sa durée.
       LA SURCOTE N'EST PAS SERVIE, ET C'EST UN ÉCART DÉCLARÉ. L'article 33 ne
       majore que les trimestres « effectués après le 1er avril 2007, au-delà
       de l'âge de soixante ans » et en sus de la durée : deux au plus pour une
