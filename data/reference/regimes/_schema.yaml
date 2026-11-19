@@ -784,10 +784,13 @@ champs_periode:
       laquelle la période renvoie dit ses taux.
       Les trimestres se comptent par trimestres civils depuis celui qui suit
       l'âge légal, ou le mois qui suit la durée requise ;
-      `legislation/surcote_baremes.csv` porte les taux. `null` : le taux plat
-      `surcote_par_trimestre` de la période, appliqué à tous les trimestres.
+      `legislation/surcote_baremes.csv` porte les taux. `banque_de_france` :
+      les trimestres entiers depuis l'âge, au mois près, aux taux et dans la
+      limite que porte la version de la fiche à la date d'effet. `null` : le
+      taux plat `surcote_par_trimestre` de la période, appliqué à tous les
+      trimestres.
     renvoi: true
-    valeurs: ["regime_general", "fonction_publique", "cnbf"]
+    valeurs: ["regime_general", "fonction_publique", "cnbf", "banque_de_france"]
     defaut: null
 
   abattement_points:
@@ -1512,5 +1515,12 @@ champs_periode:
                        "enfants_sncf", "enfants_ratp", "enfants_ieg",
                        "enfants_crpcen",
                        "periodes_assimilees", "categorie_active", "reversion"]
+
+  textes_des_renvois: >-
+    facultatif : pour chaque renvoi que la période ouvre, par nom de champ,
+    le texte qui le fait (`id`, identifiant stable) et le jour depuis lequel
+    il vaut (`depuis`, AAAA-MM-JJ) — note de décision 0009, « chaque renvoi
+    prend la date du texte qui la fait, au jour et non à l'année, et cite ce
+    texte ». Aucun calcul ne le lit.
 
   notes: "texte libre — précisions, ruptures, renvois aux textes"

@@ -1,0 +1,272 @@
+schema_version: 1
+id: surcote_banque_de_france
+intitule: >-
+  La surcote de l'agent titulaire de la Banque de France est celle de l'article 33 de son
+  règlement : un coefficient de majoration par trimestre effectué après le 1er avril 2007,
+  au-delà de l'âge d'ouverture du droit et en sus de la durée requise ; 0,75 % pour un
+  trimestre d'avril 2007 à décembre 2008, 1,25 % pour un trimestre cotisé et effectué à
+  compter du 1er janvier 2009 ; vingt trimestres au plus pour les pensions prenant effet
+  avant le 1er janvier 2016.
+domaine: decote_surcote
+regimes: [banque_de_france]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- >-
+  la date d'effet de la pension, qui dit si la limite de vingt trimestres vaut encore
+- >-
+  les trimestres cotisés entre le mois où l'agent a l'âge d'ouverture de son droit, au
+  plus tôt le 1er avril 2007, et la date d'effet, au mois près
+- >-
+  la durée d'assurance de l'agent et celle que l'article 69 du règlement lui demande
+ecrit:
+- >-
+  le coefficient de majoration de la pension : le taux de chaque trimestre compté, à la
+  date où il a été effectué
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: avant_le_reglement_de_2007
+  statut: supposee
+  hypothese: >-
+    aucune surcote avant le règlement annexé au décret n° 2007-262, entré en vigueur le
+    1er avril 2007 : le règlement d'avant, que l'index LEGI ne porte pas, n'est pas lu ;
+    l'article 33 ne compte que les trimestres « effectués après le 1er avril 2007 », ce
+    qui n'en suppose aucune avant lui
+  fiabilite: faible
+  textes: []
+  bornes:
+    liquidation.date_effet: [null, 2007-04-01]
+  contenu:
+    parametres:
+      taux: []
+      trimestres_maximum: null
+    droit: >-
+      aucune surcote au modèle
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le règlement d'avant 2007 lui-même, dans l'index LEGI et l'index du Journal officiel
+    du dépôt, le 19 novembre 2026 : ni l'un ni l'autre ne le porte
+- id: vingt_trimestres_au_plus
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006778516, article: "décret n° 2007-262 du 27 février 2007, règlement annexé, article 33, rédaction d'origine", en_vigueur: 2007-02-28, publie_le: 2007-02-28}
+  - {id: LEGIARTI000020085558, article: "même règlement, article 33, rédaction du décret n° 2008-1514 du 30 décembre 2008", en_vigueur: 2009-01-01}
+  - {id: JORFARTI000020018201, article: "décret n° 2008-1514 du 30 décembre 2008, article 1er, I, 3° et II, 2°", en_vigueur: 2009-01-01, publie_le: 2008-12-31}
+  - {id: LEGIARTI000025882187, article: "même règlement, article 33, rédaction du décret n° 2012-701 du 7 mai 2012, et article 72, II", en_vigueur: 2012-05-09, publie_le: 2012-05-08}
+  nee_de: LEGIARTI000006778516
+  bornes:
+    liquidation.date_effet: [2007-04-01, 2016-01-01]
+  contenu:
+    parametres:
+      taux:
+      - {depuis: "2007-04-01", taux: 0.0075}
+      - {depuis: "2009-01-01", taux: 0.0125}
+      trimestres_maximum: 20
+    droit: >-
+      article 33, rédaction d'origine : « Lorsque la durée d'assurance définie à l'article
+      15 est supérieure au nombre de trimestres nécessaires pour obtenir le pourcentage
+      maximum mentionné au deuxième alinéa de l'article 31 et que l'agent a atteint l'âge
+      de soixante ans, un coefficient de majoration calculé sur la base de 0,75 % par
+      trimestre supplémentaire s'applique au montant de la pension liquidée en application
+      des articles 30 et 31 dans la limite de vingt trimestres. Le nombre de trimestres
+      supplémentaires pris en compte pour ce calcul est égal, à la date de liquidation de
+      la pension, au nombre de trimestres de services effectués après le 1er avril 2007,
+      au-delà de l'âge de soixante ans et en sus du nombre de trimestres nécessaires pour
+      obtenir le pourcentage maximum ». Décret n° 2008-1514, article 1er : « le
+      pourcentage : "0,75 %" est remplacé par le pourcentage : "1,25 %" », « les mots :
+      "trimestres de services" sont remplacés par les mots : "trimestres d'assurance" »,
+      « Sont pris en compte pour ce calcul les trimestres entiers cotisés » ; II, 2° :
+      « Les dispositions du b du 3° du I ci-dessus sont applicables aux pensions prenant
+      effet à compter du 1er avril 2009. Les dispositions du a et du c du 3° du I
+      ci-dessus sont applicables aux trimestres d'assurance cotisés et effectués à compter
+      du 1er janvier 2009. » Décret n° 2012-701, article 26, 1° : « les mots : "de
+      soixante ans" sont remplacés par les mots : "mentionné au troisième alinéa de
+      l'article 26" », et l'article 72, II du règlement : l'âge de soixante ans « évolue
+      jusqu'à atteindre l'âge de soixante-deux ans […] dans les conditions fixées par le
+      1° du I du présent article »
+    conditions: >-
+      le taux est celui de la date du trimestre, non celui de la date d'effet : le décret
+      de 2008 ne donne 1,25 % qu'aux trimestres « cotisés et effectués à compter du 1er
+      janvier 2009 », et ceux d'avril 2007 à décembre 2008 gardent 0,75 %. Les trimestres
+      se comptent entiers, au mois près, depuis le mois où l'âge est révolu, au plus tôt
+      le 1er avril 2007. PRÉSOMPTION : un trimestre à cheval sur le 1er janvier 2009 n'est
+      pas « effectué à compter » de ce jour, et garde 0,75 % ; c'est le décompte que le
+      dépôt fait aux régimes spéciaux réformés en 2008, que le même décret modifie
+      (`surcote_regimes_speciaux`). PRÉSOMPTION : quand la limite de vingt trimestres
+      joue, les trimestres les plus récents sont servis d'abord ; le texte ne dit pas
+      lequel tombe. L'âge est celui que la table du régime donne à l'agent (article 72,
+      I, 1°) : soixante ans pour les nés avant 1956, ce que les deux rédactions disent
+      pareillement à qui part avant 2016. Les 2° et 3° de l'article 26 du décret
+      n° 2012-701 — la limite de vingt trimestres supprimée, les bonifications écartées
+      de la durée — ne valent que pour les « pensions prenant effet à compter du 1er
+      janvier 2016 » (article 41, I)
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    un cas chiffré de surcote d'un agent de la Banque de France, le 19 novembre 2026 :
+    les textes du Journal officiel qui citent le règlement, dans l'index du dépôt — les
+    décrets n° 2008-1514 et n° 2012-701 et la notice du second n'en donnent pas. Ni la
+    Banque de France ni une circulaire n'ont été interrogées : à chercher
+- id: sans_limite_de_trimestres
+  statut: lue
+  textes:
+  - {id: LEGIARTI000031800060, article: "même règlement, article 33, rédaction en vigueur le 1er janvier 2016, celle du décret n° 2012-701 à l'espacement de « 1,25 % » près", en_vigueur: 2016-01-01}
+  - {id: JORFARTI000025824221, article: "décret n° 2012-701 du 7 mai 2012, article 26", en_vigueur: 2012-05-09, publie_le: 2012-05-08}
+  - {id: JORFARTI000025824269, article: "décret n° 2012-701 du 7 mai 2012, article 41, I", en_vigueur: 2012-05-09, publie_le: 2012-05-08}
+  - {id: LEGIARTI000047909725, article: "même règlement, article 33, rédaction du 1er janvier 2025 : les deux premiers alinéas au mot près, et deux alinéas de plus, la surcote des parents", en_vigueur: 2025-01-01}
+  nee_de: JORFARTI000025824221
+  bornes:
+    liquidation.date_effet: [2016-01-01, null]
+  contenu:
+    parametres:
+      taux:
+      - {depuis: "2007-04-01", taux: 0.0075}
+      - {depuis: "2009-01-01", taux: 0.0125}
+      trimestres_maximum: null
+    droit: >-
+      article 33, rédaction du décret n° 2012-701 : « Lorsque la durée d'assurance définie
+      à l'article 15 est supérieure au nombre de trimestres nécessaires pour obtenir le
+      pourcentage maximum mentionné au deuxième alinéa de l'article 31 et que l'agent a
+      atteint l'âge mentionné au troisième alinéa de l'article 26, un coefficient de
+      majoration calculé sur la base de 1,25 % par trimestre supplémentaire s'applique au
+      montant de la pension liquidée en application des articles 30 et 31. Le nombre de
+      trimestres supplémentaires pris en compte pour ce calcul est égal, à la date de
+      liquidation de la pension, au nombre de trimestres d'assurance effectués après le
+      1er avril 2007, au-delà de l'âge mentionné au troisième alinéa de l'article 26 et
+      en sus du nombre de trimestres nécessaires pour obtenir le pourcentage maximum
+      mentionné au deuxième alinéa de l'article 31. Toutefois, les bonifications de durée
+      de services et majorations de durée d'assurance, à l'exclusion de celles accordées
+      au titre des enfants et du handicap, […] ne sont pas prises en compte pour le calcul
+      de la durée d'assurance mentionnée au premier alinéa du présent article. […] Sont
+      pris en compte pour ce calcul les trimestres entiers cotisés. » Décret n° 2012-701,
+      article 41, I : « Les dispositions […] des 2° et 3° de l'article 26 du présent
+      décret sont applicables aux pensions prenant effet à compter du 1er janvier 2016. »
+    conditions: >-
+      les taux par date de trimestre restent ceux du décret n° 2008-1514, que rien
+      n'abroge : un agent parti en 2016 garde 0,75 % pour ses trimestres d'avril 2007 à
+      décembre 2008. Les deux présomptions de la version d'avant valent ici, la limite en
+      moins. L'âge est celui de la table du régime : de soixante ans pour les nés avant
+      1956 à soixante-quatre ans pour ceux de 1970
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    un cas chiffré de surcote d'un agent de la Banque de France, le 19 novembre 2026 :
+    les textes du Journal officiel qui citent le règlement, dans l'index du dépôt — les
+    décrets n° 2008-1514 et n° 2012-701 et la notice du second n'en donnent pas. Ni la
+    Banque de France ni une circulaire n'ont été interrogées : à chercher
+textes_sans_effet:
+- id: LEGIARTI000026140060
+  reference: décret n° 2007-262, règlement annexé, rédaction du 4 juillet 2012
+  motif: >-
+    l'article 33 y est celui du 9 mai 2012, au mot près
+- id: LEGIARTI000028435924
+  reference: décret n° 2007-262, règlement annexé, rédaction du 1er janvier 2014
+  motif: >-
+    l'article 33 y est celui du 9 mai 2012, à l'espacement de « 1,25 % » près
+- id: LEGIARTI000029138467
+  reference: décret n° 2007-262, règlement annexé, rédaction du 26 juin 2014
+  motif: >-
+    l'article 33 y est celui du 9 mai 2012, au mot près
+- id: LEGIARTI000029924596
+  reference: décret n° 2007-262, règlement annexé, rédaction du 20 décembre 2014
+  motif: >-
+    l'article 33 y est celui du 9 mai 2012, au mot près
+- id: LEGIARTI000030059031
+  reference: décret n° 2007-262, règlement annexé, rédaction du 1er janvier 2015
+  motif: >-
+    l'article 33 y est celui du 9 mai 2012, à l'espacement de « 1,25 % » près
+- id: LEGIARTI000026151447
+  reference: décret n° 2007-262, règlement annexé, rédaction du 1er janvier 2016, jamais en vigueur
+  motif: >-
+    l'article 33 y est celui du 9 mai 2012, à l'espacement de « 1,25 % » près
+- id: LEGIARTI000033105072
+  reference: décret n° 2007-262, règlement annexé, rédaction du 10 septembre 2016
+  motif: >-
+    l'article 33 y est celui du 9 mai 2012, à l'espacement de « 1,25 % » près
+- id: LEGIARTI000042384599
+  reference: décret n° 2007-262, règlement annexé, rédaction du 2 octobre 2020
+  motif: >-
+    l'article 33 y est celui du 9 mai 2012, à l'espacement de « 1,25 % » près
+- id: LEGIARTI000047909413
+  reference: décret n° 2007-262, règlement annexé, rédaction du 1er septembre 2023
+  motif: >-
+    l'article 33 y est celui du 9 mai 2012, à l'espacement de « 1,25 % » près
+approximations:
+- version: [sans_limite_de_trimestres]
+  ecart: >-
+    depuis le 1er janvier 2016, les bonifications de durée de services et les
+    majorations de durée d'assurance, hors celles des enfants et du handicap, ne comptent
+    pas dans la durée que la surcote lit : le modèle les y compte encore. Depuis le 1er
+    janvier 2025, l'article 33 ouvre aux parents une surcote pour les trimestres cotisés
+    l'année qui précède l'âge légal, quand celui-ci atteint soixante-trois ans : le
+    modèle ne la sert pas à la Banque de France (`surcote_parentale`)
+  effet: non mesuré
+- version: [vingt_trimestres_au_plus, sans_limite_de_trimestres]
+  ecart: >-
+    la saisie ne dit pas la catégorie de l'agent : pour celui dont le droit s'ouvre à 55
+    puis 57 ans, la surcote se compte quand même depuis l'âge de droit commun, comme le
+    texte l'écrit jusqu'en 2012 (« soixante ans ») ; depuis, l'article 33 vise le seul
+    troisième alinéa de l'article 26
+  effet: non mesuré
+effet: >-
+  Le dépôt servait à tous les trimestres accomplis depuis l'âge d'ouverture le taux de
+  l'année du départ : 0,75 % en 2008, 1,25 % depuis 2009, et rien d'avril à décembre
+  2007. Un agent né en janvier 1945, sa durée acquise à soixante ans, parti à 63 ans en
+  février 2008, était majoré de douze trimestres, 9 % : le règlement lui en compte
+  trois, 2,25 %. Né en janvier 1947 et parti à 63 ans en février 2010, il était majoré de
+  15 % : il l'est de 10,25 %, sept trimestres à 0,75 % et quatre à 1,25 %. Parti en
+  novembre 2007, il n'avait rien : il a deux trimestres, 1,5 %. L'agent qui a soixante
+  ans depuis 2009 ne voit rien changer.
+sources:
+  lu_le: 2026-11-19
+  prochaine_relecture: 2027-11-19
+  a_relire:
+  - >-
+    Un exemple chiffré publié par la Banque de France, qui dirait le taux du trimestre à
+    cheval sur le 1er janvier 2009 et l'ordre de la limite de vingt trimestres : aucun
+    trouvé.
+  - >-
+    Le règlement d'avant le 1er avril 2007, que l'index LEGI ne porte pas : la version
+    `avant_le_reglement_de_2007` suppose qu'il n'avait pas de surcote.
+  - >-
+    La surcote des parents de la rédaction du 1er janvier 2025, et les bonifications
+    écartées de la durée depuis 2016 : à servir.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2007-262 du 27 février 2007, règlement annexé, article 33, dans les
+      quatorze rédactions de l'annexe que porte l'index LEGI du dépôt : quatre textes —
+      l'origine (LEGIARTI000006778516), celui du 1er janvier 2009
+      (LEGIARTI000020085558), celui du 9 mai 2012 (LEGIARTI000025882187, repris jusqu'au
+      31 décembre 2024 à l'espacement de « 1,25 % » près) et celui du 1er janvier 2025
+      (LEGIARTI000047909725)
+    date: 2026-11-19
+  - type: jorf
+    reference: >-
+      décret n° 2008-1514 du 30 décembre 2008, article 1er (JORFARTI000020018201) ; décret
+      n° 2012-701 du 7 mai 2012, articles 26 et 41 (JORFARTI000025824221,
+      JORFARTI000025824269), lus dans l'index JORF du dépôt
+    date: 2026-11-19
+historique:
+- >-
+  2026-11-19 — née de la correction des quatre dates de régime (action 191) : le régime
+  servait le taux plat de chaque période ; trois versions sur la date d'effet, les taux
+  par date de trimestre.
+reformes: []
+code:
+  interrupteurs:
+    surcote_bareme: banque_de_france
+  moteur: >-
+    `surcote_bareme: banque_de_france` lit dans la version de cette fiche que choisit la
+    date d'effet les taux par date de trimestre et la limite de trimestres : les
+    trimestres cotisés entiers depuis le mois où l'âge est révolu, au plus tôt la
+    première date de la table, dans la limite de ceux qui dépassent la durée requise,
+    les plus récents d'abord.
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, coefficientSurcoteBanqueDeFrance,
+    trimestresCotisesAuMois ;
+    moteur/js/droit/ouvrir.js : ageSurcote
+  parametres: >-
+    contenu.parametres de chaque version : taux, trimestres_maximum ;
+    regimes/banque_de_france.yaml : surcote_bareme
+  tests: [tests/test_surcote_banque_de_france.py]

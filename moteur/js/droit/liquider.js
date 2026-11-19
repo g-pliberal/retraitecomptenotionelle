@@ -870,7 +870,10 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         // depuis), et la surcote s'applique à la pension ramenée à ce maximum.
         coefficientDuMaximum = coefficientSurcote;
         coefficientSurcote = 1.0;
-        if (periode.surcote_bareme) {
+        if (periode.surcote_bareme === "banque_de_france") {
+          coefficientSurcote = coefficientSurcoteBanqueDeFrance(
+            moteur, carriere, supplementaires, ageOuverture, anneeLiquidation);
+        } else if (periode.surcote_bareme) {
           // Barème DATÉ : chaque trimestre civil de surcote au taux en
           // vigueur quand il a été accompli, depuis le trimestre qui suit
           // l'âge légal (D. 351-1-4).
@@ -2683,6 +2686,75 @@ export function decoteBanqueDeFrance(moteur, periode, carriere, anneeLiquidation
     return [ligne.coefficient, (limite ?? repli) - ligne.trimestres_avant_limite / 4.0, null];
   }
   return [null, repli, null];
+}
+
+/**
+ * Les trimestres cotisés entre deux dates, `fin` exclue, comptés en mois : une
+ * année qui valide tous les trimestres de ses mois en donne un par trois
+ * mois, reliquat compris — le mois isolé d'une dernière année, qui ne valide
+ * rien à lui seul, achève le trimestre commencé l'année d'avant ; une année
+ * qui en valide moins les répartit sur ses mois (`trimestresDeLaLigneEntre`).
+ */
+function trimestresCotisesAuMois(carriere, debut, fin) {
+  let total = 0.0;
+  for (const ligne of carriere.lignes) {
+    const moisLigne = Math.round(carriere.partRetenue(ligne.annee) * 12);
+    if (!ligne.cotise || moisLigne <= 0) {
+      continue;
+    }
+    const retenus = carriere.trimestresEcoules(ligne);
+    if (retenus < Math.floor(moisLigne / 3)) {
+      total += trimestresDeLaLigneEntre(carriere, ligne, debut, fin);
+      continue;
+    }
+    const premier = (moisLigne === 12 || ligne.annee === carriere.anneeLiquidation)
+      ? new DateMois(ligne.annee, 1)
+      : new DateMois(ligne.annee, 13 - moisLigne);
+    const recouvrement = Math.min(fin.rang, premier.rang + moisLigne) - Math.max(debut.rang, premier.rang);
+    if (recouvrement > 0) {
+      total += recouvrement / 3.0;
+    }
+  }
+  return total;
+}
+
+/** La fiche de la surcote propre à la Banque de France (article 33 de son règlement). */
+export const FICHE_SURCOTE_BANQUE_DE_FRANCE = "surcote_banque_de_france";
+
+/**
+ * Le coefficient de majoration que le règlement de la Banque de France donne
+ * à cet agent (fiche `surcote_banque_de_france`) : la date d'effet choisit la
+ * version, qui porte un taux par date de trimestre et, tant que le texte
+ * l'écrit, une limite de trimestres. Comptent les trimestres cotisés entiers
+ * depuis le mois où l'âge est révolu, au plus tôt la première date de la
+ * table, dans la limite de ceux qui dépassent la durée requise ; les plus
+ * récents sont servis d'abord, chacun au taux de sa date.
+ */
+export function coefficientSurcoteBanqueDeFrance(moteur, carriere, supplementaires, ageSurcote,
+  anneeLiquidation) {
+  const effet = dateDEffet(carriere) ?? `${String(anneeLiquidation).padStart(4, "0")}-01-01`;
+  const version = moteur.fichesDatees.versionAuxDates(
+    FICHE_SURCOTE_BANQUE_DE_FRANCE, { "liquidation.date_effet": effet });
+  if (version === null) {
+    throw new Error(`${FICHE_SURCOTE_BANQUE_DE_FRANCE} : aucune version au ${effet}`);
+  }
+  const parametres = version.parametres;
+  const maximum = parametres.trimestres_maximum ?? null;
+  const comptes = maximum === null ? supplementaires : Math.min(supplementaires, maximum);
+  const age = carriere.dateDeLAge(ageSurcote);
+  const fin = carriere.dateLiquidation;
+  let coefficient = 1.0;
+  let servis = 0;
+  for (const ligne of [...(parametres.taux ?? [])].reverse()) {
+    const depuis = new DateMois(Number(ligne.depuis.slice(0, 4)), Number(ligne.depuis.slice(5, 7)));
+    const debut = age.rang < depuis.rang ? depuis : age;
+    const cumul = Math.min(comptes, Math.floor(trimestresCotisesAuMois(carriere, debut, fin) + 1e-9));
+    if (cumul > servis) {
+      coefficient += (cumul - servis) * ligne.taux;
+      servis = cumul;
+    }
+  }
+  return coefficient;
 }
 
 export function decoteOpposable(moteur, periode, carriere, anneeLiquidation) {

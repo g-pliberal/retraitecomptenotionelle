@@ -76,7 +76,10 @@ periodes:
     perimetre_taux: agent_seul
     bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
-    surcote_par_trimestre: null
+    surcote_par_trimestre: 0.0075
+    surcote_bareme: surcote_banque_de_france
+    textes_des_renvois:
+      surcote_bareme: {id: LEGIARTI000006778516, depuis: "2007-04-01"}
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
@@ -94,13 +97,10 @@ periodes:
       à aucune fiche de génération : pour une pension de 2007, le règlement
       écrit lui-même soixante ans, la limite d'âge de soixante-cinq ans et le
       calendrier de sa durée.
-      LA SURCOTE N'EST PAS SERVIE, ET C'EST UN ÉCART DÉCLARÉ. L'article 33 ne
-      majore que les trimestres « effectués après le 1er avril 2007, au-delà
-      de l'âge de soixante ans » et en sus de la durée : deux au plus pour une
-      pension de 2007, soit 1,5 %. Le taux plat de la fiche les compterait
-      depuis soixante ans, jusqu'à vingt : la période n'en sert aucun, faute
-      d'un barème daté, qui reste à écrire — et qui manque aussi aux périodes
-      suivantes, où le taux plat compte les trimestres d'avant avril 2007.
+      LA SURCOTE EST CELLE DE L'ARTICLE 33 (fiche `surcote_banque_de_france`,
+      19 novembre 2026) : les seuls trimestres « effectués après le 1er avril
+      2007, au-delà de l'âge de soixante ans » et en sus de la durée, deux au
+      plus pour une pension de 2007, à 0,75 %. La période n'en servait aucun.
   - debut: 2008
     fin: 2008
     type_calcul: annuites
@@ -121,6 +121,7 @@ periodes:
     bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0075
+    surcote_bareme: surcote_banque_de_france
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
@@ -184,11 +185,17 @@ periodes:
     bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    surcote_bareme: surcote_banque_de_france
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
     notes: >-
-      La surcote passe de 0,75 % à 1,25 % par trimestre au 1er janvier 2009.
+      La surcote passe de 0,75 % à 1,25 % par trimestre au 1er janvier 2009,
+      pour les seuls trimestres « cotisés et effectués à compter » de ce jour
+      (décret n° 2008-1514, article 1er, II) : ceux d'avril 2007 à décembre
+      2008 gardent 0,75 %, et la fiche `surcote_banque_de_france` le lit
+      trimestre par trimestre. `surcote_par_trimestre` n'est plus que le taux
+      du jour.
   - debut: 2011
     fin: 2012
     type_calcul: annuites
@@ -209,6 +216,7 @@ periodes:
     bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    surcote_bareme: surcote_banque_de_france
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
@@ -247,6 +255,7 @@ periodes:
     bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    surcote_bareme: surcote_banque_de_france
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
@@ -285,6 +294,7 @@ periodes:
     bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    surcote_bareme: surcote_banque_de_france
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
@@ -323,6 +333,7 @@ periodes:
     bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    surcote_bareme: surcote_banque_de_france
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
@@ -361,6 +372,7 @@ periodes:
     bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    surcote_bareme: surcote_banque_de_france
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
@@ -399,6 +411,7 @@ periodes:
     bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    surcote_bareme: surcote_banque_de_france
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
@@ -437,6 +450,7 @@ periodes:
     bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    surcote_bareme: surcote_banque_de_france
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
@@ -475,6 +489,7 @@ periodes:
     bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    surcote_bareme: surcote_banque_de_france
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
@@ -513,6 +528,7 @@ periodes:
     bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    surcote_bareme: surcote_banque_de_france
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
@@ -551,6 +567,7 @@ periodes:
     bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    surcote_bareme: surcote_banque_de_france
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
@@ -589,6 +606,7 @@ periodes:
     bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    surcote_bareme: surcote_banque_de_france
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
@@ -625,6 +643,7 @@ periodes:
     bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    surcote_bareme: surcote_banque_de_france
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
@@ -658,6 +677,7 @@ periodes:
     bareme_decote: decote_banque_de_france
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
+    surcote_bareme: surcote_banque_de_france
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
     avantages_non_contributifs:
       [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]

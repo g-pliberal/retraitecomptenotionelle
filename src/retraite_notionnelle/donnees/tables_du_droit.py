@@ -861,7 +861,8 @@ class FichesDatees:
             "sportifs_haut_niveau", "conge_supplementaire_naissance",
             "minimum_pension_sncf", "retraite_progressive",
             "cotisation_rco_agricole_2026", "decote_banque_de_france",
-            "droits_apres_la_premiere_pension", "seconde_pension")
+            "droits_apres_la_premiere_pension", "seconde_pension",
+            "surcote_banque_de_france")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

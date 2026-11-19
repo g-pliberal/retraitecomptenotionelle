@@ -134,6 +134,19 @@ Minimum.ANNEE_GEL = 2004;
         "Minimum.ANNEE_GEL": 1, "1998": 2, "2026": 1}
 
 
+def test_un_renvoi_cite_son_texte_a_la_periode_ou_il_commence():
+    """La période qui ouvre un renvoi dit le texte qui le fait, et le jour
+    depuis lequel il vaut (`textes_des_renvois`, schéma des régimes)."""
+    periodes = [
+        {"debut": 2007, "surcote_bareme": "surcote_banque_de_france",
+         "bareme_decote": "decote_banque_de_france",
+         "textes_des_renvois": {
+             "surcote_bareme": {"id": "LEGIARTI000006778516", "depuis": "2007-04-01"}}},
+    ]
+    cites = {s["champ"]: outils.texte_cite(s) for s in outils.renvois([("fictif", periodes)])}
+    assert cites == {"surcote_bareme": "LEGIARTI000006778516", "bareme_decote": None}
+
+
 # --- Les cinq cliquets, sur le dépôt ---------------------------------------
 
 def test_les_valeurs_de_repli_des_renvois_ne_peuvent_que_baisser():

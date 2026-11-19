@@ -84,11 +84,13 @@ def valeurs_de_repli(regimes_lus: list[tuple[str, list[dict]]]) -> list[tuple[st
 def texte_cite(serie: dict) -> str | None:
     """Le texte que cite un renvoi, ou ``None``.
 
-    Au 19 novembre 2026, le schéma des régimes n'a aucun champ où une période
-    cite le texte qui fait son renvoi (``champs_periode``) : aucun renvoi n'en
-    cite. L'étape de la note qui date et cite les renvois crée ce champ, et le
-    lit ici."""
-    return None
+    La période qui ouvre le renvoi le cite dans ``textes_des_renvois``, par
+    champ : l'identifiant du texte, et le jour depuis lequel le renvoi vaut
+    (``champs_periode``, depuis la surcote de la Banque de France). Les
+    renvois d'avant n'en citent aucun : l'étape de la note qui les date et les
+    cite remplit ce champ, ou le refait."""
+    cite = (serie["periode"].get("textes_des_renvois") or {}).get(serie["champ"]) or {}
+    return cite.get("id")
 
 
 # --- Les constantes datées du moteur -------------------------------------
