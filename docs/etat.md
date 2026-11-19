@@ -29,7 +29,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 - Confrontées à au moins un exemple officiel : **65 sur 268** (218 exemples : 206 reproduits, 12 en écart connu, section 2).
 - Citées dans le code par leur identifiant : **123 sur 268**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
-- Désignées par les interrupteurs des périodes de régime : **51 sur 268**, par 2 573 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
+- Désignées par les interrupteurs des périodes de régime : **51 sur 268**, par 2 577 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **195 sur 268**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
 - Découpées en versions : **198 sur 268**, soit 832 versions, dont 154 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 126, dont 10 déclarées non appliquées.
@@ -420,6 +420,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `regimes` | 1 |
 
 - **Les textes** : 653 rédactions à rattacher à une version de la fiche qui les cite, 6 015 à examiner, et 9 214 sans statut, que le cliquet tient à 9 214 au plus. Les textes qui en ont le plus : `css` 4 737, `decret_46_2769` 938, `rural` 836, `cpcmr` 561, `decret_90_1215` 319 (`python scripts/textes.py`).
+- **La loi modifiée** (note de décision 0009, sixième cliquet) : aucune rédaction inscrite depuis la pose n'attend la réponse d'une fiche ; et, d'avant la pose, 83 dont la fiche ne dit rien et 435 qu'elle cite sans y répondre, que le cliquet tient à 83 et 435 au plus (`python scripts/textes.py --sans-reponse`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`agirc_arrco_valeur_achat`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 
