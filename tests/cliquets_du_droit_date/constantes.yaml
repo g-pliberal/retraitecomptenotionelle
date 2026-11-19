@@ -1,0 +1,190 @@
+# Les constantes datées du moteur, classées une à une (note de décision 0009,
+# cinquième cliquet ; rectificatif du 19 novembre 2026).
+#
+# `tests/outils_droit_date.py` les relève dans le moteur hors du site : une
+# constante nommée dont la valeur porte une année ou une date (« fichier :
+# NOM »), ou une année écrite en clair dans le reste du code (« fichier :
+# année », avec le nombre de ses occurrences, `lignes`). Chaque entrée dit sa
+# classe :
+#
+#   droit   du droit des retraites, à migrer dans les versions d'une fiche.
+#           `fiches` nomme la ou les fiches dont le champ `code.javascript`
+#           nomme déjà la constante, ce que le test vérifie ; vide, la fiche
+#           reste à désigner, par l'étape qui migre la règle et lit son texte.
+#   hors    n'en est pas, pour la raison dite : `impot`, `saisie`, `reglage`,
+#           `projection`, `remuneration`, `technique` (le test les explique).
+#
+# Une constante que cette liste ne classe pas fait échouer la suite, comme
+# une entrée dont la constante est partie. Le nombre des `droit` ne peut que
+# baisser. Classé le 19 novembre 2026, sur le nom, la valeur et le
+# commentaire de chaque constante, sans relire les textes.
+constantes:
+  "moteur/js/carriere.js : ANNEE_ANCRAGE_SALAIRE_MOYEN": {classe: hors, raison: projection}
+  "moteur/js/carriere.js : ANNEE_DU_SMIC_DU_DEPARTEMENT": {classe: droit, fiches: []}
+  "moteur/js/carriere.js : ANNEE_FORME_CATEGORIE": {classe: hors, raison: projection}
+  "moteur/js/carriere.js : CHOMAGE_NON_INDEMNISE_PREMIERE": {classe: droit, fiches: [chomage_non_indemnise]}
+  "moteur/js/carriere.js : CONJOINT_COLLABORATEUR_OBLIGATOIRE": {classe: droit, fiches: []}
+  "moteur/js/carriere.js : COTISATIONS_AU_1ER_JANVIER_DEPUIS": {classe: droit, fiches: []}
+  "moteur/js/carriere.js : COTISATIONS_AU_PRORATA_DU_DECES_DEPUIS": {classe: droit, fiches: [taux_plein_et_proratisation]}
+  "moteur/js/config.js : PARAMETRES_DEFAUT": {classe: hors, raison: reglage}
+  "moteur/js/cycle-de-vie.js : PREMIERE_ANNEE_MAJORATION_IMPOSABLE": {classe: hors, raison: impot}
+  "moteur/js/droit/acquerir.js : 1994": {classe: droit, fiches: [], lignes: 1}
+  "moteur/js/droit/acquerir.js : 2004": {classe: droit, fiches: [], lignes: 1}
+  "moteur/js/droit/acquerir.js : 2011": {classe: droit, fiches: [], lignes: 1}
+  "moteur/js/droit/acquerir.js : 2026": {classe: droit, fiches: [], lignes: 2}
+  "moteur/js/droit/completer.js : 1952": {classe: droit, fiches: [], lignes: 1}
+  "moteur/js/droit/completer.js : 1973": {classe: droit, fiches: [], lignes: 1}
+  "moteur/js/droit/completer.js : 1998": {classe: droit, fiches: [], lignes: 1}
+  "moteur/js/droit/completer.js : CONJOINTS_DEPUIS": {classe: droit, fiches: []}
+  "moteur/js/droit/completer.js : PLANS_DE_1997": {classe: droit, fiches: []}
+  "moteur/js/droit/completer.js : PLANS_DE_2002": {classe: droit, fiches: []}
+  "moteur/js/droit/completer.js : PREMIER_PLAFOND_MAJORATION": {classe: droit, fiches: [majoration_dix_pour_cent]}
+  "moteur/js/droit/completer.js : REVERSIONS_DE_L_732_41_DEPUIS": {classe: droit, fiches: []}
+  "moteur/js/droit/completer.js : SURCOTE_AJOUTEE_AU_MINIMUM_DEPUIS": {classe: droit, fiches: []}
+  "moteur/js/droit/coordonner.js : ACCESSOIRE_SANS_DROIT_DEPUIS": {classe: droit, fiches: []}
+  "moteur/js/droit/coordonner.js : ACCESSOIRE_SANS_DROIT_JUSQU": {classe: droit, fiches: []}
+  "moteur/js/droit/coordonner.js : ALIGNEMENT_DES_ARTISANS_ET_COMMERCANTS": {classe: droit, fiches: []}
+  "moteur/js/droit/coordonner.js : LURA_DATE_EFFET": {classe: droit, fiches: [liquidation_unique_regimes_alignes]}
+  "moteur/js/droit/coordonner.js : LURA_PREMIERE_GENERATION": {classe: droit, fiches: [liquidation_unique_regimes_alignes]}
+  "moteur/js/droit/coordonner.js : REPARTITION_ENTRE_REGIMES_ALIGNES_DEPUIS": {classe: droit, fiches: []}
+  "moteur/js/droit/coordonner.js : RETABLISSEMENT_DEPUIS": {classe: droit, fiches: [retablissement_fonction_publique]}
+  "moteur/js/droit/cultes.js : 1939": {classe: droit, fiches: [], lignes: 1}
+  "moteur/js/droit/cultes.js : ALIGNEMENT": {classe: droit, fiches: []}
+  "moteur/js/droit/cultes.js : CREATION": {classe: droit, fiches: []}
+  "moteur/js/droit/cultes.js : DECRET_DE_2006": {classe: droit, fiches: []}
+  "moteur/js/droit/cultes.js : DECRET_DE_2010": {classe: droit, fiches: []}
+  "moteur/js/droit/cultes.js : PART_DE_L_ECART": {classe: droit, fiches: []}
+  "moteur/js/droit/cumul.js : AGES_DE_2010": {classe: droit, fiches: []}
+  "moteur/js/droit/cumul.js : ARTISANS_1984": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/cumul.js : ASSIETTES_CSG": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/cumul.js : COMPLEMENTAIRES_2009": {classe: droit, fiches: [cumul_emploi_retraite_complementaire_des_independants]}
+  "moteur/js/droit/cumul.js : IRCANTEC_L_161_22": {classe: droit, fiches: [cumul_emploi_retraite_ircantec]}
+  "moteur/js/droit/cumul.js : IRCANTEC_SANS_REDUCTION": {classe: droit, fiches: [cumul_emploi_retraite_ircantec]}
+  "moteur/js/droit/cumul.js : LIBERAUX_2011": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/cumul.js : LOI_1983": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/cumul.js : LOI_2004": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/cumul.js : LOI_2007": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/cumul.js : LOI_2009": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/cumul.js : ORDRE_DES_AGES": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/cumul.js : PREMIERE_2015": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/cumul.js : PREMIERE_2027": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/cumul.js : REDUCTION_NON_SALARIES": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/cumul.js : REDUCTION_SALARIES": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/cumul.js : REGLES_DES_SECTIONS": {classe: droit, fiches: [cumul_emploi_retraite_complementaires_des_liberaux]}
+  "moteur/js/droit/cumul.js : REVALORISATION_2010": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/cumul.js : SECTION_3_RCI": {classe: droit, fiches: [cumul_emploi_retraite_complementaire_des_independants]}
+  "moteur/js/droit/invalidite.js : SALAIRE_MOYEN_DEPUIS": {classe: droit, fiches: []}
+  "moteur/js/droit/liquider.js : 1952": {classe: droit, fiches: [], lignes: 1}
+  "moteur/js/droit/liquider.js : 1955": {classe: droit, fiches: [], lignes: 1}
+  "moteur/js/droit/liquider.js : 1983": {classe: droit, fiches: [], lignes: 1}
+  "moteur/js/droit/liquider.js : 2011": {classe: droit, fiches: [], lignes: 1}
+  "moteur/js/droit/liquider.js : 2023": {classe: droit, fiches: [], lignes: 3}
+  "moteur/js/droit/liquider.js : 2025": {classe: droit, fiches: [], lignes: 1}
+  "moteur/js/droit/liquider.js : ANNEE_DES_REVENUS_AGRICOLES": {classe: droit, fiches: []}
+  "moteur/js/droit/liquider.js : ANNEE_DU_TITRE_ACCESSOIRE": {classe: droit, fiches: []}
+  "moteur/js/droit/liquider.js : ANNEE_DU_TITRE_SECONDAIRE": {classe: droit, fiches: []}
+  "moteur/js/droit/liquider.js : COLLABORATEUR_REGULARISE": {classe: droit, fiches: []}
+  "moteur/js/droit/liquider.js : CONVERSION_CAPITAL_RAFP": {classe: droit, fiches: []}
+  "moteur/js/droit/liquider.js : FRACTIONNEMENT_RAFP": {classe: droit, fiches: []}
+  "moteur/js/droit/liquider.js : MAJORATION_DE_1952_A_1972_CODIFIEE_DEPUIS": {classe: droit, fiches: [retraite_proportionnelle_msa]}
+  "moteur/js/droit/liquider.js : MAJORATION_DE_1952_A_1972_DEPUIS": {classe: droit, fiches: [retraite_proportionnelle_msa]}
+  "moteur/js/droit/liquider.js : MAJORATION_DE_1952_A_1972_JUSQU_A": {classe: droit, fiches: [retraite_proportionnelle_msa]}
+  "moteur/js/droit/liquider.js : MAJORATION_RAFP": {classe: droit, fiches: []}
+  "moteur/js/droit/liquider.js : MINORATION_AGE_MINIMUM_GARANTI": {classe: droit, fiches: [minimum_garanti]}
+  "moteur/js/droit/liquider.js : MINORATION_RACL_2014": {classe: droit, fiches: [minoration_racl_2014_2024]}
+  "moteur/js/droit/liquider.js : ORDONNANCE_DU_26_MARS_1982": {classe: droit, fiches: [decote_avant_1983]}
+  "moteur/js/droit/liquider.js : PERIODE_DES_POINTS_MAJORES": {classe: droit, fiches: []}
+  "moteur/js/droit/liquider.js : SURCOTE_AU_TAUX_DE_2009_DEPUIS": {classe: droit, fiches: [surcote_regimes_speciaux]}
+  "moteur/js/droit/liquider.js : SURCOTE_DEPUIS": {classe: droit, fiches: []}
+  "moteur/js/droit/liquider.js : SURCOTE_REGIMES_SPECIAUX_DEPUIS": {classe: droit, fiches: [surcote_regimes_speciaux]}
+  "moteur/js/droit/ouvrir.js : 2011": {classe: droit, fiches: [], lignes: 1}
+  "moteur/js/droit/ouvrir.js : DUREE_XXIV_C_DEPUIS": {classe: droit, fiches: []}
+  "moteur/js/droit/ouvrir.js : SANS_DATE_D_EFFET": {classe: hors, raison: technique}
+  "moteur/js/droit/ouvrir.js : SURCOTE_EMPLOIS_CLASSES": {classe: droit, fiches: [surcote_fonction_publique]}
+  "moteur/js/droit/primes.js : 2004": {classe: droit, fiches: [], lignes: 1}
+  "moteur/js/droit/reversion.js : DEBUT_DE_LA_MAJORATION": {classe: droit, fiches: []}
+  "moteur/js/droit/reversion.js : PRINCIPALE_REVALORISEE_DEPUIS": {classe: droit, fiches: []}
+  "moteur/js/droit/seconde.js : DROITS_2023": {classe: droit, fiches: [droits_apres_la_premiere_pension, seconde_pension]}
+  "moteur/js/droit/seconde.js : DROITS_RCI": {classe: droit, fiches: [seconde_pension]}
+  "moteur/js/droit/seconde.js : LIQUIDATION_2023": {classe: droit, fiches: [droits_apres_la_premiere_pension, seconde_pension]}
+  "moteur/js/droit/seconde.js : LIQUIDATION_AGIRC_ARRCO": {classe: droit, fiches: []}
+  "moteur/js/droit/seconde.js : PREMIERE_2015": {classe: droit, fiches: [droits_apres_la_premiere_pension]}
+  "moteur/js/droit/seconde.js : PREMIERE_2027": {classe: droit, fiches: [droits_apres_la_premiere_pension, seconde_pension]}
+  "moteur/js/impot-revenu.js : 1971": {classe: hors, raison: impot, lignes: 1}
+  "moteur/js/impot-revenu.js : 1972": {classe: hors, raison: impot, lignes: 2}
+  "moteur/js/impot-revenu.js : 1973": {classe: hors, raison: impot, lignes: 1}
+  "moteur/js/impot-revenu.js : 1974": {classe: hors, raison: impot, lignes: 1}
+  "moteur/js/impot-revenu.js : 1979": {classe: hors, raison: impot, lignes: 1}
+  "moteur/js/impot-revenu.js : 1981": {classe: hors, raison: impot, lignes: 1}
+  "moteur/js/impot-revenu.js : 1983": {classe: hors, raison: impot, lignes: 1}
+  "moteur/js/impot-revenu.js : 1985": {classe: hors, raison: impot, lignes: 1}
+  "moteur/js/impot-revenu.js : 1998": {classe: hors, raison: impot, lignes: 2}
+  "moteur/js/impot-revenu.js : 1999": {classe: hors, raison: impot, lignes: 1}
+  "moteur/js/impot-revenu.js : 2000": {classe: hors, raison: impot, lignes: 1}
+  "moteur/js/impot-revenu.js : ARRONDI_A_LA_CENTAINE": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : COEFFICIENTS_MAJORATION_DEGRESSIFS": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : DECOTE_DATEE_PAR_L_IPP": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : DERNIERE_ANNEE_ABATTEMENT_ADHERENTS": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : DERNIERE_ANNEE_EN_FRANCS": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : DERNIERE_ANNEE_MAJORATION": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : PREMIERE_ANNEE_ABATTEMENT_ADHERENTS": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : PREMIERE_ANNEE_ABATTEMENT_BNC": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : PREMIERE_ANNEE_ABATTEMENT_DE_20": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : PREMIERE_ANNEE_DEFICIT_MINORE": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : PREMIERE_ANNEE_DES_LOIS_LUES": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : PREMIERE_ANNEE_DU_MINIMUM_GARANTI_DE_LA_DOCTRINE": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : PREMIERE_ANNEE_ENFANT_INVALIDE": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : PREMIERE_ANNEE_MAJORATION": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : PREMIERE_ANNEE_PLAFONNEMENT": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : PREMIERE_ANNEE_SEUIL_DE_LA_PPE": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : SEUILS_ABATTEMENT_REDUIT": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : SEUILS_DU_MINIMUM_GARANTI_CITES": {classe: hors, raison: impot}
+  "moteur/js/indemnite_csg.js : 2017": {classe: hors, raison: remuneration, lignes: 1}
+  "moteur/js/indemnite_csg.js : 2018": {classe: hors, raison: remuneration, lignes: 1}
+  "moteur/js/macro.js : ANNEE_AVPF_DES_HOMMES": {classe: droit, fiches: [avpf]}
+  "moteur/js/macro.js : ANNEE_CREATION_AVPF": {classe: droit, fiches: [avpf]}
+  "moteur/js/macro.js : ANNEE_REVALORISATION_SUR_LES_PRIX": {classe: droit, fiches: []}
+  "moteur/js/macro.js : DEBUT_DES_ASSURANCES_SOCIALES": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : 2009": {classe: droit, fiches: [], lignes: 2}
+  "moteur/js/regimes.js : CarriereLongue.DUREE_FIXE_FONCTION_PUBLIQUE_AVANT": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : CarriereLongue.ENFANTS_REPUTES_COTISES_DEPUIS": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : CarriereLongue.PORTES_FONCTION_PUBLIQUE_DEPUIS": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : CarriereLongue.QUATRE_TRIMESTRES_A_LA_FIN_DE_L_ANNEE_DEPUIS": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : DUREES_AVANT_LE_DECRET": {classe: droit, fiches: [duree_requise_par_generation]}
+  "moteur/js/regimes.js : DUREE_PAR_GENERATION_EFFET": {classe: droit, fiches: [duree_requise_par_generation]}
+  "moteur/js/regimes.js : DUREE_UNIQUE_2003_EFFET": {classe: droit, fiches: [duree_requise_par_generation]}
+  "moteur/js/regimes.js : GENERATIONS_SUSPENSION": {classe: droit, fiches: [duree_requise_par_generation, fin_de_la_suspension_2028]}
+  "moteur/js/regimes.js : GENERATION_DECEMBRE_1942": {classe: droit, fiches: [duree_requise_par_generation]}
+  "moteur/js/regimes.js : GENERATION_REFORME_2023": {classe: droit, fiches: [duree_requise_par_generation]}
+  "moteur/js/regimes.js : MaximumDesCultes.DERNIER_ARRETE": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : MinimumGaranti.ANNEE_GEL": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : MinimumVieillesse.DERNIERE_ANNEE_A_DEUX_ETAGES": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : REFORME_2023_EFFET": {classe: droit, fiches: [duree_requise_par_generation]}
+  "moteur/js/regimes.js : SUSPENSION_2026_EFFET": {classe: droit, fiches: [duree_requise_par_generation, fin_de_la_suspension_2028]}
+  "moteur/js/releve-lu.js : ANNEE_MAXIMALE": {classe: hors, raison: saisie}
+  "moteur/js/releve-lu.js : ANNEE_MINIMALE": {classe: hors, raison: saisie}
+  "moteur/js/releve-lu.js : PREMIERE_ANNEE_EN_EUROS": {classe: hors, raison: saisie}
+  "moteur/js/releve-lu.js : PREMIERE_ANNEE_EN_NOUVEAUX_FRANCS": {classe: hors, raison: saisie}
+  "moteur/js/revalorisation.js : 2020": {classe: droit, fiches: [], lignes: 4}
+  "moteur/js/revalorisation.js : DEBUT_REGLE_GENERALE_PUBLIC": {classe: droit, fiches: []}
+  "moteur/js/revalorisation.js : DERNIERE_ANNEE_DES_PLANS": {classe: droit, fiches: []}
+  "moteur/js/revalorisation.js : DERNIERE_ANNEE_PEREQUATION": {classe: droit, fiches: []}
+  "moteur/js/revalorisation.js : DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT": {classe: droit, fiches: []}
+  "moteur/js/revalorisation.js : FIN_PEREQUATION": {classe: droit, fiches: [pension_differee_fonction_publique]}
+  "moteur/js/revalorisation.js : MOIS_DES_TRANCHES": {classe: droit, fiches: []}
+  "moteur/js/revalorisation.js : PMR_DES_PENSIONS_PRISES_AVANT": {classe: droit, fiches: []}
+  "moteur/js/revalorisation.js : PMR_UNIQUE": {classe: droit, fiches: []}
+  "moteur/js/revalorisation.js : TAUX_PLEIN_DE_LA_PMR_DEPUIS": {classe: droit, fiches: []}
+  "moteur/js/saisie.js : ANNEE_MAXIMALE": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : ANNEE_MINIMALE": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : DEFAUTS": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : NAISSANCE_MAXIMALE": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : NAISSANCE_MINIMALE": {classe: hors, raison: saisie}
+  "moteur/js/scenario-actuel.js : DROITS_CONTREFACTUELS": {classe: droit, fiches: [fin_de_la_suspension_2028]}
+  "moteur/js/scenario-actuel.js : PARENTS_MEILLEURES_ANNEES_DEPUIS": {classe: droit, fiches: [sam_parents_24_23]}
+
+# Les chiffres de la loi sans date, un âge, un taux : ajoutés à la main, comme
+# la note le prévoit. Chacun est une constante du fichier nommé, et compte
+# parmi les `droit`.
+sans_date:
+  "moteur/js/droit/liquider.js : SURCOTE_AGE_MAJORE": {classe: droit, fiches: []}

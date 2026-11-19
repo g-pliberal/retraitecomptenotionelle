@@ -88,6 +88,44 @@ def test_l_age_legal_et_la_duree_de_chaque_etat_du_droit(du_portage, naissance, 
     assert moteur.calculer(carriere).trimestres_requis == trimestres
 
 
+#: L'âge du taux plein sans condition de durée, le même sous les trois états
+#: du droit (L. 351-8, 1°, relu dans l'index LEGI le 19 novembre 2026) :
+#:
+#: - au 31 août 2023 : « 1° Les assurés qui atteignent l'âge prévu à l'article
+#:   L. 161-17-2 augmenté de cinq années » (LEGIARTI000028498855, du 22 janvier
+#:   2014 au 1er septembre 2023), cet âge étant alors « fixé à soixante-deux ans
+#:   pour les assurés nés à compter du 1er janvier 1955 » (L. 161-17-2,
+#:   LEGIARTI000025014605) : soixante-deux ans et cinq ;
+#: - la loi de 2023, sans la suspension : « l'âge prévu au premier alinéa de
+#:   l'article L. 161-17-2 augmenté de trois années » (LEGIARTI000047452736, du
+#:   1er septembre 2023), ce premier alinéa disant « soixante-quatre ans pour
+#:   les assurés nés à compter du 1er janvier 1968 » (LEGIARTI000047452768) :
+#:   soixante-quatre ans et trois, quelle que soit la génération ;
+#: - en vigueur : la même phrase (LEGIARTI000051289852), et un premier alinéa
+#:   qui dit toujours soixante-quatre ans, « pour les assurés nés à compter du
+#:   1er janvier 1969 » (LEGIARTI000053280889).
+#:
+#: La note de décision 0009 fera de cet âge un renvoi à l'âge légal. Si le
+#: droit du 31 août 2023 n'y gardait que l'âge légal de 2011, le renvoi de 2023
+#: y lirait soixante-deux ans et trois : soixante-cinq ans, l'erreur que ce
+#: test garde (second rectificatif).
+AGE_DU_TAUX_PLEIN = 67.0
+
+
+@pytest.mark.parametrize("droit", [None, SANS_SUSPENSION, AU_31_AOUT_2023])
+@pytest.mark.parametrize("naissance", sorted(ATTENDUS))
+def test_l_age_du_taux_plein_est_le_meme_sous_les_trois_etats_du_droit(du_portage, naissance, droit):
+    """Le même salarié : sous chaque état du droit, la décote s'annule à
+    soixante-sept ans, que la durée soit atteinte ou non."""
+    annee = int(naissance[:4])
+    parametres, carriere = du_portage.lire({"naissance": naissance, "debut": f"{annee + 23}-09",
+                                            "liquidation": f"{annee + 67}{naissance[4:7]}"})
+    simulateur = du_portage.simulateur(parametres.avec(droit_contrefactuel=droit))
+    periode = simulateur.catalogue["regime_general"].periode(annee + 67)
+    age = ouvrir.age_taux_plein(simulateur.scenario_actuel, periode, carriere)
+    assert age == pytest.approx(AGE_DU_TAUX_PLEIN)
+
+
 def test_les_ages_de_la_carriere_longue_suivent_l_etat_du_droit(du_portage):
     """Un né en février 1966 entré à dix-neuf ans, en mars 1985 : il a ses
     cinq trimestres avant la fin de l'année de ses vingt ans, non de ses
