@@ -376,17 +376,27 @@ code:
   interrupteurs:
     age_ouverture_par_generation: true
   moteur: >-
-    `age_ouverture_par_generation` : l'âge d'ouverture est lu dans `legislation/age_ouverture_requis.csv`
-    à l'ANNÉE DE NAISSANCE, et la valeur de la période (`age_ouverture`) ne sert que de
-    repli. Réservé aux régimes alignés sur l'âge légal général : les régimes spéciaux
-    gardent le leur. Sous un droit contrefactuel (`Parametres.droit_contrefactuel`),
-    `TableRecouverte` pose sur cette table celle du droit qu'il garde, de sa première
-    génération à toutes les suivantes (`ScenarioActuel._sous_le_droit`).
+    `age_ouverture_par_generation` : l'âge d'ouverture est lu dans les versions de cette
+    fiche, que le paquet porte (`fiches_datees`), et la valeur de la période
+    (`age_ouverture`) ne sert que de repli. La date d'effet de la pension choisit la
+    version, la génération sa ligne (`AgesOuverture.aLEffet`) ; ce que la version de
+    2025 laisse à sa rédaction antérieure se lit dans celle de 2023, et un renvoi sans
+    cible ou qui boucle arrête le calcul. L'âge légal d'une personne, l'assuré ou le
+    conjoint survivant (`ageLegalDeLAssure`, `ageLegalDuConjointSurvivant`), est celui
+    de la version sous laquelle son droit s'ouvre : le moteur cherche la première date
+    dont la version l'ouvre (`AgesOuverture.premierDepart`, `premiereOuvertureSous`), et
+    ne la déduit plus d'un âge par génération. Réservé aux régimes alignés sur l'âge
+    légal général : les régimes spéciaux gardent le leur. Sous un droit contrefactuel
+    (`Parametres.droit_contrefactuel`), `TableRecouverte` pose encore sur ces versions
+    la table du droit qu'il garde, de sa première génération à toutes les suivantes
+    (`ScenarioActuel._sous_le_droit`).
   javascript: >-
     moteur/js/droit/ouvrir.js : ageOuverture, ageOuvertureCommun ;
-    moteur/js/regimes.js : AgesOuverture, AgesOuvertureAvantReforme2023,
-    AgesOuvertureAvantSuspension, TableRecouverte ; moteur/js/scenario-actuel.js :
-    ScenarioActuel._sousLeDroit
+    moteur/js/droit/commun.js : ageLegalDeLAssure, ageLegalDuConjointSurvivant ;
+    moteur/js/droit/departs.js : premiereOuvertureSous, ouvertureDe ;
+    moteur/js/regimes.js : AgesOuverture, AgesOuvertureDUneVersion,
+    AgesOuvertureAvantReforme2023, AgesOuvertureAvantSuspension, TableRecouverte ;
+    moteur/js/scenario-actuel.js : ScenarioActuel._sousLeDroit
   parametres: >-
     contenu.parametres de chaque version : age ;
     legislation/age_legal_par_version.csv : entree_en_vigueur, article, generation,
@@ -394,6 +404,6 @@ code:
     legislation/age_ouverture_requis.csv,
     legislation/age_ouverture_avant_reforme_2023.csv,
     legislation/age_ouverture_avant_suspension.csv : generation, age
-  tests: [tests/test_tables_de_version.py, tests/test_simulateur.py, tests/test_donnees.py,
-    tests/test_droits_contrefactuels.py, tests/test_oracle.py, tests/js/moteur.test.js,
+  tests: [tests/test_tables_de_version.py, tests/js/age-legal.test.js,
+    tests/test_simulateur.py, tests/test_donnees.py, tests/test_droits_contrefactuels.py, tests/test_oracle.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]

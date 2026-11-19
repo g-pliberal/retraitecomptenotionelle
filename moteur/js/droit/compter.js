@@ -16,7 +16,7 @@
 import { DateMois, trimestresCivils } from "../calendrier.js";
 import * as chrono from "../chronologie.js";
 import { fiabiliteDepuisTexte, nomFiabilite, Fiabilite } from "../serie.js";
-import { ligneCotisee, periodeDeLiquidation } from "./commun.js";
+import { ageLegalDeLAssure, ligneCotisee, periodeDeLiquidation } from "./commun.js";
 import * as coordonner from "./coordonner.js";
 import { compterLesPeriodes, familleDesRegimes } from "./etranger.js";
 
@@ -1166,14 +1166,14 @@ export function servicesAuDela(carriere, statuts, age, borne, servies) {
 
 /**
  * L'âge au-delà duquel la version supprime la bonification, et la fiabilité de
- * sa lecture : écrit en années, ou l'âge légal de la génération (`AGE_LEGAL`).
+ * sa lecture : écrit en années, ou l'âge légal de l'assuré (`AGE_LEGAL`).
  * Voir `age_de_suppression` du Python.
  */
 export function ageDeSuppression(moteur, carriere, fiche, version) {
   const parametres = version.parametres;
   const age = parametres.age_de_suppression;
   if (age === AGE_LEGAL) {
-    const legal = moteur.agesOuverture.age(carriere.generation);
+    const legal = ageLegalDeLAssure(moteur, carriere);
     if (legal === null) {
       throw new Error(`${fiche}.${version.id} : pas d'âge légal pour la génération `
         + `${carriere.generation}`);

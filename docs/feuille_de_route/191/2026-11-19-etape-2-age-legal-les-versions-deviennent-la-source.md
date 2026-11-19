@@ -1,18 +1,5 @@
 # Étape 2 de la note 0009, première session : les versions de l'âge légal deviennent la source
 
-**Reprise, au 19 novembre 2026.** L'étape 2 de la note de décision 0009 range
-l'âge légal dans les versions de sa fiche, en trois sessions. La première est
-faite : la fiche `age_legal_par_generation` porte six versions, et la table de
-l'âge légal comme ses deux copies d'avant réforme se fabriquent depuis elles,
-identiques à ce qu'elles étaient. Le moteur ne les lit pas encore. Reste la
-deuxième session, qui fait lire l'âge légal au moteur par ces versions, puis
-la troisième, qui change les deux droits d'avant réforme en couches. Commencer
-par le brief de la deuxième session, « Brief A2b », dans
-`/mnt/project-files/architecture/191-briefs-amendes.md`. Aucun résultat ne
-doit bouger. Au propriétaire : dire si les deux copies passent du niveau
-`haute` au niveau `certifiee`, et faire relire par une autre session les deux
-versions de 1985 à 2011, qui n'ont pas d'exemple officiel.
-
 Le 19 novembre 2026, le propriétaire ouvre l'étape 2 de la note de décision
 0009. Cette session en est la première des trois (« Brief A2a ») : les
 versions de la fiche deviennent la source de l'âge légal, sans que le moteur

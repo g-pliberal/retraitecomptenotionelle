@@ -95,6 +95,16 @@ export function origineDesAges(naissance, jour) {
 }
 
 /**
+ * Le premier mois dont le premier jour tombe ce jour-là (AAAA-MM-JJ) ou après :
+ * la première date d'effet d'une pension sous un texte qui vaut à compter de
+ * ce jour, une pension prenant effet le premier d'un mois.
+ */
+export function premierMoisDepuis(jour) {
+  const mois = new DateMois(Number(jour.slice(0, 4)), Number(jour.slice(5, 7)));
+  return jour.slice(8, 10) === "01" ? mois : mois.plusMois(1);
+}
+
+/**
  * Mois de l'année civile ``annee`` compris entre ``debut`` et ``fin``.
  *
  * ``debut`` est inclus, ``fin`` est EXCLUE : une pension prend effet le premier

@@ -24,7 +24,7 @@ import {
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import * as categories from "./categories.js";
 import {
-  SANS_LEUR_BASE, dateDEffet, ligneCotisee, periodeDeLiquidation,
+  SANS_LEUR_BASE, ageLegalDeLAssure, dateDEffet, ligneCotisee, periodeDeLiquidation,
 } from "./commun.js";
 import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
@@ -1027,7 +1027,8 @@ export function ageOuvertureCommun(moteur, periode, carriere) {
     }
   }
   if (periode.age_ouverture_par_generation) {
-    const parGeneration = moteur.agesOuverture.age(carriere.generation);
+    // L'âge légal de l'assuré, lu dans les versions de sa fiche.
+    const parGeneration = ageLegalDeLAssure(moteur, carriere);
     if (parGeneration !== null) {
       return parGeneration[0];
     }

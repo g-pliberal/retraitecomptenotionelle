@@ -94,7 +94,6 @@ from retraite_notionnelle.noyau.calcul_notionnel import calcul_notionnel  # noqa
 from retraite_notionnelle.donnees.tables_du_droit import (  # noqa: E402
     AgesAnnulationDecote,
     AgesJouissanceMilitaire,
-    AgesOuverture,
     AgesOuvertureAvantReforme2023,
     AgesOuvertureAvantSuspension,
     AgesSurcoteRegimesSpeciaux,
@@ -138,7 +137,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 45
+VERSION = 46
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -2748,9 +2747,11 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "revalorisation_salaires": _revalorisation_salaires(),
         "revalorisation_salaires_anciennes": _revalorisation_salaires(anciennes=True),
         "revalorisation_pensions": _revalorisation_pensions(),
-        "ages_ouverture": _table_par_generation(AgesOuverture),
-        # Les âges que les droits contrefactuels posent sur la table du
-        # droit en vigueur (``DROITS_CONTREFACTUELS``, action 138, étape 10).
+        # L'âge légal du droit en vigueur n'est plus une table du paquet : le
+        # moteur le lit dans les versions de sa fiche (``fiches_datees``,
+        # ``age_legal_par_generation``, note de décision 0009). Restent les
+        # âges que les droits contrefactuels posent sur ces versions
+        # (``DROITS_CONTREFACTUELS``, action 138, étape 10).
         "ages_ouverture_avant_reforme_2023": _table_par_generation(
             AgesOuvertureAvantReforme2023),
         "ages_ouverture_avant_suspension": _table_par_generation(

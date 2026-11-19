@@ -1,4 +1,4 @@
-import { DateMois, MOIS_PAR_AN } from "./calendrier.js";
+import { DateMois, MOIS_PAR_AN, premierMoisDepuis } from "./calendrier.js";
 import { anneesRevolues } from "./chronologie.js";
 import { Fiabilite, fiabiliteDepuisTexte } from "./serie.js";
 import { applicable } from "./versions.js";
@@ -302,15 +302,194 @@ export class DureesProratisation extends TableParGeneration {
   }
 }
 
-/** Âge légal d'ouverture des droits, par génération. */
-export class AgesOuverture extends TableParGeneration {
-  constructor(paquet) {
-    super(paquet.ages_ouverture);
+/** La fiche de l'âge légal, et la date qui choisit sa version. */
+export const FICHE_DE_L_AGE_LEGAL = "age_legal_par_generation";
+const DATE_D_EFFET = "liquidation.date_effet";
+
+/** Le premier jour d'un mois, AAAA-MM-01. */
+function premierJour(date) {
+  return `${String(date.annee).padStart(4, "0")}-${String(date.mois).padStart(2, "0")}-01`;
+}
+
+/**
+ * L'âge qu'une version de la fiche de l'âge légal donne à une génération, et
+ * sa fiabilité : la ligne de sa table, la valeur qu'elle écrit pour tous, ou
+ * ce que son texte laisse à sa rédaction antérieure, pour les naissances que
+ * le renvoi nomme (« il est celui applicable en application du présent article
+ * dans sa rédaction antérieure », L. 161-17-2, loi n° 2025-1403). `null` quand
+ * la version ne dit rien de cette génération. Un renvoi sans cible, ou qui
+ * boucle, arrête le calcul et nomme ses versions : la fabrique l'a déjà
+ * refusé (`noyau/renvois.py`), ceci n'est que la ceinture.
+ */
+function ageDansLaVersion(fiche, version, generation, vues = []) {
+  const ici = `${fiche.id}.${version.id}`;
+  const renvoi = version.redaction_anterieure ?? null;
+  if (renvoi !== null) {
+    const [debut, fin] = renvoi.generations ?? [null, null];
+    if ((debut === null || generation >= debut) && (fin === null || generation < fin)) {
+      if (vues.includes(version.id)) {
+        throw new Error(`${[...vues, version.id].map((id) => `${fiche.id}.${id}`).join(", ")} : `
+          + "les rédactions antérieures bouclent");
+      }
+      const anterieure = fiche.versions.find((v) => v.id === renvoi.version);
+      if (anterieure === undefined) {
+        throw new Error(`${ici} : renvoie à sa rédaction antérieure « ${renvoi.version} », `
+          + `que la fiche ${fiche.id} ne porte pas`);
+      }
+      return ageDansLaVersion(fiche, anterieure, generation, [...vues, version.id]);
+    }
+  }
+  if (version.table) {
+    for (const [debut, fin, age, fiabilite] of version.table) {
+      if (generation >= debut && (fin === null || generation < fin)) {
+        return [age, fiabilite];
+      }
+    }
+    return null;
+  }
+  const age = version.parametres.age;
+  return age === null || age === undefined ? null : [age, version.fiabilite];
+}
+
+/**
+ * L'âge légal sous une version de sa fiche : celui que le texte de cette
+ * version oppose à chaque génération. `lus` garde ce qu'on y a lu, génération
+ * par génération : la recherche du premier départ y voit si l'âge qu'elle
+ * éprouve dépend de la version (`droit/departs.js`).
+ */
+export class AgesOuvertureDUneVersion {
+  constructor(fiche, version) {
+    this._fiche = fiche;
+    this.version = version.id;
+    this._version = version;
+    this.lus = new Map();
   }
 
   /** @returns {[number, number] | null} âge et fiabilité. */
   age(generation) {
-    return this.valeur(generation);
+    const lu = ageDansLaVersion(this._fiche, this._version, generation);
+    this.lus.set(generation, lu);
+    return lu;
+  }
+
+  valeur(generation) {
+    return this.age(generation);
+  }
+}
+
+/**
+ * Âge légal d'ouverture des droits (L. 161-17-2), lu dans les versions de sa
+ * fiche, `age_legal_par_generation`, que le paquet porte (`fiches_datees`,
+ * note de décision 0009) : la date d'effet de la pension choisit la version,
+ * la génération sa ligne ({@link aLEffet}).
+ *
+ * L'âge légal d'une PERSONNE, sans pension datée, est celui de la version sous
+ * laquelle son droit s'ouvre ({@link age}) : le moteur cherche la première
+ * date dont la version l'ouvre ({@link premierDepart}), et ne déduit plus
+ * cette date d'un âge par génération. Les lois de 2010, 2011, 2023 et 2025
+ * n'ont relevé que l'âge de générations qui ne pouvaient pas encore partir :
+ * la recherche rend l'âge de la table fusionnée que la fabrique tire des
+ * mêmes versions (`age_ouverture_requis.csv`, `tests/js/age-legal.test.js`).
+ */
+export class AgesOuverture {
+  constructor(paquet, fiches = null) {
+    this._fiches = fiches ?? new FichesDatees(paquet);
+    this._ages = new Map();
+  }
+
+  /** La fiche préparée ; sans elle, le calcul s'arrête. */
+  _fiche() {
+    const fiche = this._fiches.fiches()[FICHE_DE_L_AGE_LEGAL] ?? null;
+    if (fiche === null) {
+      throw new Error(`${FICHE_DE_L_AGE_LEGAL} : la fiche manque au paquet (fiches_datees)`);
+    }
+    return fiche;
+  }
+
+  /**
+   * L'âge légal que le droit oppose à une pension prenant effet à `dateEffet`
+   * (AAAA-MM-JJ) : celui de la version qui vaut ce jour-là. Sans version à
+   * cette date, le calcul s'arrête.
+   */
+  aLEffet(dateEffet) {
+    const fiche = this._fiche();
+    const version = this._fiches.versionAuxDates(
+      FICHE_DE_L_AGE_LEGAL, { [DATE_D_EFFET]: dateEffet });
+    if (version === null) {
+      throw new Error(`${FICHE_DE_L_AGE_LEGAL} : aucune version pour une pension prenant `
+        + `effet le ${dateEffet}`);
+    }
+    return new AgesOuvertureDUneVersion(fiche, version);
+  }
+
+  /**
+   * Les versions dans l'ordre de leurs dates d'effet : pour chacune, sa
+   * première date (AAAA-MM-JJ, `null` sans borne), le jour où elle cesse
+   * (`null` pour celle en vigueur), et l'âge légal sous elle.
+   *
+   * @returns {{debut: string|null, fin: string|null, ages: AgesOuvertureDUneVersion}[]}
+   */
+  fenetres() {
+    const fiche = this._fiche();
+    return fiche.versions
+      .map((version) => {
+        const [debut, fin] = version.bornes[DATE_D_EFFET] ?? [null, null];
+        return { debut, fin, ages: new AgesOuvertureDUneVersion(fiche, version) };
+      })
+      .sort((a, b) => (a.debut ?? "").localeCompare(b.debut ?? ""));
+  }
+
+  /**
+   * Le premier départ que l'âge légal ouvre à une personne de cette
+   * génération, dont les âges se comptent du mois `origine`
+   * (`origineDesAges`) : le premier 1er du mois où elle a l'âge que la version
+   * de ce jour-là lui oppose. La recherche ne s'arrête qu'aux dates où la
+   * version change ; l'essai de chaque premier du mois lui sert de témoin
+   * (`tests/js/age-legal.test.js`). `null` quand aucune date n'ouvre le droit.
+   *
+   * @returns {{date: DateMois, age: [number, number], version: string} | null}
+   */
+  premierDepart(generation, origine) {
+    for (const { debut, fin, ages } of this.fenetres()) {
+      const lu = ages.age(generation);
+      if (lu === null) {
+        continue;
+      }
+      const atteint = origine.plusMois(Math.round(lu[0] * MOIS_PAR_AN));
+      const date = debut === null || premierJour(atteint) >= debut
+        ? atteint : premierMoisDepuis(debut);
+      if (fin === null || premierJour(date) < fin) {
+        return { date, age: lu, version: ages.version };
+      }
+    }
+    return null;
+  }
+
+  /**
+   * L'âge légal de la personne de cette génération : celui de la version sous
+   * laquelle son droit s'ouvre ({@link premierDepart}), et sa fiabilité.
+   * `origine` est le mois d'où ses âges se comptent ; sans lui, celui qui suit
+   * sa naissance, comme pour qui n'est pas né un 1er. `null` quand aucune
+   * version ne lui ouvre le droit.
+   *
+   * @returns {[number, number] | null} âge et fiabilité.
+   */
+  age(generation, origine = null) {
+    let depuis = origine;
+    if (depuis === null) {
+      const annee = Math.floor(generation);
+      depuis = new DateMois(annee, 1)
+        .plusMois(Math.round((generation - annee) * MOIS_PAR_AN) + 1);
+    }
+    const cle = `${generation}|${depuis.rang}`;
+    if (!this._ages.has(cle)) {
+      this._ages.set(cle, this.premierDepart(generation, depuis)?.age ?? null);
+    }
+    return this._ages.get(cle);
+  }
+
+  valeur(generation) {
+    return this.age(generation);
   }
 }
 
@@ -318,11 +497,11 @@ export class AgesOuverture extends TableParGeneration {
  * Âge légal que la loi du 14 avril 2023 a relevé : celui du droit en vigueur au
  * 31 août 2023, soixante-deux ans dès 1955 — portage de
  * `AgesOuvertureAvantReforme2023`, qui ne sert qu'au droit contrefactuel
- * `au_31_aout_2023`.
+ * `au_31_aout_2023`, jusqu'à ce qu'il devienne une couche.
  */
-export class AgesOuvertureAvantReforme2023 extends AgesOuverture {
+export class AgesOuvertureAvantReforme2023 extends TableParGeneration {
   constructor(paquet) {
-    super({ ages_ouverture: paquet.ages_ouverture_avant_reforme_2023 });
+    super(paquet.ages_ouverture_avant_reforme_2023);
   }
 }
 
@@ -330,19 +509,20 @@ export class AgesOuvertureAvantReforme2023 extends AgesOuverture {
  * Âge légal que la suspension de 2026 a abaissé : celui de la loi de 2023,
  * soixante-trois ans pour 1964, soixante-quatre dès 1968 — portage de
  * `AgesOuvertureAvantSuspension`, qui ne sert qu'au droit contrefactuel
- * `loi_2023_sans_suspension`.
+ * `loi_2023_sans_suspension`, jusqu'à ce qu'il devienne une couche.
  */
-export class AgesOuvertureAvantSuspension extends AgesOuverture {
+export class AgesOuvertureAvantSuspension extends TableParGeneration {
   constructor(paquet) {
-    super({ ages_ouverture: paquet.ages_ouverture_avant_suspension });
+    super(paquet.ages_ouverture_avant_suspension);
   }
 }
 
 /**
  * Une table par génération qu'une autre recouvre, de sa première génération à
  * toutes les suivantes : ce qu'un droit contrefactuel change à l'âge légal ou à
- * la durée requise. En deçà, la table du droit en vigueur répond. Portage de
- * `TableRecouverte`.
+ * la durée requise. En deçà, la table du droit en vigueur répond ; pour l'âge
+ * légal, ce sont les versions de sa fiche, à la date d'effet comme pour la
+ * personne. Portage de `TableRecouverte`.
  */
 export class TableRecouverte {
   constructor(dessus, dessous) {
@@ -354,12 +534,29 @@ export class TableRecouverte {
     return this._dessus.valeur(generation) ?? this._dessous.valeur(generation);
   }
 
-  age(generation) {
-    return this.valeur(generation);
+  /** L'âge légal de la personne (`AgesOuverture.age`), la copie posée dessus. */
+  age(generation, origine = null) {
+    return this._dessus.valeur(generation) ?? this._dessous.age(generation, origine);
   }
 
   trimestres(generation) {
     return this.valeur(generation);
+  }
+
+  /** Ce que le dessous a lu de ses versions (`AgesOuvertureDUneVersion.lus`). */
+  get lus() {
+    return this._dessous.lus;
+  }
+
+  /** L'âge légal sous une version (`AgesOuverture.aLEffet`), la copie posée dessus. */
+  aLEffet(dateEffet) {
+    return new TableRecouverte(this._dessus, this._dessous.aLEffet(dateEffet));
+  }
+
+  /** Les versions de l'âge légal (`AgesOuverture.fenetres`), la copie posée sur chacune. */
+  fenetres() {
+    return this._dessous.fenetres().map(
+      (fenetre) => ({ ...fenetre, ages: new TableRecouverte(this._dessus, fenetre.ages) }));
   }
 }
 

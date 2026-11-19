@@ -75,7 +75,8 @@ export class ScenarioNotionnel {
     if (regle === StockAgeLegal.TOUT_DROIT) {
       return ageOuvertureDroit(this.scenarioActuel, carriere);
     }
-    const valeur = this.scenarioActuel.agesOuverture.valeur(carriere.annee_naissance);
+    // L'âge légal de l'assuré, lu à sa seule année de naissance.
+    const valeur = this.scenarioActuel.agesOuverture.age(carriere.annee_naissance);
     return valeur === null ? null : valeur[0];
   }
 

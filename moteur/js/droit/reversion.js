@@ -41,6 +41,7 @@ import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import {
   REGIMES_ALIGNES, REGIMES_ALIGNES_TETE, luraApplicable, regimesDe, teteDeSuccession,
 } from "./coordonner.js";
+import { ageLegalDuConjointSurvivant } from "./commun.js";
 import { maximumDesPensions } from "./liquider.js";
 
 /** La version du schéma que `Reversion.donnees` suit. */
@@ -1132,7 +1133,8 @@ function derniereRevision(moteur, conjoint, dateEffet, retraites) {
   if (conjoint.revenus_d_activite) {
     return null;
   }
-  const age = moteur.agesOuverture.age(generationDe(conjoint.naissance));
+  // L'âge légal du conjoint survivant, le sien, et non celui de l'assuré.
+  const age = ageLegalDuConjointSurvivant(moteur, conjoint.naissance);
   if (age === null) {
     return null;
   }

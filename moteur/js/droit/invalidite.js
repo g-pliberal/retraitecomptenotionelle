@@ -19,7 +19,7 @@
 import { DateMois, enMois } from "../calendrier.js";
 import { formatFixe } from "../format.js";
 import { Fiabilite } from "../serie.js";
-import { dateDEffet, ligneCotisee } from "./commun.js";
+import { ageLegalDeLAssure, dateDEffet, ligneCotisee } from "./commun.js";
 import { REGIMES_ALIGNES, luraApplicable } from "./coordonner.js";
 import * as liquider from "./liquider.js";
 
@@ -44,10 +44,10 @@ export const OPPOSITION = "opposition";
 export const ACTIVITE = "activite";
 export const CHOMAGE = "chomage";
 
-/** Un âge qu'une version écrit : un nombre, ou l'âge légal de la génération. */
+/** Un âge qu'une version écrit : un nombre, ou l'âge légal de l'assuré. */
 export function ageDeLaFiche(moteur, carriere, valeur) {
   if (valeur === AGE_LEGAL_PAR_GENERATION) {
-    const lu = moteur.agesOuverture.age(carriere.generation);
+    const lu = ageLegalDeLAssure(moteur, carriere);
     return lu !== null ? lu[0] : 60.0;
   }
   return Number(valeur);

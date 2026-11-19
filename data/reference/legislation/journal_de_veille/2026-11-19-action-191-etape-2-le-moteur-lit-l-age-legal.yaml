@@ -1,0 +1,20 @@
+date: "2026-11-19"
+session: "action 191 : étape 2 de la note 0009, le moteur lit l'âge légal par ses versions"
+consulte: >-
+  python scripts/veille_droit.py, le 19 novembre 2026 : rien de neuf sur
+  L. 161-17-2 ni sur D. 161-2-1-9. Aucun texte relu : la session ne change
+  aucune règle, et lit les six versions de la fiche age_legal_par_generation
+  telles que la session précédente les a déclarées, avec les textes qu'elles
+  citent.
+trouve: >-
+  Aucune valeur ne change. Le moteur lit l'âge légal dans les versions de sa
+  fiche, à la date d'effet de la pension, et cherche la première date dont
+  la version ouvre le droit au lieu de la déduire d'un âge par génération.
+  Témoins identiques. Détail dans
+  docs/feuille_de_route/191/2026-11-19-etape-2-age-legal-le-moteur-lit-les-versions.md.
+reste: >-
+  Les lecteurs qui lisent l'âge légal de la personne là où un texte vise
+  peut-être celui de la date de la demande, la retraite progressive d'abord
+  (L. 351-15, « diminué de deux années ») : à relire au texte, correction à
+  part. La troisième session de l'étape, les droits d'avant réforme en
+  couches. Une seconde lecture des versions de 1985 à 2011.

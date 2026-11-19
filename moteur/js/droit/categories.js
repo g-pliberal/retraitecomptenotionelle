@@ -10,7 +10,7 @@
  */
 
 import * as chrono from "../chronologie.js";
-import { dateDEffet, ligneCotisee } from "./commun.js";
+import { ageLegalDeLAssure, dateDEffet, ligneCotisee } from "./commun.js";
 
 /** Les fiches des catégories, dans l'ordre où le moteur les essaie. */
 export const FICHE_DES_DEPORTES = "taux_plein_anciens_deportes_internes";
@@ -25,9 +25,9 @@ export const FICHES_DES_CATEGORIES = Object.freeze([
 /** L'âge qu'une version écrit pour dire l'âge légal de la génération. */
 export const AGE_LEGAL = "age_legal_par_generation";
 
-/** L'âge de L. 161-17-2 de la génération. */
+/** L'âge de L. 161-17-2 de l'assuré, lu dans les versions de sa fiche. */
 export function ageLegal(moteur, carriere) {
-  const lu = moteur.agesOuverture.age(carriere.generation);
+  const lu = ageLegalDeLAssure(moteur, carriere);
   return lu !== null ? lu[0] : 60.0;
 }
 

@@ -231,3 +231,61 @@ def test_la_table_du_droit_en_vigueur_garde_ses_soixante_dix_neuf_lignes():
     assert copies["age_ouverture_avant_reforme_2023.csv"] == [("1961.667", 62.0)]
     assert copies["age_ouverture_avant_suspension.csv"] == [
         ("1964", 63.0), ("1965", 63.25), ("1966", 63.5), ("1967", 63.75), ("1968", 64.0)]
+
+
+# --- Ce que le paquet du moteur en porte (deuxième session) ------------------
+
+
+def test_la_version_preparee_porte_ses_propres_lignes_et_son_renvoi(poche):
+    """Le moteur lit la version à la date d'effet, et la génération y choisit
+    sa ligne : la version préparée porte ses seules lignes, en étendues de
+    générations, et ce qu'elle laisse à sa rédaction antérieure reste un
+    renvoi, que le moteur suit. La loi de poche n'écrit que les nés à compter
+    du 1er septembre 1961."""
+    fiche, racine = poche
+    decret, loi = (tables_de_version.pour_le_moteur(fiche, v, racine) for v in ("decret", "loi"))
+    assert decret == {"table": [[1900.0, 1961.667, 62.0, 3], [1961.667, 1968.0, 63.0, 3],
+                                [1968.0, None, 64.0, 3]]}
+    assert loi == {"table": [[1961.667, 1965.25, 62.75, 3], [1965.25, None, 64.0, 3]],
+                   "redaction_anterieure": {"version": "decret",
+                                            "generations": [None, 1961.667]}}
+
+
+def test_la_version_preparee_refuse_deux_textes_qui_se_contredisent(poche):
+    fiche, racine = poche
+    with (racine / "reference" / "legislation" / "ages.csv").open("a", encoding="utf-8") as flux:
+        flux.write("2023-09-01,L,1964,1965,62.75,certifiee\n")
+    with pytest.raises(ValueError, match="decret.*1964"):
+        tables_de_version.pour_le_moteur(fiche, "decret", racine)
+
+
+def test_le_paquet_porte_les_six_versions_de_l_age_legal():
+    """Les fiches que le moteur lit comptent celle de l'âge légal
+    (``FichesDatees``), ses six versions choisies à la date d'effet. Les âges
+    viennent des textes : soixante ans jusqu'au 30 juin 2011 (R. 351-2) ;
+    soixante ans et neuf mois pour les nés en 1952 (D. 161-2-1-9, rédaction du
+    31 décembre 2011) ; soixante-deux ans et neuf mois pour les nés du
+    1er janvier 1963 au 31 mars 1965 (L. 161-17-2, loi n° 2025-1403), qui
+    renvoie les nés avant le 1er septembre 1961 à sa rédaction antérieure."""
+    from retraite_notionnelle.donnees.tables_du_droit import FichesDatees
+
+    fiche = FichesDatees(RACINE_DONNEES).fiches()[tables_de_version.FICHE_DE_L_AGE_LEGAL]
+    versions = {v["id"]: v for v in fiche["versions"]}
+    assert list(versions) == ["avant_la_codification_de_1985", "soixante_ans", "loi_de_2010",
+                              "loi_de_2011", "loi_de_2023", "suspension_de_2025"]
+    assert versions["soixante_ans"]["parametres"] == {"age": 60}
+    assert "table" not in versions["soixante_ans"]
+    # Lue à la main, non recontrôlée par un récupérateur : `haute` ; la version
+    # supposée dit la sienne.
+    assert versions["soixante_ans"]["fiabilite"] == 2
+    assert versions["avant_la_codification_de_1985"]["fiabilite"] == 1
+    assert [1952.0, 1953.0, 60.75, 3] in versions["loi_de_2011"]["table"]
+    # Un âge se lit au mois exact : soixante et un ans et deux mois pour 1953,
+    # que le fichier écrit 61.17.
+    assert [1953.0, 1954.0, 61 + 2 / 12, 3] in versions["loi_de_2011"]["table"]
+    assert versions["loi_de_2011"]["table"][-1] == [1955.0, None, 62.0, 3]
+    suspension = versions["suspension_de_2025"]
+    assert suspension["table"][0][0] == 1961.667
+    assert [1963.0, 1965.25, 62.75, 3] in suspension["table"]
+    assert suspension["redaction_anterieure"] == {"version": "loi_de_2023",
+                                                  "generations": [None, 1961.667]}

@@ -37,6 +37,7 @@ from .chargement import (
 )
 from .macro import DonneesMacro
 from .minimum_vieillesse import MinimumVieillesse
+from . import tables_de_version
 from .revalorisations import RevalorisationsPensions, produit
 
 
@@ -825,7 +826,8 @@ class FichesDatees:
     ``seconde.versionDesDroits`` lit à la date de cette pension et à celle du
     mois d'activité, et la seconde pension, que
     ``seconde.regleDeLaNouvellePension`` lit à sa date d'effet et à celle de la
-    première.
+    première, et l'âge légal, que ``AgesOuverture`` du portage lit à la date
+    d'effet de la pension, la génération y choisissant sa ligne.
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
@@ -862,14 +864,22 @@ class FichesDatees:
             "minimum_pension_sncf", "retraite_progressive",
             "cotisation_rco_agricole_2026", "decote_banque_de_france",
             "droits_apres_la_premiere_pension", "seconde_pension",
-            "surcote_banque_de_france", "age_ouverture_banque_de_france_actifs")
+            "surcote_banque_de_france", "age_ouverture_banque_de_france_actifs",
+            "age_legal_par_generation")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}
         for nom in self.NOMS:
             chemin = racine / "reference" / "regles" / f"{nom}.yaml"
             if chemin.exists():
-                self._fiches[nom] = versions.preparer(charger_yaml(chemin))
+                fiche = charger_yaml(chemin)
+                self._fiches[nom] = versions.preparer(fiche)
+                if nom == tables_de_version.FICHE_DE_L_AGE_LEGAL:
+                    # La table de chaque version et son renvoi à sa rédaction
+                    # antérieure (note de décision 0009, étape 2).
+                    for version in self._fiches[nom]["versions"]:
+                        version.update(tables_de_version.pour_le_moteur(
+                            fiche, version["id"], racine))
 
     def fiches(self) -> dict[str, dict]:
         """Les fiches préparées : ce que le paquet du site porte."""

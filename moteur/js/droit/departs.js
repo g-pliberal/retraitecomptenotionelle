@@ -21,10 +21,11 @@
  * servies. Voir le Python.
  */
 
-import { DateMois } from "../calendrier.js";
+import { DateMois, premierMoisDepuis } from "../calendrier.js";
+import { FICHE_DE_L_AGE_LEGAL } from "../regimes.js";
 import { menerAuMois } from "../revalorisation.js";
 import {
-  SANS_LEUR_BASE, derniereAnnee, ligneCotisee, periodeDeLiquidation,
+  SANS_LEUR_BASE, ageLegalDeLAssure, derniereAnnee, ligneCotisee, periodeDeLiquidation,
 } from "./commun.js";
 import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
@@ -233,10 +234,12 @@ function auTrimestreCivil(moteur, code, date) {
 }
 
 /**
- * Le premier mois où ces périodes ouvrent la pension à cet assuré, ou `null`
- * quand aucune n'oppose d'âge : l'âge que l'étape « ouvrir le droit » oppose à
- * chacun des régimes, ou celui de la carrière longue acquise au départ
- * déclaré. Voir `_ouverture_sous` dans le Python.
+ * Le premier mois où ces périodes ouvrent la pension à cet assuré sous UN âge
+ * légal, celui que porte `moteur.agesOuverture`, ou `null` quand aucune
+ * n'oppose d'âge : l'âge que l'étape « ouvrir le droit » oppose à chacun des
+ * régimes, ou celui de la carrière longue acquise au départ déclaré. La date
+ * se déduit ici de l'âge : {@link premiereOuvertureSous} l'éprouve version
+ * par version de l'âge légal. Voir `_ouverture_sous` dans le Python.
  */
 function ouvertureSous(moteur, carriere, periodes) {
   const annuites = periodes.filter(([, p]) => p.type_calcul === "annuites");
@@ -258,6 +261,53 @@ function ouvertureSous(moteur, carriere, periodes) {
   return carriere.dateDeLAge(age);
 }
 
+/** Le premier jour du mois `date`, AAAA-MM-01. */
+function premierJour(date) {
+  return `${String(date.annee).padStart(4, "0")}-${String(date.mois).padStart(2, "0")}-01`;
+}
+
+/**
+ * Le premier mois où ces périodes ouvrent la pension à cet assuré, ou `null`
+ * quand aucune n'oppose d'âge. L'âge légal dépend de la date d'effet de la
+ * pension (fiche `age_legal_par_generation`) : le moteur ne déduit donc plus
+ * cette date d'un âge par génération, il cherche la première dont la version
+ * ouvre le droit (note de décision 0009). Sous chaque version de l'âge légal,
+ * dans l'ordre de leurs dates, il date l'ouverture à l'âge qu'elle oppose
+ * ({@link ouvertureSous}) et la retient si elle tombe avant la fin de cette
+ * version, au plus tôt à son premier jour : chaque premier du mois, essayé un
+ * à un, rendrait la même date. Une ouverture qui ne lit pas l'âge légal, ou
+ * qui y lit ce qu'une version précédente lisait déjà, ne se recalcule pas.
+ * Quand aucune date n'ouvre le droit, le calcul s'arrête et le dit.
+ */
+function premiereOuvertureSous(moteur, carriere, periodes) {
+  const dejaVues = [];
+  for (const { debut, fin, ages } of moteur.agesOuverture.fenetres()) {
+    let vue = dejaVues.find(({ lus }) => [...lus].every(([generation, lu]) => {
+      const ici = ages.age(generation);
+      return ici === lu || (ici !== null && lu !== null && ici[0] === lu[0]);
+    }));
+    if (vue === undefined) {
+      // Le moteur sous l'âge légal de cette seule version.
+      const sous = Object.create(moteur, { agesOuverture: { value: ages } });
+      ages.lus.clear();
+      const date = ouvertureSous(sous, carriere, periodes);
+      vue = { date, lus: new Map(ages.lus) };
+      dejaVues.push(vue);
+    }
+    if (vue.date === null || vue.lus.size === 0) {
+      // Aucun âge opposé, ou aucun qui tienne à l'âge légal.
+      return vue.date;
+    }
+    const date = debut === null || premierJour(vue.date) >= debut
+      ? vue.date : premierMoisDepuis(debut);
+    if (fin === null || premierJour(date) < fin) {
+      return date;
+    }
+  }
+  throw new Error(`${FICHE_DE_L_AGE_LEGAL} : aucune date n'ouvre le droit de l'assuré né en `
+    + `${premierJour(carriere.dateNaissance).slice(0, 7)}, sous aucune de ses versions`);
+}
+
 /**
  * Le premier mois où l'unité peut servir sa pension à cet assuré. L'âge se lit
  * dans les règles du départ déclaré quand elles l'ouvrent déjà ; sinon dans
@@ -267,10 +317,10 @@ function ouvertureSous(moteur, carriere, periodes) {
  * CPRN, que ses statuts de 2024 ouvrent le 1er janvier 2024 au notaire parti
  * en 2023 avant les 64 ans de ceux de 2017). Voir `_ouverture` dans le Python.
  */
-function ouvertureDe(moteur, carriere, unite) {
+export function ouvertureDe(moteur, carriere, unite) {
   const declare = carriere.dateLiquidation;
   let courantes = periodesDeLUnite(moteur, unite, declare);
-  let ouverture = ouvertureSous(moteur, carriere, courantes) ?? declare;
+  let ouverture = premiereOuvertureSous(moteur, carriere, courantes) ?? declare;
   if (ouverture.rang <= declare.rang) {
     return ouverture;
   }
@@ -279,7 +329,7 @@ function ouvertureDe(moteur, carriere, unite) {
     if (periodes.length !== courantes.length
         || periodes.some(([, periode], i) => periode !== courantes[i][1])) {
       courantes = periodes;
-      const sous = ouvertureSous(moteur, carriere, periodes);
+      const sous = premiereOuvertureSous(moteur, carriere, periodes);
       if (sous !== null) {
         ouverture = sous.rang > mois.rang ? sous : mois;
       }
@@ -417,9 +467,9 @@ export function regimesActifs(moteur, carriereSaisie) {
   return actifs;
 }
 
-/** L'âge de L. 161-17-2 pour la génération de l'assuré : celui du RAFP. */
+/** L'âge de L. 161-17-2 de l'assuré : celui du RAFP. */
 export function ageLegal(moteur, carriere) {
-  const lu = moteur.agesOuverture.age(carriere.generation);
+  const lu = ageLegalDeLAssure(moteur, carriere);
   return lu !== null ? lu[0] : 60.0;
 }
 

@@ -1510,7 +1510,9 @@ def donnees_d_ailleurs(tmp_path):
     """Des données d'ailleurs : une copie de celles du dépôt que l'on a
     retouchée, comme ``scripts/facteurs_depense.py --sans-suspension`` récrit
     la sienne. La génération 1968 y ouvre son droit à soixante-six ans, et non
-    à soixante-trois ans et neuf mois."""
+    à soixante-trois ans et neuf mois : la retouche porte sur la table de la
+    version en vigueur de l'âge légal, que le moteur lit, et non sur la table
+    fusionnée, qui n'en est qu'une vue fabriquée."""
     copie = tmp_path / "data"
     shutil.copytree(RACINE_DONNEES, copie)
     _recrire_l_age_legal(copie, "63.75", "66.00")
@@ -1518,11 +1520,13 @@ def donnees_d_ailleurs(tmp_path):
 
 
 def _recrire_l_age_legal(copie, avant: str, apres: str) -> None:
-    """L'âge légal de la génération 1968 de la copie, récrit."""
-    table = copie / "reference" / "legislation" / "age_ouverture_requis.csv"
+    """L'âge légal de la génération 1968 de la copie, récrit dans la version
+    en vigueur de sa fiche (loi n° 2025-1403)."""
+    table = copie / "reference" / "legislation" / "age_legal_par_version.csv"
     texte = table.read_text(encoding="utf-8")
-    assert texte.count(f"\n1968,{avant},") == 1
-    table.write_text(texte.replace(f"\n1968,{avant},", f"\n1968,{apres},"), encoding="utf-8")
+    ligne = "\n2026-09-01,L161-17-2,1968,1969,{},"
+    assert texte.count(ligne.format(avant)) == 1
+    table.write_text(texte.replace(ligne.format(avant), ligne.format(apres)), encoding="utf-8")
 
 
 def test_des_donnees_d_ailleurs_ont_leur_paquet(donnees_d_ailleurs):
@@ -1533,14 +1537,18 @@ def test_des_donnees_d_ailleurs_ont_leur_paquet(donnees_d_ailleurs):
     leur = pont.paquet_des_donnees(donnees_d_ailleurs)
     du_depot = json.loads(pont.paquet_des_donnees())
     lu = json.loads(leur)
-    assert lu["ages_ouverture"]["1968"] == [66.0, 3]
-    assert du_depot["ages_ouverture"]["1968"] == [63.75, 3]
+    def en_vigueur(paquet):
+        fiche = paquet["fiches_datees"]["age_legal_par_generation"]
+        return next(ligne for ligne in fiche["versions"][-1]["table"] if ligne[0] == 1968.0)
+
+    assert en_vigueur(lu) == [1968.0, 1969.0, 66.0, 3]
+    assert en_vigueur(du_depot) == [1968.0, 1969.0, 63.75, 3]
     assert lu.keys() == du_depot.keys()
-    assert {cle for cle in lu if lu[cle] != du_depot[cle]} == {"ages_ouverture"}
+    assert {cle for cle in lu if lu[cle] != du_depot[cle]} == {"fiches_datees"}
     assert pont.paquet_des_donnees(donnees_d_ailleurs) is leur
     _recrire_l_age_legal(donnees_d_ailleurs, "66.00", "66.250")
-    assert json.loads(pont.paquet_des_donnees(donnees_d_ailleurs))["ages_ouverture"]["1968"] == [
-        66.25, 3]
+    assert en_vigueur(json.loads(pont.paquet_des_donnees(donnees_d_ailleurs))) == [
+        1968.0, 1969.0, 66.25, 3]
 
 
 def test_le_paquet_de_donnees_d_ailleurs_ne_lit_rien_de_celles_du_depot(monkeypatch, tmp_path):

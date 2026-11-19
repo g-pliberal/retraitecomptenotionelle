@@ -21,7 +21,9 @@ import { FIN_PEREQUATION, coefficientTraitementDiffere, dateIso } from "../reval
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import * as acquerir from "./acquerir.js";
 import * as categories from "./categories.js";
-import { dateDEffet, derniereAnnee, periodeDeLiquidation } from "./commun.js";
+import {
+  ageLegalDeLAssure, dateDEffet, derniereAnnee, periodeDeLiquidation,
+} from "./commun.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import { REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
@@ -3798,8 +3800,9 @@ export function surcotePoints(moteur, periode, carriere, trimestres, requis, age
         && carriere.annee_naissance <= derniere) {
       // « Liquidant leur pension du régime de base sans abattement » (CARPIMKO,
       // statuts de 2015, articles 11, 2°, a, et 12 quater, 1°) : pas avant
-      // l'âge légal de la base, celui du premier alinéa de L. 351-1.
-      const legal = moteur.agesOuverture.age(carriere.generation);
+      // l'âge légal de la base, celui du premier alinéa de L. 351-1, pour
+      // l'assuré.
+      const legal = ageLegalDeLAssure(moteur, carriere);
       if (legal !== null) {
         parLaDuree = Math.max(parLaDuree, legal[0]);
       }

@@ -29,7 +29,7 @@ from pathlib import Path
 
 from ..config import RACINE_DONNEES
 from ..noyau import renvois
-from .chargement import charger_yaml
+from .chargement import Fiabilite, au_mois, charger_yaml
 
 #: Les générations que le modèle couvre, et la fin d'une étendue que le texte
 #: ne borne pas : celles du récupérateur
@@ -136,6 +136,73 @@ def par_mois(fiche: dict, identifiant: str, racine: Path = RACINE_DONNEES,
         avant = par_mois(fiche, anterieure["version"], racine, _vues + (identifiant,))
         valeurs.update({mois: avant[mois] for mois in laissees if mois in avant})
     return dict(sorted(valeurs.items()))
+
+
+def _fiabilite(texte) -> int:
+    """Le niveau qu'écrit une ligne ou une version, en nombre."""
+    return int(Fiabilite[str(texte).strip().upper()])
+
+
+def _generation(valeur) -> float | None:
+    """Une borne de naissance, en génération : le 1er septembre 1961 est
+    ``1961.667``, comme les tables l'écrivent."""
+    mois = _rang_du_jour(valeur)
+    return None if mois is None else float(cle(mois))
+
+
+def pour_le_moteur(fiche: dict, identifiant: str, racine: Path = RACINE_DONNEES) -> dict:
+    """Ce que le paquet ajoute à une version préparée (``versions.preparer``)
+    pour que le moteur la lise : ses propres lignes, en étendues de générations
+    ``[première, fin exclue ou None, valeur, fiabilité]``, tous textes
+    confondus, un âge au mois exact ; ce qu'elle laisse à sa rédaction antérieure, qui reste un
+    renvoi que le moteur suit ; et, sans table, la fiabilité de la valeur
+    qu'elle écrit, `haute` quand la version ne dit rien : lue, non recontrôlée
+    par un récupérateur. Deux textes qui se contredisent arrêtent la
+    fabrication, comme dans :func:`par_mois`."""
+    ou = f"{fiche.get('id')}.{identifiant}"
+    version = _version(fiche, identifiant)
+    contenu = version.get("contenu") or {}
+    table = contenu.get("table")
+    ajout: dict = {}
+    if table:
+        lignes = _lignes(table, racine)
+        if not lignes:
+            raise ValueError(f"{ou} : aucune ligne de {table['fichier']} pour "
+                             f"{table['lignes']}")
+        # Un âge s'écrit au mois dans les textes, en centièmes dans le fichier :
+        # le moteur le lit au mois exact, comme dans les tables par génération
+        # (``chargement.au_mois``).
+        exacte = au_mois if table["valeur"] == "age" else float
+        etendues = [(float(l[table["cle"]]), float(l[f"{table['cle']}_fin"]),
+                     exacte(float(l[table["valeur"]])), _fiabilite(l["fiabilite"]))
+                    for l in lignes]
+        coupures = sorted({borne for debut, fin, _, _ in etendues for borne in (debut, fin)})
+        ajout["table"] = []
+        for debut, fin in zip(coupures, coupures[1:]):
+            dites = {(valeur, fiabilite) for d, f, valeur, fiabilite in etendues
+                     if d <= debut and fin <= f}
+            if len({valeur for valeur, _ in dites}) > 1:
+                raise ValueError(
+                    f"{ou} : deux textes se contredisent pour la génération "
+                    f"{cle(rang(debut))}, " + " et ".join(
+                        str(valeur) for valeur in sorted({v for v, _ in dites})))
+            if not dites:
+                continue
+            valeur, fiabilite = next(iter(dites))[0], min(f for _, f in dites)
+            derniere = ajout["table"][-1] if ajout["table"] else None
+            fin = None if fin >= GENERATION_SANS_FIN else fin
+            if derniere and derniere[1] == debut and derniere[2:] == [valeur, fiabilite]:
+                derniere[1] = fin
+            else:
+                ajout["table"].append([debut, fin, valeur, fiabilite])
+    else:
+        ajout["fiabilite"] = _fiabilite(version.get("fiabilite") or "haute")
+    anterieure = contenu.get("redaction_anterieure")
+    if anterieure:
+        ajout["redaction_anterieure"] = {
+            "version": anterieure["version"],
+            "generations": [_generation(b) for b in anterieure.get("naissance") or [None, None]]}
+    return ajout
 
 
 def vue_par_generation(table: dict[int, float]) -> list[tuple[str, float]]:

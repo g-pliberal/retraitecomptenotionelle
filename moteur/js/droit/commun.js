@@ -2,8 +2,11 @@
  * Ce que les étapes du droit partagent avec la liquidation : la dernière
  * année d'un régime, la période qui liquide une pension à sa date d'effet,
  * la date d'effet d'une demande, ce qu'est une année
- * cotisée, les parts de la majoration pour enfants à une date.
+ * cotisée, les parts de la majoration pour enfants à une date, et de qui
+ * est l'âge légal qu'une règle lit : l'assuré, ou le conjoint survivant.
  */
+
+import { DateMois, MOIS_PAR_AN, origineDesAges } from "../calendrier.js";
 
 /**
  * Les complémentaires que leurs statuts font demander à leur âge, sans la
@@ -39,6 +42,36 @@ export function periodeDeLiquidation(regime, date) {
   }
   return regime.periodeALEffet(
     `${String(date.annee).padStart(4, "0")}-${String(date.mois).padStart(2, "0")}-01`);
+}
+
+/**
+ * L'âge légal de L'ASSURÉ (L. 161-17-2), et sa fiabilité : celui de la version
+ * de la fiche `age_legal_par_generation` sous laquelle son droit s'ouvre, ses
+ * âges comptés de son jour de naissance (`AgesOuverture.age`). C'est l'âge de
+ * la personne, quelle que soit la date d'effet de la pension qu'on calcule ;
+ * l'âge qu'une version oppose à une pension d'une date donnée se lit par
+ * `moteur.agesOuverture.aLEffet`. `null` quand aucune version ne le dit.
+ *
+ * @returns {[number, number] | null} âge et fiabilité.
+ */
+export function ageLegalDeLAssure(moteur, carriere) {
+  return moteur.agesOuverture.age(carriere.generation, carriere.origineDesAges ?? null);
+}
+
+/**
+ * L'âge légal du CONJOINT SURVIVANT, né ce jour-là (AAAA-MM-JJ), et sa
+ * fiabilité : le sien, celui de la version sous laquelle son propre droit
+ * s'ouvre, et non celui de l'assuré décédé ni celui de la date d'effet de la
+ * réversion. `null` quand aucune version ne le dit.
+ *
+ * @returns {[number, number] | null} âge et fiabilité.
+ */
+export function ageLegalDuConjointSurvivant(moteur, naissance) {
+  const annee = Number(naissance.slice(0, 4));
+  const mois = Number(naissance.slice(5, 7));
+  const generation = Math.round((annee + (mois - 1) / MOIS_PAR_AN) * 1000) / 1000;
+  return moteur.agesOuverture.age(
+    generation, origineDesAges(new DateMois(annee, mois), Number(naissance.slice(8, 10))));
 }
 
 /**
