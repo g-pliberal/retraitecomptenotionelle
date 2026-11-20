@@ -2698,8 +2698,12 @@ export function decoteBanqueDeFrance(moteur, periode, carriere, anneeLiquidation
     // alinéa de l'article 26, l'âge visé au 2° est minoré de 20 trimestres »
     // (article 70), comme la limite d'âge de l'article 32.
     const deMoins = classe ? parametres.trimestres_de_moins_des_emplois_classes ?? 0 : 0;
-    return [ligne.coefficient,
-      (limite ?? repli) - (ligne.trimestres_avant_limite + deMoins) / 4.0, null];
+    // « Pour les personnels de direction à partir du quatrième degré nés avant
+    // le 1er janvier 1956 », le second tableau : leur limite, que
+    // `limiteDuTableau` lit dans leur colonne, diminuée de leurs trimestres.
+    const trimestres = (ligne.trimestres_avant_limite_de_la_direction ?? {})[
+      carriere.emploiDeLaBanque] ?? ligne.trimestres_avant_limite;
+    return [ligne.coefficient, (limite ?? repli) - (trimestres + deMoins) / 4.0, null];
   }
   return [null, repli, null];
 }

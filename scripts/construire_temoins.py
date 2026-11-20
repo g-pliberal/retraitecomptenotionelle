@@ -1165,6 +1165,15 @@ def _cas() -> list[dict]:
         "statut": "agent_banque_de_france", "naissance": "1962-01-15",
         "debut": "1990-02", "liquidation": "2019-02", "banque": "active",
     }))
+    # LE PERSONNEL DE DIRECTION DE LA BANQUE DE FRANCE, AU SIXIÈME DEGRÉ (action
+    # 191 ; fiche ``limite_age_banque_de_france``, colonnes de l'article 241 du
+    # statut) : né en janvier 1950, entré à vingt-deux ans, il sert jusqu'à 64
+    # ans et demi, sous sa limite de 65 ans, quand l'agent de droit commun, sa
+    # carrière complète, part le 26 juillet 2012.
+    cas.append(("banque_de_france_direction_6e_degre", {
+        "statut": "agent_banque_de_france", "naissance": "1950-01-15",
+        "debut": "1972-02", "liquidation": "2014-07", "banque": "direction_6",
+    }))
     # LE MICRO-ENTREPRENEUR SAISI PAR SON CHIFFRE D'AFFAIRES (action 138,
     # étape 12) : abattu de 71, 50 ou 34 % selon l'activité (L. 613-7, II), en
     # euros, en net, où il passe tel quel, et en multiples ; la Cipav routée

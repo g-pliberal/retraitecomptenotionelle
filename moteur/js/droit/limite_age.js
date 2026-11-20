@@ -192,7 +192,32 @@ function memesEmplois(nom) {
   return FICHES_DU_CODE_DES_PENSIONS.has(nom) ? FICHES_DU_CODE_DES_PENSIONS : new Set([nom]);
 }
 
+/**
+ * L'âge, en mois, que la colonne de son emploi écrit pour la naissance de
+ * l'agent, quand la version en porte une (`colonnes`) : le personnel de
+ * direction de la Banque de France, du quatrième au septième degré (statut du
+ * personnel, article 241) ; `null` sans colonne pour cet emploi.
+ */
+function ageDeSaColonne(carriere, parametres) {
+  const colonne = (parametres.colonnes ?? {})[carriere.emploiDeLaBanque];
+  if (colonne === undefined) {
+    return null;
+  }
+  const naissance = jourDe(carriere, 0);
+  let lu = null;
+  for (const ligne of colonne) {
+    if (naissance >= ligne.depuis) {
+      lu = mois(ligne.age);
+    }
+  }
+  return lu;
+}
+
 function ageDeLaVersion(carriere, parametres, classe) {
+  const deSaColonne = ageDeSaColonne(carriere, parametres);
+  if (deSaColonne !== null) {
+    return deSaColonne;
+  }
   const limites = parametres.limites ?? {};
   if (classe in limites) {
     return mois(limites[classe]);

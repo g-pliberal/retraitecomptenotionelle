@@ -2364,7 +2364,10 @@ function banqueFormulaire(saisie) {
     + "par génération, 57 ans pour les agents nés de juillet 1964 à 1967, 59 ans "
     + "pour ceux nés depuis 1975. La décote s'y annule cinq ans plus tôt aussi "
     + "(règlement annexé au décret n° 2007-262 du 27 février 2007, articles 26, 32, "
-    + "70 et 72). Le simulateur vous croit : il ne connaît pas cette liste.")}</div>`;
+    + "70 et 72). Le simulateur vous croit : il ne connaît pas cette liste. Le "
+    + "personnel de direction du 4e au 7e degré né avant 1956 a une limite d'âge "
+    + "plus haute que les autres agents, jusqu'à 65 ans, sans que sa décote change "
+    + "(statut du personnel, article 241 ; niveaux 5 et 6, puis 7 et 8, depuis 2019).")}</div>`;
 }
 
 /**

@@ -357,11 +357,17 @@ export const TRAVAUX_MANUELS = [
  * qui « appartient à l'une des catégories dont la nomenclature est fixée par
  * délibération du conseil général » ouvre son droit cinq ans plus tôt, et sa
  * décote s'annule cinq ans plus tôt (règlement annexé au décret n° 2007-262,
- * articles 26, 32, 70 et 72). Le vide dit l'agent de droit commun.
+ * articles 26, 32, 70 et 72). Le personnel de direction du quatrième au
+ * septième degré né avant 1956 a une limite d'âge plus haute (statut du
+ * personnel, article 241 ; fiche `limite_age_banque_de_france`), et son propre
+ * tableau à l'article 70. Le vide dit l'agent de droit commun.
  */
 export const EMPLOIS_BANQUE = [
   ["", "de droit commun"],
   ["active", "ouvre le départ cinq ans plus tôt"],
+  ["direction_4_5", "de direction, 4e ou 5e degré"],
+  ["direction_6", "de direction, 6e degré"],
+  ["direction_7", "de direction, 7e degré"],
 ];
 export const STATUT_BANQUE = "agent_banque_de_france";
 

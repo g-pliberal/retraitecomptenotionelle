@@ -24,7 +24,8 @@ lit:
 - sa date de naissance (tableau de 2012)
 - >-
   la limite d'âge que le statut du personnel écrit pour sa période de naissance, colonne
-  « Limite d'âge » (`limite_age_banque_de_france`)
+  « Limite d'âge », ou celle du degré que le personnel de direction déclare (`banque`),
+  qui lit alors le second tableau (`limite_age_banque_de_france`)
 - >-
   l'emploi que l'agent déclare (`banque`) : celui des catégories du quatrième alinéa de
   l'article 26, dont le droit s'ouvre cinq ans plus tôt
@@ -132,20 +133,34 @@ versions:
         lue_depuis: "2012-07-26"
       trimestres_de_moins_des_emplois_classes: 20
       table:
-      - {depuis: "1949-01-01", coefficient: 0.00125, trimestres_avant_limite: 3}
-      - {depuis: "1949-07-01", coefficient: 0.00125, trimestres_avant_limite: 3}
-      - {depuis: "1950-01-01", coefficient: 0.0025, trimestres_avant_limite: 3}
-      - {depuis: "1950-07-01", coefficient: 0.0025, trimestres_avant_limite: 3}
-      - {depuis: "1951-01-01", coefficient: 0.00375, trimestres_avant_limite: 3}
-      - {depuis: "1951-07-01", coefficient: 0.00375, trimestres_avant_limite: 3}
-      - {depuis: "1952-01-01", coefficient: 0.005, trimestres_avant_limite: 4}
-      - {depuis: "1952-07-01", coefficient: 0.005, trimestres_avant_limite: 4}
-      - {depuis: "1953-01-01", coefficient: 0.00625, trimestres_avant_limite: 5}
-      - {depuis: "1953-07-01", coefficient: 0.00625, trimestres_avant_limite: 5}
-      - {depuis: "1954-01-01", coefficient: 0.0075, trimestres_avant_limite: 6}
-      - {depuis: "1954-07-01", coefficient: 0.0075, trimestres_avant_limite: 6}
-      - {depuis: "1955-01-01", coefficient: 0.00875, trimestres_avant_limite: 7}
-      - {depuis: "1955-07-01", coefficient: 0.00875, trimestres_avant_limite: 7}
+      - {depuis: "1949-01-01", coefficient: 0.00125, trimestres_avant_limite: 3,
+         trimestres_avant_limite_de_la_direction: {direction_4_5: 7, direction_6: 15, direction_7: 16}}
+      - {depuis: "1949-07-01", coefficient: 0.00125, trimestres_avant_limite: 3,
+         trimestres_avant_limite_de_la_direction: {direction_4_5: 7, direction_6: 15, direction_7: 15}}
+      - {depuis: "1950-01-01", coefficient: 0.0025, trimestres_avant_limite: 3,
+         trimestres_avant_limite_de_la_direction: {direction_4_5: 7, direction_6: 14, direction_7: 14}}
+      - {depuis: "1950-07-01", coefficient: 0.0025, trimestres_avant_limite: 3,
+         trimestres_avant_limite_de_la_direction: {direction_4_5: 7, direction_6: 13, direction_7: 13}}
+      - {depuis: "1951-01-01", coefficient: 0.00375, trimestres_avant_limite: 3,
+         trimestres_avant_limite_de_la_direction: {direction_4_5: 7, direction_6: 12, direction_7: 12}}
+      - {depuis: "1951-07-01", coefficient: 0.00375, trimestres_avant_limite: 3,
+         trimestres_avant_limite_de_la_direction: {direction_4_5: 7, direction_6: 11, direction_7: 11}}
+      - {depuis: "1952-01-01", coefficient: 0.005, trimestres_avant_limite: 4,
+         trimestres_avant_limite_de_la_direction: {direction_4_5: 8, direction_6: 11, direction_7: 11}}
+      - {depuis: "1952-07-01", coefficient: 0.005, trimestres_avant_limite: 4,
+         trimestres_avant_limite_de_la_direction: {direction_4_5: 8, direction_6: 10, direction_7: 10}}
+      - {depuis: "1953-01-01", coefficient: 0.00625, trimestres_avant_limite: 5,
+         trimestres_avant_limite_de_la_direction: {direction_4_5: 9, direction_6: 10, direction_7: 10}}
+      - {depuis: "1953-07-01", coefficient: 0.00625, trimestres_avant_limite: 5,
+         trimestres_avant_limite_de_la_direction: {direction_4_5: 9, direction_6: 9, direction_7: 9}}
+      - {depuis: "1954-01-01", coefficient: 0.0075, trimestres_avant_limite: 6,
+         trimestres_avant_limite_de_la_direction: {direction_4_5: 9, direction_6: 9, direction_7: 9}}
+      - {depuis: "1954-07-01", coefficient: 0.0075, trimestres_avant_limite: 6,
+         trimestres_avant_limite_de_la_direction: {direction_4_5: 8, direction_6: 8, direction_7: 8}}
+      - {depuis: "1955-01-01", coefficient: 0.00875, trimestres_avant_limite: 7,
+         trimestres_avant_limite_de_la_direction: {direction_4_5: 8, direction_6: 8, direction_7: 8}}
+      - {depuis: "1955-07-01", coefficient: 0.00875, trimestres_avant_limite: 7,
+         trimestres_avant_limite_de_la_direction: {direction_4_5: 7, direction_6: 7, direction_7: 7}}
       - {depuis: "1956-01-01", coefficient: 0.01, trimestres_avant_limite: 7}
       - {depuis: "1956-07-01", coefficient: 0.01, trimestres_avant_limite: 6}
       - {depuis: "1957-01-01", coefficient: 0.01125, trimestres_avant_limite: 6}
@@ -171,7 +186,11 @@ versions:
       1962 1,250 % Lim. âge - 1 trimestre ». « Pour les agents appartenant à une des
       catégories visées au quatrième alinéa de l'article 26, l'âge visé au 2° est minoré
       de 20 trimestres. » Un second tableau donne leur âge aux « personnels de direction
-      à partir du quatrième degré nés avant le 1er janvier 1956 ». Aux agents nés depuis
+      à partir du quatrième degré nés avant le 1er janvier 1956 », par colonne, « agents
+      des 4e et 5e degrés », « du 6e degré », « du 7e degré » : « 1er semestre 1949 Lim.
+      âge - 7 trimestres Lim. âge - 15 trimestres Lim. âge - 16 trimestres » ; « 1er
+      semestre 1952 », huit, onze et onze ; « 2e semestre 1955 », sept partout
+      (`trimestres_avant_limite_de_la_direction`). Aux agents nés depuis
       1963, l'article 32 : 1,25 % par trimestre, jusqu'à la limite d'âge
     conditions: >-
       le décret n° 2012-701 entre en vigueur le lendemain de sa publication, et son
@@ -187,7 +206,10 @@ versions:
       qui minore de même la limite d'âge des agents nés depuis 1963, ne vaut que pour les
       pensions prenant effet depuis le 1er janvier 2016 (décret n° 2012-701, articles 25
       et 41, I), ce que ces agents, qui n'ont cinquante-cinq ans qu'en 2018, ne peuvent
-      devancer. La limite d'âge est celle du tableau de
+      devancer. Le second tableau ne change pas la décote du personnel de direction : à
+      chacune de ses quatorze lignes, la limite de sa colonne diminuée de ses trimestres
+      est l'âge de l'agent de droit commun (`tests/test_direction_banque_de_france.py`).
+      La limite d'âge est celle du tableau de
       l'article 241 du statut du personnel, publié le 26 juillet 2012, lu aussi pour les
       pensions des onze semaines qui le précèdent (PRÉSOMPTION : le décret n° 2012-697
       du même jour la relève, et le tableau de l'article 70 la suppose)
@@ -236,14 +258,9 @@ textes_sans_effet:
 approximations:
 - version: [tableau_par_periode_de_liquidation, tableau_par_periode_de_naissance]
   ecart: >-
-    la saisie ne dit pas le niveau de l'agent. Ne sont pas servis le second tableau de
-    l'article 70, celui des personnels de direction du quatrième au septième degré nés
-    avant 1956, dont la limite d'âge, plus haute, n'est pas servie non plus
-    (`limite_age_banque_de_france`) : sur les lignes que cette fiche cite, leur limite
-    diminuée de leurs trimestres est l'âge de la colonne de droit commun ; ni l'exemption
-    du c de l'article 32, pour les pensions prenant effet depuis le 1er janvier 2016
-    (décret n° 2012-701, articles 25 et 41, I), de l'agent d'au moins soixante-cinq ans
-    qui a élevé un enfant handicapé ou l'a aidé
+    n'est pas servie l'exemption du c de l'article 32, pour les pensions prenant effet
+    depuis le 1er janvier 2016 (décret n° 2012-701, articles 25 et 41, I), de l'agent d'au
+    moins soixante-cinq ans qui a élevé un enfant handicapé ou l'a aidé
   effet: non mesuré
 effet: >-
   Le dépôt opposait à l'agent le barème de l'article L. 14 du code des pensions, lu à
@@ -289,6 +306,10 @@ historique:
   quatrième alinéa de l'article 26 prend la colonne des agents à 55 ans du tableau de
   2007, puis l'âge minoré de vingt trimestres ; l'exemption du c de l'article 32, que
   l'approximation datait du 9 mai 2012, l'est des pensions de 2016.
+- >-
+  2026-11-20 — le second tableau de l'article 70 transcrit, que lit le personnel de
+  direction qui déclare son degré, sur la limite d'âge de sa colonne : sa décote reste
+  celle de l'agent de droit commun, ligne à ligne.
 reformes: []
 code:
   interrupteurs:
@@ -299,7 +320,9 @@ code:
     ou celle de la naissance, dont les trimestres se retranchent de la limite d'âge du
     statut ; sans ligne, aucune décote. L'agent qui déclare un emploi des catégories du
     quatrième alinéa de l'article 26 prend la colonne `age_annulation_a_55_ans`, puis
-    retranche encore `trimestres_de_moins_des_emplois_classes`.
+    retranche encore `trimestres_de_moins_des_emplois_classes`. Le personnel de direction
+    qui déclare son degré retranche de la limite de sa colonne les trimestres de
+    `trimestres_avant_limite_de_la_direction`.
   javascript: >-
     moteur/js/droit/liquider.js : decoteOpposable, decoteBanqueDeFrance ;
     moteur/js/droit/limite_age.js : limiteDuTableau ; moteur/js/droit/ouvrir.js :
@@ -308,4 +331,5 @@ code:
     contenu.parametres de chaque version : lecture, table, limite_d_age,
     trimestres_de_moins_des_emplois_classes ;
     regimes/banque_de_france.yaml : bareme_decote
-  tests: [tests/test_decote_banque_de_france.py, tests/test_categorie_active_banque_de_france.py]
+  tests: [tests/test_decote_banque_de_france.py, tests/test_categorie_active_banque_de_france.py,
+    tests/test_direction_banque_de_france.py]
