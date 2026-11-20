@@ -104,8 +104,8 @@ C'est l'accueil. Descendre lentement, sans rien cliquer.
   chaque année ». Et une à ne pas sauter, parce que la salle la cherche :
   « Votre retraite : ce que votre régime promet → de l'ordre d'un quart de
   moins, en médiane ». La première des « Vos questions », « Ma
-  retraite va-t-elle baisser ? », en donne le détail : <!--chiffre:valeur(moteur/donnees.json:bilan_equilibre.ecarts_medians.a_venir*-100)-->23<!--/--> % pour qui n'est
-  pas encore à la retraite, <!--chiffre:valeur(moteur/donnees.json:bilan_equilibre.ecarts_medians.a_venir_volontaire*-100)-->12<!--/--> % s'il place les <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->cinq<!--/--> points rendus, <!--chiffre:valeur(moteur/donnees.json:bilan_equilibre.ecarts_medians.deja_liquidees*-100)-->25<!--/--> % sur
+  retraite va-t-elle baisser ? », en donne le détail : <!--chiffre:valeur(moteur/donnees.json:bilan_equilibre.ecarts_medians.a_venir*-100)-->26<!--/--> % pour qui n'est
+  pas encore à la retraite, <!--chiffre:valeur(moteur/donnees.json:bilan_equilibre.ecarts_medians.a_venir_volontaire*-100)-->13<!--/--> % s'il place les <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->cinq<!--/--> points rendus, <!--chiffre:valeur(moteur/donnees.json:bilan_equilibre.ecarts_medians.deja_liquidees*-100)-->26<!--/--> % sur
   la pension d'aujourd'hui d'un retraité, garantie vieillesse comprise.
 - Le bloc « Et vous, ça donne combien ? » en haut de page est un raccourci
   vers le simulateur : on peut y saisir une date de naissance et un statut et
@@ -282,7 +282,7 @@ lignes : ce qu'un militaire touche de plus ou de moins qu'un artisan, à
 cotisation égale. Le niveau général dépend aussi d'un réglage annuel, le
 coefficient d'équilibre, que le modèle calcule mais n'applique jamais.
 **Ne pas promettre de marge** : pour la proposition, ce coefficient
-descend à <!--chiffre:mesure(coefficient?scenario=6&quoi=minimum)-->0,95<!--/--> au plus bas, en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2026<!--/-->, et vaut <!--chiffre:mesure(coefficient?scenario=6)-->1,210<!--/--> en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee)-->2070<!--/--> ; appliqué,
+descend à <!--chiffre:mesure(coefficient?scenario=6&quoi=minimum)-->0,96<!--/--> au plus bas, en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2026<!--/-->, et vaut <!--chiffre:mesure(coefficient?scenario=6)-->1,213<!--/--> en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee)-->2070<!--/--> ; appliqué,
 il abaisserait les cases d'autant les années où il est sous un, et la page le dit
 dans la phrase qui suit, quelle que soit sa dernière année. C'est le coût de transition du taux unique : pendant trente ans, la caisse paie les
 pensions de l'ancien système avec <!--chiffre:difference(mesure:fiche?exemple=salaire_moyen&quoi=total;mesure:parametre?nom=taux_cotisation_liberal)-->dix<!--/--> points de cotisation en moins. Ce qu'on
@@ -372,8 +372,8 @@ puis « Qu'est-ce qui décide du résultat ? ». On peut s'arrêter au titre.
 
 Puis descendre, par-dessus « Pour aller plus loin », jusqu'à « D'où viennent
 les chiffres », le bon endroit pour conclure : « Rien ici n'est à
-croire sur parole. » <!--chiffre:somme(moteur/donnees.json:certification.series.*.valeurs)-->443 593<!--/--> valeurs recontrôlées automatiquement contre le
-fichier de l'institution qui les produit, sur <!--chiffre:entrees(moteur/donnees.json:certification.series)-->233<!--/--> séries ; <!--chiffre:entrees(moteur/donnees.json:inventaire)-->114<!--/--> régimes
+croire sur parole. » <!--chiffre:somme(moteur/donnees.json:certification.series.*.valeurs)-->443 657<!--/--> valeurs recontrôlées automatiquement contre le
+fichier de l'institution qui les produit, sur <!--chiffre:entrees(moteur/donnees.json:certification.series)-->235<!--/--> séries ; <!--chiffre:entrees(moteur/donnees.json:inventaire)-->114<!--/--> régimes
 recensés dont <!--chiffre:entrees(moteur/donnees.json:regimes)-->80<!--/--> calculés ; <!--chiffre:valeur(moteur/donnees.json:institutions_citees)-->45<!--/--> institutions citées. Ce compte mesure la
 fidélité de la recopie, non la justesse des pensions : si on vous le demande,
 la réponse est que les pensions se contrôlent ailleurs, sur les exemples
@@ -409,7 +409,7 @@ vérifiez plutôt que de nous croire.
   quart de moins en médiane sur les <!--chiffre:entrees(moteur/donnees.json:agregats.cas_types.cas)-->treize<!--/--> carrières types, retraités
   d'aujourd'hui compris. Ne pas laisser entendre que le réglage annuel
   relèverait les cases : pour la proposition, il les abaisserait, jusqu'à
-  <!--chiffre:mesure(coefficient?scenario=6&quoi=minimum&en=manque)-->5<!--/--> % en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2026<!--/-->. Le système actuel, lui, est projeté en déficit de <!--chiffre:mesure(coefficient?scenario=1&en=manque)-->16<!--/--> % de
+  <!--chiffre:mesure(coefficient?scenario=6&quoi=minimum&en=manque)-->4<!--/--> % en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2026<!--/-->. Le système actuel, lui, est projeté en déficit de <!--chiffre:mesure(coefficient?scenario=1&en=manque)-->16<!--/--> % de
   la facture en <!--chiffre:mesure(coefficient?scenario=1&quoi=annee)-->2070<!--/-->, sans règle qui le règle.
 - **« Et les petites pensions ? »** Le plancher : <!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle)-->800<!--/--> € par personne plus
   <!--chiffre:mesure(parametre?nom=allocation_isolement_mensuelle)-->250<!--/--> € pour qui vit seul, dès <!--chiffre:mesure(constante?de=moteur/js/regimes.js&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, individualisé, payé par l'impôt.
