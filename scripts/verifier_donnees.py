@@ -4245,21 +4245,6 @@ def _vue_de_l_age_legal(nom: str) -> dict[tuple, float]:
     return {(generation,): age for generation, age in vues[nom]}
 
 
-def source_age_ouverture_avant_reforme_2023() -> dict[tuple, float]:
-    """L'âge légal du droit en vigueur au 31 août 2023 : la table de la
-    version de 2011 de la fiche, depuis la première génération que la loi de
-    2023 déplace. Lue à la main jusqu'au 19 novembre 2026, elle se fabrique
-    depuis les lignes que le récupérateur lit dans LEGI."""
-    return _vue_de_l_age_legal("age_ouverture_avant_reforme_2023.csv")
-
-
-def source_age_ouverture_avant_suspension() -> dict[tuple, float]:
-    """L'âge légal de la loi de 2023 sans la suspension : la table de la
-    version de 2023 de la fiche, depuis la première génération que la loi de
-    2025 déplace. Fabriquée de même."""
-    return _vue_de_l_age_legal("age_ouverture_avant_suspension.csv")
-
-
 def source_age_legal_par_version() -> dict[tuple, float]:
     """L'âge d'ouverture que chaque rédaction de L. 161-17-2 et de
     D. 161-2-1-9 écrit, sans fusion : la table de chaque version de la fiche
@@ -5738,9 +5723,8 @@ ENTETE_AGE_LEGAL_PAR_VERSION = (
     "# rédaction antérieure » ; le décret de 2023, qu'elle n'a pas réécrit, y",
     "# garde les 63 ans de la génération 1964, que la loi dément.",
     "#",
-    "# Les trois tables que le moteur lit — `age_ouverture_requis.csv`,",
-    "# `age_ouverture_avant_reforme_2023.csv`, `age_ouverture_avant_suspension.csv`",
-    "# — sont des vues fabriquées depuis ces lignes et les versions de la fiche",
+    "# La table du droit en vigueur, `age_ouverture_requis.csv`, est une vue",
+    "# fabriquée depuis ces lignes et les versions de la fiche",
     "# (`src/retraite_notionnelle/donnees/tables_de_version.py`).",
 )
 
@@ -10398,35 +10382,6 @@ CERTIFICATIONS = (
         decimales=2,
         tolerance=0.005,
         unite=" ans",
-    ),
-    # Les deux copies gardent le niveau `haute` qu'elles avaient, lues à la
-    # main : le relever déplacerait la fiabilité que les droits
-    # contrefactuels affichent, ce qui se décide à part.
-    Certification(
-        nom="age_ouverture_avant_reforme_2023",
-        chemin=REFERENCE / "legislation" / "age_ouverture_avant_reforme_2023.csv",
-        cles=("generation",),
-        colonne="age",
-        source=source_age_ouverture_avant_reforme_2023,
-        origine="la version de 2011 de la fiche age_legal_par_generation "
-                "(age_legal_par_version.csv)",
-        decimales=2,
-        tolerance=0.005,
-        unite=" ans",
-        niveau="haute",
-    ),
-    Certification(
-        nom="age_ouverture_avant_suspension",
-        chemin=REFERENCE / "legislation" / "age_ouverture_avant_suspension.csv",
-        cles=("generation",),
-        colonne="age",
-        source=source_age_ouverture_avant_suspension,
-        origine="la version de 2023 de la fiche age_legal_par_generation "
-                "(age_legal_par_version.csv)",
-        decimales=2,
-        tolerance=0.005,
-        unite=" ans",
-        niveau="haute",
     ),
     Certification(
         nom="duree_assurance_requise",

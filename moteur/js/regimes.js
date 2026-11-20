@@ -494,35 +494,12 @@ export class AgesOuverture {
 }
 
 /**
- * Âge légal que la loi du 14 avril 2023 a relevé : celui du droit en vigueur au
- * 31 août 2023, soixante-deux ans dès 1955 — portage de
- * `AgesOuvertureAvantReforme2023`, qui ne sert qu'au droit contrefactuel
- * `au_31_aout_2023`, jusqu'à ce qu'il devienne une couche.
- */
-export class AgesOuvertureAvantReforme2023 extends TableParGeneration {
-  constructor(paquet) {
-    super(paquet.ages_ouverture_avant_reforme_2023);
-  }
-}
-
-/**
- * Âge légal que la suspension de 2026 a abaissé : celui de la loi de 2023,
- * soixante-trois ans pour 1964, soixante-quatre dès 1968 — portage de
- * `AgesOuvertureAvantSuspension`, qui ne sert qu'au droit contrefactuel
- * `loi_2023_sans_suspension`, jusqu'à ce qu'il devienne une couche.
- */
-export class AgesOuvertureAvantSuspension extends TableParGeneration {
-  constructor(paquet) {
-    super(paquet.ages_ouverture_avant_suspension);
-  }
-}
-
-/**
  * Une table par génération qu'une autre recouvre, de sa première génération à
- * toutes les suivantes : ce qu'un droit contrefactuel change à l'âge légal ou à
- * la durée requise. En deçà, la table du droit en vigueur répond ; pour l'âge
- * légal, ce sont les versions de sa fiche, à la date d'effet comme pour la
- * personne. Portage de `TableRecouverte`.
+ * toutes les suivantes : ce qu'un droit contrefactuel change à la durée
+ * requise, jusqu'à l'étape 3 de la note de décision 0009. En deçà, la table du
+ * droit en vigueur répond. L'âge légal ne passe plus par elle : un droit
+ * contrefactuel le lit dans la fiche que sa pile de couches a résolue
+ * (`FichesDatees.sousLeDroit`). Portage de `TableRecouverte`.
  */
 export class TableRecouverte {
   constructor(dessus, dessous) {
@@ -534,29 +511,8 @@ export class TableRecouverte {
     return this._dessus.valeur(generation) ?? this._dessous.valeur(generation);
   }
 
-  /** L'âge légal de la personne (`AgesOuverture.age`), la copie posée dessus. */
-  age(generation, origine = null) {
-    return this._dessus.valeur(generation) ?? this._dessous.age(generation, origine);
-  }
-
   trimestres(generation) {
     return this.valeur(generation);
-  }
-
-  /** Ce que le dessous a lu de ses versions (`AgesOuvertureDUneVersion.lus`). */
-  get lus() {
-    return this._dessous.lus;
-  }
-
-  /** L'âge légal sous une version (`AgesOuverture.aLEffet`), la copie posée dessus. */
-  aLEffet(dateEffet) {
-    return new TableRecouverte(this._dessus, this._dessous.aLEffet(dateEffet));
-  }
-
-  /** Les versions de l'âge légal (`AgesOuverture.fenetres`), la copie posée sur chacune. */
-  fenetres() {
-    return this._dessous.fenetres().map(
-      (fenetre) => ({ ...fenetre, ages: new TableRecouverte(this._dessus, fenetre.ages) }));
   }
 }
 
@@ -820,6 +776,7 @@ export class AnneesRevenuAnnuelMoyenIndependants extends TableParGeneration {
 export class FichesDatees {
   constructor(paquet) {
     this._fiches = paquet.fiches_datees ?? {};
+    this._droits = paquet.droits_contrefactuels ?? {};
   }
 
   /** Les fiches préparées, telles que le paquet les porte. */
@@ -835,6 +792,27 @@ export class FichesDatees {
     const copie = Object.create(FichesDatees.prototype);
     copie._fiches = Object.fromEntries(Object.entries(this._fiches)
       .filter(([nom]) => !noms.includes(nom)));
+    copie._droits = this._droits;
+    return copie;
+  }
+
+  /**
+   * Les mêmes fiches sous un droit contrefactuel : celles que sa pile de
+   * couches change, telles que la fabrique les a résolues
+   * (`droits_contrefactuels` du paquet, `donnees/droits_contrefactuels.py`),
+   * à la place de celles du droit en vigueur. Chaque couche y garde, dans la
+   * fiche que la réforme écartée a réécrite, la version d'avant. Un droit que
+   * le paquet ne porte pas arrête le calcul.
+   */
+  sousLeDroit(droit) {
+    const resolu = this._droits[droit] ?? null;
+    if (resolu === null) {
+      throw new Error(`${droit} : le paquet ne porte pas ce droit contrefactuel `
+        + "(droits_contrefactuels)");
+    }
+    const copie = Object.create(FichesDatees.prototype);
+    copie._fiches = { ...this._fiches, ...resolu.fiches };
+    copie._droits = this._droits;
     return copie;
   }
 

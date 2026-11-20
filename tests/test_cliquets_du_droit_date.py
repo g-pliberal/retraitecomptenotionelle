@@ -28,8 +28,6 @@ VALEURS_DE_REPLI = 1442
 RENVOIS_SANS_TEXTE = 306
 #: Les copies d'avant réforme encore dans le dépôt.
 COPIES_D_AVANT_REFORME = (
-    "age_ouverture_avant_reforme_2023.csv",
-    "age_ouverture_avant_suspension.csv",
     "duree_requise_avant_reforme_2023.csv",
     "duree_requise_avant_suspension.csv",
 )

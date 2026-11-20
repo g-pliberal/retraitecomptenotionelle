@@ -185,7 +185,7 @@ TABLES_DU_DROIT = (
     "DureesRequisesAvantReforme2023", "_rang_mois", "DureesRequisesRegimes",
     "CalendriersDureeRequise", "_age_ou_rien", "AgesRegimes", "DureesRequisesFonctionPublique",
     "DureesRequisesAvantSoixanteAns", "DureesProratisation", "AgesOuverture",
-    "AgesOuvertureAvantReforme2023", "AgesOuvertureAvantSuspension", "TableRecouverte",
+    "TableRecouverte",
     "AgesSurcoteRegimesSpeciaux", "AgesAnnulationDecote", "AgesCategorieActive",
     "DureesServicesMilitaires", "DureesServicesActifs", "AgesJouissanceMilitaire",
     "CoefficientsMinoration", "AnneesSalaireReference", "AnneesRevenuAnnuelMoyenIndependants",

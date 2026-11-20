@@ -25,7 +25,7 @@
 
 import {
   AgesAnnulationDecote, AgesCategorieActive, AgesJouissanceMilitaire,
-  AgesOuverture, AgesOuvertureAvantReforme2023, AgesOuvertureAvantSuspension,
+  AgesOuverture,
   AgesRegimes, AgesSurcoteRegimesSpeciaux, AnneesSalaireReference,
   AnneesRevenuAnnuelMoyenIndependants, BaremesTrimestre, CarriereLongue, FichesDatees,
   CoefficientsMinoration, DecoteFonctionPublique, DecoteRegimesSpeciaux,
@@ -157,12 +157,16 @@ export class ScenarioActuel {
   }
 
   /**
-   * Le moteur sous un droit contrefactuel (`DROITS_CONTREFACTUELS`) : l'âge
-   * légal et la durée requise des textes d'avant la date qu'il écarte, posés
-   * sur les tables du droit en vigueur, et la carrière longue sans les décrets
-   * qui prennent effet à compter d'elle. Au 31 août 2023, la durée que le droit
-   * en vigueur garde aux pensions d'avant septembre 2026 devient celle de 2014.
-   * Portage de `_sous_le_droit`.
+   * Le moteur sous un droit contrefactuel (`DROITS_CONTREFACTUELS`). L'âge
+   * légal se lit dans la fiche que la pile de couches du droit a résolue à la
+   * fabrique : chaque couche y garde la version d'avant la réforme qu'elle
+   * écarte, depuis la date d'effet de cette réforme (`FichesDatees.sousLeDroit`,
+   * note de décision 0009). La durée requise et la carrière longue gardent
+   * leur mécanisme jusqu'à l'étape 3 de la note : la durée des textes d'avant
+   * la date écartée, posée sur la table du droit en vigueur, et la carrière
+   * longue sans les décrets qui prennent effet à compter d'elle. Au 31 août
+   * 2023, la durée que le droit en vigueur garde aux pensions d'avant
+   * septembre 2026 devient celle de 2014.
    */
   _sousLeDroit(paquet, droit) {
     // Une faute de programme, qui doit remonter : `contexte.js` tait les autres.
@@ -170,17 +174,14 @@ export class ScenarioActuel {
       throw new RangeError(`droit contrefactuel inconnu : '${droit}' ; le moteur connaît `
         + Object.keys(DROITS_CONTREFACTUELS).sort().join(", "));
     }
-    let ages;
     let durees;
     if (droit === "au_31_aout_2023") {
-      ages = new AgesOuvertureAvantReforme2023(paquet);
       durees = this.dureesRequisesAvantReforme2023;
       this.dureesRequisesAvantSuspension = durees;
     } else {
-      ages = new AgesOuvertureAvantSuspension(paquet);
       durees = this.dureesRequisesAvantSuspension;
     }
-    this.agesOuverture = new TableRecouverte(ages, this.agesOuverture);
+    this.agesOuverture = new AgesOuverture(paquet, new FichesDatees(paquet).sousLeDroit(droit));
     this.dureesRequises = new TableRecouverte(durees, this.dureesRequises);
     this.carriereLongue = this.carriereLongue.avant(DROITS_CONTREFACTUELS[droit]);
   }

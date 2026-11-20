@@ -56,28 +56,6 @@
    "valeurs": 38,
    "verifiee_le": "2026-11-19"
   },
-  "age_ouverture_avant_reforme_2023": {
-   "ajoutees": 0,
-   "colonne": "age",
-   "corrigees": 0,
-   "empreinte": "d29c0008504189c8",
-   "identiques": 1,
-   "niveau": "haute",
-   "source": "la version de 2011 de la fiche age_legal_par_generation (age_legal_par_version.csv)",
-   "valeurs": 1,
-   "verifiee_le": "2026-11-20"
-  },
-  "age_ouverture_avant_suspension": {
-   "ajoutees": 0,
-   "colonne": "age",
-   "corrigees": 0,
-   "empreinte": "247f3fddfd7f8793",
-   "identiques": 5,
-   "niveau": "haute",
-   "source": "la version de 2023 de la fiche age_legal_par_generation (age_legal_par_version.csv)",
-   "valeurs": 5,
-   "verifiee_le": "2026-11-20"
-  },
   "age_ouverture_requis": {
    "ajoutees": 0,
    "colonne": "age",

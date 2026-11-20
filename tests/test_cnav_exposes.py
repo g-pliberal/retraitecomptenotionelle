@@ -79,7 +79,7 @@ AGE_LEGAL = (
 
 #: Le même exposé, « Jusqu'au 01/08/2026 » : les retraites prenant effet du
 #: 1er septembre 2023 au 1er août 2026, que la suspension ne touche pas
-#: (`age_ouverture_avant_suspension.csv`).
+#: (version `loi_de_2023` de la fiche `age_legal_par_generation`).
 AGE_LEGAL_AVANT_SUSPENSION = (
     ("1964-01-01", 63, 0),
     ("1965-01-01", 63, 3),
@@ -97,7 +97,11 @@ def test_l_age_legal_de_la_caisse_est_celui_de_la_serie(naissance, annees, mois)
 
 @pytest.mark.parametrize("naissance, annees, mois", AGE_LEGAL_AVANT_SUSPENSION)
 def test_l_age_legal_d_avant_la_suspension_est_celui_de_la_serie(naissance, annees, mois):
-    age = _en_escalier("age_ouverture_avant_suspension", "age", _generation(naissance))
+    from retraite_notionnelle.donnees import tables_de_version
+    from retraite_notionnelle.donnees.chargement import charger_yaml
+    fiche = charger_yaml(RACINE / "data" / "reference" / "regles" / "age_legal_par_generation.yaml")
+    age = tables_de_version.par_mois(fiche, "loi_de_2023")[
+        tables_de_version.rang(_generation(naissance))]
     assert round(age * 12) == _mois(annees, mois), naissance
 
 

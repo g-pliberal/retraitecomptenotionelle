@@ -1,20 +1,5 @@
 # Étape 2 de la note 0009, deuxième session : le moteur lit l'âge légal par ses versions
 
-**Reprise, au 19 novembre 2026.** L'étape 2 de la note de décision 0009 range
-l'âge légal dans les versions de sa fiche, en trois sessions. Les deux
-premières sont faites : la fiche `age_legal_par_generation` porte six
-versions, et le moteur y lit l'âge légal, à la date d'effet de la pension.
-Aucun résultat n'a bougé. Reste la troisième session, qui change les deux
-droits d'avant réforme en couches et retire leurs deux copies de l'âge légal.
-Elle attend l'accord du propriétaire. Commencer par le brief de cette
-session, « Brief A2c », dans
-`/mnt/project-files/architecture/191-briefs-amendes.md`. Au propriétaire
-aussi : dire si les deux copies passent du niveau `haute` au niveau
-`certifiee` ; faire relire par une autre session les versions de 1985 à
-2011, sans exemple officiel ; et décider des lecteurs qui lisent l'âge de la
-personne là où la loi dit peut-être celui de la date d'effet, listés plus
-bas.
-
 Le 19 novembre 2026, deuxième des trois sessions de l'étape 2 (« Brief
 A2b »), ouverte par la session de coordination pendant que le propriétaire
 dormait, comme une migration qui ne change aucun résultat. Elle suit la

@@ -30,14 +30,14 @@ effet: >-
   Toute liquidation. Les soixante-dix-neuf segments de la table sont certifiés :
   lus dans L. 161-17-2 et D. 161-2-1-9, chaque version à sa date d'effet (action
   27). Les deux droits contrefactuels de la page des résultats (action 138, étape
-  10) posent sur elle l'âge des versions qu'ils gardent : celui du 31 août 2023,
-  62 ans dès 1955 (`age_ouverture_avant_reforme_2023.csv`) ; la loi de 2023 sans
-  la suspension, 63 ans pour 1964 et 64 ans dès 1968 (`age_ouverture_avant_suspension.csv`).
-  Depuis le 19 novembre 2026 (note de décision 0009, étape 2), ces trois tables sont
-  des vues fabriquées depuis les versions de la fiche, aux mêmes valeurs : la table
-  du droit en vigueur est celle de la dernière version, les deux autres celles des
-  versions de 2011 et de 2023. Le moteur lit encore les trois vues ; il lira les
-  versions à la date d'effet de la pension à la session suivante de l'étape.
+  10) sont des piles de couches (`data/reference/couches/`) : chacune écarte une
+  réforme, et garde dans cette fiche la version d'avant, depuis la date d'effet de
+  la réforme. Le droit du 31 août 2023 garde ainsi la version de 2011, 62 ans dès
+  1955 ; la loi de 2023 sans la suspension garde la version de 2023, 63 ans pour
+  1964 et 64 ans dès 1968. Depuis le 19 novembre 2026 (note de décision 0009, étape
+  2), les versions de la fiche sont la source : le moteur les lit à la date d'effet
+  de la pension, la table du droit en vigueur n'est plus qu'une vue fabriquée, et
+  les deux copies d'avant réforme sont parties le 20 novembre.
 sources:
   lu_le: 2026-11-19
   prochaine_relecture: 2026-12-31
@@ -387,23 +387,22 @@ code:
     dont la version l'ouvre (`AgesOuverture.premierDepart`, `premiereOuvertureSous`), et
     ne la déduit plus d'un âge par génération. Réservé aux régimes alignés sur l'âge
     légal général : les régimes spéciaux gardent le leur. Sous un droit contrefactuel
-    (`Parametres.droit_contrefactuel`), `TableRecouverte` pose encore sur ces versions
-    la table du droit qu'il garde, de sa première génération à toutes les suivantes
-    (`ScenarioActuel._sous_le_droit`).
+    (`Parametres.droit_contrefactuel`), le moteur lit la fiche que la pile de couches
+    du droit a résolue à la fabrique (`donnees/droits_contrefactuels.py`,
+    `droits_contrefactuels` du paquet).
   javascript: >-
     moteur/js/droit/ouvrir.js : ageOuverture, ageOuvertureCommun ;
     moteur/js/droit/commun.js : ageLegalDeLAssure, ageLegalDuConjointSurvivant ;
     moteur/js/droit/departs.js : premiereOuvertureSous, ouvertureDe ;
     moteur/js/regimes.js : AgesOuverture, AgesOuvertureDUneVersion,
-    AgesOuvertureAvantReforme2023, AgesOuvertureAvantSuspension, TableRecouverte ;
+    FichesDatees.sousLeDroit ;
     moteur/js/scenario-actuel.js : ScenarioActuel._sousLeDroit
   parametres: >-
     contenu.parametres de chaque version : age ;
     legislation/age_legal_par_version.csv : entree_en_vigueur, article, generation,
     generation_fin, age ;
-    legislation/age_ouverture_requis.csv,
-    legislation/age_ouverture_avant_reforme_2023.csv,
-    legislation/age_ouverture_avant_suspension.csv : generation, age
+    legislation/age_ouverture_requis.csv : generation, age ;
+    couches/sans_la_reforme_de_2023.yaml, couches/sans_la_suspension_de_2026.yaml
   tests: [tests/test_tables_de_version.py, tests/js/age-legal.test.js,
     tests/test_simulateur.py, tests/test_donnees.py, tests/test_droits_contrefactuels.py, tests/test_oracle.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]

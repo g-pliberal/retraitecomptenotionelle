@@ -2233,7 +2233,12 @@ def test_les_ages_legaux_du_panorama_sont_ceux_du_depot(regles):
     le 1er septembre 2026, si bien qu'aucune pension n'a pu prendre effet sous
     l'ancien — l'argument de ``age_ouverture_requis.csv`` pour le privé."""
     legal = _escalier("age_ouverture_requis.csv", "age")
-    suspendu = _escalier("age_ouverture_avant_suspension.csv", "age")
+    # Le calendrier de 2023 : la version `loi_de_2023` de la fiche de l'âge légal.
+    from retraite_notionnelle.donnees import tables_de_version
+    from retraite_notionnelle.donnees.chargement import charger_yaml
+    fiche = charger_yaml(LEGISLATION.parent / "regles" / "age_legal_par_generation.yaml")
+    suspendu = [(float(cle), age) for cle, age in tables_de_version.vue_par_generation(
+        tables_de_version.par_mois(fiche, "loi_de_2023"))]
     actifs = _escalier("categorie_active.csv", "age_ouverture", classement="active")
     super_actifs = _escalier("categorie_active.csv", "age_ouverture", classement="super_active")
 

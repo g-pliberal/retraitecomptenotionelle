@@ -10,8 +10,9 @@ pour les seules naissances qu'il lui laisse.
 Ce module lit la table d'une version, résolue, mois de naissance par mois
 (:func:`par_mois`), et en fabrique les tables par génération que le moteur lit
 encore : la table du droit en vigueur, qui est celle de la dernière version
-(:func:`vue_par_generation`), et la copie d'avant une réforme, qui est celle de
-la version que la réforme a fermée (:func:`vue_d_avant`). Une table fusionnée
+(:func:`vue_par_generation`). Les deux copies d'avant réforme de l'âge légal
+sont parties : un droit contrefactuel garde la version d'avant dans une couche
+(``donnees/droits_contrefactuels.py``). Une table fusionnée
 se fabrique depuis les versions, et ne s'écrit jamais à la main :
 ``scripts/verifier_donnees.py --appliquer`` écrit les vues, et la suite les
 confronte (``tests/test_tables_de_version.py``).
@@ -40,13 +41,10 @@ PREMIERE_GENERATION, DERNIERE_GENERATION, GENERATION_SANS_FIN = 1900, 1975, 2100
 FICHE_DE_L_AGE_LEGAL = "age_legal_par_generation"
 DATE_D_EFFET = "liquidation.date_effet"
 
-#: Les trois tables de l'âge légal que le moteur lit, vues des versions de la
-#: fiche : celle du droit en vigueur (``None``), et les deux copies d'avant
-#: réforme, chacune sous la version qui a fermé celle qu'elle garde.
+#: La table de l'âge légal que la fabrique, la certification et la prose
+#: lisent, vue des versions de la fiche : celle du droit en vigueur (``None``).
 VUES_DE_L_AGE_LEGAL = {
     "age_ouverture_requis.csv": None,
-    "age_ouverture_avant_reforme_2023.csv": "loi_de_2023",
-    "age_ouverture_avant_suspension.csv": "suspension_de_2025",
 }
 
 
@@ -216,35 +214,10 @@ def vue_par_generation(table: dict[int, float]) -> list[tuple[str, float]]:
     return vue
 
 
-def vue_d_avant(avant: dict[int, float], apres: dict[int, float]) -> list[tuple[str, float]]:
-    """La copie d'avant une réforme : la table de la version qu'elle a fermée,
-    depuis la première génération dont elle change la valeur, une ligne par
-    changement. Posée sur la table du droit en vigueur, de sa première
-    génération à toutes les suivantes, elle rend le droit d'avant."""
-    changes = [mois for mois in avant if mois in apres and avant[mois] != apres[mois]]
-    if not changes:
-        return []
-    vue, precedente = [], None
-    for mois, valeur in avant.items():
-        if mois >= changes[0] and valeur != precedente:
-            vue.append((cle(mois), valeur))
-            precedente = valeur
-    return vue
-
-
-def _fermee_par(fiche: dict, identifiant: str) -> str:
-    """La version que ``identifiant`` a fermée : celle qui finit où elle commence."""
-    debut = _version(fiche, identifiant)["bornes"][DATE_D_EFFET][0]
-    for version in fiche["versions"]:
-        if version["bornes"][DATE_D_EFFET][1] == debut and debut is not None:
-            return version["id"]
-    raise ValueError(f"{fiche.get('id')}.{identifiant} : aucune version ne finit où elle commence")
-
-
 def vues_de_l_age_legal(racine: Path = RACINE_DONNEES) -> dict[str, list[tuple[str, float]]]:
-    """Les trois tables de l'âge légal, fabriquées depuis les versions de sa
-    fiche : chaque fichier de :data:`VUES_DE_L_AGE_LEGAL`, en lignes
-    (génération, âge)."""
+    """La table de l'âge légal, fabriquée depuis les versions de sa fiche :
+    chaque fichier de :data:`VUES_DE_L_AGE_LEGAL`, en lignes (génération,
+    âge)."""
     regles = racine / "reference" / "regles"
     fiche = charger_yaml(regles / f"{FICHE_DE_L_AGE_LEGAL}.yaml")
     # Un renvoi se contrôle avant d'écrire : ceux de la fiche, et toute chaîne
@@ -257,10 +230,6 @@ def vues_de_l_age_legal(racine: Path = RACINE_DONNEES) -> dict[str, list[tuple[s
     en_vigueur = next(v["id"] for v in fiche["versions"]
                       if v["bornes"][DATE_D_EFFET][1] is None)
     vues = {}
-    for nom, reforme in VUES_DE_L_AGE_LEGAL.items():
-        if reforme is None:
-            vues[nom] = vue_par_generation(par_mois(fiche, en_vigueur, racine))
-        else:
-            vues[nom] = vue_d_avant(par_mois(fiche, _fermee_par(fiche, reforme), racine),
-                                    par_mois(fiche, reforme, racine))
+    for nom in VUES_DE_L_AGE_LEGAL:
+        vues[nom] = vue_par_generation(par_mois(fiche, en_vigueur, racine))
     return vues

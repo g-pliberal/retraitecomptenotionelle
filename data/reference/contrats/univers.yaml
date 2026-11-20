@@ -16,6 +16,7 @@ objets:
       operations: {porte: "garder, ajouter, remplacer une version, neutraliser, changer un paramètre, ajouter une transition — chacune vise une fiche nommée ou un sélecteur", type: liste, de: {objet: operation}, obligatoire: true}
       depuis: {porte: "la date qu'elle lit pour agir, et sa valeur", type: libre, defaut: origine}
       portee: {porte: "l'univers, ou un seul calcul", type: valeur, valeurs: portees_de_couche, defaut: univers}
+      ecarte: {porte: "les réformes (reformes.yaml) qu'elle écarte : chaque fiche qui en déclare une y est gardée dans sa version d'avant, ou déclarée hors de la couche", type: liste, de: identifiant, defaut: [], additif: "un droit contrefactuel du scénario 1 garde une réforme, non une fiche (note de décision 0009)"}
 
   operation:
     ouvert: true

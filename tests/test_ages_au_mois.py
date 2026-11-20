@@ -180,7 +180,7 @@ def test_les_tables_d_ages_par_generation_tombent_sur_un_mois_entier():
         table, _ = charger_table_par_generation(chemin, "age")
         lues += 1
         assert _hors_du_mois(age for age, _ in table.values()) == [], chemin.name
-    assert lues >= 5
+    assert lues >= 4
 
 
 #: Le paquet des données que le portage charge.

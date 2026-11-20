@@ -518,31 +518,6 @@ class AgesOuverture(TableParGeneration):
         return self.valeur(generation)
 
 
-class AgesOuvertureAvantReforme2023(AgesOuverture):
-    """Âge légal que la loi du 14 avril 2023 a relevé : celui du droit en
-    vigueur au 31 août 2023, soixante-deux ans dès la génération 1955
-    (D. 161-2-1-9, version du 31 décembre 2011). Aucune pension n'a pris effet
-    sous lui aux générations qu'il porte : il ne sert qu'au droit
-    contrefactuel ``au_31_aout_2023``. Voir
-    ``age_ouverture_avant_reforme_2023.csv``."""
-
-    def __init__(self, racine: Path) -> None:
-        TableParGeneration.__init__(
-            self, racine, "age_ouverture_avant_reforme_2023.csv", "age")
-
-
-class AgesOuvertureAvantSuspension(AgesOuverture):
-    """Âge légal que la suspension de 2026 a abaissé : celui de la loi de 2023,
-    soixante-trois ans pour les nés en 1964, soixante-quatre dès 1968
-    (D. 161-2-1-9, version du 1er septembre 2023). Il ne sert qu'au droit
-    contrefactuel ``loi_2023_sans_suspension``. Voir
-    ``age_ouverture_avant_suspension.csv``."""
-
-    def __init__(self, racine: Path) -> None:
-        TableParGeneration.__init__(
-            self, racine, "age_ouverture_avant_suspension.csv", "age")
-
-
 class TableRecouverte:
     """Une table par génération qu'une autre recouvre, de sa première
     génération à toutes les suivantes : ce qu'un droit contrefactuel change à

@@ -77,6 +77,7 @@ from retraite_notionnelle.donnees.mortalite import (  # noqa: E402
     serialiser_calibrations,
 )
 from retraite_notionnelle.noyau import univers as univers_de_droit  # noqa: E402
+from retraite_notionnelle.donnees import droits_contrefactuels  # noqa: E402
 from retraite_notionnelle.noyau import vocabulaire  # noqa: E402
 from retraite_notionnelle.lignes import json_en_lignes  # noqa: E402
 from retraite_notionnelle.remuneration import charger_prelevements  # noqa: E402
@@ -94,8 +95,6 @@ from retraite_notionnelle.noyau.calcul_notionnel import calcul_notionnel  # noqa
 from retraite_notionnelle.donnees.tables_du_droit import (  # noqa: E402
     AgesAnnulationDecote,
     AgesJouissanceMilitaire,
-    AgesOuvertureAvantReforme2023,
-    AgesOuvertureAvantSuspension,
     AgesSurcoteRegimesSpeciaux,
     AnneesRevenuAnnuelMoyenIndependants,
     AnneesSalaireReference,
@@ -137,7 +136,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 46
+VERSION = 47
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -2749,15 +2748,11 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "revalorisation_salaires": _revalorisation_salaires(),
         "revalorisation_salaires_anciennes": _revalorisation_salaires(anciennes=True),
         "revalorisation_pensions": _revalorisation_pensions(),
-        # L'âge légal du droit en vigueur n'est plus une table du paquet : le
-        # moteur le lit dans les versions de sa fiche (``fiches_datees``,
-        # ``age_legal_par_generation``, note de décision 0009). Restent les
-        # âges que les droits contrefactuels posent sur ces versions
-        # (``DROITS_CONTREFACTUELS``, action 138, étape 10).
-        "ages_ouverture_avant_reforme_2023": _table_par_generation(
-            AgesOuvertureAvantReforme2023),
-        "ages_ouverture_avant_suspension": _table_par_generation(
-            AgesOuvertureAvantSuspension),
+        # L'âge légal n'est plus une table du paquet : le moteur le lit dans
+        # les versions de sa fiche (``fiches_datees``,
+        # ``age_legal_par_generation``, note de décision 0009), et, sous un
+        # droit contrefactuel, dans la fiche que sa pile de couches a résolue
+        # (``droits_contrefactuels``).
         "ages_surcote_regimes_speciaux": _table_par_generation(AgesSurcoteRegimesSpeciaux),
         "ages_annulation_decote": _table_par_generation(AgesAnnulationDecote),
         "ages_regimes": _ages_regimes(),
@@ -2770,6 +2765,8 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "annees_revenu_annuel_moyen_independants": _table_par_generation(
             AnneesRevenuAnnuelMoyenIndependants),
         "fiches_datees": FichesDatees(DONNEES).fiches(),
+        "droits_contrefactuels": droits_contrefactuels.pour_le_paquet(
+            FichesDatees(DONNEES).fiches(), DONNEES),
         "periodes_non_travaillees": _periodes_non_travaillees(),
         "chomage_complementaires": _chomage_complementaires(),
         "primes_soumises_a_retenue": _primes_soumises_a_retenue(),

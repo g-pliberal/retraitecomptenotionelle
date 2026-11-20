@@ -1,0 +1,64 @@
+# Une couche qui écarte une réforme (note de décision 0009, « Un scénario qui
+# garde une loi passée est une couche » ; docs/architecture.md, § 4.8). Dans
+# chaque fiche que la suspension a réécrite, elle garde la version d'avant, la
+# loi de 2023, depuis le 1er septembre 2026. Seule, elle fait le droit
+# contrefactuel `loi_2023_sans_suspension`
+# (src/retraite_notionnelle/donnees/droits_contrefactuels.py). Chaque fiche qui
+# déclare la suspension (champ `reformes`) y est gardée dans sa version
+# d'avant, ou déclarée hors de la couche (`garder`), avec sa raison :
+# tests/test_couches_du_droit.py.
+schema_version: 1
+id: sans_la_suspension_de_2026
+nom: Le droit sans la suspension de la réforme de 2023, pour les pensions prenant effet à compter du 1er septembre 2026
+ecarte: [lfss_2026_suspension]
+depuis:
+  date: liquidation.date_effet
+  valeur: 2026-09-01
+operations:
+- operation: remplacer_une_version
+  vise: age_legal_par_generation
+  motif: la version en vigueur la veille de la réforme vaut sans fin, et celles qui commencent à sa date ou après sont ôtées
+- operation: garder
+  vise: age_ouverture_ieg_actifs
+  motif: >-
+    le droit contrefactuel ne l'écarte pas : il ne change que l'âge légal, la durée requise et la carrière longue (droit_contrefactuel, moteur/js/config.js) ; à décider à l'étape qui range cette fiche en versions
+- operation: garder
+  vise: carriere_longue
+  motif: >-
+    garde son mécanisme jusqu'à l'étape 3 de la note de décision 0009 : le moteur écarte les décrets qui prennent effet à compter de la date de la couche (CarriereLongue.avant)
+- operation: garder
+  vise: carriere_longue_enfants_reputes_cotises
+  motif: >-
+    le droit contrefactuel ne l'écarte pas : il ne change que l'âge légal, la durée requise et la carrière longue (droit_contrefactuel, moteur/js/config.js) ; à décider à l'étape qui range cette fiche en versions
+- operation: garder
+  vise: categorie_active_duree_requise
+  motif: >-
+    le droit contrefactuel ne l'écarte pas : il ne change que l'âge légal, la durée requise et la carrière longue (droit_contrefactuel, moteur/js/config.js) ; à décider à l'étape qui range cette fiche en versions
+- operation: garder
+  vise: categorie_active_super_active
+  motif: >-
+    le droit contrefactuel ne l'écarte pas : il ne change que l'âge légal, la durée requise et la carrière longue (droit_contrefactuel, moteur/js/config.js) ; à décider à l'étape qui range cette fiche en versions
+- operation: garder
+  vise: duree_requise_ieg
+  motif: >-
+    le droit contrefactuel ne l'écarte pas : il ne change que l'âge légal, la durée requise et la carrière longue (droit_contrefactuel, moteur/js/config.js) ; à décider à l'étape qui range cette fiche en versions
+- operation: garder
+  vise: duree_requise_par_generation
+  motif: >-
+    garde son mécanisme jusqu'à l'étape 3 de la note de décision 0009 : la copie d'avant réforme de la durée requise, posée sur la table du droit en vigueur (TableRecouverte)
+- operation: garder
+  vise: duree_requise_sncf_ratp
+  motif: >-
+    le droit contrefactuel ne l'écarte pas : il ne change que l'âge légal, la durée requise et la carrière longue (droit_contrefactuel, moteur/js/config.js) ; à décider à l'étape qui range cette fiche en versions
+- operation: garder
+  vise: fin_de_la_suspension_2028
+  motif: >-
+    le droit contrefactuel ne l'écarte pas : il ne change que l'âge légal, la durée requise et la carrière longue (droit_contrefactuel, moteur/js/config.js) ; à décider à l'étape qui range cette fiche en versions
+- operation: garder
+  vise: militaires_duree_requise
+  motif: >-
+    le droit contrefactuel ne l'écarte pas : il ne change que l'âge légal, la durée requise et la carrière longue (droit_contrefactuel, moteur/js/config.js) ; à décider à l'étape qui range cette fiche en versions
+- operation: garder
+  vise: retraite_anticipee_handicap
+  motif: >-
+    le droit contrefactuel ne l'écarte pas : il ne change que l'âge légal, la durée requise et la carrière longue (droit_contrefactuel, moteur/js/config.js) ; à décider à l'étape qui range cette fiche en versions

@@ -38,6 +38,7 @@ import * as compter from "../../moteur/js/droit/compter.js";
 import * as lesDeparts from "../../moteur/js/droit/departs.js";
 import * as invalidite from "../../moteur/js/droit/invalidite.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
+import * as lesRegimes from "../../moteur/js/regimes.js";
 import { AgesOuverture, FICHE_DE_L_AGE_LEGAL } from "../../moteur/js/regimes.js";
 import { Simulateur } from "../../moteur/js/simulateur.js";
 
@@ -355,13 +356,68 @@ test("un renvoi sans cible ou qui boucle arrête le calcul, et nomme ses fiches"
   assert.throws(() => new AgesOuverture(sansFiche).age(1960), /age_legal_par_generation/);
 });
 
-test("sous un droit contrefactuel, la copie d'avant réforme recouvre encore les versions", () => {
-  const au31Aout = moteurSur(paquet, { droit_contrefactuel: "au_31_aout_2023" });
-  const sansSuspension = moteurSur(paquet, { droit_contrefactuel: "loi_2023_sans_suspension" });
-  // 62 ans dès 1955 sous le droit du 31 août 2023 ; 63 ans pour 1964 sous la
-  // loi de 2023 ; en deçà de la copie, les versions répondent.
-  assert.equal(au31Aout.agesOuverture.age(1968)[0], 62);
-  assert.equal(sansSuspension.agesOuverture.age(1964)[0], 63);
-  assert.equal(sansSuspension.agesOuverture.age(1953)[0], 61 + 2 / 12);
-  assert.equal(au31Aout.agesOuverture.age(1953)[0], 61 + 2 / 12);
+/**
+ * Les deux droits contrefactuels sont des couches (troisième session de
+ * l'étape 2) : chacun garde, dans la fiche de l'âge légal, la version d'avant
+ * la réforme qu'il écarte, depuis la date d'effet de cette réforme. Les âges
+ * attendus sont ceux des textes gardés : « fixé à soixante-deux ans pour les
+ * assurés nés à compter du 1er janvier 1955 » (L. 161-17-2, loi n° 2011-1906,
+ * LEGIARTI000025014605) ; « soixante-quatre ans pour les assurés nés à compter
+ * du 1er janvier 1968 » (loi n° 2023-270, LEGIARTI000047452768), et
+ * soixante-trois ans pour les nés en 1964 (D. 161-2-1-9, rédaction du 1er
+ * septembre 2023).
+ */
+test("un droit contrefactuel garde la version d'avant la réforme qu'il écarte", () => {
+  const au31Aout = moteurSur(paquet, { droit_contrefactuel: "au_31_aout_2023" }).agesOuverture;
+  const sansSuspension = moteurSur(paquet, { droit_contrefactuel: "loi_2023_sans_suspension" })
+    .agesOuverture;
+  // Le lecteur est celui des versions, sur la fiche que la couche a résolue.
+  assert.ok(au31Aout instanceof AgesOuverture);
+  assert.ok(sansSuspension instanceof AgesOuverture);
+  const derniere = (lecteur) => lecteur.fenetres().at(-1);
+  assert.deepEqual([derniere(au31Aout).ages.version, derniere(au31Aout).debut, derniere(au31Aout).fin],
+    ["loi_de_2011", "2011-12-23", null]);
+  assert.deepEqual(
+    [derniere(sansSuspension).ages.version, derniere(sansSuspension).debut,
+      derniere(sansSuspension).fin],
+    ["loi_de_2023", "2023-09-01", null]);
+  // À la date d'effet : la loi gardée répond après la date de la réforme écartée.
+  assert.equal(au31Aout.aLEffet("2027-01-01").age(1968)[0], 62);
+  assert.equal(au31Aout.aLEffet("2024-01-01").age(1964)[0], 62);
+  assert.equal(sansSuspension.aLEffet("2027-01-01").age(1964)[0], 63);
+  assert.equal(sansSuspension.aLEffet("2032-01-01").age(1968)[0], 64);
+  // Avant cette date, le droit de l'époque reste le droit de l'époque.
+  assert.equal(sansSuspension.aLEffet("2022-01-01").age(1968)[0], 62);
+  // Né en 1965, une demande de mai 2023 : la loi du 14 avril 2023 ne vaut que
+  // pour les pensions prenant effet à compter du 1er septembre 2023, et la
+  // copie lui opposait pourtant ses soixante-trois ans et trois mois.
+  assert.equal(sansSuspension.aLEffet("2023-05-01").age(1965)[0], 62);
+  assert.equal(au31Aout.aLEffet("2011-08-01").age(1952)[0], 60 + 8 / 12);
+  // Pour la personne : la recherche du premier départ, sous la loi gardée.
+  assert.equal(au31Aout.age(1968)[0], 62);
+  assert.equal(sansSuspension.age(1964)[0], 63);
+  assert.equal(sansSuspension.age(1953)[0], 61 + 2 / 12);
+  assert.equal(au31Aout.age(1953)[0], 61 + 2 / 12);
+  const depart = au31Aout.premierDepart(1968, new DateMois(1968, 2));
+  assert.deepEqual([depart.date.annee, depart.date.mois, depart.version], [2030, 2, "loi_de_2011"]);
+  // Le droit en vigueur n'en est pas touché.
+  assert.equal(moteurSur(paquet).agesOuverture.aLEffet("2027-01-01").age(1968)[0], 63.75);
+});
+
+test("les deux copies de l'âge légal et leurs classes sont parties", () => {
+  assert.equal(paquet.ages_ouverture_avant_reforme_2023, undefined);
+  assert.equal(paquet.ages_ouverture_avant_suspension, undefined);
+  assert.equal(lesRegimes.AgesOuvertureAvantReforme2023, undefined);
+  assert.equal(lesRegimes.AgesOuvertureAvantSuspension, undefined);
+  // `TableRecouverte` ne recouvre plus que la durée requise, jusqu'à l'étape 3.
+  assert.equal(lesRegimes.TableRecouverte.prototype.aLEffet, undefined);
+  assert.equal(lesRegimes.TableRecouverte.prototype.fenetres, undefined);
+  assert.equal(lesRegimes.TableRecouverte.prototype.age, undefined);
+});
+
+test("un droit contrefactuel dont le paquet ne porte pas la couche arrête le calcul", () => {
+  const sans = structuredClone(paquet);
+  delete sans.droits_contrefactuels.au_31_aout_2023;
+  assert.throws(() => moteurSur(sans, { droit_contrefactuel: "au_31_aout_2023" }),
+    /au_31_aout_2023 : .*droits_contrefactuels/);
 });

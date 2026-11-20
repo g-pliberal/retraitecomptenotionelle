@@ -118,16 +118,6 @@ def test_la_vue_par_generation_ouvre_une_ligne_par_an_et_par_coupure(poche):
     assert (vue["1961"], vue["1961.667"], vue["1965"], vue["1965.25"]) == (62, 62.75, 62.75, 64)
 
 
-def test_la_vue_d_avant_une_reforme_commence_ou_la_reforme_change_l_age(poche):
-    """La copie d'avant une réforme ne porte que ce qu'elle a changé : la
-    table de la version d'avant, depuis la première génération que la réforme
-    déplace, une ligne par changement de valeur."""
-    fiche, racine = poche
-    avant = tables_de_version.par_mois(fiche, "decret", racine)
-    apres = tables_de_version.par_mois(fiche, "loi", racine)
-    assert tables_de_version.vue_d_avant(avant, apres) == [("1961.667", 63), ("1968", 64)]
-
-
 def test_un_renvoi_qui_ne_tient_pas_arrete_la_fabrication_des_vues(poche, monkeypatch):
     """Un renvoi se contrôle à la fabrication (note 0009, second
     rectificatif) : la fiche de l'âge légal qui lirait une fiche que la carte
@@ -212,10 +202,10 @@ def test_les_versions_de_l_age_legal_commencent_a_la_date_de_leur_texte(age_lega
 
 
 @pytest.mark.parametrize("nom", list(tables_de_version.VUES_DE_L_AGE_LEGAL))
-def test_les_trois_tables_de_l_age_legal_sont_les_vues_de_ses_versions(nom):
-    """La table du droit en vigueur est celle de la dernière version ; chaque
-    copie d'avant réforme, celle de la version que la réforme a fermée, depuis
-    la première génération qu'elle déplace. Aucune valeur ne bouge."""
+def test_la_table_de_l_age_legal_est_la_vue_de_ses_versions(nom):
+    """La table du droit en vigueur est celle de la dernière version. Les deux
+    copies d'avant réforme sont parties : un droit contrefactuel garde la
+    version d'avant dans une couche (``tests/test_couches_du_droit.py``)."""
     vue = tables_de_version.vues_de_l_age_legal()[nom]
     assert [(cle, f"{age:.2f}") for cle, age in vue] == _lignes(nom)
 
@@ -227,10 +217,6 @@ def test_la_table_du_droit_en_vigueur_garde_ses_soixante_dix_neuf_lignes():
     vue = tables_de_version.vues_de_l_age_legal()["age_ouverture_requis.csv"]
     assert len(vue) == 79 and vue[0] == ("1900", 60.0) and vue[-1] == ("1975", 64.0)
     assert [cle for cle, _ in vue if "." in cle] == ["1951.5", "1961.667", "1965.25"]
-    copies = tables_de_version.vues_de_l_age_legal()
-    assert copies["age_ouverture_avant_reforme_2023.csv"] == [("1961.667", 62.0)]
-    assert copies["age_ouverture_avant_suspension.csv"] == [
-        ("1964", 63.0), ("1965", 63.25), ("1966", 63.5), ("1967", 63.75), ("1968", 64.0)]
 
 
 # --- Ce que le paquet du moteur en porte (deuxième session) ------------------
