@@ -118,3 +118,21 @@ test("le portage n'écrit plus ni les dates ni les valeurs de la règle", () => 
     assert.ok(!(nom in progressive), `${nom} est encore une constante du portage`);
   }
 });
+
+test("l'âge légal abaissé de deux ans est celui que la loi oppose à la date d'effet", () => {
+  // Née le 15 janvier 1964, ses âges se comptent du 1er février 1964. Au
+  // 1er novembre 2024, D. 161-2-1-9 (décret n° 2023-436) lui donne
+  // soixante-trois ans, et D. 161-2-24 l'« abaisse de deux ans » : soixante et
+  // un ans. Les soixante-deux ans et neuf mois de la loi n° 2025-1403 ne
+  // valent que pour les pensions prenant effet à compter du 1er septembre 2026.
+  const de1964 = { generation: 1964, origineDesAges: new DateMois(1964, 2) };
+  assert.equal(progressive.ageMinimum(moteur, de1964, new DateMois(2024, 11)), 61);
+  // Né le 15 mars 1962. Au 1er avril 2022, D. 161-2-1-9 (décret n° 2011-2034)
+  // dit soixante-deux ans « pour les assurés nés à compter du 1er janvier
+  // 1955 », et L. 351-15 les diminue de deux années : soixante ans. Les
+  // soixante-deux ans et six mois de 2023 ne lui sont pas encore opposables.
+  const de1962 = { generation: 1962.167, origineDesAges: new DateMois(1962, 4) };
+  assert.equal(progressive.ageMinimum(moteur, de1962, new DateMois(2022, 4)), 60);
+  // Le même, au 1er octobre 2023 : soixante-deux ans et six mois, moins deux.
+  assert.equal(progressive.ageMinimum(moteur, de1962, new DateMois(2023, 10)), 60.5);
+});

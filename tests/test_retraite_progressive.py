@@ -57,24 +57,21 @@ def _salariee(simulateur: Simulateur, age: float | None = 60.75, quotite: float 
 # -- la règle, version par version ------------------------------------------------
 
 @pytest.mark.parametrize("date, attendu", [
-    (DateMois(1990, 6), "legal"),
-    (DateMois(2014, 6), "au_moins_60"),
-    (DateMois(2024, 3), "legal_moins_deux"),
+    # L'âge légal est celui que la loi oppose à la date d'effet de la demande,
+    # à une assurée née le 15 janvier 1965 : soixante ans en 1990 (L. 351-1) ;
+    # soixante-deux ans en 2014 (D. 161-2-1-9, décret n° 2011-2034), diminués
+    # de deux années (L. 351-15) ; soixante-trois ans et trois mois en 2024
+    # (D. 161-2-1-9, décret n° 2023-436), abaissés de deux ans (D. 161-2-24) ;
+    # soixante ans depuis le 1er septembre 2025 (décret n° 2025-681).
+    (DateMois(1990, 6), 60.0),
+    (DateMois(2014, 6), 60.0),
+    (DateMois(2024, 3), 61.25),
     (DateMois(2025, 11), 60.0),
 ])
 def test_l_age_qui_ouvre_la_retraite_progressive(simulateur, date, attendu):
     moteur = simulateur.scenario_actuel
     carriere = _salariee(simulateur)
-    legal = departs.age_legal(moteur, carriere)
-    valeur = progressive.age_minimum(moteur, carriere, date)
-    if attendu == "legal":
-        assert valeur == legal
-    elif attendu == "au_moins_60":
-        assert valeur == max(60.0, legal - 2.0)
-    elif attendu == "legal_moins_deux":
-        assert valeur == legal - 2.0
-    else:
-        assert valeur == attendu
+    assert progressive.age_minimum(moteur, carriere, date) == attendu
 
 
 def test_la_duree_exigee_et_les_regimes_suivent_leurs_textes(simulateur):

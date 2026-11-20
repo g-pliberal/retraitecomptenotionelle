@@ -96,6 +96,18 @@ export function regle(moteur, date) {
   return moteur.fichesDatees.regle(FICHE, jour(date)) ?? { existe: false };
 }
 
+/**
+ * L'âge légal que la loi oppose à l'assuré pour une pension prenant effet à
+ * cette date : celui de la version de l'âge légal qui vaut ce jour-là, et non
+ * celui sous lequel son droit à la retraite s'ouvrira. La retraite progressive
+ * se demande avant l'âge légal : la loi qui relève ou abaisse cet âge après
+ * coup ne refait pas le droit d'hier.
+ */
+function ageLegalALaDate(moteur, carriere, date) {
+  const lu = moteur.agesOuverture.aLEffet(jour(date)).age(carriere.generation);
+  return lu !== null ? lu[0] : lesDeparts.ageLegal(moteur, carriere);
+}
+
 /** L'âge qui ouvre la retraite progressive à cette date ; `null` sans droit. */
 export function ageMinimum(moteur, carriere, date) {
   const { age = null, age_plancher: plancher = null } = regle(moteur, date);
@@ -104,9 +116,9 @@ export function ageMinimum(moteur, carriere, date) {
   }
   let ouvre;
   if (age === AGE_LEGAL) {
-    ouvre = lesDeparts.ageLegal(moteur, carriere);
+    ouvre = ageLegalALaDate(moteur, carriere, date);
   } else if (age === AGE_LEGAL_MOINS_DEUX_ANS) {
-    ouvre = lesDeparts.ageLegal(moteur, carriere) - 2.0;
+    ouvre = ageLegalALaDate(moteur, carriere, date) - 2.0;
   } else if (typeof age === "number") {
     ouvre = age;
   } else {
