@@ -54,7 +54,7 @@ import yaml
 
 from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle.donnees.regimes import INTERRUPTEURS, fiches_de_regimes
-from retraite_notionnelle.noyau import carte, textes, vocabulaire
+from retraite_notionnelle.noyau import carte, justesse, textes, vocabulaire
 from retraite_notionnelle.noyau import univers as univers_de_droit
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -122,6 +122,18 @@ ETAPES_LIQUIDATION = [
      "le coefficient de chaque pension, du départ à l'échéance"),
     ("foyer_et_net", "droit/foyer.js", "l'ASPA, au départ puis à chaque échéance"),
 ]
+
+#: Les familles de régimes de l'inventaire, comme la carte de justesse les nomme.
+FAMILLES = {
+    "base_prive": "salariés du privé, régimes de base",
+    "complementaire_prive": "salariés du privé, complémentaires",
+    "fonction_publique": "fonction publique",
+    "non_salarie": "artisans, commerçants et autres non-salariés",
+    "agricole": "régimes agricoles",
+    "liberal": "libéraux et avocats",
+    "special": "régimes spéciaux",
+    "additionnel_capitalise": "retraite additionnelle, en capitalisation",
+}
 
 #: Les fichiers que presque tout changement du moteur touche. Le registre de
 #: veille n'en est plus depuis que son journal tient un fichier par entrée
@@ -242,6 +254,103 @@ def loi_modifiee(sans_reponse: dict[str, list[dict]], cliquet: dict) -> str:
             "(`python scripts/textes.py --sans-reponse`).")
 
 
+def carte_de_justesse(calcules: dict, lignes: list[dict]) -> list[str]:
+    """La carte de justesse (action 194) : ce que les preuves établissent,
+    famille de régimes par famille, avec ses dénominateurs."""
+    total = lignes[-1]
+    avec, seul = total["prouvee_avec_temoin"], total["prouvee_au_texte_seul"]
+    prouvees = avec + seul
+    L = [
+        "**La carte de justesse** (`src/retraite_notionnelle/noyau/justesse.py`, action 194). "
+        "L'état de la carte des règles, ci-dessus, est un mot que la fiche déclare ; celui-ci "
+        "se calcule depuis les preuves, et personne ne l'écrit. Une partie est une règle sur "
+        "une période : une version de fiche, ou la fiche entière tant qu'elle n'est pas "
+        "découpée. Elle est prouvée quand son texte est lu avec sa trace et qu'une grille "
+        "indépendante — des valeurs attendues posées depuis le seul texte, sans lire le code, "
+        "sur chaque seuil de la règle — est verte ; un exemple officiel, un autre moteur ou "
+        "le simulateur d'une caisse en sont des témoins, qui ne prouvent pas seuls.",
+        "",
+        (f"**{prouvees} partie{'s' * (prouvees > 1)} prouvée{'s' * (prouvees > 1)} sur "
+         f"{total['parties']}**, dont {avec} avec témoin et {seul} au texte seul."
+         if prouvees else
+         f"**Aucune partie prouvée sur {total['parties']}** : aucune grille indépendante "
+         "n'existe encore.")
+        + f" {total['fausse']} fausse{'s' * (total['fausse'] > 1)} (section 2), "
+        f"{total['approchee']} approchée{'s' * (total['approchee'] > 1)}, "
+        f"{total['non_verifiee']} non vérifiée{'s' * (total['non_verifiee'] > 1)}, "
+        f"{total['hors_champ']} hors champ. Un cliquet tient les parties prouvées "
+        "(`tests/cliquets_de_justesse/prouvees.yaml`) : aucune ne recule sans le dire.",
+        "",
+        "| Famille de régimes | Parties | Prouvées | Fausses | Approchées | Non vérifiées "
+        "| Hors champ | Texte tracé | Témoignées par un exemple officiel |",
+        "|---|---|---|---|---|---|---|---|---|",
+    ]
+    ordre = {nom: i for i, nom in enumerate(FAMILLES)}
+    for ligne in sorted(lignes[:-1], key=lambda x: ordre.get(x["famille"], len(ordre))) + [total]:
+        L.append(
+            f"| {FAMILLES.get(ligne['famille'], ligne['famille'])} | {ligne['parties']} "
+            f"| {ligne['prouvee_avec_temoin'] + ligne['prouvee_au_texte_seul']} "
+            f"| {ligne['fausse']} | {ligne['approchee']} | {ligne['non_verifiee']} "
+            f"| {ligne['hors_champ']} | {ligne['tracees']} | {ligne['temoignees']} |")
+    a_situer = somme_ordonnee(1 for p in calcules.values() if p["temoins_a_situer"])
+    L += [
+        "",
+        "Une partie compte dans chaque famille de ses régimes, et une fois dans le total. "
+        f"Parmi les {total['parties']} parties, {total['supposees']} sont des versions "
+        "supposées, qu'aucune grille ne peut prouver tant que leur texte n'est pas retrouvé"
+        + (f" ; {a_situer} ont un exemple officiel que leur fiche cite sans dire pour quelle "
+           "version, et qui ne témoigne donc pour aucune" if a_situer else "")
+        + f". Les confrontations aux autres moteurs que {total['moteurs']} fiches racontent "
+        "en prose ne valent pas témoin : rien n'y dit, cas par cas, ce qui concorde. La carte "
+        "ne connaît encore que les règles : les barèmes, les régimes de bout en bout, les cas "
+        "types et les totaux n'y ont pas leurs preuves (section 4).",
+        "",
+    ]
+    moteur = justesse.moteur_exterieur()
+    if moteur:
+        L += [
+            f"**Un autre moteur, quantité par quantité.** {moteur['modele']} "
+            f"({moteur['version'].split(' ')[0]}) rejoue {moteur['cas']} carrières "
+            "(`tests/temoins/trajectoire_3/ecarts.json`, "
+            f"`scripts/confronter_trajectoire.py`) : **{moteur['concordent']} quantités sur "
+            f"{moteur['confrontees']}** concordent. Un écart n'est pas une erreur du dépôt, "
+            "seul le texte tranche ; il dit où relire. Chaque cas est une carrière entière, "
+            "que rien ne rattache encore à une règle : ce tableau ne change l'état d'aucune "
+            "partie.",
+            "",
+            "| Quantité | Cas | Concordent | En écart |",
+            "|---|---|---|---|",
+        ]
+        L += [f"| {nom} | {vus} | {d_accord} | {vus - d_accord} |"
+              for nom, (vus, d_accord) in sorted(
+                  moteur["quantites"].items(), key=lambda x: (x[1][1] - x[1][0], x[0]))]
+        L.append("")
+    return L
+
+
+def parties_fausses(calcules: dict) -> list[str]:
+    """Les parties que la carte de justesse calcule fausses, fiche par fiche,
+    avec l'écart qui l'établit et l'action qui la corrige, si une preuve la
+    nomme."""
+    par_fiche: dict[str, list[dict]] = {}
+    for partie in calcules.values():
+        if partie["etat"] == "fausse":
+            par_fiche.setdefault(partie["fiche"], []).append(partie)
+    L = []
+    for fiche, parties in sorted(par_fiche.items()):
+        noms = ", ".join(f"`{justesse.nom_de_partie(fiche, p['version'])}`" for p in parties)
+        ecarts = sorted({e for p in parties for e in p["ecarts"]})
+        actions = sorted({a for p in parties for a in p["actions"]})
+        L.append(
+            f"- {noms} : "
+            + (f"en écart avec {', '.join(f'`{e}`' for e in ecarts)}" if ecarts
+               else "règle connue, absente du modèle")
+            + (f" ; action{'s' * (len(actions) > 1)} {', '.join(map(str, actions))}."
+               if actions else " ; aucune action nommée par une preuve.")
+        )
+    return L
+
+
 def page() -> str:
     """``docs/etat.md``, tel que les registres le disent aujourd'hui."""
     # Les règles suivies en veille sont les fiches de la carte (§ 6).
@@ -316,6 +425,10 @@ def page() -> str:
         ("la frontière contributive", "bascules" not in frontiere),
         ("l'inventaire des régimes", False),
     ]
+
+    justes = justesse.etats(carte.fiches(), exemples)
+    familles_justes = justesse.par_famille(justes)
+    fausses = parties_fausses(justes)
 
     actions = TITRE_D_ACTION.findall(closes + "\n" + feuille)
     statuts_actions = collections.Counter(s for _, _, s in actions)
@@ -444,6 +557,7 @@ def page() -> str:
     w(f"- Réformes du calendrier : {len(reformes)}, dont {len(non_appliquees)} déclarées "
       "non appliquées.")
     w("")
+    L.extend(carte_de_justesse(justes, familles_justes))
     w(f"**La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : "
       f"{milliers(len(redactions))} rédactions d'articles, de {len(textes_par_cle)} textes, "
       f"lues le {inscription['lu_le']} ({inscription['index']}). C'est le dénominateur de "
@@ -610,6 +724,14 @@ def page() -> str:
           "le dépôt a transcrits. Un exemple qu'il ne reproduirait pas entrerait quand même, "
           "et se lirait ici.")
     w("")
+    if fausses:
+        w(f"**Les parties que la carte de justesse calcule fausses** (section 1) : un écart "
+          "y est établi. Chacune attend le numéro de l'action qui la corrige, qu'une preuve "
+          "nomme (`data/reference/preuves/`) ; un écart né d'un exemple officiel n'en porte "
+          "pas encore.")
+        w("")
+        L.extend(fausses)
+        w("")
     w("## 3. Ce qui reste à faire, et par quoi commencer")
     w("")
     w(f"- **Les {len(en_cours)} actions en cours** de la feuille de route :")
@@ -705,6 +827,11 @@ def page() -> str:
     w("- **Les limites propres à une simulation.** Le site les montrera avec chaque "
       "résultat, et les présomptions qu'elle emploie : la chronologie les liste, le site "
       "ne les affiche pas encore.")
+    w("- **La justesse au-delà des règles.** La carte de justesse (section 1) ne calcule "
+      "l'état que des règles. Les barèmes (chaque valeur lue à deux sources), les régimes "
+      "de bout en bout (une carrière complète retrouvée, par époque), les cas types et les "
+      "totaux (contre les statistiques) n'y ont pas encore leurs preuves ; une erreur "
+      "connue que sa fiche déclare en approximation y reste « approchée », non « fausse ».")
     w("- **Le coût du travail** se relève sur l'historique git, et change à chaque "
       "commit : il s'affiche à la demande, par `python scripts/tableau_de_bord.py --cout`, "
       "avec les rouges de la suite sur `main` et la taille du dépôt — ses lignes, ses "

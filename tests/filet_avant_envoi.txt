@@ -6,3 +6,4 @@
 # l'ensemble tient sous la minute, le hook `Stop` n'en laissant que deux.
 tests/test_cliquets_du_droit_date.py tests/test_liquidation.py::test_la_liquidation_et_le_journal_sont_ceux_du_temoin tests/test_droit.py::test_chaque_etape_ecrit_ce_que_le_temoin_fige
 tests/test_regle_de_chacun.py
+tests/test_justesse.py::test_aucune_partie_prouvee_ne_recule tests/test_justesse.py::test_les_preuves_du_depot_suivent_leur_format

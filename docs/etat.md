@@ -34,6 +34,63 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 - Découpées en versions : **202 sur 271**, soit 849 versions, dont 158 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 126, dont 10 déclarées non appliquées.
 
+**La carte de justesse** (`src/retraite_notionnelle/noyau/justesse.py`, action 194). L'état de la carte des règles, ci-dessus, est un mot que la fiche déclare ; celui-ci se calcule depuis les preuves, et personne ne l'écrit. Une partie est une règle sur une période : une version de fiche, ou la fiche entière tant qu'elle n'est pas découpée. Elle est prouvée quand son texte est lu avec sa trace et qu'une grille indépendante — des valeurs attendues posées depuis le seul texte, sans lire le code, sur chaque seuil de la règle — est verte ; un exemple officiel, un autre moteur ou le simulateur d'une caisse en sont des témoins, qui ne prouvent pas seuls.
+
+**Aucune partie prouvée sur 918** : aucune grille indépendante n'existe encore. 14 fausses (section 2), 633 approchées, 204 non vérifiées, 67 hors champ. Un cliquet tient les parties prouvées (`tests/cliquets_de_justesse/prouvees.yaml`) : aucune ne recule sans le dire.
+
+| Famille de régimes | Parties | Prouvées | Fausses | Approchées | Non vérifiées | Hors champ | Texte tracé | Témoignées par un exemple officiel |
+|---|---|---|---|---|---|---|---|---|
+| salariés du privé, régimes de base | 280 | 0 | 6 | 177 | 67 | 30 | 65 | 40 |
+| salariés du privé, complémentaires | 169 | 0 | 3 | 112 | 47 | 7 | 47 | 21 |
+| fonction publique | 202 | 0 | 2 | 117 | 55 | 28 | 18 | 29 |
+| artisans, commerçants et autres non-salariés | 202 | 0 | 5 | 148 | 45 | 4 | 51 | 38 |
+| régimes agricoles | 243 | 0 | 6 | 167 | 57 | 13 | 75 | 40 |
+| libéraux et avocats | 212 | 0 | 1 | 173 | 35 | 3 | 71 | 22 |
+| régimes spéciaux | 240 | 0 | 3 | 158 | 57 | 22 | 38 | 29 |
+| retraite additionnelle, en capitalisation | 40 | 0 | 4 | 10 | 15 | 11 | 9 | 12 |
+| sans famille | 1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
+| toute la carte | 918 | 0 | 14 | 633 | 204 | 67 | 240 | 82 |
+
+Une partie compte dans chaque famille de ses régimes, et une fois dans le total. Parmi les 918 parties, 158 sont des versions supposées, qu'aucune grille ne peut prouver tant que leur texte n'est pas retrouvé ; 43 ont un exemple officiel que leur fiche cite sans dire pour quelle version, et qui ne témoigne donc pour aucune. Les confrontations aux autres moteurs que 43 fiches racontent en prose ne valent pas témoin : rien n'y dit, cas par cas, ce qui concorde. La carte ne connaît encore que les règles : les barèmes, les régimes de bout en bout, les cas types et les totaux n'y ont pas leurs preuves (section 4).
+
+**Un autre moteur, quantité par quantité.** TRAJECTOiRE (3.3.2) rejoue 85 carrières (`tests/temoins/trajectoire_3/ecarts.json`, `scripts/confronter_trajectoire.py`) : **541 quantités sur 818** concordent. Un écart n'est pas une erreur du dépôt, seul le texte tranche ; il dit où relire. Chaque cas est une carrière entière, que rien ne rattache encore à une règle : ce tableau ne change l'état d'aucune partie.
+
+| Quantité | Cas | Concordent | En écart |
+|---|---|---|---|
+| pension_totale | 62 | 5 | 57 |
+| fonction_publique | 29 | 4 | 25 |
+| points_rafp | 29 | 4 | 25 |
+| salaire_annuel_moyen | 31 | 6 | 25 |
+| rafp | 29 | 5 | 24 |
+| traitement_de_reference | 29 | 6 | 23 |
+| regime_general | 31 | 10 | 21 |
+| taux | 75 | 63 | 12 |
+| trimestres_requis | 75 | 65 | 10 |
+| trimestres | 85 | 76 | 9 |
+| minimum | 62 | 56 | 6 |
+| rafp_en_capital | 29 | 24 | 5 |
+| carriere_longue | 85 | 81 | 4 |
+| msa_non_salaries | 4 | 0 | 4 |
+| msa_rco | 4 | 0 | 4 |
+| points_msa_non_salaries | 4 | 0 | 4 |
+| points_msa_rco | 4 | 0 | 4 |
+| age_ouverture | 68 | 65 | 3 |
+| asv_conventionnes | 2 | 0 | 2 |
+| carmf_complementaire | 2 | 0 | 2 |
+| cnavpl | 2 | 0 | 2 |
+| points_asv_conventionnes | 2 | 0 | 2 |
+| points_carmf_complementaire | 2 | 0 | 2 |
+| points_cnavpl | 2 | 0 | 2 |
+| majoration_complementaires | 2 | 2 | 0 |
+| majoration_fonction_publique | 1 | 1 | 0 |
+| majoration_regime_general | 2 | 2 | 0 |
+| points_agirc | 2 | 2 | 0 |
+| points_agirc_arrco | 20 | 20 | 0 |
+| points_arrco | 11 | 11 | 0 |
+| valeur_point_agirc | 2 | 2 | 0 |
+| valeur_point_agirc_arrco | 20 | 20 | 0 |
+| valeur_point_arrco | 11 | 11 | 0 |
+
 **La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 18 012 rédactions d'articles, de 325 textes, lues le 2026-11-16 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20261116-104909). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
 
 | Statut | Rédactions |
@@ -115,7 +172,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 **Ce qui est hors de la page Coût.** La réversion, par exemple, pèse 10,4 % de la masse des prestations en 2024 (COR) : le modèle en calcule une pour une personne (scénario 1), mais la page Coût n'en connaît que cette part publiée, qu'elle ne calcule pas.
 
-**La feuille de route** compte 194 actions : 140 fait, 29 en cours, 21 à faire, 2 archivée, 2 abandonnée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
+**La feuille de route** compte 195 actions : 140 fait, 30 en cours, 21 à faire, 2 archivée, 2 abandonnée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
 
 ## 2. Ce qui ne va pas encore
 
@@ -370,9 +427,22 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `erafp_1963_effet_2026_11_5000_points` | prestation_rafp | forme capital_fractionne, age_legal 62,75, coefficient 1,05, premiere_fraction 99,24 | forme capital_fractionne, age_legal 62,75, coefficient 1,05333, premiere_fraction 99,56 | `rafp_majoration_capital` |
 | `erafp_ra2012_jean_capital_62_ans` | prestation_rafp | forme capital, coefficient 1,08, conversion 24,62, capital 4030,38 | forme capital, coefficient 1,08, conversion 24,62, capital 4030,88 | `rafp_majoration_capital` |
 
+**Les parties que la carte de justesse calcule fausses** (section 1) : un écart y est établi. Chacune attend le numéro de l'action qui la corrige, qu'une preuve nomme (`data/reference/preuves/`) ; un écart né d'un exemple officiel n'en porte pas encore.
+
+- `coefficient_anticipation_ircantec / ancres_fixes_2023` : en écart avec `ircantec_minoration_age_avant_l_age_legal` ; aucune action nommée par une preuve.
+- `decote_avant_1983` : en écart avec `cnav_22_83_taux_acquis_117_trimestres` ; aucune action nommée par une preuve.
+- `liquidation_regime_par_regime / chaque_regime_a_sa_date` : en écart avec `ircantec_minoration_age_avant_l_age_legal` ; aucune action nommée par une preuve.
+- `minimum_pension_ieg / assiette_minimale_avant_2008`, `minimum_pension_ieg / minimum_2008` : règle connue, absente du modèle ; aucune action nommée par une preuve.
+- `pension_maximale_regime_general / cinquante_pour_cent_du_plafond` : en écart avec `cnav_22_83_taux_acquis_117_trimestres` ; aucune action nommée par une preuve.
+- `rafp_majoration_capital / deliberation_2005`, `rafp_majoration_capital / fractionnement_2024` : en écart avec `erafp_1958_effet_2026_11_8000_points`, `erafp_1963_effet_2026_11_5000_points`, `erafp_ra2012_jean_capital_62_ans` ; aucune action nommée par une preuve.
+- `reversion / abattement_2005`, `reversion / age_52`, `reversion / minimum_2026` : en écart avec `cnav_2005_17_derniere_revision_sans_droit_propre`, `cnav_2006_37_revision_au_constat`, `ur_reversion_prive_ressources_plafond_2024` ; aucune action nommée par une preuve.
+- `reversion_agirc_arrco / accord_2017` : en écart avec `aa_reversion_david`, `aa_reversion_francois`, `aa_reversion_simone`, `ur_reversion_prive_ressources_plafond_2024` ; aucune action nommée par une preuve.
+- `reversion_fonction_publique / complement_aspa_2025` : en écart avec `ur_reversion_etat_mariage_3_ans_et_demi` ; aucune action nommée par une preuve.
+- `reversion_rafp / decret_2004` : en écart avec `ur_reversion_etat_mariage_3_ans_et_demi` ; aucune action nommée par une preuve.
+
 ## 3. Ce qui reste à faire, et par quoi commencer
 
-- **Les 29 actions en cours** de la feuille de route :
+- **Les 30 actions en cours** de la feuille de route :
   - 47. La garantie vieillesse est une avance : la reprise sur succession, sa règle et son chiffrage
   - 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026
   - 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, puis le défaut
@@ -402,6 +472,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 191. Les fiches de la carte, exécutables : le moteur lit chaque règle dans les versions de sa fiche, domaine par domaine
   - 192. Ce que la passe de lecture du 12 novembre a trouvé dans le modèle : chaque point lu, vérifié, puis écrit ou dit
   - 193. Les caisses de retraite, une par une, sur le site : comment chacune marche
+  - 194. La carte de justesse : l'état de chaque partie du simulateur calculé depuis ses preuves, puis prouvé régime par régime
 - **Les sources à exploiter** : 7 à explorer sur 332 (126 explorées, 198 épuisées). 0 d'entre elles visent un régime partiel, et pourraient le compléter :
   - et 4 sources sans régime désigné.
 - **Les autres modèles** (§ 3.4) : 70 au registre (`data/reference/referents.yaml`) : 32 au code ouvert, 1 sur demande, 13 documenté(s) sans leur code, 24 non public(s). 28 ont déjà été confrontés au dépôt ou lui donnent des valeurs (Barèmes IPP, OpenFisca-France, OpenFisca-France-Pension, Destinie 2, Ines, TRAJECTOiRE, ANCETRE, legiretraite (paquet R), EDIFIS, Maquette globale de projection du COR, Maquette simplifiée du secrétariat général du COR, PRISME (Projection des Retraites, Simulations, Modélisation et Évaluations), Saphir, modele-ti, modele-social, modele-as, Catala (catala-examples), ir-catala, EUROMOD (France), Retraites 2027, Simulateur de dépense publique, volet retraites, « Quand pourrai-je partir à la retraite ? », Simulateur de SUD éducation, devcrafting/retraites, calcul-verification-pension-retraite, Simulateur de cas types de Nos Retraites, Les modèles de pension de l'OCDE, Ageing Report et ses fiches pays) ; le registre compte 242 écarts, dont 210 chez eux. Aucun n'est plus à confronter au scénario 1 en premier : tous ceux dont le code est ouvert et qui ne dépendent d'aucune autre source du registre l'ont été.
@@ -433,4 +504,5 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 - **Ce que personne n'a encore noté, hors des articles.** Pour les articles, le dénominateur est la loi (section 1). Les situations des fiches service-public et des circulaires, les accords Agirc-Arrco et les statuts des caisses n'ont pas encore de liste.
 - **Les règles du code qui ont leur fiche.** Une fiche dira son code. Celles que les interrupteurs des régimes désignent disent la valeur qu'elles y posent ; aucune ne nomme encore sa fonction, et le tableau compte en attendant les identifiants que le code cite.
 - **Les limites propres à une simulation.** Le site les montrera avec chaque résultat, et les présomptions qu'elle emploie : la chronologie les liste, le site ne les affiche pas encore.
+- **La justesse au-delà des règles.** La carte de justesse (section 1) ne calcule l'état que des règles. Les barèmes (chaque valeur lue à deux sources), les régimes de bout en bout (une carrière complète retrouvée, par époque), les cas types et les totaux (contre les statistiques) n'y ont pas encore leurs preuves ; une erreur connue que sa fiche déclare en approximation y reste « approchée », non « fausse ».
 - **Le coût du travail** se relève sur l'historique git, et change à chaque commit : il s'affiche à la demande, par `python scripts/tableau_de_bord.py --cout`, avec les rouges de la suite sur `main` et la taille du dépôt — ses lignes, ses tests —, que la prose ne porte plus.

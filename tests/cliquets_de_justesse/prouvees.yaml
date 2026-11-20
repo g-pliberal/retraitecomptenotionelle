@@ -1,0 +1,17 @@
+# Le cliquet de la carte de justesse (action 194, étape A ;
+# tests/test_justesse.py, `test_aucune_partie_prouvee_ne_recule`).
+#
+# Les parties que `noyau/justesse.py` calcule prouvées, avec ou sans témoin,
+# chacune sous son nom : « fiche / version », ou la fiche seule. La liste ne
+# peut que s'allonger : une partie qui y est et que le calcul ne rend plus
+# prouvée fait échouer la suite. On répare ; ou, si c'est la preuve qui était
+# fausse, on passe la partie sous `retirees`, avec le jour et la raison :
+#
+#   retirees:
+#     "fiche / version": {le: AAAA-MM-JJ, raison: "au moins huit mots"}
+#
+# Posée vide le 20 novembre 2026 : aucune grille indépendante n'existe encore.
+
+prouvees: []
+
+retirees: {}

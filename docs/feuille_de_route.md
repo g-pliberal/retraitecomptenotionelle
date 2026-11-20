@@ -8353,3 +8353,46 @@ Il a validé la maquette des caisses et choisi de l'intégrer au site.
    budget de l'État) pour celles que le dépôt n'a pas ;
 4. l'histoire « Où va votre argent ? », en porte d'entrée de la page, sur
    décision du propriétaire.
+
+### 194. La carte de justesse : l'état de chaque partie du simulateur calculé depuis ses preuves, puis prouvé régime par régime — `en cours`
+
+**Reprise, au 20 novembre 2026.** Le tableau de bord (`docs/etat.md`, section
+1) porte une carte de justesse. Elle dit de chaque règle, période par période,
+si elle est prouvée, fausse, approchée, non vérifiée ou hors champ. Un script
+la calcule depuis les preuves. Aucune partie n'est encore prouvée, parce
+qu'aucune grille de valeurs attendues, posée depuis le seul texte sans lire le
+code, n'existe. Une liste tient les parties prouvées, et la suite échoue si
+l'une recule. La première étape est faite. Reste la deuxième : le balayage de
+cohérence sur tous les cas types, puis la neutralisation de chaque règle, qui
+dit lesquelles aucun test ne garde. Le propriétaire a demandé un point d'arrêt
+après elle : ne pas enchaîner sur les suivantes sans lui. Commencer par la
+note `194/2026-11-20-etape-a-la-carte-calculee.md`, qui dit le format d'une
+preuve et ce que la carte ne sait pas encore.
+
+**D'où elle vient.** Le 20 novembre 2026, le propriétaire : « j'ai
+l'impression qu'on tourne en rond en découvrant des problèmes par hasard »,
+et : « j'ai envie qu'on puisse dire cette partie-là du simulateur est juste à
+100 % mais cette autre partie, on connaît déjà les actions à mener pour
+qu'elle devienne juste ». La proposition qui lui a été remise le même jour
+décrit six étapes ; il a retenu les deux premières, puis un point d'arrêt. Il
+a précisé que les notifications de pension d'adhérents ne seraient qu'un
+appoint : la preuve repose sur ce qui ne dépend que du dépôt, la lecture
+tracée du texte et la grille indépendante.
+
+**Les étapes :**
+
+A. la carte calculée : le format des preuves, le calcul des états, la carte
+   au tableau de bord, le cliquet des parties prouvées — faite le 20 novembre
+   2026 ;
+B. les deux filets : le balayage de cohérence (cotiser plus ne baisse jamais
+   la pension, aucun saut entre deux générations hors ceux de la loi) sur
+   tous les cas types, générations et âges de départ ; la neutralisation, qui
+   liste les règles qu'aucun test ne garde. Puis le point d'arrêt ;
+C. les autres moteurs en continu : Trajectoire exécuté à part sur une grille
+   du dépôt, sa version épinglée au registre, la veille de ses versions ;
+D. les cas types et les totaux, chacun contrôlé contre les statistiques, le
+   libéral type d'abord ;
+E. la preuve régime par régime : pour chaque caisse, la lecture tracée et une
+   grille indépendante, dans l'ordre de la relecture en cours ;
+F. le panel des simulateurs de caisses, une trentaine de cas saisis à la main
+   une fois par an.
