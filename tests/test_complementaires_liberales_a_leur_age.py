@@ -132,3 +132,35 @@ def test_la_cavp_n_ouvre_pas_avant_l_age_de_la_base(servis):
     61 ans et 2 mois."""
     actuel = servis["pharmacien|1953-03-10|61"]
     assert not actuel["liquidation_ouverte"]
+
+
+def test_la_carriere_longue_n_ouvre_pas_la_carpimko_avant_son_age():
+    """Statuts de la CARPIMKO, article 11 (arrêtés du 31 juillet 2015 et du
+    27 décembre 2023, JORFARTI000031255547 et JORFARTI000048880643), règlement
+    de 2026, article 3 (JORFARTI000054435915) : le taux plein s'ouvre avant
+    l'âge de L. 161-17-2 aux seuls assurés du IV de L. 643-3 (l'inapte et les
+    catégories) et du III (le départ anticipé des assurés handicapés) ; le II,
+    la carrière longue, n'y est pas nommé. Né le 10 mars 1957, entré à dix-huit
+    ans, parti à soixante ans : la base le 1er avril 2017, par la carrière
+    longue ; la complémentaire à l'« âge minimal pour liquider sa retraite »
+    de sa génération, 60 ans et 8 mois (article 12 quater), le 10 novembre
+    2017 : le 1er décembre 2017. Né le 10 mars 1964, entré à dix-sept ans,
+    parti à soixante ans le 1er avril 2024 : la complémentaire après la base,
+    non avec elle."""
+    cas = [{"cle": naissance, "requete": {
+        **REQUETE, "statut": "auxiliaire_medical", "naissance": naissance,
+        "debut": debut, "liquidation": "60"}}
+        for naissance, debut in (("1957-03-10", "18"), ("1964-03-10", "17"))]
+    servis, refus = servi_et_fige(cas)
+    assert refus == {}, refus
+    de_1957 = servis["1957-03-10"]["actuel"]
+    assert de_1957["motif_ouverture"] == "carriere_longue"
+    assert [(d["date_effet"], d["motif"]) for d in de_1957["departs"]] == [
+        ("2017-04-01", "depart"), ("2017-12-01", "ouverture")]
+    carpimko = {p["regime"]: p for p in de_1957["pensions_par_regime"]}[
+        "carpimko_complementaire"]
+    assert "servie à partir du 1er décembre 2017" in carpimko["detail"]
+    de_1964 = servis["1964-03-10"]["actuel"]
+    assert de_1964["departs"][0] == {"date_effet": "2024-04-01", "motif": "depart"}
+    assert de_1964["departs"][1]["motif"] == "ouverture"
+    assert de_1964["departs"][1]["date_effet"] > "2024-04-01"

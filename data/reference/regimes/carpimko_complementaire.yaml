@@ -432,6 +432,7 @@ periodes:
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     age_table: carpimko_2016
+    fermee_a_la_carriere_longue: true
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
@@ -496,6 +497,7 @@ periodes:
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     age_table: carpimko_2016
+    fermee_a_la_carriere_longue: true
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
@@ -539,6 +541,7 @@ periodes:
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     age_table: carpimko_2016
+    fermee_a_la_carriere_longue: true
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
@@ -582,6 +585,7 @@ periodes:
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     age_table: carpimko_2016
+    fermee_a_la_carriere_longue: true
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
@@ -625,6 +629,7 @@ periodes:
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     age_table: carpimko_2016
+    fermee_a_la_carriere_longue: true
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
@@ -668,6 +673,7 @@ periodes:
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     age_table: carpimko_2016
+    fermee_a_la_carriere_longue: true
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
@@ -711,6 +717,7 @@ periodes:
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     age_table: carpimko_2016
+    fermee_a_la_carriere_longue: true
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
@@ -754,6 +761,7 @@ periodes:
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     age_table: carpimko_2016
+    fermee_a_la_carriere_longue: true
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
@@ -797,6 +805,7 @@ periodes:
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     age_table: carpimko_2016
+    fermee_a_la_carriere_longue: true
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
@@ -845,6 +854,7 @@ periodes:
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     age_table: carpimko_2016
+    fermee_a_la_carriere_longue: true
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0
@@ -888,6 +898,7 @@ periodes:
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     age_table: carpimko_2016
+    fermee_a_la_carriere_longue: true
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 1.0

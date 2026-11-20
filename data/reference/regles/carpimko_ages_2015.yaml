@@ -632,19 +632,22 @@ approximations:
     statuts, articles 11 et 12, rédactions de 2015, 2019 et 2024 ; règlement de 2026,
     articles 3 et 4 ; L. 643-3 CSS, II et III (LEGIARTI000047453031)
   ecart: >-
-    En carrière longue, la CARPIMKO est servie avec la base, à l'âge que la durée lui
-    ouvre, quand ni ses statuts ni son règlement ne l'ouvrent : déclaré dans
-    `liquidation_regime_par_regime` (relecture R-N2, N-bis 0ba2aea). Jusqu'au
-    19 novembre 2026, la fiche lisait le 4) de l'article 11 de 2024, « Dès l'âge prévu au
-    III de l'article L. 643-3 », comme la carrière longue : le III est le départ des
-    assurés handicapés, la carrière longue est au II, que le texte ne nomme pas. La
-    caisse écrit le départ anticipé « sans application de décote au titre du régime de
-    base » et l'âge minimum de la complémentaire à l'âge légal (carpimko.com, « À quel
-    âge prendre ma retraite » et notice « Départ anticipé 2024 », lues le 19 novembre
-    2026), sans dire ce qu'elle sert de la complémentaire à qui part en carrière longue.
+    La carrière longue du régime de base (II de L. 643-3) n'ouvre pas la complémentaire,
+    que ni les statuts ni le règlement ne lui ouvrent : depuis le 20 novembre 2026, le
+    modèle la sert à son âge, au taux plein (`fermee_a_la_carriere_longue`), et non plus
+    avec la base. Le 4) de l'article 11 de 2024, « Dès l'âge prévu au III de l'article
+    L. 643-3 », est le départ des assurés handicapés. Le texte ne tranche pas tout : pour
+    les nés après le 31 août 1961, il ne dit plus l'âge minimal depuis 2024, et une
+    pension servie avant l'âge légal, minorée de 1,25 % par trimestre « manquant pour
+    pouvoir liquider la retraite de base à taux plein », donc de rien, s'y lirait aussi.
+    La caisse écrit l'âge minimum de la complémentaire à l'âge légal et le départ
+    anticipé « sans application de décote au titre du régime de base » (carpimko.com,
+    « À quel âge prendre ma retraite » et notice « Départ anticipé 2024 », lues le
+    19 novembre 2026), sans dire ce qu'elle sert à qui part en carrière longue.
   effet: >-
-    voir `liquidation_regime_par_regime` ; mesuré le 19 novembre 2026 dans
-    `191/2026-11-19-cultes-et-carpimko.md`
+    si la caisse servait la complémentaire avec la base, le modèle la retarderait à
+    tort, de huit mois (né en 1957) à trois ans et trois mois (né en 1966) pour un
+    départ à soixante ans : `191/2026-11-19-cultes-et-carpimko.md`
 - version: [statuts_de_2015, statuts_de_2019, statuts_de_2024, reglement_de_2026]
   textes: >-
     statuts, article 11, 2°, b, rédaction de 2015 ; article 11, 3), a, rédaction de
@@ -936,7 +939,7 @@ code:
     surcote_age_legal_de_la_base_jusqu_a_la_generation,
     surcote_trimestres_maximum, effet_au_trimestre_civil, date_effet,
     decote_annulee_par_la_duree, age_taux_plein, age_sans_coefficient_de_l_inapte,
-    categories_sans_coefficient ;
+    categories_sans_coefficient, fermee_a_la_carriere_longue ;
     legislation/ages_regimes.csv : carpimko_2016, generation, age_ouverture,
     age_taux_plein
   tests:

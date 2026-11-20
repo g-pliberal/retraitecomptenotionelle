@@ -753,6 +753,16 @@ champs_periode:
       article 12). `false` : la carrière longue reçoit la minoration de tous.
     defaut: false
 
+  fermee_a_la_carriere_longue:
+    description: >-
+      Régimes en points : le départ anticipé pour carrière longue du régime de
+      base n'ouvre pas la pension que la période liquide, servie à l'âge de
+      ses statuts — la CARPIMKO, dont l'article 11 (statuts de 2015 et de
+      2024) et l'article 3 du règlement de 2026 n'ouvrent le taux plein avant
+      l'âge de L. 161-17-2 qu'aux assurés du III et du IV de L. 643-3, non à
+      ceux du II. `false` : la carrière longue l'ouvre avec la base.
+    defaut: false
+
   carriere_longue_minoree_de:
     description: >-
       Régimes en points : le coefficient de minoration fixe (fraction) de la

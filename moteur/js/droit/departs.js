@@ -252,7 +252,10 @@ function ouvertureSous(moteur, carriere, periodes) {
     ([, periode]) => ouvrirLeDroit.ageOuverture(moteur, periode, carriere)));
   const opposent = annuites.length > 0
     ? annuites : ouvrirLeDroit.periodesOpposantUneDuree(autres);
-  for (const anticipe of [carriereLongueAcquise(moteur, carriere, opposent),
+  // La carrière longue n'ouvre pas le régime dont les statuts ne la nomment
+  // pas (`fermee_a_la_carriere_longue`) : la CARPIMKO, servie à son âge.
+  const ouvertes = opposent.filter(([, periode]) => !periode.fermee_a_la_carriere_longue);
+  for (const anticipe of [carriereLongueAcquise(moteur, carriere, ouvertes),
     handicapAcquis(moteur, carriere, opposent)]) {
     if (anticipe !== null && anticipe < age) {
       age = anticipe;

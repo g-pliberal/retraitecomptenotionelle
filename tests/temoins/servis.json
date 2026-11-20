@@ -8596,6 +8596,77 @@
    "reversion": null
   }
  },
+ "57460ab23ba88809": {
+  "cas": {
+   "requete": {
+    "age_reference": "fixe_apres_bascule",
+    "bascule": "2026",
+    "conversion_acquis": "reference",
+    "debut": "17",
+    "emploi": "cor_2026",
+    "enfants": "0",
+    "euros": "2026",
+    "indexation": "triple_lock_inverse",
+    "liquidation": "60",
+    "naissance": "1964-03-10",
+    "primes": "0",
+    "profil": "plat",
+    "projection": "cor_reference",
+    "salaire": "2",
+    "sexe": "H",
+    "statut": "auxiliaire_medical",
+    "stock": "prix",
+    "table": "unisexe"
+   }
+  },
+  "cle": "1964-03-10",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [],
+    "departs": [
+     {
+      "date_effet": "2024-04-01",
+      "motif": "depart"
+     },
+     {
+      "date_effet": "2027-01-01",
+      "motif": "ouverture"
+     }
+    ],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "carriere_longue",
+    "pension_annuelle": 18948.86607071506,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "19,231.71 points × valeur de service 0.6399 €",
+      "montant": 12306.371699119814,
+      "regime": "cnavpl",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "1,237.53 points × valeur de service 1.542606 € ; servie à partir du 1er janvier 2027, 1,909.02 € de 2027, soit 1,826.69 € de 2024",
+      "montant": 1826.6937888506673,
+      "regime": "asv_auxiliaires_medicaux",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "cotisations revalorisées 91,673 € × rendement 5.49% ; servie à partir du 1er janvier 2027, 5,032.84 € de 2027, soit 4,815.80 € de 2024",
+      "montant": 4815.800582744579,
+      "regime": "carpimko_complementaire",
+      "type_calcul": "points"
+     }
+    ],
+    "taux_liquidation": 0.0,
+    "trimestres_requis": 0,
+    "trimestres_valides": 172
+   },
+   "annee_liquidation": 2024,
+   "coefficient_euros_constants": 1.0270950250000002,
+   "mois_liquidation": 4,
+   "reversion": null
+  }
+ },
  "583f0d0749944a24": {
   "cas": {
    "requete": {
@@ -13457,6 +13528,77 @@
    },
    "annee_liquidation": 2025,
    "coefficient_euros_constants": 1.0175,
+   "mois_liquidation": 4,
+   "reversion": null
+  }
+ },
+ "8eb4d6e09be541df": {
+  "cas": {
+   "requete": {
+    "age_reference": "fixe_apres_bascule",
+    "bascule": "2026",
+    "conversion_acquis": "reference",
+    "debut": "18",
+    "emploi": "cor_2026",
+    "enfants": "0",
+    "euros": "2026",
+    "indexation": "triple_lock_inverse",
+    "liquidation": "60",
+    "naissance": "1957-03-10",
+    "primes": "0",
+    "profil": "plat",
+    "projection": "cor_reference",
+    "salaire": "2",
+    "sexe": "H",
+    "statut": "auxiliaire_medical",
+    "stock": "prix",
+    "table": "unisexe"
+   }
+  },
+  "cle": "1957-03-10",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [],
+    "departs": [
+     {
+      "date_effet": "2017-04-01",
+      "motif": "depart"
+     },
+     {
+      "date_effet": "2017-12-01",
+      "motif": "ouverture"
+     }
+    ],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "carriere_longue",
+    "pension_annuelle": 17224.515355269952,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "17,895.02 points × valeur de service 0.5672 €",
+      "montant": 10150.056283008116,
+      "regime": "cnavpl",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "1,130.10 points × valeur de service 1.246938 € ; servie à partir du 1er décembre 2017, 1,409.16 € de 2017, soit 1,409.16 € de 2017",
+      "montant": 1409.1603852570752,
+      "regime": "asv_auxiliaires_medicaux",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "cotisations revalorisées 53,245 € × rendement 10.64% ; servie à partir du 1er décembre 2017, 5,665.30 € de 2017, soit 5,665.30 € de 2017",
+      "montant": 5665.298687004762,
+      "regime": "carpimko_complementaire",
+      "type_calcul": "points"
+     }
+    ],
+    "taux_liquidation": 0.0,
+    "trimestres_requis": 0,
+    "trimestres_valides": 168
+   },
+   "annee_liquidation": 2017,
+   "coefficient_euros_constants": 1.2158379841309352,
    "mois_liquidation": 4,
    "reversion": null
   }

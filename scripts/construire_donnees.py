@@ -989,6 +989,8 @@ def _regles_des_sections(p) -> dict:
         # La carrière longue de la CAVP depuis 2024, à la première pente seule.
         "carriere_longue_minoree_jusqu_au_palier": (
             p.carriere_longue_minoree_jusqu_au_palier or None),
+        # La CARPIMKO, que la carrière longue de la base n'ouvre pas.
+        "fermee_a_la_carriere_longue": p.fermee_a_la_carriere_longue or None,
         # La longue carrière de la CAVAMAC depuis 2024, à 15 % dès 62 ans.
         "carriere_longue_minoree_de": p.carriere_longue_minoree_de,
         "carriere_longue_minoree_depuis_l_age":

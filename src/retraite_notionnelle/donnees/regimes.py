@@ -888,6 +888,12 @@ class PeriodeRegime:
     #: (article 12). ``False`` : la carrière longue reçoit la minoration de
     #: tous.
     carriere_longue_minoree_jusqu_au_palier: bool = False
+    #: LA CARRIÈRE LONGUE N'OUVRE PAS CE RÉGIME, pour une pension que la
+    #: période liquide : ses statuts n'ouvrent la pension qu'à leur âge, et ne
+    #: nomment pas le départ pour carrière longue du régime de base (CARPIMKO,
+    #: statuts de 2015, articles 11, 12 et 12 quater ; règlement de 2026,
+    #: article 3). ``False`` : la carrière longue l'ouvre avec la base.
+    fermee_a_la_carriere_longue: bool = False
     #: LA LONGUE CARRIÈRE MINORÉE D'UN COEFFICIENT FIXE, pour une pension que
     #: la période liquide : « Avec, dans les deux cas, l'application d'un
     #: coefficient de minoration de 15 % », écrivent les statuts de la CAVAMAC
@@ -2565,6 +2571,9 @@ class CatalogueRegimes:
                 ),
                 carriere_longue_minoree_jusqu_au_palier=bool(
                     p.get("carriere_longue_minoree_jusqu_au_palier", False)
+                ),
+                fermee_a_la_carriere_longue=bool(
+                    p.get("fermee_a_la_carriere_longue", False)
                 ),
                 carriere_longue_minoree_de=(
                     None if p.get("carriere_longue_minoree_de") is None

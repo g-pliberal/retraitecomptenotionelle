@@ -1,18 +1,5 @@
 # Le minimum des cultes et la carrière longue de la Carpimko, relus au texte
 
-**Reprise, au 19 novembre 2026.** Deux doutes de la lecture des rédactions
-sont instruits. Le minimum contributif des cultes reste écrêté : la règle du
-modèle tient, la fiche le déclare, et le dernier cas du cliquet « loi
-modifiée » est levé. La complémentaire des auxiliaires médicaux, elle, est
-servie à tort au départ pour carrière longue : ses statuts ne l'ouvrent qu'à
-leur âge, à toute date depuis 2015. Les fiches le disent désormais. La
-correction du moteur est prête, mais non publiée : elle retarde la
-complémentaire de plusieurs années pour ces assurés, et attend l'accord du
-propriétaire. Par quoi commencer : son accord, puis appliquer le correctif
-gardé dans les fichiers du projet,
-`ecarts/2026-11-19-carpimko-carriere-longue.patch`, refaire le paquet et les
-témoins, et retirer l'écart des deux fiches. Le détail est plus bas.
-
 Le 19 novembre 2026, la session instruit les deux points que la note
 `2026-11-19-redactions-dont-les-fiches-ne-disent-rien.md` laissait ouverts.
 Aucun résultat ne change.
@@ -116,3 +103,11 @@ Aujourd'hui, le modèle le sert aussi sans coefficient au départ pour carrière
 longue, ce que son règlement, qui ouvre à 65 ans ou à 60 ans à l'inapte, ne
 fonde pas davantage : non instruit ici. La CAVOM et la CPRN, dont les statuts
 ne disent rien non plus de la carrière longue, gardent leur écart déclaré.
+
+**Publiée le 20 novembre 2026.** Le propriétaire a choisi de publier la
+correction. Elle est sur `main` telle que préparée, le paquet refait ; aucun
+des 936 témoins de simulation ni des 86 rendus de page ne bouge, aucun ne
+portant d'auxiliaire médical parti en carrière longue. Les deux fiches disent
+la règle servie et ce que le texte laisse ouvert. Reste, pour une autre étape :
+l'avantage social vieillesse des auxiliaires médicaux, que la correction
+retarde avec la complémentaire sans que son règlement ait été lu pour ce cas.

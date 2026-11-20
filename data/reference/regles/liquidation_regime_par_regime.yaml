@@ -329,16 +329,21 @@ approximations:
     anticipé au titre du régime de base » n'entre à l'article 11 que par l'arrêté du
     27 décembre 2023 (JORFARTI000048880643, le 10 janvier 2024), et le III de L. 643-3
     est le départ des assurés handicapés, non la carrière longue, qui est au II
-    (LEGIARTI000047453031) : relu le 19 novembre 2026, l'écart de la CARPIMKO vaut donc
+    (LEGIARTI000047453031) : relu le 19 novembre 2026, l'écart de la CARPIMKO valait donc
     aussi depuis 2024. Le défaut précède le 5 novembre 2026 : la complémentaire suivait
-    déjà la base
+    déjà la base. Celui de la CARPIMKO est corrigé le 20 novembre 2026, sur l'accord du
+    propriétaire : la carrière longue ne l'ouvre plus (`fermee_a_la_carriere_longue`),
+    pour toute pension qui prend effet depuis le 3 octobre 2015 ; celui de la CAVP
+    d'avant 2024 reste
   effet: >-
     mesuré dans les deux moteurs le 5 novembre 2026 (relecture R-N2, refaite par N-bis) :
     né le 10 mars 1957, entré à dix-huit ans, parti à soixante ans le 1er avril 2017, le
     pharmacien reçoit en un seul départ, motif `carriere_longue`, sa CAVP à 0,75, quand
-    elle ne s'ouvre qu'à soixante-deux ans ; l'auxiliaire médical, sa CARPIMKO sans
-    abattement, quand elle ne s'ouvre qu'à soixante ans et huit mois. Erreur du modèle,
-    non corrigée : candidat, que la session d'orchestration porte au propriétaire
+    elle ne s'ouvre qu'à soixante-deux ans : erreur du modèle, non corrigée, candidat que
+    la session d'orchestration porte au propriétaire ; l'auxiliaire médical recevait sa
+    CARPIMKO sans abattement le même jour, et la reçoit depuis le 20 novembre 2026 à
+    soixante ans et huit mois, le 1er décembre 2017
+    (tests/test_complementaires_liberales_a_leur_age.py)
 - ecart: >-
     la CARPIMKO ne dit plus, depuis 2024, l'âge minimal des nés après le 31 août 1961 :
     l'arrêté du 27 décembre 2023 supprime les deux premiers alinéas de l'article 12 (« Le
