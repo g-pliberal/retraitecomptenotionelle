@@ -1,0 +1,4430 @@
+{
+ "cas": {
+  "cor_10_1955": {
+   "depart": "2015-02",
+   "montants_confrontes": true,
+   "objet": "cas type 10 du COR : non-cadre du privé puis fonctionnaire territorial",
+   "quantites": {
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 1041.21,
+     "ecart": 0.021,
+     "statut": "ecart",
+     "trajectoire": 1019.81
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1381.1,
+     "ecart": 0.0029,
+     "statut": "concorde",
+     "trajectoire": 1377.07
+    },
+    "points_arrco": {
+     "ecart": -0.2613,
+     "statut": "concorde"
+    },
+    "points_rafp": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0797,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 14.52,
+     "ecart": -0.0908,
+     "statut": "ecart",
+     "trajectoire": 15.97
+    },
+    "rafp_en_capital": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 1.0,
+     "statut": "ecart"
+    },
+    "regime_general": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 226.51,
+     "ecart": 0.0918,
+     "statut": "ecart",
+     "trajectoire": 207.45
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 0.0918,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0171,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_arrco": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_10_1960": {
+   "depart": "2020-01",
+   "montants_confrontes": true,
+   "objet": "cas type 10 du COR : non-cadre du privé puis fonctionnaire territorial",
+   "quantites": {
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 1064.28,
+     "ecart": 0.0257,
+     "statut": "ecart",
+     "trajectoire": 1037.57
+    },
+    "minimum": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1425.63,
+     "ecart": -0.0187,
+     "statut": "ecart",
+     "trajectoire": 1452.8
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.2882,
+     "statut": "concorde"
+    },
+    "points_rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0659,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 20.75,
+     "ecart": -0.1266,
+     "statut": "ecart",
+     "trajectoire": 23.76
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 241.94,
+     "ecart": -0.0432,
+     "statut": "ecart",
+     "trajectoire": 252.87
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 0.0251,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0099,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc_arrco": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_10_1963": {
+   "depart": "2024-01",
+   "montants_confrontes": true,
+   "objet": "cas type 10 du COR : non-cadre du privé puis fonctionnaire territorial",
+   "quantites": {
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 1192.51,
+     "ecart": 0.014,
+     "statut": "ecart",
+     "trajectoire": 1176.07
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1626.63,
+     "ecart": -0.0144,
+     "statut": "ecart",
+     "trajectoire": 1650.47
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.2657,
+     "statut": "concorde"
+    },
+    "points_rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0299,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 33.59,
+     "ecart": -0.0102,
+     "statut": "ecart",
+     "trajectoire": 33.93
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 285.68,
+     "ecart": 0.0057,
+     "statut": "ecart",
+     "trajectoire": 284.06
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0057,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "ecart": -0.036,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc_arrco": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_10_1964": {
+   "depart": "2025-07",
+   "montants_confrontes": true,
+   "objet": "cas type 10 du COR : non-cadre du privé puis fonctionnaire territorial",
+   "quantites": {
+    "carriere_longue": {
+     "ecart": -1.0,
+     "statut": "ecart"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 1093.62,
+     "ecart": -0.0963,
+     "statut": "ecart",
+     "trajectoire": 1210.21
+    },
+    "minimum": {
+     "ecart": -1.0,
+     "statut": "ecart"
+    },
+    "pension_totale": {
+     "depot": 1540.76,
+     "ecart": -0.0932,
+     "statut": "ecart",
+     "trajectoire": 1699.04
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.2621,
+     "statut": "concorde"
+    },
+    "points_rafp": {
+     "ecart": -0.0112,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 35.39,
+     "ecart": -0.0201,
+     "statut": "ecart",
+     "trajectoire": 36.11
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 296.75,
+     "ecart": 0.0049,
+     "statut": "concorde",
+     "trajectoire": 295.3
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0236,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": -0.0125,
+     "statut": "ecart"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0119,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 1.0,
+     "statut": "ecart"
+    },
+    "valeur_point_agirc_arrco": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_10_1970": {
+   "depart": "2032-01",
+   "montants_confrontes": false,
+   "objet": "cas type 10 du COR : non-cadre du privé puis fonctionnaire territorial",
+   "quantites": {
+    "carriere_longue": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -1.0,
+     "statut": "ecart"
+    },
+    "taux": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.025,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -2.0,
+     "statut": "ecart"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_11_1955": {
+   "depart": "2017-02",
+   "montants_confrontes": true,
+   "objet": "cas type 11 du COR : fonctionnaire territorial ou hospitalier sédentaire",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 2515.0,
+     "ecart": 0.0285,
+     "statut": "ecart",
+     "trajectoire": 2445.38
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 2544.41,
+     "ecart": 0.0284,
+     "statut": "ecart",
+     "trajectoire": 2474.17
+    },
+    "points_rafp": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 0.0184,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 29.42,
+     "ecart": 0.0218,
+     "statut": "ecart",
+     "trajectoire": 28.79
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 0.0285,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": 0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_11_1960": {
+   "depart": "2022-01",
+   "montants_confrontes": true,
+   "objet": "cas type 11 du COR : fonctionnaire territorial ou hospitalier sédentaire",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 2595.27,
+     "ecart": -0.0109,
+     "statut": "ecart",
+     "trajectoire": 2623.79
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 2637.38,
+     "ecart": -0.0101,
+     "statut": "ecart",
+     "trajectoire": 2664.18
+    },
+    "points_rafp": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 0.0425,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 42.1,
+     "ecart": 0.0425,
+     "statut": "ecart",
+     "trajectoire": 40.39
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0109,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_11_1963": {
+   "depart": "2025-10",
+   "montants_confrontes": true,
+   "objet": "cas type 11 du COR : fonctionnaire territorial ou hospitalier sédentaire",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "depot": 2751.34,
+     "ecart": -0.022,
+     "statut": "ecart",
+     "trajectoire": 2813.22
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 2809.53,
+     "ecart": -0.0207,
+     "statut": "ecart",
+     "trajectoire": 2868.83
+    },
+    "points_rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0159,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 58.19,
+     "ecart": 0.0464,
+     "statut": "ecart",
+     "trajectoire": 55.61
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": -0.0125,
+     "statut": "ecart"
+    },
+    "traitement_de_reference": {
+     "ecart": -0.0077,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": -0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_11_1964": {
+   "depart": "2027-01",
+   "montants_confrontes": false,
+   "objet": "cas type 11 du COR : fonctionnaire territorial ou hospitalier sédentaire",
+   "quantites": {
+    "age_ouverture": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_11_1970": {
+   "depart": "2034-10",
+   "montants_confrontes": false,
+   "objet": "cas type 11 du COR : fonctionnaire territorial ou hospitalier sédentaire",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0125,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": -0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_12_1955": {
+   "depart": "2017-02",
+   "montants_confrontes": true,
+   "objet": "cas type 12 du COR : exploitant agricole (depuis le rapport de 2026)",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "msa_non_salaries": {
+     "depot": 681.88,
+     "ecart": -0.0092,
+     "statut": "ecart",
+     "trajectoire": 688.24
+    },
+    "msa_rco": {
+     "depot": 171.02,
+     "ecart": 0.4155,
+     "statut": "ecart",
+     "trajectoire": 120.81
+    },
+    "pension_totale": {
+     "depot": 852.9,
+     "ecart": 0.0542,
+     "statut": "ecart",
+     "trajectoire": 809.06
+    },
+    "points_msa_non_salaries": {
+     "depot": 965.0,
+     "ecart": -0.2963,
+     "statut": "ecart",
+     "trajectoire": 1371.29
+    },
+    "points_msa_rco": {
+     "depot": 3873.11,
+     "ecart": -0.1018,
+     "statut": "ecart",
+     "trajectoire": 4312.23
+    },
+    "trimestres": {
+     "ecart": 4.0,
+     "statut": "ecart"
+    }
+   }
+  },
+  "cor_12_1960": {
+   "depart": "2022-01",
+   "montants_confrontes": true,
+   "objet": "cas type 12 du COR : exploitant agricole (depuis le rapport de 2026)",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": -1.0,
+     "statut": "ecart"
+    },
+    "msa_non_salaries": {
+     "depot": 713.11,
+     "ecart": -0.2485,
+     "statut": "ecart",
+     "trajectoire": 948.98
+    },
+    "msa_rco": {
+     "depot": 354.8,
+     "ecart": 1.7361,
+     "statut": "ecart",
+     "trajectoire": 129.67
+    },
+    "pension_totale": {
+     "depot": 1067.91,
+     "ecart": -0.01,
+     "statut": "ecart",
+     "trajectoire": 1078.65
+    },
+    "points_msa_non_salaries": {
+     "depot": 1081.0,
+     "ecart": -0.2157,
+     "statut": "ecart",
+     "trajectoire": 1378.3
+    },
+    "points_msa_rco": {
+     "depot": 4027.75,
+     "ecart": -0.1005,
+     "statut": "ecart",
+     "trajectoire": 4477.88
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_12_1963": {
+   "depart": "2025-10",
+   "montants_confrontes": true,
+   "objet": "cas type 12 du COR : exploitant agricole (depuis le rapport de 2026)",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": -1.0,
+     "statut": "ecart"
+    },
+    "msa_non_salaries": {
+     "depot": 893.39,
+     "ecart": -0.1318,
+     "statut": "ecart",
+     "trajectoire": 1029.07
+    },
+    "msa_rco": {
+     "depot": 306.87,
+     "ecart": 1.0068,
+     "statut": "ecart",
+     "trajectoire": 152.91
+    },
+    "pension_totale": {
+     "depot": 1200.26,
+     "ecart": 0.0155,
+     "statut": "ecart",
+     "trajectoire": 1181.98
+    },
+    "points_msa_non_salaries": {
+     "depot": 1220.0,
+     "ecart": -0.1418,
+     "statut": "ecart",
+     "trajectoire": 1421.65
+    },
+    "points_msa_rco": {
+     "depot": 4166.26,
+     "ecart": -0.1102,
+     "statut": "ecart",
+     "trajectoire": 4682.24
+    },
+    "trimestres": {
+     "ecart": 1.0,
+     "statut": "ecart"
+    }
+   }
+  },
+  "cor_12_1964": {
+   "depart": "2026-10",
+   "montants_confrontes": true,
+   "objet": "cas type 12 du COR : exploitant agricole (depuis le rapport de 2026)",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": -1.0,
+     "statut": "ecart"
+    },
+    "msa_non_salaries": {
+     "depot": 903.93,
+     "ecart": -0.1306,
+     "statut": "ecart",
+     "trajectoire": 1039.71
+    },
+    "msa_rco": {
+     "depot": 310.48,
+     "ecart": 0.9877,
+     "statut": "ecart",
+     "trajectoire": 156.2
+    },
+    "pension_totale": {
+     "depot": 1214.42,
+     "ecart": 0.0155,
+     "statut": "ecart",
+     "trajectoire": 1195.91
+    },
+    "points_msa_non_salaries": {
+     "depot": 960.0,
+     "ecart": -0.325,
+     "statut": "ecart",
+     "trajectoire": 1422.27
+    },
+    "points_msa_rco": {
+     "depot": 4233.82,
+     "ecart": -0.1068,
+     "statut": "ecart",
+     "trajectoire": 4740.3
+    },
+    "trimestres": {
+     "ecart": 1.0,
+     "statut": "ecart"
+    }
+   }
+  },
+  "cor_12_1970": {
+   "depart": "2033-01",
+   "montants_confrontes": false,
+   "objet": "cas type 12 du COR : exploitant agricole (depuis le rapport de 2026)",
+   "quantites": {
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_13_1955": {
+   "depart": "2021-08",
+   "montants_confrontes": true,
+   "objet": "cas type 13 du COR : médecin libéral (depuis le rapport de 2026)",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "asv_conventionnes": {
+     "depot": 1385.47,
+     "ecart": 0.0173,
+     "statut": "ecart",
+     "trajectoire": 1361.91
+    },
+    "carmf_complementaire": {
+     "depot": 1608.24,
+     "ecart": -0.2019,
+     "statut": "ecart",
+     "trajectoire": 2015.1
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "cnavpl": {
+     "depot": 884.32,
+     "ecart": -0.0061,
+     "statut": "ecart",
+     "trajectoire": 889.74
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 3878.04,
+     "ecart": -0.0911,
+     "statut": "ecart",
+     "trajectoire": 4266.75
+    },
+    "points_asv_conventionnes": {
+     "depot": 1232.44,
+     "ecart": 0.0237,
+     "statut": "ecart",
+     "trajectoire": 1203.88
+    },
+    "points_carmf_complementaire": {
+     "depot": 176.04,
+     "ecart": -0.3936,
+     "statut": "ecart",
+     "trajectoire": 290.32
+    },
+    "points_cnavpl": {
+     "depot": 18516.64,
+     "ecart": -0.0061,
+     "statut": "ecart",
+     "trajectoire": 18630.01
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_13_1960": {
+   "depart": "2026-10",
+   "montants_confrontes": true,
+   "objet": "cas type 13 du COR : médecin libéral (depuis le rapport de 2026)",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "asv_conventionnes": {
+     "depot": 1494.06,
+     "ecart": 0.0383,
+     "statut": "ecart",
+     "trajectoire": 1438.88
+    },
+    "carmf_complementaire": {
+     "depot": 1888.09,
+     "ecart": -0.1457,
+     "statut": "ecart",
+     "trajectoire": 2210.02
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "cnavpl": {
+     "depot": 1062.62,
+     "ecart": -0.0061,
+     "statut": "ecart",
+     "trajectoire": 1069.12
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 4444.76,
+     "ecart": -0.0579,
+     "statut": "ecart",
+     "trajectoire": 4718.02
+    },
+    "points_asv_conventionnes": {
+     "depot": 1269.3,
+     "ecart": 0.0449,
+     "statut": "ecart",
+     "trajectoire": 1214.8
+    },
+    "points_carmf_complementaire": {
+     "depot": 206.65,
+     "ecart": -0.2772,
+     "statut": "ecart",
+     "trajectoire": 285.9
+    },
+    "points_cnavpl": {
+     "depot": 19323.21,
+     "ecart": -0.0061,
+     "statut": "ecart",
+     "trajectoire": 19441.44
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_13_1963": {
+   "depart": "2030-01",
+   "montants_confrontes": false,
+   "objet": "cas type 13 du COR : médecin libéral (depuis le rapport de 2026)",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_13_1964": {
+   "depart": "2031-01",
+   "montants_confrontes": false,
+   "objet": "cas type 13 du COR : médecin libéral (depuis le rapport de 2026)",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_13_1970": {
+   "depart": "2037-01",
+   "montants_confrontes": false,
+   "objet": "cas type 13 du COR : médecin libéral (depuis le rapport de 2026)",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_1_1955": {
+   "depart": "2015-08",
+   "montants_confrontes": true,
+   "objet": "cas type 1 du COR : non-cadre puis cadre du privé, carrière complète",
+   "quantites": {
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 3025.69,
+     "ecart": -0.0765,
+     "statut": "ecart",
+     "trajectoire": 3276.43
+    },
+    "points_agirc": {
+     "ecart": -0.1205,
+     "statut": "concorde"
+    },
+    "points_arrco": {
+     "ecart": -0.1897,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 1406.58,
+     "ecart": 0.0138,
+     "statut": "ecart",
+     "trajectoire": 1387.46
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 0.0138,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc": {
+     "ecart": -0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_arrco": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_1_1960": {
+   "depart": "2022-01",
+   "montants_confrontes": true,
+   "objet": "cas type 1 du COR : non-cadre puis cadre du privé, carrière complète",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 3416.88,
+     "ecart": -0.067,
+     "statut": "ecart",
+     "trajectoire": 3662.06
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.0936,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 1580.03,
+     "ecart": -0.0339,
+     "statut": "ecart",
+     "trajectoire": 1635.54
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0339,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc_arrco": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_1_1963": {
+   "depart": "2025-10",
+   "montants_confrontes": true,
+   "objet": "cas type 1 du COR : non-cadre puis cadre du privé, carrière complète",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 3990.67,
+     "ecart": -0.0293,
+     "statut": "ecart",
+     "trajectoire": 4111.01
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.0639,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 1822.56,
+     "ecart": 0.0154,
+     "statut": "ecart",
+     "trajectoire": 1794.88
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0154,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc_arrco": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_1_1964": {
+   "depart": "2026-10",
+   "montants_confrontes": true,
+   "objet": "cas type 1 du COR : non-cadre puis cadre du privé, carrière complète",
+   "quantites": {
+    "age_ouverture": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 4032.62,
+     "ecart": -0.0215,
+     "statut": "ecart",
+     "trajectoire": 4121.41
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.05,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "depot": 1851.41,
+     "ecart": 0.0143,
+     "statut": "ecart",
+     "trajectoire": 1825.3
+    },
+    "salaire_annuel_moyen": {
+     "ecart": 0.0143,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc_arrco": {
+     "ecart": -0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_1_1970": {
+   "depart": "2035-01",
+   "montants_confrontes": false,
+   "objet": "cas type 1 du COR : non-cadre puis cadre du privé, carrière complète",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_2_1955": {
+   "depart": "2015-02",
+   "montants_confrontes": true,
+   "objet": "cas type 2 du COR : non-cadre du privé, carrière complète",
+   "quantites": {
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1280.03,
+     "ecart": -0.0439,
+     "statut": "ecart",
+     "trajectoire": 1338.76
+    },
+    "points_arrco": {
+     "ecart": -0.174,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 940.35,
+     "ecart": 0.0138,
+     "statut": "ecart",
+     "trajectoire": 927.54
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 0.0138,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_arrco": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_2_1960": {
+   "depart": "2020-10",
+   "montants_confrontes": true,
+   "objet": "cas type 2 du COR : non-cadre du privé, carrière complète",
+   "quantites": {
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1369.76,
+     "ecart": -0.0369,
+     "statut": "ecart",
+     "trajectoire": 1422.17
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.1465,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 1009.86,
+     "ecart": 0.0094,
+     "statut": "ecart",
+     "trajectoire": 1000.49
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 0.0094,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc_arrco": {
+     "ecart": -0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_2_1963": {
+   "depart": "2024-07",
+   "montants_confrontes": true,
+   "objet": "cas type 2 du COR : non-cadre du privé, carrière complète",
+   "quantites": {
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1582.53,
+     "ecart": -0.0419,
+     "statut": "ecart",
+     "trajectoire": 1651.77
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.13,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 1167.71,
+     "ecart": -0.0062,
+     "statut": "ecart",
+     "trajectoire": 1174.98
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0062,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc_arrco": {
+     "ecart": -0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_2_1964": {
+   "depart": "2026-01",
+   "montants_confrontes": true,
+   "objet": "cas type 2 du COR : non-cadre du privé, carrière complète",
+   "quantites": {
+    "carriere_longue": {
+     "ecart": -1.0,
+     "statut": "ecart"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1622.02,
+     "ecart": -0.0411,
+     "statut": "ecart",
+     "trajectoire": 1691.48
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.124,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 1198.77,
+     "ecart": -0.0039,
+     "statut": "concorde",
+     "trajectoire": 1203.42
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0147,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": -0.0125,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 1.0,
+     "statut": "ecart"
+    },
+    "valeur_point_agirc_arrco": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_2_1970": {
+   "depart": "2034-01",
+   "montants_confrontes": false,
+   "objet": "cas type 2 du COR : non-cadre du privé, carrière complète",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_2bis_1955": {
+   "depart": "2015-02",
+   "montants_confrontes": true,
+   "objet": "cas type 2 bis du COR : le cas 2, au SMIC toute la carrière",
+   "quantites": {
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 933.63,
+     "ecart": -0.0537,
+     "statut": "ecart",
+     "trajectoire": 986.62
+    },
+    "points_arrco": {
+     "ecart": -0.177,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "depot": 687.32,
+     "ecart": -0.0,
+     "statut": "concorde",
+     "trajectoire": 687.32
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 0.0138,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_arrco": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_2bis_1960": {
+   "depart": "2020-10",
+   "montants_confrontes": true,
+   "objet": "cas type 2 bis du COR : le cas 2, au SMIC toute la carrière",
+   "quantites": {
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 983.7,
+     "ecart": -0.0398,
+     "statut": "ecart",
+     "trajectoire": 1024.44
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.1518,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 718.48,
+     "ecart": 0.0094,
+     "statut": "ecart",
+     "trajectoire": 711.77
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 0.0094,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc_arrco": {
+     "ecart": -0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_2bis_1963": {
+   "depart": "2024-07",
+   "montants_confrontes": true,
+   "objet": "cas type 2 bis du COR : le cas 2, au SMIC toute la carrière",
+   "quantites": {
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1183.54,
+     "ecart": -0.0393,
+     "statut": "ecart",
+     "trajectoire": 1231.94
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.136,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "depot": 876.13,
+     "ecart": 0.0,
+     "statut": "concorde",
+     "trajectoire": 876.13
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0062,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc_arrco": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_2bis_1964": {
+   "depart": "2026-01",
+   "montants_confrontes": true,
+   "objet": "cas type 2 bis du COR : le cas 2, au SMIC toute la carrière",
+   "quantites": {
+    "carriere_longue": {
+     "ecart": -1.0,
+     "statut": "ecart"
+    },
+    "minimum": {
+     "ecart": -1.0,
+     "statut": "ecart"
+    },
+    "pension_totale": {
+     "depot": 1162.27,
+     "ecart": -0.0836,
+     "statut": "ecart",
+     "trajectoire": 1268.34
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.1299,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 848.58,
+     "ecart": -0.0615,
+     "statut": "ecart",
+     "trajectoire": 904.19
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0147,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": -0.0125,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 1.0,
+     "statut": "ecart"
+    },
+    "valeur_point_agirc_arrco": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_2bis_1970": {
+   "depart": "2034-01",
+   "montants_confrontes": false,
+   "objet": "cas type 2 bis du COR : le cas 2, au SMIC toute la carrière",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_3_1955": {
+   "depart": "2017-02",
+   "montants_confrontes": true,
+   "objet": "cas type 3 du COR : non-cadre du privé, deux périodes de chômage",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1159.32,
+     "ecart": 0.0577,
+     "statut": "ecart",
+     "trajectoire": 1096.07
+    },
+    "points_arrco": {
+     "ecart": -0.0261,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 826.08,
+     "ecart": 0.0957,
+     "statut": "ecart",
+     "trajectoire": 753.91
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 0.0099,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_arrco": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_3_1960": {
+   "depart": "2022-01",
+   "montants_confrontes": true,
+   "objet": "cas type 3 du COR : non-cadre du privé, deux périodes de chômage",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1251.86,
+     "ecart": 0.0916,
+     "statut": "ecart",
+     "trajectoire": 1146.8
+    },
+    "points_agirc_arrco": {
+     "ecart": 0.0213,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 902.58,
+     "ecart": 0.1215,
+     "statut": "ecart",
+     "trajectoire": 804.8
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.033,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc_arrco": {
+     "ecart": -0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_3_1963": {
+   "depart": "2025-10",
+   "montants_confrontes": true,
+   "objet": "cas type 3 du COR : non-cadre du privé, deux périodes de chômage",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1405.11,
+     "ecart": 0.1115,
+     "statut": "ecart",
+     "trajectoire": 1264.16
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.008,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 1024.37,
+     "ecart": 0.1636,
+     "statut": "ecart",
+     "trajectoire": 880.33
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.013,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc_arrco": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_3_1964": {
+   "depart": "2026-10",
+   "montants_confrontes": true,
+   "objet": "cas type 3 du COR : non-cadre du privé, deux périodes de chômage",
+   "quantites": {
+    "age_ouverture": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1444.21,
+     "ecart": 0.1327,
+     "statut": "ecart",
+     "trajectoire": 1274.97
+    },
+    "points_agirc_arrco": {
+     "ecart": 0.018,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "depot": 1052.47,
+     "ecart": 0.1823,
+     "statut": "ecart",
+     "trajectoire": 890.16
+    },
+    "salaire_annuel_moyen": {
+     "ecart": 0.0154,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc_arrco": {
+     "ecart": -0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_3_1970": {
+   "depart": "2034-01",
+   "montants_confrontes": false,
+   "objet": "cas type 3 du COR : non-cadre du privé, deux périodes de chômage",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_4_1955": {
+   "depart": "2017-02",
+   "montants_confrontes": true,
+   "objet": "cas type 4 du COR : non-cadre du privé, deux enfants, interruption sous AVPF",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1110.83,
+     "ecart": -0.0601,
+     "statut": "ecart",
+     "trajectoire": 1181.82
+    },
+    "points_arrco": {
+     "ecart": -0.1694,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 818.22,
+     "ecart": -0.0136,
+     "statut": "ecart",
+     "trajectoire": 829.55
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0137,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_arrco": {
+     "ecart": -0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_4_1960": {
+   "depart": "2022-01",
+   "montants_confrontes": true,
+   "objet": "cas type 4 du COR : non-cadre du privé, deux enfants, interruption sous AVPF",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1199.17,
+     "ecart": -0.0777,
+     "statut": "ecart",
+     "trajectoire": 1300.19
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.1399,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 888.45,
+     "ecart": -0.0538,
+     "statut": "ecart",
+     "trajectoire": 938.94
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0538,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc_arrco": {
+     "ecart": -0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_4_1963": {
+   "depart": "2025-10",
+   "montants_confrontes": true,
+   "objet": "cas type 4 du COR : non-cadre du privé, deux enfants, interruption sous AVPF",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1381.35,
+     "ecart": -0.0426,
+     "statut": "ecart",
+     "trajectoire": 1442.74
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.137,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 1024.74,
+     "ecart": -0.0046,
+     "statut": "concorde",
+     "trajectoire": 1029.5
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0046,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc_arrco": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_4_1964": {
+   "depart": "2026-10",
+   "montants_confrontes": true,
+   "objet": "cas type 4 du COR : non-cadre du privé, deux enfants, interruption sous AVPF",
+   "quantites": {
+    "age_ouverture": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1408.0,
+     "ecart": -0.04,
+     "statut": "ecart",
+     "trajectoire": 1466.74
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.1219,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "depot": 1045.15,
+     "ecart": -0.0079,
+     "statut": "ecart",
+     "trajectoire": 1053.52
+    },
+    "salaire_annuel_moyen": {
+     "ecart": -0.0079,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc_arrco": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_5_1955": {
+   "depart": "2016-02",
+   "montants_confrontes": true,
+   "objet": "cas type 5 du COR : fonctionnaire de l'État sédentaire, primes variables",
+   "quantites": {
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 1819.67,
+     "ecart": 0.0045,
+     "statut": "concorde",
+     "trajectoire": 1811.47
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1841.42,
+     "ecart": 0.0034,
+     "statut": "concorde",
+     "trajectoire": 1835.13
+    },
+    "points_rafp": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0709,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 21.76,
+     "ecart": -0.0805,
+     "statut": "ecart",
+     "trajectoire": 23.66
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0045,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": -0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_5_1960": {
+   "depart": "2022-01",
+   "montants_confrontes": true,
+   "objet": "cas type 5 du COR : fonctionnaire de l'État sédentaire, primes variables",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 1982.75,
+     "ecart": -0.0109,
+     "statut": "ecart",
+     "trajectoire": 2004.57
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 2019.08,
+     "ecart": -0.0105,
+     "statut": "ecart",
+     "trajectoire": 2040.43
+    },
+    "points_rafp": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 0.0131,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 36.33,
+     "ecart": 0.0131,
+     "statut": "ecart",
+     "trajectoire": 35.86
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0109,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": -0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_5_1963": {
+   "depart": "2026-01",
+   "montants_confrontes": true,
+   "objet": "cas type 5 du COR : fonctionnaire de l'État sédentaire, primes variables",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 1824.35,
+     "ecart": -0.0233,
+     "statut": "ecart",
+     "trajectoire": 1867.86
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1874.52,
+     "ecart": -0.0222,
+     "statut": "ecart",
+     "trajectoire": 1917.16
+    },
+    "points_rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0263,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 50.17,
+     "ecart": 0.0176,
+     "statut": "ecart",
+     "trajectoire": 49.3
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": -0.0125,
+     "statut": "ecart"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.009,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": -0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_5_1964": {
+   "depart": "2027-04",
+   "montants_confrontes": false,
+   "objet": "cas type 5 du COR : fonctionnaire de l'État sédentaire, primes variables",
+   "quantites": {
+    "age_ouverture": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_5_1970": {
+   "depart": "2034-10",
+   "montants_confrontes": false,
+   "objet": "cas type 5 du COR : fonctionnaire de l'État sédentaire, primes variables",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_5_primes_constantes_1955": {
+   "depart": "2016-02",
+   "montants_confrontes": true,
+   "objet": "cas type 5 du COR, à part de primes constante",
+   "quantites": {
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 1819.67,
+     "ecart": 0.0045,
+     "statut": "concorde",
+     "trajectoire": 1811.47
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1841.42,
+     "ecart": 0.0034,
+     "statut": "concorde",
+     "trajectoire": 1835.13
+    },
+    "points_rafp": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0709,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 21.76,
+     "ecart": -0.0805,
+     "statut": "ecart",
+     "trajectoire": 23.66
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0045,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": -0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_5_primes_constantes_1960": {
+   "depart": "2022-01",
+   "montants_confrontes": true,
+   "objet": "cas type 5 du COR, à part de primes constante",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 1982.75,
+     "ecart": -0.0109,
+     "statut": "ecart",
+     "trajectoire": 2004.57
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 2019.08,
+     "ecart": -0.0105,
+     "statut": "ecart",
+     "trajectoire": 2040.43
+    },
+    "points_rafp": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 0.0131,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 36.33,
+     "ecart": 0.0131,
+     "statut": "ecart",
+     "trajectoire": 35.86
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0109,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": -0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_5_primes_constantes_1963": {
+   "depart": "2026-01",
+   "montants_confrontes": true,
+   "objet": "cas type 5 du COR, à part de primes constante",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 1824.35,
+     "ecart": -0.0233,
+     "statut": "ecart",
+     "trajectoire": 1867.86
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1874.52,
+     "ecart": -0.0222,
+     "statut": "ecart",
+     "trajectoire": 1917.16
+    },
+    "points_rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0263,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 50.17,
+     "ecart": 0.0176,
+     "statut": "ecart",
+     "trajectoire": 49.3
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": -0.0125,
+     "statut": "ecart"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.009,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": -0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_5_primes_constantes_1964": {
+   "depart": "2027-04",
+   "montants_confrontes": false,
+   "objet": "cas type 5 du COR, à part de primes constante",
+   "quantites": {
+    "age_ouverture": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_5_primes_constantes_1970": {
+   "depart": "2034-10",
+   "montants_confrontes": false,
+   "objet": "cas type 5 du COR, à part de primes constante",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_6_1955": {
+   "depart": "2017-08",
+   "montants_confrontes": true,
+   "objet": "cas type 6 du COR : fonctionnaire de l'État de catégorie A",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 2923.19,
+     "ecart": 0.0191,
+     "statut": "ecart",
+     "trajectoire": 2868.36
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 2952.45,
+     "ecart": 0.019,
+     "statut": "ecart",
+     "trajectoire": 2897.51
+    },
+    "points_rafp": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0188,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "depot": 29.26,
+     "ecart": 0.0041,
+     "statut": "concorde",
+     "trajectoire": 29.14
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 0.015,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": -0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_6_1960": {
+   "depart": "2023-07",
+   "montants_confrontes": true,
+   "objet": "cas type 6 du COR : fonctionnaire de l'État de catégorie A",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 3389.7,
+     "ecart": -0.0098,
+     "statut": "ecart",
+     "trajectoire": 3423.33
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 3434.25,
+     "ecart": -0.0114,
+     "statut": "ecart",
+     "trajectoire": 3473.87
+    },
+    "points_rafp": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.1353,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 44.55,
+     "ecart": -0.1187,
+     "statut": "ecart",
+     "trajectoire": 50.55
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0118,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": 0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_6_1963": {
+   "depart": "2027-07",
+   "montants_confrontes": false,
+   "objet": "cas type 6 du COR : fonctionnaire de l'État de catégorie A",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": -0.0125,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": -0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_6_1964": {
+   "depart": "2028-10",
+   "montants_confrontes": false,
+   "objet": "cas type 6 du COR : fonctionnaire de l'État de catégorie A",
+   "quantites": {
+    "age_ouverture": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_6_1970": {
+   "depart": "2035-10",
+   "montants_confrontes": false,
+   "objet": "cas type 6 du COR : fonctionnaire de l'État de catégorie A",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_7_1955": {
+   "depart": "2018-02",
+   "montants_confrontes": true,
+   "objet": "cas type 7 du COR : fonctionnaire de l'État de catégorie A+",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 3065.12,
+     "ecart": 0.0058,
+     "statut": "ecart",
+     "trajectoire": 3047.47
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 3108.28,
+     "ecart": 0.0057,
+     "statut": "ecart",
+     "trajectoire": 3090.79
+    },
+    "points_rafp": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0068,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "depot": 43.16,
+     "ecart": -0.0036,
+     "statut": "concorde",
+     "trajectoire": 43.32
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0038,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_7_1960": {
+   "depart": "2023-07",
+   "montants_confrontes": true,
+   "objet": "cas type 7 du COR : fonctionnaire de l'État de catégorie A+",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "depot": 3546.64,
+     "ecart": -0.0094,
+     "statut": "ecart",
+     "trajectoire": 3580.25
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 3614.95,
+     "ecart": -0.009,
+     "statut": "ecart",
+     "trajectoire": 3647.67
+    },
+    "points_rafp": {
+     "ecart": -0.0059,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 68.31,
+     "ecart": 0.0132,
+     "statut": "ecart",
+     "trajectoire": 67.42
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "ecart": -0.0114,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": 0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_7_1963": {
+   "depart": "2027-07",
+   "montants_confrontes": false,
+   "objet": "cas type 7 du COR : fonctionnaire de l'État de catégorie A+",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_7_1964": {
+   "depart": "2028-10",
+   "montants_confrontes": false,
+   "objet": "cas type 7 du COR : fonctionnaire de l'État de catégorie A+",
+   "quantites": {
+    "age_ouverture": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_7_1970": {
+   "depart": "2035-10",
+   "montants_confrontes": false,
+   "objet": "cas type 7 du COR : fonctionnaire de l'État de catégorie A+",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0125,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": -0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_8_1955": {
+   "depart": "2005-01",
+   "montants_confrontes": true,
+   "objet": "cas type 8 du COR : policier, catégorie super-active (bonification du cinquième)",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 1711.47,
+     "ecart": 0.1238,
+     "statut": "ecart",
+     "trajectoire": 1522.94
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1711.47,
+     "ecart": 0.1222,
+     "statut": "ecart",
+     "trajectoire": 1525.15
+    },
+    "points_rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -1.0,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 0.0,
+     "ecart": -1.0,
+     "statut": "ecart",
+     "trajectoire": 2.21
+    },
+    "rafp_en_capital": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0181,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": 0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -8.0,
+     "statut": "ecart"
+    }
+   }
+  },
+  "cor_8_1960": {
+   "depart": "2012-01",
+   "montants_confrontes": true,
+   "objet": "cas type 8 du COR : policier, catégorie super-active (bonification du cinquième)",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 1987.49,
+     "ecart": 0.0738,
+     "statut": "ecart",
+     "trajectoire": 1850.9
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1999.85,
+     "ecart": 0.0691,
+     "statut": "ecart",
+     "trajectoire": 1870.53
+    },
+    "points_rafp": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.285,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 12.36,
+     "ecart": -0.3706,
+     "statut": "ecart",
+     "trajectoire": 19.63
+    },
+    "rafp_en_capital": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 1.0,
+     "statut": "ecart"
+    },
+    "taux": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0125,
+     "statut": "ecart"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0195,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": 0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -4.0,
+     "statut": "ecart"
+    }
+   }
+  },
+  "cor_8_1963": {
+   "depart": "2017-09",
+   "montants_confrontes": true,
+   "objet": "cas type 8 du COR : policier, catégorie super-active (bonification du cinquième)",
+   "quantites": {
+    "age_ouverture": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0033,
+     "statut": "ecart"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 2042.02,
+     "ecart": 0.1194,
+     "statut": "ecart",
+     "trajectoire": 1824.22
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 2065.64,
+     "ecart": 0.111,
+     "statut": "ecart",
+     "trajectoire": 1859.27
+    },
+    "points_rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.2179,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 23.63,
+     "ecart": -0.3259,
+     "statut": "ecart",
+     "trajectoire": 35.05
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0298,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": 0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -2.0,
+     "statut": "ecart"
+    }
+   }
+  },
+  "cor_8_1964": {
+   "depart": "2019-05",
+   "montants_confrontes": true,
+   "objet": "cas type 8 du COR : policier, catégorie super-active (bonification du cinquième)",
+   "quantites": {
+    "age_ouverture": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0033,
+     "statut": "ecart"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 2154.74,
+     "ecart": 0.1032,
+     "statut": "ecart",
+     "trajectoire": 1953.12
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 2182.49,
+     "ecart": 0.0946,
+     "statut": "ecart",
+     "trajectoire": 1993.81
+    },
+    "points_rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.2219,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 27.75,
+     "ecart": -0.3179,
+     "statut": "ecart",
+     "trajectoire": 40.68
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 0.0253,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -1.0,
+     "statut": "ecart"
+    }
+   }
+  },
+  "cor_8_1970": {
+   "depart": "2027-01",
+   "montants_confrontes": false,
+   "objet": "cas type 8 du COR : policier, catégorie super-active (bonification du cinquième)",
+   "quantites": {
+    "age_ouverture": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": -0.3333,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -1.0,
+     "statut": "ecart"
+    }
+   }
+  },
+  "cor_9_1955": {
+   "depart": "2010-07",
+   "montants_confrontes": true,
+   "objet": "cas type 9 du COR : aide-soignante hospitalière, catégorie active",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 1318.19,
+     "ecart": 0.0305,
+     "statut": "ecart",
+     "trajectoire": 1279.19
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1324.03,
+     "ecart": 0.0293,
+     "statut": "ecart",
+     "trajectoire": 1286.39
+    },
+    "points_rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.1348,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 5.83,
+     "ecart": -0.1904,
+     "statut": "ecart",
+     "trajectoire": 7.21
+    },
+    "rafp_en_capital": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 1.0,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.1028,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -13.6667,
+     "statut": "ecart"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_9_1960": {
+   "depart": "2017-01",
+   "montants_confrontes": true,
+   "objet": "cas type 9 du COR : aide-soignante hospitalière, catégorie active",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 1340.25,
+     "ecart": 0.0482,
+     "statut": "ecart",
+     "trajectoire": 1278.57
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1355.56,
+     "ecart": 0.0442,
+     "statut": "ecart",
+     "trajectoire": 1298.23
+    },
+    "points_rafp": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.1381,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 15.31,
+     "ecart": -0.2211,
+     "statut": "ecart",
+     "trajectoire": 19.65
+    },
+    "rafp_en_capital": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 1.0,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0855,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -14.6667,
+     "statut": "ecart"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_9_1963": {
+   "depart": "2020-01",
+   "montants_confrontes": true,
+   "objet": "cas type 9 du COR : aide-soignante hospitalière, catégorie active",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 1330.6,
+     "ecart": 0.0972,
+     "statut": "ecart",
+     "trajectoire": 1212.7
+    },
+    "minimum": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 1.0,
+     "statut": "ecart"
+    },
+    "pension_totale": {
+     "depot": 1351.47,
+     "ecart": 0.0907,
+     "statut": "ecart",
+     "trajectoire": 1239.06
+    },
+    "points_rafp": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.1122,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 20.87,
+     "ecart": -0.2082,
+     "statut": "ecart",
+     "trajectoire": 26.36
+    },
+    "rafp_en_capital": {
+     "ecart": 1.0,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.1,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -15.0,
+     "statut": "ecart"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "cor_9_1964": {
+   "depart": "2021-04",
+   "montants_confrontes": true,
+   "objet": "cas type 9 du COR : aide-soignante hospitalière, catégorie active",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 1311.18,
+     "ecart": 0.0204,
+     "statut": "ecart",
+     "trajectoire": 1284.96
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1335.54,
+     "ecart": 0.0155,
+     "statut": "ecart",
+     "trajectoire": 1315.09
+    },
+    "points_rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0972,
+     "statut": "ecart"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 24.35,
+     "ecart": -0.1918,
+     "statut": "ecart",
+     "trajectoire": 30.13
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0125,
+     "statut": "ecart"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0955,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -15.0,
+     "statut": "ecart"
+    },
+    "trimestres_requis": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": 1.0,
+     "statut": "ecart"
+    }
+   }
+  },
+  "cor_9_1970": {
+   "depart": "2028-10",
+   "montants_confrontes": false,
+   "objet": "cas type 9 du COR : aide-soignante hospitalière, catégorie active",
+   "quantites": {
+    "age_ouverture": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.25,
+     "statut": "ecart"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -15.0,
+     "statut": "ecart"
+    },
+    "trimestres_requis": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -1.0,
+     "statut": "ecart"
+    }
+   }
+  },
+  "fp_etat": {
+   "depart": "2018-02",
+   "montants_confrontes": true,
+   "objet": "droit direct : pension civile d'un sédentaire de l'État",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "depot": 1894.2,
+     "ecart": -0.002,
+     "statut": "concorde",
+     "trajectoire": 1897.96
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1919.04,
+     "ecart": -0.002,
+     "statut": "concorde",
+     "trajectoire": 1922.8
+    },
+    "points_rafp": {
+     "ecart": 0.0002,
+     "statut": "concorde"
+    },
+    "rafp": {
+     "depot": 24.84,
+     "ecart": 0.0002,
+     "statut": "concorde",
+     "trajectoire": 24.83
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "ecart": -0.002,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "fp_mere_deux_enfants": {
+   "depart": "2018-02",
+   "montants_confrontes": true,
+   "objet": "majorations pour enfants : la bonification de la mère fonctionnaire, qui compte à la liquidation",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 1917.02,
+     "ecart": 0.01,
+     "statut": "ecart",
+     "trajectoire": 1897.96
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1941.86,
+     "ecart": 0.0099,
+     "statut": "ecart",
+     "trajectoire": 1922.8
+    },
+    "points_rafp": {
+     "ecart": 0.0002,
+     "statut": "concorde"
+    },
+    "rafp": {
+     "depot": 24.84,
+     "ecart": 0.0002,
+     "statut": "concorde",
+     "trajectoire": 24.83
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "ecart": -0.002,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "fp_pere_trois_enfants": {
+   "depart": "2018-02",
+   "montants_confrontes": true,
+   "objet": "majorations pour enfants : 10 % de la pension civile",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "depot": 1894.2,
+     "ecart": -0.002,
+     "statut": "concorde",
+     "trajectoire": 1897.96
+    },
+    "majoration_fonction_publique": {
+     "ecart": -0.002,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 2108.46,
+     "ecart": -0.002,
+     "statut": "concorde",
+     "trajectoire": 2112.59
+    },
+    "points_rafp": {
+     "ecart": 0.0002,
+     "statut": "concorde"
+    },
+    "rafp": {
+     "depot": 24.84,
+     "ecart": 0.0002,
+     "statut": "concorde",
+     "trajectoire": 24.83
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "ecart": -0.002,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "loi_2023_fp_etat": {
+   "depart": "2024-08",
+   "montants_confrontes": true,
+   "objet": "pension civile sous la loi du 14 avril 2023",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "fonction_publique": {
+     "declare_en_octobre": "dans sa borne",
+     "depot": 2249.31,
+     "ecart": -0.0253,
+     "statut": "ecart",
+     "trajectoire": 2307.65
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 2294.69,
+     "ecart": -0.0244,
+     "statut": "ecart",
+     "trajectoire": 2352.13
+    },
+    "points_rafp": {
+     "ecart": 0.0002,
+     "statut": "concorde"
+    },
+    "rafp": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 45.38,
+     "ecart": 0.0202,
+     "statut": "ecart",
+     "trajectoire": 44.48
+    },
+    "rafp_en_capital": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "traitement_de_reference": {
+     "declare_en_octobre": "dans sa borne",
+     "ecart": -0.0253,
+     "statut": "ecart"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "loi_2023_salaire_moyen": {
+   "depart": "2024-08",
+   "montants_confrontes": true,
+   "objet": "droit direct sous la loi du 14 avril 2023 : 62 ans et 6 mois, 169 trimestres",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 2142.49,
+     "ecart": -0.046,
+     "statut": "ecart",
+     "trajectoire": 2245.9
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.1379,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 1556.5,
+     "ecart": -0.0062,
+     "statut": "ecart",
+     "trajectoire": 1566.14
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0062,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc_arrco": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "rg_bas_salaire": {
+   "depart": "2018-02",
+   "montants_confrontes": true,
+   "objet": "droit direct : le minimum contributif",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 890.31,
+     "ecart": -0.0427,
+     "statut": "ecart",
+     "trajectoire": 930.02
+    },
+    "points_arrco": {
+     "ecart": -0.1679,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "depot": 693.51,
+     "ecart": 0.0,
+     "statut": "concorde",
+     "trajectoire": 693.51
+    },
+    "salaire_annuel_moyen": {
+     "ecart": -0.0016,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_arrco": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "rg_cadre": {
+   "depart": "2018-02",
+   "montants_confrontes": true,
+   "objet": "droit direct : salaire au-dessus du plafond, Arrco et Agirc",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 3284.27,
+     "ecart": -0.1171,
+     "statut": "ecart",
+     "trajectoire": 3719.74
+    },
+    "points_agirc": {
+     "ecart": -0.2035,
+     "statut": "concorde"
+    },
+    "points_arrco": {
+     "ecart": -0.1648,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "depot": 1465.14,
+     "ecart": -0.0017,
+     "statut": "concorde",
+     "trajectoire": 1467.56
+    },
+    "salaire_annuel_moyen": {
+     "ecart": -0.0017,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc": {
+     "ecart": -0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_arrco": {
+     "ecart": -0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "rg_mere_trois_enfants": {
+   "depart": "2018-02",
+   "montants_confrontes": true,
+   "objet": "majorations pour enfants : la durée d'assurance de la mère, qui lui donne le taux plein ; 10 % au régime général, à l'Arrco et à l'Agirc",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "majoration_complementaires": {
+     "ecart": -0.0017,
+     "statut": "concorde"
+    },
+    "majoration_regime_general": {
+     "ecart": -0.0016,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1502.5,
+     "ecart": -0.0443,
+     "statut": "ecart",
+     "trajectoire": 1572.11
+    },
+    "points_arrco": {
+     "ecart": -0.1527,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "depot": 1027.53,
+     "ecart": -0.0016,
+     "statut": "concorde",
+     "trajectoire": 1029.18
+    },
+    "salaire_annuel_moyen": {
+     "ecart": -0.0016,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_arrco": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "rg_ne_en_octobre": {
+   "depart": "2024-02",
+   "montants_confrontes": true,
+   "objet": "droit direct : né en octobre 1961, aucun trimestre après l'âge d'ouverture",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 2145.5,
+     "ecart": -0.0476,
+     "statut": "ecart",
+     "trajectoire": 2252.76
+    },
+    "points_agirc_arrco": {
+     "ecart": -0.1422,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "declare_en_octobre": "hors de sa borne",
+     "depot": 1556.5,
+     "ecart": -0.0062,
+     "statut": "ecart",
+     "trajectoire": 1566.14
+    },
+    "salaire_annuel_moyen": {
+     "declare_en_octobre": "hors de sa borne",
+     "ecart": -0.0062,
+     "statut": "ecart"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_agirc_arrco": {
+     "ecart": -0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "rg_pere_trois_enfants": {
+   "depart": "2018-02",
+   "montants_confrontes": true,
+   "objet": "majorations pour enfants : le père, 10 % au régime général et à l'Arrco",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "majoration_complementaires": {
+     "ecart": -0.0018,
+     "statut": "concorde"
+    },
+    "majoration_regime_general": {
+     "ecart": -0.0016,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1945.5,
+     "ecart": -0.0543,
+     "statut": "ecart",
+     "trajectoire": 2057.18
+    },
+    "points_arrco": {
+     "ecart": -0.169,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "depot": 1284.41,
+     "ecart": -0.0016,
+     "statut": "concorde",
+     "trajectoire": 1286.48
+    },
+    "salaire_annuel_moyen": {
+     "ecart": -0.0016,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_arrco": {
+     "ecart": -0.0,
+     "statut": "concorde"
+    }
+   }
+  },
+  "rg_salaire_moyen": {
+   "depart": "2018-02",
+   "montants_confrontes": true,
+   "objet": "droit direct : régime général et Arrco, taux plein à l'âge d'ouverture",
+   "quantites": {
+    "age_ouverture": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "carriere_longue": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "minimum": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "pension_totale": {
+     "depot": 1776.4,
+     "ecart": -0.0544,
+     "statut": "ecart",
+     "trajectoire": 1878.53
+    },
+    "points_arrco": {
+     "ecart": -0.169,
+     "statut": "concorde"
+    },
+    "regime_general": {
+     "depot": 1284.41,
+     "ecart": -0.0016,
+     "statut": "concorde",
+     "trajectoire": 1286.48
+    },
+    "salaire_annuel_moyen": {
+     "ecart": -0.0016,
+     "statut": "concorde"
+    },
+    "taux": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "trimestres_requis": {
+     "ecart": 0.0,
+     "statut": "concorde"
+    },
+    "valeur_point_arrco": {
+     "ecart": -0.0,
+     "statut": "concorde"
+    }
+   }
+  }
+ },
+ "lecture": "ecart : dépôt moins TRAJECTOiRE, en trimestres pour les durées, en années pour l'âge, relatif pour le reste (voir tests/test_trajectoire.py, ecarts_du_cas) ; depot et trajectoire : pensions mensuelles brutes, hors majoration pour enfants, en euros du départ. Un écart n'est pas une erreur du dépôt : seul le texte tranche.",
+ "modele": "TRAJECTOiRE",
+ "version": "3.3.2 (DESCRIPTION) ; commit « trajectoire v3.3.2 (20 novembre 2026) »"
+}

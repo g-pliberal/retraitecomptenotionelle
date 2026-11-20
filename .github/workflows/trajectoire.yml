@@ -1,0 +1,187 @@
+name: Confrontation à TRAJECTOiRE
+
+# Le scénario 1 confronté à TRAJECTOiRE, le modèle de la DREES, sans poste :
+# R et TRAJECTOiRE s'installent ici, à part (licence EUPL : son code n'entre
+# pas au dépôt), `scripts/confronter_trajectoire.py` y fait tourner les cas
+# types du COR et les carrières du dépôt, et compare les écarts à la référence
+# `tests/temoins/trajectoire_3/ecarts.json`.
+#
+# Chaque semaine, ou à la demande — jamais à un envoi sur main : la suite
+# complète n'en est pas allongée. Deux courses : la version épinglée, qui dit
+# si le dépôt s'est écarté d'elle ; la dernière étiquette publiée, quand elle
+# en diffère, qui dit si une version nouvelle s'écarte du dépôt. Une quantité
+# qui concordait et s'écarte est une rupture : la course échoue, et un ticket
+# le dit au propriétaire. Un écart n'est pas une erreur du dépôt : seul le
+# texte tranche.
+
+on:
+  schedule:
+    - cron: "17 5 * * 1"
+  workflow_dispatch:
+    inputs:
+      figer:
+        description: "Récrire la référence sur la version épinglée, et la commiter sur main"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: trajectoire
+  cancel-in-progress: false
+
+jobs:
+  confronter:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        cible: [epinglee, derniere]
+    env:
+      LANG: C.UTF-8
+      PROJET: https://git.drees.fr/api/v4/projects/787/repository
+      R_LIBS: ${{ github.workspace }}/../trajectoire-lib
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
+      - name: Installer le paquet et ses outils de test
+        run: pip install -e '.[dev]'
+
+      - name: La version à confronter
+        id: version
+        run: |
+          read -r etiquette commit < <(python scripts/confronter_trajectoire.py --epingle)
+          echo "epingle=$commit" >> "$GITHUB_OUTPUT"
+          if [ "${{ matrix.cible }}" = derniere ]; then
+            curl -sS --fail --retry 4 "$PROJET/tags?per_page=1" -o "$RUNNER_TEMP/etiquettes.json"
+            etiquette=$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))[0]["name"])' "$RUNNER_TEMP/etiquettes.json")
+            commit=$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))[0]["commit"]["id"])' "$RUNNER_TEMP/etiquettes.json")
+          fi
+          # Une étiquette est du texte d'un tiers : on n'en garde que la forme attendue.
+          [[ "$etiquette" =~ ^v[0-9]+(\.[0-9]+)*$ && "$commit" =~ ^[0-9a-f]{40}$ ]]
+          echo "etiquette=$etiquette" >> "$GITHUB_OUTPUT"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+
+      - name: R
+        if: matrix.cible == 'epinglee' || steps.version.outputs.commit != steps.version.outputs.epingle
+        run: |
+          sudo apt-get update -q
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends \
+            r-base-core r-base-dev r-recommended libcurl4-openssl-dev libssl-dev libxml2-dev
+          mkdir -p "$R_LIBS"
+
+      - name: La bibliothèque de TRAJECTOiRE, gardée d'une semaine à l'autre
+        id: bibliotheque
+        if: matrix.cible == 'epinglee' || steps.version.outputs.commit != steps.version.outputs.epingle
+        uses: actions/cache@v6
+        with:
+          path: ${{ env.R_LIBS }}
+          key: trajectoire-${{ steps.version.outputs.commit }}-ubuntu-24.04
+
+      - name: Installer TRAJECTOiRE, à part
+        if: >-
+          (matrix.cible == 'epinglee' || steps.version.outputs.commit != steps.version.outputs.epingle)
+          && steps.bibliotheque.outputs.cache-hit != 'true'
+        run: |
+          # Hors du dépôt : l'archive du commit, par l'API du GitLab de la DREES.
+          sources="$RUNNER_TEMP/trajectoire-sources"
+          mkdir -p "$sources"
+          curl -sS --fail --retry 4 -o "$RUNNER_TEMP/trajectoire.tar.gz" \
+            "$PROJET/archive.tar.gz?sha=${{ steps.version.outputs.commit }}"
+          tar -xzf "$RUNNER_TEMP/trajectoire.tar.gz" -C "$sources" --strip-components=1
+          cat > "$RUNNER_TEMP/dependances.R" <<'FIN'
+          arguments <- commandArgs(trailingOnly = TRUE)
+          options(
+            repos = c(CRAN = "https://packagemanager.posit.co/cran/__linux__/noble/latest"),
+            HTTPUserAgent = sprintf("R/%s R (%s)", getRversion(),
+              paste(getRversion(), R.version$platform, R.version$arch, R.version$os)),
+            Ncpus = 4)
+          description <- read.dcf(file.path(arguments[1], "DESCRIPTION"))
+          voulus <- trimws(gsub("\\(.*?\\)", "", strsplit(description[1, "Imports"], ",")[[1]]))
+          voulus <- setdiff(c(voulus, "jsonlite"), rownames(installed.packages()))
+          if (length(voulus)) install.packages(voulus, lib = arguments[2])
+          manquent <- setdiff(voulus, rownames(installed.packages()))
+          if (length(manquent)) stop("paquets manquants : ", paste(manquent, collapse = ", "))
+          FIN
+          Rscript "$RUNNER_TEMP/dependances.R" "$sources" "$R_LIBS"
+          R CMD INSTALL --no-docs --no-test-load -l "$R_LIBS" "$sources"
+
+      - name: Confronter
+        id: confronter
+        if: matrix.cible == 'epinglee' || steps.version.outputs.commit != steps.version.outputs.epingle
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/resultats"
+          issue=0
+          if [ "${{ inputs.figer }}" = true ] && [ "${{ matrix.cible }}" = epinglee ]; then
+            python scripts/confronter_trajectoire.py --figer --resultats "$RUNNER_TEMP/resultats"
+          else
+            python scripts/confronter_trajectoire.py --resultats "$RUNNER_TEMP/resultats" || issue=$?
+          fi
+          {
+            echo "TRAJECTOiRE ${{ steps.version.outputs.etiquette }} (${{ matrix.cible }}), dépôt $(git rev-parse --short HEAD)"
+            echo
+            sed '/^## Les écarts, cas par cas/,$d' "$RUNNER_TEMP/resultats/rapport.md"
+          } > "$RUNNER_TEMP/resultats/bilan.md"
+          cat "$RUNNER_TEMP/resultats/bilan.md" >> "$GITHUB_STEP_SUMMARY"
+          echo "issue=$issue" >> "$GITHUB_OUTPUT"
+          # 1 : un accord s'est rompu, le ticket le dira ; autre chose : la course a cassé.
+          [ "$issue" -le 1 ]
+
+      - uses: actions/upload-artifact@v6
+        if: always() && steps.confronter.outcome != 'skipped'
+        with:
+          name: trajectoire-${{ matrix.cible }}
+          path: ${{ runner.temp }}/resultats
+          retention-days: 90
+
+      - name: Commiter la référence récrite
+        if: inputs.figer && matrix.cible == 'epinglee'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/temoins/trajectoire_3
+          if git diff --cached --quiet; then
+            echo "La référence n'a pas bougé."
+          else
+            git commit -m "Référence de la confrontation à TRAJECTOiRE, récrite par GitHub"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - name: Prévenir, quand un accord s'est rompu
+        if: steps.confronter.outputs.issue == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          titre="Confrontation à TRAJECTOiRE : un accord s'est rompu"
+          {
+            cat "$RUNNER_TEMP/resultats/bilan.md"
+            echo
+            echo "Course : $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo
+            echo "Une rupture n'est pas une erreur du dépôt : seul le texte tranche. La version"
+            echo "épinglée dit si le dépôt a bougé, la dernière si TRAJECTOiRE a bougé."
+          } > "$RUNNER_TEMP/ticket.md"
+          numero=$(gh issue list --state open --search "in:title \"$titre\"" --json number --jq '.[0].number // empty')
+          if [ -n "$numero" ]; then
+            gh issue comment "$numero" --body-file "$RUNNER_TEMP/ticket.md"
+          else
+            gh issue create --title "$titre" --body-file "$RUNNER_TEMP/ticket.md"
+          fi
+          exit 1

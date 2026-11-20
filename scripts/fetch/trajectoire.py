@@ -71,7 +71,6 @@ sys.path.insert(0, str(RACINE / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import destinie_2  # noqa: E402  (les carrières du dépôt, écrites une fois)
-from retraite_notionnelle.donnees.simulateur import SimulateurDeDonnees  # noqa: E402
 
 SORTIE = RACINE / "tests" / "temoins" / "trajectoire.json"
 SCRIPT_R = Path(__file__).resolve().with_suffix(".R")
@@ -126,9 +125,14 @@ STATUTS_COR = {
     ("FPT ou FPH", "Sedentaire"): "fonctionnaire_territorial_hospitalier",
     ("FPT ou FPH", "Actif"): "aide_soignant",
     ("FPT ou FPH", "Superactif"): "fonctionnaire_territorial_hospitalier_super_actif",
+    # Les cas types 12 et 13, que le COR publie depuis 2026 (versions 3).
+    ("Exploitant agricole", None): "exploitant_agricole",
+    ("Liberal", None): "medecin_liberal",
 }
 #: Les états sans revenu d'activité, et le motif d'interruption du dépôt.
-MOTIFS_COR = {"Chômage": "chomage_indemnise", "AVPF": "education_enfant"}
+#: Les versions 3 écrivent « Chomage », sans accent.
+MOTIFS_COR = {"Chômage": "chomage_indemnise", "Chomage": "chomage_indemnise",
+              "AVPF": "education_enfant"}
 
 #: Ce que dit chaque cas type du COR (rapport annuel, annexe des cas types).
 OBJETS_COR = {
@@ -145,6 +149,8 @@ OBJETS_COR = {
     "9": "cas type 9 du COR : aide-soignante hospitalière, catégorie active",
     "10": "cas type 10 du COR : non-cadre du privé puis fonctionnaire territorial",
     "11": "cas type 11 du COR : fonctionnaire territorial ou hospitalier sédentaire",
+    "12": "cas type 12 du COR : exploitant agricole (depuis le rapport de 2026)",
+    "13": "cas type 13 du COR : médecin libéral (depuis le rapport de 2026)",
 }
 
 
@@ -334,7 +340,7 @@ def requete_cor(ident: str, tables: dict[str, list[dict]]) -> tuple[dict[str, st
             # celui de la dernière année d'emploi ; l'AVPF, le dépôt la calcule.
             emplois = [l for l in lignes if l[2] > 0]
             statut = lignes[-1][1] if lignes else "salarie_prive_non_cadre"
-            reference = emplois[-1][2] if emplois and etat == "Chômage" else 0
+            reference = emplois[-1][2] if emplois and etat in ("Chômage", "Chomage") else 0
             lignes.append((annee, statut, reference, None))
             interruptions.append((annee, MOTIFS_COR[etat]))
             continue
@@ -471,11 +477,13 @@ def sorties_du_cas(ident: str, tables: dict[str, list[dict]], jeu: str) -> dict:
                                   "salaire_reference": salaires.get(ligne["caisse"])}
     points: dict[str, float] = {}
     annuels = []
-    for ligne in sorted(du_cas("points"), key=lambda l: (l["annee"], l["caisse"])):
+    lignes_de_points = du_cas("points") + (du_cas("points_base")
+                                           if f"points_base_{jeu}" in tables else [])
+    for ligne in sorted(lignes_de_points, key=lambda l: (l["annee"], l["caisse"])):
         points[ligne["caisse"]] = points.get(ligne["caisse"], 0) + (ligne["nbPt"] or 0)
         if ligne["nbPt"]:
             annuels.append(f"{ligne['annee']} {ligne['caisse']} {ligne['nbPt']:g} "
-                           f"(gratuits {ligne['nbPtGratuit'] or 0:g}, mois {ligne['nbMois']:g})")
+                           f"(gratuits {ligne.get('nbPtGratuit') or 0:g}, mois {ligne['nbMois'] or 0:g})")
     annees = [
         f"{l['annee']} {l['caisse']} {float(l['remuneration'] or 0):.2f} € ; "
         f"trimestres {float(l['nbTrimValide'] or 0):g} validés, "
@@ -559,7 +567,7 @@ def temoin(tables: dict[str, list[dict]], versions: dict) -> dict:
             "requete": requete,
             "requete_reserves": reserves,
         }
-    macro = SimulateurDeDonnees().macro
+    macro = destinie_2.salaires_des_cas(CARRIERES)
     for cas in CARRIERES:
         cas_temoins[cas.code] = {
             "objet": cas.objet,
@@ -632,7 +640,7 @@ def main(arguments: list[str] | None = None) -> int:
     lecteur.add_argument("--sorties", type=Path, metavar="DOSSIER",
                          help="relit les sorties d'une exécution gardée, sans relancer R")
     options = lecteur.parse_args(arguments)
-    macro = SimulateurDeDonnees().macro
+    macro = destinie_2.salaires_des_cas(CARRIERES)
     if options.lister:
         for cas in CARRIERES:
             print(f"{cas.code} : {cas.objet}")
