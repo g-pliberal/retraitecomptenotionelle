@@ -229,12 +229,17 @@ donne, pour chaque année depuis que la cotisation est toute proportionnelle,
 la cotisation maximale, les dix points qu'elle attribue et la valeur du point,
 et `scripts/fetch/carmf_chronologie.py` les verse dans `valeurs_point.csv`. Le
 moteur y compte donc de vrais points, au plafond de revenu que la caisse a
-publié chaque année. Restent au rendement de l'année du départ les années
-d'avant, où une cotisation forfaitaire et une proportionnelle assise entre un
-plancher et un plafond achetaient à deux prix la même année, ce que le format
-de la table ne sait pas dire, et que la fiche fait cotiser sur tout le revenu ;
-et les années postérieures au dernier barème. La caisse assoit la cotisation
-sur le revenu de l'avant-dernière année, le modèle sur celui de l'année même.
+publié chaque année. Avant 1996, le forfait de l'année achète quatre points,
+et la proportionnelle de 1983 à 1995, assise entre le plancher et le plafond
+de la caisse, achète au même prix, le quart du forfait ; les points d'avant
+1991 sont portés par 1,33. Restent au rendement de l'année du départ les
+années postérieures au dernier barème. La caisse assoit la cotisation sur le
+revenu de l'avant-dernière année, le modèle sur celui de l'année même. Les
+statuts d'avant 2017 ne sont pas au Journal officiel, qui n'en publie que les
+modifications : ces années tiennent à la chronologie de la caisse, qui ne dit
+pas si le délai de trois ans de la proportionnelle, écrit pour 1983 à 1990,
+vaut encore de 1991 à 1995 (le modèle ne l'y applique pas), ni comment le
+forfait se partage l'année du départ (le modèle le compte entier).
 
 **Celle de la Cipav aussi** : l'article 2 du décret n° 79-262 donne les points
 de chaque classe, et `scripts/fetch/cipav_points.py` en tire le prix du point

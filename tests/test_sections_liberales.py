@@ -1782,7 +1782,9 @@ def test_la_date_d_effet_au_trimestre_civil_se_pose_a_la_main(effets_des_liberau
     20 novembre 2026, la complémentaire des médecins compte ses points de 1996
     à 2026 au prix de la caisse, et non plus au rendement de l'année du
     départ : 16 065,65 € au lieu de 14 056,14 €, et 16 035,56 / 1,05 × 1,0625 =
-    16 226,46 € au lieu de 14 193,04 €."""
+    16 226,46 € au lieu de 14 193,04 €. Les années 1986 à 1995 se comptent à
+    leur tour en points, le forfait à quatre points et la proportionnelle au
+    même prix : 17 604,69 €, et 17 564,28 / 1,05 × 1,0625 = 17 773,38 €."""
     def montant(cle, regime):
         pensions = effets_des_liberaux[cle]["pensions_par_regime"]
         return {p["regime"]: p for p in pensions}[regime]["montant"]
@@ -1792,10 +1794,10 @@ def test_la_date_d_effet_au_trimestre_civil_se_pose_a_la_main(effets_des_liberau
     assert montant("pharmacien|1960-05-10|21|67",
                    "cavp_complementaire") == pytest.approx(14_548.91, abs=0.01)
     assert montant("medecin_liberal|1964-05-10|22|63",
-                   "carmf_complementaire") == pytest.approx(16_065.65, abs=0.01)
+                   "carmf_complementaire") == pytest.approx(17_604.69, abs=0.01)
     assert montant("medecin_liberal|1964-03-10|22|63.0833",
                    "carmf_complementaire") == pytest.approx(
-                       16_035.56 / 1.05 * 1.0625, abs=0.01)
+                       17_564.28 / 1.05 * 1.0625, abs=0.01)
     assert montant("auxiliaire_medical|1959-11-10|26|67",
                    "carpimko_complementaire") == pytest.approx(
                        5_706.01 / 1.025 * 1.0375, abs=0.01)

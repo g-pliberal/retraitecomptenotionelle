@@ -686,6 +686,11 @@ periodes:
     taux_cotisation_retraite: 0.0200
     cotisation_forfaitaire_euros: 1679.38
     cotisation_forfaitaire_annee: 1983
+    borne_basse_par_annee:
+      1983: 16769.39
+    borne_haute_par_annee:
+      1983: 38112.25
+    dispense_de_debut: {annees: 3, part: proportionnelle, depuis: 1983}
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -709,6 +714,11 @@ periodes:
     taux_cotisation_retraite: 0.0200
     cotisation_forfaitaire_euros: 1803.78
     cotisation_forfaitaire_annee: 1984
+    borne_basse_par_annee:
+      1984: 18293.88
+    borne_haute_par_annee:
+      1984: 41161.23
+    dispense_de_debut: {annees: 3, part: proportionnelle, depuis: 1983}
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -727,6 +737,11 @@ periodes:
     taux_cotisation_retraite: 0.0200
     cotisation_forfaitaire_euros: 1864.15
     cotisation_forfaitaire_annee: 1985
+    borne_basse_par_annee:
+      1985: 19056.13
+    borne_haute_par_annee:
+      1985: 42685.72
+    dispense_de_debut: {annees: 3, part: proportionnelle, depuis: 1983}
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -745,6 +760,11 @@ periodes:
     taux_cotisation_retraite: 0.0200
     cotisation_forfaitaire_euros: 1975.74
     cotisation_forfaitaire_annee: 1986
+    borne_basse_par_annee:
+      1986: 20580.62
+    borne_haute_par_annee:
+      1986: 45734.71
+    dispense_de_debut: {annees: 3, part: proportionnelle, depuis: 1983}
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -763,6 +783,11 @@ periodes:
     taux_cotisation_retraite: 0.0200
     cotisation_forfaitaire_euros: 2037.94
     cotisation_forfaitaire_annee: 1987
+    borne_basse_par_annee:
+      1987: 21342.86
+    borne_haute_par_annee:
+      1987: 53357.16
+    dispense_de_debut: {annees: 3, part: proportionnelle, depuis: 1983}
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -781,6 +806,11 @@ periodes:
     taux_cotisation_retraite: 0.0200
     cotisation_forfaitaire_euros: 2268.44
     cotisation_forfaitaire_annee: 1988
+    borne_basse_par_annee:
+      1988: 22105.11
+    borne_haute_par_annee:
+      1988: 54881.65
+    dispense_de_debut: {annees: 3, part: proportionnelle, depuis: 1983}
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -799,6 +829,11 @@ periodes:
     taux_cotisation_retraite: 0.0200
     cotisation_forfaitaire_euros: 2336.13
     cotisation_forfaitaire_annee: 1989
+    borne_basse_par_annee:
+      1989: 24391.84
+    borne_haute_par_annee:
+      1989: 60979.61
+    dispense_de_debut: {annees: 3, part: proportionnelle, depuis: 1983}
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -817,6 +852,11 @@ periodes:
     taux_cotisation_retraite: 0.0200
     cotisation_forfaitaire_euros: 2405.65
     cotisation_forfaitaire_annee: 1990
+    borne_basse_par_annee:
+      1990: 25154.09
+    borne_haute_par_annee:
+      1990: 68602.06
+    dispense_de_debut: {annees: 3, part: proportionnelle, depuis: 1983}
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -835,6 +875,10 @@ periodes:
     taux_cotisation_retraite: 0.0500
     cotisation_forfaitaire_euros: 1871.46
     cotisation_forfaitaire_annee: 1991
+    borne_basse_par_annee:
+      1991: 25916.33
+    borne_haute_par_annee:
+      1991: 70126.55
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -843,13 +887,21 @@ periodes:
       forfait RECULE du même coup — 2 405,65 € en 1990, 1 871,46 € en 1991 :
       le régime déplace son poids du montant vers le revenu.
       Cette réforme crée un point NOUVEAU : les points acquis auparavant sont
-      servis affectés d'un coefficient de 1,33 (statuts du régime), ce que le
-      rapport des deux séries publiées confirme à 1,3333 près. Le moteur
-      l'applique par une ligne d'ÉCHELLE dans `conversions_points.csv`
-      (carmf_complementaire, 1991, 1,333333) : les points acquis avant
-      1991 et liquidés depuis valent un tiers de plus, comme le régime les
-      sert. La fiche disait sous-estimer d'un tiers les droits d'avant
-      1991 ; ce n'est plus le cas.
+      servis affectés d'un coefficient de 1,33, « ce qui porte le nombre de
+      points acquis avant 1991 à 5,32 par an au lieu de 4 » (chronologie de
+      la CARMF, page 20). Le moteur l'applique par une ligne d'ÉCHELLE dans
+      `conversions_points.csv` (carmf_complementaire, 1991, 1,33).
+      LES POINTS D'AVANT 1996. Le forfait « rapporte 4 points » (page 20) :
+      le point s'achète au quart du forfait de l'année (`valeurs_point.csv`,
+      de 1949 à 1995), et la proportionnelle achète au même prix, ce que les
+      « points attribués » de la page 26 vérifient (2 210,51 € pour 4,72
+      points en 1991). Elle est assise sur le revenu « compris entre un
+      minimum et un maximum » (`borne_basse_par_annee`,
+      `borne_haute_par_annee`), et due, de 1983 à 1990, « à partir de la 4e
+      année d'affiliation » (`dispense_de_debut`, trois années, la part
+      proportionnelle). La chronologie ne dit pas si ce délai vaut encore de
+      1991 à 1995 : la fiche ne l'y porte pas. Les statuts d'avant 2017 ne
+      sont pas au Journal officiel, qui n'en publie que les modifications.
   - debut: 1992
     fin: 1992
     type_calcul: points
@@ -865,6 +917,10 @@ periodes:
     taux_cotisation_retraite: 0.0500
     cotisation_forfaitaire_euros: 1937.32
     cotisation_forfaitaire_annee: 1992
+    borne_basse_par_annee:
+      1992: 25916.33
+    borne_haute_par_annee:
+      1992: 73175.53
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -883,6 +939,10 @@ periodes:
     taux_cotisation_retraite: 0.0500
     cotisation_forfaitaire_euros: 1997.69
     cotisation_forfaitaire_annee: 1993
+    borne_basse_par_annee:
+      1993: 26678.58
+    borne_haute_par_annee:
+      1993: 83846.96
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -901,6 +961,10 @@ periodes:
     taux_cotisation_retraite: 0.0500
     cotisation_forfaitaire_euros: 2078.19
     cotisation_forfaitaire_annee: 1994
+    borne_basse_par_annee:
+      1994: 26678.58
+    borne_haute_par_annee:
+      1994: 91469.41
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
@@ -919,6 +983,10 @@ periodes:
     taux_cotisation_retraite: 0.0500
     cotisation_forfaitaire_euros: 2166.00
     cotisation_forfaitaire_annee: 1995
+    borne_basse_par_annee:
+      1995: 26678.58
+    borne_haute_par_annee:
+      1995: 91469.41
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]

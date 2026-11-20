@@ -4354,7 +4354,7 @@ def test_les_points_carmf_d_avant_1991_valent_un_tiers_de_plus(simulateur):
     """Statuts de la CARMF : les points acquis avant la réforme de 1991 sont
     servis affectés d'un coefficient de 1,33."""
     conversions = simulateur.scenario_actuel.conversions_points
-    assert conversions.echelle("carmf_complementaire", 1985, 2020)[0] == pytest.approx(1.333333)
+    assert conversions.echelle("carmf_complementaire", 1985, 2020)[0] == pytest.approx(1.33)
     assert conversions.echelle("carmf_complementaire", 1995, 2020)[0] == 1.0
     assert conversions.echelle("carmf_complementaire", 1985, 1990)[0] == 1.0
 

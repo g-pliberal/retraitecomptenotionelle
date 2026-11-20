@@ -12,7 +12,7 @@
   "valeur": "8320b50a8e185a69"
  },
  "test_cumul_activites.py::cumuls_tires_au_hasard": {
-  "valeur": "8555881a838af527"
+  "valeur": "330f3bcb9bdf7030"
  },
  "test_cycle_de_vie_portage.py::contributions agent_chemins_fer_secondaires-1930": {
   "valeur": "713dde7075f725b1"
@@ -123,7 +123,7 @@
   "valeur": "f0ddf0d2e5ce670e"
  },
  "test_pcv_sante.py::pcv des professions de santé": {
-  "valeur": "bf605e20f949e963"
+  "valeur": "3ef2f9f1f84528b3"
  },
  "test_pont.py::carrières de la grille": {
   "valeur": "5c6079634a23369f"
@@ -228,6 +228,6 @@
   "valeur": "95c5673df3a03558"
  },
  "test_web.py::carrières tirées au hasard": {
-  "valeur": "f5f0b21b0cee9d2f"
+  "valeur": "fe23d057788c5605"
  }
 }

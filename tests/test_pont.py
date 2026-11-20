@@ -2202,7 +2202,7 @@ def test_le_pont_sert_les_regles_de_l_histoire_du_droit():
     départ compris. Le point d'indice (``point_indice_fonction_publique.csv``) :
     50,2929 en 1999, 52,4933 en 2003, rien avant 1960. Le changement d'unité
     d'un point (``conversions_points.csv``) : 0,387464 pour l'Arrco en 1999,
-    1,333333 pour la complémentaire des médecins en 1991, aucun pour un point
+    1,33 pour la complémentaire des médecins en 1991, aucun pour un point
     acquis depuis, ni pour un régime sans conversion."""
     _sans_node()
     from outils_pont import droit_et_fige
@@ -2246,7 +2246,7 @@ def test_le_pont_sert_les_regles_de_l_histoire_du_droit():
         "point inconnu": None,
         "arrco": (0.387464, Fiabilite.HAUTE),
         "arrco depuis": (1.0, Fiabilite.CERTIFIEE),
-        "medecins": (1.333333, Fiabilite.HAUTE),
+        "medecins": (1.33, Fiabilite.HAUTE),
         "sans conversion": (1.0, Fiabilite.CERTIFIEE),
     }
     assert type(lus["point constant"]) is float and type(lus["arrco depuis"][0]) is float

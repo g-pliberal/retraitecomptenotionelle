@@ -28,10 +28,15 @@ refuse donc d'écrire une série où une année de 1996 à la dernière manquera
 où la cotisation maximale n'attribuerait pas dix points, où elle baisserait de
 plus de 1 %, ou dont la valeur du point sortirait de 60 à 90 €.
 
-Avant 1996, une cotisation forfaitaire (quatre points) et une proportionnelle
-assise entre un plancher et un plafond achètent à deux prix la même année : ces
-années ne sont pas extraites, et le moteur les garde au rendement
-(`rendements_points.csv`, `docs/limites.md`).
+Avant 1996, la cotisation est forfaitaire, et « rapporte 4 points » (page
+20) : le point s'achète au quart du forfait de l'année, que la table
+« Rendement du régime complémentaire » donne de 1949 à 1995 avec la valeur du
+point. Son rendement publié le confirme : quatre fois la valeur du point,
+rapportées au forfait. La proportionnelle de 1983 à 1995, assise entre un
+plancher et un plafond, achète au même prix : sa cotisation maximale, divisée
+par le quart du forfait, rend les « points attribués » que la caisse publie
+(1,02 en 1983, 4,72 en 1991, 6 en 1995). Le plancher, le plafond et le taux
+sont à la fiche du régime.
 
 L'ANNÉE EN COURS n'est pas dans la chronologie, qui paraît l'année d'après.
 Elle est SAISIE ici depuis les pages « chiffres clés » de la caisse, au niveau
@@ -55,6 +60,9 @@ URL = "https://www.carmf.fr/doc/publications/chronologie/2025/chronologie-2025.p
 SORTIE = Path("data/brut/carmf_chronologie.json")
 REGIME = "carmf_complementaire"
 PREMIERE, DERNIERE = 1996, 2025
+#: Les années du forfait : quatre points pour la cotisation forfaitaire.
+PREMIER_FORFAIT, DERNIER_FORFAIT = 1949, 1995
+POINTS_DU_FORFAIT = 4
 
 #: Les chiffres clés de 2026, lus le 22 septembre et relus le 20 novembre 2026
 #: sur https://www.carmf.fr/page.php?page=cdrom/retr/retr-chiffre.htm (« 11,52
@@ -93,6 +101,13 @@ COTISATION_DE_1996 = re.compile(
 #: la dernière année, dont la table des rendements donne une moyenne.
 DERNIERE_VALEUR = re.compile(
     r"\b" + str(DERNIERE) + r" 0,\d{3,4}[   ]?€ (\d\d,\d\d)[   ]?€")
+
+
+#: « 1978 1 025,07 € 36,59 € 14,28 % », « 01/07/1949 16,01 € 1,77 € - » : la
+#: cotisation forfaitaire de l'année, la valeur du point et le rendement.
+FORFAIT = re.compile(
+    r"^(?:01/07/)?(19\d\d) (\d{1,3}(?: \d{3})*,\d\d) ?€ (\d{1,2},\d\d) ?€ "
+    r"(?:(\d\d,\d\d) ?%|-)$")
 
 
 def _nombre(texte: str) -> float:
@@ -138,6 +153,41 @@ def extraire(lignes: list[str]) -> dict[int, tuple[float, float, float]]:
             for annee in sorted(cotisations) if annee in valeurs and annee >= PREMIERE}
 
 
+def extraire_forfaits(lignes: list[str]) -> dict[int, tuple[float, float, float | None]]:
+    """Par année de 1949 à 1995 : (forfait, valeur du point, rendement publié)."""
+    forfaits: dict[int, tuple[float, float, float | None]] = {}
+    dans_la_table = False
+    for ligne in lignes:
+        if ligne.startswith("Rendement du régime complémentaire"):
+            dans_la_table = True
+        elif dans_la_table and ligne.startswith("Montant maximum de la cotisation"):
+            dans_la_table = False
+        trouve = FORFAIT.match(_propre(ligne)) if dans_la_table else None
+        if trouve and PREMIER_FORFAIT <= int(trouve.group(1)) <= DERNIER_FORFAIT:
+            forfaits[int(trouve.group(1))] = (
+                _nombre(trouve.group(2)), _nombre(trouve.group(3)),
+                _nombre(trouve.group(4)) / 100 if trouve.group(4) else None)
+    return forfaits
+
+
+def verifier_forfaits(forfaits: dict[int, tuple[float, float, float | None]]) -> list[str]:
+    """Aucune année ne manque, et quatre points pour le forfait rendent, à la
+    valeur du point, le rendement que la caisse publie."""
+    anomalies = [f"forfait de {annee} absent"
+                 for annee in range(PREMIER_FORFAIT, DERNIER_FORFAIT + 1)
+                 if annee not in forfaits]
+    for annee, (forfait, valeur, rendement) in sorted(forfaits.items()):
+        if rendement is None:
+            continue
+        calcule = POINTS_DU_FORFAIT * valeur / forfait
+        # La valeur du point est publiée au centime : 1,77 € en 1950.
+        if abs(calcule - rendement) > max(0.0002, 0.005 / valeur * rendement):
+            anomalies.append(
+                f"{annee} : quatre points à {valeur} € pour {forfait} € rendent "
+                f"{calcule:.4f}, et non {rendement:.4f}")
+    return anomalies
+
+
 def verifier(serie: dict[int, tuple[float, float, float]]) -> list[str]:
     """Contrôle de structure : sans lui, une erreur de lecture passerait."""
     anomalies = [f"année {annee} absente" for annee in range(PREMIERE, DERNIERE + 1)
@@ -160,12 +210,18 @@ def main() -> int:
     except (urllib.error.HTTPError, urllib.error.URLError, OSError) as erreur:
         print(f"Échec : {URL} : {erreur}", file=sys.stderr)
         return 1
-    lue = extraire(lignes_pdf(octets))
-    anomalies = verifier(lue)
+    lignes = lignes_pdf(octets)
+    lue = extraire(lignes)
+    forfaits = extraire_forfaits(lignes)
+    anomalies = verifier(lue) + verifier_forfaits(forfaits)
     if anomalies:
         print("Série refusée :\n  " + "\n  ".join(anomalies), file=sys.stderr)
         return 1
     serie: dict[str, float] = {}
+    for annee, (forfait, valeur, _) in sorted(forfaits.items()):
+        serie[f"{REGIME}|{annee}|salaire_reference"] = round(forfait / POINTS_DU_FORFAIT, 6)
+        serie[f"{REGIME}|{annee}|taux_appel"] = 1.0
+        serie[f"{REGIME}|{annee}|valeur_service"] = valeur
     for annee, (maximale, points, valeur) in sorted(lue.items()):
         serie[f"{REGIME}|{annee}|salaire_reference"] = round(maximale / points, 6)
         serie[f"{REGIME}|{annee}|taux_appel"] = 1.0
@@ -181,7 +237,8 @@ def main() -> int:
         }, ensure_ascii=False, indent=1, sort_keys=True),
         encoding="utf-8",
     )
-    print(f"{SORTIE} : {len(lue)} années, de {min(lue)} à {max(lue)}, "
+    print(f"{SORTIE} : {len(forfaits)} années de forfait, de {min(forfaits)} à "
+          f"{max(forfaits)}, puis {len(lue)} années, de {min(lue)} à {max(lue)}, "
           f"et {len(SAISIES)} valeurs saisies pour 2026")
     return 0
 

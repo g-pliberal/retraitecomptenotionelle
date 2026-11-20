@@ -1390,16 +1390,18 @@ DEPARTS_PASSE_75_ANS = {
     # (156,68 points), et les trois pensions montent de 2 487,95 € : 21 083,33 €
     # ici. Le semestre de 2027, sans prix publié, reste au rendement, et
     # l'exemption retire toujours 5 154,8634 × 0,0448 × 1,30 = 300,22 €.
-    ("1951-01-01", "76.5"): 21_083.33,
+    # Les années 1981 à 1995 se comptent à leur tour en points : 240,6479
+    # points à 78,48995 €, majorés de 30 %, 24 554,97 €.
+    ("1951-01-01", "76.5"): 24_554.97,
     # Née le 1er juillet 1951, partie à 76 ans, le 1er juillet 2027 : 75 ans le
     # 1er juillet 2026, exemptée du 1er janvier 2027, le semestre civil qui
     # suit. Les mêmes cotisations, le même semestre de 2027 : 18 595,38 €.
-    ("1951-07-01", "76"): 21_083.33,
+    ("1951-07-01", "76"): 24_554.97,
     # Née le 1er janvier 1952, partie à 75 ans et 6 mois, le 1er juillet 2027 :
     # 75 ans le 1er janvier 2027, exemptée du 1er juillet 2027, le jour de son
     # départ. Rien n'est exempté, et la pension reste celle d'avant la
     # correction.
-    ("1952-01-01", "75.5"): 21_153.59,
+    ("1952-01-01", "75.5"): 24_251.76,
 }
 
 
@@ -1446,12 +1448,13 @@ def test_l_exemption_de_la_carmf_retire_300_euros_a_la_medecin_de_76_ans(
     de service de 2026 portée aux prix, et non plus à celle de 2025 (1,75 % de
     hausse en 2026) : 22 383,12 / 1,0175 = 21 998,15 €."""
     pensions = departs_passe_75_ans["1951-01-01|76.5"]
-    # Depuis le 20 novembre 2026, les années 1996 à 2026 sont en points : il
-    # ne reste au rendement que les cotisations d'avant 1996, 87 501 €, le
-    # semestre exempté de 2027 n'y étant pas, et la pension sans exemption
-    # serait de 21 083,33 + 300,22 = 21 383,55 €.
-    assert "cotisations revalorisées 87,501 €" in pensions["carmf_complementaire"]["detail"]
-    assert 21_383.55 - pensions["carmf_complementaire"]["montant"] == pytest.approx(
+    # Depuis le 20 novembre 2026, toutes les années jusqu'en 2026 sont en
+    # points : rien ne reste au rendement, le semestre exempté de 2027, seul
+    # sans prix publié, n'étant pas cotisé. Sans exemption, ses 5 154,8634 €
+    # seraient servis au rendement, 5 154,8634 × 0,0448 × 1,30 = 300,22 € de
+    # plus : 24 554,97 + 300,22 = 24 855,19 €.
+    assert "cotisations revalorisées" not in pensions["carmf_complementaire"]["detail"]
+    assert 24_855.19 - pensions["carmf_complementaire"]["montant"] == pytest.approx(
         300.22, abs=0.005)
     assert pensions["asv_conventionnes"]["montant"] == pytest.approx(21_998.15, abs=0.005)
     assert pensions["cnavpl"]["montant"] == pytest.approx(18_281.12, abs=0.005)
@@ -1875,3 +1878,139 @@ def test_vingt_annees_au_plafond_valent_deux_cents_points_a_65_ans_en_2016(simul
     l'un (la valeur « à 65 ans » de 2016), 15 775,46 € par an."""
     pension = _medecin_au_plafond(simulateur, 1951, 45.0, 65.0)
     assert pension.montant == pytest.approx((200 + 10 / 12) * 78.55, abs=0.05)
+
+
+# -- la CARMF avant 1996 : un forfait de quatre points, une proportionnelle au même prix --
+
+#: « La chronologie des chiffres de la CARMF 2025 », table « Rendement du
+#: régime complémentaire » (pages 95 et 96) : la cotisation forfaitaire de
+#: l'année et la valeur du point. « Avant 1991 la cotisation du régime
+#: complémentaire est uniquement forfaitaire et rapporte 4 points » (page 20) ;
+#: le rendement que la table publie, 13,12 % en 1991 et 12,50 % en 1995, est
+#: celui de quatre points pour le forfait.
+FORFAIT_ET_POINT_DE_LA_CARMF = {
+    1949: (16.01, 1.77), 1950: (32.01, 1.77), 1951: (42.69, 1.77),
+    1952: (44.82, 1.77), 1953: (44.82, 1.77), 1954: (48.48, 1.89),
+    1955: (48.48, 1.93), 1956: (57.63, 2.20), 1957: (65.86, 2.48),
+    1958: (78.36, 2.99), 1959: (89.34, 3.30), 1960: (94.82, 3.35),
+    1961: (100.62, 3.51), 1962: (114.34, 3.72), 1963: (121.96, 4.14),
+    1964: (147.88, 4.57), 1965: (157.02, 5.25), 1966: (221.05, 6.52),
+    1967: (321.67, 8.35), 1968: (336.61, 9.57), 1969: (402.47, 13.66),
+    1970: (402.47, 14.03), 1971: (448.20, 16.01), 1972: (505.52, 18.90),
+    1973: (551.26, 20.73), 1974: (608.27, 23.17), 1975: (698.83, 26.83),
+    1976: (781.15, 29.88), 1977: (881.77, 33.54), 1978: (1_025.07, 36.59),
+    1979: (1_125.07, 39.64), 1980: (1_211.05, 43.30), 1981: (1_309.84, 46.95),
+    1982: (1_556.81, 55.49), 1983: (1_679.38, 60.06), 1984: (1_803.78, 64.64),
+    1985: (1_864.15, 66.77), 1986: (1_975.74, 70.74), 1987: (2_037.94, 73.02),
+    1988: (2_268.44, 74.47), 1989: (2_336.13, 76.68), 1990: (2_405.65, 78.97),
+    1991: (1_871.46, 61.40), 1992: (1_937.32, 63.23), 1993: (1_997.69, 65.17),
+    1994: (2_078.19, 66.54), 1995: (2_166.00, 67.69),
+}
+
+#: Même chronologie, table « Régime complémentaire, cotisations
+#: proportionnelles » (page 26) : le revenu « plancher », le revenu
+#: « plafond », le taux, la cotisation maximale et les points qu'elle attribue.
+PROPORTIONNELLE_DE_LA_CARMF = {
+    1983: (16_769.39, 38_112.25, 0.02, 426.86, 1.02),
+    1984: (18_293.88, 41_161.23, 0.02, 457.35, 1.01),
+    1985: (19_056.13, 42_685.72, 0.02, 472.59, 1.01),
+    1986: (20_580.62, 45_734.71, 0.02, 503.08, 1.02),
+    1987: (21_342.86, 53_357.16, 0.02, 640.29, 1.26),
+    1988: (22_105.11, 54_881.65, 0.02, 655.53, 1.16),
+    1989: (24_391.84, 60_979.61, 0.02, 731.76, 1.25),
+    1990: (25_154.09, 68_602.06, 0.02, 868.96, 1.44),
+    1991: (25_916.33, 70_126.55, 0.05, 2_210.51, 4.72),
+    1992: (25_916.33, 73_175.53, 0.05, 2_362.96, 4.88),
+    1993: (26_678.58, 83_846.96, 0.05, 2_858.42, 5.72),
+    1994: (26_678.58, 91_469.41, 0.05, 3_239.54, 6.24),
+    1995: (26_678.58, 91_469.41, 0.05, 3_239.54, 6.00),
+}
+
+
+def _valeurs_du_point_de_la_carmf() -> dict:
+    import csv
+    from pathlib import Path
+
+    chemin = Path(__file__).resolve().parent.parent / "data/reference/regimes/valeurs_point.csv"
+    with chemin.open(encoding="utf-8") as fichier:
+        lignes = csv.DictReader(ligne for ligne in fichier if not ligne.startswith("#"))
+        return {(int(ligne["annee"]), ligne["mesure"]): float(ligne["valeur"])
+                for ligne in lignes if ligne["regime"] == "carmf_complementaire"}
+
+
+def test_le_forfait_de_la_carmf_achete_quatre_points_jusqu_en_1995():
+    """Chronologie de la CARMF, page 20 : « Avant 1991 la cotisation du régime
+    complémentaire est uniquement forfaitaire et rapporte 4 points ». Le point
+    s'achète donc au quart du forfait de l'année, et la table des rendements
+    (pages 95 et 96) le confirme jusqu'en 1995 : quatre fois la valeur du
+    point, rapportées au forfait, rendent le rendement qu'elle publie (13,13 %
+    en 1990, 13,12 % en 1991, 12,50 % en 1995)."""
+    table = _valeurs_du_point_de_la_carmf()
+    for annee, (forfait, valeur) in FORFAIT_ET_POINT_DE_LA_CARMF.items():
+        achat = table[annee, "salaire_reference"] * table[annee, "taux_appel"]
+        assert achat == pytest.approx(forfait / 4, abs=0.0005), annee
+        assert table[annee, "valeur_service"] == pytest.approx(valeur), annee
+    for annee, rendement in ((1990, 0.1313), (1991, 0.1312), (1995, 0.1250)):
+        forfait, valeur = FORFAIT_ET_POINT_DE_LA_CARMF[annee]
+        assert 4 * valeur / forfait == pytest.approx(rendement, abs=0.00005)
+
+
+def test_la_proportionnelle_de_la_carmf_achete_au_prix_du_forfait_de_1983_a_1995(simulateur):
+    """Chronologie de la CARMF, page 26 : la cotisation proportionnelle est
+    assise sur le revenu « compris entre un minimum et un maximum » (page 20),
+    et sa cotisation maximale attribue 1,02 point en 1983, 1,44 en 1990, 4,72
+    en 1991, 6 en 1995 : ce qu'elle achète au quart du forfait de l'année.
+    La fiche porte ce plancher, ce plafond et ce taux."""
+    fiche = simulateur.catalogue["carmf_complementaire"]
+    for annee, (plancher, plafond, taux, maximale, points) in PROPORTIONNELLE_DE_LA_CARMF.items():
+        forfait = FORFAIT_ET_POINT_DE_LA_CARMF[annee][0]
+        assert (plafond - plancher) * taux == pytest.approx(maximale, abs=0.006), annee
+        # 1995 : la caisse écrit « 6 », sans décimale, quand le calcul rend 5,98.
+        assert maximale / (forfait / 4) == pytest.approx(
+            points, abs=0.02 if annee == 1995 else 0.005), annee
+        periode = fiche.periode(annee)
+        assert periode.taux_cotisation_retraite == pytest.approx(taux), annee
+        assert dict(periode.borne_basse_par_annee)[annee] == pytest.approx(plancher), annee
+        assert dict(periode.borne_haute_par_annee)[annee] == pytest.approx(plafond), annee
+
+
+def _points_de_la_carmf_au_plafond(annee: int, proportionnelle: bool) -> float:
+    """Les points d'une année entière au plafond, à l'échelle d'après 1990 :
+    quatre pour le forfait, ceux de la cotisation proportionnelle maximale au
+    même prix, et le coefficient de 1,33 jusqu'en 1990 (« ce qui porte le
+    nombre de points acquis avant 1991 à 5,32 par an au lieu de 4 », page 20)."""
+    if annee >= 1996:
+        return 10.0
+    forfait = FORFAIT_ET_POINT_DE_LA_CARMF[annee][0]
+    points = 4.0
+    if proportionnelle and annee in PROPORTIONNELLE_DE_LA_CARMF:
+        points += PROPORTIONNELLE_DE_LA_CARMF[annee][3] / (forfait / 4)
+    return points * (1.33 if annee < 1991 else 1.0)
+
+
+def test_le_medecin_installe_en_1983_compte_ses_points_d_avant_1996(simulateur):
+    """Né le 10 janvier 1951, médecin libéral de janvier 1983 à janvier 2016, au
+    plafond, parti à 65 ans le 1er février 2016. De 1983 à 1985, le forfait
+    seul : la proportionnelle n'est due qu'« à partir de la 4e année
+    d'affiliation » (page 20). De 1986 à 1995, le forfait et la proportionnelle
+    maximale ; de 1996 à 2015, dix points ; un mois de 2016. Le tout servi
+    78,55 € le point. Jusqu'à cette correction, les années d'avant 1996
+    restaient au rendement de l'année du départ."""
+    points = sum(_points_de_la_carmf_au_plafond(annee, proportionnelle=annee >= 1986)
+                 for annee in range(1983, 2016)) + 10 / 12
+    pension = _medecin_au_plafond(simulateur, 1951, 32.0, 65.0)
+    assert pension.montant == pytest.approx(points * 78.55, abs=0.10)
+    assert "rendement" not in pension.detail
+
+
+def test_le_medecin_installe_en_1966_compte_trente_annees_de_forfait(simulateur):
+    """Né le 10 janvier 1931, médecin libéral de janvier 1966 à janvier 1996, au
+    plafond, parti à 65 ans le 1er février 1996 : quatre points par an de 1966
+    à 1982, le forfait et la proportionnelle maximale de 1983 à 1995, les
+    points d'avant 1991 portés par 1,33, et un mois de 1996 à dix points l'an,
+    servis 68,53 € le point."""
+    points = sum(_points_de_la_carmf_au_plafond(annee, proportionnelle=True)
+                 for annee in range(1966, 1996)) + 10 / 12
+    pension = _medecin_au_plafond(simulateur, 1931, 35.0, 65.0)
+    assert pension.montant == pytest.approx(points * 68.53, abs=0.10)
+    assert "rendement" not in pension.detail
