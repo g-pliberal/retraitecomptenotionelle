@@ -184,7 +184,7 @@ quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Lire une page tr
 texte et de quoi l'animer : <!--chiffre:poids_comprime(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->169<!--/--> Ko compressés
 (<!--chiffre:poids(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->547<!--/--> Ko bruts) pour l'accueil. Le premier calcul y ajoute
 le moteur, <!--chiffre:poids_comprime(moteur/js/*.js + moteur/js/droit/*.js - moteur/js/routeur.js - moteur/js/adresses.js - moteur/js/cles.js - moteur/js/gabarit.js - moteur/js/format.js - moteur/js/calendrier.js - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->960<!--/--> Ko compressés, et le paquet
-de données, <!--chiffre:poids_comprime(moteur/donnees.json)-->831<!--/--> Ko compressés (<!--chiffre:poids(moteur/donnees.json)-->6 143<!--/--> Ko bruts) ; le tout prend quelques dixièmes
+de données, <!--chiffre:poids_comprime(moteur/donnees.json)-->832<!--/--> Ko compressés (<!--chiffre:poids(moteur/donnees.json)-->6 144<!--/--> Ko bruts) ; le tout prend quelques dixièmes
 de seconde, et les chargements suivants sont immédiats.
 
 Neuf pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -229,7 +229,7 @@ Chaque page est écrite toute faite, et ne charge qu'au premier calcul
 `moteur/js/`, le moteur qui calcule, en JavaScript et sans aucune bibliothèque,
 ce qui dépend de ce que le lecteur saisit — sa carrière, ses droits et sa
 pension —, et `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->6 143<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->6 144<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->80<!--/--> fiches de régime, et ce que le Python a calculé une fois pour toutes
 sous les réglages de référence : le coût et les carrières types, que les pages
@@ -254,7 +254,7 @@ Il est traité de front : **le JavaScript de `moteur/js/` fait foi**, et
 Le moteur Python, qui garde ses jumeaux jusqu'à leur retrait, refait chaque
 simulation et doit la retrouver au bit près (`tests/test_pont.py`) ;
 `node --test` rejoue les simulations côté JavaScript et les compare valeur par valeur —
-<!--chiffre:portage(valeurs)-->176 288<!--/--> nombres,
+<!--chiffre:portage(valeurs)-->176 290<!--/--> nombres,
 dont <!--chiffre:portage(identiques)-->100,0<!--/--> % identiques
 au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->0,0<!--/--> · 10⁻¹⁵ (un *ulp*, la précision d'un flottant, vaut 2 · 10⁻¹⁶). Les
 deux moteurs ne diffèrent plus d'un *ulp* : le JavaScript calcule
@@ -488,7 +488,7 @@ cadre entré à <!--chiffre:mesure(constante?de=construire_tableaux_md&nom=AGE_D
 <!-- generations:debut -->
 | Génération | Carrière | Ligne de référence « Prix » | Ligne corrigée | Écart |
 |---|---|---|---|---|
-| 1920 | 1940-1982 | -90,4 % | -85,0 % | **+5,5 pt** |
+| 1920 | 1940-1982 | -90,5 % | -85,1 % | **+5,4 pt** |
 | 1930 | 1950-1992 | -88,9 % | -87,1 % | +1,9 pt |
 | 1945 | 1965-2007 | -84,6 % | -84,6 % | 0,0 pt |
 | 1958 | 1978-2020 | -80,3 % | -80,8 % | **-0,5 pt** |
@@ -769,11 +769,11 @@ de chaque cas type :
 | Système | Cumul 1959-2024, euros de 2026 | Écart |
 |---|---|---|
 | 1. Système actuel | <!--chiffre:mesure(cumul_passe?scenario=1)-->13 767<!--/--> Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cumul_passe?scenario=2)-->2 658<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=2)-->−80,7<!--/--> % |
+| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cumul_passe?scenario=2)-->2 621<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=2)-->−81,0<!--/--> % |
 | 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cumul_passe?scenario=3)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=3)-->+0,0<!--/--> % |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 273<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−54,4<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 196<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−55,0<!--/--> % |
 | 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=5)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=5)-->+0,0<!--/--> % |
-| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->7 919<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−42,5<!--/--> % |
+| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->7 842<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−43,0<!--/--> % |
 | *s'ajoute au 6 : sa garantie vieillesse, payée par l'impôt, lue sur la distribution des pensions* | *<!--chiffre:mesure(cumul_passe?scenario=garantie)-->3 075<!--/--> Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
@@ -800,8 +800,8 @@ puis calé pour que chaque groupe de régimes pèse la part que le COR donne à 
 dépense (`docs/limites.md` § 5 ter) : l'agent de
 conduite pèse <!--chiffre:mesure(poids?cas=agent_sncf_conduite)-->1,2<!--/--> % et non <!--chiffre:mesure(poids?cas=agent_sncf_conduite&ponderation=egale)-->5,6<!--/--> %, les quatre carrières du privé <!--chiffre:mesure(poids?cas=smic_carriere_complete|salaire_moyen|cadre|carriere_interrompue)-->43<!--/--> % à elles
 quatre. Ce que la convention égalitaire valait est désormais mesuré plutôt
-qu'argumenté — elle donne <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−81,8<!--/--> % au scénario 2 contre <!--chiffre:mesure(ecart_passe?scenario=2)-->−80,7<!--/--> %, et <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−59,8<!--/--> % au
-scénario 4 contre <!--chiffre:mesure(ecart_passe?scenario=4)-->−54,4<!--/--> %. Le biais allait dans le sens qu'on annonçait : la
+qu'argumenté — elle donne <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−82,0<!--/--> % au scénario 2 contre <!--chiffre:mesure(ecart_passe?scenario=2)-->−81,0<!--/--> %, et <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−60,1<!--/--> % au
+scénario 4 contre <!--chiffre:mesure(ecart_passe?scenario=4)-->−55,0<!--/--> %. Le biais allait dans le sens qu'on annonçait : la
 surreprésentation des départs très précoces faisait des deux scénarios un
 plancher, de peu pour le scénario 2, où les carrières du privé, que le compte
 salarial seul pénalise davantage encore, pèsent plus aux effectifs.
