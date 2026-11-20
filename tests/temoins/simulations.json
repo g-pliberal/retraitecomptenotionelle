@@ -25948,7 +25948,7 @@
        "regime": "asv_conventionnes"
       },
       {
-       "detail": "(56.76 points × valeur de service 78.55 € + cotisations revalorisées 49,048 € × rendement 6.05%) × coefficient d'anticipation 0.8500",
+       "detail": "(56.7599 points × valeur de service 78.55 € + cotisations revalorisées 49,048 € × rendement 6.05%) × coefficient d'anticipation 0.8500",
        "montant": 6312.036622667852,
        "regime": "carmf_complementaire"
       },
@@ -26492,7 +26492,7 @@
        "regime": "asv_conventionnes"
       },
       {
-       "detail": "(56.76 points × valeur de service 78.55 € + cotisations revalorisées 62,655 € × rendement 6.05%) × coefficient d'anticipation 0.8500",
+       "detail": "(56.7599 points × valeur de service 78.55 € + cotisations revalorisées 62,655 € × rendement 6.05%) × coefficient d'anticipation 0.8500",
        "montant": 7011.738779313705,
        "regime": "carmf_complementaire"
       },
@@ -30177,7 +30177,7 @@
       },
       {
        "date_effet": "2039-04-01",
-       "detail": "(37.51 points × valeur de service 96.65561 € + cotisations revalorisées 71,368 € × rendement 4.48%) × coefficient de majoration 1.1000 ; servie à partir du 1er avril 2039, 7,505.66 € de 2039, soit 7,505.66 € de 2039",
+       "detail": "(37.5150 points × valeur de service 96.65561 € + cotisations revalorisées 71,368 € × rendement 4.48%) × coefficient de majoration 1.1000 ; servie à partir du 1er avril 2039, 7,505.66 € de 2039, soit 7,505.66 € de 2039",
        "montant": 7505.660767502151,
        "montant_a_l_effet": 7505.660767502151,
        "regime": "carmf_complementaire"
@@ -279031,7 +279031,7 @@
       },
       {
        "date_effet": "2039-04-01",
-       "detail": "(77.80 points × valeur de service 96.65561 € + cotisations revalorisées 89,210 € × rendement 4.48%) × coefficient de majoration 1.1000 ; servie à partir du 1er avril 2039, 12,667.81 € de 2039, soit 12,667.81 € de 2039",
+       "detail": "(77.7976 points × valeur de service 96.65561 € + cotisations revalorisées 89,210 € × rendement 4.48%) × coefficient de majoration 1.1000 ; servie à partir du 1er avril 2039, 12,667.81 € de 2039, soit 12,667.81 € de 2039",
        "montant": 12667.81329898336,
        "montant_a_l_effet": 12667.81329898336,
        "regime": "carmf_complementaire"
@@ -279884,7 +279884,7 @@
        "regime": "asv_conventionnes"
       },
       {
-       "detail": "8.65 points × valeur de service 67.38 € + cotisations revalorisées 90,471 € × rendement 8.18%",
+       "detail": "8.6467 points × valeur de service 67.38 € + cotisations revalorisées 90,471 € × rendement 8.18%",
        "montant": 7983.105401977725,
        "regime": "carmf_complementaire"
       },
@@ -280306,7 +280306,7 @@
        "regime": "asv_conventionnes"
       },
       {
-       "detail": "(37.52 points × valeur de service 74 € + cotisations revalorisées 97,648 € × rendement 7.09%) × coefficient d'anticipation 0.9500",
+       "detail": "(37.5233 points × valeur de service 74 € + cotisations revalorisées 97,648 € × rendement 7.09%) × coefficient d'anticipation 0.9500",
        "montant": 9214.996572416598,
        "regime": "carmf_complementaire"
       },
@@ -280728,7 +280728,7 @@
        "regime": "asv_conventionnes"
       },
       {
-       "detail": "(65.28 points × valeur de service 69 € + cotisations revalorisées 79,132 € × rendement 4.96%) × coefficient de majoration 1.0875",
+       "detail": "(65.2812 points × valeur de service 69 € + cotisations revalorisées 79,132 € × rendement 4.96%) × coefficient de majoration 1.0875",
        "montant": 9166.890233574022,
        "regime": "carmf_complementaire"
       },
@@ -281118,7 +281118,7 @@
       },
       {
        "date_effet": "2029-04-01",
-       "detail": "(85.34 points × valeur de service 81.261136 € + cotisations revalorisées 63,962 € × rendement 4.48%) × coefficient de majoration 1.1000 ; servie à partir du 1er avril 2029, 10,780.05 € de 2029, soit 10,780.05 € de 2029",
+       "detail": "(85.3365 points × valeur de service 81.261136 € + cotisations revalorisées 63,962 € × rendement 4.48%) × coefficient de majoration 1.1000 ; servie à partir du 1er avril 2029, 10,780.05 € de 2029, soit 10,780.05 € de 2029",
        "montant": 10780.050590089622,
        "montant_a_l_effet": 10780.050590089622,
        "regime": "carmf_complementaire"
@@ -281486,7 +281486,7 @@
        "regime": "asv_conventionnes"
       },
       {
-       "detail": "(83.33 points × valeur de service 85.60244 € + cotisations revalorisées 74,616 € × rendement 4.48%) × coefficient de majoration 1.1000",
+       "detail": "(83.3350 points × valeur de service 85.60244 € + cotisations revalorisées 74,616 € × rendement 4.48%) × coefficient de majoration 1.1000",
        "montant": 11524.123129879375,
        "regime": "carmf_complementaire"
       },
@@ -281889,7 +281889,7 @@
       },
       {
        "date_effet": "2039-04-01",
-       "detail": "(77.80 points × valeur de service 96.65561 € + cotisations revalorisées 89,210 € × rendement 4.48%) × coefficient de majoration 1.1000 ; servie à partir du 1er avril 2039, 12,667.81 € de 2039, soit 12,667.81 € de 2039",
+       "detail": "(77.7976 points × valeur de service 96.65561 € + cotisations revalorisées 89,210 € × rendement 4.48%) × coefficient de majoration 1.1000 ; servie à partir du 1er avril 2039, 12,667.81 € de 2039, soit 12,667.81 € de 2039",
        "montant": 12667.81329898336,
        "montant_a_l_effet": 12667.81329898336,
        "regime": "carmf_complementaire"
@@ -282742,7 +282742,7 @@
        "regime": "asv_conventionnes"
       },
       {
-       "detail": "8.65 points × valeur de service 67.38 € + cotisations revalorisées 90,471 € × rendement 8.18%",
+       "detail": "8.6467 points × valeur de service 67.38 € + cotisations revalorisées 90,471 € × rendement 8.18%",
        "montant": 7983.105401977725,
        "regime": "carmf_complementaire"
       },
@@ -283164,7 +283164,7 @@
        "regime": "asv_conventionnes"
       },
       {
-       "detail": "(37.52 points × valeur de service 74 € + cotisations revalorisées 97,648 € × rendement 7.09%) × coefficient d'anticipation 0.9500",
+       "detail": "(37.5233 points × valeur de service 74 € + cotisations revalorisées 97,648 € × rendement 7.09%) × coefficient d'anticipation 0.9500",
        "montant": 9214.996572416598,
        "regime": "carmf_complementaire"
       },
@@ -283586,7 +283586,7 @@
        "regime": "asv_conventionnes"
       },
       {
-       "detail": "(65.28 points × valeur de service 69 € + cotisations revalorisées 79,132 € × rendement 4.96%) × coefficient de majoration 1.0875",
+       "detail": "(65.2812 points × valeur de service 69 € + cotisations revalorisées 79,132 € × rendement 4.96%) × coefficient de majoration 1.0875",
        "montant": 9166.890233574022,
        "regime": "carmf_complementaire"
       },
@@ -283976,7 +283976,7 @@
       },
       {
        "date_effet": "2029-04-01",
-       "detail": "(85.34 points × valeur de service 81.261136 € + cotisations revalorisées 63,962 € × rendement 4.48%) × coefficient de majoration 1.1000 ; servie à partir du 1er avril 2029, 10,780.05 € de 2029, soit 10,780.05 € de 2029",
+       "detail": "(85.3365 points × valeur de service 81.261136 € + cotisations revalorisées 63,962 € × rendement 4.48%) × coefficient de majoration 1.1000 ; servie à partir du 1er avril 2029, 10,780.05 € de 2029, soit 10,780.05 € de 2029",
        "montant": 10780.050590089622,
        "montant_a_l_effet": 10780.050590089622,
        "regime": "carmf_complementaire"
@@ -284344,7 +284344,7 @@
        "regime": "asv_conventionnes"
       },
       {
-       "detail": "(83.33 points × valeur de service 85.60244 € + cotisations revalorisées 74,616 € × rendement 4.48%) × coefficient de majoration 1.1000",
+       "detail": "(83.3350 points × valeur de service 85.60244 € + cotisations revalorisées 74,616 € × rendement 4.48%) × coefficient de majoration 1.1000",
        "montant": 11524.123129879375,
        "regime": "carmf_complementaire"
       },

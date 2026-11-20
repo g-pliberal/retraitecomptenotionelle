@@ -1849,13 +1849,14 @@ def _medecin_au_plafond(simulateur, naissance: int, debut: float, liquidation: f
     carriere = Carriere.depuis_parcours(
         annee_naissance=naissance, sexe="H",
         metiers=[Metier(affiliation="medecin_liberal", age_debut=debut, niveau_salaire=8.0)],
-        age_liquidation=liquidation, macro=simulateur.macro, nombre_enfants=0)
+        age_liquidation=liquidation, macro=simulateur.macro, nombre_enfants=0,
+        jour_naissance=10)
     resultat = simulateur.scenario_actuel.calculer(carriere)
     return {p.regime: p for p in resultat.pensions_par_regime}["carmf_complementaire"]
 
 
 def test_trente_annees_au_plafond_valent_trois_cents_points_a_la_carmf(simulateur):
-    """Né en janvier 1964, médecin libéral de janvier 1996 à janvier 2026, au
+    """Né le 10 janvier 1964, médecin libéral de janvier 1996 à janvier 2026, au
     plafond chaque année, parti à 62 ans le 1er février 2026 : trente années à
     dix points, et un mois de 2026 à 11,52 points l'an, 300,96 points, servis
     77,14 € l'un, 23 216,05 € par an. Jusqu'au 20 novembre 2026, le modèle
@@ -1868,7 +1869,7 @@ def test_trente_annees_au_plafond_valent_trois_cents_points_a_la_carmf(simulateu
 
 
 def test_vingt_annees_au_plafond_valent_deux_cents_points_a_65_ans_en_2016(simulateur):
-    """Né en janvier 1951, médecin libéral de janvier 1996 à janvier 2016, au
+    """Né le 10 janvier 1951, médecin libéral de janvier 1996 à janvier 2016, au
     plafond, parti à 65 ans le 1er février 2016, sans coefficient d'anticipation :
     vingt années à dix points et un mois de 2016, 200,83 points, servis 78,55 €
     l'un (la valeur « à 65 ans » de 2016), 15 775,46 € par an."""

@@ -383,8 +383,11 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
             fiabiliteRegime, fiabiliteService, fiabilitePoints.get(code),
           );
           const gratuits = (gratuitsAttribues.get(code) ?? [0.0, 0])[0];
+          // Un point qui vaut des dizaines d'euros (la CARMF, 77,14 €) s'écrit
+          // à quatre décimales : à deux, la formule refaite s'écarterait de
+          // quarante centimes de la ligne.
           details.push(
-            `${formatFixe(points, 2, true)} points × valeur de service `
+            `${formatFixe(points, service >= 50 ? 4 : 2, true)} points × valeur de service `
             + `${sansZerosInutiles(service, 6)} €`
             + (coefficientDuree === 1.0 ? "" : ` × ${formatFixe(coefficientDuree, 4)}`)
             // Les points gratuits sont DANS le compte : la formule se refait

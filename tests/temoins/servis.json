@@ -359,7 +359,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(75.16 points × valeur de service 69.7 € + cotisations revalorisées 42,262 € × rendement 4.94%) × coefficient de majoration 1.1375",
+      "detail": "(75.1585 points × valeur de service 69.7 € + cotisations revalorisées 42,262 € × rendement 4.94%) × coefficient de majoration 1.1375",
       "montant": 8333.641218456227,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -1009,7 +1009,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(156.68 points × valeur de service 78.48995 € + cotisations revalorisées 64,447 € × rendement 4.48%) × coefficient de majoration 1.0375 ; servie à partir du 1er avril 2027, 15,754.59 € de 2027, soit 15,754.59 € de 2027",
+      "detail": "(156.6814 points × valeur de service 78.48995 € + cotisations revalorisées 64,447 € × rendement 4.48%) × coefficient de majoration 1.0375 ; servie à partir du 1er avril 2027, 15,754.59 € de 2027, soit 15,754.59 € de 2027",
       "montant": 15754.589528026709,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -2059,7 +2059,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "73.96 points × valeur de service 70.05 € + cotisations revalorisées 58,955 € × rendement 4.87%",
+      "detail": "73.9570 points × valeur de service 70.05 € + cotisations revalorisées 58,955 € × rendement 4.87%",
       "montant": 8051.810549047203,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -2631,7 +2631,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(105.51 points × valeur de service 68.3 € + cotisations revalorisées 97,199 € × rendement 5.13%) × coefficient de majoration 1.2325",
+      "detail": "(105.5141 points × valeur de service 68.3 € + cotisations revalorisées 97,199 € × rendement 5.13%) × coefficient de majoration 1.2325",
       "montant": 15027.79136030403,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -2970,7 +2970,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(126.53 points × valeur de service 69.7 € + cotisations revalorisées 105,515 € × rendement 4.94%) × coefficient de majoration 1.3000",
+      "detail": "(126.5307 points × valeur de service 69.7 € + cotisations revalorisées 105,515 € × rendement 4.94%) × coefficient de majoration 1.3000",
       "montant": 18241.126630078794,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -3213,7 +3213,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "60.11 points × valeur de service 78.4 € + cotisations revalorisées 62,011 € × rendement 6.20%",
+      "detail": "60.1144 points × valeur de service 78.4 € + cotisations revalorisées 62,011 € × rendement 6.20%",
       "montant": 8557.627019769665,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -3472,7 +3472,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "2.39 points × valeur de service 76.15 € × coefficient de majoration 1.1375",
+      "detail": "2.3939 points × valeur de service 76.15 € × coefficient de majoration 1.1375",
       "montant": 207.35806862320712,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -4138,7 +4138,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "73.96 points × valeur de service 70.05 € + cotisations revalorisées 58,955 € × rendement 4.87%",
+      "detail": "73.9570 points × valeur de service 70.05 € + cotisations revalorisées 58,955 € × rendement 4.87%",
       "montant": 8051.810549047203,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -4754,7 +4754,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(153.27 points × valeur de service 77.14 € + cotisations revalorisées 85,996 € × rendement 4.48%) × coefficient de majoration 1.2025",
+      "detail": "(153.2744 points × valeur de service 77.14 € + cotisations revalorisées 85,996 € × rendement 4.48%) × coefficient de majoration 1.2025",
       "montant": 18850.636239342166,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -5528,7 +5528,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "20.62 points × valeur de service 67.7 € + cotisations revalorisées 86,263 € × rendement 7.61%",
+      "detail": "20.6204 points × valeur de service 67.7 € + cotisations revalorisées 86,263 € × rendement 7.61%",
       "montant": 7960.61071640004,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -5858,7 +5858,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(105.51 points × valeur de service 68.3 € + cotisations revalorisées 94,012 € × rendement 5.13%) × coefficient de majoration 1.2000",
+      "detail": "(105.5141 points × valeur de service 68.3 € + cotisations revalorisées 94,012 € × rendement 5.13%) × coefficient de majoration 1.2000",
       "montant": 14435.340727491723,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -6948,7 +6948,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(105.51 points × valeur de service 68.3 € + cotisations revalorisées 97,199 € × rendement 5.13%) × coefficient de majoration 1.2450",
+      "detail": "(105.5141 points × valeur de service 68.3 € + cotisations revalorisées 97,199 € × rendement 5.13%) × coefficient de majoration 1.2450",
       "montant": 15180.20303738622,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -7845,7 +7845,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "30.33 points × valeur de service 70 € + cotisations revalorisées 83,951 € × rendement 7.41%",
+      "detail": "30.3334 points × valeur de service 70 € + cotisations revalorisées 83,951 € × rendement 7.41%",
       "montant": 8344.079045002733,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -8091,7 +8091,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(145.79 points × valeur de service 76.15 € + cotisations revalorisées 88,516 € × rendement 4.53%) × coefficient de majoration 1.2025",
+      "detail": "(145.7914 points × valeur de service 76.15 € + cotisations revalorisées 88,516 € × rendement 4.53%) × coefficient de majoration 1.2025",
       "montant": 18171.911838258344,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -8959,7 +8959,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "73.96 points × valeur de service 70.05 € + cotisations revalorisées 58,955 € × rendement 4.87%",
+      "detail": "73.9570 points × valeur de service 70.05 € + cotisations revalorisées 58,955 € × rendement 4.87%",
       "montant": 8051.810549047203,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -9616,7 +9616,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(156.68 points × valeur de service 78.48995 € + cotisations revalorisées 87,501 € × rendement 4.48%) × coefficient de majoration 1.3000",
+      "detail": "(156.6814 points × valeur de service 78.48995 € + cotisations revalorisées 87,501 € × rendement 4.48%) × coefficient de majoration 1.3000",
       "montant": 21083.334657520336,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -10308,7 +10308,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(82.02 points × valeur de service 75.25 € + cotisations revalorisées 33,075 € × rendement 4.55%) × coefficient de majoration 1.1375",
+      "detail": "(82.0218 points × valeur de service 75.25 € + cotisations revalorisées 33,075 € × rendement 4.55%) × coefficient de majoration 1.1375",
       "montant": 8732.670074922748,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -10775,7 +10775,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(88.62 points × valeur de service 78.48995 € + cotisations revalorisées 19,190 € × rendement 4.48%) × coefficient de majoration 1.1375",
+      "detail": "(88.6223 points × valeur de service 78.48995 € + cotisations revalorisées 19,190 € × rendement 4.48%) × coefficient de majoration 1.1375",
       "montant": 8890.336904498337,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -11094,7 +11094,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(154.25 points × valeur de service 77.14 € + cotisations revalorisées 85,996 € × rendement 4.48%) × coefficient de majoration 1.2100 ; servie à partir du 1er octobre 2026, 19,059.07 € de 2026, soit 19,059.07 € de 2026",
+      "detail": "(154.2478 points × valeur de service 77.14 € + cotisations revalorisées 85,996 € × rendement 4.48%) × coefficient de majoration 1.2100 ; servie à partir du 1er octobre 2026, 19,059.07 € de 2026, soit 19,059.07 € de 2026",
       "montant": 19059.06569582,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -11206,7 +11206,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(156.68 points × valeur de service 78.48995 € + cotisations revalorisées 87,501 € × rendement 4.48%) × coefficient de majoration 1.3000",
+      "detail": "(156.6814 points × valeur de service 78.48995 € + cotisations revalorisées 87,501 € × rendement 4.48%) × coefficient de majoration 1.3000",
       "montant": 21083.334657520336,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -11312,7 +11312,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(68.02 points × valeur de service 68.3 € + cotisations revalorisées 52,990 € × rendement 5.01%) × coefficient de majoration 1.1375",
+      "detail": "(68.0167 points × valeur de service 68.3 € + cotisations revalorisées 52,990 € × rendement 5.01%) × coefficient de majoration 1.1375",
       "montant": 8304.158203631405,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -12216,7 +12216,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(72.94 points × valeur de service 69.7 € + cotisations revalorisées 45,598 € × rendement 4.94%) × coefficient de majoration 1.1375",
+      "detail": "(72.9441 points × valeur de service 69.7 € + cotisations revalorisées 45,598 € × rendement 4.94%) × coefficient de majoration 1.1375",
       "montant": 8345.572650488475,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -12480,7 +12480,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(106.35 points × valeur de service 68.3 € + cotisations revalorisées 94,012 € × rendement 5.13%) × coefficient de majoration 1.2000",
+      "detail": "(106.3452 points × valeur de service 68.3 € + cotisations revalorisées 94,012 € × rendement 5.13%) × coefficient de majoration 1.2000",
       "montant": 14503.460752955885,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -13390,7 +13390,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(106.76 points × valeur de service 68.3 € + cotisations revalorisées 94,012 € × rendement 5.13%) × coefficient de majoration 1.1500",
+      "detail": "(106.7608 points × valeur de service 68.3 € + cotisations revalorisées 94,012 € × rendement 5.13%) × coefficient de majoration 1.1500",
       "montant": 13931.790733784303,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -13693,7 +13693,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(84.10 points × valeur de service 76.15 € + cotisations revalorisées 28,302 € × rendement 4.53%) × coefficient de majoration 1.1375",
+      "detail": "(84.0957 points × valeur de service 76.15 € + cotisations revalorisées 28,302 € × rendement 4.53%) × coefficient de majoration 1.1375",
       "montant": 8742.799760967619,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -15334,7 +15334,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(126.53 points × valeur de service 69.7 € + cotisations revalorisées 105,515 € × rendement 4.94%) × coefficient de majoration 1.3000",
+      "detail": "(126.5307 points × valeur de service 69.7 € + cotisations revalorisées 105,515 € × rendement 4.94%) × coefficient de majoration 1.3000",
       "montant": 18241.126630078794,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -16174,7 +16174,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(86.13 points × valeur de service 77.14 € + cotisations revalorisées 23,627 € × rendement 4.48%) × coefficient de majoration 1.1375",
+      "detail": "(86.1264 points × valeur de service 77.14 € + cotisations revalorisées 23,627 € × rendement 4.48%) × coefficient de majoration 1.1375",
       "montant": 8761.367440019478,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -18068,7 +18068,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "2.46 points × valeur de service 76.15 € × coefficient de majoration 1.1375",
+      "detail": "2.4581 points × valeur de service 76.15 € × coefficient de majoration 1.1375",
       "montant": 212.91871192877645,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -18475,7 +18475,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(156.68 points × valeur de service 78.48995 € + cotisations revalorisées 67,025 € × rendement 4.48%) × coefficient de majoration 1.0500 ; servie à partir du 1er juillet 2027, 16,065.65 € de 2027, soit 16,065.65 € de 2027",
+      "detail": "(156.6814 points × valeur de service 78.48995 € + cotisations revalorisées 67,025 € × rendement 4.48%) × coefficient de majoration 1.0500 ; servie à partir du 1er juillet 2027, 16,065.65 € de 2027, soit 16,065.65 € de 2027",
       "montant": 16065.646246159988,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -18531,7 +18531,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(10.89 points × valeur de service 123.227863 € + cotisations revalorisées 459,101 € × rendement 4.48%) × coefficient de majoration 1.2025",
+      "detail": "(10.8899 points × valeur de service 123.227863 € + cotisations revalorisées 459,101 € × rendement 4.48%) × coefficient de majoration 1.2025",
       "montant": 26346.401920924738,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -18700,7 +18700,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(156.68 points × valeur de service 78.48995 € + cotisations revalorisées 88,707 € × rendement 4.48%) × coefficient de majoration 1.3000",
+      "detail": "(156.6814 points × valeur de service 78.48995 € + cotisations revalorisées 88,707 € × rendement 4.48%) × coefficient de majoration 1.3000",
       "montant": 21153.58718335062,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -20121,7 +20121,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(156.68 points × valeur de service 78.48995 € + cotisations revalorisées 66,385 € × rendement 4.48%) × coefficient de majoration 1.0625 ; servie à partir du 1er juillet 2027, 16,226.46 € de 2027, soit 16,226.46 € de 2027",
+      "detail": "(156.6814 points × valeur de service 78.48995 € + cotisations revalorisées 66,385 € × rendement 4.48%) × coefficient de majoration 1.0625 ; servie à partir du 1er juillet 2027, 16,226.46 € de 2027, soit 16,226.46 € de 2027",
       "montant": 16226.462065950516,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -21094,7 +21094,7 @@
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "438.08 points × valeur de service 60.250638 €",
+      "detail": "438.0828 points × valeur de service 60.250638 €",
       "montant": 26394.76881013377,
       "regime": "asv_chirurgiens_dentistes",
       "type_calcul": "points"
@@ -21465,7 +21465,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(156.19 points × valeur de service 77.14 € + cotisations revalorisées 61,650 € × rendement 4.48%) × coefficient de majoration 1.0125",
+      "detail": "(156.1947 points × valeur de service 77.14 € + cotisations revalorisées 61,650 € × rendement 4.48%) × coefficient de majoration 1.0125",
       "montant": 14995.911729217123,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -21959,7 +21959,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(116.34 points × valeur de service 69 € + cotisations revalorisées 87,023 € × rendement 4.96%) × coefficient de majoration 1.0875",
+      "detail": "(116.3410 points × valeur de service 69 € + cotisations revalorisées 87,023 € × rendement 4.96%) × coefficient de majoration 1.0875",
       "montant": 13423.975004968059,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -22292,7 +22292,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(105.51 points × valeur de service 68.3 € + cotisations revalorisées 106,075 € × rendement 5.13%) × coefficient de majoration 1.3625",
+      "detail": "(105.5141 points × valeur de service 68.3 € + cotisations revalorisées 106,075 € × rendement 5.13%) × coefficient de majoration 1.3625",
       "montant": 17233.218552655762,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -22721,7 +22721,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(116.76 points × valeur de service 69 € + cotisations revalorisées 87,023 € × rendement 4.96%) × coefficient de majoration 1.1000",
+      "detail": "(116.7589 points × valeur de service 69 € + cotisations revalorisées 87,023 € × rendement 4.96%) × coefficient de majoration 1.1000",
       "montant": 13609.989902446983,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
@@ -24183,7 +24183,7 @@
       "type_calcul": "points"
      },
      {
-      "detail": "(107.18 points × valeur de service 68.3 € + cotisations revalorisées 94,012 € × rendement 5.13%) × coefficient de majoration 1.1500",
+      "detail": "(107.1763 points × valeur de service 68.3 € + cotisations revalorisées 94,012 € × rendement 5.13%) × coefficient de majoration 1.1500",
       "montant": 13964.431579319213,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
