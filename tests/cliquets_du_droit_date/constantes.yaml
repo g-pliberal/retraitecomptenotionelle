@@ -177,8 +177,182 @@ constantes:
   "moteur/js/scenario-actuel.js : DROITS_CONTREFACTUELS": {classe: droit, fiches: [fin_de_la_suspension_2028]}
   "moteur/js/scenario-actuel.js : PARENTS_MEILLEURES_ANNEES_DEPUIS": {classe: droit, fiches: [sam_parents_24_23]}
 
-# Les chiffres de la loi sans date, un âge, un taux : ajoutés à la main, comme
-# la note le prévoit. Chacun est une constante du fichier nommé, et compte
-# parmi les `droit`.
+# Les chiffres sans date, un âge, un taux, une durée : relevés eux aussi,
+# depuis le 20 novembre 2026. `tests/outils_droit_date.py` prend toute
+# constante nommée dont la valeur écrit un nombre, sans date ni année, et
+# chacune se classe comme plus haut. Classé le 20 novembre 2026, sur la
+# déclaration, son commentaire et, quand il ne disait rien, le code qui la
+# lit ; sans relire les textes, ce que fait l'étape qui migre la règle.
 sans_date:
+  "moteur/js/calendrier.js : MOIS_PAR_AN": {classe: hors, raison: technique}
+  "moteur/js/capitalisation.js : MATURITE_MAXIMALE": {classe: hors, raison: reglage}
+  "moteur/js/carriere.js : CHOMAGE_NON_INDEMNISE_ULTERIEURE": {classe: droit, fiches: [chomage_non_indemnise]}
+  "moteur/js/carriere.js : CONJOINT_COLLABORATEUR_FORFAIT": {classe: droit, fiches: []}
+  "moteur/js/carriere.js : TRANCHES_CATEGORIE": {classe: hors, raison: projection}
+  "moteur/js/chronologie.js : CATEGORIES_D_INVALIDITE": {classe: hors, raison: technique}
+  "moteur/js/chronologie.js : SCHEMA_VERSION": {classe: hors, raison: technique}
+  "moteur/js/chronologie.js : TAUX_D_INCAPACITE_DECLARE": {classe: droit, fiches: []}
+  "moteur/js/config.js : FRAIS_ARRERAGES_VENDU": {classe: hors, raison: reglage}
+  "moteur/js/config.js : PRIME_TERME_HAUTE": {classe: hors, raison: reglage}
+  "moteur/js/config.js : PRIME_TERME_MILIEU": {classe: hors, raison: reglage}
+  "moteur/js/contexte.js : AGREGATS_MEMORISES": {classe: hors, raison: technique}
+  "moteur/js/contexte.js : VERSION_PAQUET": {classe: hors, raison: technique}
+  "moteur/js/conversion.js : TOURS_POINT_FIXE": {classe: hors, raison: technique}
+  "moteur/js/cycle-de-vie.js : AGE_EQUILIBRE_MINIMAL": {classe: hors, raison: technique}
+  "moteur/js/cycle-de-vie.js : ANNEES_AUTOUR_DU_DEPART": {classe: hors, raison: technique}
+  "moteur/js/cycle-de-vie.js : BORNES_RENDEMENT": {classe: hors, raison: technique}
+  "moteur/js/cycle-de-vie.js : PAS_DES_AGES": {classe: hors, raison: technique}
+  "moteur/js/cycle-de-vie.js : REPORT_MAXIMAL": {classe: hors, raison: technique}
+  "moteur/js/cycle-de-vie.js : TAUX_ACTUALISATION_OCDE": {classe: hors, raison: reglage}
+  "moteur/js/cycle-de-vie.js : TAUX_EXONERE_PAR_ENFANT_AU_DELA": {classe: hors, raison: impot}
+  "moteur/js/cycle-de-vie.js : TAUX_EXONERE_TROIS_ENFANTS": {classe: hors, raison: impot}
+  "moteur/js/droit/acquerir.js : POINTS_MSA_MINIMUM": {classe: droit, fiches: [retraite_proportionnelle_msa]}
+  "moteur/js/droit/acquerir.js : SCHEMA_VERSION": {classe: hors, raison: technique}
+  "moteur/js/droit/completer.js : ANNEES_DE_CHEF_DU_MINIMUM": {classe: droit, fiches: []}
+  "moteur/js/droit/completer.js : ANNEES_DU_MINIMUM_AU_PLUS": {classe: droit, fiches: []}
+  "moteur/js/droit/completer.js : ANNEES_SANS_MINORATION": {classe: droit, fiches: []}
+  "moteur/js/droit/completer.js : HEURES_DU_COMPLEMENT": {classe: droit, fiches: []}
+  "moteur/js/droit/completer.js : ORDINAUX_DES_CATEGORIES": {classe: hors, raison: technique}
+  "moteur/js/droit/completer.js : PLANCHER_DES_POINTS_D_UNE_ANNEE": {classe: droit, fiches: []}
+  "moteur/js/droit/completer.js : POINTS_D_UNE_ANNEE_DE_CONJOINT": {classe: droit, fiches: []}
+  "moteur/js/droit/completer.js : POINTS_D_UNE_ANNEE_RECONSTITUEE": {classe: droit, fiches: []}
+  "moteur/js/droit/completer.js : POINTS_D_UNE_ANNEE_SECONDAIRE": {classe: droit, fiches: []}
+  "moteur/js/droit/completer.js : POINTS_D_UNE_CARRIERE_COMPLETE": {classe: droit, fiches: []}
+  "moteur/js/droit/completer.js : SCHEMA_VERSION": {classe: hors, raison: technique}
+  "moteur/js/droit/compter.js : EPSILON_ANNEES": {classe: hors, raison: technique}
+  "moteur/js/droit/compter.js : EPSILON_JOURS": {classe: hors, raison: technique}
+  "moteur/js/droit/compter.js : JOURS_PAR_AN": {classe: droit, fiches: []}
+  "moteur/js/droit/compter.js : JOURS_PAR_MOIS": {classe: droit, fiches: []}
+  "moteur/js/droit/compter.js : JOURS_PAR_MOIS_DE_CONTRAT": {classe: droit, fiches: []}
+  "moteur/js/droit/compter.js : JOURS_PAR_TRIMESTRE": {classe: droit, fiches: []}
+  "moteur/js/droit/compter.js : JOUR_MS": {classe: hors, raison: technique}
+  "moteur/js/droit/compter.js : SCHEMA_VERSION": {classe: hors, raison: technique}
+  "moteur/js/droit/coordonner.js : SCHEMA_VERSION": {classe: hors, raison: technique}
+  "moteur/js/droit/cultes.js : DUREE_DU_MAXIMUM": {classe: droit, fiches: []}
+  "moteur/js/droit/cultes.js : DUREE_MINIMALE": {classe: droit, fiches: []}
+  "moteur/js/droit/cumul.js : ABATTEMENT_MINIMUM_GARANTI": {classe: droit, fiches: [cumul_emploi_retraite_fonction_publique]}
+  "moteur/js/droit/cumul.js : FRANCHISE_1970": {classe: droit, fiches: [cumul_emploi_retraite_fonction_publique]}
+  "moteur/js/droit/cumul.js : HEURES_SMIC": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/cumul.js : LIMITES_D_AGE_1970": {classe: droit, fiches: [cumul_emploi_retraite_fonction_publique]}
+  "moteur/js/droit/cumul.js : PART_DE_LA_PENSION": {classe: droit, fiches: [cumul_emploi_retraite_fonction_publique]}
+  "moteur/js/droit/cumul.js : PART_SMIC_2004": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/cumul.js : PART_SMIC_2007": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/cumul.js : SERVICES_DU_NON_OFFICIER": {classe: droit, fiches: [cumul_emploi_retraite_fonction_publique]}
+  "moteur/js/droit/cumul.js : SEUILS_NON_SALARIES": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/cumul.js : SIX_MOIS": {classe: droit, fiches: [cumul_emploi_retraite_et_retraite_progressive]}
+  "moteur/js/droit/foyer.js : SCHEMA_VERSION": {classe: hors, raison: technique}
+  "moteur/js/droit/invalidite.js : AGE_DE_L_ASPA": {classe: droit, fiches: []}
+  "moteur/js/droit/invalidite.js : CATEGORIE_DE_QUI_NE_TRAVAILLE_PAS": {classe: hors, raison: technique}
+  "moteur/js/droit/invalidite.js : CATEGORIE_DE_QUI_TRAVAILLE": {classe: hors, raison: technique}
+  "moteur/js/droit/invalidite.js : INDICE_DE_LA_RENTE": {classe: droit, fiches: []}
+  "moteur/js/droit/limite_age.js : MOIS_PAR_AN": {classe: hors, raison: technique}
+  "moteur/js/droit/liquidation.js : SCHEMA_VERSION": {classe: hors, raison: technique}
+  "moteur/js/droit/liquider.js : AGE_DES_DIX_DERNIERES_ANNEES": {classe: droit, fiches: []}
+  "moteur/js/droit/liquider.js : COEFFICIENTS_CONVENTION_1947": {classe: droit, fiches: [coefficients_anticipation_agirc_1947]}
+  "moteur/js/droit/liquider.js : COEFFICIENT_ANTICIPATION_PLANCHER": {classe: droit, fiches: [coefficient_anticipation_ircantec, coefficients_anticipation_agirc_arrco]}
+  "moteur/js/droit/liquider.js : COTISATIONS_DE_BASE_DU_CHEF": {classe: droit, fiches: []}
+  "moteur/js/droit/liquider.js : ORDINAUX": {classe: hors, raison: technique}
+  "moteur/js/droit/liquider.js : PALIERS_ANTICIPATION": {classe: droit, fiches: [abattement_rci, coefficient_anticipation_ircantec, coefficients_anticipation_agirc_arrco]}
+  "moteur/js/droit/liquider.js : SCHEMA_VERSION": {classe: hors, raison: technique}
   "moteur/js/droit/liquider.js : SURCOTE_AGE_MAJORE": {classe: droit, fiches: []}
+  "moteur/js/droit/liquider.js : SURCOTE_IRCANTEC_AGE": {classe: droit, fiches: [surcote_ircantec]}
+  "moteur/js/droit/liquider.js : SURCOTE_IRCANTEC_DUREE": {classe: droit, fiches: [surcote_ircantec]}
+  "moteur/js/droit/ouvrir.js : AGE_DUREE_A_L_OUVERTURE": {classe: droit, fiches: []}
+  "moteur/js/droit/ouvrir.js : AGE_SURCOTE_AVANT_2023": {classe: droit, fiches: [surcote_fonction_publique]}
+  "moteur/js/droit/ouvrir.js : SCHEMA_VERSION": {classe: hors, raison: technique}
+  "moteur/js/droit/ouvrir.js : SERVICES_MINIMAUX_MILITAIRES": {classe: droit, fiches: []}
+  "moteur/js/droit/ouvrir.js : TRIMESTRES_DECOTE_MILITAIRE": {classe: droit, fiches: []}
+  "moteur/js/droit/releve.js : AGE_DANS_L_ANNEE": {classe: hors, raison: saisie}
+  "moteur/js/droit/releve.js : AGE_DE_DEPART_FICTIF": {classe: hors, raison: saisie}
+  "moteur/js/droit/releve.js : DEMI_POINT": {classe: hors, raison: saisie}
+  "moteur/js/droit/releve.js : EPSILON_POINTS": {classe: hors, raison: technique}
+  "moteur/js/droit/releve.js : PLAFONDS_AU_PLUS": {classe: hors, raison: saisie}
+  "moteur/js/droit/releve.js : SCHEMA_VERSION": {classe: hors, raison: technique}
+  "moteur/js/droit/reversion.js : SCHEMA_VERSION": {classe: hors, raison: technique}
+  "moteur/js/droit/seconde.js : HEURES_PAR_TRIMESTRE": {classe: droit, fiches: [seconde_pension]}
+  "moteur/js/droit/seconde.js : TAUX_PLEIN": {classe: droit, fiches: [seconde_pension]}
+  "moteur/js/echeancier.js : SCHEMA_VERSION": {classe: hors, raison: technique}
+  "moteur/js/impot-revenu.js : AGE_ABATTEMENT": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : COEFFICIENT_MAJORATION": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : FRANC": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : SEUIL_ET_LIMITE_DE_1977": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : TAUX_ABATTEMENT_DE_1974": {classe: hors, raison: impot}
+  "moteur/js/impot-revenu.js : TAUX_NON_SALARIES_DE_LA_PPE": {classe: hors, raison: impot}
+  "moteur/js/macro.js : HEURES_ANNUELLES_SMIC": {classe: hors, raison: projection}
+  "moteur/js/macro.js : HEURES_AVPF_PAR_MOIS": {classe: droit, fiches: [avpf]}
+  "moteur/js/macro.js : MOIS_ASSURES_EN_1930": {classe: droit, fiches: []}
+  "moteur/js/macro.js : RETENUE_D_UN_TRIMESTRE": {classe: droit, fiches: []}
+  "moteur/js/mortalite.js : AGE_TERMINAL": {classe: hors, raison: reglage}
+  "moteur/js/mortalite.js : MORTALITE_ACCIDENTELLE": {classe: hors, raison: reglage}
+  "moteur/js/mortalite.js : PAS": {classe: hors, raison: technique}
+  "moteur/js/patrimoine.js : ACKLAM_A": {classe: hors, raison: technique}
+  "moteur/js/patrimoine.js : ACKLAM_B": {classe: hors, raison: technique}
+  "moteur/js/patrimoine.js : ACKLAM_C": {classe: hors, raison: technique}
+  "moteur/js/patrimoine.js : ACKLAM_D": {classe: hors, raison: technique}
+  "moteur/js/patrimoine.js : RANGS": {classe: hors, raison: technique}
+  "moteur/js/patrimoine.js : RANGS_GRILLE": {classe: hors, raison: technique}
+  "moteur/js/pilote.js : PASSES_LIQUIDATION": {classe: hors, raison: technique}
+  "moteur/js/prelevements-historiques.js : INDEMNITES": {classe: hors, raison: prelevements}
+  "moteur/js/prelevements-historiques.js : TRANCHES": {classe: hors, raison: prelevements}
+  "moteur/js/regimes.js : BORNES_ASSIETTE": {classe: droit, fiches: [carpimko_assiette_2026, cavom_assiette_2016, cipav_seconde_tranche]}
+  "moteur/js/regimes.js : CarriereLongue.DUREE_FIXE_FONCTION_PUBLIQUE": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : CarriereLongue.ENFANTS_REPUTES_COTISES_MAXIMUM": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : CarriereLongue.MOIS_DERNIER_TRIMESTRE": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : CarriereLongue.TRIMESTRES_DE_DEBUT_AGRICOLES": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : DUREE_UNIQUE_2003": {classe: droit, fiches: [duree_requise_par_generation]}
+  "moteur/js/regimes.js : FIABILITE_CERTIFIEE": {classe: hors, raison: technique}
+  "moteur/js/regimes.js : MinimumGaranti.INDICE_REFERENCE": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : MinimumGaranti.SEUIL_BAS": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : MinimumGaranti.SEUIL_HAUT": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : MinimumVieillesse.AGE_OUVERTURE": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : REGLE_DU_MINIMUM_EN_VIGUEUR": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : SERVI_DEPUIS_TOUJOURS": {classe: hors, raison: technique}
+  "moteur/js/regimes.js : TAUX_DE_LA_GARANTIE": {classe: droit, fiches: []}
+  "moteur/js/releve-lu.js : ANCIENS_FRANCS_PAR_FRANC": {classe: hors, raison: saisie}
+  "moteur/js/releve-lu.js : AVANT_LA_DATE": {classe: hors, raison: saisie}
+  "moteur/js/releve-lu.js : DATE": {classe: hors, raison: saisie}
+  "moteur/js/releve-lu.js : FRANCS_PAR_EURO": {classe: hors, raison: saisie}
+  "moteur/js/releve-lu.js : MONTANT": {classe: hors, raison: saisie}
+  "moteur/js/releve-lu.js : MOTS_PAR_LIGNE": {classe: hors, raison: saisie}
+  "moteur/js/releve-lu.js : NOMBRES_PAR_LIGNE": {classe: hors, raison: saisie}
+  "moteur/js/releve-lu.js : SUITE_LUE": {classe: hors, raison: saisie}
+  "moteur/js/releve-lu.js : TRIMESTRES_PAR_AN": {classe: hors, raison: saisie}
+  "moteur/js/remuneration.js : HEURES_ANNUELLES_TEMPS_PLEIN": {classe: hors, raison: remuneration}
+  "moteur/js/revalorisation.js : MINIMUM_VIEILLESSE_AGE": {classe: droit, fiches: []}
+  "moteur/js/saisie.js : ABATTEMENTS_MICRO": {classe: droit, fiches: [micro_social_abattement]}
+  "moteur/js/saisie.js : AGE_DEBUT_MAXIMAL": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : AGE_DEBUT_MINIMAL": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : AGE_LIQUIDATION_MAXIMAL": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : AGE_LIQUIDATION_MINIMAL": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : ASSIMILEES_MAXIMUM": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : CODE_DE_REGIME": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : CODE_D_ETAT": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : DATE": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : ENFANTS_MAXIMUM": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : ETRANGER_MAXIMUM": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : EX_CONJOINTS_MAXIMUM": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : HEURES_SMIC_PAR_MOIS": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : LISSAGE_MAXIMUM": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : METIERS_MAXIMUM": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : MOIS_DE_GUERRE_MAXIMUM": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : NIVEAU_MAXIMAL": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : NIVEAU_MINIMAL": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : PARTS_COLLABORATEUR": {classe: droit, fiches: [conjoint_collaborateur_independants]}
+  "moteur/js/saisie.js : PENSION_DEFAUT": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : RELEVE_MAXIMUM": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : SALAIRE_DEFAUT": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : VARIATIONS_MAXIMUM": {classe: hors, raison: saisie}
+  "moteur/js/simulateur.js : COUPES_INVERSION": {classe: hors, raison: technique}
+  "moteur/js/simulateur.js : TOLERANCE_INVERSION": {classe: hors, raison: technique}
+  "moteur/js/taux.js : MATURITE_PRIME": {classe: hors, raison: reglage}
+
+# Les fichiers que le relevé des chiffres sans date écarte en entier : ils ne
+# portent aucune règle, et leurs nombres sont ceux d'un calcul (les fonctions
+# mathématiques, la lecture d'un PDF, l'écriture des nombres, le journal). Le
+# relevé des constantes datées les lit toujours, et le test échoue s'il y en
+# trouve une.
+fichiers_sans_regle:
+  - moteur/js/format.js
+  - moteur/js/journal.js
+  - moteur/js/lecture-pdf.js
+  - moteur/js/libm.js

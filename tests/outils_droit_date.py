@@ -22,6 +22,12 @@ l'évaluation du 18 novembre (``docs/decisions/0009/evaluation-du-18-novembre/
 constantes.py``) en est le premier état ; il gardait les libellés, coupait une
 déclaration à sa septième ligne et ne voyait pas les statiques posées après
 leur classe ni les générations à décimales (``1961.667``).
+
+**Les chiffres sans date.** Un âge, un taux, une durée que la loi fixe n'ont
+pas de date, et ce relevé-là ne les voit pas. Un second prend donc toute
+constante nommée dont la valeur écrit un nombre, sans date ni année
+(``constantes_chiffrees``). Un nombre écrit en clair dans une expression, sans
+nom, reste hors de vue : rien ne le distingue d'un rang ou d'une unité.
 """
 
 from __future__ import annotations
@@ -99,6 +105,8 @@ _DATE_ENTIERE = re.compile(r"^\d{4}-\d{2}(-\d{2})?$")
 _ANNEE = re.compile(r"(?<![\w.])(?:19|20)\d\d(?!\w)")
 _DATEE = re.compile(r"DateMois\(|[\"'`]\d{4}-\d{2}(?:-\d{2})?[\"'`]")
 _CONSTANTE = re.compile(r"^(?:export\s+)?(?:const|static)\s+([A-Z][A-Z0-9_]{2,})\s*=\s*(.*)$")
+_NOMBRE = re.compile(r"(?<![\w$.])\d")
+_RANG = re.compile(r"(?<=\w)\[\d+\]")
 _POSEE = re.compile(r"^([A-Z]\w*\.[A-Z][A-Z0-9_]{2,})\s*=\s*(.*)$")
 
 
@@ -134,33 +142,56 @@ def _profondeur(texte: str) -> int:
     return sum(texte.count(c) for c in "([{") - sum(texte.count(c) for c in ")]}")
 
 
-def releve_d_une_source(source: str) -> dict[str, int]:
-    """Les constantes datées d'un fichier, sous leur nom, et les années en
-    clair du reste de son code, sous leurs quatre chiffres : pour chacune, le
-    nombre de ses déclarations ou de ses occurrences."""
-    lignes = code_nu(source).split("\n")
-    trouve: dict[str, int] = {}
+def _declarations(lignes: list[str]):
+    """Les constantes nommées d'un code nu, chacune avec sa valeur entière,
+    et, entre elles, les autres lignes : ``(nom, valeur)`` ou ``(None,
+    ligne)``."""
     i = 0
     while i < len(lignes):
         ligne = lignes[i].strip()
         declaration = _CONSTANTE.match(ligne) or _POSEE.match(ligne)
-        if declaration:
-            valeur, j = declaration.group(2), i
-            profondeur = _profondeur(valeur)
-            while ((profondeur > 0 or not valeur.rstrip().endswith(";"))
-                   and j + 1 < len(lignes)):
-                j += 1
-                valeur += " " + lignes[j].strip()
-                profondeur += _profondeur(lignes[j])
-            if _DATEE.search(valeur) or _ANNEE.search(valeur):
-                trouve[declaration.group(1)] = trouve.get(declaration.group(1), 0) + 1
-                i = j + 1
-                continue
-            i = j + 1
+        if not declaration:
+            yield None, ligne
+            i += 1
             continue
-        for annee in _ANNEE.findall(ligne):
-            trouve[annee] = trouve.get(annee, 0) + 1
-        i += 1
+        valeur, j = declaration.group(2), i
+        profondeur = _profondeur(valeur)
+        while ((profondeur > 0 or not valeur.rstrip().endswith(";"))
+               and j + 1 < len(lignes)):
+            j += 1
+            valeur += " " + lignes[j].strip()
+            profondeur += _profondeur(lignes[j])
+        yield declaration.group(1), valeur
+        i = j + 1
+
+
+def _est_datee(valeur: str) -> bool:
+    return bool(_DATEE.search(valeur) or _ANNEE.search(valeur))
+
+
+def releve_d_une_source(source: str) -> dict[str, int]:
+    """Les constantes datées d'un fichier, sous leur nom, et les années en
+    clair du reste de son code, sous leurs quatre chiffres : pour chacune, le
+    nombre de ses déclarations ou de ses occurrences."""
+    trouve: dict[str, int] = {}
+    for nom, valeur in _declarations(code_nu(source).split("\n")):
+        if nom is None:
+            for annee in _ANNEE.findall(valeur):
+                trouve[annee] = trouve.get(annee, 0) + 1
+        elif _est_datee(valeur):
+            trouve[nom] = trouve.get(nom, 0) + 1
+    return trouve
+
+
+def chiffres_d_une_source(source: str) -> dict[str, int]:
+    """Les constantes d'un fichier qui portent un chiffre sans date : celles
+    dont la valeur écrit un nombre, et que le relevé des constantes datées ne
+    prend pas. Le rang lu dans une autre constante (``TABLE[0]``) n'est pas
+    un nombre de la constante."""
+    trouve: dict[str, int] = {}
+    for nom, valeur in _declarations(code_nu(source).split("\n")):
+        if nom is not None and not _est_datee(valeur) and _NOMBRE.search(_RANG.sub("", valeur)):
+            trouve[nom] = trouve.get(nom, 0) + 1
     return trouve
 
 
@@ -175,6 +206,18 @@ def constantes_datees(dossier: Path = MOTEUR) -> dict[str, int]:
     return {f"{chemin.relative_to(racine).as_posix()} : {nom}": nombre
             for chemin in fichiers_du_moteur(dossier)
             for nom, nombre in releve_d_une_source(chemin.read_text(encoding="utf-8")).items()}
+
+
+def constantes_chiffrees(sans_regle: frozenset[str] = frozenset(),
+                         dossier: Path = MOTEUR) -> dict[str, int]:
+    """Le relevé des chiffres sans date du moteur hors du site, sous les mêmes
+    clés que ``constantes_datees``. ``sans_regle`` nomme les fichiers que la
+    liste écarte en entier, parce qu'ils ne portent aucune règle."""
+    racine = dossier.parents[1]
+    return {f"{chemin.relative_to(racine).as_posix()} : {nom}": nombre
+            for chemin in fichiers_du_moteur(dossier)
+            if chemin.relative_to(racine).as_posix() not in sans_regle
+            for nom, nombre in chiffres_d_une_source(chemin.read_text(encoding="utf-8")).items()}
 
 
 def nomme_par_la_fiche(fiche: dict, fichier: str, nom: str) -> bool:

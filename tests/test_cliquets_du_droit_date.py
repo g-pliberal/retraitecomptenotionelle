@@ -35,10 +35,14 @@ COPIES_D_AVANT_REFORME = (
 )
 #: Les versions que le moteur lit, sans leurs deux preuves ni ce qui manque.
 VERSIONS_SANS_PREUVES = 237
-#: Les constantes du moteur qui sont du droit à migrer, et celles d'entre
-#: elles dont la fiche reste à désigner.
-CONSTANTES_A_MIGRER = 113
-CONSTANTES_SANS_FICHE = 67
+#: Parmi les versions ``lue`` que le moteur lit, celles dont un texte au
+#: moins n'a ni date de lecture ni citation : la première preuve y est une
+#: déclaration que rien ne trace.
+VERSIONS_LUES_SANS_TRACE = 153
+#: Les constantes du moteur qui sont du droit à migrer, datées ou non, et
+#: celles d'entre elles dont la fiche reste à désigner.
+CONSTANTES_A_MIGRER = 175
+CONSTANTES_SANS_FICHE = 104
 
 #: Les tables de ``data/reference/`` dont le nom porte ``_avant_`` et qui
 #: sont du droit, non une copie posée sur une autre table : le droit d'avant
@@ -59,7 +63,8 @@ RAISONS = {
     "reglage": "un réglage par défaut du simulateur ou de la proposition",
     "projection": "l'ancrage d'une carrière type ou d'une projection",
     "remuneration": "la rémunération des agents publics, hors de la pension",
-    "technique": "une sentinelle, sans valeur de droit",
+    "prelevements": "les prélèvements sociaux sur les pensions et les salaires",
+    "technique": "une sentinelle, une tolérance, une unité ou une borne de calcul, sans valeur de droit",
 }
 
 
@@ -132,6 +137,30 @@ Minimum.ANNEE_GEL = 2004;
     assert outils.releve_d_une_source(source) == {
         "SURCOTE_DEPUIS": 1, "BASCULE": 1, "GENERATION": 1, "TABLE": 1, "PLANCHER": 1,
         "Minimum.ANNEE_GEL": 1, "1998": 2, "2026": 1}
+
+
+def test_le_releve_prend_les_chiffres_sans_date_des_constantes():
+    """Un âge, un taux, une durée n'ont pas de date : le relevé des constantes
+    datées ne les voit pas. Celui-ci prend toute constante nommée dont la
+    valeur porte un nombre, sans date ni année ; un libellé, un nom, le rang
+    lu dans une autre constante ne comptent pas."""
+    source = """
+const TAUX = 0.0125;
+export const AGE_MAJORE = 65;
+const SEUILS = { independants: 0.5, liberaux: 1.0 };
+const LIBELLE = "les 150 trimestres";
+const FICHES = new Set(["minimum_contributif"]);
+const PREMIERE = REGULARISE[0];
+const DEPUIS = 2004;
+const BASCULE = new DateMois(2023, 9);
+class Minimum {
+  static PLANCHER = 16.0;
+  montant(points) { return points < 16.0 ? 16.0 : points; }
+}
+Minimum.SEUIL_HAUT = 160;
+"""
+    assert outils.chiffres_d_une_source(source) == {
+        "TAUX": 1, "AGE_MAJORE": 1, "SEUILS": 1, "PLANCHER": 1, "Minimum.SEUIL_HAUT": 1}
 
 
 def test_un_renvoi_cite_son_texte_a_la_periode_ou_il_commence():
@@ -229,6 +258,43 @@ def test_une_version_sans_exemple_dit_ce_qui_a_ete_cherche():
     assert not _dit_ce_qui_manque({**supposee, "hypothese": "", "exemples": ["un_exemple"]})
 
 
+def _lecture_tracee(version: dict) -> bool:
+    """La lecture d'une version ``lue`` laisse-t-elle une trace ? Le statut
+    est une déclaration de la fiche. Ce que le contrat sait garder d'une
+    lecture est, pour chaque texte cité, sa date (``lu_le``) ou la citation
+    exacte (``citation``) : un texte qui n'a ni l'une ni l'autre est nommé,
+    sans que rien dise qu'il a été lu."""
+    textes = version.get("textes") or []
+    return bool(textes) and all(
+        isinstance(texte, dict) and bool(texte.get("lu_le") or texte.get("citation"))
+        for texte in textes)
+
+
+def test_une_lecture_laisse_sa_date_ou_sa_citation_a_chaque_texte():
+    nomme = {"id": "LEGIARTI000000000001", "article": "L. 351-8"}
+    date = {**nomme, "lu_le": "2026-11-20"}
+    cite = {"reference": "circulaire Cnav 2007/5", "citation": "« à compter du 1er janvier 2007 »"}
+    assert not _lecture_tracee({"statut": "lue", "textes": [nomme]})
+    assert not _lecture_tracee({"statut": "lue", "textes": [date, nomme]})
+    assert not _lecture_tracee({"statut": "lue", "textes": []})
+    assert not _lecture_tracee({"statut": "lue", "textes": ["L. 351-8"]})
+    assert _lecture_tracee({"statut": "lue", "textes": [date, cite]})
+
+
+def test_les_versions_lues_sans_trace_de_leur_lecture_ne_peuvent_que_baisser():
+    """La première preuve du quatrième cliquet se lit au statut ``lue`` : une
+    déclaration. Ce nombre dit combien de ces déclarations ne gardent aucune
+    trace de la lecture, pour un texte au moins. Il ne prouve pas la lecture,
+    qu'une relecture seule vérifie ; il mesure ce qui reste à relire."""
+    fiches = carte.fiches()
+    sans = [(nom, version["id"]) for nom in FichesDatees.NOMS if nom in fiches
+            for version in fiches[nom].get("versions") or []
+            if isinstance(version, dict) and version.get("statut", "lue") == "lue"
+            and not _lecture_tracee(version)]
+    _baisse_seulement(len(sans), VERSIONS_LUES_SANS_TRACE,
+                      "versions lues par le moteur sans trace de leur lecture")
+
+
 def test_les_versions_lues_par_le_moteur_sans_leurs_preuves_ne_peuvent_que_baisser():
     """« Une version que l'action 191 reprend a les deux, ou "aucun trouvé"
     avec ce qui a été cherché. » Les versions reprises sont celles des fiches
@@ -243,23 +309,32 @@ def test_les_versions_lues_par_le_moteur_sans_leurs_preuves_ne_peuvent_que_baiss
                       "versions lues par le moteur sans leurs deux preuves ni ce qui manque")
 
 
-def _liste() -> tuple[dict, dict]:
+def _liste() -> tuple[dict, dict, frozenset[str]]:
     lue = yaml.safe_load(LISTE.read_text(encoding="utf-8"))
-    return lue["constantes"], lue["sans_date"]
+    return lue["constantes"], lue["sans_date"], frozenset(lue["fichiers_sans_regle"])
 
 
-def test_chaque_constante_datee_du_moteur_est_classee():
+def test_chaque_constante_datee_ou_chiffree_du_moteur_est_classee():
     """Le cinquième cliquet se relève, il ne se choisit pas : toute constante
     datée du moteur hors du site, toute année écrite en clair dans son code,
-    est dans la liste, qui dit si elle est du droit à migrer ou pourquoi elle
-    n'en est pas. Une fiche que la liste nomme nomme la constante dans son
-    champ ``code``."""
-    constantes, sans_date = _liste()
+    et toute constante qui porte un chiffre sans date, est dans la liste, qui
+    dit si elle est du droit à migrer ou pourquoi elle n'en est pas. Une fiche
+    que la liste nomme nomme la constante dans son champ ``code``."""
+    constantes, sans_date, sans_regle = _liste()
     releve = outils.constantes_datees()
-    assert sorted(set(releve) - set(constantes)) == [], (
-        "à classer dans tests/cliquets_du_droit_date/constantes.yaml : du droit daté "
-        "va dans les versions d'une fiche, non dans une constante du moteur")
+    chiffres = outils.constantes_chiffrees(sans_regle)
+    a_classer = ("à classer dans tests/cliquets_du_droit_date/constantes.yaml : un chiffre "
+                 "de la loi va dans les versions d'une fiche, non dans une constante du moteur")
+    assert sorted(set(releve) - set(constantes)) == [], a_classer
     assert sorted(set(constantes) - set(releve)) == [], "partie(s) du moteur : à retirer de la liste"
+    assert sorted(set(chiffres) - set(sans_date)) == [], a_classer
+    assert sorted(set(sans_date) - set(chiffres)) == [], (
+        "partie(s) du moteur, ou datée(s) depuis : à retirer de `sans_date`")
+    assert not set(constantes) & set(sans_date)
+    for fichier in sans_regle:
+        assert (outils.RACINE / fichier).is_file(), f"{fichier} : parti, à retirer de la liste"
+        assert not any(cle.startswith(f"{fichier} : ") for cle in constantes), (
+            f"{fichier} porte une constante datée : il n'est plus sans règle")
     fiches = carte.fiches()
     for cle, entree in {**constantes, **sans_date}.items():
         fichier, nom = cle.split(" : ")
@@ -278,18 +353,13 @@ def test_chaque_constante_datee_du_moteur_est_classee():
                 f"{entree['lignes']}")
         else:
             assert "lignes" not in entree, cle
-    for cle in sans_date:
-        fichier, nom = cle.split(" : ")
-        source = outils.code_nu((outils.RACINE / fichier).read_text(encoding="utf-8"))
-        assert f"const {nom} =" in source, f"{cle} : cette constante n'est plus dans le fichier"
-        assert cle not in constantes, cle
 
 
 def test_les_constantes_du_droit_a_migrer_ne_peuvent_que_baisser():
     """« Les chiffres de la loi quittent le code des règles pour les
     versions. » Le nombre des constantes classées ``droit`` ne peut que
     baisser, et celui des constantes dont la fiche reste à désigner aussi."""
-    constantes, sans_date = _liste()
+    constantes, sans_date, _ = _liste()
     droit = [entree for entree in {**constantes, **sans_date}.values() if entree["classe"] == "droit"]
     _baisse_seulement(len(droit), CONSTANTES_A_MIGRER, "constantes du droit dans le moteur")
     _baisse_seulement(sum(1 for entree in droit if not entree["fiches"]), CONSTANTES_SANS_FICHE,
