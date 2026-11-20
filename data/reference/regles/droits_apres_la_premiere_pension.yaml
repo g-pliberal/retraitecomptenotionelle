@@ -3,9 +3,10 @@ id: droits_apres_la_premiere_pension
 intitule: >-
   Après une première pension de base, l'activité n'ouvre plus aucun droit à retraite,
   de base ni complémentaire : pour qui prend sa première pension depuis le 1er janvier
-  2015 (L. 161-22-1 A), puis pour tous sur les périodes accomplies depuis le 1er
-  janvier 2023 (L. 161-22-1). Échappent à la règle la retraite progressive, la pension
-  militaire et, depuis 2023, le cumul intégral, qui ouvre une seconde pension ; pour
+  2015 (L. 161-22-1 A), puis pour tous depuis le 1er septembre 2023 (L. 161-22-1).
+  Échappent à la règle la retraite progressive, la pension militaire et, pour les
+  droits constitués depuis le 1er janvier 2023, le cumul intégral, qui ouvre une
+  seconde pension ; pour
   les premières pensions prises depuis 2027, le cumul entier, à partir de l'âge du
   taux plein automatique, et les exceptions de L. 161-22-1-2.
 domaine: cumul
@@ -39,8 +40,8 @@ versions:
     droits après une première pension : chaque régime garde ses règles, et une pension
     prise dans un régime n'empêche pas d'en acquérir dans un autre. Le VIII de
     l'article 19 de cette loi ne l'applique qu'aux premières pensions prises à compter
-    du 1er janvier 2015, et l'article L. 161-22-1 de 2023 ne vise que les périodes
-    accomplies depuis le 1er janvier 2023
+    du 1er janvier 2015, et l'article L. 161-22-1 de 2023 n'entre en vigueur que le
+    1er septembre 2023 (les mois de janvier à août 2023 : version transition_2023)
   fiabilite: moyenne
   bornes:
     liquidation.premiere_pension_de_base: [null, 2015-01-01]
@@ -52,6 +53,45 @@ versions:
     parametres:
       droits_nouveaux: selon_le_regime
   exemples: [cnav_2015_08_exemple_6_premiere_retraite_d_avant_2015]
+- id: transition_2023
+  statut: lue
+  textes:
+  - {id: JORFARTI000047445113, article: "loi n° 2023-270 du 14 avril 2023, article 26, XII",
+     publie_le: 2023-04-15, lu_le: 2026-11-19}
+  - {id: JORFARTI000028493657, article: "loi n° 2014-40 du 20 janvier 2014, article 19, VIII",
+     publie_le: 2014-01-21, lu_le: 2026-11-19}
+  nee_de: JORFARTI000047445113
+  exception_de: loi_2023
+  bornes:
+    liquidation.premiere_pension_de_base: [null, 2015-01-01]
+    droit_acquis: [2023-01-01, 2023-09-01]
+  contenu:
+    droit: >-
+      « Le présent article entre en vigueur le 1er septembre 2023 » (loi n° 2023-270,
+      article 26, XII) : jusqu'au 31 août 2023, seul L. 161-22-1 A éteint les droits,
+      et il n'est « applicable [qu']aux assurés dont la première pension prend effet à
+      compter du 1er janvier 2015 » (loi n° 2014-40, article 19, VIII). Pour une
+      première pension d'avant 2015, l'activité de janvier à août 2023 ouvre donc
+      encore des droits dans les régimes qui ne l'ont pas liquidée, selon leurs
+      propres règles
+    exceptions: >-
+      dans le régime qui sert déjà la pension, le cumul intégral ouvre dès ces mois
+      les droits à une seconde pension, sans borne de première pension : « La
+      liquidation des pensions [...] intervenant à compter du 1er septembre 2023 prend
+      en compte [...] les droits en vue d'une nouvelle pension de vieillesse constitués
+      à partir du 1er janvier 2023 en application du 2° de l'article L. 161-22-1 et de
+      l'article L. 161-22-1-1 » (article 26, XII, 3°)
+    parametres:
+      droits_nouveaux: selon_le_regime
+      exceptions: [cumul_integral]
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 19 novembre 2026, par la session qui a relu la date sans avoir vu la fiche : les
+    66 circulaires de la Cnav de 2023 et 2024, dont aucune n'a le cumul emploi-retraite
+    pour objet ; les exposés « Retraite personnelle issue d'un cumul emploi retraite »
+    (28 septembre 2026) et « Fin d'acquisition de droits à retraite » (24 novembre
+    2025), sans exemple ; la fiche F13243 de service-public.gouv.fr, qui ne dit rien
+    des premières pensions d'avant 2015
 - id: loi_2014
   statut: lue
   textes:
@@ -96,7 +136,9 @@ versions:
       « La reprise ou la poursuite d'une activité professionnelle par le bénéficiaire
       d'une pension de vieillesse personnelle servie par un régime de retraite de base
       légalement obligatoire n'ouvre droit à aucun avantage de vieillesse » (L. 161-22-1,
-      premier alinéa), quelle que soit la date de la première pension
+      premier alinéa), quelle que soit la date de la première pension ; pour celle
+      d'avant 2015, à compter du 1er septembre 2023 seulement, date d'entrée en
+      vigueur de l'article (XII ; version transition_2023)
     exceptions: >-
       la retraite progressive (1°) ; le cumul intégral des conditions de L. 161-22 et
       de L. 84 CPCMR, la reprise chez le dernier employeur six mois au plus tôt après
@@ -162,13 +204,12 @@ sources:
     circulaire Cnav 2015/8 répond aux deux pour le régime général (lectures) ; les
     autres régimes restent à lire.
   - >-
-    Le XII de l'article 26 de la loi n° 2023-270 fait entrer l'article en vigueur
-    le 1er septembre 2023, et ne remonte au 1er janvier 2023 que pour « les droits en
-    vue d'une nouvelle pension » du cumul intégral (3°). La fiche éteint dès le
-    1er janvier 2023 les droits de l'activité de qui a pris sa première pension
-    avant 2015 : ses mois de janvier à août 2023 relèvent-ils encore des règles
-    d'avant ? Question relevée le 19 novembre 2026 (action 191, étape 2 du cumul),
-    à trancher par une lecture à part ; la borne n'a pas bougé.
+    Après août 2023, la fiche suit la lettre de L. 161-22-1, qui ne reprend pas la
+    borne de 2015 ; l'exposé « Fin d'acquisition de droits à retraite » de la Cnav
+    (24 novembre 2025) garde cette borne sans date de fin. Si la caisse ouvre encore
+    des droits ordinaires à la première pension d'avant 2015 après août 2023, loi_2023
+    est trop large pour elle : seule une circulaire sur le cumul de 2023, que la base
+    de la Cnav ne porte pas, ou une instruction ministérielle le trancherait.
   lectures:
   - type: circulaire_cnav
     reference: >-
@@ -193,6 +234,16 @@ sources:
     date: 2026-09-30
   - type: jorf
     reference: >-
+      loi n° 2023-270 du 14 avril 2023, article 26, XII (JORFARTI000047445113), relu
+      par une session qui n'avait vu ni la fiche ni la première lecture (note de
+      décision 0009) : l'article « entre en vigueur le 1er septembre 2023 », et son 3°
+      ne remonte au 1er janvier 2023 que pour « les droits en vue d'une nouvelle
+      pension » ; pour une première pension d'avant 2015, les mois de janvier à août
+      2023 gardent les règles d'avant (docs/feuille_de_route/191/
+      2026-11-19-relecture-de-la-date-de-2023-du-cumul.md)
+    date: 2026-11-19
+  - type: jorf
+    reference: >-
       loi n° 2014-40 du 20 janvier 2014, article 19 (JORFARTI000028493657), lu en
       entier dans l'index JORF : II (L. 161-22-1 A), V (L. 84 CPCMR, la pension
       militaire), VIII (premières pensions prises à compter du 1er janvier 2015), IX
@@ -214,8 +265,9 @@ sources:
     date: 2026-09-29
 approximations:
 - ecart: >-
-    avant 2023, pour une première pension d'avant 2015, et toujours pour une pension
-    militaire, l'activité ouvre des droits dans les régimes qui n'ont pas liquidé : le
+    avant septembre 2023, pour une première pension d'avant 2015, et toujours pour
+    une pension militaire, l'activité ouvre des droits dans les régimes qui n'ont pas
+    liquidé : le
     modèle les liquide à la fin de l'activité, ou à l'âge d'ouverture du régime s'il
     vient après, sur la carrière prolongée des années qui les ouvrent, dont la durée
     tous régimes fait le taux, surcote comprise ; il tient pour définitive la pension
@@ -275,6 +327,14 @@ historique:
   plus loi_2014 ; lfss_2026 pour une première pension de 2027, et non plus
   loi_2023. Seul ce nom change dans les résultats, pour ces deux cas : les droits
   ouverts sont les mêmes.
+- >-
+  2026-11-20 — la date de 2023, relue par une session indépendante le 19 et
+  corrigée sur l'accord du propriétaire : pour une
+  première pension d'avant 2015, la règle de 2023 ne vaut qu'à compter du
+  1er septembre 2023, date d'entrée en vigueur de l'article 26 de la loi n° 2023-270,
+  et non du 1er janvier. La version transition_2023 porte ses mois de janvier à août
+  2023 : des droits ordinaires dans le régime qui n'a rien liquidé, et déjà, en cumul
+  intégral, ceux d'une seconde pension dans le régime qui sert la première (XII, 3°).
 effet: >-
   Toute personne qui travaille après sa première pension, dans le même régime ou dans
   un autre : le fonctionnaire de catégorie active parti à cinquante-sept ans et passé

@@ -1550,6 +1550,32 @@ def test_l_activite_ouvre_une_pension_dans_le_regime_qui_n_en_servait_pas(simula
     assert all(p.regime not in nouveaux for p in echeancier.au_depart.pensions_par_regime)
 
 
+def test_la_premiere_pension_d_avant_2015_ouvre_des_droits_jusqu_en_aout_2023(simulateur):
+    """« Le présent article entre en vigueur le 1er septembre 2023 » (loi
+    n° 2023-270, article 26, XII), et L. 161-22-1 A, seul jusque-là à éteindre
+    les droits, n'est « applicable [qu']aux assurés dont la première pension
+    prend effet à compter du 1er janvier 2015 » (loi n° 2014-40, article 19,
+    VIII). La fonctionnaire née le 15 janvier 1953 et partie en août 2014,
+    salariée d'août 2022 à juillet 2024 : ses mois d'août 2022 à août 2023
+    lui ouvrent le régime général comme à tout nouvel assuré ; ceux d'après,
+    passé soixante-dix ans, la seule nouvelle pension du cumul intégral
+    (L. 161-22-1, 2°). Elle a donc deux pensions du régime général et deux
+    retraites de l'Agirc-Arrco : celles de ses droits ordinaires, et les
+    nouvelles. Ce que la première compte de 2023, huit mois sur douze, est tenu
+    par un essai de `tests/js/droits-apres-la-premiere-pension.test.js`."""
+    droits, echeancier = _droits(simulateur, 1953, 61.5, _emploi(69.5, 71.5),
+                                 [Metier("fonctionnaire_etat", 26.0)])
+    assert [(p.debut, p.fin, p.motif, p.regle) for p in droits.periodes] == [
+        (DateMois(2022, 8), DateMois(2023, 1), seconde.REGIMES_NON_LIQUIDES,
+         seconde.SANS_REGLE_GENERALE),
+        (DateMois(2023, 1), DateMois(2023, 9), seconde.REGIMES_NON_LIQUIDES,
+         "transition_2023"),
+        (DateMois(2023, 9), DateMois(2024, 8), seconde.NOUVELLE_PENSION, seconde.LOI_2023),
+    ]
+    assert {p.regime for p in droits.regimes_nouveaux} == {"regime_general", "agirc_arrco"}
+    assert {p.regime for p in droits.pensions} == {"regime_general", "agirc_arrco"}
+
+
 def test_la_pension_militaire_ouvre_le_regime_general_a_son_age(simulateur):
     """Le militaire parti à quarante-cinq ans, salarié jusqu'à cinquante ans :
     son régime général n'ouvre qu'à l'âge légal, où ses droits se liquident."""

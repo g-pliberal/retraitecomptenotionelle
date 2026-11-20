@@ -5869,6 +5869,27 @@ def test_la_page_dit_que_la_pension_militaire_n_eteint_pas_les_droits(page, requ
     assert "votre pension militaire n'éteint pas vos droits" in note
 
 
+def test_la_page_dit_les_mois_de_2023_de_la_premiere_pension_d_avant_2015(page):
+    """La salariée née en 1952, partie en 2014 au taux plein et reprise le mois
+    suivant chez son dernier employeur, jusqu'en 2024. La loi de 2023 n'entre
+    en vigueur que le 1er septembre 2023 (loi n° 2023-270, article 26, XII) :
+    ses mois de janvier à août 2023 sont d'une règle à part, et la page n'en
+    dit pas pour autant qu'ils ouvrent des droits. Avant 2023, son régime, qui
+    la sert déjà, n'ouvre rien ; depuis, le cumul intégral ouvrirait une
+    nouvelle pension, mais jamais chez le dernier employeur repris dans les
+    six mois (L. 161-22-1, 2°)."""
+    note, periodes = _note_du_cumul(page, {
+        "naissance": "1952", "debut": "20", "liquidation": "62",
+        "emploi_retraite": "2014-03", "emploi_retraite_fin": "2024-03",
+        "emploi_retraite_employeur": "dernier"})
+    assert "ouvre des droits dans les régimes qui ne vous servent pas encore" not in note
+    assert ("De mars 2014 à décembre 2022, votre activité relève du régime qui vous sert "
+            "déjà votre pension, définitive : elle n'y ouvre rien.") in note
+    assert ("De janvier 2023 à février 2024, votre activité n'ouvre aucun droit : reprise "
+            "chez votre dernier employeur moins de six mois après votre pension, elle n'en "
+            "ouvre jamais.") in note
+
+
 def test_la_page_dit_le_cumul_entier_du_non_officier_de_moins_de_vingt_cinq_ans(page):
     """L. 86, 1° : « Le titulaire d'une pension militaire non officier
     rémunérant moins de vingt-cinq années de services » cumule entièrement,

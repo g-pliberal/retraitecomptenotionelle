@@ -26542,6 +26542,7 @@ null
 "id":"droits_apres_la_premiere_pension",
 "versions":[
 {"bornes":{"droit_acquis":[null,"2023-01-01"],"liquidation.premiere_pension_de_base":[null,"2015-01-01"]},"exception_de":null,"id":"sans_regle_generale","parametres":{"droits_nouveaux":"selon_le_regime"},"texte":null},
+{"bornes":{"droit_acquis":["2023-01-01","2023-09-01"],"liquidation.premiere_pension_de_base":[null,"2015-01-01"]},"exception_de":"loi_2023","id":"transition_2023","parametres":{"droits_nouveaux":"selon_le_regime","exceptions":["cumul_integral"]},"texte":"JORFARTI000047445113"},
 {"bornes":{"droit_acquis":[null,"2023-01-01"],"liquidation.premiere_pension_de_base":["2015-01-01","2027-01-01"]},"exception_de":null,"id":"loi_2014","parametres":{"droits_nouveaux":"aucun","exceptions":["retraite_progressive","pension_militaire","marins_avant_2018"]},"texte":"JORFARTI000028493657"},
 {"bornes":{"droit_acquis":["2023-01-01",null],"liquidation.premiere_pension_de_base":[null,"2027-01-01"]},"exception_de":null,"id":"loi_2023","parametres":{"droits_nouveaux":"aucun","exceptions":["retraite_progressive","cumul_integral","pension_militaire"]},"texte":"JORFARTI000047445113"},
 {

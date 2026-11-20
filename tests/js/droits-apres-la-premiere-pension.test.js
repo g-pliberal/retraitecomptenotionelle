@@ -34,6 +34,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 import { DateMois } from "../../moteur/js/calendrier.js";
+import { AnneeCarriere } from "../../moteur/js/carriere.js";
 import { PARAMETRES_DEFAUT } from "../../moteur/js/config.js";
 import * as seconde from "../../moteur/js/droit/seconde.js";
 import { Simulateur } from "../../moteur/js/simulateur.js";
@@ -70,7 +71,7 @@ test("le paquet porte les deux fiches, et les dates qui décident de chacune", (
   assert.deepEqual(droits.dates_qui_decident,
     ["liquidation.premiere_pension_de_base", "droit_acquis"]);
   assert.deepEqual(droits.versions.map((v) => v.id),
-    ["sans_regle_generale", "loi_2014", "loi_2023", "lfss_2026"]);
+    ["sans_regle_generale", "transition_2023", "loi_2014", "loi_2023", "lfss_2026"]);
   const laSeconde = paquet.fiches_datees[SECONDE];
   assert.ok(laSeconde, `${SECONDE} manque à fiches_datees`);
   assert.deepEqual(laSeconde.dates_qui_decident,
@@ -103,9 +104,84 @@ test("depuis le 1er janvier 2023, le cumul intégral ouvre une nouvelle pension"
   // Chez le dernier employeur dans les six mois : jamais (L. 161-22-1, 2°).
   assert.deepEqual(motif(moteur, mois(2023, 1), premiere, { ...integral, sixMois: true }),
     ["dernier_employeur", "loi_2023"]);
-  // Une première pension d'avant 2015 n'y échappe plus : la règle vaut pour tous.
-  assert.deepEqual(motif(moteur, mois(2023, 1), mois(2010, 1), { nouveaux: true }),
-    ["eteints", "loi_2023"]);
+});
+
+test("la première pension d'avant 2015 garde ses règles jusqu'au 31 août 2023", () => {
+  // « Le présent article entre en vigueur le 1er septembre 2023 » (loi
+  // n° 2023-270, article 26, XII) : jusque-là L. 161-22-1 A, seul à éteindre
+  // les droits, n'est « applicable [qu']aux assurés dont la première pension
+  // prend effet à compter du 1er janvier 2015 » (loi n° 2014-40, article 19,
+  // VIII). L'activité de janvier à août 2023 ouvre donc encore des droits
+  // dans le régime qui n'a rien liquidé.
+  const premiere = mois(2010, 1);
+  const ouvre = { nouveaux: true };
+  assert.deepEqual(motif(moteur, mois(2022, 12), premiere, ouvre),
+    ["regimes_non_liquides", "sans_regle_generale"]);
+  assert.deepEqual(motif(moteur, mois(2023, 1), premiere, ouvre),
+    ["regimes_non_liquides", "transition_2023"]);
+  assert.deepEqual(motif(moteur, mois(2023, 8), premiere, ouvre),
+    ["regimes_non_liquides", "transition_2023"]);
+  // Le 1er septembre 2023, la règle vaut pour tous : plus rien hors du cumul intégral.
+  assert.deepEqual(motif(moteur, mois(2023, 9), premiere, ouvre), ["eteints", "loi_2023"]);
+  assert.deepEqual(motif(moteur, mois(2023, 9), premiere, { ...ouvre, integral: premiere }),
+    ["nouvelle_pension", "loi_2023"]);
+  // La borne de 2015 tient : la première pension de décembre 2014 en relève,
+  // celle de janvier 2015 non, pour qui rien ne s'ouvrait déjà.
+  assert.deepEqual(motif(moteur, mois(2023, 8), mois(2014, 12), ouvre),
+    ["regimes_non_liquides", "transition_2023"]);
+  assert.deepEqual(motif(moteur, mois(2023, 8), mois(2015, 1), ouvre), ["eteints", "loi_2023"]);
+});
+
+test("de janvier à août 2023, le cumul intégral ouvre déjà la nouvelle pension", () => {
+  // « La liquidation des pensions […] intervenant à compter du 1er septembre
+  // 2023 prend en compte […] les droits en vue d'une nouvelle pension de
+  // vieillesse constitués à partir du 1er janvier 2023 en application du 2° de
+  // l'article L. 161-22-1 » (article 26, XII, 3°), sans borne de première
+  // pension : dans le régime qui la sert déjà, la première pension d'avant
+  // 2015 les constitue comme les autres.
+  const premiere = mois(2010, 1);
+  assert.deepEqual(motif(moteur, mois(2023, 3), premiere, { integral: premiere }),
+    ["nouvelle_pension", "transition_2023"]);
+  assert.deepEqual(motif(moteur, mois(2023, 3), premiere, { integral: mois(2023, 6) }),
+    ["regime_liquide", "transition_2023"]);
+  assert.deepEqual(motif(moteur, mois(2023, 3), premiere),
+    ["regime_liquide", "transition_2023"]);
+  // Chez le dernier employeur dans les six mois : jamais (L. 161-22-1, 2°).
+  assert.deepEqual(motif(moteur, mois(2023, 3), premiere, { integral: premiere, sixMois: true }),
+    ["dernier_employeur", "transition_2023"]);
+  // Avant 2023, le régime qui sert la pension n'ouvre rien, cumul intégral ou non.
+  assert.deepEqual(motif(moteur, mois(2022, 12), premiere, { integral: premiere }),
+    ["regime_liquide", "sans_regle_generale"]);
+});
+
+test("l'année que la règle coupe ne compte que ses mois qui ouvrent des droits", () => {
+  // L'activité d'août 2022 à juillet 2024 d'une première pension d'avant 2015 :
+  // ses mois ouvrent des droits ordinaires jusqu'au 31 août 2023 (article 26,
+  // XII). Un calcul posé à la main : de 2023, huit mois sur douze, donc les
+  // deux tiers de 36 000 € et les deux trimestres civils entiers de ces mois,
+  // comme l'année d'un départ ; 2022 entière ; rien de 2024.
+  const ligne = (annee, mois, revenu, trimestres) => new AnneeCarriere({ annee, revenu,
+    affiliation: "salarie_prive_non_cadre", fraction_annee: mois / 12,
+    trimestres_valides: trimestres });
+  const lignes = [ligne(2022, 5, 15000, 1), ligne(2023, 12, 36000, 4),
+    ligne(2024, 7, 21000, 2)];
+  const periodes = [
+    new seconde.PeriodeDeDroits(mois(2022, 8), mois(2023, 1), "regimes_non_liquides",
+      "sans_regle_generale"),
+    new seconde.PeriodeDeDroits(mois(2023, 1), mois(2023, 9), "regimes_non_liquides",
+      "transition_2023"),
+    new seconde.PeriodeDeDroits(mois(2023, 9), mois(2024, 8), "nouvelle_pension", "loi_2023"),
+  ];
+  const comptees = seconde.lignesQuiOuvrent(lignes, periodes);
+  assert.deepEqual(comptees.map((l) => l.annee), [2022, 2023]);
+  assert.equal(comptees[0], lignes[0]);
+  assert.equal(comptees[1].revenu, 24000);
+  assert.equal(comptees[1].fraction_annee, 8 / 12);
+  assert.equal(comptees[1].trimestres_valides, 2);
+  // Une année dont tous les mois ouvrent reste la ligne qu'elle était.
+  const militaire = [new seconde.PeriodeDeDroits(mois(2022, 8), mois(2024, 8),
+    "pension_militaire", "loi_2014")];
+  assert.deepEqual(seconde.lignesQuiOuvrent(lignes, militaire), lignes);
 });
 
 test("la première pension de 2027 relève de la rédaction de la loi n° 2025-1403", () => {
@@ -133,6 +209,8 @@ test("la règle du militaire est la version qui vaut pour sa première pension",
   assert.deepEqual(motif(moteur, mois(2022, 12), mois(2014, 12), militaire),
     ["pension_militaire", "sans_regle_generale"]);
   assert.deepEqual(motif(moteur, mois(2023, 1), mois(2014, 12), militaire),
+    ["pension_militaire", "transition_2023"]);
+  assert.deepEqual(motif(moteur, mois(2023, 9), mois(2014, 12), militaire),
     ["pension_militaire", "loi_2023"]);
   // La rédaction de la loi n° 2025-1403 vaut pour qui entre « en jouissance de
   // [sa] première pension de vieillesse de base à compter du 1er janvier 2027 »

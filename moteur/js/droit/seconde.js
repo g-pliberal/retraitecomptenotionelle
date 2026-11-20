@@ -14,8 +14,8 @@
  * dates qui décident (action 191, étape 2 du domaine du cumul).
  */
 
-import { DateMois } from "../calendrier.js";
-import { forfaitMicro, revenuCotise } from "../carriere.js";
+import { DateMois, MOIS_PAR_AN, trimestresCivils } from "../calendrier.js";
+import { AnneeCarriere, forfaitMicro, revenuCotise } from "../carriere.js";
 import { menerAuMois } from "../revalorisation.js";
 import { assietteMinimale } from "./acquerir.js";
 import * as lesDeparts from "./departs.js";
@@ -193,19 +193,21 @@ export function motif(moteur, mois, premiere, integral, sixMois, militaire, nouv
   const version = versionDesDroits(moteur, premiere, mois);
   if (militaire) return [PENSION_MILITAIRE, version.id];
   const { droits_nouveaux: droitsNouveaux, exceptions = [] } = version.parametres;
-  if (droitsNouveaux === SELON_LE_REGIME) {
-    return [nouveaux ? REGIMES_NON_LIQUIDES : REGIME_LIQUIDE, version.id];
-  }
-  if (droitsNouveaux !== AUCUN) {
+  if (droitsNouveaux !== SELON_LE_REGIME && droitsNouveaux !== AUCUN) {
     throw new Error(`${FICHE_DES_DROITS} : droits nouveaux « ${droitsNouveaux} » `
       + "inconnus du moteur");
   }
+  // Chaque régime garde ses règles : celui qui n'a rien liquidé ouvre ses droits.
+  const selonLeRegime = droitsNouveaux === SELON_LE_REGIME;
+  if (selonLeRegime && nouveaux) return [REGIMES_NON_LIQUIDES, version.id];
+  // Sinon, seul un cumul que la version excepte ouvre une nouvelle pension.
+  const ferme = selonLeRegime ? REGIME_LIQUIDE : ETEINTS;
   if (!CUMULS_QUI_OUVRENT.some((exception) => exceptions.includes(exception))) {
-    return [ETEINTS, version.id];
+    return [ferme, version.id];
   }
   if (sixMois) return [DERNIER_EMPLOYEUR, version.id];
   if (integral !== null && mois.rang >= integral.rang) return [NOUVELLE_PENSION, version.id];
-  return [ETEINTS, version.id];
+  return [ferme, version.id];
 }
 
 /**
@@ -494,6 +496,36 @@ function secondeRetraiteRci(moteur, lignes, activite, periode, dateEffet, anneeD
 export const OUVRANTS = new Set([REGIMES_NON_LIQUIDES, PENSION_MILITAIRE]);
 
 /**
+ * Les lignes de l'activité que comptent les régimes qui s'ouvrent : celles des
+ * années dont des mois ouvrent des droits, chacune sur ces seuls mois. L'année
+ * que la règle coupe — 2023, pour une première pension d'avant 2015 — garde
+ * son revenu au prorata de ces mois et, comme l'année d'un départ, leurs seuls
+ * trimestres civils entiers.
+ */
+export function lignesQuiOuvrent(lignes, periodes) {
+  const ouvrants = new Map();
+  for (const periode of periodes) {
+    if (!OUVRANTS.has(periode.motif)) continue;
+    for (let r = periode.debut.rang; r < periode.fin.rang; r += 1) {
+      const { annee } = DateMois.depuisRang(r);
+      ouvrants.set(annee, (ouvrants.get(annee) ?? 0) + 1);
+    }
+  }
+  return lignes.filter((ligne) => ouvrants.has(ligne.annee)).map((ligne) => {
+    const mois = ouvrants.get(ligne.annee);
+    const travailles = Math.round(ligne.fraction_annee * MOIS_PAR_AN);
+    if (mois >= travailles) return ligne;
+    const part = mois / travailles;
+    return new AnneeCarriere({
+      ...ligne, fraction_annee: mois / MOIS_PAR_AN, revenu: ligne.revenu * part,
+      revenu_reference: ligne.revenu_reference * part,
+      revenu_avpf: ligne.revenu_avpf * part, revenu_retabli: ligne.revenu_retabli * part,
+      trimestres_valides: Math.min(ligne.trimestres_valides, trimestresCivils(mois)),
+    });
+  });
+}
+
+/**
  * Les pensions que les années d'activité ouvrent dans les régimes qui n'en
  * servent pas encore, liquidées à leur date : `[date, liquidation]` pour
  * chaque départ. Voir le Python.
@@ -501,14 +533,7 @@ export const OUVRANTS = new Set([REGIMES_NON_LIQUIDES, PENSION_MILITAIRE]);
 export function liquiderLesRegimesNouveaux(moteur, carriere, resultat, droits, cumul,
   contexte, journal = null) {
   if (droits === null || droits === undefined || cumul === null) return [];
-  const annees = new Set();
-  for (const periode of droits.periodes) {
-    if (!OUVRANTS.has(periode.motif)) continue;
-    for (let r = periode.debut.rang; r < periode.fin.rang; r += 1) {
-      annees.add(DateMois.depuisRang(r).annee);
-    }
-  }
-  const lignes = carriere.lignes_apres_depart.filter((ligne) => annees.has(ligne.annee));
+  const lignes = lignesQuiOuvrent(carriere.lignes_apres_depart, droits.periodes);
   if (lignes.length === 0) return [];
   const etendue = carriere.avecLignes(
     [...carriere.lignes, ...lignes].sort((a, b) => a.annee - b.annee),

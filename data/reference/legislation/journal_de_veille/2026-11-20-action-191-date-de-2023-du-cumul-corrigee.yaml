@@ -1,0 +1,24 @@
+date: "2026-11-20"
+session: "action 191 : la date de 2023 du cumul emploi-retraite, corrigée au texte après la relecture indépendante, sur l'accord du propriétaire"
+consulte: >-
+  La veille du jour (scripts/veille_droit.py) ne signale rien sur ces
+  textes. Rien de neuf : le XII de l'article 26 de la loi n° 2023-270
+  (JORFARTI000047445113) et le VIII de l'article 19 de la loi n° 2014-40
+  (JORFARTI000028493657), lus dans l'index JORF par l'étape 2 du cumul puis,
+  à part, par la session de relecture (entrées
+  2026-11-19-action-191-etape-2-du-cumul.yaml et
+  2026-11-19-action-191-relecture-de-la-date-de-2023-du-cumul.yaml).
+trouve: >-
+  Pour une première pension de base d'avant le 1er janvier 2015, l'activité
+  de janvier à août 2023 ouvre encore des droits ordinaires dans le régime
+  qui n'a rien liquidé : l'article 26 n'entre en vigueur que le
+  1er septembre 2023, et son XII, 3°, ne remonte au 1er janvier que pour les
+  droits à une nouvelle pension du cumul intégral. La fiche
+  droits_apres_la_premiere_pension prend la version transition_2023, que le
+  moteur lit. Aucun témoin existant ne bouge. Détail :
+  docs/feuille_de_route/191/2026-11-20-date-de-2023-du-cumul-corrigee.md.
+reste: >-
+  Aucun exemple officiel de ces huit mois. Après août 2023, l'exposé « Fin
+  d'acquisition de droits à retraite » de la Cnav garde la borne de 2015 sans
+  date de fin, contre la lettre de L. 161-22-1 : une circulaire sur le cumul
+  de 2023, absente de la base de la Cnav, le trancherait.

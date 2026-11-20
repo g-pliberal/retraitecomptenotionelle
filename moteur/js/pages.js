@@ -5045,6 +5045,17 @@ function sansNouveauxDroits(periode) {
     return "ouvre des droits dans les régimes qui ne vous servent pas encore de pension : "
       + "votre pension militaire n'éteint pas vos droits";
   }
+  // Ni la reprise chez le dernier employeur ni le régime qui sert déjà la
+  // pension ne tiennent à la version : les mois de janvier à août 2023 d'une
+  // première pension d'avant 2015 les disent comme les autres.
+  if (periode.motif === "dernier_employeur") {
+    return "n'ouvre aucun droit : reprise chez votre dernier employeur moins de six mois "
+      + "après votre pension, elle n'en ouvre jamais";
+  }
+  if (periode.motif === "regime_liquide") {
+    return "relève du régime qui vous sert déjà votre pension, définitive : elle n'y "
+      + "ouvre rien";
+  }
   switch (`${periode.motif}/${periode.regle}`) {
     case "eteints/loi_2014":
       return "n'ouvre aucun droit à retraite : depuis 2015, la reprise d'activité après "
@@ -5055,13 +5066,6 @@ function sansNouveauxDroits(periode) {
     case "eteints/lfss_2026":
       return "n'ouvre aucun droit à retraite : pour une première pension de 2027, seul le "
         + "cumul entier, à l'âge du taux plein automatique, en ouvre (L. 161-22-1)";
-    case "dernier_employeur/loi_2023":
-    case "dernier_employeur/lfss_2026":
-      return "n'ouvre aucun droit : reprise chez votre dernier employeur moins de six mois "
-        + "après votre pension, elle n'en ouvre jamais";
-    case "regime_liquide/sans_regle_generale":
-      return "relève du régime qui vous sert déjà votre pension, définitive : elle n'y "
-        + "ouvre rien";
     default:
       return "ouvre des droits dans les régimes qui ne vous servent pas encore de pension";
   }

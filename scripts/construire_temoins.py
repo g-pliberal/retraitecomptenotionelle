@@ -938,6 +938,14 @@ def _cas() -> list[dict]:
         "naissance": "1968", "debut": "17", "liquidation": "60",
         "emploi_retraite": "2029-02", "emploi_retraite_fin": "2032-02",
     }))
+    # La première pension d'avant 2015, dont l'activité ouvre encore des droits
+    # ordinaires jusqu'au 31 août 2023, la loi n° 2023-270 n'entrant en vigueur
+    # que le 1er septembre (article 26, XII ; fiche
+    # droits_apres_la_premiere_pension, version transition_2023).
+    cas.append(("cumul_premiere_pension_de_2014_en_2023", {
+        "naissance": "1953", "statut": "fonctionnaire_etat", "debut": "26",
+        "liquidation": "61.5", "emploi_retraite": "2022-08", "emploi_retraite_fin": "2024-08",
+    }))
     # La pension militaire de la première pension de 2027, que L. 86 du code
     # des pensions (rédaction du 31 décembre 2025) plafonne devant un employeur
     # public, au tiers de la pension et à la moitié du minimum garanti
