@@ -55,12 +55,16 @@ def test_la_baisse_de_l_ensemble_est_pres_du_quart(baisses):
 
 
 def test_chaque_caisse_suit_son_cas_type(baisses):
-    """Les cas types publiés (page Cas types, génération 1960, au départ) : le
-    chef d'exploitation agricole perd 51 %, le contractuel du public 34 %,
-    l'artisan 25 %, le libéral 10 % ; l'ordre des baisses suit."""
+    """Les cas types de la grille du coût, au départ : le chef d'exploitation
+    agricole perd 46 %, le contractuel du public 31 %, le libéral 26 %,
+    l'artisan 21 % ; l'ordre des baisses suit. Le libéral passait après
+    l'artisan tant que son cas type gagnait 2,5 fois le salaire moyen et que sa
+    complémentaire se servait au rendement : ramené à 1,5, la CIPAV comptée en
+    points (action 191, 20 novembre 2026), il perd plus que lui."""
     taux = {caisse: baisses[caisse].taux for caisse in REGLEES_PAR_L_ETAT}
     assert (taux["msa_exploitants_complementaire"] > taux["ircantec"]
-            > taux["rci_complementaire"] > taux["cnavpl_complementaire"])
+            > taux["cnavpl_complementaire"] > taux["rci_complementaire"])
+    assert taux["cnavpl_complementaire"] == pytest.approx(0.26, abs=0.01)
 
 
 def test_le_stock_s_eteint(baisses):

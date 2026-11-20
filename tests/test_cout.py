@@ -1001,8 +1001,10 @@ DECOMPOSITION_TETES = 0.03
 #: ses départs actifs et sédentaires (action 138, étape 3, 16 octobre) le
 #: relève à 5,7 % : quatre agents sur cinq partent désormais au taux plein des
 #: sédentaires, trois ans après l'actif, comme le jaune pensions le dit, et
-#: leur pension est plus haute d'autant. Il ne doit que descendre.
-DECOMPOSITION_PENSION_CLIQUET = 0.06
+#: leur pension est plus haute d'autant. Le libéral type du coût ramené de 2,5
+#: à 1,5 fois le salaire moyen (action 191, 20 novembre) le descend à 4,2 %.
+#: Il ne doit que descendre.
+DECOMPOSITION_PENSION_CLIQUET = 0.05
 DECOMPOSITION_PENSION_CIBLE = 0.03
 
 
@@ -2999,6 +3001,10 @@ def test_la_garantie_degressive_coute_ce_que_son_etude_en_disait(avenir):
     L'étude donnait, au recours d'un ayant droit sur deux : 0,505 point de PIB
     versé par an en moyenne de 2026 à 2070, 0,309 net des reprises sur
     succession ; en 2030, 0,59 point versé et 8,67 millions d'ayants droit.
+    REMESURÉ LE 20 NOVEMBRE 2026 (action 191) : le libéral type du coût ramené
+    de 2,5 à 1,5 fois le salaire moyen, ses pensions baissent et la garantie en
+    complète davantage : 0,515 point versé, 0,315 net, 0,60 point et 8,80
+    millions d'ayants droit en 2030.
     Le versé et le net sont proportionnels au recours, que la décision 20 du
     programme portera à un : ils se lisent ici au recours de l'étude. Les
     ayants droit n'en dépendent pas.
@@ -3009,11 +3015,11 @@ def test_la_garantie_degressive_coute_ce_que_son_etude_en_disait(avenir):
              for annee in annees}
     reprises = {annee: avenir.annee(annee).part_pib_reprises() * 0.5 / recours
                 for annee in annees}
-    assert 100 * sum(verse.values()) / len(verse) == pytest.approx(0.505, abs=0.005)
+    assert 100 * sum(verse.values()) / len(verse) == pytest.approx(0.515, abs=0.005)
     assert 100 * sum(verse[annee] - reprises[annee] for annee in annees) / len(verse) == (
-        pytest.approx(0.309, abs=0.005))
-    assert 100 * verse[2030] == pytest.approx(0.59, abs=0.01)
-    assert avenir.annee(2030).garantie.ayants_droit / 1e6 == pytest.approx(8.67, abs=0.05)
+        pytest.approx(0.315, abs=0.005))
+    assert 100 * verse[2030] == pytest.approx(0.60, abs=0.01)
+    assert avenir.annee(2030).garantie.ayants_droit / 1e6 == pytest.approx(8.80, abs=0.05)
 
 
 def test_la_garantie_decroit_quand_les_pensions_montent_face_au_plancher(cout, avenir):

@@ -278,7 +278,11 @@ def test_l_accueil_cite_les_deux_recettes_hors_du_travail(reference):
     assert "1,6 point de PIB par an" in corps
     # Un excédent et des réserves, quand la mesure les donne.
     assert m["solde_moyen_proposition"] > 0 and m["dette_2070_proposition"] < 0
-    assert "un excédent de 0,2 point par an" in corps
+    # L'excédent est celui que la mesure donne : 0,2 point jusqu'au 20 novembre
+    # 2026, 0,3 depuis que le libéral type du coût est à 1,5 fois le salaire
+    # moyen (action 191), que la fabrique récrit dans la mesure.
+    excedent = str(m["solde_moyen_proposition"]).replace(".", ",")
+    assert f"un excédent de {excedent} point par an" in corps
     # L'espace avant « % » est insécable sur la page. Les réserves sont celles
     # que la mesure donne : 6 % du PIB jusqu'au 15 novembre 2026, 7 % depuis
     # que l'exploitant agricole a la porte des vingt ans de la carrière longue
