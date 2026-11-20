@@ -795,8 +795,10 @@ RECONSTITUTION_DEPUIS = 2000
 #: caisse, et -10,7 % le même jour, aux ex-invalides la leur ; -11,0 % le
 #: 24 octobre (-10,6 % la veille), l'étape 138.3 divisant chaque caisse par
 #: les têtes de ses cas types — un défaut qui en compensait un autre (voir le
-#: test).
-RECONSTITUTION_CLIQUET = 0.115
+#: test) ; -10,5 % le 20 novembre, les années des assurances sociales de 1930
+#: à 1944 comptant à la durée du régime général, dont la pension des premières
+#: générations proratisait trop court.
+RECONSTITUTION_CLIQUET = 0.105
 #: Ce que vise le cliquet : quelques pour cent, chaque année.
 RECONSTITUTION_CIBLE = 0.05
 

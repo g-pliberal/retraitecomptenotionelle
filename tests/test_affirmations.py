@@ -2877,13 +2877,18 @@ def _(m: Modele):
     depuis que les années d'avant le 1er juillet 1930 ne valident plus rien.
 
     La page lui donne sa part à lui la première année. Le modèle n'y
-    reconstitue que lui et la pension minimum d'avant 1983, au montant de
-    l'AVTS, que la ligne du minimum contributif porte (`droit/completer.py`) :
-    les carrières de 1959, nées avant les assurances sociales, sont courtes."""
+    reconstitue avec lui que la pension minimum d'avant 1983, au montant de
+    l'AVTS, que la ligne du minimum contributif porte (`droit/completer.py`),
+    et, depuis le 20 novembre 2026, les périodes assimilées d'avant 1945, que
+    la durée du régime général compte avec les années des assurances
+    sociales (R. 351-9) : moins d'un centième de la dépense. Les carrières de
+    1959, nées avant les assurances sociales, sont courtes."""
     premiere = next(a for a in m.avantages.annees if a.observee)
-    assert set(premiere.modele) <= {"minimum_vieillesse", "minimum_contributif"}
-    assert premiere.modele.get("minimum_vieillesse", 0.0) > premiere.modele.get(
-        "minimum_contributif", 0.0)
+    assert set(premiere.modele) <= {
+        "minimum_vieillesse", "minimum_contributif", "periodes_assimilees"}
+    assert all(premiere.modele["minimum_vieillesse"] > montant
+               for ligne, montant in premiere.modele.items() if ligne != "minimum_vieillesse")
+    assert premiere.modele.get("periodes_assimilees", 0.0) < 0.01 * premiere.observee
     parts = [(a.annee, a.modele.get("minimum_vieillesse", 0.0) / a.observee)
              for a in m.avantages.annees if a.observee]
     assert parts[0][1] == max(part for _, part in parts)
