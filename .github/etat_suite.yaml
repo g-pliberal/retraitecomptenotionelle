@@ -1,15 +1,20 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: 1fea55a3c4e4afd9a0ebaae9da911590ad0571c4
-date: 2026-11-20T17:36:31Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44782833510
-presomptions: vert
+etat: rouge
+sources: 44f096a6d7d165d308833db4d1149681e1c02eef
+date: 2026-11-20T18:18:58Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44788034298
+echecs:
+  - "FAILED tests/test_web.py::test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne - AssertionError: medecin_liberal/1975/67 carmf_complementaire : « (26.67 points × valeur de service 101.81935 € + cotisations revalorisé » donne 6,200.76 €, la ligne affiche 6,201.03 €"
+presomptions: rouge
+presomptions_echecs:
+  - "FAILED tests/test_sections_sante.py::test_trente_annees_au_plafond_valent_trois_cents_points_a_la_carmf - assert 23141.968642440857 == 23216.054399999997 ± 0.05"
+  - "FAILED tests/test_sections_sante.py::test_vingt_annees_au_plafond_valent_deux_cents_points_a_65_ans_en_2016 - assert 15710.032813114956 == 15775.458333333334 ± 0.05"
 durees:
-  fabrique: 326
-  suite: 363
-  tranche_1: 314
-  tranche_2: 286
-  tranche_3: 169
-  tranche_4: 363
-  garde: 206
+  fabrique: 701
+  suite: 588
+  tranche_1: 427
+  tranche_2: 318
+  tranche_3: 372
+  tranche_4: 588
+  garde: 226
