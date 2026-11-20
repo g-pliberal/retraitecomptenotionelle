@@ -10,6 +10,11 @@ fermeture: 1945
 extinction: 1945
 succede_a: []
 integre_dans: regime_general
+# Ses trimestres sont des trimestres du régime qui lui succède, et proratisent
+# sa pension : R. 351-9 CSS les compte depuis le 1er juillet 1930 (avant 1985,
+# article 71 du décret n° 45-0179) ; pour les salariés agricoles, article 58
+# du décret n° 50-1225. Entre les deux, celui où l'assuré est entré le premier.
+duree_reprise_par: [regime_general, msa_salaries]
 population: >-
   Salariés de l'industrie et du commerce sous plafond de salaire.
   Régime en CAPITALISATION individuelle, ruiné par l'inflation des

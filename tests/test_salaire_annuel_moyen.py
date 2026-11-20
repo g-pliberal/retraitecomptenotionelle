@@ -322,6 +322,56 @@ def test_avant_1946_le_trimestre_se_lit_sur_la_retenue(simulateur):
     assert valides(francs(1.0), 1925, assure_social=False) == 4
 
 
+def test_les_annees_des_assurances_sociales_comptent_a_la_duree_du_regime(simulateur):
+    """Les trimestres de 1930 à 1944 sont des trimestres du régime général :
+    R. 351-9, rédaction de 1985 à 2014 (LEGIARTI000006749353), compte « les
+    périodes d'assurance accomplies du 1er juillet 1930 au 31 décembre 1935 »,
+    puis celles de 1936 à 1941 et de 1942 à 1945, avec celles d'après, parmi
+    les « trimestres d'assurance valables pour le calcul de la pension »
+    (article 71 du décret n° 45-0179, LEGIARTI000006760608, de 1983 à 1985) ;
+    aux salariés agricoles, « entre le 1er juillet 1930 et le 31 décembre
+    1945, il est décompté un trimestre pour tout versement correspondant à
+    cinquante jours de travail » (décret n° 50-1225, article 58, de 1983 à
+    1988). La pension se proratise donc sur les deux durées réunies.
+
+    Posé à la main : né en 1912, salarié de 1932 à 1976, parti à 65 ans en
+    1977, treize années aux assurances sociales, 52 trimestres, et 128 au
+    régime général : 180, bornés aux 150 de la pension entière. Née en 1924,
+    salariée de 1938 à 1950, partie à 65 ans en 1989 : sept années avant 1945,
+    28 trimestres, et six après, 24 : 52 sur 150."""
+    from retraite_notionnelle.types_du_pont.carriere import LigneRelevee
+
+    def francs(montant: float) -> float:
+        return montant / 6.55957
+
+    def detail(carriere, regime: str) -> str:
+        resultat = simulateur.scenario_actuel.calculer(carriere)
+        return next(p.detail for p in resultat.pensions_par_regime if p.regime == regime)
+
+    for statut, regime in (("salarie_prive_non_cadre", "regime_general"),
+                           ("salarie_agricole", "msa_salaries")):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=1912, sexe="H", affiliation=statut, age_debut=20,
+            age_liquidation=65, niveau_salaire=1.0, profil_carriere="plat",
+            jour_naissance=1)
+        par_annee = {l.annee: l.trimestres_valides for l in carriere.lignes}
+        assert sum(n for a, n in par_annee.items() if a < 1945) == 52
+        assert sum(n for a, n in par_annee.items() if a >= 1945) >= 128
+        assert "× 150/150" in detail(carriere, regime), statut
+
+    lignes = ([LigneRelevee(a, "salarie_prive_non_cadre", francs(200.0))
+               for a in range(1938, 1945)]
+              + [LigneRelevee(a, "salarie_prive_non_cadre", francs(500.0))
+                 for a in range(1945, 1949)]
+              + [LigneRelevee(a, "salarie_prive_non_cadre", francs(2_000.0))
+                 for a in (1949, 1950)])
+    carriere = simulateur.carriere_releve(1924, "F", lignes, 65.0)
+    par_annee = {l.annee: l.trimestres_valides for l in carriere.lignes}
+    assert sum(n for a, n in par_annee.items() if a < 1945) == 28
+    assert sum(n for a, n in par_annee.items() if a >= 1945) == 24
+    assert "× 52/150" in detail(carriere, "regime_general")
+
+
 def test_avant_1946_la_retenue_ne_lit_que_les_assures_sociaux(simulateur):
     """Le statut de l'année dit si la retenue compte : un cadre payé 400 F en
     1940, au-delà du plafond d'assujettissement de 300 F, ne cotisait pas aux

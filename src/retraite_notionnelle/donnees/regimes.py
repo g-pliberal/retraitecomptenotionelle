@@ -1191,6 +1191,10 @@ class Regime:
     population: str
     hors_repartition: bool
     periodes: tuple[PeriodeRegime, ...] = field(default_factory=tuple)
+    #: Les régimes qui comptent ses trimestres à leur propre durée, celle qui
+    #: proratise leur pension : le régime général et celui des salariés
+    #: agricoles, pour les assurances sociales de 1930 à 1944 (R. 351-9).
+    duree_reprise_par: tuple[str, ...] = ()
 
     def periode(self, annee: int) -> PeriodeRegime | None:
         """Paramètres applicables une année donnée.
@@ -2669,6 +2673,7 @@ class CatalogueRegimes:
             population=(fiche.get("population") or "").strip(),
             hors_repartition=bool(fiche.get("hors_repartition", False)),
             periodes=periodes,
+            duree_reprise_par=tuple(fiche.get("duree_reprise_par") or ()),
         )
 
     # -- accès ---------------------------------------------------------------

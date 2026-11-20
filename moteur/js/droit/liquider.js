@@ -690,9 +690,13 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     // Le code des pensions compte ses services au jour, et ne les arrondit
     // qu'au décompte final (R. 26 ; fiche decompte_des_services_fonction_publique).
     const auJour = dureesCultes === null && durees.auJour(membres);
+    // Les régimes éteints dont ce régime compte les trimestres à sa durée :
+    // les assurances sociales de 1930 à 1944 (`regimesRepris`).
+    const membresDeLaDuree = [...membres, ...regimesRepris(moteur, membres, droits.codes, durees)];
     let numerateur = dureesCultes !== null
       ? dureesCultes.depuis1998
-      : (auJour ? durees.servicesLiquidables(membres) : cumulPlafonne(acquisParRegime, membres));
+      : (auJour ? durees.servicesLiquidables(membres)
+        : cumulPlafonne(acquisParRegime, membresDeLaDuree));
     // La durée d'assurance que sa décote lit, au jour, sans arrondi (L. 14, I).
     const ecartAuJour = auJour && durees.dureeAuJour(membres) ? durees.ecartAuJour : 0.0;
     if (dureesCultes === null && majorationEnfants !== null
@@ -1006,14 +1010,14 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       // Des cultes, seule la fraction d'après 1997 : ses durées, et la
       // fraction d'avant 1998 hors de ce que le minimum relève.
       const cotiseeRegime = dureesCultes === null
-        ? cumulPlafonne("cotises", membres) : dureesCultes.cotisesDepuis1998;
+        ? cumulPlafonne("cotises", membresDeLaDuree) : dureesCultes.cotisesDepuis1998;
       const cotisesRegime = Math.min(cotiseeRegime, proratisation);
       const dureeRegime = dureesCultes === null
-        ? cumulPlafonne("assurance", membres) : dureesCultes.depuis1998;
+        ? cumulPlafonne("assurance", membresDeLaDuree) : dureesCultes.depuis1998;
       // Les autres régimes de base, que le minimum d'un polypensionné compte
       // depuis 2004, chacun pour sa durée, sans limite de quatre par an.
       const autresDeBase = [...durees.trimestresParRegime]
-        .filter(([autre, nombre]) => !membres.includes(autre) && nombre > 0
+        .filter(([autre, nombre]) => !membresDeLaDuree.includes(autre) && nombre > 0
           && moteur.catalogue.contient(autre)
           && ["base", "integre"].includes(moteur.catalogue.obtenir(autre).etage))
         .map(([autre]) => autre);
@@ -2886,6 +2890,36 @@ export function ecartAuTauxPlein(moteur, periode, carriere, ageLiquidation, ageA
     return Math.floor((ageLiquidation - ageAnnulation + 1e-9) * 4);
   }
   return -auTrimestreSuperieur((ageAnnulation - ageLiquidation) * 4);
+}
+
+/**
+ * Les régimes éteints dont les trimestres comptent à la durée du régime qui
+ * liquide, celle qui proratise sa pension : la fiche du régime éteint nomme
+ * ceux qui les reprennent (`duree_reprise_par`). Les assurances sociales de
+ * 1930 à 1944 le sont par le régime général (R. 351-9 CSS, « du 1er juillet
+ * 1930 » ; avant 1985, article 71 du décret n° 45-0179) et par celui des
+ * salariés agricoles (décret n° 50-1225, article 58). Quand la carrière
+ * liquide plusieurs de ces régimes, un seul les reprend, celui où l'assuré
+ * est entré le premier : les mêmes trimestres ne proratisent pas deux
+ * pensions.
+ */
+export function regimesRepris(moteur, membres, codes, durees) {
+  const assurance = durees.parAnnee.assurance;
+  const entree = (code) => Math.min(...(assurance.get(code) ?? new Map()).keys());
+  const repris = [];
+  for (const eteint of assurance.keys()) {
+    const repreneurs = (moteur.catalogue.obtenir(eteint).duree_reprise_par ?? [])
+      .filter((code) => codes.includes(code));
+    if (repreneurs.length === 0 || membres.includes(eteint)) {
+      continue;
+    }
+    const premier = repreneurs.reduce(
+      (retenu, code) => (entree(code) < entree(retenu) ? code : retenu));
+    if (membres.includes(premier)) {
+      repris.push(eteint);
+    }
+  }
+  return repris;
 }
 
 /**

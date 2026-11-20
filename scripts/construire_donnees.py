@@ -757,6 +757,7 @@ def _regimes() -> list[dict]:
             "integre_dans": regime.integre_dans,
             "population": regime.population,
             "hors_repartition": regime.hors_repartition,
+            "duree_reprise_par": list(regime.duree_reprise_par) or None,
             "periodes": [
                 {
                     "debut": p.debut,

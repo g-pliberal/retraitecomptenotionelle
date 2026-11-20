@@ -3289,13 +3289,15 @@ def test_les_taux_que_les_circulaires_donnent_a_la_pension_majoree(simulateur, d
 
 
 def test_la_reversion_suit_les_majorations_de_la_pension_du_defunt(saisies):
-    """La pension du salarié parti en 1971 sur cent quatre trimestres reçoit
+    """La pension du salarié parti en 1971 sur cent quatre trimestres, entré
+    dans la vie active en 1945, sans année aux assurances sociales, reçoit
     6 % au 1er décembre 1982 ; sa veuve, à qui la réversion est attribuée au
     1er janvier 1973, les reçoit avec elle, avant les 4 % de la réversion
     même : 10,24 % du montant calculé, puis 3,846 % en 1995 (circulaire Cnav
     n° 79/82, C ; exposé « Montant - retraite de réversion »)."""
     comparaison = saisies.simuler({
-        "naissance": "1906", "liquidation": "65", "conjoint": "1916", "deces": "1971-03"})
+        "naissance": "1906", "debut": "39", "liquidation": "65", "conjoint": "1916",
+        "deces": "1971-03"})
     general = next(l for l in comparaison.reversion.regimes if l.regime == "regime_general")
     assert (general.date_effet, general.motif) == ("1973-01-01", "servie")
     calcule = 0.5 * general.base

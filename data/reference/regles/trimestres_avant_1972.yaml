@@ -39,8 +39,17 @@ effet: >-
   réversion perd 2,8 % (`reversion_maximum_des_pensions`) ; les cas types nés de
   1885 à 1920 en perdent assez pour que le pilote les fasse partir plus tard (le cadre
   né en 1910, payé 2,2 fois le salaire moyen, à 65 ans au lieu de 60).
+  Depuis le 20 novembre 2026, ces trimestres de 1930 à 1944 comptent aussi à la durée
+  qui proratise la pension du régime général, ou de celui des salariés agricoles : le
+  modèle ne les comptait qu'à la durée tous régimes, celle du taux, et liquidait « 128/150 »
+  à qui avait cotisé de 1932 à 1976. Né en 1912, parti à 65 ans en 1977 au salaire moyen :
+  150/150, 3 302,00 € par an, le maximum des pensions, au lieu de 3 096,23 €. Née en 1924,
+  salariée de 1938 à 1950, partie à 65 ans en 1989 : 52/150 au lieu de 24/150. Dix des 937
+  témoins montent, de 0,3 à 17,5 %. Qui liquide à la fois le régime général et celui des
+  salariés agricoles voit ces trimestres repris par celui où il est entré le premier,
+  quel qu'ait été son métier d'avant 1945.
 sources:
-  lu_le: 2026-11-12
+  lu_le: 2026-11-20
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
@@ -193,6 +202,18 @@ sources:
       salaire annuel représente de fois 15 F (anciens) avec un maximum de quatre
       trimestres par année civile »
     date: 1983-09-01
+  - type: legifrance
+    reference: >-
+      décret n° 50-1225 du 21 septembre 1950, article 58, rédaction du 5 octobre 1983
+      (LEGIARTI000006774032), lu dans l'index LEGI le 20 novembre 2026, aux salariés
+      agricoles : « Pour la période comprise entre le 1er juillet 1930 et le 31 décembre
+      1945, il est décompté un trimestre pour tout versement correspondant à cinquante
+      jours de travail » ; et l'article 74, § 3, du décret n° 45-0179, rédaction du
+      17 mars 1977 (LEGIARTI000006760676) : « sont comptées comme périodes d'assurance
+      depuis le 1er juillet 1930, pour l'ouverture du droit à pension ». L'article 71 du
+      même décret n'a dans l'index que sa rédaction de 1983 : avant, la même règle est
+      présumée, ses montants en anciens francs datant d'avant 1960
+    date: 1983-10-05
   - type: autre
     reference: >-
       loi du 5 avril 1928 modifiée par la loi du 30 avril 1930, « Texte officiel et

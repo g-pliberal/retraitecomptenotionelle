@@ -3259,7 +3259,7 @@ def test_la_loi_boulin_ne_retient_que_128_136_puis_144_trimestres(simulateur):
     def pension(affiliation, regime, annee, enfants):
         carriere = simulateur.carriere_simple(
             annee_naissance=annee - 65, sexe="F", affiliation=affiliation,
-            age_debut=20, age_liquidation=65.0, niveau_salaire=0.7,
+            age_debut=1945 - (annee - 65), age_liquidation=65.0, niveau_salaire=0.7,
             nombre_enfants=enfants,
         )
         resultat = simulateur.scenario_actuel.calculer(carriere)
@@ -3268,8 +3268,9 @@ def test_la_loi_boulin_ne_retient_que_128_136_puis_144_trimestres(simulateur):
     for affiliation, regime in (("salarie_prive_non_cadre", "regime_general"),
                                 ("salarie_agricole", "msa_salaries")):
         for annee, retenus in ((1972, 128), (1973, 136), (1974, 144), (1975, 150)):
-            # Le régime commence en 1945 dans le modèle : quatre trimestres
-            # par année, sans enfant.
+            # La carrière commence en 1945, sans année aux assurances sociales,
+            # que le régime compterait aussi : quatre trimestres par année,
+            # sans enfant.
             sans = 4 * (annee - 1945)
             mere = pension(affiliation, regime, annee, 8)
             assert mere.detail.endswith(f"× {retenus}/150"), (regime, annee)
