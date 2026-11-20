@@ -85,6 +85,65 @@ def test_le_regime_general_de_l_agent_de_categorie_active_attend_l_age_legal(sim
     ]
 
 
+
+#: L'aide-soignante de la saisie, datée au mois : le privé d'abord, l'hôpital
+#: en catégorie active depuis 1995, d'où elle part avant l'âge légal.
+_SOIGNANTE = {"sexe": "F", "enfants": "0", "salaire": "1", "unite_revenu": "moyen",
+              "profil": "plat", "statut": "salarie_prive_non_cadre",
+              "metier2_statut": "fonctionnaire_territorial_hospitalier_actif",
+              "metier2_debut": "1995-01"}
+
+
+@pytest.mark.parametrize("naissance, debut, declare, cotises, attendue", [
+    # Décret n° 2023-436, article 9 : ses dispositions « s'appliquent aux
+    # pensions prenant effet à compter du 1er septembre 2023 ». Née le 15 mars
+    # 1965, entrée à quatorze ans, elle a 174 trimestres cotisés en août 2023 :
+    # la rédaction de 2012 de D. 351-1-1 lui en demande 169 + 8 pour partir à
+    # cinquante-huit ans, celle de 2023 les 172 de sa génération, sans rien de
+    # plus. Elle a cinquante-huit ans depuis mars : le droit s'ouvre le jour où
+    # le décret s'applique, non à ses soixante ans de la rédaction de 2012.
+    ("1965-03-15", "1980-01", "2023-08", 174, DateMois(2023, 9)),
+    # Loi du 30 décembre 2025, article 105, et décret n° 2026-345 : pensions
+    # prenant effet à compter du 1er septembre 2026. Née le 15 juin 1965, elle
+    # a 171 trimestres cotisés en août 2026 : L. 161-17-3 lui en demandait 172,
+    # il lui en demande 171 à compter de septembre, et elle a passé l'âge de
+    # sa porte (soixante ans et neuf mois, en mars 2026).
+    ("1965-06-15", "1983-10", "2026-08", 171, DateMois(2026, 9)),
+])
+def test_la_carriere_longue_s_ouvre_a_la_premiere_date_dont_le_texte_l_ouvre(
+        simulateur, naissance, debut, declare, cotises, attendue):
+    """Partie de l'hôpital avant qu'un décret n'ouvre sa carrière longue, sur
+    une durée qu'elle a déjà : le régime général la sert à la première date
+    d'effet dont le texte lui ouvre le droit, non à celle que rendrait le
+    texte du départ déclaré (note de décision 0009, recherche du premier
+    départ ; les durées restent celles du départ déclaré)."""
+    moteur = simulateur.scenario_actuel
+    carriere = Saisies().carriere({**_SOIGNANTE, "naissance": naissance, "debut": debut,
+                                   "liquidation": declare})
+    assert facade.trimestres_actuels(carriere) == cotises
+    assert _resume(departs.departs(moteur, carriere)) == [
+        (carriere.date_liquidation, ["cnracl"], departs.MOTIF_DEPART),
+        (attendue, ["arrco", "arrco_tranche_2", "regime_general"], departs.MOTIF_OUVERTURE),
+    ]
+
+
+def test_la_clause_de_sauvegarde_de_2023_garde_l_age_de_la_redaction_d_avant(simulateur):
+    """Décret n° 2023-436, article 8 : les nés du 1er septembre 1961 au
+    31 décembre 1963 qui justifient, avant le 1er septembre 2023, de la durée
+    de la rédaction d'avant gardent, pour une pension prenant effet après,
+    l'âge de cette rédaction. Circulaire Cnav 2023-14, point 9.2, exemple 2 :
+    née le 13 octobre 1963, 168 trimestres cotisés au 30 juin 2023, elle
+    « peut obtenir une RACL à effet du 1/11/2023, à 60 ans », quand la
+    rédaction de 2023 lui demande soixante ans et trois mois, et 170
+    trimestres."""
+    moteur = simulateur.scenario_actuel
+    carriere = Saisies().carriere({**_SOIGNANTE, "naissance": "1963-10-13",
+                                   "debut": "1981-07", "liquidation": "2023-07"})
+    assert facade.trimestres_actuels(carriere) == 168
+    assert _resume(departs.departs(moteur, carriere))[1] == (
+        DateMois(2023, 11), ["arrco", "arrco_tranche_2", "regime_general"],
+        departs.MOTIF_OUVERTURE)
+
 def test_la_pension_militaire_est_servie_des_la_sortie_de_l_armee(simulateur):
     """Le militaire qui a ses services liquide en quittant l'armée : c'est la
     seule pension que la présomption fasse demander avant le départ."""

@@ -252,9 +252,7 @@ function ouvertureSous(moteur, carriere, periodes) {
     ([, periode]) => ouvrirLeDroit.ageOuverture(moteur, periode, carriere)));
   const opposent = annuites.length > 0
     ? annuites : ouvrirLeDroit.periodesOpposantUneDuree(autres);
-  // La carrière longue n'ouvre pas le régime dont les statuts ne la nomment
-  // pas (`fermee_a_la_carriere_longue`) : la CARPIMKO, servie à son âge.
-  const ouvertes = opposent.filter(([, periode]) => !periode.fermee_a_la_carriere_longue);
+  const ouvertes = ouvertesALaCarriereLongue(opposent);
   for (const anticipe of [carriereLongueAcquise(moteur, carriere, ouvertes),
     handicapAcquis(moteur, carriere, opposent)]) {
     if (anticipe !== null && anticipe < age) {
@@ -267,6 +265,35 @@ function ouvertureSous(moteur, carriere, periodes) {
 /** Le premier jour du mois `date`, AAAA-MM-01. */
 function premierJour(date) {
   return `${String(date.annee).padStart(4, "0")}-${String(date.mois).padStart(2, "0")}-01`;
+}
+
+/**
+ * Les périodes que la carrière longue ouvre : elle n'ouvre pas le régime dont
+ * les statuts ne la nomment pas (`fermee_a_la_carriere_longue`), la CARPIMKO,
+ * servie à son âge.
+ */
+function ouvertesALaCarriereLongue(opposent) {
+  return opposent.filter(([, periode]) => !periode.fermee_a_la_carriere_longue);
+}
+
+/**
+ * La date que la carrière longue acquise sous le texte du départ déclaré
+ * garde à l'assuré quand un texte postérieur la reculerait, ou `null`. C'est
+ * ce que l'article 8 du décret n° 2023-436 écrit pour les nés du 1er septembre
+ * 1961 au 31 décembre 1963 qui justifient, avant le 1er septembre 2023, de la
+ * durée de la rédaction d'avant : ils gardent l'âge de cette rédaction pour
+ * une pension qui prend effet après (circulaire Cnav 2023-14, point 9.2). Les
+ * bornes de la clause ne sont pas lues ici : elles iront, avec sa liquidation,
+ * dans les versions de la fiche `carriere_longue` ; d'ici là, un assuré né
+ * après 1963 garde lui aussi cette date, comme avant le 20 novembre 2026.
+ */
+function gardeeParLeTexteDuDepart(moteur, carriere, periodes) {
+  const annuites = periodes.filter(([, p]) => p.type_calcul === "annuites");
+  const opposent = annuites.length > 0 ? annuites
+    : ouvrirLeDroit.periodesOpposantUneDuree(
+      periodes.filter(([, p]) => p.type_calcul !== "annuites"));
+  const age = carriereLongueAcquise(moteur, carriere, ouvertesALaCarriereLongue(opposent));
+  return age === null ? null : carriere.dateDeLAge(age);
 }
 
 /**
@@ -312,13 +339,30 @@ function premiereOuvertureSous(moteur, carriere, periodes) {
 }
 
 /**
+ * Ce que les textes d'une date d'effet opposent à l'anticipation, pour ces
+ * périodes : les portes de la carrière longue et la durée requise, lues sur
+ * la carrière vue à cette date. Deux dates qui rendent la même chaîne ouvrent
+ * le droit de la même façon.
+ */
+function droitDeLaDate(moteur, vue, periodes) {
+  return JSON.stringify([moteur.carriereLongue.portes(vue),
+    periodes.map(([, periode]) => ouvrirLeDroit.dureeRequise(moteur, periode, vue)[0])]);
+}
+
+/**
  * Le premier mois où l'unité peut servir sa pension à cet assuré. L'âge se lit
  * dans les règles du départ déclaré quand elles l'ouvrent déjà ; sinon dans
  * celles de chaque mois qui le suit, jusqu'au premier où l'assuré a l'âge que
  * les règles de ce mois-là lui opposent : la pension prend effet sous la
  * rédaction de sa date d'effet (fiche `liquidation_regime_par_regime` ; la
  * CPRN, que ses statuts de 2024 ouvrent le 1er janvier 2024 au notaire parti
- * en 2023 avant les 64 ans de ceux de 2017). Voir `_ouverture` dans le Python.
+ * en 2023 avant les 64 ans de ceux de 2017). Les règles d'un mois sont les
+ * périodes de ses régimes, les portes de la carrière longue et la durée
+ * requise de sa date d'effet (décret n° 2023-436, article 9 ; décret
+ * n° 2026-345) : l'assurée partie en août 2026 avec les 171 trimestres que
+ * L. 161-17-3 demande à compter de septembre est servie en septembre. Les
+ * durées restent celles du départ déclaré, et un texte postérieur ne recule
+ * pas la date de la carrière longue acquise au départ ({@link gardeeParLeTexteDuDepart}). Voir `_ouverture` dans le Python.
  */
 export function ouvertureDe(moteur, carriere, unite) {
   const declare = carriere.dateLiquidation;
@@ -327,14 +371,22 @@ export function ouvertureDe(moteur, carriere, unite) {
   if (ouverture.rang <= declare.rang) {
     return ouverture;
   }
+  let droit = droitDeLaDate(moteur, carriere, courantes);
+  const gardee = gardeeParLeTexteDuDepart(moteur, carriere, courantes);
   for (let mois = declare.plusMois(1); ouverture.rang > mois.rang; mois = mois.plusMois(1)) {
     const periodes = periodesDeLUnite(moteur, unite, mois);
-    if (periodes.length !== courantes.length
+    const vue = carriere.liquideeAu(mois);
+    const duMois = droitDeLaDate(moteur, vue, periodes);
+    if (duMois !== droit || periodes.length !== courantes.length
         || periodes.some(([, periode], i) => periode !== courantes[i][1])) {
       courantes = periodes;
-      const sous = premiereOuvertureSous(moteur, carriere, periodes);
+      droit = duMois;
+      const sous = premiereOuvertureSous(moteur, vue, periodes);
       if (sous !== null) {
         ouverture = sous.rang > mois.rang ? sous : mois;
+      }
+      if (gardee !== null && gardee.rang < ouverture.rang) {
+        ouverture = gardee.rang > mois.rang ? gardee : mois;
       }
     }
   }
