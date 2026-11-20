@@ -236,7 +236,10 @@ carcdsf_complementaire,2020,2021,0.0592,moyenne
 carcdsf_complementaire,2022,2022,0.0597,moyenne
 carcdsf_complementaire,2023,2025,0.0595,moyenne
 carcdsf_complementaire,2026,2100,0.0595,moyenne
-# CARMF complémentaire : rendement RECALCULÉ ANNÉE PAR ANNÉE depuis « La
+# CARMF complémentaire : DEPUIS LE 20 NOVEMBRE 2026, les années 1996 à 2026
+# achètent de vrais points (valeurs_point.csv), et ces lignes ne servent plus
+# qu'aux années d'avant 1996 et d'après le dernier barème, au rendement de
+# l'année du départ. Rendement RECALCULÉ ANNÉE PAR ANNÉE depuis « La
 # chronologie des chiffres de la CARMF », qui donne d'un côté la valeur de
 # service du point et de l'autre la cotisation maximale et les points
 # qu'elle ouvre. Il passe de 14,35 % en 1983 à 4,48 % en 2026 — divisé par

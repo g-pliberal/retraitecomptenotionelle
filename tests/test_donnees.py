@@ -683,6 +683,8 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # Le forfait de la garantie minimale de points de l'Agirc, 1989-2018.
         "valeurs_point_gmp": "regimes/valeurs_point.csv",
         "valeurs_point_cnbf": "regimes/valeurs_point.csv",
+        "valeurs_point_carmf": "regimes/valeurs_point.csv",
+        "valeurs_point_carmf_saisies": "regimes/valeurs_point.csv",
         "valeurs_point_rafp": "regimes/valeurs_point.csv",
         "valeurs_point_cnavpl": "regimes/valeurs_point.csv",
         "valeurs_service_cnavpl": "regimes/valeurs_point.csv",

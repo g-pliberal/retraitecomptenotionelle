@@ -1,0 +1,25 @@
+date: "2026-11-20"
+session: "action 191 : la complémentaire des médecins se compte en points"
+consulte: >-
+  L'index LEGI du dépôt, à jour au 16 novembre 2026 : l'arrêté du 10 juillet
+  2026 approuvant les règlements de la CARMF, annexe, I, règlement du régime
+  complémentaire, dans ses deux rédactions (LEGIARTI000054437501 et
+  LEGIARTI000054890209), articles 2 à 5, 10 à 18, 23 et 24. « La chronologie
+  des chiffres de la CARMF 2025 », PDF de la caisse relu le 20 novembre 2026,
+  pages 26, 59, 60 et 95 ; la page des chiffres clés de 2026 du site de la
+  caisse.
+trouve: >-
+  Le règlement sert des points par leur valeur (article 3), et la caisse
+  attribue dix points à la cotisation maximale de chaque année depuis 1996 ;
+  le moteur appliquait le rendement de l'année du départ aux cotisations
+  portées aux prix, 16 % de moins pour trente années cotisées de 1996 à 2025.
+  Corrigé par les données : prix et valeur du point de 1996 à 2026 dans
+  valeurs_point.csv, plafond de revenu de la caisse de 1996 à 2012 dans la
+  fiche. Détail :
+  docs/feuille_de_route/191/2026-11-20-carmf-la-complementaire-en-points.md.
+reste: >-
+  Les années d'avant 1996, à deux prix du point, restées au rendement. La
+  majoration de 13 % de l'inapte et de l'invalide, le versement unique sous
+  vingt points et la réversion du règlement, non confrontés au moteur. Un
+  exemple chiffré de la caisse, ou son simulateur. La CIPAV et les autres
+  caisses servies par un rendement.

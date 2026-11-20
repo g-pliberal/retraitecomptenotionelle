@@ -349,7 +349,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 28490.359201515617,
+    "pension_annuelle": 29273.192829880514,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -359,8 +359,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 134,374 € × rendement 4.94% × coefficient de majoration 1.1375",
-      "montant": 7550.80759009133,
+      "detail": "(75.16 points × valeur de service 69.7 € + cotisations revalorisées 42,262 € × rendement 4.94%) × coefficient de majoration 1.1375",
+      "montant": 8333.641218456227,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -993,7 +993,7 @@
     ],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 40200.99134939653,
+    "pension_annuelle": 42186.57216394849,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -1009,8 +1009,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 296,235 € × rendement 4.48% × coefficient de majoration 1.0375 ; servie à partir du 1er avril 2027, 13,769.01 € de 2027, soit 13,769.01 € de 2027",
-      "montant": 13769.008713474752,
+      "detail": "(156.68 points × valeur de service 78.48995 € + cotisations revalorisées 64,447 € × rendement 4.48%) × coefficient de majoration 1.0375 ; servie à partir du 1er avril 2027, 15,754.59 € de 2027, soit 15,754.59 € de 2027",
+      "montant": 15754.589528026709,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      }
@@ -2031,7 +2031,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 31434.85943314639,
+    "pension_annuelle": 31933.644177865983,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -2059,8 +2059,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 155,093 € × rendement 4.87%",
-      "montant": 7553.025804327608,
+      "detail": "73.96 points × valeur de service 70.05 € + cotisations revalorisées 58,955 € × rendement 4.87%",
+      "montant": 8051.810549047203,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -2621,7 +2621,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 42226.398205644786,
+    "pension_annuelle": 43656.08474716674,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -2631,8 +2631,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 215,067 € × rendement 5.13% × coefficient de majoration 1.2325",
-      "montant": 13598.10481878208,
+      "detail": "(105.51 points × valeur de service 68.3 € + cotisations revalorisées 97,199 € × rendement 5.13%) × coefficient de majoration 1.2325",
+      "montant": 15027.79136030403,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -2960,7 +2960,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 53543.51508891218,
+    "pension_annuelle": 55138.18060141417,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -2970,8 +2970,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 259,210 € × rendement 4.94% × coefficient de majoration 1.3000",
-      "montant": 16646.461117576804,
+      "detail": "(126.53 points × valeur de service 69.7 € + cotisations revalorisées 105,515 € × rendement 4.94%) × coefficient de majoration 1.3000",
+      "montant": 18241.126630078794,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -3203,7 +3203,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 29065.683640845797,
+    "pension_annuelle": 29714.820260939443,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -3213,8 +3213,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 127,556 € × rendement 6.20%",
-      "montant": 7908.490399676015,
+      "detail": "60.11 points × valeur de service 78.4 € + cotisations revalorisées 62,011 € × rendement 6.20%",
+      "montant": 8557.627019769665,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -3444,7 +3444,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 31079.72030914679,
+    "pension_annuelle": 31126.954422278926,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -3472,8 +3472,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 3,107 € × rendement 4.53% × coefficient de majoration 1.1375",
-      "montant": 160.12395549107165,
+      "detail": "2.39 points × valeur de service 76.15 € × coefficient de majoration 1.1375",
+      "montant": 207.35806862320712,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -4116,7 +4116,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 31301.163556306517,
+    "pension_annuelle": 31799.94830102611,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -4138,8 +4138,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 155,093 € × rendement 4.87%",
-      "montant": 7553.025804327608,
+      "detail": "73.96 points × valeur de service 70.05 € + cotisations revalorisées 58,955 € × rendement 4.87%",
+      "montant": 8051.810549047203,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -4744,7 +4744,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 51185.27141743639,
+    "pension_annuelle": 53447.257339325675,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -4754,8 +4754,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 307,927 € × rendement 4.48% × coefficient de majoration 1.2025",
-      "montant": 16588.65031745288,
+      "detail": "(153.27 points × valeur de service 77.14 € + cotisations revalorisées 85,996 € × rendement 4.48%) × coefficient de majoration 1.2025",
+      "montant": 18850.636239342166,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -5518,7 +5518,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 28052.39683774092,
+    "pension_annuelle": 28138.35813453944,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -5528,8 +5528,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 103,478 € × rendement 7.61%",
-      "montant": 7874.649419601516,
+      "detail": "20.62 points × valeur de service 67.7 € + cotisations revalorisées 86,263 € × rendement 7.61%",
+      "montant": 7960.61071640004,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -5848,7 +5848,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 40653.57478457888,
+    "pension_annuelle": 42045.5616809897,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -5858,8 +5858,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 211,880 € × rendement 5.13% × coefficient de majoration 1.2000",
-      "montant": 13043.3538310809,
+      "detail": "(105.51 points × valeur de service 68.3 € + cotisations revalorisées 94,012 € × rendement 5.13%) × coefficient de majoration 1.2000",
+      "montant": 14435.340727491723,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -6938,7 +6938,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 42541.11019730191,
+    "pension_annuelle": 43985.29660232813,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -6948,8 +6948,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 215,067 € × rendement 5.13% × coefficient de majoration 1.2450",
-      "montant": 13736.01663235999,
+      "detail": "(105.51 points × valeur de service 68.3 € + cotisations revalorisées 97,199 € × rendement 5.13%) × coefficient de majoration 1.2450",
+      "montant": 15180.20303738622,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -7835,7 +7835,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 30126.44220750381,
+    "pension_annuelle": 30211.67762830767,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -7845,8 +7845,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 111,455 € × rendement 7.41%",
-      "montant": 8258.843624198867,
+      "detail": "30.33 points × valeur de service 70 € + cotisations revalorisées 83,951 € × rendement 7.41%",
+      "montant": 8344.079045002733,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -8081,7 +8081,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 50469.827719103705,
+    "pension_annuelle": 52625.60344246443,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -8091,8 +8091,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 294,018 € × rendement 4.53% × coefficient de majoration 1.2025",
-      "montant": 16016.136114897616,
+      "detail": "(145.79 points × valeur de service 76.15 € + cotisations revalorisées 88,516 € × rendement 4.53%) × coefficient de majoration 1.2025",
+      "montant": 18171.911838258344,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -8949,7 +8949,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 30504.20132923198,
+    "pension_annuelle": 31002.986073951575,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -8959,8 +8959,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 155,093 € × rendement 4.87%",
-      "montant": 7553.025804327608,
+      "detail": "73.96 points × valeur de service 70.05 € + cotisations revalorisées 58,955 € × rendement 4.87%",
+      "montant": 8051.810549047203,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -9606,7 +9606,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 58874.64701890926,
+    "pension_annuelle": 61362.603702203276,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -9616,8 +9616,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 319,289 € × rendement 4.48% × coefficient de majoration 1.3000",
-      "montant": 18595.377974226314,
+      "detail": "(156.68 points × valeur de service 78.48995 € + cotisations revalorisées 87,501 € × rendement 4.48%) × coefficient de majoration 1.3000",
+      "montant": 21083.334657520336,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -10298,7 +10298,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 30268.46615596609,
+    "pension_annuelle": 31329.103877691436,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -10308,8 +10308,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 148,234 € × rendement 4.55% × coefficient de majoration 1.1375",
-      "montant": 7672.032353197398,
+      "detail": "(82.02 points × valeur de service 75.25 € + cotisations revalorisées 33,075 € × rendement 4.55%) × coefficient de majoration 1.1375",
+      "montant": 8732.670074922748,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -10765,7 +10765,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 31555.00696498909,
+    "pension_annuelle": 32686.22126411775,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -10775,8 +10775,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 152,259 € × rendement 4.48% × coefficient de majoration 1.1375",
-      "montant": 7759.122605369678,
+      "detail": "(88.62 points × valeur de service 78.48995 € + cotisations revalorisées 19,190 € × rendement 4.48%) × coefficient de majoration 1.1375",
+      "montant": 8890.336904498337,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -11078,7 +11078,7 @@
     ],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 51736.991699307524,
+    "pension_annuelle": 54013.02609558635,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -11094,8 +11094,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 309,604 € × rendement 4.48% × coefficient de majoration 1.2100 ; servie à partir du 1er octobre 2026, 16,783.03 € de 2026, soit 16,783.03 € de 2026",
-      "montant": 16783.031299541173,
+      "detail": "(154.25 points × valeur de service 77.14 € + cotisations revalorisées 85,996 € × rendement 4.48%) × coefficient de majoration 1.2100 ; servie à partir du 1er octobre 2026, 19,059.07 € de 2026, soit 19,059.07 € de 2026",
+      "montant": 19059.06569582,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      }
@@ -11196,7 +11196,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 58114.35874723259,
+    "pension_annuelle": 60602.31543052661,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -11206,8 +11206,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 319,289 € × rendement 4.48% × coefficient de majoration 1.3000",
-      "montant": 18595.377974226314,
+      "detail": "(156.68 points × valeur de service 78.48995 € + cotisations revalorisées 87,501 € × rendement 4.48%) × coefficient de majoration 1.3000",
+      "montant": 21083.334657520336,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -11302,7 +11302,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 28324.316150994546,
+    "pension_annuelle": 29125.769655971668,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -11312,8 +11312,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 131,652 € × rendement 5.01% × coefficient de majoration 1.1375",
-      "montant": 7502.704698654284,
+      "detail": "(68.02 points × valeur de service 68.3 € + cotisations revalorisées 52,990 € × rendement 5.01%) × coefficient de majoration 1.1375",
+      "montant": 8304.158203631405,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -12206,7 +12206,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 28212.14460302314,
+    "pension_annuelle": 29093.24287678084,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -12216,8 +12216,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 132,838 € × rendement 4.94% × coefficient de majoration 1.1375",
-      "montant": 7464.474376730774,
+      "detail": "(72.94 points × valeur de service 69.7 € + cotisations revalorisées 45,598 € × rendement 4.94%) × coefficient de majoration 1.1375",
+      "montant": 8345.572650488475,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -12470,7 +12470,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 40790.74835459105,
+    "pension_annuelle": 42182.713967234034,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -12480,8 +12480,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 212,987 € × rendement 5.13% × coefficient de majoration 1.2000",
-      "montant": 13111.4951403129,
+      "detail": "(106.35 points × valeur de service 68.3 € + cotisations revalorisées 94,012 € × rendement 5.13%) × coefficient de majoration 1.2000",
+      "montant": 14503.460752955885,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -13380,7 +13380,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 39777.5556324809,
+    "pension_annuelle": 41111.51247945834,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -13390,8 +13390,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 213,541 € × rendement 5.13% × coefficient de majoration 1.1500",
-      "montant": 12597.833886806866,
+      "detail": "(106.76 points × valeur de service 68.3 € + cotisations revalorisées 94,012 € × rendement 5.13%) × coefficient de majoration 1.1500",
+      "montant": 13931.790733784303,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -13683,7 +13683,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 30678.432345747628,
+    "pension_annuelle": 31775.58547133742,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -13693,8 +13693,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 148,376 € × rendement 4.53% × coefficient de majoration 1.1375",
-      "montant": 7645.646635377824,
+      "detail": "(84.10 points × valeur de service 76.15 € + cotisations revalorisées 28,302 € × rendement 4.53%) × coefficient de majoration 1.1375",
+      "montant": 8742.799760967619,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -15324,7 +15324,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 53268.56028218041,
+    "pension_annuelle": 54863.2257946824,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -15334,8 +15334,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 259,210 € × rendement 4.94% × coefficient de majoration 1.3000",
-      "montant": 16646.461117576804,
+      "detail": "(126.53 points × valeur de service 69.7 € + cotisations revalorisées 105,515 € × rendement 4.94%) × coefficient de majoration 1.3000",
+      "montant": 18241.126630078794,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -16164,7 +16164,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 30877.81771371443,
+    "pension_annuelle": 32011.85513335832,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -16174,8 +16174,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 149,673 € × rendement 4.48% × coefficient de majoration 1.1375",
-      "montant": 7627.33002037559,
+      "detail": "(86.13 points × valeur de service 77.14 € + cotisations revalorisées 23,627 € × rendement 4.48%) × coefficient de majoration 1.1375",
+      "montant": 8761.367440019478,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -18040,7 +18040,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 30720.992543012835,
+    "pension_annuelle": 30769.493315584496,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -18068,8 +18068,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 3,191 € × rendement 4.53% × coefficient de majoration 1.1375",
-      "montant": 164.4179393571186,
+      "detail": "2.46 points × valeur de service 76.15 € × coefficient de majoration 1.1375",
+      "montant": 212.91871192877645,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -18459,7 +18459,7 @@
     ],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 41028.64421345496,
+    "pension_annuelle": 43038.14768842321,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -18475,8 +18475,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 298,813 € × rendement 4.48% × coefficient de majoration 1.0500 ; servie à partir du 1er juillet 2027, 14,056.14 € de 2027, soit 14,056.14 € de 2027",
-      "montant": 14056.14277119174,
+      "detail": "(156.68 points × valeur de service 78.48995 € + cotisations revalorisées 67,025 € × rendement 4.48%) × coefficient de majoration 1.0500 ; servie à partir du 1er juillet 2027, 16,065.65 € de 2027, soit 16,065.65 € de 2027",
+      "montant": 16065.646246159988,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      }
@@ -18521,7 +18521,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 65931.9527583483,
+    "pension_annuelle": 65936.14331167759,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -18531,8 +18531,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 488,978 € × rendement 4.48% × coefficient de majoration 1.2025",
-      "montant": 26342.211367595453,
+      "detail": "(10.89 points × valeur de service 123.227863 € + cotisations revalorisées 459,101 € × rendement 4.48%) × coefficient de majoration 1.2025",
+      "montant": 26346.401920924738,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -18690,7 +18690,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 57256.90811456036,
+    "pension_annuelle": 59744.86479785439,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -18700,8 +18700,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 320,495 € × rendement 4.48% × coefficient de majoration 1.3000",
-      "montant": 18665.6305000566,
+      "detail": "(156.68 points × valeur de service 78.48995 € + cotisations revalorisées 88,707 € × rendement 4.48%) × coefficient de majoration 1.3000",
+      "montant": 21153.58718335062,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -20105,7 +20105,7 @@
     ],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 41628.18510441475,
+    "pension_annuelle": 43661.611239799284,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -20121,8 +20121,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 298,173 € × rendement 4.48% × coefficient de majoration 1.0625 ; servie à partir du 1er juillet 2027, 14,193.04 € de 2027, soit 14,193.04 € de 2027",
-      "montant": 14193.03593056598,
+      "detail": "(156.68 points × valeur de service 78.48995 € + cotisations revalorisées 66,385 € × rendement 4.48%) × coefficient de majoration 1.0625 ; servie à partir du 1er juillet 2027, 16,226.46 € de 2027, soit 16,226.46 € de 2027",
+      "montant": 16226.462065950516,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      }
@@ -21455,7 +21455,7 @@
     "departs": [],
     "liquidation_ouverte": false,
     "motif_ouverture": "non_ouverte",
-    "pension_annuelle": 38542.627935965145,
+    "pension_annuelle": 40447.06119692206,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -21465,8 +21465,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 288,613 € × rendement 4.48% × coefficient de majoration 1.0125",
-      "montant": 13091.478468260202,
+      "detail": "(156.19 points × valeur de service 77.14 € + cotisations revalorisées 61,650 € × rendement 4.48%) × coefficient de majoration 1.0125",
+      "montant": 14995.911729217123,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -21949,7 +21949,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 37382.14189572503,
+    "pension_annuelle": 38761.75261425295,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -21959,8 +21959,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 223,292 € × rendement 4.96% × coefficient de majoration 1.0875",
-      "montant": 12044.364286440128,
+      "detail": "(116.34 points × valeur de service 69 € + cotisations revalorisées 87,023 € × rendement 4.96%) × coefficient de majoration 1.0875",
+      "montant": 13423.975004968059,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -22282,7 +22282,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 49215.836530775516,
+    "pension_annuelle": 50796.32165274197,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -22292,8 +22292,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 223,942 € × rendement 5.13% × coefficient de majoration 1.3625",
-      "montant": 15652.733430689308,
+      "detail": "(105.51 points × valeur de service 68.3 € + cotisations revalorisées 106,075 € × rendement 5.13%) × coefficient de majoration 1.3625",
+      "montant": 17233.218552655762,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -22711,7 +22711,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 37920.443155596324,
+    "pension_annuelle": 39315.937209383075,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -22721,8 +22721,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 223,873 € × rendement 4.96% × coefficient de majoration 1.1000",
-      "montant": 12214.495848660235,
+      "detail": "(116.76 points × valeur de service 69 € + cotisations revalorisées 87,023 € × rendement 4.96%) × coefficient de majoration 1.1000",
+      "montant": 13609.989902446983,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },
@@ -24173,7 +24173,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 39844.58017183456,
+    "pension_annuelle": 41178.52682033991,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -24183,8 +24183,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 214,094 € × rendement 5.13% × coefficient de majoration 1.1500",
-      "montant": 12630.484930813864,
+      "detail": "(107.18 points × valeur de service 68.3 € + cotisations revalorisées 94,012 € × rendement 5.13%) × coefficient de majoration 1.1500",
+      "montant": 13964.431579319213,
       "regime": "carmf_complementaire",
       "type_calcul": "points"
      },

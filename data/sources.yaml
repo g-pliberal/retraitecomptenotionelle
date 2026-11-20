@@ -5438,6 +5438,13 @@ institutions:
           CE QUE CELA CORRIGE : le rendement passe de 14,35 % en 1983 à 4,48 %
           en 2026. La fiche portait le seul chiffre de 2026 sur toute la
           période, ce qui divisait par deux ou trois les droits d'avant 2000.
+          CE QUE CELA NE CORRIGEAIT PAS, vu le 20 novembre 2026 : le moteur ne
+          lit de cette série que le rendement de l'année du départ, qu'il
+          applique aux cotisations portées aux prix. Depuis ce jour,
+          `scripts/fetch/carmf_chronologie.py` relit le PDF et verse dans
+          `regimes/valeurs_point.csv` le prix du point (le dixième de la
+          cotisation maximale, qui attribue dix points) et sa valeur de 1996
+          à 2025 : le moteur compte des points, comme le règlement.
           SECONDE PASSE — LA PART FORFAITAIRE, QUI N'ÉTAIT PAS ILLISIBLE NON
           PLUS. La table « Cotisations forfaitaires » porte une colonne
           « Complémentaire » qui donne le montant de 1949 à 1995 : 16,01 €,

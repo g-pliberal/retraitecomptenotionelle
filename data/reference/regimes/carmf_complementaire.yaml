@@ -934,12 +934,14 @@ periodes:
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_3_5_pass
+    borne_haute_par_annee:
+      1996: 91469.41
     taux_cotisation_retraite: 0.0750
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
-      Le régime devient TOTALEMENT PROPORTIONNEL : la part forfaitaire disparaît et la cotisation maximale ouvre dix points pleins. À partir d'ici la fiche est exacte, taux et rendement venant tous deux des tables de la caisse.
+      Le régime devient TOTALEMENT PROPORTIONNEL : la part forfaitaire disparaît et la cotisation maximale ouvre dix points pleins. DEPUIS LE 20 NOVEMBRE 2026, LE MOTEUR COMPTE CES POINTS : `valeurs_point.csv` porte, de 1996 à 2026, le prix du point (le dixième de la cotisation maximale de la chronologie de la caisse ; 19 849 € pour 11,52 points en 2026) et sa valeur, et la pension est « le nombre de points acquis […] par la valeur du point » (règlement approuvé le 10 juillet 2026, article 3, LEGIARTI000054890209). Jusque-là il portait les cotisations aux prix et leur appliquait le rendement de la seule année du départ, 16 % de moins pour trente années cotisées de 1996 à 2025. LE PLAFOND DE REVENU (`borne_haute_par_annee`) est celui que la chronologie donne de 1996 à 2012 : 91 469,41 € en 1996, « indexés sur l'indice INSEE des prix », et non trois plafonds et demi de la Sécurité sociale, qu'il ne rejoint qu'en 2011 (123 732 €). Les années d'avant 1996 restent au rendement (`docs/limites/4-regimes-incomplets.md`). À partir d'ici la fiche est exacte, taux et rendement venant tous deux des tables de la caisse.
   - debut: 1997
     fin: 1998
     type_calcul: points
@@ -952,6 +954,9 @@ periodes:
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_3_5_pass
+    borne_haute_par_annee:
+      1997: 92932.92
+      1998: 94152.51
     taux_cotisation_retraite: 0.0810
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
@@ -970,6 +975,8 @@ periodes:
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_3_5_pass
+    borne_haute_par_annee:
+      1999: 94640.35
     taux_cotisation_retraite: 0.0870
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
@@ -986,6 +993,15 @@ periodes:
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_3_5_pass
+    borne_haute_par_annee:
+      2000: 95280.64
+      2001: 97369.19
+      2002: 98800
+      2003: 100600
+      2004: 102700
+      2005: 104900
+      2006: 107200
+      2007: 108500
     taux_cotisation_retraite: 0.0900
     decote_par_trimestre: 0.0125
     abattement_points: carmf_asv_minoration_enfants
@@ -1031,6 +1047,8 @@ periodes:
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_3_5_pass
+    borne_haute_par_annee:
+      2008: 110100
     taux_cotisation_retraite: 0.0910
     decote_par_trimestre: 0.0125
     abattement_points: carmf_asv_minoration_enfants
@@ -1065,6 +1083,11 @@ periodes:
     taux_plein: 1.0
     salaire_reference: carriere_entiere
     assiette: plafonnee_3_5_pass
+    borne_haute_par_annee:
+      2009: 113400
+      2010: 113000
+      2011: 123732
+      2012: 127302
     taux_cotisation_retraite: 0.0920
     decote_par_trimestre: 0.0125
     abattement_points: carmf_asv_minoration_enfants

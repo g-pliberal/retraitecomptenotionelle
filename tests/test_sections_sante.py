@@ -1162,7 +1162,9 @@ DEBUTS_A_LA_CARMF = {
     # reste celle d'avant la correction de la dispense (limite déclarée à la
     # fiche), 26 506,51 € au coefficient 1,21, soit, à 1,2025 (ligne 18) :
     # 26 506,51 / 1,21 × 1,2025.
-    ("1986-01-01", "39"): 26_342.21,
+    # Depuis le 20 novembre 2026, 2025 et 2026 achètent des points au prix de
+    # la caisse, au lieu du rendement : 26 346,40 €, 4,19 € de plus.
+    ("1986-01-01", "39"): 26_346.40,
 }
 
 
@@ -1384,16 +1386,20 @@ DEPARTS_PASSE_75_ANS = {
     # 319 288,7701 ; × 0,0448 = 14 304,1369 ; × 1,30 = 18 595,38 €, 300,22 € de
     # moins que 18 895,60 €. L'année 2026 reste cotisée en entier (limite
     # déclarée à la fiche : le partage de la cotisation au semestre).
-    ("1951-01-01", "76.5"): 18_595.38,
+    # DEPUIS LE 20 NOVEMBRE 2026, les années 1996 à 2026 se comptent en points
+    # (156,68 points), et les trois pensions montent de 2 487,95 € : 21 083,33 €
+    # ici. Le semestre de 2027, sans prix publié, reste au rendement, et
+    # l'exemption retire toujours 5 154,8634 × 0,0448 × 1,30 = 300,22 €.
+    ("1951-01-01", "76.5"): 21_083.33,
     # Née le 1er juillet 1951, partie à 76 ans, le 1er juillet 2027 : 75 ans le
     # 1er juillet 2026, exemptée du 1er janvier 2027, le semestre civil qui
     # suit. Les mêmes cotisations, le même semestre de 2027 : 18 595,38 €.
-    ("1951-07-01", "76"): 18_595.38,
+    ("1951-07-01", "76"): 21_083.33,
     # Née le 1er janvier 1952, partie à 75 ans et 6 mois, le 1er juillet 2027 :
     # 75 ans le 1er janvier 2027, exemptée du 1er juillet 2027, le jour de son
     # départ. Rien n'est exempté, et la pension reste celle d'avant la
     # correction.
-    ("1952-01-01", "75.5"): 18_665.63,
+    ("1952-01-01", "75.5"): 21_153.59,
 }
 
 
@@ -1440,8 +1446,12 @@ def test_l_exemption_de_la_carmf_retire_300_euros_a_la_medecin_de_76_ans(
     de service de 2026 portée aux prix, et non plus à celle de 2025 (1,75 % de
     hausse en 2026) : 22 383,12 / 1,0175 = 21 998,15 €."""
     pensions = departs_passe_75_ans["1951-01-01|76.5"]
-    assert "cotisations revalorisées 319,289 €" in pensions["carmf_complementaire"]["detail"]
-    assert 18_895.60 - pensions["carmf_complementaire"]["montant"] == pytest.approx(
+    # Depuis le 20 novembre 2026, les années 1996 à 2026 sont en points : il
+    # ne reste au rendement que les cotisations d'avant 1996, 87 501 €, le
+    # semestre exempté de 2027 n'y étant pas, et la pension sans exemption
+    # serait de 21 083,33 + 300,22 = 21 383,55 €.
+    assert "cotisations revalorisées 87,501 €" in pensions["carmf_complementaire"]["detail"]
+    assert 21_383.55 - pensions["carmf_complementaire"]["montant"] == pytest.approx(
         300.22, abs=0.005)
     assert pensions["asv_conventionnes"]["montant"] == pytest.approx(21_998.15, abs=0.005)
     assert pensions["cnavpl"]["montant"] == pytest.approx(18_281.12, abs=0.005)
@@ -1787,3 +1797,80 @@ def test_la_carriere_longue_de_la_cavp_se_pose_a_la_main(carrieres_longues_a_la_
     assert a_62_ans["montant"] == pytest.approx(11_580.01, abs=0.01)
     assert a_58_ans["montant"] == pytest.approx(10_580.06 / 0.75 * 0.65, abs=0.01)
     assert a_58_ans["montant"] == pytest.approx(9_169.39, abs=0.01)
+
+
+# -- la CARMF : la complémentaire se compte en points (relecture du 20 novembre 2026) --
+
+#: « La chronologie des chiffres de la CARMF 2025 », table « Régime
+#: complémentaire, cotisations proportionnelles » (page 26) : la cotisation
+#: maximale de l'année, qui attribue dix points, et table « Valeurs des points
+#: de retraite » (pages 59 et 60) : la valeur du point du médecin, « à 65 ans »
+#: jusqu'en 2016, « à 62 ans » depuis 2017. 2026 : les chiffres clés de la
+#: caisse, 19 849 € pour 11,52 points, 77,14 € le point.
+CHRONOLOGIE_DE_LA_CARMF = {
+    1996: (6_860.21, 68.53), 1997: (7_527.57, 68.68), 1998: (7_626.35, 68.91),
+    1999: (8_233.71, 67.38), 2000: (8_575.26, 67.38), 2001: (8_763.23, 67.38),
+    2002: (8_892.00, 67.70), 2003: (9_054.00, 68.00), 2004: (9_243.00, 69.00),
+    2005: (9_441.00, 70.00), 2006: (9_648.00, 70.85), 2007: (9_765.00, 71.70),
+    2008: (10_019.00, 72.50), 2009: (10_433.00, 74.00), 2010: (10_396.00, 74.10),
+    2011: (11_383.00, 75.00), 2012: (11_712.00, 76.00), 2013: (12_054.00, 77.40),
+    2014: (12_353.00, 78.00), 2015: (12_648.00, 78.40), 2016: (12_975.00, 78.55),
+    2017: (13_318.00, 68.30), 2018: (13_628.00, 68.30), 2019: (13_900.00, 69.00),
+    2020: (14_110.00, 69.70), 2021: (14_110.00, 69.70), 2022: (14_398.00, 70.05),
+    2023: (15_397.00, 73.35), 2024: (16_553.00, 75.25), 2025: (16_815.00, 76.15),
+}
+
+
+def test_le_point_de_la_carmf_s_achete_au_dixieme_de_la_cotisation_maximale():
+    """Règlement du régime complémentaire, article 3 (arrêté du 10 juillet
+    2026, LEGIARTI000054890209) : « Le montant de la retraite d'un médecin
+    s'obtient en multipliant le nombre de points acquis, alloués ou rachetés,
+    par la valeur du point ». La chronologie de la caisse attribue dix points
+    à la cotisation maximale de chaque année de 1996 à 2025, et 11,52 points
+    à celle de 2026."""
+    import csv
+    from pathlib import Path
+
+    chemin = Path(__file__).resolve().parent.parent / "data/reference/regimes/valeurs_point.csv"
+    with chemin.open(encoding="utf-8") as fichier:
+        lignes = csv.DictReader(ligne for ligne in fichier if not ligne.startswith("#"))
+        table = {(int(ligne["annee"]), ligne["mesure"]): float(ligne["valeur"])
+                 for ligne in lignes if ligne["regime"] == "carmf_complementaire"}
+    for annee, (maximale, service) in CHRONOLOGIE_DE_LA_CARMF.items():
+        achat = table[annee, "salaire_reference"] * table[annee, "taux_appel"]
+        assert achat == pytest.approx(maximale / 10, abs=0.0005), annee
+        assert table[annee, "valeur_service"] == pytest.approx(service), annee
+    assert (table[2026, "salaire_reference"] * table[2026, "taux_appel"]
+            == pytest.approx(19_849 / 11.52, abs=0.0005))
+    assert table[2026, "valeur_service"] == pytest.approx(77.14)
+
+
+def _medecin_au_plafond(simulateur, naissance: int, debut: float, liquidation: float):
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=naissance, sexe="H",
+        metiers=[Metier(affiliation="medecin_liberal", age_debut=debut, niveau_salaire=8.0)],
+        age_liquidation=liquidation, macro=simulateur.macro, nombre_enfants=0)
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    return {p.regime: p for p in resultat.pensions_par_regime}["carmf_complementaire"]
+
+
+def test_trente_annees_au_plafond_valent_trois_cents_points_a_la_carmf(simulateur):
+    """Né en janvier 1964, médecin libéral de janvier 1996 à janvier 2026, au
+    plafond chaque année, parti à 62 ans le 1er février 2026 : trente années à
+    dix points, et un mois de 2026 à 11,52 points l'an, 300,96 points, servis
+    77,14 € l'un, 23 216,05 € par an. Jusqu'au 20 novembre 2026, le modèle
+    portait les cotisations aux prix et leur appliquait le rendement de la
+    seule année du départ : 19 515,26 €."""
+    pension = _medecin_au_plafond(simulateur, 1964, 32.0, 62.0)
+    # À cinq centimes : la caisse arrondit à l'euro sa cotisation maximale.
+    assert pension.montant == pytest.approx((300 + 11.52 / 12) * 77.14, abs=0.05)
+    assert "rendement" not in pension.detail
+
+
+def test_vingt_annees_au_plafond_valent_deux_cents_points_a_65_ans_en_2016(simulateur):
+    """Né en janvier 1951, médecin libéral de janvier 1996 à janvier 2016, au
+    plafond, parti à 65 ans le 1er février 2016, sans coefficient d'anticipation :
+    vingt années à dix points et un mois de 2016, 200,83 points, servis 78,55 €
+    l'un (la valeur « à 65 ans » de 2016), 15 775,46 € par an."""
+    pension = _medecin_au_plafond(simulateur, 1951, 45.0, 65.0)
+    assert pension.montant == pytest.approx((200 + 10 / 12) * 78.55, abs=0.05)

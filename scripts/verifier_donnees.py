@@ -3831,6 +3831,30 @@ def source_valeurs_point_cnbf() -> dict[tuple, float]:
     }
 
 
+def source_valeurs_point_carmf() -> dict[tuple, float]:
+    """Prix et valeur du point de la complémentaire des médecins, de 1996 à la
+    dernière année de « La chronologie des chiffres de la CARMF ».
+
+    La caisse est le producteur. Le prix du point est le dixième de la
+    cotisation maximale, qui attribue dix points ; la valeur est celle « à 65
+    ans » jusqu'en 2016 et « à 62 ans » depuis 2017.
+    """
+    return {
+        tuple(cle.split("|")): valeur
+        for cle, valeur in sorted(
+            _serie_json("carmf_chronologie.json", "scripts/fetch/carmf_chronologie.py").items()
+        )
+    }
+
+
+def source_valeurs_point_carmf_saisies() -> dict[tuple, float]:
+    """L'année en cours, que la chronologie ne porte pas encore : saisie
+    depuis les chiffres clés du site de la caisse, au niveau ``moyenne``."""
+    charge = _lire_json("carmf_chronologie.json", "scripts/fetch/carmf_chronologie.py")
+    return {tuple(cle.split("|")): valeur
+            for cle, valeur in sorted(charge["saisies"].items())}
+
+
 def source_valeurs_point_cnavpl() -> dict[tuple, float]:
     """Taux des deux tranches des professions libérales, dans les recueils CNAVPL.
 
@@ -10149,6 +10173,30 @@ CERTIFICATIONS = (
         origine="CNBF, barèmes annuels des cotisations et prestations",
         decimales=6,
         tolerance=5e-7,
+    ),
+    Certification(
+        nom="valeurs_point_carmf",
+        chemin=REFERENCE / "regimes" / "valeurs_point.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_valeurs_point_carmf,
+        origine="CARMF, La chronologie des chiffres de la CARMF 2025 : cotisation "
+                "maximale et points attribués, valeur du point",
+        decimales=6,
+        tolerance=5e-7,
+    ),
+    Certification(
+        nom="valeurs_point_carmf_saisies",
+        chemin=REFERENCE / "regimes" / "valeurs_point.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_valeurs_point_carmf_saisies,
+        origine="CARMF, chiffres clés de 2026 lus sur le site de la caisse le "
+                "20 novembre 2026 : 19 849 € de cotisation maximale pour 11,52 "
+                "points, 77,14 € le point",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="moyenne",
     ),
     Certification(
         nom="valeurs_point_cnavpl",

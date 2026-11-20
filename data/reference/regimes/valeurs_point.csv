@@ -72,6 +72,18 @@
 #   2024 et après, sur un rendement de 6,74 % quand celui de 2026 vaut 6,20 % :
 #   les points RCI acquis en 2026 ressortaient 9 % trop nombreux, écart mis au
 #   jour par le simulateur Mon-entreprise de l'Urssaf, qui porte ces valeurs.
+# CARMF, régime complémentaire des médecins, depuis 1996 (carmf_chronologie,
+# carmf_chiffres_cles). « La chronologie des chiffres de la CARMF 2025 »,
+# table « Cotisations proportionnelles » : la cotisation maximale de chaque
+# année attribue DIX points, et le point s'achète donc au dixième de cette
+# cotisation ; table « Valeurs des points de retraite » : la valeur du point
+# du médecin, « à 65 ans » jusqu'en 2016, « à 62 ans » depuis 2017 (le
+# règlement sert alors sans coefficient à l'âge légal et majore au-delà de
+# 62 ans). 2026 : 19 849 € pour 11,52 points et 77,14 € le point, chiffres
+# clés de la caisse. Jusqu'au 20 novembre 2026, le moteur n'avait que le
+# rendement de l'année du départ, appliqué aux cotisations portées aux prix.
+# Avant 1996, une cotisation forfaitaire et une proportionnelle achètent à
+# deux prix : ces années restent au rendement (docs/limites.md).
 regime,annee,mesure,valeur,fiabilite
 agirc,1947,salaire_reference,0.039637,certifiee
 agirc,1947,valeur_service,0.006098,certifiee
@@ -528,6 +540,99 @@ cancava_avant_1973,2023,valeur_service,9.912800,haute
 cancava_avant_1973,2024,valeur_service,10.438100,haute
 cancava_avant_1973,2025,valeur_service,10.666700,haute
 cancava_avant_1973,2026,valeur_service,10.763700,haute
+carmf_complementaire,1996,salaire_reference,686.021000,certifiee
+carmf_complementaire,1996,taux_appel,1.000000,certifiee
+carmf_complementaire,1996,valeur_service,68.530000,certifiee
+carmf_complementaire,1997,salaire_reference,752.757000,certifiee
+carmf_complementaire,1997,taux_appel,1.000000,certifiee
+carmf_complementaire,1997,valeur_service,68.680000,certifiee
+carmf_complementaire,1998,salaire_reference,762.635000,certifiee
+carmf_complementaire,1998,taux_appel,1.000000,certifiee
+carmf_complementaire,1998,valeur_service,68.910000,certifiee
+carmf_complementaire,1999,salaire_reference,823.371000,certifiee
+carmf_complementaire,1999,taux_appel,1.000000,certifiee
+carmf_complementaire,1999,valeur_service,67.380000,certifiee
+carmf_complementaire,2000,salaire_reference,857.526000,certifiee
+carmf_complementaire,2000,taux_appel,1.000000,certifiee
+carmf_complementaire,2000,valeur_service,67.380000,certifiee
+carmf_complementaire,2001,salaire_reference,876.323000,certifiee
+carmf_complementaire,2001,taux_appel,1.000000,certifiee
+carmf_complementaire,2001,valeur_service,67.380000,certifiee
+carmf_complementaire,2002,salaire_reference,889.200000,certifiee
+carmf_complementaire,2002,taux_appel,1.000000,certifiee
+carmf_complementaire,2002,valeur_service,67.700000,certifiee
+carmf_complementaire,2003,salaire_reference,905.400000,certifiee
+carmf_complementaire,2003,taux_appel,1.000000,certifiee
+carmf_complementaire,2003,valeur_service,68.000000,certifiee
+carmf_complementaire,2004,salaire_reference,924.300000,certifiee
+carmf_complementaire,2004,taux_appel,1.000000,certifiee
+carmf_complementaire,2004,valeur_service,69.000000,certifiee
+carmf_complementaire,2005,salaire_reference,944.100000,certifiee
+carmf_complementaire,2005,taux_appel,1.000000,certifiee
+carmf_complementaire,2005,valeur_service,70.000000,certifiee
+carmf_complementaire,2006,salaire_reference,964.800000,certifiee
+carmf_complementaire,2006,taux_appel,1.000000,certifiee
+carmf_complementaire,2006,valeur_service,70.850000,certifiee
+carmf_complementaire,2007,salaire_reference,976.500000,certifiee
+carmf_complementaire,2007,taux_appel,1.000000,certifiee
+carmf_complementaire,2007,valeur_service,71.700000,certifiee
+carmf_complementaire,2008,salaire_reference,1001.900000,certifiee
+carmf_complementaire,2008,taux_appel,1.000000,certifiee
+carmf_complementaire,2008,valeur_service,72.500000,certifiee
+carmf_complementaire,2009,salaire_reference,1043.300000,certifiee
+carmf_complementaire,2009,taux_appel,1.000000,certifiee
+carmf_complementaire,2009,valeur_service,74.000000,certifiee
+carmf_complementaire,2010,salaire_reference,1039.600000,certifiee
+carmf_complementaire,2010,taux_appel,1.000000,certifiee
+carmf_complementaire,2010,valeur_service,74.100000,certifiee
+carmf_complementaire,2011,salaire_reference,1138.300000,certifiee
+carmf_complementaire,2011,taux_appel,1.000000,certifiee
+carmf_complementaire,2011,valeur_service,75.000000,certifiee
+carmf_complementaire,2012,salaire_reference,1171.200000,certifiee
+carmf_complementaire,2012,taux_appel,1.000000,certifiee
+carmf_complementaire,2012,valeur_service,76.000000,certifiee
+carmf_complementaire,2013,salaire_reference,1205.400000,certifiee
+carmf_complementaire,2013,taux_appel,1.000000,certifiee
+carmf_complementaire,2013,valeur_service,77.400000,certifiee
+carmf_complementaire,2014,salaire_reference,1235.300000,certifiee
+carmf_complementaire,2014,taux_appel,1.000000,certifiee
+carmf_complementaire,2014,valeur_service,78.000000,certifiee
+carmf_complementaire,2015,salaire_reference,1264.800000,certifiee
+carmf_complementaire,2015,taux_appel,1.000000,certifiee
+carmf_complementaire,2015,valeur_service,78.400000,certifiee
+carmf_complementaire,2016,salaire_reference,1297.500000,certifiee
+carmf_complementaire,2016,taux_appel,1.000000,certifiee
+carmf_complementaire,2016,valeur_service,78.550000,certifiee
+carmf_complementaire,2017,salaire_reference,1331.800000,certifiee
+carmf_complementaire,2017,taux_appel,1.000000,certifiee
+carmf_complementaire,2017,valeur_service,68.300000,certifiee
+carmf_complementaire,2018,salaire_reference,1362.800000,certifiee
+carmf_complementaire,2018,taux_appel,1.000000,certifiee
+carmf_complementaire,2018,valeur_service,68.300000,certifiee
+carmf_complementaire,2019,salaire_reference,1390.000000,certifiee
+carmf_complementaire,2019,taux_appel,1.000000,certifiee
+carmf_complementaire,2019,valeur_service,69.000000,certifiee
+carmf_complementaire,2020,salaire_reference,1411.000000,certifiee
+carmf_complementaire,2020,taux_appel,1.000000,certifiee
+carmf_complementaire,2020,valeur_service,69.700000,certifiee
+carmf_complementaire,2021,salaire_reference,1411.000000,certifiee
+carmf_complementaire,2021,taux_appel,1.000000,certifiee
+carmf_complementaire,2021,valeur_service,69.700000,certifiee
+carmf_complementaire,2022,salaire_reference,1439.800000,certifiee
+carmf_complementaire,2022,taux_appel,1.000000,certifiee
+carmf_complementaire,2022,valeur_service,70.050000,certifiee
+carmf_complementaire,2023,salaire_reference,1539.700000,certifiee
+carmf_complementaire,2023,taux_appel,1.000000,certifiee
+carmf_complementaire,2023,valeur_service,73.350000,certifiee
+carmf_complementaire,2024,salaire_reference,1655.300000,certifiee
+carmf_complementaire,2024,taux_appel,1.000000,certifiee
+carmf_complementaire,2024,valeur_service,75.250000,certifiee
+carmf_complementaire,2025,salaire_reference,1681.500000,certifiee
+carmf_complementaire,2025,taux_appel,1.000000,certifiee
+carmf_complementaire,2025,valeur_service,76.150000,certifiee
+carmf_complementaire,2026,salaire_reference,1723.003472,moyenne
+carmf_complementaire,2026,taux_appel,1.000000,moyenne
+carmf_complementaire,2026,valeur_service,77.140000,moyenne
 cnavpl,2004,valeur_service,0.484000,certifiee
 cnavpl,2005,valeur_service,0.493000,certifiee
 cnavpl,2006,valeur_service,0.502000,certifiee

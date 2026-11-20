@@ -224,6 +224,18 @@ verrouille le nombre de lignes par niveau, et y verser des valeurs demande un
 contrôle dans `verifier_donnees.py` — donc un récupérateur pour la valeur de
 service, que la caisse publie en PDF depuis 2010.
 
+**La complémentaire des médecins est raccordée** : la chronologie de la CARMF
+donne, pour chaque année depuis que la cotisation est toute proportionnelle,
+la cotisation maximale, les dix points qu'elle attribue et la valeur du point,
+et `scripts/fetch/carmf_chronologie.py` les verse dans `valeurs_point.csv`. Le
+moteur y compte donc de vrais points, au plafond de revenu que la caisse a
+publié chaque année. Restent au rendement de l'année du départ les années
+d'avant, où une cotisation forfaitaire et une proportionnelle assise entre un
+plancher et un plafond achetaient à deux prix la même année, ce que le format
+de la table ne sait pas dire, et que la fiche fait cotiser sur tout le revenu ;
+et les années postérieures au dernier barème. La caisse assoit la cotisation
+sur le revenu de l'avant-dernière année, le modèle sur celui de l'année même.
+
 **Au-delà du dernier barème publié, l'Agirc-Arrco achète ses points au salaire
 de référence que ses accords indexent sur le salaire moyen** : celui du modèle,
 <!--chiffre:valeur(data/reference/macro/hypotheses_projection.yaml:scenarios.cor_reference.salaire_moyen_nominal*100)-->2,45<!--/--> % par an au scénario de référence quand les prix montent de <!--chiffre:valeur(data/reference/macro/hypotheses_projection.yaml:scenarios.cor_reference.inflation*100)-->1,75<!--/--> %, avec

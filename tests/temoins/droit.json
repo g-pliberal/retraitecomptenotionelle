@@ -24,6 +24,13 @@
   ],
   "rendu": "82dd590022e53896"
  },
+ "00c62652ecbfd055": {
+  "fonctions": [
+   "liquider.valeur_du_point",
+   "scenario_actuel.conversions_points.echelle"
+  ],
+  "rendu": "1737c8f5e8ab2d63"
+ },
  "00eb1cfb76e7e62a": {
   "fonctions": [
    "ouvrir.age_ouverture_droit"
@@ -1691,7 +1698,7 @@
   "fonctions": [
    "scenario_actuel.calculer"
   ],
-  "rendu": "beee71c1d941a9dd"
+  "rendu": "b13478b06c987a47"
  },
  "4561b393d53ffee7": {
   "fonctions": [
@@ -2935,7 +2942,7 @@
   "fonctions": [
    "scenario_actuel.calculer"
   ],
-  "rendu": "0adbac8c87aad1a7"
+  "rendu": "c671ad67cfa1c074"
  },
  "7866dd44c9a54f83": {
   "fonctions": [
@@ -3501,7 +3508,7 @@
   "fonctions": [
    "revalorisation.derniere_valeur_publiee"
   ],
-  "rendu": "d096fcc993fdb06b"
+  "rendu": "c4e381eb2da499f4"
  },
  "8af9c67b0fa22ee9": {
   "fonctions": [
@@ -3740,7 +3747,7 @@
    "scenario_actuel.calculer",
    "simulateur.carriere_simple"
   ],
-  "rendu": "71310bb7a5c8f7ec"
+  "rendu": "88b70b2906033afc"
  },
  "93d69d1379dec771": {
   "fonctions": [
@@ -4587,7 +4594,7 @@
   "fonctions": [
    "scenario_actuel.calculer"
   ],
-  "rendu": "fe420fa4befc9fb1"
+  "rendu": "ce232c06643b69de"
  },
  "b8a8391384a1b62a": {
   "fonctions": [
@@ -5533,7 +5540,7 @@
    "scenario_actuel.calculer",
    "simulateur.carriere_simple"
   ],
-  "rendu": "2bec07abdca3ca17"
+  "rendu": "bf020334ccd233f6"
  },
  "df0bb1fbf53198e0": {
   "fonctions": [
@@ -5632,7 +5639,7 @@
   "fonctions": [
    "scenario_actuel.calculer"
   ],
-  "rendu": "41bcda10674d33cb"
+  "rendu": "d59aedf299409043"
  },
  "e23b85d71c71f9f8": {
   "fonctions": [

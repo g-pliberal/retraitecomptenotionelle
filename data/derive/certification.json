@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-11-19",
+ "dernier_passage_le": "2026-11-20",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -65,7 +65,7 @@
    "niveau": "haute",
    "source": "la version de 2011 de la fiche age_legal_par_generation (age_legal_par_version.csv)",
    "valeurs": 1,
-   "verifiee_le": "2026-11-19"
+   "verifiee_le": "2026-11-20"
   },
   "age_ouverture_avant_suspension": {
    "ajoutees": 0,
@@ -76,7 +76,7 @@
    "niveau": "haute",
    "source": "la version de 2023 de la fiche age_legal_par_generation (age_legal_par_version.csv)",
    "valeurs": 5,
-   "verifiee_le": "2026-11-19"
+   "verifiee_le": "2026-11-20"
   },
   "age_ouverture_requis": {
    "ajoutees": 0,
@@ -87,7 +87,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale L. 161-17-2 et D. 161-2-1-9, par les versions de la fiche age_legal_par_generation",
    "valeurs": 79,
-   "verifiee_le": "2026-11-19"
+   "verifiee_le": "2026-11-20"
   },
   "allocation_supplementaire_cnav": {
    "ajoutees": 0,
@@ -934,7 +934,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-11-19"
+   "verifiee_le": "2026-11-20"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -2243,7 +2243,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-11-19"
+   "verifiee_le": "2026-11-20"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -2399,6 +2399,28 @@
    "valeurs": 121,
    "verifiee_le": "2026-10-14"
   },
+  "valeurs_point_carmf": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "f2ced2bd3817ca5a",
+   "identiques": 90,
+   "niveau": "certifiee",
+   "source": "CARMF, La chronologie des chiffres de la CARMF 2025 : cotisation maximale et points attribués, valeur du point",
+   "valeurs": 90,
+   "verifiee_le": "2026-11-20"
+  },
+  "valeurs_point_carmf_saisies": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "b6e87340852e6d71",
+   "identiques": 3,
+   "niveau": "moyenne",
+   "source": "CARMF, chiffres clés de 2026 lus sur le site de la caisse le 20 novembre 2026 : 19 849 € de cotisation maximale pour 11,52 points, 77,14 € le point",
+   "valeurs": 3,
+   "verifiee_le": "2026-11-20"
+  },
   "valeurs_point_cnavpl": {
    "ajoutees": 0,
    "colonne": "valeur",
@@ -2441,7 +2463,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
    "valeurs": 29,
-   "verifiee_le": "2026-11-19"
+   "verifiee_le": "2026-11-20"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -2474,7 +2496,7 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-11-19"
+   "verifiee_le": "2026-11-20"
   },
   "valeurs_point_msa": {
    "ajoutees": 1,
