@@ -282,6 +282,56 @@ if [ "$avance" -gt 0 ] && [ -f tests/test_prose.py ] \
     done
 fi
 
+# Le filet des fichiers communs (20 novembre 2026) : deux chantiers verts
+# chacun de son côté peuvent être rouges une fois réunis — un compteur de
+# cliquet que les deux ont monté, des sorties figées qu'un cas témoin de plus
+# décale —, et la suite rapide de la session, jouée avant de rattraper main,
+# ne le voit pas. Les tests que nomme `tests/filet_avant_envoi.txt` se jouent
+# donc ici, le travail des autres rattrapé, juste avant l'envoi : un lot par
+# ligne, les lots de front, sous la minute, le hook `Stop` n'en laissant que
+# deux. Rouges, rien ne part. Un envoi qui ne touche que la documentation ne
+# les joue pas. Ils lisent le répertoire de travail. Sans Python qui ait
+# pytest, rien ne se vérifie.
+filet=tests/filet_avant_envoi.txt
+if [ "$avance" -gt 0 ] && [ -f "$filet" ] \
+    && [ -n "$(git diff --name-only origin/main..HEAD -- . ':(exclude)docs' ':(exclude)*.md')" ]; then
+    for python in python3 python; do
+        "$python" -c 'import pytest' >/dev/null 2>&1 || continue
+        sorties=$(mktemp -d)
+        lot=0
+        lots=()
+        while IFS= read -r ligne || [ -n "$ligne" ]; do
+            ligne=${ligne%%#*}
+            [ -z "${ligne//[[:space:]]/}" ] && continue
+            lot=$(( lot + 1 ))
+            # shellcheck disable=SC2086 # les tests d'un lot, un par mot
+            "$python" -m pytest -q -p no:cacheprovider $ligne >"$sorties/$lot" 2>&1 &
+            lots+=($!)
+        done < "$filet"
+        rouge=0
+        for lot in ${lots[@]+"${lots[@]}"}; do
+            wait "$lot" || rouge=1
+        done
+        if [ "$rouge" = 1 ]; then
+            {
+                echo "pousser: le filet des fichiers communs est rouge, rien poussé ($filet) :"
+                cat "$sorties"/* | grep -E '^(FAILED|ERROR)' | head -n 12 | cut -c1-400 | sed 's/^/    /'
+                cat <<'FIN'
+Ces tests gardent ce que tous les chantiers écrivent : le travail de la session
+et celui que main a reçu entre-temps ne tiennent pas ensemble. Les relancer
+(`python -m pytest <le test>`), corriger — un compteur à suivre, des sorties à
+refiger —, commiter, puis relancer. Si main est rouge sans la session
+(`.github/etat_suite.yaml`), c'est lui qui se répare d'abord.
+FIN
+            } >&2
+            rm -rf "$sorties"
+            exit 1
+        fi
+        rm -rf "$sorties"
+        break
+    done
+fi
+
 if [ "$avance" -gt 0 ]; then
     avec_reprises git push --quiet origin HEAD:main || {
         echo "pousser: push vers main impossible après 5 essais" >&2; exit 1; }

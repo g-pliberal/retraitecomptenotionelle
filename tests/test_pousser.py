@@ -351,6 +351,70 @@ def test_il_refuse_une_feuille_de_route_qui_ne_tient_pas_ses_regles(atelier):
     assert tete_distante(distant, "main") == tete
 
 
+#: Un test qui garde un fichier commun, à la façon d'un cliquet : le nombre de
+#: valeurs ne passe pas deux.
+_COMMUN = '''from pathlib import Path
+
+
+def test_le_compteur_ne_peut_que_baisser():
+    assert len(list(Path("valeurs").iterdir())) <= 2
+'''
+
+
+def _poser_le_filet(session: Path) -> None:
+    _envoyer(session, "le filet et son test", {
+        "tests/test_commun.py": _COMMUN,
+        "tests/filet_avant_envoi.txt": "# un lot par ligne\ntests/test_commun.py\n",
+        "valeurs/a.txt": "a",
+        # Ce que pytest laisse derrière lui ne se commite pas.
+        ".gitignore": "__pycache__/\n",
+    })
+    acheve = pousser(session)
+    assert acheve.returncode == 0, acheve.stderr
+
+
+def test_il_refuse_deux_chantiers_verts_seuls_et_rouges_reunis(atelier, tmp_path):
+    """Le 19 novembre 2026, deux chantiers, verts chacun de son côté, ont
+    porté ensemble un compteur à 1 445 valeurs quand son cliquet en admettait
+    1 442 : `main` est resté rouge 38 minutes, le temps d'une course de
+    GitHub et de la réparation. Avant d'envoyer, le travail des autres
+    rattrapé, le script joue les tests que nomme
+    `tests/filet_avant_envoi.txt`, ceux des fichiers que tous les chantiers
+    écrivent : rouges, rien ne part."""
+    distant, session = atelier
+    _poser_le_filet(session)
+    _autre_session_pousse(distant, tmp_path, "valeurs/b.txt")
+    avant = tete_distante(distant, "main")
+
+    _envoyer(session, "une valeur de plus", {"valeurs/c.txt": "c",
+                                             "tests/test_valeur.py": "# c\n"})
+    acheve = pousser(session)
+    assert acheve.returncode != 0
+    assert "filet" in acheve.stderr
+    assert "test_le_compteur_ne_peut_que_baisser" in acheve.stderr
+    assert tete_distante(distant, "main") == avant, "rien poussé"
+
+    tete = _envoyer(session, "le cliquet suit", {
+        "tests/test_commun.py": _COMMUN.replace("<= 2", "<= 3")})
+    acheve = pousser(session)
+    assert acheve.returncode == 0, acheve.stderr
+    assert tete_distante(distant, "main") == tete
+
+
+def test_le_filet_ne_se_joue_pas_pour_la_seule_documentation(atelier, tmp_path):
+    """Une note de feuille de route ne déplace aucun compteur : elle part sans
+    attendre le filet, même sur un `main` qu'un autre a laissé rouge."""
+    distant, session = atelier
+    _poser_le_filet(session)
+    _autre_session_pousse(distant, tmp_path, "valeurs/b.txt")
+    _autre_session_pousse(distant, tmp_path / "encore", "valeurs/c.txt")
+
+    _envoyer(session, "une note", {"docs/note.md": "Une note.\n"})
+    acheve = pousser(session)
+    assert acheve.returncode == 0, acheve.stderr
+    assert git(distant, "show", "main:docs/note.md") == "Une note."
+
+
 def _autre_session_pousse(distant: Path, tmp_path: Path, nom: str, texte: str = "x") -> str:
     autre = tmp_path / "autre"
     subprocess.run(["git", "clone", "--quiet", str(distant), str(autre)], check=True)

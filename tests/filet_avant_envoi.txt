@@ -1,0 +1,8 @@
+# Le filet des fichiers communs : les tests que `scripts/pousser.sh` joue juste
+# avant d'envoyer sur main, le travail des autres chantiers rattrapé. Ce sont
+# ceux des fichiers que tous les chantiers écrivent, tombés rouges sur main le
+# 19 novembre 2026 : les compteurs des cliquets, les sorties figées des témoins,
+# la règle de chaque génération. Un lot par ligne, les lots joués de front ;
+# l'ensemble tient sous la minute, le hook `Stop` n'en laissant que deux.
+tests/test_cliquets_du_droit_date.py tests/test_liquidation.py::test_la_liquidation_et_le_journal_sont_ceux_du_temoin tests/test_droit.py::test_chaque_etape_ecrit_ce_que_le_temoin_fige
+tests/test_regle_de_chacun.py

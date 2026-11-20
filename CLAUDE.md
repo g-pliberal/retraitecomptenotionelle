@@ -28,10 +28,11 @@ commitées quand il doit rebaser, aucun ancêtre commun avec `main` (le cas
 grave), un commit signé d'une adresse nominative, un commit qui change le
 code sans toucher aux tests, s'il ne le déclare pas (« Le test d'abord »),
 une feuille de route dont le bloc « Reprise » ou les notes enfreignent leurs
-règles, quand un commit à publier la touche, un commit qui touche une garde —
-les workflows de GitHub, les hooks et leurs réglages, `pousser.sh`,
-`publier_fabrique.sh`, `publier_inscription.sh` — sans ligne
-`Garde-modifiée: <raison>`, qu'une session n'écrit qu'avec l'accord du
+règles, quand un commit à publier la touche, le filet des fichiers communs
+(`tests/filet_avant_envoi.txt`) rouge, hors envoi de seule documentation, un
+commit qui touche une garde — les workflows de GitHub, les hooks, leurs
+réglages, `pousser.sh`, `publier_fabrique.sh`, `publier_inscription.sh` — sans
+ligne `Garde-modifiée: <raison>`, qu'une session n'écrit qu'avec l'accord du
 propriétaire, demandé avant (action 163). En avance sur `main`, il pousse
 tout ce qui est commité, même si d'autres modifications attendent :
 ne commiter qu'une fois ses tests passés, puisque le hook publie à chaque fin
