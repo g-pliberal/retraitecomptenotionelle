@@ -1,0 +1,19 @@
+date: "2026-11-20"
+session: "action 191 : le taux plein de l'ASV des auxiliaires médicaux"
+consulte: >-
+  L'index JORF du dépôt, à jour au 16 novembre 2026 : l'arrêté du 10 juillet
+  2026 (JORFTEXT000054435904), son annexe, II, règlement des prestations
+  complémentaires de vieillesse de la CARPIMKO (JORFARTI000054435915),
+  articles 1er à 4, et son article 2 (JORFARTI000054435913). La relecture des
+  régimes du même jour pour les pages de carpimko.com.
+trouve: >-
+  Le règlement ne donne le taux plein de l'ASV qu'à 65 ans révolus, à 60 ans
+  à l'inapte, et un coefficient par année d'âge de 0,75 à 0,95 dès 60 ans ; le
+  moteur la servait sans coefficient à qui avait sa durée. Corrigé : fiche
+  neuve asv_auxiliaires_medicaux_coefficients_d_age, à laquelle les périodes
+  du régime renvoient. Détail :
+  docs/feuille_de_route/191/2026-11-20-asv-des-auxiliaires-medicaux.md.
+reste: >-
+  Les statuts d'avant 2026, non publiés au Journal officiel : la règle y est
+  présumée. Un exemple chiffré de la caisse. Les ASV des chirurgiens-dentistes,
+  des sages-femmes et des directeurs de laboratoire, à relire de même.

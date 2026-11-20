@@ -4061,12 +4061,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 4314.424797528334,
+    "pension_annuelle": 4274.077548119761,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "275.62 points × valeur de service 0.731923 €",
-      "montant": 201.73624704286948,
+      "detail": "275.62 points × valeur de service 0.731923 € × coefficient d'anticipation 0.8000",
+      "montant": 161.3889976342956,
       "regime": "asv_auxiliaires_medicaux",
       "type_calcul": "points"
      },
@@ -4197,12 +4197,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 3823.2006765452425,
+    "pension_annuelle": 3778.439397298955,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "251.12 points × valeur de service 0.712972 €",
-      "montant": 179.04511698514915,
+      "detail": "251.12 points × valeur de service 0.712972 € × coefficient d'anticipation 0.7500",
+      "montant": 134.28383773886185,
       "regime": "asv_auxiliaires_medicaux",
       "type_calcul": "points"
      },
@@ -4259,12 +4259,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 3794.6319812111033,
+    "pension_annuelle": 3749.870701964816,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "251.12 points × valeur de service 0.712972 €",
-      "montant": 179.04511698514915,
+      "detail": "251.12 points × valeur de service 0.712972 € × coefficient d'anticipation 0.7500",
+      "montant": 134.28383773886185,
       "regime": "asv_auxiliaires_medicaux",
       "type_calcul": "points"
      },
@@ -4321,12 +4321,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 17308.840094433035,
+    "pension_annuelle": 17098.02118125651,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "1,127.13 points × valeur de service 1.246938 €",
-      "montant": 1405.4594211768494,
+      "detail": "1,127.13 points × valeur de service 1.246938 € × coefficient d'anticipation 0.8500",
+      "montant": 1194.640508000322,
       "regime": "asv_auxiliaires_medicaux",
       "type_calcul": "points"
      },
@@ -5701,12 +5701,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 18562.75783092391,
+    "pension_annuelle": 18411.841310167216,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "1,175.35 points × valeur de service 1.284015 €",
-      "montant": 1509.1652075669547,
+      "detail": "1,175.35 points × valeur de service 1.284015 € × coefficient d'anticipation 0.9000",
+      "montant": 1358.2486868102592,
       "regime": "asv_auxiliaires_medicaux",
       "type_calcul": "points"
      },
@@ -7311,12 +7311,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 3794.6319812111033,
+    "pension_annuelle": 3749.870701964816,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "251.12 points × valeur de service 0.712972 €",
-      "montant": 179.04511698514915,
+      "detail": "251.12 points × valeur de service 0.712972 € × coefficient d'anticipation 0.7500",
+      "montant": 134.28383773886185,
       "regime": "asv_auxiliaires_medicaux",
       "type_calcul": "points"
      },
@@ -8635,7 +8635,7 @@
     ],
     "liquidation_ouverte": true,
     "motif_ouverture": "carriere_longue",
-    "pension_annuelle": 18948.86607071506,
+    "pension_annuelle": 18674.86200238746,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -8645,8 +8645,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "1,237.53 points × valeur de service 1.542606 € ; servie à partir du 1er janvier 2027, 1,909.02 € de 2027, soit 1,826.69 € de 2024",
-      "montant": 1826.6937888506673,
+      "detail": "1,237.53 points × valeur de service 1.542606 € × coefficient d'anticipation 0.8500 ; servie à partir du 1er janvier 2027, 1,622.67 € de 2027, soit 1,552.69 € de 2024",
+      "montant": 1552.689720523067,
       "regime": "asv_auxiliaires_medicaux",
       "type_calcul": "points"
      },
@@ -9982,6 +9982,69 @@
    "annee_liquidation": 2033,
    "coefficient_euros_constants": 0.8856437756216318,
    "mois_liquidation": 6,
+   "reversion": null
+  }
+ },
+ "668d67352f1eee4c": {
+  "cas": {
+   "requete": {
+    "age_reference": "fixe_apres_bascule",
+    "bascule": "2026",
+    "conversion_acquis": "reference",
+    "debut": "25",
+    "emploi": "cor_2026",
+    "enfants": "0",
+    "euros": "2026",
+    "inaptitude": "oui",
+    "indexation": "triple_lock_inverse",
+    "liquidation": "60",
+    "naissance": "1950-03-10",
+    "primes": "0",
+    "profil": "plat",
+    "projection": "cor_reference",
+    "salaire": "1.5",
+    "sexe": "H",
+    "statut": "auxiliaire_medical",
+    "stock": "prix",
+    "table": "unisexe"
+   }
+  },
+  "cle": "1950-03-10|25|60|oui",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 8819.161784901798,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "880.41 points × valeur de service 1.166742 €",
+      "montant": 1027.215208754008,
+      "regime": "asv_auxiliaires_medicaux",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "cotisations revalorisées 26,729 € × rendement 13.10% × coefficient d'anticipation 0.7500",
+      "montant": 2626.1275534947895,
+      "regime": "carpimko_complementaire",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "14,385.46 points × valeur de service 0.532 € × coefficient d'anticipation 0.6750",
+      "montant": 5165.8190226530005,
+      "regime": "cnavpl",
+      "type_calcul": "points"
+     }
+    ],
+    "taux_liquidation": 0.0,
+    "trimestres_requis": 0,
+    "trimestres_valides": 140
+   },
+   "annee_liquidation": 2010,
+   "coefficient_euros_constants": 1.2994089914017106,
+   "mois_liquidation": 4,
    "reversion": null
   }
  },
@@ -11784,12 +11847,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 5311.999467905624,
+    "pension_annuelle": 5234.444505733404,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "373.62 points × valeur de service 0.830297 €",
-      "montant": 310.2198486888797,
+      "detail": "373.62 points × valeur de service 0.830297 € × coefficient d'anticipation 0.7500",
+      "montant": 232.6648865166598,
       "regime": "asv_auxiliaires_medicaux",
       "type_calcul": "points"
      },
@@ -13571,7 +13634,7 @@
     ],
     "liquidation_ouverte": true,
     "motif_ouverture": "carriere_longue",
-    "pension_annuelle": 17224.515355269952,
+    "pension_annuelle": 16872.225258955685,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -13581,8 +13644,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "1,130.10 points × valeur de service 1.246938 € ; servie à partir du 1er décembre 2017, 1,409.16 € de 2017, soit 1,409.16 € de 2017",
-      "montant": 1409.1603852570752,
+      "detail": "1,130.10 points × valeur de service 1.246938 € × coefficient d'anticipation 0.7500 ; servie à partir du 1er décembre 2017, 1,056.87 € de 2017, soit 1,056.87 € de 2017",
+      "montant": 1056.8702889428064,
       "regime": "asv_auxiliaires_medicaux",
       "type_calcul": "points"
      },
@@ -15497,12 +15560,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 4351.924082910363,
+    "pension_annuelle": 4295.280400144557,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "300.12 points × valeur de service 0.754935 €",
-      "montant": 226.57473106322158,
+      "detail": "300.12 points × valeur de service 0.754935 € × coefficient d'anticipation 0.7500",
+      "montant": 169.93104829741617,
       "regime": "asv_auxiliaires_medicaux",
       "type_calcul": "points"
      },
@@ -17768,6 +17831,68 @@
    "reversion": null
   }
  },
+ "b97d0628a3e4758d": {
+  "cas": {
+   "requete": {
+    "age_reference": "fixe_apres_bascule",
+    "bascule": "2026",
+    "conversion_acquis": "reference",
+    "debut": "17",
+    "emploi": "cor_2026",
+    "enfants": "0",
+    "euros": "2026",
+    "indexation": "triple_lock_inverse",
+    "liquidation": "63",
+    "naissance": "1964-03-10",
+    "primes": "0",
+    "profil": "plat",
+    "projection": "cor_reference",
+    "salaire": "1.5",
+    "sexe": "H",
+    "statut": "auxiliaire_medical",
+    "stock": "prix",
+    "table": "unisexe"
+   }
+  },
+  "cle": "1964-03-10|17|63|non",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 20717.896179611107,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "1,297.93 points × valeur de service 1.542606 € × coefficient d'anticipation 0.9000",
+      "montant": 1801.9788051358612,
+      "regime": "asv_auxiliaires_medicaux",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "cotisations revalorisées 86,384 € × rendement 5.49% × coefficient de majoration 1.0125",
+      "montant": 4801.780723677516,
+      "regime": "carpimko_complementaire",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "20,760.93 points × valeur de service 0.671448 € × coefficient de majoration 1.0125",
+      "montant": 14114.136650797729,
+      "regime": "cnavpl",
+      "type_calcul": "points"
+     }
+    ],
+    "taux_liquidation": 0.0,
+    "trimestres_requis": 0,
+    "trimestres_valides": 184
+   },
+   "annee_liquidation": 2027,
+   "coefficient_euros_constants": 0.9828009828009827,
+   "mois_liquidation": 4,
+   "reversion": null
+  }
+ },
  "b9e67e14b3db8354": {
   "cas": {
    "requete": {
@@ -19104,6 +19229,68 @@
    "reversion": null
   }
  },
+ "cdbef7717edcbd46": {
+  "cas": {
+   "requete": {
+    "age_reference": "fixe_apres_bascule",
+    "bascule": "2026",
+    "conversion_acquis": "reference",
+    "debut": "25",
+    "emploi": "cor_2026",
+    "enfants": "0",
+    "euros": "2026",
+    "indexation": "triple_lock_inverse",
+    "liquidation": "60",
+    "naissance": "1950-03-10",
+    "primes": "0",
+    "profil": "plat",
+    "projection": "cor_reference",
+    "salaire": "1.5",
+    "sexe": "H",
+    "statut": "auxiliaire_medical",
+    "stock": "prix",
+    "table": "unisexe"
+   }
+  },
+  "cle": "1950-03-10|25|60|non",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 8562.357982713296,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "880.41 points × valeur de service 1.166742 € × coefficient d'anticipation 0.7500",
+      "montant": 770.411406565506,
+      "regime": "asv_auxiliaires_medicaux",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "cotisations revalorisées 26,729 € × rendement 13.10% × coefficient d'anticipation 0.7500",
+      "montant": 2626.1275534947895,
+      "regime": "carpimko_complementaire",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "14,385.46 points × valeur de service 0.532 € × coefficient d'anticipation 0.6750",
+      "montant": 5165.8190226530005,
+      "regime": "cnavpl",
+      "type_calcul": "points"
+     }
+    ],
+    "taux_liquidation": 0.0,
+    "trimestres_requis": 0,
+    "trimestres_valides": 140
+   },
+   "annee_liquidation": 2010,
+   "coefficient_euros_constants": 1.2994089914017106,
+   "mois_liquidation": 4,
+   "reversion": null
+  }
+ },
  "ce8944b4a42fee70": {
   "cas": {
    "requete": {
@@ -20293,12 +20480,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 5085.5539007443585,
+    "pension_annuelle": 5075.467088392215,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "275.62 points × valeur de service 0.731923 €",
-      "montant": 201.73624704286948,
+      "detail": "275.62 points × valeur de service 0.731923 € × coefficient d'anticipation 0.9500",
+      "montant": 191.649434690726,
       "regime": "asv_auxiliaires_medicaux",
       "type_calcul": "points"
      },
@@ -22274,12 +22461,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 19114.86565068544,
+    "pension_annuelle": 18961.679567667245,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "1,187.32 points × valeur de service 1.290178 €",
-      "montant": 1531.8608301819447,
+      "detail": "1,187.32 points × valeur de service 1.290178 € × coefficient d'anticipation 0.9000",
+      "montant": 1378.6747471637502,
       "regime": "asv_auxiliaires_medicaux",
       "type_calcul": "points"
      },
@@ -23437,12 +23624,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 18478.79225708469,
+    "pension_annuelle": 18331.03127829324,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "1,163.50 points × valeur de service 1.269969 €",
-      "montant": 1477.6097879144706,
+      "detail": "1,163.50 points × valeur de service 1.269969 € × coefficient d'anticipation 0.9000",
+      "montant": 1329.8488091230236,
       "regime": "asv_auxiliaires_medicaux",
       "type_calcul": "points"
      },

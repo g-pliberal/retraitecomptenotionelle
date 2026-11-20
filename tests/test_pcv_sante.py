@@ -211,3 +211,92 @@ def test_les_deux_moteurs_servent_les_memes_pcv():
     assert "asv_auxiliaires_medicaux" in texte and "asv_chirurgiens_dentistes" in texte
     assert "asv_sages_femmes" in texte and "asv_directeurs_laboratoire" in texte
     assert valeur_figee("pcv des professions de santé", sorties) == sorties
+
+
+def _coefficient(detail: str) -> float:
+    """Le coefficient d'anticipation que le détail écrit, 1 sans lui."""
+    marque = "coefficient d'anticipation "
+    if marque not in detail:
+        return 1.0
+    return float(detail.split(marque)[1].split()[0])
+
+
+@pytest.mark.parametrize("naissance,age,coefficient", [
+    # Né en 1964, entré à 17 ans : sa durée est réunie et son régime de base
+    # au taux plein à chacun de ces âges.
+    (1964, 63.0, 0.90), (1964, 64.0, 0.95), (1964, 65.0, 1.0),
+    # L'âge se lit en années révolues : à 62 ans et 9 mois, le coefficient de 62 ans.
+    (1964, 62.75, 0.85),
+    # Les générations que leur régime de base laisse partir à 60 ans.
+    (1950, 60.0, 0.75), (1950, 61.0, 0.80), (1950, 62.0, 0.85),
+])
+def test_l_asv_de_l_auxiliaire_medical_n_a_le_taux_plein_qu_a_65_ans(
+        simulateur, naissance, age, coefficient):
+    """Règlement des prestations complémentaires de vieillesse de la CARPIMKO
+    (arrêté du 10 juillet 2026, annexe, II, JORFARTI000054435915). Article 3,
+    « Taux plein » : « Etre âgé de 65 ans révolus ou de 60 ans en cas
+    d'inaptitude au travail dûment constatée ». Article 4, « Décote » : « à
+    partir de l'âge de 60 ans, avec application des coefficients
+    d'anticipation suivants : 0,75 si la pension est liquidée à l'âge de 60
+    ans ; 0,80 […] 61 ans ; 0,85 […] 62 ans ; 0,90 […] 63 ans ; 0,95 […] 64
+    ans ». Le règlement ne nomme ni la durée d'assurance ni le taux plein du
+    régime de base : jusqu'au 20 novembre 2026, le moteur servait l'ASV sans
+    coefficient à qui avait sa durée."""
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=naissance, sexe="H",
+        metiers=[Metier(affiliation="auxiliaire_medical", age_debut=17.0)],
+        age_liquidation=age, macro=simulateur.macro)
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    pension = {p.regime: p for p in resultat.pensions_par_regime}[
+        "asv_auxiliaires_medicaux"]
+    assert pension.montant > 0
+    assert _coefficient(pension.detail) == pytest.approx(coefficient)
+
+
+#: La requête du formulaire d'un auxiliaire médical, au salaire d'un Smic et demi.
+REQUETE_D_AUXILIAIRE_MEDICAL = {
+    "age_reference": "fixe_apres_bascule", "bascule": "2026",
+    "conversion_acquis": "reference", "emploi": "cor_2026",
+    "enfants": "0", "euros": "2026", "indexation": "triple_lock_inverse",
+    "primes": "0", "profil": "plat", "projection": "cor_reference",
+    "salaire": "1.5", "sexe": "H", "stock": "prix", "table": "unisexe",
+    "statut": "auxiliaire_medical",
+}
+
+#: Le coefficient attendu de chaque cas servi par le portage.
+AUXILIAIRES_SERVIS = {
+    # Né le 10 mars 1964, entré à 17 ans, parti à 63 ans, sa durée réunie :
+    # « 0,90 si la pension est liquidée à l'âge de 63 ans » (article 4).
+    ("1964-03-10", "17", "63", "non"): 0.90,
+    # Né le 10 mars 1950, entré à 25 ans, inapte, parti à 60 ans : « ou de 60
+    # ans en cas d'inaptitude au travail dûment constatée » (article 3).
+    ("1950-03-10", "25", "60", "oui"): 1.0,
+    # Le même, valide : « 0,75 si la pension est liquidée à l'âge de 60 ans ».
+    ("1950-03-10", "25", "60", "non"): 0.75,
+}
+
+
+@pytest.fixture(scope="module")
+def auxiliaires_servis():
+    from outils_pont import servi_et_fige
+
+    cas = [{"cle": "|".join(cle),
+            "requete": {**REQUETE_D_AUXILIAIRE_MEDICAL, "naissance": cle[0],
+                        "debut": cle[1], "liquidation": cle[2],
+                        **({"inaptitude": "oui"} if cle[3] == "oui" else {})}}
+           for cle in AUXILIAIRES_SERVIS]
+    servis, refus = servi_et_fige(cas)
+    assert refus == {}, refus
+    return {cle: {p["regime"]: p for p in servi["actuel"]["pensions_par_regime"]}
+            for cle, servi in servis.items()}
+
+
+@pytest.mark.parametrize("cle", AUXILIAIRES_SERVIS,
+                         ids=["|".join(cle) for cle in AUXILIAIRES_SERVIS])
+def test_l_asv_de_l_auxiliaire_medical_au_coefficient_de_son_age(
+        auxiliaires_servis, cle):
+    """Les articles 3 et 4 du même règlement, servis par le portage : le
+    coefficient de l'âge à qui a sa durée, aucun à l'inapte de 60 ans."""
+    asv = auxiliaires_servis["|".join(cle)]["asv_auxiliaires_medicaux"]
+    assert asv["montant"] > 0
+    assert _coefficient(asv["detail"]) == pytest.approx(AUXILIAIRES_SERVIS[cle])

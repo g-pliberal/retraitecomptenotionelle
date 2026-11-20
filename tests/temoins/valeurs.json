@@ -12,7 +12,7 @@
   "valeur": "ed4a8c8332c4ddce"
  },
  "test_cumul_activites.py::cumuls_tires_au_hasard": {
-  "valeur": "36d3961be3fd7613"
+  "valeur": "e865962a41dafc33"
  },
  "test_cycle_de_vie_portage.py::contributions agent_chemins_fer_secondaires-1930": {
   "valeur": "713dde7075f725b1"
@@ -228,6 +228,6 @@
   "valeur": "95c5673df3a03558"
  },
  "test_web.py::carrières tirées au hasard": {
-  "valeur": "263ddc6766cd11ab"
+  "valeur": "3cc3042e6a5ad945"
  }
 }

@@ -23,13 +23,15 @@ population: >-
   deux tiers du forfait et 60 % de l'ajustement ; la fiche porte la part
   de l'auxiliaire, que le statut, sans employeur, paie, et les fractions
   `part_assurance_maladie_*` celle des caisses, que le compte notionnel
-  reçoit comme une part patronale. ÂGES : la retraite « à 65 ans », et
-  « par anticipation dès l'âge de 60 ans », avec « un coefficient
-  réducteur allant de 0,75 à 60 ans à 0,95 à 64 ans » (guide de
-  l'assurance vieillesse des professions libérales, CNAVPL, 2025, p.
-  95-96), soit 1,25 % par trimestre manquant ; présumés à toutes les
-  années. Le règlement de la section approuvé par l'arrêté du 10 juillet
-  2026 n'est pas lu.
+  reçoit comme une part patronale. ÂGES : le taux plein « à 65 ans révolus
+  ou de 60 ans en cas d'inaptitude au travail », et dès 60 ans des
+  « coefficients d'anticipation » par année d'âge, de 0,75 à 60 ans à
+  0,95 à 64 ans, que la durée d'assurance n'annule pas (règlement de la
+  section approuvé par l'arrêté du 10 juillet 2026, II, articles 3 et 4,
+  JORFARTI000054435915 ; mêmes coefficients au guide de la CNAVPL de
+  2025, p. 95-96) ; présumés à toutes les années d'avant : la fiche
+  `asv_auxiliaires_medicaux_coefficients_d_age`. `decote_par_trimestre`
+  ne sert plus au coefficient, que la fiche compte par année.
 hors_repartition: false
 inventaire:
   section: non_salaries
@@ -70,6 +72,13 @@ periodes:
     valeur_point_euros: 1.49
     valeur_point_annee: 2025
     decote_par_trimestre: 0.0125
+    abattement_points: asv_auxiliaires_medicaux_coefficients_d_age
+    decote_annulee_par_la_duree: asv_auxiliaires_medicaux_coefficients_d_age
+    age_sans_coefficient_de_l_inapte: 60
+    categories_sans_coefficient: [taux_plein_anciens_combattants_prisonniers]
+    textes_des_renvois:
+      abattement_points: {id: JORFARTI000054435915, depuis: "2026-07-18"}
+      decote_annulee_par_la_duree: {id: JORFARTI000054435915, depuis: "2026-07-18"}
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -107,6 +116,10 @@ periodes:
     valeur_point_euros: 1.49
     valeur_point_annee: 2025
     decote_par_trimestre: 0.0125
+    abattement_points: asv_auxiliaires_medicaux_coefficients_d_age
+    decote_annulee_par_la_duree: asv_auxiliaires_medicaux_coefficients_d_age
+    age_sans_coefficient_de_l_inapte: 60
+    categories_sans_coefficient: [taux_plein_anciens_combattants_prisonniers]
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -136,6 +149,10 @@ periodes:
     valeur_point_euros: 1.49
     valeur_point_annee: 2025
     decote_par_trimestre: 0.0125
+    abattement_points: asv_auxiliaires_medicaux_coefficients_d_age
+    decote_annulee_par_la_duree: asv_auxiliaires_medicaux_coefficients_d_age
+    age_sans_coefficient_de_l_inapte: 60
+    categories_sans_coefficient: [taux_plein_anciens_combattants_prisonniers]
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -162,6 +179,10 @@ periodes:
     valeur_point_euros: 1.49
     valeur_point_annee: 2025
     decote_par_trimestre: 0.0125
+    abattement_points: asv_auxiliaires_medicaux_coefficients_d_age
+    decote_annulee_par_la_duree: asv_auxiliaires_medicaux_coefficients_d_age
+    age_sans_coefficient_de_l_inapte: 60
+    categories_sans_coefficient: [taux_plein_anciens_combattants_prisonniers]
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -198,6 +219,10 @@ periodes:
     valeur_point_euros: 1.49
     valeur_point_annee: 2025
     decote_par_trimestre: 0.0125
+    abattement_points: asv_auxiliaires_medicaux_coefficients_d_age
+    decote_annulee_par_la_duree: asv_auxiliaires_medicaux_coefficients_d_age
+    age_sans_coefficient_de_l_inapte: 60
+    categories_sans_coefficient: [taux_plein_anciens_combattants_prisonniers]
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -227,6 +252,10 @@ periodes:
     valeur_point_euros: 1.49
     valeur_point_annee: 2025
     decote_par_trimestre: 0.0125
+    abattement_points: asv_auxiliaires_medicaux_coefficients_d_age
+    decote_annulee_par_la_duree: asv_auxiliaires_medicaux_coefficients_d_age
+    age_sans_coefficient_de_l_inapte: 60
+    categories_sans_coefficient: [taux_plein_anciens_combattants_prisonniers]
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
