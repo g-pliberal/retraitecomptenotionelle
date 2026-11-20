@@ -484,12 +484,12 @@ comparables et suppose du même coup qu'aucune réforme ne déplace son propre
 dénominateur. C'est une omission qui joue dans les deux sens, et la seule
 défense du chiffrage est qu'elle est symétrique.
 
-### 6. La grille : treize carrières, plafonnées à 2,5 fois le salaire moyen
+### 6. La grille : treize carrières, plafonnées à 2,2 fois le salaire moyen
 
 Tout l'agrégat repose sur le rapport de deux masses calculées sur treize cas
 types. Quatre conséquences à connaître :
 
-- **Toute règle qui ne mord qu'au-dessus de 2,5 fois le salaire moyen est
+- **Toute règle qui ne mord qu'au-dessus de 2,2 fois le salaire moyen est
   invisible dans l'agrégat**, en recette comme en dépense. Le déplafonnement de
   l'assiette décidé en septembre 2026 a laissé coût, solde et coefficients
   d'équilibre identiques au centime, faute que personne dans la grille gagne

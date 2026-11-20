@@ -1744,6 +1744,14 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
     6,0 à 11,2 milliards, environ 1,84 million et 9,4 milliards (2,4 et 2,0
     fois).
 
+    REMESURÉ LE 20 NOVEMBRE 2026, la complémentaire de la Cipav comptée en
+    points et le libéral type du coût ramené à 1,5 salaire moyen : le facteur
+    passe de 0,7365 à 0,7224, les bénéficiaires à 8,71 millions (11,55 fois
+    les allocataires, 9,70 fois les personnes avec leurs conjoints), la
+    garantie à 37,20 milliards d'euros courants de 2024 (8,09 fois les
+    dépenses), le complément moyen à 356 euros par mois. Les chiffres des
+    paragraphes d'avant sont ceux du 9 novembre.
+
     Ce n'est pas un écart du modèle à corriger : la garantie n'est pas l'Aspa
     — 800 euros par personne et 250 de plus à qui vit seul, sur la seule
     pension, quand l'Aspa a son plafond, d'une personne seule ou d'un couple —,
@@ -1819,7 +1827,10 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
     macro = simulateur.macro
     recours = parametres.taux_recours_garantie
     assert garantie.ayants_droit * recours == pytest.approx(garantie.beneficiaires)
-    assert 0.73 < garantie.facteur < 0.74
+    # Remesuré le 20 novembre 2026 : 0,7224, la complémentaire de la Cipav
+    # comptée en points (le système actuel sert plus aux libéraux par euro
+    # cotisé) et le libéral type ramené à 1,5 salaire moyen ; 0,7365 avant.
+    assert 0.72 < garantie.facteur < 0.73
     en_courants = ligne.cout(module_cout.COMPOSANTE_GARANTIE)
     assert en_courants == pytest.approx(
         ligne.cout_constants(module_cout.COMPOSANTE_GARANTIE)
@@ -1877,8 +1888,12 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
         # Mesuré le 15 novembre 2026, l'exploitant agricole parti un an plus
         # tôt par la porte des vingt ans (action 192, étape 2) ; avant : 7 496,79
         # et 29 009,54 au 15, 7 590,17 et 28 874,77 au 1er.
-        15: ((7_250, 7_350), (29_085, 29_145)),   # mesuré : 7 304,40 et 29 115,57
-        1: ((7_275, 7_375), (29_010, 29_070)),    # mesuré : 7 326,25 et 29 041,87
+        # Remesuré le 20 novembre 2026, la Cipav comptée en points et le
+        # libéral type à 1,5 salaire moyen : la garantie passe de 36 420 à
+        # 37 201 (au 1er : 37 158) ; avant : 7 304,40 et 29 115,57 au 15,
+        # 7 326,25 et 29 041,87 au 1er.
+        15: ((7_250, 7_350), (29_868, 29_928)),   # mesuré : 7 303,14 et 29 898,15
+        1: ((7_275, 7_375), (29_803, 29_863)),    # mesuré : 7 324,98 et 29 832,68
     }[jour]
     assert bas_minima < minima < haut_minima
     assert bas_net < en_courants - minima < haut_net

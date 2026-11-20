@@ -90,6 +90,24 @@ periodes:
       AUCUNE MAJORATION POUR REPORT SERVIE AVANT 2008 : les statuts
       d'avant 2007 ne sont pas lus (fiche `surcote_par_age_seul`,
       version `avant_2007`).
+      LA PENSION EST « POINTS ACQUIS × VALEUR DE SERVICE » depuis le
+      20 novembre 2026 (article 5-2 du décret) : chaque année inscrit les
+      points de sa classe, que `valeurs_point.csv` rend par un prix du
+      point, la cotisation de la classe 1 divisée par quarante jusqu'en
+      2012, celle de la classe A par 36 ensuite, le coût d'acquisition
+      depuis 2023. Jusque-là le moteur portait les cotisations aux prix et
+      les servait au rendement de l'année du départ, un tiers trop bas pour
+      qui avait cotisé avant 2013. DEUX RÉSERVES. La conversion de 2013 —
+      les points d'avant multipliés par dix, le point passé de 25,47 € à
+      2,60 € — n'est lue que chez deux tiers qui citent la caisse (Neovia,
+      Toutsurmesfinances), le décret n° 2012-1522 disant seulement la
+      réforme « sans impact pour les points attribués au titre des
+      périodes antérieures » ; les valeurs de service de 2011 à 2014 en
+      viennent aussi, et rien n'est connu avant 2011, où la valeur de 2011
+      est ramenée par les prix. Et aucun exemple officiel ne part d'une
+      carrière : la caisse ne publie que « 7 500 points × 2,63 = 19 725 € »
+      (fiche pratique de 2018) et les points d'une année (« 72,13 points »
+      pour 3 418,75 € en 2026).
   - debut: 2000
     fin: 2007
     type_calcul: points

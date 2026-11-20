@@ -684,7 +684,11 @@ def test_les_points_de_la_cnavpl_sont_au_prorata_des_parts_du_forfait(simulateur
                                   2026)
     assert points["cnavpl"] == [pytest.approx(2_706.05 / 7.53, rel=1e-3),
                                 pytest.approx(579.07 / 179.76, rel=1e-3)]
-    assert cotisations["cipav_complementaire"] == pytest.approx(3_418.75, rel=1e-6)
+    # La complémentaire s'inscrit en points, au coût d'acquisition : les
+    # « 72,13 points » de la fiche.
+    assert "cipav_complementaire" not in cotisations
+    assert sum(points["cipav_complementaire"]) == pytest.approx(3_418.75 / 47.40, rel=1e-6)
+    assert sum(points["cipav_complementaire"]) == pytest.approx(72.13, abs=0.005)
     # 2020 : D. 131-5-3 affecte 25 % du forfait de 22 % à la première tranche,
     # 5 % à la seconde et 20 % à la complémentaire ; 40 000 € de recettes y
     # versent 2 200, 440 et 1 760 €. 525 points pour la cotisation d'un
@@ -695,4 +699,7 @@ def test_les_points_de_la_cnavpl_sont_au_prorata_des_parts_du_forfait(simulateur
     assert points["cnavpl"] == [
         pytest.approx(525 * 2_200.0 / (41_136.0 * 0.0823), rel=1e-9),
         pytest.approx(25 * 440.0 / (5 * 41_136.0 * 0.0187), rel=1e-9)]
-    assert cotisations["cipav_complementaire"] == pytest.approx(1_760.0, rel=1e-9)
+    # Les 1 760 € de la complémentaire, au prix du point de 2020 : la classe
+    # A, 1 392 € (décret n° 2020-1738), porte attribution de 36 points.
+    assert sum(points["cipav_complementaire"]) == pytest.approx(
+        1_760.0 / (1_392.0 / 36), rel=1e-6)

@@ -2399,6 +2399,28 @@
    "valeurs": 3,
    "verifiee_le": "2026-11-20"
   },
+  "valeurs_point_cipav_estimees": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "3f2f47af7ebb8c8c",
+   "identiques": 10,
+   "niveau": "estimee",
+   "source": "Cotisation de la classe de référence ramenée au rapport des plafonds pour les exercices sans décret lu ; valeur de service de 2011 à 2014 lue chez des tiers qui citent la caisse",
+   "valeurs": 10,
+   "verifiee_le": "2026-11-20"
+  },
+  "valeurs_point_cipav_saisies": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "afb949586251cc60",
+   "identiques": 54,
+   "niveau": "moyenne",
+   "source": "Décret n° 79-262, article 2 (points des classes, coût d'acquisition du point), décrets annuels des cotisations, fiches pratiques de la Cipav de 2018 à 2026 (valeur de service)",
+   "valeurs": 54,
+   "verifiee_le": "2026-11-20"
+  },
   "valeurs_point_cnavpl": {
    "ajoutees": 0,
    "colonne": "valeur",

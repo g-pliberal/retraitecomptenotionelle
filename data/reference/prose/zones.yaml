@@ -277,7 +277,7 @@ fichiers:
       - "Ce que la décision rend : **+1,19 point"
       - "**Et la part est contrôlée chez un autre producteur.**"
       - "Ce qui reste : la part est très légèrement SURESTIMÉE"
-      - "5. **La grille ne monte pas au-delà de 2,5 fois le salaire moyen.**"
+      - "5. **La grille ne monte pas au-delà de 2,2 fois le salaire moyen.**"
       # Ce que la grille élargie de `scripts/grille_large.py` a mesuré le
       # 5 octobre 2026, et le minimum vieillesse qu'elle a trouvé dans la
       # masse du scénario 1 : deux mesures de quelques minutes, faites un jour.

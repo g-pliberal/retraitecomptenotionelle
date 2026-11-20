@@ -555,10 +555,13 @@ CAS_TYPES: tuple[CasType, ...] = (
         code="profession_liberale",
         libelle="Profession libérale",
         affiliation="profession_liberale",
-        age_debut=27, age_liquidation=66, niveau_salaire=2.5,
+        age_debut=27, age_liquidation=66, niveau_salaire=1.5,
         caisses=("cnavpl",),
         commentaire="Régime de base CNAVPL et complémentaire Cipav, la section par "
-                    "défaut. Un libéral d'une section spécialisée — auxiliaires "
+                    "défaut, à 1,5 salaire moyen depuis le 20 novembre 2026 : à 2,5, "
+                    "la complémentaire comptée en points le portait au-dessus des "
+                    "carrières complètes que la DREES observe (3 220 € par mois). "
+                    "Un libéral d'une section spécialisée — auxiliaires "
                     "médicaux, pharmaciens, notaires — aurait un complémentaire "
                     "différent, et celui-là n'est pas paramétré. Il a porté "
                     "jusqu'au 22 septembre 2026 une règle à lui, « ouverture plus "

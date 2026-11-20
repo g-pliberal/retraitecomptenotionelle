@@ -6,13 +6,13 @@
   "valeur": "dab6c9a3438a4ab0"
  },
  "test_avantages.py::par_carriere::1960": {
-  "valeur": "72236ae2bb92db18"
+  "valeur": "9cfcafffe4595552"
  },
  "test_cout.py::grille du coût bâtie": {
-  "valeur": "ed4a8c8332c4ddce"
+  "valeur": "8320b50a8e185a69"
  },
  "test_cumul_activites.py::cumuls_tires_au_hasard": {
-  "valeur": "1295a88d930f67f2"
+  "valeur": "8555881a838af527"
  },
  "test_cycle_de_vie_portage.py::contributions agent_chemins_fer_secondaires-1930": {
   "valeur": "713dde7075f725b1"
@@ -51,7 +51,7 @@
   "valeur": "0a9e3641e180b5f8"
  },
  "test_cycle_de_vie_script.py::demandes de l'étude, écrites": {
-  "valeur": "48ea1f6fe345f7f8"
+  "valeur": "4bca9a963f319de5"
  },
  "test_flux_fonction_publique.py::journal de la liquidation des statutaires": {
   "valeur": "ecdf1afde900daae"
@@ -102,7 +102,7 @@
   "valeur": "f15ba18caf47a8a1"
  },
  "test_independants.py::test_l_assiette_minimale_de_2022_est_celle_du_decret_n_2022_1438": {
-  "valeur": "e6298a369c77d85c"
+  "valeur": "7999c6de06290f1d"
  },
  "test_independants.py::test_l_assiette_minimale_des_artisans_et_commercants_court_depuis_1973": {
   "valeur": "92baa091df9a4195"
@@ -126,34 +126,34 @@
   "valeur": "bf605e20f949e963"
  },
  "test_pont.py::carrières de la grille": {
-  "valeur": "7905fa657ea4127f"
+  "valeur": "5c6079634a23369f"
  },
  "test_pont.py::cases": {
-  "valeur": "920249f18b744f33"
+  "valeur": "776e6a34f4783aa0"
  },
  "test_pont.py::cases de la grille des carrières types": {
-  "valeur": "2f0ac38f5e3d9dd2"
+  "valeur": "62bf65ec89af5f6e"
  },
  "test_pont.py::cases de la grille et leurs refus": {
   "valeur": "9ac1714aca64af49"
  },
  "test_pont.py::cases sous la proposition prospective": {
-  "valeur": "0f46e3e6334361f6"
+  "valeur": "246a69d771ed993b"
  },
  "test_pont.py::cases sous le barème ((1.0, 0.2815, 0.1145), (8.0, 0.2215, 0.0904), (None, 0.024, 0.004))": {
-  "valeur": "6f3861882a8bcf52"
+  "valeur": "5943c67310e04678"
  },
  "test_pont.py::cases sous le barème ((None, 0.229, 0.095),)": {
-  "valeur": "c2205fa0f2df6e83"
+  "valeur": "40b4905e5bd830d0"
  },
  "test_pont.py::cases sous le stock acquis": {
-  "valeur": "38b7acdb4799c0bd"
+  "valeur": "21594f80454dc80b"
  },
  "test_pont.py::cases sous le stock droit_commun": {
-  "valeur": "0cc1dcd8c08412bc"
+  "valeur": "d38e467920874220"
  },
  "test_pont.py::cases sous le stock tout_droit": {
-  "valeur": "0cc1dcd8c08412bc"
+  "valeur": "d38e467920874220"
  },
  "test_pont.py::comptes de la grille du coût sous le barème ((1.0, 0.2815, 0.1145), (8.0, 0.2215, 0.0904), (None, 0.024, 0.004))": {
   "valeur": "213177fcfd82031a"
@@ -228,6 +228,6 @@
   "valeur": "95c5673df3a03558"
  },
  "test_web.py::carrières tirées au hasard": {
-  "valeur": "dbbd63e0393ca83b"
+  "valeur": "f5f0b21b0cee9d2f"
  }
 }

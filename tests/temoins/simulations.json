@@ -45812,7 +45812,7 @@
        "code": "majoration_duree_assurance",
        "detail": "16 trimestres pour 2 enfants, au titre du régime « cnavpl »",
        "libelle": "Majoration de durée d'assurance",
-       "montant": 3297.044734062345
+       "montant": 3861.0960773192237
       }
      ],
      "liquidation_ouverte": true,
@@ -45820,8 +45820,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 97,782 € × rendement 6.10%",
-       "montant": 5964.7223792619925,
+       "detail": "3,104.84 points × valeur de service 2.89 €",
+       "montant": 8972.996209965338,
        "regime": "cipav_complementaire"
       },
       {
@@ -45830,12 +45830,12 @@
        "regime": "cnavpl"
       }
      ],
-     "pension_annuelle": 17584.238581665843,
-     "pension_annuelle_euros_constants": 17584.238581665843,
+     "pension_annuelle": 20592.51241236919,
+     "pension_annuelle_euros_constants": 20592.51241236919,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 1465.3532151388201,
-     "taux_remplacement": 0.36129546526203266,
-     "total_contributif": 14287.193847603497
+     "pension_mensuelle": 1716.0427010307658,
+     "taux_remplacement": 0.42310511873390894,
+     "total_contributif": 16731.416335049966
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -45900,12 +45900,12 @@
      "rente_capitalisation_obligatoire": 617.2750581650964,
      "rente_capitalisation_volontaire": 308.6375290825482,
      "taux_remplacement": 0.2712982943140825,
-     "variation_vs_actuel": -0.23349112586098864
+     "variation_vs_actuel": -0.3454671946814799
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 452256.68707439717,
-     "capital_notionnel": 452256.68707439717,
+     "capital_droits_acquis": 529627.7913259646,
+     "capital_notionnel": 529627.7913259646,
      "capital_par_regime": {
       "cipav_complementaire": 4512.244326772067,
       "cnavpl": 4254.805328145894
@@ -45914,25 +45914,25 @@
      "cotisations_employeur": 0.0,
      "cotisations_versees": 8767.049654917962,
      "droits_acquis": null,
-     "fiabilite": "moyenne",
+     "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 17584.238581665843,
-     "pension_annuelle_euros_constants": 17584.238581665843,
-     "pension_mensuelle": 1465.3532151388201,
-     "pension_totale": 17584.238581665843,
-     "pension_totale_euros_constants": 17584.238581665843,
-     "pension_totale_mensuelle": 1465.3532151388201,
+     "pension_annuelle": 20592.51241236919,
+     "pension_annuelle_euros_constants": 20592.51241236919,
+     "pension_mensuelle": 1716.0427010307658,
+     "pension_totale": 20592.51241236919,
+     "pension_totale_euros_constants": 20592.51241236919,
+     "pension_totale_mensuelle": 1716.0427010307658,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.36129546526203266,
+     "taux_remplacement": 0.42310511873390894,
      "variation_vs_actuel": 0.0
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 452256.68707439717,
-     "capital_notionnel": 452256.68707439717,
+     "capital_droits_acquis": 529627.7913259646,
+     "capital_notionnel": 529627.7913259646,
      "capital_par_regime": {
       "cipav_complementaire": 4512.244326772067,
       "cnavpl": 4254.805328145894
@@ -45941,19 +45941,19 @@
      "cotisations_employeur": 0.0,
      "cotisations_versees": 8767.049654917962,
      "droits_acquis": null,
-     "fiabilite": "moyenne",
+     "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 17584.238581665843,
-     "pension_annuelle_euros_constants": 17584.238581665843,
-     "pension_mensuelle": 1465.3532151388201,
-     "pension_totale": 17584.238581665843,
-     "pension_totale_euros_constants": 17584.238581665843,
-     "pension_totale_mensuelle": 1465.3532151388201,
+     "pension_annuelle": 20592.51241236919,
+     "pension_annuelle_euros_constants": 20592.51241236919,
+     "pension_mensuelle": 1716.0427010307658,
+     "pension_totale": 20592.51241236919,
+     "pension_totale_euros_constants": 20592.51241236919,
+     "pension_totale_mensuelle": 1716.0427010307658,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.36129546526203266,
+     "taux_remplacement": 0.42310511873390894,
      "variation_vs_actuel": 0.0
     },
     "notionnel_retroactif": {
@@ -45982,7 +45982,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.1563767377842644,
-     "variation_vs_actuel": -0.567177690229655
+     "variation_vs_actuel": -0.6304068874132203
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -46010,7 +46010,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.1563767377842644,
-     "variation_vs_actuel": -0.567177690229655
+     "variation_vs_actuel": -0.6304068874132203
     }
    },
    "unite": {
@@ -113992,8 +113992,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 123,891 € × rendement 6.10% × coefficient d'anticipation 0.8500",
-       "montant": 6423.770882874891,
+       "detail": "(1,193.59 points × valeur de service 3.62114 € + cotisations revalorisées 61,505 € × rendement 6.10%) × coefficient d'anticipation 0.8500",
+       "montant": 6862.8755096262785,
        "regime": "cipav_complementaire"
       },
       {
@@ -114002,12 +114002,12 @@
        "regime": "cnavpl"
       }
      ],
-     "pension_annuelle": 14676.795205167875,
-     "pension_annuelle_euros_constants": 11713.422315621307,
+     "pension_annuelle": 15115.899831919261,
+     "pension_annuelle_euros_constants": 12063.867890556576,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 1223.066267097323,
-     "taux_remplacement": 0.29631434552089747,
-     "total_contributif": 14676.795205167875
+     "pension_mensuelle": 1259.6583193266051,
+     "taux_remplacement": 0.30517956427418635,
+     "total_contributif": 15115.899831919261
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -114072,12 +114072,12 @@
      "rente_capitalisation_obligatoire": 2935.6590841500024,
      "rente_capitalisation_volontaire": 1467.8295420750012,
      "taux_remplacement": 0.29431471482020455,
-     "variation_vs_actuel": 8.483840399109432e-05
+     "variation_vs_actuel": -0.028966814793643603
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 173245.80102173536,
-     "capital_notionnel": 321157.84527152486,
+     "capital_droits_acquis": 183429.30286685267,
+     "capital_notionnel": 331341.34711664217,
      "capital_par_regime": {
       "regime_unifie": 147912.0442497895
      },
@@ -114086,31 +114086,31 @@
      "cotisations_versees": 141345.99120495564,
      "droits_acquis": {
       "age_conversion": 65.0,
-      "capital": 173245.80102173536,
-      "capital_a_la_bascule": 158226.63795599245,
+      "capital": 183429.30286685267,
+      "capital_a_la_bascule": 167527.30354251023,
       "coefficient_revalorisation": 1.094921836548914,
       "diviseur": 22.552558881843446,
-      "pension_figee": 7015.906212016462
+      "pension_figee": 7428.305782071704
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 12969.521620147329,
-     "pension_annuelle_euros_constants": 10350.862149720177,
-     "pension_mensuelle": 1080.7934683456108,
-     "pension_totale": 12969.521620147329,
-     "pension_totale_euros_constants": 10350.862149720177,
-     "pension_totale_mensuelle": 1080.7934683456108,
+     "pension_annuelle": 13380.76845497833,
+     "pension_annuelle_euros_constants": 10679.074663760157,
+     "pension_mensuelle": 1115.0640379148608,
+     "pension_totale": 13380.76845497833,
+     "pension_totale_euros_constants": 10679.074663760157,
+     "pension_totale_mensuelle": 1115.0640379148608,
      "rendement_cumule": 1.0464537620689425,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.2618456724966701,
-     "variation_vs_actuel": -0.11632468540675656
+     "taux_remplacement": 0.27014846169601664,
+     "variation_vs_actuel": -0.11478849398545021
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 173245.80102173536,
-     "capital_notionnel": 321157.84527152486,
+     "capital_droits_acquis": 183429.30286685267,
+     "capital_notionnel": 331341.34711664217,
      "capital_par_regime": {
       "regime_unifie": 147912.0442497895
      },
@@ -114119,26 +114119,26 @@
      "cotisations_versees": 141345.99120495564,
      "droits_acquis": {
       "age_conversion": 65.0,
-      "capital": 173245.80102173536,
-      "capital_a_la_bascule": 158226.63795599245,
+      "capital": 183429.30286685267,
+      "capital_a_la_bascule": 167527.30354251023,
       "coefficient_revalorisation": 1.094921836548914,
       "diviseur": 22.552558881843446,
-      "pension_figee": 7015.906212016462
+      "pension_figee": 7428.305782071704
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 12969.521620147329,
-     "pension_annuelle_euros_constants": 10350.862149720177,
-     "pension_mensuelle": 1080.7934683456108,
-     "pension_totale": 12969.521620147329,
-     "pension_totale_euros_constants": 10350.862149720177,
-     "pension_totale_mensuelle": 1080.7934683456108,
+     "pension_annuelle": 13380.76845497833,
+     "pension_annuelle_euros_constants": 10679.074663760157,
+     "pension_mensuelle": 1115.0640379148608,
+     "pension_totale": 13380.76845497833,
+     "pension_totale_euros_constants": 10679.074663760157,
+     "pension_totale_mensuelle": 1115.0640379148608,
      "rendement_cumule": 1.0464537620689425,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.2618456724966701,
-     "variation_vs_actuel": -0.11632468540675656
+     "taux_remplacement": 0.27014846169601664,
+     "variation_vs_actuel": -0.11478849398545021
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -114166,7 +114166,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.19803164768665138,
-     "variation_vs_actuel": -0.33168390028998695
+     "variation_vs_actuel": -0.3510979407889472
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -114194,7 +114194,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.19803164768665138,
-     "variation_vs_actuel": -0.33168390028998695
+     "variation_vs_actuel": -0.3510979407889472
     }
    },
    "unite": {
@@ -114358,8 +114358,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 30,229 € × rendement 6.10% × coefficient d'anticipation 0.8500",
-       "montant": 1567.398344627632,
+       "detail": "(436.72 points × valeur de service 3.62114 € + cotisations revalorisées 8,457 € × rendement 6.10%) × coefficient d'anticipation 0.8500",
+       "montant": 1782.6996542788042,
        "regime": "cipav_complementaire"
       },
       {
@@ -114368,12 +114368,12 @@
        "regime": "cnavpl"
       }
      ],
-     "pension_annuelle": 2702.189188942917,
-     "pension_annuelle_euros_constants": 2156.5936367122977,
+     "pension_annuelle": 2917.4904985940893,
+     "pension_annuelle_euros_constants": 2328.4237351633915,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 225.18243241190976,
-     "taux_remplacement": 0.39676604391292575,
-     "total_contributif": 2702.189188942917
+     "pension_mensuelle": 243.1242082161741,
+     "taux_remplacement": 0.4283790224671716,
+     "total_contributif": 2917.4904985940893
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -114438,12 +114438,12 @@
      "rente_capitalisation_obligatoire": 475.4051547537912,
      "rente_capitalisation_volontaire": 237.7025773768956,
      "taux_remplacement": 2.2341504347468026,
-     "variation_vs_actuel": 4.669639693112053
+     "variation_vs_actuel": 4.251238724277526
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 33452.010779428805,
-     "capital_notionnel": 53789.916863774866,
+     "capital_droits_acquis": 37660.334532900924,
+     "capital_notionnel": 57998.24061724699,
      "capital_par_regime": {
       "regime_unifie": 20337.906084346065
      },
@@ -114452,31 +114452,31 @@
      "cotisations_versees": 19435.073790681403,
      "droits_acquis": {
       "age_conversion": 65.0,
-      "capital": 33452.010779428805,
-      "capital_a_la_bascule": 30551.962398399373,
+      "capital": 37660.334532900924,
+      "capital_a_la_bascule": 34395.4547948396,
       "coefficient_revalorisation": 1.094921836548914,
       "diviseur": 19.011353010064862,
-      "pension_figee": 1607.0377727574023
+      "pension_figee": 1809.2060452841092
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 2536.1965722516675,
-     "pension_annuelle_euros_constants": 2024.1163762886442,
-     "pension_mensuelle": 211.34971435430563,
-     "pension_totale": 2536.1965722516675,
-     "pension_totale_euros_constants": 2024.1163762886442,
-     "pension_totale_mensuelle": 211.34971435430563,
+     "pension_annuelle": 2734.6191930843306,
+     "pension_annuelle_euros_constants": 2182.475740325215,
+     "pension_mensuelle": 227.88493275702754,
+     "pension_totale": 2734.6191930843306,
+     "pension_totale_euros_constants": 2182.475740325215,
+     "pension_totale_mensuelle": 227.88493275702754,
      "rendement_cumule": 1.046453762068943,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.37239312653436646,
-     "variation_vs_actuel": -0.06142893967989904
+     "taux_remplacement": 0.40152778468959655,
+     "variation_vs_actuel": -0.06268102864358349
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 33452.010779428805,
-     "capital_notionnel": 53789.916863774866,
+     "capital_droits_acquis": 37660.334532900924,
+     "capital_notionnel": 57998.24061724699,
      "capital_par_regime": {
       "regime_unifie": 20337.906084346065
      },
@@ -114485,26 +114485,26 @@
      "cotisations_versees": 19435.073790681403,
      "droits_acquis": {
       "age_conversion": 65.0,
-      "capital": 33452.010779428805,
-      "capital_a_la_bascule": 30551.962398399373,
+      "capital": 37660.334532900924,
+      "capital_a_la_bascule": 34395.4547948396,
       "coefficient_revalorisation": 1.094921836548914,
       "diviseur": 19.011353010064862,
-      "pension_figee": 1607.0377727574023
+      "pension_figee": 1809.2060452841092
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 2536.1965722516675,
-     "pension_annuelle_euros_constants": 2024.1163762886442,
-     "pension_mensuelle": 211.34971435430563,
-     "pension_totale": 2536.1965722516675,
-     "pension_totale_euros_constants": 2024.1163762886442,
-     "pension_totale_mensuelle": 211.34971435430563,
+     "pension_annuelle": 2734.6191930843306,
+     "pension_annuelle_euros_constants": 2182.475740325215,
+     "pension_mensuelle": 227.88493275702754,
+     "pension_totale": 2734.6191930843306,
+     "pension_totale_euros_constants": 2182.475740325215,
+     "pension_totale_mensuelle": 227.88493275702754,
      "rendement_cumule": 1.046453762068943,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.37239312653436646,
-     "variation_vs_actuel": -0.06142893967989904
+     "taux_remplacement": 0.40152778468959655,
+     "variation_vs_actuel": -0.06268102864358349
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -114532,7 +114532,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.29624220077473373,
-     "variation_vs_actuel": -0.2533579792938454
+     "variation_vs_actuel": -0.30845773196693826
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -114560,7 +114560,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.29624220077473373,
-     "variation_vs_actuel": -0.2533579792938454
+     "variation_vs_actuel": -0.30845773196693826
     }
    },
    "unite": {
@@ -128305,10 +128305,10 @@
    },
    "aujourd_hui": {
     "actuel": {
-     "coefficient_majoration": 1.1640580437452686,
+     "coefficient_majoration": 1.1562595524257415,
      "fiabilite": "moyenne",
      "majoration_enfants": 0.0,
-     "mensuel_decembre_2019": 1611.2939124306886,
+     "mensuel_decembre_2019": 1745.468418214871,
      "minimum_vieillesse": 0.0,
      "par_regime": [
       {
@@ -128342,13 +128342,13 @@
        "relevement_des_exploitants": 0.0
       },
       {
-       "au_depart": 851.5850306331815,
-       "aujourd_hui": 993.7990231278923,
-       "coefficient": 1.1669991690541694,
+       "au_depart": 2461.6791000433705,
+       "aujourd_hui": 2705.0390110742746,
+       "coefficient": 1.0988593155893538,
        "fiabilite": "moyenne",
        "majoration_exceptionnelle": 0.0,
        "regime": "cipav_complementaire",
-       "regle": "par_defaut",
+       "regle": "point",
        "relevement_des_exploitants": 0.0
       },
       {
@@ -128372,14 +128372,14 @@
        "relevement_des_exploitants": 0.0
       }
      ],
-     "pension_annuelle": 22456.733960945094,
+     "pension_annuelle": 24167.97394889148,
      "pension_hors_repartition": 0.0
     },
     "annee": 2026,
     "coefficients_notionnels": {
      "notionnel_liberal": 0.8337087309995886,
-     "notionnel_prospectif": 0.9858800967759959,
-     "notionnel_prospectif_employeur": 0.9858800967759959,
+     "notionnel_prospectif": 0.9792752909262246,
+     "notionnel_prospectif_employeur": 0.9792752909262246,
      "notionnel_retroactif": 0.8337087309995886,
      "notionnel_retroactif_employeur": 0.8337087309995886
     },
@@ -128387,8 +128387,8 @@
     "garantie_vieillesse": 4759.283638040528,
     "notionnels": {
      "notionnel_liberal": 14140.716361959472,
-     "notionnel_prospectif": 22456.733960945094,
-     "notionnel_prospectif_employeur": 22456.733960945094,
+     "notionnel_prospectif": 24167.97394889148,
+     "notionnel_prospectif_employeur": 24167.97394889148,
      "notionnel_retroactif": 4501.060056336601,
      "notionnel_retroactif_employeur": 9381.432723918944
     },
@@ -128518,8 +128518,8 @@
        "regime": "arrco_tranche_2"
       },
       {
-       "detail": "cotisations revalorisées 14,087 € × rendement 6.20% × coefficient d'anticipation 0.9750",
-       "montant": 851.5850306331815,
+       "detail": "960.00 points × valeur de service 2.63 € × coefficient d'anticipation 0.9750",
+       "montant": 2461.6791000433705,
        "regime": "cipav_complementaire"
       },
       {
@@ -128533,10 +128533,10 @@
        "regime": "regime_general"
       }
      ],
-     "pension_annuelle": 19291.764772048868,
-     "pension_annuelle_euros_constants": 22778.362231251675,
+     "pension_annuelle": 20901.858841459056,
+     "pension_annuelle_euros_constants": 24679.44833575119,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 1607.6470643374057,
+     "pension_mensuelle": 1741.821570121588,
      "retraite_progressive": {
       "age_minimum": 60.0,
       "date_effet": "2016-04-01",
@@ -128555,8 +128555,8 @@
       ],
       "trimestres": 153
      },
-     "taux_remplacement": 0.9382876472063015,
-     "total_contributif": 19291.764772048868
+     "taux_remplacement": 1.0165972987088197,
+     "total_contributif": 20901.858841459056
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -128624,12 +128624,12 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.46351983429548665,
-     "variation_vs_actuel": -0.5059938861226716
+     "variation_vs_actuel": -0.5440477415352144
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 471930.75395178347,
-     "capital_notionnel": 471930.75395178347,
+     "capital_droits_acquis": 511318.1773984434,
+     "capital_notionnel": 511318.1773984434,
      "capital_par_regime": {
       "agirc_arrco": 53.937329065373675,
       "regime_general": 125.07704743554355
@@ -128640,23 +128640,23 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 19291.764772048868,
-     "pension_annuelle_euros_constants": 22778.362231251675,
-     "pension_mensuelle": 1607.6470643374057,
-     "pension_totale": 19291.764772048868,
-     "pension_totale_euros_constants": 22778.362231251675,
-     "pension_totale_mensuelle": 1607.6470643374057,
+     "pension_annuelle": 20901.858841459056,
+     "pension_annuelle_euros_constants": 24679.44833575119,
+     "pension_mensuelle": 1741.821570121588,
+     "pension_totale": 20901.858841459056,
+     "pension_totale_euros_constants": 24679.44833575119,
+     "pension_totale_mensuelle": 1741.821570121588,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.9382876472063015,
+     "taux_remplacement": 1.0165972987088197,
      "variation_vs_actuel": 0.0
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 471930.75395178347,
-     "capital_notionnel": 471930.75395178347,
+     "capital_droits_acquis": 511318.1773984434,
+     "capital_notionnel": 511318.1773984434,
      "capital_par_regime": {
       "agirc_arrco": 134.8433226634342,
       "regime_general": 304.12566420278995
@@ -128667,17 +128667,17 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 19291.764772048868,
-     "pension_annuelle_euros_constants": 22778.362231251675,
-     "pension_mensuelle": 1607.6470643374057,
-     "pension_totale": 19291.764772048868,
-     "pension_totale_euros_constants": 22778.362231251675,
-     "pension_totale_mensuelle": 1607.6470643374057,
+     "pension_annuelle": 20901.858841459056,
+     "pension_annuelle_euros_constants": 24679.44833575119,
+     "pension_mensuelle": 1741.821570121588,
+     "pension_totale": 20901.858841459056,
+     "pension_totale_euros_constants": 24679.44833575119,
+     "pension_totale_mensuelle": 1741.821570121588,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.9382876472063015,
+     "taux_remplacement": 1.0165972987088197,
      "variation_vs_actuel": 0.0
     },
     "notionnel_retroactif": {
@@ -128709,7 +128709,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.22238933784046191,
-     "variation_vs_actuel": -0.7629838370966371
+     "variation_vs_actuel": -0.7812414629441583
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -128740,7 +128740,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.46351983429548665,
-     "variation_vs_actuel": -0.5059938861226716
+     "variation_vs_actuel": -0.5440477415352144
     }
    },
    "unite": {
@@ -270714,8 +270714,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 190,848 € × rendement 6.10%",
-       "montant": 11641.703229385814,
+       "detail": "2,465.27 points × valeur de service 3.62114 € + cotisations revalorisées 83,409 € × rendement 6.10%",
+       "montant": 14015.038597653678,
        "regime": "cipav_complementaire"
       },
       {
@@ -270724,12 +270724,12 @@
        "regime": "cnavpl"
       }
      ],
-     "pension_annuelle": 29013.97860530931,
-     "pension_annuelle_euros_constants": 23155.8034100471,
+     "pension_annuelle": 31387.313973577173,
+     "pension_annuelle_euros_constants": 25049.941679097377,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 2417.831550442442,
-     "taux_remplacement": 0.43520183104166626,
-     "total_contributif": 29013.97860530931
+     "pension_mensuelle": 2615.609497798098,
+     "taux_remplacement": 0.470801219598364,
+     "total_contributif": 31387.313973577173
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -270794,12 +270794,12 @@
      "rente_capitalisation_obligatoire": 3747.7140471304165,
      "rente_capitalisation_volontaire": 1873.8570235652082,
      "taux_remplacement": 0.24359821316312696,
-     "variation_vs_actuel": -0.4364130488164667
+     "variation_vs_actuel": -0.4790283820515485
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 360836.67489307735,
-     "capital_notionnel": 557053.0055843777,
+     "capital_droits_acquis": 409709.09304709773,
+     "capital_notionnel": 605925.4237383981,
      "capital_par_regime": {
       "regime_unifie": 196216.33069130036
      },
@@ -270808,31 +270808,31 @@
      "cotisations_versees": 187378.56663850366,
      "droits_acquis": {
       "age_conversion": 65.0,
-      "capital": 360836.67489307735,
-      "capital_a_la_bascule": 329554.7342725387,
+      "capital": 409709.09304709773,
+      "capital_a_la_bascule": 374190.26579875377,
       "coefficient_revalorisation": 1.094921836548914,
       "diviseur": 23.563197503395017,
-      "pension_figee": 13985.993803474932
+      "pension_figee": 15880.283893764416
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 21633.0174077778,
-     "pension_annuelle_euros_constants": 17265.122618135643,
-     "pension_mensuelle": 1802.75145064815,
-     "pension_totale": 21633.0174077778,
-     "pension_totale_euros_constants": 17265.122618135643,
-     "pension_totale_mensuelle": 1802.75145064815,
+     "pension_annuelle": 23530.965829359335,
+     "pension_annuelle_euros_constants": 18779.85870898356,
+     "pension_mensuelle": 1960.913819113278,
+     "pension_totale": 23530.965829359335,
+     "pension_totale_euros_constants": 18779.85870898356,
+     "pension_totale_mensuelle": 1960.913819113278,
      "rendement_cumule": 1.0471652879587172,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.3244894095668191,
-     "variation_vs_actuel": -0.2543932804920749
+     "taux_remplacement": 0.35295812251140557,
+     "variation_vs_actuel": -0.2503032961288615
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 360836.67489307735,
-     "capital_notionnel": 557053.0055843777,
+     "capital_droits_acquis": 409709.09304709773,
+     "capital_notionnel": 605925.4237383981,
      "capital_par_regime": {
       "regime_unifie": 196216.33069130036
      },
@@ -270841,26 +270841,26 @@
      "cotisations_versees": 187378.56663850366,
      "droits_acquis": {
       "age_conversion": 65.0,
-      "capital": 360836.67489307735,
-      "capital_a_la_bascule": 329554.7342725387,
+      "capital": 409709.09304709773,
+      "capital_a_la_bascule": 374190.26579875377,
       "coefficient_revalorisation": 1.094921836548914,
       "diviseur": 23.563197503395017,
-      "pension_figee": 13985.993803474932
+      "pension_figee": 15880.283893764416
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 21633.0174077778,
-     "pension_annuelle_euros_constants": 17265.122618135643,
-     "pension_mensuelle": 1802.75145064815,
-     "pension_totale": 21633.0174077778,
-     "pension_totale_euros_constants": 17265.122618135643,
-     "pension_totale_mensuelle": 1802.75145064815,
+     "pension_annuelle": 23530.965829359335,
+     "pension_annuelle_euros_constants": 18779.85870898356,
+     "pension_mensuelle": 1960.913819113278,
+     "pension_totale": 23530.965829359335,
+     "pension_totale_euros_constants": 18779.85870898356,
+     "pension_totale_mensuelle": 1960.913819113278,
      "rendement_cumule": 1.0471652879587172,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.3244894095668191,
-     "variation_vs_actuel": -0.2543932804920749
+     "taux_remplacement": 0.35295812251140557,
+     "variation_vs_actuel": -0.2503032961288615
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -270888,7 +270888,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.21390395382475563,
-     "variation_vs_actuel": -0.5084948210976703
+     "variation_vs_actuel": -0.5456597287338486
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -270916,7 +270916,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.21390395382475563,
-     "variation_vs_actuel": -0.5084948210976703
+     "variation_vs_actuel": -0.5456597287338486
     }
    },
    "unite": {
@@ -270973,20 +270973,20 @@
    },
    "aujourd_hui": {
     "actuel": {
-     "coefficient_majoration": 1.8055777817120537,
-     "fiabilite": "moyenne",
+     "coefficient_majoration": 1.7860131664006973,
+     "fiabilite": "estimee",
      "majoration_enfants": 0.0,
-     "mensuel_decembre_2019": 779.4033608720702,
-     "minimum_vieillesse": 1670.9855193669064,
+     "mensuel_decembre_2019": 896.7973631244703,
+     "minimum_vieillesse": 170.96480868569233,
      "par_regime": [
       {
-       "au_depart": 452.08359992115146,
-       "aujourd_hui": 821.6144806330944,
-       "coefficient": 1.8173950144981887,
-       "fiabilite": "moyenne",
+       "au_depart": 1357.793746555817,
+       "aujourd_hui": 2321.6351913143085,
+       "coefficient": 1.7098585092201037,
+       "fiabilite": "estimee",
        "majoration_exceptionnelle": 0.0,
        "regime": "cipav_complementaire",
-       "regle": "par_defaut",
+       "regle": "point",
        "relevement_des_exploitants": 0.0
       },
       {
@@ -271006,8 +271006,8 @@
     "annee": 2026,
     "coefficients_notionnels": {
      "notionnel_liberal": 0.6780145346372519,
-     "notionnel_prospectif": 1.103895696970437,
-     "notionnel_prospectif_employeur": 1.103895696970437,
+     "notionnel_prospectif": 0.9593315504096104,
+     "notionnel_prospectif_employeur": 0.9593315504096104,
      "notionnel_retroactif": 0.6780145346372519,
      "notionnel_retroactif_employeur": 0.6780145346372519
     },
@@ -271131,8 +271131,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 7,292 € × rendement 6.20%",
-       "montant": 452.08359992115146,
+       "detail": "803.33 points × valeur de service 1.690198 €",
+       "montant": 1357.793746555817,
        "regime": "cipav_complementaire"
       },
       {
@@ -271141,12 +271141,12 @@
        "regime": "cnavpl"
       }
      ],
-     "pension_annuelle": 6010.316803047448,
-     "pension_annuelle_euros_constants": 11344.441358335485,
+     "pension_annuelle": 6916.026949682114,
+     "pension_annuelle_euros_constants": 13053.964497105262,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 500.85973358728734,
-     "taux_remplacement": 0.2954554442830672,
-     "total_contributif": 6010.316803047448
+     "pension_mensuelle": 576.3355791401762,
+     "taux_remplacement": 0.3399783875046201,
+     "total_contributif": 6916.026949682114
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -271210,12 +271210,12 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.07007452895460263,
-     "variation_vs_actuel": -0.7628253927605196
+     "variation_vs_actuel": -0.7938853423332671
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 127884.0200204326,
-     "capital_notionnel": 127884.0200204326,
+     "capital_droits_acquis": 147155.19295863924,
+     "capital_notionnel": 147155.19295863924,
      "capital_par_regime": {
       "cipav_complementaire": 32.265,
       "cnavpl": 144.09305422759923
@@ -271226,23 +271226,23 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 6010.316803047448,
-     "pension_annuelle_euros_constants": 11344.441358335485,
-     "pension_mensuelle": 500.85973358728734,
-     "pension_totale": 6010.316803047448,
-     "pension_totale_euros_constants": 11344.441358335485,
-     "pension_totale_mensuelle": 500.85973358728734,
+     "pension_annuelle": 6916.026949682114,
+     "pension_annuelle_euros_constants": 13053.964497105262,
+     "pension_mensuelle": 576.3355791401762,
+     "pension_totale": 6916.026949682114,
+     "pension_totale_euros_constants": 13053.964497105262,
+     "pension_totale_mensuelle": 576.3355791401762,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.2954554442830672,
+     "taux_remplacement": 0.3399783875046201,
      "variation_vs_actuel": 0.0
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 127884.0200204326,
-     "capital_notionnel": 127884.0200204326,
+     "capital_droits_acquis": 147155.19295863924,
+     "capital_notionnel": 147155.19295863924,
      "capital_par_regime": {
       "cipav_complementaire": 32.265,
       "cnavpl": 144.09305422759923
@@ -271253,17 +271253,17 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 6010.316803047448,
-     "pension_annuelle_euros_constants": 11344.441358335485,
-     "pension_mensuelle": 500.85973358728734,
-     "pension_totale": 6010.316803047448,
-     "pension_totale_euros_constants": 11344.441358335485,
-     "pension_totale_mensuelle": 500.85973358728734,
+     "pension_annuelle": 6916.026949682114,
+     "pension_annuelle_euros_constants": 13053.964497105262,
+     "pension_mensuelle": 576.3355791401762,
+     "pension_totale": 6916.026949682114,
+     "pension_totale_euros_constants": 13053.964497105262,
+     "pension_totale_mensuelle": 576.3355791401762,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.2954554442830672,
+     "taux_remplacement": 0.3399783875046201,
      "variation_vs_actuel": 0.0
     },
     "notionnel_retroactif": {
@@ -271291,7 +271291,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.07007452895460263,
-     "variation_vs_actuel": -0.7628253927605196
+     "variation_vs_actuel": -0.7938853423332671
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -271318,7 +271318,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.07007452895460263,
-     "variation_vs_actuel": -0.7628253927605196
+     "variation_vs_actuel": -0.7938853423332671
     }
    },
    "unite": {
@@ -271375,20 +271375,20 @@
    },
    "aujourd_hui": {
     "actuel": {
-     "coefficient_majoration": 1.495128990635863,
-     "fiabilite": "moyenne",
+     "coefficient_majoration": 1.4724598035002503,
+     "fiabilite": "estimee",
      "majoration_enfants": 0.0,
-     "mensuel_decembre_2019": 897.1840537981449,
-     "minimum_vieillesse": 26.28555106134081,
+     "mensuel_decembre_2019": 1126.1855074715227,
+     "minimum_vieillesse": 0.0,
      "par_regime": [
       {
-       "au_depart": 1155.3570080101874,
-       "aujourd_hui": 1714.0284489386597,
-       "coefficient": 1.483548753376797,
-       "fiabilite": "moyenne",
+       "au_depart": 3266.8448640809197,
+       "aujourd_hui": 4633.632699282285,
+       "coefficient": 1.418381616534427,
+       "fiabilite": "estimee",
        "majoration_exceptionnelle": 0.0,
        "regime": "cipav_complementaire",
-       "regle": "par_defaut",
+       "regle": "point",
        "relevement_des_exploitants": 0.0
       },
       {
@@ -271402,14 +271402,14 @@
        "relevement_des_exploitants": 0.0
       }
      ],
-     "pension_annuelle": 12523.08,
+     "pension_annuelle": 15416.398699282285,
      "pension_hors_repartition": 0.0
     },
     "annee": 2026,
     "coefficients_notionnels": {
      "notionnel_liberal": 0.7275596157881449,
-     "notionnel_prospectif": 0.9569131460990474,
-     "notionnel_prospectif_employeur": 0.9569131460990474,
+     "notionnel_prospectif": 0.9404263252924782,
+     "notionnel_prospectif_employeur": 0.9404263252924782,
      "notionnel_retroactif": 0.7275596157881449,
      "notionnel_retroactif_employeur": 0.7275596157881449
     },
@@ -271417,8 +271417,8 @@
     "garantie_vieillesse": 9474.00681903046,
     "notionnels": {
      "notionnel_liberal": 12600.0,
-     "notionnel_prospectif": 12523.08,
-     "notionnel_prospectif_employeur": 12523.08,
+     "notionnel_prospectif": 15416.398699282285,
+     "notionnel_prospectif_employeur": 15416.398699282285,
      "notionnel_retroactif": 3125.9931809695418,
      "notionnel_retroactif_employeur": 3125.9931809695418
     },
@@ -271533,8 +271533,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 18,635 € × rendement 6.20%",
-       "montant": 1155.3570080101874,
+       "detail": "1,603.33 points × valeur de service 2.037533 €",
+       "montant": 3266.8448640809197,
        "regime": "cipav_complementaire"
       },
       {
@@ -271543,12 +271543,12 @@
        "regime": "cnavpl"
       }
      ],
-     "pension_annuelle": 8358.338663223902,
-     "pension_annuelle_euros_constants": 13086.955750426874,
+     "pension_annuelle": 10469.826519294633,
+     "pension_annuelle_euros_constants": 16392.98931204174,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 696.5282219353252,
-     "taux_remplacement": 0.3102407015952312,
-     "total_contributif": 8358.338663223902
+     "pension_mensuelle": 872.4855432745527,
+     "taux_remplacement": 0.3886138688323346,
+     "total_contributif": 10469.826519294633
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -271612,12 +271612,12 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.10185434992253775,
-     "variation_vs_actuel": -0.6716924974743437
+     "variation_vs_actuel": -0.7379034612722937
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 191157.57141710908,
-     "capital_notionnel": 191157.57141710908,
+     "capital_droits_acquis": 239447.89643338643,
+     "capital_notionnel": 239447.89643338643,
      "capital_par_regime": {
       "cipav_complementaire": 44.209999999999994,
       "cnavpl": 190.8353693118798
@@ -271628,23 +271628,23 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 8358.338663223902,
-     "pension_annuelle_euros_constants": 13086.955750426874,
-     "pension_mensuelle": 696.5282219353252,
-     "pension_totale": 8358.338663223902,
-     "pension_totale_euros_constants": 13086.955750426874,
-     "pension_totale_mensuelle": 696.5282219353252,
+     "pension_annuelle": 10469.826519294633,
+     "pension_annuelle_euros_constants": 16392.98931204174,
+     "pension_mensuelle": 872.4855432745527,
+     "pension_totale": 10469.826519294633,
+     "pension_totale_euros_constants": 16392.98931204174,
+     "pension_totale_mensuelle": 872.4855432745527,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.3102407015952312,
+     "taux_remplacement": 0.3886138688323346,
      "variation_vs_actuel": 0.0
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 191157.57141710908,
-     "capital_notionnel": 191157.57141710908,
+     "capital_droits_acquis": 239447.89643338643,
+     "capital_notionnel": 239447.89643338643,
      "capital_par_regime": {
       "cipav_complementaire": 44.209999999999994,
       "cnavpl": 190.8353693118798
@@ -271655,17 +271655,17 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 8358.338663223902,
-     "pension_annuelle_euros_constants": 13086.955750426874,
-     "pension_mensuelle": 696.5282219353252,
-     "pension_totale": 8358.338663223902,
-     "pension_totale_euros_constants": 13086.955750426874,
-     "pension_totale_mensuelle": 696.5282219353252,
+     "pension_annuelle": 10469.826519294633,
+     "pension_annuelle_euros_constants": 16392.98931204174,
+     "pension_mensuelle": 872.4855432745527,
+     "pension_totale": 10469.826519294633,
+     "pension_totale_euros_constants": 16392.98931204174,
+     "pension_totale_mensuelle": 872.4855432745527,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.3102407015952312,
+     "taux_remplacement": 0.3886138688323346,
      "variation_vs_actuel": 0.0
     },
     "notionnel_retroactif": {
@@ -271693,7 +271693,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.10185434992253775,
-     "variation_vs_actuel": -0.6716924974743437
+     "variation_vs_actuel": -0.7379034612722937
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -271720,7 +271720,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.10185434992253775,
-     "variation_vs_actuel": -0.6716924974743437
+     "variation_vs_actuel": -0.7379034612722937
     }
    },
    "unite": {
@@ -271777,20 +271777,20 @@
    },
    "aujourd_hui": {
     "actuel": {
-     "coefficient_majoration": 1.2553235811381096,
-     "fiabilite": "moyenne",
+     "coefficient_majoration": 1.2309578240832537,
+     "fiabilite": "estimee",
      "majoration_enfants": 0.0,
-     "mensuel_decembre_2019": 1115.941406755847,
+     "mensuel_decembre_2019": 1431.754439141486,
      "minimum_vieillesse": 0.0,
      "par_regime": [
       {
-       "au_depart": 2323.944584443249,
-       "aujourd_hui": 2953.6928170436768,
-       "coefficient": 1.2709824652515531,
-       "fiabilite": "moyenne",
+       "au_depart": 5812.082168043262,
+       "aujourd_hui": 6945.63891304228,
+       "coefficient": 1.1950345353394496,
+       "fiabilite": "estimee",
        "majoration_exceptionnelle": 0.0,
        "regime": "cipav_complementaire",
-       "regle": "par_defaut",
+       "regle": "point",
        "relevement_des_exploitants": 0.0
       },
       {
@@ -271804,14 +271804,14 @@
        "relevement_des_exploitants": 0.0
       }
      ],
-     "pension_annuelle": 15548.947260888002,
+     "pension_annuelle": 19540.893356886605,
      "pension_hors_repartition": 0.0
     },
     "annee": 2026,
     "coefficients_notionnels": {
      "notionnel_liberal": 0.7979398213803465,
-     "notionnel_prospectif": 0.9515895292292119,
-     "notionnel_prospectif_employeur": 0.9515895292292119,
+     "notionnel_prospectif": 0.9331192323005726,
+     "notionnel_prospectif_employeur": 0.9331192323005726,
      "notionnel_retroactif": 0.7979398213803465,
      "notionnel_retroactif_employeur": 0.7979398213803465
     },
@@ -271819,8 +271819,8 @@
     "garantie_vieillesse": 8057.408363882342,
     "notionnels": {
      "notionnel_liberal": 12600.0,
-     "notionnel_prospectif": 15548.947260888002,
-     "notionnel_prospectif_employeur": 15548.947260888002,
+     "notionnel_prospectif": 19540.893356886605,
+     "notionnel_prospectif_employeur": 19540.893356886605,
      "notionnel_retroactif": 4542.591636117658,
      "notionnel_retroactif_employeur": 4542.591636117658
     },
@@ -271935,8 +271935,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 37,483 € × rendement 6.20%",
-       "montant": 2323.944584443249,
+       "detail": "2,403.34 points × valeur de service 2.41834 €",
+       "montant": 5812.082168043262,
        "regime": "cipav_complementaire"
       },
       {
@@ -271945,12 +271945,12 @@
        "regime": "cnavpl"
       }
      ],
-     "pension_annuelle": 12386.405779767887,
-     "pension_annuelle_euros_constants": 16339.973048550313,
+     "pension_annuelle": 15874.5433633679,
+     "pension_annuelle_euros_constants": 20941.47530183171,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 1032.2004816473238,
-     "taux_remplacement": 0.3571341835172146,
-     "total_contributif": 12386.405779767887
+     "pension_mensuelle": 1322.8786136139918,
+     "taux_remplacement": 0.45770679433459127,
+     "total_contributif": 15874.5433633679
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -272014,12 +272014,12 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.12442671719104467,
-     "variation_vs_actuel": -0.6515967304903842
+     "variation_vs_actuel": -0.7281519113738857
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 293176.13171294564,
-     "capital_notionnel": 293176.13171294564,
+     "capital_droits_acquis": 375737.5059990024,
+     "capital_notionnel": 375737.5059990024,
      "capital_par_regime": {
       "cipav_complementaire": 82.33333333333333,
       "cnavpl": 216.3542046594312
@@ -272030,23 +272030,23 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 12386.405779767887,
-     "pension_annuelle_euros_constants": 16339.973048550313,
-     "pension_mensuelle": 1032.2004816473238,
-     "pension_totale": 12386.405779767887,
-     "pension_totale_euros_constants": 16339.973048550313,
-     "pension_totale_mensuelle": 1032.2004816473238,
+     "pension_annuelle": 15874.5433633679,
+     "pension_annuelle_euros_constants": 20941.47530183171,
+     "pension_mensuelle": 1322.8786136139918,
+     "pension_totale": 15874.5433633679,
+     "pension_totale_euros_constants": 20941.47530183171,
+     "pension_totale_mensuelle": 1322.8786136139918,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.3571341835172146,
+     "taux_remplacement": 0.45770679433459127,
      "variation_vs_actuel": 0.0
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 293176.13171294564,
-     "capital_notionnel": 293176.13171294564,
+     "capital_droits_acquis": 375737.5059990024,
+     "capital_notionnel": 375737.5059990024,
      "capital_par_regime": {
       "cipav_complementaire": 82.33333333333333,
       "cnavpl": 216.3542046594312
@@ -272057,17 +272057,17 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 12386.405779767887,
-     "pension_annuelle_euros_constants": 16339.973048550313,
-     "pension_mensuelle": 1032.2004816473238,
-     "pension_totale": 12386.405779767887,
-     "pension_totale_euros_constants": 16339.973048550313,
-     "pension_totale_mensuelle": 1032.2004816473238,
+     "pension_annuelle": 15874.5433633679,
+     "pension_annuelle_euros_constants": 20941.47530183171,
+     "pension_mensuelle": 1322.8786136139918,
+     "pension_totale": 15874.5433633679,
+     "pension_totale_euros_constants": 20941.47530183171,
+     "pension_totale_mensuelle": 1322.8786136139918,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.3571341835172146,
+     "taux_remplacement": 0.45770679433459127,
      "variation_vs_actuel": 0.0
     },
     "notionnel_retroactif": {
@@ -272095,7 +272095,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.12442671719104467,
-     "variation_vs_actuel": -0.6515967304903842
+     "variation_vs_actuel": -0.7281519113738857
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -272122,7 +272122,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.12442671719104467,
-     "variation_vs_actuel": -0.6515967304903842
+     "variation_vs_actuel": -0.7281519113738857
     }
    },
    "unite": {
@@ -272179,20 +272179,20 @@
    },
    "aujourd_hui": {
     "actuel": {
-     "coefficient_majoration": 1.1617431659685118,
+     "coefficient_majoration": 1.133437256263743,
      "fiabilite": "moyenne",
      "majoration_enfants": 0.0,
-     "mensuel_decembre_2019": 1253.5748547131823,
+     "mensuel_decembre_2019": 1601.5280681292772,
      "minimum_vieillesse": 0.0,
      "par_regime": [
       {
-       "au_depart": 4130.106517500753,
-       "aujourd_hui": 4819.830874028588,
-       "coefficient": 1.1669991690541694,
+       "au_depart": 8305.545078493893,
+       "aujourd_hui": 9126.625580550324,
+       "coefficient": 1.0988593155893538,
        "fiabilite": "moyenne",
        "majoration_exceptionnelle": 0.0,
        "regime": "cipav_complementaire",
-       "regle": "par_defaut",
+       "regle": "point",
        "relevement_des_exploitants": 0.0
       },
       {
@@ -272206,14 +272206,14 @@
        "relevement_des_exploitants": 0.0
       }
      ],
-     "pension_annuelle": 17475.984245916115,
+     "pension_annuelle": 21782.77895243785,
      "pension_hors_repartition": 0.0
     },
     "annee": 2026,
     "coefficients_notionnels": {
      "notionnel_liberal": 0.8337087309995886,
-     "notionnel_prospectif": 0.9839195485551951,
-     "notionnel_prospectif_employeur": 0.9839195485551951,
+     "notionnel_prospectif": 0.959946317023472,
+     "notionnel_prospectif_employeur": 0.959946317023472,
      "notionnel_retroactif": 0.8337087309995886,
      "notionnel_retroactif_employeur": 0.8337087309995886
     },
@@ -272221,8 +272221,8 @@
     "garantie_vieillesse": 6171.083660784495,
     "notionnels": {
      "notionnel_liberal": 12728.916339215506,
-     "notionnel_prospectif": 17475.984245916115,
-     "notionnel_prospectif_employeur": 17475.984245916115,
+     "notionnel_prospectif": 21782.77895243785,
+     "notionnel_prospectif_employeur": 21782.77895243785,
      "notionnel_retroactif": 6557.83267843101,
      "notionnel_retroactif_employeur": 6557.83267843101
     },
@@ -272337,8 +272337,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 66,615 € × rendement 6.20%",
-       "montant": 4130.106517500753,
+       "detail": "3,158.00 points × valeur de service 2.63 €",
+       "montant": 8305.545078493893,
        "regime": "cipav_complementaire"
       },
       {
@@ -272347,12 +272347,12 @@
        "regime": "cnavpl"
       }
      ],
-     "pension_annuelle": 15042.898256558188,
-     "pension_annuelle_euros_constants": 17761.598772560377,
+     "pension_annuelle": 19218.336817551328,
+     "pension_annuelle_euros_constants": 22691.66365467209,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 1253.5748547131823,
-     "taux_remplacement": 0.36581841472481136,
-     "total_contributif": 15042.898256558188
+     "pension_mensuelle": 1601.5280681292772,
+     "taux_remplacement": 0.46735817715040917,
+     "total_contributif": 19218.336817551328
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -272416,12 +272416,12 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.1620053997026421,
-     "variation_vs_actuel": -0.557142578990969
+     "variation_vs_actuel": -0.6533592271982349
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 357567.12149559153,
-     "capital_notionnel": 357567.12149559153,
+     "capital_droits_acquis": 456816.5827212643,
+     "capital_notionnel": 456816.5827212643,
      "capital_par_regime": {
       "cipav_complementaire": 225.5,
       "cnavpl": 342.0076624855456
@@ -272432,23 +272432,23 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 15042.898256558188,
-     "pension_annuelle_euros_constants": 17761.598772560377,
-     "pension_mensuelle": 1253.5748547131823,
-     "pension_totale": 15042.898256558188,
-     "pension_totale_euros_constants": 17761.598772560377,
-     "pension_totale_mensuelle": 1253.5748547131823,
+     "pension_annuelle": 19218.336817551328,
+     "pension_annuelle_euros_constants": 22691.66365467209,
+     "pension_mensuelle": 1601.5280681292772,
+     "pension_totale": 19218.336817551328,
+     "pension_totale_euros_constants": 22691.66365467209,
+     "pension_totale_mensuelle": 1601.5280681292772,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.36581841472481136,
+     "taux_remplacement": 0.46735817715040917,
      "variation_vs_actuel": 0.0
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 357567.12149559153,
-     "capital_notionnel": 357567.12149559153,
+     "capital_droits_acquis": 456816.5827212643,
+     "capital_notionnel": 456816.5827212643,
      "capital_par_regime": {
       "cipav_complementaire": 225.5,
       "cnavpl": 342.0076624855456
@@ -272459,17 +272459,17 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 15042.898256558188,
-     "pension_annuelle_euros_constants": 17761.598772560377,
-     "pension_mensuelle": 1253.5748547131823,
-     "pension_totale": 15042.898256558188,
-     "pension_totale_euros_constants": 17761.598772560377,
-     "pension_totale_mensuelle": 1253.5748547131823,
+     "pension_annuelle": 19218.336817551328,
+     "pension_annuelle_euros_constants": 22691.66365467209,
+     "pension_mensuelle": 1601.5280681292772,
+     "pension_totale": 19218.336817551328,
+     "pension_totale_euros_constants": 22691.66365467209,
+     "pension_totale_mensuelle": 1601.5280681292772,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.36581841472481136,
+     "taux_remplacement": 0.46735817715040917,
      "variation_vs_actuel": 0.0
     },
     "notionnel_retroactif": {
@@ -272497,7 +272497,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.1620053997026421,
-     "variation_vs_actuel": -0.557142578990969
+     "variation_vs_actuel": -0.6533592271982349
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -272524,7 +272524,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.1620053997026421,
-     "variation_vs_actuel": -0.557142578990969
+     "variation_vs_actuel": -0.6533592271982349
     }
    },
    "unite": {
@@ -272686,8 +272686,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 118,846 € × rendement 6.10%",
-       "montant": 7249.635985063389,
+       "detail": "3,280.59 points × valeur de service 3.044396 € + cotisations revalorisées 12,011 € × rendement 6.10%",
+       "montant": 10720.082518773283,
        "regime": "cipav_complementaire"
       },
       {
@@ -272696,12 +272696,12 @@
        "regime": "cnavpl"
       }
      ],
-     "pension_annuelle": 21256.448356918663,
-     "pension_annuelle_euros_constants": 20178.43351765528,
+     "pension_annuelle": 24726.89489062856,
+     "pension_annuelle_euros_constants": 23472.87732506816,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 1771.3706964098885,
-     "taux_remplacement": 0.40615682624674887,
-     "total_contributif": 21256.448356918663
+     "pension_mensuelle": 2060.5745742190466,
+     "taux_remplacement": 0.4724682591880782,
+     "total_contributif": 24726.89489062856
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -272766,12 +272766,12 @@
      "rente_capitalisation_obligatoire": 833.4887371714921,
      "rente_capitalisation_volontaire": 416.74436858574603,
      "taux_remplacement": 0.2716202001291527,
-     "variation_vs_actuel": -0.32664226561478205
+     "variation_vs_actuel": -0.4211487544230307
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 425588.71253279113,
-     "capital_notionnel": 465841.8182541802,
+     "capital_droits_acquis": 504861.77575754805,
+     "capital_notionnel": 545114.8814789371,
      "capital_par_regime": {
       "regime_unifie": 40253.10572138907
      },
@@ -272780,31 +272780,31 @@
      "cotisations_versees": 39715.15563831097,
      "droits_acquis": {
       "age_conversion": 65.0,
-      "capital": 425588.71253279113,
-      "capital_a_la_bascule": 416775.02806056006,
+      "capital": 504861.77575754805,
+      "capital_a_la_bascule": 494406.3941588773,
       "coefficient_revalorisation": 1.0211473429999995,
       "diviseur": 23.563197503395017,
-      "pension_figee": 17687.541260073493
+      "pension_figee": 20982.14361983948
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 18793.188003014355,
-     "pension_annuelle_euros_constants": 17840.09672435199,
-     "pension_mensuelle": 1566.0990002511962,
-     "pension_totale": 18793.188003014355,
-     "pension_totale_euros_constants": 17840.09672435199,
-     "pension_totale_mensuelle": 1566.0990002511962,
+     "pension_annuelle": 21991.255506573718,
+     "pension_annuelle_euros_constants": 20875.97512802436,
+     "pension_mensuelle": 1832.6046255478097,
+     "pension_totale": 21991.255506573718,
+     "pension_totale_euros_constants": 20875.97512802436,
+     "pension_totale_mensuelle": 1832.6046255478097,
      "rendement_cumule": 1.0135452089871497,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.3590901671905299,
-     "variation_vs_actuel": -0.11588296937209419
+     "taux_remplacement": 0.4201971275612522,
+     "variation_vs_actuel": -0.1106341655980283
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 425588.71253279113,
-     "capital_notionnel": 465841.8182541802,
+     "capital_droits_acquis": 504861.77575754805,
+     "capital_notionnel": 545114.8814789371,
      "capital_par_regime": {
       "regime_unifie": 40253.10572138907
      },
@@ -272813,26 +272813,26 @@
      "cotisations_versees": 39715.15563831097,
      "droits_acquis": {
       "age_conversion": 65.0,
-      "capital": 425588.71253279113,
-      "capital_a_la_bascule": 416775.02806056006,
+      "capital": 504861.77575754805,
+      "capital_a_la_bascule": 494406.3941588773,
       "coefficient_revalorisation": 1.0211473429999995,
       "diviseur": 23.563197503395017,
-      "pension_figee": 17687.541260073493
+      "pension_figee": 20982.14361983948
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 18793.188003014355,
-     "pension_annuelle_euros_constants": 17840.09672435199,
-     "pension_mensuelle": 1566.0990002511962,
-     "pension_totale": 18793.188003014355,
-     "pension_totale_euros_constants": 17840.09672435199,
-     "pension_totale_mensuelle": 1566.0990002511962,
+     "pension_annuelle": 21991.255506573718,
+     "pension_annuelle_euros_constants": 20875.97512802436,
+     "pension_mensuelle": 1832.6046255478097,
+     "pension_totale": 21991.255506573718,
+     "pension_totale_euros_constants": 20875.97512802436,
+     "pension_totale_mensuelle": 1832.6046255478097,
      "rendement_cumule": 1.0135452089871497,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.3590901671905299,
-     "variation_vs_actuel": -0.11588296937209419
+     "taux_remplacement": 0.4201971275612522,
+     "variation_vs_actuel": -0.1106341655980283
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -272860,7 +272860,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.180103570033808,
-     "variation_vs_actuel": -0.5565664334682602
+     "variation_vs_actuel": -0.6188028157842597
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -272888,7 +272888,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.180103570033808,
-     "variation_vs_actuel": -0.5565664334682602
+     "variation_vs_actuel": -0.6188028157842597
     }
    },
    "unite": {
@@ -273050,8 +273050,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 140,998 € × rendement 6.10%",
-       "montant": 8600.859980124482,
+       "detail": "2,965.81 points × valeur de service 3.20704 € + cotisations revalorisées 35,058 € × rendement 6.10%",
+       "montant": 11649.99807339791,
        "regime": "cipav_complementaire"
       },
       {
@@ -273060,12 +273060,12 @@
        "regime": "cnavpl"
       }
      ],
-     "pension_annuelle": 23372.936631192424,
-     "pension_annuelle_euros_constants": 21062.347522709155,
+     "pension_annuelle": 26422.074724465852,
+     "pension_annuelle_euros_constants": 23810.05557406065,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 1947.7447192660354,
-     "taux_remplacement": 0.4153177076159415,
-     "total_contributif": 23372.936631192424
+     "pension_mensuelle": 2201.839560372154,
+     "taux_remplacement": 0.4694983637775954,
+     "total_contributif": 26422.074724465852
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -273130,12 +273130,12 @@
      "rente_capitalisation_obligatoire": 1681.700467688594,
      "rente_capitalisation_volontaire": 840.850233844297,
      "taux_remplacement": 0.2638262139072647,
-     "variation_vs_actuel": -0.36039029958932245
+     "variation_vs_actuel": -0.4342020014593325
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 400832.958804338,
-     "capital_notionnel": 493277.6232981212,
+     "capital_droits_acquis": 468348.8756899666,
+     "capital_notionnel": 560793.5401837497,
      "capital_par_regime": {
       "regime_unifie": 92444.6644937832
      },
@@ -273144,31 +273144,31 @@
      "cotisations_versees": 90517.81876015774,
      "droits_acquis": {
       "age_conversion": 65.0,
-      "capital": 400832.958804338,
-      "capital_a_la_bascule": 384402.85203593946,
+      "capital": 468348.8756899666,
+      "capital_a_la_bascule": 449151.29758810747,
       "coefficient_revalorisation": 1.0427418961159591,
       "diviseur": 23.563197503395017,
-      "pension_figee": 16313.696474366614
+      "pension_figee": 19061.55977020492
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 19616.046120417428,
-     "pension_annuelle_euros_constants": 17676.85365895951,
-     "pension_mensuelle": 1634.6705100347856,
-     "pension_totale": 19616.046120417428,
-     "pension_totale_euros_constants": 17676.85365895951,
-     "pension_totale_mensuelle": 1634.6705100347856,
+     "pension_annuelle": 22300.93446105545,
+     "pension_annuelle_euros_constants": 20096.320762409356,
+     "pension_mensuelle": 1858.4112050879542,
+     "pension_totale": 22300.93446105545,
+     "pension_totale_euros_constants": 20096.320762409356,
+     "pension_totale_mensuelle": 1858.4112050879542,
      "rendement_cumule": 1.0212869218460838,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.348560877726759,
-     "variation_vs_actuel": -0.16073677732738245
+     "taux_remplacement": 0.396269117749556,
+     "variation_vs_actuel": -0.15597337856267512
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 400832.958804338,
-     "capital_notionnel": 493277.6232981212,
+     "capital_droits_acquis": 468348.8756899666,
+     "capital_notionnel": 560793.5401837497,
      "capital_par_regime": {
       "regime_unifie": 92444.6644937832
      },
@@ -273177,26 +273177,26 @@
      "cotisations_versees": 90517.81876015774,
      "droits_acquis": {
       "age_conversion": 65.0,
-      "capital": 400832.958804338,
-      "capital_a_la_bascule": 384402.85203593946,
+      "capital": 468348.8756899666,
+      "capital_a_la_bascule": 449151.29758810747,
       "coefficient_revalorisation": 1.0427418961159591,
       "diviseur": 23.563197503395017,
-      "pension_figee": 16313.696474366614
+      "pension_figee": 19061.55977020492
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 19616.046120417428,
-     "pension_annuelle_euros_constants": 17676.85365895951,
-     "pension_mensuelle": 1634.6705100347856,
-     "pension_totale": 19616.046120417428,
-     "pension_totale_euros_constants": 17676.85365895951,
-     "pension_totale_mensuelle": 1634.6705100347856,
+     "pension_annuelle": 22300.93446105545,
+     "pension_annuelle_euros_constants": 20096.320762409356,
+     "pension_mensuelle": 1858.4112050879542,
+     "pension_totale": 22300.93446105545,
+     "pension_totale_euros_constants": 20096.320762409356,
+     "pension_totale_mensuelle": 1858.4112050879542,
      "rendement_cumule": 1.0212869218460838,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.348560877726759,
-     "variation_vs_actuel": -0.16073677732738245
+     "taux_remplacement": 0.396269117749556,
+     "variation_vs_actuel": -0.15597337856267512
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -273224,7 +273224,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.1961923351947995,
-     "variation_vs_actuel": -0.5276090289503734
+     "variation_vs_actuel": -0.5821234953488844
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -273252,7 +273252,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.1961923351947995,
-     "variation_vs_actuel": -0.5276090289503734
+     "variation_vs_actuel": -0.5821234953488844
     }
    },
    "unite": {
@@ -330935,8 +330935,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 190,848 € × rendement 6.10%",
-       "montant": 11641.703229385814,
+       "detail": "2,465.27 points × valeur de service 3.62114 € + cotisations revalorisées 83,409 € × rendement 6.10%",
+       "montant": 14015.038597653678,
        "regime": "cipav_complementaire"
       },
       {
@@ -330945,12 +330945,12 @@
        "regime": "cnavpl"
       }
      ],
-     "pension_annuelle": 29013.97860530931,
-     "pension_annuelle_euros_constants": 23155.8034100471,
+     "pension_annuelle": 31387.313973577173,
+     "pension_annuelle_euros_constants": 25049.941679097377,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 2417.831550442442,
-     "taux_remplacement": 0.43520183104166626,
-     "total_contributif": 29013.97860530931
+     "pension_mensuelle": 2615.609497798098,
+     "taux_remplacement": 0.470801219598364,
+     "total_contributif": 31387.313973577173
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -331015,12 +331015,12 @@
      "rente_capitalisation_obligatoire": 3747.7140471304165,
      "rente_capitalisation_volontaire": 1873.8570235652082,
      "taux_remplacement": 0.24359821316312696,
-     "variation_vs_actuel": -0.4364130488164667
+     "variation_vs_actuel": -0.4790283820515485
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 360836.67489307735,
-     "capital_notionnel": 557053.0055843777,
+     "capital_droits_acquis": 409709.09304709773,
+     "capital_notionnel": 605925.4237383981,
      "capital_par_regime": {
       "regime_unifie": 196216.33069130036
      },
@@ -331029,31 +331029,31 @@
      "cotisations_versees": 187378.56663850366,
      "droits_acquis": {
       "age_conversion": 65.0,
-      "capital": 360836.67489307735,
-      "capital_a_la_bascule": 329554.7342725387,
+      "capital": 409709.09304709773,
+      "capital_a_la_bascule": 374190.26579875377,
       "coefficient_revalorisation": 1.094921836548914,
       "diviseur": 23.563197503395017,
-      "pension_figee": 13985.993803474932
+      "pension_figee": 15880.283893764416
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 21633.0174077778,
-     "pension_annuelle_euros_constants": 17265.122618135643,
-     "pension_mensuelle": 1802.75145064815,
-     "pension_totale": 21633.0174077778,
-     "pension_totale_euros_constants": 17265.122618135643,
-     "pension_totale_mensuelle": 1802.75145064815,
+     "pension_annuelle": 23530.965829359335,
+     "pension_annuelle_euros_constants": 18779.85870898356,
+     "pension_mensuelle": 1960.913819113278,
+     "pension_totale": 23530.965829359335,
+     "pension_totale_euros_constants": 18779.85870898356,
+     "pension_totale_mensuelle": 1960.913819113278,
      "rendement_cumule": 1.0471652879587172,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.3244894095668191,
-     "variation_vs_actuel": -0.2543932804920749
+     "taux_remplacement": 0.35295812251140557,
+     "variation_vs_actuel": -0.2503032961288615
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 360836.67489307735,
-     "capital_notionnel": 557053.0055843777,
+     "capital_droits_acquis": 409709.09304709773,
+     "capital_notionnel": 605925.4237383981,
      "capital_par_regime": {
       "regime_unifie": 196216.33069130036
      },
@@ -331062,26 +331062,26 @@
      "cotisations_versees": 187378.56663850366,
      "droits_acquis": {
       "age_conversion": 65.0,
-      "capital": 360836.67489307735,
-      "capital_a_la_bascule": 329554.7342725387,
+      "capital": 409709.09304709773,
+      "capital_a_la_bascule": 374190.26579875377,
       "coefficient_revalorisation": 1.094921836548914,
       "diviseur": 23.563197503395017,
-      "pension_figee": 13985.993803474932
+      "pension_figee": 15880.283893764416
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 21633.0174077778,
-     "pension_annuelle_euros_constants": 17265.122618135643,
-     "pension_mensuelle": 1802.75145064815,
-     "pension_totale": 21633.0174077778,
-     "pension_totale_euros_constants": 17265.122618135643,
-     "pension_totale_mensuelle": 1802.75145064815,
+     "pension_annuelle": 23530.965829359335,
+     "pension_annuelle_euros_constants": 18779.85870898356,
+     "pension_mensuelle": 1960.913819113278,
+     "pension_totale": 23530.965829359335,
+     "pension_totale_euros_constants": 18779.85870898356,
+     "pension_totale_mensuelle": 1960.913819113278,
      "rendement_cumule": 1.0471652879587172,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.3244894095668191,
-     "variation_vs_actuel": -0.2543932804920749
+     "taux_remplacement": 0.35295812251140557,
+     "variation_vs_actuel": -0.2503032961288615
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -331109,7 +331109,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.21390395382475563,
-     "variation_vs_actuel": -0.5084948210976703
+     "variation_vs_actuel": -0.5456597287338486
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -331137,7 +331137,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.21390395382475563,
-     "variation_vs_actuel": -0.5084948210976703
+     "variation_vs_actuel": -0.5456597287338486
     }
    },
    "unite": {
@@ -331194,20 +331194,20 @@
    },
    "aujourd_hui": {
     "actuel": {
-     "coefficient_majoration": 1.8055777817120537,
-     "fiabilite": "moyenne",
+     "coefficient_majoration": 1.7860131664006973,
+     "fiabilite": "estimee",
      "majoration_enfants": 0.0,
-     "mensuel_decembre_2019": 779.4033608720702,
-     "minimum_vieillesse": 1670.9855193669064,
+     "mensuel_decembre_2019": 896.7973631244703,
+     "minimum_vieillesse": 170.96480868569233,
      "par_regime": [
       {
-       "au_depart": 452.08359992115146,
-       "aujourd_hui": 821.6144806330944,
-       "coefficient": 1.8173950144981887,
-       "fiabilite": "moyenne",
+       "au_depart": 1357.793746555817,
+       "aujourd_hui": 2321.6351913143085,
+       "coefficient": 1.7098585092201037,
+       "fiabilite": "estimee",
        "majoration_exceptionnelle": 0.0,
        "regime": "cipav_complementaire",
-       "regle": "par_defaut",
+       "regle": "point",
        "relevement_des_exploitants": 0.0
       },
       {
@@ -331227,8 +331227,8 @@
     "annee": 2026,
     "coefficients_notionnels": {
      "notionnel_liberal": 0.6780145346372519,
-     "notionnel_prospectif": 1.103895696970437,
-     "notionnel_prospectif_employeur": 1.103895696970437,
+     "notionnel_prospectif": 0.9593315504096104,
+     "notionnel_prospectif_employeur": 0.9593315504096104,
      "notionnel_retroactif": 0.6780145346372519,
      "notionnel_retroactif_employeur": 0.6780145346372519
     },
@@ -331352,8 +331352,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 7,292 € × rendement 6.20%",
-       "montant": 452.08359992115146,
+       "detail": "803.33 points × valeur de service 1.690198 €",
+       "montant": 1357.793746555817,
        "regime": "cipav_complementaire"
       },
       {
@@ -331362,12 +331362,12 @@
        "regime": "cnavpl"
       }
      ],
-     "pension_annuelle": 6010.316803047448,
-     "pension_annuelle_euros_constants": 11344.441358335485,
+     "pension_annuelle": 6916.026949682114,
+     "pension_annuelle_euros_constants": 13053.964497105262,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 500.85973358728734,
-     "taux_remplacement": 0.2954554442830672,
-     "total_contributif": 6010.316803047448
+     "pension_mensuelle": 576.3355791401762,
+     "taux_remplacement": 0.3399783875046201,
+     "total_contributif": 6916.026949682114
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -331431,12 +331431,12 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.07007452895460263,
-     "variation_vs_actuel": -0.7628253927605196
+     "variation_vs_actuel": -0.7938853423332671
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 127884.0200204326,
-     "capital_notionnel": 127884.0200204326,
+     "capital_droits_acquis": 147155.19295863924,
+     "capital_notionnel": 147155.19295863924,
      "capital_par_regime": {
       "cipav_complementaire": 32.265,
       "cnavpl": 144.09305422759923
@@ -331447,23 +331447,23 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 6010.316803047448,
-     "pension_annuelle_euros_constants": 11344.441358335485,
-     "pension_mensuelle": 500.85973358728734,
-     "pension_totale": 6010.316803047448,
-     "pension_totale_euros_constants": 11344.441358335485,
-     "pension_totale_mensuelle": 500.85973358728734,
+     "pension_annuelle": 6916.026949682114,
+     "pension_annuelle_euros_constants": 13053.964497105262,
+     "pension_mensuelle": 576.3355791401762,
+     "pension_totale": 6916.026949682114,
+     "pension_totale_euros_constants": 13053.964497105262,
+     "pension_totale_mensuelle": 576.3355791401762,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.2954554442830672,
+     "taux_remplacement": 0.3399783875046201,
      "variation_vs_actuel": 0.0
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 127884.0200204326,
-     "capital_notionnel": 127884.0200204326,
+     "capital_droits_acquis": 147155.19295863924,
+     "capital_notionnel": 147155.19295863924,
      "capital_par_regime": {
       "cipav_complementaire": 32.265,
       "cnavpl": 144.09305422759923
@@ -331474,17 +331474,17 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 6010.316803047448,
-     "pension_annuelle_euros_constants": 11344.441358335485,
-     "pension_mensuelle": 500.85973358728734,
-     "pension_totale": 6010.316803047448,
-     "pension_totale_euros_constants": 11344.441358335485,
-     "pension_totale_mensuelle": 500.85973358728734,
+     "pension_annuelle": 6916.026949682114,
+     "pension_annuelle_euros_constants": 13053.964497105262,
+     "pension_mensuelle": 576.3355791401762,
+     "pension_totale": 6916.026949682114,
+     "pension_totale_euros_constants": 13053.964497105262,
+     "pension_totale_mensuelle": 576.3355791401762,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.2954554442830672,
+     "taux_remplacement": 0.3399783875046201,
      "variation_vs_actuel": 0.0
     },
     "notionnel_retroactif": {
@@ -331512,7 +331512,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.07007452895460263,
-     "variation_vs_actuel": -0.7628253927605196
+     "variation_vs_actuel": -0.7938853423332671
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -331539,7 +331539,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.07007452895460263,
-     "variation_vs_actuel": -0.7628253927605196
+     "variation_vs_actuel": -0.7938853423332671
     }
    },
    "unite": {
@@ -331596,20 +331596,20 @@
    },
    "aujourd_hui": {
     "actuel": {
-     "coefficient_majoration": 1.495128990635863,
-     "fiabilite": "moyenne",
+     "coefficient_majoration": 1.4724598035002503,
+     "fiabilite": "estimee",
      "majoration_enfants": 0.0,
-     "mensuel_decembre_2019": 897.1840537981449,
-     "minimum_vieillesse": 26.28555106134081,
+     "mensuel_decembre_2019": 1126.1855074715227,
+     "minimum_vieillesse": 0.0,
      "par_regime": [
       {
-       "au_depart": 1155.3570080101874,
-       "aujourd_hui": 1714.0284489386597,
-       "coefficient": 1.483548753376797,
-       "fiabilite": "moyenne",
+       "au_depart": 3266.8448640809197,
+       "aujourd_hui": 4633.632699282285,
+       "coefficient": 1.418381616534427,
+       "fiabilite": "estimee",
        "majoration_exceptionnelle": 0.0,
        "regime": "cipav_complementaire",
-       "regle": "par_defaut",
+       "regle": "point",
        "relevement_des_exploitants": 0.0
       },
       {
@@ -331623,14 +331623,14 @@
        "relevement_des_exploitants": 0.0
       }
      ],
-     "pension_annuelle": 12523.08,
+     "pension_annuelle": 15416.398699282285,
      "pension_hors_repartition": 0.0
     },
     "annee": 2026,
     "coefficients_notionnels": {
      "notionnel_liberal": 0.7275596157881449,
-     "notionnel_prospectif": 0.9569131460990474,
-     "notionnel_prospectif_employeur": 0.9569131460990474,
+     "notionnel_prospectif": 0.9404263252924782,
+     "notionnel_prospectif_employeur": 0.9404263252924782,
      "notionnel_retroactif": 0.7275596157881449,
      "notionnel_retroactif_employeur": 0.7275596157881449
     },
@@ -331638,8 +331638,8 @@
     "garantie_vieillesse": 9474.00681903046,
     "notionnels": {
      "notionnel_liberal": 12600.0,
-     "notionnel_prospectif": 12523.08,
-     "notionnel_prospectif_employeur": 12523.08,
+     "notionnel_prospectif": 15416.398699282285,
+     "notionnel_prospectif_employeur": 15416.398699282285,
      "notionnel_retroactif": 3125.9931809695418,
      "notionnel_retroactif_employeur": 3125.9931809695418
     },
@@ -331754,8 +331754,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 18,635 € × rendement 6.20%",
-       "montant": 1155.3570080101874,
+       "detail": "1,603.33 points × valeur de service 2.037533 €",
+       "montant": 3266.8448640809197,
        "regime": "cipav_complementaire"
       },
       {
@@ -331764,12 +331764,12 @@
        "regime": "cnavpl"
       }
      ],
-     "pension_annuelle": 8358.338663223902,
-     "pension_annuelle_euros_constants": 13086.955750426874,
+     "pension_annuelle": 10469.826519294633,
+     "pension_annuelle_euros_constants": 16392.98931204174,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 696.5282219353252,
-     "taux_remplacement": 0.3102407015952312,
-     "total_contributif": 8358.338663223902
+     "pension_mensuelle": 872.4855432745527,
+     "taux_remplacement": 0.3886138688323346,
+     "total_contributif": 10469.826519294633
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -331833,12 +331833,12 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.10185434992253775,
-     "variation_vs_actuel": -0.6716924974743437
+     "variation_vs_actuel": -0.7379034612722937
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 191157.57141710908,
-     "capital_notionnel": 191157.57141710908,
+     "capital_droits_acquis": 239447.89643338643,
+     "capital_notionnel": 239447.89643338643,
      "capital_par_regime": {
       "cipav_complementaire": 44.209999999999994,
       "cnavpl": 190.8353693118798
@@ -331849,23 +331849,23 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 8358.338663223902,
-     "pension_annuelle_euros_constants": 13086.955750426874,
-     "pension_mensuelle": 696.5282219353252,
-     "pension_totale": 8358.338663223902,
-     "pension_totale_euros_constants": 13086.955750426874,
-     "pension_totale_mensuelle": 696.5282219353252,
+     "pension_annuelle": 10469.826519294633,
+     "pension_annuelle_euros_constants": 16392.98931204174,
+     "pension_mensuelle": 872.4855432745527,
+     "pension_totale": 10469.826519294633,
+     "pension_totale_euros_constants": 16392.98931204174,
+     "pension_totale_mensuelle": 872.4855432745527,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.3102407015952312,
+     "taux_remplacement": 0.3886138688323346,
      "variation_vs_actuel": 0.0
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 191157.57141710908,
-     "capital_notionnel": 191157.57141710908,
+     "capital_droits_acquis": 239447.89643338643,
+     "capital_notionnel": 239447.89643338643,
      "capital_par_regime": {
       "cipav_complementaire": 44.209999999999994,
       "cnavpl": 190.8353693118798
@@ -331876,17 +331876,17 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 8358.338663223902,
-     "pension_annuelle_euros_constants": 13086.955750426874,
-     "pension_mensuelle": 696.5282219353252,
-     "pension_totale": 8358.338663223902,
-     "pension_totale_euros_constants": 13086.955750426874,
-     "pension_totale_mensuelle": 696.5282219353252,
+     "pension_annuelle": 10469.826519294633,
+     "pension_annuelle_euros_constants": 16392.98931204174,
+     "pension_mensuelle": 872.4855432745527,
+     "pension_totale": 10469.826519294633,
+     "pension_totale_euros_constants": 16392.98931204174,
+     "pension_totale_mensuelle": 872.4855432745527,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.3102407015952312,
+     "taux_remplacement": 0.3886138688323346,
      "variation_vs_actuel": 0.0
     },
     "notionnel_retroactif": {
@@ -331914,7 +331914,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.10185434992253775,
-     "variation_vs_actuel": -0.6716924974743437
+     "variation_vs_actuel": -0.7379034612722937
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -331941,7 +331941,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.10185434992253775,
-     "variation_vs_actuel": -0.6716924974743437
+     "variation_vs_actuel": -0.7379034612722937
     }
    },
    "unite": {
@@ -331998,20 +331998,20 @@
    },
    "aujourd_hui": {
     "actuel": {
-     "coefficient_majoration": 1.2553235811381096,
-     "fiabilite": "moyenne",
+     "coefficient_majoration": 1.2309578240832537,
+     "fiabilite": "estimee",
      "majoration_enfants": 0.0,
-     "mensuel_decembre_2019": 1115.941406755847,
+     "mensuel_decembre_2019": 1431.754439141486,
      "minimum_vieillesse": 0.0,
      "par_regime": [
       {
-       "au_depart": 2323.944584443249,
-       "aujourd_hui": 2953.6928170436768,
-       "coefficient": 1.2709824652515531,
-       "fiabilite": "moyenne",
+       "au_depart": 5812.082168043262,
+       "aujourd_hui": 6945.63891304228,
+       "coefficient": 1.1950345353394496,
+       "fiabilite": "estimee",
        "majoration_exceptionnelle": 0.0,
        "regime": "cipav_complementaire",
-       "regle": "par_defaut",
+       "regle": "point",
        "relevement_des_exploitants": 0.0
       },
       {
@@ -332025,14 +332025,14 @@
        "relevement_des_exploitants": 0.0
       }
      ],
-     "pension_annuelle": 15548.947260888002,
+     "pension_annuelle": 19540.893356886605,
      "pension_hors_repartition": 0.0
     },
     "annee": 2026,
     "coefficients_notionnels": {
      "notionnel_liberal": 0.7979398213803465,
-     "notionnel_prospectif": 0.9515895292292119,
-     "notionnel_prospectif_employeur": 0.9515895292292119,
+     "notionnel_prospectif": 0.9331192323005726,
+     "notionnel_prospectif_employeur": 0.9331192323005726,
      "notionnel_retroactif": 0.7979398213803465,
      "notionnel_retroactif_employeur": 0.7979398213803465
     },
@@ -332040,8 +332040,8 @@
     "garantie_vieillesse": 8057.408363882342,
     "notionnels": {
      "notionnel_liberal": 12600.0,
-     "notionnel_prospectif": 15548.947260888002,
-     "notionnel_prospectif_employeur": 15548.947260888002,
+     "notionnel_prospectif": 19540.893356886605,
+     "notionnel_prospectif_employeur": 19540.893356886605,
      "notionnel_retroactif": 4542.591636117658,
      "notionnel_retroactif_employeur": 4542.591636117658
     },
@@ -332156,8 +332156,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 37,483 € × rendement 6.20%",
-       "montant": 2323.944584443249,
+       "detail": "2,403.34 points × valeur de service 2.41834 €",
+       "montant": 5812.082168043262,
        "regime": "cipav_complementaire"
       },
       {
@@ -332166,12 +332166,12 @@
        "regime": "cnavpl"
       }
      ],
-     "pension_annuelle": 12386.405779767887,
-     "pension_annuelle_euros_constants": 16339.973048550313,
+     "pension_annuelle": 15874.5433633679,
+     "pension_annuelle_euros_constants": 20941.47530183171,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 1032.2004816473238,
-     "taux_remplacement": 0.3571341835172146,
-     "total_contributif": 12386.405779767887
+     "pension_mensuelle": 1322.8786136139918,
+     "taux_remplacement": 0.45770679433459127,
+     "total_contributif": 15874.5433633679
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -332235,12 +332235,12 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.12442671719104467,
-     "variation_vs_actuel": -0.6515967304903842
+     "variation_vs_actuel": -0.7281519113738857
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 293176.13171294564,
-     "capital_notionnel": 293176.13171294564,
+     "capital_droits_acquis": 375737.5059990024,
+     "capital_notionnel": 375737.5059990024,
      "capital_par_regime": {
       "cipav_complementaire": 82.33333333333333,
       "cnavpl": 216.3542046594312
@@ -332251,23 +332251,23 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 12386.405779767887,
-     "pension_annuelle_euros_constants": 16339.973048550313,
-     "pension_mensuelle": 1032.2004816473238,
-     "pension_totale": 12386.405779767887,
-     "pension_totale_euros_constants": 16339.973048550313,
-     "pension_totale_mensuelle": 1032.2004816473238,
+     "pension_annuelle": 15874.5433633679,
+     "pension_annuelle_euros_constants": 20941.47530183171,
+     "pension_mensuelle": 1322.8786136139918,
+     "pension_totale": 15874.5433633679,
+     "pension_totale_euros_constants": 20941.47530183171,
+     "pension_totale_mensuelle": 1322.8786136139918,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.3571341835172146,
+     "taux_remplacement": 0.45770679433459127,
      "variation_vs_actuel": 0.0
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 293176.13171294564,
-     "capital_notionnel": 293176.13171294564,
+     "capital_droits_acquis": 375737.5059990024,
+     "capital_notionnel": 375737.5059990024,
      "capital_par_regime": {
       "cipav_complementaire": 82.33333333333333,
       "cnavpl": 216.3542046594312
@@ -332278,17 +332278,17 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 12386.405779767887,
-     "pension_annuelle_euros_constants": 16339.973048550313,
-     "pension_mensuelle": 1032.2004816473238,
-     "pension_totale": 12386.405779767887,
-     "pension_totale_euros_constants": 16339.973048550313,
-     "pension_totale_mensuelle": 1032.2004816473238,
+     "pension_annuelle": 15874.5433633679,
+     "pension_annuelle_euros_constants": 20941.47530183171,
+     "pension_mensuelle": 1322.8786136139918,
+     "pension_totale": 15874.5433633679,
+     "pension_totale_euros_constants": 20941.47530183171,
+     "pension_totale_mensuelle": 1322.8786136139918,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.3571341835172146,
+     "taux_remplacement": 0.45770679433459127,
      "variation_vs_actuel": 0.0
     },
     "notionnel_retroactif": {
@@ -332316,7 +332316,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.12442671719104467,
-     "variation_vs_actuel": -0.6515967304903842
+     "variation_vs_actuel": -0.7281519113738857
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -332343,7 +332343,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.12442671719104467,
-     "variation_vs_actuel": -0.6515967304903842
+     "variation_vs_actuel": -0.7281519113738857
     }
    },
    "unite": {
@@ -332400,20 +332400,20 @@
    },
    "aujourd_hui": {
     "actuel": {
-     "coefficient_majoration": 1.1617431659685118,
+     "coefficient_majoration": 1.133437256263743,
      "fiabilite": "moyenne",
      "majoration_enfants": 0.0,
-     "mensuel_decembre_2019": 1253.5748547131823,
+     "mensuel_decembre_2019": 1601.5280681292772,
      "minimum_vieillesse": 0.0,
      "par_regime": [
       {
-       "au_depart": 4130.106517500753,
-       "aujourd_hui": 4819.830874028588,
-       "coefficient": 1.1669991690541694,
+       "au_depart": 8305.545078493893,
+       "aujourd_hui": 9126.625580550324,
+       "coefficient": 1.0988593155893538,
        "fiabilite": "moyenne",
        "majoration_exceptionnelle": 0.0,
        "regime": "cipav_complementaire",
-       "regle": "par_defaut",
+       "regle": "point",
        "relevement_des_exploitants": 0.0
       },
       {
@@ -332427,14 +332427,14 @@
        "relevement_des_exploitants": 0.0
       }
      ],
-     "pension_annuelle": 17475.984245916115,
+     "pension_annuelle": 21782.77895243785,
      "pension_hors_repartition": 0.0
     },
     "annee": 2026,
     "coefficients_notionnels": {
      "notionnel_liberal": 0.8337087309995886,
-     "notionnel_prospectif": 0.9839195485551951,
-     "notionnel_prospectif_employeur": 0.9839195485551951,
+     "notionnel_prospectif": 0.959946317023472,
+     "notionnel_prospectif_employeur": 0.959946317023472,
      "notionnel_retroactif": 0.8337087309995886,
      "notionnel_retroactif_employeur": 0.8337087309995886
     },
@@ -332442,8 +332442,8 @@
     "garantie_vieillesse": 6171.083660784495,
     "notionnels": {
      "notionnel_liberal": 12728.916339215506,
-     "notionnel_prospectif": 17475.984245916115,
-     "notionnel_prospectif_employeur": 17475.984245916115,
+     "notionnel_prospectif": 21782.77895243785,
+     "notionnel_prospectif_employeur": 21782.77895243785,
      "notionnel_retroactif": 6557.83267843101,
      "notionnel_retroactif_employeur": 6557.83267843101
     },
@@ -332558,8 +332558,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 66,615 € × rendement 6.20%",
-       "montant": 4130.106517500753,
+       "detail": "3,158.00 points × valeur de service 2.63 €",
+       "montant": 8305.545078493893,
        "regime": "cipav_complementaire"
       },
       {
@@ -332568,12 +332568,12 @@
        "regime": "cnavpl"
       }
      ],
-     "pension_annuelle": 15042.898256558188,
-     "pension_annuelle_euros_constants": 17761.598772560377,
+     "pension_annuelle": 19218.336817551328,
+     "pension_annuelle_euros_constants": 22691.66365467209,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 1253.5748547131823,
-     "taux_remplacement": 0.36581841472481136,
-     "total_contributif": 15042.898256558188
+     "pension_mensuelle": 1601.5280681292772,
+     "taux_remplacement": 0.46735817715040917,
+     "total_contributif": 19218.336817551328
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -332637,12 +332637,12 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.1620053997026421,
-     "variation_vs_actuel": -0.557142578990969
+     "variation_vs_actuel": -0.6533592271982349
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 357567.12149559153,
-     "capital_notionnel": 357567.12149559153,
+     "capital_droits_acquis": 456816.5827212643,
+     "capital_notionnel": 456816.5827212643,
      "capital_par_regime": {
       "cipav_complementaire": 225.5,
       "cnavpl": 342.0076624855456
@@ -332653,23 +332653,23 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 15042.898256558188,
-     "pension_annuelle_euros_constants": 17761.598772560377,
-     "pension_mensuelle": 1253.5748547131823,
-     "pension_totale": 15042.898256558188,
-     "pension_totale_euros_constants": 17761.598772560377,
-     "pension_totale_mensuelle": 1253.5748547131823,
+     "pension_annuelle": 19218.336817551328,
+     "pension_annuelle_euros_constants": 22691.66365467209,
+     "pension_mensuelle": 1601.5280681292772,
+     "pension_totale": 19218.336817551328,
+     "pension_totale_euros_constants": 22691.66365467209,
+     "pension_totale_mensuelle": 1601.5280681292772,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.36581841472481136,
+     "taux_remplacement": 0.46735817715040917,
      "variation_vs_actuel": 0.0
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 357567.12149559153,
-     "capital_notionnel": 357567.12149559153,
+     "capital_droits_acquis": 456816.5827212643,
+     "capital_notionnel": 456816.5827212643,
      "capital_par_regime": {
       "cipav_complementaire": 225.5,
       "cnavpl": 342.0076624855456
@@ -332680,17 +332680,17 @@
      "droits_acquis": null,
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 15042.898256558188,
-     "pension_annuelle_euros_constants": 17761.598772560377,
-     "pension_mensuelle": 1253.5748547131823,
-     "pension_totale": 15042.898256558188,
-     "pension_totale_euros_constants": 17761.598772560377,
-     "pension_totale_mensuelle": 1253.5748547131823,
+     "pension_annuelle": 19218.336817551328,
+     "pension_annuelle_euros_constants": 22691.66365467209,
+     "pension_mensuelle": 1601.5280681292772,
+     "pension_totale": 19218.336817551328,
+     "pension_totale_euros_constants": 22691.66365467209,
+     "pension_totale_mensuelle": 1601.5280681292772,
      "rendement_cumule": 1.0,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.36581841472481136,
+     "taux_remplacement": 0.46735817715040917,
      "variation_vs_actuel": 0.0
     },
     "notionnel_retroactif": {
@@ -332718,7 +332718,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.1620053997026421,
-     "variation_vs_actuel": -0.557142578990969
+     "variation_vs_actuel": -0.6533592271982349
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -332745,7 +332745,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.1620053997026421,
-     "variation_vs_actuel": -0.557142578990969
+     "variation_vs_actuel": -0.6533592271982349
     }
    },
    "unite": {
@@ -332907,8 +332907,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 118,846 € × rendement 6.10%",
-       "montant": 7249.635985063389,
+       "detail": "3,280.59 points × valeur de service 3.044396 € + cotisations revalorisées 12,011 € × rendement 6.10%",
+       "montant": 10720.082518773283,
        "regime": "cipav_complementaire"
       },
       {
@@ -332917,12 +332917,12 @@
        "regime": "cnavpl"
       }
      ],
-     "pension_annuelle": 21256.448356918663,
-     "pension_annuelle_euros_constants": 20178.43351765528,
+     "pension_annuelle": 24726.89489062856,
+     "pension_annuelle_euros_constants": 23472.87732506816,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 1771.3706964098885,
-     "taux_remplacement": 0.40615682624674887,
-     "total_contributif": 21256.448356918663
+     "pension_mensuelle": 2060.5745742190466,
+     "taux_remplacement": 0.4724682591880782,
+     "total_contributif": 24726.89489062856
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -332987,12 +332987,12 @@
      "rente_capitalisation_obligatoire": 833.4887371714921,
      "rente_capitalisation_volontaire": 416.74436858574603,
      "taux_remplacement": 0.2716202001291527,
-     "variation_vs_actuel": -0.32664226561478205
+     "variation_vs_actuel": -0.4211487544230307
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 425588.71253279113,
-     "capital_notionnel": 465841.8182541802,
+     "capital_droits_acquis": 504861.77575754805,
+     "capital_notionnel": 545114.8814789371,
      "capital_par_regime": {
       "regime_unifie": 40253.10572138907
      },
@@ -333001,31 +333001,31 @@
      "cotisations_versees": 39715.15563831097,
      "droits_acquis": {
       "age_conversion": 65.0,
-      "capital": 425588.71253279113,
-      "capital_a_la_bascule": 416775.02806056006,
+      "capital": 504861.77575754805,
+      "capital_a_la_bascule": 494406.3941588773,
       "coefficient_revalorisation": 1.0211473429999995,
       "diviseur": 23.563197503395017,
-      "pension_figee": 17687.541260073493
+      "pension_figee": 20982.14361983948
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 18793.188003014355,
-     "pension_annuelle_euros_constants": 17840.09672435199,
-     "pension_mensuelle": 1566.0990002511962,
-     "pension_totale": 18793.188003014355,
-     "pension_totale_euros_constants": 17840.09672435199,
-     "pension_totale_mensuelle": 1566.0990002511962,
+     "pension_annuelle": 21991.255506573718,
+     "pension_annuelle_euros_constants": 20875.97512802436,
+     "pension_mensuelle": 1832.6046255478097,
+     "pension_totale": 21991.255506573718,
+     "pension_totale_euros_constants": 20875.97512802436,
+     "pension_totale_mensuelle": 1832.6046255478097,
      "rendement_cumule": 1.0135452089871497,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.3590901671905299,
-     "variation_vs_actuel": -0.11588296937209419
+     "taux_remplacement": 0.4201971275612522,
+     "variation_vs_actuel": -0.1106341655980283
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 425588.71253279113,
-     "capital_notionnel": 465841.8182541802,
+     "capital_droits_acquis": 504861.77575754805,
+     "capital_notionnel": 545114.8814789371,
      "capital_par_regime": {
       "regime_unifie": 40253.10572138907
      },
@@ -333034,26 +333034,26 @@
      "cotisations_versees": 39715.15563831097,
      "droits_acquis": {
       "age_conversion": 65.0,
-      "capital": 425588.71253279113,
-      "capital_a_la_bascule": 416775.02806056006,
+      "capital": 504861.77575754805,
+      "capital_a_la_bascule": 494406.3941588773,
       "coefficient_revalorisation": 1.0211473429999995,
       "diviseur": 23.563197503395017,
-      "pension_figee": 17687.541260073493
+      "pension_figee": 20982.14361983948
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 18793.188003014355,
-     "pension_annuelle_euros_constants": 17840.09672435199,
-     "pension_mensuelle": 1566.0990002511962,
-     "pension_totale": 18793.188003014355,
-     "pension_totale_euros_constants": 17840.09672435199,
-     "pension_totale_mensuelle": 1566.0990002511962,
+     "pension_annuelle": 21991.255506573718,
+     "pension_annuelle_euros_constants": 20875.97512802436,
+     "pension_mensuelle": 1832.6046255478097,
+     "pension_totale": 21991.255506573718,
+     "pension_totale_euros_constants": 20875.97512802436,
+     "pension_totale_mensuelle": 1832.6046255478097,
      "rendement_cumule": 1.0135452089871497,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.3590901671905299,
-     "variation_vs_actuel": -0.11588296937209419
+     "taux_remplacement": 0.4201971275612522,
+     "variation_vs_actuel": -0.1106341655980283
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -333081,7 +333081,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.180103570033808,
-     "variation_vs_actuel": -0.5565664334682602
+     "variation_vs_actuel": -0.6188028157842597
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -333109,7 +333109,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.180103570033808,
-     "variation_vs_actuel": -0.5565664334682602
+     "variation_vs_actuel": -0.6188028157842597
     }
    },
    "unite": {
@@ -333271,8 +333271,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "cotisations revalorisées 140,998 € × rendement 6.10%",
-       "montant": 8600.859980124482,
+       "detail": "2,965.81 points × valeur de service 3.20704 € + cotisations revalorisées 35,058 € × rendement 6.10%",
+       "montant": 11649.99807339791,
        "regime": "cipav_complementaire"
       },
       {
@@ -333281,12 +333281,12 @@
        "regime": "cnavpl"
       }
      ],
-     "pension_annuelle": 23372.936631192424,
-     "pension_annuelle_euros_constants": 21062.347522709155,
+     "pension_annuelle": 26422.074724465852,
+     "pension_annuelle_euros_constants": 23810.05557406065,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 1947.7447192660354,
-     "taux_remplacement": 0.4153177076159415,
-     "total_contributif": 23372.936631192424
+     "pension_mensuelle": 2201.839560372154,
+     "taux_remplacement": 0.4694983637775954,
+     "total_contributif": 26422.074724465852
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -333351,12 +333351,12 @@
      "rente_capitalisation_obligatoire": 1681.700467688594,
      "rente_capitalisation_volontaire": 840.850233844297,
      "taux_remplacement": 0.2638262139072647,
-     "variation_vs_actuel": -0.36039029958932245
+     "variation_vs_actuel": -0.4342020014593325
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 400832.958804338,
-     "capital_notionnel": 493277.6232981212,
+     "capital_droits_acquis": 468348.8756899666,
+     "capital_notionnel": 560793.5401837497,
      "capital_par_regime": {
       "regime_unifie": 92444.6644937832
      },
@@ -333365,31 +333365,31 @@
      "cotisations_versees": 90517.81876015774,
      "droits_acquis": {
       "age_conversion": 65.0,
-      "capital": 400832.958804338,
-      "capital_a_la_bascule": 384402.85203593946,
+      "capital": 468348.8756899666,
+      "capital_a_la_bascule": 449151.29758810747,
       "coefficient_revalorisation": 1.0427418961159591,
       "diviseur": 23.563197503395017,
-      "pension_figee": 16313.696474366614
+      "pension_figee": 19061.55977020492
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 19616.046120417428,
-     "pension_annuelle_euros_constants": 17676.85365895951,
-     "pension_mensuelle": 1634.6705100347856,
-     "pension_totale": 19616.046120417428,
-     "pension_totale_euros_constants": 17676.85365895951,
-     "pension_totale_mensuelle": 1634.6705100347856,
+     "pension_annuelle": 22300.93446105545,
+     "pension_annuelle_euros_constants": 20096.320762409356,
+     "pension_mensuelle": 1858.4112050879542,
+     "pension_totale": 22300.93446105545,
+     "pension_totale_euros_constants": 20096.320762409356,
+     "pension_totale_mensuelle": 1858.4112050879542,
      "rendement_cumule": 1.0212869218460838,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.348560877726759,
-     "variation_vs_actuel": -0.16073677732738245
+     "taux_remplacement": 0.396269117749556,
+     "variation_vs_actuel": -0.15597337856267512
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
-     "capital_droits_acquis": 400832.958804338,
-     "capital_notionnel": 493277.6232981212,
+     "capital_droits_acquis": 468348.8756899666,
+     "capital_notionnel": 560793.5401837497,
      "capital_par_regime": {
       "regime_unifie": 92444.6644937832
      },
@@ -333398,26 +333398,26 @@
      "cotisations_versees": 90517.81876015774,
      "droits_acquis": {
       "age_conversion": 65.0,
-      "capital": 400832.958804338,
-      "capital_a_la_bascule": 384402.85203593946,
+      "capital": 468348.8756899666,
+      "capital_a_la_bascule": 449151.29758810747,
       "coefficient_revalorisation": 1.0427418961159591,
       "diviseur": 23.563197503395017,
-      "pension_figee": 16313.696474366614
+      "pension_figee": 19061.55977020492
      },
      "fiabilite": "estimee",
      "garantie_vieillesse": null,
-     "pension_annuelle": 19616.046120417428,
-     "pension_annuelle_euros_constants": 17676.85365895951,
-     "pension_mensuelle": 1634.6705100347856,
-     "pension_totale": 19616.046120417428,
-     "pension_totale_euros_constants": 17676.85365895951,
-     "pension_totale_mensuelle": 1634.6705100347856,
+     "pension_annuelle": 22300.93446105545,
+     "pension_annuelle_euros_constants": 20096.320762409356,
+     "pension_mensuelle": 1858.4112050879542,
+     "pension_totale": 22300.93446105545,
+     "pension_totale_euros_constants": 20096.320762409356,
+     "pension_totale_mensuelle": 1858.4112050879542,
      "rendement_cumule": 1.0212869218460838,
      "rente_capitalisation": 0.0,
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
-     "taux_remplacement": 0.348560877726759,
-     "variation_vs_actuel": -0.16073677732738245
+     "taux_remplacement": 0.396269117749556,
+     "variation_vs_actuel": -0.15597337856267512
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -333445,7 +333445,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.1961923351947995,
-     "variation_vs_actuel": -0.5276090289503734
+     "variation_vs_actuel": -0.5821234953488844
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -333473,7 +333473,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.1961923351947995,
-     "variation_vs_actuel": -0.5276090289503734
+     "variation_vs_actuel": -0.5821234953488844
     }
    },
    "unite": {

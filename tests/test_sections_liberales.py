@@ -806,8 +806,8 @@ def test_la_cipav_cotise_aux_deux_tranches_du_decret_dans_les_deux_moteurs(
         simulateur, annee, revenu, attendue):
     """La fiche de paie du libéral de la Cipav (``profession_liberale``), que
     le portage sert et que le témoin du droit garde (``droit_et_fige``), et
-    la cotisation que le scénario 1 inscrit l'année du revenu (``acquerir``),
-    ramenée en euros de cette année : celle du texte, au centime."""
+    les points que le scénario 1 inscrit l'année du revenu (``acquerir``),
+    au coût d'acquisition de l'année : la cotisation du texte, au centime."""
     from outils_pont import droit_et_fige
 
     from retraite_notionnelle import pont
@@ -825,10 +825,13 @@ def test_la_cipav_cotise_aux_deux_tranches_du_decret_dans_les_deux_moteurs(
     actuel = simulateur.scenario_actuel
     coordination = coordonner.coordonner(actuel, carriere)
     droits = acquerir.acquerir(actuel, coordination, compter.compter(actuel, coordination))
-    prix = simulateur.macro.coefficient_prix(annee, carriere.annee_liquidation)
-    inscrite = sum(montant for code, an, montant in droits.cotisations
-                   if code == "cipav_complementaire" and an == annee) / prix
-    assert inscrite == pytest.approx(attendue, abs=0.005)
+    # Elle s'inscrit en points, au coût d'acquisition de l'année : 45,30 € en
+    # 2023 (statuts, arrêté du 20 mars 2023), 47,40 € en 2024 et 2025
+    # (décrets n° 2024-1214 et n° 2025-1076).
+    cout = {2023: 45.30, 2024: 47.40, 2025: 47.40}[annee]
+    inscrits = _points_de_l_annee(droits.points, "cipav_complementaire", annee)
+    assert inscrits * cout == pytest.approx(attendue, abs=0.005)
+    assert not [1 for code, *_ in droits.cotisations if code == "cipav_complementaire"]
 
 
 def test_chaque_version_de_la_seconde_tranche_de_la_cipav_est_portee_par_le_modele(
@@ -866,35 +869,42 @@ def test_chaque_version_de_la_seconde_tranche_de_la_cipav_est_portee_par_le_mode
 #: 1er juillet 2026). Ligne 14 de la file des corrections (action 130), au
 #: décompte des trente ans le plus favorable à l'affilié : de date à date
 #: depuis la première cotisation, l'année où ils s'achèvent prise en entier.
-#: Libéral de la Cipav au double du salaire moyen, un an entier de report ;
-#: les cotisations revalorisées, année par année, sont celles des notes
-#: `130/2026-11-06-e10-decret-2026-418.md` et `…-e11-surcote-par-age-seul.md`,
-#: et chaque pension est posée à la main : (naissance, âge demandé, début) →
-#: (les années majorées, la pension).
+#: Libéral de la Cipav à dix fois le salaire moyen, donc toujours dans la
+#: classe la plus haute, dont l'article 2 du décret donne les points : 12 en
+#: 1979, 20 en 1980, 28 en 1981 (les classes 5, 7 et 10 ne sont obligatoires
+#: qu'en 1980, 1981 et 1982), 40 de 1982 à 2012, dix fois plus depuis la
+#: conversion de 2013, puis 468 de 2013 à 2022. Un an entier de report ;
+#: (naissance, âge demandé, début) → (les années majorées, la pension posée
+#: à la main, ou None quand la première année, partielle, ne se pose pas).
 REPORT_DE_LA_CIPAV_AU_TEXTE = {
     # Née le 10 mars 1949, libérale depuis 1971, pension au 1er janvier 2016.
     # Le régime est institué « à compter du 1er janvier 1979 » (décret
     # n° 79-262, article 1er, LEGIARTI000006767470) : 1979 est entière, les
-    # trente années vont de 1979 à 2008. 193 940,3125 × 0,062 = 12 024,2994 ;
-    # 0,05 × 0,062 × 137 466,6071 = 426,1465 ; 12 450,45 €.
-    ("1949-03-10", "66.75", "22"): ("de 1979 à 2008", 12450.45),
+    # trente années vont de 1979 à 2008. 120 + 200 + 280 + 31 × 400 + 3 × 468
+    # = 14 404 points, dont 600 + 27 × 400 = 11 400 de 1979 à 2008 ;
+    # (14 404 + 0,05 × 11 400) × 2,63 € = 39 381,62 €.
+    ("1949-03-10", "66.75", "22"): ("de 1979 à 2008", 39381.62),
     # Née le 10 mars 1957, cotisante depuis le 10 mars 1979, pension au
     # 1er janvier 2026 : 1979 est partielle, trente ans de date à date
-    # s'achèvent le 9 mars 2009, 2009 prise en entier. 354 057,8613 × 0,061 =
-    # 21 597,5295 ; 0,05 × 0,061 × 177 676,4629 = 541,9132 ; 22 139,44 €.
-    ("1957-03-10", "68.75", "22"): ("de 1979 à 2009", 22139.44),
+    # s'achèvent le 9 mars 2009, 2009 prise en entier.
+    ("1957-03-10", "68.75", "22"): ("de 1979 à 2009", None),
     # Née le 10 mars 1959, cotisante depuis le 10 mars 1981, pension au
-    # 1er juillet 2027, sous le décret : de 1981 à 2011. 374 715,4414 × 0,061
-    # = 22 857,6419 ; 0,05 × 0,061 × 194 651,6538 = 593,6875 ; 23 451,33 €.
-    ("1959-03-10", "68.25", "22"): ("de 1981 à 2011", 23451.33),
+    # 1er juillet 2027, sous le décret : de 1981 à 2011.
+    ("1959-03-10", "68.25", "22"): ("de 1981 à 2011", None),
 }
+
+
+def _coefficient_de_majoration(detail: str) -> float:
+    import re
+
+    return float(re.search(r"coefficient de majoration (\d\.\d+)", detail).group(1))
 
 
 def test_la_cipav_ne_majore_que_les_trente_premieres_annees_dans_les_deux_moteurs():
     from outils_pont import servi_et_fige
     from test_complementaires_liberales_a_leur_age import REQUETE
 
-    requete = {**REQUETE, "statut": "profession_liberale"}
+    requete = {**REQUETE, "statut": "profession_liberale", "salaire": "10"}
     # Le contrôle : cotisante depuis le 10 mars 1985, trente et une années
     # civiles jusqu'à 2015, la première partielle : toutes sont majorées.
     controle = ("1949-03-10", "66.75", "36")
@@ -911,8 +921,14 @@ def test_la_cipav_ne_majore_que_les_trente_premieres_annees_dans_les_deux_moteur
 
     for cle, (annees, montant) in REPORT_DE_LA_CIPAV_AU_TEXTE.items():
         servie = pension(cle)
-        assert servie["montant"] == pytest.approx(montant, abs=0.01), (cle, servie["detail"])
         assert annees in servie["detail"], (cle, servie["detail"])
+        if montant is None:
+            # Une année de report, sur une part des points seulement.
+            assert 1.0 < _coefficient_de_majoration(servie["detail"]) < 1.05, servie["detail"]
+        else:
+            # À cinq centimes : les cotisations des classes sont arrondies au
+            # centime, ce qui déplace le compte d'un centième de point.
+            assert servie["montant"] == pytest.approx(montant, abs=0.05), (cle, servie["detail"])
     assert pension(controle)["detail"].endswith("coefficient de majoration 1.0500")
 
 
@@ -929,13 +945,14 @@ def test_la_cipav_majore_le_report_depuis_2008_dans_les_deux_moteurs():
     from test_complementaires_liberales_a_leur_age import REQUETE
 
     requete = {**REQUETE, "statut": "profession_liberale", "liquidation": "66.75",
-               "debut": "22"}
-    # Née le 10 mars 1945, libérale depuis 1967, pension au 1er janvier 2012,
+               "debut": "22", "salaire": "10"}
+    # Née le 10 mars 1945, libérale depuis 1971, pension au 1er janvier 2012,
     # un an entier de report (65 ans le 10 mars 2010) ; trente-trois années au
-    # régime, de 1979 à 2011, les trente premières de 1979 à 2008. Cotisations
-    # revalorisées de la note `130/2026-11-06-e11-surcote-par-age-seul.md` :
-    # 157 922,1741 × 0,062 = 9 791,1748 ; 0,05 × 0,062 × 135 298,4577 =
-    # 419,4252 ; 10 210,60 €.
+    # régime, de 1979 à 2011, les trente premières de 1979 à 2008, toutes
+    # dans la classe la plus haute : 120 + 200 + 280 + 30 × 400 = 12 600
+    # points, dont 11 400 de 1979 à 2008, à 2,547 € le point (25,47 € en 2012
+    # pour un point d'avant la conversion) ; (12 600 + 0,05 × 11 400) × 2,547
+    # = 33 543,99 €.
     # Née le 10 mars 1942, pension au 1er janvier 2009 : trente années au
     # régime, de 1979 à 2008, toutes majorées, 1,05.
     # Née le 10 mars 1940, pension au 1er janvier 2007 : l'année 2007, que le
@@ -950,7 +967,7 @@ def test_la_cipav_majore_le_report_depuis_2008_dans_les_deux_moteurs():
                 ["pensions_par_regime"]}["cipav_complementaire"]
 
     de_2012 = pension("1945-03-10")
-    assert de_2012["montant"] == pytest.approx(10210.60, abs=0.01), de_2012["detail"]
+    assert de_2012["montant"] == pytest.approx(33543.99, abs=0.05), de_2012["detail"]
     assert "de 1979 à 2008" in de_2012["detail"]
     assert pension("1942-03-10")["detail"].endswith("coefficient de majoration 1.0500")
     assert "majoration" not in pension("1940-03-10")["detail"]
@@ -1795,3 +1812,57 @@ def test_la_page_dit_la_complementaire_servie_au_trimestre_civil():
     assert "Vos pensions ne commencent pas toutes à la\nmême date." in page
     assert "le 1<sup>er</sup> juillet 2027" in page
     assert "au premier jour du trimestre civil qui suit, comme ses statuts le fixent" in page
+
+
+#: Les points de la complémentaire de la Cipav, au texte. Décret n° 79-262,
+#: article 2 : la classe 1 porte attribution de quatre points et la classe 10
+#: de quarante jusqu'en 2012 (LEGIARTI000006767473), la classe A de 36 points
+#: depuis 2013 (LEGIARTI000026892951) ; depuis 2023 « un nombre de points égal
+#: à son montant divisé par le coût d'acquisition du point », 47,40 € en 2024
+#: (LEGIARTI000054168526 ; la caisse pose 3 600 € / 47,40 € = 75,9 points).
+#: Les points d'avant 2013 ont été multipliés par dix au 1er janvier 2013,
+#: quand la valeur du point passait de 25,47 € à 2,60 € : le décret
+#: n° 2012-1522 dit la réforme « sans impact pour les points attribués au
+#: titre des périodes antérieures » (JORFTEXT000026863128), le facteur dix
+#: n'est lu que chez un cabinet (Neovia), réserve que la fiche du régime porte.
+POINTS_DE_LA_CIPAV_AU_TEXTE = {
+    (2000, 10_000.0): 4 * 10,
+    (2012, 10_000.0): 4 * 10,
+    (2012, 300_000.0): 40 * 10,
+    (2014, 10_000.0): 36,
+    (2024, 40_000.0): 0.09 * 40_000 / 47.40,
+}
+
+
+def _carriere_de_la_cipav(annees_et_revenus):
+    from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
+
+    return Carriere.depuis_lignes(
+        1959, "H", [AnneeCarriere(annee=annee, affiliation="profession_liberale",
+                                  revenu=revenu, trimestres_valides=4)
+                    for annee, revenu in annees_et_revenus],
+        age_liquidation=67)
+
+
+@pytest.mark.parametrize("annee,revenu", sorted(POINTS_DE_LA_CIPAV_AU_TEXTE))
+def test_la_cipav_inscrit_les_points_de_la_classe_du_decret(simulateur, annee, revenu):
+    """Une année de cotisation à la complémentaire de la Cipav inscrit les
+    points que l'article 2 du décret n° 79-262 attache à sa classe, et non
+    une cotisation à servir au rendement de l'année du départ."""
+    carriere = _carriere_de_la_cipav([(annee, revenu)])
+    points = releve.construire(simulateur.scenario_actuel, carriere).droits.points
+    assert _points_de_l_annee(points, "cipav_complementaire", annee) == pytest.approx(
+        POINTS_DE_LA_CIPAV_AU_TEXTE[annee, revenu], abs=0.01)
+
+
+def test_la_cipav_sert_les_points_acquis_a_la_valeur_de_service(simulateur):
+    """Article 5-2 du décret n° 79-262 : « Le montant de la pension est égal
+    au produit du nombre de points acquis […] par la valeur de service du
+    point », 2,89 € en 2026 (fiche pratique 2026 de la caisse). Trois années
+    en classe 1 puis A, prises à 67 ans en 2026 : (40 + 40 + 36) × 2,89 €.
+    Le moteur portait ces cotisations aux prix et les servait à 6,10 % :
+    230,29 €, un tiers de moins."""
+    carriere = _carriere_de_la_cipav([(2000, 10_000.0), (2012, 10_000.0), (2014, 10_000.0)])
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    pension = {p.regime: p for p in resultat.pensions_par_regime}["cipav_complementaire"]
+    assert pension.montant == pytest.approx((40 + 40 + 36) * 2.89, abs=0.01), pension.detail

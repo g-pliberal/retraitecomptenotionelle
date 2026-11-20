@@ -124,6 +124,62 @@
    "reversion": null
   }
  },
+ "01fa8112a05fb8d8": {
+  "cas": {
+   "requete": {
+    "age_reference": "fixe_apres_bascule",
+    "bascule": "2026",
+    "conversion_acquis": "reference",
+    "debut": "22",
+    "emploi": "cor_2026",
+    "enfants": "0",
+    "euros": "2026",
+    "indexation": "triple_lock_inverse",
+    "liquidation": "68.25",
+    "naissance": "1959-03-10",
+    "primes": "0",
+    "profil": "plat",
+    "projection": "cor_reference",
+    "salaire": "10",
+    "sexe": "H",
+    "statut": "profession_liberale",
+    "stock": "prix",
+    "table": "unisexe"
+   }
+  },
+  "cle": "1959-03-10|68.25|22",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 79726.51991652092,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "(19,939.87 points × valeur de service 2.940575 € + cotisations revalorisées 18,218 € × rendement 6.10%) × coefficient de majoration 1.0301, la majoration portant sur les seuls points des 30 premières années, de 1981 à 2011",
+      "montant": 61544.62454786467,
+      "regime": "cipav_complementaire",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "22,105.00 points × valeur de service 0.671448 € × coefficient de majoration 1.2250",
+      "montant": 18181.895368656253,
+      "regime": "cnavpl",
+      "type_calcul": "points"
+     }
+    ],
+    "taux_liquidation": 0.0,
+    "trimestres_requis": 0,
+    "trimestres_valides": 185
+   },
+   "annee_liquidation": 2027,
+   "coefficient_euros_constants": 0.9828009828009827,
+   "mois_liquidation": 7,
+   "reversion": null
+  }
+ },
  "022b63132785f40f": {
   "cas": {
    "requete": {
@@ -306,12 +362,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 19333.78326280286,
+    "pension_annuelle": 31720.54325660892,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "cotisations revalorisées 128,012 € × rendement 6.20% × coefficient de majoration 1.0500",
-      "montant": 8333.599359946988,
+      "detail": "8,160.01 points × valeur de service 2.41834 € × coefficient de majoration 1.0500",
+      "montant": 20720.359353753047,
       "regime": "cipav_complementaire",
       "type_calcul": "points"
      },
@@ -1164,12 +1220,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 11704.200621601198,
+    "pension_annuelle": 18964.984856188963,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "cotisations revalorisées 65,064 € × rendement 6.20%",
-      "montant": 4033.9508785951625,
+      "detail": "5,543.34 points × valeur de service 2.037533 €",
+      "montant": 11294.735113182927,
       "regime": "cipav_complementaire",
       "type_calcul": "points"
      },
@@ -1422,12 +1478,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 24473.02514692484,
+    "pension_annuelle": 39490.32204864618,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "cotisations revalorisées 193,940 € × rendement 6.20% × coefficient de majoration 1.0354, la majoration portant sur les seules cotisations des 30 premières années, de 1979 à 2008",
-      "montant": 12450.44585811137,
+      "detail": "10,036.01 points × valeur de service 2.63 € × coefficient de majoration 1.0407, la majoration portant sur les seuls points des 30 premières années, de 1979 à 2008",
+      "montant": 27467.742759832705,
       "regime": "cipav_complementaire",
       "type_calcul": "points"
      },
@@ -3876,12 +3932,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 9424.70268478919,
+    "pension_annuelle": 14835.122378328873,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "cotisations revalorisées 46,435 € × rendement 6.20%",
-      "montant": 2878.948268205418,
+      "detail": "4,246.67 points × valeur de service 1.951967 €",
+      "montant": 8289.3679617451,
       "regime": "cipav_complementaire",
       "type_calcul": "points"
      },
@@ -4226,6 +4282,62 @@
    "annee_liquidation": 1985,
    "coefficient_euros_constants": 2.126415625211265,
    "mois_liquidation": 4,
+   "reversion": null
+  }
+ },
+ "24e8e369dd5bb330": {
+  "cas": {
+   "requete": {
+    "age_reference": "fixe_apres_bascule",
+    "bascule": "2026",
+    "conversion_acquis": "reference",
+    "debut": "36",
+    "emploi": "cor_2026",
+    "enfants": "0",
+    "euros": "2026",
+    "indexation": "triple_lock_inverse",
+    "liquidation": "66.75",
+    "naissance": "1949-03-10",
+    "primes": "0",
+    "profil": "plat",
+    "projection": "cor_reference",
+    "salaire": "10",
+    "sexe": "H",
+    "statut": "profession_liberale",
+    "stock": "prix",
+    "table": "unisexe"
+   }
+  },
+  "cle": "1949-03-10|66.75|36",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 42554.502937550686,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "12,537.33 points × valeur de service 2.63 € × coefficient de majoration 1.0500",
+      "montant": 34621.84293755069,
+      "regime": "cipav_complementaire",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "14,100.00 points × valeur de service 0.5626 €",
+      "montant": 7932.66,
+      "regime": "cnavpl",
+      "type_calcul": "points"
+     }
+    ],
+    "taux_liquidation": 0.0,
+    "trimestres_requis": 0,
+    "trimestres_valides": 123
+   },
+   "annee_liquidation": 2016,
+   "coefficient_euros_constants": 1.2284583824062147,
+   "mois_liquidation": 1,
    "reversion": null
   }
  },
@@ -5475,12 +5587,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 8437.191107333258,
+    "pension_annuelle": 13164.329274397493,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "cotisations revalorisées 42,306 € × rendement 6.20% × coefficient d'anticipation 0.9500",
-      "montant": 2491.80655489235,
+      "detail": "3,966.67 points × valeur de service 1.915684 € × coefficient d'anticipation 0.9500",
+      "montant": 7218.944721956585,
       "regime": "cipav_complementaire",
       "type_calcul": "points"
      },
@@ -5645,12 +5757,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 40762.764894055945,
+    "pension_annuelle": 55725.388608283116,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "cotisations revalorisées 374,715 € × rendement 6.10% × coefficient de majoration 1.0260, la majoration portant sur les seules cotisations des 30 premières années, de 1981 à 2011",
-      "montant": 23451.329468249052,
+      "detail": "(12,492.51 points × valeur de service 2.940575 € + cotisations revalorisées 6,712 € × rendement 6.10%) × coefficient de majoration 1.0342, la majoration portant sur les seuls points des 30 premières années, de 1981 à 2011",
+      "montant": 38413.95318247622,
       "regime": "cipav_complementaire",
       "type_calcul": "points"
      },
@@ -6111,11 +6223,11 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime",
-      "montant": 3628.7606462056547,
+      "montant": 4915.301133885214,
       "par_regime": [
        [
         "cipav_complementaire",
-        2102.7420802518163
+        3389.282567931375
        ],
        [
         "cnavpl",
@@ -6125,7 +6237,7 @@
       "par_regime_sans_anticipation": [
        [
         "cipav_complementaire",
-        2102.7420802518163
+        3389.282567931375
        ],
        [
         "cnavpl",
@@ -6137,12 +6249,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 39916.3671082622,
+    "pension_annuelle": 54068.31247273734,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "cotisations revalorisées 344,712 € × rendement 6.10%",
-      "montant": 21027.42080251816,
+      "detail": "11,727.62 points × valeur de service 2.89 €",
+      "montant": 33892.82567931375,
       "regime": "cipav_complementaire",
       "type_calcul": "points"
      },
@@ -6550,6 +6662,62 @@
    },
    "annee_liquidation": 2054,
    "coefficient_euros_constants": 0.6152282921122655,
+   "mois_liquidation": 1,
+   "reversion": null
+  }
+ },
+ "4394f323849ef961": {
+  "cas": {
+   "requete": {
+    "age_reference": "fixe_apres_bascule",
+    "bascule": "2026",
+    "conversion_acquis": "reference",
+    "debut": "22",
+    "emploi": "cor_2026",
+    "enfants": "0",
+    "euros": "2026",
+    "indexation": "triple_lock_inverse",
+    "liquidation": "66.75",
+    "naissance": "1945-03-10",
+    "primes": "0",
+    "profil": "plat",
+    "projection": "cor_reference",
+    "salaire": "10",
+    "sexe": "H",
+    "statut": "profession_liberale",
+    "stock": "prix",
+    "table": "unisexe"
+   }
+  },
+  "cle": "1945-03-10",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 45648.545667576764,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "12,600.01 points × valeur de service 2.547 € × coefficient de majoration 1.0452, la majoration portant sur les seuls points des 30 premières années, de 1979 à 2008",
+      "montant": 33544.02094257676,
+      "regime": "cipav_complementaire",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "19,100.00 points × valeur de service 0.5547 € × coefficient de majoration 1.1425",
+      "montant": 12104.524725,
+      "regime": "cnavpl",
+      "type_calcul": "points"
+     }
+    ],
+    "taux_liquidation": 0.0,
+    "trimestres_requis": 0,
+    "trimestres_valides": 179
+   },
+   "annee_liquidation": 2012,
+   "coefficient_euros_constants": 1.248144351853146,
    "mois_liquidation": 1,
    "reversion": null
   }
@@ -7136,12 +7304,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 5870.142668415232,
+    "pension_annuelle": 8853.477907338496,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "cotisations revalorisées 30,838 € × rendement 6.20% × coefficient d'anticipation 0.8000",
-      "montant": 1529.5840579209084,
+      "detail": "3,126.67 points × valeur de service 1.804203 € × coefficient d'anticipation 0.8000",
+      "montant": 4512.919296844173,
       "regime": "cipav_complementaire",
       "type_calcul": "points"
      },
@@ -7867,6 +8035,62 @@
    "reversion": null
   }
  },
+ "4dd91d22a259bb16": {
+  "cas": {
+   "requete": {
+    "age_reference": "fixe_apres_bascule",
+    "bascule": "2026",
+    "conversion_acquis": "reference",
+    "debut": "22",
+    "emploi": "cor_2026",
+    "enfants": "0",
+    "euros": "2026",
+    "indexation": "triple_lock_inverse",
+    "liquidation": "66.75",
+    "naissance": "1949-03-10",
+    "primes": "0",
+    "profil": "plat",
+    "projection": "cor_reference",
+    "salaire": "10",
+    "sexe": "H",
+    "statut": "profession_liberale",
+    "stock": "prix",
+    "table": "unisexe"
+   }
+  },
+  "cle": "1949-03-10|66.75|22",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 51961.106646647,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "14,404.01 points × valeur de service 2.63 € × coefficient de majoration 1.0396, la majoration portant sur les seuls points des 30 premières années, de 1979 à 2008",
+      "montant": 39381.651946647,
+      "regime": "cipav_complementaire",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "19,700.00 points × valeur de service 0.5626 € × coefficient de majoration 1.1350",
+      "montant": 12579.4547,
+      "regime": "cnavpl",
+      "type_calcul": "points"
+     }
+    ],
+    "taux_liquidation": 0.0,
+    "trimestres_requis": 0,
+    "trimestres_valides": 179
+   },
+   "annee_liquidation": 2016,
+   "coefficient_euros_constants": 1.2284583824062147,
+   "mois_liquidation": 1,
+   "reversion": null
+  }
+ },
  "4e5f25e0a3f910cc": {
   "cas": {
    "requete": {
@@ -8025,12 +8249,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 17546.292641699518,
+    "pension_annuelle": 28459.514620028123,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "cotisations revalorisées 112,064 € × rendement 6.20%",
-      "montant": 6947.955482846048,
+      "detail": "7,600.01 points × valeur de service 2.350152 €",
+      "montant": 17861.17746117465,
       "regime": "cipav_complementaire",
       "type_calcul": "points"
      },
@@ -11522,17 +11746,17 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime",
-      "montant": 418.1477446556361,
+      "montant": 1168.17710356988,
       "par_regime": [
        [
         "cipav_complementaire",
-        418.1477446556361
+        1168.17710356988
        ]
       ],
       "par_regime_sans_anticipation": [
        [
         "cipav_complementaire",
-        418.1477446556361
+        1168.17710356988
        ]
       ]
      }
@@ -11540,12 +11764,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 12441.551874586634,
+    "pension_annuelle": 20691.874822643316,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "cotisations revalorisées 67,443 € × rendement 6.20%",
-      "montant": 4181.4774465563605,
+      "detail": "5,640.00 points × valeur de service 2.071234 €",
+      "montant": 11681.7710356988,
       "regime": "cipav_complementaire",
       "type_calcul": "points"
      },
@@ -11666,12 +11890,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 6675.704656191998,
+    "pension_annuelle": 10198.119783196064,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "cotisations revalorisées 34,574 € × rendement 6.20% × coefficient d'anticipation 0.8500",
-      "montant": 1822.0688123428733,
+      "detail": "3,406.67 points × valeur de service 1.845681 € × coefficient d'anticipation 0.8500",
+      "montant": 5344.48393934694,
       "regime": "cipav_complementaire",
       "type_calcul": "points"
      },
@@ -13869,12 +14093,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 7538.683529231235,
+    "pension_annuelle": 11647.214418432026,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "cotisations revalorisées 38,431 € × rendement 6.20% × coefficient d'anticipation 0.9000",
-      "montant": 2144.4767984393393,
+      "detail": "3,686.67 points × valeur de service 1.88457 € × coefficient d'anticipation 0.9000",
+      "montant": 6253.00768764013,
       "regime": "cipav_complementaire",
       "type_calcul": "points"
      },
@@ -14508,12 +14732,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 21921.58551480649,
+    "pension_annuelle": 35673.183546988796,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "cotisations revalorisées 157,922 € × rendement 6.20% × coefficient de majoration 1.0428, la majoration portant sur les seules cotisations des 30 premières années, de 1979 à 2008",
-      "montant": 10210.600011599197,
+      "detail": "9,000.01 points × valeur de service 2.547 € × coefficient de majoration 1.0453, la majoration portant sur les seuls points des 30 premières années, de 1979 à 2008",
+      "montant": 23962.1980437815,
       "regime": "cipav_complementaire",
       "type_calcul": "points"
      },
@@ -16398,12 +16622,12 @@
     "departs": [],
     "liquidation_ouverte": false,
     "motif_ouverture": "non_ouverte",
-    "pension_annuelle": 4683.288555138677,
+    "pension_annuelle": 6846.381205170736,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "cotisations revalorisées 23,453 € × rendement 6.20% × coefficient d'anticipation 0.7500",
-      "montant": 1090.549001144213,
+      "detail": "2,566.67 points × valeur de service 1.690198 € × coefficient d'anticipation 0.7500",
+      "montant": 3253.641651176272,
       "regime": "cipav_complementaire",
       "type_calcul": "points"
      },
@@ -16813,6 +17037,62 @@
    "annee_liquidation": 2020,
    "coefficient_euros_constants": 1.175089405598697,
    "mois_liquidation": 10,
+   "reversion": null
+  }
+ },
+ "b10939a207e33428": {
+  "cas": {
+   "requete": {
+    "age_reference": "fixe_apres_bascule",
+    "bascule": "2026",
+    "conversion_acquis": "reference",
+    "debut": "22",
+    "emploi": "cor_2026",
+    "enfants": "0",
+    "euros": "2026",
+    "indexation": "triple_lock_inverse",
+    "liquidation": "66.75",
+    "naissance": "1940-03-10",
+    "primes": "0",
+    "profil": "plat",
+    "projection": "cor_reference",
+    "salaire": "10",
+    "sexe": "H",
+    "statut": "profession_liberale",
+    "stock": "prix",
+    "table": "unisexe"
+   }
+  },
+  "cle": "1940-03-10",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 35645.65842186504,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "10,600.01 points × valeur de service 2.350152 €",
+      "montant": 24911.642421865035,
+      "regime": "cipav_complementaire",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "18,350.00 points × valeur de service 0.512 € × coefficient de majoration 1.1425",
+      "montant": 10734.016000000001,
+      "regime": "cnavpl",
+      "type_calcul": "points"
+     }
+    ],
+    "taux_liquidation": 0.0,
+    "trimestres_requis": 0,
+    "trimestres_valides": 179
+   },
+   "annee_liquidation": 2007,
+   "coefficient_euros_constants": 1.3574611117659408,
+   "mois_liquidation": 1,
    "reversion": null
   }
  },
@@ -18553,6 +18833,62 @@
    "reversion": null
   }
  },
+ "c277fcd088355da4": {
+  "cas": {
+   "requete": {
+    "age_reference": "fixe_apres_bascule",
+    "bascule": "2026",
+    "conversion_acquis": "reference",
+    "debut": "22",
+    "emploi": "cor_2026",
+    "enfants": "0",
+    "euros": "2026",
+    "indexation": "triple_lock_inverse",
+    "liquidation": "66.75",
+    "naissance": "1942-03-10",
+    "primes": "0",
+    "profil": "plat",
+    "projection": "cor_reference",
+    "salaire": "10",
+    "sexe": "H",
+    "statut": "profession_liberale",
+    "stock": "prix",
+    "table": "unisexe"
+   }
+  },
+  "cle": "1942-03-10",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 40180.94090059718,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "11,400.01 points × valeur de service 2.41834 € × coefficient de majoration 1.0500",
+      "montant": 28947.56100059718,
+      "regime": "cipav_complementaire",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "18,650.00 points × valeur de service 0.5272 € × coefficient de majoration 1.1425",
+      "montant": 11233.379900000002,
+      "regime": "cnavpl",
+      "type_calcul": "points"
+     }
+    ],
+    "taux_liquidation": 0.0,
+    "trimestres_requis": 0,
+    "trimestres_valides": 179
+   },
+   "annee_liquidation": 2009,
+   "coefficient_euros_constants": 1.319185996250844,
+   "mois_liquidation": 1,
+   "reversion": null
+  }
+ },
  "c2cf4527e3c40c0c": {
   "cas": {
    "requete": {
@@ -19442,12 +19778,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 39633.302360141184,
+    "pension_annuelle": 55016.879790608764,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "cotisations revalorisées 354,058 € × rendement 6.10% × coefficient de majoration 1.0251, la majoration portant sur les seules cotisations des 30 premières années, de 1979 à 2009",
-      "montant": 22139.442749734353,
+      "detail": "12,562.74 points × valeur de service 2.89 € × coefficient de majoration 1.0335, la majoration portant sur les seuls points des 30 premières années, de 1979 à 2009",
+      "montant": 37523.02018020193,
       "regime": "cipav_complementaire",
       "type_calcul": "points"
      },
@@ -20167,12 +20503,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 5084.85504585395,
+    "pension_annuelle": 7557.479472859252,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "cotisations revalorisées 27,045 € × rendement 6.20% × coefficient d'anticipation 0.7500",
-      "montant": 1257.6042169337343,
+      "detail": "2,846.67 points × valeur de service 1.747175 € × coefficient d'anticipation 0.7500",
+      "montant": 3730.2286439390364,
       "regime": "cipav_complementaire",
       "type_calcul": "points"
      },
@@ -22943,12 +23279,12 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 18690.067567645157,
+    "pension_annuelle": 30866.90080178241,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "cotisations revalorisées 172,781 € × rendement 6.20% × coefficient de majoration 1.0500",
-      "montant": 11248.04669644386,
+      "detail": "8,482.67 points × valeur de service 2.63 € × coefficient de majoration 1.0500",
+      "montant": 23424.879930581115,
       "regime": "cipav_complementaire",
       "type_calcul": "points"
      },
@@ -23095,6 +23431,62 @@
    "annee_liquidation": 2015,
    "coefficient_euros_constants": 1.2306696074945456,
    "mois_liquidation": 10,
+   "reversion": null
+  }
+ },
+ "f21eceec5f6078eb": {
+  "cas": {
+   "requete": {
+    "age_reference": "fixe_apres_bascule",
+    "bascule": "2026",
+    "conversion_acquis": "reference",
+    "debut": "22",
+    "emploi": "cor_2026",
+    "enfants": "0",
+    "euros": "2026",
+    "indexation": "triple_lock_inverse",
+    "liquidation": "68.75",
+    "naissance": "1957-03-10",
+    "primes": "0",
+    "profil": "plat",
+    "projection": "cor_reference",
+    "salaire": "10",
+    "sexe": "H",
+    "statut": "profession_liberale",
+    "stock": "prix",
+    "table": "unisexe"
+   }
+  },
+  "cle": "1957-03-10|68.75|22",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 76517.30579706459,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "19,536.23 points × valeur de service 2.89 € × coefficient de majoration 1.0301, la majoration portant sur les seuls points des 30 premières années, de 1979 à 2009",
+      "montant": 58161.92333706459,
+      "regime": "cipav_complementaire",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "22,032.00 points × valeur de service 0.6599 € × coefficient de majoration 1.2625",
+      "montant": 18355.38246,
+      "regime": "cnavpl",
+      "type_calcul": "points"
+     }
+    ],
+    "taux_liquidation": 0.0,
+    "trimestres_requis": 0,
+    "trimestres_valides": 187
+   },
+   "annee_liquidation": 2026,
+   "coefficient_euros_constants": 1.0,
+   "mois_liquidation": 1,
    "reversion": null
   }
  },

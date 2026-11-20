@@ -683,6 +683,8 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "valeurs_point_cnbf": "regimes/valeurs_point.csv",
         "valeurs_point_carmf": "regimes/valeurs_point.csv",
         "valeurs_point_carmf_saisies": "regimes/valeurs_point.csv",
+        "valeurs_point_cipav_saisies": "regimes/valeurs_point.csv",
+        "valeurs_point_cipav_estimees": "regimes/valeurs_point.csv",
         "valeurs_point_rafp": "regimes/valeurs_point.csv",
         "valeurs_point_cnavpl": "regimes/valeurs_point.csv",
         "valeurs_service_cnavpl": "regimes/valeurs_point.csv",

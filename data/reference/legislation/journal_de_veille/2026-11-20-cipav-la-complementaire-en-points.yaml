@@ -1,0 +1,27 @@
+date: "2026-11-20"
+session: "action 191 : la complémentaire de la Cipav se compte en points"
+consulte: >-
+  Les index LEGI et JORF du dépôt, à jour au 16 novembre 2026 : le décret
+  n° 79-262, article 2 dans ses rédactions de 1979, 2013 et du 1er juillet
+  2026 (LEGIARTI000006767473, LEGIARTI000026892951, LEGIARTI000054168526) ;
+  l'article 20 du décret n° 2026-418, qui écrit ses articles 5-1 à 5-6
+  (JORFARTI000054153655) ; le décret n° 2012-1522 (JORFTEXT000026863128).
+  Les fiches pratiques de la caisse « Quel est le montant de ma retraite »
+  (2018) et « Comment est calculée la retraite » (2024, 2026), lues le
+  20 novembre 2026 ; deux pages de tiers pour la conversion de 2013 (Neovia,
+  Toutsurmesfinances).
+trouve: >-
+  La pension est le produit des points acquis par la valeur de service
+  (article 5-2), et l'article 2 donne les points de chaque classe ; le moteur
+  appliquait le rendement de l'année du départ aux cotisations portées aux
+  prix, un tiers de moins pour une carrière commencée en 1984. Corrigé :
+  prix et valeur du point de 1979 à 2026 dans valeurs_point.csv, et la part
+  du report limitée aux trente premières années mesurée sur les points.
+  Détail :
+  docs/feuille_de_route/191/2026-11-20-cipav-la-complementaire-en-points.md.
+reste: >-
+  La conversion de 2013 et les valeurs de service de 2011 à 2014, lues chez
+  des tiers seulement ; la valeur de service d'avant 2011 ; un exemple
+  officiel qui parte d'une carrière. Les points du micro-entrepreneur
+  d'avant 2023 et la minoration par année de l'article 5-1, non tranchés.
+  Les huit autres complémentaires des libéraux servies par un rendement.

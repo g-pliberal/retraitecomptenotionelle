@@ -3855,6 +3855,25 @@ def source_valeurs_point_carmf_saisies() -> dict[tuple, float]:
             for cle, valeur in sorted(charge["saisies"].items())}
 
 
+def source_valeurs_point_cipav_saisies() -> dict[tuple, float]:
+    """Prix et valeur du point de la complémentaire de la Cipav, saisis depuis
+    les textes et les fiches de la caisse : le prix est la cotisation de la
+    classe de référence divisée par ses points (décret n° 79-262, article 2),
+    puis le coût d'acquisition ; la valeur de service, depuis 2015."""
+    charge = _lire_json("cipav_points.json", "scripts/fetch/cipav_points.py")
+    return {tuple(cle.split("|")): valeur
+            for cle, valeur in sorted(charge["saisies"].items())}
+
+
+def source_valeurs_point_cipav_estimees() -> dict[tuple, float]:
+    """Ce que ni un texte ni la caisse ne donnent : le prix du point d'un
+    exercice dont le décret n'est pas lu, ramené d'un autre au rapport des
+    plafonds, et la valeur de service de 2011 à 2014, lue chez des tiers."""
+    charge = _lire_json("cipav_points.json", "scripts/fetch/cipav_points.py")
+    return {tuple(cle.split("|")): valeur
+            for cle, valeur in sorted(charge["estimees"].items())}
+
+
 def source_valeurs_point_cnavpl() -> dict[tuple, float]:
     """Taux des deux tranches des professions libérales, dans les recueils CNAVPL.
 
@@ -10181,6 +10200,32 @@ CERTIFICATIONS = (
         decimales=6,
         tolerance=5e-7,
         niveau="moyenne",
+    ),
+    Certification(
+        nom="valeurs_point_cipav_saisies",
+        chemin=REFERENCE / "regimes" / "valeurs_point.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_valeurs_point_cipav_saisies,
+        origine="Décret n° 79-262, article 2 (points des classes, coût "
+                "d'acquisition du point), décrets annuels des cotisations, "
+                "fiches pratiques de la Cipav de 2018 à 2026 (valeur de service)",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="moyenne",
+    ),
+    Certification(
+        nom="valeurs_point_cipav_estimees",
+        chemin=REFERENCE / "regimes" / "valeurs_point.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_valeurs_point_cipav_estimees,
+        origine="Cotisation de la classe de référence ramenée au rapport des "
+                "plafonds pour les exercices sans décret lu ; valeur de service "
+                "de 2011 à 2014 lue chez des tiers qui citent la caisse",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="estimee",
     ),
     Certification(
         nom="valeurs_point_cnavpl",

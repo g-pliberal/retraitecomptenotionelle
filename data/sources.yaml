@@ -6718,6 +6718,12 @@ institutions:
         note: >-
           La Cipav était rangée parmi les caisses « non abouties ». Elle publie
           en fait TOUT ce qu'un modèle en points demande.
+          LE MOTEUR COMPTE SES POINTS depuis le 20 novembre 2026 :
+          `scripts/fetch/cipav_points.py` saisit le prix du point de 1979 à
+          2026 (la cotisation de la classe de référence divisée par ses
+          points, article 2 du décret n° 79-262, puis le coût d'acquisition)
+          et la valeur de service depuis 2011, versés dans
+          `regimes/valeurs_point.csv`.
           DEPUIS 2023 LE RÉGIME EST PROPORTIONNEL — « les cotisations de
           retraite complémentaire ne sont plus forfaitaires mais
           proportionnelles au revenu » : 9 % de zéro à un plafond, 22 % d'un à

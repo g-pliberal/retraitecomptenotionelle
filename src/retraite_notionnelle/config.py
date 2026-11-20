@@ -638,7 +638,7 @@ class Parametres:
     #: disait — entrée ``accueil.on_inscrit``, action 61 de la feuille de route.
     #:
     #: Le lever ne déplace AUCUN agrégat : la grille des cas types plafonne à
-    #: 2,5 fois le salaire moyen, si bien que ni le coût, ni le solde, ni les
+    #: 2,2 fois le salaire moyen, si bien que ni le coût, ni le solde, ni les
     #: coefficients d'équilibre ne changent d'un centime. Ce que cela déplace
     #: tient dans le simulateur, au-delà de 9,2 fois le salaire moyen.
     plafond_assiette_en_pass: float | None = None

@@ -203,8 +203,8 @@ le 19 septembre 2026 :
    bord est reconduite au niveau `estimee` : la dépense observée remonte à
    1959, cette ventilation non.
 
-5. **La grille ne monte pas au-delà de 2,5 fois le salaire moyen.** Le plus
-   haut des treize cas types est la profession libérale, à 2,5 ; le
+5. **La grille ne monte pas au-delà de 2,2 fois le salaire moyen.** Le plus
+   haut des treize cas types est le cadre du privé, à 2,2 ; le
    simulateur, lui, accepte jusqu'à dix fois le salaire moyen. Toute règle qui
    ne mord qu'aux hauts revenus est donc INVISIBLE dans l'agrégat, et cela
    vaut dans les deux sens : ni la pension qu'elle ouvre, ni la cotisation

@@ -228,6 +228,9 @@ cprn_complementaire,2026,2100,0.0533,haute
 # 2022, soit 6,20 % ; 45,30 € et 2,77 € en 2023, soit 6,10 % que la caisse
 # écrit elle-même ; 47,40 € et 2,89 € en 2026, soit 6,097 %. Avant 2022 rien
 # n'est publié, et c'est la plus ancienne valeur connue qui est reconduite.
+# Depuis le 20 novembre 2026 ces rendements ne servent plus qu'aux années
+# d'après le dernier coût d'acquisition publié : de 1979 à 2026 le régime
+# compte ses points (`valeurs_point.csv`).
 cipav_complementaire,1979,2021,0.0620,estimee
 cipav_complementaire,2022,2022,0.0620,haute
 cipav_complementaire,2023,2100,0.0610,haute

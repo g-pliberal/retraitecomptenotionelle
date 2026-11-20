@@ -892,12 +892,16 @@ test("les points du micro-entrepreneur s'achètent avec son forfait", () => {
   assert.equal(points2026.cnavpl.length, 2);
   proche(points2026.cnavpl[0], 2706.05 / 7.53, 1e-3);
   proche(points2026.cnavpl[1], 579.07 / 179.76, 1e-3);
-  proche(cotisations2026.cipav_complementaire, 3418.75, 1e-6);
+  // La complémentaire de la CIPAV compte en points (décret n° 79-262,
+  // art. 2 et 5-2) : la cotisation divisée par le coût d'acquisition.
+  const somme = (liste) => (liste ?? []).reduce((total, points) => total + points, 0);
+  assert.equal(cotisations2026.cipav_complementaire, undefined);
+  proche(somme(points2026.cipav_complementaire), 3418.75 / 47.40, 1e-6);
   const [points2020, cotisations2020] = acquis("profession_liberale", "cipav", 40000, 2020);
   assert.equal(points2020.cnavpl.length, 2);
   proche(points2020.cnavpl[0], 525 * 2200 / (41136 * 0.0823), 1e-9);
   proche(points2020.cnavpl[1], 25 * 440 / (5 * 41136 * 0.0187), 1e-9);
-  proche(cotisations2020.cipav_complementaire, 1760, 1e-9);
+  proche(somme(points2020.cipav_complementaire), 1760 / (1392 / 36), 1e-6);
 });
 
 /**

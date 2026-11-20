@@ -511,12 +511,15 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         // LE REPORT NE MAJORE QUE LES PREMIÈRES ANNÉES de cotisation à la
         // Cipav : voir `premieresAnneesMajorees`. Le coefficient affiché est
         // celui de la pension entière.
-        if (abattement > 1.0 && rendementDesCotisations !== null && montant > 0
+        if (abattement > 1.0 && montant > 0
+            && (rendementDesCotisations !== null || serviceDesPoints !== null)
             && periode.surcote_premieres_annees !== null
             && periode.surcote_premieres_annees !== undefined) {
-          majorees = premieresAnneesMajorees(moteur, periode, carriere, droits.cotisations, code);
+          majorees = premieresAnneesMajorees(
+            moteur, periode, carriere, droits.cotisations, code, droits.points);
           if (majorees !== null) {
-            const part = Math.min(1.0, (majorees[0] * rendementDesCotisations) / montant);
+            const part = Math.min(1.0, (majorees[0] * (rendementDesCotisations ?? 0.0)
+              + majorees[3] * (serviceDesPoints ?? 0.0)) / montant);
             abattement = 1.0 + (abattement - 1.0) * part;
           }
         }
@@ -524,7 +527,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       }
       let detail = formulePoints(details, abattement);
       if (majorees !== null) {
-        detail += ", la majoration portant sur les seules cotisations des "
+        detail += ", la majoration portant sur "
+          + (majorees[3] > 0 ? "les seuls points des " : "les seules cotisations des ")
           + `${periode.surcote_premieres_annees} premières années, de ${majorees[1]} `
           + `à ${majorees[2]}`;
       }
@@ -4004,12 +4008,15 @@ export function anneesDExercice(moteur, carriere, code) {
  * compter une première année incomplète : le décompte est le plus favorable
  * à l'affilié, trente ans de date à date depuis la première cotisation,
  * l'année où ils s'achèvent prise en entier — une année de plus quand la
- * première est partielle. Rend `null` quand toutes les années en sont,
- * sinon [les cotisations majorées, la première année, la dernière].
+ * première est partielle. Les années se comptent sur les cotisations et sur
+ * les points que le régime a inscrits, selon que l'année a un prix du point
+ * ou non. Rend `null` quand toutes les années en sont, sinon [les
+ * cotisations majorées, la première année, la dernière, les points majorés].
  */
-export function premieresAnneesMajorees(moteur, periode, carriere, cotisations, code) {
+export function premieresAnneesMajorees(moteur, periode, carriere, cotisations, code,
+  points = []) {
   const annees = [...new Set(
-    cotisations.filter(([regime]) => regime === code).map(([, annee]) => annee),
+    [...cotisations, ...points].filter(([regime]) => regime === code).map(([, annee]) => annee),
   )].sort((a, b) => a - b);
   if (annees.length === 0) {
     return null;
@@ -4035,7 +4042,13 @@ export function premieresAnneesMajorees(moteur, periode, carriere, cotisations, 
       majorees += montant;
     }
   }
-  return [majorees, annees[0], derniere];
+  let pointsMajores = 0.0;
+  for (const [regime, annee, acquis] of points) {
+    if (regime === code && annee <= derniere) {
+      pointsMajores += acquis;
+    }
+  }
+  return [majorees, annees[0], derniere, pointsMajores];
 }
 
 /** Les deux taux du IV de l'article 16 — voir `surcotePoints`. */

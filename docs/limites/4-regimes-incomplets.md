@@ -236,6 +236,14 @@ de la table ne sait pas dire, et que la fiche fait cotiser sur tout le revenu ;
 et les années postérieures au dernier barème. La caisse assoit la cotisation
 sur le revenu de l'avant-dernière année, le modèle sur celui de l'année même.
 
+**Celle de la Cipav aussi** : l'article 2 du décret n° 79-262 donne les points
+de chaque classe, et `scripts/fetch/cipav_points.py` en tire le prix du point
+de 1979 à 2026. Deux réserves : la conversion de 2013, les points d'avant
+multipliés par dix, et la valeur de service de 2011 à 2014 ne sont lues que
+chez des tiers qui citent la caisse ; avant 2011 la valeur de service n'est
+pas connue, et une pension prise plus tôt lit celle de 2011 ramenée par les
+prix.
+
 **Au-delà du dernier barème publié, l'Agirc-Arrco achète ses points au salaire
 de référence que ses accords indexent sur le salaire moyen** : celui du modèle,
 <!--chiffre:valeur(data/reference/macro/hypotheses_projection.yaml:scenarios.cor_reference.salaire_moyen_nominal*100)-->2,45<!--/--> % par an au scénario de référence quand les prix montent de <!--chiffre:valeur(data/reference/macro/hypotheses_projection.yaml:scenarios.cor_reference.inflation*100)-->1,75<!--/--> %, avec

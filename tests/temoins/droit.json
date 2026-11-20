@@ -1524,7 +1524,7 @@
    "scenario_actuel.calculer",
    "simulateur.carriere_simple"
   ],
-  "rendu": "4205dadae5fb457e"
+  "rendu": "9b9e624741b4bd2d"
  },
  "3fd7b6ff496125b8": {
   "fonctions": [
@@ -3508,7 +3508,7 @@
   "fonctions": [
    "revalorisation.derniere_valeur_publiee"
   ],
-  "rendu": "c4e381eb2da499f4"
+  "rendu": "604d944799a4ac34"
  },
  "8af9c67b0fa22ee9": {
   "fonctions": [
@@ -6127,6 +6127,13 @@
    "scenario_actuel.calculer"
   ],
   "rendu": "deff99857940e1af"
+ },
+ "f25b84959c3a5483": {
+  "fonctions": [
+   "liquider.valeur_du_point",
+   "scenario_actuel.conversions_points.echelle"
+  ],
+  "rendu": "d6982d1b8e7a4838"
  },
  "f2f187a8f5169ce1": {
   "fonctions": [
