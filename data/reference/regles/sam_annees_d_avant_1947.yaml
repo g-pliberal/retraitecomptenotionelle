@@ -1,0 +1,77 @@
+schema_version: 1
+id: sam_annees_d_avant_1947
+intitule: >-
+  Les années d'avant 1947 au salaire annuel moyen du régime général, quand elles sont
+  prises à défaut d'assez d'années postérieures à 1947 : la caisse revalorise leurs
+  cotisations, par des coefficients que le modèle ne lit pas.
+domaine: salaire_de_reference
+regimes: [regime_general, msa_salaries]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- les salaires des années 1930 à 1946, à défaut de leurs cotisations
+ecrit:
+- le salaire revalorisé de ces années
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: prises_a_defaut
+  statut: lue
+  textes:
+  - id: LEGIARTI000051226243
+    article: R. 351-29 CSS
+    en_vigueur: 2025-02-22
+    citation: >-
+      « Lorsque l'assuré ne justifie pas de vingt-cinq années civiles d'assurance
+      postérieurement au 31 décembre 1947, les années antérieures sont prises en
+      considération en remontant à partir de cette date jusqu'à concurrence de
+      vingt-cinq années pour la détermination du salaire de base »
+    lu_le: 2026-11-20
+  - id: LEGIARTI000053335651
+    article: R. 351-29 CSS
+    en_vigueur: 2026-01-01
+    citation: >-
+      la phrase « Lorsque l'assuré ne justifie pas de vingt-cinq années civiles
+      d'assurance postérieurement au 31 décembre 1947 [...] » n'y est plus
+    lu_le: 2026-11-20
+  - id: LEGIARTI000053327980
+    article: R. 351-39 CSS
+    en_vigueur: 2026-01-01
+    citation: >-
+      « demeurent applicables les dispositions [...] du troisième alinéa de l'article
+      R. 351-29 [...] dans leur rédaction antérieure au décret n° 2025-1409 »
+    lu_le: 2026-11-20
+  bornes:
+    liquidation.date_effet: [null, null]
+  contenu:
+    droit: >-
+      les années d'avant 1948, prises à défaut, entrent pour leurs cotisations
+      revalorisées ; le moteur les prend à défaut (`moyenneSelonLaRegle`,
+      moteur/js/droit/liquider.js) mais n'a de coefficient que depuis 1947
+  exemples: aucun trouvé
+approximations:
+- ecart: >-
+    pour 1930 à 1946, la caisse publie des coefficients de cotisations, et non de
+    salaires ; le modèle, qui porte des salaires, prolonge sa colonne par son
+    approximation « les salaires jusqu'en 1986, les prix depuis » (macro.js,
+    coefficientRevalorisationParRapport)
+  effet: non mesuré
+sources:
+  lu_le: 2026-11-20
+  prochaine_relecture: 2027-01-31
+  lectures:
+  - type: legifrance
+    reference: >-
+      R. 351-29 CSS, troisième alinéa du I jusqu'en 2025 (LEGIARTI000051226243), que
+      R. 351-39 (LEGIARTI000053327980) garde depuis 2026 ; en-tête de
+      legislation/revalorisation_salaires_anciennes.csv
+    date: 2026-11-20
+historique:
+- >-
+  2026-11-20 — née de la fiche salaire_annuel_moyen (action 194) : ne touche que qui a
+  travaillé avant 1947 et compte moins d'années ensuite que le nombre retenu.
+exemples: []
+effet: >-
+  Les assurés qui ont cotisé avant 1947 et comptent, après, moins d'années que le nombre
+  retenu : nés avant 1933 pour l'essentiel.

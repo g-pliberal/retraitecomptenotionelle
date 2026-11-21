@@ -82,7 +82,7 @@ from retraite_notionnelle.calendrier import DateMois
 
 import facade
 from facade import Carriere
-from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere
+from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere, LigneRelevee
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes
 from retraite_notionnelle.donnees.chargement import Fiabilite, SerieAnnuelle
@@ -2014,6 +2014,18 @@ def _carriere_exemple(exemple: dict, decalage_mois: int = 0, sans_enfants: bool 
                 "taux": c.get("taux_invalidite")},
             "handicap": age_du_mois(c["handicap"]) if "handicap" in c else None,
         }
+    if "releve_entier" in c:
+        # Le relevé de carrière, année par année, comme le simulateur le lit :
+        # chaque ligne est une année civile et son salaire brut, au régime de
+        # l'affiliation ; rien n'est reconstitué ni projeté. Une grille du
+        # salaire annuel moyen (action 194) pose ainsi ses salaires elle-même.
+        options = dict(
+            annee_naissance=naissance.annee, sexe=communs["sexe"],
+            releve=[LigneRelevee(int(annee), c["affiliation"], float(salaire))
+                    for annee, salaire in c["releve_entier"]],
+            age_liquidation=age, mois_naissance=naissance.mois, jour_naissance=jour)
+        return pont.carriere_des_donnees(_rendu(
+            droit, "simulateur.carriere_releve", pont.SIMULATEUR, options)), None
     if "age_debut" in c or "debut" in c:
         # Le début de la carrière en France, à un âge ou à un mois : celui
         # d'une carrière qui commence hors de France se date.
@@ -2161,6 +2173,12 @@ def _mesurer(exemple: dict, carriere, resultat, cle: str, droit=droit_et_fige):
         return _rendu(droit, "liquider.nombre_d_annees_retenues", pont.MOTEUR,
                       pont.Periode("regime_general", carriere.annee_liquidation), carriere,
                       carriere.annee_naissance)
+    if cle == "salaire_annuel_moyen":
+        # Le salaire annuel moyen du régime général, en euros : celui que la
+        # version de la date d'effet forme (fiche ``salaire_annuel_moyen``).
+        return _rendu(droit, "liquider.salaire_de_reference", pont.MOTEUR, "regime_general",
+                      carriere, pont.Periode("regime_general", carriere.annee_liquidation),
+                      carriere.annee_liquidation, True, carriere.annee_naissance)
     if cle == "pension_base_sur_sam":
         sam = _rendu(droit, "liquider.salaire_de_reference", pont.MOTEUR, "regime_general",
                      carriere, pont.Periode("regime_general", carriere.annee_liquidation),
@@ -2498,6 +2516,8 @@ TOLERANCES = {
     "age_legal_a_l_effet": {},
     "majoration_enfants_sur_pensions": {"abs": 1e-9},
     "majorations_enfants_des_regimes": {"abs": 1e-9},
+    # Au centime : aucun texte n'arrondit le salaire annuel moyen.
+    "salaire_annuel_moyen": {"abs": 0.01},
     "pension_base_sur_sam": {"abs": 1e-9},
     "pension_base_sur_plafond": {"abs": 1e-9},
     "coefficients_des_regimes": {"abs": 1e-9},

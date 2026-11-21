@@ -523,3 +523,35 @@ def test_le_seuil_d_un_trimestre_est_celui_qu_un_releve_se_lit_contre(simulateur
         valides = simulateur.macro.trimestres_valides
         assert valides(montant, annee, departement) == 1
         assert valides(montant - 0.01, annee, departement) == 0
+
+
+def test_les_annees_d_avant_1948_ne_sont_prises_qu_a_defaut():
+    """R. 351-29, de 1985 à 2025 : les années « accomplies postérieurement au
+    31 décembre 1947 » ; « lorsque l'assuré ne justifie pas de [dix, puis
+    vingt-cinq] années civiles d'assurance postérieurement au 31 décembre 1947,
+    les années antérieures sont prises en considération en remontant à partir
+    de cette date jusqu'à concurrence de [ce nombre] ». La rédaction du 1er
+    janvier 2026 (LEGIARTI000053335651) n'a plus cette phrase, mais R. 351-39
+    (décret n° 2025-1409, article 2, 32°) la garde à qui a été assuré « au
+    titre de périodes antérieures de plus de soixante ans » : toute année
+    d'avant 1948.
+
+    Posé à la main : 1946 et 1947 valent plus que toutes les autres."""
+    valeurs = [(1946, 9000.0), (1947, 8000.0), (1948, 1000.0), (1949, 2000.0), (1950, 3000.0)]
+    trimestres = {annee: [4, 0] for annee, _ in valeurs}
+    validantes = {annee for annee, _ in valeurs}
+    a_defaut = _regle(annees_sans_trimestre="exclues", derniere_annee_a_defaut=1947)
+    # Une règle qui ne nomme pas cette année classe toutes les années ensemble :
+    # celle des artisans et des commerçants, dont le régime naît en 1949.
+    assert _moyenne_du_portage(_regle(), valeurs, trimestres, validantes, 2, 1990) \
+        == pytest.approx((9000.0 + 8000.0) / 2)
+    # Trois années après 1947 pour trois retenues : aucune d'avant 1948.
+    assert _moyenne_du_portage(a_defaut, valeurs, trimestres, validantes, 3, 1990) \
+        == pytest.approx((1000.0 + 2000.0 + 3000.0) / 3)
+    # Deux retenues : les deux meilleures d'après 1947.
+    assert _moyenne_du_portage(a_defaut, valeurs, trimestres, validantes, 2, 1990) \
+        == pytest.approx((2000.0 + 3000.0) / 2)
+    # Quatre retenues, trois après 1947 : on remonte d'une année, 1947, et non
+    # à la meilleure, 1946.
+    assert _moyenne_du_portage(a_defaut, valeurs, trimestres, validantes, 4, 1990) \
+        == pytest.approx((1000.0 + 2000.0 + 3000.0 + 8000.0) / 4)

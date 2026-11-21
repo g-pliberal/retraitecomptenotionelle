@@ -131,6 +131,7 @@ versions:
       ne valide aucun trimestre compte, sans trimestre
     parametres:
       selection: meilleures
+      derniere_annee_a_defaut: 1947
       avant_la_liquidation: false
       calcul: trimestriel
       trimestres_comptes: cotises_et_assimiles
@@ -156,9 +157,10 @@ versions:
   contenu:
     droit: >-
       la moyenne des salaires annuels revalorisés des meilleures années, une année qui ne
-      valide aucun trimestre comprise
+      valide aucun trimestre comprise ; les années d'avant 1948 à défaut seulement
     parametres:
       selection: meilleures
+      derniere_annee_a_defaut: 1947
       avant_la_liquidation: false
       calcul: annuel
       trimestres_comptes: cotises_et_assimiles
@@ -187,6 +189,28 @@ versions:
     article: R. 351-29 CSS
     en_vigueur: 2026-01-01
     lu_le: 2026-10-05
+  - id: LEGIARTI000053327980
+    article: R. 351-39 CSS
+    en_vigueur: 2026-01-01
+    citation: >-
+      « Pour les assurés dont les pensions n'ont pas pris effet au 1er janvier 2026 alors
+      qu'à cette date ils avaient plus de soixante-quinze ans ou avaient été assurés au
+      titre de périodes antérieures de plus de soixante ans, demeurent applicables les
+      dispositions [...] du troisième alinéa de l'article R. 351-29 [...] dans leur
+      rédaction antérieure au décret n° 2025-1409 du 30 décembre 2025 »
+    lu_le: 2026-11-20
+  - id: LEGIARTI000006742641
+    article: L. 351-11 CSS
+    en_vigueur: 2004-01-01
+    citation: >-
+      « Les cotisations et salaires servant de base au calcul des pensions sont
+      revalorisés chaque année par application du coefficient annuel de revalorisation
+      mentionné à l'article L. 161-23-1 »
+    lu_le: 2026-11-20
+  - id: LEGIARTI000031688444
+    article: L. 351-11 CSS
+    en_vigueur: 2015-12-23
+    lu_le: 2026-11-20
   - reference: >-
       circulaire Cnav n° 2004/27 du 24 juin 2004 (CR_CN_2004027_24062004) : « L'année
       civile comportant un salaire qui ne valide pas un trimestre d'assurance n'est pas
@@ -199,9 +223,14 @@ versions:
   contenu:
     droit: >-
       la moyenne des salaires annuels revalorisés des meilleures années, parmi celles dont
-      le salaire valide au moins un trimestre au sens de R. 351-9
+      le salaire valide au moins un trimestre au sens de R. 351-9 ; les années d'avant
+      1948 ne sont prises qu'à défaut d'assez d'années postérieures, « en remontant à
+      partir de cette date » (troisième alinéa du I jusqu'en 2025, que R. 351-39 garde
+      depuis 2026 à qui a des périodes de plus de soixante ans) ; l'année de l'entrée en
+      jouissance n'y entre pas (I, C, 2° depuis 2026, pratique de la caisse avant)
     parametres:
       selection: meilleures
+      derniere_annee_a_defaut: 1947
       avant_la_liquidation: false
       calcul: annuel
       trimestres_comptes: cotises_et_assimiles
@@ -217,17 +246,12 @@ approximations:
     soixante ans, et d'avant l'année de l'effet ; une année d'un seul trimestre assimilé
     compte ses trimestres cotisés, sans reconstituer le salaire de trois trimestres
   effet: non mesuré
-- ecart: >-
-    les trimestres sont ceux que le modèle valide : au seuil de R. 351-9 depuis 1946
-    (fiche trimestres_avant_1972), quatre par année travaillée avant, et au plus ce que
-    les mois de la ligne permettent ; les années d'avant 1948 se classent avec les
-    autres, quand le texte ne les prend qu'à défaut de dix années postérieures, en
-    remontant depuis 1947
-  effet: non mesuré
-- ecart: >-
-    ni les années de rachat (R. 351-29, I, C, 1°), ni les indemnités journalières de
-    maternité, portées au compte depuis 2012 et au forfait pour celles d'avant depuis
-    septembre 2023 (I, B, IV et V), que le modèle ne connaît pas
+- version: [dix_dernieres_annees_avant_soixante_ans, dix_dernieres_annees_1948,
+            dix_meilleures_annees_1973]
+  ecart: >-
+    les trimestres auxquels la somme des salaires est rapportée sont ceux que le modèle
+    valide : au seuil de R. 351-9 depuis 1946 (fiche trimestres_avant_1972), quatre par
+    année travaillée avant, et au plus ce que les mois de la ligne permettent
   effet: non mesuré
 sources:
   lu_le: 2026-11-12
@@ -320,7 +344,8 @@ code:
     anneesDesRegimesAlignes, anneesAuProrata ; moteur/js/macro.js :
     colonneDeRevalorisationEnVigueur
   parametres: >-
-    contenu.parametres de chaque version : selection, avant_la_liquidation, calcul,
+    contenu.parametres de chaque version : selection, derniere_annee_a_defaut,
+    avant_la_liquidation, calcul,
     trimestres_comptes, annees_assimilees_exclues, annees_sans_trimestre ;
     legislation/annees_salaire_reference.csv
   tests: >-
@@ -370,6 +395,15 @@ referents:
     30 juin 1995 (circulaire 95/94)
   baremes_ipp: les dix dernières années avant 1973, comme l'ordonnance de 1945
 historique:
+- >-
+  2026-11-20 — les versions de 1995 et de 2004 confrontées à une grille indépendante
+  (action 194) : 78 cas posés depuis LEGI par une session qui n'a pas vu le code. Trois
+  s'écartaient, tous par les années d'avant 1948, que le moteur classait avec les autres
+  : il ne les prend plus qu'à défaut, en remontant depuis 1947. Les deux simplifications
+  qui ne nommaient pas leur version en sont sorties : les indemnités journalières de
+  maternité ont leur fiche, sam_indemnites_de_maternite, qui les dit manquantes ; les
+  salaires d'avant 1947, sam_annees_d_avant_1947 ; les années de rachat relèvent de
+  rachats_et_versements, que le simulateur ne saisit pas.
 - >-
   2026-10-05 — datée, à l'étape 138.16 : cinq versions, des dix dernières années de 1945
   aux années validantes de 2004 ; les salaires rapportés aux trimestres jusqu'en juin

@@ -18,5 +18,7 @@ prouvees:
 - age_legal_par_generation / loi_de_2023
 - age_legal_par_generation / soixante_ans
 - age_legal_par_generation / suspension_de_2025
+- salaire_annuel_moyen / annees_validantes_2004
+- salaire_annuel_moyen / moyenne_des_salaires_annuels_1995
 
 retirees: {}

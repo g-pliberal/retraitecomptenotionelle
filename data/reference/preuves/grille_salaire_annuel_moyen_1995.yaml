@@ -1,0 +1,343 @@
+schema_version: 1
+id: grille_salaire_annuel_moyen_1995
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: salaire_annuel_moyen
+  version: moyenne_des_salaires_annuels_1995
+source:
+  auteur: session Claude indépendante, lancée le 20 novembre 2026 sans le code
+  reference: R. 351-29 (LEGIARTI000006750041), R. 351-29-1 (LEGIARTI000006749369), L. 351-11 et R.
+    351-1, lus par la session indépendante dans l'index LEGI à jour au 16 novembre 2026
+  etabli_le: '2026-11-20'
+independance: 'Les valeurs ont été posées par une session lancée sans le code : elle a cherché elle-même
+  dans une copie de l''index LEGI les articles, leurs rédactions et leurs dispositions d''application,
+  écrit son propre calcul, et proposé 33 des 78 cas ; les 45 autres, naissance, date d''effet et salaires
+  sans aucune valeur attendue, viennent de la session qui connaît le code. Elle n''a reçu, hors LEGI,
+  que trois barèmes du dépôt : les tableaux de coefficients de la Cnav, le plafond annuel et le SMIC
+  horaire. Un guetteur (inotify) a journalisé les ouvertures de fichiers sous le dépôt pendant ses
+  deux passages : aucune. Un article lui avait échappé, R. 351-39, que la session qui connaît le code
+  lui a signalé sans lui en dire l''effet : elle a refait le cas qu''il change.'
+seuils:
+- 'date d''effet : 1er juillet 1995, puis chaque date d''un tableau de coefficients jusqu''au 1er
+  janvier 2003'
+- 'naissance : avant 1934 (dix années), puis une année de plus par génération jusqu''à 1943 (vingt)'
+- une année qui ne valide aucun trimestre compte encore (même carrière que la grille de 2004, un mois
+  plus tôt)
+- 'les années d''avant 1948 : écartées dès qu''il y a assez d''années postérieures, prises à défaut
+  en remontant depuis 1947'
+- le plafond de l'année, y compris avant février 1991
+cas:
+- id: grille_salaire_annuel_moyen_1995_c01
+  enonce: 'Né en 1935-03, pension prenant effet le 1995-07-01, 40 années de salaire au régime général.
+    La session indépendante retient 12 années pour 12 au texte (1956 1961 1966 1973 1985 1986 1987
+    1988 1989 1991 1993 1994), au tableau de coefficients du 1995-07-01. Fondement qu''elle relève
+    : R351-29 LEGIARTI000006750041 ; R351-29-1 LEGIARTI000006749369 ; L351-11 ; R351-1 LEGIARTI000006749339.
+    Sa remarque : salaires d''avant février 1991 plafonnés (cotisations assises sous plafond) ; autre
+    lecture, sans plafond avant 1991 : 21479.97 | 9 année(s) plafonnée(s).'
+  carriere:
+    naissance: 1935-03
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1995-07
+    releve_entier: [[1955, 581.83], [1956, 696.57], [1957, 551.37], [1958, 567.61], [1959, 564.62],
+      [1960, 557.91], [1961, 1503.97], [1962, 815.65], [1963, 877.21], [1964, 1084.55], [1965, 1536.86],
+      [1966, 2236.48], [1967, 1200.26], [1968, 2141.98], [1969, 1714.5], [1970, 1891.29], [1971, 1638.69],
+      [1972, 2433.14], [1973, 4388.23], [1974, 3272.59], [1975, 3531.02], [1976, 5791.81], [1977,
+        4919.16], [1978, 7836.23], [1979, 7533.74], [1980, 6713.33], [1981, 8347.87], [1982, 6171.04],
+      [1983, 11003.06], [1984, 7367.91], [1985, 18618.89], [1986, 14868.83], [1987, 19824.7], [1988,
+        14995.07], [1989, 23665.08], [1990, 13348.53], [1991, 20182.38], [1992, 9947.71], [1993, 20800.09],
+      [1994, 28672.92]]
+  attendu:
+    salaire_annuel_moyen: 19751.07
+- id: grille_salaire_annuel_moyen_1995_c02
+  enonce: 'Né en 1933-05, pension prenant effet le 1995-08-01, 42 années de salaire au régime général.
+    La session indépendante retient 10 années pour 10 au texte (1955 1958 1985 1986 1987 1988 1989
+    1990 1991 1993), au tableau de coefficients du 1995-07-01. Fondement qu''elle relève : R351-29
+    LEGIARTI000006750041 ; R351-29-1 LEGIARTI000006749369 ; L351-11 ; R351-1 LEGIARTI000006749339.
+    Sa remarque : salaires d''avant février 1991 plafonnés (cotisations assises sous plafond) ; autre
+    lecture, sans plafond avant 1991 : 22400.77 | 11 année(s) plafonnée(s).'
+  carriere:
+    naissance: 1933-05
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1995-08
+    releve_entier: [[1953, 334.46], [1954, 483.64], [1955, 869.14], [1956, 493.3], [1957, 472.03],
+      [1958, 1014.13], [1959, 576.88], [1960, 1127.57], [1961, 835.16], [1962, 1053.22], [1963, 881.84],
+      [1964, 846.53], [1965, 2005.9], [1966, 1298.0], [1967, 1399.54], [1968, 1117.99], [1969, 2559.7],
+      [1970, 3260.2], [1971, 1499.82], [1972, 2243.04], [1973, 2400.95], [1974, 5244.12], [1975, 4770.43],
+      [1976, 2847.0], [1977, 5885.57], [1978, 4085.89], [1979, 4469.29], [1980, 4357.28], [1981, 4786.83],
+      [1982, 7288.18], [1983, 6432.76], [1984, 13399.12], [1985, 18689.53], [1986, 16726.51], [1987,
+        21249.11], [1988, 21959.37], [1989, 16291.16], [1990, 17922.94], [1991, 21607.59], [1992,
+        15542.91], [1993, 18738.28], [1994, 12451.07]]
+  attendu:
+    salaire_annuel_moyen: 20184.94
+- id: grille_salaire_annuel_moyen_1995_c03
+  enonce: 'Né en 1934-02, pension prenant effet le 1996-01-01, 42 années de salaire au régime général.
+    La session indépendante retient 11 années pour 11 au texte (1954 1955 1961 1962 1963 1983 1989
+    1991 1992 1993 1995), au tableau de coefficients du 1996-01-01. Fondement qu''elle relève : R351-29
+    LEGIARTI000006750041 ; R351-29-1 LEGIARTI000006749369 ; L351-11 ; R351-1 LEGIARTI000006749339.
+    Sa remarque : salaires d''avant février 1991 plafonnés (cotisations assises sous plafond) ; autre
+    lecture, sans plafond avant 1991 : 22769.20 | 14 année(s) plafonnée(s).'
+  carriere:
+    naissance: 1934-02
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1996-01
+    releve_entier: [[1954, 612.49], [1955, 889.43], [1956, 599.03], [1957, 649.76], [1958, 589.41],
+      [1959, 719.6], [1960, 1117.63], [1961, 1386.83], [1962, 1689.81], [1963, 1668.94], [1964, 1467.39],
+      [1965, 1466.95], [1966, 2308.82], [1967, 2431.0], [1968, 2124.81], [1969, 1815.12], [1970, 2251.35],
+      [1971, 2674.95], [1972, 2675.27], [1973, 2574.98], [1974, 5119.42], [1975, 4973.63], [1976,
+        7211.99], [1977, 5151.63], [1978, 4685.63], [1979, 8264.77], [1980, 10051.44], [1981, 7623.03],
+      [1982, 7310.25], [1983, 15546.98], [1984, 7328.03], [1985, 13848.89], [1986, 10654.39], [1987,
+        15164.86], [1988, 10948.82], [1989, 17924.63], [1990, 9395.81], [1991, 23522.37], [1992, 22583.06],
+      [1993, 22363.58], [1994, 14836.65], [1995, 23764.13]]
+  attendu:
+    salaire_annuel_moyen: 20976.48
+- id: grille_salaire_annuel_moyen_1995_c04
+  enonce: 'Né en 1938-06, pension prenant effet le 1998-07-01, 40 années de salaire au régime général.
+    La session indépendante retient 15 années pour 15 au texte (1961 1965 1975 1982 1985 1986 1987
+    1988 1989 1990 1991 1992 1993 1995 1997), au tableau de coefficients du 1998-01-01. Fondement
+    qu''elle relève : R351-29 LEGIARTI000006750041 ; R351-29-1 LEGIARTI000006749369 ; L351-11 ; R351-1
+    LEGIARTI000006749339. Sa remarque : salaires d''avant février 1991 plafonnés (cotisations assises
+    sous plafond) ; autre lecture, sans plafond avant 1991 : 21432.74 | 8 année(s) plafonnée(s).'
+  carriere:
+    naissance: 1938-06
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1998-07
+    releve_entier: [[1958, 501.27], [1959, 893.47], [1960, 734.91], [1961, 1294.11], [1962, 1232.24],
+      [1963, 1078.0], [1964, 1609.68], [1965, 1841.54], [1966, 937.78], [1967, 1394.1], [1968, 2481.87],
+      [1969, 2375.41], [1970, 1521.94], [1971, 1921.79], [1972, 3049.99], [1973, 3612.58], [1974,
+        3197.91], [1975, 5640.87], [1976, 5120.62], [1977, 6229.52], [1978, 7018.65], [1979, 7023.84],
+      [1980, 11132.65], [1981, 6163.32], [1982, 13868.95], [1983, 7924.34], [1984, 9467.18], [1985,
+        17771.79], [1986, 15548.98], [1987, 15109.32], [1988, 15308.62], [1989, 19073.33], [1990,
+        19343.62], [1991, 17181.85], [1992, 17458.56], [1993, 27636.13], [1994, 12059.29], [1995,
+        22068.38], [1996, 12351.87], [1997, 29688.14]]
+  attendu:
+    salaire_annuel_moyen: 20605.65
+- id: grille_salaire_annuel_moyen_1995_c05
+  enonce: 'Né en 1940-01, pension prenant effet le 2000-02-01, 40 années de salaire au régime général.
+    La session indépendante retient 17 années pour 17 au texte (1963 1964 1965 1979 1983 1986 1987
+    1989 1990 1991 1992 1993 1995 1996 1997 1998 1999), au tableau de coefficients du 2000-01-01.
+    Fondement qu''elle relève : R351-29 LEGIARTI000006750041 ; R351-29-1 LEGIARTI000006749369 ; L351-11
+    ; R351-1 LEGIARTI000006749339. Sa remarque : salaires d''avant février 1991 plafonnés (cotisations
+    assises sous plafond) ; autre lecture, sans plafond avant 1991 : 23725.85 | 15 année(s) plafonnée(s).'
+  carriere:
+    naissance: 1940-01
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2000-02
+    releve_entier: [[1960, 896.87], [1961, 752.02], [1962, 1121.79], [1963, 1495.17], [1964, 1755.98],
+      [1965, 2302.88], [1966, 1387.01], [1967, 1872.58], [1968, 2085.25], [1969, 2467.6], [1970, 2153.93],
+      [1971, 3562.16], [1972, 2203.93], [1973, 2103.63], [1974, 3173.66], [1975, 4479.58], [1976,
+        6388.33], [1977, 6884.56], [1978, 3853.44], [1979, 9977.72], [1980, 7415.26], [1981, 9144.01],
+      [1982, 9449.38], [1983, 17267.48], [1984, 7220.25], [1985, 11288.62], [1986, 18423.85], [1987,
+        19515.95], [1988, 12236.17], [1989, 19233.08], [1990, 23777.61], [1991, 20557.42], [1992,
+        26917.18], [1993, 27300.87], [1994, 13567.35], [1995, 20308.66], [1996, 22479.29], [1997,
+        31116.02], [1998, 21657.29], [1999, 26822.8]]
+  attendu:
+    salaire_annuel_moyen: 22204.1
+- id: grille_salaire_annuel_moyen_1995_c32
+  enonce: 'Né en 1943-09, pension prenant effet le 2003-12-01, 13 années de salaire au régime général.
+    La session indépendante retient 13 années pour 20 au texte (1980 1981 1982 1983 1984 1985 1986
+    1987 1988 1989 1990 1991 1992), au tableau de coefficients du 2003-01-01. Fondement qu''elle relève
+    : R351-29 LEGIARTI000006750041 ; R351-29-1 LEGIARTI000006749369 ; L351-11 ; R351-1 LEGIARTI000006749339.
+    Sa remarque : 13 année(s) retenue(s) pour 20 au texte : moyenne sur les années retenues ; autre
+    lecture, somme divisée par 20 : 9959.50 | avant 2004, toute année cotisée compte ; autre lecture
+    (« année civile d''assurance » = année validant un trimestre) : 16570.12 sur 12 année(s). Note
+    du cas : même carrière que le cas suivant.'
+  carriere:
+    naissance: 1943-09
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-12
+    releve_entier: [[1980, 6940.02], [1981, 8519.1], [1982, 8352.36], [1983, 11036.27], [1984, 8123.74],
+      [1985, 12120.18], [1986, 14704.13], [1987, 12163.21], [1988, 11134.36], [1989, 15264.4], [1990,
+        16253.92], [1991, 15837.87], [1992, 300.0]]
+  attendu:
+    salaire_annuel_moyen: 15322.31
+- id: grille_salaire_annuel_moyen_1995_c43
+  enonce: 'Né en 1930-04, pension prenant effet le 1995-10-01, 14 années de salaire au régime général.
+    La session indépendante retient 10 années pour 10 au texte (1948 1949 1950 1951 1952 1953 1954
+    1955 1956 1958), au tableau de coefficients du 1995-07-01. Fondement qu''elle relève : R351-29
+    LEGIARTI000006750041 ; R351-29-1 LEGIARTI000006749369 ; L351-11 ; R351-1 LEGIARTI000006749339.'
+  carriere:
+    naissance: 1930-04
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1995-10
+    releve_entier: [[1947, 249.0], [1948, 170.5], [1949, 196.5], [1950, 201.0], [1951, 263.0], [1952,
+        338.5], [1953, 347.5], [1954, 347.5], [1955, 361.5], [1956, 402.5], [1957, 402.5], [1958,
+        457.5], [1959, 503.0], [1960, 521.5]]
+  attendu:
+    salaire_annuel_moyen: 10951.76
+- id: grille_salaire_annuel_moyen_1995_c44
+  enonce: 'Né en 1930-04, pension prenant effet le 1996-03-01, 7 années de salaire au régime général.
+    La session indépendante retient 7 années pour 10 au texte (1947 1948 1949 1950 1951 1952 1953),
+    au tableau de coefficients du 1996-01-01. Fondement qu''elle relève : R351-29 LEGIARTI000006750041
+    ; R351-29-1 LEGIARTI000006749369 ; L351-11 ; R351-1 LEGIARTI000006749339. Sa remarque : 7 année(s)
+    retenue(s) pour 10 au texte : moyenne sur les années retenues ; autre lecture, somme divisée par
+    10 : 9812.73 | moins de N années après 1947 : années antérieures ajoutées en remontant.'
+  carriere:
+    naissance: 1930-04
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1996-03
+    releve_entier: [[1947, 249.0], [1948, 170.5], [1949, 196.5], [1950, 201.0], [1951, 263.0], [1952,
+        338.5], [1953, 347.5]]
+  attendu:
+    salaire_annuel_moyen: 14018.18
+- id: grille_salaire_annuel_moyen_1995_p03
+  enonce: 'Né en 1932-06, pension prenant effet le 1997-07-01, 42 années de salaire au régime général.
+    La session indépendante retient 10 années pour 10 au texte (1955 1963 1982 1985 1987 1988 1990
+    1993 1995 1996), au tableau de coefficients du 1997-01-01. Fondement qu''elle relève : R351-29
+    LEGIARTI000006750041 ; R351-29-1 LEGIARTI000006749369 ; L351-11 ; R351-1 LEGIARTI000006749339.
+    Sa remarque : salaires d''avant février 1991 plafonnés (cotisations assises sous plafond) ; autre
+    lecture, sans plafond avant 1991 : 22077.45 | 8 année(s) plafonnée(s). Note du cas : né avant
+    1934 : 10 années.'
+  carriere:
+    naissance: 1932-06
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1997-07
+    releve_entier: [[1955, 795.3], [1956, 603.75], [1957, 764.75], [1958, 549.0], [1959, 804.8], [
+        1960, 1043.0], [1961, 802.75], [1962, 1244.4], [1963, 1671.6], [1964, 1216.6], [1965, 1679.4],
+      [1966, 2173.6], [1967, 1564.5], [1968, 2085.25], [1969, 1492.8], [1970, 2195.2], [1971, 3018.0],
+      [1972, 2176.2], [1973, 3172.2], [1974, 4456.2], [1975, 3521.7], [1976, 5202.9], [1977, 7264.4],
+      [1978, 5488.5], [1979, 7768.15], [1980, 5499.0], [1981, 8385.6], [1982, 12504.0], [1983, 9085.05],
+      [1984, 12906.4], [1985, 17085.6], [1986, 11973.5], [1987, 16028.1], [1988, 20183.9], [1989,
+        14324.25], [1990, 18978.15], [1991, 12600.6], [1992, 17576.8], [1993, 22840.0], [1994, 15172.95],
+      [1995, 20207.05], [1996, 25806.9]]
+  attendu:
+    salaire_annuel_moyen: 21280.95
+- id: grille_salaire_annuel_moyen_1995_p04
+  enonce: 'Né en 1936-05, pension prenant effet le 1996-06-01, 40 années de salaire au régime général.
+    La session indépendante retient 13 années pour 13 au texte (1957 1960 1963 1966 1974 1982 1985
+    1987 1988 1990 1992 1993 1995), au tableau de coefficients du 1996-01-01. Fondement qu''elle relève
+    : R351-29 LEGIARTI000006750041 ; R351-29-1 LEGIARTI000006749369 ; L351-11 ; R351-1 LEGIARTI000006749339.
+    Sa remarque : salaires d''avant février 1991 plafonnés (cotisations assises sous plafond) ; autre
+    lecture, sans plafond avant 1991 : 20340.22 | 6 année(s) plafonnée(s). Note du cas : génération
+    1936 : 13 années.'
+  carriere:
+    naissance: 1936-05
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1996-06
+    releve_entier: [[1956, 603.75], [1957, 764.75], [1958, 549.0], [1959, 804.8], [1960, 1043.0],
+      [1961, 802.75], [1962, 1244.4], [1963, 1671.6], [1964, 1216.6], [1965, 1679.4], [1966, 2173.6],
+      [1967, 1564.5], [1968, 2085.25], [1969, 1492.8], [1970, 2195.2], [1971, 3018.0], [1972, 2176.2],
+      [1973, 3172.2], [1974, 4456.2], [1975, 3521.7], [1976, 5202.9], [1977, 7264.4], [1978, 5488.5],
+      [1979, 7768.15], [1980, 5499.0], [1981, 8385.6], [1982, 12504.0], [1983, 9085.05], [1984, 12906.4],
+      [1985, 17085.6], [1986, 11973.5], [1987, 16028.1], [1988, 20183.9], [1989, 14324.25], [1990,
+        18978.15], [1991, 12600.6], [1992, 17576.8], [1993, 22840.0], [1994, 15172.95], [1995, 20207.05]]
+  attendu:
+    salaire_annuel_moyen: 19742.04
+- id: grille_salaire_annuel_moyen_1995_p05
+  enonce: 'Né en 1937-05, pension prenant effet le 1997-06-01, 40 années de salaire au régime général.
+    La session indépendante retient 14 années pour 14 au texte (1957 1960 1963 1966 1974 1982 1985
+    1987 1988 1990 1992 1993 1995 1996), au tableau de coefficients du 1997-01-01. Fondement qu''elle
+    relève : R351-29 LEGIARTI000006750041 ; R351-29-1 LEGIARTI000006749369 ; L351-11 ; R351-1 LEGIARTI000006749339.
+    Sa remarque : salaires d''avant février 1991 plafonnés (cotisations assises sous plafond) ; autre
+    lecture, sans plafond avant 1991 : 20885.15 | 7 année(s) plafonnée(s). Note du cas : génération
+    1937 : 14 années.'
+  carriere:
+    naissance: 1937-05
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1997-06
+    releve_entier: [[1957, 764.75], [1958, 549.0], [1959, 804.8], [1960, 1043.0], [1961, 802.75],
+      [1962, 1244.4], [1963, 1671.6], [1964, 1216.6], [1965, 1679.4], [1966, 2173.6], [1967, 1564.5],
+      [1968, 2085.25], [1969, 1492.8], [1970, 2195.2], [1971, 3018.0], [1972, 2176.2], [1973, 3172.2],
+      [1974, 4456.2], [1975, 3521.7], [1976, 5202.9], [1977, 7264.4], [1978, 5488.5], [1979, 7768.15],
+      [1980, 5499.0], [1981, 8385.6], [1982, 12504.0], [1983, 9085.05], [1984, 12906.4], [1985, 17085.6],
+      [1986, 11973.5], [1987, 16028.1], [1988, 20183.9], [1989, 14324.25], [1990, 18978.15], [1991,
+        12600.6], [1992, 17576.8], [1993, 22840.0], [1994, 15172.95], [1995, 20207.05], [1996, 25806.9]]
+  attendu:
+    salaire_annuel_moyen: 20323.27
+- id: grille_salaire_annuel_moyen_1995_p06
+  enonce: 'Né en 1939-05, pension prenant effet le 1999-06-01, 40 années de salaire au régime général.
+    La session indépendante retient 16 années pour 16 au texte (1960 1963 1966 1971 1974 1982 1985
+    1987 1988 1990 1992 1993 1995 1996 1997 1998), au tableau de coefficients du 1999-01-01. Fondement
+    qu''elle relève : R351-29 LEGIARTI000006750041 ; R351-29-1 LEGIARTI000006749369 ; L351-11 ; R351-1
+    LEGIARTI000006749339. Sa remarque : salaires d''avant février 1991 plafonnés (cotisations assises
+    sous plafond) ; autre lecture, sans plafond avant 1991 : 21280.04 | 7 année(s) plafonnée(s). Note
+    du cas : génération 1939 : 16 années.'
+  carriere:
+    naissance: 1939-05
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1999-06
+    releve_entier: [[1959, 804.8], [1960, 1043.0], [1961, 802.75], [1962, 1244.4], [1963, 1671.6],
+      [1964, 1216.6], [1965, 1679.4], [1966, 2173.6], [1967, 1564.5], [1968, 2085.25], [1969, 1492.8],
+      [1970, 2195.2], [1971, 3018.0], [1972, 2176.2], [1973, 3172.2], [1974, 4456.2], [1975, 3521.7],
+      [1976, 5202.9], [1977, 7264.4], [1978, 5488.5], [1979, 7768.15], [1980, 5499.0], [1981, 8385.6],
+      [1982, 12504.0], [1983, 9085.05], [1984, 12906.4], [1985, 17085.6], [1986, 11973.5], [1987,
+        16028.1], [1988, 20183.9], [1989, 14324.25], [1990, 18978.15], [1991, 12600.6], [1992, 17576.8],
+      [1993, 22840.0], [1994, 15172.95], [1995, 20207.05], [1996, 25806.9], [1997, 17569.3], [1998,
+        23198.4]]
+  attendu:
+    salaire_annuel_moyen: 20726.35
+- id: grille_salaire_annuel_moyen_1995_p07
+  enonce: 'Né en 1941-05, pension prenant effet le 2001-06-01, 40 années de salaire au régime général.
+    La session indépendante retient 18 années pour 18 au texte (1963 1966 1971 1974 1977 1982 1985
+    1987 1988 1990 1992 1993 1995 1996 1997 1998 1999 2000), au tableau de coefficients du 2001-01-01.
+    Fondement qu''elle relève : R351-29 LEGIARTI000006750041 ; R351-29-1 LEGIARTI000006749369 ; L351-11
+    ; R351-1 LEGIARTI000006749339. Sa remarque : salaires d''avant février 1991 plafonnés (cotisations
+    assises sous plafond) ; autre lecture, sans plafond avant 1991 : 22016.37 | 8 année(s) plafonnée(s).
+    Note du cas : génération 1941 : 18 années.'
+  carriere:
+    naissance: 1941-05
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2001-06
+    releve_entier: [[1961, 802.75], [1962, 1244.4], [1963, 1671.6], [1964, 1216.6], [1965, 1679.4],
+      [1966, 2173.6], [1967, 1564.5], [1968, 2085.25], [1969, 1492.8], [1970, 2195.2], [1971, 3018.0],
+      [1972, 2176.2], [1973, 3172.2], [1974, 4456.2], [1975, 3521.7], [1976, 5202.9], [1977, 7264.4],
+      [1978, 5488.5], [1979, 7768.15], [1980, 5499.0], [1981, 8385.6], [1982, 12504.0], [1983, 9085.05],
+      [1984, 12906.4], [1985, 17085.6], [1986, 11973.5], [1987, 16028.1], [1988, 20183.9], [1989,
+        14324.25], [1990, 18978.15], [1991, 12600.6], [1992, 17576.8], [1993, 22840.0], [1994, 15172.95],
+      [1995, 20207.05], [1996, 25806.9], [1997, 17569.3], [1998, 23198.4], [1999, 29118.1], [2000,
+        20169.0]]
+  attendu:
+    salaire_annuel_moyen: 21507.48
+- id: grille_salaire_annuel_moyen_1995_p08
+  enonce: 'Né en 1942-05, pension prenant effet le 2002-06-01, 40 années de salaire au régime général.
+    La session indépendante retient 19 années pour 19 au texte (1963 1966 1971 1974 1977 1982 1985
+    1987 1988 1990 1992 1993 1995 1996 1997 1998 1999 2000 2001), au tableau de coefficients du 2002-01-01.
+    Fondement qu''elle relève : R351-29 LEGIARTI000006750041 ; R351-29-1 LEGIARTI000006749369 ; L351-11
+    ; R351-1 LEGIARTI000006749339. Sa remarque : salaires d''avant février 1991 plafonnés (cotisations
+    assises sous plafond) ; autre lecture, sans plafond avant 1991 : 22705.30 | aucun arrondi intermédiaire
+    ; avec arrondi au centime de chaque salaire revalorisé : 22212.70 | 8 année(s) plafonnée(s). Note
+    du cas : génération 1942 : 19 années.'
+  carriere:
+    naissance: 1942-05
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2002-06
+    releve_entier: [[1962, 1244.4], [1963, 1671.6], [1964, 1216.6], [1965, 1679.4], [1966, 2173.6],
+      [1967, 1564.5], [1968, 2085.25], [1969, 1492.8], [1970, 2195.2], [1971, 3018.0], [1972, 2176.2],
+      [1973, 3172.2], [1974, 4456.2], [1975, 3521.7], [1976, 5202.9], [1977, 7264.4], [1978, 5488.5],
+      [1979, 7768.15], [1980, 5499.0], [1981, 8385.6], [1982, 12504.0], [1983, 9085.05], [1984, 12906.4],
+      [1985, 17085.6], [1986, 11973.5], [1987, 16028.1], [1988, 20183.9], [1989, 14324.25], [1990,
+        18978.15], [1991, 12600.6], [1992, 17576.8], [1993, 22840.0], [1994, 15172.95], [1995, 20207.05],
+      [1996, 25806.9], [1997, 17569.3], [1998, 23198.4], [1999, 29118.1], [2000, 20169.0], [2001,
+        25981.55]]
+  attendu:
+    salaire_annuel_moyen: 22212.71
+- id: grille_salaire_annuel_moyen_1995_p17
+  enonce: 'Né en 1930-04, pension prenant effet le 1995-10-01, 13 années de salaire au régime général.
+    La session indépendante retient 10 années pour 10 au texte (1948 1949 1950 1951 1952 1953 1954
+    1955 1956 1957), au tableau de coefficients du 1995-07-01. Fondement qu''elle relève : R351-29
+    LEGIARTI000006750041 ; R351-29-1 LEGIARTI000006749369 ; L351-11 ; R351-1 LEGIARTI000006749339.
+    Note du cas : 12 années après 1947 pour N = 10 : 1947, bien que meilleure, n''est pas retenue.'
+  carriere:
+    naissance: 1930-04
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1995-10
+    releve_entier: [[1948, 100.0], [1949, 100.0], [1950, 100.0], [1951, 100.0], [1952, 100.0], [1953,
+        100.0], [1954, 100.0], [1955, 100.0], [1956, 100.0], [1957, 100.0], [1958, 100.0], [1959,
+        100.0], [1947, 249.0]]
+  attendu:
+    salaire_annuel_moyen: 4062.55

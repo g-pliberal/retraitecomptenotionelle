@@ -2444,7 +2444,22 @@ export function moyenneSelonLaRegle(regle, valeurs, trimestres, validantes, nomb
     }
     return Math.max(...choix.map(moyenne));
   }
-  return moyenne([...candidates].sort((a, b) => b[1] - a[1]).slice(0, nombre));
+  // LES ANNÉES D'AVANT 1948 NE SONT PRISES QU'À DÉFAUT : les meilleures se
+  // choisissent parmi les années « accomplies postérieurement au 31 décembre
+  // 1947 » ; s'il y en a moins que le nombre retenu, « les années antérieures
+  // sont prises en considération en remontant à partir de cette date jusqu'à
+  // concurrence » de ce nombre (R. 351-29, de 1985 à 2025) — les plus
+  // récentes, non les meilleures. La rédaction de 2026 n'a plus cette phrase,
+  // que R. 351-39 garde à qui a des périodes de plus de soixante ans au
+  // 1er janvier 2026 : toute année d'avant 1948 en est une.
+  // La version de la fiche dit la dernière de ces années (`derniere_annee_a_defaut`).
+  const derniere = regle.derniere_annee_a_defaut ?? -Infinity;
+  const apres = candidates.filter(([annee]) => annee > derniere);
+  const manquantes = Math.max(0, nombre - apres.length);
+  const avant = manquantes === 0 ? [] : candidates
+    .filter(([annee]) => annee <= derniere)
+    .sort((a, b) => a[0] - b[0]).slice(-manquantes);
+  return moyenne([...avant, ...[...apres].sort((a, b) => b[1] - a[1]).slice(0, nombre)]);
 }
 
 /**

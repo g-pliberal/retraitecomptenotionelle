@@ -1,0 +1,119 @@
+schema_version: 1
+id: sam_indemnites_de_maternite
+intitule: >-
+  Les indemnités journalières de maternité au salaire annuel moyen du régime général :
+  comptées pour 125 % de leur montant quand le congé débute depuis le 1er janvier 2012 ;
+  pour les congés d'avant, un forfait tiré du salaire médian, porté à l'année de la
+  naissance, quand la pension prend effet depuis le 1er septembre 2023.
+domaine: salaire_de_reference
+regimes: [regime_general, msa_salaries]
+etape: liquider_chaque_regime
+face: droit
+etat: manquante
+lit:
+- les congés de maternité et d'adoption, leurs indemnités journalières, les naissances
+- le salaire médian de l'année qui précède la naissance, fixé par arrêté
+ecrit:
+- le salaire porté au compte de l'année du congé, ou de la naissance
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: aucune_avant_2012
+  statut: lue
+  textes:
+  - id: JORFARTI000023022348
+    reference: loi n° 2010-1330 du 9 novembre 2010, article 118, VI
+    lu_le: 2026-11-20
+  bornes:
+    liquidation.date_effet: [null, 2012-01-01]
+  contenu:
+    droit: >-
+      rien : aucun congé débutant depuis le 1er janvier 2012 ne précède une pension qui
+      prend effet avant cette date ; la carte de justesse marque pourtant cette période
+      avec les deux autres, la fiche entière se disant manquante
+  exemples: aucun trouvé
+- id: cent_vingt_cinq_pour_cent_2012
+  statut: lue
+  textes:
+  - id: LEGIARTI000023868111
+    article: R. 351-29 CSS
+    en_vigueur: 2011-04-18
+    citation: >-
+      « Les indemnités journalières mentionnées au 2° de l'article L. 330-1 sont
+      assimilées à un salaire au sens du présent alinéa et prises en compte à hauteur
+      de 125 % de leur montant »
+    lu_le: 2026-11-20
+  - id: JORFARTI000023022348
+    reference: loi n° 2010-1330 du 9 novembre 2010, article 118, VI
+    citation: >-
+      « L'article 98 est applicable aux indemnités journalières d'assurance maternité
+      versées dans le cadre des congés de maternité débutant à compter du 1er janvier
+      2012 »
+    lu_le: 2026-11-20
+  bornes:
+    liquidation.date_effet: [2012-01-01, 2023-09-01]
+  contenu:
+    droit: >-
+      125 % des indemnités journalières des congés de maternité débutant depuis le 1er
+      janvier 2012, ajoutés au salaire de l'année, dans la limite du plafond
+  exemples: aucun trouvé
+- id: forfait_des_conges_d_avant_2012
+  statut: lue
+  textes:
+  - id: LEGIARTI000048031614
+    article: R. 351-29 CSS
+    en_vigueur: 2023-09-01
+    citation: >-
+      « ces dispositions sont applicables aux pensions prenant effet à compter du 1er
+      septembre 2023 » ; « Le montant forfaitaire [...] est égal à une fraction du
+      salaire médian de l'année précédant la naissance. Cette fraction est égale à : 1°
+      140/365 pour les deux premières naissances ; 2° 228/365 pour les naissances
+      au-delà de la deuxième ; 3° 298/365 pour les naissances multiples de jumeaux ; 4°
+      403/365 pour les naissances multiples de plus de deux enfants ; Le montant
+      forfaitaire est pris en compte au titre de l'année civile de la naissance »
+    lu_le: 2026-11-20
+  - id: LEGIARTI000051226243
+    article: R. 351-29 CSS
+    en_vigueur: 2025-02-22
+    lu_le: 2026-11-20
+  - id: LEGIARTI000053335651
+    article: R. 351-29 CSS
+    en_vigueur: 2026-01-01
+    lu_le: 2026-11-20
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: >-
+      en plus des 125 %, un forfait pour chaque congé débuté avant 2012, à l'année de
+      la naissance : une fraction du salaire médian de l'année précédente, sous
+      condition d'une affiliation cotisée au régime général dans les douze mois qui
+      précèdent la naissance — depuis le 22 février 2025, l'année civile de la
+      naissance ou la précédente, et le forfait s'étend, à la demande, au père après le
+      décès de la mère et à l'adoption
+  exemples: aucun trouvé
+approximations: []
+sources:
+  lu_le: 2026-11-20
+  prochaine_relecture: 2027-01-31
+  a_relire:
+  - >-
+    L'arrêté qui fixe le salaire médian de chaque année (R. 351-29, V, dernier alinéa)
+    n'est pas lu : il faut sa table avant d'écrire le forfait.
+  lectures:
+  - type: legifrance
+    reference: >-
+      R. 351-29 CSS, rédactions du 18 avril 2011 (LEGIARTI000023868111), du 1er
+      septembre 2023 (LEGIARTI000048031614), du 22 février 2025 (LEGIARTI000051226243)
+      et du 1er janvier 2026 (LEGIARTI000053335651), dans l'index LEGI du dépôt ; loi
+      n° 2010-1330, article 118, VI (JORFARTI000023022348), dans l'index du JORF
+    date: 2026-11-20
+historique:
+- >-
+  2026-11-20 — née de la fiche salaire_annuel_moyen, qui en faisait une simplification
+  de toutes ses versions (action 194).
+exemples: []
+effet: >-
+  Les mères. Depuis septembre 2023, toute mère du régime général dont l'année d'une
+  naissance d'avant 2012 compte parmi ses vingt-cinq meilleures ; depuis 2013, celles
+  qui ont eu un congé depuis 2012. Le simulateur ne le compte pas : leur salaire annuel
+  moyen est sous-estimé.

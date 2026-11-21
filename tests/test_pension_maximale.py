@@ -127,10 +127,17 @@ def test_le_maximum_ramene_la_pension_de_1990(simulateur):
     assert "ramenée au maximum des pensions" in pension.detail
 
 
-def test_le_maximum_suit_l_ajournement_d_avant_1983(simulateur):
+def test_le_maximum_suit_l_ajournement_d_avant_1983(request):
     """Liquidée à soixante-dix ans en 1982, la pension a le taux de 75 % — 50 %
     majorés de 1,25 point par trimestre d'ajournement — et le maximum aussi : «
-    le pourcentage susvisé est majoré de 1,25% par trimestre d'ajournement »."""
+    le pourcentage susvisé est majoré de 1,25% par trimestre d'ajournement ».
+
+    Le cadre au plafond n'y arrive plus seul depuis que ses années d'avant 1948
+    ne sont prises qu'à défaut (R. 351-29, action 194) : ses dix meilleures
+    années d'après 1947 font un salaire annuel moyen de 0,3 % sous le plafond
+    de 1982. Le test double les plafonds d'avant 1982 d'une copie des données,
+    pour que le maximum joue."""
+    simulateur = _sur_des_plafonds_releves(request, 1982, 2.0)
     carriere, pension = _regime_general(simulateur, 1912, 70)
     plafond = simulateur.macro.plafond_securite_sociale(carriere.annee_liquidation)
     assert "taux 75.000%" in pension.detail

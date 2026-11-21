@@ -44,6 +44,9 @@
 #     plus tôt doit être refusée (`motif_ouverture: non_ouverte`) ;
 #   pension_base_sur_sam — pension du régime général rapportée au salaire
 #     annuel moyen (taux × prorata) ;
+#   salaire_annuel_moyen — le salaire annuel moyen du régime général, en
+#     euros, au centime ; la carrière se donne alors par son relevé
+#     (`releve_entier` : des paires année, salaire brut de l'année civile) ;
 #   annees_du_salaire_annuel_moyen — le nombre des meilleures années que le
 #     salaire annuel moyen du régime général retient, celui de la pension
 #     proratisée d'une carrière hors de France compris ;

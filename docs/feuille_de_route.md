@@ -8356,15 +8356,15 @@ Il a validé la maquette des caisses et choisi de l'intégrer au site.
 ### 194. La carte de justesse : l'état de chaque partie du simulateur calculé depuis ses preuves, puis prouvé régime par régime — `en cours`
 
 **Reprise, au 21 novembre 2026.** Le tableau de bord (`docs/etat.md`, section
-1) porte la carte de justesse, que le script calcule depuis les preuves. Cinq
-parties sont prouvées : l'âge légal (`age_legal_par_generation`), de 1985 à
-aujourd'hui, par cinq grilles posées depuis le seul texte de LEGI par une
-session qui n'a pas lu le code, 100 cas sur 100. Le propriétaire a levé le
-point d'arrêt pour la preuve du régime général. Reste, une règle par session :
-la durée requise, la décote et le taux, le salaire annuel moyen ; leurs fiches
-sont à découper en versions d'abord. L'étape B, balayage et neutralisation,
-reste à faire. Lire `194/2026-11-21-l-age-legal-prouve.md` : comment la grille
-s'est faite, jusqu'où l'indépendance a tenu.
+1) porte la carte de justesse, que le script calcule depuis les preuves. Sept
+parties sont prouvées, par des grilles posées depuis le seul texte de LEGI par
+des sessions qui n'ont pas lu le code : l'âge légal, de 1985 à aujourd'hui, et
+le salaire annuel moyen depuis juillet 1995. Reste, une règle par session : les
+indemnités de maternité au salaire annuel moyen, que le moteur ne compte pas
+(fiche `sam_indemnites_de_maternite`) ; la durée requise, la décote et le taux,
+à découper en versions d'abord ; l'étape B. Lire
+`194/2026-11-20-salaire-annuel-moyen.md` : la session indépendante a cherché
+ses textes seule, sous un guetteur des fichiers ouverts.
 
 **D'où elle vient.** Le 20 novembre 2026, le propriétaire : « j'ai
 l'impression qu'on tourne en rond en découvrant des problèmes par hasard »,
