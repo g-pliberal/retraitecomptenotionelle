@@ -5794,6 +5794,12 @@
   ],
   "rendu": "7c515849922a70dd"
  },
+ "4d34773f8459a623": {
+  "fonctions": [
+   "scenario_actuel.calculer"
+  ],
+  "rendu": "ff9bd683dce18dd2"
+ },
  "4d5ad7e616a15e1b": {
   "fonctions": [
    "ouvrir.duree_requise"

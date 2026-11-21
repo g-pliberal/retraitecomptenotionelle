@@ -601,9 +601,15 @@ export function compter(moteur, coordination, avantagesNonContributifs = true) {
     if (comptesSpeciaux.length > 0) {
       const dureeJours = joursDeLaLigne(carriere, ligne);
       if (dureeJours > 0) {
+        // Le temps partiel compte en entier à la durée d'assurance, et pour sa
+        // quotité aux services liquidés là où le règlement le dit
+        // (`services_a_quotite`), l'agent présumé n'avoir pas surcotisé.
+        const aQuotite = decompteSpecial.parametres.services_a_quotite ?? [];
         for (const code of comptesSpeciaux) {
           crediterJours("assurance", code, ligne.annee, dureeJours, joursSpecial);
-          crediterJours("services", code, ligne.annee, dureeJours, joursSpecial);
+          crediterJours("services", code, ligne.annee,
+            aQuotite.includes(code) && ligne.quotite < 1.0 ? dureeJours * ligne.quotite
+              : dureeJours, joursSpecial);
         }
         joursParAnneeSpecial.set(ligne.annee,
           (joursParAnneeSpecial.get(ligne.annee) ?? 0.0) + dureeJours);

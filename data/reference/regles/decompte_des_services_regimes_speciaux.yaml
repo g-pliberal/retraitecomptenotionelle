@@ -38,6 +38,8 @@ dates_qui_decident:
 # moteur (moteur/js/droit/compter.js, `compter`, `decompteDesServices` ;
 # moteur/js/droit/liquider.js, `liquiderChaqueRegime`) lit les mêmes paramètres
 # que la fiche de la fonction publique : `existe`, `regimes`, `unite_jours`,
+# et `services_a_quotite`, les régimes dont les services à temps partiel ne
+# comptent que pour leur quotité ;
 # `seuil_jours`, `duree_au_jour`, `minimum_garanti`, `fiabilite` ; et
 # `decote_ecartee_au_maximum`, que la fonction publique tient de la
 # jurisprudence (Conseil d'État, 2 février 2010, n° 311495) et qu'aucun texte
@@ -84,6 +86,7 @@ versions:
     parametres:
       existe: true
       regimes: [banque_de_france]
+      services_a_quotite: [banque_de_france]
       unite_jours: 90
       seuil_jours: 45
       duree_au_jour: true
@@ -111,6 +114,10 @@ versions:
   - {id: LEGIARTI000029134341, article: 12, en_vigueur: 2017-01-01, lu_le: 2026-11-21}
   - {id: LEGIARTI000047909725, article: annexe 31, en_vigueur: 2025-01-01, lu_le: 2026-11-21}
   - {id: LEGIARTI000047914227, article: 24, en_vigueur: 2025-01-01, lu_le: 2026-11-21}
+  - {id: LEGIARTI000054622844, article: 7, en_vigueur: 2026-08-07, lu_le: 2026-11-21}
+  - {id: LEGIARTI000050710714, article: 19, en_vigueur: 2024-12-04, lu_le: 2026-11-21}
+  - {id: LEGIARTI000006765558, article: 13 ter, en_vigueur: 1995-09-01, lu_le: 2026-11-21}
+  - {id: LEGIARTI000018253616, article: 13 bis, en_vigueur: 2008-07-01, lu_le: 2026-11-21}
   - {id: LEGIARTI000047909834, article: 85-1, en_vigueur: 2025-01-01, lu_le: 2026-11-21}
   nee_de: LEGIARTI000019108311
   bornes:
@@ -137,6 +144,8 @@ versions:
       existe: true
       regimes: [sncf, ratp, ieg, crpcen, opera_de_paris, comedie_francaise,
                 banque_de_france]
+      services_a_quotite: [sncf, ratp, ieg, opera_de_paris, comedie_francaise,
+                           banque_de_france]
       unite_jours: 90
       seuil_jours: 45
       duree_au_jour: true
@@ -179,10 +188,17 @@ approximations:
     les exemples du test ; non mesuré ailleurs
 - version: [reglement_banque_de_france_de_2007, reforme_de_2008]
   ecart: >-
-    Les périodes à temps partiel sont comptées en entier dans les services liquidés,
-    alors que les règlements (sauf la CRPCEN) ne les retiennent que pour leur
-    quotité, sauf surcotisation : chantier à part.
-  effet: tout agent qui a travaillé à temps partiel ; non mesuré ici
+    PRÉSOMPTION : l'agent n'a pas surcotisé. Les règlements (sauf la CRPCEN) ne
+    retiennent le temps partiel aux services liquidés que pour sa quotité
+    (`services_a_quotite`), sauf si l'agent a versé la retenue qui le compte à temps
+    plein : RATP (article 18, quatre trimestres au plus), IEG (annexe 3, article 11,
+    depuis le 1er juillet 2008), Banque de France (annexe, article 11, six
+    trimestres), Opéra (article 11), Comédie-Française (article 13 bis). La saisie
+    ne le demande pas ; le modèle retient la règle par défaut du texte.
+  effet: >-
+    l'agent qui a surcotisé perd les services que sa retenue a rachetés : à la RATP,
+    quatre trimestres surcotisés à mi-temps valent deux trimestres liquidés, 1,2 % de
+    pension sur une durée requise de 170 ; aucun témoin ne surcotise
 sources:
   lu_le: 2026-11-21
   prochaine_relecture: 2027-05-21
@@ -214,7 +230,8 @@ code:
     moteur/js/droit/liquider.js : liquiderChaqueRegime, trimestresDeDecote,
     coefficientSurcoteRegimesSpeciaux
   parametres: >-
-    contenu.parametres de chaque version : existe, regimes, unite_jours, seuil_jours,
+    contenu.parametres de chaque version : existe, regimes, services_a_quotite,
+    unite_jours, seuil_jours,
     duree_au_jour, decote_ecartee_au_maximum, minimum_garanti, fiabilite
   tests: [tests/test_duree_des_regimes_speciaux.py]
   moteur: >-
