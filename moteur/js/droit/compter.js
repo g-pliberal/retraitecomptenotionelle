@@ -35,6 +35,13 @@ export const SCHEMA_VERSION = 6;
  */
 export const FICHE_DU_DECOMPTE = "decompte_des_services_fonction_publique";
 
+/**
+ * La fiche du décompte des services des régimes spéciaux réformés en 2007 et
+ * 2008, lue à la date d'effet : leurs services s'additionnent et ne
+ * s'arrondissent qu'au décompte final, comme ceux du code des pensions.
+ */
+export const FICHE_DU_DECOMPTE_SPECIAL = "decompte_des_services_regimes_speciaux";
+
 /** Le mois des pensions, en jours : l'année de trois cent soixante jours. */
 export const JOURS_PAR_MOIS = 30;
 export const JOURS_PAR_TRIMESTRE = 90;
@@ -237,7 +244,9 @@ export class Durees {
   constructor({ carriere, parAnnee, horsAnnee, enfants, trimestres, trimestresParRegime,
     bonificationsParRegime, etranger = null, emplois = [], decompte = null,
     jours = { assurance: new Map(), services: new Map() }, ecartAuJour = 0.0,
-    assimilees = [], plafondsAssimilees = new Map() }) {
+    assimilees = [], plafondsAssimilees = new Map(), decompteSpecial = null,
+    joursSpecial = { assurance: new Map(), services: new Map() },
+    ecartAuJourSpecial = 0.0 }) {
     this.carriere = carriere;
     /** Par compte, par régime et par année, les trimestres crédités. */
     this.parAnnee = parAnnee;
@@ -282,6 +291,14 @@ export class Durees {
      */
     this.ecartAuJour = ecartAuJour;
     /**
+     * Le décompte des régimes spéciaux (`FICHE_DU_DECOMPTE_SPECIAL`), leurs
+     * jours, et l'écart que leurs fractions font à `trimestres` : les mêmes
+     * cases que celles du code des pensions, pour d'autres régimes.
+     */
+    this.decompteSpecial = decompteSpecial;
+    this.joursSpecial = joursSpecial;
+    this.ecartAuJourSpecial = ecartAuJourSpecial;
+    /**
      * Les trimestres des périodes assimilées, période par période et année par
      * année, avant le plafond de l'année : ils sont dans `parAnnee`, au compte
      * `assurance` seul.
@@ -295,10 +312,37 @@ export class Durees {
     this.plafondsAssimilees = plafondsAssimilees;
   }
 
+  /**
+   * Le décompte au jour dont relèvent ces régimes, à la date d'effet — celui
+   * du code des pensions ou celui des régimes spéciaux —, `null` sans décompte.
+   */
+  decompteDe(membres) {
+    for (const decompte of [this.decompte, this.decompteSpecial]) {
+      if (decompte !== null && membres.some((m) => decompte.parametres.regimes.includes(m))) {
+        return decompte;
+      }
+    }
+    return null;
+  }
+
+  /** Les jours de services du décompte dont relèvent ces régimes. */
+  joursDe(membres) {
+    return this.decompteDe(membres) === this.decompteSpecial && this.decompteSpecial !== null
+      ? this.joursSpecial : this.jours;
+  }
+
+  /** L'écart que les fractions du décompte de ces régimes font à `trimestres`. */
+  ecartAuJourDe(membres) {
+    const decompte = this.decompteDe(membres);
+    if (decompte === null) {
+      return 0.0;
+    }
+    return decompte === this.decompteSpecial ? this.ecartAuJourSpecial : this.ecartAuJour;
+  }
+
   /** Ces régimes comptent-ils leurs services au jour, à la date d'effet ? */
   auJour(membres) {
-    return this.decompte !== null
-      && membres.some((m) => this.decompte.parametres.regimes.includes(m));
+    return this.decompteDe(membres) !== null;
   }
 
   /**
@@ -306,7 +350,7 @@ export class Durees {
    * arrondi (L. 14, I ; Conseil d'État, 2 février 2010, n° 311495) ?
    */
   dureeAuJour(membres) {
-    return this.auJour(membres) && Boolean(this.decompte.parametres.duree_au_jour);
+    return this.auJour(membres) && Boolean(this.decompteDe(membres).parametres.duree_au_jour);
   }
 
   /**
@@ -316,7 +360,7 @@ export class Durees {
   joursDeServices(membres) {
     const sommes = new Map();
     for (const membre of membres) {
-      for (const [annee, jours] of this.jours.services.get(membre) ?? []) {
+      for (const [annee, jours] of this.joursDe(membres).services.get(membre) ?? []) {
         sommes.set(annee, (sommes.get(annee) ?? 0.0) + jours);
       }
     }
@@ -329,7 +373,8 @@ export class Durees {
 
   /** Les services effectifs de ces régimes, en trimestres, arrondis. */
   servicesEffectifs(membres) {
-    return arrondirLesServices(this.joursDeServices(membres), this.decompte.parametres);
+    return arrondirLesServices(this.joursDeServices(membres),
+      (this.decompteDe(membres) ?? this.decompte).parametres);
   }
 
   /**
@@ -529,18 +574,44 @@ export function compter(moteur, coordination, avantagesNonContributifs = true) {
   const budgetJours = new Map();
   const joursParAnnee = new Map();
   const autresParAnnee = new Map();
-  const crediterJours = (compte, code, annee, nombre) => {
-    if (!jours[compte].has(code)) {
-      jours[compte].set(code, new Map());
+  const crediterJours = (compte, code, annee, nombre, table = jours) => {
+    if (!table[compte].has(code)) {
+      table[compte].set(code, new Map());
     }
-    const annees = jours[compte].get(code);
+    const annees = table[compte].get(code);
     annees.set(annee, (annees.get(annee) ?? 0.0) + nombre);
   };
+  // LES SERVICES DES RÉGIMES SPÉCIAUX RÉFORMÉS EN 2007 ET 2008 AU JOUR, eux
+  // aussi : « Dans le décompte final des trimestres liquidables, la fraction
+  // de trimestre égale ou supérieure à quarante-cinq jours est comptée pour
+  // un trimestre » (SNCF, décret n° 2008-639, article 12 ; les autres
+  // règlements de même). Fiche decompte_des_services_regimes_speciaux.
+  const decompteSpecial = decompteDesServices(moteur, carriere, anneeLiquidation,
+    FICHE_DU_DECOMPTE_SPECIAL);
+  const joursSpecial = { assurance: new Map(), services: new Map() };
+  const joursParAnneeSpecial = new Map();
+  const autresParAnneeSpecial = new Map();
   carriere.lignes.forEach((ligne, i) => {
     const retenusLigne = carriere.trimestresRetenus(ligne);
     const comptesAuJour = decompte === null ? [] : coordination.regimes[i]
       .filter((code) => moteur.catalogue.contient(code)
         && moteur.catalogue.obtenir(code).famille === "fonction_publique");
+    const comptesSpeciaux = decompteSpecial === null ? [] : coordination.regimes[i]
+      .filter((code) => decompteSpecial.parametres.regimes.includes(code));
+    if (comptesSpeciaux.length > 0) {
+      const dureeJours = joursDeLaLigne(carriere, ligne);
+      if (dureeJours > 0) {
+        for (const code of comptesSpeciaux) {
+          crediterJours("assurance", code, ligne.annee, dureeJours, joursSpecial);
+          crediterJours("services", code, ligne.annee, dureeJours, joursSpecial);
+        }
+        joursParAnneeSpecial.set(ligne.annee,
+          (joursParAnneeSpecial.get(ligne.annee) ?? 0.0) + dureeJours);
+      }
+    } else if (retenusLigne > 0) {
+      autresParAnneeSpecial.set(ligne.annee,
+        (autresParAnneeSpecial.get(ligne.annee) ?? 0) + retenusLigne);
+    }
     if (comptesAuJour.length > 0 && ligne.services_fonction_publique) {
       // Une ligne de services se compte au jour même quand elle ne valide
       // aucun trimestre entier : deux mois d'entrée en novembre.
@@ -602,6 +673,15 @@ export function compter(moteur, coordination, avantagesNonContributifs = true) {
       const auJourAnnee = Math.min(4.0, (autresParAnnee.get(annee) ?? 0)
         + joursParAnnee.get(annee) / JOURS_PAR_TRIMESTRE);
       ecartAuJour += auJourAnnee - entiers;
+    }
+  }
+  let ecartAuJourSpecial = 0.0;
+  if (decompteSpecial !== null && decompteSpecial.parametres.duree_au_jour) {
+    for (const annee of [...joursParAnneeSpecial.keys()].sort((a, b) => a - b)) {
+      const entiers = carriere.trimestresParAnnee(carriere.lignesDe(annee)).get(annee) ?? 0;
+      const auJourAnnee = Math.min(4.0, (autresParAnneeSpecial.get(annee) ?? 0)
+        + joursParAnneeSpecial.get(annee) / JOURS_PAR_TRIMESTRE);
+      ecartAuJourSpecial += auJourAnnee - entiers;
     }
   }
   // Les périodes assimilées : à l'assurance de leur régime, année par année,
@@ -676,6 +756,10 @@ export function compter(moteur, coordination, avantagesNonContributifs = true) {
     trimestresParRegime, bonificationsParRegime, etranger, emplois,
     decompte, jours: decompte !== null ? jours : { assurance: new Map(), services: new Map() },
     ecartAuJour, assimilees, plafondsAssimilees,
+    decompteSpecial,
+    joursSpecial: decompteSpecial !== null ? joursSpecial
+      : { assurance: new Map(), services: new Map() },
+    ecartAuJourSpecial,
   });
 }
 
@@ -990,9 +1074,10 @@ export function trimestresDesPeriodes(moteur, carriere, effet) {
  * Un paramètre que le moteur ne connaît pas l'arrête. Voir
  * `decompte_des_services` du Python.
  */
-export function decompteDesServices(moteur, carriere, anneeLiquidation) {
+export function decompteDesServices(moteur, carriere, anneeLiquidation,
+  fiche = FICHE_DU_DECOMPTE) {
   const mois = carriere.age_liquidation !== null ? carriere.dateLiquidation.mois : 1;
-  const version = moteur.fichesDatees.version(FICHE_DU_DECOMPTE,
+  const version = moteur.fichesDatees.version(fiche,
     `${String(anneeLiquidation).padStart(4, "0")}-${String(mois).padStart(2, "0")}-01`);
   if (version === null || !version.parametres.existe) {
     return null;
@@ -1001,10 +1086,10 @@ export function decompteDesServices(moteur, carriere, anneeLiquidation) {
   const unite = parametres.unite_jours;
   const seuil = parametres.seuil_jours;
   if (!(Number.isInteger(unite) && unite > 0 && seuil > 0 && seuil <= unite)) {
-    throw new Error(`${FICHE_DU_DECOMPTE}.${version.id} : unité ${unite}, seuil ${seuil}`);
+    throw new Error(`${fiche}.${version.id} : unité ${unite}, seuil ${seuil}`);
   }
   if (!MINIMA_DU_DECOMPTE.includes(parametres.minimum_garanti)) {
-    throw new Error(`${FICHE_DU_DECOMPTE}.${version.id} : minimum garanti inconnu, `
+    throw new Error(`${fiche}.${version.id} : minimum garanti inconnu, `
       + `${parametres.minimum_garanti}`);
   }
   return { id: version.id, parametres };

@@ -1,0 +1,236 @@
+schema_version: 1
+id: decompte_des_services_regimes_speciaux
+intitule: >-
+  Les services des régimes spéciaux réformés en 2007 et 2008 s'additionnent, et ne
+  s'arrondissent qu'une fois, au décompte final des trimestres liquidables : la fraction
+  de trimestre d'au moins quarante-cinq jours fait un trimestre, la fraction plus courte
+  se néglige (SNCF, décret n° 2008-639, article 12 ; RATP, décret n° 2008-637, article
+  23 ; IEG, annexe 3 du statut national, article 9 ; CRPCEN, décret n° 90-1215, article
+  85 ; Opéra, décret n° 68-382, article 14 ; Comédie-Française, décret n° 68-960, article
+  12 ; Banque de France, décret n° 2007-262, annexe, article 31). La durée d'assurance
+  que la décote et la surcote lisent « totalise la durée des services », sans arrondi
+  écrit ; les trimestres qui manquent à la décote s'arrondissent à l'entier supérieur,
+  ceux de la surcote sont des « trimestres entiers ».
+domaine: duree
+regimes:
+- sncf
+- ratp
+- ieg
+- crpcen
+- opera_de_paris
+- comedie_francaise
+- banque_de_france
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- les mois de chaque année de services dans ces régimes, à trente jours le mois
+- les trimestres que les autres régimes valident la même année
+- liquidation.date_effet
+ecrit:
+- les jours d'assurance et de services de chaque régime spécial, année par année, et
+  l'écart que leurs fractions font à la durée tous régimes que ces régimes lisent
+- les trimestres liquidables de ces régimes, la durée que leur décote et leur surcote
+  lisent
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
+# moteur (moteur/js/droit/compter.js, `compter`, `decompteDesServices` ;
+# moteur/js/droit/liquider.js, `liquiderChaqueRegime`) lit les mêmes paramètres
+# que la fiche de la fonction publique : `existe`, `regimes`, `unite_jours`,
+# `seuil_jours`, `duree_au_jour`, `minimum_garanti`, `fiabilite` ; et
+# `decote_ecartee_au_maximum`, que la fonction publique tient de la
+# jurisprudence (Conseil d'État, 2 février 2010, n° 311495) et qu'aucun texte
+# ni aucun arrêt ne donne à ces régimes : faux ici. Une version ne porte que
+# les régimes dont le règlement l'écrit à sa date.
+versions:
+- id: avant_les_reglements_de_2007
+  statut: supposee
+  hypothese: >-
+    les règlements d'avant la réforme (SNCF et RATP d'entreprise, annexe 3 des IEG de
+    1946, décrets de la CRPCEN, de l'Opéra et de la Comédie-Française d'avant 2008)
+    totalisent les services en annuités sans écrire d'arrondi, ou ne sont pas dans
+    l'index LEGI ; on ne leur prête aucun décompte au jour, et le modèle garde son
+    décompte année par année, en trimestres entiers
+  fiabilite: faible
+  bornes:
+    liquidation.date_effet: [null, 2007-04-01]
+  contenu:
+    droit: aucun décompte lu
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, les exemples publiés que tests/temoins/exemples_officiels.yaml
+    porte pour ces régimes (circulaire CNIEG 2024/15, pages « La décote » de la CNIEG et
+    de la CRPCEN, brochures d'info-retraite des clercs de notaires) : tous donnent la
+    durée en trimestres entiers, aucun une fraction de trimestre ni son arrondi ; les
+    pages publiques de la CPRPSNCF et de la CRP RATP n'en donnent pas
+- id: reglement_banque_de_france_de_2007
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006260745, article: 1, en_vigueur: 2007-02-28, lu_le: 2026-11-21}
+  - {id: LEGIARTI000006778516, article: annexe 31, en_vigueur: 2007-02-28, lu_le: 2026-11-21}
+  nee_de: LEGIARTI000006778516
+  bornes:
+    liquidation.date_effet: [2007-04-01, 2008-07-01]
+  contenu:
+    droit: >-
+      Le régime « est fixé à compter du 1er avril 2007 par le règlement annexé »
+      (décret n° 2007-262, article 1er) ; « La fraction de trimestre égale ou
+      supérieure à quarante-cinq jours est comptée pour un trimestre. La fraction de
+      trimestre inférieure à quarante-cinq jours est négligée » (annexe, article 31,
+      II). Les autres régimes spéciaux ne sont pas encore réformés.
+    parametres:
+      existe: true
+      regimes: [banque_de_france]
+      unite_jours: 90
+      seuil_jours: 45
+      duree_au_jour: true
+      decote_ecartee_au_maximum: false
+      minimum_garanti: liquidation
+      fiabilite: haute
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, les exemples publiés que tests/temoins/exemples_officiels.yaml
+    porte pour ces régimes (circulaire CNIEG 2024/15, pages « La décote » de la CNIEG et
+    de la CRPCEN, brochures d'info-retraite des clercs de notaires) : tous donnent la
+    durée en trimestres entiers, aucun une fraction de trimestre ni son arrondi ; les
+    pages publiques de la CPRPSNCF et de la CRP RATP n'en donnent pas
+- id: reforme_de_2008
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019108311, article: 12, en_vigueur: 2008-07-01, lu_le: 2026-11-21}
+  - {id: LEGIARTI000045021328, article: 12, en_vigueur: 2022-01-02, lu_le: 2026-11-21}
+  - {id: LEGIARTI000054622824, article: 13, en_vigueur: 2026-08-07, lu_le: 2026-11-21}
+  - {id: LEGIARTI000050710693, article: 23, en_vigueur: 2024-12-04, lu_le: 2026-11-21}
+  - {id: LEGIARTI000052046924, article: annexe 3, en_vigueur: 2025-08-06, lu_le: 2026-11-21}
+  - {id: LEGIARTI000019226006, article: annexe 3, en_vigueur: 2008-06-30, lu_le: 2026-11-21}
+  - {id: LEGIARTI000047909839, article: 85, en_vigueur: 2025-01-01, lu_le: 2026-11-21}
+  - {id: LEGIARTI000029135161, article: 14, en_vigueur: 2017-01-01, lu_le: 2026-11-21}
+  - {id: LEGIARTI000029134341, article: 12, en_vigueur: 2017-01-01, lu_le: 2026-11-21}
+  - {id: LEGIARTI000047909725, article: annexe 31, en_vigueur: 2025-01-01, lu_le: 2026-11-21}
+  - {id: LEGIARTI000047914227, article: 24, en_vigueur: 2025-01-01, lu_le: 2026-11-21}
+  - {id: LEGIARTI000047909834, article: 85-1, en_vigueur: 2025-01-01, lu_le: 2026-11-21}
+  nee_de: LEGIARTI000019108311
+  bornes:
+    liquidation.date_effet: [2008-07-01, null]
+  contenu:
+    droit: >-
+      « La durée des services et des bonifications admissibles en liquidation
+      s'exprime en trimestres. Dans le décompte final des trimestres liquidables, la
+      fraction de trimestre égale ou supérieure à quarante-cinq jours est comptée pour
+      un trimestre. La fraction de trimestre inférieure à quarante-cinq jours est
+      négligée » (SNCF, article 12, dans les rédactions du 1er juillet 2008 et du 2
+      janvier 2022) ; la même règle à la RATP (article 23 : « est prise en compte pour
+      un trimestre »), aux IEG (annexe 3, article 9, depuis la rédaction du 30 juin
+      2008), à la CRPCEN (article 85, I : « la durée des périodes de versement de
+      cotisations [...] s'additionne et s'exprime en trimestres »), à l'Opéra (article
+      14, I) et à la Comédie-Française (article 12, I) ; la Banque de France la garde
+      (annexe, article 31, II). « La durée d'assurance totalise la durée des services
+      » (SNCF, article 13, III), et « Une année civile ne peut compter pour plus de
+      quatre trimestres » ; « Le nombre de trimestres correspondant est arrondi à
+      l'entier supérieur » (article 13, I, 2°, pour la décote) ; « Sont pris en compte
+      pour ce calcul les trimestres entiers cotisés » (article 13, II, pour la
+      surcote, depuis le 1er janvier 2009).
+    parametres:
+      existe: true
+      regimes: [sncf, ratp, ieg, crpcen, opera_de_paris, comedie_francaise,
+                banque_de_france]
+      unite_jours: 90
+      seuil_jours: 45
+      duree_au_jour: true
+      decote_ecartee_au_maximum: false
+      minimum_garanti: liquidation
+      fiabilite: haute
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, les exemples publiés que tests/temoins/exemples_officiels.yaml
+    porte pour ces régimes (circulaire CNIEG 2024/15, pages « La décote » de la CNIEG et
+    de la CRPCEN, brochures d'info-retraite des clercs de notaires) : tous donnent la
+    durée en trimestres entiers, aucun une fraction de trimestre ni son arrondi ; les
+    pages publiques de la CPRPSNCF et de la CRP RATP n'en donnent pas
+textes_sans_effet:
+- id: LEGIARTI000047909408
+  article: décret n° 2007-262, article 1er
+  en_vigueur: 2023-09-01
+  motif: >-
+    ferme le régime aux agents recrutés à compter du 1er septembre 2023 (« Ce règlement
+    s'applique aux agents titulaires recrutés avant le 1er septembre 2023 ») et règle sa
+    gestion par la Caisse des dépôts ; il ne touche pas au décompte des services, que
+    l'article 31 de l'annexe porte
+approximations:
+- version: [reglement_banque_de_france_de_2007, reforme_de_2008]
+  ecart: >-
+    Le modèle connaît la carrière au mois, et compte le mois pour trente jours : la
+    fraction d'un mois se néglige, celle de deux mois fait le trimestre, alors que le
+    service compte au jour.
+  effet: >-
+    au plus un trimestre liquidable et un trimestre de décote, quand une fraction de
+    mois tombe de part et d'autre du seuil ; non mesuré
+- version: [reglement_banque_de_france_de_2007, reforme_de_2008]
+  ecart: >-
+    La durée d'assurance de la décote « totalise la durée des services » sans écrire
+    d'arrondi : le modèle la lit au jour, comme celle de la fonction publique (L. 14,
+    I). Si la caisse l'arrondissait aux quarante-cinq jours, comme les services
+    liquidables, les trimestres manquants changeraient d'au plus un.
+  effet: >-
+    au plus un trimestre de décote ; les deux lectures donnent le même nombre dans
+    les exemples du test ; non mesuré ailleurs
+- version: [reglement_banque_de_france_de_2007, reforme_de_2008]
+  ecart: >-
+    Les périodes à temps partiel sont comptées en entier dans les services liquidés,
+    alors que les règlements (sauf la CRPCEN) ne les retiennent que pour leur
+    quotité, sauf surcotisation : chantier à part.
+  effet: tout agent qui a travaillé à temps partiel ; non mesuré ici
+sources:
+  lu_le: 2026-11-21
+  prochaine_relecture: 2027-05-21
+  a_relire:
+  - >-
+    Lire les règlements d'avant 2008 de la SNCF et de la RATP, absents de l'index LEGI,
+    et la pratique des caisses sur l'arrondi des annuités d'avant la réforme.
+  - >-
+    Chercher si une caisse (CPRP SNCF, CRP RATP, CNIEG) arrondit la durée d'assurance
+    de la décote aux quarante-cinq jours, ou la lit au jour.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2008-639 (SNCF), articles 12 (LEGIARTI000019108311,
+      LEGIARTI000045021328) et 13 (LEGIARTI000019108313, LEGIARTI000020085562,
+      LEGIARTI000054622824) ; décret n° 2008-637 (RATP), articles 23
+      (LEGIARTI000050710693) et 24 (LEGIARTI000047914227) ; annexe 3 du statut des
+      IEG, articles 2, 9 et 10 (LEGIARTI000019226006, LEGIARTI000052046924) ; décret
+      n° 90-1215 (CRPCEN), articles 85 et 85-1 (LEGIARTI000047909839,
+      LEGIARTI000047909834) ; décret n° 68-382 (Opéra), article 14
+      (LEGIARTI000029135161) ; décret n° 68-960 (Comédie-Française), article 12
+      (LEGIARTI000029134341) ; décret n° 2007-262 (Banque de France), article 1er et
+      annexe, article 31 (LEGIARTI000006260745, LEGIARTI000006778516,
+      LEGIARTI000047909725), lus dans l'index LEGI du dépôt, à jour au 16 novembre 2026
+    date: 2026-11-21
+code:
+  javascript: >-
+    moteur/js/droit/compter.js : compter, decompteDesServices, Durees ;
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, trimestresDeDecote,
+    coefficientSurcoteRegimesSpeciaux
+  parametres: >-
+    contenu.parametres de chaque version : existe, regimes, unite_jours, seuil_jours,
+    duree_au_jour, decote_ecartee_au_maximum, minimum_garanti, fiabilite
+  tests: [tests/test_duree_des_regimes_speciaux.py]
+  moteur: >-
+    Durees en porte le décompte (decompteSpecial, jours, ecartAuJourSpecial) ; le
+    paquet du site porte ses versions.
+historique:
+- >-
+  2026-11-21 — écrite après la relecture au texte des régimes spéciaux : le modèle
+  comptait les trimestres civils entiers de l'année d'entrée et de celle du départ,
+  chacune à part, et perdait un trimestre quand leurs fractions additionnées
+  atteignaient quarante-cinq jours.
+reformes:
+- banque_de_france_2007
+- regimes_speciaux_2008
+effet: >-
+  Les agents dont l'année d'entrée et celle du départ sont entamées : un trimestre
+  liquidable de plus, et un trimestre de décote de moins ou de surcote de plus, quand
+  les deux fractions additionnées atteignent quarante-cinq jours ; +0,8 % à +2,1 % de
+  pension dans les exemples du test.

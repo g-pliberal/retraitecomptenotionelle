@@ -1583,7 +1583,9 @@ exemples:
       retenir est donc égal à 8 trimestres ». Le § 6, « reprenant l'exemple
       de Monsieur A », écrit « N = 4 trimestres de décote » : le témoin
       retient le décompte du § 5. Taux : 75 % × (1 − 8 × 1,25 %).
-    carriere: {naissance: "1964-12-01", sexe: H, affiliation: agent_ieg, liquidation: "2021-12", trimestres_valides: 159}
+      Le témoin le fait entrer en mars 1982 : 477 mois jusqu'à fin
+      novembre 2021, ses 159 trimestres au jour.
+    carriere: {naissance: "1964-12-01", sexe: H, affiliation: agent_ieg, liquidation: "2021-12", debut: "1982-03"}
     attendu: {trimestres_requis: 167, date_age_legal: "2020-12", taux_liquidation: 0.675}
 
   # ---- CRPCEN (clercs et employés de notaires) ---------------------------
@@ -2533,7 +2535,9 @@ exemples:
       trimestres étant ceux du premier semestre 1959, et partir à 61 ans,
       l'âge légal que la brochure donne à Yves, le mois même, la CRPCEN
       servant sa pension dès l'âge atteint.
-    carriere: {naissance: "1959-03-15", sexe: H, affiliation: clerc_de_notaire, liquidation: "2020-03", trimestres_valides: 156}
+      Le témoin le fait entrer en février 1981 : 469 mois jusqu'à fin
+      février 2020, 156 trimestres et un mois, liquidés à 156.
+    carriere: {naissance: "1959-03-15", sexe: H, affiliation: clerc_de_notaire, liquidation: "2020-03", debut: "1981-02"}
     attendu: {trimestres_requis: 166, taux_liquidation: 0.65625}
 
   - id: ur_expatries_crpcen_yves_nationale
@@ -2550,7 +2554,9 @@ exemples:
       mois même de ses 61 ans. Né un 1er, ou parti un mois plus tard, il
       n'aurait que quinze trimestres à décompter jusqu'à l'âge d'annulation
       de 2020, 65 ans.
-    carriere: {naissance: "1959-03-15", sexe: H, affiliation: clerc_de_notaire, liquidation: "2020-03", trimestres_valides: 150}
+      Le témoin le fait entrer en août 1982 : 451 mois jusqu'à fin
+      février 2020, 150 trimestres et un mois, liquidés à 150.
+    carriere: {naissance: "1959-03-15", sexe: H, affiliation: clerc_de_notaire, liquidation: "2020-03", debut: "1982-08"}
     attendu: {trimestres_requis: 166, date_age_legal: "2020-03", taux_liquidation: 0.6}
 
   # ---- Union Retraite : deux simulateurs d'info-retraite, saisis à la main ----

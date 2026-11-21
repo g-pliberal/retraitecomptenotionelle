@@ -2730,6 +2730,30 @@ def _confronter(exemple: dict) -> list[tuple]:
     return problemes
 
 
+#: Les exemples des régimes spéciaux dont la durée se compte au jour : le mois
+#: d'entrée que le témoin leur donne rend, au jour, les trimestres que la caisse
+#: écrit, et non un de plus (fiche `decompte_des_services_regimes_speciaux`).
+SERVICES_LIQUIDES_DES_EXEMPLES = {
+    "cnieg_2024_15_monsieur_a": (159, 167),
+    "ur_expatries_crpcen_jean_nationale": (156, 166),
+    "ur_expatries_crpcen_yves_nationale": (150, 166),
+}
+
+
+@pytest.mark.parametrize("ident", SERVICES_LIQUIDES_DES_EXEMPLES)
+def test_les_exemples_des_regimes_speciaux_liquident_les_trimestres_publies(ident):
+    """Monsieur A totalise 159 trimestres (circulaire CNIEG 2024/15), Jean 156
+    et Yves 150 (brochure des clercs de notaires) : leur carrière en liquide
+    autant, au jour, sur la durée requise."""
+    exemple = next(e for e in _charger_exemples() if e["id"] == ident)
+    _, resultat = _carriere_exemple(exemple)
+    regime = {"agent_ieg": "ieg", "clerc_de_notaire": "crpcen"}[
+        exemple["carriere"]["affiliation"]]
+    pension = next(p for p in resultat["pensions_par_regime"] if p["regime"] == regime)
+    lu = re.search(r"× ([0-9]+)/([0-9]+)", pension["detail"])
+    assert (int(lu.group(1)), int(lu.group(2))) == SERVICES_LIQUIDES_DES_EXEMPLES[ident]
+
+
 @pytest.mark.parametrize("exemple", _charger_exemples(), ids=lambda e: e["id"])
 def test_les_exemples_publies_par_les_caisses_sont_reproduits(exemple):
     """Chaque exemple est une carrière minuscule dont la réponse est écrite

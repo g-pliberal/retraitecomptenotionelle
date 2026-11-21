@@ -56,6 +56,7 @@ couples:
   "cavp_minoration_deux_pentes / cavp_statuts_2009": {classe: a_faire, commentaire: "réforme du 2009-06-06 ; une version commence le 2009-06-07"}
   "cese_affiliation_2023 / cese_2023": {classe: a_faire, commentaire: "fiche sans version"}
   "cultes_retraite_complementaire / cultes_arrco_2006": {classe: a_faire, commentaire: "réforme du 2006-01-01 ; aucune version ne commence cette année-là"}
+  "decompte_des_services_regimes_speciaux / banque_de_france_2007": {classe: portee, version: reglement_banque_de_france_de_2007, texte: "décret n° 2007-262, article 1er (LEGIARTI000006260745) : « à compter du 1er avril 2007 »"}
   "decote_fonction_publique / reforme_2023": {classe: a_faire, commentaire: "fiche sans version"}
   "depart_anticipe_parents_trois_enfants / fillon_2003": {classe: a_faire, commentaire: "réforme du 2004-01-01 ; une version commence le 2004-12-31"}
   "depart_anticipe_parents_trois_enfants / woerth_2010": {classe: a_faire, commentaire: "réforme du 2011-07-01 ; une version commence le 2011-01-01"}

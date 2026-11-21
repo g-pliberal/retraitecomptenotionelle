@@ -785,6 +785,7 @@ class FichesDatees:
             "versement_forfaitaire_unique", "versement_unique_agirc_arrco",
             "versement_unique_ircantec", "versement_unique_rci",
             "decompte_des_services_fonction_publique",
+            "decompte_des_services_regimes_speciaux",
             "pension_maximale_regime_general",
             "taux_plein_anciens_deportes_internes", "taux_plein_meres_de_famille_ouvrieres",
             "taux_plein_travailleurs_manuels", "taux_plein_anciens_combattants_prisonniers",

@@ -698,8 +698,11 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       : (auJour ? durees.servicesLiquidables(membres)
         : cumulPlafonne(acquisParRegime, membresDeLaDuree));
     // La durée d'assurance que sa décote lit, au jour, sans arrondi (L. 14, I).
-    const ecartAuJour = auJour && durees.dureeAuJour(membres) ? durees.ecartAuJour : 0.0;
-    if (dureesCultes === null && majorationEnfants !== null
+    const ecartAuJour = auJour && durees.dureeAuJour(membres)
+      ? durees.ecartAuJourDe(membres) : 0.0;
+    // Le régime spécial compté au jour liquide déjà ses seuls services et
+    // bonifications (`servicesLiquidables`) : rien à retirer.
+    if (dureesCultes === null && majorationEnfants !== null && !auJour
         && moteur.catalogue.obtenir(code).famille === "special") {
       // La majoration de durée n'entre pas aux services d'un régime spécial,
       // qui liquide ses services et ses bonifications : voir liquider.py.
@@ -795,7 +798,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         moteur, periode, carriere, trimestres + majorationsEmplois + ecartAuJour, requis,
         ageLiquidation, ageAnnulation,
       );
-      if (auJour && durees.dureeAuJour(membres) && trimestresRegime >= proratisation) {
+      if (auJour && durees.dureeAuJour(membres) && trimestresRegime >= proratisation
+          && durees.decompteDe(membres).parametres.decote_ecartee_au_maximum !== false) {
         // La pension que l'arrondi du décompte final porte au pourcentage
         // maximum ne subit pas de décote (Conseil d'État, 2 février 2010,
         // n° 311495). Voir liquider.py.
@@ -870,7 +874,10 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       // (XXIV, D, de la loi du 14 avril 2023) —, et le militaire n'en a
       // aucune : le III de l'article L. 14 ne la donne qu'au « fonctionnaire
       // civil », et ne lit pas les bonifications des emplois classés.
-      let supplementaires = Math.max(0, trimestres - requis - (
+      // Le régime spécial compté au jour lit ses trimestres entiers au jour.
+      const dureeDeLaSurcote = auJour && moteur.catalogue.obtenir(code).famille === "special"
+        ? Math.floor(trimestres + ecartAuJour + 1e-9) : trimestres;
+      let supplementaires = Math.max(0, dureeDeLaSurcote - requis - (
         moteur.catalogue.obtenir(code).famille === "fonction_publique"
           ? durees.dureeHorsSurcote : 0));
       const ageOuverture = ouvrir.ageSurcote(moteur, periode, carriere);
@@ -898,8 +905,10 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
             fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteSurcote);
           }
         } else if (BAREMES_REGIMES_SPECIAUX.has(periode.bareme_decote)) {
+          // « les trimestres entiers » d'une durée qui « totalise la durée
+          // des services » (SNCF, décret n° 2008-639, article 13, II et III).
           coefficientSurcote = coefficientSurcoteRegimesSpeciaux(
-            moteur, periode, carriere, trimestres, requis, ageOuverture);
+            moteur, periode, carriere, dureeDeLaSurcote, requis, ageOuverture);
         } else {
           supplementaires = Math.min(
             supplementaires,
@@ -1075,7 +1084,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       eligiblesGaranti.push({
         indice: indicePension,
         trimestresServices: auJour
-          && durees.decompte.parametres.minimum_garanti === "services_effectifs"
+          && durees.decompteDe(membres).parametres.minimum_garanti === "services_effectifs"
           ? durees.servicesEffectifs(membres)
           : (auJour ? numerateur : cumulPlafonne("services", membres)),
         // La pension liquidée pour invalidité a le minimum garanti sans
