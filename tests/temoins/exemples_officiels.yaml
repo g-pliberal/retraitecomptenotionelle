@@ -1586,7 +1586,7 @@ exemples:
       Le témoin le fait entrer en mars 1982 : 477 mois jusqu'à fin
       novembre 2021, ses 159 trimestres au jour.
     carriere: {naissance: "1964-12-01", sexe: H, affiliation: agent_ieg, liquidation: "2021-12", debut: "1982-03"}
-    attendu: {trimestres_requis: 167, date_age_legal: "2020-12", taux_liquidation: 0.675}
+    attendu: {trimestres_valides: 159, trimestres_requis: 167, date_age_legal: "2020-12", taux_liquidation: 0.675}
 
   # ---- CRPCEN (clercs et employés de notaires) ---------------------------
   # La page « La décote » de la CRPCEN, mise à jour le 16 janvier 2026, lue
@@ -2538,7 +2538,7 @@ exemples:
       Le témoin le fait entrer en février 1981 : 469 mois jusqu'à fin
       février 2020, 156 trimestres et un mois, liquidés à 156.
     carriere: {naissance: "1959-03-15", sexe: H, affiliation: clerc_de_notaire, liquidation: "2020-03", debut: "1981-02"}
-    attendu: {trimestres_requis: 166, taux_liquidation: 0.65625}
+    attendu: {trimestres_valides: 156, trimestres_requis: 166, taux_liquidation: 0.65625}
 
   - id: ur_expatries_crpcen_yves_nationale
     source: {editeur: "Union Retraite", reference: "info-retraite.fr, parcours « Retraite et expatriation », brochure des clercs et employés de notaires en contrat local dans l'UE, l'EEE ou la Suisse, un territoire conventionné et un État tiers (PDF du 22 janvier 2020), exemple d'Yves", verifie_le: "2026-10-19"}
@@ -2557,7 +2557,7 @@ exemples:
       Le témoin le fait entrer en août 1982 : 451 mois jusqu'à fin
       février 2020, 150 trimestres et un mois, liquidés à 150.
     carriere: {naissance: "1959-03-15", sexe: H, affiliation: clerc_de_notaire, liquidation: "2020-03", debut: "1982-08"}
-    attendu: {trimestres_requis: 166, date_age_legal: "2020-03", taux_liquidation: 0.6}
+    attendu: {trimestres_valides: 150, trimestres_requis: 166, date_age_legal: "2020-03", taux_liquidation: 0.6}
 
   # ---- Union Retraite : deux simulateurs d'info-retraite, saisis à la main ----
   # Interrogés le 1er octobre 2026 par le propriétaire, une saisie par borne

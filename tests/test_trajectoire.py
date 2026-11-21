@@ -439,6 +439,12 @@ PRORATA_80 = (
     "« du chef des bonifications » (fiche taux_maximum_fonction_publique, conforme) : la "
     "mère de deux enfants a 168/166 au dépôt et chez Destinie, 166/166 chez TRAJECTOiRE ; "
     "l'écart est le sien")
+DUREE_ANNONCEE_ENTIERE = (
+    "la durée d'assurance annoncée : le dépôt la compte au jour pour les services de la "
+    "fonction publique et des régimes spéciaux (L. 14, I ; SNCF, décret n° 2008-639, "
+    "article 13, III), et l'annonce en trimestres entiers, sa fraction négligée ; "
+    "TRAJECTOiRE la garde en tiers de trimestre (171,67), ou la compte année par année"
+)
 ARRONDI_SERVICES = (
     "les services de la fonction publique : TRAJECTOiRE les garde en tiers de trimestre, "
     "proratise sur eux (171,33/172) et ne fait aucune décote pour une fraction de trimestre "
@@ -517,8 +523,10 @@ ECARTS.update(_ecarts(BONIFICATION_CINQUIEME, "fonction_publique", {
     "cor_8_1955": 0.1212, "cor_8_1960": 0.0711, "cor_8_1963": 0.1077,
     "cor_8_1964": 0.0999}, 0.002))
 ECARTS.update(_ecarts(MAJORATION_HOSPITALIERS, "trimestres", {
-    "cor_9_1955": -15.0, "cor_9_1960": -14.67, "cor_9_1963": -15.0, "cor_9_1964": -15.33,
+    "cor_9_1955": -15.0, "cor_9_1963": -15.0, "cor_9_1964": -15.33,
     "cor_9_1970": -15.0}, 0.01))
+ECARTS.update(_ecarts(MAJORATION_HOSPITALIERS + " ; et " + DUREE_ANNONCEE_ENTIERE,
+                      "trimestres", {"cor_9_1960": -15.67}, 0.01))
 ECARTS.update(_ecarts(DUREE_ACTIFS + " ; et " + ARRONDI_SERVICES, "taux",
                       {"cor_9_1964": -0.025}, 1e-6))
 ECARTS.update(_ecarts(DUREE_ACTIFS + " ; " + ARRONDI_SERVICES + " ; " + TRAITEMENT
@@ -529,6 +537,12 @@ ECARTS.update(_ecarts(ARRONDI_SERVICES + " ; " + TRAITEMENT + " ; et "
                       {"cor_9_1960": 0.0483}, 0.002))
 ECARTS.update(_ecarts(ANNEE_PARTAGEE, "trimestres", {"cor_10_1970": -2.0, "cor_3_1964": -1.0},
                       1e-6))
+ECARTS.update(_ecarts(DUREE_ANNONCEE_ENTIERE, "trimestres", {
+    **{c: -2 / 3 for c in (
+        "cor_5_1960", "cor_5_1963", "cor_5_primes_constantes_1960",
+        "cor_5_primes_constantes_1963", "cor_6_1963", "cor_6_1970", "cor_7_1960",
+        "cor_7_1963", "cor_8_1955", "cor_8_1970", "cor_11_1963", "cor_11_1964")},
+    "cor_10_1960": -1.0}, 0.001))
 ECARTS.update(_ecarts(ANNEE_PARTAGEE, "carriere_longue", {"cor_10_1970": -1.0}, 1e-6))
 ECARTS.update(_ecarts(ANNEE_PARTAGEE, "taux", {"cor_10_1970": -0.025}, 1e-6))
 ECARTS.update(_ecarts(ANNEE_PARTAGEE + " ; et " + CHAINE_SAM, "regime_general", {

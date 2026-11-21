@@ -8907,7 +8907,10 @@ def test_jusqu_en_juin_2011_les_fonctionnaires_gardaient_les_portes_de_l_ancien_
         resultat = actuel.calculer(carriere)
         assert str(carriere.date_liquidation) == "juin 2011"
         assert _trimestres_cotises(carriere) == 172
-        assert resultat.trimestres_valides == 172
+        # La durée d'assurance annoncée se compte au jour (L. 14, I) : de
+        # février 1968 à mai 2011, 520 mois, 173 trimestres et un mois ; les
+        # années civiles n'en comptaient que 172.
+        assert resultat.trimestres_valides == 173
         assert sorted(porte[2] for porte in actuel.carriere_longue._portes(carriere, True)) == [
             56.0, 58.0, 59.0]
         assert ouvrir.age_ouverture_droit(actuel, carriere) == pytest.approx(59.0)

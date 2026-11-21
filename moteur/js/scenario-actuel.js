@@ -359,7 +359,7 @@ export function resultatActuel(resultat, foyer) {
     pension_annuelle: Math.max(0.0, total - resultat.horsRepartition),
     pension_hors_repartition: resultat.horsRepartition,
     pensions_par_regime: [...resultat.regimes],
-    trimestres_valides: resultat.releve.durees.trimestres
+    trimestres_valides: resultat.releve.durees.trimestresAnnonces
       + resultat.releve.durees.trimestresEtrangers,
     // Ceux d'entre eux que des périodes hors de France apportent, pour le taux.
     trimestres_etrangers: resultat.releve.durees.trimestresEtrangers,
@@ -588,7 +588,7 @@ export function resultatDesDeparts(moteur, carriere, departs, liquidations, cont
     pension_annuelle: Math.max(0.0, total - horsRepartition),
     pension_hors_repartition: horsRepartition,
     pensions_par_regime: pensions,
-    trimestres_valides: principale.releve.durees.trimestres
+    trimestres_valides: principale.releve.durees.trimestresAnnonces
       + principale.releve.durees.trimestresEtrangers,
     trimestres_etrangers: principale.releve.durees.trimestresEtrangers,
     trimestres_requis: principale.pensions.requis,

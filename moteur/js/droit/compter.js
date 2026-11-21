@@ -340,6 +340,30 @@ export class Durees {
     return decompte === this.decompteSpecial ? this.ecartAuJourSpecial : this.ecartAuJour;
   }
 
+  /**
+   * La durée d'assurance tous régimes que le relevé annonce, en trimestres
+   * entiers : celle des années civiles, corrigée de ce que les décomptes au
+   * jour du code des pensions et des régimes spéciaux y ajoutent ou en
+   * retirent (`ecartAuJour`, `ecartAuJourSpecial`), sa fraction de
+   * trimestre négligée : le texte compte cette durée au jour (L. 14, I ;
+   * SNCF, décret n° 2008-639, article 13, III), que le Service des retraites
+   * de l'État dit « calculée en trimestres et jours sans règle d'arrondi »
+   * (page « La durée d'assurance ») ; l'annonce n'en dit que les trimestres
+   * entiers.
+   * Un fonctionnaire ou un agent entré en mars et parti en décembre n'y perd
+   * plus la fraction de ses deux années entamées.
+   */
+  get trimestresAnnonces() {
+    let ecart = 0.0;
+    if (this.decompte !== null && this.decompte.parametres.duree_au_jour) {
+      ecart += this.ecartAuJour;
+    }
+    if (this.decompteSpecial !== null && this.decompteSpecial.parametres.duree_au_jour) {
+      ecart += this.ecartAuJourSpecial;
+    }
+    return Math.floor(this.trimestres + ecart + 1e-9);
+  }
+
   /** Ces régimes comptent-ils leurs services au jour, à la date d'effet ? */
   auJour(membres) {
     return this.decompteDe(membres) !== null;
