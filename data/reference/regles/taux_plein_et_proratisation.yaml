@@ -146,12 +146,6 @@ sources:
     url: https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QE10883
     date: 2026-10-19
 textes_a_rattacher:
-- reference: L. 351-1 CSS
-- reference: R. 351-6 CSS
-- id: LEGIARTI000006749339
-  reference: >-
-    code de la sécurité sociale, R. 351-1, rédaction du 21 décembre 1985 : le compte
-    arrêté au dernier jour du trimestre civil précédant l'entrée en jouissance
 - id: LEGIARTI000053352415
   reference: >-
     code rural, D. 732-48-1, rédaction du 1er janvier 2026 : quatre trimestres par année
@@ -161,6 +155,237 @@ exemples:
 - sp_f21552_taux_plein_170
 - sp_f21552_67_ans_158
 - sp_f21552_65_ans_158
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: avant_l_ordonnance_de_1982
+  statut: supposee
+  hypothese: >-
+    avant le 1er avril 1983, le taux se lisait à l'âge (40 % à soixante-cinq ans
+    jusqu'en 1971, 50 % depuis la loi n° 71-1132) et non à la durée : la formule de
+    cette fiche n'y vaut pas, et le régime garde le taux et la durée maximum de sa
+    période (`taux_plein`, `duree_requise_trimestres` : 120 trimestres jusqu'en 1971,
+    150 ensuite), que la fiche `decote_avant_1983` décrit ; ni l'ancien code ni la loi
+    de 1971 n'ont été relus pour cette version
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [null, 1983-04-01]
+  contenu:
+    droit: >-
+      pas de règle commune : le taux et la durée maximum sont ceux que la période du
+      régime écrit
+    parametres:
+      taux_plein: null
+      trimestres: null
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne prend effet avant le 1er avril
+    1983
+- id: cent_cinquante
+  statut: lue
+  nee_de: LEGIARTI000006760666
+  textes:
+  - id: LEGIARTI000006760666
+    article: décret n° 45-0179 du 29 décembre 1945, article 70-5, rédaction du 23 juillet 1982
+    en_vigueur: 1982-07-23
+    citation: >-
+      « La durée maximum d'assurance dans le régime général prise en compte pour le
+      calcul de la pension de vieillesse est de 150 trimestres. Si l'assuré a accompli
+      moins de 150 trimestres dans ce régime, la pension est égale à autant de 150ème de
+      la pension calculée conformément à l'article L. 331, deuxième alinéa, [...] qu'il
+      justifie de trimestres d'assurance. »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000006749347
+    article: R. 351-6 du code de la sécurité sociale, rédaction du 21 décembre 1985
+    en_vigueur: 1985-12-21
+    citation: >-
+      « La durée maximum d'assurance dans le régime général prise en compte pour le
+      calcul de la pension de vieillesse est de 150 trimestres. Si l'assuré a accompli
+      moins de 150 trimestres dans ce régime, la pension est égale à autant de 150e de la
+      pension calculée conformément au deuxième alinéa de l'article L. 351-1, qu'il
+      justifie de trimestres d'assurance. »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000006742620
+    article: L. 351-1 du code de la sécurité sociale, rédaction du 21 décembre 1985
+    en_vigueur: 1985-12-21
+    citation: >-
+      « Si l'assuré a accompli dans le régime général une durée d'assurance inférieure à
+      la limite mentionnée au deuxième alinéa, la pension servie par ce régime est
+      d'abord calculée sur la base de cette durée, puis réduite compte tenu de la durée
+      réelle d'assurance. »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000006749339
+    article: R. 351-1 du code de la sécurité sociale, rédaction du 21 décembre 1985
+    en_vigueur: 1985-12-21
+    citation: >-
+      « des cotisations [...] arrêtées au dernier jour du trimestre civil précédant la
+      date prévue pour l'entrée en jouissance de la pension »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [1983-04-01, 2004-01-01]
+  contenu:
+    droit: >-
+      pension = salaire annuel moyen × taux × durée du régime / 150, la durée du régime
+      bornée à 150 trimestres ; taux plein de 50 %, que la décote réduit (fiche
+      `decote_regime_general`) ; la durée arrêtée au dernier jour du trimestre civil qui
+      précède la date d'effet (R. 351-1)
+    conditions: >-
+      150 trimestres quelle que soit la génération, même quand la durée requise pour le
+      taux plein dépasse 150 (l'escalier de R. 351-45, depuis le 28 août 1993) : né en
+      1938, parti à soixante ans en 1998 avec 146 trimestres, il est décoté de neuf
+      trimestres (155 requis) mais proratisé sur 146/150. La rédaction de 1993 de L.
+      351-1 (« une limite déterminée ») ne change pas le nombre
+    parametres:
+      taux_plein: 0.5
+      trimestres: 150
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) et dans la base de législation de la Cnav
+    citée par la fiche : aucun exemple chiffré d'une pension proratisée de 1983 à 2003
+- id: decret_de_2004
+  statut: lue
+  nee_de: LEGIARTI000006749348
+  textes:
+  - id: LEGIARTI000006749348
+    article: R. 351-6 du code de la sécurité sociale, rédaction du décret n° 2004-144 (article 2)
+    en_vigueur: 2004-02-15
+    publie_le: 2004-02-14
+    citation: >-
+      « I. - La durée maximum d'assurance dans le régime général prise en compte pour le
+      calcul de la pension de vieillesse est celle prévue au troisième alinéa de
+      l'article L. 351-1. Si l'assuré a accompli une durée d'assurance inférieure à cette
+      durée maximum, la pension est réduite au prorata. Les dispositions ci-dessus
+      s'appliquent aux pensions prenant effet après le 31 décembre 2007 et aux assurés
+      nés après 1947 quelle que soit la date d'effet de leur pension. II. - Pour les
+      pensions prenant effet après le 31 décembre 2003 et avant le 1er janvier 2008, la
+      durée maximum d'assurance est fixée à : 150 trimestres pour les assurés nés avant
+      1944 ; 152 trimestres pour les assurés nés en 1944 ; 154 trimestres pour les
+      assurés nés en 1945 ; 156 trimestres pour les assurés nés en 1946 ; 158 trimestres
+      pour les assurés nés en 1947. »
+    lu_le: 2026-11-21
+  - id: JORFARTI000002078759
+    article: décret n° 2007-614 du 25 avril 2007, article 1er, I
+    en_vigueur: 2007-04-27
+    citation: >-
+      « au dernier alinéa du I, les mots : « aux pensions prenant effet après le 31
+      décembre 2007 et » sont supprimés ; au premier alinéa du II, les mots : « et avant
+      le 1er janvier 2008 » sont supprimés »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000006749349
+    article: R. 351-6 du code de la sécurité sociale, rédaction du 27 avril 2007
+    en_vigueur: 2007-04-27
+    citation: >-
+      « Les dispositions ci-dessus s'appliquent aux assurés nés après 1947 quelle que
+      soit la date d'effet de leur pension. II.-Pour les pensions prenant effet après le
+      31 décembre 2003, la durée maximum d'assurance est fixée à : 150 trimestres pour les
+      assurés nés avant 1944 ; [...] 158 trimestres pour les assurés nés en 1947. »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000006742622
+    article: L. 351-1 du code de la sécurité sociale, rédaction de la loi n° 2003-775
+    en_vigueur: 2003-08-22
+    citation: >-
+      « Si l'assuré a accompli dans le régime général une durée d'assurance inférieure à
+      la limite prévue au deuxième alinéa, la pension servie par ce régime est d'abord
+      calculée sur la base de cette durée, puis réduite compte tenu de la durée réelle
+      d'assurance. »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000023035688
+    article: L. 351-1 du code de la sécurité sociale, rédaction de la loi n° 2010-1330
+    en_vigueur: 2010-11-11
+    citation: >-
+      le même troisième alinéa, mot pour mot
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2026-01-01]
+  contenu:
+    droit: >-
+      la durée maximum est, pour les nés avant 1948, celle de la table du II de R. 351-6
+      (150 avant 1944, puis 152, 154, 156, 158), et pour les nés après 1947 la durée
+      requise pour le taux plein de leur génération (la limite du troisième alinéa de L.
+      351-1), à la date d'effet ; elle ne dépasse jamais cette durée requise
+    conditions: >-
+      la version commence le 1er janvier 2004 : la rédaction du 15 février 2004 vise les
+      « pensions prenant effet après le 31 décembre 2003 ». La rédaction de 2004 bornait
+      la table aux pensions d'avant 2008 et renvoyait ensuite à la durée requise ; le
+      décret n° 2007-614 a levé la borne avant qu'aucune pension n'en prenne effet : la
+      version ne se coupe pas au 27 avril 2007. Le né en 1948 a 160 trimestres, sa durée
+      requise : la ligne 1948 de la table en est la jonction
+    parametres:
+      taux_plein: 0.5
+    table:
+      fichier: legislation/duree_proratisation.csv
+      cle: generation
+      valeur: trimestres
+    renvois:
+    - fiche: duree_requise_par_generation
+      valeur: trimestres
+      de: assure
+      date: liquidation.date_effet
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne prend effet de 2004 à 2025 avec
+    une pension proratisée ; la circulaire Cnav n° 2004/29, citée par la fiche, n'a pas
+    été relue pour en chercher un
+- id: decret_de_2025
+  statut: lue
+  nee_de: LEGIARTI000053335582
+  textes:
+  - id: LEGIARTI000053335582
+    article: R. 351-6 du code de la sécurité sociale, rédaction du 1er janvier 2026
+    en_vigueur: 2026-01-01
+    citation: >-
+      « I.-La durée maximum d'assurance dans le régime général prise en compte pour le
+      calcul de la pension de vieillesse est celle prévue au troisième alinéa de l'article
+      L. 351-1. Si l'assuré a accompli une durée d'assurance inférieure à cette durée
+      maximum, la pension est réduite au prorata. »
+    lu_le: 2026-11-21
+  - id: JORFARTI000053227542
+    article: décret n° 2025-1409 du 30 décembre 2025, article 2, I, 21° et 32°, et II
+    en_vigueur: 2026-01-01
+    publie_le: 2025-12-31
+    citation: >-
+      « 21° Le dernier alinéa du I et le II de l'article R. 351-6 sont supprimés » ;
+      « II.-Les 3° à 5°, 9° à 12°, 14° à 26° [...] du I du présent article s'appliquent
+      aux pensions prenant effet à compter du 1er janvier 2026 »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000053327980
+    article: R. 351-39 du code de la sécurité sociale, rédaction du 1er janvier 2026
+    en_vigueur: 2026-01-01
+    citation: >-
+      « Pour les assurés dont les pensions n'ont pas pris effet au 1er janvier 2026
+      alors qu'à cette date ils avaient plus de soixante-quinze ans [...], demeurent
+      applicables les dispositions du II de l'article R. 351-6 [...] dans leur rédaction
+      antérieure au décret n° 2025-1409 du 30 décembre 2025. »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2026-01-01, null]
+  contenu:
+    droit: >-
+      la durée maximum est la durée requise pour le taux plein ; les nés avant 1948, qui
+      ont tous plus de soixante-quinze ans au 1er janvier 2026, gardent la table du II
+      de R. 351-6 dans sa rédaction de 2007 (R. 351-39) : aucune durée ne bouge
+    conditions: >-
+      la consolidation LEGI de la rédaction de 2026 garde un II de quatre lignes, sans
+      celle des nés en 1947 ; le décret supprime le II entier, et R. 351-39 le maintient
+      dans sa rédaction antérieure, ligne de 1947 comprise : le né en 1947 garde 158
+    parametres:
+      taux_plein: 0.5
+    table:
+      fichier: legislation/duree_proratisation.csv
+      cle: generation
+      valeur: trimestres
+    renvois:
+    - fiche: duree_requise_par_generation
+      valeur: trimestres
+      de: assure
+      date: liquidation.date_effet
+  exemples:
+  - sp_f21552_taux_plein_170
+  - sp_f21552_67_ans_158
+  - sp_f21552_65_ans_158
 code:
   interrupteurs:
     duree_proratisation_par_generation: true
@@ -248,6 +473,7 @@ code:
     Carriere.statutsAu1erJanvier, Carriere.qualiteAgricole, Carriere.arreteeAuDeces,
     COTISATIONS_AU_PRORATA_DU_DECES_DEPUIS ; moteur/js/regimes.js : DureesProratisation
   parametres: >-
+    contenu.parametres de chaque version : taux_plein, trimestres ;
     legislation/duree_proratisation.csv : generation, trimestres
   tests: [tests/test_simulateur.py, tests/test_donnees.py, tests/test_oracle.py,
     tests/js/moteur.test.js, tests/temoins/simulations.json]

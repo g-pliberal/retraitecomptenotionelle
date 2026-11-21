@@ -31,27 +31,27 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 - Citées dans le code par leur identifiant : **130 sur 276**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **54 sur 276**, par 2 608 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **206 sur 276**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
-- Découpées en versions : **212 sur 276**, soit 889 versions, dont 162 supposées ; le partage des versions se contrôle sur chacune.
+- Découpées en versions : **213 sur 276**, soit 893 versions, dont 163 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 126, dont 10 déclarées non appliquées.
 
 **La carte de justesse** (`src/retraite_notionnelle/noyau/justesse.py`, action 194). L'état de la carte des règles, ci-dessus, est un mot que la fiche déclare ; celui-ci se calcule depuis les preuves, et personne ne l'écrit. Une partie est une règle sur une période : une version de fiche, ou la fiche entière tant qu'elle n'est pas découpée. Elle est prouvée quand son texte est lu avec sa trace et qu'une grille indépendante — des valeurs attendues posées depuis le seul texte, sans lire le code, sur chaque seuil de la règle — est verte ; un exemple officiel, un autre moteur ou le simulateur d'une caisse en sont des témoins, qui ne prouvent pas seuls.
 
-**19 parties prouvées sur 953**, dont 9 avec témoin et 10 au texte seul. 15 fausses (section 2), 637 approchées, 215 non vérifiées, 67 hors champ. Un cliquet tient les parties prouvées (`tests/cliquets_de_justesse/prouvees.yaml`) : aucune ne recule sans le dire.
+**19 parties prouvées sur 956**, dont 9 avec témoin et 10 au texte seul. 15 fausses (section 2), 637 approchées, 218 non vérifiées, 67 hors champ. Un cliquet tient les parties prouvées (`tests/cliquets_de_justesse/prouvees.yaml`) : aucune ne recule sans le dire.
 
 | Famille de régimes | Parties | Prouvées | Fausses | Approchées | Non vérifiées | Hors champ | Texte tracé | Témoignées par un exemple officiel |
 |---|---|---|---|---|---|---|---|---|
-| salariés du privé, régimes de base | 312 | 19 | 7 | 178 | 78 | 30 | 98 | 48 |
+| salariés du privé, régimes de base | 315 | 19 | 7 | 178 | 81 | 30 | 101 | 48 |
 | salariés du privé, complémentaires | 180 | 13 | 3 | 112 | 45 | 7 | 58 | 23 |
 | fonction publique | 222 | 13 | 2 | 117 | 62 | 28 | 39 | 35 |
-| artisans, commerçants et autres non-salariés | 229 | 17 | 5 | 148 | 55 | 4 | 79 | 45 |
-| régimes agricoles | 278 | 19 | 7 | 171 | 68 | 13 | 111 | 48 |
+| artisans, commerçants et autres non-salariés | 232 | 17 | 5 | 148 | 58 | 4 | 82 | 45 |
+| régimes agricoles | 281 | 19 | 7 | 171 | 71 | 13 | 114 | 48 |
 | libéraux et avocats | 231 | 13 | 1 | 173 | 41 | 3 | 91 | 26 |
-| régimes spéciaux | 258 | 19 | 3 | 156 | 58 | 22 | 56 | 32 |
+| régimes spéciaux | 261 | 19 | 3 | 156 | 61 | 22 | 59 | 32 |
 | retraite additionnelle, en capitalisation | 40 | 5 | 4 | 10 | 10 | 11 | 9 | 12 |
 | sans famille | 1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
-| toute la carte | 953 | 19 | 15 | 637 | 215 | 67 | 276 | 90 |
+| toute la carte | 956 | 19 | 15 | 637 | 218 | 67 | 279 | 90 |
 
-Une partie compte dans chaque famille de ses régimes, et une fois dans le total. Parmi les 953 parties, 162 sont des versions supposées, qu'aucune grille ne peut prouver tant que leur texte n'est pas retrouvé ; 51 ont un exemple officiel que leur fiche cite sans dire pour quelle version, et qui ne témoigne donc pour aucune. Les confrontations aux autres moteurs que 43 fiches racontent en prose ne valent pas témoin : rien n'y dit, cas par cas, ce qui concorde. La carte ne connaît encore que les règles : les barèmes, les régimes de bout en bout, les cas types et les totaux n'y ont pas leurs preuves (section 4).
+Une partie compte dans chaque famille de ses régimes, et une fois dans le total. Parmi les 956 parties, 163 sont des versions supposées, qu'aucune grille ne peut prouver tant que leur texte n'est pas retrouvé ; 55 ont un exemple officiel que leur fiche cite sans dire pour quelle version, et qui ne témoigne donc pour aucune. Les confrontations aux autres moteurs que 43 fiches racontent en prose ne valent pas témoin : rien n'y dit, cas par cas, ce qui concorde. La carte ne connaît encore que les règles : les barèmes, les régimes de bout en bout, les cas types et les totaux n'y ont pas leurs preuves (section 4).
 
 **Un autre moteur, quantité par quantité.** TRAJECTOiRE (3.3.2) rejoue 85 carrières (`tests/temoins/trajectoire_3/ecarts.json`, `scripts/confronter_trajectoire.py`) : **541 quantités sur 818** concordent. Un écart n'est pas une erreur du dépôt, seul le texte tranche ; il dit où relire. Chaque cas est une carrière entière, que rien ne rattache encore à une règle : ce tableau ne change l'état d'aucune partie.
 
@@ -133,11 +133,11 @@ Non gardées : `complement_differentiel_rco / avant_le_complement`, `complement_
 
 | Statut | Rédactions |
 |---|---|
-| rattachées à une version | 2 017 |
-| sans effet | 152 |
-| à rattacher | 635 |
-| à examiner | 6 010 |
-| sans statut | 9 198 |
+| rattachées à une version | 2 024 |
+| sans effet | 151 |
+| à rattacher | 633 |
+| à examiner | 6 009 |
+| sans statut | 9 195 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 32 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
@@ -525,18 +525,18 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 
   | Champ | Fiches à qui il manque |
   |---|---|
-  | `versions` | 67 |
+  | `versions` | 68 |
   | `domaine` | 65 |
-  | `dates_qui_decident` | 64 |
   | `ecrit` | 64 |
   | `lit` | 64 |
+  | `dates_qui_decident` | 63 |
   | `etape` | 41 |
   | `approximations` | 15 |
   | `code` | 1 |
   | `regimes` | 1 |
 
-- **Les textes** : 635 rédactions à rattacher à une version de la fiche qui les cite, 6 010 à examiner, et 9 198 sans statut, que le cliquet tient à 9 198 au plus. Les textes qui en ont le plus : `css` 4 725, `decret_46_2769` 938, `rural` 835, `cpcmr` 561, `decret_90_1215` 319 (`python scripts/textes.py`).
-- **La loi modifiée** (note de décision 0009, sixième cliquet) : aucune rédaction inscrite depuis la pose n'attend la réponse d'une fiche ; et, d'avant la pose, 0 dont la fiche ne dit rien et 430 qu'elle cite sans y répondre, que le cliquet tient à 0 et 430 au plus (`python scripts/textes.py --sans-reponse`).
+- **Les textes** : 633 rédactions à rattacher à une version de la fiche qui les cite, 6 009 à examiner, et 9 195 sans statut, que le cliquet tient à 9 195 au plus. Les textes qui en ont le plus : `css` 4 722, `decret_46_2769` 938, `rural` 835, `cpcmr` 561, `decret_90_1215` 319 (`python scripts/textes.py`).
+- **La loi modifiée** (note de décision 0009, sixième cliquet) : aucune rédaction inscrite depuis la pose n'attend la réponse d'une fiche ; et, d'avant la pose, 0 dont la fiche ne dit rien et 429 qu'elle cite sans y répondre, que le cliquet tient à 0 et 429 au plus (`python scripts/textes.py --sans-reponse`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`agirc_arrco_valeur_achat`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 
