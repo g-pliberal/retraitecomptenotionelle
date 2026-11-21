@@ -194,15 +194,16 @@ versions:
     années : la période du régime les porte, et la fiche ne les distingue pas
   fiabilite: haute
   bornes:
-    liquidation.date_effet: [null, 1994-01-01]
+    liquidation.date_effet: [null, 1993-08-28]
   contenu:
     droit: >-
       150 trimestres, quelle que soit la génération
     conditions: >-
-      la rédaction de R. 351-45 du 28 août 1993, qui fait monter la durée d'un
-      trimestre par génération à compter des nés en 1934, ne vise que des assurés
-      qui n'ont pas soixante ans avant le 1er janvier 1994 : la version change à
-      cette date, la première où l'un d'eux peut partir à l'âge légal
+      la version s'arrête à l'entrée en vigueur de la rédaction de R. 351-45 du
+      28 août 1993, que le décret n° 93-1022 n'a pas différée (l'article 2 de la
+      loi n° 93-936 ne date au 1er janvier 1994 que son titre I) ; jusqu'au 21
+      novembre 2026, le modèle la prolongeait au 1er janvier 1994, sans effet sur
+      une pension prise à soixante ans (grille indépendante de la durée requise)
     parametres:
       trimestres: 150
   exemples: aucun trouvé
@@ -237,7 +238,7 @@ versions:
       accomplis en Afrique du Nord, que le moteur ne lit pas
     lu_le: 2026-11-21
   bornes:
-    liquidation.date_effet: [1994-01-01, 2003-01-01]
+    liquidation.date_effet: [1993-08-28, 2003-01-01]
   contenu:
     droit: >-
       150 trimestres pour les assurés nés avant 1934, puis un de plus par

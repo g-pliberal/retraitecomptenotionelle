@@ -320,6 +320,9 @@ periodes:
     age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: 150
+    # La durée de la date d'effet, lue dans la fiche : R. 351-45, II (décret
+    # n° 93-1022) vaut dès le 28 août 1993, pour les nés à compter de 1934.
+    duree_requise_par_generation: duree_requise_par_generation
     taux_plein: 0.50
     age_taux_plein_par_generation: age_annulation_decote
     decote_par_generation: decote_regime_general

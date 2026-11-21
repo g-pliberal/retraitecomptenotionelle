@@ -2809,3 +2809,17 @@ def test_la_duree_requise_se_mesure_a_la_date_d_effet_de_la_pension():
     assert not _confronter(cas("1940-01-15", "2003-02", 160))
     assert not _confronter(cas("1942-12-01", "2003-01", 159))
     assert _confronter(cas("1940-01-15", "2003-02", 157))
+
+
+def test_l_escalier_de_1993_vaut_des_le_28_aout_1993():
+    """R. 351-45, II, créé par le décret n° 93-1022 (rédaction du 28 août 1993,
+    LEGIARTI000006749449), sans disposition qui en diffère l'application :
+    151 trimestres au né en janvier 1934 dès cette date, pour une pension
+    prenant effet le 1er octobre 1993 ; avant, R. 351-27 de 1985, 150."""
+    def cas(liquidation, trimestres):
+        return {"id": "essai", "attendu": {"duree_requise_a_l_effet": trimestres},
+                "carriere": {"naissance": "1934-01-01", "sexe": "H",
+                             "affiliation": "salarie_prive_non_cadre",
+                             "liquidation": liquidation, "age_debut": 22}}
+    assert not _confronter(cas("1993-10", 151))
+    assert not _confronter(cas("1993-08", 150))

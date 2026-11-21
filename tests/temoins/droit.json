@@ -3654,6 +3654,12 @@
   ],
   "rendu": "9b1b9ad4a6bb4168"
  },
+ "5e6cfb395cc7b324": {
+  "fonctions": [
+   "ouvrir.duree_requise"
+  ],
+  "rendu": "41e57794622d4287"
+ },
  "5e805baf765b99a4": {
   "fonctions": [
    "calendrier.origine_des_ages"
@@ -4819,6 +4825,13 @@
   ],
   "rendu": "ceb43ef65ac3b6ae"
  },
+ "7b5baab355867777": {
+  "fonctions": [
+   "scenario_actuel.calculer",
+   "simulateur.carriere_simple"
+  ],
+  "rendu": "7865402a370bb4e2"
+ },
  "7b64a42d6637f337": {
   "fonctions": [
    "simulateur.carriere_simple"
@@ -5113,6 +5126,12 @@
   ],
   "rendu": "c7c0adbe4760a509"
  },
+ "82be6960491aa0b7": {
+  "fonctions": [
+   "calendrier.origine_des_ages"
+  ],
+  "rendu": "f70fcbe8eaea0cc5"
+ },
  "82d4d30a907d9f76": {
   "fonctions": [
    "liquider.prestation_rafp"
@@ -5217,7 +5236,7 @@
   "fonctions": [
    "ouvrir.duree_requise"
   ],
-  "rendu": "15ba000ac3538aa9"
+  "rendu": "8ca635e8e1c7c8d9"
  },
  "84cd3076046eea53": {
   "fonctions": [
@@ -8673,6 +8692,13 @@
   ],
   "rendu": "6c4b905d70bd9af7"
  },
+ "d6e381fe9bc7d996": {
+  "fonctions": [
+   "scenario_actuel.calculer",
+   "simulateur.carriere_simple"
+  ],
+  "rendu": "3e1a1b686fd9ef44"
+ },
  "d6fe648c1a0408b1": {
   "fonctions": [
    "ouvrir.age_legal_a_l_effet"
@@ -9776,6 +9802,12 @@
    "calendrier.origine_des_ages"
   ],
   "rendu": "2e69e2c098e2c753"
+ },
+ "ef0097f17c404576": {
+  "fonctions": [
+   "ouvrir.duree_requise"
+  ],
+  "rendu": "002980f1d7040632"
  },
  "ef391a162be85e47": {
   "fonctions": [
