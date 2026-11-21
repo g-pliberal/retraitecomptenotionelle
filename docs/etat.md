@@ -36,20 +36,20 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 **La carte de justesse** (`src/retraite_notionnelle/noyau/justesse.py`, action 194). L'état de la carte des règles, ci-dessus, est un mot que la fiche déclare ; celui-ci se calcule depuis les preuves, et personne ne l'écrit. Une partie est une règle sur une période : une version de fiche, ou la fiche entière tant qu'elle n'est pas découpée. Elle est prouvée quand son texte est lu avec sa trace et qu'une grille indépendante — des valeurs attendues posées depuis le seul texte, sans lire le code, sur chaque seuil de la règle — est verte ; un exemple officiel, un autre moteur ou le simulateur d'une caisse en sont des témoins, qui ne prouvent pas seuls.
 
-**15 parties prouvées sur 953**, dont 7 avec témoin et 8 au texte seul. 15 fausses (section 2), 637 approchées, 219 non vérifiées, 67 hors champ. Un cliquet tient les parties prouvées (`tests/cliquets_de_justesse/prouvees.yaml`) : aucune ne recule sans le dire.
+**19 parties prouvées sur 953**, dont 9 avec témoin et 10 au texte seul. 15 fausses (section 2), 637 approchées, 215 non vérifiées, 67 hors champ. Un cliquet tient les parties prouvées (`tests/cliquets_de_justesse/prouvees.yaml`) : aucune ne recule sans le dire.
 
 | Famille de régimes | Parties | Prouvées | Fausses | Approchées | Non vérifiées | Hors champ | Texte tracé | Témoignées par un exemple officiel |
 |---|---|---|---|---|---|---|---|---|
-| salariés du privé, régimes de base | 312 | 15 | 7 | 178 | 82 | 30 | 98 | 48 |
+| salariés du privé, régimes de base | 312 | 19 | 7 | 178 | 78 | 30 | 98 | 48 |
 | salariés du privé, complémentaires | 180 | 13 | 3 | 112 | 45 | 7 | 58 | 23 |
 | fonction publique | 222 | 13 | 2 | 117 | 62 | 28 | 39 | 35 |
-| artisans, commerçants et autres non-salariés | 229 | 13 | 5 | 148 | 59 | 4 | 79 | 45 |
-| régimes agricoles | 278 | 15 | 7 | 171 | 72 | 13 | 111 | 48 |
+| artisans, commerçants et autres non-salariés | 229 | 17 | 5 | 148 | 55 | 4 | 79 | 45 |
+| régimes agricoles | 278 | 19 | 7 | 171 | 68 | 13 | 111 | 48 |
 | libéraux et avocats | 231 | 13 | 1 | 173 | 41 | 3 | 91 | 26 |
-| régimes spéciaux | 258 | 15 | 3 | 156 | 62 | 22 | 56 | 32 |
+| régimes spéciaux | 258 | 19 | 3 | 156 | 58 | 22 | 56 | 32 |
 | retraite additionnelle, en capitalisation | 40 | 5 | 4 | 10 | 10 | 11 | 9 | 12 |
 | sans famille | 1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
-| toute la carte | 953 | 15 | 15 | 637 | 219 | 67 | 276 | 90 |
+| toute la carte | 953 | 19 | 15 | 637 | 215 | 67 | 276 | 90 |
 
 Une partie compte dans chaque famille de ses régimes, et une fois dans le total. Parmi les 953 parties, 162 sont des versions supposées, qu'aucune grille ne peut prouver tant que leur texte n'est pas retrouvé ; 51 ont un exemple officiel que leur fiche cite sans dire pour quelle version, et qui ne témoigne donc pour aucune. Les confrontations aux autres moteurs que 43 fiches racontent en prose ne valent pas témoin : rien n'y dit, cas par cas, ce qui concorde. La carte ne connaît encore que les règles : les barèmes, les régimes de bout en bout, les cas types et les totaux n'y ont pas leurs preuves (section 4).
 
@@ -536,7 +536,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `regimes` | 1 |
 
 - **Les textes** : 635 rédactions à rattacher à une version de la fiche qui les cite, 6 010 à examiner, et 9 198 sans statut, que le cliquet tient à 9 198 au plus. Les textes qui en ont le plus : `css` 4 725, `decret_46_2769` 938, `rural` 835, `cpcmr` 561, `decret_90_1215` 319 (`python scripts/textes.py`).
-- **La loi modifiée** (note de décision 0009, sixième cliquet) : aucune rédaction inscrite depuis la pose n'attend la réponse d'une fiche ; et, d'avant la pose, 0 dont la fiche ne dit rien et 430 qu'elle cite sans y répondre, que le cliquet tient à 0 et 431 au plus (`python scripts/textes.py --sans-reponse`).
+- **La loi modifiée** (note de décision 0009, sixième cliquet) : aucune rédaction inscrite depuis la pose n'attend la réponse d'une fiche ; et, d'avant la pose, 0 dont la fiche ne dit rien et 430 qu'elle cite sans y répondre, que le cliquet tient à 0 et 430 au plus (`python scripts/textes.py --sans-reponse`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`agirc_arrco_valeur_achat`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 

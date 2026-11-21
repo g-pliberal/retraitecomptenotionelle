@@ -1,0 +1,358 @@
+schema_version: 1
+id: grille_decote_ordonnance_de_1982
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: decote_regime_general
+  version: ordonnance_de_1982
+source:
+  auteur: session Claude indépendante, lancée le 21 novembre 2026 sans le code
+  reference: R. 351-27 (LEGIARTI000006749434, LEGIARTI000006749435), article 70 du décret n° 45-179
+    dans sa rédaction de 1982, ordonnance n° 82-270, articles 9 et 11, R. 351-45 (LEGIARTI000006749449,
+    LEGIARTI000006749450), lus par la session indépendante dans les index LEGI et JORF à jour au 16
+    novembre 2026
+  etabli_le: '2026-11-21'
+independance: 'Les valeurs ont été posées par une session lancée sans le code (Opus 5.5, agent de
+  la session qui connaît le code, sans son contexte) : elle n''a reçu que la consigne, la liste des
+  cas (date de naissance, date d''effet, trimestres tous régimes) et des copies des index LEGI et
+  JORF de la DILA à jour au 16 novembre 2026, où elle a cherché elle-même ses textes, leurs rédactions
+  et leurs dispositions d''application, y compris les durées requises et les âges d''annulation ;
+  elle a écrit son propre calcul et proposé 34 des 93 cas. Les 59 autres, sans valeur attendue, viennent
+  de la session qui connaît le code, qui travaillait pendant ce temps dans une autre copie du dépôt.
+  Un guetteur (inotify) a journalisé les ouvertures sous la copie du dépôt de /home/user pendant son
+  passage : aucune. Accord sur les 93 cas du premier coup ; pour les pensions de janvier à juillet
+  2026, où le texte est muet, la lecture retenue est la sienne et celle de la caisse.'
+seuils:
+- 'date d''effet : 1er avril 1983, entrée en vigueur de l''ordonnance n° 82-270 ; 21 décembre 1985
+  (codification) ; 28 août 1993 (escalier de R. 351-45) ; 1er janvier 2003 (160 trimestres, dérogation
+  des nés en décembre 1942) ; décembre 2003'
+- 'décompte par l''âge : soixante-cinq ans ; écart de deux, trois, quatre mois, et de quatre ans onze
+  mois et des jours (arrondi au trimestre supérieur) ; né le 1er du mois et le 31'
+- 'décompte par la durée : 150 trimestres, l''escalier de 151 à 159, 160 ; durée pile atteinte (aucune
+  décote), un trimestre manquant'
+- vingt trimestres par l'âge à soixante ans, que le texte ne plafonne pas autrement ; la durée seule
+  ou l'âge seul retenu ; les deux égaux
+cas:
+- id: grille_decote_ordonnance_de_1982_c001
+  enonce: 'Né le 1923-04-01, pension du régime général prenant effet le 1983-04-01, 130 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 150
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 20 par la durée,
+    20 retenus à 2.5 %, taux 25.0000 %. Fondement qu''elle relève : LEGIARTI000006760657 LEGIARTI000006275868.'
+  carriere:
+    naissance: '1923-04-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1983-04
+    trimestres_valides: 130
+  attendu:
+    taux_liquidation: 0.25
+- id: grille_decote_ordonnance_de_1982_c002
+  enonce: 'Né le 1923-03-15, pension du régime général prenant effet le 1983-04-01, 140 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 150
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 10 par la durée,
+    10 retenus à 2.5 %, taux 37.5000 %. Fondement qu''elle relève : LEGIARTI000006760657 LEGIARTI000006275868
+    LEGIARTI000006759664 LEGIARTI000006760656. Sa remarque : garantie art. 11 ord. 82-270 (montant,
+    pas taux) : taux ancien a l''age atteint au 31/03/1983 = 25 % (sans effet)'
+  carriere:
+    naissance: '1923-03-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1983-04
+    trimestres_valides: 140
+  attendu:
+    taux_liquidation: 0.375
+- id: grille_decote_ordonnance_de_1982_c003
+  enonce: 'Né le 1920-06-15, pension du régime général prenant effet le 1983-04-01, 145 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 150
+    trimestres, un âge d''annulation de 65 ans 0 mois, 9 trimestres par l''âge et 5 par la durée,
+    5 retenus à 2.5 %, taux 43.7500 %. Fondement qu''elle relève : LEGIARTI000006760657 LEGIARTI000006275868
+    LEGIARTI000006759664 LEGIARTI000006760656. Sa remarque : garantie art. 11 ord. 82-270 (montant,
+    pas taux) : taux ancien a l''age atteint au 31/03/1983 = 35 % (sans effet)'
+  carriere:
+    naissance: '1920-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1983-04
+    trimestres_valides: 145
+  attendu:
+    taux_liquidation: 0.4375
+- id: grille_decote_ordonnance_de_1982_c004
+  enonce: 'Né le 1920-06-15, pension du régime général prenant effet le 1983-04-01, 120 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 150
+    trimestres, un âge d''annulation de 65 ans 0 mois, 9 trimestres par l''âge et 30 par la durée,
+    9 retenus à 2.5 %, taux 38.7500 %. Fondement qu''elle relève : LEGIARTI000006760657 LEGIARTI000006275868
+    LEGIARTI000006759664 LEGIARTI000006760656. Sa remarque : garantie art. 11 ord. 82-270 (montant,
+    pas taux) : taux ancien a l''age atteint au 31/03/1983 = 35 % (sans effet)'
+  carriere:
+    naissance: '1920-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1983-04
+    trimestres_valides: 120
+  attendu:
+    taux_liquidation: 0.3875
+- id: grille_decote_ordonnance_de_1982_c005
+  enonce: 'Né le 1925-01-01, pension du régime général prenant effet le 1985-01-01, 149 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 150
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 1 par la durée,
+    1 retenus à 2.5 %, taux 48.7500 %. Fondement qu''elle relève : LEGIARTI000006760657 LEGIARTI000006275868.'
+  carriere:
+    naissance: '1925-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1985-01
+    trimestres_valides: 149
+  attendu:
+    taux_liquidation: 0.4875
+- id: grille_decote_ordonnance_de_1982_c006
+  enonce: 'Né le 1925-01-01, pension du régime général prenant effet le 1989-11-01, 140 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 150
+    trimestres, un âge d''annulation de 65 ans 0 mois, 1 trimestres par l''âge et 10 par la durée,
+    1 retenus à 2.5 %, taux 48.7500 %. Fondement qu''elle relève : LEGIARTI000006749434.'
+  carriere:
+    naissance: '1925-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1989-11
+    trimestres_valides: 140
+  attendu:
+    taux_liquidation: 0.4875
+- id: grille_decote_ordonnance_de_1982_c007
+  enonce: 'Né le 1925-01-01, pension du régime général prenant effet le 1989-09-01, 140 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 150
+    trimestres, un âge d''annulation de 65 ans 0 mois, 2 trimestres par l''âge et 10 par la durée,
+    2 retenus à 2.5 %, taux 47.5000 %. Fondement qu''elle relève : LEGIARTI000006749434.'
+  carriere:
+    naissance: '1925-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1989-09
+    trimestres_valides: 140
+  attendu:
+    taux_liquidation: 0.475
+- id: grille_decote_ordonnance_de_1982_c008
+  enonce: 'Né le 1928-07-31, pension du régime général prenant effet le 1988-08-01, 146 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 150
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 4 par la durée,
+    4 retenus à 2.5 %, taux 45.0000 %. Fondement qu''elle relève : LEGIARTI000006749434.'
+  carriere:
+    naissance: '1928-07-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1988-08
+    trimestres_valides: 146
+  attendu:
+    taux_liquidation: 0.45
+- id: grille_decote_ordonnance_de_1982_c009
+  enonce: 'Né le 1933-05-20, pension du régime général prenant effet le 1993-06-01, 148 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 150
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 2 par la durée,
+    2 retenus à 2.5 %, taux 47.5000 %. Fondement qu''elle relève : LEGIARTI000006749434.'
+  carriere:
+    naissance: '1933-05-20'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1993-06
+    trimestres_valides: 148
+  attendu:
+    taux_liquidation: 0.475
+- id: grille_decote_ordonnance_de_1982_c010
+  enonce: 'Né le 1933-05-20, pension du régime général prenant effet le 1993-09-01, 148 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 150
+    trimestres, un âge d''annulation de 65 ans 0 mois, 19 trimestres par l''âge et 2 par la durée,
+    2 retenus à 2.5 %, taux 47.5000 %. Fondement qu''elle relève : LEGIARTI000006749435 LEGIARTI000006749449.'
+  carriere:
+    naissance: '1933-05-20'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1993-09
+    trimestres_valides: 148
+  attendu:
+    taux_liquidation: 0.475
+- id: grille_decote_ordonnance_de_1982_c011
+  enonce: 'Né le 1934-02-10, pension du régime général prenant effet le 1994-03-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 151
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 1 par la durée,
+    1 retenus à 2.5 %, taux 48.7500 %. Fondement qu''elle relève : LEGIARTI000006749435 LEGIARTI000006749449.'
+  carriere:
+    naissance: '1934-02-10'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1994-03
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.4875
+- id: grille_decote_ordonnance_de_1982_c012
+  enonce: 'Né le 1938-06-15, pension du régime général prenant effet le 1998-07-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 155
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 5 par la durée,
+    5 retenus à 2.5 %, taux 43.7500 %. Fondement qu''elle relève : LEGIARTI000006749435 LEGIARTI000006749449.'
+  carriere:
+    naissance: '1938-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1998-07
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.4375
+- id: grille_decote_ordonnance_de_1982_c013
+  enonce: 'Né le 1942-12-15, pension du régime général prenant effet le 2003-01-01, 155 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 159
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 4 par la durée,
+    4 retenus à 2.5 %, taux 45.0000 %. Fondement qu''elle relève : LEGIARTI000006749435 LEGIARTI000006749449.
+    Sa remarque : si l''on ne retient pas le III de R351-45 (pension non prise ''en application de
+    R351-37'') : duree 160 -> 5 trimestres, taux 43.7500'
+  carriere:
+    naissance: '1942-12-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-01
+    trimestres_valides: 155
+  attendu:
+    taux_liquidation: 0.45
+- id: grille_decote_ordonnance_de_1982_c014
+  enonce: 'Né le 1943-06-15, pension du régime général prenant effet le 2003-07-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 160
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 10 par la durée,
+    10 retenus à 2.5 %, taux 37.5000 %. Fondement qu''elle relève : LEGIARTI000006749435 LEGIARTI000006749449.'
+  carriere:
+    naissance: '1943-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-07
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.375
+- id: grille_decote_ordonnance_de_1982_c015
+  enonce: 'Né le 1943-11-15, pension du régime général prenant effet le 2003-12-01, 158 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 160
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 2 par la durée,
+    2 retenus à 2.5 %, taux 47.5000 %. Fondement qu''elle relève : LEGIARTI000006749435 LEGIARTI000006749449.'
+  carriere:
+    naissance: '1943-11-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-12
+    trimestres_valides: 158
+  attendu:
+    taux_liquidation: 0.475
+- id: grille_decote_ordonnance_de_1982_c016
+  enonce: 'Né le 1930-10-10, pension du régime général prenant effet le 1993-11-01, 130 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 150
+    trimestres, un âge d''annulation de 65 ans 0 mois, 8 trimestres par l''âge et 20 par la durée,
+    8 retenus à 2.5 %, taux 40.0000 %. Fondement qu''elle relève : LEGIARTI000006749435 LEGIARTI000006749449.'
+  carriere:
+    naissance: '1930-10-10'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1993-11
+    trimestres_valides: 130
+  attendu:
+    taux_liquidation: 0.4
+- id: grille_decote_ordonnance_de_1982_p001
+  enonce: 'Né le 1933-12-31, pension du régime général prenant effet le 1994-01-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 150
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 0 par la durée,
+    0 retenus à 2.5 %, taux 50.0000 %. Fondement qu''elle relève : LEGIARTI000006749435 LEGIARTI000006749449.
+    Sa remarque : taux plein'
+  carriere:
+    naissance: '1933-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1994-01
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.5
+- id: grille_decote_ordonnance_de_1982_p002
+  enonce: 'Né le 1934-01-01, pension du régime général prenant effet le 1994-01-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 151
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 1 par la durée,
+    1 retenus à 2.5 %, taux 48.7500 %. Fondement qu''elle relève : LEGIARTI000006749435 LEGIARTI000006749449.'
+  carriere:
+    naissance: '1934-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1994-01
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.4875
+- id: grille_decote_ordonnance_de_1982_p003
+  enonce: 'Né le 1942-06-15, pension du régime général prenant effet le 2002-12-01, 158 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 159
+    trimestres, un âge d''annulation de 65 ans 0 mois, 19 trimestres par l''âge et 1 par la durée,
+    1 retenus à 2.5 %, taux 48.7500 %. Fondement qu''elle relève : LEGIARTI000006749435 LEGIARTI000006749449.'
+  carriere:
+    naissance: '1942-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2002-12
+    trimestres_valides: 158
+  attendu:
+    taux_liquidation: 0.4875
+- id: grille_decote_ordonnance_de_1982_p004
+  enonce: 'Né le 1942-06-15, pension du régime général prenant effet le 2003-01-01, 158 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 160
+    trimestres, un âge d''annulation de 65 ans 0 mois, 18 trimestres par l''âge et 2 par la durée,
+    2 retenus à 2.5 %, taux 47.5000 %. Fondement qu''elle relève : LEGIARTI000006749435 LEGIARTI000006749449.'
+  carriere:
+    naissance: '1942-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-01
+    trimestres_valides: 158
+  attendu:
+    taux_liquidation: 0.475
+- id: grille_decote_ordonnance_de_1982_p005
+  enonce: 'Né le 1942-12-15, pension du régime général prenant effet le 2003-02-01, 155 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 160
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 5 par la durée,
+    5 retenus à 2.5 %, taux 43.7500 %. Fondement qu''elle relève : LEGIARTI000006749435 LEGIARTI000006749449.'
+  carriere:
+    naissance: '1942-12-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-02
+    trimestres_valides: 155
+  attendu:
+    taux_liquidation: 0.4375
+- id: grille_decote_ordonnance_de_1982_p006
+  enonce: 'Né le 1918-06-15, pension du régime général prenant effet le 1983-04-01, 100 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 150
+    trimestres, un âge d''annulation de 65 ans 0 mois, 1 trimestres par l''âge et 50 par la durée,
+    1 retenus à 2.5 %, taux 48.7500 %. Fondement qu''elle relève : LEGIARTI000006760657 LEGIARTI000006275868
+    LEGIARTI000006759664 LEGIARTI000006760656. Sa remarque : garantie art. 11 ord. 82-270 (montant,
+    pas taux) : taux ancien a l''age atteint au 31/03/1983 = 45 % (sans effet)'
+  carriere:
+    naissance: '1918-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1983-04
+    trimestres_valides: 100
+  attendu:
+    taux_liquidation: 0.4875
+- id: grille_decote_ordonnance_de_1982_p007
+  enonce: 'Né le 1923-04-01, pension du régime général prenant effet le 1983-04-01, 100 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 150
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 50 par la durée,
+    20 retenus à 2.5 %, taux 25.0000 %. Fondement qu''elle relève : LEGIARTI000006760657 LEGIARTI000006275868.'
+  carriere:
+    naissance: '1923-04-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1983-04
+    trimestres_valides: 100
+  attendu:
+    taux_liquidation: 0.25
+- id: grille_decote_ordonnance_de_1982_p032
+  enonce: 'Né le 1937-03-31, pension du régime général prenant effet le 1997-04-01, 140 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 154
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 14 par la durée,
+    14 retenus à 2.5 %, taux 32.5000 %. Fondement qu''elle relève : LEGIARTI000006749435 LEGIARTI000006749449.'
+  carriere:
+    naissance: '1937-03-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1997-04
+    trimestres_valides: 140
+  attendu:
+    taux_liquidation: 0.325

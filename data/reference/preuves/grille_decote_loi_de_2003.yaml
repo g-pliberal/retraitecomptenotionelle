@@ -1,0 +1,703 @@
+schema_version: 1
+id: grille_decote_loi_de_2003
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: decote_regime_general
+  version: loi_de_2003
+source:
+  auteur: session Claude indépendante, lancée le 21 novembre 2026 sans le code
+  reference: R. 351-27, II (LEGIARTI000006749436, LEGIARTI000020082993, LEGIARTI000024113020, LEGIARTI000047633296),
+    décret n° 2004-144, article 8, L. 351-8, loi n° 2003-775, article 5, loi n° 2010-1330 et ses décrets,
+    L. 161-17-3, lus par la session indépendante dans les index LEGI et JORF à jour au 16 novembre
+    2026
+  etabli_le: '2026-11-21'
+independance: 'Les valeurs ont été posées par une session lancée sans le code (Opus 5.5, agent de
+  la session qui connaît le code, sans son contexte) : elle n''a reçu que la consigne, la liste des
+  cas (date de naissance, date d''effet, trimestres tous régimes) et des copies des index LEGI et
+  JORF de la DILA à jour au 16 novembre 2026, où elle a cherché elle-même ses textes, leurs rédactions
+  et leurs dispositions d''application, y compris les durées requises et les âges d''annulation ;
+  elle a écrit son propre calcul et proposé 34 des 93 cas. Les 59 autres, sans valeur attendue, viennent
+  de la session qui connaît le code, qui travaillait pendant ce temps dans une autre copie du dépôt.
+  Un guetteur (inotify) a journalisé les ouvertures sous la copie du dépôt de /home/user pendant son
+  passage : aucune. Accord sur les 93 cas du premier coup ; pour les pensions de janvier à juillet
+  2026, où le texte est muet, la lecture retenue est la sienne et celle de la caisse.'
+seuils:
+- 'date d''effet : 1er janvier 2004 (le II vaut pour les pensions prenant effet postérieurement au
+  31 décembre 2003, avant la rédaction du 15 février) ; 1er janvier 2009 ; juillet 2011 (âge d''annulation
+  de la loi de 2010) ; août et septembre 2023 ; décembre 2025'
+- 'naissance : 31 décembre 1943 et 1er janvier 1944, chaque génération de 1944 à 1953 (coefficient
+  de 2,375 % à 1,25 %), 30 juin et 1er juillet 1951, 31 décembre 1952 et 1er janvier 1953, 31 décembre
+  1954 et 1er janvier 1955, 31 décembre 1957 et 1er janvier 1958'
+- 'décompte par l''âge : soixante-cinq ans, puis 65 ans et 4 mois, 65 ans et 9 mois, 66 ans et 2 mois,
+  66 ans et 7 mois, 67 ans ; écarts de trois et quatre mois ; anniversaire au 31 d''un mois de trente
+  jours'
+- décompte par la durée et par l'âge égaux ; vingt trimestres par l'âge
+cas:
+- id: grille_decote_loi_de_2003_c017
+  enonce: 'Né le 1943-12-15, pension du régime général prenant effet le 2004-01-01, 158 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 160
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 2 par la durée,
+    2 retenus à 2.5 %, taux 47.5000 %. Fondement qu''elle relève : LEGIARTI000006749436 LEGIARTI000006749449
+    JORFARTI000001474532.'
+  carriere:
+    naissance: '1943-12-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2004-01
+    trimestres_valides: 158
+  attendu:
+    taux_liquidation: 0.475
+- id: grille_decote_loi_de_2003_c018
+  enonce: 'Né le 1944-01-01, pension du régime général prenant effet le 2004-01-01, 158 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 160
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 2 par la durée,
+    2 retenus à 2.375 %, taux 47.6250 %. Fondement qu''elle relève : LEGIARTI000006749436 LEGIARTI000006749449
+    JORFARTI000001474532.'
+  carriere:
+    naissance: '1944-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2004-01
+    trimestres_valides: 158
+  attendu:
+    taux_liquidation: 0.47625
+- id: grille_decote_loi_de_2003_c019
+  enonce: 'Né le 1944-01-02, pension du régime général prenant effet le 2004-02-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 160
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 10 par la durée,
+    10 retenus à 2.375 %, taux 38.1250 %. Fondement qu''elle relève : LEGIARTI000006749436 LEGIARTI000006749449
+    JORFARTI000001474532.'
+  carriere:
+    naissance: '1944-01-02'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2004-02
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.38125
+- id: grille_decote_loi_de_2003_c020
+  enonce: 'Né le 1944-06-15, pension du régime général prenant effet le 2005-07-01, 155 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 160
+    trimestres, un âge d''annulation de 65 ans 0 mois, 16 trimestres par l''âge et 5 par la durée,
+    5 retenus à 2.375 %, taux 44.0625 %. Fondement qu''elle relève : LEGIARTI000006749436 JORFARTI000001474532.'
+  carriere:
+    naissance: '1944-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2005-07
+    trimestres_valides: 155
+  attendu:
+    taux_liquidation: 0.440625
+- id: grille_decote_loi_de_2003_c021
+  enonce: 'Né le 1945-03-03, pension du régime général prenant effet le 2005-04-01, 140 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 160
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 20 par la durée,
+    20 retenus à 2.25 %, taux 27.5000 %. Fondement qu''elle relève : LEGIARTI000006749436 JORFARTI000001474532.'
+  carriere:
+    naissance: '1945-03-03'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2005-04
+    trimestres_valides: 140
+  attendu:
+    taux_liquidation: 0.275
+- id: grille_decote_loi_de_2003_c022
+  enonce: 'Né le 1946-09-09, pension du régime général prenant effet le 2006-10-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 160
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 10 par la durée,
+    10 retenus à 2.125 %, taux 39.3750 %. Fondement qu''elle relève : LEGIARTI000006749436 JORFARTI000001474532.'
+  carriere:
+    naissance: '1946-09-09'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2006-10
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.39375
+- id: grille_decote_loi_de_2003_c023
+  enonce: 'Né le 1947-04-30, pension du régime général prenant effet le 2007-05-01, 155 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 160
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 5 par la durée,
+    5 retenus à 2 %, taux 45.0000 %. Fondement qu''elle relève : LEGIARTI000006749436 JORFARTI000001474532.'
+  carriere:
+    naissance: '1947-04-30'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2007-05
+    trimestres_valides: 155
+  attendu:
+    taux_liquidation: 0.45
+- id: grille_decote_loi_de_2003_c024
+  enonce: 'Né le 1948-12-31, pension du régime général prenant effet le 2009-01-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 160
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 10 par la durée,
+    10 retenus à 1.875 %, taux 40.6250 %. Fondement qu''elle relève : LEGIARTI000020082993.'
+  carriere:
+    naissance: '1948-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2009-01
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.40625
+- id: grille_decote_loi_de_2003_c025
+  enonce: 'Né le 1949-01-01, pension du régime général prenant effet le 2009-01-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 161
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 11 par la durée,
+    11 retenus à 1.75 %, taux 40.3750 %. Fondement qu''elle relève : LEGIARTI000020082993 LEGIARTI000020627929.'
+  carriere:
+    naissance: '1949-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2009-01
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.40375
+- id: grille_decote_loi_de_2003_c026
+  enonce: 'Né le 1950-05-05, pension du régime général prenant effet le 2010-06-01, 155 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 162
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 7 par la durée,
+    7 retenus à 1.625 %, taux 44.3125 %. Fondement qu''elle relève : LEGIARTI000020082993 LEGIARTI000020627929.'
+  carriere:
+    naissance: '1950-05-05'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2010-06
+    trimestres_valides: 155
+  attendu:
+    taux_liquidation: 0.443125
+- id: grille_decote_loi_de_2003_c027
+  enonce: 'Né le 1951-06-30, pension du régime général prenant effet le 2011-07-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 163
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 13 par la durée,
+    13 retenus à 1.5 %, taux 40.2500 %. Fondement qu''elle relève : LEGIARTI000024113020 LEGIARTI000020627929
+    LEGIARTI000023030950 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1951-06-30'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-07
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.4025
+- id: grille_decote_loi_de_2003_c028
+  enonce: 'Né le 1951-07-01, pension du régime général prenant effet le 2011-11-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 163
+    trimestres, un âge d''annulation de 65 ans 4 mois, 20 trimestres par l''âge et 13 par la durée,
+    13 retenus à 1.5 %, taux 40.2500 %. Fondement qu''elle relève : LEGIARTI000024113020 LEGIARTI000020627929
+    LEGIARTI000023030950 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1951-07-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-11
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.4025
+- id: grille_decote_loi_de_2003_c029
+  enonce: 'Né le 1951-07-01, pension du régime général prenant effet le 2015-11-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 163
+    trimestres, un âge d''annulation de 65 ans 4 mois, 4 trimestres par l''âge et 13 par la durée,
+    4 retenus à 1.5 %, taux 47.0000 %. Fondement qu''elle relève : LEGIARTI000024113020 LEGIARTI000020627929
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1951-07-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2015-11
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.47
+- id: grille_decote_loi_de_2003_c030
+  enonce: 'Né le 1952-01-01, pension du régime général prenant effet le 2012-10-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 164
+    trimestres, un âge d''annulation de 65 ans 9 mois, 20 trimestres par l''âge et 4 par la durée,
+    4 retenus à 1.375 %, taux 47.2500 %. Fondement qu''elle relève : LEGIARTI000024113020 LEGIARTI000020627929
+    LEGIARTI000023030950 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1952-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2012-10
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.4725
+- id: grille_decote_loi_de_2003_c031
+  enonce: 'Né le 1952-03-15, pension du régime général prenant effet le 2017-01-01, 155 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 164
+    trimestres, un âge d''annulation de 65 ans 9 mois, 4 trimestres par l''âge et 9 par la durée,
+    4 retenus à 1.375 %, taux 47.2500 %. Fondement qu''elle relève : LEGIARTI000024113020 LEGIARTI000020627929
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1952-03-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2017-01
+    trimestres_valides: 155
+  attendu:
+    taux_liquidation: 0.4725
+- id: grille_decote_loi_de_2003_c032
+  enonce: 'Né le 1952-12-31, pension du régime général prenant effet le 2013-10-01, 155 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 164
+    trimestres, un âge d''annulation de 65 ans 9 mois, 20 trimestres par l''âge et 9 par la durée,
+    9 retenus à 1.375 %, taux 43.8125 %. Fondement qu''elle relève : LEGIARTI000024113020 LEGIARTI000020627929
+    LEGIARTI000023030950 LEGIARTI000025089933. Sa remarque : anniversaire d''annulation ramene au
+    dernier jour du mois (2018-09-30)'
+  carriere:
+    naissance: '1952-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2013-10
+    trimestres_valides: 155
+  attendu:
+    taux_liquidation: 0.438125
+- id: grille_decote_loi_de_2003_c033
+  enonce: 'Né le 1953-01-01, pension du régime général prenant effet le 2014-03-01, 155 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 165
+    trimestres, un âge d''annulation de 66 ans 2 mois, 20 trimestres par l''âge et 10 par la durée,
+    10 retenus à 1.25 %, taux 43.7500 %. Fondement qu''elle relève : LEGIARTI000024113020 JORFARTI000023334359
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1953-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2014-03
+    trimestres_valides: 155
+  attendu:
+    taux_liquidation: 0.4375
+- id: grille_decote_loi_de_2003_c034
+  enonce: 'Né le 1953-06-15, pension du régime général prenant effet le 2019-05-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 165
+    trimestres, un âge d''annulation de 66 ans 2 mois, 2 trimestres par l''âge et 15 par la durée,
+    2 retenus à 1.25 %, taux 48.7500 %. Fondement qu''elle relève : LEGIARTI000024113020 JORFARTI000023334359
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1953-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2019-05
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.4875
+- id: grille_decote_loi_de_2003_c035
+  enonce: 'Né le 1954-02-15, pension du régime général prenant effet le 2020-06-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 165
+    trimestres, un âge d''annulation de 66 ans 7 mois, 2 trimestres par l''âge et 15 par la durée,
+    2 retenus à 1.25 %, taux 48.7500 %. Fondement qu''elle relève : LEGIARTI000024113020 JORFARTI000023334359
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1954-02-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2020-06
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.4875
+- id: grille_decote_loi_de_2003_c036
+  enonce: 'Né le 1955-08-15, pension du régime général prenant effet le 2017-09-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 166
+    trimestres, un âge d''annulation de 67 ans 0 mois, 20 trimestres par l''âge et 16 par la durée,
+    16 retenus à 1.25 %, taux 40.0000 %. Fondement qu''elle relève : LEGIARTI000024113020 JORFARTI000024419267
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1955-08-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2017-09
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.4
+- id: grille_decote_loi_de_2003_c037
+  enonce: 'Né le 1956-01-01, pension du régime général prenant effet le 2022-10-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 166
+    trimestres, un âge d''annulation de 67 ans 0 mois, 1 trimestres par l''âge et 16 par la durée,
+    1 retenus à 1.25 %, taux 49.3750 %. Fondement qu''elle relève : LEGIARTI000024113020 JORFARTI000026855704
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1956-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2022-10
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.49375
+- id: grille_decote_loi_de_2003_c038
+  enonce: 'Né le 1956-01-01, pension du régime général prenant effet le 2022-09-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 166
+    trimestres, un âge d''annulation de 67 ans 0 mois, 2 trimestres par l''âge et 16 par la durée,
+    2 retenus à 1.25 %, taux 48.7500 %. Fondement qu''elle relève : LEGIARTI000024113020 JORFARTI000026855704
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1956-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2022-09
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.4875
+- id: grille_decote_loi_de_2003_c039
+  enonce: 'Né le 1956-01-02, pension du régime général prenant effet le 2022-10-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 166
+    trimestres, un âge d''annulation de 67 ans 0 mois, 2 trimestres par l''âge et 16 par la durée,
+    2 retenus à 1.25 %, taux 48.7500 %. Fondement qu''elle relève : LEGIARTI000024113020 JORFARTI000026855704
+    LEGIARTI000028498855 LEGIARTI000025089933. Sa remarque : si l''age est tenu pour atteint la veille
+    de l''anniversaire : 1 trimestres, taux 49.3750'
+  carriere:
+    naissance: '1956-01-02'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2022-10
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.4875
+- id: grille_decote_loi_de_2003_c040
+  enonce: 'Né le 1957-01-01, pension du régime général prenant effet le 2019-01-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 166
+    trimestres, un âge d''annulation de 67 ans 0 mois, 20 trimestres par l''âge et 6 par la durée,
+    6 retenus à 1.25 %, taux 46.2500 %. Fondement qu''elle relève : LEGIARTI000024113020 JORFARTI000028323755
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1957-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2019-01
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.4625
+- id: grille_decote_loi_de_2003_c041
+  enonce: 'Né le 1957-01-01, pension du régime général prenant effet le 2023-01-01, 162 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 166
+    trimestres, un âge d''annulation de 67 ans 0 mois, 4 trimestres par l''âge et 4 par la durée,
+    4 retenus à 1.25 %, taux 47.5000 %. Fondement qu''elle relève : LEGIARTI000024113020 JORFARTI000028323755
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1957-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-01
+    trimestres_valides: 162
+  attendu:
+    taux_liquidation: 0.475
+- id: grille_decote_loi_de_2003_c042
+  enonce: 'Né le 1958-03-15, pension du régime général prenant effet le 2020-04-01, 140 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 167
+    trimestres, un âge d''annulation de 67 ans 0 mois, 20 trimestres par l''âge et 27 par la durée,
+    20 retenus à 1.25 %, taux 37.5000 %. Fondement qu''elle relève : LEGIARTI000024113020 LEGIARTI000028494794
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1958-03-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2020-04
+    trimestres_valides: 140
+  attendu:
+    taux_liquidation: 0.375
+- id: grille_decote_loi_de_2003_c043
+  enonce: 'Né le 1960-03-15, pension du régime général prenant effet le 2023-04-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 167
+    trimestres, un âge d''annulation de 67 ans 0 mois, 16 trimestres par l''âge et 7 par la durée,
+    7 retenus à 1.25 %, taux 45.6250 %. Fondement qu''elle relève : LEGIARTI000024113020 LEGIARTI000028494794
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1960-03-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-04
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.45625
+- id: grille_decote_loi_de_2003_c044
+  enonce: 'Né le 1961-08-31, pension du régime général prenant effet le 2023-09-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 168
+    trimestres, un âge d''annulation de 67 ans 0 mois, 20 trimestres par l''âge et 8 par la durée,
+    8 retenus à 1.25 %, taux 45.0000 %. Fondement qu''elle relève : LEGIARTI000047633296 LEGIARTI000047452764
+    LEGIARTI000047452736 LEGIARTI000047452768.'
+  carriere:
+    naissance: '1961-08-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-09
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.45
+- id: grille_decote_loi_de_2003_c045
+  enonce: 'Né le 1961-09-01, pension du régime général prenant effet le 2023-12-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 169
+    trimestres, un âge d''annulation de 67 ans 0 mois, 19 trimestres par l''âge et 9 par la durée,
+    9 retenus à 1.25 %, taux 44.3750 %. Fondement qu''elle relève : LEGIARTI000047633296 LEGIARTI000047452764
+    LEGIARTI000047452736 LEGIARTI000047452768.'
+  carriere:
+    naissance: '1961-09-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-12
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.44375
+- id: grille_decote_loi_de_2003_c046
+  enonce: 'Né le 1962-05-10, pension du régime général prenant effet le 2025-12-01, 165 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 169
+    trimestres, un âge d''annulation de 67 ans 0 mois, 14 trimestres par l''âge et 4 par la durée,
+    4 retenus à 1.25 %, taux 47.5000 %. Fondement qu''elle relève : LEGIARTI000047633296 LEGIARTI000047452764
+    LEGIARTI000047452736 LEGIARTI000047452768.'
+  carriere:
+    naissance: '1962-05-10'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2025-12
+    trimestres_valides: 165
+  attendu:
+    taux_liquidation: 0.475
+- id: grille_decote_loi_de_2003_c047
+  enonce: 'Né le 1959-11-30, pension du régime général prenant effet le 2025-12-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 167
+    trimestres, un âge d''annulation de 67 ans 0 mois, 4 trimestres par l''âge et 17 par la durée,
+    4 retenus à 1.25 %, taux 47.5000 %. Fondement qu''elle relève : LEGIARTI000047633296 LEGIARTI000047452764
+    LEGIARTI000047452736 LEGIARTI000047452768.'
+  carriere:
+    naissance: '1959-11-30'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2025-12
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.475
+- id: grille_decote_loi_de_2003_p008
+  enonce: 'Né le 1949-12-31, pension du régime général prenant effet le 2010-01-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 161
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 11 par la durée,
+    11 retenus à 1.75 %, taux 40.3750 %. Fondement qu''elle relève : LEGIARTI000020082993 LEGIARTI000020627929.'
+  carriere:
+    naissance: '1949-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2010-01
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.40375
+- id: grille_decote_loi_de_2003_p009
+  enonce: 'Né le 1950-01-01, pension du régime général prenant effet le 2010-01-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 162
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 12 par la durée,
+    12 retenus à 1.625 %, taux 40.2500 %. Fondement qu''elle relève : LEGIARTI000020082993 LEGIARTI000020627929.'
+  carriere:
+    naissance: '1950-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2010-01
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.4025
+- id: grille_decote_loi_de_2003_p010
+  enonce: 'Né le 1951-06-15, pension du régime général prenant effet le 2011-07-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 163
+    trimestres, un âge d''annulation de 65 ans 0 mois, 20 trimestres par l''âge et 13 par la durée,
+    13 retenus à 1.5 %, taux 40.2500 %. Fondement qu''elle relève : LEGIARTI000024113020 LEGIARTI000020627929
+    LEGIARTI000023030950 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1951-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-07
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.4025
+- id: grille_decote_loi_de_2003_p011
+  enonce: 'Né le 1951-06-15, pension du régime général prenant effet le 2015-11-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 163
+    trimestres, un âge d''annulation de 65 ans 0 mois, 3 trimestres par l''âge et 13 par la durée,
+    3 retenus à 1.5 %, taux 47.7500 %. Fondement qu''elle relève : LEGIARTI000024113020 LEGIARTI000020627929
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1951-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2015-11
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.4775
+- id: grille_decote_loi_de_2003_p012
+  enonce: 'Né le 1954-12-31, pension du régime général prenant effet le 2020-11-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 165
+    trimestres, un âge d''annulation de 66 ans 7 mois, 3 trimestres par l''âge et 15 par la durée,
+    3 retenus à 1.25 %, taux 48.1250 %. Fondement qu''elle relève : LEGIARTI000024113020 JORFARTI000023334359
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1954-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2020-11
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.48125
+- id: grille_decote_loi_de_2003_p013
+  enonce: 'Né le 1955-01-01, pension du régime général prenant effet le 2021-03-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 166
+    trimestres, un âge d''annulation de 67 ans 0 mois, 4 trimestres par l''âge et 16 par la durée,
+    4 retenus à 1.25 %, taux 47.5000 %. Fondement qu''elle relève : LEGIARTI000024113020 JORFARTI000024419267
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1955-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2021-03
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.475
+- id: grille_decote_loi_de_2003_p014
+  enonce: 'Né le 1957-12-31, pension du régime général prenant effet le 2020-01-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 166
+    trimestres, un âge d''annulation de 67 ans 0 mois, 20 trimestres par l''âge et 6 par la durée,
+    6 retenus à 1.25 %, taux 46.2500 %. Fondement qu''elle relève : LEGIARTI000024113020 JORFARTI000028323755
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1957-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2020-01
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.4625
+- id: grille_decote_loi_de_2003_p015
+  enonce: 'Né le 1958-01-01, pension du régime général prenant effet le 2020-01-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 167
+    trimestres, un âge d''annulation de 67 ans 0 mois, 20 trimestres par l''âge et 7 par la durée,
+    7 retenus à 1.25 %, taux 45.6250 %. Fondement qu''elle relève : LEGIARTI000024113020 LEGIARTI000028494794
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1958-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2020-01
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.45625
+- id: grille_decote_loi_de_2003_p016
+  enonce: 'Né le 1960-12-31, pension du régime général prenant effet le 2023-01-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 167
+    trimestres, un âge d''annulation de 67 ans 0 mois, 20 trimestres par l''âge et 7 par la durée,
+    7 retenus à 1.25 %, taux 45.6250 %. Fondement qu''elle relève : LEGIARTI000024113020 LEGIARTI000028494794
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1960-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-01
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.45625
+- id: grille_decote_loi_de_2003_p017
+  enonce: 'Né le 1961-01-01, pension du régime général prenant effet le 2023-01-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 168
+    trimestres, un âge d''annulation de 67 ans 0 mois, 20 trimestres par l''âge et 8 par la durée,
+    8 retenus à 1.25 %, taux 45.0000 %. Fondement qu''elle relève : LEGIARTI000024113020 LEGIARTI000028494794
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1961-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-01
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.45
+- id: grille_decote_loi_de_2003_p018
+  enonce: 'Né le 1961-03-15, pension du régime général prenant effet le 2023-08-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 168
+    trimestres, un âge d''annulation de 67 ans 0 mois, 19 trimestres par l''âge et 8 par la durée,
+    8 retenus à 1.25 %, taux 45.0000 %. Fondement qu''elle relève : LEGIARTI000024113020 LEGIARTI000028494794
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1961-03-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-08
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.45
+- id: grille_decote_loi_de_2003_p019
+  enonce: 'Né le 1961-03-15, pension du régime général prenant effet le 2023-09-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 168
+    trimestres, un âge d''annulation de 67 ans 0 mois, 19 trimestres par l''âge et 8 par la durée,
+    8 retenus à 1.25 %, taux 45.0000 %. Fondement qu''elle relève : LEGIARTI000047633296 LEGIARTI000047452764
+    LEGIARTI000047452736 LEGIARTI000047452768.'
+  carriere:
+    naissance: '1961-03-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-09
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.45
+- id: grille_decote_loi_de_2003_p027
+  enonce: 'Né le 1953-06-02, pension du régime général prenant effet le 2019-08-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 165
+    trimestres, un âge d''annulation de 66 ans 2 mois, 1 trimestres par l''âge et 15 par la durée,
+    1 retenus à 1.25 %, taux 49.3750 %. Fondement qu''elle relève : LEGIARTI000024113020 JORFARTI000023334359
+    LEGIARTI000028498855 LEGIARTI000025089933. Sa remarque : si l''age est tenu pour atteint la veille
+    de l''anniversaire : 0 trimestres, taux 50.0000'
+  carriere:
+    naissance: '1953-06-02'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2019-08
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.49375
+- id: grille_decote_loi_de_2003_p028
+  enonce: 'Né le 1961-08-31, pension du régime général prenant effet le 2024-01-01, 140 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 168
+    trimestres, un âge d''annulation de 67 ans 0 mois, 19 trimestres par l''âge et 28 par la durée,
+    19 retenus à 1.25 %, taux 38.1250 %. Fondement qu''elle relève : LEGIARTI000047633296 LEGIARTI000047452764
+    LEGIARTI000047452736 LEGIARTI000047452768.'
+  carriere:
+    naissance: '1961-08-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-01
+    trimestres_valides: 140
+  attendu:
+    taux_liquidation: 0.38125
+- id: grille_decote_loi_de_2003_p029
+  enonce: 'Né le 1952-08-31, pension du régime général prenant effet le 2018-03-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 164
+    trimestres, un âge d''annulation de 65 ans 9 mois, 1 trimestres par l''âge et 14 par la durée,
+    1 retenus à 1.375 %, taux 49.3125 %. Fondement qu''elle relève : LEGIARTI000024113020 LEGIARTI000020627929
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1952-08-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2018-03
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.493125
+- id: grille_decote_loi_de_2003_p033
+  enonce: 'Né le 1952-12-31, pension du régime général prenant effet le 2014-01-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 164
+    trimestres, un âge d''annulation de 65 ans 9 mois, 19 trimestres par l''âge et 4 par la durée,
+    4 retenus à 1.375 %, taux 47.2500 %. Fondement qu''elle relève : LEGIARTI000024113020 LEGIARTI000020627929
+    LEGIARTI000023030950 LEGIARTI000025089933. Sa remarque : anniversaire d''annulation ramene au
+    dernier jour du mois (2018-09-30)'
+  carriere:
+    naissance: '1952-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2014-01
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.4725
+- id: grille_decote_loi_de_2003_p034
+  enonce: 'Né le 1953-01-01, pension du régime général prenant effet le 2014-03-01, 164 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 165
+    trimestres, un âge d''annulation de 66 ans 2 mois, 20 trimestres par l''âge et 1 par la durée,
+    1 retenus à 1.25 %, taux 49.3750 %. Fondement qu''elle relève : LEGIARTI000024113020 JORFARTI000023334359
+    LEGIARTI000028498855 LEGIARTI000025089933.'
+  carriere:
+    naissance: '1953-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2014-03
+    trimestres_valides: 164
+  attendu:
+    taux_liquidation: 0.49375

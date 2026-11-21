@@ -1,0 +1,228 @@
+schema_version: 1
+id: grille_decote_decret_de_2026
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: decote_regime_general
+  version: decret_de_2026
+source:
+  auteur: session Claude indépendante, lancée le 21 novembre 2026 sans le code
+  reference: R. 351-27 (LEGIARTI000054589995), décret n° 2026-699, article 1er, 3° (JORFARTI000054569111),
+    L. 161-17-3 (LEGIARTI000053280903), loi n° 2025-1403, article 105, VI, lus par la session indépendante
+    dans les index LEGI et JORF à jour au 16 novembre 2026
+  etabli_le: '2026-11-21'
+independance: 'Les valeurs ont été posées par une session lancée sans le code (Opus 5.5, agent de
+  la session qui connaît le code, sans son contexte) : elle n''a reçu que la consigne, la liste des
+  cas (date de naissance, date d''effet, trimestres tous régimes) et des copies des index LEGI et
+  JORF de la DILA à jour au 16 novembre 2026, où elle a cherché elle-même ses textes, leurs rédactions
+  et leurs dispositions d''application, y compris les durées requises et les âges d''annulation ;
+  elle a écrit son propre calcul et proposé 34 des 93 cas. Les 59 autres, sans valeur attendue, viennent
+  de la session qui connaît le code, qui travaillait pendant ce temps dans une autre copie du dépôt.
+  Un guetteur (inotify) a journalisé les ouvertures sous la copie du dépôt de /home/user pendant son
+  passage : aucune. Accord sur les 93 cas du premier coup ; pour les pensions de janvier à juillet
+  2026, où le texte est muet, la lecture retenue est la sienne et celle de la caisse.'
+seuils:
+- 'date d''effet : 1er août et 1er septembre 2026 (suspension de la loi de 2023), décembre 2026, 2027
+  à 2034'
+- 'naissance : 30 novembre 1959 (soixante-sept ans atteints : aucune décote), 1963, 1964, 31 mars
+  et 1er avril 1965, 31 décembre 1965 et 1er janvier 1966, 1968, 1970'
+- durée pile atteinte et un trimestre manquant ; décompte par l'âge retenu (douze trimestres)
+cas:
+- id: grille_decote_decret_de_2026_c050
+  enonce: 'Né le 1962-05-10, pension du régime général prenant effet le 2026-08-01, 165 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 169
+    trimestres, un âge d''annulation de 67 ans 0 mois, 12 trimestres par l''âge et 4 par la durée,
+    4 retenus à 1.25 %, taux 47.5000 %. Fondement qu''elle relève : LEGIARTI000054589995 LEGIARTI000047452764
+    LEGIARTI000051289852 LEGIARTI000051289659 JORFARTI000054569111.'
+  carriere:
+    naissance: '1962-05-10'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-08
+    trimestres_valides: 165
+  attendu:
+    taux_liquidation: 0.475
+- id: grille_decote_decret_de_2026_c053
+  enonce: 'Né le 1959-11-30, pension du régime général prenant effet le 2026-12-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 167
+    trimestres, un âge d''annulation de 67 ans 0 mois, 0 trimestres par l''âge et 17 par la durée,
+    0 retenus à 1.25 %, taux 50.0000 %. Fondement qu''elle relève : LEGIARTI000054589995 LEGIARTI000053280903
+    JORFARTI000053227007 LEGIARTI000051289852 LEGIARTI000053280889 JORFARTI000054569111. Sa remarque
+    : taux plein'
+  carriere:
+    naissance: '1959-11-30'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-12
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.5
+- id: grille_decote_decret_de_2026_c054
+  enonce: 'Né le 1963-05-10, pension du régime général prenant effet le 2026-09-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 170
+    trimestres, un âge d''annulation de 67 ans 0 mois, 15 trimestres par l''âge et 10 par la durée,
+    10 retenus à 1.25 %, taux 43.7500 %. Fondement qu''elle relève : LEGIARTI000054589995 LEGIARTI000053280903
+    JORFARTI000053227007 LEGIARTI000051289852 LEGIARTI000053280889 JORFARTI000054569111.'
+  carriere:
+    naissance: '1963-05-10'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.4375
+- id: grille_decote_decret_de_2026_c055
+  enonce: 'Né le 1964-07-01, pension du régime général prenant effet le 2027-07-01, 159 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 170
+    trimestres, un âge d''annulation de 67 ans 0 mois, 16 trimestres par l''âge et 11 par la durée,
+    11 retenus à 1.25 %, taux 43.1250 %. Fondement qu''elle relève : LEGIARTI000054589995 LEGIARTI000053280903
+    JORFARTI000053227007 LEGIARTI000051289852 LEGIARTI000053280889 JORFARTI000054569111.'
+  carriere:
+    naissance: '1964-07-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2027-07
+    trimestres_valides: 159
+  attendu:
+    taux_liquidation: 0.43125
+- id: grille_decote_decret_de_2026_c056
+  enonce: 'Né le 1965-03-31, pension du régime général prenant effet le 2029-04-01, 168 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 170
+    trimestres, un âge d''annulation de 67 ans 0 mois, 12 trimestres par l''âge et 2 par la durée,
+    2 retenus à 1.25 %, taux 48.7500 %. Fondement qu''elle relève : LEGIARTI000054589995 LEGIARTI000053280903
+    JORFARTI000053227007 LEGIARTI000051289852 LEGIARTI000053280889 JORFARTI000054569111.'
+  carriere:
+    naissance: '1965-03-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2029-04
+    trimestres_valides: 168
+  attendu:
+    taux_liquidation: 0.4875
+- id: grille_decote_decret_de_2026_c057
+  enonce: 'Né le 1968-02-02, pension du régime général prenant effet le 2032-03-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 172
+    trimestres, un âge d''annulation de 67 ans 0 mois, 12 trimestres par l''âge et 22 par la durée,
+    12 retenus à 1.25 %, taux 42.5000 %. Fondement qu''elle relève : LEGIARTI000054589995 LEGIARTI000053280903
+    JORFARTI000053227007 LEGIARTI000051289852 LEGIARTI000053280889 JORFARTI000054569111.'
+  carriere:
+    naissance: '1968-02-02'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2032-03
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.425
+- id: grille_decote_decret_de_2026_c058
+  enonce: 'Né le 1970-01-01, pension du régime général prenant effet le 2034-01-01, 172 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 172
+    trimestres, un âge d''annulation de 67 ans 0 mois, 12 trimestres par l''âge et 0 par la durée,
+    0 retenus à 1.25 %, taux 50.0000 %. Fondement qu''elle relève : LEGIARTI000054589995 LEGIARTI000053280903
+    JORFARTI000053227007 LEGIARTI000051289852 LEGIARTI000053280889 JORFARTI000054569111. Sa remarque
+    : taux plein'
+  carriere:
+    naissance: '1970-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2034-01
+    trimestres_valides: 172
+  attendu:
+    taux_liquidation: 0.5
+- id: grille_decote_decret_de_2026_c059
+  enonce: 'Né le 1970-01-01, pension du régime général prenant effet le 2034-01-01, 171 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 172
+    trimestres, un âge d''annulation de 67 ans 0 mois, 12 trimestres par l''âge et 1 par la durée,
+    1 retenus à 1.25 %, taux 49.3750 %. Fondement qu''elle relève : LEGIARTI000054589995 LEGIARTI000053280903
+    JORFARTI000053227007 LEGIARTI000051289852 LEGIARTI000053280889 JORFARTI000054569111.'
+  carriere:
+    naissance: '1970-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2034-01
+    trimestres_valides: 171
+  attendu:
+    taux_liquidation: 0.49375
+- id: grille_decote_decret_de_2026_p022
+  enonce: 'Né le 1963-06-15, pension du régime général prenant effet le 2026-08-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 170
+    trimestres, un âge d''annulation de 67 ans 0 mois, 16 trimestres par l''âge et 10 par la durée,
+    10 retenus à 1.25 %, taux 43.7500 %. Fondement qu''elle relève : LEGIARTI000054589995 LEGIARTI000047452764
+    LEGIARTI000051289852 LEGIARTI000051289659 JORFARTI000054569111.'
+  carriere:
+    naissance: '1963-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-08
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.4375
+- id: grille_decote_decret_de_2026_p023
+  enonce: 'Né le 1963-06-15, pension du régime général prenant effet le 2026-09-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 170
+    trimestres, un âge d''annulation de 67 ans 0 mois, 16 trimestres par l''âge et 10 par la durée,
+    10 retenus à 1.25 %, taux 43.7500 %. Fondement qu''elle relève : LEGIARTI000054589995 LEGIARTI000053280903
+    JORFARTI000053227007 LEGIARTI000051289852 LEGIARTI000053280889 JORFARTI000054569111.'
+  carriere:
+    naissance: '1963-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.4375
+- id: grille_decote_decret_de_2026_p024
+  enonce: 'Né le 1965-04-01, pension du régime général prenant effet le 2029-01-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 171
+    trimestres, un âge d''annulation de 67 ans 0 mois, 13 trimestres par l''âge et 11 par la durée,
+    11 retenus à 1.25 %, taux 43.1250 %. Fondement qu''elle relève : LEGIARTI000054589995 LEGIARTI000053280903
+    JORFARTI000053227007 LEGIARTI000051289852 LEGIARTI000053280889 JORFARTI000054569111.'
+  carriere:
+    naissance: '1965-04-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2029-01
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.43125
+- id: grille_decote_decret_de_2026_p025
+  enonce: 'Né le 1965-12-31, pension du régime général prenant effet le 2029-10-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 171
+    trimestres, un âge d''annulation de 67 ans 0 mois, 13 trimestres par l''âge et 11 par la durée,
+    11 retenus à 1.25 %, taux 43.1250 %. Fondement qu''elle relève : LEGIARTI000054589995 LEGIARTI000053280903
+    JORFARTI000053227007 LEGIARTI000051289852 LEGIARTI000053280889 JORFARTI000054569111.'
+  carriere:
+    naissance: '1965-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2029-10
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.43125
+- id: grille_decote_decret_de_2026_p026
+  enonce: 'Né le 1966-01-01, pension du régime général prenant effet le 2029-10-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 172
+    trimestres, un âge d''annulation de 67 ans 0 mois, 13 trimestres par l''âge et 12 par la durée,
+    12 retenus à 1.25 %, taux 42.5000 %. Fondement qu''elle relève : LEGIARTI000054589995 LEGIARTI000053280903
+    JORFARTI000053227007 LEGIARTI000051289852 LEGIARTI000053280889 JORFARTI000054569111.'
+  carriere:
+    naissance: '1966-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2029-10
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.425
+- id: grille_decote_decret_de_2026_p031
+  enonce: 'Né le 1959-11-30, pension du régime général prenant effet le 2026-08-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 167
+    trimestres, un âge d''annulation de 67 ans 0 mois, 2 trimestres par l''âge et 7 par la durée,
+    2 retenus à 1.25 %, taux 48.7500 %. Fondement qu''elle relève : LEGIARTI000054589995 LEGIARTI000047452764
+    LEGIARTI000051289852 LEGIARTI000051289659 JORFARTI000054569111.'
+  carriere:
+    naissance: '1959-11-30'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-08
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.4875

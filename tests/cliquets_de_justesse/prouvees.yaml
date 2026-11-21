@@ -18,6 +18,10 @@ prouvees:
 - age_legal_par_generation / loi_de_2023
 - age_legal_par_generation / soixante_ans
 - age_legal_par_generation / suspension_de_2025
+- decote_regime_general / decret_de_2025
+- decote_regime_general / decret_de_2026
+- decote_regime_general / loi_de_2003
+- decote_regime_general / ordonnance_de_1982
 - duree_requise_par_generation / cent_cinquante
 - duree_requise_par_generation / cent_soixante
 - duree_requise_par_generation / decembre_1942_au_1er_janvier_2003

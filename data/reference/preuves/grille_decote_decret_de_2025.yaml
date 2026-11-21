@@ -1,0 +1,161 @@
+schema_version: 1
+id: grille_decote_decret_de_2025
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: decote_regime_general
+  version: decret_de_2025
+source:
+  auteur: session Claude indépendante, lancée le 21 novembre 2026 sans le code
+  reference: R. 351-27 (LEGIARTI000053335645), décret n° 2025-1409, article 2, I, 29°, e et II (JORFARTI000053227542),
+    lus par la session indépendante dans les index LEGI et JORF à jour au 16 novembre 2026
+  etabli_le: '2026-11-21'
+independance: 'Les valeurs ont été posées par une session lancée sans le code (Opus 5.5, agent de
+  la session qui connaît le code, sans son contexte) : elle n''a reçu que la consigne, la liste des
+  cas (date de naissance, date d''effet, trimestres tous régimes) et des copies des index LEGI et
+  JORF de la DILA à jour au 16 novembre 2026, où elle a cherché elle-même ses textes, leurs rédactions
+  et leurs dispositions d''application, y compris les durées requises et les âges d''annulation ;
+  elle a écrit son propre calcul et proposé 34 des 93 cas. Les 59 autres, sans valeur attendue, viennent
+  de la session qui connaît le code, qui travaillait pendant ce temps dans une autre copie du dépôt.
+  Un guetteur (inotify) a journalisé les ouvertures sous la copie du dépôt de /home/user pendant son
+  passage : aucune. Accord sur les 93 cas du premier coup ; pour les pensions de janvier à juillet
+  2026, où le texte est muet, la lecture retenue est la sienne et celle de la caisse.'
+seuils:
+- 'date d''effet : 1er janvier, mars, avril et juillet 2026, sous un texte qui ne fixe plus de coefficient
+  aux pensions prenant effet après 2003'
+- 'naissance : 30 novembre 1959 (âge d''annulation dans l''année), 1960, 31 décembre 1962 et 1er janvier
+  1963'
+cas:
+- id: grille_decote_decret_de_2025_c048
+  enonce: 'Né le 1962-05-10, pension du régime général prenant effet le 2026-01-01, 165 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 169
+    trimestres, un âge d''annulation de 67 ans 0 mois, 14 trimestres par l''âge et 4 par la durée,
+    4 retenus à 1.25 %, taux 47.5000 %. Fondement qu''elle relève : LEGIARTI000053335645 LEGIARTI000047452764
+    LEGIARTI000051289852 LEGIARTI000051289659 JORFARTI000053227542. Le texte en vigueur à la date
+    d''effet (LEGIARTI000053335645) ne fixe plus de coefficient aux pensions prenant effet après 2003,
+    le décret n° 2025-1409 ayant abrogé le II de R. 351-27 ; la lecture retenue, la sienne, est 1,25
+    %, celle que la caisse applique (circulaire Cnav 2026-07 du 5 mars 2026, point 4.1.1, exemple
+    1 : « minoration 9 × 0,625 ») et que le décret n° 2026-699 écrit dès le 1er août 2026 ; les deux
+    autres lectures, aucune minoration (50 %) ou 2,5 %, ne sont celles de personne.'
+  carriere:
+    naissance: '1962-05-10'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-01
+    trimestres_valides: 165
+  attendu:
+    taux_liquidation: 0.475
+- id: grille_decote_decret_de_2025_c049
+  enonce: 'Né le 1962-05-10, pension du régime général prenant effet le 2026-07-01, 165 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 169
+    trimestres, un âge d''annulation de 67 ans 0 mois, 12 trimestres par l''âge et 4 par la durée,
+    4 retenus à 1.25 %, taux 47.5000 %. Fondement qu''elle relève : LEGIARTI000053335645 LEGIARTI000047452764
+    LEGIARTI000051289852 LEGIARTI000051289659 JORFARTI000053227542. Le texte en vigueur à la date
+    d''effet (LEGIARTI000053335645) ne fixe plus de coefficient aux pensions prenant effet après 2003,
+    le décret n° 2025-1409 ayant abrogé le II de R. 351-27 ; la lecture retenue, la sienne, est 1,25
+    %, celle que la caisse applique (circulaire Cnav 2026-07 du 5 mars 2026, point 4.1.1, exemple
+    1 : « minoration 9 × 0,625 ») et que le décret n° 2026-699 écrit dès le 1er août 2026 ; les deux
+    autres lectures, aucune minoration (50 %) ou 2,5 %, ne sont celles de personne.'
+  carriere:
+    naissance: '1962-05-10'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-07
+    trimestres_valides: 165
+  attendu:
+    taux_liquidation: 0.475
+- id: grille_decote_decret_de_2025_c051
+  enonce: 'Né le 1960-03-15, pension du régime général prenant effet le 2026-04-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 167
+    trimestres, un âge d''annulation de 67 ans 0 mois, 4 trimestres par l''âge et 7 par la durée,
+    4 retenus à 1.25 %, taux 47.5000 %. Fondement qu''elle relève : LEGIARTI000053335645 LEGIARTI000047452764
+    LEGIARTI000051289852 LEGIARTI000051289659 JORFARTI000053227542. Le texte en vigueur à la date
+    d''effet (LEGIARTI000053335645) ne fixe plus de coefficient aux pensions prenant effet après 2003,
+    le décret n° 2025-1409 ayant abrogé le II de R. 351-27 ; la lecture retenue, la sienne, est 1,25
+    %, celle que la caisse applique (circulaire Cnav 2026-07 du 5 mars 2026, point 4.1.1, exemple
+    1 : « minoration 9 × 0,625 ») et que le décret n° 2026-699 écrit dès le 1er août 2026 ; les deux
+    autres lectures, aucune minoration (50 %) ou 2,5 %, ne sont celles de personne.'
+  carriere:
+    naissance: '1960-03-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-04
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.475
+- id: grille_decote_decret_de_2025_c052
+  enonce: 'Né le 1959-11-30, pension du régime général prenant effet le 2026-01-01, 150 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 167
+    trimestres, un âge d''annulation de 67 ans 0 mois, 4 trimestres par l''âge et 17 par la durée,
+    4 retenus à 1.25 %, taux 47.5000 %. Fondement qu''elle relève : LEGIARTI000053335645 LEGIARTI000047452764
+    LEGIARTI000051289852 LEGIARTI000051289659 JORFARTI000053227542. Le texte en vigueur à la date
+    d''effet (LEGIARTI000053335645) ne fixe plus de coefficient aux pensions prenant effet après 2003,
+    le décret n° 2025-1409 ayant abrogé le II de R. 351-27 ; la lecture retenue, la sienne, est 1,25
+    %, celle que la caisse applique (circulaire Cnav 2026-07 du 5 mars 2026, point 4.1.1, exemple
+    1 : « minoration 9 × 0,625 ») et que le décret n° 2026-699 écrit dès le 1er août 2026 ; les deux
+    autres lectures, aucune minoration (50 %) ou 2,5 %, ne sont celles de personne.'
+  carriere:
+    naissance: '1959-11-30'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-01
+    trimestres_valides: 150
+  attendu:
+    taux_liquidation: 0.475
+- id: grille_decote_decret_de_2025_p020
+  enonce: 'Né le 1962-12-31, pension du régime général prenant effet le 2026-03-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 169
+    trimestres, un âge d''annulation de 67 ans 0 mois, 16 trimestres par l''âge et 9 par la durée,
+    9 retenus à 1.25 %, taux 44.3750 %. Fondement qu''elle relève : LEGIARTI000053335645 LEGIARTI000047452764
+    LEGIARTI000051289852 LEGIARTI000051289659 JORFARTI000053227542. Le texte en vigueur à la date
+    d''effet (LEGIARTI000053335645) ne fixe plus de coefficient aux pensions prenant effet après 2003,
+    le décret n° 2025-1409 ayant abrogé le II de R. 351-27 ; la lecture retenue, la sienne, est 1,25
+    %, celle que la caisse applique (circulaire Cnav 2026-07 du 5 mars 2026, point 4.1.1, exemple
+    1 : « minoration 9 × 0,625 ») et que le décret n° 2026-699 écrit dès le 1er août 2026 ; les deux
+    autres lectures, aucune minoration (50 %) ou 2,5 %, ne sont celles de personne.'
+  carriere:
+    naissance: '1962-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-03
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.44375
+- id: grille_decote_decret_de_2025_p021
+  enonce: 'Né le 1963-01-01, pension du régime général prenant effet le 2026-03-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 170
+    trimestres, un âge d''annulation de 67 ans 0 mois, 16 trimestres par l''âge et 10 par la durée,
+    10 retenus à 1.25 %, taux 43.7500 %. Fondement qu''elle relève : LEGIARTI000053335645 LEGIARTI000047452764
+    LEGIARTI000051289852 LEGIARTI000051289659 JORFARTI000053227542. Le texte en vigueur à la date
+    d''effet (LEGIARTI000053335645) ne fixe plus de coefficient aux pensions prenant effet après 2003,
+    le décret n° 2025-1409 ayant abrogé le II de R. 351-27 ; la lecture retenue, la sienne, est 1,25
+    %, celle que la caisse applique (circulaire Cnav 2026-07 du 5 mars 2026, point 4.1.1, exemple
+    1 : « minoration 9 × 0,625 ») et que le décret n° 2026-699 écrit dès le 1er août 2026 ; les deux
+    autres lectures, aucune minoration (50 %) ou 2,5 %, ne sont celles de personne.'
+  carriere:
+    naissance: '1963-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-03
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.4375
+- id: grille_decote_decret_de_2025_p030
+  enonce: 'Né le 1959-11-30, pension du régime général prenant effet le 2026-07-01, 160 trimestres
+    tous régimes, sans titre au taux plein : la session indépendante lit une durée requise de 167
+    trimestres, un âge d''annulation de 67 ans 0 mois, 2 trimestres par l''âge et 7 par la durée,
+    2 retenus à 1.25 %, taux 48.7500 %. Fondement qu''elle relève : LEGIARTI000053335645 LEGIARTI000047452764
+    LEGIARTI000051289852 LEGIARTI000051289659 JORFARTI000053227542. Le texte en vigueur à la date
+    d''effet (LEGIARTI000053335645) ne fixe plus de coefficient aux pensions prenant effet après 2003,
+    le décret n° 2025-1409 ayant abrogé le II de R. 351-27 ; la lecture retenue, la sienne, est 1,25
+    %, celle que la caisse applique (circulaire Cnav 2026-07 du 5 mars 2026, point 4.1.1, exemple
+    1 : « minoration 9 × 0,625 ») et que le décret n° 2026-699 écrit dès le 1er août 2026 ; les deux
+    autres lectures, aucune minoration (50 %) ou 2,5 %, ne sont celles de personne.'
+  carriere:
+    naissance: '1959-11-30'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-07
+    trimestres_valides: 160
+  attendu:
+    taux_liquidation: 0.4875
