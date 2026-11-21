@@ -1,9 +1,9 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: rouge
-sources: 4cdf56777560ffc7775d15681dcfa620566615a4
-date: 2026-11-21T04:00:21Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44862182991
+sources: 50cad00ede189bff105e65ade8fea2856c74c05c
+date: 2026-11-21T04:22:56Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44863021816
 echecs:
   - "FAILED tests/test_estimation_officielle.py::test_les_revenus_a_venir_poursuivent_la_derniere_annee - AssertionError: 1 cas absent(s) du témoin des servis, dont ['depart'] : les y ajouter par FIGER_SERVIS=1 python -m pytest <ce fichier>"
   - "FAILED tests/test_estimation_officielle.py::test_la_carriere_a_venir_part_du_revenu_que_la_page_retient - AssertionError: 1 cas absent(s) du témoin des servis, dont ['depart'] : les y ajouter par FIGER_SERVIS=1 python -m pytest <ce fichier>"
@@ -13,15 +13,14 @@ echecs:
   - "FAILED tests/test_estimation_officielle.py::test_le_modele_est_ramene_aux_euros_de_la_page - AssertionError: 1 cas absent(s) du témoin des servis, dont ['depart'] : les y ajouter par FIGER_SERVIS=1 python -m pytest <ce fichier>"
   - "FAILED tests/test_estimation_officielle.py::test_le_plafond_dit_quel_releve_on_a_lu - AssertionError: 1 cas absent(s) du témoin des servis, dont ['depart'] : les y ajouter par FIGER_SERVIS=1 python -m pytest <ce fichier>"
   - "FAILED tests/test_estimation_officielle.py::test_la_ligne_de_commande_imprime_le_rapport - AssertionError: 1 cas absent(s) du témoin des servis, dont ['depart'] : les y ajouter par FIGER_SERVIS=1 python -m pytest <ce fichier>"
-  - "FAILED tests/test_donnees.py::test_journal_de_certification_decrit_les_series_certifiees - AssertionError: ('legislation/age_annulation_decote.csv', 'haute')"
 presomptions: rouge
 presomptions_echecs:
   - "FAILED tests/test_servis_figes.py::test_le_portage_resert_chaque_servi_fige_a_l_octet - AssertionError: 126 écart(s), dont : ['087f29c77e598448, servi.actuel.avantages_appliques.[0].montant : attendu 1804.405967678671, lu 1800.199509244041', '087f29c77e598448, servi.actuel.avantages_appliques.[1].montant : attendu 887.3499252271317, lu 885.9925194547146', '087f29c77e598448, servi.actuel.avantages_appliques.[2].montant : attendu 2392.105590265545, lu 2389.187167854848', '087f29c77e598448, servi.actuel.avantages_appliques.[2].par_regime.[2].[1] : attendu 1907.802339238333, lu 1904.8839168276363', '087f29c77e598448, servi.actuel.avantages_appliques.[2].par_regime_sans_anticipation.[2].[1] : attendu 1907.802339238333, lu 1904.8839168276363']"
 durees:
-  fabrique: 441
-  suite: 596
-  tranche_1: 596
-  tranche_2: 310
-  tranche_3: 483
-  tranche_4: 305
-  garde: 149
+  fabrique: 700
+  suite: 572
+  tranche_1: 572
+  tranche_2: 337
+  tranche_3: 507
+  tranche_4: 480
+  garde: 138
