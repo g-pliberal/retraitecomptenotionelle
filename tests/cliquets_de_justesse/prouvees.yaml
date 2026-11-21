@@ -12,6 +12,11 @@
 #
 # Posée vide le 20 novembre 2026 : aucune grille indépendante n'existe encore.
 
-prouvees: []
+prouvees:
+- age_legal_par_generation / loi_de_2010
+- age_legal_par_generation / loi_de_2011
+- age_legal_par_generation / loi_de_2023
+- age_legal_par_generation / soixante_ans
+- age_legal_par_generation / suspension_de_2025
 
 retirees: {}

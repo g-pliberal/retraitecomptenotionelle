@@ -1,0 +1,275 @@
+schema_version: 1
+id: grille_age_legal_loi_de_2010
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: age_legal_par_generation
+  version: loi_de_2010
+source:
+  auteur: session Claude indépendante, lancée le 20 novembre 2026 sans accès au dépôt
+  reference: 'L. 161-17-2 de la loi du 9 novembre 2010 et D. 161-2-1-9 du 30 décembre 2010
+    : quatre mois par génération ; rédactions tirées de l''index LEGI à jour au 16 novembre
+    2026'
+  etabli_le: '2026-11-20'
+independance: Les valeurs ont été posées par une session qui n'a reçu que dix rédactions de
+  R. 351-2, L. 161-17-2 et D. 161-2-1-9 tirées de LEGI et la liste des cas, naissance et date
+  d'effet ; elle déclare n'avoir ouvert ni le dépôt ni le web. Les cas ont été choisis par
+  la session qui connaît le code, la session indépendante en a proposé onze de plus.
+seuils:
+- 'date d''effet : du 1er juillet au 1er décembre 2011'
+- 'naissance : 1er juillet 1951, 1er janvier 1952, 1953, 1954, 1955, 1956, chaque bord des
+  deux côtés'
+cas:
+- id: grille_age_legal_loi_de_2010_b01
+  enonce: 'Né le 1951-06-30, pension prenant effet le 2011-07-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans, atteint le 2011-06-30 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : D. 161-2-1-9, LEGIARTI000023388636, 1° ; L. 161-17-2,
+    LEGIARTI000023030935 ; R. 351-2, LEGIARTI000024113000.'
+  carriere:
+    naissance: '1951-06-30'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-07
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.0
+    age_ouverture: 60.0
+    date_age_legal: 2011-06
+- id: grille_age_legal_loi_de_2010_b02
+  enonce: 'Né le 1951-07-01, pension prenant effet le 2011-12-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans et 4 mois, atteint le 2011-11-01 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : D. 161-2-1-9, LEGIARTI000023388636, 2°
+    ; L. 161-17-2, LEGIARTI000023030935 ; R. 351-2, LEGIARTI000024113000.'
+  carriere:
+    naissance: '1951-07-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-12
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.333333
+    age_ouverture: 60.333333
+    date_age_legal: 2011-11
+- id: grille_age_legal_loi_de_2010_b03
+  enonce: 'Né le 1951-07-15, pension prenant effet le 2011-12-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans et 4 mois, atteint le 2011-11-15 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : D. 161-2-1-9, LEGIARTI000023388636, 2°
+    ; L. 161-17-2, LEGIARTI000023030935 ; R. 351-2, LEGIARTI000024113000.'
+  carriere:
+    naissance: '1951-07-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-12
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.333333
+    age_ouverture: 60.333333
+    date_age_legal: 2011-11
+- id: grille_age_legal_loi_de_2010_b04
+  enonce: 'Né le 1951-12-31, pension prenant effet le 2011-12-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans et 4 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : D. 161-2-1-9, LEGIARTI000023388636, 2° ; L. 161-17-2, LEGIARTI000023030935
+    ; R. 351-2, LEGIARTI000024113000. Sa remarque : Quantième 31 inexistant dans le mois d''arrivée
+    : retenu le dernier jour du mois (2012-04-30), l''autre lecture étant le 1er du mois suivant
+    ; aucun texte fourni ne tranche'
+  carriere:
+    naissance: '1951-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-12
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.333333
+- id: grille_age_legal_loi_de_2010_b05
+  enonce: 'Né le 1952-01-01, pension prenant effet le 2011-12-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans et 8 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : D. 161-2-1-9, LEGIARTI000023388636, 3° ; L. 161-17-2, LEGIARTI000023030935
+    ; R. 351-2, LEGIARTI000024113000. Sa remarque : Sensible à l''hypothèse : la rédaction
+    du 23/12/2011 de L. 161-17-2 (LEGIARTI000025014605) et celle du 31/12/2011 de D. 161-2-1-9
+    (LEGIARTI000025089933) n''ont aucune disposition d''application dans les textes fournis
+    ; j''applique la rédaction en vigueur à la date d''effet. Si la nouvelle rédaction valait
+    pour toute la génération, l''âge serait 60 ans 9 mois'
+  carriere:
+    naissance: '1952-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-12
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.666667
+- id: grille_age_legal_loi_de_2010_b06
+  enonce: 'Né le 1952-12-31, pension prenant effet le 2011-08-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans et 8 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : D. 161-2-1-9, LEGIARTI000023388636, 3° ; L. 161-17-2, LEGIARTI000023030935
+    ; R. 351-2, LEGIARTI000024113000. Sa remarque : Sensible à l''hypothèse : la rédaction
+    du 23/12/2011 de L. 161-17-2 (LEGIARTI000025014605) et celle du 31/12/2011 de D. 161-2-1-9
+    (LEGIARTI000025089933) n''ont aucune disposition d''application dans les textes fournis
+    ; j''applique la rédaction en vigueur à la date d''effet. Si la nouvelle rédaction valait
+    pour toute la génération, l''âge serait 60 ans 9 mois'
+  carriere:
+    naissance: '1952-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-08
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.666667
+- id: grille_age_legal_loi_de_2010_b07
+  enonce: 'Né le 1953-06-15, pension prenant effet le 2011-10-01 : le texte fixe l''âge d''ouverture
+    du droit à 61 ans, que l''assuré n''a pas à cette date. Fondement relevé par la session
+    indépendante : D. 161-2-1-9, LEGIARTI000023388636, 4° ; L. 161-17-2, LEGIARTI000023030935
+    ; R. 351-2, LEGIARTI000024113000. Sa remarque : Sensible à l''hypothèse : la rédaction
+    du 23/12/2011 de L. 161-17-2 (LEGIARTI000025014605) et celle du 31/12/2011 de D. 161-2-1-9
+    (LEGIARTI000025089933) n''ont aucune disposition d''application dans les textes fournis
+    ; j''applique la rédaction en vigueur à la date d''effet. Si la nouvelle rédaction valait
+    pour toute la génération, l''âge serait 61 ans 2 mois'
+  carriere:
+    naissance: '1953-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-10
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 61.0
+- id: grille_age_legal_loi_de_2010_b08
+  enonce: 'Né le 1954-06-15, pension prenant effet le 2011-10-01 : le texte fixe l''âge d''ouverture
+    du droit à 61 ans et 4 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : D. 161-2-1-9, LEGIARTI000023388636, 5° ; L. 161-17-2, LEGIARTI000023030935
+    ; R. 351-2, LEGIARTI000024113000. Sa remarque : Sensible à l''hypothèse : la rédaction
+    du 23/12/2011 de L. 161-17-2 (LEGIARTI000025014605) et celle du 31/12/2011 de D. 161-2-1-9
+    (LEGIARTI000025089933) n''ont aucune disposition d''application dans les textes fournis
+    ; j''applique la rédaction en vigueur à la date d''effet. Si la nouvelle rédaction valait
+    pour toute la génération, l''âge serait 61 ans 7 mois'
+  carriere:
+    naissance: '1954-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-10
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 61.333333
+- id: grille_age_legal_loi_de_2010_b09
+  enonce: 'Né le 1955-01-01, pension prenant effet le 2011-12-01 : le texte fixe l''âge d''ouverture
+    du droit à 61 ans et 8 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : D. 161-2-1-9, LEGIARTI000023388636, 6° ; L. 161-17-2, LEGIARTI000023030935
+    ; R. 351-2, LEGIARTI000024113000. Sa remarque : Sensible à l''hypothèse : la rédaction
+    du 23/12/2011 de L. 161-17-2 (LEGIARTI000025014605) et celle du 31/12/2011 de D. 161-2-1-9
+    (LEGIARTI000025089933) n''ont aucune disposition d''application dans les textes fournis
+    ; j''applique la rédaction en vigueur à la date d''effet. Si la nouvelle rédaction valait
+    pour toute la génération, l''âge serait 62 ans 0 mois'
+  carriere:
+    naissance: '1955-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-12
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 61.666667
+- id: grille_age_legal_loi_de_2010_b10
+  enonce: 'Né le 1955-12-31, pension prenant effet le 2011-12-01 : le texte fixe l''âge d''ouverture
+    du droit à 61 ans et 8 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : D. 161-2-1-9, LEGIARTI000023388636, 6° ; L. 161-17-2, LEGIARTI000023030935
+    ; R. 351-2, LEGIARTI000024113000. Sa remarque : Sensible à l''hypothèse : la rédaction
+    du 23/12/2011 de L. 161-17-2 (LEGIARTI000025014605) et celle du 31/12/2011 de D. 161-2-1-9
+    (LEGIARTI000025089933) n''ont aucune disposition d''application dans les textes fournis
+    ; j''applique la rédaction en vigueur à la date d''effet. Si la nouvelle rédaction valait
+    pour toute la génération, l''âge serait 62 ans 0 mois'
+  carriere:
+    naissance: '1955-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-12
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 61.666667
+- id: grille_age_legal_loi_de_2010_b11
+  enonce: 'Né le 1956-01-01, pension prenant effet le 2011-12-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans, que l''assuré n''a pas à cette date. Fondement relevé par la session
+    indépendante : D. 161-2-1-9, LEGIARTI000023388636, 7° ; L. 161-17-2, LEGIARTI000023030935
+    ; R. 351-2, LEGIARTI000024113000.'
+  carriere:
+    naissance: '1956-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-12
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.0
+- id: grille_age_legal_loi_de_2010_b12
+  enonce: 'Né le 1949-02-03, pension prenant effet le 2011-09-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans, atteint le 2009-02-03 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : D. 161-2-1-9, LEGIARTI000023388636, 1° ; L. 161-17-2,
+    LEGIARTI000023030935 ; R. 351-2, LEGIARTI000024113000.'
+  carriere:
+    naissance: '1949-02-03'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-09
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.0
+    age_ouverture: 60.0
+    date_age_legal: 2009-02
+- id: grille_age_legal_loi_de_2010_s01
+  enonce: 'Né le 1951-07-01, pension prenant effet le 2011-07-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans et 4 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : proposé par la session indépendante dans son rapport, point
+    4.'
+  carriere:
+    naissance: '1951-07-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-07
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.333333
+- id: grille_age_legal_loi_de_2010_s02
+  enonce: 'Né le 1953-01-01, pension prenant effet le 2011-12-01 : le texte fixe l''âge d''ouverture
+    du droit à 61 ans, que l''assuré n''a pas à cette date. Fondement relevé par la session
+    indépendante : proposé par la session indépendante dans son rapport, point 4.'
+  carriere:
+    naissance: '1953-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-12
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 61.0
+- id: grille_age_legal_loi_de_2010_s03
+  enonce: 'Né le 1953-12-31, pension prenant effet le 2011-12-01 : le texte fixe l''âge d''ouverture
+    du droit à 61 ans, que l''assuré n''a pas à cette date. Fondement relevé par la session
+    indépendante : proposé par la session indépendante dans son rapport, point 4.'
+  carriere:
+    naissance: '1953-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-12
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 61.0
+- id: grille_age_legal_loi_de_2010_s04
+  enonce: 'Né le 1954-01-01, pension prenant effet le 2011-12-01 : le texte fixe l''âge d''ouverture
+    du droit à 61 ans et 4 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : proposé par la session indépendante dans son rapport, point
+    4.'
+  carriere:
+    naissance: '1954-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-12
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 61.333333
+- id: grille_age_legal_loi_de_2010_s05
+  enonce: 'Né le 1954-12-31, pension prenant effet le 2011-12-01 : le texte fixe l''âge d''ouverture
+    du droit à 61 ans et 4 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : proposé par la session indépendante dans son rapport, point
+    4.'
+  carriere:
+    naissance: '1954-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-12
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 61.333333

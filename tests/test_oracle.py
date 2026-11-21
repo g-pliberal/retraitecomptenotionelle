@@ -2056,6 +2056,8 @@ def _mesurer(exemple: dict, carriere, resultat, cle: str, droit=droit_et_fige):
         return resultat[cle]
     if cle == "age_ouverture":
         return _rendu(droit, "ouvrir.age_ouverture_droit", pont.MOTEUR, carriere)
+    if cle == "age_legal_a_l_effet":
+        return _rendu(droit, "ouvrir.age_legal_a_l_effet", pont.MOTEUR, carriere)
     if cle == "date_age_legal":
         atteint = carriere.date_naissance.plus_mois(_rendu(
             droit, "calendrier.en_mois",
@@ -2493,6 +2495,7 @@ def _cumul_exemple(exemple: dict, carriere, droit=droit_et_fige):
 TOLERANCES = {
     "taux_liquidation": {"abs": 1e-6},
     "age_ouverture": {},
+    "age_legal_a_l_effet": {},
     "majoration_enfants_sur_pensions": {"abs": 1e-9},
     "majorations_enfants_des_regimes": {"abs": 1e-9},
     "pension_base_sur_sam": {"abs": 1e-9},
@@ -2733,3 +2736,19 @@ def test_le_temoin_des_exemples_officiels_est_source():
         assert regle is not None, (exemple["id"], ecart["fiche"])
         assert regle["etat"] not in ("conforme", "transcrite"), (exemple["id"], regle["etat"])
         assert exemple["id"] in carte.exemples_de(regle), (exemple["id"], regle["id"])
+
+
+def test_l_age_legal_se_mesure_a_la_date_d_effet_de_la_pension():
+    """``age_legal_a_l_effet`` : l'âge que le droit oppose à une pension
+    prenant effet au mois de la liquidation, que l'assuré l'ait atteint ou non.
+    Né en 1952, il lit soixante ans et huit mois dans D. 161-2-1-9 du 30
+    décembre 2010 pour un effet au 1er décembre 2011, et soixante ans et neuf
+    mois dans la rédaction du 29 décembre 2011 pour un effet au 1er janvier
+    2012 ; ``age_ouverture``, l'âge de la personne, reste le second."""
+    def cas(liquidation, age):
+        return {"id": "essai", "attendu": {"age_legal_a_l_effet": age}, "carriere": {
+            "naissance": "1952-01-01", "sexe": "H", "affiliation": "salarie_prive_non_cadre",
+            "liquidation": liquidation, "age_debut": 22}}
+    assert not _confronter(cas("2011-12", 60 + 8 / 12))
+    assert not _confronter(cas("2012-01", 60 + 9 / 12))
+    assert _confronter(cas("2011-12", 60 + 9 / 12))

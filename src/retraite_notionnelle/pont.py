@@ -1335,6 +1335,7 @@ LECTURES_DU_DROIT = {
     "ouvrir.age_annulation_droit": float,
     "ouvrir.age_ouverture": float,
     "ouvrir.age_ouverture_droit": float,
+    "ouvrir.age_legal_a_l_effet": float,
     "ouvrir.duree_requise": tuple[int, Fiabilite | None],
     "periode.capital_seuil_points": float | None,
     "liquider.duree_proratisation": tuple[int, Fiabilite | None],

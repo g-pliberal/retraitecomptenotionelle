@@ -1,0 +1,438 @@
+schema_version: 1
+id: grille_age_legal_loi_de_2023
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: age_legal_par_generation
+  version: loi_de_2023
+source:
+  auteur: session Claude indépendante, lancée le 20 novembre 2026 sans accès au dépôt
+  reference: 'L. 161-17-2 de la loi du 14 avril 2023 et D. 161-2-1-9 du 3 juin 2023 : trois
+    mois par génération ; rédactions tirées de l''index LEGI à jour au 16 novembre 2026'
+  etabli_le: '2026-11-20'
+independance: Les valeurs ont été posées par une session qui n'a reçu que dix rédactions de
+  R. 351-2, L. 161-17-2 et D. 161-2-1-9 tirées de LEGI et la liste des cas, naissance et date
+  d'effet ; elle déclare n'avoir ouvert ni le dépôt ni le web. Les cas ont été choisis par
+  la session qui connaît le code, la session indépendante en a proposé onze de plus.
+seuils:
+- 'date d''effet : du 1er septembre 2023 au 1er août 2026, la rédaction du 30 décembre 2025
+  ne valant pas avant le 1er septembre 2026'
+- 'naissance : 1er septembre 1961, 1er janvier 1962, 1963, 1964, 1965, 1966, 1967, 1968, et
+  les générations d''avant 1955 que le décret reprend'
+cas:
+- id: grille_age_legal_loi_de_2023_d01
+  enonce: 'Né le 1961-08-31, pension prenant effet le 2023-09-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans, atteint le 2023-08-31 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 6° ; L. 161-17-2,
+    LEGIARTI000047452768.'
+  carriere:
+    naissance: '1961-08-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-09
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.0
+    age_ouverture: 62.0
+    date_age_legal: 2023-08
+- id: grille_age_legal_loi_de_2023_d02
+  enonce: 'Né le 1961-09-01, pension prenant effet le 2023-12-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 3 mois, atteint le 2023-12-01 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 7°
+    ; L. 161-17-2, LEGIARTI000047452768.'
+  carriere:
+    naissance: '1961-09-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-12
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.25
+    age_ouverture: 62.25
+    date_age_legal: 2023-12
+- id: grille_age_legal_loi_de_2023_d03
+  enonce: 'Né le 1961-12-31, pension prenant effet le 2024-04-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 3 mois, atteint le 2024-03-31 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 7°
+    ; L. 161-17-2, LEGIARTI000047452768.'
+  carriere:
+    naissance: '1961-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-04
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.25
+    age_ouverture: 62.25
+    date_age_legal: 2024-03
+- id: grille_age_legal_loi_de_2023_d04
+  enonce: 'Né le 1962-01-01, pension prenant effet le 2024-08-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 6 mois, atteint le 2024-07-01 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 8°
+    ; L. 161-17-2, LEGIARTI000047452768.'
+  carriere:
+    naissance: '1962-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-08
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.5
+    age_ouverture: 62.5
+    date_age_legal: 2024-07
+- id: grille_age_legal_loi_de_2023_d05
+  enonce: 'Né le 1962-08-31, pension prenant effet le 2025-03-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 6 mois, atteint le 2025-02-28 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 8°
+    ; L. 161-17-2, LEGIARTI000051289659. Sa remarque : Quantième 31 inexistant dans le mois
+    d''arrivée : retenu le dernier jour du mois (2025-02-28), l''autre lecture étant le 1er
+    du mois suivant ; aucun texte fourni ne tranche'
+  carriere:
+    naissance: '1962-08-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2025-03
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.5
+    age_ouverture: 62.5
+    date_age_legal: 2025-02
+- id: grille_age_legal_loi_de_2023_d06
+  enonce: 'Né le 1962-12-31, pension prenant effet le 2025-07-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 6 mois, atteint le 2025-06-30 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 8°
+    ; L. 161-17-2, LEGIARTI000051289659. Sa remarque : Quantième 31 inexistant dans le mois
+    d''arrivée : retenu le dernier jour du mois (2025-06-30), l''autre lecture étant le 1er
+    du mois suivant ; aucun texte fourni ne tranche'
+  carriere:
+    naissance: '1962-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2025-07
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.5
+    age_ouverture: 62.5
+    date_age_legal: 2025-06
+- id: grille_age_legal_loi_de_2023_d07
+  enonce: 'Né le 1963-01-01, pension prenant effet le 2025-11-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 9 mois, atteint le 2025-10-01 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 9°
+    ; L. 161-17-2, LEGIARTI000051289659.'
+  carriere:
+    naissance: '1963-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2025-11
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.75
+    age_ouverture: 62.75
+    date_age_legal: 2025-10
+- id: grille_age_legal_loi_de_2023_d08
+  enonce: 'Né le 1963-11-30, pension prenant effet le 2026-08-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 9 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 9° ; L. 161-17-2, LEGIARTI000051289659.'
+  carriere:
+    naissance: '1963-11-30'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-08
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.75
+- id: grille_age_legal_loi_de_2023_d09
+  enonce: 'Né le 1963-12-31, pension prenant effet le 2026-08-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 9 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 9° ; L. 161-17-2, LEGIARTI000051289659.
+    Sa remarque : Quantième 31 inexistant dans le mois d''arrivée : retenu le dernier jour
+    du mois (2026-09-30), l''autre lecture étant le 1er du mois suivant ; aucun texte fourni
+    ne tranche'
+  carriere:
+    naissance: '1963-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-08
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.75
+- id: grille_age_legal_loi_de_2023_d10
+  enonce: 'Né le 1964-01-01, pension prenant effet le 2026-08-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans, que l''assuré n''a pas à cette date. Fondement relevé par la session
+    indépendante : D. 161-2-1-9, LEGIARTI000047634502, 10° ; L. 161-17-2, LEGIARTI000051289659.
+    Sa remarque : La rédaction LEGIARTI000053280889, en vigueur depuis le 31/12/2025, ne s''applique
+    qu''aux pensions prenant effet à compter du 1er septembre 2026 : rédaction antérieure
+    maintenue par déduction, R. 351-2 postérieur au 01/09/2023 non fourni'
+  carriere:
+    naissance: '1964-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-08
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.0
+- id: grille_age_legal_loi_de_2023_d11
+  enonce: 'Né le 1964-03-20, pension prenant effet le 2026-01-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans, que l''assuré n''a pas à cette date. Fondement relevé par la session
+    indépendante : D. 161-2-1-9, LEGIARTI000047634502, 10° ; L. 161-17-2, LEGIARTI000051289659.
+    Sa remarque : La rédaction LEGIARTI000053280889, en vigueur depuis le 31/12/2025, ne s''applique
+    qu''aux pensions prenant effet à compter du 1er septembre 2026 : rédaction antérieure
+    maintenue par déduction, R. 351-2 postérieur au 01/09/2023 non fourni'
+  carriere:
+    naissance: '1964-03-20'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-01
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.0
+- id: grille_age_legal_loi_de_2023_d12
+  enonce: 'Né le 1964-12-31, pension prenant effet le 2025-03-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans, que l''assuré n''a pas à cette date. Fondement relevé par la session
+    indépendante : D. 161-2-1-9, LEGIARTI000047634502, 10° ; L. 161-17-2, LEGIARTI000051289659.'
+  carriere:
+    naissance: '1964-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2025-03
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.0
+- id: grille_age_legal_loi_de_2023_d13
+  enonce: 'Né le 1965-01-01, pension prenant effet le 2026-08-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans et 3 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 11° ; L. 161-17-2, LEGIARTI000051289659.
+    Sa remarque : La rédaction LEGIARTI000053280889, en vigueur depuis le 31/12/2025, ne s''applique
+    qu''aux pensions prenant effet à compter du 1er septembre 2026 : rédaction antérieure
+    maintenue par déduction, R. 351-2 postérieur au 01/09/2023 non fourni'
+  carriere:
+    naissance: '1965-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-08
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.25
+- id: grille_age_legal_loi_de_2023_d14
+  enonce: 'Né le 1965-03-31, pension prenant effet le 2025-06-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans et 3 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 11° ; L. 161-17-2, LEGIARTI000051289659.
+    Sa remarque : Quantième 31 inexistant dans le mois d''arrivée : retenu le dernier jour
+    du mois (2028-06-30), l''autre lecture étant le 1er du mois suivant ; aucun texte fourni
+    ne tranche'
+  carriere:
+    naissance: '1965-03-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2025-06
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.25
+- id: grille_age_legal_loi_de_2023_d15
+  enonce: 'Né le 1965-04-01, pension prenant effet le 2025-06-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans et 3 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 11° ; L. 161-17-2, LEGIARTI000051289659.'
+  carriere:
+    naissance: '1965-04-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2025-06
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.25
+- id: grille_age_legal_loi_de_2023_d16
+  enonce: 'Né le 1966-06-15, pension prenant effet le 2026-02-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans et 6 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 12° ; L. 161-17-2, LEGIARTI000051289659.
+    Sa remarque : La rédaction LEGIARTI000053280889, en vigueur depuis le 31/12/2025, ne s''applique
+    qu''aux pensions prenant effet à compter du 1er septembre 2026 : rédaction antérieure
+    maintenue par déduction, R. 351-2 postérieur au 01/09/2023 non fourni'
+  carriere:
+    naissance: '1966-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-02
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.5
+- id: grille_age_legal_loi_de_2023_d17
+  enonce: 'Né le 1967-06-15, pension prenant effet le 2024-01-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans et 9 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 13° ; L. 161-17-2, LEGIARTI000047452768.'
+  carriere:
+    naissance: '1967-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-01
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.75
+- id: grille_age_legal_loi_de_2023_d18
+  enonce: 'Né le 1967-12-31, pension prenant effet le 2026-08-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans et 9 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 13° ; L. 161-17-2, LEGIARTI000051289659.
+    Sa remarque : La rédaction LEGIARTI000053280889, en vigueur depuis le 31/12/2025, ne s''applique
+    qu''aux pensions prenant effet à compter du 1er septembre 2026 : rédaction antérieure
+    maintenue par déduction, R. 351-2 postérieur au 01/09/2023 non fourni | Quantième 31 inexistant
+    dans le mois d''arrivée : retenu le dernier jour du mois (2031-09-30), l''autre lecture
+    étant le 1er du mois suivant ; aucun texte fourni ne tranche'
+  carriere:
+    naissance: '1967-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-08
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.75
+- id: grille_age_legal_loi_de_2023_d19
+  enonce: 'Né le 1968-01-01, pension prenant effet le 2026-08-01 : le texte fixe l''âge d''ouverture
+    du droit à 64 ans, que l''assuré n''a pas à cette date. Fondement relevé par la session
+    indépendante : D. 161-2-1-9, LEGIARTI000047634502, 14° ; L. 161-17-2, LEGIARTI000051289659.
+    Sa remarque : La rédaction LEGIARTI000053280889, en vigueur depuis le 31/12/2025, ne s''applique
+    qu''aux pensions prenant effet à compter du 1er septembre 2026 : rédaction antérieure
+    maintenue par déduction, R. 351-2 postérieur au 01/09/2023 non fourni'
+  carriere:
+    naissance: '1968-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-08
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 64.0
+- id: grille_age_legal_loi_de_2023_d20
+  enonce: 'Né le 1975-10-10, pension prenant effet le 2023-09-01 : le texte fixe l''âge d''ouverture
+    du droit à 64 ans, que l''assuré n''a pas à cette date. Fondement relevé par la session
+    indépendante : D. 161-2-1-9, LEGIARTI000047634502, 14° ; L. 161-17-2, LEGIARTI000047452768.'
+  carriere:
+    naissance: '1975-10-10'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-09
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 64.0
+- id: grille_age_legal_loi_de_2023_d21
+  enonce: 'Né le 1951-07-15, pension prenant effet le 2023-10-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans et 4 mois, atteint le 2011-11-15 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 2°
+    ; L. 161-17-2, LEGIARTI000047452768.'
+  carriere:
+    naissance: '1951-07-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-10
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.333333
+    age_ouverture: 60.333333
+    date_age_legal: 2011-11
+- id: grille_age_legal_loi_de_2023_d22
+  enonce: 'Né le 1953-04-04, pension prenant effet le 2024-01-01 : le texte fixe l''âge d''ouverture
+    du droit à 61 ans et 2 mois, atteint le 2014-06-04 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 4°
+    ; L. 161-17-2, LEGIARTI000047452768.'
+  carriere:
+    naissance: '1953-04-04'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-01
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 61.166667
+    age_ouverture: 61.166667
+    date_age_legal: 2014-06
+- id: grille_age_legal_loi_de_2023_d23
+  enonce: 'Né le 1950-02-02, pension prenant effet le 2025-01-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans, atteint le 2010-02-02 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 1° ; L. 161-17-2,
+    LEGIARTI000047452768.'
+  carriere:
+    naissance: '1950-02-02'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2025-01
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.0
+    age_ouverture: 60.0
+    date_age_legal: 2010-02
+- id: grille_age_legal_loi_de_2023_d24
+  enonce: 'Né le 1955-01-01, pension prenant effet le 2024-06-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans, atteint le 2017-01-01 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : D. 161-2-1-9, LEGIARTI000047634502, 6° ; L. 161-17-2,
+    LEGIARTI000047452768.'
+  carriere:
+    naissance: '1955-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-06
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.0
+    age_ouverture: 62.0
+    date_age_legal: 2017-01
+- id: grille_age_legal_loi_de_2023_s07
+  enonce: 'Né le 1961-09-01, pension prenant effet le 2023-09-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 3 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : proposé par la session indépendante dans son rapport, point
+    4.'
+  carriere:
+    naissance: '1961-09-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-09
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.25
+- id: grille_age_legal_loi_de_2023_s08
+  enonce: 'Né le 1965-12-31, pension prenant effet le 2026-08-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans et 3 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : proposé par la session indépendante dans son rapport, point
+    4.'
+  carriere:
+    naissance: '1965-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-08
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.25
+- id: grille_age_legal_loi_de_2023_s09
+  enonce: 'Né le 1966-01-01, pension prenant effet le 2026-08-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans et 6 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : proposé par la session indépendante dans son rapport, point
+    4.'
+  carriere:
+    naissance: '1966-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-08
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.5
+- id: grille_age_legal_loi_de_2023_s10
+  enonce: 'Né le 1966-12-31, pension prenant effet le 2026-08-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans et 6 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : proposé par la session indépendante dans son rapport, point
+    4.'
+  carriere:
+    naissance: '1966-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-08
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.5
+- id: grille_age_legal_loi_de_2023_s11
+  enonce: 'Né le 1967-01-01, pension prenant effet le 2026-08-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans et 9 mois, que l''assuré n''a pas à cette date. Fondement relevé par
+    la session indépendante : proposé par la session indépendante dans son rapport, point
+    4.'
+  carriere:
+    naissance: '1967-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-08
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.75

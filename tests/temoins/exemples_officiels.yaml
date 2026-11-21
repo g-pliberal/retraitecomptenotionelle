@@ -37,6 +37,9 @@
 #   liquidation_ouverte — lus dans le résultat du scénario 1 ;
 #   age_ouverture — l'âge légal opposable, par `age_ouverture_droit` ;
 #   date_age_legal — le mois où cet âge est atteint (année-mois) ;
+#   age_legal_a_l_effet — l'âge légal que le droit oppose à une pension
+#     prenant effet au mois de la liquidation, que l'assuré l'ait atteint ou
+#     non : celui de la rédaction qui vaut à cette date d'effet ;
 #   non_ouverte_un_trimestre_plus_tot — la même carrière liquidée trois mois
 #     plus tôt doit être refusée (`motif_ouverture: non_ouverte`) ;
 #   pension_base_sur_sam — pension du régime général rapportée au salaire

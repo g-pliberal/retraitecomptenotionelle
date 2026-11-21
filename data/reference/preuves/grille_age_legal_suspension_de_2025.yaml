@@ -1,0 +1,494 @@
+schema_version: 1
+id: grille_age_legal_suspension_de_2025
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: age_legal_par_generation
+  version: suspension_de_2025
+source:
+  auteur: session Claude indépendante, lancée le 20 novembre 2026 sans accès au dépôt
+  reference: L. 161-17-2 de la loi du 30 décembre 2025, qui l'emporte sur D. 161-2-1-9 resté
+    à sa rédaction de 2023 ; rédactions tirées de l'index LEGI à jour au 16 novembre 2026
+  etabli_le: '2026-11-20'
+independance: Les valeurs ont été posées par une session qui n'a reçu que dix rédactions de
+  R. 351-2, L. 161-17-2 et D. 161-2-1-9 tirées de LEGI et la liste des cas, naissance et date
+  d'effet ; elle déclare n'avoir ouvert ni le dépôt ni le web. Les cas ont été choisis par
+  la session qui connaît le code, la session indépendante en a proposé onze de plus.
+seuils:
+- 'date d''effet : depuis le 1er septembre 2026'
+- 'naissance : 1er septembre 1961, 1er janvier 1962, 1er janvier 1963, 1er avril 1965, 1er
+  janvier 1966, 1967, 1968, 1969, et les nés avant le 1er septembre 1961 renvoyés à la rédaction
+  antérieure'
+cas:
+- id: grille_age_legal_suspension_de_2025_e01
+  enonce: 'Né le 1961-08-31, pension prenant effet le 2026-09-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans, atteint le 2023-08-31 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, dernier alinéa
+    (renvoi à la rédaction antérieure LEGIARTI000051289659) ; D. 161-2-1-9, LEGIARTI000047634502,
+    6°.'
+  carriere:
+    naissance: '1961-08-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.0
+    age_ouverture: 62.0
+    date_age_legal: 2023-08
+- id: grille_age_legal_suspension_de_2025_e02
+  enonce: 'Né le 1961-09-01, pension prenant effet le 2026-09-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 3 mois, atteint le 2023-12-01 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 1°.'
+  carriere:
+    naissance: '1961-09-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.25
+    age_ouverture: 62.25
+    date_age_legal: 2023-12
+- id: grille_age_legal_suspension_de_2025_e03
+  enonce: 'Né le 1961-12-31, pension prenant effet le 2027-01-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 3 mois, atteint le 2024-03-31 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 1°.'
+  carriere:
+    naissance: '1961-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2027-01
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.25
+    age_ouverture: 62.25
+    date_age_legal: 2024-03
+- id: grille_age_legal_suspension_de_2025_e04
+  enonce: 'Né le 1962-01-01, pension prenant effet le 2026-09-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 6 mois, atteint le 2024-07-01 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 2°.'
+  carriere:
+    naissance: '1962-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.5
+    age_ouverture: 62.5
+    date_age_legal: 2024-07
+- id: grille_age_legal_suspension_de_2025_e05
+  enonce: 'Né le 1962-12-31, pension prenant effet le 2026-10-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 6 mois, atteint le 2025-06-30 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 2°.
+    Sa remarque : Quantième 31 inexistant dans le mois d''arrivée : retenu le dernier jour
+    du mois (2025-06-30), l''autre lecture étant le 1er du mois suivant ; aucun texte fourni
+    ne tranche'
+  carriere:
+    naissance: '1962-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-10
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.5
+    age_ouverture: 62.5
+    date_age_legal: 2025-06
+- id: grille_age_legal_suspension_de_2025_e06
+  enonce: 'Né le 1963-01-01, pension prenant effet le 2026-09-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 9 mois, atteint le 2025-10-01 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 3°.'
+  carriere:
+    naissance: '1963-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.75
+    age_ouverture: 62.75
+    date_age_legal: 2025-10
+- id: grille_age_legal_suspension_de_2025_e07
+  enonce: 'Né le 1963-12-31, pension prenant effet le 2026-10-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 9 mois, atteint le 2026-09-30 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 3°.
+    Sa remarque : Quantième 31 inexistant dans le mois d''arrivée : retenu le dernier jour
+    du mois (2026-09-30), l''autre lecture étant le 1er du mois suivant ; aucun texte fourni
+    ne tranche'
+  carriere:
+    naissance: '1963-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-10
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.75
+    age_ouverture: 62.75
+    date_age_legal: 2026-09
+- id: grille_age_legal_suspension_de_2025_e08
+  enonce: 'Né le 1964-01-01, pension prenant effet le 2026-11-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 9 mois, atteint le 2026-10-01 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 3°.
+    Sa remarque : D. 161-2-1-9 (LEGIARTI000047634502, 10°), toujours en vigueur, dit 63 ans
+    0 mois : la loi, supérieure et postérieure, l''emporte'
+  carriere:
+    naissance: '1964-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-11
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.75
+    age_ouverture: 62.75
+    date_age_legal: 2026-10
+- id: grille_age_legal_suspension_de_2025_e09
+  enonce: 'Né le 1964-05-16, pension prenant effet le 2027-03-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 9 mois, atteint le 2027-02-16 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 3°.
+    Sa remarque : D. 161-2-1-9 (LEGIARTI000047634502, 10°), toujours en vigueur, dit 63 ans
+    0 mois : la loi, supérieure et postérieure, l''emporte'
+  carriere:
+    naissance: '1964-05-16'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2027-03
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.75
+    age_ouverture: 62.75
+    date_age_legal: 2027-02
+- id: grille_age_legal_suspension_de_2025_e10
+  enonce: 'Né le 1964-12-31, pension prenant effet le 2027-10-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 9 mois, atteint le 2027-09-30 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 3°.
+    Sa remarque : D. 161-2-1-9 (LEGIARTI000047634502, 10°), toujours en vigueur, dit 63 ans
+    0 mois : la loi, supérieure et postérieure, l''emporte | Quantième 31 inexistant dans
+    le mois d''arrivée : retenu le dernier jour du mois (2027-09-30), l''autre lecture étant
+    le 1er du mois suivant ; aucun texte fourni ne tranche'
+  carriere:
+    naissance: '1964-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2027-10
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.75
+    age_ouverture: 62.75
+    date_age_legal: 2027-09
+- id: grille_age_legal_suspension_de_2025_e11
+  enonce: 'Né le 1965-02-24, pension prenant effet le 2027-12-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 9 mois, atteint le 2027-11-24 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 3°.
+    Sa remarque : D. 161-2-1-9 (LEGIARTI000047634502, 11°), toujours en vigueur, dit 63 ans
+    3 mois : la loi, supérieure et postérieure, l''emporte'
+  carriere:
+    naissance: '1965-02-24'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2027-12
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.75
+    age_ouverture: 62.75
+    date_age_legal: 2027-11
+- id: grille_age_legal_suspension_de_2025_e12
+  enonce: 'Né le 1965-03-31, pension prenant effet le 2028-01-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans et 9 mois, atteint le 2027-12-31 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 3°.
+    Sa remarque : D. 161-2-1-9 (LEGIARTI000047634502, 11°), toujours en vigueur, dit 63 ans
+    3 mois : la loi, supérieure et postérieure, l''emporte'
+  carriere:
+    naissance: '1965-03-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2028-01
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.75
+    age_ouverture: 62.75
+    date_age_legal: 2027-12
+- id: grille_age_legal_suspension_de_2025_e13
+  enonce: 'Né le 1965-04-01, pension prenant effet le 2028-05-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans, atteint le 2028-04-01 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 4°. Sa remarque
+    : D. 161-2-1-9 (LEGIARTI000047634502, 11°), toujours en vigueur, dit 63 ans 3 mois : la
+    loi, supérieure et postérieure, l''emporte'
+  carriere:
+    naissance: '1965-04-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2028-05
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.0
+    age_ouverture: 63.0
+    date_age_legal: 2028-04
+- id: grille_age_legal_suspension_de_2025_e14
+  enonce: 'Né le 1965-07-08, pension prenant effet le 2028-08-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans, atteint le 2028-07-08 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 4°. Sa remarque
+    : D. 161-2-1-9 (LEGIARTI000047634502, 11°), toujours en vigueur, dit 63 ans 3 mois : la
+    loi, supérieure et postérieure, l''emporte'
+  carriere:
+    naissance: '1965-07-08'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2028-08
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.0
+    age_ouverture: 63.0
+    date_age_legal: 2028-07
+- id: grille_age_legal_suspension_de_2025_e15
+  enonce: 'Né le 1965-12-31, pension prenant effet le 2029-01-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans, atteint le 2028-12-31 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 4°. Sa remarque
+    : D. 161-2-1-9 (LEGIARTI000047634502, 11°), toujours en vigueur, dit 63 ans 3 mois : la
+    loi, supérieure et postérieure, l''emporte'
+  carriere:
+    naissance: '1965-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2029-01
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.0
+    age_ouverture: 63.0
+    date_age_legal: 2028-12
+- id: grille_age_legal_suspension_de_2025_e16
+  enonce: 'Né le 1966-01-01, pension prenant effet le 2029-05-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans et 3 mois, atteint le 2029-04-01 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 5°.
+    Sa remarque : D. 161-2-1-9 (LEGIARTI000047634502, 12°), toujours en vigueur, dit 63 ans
+    6 mois : la loi, supérieure et postérieure, l''emporte'
+  carriere:
+    naissance: '1966-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2029-05
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.25
+    age_ouverture: 63.25
+    date_age_legal: 2029-04
+- id: grille_age_legal_suspension_de_2025_e17
+  enonce: 'Né le 1966-12-31, pension prenant effet le 2030-04-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans et 3 mois, atteint le 2030-03-31 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 5°.
+    Sa remarque : D. 161-2-1-9 (LEGIARTI000047634502, 12°), toujours en vigueur, dit 63 ans
+    6 mois : la loi, supérieure et postérieure, l''emporte'
+  carriere:
+    naissance: '1966-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2030-04
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.25
+    age_ouverture: 63.25
+    date_age_legal: 2030-03
+- id: grille_age_legal_suspension_de_2025_e18
+  enonce: 'Né le 1967-01-01, pension prenant effet le 2030-08-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans et 6 mois, atteint le 2030-07-01 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 6°.
+    Sa remarque : D. 161-2-1-9 (LEGIARTI000047634502, 13°), toujours en vigueur, dit 63 ans
+    9 mois : la loi, supérieure et postérieure, l''emporte'
+  carriere:
+    naissance: '1967-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2030-08
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.5
+    age_ouverture: 63.5
+    date_age_legal: 2030-07
+- id: grille_age_legal_suspension_de_2025_e19
+  enonce: 'Né le 1967-12-31, pension prenant effet le 2031-07-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans et 6 mois, atteint le 2031-06-30 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 6°.
+    Sa remarque : D. 161-2-1-9 (LEGIARTI000047634502, 13°), toujours en vigueur, dit 63 ans
+    9 mois : la loi, supérieure et postérieure, l''emporte | Quantième 31 inexistant dans
+    le mois d''arrivée : retenu le dernier jour du mois (2031-06-30), l''autre lecture étant
+    le 1er du mois suivant ; aucun texte fourni ne tranche'
+  carriere:
+    naissance: '1967-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2031-07
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.5
+    age_ouverture: 63.5
+    date_age_legal: 2031-06
+- id: grille_age_legal_suspension_de_2025_e20
+  enonce: 'Né le 1968-01-01, pension prenant effet le 2031-11-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans et 9 mois, atteint le 2031-10-01 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 7°.
+    Sa remarque : D. 161-2-1-9 (LEGIARTI000047634502, 14°), toujours en vigueur, dit 64 ans
+    0 mois : la loi, supérieure et postérieure, l''emporte'
+  carriere:
+    naissance: '1968-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2031-11
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.75
+    age_ouverture: 63.75
+    date_age_legal: 2031-10
+- id: grille_age_legal_suspension_de_2025_e21
+  enonce: 'Né le 1968-12-31, pension prenant effet le 2032-10-01 : le texte fixe l''âge d''ouverture
+    du droit à 63 ans et 9 mois, atteint le 2032-09-30 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, 7°.
+    Sa remarque : D. 161-2-1-9 (LEGIARTI000047634502, 14°), toujours en vigueur, dit 64 ans
+    0 mois : la loi, supérieure et postérieure, l''emporte | Quantième 31 inexistant dans
+    le mois d''arrivée : retenu le dernier jour du mois (2032-09-30), l''autre lecture étant
+    le 1er du mois suivant ; aucun texte fourni ne tranche'
+  carriere:
+    naissance: '1968-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2032-10
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 63.75
+    age_ouverture: 63.75
+    date_age_legal: 2032-09
+- id: grille_age_legal_suspension_de_2025_e22
+  enonce: 'Né le 1969-01-01, pension prenant effet le 2033-02-01 : le texte fixe l''âge d''ouverture
+    du droit à 64 ans, atteint le 2033-01-01 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, al. 1.'
+  carriere:
+    naissance: '1969-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2033-02
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 64.0
+    age_ouverture: 64.0
+    date_age_legal: 2033-01
+- id: grille_age_legal_suspension_de_2025_e23
+  enonce: 'Né le 1969-05-31, pension prenant effet le 2033-06-01 : le texte fixe l''âge d''ouverture
+    du droit à 64 ans, atteint le 2033-05-31 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, al. 1.'
+  carriere:
+    naissance: '1969-05-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2033-06
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 64.0
+    age_ouverture: 64.0
+    date_age_legal: 2033-05
+- id: grille_age_legal_suspension_de_2025_e24
+  enonce: 'Né le 1980-02-29, pension prenant effet le 2044-03-01 : le texte fixe l''âge d''ouverture
+    du droit à 64 ans, atteint le 2044-02-29 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, al. 1.'
+  carriere:
+    naissance: '1980-02-29'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2044-03
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 64.0
+    age_ouverture: 64.0
+    date_age_legal: 2044-02
+- id: grille_age_legal_suspension_de_2025_e25
+  enonce: 'Né le 1990-11-11, pension prenant effet le 2055-01-01 : le texte fixe l''âge d''ouverture
+    du droit à 64 ans, atteint le 2054-11-11 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, al. 1.'
+  carriere:
+    naissance: '1990-11-11'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2055-01
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 64.0
+    age_ouverture: 64.0
+    date_age_legal: 2054-11
+- id: grille_age_legal_suspension_de_2025_e26
+  enonce: 'Né le 1954-05-05, pension prenant effet le 2026-09-01 : le texte fixe l''âge d''ouverture
+    du droit à 61 ans et 7 mois, atteint le 2015-12-05 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, dernier
+    alinéa (renvoi à la rédaction antérieure LEGIARTI000051289659) ; D. 161-2-1-9, LEGIARTI000047634502,
+    5°.'
+  carriere:
+    naissance: '1954-05-05'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 61.583333
+    age_ouverture: 61.583333
+    date_age_legal: 2015-12
+- id: grille_age_legal_suspension_de_2025_e27
+  enonce: 'Né le 1951-07-01, pension prenant effet le 2026-09-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans et 4 mois, atteint le 2011-11-01 : le droit est ouvert à cette date.
+    Fondement relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, dernier
+    alinéa (renvoi à la rédaction antérieure LEGIARTI000051289659) ; D. 161-2-1-9, LEGIARTI000047634502,
+    2°.'
+  carriere:
+    naissance: '1951-07-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.333333
+    age_ouverture: 60.333333
+    date_age_legal: 2011-11
+- id: grille_age_legal_suspension_de_2025_e28
+  enonce: 'Né le 1950-06-06, pension prenant effet le 2027-01-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans, atteint le 2010-06-06 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, dernier alinéa
+    (renvoi à la rédaction antérieure LEGIARTI000051289659) ; D. 161-2-1-9, LEGIARTI000047634502,
+    1°.'
+  carriere:
+    naissance: '1950-06-06'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2027-01
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.0
+    age_ouverture: 60.0
+    date_age_legal: 2010-06
+- id: grille_age_legal_suspension_de_2025_e29
+  enonce: 'Né le 1955-03-03, pension prenant effet le 2026-12-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans, atteint le 2017-03-03 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, dernier alinéa
+    (renvoi à la rédaction antérieure LEGIARTI000051289659) ; D. 161-2-1-9, LEGIARTI000047634502,
+    6°.'
+  carriere:
+    naissance: '1955-03-03'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-12
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.0
+    age_ouverture: 62.0
+    date_age_legal: 2017-03
+- id: grille_age_legal_suspension_de_2025_e30
+  enonce: 'Né le 1960-01-01, pension prenant effet le 2026-09-01 : le texte fixe l''âge d''ouverture
+    du droit à 62 ans, atteint le 2022-01-01 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : L. 161-17-2, LEGIARTI000053280889, dernier alinéa
+    (renvoi à la rédaction antérieure LEGIARTI000051289659) ; D. 161-2-1-9, LEGIARTI000047634502,
+    6°.'
+  carriere:
+    naissance: '1960-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 62.0
+    age_ouverture: 62.0
+    date_age_legal: 2022-01

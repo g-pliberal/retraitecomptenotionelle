@@ -1,0 +1,123 @@
+schema_version: 1
+id: grille_age_legal_soixante_ans
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: age_legal_par_generation
+  version: soixante_ans
+source:
+  auteur: session Claude indépendante, lancée le 20 novembre 2026 sans accès au dépôt
+  reference: 'R. 351-2 du 21 décembre 1985 : soixante ans, quelle que soit la génération,
+    jusqu''aux pensions prenant effet le 1er juin 2011 ; rédactions tirées de l''index LEGI
+    à jour au 16 novembre 2026'
+  etabli_le: '2026-11-20'
+independance: Les valeurs ont été posées par une session qui n'a reçu que dix rédactions de
+  R. 351-2, L. 161-17-2 et D. 161-2-1-9 tirées de LEGI et la liste des cas, naissance et date
+  d'effet ; elle déclare n'avoir ouvert ni le dépôt ni le web. Les cas ont été choisis par
+  la session qui connaît le code, la session indépendante en a proposé onze de plus.
+seuils:
+- 'date d''effet : le 1er juillet 2011, première pension de L. 161-17-2'
+- 'aucun seuil de génération : soixante ans pour tous, y compris les nés après le 1er juillet
+  1951'
+cas:
+- id: grille_age_legal_soixante_ans_a01
+  enonce: 'Né le 1926-01-15, pension prenant effet le 1986-02-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans, atteint le 1986-01-15 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : R. 351-2, LEGIARTI000006749340, phrase 1 (L. 161-17-2
+    inapplicable avant le 1er juillet 2011 : loi 2010-1330 art. 118 II).'
+  carriere:
+    naissance: '1926-01-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1986-02
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.0
+    age_ouverture: 60.0
+    date_age_legal: 1986-01
+- id: grille_age_legal_soixante_ans_a02
+  enonce: 'Né le 1930-03-10, pension prenant effet le 1990-04-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans, atteint le 1990-03-10 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : R. 351-2, LEGIARTI000006749340, phrase 1 (L. 161-17-2
+    inapplicable avant le 1er juillet 2011 : loi 2010-1330 art. 118 II).'
+  carriere:
+    naissance: '1930-03-10'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1990-04
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.0
+    age_ouverture: 60.0
+    date_age_legal: 1990-03
+- id: grille_age_legal_soixante_ans_a03
+  enonce: 'Né le 1940-07-31, pension prenant effet le 2000-08-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans, atteint le 2000-07-31 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : R. 351-2, LEGIARTI000006749340, phrase 1 (L. 161-17-2
+    inapplicable avant le 1er juillet 2011 : loi 2010-1330 art. 118 II).'
+  carriere:
+    naissance: '1940-07-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2000-08
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.0
+    age_ouverture: 60.0
+    date_age_legal: 2000-07
+- id: grille_age_legal_soixante_ans_a04
+  enonce: 'Né le 1950-12-05, pension prenant effet le 2011-06-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans, atteint le 2010-12-05 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : R. 351-2, LEGIARTI000006749340, phrase 1 (L. 161-17-2
+    inapplicable avant le 1er juillet 2011 : loi 2010-1330 art. 118 II).'
+  carriere:
+    naissance: '1950-12-05'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-06
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.0
+    age_ouverture: 60.0
+    date_age_legal: 2010-12
+- id: grille_age_legal_soixante_ans_a05
+  enonce: 'Né le 1951-01-20, pension prenant effet le 2011-02-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans, atteint le 2011-01-20 : le droit est ouvert à cette date. Fondement
+    relevé par la session indépendante : R. 351-2, LEGIARTI000006749340, phrase 1 (L. 161-17-2
+    inapplicable avant le 1er juillet 2011 : loi 2010-1330 art. 118 II).'
+  carriere:
+    naissance: '1951-01-20'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-02
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.0
+    age_ouverture: 60.0
+    date_age_legal: 2011-01
+- id: grille_age_legal_soixante_ans_a06
+  enonce: 'Né le 1953-05-05, pension prenant effet le 2011-06-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans, que l''assuré n''a pas à cette date. Fondement relevé par la session
+    indépendante : R. 351-2, LEGIARTI000006749340, phrase 1 (L. 161-17-2 inapplicable avant
+    le 1er juillet 2011 : loi 2010-1330 art. 118 II).'
+  carriere:
+    naissance: '1953-05-05'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-06
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.0
+- id: grille_age_legal_soixante_ans_a07
+  enonce: 'Né le 1951-08-10, pension prenant effet le 2011-06-01 : le texte fixe l''âge d''ouverture
+    du droit à 60 ans, que l''assuré n''a pas à cette date. Fondement relevé par la session
+    indépendante : R. 351-2, LEGIARTI000006749340, phrase 1 (L. 161-17-2 inapplicable avant
+    le 1er juillet 2011 : loi 2010-1330 art. 118 II).'
+  carriere:
+    naissance: '1951-08-10'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-06
+    age_debut: 22
+  attendu:
+    age_legal_a_l_effet: 60.0

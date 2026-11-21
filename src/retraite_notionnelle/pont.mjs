@@ -1044,6 +1044,10 @@ const FONCTIONS_DU_DROIT = {
   "chronologie.valeur": (presomption) => valeurPresumee(presomption, contexte.paquet.presomptions),
   "ouvrir.age_ouverture": ouvrir.ageOuverture,
   "ouvrir.age_ouverture_droit": ouvrir.ageOuvertureDroit,
+  // L'âge légal que la version de la date d'effet oppose à la pension, que
+  // l'assuré l'ait atteint ou non (fiche age_legal_par_generation).
+  "ouvrir.age_legal_a_l_effet": (moteur, carriere) => moteur.agesOuverture
+    .aLEffet(commun.dateDEffet(carriere)).age(carriere.generation)[0],
   "ouvrir.duree_requise": ouvrir.dureeRequise,
   "periode.capital_seuil_points": (periode) => periode.capital_seuil_points ?? null,
   "liquider.duree_proratisation": liquider.dureeProratisation,
