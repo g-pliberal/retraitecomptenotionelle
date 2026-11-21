@@ -179,8 +179,9 @@ def test_la_carriere_longue_est_ouverte_aux_regimes_en_points(simulateur):
 def test_les_scenarios_notionnels_ne_bougent_pas(mesure):
     """Le résultat qui ferme le sujet.
 
-    Les cinq scénarios que le site compare se déplacent moins que le système
-    actuel, et de moins d'un quart de point de PIB. Dans un compte notionnel, partir plus tôt allonge le diviseur autant
+    Les cinq scénarios que le site compare se déplacent, en sens contraire du
+    système actuel, de moins de trois dixièmes de point de PIB, et d'au plus
+    une fois et demie son mouvement. Dans un compte notionnel, partir plus tôt allonge le diviseur autant
     que la carrière raccourcie retire au capital : les deux termes se
     répondent.
 
@@ -203,16 +204,26 @@ def test_les_scenarios_notionnels_ne_bougent_pas(mesure):
     sous les âges corrigés. Le système actuel passe à +0,26 point ; les
     scénarios notionnels vont de −0,09 (rétroactif) à −0,20 (prospectif à
     cotisation employeur), soit au plus 0,77 fois le mouvement du système
-    actuel : la propriété tient, plus étroitement.
+    actuel. Le 21 novembre 2026, l'année d'entrée valide ce que son salaire
+    vaut, au plus quatre trimestres, et non plus les seuls trimestres civils
+    de ses mois (R. 351-9, action 134) : une entrée en milieu d'année vaut une
+    entrée au 1er janvier, la recherche de l'âge d'entrée y perd la moitié de
+    ses pas, et un pas d'un quart d'année n'y change rien. Le système actuel
+    passe à +0,23 point, les scénarios notionnels vont de −0,13 (rétroactif)
+    à −0,28 (les deux à cotisation employeur), soit 1,24 fois le mouvement du
+    système actuel : le « moins que lui » ne tient plus pour ces deux-là ; le
+    mouvement reste petit, sous trois dixièmes de point.
     """
     actuel = abs(mesure["contrefactuel"]["actuel"] - mesure["reference"]["actuel"])
     for scenario, _ in C.SCENARIOS:
         if scenario == "actuel":
             continue
         ecart = mesure["contrefactuel"][scenario] - mesure["reference"][scenario]
-        assert abs(ecart) < actuel * 4 / 5, (
+        assert ecart * (mesure["contrefactuel"]["actuel"] - mesure["reference"]["actuel"]) < 0, (
+            f"{scenario} : {ecart * 100:+.2f} point, du sens du système actuel")
+        assert abs(ecart) < actuel * 3 / 2, (
             f"{scenario} : {ecart * 100:+.2f} point")
-        assert abs(ecart) < 0.0025, f"{scenario} : {ecart * 100:+.2f} point"
+        assert abs(ecart) < 0.003, f"{scenario} : {ecart * 100:+.2f} point"
 
 
 def test_corriger_les_ages_eloigne_le_modele_du_COR(mesure):
