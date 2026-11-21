@@ -327,6 +327,16 @@ export class PensionServie {
       const publiee = derniereValeurPubliee(this.actuel, bareme);
       if (auDepart !== null && auDepart[0] > 0 && publiee !== null) {
         const anneeFin = Number(jusqua.slice(0, 4));
+        if (Number(depart.slice(0, 4)) > publiee) {
+          // Départ après la dernière valeur publiée : au-delà, la pension ne
+          // suit que la revalorisation générale publiée, comme au bout de la
+          // règle ci-dessous ; jamais une valeur du point antérieure au départ.
+          const [suite, fiabiliteSuite] = this.revalorisations.generale(
+            depart, jusqua, false, mensuel2019,
+          );
+          return [suite, REGLE_POINT,
+            Math.min(auDepart[1], fiabiliteSuite, Fiabilite.MOYENNE)];
+        }
         const ancre = Math.min(anneeFin, publiee);
         // La valeur du jour aux deux bouts : à la date d'effet et à l'échéance.
         const aLAncre = liquider.valeurDuPoint(

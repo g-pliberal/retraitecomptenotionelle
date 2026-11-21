@@ -21009,7 +21009,7 @@
         "motif": "avant_l_age_legal",
         "par_regime": [
          {
-          "montant": 273.2951518574738,
+          "montant": 282.94417881274177,
           "motif": "avant_l_age_legal",
           "plafond": null,
           "reduction": 153.32552838889853,
@@ -21018,7 +21018,7 @@
           "statut": "reduite"
          },
          {
-          "montant": 330.5214181444575,
+          "montant": 342.1908899638203,
           "motif": "avant_l_age_legal",
           "plafond": null,
           "reduction": 185.43091868411844,
@@ -21036,7 +21036,7 @@
           "statut": "reduite"
          }
         ],
-        "pensions": 2517.5437370313903,
+        "pensions": 2538.862235806021,
         "plafond": null,
         "reduction": 2252.483614102476,
         "regle": "imputee_apres_les_bases_2027",
@@ -21050,16 +21050,16 @@
         "motif": "avant_l_age_legal",
         "par_regime": [
          {
-          "montant": 278.0778170149796,
+          "montant": 287.8957019419648,
           "motif": "avant_l_age_legal",
           "plafond": null,
-          "reduction": 163.14524667832197,
+          "reduction": 163.14524667832194,
           "regime": "rci",
           "regle": "imputee_apres_les_bases_2027",
           "statut": "reduite"
          },
          {
-          "montant": 336.3055429619855,
+          "montant": 348.17923053818726,
           "motif": "avant_l_age_legal",
           "plafond": null,
           "reduction": 197.30682351719037,
@@ -21077,7 +21077,7 @@
           "statut": "reduite"
          }
         ],
-        "pensions": 2561.60075242944,
+        "pensions": 2583.292324932627,
         "plafond": null,
         "reduction": 2307.669462647987,
         "regle": "imputee_apres_les_bases_2027",
@@ -21091,19 +21091,19 @@
         "motif": "avant_l_age_legal",
         "par_regime": [
          {
-          "montant": 282.94417881274177,
+          "montant": 292.9338767259491,
           "motif": "avant_l_age_legal",
           "plafond": null,
-          "reduction": 173.3116548156042,
+          "reduction": 173.31165481560416,
           "regime": "rci",
           "regle": "imputee_apres_les_bases_2027",
           "statut": "reduite"
          },
          {
-          "montant": 342.1908899638203,
+          "montant": 354.27236707260545,
           "motif": "avant_l_age_legal",
           "plafond": null,
-          "reduction": 209.60201284686522,
+          "reduction": 209.60201284686516,
           "regime": "rco_artisans",
           "regle": "imputee_apres_les_bases_2027",
           "statut": "reduite"
@@ -21118,7 +21118,7 @@
           "statut": "reduite"
          }
         ],
-        "pensions": 2606.428765596955,
+        "pensions": 2628.4999406189477,
         "plafond": null,
         "reduction": 2364.2073644828624,
         "regle": "imputee_apres_les_bases_2027",
@@ -21132,7 +21132,7 @@
         "motif": "seuil_non_publie",
         "par_regime": [
          {
-          "montant": 282.94417881274177,
+          "montant": 292.9338767259491,
           "motif": "seuil_non_publie",
           "plafond": null,
           "reduction": 0.0,
@@ -21141,7 +21141,7 @@
           "statut": "seuil_non_publie"
          },
          {
-          "montant": 342.1908899638203,
+          "montant": 354.27236707260545,
           "motif": "seuil_non_publie",
           "plafond": null,
           "reduction": 0.0,
@@ -21159,7 +21159,7 @@
           "statut": "seuil_non_publie"
          }
         ],
-        "pensions": 2606.428765596955,
+        "pensions": 2628.4999406189477,
         "plafond": null,
         "reduction": 0.0,
         "regle": "imputee_apres_les_bases_2027",
@@ -21173,7 +21173,7 @@
         "motif": "seuil_non_publie",
         "par_regime": [
          {
-          "montant": 287.8957019419647,
+          "montant": 298.0602195686533,
           "motif": "seuil_non_publie",
           "plafond": null,
           "reduction": 0.0,
@@ -21182,7 +21182,7 @@
           "statut": "seuil_non_publie"
          },
          {
-          "montant": 348.17923053818714,
+          "montant": 360.47213349637605,
           "motif": "seuil_non_publie",
           "plafond": null,
           "reduction": 0.0,
@@ -21200,7 +21200,7 @@
           "statut": "seuil_non_publie"
          }
         ],
-        "pensions": 2652.0412689949017,
+        "pensions": 2674.4986895797792,
         "plafond": null,
         "reduction": 0.0,
         "regle": "imputee_apres_les_bases_2027",
@@ -21610,7 +21610,7 @@
       "fin": "2032-02-01",
       "groupe": "salaries",
       "integral_depuis": null,
-      "non_servi": 87880.80467383083,
+      "non_servi": 88294.6842266111,
       "tranches": [
        {
         "debut": "2029-02-01",
@@ -21619,19 +21619,19 @@
         "motif": "depassement",
         "par_regime": [
          {
-          "montant": 162.60220226113108,
+          "montant": 165.4477408007009,
           "motif": "depassement",
           "plafond": 4216.92085485932,
-          "reduction": 162.60220226113108,
+          "reduction": 165.4477408007009,
           "regime": "agirc_arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
          },
          {
-          "montant": 482.045663964672,
+          "montant": 490.48146308405376,
           "motif": "depassement",
           "plafond": 4216.92085485932,
-          "reduction": 482.045663964672,
+          "reduction": 490.48146308405376,
           "regime": "arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
@@ -21646,9 +21646,9 @@
           "statut": "reduite"
          }
         ],
-        "pensions": 2558.375033255262,
+        "pensions": 2569.6563709142138,
         "plafond": 4216.92085485932,
-        "reduction": 2558.375033255262,
+        "reduction": 2569.6563709142138,
         "regle": "trois_regimes_selon_l_age_2027",
         "revenu": 3821.0069789694257,
         "statut": "suspendue"
@@ -21660,19 +21660,19 @@
         "motif": "depassement",
         "par_regime": [
          {
-          "montant": 165.44774080070087,
+          "montant": 168.34307626471318,
           "motif": "depassement",
           "plafond": 4290.716969819358,
-          "reduction": 165.44774080070087,
+          "reduction": 168.34307626471318,
           "regime": "agirc_arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
          },
          {
-          "montant": 490.48146308405376,
+          "montant": 499.06488868802467,
           "motif": "depassement",
           "plafond": 4290.716969819358,
-          "reduction": 490.48146308405376,
+          "reduction": 499.06488868802467,
           "regime": "arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
@@ -21687,9 +21687,9 @@
           "statut": "reduite"
          }
         ],
-        "pensions": 2603.1465963372293,
+        "pensions": 2614.6253574052125,
         "plafond": 4290.716969819358,
-        "reduction": 2603.1465963372293,
+        "reduction": 2614.6253574052125,
         "regle": "trois_regimes_selon_l_age_2027",
         "revenu": 3914.6216499541765,
         "statut": "suspendue"
@@ -21701,19 +21701,19 @@
         "motif": "depassement",
         "par_regime": [
          {
-          "montant": 168.34307626471315,
+          "montant": 171.28908009934568,
           "motif": "depassement",
           "plafond": 4365.804516791197,
-          "reduction": 168.34307626471315,
+          "reduction": 171.28908009934568,
           "regime": "agirc_arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
          },
          {
-          "montant": 499.06488868802467,
+          "montant": 507.7985242400651,
           "motif": "depassement",
           "plafond": 4365.804516791197,
-          "reduction": 499.06488868802467,
+          "reduction": 507.7985242400651,
           "regime": "arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
@@ -21728,9 +21728,9 @@
           "statut": "reduite"
          }
         ],
-        "pensions": 2648.7016617731306,
+        "pensions": 2660.381301159804,
         "plafond": 4365.804516791197,
-        "reduction": 2648.7016617731306,
+        "reduction": 2660.381301159804,
         "regle": "trois_regimes_selon_l_age_2027",
         "revenu": 4010.5298803780533,
         "statut": "suspendue"
@@ -21742,19 +21742,19 @@
         "motif": "depassement",
         "par_regime": [
          {
-          "montant": 168.34307626471315,
+          "montant": 171.28908009934568,
           "motif": "depassement",
           "plafond": 4365.804516791197,
-          "reduction": 168.34307626471315,
+          "reduction": 171.28908009934568,
           "regime": "agirc_arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
          },
          {
-          "montant": 499.06488868802467,
+          "montant": 507.7985242400651,
           "motif": "depassement",
           "plafond": 4365.804516791197,
-          "reduction": 499.06488868802467,
+          "reduction": 507.7985242400651,
           "regime": "arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
@@ -21769,9 +21769,9 @@
           "statut": "seuil_non_publie"
          }
         ],
-        "pensions": 2648.7016617731306,
+        "pensions": 2660.381301159804,
         "plafond": 4365.804516791197,
-        "reduction": 667.4079649527378,
+        "reduction": 679.0876043394107,
         "regle": "trois_regimes_selon_l_age_2027",
         "revenu": 4010.5298803780533,
         "statut": "suspendue"
@@ -21783,19 +21783,19 @@
         "motif": "depassement",
         "par_regime": [
          {
-          "montant": 171.28908009934563,
+          "montant": 174.28663900108418,
           "motif": "depassement",
           "plafond": 4442.206095835043,
-          "reduction": 171.28908009934563,
+          "reduction": 174.28663900108418,
           "regime": "agirc_arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
          },
          {
-          "montant": 507.7985242400651,
+          "montant": 516.6849984142663,
           "motif": "depassement",
           "plafond": 4442.206095835043,
-          "reduction": 507.7985242400651,
+          "reduction": 516.6849984142663,
           "regime": "arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
@@ -21810,9 +21810,9 @@
           "statut": "seuil_non_publie"
          }
         ],
-        "pensions": 2695.053940854161,
+        "pensions": 2706.9379739301003,
         "plafond": 4442.206095835043,
-        "reduction": 679.0876043394107,
+        "reduction": 690.9716374153504,
         "regle": "trois_regimes_selon_l_age_2027",
         "revenu": 4108.787862447315,
         "statut": "suspendue"
@@ -89612,7 +89612,7 @@
      "departs": [
       {
        "date_effet": "2045-02-01",
-       "montant": 58896.873265929666,
+       "montant": 64546.37753051674,
        "montant_a_l_effet": 64546.37753051674,
        "motif": "limite_d_age",
        "regimes": [
@@ -89627,8 +89627,8 @@
      "par_regime": [
       {
        "date_effet": "2045-02-01",
-       "detail": "(12,609.62 points × valeur de service 0.779386 € + cotisations revalorisées 97,532 € × rendement 7.63%) × coefficient de majoration 1.1650 ; servie depuis le 1er février 2045, 20,118.89 € à cette date, 14,469.38 € au départ",
-       "montant": 14469.383546915784,
+       "detail": "(12,609.62 points × valeur de service 0.779386 € + cotisations revalorisées 97,532 € × rendement 7.63%) × coefficient de majoration 1.1650 ; servie depuis le 1er février 2045, 20,118.89 € à cette date, 20,118.89 € au départ",
+       "montant": 20118.887811502853,
        "montant_a_l_effet": 20118.887811502853,
        "regime": "ircantec"
       },
@@ -89640,12 +89640,12 @@
        "regime": "regime_general"
       }
      ],
-     "pension_annuelle": 58896.873265929666,
-     "pension_annuelle_euros_constants": 38838.83638371342,
+     "pension_annuelle": 64546.37753051674,
+     "pension_annuelle_euros_constants": 42564.334183752275,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 4908.0727721608055,
-     "taux_remplacement": 0.6769304914888435,
-     "total_contributif": 58896.873265929666
+     "pension_mensuelle": 5378.864794209728,
+     "taux_remplacement": 0.741862999556424,
+     "total_contributif": 64546.37753051674
     },
     "notionnel_liberal": {
      "annees_part_employeur": {},
@@ -89710,7 +89710,7 @@
      "rente_capitalisation_obligatoire": 13434.980900949919,
      "rente_capitalisation_volontaire": 6717.490450474959,
      "taux_remplacement": 0.3909082158336065,
-     "variation_vs_actuel": -0.42252827912384106
+     "variation_vs_actuel": -0.4730722302266873
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
@@ -89743,7 +89743,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.5203195210115058,
-     "variation_vs_actuel": -0.23135458137346854
+     "variation_vs_actuel": -0.29863125493168396
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
@@ -89776,7 +89776,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.6983150211400697,
-     "variation_vs_actuel": 0.031590436418653445
+     "variation_vs_actuel": -0.05870083619535227
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -89804,7 +89804,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.1948874633733831,
-     "variation_vs_actuel": -0.7121012189231617
+     "variation_vs_actuel": -0.7372999280326549
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -89832,7 +89832,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.4815144406377472,
-     "variation_vs_actuel": -0.2886796403886277
+     "variation_vs_actuel": -0.35093886482321524
     }
    },
    "unite": {
@@ -148581,7 +148581,7 @@
     "personne": "conjoint",
     "regimes": [
      {
-      "base": 3216.921109568076,
+      "base": 3632.2968648541846,
       "cumul_effet": null,
       "date_effet": "2040-06-01",
       "derniere_revision": null,
@@ -148601,7 +148601,7 @@
       "minimum": 0.0,
       "minimum_contributif": 0.0,
       "moments_examines": [],
-      "montant": 1930.1526657408456,
+      "montant": 2179.3781189125107,
       "motif": "servie",
       "part": 1.0,
       "periode_de_reference": 0,
@@ -148619,7 +148619,7 @@
       "version": "accord_2017"
      },
      {
-      "base": 4871.526558253125,
+      "base": 5500.54851888256,
       "cumul_effet": null,
       "date_effet": "2040-06-01",
       "derniere_revision": null,
@@ -148639,7 +148639,7 @@
       "minimum": 0.0,
       "minimum_contributif": 0.0,
       "moments_examines": [],
-      "montant": 2922.9159349518745,
+      "montant": 3300.329111329536,
       "motif": "servie",
       "part": 1.0,
       "periode_de_reference": 0,
@@ -148700,7 +148700,7 @@
     "ressources": 0.0,
     "ressources_presumees": true,
     "schema_version": 1,
-    "total": 19075.807279997887
+    "total": 19702.445909547216
    },
    "scenarios": {
     "actuel": {
@@ -155038,7 +155038,7 @@
     "personne": "conjoint",
     "regimes": [
      {
-      "base": 4250.791647807495,
+      "base": 5234.591954749106,
       "cumul_effet": null,
       "date_effet": "2039-03-01",
       "derniere_revision": null,
@@ -155058,7 +155058,7 @@
       "minimum": 0.0,
       "minimum_contributif": 0.0,
       "moments_examines": [],
-      "montant": 2550.474988684497,
+      "montant": 3140.755172849463,
       "motif": "servie",
       "part": 1.0,
       "periode_de_reference": 0,
@@ -155076,7 +155076,7 @@
       "version": "accord_2017"
      },
      {
-      "base": 4034.4970966158653,
+      "base": 4968.238340803394,
       "cumul_effet": null,
       "date_effet": "2039-03-01",
       "derniere_revision": null,
@@ -155096,7 +155096,7 @@
       "minimum": 0.0,
       "minimum_contributif": 0.0,
       "moments_examines": [],
-      "montant": 2420.698257969519,
+      "montant": 2980.943004482036,
       "motif": "servie",
       "part": 1.0,
       "periode_de_reference": 0,
@@ -155157,7 +155157,7 @@
     "ressources": 0.0,
     "ressources_presumees": true,
     "schema_version": 1,
-    "total": 20944.697101950936
+    "total": 22095.22203262842
    },
    "scenarios": {
     "actuel": {
@@ -170033,7 +170033,7 @@
       "fin": "2036-02-01",
       "groupe": "salaries",
       "integral_depuis": "2035-02-01",
-      "non_servi": 112794.55891817882,
+      "non_servi": 113644.4291702352,
       "tranches": [
        {
         "debut": "2029-02-01",
@@ -170042,19 +170042,19 @@
         "motif": "depassement",
         "par_regime": [
          {
-          "montant": 162.60220226113108,
+          "montant": 165.4477408007009,
           "motif": "depassement",
           "plafond": 4216.92085485932,
-          "reduction": 162.60220226113108,
+          "reduction": 165.4477408007009,
           "regime": "agirc_arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
          },
          {
-          "montant": 482.045663964672,
+          "montant": 490.48146308405376,
           "motif": "depassement",
           "plafond": 4216.92085485932,
-          "reduction": 482.045663964672,
+          "reduction": 490.48146308405376,
           "regime": "arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
@@ -170069,9 +170069,9 @@
           "statut": "reduite"
          }
         ],
-        "pensions": 2558.375033255262,
+        "pensions": 2569.6563709142138,
         "plafond": 4216.92085485932,
-        "reduction": 2558.375033255262,
+        "reduction": 2569.6563709142138,
         "regle": "trois_regimes_selon_l_age_2027",
         "revenu": 3821.0069789694257,
         "statut": "suspendue"
@@ -170083,19 +170083,19 @@
         "motif": "depassement",
         "par_regime": [
          {
-          "montant": 165.44774080070087,
+          "montant": 168.34307626471318,
           "motif": "depassement",
           "plafond": 4290.716969819358,
-          "reduction": 165.44774080070087,
+          "reduction": 168.34307626471318,
           "regime": "agirc_arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
          },
          {
-          "montant": 490.48146308405376,
+          "montant": 499.06488868802467,
           "motif": "depassement",
           "plafond": 4290.716969819358,
-          "reduction": 490.48146308405376,
+          "reduction": 499.06488868802467,
           "regime": "arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
@@ -170110,9 +170110,9 @@
           "statut": "reduite"
          }
         ],
-        "pensions": 2603.1465963372293,
+        "pensions": 2614.6253574052125,
         "plafond": 4290.716969819358,
-        "reduction": 2603.1465963372293,
+        "reduction": 2614.6253574052125,
         "regle": "trois_regimes_selon_l_age_2027",
         "revenu": 3914.6216499541765,
         "statut": "suspendue"
@@ -170124,19 +170124,19 @@
         "motif": "depassement",
         "par_regime": [
          {
-          "montant": 168.34307626471315,
+          "montant": 171.28908009934568,
           "motif": "depassement",
           "plafond": 4365.804516791197,
-          "reduction": 168.34307626471315,
+          "reduction": 171.28908009934568,
           "regime": "agirc_arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
          },
          {
-          "montant": 499.06488868802467,
+          "montant": 507.7985242400651,
           "motif": "depassement",
           "plafond": 4365.804516791197,
-          "reduction": 499.06488868802467,
+          "reduction": 507.7985242400651,
           "regime": "arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
@@ -170151,9 +170151,9 @@
           "statut": "reduite"
          }
         ],
-        "pensions": 2648.7016617731306,
+        "pensions": 2660.381301159804,
         "plafond": 4365.804516791197,
-        "reduction": 2648.7016617731306,
+        "reduction": 2660.381301159804,
         "regle": "trois_regimes_selon_l_age_2027",
         "revenu": 4010.5298803780533,
         "statut": "suspendue"
@@ -170165,19 +170165,19 @@
         "motif": "depassement",
         "par_regime": [
          {
-          "montant": 168.34307626471315,
+          "montant": 171.28908009934568,
           "motif": "depassement",
           "plafond": 4365.804516791197,
-          "reduction": 168.34307626471315,
+          "reduction": 171.28908009934568,
           "regime": "agirc_arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
          },
          {
-          "montant": 499.06488868802467,
+          "montant": 507.7985242400651,
           "motif": "depassement",
           "plafond": 4365.804516791197,
-          "reduction": 499.06488868802467,
+          "reduction": 507.7985242400651,
           "regime": "arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
@@ -170192,9 +170192,9 @@
           "statut": "seuil_non_publie"
          }
         ],
-        "pensions": 2648.7016617731306,
+        "pensions": 2660.381301159804,
         "plafond": 4365.804516791197,
-        "reduction": 667.4079649527378,
+        "reduction": 679.0876043394107,
         "regle": "trois_regimes_selon_l_age_2027",
         "revenu": 4010.5298803780533,
         "statut": "suspendue"
@@ -170206,19 +170206,19 @@
         "motif": "depassement",
         "par_regime": [
          {
-          "montant": 171.28908009934563,
+          "montant": 174.28663900108418,
           "motif": "depassement",
           "plafond": 4442.206095835043,
-          "reduction": 171.28908009934563,
+          "reduction": 174.28663900108418,
           "regime": "agirc_arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
          },
          {
-          "montant": 507.7985242400651,
+          "montant": 516.6849984142663,
           "motif": "depassement",
           "plafond": 4442.206095835043,
-          "reduction": 507.7985242400651,
+          "reduction": 516.6849984142663,
           "regime": "arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
@@ -170233,9 +170233,9 @@
           "statut": "seuil_non_publie"
          }
         ],
-        "pensions": 2695.053940854161,
+        "pensions": 2706.9379739301003,
         "plafond": 4442.206095835043,
-        "reduction": 679.0876043394107,
+        "reduction": 690.9716374153504,
         "regle": "trois_regimes_selon_l_age_2027",
         "revenu": 4108.787862447315,
         "statut": "suspendue"
@@ -170247,19 +170247,19 @@
         "motif": "depassement",
         "par_regime": [
          {
-          "montant": 174.28663900108418,
+          "montant": 177.33665518360317,
           "motif": "depassement",
           "plafond": 4519.944702512156,
-          "reduction": 174.28663900108418,
+          "reduction": 177.33665518360317,
           "regime": "agirc_arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
          },
          {
-          "montant": 516.6849984142663,
+          "montant": 525.726985886516,
           "motif": "depassement",
           "plafond": 4519.944702512156,
-          "reduction": 516.6849984142663,
+          "reduction": 525.726985886516,
           "regime": "arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
@@ -170274,9 +170274,9 @@
           "statut": "seuil_non_publie"
          }
         ],
-        "pensions": 2742.2173848191087,
+        "pensions": 2754.3093884738773,
         "plafond": 4519.944702512156,
-        "reduction": 690.9716374153504,
+        "reduction": 703.0636410701192,
         "regle": "trois_regimes_selon_l_age_2027",
         "revenu": 4209.453165077274,
         "statut": "suspendue"
@@ -170288,19 +170288,19 @@
         "motif": "depassement",
         "par_regime": [
          {
-          "montant": 177.33665518360317,
+          "montant": 180.44004664931626,
           "motif": "depassement",
           "plafond": 4599.04373480612,
-          "reduction": 177.33665518360317,
+          "reduction": 180.44004664931626,
           "regime": "agirc_arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
          },
          {
-          "montant": 525.726985886516,
+          "montant": 534.9272081395301,
           "motif": "depassement",
           "plafond": 4599.04373480612,
-          "reduction": 525.726985886516,
+          "reduction": 534.9272081395301,
           "regime": "arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
@@ -170315,9 +170315,9 @@
           "statut": "seuil_non_publie"
          }
         ],
-        "pensions": 2790.2061890534433,
+        "pensions": 2802.5098027721706,
         "plafond": 4599.04373480612,
-        "reduction": 703.0636410701192,
+        "reduction": 715.3672547888464,
         "regle": "trois_regimes_selon_l_age_2027",
         "revenu": 4312.584767621668,
         "statut": "suspendue"
@@ -170329,19 +170329,19 @@
         "motif": "depassement",
         "par_regime": [
          {
-          "montant": 180.44004664931626,
+          "montant": 183.5977474656793,
           "motif": "depassement",
           "plafond": 4679.527000165227,
-          "reduction": 180.44004664931626,
+          "reduction": 183.5977474656793,
           "regime": "agirc_arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
          },
          {
-          "montant": 534.9272081395301,
+          "montant": 544.2884342819718,
           "motif": "depassement",
           "plafond": 4679.527000165227,
-          "reduction": 534.9272081395301,
+          "reduction": 544.2884342819718,
           "regime": "arrco",
           "regle": "trois_regimes_selon_l_age_2027",
           "statut": "suspendue"
@@ -170356,9 +170356,9 @@
           "statut": "seuil_non_publie"
          }
         ],
-        "pensions": 2839.0347973618786,
+        "pensions": 2851.5537243206836,
         "plafond": 4679.527000165227,
-        "reduction": 715.3672547888464,
+        "reduction": 727.8861817476511,
         "regle": "trois_regimes_selon_l_age_2027",
         "revenu": 4418.243094428399,
         "statut": "suspendue"
@@ -170370,7 +170370,7 @@
         "motif": "taux_plein",
         "par_regime": [
          {
-          "montant": 180.44004664931626,
+          "montant": 183.5977474656793,
           "motif": "taux_plein",
           "plafond": null,
           "reduction": 0.0,
@@ -170379,7 +170379,7 @@
           "statut": "integral"
          },
          {
-          "montant": 534.9272081395301,
+          "montant": 544.2884342819718,
           "motif": "taux_plein",
           "plafond": null,
           "reduction": 0.0,
@@ -170397,7 +170397,7 @@
           "statut": "integral"
          }
         ],
-        "pensions": 2839.0347973618786,
+        "pensions": 2851.5537243206836,
         "plafond": null,
         "reduction": 0.0,
         "regle": "trois_regimes_selon_l_age_2027",
@@ -170411,7 +170411,7 @@
         "motif": "taux_plein",
         "par_regime": [
          {
-          "montant": 183.5977474656793,
+          "montant": 186.81070804632873,
           "motif": "taux_plein",
           "plafond": null,
           "reduction": 0.0,
@@ -170420,7 +170420,7 @@
           "statut": "integral"
          },
          {
-          "montant": 544.288434281972,
+          "montant": 553.8134818819063,
           "motif": "taux_plein",
           "plafond": null,
           "reduction": 0.0,
@@ -170438,7 +170438,7 @@
           "statut": "integral"
          }
         ],
-        "pensions": 2888.717906315712,
+        "pensions": 2901.4559144962955,
         "plafond": null,
         "reduction": 0.0,
         "regle": "trois_regimes_selon_l_age_2027",

@@ -607,3 +607,19 @@ def test_le_cadre_du_cor_est_retrouve_a_un_tiers_de_point(simulateur, cor):
             refait = _pouvoir_d_achat(simulateur, "cadre", composition, int(generation),
                                       annee, 0.019)
             assert refait == pytest.approx(publie, abs=tolerance), (generation, annee)
+
+
+def test_la_pension_de_points_servie_apres_le_dernier_bareme_ne_baisse_pas(simulateur):
+    """L'Ircantec ne relève son point qu'au 1er janvier (arrêté annuel de la
+    valeur de service) : une pension servie en février vaut autant en mai de
+    la même année, y compris après la dernière valeur publiée (2026), où le
+    moteur la menait du point projeté du départ au point publié de 2026 :
+    −1,7 % en 2027, −45 % en 2060 (action 194, pistes du balayage). D'une
+    année à l'autre, au-delà du dernier barème, elle ne baisse pas non plus."""
+    servie = PensionServie(simulateur)
+    pension = SimpleNamespace(regime="ircantec", type_calcul="points")
+    for annee in (2027, 2040, 2060):
+        assert servie.coefficient(pension, annee, date(annee, 2, 1), date(annee, 5, 1),
+                                  None)[0] == pytest.approx(1.0, rel=1e-12), annee
+    assert servie.coefficient(pension, 2030, date(2030, 2, 1), date(2035, 2, 1),
+                              None)[0] >= 1.0
