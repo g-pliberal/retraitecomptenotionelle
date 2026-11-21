@@ -1,0 +1,22 @@
+date: "2026-11-21"
+session: "réversions servies à 0 € : le FSPOEIE et la complémentaire des cultes"
+consulte: >-
+  L'index LEGI du dépôt : décret n° 2004-1056, articles 25 à 32 dans toutes leurs
+  rédactions (LEGIARTI000006781501 à LEGIARTI000030188543) ; décret n° 65-836,
+  articles 16, 17, 19, 20, 21 et 22 (LEGIARTI000006766763 à LEGIARTI000006766774) ;
+  L. 921-1 du code de la sécurité sociale (LEGIARTI000047452643) ; pour la suite,
+  L. 382-27 (LEGIARTI000048697351), le décret n° 79-607, articles 47 à 50, L. 732-41,
+  L. 732-62 et D. 732-89 à D. 732-157 du code rural, R. 732-95 (2026).
+trouve: >-
+  Aucune fiche de réversion ne nommait le FSPOEIE ni la complémentaire des cultes :
+  leur réversion valait 0 €, motif non_portee. Le décret n° 2004-1056 sert 50 % aux
+  conjoints sans âge ni ressources, sous la condition de mariage du code des
+  pensions ; le décret n° 65-836 le servait à la veuve, et au veuf sous réserves
+  depuis 1979. Fiche reversion_fspoeie neuve ; arrco_cultes rejoint
+  reversion_agirc_arrco par L. 921-1. Quarante-neuf autres régimes calculés restent
+  sans réversion, déclarés dans docs/limites/4-regimes-incomplets.md.
+reste: >-
+  La CAVIMAC (L. 382-27 depuis 1998, décret n° 79-607 avant) et les exploitants
+  agricoles, base et RCO (cinq époques de texte, réforme de 2026) ; les rédactions
+  du décret n° 65-836 d'avant 1979 et 1982, absentes de l'index ; un exemple publié
+  par la Caisse des dépôts pour le FSPOEIE.

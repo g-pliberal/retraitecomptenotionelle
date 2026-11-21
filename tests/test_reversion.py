@@ -803,6 +803,42 @@ def test_la_crpcen_reverse_la_moitie_sous_la_condition_de_mariage(
     assert ligne[2:4] == ((10000.0, "servie") if servie else (0.0, "mariage"))
 
 
+def test_le_fspoeie_reverse_la_moitie_comme_le_simulateur_d_info_retraite(simulateur):
+    """Décret n° 2004-1056, article 25, I : « Les conjoints ont droit à une
+    pension égale à 50 % de la pension obtenue par l'intéressé », sans âge ni
+    ressources. Le simulateur de réversion d'info-retraite, le 21 novembre
+    2026 : un ouvrier de l'État qui touchait 1 800 euros par mois, marié
+    depuis plus de cinq ans, sans enfant commun, laisse à sa veuve 900 euros
+    par mois du FSPOEIE."""
+    carriere = _carriere(simulateur, 1955, 62.0, "1958", "2026-10-10", mariage="2015-06")
+    ligne, = _lignes(simulateur, carriere, [("fspoeie", 12 * 1800.0)], 2026)
+    assert ligne[:5] == ("fspoeie", 0.50, 12 * 900.0, "servie", "conjoints_2004")
+
+
+@pytest.mark.parametrize("mariage, deces, version, servie", [
+    # Marié après le départ (2017), mort vingt et un mois plus tard : rien
+    # (article 26, I, 1°, et III, 2°).
+    ("2018-05", "2020-02-10", "conjoints_2004", False),
+    # Marié deux ans avant la radiation des contrôles : la moitié.
+    ("2014-12", "2020-02-10", "conjoints_2004", True),
+    # Quatre ans de mariage au décès : la moitié.
+    ("2018-05", "2022-06-10", "conjoints_2004", True),
+    # Avant 2004, la veuve, aux mêmes conditions (décret n° 65-836, article 16).
+    ("2001-05", "2003-02-10", "veuves_1979", False),
+    ("1997-12", "2003-02-10", "veuves_1979", True),
+])
+def test_le_fspoeie_reverse_sous_la_condition_de_mariage_de_l_article_26(
+        simulateur, mariage, deces, version, servie):
+    """Décret n° 2004-1056, article 26 ; avant 2004, décret n° 65-836,
+    article 16, III et IV : deux ans de services depuis le mariage, sauf
+    enfant, ou quatre ans de mariage."""
+    carriere = _carriere(simulateur, 1955 if deces > "2004" else 1939, 62.0,
+                         "1958" if deces > "2004" else "1942", deces, mariage=mariage)
+    ligne, = _lignes(simulateur, carriere, [("fspoeie", 20000.0)], int(deces[:4]))
+    assert ligne[0] == "fspoeie" and ligne[4] == version
+    assert ligne[2:4] == ((10000.0, "servie") if servie else (0.0, "mariage"))
+
+
 @pytest.mark.parametrize("mariage, deces, servie", [
     # Marié avant le départ, en 2012 : aucune condition.
     ("2009-12", "2013-02-10", True),
@@ -1120,6 +1156,18 @@ def test_la_periodicite_ne_date_ni_un_deces_d_avant_2019_ni_celui_d_un_actif(sim
     ligne, = reversion(simulateur.scenario_actuel, [("agirc_arrco", 280.0, HAUTE)], actif,
                        2024, avant_le_depart=True).regimes
     assert ligne.date_effet == "2024-06-01"
+
+
+def test_la_complementaire_des_cultes_reverse_comme_l_agirc_arrco(simulateur):
+    """L. 921-1 affilie les ministres des cultes rémunérés à une institution
+    de l'Agirc-Arrco, dont l'accord règle la réversion : 60 % des points. Le
+    simulateur de réversion d'info-retraite, le 21 novembre 2026 : 100 euros
+    par mois de complémentaire des cultes laissent 60 euros à la veuve née en
+    1964."""
+    carriere = _carriere(simulateur, 1950, 62.0, "1964-03-10", "2026-10-10",
+                         mariage="1990-06")
+    ligne, = _lignes(simulateur, carriere, [("arrco_cultes", 12 * 100.0)], 2026)
+    assert ligne[:4] == ("arrco_cultes", 0.60, 12 * 60.0, "servie")
 
 
 def test_la_majoration_pour_enfants_du_defunt_est_reversee_en_entier(simulateur):

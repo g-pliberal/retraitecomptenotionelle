@@ -16,6 +16,7 @@ regimes:
 - agirc_entreprises_nouvelles
 - unirs
 - regimes_professionnels_integres
+- arrco_cultes
 etape: liquider_chaque_regime
 face: droit
 etat: approchee
@@ -149,6 +150,7 @@ versions:
   - {id: KALIARTI000047205218, article: "accord national interprofessionnel du 17 novembre 2017, article 106", en_vigueur: 2021-01-01, lu_le: 2026-11-21}
   - {id: KALIARTI000036731861, article: "accord national interprofessionnel du 17 novembre 2017, article 107", en_vigueur: 2019-01-01, lu_le: 2026-11-21}
   - {id: KALIARTI000036731971, article: "accord national interprofessionnel du 17 novembre 2017, article 116", en_vigueur: 2019-01-01, lu_le: 2026-11-21}
+  - {id: LEGIARTI000047452643, article: "code de la sécurité sociale, L. 921-1", en_vigueur: 2023-09-01}
   - reference: >-
       accord national interprofessionnel du 17 novembre 2017, « applicable au 1er
       janvier 2019 », annexé à la circulaire Agirc-Arrco 2018-09-DC (hors JORF)
@@ -408,6 +410,15 @@ sources:
     depuis le 5 octobre 2026. Léo, qui demande sa réversion dix-huit mois après le
     décès, n'y est pas : le modèle ne date pas la demande.
   lectures:
+  - type: legifrance
+    reference: >-
+      L. 921-1 du code de la sécurité sociale (LEGIARTI000047452643), lu le 21 novembre
+      2026 : les salariés « sont affiliés obligatoirement à une de ces institutions »,
+      et « Ces dispositions sont applicables aux personnes mentionnées à l'article
+      L. 382-15 qui bénéficient d'un revenu d'activité perçu individuellement » : les
+      points des cultes (arrco_cultes) sont des points de l'Arrco, puis de
+      l'Agirc-Arrco, dont l'accord règle la réversion
+    date: 2023-09-01
   - type: autre
     reference: >-
       index KALI de la DILA (à jour au 13 novembre 2026), accord national
@@ -526,6 +537,11 @@ historique:
   du défunt payé au trimestre — hors de France et des États de l'article 106 — ou à
   l'année — plus de 100 et moins de 200 points, article 107 — (article 116 ;
   `periodicite`) : les exemples de François, David et Simone concordent.
+- >-
+  2026-11-21 — la complémentaire des cultes (arrco_cultes) rejoint la fiche : L. 921-1
+  l'affilie à une institution de l'Arrco depuis 2006, mais aucune fiche de réversion
+  ne la nommait, et sa ligne valait 0, motif non_portee ; le simulateur
+  d'info-retraite reverse 60 euros sur 100.
 effet: >-
   Tout conjoint, ou ex-conjoint marié, d'un salarié ou ancien salarié du privé qui
   décède. Le modèle la calcule pour le conjoint que la saisie déclare, sur la

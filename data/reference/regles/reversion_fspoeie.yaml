@@ -1,0 +1,243 @@
+schema_version: 1
+id: reversion_fspoeie
+intitule: >-
+  Pension de réversion du fonds spécial des pensions des ouvriers des établissements
+  industriels de l'État (décret n° 2004-1056, articles 25 à 32 ; avant 2004, décret
+  n° 65-836, articles 16 à 21) : 50 % de la pension obtenue par l'ouvrier ou qu'il
+  aurait pu obtenir au jour de son décès, sans condition d'âge ni de ressources, sous
+  condition d'antériorité ou de durée du mariage ; partagée entre conjoints au prorata
+  des mariages ; perdue au remariage ou au concubinage notoire.
+domaine: reversion
+regimes:
+- fspoeie
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- conjoint.deces
+- union.debut, d'un mariage, et la radiation des contrôles de l'ouvrier, pour la
+  condition d'antériorité de l'article 26
+- les enfants issus du mariage
+- les précédents conjoints de l'ouvrier, leur mariage, leur divorce et leur remariage,
+  que le partage au prorata des mariages lit ; une nouvelle union du survivant, qui
+  éteint le droit (article 32)
+- la pension du défunt, servie ou qu'il aurait pu obtenir au jour de son décès
+ecrit:
+- la pension de réversion du survivant, au FSPOEIE
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la réversion (§ 4.1) : la
+# veuve seule, puis, depuis le 5 janvier 1979, le veuf sous réserves (article 21 du
+# décret de 1965), et les conjoints depuis le 1er janvier 2004. Le moteur les lit
+# par la branche de la fonction publique (MOITIE_SOUS_CONDITION_DE_MARIAGE, dans
+# droit/reversion.js) : le taux, et la condition de mariage. Le texte est le
+# jumeau de L. 38, L. 39 et L. 43 à L. 46 du code des pensions, mot pour mot sur ce
+# que le moteur en lit, mais c'est le sien : la fiche de la fonction publique ne
+# nomme pas les ouvriers de l'État, qui restaient sans réversion.
+versions:
+- id: avant_1979
+  statut: supposee
+  hypothese: >-
+    l'article 16 du décret n° 65-836 n'est dans l'index LEGI qu'à partir de sa
+    rédaction du 1er janvier 1982, l'article 19 de celle du 5 janvier 1979 ; on prête
+    aux réversions d'avant la règle de 1982, sans partage avec l'ex-épouse
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [null, 1979-01-05]
+  contenu:
+    droit: 50 % de la pension obtenue par le mari ou qu'il aurait pu obtenir
+    beneficiaire: la veuve
+    parametres:
+      taux: 0.50
+      ex_conjoints: aucun
+      beneficiaire: veuve
+      mariage_services_minimum_annees: 2
+      mariage_minimum_annees: 4
+      age_minimum: null
+      perte_au_remariage: [mariage, concubinage]
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: veuves_1979
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006766767, article: "décret n° 65-836, article 19", en_vigueur: 1979-01-05}
+  - {id: LEGIARTI000006766772, article: "décret n° 65-836, article 21", en_vigueur: 1979-01-05}
+  - {id: LEGIARTI000006766763, article: "décret n° 65-836, article 16", en_vigueur: 1982-01-01}
+  - {id: LEGIARTI000006766769, article: "décret n° 65-836, article 20", en_vigueur: 1965-10-02}
+  - {id: LEGIARTI000006766768, article: "décret n° 65-836, article 19", en_vigueur: 1985-03-10}
+  - {id: LEGIARTI000006766770, article: "décret n° 65-836, article 20", en_vigueur: 1985-03-10}
+  - {id: LEGIARTI000006766773, article: "décret n° 65-836, article 21", en_vigueur: 1985-03-10}
+  nee_de: LEGIARTI000006766767
+  bornes:
+    liquidation.date_effet: [1979-01-05, 2004-01-01]
+  contenu:
+    droit: >-
+      « Les veuves des tributaires de la présente loi ont droit à une pension égale à
+      50 % de la pension obtenue par le mari ou qu'il aurait pu obtenir au jour de son
+      décès » (article 16, I), augmentée de la moitié de la majoration pour enfants
+      pour la veuve qui les a élevés ; au conjoint survivant d'une ouvrière, 50 % de
+      sa pension, différés jusqu'à l'âge minimal de jouissance et plafonnés à 37,50 %
+      du traitement brut de l'indice 550 (article 21)
+    beneficiaire: la veuve ; le veuf sous les réserves de l'article 21
+    conditions: >-
+      deux ans de services depuis le mariage jusqu'à la radiation des contrôles, sauf
+      enfant issu du mariage (article 16, III) ; nonobstant, un enfant issu du mariage
+      ou quatre ans de mariage (article 16, IV) ; entre la veuve et l'ex-épouse non
+      remariée, un partage au prorata de la durée de chaque mariage (article 19, II) ;
+      la perte du droit au remariage ou au concubinage notoire (article 20)
+    parametres:
+      taux: 0.50
+      ex_conjoints: non_remaries
+      beneficiaire: veuve
+      mariage_services_minimum_annees: 2
+      mariage_minimum_annees: 4
+      age_minimum: null
+      perte_au_remariage: [mariage, concubinage]
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: conjoints_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006781501, article: "décret n° 2004-1056, article 25", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006781502, article: "décret n° 2004-1056, article 26", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006781505, article: "décret n° 2004-1056, article 29", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006781506, article: "décret n° 2004-1056, article 30", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006781507, article: "décret n° 2004-1056, article 31", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006781509, article: "décret n° 2004-1056, article 32", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000029134298, article: "décret n° 2004-1056, article 25", en_vigueur: 2014-06-26}
+  - {id: LEGIARTI000029134302, article: "décret n° 2004-1056, article 32", en_vigueur: 2014-06-26}
+  - {id: LEGIARTI000030188546, article: "décret n° 2004-1056, article 29", en_vigueur: 2015-02-04}
+  - {id: LEGIARTI000030188543, article: "décret n° 2004-1056, article 32", en_vigueur: 2015-02-04}
+  nee_de: LEGIARTI000006781501
+  bornes:
+    liquidation.date_effet: [2004-01-01, null]
+  contenu:
+    droit: >-
+      « Les conjoints ont droit à une pension égale à 50 % de la pension obtenue par
+      l'intéressé ou qu'il aurait pu obtenir au jour du décès » (article 25, I),
+      augmentée de la moitié de la majoration pour enfants pour le conjoint qui les a
+      élevés ; le total de la réversion et des autres ressources ne peut être
+      inférieur à l'allocation aux vieux travailleurs salariés augmentée de
+      l'allocation supplémentaire (article 25, III à V)
+    beneficiaire: les conjoints, de l'un et l'autre sexe ; les conjoints divorcés (article 30)
+    conditions: >-
+      l'antériorité du mariage de l'article 26, celle de 1965 ; entre plusieurs
+      conjoints, un partage au prorata de la durée de chaque mariage (article 31),
+      par lit depuis le 4 février 2015 (article 29) ; la perte du droit au remariage
+      ou au concubinage notoire, recouvré quand l'union cesse (article 32)
+    parametres:
+      taux: 0.50
+      ex_conjoints: non_remaries
+      beneficiaire: conjoint
+      mariage_services_minimum_annees: 2
+      mariage_minimum_annees: 4
+      age_minimum: null
+      perte_au_remariage: [mariage, concubinage]
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations:
+- version: [avant_1979, veuves_1979]
+  ecart: >-
+    le veuf d'une ouvrière reçoit la moitié de sa pension comme la veuve : ni le
+    report à l'âge minimal de jouissance ni le plafond de l'article 21 ne sont
+    appliqués, et, avant 1979, le texte ne lui donnait rien
+  effet: non mesuré
+- ecart: >-
+    le minimum qui porte la réversion à l'allocation aux vieux travailleurs salariés
+    augmentée de l'allocation supplémentaire (article 25, III à V), la moitié de la
+    majoration pour enfants (article 25, II) et la rente d'invalidité (article 33) ne
+    sont pas appliqués
+  effet: >-
+    la réversion des petites pensions, et de qui a élevé trois enfants, est
+    sous-estimée ; non mesuré
+- ecart: >-
+    la condition de l'article 26 tient le départ, ou le décès qui le précède, pour la
+    radiation des contrôles, et tout enfant déclaré pour un enfant issu du mariage ;
+    le cas de la radiation pour réduction d'effectifs (article 26, II), la pension
+    d'orphelin (article 27) et la part des lits que représentent des orphelins seuls
+    (article 29) ne sont pas portés ; les montants sont ceux de l'année du décès
+  effet: non mesuré
+- ecart: >-
+    le partage au prorata des mariages lit les précédents conjoints que la saisie
+    déclare, deux au plus, non remariés au décès, sans leur opposer la condition de
+    l'article 26 ; le remariage ou le concubinage notoire du survivant éteint la
+    réversion au mois qui le suit, et ce qu'il recouvre quand cette union cesse
+    (article 32) n'est pas porté
+  effet: non mesuré
+- ecart: >-
+    la pension que l'ouvrier mort avant son départ « aurait pu obtenir au jour du
+    décès » se liquide, comme à la fonction publique, sur ses services au premier jour
+    du trimestre civil du décès et sans décote
+  effet: non mesuré
+presomptions:
+  mariage_des_conjoints: >-
+    la condition d'antériorité du mariage de l'article 26, quand sa date n'est pas
+    déclarée
+  conjoint_de_l_autre_sexe: >-
+    la veuve, seule bénéficiaire avant 1979, puis sous réserves avant 2004, quand le
+    sexe du conjoint n'est pas dit
+  deces_apres_le_depart: >-
+    la réversion que la page montre sans décès déclaré, pour un décès supposé juste
+    après le départ, ou cette année pour qui est déjà parti
+sources:
+  lu_le: 2026-11-21
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Les rédactions de l'article 16 du décret n° 65-836 d'avant le 1er janvier 1982,
+    et de l'article 19 d'avant le 5 janvier 1979, que l'index LEGI ne porte pas : la
+    version avant_1979 leur prête la règle lue.
+  - >-
+    La loi de finances pour 2026 (article 205) porte au niveau de l'ASPA le minimum de
+    la réversion du code des pensions (L. 38) ; le décret n° 2004-1056, article 25,
+    III, n'a dans l'index aucune rédaction postérieure au 26 juin 2014. Relire s'il
+    est modifié, et le guide de la Caisse des dépôts sur la réversion du FSPOEIE.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2004-1056, articles 25 (LEGIARTI000006781501, 029134298), 26
+      (006781502), 27 (006781503, 030188550), 28, 29 (006781505, 030188546), 30
+      (006781506), 31 (006781507, abrogé le 4 février 2015) et 32 (006781509,
+      029134302, 030188543), dans l'index LEGI : « Les conjoints ont droit à une
+      pension égale à 50 % de la pension obtenue par l'intéressé ou qu'il aurait pu
+      obtenir au jour du décès » ; deux ans de services depuis le mariage jusqu'à la
+      radiation des contrôles, sauf enfant, ou quatre ans de mariage ; le partage au
+      prorata des mariages ; « Le conjoint survivant ou divorcé qui contracte un
+      nouveau mariage ou vit en état de concubinage notoire perd son droit à pension »
+    date: 2015-02-04
+  - type: legifrance
+    reference: >-
+      décret n° 65-836, articles 16 (LEGIARTI000006766763, 1982), 17 (006766764), 19
+      (006766767, 1979 ; 006766768, 1985), 20 (006766769, 1965 ; 006766770, 1985) et
+      21 (006766772, 1979 ; 006766773, 1985), dans l'index LEGI : la veuve, puis le
+      veuf depuis 1979 sous réserve d'âge et de plafond ; les mêmes conditions de
+      mariage qu'en 2004
+    date: 1985-03-10
+  - type: autre
+    reference: >-
+      simulateur de réversion d'info-retraite, le 21 novembre 2026 : un ouvrier de
+      l'État à 1 800 euros nets par mois, marié depuis plus de cinq ans, sans enfant
+      commun, laisse à sa veuve 900 euros par mois du FSPOEIE
+    date: 2026-11-21
+code:
+  javascript: >-
+    moteur/js/regimes.js : Reversions ; moteur/js/droit/reversion.js : reversion,
+    MOITIE_SOUS_CONDITION_DE_MARIAGE, mariageSuffit, partDuSurvivant, admisAilleurs,
+    jusquAuRemariage
+  parametres: >-
+    contenu.parametres de chaque version : taux, ex_conjoints, beneficiaire,
+    mariage_services_minimum_annees, mariage_minimum_annees, age_minimum, fiabilite,
+    perte_au_remariage
+  tests: [tests/test_reversion.py]
+  moteur: >-
+    Reversions lit les versions de cette fiche. Le paquet du site porte ses versions.
+historique:
+- >-
+  2026-11-21 — la fiche naît : le moteur rangeait le FSPOEIE avec la fonction publique
+  (REGIMES_CODE_DES_PENSIONS), mais aucune fiche de réversion ne le nommait, et sa
+  ligne disait « la réversion de ce régime n'est pas encore portée ». Le simulateur
+  d'info-retraite servait 900 euros par mois là où le modèle servait 0.
+effet: >-
+  Tout conjoint, ou ex-conjoint, d'un ouvrier de l'État qui décède : la moitié de sa
+  pension, sans âge ni ressources, dès que le mariage remplit la condition de
+  l'article 26, partagée avec les précédents conjoints non remariés.

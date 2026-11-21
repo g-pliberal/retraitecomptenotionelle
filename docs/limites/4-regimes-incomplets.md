@@ -204,6 +204,34 @@ de liquidation a été lu à la source et décrit, sans que rien n'en soit calcu
   relèvent d'actes du pays que LexPol, injoignable depuis le conteneur, n'a pas
   laissé lire, non plus que le Journal officiel de Wallis-et-Futuna.
 
+## Les régimes dont la réversion n'est pas calculée
+
+La réversion ne se calcule que pour les régimes qu'une fiche de réversion
+nomme (`data/reference/regles/reversion*.yaml`) : le régime général et les
+régimes alignés, l'Agirc-Arrco et la complémentaire des cultes, la fonction
+publique, la CNRACL, le fonds spécial des ouvriers de l'État, le RAFP,
+l'Ircantec, les indépendants, la CRPCEN, les IEG, la SNCF, la CARCDSF et la
+CAVAMAC. Pour tous les autres régimes du catalogue, la ligne de réversion ne
+porte aucun montant, et la page le dit : « non calculée : ce régime n'est pas
+encore porté ». Le survivant en reçoit pourtant une, presque partout, et la
+réversion affichée est donc **sous-estimée** de toute la part de ces régimes.
+
+Sont dans ce cas : les non-salariés agricoles, base et complémentaire (RCO) ;
+le régime des cultes (CAVIMAC) ; les marins (ENIM) ; le personnel navigant
+(CRPNPAC, ses deux tranches) ; les professions libérales, base (CNAVPL) et
+complémentaires (CARMF, CIPAV, CARPIMKO, CAVEC, CAVP, CAVOM, CARPV, CPRN),
+leurs régimes des praticiens conventionnés (ASV) et les artistes auteurs
+(IRCEC) ; les avocats (CNBF, base et complémentaire) ; la RATP, la Banque de
+France, les mines, la SEITA, l'Opéra de Paris, la Comédie-Française, le port
+de Strasbourg, les chemins de fer secondaires ; les assemblées
+parlementaires et le Conseil économique, social et environnemental ; le
+régime additionnel des enseignants du privé ; l'IGRANTE, l'IPACTE, les
+gérants de débits de tabac, les conjoints du bâtiment de l'ORGANIC ; les
+pensions civiles d'avant 1924 ; l'allocation aux vieux travailleurs
+salariés ; l'outre-mer et le Pacifique (CAFAT, CPS de Polynésie et sa
+tranche B, CPS de Saint-Pierre-et-Miquelon, CSSM de Mayotte, Wallis-et-Futuna,
+fonctionnaires du Pacifique). Chacun a ses textes, à lire avant d'être porté.
+
 ## Un rendement unique là où il faudrait une série
 
 La fiche CARPIMKO met en lumière une approximation qui vaut pour TOUS les

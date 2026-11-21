@@ -2001,6 +2001,7 @@ Reversions.FICHES = Object.freeze([
   "reversion", "reversion_fonction_publique", "reversion_agirc_arrco",
   "reversion_rafp", "reversion_ircantec", "reversion_rci", "reversion_crpcen",
   "reversion_ieg", "reversion_sncf", "reversion_carcdsf", "reversion_cavamac",
+  "reversion_fspoeie",
   "majoration_forfaitaire_reversion",
 ]);
 

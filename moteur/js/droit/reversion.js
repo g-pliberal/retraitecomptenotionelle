@@ -72,7 +72,7 @@ export const APRES_LES_BASES = Object.freeze(["reversion", "reversion_rci"]);
  * condition de mariage de L. 39 : voir le Python.
  */
 export const MOITIE_SOUS_CONDITION_DE_MARIAGE = Object.freeze([
-  "reversion_fonction_publique", "reversion_crpcen",
+  "reversion_fonction_publique", "reversion_crpcen", "reversion_fspoeie",
 ]);
 
 /**
