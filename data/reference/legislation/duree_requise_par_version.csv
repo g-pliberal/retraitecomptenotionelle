@@ -1,0 +1,71 @@
+# Durée d'assurance requise pour le taux plein, VERSION PAR VERSION
+# ------------------------------------------------------------------
+# source_id: dila_legi_parametres_retraite, dila_legi_duree_requise
+#
+# La table de chaque version de la fiche `duree_requise_par_generation` (note
+# de décision 0009, étape 3) : ce que chaque texte écrit lui-même, génération
+# par génération, SANS FUSION. Le récupérateur
+# (`scripts/fetch/dila_legi_parametres_retraite.py`, `duree_requise_par_version`)
+# lit dans l'index LEGI chaque rédaction de L. 161-17-3, de R. 351-27 (depuis
+# 2009, « nés avant le 1er janvier 1949 ») et de R. 351-45, partie par partie
+# (« R351-45 II », l'escalier de 1934 à 1942 ; « R351-45 III », décembre
+# 1942) ; `scripts/fetch/dila_legi_duree_requise.py`, les décrets des
+# générations 1953 à 1957 ; `scripts/verifier_donnees.py --appliquer` les
+# écrit et les certifie. Seules les lignes de la loi n° 2003-775 (article 5,
+# III : un trimestre de plus par année, des nés en 1949 à ceux de 1952) se
+# saisissent à la main, au niveau `haute` : aucun texte consolidé ne les
+# écrit génération par génération.
+#
+# `entree_en_vigueur` est la date d'effet de la rédaction, lue dans la
+# disposition d'application que LEGI porte en tête, à défaut son entrée en
+# vigueur ; `generation` ouvre la ligne, `generation_fin` est la première
+# génération qu'elle ne vise plus (`2100` : sans fin) ; une coupure en cours
+# d'année porte des décimales, `1961.667` pour le 1er septembre 1961.
+#
+# Ce que le fichier NE DIT PAS, et que la fiche dit : quelles lignes font une
+# version, de quelle date d'effet à quelle autre elle vaut, et la valeur que
+# la version écrit pour toute génération qu'aucune ligne ne nomme (le I de
+# R. 351-45 : « 160 trimestres […] quelle que soit la date de naissance »).
+#
+# La table du droit en vigueur, `duree_assurance_requise.csv`, est une vue
+# fabriquée depuis ces lignes et les versions de la fiche
+# (`src/retraite_notionnelle/donnees/tables_de_version.py`).
+entree_en_vigueur,article,generation,generation_fin,trimestres,fiabilite
+1993-08-28,R351-45 II,1900,1934,150,certifiee
+1993-08-28,R351-45 II,1934,1935,151,certifiee
+1993-08-28,R351-45 II,1935,1936,152,certifiee
+1993-08-28,R351-45 II,1936,1937,153,certifiee
+1993-08-28,R351-45 II,1937,1938,154,certifiee
+1993-08-28,R351-45 II,1938,1939,155,certifiee
+1993-08-28,R351-45 II,1939,1940,156,certifiee
+1993-08-28,R351-45 II,1940,1941,157,certifiee
+1993-08-28,R351-45 II,1941,1942,158,certifiee
+1993-08-28,R351-45 II,1942,1943,159,certifiee
+1993-08-28,R351-45 III,1942.917,1943,159,certifiee
+2009-01-01,R351-27,1900,1949,160,certifiee
+2009-01-01,loi 2003-775 art. 5,1949,1950,161,haute
+2009-01-01,loi 2003-775 art. 5,1950,1951,162,haute
+2009-01-01,loi 2003-775 art. 5,1951,1952,163,haute
+2009-01-01,loi 2003-775 art. 5,1952,1953,164,haute
+2011-01-01,D2010-1734 art. 9,1953,1955,165,certifiee
+2011-08-03,D2011-916 art. 1,1955,1956,166,certifiee
+2012-12-30,D2012-1487 art. 1,1956,1957,166,certifiee
+2013-12-16,D2013-1155 art. 1,1957,1958,166,certifiee
+2014-01-22,L161-17-3,1958,1961,167,certifiee
+2014-01-22,L161-17-3,1961,1964,168,certifiee
+2014-01-22,L161-17-3,1964,1967,169,certifiee
+2014-01-22,L161-17-3,1967,1970,170,certifiee
+2014-01-22,L161-17-3,1970,1973,171,certifiee
+2014-01-22,L161-17-3,1973,2100,172,certifiee
+2023-09-01,L161-17-3,1958,1961,167,certifiee
+2023-09-01,L161-17-3,1961,1961.667,168,certifiee
+2023-09-01,L161-17-3,1961.667,1963,169,certifiee
+2023-09-01,L161-17-3,1963,1964,170,certifiee
+2023-09-01,L161-17-3,1964,1965,171,certifiee
+2023-09-01,L161-17-3,1965,2100,172,certifiee
+2026-09-01,L161-17-3,1958,1961,167,certifiee
+2026-09-01,L161-17-3,1961,1961.667,168,certifiee
+2026-09-01,L161-17-3,1961.667,1963,169,certifiee
+2026-09-01,L161-17-3,1963,1965.25,170,certifiee
+2026-09-01,L161-17-3,1965.25,1966,171,certifiee
+2026-09-01,L161-17-3,1966,2100,172,certifiee

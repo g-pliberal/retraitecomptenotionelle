@@ -179,13 +179,12 @@ def test_le_contexte_de_la_fabrique_batit_le_simulateur_de_donnees():
 #: lisent la fabrique du paquet et le coût des avantages : 43 classes, leurs
 #: deux aides et leurs six constantes, relogées telles quelles sous
 #: ``donnees/tables_du_droit.py`` (action 161, étape 3 de l'inventaire du
-#: retrait des règles).
+#: retrait des règles), moins les deux copies d'avant réforme de la durée
+#: requise et la table qui les recouvrait (note de décision 0009, étape 3).
 TABLES_DU_DROIT = (
-    "Rendements", "TableParGeneration", "DureesRequises", "DureesRequisesAvantSuspension",
-    "DureesRequisesAvantReforme2023", "_rang_mois", "DureesRequisesRegimes",
+    "Rendements", "TableParGeneration", "DureesRequises", "_rang_mois", "DureesRequisesRegimes",
     "CalendriersDureeRequise", "_age_ou_rien", "AgesRegimes", "DureesRequisesFonctionPublique",
     "DureesRequisesAvantSoixanteAns", "DureesProratisation", "AgesOuverture",
-    "TableRecouverte",
     "AgesSurcoteRegimesSpeciaux", "AgesAnnulationDecote", "AgesCategorieActive",
     "DureesServicesMilitaires", "DureesServicesActifs", "AgesJouissanceMilitaire",
     "CoefficientsMinoration", "AnneesSalaireReference", "AnneesRevenuAnnuelMoyenIndependants",

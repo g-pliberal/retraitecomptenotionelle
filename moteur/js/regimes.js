@@ -40,83 +40,17 @@ export class TableParGeneration {
   }
 }
 
-/** Durée d'assurance requise pour le taux plein, par génération. */
-export class DureesRequises extends TableParGeneration {
-  constructor(paquet) {
-    super(paquet.durees_requises);
-  }
-
-  /** @returns {[number, number] | null} trimestres et fiabilité. */
-  trimestres(generation) {
-    return this.valeur(generation);
-  }
-}
-
-/**
- * Durée requise que la suspension de 2026 remplace, pour les pensions prenant
- * effet avant le 1er septembre 2026 : 171 trimestres pour les nés en 1964, 172
- * pour ceux de 1965 — portage de `DureesRequisesAvantSuspension`.
- */
-export class DureesRequisesAvantSuspension extends TableParGeneration {
-  constructor(paquet) {
-    super(paquet.durees_requises_avant_suspension);
-  }
-
-  /** @returns {[number, number] | null} trimestres et fiabilité. */
-  trimestres(generation) {
-    return this.valeur(generation);
-  }
-}
-
-/** Première date d'effet de la table de la suspension, et ses générations. */
-export const SUSPENSION_2026_EFFET = [2026, 9];
-export const GENERATIONS_SUSPENSION = [1964.0, 1966.0];
-
-/**
- * Durée requise que la loi du 14 avril 2023 a relevée, pour les pensions
- * prenant effet avant le 1er septembre 2023 : L. 161-17-3 dans sa version du
- * 22 janvier 2014 — portage de `DureesRequisesAvantReforme2023`.
- */
-export class DureesRequisesAvantReforme2023 extends TableParGeneration {
-  constructor(paquet) {
-    super(paquet.durees_requises_avant_reforme_2023);
-  }
-
-  /** @returns {[number, number] | null} trimestres et fiabilité. */
-  trimestres(generation) {
-    return this.valeur(generation);
-  }
-}
-
-/** Première date d'effet de la table de 2023, et sa première génération. */
-export const REFORME_2023_EFFET = [2023, 9];
-export const GENERATION_REFORME_2023 = 1961.667;
-
-/**
- * La durée unique de R. 351-45, I : 160 trimestres pour toute pension prenant
- * effet à compter du 1er janvier 2003, quelle que soit la génération ; la
- * génération de décembre 1942, que le III garde à 159 trimestres pour une
- * pension prenant effet ce jour-là — portage du Python.
- */
-export const DUREE_UNIQUE_2003 = 160;
-export const DUREE_UNIQUE_2003_EFFET = [2003, 1];
-export const GENERATION_DECEMBRE_1942 = 1942.917;
-
-/**
- * La même durée unique tient jusqu'au 31 décembre 2008, aux générations dont
- * la table dit davantage : la durée par génération n'entre au code qu'avec le
- * décret n° 2008-1555, article 4, en vigueur le 1er janvier 2009 (circulaire
- * Cnav 2008/41, § 211). Première date d'effet de la table — portage du Python.
- */
-export const DUREE_PAR_GENERATION_EFFET = [2009, 1];
-
 /**
  * Les nés de 1953 à 1955 partis avant le décret de leur génération : la durée
  * de la génération 1952 pour une demande d'avant 2011, que le modèle, sans
  * date de demande, lit jusqu'à une pension prenant effet au 1er juin 2011
  * (circulaire Cnav 2011/25) ; 165 aux nés en 1955 jusqu'au décret n° 2011-916,
  * en vigueur le 3 août 2011. [première génération, génération suivante, dernière
- * date d'effet, trimestres], lus dans l'ordre — portage du Python.
+ * date d'effet, trimestres], lus dans l'ordre. C'est une pratique de la caisse,
+ * non le texte, que la version `loi_de_2003` de la fiche ne porte pas : elle
+ * reste ici, au cliquet des constantes datées, jusqu'à ce que le contrat des
+ * fiches sache dire une version restreinte aux régimes alignés (note de
+ * décision 0009, étape 3).
  */
 export const DUREES_AVANT_LE_DECRET = [
   [1953, 1956, [2011, 6], 164],
@@ -350,9 +284,12 @@ function origineDeLaGeneration(generation) {
  * dans sa rédaction antérieure », L. 161-17-2, loi n° 2025-1403). `null` quand
  * la version ne dit rien de cette génération. Un renvoi sans cible, ou qui
  * boucle, arrête le calcul et nomme ses versions : la fabrique l'a déjà
- * refusé (`noyau/renvois.py`), ceci n'est que la ceinture.
+ * refusé (`noyau/renvois.py`), ceci n'est que la ceinture. `nom` est le
+ * paramètre que la version écrit pour toute génération que sa table ne nomme
+ * pas : `age` pour l'âge légal, `trimestres` pour la durée requise (le I de
+ * R. 351-45, « quelle que soit la date de naissance », que le II déroge).
  */
-function ageDansLaVersion(fiche, version, generation, vues = []) {
+function ageDansLaVersion(fiche, version, generation, vues = [], nom = "age") {
   const ici = `${fiche.id}.${version.id}`;
   const renvoi = version.redaction_anterieure ?? null;
   if (renvoi !== null) {
@@ -367,18 +304,15 @@ function ageDansLaVersion(fiche, version, generation, vues = []) {
         throw new Error(`${ici} : renvoie à sa rédaction antérieure « ${renvoi.version} », `
           + `que la fiche ${fiche.id} ne porte pas`);
       }
-      return ageDansLaVersion(fiche, anterieure, generation, [...vues, version.id]);
+      return ageDansLaVersion(fiche, anterieure, generation, [...vues, version.id], nom);
     }
   }
-  if (version.table) {
-    for (const [debut, fin, age, fiabilite] of version.table) {
-      if (generation >= debut && (fin === null || generation < fin)) {
-        return [age, fiabilite];
-      }
+  for (const [debut, fin, age, fiabilite] of version.table ?? []) {
+    if (generation >= debut && (fin === null || generation < fin)) {
+      return [age, fiabilite];
     }
-    return null;
   }
-  const age = version.parametres.age;
+  const age = version.parametres[nom];
   return age === null || age === undefined ? null : [age, version.fiabilite];
 }
 
@@ -507,26 +441,112 @@ export class AgesOuverture {
   }
 }
 
+/** La fiche de la durée requise pour le taux plein (L. 161-17-3, R. 351-27). */
+export const FICHE_DE_LA_DUREE_REQUISE = "duree_requise_par_generation";
+
 /**
- * Une table par génération qu'une autre recouvre, de sa première génération à
- * toutes les suivantes : ce qu'un droit contrefactuel change à la durée
- * requise, jusqu'à l'étape 3 de la note de décision 0009. En deçà, la table du
- * droit en vigueur répond. L'âge légal ne passe plus par elle : un droit
- * contrefactuel le lit dans la fiche que sa pile de couches a résolue
- * (`FichesDatees.sousLeDroit`). Portage de `TableRecouverte`.
+ * La durée requise sous une version de sa fiche : la ligne de sa table pour la
+ * génération, ce qu'elle laisse à sa rédaction antérieure, ou la valeur qu'elle
+ * écrit pour toute génération (`trimestres`). `version` est `null` quand
+ * aucune ne vaut : la durée ne dit rien.
  */
-export class TableRecouverte {
-  constructor(dessus, dessous) {
-    this._dessus = dessus;
-    this._dessous = dessous;
+export class DureesRequisesDUneVersion {
+  constructor(fiche, version) {
+    this._fiche = fiche;
+    this._version = version;
+    this.version = version === null ? null : version.id;
+  }
+
+  /** @returns {[number, number] | null} trimestres et fiabilité. */
+  trimestres(generation) {
+    return this._version === null ? null
+      : ageDansLaVersion(this._fiche, this._version, generation, [], "trimestres");
   }
 
   valeur(generation) {
-    return this._dessus.valeur(generation) ?? this._dessous.valeur(generation);
+    return this.trimestres(generation);
+  }
+}
+
+/**
+ * Durée d'assurance requise pour le taux plein, lue dans les versions de sa
+ * fiche, `duree_requise_par_generation`, que le paquet porte (`fiches_datees`,
+ * note de décision 0009, étape 3) : la date d'effet de la pension choisit la
+ * version ({@link aLEffet}), la génération sa ligne. Sans date d'effet, la
+ * dernière version, celle du droit en vigueur ({@link trimestres}) : la table
+ * par génération que la fabrique en tire (`duree_assurance_requise.csv`). Sous
+ * un droit contrefactuel, la fiche est celle que sa pile de couches a résolue
+ * (`fiches`).
+ */
+export class DureesRequises {
+  constructor(paquet, fiches = null) {
+    this._fiches = fiches ?? new FichesDatees(paquet);
   }
 
+  /** La fiche préparée ; sans elle, le calcul s'arrête. */
+  _fiche() {
+    const fiche = this._fiches.fiches()[FICHE_DE_LA_DUREE_REQUISE] ?? null;
+    if (fiche === null) {
+      throw new Error(`${FICHE_DE_LA_DUREE_REQUISE} : la fiche manque au paquet `
+        + "(fiches_datees)");
+    }
+    return fiche;
+  }
+
+  /**
+   * La durée que le droit oppose à une pension prenant effet à `dateEffet`
+   * (AAAA-MM-JJ) : celle de la version qui vaut ce jour-là ; `null`, la
+   * dernière.
+   */
+  aLEffet(dateEffet) {
+    const fiche = this._fiche();
+    const version = dateEffet === null
+      ? fiche.versions.find((v) => (v.bornes[DATE_D_EFFET] ?? [null, null])[1] === null) ?? null
+      : this._fiches.versionAuxDates(FICHE_DE_LA_DUREE_REQUISE, { [DATE_D_EFFET]: dateEffet });
+    return new DureesRequisesDUneVersion(fiche, version);
+  }
+
+  /**
+   * La durée d'une pension prenant effet à `dateEffet` : celle de la version
+   * qui vaut ce jour-là ; si elle ne dit rien de la génération (la loi de 2003
+   * pour les nés après 1957, que ses décrets n'avaient pas encore atteints),
+   * celle de la première version suivante qui la dit (L. 161-17-3 de 2014).
+   * Sans date d'effet, la dernière version.
+   * @returns {[number, number] | null}
+   */
+  deLaPension(dateEffet, generation) {
+    const lue = this.aLEffet(dateEffet).trimestres(generation);
+    if (lue !== null || dateEffet === null) {
+      return lue;
+    }
+    const fiche = this._fiche();
+    const suivantes = fiche.versions
+      .filter((v) => (v.bornes[DATE_D_EFFET] ?? [null])[0] !== null
+        && v.bornes[DATE_D_EFFET][0] > dateEffet)
+      .sort((a, b) => (a.bornes[DATE_D_EFFET][0] < b.bornes[DATE_D_EFFET][0] ? -1 : 1));
+    for (const version of suivantes) {
+      const dite = new DureesRequisesDUneVersion(fiche, version).trimestres(generation);
+      if (dite !== null) {
+        return dite;
+      }
+    }
+    return null;
+  }
+
+  /** La durée sous la version qui porte cet identifiant, ou `null`. */
+  deLaVersion(identifiant) {
+    const fiche = this._fiche();
+    return new DureesRequisesDUneVersion(
+      fiche, fiche.versions.find((v) => v.id === identifiant) ?? null);
+  }
+
+  /** @returns {[number, number] | null} la durée du droit en vigueur. */
   trimestres(generation) {
-    return this.valeur(generation);
+    return this.aLEffet(null).trimestres(generation);
+  }
+
+  valeur(generation) {
+    return this.trimestres(generation);
   }
 }
 

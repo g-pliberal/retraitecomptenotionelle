@@ -1,12 +1,12 @@
 schema_version: 1
 id: duree_requise_par_generation
 intitule: >-
-  Durée d'assurance requise pour le taux plein et dénominateur du prorata, par génération
-  ; pour les pensions prenant effet avant le 1er septembre 2026, les nés en 1964
-  et 1965 doivent celle de la loi de 2023, 171 et 172 trimestres ; pour les pensions
-  prenant effet avant le 1er septembre 2023, les nés à compter du 1er septembre
-  1961 doivent celle de la version de 2014 de L. 161-17-3, 168 trimestres jusqu'en
-  1963 et 169 de 1964 à 1966.
+  Durée d'assurance requise pour le taux plein et dénominateur du prorata, lue
+  dans la version du texte en vigueur à la date d'effet de la pension : 150
+  trimestres jusqu'en 1993, l'escalier de 1993 jusqu'en 2002, 160 jusqu'en 2008,
+  puis la table par génération de la loi de 2003 et de ses décrets, de
+  L. 161-17-3 en 2014, en 2023 et depuis la suspension du 1er septembre 2026.
+domaine: duree
 regimes: [agirc, agirc_arrco, agirc_entreprises_nouvelles, arrco, arrco_cultes,
   arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, asv_conventionnes,
   banque_de_france, cancava, cancava_avant_1973, carcdsf_complementaire,
@@ -18,6 +18,16 @@ regimes: [agirc, agirc_arrco, agirc_entreprises_nouvelles, arrco, arrco_cultes,
   organic_conjoints_batiment, ratp, rci, regime_general, rsi, sncf, unirs]
 etat: conforme
 etape: ouvrir_le_droit
+lit:
+- l'année et le mois de naissance de l'assuré
+- liquidation.date_effet
+ecrit:
+- >-
+  la durée d'assurance requise pour le taux plein et le dénominateur du prorata,
+  dans les régimes qui renvoient à la règle commune
+  (`duree_requise_par_generation`)
+dates_qui_decident:
+- liquidation.date_effet
 effet: >-
   Taux et proratisation de toute liquidation. Les vingt segments depuis 1958 sont
   certifiés (action 27). Jusqu'au 23 septembre 2026, le modèle opposait la table
@@ -38,14 +48,15 @@ effet: >-
   un départ en carrière longue refusé à qui avait 168 trimestres, et un prorata réduit
   de 0,6 à 2,4 % ; et 165 ou 166 aux nés de 1953 à 1955 partis avant le décret de leur
   génération, à qui la caisse en opposait 164, ou 165 aux nés en 1955 de juin à août 2011.
+  Depuis le 21 novembre 2026 (note de décision 0009, étape 3), les versions de la
+  fiche sont la source : le moteur les lit à la date d'effet de la pension, et la
+  table par génération n'est plus qu'une vue fabriquée de la dernière. Le droit du
+  31 août 2023 garde la version de 2014 ; la loi de 2023 sans la suspension garde
+  celle de 2023.
 sources:
   lu_le: 2026-11-16
   prochaine_relecture: 2026-12-31
   a_relire:
-  - >-
-    La circulaire Cnav 2011/24, jumelle de la 2011/25 pour la carrière longue des nés
-    de 1953 et après, n'a pas été lue : la règle de la date de demande y est présumée
-    la même.
   - >-
     La clause de sauvegarde de l'article 8 du décret n° 2023-436 — la carrière longue
     aux conditions d'avant septembre 2023 pour les nés de septembre 1961 à 1963
@@ -144,6 +155,18 @@ sources:
       circulaire est celle de la caisse : la fonction publique garde la table de la
       génération, comme OpenFisca (tests/test_oracle_carriere_longue_fonction_publique.py)
     date: 2011-03-17
+  - type: circulaire_cnav
+    reference: >-
+      2011/24 du 17 mars 2011 (annulée et remplacée par la 2012/6), lue le 21 novembre
+      2026 dans la base de législation de la Cnav : ses tableaux, génération par
+      génération, donnent 164 trimestres aux nés en 1952, 165 aux nés en 1953 et 1954,
+      pour des départs à l'âge légal de 2012 à 2016 ; « Dans l'attente de la publication
+      des décrets qui fixeront la durée d'assurance applicable aux générations nées à
+      compter de 1955, la durée d'assurance à retenir correspond à celle en vigueur pour
+      les assurés nés en 1953 et 1954 pour les estimations de retraite ». Elle ne dit rien
+      des départs anticipés de 2011, ni de la date de la demande : elle ne contredit pas
+      la 2011/25
+    date: 2011-03-17
   - type: legifrance
     reference: >-
       décret n° 2011-916 du 1er août 2011 (JORFTEXT000024419259), article 1er : 166
@@ -151,6 +174,354 @@ sources:
       la publication », le 3 août 2011 : 165 aux nés en 1955 jusqu'à une pension
       prenant effet le 1er août 2011
     date: 2026-11-16
+versions:
+- id: cent_cinquante
+  statut: lue
+  nee_de: LEGIARTI000006749434
+  textes:
+  - id: LEGIARTI000006749434
+    article: R. 351-27 du code de la sécurité sociale, rédaction du 21 décembre 1985
+    en_vigueur: 1985-12-21
+    citation: >-
+      « […] d'une durée au moins égale à 150 trimestres, le taux applicable à leur
+      salaire annuel de base est fixé à 50 % »
+    lu_le: 2026-11-21
+  hypothese: >-
+    avant la codification du 21 décembre 1985, les mêmes 150 trimestres, que
+    l'ordonnance n° 82-270 a fixés et que l'index LEGI ne porte pas ; la valeur
+    que la table du dépôt donnait déjà, depuis la génération 1900, à toute
+    pension d'avant 1994. Les assurés qui ont liquidé avant 1972 devaient trente
+    années : la période du régime les porte, et la fiche ne les distingue pas
+  fiabilite: haute
+  bornes:
+    liquidation.date_effet: [null, 1994-01-01]
+  contenu:
+    droit: >-
+      150 trimestres, quelle que soit la génération
+    conditions: >-
+      la rédaction de R. 351-45 du 28 août 1993, qui fait monter la durée d'un
+      trimestre par génération à compter des nés en 1934, ne vise que des assurés
+      qui n'ont pas soixante ans avant le 1er janvier 1994 : la version change à
+      cette date, la première où l'un d'eux peut partir à l'âge légal
+    parametres:
+      trimestres: 150
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne prend effet avant 1994
+- id: escalier_de_1993
+  statut: lue
+  nee_de: LEGIARTI000006749449
+  textes:
+  - id: LEGIARTI000006749449
+    article: R. 351-45, II, du code de la sécurité sociale, rédaction du 28 août 1993
+    en_vigueur: 1993-08-28
+    citation: >-
+      « II. - En ce qui concerne les pensions prenant effet avant le 1er janvier
+      2003, la durée d'assurance […] est de : 150 trimestres pour l'assuré né avant
+      le 1er janvier 1934 ; 151 trimestres pour l'assuré né en 1934 ; […] 159
+      trimestres pour l'assuré né en 1942. »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000006749435
+    article: R. 351-27 du code de la sécurité sociale, rédaction du 28 août 1993
+    en_vigueur: 1993-08-28
+    citation: >-
+      « […] d'une durée au moins égale à 160 trimestres, le taux applicable à leur
+      salaire annuel de base est fixé à 50 % »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000006749450
+    article: R. 351-45, rédaction du 10 mai 1995, jusqu'au 1er janvier 2009
+    en_vigueur: 1995-05-10
+    citation: >-
+      les mêmes I, II et III ; le IV réduit ces durées des services militaires
+      accomplis en Afrique du Nord, que le moteur ne lit pas
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [1994-01-01, 2003-01-01]
+  contenu:
+    droit: >-
+      150 trimestres pour les assurés nés avant 1934, puis un de plus par
+      génération jusqu'à 159 pour ceux nés en 1942 ; 160, la durée de R. 351-27,
+      pour les générations suivantes, qui n'ont pas soixante ans avant 2003
+    parametres:
+      trimestres: 160
+    table:
+      fichier: legislation/duree_requise_par_version.csv
+      lignes:
+        article: ['R351-45 II']
+      cle: generation
+      valeur: trimestres
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne prend effet de 1994 à 2002 ;
+    l'exposé « Durée d'assurance pour le taux plein » de la base de la Cnav en
+    donne les tableaux, confrontés aux séries (tests/test_cnav_exposes.py)
+  fiabilite: haute
+- id: decembre_1942_au_1er_janvier_2003
+  statut: lue
+  nee_de: LEGIARTI000006749449
+  textes:
+  - id: LEGIARTI000006749449
+    article: R. 351-45, I et III, du code de la sécurité sociale, rédaction du 28 août 1993
+    en_vigueur: 1993-08-28
+    citation: >-
+      « III. - Par dérogation au I ci-dessus, la durée d'assurance […] demeure fixée
+      à 159 trimestres pour les assurés nés en décembre 1942 et dont la pension prend
+      effet au 1er janvier 2003 en application de l'article R. 351-37. »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2003-01-01, 2003-01-02]
+  contenu:
+    droit: >-
+      160 trimestres, sauf aux assurés nés en décembre 1942, qui en doivent 159
+    conditions: >-
+      une version d'un jour : le III ne vaut que pour la pension qui prend effet le
+      1er janvier 2003 ; la suivante, du 2 janvier, ne change rien à la recherche
+      du premier départ, qui ne s'arrête qu'au premier du mois suivant
+    parametres:
+      trimestres: 160
+    table:
+      fichier: legislation/duree_requise_par_version.csv
+      lignes:
+        article: ['R351-45 III']
+      cle: generation
+      valeur: trimestres
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026 : l'exposé « Durée d'assurance pour le taux plein » de la
+    base de la Cnav (version du 15 septembre 2026) le dit sans chiffrer de cas
+  fiabilite: haute
+- id: cent_soixante
+  statut: lue
+  nee_de: LEGIARTI000006749449
+  textes:
+  - id: LEGIARTI000006749449
+    article: R. 351-45, I, du code de la sécurité sociale, rédaction du 28 août 1993
+    en_vigueur: 1993-08-28
+    citation: >-
+      « I. - La durée d'assurance et de périodes reconnues équivalentes de 160
+      trimestres […] est applicable aux pensions prenant effet postérieurement au
+      31 décembre 2002, quelle que soit la date de naissance de l'assuré. »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000006749436
+    article: R. 351-27, rédaction du 15 février 2004, jusqu'au 1er janvier 2009
+    en_vigueur: 2004-02-15
+    citation: >-
+      « d'une durée au moins égale à 160 trimestres »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2003-01-02, 2009-01-01]
+  contenu:
+    droit: >-
+      160 trimestres, quelle que soit la génération
+    conditions: >-
+      la loi n° 2003-775 (article 5, III) ne majore la durée d'un trimestre par
+      année qu'« à compter de 2009 », et le décret n° 2008-1555 (article 4) ne
+      l'écrit au 1° de R. 351-27 qu'au 1er janvier 2009 (circulaire Cnav 2008/41,
+      § 211)
+    parametres:
+      trimestres: 160
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne prend effet de 2003 à 2008
+  fiabilite: haute
+- id: loi_de_2003
+  statut: lue
+  nee_de: LEGIARTI000020082993
+  textes:
+  - id: LEGIARTI000020082993
+    article: >-
+      R. 351-27 du code de la sécurité sociale, rédaction du décret n° 2008-1555 du
+      31 décembre 2008 (article 4), en vigueur le 1er janvier 2009
+    en_vigueur: 2009-01-01
+    citation: >-
+      « la limite prévue au deuxième alinéa de l'article L. 351-1, résultant de
+      l'application de l'article 5 de la loi n° 2003-775 du 21 août 2003 […]. Pour
+      les assurés nés avant le 1er janvier 1949, cette limite est fixée à 160
+      trimestres »
+    lu_le: 2026-11-21
+  - id: JORFARTI000001914387
+    article: loi n° 2003-775 du 21 août 2003, article 5, III
+    en_vigueur: 2003-08-22
+    citation: >-
+      la durée est « majorée d'un trimestre par année » « à compter de 2009 » :
+      161 trimestres pour les assurés nés en 1949, jusqu'à 164 pour ceux nés en 1952
+    lu_le: 2026-11-16
+  - id: LEGIARTI000023383430
+    article: décret n° 2010-1734 du 30 décembre 2010, article 9
+    en_vigueur: 2011-01-01
+    citation: >-
+      « […] sont fixées à 165 trimestres pour les assurés nés en 1953 et 1954. »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000024424403
+    article: décret n° 2011-916 du 1er août 2011, article 1er
+    en_vigueur: 2011-08-03
+    citation: >-
+      « […] sont fixées à 166 trimestres pour les assurés nés en 1955. »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000026882922
+    article: décret n° 2012-1487 du 27 décembre 2012, article 1er
+    en_vigueur: 2012-12-30
+    citation: >-
+      « […] sont fixées à 166 trimestres pour les assurés nés en 1956. »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000028324794
+    article: décret n° 2013-1155 du 13 décembre 2013, article 1er
+    en_vigueur: 2013-12-16
+    citation: >-
+      « […] sont fixées à 166 trimestres pour les assurés nés en 1957. »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2009-01-01, 2014-01-22]
+  contenu:
+    droit: >-
+      160 trimestres pour les assurés nés avant 1949, puis un de plus par
+      génération jusqu'à 164 pour ceux nés en 1952 ; 165 pour ceux nés en 1953 et
+      1954, 166 pour ceux nés de 1955 à 1957, que fixe chacun le décret de leur
+      génération
+    conditions: >-
+      la version lit chaque décret dès le 1er janvier 2009, comme la fonction
+      publique et OpenFisca ; la caisse, elle, opposait aux nés de 1953 à 1955
+      partis avant le décret de leur génération la durée qu'elle leur opposait
+      jusque-là, 164 ou 165 trimestres (circulaire Cnav 2011/25) : c'est une
+      pratique de caisse, que le moteur garde dans le code
+      (`DUREES_AVANT_LE_DECRET`, cliquet des constantes datées). Aucun texte de
+      cette version n'écrit la durée des assurés nés à compter de 1958, qui ne
+      pouvaient partir qu'après elle : la version ne leur dit rien
+    table:
+      fichier: legislation/duree_requise_par_version.csv
+      lignes:
+        article: [R351-27, loi 2003-775 art. 5, D2010-1734 art. 9, D2011-916 art. 1,
+          D2012-1487 art. 1, D2013-1155 art. 1]
+      cle: generation
+      valeur: trimestres
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne prend effet de 2009 au 21
+    janvier 2014 ; la circulaire Cnav 2011/25 n'en chiffre pas
+- id: loi_de_2014
+  statut: lue
+  nee_de: LEGIARTI000028494794
+  textes:
+  - id: LEGIARTI000028494794
+    article: >-
+      L. 161-17-3 du code de la sécurité sociale, rédaction de la loi n° 2014-40 du
+      20 janvier 2014 (article 2), en vigueur le 22 janvier 2014
+    en_vigueur: 2014-01-22
+    citation: >-
+      « 1° 167 trimestres, pour les assurés nés entre le 1er janvier 1958 et le 31
+      décembre 1960 ; 2° 168 trimestres, pour les assurés nés entre le 1er janvier
+      1961 et le 31 décembre 1963 ; 3° 169 trimestres, pour les assurés nés entre le
+      1er janvier 1964 et le 31 décembre 1966 ; 4° 170 trimestres, pour les assurés
+      nés entre le 1er janvier 1967 et le 31 décembre 1969 ; 5° 171 trimestres, pour
+      les assurés nés entre le 1er janvier 1970 et le 31 décembre 1972 ; 6° 172
+      trimestres, pour les assurés nés à partir du 1er janvier 1973. »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2014-01-22, 2023-09-01]
+  contenu:
+    droit: >-
+      la loi écrit la durée des assurés nés à compter de 1958, de 167 à 172
+      trimestres ; celle des générations d'avant reste celle des textes de la
+      version précédente
+    conditions: >-
+      LEGI ne porte aucune disposition d'application en tête de la rédaction : la
+      version commence à son entrée en vigueur. Aucune génération qu'elle écrit ne
+      pouvait partir avant, sinon à cinquante-cinq ans au titre du handicap
+    table:
+      fichier: legislation/duree_requise_par_version.csv
+      lignes:
+        entree_en_vigueur: ['2014-01-22']
+        article: [L161-17-3]
+      cle: generation
+      valeur: trimestres
+    redaction_anterieure:
+      version: loi_de_2003
+      naissance: [null, 1958-01-01]
+      texte: LEGIARTI000028494794
+  exemples:
+  - cnav_2023_19_duree_1962_avant_septembre
+  - cnav_2023_19_duree_1963_avant_septembre
+- id: loi_de_2023
+  statut: lue
+  nee_de: LEGIARTI000047452764
+  textes:
+  - id: LEGIARTI000047452764
+    article: >-
+      L. 161-17-3, rédaction de la loi n° 2023-270 du 14 avril 2023 (article 10),
+      dont le B du XXX l'applique « aux pensions prenant effet à compter du 1er
+      septembre 2023 »
+    en_vigueur: 2023-09-01
+    citation: >-
+      « 2° 168 trimestres, pour les assurés nés entre le 1er janvier 1961 et le 31
+      août 1961 ; 3° 169 trimestres, pour les assurés nés entre le 1er septembre
+      1961 et le 31 décembre 1962 ; 4° 170 trimestres, pour les assurés nés en 1963 ;
+      5° 171 trimestres, pour les assurés nés en 1964 ; 6° 172 trimestres, pour les
+      assurés nés à partir du 1er janvier 1965. »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2023-09-01, 2026-09-01]
+  contenu:
+    droit: >-
+      la montée est accélérée d'un trimestre par génération pour les assurés nés
+      à compter du 1er septembre 1961, jusqu'à 172 trimestres dès la génération
+      1965
+    table:
+      fichier: legislation/duree_requise_par_version.csv
+      lignes:
+        entree_en_vigueur: ['2023-09-01']
+        article: [L161-17-3]
+      cle: generation
+      valeur: trimestres
+    redaction_anterieure:
+      version: loi_de_2014
+      naissance: [null, 1958-01-01]
+      texte: LEGIARTI000047452764
+  exemples:
+  - cnav_2026_07_duree_1964_avant_septembre
+  - cnav_2026_07_duree_1965_avant_septembre
+- id: suspension_de_2025
+  statut: lue
+  nee_de: LEGIARTI000053280903
+  textes:
+  - id: LEGIARTI000053280903
+    article: >-
+      L. 161-17-3, rédaction de la loi n° 2025-1403 du 30 décembre 2025 (article
+      105), dont le VI l'applique « aux pensions prenant effet à compter du 1 er
+      septembre 2026 »
+    en_vigueur: 2025-12-31
+    citation: >-
+      « 4° 170 trimestres, pour les assurés nés entre le 1 er janvier 1963 et le 31
+      mars 1965 ; 5° 171 trimestres, pour les assurés nés entre le 1 er avril 1965
+      et le 31 décembre 1965 ; 6° 172 trimestres, pour les assurés nés à partir du
+      1 er janvier 1966. »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2026-09-01, null]
+  contenu:
+    droit: >-
+      la montée de la loi de 2023 est suspendue : 170 trimestres pour les assurés
+      nés du 1er janvier 1963 au 31 mars 1965, 171 pour ceux nés d'avril à
+      décembre 1965, 172 à compter de la génération 1966
+    table:
+      fichier: legislation/duree_requise_par_version.csv
+      lignes:
+        entree_en_vigueur: ['2026-09-01']
+        article: [L161-17-3]
+      cle: generation
+      valeur: trimestres
+    redaction_anterieure:
+      version: loi_de_2023
+      naissance: [null, 1958-01-01]
+      texte: LEGIARTI000053280903
+  exemples:
+  - cnav_2026_07_age_legal_1964
+  - cnav_2026_07_age_legal_1965_apres_avril
+  - sp_f19666_decote
+  - sp_f21552_taux_plein_170
 textes_a_rattacher:
 - reference: L. 161-17-3 CSS (réécrit par la loi n° 2025-1403, article 105)
 - reference: loi n° 2025-1403, article 105 VI
@@ -169,15 +540,6 @@ textes_sans_effet:
     décote atteigne encore en août 2026, ceux d'avant ayant tous passé l'âge où elle
     s'annule ; le 1°, qui renvoie depuis le 1er janvier 2026 à « la limite prévue à
     l'article L. 161-17-3 », n'y change pas
-exemples:
-- cnav_2026_07_age_legal_1964
-- cnav_2026_07_age_legal_1965_apres_avril
-- sp_f19666_decote
-- sp_f21552_taux_plein_170
-- cnav_2026_07_duree_1964_avant_septembre
-- cnav_2026_07_duree_1965_avant_septembre
-- cnav_2023_19_duree_1962_avant_septembre
-- cnav_2023_19_duree_1963_avant_septembre
 reformes:
 - reforme_2023
 - lfss_2026_suspension
@@ -185,33 +547,34 @@ code:
   interrupteurs:
     duree_requise_par_generation: true
   moteur: >-
-    `duree_requise_par_generation` : la durée requise est lue dans `legislation/duree_assurance_requise.csv`
-    à l'ANNÉE DE NAISSANCE, et la valeur de la période (`duree_requise_trimestres`) ne
-    sert que de repli pour les générations hors table. C'est la règle depuis la loi du
-    22 juillet 1993 : deux assurés qui liquident le même jour n'ont pas la même exigence
-    s'ils ne sont pas de la même génération. Sans renvoi, la durée est celle de la période,
-    lue à l'année de liquidation — ce qui reste correct avant 1993. Les deux droits
-    contrefactuels de la page des résultats (action 138, étape 10) posent sur elle la
-    table qu'ils gardent (`TableRecouverte`, `ScenarioActuel._sous_le_droit`) : celle
-    d'avant la suspension pour la loi de 2023 sans elle, celle de 2014 au 31 août 2023,
-    qui vaut alors aussi pour les pensions d'avant septembre 2026. L'escalier des nés
-    de 1934 à 1942 ne vaut que pour une pension prenant effet avant 2003 : depuis, la
-    table cède la place à 160 trimestres (`DUREE_UNIQUE_2003`), sauf à la génération
-    de décembre 1942 partie le 1er janvier 2003 (R. 351-45, I à III). Et la table
-    ne vaut, au-dessus de 160, que pour une pension prenant effet depuis 2009
-    (`DUREE_PAR_GENERATION_EFFET`) ; les nés de 1953 à 1955 gardent jusqu'au décret
-    de leur génération 164 ou 165 trimestres (`DUREES_AVANT_LE_DECRET`).
+    `duree_requise_par_generation` : la durée requise est lue dans les versions de
+    cette fiche, que le paquet porte (`fiches_datees`) : la date d'effet de la
+    pension choisit la version (`DureesRequises.aLEffet`), la génération sa ligne, et
+    une génération que la table de la version ne nomme pas lit ce que la version
+    laisse à sa rédaction antérieure, ou la valeur qu'elle écrit pour toutes
+    (`trimestres`). Sans date d'effet, la dernière version, le droit en vigueur. La
+    valeur de la période (`duree_requise_trimestres`) ne sert plus que si la version
+    ne dit rien de la génération. Sous un droit contrefactuel, le moteur lit la fiche
+    que la pile de couches a résolue (`FichesDatees.sousLeDroit`) : la version de 2014
+    sans fin au 31 août 2023, celle de 2023 sans fin pour la loi de 2023 sans la
+    suspension. Reste au code une pratique de la caisse : les nés de 1953 à 1955
+    gardent jusqu'au décret de leur génération 164 ou 165 trimestres
+    (`DUREES_AVANT_LE_DECRET`, circulaire Cnav 2011/25), que la fonction publique ne
+    suit pas. La table par génération `duree_assurance_requise.csv` reste celle que
+    la fabrique, le coût et la prose lisent : la durée de chaque génération sous la
+    version qui l'a vue partir à l'âge légal, confrontée aux versions
+    (tests/test_duree_requise.py).
   javascript: >-
     moteur/js/droit/ouvrir.js : dureeRequise ; moteur/js/regimes.js : DureesRequises,
-    DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension, TableRecouverte,
-    REFORME_2023_EFFET, GENERATION_REFORME_2023, SUSPENSION_2026_EFFET,
-    GENERATIONS_SUSPENSION, DUREE_UNIQUE_2003, DUREE_UNIQUE_2003_EFFET,
-    GENERATION_DECEMBRE_1942, DUREE_PAR_GENERATION_EFFET, DUREES_AVANT_LE_DECRET ;
-    moteur/js/scenario-actuel.js : ScenarioActuel._sousLeDroit
+    DureesRequisesDUneVersion, DUREES_AVANT_LE_DECRET ; moteur/js/droit/invalidite.js
+    : dureeLimite
   parametres: >-
-    legislation/duree_assurance_requise.csv,
-    legislation/duree_requise_avant_reforme_2023.csv,
-    legislation/duree_requise_avant_suspension.csv : generation, trimestres
-  tests: [tests/test_simulateur.py, tests/test_donnees.py,
+    contenu.parametres de chaque version : trimestres ;
+    legislation/duree_requise_par_version.csv : entree_en_vigueur, article,
+    generation, generation_fin, trimestres ; legislation/duree_assurance_requise.csv :
+    generation, trimestres ; couches/sans_la_reforme_de_2023.yaml,
+    couches/sans_la_suspension_de_2026.yaml
+  tests: [tests/test_duree_requise.py, tests/js/duree-requise.test.js,
+    tests/test_simulateur.py, tests/test_donnees.py,
     tests/test_droits_contrefactuels.py, tests/test_oracle.py, tests/js/moteur.test.js,
     tests/test_cnav_exposes.py, tests/temoins/simulations.json]

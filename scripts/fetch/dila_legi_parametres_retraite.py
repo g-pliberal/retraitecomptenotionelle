@@ -561,6 +561,76 @@ def duree_requise(versions: list[tuple[str, str]]) -> dict[float, float]:
     return _par_version(versions, lire)
 
 
+#: Les parties de R. 351-45 : « I. - », « II. - », « III. - »… Chacune est un
+#: texte à elle dans la table des versions : le I écrit 160 trimestres à toute
+#: génération après 2002, le II l'escalier d'avant 2003, le III la seule
+#: génération de décembre 1942 au 1er janvier 2003.
+PARTIE_ROMAINE = re.compile(r"(?:^|\s)([IVX]+)\.\s*-\s*")
+
+#: « 159 trimestres pour les assurés nés en décembre 1942 » : un mois nommé,
+#: que les motifs communs ne lisent pas (R. 351-45, III).
+EN_MOIS = re.compile(r"n[ée]s?\s+en\s+([a-zéû]+)\s+(\d{4})", re.I)
+
+
+def _durees_d_une_redaction(texte: str) -> dict[int, dict[int, float]]:
+    """La durée que la rédaction écrit elle-même, mois de naissance par mois :
+    chaque membre de phrase qui porte « N trimestres » et nomme des naissances.
+    Un membre qui n'en nomme aucune (« quelle que soit la date de naissance »)
+    n'y entre pas : la fiche porte cette valeur générale en paramètre."""
+    alineas = []
+    for alinea in _alineas(texte):
+        for membre in re.split(r"\s*;\s*", alinea):
+            trouve = re.search(r"\b(1[5-7]\d)\s*trimestres", membre)
+            if not trouve:
+                continue
+            mois = EN_MOIS.search(membre)
+            if mois and MOIS.get(mois.group(1).lower()):
+                numero, annee = MOIS[mois.group(1).lower()], int(mois.group(2))
+                alineas.append((float(trouve.group(1)),
+                                f"nés entre le 1er {mois.group(1)} {annee} et le "
+                                f"28 {mois.group(1)} {annee}" if numero else membre))
+                continue
+            alineas.append((float(trouve.group(1)), membre))
+    return table_par_generation(alineas, mois=True)
+
+
+def duree_requise_par_version(
+        versions: dict[str, list[tuple[str, str]]]) -> list[dict]:
+    """La durée requise que chaque rédaction écrit, sans fusion — la table de
+    chaque version de la fiche ``duree_requise_par_generation`` (note de
+    décision 0009, étape 3), comme :func:`age_ouverture_par_version` pour
+    l'âge légal.
+
+    L. 161-17-3 (2014, 2023, 2025) ; R. 351-27, depuis 2009, pour les nés
+    avant 1949 ; R. 351-45, partie par partie : son II (l'escalier de 1934 à
+    1942) et son III (décembre 1942), sous les noms « R351-45 II » et
+    « R351-45 III ». Une rédaction qui n'écrit rien de plus ni de moins que la
+    précédente du même article n'ouvre pas de date d'effet.
+    """
+    lignes = []
+    for article, redactions in versions.items():
+        precedentes: dict[str, dict] = {}
+        for date_debut, texte in sorted(redactions,
+                                        key=lambda v: (date_effet(v[0], v[1]), v[0])):
+            if article == "R351-45":
+                morceaux = PARTIE_ROMAINE.split(" " + texte)
+                parties = [(f"R351-45 {morceaux[i]}", morceaux[i + 1])
+                           for i in range(1, len(morceaux) - 1, 2)]
+            else:
+                parties = [(article, texte)]
+            for nom, partie in parties:
+                par_mois = _durees_d_une_redaction(partie)
+                if not par_mois or par_mois == precedentes.get(nom):
+                    continue
+                precedentes[nom] = par_mois
+                for generation, generation_fin, trimestres in _etendues(par_mois):
+                    lignes.append({"entree_en_vigueur": date_effet(date_debut, texte),
+                                   "article": nom, "generation": generation,
+                                   "generation_fin": generation_fin,
+                                   "trimestres": trimestres})
+    return lignes
+
+
 #: « 151 trimestres pour l'assuré né en 1934 ; 152 trimestres pour l'assuré né
 #: en 1935 » — la montée en charge de la loi du 22 juillet 1993, au II de
 #: l'article R. 351-45. L'article est abrogé depuis 2009 ; la base le garde.
@@ -1209,6 +1279,8 @@ def main(arguments: list[str] | None = None) -> int:
     versions_age = versions["L161-17-2"] + versions["D161-2-1-9"]
     ages_par_version = age_ouverture_par_version(
         {article: versions[article] for article in ("L161-17-2", "D161-2-1-9")})
+    durees_par_version = duree_requise_par_version(
+        {article: versions[article] for article in ("L161-17-3", "R351-27", "R351-45")})
     tables = {
         "age_ouverture": age_ouverture(versions_age),
         "duree_requise": duree_requise(versions["L161-17-3"]),
@@ -1241,6 +1313,15 @@ def main(arguments: list[str] | None = None) -> int:
     if not (durees and max(durees.values()) == 172.0):
         print(f"\nÉCHEC   durées requises invraisemblables : "
               f"{sorted(set(durees.values()))}", file=sys.stderr)
+        return 1
+    # La dernière rédaction de L. 161-17-3, lue seule, dit la table fusionnée.
+    dernieres = [l for l in durees_par_version if l["article"] == "L161-17-3"]
+    dernieres = [l for l in dernieres if l["entree_en_vigueur"]
+                 == max(x["entree_en_vigueur"] for x in dernieres)]
+    if not dernieres or any(durees.get(l["generation"]) != l["trimestres"]
+                            for l in dernieres):
+        print("\nÉCHEC   la dernière rédaction de L. 161-17-3, lue seule, ne dit pas "
+              "la durée de la table fusionnée", file=sys.stderr)
         return 1
     coefficients = tables["coefficient_minoration"]
     if not (coefficients and max(coefficients.values()) == 0.025
@@ -1322,6 +1403,7 @@ def main(arguments: list[str] | None = None) -> int:
             },
             "carriere_longue": portes,
             "age_ouverture_par_version": ages_par_version,
+            "duree_requise_par_version": durees_par_version,
         }, ensure_ascii=False, indent=1),
         encoding="utf-8",
     )

@@ -34,7 +34,9 @@ dates_qui_decident:
 # quand la version l'exige, âge par âge ; `retranches_en_plus`, ce que la
 # version retranche encore par génération, [début, fin), décimales ;
 # `duree_d_avant_2023_jusqu_a`, la génération avant laquelle la durée retranchée
-# est celle de L. 161-17-3 d'avant la loi du 14 avril 2023 ; `majoration`, la
+# est celle de L. 161-17-3 d'avant la loi du 14 avril 2023, et
+# `duree_d_avant_2023_version`, la version de la fiche `duree_requise_par_generation`
+# qui la porte ; `majoration`, la
 # fraction du rapport des durées et l'arrondi du coefficient ;
 # `fonctionnaire_sans_decote`, le coefficient de minoration écarté au même taux.
 versions:
@@ -276,6 +278,7 @@ versions:
       cotisees_retranchees: [60, 70, 80, 90, 100]
       validees_retranchees: null
       duree_d_avant_2023_jusqu_a: 1973.0
+      duree_d_avant_2023_version: loi_de_2014
       majoration: {fraction: 0.3333333333333333, arrondi: 0.01}
       fonctionnaire_sans_decote: true
   exemples: [ur_handicap_1967_59, ur_handicap_1970_57, ur_handicap_1970_57_fonctionnaire,
@@ -328,7 +331,8 @@ code:
   parametres: >-
     contenu.parametres de chaque version : existe, taux_incapacite, ages,
     cotisees_retranchees, validees_retranchees, retranches_en_plus,
-    duree_d_avant_2023_jusqu_a, majoration, fonctionnaire_sans_decote
+    duree_d_avant_2023_jusqu_a, duree_d_avant_2023_version, majoration,
+    fonctionnaire_sans_decote
   tests: >-
     tests/test_invalidite.py ; les exemples ur_handicap_* et cnav_2026_18_majoration*
     de tests/temoins/exemples_officiels.yaml ; les témoins handicap_* des simulations,

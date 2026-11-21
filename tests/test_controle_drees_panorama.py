@@ -2302,7 +2302,14 @@ def test_les_durees_requises_du_panorama_sont_celles_du_depot(regles):
     (``duree_requise_fonction_publique.csv`` ; 150 trimestres avant 2004, que la
     fiche du régime porte), puis celle du privé."""
     requise = _escalier("duree_assurance_requise.csv", "trimestres")
-    suspendue = _escalier("duree_requise_avant_suspension.csv", "trimestres")
+    # La loi de 2023, que la suspension remplace : sa version de la fiche
+    # (note de décision 0009, étape 3).
+    from retraite_notionnelle.donnees import tables_de_version
+    from retraite_notionnelle.donnees.chargement import charger_yaml
+    fiche = charger_yaml(RACINE / "data" / "reference" / "regles"
+                         / "duree_requise_par_generation.yaml")
+    suspendue = [(float(tables_de_version.cle(m)), v) for m, v in
+                 tables_de_version.par_mois(fiche, "loi_de_2023", nom="trimestres").items()]
     publique = {int(ligne["annee_ouverture"]): int(ligne["trimestres"])
                 for ligne in _csv("duree_requise_fonction_publique.csv")}
 

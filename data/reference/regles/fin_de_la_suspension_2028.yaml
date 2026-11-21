@@ -90,23 +90,21 @@ code:
     `age_ouverture_requis.csv` et `duree_assurance_requise.csv` gardent aux nés de 1964
     au premier trimestre de 1965 soixante-deux ans et neuf mois et cent soixante-dix
     trimestres, et décalent d'un trimestre le calendrier des générations qui suivent.
-    `duree_requise` oppose aux nés de 1964 et de 1965 la durée de la loi de 2023 pour
-    une pension prenant effet avant septembre 2026 (`SUSPENSION_2026_EFFET`,
-    `GENERATIONS_SUSPENSION`, `DureesRequisesAvantSuspension`). `_sous_le_droit` pose la
-    durée de la loi de 2023 sans la suspension sur la table du droit en vigueur
-    (`TableRecouverte`), et lit l'âge légal dans la fiche que la couche
-    `sans_la_suspension_de_2026` a résolue, pour le droit contrefactuel
-    `loi_2023_sans_suspension` (`DROITS_CONTREFACTUELS`). Aucune date de 2028 n'est lue :
-    un changement du calendrier se porterait dans ces tables.
+    La durée requise se lit dans les versions de sa fiche (`duree_requise_par_generation`,
+    note de décision 0009, étape 3) : la date d'effet de la pension choisit la version,
+    la loi de 2023 avant septembre 2026, la suspension depuis. `_sous_le_droit` lit l'âge
+    légal et la durée requise dans les fiches que la couche `sans_la_suspension_de_2026` a
+    résolues, pour le droit contrefactuel `loi_2023_sans_suspension`
+    (`DROITS_CONTREFACTUELS`). Aucune date de 2028 n'est lue : un changement du
+    calendrier se porterait dans une version de plus.
   javascript: >-
-    moteur/js/regimes.js : SUSPENSION_2026_EFFET, GENERATIONS_SUSPENSION,
-    DureesRequisesAvantSuspension, TableRecouverte, FichesDatees.sousLeDroit ;
+    moteur/js/regimes.js : DureesRequises, FichesDatees.sousLeDroit ;
     moteur/js/droit/ouvrir.js : dureeRequise ; moteur/js/scenario-actuel.js :
     DROITS_CONTREFACTUELS, ScenarioActuel._sousLeDroit
   parametres: >-
     legislation/age_ouverture_requis.csv,
-    legislation/duree_assurance_requise.csv,
-    legislation/duree_requise_avant_suspension.csv : generation, age, trimestres
+    legislation/duree_assurance_requise.csv : generation, age, trimestres ;
+    legislation/duree_requise_par_version.csv : trimestres
   tests:
   - tests/test_droits_contrefactuels.py
   - tests/test_simulateur.py

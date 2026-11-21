@@ -18,6 +18,10 @@ operations:
 - operation: remplacer_une_version
   vise: age_legal_par_generation
   motif: la version en vigueur la veille de la réforme vaut sans fin, et celles qui commencent à sa date ou après sont ôtées
+- operation: remplacer_une_version
+  vise: duree_requise_par_generation
+  motif: >-
+    la version en vigueur la veille de la réforme, L. 161-17-3 dans sa rédaction de 2023, vaut sans fin, et celle de la suspension est ôtée : 172 trimestres au né en 1965
 - operation: garder
   vise: age_ouverture_ieg_actifs
   motif: >-
@@ -42,10 +46,6 @@ operations:
   vise: duree_requise_ieg
   motif: >-
     le droit contrefactuel ne l'écarte pas : il ne change que l'âge légal, la durée requise et la carrière longue (droit_contrefactuel, moteur/js/config.js) ; à décider à l'étape qui range cette fiche en versions
-- operation: garder
-  vise: duree_requise_par_generation
-  motif: >-
-    garde son mécanisme jusqu'à l'étape 3 de la note de décision 0009 : la copie d'avant réforme de la durée requise, posée sur la table du droit en vigueur (TableRecouverte)
 - operation: garder
   vise: duree_requise_sncf_ratp
   motif: >-

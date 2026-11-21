@@ -27,10 +27,7 @@ VALEURS_DE_REPLI = 1442
 #: Les renvois, en séries, qui ne citent pas le texte qui les fait.
 RENVOIS_SANS_TEXTE = 306
 #: Les copies d'avant réforme encore dans le dépôt.
-COPIES_D_AVANT_REFORME = (
-    "duree_requise_avant_reforme_2023.csv",
-    "duree_requise_avant_suspension.csv",
-)
+COPIES_D_AVANT_REFORME = ()
 #: Les versions que le moteur lit, sans leurs deux preuves ni ce qui manque.
 VERSIONS_SANS_PREUVES = 237
 #: Parmi les versions ``lue`` que le moteur lit, celles dont un texte au
@@ -39,7 +36,7 @@ VERSIONS_SANS_PREUVES = 237
 VERSIONS_LUES_SANS_TRACE = 153
 #: Les constantes du moteur qui sont du droit à migrer, datées ou non, et
 #: celles d'entre elles dont la fiche reste à désigner.
-CONSTANTES_A_MIGRER = 175
+CONSTANTES_A_MIGRER = 167
 CONSTANTES_SANS_FICHE = 104
 
 #: Les tables de ``data/reference/`` dont le nom porte ``_avant_`` et qui

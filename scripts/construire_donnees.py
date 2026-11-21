@@ -104,8 +104,6 @@ from retraite_notionnelle.donnees.tables_du_droit import (  # noqa: E402
     CoefficientsMinoration,
     DureesProratisation,
     DureesServicesActifs,
-    DureesRequises,
-    DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension,
     Invalidites,
     MajorationsPourEnfants,
     Rendements,
@@ -2737,11 +2735,6 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "classes_cotisation": _classes_cotisation(),
         "classes_cotisation_regles": _classes_cotisation_regles(),
         "salaires_forfaitaires": _salaires_forfaitaires(),
-        "durees_requises": _table_par_generation(DureesRequises),
-        "durees_requises_avant_suspension": _table_par_generation(
-            DureesRequisesAvantSuspension),
-        "durees_requises_avant_reforme_2023": _table_par_generation(
-            DureesRequisesAvantReforme2023),
         "durees_requises_regimes": _durees_requises_regimes(),
         "calendriers_duree_requise": _calendriers_duree_requise(),
         "durees_proratisation": _table_par_generation(DureesProratisation),

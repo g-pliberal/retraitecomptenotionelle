@@ -170,12 +170,13 @@ DUREE_REQUISE = (
 )
 
 #: Le même exposé, « Jusqu'au 01/08/2026 » : les retraites prenant effet du
-#: 1er septembre 2023 au 1er août 2026 (`duree_requise_avant_suspension.csv`).
+#: 1er septembre 2023 au 1er août 2026 (version `loi_de_2023` de la fiche
+#: `duree_requise_par_generation`).
 DUREE_REQUISE_AVANT_SUSPENSION = (("1964-01-01", 171), ("1965-01-01", 172))
 
 #: Le même exposé, « Anciennes dispositions, avant le 01/09/2023 » : le
 #: calendrier de la loi du 20 janvier 2014, d'un trimestre tous les trois ans
-#: (`duree_requise_avant_reforme_2023.csv`, depuis la génération que la loi du
+#: (version `loi_de_2014` de la fiche, depuis la génération que la loi du
 #: 14 avril 2023 a touchée la première).
 DUREE_REQUISE_AVANT_2023 = (
     ("1961-09-01", 168),   # « 1961 - 1962 - 1963 »
@@ -309,14 +310,22 @@ def test_la_duree_requise_de_la_caisse_est_celle_de_la_serie(naissance, trimestr
     assert serie == trimestres, naissance
 
 
-@pytest.mark.parametrize("serie, table", [
-    ("duree_requise_avant_suspension", DUREE_REQUISE_AVANT_SUSPENSION),
-    ("duree_requise_avant_reforme_2023", DUREE_REQUISE_AVANT_2023),
+@pytest.mark.parametrize("version, table", [
+    ("loi_de_2023", DUREE_REQUISE_AVANT_SUSPENSION),
+    ("loi_de_2014", DUREE_REQUISE_AVANT_2023),
 ])
-def test_les_durees_requises_d_avant_sont_celles_de_la_caisse(serie, table):
+def test_les_durees_requises_d_avant_sont_celles_de_la_caisse(version, table):
+    """Les versions d'avant de la fiche (note de décision 0009, étape 3), qui
+    remplacent les deux copies d'avant réforme."""
+    from retraite_notionnelle.donnees import tables_de_version
+    from retraite_notionnelle.donnees.chargement import charger_yaml
+
+    fiche = charger_yaml(RACINE / "data" / "reference" / "regles"
+                         / "duree_requise_par_generation.yaml")
+    valeurs = tables_de_version.par_mois(fiche, version, nom="trimestres")
     for naissance, trimestres in table:
-        assert _en_escalier(serie, "trimestres", _generation(naissance)) == trimestres, (
-            serie, naissance)
+        assert valeurs[tables_de_version.rang(_generation(naissance))] == trimestres, (
+            version, naissance)
 
 
 # -- la durée de proratisation ---------------------------------------------------

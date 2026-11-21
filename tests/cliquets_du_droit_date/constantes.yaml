@@ -145,16 +145,9 @@ constantes:
   "moteur/js/regimes.js : CarriereLongue.PORTES_FONCTION_PUBLIQUE_DEPUIS": {classe: droit, fiches: []}
   "moteur/js/regimes.js : CarriereLongue.QUATRE_TRIMESTRES_A_LA_FIN_DE_L_ANNEE_DEPUIS": {classe: droit, fiches: []}
   "moteur/js/regimes.js : DUREES_AVANT_LE_DECRET": {classe: droit, fiches: [duree_requise_par_generation]}
-  "moteur/js/regimes.js : DUREE_PAR_GENERATION_EFFET": {classe: droit, fiches: [duree_requise_par_generation]}
-  "moteur/js/regimes.js : DUREE_UNIQUE_2003_EFFET": {classe: droit, fiches: [duree_requise_par_generation]}
-  "moteur/js/regimes.js : GENERATIONS_SUSPENSION": {classe: droit, fiches: [duree_requise_par_generation, fin_de_la_suspension_2028]}
-  "moteur/js/regimes.js : GENERATION_DECEMBRE_1942": {classe: droit, fiches: [duree_requise_par_generation]}
-  "moteur/js/regimes.js : GENERATION_REFORME_2023": {classe: droit, fiches: [duree_requise_par_generation]}
   "moteur/js/regimes.js : MaximumDesCultes.DERNIER_ARRETE": {classe: droit, fiches: []}
   "moteur/js/regimes.js : MinimumGaranti.ANNEE_GEL": {classe: droit, fiches: []}
   "moteur/js/regimes.js : MinimumVieillesse.DERNIERE_ANNEE_A_DEUX_ETAGES": {classe: droit, fiches: []}
-  "moteur/js/regimes.js : REFORME_2023_EFFET": {classe: droit, fiches: [duree_requise_par_generation]}
-  "moteur/js/regimes.js : SUSPENSION_2026_EFFET": {classe: droit, fiches: [duree_requise_par_generation, fin_de_la_suspension_2028]}
   "moteur/js/releve-lu.js : ANNEE_MAXIMALE": {classe: hors, raison: saisie}
   "moteur/js/releve-lu.js : ANNEE_MINIMALE": {classe: hors, raison: saisie}
   "moteur/js/releve-lu.js : PREMIERE_ANNEE_EN_EUROS": {classe: hors, raison: saisie}
@@ -301,7 +294,6 @@ sans_date:
   "moteur/js/regimes.js : CarriereLongue.ENFANTS_REPUTES_COTISES_MAXIMUM": {classe: droit, fiches: []}
   "moteur/js/regimes.js : CarriereLongue.MOIS_DERNIER_TRIMESTRE": {classe: droit, fiches: []}
   "moteur/js/regimes.js : CarriereLongue.TRIMESTRES_DE_DEBUT_AGRICOLES": {classe: droit, fiches: []}
-  "moteur/js/regimes.js : DUREE_UNIQUE_2003": {classe: droit, fiches: [duree_requise_par_generation]}
   "moteur/js/regimes.js : FIABILITE_CERTIFIEE": {classe: hors, raison: technique}
   "moteur/js/regimes.js : MinimumGaranti.INDICE_REFERENCE": {classe: droit, fiches: []}
   "moteur/js/regimes.js : MinimumGaranti.SEUIL_BAS": {classe: droit, fiches: []}

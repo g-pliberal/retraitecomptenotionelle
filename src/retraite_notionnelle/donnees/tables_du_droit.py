@@ -116,29 +116,6 @@ class DureesRequises(TableParGeneration):
         return None if valeur is None else (int(valeur[0]), valeur[1])
 
 
-class DureesRequisesAvantSuspension(DureesRequises):
-    """Durée requise que la suspension de 2026 remplace, pour les pensions
-    prenant effet avant le 1er septembre 2026 : 171 trimestres pour les nés en
-    1964, 172 pour ceux de 1965 (loi n° 2025-1403, article 105 VI ; circulaire
-    Cnav 2026-07, point 2.1). Voir ``duree_requise_avant_suspension.csv``."""
-
-    def __init__(self, racine: Path) -> None:
-        TableParGeneration.__init__(
-            self, racine, "duree_requise_avant_suspension.csv", "trimestres")
-
-
-class DureesRequisesAvantReforme2023(DureesRequises):
-    """Durée requise que la loi du 14 avril 2023 a relevée, pour les pensions
-    prenant effet avant le 1er septembre 2023 : L. 161-17-3 dans sa version du
-    22 janvier 2014 — 168 trimestres pour les nés de 1961 à 1963, 169 de 1964
-    à 1966 (B du XXX de l'article 10 de la loi n° 2023-270 ; circulaire Cnav
-    2023/19, point 2). Voir ``duree_requise_avant_reforme_2023.csv``."""
-
-    def __init__(self, racine: Path) -> None:
-        TableParGeneration.__init__(
-            self, racine, "duree_requise_avant_reforme_2023.csv", "trimestres")
-
-
 def _rang_mois(texte: str) -> int:
     """« AAAA-MM » -> rang absolu du mois, celui de :class:`DateMois`."""
     annee, mois = texte.strip().split("-")
@@ -518,28 +495,6 @@ class AgesOuverture(TableParGeneration):
         return self.valeur(generation)
 
 
-class TableRecouverte:
-    """Une table par génération qu'une autre recouvre, de sa première
-    génération à toutes les suivantes : ce qu'un droit contrefactuel change à
-    l'âge légal ou à la durée requise. En deçà, la table du droit en vigueur
-    répond. Elle se lit comme les deux tables qu'elle assemble."""
-
-    def __init__(self, dessus: TableParGeneration, dessous: TableParGeneration) -> None:
-        self._dessus = dessus
-        self._dessous = dessous
-
-    def valeur(self, generation: float) -> tuple[float, Fiabilite] | None:
-        lue = self._dessus.valeur(generation)
-        return lue if lue is not None else self._dessous.valeur(generation)
-
-    def age(self, generation: float) -> tuple[float, Fiabilite] | None:
-        return self.valeur(generation)
-
-    def trimestres(self, generation: float) -> tuple[int, Fiabilite] | None:
-        valeur = self.valeur(generation)
-        return None if valeur is None else (int(valeur[0]), valeur[1])
-
-
 class AgesSurcoteRegimesSpeciaux(TableParGeneration):
     """Âge d'où la SNCF et la RATP comptent la surcote, par génération.
 
@@ -809,7 +764,9 @@ class FichesDatees:
     lit, et le taux plein de la pension que la carrière longue ouvre, que
     ``categories.tauxPleinDeLaCarriereLongue`` lit, et l'âge du taux plein, que
     ``AgesAnnulationDecote`` du portage lit à la date d'effet de la pension,
-    ses deux dernières versions par un renvoi à l'âge légal.
+    ses deux dernières versions par un renvoi à l'âge légal, et la durée
+    requise, que ``DureesRequises`` du portage lit à la date d'effet de la
+    pension.
     """
 
     NOMS = ("salaire_annuel_moyen", "sam_indemnites_de_maternite",
@@ -850,7 +807,7 @@ class FichesDatees:
             "surcote_banque_de_france", "age_ouverture_banque_de_france_actifs",
             "age_legal_par_generation", "carriere_longue_sauvegarde_de_2023",
             "taux_plein_carriere_longue", "points_agricoles_au_revenu_cadastral",
-            "age_annulation_decote")
+            "age_annulation_decote", "duree_requise_par_generation")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}
@@ -860,7 +817,8 @@ class FichesDatees:
                 fiche = charger_yaml(chemin)
                 self._fiches[nom] = versions.preparer(fiche)
                 if nom in (tables_de_version.FICHE_DE_L_AGE_LEGAL,
-                           tables_de_version.FICHE_DE_L_AGE_DU_TAUX_PLEIN):
+                           tables_de_version.FICHE_DE_L_AGE_DU_TAUX_PLEIN,
+                           tables_de_version.FICHE_DE_LA_DUREE_REQUISE):
                     # La table de chaque version, son renvoi à sa rédaction
                     # antérieure (note de décision 0009, étape 2), ses renvois
                     # datés à une autre fiche (étape 3).

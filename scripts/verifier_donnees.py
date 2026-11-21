@@ -4300,6 +4300,52 @@ def source_age_legal_par_version() -> dict[tuple, float]:
     }
 
 
+def source_duree_requise_par_version() -> dict[tuple, float]:
+    """La durée requise que chaque rédaction de L. 161-17-3, de R. 351-27 et
+    de R. 351-45 (partie par partie) écrit, sans fusion : la table des versions
+    de la fiche `duree_requise_par_generation` (note de décision 0009,
+    étape 3). Clé : la date d'effet de la rédaction, son article, la
+    génération qui ouvre la ligne et la première qu'elle ne vise plus."""
+    brut = _lire_json("dila_legi_parametres_retraite.json",
+                      "scripts/fetch/dila_legi_parametres_retraite.py")
+    if "duree_requise_par_version" not in brut:
+        raise SourceAbsente("data/brut/dila_legi_parametres_retraite.json d'avant le "
+                            "21 novembre 2026 (relancer "
+                            "scripts/fetch/dila_legi_parametres_retraite.py)")
+    return {
+        (str(ligne["entree_en_vigueur"]), str(ligne["article"]),
+         tables_de_version.cle(tables_de_version.rang(ligne["generation"])),
+         tables_de_version.cle(tables_de_version.rang(ligne["generation_fin"]))):
+        float(ligne["trimestres"])
+        for ligne in brut["duree_requise_par_version"]
+    }
+
+
+#: Les décrets des générations 1953 à 1957, ligne par ligne de la table des
+#: versions : (date d'effet, article, première génération, fin) par génération.
+DECRETS_DE_LA_DUREE = {
+    1953: ("2011-01-01", "D2010-1734 art. 9", "1953", "1955"),
+    1954: ("2011-01-01", "D2010-1734 art. 9", "1953", "1955"),
+    1955: ("2011-08-03", "D2011-916 art. 1", "1955", "1956"),
+    1956: ("2012-12-30", "D2012-1487 art. 1", "1956", "1957"),
+    1957: ("2013-12-16", "D2013-1155 art. 1", "1957", "1958"),
+}
+
+
+def source_duree_requise_decrets_par_version() -> dict[tuple, float]:
+    """Les décrets des générations 1953 à 1957, aux lignes de la table des
+    versions qui les portent ; deux générations d'un même décret disent la
+    même durée, ou la source est refusée."""
+    lues: dict[tuple, float] = {}
+    for (generation,), valeur in source_duree_requise_decrets().items():
+        cle = DECRETS_DE_LA_DUREE.get(int(float(generation)))
+        if cle is None:
+            continue
+        if lues.setdefault(cle, valeur) != valeur:
+            raise SourceAbsente(f"{cle[1]} : deux durées pour une même ligne")
+    return lues
+
+
 def source_duree_requise() -> dict[tuple, float]:
     """Durée d'assurance requise par génération — L. 161-17-3."""
     return _table_legi("duree_requise")
@@ -10454,6 +10500,32 @@ CERTIFICATIONS = (
         unite=" ans",
         niveau="haute",
     ),
+    # La durée requise : la table de chaque version, lue dans LEGI (note de
+    # décision 0009, étape 3), puis la table par génération.
+    Certification(
+        nom="duree_requise_par_version",
+        chemin=REFERENCE / "legislation" / "duree_requise_par_version.csv",
+        cles=("entree_en_vigueur", "article", "generation", "generation_fin"),
+        colonne="trimestres",
+        source=source_duree_requise_par_version,
+        origine="DILA, base LEGI, code de la sécurité sociale L. 161-17-3, "
+                "R. 351-27 et R. 351-45, rédaction par rédaction",
+        decimales=0,
+        tolerance=0.5,
+        unite=" trimestres",
+    ),
+    Certification(
+        nom="duree_requise_par_version_decrets",
+        chemin=REFERENCE / "legislation" / "duree_requise_par_version.csv",
+        cles=("entree_en_vigueur", "article", "generation", "generation_fin"),
+        colonne="trimestres",
+        source=source_duree_requise_decrets_par_version,
+        origine="DILA, base LEGI, décrets pris pour l'application de la loi du "
+                "21 août 2003 et de celle du 9 novembre 2010",
+        decimales=0,
+        tolerance=0.5,
+        unite=" trimestres",
+    ),
     Certification(
         nom="duree_assurance_requise",
         chemin=REFERENCE / "legislation" / "duree_assurance_requise.csv",
@@ -13064,14 +13136,6 @@ RECOUPEMENTS_IPP: tuple[tuple[str, Callable[[dict], list], dict[str, str]], ...]
     ("revalorisation_salaires", _ipp_salaires,
      {"1983-07-01": _IPP_E11, "1989-01-01": _IPP_E11}),
     ("revalorisation_pensions_fonction_publique", _ipp_pensions_fonction_publique, {}),
-    ("duree_requise_avant_reforme_2023", _ipp_par_generation(
-        "duree_requise_avant_reforme_2023.csv",
-        (("trimestres", _IPP_RG + "trimtp/nombre_trimestres_cibles_par_generation", False),),
-        "2023-08-31"), {}),
-    ("duree_requise_avant_suspension", _ipp_par_generation(
-        "duree_requise_avant_suspension.csv",
-        (("trimestres", _IPP_RG + "trimtp/nombre_trimestres_cibles_par_generation", False),),
-        "2026-08-31"), {}),
     # Les actifs que la réforme de 2023 n'atteint pas, nés avant le 1er septembre
     # 1966 : l'IPP s'arrête à la loi de 2010 (E6).
     ("categorie_active", _ipp_par_generation(

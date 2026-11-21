@@ -480,14 +480,16 @@ export function trimestresEnSituationDeHandicap(moteur, carriere, cotises = true
 /**
  * La durée dont la version retranche les trimestres : la durée requise, ou
  * celle d'avant la loi du 14 avril 2023 pour les générations que la version
- * dit, moins ce qu'elle retranche en plus. Voir `_duree_limite` du Python.
+ * dit, moins ce qu'elle retranche en plus. « L. 161-17-3 dans sa rédaction
+ * antérieure à la loi n° 2023-270 » est une version de la fiche de la durée
+ * requise, que la version nomme (`duree_d_avant_2023_version`).
  */
 function dureeLimite(moteur, carriere, parametres, requis) {
   let limite = requis;
   const jusquA = parametres.duree_d_avant_2023_jusqu_a;
   if (jusquA !== undefined && jusquA !== null && carriere.generation < Number(jusquA)) {
-    const avant = moteur.dureesRequisesAvantReforme2023.trimestres(carriere.generation)
-      ?? moteur.dureesRequises.trimestres(carriere.generation);
+    const avant = moteur.dureesRequises.deLaVersion(
+      parametres.duree_d_avant_2023_version).trimestres(carriere.generation);
     if (avant !== null && avant !== undefined) {
       limite = avant[0];
     }

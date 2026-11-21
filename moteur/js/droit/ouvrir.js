@@ -15,12 +15,7 @@
 
 import { DateMois, MOIS_PAR_AN, enMois, trimestresCivils } from "../calendrier.js";
 import { AnneeCarriere, chomageComplementaires } from "../carriere.js";
-import {
-  GENERATIONS_SUSPENSION, SUSPENSION_2026_EFFET,
-  GENERATION_REFORME_2023, REFORME_2023_EFFET,
-  DUREE_UNIQUE_2003, DUREE_UNIQUE_2003_EFFET, GENERATION_DECEMBRE_1942,
-  DUREE_PAR_GENERATION_EFFET, DUREES_AVANT_LE_DECRET,
-} from "../regimes.js";
+import { DUREES_AVANT_LE_DECRET } from "../regimes.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import * as categories from "./categories.js";
 import {
@@ -387,77 +382,34 @@ export function dureeRequise(moteur, periode, carriere) {
     return avantSoixanteAns;
   }
   if (periode.duree_requise_par_generation) {
-    // LA RÉFORME DE 2023 NE VAUT QU'À COMPTER DU 1er SEPTEMBRE 2023 : avant,
-    // les nés à compter du 1er septembre 1961 doivent la durée de la version
-    // de 2014 de L. 161-17-3. Voir le Python.
-    const [anneeReforme, moisReforme] = REFORME_2023_EFFET;
-    if (carriere.age_liquidation !== null && carriere.age_liquidation !== undefined
-        && carriere.generation >= GENERATION_REFORME_2023
-        && (carriere.anneeLiquidation < anneeReforme
-          || (carriere.anneeLiquidation === anneeReforme
-            && carriere.moisLiquidation < moisReforme))) {
-      const avant = moteur.dureesRequisesAvantReforme2023.trimestres(carriere.generation);
-      if (avant !== null) {
-        return avant;
-      }
-    }
-    // LA SUSPENSION NE VAUT QU'À COMPTER DU 1er SEPTEMBRE 2026 : avant, les
-    // nés en 1964 et 1965 doivent la durée de la loi de 2023.
-    const [anneeEffet, moisEffet] = SUSPENSION_2026_EFFET;
-    if (carriere.age_liquidation !== null && carriere.age_liquidation !== undefined
-        && carriere.generation >= GENERATIONS_SUSPENSION[0]
-        && carriere.generation < GENERATIONS_SUSPENSION[1]
-        && (carriere.anneeLiquidation < anneeEffet
-          || (carriere.anneeLiquidation === anneeEffet
-            && carriere.moisLiquidation < moisEffet))) {
-      const avant = moteur.dureesRequisesAvantSuspension.trimestres(carriere.generation);
-      if (avant !== null) {
-        return avant;
-      }
-    }
-    const parGeneration = moteur.dureesRequises.trimestres(carriere.generation);
-    if (parGeneration !== null) {
-      // L'ESCALIER DES NÉS DE 1934 À 1942 NE VAUT QU'AVANT 2003 (R. 351-45,
-      // II) : depuis, 160 trimestres, quelle que soit la génération (I).
-      // Voir le Python.
-      const [anneeUnique, moisUnique] = DUREE_UNIQUE_2003_EFFET;
-      if (parGeneration[0] < DUREE_UNIQUE_2003
-          && carriere.age_liquidation !== null && carriere.age_liquidation !== undefined
-          && (carriere.anneeLiquidation > anneeUnique
-            || (carriere.anneeLiquidation === anneeUnique
-              && carriere.moisLiquidation >= moisUnique))
-          && !(carriere.generation === GENERATION_DECEMBRE_1942
-            && carriere.anneeLiquidation === anneeUnique
-            && carriere.moisLiquidation === moisUnique)) {
-        return [DUREE_UNIQUE_2003, parGeneration[1]];
-      }
-      // ET LA TABLE NE VAUT, AU-DESSUS DE 160, QU'À COMPTER DE 2009 (R. 351-45,
-      // I, jusqu'au décret n° 2008-1555) ; les nés de 1953 à 1955 gardent
-      // jusqu'au décret de leur génération la durée que la caisse leur
-      // opposait (circulaire Cnav 2011/25). Voir le Python.
-      if (parGeneration[0] > DUREE_UNIQUE_2003
-          && carriere.age_liquidation !== null && carriere.age_liquidation !== undefined) {
+    // LA DURÉE DU TEXTE EN VIGUEUR À LA DATE D'EFFET DE LA PENSION (fiche
+    // `duree_requise_par_generation`, note de décision 0009, étape 3) : 150
+    // trimestres jusqu'en 1993, l'escalier de R. 351-45, II, jusqu'en 2002,
+    // 160 jusqu'en 2008, sauf au né en décembre 1942 parti le 1er janvier 2003
+    // (III), puis la table de la loi de 2003, de 2014, de 2023 et de la
+    // suspension. Sans date d'effet, ou quand la version ne dit rien de la
+    // génération, la dernière version.
+    const dateEffet = dateDEffet(carriere);
+    const lue = moteur.dureesRequises.deLaPension(dateEffet, carriere.generation);
+    if (lue !== null) {
+      // Les nés de 1953 à 1955 gardent jusqu'au décret de leur génération la
+      // durée que la caisse leur opposait (circulaire Cnav 2011/25) : une
+      // pratique de la caisse, que la fonction publique ne suit pas (OpenFisca
+      // de même, test de l'oracle).
+      if (dateEffet !== null && !DUREE_DE_LA_FONCTION_PUBLIQUE.has(periode.bareme_decote)) {
         const effet = carriere.anneeLiquidation * 12 + carriere.moisLiquidation;
-        const [anneeTable, moisTable] = DUREE_PAR_GENERATION_EFFET;
-        if (effet < anneeTable * 12 + moisTable) {
-          return [DUREE_UNIQUE_2003, parGeneration[1]];
-        }
-        // La circulaire Cnav 2011/25 ne vaut que pour la caisse : la fonction
-        // publique garde la table (OpenFisca de même, test de l'oracle).
-        const avantLeDecret = DUREE_DE_LA_FONCTION_PUBLIQUE.has(periode.bareme_decote)
-          ? [] : DUREES_AVANT_LE_DECRET;
-        for (const [premiere, suivante, [annee, mois], trimestres] of avantLeDecret) {
+        for (const [premiere, suivante, [annee, mois], trimestres] of DUREES_AVANT_LE_DECRET) {
           if (carriere.generation >= premiere && carriere.generation < suivante
-              && effet <= annee * 12 + mois && trimestres < parGeneration[0]) {
+              && effet <= annee * 12 + mois && trimestres < lue[0]) {
             // La date de la demande, que le modèle n'a pas, décide en 2011.
             const fiabilite = carriere.anneeLiquidation >= 2011
-              ? Math.min(parGeneration[1] ?? Fiabilite.MOYENNE, Fiabilite.MOYENNE)
-              : parGeneration[1];
+              ? Math.min(lue[1] ?? Fiabilite.MOYENNE, Fiabilite.MOYENNE)
+              : lue[1];
             return [trimestres, fiabilite];
           }
         }
       }
-      return parGeneration;
+      return lue;
     }
   }
   return [periode.duree_requise_trimestres || 160, null];

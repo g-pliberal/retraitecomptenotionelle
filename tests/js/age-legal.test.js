@@ -409,10 +409,9 @@ test("les deux copies de l'âge légal et leurs classes sont parties", () => {
   assert.equal(paquet.ages_ouverture_avant_suspension, undefined);
   assert.equal(lesRegimes.AgesOuvertureAvantReforme2023, undefined);
   assert.equal(lesRegimes.AgesOuvertureAvantSuspension, undefined);
-  // `TableRecouverte` ne recouvre plus que la durée requise, jusqu'à l'étape 3.
-  assert.equal(lesRegimes.TableRecouverte.prototype.aLEffet, undefined);
-  assert.equal(lesRegimes.TableRecouverte.prototype.fenetres, undefined);
-  assert.equal(lesRegimes.TableRecouverte.prototype.age, undefined);
+  // `TableRecouverte` est partie avec les copies de la durée requise, à
+  // l'étape 3 (tests/js/duree-requise.test.js).
+  assert.equal(lesRegimes.TableRecouverte, undefined);
 });
 
 test("un droit contrefactuel dont le paquet ne porte pas la couche arrête le calcul", () => {

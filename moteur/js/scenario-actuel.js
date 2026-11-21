@@ -30,7 +30,6 @@ import {
   AnneesRevenuAnnuelMoyenIndependants, BaremesTrimestre, CarriereLongue, FichesDatees,
   CoefficientsMinoration, DecoteFonctionPublique, DecoteRegimesSpeciaux,
   DureesProratisation, DureesRequises, DureesRequisesAvantSoixanteAns,
-  DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension,
   DureesRequisesFonctionPublique, DureesRequisesRegimes, CalendriersDureeRequise,
   DureesServicesActifs, DureesServicesMilitaires,
   ComplementDifferentielRco,
@@ -39,7 +38,7 @@ import {
   ClassesCotisation, ConversionsPoints, Rendements, SalairesForfaitaires,
   CarrieresHorsDeFrance, Invalidites, MajorationsEnfantsPoints, Reversions,
   ServicesOuvrantPension, SurcoteBaremes,
-  SurcoteParentale, TableRecouverte,
+  SurcoteParentale,
   ValeursPoint,
 } from "./regimes.js";
 import { formatFixe } from "./format.js";
@@ -80,8 +79,6 @@ export class ScenarioActuel {
     this.classes = new ClassesCotisation(paquet);
     this.grilles = new SalairesForfaitaires(paquet);
     this.dureesRequises = new DureesRequises(paquet);
-    this.dureesRequisesAvantSuspension = new DureesRequisesAvantSuspension(paquet);
-    this.dureesRequisesAvantReforme2023 = new DureesRequisesAvantReforme2023(paquet);
     this.dureesRequisesRegimes = new DureesRequisesRegimes(paquet);
     this.calendriersDureeRequise = new CalendriersDureeRequise(paquet);
     this.dureesRequisesFonctionPublique = new DureesRequisesFonctionPublique(paquet);
@@ -158,16 +155,12 @@ export class ScenarioActuel {
 
   /**
    * Le moteur sous un droit contrefactuel (`DROITS_CONTREFACTUELS`). L'âge
-   * légal et l'âge du taux plein se lisent dans les fiches que la pile de
-   * couches du droit a résolues à la
-   * fabrique : chaque couche y garde la version d'avant la réforme qu'elle
-   * écarte, depuis la date d'effet de cette réforme (`FichesDatees.sousLeDroit`,
-   * note de décision 0009). La durée requise et la carrière longue gardent
-   * leur mécanisme jusqu'à l'étape 3 de la note : la durée des textes d'avant
-   * la date écartée, posée sur la table du droit en vigueur, et la carrière
-   * longue sans les décrets qui prennent effet à compter d'elle. Au 31 août
-   * 2023, la durée que le droit en vigueur garde aux pensions d'avant
-   * septembre 2026 devient celle de 2014.
+   * légal, l'âge du taux plein et la durée requise se lisent dans les fiches
+   * que la pile de couches du droit a résolues à la fabrique : chaque couche y
+   * garde la version d'avant la réforme qu'elle écarte, depuis la date d'effet
+   * de cette réforme (`FichesDatees.sousLeDroit`, note de décision 0009). La
+   * carrière longue garde son mécanisme jusqu'à sa session de l'étape 3 : sans
+   * les décrets qui prennent effet à compter de la date écartée.
    */
   _sousLeDroit(paquet, droit) {
     // Une faute de programme, qui doit remonter : `contexte.js` tait les autres.
@@ -175,17 +168,10 @@ export class ScenarioActuel {
       throw new RangeError(`droit contrefactuel inconnu : '${droit}' ; le moteur connaît `
         + Object.keys(DROITS_CONTREFACTUELS).sort().join(", "));
     }
-    let durees;
-    if (droit === "au_31_aout_2023") {
-      durees = this.dureesRequisesAvantReforme2023;
-      this.dureesRequisesAvantSuspension = durees;
-    } else {
-      durees = this.dureesRequisesAvantSuspension;
-    }
     const fiches = new FichesDatees(paquet).sousLeDroit(droit);
     this.agesOuverture = new AgesOuverture(paquet, fiches);
     this.agesAnnulationDecote = new AgesAnnulationDecote(paquet, fiches);
-    this.dureesRequises = new TableRecouverte(durees, this.dureesRequises);
+    this.dureesRequises = new DureesRequises(paquet, fiches);
     this.carriereLongue = this.carriereLongue.avant(DROITS_CONTREFACTUELS[droit]);
   }
 

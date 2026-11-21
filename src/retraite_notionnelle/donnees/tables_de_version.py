@@ -92,16 +92,19 @@ def _lignes(table: dict, racine: Path) -> list[dict]:
 
 
 def par_mois(fiche: dict, identifiant: str, racine: Path = RACINE_DONNEES,
-             _vues: tuple[str, ...] = ()) -> dict[int, float]:
+             _vues: tuple[str, ...] = (), nom: str = "age") -> dict[int, float]:
     """La table d'une version, résolue : la valeur de chaque mois de naissance
     qu'elle couvre, de la première à la dernière génération du modèle.
 
     Ses propres lignes d'abord, tous textes confondus : deux textes d'une
     version peuvent écrire la même génération, la loi sa cible et le décret la
     montée, s'ils disent la même valeur. Puis ce qu'elle laisse à sa rédaction
-    antérieure, pour les naissances que le renvoi nomme. Une contradiction,
-    une version sans ligne, une naissance écrite et renvoyée à la fois, un
-    renvoi qui boucle arrêtent la fabrication."""
+    antérieure, pour les naissances que le renvoi nomme. Puis, pour les
+    naissances qui restent, la valeur que la version écrit pour toute
+    génération, son paramètre ``nom`` (le I de R. 351-45 : « quelle que soit
+    la date de naissance »). Une contradiction, une version sans ligne, une
+    naissance écrite et renvoyée à la fois, un renvoi qui boucle arrêtent la
+    fabrication."""
     ou = f"{fiche.get('id')}.{identifiant}"
     if identifiant in _vues:
         raise ValueError(f"{ou} : les rédactions antérieures bouclent")
@@ -131,8 +134,12 @@ def par_mois(fiche: dict, identifiant: str, racine: Path = RACINE_DONNEES,
         if ecrites:
             raise ValueError(f"{ou} : écrit la génération {cle(ecrites[0])}, qu'elle "
                              "renvoie aussi à sa rédaction antérieure")
-        avant = par_mois(fiche, anterieure["version"], racine, _vues + (identifiant,))
+        avant = par_mois(fiche, anterieure["version"], racine, _vues + (identifiant,), nom)
         valeurs.update({mois: avant[mois] for mois in laissees if mois in avant})
+    general = (contenu.get("parametres") or {}).get(nom)
+    if general is not None:
+        for mois in range(debut, fin):
+            valeurs.setdefault(mois, float(general))
     return dict(sorted(valeurs.items()))
 
 
@@ -193,7 +200,9 @@ def pour_le_moteur(fiche: dict, identifiant: str, racine: Path = RACINE_DONNEES)
                 derniere[1] = fin
             else:
                 ajout["table"].append([debut, fin, valeur, fiabilite])
-    else:
+    if not table or (contenu.get("parametres") or {}).get("trimestres") is not None:
+        # La fiabilité de la valeur que la version écrit pour tous : sans
+        # table, ou pour les générations que sa table ne nomme pas.
         ajout["fiabilite"] = _fiabilite(version.get("fiabilite") or "haute")
     anterieure = contenu.get("redaction_anterieure")
     if anterieure:
@@ -362,3 +371,22 @@ def vue_de_l_age_du_taux_plein(racine: Path = RACINE_DONNEES) -> list[tuple[str,
                 table[mois] = ages[mois]
                 break
     return vue_par_generation(table)
+
+
+# --- La durée requise (note de décision 0009, étape 3) ------------------------
+
+#: La fiche de la durée requise pour le taux plein, et la vue par génération
+#: qu'on en fabrique : la table du droit en vigueur, celle de sa dernière
+#: version, que la certification confronte aux textes.
+FICHE_DE_LA_DUREE_REQUISE = "duree_requise_par_generation"
+VUE_DE_LA_DUREE_REQUISE = "duree_assurance_requise.csv"
+
+
+def vue_de_la_duree_requise(racine: Path = RACINE_DONNEES) -> list[tuple[str, float]]:
+    """La durée requise par génération du droit en vigueur, fabriquée depuis
+    la dernière version de la fiche, résolue : en lignes (génération,
+    trimestres), une à chaque janvier et à chaque coupure en cours d'année."""
+    fiche = charger_yaml(racine / "reference" / "regles" / f"{FICHE_DE_LA_DUREE_REQUISE}.yaml")
+    en_vigueur = next(v["id"] for v in fiche["versions"]
+                      if v["bornes"][DATE_D_EFFET][1] is None)
+    return vue_par_generation(par_mois(fiche, en_vigueur, racine, nom="trimestres"))

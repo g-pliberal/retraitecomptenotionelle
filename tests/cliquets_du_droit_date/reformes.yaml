@@ -18,7 +18,7 @@
 # guider la lecture, ce que la fiche a : aucune version (la migration de la
 # note 0009 la découpera), ou les débuts de ses versions la même année.
 
-cliquet_a_faire: 93
+cliquet_a_faire: 91
 
 couples:
   "age_ouverture_ieg_actifs / lfss_2026_suspension": {classe: a_faire, commentaire: "réforme du 2026-09-01 ; aucune version ne commence cette année-là"}
@@ -66,8 +66,6 @@ couples:
   "duree_requise_ieg / lfss_2026_suspension": {classe: a_faire, commentaire: "réforme du 2026-09-01 ; aucune version ne commence cette année-là"}
   "duree_requise_ieg / reforme_2023": {classe: a_faire, commentaire: "réforme du 2023-09-01 ; aucune version ne commence cette année-là"}
   "duree_requise_ieg / touraine_2014": {classe: a_faire, commentaire: "réforme du 2014-01-22 ; aucune version ne commence cette année-là"}
-  "duree_requise_par_generation / lfss_2026_suspension": {classe: a_faire, commentaire: "fiche sans version"}
-  "duree_requise_par_generation / reforme_2023": {classe: a_faire, commentaire: "fiche sans version"}
   "duree_requise_sncf_ratp / lfss_2026_suspension": {classe: a_faire, commentaire: "réforme du 2026-09-01 ; aucune version ne commence cette année-là"}
   "duree_requise_sncf_ratp / reforme_2023": {classe: a_faire, commentaire: "réforme du 2023-09-01 ; aucune version ne commence cette année-là"}
   "duree_requise_sncf_ratp / touraine_2014": {classe: a_faire, commentaire: "réforme du 2014-01-22 ; aucune version ne commence cette année-là"}
