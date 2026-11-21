@@ -650,6 +650,28 @@
    "valeurs": 5,
    "verifiee_le": "2026-11-21"
   },
+  "duree_requise_par_version": {
+   "ajoutees": 0,
+   "colonne": "trimestres",
+   "corrigees": 0,
+   "empreinte": "7dfae7369bde4785",
+   "identiques": 30,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code de la sécurité sociale L. 161-17-3, R. 351-27 et R. 351-45, rédaction par rédaction",
+   "valeurs": 30,
+   "verifiee_le": "2026-11-21"
+  },
+  "duree_requise_par_version_decrets": {
+   "ajoutees": 0,
+   "colonne": "trimestres",
+   "corrigees": 0,
+   "empreinte": "82dbaa2a2eafa2ae",
+   "identiques": 4,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, décrets pris pour l'application de la loi du 21 août 2003 et de celle du 9 novembre 2010",
+   "valeurs": 4,
+   "verifiee_le": "2026-11-21"
+  },
   "durees_echelon_duree": {
    "ajoutees": 0,
    "colonne": "duree",

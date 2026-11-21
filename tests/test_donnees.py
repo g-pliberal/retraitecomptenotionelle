@@ -605,6 +605,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # La table de chaque version de l'âge légal, et sa vue (note de
         # décision 0009, étape 2).
         "age_legal_par_version": "legislation/age_legal_par_version.csv",
+        # La durée requise de chaque version, lue dans LEGI, et ses décrets
+        # (note de décision 0009, étape 3).
+        "duree_requise_par_version": "legislation/duree_requise_par_version.csv",
+        "duree_requise_par_version_decrets": "legislation/duree_requise_par_version.csv",
         "age_ouverture_requis": "legislation/age_ouverture_requis.csv",
         "duree_assurance_requise": "legislation/duree_assurance_requise.csv",
         "duree_assurance_requise_decrets":
