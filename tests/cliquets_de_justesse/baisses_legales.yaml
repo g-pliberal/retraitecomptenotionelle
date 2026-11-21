@@ -1,0 +1,6 @@
+# Les baisses de pension que la loi fait (action 194, étape B) : le balayage
+# de cohérence (scripts/filets.py, noyau/filets.py) admet une baisse que
+# l'une de ces lignes rattache à un texte cité, sous ses conditions ; toute
+# autre baisse est « à expliquer ». Une ligne ne s'inscrit qu'après lecture
+# du texte qu'elle cite.
+baisses: []

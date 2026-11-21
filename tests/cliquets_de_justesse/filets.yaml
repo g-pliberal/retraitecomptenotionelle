@@ -1,0 +1,11 @@
+# Le cliquet des filets de la carte de justesse (action 194, étape B) : le
+# nombre d'anomalies « à expliquer » du balayage de cohérence, et celui des
+# parties qu'aucun témoin ne garde, ne peuvent que baisser. Le rapport
+# (filets_rapport.yaml), que scripts/filets.py écrit, ne les dépasse pas
+# (tests/test_filets.py) ; une baisse se reporte ici, avec le jour.
+balayage:
+  a_expliquer: 3052
+  le: 2026-11-21
+neutralisation:
+  non_gardee: 192
+  le: 2026-11-21

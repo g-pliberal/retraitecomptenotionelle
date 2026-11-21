@@ -328,6 +328,76 @@ def carte_de_justesse(calcules: dict, lignes: list[dict]) -> list[str]:
     return L
 
 
+def filets_de_la_carte(rapport: dict | None = None) -> list[str]:
+    """Les deux filets de la carte (action 194, étape B), à part d'elle : le
+    balayage de cohérence et la neutralisation, lus au dernier rapport de
+    ``scripts/filets.py``."""
+    from retraite_notionnelle.noyau import filets
+
+    if rapport is None:
+        if not filets.RAPPORT.exists():
+            return []
+        rapport = lire_yaml(str(filets.RAPPORT.relative_to(RACINE)))
+    L = ["**Les filets de la carte** (`src/retraite_notionnelle/noyau/filets.py`, "
+         "`scripts/filets.py`, action 194, étape B). Ils ne prouvent rien, et leur section "
+         "ne change l'état d'aucune partie : ils disent où regarder d'abord.", ""]
+    balayage = rapport.get("balayage")
+    if balayage:
+        c = balayage["comptes"]
+        b = c["baisses"]
+        n = c["a_expliquer"]
+        L += [
+            f"*Le balayage de cohérence* ({balayage['le']}) : {milliers(c['calculs'])} "
+            "calculs des treize cas types, écrits en part du salaire moyen de chaque année, "
+            "générations 1940 à 1990, départs par trimestre jusqu'à 70 ans. Cotiser plus ne "
+            "baisse jamais la pension, sauf baisse qu'une liste rattache à un texte "
+            "(`tests/cliquets_de_justesse/baisses_legales.yaml`) ; et aucun saut du taux de "
+            "remplacement entre deux générations voisines au-delà de "
+            f"{virgule(100 * balayage['seuil_de_saut'], 0)} %, hors des bornes que les tables "
+            "et les versions du paquet posent, ou d'un trimestre validé de plus. "
+            f"**{n} anomalie{'s' * (n > 1)} à expliquer** : {c['sauts']['a_expliquer']} "
+            f"sauts ; baisses, {b['a']['a_expliquer']} sous un salaire plus haut une année, "
+            f"{b['b']['a_expliquer']} sous une année d'activité de plus, "
+            f"{b['c']['a_expliquer']} sous un départ plus tard. Chacune est une piste, non "
+            "une erreur établie ; le cliquet (`tests/cliquets_de_justesse/filets.yaml`) "
+            "n'en laisse pas monter le nombre.",
+            "",
+            "| Sorte | Cas type | Génération | Pensions | Âges | Écart le plus fort |",
+            "|---|---|---|---|---|---|",
+        ]
+        L += [f"| {g['sorte']} | {g['cas']} | {g['point']} | {g['pensions']} "
+              f"| {virgule(g['ages'][0], 2)} à {virgule(g['ages'][1], 2)} "
+              f"| {virgule(100 * g['ecart_max'], 2)} % |"
+              for g in balayage["a_expliquer"][:15]]
+        L.append("")
+    neutralisation = rapport.get("neutralisation")
+    if neutralisation:
+        c = neutralisation["comptes"]
+        L += [
+            f"*La neutralisation* ({neutralisation['le']}) : chaque partie mutée — ses "
+            "paramètres, la source que sa fiche nomme, ses interrupteurs —, les "
+            f"{neutralisation['temoins']} témoins de simulation rejoués. Sur "
+            f"{c['parties']} parties, **{c['gardee']} gardées**, {c['non_gardee']} non "
+            f"gardées (le paquet change, aucun témoin), {c['hors_d_atteinte']} hors "
+            "d'atteinte (aucune mutation ne change le paquet). Une partie non gardée n'est "
+            "pas fausse : elle n'est pas surveillée. Les exemples officiels ne sont pas "
+            "rejoués : la garde est une borne basse.",
+            "",
+            "| Famille de régimes | Gardées | Non gardées | Hors d'atteinte |",
+            "|---|---|---|---|",
+        ]
+        for famille, n in neutralisation["par_famille"].items():
+            L.append(f"| {FAMILLES.get(famille, famille)} | {n['gardee']} | {n['non_gardee']} "
+                     f"| {n['hors_d_atteinte']} |")
+        non_gardees = [p for p in neutralisation["parties"] if p["etat"] == "non_gardee"]
+        if non_gardees:
+            L += ["", "Non gardées : " + ", ".join(
+                f"`{justesse.nom_de_partie(p['fiche'], p['version'])}`" for p in non_gardees)
+                + "."]
+        L.append("")
+    return L
+
+
 def parties_fausses(calcules: dict) -> list[str]:
     """Les parties que la carte de justesse calcule fausses, fiche par fiche,
     avec l'écart qui l'établit et l'action qui la corrige, si une preuve la
@@ -558,6 +628,7 @@ def page() -> str:
       "non appliquées.")
     w("")
     L.extend(carte_de_justesse(justes, familles_justes))
+    L.extend(filets_de_la_carte())
     w(f"**La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : "
       f"{milliers(len(redactions))} rédactions d'articles, de {len(textes_par_cle)} textes, "
       f"lues le {inscription['lu_le']} ({inscription['index']}). C'est le dénominateur de "
