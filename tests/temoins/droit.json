@@ -2327,6 +2327,12 @@
   ],
   "rendu": "b7c749eb973de4e2"
  },
+ "2a16f61dba6247d3": {
+  "fonctions": [
+   "calendrier.origine_des_ages"
+  ],
+  "rendu": "c32d114b0b417edd"
+ },
  "2a49f421be78ca73": {
   "fonctions": [
    "scenario_actuel.calculer"
@@ -7122,6 +7128,12 @@
   ],
   "rendu": "f70fcbe8eaea0cc5"
  },
+ "82c950c4ea56da57": {
+  "fonctions": [
+   "simulateur.carriere_releve"
+  ],
+  "rendu": "dffe475a6f6d7b6a"
+ },
  "82d4d30a907d9f76": {
   "fonctions": [
    "liquider.prestation_rafp"
@@ -8277,6 +8289,12 @@
   ],
   "rendu": "c9b565b41d8e9d2a"
  },
+ "95bea63ff1df4b2f": {
+  "fonctions": [
+   "liquider.salaire_de_reference"
+  ],
+  "rendu": "3ba235db5f2fe943"
+ },
  "95c48963f76d3d8d": {
   "fonctions": [
    "ouvrir.age_legal_a_l_effet"
@@ -8739,6 +8757,12 @@
    "ouvrir.duree_requise"
   ],
   "rendu": "50387a89684629bf"
+ },
+ "9d6c7a20d999dfe4": {
+  "fonctions": [
+   "scenario_actuel.calculer"
+  ],
+  "rendu": "80dbafd6b4c7d8df"
  },
  "9d92b470312da98b": {
   "fonctions": [

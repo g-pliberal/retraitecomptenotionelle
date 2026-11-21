@@ -1896,6 +1896,11 @@ def _rendu(droit, *appel, parametres=None):
     return lus["rendu"]
 
 
+# Les grandeurs qu'un relevé entier mesure sur le résultat de la liquidation.
+GRANDEURS_DU_RESULTAT = {"trimestres_valides", "trimestres_requis", "taux_liquidation",
+                         "pension_base_sur_sam"}
+
+
 def _carriere_exemple(exemple: dict, decalage_mois: int = 0, sans_enfants: bool = False,
                       droit=droit_et_fige):
     """La carrière que l'exemple décrit, liquidée au mois voulu.
@@ -2026,8 +2031,14 @@ def _carriere_exemple(exemple: dict, decalage_mois: int = 0, sans_enfants: bool 
             age_liquidation=age, mois_naissance=naissance.mois, jour_naissance=jour,
             nombre_enfants=communs["nombre_enfants"],
             naissances_enfants=communs["naissances_enfants"])
-        return pont.carriere_des_donnees(_rendu(
-            droit, "simulateur.carriere_releve", pont.SIMULATEUR, options)), None
+        carriere = pont.carriere_des_donnees(_rendu(
+            droit, "simulateur.carriere_releve", pont.SIMULATEUR, options))
+        # Le résultat, que lisent les grandeurs de la liquidation (la grille du
+        # taux et de la proratisation) ; celles du seul salaire annuel moyen
+        # s'en passent, et ne le demandent pas.
+        if not set(exemple["attendu"]) & GRANDEURS_DU_RESULTAT:
+            return carriere, None
+        return carriere, _rendu(droit, "scenario_actuel.calculer", pont.MOTEUR, carriere)
     if "age_debut" in c or "debut" in c:
         # Le début de la carrière en France, à un âge ou à un mois : celui
         # d'une carrière qui commence hors de France se date.
@@ -2823,3 +2834,21 @@ def test_l_escalier_de_1993_vaut_des_le_28_aout_1993():
                              "liquidation": liquidation, "age_debut": 22}}
     assert not _confronter(cas("1993-10", 151))
     assert not _confronter(cas("1993-08", 150))
+
+
+def test_le_taux_et_la_proratisation_se_mesurent_sur_un_releve_entier():
+    """``pension_base_sur_sam`` et ``trimestres_valides`` se lisent aussi d'un
+    relevé année par année (``releve_entier``), que la grille du taux et de la
+    proratisation pose elle-même (action 194). Né le 30 novembre 1946, salarié
+    de 1975 à 2010 puis jusqu'au 30 novembre 2011, pension du 1er décembre 2011
+    à 65 ans : 144 trimestres, plus les trois trimestres civils de 2011 qui
+    précèdent celui de l'effet (R. 351-1), soit 147 ; le taux plein par l'âge ;
+    la durée maximum de R. 351-6, II, 156 trimestres pour le né en 1946 :
+    0,5 × 147 / 156."""
+    releve = [[annee, 1.0e6] for annee in range(1975, 2011)] + [[2011, 1.0e6 * 11 / 12]]
+    cas = {"id": "essai", "attendu": {"trimestres_valides": 147,
+                                      "pension_base_sur_sam": 0.5 * 147 / 156},
+           "carriere": {"naissance": "1946-11-30", "sexe": "H",
+                        "affiliation": "salarie_prive_non_cadre",
+                        "liquidation": "2011-12", "releve_entier": releve}}
+    assert not _confronter(cas)
