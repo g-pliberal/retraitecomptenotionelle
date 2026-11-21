@@ -409,6 +409,14 @@ approximations:
   effet: >-
     un cas de la grille indépendante, grille_sam_maternite_forfait_2023_p14 : 19 866,42
     euros de salaire annuel moyen au lieu de 19 591,10
+presomptions:
+  naissance_des_enfants: >-
+    la naissance de chaque enfant dont la date n'est pas déclarée, qui fait l'année du
+    forfait, le médian de l'année précédente et le rang ; présumés nés le même jour,
+    les enfants comptent comme une naissance multiple
+  jour_de_naissance: >-
+    le jour de naissance de l'assurée, quand il n'est pas déclaré, qui date la pension
+    et la place avant ou après le 1er septembre 2023
 sources:
   lu_le: 2026-11-20
   prochaine_relecture: 2027-01-31

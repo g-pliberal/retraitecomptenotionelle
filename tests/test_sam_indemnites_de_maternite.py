@@ -176,17 +176,19 @@ NAISSANCES = ("1998-05-12", "2007-03-03", "2013-06-01")
 
 def test_la_mere_recoit_le_forfait_depuis_septembre_2023(simulateur):
     """Née en janvier 1960, seize années à 15 000 €, 30 000 € en 2007 ; trois
-    enfants, en 1998, 2007 et 2013. Pension de février 2024 : 1998 reçoit
+    enfants, en 1998, 2007 et 2013. Pension de janvier ou février 2024, selon
+    le jour de naissance présumé : 1998 reçoit
     15 548 × 140/365 = 5 963,62, soit 5 964 € ; 2007, 18 374 × 140/365 =
     7 047,56, soit 7 048 €, que le plafond de 32 184 € ramène à 2 184 € ; la
-    naissance de 2013 est d'un congé d'après 2011. Pension de février 2023 :
+    naissance de 2013 est d'un congé d'après 2011. Pension de 2023 :
     rien, comme pour le père."""
     mere = _carriere("F", 64, NAISSANCES)
-    assert (mere.annee_liquidation, mere.mois_liquidation) == (2024, 2)
+    assert (mere.annee_liquidation, mere.mois_liquidation) >= (2023, 9)
     assert _sam(simulateur, mere) == pytest.approx(
         _moyenne(simulateur, mere, {1998: 5_964.0, 2007: 2_184.0}), abs=0.005)
 
     avant = _carriere("F", 63, NAISSANCES)
+    assert (avant.annee_liquidation, avant.mois_liquidation) < (2023, 9)
     assert _sam(simulateur, avant) == pytest.approx(_moyenne(simulateur, avant, {}), abs=0.005)
     pere = _carriere("H", 64, NAISSANCES)
     assert _sam(simulateur, pere) == pytest.approx(_moyenne(simulateur, pere, {}), abs=0.005)

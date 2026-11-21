@@ -656,7 +656,7 @@ def test_une_saisie_par_la_pension_passe_le_pont_par_la_carriere_que_l_inversion
 #: une mère de trois enfants, salariée du privé de 2002 à 2025, qui part en juin 2033.
 RELEVE_A_PROLONGER = {
     "naissance": "1966-05-12", "sexe": "F", "liquidation": "2033-06", "enfants": "3",
-    "euros": "2026",
+    "naissances": "1994-05,1996-05,1998-05", "euros": "2026",
     "releve": ",".join(f"{annee}:salarie_prive_non_cadre:{18_300 + 600 * (annee - 2002)}"
                        for annee in range(2002, 2026)),
 }

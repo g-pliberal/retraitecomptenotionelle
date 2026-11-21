@@ -75,7 +75,9 @@ def _estimation(**remplacements) -> dict:
             "montants": "brut", "periodicite": "mensuel", "euros_de": 2026,
             "revenus_futurs": "Une évolution régulière de vos revenus est appliquée.",
         },
-        "assure": {"sexe": "F", "enfants": 3},
+        # Les naissances déclarées : le témoin des servis ne doit rien à la
+        # présomption des naissances, que la garde des présomptions décale.
+        "assure": {"sexe": "F", "enfants": 3, "naissances": ["1994-05", "1996-05", "1998-05"]},
         "departs": [
             {"age": "64 ans", "date": dt.date(2030, 6, 1), "trimestres": 160,
              "regimes": [{"libelle": "Assurance retraite", "brut": 1000},
