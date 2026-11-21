@@ -86,8 +86,12 @@ def test_chaque_fiche_qui_declare_la_reforme_est_gardee_ou_declaree_hors_de_la_c
     assert droits.fiches_sans_decision(brute) == []
     decidees = {o["vise"]: o for o in brute["operations"]}
     assert set(decidees) == declarent, "la couche ne décide que des fiches de sa réforme"
-    # L'âge légal est la seule version gardée à cette étape ; le reste dit pourquoi.
-    assert [n for n, o in decidees.items() if o["operation"] == "remplacer_une_version"] == [AGE_LEGAL]
+    # L'âge légal, et sous la loi de 2023 l'âge du taux plein qui le lit (étape
+    # 3 de la note 0009), gardent leur version d'avant ; le reste dit pourquoi.
+    gardees = {"sans_la_reforme_de_2023": ["age_annulation_decote", AGE_LEGAL],
+               "sans_la_suspension_de_2026": [AGE_LEGAL]}[couche]
+    assert sorted(n for n, o in decidees.items()
+                  if o["operation"] == "remplacer_une_version") == gardees
     for nom, operation in decidees.items():
         assert operation["operation"] in ("remplacer_une_version", "garder"), nom
         assert len(str(operation.get("motif") or "").split()) >= 5, f"{nom} : sa raison"

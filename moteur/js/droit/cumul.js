@@ -23,7 +23,7 @@
  */
 
 import { DateMois } from "../calendrier.js";
-import { periodeDeLiquidation } from "./commun.js";
+import { ageDuTauxPleinDeLAssure, periodeDeLiquidation } from "./commun.js";
 import * as lesDeparts from "./departs.js";
 import * as invalidite from "./invalidite.js";
 import * as limiteDAge from "./limite_age.js";
@@ -414,7 +414,7 @@ class Calcul {
       groupeDeLaPension(moteur, p.regime),
     ]);
     this.ageLegal = lesDeparts.ageLegal(moteur, carriere);
-    const automatique = moteur.agesAnnulationDecote.age(carriere.generation);
+    const automatique = ageDuTauxPleinDeLAssure(moteur, carriere);
     this.ageAutomatique = automatique !== null ? automatique[0] : 65.0;
     if (this.premiere < AGES_DE_2010
         && !this.pensions.some(([, , groupe]) => groupe === "fonction_publique")) {

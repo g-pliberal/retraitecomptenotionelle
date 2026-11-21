@@ -10,7 +10,9 @@
  */
 
 import * as chrono from "../chronologie.js";
-import { ageLegalDeLAssure, dateDEffet, ligneCotisee } from "./commun.js";
+import {
+  ageDuTauxPleinDeLAssure, ageLegalDeLAssure, dateDEffet, ligneCotisee,
+} from "./commun.js";
 
 /** Les fiches des catégories, dans l'ordre où le moteur les essaie. */
 export const FICHE_DES_DEPORTES = "taux_plein_anciens_deportes_internes";
@@ -33,7 +35,7 @@ export function ageLegal(moteur, carriere) {
 
 /** L'âge du 1° de L. 351-8, où la décote s'annule, de la génération. */
 export function ageDuTauxPlein(moteur, carriere) {
-  const lu = moteur.agesAnnulationDecote.age(carriere.generation);
+  const lu = ageDuTauxPleinDeLAssure(moteur, carriere);
   return lu !== null ? lu[0] : 65.0;
 }
 

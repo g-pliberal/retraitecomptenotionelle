@@ -308,6 +308,12 @@ versions:
       1er septembre 1961, jusqu'à soixante-quatre ans pour ceux nés à compter du 1er
       janvier 1968 ; la loi écrit la cible, le décret la montée et reprend les âges
       des générations d'avant, et la génération de l'assuré choisit la ligne
+    parametres:
+      # « l'âge prévu au premier alinéa de l'article L. 161-17-2 », que lit
+      # L. 351-8, 1°, depuis le 1er septembre 2023 (fiche age_annulation_decote) :
+      # « soixante-quatre ans pour les assurés nés à compter du 1er janvier 1968 »
+      # (LEGIARTI000047452768), le même âge pour tout assuré.
+      age_du_premier_alinea: 64
     table:
       fichier: legislation/age_legal_par_version.csv
       lignes:
@@ -356,6 +362,12 @@ versions:
       (LEGIARTI000047634502, en vigueur), dit encore soixante-trois ans pour les
       assurés nés en 1964 ; il n'est plus lu que par le renvoi de la loi à sa
       rédaction antérieure, pour les assurés nés avant le 1er septembre 1961
+    parametres:
+      # « l'âge prévu au premier alinéa de l'article L. 161-17-2 », que lit
+      # L. 351-8, 1°, depuis le 1er septembre 2023 (fiche age_annulation_decote) :
+      # « soixante-quatre ans pour les assurés nés à compter du 1er janvier 1969 »
+      # (LEGIARTI000053280889), le même âge pour tout assuré.
+      age_du_premier_alinea: 64
     table:
       fichier: legislation/age_legal_par_version.csv
       lignes:
@@ -398,7 +410,7 @@ code:
     FichesDatees.sousLeDroit ;
     moteur/js/scenario-actuel.js : ScenarioActuel._sousLeDroit
   parametres: >-
-    contenu.parametres de chaque version : age ;
+    contenu.parametres de chaque version : age, age_du_premier_alinea ;
     legislation/age_legal_par_version.csv : entree_en_vigueur, article, generation,
     generation_fin, age ;
     legislation/age_ouverture_requis.csv : generation, age ;

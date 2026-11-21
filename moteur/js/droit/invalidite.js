@@ -19,7 +19,9 @@
 import { DateMois, enMois } from "../calendrier.js";
 import { formatFixe } from "../format.js";
 import { Fiabilite } from "../serie.js";
-import { ageLegalDeLAssure, dateDEffet, ligneCotisee } from "./commun.js";
+import {
+  ageDuTauxPleinDeLAssure, ageLegalDeLAssure, dateDEffet, ligneCotisee,
+} from "./commun.js";
 import { REGIMES_ALIGNES, luraApplicable } from "./coordonner.js";
 import * as liquider from "./liquider.js";
 
@@ -261,7 +263,7 @@ export function substitution(moteur, carriere) {
       && [MAINTIEN_JUSQU_A_LA_DEMANDE, OPPOSITION].includes(parametres.invalide_qui_travaille)) {
     let plusTard = declare;
     if (parametres.invalide_qui_travaille === MAINTIEN_JUSQU_A_LA_DEMANDE) {
-      const automatique = moteur.agesAnnulationDecote.age(carriere.generation);
+      const automatique = ageDuTauxPleinDeLAssure(moteur, carriere);
       plusTard = plusPrecoce(declare, carriere.dateDeLAge(
         automatique !== null ? automatique[0] : 65.0));
     }

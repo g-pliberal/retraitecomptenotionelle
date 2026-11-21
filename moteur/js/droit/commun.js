@@ -75,6 +75,20 @@ export function ageLegalDuConjointSurvivant(moteur, naissance) {
 }
 
 /**
+ * L'âge du taux plein (L. 351-8, 1°) de L'ASSURÉ, et sa fiabilité : celui de la
+ * version de la fiche `age_annulation_decote` sous laquelle il l'atteint, ses
+ * âges comptés de son jour de naissance (`AgesAnnulationDecote.age`). C'est
+ * l'âge de la personne : il date ce qui se passe quand elle l'atteint — la
+ * retraite qui suit l'invalidité, le terme de l'activité après la pension.
+ * `null` quand aucune version ne le dit.
+ *
+ * @returns {[number, number] | null} âge et fiabilité.
+ */
+export function ageDuTauxPleinDeLAssure(moteur, carriere) {
+  return moteur.agesAnnulationDecote.age(carriere.generation, carriere.origineDesAges ?? null);
+}
+
+/**
  * La date d'effet d'une demande (AAAA-MM-JJ) : le premier jour du mois de la
  * liquidation, ou `null` pour une carrière sans départ.
  */

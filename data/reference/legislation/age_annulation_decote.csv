@@ -1,43 +1,80 @@
-# Âge d'annulation de la décote, PAR GÉNÉRATION
-# ----------------------------------------------
-# source_id: legifrance_textes, cnav_circulaires
+# Âge d'annulation de la décote, PAR GÉNÉRATION : une VUE, fabriquée
+# ----------------------------------------------------------------------
+# source_id: legifrance_textes
 #
-# C'est l'âge auquel le taux plein est acquis sans condition de durée. Comme
-# l'âge d'ouverture, il est indexé sur l'ANNÉE DE NAISSANCE et non sur l'année
-# de liquidation : les fiches de régime portaient l'âge CIBLE de la réforme dès
-# son entrée en vigueur — 67 ans opposés à des liquidations de 2011, alors que
-# la génération concernée cette année-là relevait de 65 ans.
+# Depuis le 21 novembre 2026 (note de décision 0009, étape 3), cette table n'est
+# plus une source : les versions de la fiche `age_annulation_decote`
+# (data/reference/regles/) le sont, que le moteur lit à la date d'effet de la
+# pension. Elle se fabrique depuis elles (`tables_de_version.vue_de_l_age_du_taux_plein`,
+# que `scripts/verifier_donnees.py --appliquer` écrit) et ne se retouche jamais à
+# la main : tests/test_age_du_taux_plein.py la confronte aux versions.
 #
-# Étape législative unique : la loi du 9 novembre 2010, générations 1951-1955,
-# 65 -> 67 ans. La loi du 14 avril 2023 n'y a pas touché : elle a relevé l'âge
-# d'ouverture, pas celui-ci.
+# L'âge de chaque génération est celui de la version sous laquelle l'assuré
+# l'atteint : soixante-cinq ans (R. 351-27) jusqu'au 30 juin 2011 ; puis l'âge
+# légal de L. 161-17-2 augmenté de cinq années (L. 351-8, 1°, loi n° 2010-1330) ;
+# depuis le 1er septembre 2023, l'âge du premier alinéa de L. 161-17-2,
+# soixante-quatre ans, augmenté de trois. Aucun assuré né avant 1955 n'atteignait
+# son âge après le 1er septembre 2023 : la table garde les âges de 2011, 65 ans et
+# 4 mois pour les nés à compter du 1er juillet 1951 (la ligne `1951.5`) à 67 ans
+# dès 1955. Les nés avant 1930 ont soixante-cinq ans comme les autres
+# (R. 351-27) : jusqu'au 21 novembre 2026, la table commençait en 1930.
 #
-# La génération 1951 est coupée au 1er juillet par le texte, ET LA TABLE LA
-# COUPE AUSSI : la ligne `1951.5` désigne les assurés nés à compter du
-# 1er juillet 1951, comme dans age_ouverture_requis.csv. Ceux nés avant gardent
-# les 65 ans du droit antérieur, que le modèle leur refusait.
-#
-# POURQUOI CETTE TABLE RESTE `haute`, ET COMMENT ELLE EST TOUT DE MÊME
-# RECONTRÔLÉE. Aucun texte ne l'écrit génération par génération : ce que le code
-# écrit est une RÈGLE. L'article L. 351-8 1° donne « l'âge prévu à l'article
-# L. 161-17-2 augmenté de cinq années », devenu trois années quand la réforme du
-# 14 avril 2023 a porté l'âge d'ouverture à 64 ans — la cible restant 67. Cette
-# table est donc celle des âges d'ouverture, certifiée, décalée de cinq ans et
-# plafonnée à 67.
-#
-# Une valeur calculée n'est pas une valeur confrontée, et le dépôt applique ici
-# la règle qui vaut pour l'espérance de vie dérivée : niveau `haute`. Mais
-# `scripts/verifier_donnees.py` la recalcule à chaque exécution depuis la table
-# certifiée — si une réforme déplaçait l'âge d'ouverture sans que celui-ci
-# suive, l'écart se verrait là plutôt que dans une pension.
-# Les assurés nés avant 1930 : soixante-cinq ans, comme les autres
-# (R. 351-27, « l'âge prévu au 1° de l'article L. 351-8 est fixé à soixante-cinq
-# ans », LEGIARTI000006749434). Jusqu'au 21 novembre 2026 la table commençait en
-# 1930, et un régime qui renvoie à la règle commune répondait par la valeur de
-# sa période : 67 ans à la Carpimko de 1987.
+# Une ligne à chaque janvier, et une à chaque coupure en cours d'année. Les âges
+# s'écrivent au centième ; le chargeur les ramène au mois entier (`au_mois`).
+# Niveau `haute` : une valeur calculée depuis une règle n'est pas une valeur
+# confrontée ; `scripts/verifier_donnees.py` la recontrôle aussi contre l'âge
+# d'ouverture certifié, et contre OpenFisca.
 generation,age,fiabilite
 1900,65.00,haute
+1901,65.00,haute
+1902,65.00,haute
+1903,65.00,haute
+1904,65.00,haute
+1905,65.00,haute
+1906,65.00,haute
+1907,65.00,haute
+1908,65.00,haute
+1909,65.00,haute
+1910,65.00,haute
+1911,65.00,haute
+1912,65.00,haute
+1913,65.00,haute
+1914,65.00,haute
+1915,65.00,haute
+1916,65.00,haute
+1917,65.00,haute
+1918,65.00,haute
+1919,65.00,haute
+1920,65.00,haute
+1921,65.00,haute
+1922,65.00,haute
+1923,65.00,haute
+1924,65.00,haute
+1925,65.00,haute
+1926,65.00,haute
+1927,65.00,haute
+1928,65.00,haute
+1929,65.00,haute
 1930,65.00,haute
+1931,65.00,haute
+1932,65.00,haute
+1933,65.00,haute
+1934,65.00,haute
+1935,65.00,haute
+1936,65.00,haute
+1937,65.00,haute
+1938,65.00,haute
+1939,65.00,haute
+1940,65.00,haute
+1941,65.00,haute
+1942,65.00,haute
+1943,65.00,haute
+1944,65.00,haute
+1945,65.00,haute
+1946,65.00,haute
+1947,65.00,haute
+1948,65.00,haute
+1949,65.00,haute
 1950,65.00,haute
 1951,65.00,haute
 1951.5,65.33,haute
@@ -45,3 +82,23 @@ generation,age,fiabilite
 1953,66.17,haute
 1954,66.58,haute
 1955,67.00,haute
+1956,67.00,haute
+1957,67.00,haute
+1958,67.00,haute
+1959,67.00,haute
+1960,67.00,haute
+1961,67.00,haute
+1962,67.00,haute
+1963,67.00,haute
+1964,67.00,haute
+1965,67.00,haute
+1966,67.00,haute
+1967,67.00,haute
+1968,67.00,haute
+1969,67.00,haute
+1970,67.00,haute
+1971,67.00,haute
+1972,67.00,haute
+1973,67.00,haute
+1974,67.00,haute
+1975,67.00,haute

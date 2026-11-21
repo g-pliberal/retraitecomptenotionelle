@@ -24,7 +24,8 @@ import {
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import * as categories from "./categories.js";
 import {
-  SANS_LEUR_BASE, ageLegalDeLAssure, dateDEffet, ligneCotisee, periodeDeLiquidation,
+  SANS_LEUR_BASE, ageDuTauxPleinDeLAssure, ageLegalDeLAssure, dateDEffet, ligneCotisee,
+  periodeDeLiquidation,
 } from "./commun.js";
 import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
@@ -1570,7 +1571,10 @@ export function ageTauxPlein(moteur, periodeLiquidation, carriere) {
     }
   }
   if (periode.age_taux_plein_par_generation) {
-    const parGeneration = moteur.agesAnnulationDecote.age(carriere.generation);
+    // Lu dans les versions de la fiche (note de décision 0009, étape 3) ; le
+    // minimum avec le parent de trois enfants est une relation entre deux
+    // fiches, que le contrat ne sait pas encore déclarer.
+    const parGeneration = ageDuTauxPleinDeLAssure(moteur, carriere);
     if (parGeneration !== null) {
       const parent = categories.ageDuParentDeTroisEnfants(moteur, periode.regime, carriere);
       return parent === null ? parGeneration[0] : Math.min(parent, parGeneration[0]);

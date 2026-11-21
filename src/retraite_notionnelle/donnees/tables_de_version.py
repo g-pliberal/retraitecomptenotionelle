@@ -200,7 +200,29 @@ def pour_le_moteur(fiche: dict, identifiant: str, racine: Path = RACINE_DONNEES)
         ajout["redaction_anterieure"] = {
             "version": anterieure["version"],
             "generations": [_generation(b) for b in anterieure.get("naissance") or [None, None]]}
+    if contenu.get("renvois"):
+        ajout["renvois"] = [renvoi_pour_le_moteur(r) for r in contenu["renvois"]]
     return ajout
+
+
+def _en_mois(duree: dict | None) -> int:
+    duree = duree or {}
+    return 12 * int(duree.get("ans") or 0) + int(duree.get("mois") or 0) \
+        + 3 * int(duree.get("trimestres") or 0)
+
+
+def renvoi_pour_le_moteur(renvoi: dict) -> dict:
+    """Un renvoi daté (contrat C.2, objet ``renvoi``), tel que le moteur le
+    suit : la fiche lue, la valeur nommée, de qui, la date qui choisit la
+    version lue, et ce que l'opération ajoute, en mois (négatif s'il le
+    retranche). Une opération par fonction (``code``) n'a pas encore de
+    lecteur : elle arrête la fabrication."""
+    if renvoi.get("code"):
+        raise ValueError(f"renvoi à {renvoi.get('fiche')} : le moteur ne suit pas encore "
+                         f"une opération par fonction ({renvoi['code']})")
+    return {"fiche": renvoi["fiche"], "valeur": renvoi["valeur"], "de": renvoi["de"],
+            "date": renvoi["date"],
+            "mois": _en_mois(renvoi.get("ajoute")) - _en_mois(renvoi.get("retranche"))}
 
 
 def vue_par_generation(table: dict[int, float]) -> list[tuple[str, float]]:
@@ -233,3 +255,110 @@ def vues_de_l_age_legal(racine: Path = RACINE_DONNEES) -> dict[str, list[tuple[s
     for nom in VUES_DE_L_AGE_LEGAL:
         vues[nom] = vue_par_generation(par_mois(fiche, en_vigueur, racine))
     return vues
+
+
+# --- L'âge du taux plein (note de décision 0009, étape 3) --------------------
+
+#: La fiche de l'âge du 1° de L. 351-8, et la vue par génération qu'on en
+#: fabrique.
+FICHE_DE_L_AGE_DU_TAUX_PLEIN = "age_annulation_decote"
+VUE_DE_L_AGE_DU_TAUX_PLEIN = "age_annulation_decote.csv"
+
+
+def _jour(valeur) -> str | None:
+    return None if valeur is None else str(valeur)[:10]
+
+
+def _vaut(version: dict, jour: str) -> bool:
+    debut, fin = (_jour(b) for b in version["bornes"][DATE_D_EFFET])
+    return (debut is None or debut <= jour) and (fin is None or jour < fin)
+
+
+def _a_la_date(fiche: dict, jour: str) -> dict | None:
+    valent = [v for v in fiche.get("versions") or [] if _vaut(v, jour)]
+    if len(valent) > 1:
+        raise ValueError(f"{fiche['id']} : {', '.join(v['id'] for v in valent)} valent "
+                         f"ensemble le {jour}")
+    return valent[0] if valent else None
+
+
+def _toutes_les_generations(age: float) -> dict[int, float]:
+    return {mois: age for mois in range(rang(PREMIERE_GENERATION), rang(DERNIERE_GENERATION + 1))}
+
+
+def ages_du_taux_plein_a_l_effet(taux_plein: dict, age_legal: dict, jour: str,
+                                 racine: Path = RACINE_DONNEES) -> dict[int, float]:
+    """L'âge du taux plein que la version de ``jour`` (AAAA-MM-JJ) oppose à
+    chaque mois de naissance, au mois exact : sa valeur, ou celle qu'elle lit
+    par son renvoi dans la version de l'âge légal du même jour, augmentée de
+    ce que l'opération ajoute. Vide quand aucune version ne vaut ce jour-là.
+    Le portage lit de même (``AgesAnnulationDecote.aLEffet``)."""
+    version = _a_la_date(taux_plein, jour)
+    if version is None:
+        return {}
+    contenu = version.get("contenu") or {}
+    if "age" in (contenu.get("parametres") or {}):
+        age = contenu["parametres"]["age"]
+        # Sans règle commune (avant 1983), la version ne dit rien.
+        return {} if age is None else _toutes_les_generations(au_mois(float(age)))
+    (renvoi,) = contenu["renvois"]
+    lue = _a_la_date(age_legal, jour)
+    ou = f"{taux_plein['id']}.{version['id']}"
+    if lue is None:
+        raise ValueError(f"{ou} : aucune version de {age_legal['id']} le {jour}")
+    parametres = (lue.get("contenu") or {}).get("parametres") or {}
+    if renvoi["valeur"] in parametres:
+        lus = _toutes_les_generations(float(parametres[renvoi["valeur"]]))
+    elif renvoi["valeur"] == "age":
+        lus = par_mois(age_legal, lue["id"], racine)
+    else:
+        raise ValueError(f"{ou} : lit « {renvoi['valeur']} », que "
+                         f"{age_legal['id']}.{lue['id']} ne porte pas")
+    ajout = renvoi_pour_le_moteur(renvoi)["mois"]
+    return {mois: (round(age * 12) + ajout) / 12 for mois, age in lus.items()}
+
+
+def _premier_du_mois_depuis(jour: str) -> int:
+    """Le rang du premier 1er du mois à compter de ``jour``."""
+    annee, mois, quantieme = (int(x) for x in jour.split("-"))
+    return annee * 12 + mois - 1 + (quantieme > 1)
+
+
+def _premier_jour(rang_du_mois: int) -> str:
+    annee, mois = divmod(rang_du_mois, 12)
+    return f"{annee:04d}-{mois + 1:02d}-01"
+
+
+def vue_de_l_age_du_taux_plein(racine: Path = RACINE_DONNEES) -> list[tuple[str, float]]:
+    """La table de l'âge du taux plein par génération, fabriquée depuis les
+    versions de sa fiche : l'âge de chaque mois de naissance est celui de la
+    version sous laquelle l'assuré l'atteint, ses âges comptés du mois qui
+    suit sa naissance — la recherche du premier départ de l'âge légal
+    (``AgesOuverture.premierDepart`` du portage), que
+    ``AgesAnnulationDecote.age`` fait aussi. Les fenêtres se coupent à chaque
+    borne des deux fiches, celle de l'âge du taux plein et celle de l'âge
+    légal qu'elle lit."""
+    regles = racine / "reference" / "regles"
+    taux_plein = charger_yaml(regles / f"{FICHE_DE_L_AGE_DU_TAUX_PLEIN}.yaml")
+    age_legal = charger_yaml(regles / f"{FICHE_DE_L_AGE_LEGAL}.yaml")
+    erreurs = [e for e in renvois.controler(
+        {chemin.stem: charger_yaml(chemin) for chemin in sorted(regles.glob("*.yaml"))})
+        if f"{FICHE_DE_L_AGE_DU_TAUX_PLEIN}." in e]
+    if erreurs:
+        raise ValueError(" ; ".join(erreurs))
+    bornes = sorted({_jour(b) for fiche in (taux_plein, age_legal) for v in fiche["versions"]
+                     for b in v["bornes"][DATE_D_EFFET] if b is not None})
+    fenetres = [(debut, fin, ages_du_taux_plein_a_l_effet(taux_plein, age_legal, debut, racine))
+                for debut, fin in zip(bornes, bornes[1:] + [None])]
+    table: dict[int, float] = {}
+    for mois in range(rang(PREMIERE_GENERATION), rang(DERNIERE_GENERATION + 1)):
+        origine = mois + 1
+        for debut, fin, ages in fenetres:
+            if mois not in ages:
+                continue
+            atteint = origine + round(ages[mois] * 12)
+            date = max(atteint, _premier_du_mois_depuis(debut))
+            if fin is None or _premier_jour(date) < fin:
+                table[mois] = ages[mois]
+                break
+    return vue_par_generation(table)

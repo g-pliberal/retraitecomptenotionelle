@@ -1,8 +1,11 @@
 schema_version: 1
 id: age_annulation_decote
 intitule: >-
-  Taux plein sans condition de durée à l'âge légal de droit commun augmenté de trois
-  ans : 67 ans depuis la génération 1955, inchangé par la suspension.
+  Taux plein sans condition de durée à l'âge du 1° de L. 351-8 : soixante-cinq ans
+  jusqu'au 30 juin 2011, puis l'âge légal augmenté de cinq ans, et depuis le
+  1er septembre 2023 l'âge du premier alinéa de L. 161-17-2, soixante-quatre ans,
+  augmenté de trois : 67 ans pour toute pension, inchangé par la suspension.
+domaine: age
 regimes: [agirc, agirc_arrco, agirc_entreprises_nouvelles, arrco, arrco_cultes,
   arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, asv_chirurgiens_dentistes,
   asv_conventionnes, asv_directeurs_laboratoire, asv_sages_femmes, banque_de_france,
@@ -13,12 +16,42 @@ regimes: [agirc, agirc_arrco, agirc_entreprises_nouvelles, arrco, arrco_cultes,
   ircantec, ircec_raap, ircec_raap_taux_amenage, ircec_racd, ircec_racl,
   msa_non_salaries, msa_rco, msa_salaries, nric, organic, organic_avant_1973,
   organic_conjoints_batiment, rci, rco_artisans, regime_general, rsi]
+etape: ouvrir_le_droit
 etat: conforme
-effet: Décote et taux plein d'office.
+lit:
+- l'année et le mois de naissance de l'assuré
+- liquidation.date_effet
+- >-
+  l'âge légal de l'assuré, ou l'âge du premier alinéa de L. 161-17-2, dans la
+  version de `age_legal_par_generation` en vigueur à la date d'effet de sa pension
+ecrit:
+- >-
+  l'âge où la décote s'annule et où le taux plein est acquis sans condition de
+  durée, dans les régimes qui renvoient à la règle commune
+  (`age_taux_plein_par_generation`)
+dates_qui_decident:
+- liquidation.date_effet
+effet: >-
+  Décote et taux plein d'office. Depuis le 21 novembre 2026 (note de décision 0009,
+  étape 3), les versions de la fiche sont la source : le moteur les lit à la date
+  d'effet de la pension, les deux dernières par un renvoi à l'âge légal, et la table
+  par génération n'est plus qu'une vue fabriquée. Le droit du 31 août 2023 garde la
+  version de 2011, 62 ans plus cinq ; la loi de 2023 sans la suspension garde 64 ans
+  plus trois : 67 ans dès la génération 1955 sous les trois états du droit.
 sources:
-  lu_le: 2026-09-17
+  lu_le: 2026-11-21
   prochaine_relecture: 2027-06-30
   lectures:
+  - type: legifrance
+    reference: >-
+      Pour le découpage en versions, lues dans l'index LEGI à jour au 16 novembre
+      2026 : les six rédactions de L. 351-8 CSS (LEGIARTI000006742632,
+      LEGIARTI000006742633, LEGIARTI000023030950, LEGIARTI000028498855,
+      LEGIARTI000047452736, LEGIARTI000051289852), les quatre de R. 351-27 d'avant
+      le 3 juin 2011 (LEGIARTI000006749434 à LEGIARTI000020082993) et l'article 9 de
+      l'ordonnance n° 82-270 (LEGIARTI000006275868), chacune avec la disposition
+      d'application que LEGI porte en tête
+    date: 2026-11-21
   - type: circulaire_cnav
     reference: 2026-07 du 5 mars 2026, point 3
     date: 2026-03-05
@@ -37,9 +70,202 @@ sources:
       5° Soixante et un ans et sept mois pour les assurés nés en 1954 ». Les âges sont
       en ans et en mois ; la table les écrit au centième. Lus dans l'index LEGI du dépôt
     date: 2026-11-05
-textes_a_rattacher:
-- reference: L. 351-8 1° CSS
+versions:
+- id: avant_l_ordonnance_de_1982
+  statut: supposee
+  hypothese: >-
+    aucune règle commune : avant le 1er avril 1983, l'ancien code de la sécurité
+    sociale, que l'index LEGI ne porte pas et qui n'a pas été lu, fixait le taux
+    plein du régime général à soixante-cinq ans, et chaque régime qui renvoie
+    aujourd'hui à cette fiche avait son propre droit ; la fiche ne dit donc rien,
+    et le régime garde la valeur de sa période (note de décision 0009, « Le fichier
+    de régime garde son droit propre »)
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [null, 1983-04-01]
+  contenu:
+    droit: >-
+      pas de règle commune : l'âge du taux plein est celui que la période du régime
+      écrit (`age_taux_plein`)
+    parametres:
+      age: null
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne prend effet avant le 1er
+    avril 1983
+- id: ordonnance_de_1982
+  statut: supposee
+  hypothese: >-
+    soixante-cinq ans, l'âge que R. 351-27 écrit à la codification du 21 décembre
+    1985 ; l'article 1er de l'ordonnance n° 82-270, qui définit le taux plein,
+    n'est pas dans l'index LEGI, qui n'en porte que l'article 9, et n'a pas été lu
+    au Journal officiel
+  fiabilite: moyenne
+  textes:
+  - id: LEGIARTI000006275868
+    article: ordonnance n° 82-270 du 26 mars 1982, article 9
+    en_vigueur: 1982-07-01
+    citation: >-
+      « Les dispositions de la présente ordonnance entreront en vigueur le 1er avril
+      1983. »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [1983-04-01, 1985-12-21]
+  contenu:
+    droit: >-
+      le taux plein est acquis sans condition de durée à soixante-cinq ans, quelle
+      que soit la génération
+    conditions: >-
+      l'article 9 ouvre le taux plein dès le 1er juillet 1982 à deux publics, les
+      assurés de soixante-trois ans qui justifient de 150 trimestres et certains
+      demandeurs d'emploi de soixante ans : ce n'est pas l'âge du 1°, et le moteur
+      ne les distingue pas. Avant le 1er avril 1983, la fiche n'a pas de version :
+      chaque régime garde la valeur de sa période (`age_taux_plein`)
+    parametres:
+      age: 65
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne prend effet avant le 21
+    décembre 1985
+- id: soixante_cinq_ans
+  statut: lue
+  nee_de: LEGIARTI000006749434
+  textes:
+  - id: LEGIARTI000006742632
+    article: L. 351-8, 1°, du code de la sécurité sociale, rédaction du 21 décembre 1985
+    en_vigueur: 1985-12-21
+    citation: >-
+      « Bénéficient du taux plein même s'ils ne justifient pas de la durée requise
+      d'assurance [...] : 1°) les assurés qui atteignent un âge déterminé ; »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000006749434
+    article: R. 351-27, 1°, rédaction du 21 décembre 1985
+    en_vigueur: 1985-12-21
+    citation: >-
+      « l'âge prévu au 1° de l'article L. 351-8 est fixé à soixante-cinq ans »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000020082993
+    article: >-
+      R. 351-27, I, 1°, rédaction du 1er janvier 2009, la dernière avant le 3 juin
+      2011 ; celles du 28 août 1993 et du 15 février 2004 portent la même phrase
+    en_vigueur: 2009-01-01
+    citation: >-
+      « l'âge prévu au 1° de l'article L. 351-8 est fixé à soixante-cinq ans »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [1985-12-21, 2011-07-01]
+  contenu:
+    droit: >-
+      le taux plein est acquis sans condition de durée à soixante-cinq ans, quelle
+      que soit la génération : la loi dit « un âge déterminé », que le décret fixe
+    conditions: >-
+      la rédaction de R. 351-27 du 3 juin 2011 ne fixe plus d'âge, et celle de
+      L. 351-8 qui renvoie à L. 161-17-2 ne vaut que pour les pensions prenant
+      effet à compter du 1er juillet 2011 : aucune pension ne prend effet entre les
+      deux, faute d'un premier du mois, et soixante-cinq ans valent jusqu'au 30 juin
+      2011
+    parametres:
+      age: 65
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun de ceux qui portent l'âge du
+    taux plein ne prend effet avant le 1er juillet 2011
+- id: age_legal_plus_cinq
+  statut: lue
+  nee_de: LEGIARTI000023030950
+  textes:
+  - id: LEGIARTI000023030950
+    article: >-
+      L. 351-8, 1°, rédaction de la loi n° 2010-1330 du 9 novembre 2010 (article
+      20), que son article 118, II, applique « aux pensions prenant effet à compter
+      du 1er juillet 2011 »
+    en_vigueur: 2011-07-01
+    citation: >-
+      « 1° Les assurés qui atteignent l'âge prévu à l'article L. 161-17-2 augmenté
+      de cinq années ; »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000028498855
+    article: >-
+      L. 351-8, 1°, rédaction du 22 janvier 2014, applicable aux pensions prenant
+      effet à compter du 1er février 2014 : le 1° mot pour mot
+    en_vigueur: 2014-01-22
+    citation: >-
+      « 1° Les assurés qui atteignent l'âge prévu à l'article L. 161-17-2 augmenté
+      de cinq années ; »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2011-07-01, 2023-09-01]
+  contenu:
+    droit: >-
+      le taux plein est acquis sans condition de durée à l'âge légal de l'assuré,
+      celui de sa génération dans la version de L. 161-17-2 en vigueur à la date
+      d'effet, augmenté de cinq ans : de soixante-cinq ans pour les nés avant le
+      1er juillet 1951 à soixante-sept ans pour les nés à compter de 1955
+    renvois:
+    - fiche: age_legal_par_generation
+      valeur: age
+      de: assure
+      date: liquidation.date_effet
+      ajoute: {ans: 5}
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne prend effet du 1er juillet
+    2011 au 31 août 2023 en portant l'âge du taux plein ; les circulaires de la
+    Cnav de 2011 que le registre de sa base rattache à l'âge légal (2011/24,
+    2011/41, 2011/61, 2011/69) n'ont pas été relues pour leurs exemples
+- id: premier_alinea_plus_trois
+  statut: lue
+  nee_de: LEGIARTI000047452736
+  textes:
+  - id: LEGIARTI000047452736
+    article: >-
+      L. 351-8, 1°, rédaction de la loi n° 2023-270 du 14 avril 2023, applicable «
+      aux pensions prenant effet à compter du 1er septembre 2023 »
+    en_vigueur: 2023-09-01
+    citation: >-
+      « 1° Les assurés qui atteignent l'âge prévu au premier alinéa de l'article L.
+      161-17-2 augmenté de trois années ; »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000051289852
+    article: >-
+      L. 351-8, rédaction de la loi n° 2025-199 du 28 février 2025, qui ajoute un 6°
+      pour les pensions prenant effet à compter du 1er janvier 2026 ; le 1° mot pour
+      mot
+    en_vigueur: 2025-02-28
+    citation: >-
+      « 1° Les assurés qui atteignent l'âge prévu au premier alinéa de l'article L.
+      161-17-2 augmenté de trois années ; »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: >-
+      le taux plein est acquis sans condition de durée à l'âge du premier alinéa de
+      L. 161-17-2, soixante-quatre ans, augmenté de trois ans : soixante-sept ans
+      pour tout assuré, et non l'âge légal de sa génération augmenté de trois
+    renvois:
+    - fiche: age_legal_par_generation
+      valeur: age_du_premier_alinea
+      de: assure
+      date: liquidation.date_effet
+      ajoute: {ans: 3}
+  exemples:
+  - sp_f19666_decote
+  - sp_f21552_67_ans_158
+  - cnav_2026_07_decote_1961
 textes_sans_effet:
+- id: LEGIARTI000054589995
+  article: R. 351-27 CSS
+  en_vigueur: 2026-08-01
+  motif: >-
+    ne retouche que le coefficient de minoration (« 1,25 % ») ; R. 351-27 ne fixe plus
+    l'âge du 1° de L. 351-8 depuis sa rédaction du 3 juin 2011 (LEGIARTI000024113020),
+    qui ôte « l'âge prévu au 1° de l'article L. 351-8 est fixé à soixante-cinq ans » :
+    cet âge se lit dans L. 351-8 même, par son renvoi à L. 161-17-2
 - id: LEGIARTI000047634502
   article: D. 161-2-1-9 CSS
   en_vigueur: 2023-09-01
@@ -51,42 +277,36 @@ textes_sans_effet:
     nés avant 1955, mot pour mot ; depuis cette date, l'âge du 1° de L. 351-8 se compte
     du premier alinéa de L. 161-17-2, soixante-quatre ans, augmenté de trois années : 67
     ans, que la table porte depuis la génération 1955
-- id: LEGIARTI000051289852
-  article: L. 351-8 CSS
-  en_vigueur: 2025-02-28
-  motif: >-
-    la loi n° 2025-199 ajoute un 6°, le taux plein à soixante-cinq ans de l'assuré qui a
-    des trimestres de la majoration de L. 351-4-1 ou qui a aidé son enfant handicapé,
-    pour les pensions prenant effet à compter du 1er janvier 2026 ; le reste, mot pour
-    mot, dont le 1°, « l'âge prévu au premier alinéa de l'article L. 161-17-2 augmenté
-    de trois années »
-exemples:
-- sp_f19666_decote
-- sp_f21552_67_ans_158
-- cnav_2026_07_decote_1961
 reformes:
 - reforme_2023
 code:
   interrupteurs:
     age_taux_plein_par_generation: true
   moteur: >-
-    `age_taux_plein_par_generation` : l'âge d'annulation de la décote est lu dans `legislation/age_annulation_decote.csv`
-    à l'ANNÉE DE NAISSANCE, et la valeur de la période (`age_taux_plein`) ne sert que
-    de repli. La loi du 9 novembre 2010 fait passer cet âge de 65 à 67 ans pour les seules
-    générations 1951-1955 : opposer 67 ans dès 2011, comme le faisait la fiche du régime,
-    l'appliquait à des générations que la loi n'a jamais visées. La table écrit ses
-    âges au centième, 66,17 pour 66 ans et 2 mois (66,1667) : le chargeur les ramène
-    au mois entier (`au_mois`), comme tout âge des tables de la législation et des
-    fiches de régime. Jusqu'au 5 novembre 2026, l'assuré né en 1953 parti à 66 ans et
-    2 mois pile gardait un trimestre de décote : 49,375 % au régime général, 0,99 à
-    l'Agirc-Arrco, 0,9875 à la CNAVPL et à l'ASV des biologistes ; et parti à 61 ans
-    et 2 mois, l'âge de D. 161-2-1-9, 4°, le droit lui était refusé (relecture
-    R-L-bis, action 130).
+    `age_taux_plein_par_generation` : l'âge du taux plein est lu dans les versions de
+    cette fiche, que le paquet porte (`fiches_datees`), et la valeur de la période
+    (`age_taux_plein`) ne sert que de repli, avant le 1er avril 1983. La date d'effet
+    de la pension choisit la version (`AgesAnnulationDecote.aLEffet`) ; une version
+    qui renvoie lit la valeur nommée dans la version de l'âge légal à la même date,
+    et un renvoi sans cible arrête le calcul. L'âge du taux plein d'une PERSONNE, sans
+    pension datée (l'invalide, le conjoint survivant, l'activité après la pension),
+    est celui de la version sous laquelle elle l'atteint
+    (`AgesAnnulationDecote.age`), comme l'âge légal. Le minimum avec l'âge du parent
+    de trois enfants (`taux_plein_a_soixante_cinq_ans`) reste une relation écrite
+    dans le code (`ouvrir.ageTauxPlein`). Sous un droit contrefactuel, le moteur lit
+    la fiche que la pile de couches a résolue (`FichesDatees.sousLeDroit`). Les âges
+    s'écrivent au mois exact : jusqu'au 5 novembre 2026, l'assuré né en 1953 parti à
+    66 ans et 2 mois pile gardait un trimestre de décote (relecture R-L-bis, action
+    130).
   javascript: >-
-    moteur/js/droit/ouvrir.js : ageTauxPlein ; moteur/js/regimes.js :
-    AgesAnnulationDecote
+    moteur/js/droit/ouvrir.js : ageTauxPlein ; moteur/js/droit/commun.js :
+    ageDuTauxPleinDeLAssure ; moteur/js/regimes.js : AgesAnnulationDecote,
+    valeurDuRenvoi
   parametres: >-
-    legislation/age_annulation_decote.csv : generation, age
-  tests: [tests/test_ages_au_mois.py, tests/test_simulateur.py, tests/test_donnees.py,
-    tests/test_oracle.py,
-    tests/js/moteur.test.js, tests/temoins/simulations.json]
+    contenu.parametres de chaque version : age ;
+    legislation/age_annulation_decote.csv : generation, age ;
+    couches/sans_la_reforme_de_2023.yaml
+  tests: [tests/test_age_du_taux_plein.py, tests/js/age-du-taux-plein.test.js,
+    tests/test_ages_au_mois.py, tests/test_simulateur.py, tests/test_donnees.py,
+    tests/test_droits_contrefactuels.py, tests/test_oracle.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

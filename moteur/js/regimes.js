@@ -312,6 +312,37 @@ function premierJour(date) {
 }
 
 /**
+ * Le premier 1er du mois où une personne de cette génération, ses âges comptés
+ * du mois `origine`, a l'âge que lui oppose la version de ce jour-là, parmi des
+ * fenêtres `{debut, fin, ages}` où les versions ne changent pas ; `null` quand
+ * aucune ne le lui donne. La recherche ne s'arrête qu'aux bornes des fenêtres.
+ *
+ * @returns {{date: DateMois, age: [number, number], version: string} | null}
+ */
+function premierAtteint(fenetres, generation, origine) {
+  for (const { debut, fin, ages } of fenetres) {
+    const lu = ages.age(generation);
+    if (lu === null) {
+      continue;
+    }
+    const atteint = origine.plusMois(Math.round(lu[0] * MOIS_PAR_AN));
+    const date = debut === null || premierJour(atteint) >= debut
+      ? atteint : premierMoisDepuis(debut);
+    if (fin === null || premierJour(date) < fin) {
+      return { date, age: lu, version: ages.version };
+    }
+  }
+  return null;
+}
+
+/** Le mois d'où se comptent les âges d'une génération, sans jour de naissance :
+ * celui qui suit sa naissance, comme pour qui n'est pas né un 1er. */
+function origineDeLaGeneration(generation) {
+  const annee = Math.floor(generation);
+  return new DateMois(annee, 1).plusMois(Math.round((generation - annee) * MOIS_PAR_AN) + 1);
+}
+
+/**
  * L'âge qu'une version de la fiche de l'âge légal donne à une génération, et
  * sa fiabilité : la ligne de sa table, la valeur qu'elle écrit pour tous, ou
  * ce que son texte laisse à sa rédaction antérieure, pour les naissances que
@@ -450,19 +481,7 @@ export class AgesOuverture {
    * @returns {{date: DateMois, age: [number, number], version: string} | null}
    */
   premierDepart(generation, origine) {
-    for (const { debut, fin, ages } of this.fenetres()) {
-      const lu = ages.age(generation);
-      if (lu === null) {
-        continue;
-      }
-      const atteint = origine.plusMois(Math.round(lu[0] * MOIS_PAR_AN));
-      const date = debut === null || premierJour(atteint) >= debut
-        ? atteint : premierMoisDepuis(debut);
-      if (fin === null || premierJour(date) < fin) {
-        return { date, age: lu, version: ages.version };
-      }
-    }
-    return null;
+    return premierAtteint(this.fenetres(), generation, origine);
   }
 
   /**
@@ -475,12 +494,7 @@ export class AgesOuverture {
    * @returns {[number, number] | null} âge et fiabilité.
    */
   age(generation, origine = null) {
-    let depuis = origine;
-    if (depuis === null) {
-      const annee = Math.floor(generation);
-      depuis = new DateMois(annee, 1)
-        .plusMois(Math.round((generation - annee) * MOIS_PAR_AN) + 1);
-    }
+    const depuis = origine ?? origineDeLaGeneration(generation);
     const cle = `${generation}|${depuis.rang}`;
     if (!this._ages.has(cle)) {
       this._ages.set(cle, this.premierDepart(generation, depuis)?.age ?? null);
@@ -531,15 +545,170 @@ export class AgesSurcoteRegimesSpeciaux extends TableParGeneration {
   }
 }
 
-/** Âge d'annulation de la décote, par génération : 65 ans, puis 67. */
-export class AgesAnnulationDecote extends TableParGeneration {
-  constructor(paquet) {
-    super(paquet.ages_annulation_decote);
+/** La fiche de l'âge du taux plein (L. 351-8, 1°). */
+export const FICHE_DE_L_AGE_DU_TAUX_PLEIN = "age_annulation_decote";
+
+/**
+ * La valeur qu'un renvoi daté lit (contrat C.2, objet `renvoi`) : dans la
+ * version de la fiche nommée qui vaut à la date du renvoi, `dateEffet`, un de
+ * ses paramètres, ou l'âge que sa table donne à la génération ; puis ce que
+ * l'opération ajoute, en mois. `ici` nomme la version qui lit. Un renvoi sans
+ * cible arrête le calcul et nomme les deux fiches : la fabrique l'a déjà
+ * refusé (`noyau/renvois.py`, `droits_contrefactuels.controler_les_renvois`),
+ * ceci n'est que la ceinture.
+ *
+ * @returns {[number, number] | null} valeur et fiabilité.
+ */
+export function valeurDuRenvoi(fiches, ici, renvoi, dateEffet, generation) {
+  const lue = fiches.fiches()[renvoi.fiche] ?? null;
+  if (lue === null) {
+    throw new Error(`${ici} : renvoie à « ${renvoi.fiche} », que le paquet ne porte pas `
+      + "(fiches_datees)");
+  }
+  const version = fiches.versionAuxDates(renvoi.fiche, { [renvoi.date]: dateEffet });
+  if (version === null) {
+    throw new Error(`${ici} : aucune version de ${renvoi.fiche} pour une pension prenant `
+      + `effet le ${dateEffet}`);
+  }
+  let lu;
+  const parametre = version.parametres[renvoi.valeur];
+  if (parametre !== undefined && parametre !== null) {
+    lu = [parametre, version.fiabilite ?? Fiabilite.HAUTE];
+  } else if (renvoi.valeur === "age") {
+    lu = ageDansLaVersion(lue, version, generation);
+  } else {
+    throw new Error(`${ici} : lit « ${renvoi.valeur} », que ${renvoi.fiche}.${version.id} `
+      + "ne porte pas");
+  }
+  return lu === null ? null : [(Math.round(lu[0] * MOIS_PAR_AN) + renvoi.mois) / MOIS_PAR_AN, lu[1]];
+}
+
+/**
+ * L'âge du taux plein sous une version de sa fiche, pour une pension prenant
+ * effet à une date : sa valeur, ou celle que son renvoi lit dans la version de
+ * l'âge légal à la même date. `version` est `null` quand aucune ne vaut.
+ */
+export class AgesTauxPleinDUneVersion {
+  constructor(fiches, fiche, version, dateEffet) {
+    this._fiches = fiches;
+    this._fiche = fiche;
+    this._version = version;
+    this._dateEffet = dateEffet;
+    this.version = version === null ? null : version.id;
   }
 
   /** @returns {[number, number] | null} âge et fiabilité. */
   age(generation) {
-    return this.valeur(generation);
+    const version = this._version;
+    if (version === null) {
+      return null;
+    }
+    const ici = `${this._fiche.id}.${version.id}`;
+    if (Object.hasOwn(version.parametres, "age")) {
+      // Sans règle commune (avant 1983), la version ne dit rien : `null`.
+      const age = version.parametres.age;
+      return age === null ? null : [age, version.fiabilite];
+    }
+    const renvois = version.renvois ?? [];
+    if (renvois.length !== 1) {
+      throw new Error(`${ici} : ni âge ni renvoi unique`);
+    }
+    const lu = valeurDuRenvoi(this._fiches, ici, renvois[0], this._dateEffet, generation);
+    return lu === null ? null : [lu[0], Math.min(lu[1], version.fiabilite)];
+  }
+
+  valeur(generation) {
+    return this.age(generation);
+  }
+}
+
+/**
+ * L'âge du taux plein (L. 351-8, 1°), où la décote s'annule, lu dans les
+ * versions de sa fiche, `age_annulation_decote`, que le paquet porte
+ * (`fiches_datees`, note de décision 0009, étape 3) : la date d'effet de la
+ * pension choisit la version ({@link aLEffet}). Les deux dernières renvoient à
+ * l'âge légal, lu dans SA version à la même date : « l'âge prévu à l'article
+ * L. 161-17-2 augmenté de cinq années », puis « l'âge prévu au premier alinéa
+ * de l'article L. 161-17-2 augmenté de trois années », soixante-quatre ans pour
+ * tout assuré. Sous un droit contrefactuel, les deux fiches sont celles que sa
+ * pile de couches a résolues (`fiches`).
+ *
+ * L'âge du taux plein d'une PERSONNE, sans pension datée, est celui de la
+ * version sous laquelle elle l'atteint ({@link age}), comme son âge légal
+ * (`AgesOuverture.age`) : il donne la table par génération que la fabrique
+ * tire des mêmes versions (`age_annulation_decote.csv`).
+ */
+export class AgesAnnulationDecote {
+  constructor(paquet, fiches = null) {
+    this._fiches = fiches ?? new FichesDatees(paquet);
+    this._ages = new Map();
+  }
+
+  /** La fiche préparée ; sans elle, le calcul s'arrête. */
+  _fiche() {
+    const fiche = this._fiches.fiches()[FICHE_DE_L_AGE_DU_TAUX_PLEIN] ?? null;
+    if (fiche === null) {
+      throw new Error(`${FICHE_DE_L_AGE_DU_TAUX_PLEIN} : la fiche manque au paquet `
+        + "(fiches_datees)");
+    }
+    return fiche;
+  }
+
+  /**
+   * L'âge du taux plein que le droit oppose à une pension prenant effet à
+   * `dateEffet` (AAAA-MM-JJ). Avant la première version, le 1er avril 1983,
+   * il ne dit rien (`age` rend `null`) : le régime garde sa valeur.
+   */
+  aLEffet(dateEffet) {
+    const fiche = this._fiche();
+    const version = this._fiches.versionAuxDates(
+      FICHE_DE_L_AGE_DU_TAUX_PLEIN, { [DATE_D_EFFET]: dateEffet });
+    return new AgesTauxPleinDUneVersion(this._fiches, fiche, version, dateEffet);
+  }
+
+  /**
+   * Les fenêtres où ni la version de l'âge du taux plein ni celle de l'âge
+   * légal qu'elle lit ne changent, dans l'ordre : la première date de chacune
+   * (AAAA-MM-JJ), le jour où elle cesse (`null` pour la dernière), et l'âge
+   * sous elle.
+   */
+  fenetres() {
+    const fiches = this._fiches.fiches();
+    const bornes = new Set();
+    for (const nom of [FICHE_DE_L_AGE_DU_TAUX_PLEIN, FICHE_DE_L_AGE_LEGAL]) {
+      for (const version of fiches[nom]?.versions ?? []) {
+        for (const borne of version.bornes[DATE_D_EFFET] ?? []) {
+          if (borne !== null) {
+            bornes.add(borne);
+          }
+        }
+      }
+    }
+    const dates = [...bornes].sort();
+    return dates.map((debut, i) => ({
+      debut, fin: dates[i + 1] ?? null, ages: this.aLEffet(debut),
+    }));
+  }
+
+  /**
+   * L'âge du taux plein de la personne de cette génération : celui de la
+   * version sous laquelle elle l'atteint, ses âges comptés du mois `origine`
+   * (sans lui, celui qui suit sa naissance), et sa fiabilité. `null` quand
+   * aucune version ne le lui donne.
+   *
+   * @returns {[number, number] | null} âge et fiabilité.
+   */
+  age(generation, origine = null) {
+    const depuis = origine ?? origineDeLaGeneration(generation);
+    const cle = `${generation}|${depuis.rang}`;
+    if (!this._ages.has(cle)) {
+      this._ages.set(cle, premierAtteint(this.fenetres(), generation, depuis)?.age ?? null);
+    }
+    return this._ages.get(cle);
+  }
+
+  valeur(generation) {
+    return this.age(generation);
   }
 }
 

@@ -4255,6 +4255,16 @@ def source_age_ouverture() -> dict[tuple, float]:
     return _vue_de_l_age_legal("age_ouverture_requis.csv")
 
 
+def source_age_annulation_decote() -> dict[tuple, float]:
+    """L'âge du taux plein par génération — une VUE des versions de la fiche
+    `age_annulation_decote` (note de décision 0009, étape 3) : l'âge de chaque
+    génération est celui de la version sous laquelle elle l'atteint, les deux
+    dernières lisant l'âge légal par un renvoi (L. 351-8, 1°). Elle se
+    confronte à ce que les versions fabriquent, et `--appliquer` l'écrit."""
+    return {(generation,): age
+            for generation, age in tables_de_version.vue_de_l_age_du_taux_plein()}
+
+
 def _vue_de_l_age_legal(nom: str) -> dict[tuple, float]:
     try:
         vues = tables_de_version.vues_de_l_age_legal()
@@ -10427,6 +10437,19 @@ CERTIFICATIONS = (
         decimales=2,
         tolerance=0.005,
         unite=" ans",
+    ),
+    Certification(
+        nom="age_annulation_decote",
+        chemin=REFERENCE / "legislation" / "age_annulation_decote.csv",
+        cles=("generation",),
+        colonne="age",
+        source=source_age_annulation_decote,
+        origine="DILA, base LEGI, code de la sécurité sociale L. 351-8, 1°, et "
+                "R. 351-27, par les versions de la fiche age_annulation_decote",
+        decimales=2,
+        tolerance=0.005,
+        unite=" ans",
+        niveau="haute",
     ),
     Certification(
         nom="duree_assurance_requise",

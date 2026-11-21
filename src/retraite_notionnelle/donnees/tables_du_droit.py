@@ -807,7 +807,9 @@ class FichesDatees:
     d'effet de la pension, la génération y choisissant sa ligne, et la clause
     de sauvegarde de la carrière longue de 2023, que ``ouvrir.sauvegardeDe2023``
     lit, et le taux plein de la pension que la carrière longue ouvre, que
-    ``categories.tauxPleinDeLaCarriereLongue`` lit.
+    ``categories.tauxPleinDeLaCarriereLongue`` lit, et l'âge du taux plein, que
+    ``AgesAnnulationDecote`` du portage lit à la date d'effet de la pension,
+    ses deux dernières versions par un renvoi à l'âge légal.
     """
 
     NOMS = ("salaire_annuel_moyen", "sam_indemnites_de_maternite",
@@ -847,7 +849,8 @@ class FichesDatees:
             "droits_apres_la_premiere_pension", "seconde_pension",
             "surcote_banque_de_france", "age_ouverture_banque_de_france_actifs",
             "age_legal_par_generation", "carriere_longue_sauvegarde_de_2023",
-            "taux_plein_carriere_longue", "points_agricoles_au_revenu_cadastral")
+            "taux_plein_carriere_longue", "points_agricoles_au_revenu_cadastral",
+            "age_annulation_decote")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}
@@ -856,9 +859,11 @@ class FichesDatees:
             if chemin.exists():
                 fiche = charger_yaml(chemin)
                 self._fiches[nom] = versions.preparer(fiche)
-                if nom == tables_de_version.FICHE_DE_L_AGE_LEGAL:
-                    # La table de chaque version et son renvoi à sa rédaction
-                    # antérieure (note de décision 0009, étape 2).
+                if nom in (tables_de_version.FICHE_DE_L_AGE_LEGAL,
+                           tables_de_version.FICHE_DE_L_AGE_DU_TAUX_PLEIN):
+                    # La table de chaque version, son renvoi à sa rédaction
+                    # antérieure (note de décision 0009, étape 2), ses renvois
+                    # datés à une autre fiche (étape 3).
                     for version in self._fiches[nom]["versions"]:
                         version.update(tables_de_version.pour_le_moteur(
                             fiche, version["id"], racine))

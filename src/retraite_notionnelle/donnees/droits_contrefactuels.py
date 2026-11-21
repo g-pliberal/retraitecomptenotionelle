@@ -11,9 +11,11 @@ s'y déclare hors de la couche (``garder``), avec sa raison.
 
 La pile se résout ici, à la fabrication : le paquet porte, sous chaque droit,
 les fiches résolues, que le portage lit à la place de celles du droit en
-vigueur (``FichesDatees.sousLeDroit``, ``moteur/js/regimes.js``). À cette
-étape, seule la fiche de l'âge légal est gardée dans sa version d'avant ; la
-durée requise et la carrière longue gardent leur mécanisme jusqu'à l'étape 3
+vigueur (``FichesDatees.sousLeDroit``, ``moteur/js/regimes.js``). Les fiches
+de l'âge légal et de l'âge du taux plein sont gardées dans leur version
+d'avant, et les renvois de l'une à l'autre se contrôlent sur les fiches que la
+pile laisse (:func:`controler_les_renvois`) ; la durée requise et la carrière
+longue gardent leur mécanisme jusqu'aux sessions suivantes de l'étape 3
 (``ScenarioActuel._sousLeDroit``, ``moteur/js/scenario-actuel.js``).
 """
 
@@ -98,7 +100,57 @@ def fiches_resolues(pile: tuple[str, ...], fiches: dict[str, dict],
                 raise ValueError(f"couche {nom} : le moteur ne lit pas {vise} par ses versions "
                                  "(FichesDatees.NOMS)")
             resolues[vise] = garder_la_version_d_avant(resolues.get(vise, fiches[vise]), depuis)
+    erreurs = controler_les_renvois({**fiches, **resolues})
+    if erreurs:
+        raise ValueError(f"pile {' + '.join(pile)} : " + " ; ".join(erreurs))
     return resolues
+
+
+def _porte(fiche: dict, version: dict, valeur: str, vues: frozenset = frozenset()) -> bool:
+    """La version préparée porte-t-elle la valeur qu'un renvoi nomme : un de
+    ses paramètres, l'âge de sa table, ou ce que porte sa rédaction
+    antérieure ? Voir ``renvois.porte``, sur les fiches de la carte."""
+    if valeur in (version.get("parametres") or {}):
+        return True
+    if valeur == "age" and version.get("table"):
+        return True
+    anterieure = version.get("redaction_anterieure")
+    if anterieure and version["id"] not in vues:
+        cible = next((v for v in fiche["versions"] if v["id"] == anterieure["version"]), None)
+        return cible is not None and _porte(fiche, cible, valeur, vues | {version["id"]})
+    return False
+
+
+def _se_croisent(une: list, autre: list) -> bool:
+    (a, b), (c, d) = une, autre
+    return (b is None or c is None or c < b) and (d is None or a is None or a < d)
+
+
+def controler_les_renvois(fiches: dict[str, dict]) -> list[str]:
+    """Ce qui ne tient pas dans les renvois datés des fiches préparées, telles
+    qu'une pile de couches les laisse : chaque version de la fiche lue qui vaut
+    pendant la version qui lit doit porter la valeur nommée. C'est le second
+    piège de l'étape 3 de la note 0009 : une couche qui garde la version de
+    2011 de l'âge légal, mais non celle de l'âge du taux plein, laisserait la
+    version de 2023 chercher l'âge du premier alinéa là où il n'est pas.
+    ``noyau/renvois.py`` contrôle de même les fiches de la carte."""
+    erreurs = []
+    for nom, fiche in fiches.items():
+        for version in fiche.get("versions") or []:
+            for renvoi in version.get("renvois") or []:
+                lue = fiches.get(renvoi["fiche"])
+                ici = f"{nom}.{version['id']}"
+                if lue is None:
+                    erreurs.append(f"{ici} : renvoie à « {renvoi['fiche']} », que le paquet "
+                                   "ne porte pas")
+                    continue
+                etendue = version["bornes"].get(renvoi["date"]) or [None, None]
+                for autre in lue["versions"]:
+                    if (_se_croisent(etendue, autre["bornes"].get(renvoi["date"]) or [None, None])
+                            and not _porte(lue, autre, renvoi["valeur"])):
+                        erreurs.append(f"{ici} : lit « {renvoi['valeur']} », que "
+                                       f"{renvoi['fiche']}.{autre['id']} ne porte pas")
+    return erreurs
 
 
 def pour_le_paquet(fiches: dict[str, dict], racine: Path = RACINE_DONNEES) -> dict[str, dict]:

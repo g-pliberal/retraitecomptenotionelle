@@ -15,10 +15,10 @@ depuis:
   date: liquidation.date_effet
   valeur: 2023-09-01
 operations:
-- operation: garder
+- operation: remplacer_une_version
   vise: age_annulation_decote
   motif: >-
-    l'âge du taux plein est de soixante-sept ans sous les trois états du droit (tests/test_droits_contrefactuels.py) ; sa version d'avant la réforme entre dans la couche à l'étape 3, quand il devient un renvoi à l'âge légal
+    la version en vigueur la veille de la réforme, l'âge légal augmenté de cinq ans, vaut sans fin : elle lit l'âge légal dans la version que la couche garde, soixante-deux ans, et la version de 2023 y chercherait l'âge du premier alinéa, que la version de 2011 ne porte pas ; soixante-sept ans sous les trois états du droit (tests/test_droits_contrefactuels.py)
 - operation: remplacer_une_version
   vise: age_legal_par_generation
   motif: la version en vigueur la veille de la réforme vaut sans fin, et celles qui commencent à sa date ou après sont ôtées

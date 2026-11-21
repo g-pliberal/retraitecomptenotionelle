@@ -93,7 +93,6 @@ from retraite_notionnelle.donnees.regimes import (  # noqa: E402
 )
 from retraite_notionnelle.noyau.calcul_notionnel import calcul_notionnel  # noqa: E402
 from retraite_notionnelle.donnees.tables_du_droit import (  # noqa: E402
-    AgesAnnulationDecote,
     AgesJouissanceMilitaire,
     AgesSurcoteRegimesSpeciaux,
     AnneesRevenuAnnuelMoyenIndependants,
@@ -2755,7 +2754,8 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         # droit contrefactuel, dans la fiche que sa pile de couches a résolue
         # (``droits_contrefactuels``).
         "ages_surcote_regimes_speciaux": _table_par_generation(AgesSurcoteRegimesSpeciaux),
-        "ages_annulation_decote": _table_par_generation(AgesAnnulationDecote),
+        # L'âge du taux plein non plus : le moteur le lit dans les versions de
+        # sa fiche (``age_annulation_decote``, note de décision 0009, étape 3).
         "ages_regimes": _ages_regimes(),
         "categorie_active": _categorie_active(),
         "durees_services_militaires": _durees_services_militaires(),

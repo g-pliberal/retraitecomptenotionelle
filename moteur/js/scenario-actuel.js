@@ -158,7 +158,8 @@ export class ScenarioActuel {
 
   /**
    * Le moteur sous un droit contrefactuel (`DROITS_CONTREFACTUELS`). L'âge
-   * légal se lit dans la fiche que la pile de couches du droit a résolue à la
+   * légal et l'âge du taux plein se lisent dans les fiches que la pile de
+   * couches du droit a résolues à la
    * fabrique : chaque couche y garde la version d'avant la réforme qu'elle
    * écarte, depuis la date d'effet de cette réforme (`FichesDatees.sousLeDroit`,
    * note de décision 0009). La durée requise et la carrière longue gardent
@@ -181,7 +182,9 @@ export class ScenarioActuel {
     } else {
       durees = this.dureesRequisesAvantSuspension;
     }
-    this.agesOuverture = new AgesOuverture(paquet, new FichesDatees(paquet).sousLeDroit(droit));
+    const fiches = new FichesDatees(paquet).sousLeDroit(droit);
+    this.agesOuverture = new AgesOuverture(paquet, fiches);
+    this.agesAnnulationDecote = new AgesAnnulationDecote(paquet, fiches);
     this.dureesRequises = new TableRecouverte(durees, this.dureesRequises);
     this.carriereLongue = this.carriereLongue.avant(DROITS_CONTREFACTUELS[droit]);
   }
