@@ -12,6 +12,12 @@
   ],
   "rendu": "5a2914bb799b911b"
  },
+ "0063288069926227": {
+  "fonctions": [
+   "simulateur.carriere_releve"
+  ],
+  "rendu": "ee7a9155391af97a"
+ },
  "006698116e99bdc5": {
   "fonctions": [
    "liquider.maternite_au_compte"
@@ -2617,6 +2623,12 @@
    "ouvrir.duree_requise"
   ],
   "rendu": "ec319779004a7b7e"
+ },
+ "2356932456592058": {
+  "fonctions": [
+   "simulateur.carriere_releve"
+  ],
+  "rendu": "2a68e5925311ab2e"
  },
  "235f329f01c55d48": {
   "fonctions": [
@@ -10316,6 +10328,12 @@
   ],
   "rendu": "f47a2cca71e925cb"
  },
+ "866cba9c340c0fba": {
+  "fonctions": [
+   "simulateur.carriere_releve"
+  ],
+  "rendu": "20d25fc617ecee7f"
+ },
  "867a97a8134cd1da": {
   "fonctions": [
    "simulateur.carriere_simple"
@@ -10487,6 +10505,12 @@
    "scenario_actuel.calculer"
   ],
   "rendu": "eb63b719de744752"
+ },
+ "887e03943d793e92": {
+  "fonctions": [
+   "calendrier.origine_des_ages"
+  ],
+  "rendu": "3501b06d0a6843ba"
  },
  "8897aeec0161beec": {
   "fonctions": [
@@ -15341,6 +15365,12 @@
   ],
   "rendu": "25e4829190822272"
  },
+ "c5fb80ecc0138847": {
+  "fonctions": [
+   "simulateur.carriere_releve"
+  ],
+  "rendu": "c6759bcb0944e5f0"
+ },
  "c6033d9eb291f589": {
   "fonctions": [
    "liquider.valeur_du_point"
@@ -15952,6 +15982,12 @@
   ],
   "rendu": "6bbf61a533f6c109"
  },
+ "ceab5013f29f5092": {
+  "fonctions": [
+   "simulateur.carriere_releve"
+  ],
+  "rendu": "5a292eff6c87d755"
+ },
  "ceee361517a5fbe3": {
   "fonctions": [
    "ouvrir.age_legal_a_l_effet"
@@ -16499,6 +16535,12 @@
   ],
   "rendu": "8334ed6a73ba26e6"
  },
+ "d56d953ab8e396f2": {
+  "fonctions": [
+   "releve.construire.droits.points"
+  ],
+  "rendu": "c26b1b9600959261"
+ },
  "d57f26173a58bb38": {
   "fonctions": [
    "scenario_actuel.calculer"
@@ -16651,6 +16693,13 @@
    "compte.cotisation_annuelle.par_regime"
   ],
   "rendu": "d779963912a38c0a"
+ },
+ "d7562501746145df": {
+  "fonctions": [
+   "scenario_actuel.calculer",
+   "simulateur.carriere_simple"
+  ],
+  "rendu": "503827199d0fc8a3"
  },
  "d7847300a4013dfd": {
   "fonctions": [

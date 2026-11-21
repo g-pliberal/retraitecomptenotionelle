@@ -2305,7 +2305,8 @@ def _mesurer(exemple: dict, carriere, resultat, cle: str, droit=droit_et_fige):
                 annee_naissance=naissance.annee, sexe=c.get("sexe", "H"), releve=lignes,
                 age_liquidation=(depart.annee - naissance.annee
                                  + (depart.mois - naissance.mois) / 12),
-                mois_naissance=naissance.mois)))
+                mois_naissance=naissance.mois,
+                part_primes=float(c.get("part_primes", 0.0)))))
         mesure: dict = {"annee": annee}
         for code, a, points, _ in _rendu(droit, "releve.construire.droits.points", pont.MOTEUR,
                                          construite):

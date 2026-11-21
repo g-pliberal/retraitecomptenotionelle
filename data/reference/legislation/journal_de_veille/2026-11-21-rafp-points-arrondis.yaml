@@ -1,0 +1,17 @@
+date: "2026-11-21"
+session: "action 194 : les points du RAFP, arrondis chaque année au point supérieur"
+consulte: >-
+  L'index LEGI du dépôt, à jour du 16 novembre 2026 : décret n° 2004-569,
+  article 5 (LEGIARTI000006453303), seule version en vigueur depuis le 19 juin
+  2004. La calculette de points de l'ERAFP (rafp.fr), trois saisies du 21
+  novembre 2026. scripts/veille_droit.py : rien à relire sur les fiches du
+  RAFP.
+trouve: >-
+  Le décret ne dit pas d'arrondi ; la caisse arrondit le total des points de
+  l'année au point supérieur (246,64 points de 2026 rendus 247). Le moteur
+  arrondit désormais comme elle, dans le relevé des points comme dans leur
+  total. Détail :
+  docs/feuille_de_route/194/2026-11-21-rafp-points-arrondis.md.
+reste: >-
+  Les témoins de simulation et du droit, à refaire au tour de ce changement
+  sur main.

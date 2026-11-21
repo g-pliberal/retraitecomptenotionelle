@@ -25,6 +25,47 @@ import * as ouvrir from "./ouvrir.js";
 export const SCHEMA_VERSION = 1;
 
 /**
+ * Les régimes qui arrondissent les points de chaque année au point supérieur.
+ * Le RAFP : le décret n° 2004-569, article 5, fait des points de l'année le
+ * « rapport entre les cotisations versées […] et la valeur d'acquisition du
+ * point », sans dire d'arrondi ; la caisse arrondit le total de l'année au
+ * point supérieur, comme sa page des cotisations l'écrit et comme sa
+ * calculette de points le fait (rafp.fr, saisie du 21 novembre 2026 :
+ * 359,76 points rendent 360, 314,36 rendent 315, 246,64 rendent 247).
+ */
+export const POINTS_ARRONDIS_A_L_ANNEE = Object.freeze(new Set(["rafp"]));
+
+/**
+ * Les crédits de points, ceux des régimes de `POINTS_ARRONDIS_A_L_ANNEE`
+ * regroupés par année et arrondis au point supérieur, les autres tels quels.
+ * Un total entier, à l'erreur d'arrondi près, ne monte pas d'un point.
+ */
+export function arrondirLesPointsDeLAnnee(credits) {
+  const rendus = [];
+  const parAnnee = new Map();
+  for (const credit of credits) {
+    const [code, annee, points] = credit;
+    if (!POINTS_ARRONDIS_A_L_ANNEE.has(code)) {
+      rendus.push(credit);
+      continue;
+    }
+    const cle = `${code}|${annee}`;
+    const deja = parAnnee.get(cle);
+    if (deja === undefined) {
+      const regroupe = [...credit];
+      parAnnee.set(cle, regroupe);
+      rendus.push(regroupe);
+    } else {
+      deja[2] += points;
+    }
+  }
+  for (const regroupe of parAnnee.values()) {
+    regroupe[2] = Math.ceil(regroupe[2] - 1e-6);
+  }
+  return rendus;
+}
+
+/**
  * La part de la rémunération de la ligne qu'est la prime soumise à retenue de
  * son statut, que le RAFP ne compte ni dans ses primes ni dans le traitement
  * qui les plafonne. Voir acquerir.py.
@@ -1075,6 +1116,9 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
       fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, fiabilite));
   }
 
+  // Le relevé lui-même porte les points arrondis : la pension, le relevé et
+  // la conversion inverse lisent les mêmes.
+  credits.splice(0, credits.length, ...arrondirLesPointsDeLAnnee(credits));
   const pointsAcquis = new Map();
   const majorationPoints = new Map();
   const pointsMajores = new Map();

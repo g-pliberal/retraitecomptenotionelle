@@ -1321,6 +1321,18 @@ exemples:
     carriere: {naissance: "1985-03", sexe: F, affiliation: contractuel_public, liquidation: "2052-04", age_debut: 22, releve: {2019: 50000}}
     attendu: {points_de_l_annee: {annee: 2019, arrondi: point, ircantec: [458, 298]}}
 
+  - id: erafp_calculette_points_2026
+    source: {editeur: "ERAFP", reference: "calculette de points de l'ERAFP, rafp.fr, saisie « 2026 ; 15,00 € »", verifie_le: "2026-11-21", simulateur: rafp_calculette_points, saisie: "2026 ; 15,00"}
+    enonce: >-
+      Relevé de la saisie du 21 novembre 2026, par Claude : 15 € par mois de
+      cotisation de l'agent en 2026, autant pour l'employeur, soit 360 € au
+      salaire de référence de 1,4596 €, 246,64 points, que la calculette
+      arrondit à 247 ; le décret n° 2004-569 ne dit pas d'arrondi. La carrière
+      d'exemple : un fonctionnaire de l'État payé 36 000 € en 2026, dont 10 %
+      de primes, 3 600 €, sous le plafond de 20 % du traitement.
+    carriere: {naissance: "1990-01", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2055-01", age_debut: 22, part_primes: 0.1, releve: {2026: 36000}}
+    attendu: {points_de_l_annee: {annee: 2026, rafp: 247}}
+
   # ---- ENIM (régime des marins) ------------------------------------------
   # Les deux pages que l'Établissement national des invalides de la marine
   # consacre au calcul et aux conditions d'attribution, lues le 22 septembre
