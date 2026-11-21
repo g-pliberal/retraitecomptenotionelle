@@ -408,6 +408,10 @@ def vue_de_la_duree_requise(racine: Path = RACINE_DONNEES) -> list[tuple[str, fl
 #: que ses versions désignent : non une valeur par génération, mais des portes,
 #: plusieurs par génération, chacune une borne de début, un âge et des durées.
 FICHE_DE_LA_CARRIERE_LONGUE = "carriere_longue"
+
+#: La fiche de la surcote du régime général (D. 351-1-4), dont chaque version
+#: porte les taux par date de trimestre (étape 3, quatrième session).
+FICHE_DE_LA_SURCOTE = "surcote_regime_general"
 VALEUR_DES_PORTES = "age_depart"
 VUE_DE_LA_CARRIERE_LONGUE = "carriere_longue.csv"
 

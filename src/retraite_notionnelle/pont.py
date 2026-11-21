@@ -3253,11 +3253,10 @@ REGLES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
 #: ``moteur/js/droit/<module>.js`` ; une constante qui n'y est pas est refusée
 #: avant node.
 CONSTANTES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
-    # L'âge du barème de 2007-2008 au-delà duquel la surcote est majorée ; la
-    # minoration de l'âge du minimum garanti (décret n° 2010-1744, article 3) ;
-    # la table d'anticipation de la convention de 1947 et le plancher de
-    # l'Ircantec, que leurs tests lisent.
-    "liquider": ("SURCOTE_AGE_MAJORE", "MINORATION_AGE_MINIMUM_GARANTI",
+    # La minoration de l'âge du minimum garanti (décret n° 2010-1744,
+    # article 3) ; la table d'anticipation de la convention de 1947 et le
+    # plancher de l'Ircantec, que leurs tests lisent.
+    "liquider": ("MINORATION_AGE_MINIMUM_GARANTI",
                  "COEFFICIENTS_CONVENTION_1947", "COEFFICIENT_ANTICIPATION_PLANCHER",
                  # La fiche de la pension maximale, que ses tests lisent.
                  "FICHE_DE_LA_PENSION_MAXIMALE"),

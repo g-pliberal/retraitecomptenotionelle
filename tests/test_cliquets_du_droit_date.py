@@ -36,8 +36,8 @@ VERSIONS_SANS_PREUVES = 237
 VERSIONS_LUES_SANS_TRACE = 153
 #: Les constantes du moteur qui sont du droit à migrer, datées ou non, et
 #: celles d'entre elles dont la fiche reste à désigner.
-CONSTANTES_A_MIGRER = 167
-CONSTANTES_SANS_FICHE = 104
+CONSTANTES_A_MIGRER = 166
+CONSTANTES_SANS_FICHE = 103
 
 #: Les tables de ``data/reference/`` dont le nom porte ``_avant_`` et qui
 #: sont du droit, non une copie posée sur une autre table : le droit d'avant

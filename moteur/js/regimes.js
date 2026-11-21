@@ -2647,67 +2647,139 @@ CarriereLongue.COLONNES = ["generation", "generation_fin", "age_debut_maximum",
   "trimestres_debut", "age_depart", "trimestres_supplementaires",
   "trimestres_assurance_supplementaires", "fiabilite"];
 
+/** La fiche de la surcote du régime général (D. 351-1-4) et le barème qu'elle porte. */
+export const FICHE_DE_LA_SURCOTE = "surcote_regime_general";
+export const BAREME_DE_LA_FICHE_DE_LA_SURCOTE = "regime_general";
+
+/** Le rang du premier mois d'un jour AAAA-MM-JJ. */
+function rangDuJour(jour) {
+  return new DateMois(Number(jour.slice(0, 4)), Number(jour.slice(5, 7))).rang;
+}
+
 /**
- * Barème DATÉ de la surcote — D. 351-1-4 du code de la sécurité sociale,
- * L. 14 III du code des pensions. Chaque trimestre de surcote garde le taux en
- * vigueur à la date où il a été accompli ; voir
- * `legislation/surcote_baremes.csv`.
+ * Barème DATÉ de la surcote. Chaque trimestre de surcote garde le taux en
+ * vigueur à la date où il a été accompli. Le régime général et les régimes
+ * alignés le lisent dans les versions de la fiche `surcote_regime_general`
+ * (note de décision 0009, étape 3) : la date d'effet de la pension choisit la
+ * rédaction de D. 351-1-4, la date du trimestre sa ligne. La fonction publique
+ * (L. 14 III du code des pensions) et la CNBF (R. 653-3) gardent leurs lignes
+ * de `legislation/surcote_baremes.csv`.
  */
 export class SurcoteBaremes {
-  constructor(paquet) {
+  constructor(paquet, fiches = null) {
     // [barème, début, fin, rang minimum, après 65 ans, taux, plafond, fiabilité,
     //  date d'effet depuis laquelle la ligne vaut]
     this._lignes = paquet.surcote_baremes ?? [];
+    this._fiches = fiches ?? new FichesDatees(paquet);
   }
 
   connait(bareme) {
+    if (bareme === BAREME_DE_LA_FICHE_DE_LA_SURCOTE) {
+      return Boolean(this._fiches.fiches()[FICHE_DE_LA_SURCOTE]);
+    }
     return this._lignes.some((ligne) => ligne[0] === bareme);
+  }
+
+  /** La version de la fiche qui vaut pour une pension prenant effet à `effet`. */
+  _version(effet) {
+    if (effet === null || effet === undefined) {
+      throw new Error(`${FICHE_DE_LA_SURCOTE} : sans date d'effet, aucune version ne se choisit`);
+    }
+    const jour = `${String(effet.annee).padStart(4, "0")}-${String(effet.mois).padStart(2, "0")}-01`;
+    const version = this._fiches.versionAuxDates(
+      FICHE_DE_LA_SURCOTE, { "liquidation.date_effet": jour });
+    if (version === null) {
+      throw new Error(`${FICHE_DE_LA_SURCOTE} : aucune version pour une pension prenant effet le ${jour}`);
+    }
+    return version;
+  }
+
+  /**
+   * L'âge après lequel un trimestre prend le taux majoré, pour une pension
+   * prenant effet à `effet` : le soixante-cinquième anniversaire depuis le
+   * décret n° 2006-1611 ; `null` quand le barème n'en a pas.
+   */
+  ageMajore(bareme, effet) {
+    if (bareme !== BAREME_DE_LA_FICHE_DE_LA_SURCOTE) {
+      return null;
+    }
+    return this._version(effet).parametres.age_majore ?? null;
+  }
+
+  /**
+   * Les lignes que le barème oppose à une pension prenant effet à `effet` :
+   * pour chacune, [premier rang de mois, dernier rang exclu ou null, rang
+   * minimum, après l'âge majoré, taux, plafond, fiabilité, numéro].
+   */
+  _lignesDe(bareme, effet) {
+    if (bareme === BAREME_DE_LA_FICHE_DE_LA_SURCOTE) {
+      const version = this._version(effet);
+      return (version.parametres.lignes ?? []).map((ligne, numero) => [
+        rangDuJour(ligne.depuis), ligne.avant ? rangDuJour(ligne.avant) : null,
+        ligne.rang_minimum, Boolean(ligne.apres_l_age_majore), ligne.taux, null,
+        version.fiabilite ?? null, numero]);
+    }
+    const au = effet === null || effet === undefined ? null : effet.annee + (effet.mois - 1) / 12.0;
+    const lignes = [];
+    this._lignes.forEach((ligne, numero) => {
+      const [code, debut, fin, rangMinimum, condition65, taux, maximum, fiab, depuis] = ligne;
+      if (code !== bareme) {
+        return;
+      }
+      if (depuis !== null && depuis !== undefined && (au === null || au < depuis - 1e-9)) {
+        return;
+      }
+      // Les bornes du fichier sont des années décimales du premier mois du
+      // trimestre, la fin comprise.
+      const premier = Math.round(debut * 12 - 1e-6);
+      const dernier = Math.round(fin * 12 - 1e-6) + 1;
+      lignes.push([premier, dernier, rangMinimum, Boolean(condition65), taux, maximum, fiab, numero]);
+    });
+    return lignes;
   }
 
   /**
    * Coefficient de majoration pour ces trimestres de surcote, datés.
    *
    * @param {Array<[DateMois, boolean]>} trimestres premier mois de chaque
-   *   trimestre civil de surcote, dans l'ordre, et s'il suit le
-   *   soixante-cinquième anniversaire.
-   * @param {DateMois|null} effet date d'effet de la pension : une ligne qui
-   *   porte une date d'effet ne vaut que pour une pension prenant effet depuis
-   *   (décret n° 2006-1611, article 3).
+   *   trimestre civil de surcote, dans l'ordre, et s'il suit l'âge majoré.
+   * @param {DateMois|null} effet date d'effet de la pension, qui choisit la
+   *   version de la fiche (décret n° 2006-1611, article 3).
    * @returns {[number, number|null]} coefficient et fiabilité.
    */
   coefficient(bareme, trimestres, effet = null) {
-    const au = effet === null || effet === undefined ? null : effet.annee + (effet.mois - 1) / 12.0;
+    const lignes = this._lignesDe(bareme, effet);
     const servis = new Map();
     let total = 0.0;
     let fiabilite = null;
     trimestres.forEach(([date, apres65], indice) => {
       const rang = indice + 1;
-      const valeur = date.annee + (date.mois - 1) / 12.0;
+      // Le rang du mois, de l'année et du mois : la façade passe des dates
+      // qui n'en ont que les champs.
+      const mois = date.annee * MOIS_PAR_AN + date.mois - 1;
       let meilleure = null;
-      this._lignes.forEach((ligne, numero) => {
-        const [code, debut, fin, rangMinimum, condition65, taux, maximum, fiab, depuis] = ligne;
-        if (code !== bareme || !(debut - 1e-9 <= valeur && valeur <= fin + 1e-9)) {
-          return;
-        }
-        if (depuis !== null && depuis !== undefined && (au === null || au < depuis - 1e-9)) {
-          return;
+      for (const [premier, dernier, rangMinimum, condition65, taux, maximum, fiab, numero] of lignes) {
+        if (mois < premier || (dernier !== null && mois >= dernier)) {
+          continue;
         }
         if (rang < rangMinimum || (condition65 && !apres65)) {
-          return;
+          continue;
         }
-        if (maximum !== null && (servis.get(numero) ?? 0) >= maximum) {
-          return;
+        if (maximum !== null && maximum !== undefined && (servis.get(numero) ?? 0) >= maximum) {
+          continue;
         }
         if (meilleure === null || taux > meilleure[1]) {
           meilleure = [numero, taux, fiab];
         }
-      });
+      }
       if (meilleure === null) {
         return;
       }
       servis.set(meilleure[0], (servis.get(meilleure[0]) ?? 0) + 1);
       total += meilleure[1];
-      fiabilite = fiabilite === null ? meilleure[2] : Math.min(fiabilite, meilleure[2]);
+      if (meilleure[2] !== null && meilleure[2] !== undefined) {
+        fiabilite = fiabilite === null ? meilleure[2] : Math.min(fiabilite, meilleure[2]);
+      }
     });
     return [1.0 + total, fiabilite];
   }

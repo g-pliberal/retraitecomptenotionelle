@@ -4,15 +4,61 @@ intitule: >-
   Trimestres civils entiers cotisés après l'âge légal et au-delà de la durée requise,
   depuis le trimestre qui suit l'âge légal ou le mois qui suit la durée ; taux à
   la date de chaque trimestre (0,75 %, 1 %, 1,25 % après 65 ans, 1,25 % depuis 2009).
+domaine: decote_surcote
 regimes: [cancava, cavimac, cnavpl, msa_non_salaries, msa_salaries, organic,
   regime_general, rsi]
 etat: conforme
 etape: liquider_chaque_regime
-effet: Toute liquidation après l'âge légal avec la durée requise.
+lit:
+- liquidation.date_effet
+- >-
+  la date de chaque trimestre civil de surcote, son rang depuis le premier, et s'il
+  suit le soixante-cinquième anniversaire de l'assuré
+- >-
+  l'âge légal et la durée requise de l'assuré, dans les versions de
+  `age_legal_par_generation` et de `duree_requise_par_generation` en vigueur à la
+  date d'effet de sa pension
+ecrit:
+- >-
+  le coefficient de majoration de la pension, dans les régimes dont la période
+  renvoie au barème daté du régime général (`surcote_bareme: regime_general`)
+dates_qui_decident:
+- liquidation.date_effet
+effet: >-
+  Toute liquidation après l'âge légal avec la durée requise. Depuis le 21 novembre
+  2026 (note de décision 0009, étape 3), les versions de la fiche sont la source :
+  la date d'effet de la pension choisit la rédaction de D. 351-1-4, la date de chaque
+  trimestre son taux ; les lignes `regime_general` de `legislation/surcote_baremes.csv`
+  sont parties, et l'âge légal de la surcote se lit à la date d'effet. Aucune pension
+  n'a bougé.
 sources:
-  lu_le: 2026-09-17
+  lu_le: 2026-11-21
   prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    La rédaction de 2004 de D. 351-1-4 réduit « au prorata » les trimestres de l'année
+    du soixantième anniversaire quand la durée de cette année est inférieure à quatre
+    trimestres ; la circulaire Cnav 2004/37, point 32, attendait « des précisions de la
+    Direction de la Sécurité sociale » : le moteur compte ces trimestres comme dans les
+    rédactions suivantes. Pratique de la caisse à trouver (pensions de 2004 à 2006).
+  - >-
+    La CNAVPL (R. 643-8) et la MSA des non-salariés (D. 732-42 du code rural) ont leur
+    propre texte, que les versions ne couvrent pas : leur surcote reste le taux plat de
+    la période (`surcote_points: regime_general`). D. 732-42, dans sa rédaction du
+    décret n° 2006-1611, article 2, compte le taux de 1 % « au-delà de cent
+    soixante-quatre trimestres » pour les nés avant 1949 partis avant 2009.
   lectures:
+  - type: legifrance
+    reference: >-
+      D. 351-1-4 CSS, ses cinq rédactions (LEGIARTI000006736524, …525, LEGIARTI000020090083,
+      LEGIARTI000023397575, LEGIARTI000053356001), lues dans l'index LEGI à jour au
+      16 novembre 2026 ; décrets n° 2004-156, n° 2006-1611 (articles 1er à 3) et
+      n° 2008-1509 (articles 5, 6 et 8), dans l'index du Journal officiel
+    date: 2026-11-21
+  - type: circulaire_cnav
+    reference: >-
+      2004/37 du 15 juillet 2004, points 32 et 41 : « 5 x 0,75 % = 0,0375 »
+    date: 2004-07-15
   - type: circulaire_cnav
     reference: 2018-04 du 1er février 2018, points 2 et 3
     date: 2018-02-01
@@ -24,12 +70,202 @@ sources:
     date: 2026-01-01
 textes_a_rattacher:
 - reference: L. 351-1-2 CSS
-- reference: D. 351-1-4 CSS (versions 2004, 2007, 2009)
 exemples:
 - sp_f19643_surcote
 - cnav_2018_04_surcote_un_taux
 - cnav_2018_04_surcote_deux_taux
 - cnav_2018_04_surcote_trois_taux
+versions:
+- id: sans_surcote
+  statut: supposee
+  hypothese: >-
+    aucune surcote avant 2004 : L. 351-1-2, que la loi n° 2003-775 crée, est
+    « applicable aux périodes accomplies à compter du 1er janvier 2004 » (article
+    25, IV, cité par LEGI sous LEGIARTI000006742670) ; l'article reste à couper en
+    versions, ses rédactions de 2010 et de 2011 changeant le décompte des trimestres
+    et non leur taux (`textes_a_rattacher`)
+  fiabilite: haute
+  bornes:
+    liquidation.date_effet: [null, 2004-01-01]
+  contenu:
+    droit: >-
+      aucune surcote : L. 351-1-2 la crée pour les périodes accomplies à compter du
+      1er janvier 2004, et aucune pension prenant effet avant n'en porte
+    parametres:
+      lignes: []
+      age_majore: null
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun n'a de surcote avant 2004
+- id: loi_de_2003
+  statut: lue
+  nee_de: LEGIARTI000006736524
+  textes:
+  - id: LEGIARTI000006736524
+    article: D. 351-1-4 du code de la sécurité sociale, rédaction du décret n° 2004-156
+    en_vigueur: 2004-02-19
+    citation: >-
+      « La majoration prévue à l'article L. 351-1-2 est égale à 0,75 % par trimestre.
+      La durée d'assurance mentionnée à cet article est celle accomplie à compter du
+      1er janvier 2004, après le soixantième anniversaire de l'assuré et excédant la
+      valeur de la limite mentionnée au deuxième alinéa de l'article L. 351-1. »
+    lu_le: 2026-11-21
+  - id: JORFARTI000001915949
+    article: décret n° 2004-156 du 16 février 2004, article 1er
+    en_vigueur: 2004-02-19
+    publie_le: 2004-02-18
+    citation: >-
+      « La sous-section 1 [...] est complétée par un article D. 351-1-4 ainsi rédigé »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2007-01-01]
+  contenu:
+    droit: >-
+      0,75 % pour chaque trimestre de surcote, quels que soient son rang et l'âge
+    conditions: >-
+      la version commence le 1er janvier 2004, date à laquelle L. 351-1-2 s'applique,
+      et non le 19 février, date du décret : aucun trimestre de 2004 n'est accompli
+      avant le 31 mars, et aucune pension prenant effet entre les deux n'a de surcote.
+      Le texte réduit « au prorata » les trimestres de l'année du soixantième
+      anniversaire quand la durée de cette année est inférieure à quatre trimestres ;
+      la caisse attendait encore, le 15 juillet 2004, les « précisions de la Direction
+      de la Sécurité sociale sur la règle de prorata » (circulaire 2004/37, point 32) :
+      le moteur ne l'applique pas, et le dit (`sources.a_relire`)
+    parametres:
+      lignes:
+      - {depuis: "2004-01-01", avant: null, rang_minimum: 1, apres_l_age_majore: false, taux: 0.0075}
+      age_majore: null
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans la base de législation de la Cnav : la circulaire
+    2004/37 du 15 juillet 2004, point 41, pose « 5 x 0,75 % = 0,0375 » sans date ni
+    carrière ; tests/test_surcote_versions.py le rejoue, avec des trimestres de 2004
+- id: decret_de_2006
+  statut: lue
+  nee_de: LEGIARTI000006736525
+  textes:
+  - id: LEGIARTI000006736525
+    article: D. 351-1-4 du code de la sécurité sociale, rédaction du décret n° 2006-1611
+    en_vigueur: 2006-12-17
+    citation: >-
+      « La majoration prévue à l'article L. 351-1-2 pour la période d'assurance accomplie
+      après le soixantième anniversaire de l'assuré et au-delà de la durée d'assurance
+      [...] est égale, pour chaque trimestre accompli à compter du 1er janvier 2004, à :
+      1° 0,75 % du premier au quatrième trimestre ; 2° 1 % au-delà du quatrième
+      trimestre ; 3° ou, quel que soit son rang, 1,25 % pour chaque trimestre accompli
+      après le soixante-cinquième anniversaire de l'assuré. »
+    lu_le: 2026-11-21
+  - id: JORFARTI000001882174
+    article: décret n° 2006-1611 du 15 décembre 2006, article 3
+    en_vigueur: 2006-12-17
+    publie_le: 2006-12-17
+    citation: >-
+      « Les dispositions du présent décret sont applicables aux pensions prenant effet
+      à compter du 1er janvier 2007. »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2007-01-01, 2009-01-01]
+  contenu:
+    droit: >-
+      pour chaque trimestre accompli depuis le 1er janvier 2004 : 0,75 % du premier au
+      quatrième, 1 % à partir du cinquième, 1,25 % quel que soit son rang après le
+      soixante-cinquième anniversaire ; le rang se compte depuis le premier trimestre
+      de surcote, et le taux le plus favorable l'emporte
+    conditions: >-
+      la rédaction entre dans LEGI le 17 décembre 2006 ; l'article 3 la réserve aux
+      pensions prenant effet à compter du 1er janvier 2007 (exemple 3 de la circulaire
+      Cnav 2007/5, correction du 17 novembre 2026)
+    parametres:
+      lignes:
+      - {depuis: "2004-01-01", avant: null, rang_minimum: 1, apres_l_age_majore: false, taux: 0.0075}
+      - {depuis: "2004-01-01", avant: null, rang_minimum: 5, apres_l_age_majore: false, taux: 0.01}
+      - {depuis: "2004-01-01", avant: null, rang_minimum: 1, apres_l_age_majore: true, taux: 0.0125}
+      age_majore: 65
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    l'exemple 3 de la circulaire Cnav 2007/5 du 16 janvier 2007, que
+    tests/test_surcote_2004_2006.py rejoue sur le barème, n'est pas dans
+    tests/temoins/exemples_officiels.yaml
+- id: lfss_2009
+  statut: lue
+  nee_de: LEGIARTI000020090083
+  textes:
+  - id: LEGIARTI000020090083
+    article: D. 351-1-4 du code de la sécurité sociale, rédaction du décret n° 2008-1509
+    en_vigueur: 2009-04-01
+    citation: >-
+      « [...] pour chaque trimestre accompli à compter du 1er janvier 2004 et avant le
+      1er janvier 2009, à : 1° 0, 75 % du premier au quatrième trimestre ; 2° 1 %
+      au-delà du quatrième trimestre ; 3° ou, quel que soit son rang, 1, 25 % pour
+      chaque trimestre accompli après le soixante-cinquième anniversaire de l'assuré.
+      La majoration est égale à 1, 25 % pour chaque trimestre accompli à compter du
+      1er janvier 2009. »
+    lu_le: 2026-11-21
+  - id: JORFARTI000020018092
+    article: décret n° 2008-1509 du 30 décembre 2008, article 5
+    en_vigueur: 2009-01-01
+    publie_le: 2008-12-31
+    citation: >-
+      « La majoration est égale à 1, 25 % pour chaque trimestre accompli à compter du
+      1er janvier 2009. »
+    lu_le: 2026-11-21
+  - id: JORFARTI000020018102
+    article: décret n° 2008-1509 du 30 décembre 2008, article 8
+    en_vigueur: 2009-01-01
+    publie_le: 2008-12-31
+    citation: >-
+      « Les dispositions des articles 1er et à 4 entrent en vigueur au 1er janvier
+      2009. Les dispositions des articles 6 et 7 sont applicables aux pensions prenant
+      effet à compter du 1er avril 2009. »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2009-01-01, null]
+  contenu:
+    droit: >-
+      les taux de 2006 pour les trimestres accomplis de 2004 à 2008 ; 1,25 % pour tout
+      trimestre accompli depuis le 1er janvier 2009
+    conditions: >-
+      LEGI date la rédaction du 1er avril 2009, parce qu'il y fond l'article 6 du
+      décret, qui fait calculer la surcote avant la majoration de L. 351-12 pour les
+      pensions prenant effet depuis cette date ; l'article 5, qui porte le taux, n'est
+      pas différé par l'article 8 et vaut dès le 1er janvier 2009, la date de la réforme
+      `lfss_2009_surcote`. Couper au 1er janvier ou au 1er avril donne le même
+      résultat : un trimestre de 2009 n'est accompli qu'au 31 mars, et aucune pension
+      prenant effet avant le 1er avril n'en porte. Depuis le 1er juillet 2011, D. 351-1-4
+      renvoie à « l'âge prévu au premier alinéa de l'article L. 351-1 » au lieu du
+      soixantième anniversaire : le moteur lit l'âge légal de la version en vigueur à
+      la date d'effet (`ouvrir.ageLegalALaDateDEffet`), qui valait soixante ans pour
+      toute pension d'avant cette date
+    parametres:
+      lignes:
+      - {depuis: "2004-01-01", avant: "2009-01-01", rang_minimum: 1, apres_l_age_majore: false, taux: 0.0075}
+      - {depuis: "2004-01-01", avant: "2009-01-01", rang_minimum: 5, apres_l_age_majore: false, taux: 0.01}
+      - {depuis: "2004-01-01", avant: "2009-01-01", rang_minimum: 1, apres_l_age_majore: true, taux: 0.0125}
+      - {depuis: "2009-01-01", avant: null, rang_minimum: 1, apres_l_age_majore: false, taux: 0.0125}
+      age_majore: 65
+  exemples:
+  - sp_f19643_surcote
+  - cnav_2018_04_surcote_un_taux
+  - cnav_2018_04_surcote_deux_taux
+  - cnav_2018_04_surcote_trois_taux
+textes_sans_effet:
+- id: LEGIARTI000023397575
+  article: D. 351-1-4 CSS
+  en_vigueur: 2011-07-01
+  motif: >-
+    le décret n° 2010-1734 remplace « le soixantième anniversaire » par « l'âge prévu au
+    premier alinéa de l'article L. 351-1 », pour les pensions prenant effet à compter du
+    1er juillet 2011 ; les taux et les dates des trimestres sont ceux de 2009, mot pour
+    mot ; le renvoi à l'âge légal, que le moteur lit à la date d'effet, valait soixante
+    ans pour toute pension d'avant
+- id: LEGIARTI000053356001
+  article: D. 351-1-4 CSS
+  en_vigueur: 2026-01-01
+  motif: >-
+    le décret n° 2025-1410 ne change que la mention de son application, « aux pensions
+    prenant effet à compter du 1er janvier 2026 » ; le texte de la majoration est celui
+    de 2011, mot pour mot
 reformes:
 - surcote_2007
 - lfss_2009_surcote
@@ -48,14 +284,15 @@ code:
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, coefficientSurcoteDatee,
     surcotePoints, trimestresCotisesApres ; moteur/js/droit/ouvrir.js : ageSurcote,
-    ageOuvertureCommun ; moteur/js/regimes.js : SurcoteBaremes
+    ageOuvertureCommun ; moteur/js/regimes.js : SurcoteBaremes ;
+    moteur/js/droit/ouvrir.js : ageLegalALaDateDEffet
   parametres: >-
     regimes/cancava.yaml, regimes/cavimac.yaml, regimes/cnavpl.yaml,
     regimes/msa_non_salaries.yaml, regimes/msa_salaries.yaml, regimes/organic.yaml,
     regimes/regime_general.yaml, regimes/rsi.yaml : surcote_par_trimestre,
-    duree_requise_trimestres, age_ouverture ; legislation/surcote_baremes.csv :
-    regime_general
+    duree_requise_trimestres, age_ouverture ; contenu.parametres de chaque version : age_majore, lignes
   tests: [tests/test_simulateur.py, tests/test_oracle.py, tests/test_surcote_2004_2006.py,
+    tests/test_surcote_versions.py, tests/js/surcote-versions.test.js,
     tests/test_oracle_periodes_assimilees.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]
 referents:

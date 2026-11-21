@@ -12,19 +12,11 @@
 # tout le monde ensuite, y compris aux trimestres accomplis sous l'ancien
 # barème.
 #
-# Régime général et régimes alignés (`regime_general`) :
-#   2004-2008  0,75 % par trimestre pour une pension prenant effet avant le
-#              1er janvier 2007 (décret n° 2004-156 du 16 février 2004) ;
-#              pour une pension prenant effet à compter de cette date,
-#              0,75 % pour les quatre premiers trimestres, 1 % à compter du
-#              cinquième, 1,25 % pour les trimestres accomplis après le
-#              soixante-cinquième anniversaire, « pour chaque trimestre
-#              accompli à compter du 1er janvier 2004 » (décret n° 2006-1611
-#              du 15 décembre 2006, JO du 17, articles 1er et 3 ; circulaire
-#              Cnav 2007/5 du 16 janvier 2007, point 5 et exemple 3) — le RANG
-#              se compte depuis le premier trimestre de surcote
-#   2009-      1,25 % pour tout trimestre accompli à compter du 1er janvier
-#              2009 (loi n° 2008-1330 du 17 décembre 2008, décret n° 2008-1509)
+# Le régime général et les régimes alignés n'ont plus de ligne ici depuis le
+# 21 novembre 2026 (note de décision 0009, étape 3) : leurs taux se lisent dans
+# les versions de la fiche `regles/surcote_regime_general.yaml`, que la date
+# d'effet de la pension choisit, la date du trimestre choisissant la ligne.
+#
 # Fonction publique (`fonction_publique`, article L. 14 III du code des
 # pensions civiles et militaires) :
 #   2004-2008  0,75 % par trimestre, vingt trimestres au plus
@@ -42,20 +34,9 @@
 # la ligne ne s'applique qu'aux trimestres postérieurs au soixante-cinquième
 # anniversaire ; `trimestres_maximum` plafonne le nombre de trimestres servis
 # à ce barème ; `effet_depuis`, quand il est rempli, est la date d'effet de la
-# pension (année décimale) à partir de laquelle la ligne vaut. Quand plusieurs lignes valent pour un trimestre, la plus
-# favorable l'emporte — c'est l'ordre du texte : « en priorité » les 1,25 %
-# de l'âge, dit la circulaire.
-#
-# Les trois exemples de la circulaire 2018-04 (point 3.2) rejouent ce barème
-# dans `tests/temoins/exemples_officiels.yaml`.
-# L'exemple 3 de la circulaire 2007/5 le rejoue dans
-# `tests/test_surcote_2004_2006.py`.
+# pension (année décimale) à partir de laquelle la ligne vaut. Quand plusieurs lignes
+# valent pour un trimestre, la plus favorable l'emporte.
 bareme,debut,fin,rang_minimum,apres_65_ans,taux,trimestres_maximum,effet_depuis,fiabilite
-regime_general,2004,2006.917,1,0,0.0075,,,haute
-regime_general,2007,2008.917,1,0,0.0075,,,haute
-regime_general,2004,2008.917,5,0,0.0100,,2007,haute
-regime_general,2004,2008.917,1,1,0.0125,,2007,haute
-regime_general,2009,2100,1,0,0.0125,,,haute
 fonction_publique,2004,2008.917,1,0,0.0075,20,,haute
 fonction_publique,2009,2100,1,0,0.0125,,,haute
 cnbf,2004,2010.25,1,0,0.0075,,,haute

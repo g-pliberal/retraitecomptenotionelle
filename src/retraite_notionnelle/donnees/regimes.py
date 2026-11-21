@@ -518,8 +518,9 @@ class PeriodeRegime:
     taux_plein_anticipe_par_enfant_annees: float | None
     taux_plein_anticipe_maximum_annees: float | None
     surcote_par_trimestre: float | None
-    #: Barème DATÉ de la surcote — ``regime_general`` ou ``fonction_publique`` —,
-    #: lu dans ``legislation/surcote_baremes.csv`` trimestre par trimestre ;
+    #: Barème DATÉ de la surcote, lu trimestre par trimestre : ``regime_general``
+    #: dans les versions de la fiche ``surcote_regime_general``,
+    #: ``fonction_publique`` et ``cnbf`` dans ``legislation/surcote_baremes.csv`` ;
     #: ``None`` applique le taux plat ci-dessus à tous les trimestres.
     surcote_bareme: str | None
     #: Barème d'abattement des régimes en points. ``decote_du_regime_de_base``

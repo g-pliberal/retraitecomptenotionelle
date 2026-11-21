@@ -794,7 +794,10 @@ champs_periode:
       laquelle la période renvoie dit ses taux.
       Les trimestres se comptent par trimestres civils depuis celui qui suit
       l'âge légal, ou le mois qui suit la durée requise ;
-      `legislation/surcote_baremes.csv` porte les taux. `banque_de_france` :
+      `regime_general` lit ses taux dans les versions de la fiche
+      `surcote_regime_general`, à la date d'effet de la pension ;
+      `fonction_publique` et `cnbf`, dans `legislation/surcote_baremes.csv`.
+      `banque_de_france` :
       les trimestres entiers depuis l'âge, au mois près, aux taux et dans la
       limite que porte la version de la fiche à la date d'effet. `null` : le
       taux plat `surcote_par_trimestre` de la période, appliqué à tous les

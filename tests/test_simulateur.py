@@ -22,7 +22,7 @@ from retraite_notionnelle.config import (
     SituationFoyer,
     SourceCotisations,
 )
-from retraite_notionnelle.donnees.chargement import Fiabilite
+from retraite_notionnelle.donnees.chargement import Fiabilite, charger_yaml
 from retraite_notionnelle.donnees.simulateur import SCENARIOS_NOTIONNELS
 
 # Les entrées du moteur passent par la façade des tests (action 161) : le
@@ -3435,30 +3435,26 @@ def test_la_liquidation_unique_reunit_les_regimes_alignes(simulateur):
 
 
 def test_le_bareme_2007_de_la_surcote_majore_au_dela_de_65_ans(simulateur):
-    """L'âge du barème de 2007-2008 n'est écrit nulle part dans les données.
+    """L'âge du barème de 2007-2008 est un paramètre des versions de la fiche.
 
-    `surcote_baremes.csv` porte les taux et un DRAPEAU, `apres_65_ans` : le
-    seuil lui-même — soixante-cinq ans — ne vit que dans une constante du
-    moteur, et `limites.md` l'annonce au lecteur. Ce test est ce qui la tient :
-    il ne juge pas le calcul, que les tests voisins couvrent, mais le fait que
-    le barème et le moteur parlent du même âge. Le changer d'un côté sans
-    l'autre échoue ici, et la prose qui le cite s'appuie sur ce nom.
+    Depuis la note de décision 0009, étape 3, la fiche `surcote_regime_general`
+    porte les taux de D. 351-1-4, rédaction par rédaction, et l'âge au-delà
+    duquel un trimestre prend 1,25 % quel que soit son rang (« après le
+    soixante-cinquième anniversaire », décret n° 2006-1611) : `age_majore`. Ce
+    test tient que les versions qui le portent ont une ligne, et une seule,
+    pour ces trimestres, et que la rédaction de 2004 n'en a pas.
     """
-    # La constante du moteur qui fait foi, le portage, lue par la façade.
-    assert liquider.SURCOTE_AGE_MAJORE == 65
-
-    chemin = (RACINE_DONNEES / "reference" / "legislation"
-              / "surcote_baremes.csv")
-    with chemin.open(encoding="utf-8") as flux:
-        lignes = (ligne for ligne in flux if not ligne.lstrip().startswith("#"))
-        bareme = [l for l in csv.DictReader(lignes)
-                  if l["bareme"] == "regime_general" and float(l["debut"]) <= 2007
-                  and float(l["fin"]) >= 2008.917]
-    majores = [l for l in bareme if l["apres_65_ans"] == "1"]
-    assert [l["taux"] for l in majores] == ["0.0125"], (
-        "le barème de 2007-2008 doit porter une ligne, et une seule, pour les "
-        "trimestres acquis au-delà de l'âge majoré")
-    assert {l["taux"] for l in bareme if l not in majores} == {"0.0075", "0.0100"}
+    fiche = charger_yaml(RACINE_DONNEES / "reference" / "regles" / "surcote_regime_general.yaml")
+    versions = {v["id"]: v["contenu"]["parametres"] for v in fiche["versions"]}
+    assert versions["loi_de_2003"]["age_majore"] is None
+    for nom in ("decret_de_2006", "lfss_2009"):
+        assert versions[nom]["age_majore"] == 65
+        majores = [l for l in versions[nom]["lignes"] if l["apres_l_age_majore"]]
+        assert [l["taux"] for l in majores] == [0.0125], (
+            "le barème de 2007-2008 doit porter une ligne, et une seule, pour les "
+            "trimestres acquis au-delà de l'âge majoré")
+        assert {l["taux"] for l in versions[nom]["lignes"]
+                if l not in majores and l["depuis"] == "2004-01-01"} == {0.0075, 0.01}
 
 
 def test_la_surcote_parentale_se_cumule_avec_la_surcote_ordinaire(simulateur):

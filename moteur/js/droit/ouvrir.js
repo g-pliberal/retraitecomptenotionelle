@@ -959,7 +959,9 @@ export function ageSurcote(moteur, periode, carriere) {
       return propre[0];
     }
   }
-  const commun = ageOuvertureCommun(moteur, periode, carriere);
+  const commun = periode.surcote_bareme === "regime_general"
+    ? ageLegalALaDateDEffet(moteur, periode, carriere)
+    : ageOuvertureCommun(moteur, periode, carriere);
   if (moteur.catalogue.obtenir(periode.regime).famille !== "fonction_publique") {
     return commun;
   }
@@ -977,6 +979,24 @@ export function ageSurcote(moteur, periode, carriere) {
     return derogation.ageOuverture + majoration;
   }
   return Math.min(commun, AGE_SURCOTE_AVANT_2023);
+}
+
+/**
+ * L'âge légal que la surcote du régime général lit : celui de la version de
+ * `age_legal_par_generation` en vigueur à la date d'effet de la pension, la
+ * génération y choisissant sa ligne — D. 351-1-4 renvoie à « l'âge prévu au
+ * premier alinéa de l'article L. 351-1 » (note de décision 0009 : « Les
+ * renvois de la surcote à l'âge légal et à la durée requise suivent la date
+ * d'effet »). Sans date d'effet, ou quand la période ne lit pas l'âge par
+ * génération, l'âge de la personne ({@link ageOuvertureCommun}).
+ */
+export function ageLegalALaDateDEffet(moteur, periode, carriere) {
+  const effet = dateDEffet(carriere);
+  if (effet === null || !periode.age_ouverture_par_generation || periode.age_table) {
+    return ageOuvertureCommun(moteur, periode, carriere);
+  }
+  const lu = moteur.agesOuverture.aLEffet(effet).age(carriere.generation);
+  return lu === null ? ageOuvertureCommun(moteur, periode, carriere) : lu[0];
 }
 
 export function ageOuvertureCommun(moteur, periode, carriere) {

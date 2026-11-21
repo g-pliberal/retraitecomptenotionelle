@@ -250,7 +250,6 @@ sans_date:
   "moteur/js/droit/liquider.js : ORDINAUX": {classe: hors, raison: technique}
   "moteur/js/droit/liquider.js : PALIERS_ANTICIPATION": {classe: droit, fiches: [abattement_rci, coefficient_anticipation_ircantec, coefficients_anticipation_agirc_arrco]}
   "moteur/js/droit/liquider.js : SCHEMA_VERSION": {classe: hors, raison: technique}
-  "moteur/js/droit/liquider.js : SURCOTE_AGE_MAJORE": {classe: droit, fiches: []}
   "moteur/js/droit/liquider.js : SURCOTE_IRCANTEC_AGE": {classe: droit, fiches: [surcote_ircantec]}
   "moteur/js/droit/liquider.js : SURCOTE_IRCANTEC_DUREE": {classe: droit, fiches: [surcote_ircantec]}
   "moteur/js/droit/ouvrir.js : AGE_DUREE_A_L_OUVERTURE": {classe: droit, fiches: []}

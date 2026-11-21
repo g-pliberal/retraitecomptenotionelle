@@ -42,9 +42,6 @@ export const SCHEMA_VERSION = 1;
 /** Premier trimestre que la surcote puisse compter (loi du 21 août 2003). */
 const SURCOTE_DEPUIS = new DateMois(2004, 1);
 
-/** Âge au-delà duquel le barème de 2007-2008 sert 1,25 %. */
-export const SURCOTE_AGE_MAJORE = 65;
-
 /**
  * Barèmes de décote lus dans une table, et non dans la fiche du régime : le
  * coefficient et l'âge d'annulation y montent en charge avec la date où le droit
@@ -3917,8 +3914,14 @@ export function coefficientSurcoteDatee(moteur, periode, carriere, trimestres, r
     debut = new DateMois(debut.annee, 1).plusMois(3 * (Math.floor((debut.mois - 1) / 3) + 1));
   }
   const fin = carriere.dateLiquidation;
-  const date65 = carriere.moisDeLAnniversaire(SURCOTE_AGE_MAJORE);
-  const trimestre65 = date65.annee * 4 + Math.floor((date65.mois - 1) / 3);
+  // L'âge après lequel un trimestre prend le taux majoré est un paramètre de
+  // la version que la date d'effet choisit : soixante-cinq ans depuis le
+  // décret n° 2006-1611, aucun avant (fiche `surcote_regime_general`).
+  const ageMajore = moteur.surcoteBaremes.connait(periode.surcote_bareme ?? "")
+    ? moteur.surcoteBaremes.ageMajore(periode.surcote_bareme, fin) : null;
+  const date65 = ageMajore === null ? null : carriere.moisDeLAnniversaire(ageMajore);
+  const trimestre65 = date65 === null ? Infinity
+    : date65.annee * 4 + Math.floor((date65.mois - 1) / 3);
 
   const dates = [];
   const restants = new Map(cotisesParAnnee);

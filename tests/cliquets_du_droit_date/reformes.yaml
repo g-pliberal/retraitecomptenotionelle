@@ -18,7 +18,7 @@
 # guider la lecture, ce que la fiche a : aucune version (la migration de la
 # note 0009 la découpera), ou les débuts de ses versions la même année.
 
-cliquet_a_faire: 89
+cliquet_a_faire: 87
 
 couples:
   "age_ouverture_ieg_actifs / lfss_2026_suspension": {classe: a_faire, commentaire: "réforme du 2026-09-01 ; aucune version ne commence cette année-là"}
@@ -106,7 +106,5 @@ couples:
   "surcote_fonction_publique / lfss_2009_surcote": {classe: a_faire, commentaire: "fiche sans version"}
   "surcote_par_age_seul / cavec_report_2025": {classe: a_faire, commentaire: "réforme du 2025-07-06 ; une version commence le 2025-07-07"}
   "surcote_parentale / reforme_2023": {classe: a_faire, commentaire: "fiche sans version"}
-  "surcote_regime_general / lfss_2009_surcote": {classe: a_faire, commentaire: "fiche sans version"}
-  "surcote_regime_general / surcote_2007": {classe: a_faire, commentaire: "fiche sans version"}
   "surcote_regimes_speciaux / regimes_speciaux_2008": {classe: a_faire, commentaire: "fiche sans version"}
   "versement_forfaitaire_unique / touraine_2014": {classe: a_faire, commentaire: "réforme du 2014-01-22 ; aucune version ne commence cette année-là"}

@@ -2471,14 +2471,21 @@ def test_la_decote_et_la_surcote_du_panorama_sont_celles_du_depot(regles):
     assert ecart == {1955: 20, 1960: 20, 1969: 12, 1975: 12}
     publique = {int(l["annee"]): float(l["coefficient"]) for l in _csv("decote_fonction_publique.csv")}
     assert min(publique) == 2006 and publique[2006] == 0.00125 and publique[2015] == 0.0125
-    surcote = [l for l in _csv("surcote_baremes.csv") if l["bareme"] == "regime_general"]
     # Les taux de 1 % et de 1,25 % valent pour les trimestres accomplis depuis
-    # 2004, aux pensions prenant effet depuis 2007 (décret n° 2006-1611).
-    taux = {(l["debut"], l["rang_minimum"], l["apres_65_ans"], l["effet_depuis"]): float(l["taux"])
-            for l in surcote}
-    assert taux == {("2004", "1", "0", ""): 0.0075, ("2007", "1", "0", ""): 0.0075,
-                    ("2004", "5", "0", "2007"): 0.01, ("2004", "1", "1", "2007"): 0.0125,
-                    ("2009", "1", "0", ""): 0.0125}
+    # 2004, aux pensions prenant effet depuis 2007 (décret n° 2006-1611) : les
+    # versions de la fiche de la surcote (note de décision 0009, étape 3).
+    fiche = yaml.safe_load((RACINE_DONNEES / "reference" / "regles" / "surcote_regime_general.yaml")
+                           .read_text(encoding="utf-8"))
+    taux = {(v["id"], l["depuis"], l["rang_minimum"], l["apres_l_age_majore"]): l["taux"]
+            for v in fiche["versions"] for l in v["contenu"]["parametres"]["lignes"]}
+    assert taux == {("loi_de_2003", "2004-01-01", 1, False): 0.0075,
+                    ("decret_de_2006", "2004-01-01", 1, False): 0.0075,
+                    ("decret_de_2006", "2004-01-01", 5, False): 0.01,
+                    ("decret_de_2006", "2004-01-01", 1, True): 0.0125,
+                    ("lfss_2009", "2004-01-01", 1, False): 0.0075,
+                    ("lfss_2009", "2004-01-01", 5, False): 0.01,
+                    ("lfss_2009", "2004-01-01", 1, True): 0.0125,
+                    ("lfss_2009", "2009-01-01", 1, False): 0.0125}
     parentale = _csv("surcote_parentale.csv")[0]
     assert float(parentale["age_ouverture"]) == 63
     assert float(parentale["taux_par_trimestre"]) * int(parentale["trimestres_maximum"]) == 0.05

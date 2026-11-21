@@ -2607,12 +2607,14 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
     assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)
 
 
-def test_l_age_majore_de_la_surcote_se_lit_au_portage():
-    """Le barème de 2007-2008 majore la surcote des trimestres acquis au-delà
-    de soixante-cinq ans (décret n° 2006-1611) : une constante du portage,
-    que la façade lit au pont (``pont.CONSTANTES_DE_LA_FACADE``)."""
-    assert pont.constante_du_droit("liquider", "SURCOTE_AGE_MAJORE") == 65
-    assert liquider.SURCOTE_AGE_MAJORE == 65
+def test_une_constante_du_portage_se_lit_au_pont():
+    """La minoration de l'âge du minimum garanti (décret n° 2010-1744,
+    article 3) : une constante du portage, que la façade lit au pont
+    (``pont.CONSTANTES_DE_LA_FACADE``). L'âge majoré de la surcote, qui servait
+    d'exemple, est un paramètre de la fiche depuis l'étape 3 de la note 0009."""
+    attendu = {"2011": 9, "2012": 7, "2013": 5, "2014": 3, "2015": 1}
+    lue = pont.constante_du_droit("liquider", "MINORATION_AGE_MINIMUM_GARANTI")
+    assert {str(cle): valeur for cle, valeur in lue.items()} == attendu
     with pytest.raises(ValueError, match="liquider.SURCOTE_INCONNUE"):
         pont.constante_du_droit("liquider", "SURCOTE_INCONNUE")
 

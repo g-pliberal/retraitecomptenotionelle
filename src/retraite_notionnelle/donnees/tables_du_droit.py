@@ -766,7 +766,9 @@ class FichesDatees:
     ses deux dernières versions par un renvoi à l'âge légal, et la durée
     requise, que ``DureesRequises`` du portage lit à la date d'effet de la
     pension, et la carrière longue, que ``CarriereLongue`` du portage lit à la
-    date d'effet de la pension, ses portes et ses renvois à l'âge légal.
+    date d'effet de la pension, ses portes et ses renvois à l'âge légal, et
+    la surcote du régime général, que ``SurcoteBaremes`` du portage lit à la
+    date d'effet de la pension, chaque trimestre au taux de sa date.
     """
 
     NOMS = ("salaire_annuel_moyen", "sam_indemnites_de_maternite",
@@ -807,7 +809,8 @@ class FichesDatees:
             "surcote_banque_de_france", "age_ouverture_banque_de_france_actifs",
             "age_legal_par_generation", "carriere_longue_sauvegarde_de_2023",
             "taux_plein_carriere_longue", "points_agricoles_au_revenu_cadastral",
-            "age_annulation_decote", "duree_requise_par_generation", "carriere_longue")
+            "age_annulation_decote", "duree_requise_par_generation", "carriere_longue",
+            "surcote_regime_general")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}
@@ -819,7 +822,8 @@ class FichesDatees:
                 if nom in (tables_de_version.FICHE_DE_L_AGE_LEGAL,
                            tables_de_version.FICHE_DE_L_AGE_DU_TAUX_PLEIN,
                            tables_de_version.FICHE_DE_LA_DUREE_REQUISE,
-                           tables_de_version.FICHE_DE_LA_CARRIERE_LONGUE):
+                           tables_de_version.FICHE_DE_LA_CARRIERE_LONGUE,
+                           tables_de_version.FICHE_DE_LA_SURCOTE):
                     # La table de chaque version, son renvoi à sa rédaction
                     # antérieure (note de décision 0009, étape 2), ses renvois
                     # datés à une autre fiche (étape 3).
@@ -1523,8 +1527,12 @@ class CarriereLongue:
 
 
 class SurcoteBaremes:
-    """Barème DATÉ de la surcote — article D. 351-1-4 du code de la sécurité
-    sociale, article L. 14 III du code des pensions.
+    """Barème DATÉ de la surcote — article L. 14 III du code des pensions,
+    article R. 653-3 du code de la sécurité sociale (CNBF). Le régime général
+    (D. 351-1-4) n'a plus de ligne ici depuis le 21 novembre 2026 : ses taux
+    sont dans les versions de la fiche ``surcote_regime_general``, que le
+    portage lit (``SurcoteBaremes`` de ``moteur/js/regimes.js``). Ce qui suit
+    garde l'histoire de la règle.
 
     Chaque trimestre de surcote garde le taux en vigueur à la date où il a été
     ACCOMPLI, et, de 2004 à 2008, à la date d'effet de la pension : 0,75 %

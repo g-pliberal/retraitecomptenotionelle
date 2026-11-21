@@ -13136,33 +13136,51 @@ def _ipp_services_actifs(feuilles: dict) -> list:
 #: La surcote du régime général et de la fonction publique : (barème, début,
 #: rang minimum, après 65 ans) -> le paramètre de l'IPP et sa date.
 _SURCOTE_IPP = {
-    ("regime_general", "2004", "1", "0"): ("apres_01_01_2004/moins_de_4_trimestres",
-                                           "2004-01-01"),
-    ("regime_general", "2007", "1", "0"): ("apres_01_01_2004/moins_de_4_trimestres",
-                                           "2007-01-01"),
-    ("regime_general", "2004", "5", "0"): ("apres_01_01_2004/plus_de_5_trimestres",
-                                           "2007-01-01"),
-    ("regime_general", "2004", "1", "1"): ("apres_01_01_2004/partir_65_ans", "2007-01-01"),
-    ("regime_general", "2009", "1", "0"): ("apres_01_01_2009", "2009-04-01"),
     ("fonction_publique", "2004", "1", "0"): (None, "2004-01-01"),
     ("fonction_publique", "2009", "1", "0"): (None, "2009-01-01"),
+}
+
+#: Les lignes du régime général, dans les versions de la fiche
+#: ``surcote_regime_general`` (note de décision 0009, étape 3) : (version,
+#: premier jour des trimestres, rang minimum, après l'âge majoré) → feuille de
+#: l'IPP et jour où la lire.
+_SURCOTE_IPP_DES_VERSIONS = {
+    ("loi_de_2003", "2004-01-01", 1, False): ("apres_01_01_2004/moins_de_4_trimestres",
+                                              "2004-01-01"),
+    ("decret_de_2006", "2004-01-01", 1, False): ("apres_01_01_2004/moins_de_4_trimestres",
+                                                 "2007-01-01"),
+    ("decret_de_2006", "2004-01-01", 5, False): ("apres_01_01_2004/plus_de_5_trimestres",
+                                                 "2007-01-01"),
+    ("decret_de_2006", "2004-01-01", 1, True): ("apres_01_01_2004/partir_65_ans", "2007-01-01"),
+    ("lfss_2009", "2009-01-01", 1, False): ("apres_01_01_2009", "2009-04-01"),
 }
 
 
 def _ipp_surcote(feuilles: dict) -> list:
     rendu = []
+    lues = []
     for ligne in charger_csv(REFERENCE / "legislation" / "surcote_baremes.csv"):
         cle = (ligne["bareme"], ligne["debut"], ligne["rang_minimum"], ligne["apres_65_ans"])
-        if cle not in _SURCOTE_IPP:
-            continue
-        feuille, jour = _SURCOTE_IPP[cle]
+        if cle in _SURCOTE_IPP:
+            lues.append((" ".join(cle), ligne["taux"], *_SURCOTE_IPP[cle]))
+    import yaml
+
+    fiche = yaml.safe_load((REFERENCE / "regles" / "surcote_regime_general.yaml")
+                           .read_text(encoding="utf-8"))
+    for version in fiche["versions"]:
+        for ligne in (version["contenu"].get("parametres") or {}).get("lignes") or []:
+            cle = (version["id"], str(ligne["depuis"]), int(ligne["rang_minimum"]),
+                   bool(ligne["apres_l_age_majore"]))
+            if cle in _SURCOTE_IPP_DES_VERSIONS:
+                lues.append((f"regime_general {cle[0]} {cle[2]} {int(cle[3])}",
+                             str(ligne["taux"]), *_SURCOTE_IPP_DES_VERSIONS[cle]))
+    for nom, valeur, feuille, jour in lues:
         parametre = (_IPP_FP + "surcote/taux_surcote_par_trimestre" if feuille is None
                      else _IPP_RG + "surcote/taux_surcote_par_trimestre_cotise_selon_"
                      "date_cotisation/" + feuille)
         taux = _ipp_en_vigueur(feuilles[parametre]["valeurs"], jour)[1]
         if taux is not None:
-            rendu.append((" ".join(cle), float(ligne["taux"]), taux,
-                          _demi_unite(ligne["taux"])))
+            rendu.append((nom, float(valeur), taux, _demi_unite(valeur)))
     return rendu
 
 
