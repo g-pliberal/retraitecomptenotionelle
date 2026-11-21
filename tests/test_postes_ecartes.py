@@ -125,6 +125,24 @@ def test_le_besoin_est_le_deficit_rapporte_au_poste(calcul):
         assert besoin.suffit_toujours == (besoin.part_critique <= 1.0)
 
 
+def test_une_annee_d_excedent_isolee_n_est_pas_l_equilibre():
+    """Comme la page Coût, le chiffrage date l'équilibre de l'année d'où le
+    solde ne redevient plus négatif, non d'un excédent que des déficits
+    suivent (le scénario libéral, positif en 2029 seulement, le 21 novembre
+    2026)."""
+    from types import SimpleNamespace
+
+    def ligne(annee, ressources, depense):
+        return SimpleNamespace(annee=annee, ressources_de=lambda s, r=ressources: r,
+                               depense=lambda s, d=depense: d)
+
+    lignes = [ligne(2026, 0.9, 1.0), ligne(2027, 1.1, 1.0), ligne(2028, 0.95, 1.0),
+              ligne(2029, 1.0, 1.0), ligne(2030, 1.2, 1.0)]
+    solde = SimpleNamespace(projetees=lambda: lignes)
+    chiffrage = postes_ecartes.chiffrer(solde, "essai", "essai", ())
+    assert chiffrage.premiere_annee_equilibree == 2029
+
+
 def test_un_poste_inconnu_est_refuse():
     """Le script nomme ses trois postes et refuse le reste, plutôt que de
     rendre zéro — un zéro silencieux ferait un chiffrage qui ne chiffre rien."""

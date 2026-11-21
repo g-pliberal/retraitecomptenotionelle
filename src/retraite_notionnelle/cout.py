@@ -134,7 +134,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field, replace
-from typing import TYPE_CHECKING, Callable, Sequence
+from typing import TYPE_CHECKING, Callable, Iterable, Sequence
 
 from . import pont
 from .config import ModeIndexation
@@ -1815,6 +1815,18 @@ class SoldeAnnuel:
         }
 
 
+def annee_d_equilibre(soldes: Iterable[tuple[int, float]]) -> int | None:
+    """Première année d'où les ``soldes``, pris par années croissantes, ne
+    redeviennent plus négatifs ; ``None`` quand le dernier l'est."""
+    equilibree = None
+    for annee, valeur in soldes:
+        if valeur < 0.0:
+            equilibree = None
+        elif equilibree is None:
+            equilibree = annee
+    return equilibree
+
+
 @dataclass
 class Solde:
     """Le bilan du système de retraite, de la première année du COR à son horizon."""
@@ -1866,15 +1878,17 @@ class Solde:
         return somme_ordonnee(ligne.solde(scenario) for ligne in lignes) / len(lignes)
 
     def premiere_annee_equilibree(self, scenario: str) -> int | None:
-        """Première année PROJETÉE où le système cesse d'être en déficit.
+        """Première année PROJETÉE à partir de laquelle le système ne retombe
+        plus en déficit, jusqu'à l'horizon.
 
-        ``None`` quand il ne l'est jamais sur la fenêtre. La question ne se pose
-        que sur l'avenir : le passé est ce qu'il a été.
+        Une année d'excédent isolée n'en est pas une : le scénario libéral,
+        positif en 2029 puis en déficit de 2030 à 2051, faisait écrire à la
+        page Coût « les comptes se rééquilibrent en 2029 ». ``None`` quand le
+        solde est négatif à l'horizon. La question ne se pose que sur
+        l'avenir : le passé est ce qu'il a été.
         """
-        for ligne in self.projetees():
-            if ligne.solde(scenario) >= 0.0:
-                return ligne.annee
-        return None
+        return annee_d_equilibre(
+            (ligne.annee, ligne.solde(scenario)) for ligne in self.projetees())
 
 
 

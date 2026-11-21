@@ -151,9 +151,7 @@ def chiffrer(solde: C.Solde, cle: str, libelle: str,
         resultat.ressources[ligne.annee] = ressources
         resultat.coefficients[ligne.annee] = ressources / depense if depense > 0 else 0.0
         total += ressources - depense
-        if (resultat.premiere_annee_equilibree is None
-                and ressources - depense >= 0.0):
-            resultat.premiere_annee_equilibree = ligne.annee
+    resultat.premiere_annee_equilibree = C.annee_d_equilibre(resultat.soldes.items())
     resultat.solde_moyen = total / len(projetees) if projetees else 0.0
     pire = min(resultat.soldes.items(), key=lambda couple: couple[1])
     resultat.pire_annee, resultat.pire_solde = pire

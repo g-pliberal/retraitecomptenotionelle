@@ -9830,8 +9830,11 @@ function cout(contexte, regards = null) {
   // « en 2043 » et « jamais » ne se branchent pas au même endroit de la
   // phrase : l'un complète le verbe, l'autre le nie, et le repli posé sur le
   // seul millésime donnait « les comptes se rééquilibrent en jamais ».
+  // « Durablement » : l'année est celle d'où le solde ne redevient plus
+  // négatif, et la courbe peut montrer avant elle un excédent isolé (2029
+  // pour la proposition, au 21 novembre 2026).
   const retourEquilibre = equilibre
-    ? `les comptes se rééquilibrent en ${equilibre}`
+    ? `les comptes se rééquilibrent durablement en ${equilibre}`
     : "les comptes ne se rééquilibrent jamais";
 
   // -- le second graphique : d'où vient l'argent ---------------------------

@@ -3362,6 +3362,38 @@ def test_le_systeme_actuel_ne_s_equilibre_jamais_et_le_notionnel_si(solde):
                 <= ligne.solde("notionnel_prospectif") + 1e-12), ligne.annee
 
 
+def test_l_annee_d_equilibre_est_celle_d_ou_le_solde_ne_redevient_plus_negatif():
+    """Une année d'excédent isolée n'est pas un retour à l'équilibre.
+
+    Le 21 novembre 2026, le scénario libéral passait à +0,05 % du PIB en
+    2029, retombait en déficit de 2030 à 2051, et n'était durablement en
+    excédent qu'à partir de 2052 : la page Coût écrivait « les comptes se
+    rééquilibrent en 2029 ». L'année dite est celle à partir de laquelle le
+    solde reste positif ou nul jusqu'à la fin de la projection.
+    """
+    from types import SimpleNamespace
+
+    from retraite_notionnelle.cout import Solde
+
+    def ligne(annee: int, valeur: float, projete: bool = True) -> SimpleNamespace:
+        return SimpleNamespace(annee=annee, projete=projete,
+                               solde=lambda scenario, v=valeur: v)
+
+    # Une année observée en excédent ne compte pas : seul l'avenir se juge.
+    signes = [(2025, 0.01, False), (2026, -0.4), (2027, -0.2), (2028, 0.05),
+              (2029, -0.03), (2030, -0.2), (2031, 0.0), (2032, 0.02), (2033, 0.1)]
+    solde = Solde(annees=[ligne(*s) for s in signes], premiere_annee_projetee=2026)
+    assert solde.premiere_annee_equilibree("liberal") == 2031
+    # Toujours en excédent : la première année projetée.
+    solde = Solde(annees=[ligne(2026, 0.1), ligne(2027, 0.2)],
+                  premiere_annee_projetee=2026)
+    assert solde.premiere_annee_equilibree("liberal") == 2026
+    # En déficit à l'horizon, même après des excédents : jamais.
+    solde = Solde(annees=[ligne(2026, 0.1), ligne(2027, -0.01)],
+                  premiere_annee_projetee=2026)
+    assert solde.premiere_annee_equilibree("liberal") is None
+
+
 def test_le_solde_en_euros_s_arrete_ou_le_pib_publie_s_arrete(solde, depenses):
     """Au-delà, un montant en milliards serait une hypothèse de croissance.
 

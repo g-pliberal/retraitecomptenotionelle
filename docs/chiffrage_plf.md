@@ -310,7 +310,7 @@ salaire net affiché par le simulateur est celui qui les laisse au salarié.
 | Garantie nette cumulée | 994 | 733 | — |
 | Solde moyen, points de PIB | +0,26 | -1,92 | -1,13 |
 | Dette accumulée en 2070, points de PIB | -11 | +143 | +66 |
-| Première année d'équilibre | 2029 | 2066 | jamais |
+| Première année d'équilibre | 2052 | 2066 | jamais |
 <!-- agregats:fin -->
 
 La variante rétroactive ne fait pas mieux que le droit en vigueur sur la

@@ -278,6 +278,10 @@ EXCEPTIONS = {
     ("test_cout.py",
      "test_nee_toute_l_annee_chaque_cohorte_part_le_mois_que_lui_donne_son_droit"): "rapide",
     ("test_cout.py", "test_une_convention_de_naissance_inconnue_est_refusee"): "rapide",
+    # L'année d'équilibre affichée par la page Coût, sur un solde d'essai.
+    ("test_cout.py",
+     "test_l_annee_d_equilibre_est_celle_d_ou_le_solde_ne_redevient_plus_negatif"): "rapide",
+    ("test_postes_ecartes.py", "test_une_annee_d_excedent_isolee_n_est_pas_l_equilibre"): "rapide",
     ("test_cout_naissances.py",
      "test_le_tableau_dit_ce_que_les_cohortes_nees_toute_l_annee_deplacent"): "rapide",
     # De même, la date de chaque cohorte de la grille des avantages.

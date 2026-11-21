@@ -4985,6 +4985,16 @@ def test_la_page_cout_tient_en_deux_graphiques_et_sans_tableau_ouvert():
     assert corps.count('<figure class="graphique"') > traces
 
 
+def test_la_page_cout_dit_que_l_equilibre_est_durable():
+    """La courbe de la proposition montre un excédent isolé en 2029, que des
+    déficits suivent jusqu'en 2051 : l'année dite sous elle est celle d'où le
+    solde ne redevient plus négatif, et la phrase le dit, sans quoi le
+    lecteur lirait une contradiction entre la courbe et le texte."""
+    corps = rendre("/cout", {})[1]
+    texte = re.sub(r"<[^>]+>", " ", corps)
+    assert re.search(r"les comptes se rééquilibrent durablement en \d{4}", texte)
+
+
 def test_chaque_carte_de_la_page_cout_porte_sa_question_et_sa_reponse():
     """Une carte sans réponse est un graphique nu : le lecteur doit le lire.
 
