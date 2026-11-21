@@ -28,30 +28,30 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | à vérifier | 2 |
 
 - Confrontées à au moins un exemple officiel : **69 sur 276** (227 exemples : 215 reproduits, 12 en écart connu, section 2).
-- Citées dans le code par leur identifiant : **129 sur 276**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
+- Citées dans le code par leur identifiant : **130 sur 276**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **54 sur 276**, par 2 608 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
-- Mûres, sans rien qui manque à leur contrat : **205 sur 276**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
-- Découpées en versions : **210 sur 276**, soit 880 versions, dont 160 supposées ; le partage des versions se contrôle sur chacune.
+- Mûres, sans rien qui manque à leur contrat : **206 sur 276**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
+- Découpées en versions : **211 sur 276**, soit 884 versions, dont 161 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 126, dont 10 déclarées non appliquées.
 
 **La carte de justesse** (`src/retraite_notionnelle/noyau/justesse.py`, action 194). L'état de la carte des règles, ci-dessus, est un mot que la fiche déclare ; celui-ci se calcule depuis les preuves, et personne ne l'écrit. Une partie est une règle sur une période : une version de fiche, ou la fiche entière tant qu'elle n'est pas découpée. Elle est prouvée quand son texte est lu avec sa trace et qu'une grille indépendante — des valeurs attendues posées depuis le seul texte, sans lire le code, sur chaque seuil de la règle — est verte ; un exemple officiel, un autre moteur ou le simulateur d'une caisse en sont des témoins, qui ne prouvent pas seuls.
 
-**15 parties prouvées sur 946**, dont 7 avec témoin et 8 au texte seul. 15 fausses (section 2), 637 approchées, 212 non vérifiées, 67 hors champ. Un cliquet tient les parties prouvées (`tests/cliquets_de_justesse/prouvees.yaml`) : aucune ne recule sans le dire.
+**15 parties prouvées sur 949**, dont 7 avec témoin et 8 au texte seul. 15 fausses (section 2), 637 approchées, 215 non vérifiées, 67 hors champ. Un cliquet tient les parties prouvées (`tests/cliquets_de_justesse/prouvees.yaml`) : aucune ne recule sans le dire.
 
 | Famille de régimes | Parties | Prouvées | Fausses | Approchées | Non vérifiées | Hors champ | Texte tracé | Témoignées par un exemple officiel |
 |---|---|---|---|---|---|---|---|---|
-| salariés du privé, régimes de base | 305 | 15 | 7 | 178 | 75 | 30 | 91 | 47 |
+| salariés du privé, régimes de base | 308 | 15 | 7 | 178 | 78 | 30 | 94 | 47 |
 | salariés du privé, complémentaires | 180 | 13 | 3 | 112 | 45 | 7 | 58 | 23 |
 | fonction publique | 222 | 13 | 2 | 117 | 62 | 28 | 39 | 35 |
-| artisans, commerçants et autres non-salariés | 222 | 13 | 5 | 148 | 52 | 4 | 72 | 44 |
-| régimes agricoles | 271 | 15 | 7 | 171 | 65 | 13 | 104 | 47 |
-| libéraux et avocats | 228 | 13 | 1 | 173 | 38 | 3 | 88 | 26 |
-| régimes spéciaux | 251 | 15 | 3 | 156 | 55 | 22 | 49 | 31 |
+| artisans, commerçants et autres non-salariés | 225 | 13 | 5 | 148 | 55 | 4 | 75 | 44 |
+| régimes agricoles | 274 | 15 | 7 | 171 | 68 | 13 | 107 | 47 |
+| libéraux et avocats | 231 | 13 | 1 | 173 | 41 | 3 | 91 | 26 |
+| régimes spéciaux | 254 | 15 | 3 | 156 | 58 | 22 | 52 | 31 |
 | retraite additionnelle, en capitalisation | 40 | 5 | 4 | 10 | 10 | 11 | 9 | 12 |
 | sans famille | 1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
-| toute la carte | 946 | 15 | 15 | 637 | 212 | 67 | 269 | 89 |
+| toute la carte | 949 | 15 | 15 | 637 | 215 | 67 | 272 | 89 |
 
-Une partie compte dans chaque famille de ses régimes, et une fois dans le total. Parmi les 946 parties, 160 sont des versions supposées, qu'aucune grille ne peut prouver tant que leur texte n'est pas retrouvé ; 47 ont un exemple officiel que leur fiche cite sans dire pour quelle version, et qui ne témoigne donc pour aucune. Les confrontations aux autres moteurs que 43 fiches racontent en prose ne valent pas témoin : rien n'y dit, cas par cas, ce qui concorde. La carte ne connaît encore que les règles : les barèmes, les régimes de bout en bout, les cas types et les totaux n'y ont pas leurs preuves (section 4).
+Une partie compte dans chaque famille de ses régimes, et une fois dans le total. Parmi les 949 parties, 161 sont des versions supposées, qu'aucune grille ne peut prouver tant que leur texte n'est pas retrouvé ; 51 ont un exemple officiel que leur fiche cite sans dire pour quelle version, et qui ne témoigne donc pour aucune. Les confrontations aux autres moteurs que 43 fiches racontent en prose ne valent pas témoin : rien n'y dit, cas par cas, ce qui concorde. La carte ne connaît encore que les règles : les barèmes, les régimes de bout en bout, les cas types et les totaux n'y ont pas leurs preuves (section 4).
 
 **Un autre moteur, quantité par quantité.** TRAJECTOiRE (3.3.2) rejoue 85 carrières (`tests/temoins/trajectoire_3/ecarts.json`, `scripts/confronter_trajectoire.py`) : **541 quantités sur 818** concordent. Un écart n'est pas une erreur du dépôt, seul le texte tranche ; il dit où relire. Chaque cas est une carrière entière, que rien ne rattache encore à une règle : ce tableau ne change l'état d'aucune partie.
 
@@ -95,11 +95,11 @@ Une partie compte dans chaque famille de ses régimes, et une fois dans le total
 
 | Statut | Rédactions |
 |---|---|
-| rattachées à une version | 2 014 |
-| sans effet | 150 |
+| rattachées à une version | 2 017 |
+| sans effet | 152 |
 | à rattacher | 635 |
 | à examiner | 6 010 |
-| sans statut | 9 203 |
+| sans statut | 9 198 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 32 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
@@ -483,21 +483,21 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 - **Ce que les autres modèles font mieux** (action 138) : 291 points, lus chez 66 modèles : 44 à reprendre, 48 à trancher par le propriétaire (des choix du programme), 150 repris, 10 écartés, 39 coupés (léger ou nul, déclaré sans être fait). Les points à reprendre, par chantier de la feuille de route : 138.2 (1), 138.3 (8), 138.5 (5), 138.7 (2), 138.8 (1), 138.11 (1), 138.12 (1), 138.14 (12), 138.18 (4), 138.19 (2), 155.1 (1), 155.2 (1), 155.3 (3), 156.1 (1), 157.1 (1).
 - **Les fiches sans exemple officiel** : 207.
 - **Les domaines sans décision** (§ 8) : 120 fiches du droit réel qu'aucun des 5 univers de la proposition ne décide. 86 disent leur étape, et c'est une décision qui manque : `agirc_arrco_valeur_achat`, `assiette_minimale_independants`, `assiette_rco_independants`, `assiette_sociale_independants`, `asv_autres_professions_de_sante`, `asv_medecins_ajustement`, `asv_medecins_points`, `carpimko_assiette_2026`, `cavom_assiette_2016`, `cci_paris_transfert_2006`, `cci_roubaix_transfert_1998`, `chomage_retraite_complementaire`, `cipav_seconde_tranche`, `compagnie_generale_eaux_transfert_1991`, `conjoint_collaborateur_independants`, `cotisation_agricole_de_1952`, `cotisation_maladie_des_non_residents`, `cotisation_maladie_pensions_complementaires`, `cotisation_rco_agricole_2026`, `cotisation_vieillesse_agricole_avant_2003`, `cotisation_vieillesse_independants`, `cotisation_vieillesse_independants_mayotte`, `credit_foncier_transfert_1989`, `crfm_mayotte_pension_unique`, `crfom_regime_du_decret_1950`, `csg_des_pensions_selon_le_revenu`, `cultes_retraite_complementaire_taux_specifiques`, `cumul_emploi_retraite_complementaire_des_independants`, `cumul_emploi_retraite_complementaires_des_liberaux`, `cumul_emploi_retraite_et_retraite_progressive`, `cumul_emploi_retraite_fonction_publique`, `cumul_emploi_retraite_ircantec`, `cumul_emploi_retraite_rco_agricole`, `droits_apres_la_premiere_pension`, `elus_nouvelle_caledonie_cafat`, `exoneration_independants_outre_mer`, `financement_chomage_complementaire`, `igrante_points`, `interpenetration_fonction_publique`, `ipacte_points`, `ircantec_valeurs_point`, `limite_age_banque_de_france`, `limite_age_contractuels`, `limite_age_fonction_publique`, `limite_age_ieg`, `limite_age_militaires`, `limite_age_mines`, `limite_age_opera`, `limite_age_ouvriers_etat`, `limite_age_seita`, `limite_age_sncf_ratp`, `liquidation_regime_par_regime`, `liquidation_unique_regimes_alignes`, `maintien_affiliation_crpcen_ieg`, `maintien_en_fonctions_jusqu_a_70_ans`, `maintiens_en_fonctions_de_certains_corps`, `majoration_exceptionnelle_2023`, `majorations_forfaitaires_1972_1982`, `micro_social_abattement`, `organic_conjoints_de_commercants`, `parlement_europeen_affiliation`, `pension_d_invalidite_substituee`, `plafond_limite_age_fonction_publique`, `points_agricoles_au_revenu_cadastral`, `points_au_prorata_des_cotisations`, `points_invalidite_independants`, `prolongation_activite_carriere_incomplete`, `prolongation_activite_categorie_active`, `rafp_age_d_ouverture`, `rafp_beneficiaires`, `rafp_compte_epargne_temps`, `rafp_cotisation_volontaire_outre_mer`, `rafp_gipa_hors_plafond`, `ravgdt_allocation_viagere`, `rci_seuil_premiere_tranche`, `rco_points_gratuits_66`, `recul_limite_age_enfants`, `regies_ferroviaires_pensions_en_extinction`, `relevement_des_exploitants_2023`, `residence_et_minimum_vieillesse`, `retablissement_fonction_publique`, `retraite_progressive`, `retraite_proportionnelle_msa`, `services_passes_outre_mer`, `totalisation_des_periodes_etrangeres`, `un_statut_par_annee`. Les 34 autres ne disent pas encore leur étape, et une couche ne les atteint que par leur nom : la plupart sont des règles de la liquidation, que le compte notionnel remplace, et leur étape les rangera.
-- **Faire mûrir la carte** : 391 champs obligatoires manquent, à 71 fiches. Par champ :
+- **Faire mûrir la carte** : 386 champs obligatoires manquent, à 70 fiches. Par champ :
 
   | Champ | Fiches à qui il manque |
   |---|---|
-  | `versions` | 68 |
-  | `domaine` | 67 |
-  | `dates_qui_decident` | 66 |
-  | `ecrit` | 66 |
-  | `lit` | 66 |
+  | `versions` | 67 |
+  | `domaine` | 66 |
+  | `dates_qui_decident` | 65 |
+  | `ecrit` | 65 |
+  | `lit` | 65 |
   | `etape` | 41 |
   | `approximations` | 15 |
   | `code` | 1 |
   | `regimes` | 1 |
 
-- **Les textes** : 635 rédactions à rattacher à une version de la fiche qui les cite, 6 010 à examiner, et 9 203 sans statut, que le cliquet tient à 9 203 au plus. Les textes qui en ont le plus : `css` 4 730, `decret_46_2769` 938, `rural` 835, `cpcmr` 561, `decret_90_1215` 319 (`python scripts/textes.py`).
+- **Les textes** : 635 rédactions à rattacher à une version de la fiche qui les cite, 6 010 à examiner, et 9 198 sans statut, que le cliquet tient à 9 198 au plus. Les textes qui en ont le plus : `css` 4 725, `decret_46_2769` 938, `rural` 835, `cpcmr` 561, `decret_90_1215` 319 (`python scripts/textes.py`).
 - **La loi modifiée** (note de décision 0009, sixième cliquet) : aucune rédaction inscrite depuis la pose n'attend la réponse d'une fiche ; et, d'avant la pose, 0 dont la fiche ne dit rien et 431 qu'elle cite sans y répondre, que le cliquet tient à 0 et 431 au plus (`python scripts/textes.py --sans-reponse`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`agirc_arrco_valeur_achat`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
