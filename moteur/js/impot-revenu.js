@@ -403,9 +403,14 @@ function auPlusProche(valeur, pas = 1.0) {
   return Math.floor(arrondi6(valeur / pas) + 0.5) * pas;
 }
 
+/** Un abattement ou un revenu net s'arrondit-il au plus proche ? Depuis 1998. */
+function elementAuPlusProche(annee) {
+  return annee >= 1998;
+}
+
 /** Un abattement ou un revenu net : au plus proche depuis 1998, au centime inférieur avant. */
 function arrondirElement(annee, valeur) {
-  if (annee >= 1998) return auPlusProche(valeur);
+  if (elementAuPlusProche(annee)) return auPlusProche(valeur);
   return Math.floor(arrondi6(valeur * 100)) / 100;
 }
 
@@ -483,10 +488,20 @@ function revenusNetsDuFoyer(foyer, parametres, salaires, pensions) {
     return Math.min(abattement, pension);
   });
   const total = somme(abattements);
-  if ("pensions_maximum" in d && total > d.pensions_maximum) {
-    abattements = abattements.map((a) => a * d.pensions_maximum / total);
+  const plafonne = "pensions_maximum" in d && total > d.pensions_maximum;
+  if (plafonne) abattements = abattements.map((a) => a * d.pensions_maximum / total);
+  if (plafonne && elementAuPlusProche(annee)) {
+    // Depuis que l'abattement s'arrondit au plus proche (1998), deux demi-unités
+    // arrondies chacune passeraient le plafond du foyer : la part de chacun
+    // s'arrondit, et le dernier a ce qui reste (code M de la DGFiP, chap-81.m :
+    // APRC = min(ABPRC, PL_PB - APRV) de 2010 à 2015, ABPRC = PLAF - ABPRV
+    // depuis 2016). Avant, chaque base s'arrondit au centime inférieur (art.
+    // 1657, 1), et leur somme reste sous le plafond.
+    const parts = abattements.slice(0, -1).map((a) => arrondirElement(annee, a));
+    abattements = [...parts, d.pensions_maximum - somme(parts)];
+  } else {
+    abattements = abattements.map((a) => arrondirElement(annee, a));
   }
-  abattements = abattements.map((a) => arrondirElement(annee, a));
   const pensionsNettes = pensions.map((p, rang) => p - abattements[rang]);
   let vingt = 0.0;
   if (obtenir(d, "vingt_pour_cent_taux", 0)) {

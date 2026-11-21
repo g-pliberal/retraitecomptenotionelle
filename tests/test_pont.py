@@ -1840,6 +1840,29 @@ def test_le_pont_calcule_l_impot_de_chaque_foyer():
     assert pont.impot([]) == []
 
 
+def test_le_plafond_des_pensions_ne_se_depasse_pas_a_l_arrondi():
+    """Revenus de 2022 : l'abattement de 10 % des pensions, 7 000 € pour 45 000 €
+    et 25 000 €, est plafonné à 4 123 € pour le foyer (CGI, art. 158, 5, a).
+    Partagé au prorata, il donne 2 650,50 € et 1 472,50 € ; arrondis chacun, ils
+    feraient 4 124 €. Le code M de la DGFiP (ir-calcul, revenus de 2022,
+    chap-81.m, ABPRV puis ABPRC) arrondit la part du premier et laisse le reste
+    au second : 65 877 € de revenu, et un impôt de 6 951 €, celui que ce code,
+    interprété par Mlang, rend pour ce foyer. Avant 1998, chaque base
+    s'arrondit au centime inférieur, et rien ne dépasse."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    couple, egales = pont.impot([
+        (2022, {"declarants": [{"pensions": 45000.0, "age": 75},
+                               {"pensions": 25000.0, "age": 72}]}),
+        (2015, {"declarants": [{"pensions": 30000.0, "age": 75},
+                               {"pensions": 30000.0, "age": 72}]})])
+    assert couple == pont.ImpotDemande(impot=6951.0, mis_en_recouvrement=True)
+    # Revenus de 2015 : deux parts de 1 855,50 € sous un plafond de 3 711 € ; le
+    # code de cette année borne la seconde au reste, APRC = min(ABPRC, PL_PB -
+    # APRV) = 1 855 € : 56 289 € de revenu, 5 598 € d'impôt.
+    assert egales == pont.ImpotDemande(impot=5598.0, mis_en_recouvrement=True)
+
+
 def test_le_bareme_projete_suit_l_indexation_demandee():
     """Au-delà de la dernière loi de finances lue, le barème se projette sur
     les prix, ou sur le salaire moyen, qui croît plus vite : la même pension

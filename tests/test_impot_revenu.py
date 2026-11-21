@@ -335,6 +335,30 @@ def test_l_abattement_des_pensions_a_un_minimum_par_pensionne_et_un_maximum_par_
     euros = impot_du_foyer(Foyer((Declarant(pensions=40000, age=70),
                                   Declarant(pensions=2000, age=70))), 2011, baremes)
     assert sum(euros.pensions_nettes) == 42000 - 3660
+    # Le plafond partagé ne se dépasse pas à l'arrondi. Revenus de 2022, 4 123 € :
+    # 45 000 € et 25 000 € en ont 2 650,50 € et 1 472,50 €, qui, arrondis
+    # chacun, feraient 4 124 €. Le code M de la DGFiP (ir-calcul, revenus de
+    # 2022, chap-81.m, ABPRV puis ABPRC) arrondit la part du premier et donne
+    # au second le reste du plafond : 2 651 € et 1 472 €.
+    demis = impot_du_foyer(Foyer((Declarant(pensions=45000, age=75),
+                                  Declarant(pensions=25000, age=72))), 2022, baremes)
+    assert demis.pensions_nettes == (45000 - 2651, 25000 - 1472)
+    # De même avant 2016, quoique le code l'écrive autrement : revenus de 2015,
+    # plafond de 3 711 €, deux pensions de 30 000 €, deux parts de 1 855,50 € ;
+    # chap-81.m arrondit chacune (ABPRV, ABPRC = 1 856 €) mais borne la seconde
+    # au reste, APRC = min(ABPRC, PL_PB - APRV) = 3 711 - 1 856 = 1 855 €, et
+    # PRNNC = EXPRC - APRC : 56 289 € de revenu, 5 598 € d'impôt.
+    egales = impot_du_foyer(Foyer((Declarant(pensions=30000, age=75),
+                                   Declarant(pensions=30000, age=72))), 2015, baremes)
+    assert egales.pensions_nettes == (30000 - 1856, 30000 - 1855)
+    assert egales.impot == 5598
+    # Avant les revenus de 1998, chaque base s'arrondit au centime de franc
+    # inférieur (art. 1657, 1) : la somme reste sous le plafond, rien à borner.
+    # 1995, plafond de 31 900 F : 23 925,0199 F et 7 974,9800 F.
+    francs_1995 = impot_du_foyer(Foyer((Declarant(pensions=300001, age=75),
+                                        Declarant(pensions=100000, age=72))), 1995, baremes,
+                                 unite="monnaie")
+    assert francs_1995.pensions_nettes == (300001 - 23925.01, 100000 - 7974.98)
 
 
 def test_l_abattement_des_personnes_agees_suit_le_revenu_net_global(baremes):

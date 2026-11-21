@@ -539,9 +539,19 @@ def _revenus_nets(foyer: Foyer, parametres: ParametresImpot, salaires: tuple[flo
         abattements.append(min(abattement, pension))
     total = somme_ordonnee(abattements)
     if "pensions_maximum" in d and total > d["pensions_maximum"]:
-        # Le maximum vaut pour le foyer : chaque pensionné en garde sa part.
         abattements = [a * d["pensions_maximum"] / total for a in abattements]
-    abattements = [_arrondir_element(annee, a) for a in abattements]
+    if "pensions_maximum" in d and total > d["pensions_maximum"] and annee >= 1998:
+        # Le maximum vaut pour le foyer : chaque pensionné en garde sa part. Depuis
+        # que l'abattement s'arrondit au plus proche (1998), deux demi-unités
+        # arrondies chacune passeraient le plafond : la part de chacun s'arrondit,
+        # et le dernier a ce qui reste du plafond (code M de la DGFiP, chap-81.m :
+        # APRC = min(ABPRC, PL_PB - APRV) des revenus de 2010 à 2015, ABPRC = PLAF
+        # - ABPRV depuis 2016). Avant, chaque base s'arrondit au centime inférieur
+        # (art. 1657, 1), et leur somme reste sous le plafond.
+        parts = [_arrondir_element(annee, a) for a in abattements[:-1]]
+        abattements = parts + [d["pensions_maximum"] - somme_ordonnee(parts)]
+    else:
+        abattements = [_arrondir_element(annee, a) for a in abattements]
     pensions_nettes = [p - a for p, a in zip(pensions, abattements)]
     vingt = 0.0
     if d.get("vingt_pour_cent_taux"):
