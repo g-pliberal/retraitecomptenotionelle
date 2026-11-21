@@ -1,0 +1,3148 @@
+schema_version: 1
+id: grille_taux_et_proratisation_decret_de_2004
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: taux_plein_et_proratisation
+  version: decret_de_2004
+source:
+  auteur: session Claude indépendante, lancée le 21 novembre 2026 sans le code
+  reference: R. 351-6 (LEGIARTI000006749348, LEGIARTI000006749349), décrets n° 2004-144 (article 2)
+    et n° 2007-614 (article 1er), L. 351-1 (LEGIARTI000006742622, LEGIARTI000023035688), R. 351-1,
+    R. 351-27, L. 161-17-3, lus par la session indépendante dans les index LEGI et JORF à jour au
+    16 novembre 2026
+  etabli_le: '2026-11-21'
+independance: 'Les valeurs ont été posées par une session lancée sans le code (Opus 5.5) : elle n''a
+  reçu que la consigne, 40 cas (date de naissance, date d''effet, salaires annuels au plafond) sans
+  valeur, le plafond et le SMIC du dépôt, et des copies des index LEGI et JORF de la DILA à jour au
+  16 novembre 2026, où elle a cherché elle-même ses textes (R. 351-6, L. 351-1, R. 351-1, R. 351-27,
+  R. 351-7, l''article 70-5 du décret n° 45-179, les décrets n° 2004-144, 2007-614 et 2025-1409) ;
+  elle a écrit son propre calcul et proposé 20 cas. Un guetteur (fanotify, avec le processus) a journalisé
+  les ouvertures sous les deux copies du dépôt et sous le dossier partagé : aucune de sa part. Pour
+  l''année de l''effet, la lecture retenue est celle de la caisse, qu''elle donne comme seconde lecture
+  ; pour la majoration de R. 351-7 sans activité après l''âge du taux plein (quatre cas), celle de
+  la caisse aussi (circulaire 2004/20) : chaque énoncé chiffre sa lecture avec la retenue. Deux cas,
+  qui portent une surcote, sont hors grille.'
+seuils:
+- 'date d''effet : 1er janvier 2004, 1er janvier 2008 (que le décret n° 2007-614 efface), décembre
+  2025'
+- 'naissance : 1943 et 1944, chaque génération de 1944 à 1947, 31 décembre 1947 et 1er janvier 1948,
+  31 décembre 1948 et 1er janvier 1949'
+- 'le né en 1946 parti en 2006 : 160 trimestres pour le taux, 156 pour le prorata'
+- 'l''arrêt du compte : effet au 1er janvier, au 1er février, au 1er avril, au 1er juillet, au 1er
+  octobre, au 1er décembre'
+cas:
+- id: grille_taux_et_proratisation_decret_de_2004_c06
+  enonce: 'Né le 1941-12-31, salarié du seul régime général de 1965 à 2003 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2004-01-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 156 trimestres, une durée
+    maximum de 150, un taux de 0.45 et un rapport de la pension au salaire annuel moyen de 0.45. Fondement
+    qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000006749436(R351-27) ; LEGIARTI000006749450(R351-45)
+    ; LEGIARTI000006749348(R351-6) ; JORFARTI000001474532(D2004-144 art.8) ; LEGIARTI000006749353(R351-9)
+    ; LEGIARTI000006749351(R351-7) ; LEGIARTI000006742622(L351-1).'
+  carriere:
+    naissance: '1941-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2004-01
+    releve_entier:
+    - - 1965
+      - 1866.0
+    - - 1966
+      - 1976.0
+    - - 1967
+      - 2086.0
+    - - 1968
+      - 2195.0
+    - - 1969
+      - 2488.0
+    - - 1970
+      - 2744.0
+    - - 1971
+      - 3018.0
+    - - 1972
+      - 3348.0
+    - - 1973
+      - 3732.0
+    - - 1974
+      - 4244.0
+    - - 1975
+      - 5031.0
+    - - 1976
+      - 5781.0
+    - - 1977
+      - 6604.0
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+  attendu:
+    trimestres_valides: 156
+    taux_liquidation: 0.45
+    pension_base_sur_sam: 0.45
+- id: grille_taux_et_proratisation_decret_de_2004_c07
+  enonce: 'Né le 1944-03-15, salarié du seul régime général de 1964 à 2004 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2004-04-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 161 trimestres, une durée
+    maximum de 152, un taux de 0.5 et un rapport de la pension au salaire annuel moyen de 0.5. Fondement
+    qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000006749436(R351-27) ; LEGIARTI000006749450(R351-45)
+    ; LEGIARTI000006749348(R351-6) ; LEGIARTI000006749353(R351-9) ; LEGIARTI000006749351(R351-7) ;
+    LEGIARTI000006742622(L351-1). Lecture retenue pour l''année de l''effet : celle de la caisse,
+    où ne comptent que les trimestres civils clos avant le trimestre de l''effet (circulaire Cnav
+    n° 2004/29, point 2121 : la durée « est arrêtée au dernier jour du trimestre civil précédant la
+    date d''effet de la pension » ; n° 51/98, point 1321, et 2002/71, point 132 : l''arrêt du compte
+    de R. 351-1 « limite[...] la validation des périodes d''assurance » à ce jour), que la session
+    indépendante donne comme seconde lecture. Sa lecture retenue, le salaire des trimestres clos validant
+    jusqu''à quatre trimestres (R. 351-9), donne 164 trimestres, un taux de 0.5 et 0.5.'
+  carriere:
+    naissance: '1944-03-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2004-04
+    releve_entier:
+    - - 1964
+      - 1738.0
+    - - 1965
+      - 1866.0
+    - - 1966
+      - 1976.0
+    - - 1967
+      - 2086.0
+    - - 1968
+      - 2195.0
+    - - 1969
+      - 2488.0
+    - - 1970
+      - 2744.0
+    - - 1971
+      - 3018.0
+    - - 1972
+      - 3348.0
+    - - 1973
+      - 3732.0
+    - - 1974
+      - 4244.0
+    - - 1975
+      - 5031.0
+    - - 1976
+      - 5781.0
+    - - 1977
+      - 6604.0
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 7428.0
+  attendu:
+    trimestres_valides: 161
+    taux_liquidation: 0.5
+    pension_base_sur_sam: 0.5
+- id: grille_taux_et_proratisation_decret_de_2004_c08
+  enonce: 'Né le 1944-06-01, salarié du seul régime général de 1972 à 2009 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2009-07-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 150 trimestres, une durée
+    maximum de 152, un taux de 0.5 et un rapport de la pension au salaire annuel moyen de 0.4934210526.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000020082993(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000006749353(R351-9) ; LEGIARTI000006749351(R351-7) ; LEGIARTI000006742622(L351-1).
+    Lecture retenue pour l''année de l''effet : celle de la caisse, où ne comptent que les trimestres
+    civils clos avant le trimestre de l''effet (circulaire Cnav n° 2004/29, point 2121 : la durée
+    « est arrêtée au dernier jour du trimestre civil précédant la date d''effet de la pension » ;
+    n° 51/98, point 1321, et 2002/71, point 132 : l''arrêt du compte de R. 351-1 « limite[...] la
+    validation des périodes d''assurance » à ce jour), que la session indépendante donne comme seconde
+    lecture. Sa lecture retenue, le salaire des trimestres clos validant jusqu''à quatre trimestres
+    (R. 351-9), donne 152 trimestres, un taux de 0.5 et 0.5.'
+  carriere:
+    naissance: '1944-06-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2009-07
+    releve_entier:
+    - - 1972
+      - 3348.0
+    - - 1973
+      - 3732.0
+    - - 1974
+      - 4244.0
+    - - 1975
+      - 5031.0
+    - - 1976
+      - 5781.0
+    - - 1977
+      - 6604.0
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 17154.0
+  attendu:
+    trimestres_valides: 150
+    taux_liquidation: 0.5
+    pension_base_sur_sam: 0.4934210526
+- id: grille_taux_et_proratisation_decret_de_2004_c09
+  enonce: 'Né le 1946-02-10, salarié du seul régime général de 1967 à 2006 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2006-03-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 156 trimestres, une durée
+    maximum de 156, un taux de 0.4575 et un rapport de la pension au salaire annuel moyen de 0.4575.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000006749436(R351-27) ; LEGIARTI000006749450(R351-45)
+    ; LEGIARTI000006749348(R351-6) ; LEGIARTI000006749353(R351-9) ; LEGIARTI000006749351(R351-7) ;
+    LEGIARTI000006742622(L351-1). Ses autres remarques : autre lecture (année d''effet comptée sur
+    tout le salaire jusqu''à la veille de l''effet, sans l''arrêt de R351-1) : trimestres=159, trimestres_minores=1,
+    taux=0.489375, coefficient=1, taux_fois_coefficient=0.489375'
+  carriere:
+    naissance: '1946-02-10'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2006-03
+    releve_entier:
+    - - 1967
+      - 2086.0
+    - - 1968
+      - 2195.0
+    - - 1969
+      - 2488.0
+    - - 1970
+      - 2744.0
+    - - 1971
+      - 3018.0
+    - - 1972
+      - 3348.0
+    - - 1973
+      - 3732.0
+    - - 1974
+      - 4244.0
+    - - 1975
+      - 5031.0
+    - - 1976
+      - 5781.0
+    - - 1977
+      - 6604.0
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 5178.0
+  attendu:
+    trimestres_valides: 156
+    taux_liquidation: 0.4575
+    pension_base_sur_sam: 0.4575
+- id: grille_taux_et_proratisation_decret_de_2004_c10
+  enonce: 'Né le 1946-11-30, salarié du seul régime général de 1975 à 2011 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2011-12-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 147 trimestres, une durée
+    maximum de 156, un taux de 0.5 et un rapport de la pension au salaire annuel moyen de 0.4711538462.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000024113020(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000006749353(R351-9) ; LEGIARTI000024113035(R351-7) ; LEGIARTI000023030950(L351-8) ;
+    LEGIARTI000023388636(D161-2-1-9) ; LEGIARTI000023035688(L351-1). Lecture retenue pour l''année
+    de l''effet : celle de la caisse, où ne comptent que les trimestres civils clos avant le trimestre
+    de l''effet (circulaire Cnav n° 2004/29, point 2121 : la durée « est arrêtée au dernier jour du
+    trimestre civil précédant la date d''effet de la pension » ; n° 51/98, point 1321, et 2002/71,
+    point 132 : l''arrêt du compte de R. 351-1 « limite[...] la validation des périodes d''assurance
+    » à ce jour), que la session indépendante donne comme seconde lecture. Sa lecture retenue, le
+    salaire des trimestres clos validant jusqu''à quatre trimestres (R. 351-9), donne 148 trimestres,
+    un taux de 0.5 et 0.4743589744.'
+  carriere:
+    naissance: '1946-11-30'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-12
+    releve_entier:
+    - - 1975
+      - 5031.0
+    - - 1976
+      - 5781.0
+    - - 1977
+      - 6604.0
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 32406.0
+  attendu:
+    trimestres_valides: 147
+    taux_liquidation: 0.5
+    pension_base_sur_sam: 0.4711538462
+- id: grille_taux_et_proratisation_decret_de_2004_c11
+  enonce: 'Né le 1947-12-31, salarié du seul régime général de 1980 à 2012 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2013-01-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 132 trimestres, une durée
+    maximum de 158, un taux de 0.5 et un rapport de la pension au salaire annuel moyen de 0.417721519.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000024113020(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000006749353(R351-9) ; LEGIARTI000024113035(R351-7) ; LEGIARTI000023030950(L351-8) ;
+    LEGIARTI000025089933(D161-2-1-9) ; LEGIARTI000023035688(L351-1).'
+  carriere:
+    naissance: '1947-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2013-01
+    releve_entier:
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 35352.0
+    - - 2012
+      - 36372.0
+  attendu:
+    trimestres_valides: 132
+    taux_liquidation: 0.5
+    pension_base_sur_sam: 0.417721519
+- id: grille_taux_et_proratisation_decret_de_2004_c12
+  enonce: 'Né le 1948-01-01, salarié du seul régime général de 1980 à 2012 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2013-01-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 132 trimestres, une durée
+    maximum de 160, un taux de 0.5 et un rapport de la pension au salaire annuel moyen de 0.4125.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000024113020(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000006749353(R351-9) ; LEGIARTI000024113035(R351-7) ; LEGIARTI000023030950(L351-8) ;
+    LEGIARTI000025089933(D161-2-1-9) ; LEGIARTI000023035688(L351-1).'
+  carriere:
+    naissance: '1948-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2013-01
+    releve_entier:
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 35352.0
+    - - 2012
+      - 36372.0
+  attendu:
+    trimestres_valides: 132
+    taux_liquidation: 0.5
+    pension_base_sur_sam: 0.4125
+- id: grille_taux_et_proratisation_decret_de_2004_c13
+  enonce: 'Né le 1943-12-15, salarié du seul régime général de 1975 à 2008 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2009-01-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 136 trimestres, une durée
+    maximum de 150, un taux de 0.5 et un rapport de la pension au salaire annuel moyen de 0.4533333333.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000020082993(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000006749353(R351-9) ; LEGIARTI000006749351(R351-7) ; LEGIARTI000006742622(L351-1).'
+  carriere:
+    naissance: '1943-12-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2009-01
+    releve_entier:
+    - - 1975
+      - 5031.0
+    - - 1976
+      - 5781.0
+    - - 1977
+      - 6604.0
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+  attendu:
+    trimestres_valides: 136
+    taux_liquidation: 0.5
+    pension_base_sur_sam: 0.4533333333
+- id: grille_taux_et_proratisation_decret_de_2004_c14
+  enonce: 'Né le 1945-05-20, salarié du seul régime général de 1970 à 2007 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2007-06-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 149 trimestres, une durée
+    maximum de 154, un taux de 0.37625 et un rapport de la pension au salaire annuel moyen de 0.3640340909.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000006749436(R351-27) ; LEGIARTI000006749450(R351-45)
+    ; LEGIARTI000006749349(R351-6) ; LEGIARTI000006749353(R351-9) ; LEGIARTI000006749351(R351-7) ;
+    LEGIARTI000006742622(L351-1). Lecture retenue pour l''année de l''effet : celle de la caisse,
+    où ne comptent que les trimestres civils clos avant le trimestre de l''effet (circulaire Cnav
+    n° 2004/29, point 2121 : la durée « est arrêtée au dernier jour du trimestre civil précédant la
+    date d''effet de la pension » ; n° 51/98, point 1321, et 2002/71, point 132 : l''arrêt du compte
+    de R. 351-1 « limite[...] la validation des périodes d''assurance » à ce jour), que la session
+    indépendante donne comme seconde lecture. Sa lecture retenue, le salaire des trimestres clos validant
+    jusqu''à quatre trimestres (R. 351-9), donne 152 trimestres, un taux de 0.41 et 0.4046753247.'
+  carriere:
+    naissance: '1945-05-20'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2007-06
+    releve_entier:
+    - - 1970
+      - 2744.0
+    - - 1971
+      - 3018.0
+    - - 1972
+      - 3348.0
+    - - 1973
+      - 3732.0
+    - - 1974
+      - 4244.0
+    - - 1975
+      - 5031.0
+    - - 1976
+      - 5781.0
+    - - 1977
+      - 6604.0
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 13410.0
+  attendu:
+    trimestres_valides: 149
+    taux_liquidation: 0.37625
+    pension_base_sur_sam: 0.3640340909
+- id: grille_taux_et_proratisation_decret_de_2004_c15
+  enonce: 'Né le 1952-07-01, salarié du seul régime général de 1980 à 2018 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2018-04-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 153 trimestres, une durée
+    maximum de 164, un taux de 0.5 et un rapport de la pension au salaire annuel moyen de 0.4664634146.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000024113020(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000028751530(R351-9) ; LEGIARTI000024113035(R351-7) ; LEGIARTI000028498855(L351-8) ;
+    LEGIARTI000025089933(D161-2-1-9) ; LEGIARTI000006758542..LEGIARTI000033714337(loi 2003-775 art.5
+    III,V) ; LEGIARTI000023035688(L351-1). Lecture retenue pour l''année de l''effet : celle de la
+    caisse, où ne comptent que les trimestres civils clos avant le trimestre de l''effet (circulaire
+    Cnav n° 2004/29, point 2121 : la durée « est arrêtée au dernier jour du trimestre civil précédant
+    la date d''effet de la pension » ; n° 51/98, point 1321, et 2002/71, point 132 : l''arrêt du compte
+    de R. 351-1 « limite[...] la validation des périodes d''assurance » à ce jour), que la session
+    indépendante donne comme seconde lecture. Sa lecture retenue, le salaire des trimestres clos validant
+    jusqu''à quatre trimestres (R. 351-9), donne 156 trimestres, un taux de 0.5 et 0.4756097561.'
+  carriere:
+    naissance: '1952-07-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2018-04
+    releve_entier:
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 35352.0
+    - - 2012
+      - 36372.0
+    - - 2013
+      - 37032.0
+    - - 2014
+      - 37548.0
+    - - 2015
+      - 38040.0
+    - - 2016
+      - 38616.0
+    - - 2017
+      - 39228.0
+    - - 2018
+      - 9933.0
+  attendu:
+    trimestres_valides: 153
+    taux_liquidation: 0.5
+    pension_base_sur_sam: 0.4664634146
+- id: grille_taux_et_proratisation_decret_de_2004_c16
+  enonce: 'Né le 1955-03-15, salarié du seul régime général de 1985 à 2022 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2022-04-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 149 trimestres, une durée
+    maximum de 166, un taux de 0.5 et un rapport de la pension au salaire annuel moyen de 0.4487951807.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000024113020(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000028751530(R351-9) ; LEGIARTI000024113035(R351-7) ; LEGIARTI000028498855(L351-8) ;
+    LEGIARTI000025089933(D161-2-1-9) ; JORFARTI000024419267(D2011-916) ; LEGIARTI000023035688(L351-1).
+    Lecture retenue pour l''année de l''effet : celle de la caisse, où ne comptent que les trimestres
+    civils clos avant le trimestre de l''effet (circulaire Cnav n° 2004/29, point 2121 : la durée
+    « est arrêtée au dernier jour du trimestre civil précédant la date d''effet de la pension » ;
+    n° 51/98, point 1321, et 2002/71, point 132 : l''arrêt du compte de R. 351-1 « limite[...] la
+    validation des périodes d''assurance » à ce jour), que la session indépendante donne comme seconde
+    lecture. Sa lecture retenue, le salaire des trimestres clos validant jusqu''à quatre trimestres
+    (R. 351-9), donne 152 trimestres, un taux de 0.5 et 0.4578313253.'
+  carriere:
+    naissance: '1955-03-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2022-04
+    releve_entier:
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 35352.0
+    - - 2012
+      - 36372.0
+    - - 2013
+      - 37032.0
+    - - 2014
+      - 37548.0
+    - - 2015
+      - 38040.0
+    - - 2016
+      - 38616.0
+    - - 2017
+      - 39228.0
+    - - 2018
+      - 39732.0
+    - - 2019
+      - 40524.0
+    - - 2020
+      - 41136.0
+    - - 2021
+      - 41136.0
+    - - 2022
+      - 10284.0
+  attendu:
+    trimestres_valides: 149
+    taux_liquidation: 0.5
+    pension_base_sur_sam: 0.4487951807
+- id: grille_taux_et_proratisation_decret_de_2004_c18
+  enonce: 'Né le 1958-12-01, salarié du seul régime général de 1990 à 2025 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2025-12-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 143 trimestres, une durée
+    maximum de 167, un taux de 0.5 et un rapport de la pension au salaire annuel moyen de 0.4281437126.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000047633296(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000028751530(R351-9) ; LEGIARTI000047633307(R351-7) ; LEGIARTI000047452736(L351-8) ;
+    LEGIARTI000051289659(L161-17-2) ; LEGIARTI000047452764(L161-17-3) ; LEGIARTI000023035688(L351-1).
+    Lecture retenue pour l''année de l''effet : celle de la caisse, où ne comptent que les trimestres
+    civils clos avant le trimestre de l''effet (circulaire Cnav n° 2004/29, point 2121 : la durée
+    « est arrêtée au dernier jour du trimestre civil précédant la date d''effet de la pension » ;
+    n° 51/98, point 1321, et 2002/71, point 132 : l''arrêt du compte de R. 351-1 « limite[...] la
+    validation des périodes d''assurance » à ce jour), que la session indépendante donne comme seconde
+    lecture. Sa lecture retenue, le salaire des trimestres clos validant jusqu''à quatre trimestres
+    (R. 351-9), donne 144 trimestres, un taux de 0.5 et 0.4311377246.'
+  carriere:
+    naissance: '1958-12-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2025-12
+    releve_entier:
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 35352.0
+    - - 2012
+      - 36372.0
+    - - 2013
+      - 37032.0
+    - - 2014
+      - 37548.0
+    - - 2015
+      - 38040.0
+    - - 2016
+      - 38616.0
+    - - 2017
+      - 39228.0
+    - - 2018
+      - 39732.0
+    - - 2019
+      - 40524.0
+    - - 2020
+      - 41136.0
+    - - 2021
+      - 41136.0
+    - - 2022
+      - 41136.0
+    - - 2023
+      - 43992.0
+    - - 2024
+      - 46368.0
+    - - 2025
+      - 43175.0
+  attendu:
+    trimestres_valides: 143
+    taux_liquidation: 0.5
+    pension_base_sur_sam: 0.4281437126
+- id: grille_taux_et_proratisation_decret_de_2004_c21
+  enonce: 'Né le 1950-12-10, salarié du seul régime général de 1978 à 2015 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2016-01-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 152 trimestres, une durée
+    maximum de 162, un taux de 0.5 et un rapport de la pension au salaire annuel moyen de 0.4691358025.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000024113020(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000028751530(R351-9) ; LEGIARTI000024113035(R351-7) ; LEGIARTI000028498855(L351-8) ;
+    LEGIARTI000025089933(D161-2-1-9) ; LEGIARTI000006758542..LEGIARTI000033714337(loi 2003-775 art.5
+    III,V) ; LEGIARTI000023035688(L351-1).'
+  carriere:
+    naissance: '1950-12-10'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2016-01
+    releve_entier:
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 35352.0
+    - - 2012
+      - 36372.0
+    - - 2013
+      - 37032.0
+    - - 2014
+      - 37548.0
+    - - 2015
+      - 38040.0
+  attendu:
+    trimestres_valides: 152
+    taux_liquidation: 0.5
+    pension_base_sur_sam: 0.4691358025
+- id: grille_taux_et_proratisation_decret_de_2004_c22
+  enonce: 'Né le 1951-01-20, salarié du seul régime général de 1980 à 2016 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2016-02-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 144 trimestres, une durée
+    maximum de 163, un taux de 0.5 et un rapport de la pension au salaire annuel moyen de 0.4417177914.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000024113020(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000028751530(R351-9) ; LEGIARTI000024113035(R351-7) ; LEGIARTI000028498855(L351-8) ;
+    LEGIARTI000025089933(D161-2-1-9) ; LEGIARTI000006758542..LEGIARTI000033714337(loi 2003-775 art.5
+    III,V) ; LEGIARTI000023035688(L351-1). Ses autres remarques : autre lecture (année d''effet comptée
+    sur tout le salaire jusqu''à la veille de l''effet, sans l''arrêt de R351-1) : trimestres=146,
+    trimestres_minores=0, taux=0.5, coefficient=0.8957055215, taux_fois_coefficient=0.4478527607'
+  carriere:
+    naissance: '1951-01-20'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2016-02
+    releve_entier:
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 35352.0
+    - - 2012
+      - 36372.0
+    - - 2013
+      - 37032.0
+    - - 2014
+      - 37548.0
+    - - 2015
+      - 38040.0
+    - - 2016
+      - 3218.0
+  attendu:
+    trimestres_valides: 144
+    taux_liquidation: 0.5
+    pension_base_sur_sam: 0.4417177914
+- id: grille_taux_et_proratisation_decret_de_2004_c29
+  enonce: 'Né le 1947-04-04, salarié du seul régime général de 1972 à 2008 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2008-05-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 145 trimestres, une durée
+    maximum de 158, un taux de 0.35 et un rapport de la pension au salaire annuel moyen de 0.3212025316.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000006749436(R351-27) ; LEGIARTI000006749450(R351-45)
+    ; LEGIARTI000006749349(R351-6) ; LEGIARTI000006749353(R351-9) ; LEGIARTI000006749351(R351-7) ;
+    LEGIARTI000006742622(L351-1). Lecture retenue pour l''année de l''effet : celle de la caisse,
+    où ne comptent que les trimestres civils clos avant le trimestre de l''effet (circulaire Cnav
+    n° 2004/29, point 2121 : la durée « est arrêtée au dernier jour du trimestre civil précédant la
+    date d''effet de la pension » ; n° 51/98, point 1321, et 2002/71, point 132 : l''arrêt du compte
+    de R. 351-1 « limite[...] la validation des périodes d''assurance » à ce jour), que la session
+    indépendante donne comme seconde lecture. Sa lecture retenue, le salaire des trimestres clos validant
+    jusqu''à quatre trimestres (R. 351-9), donne 148 trimestres, un taux de 0.38 et 0.3559493671.'
+  carriere:
+    naissance: '1947-04-04'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2008-05
+    releve_entier:
+    - - 1972
+      - 3348.0
+    - - 1973
+      - 3732.0
+    - - 1974
+      - 4244.0
+    - - 1975
+      - 5031.0
+    - - 1976
+      - 5781.0
+    - - 1977
+      - 6604.0
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 11092.0
+  attendu:
+    trimestres_valides: 145
+    taux_liquidation: 0.35
+    pension_base_sur_sam: 0.3212025316
+- id: grille_taux_et_proratisation_decret_de_2004_c30
+  enonce: 'Né le 1956-09-15, salarié du seul régime général de 1990 à 2023 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2023-10-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 135 trimestres, une durée
+    maximum de 166, un taux de 0.5 et un rapport de la pension au salaire annuel moyen de 0.406626506.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000047633296(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000028751530(R351-9) ; LEGIARTI000047633307(R351-7) ; LEGIARTI000047452736(L351-8) ;
+    LEGIARTI000047452768(L161-17-2) ; JORFARTI000026855704(D2012-1487) ; LEGIARTI000023035688(L351-1).
+    Lecture retenue pour l''année de l''effet : celle de la caisse, où ne comptent que les trimestres
+    civils clos avant le trimestre de l''effet (circulaire Cnav n° 2004/29, point 2121 : la durée
+    « est arrêtée au dernier jour du trimestre civil précédant la date d''effet de la pension » ;
+    n° 51/98, point 1321, et 2002/71, point 132 : l''arrêt du compte de R. 351-1 « limite[...] la
+    validation des périodes d''assurance » à ce jour), que la session indépendante donne comme seconde
+    lecture. Sa lecture retenue, le salaire des trimestres clos validant jusqu''à quatre trimestres
+    (R. 351-9), donne 136 trimestres, un taux de 0.5 et 0.4096385542.'
+  carriere:
+    naissance: '1956-09-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-10
+    releve_entier:
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 35352.0
+    - - 2012
+      - 36372.0
+    - - 2013
+      - 37032.0
+    - - 2014
+      - 37548.0
+    - - 2015
+      - 38040.0
+    - - 2016
+      - 38616.0
+    - - 2017
+      - 39228.0
+    - - 2018
+      - 39732.0
+    - - 2019
+      - 40524.0
+    - - 2020
+      - 41136.0
+    - - 2021
+      - 41136.0
+    - - 2022
+      - 41136.0
+    - - 2023
+      - 32994.0
+  attendu:
+    trimestres_valides: 135
+    taux_liquidation: 0.5
+    pension_base_sur_sam: 0.406626506
+- id: grille_taux_et_proratisation_decret_de_2004_c33
+  enonce: 'Né le 1943-06-10, salarié du seul régime général de 1968 à 2003 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2004-01-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 144 trimestres, une durée
+    maximum de 150, un taux de 0.3 et un rapport de la pension au salaire annuel moyen de 0.288. Fondement
+    qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000006749436(R351-27) ; LEGIARTI000006749450(R351-45)
+    ; LEGIARTI000006749348(R351-6) ; JORFARTI000001474532(D2004-144 art.8) ; LEGIARTI000006749353(R351-9)
+    ; LEGIARTI000006749351(R351-7) ; LEGIARTI000006742622(L351-1).'
+  carriere:
+    naissance: '1943-06-10'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2004-01
+    releve_entier:
+    - - 1968
+      - 2195.0
+    - - 1969
+      - 2488.0
+    - - 1970
+      - 2744.0
+    - - 1971
+      - 3018.0
+    - - 1972
+      - 3348.0
+    - - 1973
+      - 3732.0
+    - - 1974
+      - 4244.0
+    - - 1975
+      - 5031.0
+    - - 1976
+      - 5781.0
+    - - 1977
+      - 6604.0
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+  attendu:
+    trimestres_valides: 144
+    taux_liquidation: 0.3
+    pension_base_sur_sam: 0.288
+- id: grille_taux_et_proratisation_decret_de_2004_c34
+  enonce: 'Né le 1944-01-01, salarié du seul régime général de 1970 à 2003 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2004-01-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 136 trimestres, une durée
+    maximum de 152, un taux de 0.2625 et un rapport de la pension au salaire annuel moyen de 0.2348684211.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000006749436(R351-27) ; LEGIARTI000006749450(R351-45)
+    ; LEGIARTI000006749348(R351-6) ; JORFARTI000001474532(D2004-144 art.8) ; LEGIARTI000006749353(R351-9)
+    ; LEGIARTI000006749351(R351-7) ; LEGIARTI000006742622(L351-1).'
+  carriere:
+    naissance: '1944-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2004-01
+    releve_entier:
+    - - 1970
+      - 2744.0
+    - - 1971
+      - 3018.0
+    - - 1972
+      - 3348.0
+    - - 1973
+      - 3732.0
+    - - 1974
+      - 4244.0
+    - - 1975
+      - 5031.0
+    - - 1976
+      - 5781.0
+    - - 1977
+      - 6604.0
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+  attendu:
+    trimestres_valides: 136
+    taux_liquidation: 0.2625
+    pension_base_sur_sam: 0.2348684211
+- id: grille_taux_et_proratisation_decret_de_2004_c35
+  enonce: 'Né le 1948-12-31, salarié du seul régime général de 1985 à 2013 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2014-01-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 116 trimestres, une durée
+    maximum de 160, un taux de 0.5 et un rapport de la pension au salaire annuel moyen de 0.3625.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000024113020(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000006749353(R351-9) ; LEGIARTI000024113035(R351-7) ; LEGIARTI000023030950(L351-8) ;
+    LEGIARTI000025089933(D161-2-1-9) ; LEGIARTI000023035688(L351-1).'
+  carriere:
+    naissance: '1948-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2014-01
+    releve_entier:
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 35352.0
+    - - 2012
+      - 36372.0
+    - - 2013
+      - 37032.0
+  attendu:
+    trimestres_valides: 116
+    taux_liquidation: 0.5
+    pension_base_sur_sam: 0.3625
+- id: grille_taux_et_proratisation_decret_de_2004_c36
+  enonce: 'Né le 1949-01-01, salarié du seul régime général de 1985 à 2013 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2014-01-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 116 trimestres, une durée
+    maximum de 161, un taux de 0.5 et un rapport de la pension au salaire annuel moyen de 0.3602484472.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000024113020(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000006749353(R351-9) ; LEGIARTI000024113035(R351-7) ; LEGIARTI000023030950(L351-8) ;
+    LEGIARTI000025089933(D161-2-1-9) ; LEGIARTI000006758542..LEGIARTI000033714337(loi 2003-775 art.5
+    III,V) ; LEGIARTI000023035688(L351-1).'
+  carriere:
+    naissance: '1949-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2014-01
+    releve_entier:
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 35352.0
+    - - 2012
+      - 36372.0
+    - - 2013
+      - 37032.0
+  attendu:
+    trimestres_valides: 116
+    taux_liquidation: 0.5
+    pension_base_sur_sam: 0.3602484472
+- id: grille_taux_et_proratisation_decret_de_2004_c37
+  enonce: 'Né le 1951-07-01, salarié du seul régime général de 1985 à 2016 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2016-11-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 127 trimestres, une durée
+    maximum de 163, un taux de 0.5 et un rapport de la pension au salaire annuel moyen de 0.3895705521.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000024113020(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000028751530(R351-9) ; LEGIARTI000024113035(R351-7) ; LEGIARTI000028498855(L351-8) ;
+    LEGIARTI000025089933(D161-2-1-9) ; LEGIARTI000006758542..LEGIARTI000033714337(loi 2003-775 art.5
+    III,V) ; LEGIARTI000023035688(L351-1). Lecture retenue pour l''année de l''effet : celle de la
+    caisse, où ne comptent que les trimestres civils clos avant le trimestre de l''effet (circulaire
+    Cnav n° 2004/29, point 2121 : la durée « est arrêtée au dernier jour du trimestre civil précédant
+    la date d''effet de la pension » ; n° 51/98, point 1321, et 2002/71, point 132 : l''arrêt du compte
+    de R. 351-1 « limite[...] la validation des périodes d''assurance » à ce jour), que la session
+    indépendante donne comme seconde lecture. Sa lecture retenue, le salaire des trimestres clos validant
+    jusqu''à quatre trimestres (R. 351-9), donne 128 trimestres, un taux de 0.5 et 0.3926380368.'
+  carriere:
+    naissance: '1951-07-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2016-11
+    releve_entier:
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 35352.0
+    - - 2012
+      - 36372.0
+    - - 2013
+      - 37032.0
+    - - 2014
+      - 37548.0
+    - - 2015
+      - 38040.0
+    - - 2016
+      - 32180.0
+  attendu:
+    trimestres_valides: 127
+    taux_liquidation: 0.5
+    pension_base_sur_sam: 0.3895705521
+- id: grille_taux_et_proratisation_decret_de_2004_c39
+  enonce: 'Né le 1957-10-10, salarié du seul régime général de 1975 à 2019 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2020-01-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 180 trimestres, une durée
+    maximum de 166, un taux de 0.5 et un rapport de la pension au salaire annuel moyen de 0.5. Fondement
+    qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000024113020(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000028751530(R351-9) ; LEGIARTI000024113035(R351-7) ; LEGIARTI000028498855(L351-8) ;
+    LEGIARTI000025089933(D161-2-1-9) ; JORFARTI000028323755(D2013-1155) ; LEGIARTI000023035688(L351-1).'
+  carriere:
+    naissance: '1957-10-10'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2020-01
+    releve_entier:
+    - - 1975
+      - 5031.0
+    - - 1976
+      - 5781.0
+    - - 1977
+      - 6604.0
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 35352.0
+    - - 2012
+      - 36372.0
+    - - 2013
+      - 37032.0
+    - - 2014
+      - 37548.0
+    - - 2015
+      - 38040.0
+    - - 2016
+      - 38616.0
+    - - 2017
+      - 39228.0
+    - - 2018
+      - 39732.0
+    - - 2019
+      - 40524.0
+  attendu:
+    trimestres_valides: 180
+    taux_liquidation: 0.5
+    pension_base_sur_sam: 0.5
+- id: grille_taux_et_proratisation_decret_de_2004_c40
+  enonce: 'Né le 1954-04-20, salarié du seul régime général de 1978 à 2016 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2016-05-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 153 trimestres, une durée
+    maximum de 165, un taux de 0.425 et un rapport de la pension au salaire annuel moyen de 0.3940909091.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000024113020(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000028751530(R351-9) ; LEGIARTI000024113035(R351-7) ; LEGIARTI000028498855(L351-8) ;
+    LEGIARTI000025089933(D161-2-1-9) ; JORFARTI000023334359(D2010-1734 art.9) ; LEGIARTI000023035688(L351-1).
+    Lecture retenue pour l''année de l''effet : celle de la caisse, où ne comptent que les trimestres
+    civils clos avant le trimestre de l''effet (circulaire Cnav n° 2004/29, point 2121 : la durée
+    « est arrêtée au dernier jour du trimestre civil précédant la date d''effet de la pension » ;
+    n° 51/98, point 1321, et 2002/71, point 132 : l''arrêt du compte de R. 351-1 « limite[...] la
+    validation des périodes d''assurance » à ce jour), que la session indépendante donne comme seconde
+    lecture. Sa lecture retenue, le salaire des trimestres clos validant jusqu''à quatre trimestres
+    (R. 351-9), donne 156 trimestres, un taux de 0.44375 et 0.4195454545.'
+  carriere:
+    naissance: '1954-04-20'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2016-05
+    releve_entier:
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 35352.0
+    - - 2012
+      - 36372.0
+    - - 2013
+      - 37032.0
+    - - 2014
+      - 37548.0
+    - - 2015
+      - 38040.0
+    - - 2016
+      - 12872.0
+  attendu:
+    trimestres_valides: 153
+    taux_liquidation: 0.425
+    pension_base_sur_sam: 0.3940909091
+- id: grille_taux_et_proratisation_decret_de_2004_p001
+  enonce: 'Né le 1947-12-31, salarié du seul régime général de 1970 à 2007 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2008-01-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 152 trimestres, une durée
+    maximum de 158, un taux de 0.42 et un rapport de la pension au salaire annuel moyen de 0.4040506329.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000006749436(R351-27) ; LEGIARTI000006749450(R351-45)
+    ; LEGIARTI000006749349(R351-6) ; LEGIARTI000006749353(R351-9) ; LEGIARTI000006749351(R351-7) ;
+    LEGIARTI000006742622(L351-1).'
+  carriere:
+    naissance: '1947-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2008-01
+    releve_entier:
+    - - 1970
+      - 2744.0
+    - - 1971
+      - 3018.0
+    - - 1972
+      - 3348.0
+    - - 1973
+      - 3732.0
+    - - 1974
+      - 4244.0
+    - - 1975
+      - 5031.0
+    - - 1976
+      - 5781.0
+    - - 1977
+      - 6604.0
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+  attendu:
+    trimestres_valides: 152
+    taux_liquidation: 0.42
+    pension_base_sur_sam: 0.4040506329
+- id: grille_taux_et_proratisation_decret_de_2004_p002
+  enonce: 'Né le 1948-01-01, salarié du seul régime général de 1970 à 2007 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2008-01-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 152 trimestres, une durée
+    maximum de 160, un taux de 0.425 et un rapport de la pension au salaire annuel moyen de 0.40375.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000006749436(R351-27) ; LEGIARTI000006749450(R351-45)
+    ; LEGIARTI000006749349(R351-6) ; LEGIARTI000006749353(R351-9) ; LEGIARTI000006749351(R351-7) ;
+    LEGIARTI000006742622(L351-1).'
+  carriere:
+    naissance: '1948-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2008-01
+    releve_entier:
+    - - 1970
+      - 2744.0
+    - - 1971
+      - 3018.0
+    - - 1972
+      - 3348.0
+    - - 1973
+      - 3732.0
+    - - 1974
+      - 4244.0
+    - - 1975
+      - 5031.0
+    - - 1976
+      - 5781.0
+    - - 1977
+      - 6604.0
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+  attendu:
+    trimestres_valides: 152
+    taux_liquidation: 0.425
+    pension_base_sur_sam: 0.40375
+- id: grille_taux_et_proratisation_decret_de_2004_p007
+  enonce: 'Né le 1961-08-31, salarié du seul régime général de 1985 à 2023 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2023-12-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 155 trimestres, une durée
+    maximum de 168, un taux de 0.41875 et un rapport de la pension au salaire annuel moyen de 0.3863467262.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000047633296(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000028751530(R351-9) ; LEGIARTI000047633307(R351-7) ; LEGIARTI000047452736(L351-8) ;
+    LEGIARTI000047452768(L161-17-2) ; LEGIARTI000047452764(L161-17-3) ; LEGIARTI000023035688(L351-1).
+    Lecture retenue pour l''année de l''effet : celle de la caisse, où ne comptent que les trimestres
+    civils clos avant le trimestre de l''effet (circulaire Cnav n° 2004/29, point 2121 : la durée
+    « est arrêtée au dernier jour du trimestre civil précédant la date d''effet de la pension » ;
+    n° 51/98, point 1321, et 2002/71, point 132 : l''arrêt du compte de R. 351-1 « limite[...] la
+    validation des périodes d''assurance » à ce jour), que la session indépendante donne comme seconde
+    lecture. Sa lecture retenue, le salaire des trimestres clos validant jusqu''à quatre trimestres
+    (R. 351-9), donne 156 trimestres, un taux de 0.425 et 0.3946428571.'
+  carriere:
+    naissance: '1961-08-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-12
+    releve_entier:
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 35352.0
+    - - 2012
+      - 36372.0
+    - - 2013
+      - 37032.0
+    - - 2014
+      - 37548.0
+    - - 2015
+      - 38040.0
+    - - 2016
+      - 38616.0
+    - - 2017
+      - 39228.0
+    - - 2018
+      - 39732.0
+    - - 2019
+      - 40524.0
+    - - 2020
+      - 41136.0
+    - - 2021
+      - 41136.0
+    - - 2022
+      - 41136.0
+    - - 2023
+      - 40326.0
+  attendu:
+    trimestres_valides: 155
+    taux_liquidation: 0.41875
+    pension_base_sur_sam: 0.3863467262
+- id: grille_taux_et_proratisation_decret_de_2004_p008
+  enonce: 'Né le 1961-09-01, salarié du seul régime général de 1985 à 2023 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2024-01-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 156 trimestres, une durée
+    maximum de 169, un taux de 0.41875 et un rapport de la pension au salaire annuel moyen de 0.3865384615.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000047633296(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000028751530(R351-9) ; LEGIARTI000047633307(R351-7) ; LEGIARTI000047452736(L351-8) ;
+    LEGIARTI000047452768(L161-17-2) ; LEGIARTI000047452764(L161-17-3) ; LEGIARTI000023035688(L351-1).
+    Ses autres remarques : si l''on applique la loi 2003-775 art.5 V (règles de l''année des 60 ans)
+    plutôt que la rédaction de L161-17-3 applicable aux pensions prenant effet à la date d''effet
+    : durée 168, trimestres_minores=12, taux=0.425, coefficient=0.9285714286, taux_fois_coefficient=0.3946428571'
+  carriere:
+    naissance: '1961-09-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-01
+    releve_entier:
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 35352.0
+    - - 2012
+      - 36372.0
+    - - 2013
+      - 37032.0
+    - - 2014
+      - 37548.0
+    - - 2015
+      - 38040.0
+    - - 2016
+      - 38616.0
+    - - 2017
+      - 39228.0
+    - - 2018
+      - 39732.0
+    - - 2019
+      - 40524.0
+    - - 2020
+      - 41136.0
+    - - 2021
+      - 41136.0
+    - - 2022
+      - 41136.0
+    - - 2023
+      - 43992.0
+  attendu:
+    trimestres_valides: 156
+    taux_liquidation: 0.41875
+    pension_base_sur_sam: 0.3865384615
+- id: grille_taux_et_proratisation_decret_de_2004_p009
+  enonce: 'Né le 1961-01-01, salarié du seul régime général de 1985 à 2023 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2023-02-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 152 trimestres, une durée
+    maximum de 168, un taux de 0.4 et un rapport de la pension au salaire annuel moyen de 0.3619047619.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000024113020(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000028751530(R351-9) ; LEGIARTI000024113035(R351-7) ; LEGIARTI000028498855(L351-8) ;
+    LEGIARTI000025089933(D161-2-1-9) ; LEGIARTI000028494794(L161-17-3) ; LEGIARTI000023035688(L351-1).
+    Ses autres remarques : autre lecture (année d''effet comptée sur tout le salaire jusqu''à la veille
+    de l''effet, sans l''arrêt de R351-1) : trimestres=154, trimestres_minores=14, taux=0.4125, coefficient=0.9166666667,
+    taux_fois_coefficient=0.378125'
+  carriere:
+    naissance: '1961-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-02
+    releve_entier:
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 35352.0
+    - - 2012
+      - 36372.0
+    - - 2013
+      - 37032.0
+    - - 2014
+      - 37548.0
+    - - 2015
+      - 38040.0
+    - - 2016
+      - 38616.0
+    - - 2017
+      - 39228.0
+    - - 2018
+      - 39732.0
+    - - 2019
+      - 40524.0
+    - - 2020
+      - 41136.0
+    - - 2021
+      - 41136.0
+    - - 2022
+      - 41136.0
+    - - 2023
+      - 3666.0
+  attendu:
+    trimestres_valides: 152
+    taux_liquidation: 0.4
+    pension_base_sur_sam: 0.3619047619
+- id: grille_taux_et_proratisation_decret_de_2004_p010
+  enonce: 'Né le 1949-12-15, salarié du seul régime général de 1972 à 2010 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2010-03-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 152 trimestres, une durée
+    maximum de 161, un taux de 0.42125 et un rapport de la pension au salaire annuel moyen de 0.3977018634.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000020082993(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000006749353(R351-9) ; LEGIARTI000006749351(R351-7) ; LEGIARTI000006758542..LEGIARTI000033714337(loi
+    2003-775 art.5 III,V) ; LEGIARTI000006742622(L351-1). Ses autres remarques : autre lecture (année
+    d''effet comptée sur tout le salaire jusqu''à la veille de l''effet, sans l''arrêt de R351-1)
+    : trimestres=155, trimestres_minores=6, taux=0.4475, coefficient=0.9627329193, taux_fois_coefficient=0.4308229814'
+  carriere:
+    naissance: '1949-12-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2010-03
+    releve_entier:
+    - - 1972
+      - 3348.0
+    - - 1973
+      - 3732.0
+    - - 1974
+      - 4244.0
+    - - 1975
+      - 5031.0
+    - - 1976
+      - 5781.0
+    - - 1977
+      - 6604.0
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 5770.0
+  attendu:
+    trimestres_valides: 152
+    taux_liquidation: 0.42125
+    pension_base_sur_sam: 0.3977018634
+- id: grille_taux_et_proratisation_decret_de_2004_p011
+  enonce: 'Né le 1949-12-15, salarié du seul régime général de 1972 à 2010 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2010-04-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 153 trimestres, une durée
+    maximum de 161, un taux de 0.43 et un rapport de la pension au salaire annuel moyen de 0.4086335404.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000020082993(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000006749353(R351-9) ; LEGIARTI000006749351(R351-7) ; LEGIARTI000006758542..LEGIARTI000033714337(loi
+    2003-775 art.5 III,V) ; LEGIARTI000006742622(L351-1). Lecture retenue pour l''année de l''effet
+    : celle de la caisse, où ne comptent que les trimestres civils clos avant le trimestre de l''effet
+    (circulaire Cnav n° 2004/29, point 2121 : la durée « est arrêtée au dernier jour du trimestre
+    civil précédant la date d''effet de la pension » ; n° 51/98, point 1321, et 2002/71, point 132
+    : l''arrêt du compte de R. 351-1 « limite[...] la validation des périodes d''assurance » à ce
+    jour), que la session indépendante donne comme seconde lecture. Sa lecture retenue, le salaire
+    des trimestres clos validant jusqu''à quatre trimestres (R. 351-9), donne 156 trimestres, un taux
+    de 0.45625 et 0.4420807453.'
+  carriere:
+    naissance: '1949-12-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2010-04
+    releve_entier:
+    - - 1972
+      - 3348.0
+    - - 1973
+      - 3732.0
+    - - 1974
+      - 4244.0
+    - - 1975
+      - 5031.0
+    - - 1976
+      - 5781.0
+    - - 1977
+      - 6604.0
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 8655.0
+  attendu:
+    trimestres_valides: 153
+    taux_liquidation: 0.43
+    pension_base_sur_sam: 0.4086335404
+- id: grille_taux_et_proratisation_decret_de_2004_p013
+  enonce: 'Né le 1945-03-01, salarié du seul régime général de 1985 à 2011 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2012-01-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 127 trimestres, une durée
+    maximum de 154, un taux de 0.5 et un rapport de la pension au salaire annuel moyen de 0.4123376623.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000024113020(R351-27) ; LEGIARTI000006749349(R351-6)
+    ; LEGIARTI000006749353(R351-9) ; LEGIARTI000024113035(R351-7) ; LEGIARTI000023030950(L351-8) ;
+    LEGIARTI000025089933(D161-2-1-9) ; LEGIARTI000023035688(L351-1). Ses autres remarques : trimestres
+    inclut la majoration de durée de R351-7 (7 trimestres après l''âge, +2,5 % chacun, arrondi supérieur)
+    ; si on l''écarte comme la surcote : trimestres=108, coefficient=0.7012987013, taux_fois_coefficient=0.3506493506'
+  carriere:
+    naissance: '1945-03-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2012-01
+    releve_entier:
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 32184.0
+    - - 2008
+      - 33276.0
+    - - 2009
+      - 34308.0
+    - - 2010
+      - 34620.0
+    - - 2011
+      - 35352.0
+  attendu:
+    taux_liquidation: 0.5
+    pension_base_sur_sam: 0.4123376623
+- id: grille_taux_et_proratisation_decret_de_2004_p019
+  enonce: 'Né le 1943-12-31, salarié du seul régime général de 1968 à 2003 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2004-01-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 144 trimestres, une durée
+    maximum de 150, un taux de 0.3 et un rapport de la pension au salaire annuel moyen de 0.288. Fondement
+    qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000006749436(R351-27) ; LEGIARTI000006749450(R351-45)
+    ; LEGIARTI000006749348(R351-6) ; JORFARTI000001474532(D2004-144 art.8) ; LEGIARTI000006749353(R351-9)
+    ; LEGIARTI000006749351(R351-7) ; LEGIARTI000006742622(L351-1).'
+  carriere:
+    naissance: '1943-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2004-01
+    releve_entier:
+    - - 1968
+      - 2195.0
+    - - 1969
+      - 2488.0
+    - - 1970
+      - 2744.0
+    - - 1971
+      - 3018.0
+    - - 1972
+      - 3348.0
+    - - 1973
+      - 3732.0
+    - - 1974
+      - 4244.0
+    - - 1975
+      - 5031.0
+    - - 1976
+      - 5781.0
+    - - 1977
+      - 6604.0
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+  attendu:
+    trimestres_valides: 144
+    taux_liquidation: 0.3
+    pension_base_sur_sam: 0.288
+- id: grille_taux_et_proratisation_decret_de_2004_p020
+  enonce: 'Né le 1947-06-15, salarié du seul régime général de 1972 à 2007 (salaire au plafond chaque
+    année entière, au prorata des mois l''année de l''effet), pension prenant effet le 2007-07-01,
+    sans enfant ni exception au taux plein : la session indépendante lit 142 trimestres, une durée
+    maximum de 158, un taux de 0.32 et un rapport de la pension au salaire annuel moyen de 0.2875949367.
+    Fondement qu''elle relève : LEGIARTI000006749339(R351-1) ; LEGIARTI000006749436(R351-27) ; LEGIARTI000006749450(R351-45)
+    ; LEGIARTI000006749349(R351-6) ; LEGIARTI000006749353(R351-9) ; LEGIARTI000006749351(R351-7) ;
+    LEGIARTI000006742622(L351-1). Lecture retenue pour l''année de l''effet : celle de la caisse,
+    où ne comptent que les trimestres civils clos avant le trimestre de l''effet (circulaire Cnav
+    n° 2004/29, point 2121 : la durée « est arrêtée au dernier jour du trimestre civil précédant la
+    date d''effet de la pension » ; n° 51/98, point 1321, et 2002/71, point 132 : l''arrêt du compte
+    de R. 351-1 « limite[...] la validation des périodes d''assurance » à ce jour), que la session
+    indépendante donne comme seconde lecture. Sa lecture retenue, le salaire des trimestres clos validant
+    jusqu''à quatre trimestres (R. 351-9), donne 144 trimestres, un taux de 0.34 et 0.3098734177.'
+  carriere:
+    naissance: '1947-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2007-07
+    releve_entier:
+    - - 1972
+      - 3348.0
+    - - 1973
+      - 3732.0
+    - - 1974
+      - 4244.0
+    - - 1975
+      - 5031.0
+    - - 1976
+      - 5781.0
+    - - 1977
+      - 6604.0
+    - - 1978
+      - 7318.0
+    - - 1979
+      - 8177.0
+    - - 1980
+      - 9165.0
+    - - 1981
+      - 10482.0
+    - - 1982
+      - 12504.0
+    - - 1983
+      - 13977.0
+    - - 1984
+      - 15184.0
+    - - 1985
+      - 16272.0
+    - - 1986
+      - 17105.0
+    - - 1987
+      - 17809.0
+    - - 1988
+      - 18349.0
+    - - 1989
+      - 19099.0
+    - - 1990
+      - 19977.0
+    - - 1991
+      - 21001.0
+    - - 1992
+      - 21971.0
+    - - 1993
+      - 22840.0
+    - - 1994
+      - 23343.0
+    - - 1995
+      - 23773.0
+    - - 1996
+      - 24578.0
+    - - 1997
+      - 25099.0
+    - - 1998
+      - 25776.0
+    - - 1999
+      - 26471.0
+    - - 2000
+      - 26892.0
+    - - 2001
+      - 27349.0
+    - - 2002
+      - 28224.0
+    - - 2003
+      - 29184.0
+    - - 2004
+      - 29712.0
+    - - 2005
+      - 30192.0
+    - - 2006
+      - 31068.0
+    - - 2007
+      - 16092.0
+  attendu:
+    trimestres_valides: 142
+    taux_liquidation: 0.32
+    pension_base_sur_sam: 0.2875949367

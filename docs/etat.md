@@ -36,20 +36,20 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 **La carte de justesse** (`src/retraite_notionnelle/noyau/justesse.py`, action 194). L'état de la carte des règles, ci-dessus, est un mot que la fiche déclare ; celui-ci se calcule depuis les preuves, et personne ne l'écrit. Une partie est une règle sur une période : une version de fiche, ou la fiche entière tant qu'elle n'est pas découpée. Elle est prouvée quand son texte est lu avec sa trace et qu'une grille indépendante — des valeurs attendues posées depuis le seul texte, sans lire le code, sur chaque seuil de la règle — est verte ; un exemple officiel, un autre moteur ou le simulateur d'une caisse en sont des témoins, qui ne prouvent pas seuls.
 
-**19 parties prouvées sur 956**, dont 9 avec témoin et 10 au texte seul. 15 fausses (section 2), 637 approchées, 218 non vérifiées, 67 hors champ. Un cliquet tient les parties prouvées (`tests/cliquets_de_justesse/prouvees.yaml`) : aucune ne recule sans le dire.
+**22 parties prouvées sur 956**, dont 10 avec témoin et 12 au texte seul. 15 fausses (section 2), 637 approchées, 215 non vérifiées, 67 hors champ. Un cliquet tient les parties prouvées (`tests/cliquets_de_justesse/prouvees.yaml`) : aucune ne recule sans le dire.
 
 | Famille de régimes | Parties | Prouvées | Fausses | Approchées | Non vérifiées | Hors champ | Texte tracé | Témoignées par un exemple officiel |
 |---|---|---|---|---|---|---|---|---|
-| salariés du privé, régimes de base | 315 | 19 | 7 | 178 | 81 | 30 | 101 | 48 |
+| salariés du privé, régimes de base | 315 | 22 | 7 | 178 | 78 | 30 | 101 | 48 |
 | salariés du privé, complémentaires | 180 | 13 | 3 | 112 | 45 | 7 | 58 | 23 |
 | fonction publique | 222 | 13 | 2 | 117 | 62 | 28 | 39 | 35 |
-| artisans, commerçants et autres non-salariés | 232 | 17 | 5 | 148 | 58 | 4 | 82 | 45 |
-| régimes agricoles | 281 | 19 | 7 | 171 | 71 | 13 | 114 | 48 |
+| artisans, commerçants et autres non-salariés | 232 | 20 | 5 | 148 | 55 | 4 | 82 | 45 |
+| régimes agricoles | 281 | 22 | 7 | 171 | 68 | 13 | 114 | 48 |
 | libéraux et avocats | 231 | 13 | 1 | 173 | 41 | 3 | 91 | 26 |
-| régimes spéciaux | 261 | 19 | 3 | 156 | 61 | 22 | 59 | 32 |
+| régimes spéciaux | 261 | 22 | 3 | 156 | 58 | 22 | 59 | 32 |
 | retraite additionnelle, en capitalisation | 40 | 5 | 4 | 10 | 10 | 11 | 9 | 12 |
 | sans famille | 1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
-| toute la carte | 956 | 19 | 15 | 637 | 218 | 67 | 279 | 90 |
+| toute la carte | 956 | 22 | 15 | 637 | 215 | 67 | 279 | 90 |
 
 Une partie compte dans chaque famille de ses régimes, et une fois dans le total. Parmi les 956 parties, 163 sont des versions supposées, qu'aucune grille ne peut prouver tant que leur texte n'est pas retrouvé ; 55 ont un exemple officiel que leur fiche cite sans dire pour quelle version, et qui ne témoigne donc pour aucune. Les confrontations aux autres moteurs que 43 fiches racontent en prose ne valent pas témoin : rien n'y dit, cas par cas, ce qui concorde. La carte ne connaît encore que les règles : les barèmes, les régimes de bout en bout, les cas types et les totaux n'y ont pas leurs preuves (section 4).
 

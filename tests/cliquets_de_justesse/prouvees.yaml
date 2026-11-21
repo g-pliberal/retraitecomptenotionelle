@@ -32,5 +32,8 @@ prouvees:
 - duree_requise_par_generation / suspension_de_2025
 - salaire_annuel_moyen / annees_validantes_2004
 - salaire_annuel_moyen / moyenne_des_salaires_annuels_1995
+- taux_plein_et_proratisation / cent_cinquante
+- taux_plein_et_proratisation / decret_de_2004
+- taux_plein_et_proratisation / decret_de_2025
 
 retirees: {}
