@@ -8357,16 +8357,14 @@ Il a validé la maquette des caisses et choisi de l'intégrer au site.
 
 **Reprise, au 21 novembre 2026.** Le tableau de bord (`docs/etat.md`, section
 1) porte la carte de justesse, que le script calcule depuis les preuves.
-Dix-neuf parties sont prouvées, par des grilles posées depuis le seul texte
+Vingt-deux parties sont prouvées, par des grilles posées depuis le seul texte
 par des sessions qui n'ont pas lu le code : l'âge légal depuis 1985, le
 salaire annuel moyen depuis juillet 1995, la durée requise dans ses huit
-versions, la décote du régime général depuis 1983 dans quatre. Reste le taux,
-à découper en versions d'abord. Les deux filets sont faits : le balayage
-trouve 3 052 anomalies à expliquer, la neutralisation 192 parties qu'aucun
-témoin ne garde ; un cliquet interdit aux deux comptes de monter. Après eux,
-le propriétaire décide de la suite de la carte. Lire
-`194/2026-11-21-etape-b-les-filets.md`, qui classe les pistes, et
-`194/2026-11-21-decote-prouvee.md`.
+versions, la décote du régime général depuis 1983 dans quatre, le taux et la
+proratisation dans trois. Les deux filets sont faits : 3 052 anomalies à
+expliquer, 192 parties qu'aucun témoin ne garde. Le propriétaire décide de la
+suite de la carte. Lire `194/2026-11-21-etape-b-les-filets.md`, qui classe les
+pistes, et `194/2026-11-21-taux-et-proratisation-prouves.md`.
 
 **D'où elle vient.** Le 20 novembre 2026, le propriétaire : « j'ai
 l'impression qu'on tourne en rond en découvrant des problèmes par hasard »,
