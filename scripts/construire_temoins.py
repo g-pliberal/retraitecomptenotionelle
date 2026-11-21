@@ -290,8 +290,10 @@ def _cas() -> list[dict]:
 
     # Un statut d'affiliation après l'autre : c'est le catalogue des régimes,
     # les assiettes à tranches et les régimes en points qui sont balayés ici.
+    # Le statut de la base, né la même année, est le témoin ``base`` lui-même.
     for statut in STATUTS:
-        cas_statut(f"statut_{statut}", statut, int(BASE["naissance"]))
+        if statut != BASE["statut"]:
+            cas_statut(f"statut_{statut}", statut, int(BASE["naissance"]))
 
     # Générations : la même carrière déplacée dans le temps traverse toutes les
     # ruptures législatives, et l'écart d'indexation entre époques.
@@ -330,8 +332,9 @@ def _cas() -> list[dict]:
         cas_statut(f"statut_{statut}_ne_le_20_septembre_1968", statut, 1968,
                    "1968-09-20")
 
-    # Âges de liquidation : départ très anticipé, à l'heure, très différé.
-    for age in ("52", "57", "60", "62", "64", "67", "70"):
+    # Âges de liquidation : départ très anticipé, à l'heure, très différé ;
+    # à soixante-quatre ans, l'âge de la base, c'est le témoin ``base``.
+    for age in ("52", "57", "60", "62", "67", "70"):
         cas.append((f"liquidation_{age}", {"liquidation": age}))
     # LES DÉPARTS TRÈS TARDIFS, que la saisie accepte depuis le 10 octobre 2026
     # (action 151) : jusqu'au dernier âge que les tables de mortalité
@@ -569,7 +572,8 @@ def _cas() -> list[dict]:
     }))
 
     # Règles de modélisation, une par une.
-    for mode in ("triple_lock_inverse", "triple_lock_inverse_nominal",
+    # La règle de la base, ``triple_lock_inverse``, est le témoin ``base``.
+    for mode in ("triple_lock_inverse_nominal",
                  "mediane_trois_taux", "moyenne_trois_taux",
                  "revalorisation_portee_au_compte", "pib_nominal",
                  "prix", "salaires"):
@@ -641,7 +645,8 @@ def _cas() -> list[dict]:
     # moteurs doivent tirer des mêmes tables (action 138, étape 7).
     for hypothese in ("basse", "haute"):
         cas.append((f"esperance_vie_{hypothese}", {"esperance_vie": hypothese}))
-    for bascule in ("1980", "2000", "2026", "2040", "2060"):
+    # La bascule de la base, 2026, pour la même naissance, est ``generation_1990``.
+    for bascule in ("1980", "2000", "2040", "2060"):
         cas.append((f"bascule_{bascule}", {"bascule": bascule, "naissance": "1990"}))
     for euros in ("1980", "2000", "2050"):
         cas.append((f"euros_{euros}", {"euros": euros}))

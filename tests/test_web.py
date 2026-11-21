@@ -3792,6 +3792,30 @@ def test_le_balayage_des_temoins_visite_six_generations():
     assert module.debut_admissible("mineur", 1975) == 21
 
 
+def test_aucun_temoin_ne_repete_la_requete_d_un_autre():
+    """Deux témoins de même requête rendent le même résultat au bit près : le
+    second ne garde rien que le premier ne garde. Les boucles du balayage
+    repassaient par la valeur de la base (l'âge de 64 ans, l'indexation par
+    défaut, le statut du salarié non cadre, la bascule de 2026), et quatre
+    témoins doublaient ainsi ``base`` ou ``generation_1990`` (tri des tests du
+    21 novembre 2026)."""
+    import importlib.util
+    from pathlib import Path
+
+    chemin = Path(__file__).resolve().parents[1] / "scripts" / "construire_temoins.py"
+    specification = importlib.util.spec_from_file_location("construire_temoins", chemin)
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    vus: dict[str, str] = {}
+    doublons = []
+    for cas in module._cas():
+        cle = json.dumps(cas["requete"], sort_keys=True)
+        if cle in vus:
+            doublons.append((vus[cle], cas["nom"]))
+        vus.setdefault(cle, cas["nom"])
+    assert doublons == []
+
+
 # -- le ruban entre deux courbes ----------------------------------------------
 
 
