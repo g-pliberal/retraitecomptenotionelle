@@ -8356,15 +8356,14 @@ Il a validé la maquette des caisses et choisi de l'intégrer au site.
 ### 194. La carte de justesse : l'état de chaque partie du simulateur calculé depuis ses preuves, puis prouvé régime par régime — `en cours`
 
 **Reprise, au 21 novembre 2026.** Le tableau de bord (`docs/etat.md`, section
-1) porte la carte de justesse, que le script calcule depuis les preuves. Sept
-parties sont prouvées, par des grilles posées depuis le seul texte de LEGI par
-des sessions qui n'ont pas lu le code : l'âge légal, de 1985 à aujourd'hui, et
-le salaire annuel moyen depuis juillet 1995. Le forfait de maternité au salaire
-annuel moyen est écrit et confronté, sans être prouvé : une partie en écart,
-une approchée. Reste, une règle par session : la durée requise, la décote et
-le taux, à découper en versions d'abord ; l'étape B. Lire
-`194/2026-11-20-salaire-annuel-moyen.md` : la session indépendante a cherché
-ses textes seule, sous un guetteur des fichiers ouverts.
+1) porte la carte de justesse, que le script calcule depuis les preuves.
+Quinze parties sont prouvées, par des grilles posées depuis le seul texte par
+des sessions qui n'ont pas lu le code : l'âge légal depuis 1985, le salaire
+annuel moyen depuis juillet 1995, la durée requise dans ses huit versions. Le
+forfait de maternité est écrit et confronté, sans être prouvé. Reste, une
+règle par session : la décote et le taux, à découper en versions d'abord ;
+l'étape B. Lire `194/2026-11-21-duree-requise-prouvee.md` : la session
+indépendante a cherché ses textes seule, sous un guetteur des fichiers ouverts.
 
 **D'où elle vient.** Le 20 novembre 2026, le propriétaire : « j'ai
 l'impression qu'on tourne en rond en découvrant des problèmes par hasard »,
