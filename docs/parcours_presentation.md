@@ -282,7 +282,7 @@ lignes : ce qu'un militaire touche de plus ou de moins qu'un artisan, à
 cotisation égale. Le niveau général dépend aussi d'un réglage annuel, le
 coefficient d'équilibre, que le modèle calcule mais n'applique jamais.
 **Ne pas promettre de marge** : pour la proposition, ce coefficient
-descend à <!--chiffre:mesure(coefficient?scenario=6&quoi=minimum)-->0,96<!--/--> au plus bas, en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2026<!--/-->, et vaut <!--chiffre:mesure(coefficient?scenario=6)-->1,213<!--/--> en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee)-->2070<!--/--> ; appliqué,
+descend à <!--chiffre:mesure(coefficient?scenario=6&quoi=minimum)-->0,96<!--/--> au plus bas, en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2026<!--/-->, et vaut <!--chiffre:mesure(coefficient?scenario=6)-->1,212<!--/--> en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee)-->2070<!--/--> ; appliqué,
 il abaisserait les cases d'autant les années où il est sous un, et la page le dit
 dans la phrase qui suit, quelle que soit sa dernière année. C'est le coût de transition du taux unique : pendant trente ans, la caisse paie les
 pensions de l'ancien système avec <!--chiffre:difference(mesure:fiche?exemple=salaire_moyen&quoi=total;mesure:parametre?nom=taux_cotisation_liberal)-->dix<!--/--> points de cotisation en moins. Ce qu'on
@@ -354,7 +354,7 @@ Onglet **Droits non cotisés**. La page qui explique les écarts du
 simulateur : ce que le système actuel verse sans que personne l'ait cotisé.
 Trois chiffres :
 <!--chiffre:entrees(moteur/donnees.json:avantages.avantages?famille!=ecarts_structurels&fin=None)-->43<!--/--> dispositifs en vigueur, du minimum vieillesse à la bonification du
-cinquième ; <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.gratuit/1000)-->98,8<!--/--> Md € en <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.annee)-->2024<!--/--> pour les 23 que le modèle sait chiffrer, dont
+cinquième ; <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.gratuit/1000)-->98,1<!--/--> Md € en <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.annee)-->2024<!--/--> pour les 23 que le modèle sait chiffrer, dont
 <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.lignes.reversion/1000)-->38,3<!--/--> Md € de réversion, qui est lue et non calculée ; <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.anticipee/1000)-->8,5<!--/--> Md € de pensions
 servies avant l'âge légal. La page dit que ces deux montants sont des
 planchers. Le graphique du haut compte les dispositifs année par année depuis

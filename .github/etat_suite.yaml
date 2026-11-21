@@ -1,15 +1,17 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: a22036112e59dae633c767a9e7c9669ac7dab0db
-date: 2026-11-21T00:41:58Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44843230265
+etat: rouge
+sources: 836f17669fa25f307313f79aa85f59f21c3dc69b
+date: 2026-11-21T01:23:24Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44847515991
+echecs:
+  - "FAILED tests/test_controle_drees_panorama.py::test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l_asv - assert 7250 < 6773.149191161774"
 presomptions: vert
 durees:
-  fabrique: 543
-  suite: 613
-  tranche_1: 419
-  tranche_2: 613
-  tranche_3: 364
-  tranche_4: 372
-  garde: 232
+  fabrique: 525
+  suite: 764
+  tranche_1: 764
+  tranche_2: 455
+  tranche_3: 390
+  tranche_4: 299
+  garde: 165

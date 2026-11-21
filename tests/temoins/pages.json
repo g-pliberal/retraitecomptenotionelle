@@ -30949,7 +30949,7 @@
    "<td class=\"texte\">depuis 1952</td>",
    "<td class=\"texte\">exploitant_agricole, collaborateur_agricole</td>",
    "<td class=\"texte long\">",
-   "Le barème en points d&#x27;avant 1990 n&#x27;est pas appliqué : R. 732-69, lu, le compte en revenu cadastral, que le modèle n&#x27;a pas, et renvoie pour les années d&#x27;avant 1981 à quatre décrets que l&#x27;index n&#x27;a pas en texte ; ces années entrent dans la moyenne de la réforme de 2026 par les points que vaut leur rendement ; conjoints et aides familiaux sont sous-estimés.",
+   "Le barème en points de 1981 à 1989 se lit sur un revenu cadastral que le modèle n&#x27;a pas, et déduit du revenu par convention ; celui d&#x27;avant 1981 n&#x27;est pas appliqué : R. 732-69 renvoie pour ces années à quatre décrets que l&#x27;index n&#x27;a pas en texte, et elles entrent dans la moyenne de la réforme de 2026 par les points que vaut leur rendement ; conjoints et aides familiaux sont sous-estimés.",
    "</td>",
    "</tr>",
    "<tr data-famille=\"agricole\" data-couverture=\"partiel\" data-fiabilite=\"haute\">",
