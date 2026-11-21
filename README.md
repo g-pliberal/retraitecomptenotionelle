@@ -108,8 +108,8 @@ Scénario                                                          Courants   Co
 > de faire porter toute la baisse par la part salariale, qui tombe de <!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=salarie)-->11,31<!--/--> à
 > **<!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=salarie&systeme=proposition)-->6,33<!--/-->**. C'est le seul partage dont la baisse arrive sur la fiche le
 > lendemain de la réforme, sans supposer qu'un employeur rende son économie, et
-> le seul qui rende quelque chose au voisinage du SMIC : +<!--chiffre:mesure(gain_net?exemple=salaire_moyen&en=mensuel)-->209<!--/--> € par mois au
-> salaire moyen, +<!--chiffre:mesure(gain_net?exemple=smic&en=mensuel)-->93<!--/--> € au SMIC, à coût du travail inchangé — et davantage le
+> le seul qui rende quelque chose au voisinage du SMIC : +<!--chiffre:mesure(gain_net?exemple=salaire_moyen&en=mensuel)-->194<!--/--> € par mois au
+> salaire moyen, +<!--chiffre:mesure(gain_net?exemple=smic&en=mensuel)-->84<!--/--> € au SMIC, à coût du travail inchangé — et davantage le
 > premier mois, avant que le brut ne s'ajuste. Le prix à payer est que le
 > salaire **brut** ne monte pas, donc ni les droits qui en dépendent, ni le
 > crédit au compte notionnel ; le partage inverse le ferait monter,
@@ -183,7 +183,7 @@ de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Lire une page transfère son
 texte et de quoi l'animer : <!--chiffre:poids_comprime(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->169<!--/--> Ko compressés
 (<!--chiffre:poids(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->547<!--/--> Ko bruts) pour l'accueil. Le premier calcul y ajoute
-le moteur, <!--chiffre:poids_comprime(moteur/js/*.js + moteur/js/droit/*.js - moteur/js/routeur.js - moteur/js/adresses.js - moteur/js/cles.js - moteur/js/gabarit.js - moteur/js/format.js - moteur/js/calendrier.js - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->969<!--/--> Ko compressés, et le paquet
+le moteur, <!--chiffre:poids_comprime(moteur/js/*.js + moteur/js/droit/*.js - moteur/js/routeur.js - moteur/js/adresses.js - moteur/js/cles.js - moteur/js/gabarit.js - moteur/js/format.js - moteur/js/calendrier.js - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->970<!--/--> Ko compressés, et le paquet
 de données, <!--chiffre:poids_comprime(moteur/donnees.json)-->835<!--/--> Ko compressés (<!--chiffre:poids(moteur/donnees.json)-->6 171<!--/--> Ko bruts) ; le tout prend quelques dixièmes
 de seconde, et les chargements suivants sont immédiats.
 
@@ -1089,7 +1089,7 @@ contre-intuitif. Deux impôts du poste seulement sortent d'une rémunération :
 sécurité sociale verse une part à la branche vieillesse, et **le forfait
 social**, que l'article L. 241-3, 1° lui donne en entier — ensemble
 <!--chiffre:mesure(restitution?quoi=part_du_poste&annee=2026)-->28<!--/--> % du poste. Ils sont supprimés. Le solde revient en
-**<!--chiffre:mesure(restitution?quoi=points_csg&annee=2026)-->1,12<!--/--> point de CSG d'activité**, et il faut dire pourquoi ce n'est pas une
+**<!--chiffre:mesure(restitution?quoi=points_csg&annee=2026)-->0,69<!--/--> point de CSG d'activité**, et il faut dire pourquoi ce n'est pas une
 restitution : **la CSG sur les revenus d'activité ne finance aujourd'hui
 aucune retraite.** L'article L. 131-8, 3° la répartit entre la CNAF,
 l'assurance maladie, la CADES, l'Unédic et la CNSA, et rien à la vieillesse ;
@@ -1104,7 +1104,7 @@ traitement — l'autre moitié paie la dette de pensions déjà promises, qui re
 due. Une part n'entre pas dans ce partage : ce que le taux payait de départs
 anticipés, que la proposition supprime, et que l'État garde en entier. Sur la
 fiche de paie de la fonctionnaire de l'exemple du §3, c'est
-**+<!--chiffre:mesure(gain_net?exemple=fonctionnaire)-->25,5<!--/--> % de traitement net** en 2026, et à tous les niveaux de traitement :
+**+<!--chiffre:mesure(gain_net?exemple=fonctionnaire)-->24,9<!--/--> % de traitement net** en 2026, et à tous les niveaux de traitement :
 ni réduction générale ni plafond ne viennent courber le calcul. Ce n'est ni
 l'incidence intégrale, qui lui prêterait toute la contribution comme si elle
 avait été son salaire différé, ni l'assiette fixe, qui ne lui en rendrait
@@ -1112,7 +1112,7 @@ rien : mettre le partage à zéro rend l'ancienne convention. Pour un militaire,
 l'État verse <!--chiffre:cellule(data/reference/legislation/contribution_employeur_militaires.csv:taux*100?annee=2026)-->126,07<!--/--> % de la solde, dont <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*-100?population=militaires&poste=avantages_professionnels)-->33,8<!--/--> points paient ses départs anticipés (<!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*-100?population=civils&poste=avantages_professionnels)-->1,5<!--/--> point
 pour un civil, au tableau n° 15 de la Cour des comptes). L'État garde ces
 points ; la même moitié de ce qui reste, un écart plus grand que celui d'un
-civil, fait **+<!--chiffre:mesure(gain_net?exemple=fonctionnaire&affiliation=militaire)-->29,6<!--/--> %** de solde nette sur la même carrière.
+civil, fait **+<!--chiffre:mesure(gain_net?exemple=fonctionnaire&affiliation=militaire)-->28,9<!--/--> %** de solde nette sur la même carrière.
 
 **Et les pensions LIQUIDÉES suivent la règle d'indexation, comme le compte qui
 les a produites.** Un système notionnel a deux règles d'indexation — celle du

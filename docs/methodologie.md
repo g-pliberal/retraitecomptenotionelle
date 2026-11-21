@@ -2126,7 +2126,7 @@ branche vieillesse dans sa version en vigueur au 1er février 2026, et le
 **forfait social**, que l'article L. 241-3, 1° lui donne en entier — ensemble
 <!--chiffre:mesure(restitution?quoi=part_du_poste&annee=2024)-->28<!--/--> % du poste en 2024, entre <!--chiffre:mesure(restitution?quoi=part_du_poste&annee=2019)-->27<!--/--> % en 2019 et <!--chiffre:mesure(restitution?quoi=part_du_poste&annee=2020)-->29<!--/--> % en 2020. Ils sont
 supprimés. Le solde revient par une baisse de la CSG sur les revenus
-d'activité, de <!--chiffre:mesure(restitution?quoi=points_csg&annee=2026)-->1,1<!--/--> point en 2026.
+d'activité, de <!--chiffre:mesure(restitution?quoi=points_csg&annee=2026)-->0,7<!--/--> point en 2026.
 
 Et il faut dire ce que cette baisse n'est pas. **La CSG sur les revenus
 d'activité ne finance aujourd'hui aucune retraite** : ses <!--chiffre:illustration()-->9,20<!--/--> points vont à la

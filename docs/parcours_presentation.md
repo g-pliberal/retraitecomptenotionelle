@@ -160,8 +160,8 @@ Comment les lire, et c'est la chose la plus importante de la présentation :
 
 Puis, sous les quatre lignes, le bloc **« Et pendant que vous cotisez »** :
 une réforme change aussi la fiche de paie. Sur l'exemple, le salaire net
-mensuel passe de <!--chiffre:mesure(simulateur?systeme=1&quoi=salaire&montants=net)-->2 383<!--/--> € à <!--chiffre:mesure(simulateur?systeme=4&quoi=salaire&montants=net)-->2 554<!--/--> €, soit **<!--chiffre:mesure(simulateur?systeme=4&quoi=gain&montants=net)-->+171<!--/--> € par mois** à coût du
-travail inchangé pour l'employeur, et <!--chiffre:mesure(simulateur?quoi=gain_cumule&montants=net)-->+114 720<!--/--> € sur les <!--chiffre:mesure(simulateur?quoi=annees&montants=net)-->38<!--/--> années qui
+mensuel passe de <!--chiffre:mesure(simulateur?systeme=1&quoi=salaire&montants=net)-->2 383<!--/--> € à <!--chiffre:mesure(simulateur?systeme=4&quoi=salaire&montants=net)-->2 541<!--/--> €, soit **<!--chiffre:mesure(simulateur?systeme=4&quoi=gain&montants=net)-->+158<!--/--> € par mois** à coût du
+travail inchangé pour l'employeur, et <!--chiffre:mesure(simulateur?quoi=gain_cumule&montants=net)-->+107 108<!--/--> € sur les <!--chiffre:mesure(simulateur?quoi=annees&montants=net)-->38<!--/--> années qui
 restent avant le départ. C'est le net plein : la proposition prélève <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal+taux_capitalisation_obligatoire)-->23<!--/--> %
 pour la retraite et rien d'autre, quand le droit en vigueur en prélève <!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=total)-->28<!--/-->.
 Celui qui verse en plus les <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->5<!--/--> % volontaires retrouve l'effort d'aujourd'hui,
