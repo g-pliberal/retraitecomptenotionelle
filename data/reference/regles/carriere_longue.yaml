@@ -11,7 +11,18 @@ intitule: >-
 regimes: [cancava, cnavpl, cnracl, fonction_publique_etat, fspoeie, msa_non_salaries,
   msa_salaries, organic, regime_general, rsi]
 etat: conforme
+domaine: depart_anticipe
 etape: ouvrir_le_droit
+lit:
+- la date de naissance de la personne, au mois
+- la durée d'assurance validée jusqu'à la fin de l'année de la borne de début
+- la durée cotisée, périodes réputées comprises, et la durée d'assurance tous régimes
+- liquidation.date_effet
+ecrit:
+- l'âge de départ anticipé que « ouvrir le droit » oppose au départ, et que la datation
+  des départs lit
+dates_qui_decident:
+- liquidation.date_effet
 effet: >-
   Tout départ avant l'âge légal. Les quatre-vingts portes de 2004 à 2026 sont lues
   et certifiées (action 27) : celles de 2011 et de 2012 génération par génération
@@ -277,20 +288,261 @@ sources:
     date: 2026-09-01
 textes_a_rattacher:
 - reference: L. 351-1-1 CSS
-- reference: D. 351-1-1 CSS (décret n° 2026-345 du 7 mai 2026)
 - {id: LEGIARTI000053365409, article: "D. 732-40 du code rural", en_vigueur: 2026-01-01, change: "pensions prenant effet à compter du 1er janvier 2026 (décret n° 2025-1410) : l'article ne garde que le début d'activité du non-salarié agricole, quatre trimestres validés à son régime à la fin de l'année de l'anniversaire, « par dérogation à l'article D. 351-1-3 » ; l'abaissement de l'âge n'y est plus, L. 732-18-1 étant abrogé le même jour. Voie lue le 12 novembre 2026, non portée par le modèle (sources.a_relire)"}
-exemples:
-- cnav_2026_29_racl_1964
-- cnav_2026_29_racl_1965_premier_trimestre
-- cnav_2026_29_racl_1965_apres_avril
-- cnav_2026_29_racl_1967
-- cnav_2026_29_racl_1970
-- cnav_2026_29_racl_1971
-- ur_racl_1965_decembre
-- ur_racl_1966_avant_20
-- ur_racl_1966_avant_21
-- ur_racl_1968_avant_18
-- ur_racl_1969_avant_16
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1 ; note de
+# décision 0009, étape 3, troisième session). Chacune désigne ses portes dans
+# `legislation/carriere_longue_par_version.csv`, que le récupérateur lit dans l'index
+# LEGI, rédaction par rédaction ; une porte du II que le texte écrit par renvoi à l'âge
+# légal n'y a pas de ligne : la version porte le renvoi (`contenu.renvois`), que le moteur
+# suit contre la version de l'âge légal de la même date, à la génération de l'assuré.
+versions:
+- id: avant_la_loi_de_2003
+  statut: lue
+  textes:
+  - id: LEGIARTI000006736521
+    article: >-
+      D. 351-1-1, rédaction du décret n° 2003-1036 du 30 octobre 2003, qui crée l'article ;
+      son article 7 l'applique aux « pensions prenant effet postérieurement au 31 décembre
+      2003 » (JORFARTI000001667141)
+    en_vigueur: 2003-10-31
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [null, 2004-01-01]
+  contenu:
+    droit: >-
+      pas de départ anticipé pour carrière longue : L. 351-1-1 et D. 351-1-1 ne valent que
+      pour les pensions prenant effet à compter du 1er janvier 2004
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun n'ouvre une carrière longue avant 2004
+- id: loi_de_2003
+  statut: lue
+  nee_de: LEGIARTI000006736521
+  textes:
+  - id: LEGIARTI000006736521
+    article: >-
+      D. 351-1-1, rédaction du décret n° 2003-1036 du 30 octobre 2003 (article 7 :
+      « pensions prenant effet postérieurement au 31 décembre 2003 »)
+    en_vigueur: 2003-10-31
+    citation: >-
+      « […] d'une durée minimale d'assurance ou de périodes reconnues équivalentes au
+      moins égale à la limite fixée en application du deuxième alinéa de l'article
+      L. 351-1 majorée de huit trimestres : 1° A cinquante-six ans pour les assurés
+      justifiant d'une durée d'assurance ayant donné lieu à cotisations à leur charge au
+      moins égale à la durée minimale mentionnée au premier alinéa du présent article et
+      ayant débuté leur activité avant l'âge de seize ans ; 2° A cinquante-huit ans […] »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2011-07-01]
+  contenu:
+    droit: >-
+      trois portes, pour toute génération : 56 ans avec huit trimestres cotisés au-delà de
+      la durée requise et 58 ans avec quatre, pour qui a débuté avant seize ans ; 59 ans
+      avec la durée requise cotisée, pour qui a débuté avant dix-sept ans ; et, de tous,
+      une durée d'assurance tous régimes de huit trimestres au-delà de la durée requise
+    table:
+      fichier: legislation/carriere_longue_par_version.csv
+      lignes:
+        entree_en_vigueur: ['2004-01-01']
+      cle: generation
+      valeur: age_depart
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) et dans la circulaire Cnav n° 2003-46, que la
+    fiche cite : ni l'une ni l'autre ne chiffre une porte de 2004 à juin 2011
+- id: loi_de_2010
+  statut: lue
+  nee_de: LEGIARTI000023397567
+  textes:
+  - id: LEGIARTI000023397567
+    article: >-
+      D. 351-1-1, rédaction du décret n° 2010-1734 du 30 décembre 2010, dont l'article 11
+      l'applique « aux pensions prenant effet à compter du 1er juillet 2011 »
+    en_vigueur: 2011-07-01
+    citation: >-
+      « Décret n° 2010-1734 du 30 décembre 2010 art. 11 : Ces dispositions sont
+      applicables aux pensions prenant effet à compter du 1er juillet 2011. »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2011-07-01, 2012-11-01]
+  contenu:
+    droit: >-
+      les âges de départ relevés avec l'âge légal (loi n° 2010-1330), génération par
+      génération sous des en-têtes « Pour les assurés nés en 1953 : », chaque bloc aux
+      seules générations qu'il nomme ; la porte des dix-huit ans pour les nés à compter du
+      1er juillet 1951 ; la durée d'assurance de huit trimestres au-delà de la durée
+      requise, toujours
+    table:
+      fichier: legislation/carriere_longue_par_version.csv
+      lignes:
+        entree_en_vigueur: ['2011-07-01']
+      cle: generation
+      valeur: age_depart
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne prend effet de juillet 2011 à
+    octobre 2012 par la carrière longue
+- id: decret_de_2012
+  statut: lue
+  nee_de: LEGIARTI000026139949
+  textes:
+  - id: LEGIARTI000026139949
+    article: >-
+      D. 351-1-1, rédaction du décret n° 2012-847 du 2 juillet 2012, dont l'article 14
+      l'applique aux « pensions prenant effet à compter du 1er novembre 2012 »
+      (circulaire Cnav n° 2012-60, point 5)
+    en_vigueur: 2012-11-01
+    citation: >-
+      « I.-L'âge prévu au premier alinéa de l'article L. 351-1 est abaissé, en application
+      de l'article L. 351-1-1, à soixante ans, pour les assurés qui justifient d'une durée
+      d'assurance cotisée […] au moins égale à celle prévue au deuxième alinéa de l'article
+      L. 351-1 et qui ont débuté leur activité avant l'âge de vingt ans. »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2012-11-01, 2023-09-01]
+  contenu:
+    droit: >-
+      soixante ans pour qui a débuté avant vingt ans, toute génération ; au II, les portes
+      d'avant soixante ans des nés de 1952 à 1960 et au-delà, bloc par bloc ; la seule durée
+      cotisée, sans durée d'assurance tous régimes
+    table:
+      fichier: legislation/carriere_longue_par_version.csv
+      lignes:
+        entree_en_vigueur: ['2012-11-01']
+      cle: generation
+      valeur: age_depart
+  exemples:
+  - cnav_2023_19_duree_1962_avant_septembre
+  - cnav_2023_19_duree_1963_avant_septembre
+- id: decret_de_2023
+  statut: lue
+  nee_de: LEGIARTI000047634571
+  textes:
+  - id: LEGIARTI000047634571
+    article: >-
+      D. 351-1-1, rédaction du décret n° 2023-436 du 3 juin 2023, dont l'article 9
+      l'applique « aux pensions prenant effet à compter du 1er septembre 2023 »
+    en_vigueur: 2023-09-01
+    citation: >-
+      « 1° A cinquante-huit ans pour les assurés qui ont débuté leur activité avant l'âge
+      de seize ans ; 2° A soixante ans […] avant l'âge de dix-huit ans ; 3° A soixante-deux
+      pour les assurés qui ont débuté leur activité avant l'âge de vingt ans ; 4° A
+      soixante-trois ans […] avant l'âge de vingt-et-un ans. II.-Les dispositions du 3° du
+      I s'appliquent aux assurés nés entre le 1er septembre 1961 et le 31 décembre 1969
+      sous réserve des adaptations suivantes : 1° Pour les assurés nés entre le 1er
+      septembre 1961 et 31 août 1963 inclus, le nombre : “ soixante-deux ” est remplacé
+      par le nombre : “ soixante ” ; 2° Pour les assurés nés entre le 1er septembre 1963 et
+      le 31 décembre 1968 inclus, les mots : “ soixante-deux ans ” sont remplacés par les
+      mots : “ l'âge prévu à l'article L. 161-17-2 minoré de deux ans et six mois ” ; 3°
+      Pour les assurés nés en 1969, les mots : “ soixante-deux ans ” sont remplacés par
+      les mots : “ soixante-et-un ans et neuf mois ”. »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2023-09-01, 2026-09-01]
+  contenu:
+    droit: >-
+      quatre portes, aux âges que le I écrit en clair — 58, 60, 62 et 63 ans —, qui ne sont
+      pas l'âge légal diminué de quoi que ce soit ; la porte des vingt ans adaptée au II :
+      60 ans pour les nés de septembre 1961 à août 1963, l'âge légal de la génération
+      moins deux ans et six mois de septembre 1963 à 1968, 61 ans et 9 mois en 1969
+    table:
+      fichier: legislation/carriere_longue_par_version.csv
+      lignes:
+        entree_en_vigueur: ['2023-09-01']
+      cle: generation
+      valeur: age_depart
+    renvois:
+    - fiche: age_legal_par_generation
+      valeur: age
+      de: assure
+      date: liquidation.date_effet
+      retranche: {ans: 2, mois: 6}
+      naissance: [1963-09-01, 1969-01-01]
+      ligne: {age_debut_maximum: 20}
+      texte: LEGIARTI000047634571
+  exemples:
+  - cnracl_carriere_longue_avant_soixante_ans
+- id: decret_de_2026
+  statut: lue
+  nee_de: LEGIARTI000054059621
+  textes:
+  - id: LEGIARTI000054059621
+    article: >-
+      D. 351-1-1, rédaction du décret n° 2026-345 du 7 mai 2026, dont l'article 4
+      l'applique « aux pensions prenant effet à compter du 1er septembre 2026 »
+    en_vigueur: 2026-09-01
+    citation: >-
+      « II. - Les dispositions du 3° du I s'appliquent aux assurés nés entre le 1er
+      septembre 1961 et le 31 décembre 1970 sous réserve des adaptations suivantes : 1°
+      […] “ soixante ” ; 2° Pour les assurés nés entre le 1er septembre 1963 et le 31
+      décembre 1963 inclus et pour les assurés nés entre le 1 er janvier 1966 et le 31
+      décembre 1969 inclus, les mots : “ soixante-deux ans ” sont remplacés par les mots :
+      “ l'âge prévu à l'article L. 161-17-2 minoré de deux ans et six mois ” ; 3° Pour les
+      assurés nés en 1964 […] “soixante ans et six mois” ; 4° Pour les assurés nés entre
+      le 1 er janvier 1965 et le 30 novembre 1965 inclus et pour les assurés nés entre le
+      1 er décembre et le 31 décembre 1965 inclus, […] “soixante ans et neuf mois” et
+      “soixante ans et huit mois” ; 5° Pour les assurés nés en 1970, […] “ soixante-et-un
+      ans et neuf mois ”. »
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2026-09-01, null]
+  contenu:
+    droit: >-
+      les quatre portes du I inchangées ; la porte des vingt ans adaptée au II : par renvoi
+      à l'âge légal, celui de la suspension, moins deux ans et six mois pour les nés de
+      septembre à décembre 1963 et de 1966 à 1969 ; en clair, 60 ans et 6 mois en 1964,
+      60 ans et 9 mois de janvier à novembre 1965, 60 ans et 8 mois en décembre 1965,
+      61 ans et 9 mois en 1970. Aucun de ces âges écrits n'est l'âge légal de la
+      suspension moins deux ans (62 ans et 9 mois en 1964, 63 ans d'avril à décembre
+      1965) : la table est celle du texte, non une copie
+    table:
+      fichier: legislation/carriere_longue_par_version.csv
+      lignes:
+        entree_en_vigueur: ['2026-09-01']
+      cle: generation
+      valeur: age_depart
+    renvois:
+    - fiche: age_legal_par_generation
+      valeur: age
+      de: assure
+      date: liquidation.date_effet
+      retranche: {ans: 2, mois: 6}
+      naissance: [1963-09-01, 1964-01-01]
+      ligne: {age_debut_maximum: 20}
+      texte: LEGIARTI000054059621
+    - fiche: age_legal_par_generation
+      valeur: age
+      de: assure
+      date: liquidation.date_effet
+      retranche: {ans: 2, mois: 6}
+      naissance: [1966-01-01, 1970-01-01]
+      ligne: {age_debut_maximum: 20}
+      texte: LEGIARTI000054059621
+  exemples:
+  - cnav_2026_29_racl_1964
+  - cnav_2026_29_racl_1965_premier_trimestre
+  - cnav_2026_29_racl_1965_apres_avril
+  - cnav_2026_29_racl_1967
+  - cnav_2026_29_racl_1970
+  - cnav_2026_29_racl_1971
+  - ur_racl_1965_decembre
+  - ur_racl_1966_avant_20
+  - ur_racl_1966_avant_21
+  - ur_racl_1968_avant_18
+  - ur_racl_1969_avant_16
+  - ur_racl_1970_avant_16
+  - ur_racl_1970_avant_18
+textes_sans_effet:
+- id: LEGIARTI000053356023
+  article: D. 351-1-1 CSS
+  en_vigueur: 2026-01-01
+  motif: >-
+    le décret n° 2025-1410 réécrit l'article pour les pensions prenant effet à compter du
+    1er janvier 2026 sans changer une porte : le I et le II mot pour mot ceux de la
+    rédaction du 1er septembre 2023 (lu le 21 novembre 2026)
 reformes:
 - reforme_2023
 - lfss_2026_suspension
@@ -307,37 +559,44 @@ referents:
       de son année partagée que TRAJECTOiRE compte en trop (registre)
 code:
   moteur: >-
-    `CarriereLongue` lit `carriere_longue.csv`, une porte par ligne : sa date d'effet,
-    ses générations, de `generation` à `generation_fin` exclue, sa borne d'entrée et ses
-    trimestres de début, son âge de départ, les trimestres cotisés qu'elle demande
-    au-delà de la durée requise et, jusqu'en octobre 2012, les trimestres d'assurance.
-    `_portes` retient celles du texte en vigueur à la date d'effet, chacune aux seules
-    générations qu'elle nomme, une par couple de borne et de supplément ; aux
-    fonctionnaires, chacune à sa date et sur leur durée fixe d'avant 2009
-    (`de_la_fonction_publique`, `_requis`). `_entree_precoce` lit la durée d'assurance
-    validée, périodes assimilées comprises, jusqu'à la fin de l'année civile de la borne :
-    cinq trimestres, quatre au né du dernier trimestre, que l'année même de
-    l'anniversaire doit porter avant novembre 2012. `age_de_depart` ouvre la plus
-    précoce des portes dont la durée cotisée, réputée comprise (`cotises_reputes`),
-    atteint la durée requise et le supplément, et dont la durée d'assurance tous régimes
-    (`duree_d_assurance`) atteint, quand la ligne le demande, la durée requise et ses
-    huit trimestres ; `age_propose` projette les mêmes conditions pour dater un départ.
-    `ouvrir` l'oppose au départ, sur les régimes qui opposent une durée ;
-    `age_carriere_longue` et `_carriere_longue_acquise` la lisent pour dater celui d'une
-    carrière, `ouverture_carriere_longue` pour un fonctionnaire. `avant` la ramène aux
-    décrets d'avant une date, pour un droit contrefactuel.
+    `CarriereLongue` lit les versions de cette fiche, que le paquet porte
+    (`fiches_datees`) : la date d'effet de la pension choisit la version (`version`),
+    et ses portes, que la version désigne dans `carriere_longue_par_version.csv`, une
+    par ligne : ses générations, de `generation` à `generation_fin` exclue, sa borne
+    d'entrée et ses trimestres de début, son âge de départ, les trimestres cotisés
+    qu'elle demande au-delà de la durée requise et, jusqu'en octobre 2012, les
+    trimestres d'assurance. Un renvoi de la version (`_lignes`) écrit la porte qu'il
+    adapte, aux seules générations que le texte lui nomme, à l'âge légal de la
+    génération dans la version de la même date, moins ce qu'il retranche
+    (`valeurDuRenvoi`). `portes` retient, à la génération de l'assuré, une porte par
+    couple de borne et de supplément ; aux fonctionnaires, chacune à sa date et sur
+    leur durée fixe d'avant 2009 (`deLaFonctionPublique`, `requisDe`).
+    `entreePrecoce` lit la durée d'assurance validée, périodes assimilées comprises,
+    jusqu'à la fin de l'année civile de la borne : cinq trimestres, quatre au né du
+    dernier trimestre, que l'année même de l'anniversaire doit porter avant novembre
+    2012. `ageDeDepart` ouvre la plus précoce des portes dont la durée cotisée,
+    réputée comprise (`cotisesReputes`), atteint la durée requise et le supplément,
+    et dont la durée d'assurance tous régimes atteint, quand la ligne le demande, la
+    durée requise et ses huit trimestres ; `agePropose` projette les mêmes conditions
+    pour dater un départ. Sous un droit contrefactuel, la pile de couches remplace la
+    fiche (`remplacer_une_version`) : la version d'avant la réforme vaut sans fin.
+    `legislation/carriere_longue.csv`, indexée par l'année décimale de la date
+    d'effet, chaque renvoi résolu, est la vue fabriquée des versions
+    (`tables_de_version.vue_de_la_carriere_longue`), que la certification relit.
   javascript: >-
-    moteur/js/regimes.js : CarriereLongue, CarriereLongue.portes,
-    CarriereLongue.deLaFonctionPublique, CarriereLongue.requisDe,
-    CarriereLongue.entreePrecoce, CarriereLongue.ageDeDepart, CarriereLongue.agePropose,
-    CarriereLongue.avant ; moteur/js/droit/ouvrir.js : ouvrir, ageCarriereLongue,
+    moteur/js/regimes.js : CarriereLongue, CarriereLongue.version,
+    CarriereLongue.portes, CarriereLongue.deLaFonctionPublique,
+    CarriereLongue.requisDe, CarriereLongue.entreePrecoce, CarriereLongue.ageDeDepart,
+    CarriereLongue.agePropose ; moteur/js/droit/ouvrir.js : ouvrir, ageCarriereLongue,
     dureeDAssurance, ouvertureCarriereLongue ; moteur/js/droit/departs.js :
     carriereLongueAcquise
   parametres: >-
-    legislation/carriere_longue.csv : date_effet, generation, generation_fin,
-    age_debut_maximum, trimestres_debut, age_depart, trimestres_supplementaires,
-    trimestres_assurance_supplementaires
+    legislation/carriere_longue_par_version.csv : entree_en_vigueur, generation,
+    generation_fin, age_debut_maximum, trimestres_debut, age_depart,
+    trimestres_supplementaires, trimestres_assurance_supplementaires
   tests:
+  - tests/test_carriere_longue_versions.py
+  - tests/js/carriere-longue-versions.test.js
   - tests/test_simulateur.py
   - tests/test_cnracl.py
   - tests/test_droits_contrefactuels.py

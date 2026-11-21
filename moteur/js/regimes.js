@@ -2261,13 +2261,16 @@ export class MajorationsEnfantsPoints {
  * des informations que le modèle n'a pas.
  */
 export class CarriereLongue {
-  constructor(paquet) {
-    // { date d'effet (année décimale) : [[génération, première génération
-    //   qu'elle ne vise plus, âge de début maximum, trimestres de début, âge de
-    //   départ, trimestres supplémentaires, trimestres d'assurance au-delà de
-    //   la durée requise (null depuis 2012), fiabilité], …] }
-    this._table = paquet.carriere_longue ?? {};
-    this._dates = Object.keys(this._table).map(Number).sort((a, b) => a - b);
+  /**
+   * Les portes se lisent dans les versions de la fiche `carriere_longue`, que
+   * le paquet porte (`fiches_datees`, note de décision 0009, étape 3) : la
+   * date d'effet de la pension choisit la version, la génération ses portes.
+   * Sous un droit contrefactuel, la fiche est celle que sa pile de couches a
+   * résolue (`fiches`) : la couche garde la version d'avant la réforme qu'elle
+   * écarte.
+   */
+  constructor(paquet, fiches = null) {
+    this._fiches = fiches ?? new FichesDatees(paquet);
     // Les rédactions de D. 351-1-2, que le paquet porte parmi les versions
     // des fiches : ses natures réputées cotisées et leurs limites.
     this._reputes = (paquet.versions_des_fiches ?? {})[CarriereLongue.FICHE_DES_REPUTES]
@@ -2275,56 +2278,77 @@ export class CarriereLongue {
   }
 
   /**
-   * La même table, sans les textes qui prennent effet à compter de `[annee,
-   * mois]` : la carrière longue d'un droit contrefactuel — portage de
-   * `CarriereLongue.avant`.
+   * La version de la fiche qui vaut pour une pension prenant effet à
+   * `dateEffet` (AAAA-MM-JJ), telle que le paquet la porte ; `null` sans
+   * fiche ou sans version.
    */
-  avant([annee, mois]) {
-    const limite = Math.round((annee + (mois - 1) / 12.0) * 1000) / 1000;
-    // Une copie, comme le Python : le reste de l'instance — les rédactions de
-    // D. 351-1-2 — reste celui du droit en vigueur.
-    const copie = Object.assign(Object.create(CarriereLongue.prototype), this);
-    copie._table = Object.fromEntries(Object.entries(this._table)
-      .filter(([effet]) => Number(effet) < limite - 1e-9));
-    copie._dates = Object.keys(copie._table).map(Number).sort((a, b) => a - b);
-    return copie;
+  version(dateEffet) {
+    return this._fiches.versionAuxDates(CarriereLongue.FICHE, { [DATE_D_EFFET]: dateEffet });
   }
 
   /**
-   * Les portes opposables à cette carrière : celles du texte en vigueur à sa
-   * date d'effet, et pour chaque porte — borne d'entrée ET supplément de
+   * Les portes qu'une version ouvre à une génération, pour une pension
+   * prenant effet à `dateEffet` : ses lignes, et celles que ses renvois
+   * écrivent. Un renvoi (« l'âge prévu à l'article L. 161-17-2 minoré de deux
+   * ans et six mois », D. 351-1-1, II, depuis 2023) ne vaut que pour les
+   * générations que le texte lui nomme ; il prend la porte de la règle
+   * générale qu'il adapte (`ligne`), à l'âge qu'il lit dans la version de
+   * l'âge légal de la même date, pour la génération de l'assuré.
+   */
+  _lignes(version, dateEffet, generation) {
+    const lignes = [...(version.portes ?? [])];
+    for (const renvoi of version.renvois ?? []) {
+      const [debut, fin] = renvoi.generations ?? [null, null];
+      if ((debut !== null && generation < debut - 1e-9)
+          || (fin !== null && generation > fin - 1e-9)) {
+        continue;
+      }
+      const modele = lignes.find((porte) => porte[0] === CarriereLongue.GENERATION_GENERALE
+        && Object.entries(renvoi.ligne ?? {}).every(([colonne, valeur]) =>
+          porte[CarriereLongue.COLONNES.indexOf(colonne)] === valeur));
+      const ici = `${CarriereLongue.FICHE}.${version.id}`;
+      if (modele === undefined) {
+        throw new Error(`${ici} : le renvoi adapte une porte que la version n'écrit pas`);
+      }
+      const lu = valeurDuRenvoi(this._fiches, ici, renvoi, dateEffet, generation);
+      if (lu === null) {
+        continue;
+      }
+      const porte = [...modele];
+      porte[0] = debut ?? CarriereLongue.GENERATION_GENERALE;
+      porte[1] = fin;
+      porte[4] = lu[0];
+      porte[7] = Math.min(modele[7], lu[1]);
+      lignes.push(porte);
+    }
+    return lignes;
+  }
+
+  /**
+   * Les portes opposables à cette carrière : celles de la version en vigueur
+   * à sa date d'effet, et pour chaque porte — borne d'entrée ET supplément de
    * trimestres —, parmi les lignes qui couvrent sa génération, celle de la
    * plus haute génération (D. 351-1-1, II). Une ligne ne couvre que les
    * générations que le texte lui nomme, jusqu'à sa fin exclue : la porte des
    * débuts avant dix-sept ans du décret du 2 juillet 2012 ne s'ouvre qu'aux
    * nés de 1952 et de 1953. Une borne d'entrée peut ouvrir deux portes :
    * avant 2023, débuter avant seize ans ouvrait cinquante-six ans avec huit
-   * trimestres de plus, ou cinquante-huit avec quatre.
+   * trimestres de plus, ou cinquante-huit avec quatre. `null` quand la version
+   * n'en porte aucune, avant 2004.
    */
   portes(carriere, fonctionPublique = false) {
-    if (this._dates.length === 0) {
-      return null;
-    }
     const date = carriere.dateLiquidation;
-    // À la précision de la table : sans l'arrondi, le premier mois d'un
-    // décret de septembre lisait encore le décret d'avant.
-    const effet = Math.round((date.annee + (date.mois - 1) / 12.0) * 1000) / 1000;
-    if (effet < this._dates[0]) {
+    const dateEffet = `${String(date.annee).padStart(4, "0")}-`
+      + `${String(date.mois).padStart(2, "0")}-01`;
+    const version = this.version(dateEffet);
+    if (version === null || !version.portes) {
       return null;
     }
-    let applicable = this._dates[0];
-    for (const candidate of this._dates) {
-      if (candidate > effet + 1e-9) {
-        break;
-      }
-      applicable = candidate;
-    }
-    const cle = Object.keys(this._table).find((k) => Number(k) === applicable);
     const generation = carriere.generation;
     const retenues = new Map();
     for (const [gen, fin, ageMax, trimestresDebut, ageDepart, supplement, assurance, fiabilite]
-      of this._table[cle]) {
-      if (gen > generation + 1e-9 || generation > fin - 1e-9) {
+      of this._lignes(version, dateEffet, generation)) {
+      if (gen > generation + 1e-9 || (fin !== null && generation > fin - 1e-9)) {
         continue;
       }
       const clePorte = `${ageMax}|${supplement}`;
@@ -2610,6 +2634,18 @@ CarriereLongue.DUREE_FIXE_FONCTION_PUBLIQUE = 160;
 CarriereLongue.DUREE_FIXE_FONCTION_PUBLIQUE_AVANT = new DateMois(2009, 1).rang;
 /** Les rédactions de D. 351-1-2, une version par rédaction qui change ce qu'il répute cotisé. */
 CarriereLongue.FICHE_DES_REPUTES = "carriere_longue_reputes_cotises_autres";
+/** La fiche des portes (D. 351-1-1), que le paquet porte dans `fiches_datees`. */
+CarriereLongue.FICHE = "carriere_longue";
+/** La génération de la règle générale, celle que les adaptations du II précisent. */
+CarriereLongue.GENERATION_GENERALE = 1900;
+/**
+ * Les colonnes d'une porte du paquet, dans l'ordre (`COLONNES_DES_PORTES` de
+ * `donnees/tables_de_version.py`) : un renvoi nomme la porte qu'il adapte par
+ * l'une d'elles.
+ */
+CarriereLongue.COLONNES = ["generation", "generation_fin", "age_debut_maximum",
+  "trimestres_debut", "age_depart", "trimestres_supplementaires",
+  "trimestres_assurance_supplementaires", "fiabilite"];
 
 /**
  * Barème DATÉ de la surcote — D. 351-1-4 du code de la sécurité sociale,

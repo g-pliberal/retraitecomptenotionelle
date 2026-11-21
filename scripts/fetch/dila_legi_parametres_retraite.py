@@ -755,7 +755,7 @@ def _age_cite(texte: str) -> float | None:
 
 
 def _adaptations(partie: str, age_general: float, age_debut: int,
-                 ages: dict[int, dict[int, float]]) -> dict[float, float]:
+                 ages: dict[int, dict[int, float]] | None) -> dict[float, float | tuple]:
     """La borne des vingt ans par génération, résolue depuis le II.
 
     Chaque alinéa nomme une ou deux périodes de naissance et ce qui remplace
@@ -764,6 +764,10 @@ def _adaptations(partie: str, age_general: float, age_debut: int,
     la table d'âge en vigueur à la date d'effet de la version. Après la
     dernière génération que le II adapte, la règle générale reprend, et la
     table le dit d'une ligne.
+
+    Sans ``ages``, le renvoi ne se résout pas : ses mois portent ce qu'il
+    retranche, ``("minore", ans, mois)``, que la version de la fiche garde
+    comme un renvoi (:func:`carriere_longue_par_version`).
     """
     del age_debut  # la porte adaptée est identifiée par l'appelant
     par_mois: dict[int, dict[int, float]] = {}
@@ -788,6 +792,9 @@ def _adaptations(partie: str, age_general: float, age_debut: int,
                 for m in mois:
                     if fixe is not None:
                         valeur = fixe
+                    elif minore and ages is None:
+                        valeur = ("minore", nombre_en_lettres(minore.group(1)) or 0,
+                                  nombre_en_lettres(minore.group(2)) or 0)
                     elif minore and annee in ages and m in ages[annee]:
                         offset = (nombre_en_lettres(minore.group(1)) or 0) \
                             + (nombre_en_lettres(minore.group(2)) or 0) / 12.0
@@ -894,6 +901,61 @@ def _portes(texte: str, effet: str) -> list[dict]:
     return portes
 
 
+def _lignes_de_la_version(texte: str, effet: str,
+                          versions_age: list[tuple[str, str]] | None) -> list[dict]:
+    """Les portes d'une rédaction de D. 351-1-1 : celles qu'elle écrit, et
+    celles que son II adapte. ``versions_age`` résout le renvoi du II à l'âge
+    légal ; sans elles (``None``), la porte adaptée par renvoi garde, au lieu
+    de son âge, ce qu'elle retranche (voir :func:`_adaptations`)."""
+    lignes = _portes(texte, effet)
+    morceaux = re.split(r"\sII\s*\.?\s*[-―]", texte, maxsplit=1)
+    if len(morceaux) > 1 and (versions_age or versions_age is None):
+        adaptee = PORTE_ADAPTEE.search(morceaux[1])
+        rang = int(adaptee.group(1)) - 1 if adaptee else -1
+        generales = [l for l in lignes if l["generation"] == PREMIERE_GENERATION]
+        if 0 <= rang < len(generales):
+            porte = generales[rang]
+            ages = None if versions_age is None else _mois_des_segments(age_ouverture(
+                [v for v in versions_age if date_effet(v[0], v[1]) <= effet]))
+            adaptees = sorted(_adaptations(
+                morceaux[1], porte["age_depart"],
+                porte["age_debut_maximum"], ages).items())
+            # Chaque adaptation vaut jusqu'à la suivante ; la règle
+            # générale, qui reprend après la dernière, sans fin.
+            fins = [generation for generation, _ in adaptees[1:]] + [GENERATION_SANS_FIN]
+            for (generation, age), generation_fin in zip(adaptees, fins):
+                lignes.append({
+                    "entree_en_vigueur": effet,
+                    "generation": generation,
+                    "generation_fin": generation_fin,
+                    "age_debut_maximum": porte["age_debut_maximum"],
+                    "age_depart": age,
+                    "trimestres_supplementaires": porte["trimestres_supplementaires"],
+                    "trimestres_assurance_supplementaires":
+                        porte["trimestres_assurance_supplementaires"],
+                })
+    return lignes
+
+
+def _versions_qui_changent(versions: list[tuple[str, str]],
+                           versions_age: list[tuple[str, str]] | None) -> list[dict]:
+    """Les portes de chaque rédaction, dans l'ordre des dates d'effet ; une
+    rédaction qui ne change aucune porte n'en ouvre pas."""
+    portes: list[dict] = []
+    precedentes: list[tuple] | None = None
+    ordre = sorted(versions, key=lambda v: (date_effet(v[0], v[1]), v[0]))
+    for date_debut, texte in ordre:
+        effet = EFFET_CONNU.get(date_debut) or date_effet(date_debut, texte)
+        lignes = _lignes_de_la_version(texte, effet, versions_age)
+        empreinte = [tuple(sorted((k, v) for k, v in l.items()
+                                  if k != "entree_en_vigueur")) for l in lignes]
+        if not lignes or empreinte == precedentes:
+            continue
+        precedentes = empreinte
+        portes.extend(lignes)
+    return portes
+
+
 def carriere_longue(versions: list[tuple[str, str]],
                     versions_age: list[tuple[str, str]] | None = None) -> list[dict]:
     """Portes du départ anticipé — D. 351-1-1, version par version.
@@ -915,47 +977,41 @@ def carriere_longue(versions: list[tuple[str, str]],
     D. 161-2-1-9. Une version qui ne change aucune porte — le décret
     n° 2025-1410, qui réécrit le I sans en changer une valeur — n'ouvre pas
     de date d'effet : la table est indexée sur les dates où quelque chose
-    change.
+    change. C'est la vue résolue, que `carriere_longue.csv` porte ; les
+    versions de la fiche lisent :func:`carriere_longue_par_version`.
     """
-    portes: list[dict] = []
-    precedentes: list[tuple] | None = None
-    ordre = sorted(versions, key=lambda v: (date_effet(v[0], v[1]), v[0]))
-    for date_debut, texte in ordre:
-        effet = EFFET_CONNU.get(date_debut) or date_effet(date_debut, texte)
-        lignes = _portes(texte, effet)
-        morceaux = re.split(r"\sII\s*\.?\s*[-―]", texte, maxsplit=1)
-        if len(morceaux) > 1 and versions_age:
-            adaptee = PORTE_ADAPTEE.search(morceaux[1])
-            rang = int(adaptee.group(1)) - 1 if adaptee else -1
-            generales = [l for l in lignes if l["generation"] == PREMIERE_GENERATION]
-            if 0 <= rang < len(generales):
-                porte = generales[rang]
-                ages = _mois_des_segments(age_ouverture(
-                    [v for v in versions_age if date_effet(v[0], v[1]) <= effet]))
-                adaptees = sorted(_adaptations(
-                    morceaux[1], porte["age_depart"],
-                    porte["age_debut_maximum"], ages).items())
-                # Chaque adaptation vaut jusqu'à la suivante ; la règle
-                # générale, qui reprend après la dernière, sans fin.
-                fins = [generation for generation, _ in adaptees[1:]] + [GENERATION_SANS_FIN]
-                for (generation, age), generation_fin in zip(adaptees, fins):
-                    lignes.append({
-                        "entree_en_vigueur": effet,
-                        "generation": generation,
-                        "generation_fin": generation_fin,
-                        "age_debut_maximum": porte["age_debut_maximum"],
-                        "age_depart": age,
-                        "trimestres_supplementaires": porte["trimestres_supplementaires"],
-                        "trimestres_assurance_supplementaires":
-                            porte["trimestres_assurance_supplementaires"],
-                    })
-        empreinte = [tuple(sorted((k, v) for k, v in l.items()
-                                  if k != "entree_en_vigueur")) for l in lignes]
-        if not lignes or empreinte == precedentes:
-            continue
-        precedentes = empreinte
-        portes.extend(lignes)
-    return portes
+    return _versions_qui_changent(versions, versions_age or [])
+
+
+def carriere_longue_par_version(
+        versions: list[tuple[str, str]]) -> tuple[list[dict], list[dict]]:
+    """Les portes que chaque rédaction de D. 351-1-1 écrit, et ses renvois
+    (note de décision 0009, étape 3) : la table des versions de la fiche
+    `carriere_longue`, sans rien résoudre.
+
+    Ce que le II écrit en clair — « soixante », « soixante ans et six mois »
+    — est une ligne ; ce qu'il écrit par renvoi — « l'âge prévu à l'article
+    L. 161-17-2 minoré de deux ans et six mois » — n'en est pas une : c'est
+    un renvoi, que la version déclare et que le moteur suit contre l'âge
+    légal de la génération à la date d'effet. Rendus : les lignes, puis un
+    renvoi par étendue de générations qu'il couvre, avec la porte qu'il
+    adapte et ce qu'il retranche.
+    """
+    lignes, renvois = [], []
+    for ligne in _versions_qui_changent(versions, None):
+        age = ligne["age_depart"]
+        if isinstance(age, tuple):
+            _, ans, mois = age
+            renvois.append({
+                "entree_en_vigueur": ligne["entree_en_vigueur"],
+                "age_debut_maximum": ligne["age_debut_maximum"],
+                "generation": ligne["generation"],
+                "generation_fin": ligne["generation_fin"],
+                "retranche": {"ans": ans, "mois": mois},
+            })
+        else:
+            lignes.append(ligne)
+    return lignes, renvois
 
 
 #: « 152 trimestres pour les assurés nés en 1944 », « 150 trimestres pour les
@@ -1330,6 +1386,7 @@ def main(arguments: list[str] | None = None) -> int:
               f"{sorted(set(coefficients.values()))}", file=sys.stderr)
         return 1
     portes = tables["carriere_longue"]
+    portes_par_version, renvois_par_version = carriere_longue_par_version(versions["D351-1-1"])
     generales = {p["age_debut_maximum"] for p in portes if p["generation"] == PREMIERE_GENERATION}
     if not {16, 18, 20, 21} <= generales:
         print(f"\nÉCHEC   portes de carrière longue invraisemblables : "
@@ -1404,6 +1461,8 @@ def main(arguments: list[str] | None = None) -> int:
             "carriere_longue": portes,
             "age_ouverture_par_version": ages_par_version,
             "duree_requise_par_version": durees_par_version,
+            "carriere_longue_par_version": portes_par_version,
+            "carriere_longue_renvois": renvois_par_version,
         }, ensure_ascii=False, indent=1),
         encoding="utf-8",
     )

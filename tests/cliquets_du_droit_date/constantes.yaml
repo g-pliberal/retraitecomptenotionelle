@@ -148,6 +148,7 @@ constantes:
   "moteur/js/regimes.js : MaximumDesCultes.DERNIER_ARRETE": {classe: droit, fiches: []}
   "moteur/js/regimes.js : MinimumGaranti.ANNEE_GEL": {classe: droit, fiches: []}
   "moteur/js/regimes.js : MinimumVieillesse.DERNIERE_ANNEE_A_DEUX_ETAGES": {classe: droit, fiches: []}
+  "moteur/js/regimes.js : CarriereLongue.GENERATION_GENERALE": {classe: hors, raison: technique}
   "moteur/js/releve-lu.js : ANNEE_MAXIMALE": {classe: hors, raison: saisie}
   "moteur/js/releve-lu.js : ANNEE_MINIMALE": {classe: hors, raison: saisie}
   "moteur/js/releve-lu.js : PREMIERE_ANNEE_EN_EUROS": {classe: hors, raison: saisie}

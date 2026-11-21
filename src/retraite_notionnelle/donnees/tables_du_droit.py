@@ -13,7 +13,6 @@ règles du moteur Python.
 
 from __future__ import annotations
 
-import copy
 import csv
 from bisect import bisect_right
 from datetime import date
@@ -766,7 +765,8 @@ class FichesDatees:
     ``AgesAnnulationDecote`` du portage lit à la date d'effet de la pension,
     ses deux dernières versions par un renvoi à l'âge légal, et la durée
     requise, que ``DureesRequises`` du portage lit à la date d'effet de la
-    pension.
+    pension, et la carrière longue, que ``CarriereLongue`` du portage lit à la
+    date d'effet de la pension, ses portes et ses renvois à l'âge légal.
     """
 
     NOMS = ("salaire_annuel_moyen", "sam_indemnites_de_maternite",
@@ -807,7 +807,7 @@ class FichesDatees:
             "surcote_banque_de_france", "age_ouverture_banque_de_france_actifs",
             "age_legal_par_generation", "carriere_longue_sauvegarde_de_2023",
             "taux_plein_carriere_longue", "points_agricoles_au_revenu_cadastral",
-            "age_annulation_decote", "duree_requise_par_generation")
+            "age_annulation_decote", "duree_requise_par_generation", "carriere_longue")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}
@@ -818,7 +818,8 @@ class FichesDatees:
                 self._fiches[nom] = versions.preparer(fiche)
                 if nom in (tables_de_version.FICHE_DE_L_AGE_LEGAL,
                            tables_de_version.FICHE_DE_L_AGE_DU_TAUX_PLEIN,
-                           tables_de_version.FICHE_DE_LA_DUREE_REQUISE):
+                           tables_de_version.FICHE_DE_LA_DUREE_REQUISE,
+                           tables_de_version.FICHE_DE_LA_CARRIERE_LONGUE):
                     # La table de chaque version, son renvoi à sa rédaction
                     # antérieure (note de décision 0009, étape 2), ses renvois
                     # datés à une autre fiche (étape 3).
@@ -1499,29 +1500,13 @@ class MaximumDesCultes:
 class CarriereLongue:
     """Départ anticipé pour carrière longue — article L. 351-1-1.
 
-    La principale porte d'entrée avant l'âge légal, et la seule qui se déduise
-    de la carrière elle-même : la pénibilité, l'invalidité et l'inaptitude
-    demandent des informations que le modèle n'a pas.
-
-    **Les portes se lisent à la DATE D'EFFET de la pension, et par
-    GÉNÉRATION.** Le décret du 2 juillet 2012 vaut pour les pensions prenant
-    effet à compter du 1er novembre 2012, celui du 3 juin 2023 à compter du
-    1er septembre 2023, celui du 7 mai 2026 à compter du 1er septembre 2026 :
-    la table porte l'année décimale du premier mois d'application. Et depuis
-    2023 la borne des vingt ans monte avec l'âge légal de la génération
-    (D. 351-1-1, II) : soixante ans pour les nés d'avant septembre 1963, puis
-    l'âge légal diminué de deux ans et six mois, jusqu'à soixante-deux ans.
-    Le modèle lisait la règle générale seule et opposait soixante-deux ans à
-    une génération 1965 à qui le droit ouvre soixante ans et neuf mois.
-
-    La table seule : ses règles — les portes opposables, la durée réputée
-    cotisée, l'âge ouvert ou proposé — en sont détachées, sous
-    ``droit/carriere_longue.py`` (action 161, étape 3).
+    Les portes (D. 351-1-1) se lisent dans les versions de la fiche
+    `carriere_longue`, que :class:`FichesDatees` porte au paquet, avec leurs
+    renvois à l'âge légal (note de décision 0009, étape 3) ; le portage les
+    choisit à la date d'effet de la pension (``CarriereLongue`` de
+    ``moteur/js/regimes.js``). Reste ici la fiche des périodes que D. 351-1-2
+    répute cotisées, que le paquet porte parmi les versions des fiches.
     """
-
-    #: Génération de la règle générale, celle qui vaut à défaut d'une ligne
-    #: plus précise.
-    GENERATION_GENERALE = 1900.0
 
     #: Les rédactions de D. 351-1-2, une version par rédaction qui change ce
     #: qu'il répute cotisé : ses natures et leurs limites, à la date d'effet.
@@ -1530,58 +1515,11 @@ class CarriereLongue:
     def __init__(self, racine: Path) -> None:
         fiche = racine / "reference" / "regles" / f"{self.FICHE_DES_REPUTES}.yaml"
         self._reputes = versions.preparer(charger_yaml(fiche)) if fiche.exists() else None
-        self._table: dict[float, list[tuple[float, float, int, int, float, int, int | None,
-                                            Fiabilite]]] = {}
-        chemin = racine / "reference" / "legislation" / "carriere_longue.csv"
-        if not chemin.exists():
-            self._dates: list[float] = []
-            return
-        with chemin.open(encoding="utf-8") as flux:
-            lignes = (l for l in flux if not l.lstrip().startswith("#"))
-            for ligne in csv.DictReader(lignes):
-                assurance = ligne["trimestres_assurance_supplementaires"].strip()
-                self._table.setdefault(float(ligne["date_effet"]), []).append((
-                    float(ligne["generation"]),
-                    float(ligne["generation_fin"]),
-                    int(ligne["age_debut_maximum"]),
-                    int(ligne["trimestres_debut"]),
-                    au_mois(float(ligne["age_depart"])),
-                    int(ligne["trimestres_supplementaires"]),
-                    int(assurance) if assurance else None,
-                    Fiabilite.depuis_texte(ligne["fiabilite"]),
-                ))
-        self._dates = sorted(self._table)
 
     def fiches(self) -> dict[str, dict]:
         """La fiche préparée des périodes réputées cotisées, sous son nom : ce
         que le paquet du site porte."""
         return {} if self._reputes is None else {self._reputes["id"]: self._reputes}
-
-    def avant(self, date: DateMois) -> CarriereLongue:
-        """La même table, sans les textes qui prennent effet à compter de
-        ``date`` : la carrière longue d'un droit contrefactuel. Au droit du
-        31 août 2023, les portes du décret du 2 juillet 2012 valent à toute
-        date d'effet ; à la loi de 2023 sans la suspension, celles du décret
-        du 3 juin 2023."""
-        copie = copy.copy(self)
-        limite = self._annee_decimale(date)
-        copie._table = {effet: portes for effet, portes in self._table.items()
-                        if effet < limite - 1e-9}
-        copie._dates = sorted(copie._table)
-        return copie
-
-    @staticmethod
-    def _annee_decimale(date: DateMois) -> float:
-        """L'année décimale d'une date d'effet, à la précision de la table.
-
-        La table écrit le 1er septembre 2026 `2026.667`, quand huit douzièmes
-        valent 2026,666 666… : sans l'arrondi, le premier mois d'un décret de
-        septembre lisait encore le décret d'avant, et l'assuré né en décembre
-        1965 partait au 1er octobre 2026 et non au 1er septembre (exemple
-        `ur_racl_1965_decembre`). C'est le trou que ``Carriere.generation``
-        referme déjà pour les générations.
-        """
-        return round(date.annee + (date.mois - 1) / 12.0, 3)
 
 
 class SurcoteBaremes:

@@ -22,14 +22,14 @@ operations:
   vise: duree_requise_par_generation
   motif: >-
     la version en vigueur la veille de la réforme, L. 161-17-3 dans sa rédaction de 2023, vaut sans fin, et celle de la suspension est ôtée : 172 trimestres au né en 1965
+- operation: remplacer_une_version
+  vise: carriere_longue
+  motif: >-
+    la version en vigueur la veille de la suspension, D. 351-1-1 dans la rédaction du décret du 3 juin 2023, vaut sans fin, et celle du décret du 7 mai 2026 est ôtée ; son renvoi lit l'âge légal dans la version que la couche garde, celle de 2023 : 61 ans et 3 mois au né de juin 1967 entré avant vingt ans, 61 ans sous la suspension (tests/js/carriere-longue-versions.test.js)
 - operation: garder
   vise: age_ouverture_ieg_actifs
   motif: >-
     le droit contrefactuel ne l'écarte pas : il ne change que l'âge légal, la durée requise et la carrière longue (droit_contrefactuel, moteur/js/config.js) ; à décider à l'étape qui range cette fiche en versions
-- operation: garder
-  vise: carriere_longue
-  motif: >-
-    garde son mécanisme jusqu'à l'étape 3 de la note de décision 0009 : le moteur écarte les décrets qui prennent effet à compter de la date de la couche (CarriereLongue.avant)
 - operation: garder
   vise: carriere_longue_enfants_reputes_cotises
   motif: >-

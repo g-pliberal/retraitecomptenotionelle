@@ -54,7 +54,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale L. 161-17-2 et D. 161-2-1-9, rédaction par rédaction",
    "valeurs": 38,
-   "verifiee_le": "2026-11-19"
+   "verifiee_le": "2026-11-21"
   },
   "age_ouverture_requis": {
    "ajoutees": 0,
@@ -120,7 +120,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 634-1-1",
    "valeurs": 21,
-   "verifiee_le": "2026-11-19"
+   "verifiee_le": "2026-11-21"
   },
   "annees_salaire_reference": {
    "ajoutees": 0,
@@ -131,7 +131,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-29-1",
    "valeurs": 16,
-   "verifiee_le": "2026-11-19"
+   "verifiee_le": "2026-11-21"
   },
   "arrivees_tardives": {
    "ajoutees": 0,
@@ -274,7 +274,18 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale L. 351-1-1 et D. 351-1-1 (I et II)",
    "valeurs": 80,
-   "verifiee_le": "2026-11-19"
+   "verifiee_le": "2026-11-21"
+  },
+  "carriere_longue_par_version": {
+   "ajoutees": 0,
+   "colonne": "age_depart",
+   "corrigees": 0,
+   "empreinte": "3e0036684291e1d4",
+   "identiques": 69,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, code de la sécurité sociale D. 351-1-1 (I et II), rédaction par rédaction",
+   "valeurs": 69,
+   "verifiee_le": "2026-11-21"
   },
   "coefficient_minoration": {
    "ajoutees": 0,
@@ -285,7 +296,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-27",
    "valeurs": 76,
-   "verifiee_le": "2026-11-19"
+   "verifiee_le": "2026-11-21"
   },
   "comptes_complementaires": {
    "ajoutees": 1617,
@@ -593,7 +604,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale L. 161-17-3",
    "valeurs": 20,
-   "verifiee_le": "2026-11-19"
+   "verifiee_le": "2026-11-21"
   },
   "duree_assurance_requise_1993": {
    "ajoutees": 0,
@@ -604,7 +615,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-45 II",
    "valeurs": 9,
-   "verifiee_le": "2026-11-19"
+   "verifiee_le": "2026-11-21"
   },
   "duree_assurance_requise_decrets": {
    "ajoutees": 0,
@@ -637,7 +648,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-6 II",
    "valeurs": 5,
-   "verifiee_le": "2026-11-19"
+   "verifiee_le": "2026-11-21"
   },
   "duree_requise_fonction_publique_openfisca": {
    "ajoutees": 0,
@@ -2595,7 +2606,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-9",
    "valeurs": 2,
-   "verifiee_le": "2026-11-19"
+   "verifiee_le": "2026-11-21"
   },
   "volume_travail": {
    "ajoutees": 0,

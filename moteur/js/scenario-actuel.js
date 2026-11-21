@@ -159,8 +159,8 @@ export class ScenarioActuel {
    * que la pile de couches du droit a résolues à la fabrique : chaque couche y
    * garde la version d'avant la réforme qu'elle écarte, depuis la date d'effet
    * de cette réforme (`FichesDatees.sousLeDroit`, note de décision 0009). La
-   * carrière longue garde son mécanisme jusqu'à sa session de l'étape 3 : sans
-   * les décrets qui prennent effet à compter de la date écartée.
+   * carrière longue aussi : la couche garde la rédaction de D. 351-1-1 d'avant
+   * la réforme, et son renvoi lit l'âge légal que la couche garde.
    */
   _sousLeDroit(paquet, droit) {
     // Une faute de programme, qui doit remonter : `contexte.js` tait les autres.
@@ -172,7 +172,7 @@ export class ScenarioActuel {
     this.agesOuverture = new AgesOuverture(paquet, fiches);
     this.agesAnnulationDecote = new AgesAnnulationDecote(paquet, fiches);
     this.dureesRequises = new DureesRequises(paquet, fiches);
-    this.carriereLongue = this.carriereLongue.avant(DROITS_CONTREFACTUELS[droit]);
+    this.carriereLongue = new CarriereLongue(paquet, fiches);
   }
 
   /**

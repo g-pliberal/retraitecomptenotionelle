@@ -108,6 +108,8 @@ objets:
       retranche: {porte: "la durée que l'opération en retranche", type: objet, objet: duree, defaut: null}
       code: {porte: "pour toute autre opération, la fonction qui l'applique : « fichier : nom »", type: texte, defaut: null}
       texte: {porte: "le texte qui écrit le renvoi, quand la version en cite plusieurs", type: texte, defaut: null}
+      naissance: {porte: "les naissances auxquelles le texte écrit le renvoi, [début, fin) ; sans elles, toutes", type: intervalle, defaut: null, additif: "D. 351-1-1 ne renvoie à l'âge légal que pour certaines générations (note 0009, étape 3, carrière longue)"}
+      ligne: {porte: "la ligne de la table de la version que la valeur lue tient, par les colonnes qui la désignent", type: libre, defaut: null, additif: "la porte des vingt ans de D. 351-1-1, parmi les quatre de la version"}
     au_plus_un_de: [ajoute, retranche, code]
 
   duree:

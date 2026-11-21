@@ -86,12 +86,14 @@ def test_chaque_fiche_qui_declare_la_reforme_est_gardee_ou_declaree_hors_de_la_c
     assert droits.fiches_sans_decision(brute) == []
     decidees = {o["vise"]: o for o in brute["operations"]}
     assert set(decidees) == declarent, "la couche ne décide que des fiches de sa réforme"
-    # L'âge légal, la durée requise, et sous la loi de 2023 l'âge du taux plein
-    # qui lit l'âge légal (étape 3 de la note 0009), gardent leur version
-    # d'avant ; le reste dit pourquoi.
+    # L'âge légal, la durée requise, la carrière longue, et sous la loi de 2023
+    # l'âge du taux plein qui lit l'âge légal (étape 3 de la note 0009),
+    # gardent leur version d'avant ; le reste dit pourquoi.
     gardees = {"sans_la_reforme_de_2023": ["age_annulation_decote", AGE_LEGAL,
+                                           "carriere_longue",
                                            "duree_requise_par_generation"],
-               "sans_la_suspension_de_2026": [AGE_LEGAL, "duree_requise_par_generation"]}[couche]
+               "sans_la_suspension_de_2026": [AGE_LEGAL, "carriere_longue",
+                                              "duree_requise_par_generation"]}[couche]
     assert sorted(n for n, o in decidees.items()
                   if o["operation"] == "remplacer_une_version") == gardees
     for nom, operation in decidees.items():
@@ -107,9 +109,9 @@ def test_une_fiche_qui_declare_la_reforme_sans_etre_decidee_fait_echouer():
 
 
 def test_la_date_de_chaque_couche_est_celle_que_le_moteur_ecarte():
-    """La carrière longue garde son mécanisme jusqu'à l'étape 3
-    (``CarriereLongue.avant``) : sa date, dans le portage, est celle de la
-    couche du haut de la pile."""
+    """Le portage nomme chaque droit contrefactuel avec la date de la couche
+    du haut de sa pile (``DROITS_CONTREFACTUELS``) ; la carrière longue n'y
+    lit plus rien depuis l'étape 3 de la note 0009 : sa couche la remplace."""
     source = (outils.RACINE / "moteur" / "js" / "scenario-actuel.js").read_text(encoding="utf-8")
     for droit, pile in droits.DROITS.items():
         depuis = univers.couches()[pile[-1]]["depuis"]

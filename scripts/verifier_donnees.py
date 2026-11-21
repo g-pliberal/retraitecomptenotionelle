@@ -4649,6 +4649,33 @@ def source_carriere_longue() -> dict[tuple, float]:
     return portes
 
 
+def source_carriere_longue_par_version() -> dict[tuple, float]:
+    """Les portes que chaque rédaction de D. 351-1-1 écrit, sans résoudre ses
+    renvois : la table des versions de la fiche `carriere_longue` (note de
+    décision 0009, étape 3). Clé : la date d'effet de la rédaction, au jour,
+    lue dans sa disposition d'application ; la génération qui ouvre la porte,
+    la première qu'elle ne vise plus, l'âge de début, les trimestres cotisés et
+    d'assurance au-delà de la durée requise. Ce que le II écrit par renvoi à
+    l'âge légal n'est pas une ligne : la version porte le renvoi, que
+    `tests/test_carriere_longue_versions.py` confronte au récupérateur."""
+    brut = _lire_json("dila_legi_parametres_retraite.json",
+                      "scripts/fetch/dila_legi_parametres_retraite.py")
+    if "carriere_longue_par_version" not in brut:
+        raise SourceAbsente("data/brut/dila_legi_parametres_retraite.json d'avant le "
+                            "21 novembre 2026 (relancer "
+                            "scripts/fetch/dila_legi_parametres_retraite.py)")
+    portes = {}
+    for porte in brut["carriere_longue_par_version"]:
+        assurance = porte["trimestres_assurance_supplementaires"]
+        portes[(str(porte["entree_en_vigueur"]),
+                tables_de_version.cle(tables_de_version.rang(porte["generation"])),
+                tables_de_version.cle(tables_de_version.rang(porte["generation_fin"])),
+                str(int(porte["age_debut_maximum"])),
+                str(int(porte["trimestres_supplementaires"])),
+                "" if assurance is None else str(int(assurance)))] = float(porte["age_depart"])
+    return portes
+
+
 def _point_insee() -> dict[str, dict[int, float]]:
     """Valeur de service du point Agirc, Arrco et Agirc-Arrco, au 31 décembre.
 
@@ -10597,6 +10624,23 @@ CERTIFICATIONS = (
         source=source_carriere_longue,
         origine="DILA, base LEGI, code de la sécurité sociale L. 351-1-1 "
                 "et D. 351-1-1 (I et II)",
+        decimales=2,
+        tolerance=0.005,
+        unite=" ans",
+        gabarit={"trimestres_debut": "5", "trimestres_supplementaires": "0"},
+    ),
+    # La table des versions de la fiche `carriere_longue` (note de décision
+    # 0009, étape 3) : les portes écrites, rédaction par rédaction, sans les
+    # renvois à l'âge légal, que la fiche déclare.
+    Certification(
+        nom="carriere_longue_par_version",
+        chemin=REFERENCE / "legislation" / "carriere_longue_par_version.csv",
+        cles=("entree_en_vigueur", "generation", "generation_fin", "age_debut_maximum",
+              "trimestres_supplementaires", "trimestres_assurance_supplementaires"),
+        colonne="age_depart",
+        source=source_carriere_longue_par_version,
+        origine="DILA, base LEGI, code de la sécurité sociale D. 351-1-1 (I et II), "
+                "rédaction par rédaction",
         decimales=2,
         tolerance=0.005,
         unite=" ans",

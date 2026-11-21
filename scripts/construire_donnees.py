@@ -2074,26 +2074,6 @@ def _majoration_enfants_points() -> dict:
     }
 
 
-def _carriere_longue() -> dict:
-    """Portes du départ anticipé pour carrière longue, par date d'effet.
-
-    La clé est l'année décimale du premier mois d'application ; chaque porte
-    porte la génération à partir de laquelle elle vaut, ``1900`` pour la
-    règle générale, la première qu'elle ne vise plus, ``2100`` sans fin, et
-    les trimestres d'assurance qu'elle exige au-delà de la durée requise,
-    ``null`` depuis 2012.
-    """
-    return {
-        _sans_zeros(date_effet): [
-            [generation, fin, age_max, trimestres, age_depart, supplement, assurance,
-             int(fiabilite)]
-            for generation, fin, age_max, trimestres, age_depart, supplement, assurance,
-            fiabilite in portes
-        ]
-        for date_effet, portes in sorted(CarriereLongue(DONNEES)._table.items())
-    }
-
-
 def _sans_zeros(valeur: float) -> str:
     texte = f"{valeur:.3f}".rstrip("0").rstrip(".")
     return texte
@@ -2800,7 +2780,6 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "durees_requises_avant_soixante_ans": _durees_requises_avant_soixante_ans(),
         "decote_fonction_publique": _decote_fonction_publique(),
         "decote_regimes_speciaux": _decote_regimes_speciaux(),
-        "carriere_longue": _carriere_longue(),
         "versions_des_fiches": _versions_des_fiches(),
         "presomptions": _presomptions(),
         "accords_internationaux": _accords_internationaux(),

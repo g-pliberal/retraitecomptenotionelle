@@ -199,6 +199,7 @@ def test_les_autres_ages_de_la_legislation_tombent_sur_un_mois_entier():
              for ligne in lignes.values() for age in ligne[:3]]
     for table in ("durees_services_actifs", "durees_services_militaires"):
         ages += [ligne[0] for lignes in paquet[table].values() for ligne in lignes.values()]
-    ages += [porte[4] for portes in paquet["carriere_longue"].values() for porte in portes]
+    ages += [porte[4] for version in paquet["fiches_datees"]["carriere_longue"]["versions"]
+             for porte in version.get("portes") or []]
     assert len(ages) > 100
     assert _hors_du_mois(ages) == []

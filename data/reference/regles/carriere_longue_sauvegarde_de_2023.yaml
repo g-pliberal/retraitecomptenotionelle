@@ -25,7 +25,9 @@ dates_qui_decident:
 # (droit/ouvrir.js, `sauvegardeDe2023`) lit : `existe` ; `regimes`, ceux dont la clause
 # nomme les articles ; `nes_du` et `nes_au`, l'année et le mois de naissance des
 # générations qu'elle vise, bornes comprises ; `duree_acquise_avant`, l'année et le mois
-# avant le premier jour desquels la durée s'acquiert, sous les rédactions d'avant.
+# avant le premier jour desquels la durée s'acquiert, sous les rédactions d'avant ;
+# `redactions_anterieures`, la version de chaque fiche que la clause garde, nommée
+# (D. 351-1-1 dans sa rédaction du 1er novembre 2012, fiche carriere_longue).
 versions:
 - id: avant_le_decret_du_3_juin_2023
   statut: lue
@@ -85,6 +87,8 @@ versions:
       nes_du: [1961, 9]
       nes_au: [1963, 12]
       duree_acquise_avant: [2023, 9]
+      redactions_anterieures:
+        carriere_longue: decret_de_2012
   exemples:
   - cnav_2023_14_sauvegarde_1962
   - cnav_2023_14_sauvegarde_1963_octobre
@@ -143,7 +147,7 @@ code:
     moteur/js/droit/departs.js : carriereLongueAcquise, ouvertureDe
   parametres: >-
     contenu.parametres de chaque version : existe, regimes, nes_du, nes_au,
-    duree_acquise_avant
+    duree_acquise_avant, redactions_anterieures
   tests: [tests/test_sauvegarde_de_2023.py, tests/test_departs.py, tests/test_oracle.py]
   moteur: >-
     Le paquet du site porte ses versions.

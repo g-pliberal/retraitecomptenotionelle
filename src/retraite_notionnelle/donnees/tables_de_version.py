@@ -169,7 +169,9 @@ def pour_le_moteur(fiche: dict, identifiant: str, racine: Path = RACINE_DONNEES)
     contenu = version.get("contenu") or {}
     table = contenu.get("table")
     ajout: dict = {}
-    if table:
+    if table and table["valeur"] == VALEUR_DES_PORTES:
+        ajout["portes"] = _portes_pour_le_moteur(ou, table, racine)
+    elif table:
         lignes = _lignes(table, racine)
         if not lignes:
             raise ValueError(f"{ou} : aucune ligne de {table['fichier']} pour "
@@ -200,7 +202,8 @@ def pour_le_moteur(fiche: dict, identifiant: str, racine: Path = RACINE_DONNEES)
                 derniere[1] = fin
             else:
                 ajout["table"].append([debut, fin, valeur, fiabilite])
-    if not table or (contenu.get("parametres") or {}).get("trimestres") is not None:
+    if not table or (contenu.get("parametres") or {}).get("trimestres") is not None \
+            or table["valeur"] == VALEUR_DES_PORTES:
         # La fiabilité de la valeur que la version écrit pour tous : sans
         # table, ou pour les générations que sa table ne nomme pas.
         ajout["fiabilite"] = _fiabilite(version.get("fiabilite") or "haute")
@@ -229,9 +232,16 @@ def renvoi_pour_le_moteur(renvoi: dict) -> dict:
     if renvoi.get("code"):
         raise ValueError(f"renvoi à {renvoi.get('fiche')} : le moteur ne suit pas encore "
                          f"une opération par fonction ({renvoi['code']})")
-    return {"fiche": renvoi["fiche"], "valeur": renvoi["valeur"], "de": renvoi["de"],
-            "date": renvoi["date"],
-            "mois": _en_mois(renvoi.get("ajoute")) - _en_mois(renvoi.get("retranche"))}
+    lu = {"fiche": renvoi["fiche"], "valeur": renvoi["valeur"], "de": renvoi["de"],
+          "date": renvoi["date"],
+          "mois": _en_mois(renvoi.get("ajoute")) - _en_mois(renvoi.get("retranche"))}
+    if renvoi.get("naissance"):
+        # Les générations auxquelles le texte écrit le renvoi, comme les tables
+        # les écrivent ; `null`, sans borne.
+        lu["generations"] = [_generation(b) for b in renvoi["naissance"]]
+    if renvoi.get("ligne"):
+        lu["ligne"] = dict(renvoi["ligne"])
+    return lu
 
 
 def vue_par_generation(table: dict[int, float]) -> list[tuple[str, float]]:
@@ -390,3 +400,99 @@ def vue_de_la_duree_requise(racine: Path = RACINE_DONNEES) -> list[tuple[str, fl
     en_vigueur = next(v["id"] for v in fiche["versions"]
                       if v["bornes"][DATE_D_EFFET][1] is None)
     return vue_par_generation(par_mois(fiche, en_vigueur, racine, nom="trimestres"))
+
+
+# --- La carrière longue (note de décision 0009, étape 3) ---------------------
+
+#: La fiche du départ anticipé pour carrière longue (D. 351-1-1), et la colonne
+#: que ses versions désignent : non une valeur par génération, mais des portes,
+#: plusieurs par génération, chacune une borne de début, un âge et des durées.
+FICHE_DE_LA_CARRIERE_LONGUE = "carriere_longue"
+VALEUR_DES_PORTES = "age_depart"
+VUE_DE_LA_CARRIERE_LONGUE = "carriere_longue.csv"
+
+#: Les colonnes d'une porte, dans l'ordre où le moteur les lit (``CarriereLongue``
+#: du portage) : la génération qui l'ouvre, la première qu'elle ne vise plus, la
+#: borne de début, les trimestres de début, l'âge de départ, les trimestres
+#: cotisés et d'assurance au-delà de la durée requise, la fiabilité.
+COLONNES_DES_PORTES = ("generation", "generation_fin", "age_debut_maximum",
+                       "trimestres_debut", "age_depart", "trimestres_supplementaires",
+                       "trimestres_assurance_supplementaires", "fiabilite")
+
+
+def _portes_pour_le_moteur(ou: str, table: dict, racine: Path) -> list[list]:
+    """Les portes d'une version, dans l'ordre du fichier : ``[génération, fin
+    exclue ou None, borne de début, trimestres de début, âge au mois exact,
+    trimestres cotisés en plus, trimestres d'assurance en plus ou None,
+    fiabilité]``."""
+    lignes = _lignes(table, racine)
+    if not lignes:
+        raise ValueError(f"{ou} : aucune ligne de {table['fichier']} pour {table['lignes']}")
+    portes = []
+    for ligne in lignes:
+        fin = float(ligne["generation_fin"])
+        assurance = ligne["trimestres_assurance_supplementaires"].strip()
+        portes.append([float(ligne["generation"]),
+                       None if fin >= GENERATION_SANS_FIN else fin,
+                       int(ligne["age_debut_maximum"]), int(ligne["trimestres_debut"]),
+                       au_mois(float(ligne["age_depart"])),
+                       int(ligne["trimestres_supplementaires"]),
+                       int(assurance) if assurance else None,
+                       _fiabilite(ligne["fiabilite"])])
+    return portes
+
+
+def _decimale(jour: str) -> str:
+    """La date d'effet d'une version, en année décimale du premier mois, comme
+    `carriere_longue.csv` l'écrit : ``2023-09-01`` -> ``2023.667``."""
+    annee, mois = int(jour[:4]), int(jour[5:7])
+    return f"{annee + (mois - 1) / 12.0:.3f}".rstrip("0").rstrip(".")
+
+
+def vue_de_la_carriere_longue(racine: Path = RACINE_DONNEES) -> list[tuple[str, ...]]:
+    """`carriere_longue.csv`, fabriquée depuis les versions de la fiche : les
+    portes de chaque version, indexées par l'année décimale de sa date
+    d'effet, chaque renvoi résolu contre la version de l'âge légal du même
+    jour, mois de naissance par mois, comme le récupérateur les résolvait
+    (``carriere_longue`` de ``scripts/fetch/dila_legi_parametres_retraite.py``)
+    et comme le moteur les lit. En lignes de texte, dans l'ordre des colonnes
+    du fichier, triées par date puis par génération."""
+    regles = racine / "reference" / "regles"
+    fiche = charger_yaml(regles / f"{FICHE_DE_LA_CARRIERE_LONGUE}.yaml")
+    age_legal = charger_yaml(regles / f"{FICHE_DE_L_AGE_LEGAL}.yaml")
+    erreurs = [e for e in renvois.controler(
+        {chemin.stem: charger_yaml(chemin) for chemin in sorted(regles.glob("*.yaml"))})
+        if f"{FICHE_DE_LA_CARRIERE_LONGUE}." in e]
+    if erreurs:
+        raise ValueError(" ; ".join(erreurs))
+    vue = []
+    for version in fiche["versions"]:
+        contenu = version.get("contenu") or {}
+        table = contenu.get("table")
+        if not table:
+            continue
+        jour = _jour(version["bornes"][DATE_D_EFFET][0])
+        lignes = _lignes(table, racine)
+        for renvoi in contenu.get("renvois") or []:
+            ou = f"{fiche['id']}.{version['id']}"
+            lue = _a_la_date(age_legal, jour)
+            if lue is None:
+                raise ValueError(f"{ou} : aucune version de {age_legal['id']} le {jour}")
+            ages = par_mois(age_legal, lue["id"], racine)
+            ajout = renvoi_pour_le_moteur(renvoi)["mois"]
+            modele = next(l for l in lignes if l["generation"] == str(PREMIERE_GENERATION)
+                          and all(l[c] == str(v) for c, v in renvoi["ligne"].items()))
+            premier, dernier = (_rang_du_jour(b) for b in renvoi["naissance"])
+            precedent = None
+            for mois in range(premier, dernier):
+                age = (round(ages[mois] * 12) + ajout) / 12
+                if precedent is not None and precedent["age_depart"] == f"{age:.2f}" \
+                        and mois % 12:
+                    precedent["generation_fin"] = cle(mois + 1)
+                    continue
+                precedent = {**modele, "generation": cle(mois), "generation_fin": cle(mois + 1),
+                             "age_depart": f"{age:.2f}"}
+                lignes.append(precedent)
+        lignes.sort(key=lambda l: float(l["generation"]))
+        vue += [(_decimale(jour),) + tuple(l[c] for c in COLONNES_DES_PORTES) for l in lignes]
+    return vue

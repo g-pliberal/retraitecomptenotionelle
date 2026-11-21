@@ -258,12 +258,14 @@ def test_la_fabrique_ne_prend_plus_ses_chargeurs_aux_regles():
 
 
 def test_la_table_de_la_carriere_longue_ne_porte_plus_ses_regles():
-    """La table ne garde que son chargement, ses fiches et sa variante datée
-    (``avant``) ; les portes, la durée réputée cotisée et les âges sont des
-    règles, que seul le portage écrit (``moteur/js/regimes.js``)."""
+    """Le chargeur ne garde que la fiche des périodes réputées cotisées : les
+    portes se lisent dans les versions de la fiche `carriere_longue`
+    (``FichesDatees``), et la variante datée (``avant``) est partie avec
+    l'étape 3 de la note 0009 ; les portes, la durée réputée cotisée et les
+    âges sont des règles, que seul le portage écrit (``moteur/js/regimes.js``)."""
     subprocess.run([sys.executable, "-c", "\n".join((
         "from retraite_notionnelle.donnees.tables_du_droit import CarriereLongue",
         "methodes = {n for n, v in vars(CarriereLongue).items()",
         "            if callable(v) or isinstance(v, staticmethod)}",
-        "assert methodes == {'__init__', 'fiches', 'avant', '_annee_decimale'}, methodes",
+        "assert methodes == {'__init__', 'fiches'}, methodes",
     ))], check=True, cwd=RACINE)

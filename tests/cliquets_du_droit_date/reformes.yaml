@@ -18,7 +18,7 @@
 # guider la lecture, ce que la fiche a : aucune version (la migration de la
 # note 0009 la découpera), ou les débuts de ses versions la même année.
 
-cliquet_a_faire: 91
+cliquet_a_faire: 89
 
 couples:
   "age_ouverture_ieg_actifs / lfss_2026_suspension": {classe: a_faire, commentaire: "réforme du 2026-09-01 ; aucune version ne commence cette année-là"}
@@ -44,8 +44,6 @@ couples:
   "carpimko_ages_2015 / carpimko_2024": {classe: a_faire, commentaire: "réforme du 2024-01-09 ; une version commence le 2024-01-10"}
   "carpimko_ages_2015 / carpimko_report_2015": {classe: a_faire, commentaire: "réforme du 2015-10-02 ; une version commence le 2015-10-03"}
   "carpv_minoration_age_seul / carpv_statuts_2021": {classe: a_faire, commentaire: "réforme du 2021-10-19 ; aucune version ne commence cette année-là"}
-  "carriere_longue / lfss_2026_suspension": {classe: a_faire, commentaire: "fiche sans version"}
-  "carriere_longue / reforme_2023": {classe: a_faire, commentaire: "fiche sans version"}
   "carriere_longue_enfants_reputes_cotises / lfss_2026_suspension": {classe: a_faire, commentaire: "fiche sans version"}
   "categorie_active_duree_requise / lfss_2026_suspension": {classe: a_faire, commentaire: "fiche sans version"}
   "categorie_active_super_active / lfss_2026_suspension": {classe: a_faire, commentaire: "fiche sans version"}

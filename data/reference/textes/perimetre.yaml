@@ -128,6 +128,6 @@ cliquet:
   # Les couples d'une fiche et d'une rédaction d'avant la pose, sans réponse,
   # comptés au jour de la pose. Ils ne peuvent que décroître. La fiche cite la
   # rédaction sans l'avoir coupée en version :
-  citees_sans_reponse: 432
+  citees_sans_reponse: 431
   # La fiche n'en dit rien, à lire d'abord :
   sans_un_mot: 0

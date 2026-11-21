@@ -26,6 +26,10 @@ operations:
   vise: duree_requise_par_generation
   motif: >-
     la version en vigueur la veille de la réforme, L. 161-17-3 dans sa rédaction de 2014, vaut sans fin, et celles qui commencent à sa date ou après sont ôtées : 169 trimestres au né en 1965
+- operation: remplacer_une_version
+  vise: carriere_longue
+  motif: >-
+    la version en vigueur la veille de la réforme, D. 351-1-1 dans la rédaction du décret du 2 juillet 2012, vaut sans fin, et celles de 2023 et de 2026 sont ôtées : soixante ans à qui a débuté avant vingt ans, le né de juin 1965 parti en octobre 2027 comme les autres (tests/js/carriere-longue-versions.test.js) ; la version de 2023 et son renvoi à l'âge légal n'y ont plus de place
 - operation: garder
   vise: age_ouverture_ieg_actifs
   motif: >-
@@ -42,10 +46,6 @@ operations:
   vise: age_surcote_sncf_ratp
   motif: >-
     le droit contrefactuel ne l'écarte pas : il ne change que l'âge légal, la durée requise et la carrière longue (droit_contrefactuel, moteur/js/config.js) ; à décider à l'étape qui range cette fiche en versions
-- operation: garder
-  vise: carriere_longue
-  motif: >-
-    garde son mécanisme jusqu'à l'étape 3 de la note de décision 0009 : le moteur écarte les décrets qui prennent effet à compter de la date de la couche (CarriereLongue.avant)
 - operation: garder
   vise: categorie_active_super_active
   motif: >-

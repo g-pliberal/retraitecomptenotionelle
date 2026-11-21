@@ -627,6 +627,11 @@ def test_journal_de_certification_decrit_les_series_certifiees():
             "legislation/duree_requise_fonction_publique.csv",
         "coefficient_minoration": "legislation/coefficient_minoration.csv",
         "carriere_longue": "legislation/carriere_longue.csv",
+        # La table de chaque version de l'âge du taux plein, de la durée
+        # requise et de la carrière longue (note de décision 0009, étape 3).
+        "age_annulation_decote": "legislation/age_annulation_decote.csv",
+        "duree_requise_par_version": "legislation/duree_requise_par_version.csv",
+        "carriere_longue_par_version": "legislation/carriere_longue_par_version.csv",
         "duree_proratisation": "legislation/duree_proratisation.csv",
         "annees_salaire_reference": "legislation/annees_salaire_reference.csv",
         "annees_revenu_annuel_moyen_independants":
