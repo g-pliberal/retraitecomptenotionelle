@@ -4479,7 +4479,10 @@ BUDGETS_DEPLIES: dict[str, int] = {
     # durée — : chacun coûte une ligne dans deux tableaux et son nom dans la
     # phrase des lignes pas encore mesurées. Comme la borne repliée, celle-ci
     # suit l'inventaire, pas la prose.
-    "/avantages": 7650,
+    # Puis à 7 700 le même jour (action 193) : chaque dispositif dit ce que le
+    # modèle en fait dans les mots de la page des caisses, « calculé, chiffré »,
+    # « pas encore calculé »…, 46 mots sur 53 lignes ; la prose en a rendu trois.
+    "/avantages": 7700,
     # Méthode et sources tout déplié, hors ses deux bases : 5 944 mots le
     # 24 octobre 2026 (action 173, étape 10). Ses dépliants redisaient trois
     # fois que le choix des maturités ne change rien sous les taux à terme,

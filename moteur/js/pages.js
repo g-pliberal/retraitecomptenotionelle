@@ -3701,12 +3701,18 @@ function caissesDeRetraite(contexte) {
     + "paie de retraités. Touchez-en une pour voir comment elle marche.",
   );
   const fiches = idents.map((ident) => ficheDeLaCaisse(ident, donnees[ident])).join("\n");
+  // Tous les régimes que les fiches recensent, et ce que le modèle en calcule :
+  // la liste est fabriquée depuis l'inventaire du paquet, jamais recopiée.
+  const regimes = inventaireSection(contexte.paquet.inventaire,
+    contexte.simulateur().catalogue, contexte.paquet.gestionnaires);
   return `
 ${tete}
 
 ${g.tranche(`<div class="carte-des-caisses">${carte}</div>`)}
 
 ${g.tranche(fiches, true)}
+
+${g.tranche(regimes, true)}
 
 <div class="note"><strong>D'où viennent les chiffres.</strong> Cotisants et
 retraités de 2024, et d'où vient l'argent de chaque caisse en 2023 : Conseil
@@ -10048,10 +10054,10 @@ const COULEURS_MOTIFS = {
 
 /** Ce que chacun des quatre états du modèle veut dire, en français courant. */
 const LIBELLES_ETATS = {
-  chiffre: "chiffré",
-  integre: "servi, chiffré à part",
-  declare: "déclaré, non servi",
-  absent: "absent",
+  chiffre: "calculé, chiffré",
+  integre: "calculé, chiffré à part",
+  declare: "déclaré, pas encore calculé",
+  absent: "pas encore calculé",
 };
 
 /**
@@ -10703,7 +10709,7 @@ function avantagesDetailListe(contexte) {
       avantage.base_legale.join("; ") || "—",
       String(avantage.creation),
       avantage.fin === null ? "en vigueur" : String(avantage.fin),
-      avantage.servi_en_partie ? "servi en partie" : LIBELLES_ETATS[avantage.etat_modele],
+      avantage.servi_en_partie ? "calculé en partie" : LIBELLES_ETATS[avantage.etat_modele],
     ]);
     if (lignes.length === 0) continue;
     blocs.push(
@@ -10756,27 +10762,27 @@ function avantagesDetailEtats(contexte) {
     }
   }
   const lignes = [
-    ["chiffré", String(inventaire.compte("chiffre")),
+    [LIBELLES_ETATS.chiffre, String(inventaire.compte("chiffre")),
       "La cascade du scénario 1 en isole le montant en euros. La somme de "
       + "ces lignes vaut exactement la pension moins sa part cotisée."],
-    ["servi, chiffré à part", String(inventaire.compte("integre")),
+    [LIBELLES_ETATS.integre, String(inventaire.compte("integre")),
       "Le scénario 1 les sert, mais l'effet passe par un trimestre, un âge "
       + `ou une assiette. ${c.neutralisations.length} sont mesurés par retrait : on `
       + `refait la pension sans l'avantage, et l'écart est le chiffre. ${lues}${pasEncore}Les `
       + `${inventaire.compte("integre") - c.neutralisations.length - integreesLues.length
         - nonMesurees.length} `
       + "derniers ne sont pas des dispositifs, et se lisent ailleurs."],
-    ["déclaré, non servi", String(inventaire.compte("declare")),
+    [LIBELLES_ETATS.declare, String(inventaire.compte("declare")),
       "Une fiche de régime les déclare, et le scénario 1 ne les sert pas à "
       + `tous. La réversion est de ceux-là : ${declarations} périodes du catalogue `
       + "l'annoncent, et le modèle ne la liquide que pour le conjoint qu'on lui "
       + "déclare, pas pour tous les ménages. Son coût est donc LU dans "
       + "l'enquête de la DREES auprès des caisses, et c'est le chiffre le plus "
       + "sûr de cette page."],
-    ["absent", String(inventaire.compte("absent")),
+    [LIBELLES_ETATS.absent, String(inventaire.compte("absent")),
       "Ni déclarés ni servis : les bonifications de service, l'allocation "
-      + "veuvage. C'est un écart au "
-      + "droit positif, et le dépôt le nomme plutôt que de l'estimer."],
+      + "veuvage. Un écart au droit positif, que le dépôt nomme plutôt que "
+      + "de l'estimer."],
   ];
   const clesRefus = Object.keys(c.refus).sort();
   const refus = clesRefus.map(
@@ -16181,12 +16187,39 @@ const FAMILLES_INVENTAIRE = {
 const NIVEAUX_FIABILITE = ["certifiee", "haute", "moyenne", "estimee"];
 
 const COUVERTURES_INVENTAIRE = [
-  ["modelise", "modélisé", "modélisés"],
-  ["partiel", "partiel", "partiels"],
-  ["a_modeliser", "à modéliser", "à modéliser"],
-  ["routage", "porté par un statut", "portés par un statut"],
+  ["modelise", "calculé en entier", "calculés en entier"],
+  ["partiel", "calculé en partie", "calculés en partie"],
+  ["a_modeliser", "pas encore calculé", "pas encore calculés"],
+  ["routage", "calculé par un autre régime", "calculés par un autre régime"],
   ["hors_champ", "hors champ", "hors champ"],
 ];
+
+const LEGIFRANCE = "https://www.legifrance.gouv.fr";
+
+/**
+ * L'adresse Légifrance d'un texte de l'inventaire, depuis son identifiant
+ * DILA ; `null` sans identifiant. Un article ou un texte de code se lit sous
+ * `codes/`, les autres sous `loda/` : la référence le dit, qui commence alors
+ * par « code », ou par l'article « du code » qu'elle cite.
+ */
+function adresseLegifrance(texte) {
+  const id = texte.id || "";
+  const deCode = /^(articles?\s[^,]*?\bdu\s+)?code\b/i.test(texte.reference.trim());
+  if (id.startsWith("LEGIARTI")) return `${LEGIFRANCE}/${deCode ? "codes" : "loda"}/article_lc/${id}`;
+  if (id.startsWith("LEGITEXT")) return `${LEGIFRANCE}/${deCode ? "codes/texte_lc" : "loda/id"}/${id}`;
+  if (id.startsWith("JORFTEXT")) return `${LEGIFRANCE}/jorf/id/${id}`;
+  if (id.startsWith("JORFARTI")) return `${LEGIFRANCE}/jorf/article_jo/${id}`;
+  return null;
+}
+
+/** Les textes d'un régime, chacun lié à Légifrance quand il y est. */
+function textesDuRegime(textes) {
+  return (textes || []).map((texte) => {
+    const adresse = adresseLegifrance(texte);
+    const nom = echapper(texte.reference);
+    return adresse ? `<a href="${adresse}">${nom}</a>` : nom;
+  }).join("<br>");
+}
 
 function periodeInventaire(creation, fermeture, extinction) {
   if (creation === null || creation === undefined) {
@@ -16262,13 +16295,14 @@ function inventaireSection(lignes, catalogue, gestionnaires = {}) {
       echapper(lecture[ligne.couverture]),
       cellule(g.fiabiliteEnClair(fiabilites.get(ligne.code) ?? "")),
       echapper(periodeInventaire(ligne.creation, ligne.fermeture, ligne.extinction)),
-      cellule((ligne.statuts || []).join(", ")),
+      textesDuRegime(ligne.textes) || "—",
       cellule(ligne.couverture === "hors_champ" ? ligne.raison_hors_champ : ligne.manque),
     ]);
     attributs.push({
       "data-famille": ligne.famille,
       "data-couverture": ligne.couverture,
       "data-fiabilite": fiabilites.get(ligne.code) ?? "",
+      "data-code": ligne.code,
     });
   }
 
@@ -16294,7 +16328,7 @@ function inventaireSection(lignes, catalogue, gestionnaires = {}) {
     + '<p class="compte discret" aria-live="polite" data-compte-de="inventaire" '
     + `data-unite="régimes">${lignes.length} régimes</p>`;
   const table = g.tableau(
-    ["Régime", "Géré par", "Famille", "Dans le modèle", "Fiabilité", "Période", "Statuts",
+    ["Régime", "Géré par", "Famille", "Dans le modèle", "Fiabilité", "Période", "Textes",
       "Ce qui manque, ou pourquoi"],
     corps,
     ["", "texte", "texte", "texte", "texte", "texte", "texte", "texte long"],
@@ -16304,23 +16338,23 @@ function inventaireSection(lignes, catalogue, gestionnaires = {}) {
     true,
     "inventaire",
   );
-  return g.depliant(`Les ${lignes.length} régimes, un par un`, `
-<p>L'inventaire compte ${lignes.length} régimes de retraite obligatoires, actuels
-et disparus : ${phrase}. Il fait foi dans
-<a href="${g.DEPOT}/blob/main/data/reference/regimes/inventaire.yaml">inventaire.yaml</a>,
-où chaque ligne cite son texte fondateur, et un test le tient aligné sur le
-catalogue. Un régime « partiel » est
-calculé, mais un étage, un barème ou une période lui manque, et la dernière
-colonne dit lequel ; un régime « à modéliser » n'a pas de fiche ; une ligne
-« portée par un statut » n'est pas un régime mais une affiliation (l'élu
-local, le micro-entrepreneur), que le statut nommé route vers les régimes du
-catalogue. La fiabilité est celle de la fiche du catalogue, quand il y en a
-une. « Géré par » nomme
+  const titre = `Les ${lignes.length} régimes : ${comptes.modelise} calculés en entier, `
+    + `${comptes.partiel} en partie`;
+  return g.depliant(titre, `
+<p>Tous les régimes de retraite obligatoires, actuels et disparus : ${phrase}.
+Cette liste est fabriquée depuis les fiches du modèle
+(<a href="${g.DEPOT}/tree/main/data/reference/regimes">une par régime</a>), et
+un régime qu'on y ajoute paraît ici de lui-même. « Calculé en partie » : le
+simulateur le calcule, mais un étage, un barème ou une période lui manque, et
+la dernière colonne dit lequel. « Calculé par un autre régime » : une
+affiliation (l'élu local, le micro-entrepreneur), que le simulateur range dans
+les régimes qui l'accueillent. Chaque ligne cite ses textes, liés à Légifrance
+quand ils y sont. « Géré par » nomme
 <a href="${g.DEPOT}/blob/main/data/reference/regimes/_gestionnaires.yaml">l'organisme</a>
 qui le gère, ou l'a géré en dernier : ${organismesVivants.size} organismes
 gèrent les ${vivantes.length} régimes encore en vie. Cherchez, filtrez, ou triez en cliquant un en-tête.</p>
 ${filtres}
-${table}`, "donnees-inventaire");
+${table}`, "les-regimes");
 }
 
 /**
@@ -16429,7 +16463,8 @@ function methodeSources(contexte) {
       + `${dateEnClair(datesVerification[datesVerification.length - 1])}`,
     ) + g.fiche(
       "Régimes recensés", String(inventaire),
-      `dont ${simulateur.catalogue.taille} calculés`,
+      `dont ${simulateur.catalogue.taille} calculés, `
+      + `<a href="${g.lien("/caisses", "les-regimes")}">un par un</a>`,
     ) + g.fiche(
       "Institutions citées", institutions,
       "INSEE, COR, DREES, Cnav, Légifrance…",
@@ -16448,7 +16483,8 @@ robustes encore.</div>`;
       "la certification n'a pas encore été lancée",
     ) + g.fiche(
       "Régimes recensés", String(inventaire),
-      `dont ${simulateur.catalogue.taille} calculés`,
+      `dont ${simulateur.catalogue.taille} calculés, `
+      + `<a href="${g.lien("/caisses", "les-regimes")}">un par un</a>`,
     ) + g.fiche(
       "Institutions citées", institutions,
       "INSEE, COR, DREES, Cnav, Légifrance…",
@@ -16549,8 +16585,6 @@ citation de la source : chaque valeur du dépôt porte la sienne dans
 <strong>Qui reprend un chiffre d'ici cite le producteur, pas ce site.</strong></p>`, "donnees-reutilisation");
 
   const detail = depliantSeries + depliantFiabilite
-    + inventaireSection(contexte.paquet.inventaire || [], simulateur.catalogue,
-      contexte.paquet.gestionnaires || {})
     + depliantSources + depliantReutilisation;
 
   return `
@@ -16754,7 +16788,7 @@ function programmePourquoi(contexte) {
   const inventaire = (contexte.paquet.inventaire || []).length;
   return `
 <p>La retraite française ? Un empilement de régimes, plus qu'un système.
-Ce site en <a href="${g.lien("/methode", "sources")}" data-vers="sources">recense ${inventaire}</a>, actuels et
+Ce site en <a href="${g.lien("/caisses", "les-regimes")}">recense ${inventaire}</a>, actuels et
 disparus, et en calcule ${regimes}. Chacun a son âge de départ, son assiette, son
 taux, sa durée exigée et son minimum.</p>
 <ul class="serree">

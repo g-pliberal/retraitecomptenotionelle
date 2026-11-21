@@ -304,15 +304,17 @@ def test_l_inventaire_est_une_table_qui_se_filtre_et_se_trie(contexte):
 
     Une seule table, chaque ligne portant sa famille et sa couverture en
     ``data-``, un champ de recherche et deux menus devant elle, des en-têtes
-    qui sont des boutons de tri. Sans script, elle se lit entière.
+    qui sont des boutons de tri. Sans script, elle se lit entière. Elle est
+    sur la page « Les caisses » depuis le 21 novembre 2026, et non plus sur
+    Méthode : la liste de tous les régimes est la suite des caisses.
     """
     from retraite_notionnelle.config import RACINE_DONNEES
     from retraite_notionnelle.donnees.regimes import charger_inventaire
 
-    corps = rendre("/methode", {})[1]
+    corps = rendre("/caisses", {})[1]
     lignes = charger_inventaire(RACINE_DONNEES)
     table = re.search(r'<table id="inventaire">.*?</table>', corps, re.S).group(0)
-    rangs = re.findall(r'<tr data-famille="([^"]+)" data-couverture="([^"]+)" data-fiabilite="[^"]*">', table)
+    rangs = re.findall(r'<tr data-famille="([^"]+)" data-couverture="([^"]+)" data-fiabilite="[^"]*" data-code="[^"]+">', table)
     assert len(rangs) == len(lignes)
     assert [famille for famille, _ in rangs] == [l.famille for l in lignes]
     assert table.count('<button type="button" class="tri"') == 8
@@ -332,9 +334,7 @@ def test_l_inventaire_est_une_table_qui_se_filtre_et_se_trie(contexte):
         if ligne.couverture in ("modelise", "partiel"):
             assert ligne.code in catalogue, ligne.code
     assert ">certifiee<" in table or ">haute<" in table
-    # Et l'inventaire ne s'impose toujours pas : il reste replié. Depuis que
-    # Sources est la fin de la page Méthode, un tableau y est ouvert — celui
-    # des règles d'indexation, qui est la réponse de Méthode —, mais pas lui.
+    # Et l'inventaire ne s'impose toujours pas : il reste replié.
     assert '<table id="inventaire">' not in _hors_depliants(corps)
 
     from pathlib import Path
@@ -355,7 +355,7 @@ def test_l_inventaire_nomme_le_gestionnaire_de_chaque_regime():
     from retraite_notionnelle.config import RACINE_DONNEES
     from retraite_notionnelle.donnees.regimes import charger_gestionnaires, charger_inventaire
 
-    corps = rendre("/methode", {})[1]
+    corps = rendre("/caisses", {})[1]
     table = re.search(r'<table id="inventaire">.*?</table>', corps, re.S).group(0)
     assert ">Géré par<" in table
     organismes = charger_gestionnaires(RACINE_DONNEES)
@@ -1913,10 +1913,12 @@ def test_la_page_risque_range_ses_sections_et_se_relie():
 
 def test_la_page_donnees_se_lit_comme_une_base():
     """Deux tables filtrables et triables : l'inventaire, croisé par famille,
-    couverture et fiabilité, et les séries certifiées, par niveau."""
+    couverture et fiabilité, et les séries certifiées, par niveau. L'inventaire
+    est sur la page « Les caisses » depuis le 21 novembre 2026."""
+    caisses = rendre("/caisses", {})[1]
     corps = rendre("/methode", {})[1]
-    inventaire = re.search(r'<table id="inventaire">.*?</table>', corps, re.S).group(0)
-    assert 'id="inventaire-fiabilite"' in corps and 'data-filtre="fiabilite"' in corps
+    inventaire = re.search(r'<table id="inventaire">.*?</table>', caisses, re.S).group(0)
+    assert 'id="inventaire-fiabilite"' in caisses and 'data-filtre="fiabilite"' in caisses
     fiabilites = re.findall(r'data-fiabilite="([^"]*)"', inventaire)
     assert len(fiabilites) == inventaire.count("<tr ")
     assert {f for f in fiabilites if f} <= {"certifiee", "haute", "moyenne", "estimee"}
@@ -2751,9 +2753,9 @@ def test_droits_non_cotises_disent_ce_que_le_moteur_sert(page, contexte):
     texte = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", page("/avantages"))))
     for libelle in ("Pension de réversion", "Majoration de la pension de réversion",
                     "Majoration forfaitaire de réversion pour enfant à charge"):
-        assert re.search(re.escape(libelle) + r" [^|]{0,120}? en vigueur servi en partie",
-                         texte), f"{libelle} : la page ne dit pas qu'il est servi en partie"
-    assert re.search(r"Coefficient de solidarité de l'Agirc-Arrco .{0,160}? déclaré, non servi",
+        assert re.search(re.escape(libelle) + r" [^|]{0,120}? en vigueur calculé en partie",
+                         texte), f"{libelle} : la page ne dit pas qu'il est calculé en partie"
+    assert re.search(r"Coefficient de solidarité de l'Agirc-Arrco .{0,160}? déclaré, pas encore calculé",
                      texte)
     non_mesures = [a for a in contexte.inventaire_avantages().avantages
                    if a.etat_modele == "integre" and a.mesurable_par == "aucune"]

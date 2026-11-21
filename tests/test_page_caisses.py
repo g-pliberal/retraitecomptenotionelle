@@ -13,16 +13,28 @@ structure de financement de 2023, des compléments du rapport du COR de juin
 ``structure_financement.csv``) ; les réserves de fin 2025, du tableau 2.3 du
 rapport du COR de juin 2026 (``reserves_regimes.csv``) ; les prix et valeurs
 du point de 2026, des barèmes des caisses (``valeurs_point.csv``).
+
+Le 21 novembre 2026, le propriétaire veut que la page montre TOUT, et que ce
+qu'elle montre ne se recopie pas : les régimes que l'inventaire recense, chacun
+marqué selon ce que le modèle en calcule et avec ses textes, sont fabriqués
+depuis les fiches (``data/reference/regimes/``), et un test refuse la page
+qu'un régime du modèle manquerait. La page « Droits non cotisés » tient la
+même promesse pour les dispositifs (``avantages_non_contributifs.yaml``).
 """
 
 from __future__ import annotations
 
+import html
 import re
 from pathlib import Path
 
 import pytest
 
+import yaml
+
+from retraite_notionnelle.avantages import charger_avantages
 from retraite_notionnelle.donnees.caisses_du_site import CAISSES, lire
+from retraite_notionnelle.donnees.regimes import CatalogueRegimes, charger_inventaire
 from retraite_notionnelle.web.site import disponible, module, rendre
 
 DONNEES = Path(__file__).resolve().parents[1] / "data"
@@ -138,3 +150,136 @@ def test_les_caisses_viennent_dans_l_ordre_des_familles():
     _, corps = rendre("/caisses")
     ordre = re.findall(r'id="caisse-([a-z_]+)"', corps)
     assert ordre == [c.ident for c in CAISSES]
+
+
+# -- Tout ce que les fiches recensent, sur la page ----------------------------
+
+#: Ce que la page dit de chaque couverture de l'inventaire, dans les mots
+#: que le propriétaire a choisis le 21 novembre 2026.
+STATUTS = {
+    "modelise": "calculé en entier",
+    "partiel": "calculé en partie",
+    "a_modeliser": "pas encore calculé",
+    "routage": "calculé par un autre régime",
+    "hors_champ": "hors champ",
+}
+
+
+def _texte(code: str) -> str:
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", code)))
+
+
+def _rangees(corps: str) -> dict[str, str]:
+    table = re.search(r'<table id="inventaire">.*?</table>', corps, re.S)
+    assert table, "la page ne porte pas la table des régimes"
+    return dict(re.findall(r'<tr [^>]*data-code="([^"]+)"[^>]*>(.*?)</tr>', table.group(0), re.S))
+
+
+@pytest.mark.skipif(not disponible(), reason="node absent")
+def test_chaque_regime_de_l_inventaire_est_sur_la_page_avec_son_statut():
+    lignes = charger_inventaire(DONNEES)
+    _, corps = rendre("/caisses")
+    rangees = _rangees(corps)
+    assert list(rangees) == [ligne.code for ligne in lignes]
+    for ligne in lignes:
+        rangee = _texte(rangees[ligne.code])
+        assert " ".join(ligne.nom.split()) in rangee, ligne.code
+        assert STATUTS[ligne.couverture] in rangee, ligne.code
+
+
+@pytest.mark.skipif(not disponible(), reason="node absent")
+def test_chaque_regime_que_le_modele_calcule_est_sur_la_page():
+    # Le modèle calcule les régimes du catalogue : chacun a sa ligne, marquée
+    # calculée, en entier ou en partie. Une fiche qu'on y ajoute paraît sans
+    # que personne ne la recopie, et la page qui l'oublierait échoue ici.
+    _, corps = rendre("/caisses")
+    rangees = _rangees(corps)
+    for regime in CatalogueRegimes(DONNEES):
+        assert regime.code in rangees, regime.code
+        rangee = _texte(rangees[regime.code])
+        assert "calculé en entier" in rangee or "calculé en partie" in rangee, regime.code
+
+
+@pytest.mark.skipif(not disponible(), reason="node absent")
+def test_le_titre_de_la_liste_compte_ce_que_le_modele_calcule():
+    lignes = charger_inventaire(DONNEES)
+    _, corps = rendre("/caisses")
+    entiers = sum(ligne.couverture == "modelise" for ligne in lignes)
+    partiels = sum(ligne.couverture == "partiel" for ligne in lignes)
+    resume = re.search(r'id="les-regimes".*?<summary>(.*?)</summary>', corps, re.S)
+    assert resume, "la liste des régimes n'est pas un dépliant de la page"
+    assert _texte(resume.group(1)).strip() == (
+        f"Les {len(lignes)} régimes : {entiers} calculés en entier, {partiels} en partie")
+
+
+@pytest.mark.skipif(not disponible(), reason="node absent")
+def test_chaque_regime_cite_ses_textes_et_les_lie_a_legifrance():
+    lignes = charger_inventaire(DONNEES)
+    _, corps = rendre("/caisses")
+    rangees = _rangees(corps)
+    for ligne in lignes:
+        rangee = rangees[ligne.code]
+        for texte in ligne.textes:
+            assert " ".join(texte["reference"].split()) in _texte(rangee), ligne.code
+            if texte["id"]:
+                assert re.search(
+                    rf'href="https://www\.legifrance\.gouv\.fr/[a-z]+/[a-z_]+/{texte["id"]}"',
+                    rangee), (ligne.code, texte["id"])
+    # Les quatre formes d'identifiant, chacune à son adresse : un article de
+    # code, un article de loi, une loi au JORF, un article au JORF.
+    assert 'href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006745499"' \
+        in rangees["agirc"]
+    # « article L. 634-3 du code de la sécurité sociale » est aussi un article
+    # de code, que la référence nomme après lui.
+    assert any('href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000036391704"'
+               in rangee for rangee in rangees.values())
+    assert any('href="https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000006756839"'
+               in rangee for rangee in rangees.values())
+    assert 'href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000877358"' in rangees["cnrv"]
+    assert any(re.search(r'href="https://www\.legifrance\.gouv\.fr/jorf/article_jo/JORFARTI\d+"',
+                         rangee) for rangee in rangees.values())
+
+
+@pytest.mark.skipif(not disponible(), reason="node absent")
+def test_la_liste_des_regimes_n_est_qu_a_un_endroit():
+    # Méthode la portait : elle y renvoie désormais, sans la redire.
+    _, methode = rendre("/methode")
+    assert '<table id="inventaire">' not in methode
+    assert re.search(r'href="\.\./caisses/#les-regimes"', methode)
+
+
+# -- Les droits non cotisés : chaque dispositif, et ce que le modèle en fait ---
+
+LIBELLES_ETATS = {
+    "chiffre": "calculé, chiffré",
+    "integre": "calculé, chiffré à part",
+    "declare": "déclaré, pas encore calculé",
+    "absent": "pas encore calculé",
+}
+
+
+@pytest.mark.skipif(not disponible(), reason="node absent")
+def test_chaque_droit_non_cotise_du_modele_est_sur_la_page():
+    inventaire = charger_avantages(DONNEES)
+    _, corps = rendre("/avantages")
+    liste = re.search(r'id="avantages-liste".*?</details>', corps, re.S)
+    assert liste
+    rangees = [_texte(r) for r in re.findall(r"<tr>(.*?)</tr>", liste.group(0), re.S)]
+    for avantage in inventaire.avantages:
+        trouvees = [r for r in rangees if r.strip().startswith(avantage.libelle)]
+        assert trouvees, avantage.code
+        # Un dispositif servi en partie (la réversion, au seul conjoint
+        # déclaré) le dit dans les mots des régimes : « calculé en partie ».
+        attendu = ("calculé en partie" if avantage.servi_en_partie
+                   else LIBELLES_ETATS[avantage.etat_modele])
+        assert attendu in trouvees[0], avantage.code
+    # Ce que les fiches de régimes déclarent, sous un code ou sous un alias, y
+    # mène toujours à une ligne de la page.
+    brut = yaml.safe_load((DONNEES / "reference" / "legislation"
+                           / "avantages_non_contributifs.yaml").read_text(encoding="utf-8"))
+    libelle = {nom: a["libelle"] for a in brut["avantages"]
+               for nom in [a["code"], *a.get("alias", [])]}
+    for regime in CatalogueRegimes(DONNEES):
+        for periode in regime.periodes:
+            for code in periode.avantages_non_contributifs or ():
+                assert any(r.strip().startswith(libelle[code]) for r in rangees), code

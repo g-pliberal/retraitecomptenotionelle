@@ -197,7 +197,7 @@ class Avantage:
     sans_chiffre: str = ""
     #: En quoi le scénario 1 ne sert cet avantage qu'en partie — la réversion,
     #: au seul conjoint que la saisie déclare. Vide quand l'état du modèle dit
-    #: tout. La page affiche alors « servi en partie » au lieu de l'état.
+    #: tout. La page affiche alors « calculé en partie » au lieu de l'état.
     servi_en_partie: str = ""
 
     @property
