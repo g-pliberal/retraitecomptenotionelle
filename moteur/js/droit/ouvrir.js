@@ -27,6 +27,7 @@ import * as coordonner from "./coordonner.js";
 import { borneCarriere, REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
 import * as etranger from "./etranger.js";
 import * as invalidite from "./invalidite.js";
+import * as limiteAge from "./limite_age.js";
 
 /** La version du schéma de l'étape. */
 export const SCHEMA_VERSION = 1;
@@ -1392,6 +1393,25 @@ export function ageAnnulationDroit(moteur, carriereSaisie) {
 }
 
 /**
+ * L'âge où le chômage cesse d'être indemnisé : l'âge du 1° de L. 351-8 du
+ * code de la sécurité sociale, que l'article L. 5421-4 du code du travail
+ * nomme (de 2011 à 2023, il écrit l'âge de L. 161-17-2 augmenté de cinq
+ * ans : le même âge, celui du régime général). Le règlement de la Banque de France, dont l'âge du taux plein est
+ * le sien (`ageAnnulationBanqueDeFrance`), n'y change rien : l'agent garde
+ * l'âge du régime général. Les autres régimes lisent encore leur propre âge
+ * du taux plein (`ageTauxPlein`).
+ */
+function ageDuChomage(moteur, periode, carriere) {
+  if (periode.bareme_decote === BAREME_BANQUE_DE_FRANCE) {
+    const commun = ageDuTauxPleinDeLaPension(moteur, carriere);
+    if (commun !== null) {
+      return commun[0];
+    }
+  }
+  return ageTauxPlein(moteur, periode, carriere);
+}
+
+/**
  * Le premier mois sans revenu de remplacement du chômage : l'âge
  * d'annulation de la décote, de tout temps, ou, depuis le 1er avril 1983,
  * l'âge légal et la durée requise pour le taux plein (L. 5421-4 du code du
@@ -1409,7 +1429,7 @@ export function finIndemnisation(moteur, carriereSaisie) {
     return null;
   }
   const annulation = carriere.dateDeLAge(Math.min(
-    ...retenues.map(([, periode]) => ageTauxPlein(moteur, periode, carriere)),
+    ...retenues.map(([, periode]) => ageDuChomage(moteur, periode, carriere)),
   ));
   if (chomage.finIndemnisationDureeDepuis === null) {
     return annulation;
@@ -1522,6 +1542,10 @@ export function indemnisationBornee(moteur, carriere) {
  * Et le parent de trois enfants né du 1er juillet 1951 au 31 décembre 1955
  * qui en remplit les conditions a l'âge de soixante-cinq ans, là où vaut
  * L. 351-8 (`categories.ageDuParentDeTroisEnfants`).
+ *
+ * À la Banque de France, c'est l'âge du règlement, non celui de L. 351-8 :
+ * « l'âge auquel s'annule le coefficient de minoration » (articles 32 et 70,
+ * `ageAnnulationBanqueDeFrance`).
  */
 export function ageTauxPlein(moteur, periodeLiquidation, carriere) {
   let periode = periodeLiquidation;
@@ -1535,6 +1559,9 @@ export function ageTauxPlein(moteur, periodeLiquidation, carriere) {
   const derogation = derogationActive(moteur, periode, carriere);
   if (derogation !== null) {
     return derogation.ageAnnulation;
+  }
+  if (periode.bareme_decote === BAREME_BANQUE_DE_FRANCE) {
+    return ageAnnulationBanqueDeFrance(moteur, periode, carriere);
   }
   if (periode.age_table) {
     const propres = moteur.agesRegimes.ages(periode.age_table, carriere.generation);
@@ -1553,6 +1580,102 @@ export function ageTauxPlein(moteur, periodeLiquidation, carriere) {
     }
   }
   return periode.age_taux_plein;
+}
+
+/** Le barème de la décote du règlement de la Banque de France. */
+const BAREME_BANQUE_DE_FRANCE = "banque_de_france";
+
+/** La fiche de la décote propre à la Banque de France (article 70 de son règlement). */
+export const FICHE_DECOTE_BANQUE_DE_FRANCE = "decote_banque_de_france";
+
+/** La dernière ligne d'une table datée dont le `depuis` (AAAA-MM-JJ) ne dépasse pas ce jour. */
+function ligneDepuis(table, jour) {
+  let lue = null;
+  for (const ligne of table ?? []) {
+    if (jour >= ligne.depuis) {
+      lue = ligne;
+    }
+  }
+  return lue;
+}
+
+/**
+ * Le coefficient de minoration que le règlement de la Banque de France
+ * oppose à cet agent, et l'âge où il s'annule (fiche
+ * `decote_banque_de_france`) : la date d'effet choisit le tableau de
+ * l'article 70. Celui de 2007 se lit à la période où l'agent « est
+ * susceptible de liquider sa pension », et écrit l'âge en clair ; celui du
+ * 9 mai 2012 se lit à la période de naissance, et retranche ses trimestres de
+ * la limite d'âge du statut. L'agent dont l'emploi ouvre le droit cinq ans
+ * plus tôt (`emploiDeLaBanque`) a la dernière colonne du premier, et vingt
+ * trimestres de moins au second.
+ *
+ * @returns {[number|null, number|null]} coefficient et âge ; `[null, null]`
+ *   quand le tableau écrit « Sans objet » : aucune minoration.
+ */
+export function minorationBanqueDeFrance(moteur, periode, carriere,
+  anneeLiquidation = carriere.anneeLiquidation) {
+  const effet = dateDEffet(carriere) ?? `${String(anneeLiquidation).padStart(4, "0")}-01-01`;
+  const version = moteur.fichesDatees.versionAuxDates(
+    FICHE_DECOTE_BANQUE_DE_FRANCE, { "liquidation.date_effet": effet });
+  if (version === null) {
+    throw new Error(`${FICHE_DECOTE_BANQUE_DE_FRANCE} : aucune version au ${effet}`);
+  }
+  const parametres = version.parametres;
+  const deux = (n) => String(n).padStart(2, "0");
+  const classe = carriere.emploiDeLaBanque === "active";
+  if (parametres.lecture === "ouverture_du_droit") {
+    const ouverture = DateMois.depuisRang(moisOuvertureDesDroits(moteur, periode, carriere));
+    const ligne = ligneDepuis(parametres.table,
+      `${String(ouverture.annee).padStart(4, "0")}-${deux(ouverture.mois)}-01`);
+    if (ligne === null) {
+      return [null, null];
+    }
+    // « Pour les agents dont les droits sont ouverts à l'âge de 55 ans », la
+    // dernière colonne du tableau.
+    return [ligne.coefficient, classe ? ligne.age_annulation_a_55_ans : ligne.age_annulation];
+  }
+  if (parametres.lecture === "naissance") {
+    const naissance = carriere.dateNaissance;
+    const ligne = ligneDepuis(parametres.table,
+      `${String(naissance.annee).padStart(4, "0")}-${deux(naissance.mois)}-`
+      + deux(carriere.jourDeNaissance));
+    if (ligne === null) {
+      return [null, null];
+    }
+    const renvoi = parametres.limite_d_age;
+    const limite = limiteAge.limiteDuTableau(moteur, carriere, renvoi.fiche, renvoi.classe,
+      effet < renvoi.lue_depuis ? renvoi.lue_depuis : effet);
+    // « Pour les agents appartenant à une des catégories visées au quatrième
+    // alinéa de l'article 26, l'âge visé au 2° est minoré de 20 trimestres »
+    // (article 70), comme la limite d'âge de l'article 32.
+    const deMoins = classe ? parametres.trimestres_de_moins_des_emplois_classes ?? 0 : 0;
+    // « Pour les personnels de direction à partir du quatrième degré nés avant
+    // le 1er janvier 1956 », le second tableau : leur limite, que
+    // `limiteDuTableau` lit dans leur colonne, diminuée de leurs trimestres.
+    const trimestres = (ligne.trimestres_avant_limite_de_la_direction ?? {})[
+      carriere.emploiDeLaBanque] ?? ligne.trimestres_avant_limite;
+    // Sans limite lue, celle que la période écrit (`age_taux_plein`), la
+    // limite d'âge de droit commun du statut.
+    return [ligne.coefficient,
+      (limite ?? periode.age_taux_plein) - (trimestres + deMoins) / 4.0];
+  }
+  return [null, null];
+}
+
+/**
+ * L'âge du taux plein de l'agent de la Banque de France : « l'âge auquel
+ * s'annule le coefficient de minoration », la limite d'âge du grade
+ * (article 32, 1°), que l'article 70 abaisse à titre transitoire
+ * (`minorationBanqueDeFrance`). Aucune rédaction du règlement ne renvoie à
+ * L. 351-8 du code de la sécurité sociale. Quand le tableau écrit « Sans
+ * objet » — jusqu'au 31 décembre 2008, et aux agents nés jusqu'au second
+ * semestre 1948 —, aucune minoration : la pension est entière dès l'âge
+ * d'ouverture, comme aux régimes sans décote.
+ */
+export function ageAnnulationBanqueDeFrance(moteur, periode, carriere) {
+  const [, age] = minorationBanqueDeFrance(moteur, periode, carriere);
+  return age ?? ageOuverture(moteur, periode, carriere);
 }
 
 /**

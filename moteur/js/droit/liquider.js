@@ -30,7 +30,6 @@ import { REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
 import * as cultes from "./cultes.js";
 import { familleDuRegime } from "./etranger.js";
 import * as invalidite from "./invalidite.js";
-import * as limiteAge from "./limite_age.js";
 import * as primes from "./primes.js";
 import { primesSoumises } from "../primes.js";
 import * as ouvrir from "./ouvrir.js";
@@ -2779,78 +2778,18 @@ export function borneDeLaDuree(moteur, periode, carriere, cible) {
   return Math.max(0, cible - 150 - Math.floor(apres + 1e-9));
 }
 
-/** La fiche de la décote propre à la Banque de France (article 70 de son règlement). */
-export const FICHE_DECOTE_BANQUE_DE_FRANCE = "decote_banque_de_france";
-
-/** La dernière ligne d'une table datée dont le `depuis` (AAAA-MM-JJ) ne dépasse pas ce jour. */
-function ligneDepuis(table, jour) {
-  let lue = null;
-  for (const ligne of table ?? []) {
-    if (jour >= ligne.depuis) {
-      lue = ligne;
-    }
-  }
-  return lue;
-}
-
 /**
- * La décote que le règlement de la Banque de France oppose à cet agent (fiche
- * `decote_banque_de_france`) : la date d'effet choisit le tableau de l'article
- * 70. Celui de 2007 se lit à la période où l'agent « est susceptible de
- * liquider sa pension », et écrit l'âge d'annulation en clair ; celui du
- * 9 mai 2012 se lit à la période de naissance, et retranche ses trimestres de
- * la limite d'âge du statut. Sans ligne — « Sans objet » —, aucune décote.
- * L'agent dont l'emploi ouvre le droit cinq ans plus tôt (`emploiDeLaBanque`)
- * a la dernière colonne du premier, et vingt trimestres de moins au second.
+ * La décote que le règlement de la Banque de France oppose à cet agent : le
+ * taux de l'article 70 (`ouvrir.minorationBanqueDeFrance`), et l'âge où il
+ * s'annule, qui est l'âge du taux plein du régime (`ouvrir.ageTauxPlein`).
+ * Sans ligne — « Sans objet » —, aucune décote.
  *
  * @returns {[number|null, number, number|null]} coefficient, âge, fiabilité.
  */
 export function decoteBanqueDeFrance(moteur, periode, carriere, anneeLiquidation) {
-  const repli = ouvrir.ageTauxPlein(moteur, periode, carriere);
-  const effet = dateDEffet(carriere) ?? `${String(anneeLiquidation).padStart(4, "0")}-01-01`;
-  const version = moteur.fichesDatees.versionAuxDates(
-    FICHE_DECOTE_BANQUE_DE_FRANCE, { "liquidation.date_effet": effet });
-  if (version === null) {
-    throw new Error(`${FICHE_DECOTE_BANQUE_DE_FRANCE} : aucune version au ${effet}`);
-  }
-  const parametres = version.parametres;
-  const deux = (n) => String(n).padStart(2, "0");
-  const classe = carriere.emploiDeLaBanque === "active";
-  if (parametres.lecture === "ouverture_du_droit") {
-    const ouverture = DateMois.depuisRang(ouvrir.moisOuvertureDesDroits(moteur, periode, carriere));
-    const ligne = ligneDepuis(parametres.table,
-      `${String(ouverture.annee).padStart(4, "0")}-${deux(ouverture.mois)}-01`);
-    if (ligne === null) {
-      return [null, repli, null];
-    }
-    // « Pour les agents dont les droits sont ouverts à l'âge de 55 ans », la
-    // dernière colonne du tableau.
-    return [ligne.coefficient,
-      classe ? ligne.age_annulation_a_55_ans : ligne.age_annulation, null];
-  }
-  if (parametres.lecture === "naissance") {
-    const naissance = carriere.dateNaissance;
-    const ligne = ligneDepuis(parametres.table,
-      `${String(naissance.annee).padStart(4, "0")}-${deux(naissance.mois)}-`
-      + deux(carriere.jourDeNaissance));
-    if (ligne === null) {
-      return [null, repli, null];
-    }
-    const renvoi = parametres.limite_d_age;
-    const limite = limiteAge.limiteDuTableau(moteur, carriere, renvoi.fiche, renvoi.classe,
-      effet < renvoi.lue_depuis ? renvoi.lue_depuis : effet);
-    // « Pour les agents appartenant à une des catégories visées au quatrième
-    // alinéa de l'article 26, l'âge visé au 2° est minoré de 20 trimestres »
-    // (article 70), comme la limite d'âge de l'article 32.
-    const deMoins = classe ? parametres.trimestres_de_moins_des_emplois_classes ?? 0 : 0;
-    // « Pour les personnels de direction à partir du quatrième degré nés avant
-    // le 1er janvier 1956 », le second tableau : leur limite, que
-    // `limiteDuTableau` lit dans leur colonne, diminuée de leurs trimestres.
-    const trimestres = (ligne.trimestres_avant_limite_de_la_direction ?? {})[
-      carriere.emploiDeLaBanque] ?? ligne.trimestres_avant_limite;
-    return [ligne.coefficient, (limite ?? repli) - (trimestres + deMoins) / 4.0, null];
-  }
-  return [null, repli, null];
+  const [coefficient] = ouvrir.minorationBanqueDeFrance(
+    moteur, periode, carriere, anneeLiquidation);
+  return [coefficient, ouvrir.ageTauxPlein(moteur, periode, carriere), null];
 }
 
 /**

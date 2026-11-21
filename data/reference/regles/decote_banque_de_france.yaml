@@ -35,6 +35,9 @@ ecrit:
 - >-
   le taux du coefficient de minoration par trimestre manquant, et l'âge auquel il
   s'annule, d'où se comptent les trimestres manquants par l'âge (1° de l'article 32)
+- >-
+  l'âge du taux plein du régime, qui est cet âge : le départ au taux plein et le taux
+  plein automatique le lisent ; « Sans objet », l'âge d'ouverture
 dates_qui_decident:
 - liquidation.date_effet
 versions:
@@ -310,6 +313,13 @@ historique:
   2026-11-20 — le second tableau de l'article 70 transcrit, que lit le personnel de
   direction qui déclare son degré, sur la limite d'âge de sa colonne : sa décote reste
   celle de l'agent de droit commun, ligne à ligne.
+- >-
+  2026-11-21 — l'âge auquel le coefficient s'annule devient l'âge du taux plein du
+  régime (note 0009, étape 4) : la période renvoyait pour lui à l'âge du régime général
+  (`age_annulation_decote`), qu'aucune rédaction du règlement ne nomme ; le départ au
+  taux plein de l'agent né en juillet 1951 passe de 65 ans et 4 mois à 62 ans et un
+  trimestre. La fin de l'indemnisation du chômage garde l'âge de L. 351-8, que nomme
+  L. 5421-4 du code du travail.
 reformes: []
 code:
   interrupteurs:
@@ -322,14 +332,16 @@ code:
     quatrième alinéa de l'article 26 prend la colonne `age_annulation_a_55_ans`, puis
     retranche encore `trimestres_de_moins_des_emplois_classes`. Le personnel de direction
     qui déclare son degré retranche de la limite de sa colonne les trimestres de
-    `trimestres_avant_limite_de_la_direction`.
+    `trimestres_avant_limite_de_la_direction`. L'âge ainsi lu est l'âge du taux plein
+    du régime (`ageTauxPlein`), « Sans objet » l'âge d'ouverture.
   javascript: >-
     moteur/js/droit/liquider.js : decoteOpposable, decoteBanqueDeFrance ;
     moteur/js/droit/limite_age.js : limiteDuTableau ; moteur/js/droit/ouvrir.js :
-    moisOuvertureDesDroits
+    moisOuvertureDesDroits, minorationBanqueDeFrance, ageAnnulationBanqueDeFrance,
+    ageTauxPlein
   parametres: >-
     contenu.parametres de chaque version : lecture, table, limite_d_age,
     trimestres_de_moins_des_emplois_classes ;
     regimes/banque_de_france.yaml : bareme_decote
   tests: [tests/test_decote_banque_de_france.py, tests/test_categorie_active_banque_de_france.py,
-    tests/test_direction_banque_de_france.py]
+    tests/test_direction_banque_de_france.py, tests/test_age_du_taux_plein_banque_de_france.py]

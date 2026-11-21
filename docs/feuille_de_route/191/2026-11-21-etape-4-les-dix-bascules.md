@@ -5,8 +5,9 @@ d'âge que la note 0009 désignait sont rangés : huit citent le texte qui les
 fait, au jour où leur période commence à liquider ; celui de la Banque de
 France à l'âge légal, qu'aucun texte ne faisait avant 2025, est parti, et
 revient cité en 2025 ; celui de la Banque de France à l'âge du taux plein
-reste à corriger. Un contrôle Z3 vérifie chaque renvoi cité. Aucun résultat
-n'a bougé. Point d'arrêt : le propriétaire décide de la suite de l'étape 4
+est parti, l'âge lu dans le règlement (note du même jour sur ce taux
+plein). Un contrôle Z3 vérifie chaque renvoi cité. Aucun témoin n'a
+bougé. Point d'arrêt : le propriétaire décide de la suite de l'étape 4
 sur le compte qui clôt cette note ; ne pas l'ouvrir avant.
 
 Le 21 novembre 2026, l'après-midi, sur Opus 5.5, au choix du propriétaire
@@ -32,7 +33,7 @@ dater au jour, ôter le repli.
 | Commerçants d'avant 1973 | âge d'ouverture | 7 octobre 2012 | décret n° 73-937, art. 3, LEGIARTI000026474703 | cité |
 | Artisans d'avant 1973 | âge d'ouverture | 7 octobre 2012 | le même | cité |
 | Banque de France | âge d'ouverture | 1er janvier 2025 | règlement, art. 26 a, LEGIARTI000047909725 | parti de 2008 à 2022, cité en 2025 |
-| Banque de France | âge du taux plein | — | — | laissé : à corriger |
+| Banque de France | âge du taux plein | — | — | parti, l'article 70 lu le même jour |
 
 **La Banque de France, l'âge d'ouverture.** De 2008 à 2022, ses périodes
 renvoyaient à `age_legal_par_generation`. Aucune rédaction du règlement ne le
@@ -108,5 +109,5 @@ sans elle, compter une heure par renvoi.
 Le reste de l'étape 4 : 296 renvois sans texte, la plupart jamais relus, et
 1 429 valeurs de repli, qu'aucun ne peut ôter avant la fusion. À trancher par
 le propriétaire : le budget des 296 renvois (par poids dans les résultats,
-comme la note le dit), la fusion par les renvois, et la correction de l'âge
-du taux plein de la Banque de France.
+comme la note le dit), et la fusion par les renvois. L'âge du taux plein de
+la Banque de France est corrigé le même jour.

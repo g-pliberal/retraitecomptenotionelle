@@ -107,7 +107,6 @@ periodes:
     age_ouverture: 60
     age_table: banque_de_france
     age_taux_plein: 65
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 160
     duree_requise_par_generation: duree_requise_par_generation
     duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
@@ -171,13 +170,25 @@ periodes:
       72 — et que la table du régime masquait toujours. Le renvoi est parti
       sans qu'aucun résultat ne bouge ; il ne revient qu'avec la rédaction du
       1er janvier 2025 (LEGIARTI000047909725), seule à citer L. 161-17-2.
+      L'ÂGE DU TAUX PLEIN EST CELUI DU RÈGLEMENT, NON CELUI DE L. 351-8 (relu
+      le 21 novembre 2026, note 0009, étape 4) : de 2008 à 2022 et depuis
+      2025, les périodes renvoyaient à `age_annulation_decote`, l'âge du
+      régime général, qu'aucune rédaction du règlement ne nomme ; le seul âge
+      où la pension cesse d'être minorée est « l'âge auquel s'annule le
+      coefficient de minoration », la limite d'âge du grade (article 32, 1°),
+      que l'article 70 abaisse à titre transitoire (fiche
+      `decote_banque_de_france`, que le moteur lit pour l'âge du taux plein
+      comme pour la décote). « Sans objet » au tableau, l'âge d'ouverture.
+      L'agent né en juillet 1951 avait un taux plein à 65 ans et 4 mois ; le
+      règlement l'écrit à 62 ans et un trimestre. Le renvoi est parti ;
+      `age_taux_plein` ne reste que la limite d'âge de droit commun, que la
+      décote lit quand le statut n'en donne pas.
   - debut: 2009
     fin: 2010
     type_calcul: annuites
     age_ouverture: 60
     age_table: banque_de_france
     age_taux_plein: 65
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 160
     duree_requise_par_generation: duree_requise_par_generation
     duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
@@ -207,7 +218,6 @@ periodes:
     age_ouverture: 62
     age_table: banque_de_france
     age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
@@ -245,7 +255,6 @@ periodes:
     age_ouverture: 62
     age_table: banque_de_france
     age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
@@ -283,7 +292,6 @@ periodes:
     age_ouverture: 62
     age_table: banque_de_france
     age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
@@ -321,7 +329,6 @@ periodes:
     age_ouverture: 62
     age_table: banque_de_france
     age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
@@ -359,7 +366,6 @@ periodes:
     age_ouverture: 62
     age_table: banque_de_france
     age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
@@ -397,7 +403,6 @@ periodes:
     age_ouverture: 62
     age_table: banque_de_france
     age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
@@ -435,7 +440,6 @@ periodes:
     age_ouverture: 62
     age_table: banque_de_france
     age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
@@ -473,7 +477,6 @@ periodes:
     age_ouverture: 62
     age_table: banque_de_france
     age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
@@ -511,7 +514,6 @@ periodes:
     age_ouverture: 62
     age_table: banque_de_france
     age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
@@ -549,7 +551,6 @@ periodes:
     age_ouverture: 62
     age_table: banque_de_france
     age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
@@ -587,7 +588,6 @@ periodes:
     age_ouverture: 62
     age_table: banque_de_france
     age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     duree_requise_table: [banque_de_france_2023, banque_de_france_2014]
@@ -660,7 +660,6 @@ periodes:
     textes_des_renvois:
       age_ouverture_par_generation: {id: LEGIARTI000047909725, depuis: "2025-01-01"}
     age_taux_plein: 67
-    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     duree_requise_table: [banque_de_france_2023, banque_de_france_2014]

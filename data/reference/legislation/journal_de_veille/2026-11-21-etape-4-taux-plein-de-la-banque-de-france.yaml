@@ -1,0 +1,26 @@
+date: "2026-11-21"
+session: "action 191, étape 4 de la note 0009 : l'âge du taux plein de la Banque de France, lu dans son règlement"
+consulte: >-
+  L'index LEGI du dépôt (à jour au 16 novembre 2026) : règlement annexé au
+  décret n° 2007-262, rédactions de 2007 (LEGIARTI000006778516), du 9 mai 2012
+  (LEGIARTI000025882187) et du 1er janvier 2025 (LEGIARTI000047909725),
+  articles 32, 34, 70 et 72 ; la recherche de « 351-8 », de « taux plein » et
+  de « s'annule » dans ces trois rédactions ; l'article L. 5421-4 du code du
+  travail, tel que la règle de la fin d'indemnisation le cite.
+  scripts/veille_droit.py : rien de neuf sur ces textes.
+trouve: >-
+  Aucune rédaction du règlement ne renvoie à L. 351-8 : l'âge où la pension
+  cesse d'être minorée est « l'âge auquel s'annule le coefficient de
+  minoration », la limite d'âge du grade (article 32, 1°), que l'article 70
+  abaisse à titre transitoire, « Sans objet » jusqu'au 31 décembre 2008 et aux
+  nés jusqu'au second semestre 1948. Le renvoi des périodes de 2008 à 2022 et
+  de 2025 à `age_annulation_decote` est parti ; le départ au taux plein et le
+  taux plein automatique lisent l'article 70. Le chômage garde l'âge de
+  L. 351-8, que L. 5421-4 du code du travail nomme. Détail :
+  docs/feuille_de_route/191/2026-11-21-etape-4-taux-plein-de-la-banque-de-france.md.
+reste: >-
+  Le minimum garanti de la Banque de France : l'article 72, III, de la
+  rédaction de 2012 minore l'âge de l'article 34 de neuf trimestres en 2016 à
+  un en 2020, selon l'année où l'âge d'ouverture est atteint, et le moteur ne
+  porte cette minoration qu'à la fonction publique, de 2011 à 2015 ; la date
+  depuis laquelle l'article 34 réserve le minimum au taux plein reste à lire.
