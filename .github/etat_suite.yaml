@@ -1,18 +1,20 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: 40b9104b29e5c11468a33af5ed76138b8a9d806a
-date: 2026-11-21T03:20:15Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44858807665
+etat: rouge
+sources: 127b0fbafda946e27d9de2c180b393a0b2249ffc
+date: 2026-11-21T03:41:47Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44860783756
+echecs:
+  - "FAILED tests/test_donnees.py::test_journal_de_certification_decrit_les_series_certifiees - AssertionError: ('legislation/age_annulation_decote.csv', 'haute')"
 presomptions: rouge
 presomptions_echecs:
   - "FAILED tests/test_sam_indemnites_de_maternite.py::test_la_mere_recoit_le_forfait_depuis_septembre_2023 - assert (2024, 1) == (2024, 2)"
   - "FAILED tests/test_servis_figes.py::test_le_portage_resert_chaque_servi_fige_a_l_octet - AssertionError: 126 écart(s), dont : ['087f29c77e598448, servi.actuel.avantages_appliques.[0].montant : attendu 1804.405967678671, lu 1800.199509244041', '087f29c77e598448, servi.actuel.avantages_appliques.[1].montant : attendu 887.3499252271317, lu 885.9925194547146', '087f29c77e598448, servi.actuel.avantages_appliques.[2].montant : attendu 2392.105590265545, lu 2389.187167854848', '087f29c77e598448, servi.actuel.avantages_appliques.[2].par_regime.[2].[1] : attendu 1907.802339238333, lu 1904.8839168276363', '087f29c77e598448, servi.actuel.avantages_appliques.[2].par_regime_sans_anticipation.[2].[1] : attendu 1907.802339238333, lu 1904.8839168276363']"
 durees:
-  fabrique: 638
-  suite: 517
-  tranche_1: 476
-  tranche_2: 517
-  tranche_3: 448
-  tranche_4: 366
-  garde: 139
+  fabrique: 469
+  suite: 614
+  tranche_1: 290
+  tranche_2: 614
+  tranche_3: 503
+  tranche_4: 438
+  garde: 237
