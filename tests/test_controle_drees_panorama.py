@@ -1892,8 +1892,14 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
         # libéral type à 1,5 salaire moyen : la garantie passe de 36 420 à
         # 37 201 (au 1er : 37 158) ; avant : 7 304,40 et 29 115,57 au 15,
         # 7 326,25 et 29 041,87 au 1er.
-        15: ((7_250, 7_350), (29_868, 29_928)),   # mesuré : 7 303,14 et 29 898,15
-        1: ((7_275, 7_375), (29_803, 29_863)),    # mesuré : 7 324,98 et 29 832,68
+        # Remesuré le 21 novembre 2026, les années 1981 à 1989 des chefs
+        # d'exploitation au barème du revenu cadastral (action 131) : leur
+        # pension de base monte, et les minima des exploitants qu'elle
+        # absorbe baissent, la pension majorée de référence de 349 à 51
+        # millions, le complément différentiel de la RCO de 637 à 211 ;
+        # avant : 7 303,14 et 29 898,15 au 15, 7 324,98 et 29 832,68 au 1er.
+        15: ((6_723, 6_823), (30_416, 30_476)),   # mesuré : 6 773,15 et 30 445,94
+        1: ((6_743, 6_843), (30_351, 30_411)),    # mesuré : 6 793,19 et 30 380,83
     }[jour]
     assert bas_minima < minima < haut_minima
     assert bas_net < en_courants - minima < haut_net
