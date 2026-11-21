@@ -3811,6 +3811,25 @@ export function ageDeLaDureeAtteinte(moteur, periode, carriere, trimestres, requ
 }
 
 /**
+ * Le premier mois de l'année que la carrière couvre, et le nombre de ses
+ * mois : depuis janvier, sauf l'année d'entrée, qui finit en décembre ;
+ * `null` quand elle n'en couvre aucun.
+ */
+function moisDeLAnnee(carriere, annee) {
+  const lignes = carriere.lignes.filter((ligne) => ligne.annee === annee);
+  if (lignes.length === 0) {
+    return null;
+  }
+  const nombre = Math.round(carriere.partRetenue(annee) * 12);
+  if (nombre <= 0) {
+    return null;
+  }
+  const premier = (nombre === 12 || annee === carriere.anneeLiquidation)
+    ? new DateMois(annee, 1) : new DateMois(annee, 13 - nombre);
+  return [premier, nombre];
+}
+
+/**
  * Coefficient de surcote, trimestre civil par trimestre civil.
  *
  * Règle de la circulaire Cnav 2018-04 (point 2) : la PÉRIODE DE RÉFÉRENCE
@@ -3856,11 +3875,19 @@ export function coefficientSurcoteDatee(moteur, periode, carriere, trimestres, r
       break;
     }
     const valides = parAnnee.get(annee);
-    if (acquis + valides >= requis) {
+    // Le code des pensions compte sa durée au jour (L. 14, I) : l'année y
+    // apporte ses mois, trois par trimestre, depuis son premier mois, et la
+    // durée requise est atteinte au mois où ils la complètent, non au
+    // trimestre civil (L. 14, III).
+    const mois = enDuree ? moisDeLAnnee(carriere, annee) : null;
+    const apport = mois === null ? valides : Math.min(4, Math.max(valides, mois[1] / 3));
+    if (acquis + apport >= requis - 1e-9) {
       const manquants = requis - acquis;
-      debutDuree = new DateMois(annee, 1).plusMois(3 * manquants);
+      debutDuree = mois === null
+        ? new DateMois(annee, 1).plusMois(3 * manquants)
+        : mois[0].plusMois(Math.ceil(3 * manquants - 1e-9));
     }
-    acquis += valides;
+    acquis += apport;
   }
   if (debutDuree === null) {
     return [1.0, null];
