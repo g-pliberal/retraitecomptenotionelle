@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Les deux fusions que ``scripts/pousser.sh`` confie à git, le temps d'un rebasage.
+"""Les quatre fusions que ``scripts/pousser.sh`` confie à git, le temps d'un rebasage.
 
     python scripts/fusionner.py ancres    BASE COURANT AUTRE [TAILLE]
     python scripts/fusionner.py ensembles BASE COURANT AUTRE [TAILLE]
+    python scripts/fusionner.py cles      BASE COURANT AUTRE [TAILLE]
+    python scripts/fusionner.py compteurs BASE COURANT AUTRE [TAILLE]
 
 Ce sont deux pilotes de fusion git (``gitattributes``, « Defining a custom
 merge driver ») : git les appelle avec la version de la base, celle de la
@@ -46,6 +48,30 @@ leurs lignes au même endroit.
     retire part. Une liste triée le reste ; une autre garde l'ordre de
     ``main``, et chaque ajout du commit rejoué se place après son prédécesseur.
     Le fichier s'écrit comme ``conservation.py --figer`` l'écrit.
+``cles``
+    Les témoins rangés une entrée par cas (``simulations``, ``sorties``,
+    ``droit``, ``servis``, ``valeurs``), fusionnés entrée par entrée : une
+    entrée que seul un côté a changée, ajoutée ou retirée prend sa version ;
+    une entrée que les deux côtés ont changée, chacun à sa façon, reste un
+    conflit, puisque la bonne valeur vient de la réunion des deux corrections
+    et qu'aucun côté ne l'a. Une entrée est un tout, jamais un ensemble. Le
+    fichier s'écrit comme ``construire_temoins.py`` l'écrit. Mesuré du 18 au
+    21 novembre 2026 : deux publications successives touchaient les mêmes
+    cas pour 1 paire sur 14 de ``simulations.json``, 2 sur 16 de
+    ``sorties.json``, 4 sur 19 de ``droit.json``, toutes dans un même
+    chantier ; or ``-merge`` gardait le témoin de main, et la correction de
+    la session s'y perdait.
+``compteurs``
+    Les fichiers qui posent des cliquets (``test_cliquets_du_droit_date.py``,
+    ``perimetre.yaml``), un nombre par ligne, qui ne peut que baisser. Une
+    fusion de texte d'abord ; dans un conflit fait de lignes de compteurs — un
+    nom, ``=`` ou ``:``, un seul nombre entier, rien d'autre —, chaque
+    compteur additionne les baisses des deux côtés : 100 abaissé à 97 par main
+    et à 95 par la session donne 92. Une hausse, un nombre sous zéro, toute
+    autre ligne — un identifiant, une date, une phrase — restent un conflit. La somme suppose que
+    les deux chantiers ont réglé des choses différentes ; le filet joué avant
+    l'envoi recompte, et refuse sinon. Du 18 au 21 novembre 2026, la ligne
+    ``redactions_sans_statut`` a été abaissée cinq fois, par cinq chantiers.
 
 Ce module ne lit que la bibliothèque standard : ``pousser.sh`` le copie hors du
 répertoire de travail avant de rebaser, et le lance sans le paquet.
@@ -89,8 +115,10 @@ class Conflit(Exception):
 # --------------------------------------------------------------------------
 
 
-def fusion_de_texte(courant: str, base: str, autre: str, taille: int = 7) -> tuple[bool, str]:
-    """``git merge-file`` : (fusionné sans conflit, résultat marqué au besoin).
+def fusion_de_texte(courant: str, base: str, autre: str, taille: int = 7,
+                    diff3: bool = False) -> tuple[bool, str]:
+    """``git merge-file`` : (fusionné sans conflit, résultat marqué au besoin ;
+    avec ``diff3``, la base entre les deux côtés de chaque conflit).
 
     L'algorithme est l'histogramme, celui que la stratégie ``ort`` de git
     prend par défaut ; un git trop ancien pour le choisir prend le sien.
@@ -103,7 +131,7 @@ def fusion_de_texte(courant: str, base: str, autre: str, taille: int = 7) -> tup
             chemin.write_bytes(texte.encode("utf-8"))
             chemins.append(str(chemin))
         commun = ["git", "merge-file", "-p", f"--marker-size={taille}",
-                  "-L", "main", "-L", "base", "-L", "session"]
+                  "-L", "main", "-L", "base", "-L", "session", *(["--diff3"] if diff3 else [])]
         for options in (["--diff-algorithm=histogram"], []):
             fini = subprocess.run([*commun, *options, *chemins], capture_output=True)
             if 0 <= fini.returncode < 128:
@@ -325,7 +353,101 @@ def fusionner_ensembles(base: str, courant: str, autre: str, taille: int = 7) ->
     return True, json.dumps(fusion, ensure_ascii=False, indent=1, sort_keys=True) + "\n"
 
 
-FUSIONS = {"ancres": fusionner_prose, "ensembles": fusionner_ensembles}
+def _forme(valeur) -> str:
+    """Une valeur sous une forme qui se compare : ``NaN`` n'est pas égal à
+    lui-même, son écriture l'est."""
+    return json.dumps(valeur, ensure_ascii=False, sort_keys=True)
+
+
+def fusionner_cles(base: str, courant: str, autre: str, taille: int = 7) -> tuple[bool, str]:
+    """Un témoin rangé une entrée par cas, fusionné entrée par entrée ; si
+    l'un des trois n'est pas un dictionnaire JSON, ou qu'une même entrée a
+    changé des deux côtés, la fusion de texte, conflit marqué compris, et
+    jamais propre."""
+    try:
+        versions = [json.loads(x) for x in (base, courant, autre)]
+    except ValueError:
+        return False, fusion_de_texte(courant, base, autre, taille)[1]
+    if not all(isinstance(x, dict) for x in versions):
+        return False, fusion_de_texte(courant, base, autre, taille)[1]
+    b, c, a = versions
+    resultat = {}
+    for cle in set(b) | set(c) | set(a):
+        vb, vc, va = (_forme(x[cle]) if cle in x else None for x in (b, c, a))
+        if vc == va or vb == va:
+            garde = c
+        elif vb == vc:
+            garde = a
+        else:
+            return False, fusion_de_texte(courant, base, autre, taille)[1]
+        if cle in garde:
+            resultat[cle] = garde[cle]
+    # Comme ``construire_temoins.py`` l'écrit.
+    return True, json.dumps(resultat, ensure_ascii=False, indent=1, sort_keys=True) + "\n"
+
+
+#: Une ligne de compteur : un nom, ``=`` ou ``:``, et un seul nombre entier,
+#: rien d'autre (``VALEURS_DE_REPLI = 1442``, ``  redactions_sans_statut: 9189``).
+#: Un identifiant, une date, un nombre dans une phrase n'en sont pas.
+COMPTEUR = re.compile(r"^([ \t]*[A-Za-z_]\w*[ \t]*(?:=|:)[ \t]*)(\d+)([ \t]*\r?\n?)$")
+
+
+def _ligne_de_compteurs(base: str, courant: str, autre: str) -> str:
+    """La ligne réunie, dont le compteur additionne les deux baisses ;
+    ``Conflit`` si l'une des trois n'est pas une ligne de compteur, si le nom
+    diffère, si le compteur monte, ou s'il passe sous zéro."""
+    lues = [COMPTEUR.match(x) for x in (base, courant, autre)]
+    if not all(lues):
+        raise Conflit("la ligne n'est pas un compteur")
+    if not lues[0].group(1, 3) == lues[1].group(1, 3) == lues[2].group(1, 3):
+        raise Conflit("le nom du compteur a changé")
+    nb, nc, na = (int(x.group(2)) for x in lues)
+    if nc > nb or na > nb:
+        raise Conflit("un compteur monte")
+    if nc + na - nb < 0:
+        raise Conflit("un compteur passe sous zéro")
+    return f"{lues[0].group(1)}{nc + na - nb}{lues[0].group(3)}"
+
+
+def fusionner_compteurs(base: str, courant: str, autre: str, taille: int = 7) -> tuple[bool, str]:
+    """Un fichier qui pose des cliquets, fusionné comme du texte ; dans chaque
+    conflit fait de lignes de compteurs (``COMPTEUR``), chaque compteur
+    additionne les baisses des deux côtés. Tout autre conflit reste marqué."""
+    propre, marque = fusion_de_texte(courant, base, autre, taille)
+    if propre:
+        return True, marque
+    _, texte = fusion_de_texte(courant, base, autre, taille, diff3=True)
+    debut, milieu, separe, fin = ("<" * taille + " ", "|" * taille + " ", "=" * taille,
+                                  ">" * taille + " ")
+    sortie, lignes, i = [], texte.splitlines(keepends=True), 0
+    try:
+        while i < len(lignes):
+            if not lignes[i].startswith(debut):
+                sortie.append(lignes[i])
+                i += 1
+                continue
+            parts, j = {"c": [], "b": [], "a": []}, i + 1
+            cote = "c"
+            while not lignes[j].startswith(fin):
+                if lignes[j].startswith(milieu):
+                    cote = "b"
+                elif lignes[j].rstrip("\n") == separe:
+                    cote = "a"
+                else:
+                    parts[cote].append(lignes[j])
+                j += 1
+            if not len(parts["b"]) == len(parts["c"]) == len(parts["a"]):
+                raise Conflit("les deux côtés n'ont pas le même nombre de lignes")
+            sortie.extend(_ligne_de_compteurs(lb, lc, la)
+                          for lb, lc, la in zip(parts["b"], parts["c"], parts["a"]))
+            i = j + 1
+    except (Conflit, IndexError):
+        return False, marque
+    return True, "".join(sortie)
+
+
+FUSIONS = {"ancres": fusionner_prose, "ensembles": fusionner_ensembles,
+           "cles": fusionner_cles, "compteurs": fusionner_compteurs}
 
 
 def main(argv: list[str] | None = None) -> int:

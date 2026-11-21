@@ -139,7 +139,7 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PROJECT_DIR}/scripts/pousser.sh\"",
-            "timeout": 120,
+            "timeout": 600,
             "statusMessage": "Publication sur main"
           }
         ]
@@ -151,7 +151,7 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PROJECT_DIR}/scripts/pousser.sh\"",
-            "timeout": 120,
+            "timeout": 600,
             "statusMessage": "Publication sur main, après une erreur de l'API"
           }
         ]

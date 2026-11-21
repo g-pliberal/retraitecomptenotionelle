@@ -3,8 +3,12 @@
 # ceux des fichiers que tous les chantiers écrivent, tombés rouges sur main le
 # 19 novembre 2026 : les compteurs des cliquets, les sorties figées des témoins,
 # la règle de chaque génération. Un lot par ligne, les lots joués de front ;
-# l'ensemble tient sous la minute, le hook `Stop` n'en laissant que deux.
+# l'ensemble tient sous la minute. Les deux cliquets que le pilote `compteurs`
+# fusionne en additionnant les baisses des deux côtés (`.gitattributes`) y
+# sont recomptés : si les deux chantiers avaient réglé la même chose, la somme
+# est trop basse, et rien ne part.
 tests/test_cliquets_du_droit_date.py tests/test_liquidation.py::test_la_liquidation_et_le_journal_sont_ceux_du_temoin tests/test_droit.py::test_chaque_etape_ecrit_ce_que_le_temoin_fige
 tests/test_regle_de_chacun.py
 tests/test_justesse.py::test_aucune_partie_prouvee_ne_recule tests/test_justesse.py::test_les_preuves_du_depot_suivent_leur_format
 tests/test_filets.py::test_le_rapport_et_le_cliquet_se_tiennent tests/test_filets.py::test_l_echantillon_fixe_du_rapport_n_a_pas_plus_d_anomalies_que_le_rapport_n_en_compte
+tests/test_textes.py::test_la_liste_du_depot_tient_et_son_cliquet_est_juste tests/test_textes.py::test_aucune_loi_modifiee_n_attend_sa_reponse_au_dela_de_quatorze_jours

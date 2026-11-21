@@ -218,3 +218,189 @@ def test_le_pilote_ecrit_dans_le_fichier_courant_et_dit_s_il_a_fusionne(tmp_path
     assert fusionner.main(arguments) == 1
     assert "<<<<<<<" in chemins["courant"].read_bytes().decode("utf-8")
     assert fusionner.main(["inconnu", "a", "b", "c"]) == 2
+
+
+# -- les témoins, fusionnés entrée par entrée ---------------------------------------
+
+
+def temoin(entrees: dict) -> str:
+    """Un témoin de ``tests/temoins/``, écrit comme ``construire_temoins.py``
+    l'écrit."""
+    return json.dumps(entrees, ensure_ascii=False, indent=1, sort_keys=True) + "\n"
+
+
+BASE = {"cas_a": {"pension": [1000.0, 1010.5]}, "cas_b": {"pension": [900.0]},
+        "cas_c": {"pension": [800.0]}, "cas_d": {"pension": [700.0]}}
+
+
+def avec(**changes) -> dict:
+    entrees = json.loads(json.dumps(BASE))
+    for cle, valeur in changes.items():
+        if valeur is None:
+            entrees.pop(cle)
+        else:
+            entrees[cle] = valeur
+    return entrees
+
+
+def test_deux_corrections_sur_deux_cas_voisins_se_fusionnent_entree_par_entree():
+    """Deux sessions corrigent deux régimes : chacune déplace son cas, et les
+    deux cas se suivent dans le fichier. Marqué ``-merge``, le témoin gardait
+    la version de main et perdait la correction de la session ; entrée par
+    entrée, les deux corrections restent, sans rien perdre."""
+    main = avec(cas_b={"pension": [905.0]})
+    session = avec(cas_c={"pension": [812.25]}, cas_e={"pension": [1.0]})
+    propre, resultat = fusionner.fusionner_cles(temoin(BASE), temoin(main), temoin(session))
+    assert propre
+    assert resultat == temoin(avec(cas_b={"pension": [905.0]}, cas_c={"pension": [812.25]},
+                                   cas_e={"pension": [1.0]}))
+
+
+def test_une_meme_entree_changee_des_deux_cotes_reste_un_conflit():
+    """Le cas dangereux : deux corrections déplacent le même cas, chacune à sa
+    valeur. Aucune des deux n'est la bonne, qui vient de leur réunion : le
+    conflit reste, marqué comme git le marque, et rien ne se devine."""
+    main = avec(cas_b={"pension": [905.0]})
+    session = avec(cas_b={"pension": [910.0]})
+    propre, resultat = fusionner.fusionner_cles(temoin(BASE), temoin(main), temoin(session))
+    assert not propre
+    assert "<<<<<<<" in resultat
+
+
+def test_une_entree_d_une_liste_ne_se_fusionne_pas_comme_un_ensemble():
+    """Une entrée est un tout : deux côtés qui changent deux nombres d'un même
+    cas sont en conflit, à la différence de la référence de la conservation."""
+    main = avec(cas_a={"pension": [1001.0, 1010.5]})
+    session = avec(cas_a={"pension": [1000.0, 1011.0]})
+    assert not fusionner.fusionner_cles(temoin(BASE), temoin(main), temoin(session))[0]
+
+
+def test_un_meme_changement_des_deux_cotes_compte_une_fois():
+    main = avec(cas_b={"pension": [905.0]}, cas_d=None)
+    session = avec(cas_b={"pension": [905.0]}, cas_d=None)
+    assert fusionner.fusionner_cles(temoin(BASE), temoin(main), temoin(session)) == (
+        True, temoin(main))
+
+
+def test_une_entree_retiree_d_un_cote_part_et_retiree_contre_changee_reste_un_conflit():
+    main = avec(cas_d=None)
+    session = avec(cas_a={"pension": [1.0, 2.0]})
+    assert fusionner.fusionner_cles(temoin(BASE), temoin(main), temoin(session)) == (
+        True, temoin(avec(cas_d=None, cas_a={"pension": [1.0, 2.0]})))
+    session = avec(cas_d={"pension": [701.0]})
+    assert not fusionner.fusionner_cles(temoin(BASE), temoin(main), temoin(session))[0]
+
+
+def test_un_nan_inchange_n_est_pas_un_changement():
+    """``json`` lit et écrit ``NaN``, que Python ne dit pas égal à lui-même."""
+    base = temoin({"x": {"v": float("nan")}, "y": {"v": 1.0}})
+    main = temoin({"x": {"v": float("nan")}, "y": {"v": 2.0}})
+    session = temoin({"x": {"v": float("nan")}, "y": {"v": 1.0}, "z": {"v": 3.0}})
+    propre, resultat = fusionner.fusionner_cles(base, main, session)
+    assert propre
+    assert resultat == temoin({"x": {"v": float("nan")}, "y": {"v": 2.0}, "z": {"v": 3.0}})
+
+
+def test_un_temoin_illisible_reste_un_conflit():
+    main = temoin(avec(cas_b={"pension": [905.0]}))
+    session = temoin(avec(cas_b={"pension": [910.0]})).replace("910.0", "910.0,,")
+    assert not fusionner.fusionner_cles(temoin(BASE), main, session)[0]
+
+
+def test_les_temoins_par_cas_relevent_de_la_fusion_par_cles():
+    """``.gitattributes`` confie au pilote les témoins rangés une entrée par
+    cas ; ceux des pages, qui suivent les agrégats, gardent la version de
+    main, et le paquet reste à refaire."""
+    import subprocess
+    sortie = subprocess.run(
+        ["git", "check-attr", "merge", "--",
+         *(f"tests/temoins/{nom}.json" for nom in
+           ("simulations", "sorties", "droit", "servis", "valeurs", "pages"))],
+        cwd=RACINE, capture_output=True, text=True, check=True).stdout
+    lu = dict(ligne.split(": merge: ") for ligne in sortie.splitlines())
+    assert lu == {**{f"tests/temoins/{nom}.json": "cles" for nom in
+                     ("simulations", "sorties", "droit", "servis", "valeurs")},
+                  "tests/temoins/pages.json": "unset"}
+
+
+# -- les compteurs des cliquets, dont les baisses s'additionnent ---------------------
+
+
+def cliquets(repli: int, sans_texte: int = 306, commentaire: str = "valeurs de repli") -> str:
+    """Les compteurs de ``tests/test_cliquets_du_droit_date.py``, tels qu'ils
+    s'écrivent : un nombre par ligne, l'un sous l'autre."""
+    return (f'"""Les cliquets."""\n\n#: Les {commentaire}.\nVALEURS_DE_REPLI = {repli}\n'
+            f"#: Les renvois sans texte.\nRENVOIS_SANS_TEXTE = {sans_texte}\n")
+
+
+def perimetre(sans_statut: int, sans_reponse: int = 429) -> str:
+    return (f"cliquet:\n  # Les rédactions sans aucun statut.\n"
+            f"  redactions_sans_statut: {sans_statut}\n"
+            f"  citees_sans_reponse: {sans_reponse}\n  pose_le: 2026-11-19\n")
+
+
+def test_deux_baisses_d_un_meme_cliquet_s_additionnent():
+    """Deux chantiers abaissent le même compteur, chacun de ce qu'il a réglé :
+    git bute sur la ligne, et la bonne valeur, celle des deux réunis, n'est
+    écrite d'aucun côté. Les deux baisses s'additionnent ; le filet joué avant
+    l'envoi recompte, et refuse si les deux chantiers avaient réglé la même
+    chose."""
+    assert not fusionner.fusion_de_texte(cliquets(97), cliquets(100), cliquets(95))[0]
+    assert fusionner.fusionner_compteurs(cliquets(100), cliquets(97), cliquets(95)) == (
+        True, cliquets(92))
+    assert fusionner.fusionner_compteurs(perimetre(9208), perimetre(9203, 428),
+                                         perimetre(9195)) == (True, perimetre(9190, 428))
+
+
+def test_un_compteur_qui_monte_d_un_cote_reste_un_conflit():
+    """Un cliquet ne peut que baisser : une hausse ne se fond jamais dans la
+    baisse de l'autre côté, qui la cacherait."""
+    propre, resultat = fusionner.fusionner_compteurs(cliquets(100), cliquets(97), cliquets(101))
+    assert not propre
+    assert "<<<<<<<" in resultat
+
+
+def test_un_compteur_sous_zero_reste_un_conflit():
+    assert not fusionner.fusionner_compteurs(cliquets(3), cliquets(1), cliquets(0))[0]
+
+
+def test_un_texte_change_autour_d_un_compteur_reste_un_conflit():
+    """Seul un nombre change sur la ligne, des deux côtés ; le reste du texte
+    s'écrit à la main, et son conflit reste un conflit."""
+    main = cliquets(97).replace("VALEURS_DE_REPLI = 97", "VALEURS_DE_REPLI = 97  # au 21")
+    assert not fusionner.fusionner_compteurs(cliquets(100), main, cliquets(95))[0]
+    assert not fusionner.fusionner_compteurs(
+        cliquets(100), cliquets(97, commentaire="valeurs écrites"),
+        cliquets(95, commentaire="valeurs posées"))[0]
+
+
+def test_deux_compteurs_differents_se_fusionnent_comme_du_texte():
+    assert fusionner.fusionner_compteurs(perimetre(9208), perimetre(9203),
+                                         perimetre(9208, 427)) == (True, perimetre(9203, 427))
+
+
+def test_les_cliquets_relevent_de_la_fusion_des_compteurs():
+    import subprocess
+    fichiers = ["tests/test_cliquets_du_droit_date.py", "data/reference/textes/perimetre.yaml"]
+    sortie = subprocess.run(["git", "check-attr", "merge", "--", *fichiers], cwd=RACINE,
+                            capture_output=True, text=True, check=True).stdout
+    assert sortie.splitlines() == [f"{f}: merge: compteurs" for f in fichiers]
+
+
+def test_un_identifiant_ou_une_date_change_des_deux_cotes_reste_un_conflit():
+    """Seule une ligne faite d'un nom et d'un seul nombre est un compteur. Un
+    identifiant d'article, une date, un nombre au milieu d'un texte ne
+    s'additionnent jamais (relecture du 21 novembre 2026 : l'identifiant
+    LEGIARTI000006778516 ressortait LEGIARTI6776484, la date du 19 au 16)."""
+    def article(identifiant: str) -> str:
+        return f"articles:\n  - LEGIARTI{identifiant}\n  - fin\n"
+    assert not fusionner.fusionner_compteurs(article("000006778516"), article("000006778510"),
+                                             article("000006778508"))[0]
+
+    def pose(jour: int) -> str:
+        return f"cliquet:\n  redactions_sans_statut: 10\n  pose_le: 2026-11-{jour}\n"
+    assert not fusionner.fusionner_compteurs(pose(19), pose(18), pose(17))[0]
+
+    def phrase(n: int) -> str:
+        return f"#: Les {n} renvois.\nX = 1\n"
+    assert not fusionner.fusionner_compteurs(phrase(10), phrase(9), phrase(8))[0]

@@ -15,8 +15,9 @@
 # fichiers que git reconnaît comme binaires ne sont pas touchés.
 * text=auto eol=lf
 
-# La prose et la référence de la conservation se fusionnent par les deux
-# pilotes de `scripts/fusionner.py`, que `scripts/pousser.sh` déclare à git le
+# La prose, la référence de la conservation, les témoins rangés par cas et les
+# compteurs des cliquets se fusionnent par les quatre pilotes de
+# `scripts/fusionner.py`, que `scripts/pousser.sh` déclare à git le
 # temps de son rebasage (action 148, étape 3). Un git lancé à la main ne les
 # connaît pas, et fusionne ces fichiers comme du texte, comme avant.
 #
@@ -30,13 +31,43 @@
 # d'empreintes et de clés, et deux sessions qui la refigent le même jour y
 # ajoutent leurs lignes au même endroit. Chaque liste s'y fusionne comme un
 # ensemble : ce que chaque côté ajoute reste, ce que chaque côté retire part.
+#
+# `cles` : les témoins rangés une entrée par cas — un cas type, une demande au
+# droit — se fusionnent entrée par entrée. Deux corrections de deux régimes y
+# déplacent presque toujours des cas différents (mesuré du 18 au 21 novembre
+# 2026 : une paire de publications successives sur quatorze, dans un même
+# chantier, pour `simulations.json`) : chacune garde ses cas, au lieu que le
+# témoin de main efface ceux de la session. Une entrée changée des deux côtés
+# reste un conflit, et `pousser.sh` refuse : sa valeur vient de la réunion des
+# deux corrections, qu'aucun côté n'a calculée. Le danger que dit le bloc
+# suivant, un fichier qu'aucun état du modèle n'a produit, n'est ici que celui
+# d'un cas que les deux corrections touchent sans l'avoir déplacé chacune
+# seule ; GitHub refait les témoins après l'envoi, et la suite les rejoue.
+# `pages.json` n'en est pas : ses pages suivent les agrégats, que presque
+# toute correction déplace.
+#
+# `compteurs` : les cliquets s'écrivent un nombre par ligne, et deux chantiers
+# qui abaissent le même récrivent la même ligne, chacun à sa valeur. Quand un
+# conflit ne porte que sur des lignes faites d'un nom et d'un seul nombre,
+# chaque nombre additionne les baisses des deux côtés ; une hausse, un nombre
+# sous zéro, toute autre ligne — un identifiant, une date — restent un
+# conflit. Le filet joué avant l'envoi (`tests/filet_avant_envoi.txt`)
+# recompte : si les deux chantiers avaient réglé la même chose, la somme est
+# trop basse, le cliquet l'abaisser rouge, et rien ne part.
+
 *.md                            merge=ancres
 tests/temoins/conservation.json merge=ensembles
+tests/temoins/simulations.json  merge=cles
+tests/temoins/sorties.json      merge=cles
+tests/temoins/droit.json        merge=cles
+tests/temoins/servis.json       merge=cles
+tests/temoins/valeurs.json      merge=cles
+tests/test_cliquets_du_droit_date.py merge=compteurs
+data/reference/textes/perimetre.yaml merge=compteurs
 
 # Les fichiers fabriqués par un script ne se fusionnent pas ligne à ligne.
 #
-# `pages.json`, `simulations.json` et `donnees.json` — plusieurs mégaoctets
-# chacun —, `equilibre.json`, `agregats.json` et la série du chiffrage
+# `pages.json` et `donnees.json` — plusieurs mégaoctets chacun —, `equilibre.json`, `agregats.json` et la série du chiffrage
 # budgétaire sont écrits par un script depuis le modèle Python ; le tableau de
 # bord, `docs/etat.md`, par le sien depuis les registres ; l'inventaire des
 # régimes, depuis les fichiers de régimes. `moteur/style.css` n'en est plus
@@ -58,8 +89,11 @@ tests/temoins/conservation.json merge=ensembles
 # Le paquet fait exception, par `refaire=<son script>` : les deux moteurs y
 # lisent leurs règles, et garder celui de main publierait la correction de la
 # session sans le paquet qui la porte, son test rouge sur main jusqu'au commit
-# de GitHub. `pousser.sh` refuse alors, et nomme le script : la session rebase
-# à la main et refait le paquet des sources réunies (action 135).
+# de GitHub. `pousser.sh` garde celui de main le temps du rebasage, puis lance
+# le script nommé, qui le refait des sources réunies dans le dernier commit de
+# la session ; tant qu'il n'y est pas, rien ne part (action 135). Sans mémoire
+# des calculs, le script tient près de trois minutes : le hook de fin de tour
+# en a dix.
 #
 # On ne touche pas à l'attribut `diff` : le diff chiffre par chiffre des
 # témoins est ce qui rend le portage JavaScript vérifiable, il doit rester
@@ -67,10 +101,6 @@ tests/temoins/conservation.json merge=ensembles
 
 moteur/donnees.json            -merge refaire=scripts/construire_donnees.py
 tests/temoins/pages.json       -merge
-tests/temoins/simulations.json -merge
-tests/temoins/servis.json      -merge
-tests/temoins/sorties.json     -merge
-tests/temoins/valeurs.json     -merge
 data/derive/equilibre.json     -merge refaire=scripts/construire_donnees.py
 data/derive/agregats.json      -merge refaire=scripts/construire_donnees.py
 docs/chiffrage_plf.csv         -merge

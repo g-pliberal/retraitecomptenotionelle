@@ -5874,19 +5874,19 @@ de statuts et les `manque` de la page Méthode.
 
 ### 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats — `en cours`
 
-**Reprise, au 20 novembre 2026.** L'action réduit ce que coûte un changement
+**Reprise, au 21 novembre 2026.** L'action réduit ce que coûte un changement
 du modèle, en temps et en jetons, sans céder sur les vérifications. La
-vérification complète tourne chez GitHub après chaque envoi, en vingt minutes
-environ. Depuis le 20 novembre, le script d'envoi rejoue juste avant, en moins
-d'une minute, les tests des fichiers que tous les chantiers écrivent : deux
-chantiers verts séparément ne partent plus rouges ensemble. Par quoi
-commencer : relever, sur une semaine d'envois, si `main` est moins souvent
-rouge, et quels tests tombent encore, pour les ajouter au filet. Restent
-aussi : répartir sur les cœurs les calculs du paquet, relever la durée des
-corrections, comparer les réponses des agents de recherche à celles d'avant.
-Une décision attend le propriétaire : faire passer seul un changement
-transversal. Notes : `reprise.py 135` les liste ; la dernière,
-`2026-11-20-filet-avant-envoi.md`.
+vérification complète tourne chez GitHub après chaque envoi. Le script
+d'envoi rejoue juste avant les tests des fichiers que tous les chantiers
+écrivent. Depuis le 21 novembre, deux chantiers qui déplacent des cas
+témoins différents, ou abaissent le même compteur, ne s'attendent plus : le
+rebasage fusionne les témoins cas par cas, additionne les baisses, et refait
+le paquet de données. Par quoi commencer : relever sur une semaine d'envois
+combien de refus le rebasage évite et lesquels restent. Restent aussi :
+répartir sur les cœurs les calculs du paquet, relever la durée des
+corrections. Le propriétaire veut voir ce résultat avant d'assouplir sa règle
+d'un seul chantier à la fois. Notes : `reprise.py 135` les liste ; la
+dernière, `2026-11-21-fichiers-communs-en-parallele.md`.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus

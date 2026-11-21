@@ -2144,3 +2144,15 @@ def test_le_tableau_de_bord_compte_les_reponses_dues_aux_lois_modifiees():
         "le 2026-12-07 ; et, d'avant la pose, 1 dont la fiche ne dit rien et 2 qu'elle "
         "cite sans y répondre, que le cliquet tient à 83 et 435 au plus "
         "(`python scripts/textes.py --sans-reponse`).")
+
+
+def test_le_hook_de_fin_de_tour_laisse_le_temps_de_refaire_le_paquet():
+    """Le paquet refait sans mémoire des calculs tenait 2 min 48 s le
+    21 novembre 2026, avant le filet, qui joue sous la minute : les deux
+    minutes d'avant interrompaient le hook à chaque tour, et le paquet ne se
+    refaisait jamais. Dix minutes laissent la marge."""
+    reglages = json.loads((RACINE / ".claude" / "settings.json").read_text(encoding="utf-8"))
+    for evenement in ("Stop", "StopFailure"):
+        (hook,) = [h for bloc in reglages["hooks"][evenement] for h in bloc["hooks"]
+                   if "pousser.sh" in h["command"]]
+        assert hook["timeout"] >= 600, evenement

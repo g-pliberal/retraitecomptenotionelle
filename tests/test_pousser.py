@@ -591,39 +591,117 @@ def test_un_conflit_sur_un_fichier_fabrique_garde_la_version_de_main(atelier, tm
     assert git(session, "status", "--porcelain") == ""
 
 
-def test_une_correction_ne_part_jamais_avec_le_paquet_d_une_autre(atelier, tmp_path):
+#: Le script du paquet, dans l'atelier : il réunit les règles en un paquet,
+#: comme ``construire_donnees.py`` réunit les données ; ``PAQUET_EN_PANNE``
+#: le fait échouer, comme un hook interrompu ou une donnée illisible.
+CONSTRUIRE = """import json, os, pathlib, sys
+if os.environ.get("PAQUET_EN_PANNE"):
+    sys.exit(1)
+regles = sorted(p.read_text().strip() for p in pathlib.Path("regles").glob("*.yaml"))
+pathlib.Path("moteur/donnees.json").write_text(json.dumps(regles) + "\\n")
+"""
+
+
+def _poser_le_paquet(atelier, tmp_path):
+    """Pose sur main un paquet que ``.gitattributes`` marque
+    ``refaire=<son script>``, le script, et une règle ; rend l'autre session."""
+    distant, session = atelier
+    autre = _marquer_fabrique(distant, tmp_path)
+    for nom, texte in ((".gitattributes", "fabrique.json -merge\n"
+                        "moteur/donnees.json -merge refaire=scripts/construire_donnees.py\n"),
+                       ("scripts/construire_donnees.py", CONSTRUIRE),
+                       ("regles/base.yaml", "base\n"),
+                       ("moteur/donnees.json", '["base"]\n')):
+        ecrire(autre, nom, texte)
+    git(autre, "add", "-A")
+    git(autre, "commit", "--quiet", "-m", "le paquet et son script")
+    git(autre, "push", "--quiet", "origin", "main")
+    git(session, "pull", "--quiet", "--rebase", "origin", "main")
+    return distant, session, autre
+
+
+def en_panne_de_paquet(depot: Path) -> subprocess.CompletedProcess:
+    """``pousser.sh``, le script du paquet en échec."""
+    return subprocess.run(["env", "PAQUET_EN_PANNE=1", "bash", str(SCRIPT)], cwd=depot,
+                          capture_output=True, text=True, encoding="utf-8")
+
+
+def _corriger(depot: Path, regle: str) -> str:
+    """Une correction et son paquet refait, comme une session les commite."""
+    ecrire(depot, f"regles/{regle}.yaml", f"{regle}\n")
+    subprocess.run(["python3", "scripts/construire_donnees.py"], cwd=depot, check=True)
+    git(depot, "add", "-A")
+    git(depot, "commit", "--quiet", "-m", f"la règle {regle}, son paquet refait")
+    return git(depot, "rev-parse", "HEAD")
+
+
+def test_une_correction_part_avec_le_paquet_des_sources_reunies(atelier, tmp_path):
     """Les deux moteurs lisent leurs règles au paquet : une correction publiée
     avec le paquet d'une autre session laisserait sur main le test de la
     correction rouge, jusqu'au commit où GitHub refait le paquet (le
-    14 novembre 2026, quatre fois, file de l'action 130). Un fichier fabriqué
-    que ``.gitattributes`` marque ``refaire=<script>`` ne se règle donc pas
-    seul : le script refuse, et nomme le script qui le refait."""
-    distant, session = atelier
-    autre = _marquer_fabrique(distant, tmp_path)
-    (autre / "moteur").mkdir()
-    commiter(autre, ".gitattributes", "fabrique.json -merge\n"
-             "moteur/donnees.json -merge refaire=scripts/construire_donnees.py\n")
-    commiter(autre, "moteur/donnees.json", "{}\n")
-    git(autre, "push", "--quiet", "origin", "main")
-    git(session, "pull", "--quiet", "--rebase", "origin", "main")
-
-    (session / "regle.yaml").write_text("ma correction\n", encoding="utf-8")
-    (session / "moteur/donnees.json").write_text('{"ma correction": 1}\n', encoding="utf-8")
-    (session / "fabrique.json").write_text('{"session": 1}\n', encoding="utf-8")
-    git(session, "add", "-A")
-    git(session, "commit", "--quiet", "-m", "ma correction, son paquet refait")
-    mienne = git(session, "rev-parse", "HEAD")
-    commiter(autre, "moteur/donnees.json", '{"sa correction": 1}\n')
-    attendu = commiter(autre, "fabrique.json", '{"autre": 1}\n')
+    14 novembre 2026, quatre fois, file de l'action 130). Le rebasage garde
+    celui de main, puis le script que ``.gitattributes`` nomme le refait des
+    sources réunies, dans le dernier commit de la session : les deux
+    corrections partent, chacune dans le paquet."""
+    distant, session, autre = _poser_le_paquet(atelier, tmp_path)
+    _corriger(session, "cipav")
+    _corriger(autre, "carmf")
     git(autre, "push", "--quiet", "origin", "main")
 
     acheve = pousser(session)
-    assert acheve.returncode != 0
-    assert tete_distante(distant, "main") == attendu, "rien poussé"
-    assert "moteur/donnees.json" in acheve.stderr
-    assert "python scripts/construire_donnees.py" in acheve.stderr
-    assert git(session, "rev-parse", "HEAD") == mienne, "le rebasage a été abandonné"
+    assert acheve.returncode == 0, acheve.stderr
+    tete = tete_distante(distant, "main")
+    assert tete == git(session, "rev-parse", "HEAD")
+    assert git(session, "show", f"{tete}:moteur/donnees.json") == '["base", "carmf", "cipav"]'
+    assert git(session, "show", f"{tete}:regles/cipav.yaml") == "cipav"
+    assert git(session, "rev-list", "--count", "origin/main~1..HEAD") == "1", \
+        "le paquet refait entre dans le dernier commit, sans commit de plus"
     assert git(session, "status", "--porcelain") == ""
+
+
+def test_un_paquet_qui_n_a_pas_pu_etre_refait_ne_part_pas(atelier, tmp_path):
+    """Le cas dangereux : le rebasage a gardé le paquet de main, et le script
+    échoue, ou le hook est interrompu pendant qu'il tourne. Rien ne part, pas
+    même au tour suivant, tant que le paquet n'a pas été refait ; le tour
+    suivant le refait, puis publie."""
+    distant, session, autre = _poser_le_paquet(atelier, tmp_path)
+    _corriger(session, "cipav")
+    _corriger(autre, "carmf")
+    git(autre, "push", "--quiet", "origin", "main")
+    attendu = tete_distante(distant, "main")
+
+    en_panne = en_panne_de_paquet(session)
+    assert en_panne.returncode != 0
+    assert "scripts/construire_donnees.py" in en_panne.stderr
+    assert tete_distante(distant, "main") == attendu, "rien poussé"
+    assert git(session, "show", "HEAD:moteur/donnees.json") == '["base", "carmf"]', \
+        "le rebasage est fait, le paquet de main encore là"
+
+    encore = en_panne_de_paquet(session)
+    assert encore.returncode != 0
+    assert tete_distante(distant, "main") == attendu, "le tour suivant ne publie pas non plus"
+
+    acheve = pousser(session)
+    assert acheve.returncode == 0, acheve.stderr
+    assert git(session, "show", f"{tete_distante(distant, 'main')}:moteur/donnees.json") == \
+        '["base", "carmf", "cipav"]'
+
+
+def test_un_paquet_a_refaire_attend_que_le_repertoire_soit_propre(atelier, tmp_path):
+    """Le script lit le répertoire de travail : une source modifiée sans être
+    commitée entrerait dans le paquet du commit. Il attend qu'elle le soit."""
+    distant, session, autre = _poser_le_paquet(atelier, tmp_path)
+    _corriger(session, "cipav")
+    _corriger(autre, "carmf")
+    git(autre, "push", "--quiet", "origin", "main")
+    attendu = tete_distante(distant, "main")
+    assert en_panne_de_paquet(session).returncode != 0
+    ecrire(session, "regles/cipav.yaml", "cipav retouchée\n")
+
+    acheve = pousser(session)
+    assert acheve.returncode != 0
+    assert "commit" in acheve.stderr
+    assert tete_distante(distant, "main") == attendu, "rien poussé"
 
 
 def test_un_commit_qui_ne_portait_que_du_fabrique_disparait(atelier, tmp_path):
@@ -766,3 +844,135 @@ def test_deux_refigements_de_la_conservation_se_fusionnent(atelier, tmp_path):
     tete = tete_distante(distant, "main")
     assert git(session, "show", f"{tete}:{REFERENCE}") == journal(
         "2026-10-06 | a", "2026-10-06 | b", "2026-10-06 | c").strip()
+
+
+# -- les témoins rangés par cas, fusionnés entrée par entrée (pilote `cles`) ------
+
+TEMOIN = "tests/temoins/simulations.json"
+
+
+def cas(**pensions: float) -> str:
+    """Un témoin par cas, écrit comme ``construire_temoins.py`` l'écrit : une
+    ligne par cas, pour que deux cas voisins fassent buter la fusion de git."""
+    lignes = ",\n".join(f' "{nom}": {valeur}' for nom, valeur in sorted(pensions.items()))
+    return "{\n" + lignes + "\n}\n"
+
+
+def _poser_le_temoin(atelier, tmp_path):
+    distant, session = atelier
+    autre = tmp_path / "autre"
+    subprocess.run(["git", "clone", "--quiet", str(distant), str(autre)], check=True)
+    git(autre, "config", "user.email", "autre@exemple.fr")
+    git(autre, "config", "user.name", "Autre")
+    ecrire(autre, ".gitattributes", f"{TEMOIN} merge=cles\n")
+    ecrire(autre, TEMOIN, cas(cnav=1000.0, carmf=900.0, cipav=800.0))
+    git(autre, "add", "-A")
+    git(autre, "commit", "--quiet", "-m", "le témoin")
+    git(autre, "push", "--quiet", "origin", "main")
+    git(session, "pull", "--quiet", "--rebase", "origin", "main")
+    return distant, session, autre
+
+
+def test_deux_corrections_qui_deplacent_deux_cas_voisins_passent_toutes_deux(atelier, tmp_path):
+    """Deux chantiers en parallèle : l'un corrige la CARMF, l'autre la CIPAV,
+    et chacun refait le témoin. Le second publie après le premier, sans
+    attendre son tour : les deux corrections et leurs deux cas restent."""
+    distant, session, autre = _poser_le_temoin(atelier, tmp_path)
+    _envoyer(session, "la CIPAV corrigée", {"cipav.py": "ma règle\n",
+                                            TEMOIN: cas(cnav=1000.0, carmf=900.0, cipav=812.5)})
+    _envoyer(autre, "la CARMF corrigée", {"carmf.py": "sa règle\n",
+                                          TEMOIN: cas(cnav=1000.0, carmf=905.0, cipav=800.0)})
+    git(autre, "push", "--quiet", "origin", "main")
+
+    acheve = pousser(session)
+    assert acheve.returncode == 0, acheve.stderr
+    tete = tete_distante(distant, "main")
+    assert git(session, "show", f"{tete}:{TEMOIN}") == cas(
+        cnav=1000.0, carmf=905.0, cipav=812.5).strip()
+    assert git(session, "show", f"{tete}:cipav.py") == "ma règle"
+    assert git(session, "show", f"{tete}:carmf.py") == "sa règle"
+
+
+def test_un_meme_cas_deplace_par_deux_corrections_refuse(atelier, tmp_path):
+    """Le cas dangereux : les deux corrections déplacent le même cas, chacune
+    à sa valeur. Aucune n'est celle de leur réunion : rien ne part, et la
+    session refait le témoin sur les sources réunies."""
+    distant, session, autre = _poser_le_temoin(atelier, tmp_path)
+    _envoyer(session, "la CNAV corrigée", {TEMOIN: cas(cnav=1010.0, carmf=900.0, cipav=800.0)})
+    attendu = _envoyer(autre, "la CNAV corrigée autrement",
+                       {TEMOIN: cas(cnav=1020.0, carmf=900.0, cipav=800.0)})
+    git(autre, "push", "--quiet", "origin", "main")
+
+    acheve = pousser(session)
+    assert acheve.returncode != 0
+    assert "conflit" in acheve.stderr
+    assert TEMOIN in acheve.stderr, "le refus nomme le témoin"
+    assert "python scripts/construire_temoins.py" in acheve.stderr, \
+        "et dit de refaire les témoins des sources réunies"
+    assert tete_distante(distant, "main") == attendu, "rien poussé"
+    assert git(session, "status", "--porcelain") == "", "le rebasage a été abandonné"
+
+
+# -- les compteurs des cliquets (pilote `compteurs`) -----------------------------
+
+CLIQUETS = "tests/test_cliquets_du_droit_date.py"
+
+
+def compteur(valeur: int) -> str:
+    return f'"""Les cliquets."""\n\n#: Les valeurs de repli.\nVALEURS_DE_REPLI = {valeur}\n'
+
+
+def _poser_le_cliquet(atelier, tmp_path):
+    distant, session = atelier
+    autre = tmp_path / "autre"
+    subprocess.run(["git", "clone", "--quiet", str(distant), str(autre)], check=True)
+    git(autre, "config", "user.email", "autre@exemple.fr")
+    git(autre, "config", "user.name", "Autre")
+    ecrire(autre, ".gitattributes", f"{CLIQUETS} merge=compteurs\n")
+    ecrire(autre, CLIQUETS, compteur(100))
+    git(autre, "add", "-A")
+    git(autre, "commit", "--quiet", "-m", "le cliquet")
+    git(autre, "push", "--quiet", "origin", "main")
+    git(session, "pull", "--quiet", "--rebase", "origin", "main")
+    return distant, session, autre
+
+
+def test_deux_chantiers_qui_abaissent_le_meme_cliquet_passent_tous_deux(atelier, tmp_path):
+    distant, session, autre = _poser_le_cliquet(atelier, tmp_path)
+    _envoyer(session, "cinq renvois retirés", {CLIQUETS: compteur(95)})
+    _envoyer(autre, "trois renvois retirés", {CLIQUETS: compteur(97)})
+    git(autre, "push", "--quiet", "origin", "main")
+
+    acheve = pousser(session)
+    assert acheve.returncode == 0, acheve.stderr
+    assert git(session, "show", f"{tete_distante(distant, 'main')}:{CLIQUETS}") == \
+        compteur(92).strip()
+
+
+def test_un_cliquet_qui_monte_d_un_cote_refuse(atelier, tmp_path):
+    distant, session, autre = _poser_le_cliquet(atelier, tmp_path)
+    _envoyer(session, "un renvoi de plus", {CLIQUETS: compteur(101)})
+    attendu = _envoyer(autre, "trois renvois retirés", {CLIQUETS: compteur(97)})
+    git(autre, "push", "--quiet", "origin", "main")
+
+    acheve = pousser(session)
+    assert acheve.returncode != 0
+    assert "conflit" in acheve.stderr
+    assert tete_distante(distant, "main") == attendu, "rien poussé"
+
+
+def test_un_paquet_a_moitie_ecrit_par_un_hook_interrompu_se_refait(atelier, tmp_path):
+    """Le hook de fin de tour a un temps compté : interrompu pendant le script,
+    il laisse un paquet à moitié écrit. Le tour suivant le reprend de zéro."""
+    distant, session, autre = _poser_le_paquet(atelier, tmp_path)
+    _corriger(session, "cipav")
+    _corriger(autre, "carmf")
+    git(autre, "push", "--quiet", "origin", "main")
+    assert en_panne_de_paquet(session).returncode != 0
+    ecrire(session, "moteur/donnees.json", '["base", "car')
+
+    acheve = pousser(session)
+    assert acheve.returncode == 0, acheve.stderr
+    assert git(session, "show", f"{tete_distante(distant, 'main')}:moteur/donnees.json") == \
+        '["base", "carmf", "cipav"]'
+
