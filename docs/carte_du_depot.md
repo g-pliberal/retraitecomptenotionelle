@@ -77,7 +77,7 @@ jumeaux Python sont partis (action 161). Les témoins le tiennent :
 complètes, que le portage refait à l'octet (`tests/test_pont.py`), et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->86<!--/--> pages figées, que
 `node --test` rejoue ;
-<!--chiffre:portage(valeurs)-->176 290<!--/--> nombres comparés, dont
+<!--chiffre:portage(valeurs)-->176 293<!--/--> nombres comparés, dont
 <!--chiffre:portage(identiques)-->100,0<!--/--> % identiques au bit près.
 
 Une exception, voulue : le coût pour toute la population ne se calcule qu'en
