@@ -1,0 +1,28 @@
+date: "2026-11-20"
+session: "action 194 : la maternité au salaire annuel moyen"
+consulte: >-
+  veille_droit.py (dernière veille consignée : 2026-11-20) ; les index LEGI et JORF de la
+  release `index-dila`, à jour au 16 novembre 2026. Dans LEGI : R. 351-29, ses rédactions
+  de 2011 à 2026 (LEGIARTI000023868111, 048031614, 051226243, 053335651) ; la loi n°
+  2010-1330, article 118, rédaction du 1er septembre 2023 (LEGIARTI000047453380) ; L.
+  351-1 ; L. 331-3 et L. 331-4 (LEGIARTI000006742545, 006742550) ; R. 173-3-2, rédaction
+  du 1er août 2026 (LEGIARTI000054589934). Dans le JORF : l'arrêté du 29 avril 2024
+  fixant le salaire médian (JORFTEXT000049496470) ; le décret n° 2025-155, article 3
+  (JORFARTI000051223569) ; le décret n° 2005-1351, article 3 (JORFARTI000001522288). Par
+  l'API de la base de législation de la Cnav : l'exposé « Revenu annuel moyen » et la
+  circulaire Cnav 2025/11 du 28 mars 2025, entière, avec ses quatre annexes.
+trouve: >-
+  Pour les pensions prenant effet depuis le 1er septembre 2023, chaque congé de maternité
+  débuté avant 2012 porte au compte de l'année de la naissance une fraction du salaire
+  médian de l'année précédente, arrondie à l'euro ; le total du salaire et du forfait
+  n'est borné au plafond que pour les années depuis 2005 ; aucun trimestre n'en vient.
+  Le scénario 1 l'applique désormais à la mère salariée du régime général ou agricole ;
+  quatre exemples de la circulaire sont rejoués, et 52 des 53 cas d'une grille posée sans
+  le code. Les parents nés avant 1948 gardent le nombre d'années de leur génération (R.
+  173-3-2, III) : le moteur le leur réduisait, corrigé.
+reste: >-
+  Les 125 % des indemnités des congés débutés depuis 2012, dont le simulateur n'a pas le
+  montant : le choix de la donnée est soumis au propriétaire. L'application du décret n°
+  2025-155 aux pensions d'avant le 22 février 2025, que la circulaire fait remonter au
+  1er septembre 2023 sans que le décret le dise. L'adoption et le père après le décès de
+  la mère.

@@ -103,3 +103,10 @@ code:
     reversion_deces_avant_le_depart, reversion_enfants_a_charge,
     reversion_enfants_jusqu_a_sa_retraite, auteur_dramatique_carriere_courte,
     ircantec_quatre_enfants et ircantec_sept_enfants
+historique:
+- >-
+  2026-11-20 — les assurés nés avant 1948 gardent le nombre d'années de leur génération
+  (R. 173-3-2, III, LEGIARTI000054589934 : « Par dérogation au I ») : le moteur leur
+  retirait une ou deux années, ce que la grille indépendante de la maternité a montré
+  (née en 1947, deux enfants, pension d'octobre 2026 : 18 834,50 euros de salaire
+  annuel moyen sur vingt-quatre années, 19 119,42 sur vingt-deux).

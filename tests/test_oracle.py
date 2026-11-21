@@ -2023,7 +2023,9 @@ def _carriere_exemple(exemple: dict, decalage_mois: int = 0, sans_enfants: bool 
             annee_naissance=naissance.annee, sexe=communs["sexe"],
             releve=[LigneRelevee(int(annee), c["affiliation"], float(salaire))
                     for annee, salaire in c["releve_entier"]],
-            age_liquidation=age, mois_naissance=naissance.mois, jour_naissance=jour)
+            age_liquidation=age, mois_naissance=naissance.mois, jour_naissance=jour,
+            nombre_enfants=communs["nombre_enfants"],
+            naissances_enfants=communs["naissances_enfants"])
         return pont.carriere_des_donnees(_rendu(
             droit, "simulateur.carriere_releve", pont.SIMULATEUR, options)), None
     if "age_debut" in c or "debut" in c:
@@ -2176,9 +2178,21 @@ def _mesurer(exemple: dict, carriere, resultat, cle: str, droit=droit_et_fige):
     if cle == "salaire_annuel_moyen":
         # Le salaire annuel moyen du régime général, en euros : celui que la
         # version de la date d'effet forme (fiche ``salaire_annuel_moyen``).
+        # La mère y vient avec ses enfants, qui réduisent le nombre d'années
+        # depuis septembre 2026 (fiche ``sam_parents_24_23``).
         return _rendu(droit, "liquider.salaire_de_reference", pont.MOTEUR, "regime_general",
                       carriere, pont.Periode("regime_general", carriere.annee_liquidation),
-                      carriere.annee_liquidation, True, carriere.annee_naissance)
+                      carriere.annee_liquidation, True, carriere.annee_naissance, True, None,
+                      carriere.nombre_enfants if carriere.sexe == "F" else 0)
+    if cle in ("indemnites_de_maternite_au_compte", "salaire_retenu_avec_les_indemnites"):
+        # Ce que la maternité porte au compte du régime général : le montant
+        # forfaitaire de chaque année, et le salaire de l'année retenu avec lui
+        # (fiche ``sam_indemnites_de_maternite``).
+        au_compte = _rendu(droit, "liquider.maternite_au_compte", pont.MOTEUR, "regime_general",
+                           carriere, pont.Periode("regime_general", carriere.annee_liquidation),
+                           carriere.annee_liquidation)
+        rang = 1 if cle == "indemnites_de_maternite_au_compte" else 2
+        return {int(ligne[0]): ligne[rang] for ligne in au_compte}
     if cle == "pension_base_sur_sam":
         sam = _rendu(droit, "liquider.salaire_de_reference", pont.MOTEUR, "regime_general",
                      carriere, pont.Periode("regime_general", carriere.annee_liquidation),

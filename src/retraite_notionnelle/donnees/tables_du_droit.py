@@ -759,6 +759,8 @@ class FichesDatees:
     (``revenu_annuel_moyen_independants``) : quelles années, comment les
     moyenner, lesquelles écarter, et, pour les seconds, quelle table du nombre
     d'années. Une période y renvoie par ``regles_du_salaire_annuel_moyen``.
+    Et les indemnités journalières de maternité que ce salaire compte
+    (``sam_indemnites_de_maternite``), que ``liquider.salaireDeReference`` lit.
     Et les bonifications des emplois classés de la fonction publique et celle
     des militaires, que ``compter.trimestres_des_emplois`` lit
     (``compter.FICHES_DES_EMPLOIS``),
@@ -808,7 +810,8 @@ class FichesDatees:
     ``categories.tauxPleinDeLaCarriereLongue`` lit.
     """
 
-    NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
+    NOMS = ("salaire_annuel_moyen", "sam_indemnites_de_maternite",
+            "revenu_annuel_moyen_independants",
             "bonification_cinquieme_police_penitentiaire",
             "bonification_cinquieme_sapeurs_pompiers",
             "bonification_cinquieme_militaires",

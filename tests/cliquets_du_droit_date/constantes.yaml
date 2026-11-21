@@ -184,6 +184,7 @@ constantes:
 # déclaration, son commentaire et, quand il ne disait rien, le code qui la
 # lit ; sans relire les textes, ce que fait l'étape qui migre la règle.
 sans_date:
+  "moteur/js/droit/liquider.js : JOUR": {classe: hors, raison: technique}
   "moteur/js/calendrier.js : MOIS_PAR_AN": {classe: hors, raison: technique}
   "moteur/js/capitalisation.js : MATURITE_MAXIMALE": {classe: hors, raison: reglage}
   "moteur/js/carriere.js : CHOMAGE_NON_INDEMNISE_ULTERIEURE": {classe: droit, fiches: [chomage_non_indemnise]}

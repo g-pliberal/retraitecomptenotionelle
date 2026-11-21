@@ -371,7 +371,12 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   se lit à l'année. Le congé de maternité fait exception : la caisse n'en
   valide que le trimestre de l'accouchement, puis, pour les naissances depuis
   2014, un trimestre par quatre-vingt-dix jours d'indemnités (R. 351-12, 2°),
-  quand le modèle donne quatre trimestres à l'année déclarée. Il ne sert pas :
+  quand le modèle donne quatre trimestres à l'année déclarée. Au salaire
+  annuel moyen, la mère salariée reçoit le montant forfaitaire des congés de
+  maternité d'avant 2012, pour une pension prenant effet depuis septembre 2023
+  (fiche `sam_indemnites_de_maternite`) ; les indemnités d'un congé depuis
+  2012, que le droit compte majorées d'un quart, ne sont pas ajoutées, faute
+  de leur montant, et le salaire saisi de l'année du congé est pris entier. Il ne sert pas :
   l'activité partielle depuis mars 2020, un trimestre par deux cent vingt
   heures indemnisées ; l'allocation de préparation à la retraite des anciens
   combattants d'Afrique du Nord ; les périodes de guerre — mobilisation,

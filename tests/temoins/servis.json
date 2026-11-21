@@ -1102,7 +1102,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 1754.803887186099,
+      "montant": 1804.405967678671,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -1110,7 +1110,7 @@
       "a_charge": [],
       "code": "surcote_parentale",
       "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
-      "montant": 867.170974286769,
+      "montant": 887.3499252271317,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -1118,7 +1118,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 2348.720845743765,
+      "montant": 2392.105590265545,
       "par_regime": [
        [
         "agirc_arrco",
@@ -1130,7 +1130,7 @@
        ],
        [
         "regime_general",
-        1864.4175947165531
+        1907.802339238333
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -1144,7 +1144,7 @@
        ],
        [
         "regime_general",
-        1864.4175947165531
+        1907.802339238333
        ]
       ]
      }
@@ -1152,7 +1152,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 26741.720587490792,
+    "pension_annuelle": 27218.95277723037,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -1174,8 +1174,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 34,686.84 € × taux 51.250% × 172/172, surcote parentale 5.00% de 17,343.42 €",
-      "montant": 18644.17594716553,
+      "detail": "SR 35,494.00 € × taux 51.250% × 172/172, surcote parentale 5.00% de 17,747.00 €",
+      "montant": 19078.02339238333,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
@@ -1976,7 +1976,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 1697.2956632559908,
+      "montant": 1746.8977437485628,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -1984,7 +1984,7 @@
       "a_charge": [],
       "code": "surcote_parentale",
       "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
-      "montant": 849.3118128959003,
+      "montant": 869.4907638362629,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -1992,7 +1992,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 2303.1084762140326,
+      "montant": 2346.4932207358124,
       "par_regime": [
        [
         "agirc_arrco",
@@ -2004,7 +2004,7 @@
        ],
        [
         "regime_general",
-        1826.0203977261854
+        1869.4051422479652
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -2018,7 +2018,7 @@
        ],
        [
         "regime_general",
-        1826.0203977261854
+        1869.4051422479652
        ]
       ]
      }
@@ -2026,7 +2026,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 26239.984522663726,
+    "pension_annuelle": 26717.216712403308,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -2048,8 +2048,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 33,972.47 € × taux 51.250% × 172/172, surcote parentale 5.00% de 16,986.24 €",
-      "montant": 18260.203977261852,
+      "detail": "SR 34,779.63 € × taux 51.250% × 172/172, surcote parentale 5.00% de 17,389.82 €",
+      "montant": 18694.05142247965,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
@@ -2352,7 +2352,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 2275.548908751931,
+      "montant": 2271.5659989076667,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -2360,7 +2360,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 2157.762497583976,
+      "montant": 2203.632186352817,
       "par_regime": [
        [
         "agirc_arrco",
@@ -2372,7 +2372,7 @@
        ],
        [
         "regime_general",
-        1727.3948779974512
+        1773.2645667662925
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -2386,7 +2386,7 @@
        ],
        [
         "regime_general",
-        1727.3948779974512
+        1773.2645667662925
        ]
       ]
      }
@@ -2394,7 +2394,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 24689.56985037697,
+    "pension_annuelle": 25194.136426834226,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -2416,8 +2416,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 34,547.90 € × taux 50.000% × 172/172",
-      "montant": 17273.94877997451,
+      "detail": "SR 35,465.29 € × taux 50.000% × 172/172",
+      "montant": 17732.645667662924,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
@@ -8420,7 +8420,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 1336.1159549242875,
+      "montant": 1369.273487090817,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -8428,7 +8428,7 @@
       "a_charge": [],
       "code": "surcote_parentale",
       "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
-      "montant": 913.8089506345021,
+      "montant": 933.1819055728225,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -8436,7 +8436,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 2789.503503651498,
+      "montant": 2836.9672432503826,
       "par_regime": [
        [
         "agirc_arrco",
@@ -8448,7 +8448,7 @@
        ],
        [
         "regime_general",
-        2238.8319290545305
+        2286.2956686534153
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -8462,7 +8462,7 @@
        ],
        [
         "regime_general",
-        2238.8319290545305
+        2286.2956686534153
        ]
       ]
      }
@@ -8470,7 +8470,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 31638.720917119714,
+    "pension_annuelle": 32160.822052707445,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -8492,8 +8492,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 36,552.36 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,276.18 €",
-      "montant": 22388.319290545303,
+      "detail": "SR 37,327.28 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,663.64 €",
+      "montant": 22862.95668653415,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
@@ -10121,7 +10121,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 1399.6620593737352,
+      "montant": 1432.8195915402648,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -10129,7 +10129,7 @@
       "a_charge": [],
       "code": "surcote_parentale",
       "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
-      "montant": 934.7812623339887,
+      "montant": 954.1542172723092,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -10137,7 +10137,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 2862.4376441195263,
+      "montant": 2909.9013837184116,
       "par_regime": [
        [
         "agirc_arrco",
@@ -10149,7 +10149,7 @@
        ],
        [
         "regime_general",
-        2290.2140927182727
+        2337.677832317158
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -10163,7 +10163,7 @@
        ],
        [
         "regime_general",
-        2290.2140927182727
+        2337.677832317158
        ]
       ]
      }
@@ -10171,7 +10171,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 32440.996462268027,
+    "pension_annuelle": 32963.09759785576,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -10193,8 +10193,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 37,391.25 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,695.63 €",
-      "montant": 22902.140927182725,
+      "detail": "SR 38,166.17 € × taux 58.750% × 172/172, surcote parentale 5.00% de 19,083.08 €",
+      "montant": 23376.778323171577,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
@@ -10362,7 +10362,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 1353.635947364226,
+      "montant": 1386.793479530752,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -10370,7 +10370,7 @@
       "a_charge": [],
       "code": "surcote_parentale",
       "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
-      "montant": 919.5911263572525,
+      "montant": 938.9640812955728,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -10378,7 +10378,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 2806.2199627454384,
+      "montant": 2853.6837023443222,
       "par_regime": [
        [
         "agirc_arrco",
@@ -10390,7 +10390,7 @@
        ],
        [
         "regime_general",
-        2252.998259575269
+        2300.4619991741533
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -10404,7 +10404,7 @@
        ],
        [
         "regime_general",
-        2252.998259575269
+        2300.4619991741533
        ]
       ]
      }
@@ -10412,7 +10412,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 31822.60196715306,
+    "pension_annuelle": 32344.703102740787,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -10434,8 +10434,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 36,783.65 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,391.82 €",
-      "montant": 22529.98259575269,
+      "detail": "SR 37,558.56 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,779.28 €",
+      "montant": 23004.619991741532,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
@@ -12124,7 +12124,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 1702.4256130070462,
+      "montant": 1753.6905273860757,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -12132,7 +12132,7 @@
       "a_charge": [],
       "code": "surcote_parentale",
       "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
-      "montant": 847.1437449922851,
+      "montant": 867.7022738374241,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -12140,7 +12140,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 2297.4550473136246,
+      "montant": 2341.655884330674,
       "par_regime": [
        [
         "agirc_arrco",
@@ -12152,7 +12152,7 @@
        ],
        [
         "regime_general",
-        1821.3590517334128
+        1865.5598887504618
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -12166,7 +12166,7 @@
        ],
        [
         "regime_general",
-        1821.3590517334128
+        1865.5598887504618
        ]
       ]
      }
@@ -12174,7 +12174,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 26167.875975682895,
+    "pension_annuelle": 26654.085182870433,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -12196,8 +12196,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 33,885.75 € × taux 51.250% × 172/172, surcote parentale 5.00% de 16,942.87 €",
-      "montant": 18213.590517334127,
+      "detail": "SR 34,708.09 € × taux 51.250% × 172/172, surcote parentale 5.00% de 17,354.05 €",
+      "montant": 18655.598887504617,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
@@ -15345,7 +15345,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 1367.0859107025608,
+      "montant": 1401.357901154297,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -15353,7 +15353,7 @@
       "a_charge": [],
       "code": "surcote_parentale",
       "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
-      "montant": 915.3663654171932,
+      "montant": 935.3409460899489,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -15361,7 +15361,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 2793.226072660599,
+      "montant": 2842.163795308851,
       "par_regime": [
        [
         "agirc_arrco",
@@ -15373,7 +15373,7 @@
        ],
        [
         "regime_general",
-        2242.6475952721235
+        2291.585317920375
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -15387,7 +15387,7 @@
        ],
        [
         "regime_general",
-        2242.6475952721235
+        2291.585317920375
        ]
       ]
      }
@@ -15395,7 +15395,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 31669.218335685815,
+    "pension_annuelle": 32207.533284816585,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -15417,8 +15417,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 36,614.65 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,307.33 €",
-      "montant": 22426.475952721234,
+      "detail": "SR 37,413.64 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,706.82 €",
+      "montant": 22915.85317920375,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
@@ -15666,7 +15666,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 1318.9385090343894,
+      "montant": 1352.096041200919,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -15674,7 +15674,7 @@
       "a_charge": [],
       "code": "surcote_parentale",
       "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
-      "montant": 908.1398265784292,
+      "montant": 927.5127815167497,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -15682,7 +15682,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 2773.117170767574,
+      "montant": 2820.580910366459,
       "par_regime": [
        [
         "agirc_arrco",
@@ -15694,7 +15694,7 @@
        ],
        [
         "regime_general",
-        2224.9425751171516
+        2272.406314716037
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -15708,7 +15708,7 @@
        ],
        [
         "regime_general",
-        2224.9425751171516
+        2272.406314716037
        ]
       ]
      }
@@ -15716,7 +15716,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 31458.471255396555,
+    "pension_annuelle": 31980.57239098429,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -15738,8 +15738,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 36,325.59 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,162.80 €",
-      "montant": 22249.425751171515,
+      "detail": "SR 37,100.51 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,550.26 €",
+      "montant": 22724.063147160366,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
@@ -17117,7 +17117,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 1694.9490816492726,
+      "montant": 1744.5511621418445,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -17125,7 +17125,7 @@
       "a_charge": [],
       "code": "surcote_parentale",
       "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
-      "montant": 848.5884091514005,
+      "montant": 868.767360091763,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -17133,7 +17133,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 2301.2037278048465,
+      "montant": 2344.588472326626,
       "par_regime": [
        [
         "agirc_arrco",
@@ -17145,7 +17145,7 @@
        ],
        [
         "regime_general",
-        1824.4650796755109
+        1867.8498241972902
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -17159,7 +17159,7 @@
        ],
        [
         "regime_general",
-        1824.4650796755109
+        1867.8498241972902
        ]
       ]
      }
@@ -17167,7 +17167,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 26219.032290162686,
+    "pension_annuelle": 26696.264479902256,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -17189,8 +17189,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 33,943.54 € × taux 51.250% × 172/172, surcote parentale 5.00% de 16,971.77 €",
-      "montant": 18244.650796755108,
+      "detail": "SR 34,750.69 € × taux 51.250% × 172/172, surcote parentale 5.00% de 17,375.35 €",
+      "montant": 18678.498241972902,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
@@ -17489,7 +17489,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 2275.548908751931,
+      "montant": 2271.5659989076667,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -17497,7 +17497,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 2157.762497583976,
+      "montant": 2203.632186352817,
       "par_regime": [
        [
         "agirc_arrco",
@@ -17509,7 +17509,7 @@
        ],
        [
         "regime_general",
-        1727.3948779974512
+        1773.2645667662925
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -17523,7 +17523,7 @@
        ],
        [
         "regime_general",
-        1727.3948779974512
+        1773.2645667662925
        ]
       ]
      }
@@ -17531,7 +17531,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 24689.56985037697,
+    "pension_annuelle": 25194.136426834226,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -17553,8 +17553,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 34,547.90 € × taux 50.000% × 172/172",
-      "montant": 17273.94877997451,
+      "detail": "SR 35,465.29 € × taux 50.000% × 172/172",
+      "montant": 17732.645667662924,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
@@ -17646,7 +17646,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 1399.6620593737352,
+      "montant": 1432.8195915402648,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -17654,7 +17654,7 @@
       "a_charge": [],
       "code": "surcote_parentale",
       "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
-      "montant": 934.7812623339887,
+      "montant": 954.1542172723092,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -17662,7 +17662,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 2849.438290866418,
+      "montant": 2896.902030465303,
       "par_regime": [
        [
         "agirc_arrco",
@@ -17674,7 +17674,7 @@
        ],
        [
         "regime_general",
-        2290.2140927182727
+        2337.677832317158
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -17688,7 +17688,7 @@
        ],
        [
         "regime_general",
-        2290.2140927182727
+        2337.677832317158
        ]
       ]
      }
@@ -17696,7 +17696,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 32298.003576483836,
+    "pension_annuelle": 32820.104712071574,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -17718,8 +17718,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 37,391.25 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,695.63 €",
-      "montant": 22902.140927182725,
+      "detail": "SR 38,166.17 € × taux 58.750% × 172/172, surcote parentale 5.00% de 19,083.08 €",
+      "montant": 23376.778323171577,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
@@ -17899,7 +17899,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 1758.5059155915878,
+      "montant": 1808.1079960841562,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -17907,7 +17907,7 @@
       "a_charge": [],
       "code": "surcote_parentale",
       "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
-      "montant": 867.170974286769,
+      "montant": 887.3499252271317,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -17915,7 +17915,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 2361.060940428726,
+      "montant": 2404.445684950506,
       "par_regime": [
        [
         "agirc_arrco",
@@ -17927,7 +17927,7 @@
        ],
        [
         "regime_general",
-        1864.4175947165531
+        1907.802339238333
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -17941,7 +17941,7 @@
        ],
        [
         "regime_general",
-        1864.4175947165531
+        1907.802339238333
        ]
       ]
      }
@@ -17949,7 +17949,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 26877.46162902536,
+    "pension_annuelle": 27354.693818764943,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -17971,8 +17971,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 34,686.84 € × taux 51.250% × 172/172, surcote parentale 5.00% de 17,343.42 €",
-      "montant": 18644.17594716553,
+      "detail": "SR 35,494.00 € × taux 51.250% × 172/172, surcote parentale 5.00% de 17,747.00 €",
+      "montant": 19078.02339238333,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
@@ -21673,7 +21673,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 1648.6631884067792,
+      "montant": 1698.2652688993512,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -21681,7 +21681,7 @@
       "a_charge": [],
       "code": "surcote_parentale",
       "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
-      "montant": 834.2721350291167,
+      "montant": 854.4510859694792,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -21689,7 +21689,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 2264.0195452676926,
+      "montant": 2307.4042897894724,
       "par_regime": [
        [
         "agirc_arrco",
@@ -21701,7 +21701,7 @@
        ],
        [
         "regime_general",
-        1793.6850903126008
+        1837.0698348343803
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -21715,7 +21715,7 @@
        ],
        [
         "regime_general",
-        1793.6850903126008
+        1837.0698348343803
        ]
       ]
      }
@@ -21723,7 +21723,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 25810.00628225399,
+    "pension_annuelle": 26287.23847199357,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -21745,8 +21745,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 33,370.89 € × taux 51.250% × 172/172, surcote parentale 5.00% de 16,685.44 €",
-      "montant": 17936.850903126007,
+      "detail": "SR 34,178.04 € × taux 51.250% × 172/172, surcote parentale 5.00% de 17,089.02 €",
+      "montant": 18370.6983483438,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
@@ -22167,7 +22167,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 1342.6578476911818,
+      "montant": 1375.8153798577187,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -22175,7 +22175,7 @@
       "a_charge": [],
       "code": "surcote_parentale",
       "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
-      "montant": 915.9679911516286,
+      "montant": 935.3409460899489,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -22183,7 +22183,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 2795.745139763367,
+      "montant": 2843.2088793622524,
       "par_regime": [
        [
         "agirc_arrco",
@@ -22195,7 +22195,7 @@
        ],
        [
         "regime_general",
-        2244.12157832149
+        2291.585317920375
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -22209,7 +22209,7 @@
        ],
        [
         "regime_general",
-        2244.12157832149
+        2291.585317920375
        ]
       ]
      }
@@ -22217,7 +22217,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 31707.378914350284,
+    "pension_annuelle": 32229.48004993802,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -22239,8 +22239,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 36,638.72 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,319.36 €",
-      "montant": 22441.2157832149,
+      "detail": "SR 37,413.64 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,706.82 €",
+      "montant": 22915.85317920375,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
@@ -22500,7 +22500,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 1249.648215011257,
+      "montant": 1282.8057471777865,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -22508,7 +22508,7 @@
       "a_charge": [],
       "code": "surcote_parentale",
       "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
-      "montant": 885.2717427424125,
+      "montant": 904.6446976807329,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -22516,7 +22516,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 2707.489631678503,
+      "montant": 2754.9533712773878,
       "par_regime": [
        [
         "agirc_arrco",
@@ -22528,7 +22528,7 @@
        ],
        [
         "regime_general",
-        2168.9157697189107
+        2216.3795093177955
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -22542,7 +22542,7 @@
        ],
        [
         "regime_general",
-        2168.9157697189107
+        2216.3795093177955
        ]
       ]
      }
@@ -22550,7 +22550,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 30736.568325416774,
+    "pension_annuelle": 31258.669461004505,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -22572,8 +22572,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 35,410.87 € × taux 58.750% × 172/172, surcote parentale 5.00% de 17,705.43 €",
-      "montant": 21689.157697189108,
+      "detail": "SR 36,185.79 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,092.89 €",
+      "montant": 22163.795093177956,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }

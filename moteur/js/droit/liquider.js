@@ -2117,7 +2117,8 @@ export function revalorisationExceptionnelleDeMayotte(mahorais, annee, anneeEffe
 
 export function salaireDeReference(moteur, code, carriere, periode, anneeLiquidation, plafonner,
   generation = null, avpf = true, membres = null, enfantsMajores = 0,
-  depuis = null, anneesRetenues = null, plancher = false, affilieAvant2016 = false) {
+  depuis = null, anneesRetenues = null, plancher = false, affilieAvant2016 = false,
+  auCompteDeLaMaternite = null) {
   const codesAdmis = new Set(membres && membres.length > 0 ? membres : [code]);
   const avpfOuvert = avpf
     && periode.avantages_non_contributifs.includes("avpf");
@@ -2172,6 +2173,22 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
   // Les trimestres de chaque année au régime, cotisés (AVPF comprise) puis
   // assimilés : le dénominateur d'avant juillet 1995. Voir le Python.
   const trimestres = new Map();
+  // LES INDEMNITÉS JOURNALIÈRES DE MATERNITÉ : le forfait que la version de
+  // la date d'effet porte à l'année de chaque naissance d'un congé d'avant
+  // 2012 (fiche `sam_indemnites_de_maternite`), et les années où la mère a
+  // cotisé comme salariée, que sa condition d'affiliation lit.
+  const maternite = regleDeLaMaternite(moteur, code, carriere, anneeLiquidation,
+    moisLiquidation);
+  const anneesCotisees = new Set();
+  for (const ligne of carriere.lignes) {
+    if (maternite !== null && ligne.cotise && ligne.annee < anneeLiquidation
+        && coordonner.regimesDe(moteur, ligne, ligne.annee,
+          moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee),
+          ligne.revenu, moteur.macro.plafond_securite_sociale.valeur(ligne.annee),
+        ).some((c) => maternite.regimes.includes(c))) {
+      anneesCotisees.add(ligne.annee);
+    }
+  }
   for (const ligne of carriere.lignes) {
     // L'année de la liquidation n'entre pas dans la moyenne, sauf celle où
     // l'exploitant agricole cesse : il y cotise pour l'année entière
@@ -2292,12 +2309,33 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
   // effet depuis, avant l'écrêtement au plafond de la caisse. Voir le Python.
   const exceptionnelle = (annee) => revalorisationExceptionnelleDeMayotte(
     mahorais, annee, anneeLiquidation, moisLiquidation);
+  // Le forfait de chaque année, pour la mère qui a cotisé cette année-là ou
+  // la précédente (R. 351-29, IV). Il ne valide aucun trimestre : une année
+  // sans salaire au compte ne le reçoit pas.
+  const indemnites = new Map();
+  if (maternite !== null) {
+    for (const [annee, montant] of forfaitsDeMaternite(maternite.forfait,
+      carriere.naissancesDesEnfants.map(([, naissance]) => naissance).sort())) {
+      if (parAnnee.has(annee) && (anneesCotisees.has(annee) || anneesCotisees.has(annee - 1))) {
+        indemnites.set(annee, (indemnites.get(annee) ?? 0) + montant);
+      }
+    }
+  }
   const revenus = [];
   const anneesDesRevenus = [];
   for (const annee of [...parAnnee.keys()].sort((a, b) => a - b)) {
     const [revenu, fraction] = parAnnee.get(annee);
-    revenus.push(borner(revenu * exceptionnelle(annee), annee, fraction)
-      * revaloriser(annee, anneeLiquidation));
+    let retenu = borner(revenu * exceptionnelle(annee), annee, fraction);
+    if (indemnites.has(annee)) {
+      const salaire = retenu;
+      retenu = retenirAvecLesIndemnites(maternite.forfait, annee, salaire,
+        indemnites.get(annee), plafonner
+          ? moteur.macro.plafondDeCotisations(annee, mahorais) : Infinity);
+      if (auCompteDeLaMaternite !== null) {
+        auCompteDeLaMaternite.push([annee, indemnites.get(annee), retenu]);
+      }
+    }
+    revenus.push(retenu * revaloriser(annee, anneeLiquidation));
     anneesDesRevenus.push(annee);
   }
 
@@ -2400,6 +2438,92 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
   return retenus.reduce((total, valeur) => total + valeur, 0.0) / retenus.length;
 }
 
+/** La fiche des indemnités journalières de maternité au salaire annuel moyen. */
+export const FICHE_DES_INDEMNITES_DE_MATERNITE = "sam_indemnites_de_maternite";
+
+/**
+ * Ce que la version de la date d'effet dit des indemnités journalières de
+ * maternité, pour la mère que ce régime liquide : ses régimes et son forfait ;
+ * `null` pour un homme, un régime que la fiche ne nomme pas — les
+ * indépendants, D. 634-1 —, ou une pension d'avant le 1er septembre 2023.
+ */
+function regleDeLaMaternite(moteur, code, carriere, anneeLiquidation, moisLiquidation) {
+  if (carriere.sexe !== "F") {
+    return null;
+  }
+  const regle = moteur.fichesDatees.regle(FICHE_DES_INDEMNITES_DE_MATERNITE,
+    `${String(anneeLiquidation).padStart(4, "0")}-${String(moisLiquidation).padStart(2, "0")}-01`);
+  if (regle === null || !regle.forfait || !(regle.regimes ?? []).includes(code)) {
+    return null;
+  }
+  return regle;
+}
+
+const JOUR = 86_400_000;
+
+/**
+ * Les montants forfaitaires des congés de maternité débutés avant 2012,
+ * `[année de la naissance, montant]`, pour ces naissances (AAAA-MM-JJ, dans
+ * l'ordre) : le salaire médian de l'année précédente (arrêté du 29 avril
+ * 2024), multiplié par la fraction de R. 351-29, V — les deux premières
+ * naissances, les suivantes, des jumeaux, plus de deux enfants — et arrondi à
+ * l'euro, la moitié vers le haut (L. 133-10 ; circulaire Cnav 2025/11,
+ * § 2.4.1.2). Des enfants nés le même jour font une naissance multiple. Le
+ * congé est tenu pour débuté à la date que la loi lui donne avant
+ * l'accouchement (L. 331-3 et L. 331-4) ; la mère qui a déjà mis au monde
+ * deux enfants a le congé d'une naissance au-delà de la deuxième. Une année
+ * dont l'arrêté ne fixe pas le salaire médian ne porte rien.
+ */
+export function forfaitsDeMaternite(forfait, naissances) {
+  const montants = [];
+  const limite = Date.parse(`${forfait.conges_debutant_avant}T00:00:00Z`);
+  for (let rang = 0; rang < naissances.length;) {
+    const jour = naissances[rang];
+    let enfants = 1;
+    while (naissances[rang + enfants] === jour) {
+      enfants += 1;
+    }
+    let sorte = rang >= 2 ? "au_dela_de_la_deuxieme" : "deux_premieres";
+    if (enfants > 1) {
+      sorte = enfants === 2 ? "jumeaux" : "plus_de_deux_enfants";
+    }
+    rang += enfants;
+    const debut = Date.parse(`${jour}T00:00:00Z`)
+      - forfait.semaines_avant_la_naissance[sorte] * 7 * JOUR;
+    const annee = Number(jour.slice(0, 4));
+    const median = forfait.salaire_median[String(annee - 1)] ?? null;
+    if (debut < limite && median !== null) {
+      montants.push([annee, Math.floor(median * forfait.jours_sur_365[sorte] / 365 + 0.5)]);
+    }
+  }
+  return montants;
+}
+
+/**
+ * Le salaire d'une année retenu avec ses indemnités de maternité : leur somme,
+ * que le plafond de l'année borne depuis 2005, les indemnités écrêtées les
+ * premières ; avant, le total peut le passer (circulaire Cnav 2025/11,
+ * § 2.4.1.4).
+ */
+export function retenirAvecLesIndemnites(forfait, annee, salaire, indemnites, plafond) {
+  if (annee < forfait.ecrete_au_plafond_depuis) {
+    return salaire + indemnites;
+  }
+  return salaire + Math.max(0, Math.min(indemnites, plafond - salaire));
+}
+
+/**
+ * Ce que la maternité porte au compte de chaque année, pour les exemples de
+ * la caisse : `[année, montant forfaitaire reporté, salaire retenu avec lui]`.
+ */
+export function materniteAuCompte(moteur, code, carriere, periode, anneeLiquidation,
+  plafonner = true) {
+  const auCompte = [];
+  salaireDeReference(moteur, code, carriere, periode, anneeLiquidation, plafonner,
+    carriere.annee_naissance, true, null, 0, null, null, false, false, auCompte);
+  return auCompte;
+}
+
 /** Les dix dernières années d'avant 1973 se comptent avant soixante ans. */
 export const AGE_DES_DIX_DERNIERES_ANNEES = 60;
 
@@ -2488,8 +2612,14 @@ export function nombreDAnneesRetenues(moteur, periode, carriere, generation,
     // LES PARENTS : vingt-quatre années pour qui bénéficie d'une majoration
     // ou d'une bonification au titre d'un enfant, vingt-trois pour deux
     // enfants et plus, pensions prenant effet à compter du 1er septembre 2026
-    // (R. 173-3-2, décret n° 2026-699).
+    // (R. 173-3-2, décret n° 2026-699). Les assurés nés avant 1948 gardent le
+    // nombre de leur génération (III : « Par dérogation au I ») : ce sont
+    // ceux à qui la table du régime général (R. 351-29-1) ne donne pas encore
+    // le nombre de droit commun.
+    const general = moteur.anneesSalaireReference.annees(generation);
+    const droitCommun = periode.salaire_reference === "10_meilleures_annees" ? 10 : 25;
     if (enfantsMajores > 0 && carriere.age_liquidation !== null
+        && (general === null || general[0] >= droitCommun)
         && carriere.dateLiquidation.rang >= moteur.parentsMeilleuresAnneesDepuis) {
       annees = Math.max(1, annees - (enfantsMajores === 1 ? 1 : 2));
     }

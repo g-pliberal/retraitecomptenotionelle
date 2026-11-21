@@ -1,0 +1,563 @@
+schema_version: 1
+id: grille_sam_maternite_forfait_2023
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: sam_indemnites_de_maternite
+  version: forfait_des_conges_d_avant_2012
+source:
+  auteur: session Claude indépendante, lancée le 20 novembre 2026 sans le code
+  reference: R. 351-29 (LEGIARTI000048031614, LEGIARTI000051226243, LEGIARTI000053335651), loi n°
+    2010-1330, article 118, VI (LEGIARTI000047453380), arrêté du 29 avril 2024 (JORFARTI000049496475),
+    décret n° 2005-1351, article 3 (JORFARTI000001522288), L. 331-3 et L. 331-4, R. 173-3-2, R. 351-29-1,
+    lus par la session indépendante dans les index LEGI et JORF à jour au 16 novembre 2026 ; circulaire
+    Cnav 2025/11 du 28 mars 2025, lue après les textes
+  etabli_le: '2026-11-20'
+independance: 'Les valeurs ont été posées par une session lancée sans le code : elle a cherché elle-même,
+  dans une copie des index LEGI et JORF, les articles, la loi, l''arrêté du salaire médian et leurs
+  dispositions d''application, écrit sa lecture avant d''ouvrir la circulaire Cnav 2025/11, écrit
+  son propre calcul, et proposé 17 des 54 cas ; les 37 autres, naissance, sexe, date d''effet, naissances
+  des enfants et salaires sans aucune valeur attendue, viennent de la session qui connaît le code.
+  Elle n''a reçu, hors des index et de la circulaire, que trois barèmes du dépôt : les tableaux de
+  coefficients de la Cnav, le plafond annuel et le SMIC horaire. Un guetteur (inotify) a journalisé
+  les ouvertures de fichiers sous les trois copies du dépôt pendant ses deux passages : aucune. Un
+  texte lui avait échappé, le décret n° 2005-1351, que la session qui connaît le code lui a signalé
+  sans lui en dire l''effet : elle a refait les dix-huit cas qu''il change.'
+seuils:
+- 'date d''effet : 1er septembre 2023, 1er février et 1er mars 2025, 1er janvier, 1er septembre, 1er
+  octobre et 1er novembre 2026'
+- 'le rang : une, deux, trois, quatre naissances ; des jumeaux, des triplés ; un enfant après des
+  jumeaux ou des triplés, des jumeaux après un enfant ; deux naissances la même année'
+- 'le début du congé autour du 1er janvier 2012 : naissances du 31 décembre 2011 au 1er juin 2012,
+  six, huit et douze semaines avant l''accouchement'
+- 'le plafond : un total qui le passe en 2004 et en 2005, un salaire déjà au plafond en 2003 et en
+  2007 (décret n° 2005-1351, article 3 : les salaires perçus depuis le 1er janvier 2005)'
+- 'l''affiliation : aucun salaire l''année de la naissance, aucun l''année d''avant, une année sous
+  le seuil d''un trimestre, une carrière commencée l''année suivante'
+- 'le salaire médian : la naissance de 1950, sans salaire médian de 1949, celle de 1951'
+- le père ; les vingt-quatre et vingt-trois années des parents depuis septembre 2026, et l'assurée
+  née avant 1948
+- 'hors de la grille : les 125 % des congés débutés depuis 2012, dont aucun cas ne donne le montant,
+  comptés pour zéro des deux côtés'
+cas:
+- id: grille_sam_maternite_forfait_2023_m02
+  enonce: 'Née en 1961-03, pension prenant effet le 2023-09-01, 31 années de salaire au régime général,
+    enfants nés le 1988-04-12, le 1991-10-03. La session indépendante porte au compte : 1988:4488
+    1991:5072 ; années retenues avec le forfait : 1988:11255.27 1991:21593.25. Fondement qu''elle
+    relève : R. 351-29 (LEGIARTI000048031614) ; loi 2010-1330 art. 118 VI (LEGIARTI000047453380) ;
+    arrêté du 29 avril 2024 (JORFARTI000049496475) ; décret 2005-1351 art. 3 (JORFARTI000001522288)
+    et R. 351-29 d''avant (LEGIARTI000006750042). Sa remarque : naissance du 1988-04-12 : 140/365
+    x 11700 = 4488 | naissance du 1991-10-03 : 140/365 x 13223 = 5072 | 1991 : 21593.25 retenus au-dessus
+    du plafond (21001.0), salaire perçu avant 2005 (décret 2005-1351 art. 3) | sam_si_plafond_annuel_aussi_avant_2005=22762.56
+    | sam_si_forfait_non_arrondi=22799.18 | CHANGE : premier rendu=22762.56. Note du cas : même carrière,
+    six dates d''effet. Premier rendu, avant la lecture du décret n° 2005-1351 : 22762.56.'
+  carriere:
+    naissance: 1961-03
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-09
+    nombre_enfants: 2
+    naissances_enfants: ['1988-04-12', '1991-10-03']
+    releve_entier: [[1982, 7503.85], [1983, 6842.51], [1984, 10101.24], [1985, 5749.31], [1986, 12687.07],
+      [1987, 11964.47], [1988, 6767.27], [1989, 12378.21], [1990, 8040.91], [1991, 16521.25], [1992,
+        14492.7], [1993, 12912.74], [1994, 11460.05], [1995, 14532.91], [1996, 16972.22], [1997, 15369.35],
+      [1998, 19280.25], [1999, 20615.31], [2000, 17553.93], [2001, 16866.91], [2002, 10585.59], [
+        2003, 22140.95], [2004, 18029.88], [2005, 17398.82], [2006, 15619.32], [2007, 23203.0], [
+        2008, 13744.58], [2009, 18143.35], [2010, 19176.63], [2011, 13316.45], [2012, 25933.41]]
+  attendu:
+    salaire_annuel_moyen: 22799.21
+- id: grille_sam_maternite_forfait_2023_m03
+  enonce: 'Née en 1961-03, pension prenant effet le 2025-02-01, 31 années de salaire au régime général,
+    enfants nés le 1988-04-12, le 1991-10-03. La session indépendante porte au compte : 1988:4488
+    1991:5072 ; années retenues avec le forfait : 1988:11255.27 1991:21593.25. Fondement qu''elle
+    relève : R. 351-29 (LEGIARTI000048031614) ; loi 2010-1330 art. 118 VI (LEGIARTI000047453380) ;
+    arrêté du 29 avril 2024 (JORFARTI000049496475) ; décret 2005-1351 art. 3 (JORFARTI000001522288)
+    et R. 351-29 d''avant (LEGIARTI000006750042). Sa remarque : naissance du 1988-04-12 : 140/365
+    x 11700 = 4488 | naissance du 1991-10-03 : 140/365 x 13223 = 5072 | 1991 : 21593.25 retenus au-dessus
+    du plafond (21001.0), salaire perçu avant 2005 (décret 2005-1351 art. 3) | sam_si_plafond_annuel_aussi_avant_2005=24479.03
+    | sam_si_forfait_non_arrondi=24518.39 | CHANGE : premier rendu=24479.03. Note du cas : même carrière,
+    six dates d''effet. Premier rendu, avant la lecture du décret n° 2005-1351 : 24479.03.'
+  carriere:
+    naissance: 1961-03
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2025-02
+    nombre_enfants: 2
+    naissances_enfants: ['1988-04-12', '1991-10-03']
+    releve_entier: [[1982, 7503.85], [1983, 6842.51], [1984, 10101.24], [1985, 5749.31], [1986, 12687.07],
+      [1987, 11964.47], [1988, 6767.27], [1989, 12378.21], [1990, 8040.91], [1991, 16521.25], [1992,
+        14492.7], [1993, 12912.74], [1994, 11460.05], [1995, 14532.91], [1996, 16972.22], [1997, 15369.35],
+      [1998, 19280.25], [1999, 20615.31], [2000, 17553.93], [2001, 16866.91], [2002, 10585.59], [
+        2003, 22140.95], [2004, 18029.88], [2005, 17398.82], [2006, 15619.32], [2007, 23203.0], [
+        2008, 13744.58], [2009, 18143.35], [2010, 19176.63], [2011, 13316.45], [2012, 25933.41]]
+  attendu:
+    salaire_annuel_moyen: 24518.43
+- id: grille_sam_maternite_forfait_2023_m07
+  enonce: 'Né en 1961-03, pension prenant effet le 2024-01-01, 31 années de salaire au régime général,
+    enfants nés le 1988-04-12, le 1991-10-03. La session indépendante porte au compte : rien ; années
+    retenues avec le forfait : aucune. Fondement qu''elle relève : R. 351-29 (LEGIARTI000048031614).
+    Sa remarque : père : aucune indemnité de maternité (R. 351-29 IV ne vise le père qu''après le
+    décès de la mère). Note du cas : le père, même carrière.'
+  carriere:
+    naissance: 1961-03
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-01
+    nombre_enfants: 2
+    naissances_enfants: ['1988-04-12', '1991-10-03']
+    releve_entier: [[1982, 7503.85], [1983, 6842.51], [1984, 10101.24], [1985, 5749.31], [1986, 12687.07],
+      [1987, 11964.47], [1988, 6767.27], [1989, 12378.21], [1990, 8040.91], [1991, 16521.25], [1992,
+        14492.7], [1993, 12912.74], [1994, 11460.05], [1995, 14532.91], [1996, 16972.22], [1997, 15369.35],
+      [1998, 19280.25], [1999, 20615.31], [2000, 17553.93], [2001, 16866.91], [2002, 10585.59], [
+        2003, 22140.95], [2004, 18029.88], [2005, 17398.82], [2006, 15619.32], [2007, 23203.0], [
+        2008, 13744.58], [2009, 18143.35], [2010, 19176.63], [2011, 13316.45], [2012, 25933.41]]
+  attendu:
+    salaire_annuel_moyen: 23546.76
+- id: grille_sam_maternite_forfait_2023_m08
+  enonce: 'Née en 1960-06, pension prenant effet le 2024-07-01, 36 années de salaire au régime général,
+    enfants nés le 1985-02-01. La session indépendante porte au compte : 1985:3893 ; années retenues
+    avec le forfait : 1985:15195.47. Fondement qu''elle relève : R. 351-29 (LEGIARTI000048031614)
+    ; loi 2010-1330 art. 118 VI (LEGIARTI000047453380) ; arrêté du 29 avril 2024 (JORFARTI000049496475)
+    ; décret 2005-1351 art. 3 (JORFARTI000001522288) et R. 351-29 d''avant (LEGIARTI000006750042).
+    Sa remarque : naissance du 1985-02-01 : 140/365 x 10149 = 3893 | sam_si_forfait_non_arrondi=25635.49.'
+  carriere:
+    naissance: 1960-06
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-07
+    nombre_enfants: 1
+    naissances_enfants: ['1985-02-01']
+    releve_entier: [[1980, 4047.17], [1981, 7759.76], [1982, 4556.04], [1983, 7642.37], [1984, 5353.46],
+      [1985, 11302.47], [1986, 6052.15], [1987, 10331.56], [1988, 11537.77], [1989, 9872.91], [1990,
+        15895.68], [1991, 8043.29], [1992, 14238.77], [1993, 15972.42], [1994, 14494.29], [1995, 16116.17],
+      [1996, 15523.19], [1997, 17985.05], [1998, 16270.35], [1999, 11704.64], [2000, 9571.06], [2001,
+        21534.37], [2002, 12784.41], [2003, 17394.14], [2004, 11654.31], [2005, 18164.87], [2006,
+        23085.7], [2007, 25268.74], [2008, 19421.84], [2009, 26863.22], [2010, 19392.63], [2011, 28044.89],
+      [2012, 23009.01], [2013, 19520.11], [2014, 26671.41], [2015, 19833.65]]
+  attendu:
+    salaire_annuel_moyen: 25635.51
+- id: grille_sam_maternite_forfait_2023_m09
+  enonce: 'Née en 1960-06, pension prenant effet le 2024-07-01, 36 années de salaire au régime général,
+    enfants nés le 1985-02-01, le 1987-06-15, le 1990-09-30. La session indépendante porte au compte
+    : 1985:3893 1987:4361 1990:7842 ; années retenues avec le forfait : 1985:15195.47 1987:14692.56
+    1990:23737.68. Fondement qu''elle relève : R. 351-29 (LEGIARTI000048031614) ; loi 2010-1330 art.
+    118 VI (LEGIARTI000047453380) ; arrêté du 29 avril 2024 (JORFARTI000049496475) ; décret 2005-1351
+    art. 3 (JORFARTI000001522288) et R. 351-29 d''avant (LEGIARTI000006750042). Sa remarque : naissance
+    du 1985-02-01 : 140/365 x 10149 = 3893 | naissance du 1987-06-15 : 140/365 x 11371 = 4361 | naissance
+    du 1990-09-30 : 228/365 x 12554 = 7842 | 1990 : 23737.68 retenus au-dessus du plafond (19977.0),
+    salaire perçu avant 2005 (décret 2005-1351 art. 3) | sam_si_plafond_annuel_aussi_avant_2005=26219.88
+    | sam_si_forfait_non_arrondi=26468.55 | CHANGE : premier rendu=26219.88. Premier rendu, avant
+    la lecture du décret n° 2005-1351 : 26219.88.'
+  carriere:
+    naissance: 1960-06
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-07
+    nombre_enfants: 3
+    naissances_enfants: ['1985-02-01', '1987-06-15', '1990-09-30']
+    releve_entier: [[1980, 4047.17], [1981, 7759.76], [1982, 4556.04], [1983, 7642.37], [1984, 5353.46],
+      [1985, 11302.47], [1986, 6052.15], [1987, 10331.56], [1988, 11537.77], [1989, 9872.91], [1990,
+        15895.68], [1991, 8043.29], [1992, 14238.77], [1993, 15972.42], [1994, 14494.29], [1995, 16116.17],
+      [1996, 15523.19], [1997, 17985.05], [1998, 16270.35], [1999, 11704.64], [2000, 9571.06], [2001,
+        21534.37], [2002, 12784.41], [2003, 17394.14], [2004, 11654.31], [2005, 18164.87], [2006,
+        23085.7], [2007, 25268.74], [2008, 19421.84], [2009, 26863.22], [2010, 19392.63], [2011, 28044.89],
+      [2012, 23009.01], [2013, 19520.11], [2014, 26671.41], [2015, 19833.65]]
+  attendu:
+    salaire_annuel_moyen: 26468.54
+- id: grille_sam_maternite_forfait_2023_m10
+  enonce: 'Née en 1960-06, pension prenant effet le 2024-07-01, 36 années de salaire au régime général,
+    enfants nés le 1985-02-01, le 1987-06-15, le 1990-09-30, le 1994-01-20. La session indépendante
+    porte au compte : 1985:3893 1987:4361 1990:7842 1994:9049 ; années retenues avec le forfait :
+    1985:15195.47 1987:14692.56 1990:23737.68 1994:23543.29. Fondement qu''elle relève : R. 351-29
+    (LEGIARTI000048031614) ; loi 2010-1330 art. 118 VI (LEGIARTI000047453380) ; arrêté du 29 avril
+    2024 (JORFARTI000049496475) ; décret 2005-1351 art. 3 (JORFARTI000001522288) et R. 351-29 d''avant
+    (LEGIARTI000006750042). Sa remarque : naissance du 1985-02-01 : 140/365 x 10149 = 3893 | naissance
+    du 1987-06-15 : 140/365 x 11371 = 4361 | naissance du 1990-09-30 : 228/365 x 12554 = 7842 | naissance
+    du 1994-01-20 : 228/365 x 14487 = 9049 | 1990 : 23737.68 retenus au-dessus du plafond (19977.0),
+    salaire perçu avant 2005 (décret 2005-1351 art. 3) | 1994 : 23543.29 retenus au-dessus du plafond
+    (23343.0), salaire perçu avant 2005 (décret 2005-1351 art. 3) | sam_si_plafond_annuel_aussi_avant_2005=26767.44
+    | sam_si_forfait_non_arrondi=27028.53 | CHANGE : premier rendu=26767.44. Premier rendu, avant
+    la lecture du décret n° 2005-1351 : 26767.44.'
+  carriere:
+    naissance: 1960-06
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-07
+    nombre_enfants: 4
+    naissances_enfants: ['1985-02-01', '1987-06-15', '1990-09-30', '1994-01-20']
+    releve_entier: [[1980, 4047.17], [1981, 7759.76], [1982, 4556.04], [1983, 7642.37], [1984, 5353.46],
+      [1985, 11302.47], [1986, 6052.15], [1987, 10331.56], [1988, 11537.77], [1989, 9872.91], [1990,
+        15895.68], [1991, 8043.29], [1992, 14238.77], [1993, 15972.42], [1994, 14494.29], [1995, 16116.17],
+      [1996, 15523.19], [1997, 17985.05], [1998, 16270.35], [1999, 11704.64], [2000, 9571.06], [2001,
+        21534.37], [2002, 12784.41], [2003, 17394.14], [2004, 11654.31], [2005, 18164.87], [2006,
+        23085.7], [2007, 25268.74], [2008, 19421.84], [2009, 26863.22], [2010, 19392.63], [2011, 28044.89],
+      [2012, 23009.01], [2013, 19520.11], [2014, 26671.41], [2015, 19833.65]]
+  attendu:
+    salaire_annuel_moyen: 27028.49
+- id: grille_sam_maternite_forfait_2023_m11
+  enonce: 'Née en 1960-06, pension prenant effet le 2024-07-01, 36 années de salaire au régime général,
+    enfants nés le 1986-05-05, le 1986-05-05. La session indépendante porte au compte : 1986:8880
+    ; années retenues avec le forfait : 1986:14932.15. Fondement qu''elle relève : R. 351-29 (LEGIARTI000048031614)
+    ; loi 2010-1330 art. 118 VI (LEGIARTI000047453380) ; arrêté du 29 avril 2024 (JORFARTI000049496475)
+    ; décret 2005-1351 art. 3 (JORFARTI000001522288) et R. 351-29 d''avant (LEGIARTI000006750042).
+    Sa remarque : naissance du 1986-05-05 : 298/365 x 10877 = 8880 | sam_si_forfait_non_arrondi=25710.34.
+    Note du cas : des jumeaux.'
+  carriere:
+    naissance: 1960-06
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-07
+    nombre_enfants: 2
+    naissances_enfants: ['1986-05-05', '1986-05-05']
+    releve_entier: [[1980, 4047.17], [1981, 7759.76], [1982, 4556.04], [1983, 7642.37], [1984, 5353.46],
+      [1985, 11302.47], [1986, 6052.15], [1987, 10331.56], [1988, 11537.77], [1989, 9872.91], [1990,
+        15895.68], [1991, 8043.29], [1992, 14238.77], [1993, 15972.42], [1994, 14494.29], [1995, 16116.17],
+      [1996, 15523.19], [1997, 17985.05], [1998, 16270.35], [1999, 11704.64], [2000, 9571.06], [2001,
+        21534.37], [2002, 12784.41], [2003, 17394.14], [2004, 11654.31], [2005, 18164.87], [2006,
+        23085.7], [2007, 25268.74], [2008, 19421.84], [2009, 26863.22], [2010, 19392.63], [2011, 28044.89],
+      [2012, 23009.01], [2013, 19520.11], [2014, 26671.41], [2015, 19833.65]]
+  attendu:
+    salaire_annuel_moyen: 25710.31
+- id: grille_sam_maternite_forfait_2023_m12
+  enonce: 'Née en 1960-06, pension prenant effet le 2024-07-01, 36 années de salaire au régime général,
+    enfants nés le 1986-05-05, le 1986-05-05, le 1986-05-05. La session indépendante porte au compte
+    : 1986:12009 ; années retenues avec le forfait : 1986:18061.15. Fondement qu''elle relève : R.
+    351-29 (LEGIARTI000048031614) ; loi 2010-1330 art. 118 VI (LEGIARTI000047453380) ; arrêté du 29
+    avril 2024 (JORFARTI000049496475) ; décret 2005-1351 art. 3 (JORFARTI000001522288) et R. 351-29
+    d''avant (LEGIARTI000006750042). Sa remarque : naissance du 1986-05-05 : 403/365 x 10877 = 12009
+    | 1986 : 18061.15 retenus au-dessus du plafond (17105.0), salaire perçu avant 2005 (décret 2005-1351
+    art. 3) | sam_si_plafond_annuel_aussi_avant_2005=25873.02 | sam_si_forfait_non_arrondi=25944.64
+    | CHANGE : premier rendu=25873.02. Note du cas : des triplés. Premier rendu, avant la lecture
+    du décret n° 2005-1351 : 25873.02.'
+  carriere:
+    naissance: 1960-06
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-07
+    nombre_enfants: 3
+    naissances_enfants: ['1986-05-05', '1986-05-05', '1986-05-05']
+    releve_entier: [[1980, 4047.17], [1981, 7759.76], [1982, 4556.04], [1983, 7642.37], [1984, 5353.46],
+      [1985, 11302.47], [1986, 6052.15], [1987, 10331.56], [1988, 11537.77], [1989, 9872.91], [1990,
+        15895.68], [1991, 8043.29], [1992, 14238.77], [1993, 15972.42], [1994, 14494.29], [1995, 16116.17],
+      [1996, 15523.19], [1997, 17985.05], [1998, 16270.35], [1999, 11704.64], [2000, 9571.06], [2001,
+        21534.37], [2002, 12784.41], [2003, 17394.14], [2004, 11654.31], [2005, 18164.87], [2006,
+        23085.7], [2007, 25268.74], [2008, 19421.84], [2009, 26863.22], [2010, 19392.63], [2011, 28044.89],
+      [2012, 23009.01], [2013, 19520.11], [2014, 26671.41], [2015, 19833.65]]
+  attendu:
+    salaire_annuel_moyen: 25944.61
+- id: grille_sam_maternite_forfait_2023_m13
+  enonce: 'Née en 1960-06, pension prenant effet le 2024-07-01, 36 années de salaire au régime général,
+    enfants nés le 1986-05-05, le 1986-05-05, le 1989-03-03. La session indépendante porte au compte
+    : 1986:8880 1989:7543 ; années retenues avec le forfait : 1986:14932.15 1989:17415.91. Fondement
+    qu''elle relève : R. 351-29 (LEGIARTI000048031614) ; loi 2010-1330 art. 118 VI (LEGIARTI000047453380)
+    ; arrêté du 29 avril 2024 (JORFARTI000049496475) ; décret 2005-1351 art. 3 (JORFARTI000001522288)
+    et R. 351-29 d''avant (LEGIARTI000006750042). Sa remarque : naissance du 1986-05-05 : 298/365
+    x 10877 = 8880 | naissance du 1989-03-03 : 228/365 x 12075 = 7543 | sam_si_rang_compte_par_accouchement=25919.47
+    | sam_si_forfait_non_arrondi=26117.31. Note du cas : des jumeaux, puis un enfant.'
+  carriere:
+    naissance: 1960-06
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-07
+    nombre_enfants: 3
+    naissances_enfants: ['1986-05-05', '1986-05-05', '1989-03-03']
+    releve_entier: [[1980, 4047.17], [1981, 7759.76], [1982, 4556.04], [1983, 7642.37], [1984, 5353.46],
+      [1985, 11302.47], [1986, 6052.15], [1987, 10331.56], [1988, 11537.77], [1989, 9872.91], [1990,
+        15895.68], [1991, 8043.29], [1992, 14238.77], [1993, 15972.42], [1994, 14494.29], [1995, 16116.17],
+      [1996, 15523.19], [1997, 17985.05], [1998, 16270.35], [1999, 11704.64], [2000, 9571.06], [2001,
+        21534.37], [2002, 12784.41], [2003, 17394.14], [2004, 11654.31], [2005, 18164.87], [2006,
+        23085.7], [2007, 25268.74], [2008, 19421.84], [2009, 26863.22], [2010, 19392.63], [2011, 28044.89],
+      [2012, 23009.01], [2013, 19520.11], [2014, 26671.41], [2015, 19833.65]]
+  attendu:
+    salaire_annuel_moyen: 26117.3
+- id: grille_sam_maternite_forfait_2023_m14
+  enonce: 'Née en 1960-06, pension prenant effet le 2024-07-01, 36 années de salaire au régime général,
+    enfants nés le 1984-05-05, le 1989-03-03, le 1989-03-03. La session indépendante porte au compte
+    : 1984:3638 1989:9858 ; années retenues avec le forfait : 1984:8991.46 1989:19730.91. Fondement
+    qu''elle relève : R. 351-29 (LEGIARTI000048031614) ; loi 2010-1330 art. 118 VI (LEGIARTI000047453380)
+    ; arrêté du 29 avril 2024 (JORFARTI000049496475) ; décret 2005-1351 art. 3 (JORFARTI000001522288)
+    et R. 351-29 d''avant (LEGIARTI000006750042). Sa remarque : naissance du 1984-05-05 : 140/365
+    x 9484 = 3638 | naissance du 1989-03-03 : 298/365 x 12075 = 9858 | 1989 : 19730.91 retenus au-dessus
+    du plafond (19099.0), salaire perçu avant 2005 (décret 2005-1351 art. 3) | sam_si_plafond_annuel_aussi_avant_2005=25890.16
+    | sam_si_forfait_non_arrondi=25933.14 | CHANGE : premier rendu=25890.16. Note du cas : un enfant,
+    puis des jumeaux. Premier rendu, avant la lecture du décret n° 2005-1351 : 25890.16.'
+  carriere:
+    naissance: 1960-06
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-07
+    nombre_enfants: 3
+    naissances_enfants: ['1984-05-05', '1989-03-03', '1989-03-03']
+    releve_entier: [[1980, 4047.17], [1981, 7759.76], [1982, 4556.04], [1983, 7642.37], [1984, 5353.46],
+      [1985, 11302.47], [1986, 6052.15], [1987, 10331.56], [1988, 11537.77], [1989, 9872.91], [1990,
+        15895.68], [1991, 8043.29], [1992, 14238.77], [1993, 15972.42], [1994, 14494.29], [1995, 16116.17],
+      [1996, 15523.19], [1997, 17985.05], [1998, 16270.35], [1999, 11704.64], [2000, 9571.06], [2001,
+        21534.37], [2002, 12784.41], [2003, 17394.14], [2004, 11654.31], [2005, 18164.87], [2006,
+        23085.7], [2007, 25268.74], [2008, 19421.84], [2009, 26863.22], [2010, 19392.63], [2011, 28044.89],
+      [2012, 23009.01], [2013, 19520.11], [2014, 26671.41], [2015, 19833.65]]
+  attendu:
+    salaire_annuel_moyen: 25933.11
+- id: grille_sam_maternite_forfait_2023_m15
+  enonce: 'Née en 1960-06, pension prenant effet le 2024-07-01, 36 années de salaire au régime général,
+    enfants nés le 1985-02-01, le 1985-12-20. La session indépendante porte au compte : 1985:7786
+    ; années retenues avec le forfait : 1985:19088.47. Fondement qu''elle relève : R. 351-29 (LEGIARTI000048031614)
+    ; loi 2010-1330 art. 118 VI (LEGIARTI000047453380) ; arrêté du 29 avril 2024 (JORFARTI000049496475)
+    ; décret 2005-1351 art. 3 (JORFARTI000001522288) et R. 351-29 d''avant (LEGIARTI000006750042).
+    Sa remarque : naissance du 1985-02-01 : 140/365 x 10149 = 3893 | naissance du 1985-12-20 : 140/365
+    x 10149 = 3893 | 1985 : 19088.47 retenus au-dessus du plafond (16272.0), salaire perçu avant 2005
+    (décret 2005-1351 art. 3) | sam_si_plafond_annuel_aussi_avant_2005=25717.97 | sam_si_forfait_non_arrondi=25933.68
+    | CHANGE : premier rendu=25717.97. Note du cas : deux naissances la même année. Premier rendu,
+    avant la lecture du décret n° 2005-1351 : 25717.97.'
+  carriere:
+    naissance: 1960-06
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-07
+    nombre_enfants: 2
+    naissances_enfants: ['1985-02-01', '1985-12-20']
+    releve_entier: [[1980, 4047.17], [1981, 7759.76], [1982, 4556.04], [1983, 7642.37], [1984, 5353.46],
+      [1985, 11302.47], [1986, 6052.15], [1987, 10331.56], [1988, 11537.77], [1989, 9872.91], [1990,
+        15895.68], [1991, 8043.29], [1992, 14238.77], [1993, 15972.42], [1994, 14494.29], [1995, 16116.17],
+      [1996, 15523.19], [1997, 17985.05], [1998, 16270.35], [1999, 11704.64], [2000, 9571.06], [2001,
+        21534.37], [2002, 12784.41], [2003, 17394.14], [2004, 11654.31], [2005, 18164.87], [2006,
+        23085.7], [2007, 25268.74], [2008, 19421.84], [2009, 26863.22], [2010, 19392.63], [2011, 28044.89],
+      [2012, 23009.01], [2013, 19520.11], [2014, 26671.41], [2015, 19833.65]]
+  attendu:
+    salaire_annuel_moyen: 25933.71
+- id: grille_sam_maternite_forfait_2023_m34
+  enonce: 'Née en 1960-01, pension prenant effet le 2024-01-01, 43 années de salaire au régime général,
+    enfants nés le 1982-03-03, le 1984-04-04. La session indépendante porte au compte : 1982:2905
+    1984:3638 ; années retenues avec le forfait : 1982:9457.1 1984:11958.83. Fondement qu''elle relève
+    : R. 351-29 (LEGIARTI000048031614) ; loi 2010-1330 art. 118 VI (LEGIARTI000047453380) ; arrêté
+    du 29 avril 2024 (JORFARTI000049496475) ; décret 2005-1351 art. 3 (JORFARTI000001522288) et R.
+    351-29 d''avant (LEGIARTI000006750042). Sa remarque : naissance du 1982-03-03 : 140/365 x 7575
+    = 2905 | naissance du 1984-04-04 : 140/365 x 9484 = 3638. Note du cas : quarante-trois années
+    croissantes.'
+  carriere:
+    naissance: 1960-01
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-01
+    nombre_enfants: 2
+    naissances_enfants: ['1982-03-03', '1984-04-04']
+    releve_entier: [[1980, 4582.5], [1981, 5366.78], [1982, 6552.1], [1983, 7491.67], [1984, 8320.83],
+      [1985, 9112.32], [1986, 9784.06], [1987, 10400.46], [1988, 10936.0], [1989, 11612.19], [1990,
+        12385.74], [1991, 13272.63], [1992, 14149.32], [1993, 14983.04], [1994, 15593.12], [1995,
+        16165.64], [1996, 17007.98], [1997, 17669.7], [1998, 18455.62], [1999, 19270.89], [2000, 19900.08],
+      [2001, 20566.45], [2002, 21563.14], [2003, 22646.78], [2004, 23413.06], [2005, 24153.6], [2006,
+        25227.22], [2007, 26519.62], [2008, 27818.74], [2009, 29093.18], [2010, 29773.2], [2011, 30826.94],
+      [2012, 32152.85], [2013, 33180.67], [2014, 34093.58], [2015, 34996.8], [2016, 35990.11], [2017,
+        37031.23], [2018, 37983.79], [2019, 39227.23], [2020, 40313.28], [2021, 40806.91], [2022,
+        41300.54]]
+  attendu:
+    salaire_annuel_moyen: 36469.45
+- id: grille_sam_maternite_forfait_2023_m35
+  enonce: 'Née en 1960-01, pension prenant effet le 2024-01-01, 43 années de salaire au régime général,
+    enfants nés le 1984-04-04. La session indépendante porte au compte : 1984:3638 ; années retenues
+    avec le forfait : 1984:6674.8. Fondement qu''elle relève : R. 351-29 (LEGIARTI000048031614) ;
+    loi 2010-1330 art. 118 VI (LEGIARTI000047453380) ; arrêté du 29 avril 2024 (JORFARTI000049496475)
+    ; décret 2005-1351 art. 3 (JORFARTI000001522288) et R. 351-29 d''avant (LEGIARTI000006750042).
+    Sa remarque : naissance du 1984-04-04 : 140/365 x 9484 = 3638. Note du cas : 1984 à 20 % du plafond.'
+  carriere:
+    naissance: 1960-01
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-01
+    nombre_enfants: 1
+    naissances_enfants: ['1984-04-04']
+    releve_entier: [[1980, 4582.5], [1981, 5366.78], [1982, 6552.1], [1983, 7491.67], [1984, 3036.8],
+      [1985, 9112.32], [1986, 9784.06], [1987, 10400.46], [1988, 10936.0], [1989, 11612.19], [1990,
+        12385.74], [1991, 13272.63], [1992, 14149.32], [1993, 14983.04], [1994, 15593.12], [1995,
+        16165.64], [1996, 17007.98], [1997, 17669.7], [1998, 18455.62], [1999, 19270.89], [2000, 19900.08],
+      [2001, 20566.45], [2002, 21563.14], [2003, 22646.78], [2004, 23413.06], [2005, 24153.6], [2006,
+        25227.22], [2007, 26519.62], [2008, 27818.74], [2009, 29093.18], [2010, 29773.2], [2011, 30826.94],
+      [2012, 32152.85], [2013, 33180.67], [2014, 34093.58], [2015, 34996.8], [2016, 35990.11], [2017,
+        37031.23], [2018, 37983.79], [2019, 39227.23], [2020, 40313.28], [2021, 40806.91], [2022,
+        41300.54]]
+  attendu:
+    salaire_annuel_moyen: 36469.45
+- id: grille_sam_maternite_forfait_2023_m36
+  enonce: 'Née en 1928-01, pension prenant effet le 2023-10-01, 26 années de salaire au régime général,
+    enfants nés le 1950-06-01, le 1951-06-01, le 1953-06-01. La session indépendante porte au compte
+    : 1950:0 1951:129 1953:295 ; années retenues avec le forfait : 1950:241.2 1951:444.6 1953:712.0.
+    Fondement qu''elle relève : R. 351-29 (LEGIARTI000048031614) ; loi 2010-1330 art. 118 VI (LEGIARTI000047453380)
+    ; arrêté du 29 avril 2024 (JORFARTI000049496475) ; décret 2005-1351 art. 3 (JORFARTI000001522288)
+    et R. 351-29 d''avant (LEGIARTI000006750042). Sa remarque : naissance du 1950-06-01 : salaire
+    médian de 1949 absent de l''arrêté du 29 avril 2024, forfait compté 0 | naissance du 1951-06-01
+    : 140/365 x 336 = 129 | naissance du 1953-06-01 : 228/365 x 473 = 295 | 10 années (R. 351-29-1
+    II, née en 1928) | 1953 : 712.0 retenus au-dessus du plafond (695.0), salaire perçu avant 2005
+    (décret 2005-1351 art. 3) | sam_si_plafond_annuel_aussi_avant_2005=20657.30 | sam_si_forfait_non_arrondi=20739.49
+    | CHANGE : premier rendu=20657.30 | seuil du trimestre d''avant 1970 (AVTS) absent des barèmes
+    : années à salaire tenues pour validantes. Note du cas : carrière de 1949 à 1974. Premier rendu,
+    avant la lecture du décret n° 2005-1351 : 20657.30.'
+  carriere:
+    naissance: 1928-01
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-10
+    nombre_enfants: 3
+    naissances_enfants: ['1950-06-01', '1951-06-01', '1953-06-01']
+    releve_entier: [[1949, 235.8], [1950, 241.2], [1951, 315.6], [1952, 406.2], [1953, 417.0], [1954,
+        417.0], [1955, 433.8], [1956, 483.0], [1957, 483.0], [1958, 549.0], [1959, 603.6], [1960,
+        625.8], [1961, 741.0], [1962, 878.4], [1963, 955.2], [1964, 1042.8], [1965, 1119.6], [1966,
+        1185.6], [1967, 1251.6], [1968, 1317.0], [1969, 1492.8], [1970, 1646.4], [1971, 1810.8], [
+        1972, 2008.8], [1973, 2239.2], [1974, 2546.4]]
+  attendu:
+    salaire_annuel_moyen: 20738.0
+- id: grille_sam_maternite_forfait_2023_m37
+  enonce: 'Née en 1949-09, pension prenant effet le 2023-12-01, 17 années de salaire au régime général,
+    enfants nés le 2010-10-10. La session indépendante porte au compte : 2010:7658 ; années retenues
+    avec le forfait : 2010:29187.84. Fondement qu''elle relève : R. 351-29 (LEGIARTI000048031614)
+    ; loi 2010-1330 art. 118 VI (LEGIARTI000047453380) ; arrêté du 29 avril 2024 (JORFARTI000049496475).
+    Sa remarque : naissance du 2010-10-10 : 140/365 x 19965 = 7658 | sam_si_forfait_non_arrondi=20042.44.'
+  carriere:
+    naissance: 1949-09
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-12
+    nombre_enfants: 1
+    naissances_enfants: ['2010-10-10']
+    releve_entier: [[1995, 9718.29], [1996, 13261.28], [1997, 15285.07], [1998, 10021.18], [1999,
+        12562.02], [2000, 15859.18], [2001, 20360.94], [2002, 14627.99], [2003, 10431.1], [2004, 18028.79],
+      [2005, 13282.2], [2006, 11494.81], [2007, 14329.38], [2008, 21316.4], [2009, 22331.47], [2010,
+        21529.84], [2011, 15110.23]]
+  attendu:
+    salaire_annuel_moyen: 20042.45
+- id: grille_sam_maternite_forfait_2023_p07
+  enonce: 'Née en 1960-06, pension prenant effet le 2024-07-01, 36 années de salaire au régime général,
+    enfants nés le 1986-05-05, le 1986-05-05, le 1986-05-05, le 1989-03-03. La session indépendante
+    porte au compte : 1986:12009 1989:7543 ; années retenues avec le forfait : 1986:19877.3 1989:16901.51.
+    Fondement qu''elle relève : R. 351-29 (LEGIARTI000048031614) ; loi 2010-1330 art. 118 VI (LEGIARTI000047453380)
+    ; arrêté du 29 avril 2024 (JORFARTI000049496475) ; décret 2005-1351 art. 3 (JORFARTI000001522288)
+    et R. 351-29 d''avant (LEGIARTI000006750042). Sa remarque : naissance du 1986-05-05 : 403/365
+    x 10877 = 12009 | naissance du 1989-03-03 : 228/365 x 12075 = 7543 | 1986 : 19877.3 retenus au-dessus
+    du plafond (17105.0), salaire perçu avant 2005 (décret 2005-1351 art. 3) | sam_si_plafond_annuel_aussi_avant_2005=19408.96
+    | sam_si_rang_compte_par_accouchement=19418.72 | sam_si_forfait_non_arrondi=19616.56 | CHANGE
+    : premier rendu=19408.96. Note du cas : des triplés, puis un enfant : rang de l''enfant suivant.
+    Premier rendu, avant la lecture du décret n° 2005-1351 : 19408.96.'
+  carriere:
+    naissance: 1960-06
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-07
+    nombre_enfants: 4
+    naissances_enfants: ['1986-05-05', '1986-05-05', '1986-05-05', '1989-03-03']
+    releve_entier: [[1980, 3666.0], [1981, 4821.72], [1982, 6502.08], [1983, 6010.11], [1984, 7440.16],
+      [1985, 6508.8], [1986, 7868.3], [1987, 9260.68], [1988, 7890.07], [1989, 9358.51], [1990, 7990.8],
+      [1991, 9660.46], [1992, 11424.92], [1993, 9821.2], [1994, 11438.07], [1995, 9509.2], [1996,
+        11305.88], [1997, 13051.48], [1998, 11083.68], [1999, 12970.79], [2000, 10756.8], [2001, 12580.54],
+      [2002, 14676.48], [2003, 12549.12], [2004, 14558.88], [2005, 12076.8], [2006, 14291.28], [2007,
+        16735.68], [2008, 14308.68], [2009, 16810.92], [2010, 13848.0], [2011, 16261.92], [2012, 18913.44],
+      [2013, 15923.76], [2014, 18398.52], [2015, 15216.0]]
+  attendu:
+    salaire_annuel_moyen: 19616.55
+- id: grille_sam_maternite_forfait_2023_p08
+  enonce: 'Née en 1960-06, pension prenant effet le 2024-07-01, 36 années de salaire au régime général,
+    enfants nés le 1986-05-05, le 1986-05-05, le 1989-03-03, le 1989-03-03. La session indépendante
+    porte au compte : 1986:8880 1989:9858 ; années retenues avec le forfait : 1986:16748.3 1989:19216.51.
+    Fondement qu''elle relève : R. 351-29 (LEGIARTI000048031614) ; loi 2010-1330 art. 118 VI (LEGIARTI000047453380)
+    ; arrêté du 29 avril 2024 (JORFARTI000049496475) ; décret 2005-1351 art. 3 (JORFARTI000001522288)
+    et R. 351-29 d''avant (LEGIARTI000006750042). Sa remarque : naissance du 1986-05-05 : 298/365
+    x 10877 = 8880 | naissance du 1989-03-03 : 298/365 x 12075 = 9858 | 1989 : 19216.51 retenus au-dessus
+    du plafond (19099.0), salaire perçu avant 2005 (décret 2005-1351 art. 3) | sam_si_plafond_annuel_aussi_avant_2005=19531.59
+    | sam_si_forfait_non_arrondi=19539.64 | CHANGE : premier rendu=19531.59. Note du cas : des jumeaux,
+    puis des jumeaux. Premier rendu, avant la lecture du décret n° 2005-1351 : 19531.59.'
+  carriere:
+    naissance: 1960-06
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-07
+    nombre_enfants: 4
+    naissances_enfants: ['1986-05-05', '1986-05-05', '1989-03-03', '1989-03-03']
+    releve_entier: [[1980, 3666.0], [1981, 4821.72], [1982, 6502.08], [1983, 6010.11], [1984, 7440.16],
+      [1985, 6508.8], [1986, 7868.3], [1987, 9260.68], [1988, 7890.07], [1989, 9358.51], [1990, 7990.8],
+      [1991, 9660.46], [1992, 11424.92], [1993, 9821.2], [1994, 11438.07], [1995, 9509.2], [1996,
+        11305.88], [1997, 13051.48], [1998, 11083.68], [1999, 12970.79], [2000, 10756.8], [2001, 12580.54],
+      [2002, 14676.48], [2003, 12549.12], [2004, 14558.88], [2005, 12076.8], [2006, 14291.28], [2007,
+        16735.68], [2008, 14308.68], [2009, 16810.92], [2010, 13848.0], [2011, 16261.92], [2012, 18913.44],
+      [2013, 15923.76], [2014, 18398.52], [2015, 15216.0]]
+  attendu:
+    salaire_annuel_moyen: 19539.58
+- id: grille_sam_maternite_forfait_2023_p09
+  enonce: 'Née en 1960-06, pension prenant effet le 2024-07-01, 32 années de salaire au régime général,
+    enfants nés le 1979-03-01, le 1981-04-01, le 1986-05-05. La session indépendante porte au compte
+    : 1986:6794 ; années retenues avec le forfait : 1986:14662.3. Fondement qu''elle relève : R. 351-29
+    (LEGIARTI000048031614) ; loi 2010-1330 art. 118 VI (LEGIARTI000047453380) ; arrêté du 29 avril
+    2024 (JORFARTI000049496475) ; décret 2005-1351 art. 3 (JORFARTI000001522288) et R. 351-29 d''avant
+    (LEGIARTI000006750042). Sa remarque : naissance du 1979-03-01 : condition d''affiliation non remplie,
+    pas de forfait | naissance du 1981-04-01 : condition d''affiliation non remplie, pas de forfait
+    | naissance du 1986-05-05 : 228/365 x 10877 = 6794 | sam_si_forfait_non_arrondi=18713.46. Note
+    du cas : troisième naissance, les deux premières avant toute affiliation : le rang compte-t-il
+    les naissances sans forfait.'
+  carriere:
+    naissance: 1960-06
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-07
+    nombre_enfants: 3
+    naissances_enfants: ['1979-03-01', '1981-04-01', '1986-05-05']
+    releve_entier: [[1984, 7440.16], [1985, 6508.8], [1986, 7868.3], [1987, 9260.68], [1988, 7890.07],
+      [1989, 9358.51], [1990, 7990.8], [1991, 9660.46], [1992, 11424.92], [1993, 9821.2], [1994, 11438.07],
+      [1995, 9509.2], [1996, 11305.88], [1997, 13051.48], [1998, 11083.68], [1999, 12970.79], [2000,
+        10756.8], [2001, 12580.54], [2002, 14676.48], [2003, 12549.12], [2004, 14558.88], [2005, 12076.8],
+      [2006, 14291.28], [2007, 16735.68], [2008, 14308.68], [2009, 16810.92], [2010, 13848.0], [2011,
+        16261.92], [2012, 18913.44], [2013, 15923.76], [2014, 18398.52], [2015, 15216.0]]
+  attendu:
+    salaire_annuel_moyen: 18713.43
+- id: grille_sam_maternite_forfait_2023_p14
+  enonce: 'Née en 1960-06, pension prenant effet le 2024-07-01, 28 années de salaire au régime général,
+    enfants nés le 1995-01-15. La session indépendante porte au compte : rien ; années retenues avec
+    le forfait : aucune. Fondement qu''elle relève : R. 351-29 (LEGIARTI000048031614) ; loi 2010-1330
+    art. 118 VI (LEGIARTI000047453380) ; arrêté du 29 avril 2024 (JORFARTI000049496475). Sa remarque
+    : naissance du 1995-01-15 : condition d''affiliation non remplie, pas de forfait | sam_si_condition_de_la_circulaire_(annees_civiles)=19866.42.
+    Note du cas : embauchée le 1er mars 1995, aucun salaire avant : aucune affiliation dans les douze
+    mois précédant la naissance, mais une dans l''année civile de la naissance ; effet avant le décret
+    2025-155.'
+  carriere:
+    naissance: 1960-06
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-07
+    nombre_enfants: 1
+    naissances_enfants: ['1995-01-15']
+    releve_entier: [[1995, 9509.2], [1996, 11305.88], [1997, 13051.48], [1998, 11083.68], [1999, 12970.79],
+      [2000, 10756.8], [2001, 12580.54], [2002, 14676.48], [2003, 12549.12], [2004, 14558.88], [2005,
+        12076.8], [2006, 14291.28], [2007, 16735.68], [2008, 14308.68], [2009, 16810.92], [2010, 13848.0],
+      [2011, 16261.92], [2012, 18913.44], [2013, 15923.76], [2014, 18398.52], [2015, 15216.0], [2016,
+        17763.36], [2017, 20398.56], [2018, 17084.76], [2019, 19856.76], [2020, 16454.4], [2021, 18922.56],
+      [2022, 21390.72]]
+  attendu:
+    salaire_annuel_moyen: 19591.1
+  ecart_connu:
+    modele:
+      salaire_annuel_moyen: 19866.42
+    explication: 'Le cas dit que l''assurée n''a pas cotisé dans les douze mois qui précèdent la naissance
+      de janvier 1995, mais dans l''année civile 1995 : pour une pension de juillet 2024, la rédaction
+      d''avant le 22 février 2025 ne lui donne pas le forfait. Le simulateur ne connaît que des années
+      civiles, et lit la condition comme la rédaction de 2025 et la circulaire Cnav 2025/11.'
+    action: 194
+    depuis: '2026-11-20'
+- id: grille_sam_maternite_forfait_2023_p17
+  enonce: 'Née en 1960-06, pension prenant effet le 2024-07-01, 22 années de salaire au régime général,
+    enfants nés le 1995-08-08. La session indépendante porte au compte : 1995:5566 ; années retenues
+    avec le forfait : aucune. Fondement qu''elle relève : R. 351-29 (LEGIARTI000048031614) ; loi 2010-1330
+    art. 118 VI (LEGIARTI000047453380) ; arrêté du 29 avril 2024 (JORFARTI000049496475) ; décret 2005-1351
+    art. 3 (JORFARTI000001522288) et R. 351-29 d''avant (LEGIARTI000006750042). Sa remarque : naissance
+    du 1995-08-08 : 140/365 x 14511 = 5566 | 1995 : le salaire (0) ne valide pas un trimestre, année
+    non retenue malgré le forfait | sam_si_le_forfait_compte_pour_le_trimestre=16970.39. Note du cas
+    : aucun salaire en 1995, vingt-deux années de salaire, effet avant 2026 (les cas m29 à m33 sont
+    tous de 2026).'
+  carriere:
+    naissance: 1960-06
+    sexe: F
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2024-07
+    nombre_enfants: 1
+    naissances_enfants: ['1995-08-08']
+    releve_entier: [[1988, 7890.07], [1989, 9358.51], [1990, 7990.8], [1991, 9660.46], [1992, 11424.92],
+      [1993, 9821.2], [1994, 11438.07], [1996, 11305.88], [1997, 13051.48], [1998, 11083.68], [1999,
+        12970.79], [2000, 10756.8], [2001, 12580.54], [2002, 14676.48], [2003, 12549.12], [2004, 14558.88],
+      [2005, 12076.8], [2006, 14291.28], [2007, 16735.68], [2008, 14308.68], [2009, 16810.92], [2010,
+        13848.0]]
+  attendu:
+    salaire_annuel_moyen: 17354.69

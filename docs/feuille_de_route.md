@@ -8359,10 +8359,10 @@ Il a validé la maquette des caisses et choisi de l'intégrer au site.
 1) porte la carte de justesse, que le script calcule depuis les preuves. Sept
 parties sont prouvées, par des grilles posées depuis le seul texte de LEGI par
 des sessions qui n'ont pas lu le code : l'âge légal, de 1985 à aujourd'hui, et
-le salaire annuel moyen depuis juillet 1995. Reste, une règle par session : les
-indemnités de maternité au salaire annuel moyen, que le moteur ne compte pas
-(fiche `sam_indemnites_de_maternite`) ; la durée requise, la décote et le taux,
-à découper en versions d'abord ; l'étape B. Lire
+le salaire annuel moyen depuis juillet 1995. Le forfait de maternité au salaire
+annuel moyen est écrit et confronté, sans être prouvé : une partie en écart,
+une approchée. Reste, une règle par session : la durée requise, la décote et
+le taux, à découper en versions d'abord ; l'étape B. Lire
 `194/2026-11-20-salaire-annuel-moyen.md` : la session indépendante a cherché
 ses textes seule, sous un guetteur des fichiers ouverts.
 

@@ -1061,6 +1061,7 @@ const FONCTIONS_DU_DROIT = {
     .prestationRafp(rente, points, seuil, age, new DateMois(annee, mois), ecart),
   "liquider.decote_opposable": liquider.decoteOpposable,
   "liquider.salaire_de_reference": liquider.salaireDeReference,
+  "liquider.maternite_au_compte": liquider.materniteAuCompte,
   "liquider.trimestres_de_decote": liquider.trimestresDeDecote,
   "liquider.valeur_du_point": liquider.valeurDuPoint,
   "regimes.BORNES_ASSIETTE": () => BORNES_ASSIETTE,

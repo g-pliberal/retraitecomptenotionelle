@@ -9,9 +9,10 @@ domaine: salaire_de_reference
 regimes: [regime_general, msa_salaries]
 etape: liquider_chaque_regime
 face: droit
-etat: manquante
+etat: approchee
 lit:
-- les congés de maternité et d'adoption, leurs indemnités journalières, les naissances
+- le sexe de l'assuré, les naissances de ses enfants, déclarées ou présumées
+- les années où il a cotisé comme salarié au régime général ou au régime agricole
 - le salaire médian de l'année qui précède la naissance, fixé par arrêté
 ecrit:
 - le salaire porté au compte de l'année du congé, ou de la naissance
@@ -30,8 +31,16 @@ versions:
     droit: >-
       rien : aucun congé débutant depuis le 1er janvier 2012 ne précède une pension qui
       prend effet avant cette date ; la carte de justesse marque pourtant cette période
-      avec les deux autres, la fiche entière se disant manquante
+      avec les deux autres
+    parametres:
+      regimes: [regime_general, msa_salaries]
+      forfait: null
   exemples: aucun trouvé
+  exemples_cherches: >-
+    le 20 novembre 2026, dans la circulaire Cnav 2025/11 du 28 mars 2025 et dans
+    les exemples officiels du dépôt (tests/temoins/exemples_officiels.yaml) :
+    les exemples de la circulaire sont écrits sous la rédaction du 22 février
+    2025, aucun ne porte une pension de cette version
 - id: cent_vingt_cinq_pour_cent_2012
   statut: lue
   textes:
@@ -56,7 +65,15 @@ versions:
     droit: >-
       125 % des indemnités journalières des congés de maternité débutant depuis le 1er
       janvier 2012, ajoutés au salaire de l'année, dans la limite du plafond
+    parametres:
+      regimes: [regime_general, msa_salaries]
+      forfait: null
   exemples: aucun trouvé
+  exemples_cherches: >-
+    le 20 novembre 2026, dans la circulaire Cnav 2025/11 du 28 mars 2025 et dans
+    les exemples officiels du dépôt (tests/temoins/exemples_officiels.yaml) :
+    les exemples de la circulaire sont écrits sous la rédaction du 22 février
+    2025, aucun ne porte une pension de cette version
 - id: forfait_des_conges_d_avant_2012
   statut: lue
   textes:
@@ -72,48 +89,375 @@ versions:
       403/365 pour les naissances multiples de plus de deux enfants ; Le montant
       forfaitaire est pris en compte au titre de l'année civile de la naissance »
     lu_le: 2026-11-20
+  - id: LEGIARTI000047453380
+    reference: >-
+      loi n° 2010-1330 du 9 novembre 2010, article 118, VI, second alinéa, né de la loi
+      n° 2023-270, article 22
+    citation: >-
+      « Il est également applicable aux indemnités journalières d'assurance maternité
+      versées dans le cadre des congés de maternité ayant débuté avant le 1er janvier
+      2012. Ces indemnités sont évaluées sur une base forfaitaire, selon des modalités
+      fixées par décret en tenant compte du montant dont peut bénéficier un salarié
+      rémunéré au niveau du salaire médian l'année précédant le congé de maternité. »
+    lu_le: 2026-11-20
+  - id: JORFARTI000049496475
+    reference: >-
+      arrêté du 29 avril 2024 fixant les valeurs du salaire médian prévu à l'article R.
+      351-29 du code de la sécurité sociale, article 1er
+    citation: >-
+      « Les valeurs du salaire net médian mentionné au IV de l'article R. 351-29 du
+      code de la sécurité sociale sont fixées conformément au tableau ci-dessous »
+    lu_le: 2026-11-20
+  - reference: >-
+      circulaire Cnav 2025/11 du 28 mars 2025 (circulaire_cnav_2025_11_28032025.pdf), §
+      1, 2.1, 2.3, 2.4 et 4, annexes 1 et 2 : les salariés du régime général et du
+      régime agricole, non les indépendants (D. 634-1) ; une naissance de 2012 dont le
+      congé a débuté en 2011 ; l'arrondi à l'euro ; le total borné au plafond depuis
+      2005, les indemnités écrêtées les premières, et libre de le passer avant ; aucun
+      trimestre validé ; les pensions prenant effet à compter du 1er septembre 2023
+    lu_le: 2026-11-20
+  - id: LEGIARTI000006742545
+    article: L. 331-3 CSS
+    citation: >-
+      « Pendant une période qui débute six semaines avant la date présumée de
+      l'accouchement » ; « Lorsque des naissances multiples sont prévues, cette période
+      commence douze semaines avant la date présumée de l'accouchement, vingt-quatre
+      semaines en cas de naissance de plus de deux enfants »
+    lu_le: 2026-11-20
+  - id: LEGIARTI000006742550
+    article: L. 331-4 CSS
+    citation: >-
+      « portée à huit semaines avant la date présumée de l'accouchement [...] lorsque
+      l'assurée elle-même ou le ménage assume déjà la charge d'au moins deux enfants
+      [...] ou lorsque l'assurée a déjà mis au monde au moins deux enfants nés viables »
+    lu_le: 2026-11-20
+  bornes:
+    liquidation.date_effet: [2023-09-01, 2025-02-22]
+  contenu:
+    droit: >-
+      en plus des 125 %, un forfait pour chaque congé de maternité débuté avant 2012, porté
+      au compte de l'année de la naissance : une fraction du salaire médian de l'année
+      précédente, arrondie à l'euro, pour la mère qui justifie, « au cours des douze mois
+      précédant la naissance », d'une affiliation cotisée de salariée. Le total du salaire
+      et du forfait est borné au plafond pour les années depuis 2005 ; le forfait ne valide
+      aucun trimestre
+    parametres:
+      regimes: [regime_general, msa_salaries]
+      forfait:
+        conges_debutant_avant: '2012-01-01'
+        semaines_avant_la_naissance:
+          deux_premieres: 6
+          au_dela_de_la_deuxieme: 8
+          jumeaux: 12
+          plus_de_deux_enfants: 24
+        jours_sur_365:
+          deux_premieres: 140
+          au_dela_de_la_deuxieme: 228
+          jumeaux: 298
+          plus_de_deux_enfants: 403
+        ecrete_au_plafond_depuis: 2005
+        salaire_median:
+          '1950': 336
+          '1951': 404
+          '1952': 473
+          '1953': 496
+          '1954': 518
+          '1955': 546
+          '1956': 663
+          '1957': 732
+          '1958': 793
+          '1959': 854
+          '1960': 941
+          '1961': 991
+          '1962': 1128
+          '1963': 1151
+          '1964': 1250
+          '1965': 1317
+          '1966': 1387
+          '1967': 1471
+          '1968': 1616
+          '1969': 1799
+          '1970': 1977
+          '1971': 2211
+          '1972': 2439
+          '1973': 2744
+          '1974': 3201
+          '1975': 3661
+          '1976': 4256
+          '1977': 4718
+          '1978': 5356
+          '1979': 5869
+          '1980': 6712
+          '1981': 7575
+          '1982': 8592
+          '1983': 9484
+          '1984': 10149
+          '1985': 10877
+          '1986': 11371
+          '1987': 11700
+          '1988': 12075
+          '1989': 12554
+          '1990': 13223
+          '1991': 13709
+          '1992': 14135
+          '1993': 14487
+          '1994': 14511
+          '1995': 14932
+          '1996': 15214
+          '1997': 15548
+          '1998': 15835
+          '1999': 16051
+          '2000': 16310
+          '2001': 16505
+          '2002': 16941
+          '2003': 17273
+          '2004': 17584
+          '2005': 18117
+          '2006': 18374
+          '2007': 18865
+          '2008': 19542
+          '2009': 19965
+          '2010': 20346
+          '2011': 20793
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 20 novembre 2026, dans la circulaire Cnav 2025/11 du 28 mars 2025 et dans
+    les exemples officiels du dépôt (tests/temoins/exemples_officiels.yaml) :
+    les exemples de la circulaire sont écrits sous la rédaction du 22 février
+    2025, aucun ne porte une pension de cette version
+- id: forfait_a_l_annee_civile_2025
+  statut: lue
+  textes:
   - id: LEGIARTI000051226243
     article: R. 351-29 CSS
     en_vigueur: 2025-02-22
+    citation: >-
+      « est soumise à la condition que l'assuré justifie, au cours de l'année civile de
+      la naissance ou de l'adoption ou de l'année civile précédant celle-ci, d'une
+      affiliation aux assurances sociales du régime général, au sens de l'article L.
+      311-2 du présent code, ayant fait l'objet d'un versement de cotisations, quel
+      qu'en soit le montant »
     lu_le: 2026-11-20
   - id: LEGIARTI000053335651
     article: R. 351-29 CSS
     en_vigueur: 2026-01-01
     lu_le: 2026-11-20
+  - id: LEGIARTI000047453380
+    reference: >-
+      loi n° 2010-1330 du 9 novembre 2010, article 118, VI, second alinéa, né de la loi
+      n° 2023-270, article 22
+    citation: >-
+      « Il est également applicable aux indemnités journalières d'assurance maternité
+      versées dans le cadre des congés de maternité ayant débuté avant le 1er janvier
+      2012. Ces indemnités sont évaluées sur une base forfaitaire, selon des modalités
+      fixées par décret en tenant compte du montant dont peut bénéficier un salarié
+      rémunéré au niveau du salaire médian l'année précédant le congé de maternité. »
+    lu_le: 2026-11-20
+  - id: JORFARTI000049496475
+    reference: >-
+      arrêté du 29 avril 2024 fixant les valeurs du salaire médian prévu à l'article R.
+      351-29 du code de la sécurité sociale, article 1er
+    citation: >-
+      « Les valeurs du salaire net médian mentionné au IV de l'article R. 351-29 du
+      code de la sécurité sociale sont fixées conformément au tableau ci-dessous »
+    lu_le: 2026-11-20
+  - reference: >-
+      circulaire Cnav 2025/11 du 28 mars 2025 (circulaire_cnav_2025_11_28032025.pdf), §
+      1, 2.1, 2.3, 2.4 et 4, annexes 1 et 2 : les salariés du régime général et du
+      régime agricole, non les indépendants (D. 634-1) ; une naissance de 2012 dont le
+      congé a débuté en 2011 ; l'arrondi à l'euro ; le total borné au plafond depuis
+      2005, les indemnités écrêtées les premières, et libre de le passer avant ; aucun
+      trimestre validé ; les pensions prenant effet à compter du 1er septembre 2023
+    lu_le: 2026-11-20
+  - id: LEGIARTI000006742545
+    article: L. 331-3 CSS
+    citation: >-
+      « Pendant une période qui débute six semaines avant la date présumée de
+      l'accouchement » ; « Lorsque des naissances multiples sont prévues, cette période
+      commence douze semaines avant la date présumée de l'accouchement, vingt-quatre
+      semaines en cas de naissance de plus de deux enfants »
+    lu_le: 2026-11-20
+  - id: LEGIARTI000006742550
+    article: L. 331-4 CSS
+    citation: >-
+      « portée à huit semaines avant la date présumée de l'accouchement [...] lorsque
+      l'assurée elle-même ou le ménage assume déjà la charge d'au moins deux enfants
+      [...] ou lorsque l'assurée a déjà mis au monde au moins deux enfants nés viables »
+    lu_le: 2026-11-20
   bornes:
-    liquidation.date_effet: [2023-09-01, null]
+    liquidation.date_effet: [2025-02-22, null]
   contenu:
     droit: >-
-      en plus des 125 %, un forfait pour chaque congé débuté avant 2012, à l'année de
-      la naissance : une fraction du salaire médian de l'année précédente, sous
-      condition d'une affiliation cotisée au régime général dans les douze mois qui
-      précèdent la naissance — depuis le 22 février 2025, l'année civile de la
-      naissance ou la précédente, et le forfait s'étend, à la demande, au père après le
-      décès de la mère et à l'adoption
-  exemples: aucun trouvé
-approximations: []
+      le même forfait, sa condition lue à l'année civile : une affiliation cotisée de
+      salarié « au cours de l'année civile de la naissance ou de l'adoption ou de l'année
+      civile précédant celle-ci » ; il s'étend, à la demande, au père après le décès de la
+      mère, à l'adoption et aux allocations des salariées enceintes dispensées de travail
+      (décret n° 2025-155, article 3). La circulaire Cnav 2025/11 applique cette lecture
+      aux pensions prenant effet depuis le 1er septembre 2023
+    parametres:
+      regimes: [regime_general, msa_salaries]
+      forfait:
+        conges_debutant_avant: '2012-01-01'
+        semaines_avant_la_naissance:
+          deux_premieres: 6
+          au_dela_de_la_deuxieme: 8
+          jumeaux: 12
+          plus_de_deux_enfants: 24
+        jours_sur_365:
+          deux_premieres: 140
+          au_dela_de_la_deuxieme: 228
+          jumeaux: 298
+          plus_de_deux_enfants: 403
+        ecrete_au_plafond_depuis: 2005
+        salaire_median:
+          '1950': 336
+          '1951': 404
+          '1952': 473
+          '1953': 496
+          '1954': 518
+          '1955': 546
+          '1956': 663
+          '1957': 732
+          '1958': 793
+          '1959': 854
+          '1960': 941
+          '1961': 991
+          '1962': 1128
+          '1963': 1151
+          '1964': 1250
+          '1965': 1317
+          '1966': 1387
+          '1967': 1471
+          '1968': 1616
+          '1969': 1799
+          '1970': 1977
+          '1971': 2211
+          '1972': 2439
+          '1973': 2744
+          '1974': 3201
+          '1975': 3661
+          '1976': 4256
+          '1977': 4718
+          '1978': 5356
+          '1979': 5869
+          '1980': 6712
+          '1981': 7575
+          '1982': 8592
+          '1983': 9484
+          '1984': 10149
+          '1985': 10877
+          '1986': 11371
+          '1987': 11700
+          '1988': 12075
+          '1989': 12554
+          '1990': 13223
+          '1991': 13709
+          '1992': 14135
+          '1993': 14487
+          '1994': 14511
+          '1995': 14932
+          '1996': 15214
+          '1997': 15548
+          '1998': 15835
+          '1999': 16051
+          '2000': 16310
+          '2001': 16505
+          '2002': 16941
+          '2003': 17273
+          '2004': 17584
+          '2005': 18117
+          '2006': 18374
+          '2007': 18865
+          '2008': 19542
+          '2009': 19965
+          '2010': 20346
+          '2011': 20793
+  exemples: [cnav_2025_11_maternite_jumeaux_1990, cnav_2025_11_maternite_premiere_naissance_2002,
+             cnav_2025_11_maternite_troisieme_naissance_2007,
+             cnav_2025_11_maternite_deuxieme_naissance_2003]
+approximations:
+- version: [cent_vingt_cinq_pour_cent_2012, forfait_des_conges_d_avant_2012,
+            forfait_a_l_annee_civile_2025]
+  ecart: >-
+    les 125 % des indemnités d'un congé débuté depuis 2012 ne sont pas ajoutés : le
+    simulateur ne demande pas le montant des indemnités versées, et le salaire que la
+    saisie donne à l'année du congé est pris tel quel, comme celui d'une année entière
+  effet: non mesuré
+- version: [forfait_des_conges_d_avant_2012, forfait_a_l_annee_civile_2025]
+  ecart: >-
+    le forfait s'ajoute au salaire que la saisie donne à l'année de la naissance, qu'une
+    carrière saisie sans relevé ne réduit pas des semaines du congé : l'année y est
+    comptée plus haut qu'au compte ; un relevé porte le salaire réellement cotisé
+  effet: non mesuré
+- version: [forfait_des_conges_d_avant_2012, forfait_a_l_annee_civile_2025]
+  ecart: >-
+    le début du congé est présumé à sa date légale avant l'accouchement (six, huit,
+    douze ou vingt-quatre semaines), une naissance dite à l'année tombant au 1er
+    janvier ; ni l'adoption,
+    ni le père après le décès de la mère, ni les allocations des salariées dispensées
+    de travail, qui ne sont comptés qu'à la demande ; deux pensions séparées du régime
+    général et du régime agricole portent chacune le forfait d'une année cotisée aux
+    deux
+  effet: non mesuré
+- version: [forfait_des_conges_d_avant_2012]
+  ecart: >-
+    la condition d'affiliation se lit à l'année civile, de la naissance ou d'avant, comme
+    la rédaction du 22 février 2025 et la circulaire Cnav 2025/11, quand la rédaction de
+    2023 demande les douze mois qui précèdent la naissance : le simulateur ne connaît que
+    des années. La mère qui n'a cotisé qu'après la naissance, la même année, reçoit ici
+    le forfait
+  effet: >-
+    un cas de la grille indépendante, grille_sam_maternite_forfait_2023_p14 : 19 866,42
+    euros de salaire annuel moyen au lieu de 19 591,10
 sources:
   lu_le: 2026-11-20
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
-    L'arrêté qui fixe le salaire médian de chaque année (R. 351-29, V, dernier alinéa)
-    n'est pas lu : il faut sa table avant d'écrire le forfait.
+    Les 125 % des congés débutés depuis 2012 : la donnée manque, le montant des
+    indemnités versées. La demander à la saisie, la lire au relevé, ou la reconstituer
+    du salaire — le choix est soumis au propriétaire (20 novembre 2026).
   lectures:
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav 2025/11 du 28 mars 2025, entière, et l'exposé « Revenu annuel
+      moyen » de la base de législation de la Cnav (« Indemnités journalières maternité
+      ou adoption »), par son API
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2025_11_28032025.pdf
+    date: 2026-11-20
   - type: legifrance
     reference: >-
       R. 351-29 CSS, rédactions du 18 avril 2011 (LEGIARTI000023868111), du 1er
       septembre 2023 (LEGIARTI000048031614), du 22 février 2025 (LEGIARTI000051226243)
       et du 1er janvier 2026 (LEGIARTI000053335651), dans l'index LEGI du dépôt ; loi
-      n° 2010-1330, article 118, VI (JORFARTI000023022348), dans l'index du JORF
+      n° 2010-1330, article 118, VI (JORFARTI000023022348), dans l'index du JORF, et sa
+      rédaction du 1er septembre 2023 (LEGIARTI000047453380) ; arrêté du 29 avril 2024
+      (JORFTEXT000049496470) ; décret n° 2025-155, article 3 (JORFARTI000051223569) ; L.
+      331-3 et L. 331-4 CSS
     date: 2026-11-20
+code:
+  javascript: >-
+    moteur/js/droit/liquider.js : salaireDeReference, forfaitsDeMaternite,
+    retenirAvecLesIndemnites, materniteAuCompte ; moteur/js/regimes.js : FichesDatees
+  parametres: >-
+    contenu.parametres de chaque version : regimes, forfait
+  tests: [tests/test_sam_indemnites_de_maternite.py]
+  moteur: >-
+    Le paquet du site porte ses versions.
 historique:
+- >-
+  2026-11-20 — le forfait des congés d'avant 2012 écrit, pour les pensions prenant effet
+  depuis le 1er septembre 2023 : l'arrêté du salaire médian et la circulaire Cnav
+  2025/11 lus, quatre de ses exemples rejoués. Les 125 % des congés depuis 2012
+  restent à écrire, faute du montant des indemnités.
 - >-
   2026-11-20 — née de la fiche salaire_annuel_moyen, qui en faisait une simplification
   de toutes ses versions (action 194).
-exemples: []
+exemples: [cnav_2025_11_maternite_jumeaux_1990, cnav_2025_11_maternite_premiere_naissance_2002,
+  cnav_2025_11_maternite_troisieme_naissance_2007, cnav_2025_11_maternite_deuxieme_naissance_2003]
 effet: >-
-  Les mères. Depuis septembre 2023, toute mère du régime général dont l'année d'une
-  naissance d'avant 2012 compte parmi ses vingt-cinq meilleures ; depuis 2013, celles
-  qui ont eu un congé depuis 2012. Le simulateur ne le compte pas : leur salaire annuel
-  moyen est sous-estimé.
+  Les mères salariées. Depuis septembre 2023, celle dont l'année d'une naissance
+  d'avant 2012 compte parmi ses meilleures années y reçoit le forfait : 5 964 euros
+  pour une première naissance de 1998, 11 477 pour une troisième de 2007. Pour un congé
+  depuis 2012, le simulateur prend le salaire saisi de l'année, sans les 125 % des
+  indemnités.

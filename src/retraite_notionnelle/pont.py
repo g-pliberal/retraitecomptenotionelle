@@ -1346,6 +1346,7 @@ LECTURES_DU_DROIT = {
     "liquider.prestation_rafp": prestation_rafp_des_donnees,
     "liquider.decote_opposable": tuple[float | None, float, Fiabilite | None],
     "liquider.salaire_de_reference": float,
+    "liquider.maternite_au_compte": list,
     "liquider.trimestres_de_decote": float,
     "liquider.valeur_du_point": tuple[float, Fiabilite] | None,
     "invalidite.exigences_du_handicap": tuple[float, int, int | None] | None,

@@ -47,6 +47,9 @@
 #   salaire_annuel_moyen — le salaire annuel moyen du régime général, en
 #     euros, au centime ; la carrière se donne alors par son relevé
 #     (`releve_entier` : des paires année, salaire brut de l'année civile) ;
+#   indemnites_de_maternite_au_compte, salaire_retenu_avec_les_indemnites —
+#     le montant forfaitaire que chaque année reçoit des congés de maternité
+#     d'avant 2012, et le salaire de l'année retenu avec lui, par année ;
 #   annees_du_salaire_annuel_moyen — le nombre des meilleures années que le
 #     salaire annuel moyen du régime général retient, celui de la pension
 #     proratisée d'une carrière hors de France compris ;
@@ -873,6 +876,53 @@ exemples:
       porte au-delà comme celui de la circulaire, 1,10 fois.
     carriere: {naissance: "1917-03-15", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "1983-09", trimestres_valides: 145}
     attendu: {taux_liquidation: 0.55, pension_base_sur_plafond: 0.55}
+
+  - id: cnav_2025_11_maternite_jumeaux_1990
+    source: {editeur: "Cnav", reference: "circulaire Cnav 2025/11 du 28 mars 2025, § 2.4.1.2, exemple", verifie_le: "2026-11-20"}
+    enonce: >-
+      « Naissances de jumeaux en 1990. Fraction applicable pour des jumeaux :
+      298/365. Salaire annuel médian en 1989 : 12 554 euros. IJ maternité
+      forfaitaires : 12 554 euros X 298/365 = 10 249,567 euros. Montant à
+      reporter au compte en 1990 arrondi à l'euro le plus proche = 10 250
+      euros ». La circulaire ne dit ni la mère ni son salaire : le témoin lui
+      donne 10 000 euros au compte de 1990 et une pension de janvier 2026.
+    carriere: {naissance: "1960-01", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2026-01", nombre_enfants: 2, naissances_enfants: ["1990-06-15", "1990-06-15"], releve_entier: [[1990, 10000]]}
+    attendu: {indemnites_de_maternite_au_compte: {1990: 10250}}
+
+  - id: cnav_2025_11_maternite_premiere_naissance_2002
+    source: {editeur: "Cnav", reference: "circulaire Cnav 2025/11 du 28 mars 2025, § 2.4.1.4, exemple d'avant 2005", verifie_le: "2026-11-20"}
+    enonce: >-
+      « Naissance en 2002. Revenu annuel brut soumis à cotisations : 25 000
+      euros. Salaire plafond annuel en 2002 : 28 224 €. Première naissance »,
+      16 505 euros X 140/365 = 6 330,68 euros arrondi à 6 331 euros ;
+      « Montant total retenu en 2002 : 25 000 euros + 6 331 euros = 31 331
+      euros > salaire plafond annuel ». Pension de janvier 2026.
+    carriere: {naissance: "1960-01", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2026-01", nombre_enfants: 1, naissances_enfants: ["2002-06-15"], releve_entier: [[2002, 25000]]}
+    attendu: {indemnites_de_maternite_au_compte: {2002: 6331}, salaire_retenu_avec_les_indemnites: {2002: 31331}}
+
+  - id: cnav_2025_11_maternite_troisieme_naissance_2007
+    source: {editeur: "Cnav", reference: "circulaire Cnav 2025/11 du 28 mars 2025, § 2.4.1.4, exemple de l'écrêtement", verifie_le: "2026-11-20"}
+    enonce: >-
+      « Naissance du 3ème enfant en 2007. Revenu annuel brut soumis à
+      cotisations = 25 800 euros. Salaire plafond annuel : 32 184 € », 18 374
+      euros X 228/365 = 11 477,45 euros arrondi à 11 477 euros ; « IJ maternité
+      limité au salaire plafond annuel = 32 184 (plafond) - 25 800 = 6 384
+      euros. Montant total retenu en 2007 : 25 800 euros + 6 384 euros = 32 184
+      euros ». Le témoin date les deux premières naissances de 2001 et 2004,
+      années sans salaire au compte ; pension de janvier 2026.
+    carriere: {naissance: "1960-01", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2026-01", nombre_enfants: 3, naissances_enfants: ["2001-06-15", "2004-06-15", "2007-06-15"], releve_entier: [[2007, 25800]]}
+    attendu: {indemnites_de_maternite_au_compte: {2007: 11477}, salaire_retenu_avec_les_indemnites: {2007: 32184}}
+
+  - id: cnav_2025_11_maternite_deuxieme_naissance_2003
+    source: {editeur: "Cnav", reference: "circulaire Cnav 2025/11 du 28 mars 2025, § 2.4.2, exemple", verifie_le: "2026-11-20"}
+    enonce: >-
+      « Deuxième naissance en 2003. Revenu annuel brut soumis à cotisations :
+      4 600 euros », 16 941 euros X 140/365 = 6 497,91 arrondi à 6 498 euros ;
+      « Montant total retenu en 2003 : 4 600 euros + 6 498 euros = 11 098
+      euros ». Le témoin date la première naissance de 2000, année sans
+      salaire au compte ; pension de janvier 2026.
+    carriere: {naissance: "1960-01", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2026-01", nombre_enfants: 2, naissances_enfants: ["2000-06-15", "2003-06-15"], releve_entier: [[2003, 4600]]}
+    attendu: {indemnites_de_maternite_au_compte: {2003: 6498}, salaire_retenu_avec_les_indemnites: {2003: 11098}}
 
   - id: cnav_22_83_taux_acquis_117_trimestres
     source: {editeur: "Cnav", reference: "circulaire n° 22/83 du 16 février 1983, point 313, exemples de calculs, 3ème cas", verifie_le: "2026-10-11"}
