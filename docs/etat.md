@@ -27,7 +27,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | manquantes | 1 |
 | à vérifier | 2 |
 
-- Confrontées à au moins un exemple officiel : **69 sur 277** (227 exemples : 215 reproduits, 12 en écart connu, section 2).
+- Confrontées à au moins un exemple officiel : **69 sur 277** (227 exemples : 219 reproduits, 8 en écart connu, section 2).
 - Citées dans le code par leur identifiant : **131 sur 277**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **54 sur 277**, par 2 581 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **207 sur 277**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
@@ -36,20 +36,20 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 **La carte de justesse** (`src/retraite_notionnelle/noyau/justesse.py`, action 194). L'état de la carte des règles, ci-dessus, est un mot que la fiche déclare ; celui-ci se calcule depuis les preuves, et personne ne l'écrit. Une partie est une règle sur une période : une version de fiche, ou la fiche entière tant qu'elle n'est pas découpée. Elle est prouvée quand son texte est lu avec sa trace et qu'une grille indépendante — des valeurs attendues posées depuis le seul texte, sans lire le code, sur chaque seuil de la règle — est verte ; un exemple officiel, un autre moteur ou le simulateur d'une caisse en sont des témoins, qui ne prouvent pas seuls.
 
-**22 parties prouvées sur 959**, dont 10 avec témoin et 12 au texte seul. 15 fausses (section 2), 639 approchées, 216 non vérifiées, 67 hors champ. Un cliquet tient les parties prouvées (`tests/cliquets_de_justesse/prouvees.yaml`) : aucune ne recule sans le dire.
+**22 parties prouvées sur 959**, dont 10 avec témoin et 12 au texte seul. 13 fausses (section 2), 640 approchées, 217 non vérifiées, 67 hors champ. Un cliquet tient les parties prouvées (`tests/cliquets_de_justesse/prouvees.yaml`) : aucune ne recule sans le dire.
 
 | Famille de régimes | Parties | Prouvées | Fausses | Approchées | Non vérifiées | Hors champ | Texte tracé | Témoignées par un exemple officiel |
 |---|---|---|---|---|---|---|---|---|
-| salariés du privé, régimes de base | 318 | 22 | 7 | 180 | 79 | 30 | 104 | 48 |
-| salariés du privé, complémentaires | 180 | 13 | 3 | 112 | 45 | 7 | 58 | 23 |
-| fonction publique | 222 | 13 | 2 | 117 | 62 | 28 | 39 | 35 |
-| artisans, commerçants et autres non-salariés | 235 | 20 | 5 | 150 | 56 | 4 | 85 | 45 |
-| régimes agricoles | 284 | 22 | 7 | 173 | 69 | 13 | 117 | 48 |
-| libéraux et avocats | 231 | 13 | 1 | 173 | 41 | 3 | 91 | 26 |
-| régimes spéciaux | 261 | 22 | 3 | 156 | 58 | 22 | 59 | 32 |
-| retraite additionnelle, en capitalisation | 40 | 5 | 4 | 10 | 10 | 11 | 9 | 12 |
+| salariés du privé, régimes de base | 318 | 22 | 6 | 181 | 79 | 30 | 104 | 49 |
+| salariés du privé, complémentaires | 180 | 13 | 1 | 113 | 46 | 7 | 58 | 24 |
+| fonction publique | 222 | 13 | 1 | 118 | 62 | 28 | 39 | 36 |
+| artisans, commerçants et autres non-salariés | 235 | 20 | 4 | 151 | 56 | 4 | 85 | 46 |
+| régimes agricoles | 284 | 22 | 6 | 174 | 69 | 13 | 117 | 49 |
+| libéraux et avocats | 231 | 13 | 0 | 174 | 41 | 3 | 91 | 27 |
+| régimes spéciaux | 261 | 22 | 2 | 157 | 58 | 22 | 59 | 33 |
+| retraite additionnelle, en capitalisation | 40 | 5 | 3 | 11 | 10 | 11 | 9 | 13 |
 | sans famille | 1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
-| toute la carte | 959 | 22 | 15 | 639 | 216 | 67 | 282 | 90 |
+| toute la carte | 959 | 22 | 13 | 640 | 217 | 67 | 282 | 91 |
 
 Une partie compte dans chaque famille de ses régimes, et une fois dans le total. Parmi les 959 parties, 163 sont des versions supposées, qu'aucune grille ne peut prouver tant que leur texte n'est pas retrouvé ; 55 ont un exemple officiel que leur fiche cite sans dire pour quelle version, et qui ne témoigne donc pour aucune. Les confrontations aux autres moteurs que 43 fiches racontent en prose ne valent pas témoin : rien n'y dit, cas par cas, ce qui concorde. La carte ne connaît encore que les règles : les barèmes, les régimes de bout en bout, les cas types et les totaux n'y ont pas leurs preuves (section 4).
 
@@ -133,13 +133,13 @@ Non gardées : `complement_differentiel_rco / avant_le_complement`, `complement_
 
 | Statut | Rédactions |
 |---|---|
-| rattachées à une version | 2 030 |
+| rattachées à une version | 2 034 |
 | sans effet | 152 |
 | à rattacher | 632 |
-| à examiner | 6 009 |
+| à examiner | 6 005 |
 | sans statut | 9 189 |
 
-**La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 32 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
+**La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 33 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
 | Présomption | Valeur | Fiches qui la lisent | Où elle s'applique |
 |---|---|---|---|
@@ -163,6 +163,7 @@ Non gardées : `complement_differentiel_rco / avant_le_complement`, `complement_
 | `aucun_autre_revenu_que_ses_pensions` | la pension du système 1, et les ressources du conjoint déclaré, abattues de 10 % | `csg_des_pensions_selon_le_revenu` | le net (moteur/js/contexte.js, Montants.duFoyer), quand la saisie ne dit pas le revenu fiscal ; son fait entrera à l'étape `foyer_et_net` |
 | `conjoint_de_l_autre_sexe` | l'autre sexe | `reversion_agirc_arrco`, `reversion_crpcen`, `reversion_fonction_publique`, `reversion_ieg`, `reversion_ircantec` | la saisie, qui donne au conjoint l'autre sexe quand elle ne le dit pas (moteur/js/saisie.js, Saisie.conjointDeclare) ; son fait entrera à l'étape `preparer_la_chronologie` |
 | `reversion_demandee_dans_l_annee` | dans l'année | `majoration_forfaitaire_reversion`, `reversion`, `reversion_agirc_arrco`, `reversion_carcdsf`, `reversion_cavamac`, `reversion_ircantec`, `reversion_rafp`, `reversion_rci` | la date d'effet de la réversion (droit/reversion.py), au premier jour du mois qui suit le décès, ou qui suit l'âge requis ; son jumeau JavaScript ; son fait entrera à l'étape `liquider_chaque_regime` |
+| `paye_dans_l_etat_de_residence` | la résidence que la saisie dit, la France sinon | `reversion_agirc_arrco` | la date d'effet de la réversion de l'Agirc-Arrco (moteur/js/droit/reversion.js, periodeSuivante), au premier jour du trimestre civil qui suit le décès d'un défunt payé au trimestre ; son fait entrera à l'étape `liquider_chaque_regime` |
 | `reversion_demandee_le_mois_avant_sa_date_d_effet` | le mois qui précède la date d'effet | `reversion` | _ressources_a_la_date_d_effet (droit/reversion.py), qui examine les ressources d'une réversion du régime général d'avant juillet 2004 sur les trois ou douze mois civils qui précèdent ce mois, puis, la condition non remplie, sur ceux qui précèdent le décès (R. 353-1) ; son jumeau JavaScript ; son fait entrera à l'étape `liquider_chaque_regime` |
 | `deces_apres_le_depart` | au départ | `reversion`, `reversion_agirc_arrco`, `reversion_carcdsf`, `reversion_cavamac`, `reversion_crpcen`, `reversion_fonction_publique`, `reversion_ieg`, `reversion_ircantec`, `reversion_rafp`, `reversion_rci`, `reversion_sncf` | l'échéancier (echeancier.py), qui liquide alors une réversion d'essai, hors du journal ; son jumeau JavaScript ; son fait entrera à l'étape `echeancier` |
 | `validation_ircantec_demandee` | demandée | `retablissement_fonction_publique` | retablir (droit/coordonner.py), et l'assiette de l'Ircantec des années rétablies (droit/acquerir.py) ; leurs jumeaux JavaScript ; son fait entrera à l'étape `coordonner_les_affiliations` |
@@ -457,10 +458,6 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 |---|---|---|---|---|
 | `cnav_22_83_taux_acquis_117_trimestres` | taux_liquidation | 0,55 | 0,5 | `decote_avant_1983` |
 | `cnav_22_83_taux_acquis_117_trimestres` | pension_base_sur_sam | 0,429 | 0,44 | `decote_avant_1983` |
-| `ircantec_minoration_age_avant_l_age_legal` | coefficients_des_regimes | ircantec 0,7625 | ircantec 0,9 | `liquidation_regime_par_regime` |
-| `aa_reversion_francois` | dates_d_effet_de_la_reversion | arrco 2025-01-01 | arrco 2024-12-01 | `reversion_agirc_arrco` |
-| `aa_reversion_david` | dates_d_effet_de_la_reversion | arrco 2024-10-01 | arrco 2024-08-01 | `reversion_agirc_arrco` |
-| `aa_reversion_simone` | dates_d_effet_de_la_reversion | arrco 2025-01-01 | arrco 2024-03-01 | `reversion_agirc_arrco` |
 | `cnav_2005_17_derniere_revision_sans_droit_propre` | dates_de_derniere_revision_de_la_reversion | regime_general 2013-09-01 | regime_general 2014-11-01 | `reversion` |
 | `cnav_2006_37_revision_au_constat` | dates_de_revision_de_la_reversion | regime_general 2007-03-01 | regime_general 2007-02-01 | `reversion` |
 | `ur_reversion_etat_mariage_3_ans_et_demi` | reversions_mensuelles | fonction_publique_etat 0, rafp 0 | fonction_publique_etat 0, rafp 50 | `reversion_rafp` |
@@ -471,14 +468,12 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 
 **Les parties que la carte de justesse calcule fausses** (section 1) : un écart y est établi. Chacune attend le numéro de l'action qui la corrige, qu'une preuve nomme (`data/reference/preuves/`) ; un écart né d'un exemple officiel n'en porte pas encore.
 
-- `coefficient_anticipation_ircantec / ancres_fixes_2023` : en écart avec `ircantec_minoration_age_avant_l_age_legal` ; aucune action nommée par une preuve.
 - `decote_avant_1983` : en écart avec `cnav_22_83_taux_acquis_117_trimestres` ; aucune action nommée par une preuve.
-- `liquidation_regime_par_regime / chaque_regime_a_sa_date` : en écart avec `ircantec_minoration_age_avant_l_age_legal` ; aucune action nommée par une preuve.
 - `minimum_pension_ieg / assiette_minimale_avant_2008`, `minimum_pension_ieg / minimum_2008` : règle connue, absente du modèle ; aucune action nommée par une preuve.
 - `pension_maximale_regime_general / cinquante_pour_cent_du_plafond` : en écart avec `cnav_22_83_taux_acquis_117_trimestres` ; aucune action nommée par une preuve.
 - `rafp_majoration_capital / deliberation_2005`, `rafp_majoration_capital / fractionnement_2024` : en écart avec `erafp_1958_effet_2026_11_8000_points`, `erafp_1963_effet_2026_11_5000_points`, `erafp_ra2012_jean_capital_62_ans` ; aucune action nommée par une preuve.
 - `reversion / abattement_2005`, `reversion / age_52`, `reversion / minimum_2026` : en écart avec `cnav_2005_17_derniere_revision_sans_droit_propre`, `cnav_2006_37_revision_au_constat`, `ur_reversion_prive_ressources_plafond_2024` ; aucune action nommée par une preuve.
-- `reversion_agirc_arrco / accord_2017` : en écart avec `aa_reversion_david`, `aa_reversion_francois`, `aa_reversion_simone`, `ur_reversion_prive_ressources_plafond_2024` ; aucune action nommée par une preuve.
+- `reversion_agirc_arrco / accord_2017` : en écart avec `ur_reversion_prive_ressources_plafond_2024` ; aucune action nommée par une preuve.
 - `reversion_fonction_publique / complement_aspa_2025` : en écart avec `ur_reversion_etat_mariage_3_ans_et_demi` ; aucune action nommée par une preuve.
 - `reversion_rafp / decret_2004` : en écart avec `ur_reversion_etat_mariage_3_ans_et_demi` ; aucune action nommée par une preuve.
 - `sam_indemnites_de_maternite / forfait_des_conges_d_avant_2012` : en écart avec `grille_sam_maternite_forfait_2023` ; action 194.
@@ -536,7 +531,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `code` | 1 |
   | `regimes` | 1 |
 
-- **Les textes** : 632 rédactions à rattacher à une version de la fiche qui les cite, 6 009 à examiner, et 9 189 sans statut, que le cliquet tient à 9 189 au plus. Les textes qui en ont le plus : `css` 4 717, `decret_46_2769` 938, `rural` 834, `cpcmr` 561, `decret_90_1215` 319 (`python scripts/textes.py`).
+- **Les textes** : 632 rédactions à rattacher à une version de la fiche qui les cite, 6 005 à examiner, et 9 189 sans statut, que le cliquet tient à 9 189 au plus. Les textes qui en ont le plus : `css` 4 717, `decret_46_2769` 938, `rural` 834, `cpcmr` 561, `decret_90_1215` 319 (`python scripts/textes.py`).
 - **La loi modifiée** (note de décision 0009, sixième cliquet) : aucune rédaction inscrite depuis la pose n'attend la réponse d'une fiche ; et, d'avant la pose, 0 dont la fiche ne dit rien et 429 qu'elle cite sans y répondre, que le cliquet tient à 0 et 429 au plus (`python scripts/textes.py --sans-reponse`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`agirc_arrco_valeur_achat`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.

@@ -736,7 +736,7 @@ appliqué, année par année, à la distribution des pensions de l'échantillon
 interrégimes de 2020, déplacée du facteur que la grille donne : la pension
 moyenne que la garantie regarde, rapportée à celle du système actuel en 2020.
 Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,61<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->0,96<!--/--> en 2070. La garantie coûte
-<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->1,24<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->38<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->8,7<!--/--> millions de
+<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->1,23<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->38<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->8,7<!--/--> millions de
 bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->1,00<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->39<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->9,2<!--/--> millions —, soit
 <!--chiffre:mesure(cumul_avenir?scenario=garantie)-->1701<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
 déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->3 075<!--/--> depuis 1959. Ces chiffres
@@ -833,12 +833,12 @@ la TVA à taux unique du 23 au 24 septembre 2026 est retirée —, et le solde
 s'accumule, en dette quand il est positif, en réserve quand il est négatif :
 celui de la proposition en 2070 est de <!--chiffre:mesure(dette?scenario=6)-->-11<!--/--> % du
 PIB quand la moitié des reportés travaillent, de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=1)-->-20<!--/--> % quand tous le font,
-de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0)-->-2<!--/--> % quand aucun, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel et <!--chiffre:mesure(dette?scenario=6&age_legal=aucun)-->10<!--/--> % pour
+de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0)-->-2<!--/--> % quand aucun, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel et <!--chiffre:mesure(dette?scenario=6&age_legal=aucun)-->11<!--/--> % pour
 la proposition sans âge légal. L'ampleur de son avantage sur le système actuel
 tient donc à ce que les reportés travaillent. Elle serait bien moindre si le
 compte d'un fonctionnaire d'État recevait le taux de l'État entier, et non sa
 seule part « retraite » : la dette atteindrait alors
-<!--chiffre:mesure(dette?scenario=6&emploi_reportes=0&contribution_etat=entiere)-->35<!--/--> % si aucun ne travaillait.
+<!--chiffre:mesure(dette?scenario=6&emploi_reportes=0&contribution_etat=entiere)-->36<!--/--> % si aucun ne travaillait.
 
 **Le PIB ne bouge pas.** Plus d'emploi ferait plus de production, et le modèle
 garde le PIB que le COR projette aux âges d'aujourd'hui. Toutes les parts de
