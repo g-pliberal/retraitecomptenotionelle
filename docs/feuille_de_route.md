@@ -1840,6 +1840,115 @@ suit `docs/veille_droit.md`, sur Opus.
 **Ce que le propriétaire tranche** : l'ordre des écarts ; si le Crédit foncier
 vaut un statut (écart 7). La part CRFM attend l'arrêté de 1977.
 
+### 195. Ce que des experts reprocheront au simulateur : un plan par reproche — `à faire`
+
+**D'où elle vient.** Le 21 novembre 2026, le propriétaire a demandé ce que
+des experts pourraient lui reprocher. Une relecture à charge, en lecture
+seule sur `main` au commit 737f266, en a classé douze, du plus grave au moins
+grave. Le propriétaire a ensuite demandé « un plan d'action pour chaque
+problème », à traiter plus tard. Chaque reproche a ici son plan : ce qu'il
+doit produire, et à quoi l'on sait qu'il est fini. Là où une action ouverte
+en porte déjà une partie, le plan la nomme et ne dit que ce qui lui manque ;
+elle n'est pas récrite. Aucun plan n'est commencé.
+
+**Les plans, du plus grave au moins grave**, une étape par session :
+
+1. **Le rétroactif appelle « non cotisé » ce qui vient surtout des taux
+   d'époque.** Un retraité de 2026 a cotisé à des taux bien plus bas que les
+   28 % d'aujourd'hui ; le dépôt ne mesure nulle part ce que cela pèse dans
+   la baisse de 26 % annoncée aux retraités (`docs/limites/5-quater-litterature.md`
+   l'explique par quatre autres choix). Produire : sur les cas types déjà
+   retraités, le scénario 2 rejoué au taux d'aujourd'hui sur toute la
+   carrière, et la baisse partagée en trois parts — avantages non
+   contributifs au sens du COR, taux d'époque, indexation — dans une partie
+   des limites. Fini quand la partie existe, que l'accueil et la page Coût
+   nomment chaque part de son nom, et qu'aucune n'est plus appelée « non
+   cotisée » à tort. Une mesure, sans changer le modèle.
+2. **Le chiffrage budgétaire tient à treize carrières types.** L'action 194,
+   à son étape D, doit contrôler les cas types et les totaux contre les
+   statistiques ; l'action 152 situe les cas types dans l'EIR. Ce qui
+   manque : la fiche de proposition et la prose de `docs/chiffrage_plf.md`
+   récrites en ordre de grandeur, avec une fourchette tirée des arbitrages
+   ouverts et sans date de retour à l'équilibre. Fini quand aucun document
+   public ne cite plus de solde au milliard près ni d'année d'équilibre.
+3. **Le scénario 1 s'écarte de TRAJECTOiRE.** La pension totale ne concorde
+   que dans 5 cas sur 62, à 4 % d'écart médian (`tests/temoins/trajectoire_3/ecarts.json`).
+   L'action 137 ne relit que les écarts nouveaux ; l'étape C de l'action 194
+   attend la décision du propriétaire. Ce qui manque : les dix plus gros
+   écarts de pension totale relus un à un à leur texte, chacun rangé en erreur
+   du dépôt (corrigée par sa propre action), simplification de TRAJECTOiRE, ou
+   choix assumé. Fini quand ces dix ont chacun leur rangement écrit.
+4. **« 80 régimes calculés », pour 36 modélisés et 44 partiels.** L'étape E de
+   l'action 194, la preuve régime par régime, attend la décision du
+   propriétaire. Ce qui manque : l'accueil et la page Méthode disent « 36
+   modélisés, 44 en partie », et distinguent les données certifiées des
+   règles prouvées, avec le compte des parties prouvées que le tableau de
+   bord calcule. Fini quand la réponse à « Ces chiffres sont-ils fiables ? »
+   le dit.
+5. **Écrit et vérifié par des IA, jamais confronté à un dossier réel.** Les
+   preuves sont toutes des grilles posées par des sessions ; aucune n'est une
+   notification de pension. L'action 183, à son point 4, prévoit des relevés
+   réels ; l'étape F de l'action 194, une trentaine de cas saisis dans les
+   simulateurs des caisses. Le 20 novembre 2026, le propriétaire a voulu les
+   notifications d'adhérents en appoint seulement. Ce qui manque, en décision
+   du propriétaire : s'il réunit une dizaine de dossiers réels (relevé et
+   notification, anonymisés), et s'il fait relire un échantillon de règles par
+   un liquidateur ou un juriste. Fini quand la décision est écrite ici et, si
+   elle est oui, les dossiers rejoués en témoins.
+6. **L'accueil promet plus que le modèle ne tient.** Quatre phrases :
+   « leur cotisation ne montera pas » sans dire le coefficient d'équilibre
+   non appliqué ; la Suède, l'Italie, la Pologne et la Lettonie citées sans
+   dire qu'aucune n'a recalculé les pensions liquidées ; « personne, pas même
+   les caisses, ne sait dire […] autrement qu'en trimestres et en points » ;
+   une « baisse médiane » de treize cas types. Produire : chacune vérifiée à
+   sa source, puis récrite ou retirée, avec son contrôle au catalogue
+   `data/reference/site/affirmations.yaml`. Fini quand les quatre y sont.
+7. **Le rétroactif repose sur les données les moins sûres.** Les taux d'avant
+   1967 sont estimés ; la part « retraite seule » de l'État prête à toutes
+   les années la proportion de 2025 (action 129, qui attend une série). Ce
+   qui manque : une variante de sensibilité sur les taux d'avant 1967, et la
+   page Méthode qui dit ce que les deux estimations déplacent sur un retraité
+   type. Fini quand le chiffre est publié.
+8. **L'équité public-privé tient à une convention.** Selon la part de la
+   contribution de l'État portée au compte, le fonctionnaire de l'exemple de
+   `5-quater-litterature.md` perd 8,1 % ou bien davantage. L'action 129 tient
+   le réglage ; reste au propriétaire à dire s'il veut la convention du jaune
+   budgétaire (16,67 %). Ce qui manque : l'exemple publié sous les trois
+   conventions côte à côte. Fini quand la page Méthode les montre.
+9. **Des présomptions que la simulation ne montre pas.** Le tableau de bord
+   en compte trente-deux (enfants aux trente ans de l'assuré, mariage à
+   vingt-sept ans, survivant sans ressources…) ; l'architecture (action 130)
+   en fait des faits saisis, étape par étape. Ce qui manque d'ici là : la
+   page Simuler affiche, sous le résultat, celles qui ont joué pour la
+   carrière saisie. Fini quand un test le vérifie sur un cas qui en mobilise
+   une.
+10. **Des conclusions encodées dans des tests, desserrées quand le résultat
+    bouge.** Le 21 novembre 2026, le test des âges de départ a vu sa borne
+    passer de 0,25 à 0,3 point et de « moins que le système actuel » à « une
+    fois et demie », pour suivre le nouveau résultat. Produire : une règle
+    dans `.claude/rules/tests.md` — un test qui porte une conclusion publiée
+    ne se desserre pas sans une note datée qui dit ce qui a changé et le
+    signale au propriétaire. Les 3 052 anomalies du balayage restent à
+    l'action 194. Fini quand la règle est écrite et son test vert.
+11. **Des chiffres publics qui se contredisent.** La correction du partage
+    des impôts affectés (la part de TVA gardée comptée deux fois) est décidée
+    et attend son tour de publication. Restent : la fiche de proposition à
+    −47 Md€ quand le chiffrage en dit −44 ; la prose datée du chiffrage qui
+    cite −0,63 point sous un tableau à −1,44 ; la mortalité « observée depuis
+    1986 » à la page Méthode contre « depuis 1899 » dans les limites. Produire
+    une passe de cohérence entre la fiche, le chiffrage, l'accueil et la page
+    Méthode. Fini quand chaque chiffre public a une seule valeur, ou sa date.
+12. **Le risque juridique de la baisse des pensions liquidées.** Hors du
+    modèle, et déjà écrit au chiffrage et à la fiche. En décision du
+    propriétaire : faire consulter un juriste de droit public. Rien à faire
+    au dépôt d'ici là.
+
+**Ce que le propriétaire tranche** : l'ordre des plans ; la suite de
+l'action 194 après son point d'arrêt (plans 2 à 5) ; les dossiers réels et
+la relecture humaine (plan 5) ; la convention de la part de l'État (plan 8) ;
+la consultation d'un juriste (plan 12). Les plans 1, 3 et 7 touchent les
+fichiers communs : chacun attend qu'aucun autre chantier n'y écrive.
+
 ---
 
 ## Les actions en cours
