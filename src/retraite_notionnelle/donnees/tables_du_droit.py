@@ -802,7 +802,10 @@ class FichesDatees:
     mois d'activité, et la seconde pension, que
     ``seconde.regleDeLaNouvellePension`` lit à sa date d'effet et à celle de la
     première, et l'âge légal, que ``AgesOuverture`` du portage lit à la date
-    d'effet de la pension, la génération y choisissant sa ligne.
+    d'effet de la pension, la génération y choisissant sa ligne, et la clause
+    de sauvegarde de la carrière longue de 2023, que ``ouvrir.sauvegardeDe2023``
+    lit, et le taux plein de la pension que la carrière longue ouvre, que
+    ``categories.tauxPleinDeLaCarriereLongue`` lit.
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
@@ -840,7 +843,8 @@ class FichesDatees:
             "cotisation_rco_agricole_2026", "decote_banque_de_france",
             "droits_apres_la_premiere_pension", "seconde_pension",
             "surcote_banque_de_france", "age_ouverture_banque_de_france_actifs",
-            "age_legal_par_generation")
+            "age_legal_par_generation", "carriere_longue_sauvegarde_de_2023",
+            "taux_plein_carriere_longue")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

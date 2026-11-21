@@ -277,26 +277,6 @@ function ouvertesALaCarriereLongue(opposent) {
 }
 
 /**
- * La date que la carrière longue acquise sous le texte du départ déclaré
- * garde à l'assuré quand un texte postérieur la reculerait, ou `null`. C'est
- * ce que l'article 8 du décret n° 2023-436 écrit pour les nés du 1er septembre
- * 1961 au 31 décembre 1963 qui justifient, avant le 1er septembre 2023, de la
- * durée de la rédaction d'avant : ils gardent l'âge de cette rédaction pour
- * une pension qui prend effet après (circulaire Cnav 2023-14, point 9.2). Les
- * bornes de la clause ne sont pas lues ici : elles iront, avec sa liquidation,
- * dans les versions de la fiche `carriere_longue` ; d'ici là, un assuré né
- * après 1963 garde lui aussi cette date, comme avant le 20 novembre 2026.
- */
-function gardeeParLeTexteDuDepart(moteur, carriere, periodes) {
-  const annuites = periodes.filter(([, p]) => p.type_calcul === "annuites");
-  const opposent = annuites.length > 0 ? annuites
-    : ouvrirLeDroit.periodesOpposantUneDuree(
-      periodes.filter(([, p]) => p.type_calcul !== "annuites"));
-  const age = carriereLongueAcquise(moteur, carriere, ouvertesALaCarriereLongue(opposent));
-  return age === null ? null : carriere.dateDeLAge(age);
-}
-
-/**
  * Le premier mois où ces périodes ouvrent la pension à cet assuré, ou `null`
  * quand aucune n'oppose d'âge. L'âge légal dépend de la date d'effet de la
  * pension (fiche `age_legal_par_generation`) : le moteur ne déduit donc plus
@@ -361,8 +341,10 @@ function droitDeLaDate(moteur, vue, periodes) {
  * requise de sa date d'effet (décret n° 2023-436, article 9 ; décret
  * n° 2026-345) : l'assurée partie en août 2026 avec les 171 trimestres que
  * L. 161-17-3 demande à compter de septembre est servie en septembre. Les
- * durées restent celles du départ déclaré, et un texte postérieur ne recule
- * pas la date de la carrière longue acquise au départ ({@link gardeeParLeTexteDuDepart}). Voir `_ouverture` dans le Python.
+ * durées restent celles du départ déclaré. Un texte postérieur recule la date
+ * de la carrière longue acquise au départ, sauf à qui la clause de sauvegarde
+ * de 2023 garde l'âge de la rédaction d'avant (`ouvrir.sauvegardeDe2023`,
+ * fiche `carriere_longue_sauvegarde_de_2023`). Voir `_ouverture` dans le Python.
  */
 export function ouvertureDe(moteur, carriere, unite) {
   const declare = carriere.dateLiquidation;
@@ -372,7 +354,6 @@ export function ouvertureDe(moteur, carriere, unite) {
     return ouverture;
   }
   let droit = droitDeLaDate(moteur, carriere, courantes);
-  const gardee = gardeeParLeTexteDuDepart(moteur, carriere, courantes);
   for (let mois = declare.plusMois(1); ouverture.rang > mois.rang; mois = mois.plusMois(1)) {
     const periodes = periodesDeLUnite(moteur, unite, mois);
     const vue = carriere.liquideeAu(mois);
@@ -384,9 +365,6 @@ export function ouvertureDe(moteur, carriere, unite) {
       const sous = premiereOuvertureSous(moteur, vue, periodes);
       if (sous !== null) {
         ouverture = sous.rang > mois.rang ? sous : mois;
-      }
-      if (gardee !== null && gardee.rang < ouverture.rang) {
-        ouverture = gardee.rang > mois.rang ? gardee : mois;
       }
     }
   }
@@ -413,30 +391,15 @@ function handicapAcquis(moteur, carriere, periodes) {
 
 /**
  * L'âge que la carrière longue ouvre aux régimes de `periodes` sur la durée
- * cotisée au départ déclaré, ou `null`. Voir `_carriere_longue_acquise`.
+ * cotisée à la date de la carrière, ou `null` : celui du texte de cette date,
+ * ou celui que la clause de sauvegarde de 2023 garde à l'assuré, quand il est
+ * plus précoce.
  */
 function carriereLongueAcquise(moteur, carriere, periodes) {
-  if (periodes.length === 0) {
-    return null;
-  }
-  const requis = Math.max(...periodes.map(
-    ([, periode]) => ouvrirLeDroit.dureeRequise(moteur, periode, carriere)[0])) || 160;
-  const anneeLiquidation = carriere.anneeLiquidation;
-  let cotises = carriere.trimestresCumules(carriere.lignes.filter(
-    (ligne) => ligneCotisee(moteur, carriere, ligne) && ligne.annee <= anneeLiquidation));
-  const famille = etranger.familleDesRegimes(moteur, periodes.map(([code]) => code));
-  const etrangers = etranger.trimestresEtrangers(moteur, carriere);
-  const majoration = compter.majorationPourEnfants(
-    moteur, carriere, new Map(periodes.map(([code]) => [code, cotises])), anneeLiquidation);
-  cotises = moteur.carriereLongue.cotisesReputes(
-    carriere, cotises + etrangers.trimestresCotises(famille),
-    majoration !== null ? majoration.trimestres : 0);
-  const anticipe = moteur.carriereLongue.ageDeDepart(
-    carriere, anneeLiquidation, cotises, requis, etrangers.cotises[famille],
-    moteur.carriereLongue.deLaFonctionPublique(periodes.map(([code]) => code)),
-    ouvrirLeDroit.dureeDAssurance(carriere, majoration, etrangers.trimestres(famille)),
-    ouvrirLeDroit.trimestresAgricoles(moteur, carriere));
-  return anticipe === null ? null : anticipe[0];
+  const acquis = ouvrirLeDroit.carriereLongueAcquise(moteur, carriere, periodes);
+  const garde = ouvrirLeDroit.sauvegardeDe2023(moteur, carriere, periodes);
+  const ages = [acquis, garde].filter((lu) => lu !== null).map(([age]) => age);
+  return ages.length === 0 ? null : Math.min(...ages);
 }
 
 /**

@@ -497,12 +497,23 @@ def test_la_coupe_ne_change_pas_ce_que_le_moteur_lit():
         {"motifs": ["taux_plein_a_soixante_cinq_ans"],
          "regimes": ["agirc", "agirc_arrco", "agirc_entreprises_nouvelles", "arrco",
                      "arrco_tranche_2", "arrco_tranche_2_entreprises_nouvelles", "unirs"]}]}
+    # La version en vigueur nomme en outre le taux plein de la carrière longue
+    # (L. 351-8, 4° ter, pensions prenant effet à compter du 1er septembre
+    # 2023), que la complémentaire suit comme les autres (article 84, 3, de
+    # l'accord de 2017 ; tests/test_sauvegarde_de_2023.py).
+    en_vigueur = {**parents, "exonerations": [
+        {**parents["exonerations"][0],
+         "motifs": [*parents["exonerations"][0]["motifs"], "taux_plein_carriere_longue"]},
+        *parents["exonerations"][1:]]}
     lus = {}
     for v in versions:
-        avant = _bornes(v, "liquidation.date_effet")[0] < date(2011, 7, 1)
-        lus.setdefault(avant, set()).add(json.dumps(v["contenu"]["parametres"], sort_keys=True))
-    assert lus == {True: {json.dumps(asf, sort_keys=True)},
-                   False: {json.dumps(parents, sort_keys=True)}}
+        debut = _bornes(v, "liquidation.date_effet")[0]
+        quand = ("asf" if debut < date(2011, 7, 1)
+                 else "parents" if debut < date(2023, 3, 16) else "en_vigueur")
+        lus.setdefault(quand, set()).add(json.dumps(v["contenu"]["parametres"], sort_keys=True))
+    assert lus == {"asf": {json.dumps(asf, sort_keys=True)},
+                   "parents": {json.dumps(parents, sort_keys=True)},
+                   "en_vigueur": {json.dumps(en_vigueur, sort_keys=True)}}
 
 
 def test_la_table_des_ages_est_l_escalier_du_portage():

@@ -1,0 +1,160 @@
+schema_version: 1
+id: carriere_longue_sauvegarde_de_2023
+intitule: >-
+  La clause de sauvegarde de la carrière longue de 2023 : l'assuré né du 1er septembre
+  1961 au 31 décembre 1963 qui avait, avant le 1er septembre 2023, la durée cotisée que
+  demandaient les rédactions d'avant peut demander, pour une pension prenant effet à
+  compter de cette date, l'âge de ces rédactions (décret n° 2023-436, article 8).
+domaine: depart_anticipe
+regimes: [cancava, cnracl, fonction_publique_etat, fspoeie, msa_non_salaries, msa_salaries,
+  organic, regime_general, rsi]
+etape: ouvrir_le_droit
+face: droit
+etat: conforme
+lit:
+- la date de naissance de la personne, au mois
+- la durée cotisée, périodes réputées comprises, acquise avant le 1er septembre 2023
+- les portes de la carrière longue et la durée requise des rédactions d'avant
+- liquidation.date_effet
+ecrit:
+- l'âge de la carrière longue des rédactions d'avant, que « ouvrir le droit » oppose au
+  départ et que la datation des départs lit pour le régime qui attend
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le moteur
+# (droit/ouvrir.js, `sauvegardeDe2023`) lit : `existe` ; `regimes`, ceux dont la clause
+# nomme les articles ; `nes_du` et `nes_au`, l'année et le mois de naissance des
+# générations qu'elle vise, bornes comprises ; `duree_acquise_avant`, l'année et le mois
+# avant le premier jour desquels la durée s'acquiert, sous les rédactions d'avant.
+versions:
+- id: avant_le_decret_du_3_juin_2023
+  statut: lue
+  textes:
+  - {id: JORFARTI000047625914, article: "décret n° 2023-436, article 9", publie_le: 2023-06-04, lu_le: 2026-11-20}
+  nee_de: JORFARTI000047625914
+  bornes:
+    liquidation.date_effet: [null, 2023-09-01]
+  contenu:
+    droit: >-
+      « Les dispositions du présent décret s'appliquent aux pensions prenant effet à
+      compter du 1er septembre 2023 » (article 9) : avant, la pension s'ouvre sous les
+      rédactions que la clause garde, et la clause n'a pas d'objet
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    la circulaire Cnav n° 2023-14 du 10 juillet 2023, lue en entier le 20 novembre 2026 :
+    ses exemples sont tous des pensions prenant effet à compter du 1er septembre 2023
+- id: decret_du_3_juin_2023
+  statut: lue
+  textes:
+  - {id: JORFARTI000047625907, article: "décret n° 2023-436, article 8", publie_le: 2023-06-04, lu_le: 2026-11-20}
+  - {id: LEGIARTI000029134997, article: "décret n° 2003-1306, article 26-1", en_vigueur: 2014-06-26, lu_le: 2026-11-20}
+  - {id: LEGIARTI000029134294, article: "décret n° 2004-1056, article 22 ter", en_vigueur: 2014-06-26, lu_le: 2026-11-20}
+  nee_de: JORFARTI000047625907
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: >-
+      « Par dérogation aux dispositions de l'article 3 du présent décret, les assurés nés
+      entre le 1er septembre 1961 et le 31 décembre 1963 et qui justifient, avant le 1er
+      septembre 2023, d'une durée d'assurance mentionnée aux articles D. 16-1 et D. 16-2
+      du code des pensions civiles et militaires de retraite, D. 732-40 du code rural et
+      de la pêche maritime et L. 161-17-3, D. 351-1-1 et D. 351-1-2 du code de la sécurité
+      sociale, dans leur rédaction antérieure à l'entrée en vigueur du présent décret,
+      peuvent demander à bénéficier, pour une pension prenant effet à compter du 1er
+      septembre 2023, d'un âge d'ouverture du droit à pension abaissé dans les conditions
+      prévues aux articles D. 16-1 du code des pensions civiles et militaires de retraite,
+      D. 732-40 du code rural et de la pêche maritime et D. 351-1-1 du code de la sécurité
+      sociale dans leur rédaction antérieure à l'entrée en vigueur du présent décret »
+      (article 8) ; « Les trimestres validés au titre de l'AVPF, de l'Ava ainsi que les
+      VPLR effectués pour la prise en compte des années d'apprentissage ne doivent pas
+      être retenus pour apprécier la durée d'assurance cotisée acquise avant le 1er
+      septembre 2023. La retraite est calculée au taux plein, conformément aux
+      dispositions de l'article L. 351-8, 4°ter. Toutefois, pour la détermination de la
+      durée de proratisation, la durée d'assurance maximum à retenir doit tenir compte de
+      l'augmentation de la durée nécessaire pour obtenir le taux plein » (circulaire Cnav
+      n° 2023-14, point 9.2)
+    beneficiaire: >-
+      l'assuré né du 1er septembre 1961 au 31 décembre 1963 qui avait la durée des
+      rédactions d'avant au 31 août 2023
+    parametres:
+      existe: true
+      regimes: [cancava, cnracl, fonction_publique_etat, fspoeie, msa_non_salaries,
+        msa_salaries, organic, regime_general, rsi]
+      nes_du: [1961, 9]
+      nes_au: [1963, 12]
+      duree_acquise_avant: [2023, 9]
+  exemples:
+  - cnav_2023_14_sauvegarde_1962
+  - cnav_2023_14_sauvegarde_1963_octobre
+  - cnav_2023_14_sauvegarde_1963_avpf
+approximations:
+- version: [decret_du_3_juin_2023]
+  ecart: >-
+    L'article 8 nomme les articles du code des pensions, non le décret n° 2003-1306 de
+    la CNRACL ni le décret n° 2004-1056 des ouvriers de l'État, qui appliquent L. 25 bis
+    « dans les conditions et selon les modalités prévues aux articles D. 16-1 à D. 16-3
+    » (articles 26-1 et 22 ter) ; la notice du décret vise les « régimes spéciaux de la
+    fonction publique ». Le modèle leur ouvre la clause. Aucune instruction de la CNRACL
+    n'a été lue.
+  effet: non mesuré ; les fonctionnaires territoriaux et hospitaliers et les ouvriers de l'État de ces générations partis sous la clause
+- version: [decret_du_3_juin_2023]
+  ecart: >-
+    La clause s'ouvre « à leur demande » : le modèle la tient pour demandée dès qu'un
+    départ déclaré ou un régime qui attend en a besoin, et ne la propose pas comme âge
+    de départ d'un cas type (`ageCarriereLongue`), qui continue de lire la rédaction de
+    son départ. Le versement pour la retraite au titre de l'apprentissage, que la
+    circulaire écarte de la durée acquise, n'est pas une période du modèle.
+  effet: non mesuré
+sources:
+  lu_le: 2026-11-20
+  prochaine_relecture: 2027-05-31
+  a_relire:
+  - >-
+    Lire ce que la CNRACL et le fonds des ouvriers de l'État font de la clause, et si la
+    pension qu'elle ouvre y porte le coefficient de minoration (fiche
+    taux_plein_carriere_longue).
+  lectures:
+  - type: jorf
+    reference: >-
+      décret n° 2023-436 du 3 juin 2023 (JORFTEXT000047625782), articles 8
+      (JORFARTI000047625907) et 9 (JORFARTI000047625914), lus dans l'index JORF du 16
+      novembre 2026
+    date: 2023-06-04
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2023-14 du 10 juillet 2023, point 9.2 et ses trois exemples,
+      point 4.2 (« La retraite anticipée pour carrière longue est obligatoirement
+      calculée au taux plein de 50% », L. 351-8, 4° ter) ; copie du 20 novembre 2026,
+      sha256:a89060fe655625bcad2ff6e23428578797507ea3f42e2a796fd5303b07a36509
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2023_14_10072023.pdf
+    date: 2023-07-10
+  - type: legifrance
+    reference: >-
+      décret n° 2003-1306, article 26-1 (LEGIARTI000029134997), et décret n° 2004-1056,
+      article 22 ter (LEGIARTI000029134294), lus dans l'index LEGI du 16 novembre 2026 :
+      L. 25 bis s'y applique dans les conditions des articles D. 16-1 à D. 16-3 du code
+      des pensions
+    date: 2014-06-26
+code:
+  javascript: >-
+    moteur/js/droit/ouvrir.js : sauvegardeDe2023, carriereLongueAcquise, ouvrir ;
+    moteur/js/droit/departs.js : carriereLongueAcquise, ouvertureDe
+  parametres: >-
+    contenu.parametres de chaque version : existe, regimes, nes_du, nes_au,
+    duree_acquise_avant
+  tests: [tests/test_sauvegarde_de_2023.py, tests/test_departs.py, tests/test_oracle.py]
+  moteur: >-
+    Le paquet du site porte ses versions.
+historique:
+- >-
+  2026-11-20 — écrite sur le choix du propriétaire (« Sauvegarde de 2023, puis étape
+  3 »), après la vérification de la carrière longue aux bascules, qui n'en gardait que
+  la date, et à toutes les générations.
+effet: >-
+  Né le 4 février 1962, 168 trimestres cotisés fin 2022, départ au 1er octobre 2023 : le
+  modèle disait le droit « non ouvert », au taux de 49,375 % ; il part par la carrière
+  longue, au taux plein, sur 168/169. Le régime qui attend après un départ d'avant
+  septembre 2023 ne garde plus l'âge de la rédaction d'avant qu'aux générations de la
+  clause.

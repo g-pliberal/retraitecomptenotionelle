@@ -89,7 +89,15 @@ def test_les_versions_datent_le_protocole_et_la_structure_financiere(simulateur)
          "regimes": ["agirc", "agirc_arrco", "agirc_entreprises_nouvelles", "arrco",
                      "arrco_tranche_2", "arrco_tranche_2_entreprises_nouvelles", "unirs"]}]}
     assert regle(FICHE, "2016-01-01") == regle(FICHE, "2019-01-01") == parents
-    assert regle(FICHE, "2026-10-01") == parents
+    assert regle(FICHE, "2023-03-01") == parents
+    # La version en vigueur nomme aussi le taux plein de la carrière longue
+    # (L. 351-8, 4° ter), que le régime général sert aux pensions prenant
+    # effet à compter du 1er septembre 2023 : la complémentaire le suit
+    # (article 84, 3, de l'accord de 2017).
+    assert regle(FICHE, "2026-10-01") == {**parents, "exonerations": [
+        {"motifs": ["inaptitude", *categories.FICHES_DES_CATEGORIES,
+                    categories.FICHE_DE_LA_CARRIERE_LONGUE], "regimes": None},
+        parents["exonerations"][1]]}
 
 
 # -- la structure financière, au 1er avril 1983 ------------------------------------

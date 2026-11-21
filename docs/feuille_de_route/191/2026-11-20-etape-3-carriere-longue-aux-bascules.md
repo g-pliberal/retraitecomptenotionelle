@@ -1,16 +1,16 @@
 # Avant l'étape 3 de la note 0009 : la carrière longue aux bascules de 2023 et de 2026
 
 **Reprise, au 20 novembre 2026.** L'étape 3 de la note de décision 0009 n'est
-pas lancée : le propriétaire a demandé d'abord cette vérification, et décide
-de la suite. Elle est faite. Quand un régime attend son ouverture après le
-départ déclaré, le moteur lisait la carrière longue et la durée requise dans
-le texte du départ déclaré ; il les lit maintenant dans le texte de chaque
-date d'effet essayée, les durées restant celles du départ déclaré, et sans
-reculer une date que le texte du départ ouvrait. Reste, au propriétaire :
-lancer ou non l'étape 3, dont le brief est « Pour l'étape 3 » dans
-`/mnt/project-files/architecture/191-briefs-amendes.md` ; et écrire ou non
-la clause de sauvegarde de l'article 8 du décret n° 2023-436, dont le moteur
-ne garde que la date. Le détail est dans cette note.
+pas lancée : le propriétaire a demandé d'abord deux corrections, qui sont
+faites. Quand un régime attend son ouverture après le départ déclaré, le
+moteur lit la carrière longue et la durée requise dans le texte de chaque date
+d'effet essayée, les durées restant celles du départ déclaré. Et la clause de
+sauvegarde de l'article 8 du décret n° 2023-436 est écrite en entier, dans
+deux fiches que le moteur lit : voir `2026-11-20-sauvegarde-de-2023.md`.
+Reste à lancer l'étape 3, dans une session neuve : son brief est « Pour
+l'étape 3 » dans `/mnt/project-files/architecture/191-briefs-amendes.md`. Au
+propriétaire : ce que la CNRACL fait de la clause et de la décote, que ses
+décrets ne disent pas. Le détail de la vérification est dans cette note.
 
 Le 20 novembre 2026, une session de vérification, sur le choix du
 propriétaire au point d'arrêt de l'étape 2 (« Vérifier d'abord la carrière

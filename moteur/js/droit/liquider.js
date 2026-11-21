@@ -228,7 +228,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
   // La catégorie de L. 351-8 qui donne au salarié le taux plein du régime
   // général, que ses complémentaires suivent ; `null` sans elle.
   const parCategorie = categories.tauxPleinParCategorie(
-    moteur, invalidite.REGIME_DES_SALARIES, carriere, durees, ageLiquidation);
+    moteur, invalidite.REGIME_DES_SALARIES, carriere, durees, ageLiquidation, ouverture);
   const codes = droits.codes.filter((code) => regimes === null || regimes.has(code));
   const groupes = releve.groupes;
 
@@ -302,7 +302,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
             ignorerPenaliteAge ? 1.0 : abattementPoints(
               moteur, periode, carriere, trimestres, requisReference, ageLiquidation,
               anneeLiquidation, durees.trimestresParRegime.get(code) ?? 0),
-            regimesDuHandicap.has(code));
+            regimesDuHandicap.has(code) || categories.tauxPleinDeLaCarriereLongue(
+              moteur, code, carriere, parLaCarriereLongue));
         }
         pensions.push(pension);
         continue;
@@ -571,7 +572,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           && periode.avantages_non_contributifs.includes("pension_majoree_reference")) {
         agricole = eligibleAgricole(
           moteur, periode, carriere, releve, membres, trimestres, ageLiquidation,
-          pensions.length, abattement, regimesDuHandicap.has(code));
+          pensions.length, abattement,
+          regimesDuHandicap.has(code) || categories.tauxPleinDeLaCarriereLongue(
+            moteur, code, carriere, parLaCarriereLongue));
       }
       pensions.push({
         regime: code,
@@ -804,7 +807,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       if (tauxPleinDesFemmes(periode, carriere, cumulPlafonne, ageLiquidation)
           || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation)
           || categories.tauxPleinParCategorie(
-            moteur, code, carriere, durees, ageLiquidation) !== null
+            moteur, code, carriere, durees, ageLiquidation, ouverture) !== null
           || pourInvalidite !== null
           || regimesDuHandicap.has(code)
           || carriere.au_deces
@@ -951,7 +954,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           || ageLiquidation >= ouvrir.ageTauxPlein(moteur, periode, carriere)
           || invalidite.tauxPleinDeLInapte(moteur, code, carriere, ageLiquidation)
           || categories.tauxPleinParCategorie(
-            moteur, code, carriere, durees, ageLiquidation) !== null
+            moteur, code, carriere, durees, ageLiquidation, ouverture) !== null
           || regimesDuHandicap.has(code));
     const fractionCultes = dureesCultes !== null
       ? cultes.fractionDAvant1998(
@@ -3236,6 +3239,13 @@ export function abattementRegimeDeBase(moteur, periode, carriere, trimestres, re
   // La complémentaire des indépendants que la fiche `retraite_anticipee_handicap`
   // nomme, sans abattement au départ anticipé des assurés handicapés.
   if (handicap && moteur.invalidites.regimes("handicap").has(periode.regime)) {
+    return 1.0;
+  }
+  // Le coefficient de minoration « n'est pas applicable aux assurés dont l'âge
+  // […] est abaissé dans les conditions prévues à l'article L. 732-18-1 »
+  // (L. 732-25 du code rural, depuis le 1er septembre 2023) : le régime en
+  // points que la fiche `taux_plein_carriere_longue` nomme.
+  if (categories.tauxPleinDeLaCarriereLongue(moteur, periode.regime, carriere, carriereLongue)) {
     return 1.0;
   }
   const [decote, ageAnnulation] = decoteOpposable(moteur, periode, carriere, anneeLiquidation);

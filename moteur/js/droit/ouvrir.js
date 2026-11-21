@@ -275,7 +275,7 @@ export function ouvrir(moteur, releve, regimes = null) {
     ageOuvertureReference = ageOuvertureReference === null ? handicap
       : Math.min(ageOuvertureReference, handicap);
   } else if (ageOuvertureReference !== null && ageLiquidation < ageOuvertureReference) {
-    const anticipe = moteur.carriereLongue.ageDeDepart(
+    let anticipe = moteur.carriereLongue.ageDeDepart(
       carriere, anneeLiquidation,
       moteur.carriereLongue.cotisesReputes(
         carriere, trimestresCotises,
@@ -288,6 +288,14 @@ export function ouvrir(moteur, releve, regimes = null) {
       durees.pourLeTaux(famille),
       trimestresAgricoles(moteur, carriere),
     );
+    // La clause de sauvegarde de 2023 : l'âge de la rédaction d'avant, à qui
+    // en avait la durée avant le 1er septembre 2023 (`sauvegardeDe2023`).
+    if (anticipe === null || enMois(ageLiquidation) < enMois(anticipe[0])) {
+      const garde = sauvegardeDe2023(moteur, carriere, opposants.map((code) => [code, null]));
+      if (garde !== null && (anticipe === null || garde[0] < anticipe[0])) {
+        anticipe = garde;
+      }
+    }
     // Au mois près : la table écrit soixante ans et huit mois 60,67, que
     // l'âge exact, 60,666…, n'atteindrait jamais.
     if (anticipe !== null && enMois(ageLiquidation) >= enMois(anticipe[0])) {
@@ -1156,6 +1164,81 @@ export function ageCarriereLongue(moteur, carriere, annuites) {
     dureeDAssurance(carriere, majoration, etrangers.trimestres(famille)),
     trimestresAgricoles(moteur, carriere),
   );
+}
+
+/**
+ * L'âge que la carrière longue ouvre aux régimes de `periodes` sur la durée
+ * cotisée à la date d'effet de la carrière, sous le texte de cette date, et sa
+ * fiabilité ; `null` sans elle. Voir `_carriere_longue_acquise`.
+ *
+ * @returns {[number, number]|null}
+ */
+export function carriereLongueAcquise(moteur, carriere, periodes) {
+  if (periodes.length === 0) {
+    return null;
+  }
+  const requis = Math.max(...periodes.map(
+    ([, periode]) => dureeRequise(moteur, periode, carriere)[0])) || 160;
+  const anneeLiquidation = carriere.anneeLiquidation;
+  let cotises = carriere.trimestresCumules(carriere.lignes.filter(
+    (ligne) => ligneCotisee(moteur, carriere, ligne) && ligne.annee <= anneeLiquidation));
+  const famille = etranger.familleDesRegimes(moteur, periodes.map(([code]) => code));
+  const etrangers = etranger.trimestresEtrangers(moteur, carriere);
+  const majoration = compter.majorationPourEnfants(
+    moteur, carriere, new Map(periodes.map(([code]) => [code, cotises])), anneeLiquidation);
+  cotises = moteur.carriereLongue.cotisesReputes(
+    carriere, cotises + etrangers.trimestresCotises(famille),
+    majoration !== null ? majoration.trimestres : 0);
+  return moteur.carriereLongue.ageDeDepart(
+    carriere, anneeLiquidation, cotises, requis, etrangers.cotises[famille],
+    moteur.carriereLongue.deLaFonctionPublique(periodes.map(([code]) => code)),
+    dureeDAssurance(carriere, majoration, etrangers.trimestres(famille)),
+    trimestresAgricoles(moteur, carriere));
+}
+
+/** La fiche de la clause de sauvegarde de la carrière longue de 2023. */
+export const FICHE_DE_LA_SAUVEGARDE = "carriere_longue_sauvegarde_de_2023";
+
+/**
+ * L'âge que la clause de sauvegarde de 2023 garde à l'assuré dans les régimes
+ * de `periodes`, et sa fiabilité ; `null` quand elle ne lui garde rien.
+ *
+ * Décret n° 2023-436, article 8 : les assurés nés du 1er septembre 1961 au
+ * 31 décembre 1963 qui justifient, avant le 1er septembre 2023, de la durée
+ * que demandaient les rédactions d'avant « peuvent demander à bénéficier, pour
+ * une pension prenant effet à compter du 1er septembre 2023 », de l'âge de ces
+ * rédactions. La version de la fiche qui vaut à la date d'effet dit les
+ * générations, les régimes et le jour avant lequel la durée s'acquiert : la
+ * carrière se lit au dernier mois d'avant ce jour, où tout est de la rédaction
+ * d'avant — les portes, la durée requise, les périodes réputées cotisées, sans
+ * l'AVPF (circulaire Cnav 2023-14, point 9.2) —, et où l'année en cours ne
+ * compte que ses trimestres civils écoulés.
+ *
+ * @returns {[number, number]|null}
+ */
+export function sauvegardeDe2023(moteur, carriere, periodes) {
+  const date = dateDEffet(carriere);
+  const regle = date === null ? null : moteur.fichesDatees.regle(FICHE_DE_LA_SAUVEGARDE, date);
+  if (!regle || !regle.existe) {
+    return null;
+  }
+  const rang = carriere.annee_naissance * 12 + carriere.mois_naissance;
+  const [anneeDu, moisDu] = regle.nes_du;
+  const [anneeAu, moisAu] = regle.nes_au;
+  if (rang < anneeDu * 12 + moisDu || rang > anneeAu * 12 + moisAu) {
+    return null;
+  }
+  const [annee, mois] = regle.duree_acquise_avant;
+  const avant = new DateMois(annee, mois).plusMois(-1);
+  const gardees = [];
+  for (const [code] of periodes) {
+    const periode = regle.regimes.includes(code)
+      ? periodeDeLiquidation(moteur.catalogue.obtenir(code), avant) : null;
+    if (periode !== null) {
+      gardees.push([code, periode]);
+    }
+  }
+  return carriereLongueAcquise(moteur, carriere.liquideeAu(avant), gardees);
 }
 
 /**

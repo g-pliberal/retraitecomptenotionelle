@@ -343,17 +343,44 @@ export function ageDuFonctionnaireParentDeTroisEnfants(moteur, regime, carriere)
  * `regime`, à la date d'effet de sa pension, ou `null`. Voir
  * `taux_plein_par_categorie` du Python.
  */
-export function tauxPleinParCategorie(moteur, regime, carriere, durees, ageLiquidation) {
+export function tauxPleinParCategorie(moteur, regime, carriere, durees, ageLiquidation,
+  ouverture = null) {
   const date = dateDEffet(carriere);
-  if (date === null || !carriere.titresAuTauxPlein) {
+  if (date === null) {
     return null;
   }
-  for (const nom of FICHES_DES_CATEGORIES) {
-    const regle = moteur.fichesDatees.regle(nom, date);
-    if (regle && regle.existe && regle.regimes.includes(regime)
-        && remplit(moteur, nom, regle, carriere, durees, ageLiquidation)) {
-      return nom;
+  if (carriere.titresAuTauxPlein) {
+    for (const nom of FICHES_DES_CATEGORIES) {
+      const regle = moteur.fichesDatees.regle(nom, date);
+      if (regle && regle.existe && regle.regimes.includes(regime)
+          && remplit(moteur, nom, regle, carriere, durees, ageLiquidation)) {
+        return nom;
+      }
     }
   }
-  return null;
+  return tauxPleinDeLaCarriereLongue(
+    moteur, regime, carriere, ouverture !== null && ouverture.motif === "carriere_longue")
+    ? FICHE_DE_LA_CARRIERE_LONGUE : null;
+}
+
+/** La fiche du taux plein de la retraite anticipée pour carrière longue. */
+export const FICHE_DE_LA_CARRIERE_LONGUE = "taux_plein_carriere_longue";
+
+/**
+ * La pension que la carrière longue ouvre (`parLaCarriereLongue`, que dit
+ * l'étape « ouvrir le droit ») est-elle servie au taux plein dans `regime`,
+ * quelle que soit la durée d'assurance ? Le 4° ter de L. 351-8, L. 14 du code des pensions et
+ * L. 732-25 du code rural l'écrivent pour les pensions prenant effet à compter
+ * du 1er septembre 2023 : la version de la fiche qui vaut à la date d'effet dit
+ * les régimes. C'est ce qui sert au taux plein l'assuré que la clause de
+ * sauvegarde de 2023 fait partir sans la durée de sa génération.
+ */
+export function tauxPleinDeLaCarriereLongue(moteur, regime, carriere, parLaCarriereLongue) {
+  if (!parLaCarriereLongue) {
+    return false;
+  }
+  const date = dateDEffet(carriere);
+  const regle = date === null ? null
+    : moteur.fichesDatees.regle(FICHE_DE_LA_CARRIERE_LONGUE, date);
+  return Boolean(regle && regle.existe && regle.regimes.includes(regime));
 }

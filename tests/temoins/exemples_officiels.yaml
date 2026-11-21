@@ -689,6 +689,51 @@ exemples:
     carriere: {naissance: "1963-03-01", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2023-03", age_debut: 17}
     attendu: {trimestres_requis: 168, motif_ouverture: carriere_longue}
 
+  # ---- Cnav, circulaire 2023-14 du 10 juillet 2023, point 9.2 ------------
+  # La clause de sauvegarde de l'article 8 du décret n° 2023-436 : les nés du
+  # 1er septembre 1961 au 31 décembre 1963 qui avaient, avant le 1er septembre
+  # 2023, la durée cotisée des rédactions d'avant gardent l'âge de ces
+  # rédactions pour une pension qui prend effet après ; taux plein par le
+  # 4° ter de L. 351-8, proratisation sur la durée de la loi de 2023. Les trois
+  # exemples de la circulaire, lus le 20 novembre 2026.
+  - id: cnav_2023_14_sauvegarde_1962
+    source: {editeur: "Cnav", reference: "circulaire 2023-14 du 10 juillet 2023, Retraite anticipée pour carrière longue à compter du 1er septembre 2023, point 9.2, exemple 1", verifie_le: "2026-11-20"}
+    enonce: >-
+      « Assuré né le 4/02/1962. Il réunit uniquement 168 trimestres cotisés au
+      30/06/2023. Il justifie de 6 trimestres avant 1982 (année de ses 20 ans).
+      A sa demande, il peut obtenir une RACL à effet du 1/10/2023, à 61 ans et
+      7 mois. La retraite sera calculée au taux plein. La durée de
+      proratisation sera égale à 168/169. » La carrière d'ici porte ses 168
+      trimestres de 1981 à 2022, et rien en 2023.
+    carriere: {naissance: "1962-02-04", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2023-10", debut: "1981-01", interruptions: {2023: sans_activite}}
+    attendu: {trimestres_valides: 168, trimestres_requis: 169, motif_ouverture: carriere_longue, liquidation_ouverte: true, taux_liquidation: 0.5, pension_base_sur_sam: 0.49704142}
+
+  - id: cnav_2023_14_sauvegarde_1963_octobre
+    source: {editeur: "Cnav", reference: "circulaire 2023-14 du 10 juillet 2023, point 9.2, exemple 2", verifie_le: "2026-11-20"}
+    enonce: >-
+      « Assurée née le 13/10/1963. Elle réunit 168 trimestres cotisés au
+      30/06/2023 et 4 trimestres de majoration de durée d'assurance pour
+      enfant. Elle justifie de 7 trimestres avant 1983 (année de ses 20 ans).
+      A sa demande, elle peut obtenir une RACL à effet du 1/11/2023, à 60 ans.
+      La retraite sera calculée au taux plein. La durée de proratisation sera
+      égale à 170/170. » La rédaction de 2023 lui demande soixante ans et
+      trois mois, et 170 trimestres cotisés.
+    carriere: {naissance: "1963-10-13", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2023-11", debut: "1981-07", nombre_enfants: 1}
+    attendu: {trimestres_requis: 170, motif_ouverture: carriere_longue, liquidation_ouverte: true, taux_liquidation: 0.5, pension_base_sur_sam: 0.5}
+
+  - id: cnav_2023_14_sauvegarde_1963_avpf
+    source: {editeur: "Cnav", reference: "circulaire 2023-14 du 10 juillet 2023, point 9.2, exemple 3", verifie_le: "2026-11-20"}
+    enonce: >-
+      « Assurée née le 4/02/1963. Elle réunit uniquement 164 trimestres cotisés
+      au titre de son activité au 30/06/2023 et 4 trimestres d'AVPF. Elle
+      demande une RACL à effet du 1/10/2023, à 60 ans et 7 mois. Elle ne
+      pourra pas bénéficier de la clause de sauvegarde au 01/10/2023. Ses
+      droits au 1/10/2023 doivent être étudiés compte tenu des conditions
+      applicables à compter du 1er septembre 2023 » : 170 trimestres, qu'elle
+      n'a pas, l'AVPF comprise.
+    carriere: {naissance: "1963-02-04", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2023-10", debut: "1981-01", nombre_enfants: 1, interruptions: {1990: education_enfant, 2023: sans_activite}}
+    attendu: {trimestres_requis: 170, motif_ouverture: non_ouverte, liquidation_ouverte: false}
+
   # ---- Cnav, circulaire 2026-07 du 5 mars 2026, point 2.1 ----------------
   # Le revers de la date d'effet : avant le 1er septembre 2026, la durée de la
   # loi de 2023 demeure. Deux départs anticipés de ces générations, avant cette

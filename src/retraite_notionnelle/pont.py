@@ -3269,7 +3269,8 @@ CONSTANTES_DE_LA_FACADE: dict[str, tuple[str, ...]] = {
     # sous les mêmes noms (action 161, troisième lot de la suppression).
     "categories": ("AGE_LEGAL", "FICHES_DES_CATEGORIES", "FICHE_DES_ANCIENS_COMBATTANTS",
                    "FICHE_DES_DEPORTES", "FICHE_DES_MERES_OUVRIERES",
-                   "FICHE_DES_SOIXANTE_CINQ_ANS", "FICHE_DES_TRAVAILLEURS_MANUELS"),
+                   "FICHE_DES_SOIXANTE_CINQ_ANS", "FICHE_DES_TRAVAILLEURS_MANUELS",
+                   "FICHE_DE_LA_CARRIERE_LONGUE"),
     "completer": ("FICHE_DES_ENFANTS_A_CHARGE", "FICHE_DU_CONJOINT", "FICHE_DU_PLAFOND_L18",
                   "FICHE_DU_VERSEMENT_AGIRC_ARRCO", "FICHE_DU_VERSEMENT_FORFAITAIRE",
                   "FICHE_DU_VERSEMENT_IRCANTEC", "FICHE_DU_VERSEMENT_RCI",

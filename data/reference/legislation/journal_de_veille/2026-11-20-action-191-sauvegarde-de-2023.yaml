@@ -1,0 +1,34 @@
+date: "2026-11-20"
+session: "action 191 : la clause de sauvegarde de la carrière longue de 2023, appliquée en entier"
+consulte: >-
+  L'index du Journal officiel du dépôt, à jour au 16 novembre 2026 : le décret
+  n° 2023-436 du 3 juin 2023, articles 7, 8 (JORFARTI000047625907) et 9
+  (JORFARTI000047625914). La circulaire Cnav 2023-14 du 10 juillet 2023, lue
+  en entier dans le PDF de la base de législation de la Cnav
+  (sha256:a89060fe655625bcad2ff6e23428578797507ea3f42e2a796fd5303b07a36509),
+  points 4.2 et 9.2. L'index LEGI, à la même date : L. 351-8 du code de la
+  sécurité sociale (LEGIARTI000047452736, LEGIARTI000051289852), L. 634-2,
+  L. 14 et L. 25 bis du code des pensions (LEGIARTI000047452815,
+  LEGIARTI000048844775), L. 732-25 puis L. 732-24 du code rural
+  (LEGIARTI000047452862, LEGIARTI000053280317), L. 643-3, l'article 20 du
+  décret n° 2003-1306 et l'article 16 du décret n° 2004-1056, leurs articles
+  26-1 et 22 ter, l'article 16 de l'arrêté du 30 décembre 1970 de l'Ircantec.
+  L'index KALI au 13 novembre 2026 : les articles 84 et 85 de l'accord
+  Agirc-Arrco du 17 novembre 2017.
+trouve: >-
+  La clause de l'article 8 garde l'âge des rédactions d'avant aux nés du
+  1er septembre 1961 au 31 décembre 1963 qui en avaient la durée avant le
+  1er septembre 2023 ; la pension est au taux plein (L. 351-8, 4° ter ; L. 14
+  du code des pensions ; L. 732-25 du code rural), proratisée sur la durée de
+  la loi de 2023, et la complémentaire suit le taux plein. Le moteur disait
+  le droit non ouvert, au taux de 49,375 % pour l'exemple 1 de la circulaire.
+  Écrit : deux fiches, carriere_longue_sauvegarde_de_2023 et
+  taux_plein_carriere_longue, que le moteur lit par leurs versions ; les trois
+  exemples de la circulaire entrent aux exemples officiels. Détail :
+  docs/feuille_de_route/191/2026-11-20-sauvegarde-de-2023.md.
+reste: >-
+  Ce que la CNRACL et le fonds des ouvriers de l'État font de la clause et du
+  coefficient de minoration : leurs décrets ne reprennent pas la phrase de
+  L. 14, et aucune instruction de la CNRACL n'a été lue. Le versement pour la
+  retraite au titre de l'apprentissage, que la circulaire écarte de la durée
+  acquise, n'est pas une période du modèle.

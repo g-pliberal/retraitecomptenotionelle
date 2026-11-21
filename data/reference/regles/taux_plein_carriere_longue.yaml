@@ -1,0 +1,174 @@
+schema_version: 1
+id: taux_plein_carriere_longue
+intitule: >-
+  La pension dont l'âge est abaissé pour carrière longue est servie au taux plein, sans
+  coefficient de minoration, quelle que soit la durée d'assurance (L. 351-8, 4° ter ;
+  L. 14, I, du code des pensions ; L. 732-25 du code rural), pour les pensions prenant
+  effet à compter du 1er septembre 2023.
+domaine: decote_surcote
+regimes: [regime_general, msa_salaries, cancava, organic, rsi, fonction_publique_etat,
+  msa_non_salaries]
+etape: liquider_chaque_regime
+face: droit
+etat: conforme
+lit:
+- ce qui ouvre la liquidation, que dit « ouvrir le droit » (la carrière longue)
+- liquidation.date_effet
+ecrit:
+- le taux plein du régime, sans décote, que « liquider chaque régime » applique, celui
+  que le minimum contributif demande et celui que les complémentaires suivent
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le moteur
+# (droit/categories.js, `tauxPleinDeLaCarriereLongue`) lit : `existe` ; `regimes`, ceux
+# dont le texte écarte la décote de la pension que la carrière longue ouvre.
+versions:
+- id: avant_la_loi_du_14_avril_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000028498855, article: L. 351-8, en_vigueur: 2014-01-22, lu_le: 2026-11-20}
+  nee_de: LEGIARTI000028498855
+  bornes:
+    liquidation.date_effet: [null, 2023-09-01]
+  contenu:
+    droit: >-
+      L. 351-8, rédaction du 22 janvier 2014 au 1er septembre 2023 : aucun 4° ter. La
+      carrière longue demande la durée requise en durée cotisée, et la pension qu'elle
+      ouvre a le taux plein par sa durée
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    la circulaire Cnav n° 2023-14 du 10 juillet 2023, lue en entier le 20 novembre 2026 :
+    ses exemples sont tous des pensions prenant effet à compter du 1er septembre 2023
+- id: loi_du_14_avril_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047452736, article: L. 351-8, en_vigueur: 2023-09-01, lu_le: 2026-11-20}
+  - {id: LEGIARTI000051289852, article: L. 351-8, en_vigueur: 2025-02-28, lu_le: 2026-11-20}
+  - {id: LEGIARTI000036391466, article: L. 634-2, en_vigueur: 2018-01-01, lu_le: 2026-11-20}
+  - {id: LEGIARTI000048697333, article: L. 634-2, en_vigueur: 2023-12-28, lu_le: 2026-11-20}
+  - {id: LEGIARTI000047452815, article: "L. 14 du code des pensions civiles et militaires de retraite", en_vigueur: 2023-09-01, lu_le: 2026-11-20}
+  - {id: LEGIARTI000048844775, article: "L. 14 du code des pensions civiles et militaires de retraite", en_vigueur: 2023-12-31, lu_le: 2026-11-20}
+  - {id: LEGIARTI000047452862, article: "L. 732-25 du code rural et de la pêche maritime", en_vigueur: 2023-09-01, lu_le: 2026-11-20}
+  - {id: LEGIARTI000053280317, article: "L. 732-24 du code rural et de la pêche maritime", en_vigueur: 2026-01-01, lu_le: 2026-11-20}
+  - {id: LEGIARTI000048065521, article: "arrêté du 30 décembre 1970, article 16", en_vigueur: 2023-09-14, lu_le: 2026-11-20}
+  - {id: KALIARTI000036731926, article: "accord national interprofessionnel du 17 novembre 2017, article 84", en_vigueur: 2019-01-01, lu_le: 2026-11-20}
+  - {id: LEGIARTI000047985955, article: "décret n° 2003-1306, article 20", en_vigueur: 2023-09-01, lu_le: 2026-11-20}
+  - {id: LEGIARTI000054590030, article: "décret n° 2003-1306, article 20", en_vigueur: 2026-08-01, lu_le: 2026-11-20}
+  - {id: LEGIARTI000047985971, article: "décret n° 2004-1056, article 16", en_vigueur: 2023-09-01, lu_le: 2026-11-20}
+  - {id: LEGIARTI000054590056, article: "décret n° 2004-1056, article 16", en_vigueur: 2026-08-01, lu_le: 2026-11-20}
+  nee_de: LEGIARTI000047452736
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: >-
+      « Bénéficient du taux plein même s'ils ne justifient pas de la durée requise
+      d'assurance ou de périodes équivalentes dans le régime général et un ou plusieurs
+      autres régimes obligatoires : […] 4° ter Les assurés dont l'âge mentionné au même
+      premier alinéa est abaissé dans des conditions prévues à l'article L. 351-1-1 »
+      (L. 351-8, « pensions prenant effet à compter du 1er septembre 2023 ») ; « Le
+      coefficient de minoration n'est pas applicable aux assurés dont l'âge mentionné au
+      premier alinéa du 1° du I de l'article L. 24 du présent code est abaissé dans les
+      conditions prévues à l'article L. 25 bis » (L. 14, I, du code des pensions) ; « Le
+      coefficient de minoration n'est pas applicable aux assurés dont l'âge mentionné à
+      l'article L. 732-18 du présent code est abaissé dans les conditions prévues à
+      l'article L. 732-18-1 » (L. 732-25 du code rural, jusqu'au 31 décembre 2025) ; « Ce
+      coefficient n'est applicable ni aux assurés mentionnés à l'article L. 351-8 du code
+      de la sécurité sociale, sous réserve de l'exclusion » de son 4° (L. 732-24 du code
+      rural, depuis le 1er janvier 2026) ; « La retraite anticipée pour
+      carrière longue est obligatoirement calculée au taux plein de 50% » (circulaire
+      Cnav n° 2023-14, point 4.2)
+    beneficiaire: l'assuré dont la carrière longue ouvre la pension
+    parametres:
+      existe: true
+      regimes: [regime_general, msa_salaries, cancava, organic, rsi,
+        fonction_publique_etat, msa_non_salaries]
+  exemples:
+  - cnav_2023_14_sauvegarde_1962
+  - cnav_2023_14_sauvegarde_1963_octobre
+approximations:
+- version: [loi_du_14_avril_2023]
+  ecart: >-
+    Le III de l'article 20 du décret n° 2003-1306 (CNRACL) et le III de l'article 16 du
+    décret n° 2004-1056 (ouvriers de l'État), dans leurs rédactions du 1er septembre
+    2023 et suivantes, ne reprennent pas la phrase de L. 14 : le modèle garde à ces deux
+    régimes leur coefficient de minoration, qui ne joue que pour le départ sous la
+    clause de sauvegarde de 2023, sans la durée de la génération. La pratique de la
+    CNRACL n'a pas été lue.
+  effet: >-
+    1,25 % par trimestre manquant, un ou deux trimestres, sur la pension du
+    fonctionnaire territorial ou hospitalier parti sous la clause de sauvegarde
+- version: [loi_du_14_avril_2023]
+  ecart: >-
+    Le régime de base des professions libérales (L. 643-3, II) n'est pas lu ici : la
+    clause de sauvegarde de 2023 ne nomme pas ses articles, et la carrière longue y
+    demande la durée de la génération.
+  effet: aucun connu
+sources:
+  lu_le: 2026-11-20
+  prochaine_relecture: 2027-05-31
+  a_relire:
+  - >-
+    Lire si la CNRACL et le fonds des ouvriers de l'État servent sans coefficient de
+    minoration la pension que la carrière longue ouvre : leurs décrets ne l'écrivent
+    pas, L. 14 du code des pensions l'écrit pour les fonctionnaires de l'État.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 351-8 CSS, rédaction du 1er septembre 2023 (LEGIARTI000047452736), 4° ter, et
+      la précédente (LEGIARTI000028498855), sans lui ; L. 14 du code des pensions,
+      rédaction du 1er septembre 2023 (LEGIARTI000047452815) ; L. 732-25 du code rural,
+      rédaction du 1er septembre 2023 (LEGIARTI000047452862), abrogé le 1er janvier
+      2026, où L. 732-24 (LEGIARTI000053280317) renvoie à L. 351-8 ; L. 351-8 du 28
+      février 2025 (LEGIARTI000051289852) et L. 14 du 31 décembre 2023
+      (LEGIARTI000048844775) gardent la phrase mot pour mot ; L. 634-2 CSS
+      (LEGIARTI000036391466), qui rend les chapitres Ier à V du titre V du livre III
+      applicables aux artisans et aux commerçants ; lus dans l'index LEGI du 16
+      novembre 2026
+    date: 2023-09-01
+  - type: legifrance
+    reference: >-
+      décret n° 2003-1306, article 20, III, rédaction du 1er septembre 2023
+      (LEGIARTI000047985955) et du 1er août 2026 (LEGIARTI000054590030) ; décret
+      n° 2004-1056, article 16, III, rédaction du 1er septembre 2023
+      (LEGIARTI000047985971) : ni l'un ni l'autre n'écarte le coefficient de minoration
+      de la pension de la carrière longue
+    date: 2023-09-01
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2023-14 du 10 juillet 2023, points 4.2 et 9.2 ; copie du 20
+      novembre 2026,
+      sha256:a89060fe655625bcad2ff6e23428578797507ea3f42e2a796fd5303b07a36509
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2023_14_10072023.pdf
+    date: 2023-07-10
+  - type: autre
+    reference: >-
+      accord national interprofessionnel du 17 novembre 2017 (Agirc-Arrco), article 84,
+      3 (KALIARTI000036731926) : la pension est servie sans coefficient « à l'âge auquel
+      il a obtenu la pension d'assurance vieillesse du régime général ou du régime des
+      assurances sociales agricoles à taux plein » ; arrêté du 30 décembre 1970
+      (Ircantec), article 16, I, 1°, a (LEGIARTI000048065521) : le coefficient n'est pas
+      applicable aux « agents et anciens agents admis à faire liquider leur retraite au
+      régime général en application de l'article L. 351-1-1 » ; lus dans les index KALI
+      du 13 novembre et LEGI du 16 novembre 2026
+    date: 2023-09-14
+code:
+  javascript: >-
+    moteur/js/droit/categories.js : tauxPleinDeLaCarriereLongue, tauxPleinParCategorie ;
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints,
+    abattementRegimeDeBase, eligibleAgricole
+  parametres: >-
+    contenu.parametres de chaque version : existe, regimes
+  tests: [tests/test_sauvegarde_de_2023.py, tests/test_oracle.py]
+  moteur: >-
+    Le paquet du site porte ses versions.
+historique:
+- >-
+  2026-11-20 — écrite avec la clause de sauvegarde de 2023 (fiche
+  carriere_longue_sauvegarde_de_2023), dont elle sert le taux.
+effet: >-
+  La pension que la clause de sauvegarde de 2023 ouvre sans la durée de la génération
+  est servie au taux plein : 50 % au lieu de 49,375 % pour un trimestre manquant, et sa
+  complémentaire sans coefficient d'anticipation. Les autres carrières longues ont déjà
+  la durée requise.
