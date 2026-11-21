@@ -1,0 +1,91 @@
+schema_version: 1
+id: grille_duree_requise_decembre_1942_au_1er_janvier_2003
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: duree_requise_par_generation
+  version: decembre_1942_au_1er_janvier_2003
+source:
+  auteur: session Claude indépendante, lancée le 21 novembre 2026 sans le code
+  reference: R. 351-45, I et III (LEGIARTI000006749450), R. 351-37, lus par la session indépendante
+    dans les index LEGI et JORF à jour au 16 novembre 2026
+  etabli_le: '2026-11-21'
+independance: 'Les valeurs ont été posées par une session lancée sans le code (Opus 5.5) : elle n''a
+  reçu que la consigne, la liste des cas (date de naissance, date d''effet) et des copies des index
+  LEGI et JORF de la DILA à jour au 16 novembre 2026, où elle a cherché elle-même ses textes, leurs
+  rédactions et leurs dispositions d''application ; elle a écrit son propre calcul et proposé 30 des
+  144 cas. Les 114 autres, sans valeur attendue, viennent de la session qui connaît le code. Un guetteur
+  (inotify) a journalisé les ouvertures sous les deux copies du dépôt pendant son passage : aucune
+  lecture de sa part, seulement le chargement des skills de Claude Code à son démarrage. Sur huit
+  cas, la lecture retenue est celle de la caisse, que l''énoncé chiffre avec la sienne ; trois cas
+  que ni le texte ni une pratique connue ne tranchent sont hors grille.'
+seuils:
+- 'date d''effet : le 1er janvier 2003 seul'
+- 'naissance : 30 novembre, 1er et 31 décembre 1942, 1er janvier 1943'
+cas:
+- id: grille_duree_requise_decembre_1942_au_1er_janvier_2003_c024
+  enonce: 'Né le 1942-12-01, pension du régime général prenant effet le 2003-01-01 : la session indépendante
+    lit 159 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 (III).'
+  carriere:
+    naissance: '1942-12-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 159
+- id: grille_duree_requise_decembre_1942_au_1er_janvier_2003_c025
+  enonce: 'Né le 1942-12-31, pension du régime général prenant effet le 2003-01-01 : la session indépendante
+    lit 159 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 (III).'
+  carriere:
+    naissance: '1942-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 159
+- id: grille_duree_requise_decembre_1942_au_1er_janvier_2003_c026
+  enonce: 'Né le 1942-11-30, pension du régime général prenant effet le 2003-01-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 (I).'
+  carriere:
+    naissance: '1942-11-30'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_decembre_1942_au_1er_janvier_2003_c027
+  enonce: 'Né le 1943-01-01, pension du régime général prenant effet le 2003-01-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 (I).'
+  carriere:
+    naissance: '1943-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_decembre_1942_au_1er_janvier_2003_c028
+  enonce: 'Né le 1940-01-15, pension du régime général prenant effet le 2003-01-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 (I).'
+  carriere:
+    naissance: '1940-01-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_decembre_1942_au_1er_janvier_2003_c029
+  enonce: 'Né le 1934-05-05, pension du régime général prenant effet le 2003-01-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 (I).'
+  carriere:
+    naissance: '1934-05-05'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160

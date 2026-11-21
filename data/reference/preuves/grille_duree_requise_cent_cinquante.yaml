@@ -1,0 +1,111 @@
+schema_version: 1
+id: grille_duree_requise_cent_cinquante
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: duree_requise_par_generation
+  version: cent_cinquante
+source:
+  auteur: session Claude indépendante, lancée le 21 novembre 2026 sans le code
+  reference: R. 351-27 (LEGIARTI000006749434), article 70 du décret n° 45-179 et ordonnance n° 82-270,
+    article 9, lus par la session indépendante dans les index LEGI et JORF à jour au 16 novembre 2026
+  etabli_le: '2026-11-21'
+independance: 'Les valeurs ont été posées par une session lancée sans le code (Opus 5.5) : elle n''a
+  reçu que la consigne, la liste des cas (date de naissance, date d''effet) et des copies des index
+  LEGI et JORF de la DILA à jour au 16 novembre 2026, où elle a cherché elle-même ses textes, leurs
+  rédactions et leurs dispositions d''application ; elle a écrit son propre calcul et proposé 30 des
+  144 cas. Les 114 autres, sans valeur attendue, viennent de la session qui connaît le code. Un guetteur
+  (inotify) a journalisé les ouvertures sous les deux copies du dépôt pendant son passage : aucune
+  lecture de sa part, seulement le chargement des skills de Claude Code à son démarrage. Sur huit
+  cas, la lecture retenue est celle de la caisse, que l''énoncé chiffre avec la sienne ; trois cas
+  que ni le texte ni une pratique connue ne tranchent sont hors grille.'
+seuils:
+- 'date d''effet : avant et depuis le 1er avril 1983 (ordonnance n° 82-270)'
+- 'date d''effet : le 1er août 1993, veille de la rédaction de R. 351-45 du 28 août 1993'
+- 'naissance : décembre 1933, la dernière génération à 150 trimestres dans toutes les versions'
+cas:
+- id: grille_duree_requise_cent_cinquante_c001
+  enonce: 'Né le 1920-05-14, pension du régime général prenant effet le 1980-06-01 : la session indépendante
+    lit 150 trimestres. Fondement qu''elle relève : LEGIARTI000006760656. Sa remarque : À la lettre,
+    aucune durée ne donne alors le taux plein sans condition d''âge : 150 trimestres donnent une pension
+    entière de 25 % à 60 ans, +5 points par an, 50 % à 65 ans seulement (art. 70 du décret 45-179,
+    version 1973). 150 retenu comme durée de référence ; autre lecture : aucune valeur (taux plein
+    à 65 ans seulement).'
+  carriere:
+    naissance: '1920-05-14'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1980-06
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 150
+- id: grille_duree_requise_cent_cinquante_c002
+  enonce: 'Né le 1925-01-01, pension du régime général prenant effet le 1985-02-01 : la session indépendante
+    lit 150 trimestres. Fondement qu''elle relève : LEGIARTI000006760657 ; LEGIARTI000006275868.'
+  carriere:
+    naissance: '1925-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1985-02
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 150
+- id: grille_duree_requise_cent_cinquante_c003
+  enonce: 'Né le 1930-07-10, pension du régime général prenant effet le 1990-08-01 : la session indépendante
+    lit 150 trimestres. Fondement qu''elle relève : LEGIARTI000006749434.'
+  carriere:
+    naissance: '1930-07-10'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1990-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 150
+- id: grille_duree_requise_cent_cinquante_p001
+  enonce: 'Né le 1933-12-31, pension du régime général prenant effet le 1983-03-01 : la session indépendante
+    lit 150 trimestres. Fondement qu''elle relève : LEGIARTI000006760656. Sa remarque : À la lettre,
+    aucune durée ne donne alors le taux plein sans condition d''âge : 150 trimestres donnent une pension
+    entière de 25 % à 60 ans, +5 points par an, 50 % à 65 ans seulement (art. 70 du décret 45-179,
+    version 1973). 150 retenu comme durée de référence ; autre lecture : aucune valeur (taux plein
+    à 65 ans seulement).'
+  carriere:
+    naissance: '1933-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1983-03
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 150
+- id: grille_duree_requise_cent_cinquante_p002
+  enonce: 'Né le 1923-04-01, pension du régime général prenant effet le 1983-04-01 : la session indépendante
+    lit 150 trimestres. Fondement qu''elle relève : LEGIARTI000006760657 ; LEGIARTI000006275868.'
+  carriere:
+    naissance: '1923-04-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1983-04
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 150
+- id: grille_duree_requise_cent_cinquante_p003
+  enonce: 'Né le 1925-06-01, pension du régime général prenant effet le 1985-12-01 : la session indépendante
+    lit 150 trimestres. Fondement qu''elle relève : LEGIARTI000006760657 ; LEGIARTI000006275868.'
+  carriere:
+    naissance: '1925-06-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1985-12
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 150
+- id: grille_duree_requise_cent_cinquante_p004
+  enonce: 'Né le 1933-05-05, pension du régime général prenant effet le 1993-08-01 : la session indépendante
+    lit 150 trimestres. Fondement qu''elle relève : LEGIARTI000006749434.'
+  carriere:
+    naissance: '1933-05-05'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1993-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 150

@@ -1,0 +1,385 @@
+schema_version: 1
+id: grille_duree_requise_loi_de_2003
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: duree_requise_par_generation
+  version: loi_de_2003
+source:
+  auteur: session Claude indépendante, lancée le 21 novembre 2026 sans le code
+  reference: R. 351-27 (LEGIARTI000020082993, LEGIARTI000024113020), loi n° 2003-775, article 5, décrets
+    n° 2010-1734 (article 9), 2011-916, 2012-1487, 2013-1155, lus par la session indépendante dans
+    les index LEGI et JORF à jour au 16 novembre 2026
+  etabli_le: '2026-11-21'
+independance: 'Les valeurs ont été posées par une session lancée sans le code (Opus 5.5) : elle n''a
+  reçu que la consigne, la liste des cas (date de naissance, date d''effet) et des copies des index
+  LEGI et JORF de la DILA à jour au 16 novembre 2026, où elle a cherché elle-même ses textes, leurs
+  rédactions et leurs dispositions d''application ; elle a écrit son propre calcul et proposé 30 des
+  144 cas. Les 114 autres, sans valeur attendue, viennent de la session qui connaît le code. Un guetteur
+  (inotify) a journalisé les ouvertures sous les deux copies du dépôt pendant son passage : aucune
+  lecture de sa part, seulement le chargement des skills de Claude Code à son démarrage. Sur huit
+  cas, la lecture retenue est celle de la caisse, que l''énoncé chiffre avec la sienne ; trois cas
+  que ni le texte ni une pratique connue ne tranchent sont hors grille.'
+seuils:
+- 'date d''effet : 1er janvier 2009, 1er janvier 2011 (décret n° 2010-1734), juin, juillet, août et
+  septembre 2011 (décret n° 2011-916 et circulaire Cnav 2011/25), décembre 2012 et janvier 2013 (décret
+  n° 2012-1487), décembre 2013 et janvier 2014 (décret n° 2013-1155)'
+- 'naissance : 31 décembre 1948 et 1er janvier 1949, chaque génération de 1949 à 1957'
+cas:
+- id: grille_duree_requise_loi_de_2003_c038
+  enonce: 'Né le 1948-12-31, pension du régime général prenant effet le 2009-01-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000020082993 ; LEGIARTI000006758543.'
+  carriere:
+    naissance: '1948-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2009-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_loi_de_2003_c039
+  enonce: 'Né le 1949-01-01, pension du régime général prenant effet le 2009-01-01 : la session indépendante
+    lit 161 trimestres. Fondement qu''elle relève : LEGIARTI000006758543 ; LEGIARTI000020082993.'
+  carriere:
+    naissance: '1949-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2009-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 161
+- id: grille_duree_requise_loi_de_2003_c040
+  enonce: 'Né le 1949-12-31, pension du régime général prenant effet le 2010-01-01 : la session indépendante
+    lit 161 trimestres. Fondement qu''elle relève : LEGIARTI000020627929 ; LEGIARTI000020082993.'
+  carriere:
+    naissance: '1949-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2010-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 161
+- id: grille_duree_requise_loi_de_2003_c041
+  enonce: 'Né le 1950-06-15, pension du régime général prenant effet le 2010-07-01 : la session indépendante
+    lit 162 trimestres. Fondement qu''elle relève : LEGIARTI000020627929 ; LEGIARTI000020082993.'
+  carriere:
+    naissance: '1950-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2010-07
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 162
+- id: grille_duree_requise_loi_de_2003_c042
+  enonce: 'Né le 1951-06-30, pension du régime général prenant effet le 2011-06-01 : la session indépendante
+    lit 163 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000020082993.'
+  carriere:
+    naissance: '1951-06-30'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-06
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 163
+- id: grille_duree_requise_loi_de_2003_c043
+  enonce: 'Né le 1951-07-01, pension du régime général prenant effet le 2011-07-01 : la session indépendante
+    lit 163 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1951-07-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-07
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 163
+- id: grille_duree_requise_loi_de_2003_c044
+  enonce: 'Né le 1952-01-01, pension du régime général prenant effet le 2012-01-01 : la session indépendante
+    lit 164 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1952-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2012-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 164
+- id: grille_duree_requise_loi_de_2003_c045
+  enonce: 'Né le 1952-12-31, pension du régime général prenant effet le 2013-01-01 : la session indépendante
+    lit 164 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1952-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2013-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 164
+- id: grille_duree_requise_loi_de_2003_c046
+  enonce: 'Né le 1953-01-15, pension du régime général prenant effet le 2010-12-01 : la session indépendante
+    lit 164 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000020082993. Sa
+    remarque : Aucun texte en vigueur au 2010-12-01 ne fixe la durée de la génération 1953 ; retenu
+    : la dernière durée fixée, celle des nés jusqu''au 1952-12-31 (164) ; autre lecture : le texte
+    publié ensuite (LEGIARTI000023383430) donne 165.'
+  carriere:
+    naissance: '1953-01-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2010-12
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 164
+- id: grille_duree_requise_loi_de_2003_c047
+  enonce: 'Né le 1953-01-15, pension du régime général prenant effet le 2011-01-01 : la session indépendante
+    lit 165 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000023383430 ;
+    LEGIARTI000020082993. Lecture retenue : 164, celle de la caisse. La circulaire Cnav 2011/25 du
+    17 mars 2011 retient 164 ou 165 trimestres « selon que la date de demande [...] se situe avant
+    ou après le 1er janvier 2011 », et ne remet pas en cause les attestations d''avant 2011 « pour
+    des dates d''effet de pension jusqu''au 1er juin 2011 au plus tard » ; le modèle, qui n''a pas
+    la date de la demande, lit 164 jusqu''à cette date d''effet. Au texte seul (décret n° 2010-1734,
+    en vigueur le 1er janvier 2011), 165, la valeur de la session indépendante.'
+  carriere:
+    naissance: '1953-01-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 164
+- id: grille_duree_requise_loi_de_2003_c048
+  enonce: 'Né le 1953-01-15, pension du régime général prenant effet le 2011-05-01 : la session indépendante
+    lit 165 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000023383430 ;
+    LEGIARTI000020082993. Lecture retenue : 164, celle de la caisse. La circulaire Cnav 2011/25 du
+    17 mars 2011 retient 164 ou 165 trimestres « selon que la date de demande [...] se situe avant
+    ou après le 1er janvier 2011 », et ne remet pas en cause les attestations d''avant 2011 « pour
+    des dates d''effet de pension jusqu''au 1er juin 2011 au plus tard » ; le modèle, qui n''a pas
+    la date de la demande, lit 164 jusqu''à cette date d''effet. Au texte seul (décret n° 2010-1734,
+    en vigueur le 1er janvier 2011), 165, la valeur de la session indépendante.'
+  carriere:
+    naissance: '1953-01-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-05
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 164
+- id: grille_duree_requise_loi_de_2003_c049
+  enonce: 'Né le 1953-01-15, pension du régime général prenant effet le 2011-06-01 : la session indépendante
+    lit 165 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000023383430 ;
+    LEGIARTI000020082993. Lecture retenue : 164, celle de la caisse. La circulaire Cnav 2011/25 du
+    17 mars 2011 retient 164 ou 165 trimestres « selon que la date de demande [...] se situe avant
+    ou après le 1er janvier 2011 », et ne remet pas en cause les attestations d''avant 2011 « pour
+    des dates d''effet de pension jusqu''au 1er juin 2011 au plus tard » ; le modèle, qui n''a pas
+    la date de la demande, lit 164 jusqu''à cette date d''effet. Au texte seul (décret n° 2010-1734,
+    en vigueur le 1er janvier 2011), 165, la valeur de la session indépendante.'
+  carriere:
+    naissance: '1953-01-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-06
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 164
+- id: grille_duree_requise_loi_de_2003_c050
+  enonce: 'Né le 1953-01-15, pension du régime général prenant effet le 2011-07-01 : la session indépendante
+    lit 165 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000023383430 ;
+    LEGIARTI000024113020.'
+  carriere:
+    naissance: '1953-01-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-07
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 165
+- id: grille_duree_requise_loi_de_2003_c051
+  enonce: 'Né le 1953-07-07, pension du régime général prenant effet le 2013-04-01 : la session indépendante
+    lit 165 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000023383430 ;
+    LEGIARTI000024113020.'
+  carriere:
+    naissance: '1953-07-07'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2013-04
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 165
+- id: grille_duree_requise_loi_de_2003_c052
+  enonce: 'Né le 1954-12-31, pension du régime général prenant effet le 2014-01-01 : la session indépendante
+    lit 165 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000023383430 ;
+    LEGIARTI000024113020.'
+  carriere:
+    naissance: '1954-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2014-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 165
+- id: grille_duree_requise_loi_de_2003_c053
+  enonce: 'Né le 1955-01-01, pension du régime général prenant effet le 2011-07-01 : la session indépendante
+    lit 165 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000023383430 ;
+    LEGIARTI000024113020. Sa remarque : Aucun texte en vigueur au 2011-07-01 ne fixe la durée de la
+    génération 1955 ; retenu : la dernière durée fixée, celle des nés jusqu''au 1954-12-31 (165) ;
+    autre lecture : le texte publié ensuite (LEGIARTI000024424403) donne 166.'
+  carriere:
+    naissance: '1955-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-07
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 165
+- id: grille_duree_requise_loi_de_2003_c054
+  enonce: 'Né le 1955-01-01, pension du régime général prenant effet le 2011-08-01 : la session indépendante
+    lit 165 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000023383430 ;
+    LEGIARTI000024113020. Sa remarque : Aucun texte en vigueur au 2011-08-01 ne fixe la durée de la
+    génération 1955 ; retenu : la dernière durée fixée, celle des nés jusqu''au 1954-12-31 (165) ;
+    autre lecture : le texte publié ensuite (LEGIARTI000024424403) donne 166.'
+  carriere:
+    naissance: '1955-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 165
+- id: grille_duree_requise_loi_de_2003_c055
+  enonce: 'Né le 1955-01-01, pension du régime général prenant effet le 2011-09-01 : la session indépendante
+    lit 166 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000024424403 ;
+    LEGIARTI000024113020.'
+  carriere:
+    naissance: '1955-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 166
+- id: grille_duree_requise_loi_de_2003_c056
+  enonce: 'Né le 1955-06-06, pension du régime général prenant effet le 2013-06-01 : la session indépendante
+    lit 166 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000024424403 ;
+    LEGIARTI000024113020.'
+  carriere:
+    naissance: '1955-06-06'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2013-06
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 166
+- id: grille_duree_requise_loi_de_2003_c057
+  enonce: 'Né le 1956-01-01, pension du régime général prenant effet le 2012-12-01 : la session indépendante
+    lit 166 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000024424403 ;
+    LEGIARTI000024113020. Sa remarque : Aucun texte en vigueur au 2012-12-01 ne fixe la durée de la
+    génération 1956 ; retenu : la dernière durée fixée, celle des nés jusqu''au 1955-12-31 (166) ;
+    le texte publié ensuite (LEGIARTI000026882922) donne la même valeur.'
+  carriere:
+    naissance: '1956-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2012-12
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 166
+- id: grille_duree_requise_loi_de_2003_c058
+  enonce: 'Né le 1956-01-01, pension du régime général prenant effet le 2013-01-01 : la session indépendante
+    lit 166 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000026882922 ;
+    LEGIARTI000024113020.'
+  carriere:
+    naissance: '1956-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2013-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 166
+- id: grille_duree_requise_loi_de_2003_c059
+  enonce: 'Né le 1957-03-03, pension du régime général prenant effet le 2013-12-01 : la session indépendante
+    lit 166 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000026882922 ;
+    LEGIARTI000024113020. Sa remarque : Aucun texte en vigueur au 2013-12-01 ne fixe la durée de la
+    génération 1957 ; retenu : la dernière durée fixée, celle des nés jusqu''au 1956-12-31 (166) ;
+    le texte publié ensuite (LEGIARTI000028324794) donne la même valeur.'
+  carriere:
+    naissance: '1957-03-03'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2013-12
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 166
+- id: grille_duree_requise_loi_de_2003_c060
+  enonce: 'Né le 1957-03-03, pension du régime général prenant effet le 2014-01-01 : la session indépendante
+    lit 166 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000028324794 ;
+    LEGIARTI000024113020.'
+  carriere:
+    naissance: '1957-03-03'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2014-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 166
+- id: grille_duree_requise_loi_de_2003_p013
+  enonce: 'Né le 1948-06-01, pension du régime général prenant effet le 2009-06-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000020082993 ; LEGIARTI000020627929.'
+  carriere:
+    naissance: '1948-06-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2009-06
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_loi_de_2003_p014
+  enonce: 'Né le 1951-12-31, pension du régime général prenant effet le 2012-01-01 : la session indépendante
+    lit 163 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1951-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2012-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 163
+- id: grille_duree_requise_loi_de_2003_p015
+  enonce: 'Né le 1952-12-31, pension du régime général prenant effet le 2010-12-01 : la session indépendante
+    lit 164 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000020082993.'
+  carriere:
+    naissance: '1952-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2010-12
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 164
+- id: grille_duree_requise_loi_de_2003_p016
+  enonce: 'Né le 1954-12-31, pension du régime général prenant effet le 2010-12-01 : la session indépendante
+    lit 164 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000020082993. Sa
+    remarque : Aucun texte en vigueur au 2010-12-01 ne fixe la durée de la génération 1954 ; retenu
+    : la dernière durée fixée, celle des nés jusqu''au 1952-12-31 (164) ; autre lecture : le texte
+    publié ensuite (LEGIARTI000023383430) donne 165.'
+  carriere:
+    naissance: '1954-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2010-12
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 164
+- id: grille_duree_requise_loi_de_2003_p017
+  enonce: 'Né le 1953-01-01, pension du régime général prenant effet le 2011-01-01 : la session indépendante
+    lit 165 trimestres. Fondement qu''elle relève : LEGIARTI000023030932 ; LEGIARTI000023383430 ;
+    LEGIARTI000020082993. Lecture retenue : 164, celle de la caisse. La circulaire Cnav 2011/25 du
+    17 mars 2011 retient 164 ou 165 trimestres « selon que la date de demande [...] se situe avant
+    ou après le 1er janvier 2011 », et ne remet pas en cause les attestations d''avant 2011 « pour
+    des dates d''effet de pension jusqu''au 1er juin 2011 au plus tard » ; le modèle, qui n''a pas
+    la date de la demande, lit 164 jusqu''à cette date d''effet. Au texte seul (décret n° 2010-1734,
+    en vigueur le 1er janvier 2011), 165, la valeur de la session indépendante.'
+  carriere:
+    naissance: '1953-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2011-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 164

@@ -1,0 +1,214 @@
+schema_version: 1
+id: grille_duree_requise_cent_soixante
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: duree_requise_par_generation
+  version: cent_soixante
+source:
+  auteur: session Claude indépendante, lancée le 21 novembre 2026 sans le code
+  reference: R. 351-45, I (LEGIARTI000006749450), R. 351-27 (LEGIARTI000006749436), loi n° 2003-775,
+    article 5, lus par la session indépendante dans les index LEGI et JORF à jour au 16 novembre 2026
+  etabli_le: '2026-11-21'
+independance: 'Les valeurs ont été posées par une session lancée sans le code (Opus 5.5) : elle n''a
+  reçu que la consigne, la liste des cas (date de naissance, date d''effet) et des copies des index
+  LEGI et JORF de la DILA à jour au 16 novembre 2026, où elle a cherché elle-même ses textes, leurs
+  rédactions et leurs dispositions d''application ; elle a écrit son propre calcul et proposé 30 des
+  144 cas. Les 114 autres, sans valeur attendue, viennent de la session qui connaît le code. Un guetteur
+  (inotify) a journalisé les ouvertures sous les deux copies du dépôt pendant son passage : aucune
+  lecture de sa part, seulement le chargement des skills de Claude Code à son démarrage. Sur huit
+  cas, la lecture retenue est celle de la caisse, que l''énoncé chiffre avec la sienne ; trois cas
+  que ni le texte ni une pratique connue ne tranchent sont hors grille.'
+seuils:
+- 'date d''effet : 1er février 2003, 1er décembre 2008'
+- 'naissance : décembre 1942, 1934 à 1950 (les nés à compter de 1949 partis avant 2009)'
+cas:
+- id: grille_duree_requise_cent_soixante_c030
+  enonce: 'Né le 1942-12-31, pension du régime général prenant effet le 2003-02-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 (I).'
+  carriere:
+    naissance: '1942-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-02
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_cent_soixante_c031
+  enonce: 'Né le 1940-01-15, pension du régime général prenant effet le 2003-02-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 (I).'
+  carriere:
+    naissance: '1940-01-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-02
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_cent_soixante_c032
+  enonce: 'Né le 1934-05-05, pension du régime général prenant effet le 2003-02-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 (I).'
+  carriere:
+    naissance: '1934-05-05'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-02
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_cent_soixante_c033
+  enonce: 'Né le 1943-06-06, pension du régime général prenant effet le 2003-07-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 (I).'
+  carriere:
+    naissance: '1943-06-06'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-07
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_cent_soixante_c034
+  enonce: 'Né le 1945-09-09, pension du régime général prenant effet le 2005-10-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000006749436 ; LEGIARTI000006749450 (I)
+    ; LEGIARTI000006758542.'
+  carriere:
+    naissance: '1945-09-09'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2005-10
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_cent_soixante_c035
+  enonce: 'Né le 1948-12-31, pension du régime général prenant effet le 2008-12-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000006749436 ; LEGIARTI000006749450 (I)
+    ; LEGIARTI000006758543.'
+  carriere:
+    naissance: '1948-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2008-12
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_cent_soixante_c036
+  enonce: 'Né le 1949-01-01, pension du régime général prenant effet le 2008-12-01 : la session indépendante
+    lit 161 trimestres. Fondement qu''elle relève : LEGIARTI000006758543 ; LEGIARTI000006749436 ;
+    LEGIARTI000006749450 (I). Sa remarque : Conflit : R351-27 et R351-45 I en vigueur fixent 160 «
+    quelle que soit la date de naissance » ; la loi 2003-775 art. 5 (V et III) rattache la durée à
+    l''année des 60 ans. Retenu : la loi (161) ; à la lettre du décret : 160. Lecture retenue : 160,
+    celle de la caisse et du décret en vigueur à la date d''effet. R. 351-45, I (LEGIARTI000006749450)
+    : 160 trimestres « aux pensions prenant effet postérieurement au 31 décembre 2002, quelle que
+    soit la date de naissance » ; la circulaire Cnav 2008/41 (§ 211 et 213) ne fait évoluer la durée
+    qu''« à compter du 1er janvier 2009 », pour les « dates d''effet postérieures au 1er décembre
+    2008 ». La lecture de la session indépendante, le V de l''article 5 de la loi n° 2003-775 (la
+    durée en vigueur aux soixante ans), donnerait la valeur qu''elle rend ; une session Fable 5.2
+    consultée le 21 novembre 2026 retient 160 (la durée des soixante ans n''était pas encore en vigueur).
+    Sans effet sur le taux d''une carrière longue, qui exigeait déjà 168 trimestres.'
+  carriere:
+    naissance: '1949-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2008-12
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_cent_soixante_c037
+  enonce: 'Né le 1950-06-15, pension du régime général prenant effet le 2008-12-01 : la session indépendante
+    lit 162 trimestres. Fondement qu''elle relève : LEGIARTI000006758543 ; LEGIARTI000006749436 ;
+    LEGIARTI000006749450 (I). Sa remarque : Conflit : R351-27 et R351-45 I en vigueur fixent 160 «
+    quelle que soit la date de naissance » ; la loi 2003-775 art. 5 (V et III) rattache la durée à
+    l''année des 60 ans. Retenu : la loi (162) ; à la lettre du décret : 160. Lecture retenue : 160,
+    celle de la caisse et du décret en vigueur à la date d''effet. R. 351-45, I (LEGIARTI000006749450)
+    : 160 trimestres « aux pensions prenant effet postérieurement au 31 décembre 2002, quelle que
+    soit la date de naissance » ; la circulaire Cnav 2008/41 (§ 211 et 213) ne fait évoluer la durée
+    qu''« à compter du 1er janvier 2009 », pour les « dates d''effet postérieures au 1er décembre
+    2008 ». La lecture de la session indépendante, le V de l''article 5 de la loi n° 2003-775 (la
+    durée en vigueur aux soixante ans), donnerait la valeur qu''elle rend ; une session Fable 5.2
+    consultée le 21 novembre 2026 retient 160 (la durée des soixante ans n''était pas encore en vigueur).
+    Sans effet sur le taux d''une carrière longue, qui exigeait déjà 168 trimestres.'
+  carriere:
+    naissance: '1950-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2008-12
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_cent_soixante_p008
+  enonce: 'Né le 1942-12-15, pension du régime général prenant effet le 2003-02-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 (I).'
+  carriere:
+    naissance: '1942-12-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-02
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_cent_soixante_p009
+  enonce: 'Né le 1942-12-01, pension du régime général prenant effet le 2003-02-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 (I).'
+  carriere:
+    naissance: '1942-12-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-02
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_cent_soixante_p010
+  enonce: 'Né le 1949-01-01, pension du régime général prenant effet le 2003-08-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 (I).'
+  carriere:
+    naissance: '1949-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_cent_soixante_p011
+  enonce: 'Né le 1949-01-01, pension du régime général prenant effet le 2003-09-01 : la session indépendante
+    lit 161 trimestres. Fondement qu''elle relève : LEGIARTI000006758542 ; LEGIARTI000006749435 ;
+    LEGIARTI000006749450 (I). Sa remarque : Conflit : R351-27 et R351-45 I en vigueur fixent 160 «
+    quelle que soit la date de naissance » ; la loi 2003-775 art. 5 (V et III) rattache la durée à
+    l''année des 60 ans. Retenu : la loi (161) ; à la lettre du décret : 160. Lecture retenue : 160,
+    celle de la caisse et du décret en vigueur à la date d''effet. R. 351-45, I (LEGIARTI000006749450)
+    : 160 trimestres « aux pensions prenant effet postérieurement au 31 décembre 2002, quelle que
+    soit la date de naissance » ; la circulaire Cnav 2008/41 (§ 211 et 213) ne fait évoluer la durée
+    qu''« à compter du 1er janvier 2009 », pour les « dates d''effet postérieures au 1er décembre
+    2008 ». La lecture de la session indépendante, le V de l''article 5 de la loi n° 2003-775 (la
+    durée en vigueur aux soixante ans), donnerait la valeur qu''elle rend ; une session Fable 5.2
+    consultée le 21 novembre 2026 retient 160 (la durée des soixante ans n''était pas encore en vigueur).
+    Sans effet sur le taux d''une carrière longue, qui exigeait déjà 168 trimestres.'
+  carriere:
+    naissance: '1949-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2003-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_cent_soixante_p012
+  enonce: 'Né le 1949-06-01, pension du régime général prenant effet le 2008-06-01 : la session indépendante
+    lit 161 trimestres. Fondement qu''elle relève : LEGIARTI000006758543 ; LEGIARTI000006749436 ;
+    LEGIARTI000006749450 (I). Sa remarque : Conflit : R351-27 et R351-45 I en vigueur fixent 160 «
+    quelle que soit la date de naissance » ; la loi 2003-775 art. 5 (V et III) rattache la durée à
+    l''année des 60 ans. Retenu : la loi (161) ; à la lettre du décret : 160. Lecture retenue : 160,
+    celle de la caisse et du décret en vigueur à la date d''effet. R. 351-45, I (LEGIARTI000006749450)
+    : 160 trimestres « aux pensions prenant effet postérieurement au 31 décembre 2002, quelle que
+    soit la date de naissance » ; la circulaire Cnav 2008/41 (§ 211 et 213) ne fait évoluer la durée
+    qu''« à compter du 1er janvier 2009 », pour les « dates d''effet postérieures au 1er décembre
+    2008 ». La lecture de la session indépendante, le V de l''article 5 de la loi n° 2003-775 (la
+    durée en vigueur aux soixante ans), donnerait la valeur qu''elle rend ; une session Fable 5.2
+    consultée le 21 novembre 2026 retient 160 (la durée des soixante ans n''était pas encore en vigueur).
+    Sans effet sur le taux d''une carrière longue, qui exigeait déjà 168 trimestres.'
+  carriere:
+    naissance: '1949-06-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2008-06
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160

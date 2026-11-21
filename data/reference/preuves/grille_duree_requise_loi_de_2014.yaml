@@ -1,0 +1,261 @@
+schema_version: 1
+id: grille_duree_requise_loi_de_2014
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: duree_requise_par_generation
+  version: loi_de_2014
+source:
+  auteur: session Claude indépendante, lancée le 21 novembre 2026 sans le code
+  reference: L. 161-17-3 (LEGIARTI000028494794), loi n° 2014-40, article 2, lus par la session indépendante
+    dans les index LEGI et JORF à jour au 16 novembre 2026
+  etabli_le: '2026-11-21'
+independance: 'Les valeurs ont été posées par une session lancée sans le code (Opus 5.5) : elle n''a
+  reçu que la consigne, la liste des cas (date de naissance, date d''effet) et des copies des index
+  LEGI et JORF de la DILA à jour au 16 novembre 2026, où elle a cherché elle-même ses textes, leurs
+  rédactions et leurs dispositions d''application ; elle a écrit son propre calcul et proposé 30 des
+  144 cas. Les 114 autres, sans valeur attendue, viennent de la session qui connaît le code. Un guetteur
+  (inotify) a journalisé les ouvertures sous les deux copies du dépôt pendant son passage : aucune
+  lecture de sa part, seulement le chargement des skills de Claude Code à son démarrage. Sur huit
+  cas, la lecture retenue est celle de la caisse, que l''énoncé chiffre avec la sienne ; trois cas
+  que ni le texte ni une pratique connue ne tranchent sont hors grille.'
+seuils:
+- 'date d''effet : 1er février 2014, 1er août 2023'
+- 'naissance : 1958, 31 décembre 1960 et 1er janvier 1961, 31 août et 1er septembre 1961, 1963 et
+  1964, 1966 et 1967, 1969 et 1970, 1972 et 1973'
+- les générations d'avant 1958, que la loi laisse aux textes antérieurs
+cas:
+- id: grille_duree_requise_loi_de_2014_c063
+  enonce: 'Né le 1958-01-01, pension du régime général prenant effet le 2014-02-01 : la session indépendante
+    lit 167 trimestres. Fondement qu''elle relève : LEGIARTI000028494794 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1958-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2014-02
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 167
+- id: grille_duree_requise_loi_de_2014_c064
+  enonce: 'Né le 1952-06-06, pension du régime général prenant effet le 2014-06-01 : la session indépendante
+    lit 164 trimestres. Fondement qu''elle relève : LEGIARTI000028498270 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1952-06-06'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2014-06
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 164
+- id: grille_duree_requise_loi_de_2014_c065
+  enonce: 'Né le 1953-09-09, pension du régime général prenant effet le 2015-10-01 : la session indépendante
+    lit 165 trimestres. Fondement qu''elle relève : LEGIARTI000028498270 ; LEGIARTI000023383430 ;
+    LEGIARTI000024113020.'
+  carriere:
+    naissance: '1953-09-09'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2015-10
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 165
+- id: grille_duree_requise_loi_de_2014_c066
+  enonce: 'Né le 1955-12-31, pension du régime général prenant effet le 2017-01-01 : la session indépendante
+    lit 166 trimestres. Fondement qu''elle relève : LEGIARTI000033714337 ; LEGIARTI000024424403 ;
+    LEGIARTI000024113020.'
+  carriere:
+    naissance: '1955-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2017-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 166
+- id: grille_duree_requise_loi_de_2014_c067
+  enonce: 'Né le 1957-07-07, pension du régime général prenant effet le 2019-08-01 : la session indépendante
+    lit 166 trimestres. Fondement qu''elle relève : LEGIARTI000033714337 ; LEGIARTI000028324794 ;
+    LEGIARTI000024113020.'
+  carriere:
+    naissance: '1957-07-07'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2019-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 166
+- id: grille_duree_requise_loi_de_2014_c068
+  enonce: 'Né le 1960-12-31, pension du régime général prenant effet le 2023-08-01 : la session indépendante
+    lit 167 trimestres. Fondement qu''elle relève : LEGIARTI000028494794 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1960-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 167
+- id: grille_duree_requise_loi_de_2014_c069
+  enonce: 'Né le 1961-01-01, pension du régime général prenant effet le 2023-08-01 : la session indépendante
+    lit 168 trimestres. Fondement qu''elle relève : LEGIARTI000028494794 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1961-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 168
+- id: grille_duree_requise_loi_de_2014_c070
+  enonce: 'Né le 1961-08-31, pension du régime général prenant effet le 2023-08-01 : la session indépendante
+    lit 168 trimestres. Fondement qu''elle relève : LEGIARTI000028494794 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1961-08-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 168
+- id: grille_duree_requise_loi_de_2014_c071
+  enonce: 'Né le 1961-09-01, pension du régime général prenant effet le 2023-08-01 : la session indépendante
+    lit 168 trimestres. Fondement qu''elle relève : LEGIARTI000028494794 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1961-09-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 168
+- id: grille_duree_requise_loi_de_2014_c072
+  enonce: 'Né le 1962-12-31, pension du régime général prenant effet le 2023-08-01 : la session indépendante
+    lit 168 trimestres. Fondement qu''elle relève : LEGIARTI000028494794 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1962-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 168
+- id: grille_duree_requise_loi_de_2014_c073
+  enonce: 'Né le 1963-12-31, pension du régime général prenant effet le 2023-08-01 : la session indépendante
+    lit 168 trimestres. Fondement qu''elle relève : LEGIARTI000028494794 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1963-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 168
+- id: grille_duree_requise_loi_de_2014_c074
+  enonce: 'Né le 1964-01-01, pension du régime général prenant effet le 2023-08-01 : la session indépendante
+    lit 169 trimestres. Fondement qu''elle relève : LEGIARTI000028494794 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1964-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 169
+- id: grille_duree_requise_loi_de_2014_c075
+  enonce: 'Né le 1966-12-31, pension du régime général prenant effet le 2023-08-01 : la session indépendante
+    lit 169 trimestres. Fondement qu''elle relève : LEGIARTI000028494794 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1966-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 169
+- id: grille_duree_requise_loi_de_2014_c076
+  enonce: 'Né le 1967-01-01, pension du régime général prenant effet le 2023-08-01 : la session indépendante
+    lit 170 trimestres. Fondement qu''elle relève : LEGIARTI000028494794 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1967-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 170
+- id: grille_duree_requise_loi_de_2014_c077
+  enonce: 'Né le 1969-12-31, pension du régime général prenant effet le 2023-08-01 : la session indépendante
+    lit 170 trimestres. Fondement qu''elle relève : LEGIARTI000028494794 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1969-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 170
+- id: grille_duree_requise_loi_de_2014_c078
+  enonce: 'Né le 1970-01-01, pension du régime général prenant effet le 2023-08-01 : la session indépendante
+    lit 171 trimestres. Fondement qu''elle relève : LEGIARTI000028494794 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1970-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 171
+- id: grille_duree_requise_loi_de_2014_c079
+  enonce: 'Né le 1972-12-31, pension du régime général prenant effet le 2023-08-01 : la session indépendante
+    lit 171 trimestres. Fondement qu''elle relève : LEGIARTI000028494794 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1972-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 171
+- id: grille_duree_requise_loi_de_2014_c080
+  enonce: 'Né le 1973-01-01, pension du régime général prenant effet le 2023-08-01 : la session indépendante
+    lit 172 trimestres. Fondement qu''elle relève : LEGIARTI000028494794 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1973-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 172
+- id: grille_duree_requise_loi_de_2014_c081
+  enonce: 'Né le 1948-04-04, pension du régime général prenant effet le 2018-05-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000024113020 ; LEGIARTI000033714337.'
+  carriere:
+    naissance: '1948-04-04'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2018-05
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_loi_de_2014_p019
+  enonce: 'Né le 1958-06-01, pension du régime général prenant effet le 2014-02-01 : la session indépendante
+    lit 167 trimestres. Fondement qu''elle relève : LEGIARTI000028494794 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1958-06-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2014-02
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 167
+- id: grille_duree_requise_loi_de_2014_p020
+  enonce: 'Né le 1966-12-31, pension du régime général prenant effet le 2023-08-01 : la session indépendante
+    lit 169 trimestres. Fondement qu''elle relève : LEGIARTI000028494794 ; LEGIARTI000024113020.'
+  carriere:
+    naissance: '1966-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2023-08
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 169

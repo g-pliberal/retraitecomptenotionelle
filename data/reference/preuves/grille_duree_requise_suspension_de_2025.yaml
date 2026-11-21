@@ -1,0 +1,248 @@
+schema_version: 1
+id: grille_duree_requise_suspension_de_2025
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: duree_requise_par_generation
+  version: suspension_de_2025
+source:
+  auteur: session Claude indépendante, lancée le 21 novembre 2026 sans le code
+  reference: L. 161-17-3 (LEGIARTI000053280903), loi n° 2025-1403, article 105, VI, lus par la session
+    indépendante dans les index LEGI et JORF à jour au 16 novembre 2026
+  etabli_le: '2026-11-21'
+independance: 'Les valeurs ont été posées par une session lancée sans le code (Opus 5.5) : elle n''a
+  reçu que la consigne, la liste des cas (date de naissance, date d''effet) et des copies des index
+  LEGI et JORF de la DILA à jour au 16 novembre 2026, où elle a cherché elle-même ses textes, leurs
+  rédactions et leurs dispositions d''application ; elle a écrit son propre calcul et proposé 30 des
+  144 cas. Les 114 autres, sans valeur attendue, viennent de la session qui connaît le code. Un guetteur
+  (inotify) a journalisé les ouvertures sous les deux copies du dépôt pendant son passage : aucune
+  lecture de sa part, seulement le chargement des skills de Claude Code à son démarrage. Sur huit
+  cas, la lecture retenue est celle de la caisse, que l''énoncé chiffre avec la sienne ; trois cas
+  que ni le texte ni une pratique connue ne tranchent sont hors grille.'
+seuils:
+- 'date d''effet : 1er septembre 2026 et au-delà'
+- 'naissance : 31 août et 1er septembre 1961, 1962, 1963, 31 mars et 1er avril 1965, 31 décembre 1965
+  et 1er janvier 1966, 1970, 1973'
+- les générations d'avant 1958 depuis le 1er janvier 2026, que R. 351-27 ne chiffre plus
+cas:
+- id: grille_duree_requise_suspension_de_2025_c100
+  enonce: 'Né le 1955-05-05, pension du régime général prenant effet le 2026-09-01 : la session indépendante
+    lit 166 trimestres. Fondement qu''elle relève : LEGIARTI000033714337 ; LEGIARTI000024424403 ;
+    LEGIARTI000054589995. Sa remarque : R351-27 (version 2026) ne renvoie qu''à L161-17-3, muet sur
+    les générations antérieures à 1958 ; la valeur vient de la loi 2003-775 art. 5 et de son décret,
+    toujours en vigueur.'
+  carriere:
+    naissance: '1955-05-05'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 166
+- id: grille_duree_requise_suspension_de_2025_c101
+  enonce: 'Né le 1960-12-31, pension du régime général prenant effet le 2026-09-01 : la session indépendante
+    lit 167 trimestres. Fondement qu''elle relève : LEGIARTI000053280903 ; JORFARTI000053227007 ;
+    LEGIARTI000054589995.'
+  carriere:
+    naissance: '1960-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 167
+- id: grille_duree_requise_suspension_de_2025_c102
+  enonce: 'Né le 1961-08-31, pension du régime général prenant effet le 2026-09-01 : la session indépendante
+    lit 168 trimestres. Fondement qu''elle relève : LEGIARTI000053280903 ; JORFARTI000053227007 ;
+    LEGIARTI000054589995.'
+  carriere:
+    naissance: '1961-08-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 168
+- id: grille_duree_requise_suspension_de_2025_c103
+  enonce: 'Né le 1961-09-01, pension du régime général prenant effet le 2026-09-01 : la session indépendante
+    lit 169 trimestres. Fondement qu''elle relève : LEGIARTI000053280903 ; JORFARTI000053227007 ;
+    LEGIARTI000054589995.'
+  carriere:
+    naissance: '1961-09-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 169
+- id: grille_duree_requise_suspension_de_2025_c104
+  enonce: 'Né le 1962-12-31, pension du régime général prenant effet le 2026-09-01 : la session indépendante
+    lit 169 trimestres. Fondement qu''elle relève : LEGIARTI000053280903 ; JORFARTI000053227007 ;
+    LEGIARTI000054589995.'
+  carriere:
+    naissance: '1962-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 169
+- id: grille_duree_requise_suspension_de_2025_c105
+  enonce: 'Né le 1963-01-01, pension du régime général prenant effet le 2026-09-01 : la session indépendante
+    lit 170 trimestres. Fondement qu''elle relève : LEGIARTI000053280903 ; JORFARTI000053227007 ;
+    LEGIARTI000054589995.'
+  carriere:
+    naissance: '1963-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 170
+- id: grille_duree_requise_suspension_de_2025_c106
+  enonce: 'Né le 1964-08-08, pension du régime général prenant effet le 2026-09-01 : la session indépendante
+    lit 170 trimestres. Fondement qu''elle relève : LEGIARTI000053280903 ; JORFARTI000053227007 ;
+    LEGIARTI000054589995.'
+  carriere:
+    naissance: '1964-08-08'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 170
+- id: grille_duree_requise_suspension_de_2025_c107
+  enonce: 'Né le 1965-03-31, pension du régime général prenant effet le 2026-09-01 : la session indépendante
+    lit 170 trimestres. Fondement qu''elle relève : LEGIARTI000053280903 ; JORFARTI000053227007 ;
+    LEGIARTI000054589995.'
+  carriere:
+    naissance: '1965-03-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 170
+- id: grille_duree_requise_suspension_de_2025_c108
+  enonce: 'Né le 1965-04-01, pension du régime général prenant effet le 2026-09-01 : la session indépendante
+    lit 171 trimestres. Fondement qu''elle relève : LEGIARTI000053280903 ; JORFARTI000053227007 ;
+    LEGIARTI000054589995.'
+  carriere:
+    naissance: '1965-04-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 171
+- id: grille_duree_requise_suspension_de_2025_c109
+  enonce: 'Né le 1965-12-31, pension du régime général prenant effet le 2026-09-01 : la session indépendante
+    lit 171 trimestres. Fondement qu''elle relève : LEGIARTI000053280903 ; JORFARTI000053227007 ;
+    LEGIARTI000054589995.'
+  carriere:
+    naissance: '1965-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 171
+- id: grille_duree_requise_suspension_de_2025_c110
+  enonce: 'Né le 1966-01-01, pension du régime général prenant effet le 2026-09-01 : la session indépendante
+    lit 172 trimestres. Fondement qu''elle relève : LEGIARTI000053280903 ; JORFARTI000053227007 ;
+    LEGIARTI000054589995.'
+  carriere:
+    naissance: '1966-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 172
+- id: grille_duree_requise_suspension_de_2025_c111
+  enonce: 'Né le 1968-02-02, pension du régime général prenant effet le 2027-03-01 : la session indépendante
+    lit 172 trimestres. Fondement qu''elle relève : LEGIARTI000053280903 ; JORFARTI000053227007 ;
+    LEGIARTI000054589995.'
+  carriere:
+    naissance: '1968-02-02'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2027-03
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 172
+- id: grille_duree_requise_suspension_de_2025_c112
+  enonce: 'Né le 1969-03-03, pension du régime général prenant effet le 2030-04-01 : la session indépendante
+    lit 172 trimestres. Fondement qu''elle relève : LEGIARTI000053280903 ; JORFARTI000053227007 ;
+    LEGIARTI000054589995.'
+  carriere:
+    naissance: '1969-03-03'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2030-04
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 172
+- id: grille_duree_requise_suspension_de_2025_c113
+  enonce: 'Né le 1973-04-04, pension du régime général prenant effet le 2035-05-01 : la session indépendante
+    lit 172 trimestres. Fondement qu''elle relève : LEGIARTI000053280903 ; JORFARTI000053227007 ;
+    LEGIARTI000054589995.'
+  carriere:
+    naissance: '1973-04-04'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2035-05
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 172
+- id: grille_duree_requise_suspension_de_2025_c114
+  enonce: 'Né le 1965-04-01, pension du régime général prenant effet le 2028-01-01 : la session indépendante
+    lit 171 trimestres. Fondement qu''elle relève : LEGIARTI000053280903 ; JORFARTI000053227007 ;
+    LEGIARTI000054589995.'
+  carriere:
+    naissance: '1965-04-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2028-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 171
+- id: grille_duree_requise_suspension_de_2025_p026
+  enonce: 'Né le 1965-01-01, pension du régime général prenant effet le 2026-09-01 : la session indépendante
+    lit 170 trimestres. Fondement qu''elle relève : LEGIARTI000053280903 ; JORFARTI000053227007 ;
+    LEGIARTI000054589995.'
+  carriere:
+    naissance: '1965-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 170
+- id: grille_duree_requise_suspension_de_2025_p027
+  enonce: 'Né le 1970-01-01, pension du régime général prenant effet le 2026-09-01 : la session indépendante
+    lit 172 trimestres. Fondement qu''elle relève : LEGIARTI000053280903 ; JORFARTI000053227007 ;
+    LEGIARTI000054589995.'
+  carriere:
+    naissance: '1970-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 172
+- id: grille_duree_requise_suspension_de_2025_p030
+  enonce: 'Né le 1940-01-15, pension du régime général prenant effet le 2026-09-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000054589995 ; LEGIARTI000033714337 ;
+    LEGIARTI000047633296. Sa remarque : Depuis le 1er janvier 2026, R351-27 ne renvoie plus qu''à
+    L161-17-3 (générations 1958 et suivantes) et a perdu la phrase « nés avant le 1er janvier 1949
+    : 160 » : aucun texte en vigueur ne chiffre plus cette génération ; 160 retenu (dernière valeur
+    écrite, R351-27 version 2023, et loi 2003-775 art. 5 I : 160 pour 2003-2007).'
+  carriere:
+    naissance: '1940-01-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2026-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160

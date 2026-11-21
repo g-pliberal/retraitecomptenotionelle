@@ -1,0 +1,307 @@
+schema_version: 1
+id: grille_duree_requise_escalier_de_1993
+sorte: grille_independante
+etage: regle
+parties:
+- fiche: duree_requise_par_generation
+  version: escalier_de_1993
+source:
+  auteur: session Claude indépendante, lancée le 21 novembre 2026 sans le code
+  reference: R. 351-27 (LEGIARTI000006749435) et R. 351-45, II (LEGIARTI000006749449, LEGIARTI000006749450),
+    décret n° 93-1022, lus par la session indépendante dans les index LEGI et JORF à jour au 16 novembre
+    2026
+  etabli_le: '2026-11-21'
+independance: 'Les valeurs ont été posées par une session lancée sans le code (Opus 5.5) : elle n''a
+  reçu que la consigne, la liste des cas (date de naissance, date d''effet) et des copies des index
+  LEGI et JORF de la DILA à jour au 16 novembre 2026, où elle a cherché elle-même ses textes, leurs
+  rédactions et leurs dispositions d''application ; elle a écrit son propre calcul et proposé 30 des
+  144 cas. Les 114 autres, sans valeur attendue, viennent de la session qui connaît le code. Un guetteur
+  (inotify) a journalisé les ouvertures sous les deux copies du dépôt pendant son passage : aucune
+  lecture de sa part, seulement le chargement des skills de Claude Code à son démarrage. Sur huit
+  cas, la lecture retenue est celle de la caisse, que l''énoncé chiffre avec la sienne ; trois cas
+  que ni le texte ni une pratique connue ne tranchent sont hors grille.'
+seuils:
+- 'date d''effet : 1er septembre 1993, 1er octobre 1993, 1er janvier 1994, 1er décembre 2002'
+- 'naissance : 31 décembre 1933 et 1er janvier 1934, chaque génération de 1934 à 1942, 1943'
+- 'naissance : 30 novembre et 1er décembre 1942'
+cas:
+- id: grille_duree_requise_escalier_de_1993_c004
+  enonce: 'Né le 1933-11-30, pension du régime général prenant effet le 1993-12-01 : la session indépendante
+    lit 150 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749449 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1933-11-30'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1993-12
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 150
+- id: grille_duree_requise_escalier_de_1993_c005
+  enonce: 'Né le 1933-12-01, pension du régime général prenant effet le 1993-12-01 : la session indépendante
+    lit 150 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749449 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1933-12-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1993-12
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 150
+- id: grille_duree_requise_escalier_de_1993_c006
+  enonce: 'Né le 1933-12-31, pension du régime général prenant effet le 1994-01-01 : la session indépendante
+    lit 150 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749449 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1933-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1994-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 150
+- id: grille_duree_requise_escalier_de_1993_c007
+  enonce: 'Né le 1933-06-15, pension du régime général prenant effet le 1994-01-01 : la session indépendante
+    lit 150 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749449 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1933-06-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1994-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 150
+- id: grille_duree_requise_escalier_de_1993_c008
+  enonce: 'Né le 1934-01-01, pension du régime général prenant effet le 1994-01-01 : la session indépendante
+    lit 151 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749449 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1934-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1994-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 151
+- id: grille_duree_requise_escalier_de_1993_c009
+  enonce: 'Né le 1934-01-02, pension du régime général prenant effet le 1994-02-01 : la session indépendante
+    lit 151 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749449 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1934-01-02'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1994-02
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 151
+- id: grille_duree_requise_escalier_de_1993_c010
+  enonce: 'Né le 1934-12-31, pension du régime général prenant effet le 1995-01-01 : la session indépendante
+    lit 151 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749449 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1934-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1995-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 151
+- id: grille_duree_requise_escalier_de_1993_c011
+  enonce: 'Né le 1935-03-20, pension du régime général prenant effet le 1995-04-01 : la session indépendante
+    lit 152 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749449 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1935-03-20'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1995-04
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 152
+- id: grille_duree_requise_escalier_de_1993_c012
+  enonce: 'Né le 1936-08-08, pension du régime général prenant effet le 1996-09-01 : la session indépendante
+    lit 153 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1936-08-08'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1996-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 153
+- id: grille_duree_requise_escalier_de_1993_c013
+  enonce: 'Né le 1937-02-02, pension du régime général prenant effet le 1997-03-01 : la session indépendante
+    lit 154 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1937-02-02'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1997-03
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 154
+- id: grille_duree_requise_escalier_de_1993_c014
+  enonce: 'Né le 1938-10-31, pension du régime général prenant effet le 1998-11-01 : la session indépendante
+    lit 155 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1938-10-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1998-11
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 155
+- id: grille_duree_requise_escalier_de_1993_c015
+  enonce: 'Né le 1939-04-04, pension du régime général prenant effet le 1999-05-01 : la session indépendante
+    lit 156 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1939-04-04'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1999-05
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 156
+- id: grille_duree_requise_escalier_de_1993_c016
+  enonce: 'Né le 1940-01-15, pension du régime général prenant effet le 2000-02-01 : la session indépendante
+    lit 157 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1940-01-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2000-02
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 157
+- id: grille_duree_requise_escalier_de_1993_c017
+  enonce: 'Né le 1940-01-15, pension du régime général prenant effet le 2002-11-01 : la session indépendante
+    lit 157 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1940-01-15'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2002-11
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 157
+- id: grille_duree_requise_escalier_de_1993_c018
+  enonce: 'Né le 1941-06-30, pension du régime général prenant effet le 2001-07-01 : la session indépendante
+    lit 158 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1941-06-30'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2001-07
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 158
+- id: grille_duree_requise_escalier_de_1993_c019
+  enonce: 'Né le 1942-01-01, pension du régime général prenant effet le 2002-01-01 : la session indépendante
+    lit 159 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1942-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2002-01
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 159
+- id: grille_duree_requise_escalier_de_1993_c020
+  enonce: 'Né le 1942-11-30, pension du régime général prenant effet le 2002-12-01 : la session indépendante
+    lit 159 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1942-11-30'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2002-12
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 159
+- id: grille_duree_requise_escalier_de_1993_c021
+  enonce: 'Né le 1942-12-01, pension du régime général prenant effet le 2002-12-01 : la session indépendante
+    lit 159 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1942-12-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2002-12
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 159
+- id: grille_duree_requise_escalier_de_1993_c022
+  enonce: 'Né le 1943-01-01, pension du régime général prenant effet le 2002-12-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 ;
+    JORFARTI000001352769. Sa remarque : R351-45 II ne vise pas les assurés nés après 1942 : s''applique
+    le 1° de R351-27 (160).'
+  carriere:
+    naissance: '1943-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2002-12
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
+- id: grille_duree_requise_escalier_de_1993_c023
+  enonce: 'Né le 1928-03-03, pension du régime général prenant effet le 1998-04-01 : la session indépendante
+    lit 150 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1928-03-03'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1998-04
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 150
+- id: grille_duree_requise_escalier_de_1993_p005
+  enonce: 'Né le 1933-12-31, pension du régime général prenant effet le 1993-09-01 : la session indépendante
+    lit 150 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749449 ;
+    JORFARTI000001352769.'
+  carriere:
+    naissance: '1933-12-31'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1993-09
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 150
+- id: grille_duree_requise_escalier_de_1993_p006
+  enonce: 'Né le 1934-01-01, pension du régime général prenant effet le 1993-10-01 : la session indépendante
+    lit 151 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749449 ;
+    JORFARTI000001352769. Sa remarque : Le décret 93-1022 n''a pas de date d''effet différée (la loi
+    93-936 art. 2 ne vise que son titre I) : barème appliqué dès sa publication ; autre lecture (entrée
+    au 1er janvier 1994, comme le titre I de la loi) : 150.'
+  carriere:
+    naissance: '1934-01-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 1993-10
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 151
+- id: grille_duree_requise_escalier_de_1993_p007
+  enonce: 'Né le 1943-06-01, pension du régime général prenant effet le 2002-06-01 : la session indépendante
+    lit 160 trimestres. Fondement qu''elle relève : LEGIARTI000006749435 ; LEGIARTI000006749450 ;
+    JORFARTI000001352769. Sa remarque : R351-45 II ne vise pas les assurés nés après 1942 : s''applique
+    le 1° de R351-27 (160).'
+  carriere:
+    naissance: '1943-06-01'
+    sexe: H
+    affiliation: salarie_prive_non_cadre
+    liquidation: 2002-06
+    age_debut: 22
+  attendu:
+    duree_requise_a_l_effet: 160
