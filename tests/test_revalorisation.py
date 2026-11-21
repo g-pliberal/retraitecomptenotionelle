@@ -623,3 +623,8 @@ def test_la_pension_de_points_servie_apres_le_dernier_bareme_ne_baisse_pas(simul
                                   None)[0] == pytest.approx(1.0, rel=1e-12), annee
     assert servie.coefficient(pension, 2030, date(2030, 2, 1), date(2035, 2, 1),
                               None)[0] >= 1.0
+    # L'Agirc-Arrco relève son point au 1er novembre : servie en décembre 2027,
+    # la pension vaut autant en juin 2028.
+    agirc_arrco = SimpleNamespace(regime="agirc_arrco", type_calcul="points")
+    assert servie.coefficient(agirc_arrco, 2027, date(2027, 12, 1), date(2028, 6, 1),
+                              None)[0] == pytest.approx(1.0, rel=1e-12)
