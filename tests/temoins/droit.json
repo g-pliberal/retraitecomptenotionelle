@@ -3475,6 +3475,12 @@
   ],
   "rendu": "ac0fca9f4c4d1f47"
  },
+ "2dc1bcea333a2b2e": {
+  "fonctions": [
+   "scenario_actuel.calculer"
+  ],
+  "rendu": "86cfdedb9797d2c0"
+ },
  "2dc2a249bb758ef2": {
   "fonctions": [
    "simulateur.carriere_simple"

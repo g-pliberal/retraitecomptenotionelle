@@ -2783,14 +2783,11 @@ export function coefficientSurcoteRegimesSpeciaux(moteur, periode, carriere, tri
 export function borneDeLaDuree(moteur, periode, carriere, cible) {
   const ouverture = carriere.dateDeLAge(ouvrir.ageOuverture(moteur, periode, carriere));
   const fin = carriere.dateLiquidation;
-  let apres = 0.0;
-  if (ouverture.rang < fin.rang) {
-    for (const ligne of carriere.lignes) {
-      if (ligne.cotise) {
-        apres += trimestresDeLaLigneEntre(carriere, ligne, ouverture, fin);
-      }
-    }
-  }
+  // Les trimestres « cotisés et effectués au-delà de l'âge auquel le droit à
+  // pension est ouvert », au mois, comme la durée d'assurance qui « totalise
+  // la durée des services » (SNCF, décret n° 2008-639, article 13, I et III),
+  // et non au prorata des trimestres civils de chaque année.
+  const apres = ouverture.rang < fin.rang ? trimestresCotisesAuMois(carriere, ouverture, fin) : 0.0;
   return Math.max(0, cible - 150 - Math.floor(apres + 1e-9));
 }
 
