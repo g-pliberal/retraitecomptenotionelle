@@ -1828,6 +1828,18 @@ Ils sont les mêmes octets sous tout Python : le code additionne par
 `somme_ordonnee`, de gauche à droite, non par `sum()`, qui compense depuis
 Python 3.12.
 
+À côté, sans rien bloquer, un contrôle cherche les propriétés fausses
+(action 194) : `.github/workflows/proprietes.yml`, après chaque course,
+lance `scripts/proprietes_z3.py`. Les règles de la durée requise, des âges, de
+la carrière longue et de la pension du régime général y sont écrites une fois
+pour deux usages (`scripts/regles_z3/`) : exécutées, elles sont comparées au
+moteur ; données au solveur Z3, elles deviennent des questions — aucune date
+sans version, aucun droit ouvert qui se referme, aucun départ plus tardif qui
+baisse la pension. Z3 prouve, ou rend un contre-exemple chiffré. Les baisses
+que la loi a voulues se déclarent, chacune avec sa source
+(`tests/cliquets_de_justesse/proprietes_attendues.yaml`) ; toute autre est une
+surprise, annoncée par un avertissement, la course restant verte.
+
 ---
 
 ## 11. Le chemin

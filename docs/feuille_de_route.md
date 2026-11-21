@@ -8360,13 +8360,15 @@ Il a validé la maquette des caisses et choisi de l'intégrer au site.
 **Reprise, au 21 novembre 2026.** Le tableau de bord (`docs/etat.md`, section
 1) porte la carte de justesse, que le script calcule depuis les preuves.
 Vingt-deux parties sont prouvées, par des grilles posées depuis le seul texte
-par des sessions qui n'ont pas lu le code : l'âge légal depuis 1985, le
-salaire annuel moyen depuis juillet 1995, la durée requise dans ses huit
-versions, la décote du régime général depuis 1983 dans quatre, le taux et la
-proratisation dans trois. Les deux filets sont faits : 3 052 anomalies à
-expliquer, 192 parties qu'aucun témoin ne garde. Le propriétaire décide de la
-suite de la carte. Lire `194/2026-11-21-etape-b-les-filets.md`, qui classe les
-pistes, et `194/2026-11-21-taux-et-proratisation-prouves.md`.
+par des sessions qui n'ont pas lu le code. Les deux filets sont faits : 3 052
+anomalies à expliquer, 192 parties qu'aucun témoin ne garde. Trois pistes du
+balayage sont expliquées : deux erreurs du moteur restent à corriger, la
+surcote des régimes spéciaux et une pension déjà servie menée dans l'avenir.
+Un contrôle par Z3 cherche sur GitHub, après chaque course et sans bloquer,
+les propriétés fausses des fiches, hors des baisses que la loi a voulues. Le
+propriétaire décide de la suite de la carte. Lire
+`194/2026-11-21-etape-b-les-filets.md`, `194/2026-11-21-pistes-du-balayage.md`
+et `194/2026-11-21-controle-z3.md`.
 
 **D'où elle vient.** Le 20 novembre 2026, le propriétaire : « j'ai
 l'impression qu'on tourne en rond en découvrant des problèmes par hasard »,

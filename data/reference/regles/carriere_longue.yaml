@@ -231,6 +231,20 @@ sources:
     date: 2012-09-04
   - type: circulaire_cnav
     reference: >-
+      2011-16 du 7 février 2011, « Retraite anticipée pour carrière longue », qui applique
+      le décret n° 2010-1734 (version loi_de_2010) : § 13, l'ancien dispositif vaut « pour
+      toutes les demandes de retraites anticipées dont la date d'effet se situera jusqu'au
+      1er juin 2011 inclus » ; § 24, le nouveau « pour toutes les demandes de retraites
+      anticipées dont la date d'effet se situera à compter du 1er juillet 2011 ». La date
+      d'effet seule partage les deux, sans droit acquis à l'ancien âge : un né de mars à
+      mai 1952 entré avant 17 ans, qui pouvait partir au 1er juin 2011 à 59 ans, ne le
+      peut plus au 1er juillet ni au 1er août (59 ans et 4 mois), ce que le contrôle Z3
+      déclare cas attendu. Lue le 21 novembre 2026 par l'API de la base de législation de
+      la Cnav
+    url: https://legislation.lassuranceretraite.fr/references-reglementaires?file_leaf_ref=CR_CN_2011016_07022011.aspx
+    date: 2011-02-07
+  - type: circulaire_cnav
+    reference: >-
       2026-29 du 4 septembre 2026, point 1.1.4 : « Sont prises en compte, pour apprécier la
       condition relative au début d'activité, les périodes de cotisations à l'assurance
       vieillesse obligatoire ou volontaire (les rachats et versements pour la retraite en

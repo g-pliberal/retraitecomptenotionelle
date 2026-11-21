@@ -19,6 +19,10 @@ dependencies = [
 # minutes à moins d'une. xlrd ne sert qu'aux récupérateurs qui lisent un
 # classeur `.xls`, que la bibliothèque standard ne lit pas (action 176).
 dev = ["pytest>=8.0", "pytest-xdist>=3.5", "xlrd>=2.0"]
+# Z3 ne sert qu'au contrôle des propriétés du droit (action 194,
+# `scripts/proprietes_z3.py`), que seul `.github/workflows/proprietes.yml`
+# installe : la suite complète saute les tests qui l'emploient.
+z3 = ["z3-solver>=4.12"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

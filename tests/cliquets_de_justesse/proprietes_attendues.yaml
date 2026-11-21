@@ -1,0 +1,114 @@
+# Les cas attendus du contrôle Z3 (action 194 ; `scripts/proprietes_z3.py`,
+# `.github/workflows/proprietes.yml`) : les contre-exemples qu'une propriété
+# du droit admet parce que le texte le veut, lus au texte. Le contrôle cherche
+# un contre-exemple HORS de ces cas, et ne montre que les vraies surprises ; il
+# signale aussi un cas déclaré que plus rien ne réalise.
+#
+# Chaque cas nomme sa propriété (`python scripts/proprietes_z3.py --liste`), sa
+# nature — `legal`, une baisse voulue par la loi ; `ecart_connu`, un écart du
+# moteur au texte, connu et non corrigé, qui n'est PAS le droit —, et les champs
+# de la propriété qui le situent : une valeur, ou un intervalle [début, fin]
+# fermé, `null` ne bornant pas. Mois en AAAA-MM, jours en AAAA-MM-JJ. Un cas ne
+# s'inscrit qu'après lecture du texte qu'il cite.
+attendus:
+
+# --- La suspension de la réforme de 2023, au 1er septembre 2026 ---------------
+- propriete: duree.partir_plus_tard
+  nature: legal
+  titre: >-
+    La suspension du 1er septembre 2026 baisse la durée requise des nés en 1964 et
+    1965 (de 171 à 170, de 172 à 170 ou 171)
+  cas: {ne: [1964-01, 1965-12], avant: [null, 2026-08-31], apres: [2026-09-01, null]}
+  source: >-
+    L. 161-17-3 CSS, rédaction de la loi n° 2025-1403 du 30 décembre 2025, article 105
+    (LEGIARTI000053280903), applicable aux pensions prenant effet à compter du
+    1er septembre 2026 (article 105 VI) ; fiche duree_requise_par_generation, version
+    suspension_de_2025, prouvée par la grille aveugle de l'action 194.
+- propriete: age_legal.version_suivante
+  nature: legal
+  titre: >-
+    La suspension du 1er septembre 2026 baisse l'âge légal des nés de 1964 à 1968, de
+    trois mois (de six mois pour les nés de janvier à mars 1965)
+  cas: {ne: [1964-01, 1968-12], date_effet: 2026-09}
+  source: >-
+    L. 161-17-2 CSS, rédaction de la loi n° 2025-1403 du 30 décembre 2025, article 105
+    (LEGIARTI000053280889), « aux pensions prenant effet à compter du 1er septembre
+    2026 » (VI) ; fiche age_legal_par_generation, version suspension_de_2025, prouvée par
+    la grille aveugle de l'action 194.
+
+# --- Le 1er janvier 2003 : R. 351-45 ----------------------------------------------
+- propriete: duree.naitre_plus_tard
+  nature: legal
+  titre: >-
+    L'exception de décembre 1942 au 1er janvier 2003 : 159 trimestres pour les nés en
+    décembre 1942 dont la pension prend effet ce jour-là, 160 pour tous les autres
+  cas: {date_effet: 2003-01-01, ne_apres: 1942-12}
+  source: >-
+    R. 351-45 CSS, III, rédaction du 10 mai 1995 au 1er janvier 2009
+    (LEGIARTI000006749450) : « Par dérogation au I […], 159 trimestres pour les assurés
+    nés en décembre 1942 et dont la pension prend effet au 1er janvier 2003 » ; fiche
+    duree_requise_par_generation, version decembre_1942_au_1er_janvier_2003.
+- propriete: pension.partir_plus_tard_meme_duree
+  nature: legal
+  titre: >-
+    Le passage à 160 trimestres au 1er janvier 2003, quelle que soit la génération :
+    qui reporte en 2003 un départ d'avant peut perdre (né le 1er décembre 1938,
+    154 trimestres : 48,75 % en janvier 2002, 45 % en février 2003)
+  cas: {ne: [1938-01, 1942-12], depart: [null, 2003-01], report: [2003-01, null]}
+  source: >-
+    R. 351-45 CSS, I, rédaction du 10 mai 1995 au 1er janvier 2009
+    (LEGIARTI000006749450) : la durée de 160 trimestres « est applicable aux pensions
+    prenant effet postérieurement au 31 décembre 2002, quelle que soit la date de
+    naissance de l'assuré » ; confirmé par la base de législation de la Cnav. Note du
+    21 novembre 2026, « La décote qui monte entre novembre 2002 et février 2003 : le
+    texte, pas une erreur » (dossier du projet, ecarts/2026-11-21-decote-de-l-hiver-2002-2003.md).
+- propriete: pension.partir_plus_tard_en_travaillant
+  nature: legal
+  titre: >-
+    Le passage à 160 trimestres au 1er janvier 2003, même en continuant de travailler
+    (né en décembre 1942, 141 trimestres : 25,85 % du SAM en janvier 2003, 24,68 % en
+    février) ; la surcote, qui ne compte pas les trimestres d'avant 2004, ne rattrape rien
+  cas: {ne: [1938-01, 1942-12], depart: [null, 2003-01], report: [2003-01, null]}
+  source: >-
+    R. 351-45 CSS, I et III, rédaction du 10 mai 1995 au 1er janvier 2009
+    (LEGIARTI000006749450) ; L. 351-1-2 CSS (loi n° 2003-775), la surcote des seules
+    périodes accomplies après le 1er janvier 2004.
+
+# --- La carrière longue au 1er juillet 2011 ---------------------------------------
+- propriete: carriere_longue.avant_17_ans.depart_reste_ouvert
+  nature: legal
+  titre: >-
+    La carrière longue de juillet 2011 : un né de mars à mai 1952 entré avant 17 ans,
+    qui peut partir au 1er juin 2011 à 59 ans, ne le peut plus au 1er juillet ni au
+    1er août (59 ans et 4 mois)
+  cas: {ne: [1952-03, 1952-05], date_effet: 2011-07}
+  source: >-
+    Décret n° 2010-1734 du 30 décembre 2010, article 11 : « Ces dispositions sont
+    applicables aux pensions prenant effet à compter du 1er juillet 2011 »
+    (D. 351-1-1, LEGIARTI000023397567) ; circulaire Cnav n° 2011-16 du 7 février 2011,
+    § 13 (l'ancien dispositif « jusqu'au 1er juin 2011 inclus ») et § 24 (le nouveau
+    « à compter du 1er juillet 2011 »), sans droit acquis à l'ancien âge. Vérifié le
+    21 novembre 2026 (ecarts/2026-11-21-carriere-longue-juillet-2011-pas-d-ecart.md).
+- propriete: carriere_longue.avant_16_ans.depart_reste_ouvert
+  nature: legal
+  titre: >-
+    La carrière longue de juillet 2011, débuts avant 16 ans : les nés de mars à mai 1955
+    passent de 56 ans à 56 ans et 4 mois (sans effet : la porte demande 172 trimestres
+    à 56 ans)
+  cas: {ne: [1955-03, 1955-05], date_effet: 2011-07}
+  source: >-
+    Décret n° 2010-1734 du 30 décembre 2010, article 11 (D. 351-1-1,
+    LEGIARTI000023397567) ; circulaire Cnav n° 2011-16 du 7 février 2011, §§ 13 et 24.
+
+# --- Un écart connu, non corrigé : ce n'est pas le droit --------------------------
+- propriete: duree.naitre_plus_tard
+  nature: ecart_connu
+  titre: >-
+    Les nés avant 1900 : le moteur leur oppose 160 trimestres du 28 août 1993 au
+    1er janvier 2003, le texte dit 150 (sans effet réel : ils ont plus de 93 ans)
+  cas: {ne_avant: [null, 1899-12], date_effet: [1993-08-28, 2003-01-01]}
+  source: >-
+    Écart relevé par l'essai Lean puis l'essai Z3 du 21 novembre 2026 : la table de la
+    fiche duree_requise_par_generation commence en 1900, et le moteur oppose au-delà sa
+    valeur par défaut (`ouvrir.js`) ; R. 351-45, II, donne 150 trimestres aux nés avant
+    1934. Non corrigé.

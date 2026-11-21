@@ -1,0 +1,81 @@
+name: Propriétés du droit (Z3)
+
+# Le contrôle Z3 des propriétés du droit (action 194) : `scripts/proprietes_z3.py`
+# compare au moteur les règles écrites pour Z3 (`scripts/regles_z3/`), puis
+# cherche, pour chaque propriété — couverture des dates des fiches, âge légal,
+# âge du taux plein, carrière longue, durée requise, pension avec décote,
+# proratisation et surcote —, un contre-exemple hors des cas attendus
+# (`tests/cliquets_de_justesse/proprietes_attendues.yaml`, chacun avec sa source).
+#
+# Il AVERTIT SANS BLOQUER : il tourne à part, après chaque course de la suite
+# (« Tests »), sur le dernier main, fichiers fabriqués compris ; il ne publie
+# rien, et la suite comme le site n'en dépendent pas. Une surprise — propriété
+# fausse hors des cas attendus, cas attendu disparu, règle qui s'écarte du
+# moteur — devient une annotation d'avertissement, avec son contre-exemple
+# chiffré, et le rapport s'affiche dans le résumé de la course, qui reste
+# verte. La course ne rougit que si le contrôle lui-même casse : ses tests
+# (`tests/test_proprietes_z3.py`) ou le script. Z3 (`z3-solver`, extra `z3`)
+# ne s'installe qu'ici : la suite complète saute les tests qui l'emploient.
+# Moins de deux minutes par course.
+
+on:
+  workflow_run:
+    workflows: [Tests]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: proprietes-z3
+  cancel-in-progress: true
+
+jobs:
+  controler:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
+      - name: Installer le paquet, ses outils de test et Z3
+        run: pip install -e '.[dev,z3]'
+
+      # Que le contrôle sache encore trouver une faute, et que chaque cas
+      # attendu se réalise : un rouge ici dit que le contrôle a cassé.
+      - name: Les tests du contrôle
+        run: python -m pytest tests/test_proprietes_z3.py -rfE
+
+      # 0 : rien d'inattendu ; 1 : une surprise, en avertissement ; au-delà, cassé.
+      - name: Le contrôle
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/resultats"
+          issue=0
+          python scripts/proprietes_z3.py --resultats "$RUNNER_TEMP/resultats" --github || issue=$?
+          {
+            echo "Dépôt $(git rev-parse --short HEAD)"
+            echo
+            cat "$RUNNER_TEMP/resultats/rapport.md" 2>/dev/null || echo "Pas de rapport : le contrôle a cassé."
+          } >> "$GITHUB_STEP_SUMMARY"
+          [ "$issue" -le 1 ]
+
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: proprietes-z3
+          path: ${{ runner.temp }}/resultats
+          retention-days: 30
