@@ -948,6 +948,116 @@
    "reversion": null
   }
  },
+ "0815e133f26a99f4": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2026",
+    "interruptions": "",
+    "liquidation": "2033-06",
+    "naissance": "1966-05-12",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "1988:salarie_prive_non_cadre:9147:4\n1989:salarie_prive_non_cadre:9604:4\n1990:salarie_prive_non_cadre:10062:4\n1991:salarie_prive_non_cadre:10519:4\n1992:salarie_prive_non_cadre:10976:4\n1993:salarie_prive_non_cadre:11434:4\n1994:salarie_prive_non_cadre:11891:4\n1995:salarie_prive_non_cadre:12348:4\n1996:salarie_prive_non_cadre:12806:4\n1997:salarie_prive_non_cadre:13263:4\n1998:salarie_prive_non_cadre:13720:4\n1999:salarie_prive_non_cadre:14178:4\n2000:salarie_prive_non_cadre:14635:4\n2001:salarie_prive_non_cadre:15092:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:18900:4\n2004:salarie_prive_non_cadre:19500:4\n2005:salarie_prive_non_cadre:20100:4\n2006:salarie_prive_non_cadre:20700:4\n2007:salarie_prive_non_cadre:21300:4\n2008:salarie_prive_non_cadre:21900:4\n2009:salarie_prive_non_cadre:22500:4\n2010:salarie_prive_non_cadre:23100:4\n2011:salarie_prive_non_cadre:23700:4\n2012:salarie_prive_non_cadre:24300:4\n2013:salarie_prive_non_cadre:24900:4\n2014:salarie_prive_non_cadre:25500:4\n2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:31500:4\n2025:salarie_prive_non_cadre:32100:4\n2026:salarie_prive_non_cadre:30000\n2027:salarie_prive_non_cadre:30525\n2028:salarie_prive_non_cadre:31059\n2029:salarie_prive_non_cadre:31603\n2030:salarie_prive_non_cadre:32156\n2031:salarie_prive_non_cadre:32718\n2032:salarie_prive_non_cadre:33291\n2033:salarie_prive_non_cadre:14114",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [
+     {
+      "a_charge": [],
+      "code": "majoration_duree_assurance",
+      "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
+      "montant": 1246.408683555681,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "surcote_parentale",
+      "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
+      "montant": 892.6324654622148,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "majoration_enfants",
+      "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
+      "montant": 2725.5234023420185,
+      "par_regime": [
+       [
+        "agirc_arrco",
+        224.9243558178792
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        2186.949540382426
+       ]
+      ],
+      "par_regime_sans_anticipation": [
+       [
+        "agirc_arrco",
+        224.9243558178792
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        2186.949540382426
+       ]
+      ]
+     }
+    ],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 30934.939802715446,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "1,389.52 points × valeur de service 1.618723 €",
+      "montant": 2249.2435581787913,
+      "regime": "agirc_arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "2,527.10 points × valeur de service 1.618723 €",
+      "montant": 4090.6774383703723,
+      "regime": "arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "aucun droit",
+      "montant": 0.0,
+      "regime": "arrco_tranche_2",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "SR 35,705.30 € × taux 58.750% × 172/172, surcote parentale 5.00% de 17,852.65 €",
+      "montant": 21869.49540382426,
+      "regime": "regime_general",
+      "type_calcul": "annuites"
+     }
+    ],
+    "taux_liquidation": 0.5875,
+    "trimestres_requis": 172,
+    "trimestres_valides": 205
+   },
+   "annee_liquidation": 2033,
+   "coefficient_euros_constants": 0.8856437756216318,
+   "mois_liquidation": 6,
+   "reversion": null
+  }
+ },
  "0817380527212519": {
   "cas": {
    "requete": {
@@ -1830,6 +1940,108 @@
    "reversion": null
   }
  },
+ "10d6d4f87ce8ccf6": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2028",
+    "interruptions": "",
+    "liquidation": "2033-06",
+    "naissance": "1966-05-12",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "1988:salarie_prive_non_cadre:9147:4\n1989:salarie_prive_non_cadre:9604:4\n1990:salarie_prive_non_cadre:10062:4\n1991:salarie_prive_non_cadre:10519:4\n1992:salarie_prive_non_cadre:10976:4\n1993:salarie_prive_non_cadre:11434:4\n1994:salarie_prive_non_cadre:11891:4\n1995:salarie_prive_non_cadre:12348:4\n1996:salarie_prive_non_cadre:12806:4\n1997:salarie_prive_non_cadre:13263:4\n1998:salarie_prive_non_cadre:13720:4\n1999:salarie_prive_non_cadre:14178:4\n2000:salarie_prive_non_cadre:14635:4\n2001:salarie_prive_non_cadre:15092:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:18900:4\n2004:salarie_prive_non_cadre:19500:4\n2005:salarie_prive_non_cadre:20100:4\n2006:salarie_prive_non_cadre:20700:4\n2007:salarie_prive_non_cadre:21300:4\n2008:salarie_prive_non_cadre:21900:4\n2009:salarie_prive_non_cadre:22500:4\n2010:salarie_prive_non_cadre:23100:4\n2011:salarie_prive_non_cadre:23700:4\n2012:salarie_prive_non_cadre:24300:4\n2013:salarie_prive_non_cadre:24900:4\n2014:salarie_prive_non_cadre:25500:4\n2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:31500:4\n2025:salarie_prive_non_cadre:32100:4",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [
+     {
+      "a_charge": [],
+      "code": "majoration_duree_assurance",
+      "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
+      "montant": 2206.479960617442,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "majoration_enfants",
+      "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
+      "montant": 2185.6105132512444,
+      "par_regime": [
+       [
+        "agirc_arrco",
+        116.71811344481125
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        1755.2428936647198
+       ]
+      ],
+      "par_regime_sans_anticipation": [
+       [
+        "agirc_arrco",
+        116.71811344481125
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        1755.2428936647198
+       ]
+      ]
+     }
+    ],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 24995.898022716927,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "721.05 points × valeur de service 1.618723 €",
+      "montant": 1167.1811344481123,
+      "regime": "agirc_arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "2,527.10 points × valeur de service 1.618723 €",
+      "montant": 4090.6774383703723,
+      "regime": "arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "aucun droit",
+      "montant": 0.0,
+      "regime": "arrco_tranche_2",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "SR 35,104.86 € × taux 50.000% × 172/172",
+      "montant": 17552.428936647197,
+      "regime": "regime_general",
+      "type_calcul": "annuites"
+     }
+    ],
+    "taux_liquidation": 0.5,
+    "trimestres_requis": 172,
+    "trimestres_valides": 176
+   },
+   "annee_liquidation": 2033,
+   "coefficient_euros_constants": 0.9169125361746732,
+   "mois_liquidation": 6,
+   "reversion": null
+  }
+ },
  "10f0352c9fda87bb": {
   "cas": {
    "requete": {
@@ -1952,6 +2164,116 @@
    "annee_liquidation": 2012,
    "coefficient_euros_constants": 1.248144351853146,
    "mois_liquidation": 12,
+   "reversion": null
+  }
+ },
+ "13951579743e9977": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2026",
+    "interruptions": "",
+    "liquidation": "2033-06",
+    "naissance": "1966-05-12",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "1988:salarie_prive_non_cadre:9147:4\n1989:salarie_prive_non_cadre:9604:4\n1990:salarie_prive_non_cadre:10062:4\n1991:salarie_prive_non_cadre:10519:4\n1992:salarie_prive_non_cadre:10976:4\n1993:salarie_prive_non_cadre:11434:4\n1994:salarie_prive_non_cadre:11891:4\n1995:salarie_prive_non_cadre:12348:4\n1996:salarie_prive_non_cadre:12806:4\n1997:salarie_prive_non_cadre:13263:4\n1998:salarie_prive_non_cadre:13720:4\n1999:salarie_prive_non_cadre:14178:4\n2000:salarie_prive_non_cadre:14635:4\n2001:salarie_prive_non_cadre:15092:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:18900:4\n2004:salarie_prive_non_cadre:19500:4\n2005:salarie_prive_non_cadre:20100:4\n2006:salarie_prive_non_cadre:20700:4\n2007:salarie_prive_non_cadre:21300:4\n2008:salarie_prive_non_cadre:21900:4\n2009:salarie_prive_non_cadre:22500:4\n2010:salarie_prive_non_cadre:23100:4\n2011:salarie_prive_non_cadre:23700:4\n2012:salarie_prive_non_cadre:24300:4\n2013:salarie_prive_non_cadre:24900:4\n2014:salarie_prive_non_cadre:25500:4\n2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:46368:4\n2025:salarie_prive_non_cadre:32100:4\n2026:salarie_prive_non_cadre:32886\n2027:salarie_prive_non_cadre:33692\n2028:salarie_prive_non_cadre:34518\n2029:salarie_prive_non_cadre:35363\n2030:salarie_prive_non_cadre:36230\n2031:salarie_prive_non_cadre:37117\n2032:salarie_prive_non_cadre:38027\n2033:salarie_prive_non_cadre:16233",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [
+     {
+      "a_charge": [],
+      "code": "majoration_duree_assurance",
+      "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
+      "montant": 1396.4225279181555,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "surcote_parentale",
+      "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
+      "montant": 942.141985053791,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "majoration_enfants",
+      "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
+      "montant": 2867.472061529933,
+      "par_regime": [
+       [
+        "agirc_arrco",
+        245.574692006432
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        2308.2478633817877
+       ]
+      ],
+      "par_regime_sans_anticipation": [
+       [
+        "agirc_arrco",
+        245.574692006432
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        2308.2478633817877
+       ]
+      ]
+     }
+    ],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 32496.375053782504,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "1,517.09 points × valeur de service 1.618723 €",
+      "montant": 2455.7469200643195,
+      "regime": "agirc_arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "2,527.10 points × valeur de service 1.618723 €",
+      "montant": 4090.6774383703723,
+      "regime": "arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "aucun droit",
+      "montant": 0.0,
+      "regime": "arrco_tranche_2",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "SR 37,685.68 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,842.84 €",
+      "montant": 23082.47863381788,
+      "regime": "regime_general",
+      "type_calcul": "annuites"
+     }
+    ],
+    "taux_liquidation": 0.5875,
+    "trimestres_requis": 172,
+    "trimestres_valides": 205
+   },
+   "annee_liquidation": 2033,
+   "coefficient_euros_constants": 0.8856437756216318,
+   "mois_liquidation": 6,
    "reversion": null
   }
  },
@@ -2265,6 +2587,116 @@
    "annee_liquidation": 2017,
    "coefficient_euros_constants": 1.2158379841309352,
    "mois_liquidation": 1,
+   "reversion": null
+  }
+ },
+ "143525fa430ed563": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2026",
+    "interruptions": "",
+    "liquidation": "2030-06",
+    "naissance": "1966-05-12",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "1988:salarie_prive_non_cadre:9147:4\n1989:salarie_prive_non_cadre:9604:4\n1990:salarie_prive_non_cadre:10062:4\n1991:salarie_prive_non_cadre:10519:4\n1992:salarie_prive_non_cadre:10976:4\n1993:salarie_prive_non_cadre:11434:4\n1994:salarie_prive_non_cadre:11891:4\n1995:salarie_prive_non_cadre:12348:4\n1996:salarie_prive_non_cadre:12806:4\n1997:salarie_prive_non_cadre:13263:4\n1998:salarie_prive_non_cadre:13720:4\n1999:salarie_prive_non_cadre:14178:4\n2000:salarie_prive_non_cadre:14635:4\n2001:salarie_prive_non_cadre:15092:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:18900:4\n2004:salarie_prive_non_cadre:19500:4\n2005:salarie_prive_non_cadre:20100:4\n2006:salarie_prive_non_cadre:20700:4\n2007:salarie_prive_non_cadre:21300:4\n2008:salarie_prive_non_cadre:21900:4\n2009:salarie_prive_non_cadre:22500:4\n2010:salarie_prive_non_cadre:23100:4\n2011:salarie_prive_non_cadre:23700:4\n2012:salarie_prive_non_cadre:24300:4\n2013:salarie_prive_non_cadre:24900:4\n2014:salarie_prive_non_cadre:25500:4\n2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:55642:4\n2025:salarie_prive_non_cadre:32100:4\n2026:salarie_prive_non_cadre:32886\n2027:salarie_prive_non_cadre:33692\n2028:salarie_prive_non_cadre:34518\n2029:salarie_prive_non_cadre:35363\n2030:salarie_prive_non_cadre:15096",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [
+     {
+      "a_charge": [],
+      "code": "majoration_duree_assurance",
+      "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
+      "montant": 1754.603212947717,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "surcote_parentale",
+      "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
+      "montant": 876.2413646371181,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "majoration_enfants",
+      "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
+      "montant": 2380.5622796819766,
+      "par_regime": [
+       [
+        "agirc_arrco",
+        198.90048663919987
+       ],
+       [
+        "arrco",
+        297.7428590729733
+       ],
+       [
+        "regime_general",
+        1883.9189339698034
+       ]
+      ],
+      "par_regime_sans_anticipation": [
+       [
+        "agirc_arrco",
+        198.90048663919987
+       ],
+       [
+        "arrco",
+        297.7428590729733
+       ],
+       [
+        "regime_general",
+        1883.9189339698034
+       ]
+      ]
+     }
+    ],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 27091.976360811117,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "1,294.39 points × valeur de service 1.53663 €",
+      "montant": 1989.0048663919981,
+      "regime": "agirc_arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "2,527.10 points × valeur de service 1.53663 €",
+      "montant": 3883.219875039108,
+      "regime": "arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "aucun droit",
+      "montant": 0.0,
+      "regime": "arrco_tranche_2",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "SR 35,049.65 € × taux 51.250% × 172/172, surcote parentale 5.00% de 17,524.83 €",
+      "montant": 18839.189339698034,
+      "regime": "regime_general",
+      "type_calcul": "annuites"
+     }
+    ],
+    "taux_liquidation": 0.5125,
+    "trimestres_requis": 172,
+    "trimestres_valides": 193
+   },
+   "annee_liquidation": 2030,
+   "coefficient_euros_constants": 0.9329585055577301,
+   "mois_liquidation": 6,
    "reversion": null
   }
  },
@@ -7385,6 +7817,116 @@
    "reversion": null
   }
  },
+ "48f976303ab93289": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2026",
+    "interruptions": "",
+    "liquidation": "2030-06",
+    "naissance": "1966-05-12",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "1988:salarie_prive_non_cadre:9147:4\n1989:salarie_prive_non_cadre:9604:4\n1990:salarie_prive_non_cadre:10062:4\n1991:salarie_prive_non_cadre:10519:4\n1992:salarie_prive_non_cadre:10976:4\n1993:salarie_prive_non_cadre:11434:4\n1994:salarie_prive_non_cadre:11891:4\n1995:salarie_prive_non_cadre:12348:4\n1996:salarie_prive_non_cadre:12806:4\n1997:salarie_prive_non_cadre:13263:4\n1998:salarie_prive_non_cadre:13720:4\n1999:salarie_prive_non_cadre:14178:4\n2000:salarie_prive_non_cadre:14635:4\n2001:salarie_prive_non_cadre:15092:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:18900:4\n2004:salarie_prive_non_cadre:19500:4\n2005:salarie_prive_non_cadre:20100:4\n2006:salarie_prive_non_cadre:20700:4\n2007:salarie_prive_non_cadre:21300:4\n2008:salarie_prive_non_cadre:21900:4\n2009:salarie_prive_non_cadre:22500:4\n2010:salarie_prive_non_cadre:20000:4\n2011:salarie_prive_non_cadre:23700:4\n2012:salarie_prive_non_cadre:24300:4\n2013:salarie_prive_non_cadre:24900:4\n2014:salarie_prive_non_cadre:25500:4\n2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:31500:4\n2025:salarie_prive_non_cadre:32100:4\n2026:salarie_prive_non_cadre:32886\n2027:salarie_prive_non_cadre:33692\n2028:salarie_prive_non_cadre:34518\n2029:salarie_prive_non_cadre:35363\n2030:salarie_prive_non_cadre:15096",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [
+     {
+      "a_charge": [],
+      "code": "majoration_duree_assurance",
+      "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
+      "montant": 1699.6367374170768,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "surcote_parentale",
+      "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
+      "montant": 857.1976825102583,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "majoration_enfants",
+      "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
+      "montant": 2319.071012977267,
+      "par_regime": [
+       [
+        "agirc_arrco",
+        179.3452194148737
+       ],
+       [
+        "arrco",
+        296.75077616533827
+       ],
+       [
+        "regime_general",
+        1842.9750173970551
+       ]
+      ],
+      "par_regime_sans_anticipation": [
+       [
+        "agirc_arrco",
+        179.3452194148737
+       ],
+       [
+        "arrco",
+        296.75077616533827
+       ],
+       [
+        "regime_general",
+        1842.9750173970551
+       ]
+      ]
+     }
+    ],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 26405.65159798296,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "1,167.13 points × valeur de service 1.53663 €",
+      "montant": 1793.4521941487362,
+      "regime": "agirc_arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "2,514.19 points × valeur de service 1.53663 €",
+      "montant": 3863.3782168864063,
+      "regime": "arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "aucun droit",
+      "montant": 0.0,
+      "regime": "arrco_tranche_2",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "SR 34,287.91 € × taux 51.250% × 172/172, surcote parentale 5.00% de 17,143.95 €",
+      "montant": 18429.75017397055,
+      "regime": "regime_general",
+      "type_calcul": "annuites"
+     }
+    ],
+    "taux_liquidation": 0.5125,
+    "trimestres_requis": 172,
+    "trimestres_valides": 193
+   },
+   "annee_liquidation": 2030,
+   "coefficient_euros_constants": 0.9329585055577301,
+   "mois_liquidation": 6,
+   "reversion": null
+  }
+ },
  "4a2a037c55674f08": {
   "cas": {
    "requete": {
@@ -8571,6 +9113,116 @@
    "reversion": null
   }
  },
+ "5628cf87562d4fc4": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2026",
+    "interruptions": "",
+    "liquidation": "2033-06",
+    "naissance": "1966-05-12",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "1988:salarie_prive_non_cadre:9147:4\n1989:salarie_prive_non_cadre:9604:4\n1990:salarie_prive_non_cadre:10062:4\n1991:salarie_prive_non_cadre:10519:4\n1992:salarie_prive_non_cadre:10976:4\n1993:salarie_prive_non_cadre:11434:4\n1994:salarie_prive_non_cadre:11891:4\n1995:salarie_prive_non_cadre:12348:4\n1996:salarie_prive_non_cadre:12806:4\n1997:salarie_prive_non_cadre:13263:4\n1998:salarie_prive_non_cadre:13720:4\n1999:salarie_prive_non_cadre:14178:4\n2000:salarie_prive_non_cadre:14635:4\n2001:salarie_prive_non_cadre:15092:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:18900:4\n2004:salarie_prive_non_cadre:19500:4\n2005:salarie_prive_non_cadre:20100:4\n2006:salarie_prive_non_cadre:20700:4\n2007:salarie_prive_non_cadre:21300:4\n2008:salarie_prive_non_cadre:21900:4\n2009:salarie_prive_non_cadre:22500:4\n2010:salarie_prive_non_cadre:23100:4\n2011:salarie_prive_non_cadre:23700:4\n2012:salarie_prive_non_cadre:24300:4\n2013:salarie_prive_non_cadre:24900:4\n2014:salarie_prive_non_cadre:25500:4\n2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:31500:4\n2025:salarie_prive_non_cadre:32100:4\n2026:salarie_prive_non_cadre:32988\n2027:salarie_prive_non_cadre:33901\n2028:salarie_prive_non_cadre:34840\n2029:salarie_prive_non_cadre:35804\n2030:salarie_prive_non_cadre:36795\n2031:salarie_prive_non_cadre:37813\n2032:salarie_prive_non_cadre:38859\n2033:salarie_prive_non_cadre:16639",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [
+     {
+      "a_charge": [],
+      "code": "majoration_duree_assurance",
+      "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
+      "montant": 1350.3964159086427,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "surcote_parentale",
+      "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
+      "montant": 926.9518490770548,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "majoration_enfants",
+      "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
+      "montant": 2824.253733408953,
+      "par_regime": [
+       [
+        "agirc_arrco",
+        239.57219702845595
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        2271.032030238784
+       ]
+      ],
+      "par_regime_sans_anticipation": [
+       [
+        "agirc_arrco",
+        239.57219702845595
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        2271.032030238784
+       ]
+      ]
+     }
+    ],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 32020.973444451727,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "1,480.01 points × valeur de service 1.618723 €",
+      "montant": 2395.7219702845587,
+      "regime": "agirc_arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "2,527.10 points × valeur de service 1.618723 €",
+      "montant": 4090.6774383703723,
+      "regime": "arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "aucun droit",
+      "montant": 0.0,
+      "regime": "arrco_tranche_2",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "SR 37,078.07 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,539.04 €",
+      "montant": 22710.32030238784,
+      "regime": "regime_general",
+      "type_calcul": "annuites"
+     }
+    ],
+    "taux_liquidation": 0.5875,
+    "trimestres_requis": 172,
+    "trimestres_valides": 205
+   },
+   "annee_liquidation": 2033,
+   "coefficient_euros_constants": 0.8856437756216318,
+   "mois_liquidation": 6,
+   "reversion": null
+  }
+ },
  "56a5d09aa61951fd": {
   "cas": {
    "requete": {
@@ -8718,6 +9370,116 @@
    "annee_liquidation": 2009,
    "coefficient_euros_constants": 1.319185996250844,
    "mois_liquidation": 9,
+   "reversion": null
+  }
+ },
+ "56bb8273d168d8e2": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2026",
+    "interruptions": "",
+    "liquidation": "2030-06",
+    "naissance": "1966-05-12",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "1988:salarie_prive_non_cadre:9147:4\n1989:salarie_prive_non_cadre:9604:4\n1990:salarie_prive_non_cadre:10062:4\n1991:salarie_prive_non_cadre:10519:4\n1992:salarie_prive_non_cadre:10976:4\n1993:salarie_prive_non_cadre:11434:4\n1994:salarie_prive_non_cadre:11891:4\n1995:salarie_prive_non_cadre:12348:4\n1996:salarie_prive_non_cadre:12806:4\n1997:salarie_prive_non_cadre:13263:4\n1998:salarie_prive_non_cadre:13720:4\n1999:salarie_prive_non_cadre:14178:4\n2000:salarie_prive_non_cadre:14635:4\n2001:salarie_prive_non_cadre:15092:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:18900:4\n2004:salarie_prive_non_cadre:19500:4\n2005:salarie_prive_non_cadre:20100:4\n2006:salarie_prive_non_cadre:20700:4\n2007:salarie_prive_non_cadre:21300:4\n2008:salarie_prive_non_cadre:21900:4\n2009:salarie_prive_non_cadre:22500:4\n2010:salarie_prive_non_cadre:23100:4\n2011:salarie_prive_non_cadre:23700:4\n2012:salarie_prive_non_cadre:24300:4\n2013:salarie_prive_non_cadre:24900:4\n2014:salarie_prive_non_cadre:25500:4\n2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:46368:4\n2025:salarie_prive_non_cadre:32100:4\n2026:salarie_prive_non_cadre:32886\n2027:salarie_prive_non_cadre:33692\n2028:salarie_prive_non_cadre:34518\n2029:salarie_prive_non_cadre:35363\n2030:salarie_prive_non_cadre:15096",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [
+     {
+      "a_charge": [],
+      "code": "majoration_duree_assurance",
+      "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
+      "montant": 1750.9011845422283,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "surcote_parentale",
+      "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
+      "montant": 876.2413646371181,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "majoration_enfants",
+      "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
+      "montant": 2368.2221849970156,
+      "par_regime": [
+       [
+        "agirc_arrco",
+        186.56039195423872
+       ],
+       [
+        "arrco",
+        297.7428590729733
+       ],
+       [
+        "regime_general",
+        1883.9189339698034
+       ]
+      ],
+      "par_regime_sans_anticipation": [
+       [
+        "agirc_arrco",
+        186.56039195423872
+       ],
+       [
+        "arrco",
+        297.7428590729733
+       ],
+       [
+        "regime_general",
+        1883.9189339698034
+       ]
+      ]
+     }
+    ],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 26956.235319276544,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "1,214.09 points × valeur de service 1.53663 €",
+      "montant": 1865.6039195423866,
+      "regime": "agirc_arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "2,527.10 points × valeur de service 1.53663 €",
+      "montant": 3883.219875039108,
+      "regime": "arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "aucun droit",
+      "montant": 0.0,
+      "regime": "arrco_tranche_2",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "SR 35,049.65 € × taux 51.250% × 172/172, surcote parentale 5.00% de 17,524.83 €",
+      "montant": 18839.189339698034,
+      "regime": "regime_general",
+      "type_calcul": "annuites"
+     }
+    ],
+    "taux_liquidation": 0.5125,
+    "trimestres_requis": 172,
+    "trimestres_valides": 193
+   },
+   "annee_liquidation": 2030,
+   "coefficient_euros_constants": 0.9329585055577301,
+   "mois_liquidation": 6,
    "reversion": null
   }
  },
@@ -11715,6 +12477,116 @@
    "reversion": null
   }
  },
+ "77e496e0763b6cd9": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2026",
+    "interruptions": "",
+    "liquidation": "2030-06",
+    "naissance": "1966-05-12",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "1988:salarie_prive_non_cadre:9147:4\n1989:salarie_prive_non_cadre:9604:4\n1990:salarie_prive_non_cadre:10062:4\n1991:salarie_prive_non_cadre:10519:4\n1992:salarie_prive_non_cadre:10976:4\n1993:salarie_prive_non_cadre:11434:4\n1994:salarie_prive_non_cadre:11891:4\n1995:salarie_prive_non_cadre:12348:4\n1996:salarie_prive_non_cadre:12806:4\n1997:salarie_prive_non_cadre:13263:4\n1998:salarie_prive_non_cadre:13720:4\n1999:salarie_prive_non_cadre:14178:4\n2000:salarie_prive_non_cadre:14635:4\n2001:salarie_prive_non_cadre:15092:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:18900:4\n2004:salarie_prive_non_cadre:19500:4\n2005:salarie_prive_non_cadre:20100:4\n2006:salarie_prive_non_cadre:20700:4\n2007:salarie_prive_non_cadre:21300:4\n2008:salarie_prive_non_cadre:21900:4\n2009:salarie_prive_non_cadre:22500:4\n2010:salarie_prive_non_cadre:23100:4\n2011:salarie_prive_non_cadre:23700:4\n2012:salarie_prive_non_cadre:24300:4\n2013:salarie_prive_non_cadre:24900:4\n2014:salarie_prive_non_cadre:25500:4\n2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:31500:4\n2025:salarie_prive_non_cadre:32100:4\n2026:salarie_prive_non_cadre:32825\n2027:salarie_prive_non_cadre:33566\n2028:salarie_prive_non_cadre:34325\n2029:salarie_prive_non_cadre:35100\n2030:salarie_prive_non_cadre:14955",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [
+     {
+      "a_charge": [],
+      "code": "majoration_duree_assurance",
+      "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
+      "montant": 1691.0463790054055,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "surcote_parentale",
+      "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
+      "montant": 857.6587995017495,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "majoration_enfants",
+      "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
+      "montant": 2320.705067058097,
+      "par_regime": [
+       [
+        "agirc_arrco",
+        178.9957890563622
+       ],
+       [
+        "arrco",
+        297.7428590729733
+       ],
+       [
+        "regime_general",
+        1843.9664189287614
+       ]
+      ],
+      "par_regime_sans_anticipation": [
+       [
+        "agirc_arrco",
+        178.9957890563622
+       ],
+       [
+        "arrco",
+        297.7428590729733
+       ],
+       [
+        "regime_general",
+        1843.9664189287614
+       ]
+      ]
+     }
+    ],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 26433.54702194844,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "1,164.86 points × valeur de service 1.53663 €",
+      "montant": 1789.9578905636222,
+      "regime": "agirc_arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "2,527.10 points × valeur de service 1.53663 €",
+      "montant": 3883.219875039108,
+      "regime": "arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "aucun droit",
+      "montant": 0.0,
+      "regime": "arrco_tranche_2",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "SR 34,306.35 € × taux 51.250% × 172/172, surcote parentale 5.00% de 17,153.18 €",
+      "montant": 18439.664189287614,
+      "regime": "regime_general",
+      "type_calcul": "annuites"
+     }
+    ],
+    "taux_liquidation": 0.5125,
+    "trimestres_requis": 172,
+    "trimestres_valides": 193
+   },
+   "annee_liquidation": 2030,
+   "coefficient_euros_constants": 0.9329585055577301,
+   "mois_liquidation": 6,
+   "reversion": null
+  }
+ },
  "78c36040e4591027": {
   "cas": {
    "requete": {
@@ -12663,6 +13535,116 @@
    "reversion": null
   }
  },
+ "82ee1e859a218765": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2026",
+    "interruptions": "",
+    "liquidation": "2033-06",
+    "naissance": "1966-05-12",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "1988:salarie_prive_non_cadre:9147:4\n1989:salarie_prive_non_cadre:9604:4\n1990:salarie_prive_non_cadre:10062:4\n1991:salarie_prive_non_cadre:10519:4\n1992:salarie_prive_non_cadre:10976:4\n1993:salarie_prive_non_cadre:11434:4\n1994:salarie_prive_non_cadre:11891:4\n1995:salarie_prive_non_cadre:12348:4\n1996:salarie_prive_non_cadre:12806:4\n1997:salarie_prive_non_cadre:13263:4\n1998:salarie_prive_non_cadre:13720:4\n1999:salarie_prive_non_cadre:14178:4\n2000:salarie_prive_non_cadre:14635:4\n2001:salarie_prive_non_cadre:15092:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:18900:4\n2004:salarie_prive_non_cadre:19500:4\n2005:salarie_prive_non_cadre:20100:4\n2006:salarie_prive_non_cadre:20700:4\n2007:salarie_prive_non_cadre:21300:4\n2008:salarie_prive_non_cadre:21900:4\n2009:salarie_prive_non_cadre:22500:4\n2010:salarie_prive_non_cadre:23100:4\n2011:salarie_prive_non_cadre:23700:4\n2012:salarie_prive_non_cadre:24300:4\n2013:salarie_prive_non_cadre:24900:4\n2014:salarie_prive_non_cadre:25500:4\n2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:31500:4\n2025:salarie_prive_non_cadre:32100:4\n2026:salarie_prive_non_cadre:32662\n2027:salarie_prive_non_cadre:33233\n2028:salarie_prive_non_cadre:33815\n2029:salarie_prive_non_cadre:34407\n2030:salarie_prive_non_cadre:35009\n2031:salarie_prive_non_cadre:35621\n2032:salarie_prive_non_cadre:36245\n2033:salarie_prive_non_cadre:15366",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [
+     {
+      "a_charge": [],
+      "code": "majoration_duree_assurance",
+      "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
+      "montant": 1315.6989775788097,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "surcote_parentale",
+      "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
+      "montant": 915.5005492982315,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "majoration_enfants",
+      "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
+      "montant": 2791.1509414310894,
+      "par_regime": [
+       [
+        "agirc_arrco",
+        234.52508950870924
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        2242.976345780667
+       ]
+      ],
+      "par_regime_sans_anticipation": [
+       [
+        "agirc_arrco",
+        234.52508950870924
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        2242.976345780667
+       ]
+      ]
+     }
+    ],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 31656.842732695226,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "1,448.83 points × valeur de service 1.618723 €",
+      "montant": 2345.250895087092,
+      "regime": "agirc_arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "2,527.10 points × valeur de service 1.618723 €",
+      "montant": 4090.6774383703723,
+      "regime": "arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "aucun droit",
+      "montant": 0.0,
+      "regime": "arrco_tranche_2",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "SR 36,620.02 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,310.01 €",
+      "montant": 22429.76345780667,
+      "regime": "regime_general",
+      "type_calcul": "annuites"
+     }
+    ],
+    "taux_liquidation": 0.5875,
+    "trimestres_requis": 172,
+    "trimestres_valides": 205
+   },
+   "annee_liquidation": 2033,
+   "coefficient_euros_constants": 0.8856437756216318,
+   "mois_liquidation": 6,
+   "reversion": null
+  }
+ },
  "843f62d53de6a4f7": {
   "cas": {
    "requete": {
@@ -13166,6 +14148,23 @@
    "reversion": null
   }
  },
+ "883be7d684f16083": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2026",
+    "interruptions": "",
+    "liquidation": "2113-10",
+    "naissance": "1993-09-14",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:31500:4\n2025:salarie_prive_non_cadre:32100:4\n2026:salarie_prive_non_cadre:32886\n2027:salarie_prive_non_cadre:33692\n2028:salarie_prive_non_cadre:34518\n2029:salarie_prive_non_cadre:35363\n2030:salarie_prive_non_cadre:36230\n2031:salarie_prive_non_cadre:37117\n2032:salarie_prive_non_cadre:38027\n2033:salarie_prive_non_cadre:38958\n2034:salarie_prive_non_cadre:39913\n2035:salarie_prive_non_cadre:40891\n2036:salarie_prive_non_cadre:41893\n2037:salarie_prive_non_cadre:42919\n2038:salarie_prive_non_cadre:43970\n2039:salarie_prive_non_cadre:45048\n2040:salarie_prive_non_cadre:46151\n2041:salarie_prive_non_cadre:47282\n2042:salarie_prive_non_cadre:48440\n2043:salarie_prive_non_cadre:49627\n2044:salarie_prive_non_cadre:50843\n2045:salarie_prive_non_cadre:52089\n2046:salarie_prive_non_cadre:53365\n2047:salarie_prive_non_cadre:54672\n2048:salarie_prive_non_cadre:56012\n2049:salarie_prive_non_cadre:57384\n2050:salarie_prive_non_cadre:58790\n2051:salarie_prive_non_cadre:60230\n2052:salarie_prive_non_cadre:61706\n2053:salarie_prive_non_cadre:63218\n2054:salarie_prive_non_cadre:64767\n2055:salarie_prive_non_cadre:66354\n2056:salarie_prive_non_cadre:67979\n2057:salarie_prive_non_cadre:69645\n2058:salarie_prive_non_cadre:71351\n2059:salarie_prive_non_cadre:73099\n2060:salarie_prive_non_cadre:74890\n2061:salarie_prive_non_cadre:76725\n2062:salarie_prive_non_cadre:78605\n2063:salarie_prive_non_cadre:80530\n2064:salarie_prive_non_cadre:82503\n2065:salarie_prive_non_cadre:84525\n2066:salarie_prive_non_cadre:86596\n2067:salarie_prive_non_cadre:88717\n2068:salarie_prive_non_cadre:90891\n2069:salarie_prive_non_cadre:93118\n2070:salarie_prive_non_cadre:95399\n2071:salarie_prive_non_cadre:97736\n2072:salarie_prive_non_cadre:100131\n2073:salarie_prive_non_cadre:102584\n2074:salarie_prive_non_cadre:105097\n2075:salarie_prive_non_cadre:107672\n2076:salarie_prive_non_cadre:110310\n2077:salarie_prive_non_cadre:113013\n2078:salarie_prive_non_cadre:115781\n2079:salarie_prive_non_cadre:118618\n2080:salarie_prive_non_cadre:121524\n2081:salarie_prive_non_cadre:124502\n2082:salarie_prive_non_cadre:127552\n2083:salarie_prive_non_cadre:130677\n2084:salarie_prive_non_cadre:133878\n2085:salarie_prive_non_cadre:137159\n2086:salarie_prive_non_cadre:140519\n2087:salarie_prive_non_cadre:143962\n2088:salarie_prive_non_cadre:147489\n2089:salarie_prive_non_cadre:151102\n2090:salarie_prive_non_cadre:154804\n2091:salarie_prive_non_cadre:158597\n2092:salarie_prive_non_cadre:162482\n2093:salarie_prive_non_cadre:166463\n2094:salarie_prive_non_cadre:170542\n2095:salarie_prive_non_cadre:174720\n2096:salarie_prive_non_cadre:179001\n2097:salarie_prive_non_cadre:183386\n2098:salarie_prive_non_cadre:187879\n2099:salarie_prive_non_cadre:192482\n2100:salarie_prive_non_cadre:197198\n2101:salarie_prive_non_cadre:202029\n2102:salarie_prive_non_cadre:206979\n2103:salarie_prive_non_cadre:212050\n2104:salarie_prive_non_cadre:217245\n2105:salarie_prive_non_cadre:222568\n2106:salarie_prive_non_cadre:228021\n2107:salarie_prive_non_cadre:233607\n2108:salarie_prive_non_cadre:239330\n2109:salarie_prive_non_cadre:245194\n2110:salarie_prive_non_cadre:251201\n2111:salarie_prive_non_cadre:257356\n2112:salarie_prive_non_cadre:263661\n2113:salarie_prive_non_cadre:202590",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "refus": "Départ à la retraite : le modèle l'accepte de 40 à 119 ans, soit de octobre 2033 à octobre 2112."
+ },
  "88e4f5a53d921a77": {
   "cas": {
    "requete": {
@@ -13420,6 +14419,108 @@
    "annee_liquidation": 2021,
    "coefficient_euros_constants": 1.1561061427349881,
    "mois_liquidation": 4,
+   "reversion": null
+  }
+ },
+ "8b7939c852763bf9": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2026",
+    "interruptions": "",
+    "liquidation": "2033-06",
+    "naissance": "1966-05-12",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "1988:salarie_prive_non_cadre:9147:4\n1989:salarie_prive_non_cadre:9604:4\n1990:salarie_prive_non_cadre:10062:4\n1991:salarie_prive_non_cadre:10519:4\n1992:salarie_prive_non_cadre:10976:4\n1993:salarie_prive_non_cadre:11434:4\n1994:salarie_prive_non_cadre:11891:4\n1995:salarie_prive_non_cadre:12348:4\n1996:salarie_prive_non_cadre:12806:4\n1997:salarie_prive_non_cadre:13263:4\n1998:salarie_prive_non_cadre:13720:4\n1999:salarie_prive_non_cadre:14178:4\n2000:salarie_prive_non_cadre:14635:4\n2001:salarie_prive_non_cadre:15092:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:18900:4\n2004:salarie_prive_non_cadre:19500:4\n2005:salarie_prive_non_cadre:20100:4\n2006:salarie_prive_non_cadre:20700:4\n2007:salarie_prive_non_cadre:21300:4\n2008:salarie_prive_non_cadre:21900:4\n2009:salarie_prive_non_cadre:22500:4\n2010:salarie_prive_non_cadre:23100:4\n2011:salarie_prive_non_cadre:23700:4\n2012:salarie_prive_non_cadre:24300:4\n2013:salarie_prive_non_cadre:24900:4\n2014:salarie_prive_non_cadre:25500:4\n2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:31500:4\n2025:salarie_prive_non_cadre:32100:4",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [
+     {
+      "a_charge": [],
+      "code": "majoration_duree_assurance",
+      "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
+      "montant": 2206.479960617442,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "majoration_enfants",
+      "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
+      "montant": 2185.6105132512444,
+      "par_regime": [
+       [
+        "agirc_arrco",
+        116.71811344481125
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        1755.2428936647198
+       ]
+      ],
+      "par_regime_sans_anticipation": [
+       [
+        "agirc_arrco",
+        116.71811344481125
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        1755.2428936647198
+       ]
+      ]
+     }
+    ],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 24995.898022716927,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "721.05 points × valeur de service 1.618723 €",
+      "montant": 1167.1811344481123,
+      "regime": "agirc_arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "2,527.10 points × valeur de service 1.618723 €",
+      "montant": 4090.6774383703723,
+      "regime": "arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "aucun droit",
+      "montant": 0.0,
+      "regime": "arrco_tranche_2",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "SR 35,104.86 € × taux 50.000% × 172/172",
+      "montant": 17552.428936647197,
+      "regime": "regime_general",
+      "type_calcul": "annuites"
+     }
+    ],
+    "taux_liquidation": 0.5,
+    "trimestres_requis": 172,
+    "trimestres_valides": 176
+   },
+   "annee_liquidation": 2033,
+   "coefficient_euros_constants": 0.8856437756216318,
+   "mois_liquidation": 6,
    "reversion": null
   }
  },
@@ -16106,6 +17207,116 @@
    "reversion": null
   }
  },
+ "a7981ea4cded6324": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2026",
+    "interruptions": "",
+    "liquidation": "2033-06",
+    "naissance": "1966-05-12",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "1988:salarie_prive_non_cadre:9147:4\n1989:salarie_prive_non_cadre:9604:4\n1990:salarie_prive_non_cadre:10062:4\n1991:salarie_prive_non_cadre:10519:4\n1992:salarie_prive_non_cadre:10976:4\n1993:salarie_prive_non_cadre:11434:4\n1994:salarie_prive_non_cadre:11891:4\n1995:salarie_prive_non_cadre:12348:4\n1996:salarie_prive_non_cadre:12806:4\n1997:salarie_prive_non_cadre:13263:4\n1998:salarie_prive_non_cadre:13720:4\n1999:salarie_prive_non_cadre:14178:4\n2000:salarie_prive_non_cadre:14635:4\n2001:salarie_prive_non_cadre:15092:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:18900:4\n2004:salarie_prive_non_cadre:19500:4\n2005:salarie_prive_non_cadre:20100:4\n2006:salarie_prive_non_cadre:20700:4\n2007:salarie_prive_non_cadre:21300:4\n2008:salarie_prive_non_cadre:21900:4\n2009:salarie_prive_non_cadre:22500:4\n2010:salarie_prive_non_cadre:20000:4\n2011:salarie_prive_non_cadre:23700:4\n2012:salarie_prive_non_cadre:24300:4\n2013:salarie_prive_non_cadre:24900:4\n2014:salarie_prive_non_cadre:25500:4\n2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:31500:4\n2025:salarie_prive_non_cadre:32100:4\n2026:salarie_prive_non_cadre:32886\n2027:salarie_prive_non_cadre:33692\n2028:salarie_prive_non_cadre:34518\n2029:salarie_prive_non_cadre:35363\n2030:salarie_prive_non_cadre:36230\n2031:salarie_prive_non_cadre:37117\n2032:salarie_prive_non_cadre:38027\n2033:salarie_prive_non_cadre:16233",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [
+     {
+      "a_charge": [],
+      "code": "majoration_duree_assurance",
+      "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
+      "montant": 1358.610906945185,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "surcote_parentale",
+      "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
+      "montant": 923.3287138714309,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "majoration_enfants",
+      "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
+      "montant": 2812.733826373481,
+      "par_regime": [
+       [
+        "agirc_arrco",
+        237.9740553001644
+       ],
+       [
+        "arrco",
+        312.6044220883115
+       ],
+       [
+        "regime_general",
+        2262.1553489850053
+       ]
+      ],
+      "par_regime_sans_anticipation": [
+       [
+        "agirc_arrco",
+        237.9740553001644
+       ],
+       [
+        "arrco",
+        312.6044220883115
+       ],
+       [
+        "regime_general",
+        2262.1553489850053
+       ]
+      ]
+     }
+    ],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 31883.80362652752,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "1,470.13 points × valeur de service 1.618723 €",
+      "montant": 2379.7405530016435,
+      "regime": "agirc_arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "2,514.19 points × valeur de service 1.618723 €",
+      "montant": 4069.775757302339,
+      "regime": "arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "aucun droit",
+      "montant": 0.0,
+      "regime": "arrco_tranche_2",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "SR 36,933.15 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,466.57 €",
+      "montant": 22621.553489850052,
+      "regime": "regime_general",
+      "type_calcul": "annuites"
+     }
+    ],
+    "taux_liquidation": 0.5875,
+    "trimestres_requis": 172,
+    "trimestres_valides": 205
+   },
+   "annee_liquidation": 2033,
+   "coefficient_euros_constants": 0.8856437756216318,
+   "mois_liquidation": 6,
+   "reversion": null
+  }
+ },
  "a82c5084e37c2cab": {
   "cas": {
    "requete": {
@@ -17202,6 +18413,116 @@
    "annee_liquidation": 2030,
    "coefficient_euros_constants": 0.9329585055577301,
    "mois_liquidation": 6,
+   "reversion": null
+  }
+ },
+ "b1e4be64f02ead1a": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2026",
+    "interruptions": "",
+    "liquidation": "2057-10",
+    "naissance": "1993-09-14",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:31500:4\n2025:salarie_prive_non_cadre:32100:4\n2026:salarie_prive_non_cadre:32886\n2027:salarie_prive_non_cadre:33692\n2028:salarie_prive_non_cadre:34518\n2029:salarie_prive_non_cadre:35363\n2030:salarie_prive_non_cadre:36230\n2031:salarie_prive_non_cadre:37117\n2032:salarie_prive_non_cadre:38027\n2033:salarie_prive_non_cadre:38958\n2034:salarie_prive_non_cadre:39913\n2035:salarie_prive_non_cadre:40891\n2036:salarie_prive_non_cadre:41893\n2037:salarie_prive_non_cadre:42919\n2038:salarie_prive_non_cadre:43970\n2039:salarie_prive_non_cadre:45048\n2040:salarie_prive_non_cadre:46151\n2041:salarie_prive_non_cadre:47282\n2042:salarie_prive_non_cadre:48440\n2043:salarie_prive_non_cadre:49627\n2044:salarie_prive_non_cadre:50843\n2045:salarie_prive_non_cadre:52089\n2046:salarie_prive_non_cadre:53365\n2047:salarie_prive_non_cadre:54672\n2048:salarie_prive_non_cadre:56012\n2049:salarie_prive_non_cadre:57384\n2050:salarie_prive_non_cadre:58790\n2051:salarie_prive_non_cadre:60230\n2052:salarie_prive_non_cadre:61706\n2053:salarie_prive_non_cadre:63218\n2054:salarie_prive_non_cadre:64767\n2055:salarie_prive_non_cadre:66354\n2056:salarie_prive_non_cadre:67979\n2057:salarie_prive_non_cadre:52233",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [
+     {
+      "a_charge": [],
+      "code": "majoration_duree_assurance",
+      "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
+      "montant": 895.6753274165312,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "surcote_parentale",
+      "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
+      "montant": 1605.2628610178674,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "majoration_enfants",
+      "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
+      "montant": 4438.254945556218,
+      "par_regime": [
+       [
+        "agirc_arrco",
+        964.1574222107353
+       ],
+       [
+        "arrco",
+        103.04551520796174
+       ],
+       [
+        "regime_general",
+        3371.0520081375216
+       ]
+      ],
+      "par_regime_sans_anticipation": [
+       [
+        "agirc_arrco",
+        964.1574222107353
+       ],
+       [
+        "arrco",
+        103.04551520796174
+       ],
+       [
+        "regime_general",
+        3371.0520081375216
+       ]
+      ]
+     }
+    ],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 48820.8044011184,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "3,927.80 points × valeur de service 2.454701 €",
+      "montant": 9641.574222107354,
+      "regime": "agirc_arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "419.79 points × valeur de service 2.454701 €",
+      "montant": 1030.4551520796172,
+      "regime": "arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "aucun droit",
+      "montant": 0.0,
+      "regime": "arrco_tranche_2",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "SR 64,210.51 € × taux 50.000% × 172/172, surcote parentale 5.00% de 32,105.26 €",
+      "montant": 33710.520081375216,
+      "regime": "regime_general",
+      "type_calcul": "annuites"
+     }
+    ],
+    "taux_liquidation": 0.5,
+    "trimestres_requis": 172,
+    "trimestres_valides": 195
+   },
+   "annee_liquidation": 2057,
+   "coefficient_euros_constants": 0.5840271611756467,
+   "mois_liquidation": 10,
    "reversion": null
   }
  },
@@ -19867,6 +21188,116 @@
    "reversion": null
   }
  },
+ "d2569d0158a8f451": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2026",
+    "interruptions": "",
+    "liquidation": "2030-06",
+    "naissance": "1966-05-12",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "1988:salarie_prive_non_cadre:9147:4\n1989:salarie_prive_non_cadre:9604:4\n1990:salarie_prive_non_cadre:10062:4\n1991:salarie_prive_non_cadre:10519:4\n1992:salarie_prive_non_cadre:10976:4\n1993:salarie_prive_non_cadre:11434:4\n1994:salarie_prive_non_cadre:11891:4\n1995:salarie_prive_non_cadre:12348:4\n1996:salarie_prive_non_cadre:12806:4\n1997:salarie_prive_non_cadre:13263:4\n1998:salarie_prive_non_cadre:13720:4\n1999:salarie_prive_non_cadre:14178:4\n2000:salarie_prive_non_cadre:14635:4\n2001:salarie_prive_non_cadre:15092:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:18900:4\n2004:salarie_prive_non_cadre:19500:4\n2005:salarie_prive_non_cadre:20100:4\n2006:salarie_prive_non_cadre:20700:4\n2007:salarie_prive_non_cadre:21300:4\n2008:salarie_prive_non_cadre:21900:4\n2009:salarie_prive_non_cadre:22500:4\n2010:salarie_prive_non_cadre:23100:4\n2011:salarie_prive_non_cadre:23700:4\n2012:salarie_prive_non_cadre:24300:4\n2013:salarie_prive_non_cadre:24900:4\n2014:salarie_prive_non_cadre:25500:4\n2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:31500:4\n2025:salarie_prive_non_cadre:32100:4\n2026:salarie_prive_non_cadre:32886\n2027:salarie_prive_non_cadre:33692\n2028:salarie_prive_non_cadre:34518\n2029:salarie_prive_non_cadre:35363\n2030:salarie_prive_non_cadre:15096",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [
+     {
+      "a_charge": [],
+      "code": "majoration_duree_assurance",
+      "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
+      "montant": 1693.3929606121237,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "surcote_parentale",
+      "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
+      "montant": 858.3822032462493,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "majoration_enfants",
+      "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
+      "montant": 2322.6098154672827,
+      "par_regime": [
+       [
+        "agirc_arrco",
+        179.3452194148737
+       ],
+       [
+        "arrco",
+        297.7428590729733
+       ],
+       [
+        "regime_general",
+        1845.521736979436
+       ]
+      ],
+      "par_regime_sans_anticipation": [
+       [
+        "agirc_arrco",
+        179.3452194148737
+       ],
+       [
+        "arrco",
+        297.7428590729733
+       ],
+       [
+        "regime_general",
+        1845.521736979436
+       ]
+      ]
+     }
+    ],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 26454.499254449485,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "1,167.13 points × valeur de service 1.53663 €",
+      "montant": 1793.4521941487362,
+      "regime": "agirc_arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "2,527.10 points × valeur de service 1.53663 €",
+      "montant": 3883.219875039108,
+      "regime": "arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "aucun droit",
+      "montant": 0.0,
+      "regime": "arrco_tranche_2",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "SR 34,335.29 € × taux 51.250% × 172/172, surcote parentale 5.00% de 17,167.64 €",
+      "montant": 18455.217369794358,
+      "regime": "regime_general",
+      "type_calcul": "annuites"
+     }
+    ],
+    "taux_liquidation": 0.5125,
+    "trimestres_requis": 172,
+    "trimestres_valides": 193
+   },
+   "annee_liquidation": 2030,
+   "coefficient_euros_constants": 0.9329585055577301,
+   "mois_liquidation": 6,
+   "reversion": null
+  }
+ },
  "d2a94d7aa3849deb": {
   "cas": {
    "requete": {
@@ -20604,6 +22035,116 @@
    }
   }
  },
+ "d7754ff2c76b567e": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2026",
+    "interruptions": "",
+    "liquidation": "2033-06",
+    "naissance": "1966-05-12",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "1988:salarie_prive_non_cadre:9147:4\n1989:salarie_prive_non_cadre:9604:4\n1990:salarie_prive_non_cadre:10062:4\n1991:salarie_prive_non_cadre:10519:4\n1992:salarie_prive_non_cadre:10976:4\n1993:salarie_prive_non_cadre:11434:4\n1994:salarie_prive_non_cadre:11891:4\n1995:salarie_prive_non_cadre:12348:4\n1996:salarie_prive_non_cadre:12806:4\n1997:salarie_prive_non_cadre:13263:4\n1998:salarie_prive_non_cadre:13720:4\n1999:salarie_prive_non_cadre:14178:4\n2000:salarie_prive_non_cadre:14635:4\n2001:salarie_prive_non_cadre:15092:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:18900:4\n2004:salarie_prive_non_cadre:19500:4\n2005:salarie_prive_non_cadre:20100:4\n2006:salarie_prive_non_cadre:20700:4\n2007:salarie_prive_non_cadre:21300:4\n2008:salarie_prive_non_cadre:21900:4\n2009:salarie_prive_non_cadre:22500:4\n2010:salarie_prive_non_cadre:23100:4\n2011:salarie_prive_non_cadre:23700:4\n2012:salarie_prive_non_cadre:24300:4\n2013:salarie_prive_non_cadre:24900:4\n2014:salarie_prive_non_cadre:25500:4\n2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:31500:4\n2025:salarie_prive_non_cadre:32100:4\n2026:salarie_prive_non_cadre:32886\n2027:salarie_prive_non_cadre:33692\n2028:salarie_prive_non_cadre:34518\n2029:salarie_prive_non_cadre:35363\n2030:salarie_prive_non_cadre:36230\n2031:salarie_prive_non_cadre:37117\n2032:salarie_prive_non_cadre:38027\n2033:salarie_prive_non_cadre:16233",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [
+     {
+      "a_charge": [],
+      "code": "majoration_duree_assurance",
+      "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
+      "montant": 1339.4183162356057,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "surcote_parentale",
+      "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
+      "montant": 923.3287138714309,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "majoration_enfants",
+      "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
+      "montant": 2813.7789104268827,
+      "par_regime": [
+       [
+        "agirc_arrco",
+        237.9740553001644
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        2262.1553489850053
+       ]
+      ],
+      "par_regime_sans_anticipation": [
+       [
+        "agirc_arrco",
+        237.9740553001644
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        2262.1553489850053
+       ]
+      ]
+     }
+    ],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 31905.75039164895,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "1,470.13 points × valeur de service 1.618723 €",
+      "montant": 2379.7405530016435,
+      "regime": "agirc_arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "2,527.10 points × valeur de service 1.618723 €",
+      "montant": 4090.6774383703723,
+      "regime": "arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "aucun droit",
+      "montant": 0.0,
+      "regime": "arrco_tranche_2",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "SR 36,933.15 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,466.57 €",
+      "montant": 22621.553489850052,
+      "regime": "regime_general",
+      "type_calcul": "annuites"
+     }
+    ],
+    "taux_liquidation": 0.5875,
+    "trimestres_requis": 172,
+    "trimestres_valides": 205
+   },
+   "annee_liquidation": 2033,
+   "coefficient_euros_constants": 0.8856437756216318,
+   "mois_liquidation": 6,
+   "reversion": null
+  }
+ },
  "d789b677697ac4c2": {
   "cas": {
    "requete": {
@@ -21256,6 +22797,116 @@
    "annee_liquidation": 2015,
    "coefficient_euros_constants": 1.2306696074945456,
    "mois_liquidation": 10,
+   "reversion": null
+  }
+ },
+ "def5d26c61573745": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2026",
+    "interruptions": "",
+    "liquidation": "2030-06",
+    "naissance": "1966-05-12",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "1988:salarie_prive_non_cadre:9147:4\n1989:salarie_prive_non_cadre:9604:4\n1990:salarie_prive_non_cadre:10062:4\n1991:salarie_prive_non_cadre:10519:4\n1992:salarie_prive_non_cadre:10976:4\n1993:salarie_prive_non_cadre:11434:4\n1994:salarie_prive_non_cadre:11891:4\n1995:salarie_prive_non_cadre:12348:4\n1996:salarie_prive_non_cadre:12806:4\n1997:salarie_prive_non_cadre:13263:4\n1998:salarie_prive_non_cadre:13720:4\n1999:salarie_prive_non_cadre:14178:4\n2000:salarie_prive_non_cadre:14635:4\n2001:salarie_prive_non_cadre:15092:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:18900:4\n2004:salarie_prive_non_cadre:19500:4\n2005:salarie_prive_non_cadre:20100:4\n2006:salarie_prive_non_cadre:20700:4\n2007:salarie_prive_non_cadre:21300:4\n2008:salarie_prive_non_cadre:21900:4\n2009:salarie_prive_non_cadre:22500:4\n2010:salarie_prive_non_cadre:23100:4\n2011:salarie_prive_non_cadre:23700:4\n2012:salarie_prive_non_cadre:24300:4\n2013:salarie_prive_non_cadre:24900:4\n2014:salarie_prive_non_cadre:25500:4\n2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:31500:4\n2025:salarie_prive_non_cadre:32100:4\n2026:salarie_prive_non_cadre:30000\n2027:salarie_prive_non_cadre:30525\n2028:salarie_prive_non_cadre:31059\n2029:salarie_prive_non_cadre:31603\n2030:salarie_prive_non_cadre:13398",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [
+     {
+      "a_charge": [],
+      "code": "majoration_duree_assurance",
+      "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
+      "montant": 1644.7604857629049,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "surcote_parentale",
+      "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
+      "montant": 843.3425253794657,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "majoration_enfants",
+      "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
+      "montant": 2283.520884520943,
+      "par_regime": [
+       [
+        "agirc_arrco",
+        172.59159588211855
+       ],
+       [
+        "arrco",
+        297.7428590729733
+       ],
+       [
+        "regime_general",
+        1813.186429565851
+       ]
+      ],
+      "par_regime_sans_anticipation": [
+       [
+        "agirc_arrco",
+        172.59159588211855
+       ],
+       [
+        "arrco",
+        297.7428590729733
+       ],
+       [
+        "regime_general",
+        1813.186429565851
+       ]
+      ]
+     }
+    ],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 26024.521014039743,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "1,123.18 points × valeur de service 1.53663 €",
+      "montant": 1725.9159588211849,
+      "regime": "agirc_arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "2,527.10 points × valeur de service 1.53663 €",
+      "montant": 3883.219875039108,
+      "regime": "arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "aucun droit",
+      "montant": 0.0,
+      "regime": "arrco_tranche_2",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "SR 33,733.70 € × taux 51.250% × 172/172, surcote parentale 5.00% de 16,866.85 €",
+      "montant": 18131.86429565851,
+      "regime": "regime_general",
+      "type_calcul": "annuites"
+     }
+    ],
+    "taux_liquidation": 0.5125,
+    "trimestres_requis": 172,
+    "trimestres_valides": 193
+   },
+   "annee_liquidation": 2030,
+   "coefficient_euros_constants": 0.9329585055577301,
+   "mois_liquidation": 6,
    "reversion": null
   }
  },
@@ -21953,6 +23604,116 @@
    "annee_liquidation": 2012,
    "coefficient_euros_constants": 1.248144351853146,
    "mois_liquidation": 3,
+   "reversion": null
+  }
+ },
+ "e303ee4be704aa23": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2026",
+    "interruptions": "",
+    "liquidation": "2033-06",
+    "naissance": "1966-05-12",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "1988:salarie_prive_non_cadre:9147:4\n1989:salarie_prive_non_cadre:9604:4\n1990:salarie_prive_non_cadre:10062:4\n1991:salarie_prive_non_cadre:10519:4\n1992:salarie_prive_non_cadre:10976:4\n1993:salarie_prive_non_cadre:11434:4\n1994:salarie_prive_non_cadre:11891:4\n1995:salarie_prive_non_cadre:12348:4\n1996:salarie_prive_non_cadre:12806:4\n1997:salarie_prive_non_cadre:13263:4\n1998:salarie_prive_non_cadre:13720:4\n1999:salarie_prive_non_cadre:14178:4\n2000:salarie_prive_non_cadre:14635:4\n2001:salarie_prive_non_cadre:15092:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:18900:4\n2004:salarie_prive_non_cadre:19500:4\n2005:salarie_prive_non_cadre:20100:4\n2006:salarie_prive_non_cadre:20700:4\n2007:salarie_prive_non_cadre:21300:4\n2008:salarie_prive_non_cadre:21900:4\n2009:salarie_prive_non_cadre:22500:4\n2010:salarie_prive_non_cadre:23100:4\n2011:salarie_prive_non_cadre:23700:4\n2012:salarie_prive_non_cadre:24300:4\n2013:salarie_prive_non_cadre:24900:4\n2014:salarie_prive_non_cadre:25500:4\n2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:31500:4\n2025:salarie_prive_non_cadre:32100:4\n2026:salarie_prive_non_cadre:32825\n2027:salarie_prive_non_cadre:33566\n2028:salarie_prive_non_cadre:34325\n2029:salarie_prive_non_cadre:35100\n2030:salarie_prive_non_cadre:35893\n2031:salarie_prive_non_cadre:36704\n2032:salarie_prive_non_cadre:37533\n2033:salarie_prive_non_cadre:15992",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [
+     {
+      "a_charge": [],
+      "code": "majoration_duree_assurance",
+      "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
+      "montant": 1332.8764234687114,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "surcote_parentale",
+      "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
+      "montant": 921.1696733543045,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "majoration_enfants",
+      "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
+      "montant": 2807.537274315013,
+      "par_regime": [
+       [
+        "agirc_arrco",
+        237.02206845525404
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        2256.8656997180456
+       ]
+      ],
+      "par_regime_sans_anticipation": [
+       [
+        "agirc_arrco",
+        237.02206845525404
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        2256.8656997180456
+       ]
+      ]
+     }
+    ],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 31837.09239441838,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "1,464.25 points × valeur de service 1.618723 €",
+      "montant": 2370.22068455254,
+      "regime": "agirc_arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "2,527.10 points × valeur de service 1.618723 €",
+      "montant": 4090.6774383703723,
+      "regime": "arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "aucun droit",
+      "montant": 0.0,
+      "regime": "arrco_tranche_2",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "SR 36,846.79 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,423.39 €",
+      "montant": 22568.656997180457,
+      "regime": "regime_general",
+      "type_calcul": "annuites"
+     }
+    ],
+    "taux_liquidation": 0.5875,
+    "trimestres_requis": 172,
+    "trimestres_valides": 205
+   },
+   "annee_liquidation": 2033,
+   "coefficient_euros_constants": 0.8856437756216318,
+   "mois_liquidation": 6,
    "reversion": null
   }
  },
@@ -23368,6 +25129,116 @@
    "annee_liquidation": 2024,
    "coefficient_euros_constants": 1.0270950250000002,
    "mois_liquidation": 10,
+   "reversion": null
+  }
+ },
+ "f1f3a287355371fb": {
+  "cas": {
+   "prolonger": false,
+   "requete": {
+    "enfants": "3",
+    "euros": "2026",
+    "interruptions": "",
+    "liquidation": "2033-06",
+    "naissance": "1966-05-12",
+    "naissances": "1994-05,1996-05,1998-05",
+    "releve": "1988:salarie_prive_non_cadre:9147:4\n1989:salarie_prive_non_cadre:9604:4\n1990:salarie_prive_non_cadre:10062:4\n1991:salarie_prive_non_cadre:10519:4\n1992:salarie_prive_non_cadre:10976:4\n1993:salarie_prive_non_cadre:11434:4\n1994:salarie_prive_non_cadre:11891:4\n1995:salarie_prive_non_cadre:12348:4\n1996:salarie_prive_non_cadre:12806:4\n1997:salarie_prive_non_cadre:13263:4\n1998:salarie_prive_non_cadre:13720:4\n1999:salarie_prive_non_cadre:14178:4\n2000:salarie_prive_non_cadre:14635:4\n2001:salarie_prive_non_cadre:15092:4\n2002:salarie_prive_non_cadre:18300:4\n2003:salarie_prive_non_cadre:18900:4\n2004:salarie_prive_non_cadre:19500:4\n2005:salarie_prive_non_cadre:20100:4\n2006:salarie_prive_non_cadre:20700:4\n2007:salarie_prive_non_cadre:21300:4\n2008:salarie_prive_non_cadre:21900:4\n2009:salarie_prive_non_cadre:22500:4\n2010:salarie_prive_non_cadre:23100:4\n2011:salarie_prive_non_cadre:23700:4\n2012:salarie_prive_non_cadre:24300:4\n2013:salarie_prive_non_cadre:24900:4\n2014:salarie_prive_non_cadre:25500:4\n2015:salarie_prive_non_cadre:26100:4\n2016:salarie_prive_non_cadre:26700:4\n2017:salarie_prive_non_cadre:27300:4\n2018:salarie_prive_non_cadre:27900:4\n2019:salarie_prive_non_cadre:28500:4\n2020:salarie_prive_non_cadre:29100:4\n2021:salarie_prive_non_cadre:29700:4\n2022:salarie_prive_non_cadre:30300:4\n2023:salarie_prive_non_cadre:30900:4\n2024:salarie_prive_non_cadre:55642:4\n2025:salarie_prive_non_cadre:32100:4\n2026:salarie_prive_non_cadre:32886\n2027:salarie_prive_non_cadre:33692\n2028:salarie_prive_non_cadre:34518\n2029:salarie_prive_non_cadre:35363\n2030:salarie_prive_non_cadre:36230\n2031:salarie_prive_non_cadre:37117\n2032:salarie_prive_non_cadre:38027\n2033:salarie_prive_non_cadre:16233",
+    "sexe": "F"
+   }
+  },
+  "cle": "depart",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [
+     {
+      "a_charge": [],
+      "code": "majoration_duree_assurance",
+      "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
+      "montant": 1396.4225279181555,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "surcote_parentale",
+      "detail": "5.00% pour 4 trimestres dans l'année qui précède l'âge légal",
+      "montant": 942.141985053791,
+      "par_regime": [],
+      "par_regime_sans_anticipation": []
+     },
+     {
+      "a_charge": [],
+      "code": "majoration_enfants",
+      "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
+      "montant": 2880.4714147830414,
+      "par_regime": [
+       [
+        "agirc_arrco",
+        258.57404525954036
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        2308.2478633817877
+       ]
+      ],
+      "par_regime_sans_anticipation": [
+       [
+        "agirc_arrco",
+        258.57404525954036
+       ],
+       [
+        "arrco",
+        313.6495061417132
+       ],
+       [
+        "regime_general",
+        2308.2478633817877
+       ]
+      ]
+     }
+    ],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 32639.367939566695,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "1,597.40 points × valeur de service 1.618723 €",
+      "montant": 2585.740452595403,
+      "regime": "agirc_arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "2,527.10 points × valeur de service 1.618723 €",
+      "montant": 4090.6774383703723,
+      "regime": "arrco",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "aucun droit",
+      "montant": 0.0,
+      "regime": "arrco_tranche_2",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "SR 37,685.68 € × taux 58.750% × 172/172, surcote parentale 5.00% de 18,842.84 €",
+      "montant": 23082.47863381788,
+      "regime": "regime_general",
+      "type_calcul": "annuites"
+     }
+    ],
+    "taux_liquidation": 0.5875,
+    "trimestres_requis": 172,
+    "trimestres_valides": 205
+   },
+   "annee_liquidation": 2033,
+   "coefficient_euros_constants": 0.8856437756216318,
+   "mois_liquidation": 6,
    "reversion": null
   }
  },
