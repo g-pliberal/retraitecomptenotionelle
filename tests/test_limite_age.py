@@ -239,6 +239,27 @@ def test_avant_2023_le_contractuel_part_a_sa_limite(simulateur):
             == (65.0, 65.0, version, ())
 
 
+def test_la_limite_atteinte_en_decembre_fait_partir_la_pension_en_janvier(simulateur):
+    """Né le 15 août 1951, le contractuel a soixante ans en 2011 : sa limite
+    est de soixante-cinq ans et quatre mois (L. 556-11 CGFP, marche du décret
+    prévu au II de l'article 28 de la loi n° 2010-1330), atteinte le 15
+    décembre 2016 ; ses pensions partent le 1er janvier 2017, comme celles du
+    contractuel né le 15 juillet partent le 1er décembre. Le fonctionnaire né
+    le 15 décembre 1950, limité à soixante-cinq ans le 15 décembre 2015, est
+    radié et pensionné au 1er janvier 2016. La radiation tombée en janvier ne
+    doit pas disparaître de la carrière arrêtée à la radiation (balayage de
+    l'action 194, piste 4)."""
+    moteur = simulateur.scenario_actuel
+    for statut, naissance, mois, effet in (
+            ("contractuel_public", 1951, 7, "2016-12-01"),
+            ("contractuel_public", 1951, 8, "2017-01-01"),
+            ("fonctionnaire_etat", 1950, 12, "2016-01-01")):
+        carriere = _simple(simulateur, statut, naissance, 70, mois_naissance=mois)
+        resultat = moteur.calculer(carriere)
+        assert {p.date_effet for p in resultat.pensions_par_regime} == {effet}, \
+            (statut, naissance, mois)
+
+
 def test_l_ouvrier_suit_les_paliers_du_decret_de_2004(simulateur):
     """Né en 1945, l'ouvrier a soixante et un ans et demi en 2006, la limite de
     cette année-là (décret n° 2004-1057, article 2) ; l'insalubre, soixante ans

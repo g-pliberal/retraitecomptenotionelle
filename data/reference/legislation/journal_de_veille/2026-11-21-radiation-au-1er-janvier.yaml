@@ -1,0 +1,18 @@
+date: "2026-11-21"
+session: "action 151, étape 12 : la radiation par limite d'âge qui tombe un 1er janvier"
+consulte: >-
+  L'index LEGI du dépôt : R. 351-37 du code de la sécurité sociale
+  (LEGIARTI000023796396) ; article 17 de l'arrêté du 30 décembre 1970,
+  Ircantec (LEGIARTI000019511935, LEGIARTI000019511986). Fiche
+  limite_age_contractuels. scripts/veille_droit.py : rien à relire sur les
+  fiches de la limite d'âge.
+trouve: >-
+  La pension du régime général et l'allocation de l'Ircantec partent de la
+  demande ; le modèle présume celle-ci à la fin du contrat (étape 4, choix 5).
+  Défaut de code, non de texte : la radiation atteinte en décembre
+  disparaissait du calcul ; corrigé (contractuel né en août 1951, parti à
+  70 ans : 21 005 à 20 001 euros par an). Détail :
+  docs/feuille_de_route/151/2026-11-21-etape-12-radiation-au-1er-janvier.md.
+reste: >-
+  Au propriétaire : garder la présomption que le contractuel radié demande
+  ses pensions à la fin de son contrat, ou les servir au départ saisi.

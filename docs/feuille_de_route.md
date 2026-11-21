@@ -6953,16 +6953,16 @@ la décision du 1er novembre, une ligne de plus à la table datée.
 
 ### 151. Partir très tard : le départ jusqu'au bout des tables de mortalité, puis la limite d'âge des fonctionnaires et ses exceptions — `en cours`
 
-**Reprise, au 18 octobre 2026.** Faites, les étapes 1 à 11 : le départ jusqu'à 119 ans ;
-la limite d'âge lue ; la radiation à la limite des fonctionnaires, des militaires, des
-contractuels, des ouvriers de l'État, de la SNCF, de la RATP, des IEG (depuis 1954), de
-l'Opéra, de la SEITA et de la Banque, et la limite du mineur, présumé maintenu au-delà
-(étapes 3, 4, 6, 8 à 10), en Python et en JavaScript ; la page, qui dit la limite et la
-fin de l'emploi dans les mots de chaque statut (étapes 5 et 11) ; la CARMF avant 2017 et
-le taux acquis en 1983 (étape 7). Reste au modèle : la SNCF, la RATP et la Banque avant
-2010 et 2012, dont les textes ne se lisent pas d'ici (note de l'étape 10). Au
-propriétaire : la radiation dans les comptes notionnels, l'actif d'avant 2010, les choix
-des étapes 4, 6 et 8 à 10, et où la page dit le maintien du mineur (note de l'étape 11).
+**Reprise, au 21 novembre 2026.** Faites, les étapes 1 à 12 : partir jusqu'à
+119 ans ; la limite lue ; la radiation à la limite des fonctionnaires, des
+militaires, des contractuels, des ouvriers de l'État, des régimes spéciaux et du mineur ;
+la page, qui dit la limite et la fin de l'emploi (étapes 5 et
+11) ; la CARMF avant 2017 et le taux acquis en 1983 (étape 7) ; la radiation atteinte
+en décembre, qui disparaissait du calcul (étape 12). Reste au modèle : trois régimes
+spéciaux avant 2010 (note de l'étape 10). Au propriétaire : la radiation
+en comptes notionnels, l'actif d'avant 2010, les choix des étapes 4, 6 et 8 à 10,
+dont la pension du contractuel présumée demandée à la fin du contrat (étape 12), et
+où la page dit le maintien du mineur (note de l'étape 11).
 
 **Demande**, le 10 octobre 2026 : « Pourquoi on bloque à 75 ans ? Est-ce que
 c'est uniquement une raison technique ? Ou est-ce qu'il y a un vrai problème

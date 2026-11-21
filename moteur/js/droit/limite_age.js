@@ -502,7 +502,12 @@ export function radiation(moteur, carriere) {
     return null;
   }
   const [limite, version, jourLimite] = lue;
-  if (carriere.dateDeLAge(limite / MOIS_PAR_AN).rang >= fin.rang) {
+  // Des services qui s'arrêtent au 31 décembre de l'année où l'agent atteint
+  // sa limite finissent par elle : la radiation du 1er janvier reste, comme
+  // dans la carrière que `radier` arrête à ce jour (balayage, action 194).
+  const declaree = derniere.annee >= declare.annee;
+  const limiteAtteinte = carriere.dateDeLAge(limite / MOIS_PAR_AN);
+  if (declaree ? limiteAtteinte.rang >= fin.rang : limiteAtteinte.rang > fin.rang) {
     return null;
   }
   // Le jour où l'agent atteint cet âge, jamais avant celui où il atteint sa
