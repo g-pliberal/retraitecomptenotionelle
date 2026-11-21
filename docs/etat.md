@@ -29,27 +29,27 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 - Confrontées à au moins un exemple officiel : **69 sur 276** (227 exemples : 215 reproduits, 12 en écart connu, section 2).
 - Citées dans le code par leur identifiant : **129 sur 276**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
-- Désignées par les interrupteurs des périodes de régime : **54 sur 276**, par 2 607 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
+- Désignées par les interrupteurs des périodes de régime : **54 sur 276**, par 2 608 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **204 sur 276**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
 - Découpées en versions : **209 sur 276**, soit 874 versions, dont 160 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 126, dont 10 déclarées non appliquées.
 
 **La carte de justesse** (`src/retraite_notionnelle/noyau/justesse.py`, action 194). L'état de la carte des règles, ci-dessus, est un mot que la fiche déclare ; celui-ci se calcule depuis les preuves, et personne ne l'écrit. Une partie est une règle sur une période : une version de fiche, ou la fiche entière tant qu'elle n'est pas découpée. Elle est prouvée quand son texte est lu avec sa trace et qu'une grille indépendante — des valeurs attendues posées depuis le seul texte, sans lire le code, sur chaque seuil de la règle — est verte ; un exemple officiel, un autre moteur ou le simulateur d'une caisse en sont des témoins, qui ne prouvent pas seuls.
 
-**7 parties prouvées sur 941**, dont 4 avec témoin et 3 au texte seul. 15 fausses (section 2), 637 approchées, 215 non vérifiées, 67 hors champ. Un cliquet tient les parties prouvées (`tests/cliquets_de_justesse/prouvees.yaml`) : aucune ne recule sans le dire.
+**15 parties prouvées sur 941**, dont 7 avec témoin et 8 au texte seul. 15 fausses (section 2), 637 approchées, 207 non vérifiées, 67 hors champ. Un cliquet tient les parties prouvées (`tests/cliquets_de_justesse/prouvees.yaml`) : aucune ne recule sans le dire.
 
 | Famille de régimes | Parties | Prouvées | Fausses | Approchées | Non vérifiées | Hors champ | Texte tracé | Témoignées par un exemple officiel |
 |---|---|---|---|---|---|---|---|---|
-| salariés du privé, régimes de base | 300 | 7 | 7 | 178 | 78 | 30 | 85 | 45 |
-| salariés du privé, complémentaires | 180 | 5 | 3 | 112 | 53 | 7 | 58 | 23 |
-| fonction publique | 217 | 5 | 2 | 117 | 65 | 28 | 33 | 33 |
-| artisans, commerçants et autres non-salariés | 217 | 5 | 5 | 148 | 55 | 4 | 66 | 42 |
-| régimes agricoles | 266 | 7 | 7 | 171 | 68 | 13 | 98 | 45 |
-| libéraux et avocats | 223 | 5 | 1 | 173 | 41 | 3 | 82 | 24 |
-| régimes spéciaux | 251 | 7 | 3 | 156 | 63 | 22 | 49 | 31 |
+| salariés du privé, régimes de base | 300 | 15 | 7 | 178 | 70 | 30 | 85 | 45 |
+| salariés du privé, complémentaires | 180 | 13 | 3 | 112 | 45 | 7 | 58 | 23 |
+| fonction publique | 217 | 13 | 2 | 117 | 57 | 28 | 33 | 33 |
+| artisans, commerçants et autres non-salariés | 217 | 13 | 5 | 148 | 47 | 4 | 66 | 42 |
+| régimes agricoles | 266 | 15 | 7 | 171 | 60 | 13 | 98 | 45 |
+| libéraux et avocats | 223 | 13 | 1 | 173 | 33 | 3 | 82 | 24 |
+| régimes spéciaux | 251 | 15 | 3 | 156 | 55 | 22 | 49 | 31 |
 | retraite additionnelle, en capitalisation | 40 | 5 | 4 | 10 | 10 | 11 | 9 | 12 |
 | sans famille | 1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
-| toute la carte | 941 | 7 | 15 | 637 | 215 | 67 | 263 | 87 |
+| toute la carte | 941 | 15 | 15 | 637 | 207 | 67 | 263 | 87 |
 
 Une partie compte dans chaque famille de ses régimes, et une fois dans le total. Parmi les 941 parties, 160 sont des versions supposées, qu'aucune grille ne peut prouver tant que leur texte n'est pas retrouvé ; 47 ont un exemple officiel que leur fiche cite sans dire pour quelle version, et qui ne témoigne donc pour aucune. Les confrontations aux autres moteurs que 43 fiches racontent en prose ne valent pas témoin : rien n'y dit, cas par cas, ce qui concorde. La carte ne connaît encore que les règles : les barèmes, les régimes de bout en bout, les cas types et les totaux n'y ont pas leurs preuves (section 4).
 
