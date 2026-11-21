@@ -418,6 +418,9 @@ class ImpotDuFoyer:
     revenus_d_activite: tuple[float, ...]
     prime_pour_l_emploi: float
     credit_exceptionnel: float
+    #: Le crédit d'impôt « modernisation du recouvrement », qui efface l'impôt
+    #: des revenus de 2018, l'année blanche (:func:`_credit_modernisation`).
+    credit_modernisation_recouvrement: float
     #: La taxe complémentaire des revenus de l'année, jusqu'à ceux de 1969
     #: (:func:`taxe_complementaire`), que le foyer paie en plus de l'impôt.
     taxe_complementaire: float
@@ -975,6 +978,18 @@ def _credit_exceptionnel(foyer: Foyer, parametres: ParametresImpot, impot: float
                            credit_maximum * (maximum - par_part) / (maximum - plein))
 
 
+def _credit_modernisation(parametres: ParametresImpot, impot: float) -> float:
+    """Le crédit d'impôt « modernisation du recouvrement » des revenus de 2018
+    (loi n° 2016-1917, art. 60, II, décalé par l'ordonnance n° 2017-1390) : la
+    cotisation, multipliée par la part des revenus non exceptionnels, qui sont,
+    pour le module, tous ses revenus (``taux``) ; l'année blanche du passage au
+    prélèvement à la source."""
+    c = parametres["credit_modernisation_recouvrement"]
+    if not c or impot <= 0:
+        return 0.0
+    return _arrondir_impot(parametres.annee, impot * c["taux"])
+
+
 def revenus_de_la_prime(parametres: ParametresImpot, salaires: tuple[float, ...],
                        benefices: tuple[float, ...]) -> tuple[float, ...]:
     """Par déclarant, le revenu d'activité de la prime pour l'emploi : ses
@@ -1289,7 +1304,8 @@ def _liquider(foyer: Foyer, parametres: ParametresImpot, revenu: float,
     # imposable : ses crédits lui sont restitués en entier (art. 200 sexies,
     # IV ; BOI 5 B-12-01, n° 53 : « la totalité de la prime pour l'emploi
     # lorsque le contribuable n'est pas imposable »).
-    net = (impot if mis_en_recouvrement else 0.0) - ppe - credit
+    modernisation = _credit_modernisation(parametres, impot) if mis_en_recouvrement else 0.0
+    net = (impot if mis_en_recouvrement else 0.0) - ppe - credit - modernisation
     if 0 <= net < recouvrement.get("seuil_apres_credits", 0.0):
         net = 0.0
     net += assiette["taxe_complementaire"]
@@ -1322,6 +1338,7 @@ def _liquider(foyer: Foyer, parametres: ParametresImpot, revenu: float,
         revenus_d_activite=tuple(r * retour for r in activite),
         prime_pour_l_emploi=ppe * retour,
         credit_exceptionnel=credit * retour,
+        credit_modernisation_recouvrement=modernisation * retour,
         taxe_complementaire=assiette["taxe_complementaire"] * retour,
         mis_en_recouvrement=mis_en_recouvrement,
         exonere=exoneration,

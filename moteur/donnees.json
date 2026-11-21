@@ -29500,6 +29500,7 @@ null
 {"annee":2025,"monnaie":"EUR","seuils":[0,11600,29579,84577,181917],"taux":[0.0,0.11,0.3,0.41,0.45]}
 ],
 "credit_exceptionnel":[{"annee":2008,"monnaie":"EUR","revenu_par_part_maximum":12475,"revenu_par_part_plein":11673,"taux":0.6666666666666666},{"annee":2009,"supprimee":true}],
+"credit_modernisation_recouvrement":[{"annee":2018,"monnaie":"EUR","taux":1.0},{"annee":2019,"supprimee":true}],
 "decote":[
 {"annee":1960,"franchise_par_part":70,"limite_par_part":140,"monnaie":"FRF"},
 {"annee":1961,"franchise_par_part":70,"limite_par_part":210,"monnaie":"FRF"},

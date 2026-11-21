@@ -49,7 +49,7 @@ export const SERIES = Object.freeze([
   "abattement_exceptionnel_ages_invalides", "abattement_exceptionnel_personnes_seules",
   "majorations_exceptionnelles", "minorations_exceptionnelles",
   "reduction_exceptionnelle", "reduction_proportionnelle", "prime_pour_l_emploi",
-  "credit_exceptionnel", "taxe_complementaire",
+  "credit_exceptionnel", "credit_modernisation_recouvrement", "taxe_complementaire",
 ]);
 
 /** Les clés qui ne sont pas des valeurs : elles disent d'où vient la marche. */
@@ -331,7 +331,7 @@ export function chargerBaremesImpotRevenu(paquet) {
   const brut = paquet.impot_revenu ?? null;
   const baremes = brut === null ? null : new BaremesImpotRevenu({
     series: Object.fromEntries(SERIES.map((nom) => [nom,
-      [...brut.series[nom]].sort((a, b) => a.annee - b.annee)])),
+      [...(brut.series[nom] ?? [])].sort((a, b) => a.annee - b.annee)])),
     lu_le: brut.lu_le ?? "",
     premiere_annee: Number(brut.premiere_annee),
   });
@@ -799,6 +799,18 @@ function reductionProportionnelle(parametres, impot) {
   return arrondirImpot(parametres.annee, impot * r.taux);
 }
 
+/**
+ * Le crédit d'impôt « modernisation du recouvrement » des revenus de 2018 (loi n°
+ * 2016-1917, art. 60, II, décalé par l'ordonnance n° 2017-1390) : la cotisation,
+ * multipliée par la part des revenus non exceptionnels, tous ceux du module
+ * (`taux`) ; l'année blanche du passage au prélèvement à la source.
+ */
+function creditModernisation(parametres, impot) {
+  const c = parametres.serie("credit_modernisation_recouvrement");
+  if (vide(c) || impot <= 0) return 0.0;
+  return arrondirImpot(parametres.annee, impot * c.taux);
+}
+
 /** Le crédit d'impôt exceptionnel des revenus de 2008 (loi n° 2009-431, art. 1). */
 function creditExceptionnel(foyer, parametres, impot, revenu, rfr, parts) {
   const c = parametres.serie("credit_exceptionnel");
@@ -1060,7 +1072,8 @@ function liquider(foyer, parametres, revenu, activite, assiette, unite, vers, ex
   const credit = creditExceptionnel(foyer, parametres, impotBrut - laDecote, revenu, rfr, parts);
   const recouvrement = parametres.serie("recouvrement");
   const misEnRecouvrement = impot > 0 && impot >= obtenir(recouvrement, "seuil", 0.0);
-  let net = (misEnRecouvrement ? impot : 0.0) - ppe - credit;
+  const modernisation = misEnRecouvrement ? creditModernisation(parametres, impot) : 0.0;
+  let net = (misEnRecouvrement ? impot : 0.0) - ppe - credit - modernisation;
   if (net >= 0 && net < obtenir(recouvrement, "seuil_apres_credits", 0.0)) net = 0.0;
   net += assiette.taxe_complementaire;
   const retour = 1.0 / vers;
@@ -1095,6 +1108,7 @@ function liquider(foyer, parametres, revenu, activite, assiette, unite, vers, ex
     revenus_d_activite: activite.map((r) => r * retour),
     prime_pour_l_emploi: ppe * retour,
     credit_exceptionnel: credit * retour,
+    credit_modernisation_recouvrement: modernisation * retour,
     taxe_complementaire: assiette.taxe_complementaire * retour,
     mis_en_recouvrement: misEnRecouvrement,
     exonere: exoneration,

@@ -1,0 +1,20 @@
+date: "2026-11-21"
+session: "action 138, étape 5 : l'impôt confronté au calcul officiel de la DGFiP, et l'année blanche de 2018"
+consulte: >-
+  L'index JORF : loi n° 2016-1917 de finances pour 2017, article 60
+  (JORFARTI000033734238) ; ordonnance n° 2017-1390 (JORFTEXT000035607495),
+  dont l'article n'est pas dans l'index du champ social. Le code général des
+  impôts, article 158, 5, a, et article 1657, 1. Le code M de la DGFiP
+  (ir-calcul, revenus 2019 à 2025) et le simulateur d'impots.gouv (revenus
+  2015 à 2018 et 2024).
+trouve: >-
+  Le plafond de l'abattement de 10 % sur les pensions s'applique au foyer, la
+  dernière part prenant le reste (APRC du code M) : le module dépassait d'un
+  euro par l'arrondi de chaque part, corrigé depuis 1998. Le crédit d'impôt de
+  modernisation du recouvrement efface l'impôt des revenus non exceptionnels
+  de 2018, décalé de 2017 à 2018 par l'ordonnance ; écrit en donnée. Le moteur
+  s'accorde ensuite à l'euro sur 329 foyers-années du code M. Détail :
+  docs/feuille_de_route/138/2026-11-21-etape-5-impot-confronte-au-calcul-officiel.md.
+reste: >-
+  Le texte de l'ordonnance n° 2017-1390, lu hors de l'index ; le bénéfice
+  exceptionnel des indépendants en 2018 ; les revenus 2010 à 2018 au code M.

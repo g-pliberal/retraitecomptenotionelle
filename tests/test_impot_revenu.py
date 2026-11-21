@@ -469,6 +469,41 @@ def test_le_seuil_de_mise_en_recouvrement(baremes):
         assert calcul.mis_en_recouvrement is recouvre
 
 
+def test_l_annee_blanche_efface_l_impot_des_revenus_de_2018(baremes):
+    """Le crédit d'impôt « modernisation du recouvrement » (loi n° 2016-1917,
+    art. 60, II, décalé d'un an par l'ordonnance n° 2017-1390) efface l'impôt
+    des revenus non exceptionnels de 2018 : « égal au montant de l'impôt sur le
+    revenu dû au titre de l'année [2018] [...] multiplié par le rapport entre
+    les montants nets imposables des revenus non exceptionnels [...] et le
+    revenu net imposable » ; salaires et pensions le sont en entier. Le
+    simulateur d'impots.gouv (calc-2019.cgi, interrogé le 21 novembre 2026) :
+    salarié seul, 21 000 € imposables, impôt avant imputations 794 €, « effacement
+    de votre impôt sur le revenu 2018 à hauteur de 794 », impôt net 0 € ; couple
+    de retraités, 2 × 30 001 €, 5 261 € effacés. Ni 2017 ni 2019 n'ont ce crédit."""
+    salarie = Foyer((Declarant(salaires=21000, age=40),))
+    blanche = impot_du_foyer(salarie, 2018, baremes)
+    assert blanche.impot_avant_credits == 794
+    assert blanche.credit_modernisation_recouvrement == 794
+    assert blanche.impot == 0
+    retraites = Foyer((Declarant(pensions=30001, age=75), Declarant(pensions=30001, age=72)))
+    couple = impot_du_foyer(retraites, 2018, baremes)
+    assert (couple.impot_avant_credits, couple.impot) == (5261, 0)
+    for annee in (2017, 2019):
+        avant_apres = impot_du_foyer(salarie, annee, baremes)
+        assert avant_apres.credit_modernisation_recouvrement == 0
+        assert avant_apres.impot == avant_apres.impot_avant_credits > 0
+
+
+def test_le_portage_efface_l_impot_des_revenus_de_2018():
+    """Le même crédit, au portage, qui calcule l'impôt du site et du coût."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage ne se vérifie pas ici")
+    salarie = {"declarants": [{"salaires": 21000.0, "age": 40}]}
+    avant, blanche, apres = pont.impot([(2017, salarie), (2018, salarie), (2019, salarie)])
+    assert blanche == pont.ImpotDemande(impot=0.0, mis_en_recouvrement=True)
+    assert avant.impot > 0 and apres.impot > 0
+
+
 def test_la_prime_pour_l_emploi_suit_l_article_200_sexies(baremes):
     """Revenus de 2007 (LEGIARTI000017888107) : 7,7 % du revenu d'activité
     jusqu'à 12 475 €, 19,3 % de ce qui le sépare de 17 451 € au-delà ; 83 € de

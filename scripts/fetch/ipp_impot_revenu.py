@@ -1378,6 +1378,18 @@ CREDIT_EXCEPTIONNEL = [
      "texte": "BOI 5 B-25-09, n° 2 : « limité à l'imposition des revenus de 2008 »"},
 ]
 
+#: Le crédit d'impôt « modernisation du recouvrement » des revenus de 2018, l'année
+#: blanche du passage au prélèvement à la source : la part de l'impôt que portent
+#: les revenus non exceptionnels (`taux`, de l'impôt avant crédits), qui sont, pour
+#: le module, ses salaires, ses pensions et ses bénéfices.
+CREDIT_MODERNISATION_RECOUVREMENT = [
+    {"annee": 2018, "monnaie": "EUR", "taux": 1.0, "origine": "loi",
+     "texte": "Loi n° 2016-1917 du 29 décembre 2016 de finances pour 2017, art. 60, II (JORFARTI000033734238), décalé d'un an par l'ordonnance n° 2017-1390 du 22 septembre 2017 (JORFTEXT000035607495) : « Les contribuables bénéficient, à raison des revenus non exceptionnels entrant dans le champ du prélèvement mentionné à l'article 204 A [...] d'un crédit d'impôt « modernisation du recouvrement » » ; « égal au montant de l'impôt sur le revenu dû au titre de l'année [...] multiplié par le rapport entre les montants nets imposables des revenus non exceptionnels [...] et le revenu net imposable au barème progressif » ; le simulateur d'impots.gouv des revenus de 2018 (calc-2019.cgi) : « effacement de votre impôt sur le revenu 2018 »"},
+    {"annee": 2019, "supprimee": True,
+     "texte": "Loi n° 2016-1917, art. 60, II, A, décalé par l'ordonnance n° 2017-1390 : les "
+              "revenus « perçus ou réalisés en 2018 » seuls"},
+]
+
 #: Le seuil de mise en recouvrement avant que l'IPP ne le porte (2002), lu dans
 #: les rédactions de l'article 1657 du code que l'index LEGI conserve ; une
 #: année que le code ne chiffre pas suit sa règle d'indexation (voir
@@ -1653,6 +1665,8 @@ def corriger(series: dict[str, list[dict]]) -> dict[str, list[dict]]:
         marche["texte"] = f"{marche['texte']} ; {texte}"
     series["reduction_proportionnelle"] = [dict(m) for m in REDUCTION_PROPORTIONNELLE]
     series["credit_exceptionnel"] = [dict(m) for m in CREDIT_EXCEPTIONNEL]
+    series["credit_modernisation_recouvrement"] = [dict(m)
+                                                   for m in CREDIT_MODERNISATION_RECOUVREMENT]
     series["reduction_des_salaires"] = [dict(m) for m in REDUCTION_DES_SALAIRES]
     series["taxe_complementaire"] = [dict(m) for m in TAXE_COMPLEMENTAIRE]
     series["minimum_garanti"] = [dict(m) for m in MINIMUM_GARANTI]
@@ -1802,6 +1816,8 @@ ENTETE = """\
 #   prime_pour_l_emploi : de 2000 à 2014.
 #   credit_exceptionnel : celui des revenus de 2008, les deux tiers de l'impôt
 #     sous le premier seuil de revenu par part, dégressif jusqu'au second.
+#   credit_modernisation_recouvrement : celui des revenus de 2018, l'année
+#     blanche : l'impôt des revenus non exceptionnels effacé (`taux`).
 #   taxe_complementaire : des revenus de 1959 à ceux de 1969, la taxe des
 #     revenus autres que les salaires et les pensions : son `taux`, celui des
 #     artisans (`taux_artisans`) quand il diffère, l'abattement à la base des
@@ -1820,7 +1836,7 @@ ORDRE = ("bareme", "quotient_familial", "parts_par_rang_d_enfant",
          "abattement_exceptionnel_ages_invalides", "abattement_exceptionnel_personnes_seules",
          "majorations_exceptionnelles", "minorations_exceptionnelles",
          "reduction_exceptionnelle", "reduction_proportionnelle", "prime_pour_l_emploi",
-         "credit_exceptionnel", "taxe_complementaire")
+         "credit_exceptionnel", "credit_modernisation_recouvrement", "taxe_complementaire")
 
 
 def ecrire(series: dict[str, list[dict]], lu_le: str) -> str:
