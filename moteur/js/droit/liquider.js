@@ -22,7 +22,8 @@ import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import * as acquerir from "./acquerir.js";
 import * as categories from "./categories.js";
 import {
-  ageLegalDeLAssure, dateDEffet, derniereAnnee, periodeDeLiquidation,
+  FICHE_DES_COEFFICIENTS_IRCANTEC, ageLegalDeLAssure, dateDEffet, derniereAnnee,
+  periodeDeLiquidation,
 } from "./commun.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
 import * as coordonner from "./coordonner.js";
@@ -3477,7 +3478,7 @@ export function exonerationsAgircArrco(moteur, periode, carriere) {
 /** La fiche dont les versions disent le barème de l'article 16 de l'arrêté du
  * 30 décembre 1970, que l'Ircantec applique aussi aux points de l'IPACTE et de
  * l'IGRANTE. */
-export const FICHE_DES_COEFFICIENTS_IRCANTEC = "coefficient_anticipation_ircantec";
+export { FICHE_DES_COEFFICIENTS_IRCANTEC };
 
 /**
  * Le barème de l'Ircantec d'une pension qui prend effet à la date de la
@@ -3675,6 +3676,18 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
     const bareme = baremeIrcantec(moteur, periode, carriere);
     if (bareme !== null && !bareme.duree_requise_par_generation) {
       parAgeSeul = true;
+    }
+    // Avant l'âge légal, l'Ircantec ne lit que l'âge : la seconde table ne vaut
+    // que pour les agents « âgés de soixante à soixante-cinq ans » (1983), puis
+    // d'un âge « compris entre l'âge prévu à l'article L. 161-17-2 [...] et
+    // l'âge prévu au 1° de l'article L. 351-8 » (article 16, II), et le taux
+    // plein n'exonère que « dès lors qu'elles ont atteint l'âge légal » (I, 2°).
+    // La carrière longue l'exonère avant (I, 1°, a), que la liquidation lit.
+    if (bareme !== null && !carriereLongue) {
+      const legal = ageLegalDeLAssure(moteur, carriere);
+      if (legal !== null && ageLiquidation + 1e-9 < legal[0]) {
+        parAgeSeul = true;
+      }
     }
     // L'inapte a le taux plein au régime général, et la complémentaire le
     // suit : l'Agirc-Arrco depuis l'ASF (article 84, 3, de l'accord de 2017),

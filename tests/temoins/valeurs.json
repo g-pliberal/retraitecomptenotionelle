@@ -12,7 +12,7 @@
   "valeur": "8320b50a8e185a69"
  },
  "test_cumul_activites.py::cumuls_tires_au_hasard": {
-  "valeur": "cd51ca6b2d45cdd1"
+  "valeur": "e6c0aa5a2815a4ae"
  },
  "test_cycle_de_vie_portage.py::contributions agent_chemins_fer_secondaires-1930": {
   "valeur": "713dde7075f725b1"
@@ -90,7 +90,7 @@
   "valeur": "7e51ed63f14e9c4c"
  },
  "test_grille_large.py::échantillon daté, bâti et simulé": {
-  "valeur": "60a6c4e0808fdaaa"
+  "valeur": "316da0e7eb76154a"
  },
  "test_independants.py::droits au conjoint": {
   "valeur": "9d74fcc32a7feb9d"
@@ -156,10 +156,10 @@
   "valeur": "d38e467920874220"
  },
  "test_pont.py::comptes de la grille du coût sous le barème ((1.0, 0.2815, 0.1145), (8.0, 0.2215, 0.0904), (None, 0.024, 0.004))": {
-  "valeur": "213177fcfd82031a"
+  "valeur": "fa110bf0b2dd660e"
  },
  "test_pont.py::comptes de la grille du coût sous le barème None": {
-  "valeur": "5813bac47b09279c"
+  "valeur": "f2f3f136380d2b91"
  },
  "test_pont.py::coût des avantages": {
   "valeur": "6bb8f8d51ced8d6d"
@@ -189,7 +189,7 @@
   "valeur": "a56817c9b8a5bf25"
  },
  "test_pont.py::grille du coût": {
-  "valeur": "b136b5b276f441f9"
+  "valeur": "fba38df5a1063400"
  },
  "test_pont.py::grille du coût, bascule en 2026": {
   "valeur": "f374dcfda8b75e83"

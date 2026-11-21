@@ -19,8 +19,8 @@ import { DUREES_AVANT_LE_DECRET } from "../regimes.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import * as categories from "./categories.js";
 import {
-  SANS_LEUR_BASE, ageDuTauxPleinDeLaPension, ageLegalDeLAssure, dateDEffet, ligneCotisee,
-  periodeDeLiquidation,
+  FICHE_DES_COEFFICIENTS_IRCANTEC, SANS_LEUR_BASE, ageDuTauxPleinDeLaPension,
+  ageLegalDeLAssure, dateDEffet, ligneCotisee, periodeDeLiquidation,
 } from "./commun.js";
 import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
@@ -220,10 +220,21 @@ export function ouvrir(moteur, releve, regimes = null) {
     // suit sa base — la CAVP, la CARMF, servies au trimestre civil qui suit —
     // s'ouvre aux conditions des régimes de base de la carrière, carrière
     // longue comprise ; celle qui se demande à son âge, sans la base
-    // (`SANS_LEUR_BASE`), ne leur doit que leur durée requise. Voir le Python.
+    // (`SANS_LEUR_BASE`), ne leur doit que leur durée requise, comme
+    // l'Ircantec qui devance une base qui n'ouvre pas encore, dès son âge
+    // (`ageAuPlusTotSansLaBase`). Voir le Python.
     const bases = references(moteur, releve, droits.codes);
+    const devance = (code) => {
+      const periode = periodeDeLiquidation(moteur.catalogue.obtenir(code),
+        carriere.dateLiquidation);
+      const auPlusTot = periode === null ? null
+        : ageAuPlusTotSansLaBase(moteur, periode, carriere);
+      return auPlusTot !== null && bases.age !== null
+        && enMois(ageLiquidation) >= enMois(auPlusTot)
+        && enMois(ageLiquidation) < enMois(bases.age);
+    };
     const suitSaBase = codes.some((code) => !SANS_LEUR_BASE.has(code)
-      && !ETAGES_DE_BASE.has(moteur.catalogue.obtenir(code).etage));
+      && !ETAGES_DE_BASE.has(moteur.catalogue.obtenir(code).etage) && !devance(code));
     reference = suitSaBase ? bases : { ...reference, requis: bases.requis };
   }
   const requisReference = reference.requis || 160;
@@ -1276,6 +1287,24 @@ export function periodesOpposantUneDuree(periodes) {
   return periodes.filter(([, periode]) =>
     periode.abattement_points !== "agirc_arrco"
     && periode.abattement_points !== "ircantec");
+}
+
+/**
+ * L'âge dès lequel la période sert sa pension sans le régime de base, ou
+ * `null` : l'Ircantec, et les points de l'IPACTE et de l'IGRANTE qu'elle
+ * liquide, « normalement » à l'âge du taux plein, mais « au plus tôt dix ans
+ * avant » (arrêté du 30 décembre 1970, article 16, I : cinquante-cinq ans
+ * jusqu'au 30 juin 2011, l'âge du 1° de L. 351-8 diminué de dix ans depuis),
+ * `anticipation_maximale_annees` de la version de la date d'effet.
+ */
+export function ageAuPlusTotSansLaBase(moteur, periode, carriere) {
+  const date = dateDEffet(carriere);
+  if (periode.abattement_points !== "ircantec" || date === null) {
+    return null;
+  }
+  const bareme = moteur.fichesDatees.regle(FICHE_DES_COEFFICIENTS_IRCANTEC, date);
+  const annees = bareme?.anticipation_maximale_annees ?? null;
+  return annees === null ? null : ageTauxPlein(moteur, periode, carriere) - annees;
 }
 
 /**

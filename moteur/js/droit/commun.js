@@ -14,11 +14,16 @@ import { DateMois, MOIS_PAR_AN, origineDesAges } from "../calendrier.js";
  * « dès lors qu'il réunit [...] 1° Avoir atteint l'âge de cinquante ans »
  * (R. 426-11 du code de l'aviation civile). La CAVOM, la CARPIMKO et la
  * CPRN, chacune à l'âge de ses statuts, avant la base ou après. Voir
- * `SANS_LEUR_BASE` (commun.py).
+ * `SANS_LEUR_BASE` (commun.py). L'Ircantec n'en est pas : elle suit la base,
+ * mais la devance quand celle-ci n'ouvre pas encore
+ * (`ouvrir.ageAuPlusTotSansLaBase`, `departs.departsEtDemandes`).
  */
 export const SANS_LEUR_BASE = new Set(["carpv_complementaire", "cavec_complementaire",
   "cavom_complementaire", "carpimko_complementaire", "cprn_complementaire",
   "crpnpac", "crpnpac_tranche_2"]);
+
+/** La fiche des coefficients d'anticipation de l'Ircantec (article 16). */
+export const FICHE_DES_COEFFICIENTS_IRCANTEC = "coefficient_anticipation_ircantec";
 
 /** Dernière année pour laquelle le régime a des paramètres. */
 export function derniereAnnee(regime) {

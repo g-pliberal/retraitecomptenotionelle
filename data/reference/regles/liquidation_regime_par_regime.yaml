@@ -187,7 +187,14 @@ versions:
       calendrier figurant à l'article D. 161-2-1-9 du code de la sécurité sociale »
       (article 15, arrêté du 23 juin 2011 ; règlement de 2026, article 12) ; elle suit
       sa base. La CARPV, la CAVEC, la CAVOM, la CARPIMKO et la CPRN forment chacune
-      une unité à elle (departs.py, SANS_LEUR_BASE). La CRPNPAC, complémentaire du
+      une unité à elle (departs.py, SANS_LEUR_BASE). L'Ircantec, avec les points de
+      l'IPACTE et de l'IGRANTE qu'elle liquide, suit sa base, mais la devance au départ
+      déclaré quand celle-ci n'ouvre pas encore : l'article 16 ne lie l'anticipation à
+      aucune liquidation du régime de base (« elle peut faire l'objet d'une
+      anticipation, au plus tôt à cinquante-cinq ans », de 1971 au 30 juin 2011 ; « au
+      plus tôt dix ans avant que l'assuré ait atteint » l'âge du 1° de L. 351-8,
+      depuis), et la caisse la sert « au plus tôt à l'âge de 57 ans », avant le régime
+      général, au coefficient de l'âge seul. La CRPNPAC, complémentaire du
       personnel navigant, aussi, ses deux tranches : « Une pension de retraite est
       servie à l'affilié qui demande la liquidation de ses droits à pension [...] dès
       lors qu'il réunit cumulativement à la date d'effet de la pension les conditions
@@ -243,16 +250,18 @@ approximations:
     cumul_emploi_retraite_et_retraite_progressive et droits_apres_la_premiere_pension)
   effet: non mesuré
 - ecart: >-
-    une complémentaire des salariés est présumée demandée avec son régime de base :
-    l'anticipation de dix ans au plus que ses textes permettent, sous un abattement
-    qui peut atteindre 57 %, n'est prise que si le régime de base lui-même est pris
-    à cette date. Demandée plus tard que lui, elle se liquide à sa date ; plus tôt,
-    elle le suit
+    l'Agirc-Arrco est présumée demandée avec son régime de base : l'anticipation de
+    dix ans au plus que l'accord permet (« au plus tôt 10 ans avant cet âge »,
+    article 84), sous un abattement qui peut atteindre 57 %, n'est prise que si le
+    régime de base lui-même est pris à cette date. Demandée plus tard que lui, elle se
+    liquide à sa date ; plus tôt, elle le suit. L'Ircantec, qui la suivait aussi, la
+    devance au départ déclaré depuis le 21 novembre 2026
   effet: >-
-    mesuré par un exemple de l'Ircantec (ircantec_minoration_age_avant_l_age_legal,
-    écart connu) : né en décembre 1964, parti à 61 ans et 9 mois avec 160 trimestres,
-    l'assuré reçoit de la caisse ses points au coefficient 0,7625 dès septembre 2026 ;
-    le modèle les lui sert un an plus tard, à l'âge légal, à 0,90
+    non mesuré : aucun exemple publié de l'Agirc-Arrco servie avant le régime de base.
+    Celui de l'Ircantec (ircantec_minoration_age_avant_l_age_legal) dit l'ordre de
+    grandeur : né en décembre 1964, parti à 61 ans et 9 mois avec 160 trimestres,
+    l'assuré reçoit ses points au coefficient 0,7625 dès septembre 2026, un an avant
+    l'âge légal
 - ecart: >-
     le minimum contributif d'un départ s'écrête sur les pensions que les départs
     précédents servent, menées au mois de sa date d'effet (R. 173-7) ; il n'est pas
@@ -403,7 +412,7 @@ presomptions:
   depart_de_chaque_regime: >-
     la date d'effet de chaque pension que l'assuré ne dit pas
 sources:
-  lu_le: 2026-09-29
+  lu_le: 2026-11-21
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -559,10 +568,20 @@ sources:
       (JORFARTI000048880592), qui récrit l'article 15 sans changer l'âge et y ajoute la
       liquidation anticipée (approximations). Aucun ne lie la complémentaire à la base
     date: 2026-11-05
+  - type: legifrance
+    reference: >-
+      arrêté du 30 décembre 1970, article 16, I, rédactions du 31 août 1983, du
+      1er janvier 2004, du 1er juillet 2011 et du 14 septembre 2023 (LEGIARTI000006381610,
+      LEGIARTI000006381612, LEGIARTI000024266924, LEGIARTI000048065521), dans l'index LEGI
+      du dépôt : l'anticipation « au plus tôt » cinquante-cinq ans, puis dix ans avant
+      l'âge du 1° de L. 351-8, sans condition tenant au régime de base ; l'Ircantec se
+      demande à son âge, sans la base (contenu.complementaires)
+    date: 2026-11-21
 code:
   javascript: >-
     moteur/js/droit/departs.js : departs, departsEtDemandes, auTrimestreCivil,
-    DemandeExaminee, liquiderLesDeparts ; moteur/js/carriere.js : Carriere.demandesDePension ;
+    ouvertureSous, DemandeExaminee, liquiderLesDeparts ; moteur/js/droit/commun.js :
+    SANS_LEUR_BASE ; moteur/js/carriere.js : Carriere.demandesDePension ;
     moteur/js/saisie.js : PREFIXE_DEMANDE ; moteur/js/droit/liquidation.js : Demande,
     Etat ; moteur/js/droit/ouvrir.js : ouvrir ; moteur/js/droit/liquider.js :
     liquiderChaqueRegime ; moteur/js/droit/completer.js : completer ;
@@ -573,7 +592,8 @@ code:
     contenu.parametres de chaque version : depart_tous_regimes
   tests: >-
     tests/test_departs.py ; tests/test_ouverture_des_navigants.py ;
-    tests/test_complementaires_liberales_a_leur_age.py ; les témoins departs_*, demande_* et metiers_militaire_* des
+    tests/test_complementaires_liberales_a_leur_age.py ; tests/test_ircantec.py,
+    l'Ircantec sans la base ; les témoins departs_*, demande_* et metiers_militaire_* des
     simulations, et simuler_demande_de_pension des pages ;
     tests/test_liquidation.py, qui compare les journaux des deux moteurs
   moteur: >-
@@ -604,6 +624,12 @@ historique:
   CPRN le 1er janvier 2024, où les statuts de 2024 la lui ouvrent (article 18, arrêté
   du 29 novembre 2023), et non le 1er avril 2025, à 64 ans ; né en mars 1960, le 1er
   janvier 2024 et non le 1er avril (fiche `cprn_ages_decote_enfants`).
+- >-
+  2026-11-21 — corrigée : l'Ircantec, et les points de l'IPACTE et de l'IGRANTE
+  qu'elle liquide, se demandent sans la base, dès dix ans avant l'âge normal (article
+  16, I) ; né en décembre 1964, parti à 61 ans et 9 mois, l'assuré reçoit ses points à
+  0,7625 dès septembre 2026, et non à 0,90 à l'âge légal (exemple
+  ircantec_minoration_age_avant_l_age_legal).
 effet: >-
   Tout polypensionné dont les régimes n'ouvrent pas au même âge : le fonctionnaire de
   catégorie active ou le militaire qui a aussi travaillé dans le privé, l'agent d'un

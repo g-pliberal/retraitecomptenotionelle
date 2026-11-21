@@ -242,6 +242,12 @@ function auTrimestreCivil(moteur, code, date) {
  * par version de l'âge légal. Voir `_ouverture_sous` dans le Python.
  */
 function ouvertureSous(moteur, carriere, periodes) {
+  // L'Ircantec, dix ans au plus avant l'âge normal, sans la base.
+  const auPlusTot = periodes.map(
+    ([, periode]) => ouvrirLeDroit.ageAuPlusTotSansLaBase(moteur, periode, carriere));
+  if (periodes.length > 0 && auPlusTot.every((age) => age !== null)) {
+    return carriere.dateDeLAge(Math.min(...auPlusTot));
+  }
   const annuites = periodes.filter(([, p]) => p.type_calcul === "annuites");
   const autres = periodes.filter(([, p]) => p.type_calcul !== "annuites");
   const retenues = annuites.length > 0 ? annuites : ouvrirLeDroit.sansAgesPropres(moteur, autres);
@@ -618,8 +624,21 @@ export function departsEtDemandes(moteur, carriereSaisie) {
     return voulue !== null && voulue.rang > presumee[0].rang
       ? [voulue, MOTIF_DEMANDE] : presumee;
   });
+  // L'Ircantec, et les points de l'IPACTE et de l'IGRANTE qu'elle liquide,
+  // suivent la base, mais la devancent au départ déclaré quand elle n'ouvre
+  // pas encore et qu'elles s'ouvrent déjà : « au plus tôt dix ans avant »
+  // l'âge normal (article 16, I). Avant leur âge, elles suivent la base.
+  const propres = new Map();
+  for (const code of suivies.keys()) {
+    const periode = periodeDe(moteur, code, carriere.anneeLiquidation);
+    if (periode !== null
+        && ouvrirLeDroit.ageAuPlusTotSansLaBase(moteur, periode, carriere) !== null) {
+      propres.set(code, ouvertureDe(moteur, carriere, new Set([code])));
+    }
+  }
   if (ouvertures.every((ouverture) => ouverture.rang > declare.rang)
-      && dates.every(([, motif]) => motif !== MOTIF_DEMANDE)) {
+      && dates.every(([, motif]) => motif !== MOTIF_DEMANDE)
+      && [...propres.values()].every((ouverture) => ouverture.rang > declare.rang)) {
     return [unique, []];
   }
 
@@ -635,6 +654,12 @@ export function departsEtDemandes(moteur, carriereSaisie) {
       }
     }
     parRegime.set(code, quand ?? [declare, MOTIF_DEPART]);
+  }
+  for (const [code, propre] of propres) {
+    const [quand, motif] = parRegime.get(code);
+    if (motif === MOTIF_OUVERTURE && propre.rang <= declare.rang && declare.rang < quand.rang) {
+      parRegime.set(code, [declare, MOTIF_DEPART]);
+    }
   }
   let legal = null;
   if (parRegime.has(RAFP)) {

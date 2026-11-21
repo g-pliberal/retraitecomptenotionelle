@@ -8472,17 +8472,16 @@ Il a validé la maquette des caisses et choisi de l'intégrer au site.
 Vingt-deux parties sont prouvées, par des grilles posées depuis le seul texte
 par des sessions qui n'ont pas lu le code. Les deux filets sont faits : 3 052
 anomalies à expliquer, 192 parties qu'aucun témoin ne garde. Trois pistes du
-balayage sont expliquées. La surcote des régimes spéciaux compte désormais
-la durée des services, sauf à l'Opéra, que sa durée d'assurance totale borne
-encore ; une pension de points déjà servie ne baisse plus au-delà du
-dernier barème publié. Un contrôle
-par Z3 cherche sur GitHub, après chaque course et sans bloquer,
-les propriétés fausses des fiches, hors des baisses que la loi a voulues. Le
-propriétaire décide de la suite de la carte. Lire
-`194/2026-11-21-etape-b-les-filets.md`, `194/2026-11-21-pistes-du-balayage.md`,
-`194/2026-11-21-controle-z3.md`,
-`194/2026-11-21-surcote-des-regimes-speciaux-au-mois.md` et
-`194/2026-11-21-pension-de-points-servie.md`.
+balayage sont expliquées. Trois écarts au droit sont corrigés : la surcote des
+régimes spéciaux compte la durée des services, sauf à l'Opéra ; une pension
+de points servie ne baisse plus ; l'Ircantec se sert au départ, avant le
+régime général. Un contrôle par Z3 cherche sur GitHub, sans bloquer, les
+propriétés fausses des fiches. Le propriétaire décide de la suite de la
+carte. Lire `194/2026-11-21-etape-b-les-filets.md`,
+`194/2026-11-21-pistes-du-balayage.md`, `194/2026-11-21-controle-z3.md`,
+`194/2026-11-21-surcote-des-regimes-speciaux-au-mois.md`,
+`194/2026-11-21-pension-de-points-servie.md` et
+`194/2026-11-21-ircantec-sans-la-base.md`.
 
 **D'où elle vient.** Le 20 novembre 2026, le propriétaire : « j'ai
 l'impression qu'on tourne en rond en découvrant des problèmes par hasard »,

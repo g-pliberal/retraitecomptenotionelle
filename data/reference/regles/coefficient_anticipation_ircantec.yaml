@@ -543,22 +543,6 @@ approximations:
     les pensions prises du 1er avril au 30 août 1983 avec cent trente à cent quarante-neuf
     trimestres : jusqu'à 3,75 points de coefficient de moins que l'escalier, si la caisse
     l'y lisait ; non mesuré, la pratique de la caisse reste à lire
-- version: [ipacte_et_igrante, arrete_de_1970, anciens_combattants_1976, travailleurs_manuels_1977,
-    femmes_de_la_loi_de_1977, ordonnance_du_26_mars_1982, structure_financiere_1983,
-    escalier_au_trimestre_1983, retraite_anticipee_2004, ages_de_2010,
-    handicapes_a_l_age_legal_2018, compte_de_prevention_2018, ancres_fixes_2023]
-  textes: >-
-    article 16, I : « au plus tôt à cinquante-cinq ans », puis « au plus tôt dix ans avant »
-    l'âge du 1° de L. 351-8
-  ecart: >-
-    le modèle liquide l'Ircantec avec la pension de base, à l'âge d'ouverture de sa période
-    — soixante ans, puis l'âge légal de la génération — et jamais avant : il ne sert pas
-    l'anticipation de dix ans que l'article ouvre, ni les coefficients de 0,43 à 0,78
-    qu'elle porte (fiche liquidation_regime_par_regime)
-  effet: >-
-    mesuré par l'exemple ircantec_minoration_age_avant_l_age_legal, en écart connu : 0,7625
-    publiés à soixante et un ans et neuf mois, 0,9 rendus par le modèle, qui attend l'âge
-    légal
 - version: [ages_de_2010, handicapes_a_l_age_legal_2018, compte_de_prevention_2018, ancres_fixes_2023]
   textes: article 16, I, rédaction du 1er juillet 2011, l'âge prévu au 1° de L. 351-8
   ecart: >-
@@ -728,10 +712,16 @@ effet: >-
   1977, dès le 30 septembre 1978 (5°), et l'agent de soixante-trois ans et de cent
   cinquante trimestres, dès le 1er juillet 1982 (6° a), que le même fichier rejoue ; le
   6° a), qui n'a pas de terme, jusqu'au 31 décembre 2003, depuis la relecture R-M3-bis,
-  ce que le même fichier rejoue aussi. Reste :
-  il ne sert pas l'anticipation avant l'âge légal.
+  ce que le même fichier rejoue aussi. Depuis le 21 novembre 2026, il sert
+  l'anticipation sans la base, au départ déclaré quand la base n'ouvre pas encore, dès
+  dix ans avant l'âge normal (I : cinquante-cinq ans, puis l'âge du 1° de L. 351-8
+  diminué de dix ans), au coefficient de l'âge seul avant
+  l'âge légal (II, et I, 2°), sauf la carrière longue (I, 1°, a) : l'exemple
+  ircantec_minoration_age_avant_l_age_legal, 0,7625 à soixante et un ans et neuf mois,
+  et tests/test_ircantec.py, à cinquante-sept ans en 2023, cinquante-six ans en 2002 et
+  cinquante-sept ans en 1977.
 sources:
-  lu_le: 2026-11-05
+  lu_le: 2026-11-21
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -842,6 +832,18 @@ sources:
       6° a), lue dans l'index JORF du dépôt, à jour du 5 novembre 2026 (relecture
       R-M3-ter)
     date: 2026-11-05
+  - type: legifrance
+    reference: >-
+      arrêté du 30 décembre 1970, article 16, I et II, rédactions du 31 août 1983, du
+      1er janvier 2004, du 1er juillet 2011 et du 14 septembre 2023 (LEGIARTI000006381610,
+      LEGIARTI000006381612, LEGIARTI000024266924, LEGIARTI000048065521), dans l'index LEGI du
+      dépôt : l'anticipation « au plus tôt » cinquante-cinq ans, puis dix ans avant l'âge
+      du 1° de L. 351-8, sans condition tenant au régime de base ; la seconde table
+      réservée aux agents « âgés de soixante à soixante-cinq ans », puis d'un âge
+      « compris entre l'âge prévu à l'article L. 161-17-2 [...] et l'âge prévu au 1° de
+      l'article L. 351-8 » ; l'exonération au taux plein « dès lors qu'elles ont atteint
+      l'âge légal » (2023, I, 2°)
+    date: 2026-11-21
 textes_sans_effet:
 - id: LEGIARTI000006381611
   article: arrêté du 30 décembre 1970, article 16
@@ -884,8 +886,15 @@ code:
     que la version nomme exonèrent, que `exonere_par_l_age_et_la_duree` lit
     (`exoneration_des_femmes_de_1977`, 5°, jusqu'au 31 mars 1983 ;
     `exoneration_des_agents_de_soixante_trois_ans`, 6° a), jusqu'au 31 décembre 2003),
-    l'agent encore en fonction par `agent_a_la_liquidation`.
+    l'agent encore en fonction par `agent_a_la_liquidation`. Avant l'âge légal, hors la
+    carrière longue, l'âge seul : ni la seconde table ni la durée n'y valent (II, I, 2°).
+    L'Ircantec, l'IPACTE et l'IGRANTE suivent la base, mais la devancent au départ
+    déclaré quand elle n'ouvre pas encore, dès `anticipation_maximale_annees` avant l'âge
+    du taux plein de la période (`age_au_plus_tot_sans_la_base`), lu dans la version de
+    la date d'effet (`departs_et_demandes`).
   javascript: >-
+    moteur/js/droit/ouvrir.js : ageAuPlusTotSansLaBase, ouvrir ; moteur/js/droit/departs.js :
+    ouvertureSous, departsEtDemandes ;
     moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints, baremeIrcantec,
     exonereParLAgeEtLaDuree, agentALaLiquidation, coefficientParAnneeDAge, coefficientPourAge, coefficientAnticipation, PALIERS_ANTICIPATION,
     COEFFICIENT_ANTICIPATION_PLANCHER ; moteur/js/droit/ouvrir.js : ageTauxPlein ;

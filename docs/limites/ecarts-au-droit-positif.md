@@ -191,10 +191,7 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   en a acquis <!--chiffre:illustration()-->500<!--/--> en cinq ans, dit la
   caisse — ; ceux du chômage dont l'allocation n'est pas cotisée, sur le SMIC,
   un an au plus après trois mois ; la validation des services d'avant 1973,
-  contre les cotisations de l'époque. Le modèle ne sert pas non plus la
-  pension que la caisse verse avant le régime de base, au plus tôt à
-  cinquante-sept ans, au coefficient de l'âge seul (exemple
-  `ircantec_minoration_age_avant_l_age_legal`, en écart connu), ni la seconde
+  contre les cotisations de l'époque. Le modèle ne sert pas non plus la seconde
   pension de l'activité reprise en cumul intégral depuis le 1er septembre
   2024, sans majoration pour enfants — deux liquidations au plus depuis le
   1er août 2026 —, ni les taux propres des professeurs et maîtres de

@@ -62,33 +62,26 @@ DU_PORTAGE = {
 #: durée, jusqu'au 1er avril 1983, qui abat à l'âge seul quelle que soit la
 #: période — celle de l'IPACTE et de l'IGRANTE porte la durée ; l'âge et la
 #: durée qui exonèrent l'agent de soixante-trois ans, jusqu'au 31 décembre 2003
-#: (6° a), et la femme de la loi du 12 juillet 1977, jusqu'au 31 mars 1983 (5°).
+#: (6° a), et la femme de la loi du 12 juillet 1977, jusqu'au 31 mars 1983 (5°) ;
+#: les dix ans dont l'Ircantec devance l'âge normal, sans la base
+#: (`ageAuPlusTotSansLaBase`, depuis le 21 novembre 2026).
 DE_LA_VERSION = {"coefficients_par_annee_d_age", "exoneration_des_agents_de_soixante_trois_ans",
-                 "exoneration_des_femmes_de_1977"}
+                 "exoneration_des_femmes_de_1977", "anticipation_maximale_annees"}
 #: Le paramètre qu'un test à lui confronte au dépôt : la durée que la seconde
 #: table lit de 1983 à 2003.
 A_PART = {"duree_de_la_seconde_table_trimestres"}
 
-#: Les versions du coefficient qui couvrent une année entière, et celles
-#: d'après le 1er juillet 2011.
-COUVRANTES = ("ipacte_et_igrante", "arrete_de_1970", "femmes_de_la_loi_de_1977",
-              "escalier_au_trimestre_1983", "retraite_anticipee_2004", "ages_de_2010",
-              "compte_de_prevention_2018", "ancres_fixes_2023")
+#: Les versions du coefficient d'après le 1er juillet 2011.
 DEPUIS_2011 = ("ages_de_2010", "compte_de_prevention_2018", "ancres_fixes_2023")
 FERMES = ("ipacte", "igrante")
 
 #: Ce que le modèle fait autrement que le droit : la fiche, la version, le
 #: champ qu'elle lit et que le dépôt porte autrement, les régimes où il le
 #: porte autrement (tous, ou le portage, sans eux), et l'article que cite
-#: l'approximation qui le déclare. Le modèle liquide l'Ircantec avec la
-#: pension de base, jamais avant l'âge d'ouverture de sa période, quand
-#: l'article ouvre l'anticipation dix ans avant l'âge du taux plein ; il garde
-#: soixante-cinq ans aux points de l'IPACTE et de l'IGRANTE après le
-#: 1er juillet 2011 ; il compte en mois
-#: le trimestre de la surcote, de quatre-vingt-dix jours depuis 2023.
+#: l'approximation qui le déclare. Le modèle garde soixante-cinq ans aux
+#: points de l'IPACTE et de l'IGRANTE après le 1er juillet 2011 ; il compte en
+#: mois le trimestre de la surcote, de quatre-vingt-dix jours depuis 2023.
 ECARTS_DECLARES = [
-    *[(ANTICIPATION, version, "anticipation_maximale_annees", None, "article 16, I")
-      for version in COUVRANTES],
     *[(ANTICIPATION, version, "age_taux_plein_par_generation", FERMES, "L. 351-8")
       for version in DEPUIS_2011],
     (SURCOTE, "precisions_de_2023", "trimestre_en_jours", None, "IV, 3°"),
@@ -604,3 +597,81 @@ def test_la_femme_de_la_loi_de_1977_du_30_septembre_1978_au_1er_avril_1983():
                                                 FEMMES_DE_LA_LOI_DE_1977]))
     attendus = [attendu for _, attendu in FEMMES_DE_LA_LOI_DE_1977]
     assert portage == attendus
+
+
+# -- l'anticipation sans la base -------------------------------------------------
+
+#: L'Ircantec se demande sans le régime général, dix ans au plus avant l'âge
+#: « normal » : « Cependant elle peut faire l'objet d'une anticipation, au plus
+#: tôt à cinquante-cinq ans » (article 16, de 1971 au 30 juin 2011), « au plus
+#: tôt dix ans avant que l'assuré ait atteint » l'âge du 1° de L. 351-8 (depuis
+#: le 1er juillet 2011, LEGIARTI000024266924 à LEGIARTI000048065521) ; la
+#: caisse la sert « au plus tôt à l'âge de 57 ans ». Avant l'âge légal, l'âge
+#: seul : la seconde table ne vaut que pour les agents « âgés de soixante à
+#: soixante-cinq ans » (1983), puis d'un âge « compris entre l'âge prévu à
+#: l'article L. 161-17-2 [...] et l'âge prévu au 1° de l'article L. 351-8 »
+#: (II). La retouche de la requête, et, départ par départ, sa date et les
+#: coefficients des trois régimes en points qu'il sert — lus à la main dans la
+#: version de la date d'effet —, ou ``"base"`` pour le départ du régime
+#: général, qui attend son âge.
+SANS_LA_BASE = [
+    # Né le 15 janvier 1966, contractuel dès vingt-deux ans, parti à
+    # cinquante-sept ans en février 2023 : dix ans avant soixante-sept ans, le
+    # plancher, 0,43 ; le régime général attend son âge légal.
+    ({"naissance": "1966-01-15", "debut": "22", "liquidation": "57"},
+     [{"date": "2023-02-01", "ircantec": 0.43}, "base"]),
+    # Né le 15 juin 1946, contractuel dès 1968, parti à cinquante-six ans en
+    # juillet 2002 : l'escalier de 1983, 0,43 à cinquante-cinq ans et quatre
+    # trimestres de 0,0175, 0,50, aux points de l'IPACTE et de l'IGRANTE de
+    # 1968 à 1970 comme à ceux de l'Ircantec ; le régime général s'ouvre à
+    # soixante ans, en juillet 2006.
+    ({"naissance": "1946-06-15", "debut": "22", "liquidation": "56"},
+     [{"date": "2002-07-01", **{code: 0.50 for code in EN_POINTS}}, "base"]),
+    # Né le 15 janvier 1920, contractuel dès 1950, parti à cinquante-sept ans
+    # en février 1977 : la table par année d'âge, « 57 ans 0,57 », aux points
+    # de l'IPACTE, de l'IGRANTE et de l'Ircantec ensemble.
+    ({"naissance": "1920-01-15", "liquidation": "57"},
+     [{"date": "1977-02-01", **{code: 0.57 for code in EN_POINTS}}, "base"]),
+    # Avant le plancher, l'Ircantec ne se demande pas encore : elle suit le
+    # régime général, et rien n'est servi avant lui, plutôt qu'une pension
+    # servie dès le plancher au coefficient le plus bas. Né le 15 janvier
+    # 1966, parti à cinquante-six ans en février 2022, un an avant
+    # cinquante-sept ans ; né le 15 juin 1946, parti à cinquante-quatre ans en
+    # juillet 2000, un an avant les cinquante-cinq ans d'alors.
+    ({"naissance": "1966-01-15", "debut": "22", "liquidation": "56"}, ["base"]),
+    ({"naissance": "1946-06-15", "debut": "22", "liquidation": "54"}, ["base"]),
+]
+
+
+def _departs_servis(sortie: dict) -> list:
+    """Chaque départ : sa date et le coefficient de chacun des trois régimes en
+    points qu'il sert, ou ``"base"`` quand il sert le régime général."""
+    departs = []
+    for liquidation in sortie["liquidations"]:
+        regimes = {pension["regime"]: pension for pension in liquidation["pensions"]["regimes"]}
+        if "regime_general" in regimes:
+            departs.append("base")
+            continue
+        servis = {"date": liquidation["ouverture"]["date_effet"]}
+        for code in EN_POINTS:
+            if code in regimes:
+                trouve = re.search(r"coefficient d'anticipation ([0-9.]+)",
+                                   regimes[code]["detail"])
+                servis[code] = float(trouve.group(1)) if trouve else None
+        departs.append(servis)
+    return departs
+
+
+def test_l_ircantec_se_demande_sans_la_base_dix_ans_avant_l_age_normal():
+    """Le contractuel parti avant l'âge légal reçoit sa pension de l'Ircantec
+    à son départ, dès dix ans avant l'âge normal, au coefficient de son âge
+    seul, et celle du régime général à l'âge légal, dans un second départ."""
+    import shutil
+
+    from outils_sorties import lancer
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    requetes = [{**REQUETE, **retouche} for retouche, _ in SANS_LA_BASE]
+    portage = [_departs_servis(sortie) for sortie in lancer("comparer-liquidation.mjs", requetes)]
+    assert portage == [attendu for _, attendu in SANS_LA_BASE]

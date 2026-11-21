@@ -1299,18 +1299,6 @@ exemples:
       régime général.
     carriere: {naissance: "1964-12-01", sexe: H, affiliation: contractuel_public, liquidation: "2026-09", trimestres_valides: 160}
     attendu: {coefficients_des_regimes: {ircantec: 0.7625}}
-    ecart_connu:
-      modele: {coefficients_des_regimes: {ircantec: 0.9}}
-      explication: >-
-        Le modèle présume la complémentaire demandée avec son régime de base :
-        avant l'âge légal, rien ne s'ouvre, et l'Ircantec attend le régime
-        général, à 62 ans et 9 mois, où la durée lui donne 0,90, dix
-        trimestres manquants. La caisse la sert dès septembre 2026, un an plus
-        tôt, à 0,7625. Il faudrait laisser une complémentaire des salariés
-        devancer son régime de base de dix ans au plus, au coefficient de
-        l'âge seul (fiche liquidation_regime_par_regime).
-      fiche: liquidation_regime_par_regime
-      depuis: "2026-10-13"
 
   - id: ircantec_points_2024_deux_tranches
     source: {editeur: "Ircantec", reference: "ircantec.retraites.fr, Actif, « Les points acquis par cotisations », exemple de 2024", verifie_le: "2026-10-13"}
