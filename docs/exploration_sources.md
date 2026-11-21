@@ -188,15 +188,35 @@ formulaire offre, dix s'il est ouvert, parce qu'une saisie par borne ne borne
 rien quand chaque entrée est une borne ; le propriétaire le change dans le
 registre. `python scripts/simulateurs.py budget` dit ce qui reste.
 
+**Depuis le 21 novembre 2026, cinq cents saisies par mois.** Le propriétaire
+a demandé d'interroger plus souvent les simulateurs officiels : « on pourrait
+utiliser les simulateurs officiels plus souvent ? j'ai l'impression qu'on
+pourrait trouver nos erreurs plus simplement au lien de les trouver par
+hasard ». Il a répondu « oui » à la règle qui remplace l'accord lot par lot :
+jusqu'à cinq cents saisies par mois et par simulateur public, en cas fictifs,
+à rythme humain et une à la fois, avec arrêt immédiat au premier captcha ou
+message de blocage, et un compte rendu après chaque lot ; un site dont les
+conditions d'utilisation interdisent cet usage est écarté et signalé au
+propriétaire. Les budgets du registre et le refus du script restent à
+relever à ce plafond. Une réserve, le jour même : les conditions générales
+d'info-retraite réservent l'usage du site aux « stricts besoins de
+l'Utilisateur », interdisent « toute rediffusion » de ses contenus et
+demandent de « ne pas communiquer de fausses informations ». Jusqu'à ce que
+le propriétaire tranche, aucune saisie nouvelle ne se fait sur les quatre
+simulateurs d'info-retraite, et rien n'entre dans le dépôt de leurs pages
+que les cas saisis et les nombres obtenus.
+
 **La saisie.** Une personne tape les entrées et colle chaque réponse, telle
 quelle, dans la feuille. Claude peut le faire à sa place, à cinq conditions :
 le simulateur est anonyme et sans captcha ; le lot — le simulateur et ses
 entrées — est présenté au propriétaire, qui l'approuve avant la première
-saisie ; Claude saisit dans le navigateur intégré, qui ne cache pas ce qu'il
+saisie, ou, depuis le 21 novembre 2026, entre dans le plafond mensuel
+ci-dessus ; Claude saisit dans le navigateur intégré, qui ne cache pas ce qu'il
 est, par ses outils de page, une entrée à la fois, au rythme d'une personne ;
 il refuse les cookies qui ne sont pas nécessaires ; il s'arrête au premier
 captcha, à la première connexion demandée, au premier écran qu'il
-n'attendait pas. Jamais de script, jamais hors du lot.
+n'attendait pas. Jamais de script, jamais hors du lot ni au-delà du
+plafond.
 
 **La transcription.** `python scripts/simulateurs.py transcrire <feuille>`
 fait de chaque réponse un exemple officiel : la source nomme le simulateur et

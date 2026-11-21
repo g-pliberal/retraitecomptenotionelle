@@ -325,17 +325,19 @@ saisirait. Quatre voies, dans cet ordre :
    sous le contrôle du propriétaire, saisit les cas de bascule que fabrique la
    carte (§ 4.1), un par borne : chaque saisie teste une règle à l'endroit où
    elle change. Chaque réponse entre comme exemple officiel, ponctuel et cité :
-   le simulateur, la date, la saisie, le résultat. Un budget par simulateur,
-   tenu dans le registre, garde l'ensemble loin d'une extraction
-   substantielle. `scripts/simulateurs.py` fait tout ce qui entoure la
-   saisie : il tient le budget, écrit la feuille — les entrées et la
-   prédiction du modèle, avant la réponse — et transcrit les réponses.
-   Claude ne saisit que dans un simulateur anonyme, sans captcha ; le lot, le
-   simulateur et ses entrées, est approuvé par le propriétaire avant la
-   première ; il saisit une entrée à la fois, au rythme d'une personne, dans
-   un navigateur qui ne cache pas ce qu'il est, et s'arrête au premier
-   captcha, à la première connexion demandée, au premier écran qu'il
-   n'attendait pas (`docs/exploration_sources.md`).
+   le simulateur, la date, la saisie, le résultat. `scripts/simulateurs.py`
+   fait tout ce qui entoure la saisie : il écrit la feuille — les entrées et
+   la prédiction du modèle, avant la réponse — et transcrit les réponses.
+   Depuis le 21 novembre 2026, le propriétaire a remplacé l'accord lot par
+   lot et le petit budget de chaque simulateur par une règle d'ensemble :
+   jusqu'à cinq cents saisies par mois et par simulateur public, en cas
+   fictifs, et un compte rendu après chaque lot. Claude ne saisit que dans
+   un simulateur anonyme, sans captcha ; il saisit une entrée à la fois, au
+   rythme d'une personne, dans un navigateur qui ne cache pas ce qu'il est,
+   et s'arrête au premier captcha, au premier message de blocage, à la
+   première connexion demandée, au premier écran qu'il n'attendait pas. Un
+   site dont les conditions d'utilisation interdisent cet usage est écarté
+   et signalé au propriétaire (`docs/exploration_sources.md`).
 3. **Comparer une carrière réelle.** Le propriétaire compare la sienne à
    « Mon estimation retraite », et des volontaires peuvent faire de même s'ils
    y consentent : c'est l'usage personnel que les conditions permettent.
