@@ -216,10 +216,10 @@
   "valeur": "1fb8f5a7cd4222b6"
  },
  "test_solde_fusion.py::grille sous l'hypothèse B": {
-  "valeur": "082d80167d2eac4d"
+  "valeur": "2be33cc550b4e473"
  },
  "test_solde_fusion.py::grille sous l'hypothèse C": {
-  "valeur": "bc6690747a24741f"
+  "valeur": "eadebfeb4c4a8726"
  },
  "test_stock_age_legal.py::pensions des cas sous droit_commun": {
   "valeur": "c154d424761481c1"
@@ -228,6 +228,6 @@
   "valeur": "95c5673df3a03558"
  },
  "test_web.py::carrières tirées au hasard": {
-  "valeur": "3757849543a4de41"
+  "valeur": "4eeae7b7e93fe12a"
  }
 }

@@ -78,7 +78,7 @@ complètes, que le portage refait à l'octet (`tests/test_pont.py`), et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->86<!--/--> pages figées, que
 `node --test` rejoue ;
 <!--chiffre:portage(valeurs)-->176 290<!--/--> nombres comparés, dont
-<!--chiffre:portage(identiques)-->99,9<!--/--> % identiques au bit près.
+<!--chiffre:portage(identiques)-->100,0<!--/--> % identiques au bit près.
 
 Une exception, voulue : le coût pour toute la population ne se calcule qu'en
 Python. Il voyage tout fait dans le paquet (`data/derive/agregats.json`), et
