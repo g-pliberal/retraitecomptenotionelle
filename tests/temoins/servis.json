@@ -16165,7 +16165,7 @@
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
     "pension_annuelle": 24454.98280899299,
-    "pension_hors_repartition": 291.52975263533057,
+    "pension_hors_repartition": 291.81548,
     "pensions_par_regime": [
      {
       "detail": "SR 29,642.40 € × taux 75.000% × 166/166",
@@ -16174,8 +16174,8 @@
       "type_calcul": "annuites"
      },
      {
-      "detail": "6,432.70 points × valeur de service 0.04532 €",
-      "montant": 291.52975263533057,
+      "detail": "6,439.00 points × valeur de service 0.04532 €",
+      "montant": 291.81548,
       "regime": "rafp",
       "type_calcul": "points"
      }
@@ -16209,7 +16209,7 @@
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
     "pension_annuelle": 22231.80255362999,
-    "pension_hors_repartition": 291.52975263533057,
+    "pension_hors_repartition": 291.81548,
     "pensions_par_regime": [
      {
       "detail": "SR 29,642.40 € × taux 75.000% × 166/166",
@@ -16218,8 +16218,8 @@
       "type_calcul": "annuites"
      },
      {
-      "detail": "6,432.70 points × valeur de service 0.04532 €",
-      "montant": 291.52975263533057,
+      "detail": "6,439.00 points × valeur de service 0.04532 €",
+      "montant": 291.81548,
       "regime": "rafp",
       "type_calcul": "points"
      }
@@ -18486,7 +18486,7 @@
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
     "pension_annuelle": 26400.34285714286,
-    "pension_hors_repartition": 532.5722562361025,
+    "pension_hors_repartition": 533.1964320000001,
     "pensions_par_regime": [
      {
       "detail": "SR 35,200.46 € × taux 75.000% × 169/169",
@@ -18495,8 +18495,8 @@
       "type_calcul": "annuites"
      },
      {
-      "detail": "9,708.62 points × valeur de service 0.05378 € × coefficient de majoration 1.0200",
-      "montant": 532.5722562361025,
+      "detail": "9,720.00 points × valeur de service 0.05378 € × coefficient de majoration 1.0200",
+      "montant": 533.1964320000001,
       "regime": "rafp",
       "type_calcul": "points"
      }
@@ -20223,7 +20223,7 @@
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
     "pension_annuelle": 22499.65559644481,
-    "pension_hors_repartition": 291.52975263533057,
+    "pension_hors_repartition": 291.81548,
     "pensions_par_regime": [
      {
       "detail": "SR 29,642.40 € × taux 75.000% × 168/166",
@@ -20232,8 +20232,8 @@
       "type_calcul": "annuites"
      },
      {
-      "detail": "6,432.70 points × valeur de service 0.04532 €",
-      "montant": 291.52975263533057,
+      "detail": "6,439.00 points × valeur de service 0.04532 €",
+      "montant": 291.81548,
       "regime": "rafp",
       "type_calcul": "points"
      }
@@ -21141,7 +21141,7 @@
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
     "pension_annuelle": 22231.80255362999,
-    "pension_hors_repartition": 291.52975263533057,
+    "pension_hors_repartition": 291.81548,
     "pensions_par_regime": [
      {
       "detail": "SR 29,642.40 € × taux 75.000% × 166/166",
@@ -21150,8 +21150,8 @@
       "type_calcul": "annuites"
      },
      {
-      "detail": "6,432.70 points × valeur de service 0.04532 €",
-      "montant": 291.52975263533057,
+      "detail": "6,439.00 points × valeur de service 0.04532 €",
+      "montant": 291.81548,
       "regime": "rafp",
       "type_calcul": "points"
      }
@@ -21173,7 +21173,7 @@
      },
      {
       "date_effet": "2023-02-01",
-      "montant": 161.9752685648196,
+      "montant": 162.13402,
       "regime": "rafp"
      }
     ]

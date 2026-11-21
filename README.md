@@ -108,8 +108,8 @@ Scénario                                                          Courants   Co
 > de faire porter toute la baisse par la part salariale, qui tombe de <!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=salarie)-->11,31<!--/--> à
 > **<!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=salarie&systeme=proposition)-->6,33<!--/-->**. C'est le seul partage dont la baisse arrive sur la fiche le
 > lendemain de la réforme, sans supposer qu'un employeur rende son économie, et
-> le seul qui rende quelque chose au voisinage du SMIC : +<!--chiffre:mesure(gain_net?exemple=salaire_moyen&en=mensuel)-->194<!--/--> € par mois au
-> salaire moyen, +<!--chiffre:mesure(gain_net?exemple=smic&en=mensuel)-->84<!--/--> € au SMIC, à coût du travail inchangé — et davantage le
+> le seul qui rende quelque chose au voisinage du SMIC : +<!--chiffre:mesure(gain_net?exemple=salaire_moyen&en=mensuel)-->191<!--/--> € par mois au
+> salaire moyen, +<!--chiffre:mesure(gain_net?exemple=smic&en=mensuel)-->83<!--/--> € au SMIC, à coût du travail inchangé — et davantage le
 > premier mois, avant que le brut ne s'ajuste. Le prix à payer est que le
 > salaire **brut** ne monte pas, donc ni les droits qui en dépendent, ni le
 > crédit au compte notionnel ; le partage inverse le ferait monter,
@@ -183,8 +183,8 @@ de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Lire une page transfère son
 texte et de quoi l'animer : <!--chiffre:poids_comprime(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->169<!--/--> Ko compressés
 (<!--chiffre:poids(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->547<!--/--> Ko bruts) pour l'accueil. Le premier calcul y ajoute
-le moteur, <!--chiffre:poids_comprime(moteur/js/*.js + moteur/js/droit/*.js - moteur/js/routeur.js - moteur/js/adresses.js - moteur/js/cles.js - moteur/js/gabarit.js - moteur/js/format.js - moteur/js/calendrier.js - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->973<!--/--> Ko compressés, et le paquet
-de données, <!--chiffre:poids_comprime(moteur/donnees.json)-->836<!--/--> Ko compressés (<!--chiffre:poids(moteur/donnees.json)-->6 173<!--/--> Ko bruts) ; le tout prend quelques dixièmes
+le moteur, <!--chiffre:poids_comprime(moteur/js/*.js + moteur/js/droit/*.js - moteur/js/routeur.js - moteur/js/adresses.js - moteur/js/cles.js - moteur/js/gabarit.js - moteur/js/format.js - moteur/js/calendrier.js - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->979<!--/--> Ko compressés, et le paquet
+de données, <!--chiffre:poids_comprime(moteur/donnees.json)-->838<!--/--> Ko compressés (<!--chiffre:poids(moteur/donnees.json)-->6 185<!--/--> Ko bruts) ; le tout prend quelques dixièmes
 de seconde, et les chargements suivants sont immédiats.
 
 Neuf pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -229,7 +229,7 @@ Chaque page est écrite toute faite, et ne charge qu'au premier calcul
 `moteur/js/`, le moteur qui calcule, en JavaScript et sans aucune bibliothèque,
 ce qui dépend de ce que le lecteur saisit — sa carrière, ses droits et sa
 pension —, et `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->6 173<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->6 185<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->80<!--/--> fiches de régime, et ce que le Python a calculé une fois pour toutes
 sous les réglages de référence : le coût et les carrières types, que les pages
@@ -663,7 +663,7 @@ Scénario                                                          Courants   Co
 5. Notionnel dès 2026, salariale + patronale                       32,870€     26,233€    2,186€   -11.4%
 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        35,714€     28,013€    2,334€    -5.4%
 --------------------------------------------------------------------------------------------------------
-   hors répartition (RAFP), servi à part, identique aux 6           1,334€      1,065€       89€
+   hors répartition (RAFP), servi à part, identique aux 6           1,335€      1,066€       89€
 --------------------------------------------------------------------------------------------------------
    + rente capitalisée obligatoire, scénario 6                      1,874€      1,470€      122€
    + rente capitalisée volontaire, les 5 points rendus              1,874€      1,470€      122€
@@ -850,8 +850,8 @@ génération acquiert sous chaque règle.
 |---|---|---|---|---|
 | 1. Système actuel | <!--chiffre:mesure(cout_annee?scenario=1&annee=2070)-->596<!--/--> Md € | **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->15,3<!--/-->** % | <!--chiffre:mesure(cumul_avenir?scenario=1)-->23 872<!--/--> Md € | réf. |
 | 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cout_annee?scenario=2&annee=2070)-->179<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=2&annee=2070)-->4,6<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=2)-->7 069<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=2)-->−70,4<!--/--> % |
-| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cout_annee?scenario=3&annee=2070)-->278<!--/--> Md € | **<!--chiffre:mesure(part_pib?scenario=3&annee=2070)-->7,1<!--/-->** % | <!--chiffre:mesure(cumul_avenir?scenario=3)-->17 790<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=3)-->−25,5<!--/--> % |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cout_annee?scenario=4&annee=2070)-->401<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=4&annee=2070)-->10,3<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=4)-->16 882<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=4)-->−29,3<!--/--> % |
+| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cout_annee?scenario=3&annee=2070)-->278<!--/--> Md € | **<!--chiffre:mesure(part_pib?scenario=3&annee=2070)-->7,1<!--/-->** % | <!--chiffre:mesure(cumul_avenir?scenario=3)-->17 791<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=3)-->−25,5<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cout_annee?scenario=4&annee=2070)-->401<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=4&annee=2070)-->10,3<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=4)-->16 881<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=4)-->−29,3<!--/--> % |
 | 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cout_annee?scenario=5&annee=2070)-->435<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=5&annee=2070)-->11,2<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=5)-->20 541<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=5)-->−14,0<!--/--> % |
 | 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cout_annee?scenario=6&annee=2070)-->314<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,1<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=6)-->15 722<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=6)-->−34,1<!--/--> % |
 
@@ -1089,7 +1089,7 @@ contre-intuitif. Deux impôts du poste seulement sortent d'une rémunération :
 sécurité sociale verse une part à la branche vieillesse, et **le forfait
 social**, que l'article L. 241-3, 1° lui donne en entier — ensemble
 <!--chiffre:mesure(restitution?quoi=part_du_poste&annee=2026)-->28<!--/--> % du poste. Ils sont supprimés. Le solde revient en
-**<!--chiffre:mesure(restitution?quoi=points_csg&annee=2026)-->0,69<!--/--> point de CSG d'activité**, et il faut dire pourquoi ce n'est pas une
+**<!--chiffre:mesure(restitution?quoi=points_csg&annee=2026)-->0,60<!--/--> point de CSG d'activité**, et il faut dire pourquoi ce n'est pas une
 restitution : **la CSG sur les revenus d'activité ne finance aujourd'hui
 aucune retraite.** L'article L. 131-8, 3° la répartit entre la CNAF,
 l'assurance maladie, la CADES, l'Unédic et la CNSA, et rien à la vieillesse ;
@@ -1104,7 +1104,7 @@ traitement — l'autre moitié paie la dette de pensions déjà promises, qui re
 due. Une part n'entre pas dans ce partage : ce que le taux payait de départs
 anticipés, que la proposition supprime, et que l'État garde en entier. Sur la
 fiche de paie de la fonctionnaire de l'exemple du §3, c'est
-**+<!--chiffre:mesure(gain_net?exemple=fonctionnaire)-->24,9<!--/--> % de traitement net** en 2026, et à tous les niveaux de traitement :
+**+<!--chiffre:mesure(gain_net?exemple=fonctionnaire)-->24,7<!--/--> % de traitement net** en 2026, et à tous les niveaux de traitement :
 ni réduction générale ni plafond ne viennent courber le calcul. Ce n'est ni
 l'incidence intégrale, qui lui prêterait toute la contribution comme si elle
 avait été son salaire différé, ni l'assiette fixe, qui ne lui en rendrait
@@ -1112,7 +1112,7 @@ rien : mettre le partage à zéro rend l'ancienne convention. Pour un militaire,
 l'État verse <!--chiffre:cellule(data/reference/legislation/contribution_employeur_militaires.csv:taux*100?annee=2026)-->126,07<!--/--> % de la solde, dont <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*-100?population=militaires&poste=avantages_professionnels)-->33,8<!--/--> points paient ses départs anticipés (<!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*-100?population=civils&poste=avantages_professionnels)-->1,5<!--/--> point
 pour un civil, au tableau n° 15 de la Cour des comptes). L'État garde ces
 points ; la même moitié de ce qui reste, un écart plus grand que celui d'un
-civil, fait **+<!--chiffre:mesure(gain_net?exemple=fonctionnaire&affiliation=militaire)-->28,9<!--/--> %** de solde nette sur la même carrière.
+civil, fait **+<!--chiffre:mesure(gain_net?exemple=fonctionnaire&affiliation=militaire)-->28,8<!--/--> %** de solde nette sur la même carrière.
 
 **Et les pensions LIQUIDÉES suivent la règle d'indexation, comme le compte qui
 les a produites.** Un système notionnel a deux règles d'indexation — celle du

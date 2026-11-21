@@ -53,7 +53,7 @@ coefficient maximal, <!--chiffre:valeur(data/reference/legislation/prelevements_
 salarié au SMIC ne supporte aujourd'hui que ses <!--chiffre:mesure(fiche?exemple=smic&quoi=salarie)-->11,3<!--/--> points salariaux, et que
 baisser la part patronale ne lui rend rien. Le partage retenu ne touche pas à
 cette part : il ramène la retenue de l'assuré à <!--chiffre:mesure(fiche?exemple=smic&quoi=salarie&systeme=proposition)-->6,33<!--/--> points, et le gain au SMIC
-est de **+<!--chiffre:mesure(gain_net?exemple=smic&en=mensuel)-->84<!--/--> € par mois à coût du travail inchangé**, et davantage le premier
+est de **+<!--chiffre:mesure(gain_net?exemple=smic&en=mensuel)-->83<!--/--> € par mois à coût du travail inchangé**, et davantage le premier
 mois, à brut inchangé. *Corrigé le 23 septembre 2026* : la phrase disait
 l'inverse, ce chiffre pour celui du premier mois.
 

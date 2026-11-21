@@ -115,7 +115,7 @@ publiée, le coût du système actuel est la masse de pensions des cas types, mi
 à l'échelle par l'ancrage qui la rend égale à la dépense de cette année-là. La
 même formule, appliquée aux années publiées, devrait retrouver ce qui a été
 dépensé (`Avenir.reconstitution`) ; elle s'en écarte de <!--chiffre:mesure(reconstitution?annee=2000)-->−3,7<!--/--> % en 2000, de
-<!--chiffre:mesure(reconstitution?annee=2009)-->−10,2<!--/--> % en 2009 et de <!--chiffre:mesure(reconstitution?annee=2020)-->−0,6<!--/--> % en 2020, et de <!--chiffre:mesure(reconstitution?annee=1990)-->−7,6<!--/--> % en 1990. La masse du
+<!--chiffre:mesure(reconstitution?annee=2009)-->−10,3<!--/--> % en 2009 et de <!--chiffre:mesure(reconstitution?annee=2020)-->−0,6<!--/--> % en 2020, et de <!--chiffre:mesure(reconstitution?annee=1990)-->−7,6<!--/--> % en 1990. La masse du
 modèle croît donc plus vite que la dépense réelle, et l'ancrage reporte cette
 dérive sur l'avenir : c'est le symptôme le plus direct de l'écart au COR.
 L'ancrage suppose, sans le vérifier, que l'écart des cas types au réel est le
@@ -179,7 +179,7 @@ retraités de plus, le modèle
 les têtes que la trajectoire s'écarte. La pension moyenne relative, elle, recule
 de <!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070&source=cor)-->−17,2<!--/--> %
 chez le COR et de
-<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070)-->−13,7<!--/--> % seulement
+<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070)-->−13,8<!--/--> % seulement
 dans le modèle ; et sur le passé, de 2005 à 2025, elle a crû de
 <!--chiffre:mesure(decomposition?facteur=pension_relative&de=2005&a=2025&source=cor)-->8,9<!--/--> %
 quand le modèle la fait croître de

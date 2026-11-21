@@ -125,17 +125,17 @@ tout en euros d'aujourd'hui, par mois. Ce que l'exemple donne :
 
 | Système | Pension nette par mois | Écart au système actuel |
 |---|---|---|
-| 1. Système de répartition actuel | <!--chiffre:mesure(simulateur?systeme=1&montants=net)-->2 723<!--/--> € | référence |
-| 2. Ce que vous avez cotisé, part salariale seule | <!--chiffre:mesure(simulateur?systeme=2&montants=net)-->661<!--/--> € | <!--chiffre:mesure(simulateur?systeme=2&quoi=ecart&montants=net)-->-75,7<!--/--> % |
-| 3. Ce que vous avez cotisé, part salariale + patronale | <!--chiffre:mesure(simulateur?systeme=3&montants=net)-->1 634<!--/--> € | <!--chiffre:mesure(simulateur?systeme=3&quoi=ecart&montants=net)-->-40,0<!--/--> % |
-| 4. La proposition du Parti libéral français | <!--chiffre:mesure(simulateur?systeme=4&montants=net)-->2 003<!--/--> € | <!--chiffre:mesure(simulateur?systeme=4&quoi=ecart&montants=net)-->-26,4<!--/--> % |
+| 1. Système de répartition actuel | <!--chiffre:mesure(simulateur?systeme=1&montants=net)-->2 742<!--/--> € | référence |
+| 2. Ce que vous avez cotisé, part salariale seule | <!--chiffre:mesure(simulateur?systeme=2&montants=net)-->667<!--/--> € | <!--chiffre:mesure(simulateur?systeme=2&quoi=ecart&montants=net)-->-75,7<!--/--> % |
+| 3. Ce que vous avez cotisé, part salariale + patronale | <!--chiffre:mesure(simulateur?systeme=3&montants=net)-->1 647<!--/--> € | <!--chiffre:mesure(simulateur?systeme=3&quoi=ecart&montants=net)-->-39,9<!--/--> % |
+| 4. La proposition du Parti libéral français | <!--chiffre:mesure(simulateur?systeme=4&montants=net)-->2 019<!--/--> € | <!--chiffre:mesure(simulateur?systeme=4&quoi=ecart&montants=net)-->-26,4<!--/--> % |
 
 Comment les lire, et c'est la chose la plus importante de la présentation :
 
 - **Le système 1 est la référence** : le droit en vigueur, minima et
   majorations compris, recalculé règle par règle sur cette carrière. Sa ligne
   porte un troisième chiffre, et il vaut d'être lu à voix haute :
-  **financé, <!--chiffre:mesure(simulateur?systeme=1&quoi=finance&montants=net)-->2 323<!--/--> €**, soit <!--chiffre:mesure(simulateur?systeme=1&quoi=financee&montants=net)-->85<!--/--> % de ce qu'il
+  **financé, <!--chiffre:mesure(simulateur?systeme=1&quoi=finance&montants=net)-->2 339<!--/--> €**, soit <!--chiffre:mesure(simulateur?systeme=1&quoi=financee&montants=net)-->85<!--/--> % de ce qu'il
   promet. Le reste attend des cotisations que personne n'a versées. La barre
   sous la ligne le montre, et la page Pourquoi changer le chiffre.
 - **Les systèmes 2 et 3 ne sont pas des propositions.** Ce sont des
@@ -160,8 +160,8 @@ Comment les lire, et c'est la chose la plus importante de la présentation :
 
 Puis, sous les quatre lignes, le bloc **« Et pendant que vous cotisez »** :
 une réforme change aussi la fiche de paie. Sur l'exemple, le salaire net
-mensuel passe de <!--chiffre:mesure(simulateur?systeme=1&quoi=salaire&montants=net)-->2 383<!--/--> € à <!--chiffre:mesure(simulateur?systeme=4&quoi=salaire&montants=net)-->2 541<!--/--> €, soit **<!--chiffre:mesure(simulateur?systeme=4&quoi=gain&montants=net)-->+158<!--/--> € par mois** à coût du
-travail inchangé pour l'employeur, et <!--chiffre:mesure(simulateur?quoi=gain_cumule&montants=net)-->+107 108<!--/--> € sur les <!--chiffre:mesure(simulateur?quoi=annees&montants=net)-->38<!--/--> années qui
+mensuel passe de <!--chiffre:mesure(simulateur?systeme=1&quoi=salaire&montants=net)-->2 380<!--/--> € à <!--chiffre:mesure(simulateur?systeme=4&quoi=salaire&montants=net)-->2 537<!--/--> €, soit **<!--chiffre:mesure(simulateur?systeme=4&quoi=gain&montants=net)-->+158<!--/--> € par mois** à coût du
+travail inchangé pour l'employeur, et <!--chiffre:mesure(simulateur?quoi=gain_cumule&montants=net)-->+106 823<!--/--> € sur les <!--chiffre:mesure(simulateur?quoi=annees&montants=net)-->38<!--/--> années qui
 restent avant le départ. C'est le net plein : la proposition prélève <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal+taux_capitalisation_obligatoire)-->23<!--/--> %
 pour la retraite et rien d'autre, quand le droit en vigueur en prélève <!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=total)-->28<!--/-->.
 Celui qui verse en plus les <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->5<!--/--> % volontaires retrouve l'effort d'aujourd'hui,
@@ -191,9 +191,9 @@ net :
 
 | Système | Pension nette par mois | Écart |
 |---|---|---|
-| 1. Actuel | <!--chiffre:mesure(simulateur?systeme=1&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->1 299<!--/--> € | référence |
-| 3. Ce qui a été cotisé, deux parts | <!--chiffre:mesure(simulateur?systeme=3&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->1 029<!--/--> € | <!--chiffre:mesure(simulateur?systeme=3&quoi=ecart&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->-20,8<!--/--> % |
-| 4. La proposition | <!--chiffre:mesure(simulateur?systeme=4&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->1 318<!--/--> € | <!--chiffre:mesure(simulateur?systeme=4&quoi=ecart&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->1,4<!--/--> % |
+| 1. Actuel | <!--chiffre:mesure(simulateur?systeme=1&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->1 319<!--/--> € | référence |
+| 3. Ce qui a été cotisé, deux parts | <!--chiffre:mesure(simulateur?systeme=3&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->1 045<!--/--> € | <!--chiffre:mesure(simulateur?systeme=3&quoi=ecart&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->-20,8<!--/--> % |
+| 4. La proposition | <!--chiffre:mesure(simulateur?systeme=4&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->1 327<!--/--> € | <!--chiffre:mesure(simulateur?systeme=4&quoi=ecart&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->0,6<!--/--> % |
 
 À montrer avec le plancher en tête : la garantie vieillesse, <!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle+allocation_isolement_mensuelle)-->1 050<!--/--> € brut
 pour une personne seule dès <!--chiffre:mesure(constante?de=moteur/js/regimes.js&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans. Sous la proposition, cette carrière part
@@ -229,9 +229,9 @@ septembre 2022, départ en janvier 2064 à 64 ans :
 
 | Système | Pension nette par mois | Écart |
 |---|---|---|
-| 1. Actuel | <!--chiffre:mesure(simulateur?systeme=1&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->2 485<!--/--> € | référence |
-| 3. Ce qui a été cotisé, deux parts | <!--chiffre:mesure(simulateur?systeme=3&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->1 553<!--/--> € | <!--chiffre:mesure(simulateur?systeme=3&quoi=ecart&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->-37,5<!--/--> % |
-| 4. La proposition | <!--chiffre:mesure(simulateur?systeme=4&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->1 914<!--/--> € | <!--chiffre:mesure(simulateur?systeme=4&quoi=ecart&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->-23,0<!--/--> % |
+| 1. Actuel | <!--chiffre:mesure(simulateur?systeme=1&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->2 505<!--/--> € | référence |
+| 3. Ce qui a été cotisé, deux parts | <!--chiffre:mesure(simulateur?systeme=3&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->1 565<!--/--> € | <!--chiffre:mesure(simulateur?systeme=3&quoi=ecart&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->-37,5<!--/--> % |
+| 4. La proposition | <!--chiffre:mesure(simulateur?systeme=4&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->1 929<!--/--> € | <!--chiffre:mesure(simulateur?systeme=4&quoi=ecart&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->-23,0<!--/--> % |
 
 C'est la carrière qui cotise presque entièrement après la bascule : la
 rente capitalisée y pèse le plus, et l'écart entre 3 et 4 est le plus large
@@ -353,7 +353,7 @@ Si le temps manque, garder cette page pour les questions : elle répond seule
 Onglet **Droits non cotisés**. La page qui explique les écarts du
 simulateur : ce que le système actuel verse sans que personne l'ait cotisé.
 Trois chiffres :
-<!--chiffre:entrees(moteur/donnees.json:avantages.avantages?famille!=ecarts_structurels&fin=None)-->43<!--/--> dispositifs en vigueur, du minimum vieillesse à la bonification du
+<!--chiffre:entrees(moteur/donnees.json:avantages.avantages?famille!=ecarts_structurels&fin=None)-->46<!--/--> dispositifs en vigueur, du minimum vieillesse à la bonification du
 cinquième ; <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.gratuit/1000)-->98,1<!--/--> Md € en <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.annee)-->2024<!--/--> pour les 23 que le modèle sait chiffrer, dont
 <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.lignes.reversion/1000)-->38,3<!--/--> Md € de réversion, qui est lue et non calculée ; <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.anticipee/1000)-->8,5<!--/--> Md € de pensions
 servies avant l'âge légal. La page dit que ces deux montants sont des
@@ -361,9 +361,9 @@ planchers. Le graphique du haut compte les dispositifs année par année depuis
 1831, où il n'y en avait qu'un.
 
 Deux comptes se croisent sur cette page, et il vaut mieux le savoir avant
-qu'on le demande : **<!--chiffre:entrees(moteur/donnees.json:avantages.avantages?famille!=ecarts_structurels&fin=None)-->43<!--/--> dispositifs sont en vigueur aujourd'hui**, et le
-tableau du bas en recense **<!--chiffre:entrees(moteur/donnees.json:avantages.avantages)-->49<!--/--> dispositifs** depuis 1831, ceux d'hier
-compris. Les 23 que le modèle chiffre se comptent sur les <!--chiffre:entrees(moteur/donnees.json:avantages.avantages)-->49<!--/-->.
+qu'on le demande : **<!--chiffre:entrees(moteur/donnees.json:avantages.avantages?famille!=ecarts_structurels&fin=None)-->46<!--/--> dispositifs sont en vigueur aujourd'hui**, et le
+tableau du bas en recense **<!--chiffre:entrees(moteur/donnees.json:avantages.avantages)-->53<!--/--> dispositifs** depuis 1831, ceux d'hier
+compris. Les 23 que le modèle chiffre se comptent sur les <!--chiffre:entrees(moteur/donnees.json:avantages.avantages)-->53<!--/-->.
 
 ### 6. Méthode et sources — deux minutes, pour finir
 
