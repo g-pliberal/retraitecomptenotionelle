@@ -201,7 +201,10 @@ def test_les_dates_d_effet_partagent_les_annees_sans_trou_ni_doublon():
                        # décret n° 2012-1129, en vigueur le 7 octobre 2012
                        "organic_avant_1973", "cancava_avant_1973",
                        # décret n° 2006-1325, en vigueur le 2 novembre 2006
-                       "cavimac"}
+                       "cavimac",
+                       # décrets de juin 2008, pour les pensions prenant effet
+                       # à compter du 1er juillet 2008
+                       "sncf", "ratp", "ieg", "opera_de_paris", "comedie_francaise"}
 
 
 @pytest.mark.parametrize("bornes,message", [

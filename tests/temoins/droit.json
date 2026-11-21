@@ -3093,6 +3093,12 @@
   ],
   "rendu": "26b18033682d5b67"
  },
+ "291deb1e838e13b4": {
+  "fonctions": [
+   "scenario_actuel.calculer"
+  ],
+  "rendu": "3135400820141388"
+ },
  "292406ab03732934": {
   "fonctions": [
    "calendrier.origine_des_ages"

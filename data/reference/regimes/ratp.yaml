@@ -37,6 +37,7 @@ inventaire:
 periodes:
   - debut: 1930
     fin: 2008
+    date_effet: [1930-01-01, 2008-07-01]
     type_calcul: annuites
     age_ouverture: 50
     age_taux_plein: 50
@@ -53,6 +54,10 @@ periodes:
     notes: 50 ans pour les tables de roulement, 55 ans pour les autres agents.
   - debut: 2009
     fin: 2016
+    # Le règlement de 2008 vaut pour les pensions prenant effet à compter du
+    # 1er juillet 2008 (SNCF, décret n° 2008-639, article 13 et 35, rédactions
+    # du 1er juillet 2008 ; RATP, IEG, Opéra, Comédie-Française de même).
+    date_effet: [2008-07-01, 2017-01-01]
     type_calcul: annuites
     age_ouverture: 52
     age_taux_plein: 57

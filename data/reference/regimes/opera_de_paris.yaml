@@ -70,6 +70,7 @@ periodes:
       proratisation.
   - debut: 2002
     fin: 2008
+    date_effet: [2002-01-01, 2008-07-01]
     type_calcul: annuites
     age_ouverture: 40
     age_taux_plein: 40
@@ -100,6 +101,10 @@ periodes:
       génération (`tests/test_regle_de_chacun.py`, `A_L_ANNEE_D_EFFET`).
   - debut: 2009
     fin: 2013
+    # Le règlement de 2008 vaut pour les pensions prenant effet à compter du
+    # 1er juillet 2008 (SNCF, décret n° 2008-639, article 13 et 35, rédactions
+    # du 1er juillet 2008 ; RATP, IEG, Opéra, Comédie-Française de même).
+    date_effet: [2008-07-01, 2014-01-01]
     type_calcul: annuites
     age_ouverture: 40
     age_taux_plein: 42

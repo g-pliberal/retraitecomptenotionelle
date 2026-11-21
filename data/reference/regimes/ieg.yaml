@@ -147,6 +147,7 @@ periodes:
       Âge, durée et taux plein inchangés : statut national de 1946, annexe 3, jusqu'à la réforme de 2008.
   - debut: 1991
     fin: 2008
+    date_effet: [1991-01-01, 2008-07-01]
     type_calcul: annuites
     age_ouverture: 55
     age_taux_plein: 55
@@ -165,6 +166,10 @@ periodes:
       Âge, durée et taux plein inchangés : statut national de 1946, annexe 3, jusqu'à la réforme de 2008.
   - debut: 2009
     fin: 2016
+    # Le règlement de 2008 vaut pour les pensions prenant effet à compter du
+    # 1er juillet 2008 (SNCF, décret n° 2008-639, article 13 et 35, rédactions
+    # du 1er juillet 2008 ; RATP, IEG, Opéra, Comédie-Française de même).
+    date_effet: [2008-07-01, 2017-01-01]
     type_calcul: annuites
     age_ouverture: 57
     age_taux_plein: 62

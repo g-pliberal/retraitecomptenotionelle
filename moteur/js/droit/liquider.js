@@ -2724,7 +2724,13 @@ export function trimestresDeSurcoteRegimesSpeciaux(carriere, trimestres, requis,
   }
   const fin = carriere.dateLiquidation;
   const apres = debut.rang < fin.rang ? trimestresCotisesAuMois(carriere, debut, fin) : 0.0;
-  return Math.min(Math.max(0, trimestres - requis), Math.floor(apres + 1e-9));
+  // De juillet à décembre 2008, « Le nombre de trimestres correspondant est
+  // arrondi à l'entier supérieur » ; depuis 2009, « les trimestres entiers
+  // cotisés » (SNCF, décret n° 2008-639, article 13, II, LEGIARTI000019108313
+  // puis LEGIARTI000020085562 ; les autres règlements de même).
+  const effectues = fin.rang < SURCOTE_AU_TAUX_DE_2009_DEPUIS.rang
+    ? Math.ceil(apres - 1e-9) : Math.floor(apres + 1e-9);
+  return Math.min(Math.max(0, trimestres - requis), effectues);
 }
 
 /** Le premier mois des trimestres que la surcote des fonctionnaires majore de 1,25 %. */

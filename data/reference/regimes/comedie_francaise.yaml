@@ -64,6 +64,7 @@ periodes:
       1970 se voit donc opposer cinq ans de plus que son droit.
   - debut: 1993
     fin: 2008
+    date_effet: [1993-01-01, 2008-07-01]
     type_calcul: annuites
     age_ouverture: 60
     age_taux_plein: 60
@@ -85,6 +86,10 @@ periodes:
       spectacle et les pompiers civils ». La fiche retient le premier cas.
   - debut: 2009
     fin: 2011
+    # Le règlement de 2008 vaut pour les pensions prenant effet à compter du
+    # 1er juillet 2008 (SNCF, décret n° 2008-639, article 13 et 35, rédactions
+    # du 1er juillet 2008 ; RATP, IEG, Opéra, Comédie-Française de même).
+    date_effet: [2008-07-01, 2012-01-01]
     type_calcul: annuites
     age_ouverture: 60
     age_taux_plein: 65
