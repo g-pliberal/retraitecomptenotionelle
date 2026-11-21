@@ -1,15 +1,46 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: aadc640e9e83fda9f6ed722849acbfc16c9f5b88
-date: 2026-11-21T01:44:53Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44850225951
+etat: rouge
+sources: d4a9b7a5c9e71c976c9f3d561e9916dbc65e9d3f
+date: 2026-11-21T02:13:24Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44852465777
+echecs:
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d05] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d06] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d07] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d08] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d09] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d10] - AssertionError: demande au droit absente du témoin (scenario_actuel.calculer, simulateur.carriere_simple) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d11] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d12] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d13] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d14] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d15] - AssertionError: demande au droit absente du témoin (scenario_actuel.calculer, simulateur.carriere_simple) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d16] - AssertionError: demande au droit absente du témoin (scenario_actuel.calculer, simulateur.carriere_simple) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d17] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d18] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d19] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d20] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d21] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d22] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d23] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_d24] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_s07] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_s08] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_s09] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_s10] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_loi_de_2023_s11] - AssertionError: demande au droit absente du témoin (scenario_actuel.calculer, simulateur.carriere_simple) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_soixante_ans_a01] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_soixante_ans_a02] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_soixante_ans_a03] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_soixante_ans_a04] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
+  - "FAILED tests/test_justesse.py::test_chaque_cas_des_preuves_du_depot_est_rejoue[grille_age_legal_soixante_ans_a05] - AssertionError: demande au droit absente du témoin (calendrier.origine_des_ages) : l'y ajouter par FIGER_DROIT=1 python -m pytest <ce fichier>"
 presomptions: vert
 durees:
-  fabrique: 452
-  suite: 558
-  tranche_1: 319
-  tranche_2: 558
-  tranche_3: 530
-  tranche_4: 458
-  garde: 163
+  fabrique: 708
+  suite: 624
+  tranche_1: 403
+  tranche_2: 624
+  tranche_3: 244
+  tranche_4: 331
+  garde: 213
