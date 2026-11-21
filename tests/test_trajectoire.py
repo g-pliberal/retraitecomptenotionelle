@@ -510,8 +510,10 @@ ECARTS.update(_ecarts(LOI_2025, "age_ouverture", {c: -0.25 for c in _A_1964}, 1e
 ECARTS.update(_ecarts(LOI_2025, "age_ouverture", {"cor_9_1970": -0.5}, 1e-6))
 ECARTS.update(_ecarts(LOI_2025, "trimestres_requis", {c: -1.0 for c in _A_1964}, 1e-6))
 ECARTS.update(_ecarts(LOI_2025, "trimestres_requis", {"cor_9_1970": -2.0}, 1e-6))
+# cor_11_1964 n'y est plus : ses 170 trimestres et deux tiers ne font aucun
+# trimestre entier de surcote au-delà des 170 requis (L. 14, III).
 ECARTS.update(_ecarts(LOI_2025, "taux", {c: 0.0125 for c in (
-    "cor_5_1964", "cor_5_primes_constantes_1964", "cor_6_1964", "cor_11_1964")}, 1e-6))
+    "cor_5_1964", "cor_5_primes_constantes_1964", "cor_6_1964")}, 1e-6))
 ECARTS.update(_ecarts(SUPER_ACTIFS, "age_ouverture",
                       {"cor_8_1963": 1 + 2 / 12, "cor_8_1964": 1 + 7 / 12,
                        "cor_8_1970": 9 / 12}, 1e-6))
@@ -957,3 +959,15 @@ def test_trajectoire_rejoue_le_temoin(temoin, tmp_path):
     rejoue = json.loads(sortie.read_text(encoding="utf-8"))
     sans_date = lambda document: {k: v for k, v in document.items() if k != "execute_le"}
     assert sans_date(rejoue) == sans_date(temoin)
+
+
+def test_la_surcote_du_fonctionnaire_ne_compte_que_les_trimestres_entiers(mesures):
+    """L. 14, III : la surcote compte les « trimestres entiers » d'assurance
+    au-delà de la durée requise, et cette durée se compte au jour (L. 14, I).
+    L'hospitalière du cas type 11, née en 1964, réunit 170 trimestres et deux
+    tiers pour 170 requis : aucun trimestre entier au-delà, aucune surcote, un
+    taux de 75 %. Les années civiles lui en comptaient 171, et un trimestre
+    de surcote : 75 % × 1,0125 = 75,9375 %."""
+    depot, _ = mesures["cor_11_1964"]
+    assert (depot["trimestres"], depot["trimestres_requis"]) == (170.0, 170.0)
+    assert depot["taux"] == pytest.approx(0.75, abs=1e-9)

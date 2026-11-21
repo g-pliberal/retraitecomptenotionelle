@@ -874,8 +874,11 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       // (XXIV, D, de la loi du 14 avril 2023) —, et le militaire n'en a
       // aucune : le III de l'article L. 14 ne la donne qu'au « fonctionnaire
       // civil », et ne lit pas les bonifications des emplois classés.
-      // Le régime spécial compté au jour lit ses trimestres entiers au jour.
-      const dureeDeLaSurcote = auJour && moteur.catalogue.obtenir(code).famille === "special"
+      // Le régime spécial et le code des pensions comptés au jour lisent leurs
+      // « trimestres entiers » d'une durée d'assurance comptée au jour (L. 14,
+      // I et III ; SNCF, décret n° 2008-639, article 13, II et III).
+      const dureeDeLaSurcote = auJour && ["special", "fonction_publique"].includes(
+        moteur.catalogue.obtenir(code).famille)
         ? Math.floor(trimestres + ecartAuJour + 1e-9) : trimestres;
       let supplementaires = Math.max(0, dureeDeLaSurcote - requis - (
         moteur.catalogue.obtenir(code).famille === "fonction_publique"
