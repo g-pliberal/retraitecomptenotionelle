@@ -345,6 +345,8 @@ periodes:
     type_calcul: annuites
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
+    textes_des_renvois:
+      age_ouverture_par_generation: {id: JORFARTI000001085913, depuis: "2006-11-02"}
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172

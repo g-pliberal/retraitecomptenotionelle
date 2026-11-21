@@ -134,3 +134,28 @@ def test_la_comparaison_au_moteur_signale_un_ecart(regles):
     n, ecarts = controle.comparer(lambda g, d: rg(g, d), lignes)
     assert n == 2
     assert ecarts == [((1963 * 12, 20250101), lignes[1][2], lignes[1][2] - 1)]
+
+
+def test_un_renvoi_de_regime_qui_ne_vaut_pas_au_jour_qu_il_cite_est_une_surprise(regles):
+    """Les renvois des régimes, cités au jour de leur texte (note 0009, étape 4) :
+    la période qui ouvre le renvoi liquide depuis le jour cité, ni avant ni
+    après, et une seule période liquide chaque jour. Sur le dépôt, aucun
+    contre-exemple qu'un cas attendu ne déclare ; sur une période coupée à l'année quand le texte coupe au
+    7 octobre 2012, le contre-exemple tombe entre les deux."""
+    controle, _, questions, _ = regles
+    props = {p.id: p for p in questions.des_renvois_des_regimes(RACINE)}
+    cle = "renvoi.organic_avant_1973.age_ouverture_par_generation"
+    assert cle in props, sorted(props)
+    for p in props.values():
+        assert controle.verifier(p, _attendus()).statut in {"prouvee", "attendue"}, p.id
+    cite = {"age_ouverture_par_generation": {"id": "LEGIARTI000026474703", "depuis": "2012-10-07"}}
+    periodes = [
+        {"debut": 2004, "fin": 2012, "age_ouverture": 60},
+        {"debut": 2013, "age_ouverture_par_generation": "age_legal_par_generation",
+         "textes_des_renvois": cite},
+    ]
+    (faux,) = questions.des_renvois_des_regimes(RACINE, [("fictif", periodes)])
+    r = controle.verifier(faux, _attendus())
+    assert r.statut == "surprise"
+    jour = r.surprises[0]["champs"]["date_effet"]
+    assert "2012-10-07" <= str(jour) < "2013-01-01", r.surprises

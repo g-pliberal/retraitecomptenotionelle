@@ -897,6 +897,8 @@ periodes:
     type_calcul: annuites
     age_ouverture: 64
     age_ouverture_par_generation: age_legal_par_generation
+    textes_des_renvois:
+      age_ouverture_par_generation: {id: LEGIARTI000047910068, depuis: "2025-01-01"}
     age_taux_plein: 67
     age_table: crpcen_2023
     age_taux_plein_a_l_ouverture: decote_regimes_speciaux

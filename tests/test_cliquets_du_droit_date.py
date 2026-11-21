@@ -23,9 +23,9 @@ from retraite_notionnelle.noyau import carte
 LISTE = outils.RACINE / "tests" / "cliquets_du_droit_date" / "constantes.yaml"
 
 #: Les valeurs de repli écrites à côté d'un renvoi, période par période.
-VALEURS_DE_REPLI = 1442
+VALEURS_DE_REPLI = 1429
 #: Les renvois, en séries, qui ne citent pas le texte qui les fait.
-RENVOIS_SANS_TEXTE = 306
+RENVOIS_SANS_TEXTE = 296
 #: Les copies d'avant réforme encore dans le dépôt.
 COPIES_D_AVANT_REFORME = ()
 #: Les versions que le moteur lit, sans leurs deux preuves ni ce qui manque.

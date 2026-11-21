@@ -168,3 +168,82 @@ def test_la_pension_du_1er_novembre_2006_garde_la_formule_d_avant_le_decret(simu
     assert _pension_cavimac(simulateur, novembre).montant == pytest.approx(
         _pension_cavimac(simulateur, octobre).montant)
     assert majoration in _pension_cavimac(simulateur, decembre).detail
+
+
+# -- les dix renvois, cités au jour de leur texte (note 0009, étape 4) ---------------
+
+import datetime  # noqa: E402
+
+import outils_droit_date as outils  # noqa: E402
+
+#: Chaque renvoi des dix, par la période qui l'ouvre : le texte qui le fait et le
+#: jour depuis lequel il vaut, relus dans l'index LEGI et JORF de la DILA.
+DIX_RENVOIS = {
+    # Code de la sécurité sociale, L. 723-10-1, I, en vigueur au 1er janvier 2004 :
+    # « à partir de l'âge prévu au premier alinéa de l'article L. 351-1 ».
+    ("cnbf", "age_ouverture_par_generation", 2004): ("LEGIARTI000006744100", "2004-01-01"),
+    # Décret n° 2006-1325, article 2, I, publié le 1er novembre 2006 : l'âge
+    # des périodes d'avant 1998 « est également abaissé à soixante ans ».
+    ("cavimac", "age_ouverture_par_generation", 2007): ("JORFARTI000001085913", "2006-11-02"),
+    # Loi n° 2003-775, article 66, III, en application le 1er janvier 2004
+    # (article 80) ; ses deux décrets pour la CNRACL (art. 65, III) et le FSPOEIE
+    # (art. 50, III).
+    ("fonction_publique_etat", "age_taux_plein_par_generation", 2004):
+        ("JORFARTI000002020831", "2004-01-01"),
+    ("cnracl", "age_taux_plein_par_generation", 2004): ("LEGIARTI000006400937", "2004-01-01"),
+    ("fspoeie", "age_taux_plein_par_generation", 2004): ("LEGIARTI000006781529", "2004-01-01"),
+    # Décret n° 90-1215, article 84, rédaction du décret n° 2023-689 : « aux
+    # pensions prenant effet à compter du 1er janvier 2025 ».
+    ("crpcen", "age_ouverture_par_generation", 2025): ("LEGIARTI000047910068", "2025-01-01"),
+    # Décret n° 73-937, article 3, rédaction du 7 octobre 2012 : « à compter de
+    # l'âge prévu par l'article L. 161-17-2 ».
+    ("organic_avant_1973", "age_ouverture_par_generation", 2013):
+        ("LEGIARTI000026474703", "2012-10-07"),
+    ("cancava_avant_1973", "age_ouverture_par_generation", 2013):
+        ("LEGIARTI000026474703", "2012-10-07"),
+    # Règlement annexé au décret n° 2007-262, article 26 a, rédaction du
+    # 1er janvier 2025 : « au moins l'âge mentionné au premier alinéa de
+    # l'article L. 161-17-2 », sous réserve de la table de l'article 72.
+    ("banque_de_france", "age_ouverture_par_generation", 2025):
+        ("LEGIARTI000047909725", "2025-01-01"),
+}
+
+
+def _series():
+    return {(s["regime"], s["champ"], s["debut"]): s
+            for s in outils.renvois(outils.periodes_des_regimes())}
+
+
+def _premier_jour(periode: dict) -> str:
+    """Le jour depuis lequel la période liquide : le début de `date_effet`, ou
+    le 1er janvier de son année."""
+    bornes = periode.get("date_effet")
+    if bornes and bornes[0] is not None:
+        jour = bornes[0]
+        return jour.isoformat() if isinstance(jour, datetime.date) else str(jour)
+    return f"{periode['debut']:04d}-01-01"
+
+
+@pytest.mark.parametrize("cle", sorted(DIX_RENVOIS), ids=lambda c: f"{c[0]}-{c[2]}")
+def test_chacun_des_dix_renvois_cite_son_texte_au_jour_ou_sa_periode_commence(cle):
+    """« Chaque renvoi […] prend la date du texte qui la fait, au jour et non à
+    l'année, et cite ce texte » (note 0009) : le texte cité est celui que la
+    relecture a lu, et la période qui ouvre le renvoi liquide depuis le jour où
+    il vaut."""
+    serie = _series().get(cle)
+    assert serie is not None, f"{cle} : aucun renvoi ne s'ouvre là"
+    cite = (serie["periode"].get("textes_des_renvois") or {}).get(cle[1]) or {}
+    identifiant, depuis = DIX_RENVOIS[cle]
+    assert (cite.get("id"), str(cite.get("depuis"))) == (identifiant, depuis)
+    assert _premier_jour(serie["periode"]) == depuis
+
+
+def test_la_banque_de_france_ne_renvoie_a_l_age_legal_qu_a_compter_de_2025():
+    """Le règlement de 2007 écrit soixante ans (article 26 a), puis la table de
+    son article 72 (`age_table: banque_de_france`) ; il ne renvoie à
+    L. 161-17-2 que dans sa rédaction du 1er janvier 2025
+    (LEGIARTI000047909725), la seule des rédactions que l'index porte où ce
+    numéro paraisse. Le renvoi de 2008 n'était le texte d'aucune."""
+    debuts = sorted(d for (r, c, d) in _series()
+                    if r == "banque_de_france" and c == "age_ouverture_par_generation")
+    assert debuts == [2025]

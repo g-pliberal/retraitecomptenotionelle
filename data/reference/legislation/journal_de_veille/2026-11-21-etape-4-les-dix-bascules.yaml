@@ -1,0 +1,23 @@
+date: "2026-11-21"
+session: "action 191, étape 4 de la note 0009 : les dix renvois qui peuvent changer un résultat, cités au jour"
+consulte: >-
+  L'index LEGI et JORF du dépôt (à jour au 16 novembre 2026) : L. 723-10-1
+  (LEGIARTI000006744100) ; décret n° 2006-1325, article 2
+  (JORFARTI000001085913) ; loi n° 2003-775, article 66 (JORFARTI000002020831) ;
+  décret n° 2003-1306, article 65 (LEGIARTI000006400937) ; décret
+  n° 2004-1056, article 50 (LEGIARTI000006781529) ; décret n° 90-1215,
+  article 84 (LEGIARTI000047910068) ; décret n° 73-937, article 3
+  (LEGIARTI000026474703) ; règlement annexé au décret n° 2007-262, rédactions
+  de 2007 (LEGIARTI000006778516) et du 1er janvier 2025 (LEGIARTI000047909725),
+  et la recherche de « 161-17-2 » dans toutes ses rédactions.
+  scripts/veille_droit.py : rien de neuf sur ces textes.
+trouve: >-
+  Les dates des dix renvois, déjà corrigées le 19 novembre, tiennent au jour.
+  Le règlement de la Banque de France ne renvoie à L. 161-17-2 que depuis le
+  1er janvier 2025 : le renvoi de 2008 à 2022 est parti, sans effet (la table
+  de l'article 72 répondait). Détail :
+  docs/feuille_de_route/191/2026-11-21-etape-4-les-dix-bascules.md.
+reste: >-
+  L'âge du taux plein de la Banque de France, que les lectures du moteur
+  hors de la décote prennent encore au régime général, quand l'article 70 du règlement en fixe
+  un propre ; les rédactions de l'article 26 de 2008 à 2024, une à une.

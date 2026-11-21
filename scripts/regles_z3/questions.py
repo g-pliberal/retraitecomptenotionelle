@@ -11,6 +11,7 @@ jamais la carrière longue », vraie pour qui a passé l'âge)."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Callable
 
 import z3
@@ -263,9 +264,71 @@ def de_la_pension(M: Modele) -> list[Propriete]:
     ]
 
 
+# ------------------------------------------- les renvois des régimes, au jour
+def _effet(periode) -> tuple:
+    """Les jours que la période liquide, comme `Periode.effet` du moteur :
+    `date_effet`, sinon ses années ; en entiers AAAAMMJJ, la fin exclue."""
+    bornes = periode.get("date_effet")
+    if bornes:
+        return tuple(entier_du_jour(b) for b in bornes)
+    fin = periode.get("fin")
+    return periode["debut"] * 10000 + 101, None if fin is None else (fin + 1) * 10000 + 101
+
+
+def _jour_valide(x):
+    """Une vraie date AAAAMMJJ (le 29 février laissé de côté)."""
+    jj, mm = x % 100, x / 100 % 100
+    return z3.And(jj >= 1, mm >= 1, mm <= 12,
+                  jj <= z3.If(mm == 2, 28, z3.If(z3.Or(mm == 4, mm == 6, mm == 9, mm == 11), 30, 31)))
+
+
+def des_renvois_des_regimes(racine, regimes_lus=None) -> list[Propriete]:
+    """Chaque renvoi d'un régime qui cite son texte (`textes_des_renvois`, note
+    0009, étape 4) vaut au jour cité : la période qui l'ouvre liquide depuis ce
+    jour, celle d'avant jusqu'à la veille, et une seule période liquide chaque
+    jour, de la période d'avant à la fin du renvoi. Lu dans les fichiers de
+    régime, comme les cliquets (`tests/outils_droit_date.py`)."""
+    if regimes_lus is None:
+        from retraite_notionnelle.donnees import regimes as _regimes
+        regimes_lus = [(f["code"], list(f.get("periodes") or []))
+                       for _, f in _regimes.fichiers_de_regimes(Path(racine) / "data")]
+    jour = z3.Int("jour")
+    props = []
+    for code, periodes in regimes_lus:
+        effets = [_effet(p) for p in periodes]
+        dans_p = [z3.And(*([a <= jour] if a else []), *([jour < b] if b else [])) for a, b in effets]
+        compte = z3.Sum([z3.If(x, 1, 0) for x in dans_p])
+        for i, periode in enumerate(periodes):
+            for champ, cite in sorted((periode.get("textes_des_renvois") or {}).items()):
+                cible = periode.get(champ)
+                if cible is None or (i and periodes[i - 1].get(champ) == cible):
+                    continue
+                depuis = entier_du_jour(cite["depuis"])
+                j = i
+                while j + 1 < len(periodes) and periodes[j + 1].get(champ) == cible:
+                    j += 1
+                fin = effets[j][1]
+                debut = effets[i - 1][0] if i else depuis - 10000
+                porte = z3.Or(*[dans_p[k] for k in range(len(periodes))
+                                if periodes[k].get(champ) == cible])
+                props.append(Propriete(
+                    f"renvoi.{code}.{champ}",
+                    f"{code} : le renvoi `{champ}` vaut depuis le {cite['depuis']} ({cite['id']}), "
+                    "une seule période chaque jour",
+                    [debut <= jour, *([jour < fin] if fin else [jour <= 99991231]), _jour_valide(jour),
+                     z3.Or(porte != (jour >= depuis), compte != 1)],
+                    {"date_effet": (jour, "jour")},
+                    lambda mod, porte=porte, compte=compte, depuis=depuis: (
+                        f"pension du {jour_lu(val(mod, jour))} : "
+                        f"{'renvoi' if z3.is_true(mod.eval(porte, model_completion=True)) else 'sans renvoi'}"
+                        f" (cité depuis le {jour_lu(depuis)}), {val(mod, compte)} période(s)")))
+    return props
+
+
 def catalogue(racine, extrait) -> list[Propriete]:
     F = _fiches.charger(racine)
     versions = _duree.lire_versions(racine)
     return (de_la_couverture(F) + de_la_duree(versions, extrait["durees_avant_le_decret"])
             + des_ages(F) + de_la_carriere_longue(F)
-            + de_la_pension(Modele(racine, extrait, versions, F)))
+            + de_la_pension(Modele(racine, extrait, versions, F))
+            + des_renvois_des_regimes(racine))

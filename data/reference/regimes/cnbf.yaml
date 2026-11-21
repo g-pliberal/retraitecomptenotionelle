@@ -70,6 +70,8 @@ periodes:
     type_calcul: forfaitaire
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
+    textes_des_renvois:
+      age_ouverture_par_generation: {id: LEGIARTI000006744100, depuis: "2004-01-01"}
     age_taux_plein: 67
     age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: 172

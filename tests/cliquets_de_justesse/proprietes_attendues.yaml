@@ -112,3 +112,25 @@ attendus:
     fiche duree_requise_par_generation commence en 1900, et le moteur oppose au-delà sa
     valeur par défaut (`ouvrir.js`) ; R. 351-45, II, donne 150 trimestres aux nés avant
     1934. Non corrigé.
+
+# --- Une présomption déclarée : le renvoi vaut avant le texte qu'il cite -----------
+- propriete: renvoi.asv_auxiliaires_medicaux.abattement_points
+  nature: ecart_connu
+  titre: >-
+    L'ASV des auxiliaires médicaux : les coefficients d'âge du règlement de 2026 sont
+    présumés à toutes les pensions d'avant le 18 juillet 2026, dont les statuts ne sont
+    pas lus
+  cas: {date_effet: [null, 2026-07-17]}
+  source: >-
+    Règlement de la section approuvé par l'arrêté du 10 juillet 2026, II, articles 3 et 4
+    (JORFARTI000054435915) ; présomption déclarée dans asv_auxiliaires_medicaux.yaml et
+    docs/feuille_de_route/191/2026-11-20-asv-des-auxiliaires-medicaux.md (« Reste »).
+- propriete: renvoi.asv_auxiliaires_medicaux.decote_annulee_par_la_duree
+  nature: ecart_connu
+  titre: >-
+    L'ASV des auxiliaires médicaux : la décote que la durée n'annule pas, du même
+    règlement de 2026, présumée aux pensions d'avant le 18 juillet 2026
+  cas: {date_effet: [null, 2026-07-17]}
+  source: >-
+    Règlement de la section approuvé par l'arrêté du 10 juillet 2026, II, articles 3 et 4
+    (JORFARTI000054435915) ; même présomption.
