@@ -64,6 +64,17 @@ montant en euros courants jusqu'en 2070 ne voudrait rien dire, et c'est leur
 PART DU POSTE qui est reconduite — 27,8 % en 2025, entre 26,6 et 29,2 % depuis
 2019. Même règle que ``AssietteActivite.annee_de_reference``, et pour la même
 raison.
+
+LA PART DE TVA GARDÉE N'EST PAS ABANDONNÉE
+-------------------------------------------
+Le poste du COR compte la TVA reversée à l'Agirc-Arrco, que la proposition
+GARDE (décision 79 du programme, ``donnees/tva.py``) : le coût la lui rend, à
+compter de sa bascule, sur la ligne ``impots_tva_gardee``. Le partage la
+retranche donc du poste avant de le couper en deux, sans quoi il distribuerait
+une recette que la retraite encaisse encore — 64 Md€ partagés en 2026, quand
+elle n'en perd que 53. Moitié, moitié, sur ce qui est vraiment abandonné :
+le propriétaire l'a tranché le 21 novembre 2026. La part gardée se rapporte au
+PIB comme le coût le fait, publié puis projeté par sa variation nominale.
 """
 
 from __future__ import annotations
@@ -75,7 +86,12 @@ from pathlib import Path
 from .donnees.assiette import AssietteActivite
 from .donnees.chargement import Fiabilite, SerieAnnuelle, charger_serie_annuelle
 from .donnees.equilibre import ComptesRetraite
+from .donnees.macro import DonneesMacro
+from .donnees.tva import TvaGardee
 from .somme import somme_ordonnee
+
+#: L'année de la bascule sous les réglages de référence (``Parametres``).
+ANNEE_BASCULE: int = 2026
 
 #: Les deux impôts du poste qui sont assis sur une rémunération, et que la
 #: proposition supprime. Voir le docstring : c'est le droit qui les désigne,
@@ -91,7 +107,8 @@ class RestitutionAnnuelle:
     """Le partage d'une année, en part de PIB sauf mention contraire."""
 
     annee: int
-    #: Les impôts et taxes que la proposition n'encaisse plus, en part de PIB.
+    #: Les impôts et taxes que la proposition n'encaisse plus, en part de PIB :
+    #: le poste du COR, moins la part de TVA qu'elle garde.
     poste_abandonne: float
     #: La moitié rendue aux salaires, en part de PIB.
     rendu: float
@@ -106,6 +123,9 @@ class RestitutionAnnuelle:
     #: Celle des deux séries d'impôts qui vaut le moins, l'année où la part est
     #: mesurée. Les parts de PIB, elles, valent ce que vaut le compte du COR.
     fiabilite: Fiabilite
+    #: La part de TVA que la proposition garde, et qui n'est donc pas
+    #: partagée, en part de PIB ; zéro avant la bascule.
+    tva_gardee: float = 0.0
 
 
 class Restitution:
@@ -117,8 +137,12 @@ class Restitution:
     convertit en points de CSG ce qui reste à rendre.
     """
 
-    def __init__(self, racine: Path, part_rendue: float = 0.5) -> None:
+    def __init__(self, racine: Path, part_rendue: float = 0.5,
+                 annee_bascule: int = ANNEE_BASCULE, tva_gardee: bool = True) -> None:
         macro = racine / "reference" / "macro"
+        self.annee_bascule = annee_bascule
+        self.gardee = TvaGardee(racine) if tva_gardee else None
+        self.macro = DonneesMacro(racine)
         chemin = macro / "impots_retraite_remuneration.csv"
         self.part_rendue = part_rendue
         self.postes: dict[str, SerieAnnuelle] = {}
@@ -145,10 +169,32 @@ class Restitution:
         """Taxe sur les salaires et forfait social, en millions d'euros courants."""
         return somme_ordonnee(serie(annee) for serie in self.postes.values())
 
-    def poste_abandonne(self, annee: int) -> float:
-        """Les impôts et taxes que la proposition n'encaisse plus, en part de PIB."""
+    def poste_affecte(self, annee: int) -> float:
+        """Les impôts et taxes affectés à la retraite, en part de PIB : le
+        poste du COR, part de TVA de l'Agirc-Arrco comprise."""
         return (self.comptes.ressource(annee)
                 * self.comptes.part("impots_et_taxes", annee))
+
+    def pib_de_la_trajectoire(self, annee: int) -> float:
+        """Le PIB que le coût prête à l'année, en millions d'euros : publié,
+        puis le dernier publié que fait croître la variation nominale."""
+        derniere = self.assiette.pib.derniere_annee
+        pib = self.assiette.pib(min(annee, derniere))
+        for suivante in range(derniere + 1, annee + 1):
+            pib *= 1.0 + self.macro.pib_nominal(suivante)
+        return pib
+
+    def tva_gardee(self, annee: int) -> float:
+        """La part de TVA que la proposition garde, en part de PIB : celle
+        que le coût lui rend, à compter de sa bascule."""
+        if self.gardee is None or not self.gardee or annee < self.annee_bascule:
+            return 0.0
+        return max(self.gardee.part_pib(annee, self.pib_de_la_trajectoire), 0.0)
+
+    def poste_abandonne(self, annee: int) -> float:
+        """Les impôts et taxes que la proposition n'encaisse plus, en part de
+        PIB : le poste, moins la part de TVA qu'elle garde."""
+        return self.poste_affecte(annee) - self.tva_gardee(annee)
 
     def part_du_poste(self, annee: int) -> float:
         """La part du poste qui est assise sur une rémunération.
@@ -162,17 +208,20 @@ class Restitution:
             return 0.0
         reference = min(annee, self.derniere_annee)
         pib = self.assiette.pib(reference)
-        poste = self.poste_abandonne(reference) * pib
+        poste = self.poste_affecte(reference) * pib
         if poste <= 0.0:
             return 0.0
         return self.montant_remuneration(reference) / poste
 
     def annuelle(self, annee: int) -> RestitutionAnnuelle:
         """Le partage d'une année."""
-        poste = self.poste_abandonne(annee)
+        gardee = self.tva_gardee(annee)
+        poste = self.poste_affecte(annee) - gardee
         part = self.part_du_poste(annee)
         rendu = self.part_rendue * poste
-        supprime = min(part * poste, rendu)
+        # Les deux impôts supprimés sont une part du poste du COR, non de ce
+        # qui reste une fois la TVA gardée : elle n'en compte aucun.
+        supprime = min(part * self.poste_affecte(annee), rendu)
         reference = self.assiette.annee_de_reference(annee)
         part_assiette = self.assiette.part_pib(reference)
         reste = max(0.0, rendu - supprime)
@@ -188,19 +237,24 @@ class Restitution:
                  for serie in self.postes.values()),
                 default=Fiabilite.ESTIMEE,
             ),
+            tva_gardee=gardee,
         )
 
 
-def points_csg_rendus(racine: Path, annee: int, part_rendue: float = 0.5) -> float:
+def points_csg_rendus(racine: Path, annee: int, part_rendue: float = 0.5,
+                      annee_bascule: int | None = None, tva_gardee: bool = True) -> float:
     """Les points de CSG d'activité que la proposition rend cette année-là.
 
     Le raccourci de la fiche de paie, qui n'a besoin que de ce nombre. La
     lecture des trois séries est mémorisée : la fiche de paie d'une carrière le
     demande une fois par année cotisée.
     """
-    return _restitution(racine, part_rendue).annuelle(annee).points_csg
+    bascule = ANNEE_BASCULE if annee_bascule is None else annee_bascule
+    return _restitution(racine, part_rendue, bascule, tva_gardee).annuelle(annee).points_csg
 
 
 @lru_cache(maxsize=8)
-def _restitution(racine: Path, part_rendue: float) -> Restitution:
-    return Restitution(racine, part_rendue)
+def _restitution(racine: Path, part_rendue: float, annee_bascule: int | None = None,
+                 tva_gardee: bool = True) -> Restitution:
+    bascule = ANNEE_BASCULE if annee_bascule is None else annee_bascule
+    return Restitution(racine, part_rendue, bascule, tva_gardee)

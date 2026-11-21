@@ -12683,14 +12683,21 @@ function coutNoteRestitution(contexte, annee, pib, anneePib) {
   if (part.posteAbandonne <= 0) {
     return "";
   }
+  const affecte = part.posteAbandonne + part.tvaGardee;
+  // La part de TVA gardée n'est pas abandonnée : le partage ne la compte pas.
+  const horsTvaGardee = part.tvaGardee > 0
+    ? ` La proposition en garde la part de TVA qui va déjà aux retraites,
+${milliards(part.tvaGardee * pib, 1)} : ce qu'elle cesse d'encaisser se
+ramène donc à ${milliards(part.posteAbandonne * pib, 1)}.`
+    : "";
   return `
 <div class="note"><strong>Ce que la proposition n'encaisse plus, elle ne le
 garde pas.</strong> Les impôts et taxes affectés valent
-${g.pourcentage(part.posteAbandonne, false, 2)} du PIB en ${annee}, soit
-${milliards(part.posteAbandonne * pib, 0)} au point de PIB de ${anneePib}.
+${g.pourcentage(affecte, false, 2)} du PIB en ${annee}, soit
+${milliards(affecte * pib, 0)} au point de PIB de ${anneePib}.${horsTvaGardee}
 Ne rien dire de cette recette reviendrait à la laisser au budget, c'est-à-dire
 à la consacrer tout entière au déficit. La proposition la partage en deux :
-<strong>${milliards(part.rendu * pib, 0)} sont rendus aux salaires</strong>,
+<strong>${milliards(part.rendu * pib, part.tvaGardee > 0 ? 1 : 0)} sont rendus aux salaires</strong>,
 autant <strong>éteint de la dette</strong>, à commencer par celle que le
 système de retraite porte. Ce qui est rendu l'est dans l'ordre que le droit
 impose : on supprime d'abord les deux impôts du poste qui sortent d'une
@@ -17567,6 +17574,9 @@ function programmeRestitution(contexte) {
   // dernière année publiée sinon.
   const pib = pibDeConversion(comptes, annee);
   const poids = comptes.part("impots_et_taxes", annee);
+  // Une fois la part de TVA mise à part, le reste n'est plus un nombre rond :
+  // la décimale garde les deux moitiés égales à leur somme (53,1 = 26,6 + 26,6).
+  const precision = part.tvaGardee > 0 ? 1 : 0;
   // La TVA à taux unique prend leur place dans le financement de la retraite :
   // la phrase se tait quand elle n'est pas réformée.
   const tvaALeurPlace = base.taux_tva_liberal > 0.0
@@ -17583,16 +17593,18 @@ function programmeRestitution(contexte) {
       + "la valeur du terrain."
     : "";
   return `
-<h3>Les impôts que nous supprimons : ${milliards(part.rendu * pib, 0)} rendus aux
+<h3>Les impôts que nous supprimons : ${milliards(part.rendu * pib, precision)} rendus aux
 salaires</h3>
 <p>La retraite est financée à ${g.pourcentage(poids, false, 0)} par des
-<strong>impôts</strong> (${milliards(part.posteAbandonne * pib, 0)} en
+<strong>impôts</strong> (${milliards((part.posteAbandonne + part.tvaGardee) * pib, 0)} en
 ${annee}) qui n'ouvrent de droit à personne : un compte notionnel, qui ne rend
 que ce qui a été cotisé, ne sait les porter au crédit de personne.
 <strong>Nous cessons donc de les affecter à la retraite.</strong>${tvaALeurPlace}${horsDuTravail}</p>
 <p><strong>Et nous ne les gardons pas.</strong> Laissée au budget, cette
-recette irait tout entière au déficit. Nous la partageons en deux :
-<strong>${milliards(part.rendu * pib, 0)} rendus aux salaires</strong>, autant
+recette${part.tvaGardee > 0
+    ? `, ${milliards(part.posteAbandonne * pib, 1)} une fois la part de TVA mise à part,`
+    : ""} irait tout entière au déficit. Nous la partageons en deux :
+<strong>${milliards(part.rendu * pib, precision)} rendus aux salaires</strong>, autant
 pour <strong>éteindre de la dette</strong>.</p>
 <ul class="serree">
   <li><strong>La taxe sur les salaires est supprimée</strong>, pour la part qui

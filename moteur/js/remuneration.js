@@ -1877,7 +1877,10 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
    * sauf quand le compte les convertit (`isoler_capitalisation` à faux).
    */
   const blocPropose = (annee, actuel, partTraitement) => {
-    const csg = paquet ? pointsCsgRendus(paquet, annee, rendue) : 0;
+    const csg = paquet
+      ? pointsCsgRendus(paquet, annee, rendue, parametres.annee_bascule,
+                        parametres.tva_des_retraites_gardee)
+      : 0;
     const conservees = parametres.isoler_capitalisation
       ? actuel.composantes.filter((c) => c.horsRepartition) : [];
     if (sansEmployeur) {

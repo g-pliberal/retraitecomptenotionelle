@@ -210,7 +210,8 @@ export class Contexte {
    */
   restitution() {
     return this._agregat("restitution", () => new Restitution(
-      this.paquet, this.base.part_rendue_aux_salaires,
+      this.paquet, this.base.part_rendue_aux_salaires, this.base.annee_bascule,
+      this.base.tva_des_retraites_gardee,
     ));
   }
 

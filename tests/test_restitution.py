@@ -133,3 +133,126 @@ def test_le_raccourci_de_la_fiche_de_paie_donne_la_meme_chose(restitution):
     assert points_csg_rendus(
         PARAMETRES.racine_donnees, 2026, PARAMETRES.part_rendue_aux_salaires
     ) == pytest.approx(restitution.annuelle(2026).points_csg)
+
+
+# .. la part de TVA gardée ......................................................
+#
+# La proposition garde la part de TVA qui va déjà aux retraites (décision 79
+# du programme, ``donnees/tva.py``) : le coût la lui rend sur la ligne
+# ``impots_tva_gardee``. Elle n'est donc pas abandonnée, et le partage qui la
+# compterait la distribuerait une seconde fois — 64 Md€ partagés en 2026 quand
+# la retraite n'en perd que 53. Le propriétaire a tranché le 21 novembre 2026 :
+# moitié, moitié, sur ce qui est vraiment abandonné.
+
+#: La compensation de l'Agirc-Arrco en 2026, en millions d'euros, calculée à la
+#: main sur la source : la réduction générale efface 18 910 M€ hors des
+#: régimes de base (rapport CCSS d'octobre 2026, fiche 1.6, tableau 2), dont
+#: l'Agirc-Arrco porte 6,01 points sur 10,2.
+COMPENSATION_2026_MEUR = 11142.06862745098
+
+
+def test_la_part_de_tva_gardee_n_est_pas_partagee(restitution):
+    """Rendu et dette somment au poste du COR MOINS la part de TVA gardée."""
+    part = restitution.annuelle(2026)
+    pib_2026 = restitution.pib_de_la_trajectoire(2026)
+    assert part.tva_gardee * pib_2026 == pytest.approx(COMPENSATION_2026_MEUR, rel=1e-12)
+    assert part.poste_abandonne == pytest.approx(
+        restitution.poste_affecte(2026) - part.tva_gardee, rel=1e-12)
+    assert part.rendu + part.eteint_de_dette == pytest.approx(
+        part.poste_abandonne, rel=1e-12)
+
+
+def test_le_pib_de_2026_est_celui_que_le_cout_projette(restitution):
+    """Le PIB publié de 2025, que fait croître la variation nominale de 2026 :
+    la convention du coût (``cout.py``, ``pib_projete``), sans quoi la part
+    gardée n'y serait pas la même."""
+    attendu = restitution.assiette.pib(2025) * (1 + restitution.macro.pib_nominal(2026))
+    assert restitution.pib_de_la_trajectoire(2026) == pytest.approx(attendu, rel=1e-12)
+    assert restitution.pib_de_la_trajectoire(2025) == restitution.assiette.pib(2025)
+
+
+def test_avant_la_bascule_rien_n_est_garde(restitution):
+    """Le coût ne garde la part de TVA qu'à compter de la bascule."""
+    part = restitution.annuelle(2025)
+    assert part.tva_gardee == 0.0
+    assert part.poste_abandonne == restitution.poste_affecte(2025)
+
+
+def test_sans_la_part_gardee_tout_le_poste_est_partage():
+    """Le réglage ``tva_des_retraites_gardee`` à faux rend tout le poste."""
+    sans = Restitution(PARAMETRES.racine_donnees, 0.5, tva_gardee=False).annuelle(2026)
+    assert sans.tva_gardee == 0.0
+    assert sans.poste_abandonne == pytest.approx(
+        Restitution(PARAMETRES.racine_donnees, 0.5).poste_affecte(2026))
+
+
+def test_la_baisse_de_csg_de_2026_est_calculee_sur_ce_qui_est_abandonne(restitution):
+    """Le solde de la moitié de ce qui est vraiment abandonné, en points.
+
+    Un calcul posé à la main sur les trois séries : la moitié du poste moins
+    la part gardée, moins les deux impôts supprimés, sur l'assiette.
+    """
+    poste = restitution.poste_affecte(2026)
+    gardee = COMPENSATION_2026_MEUR / restitution.pib_de_la_trajectoire(2026)
+    supprime = restitution.part_du_poste(2026) * poste
+    assiette = restitution.assiette.part_pib(restitution.assiette.annee_de_reference(2026))
+    attendu = (0.5 * (poste - gardee) - supprime) / assiette
+    assert restitution.annuelle(2026).points_csg == pytest.approx(attendu, rel=1e-12)
+    assert 0.0065 < attendu < 0.0070
+
+
+def test_le_raccourci_suit_la_bascule_et_le_reglage():
+    """La fiche de paie reçoit la même chose que la page."""
+    racine = PARAMETRES.racine_donnees
+    assert points_csg_rendus(racine, 2026, 0.5, 2026, True) == pytest.approx(
+        Restitution(racine, 0.5, 2026, True).annuelle(2026).points_csg)
+    assert points_csg_rendus(racine, 2026, 0.5, 2030, True) == pytest.approx(
+        Restitution(racine, 0.5, tva_gardee=False).annuelle(2026).points_csg)
+
+
+def test_la_bascule_par_defaut_est_celle_des_reglages():
+    """Le raccourci sans bascule prend celle des réglages de référence."""
+    from retraite_notionnelle.restitution import ANNEE_BASCULE
+    assert ANNEE_BASCULE == PARAMETRES.annee_bascule
+
+
+def _node(script: str) -> object:
+    """Ce que le portage rend, lu par ``node`` depuis la racine du dépôt."""
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    racine = Path(__file__).resolve().parents[1]
+    sortie = subprocess.run(["node", "--input-type=module", "-e", script], cwd=racine,
+                            capture_output=True, text=True, encoding="utf-8", check=True)
+    return json.loads(sortie.stdout)
+
+
+def test_le_portage_retranche_la_meme_part_de_tva():
+    """Le site et la fiche de paie partagent ce que le Python partage, au bit
+    près : la part gardée vient du paquet, que la fabrique a calculée."""
+    lu = _node("""
+        import { readFileSync } from "node:fs";
+        import { Restitution, pointsCsgRendus } from "./moteur/js/restitution.js";
+        const paquet = JSON.parse(readFileSync("moteur/donnees.json", "utf-8"));
+        const r = new Restitution(paquet, 0.5, 2026, true);
+        const sortie = {};
+        for (const a of [2025, 2026, 2027, 2050]) {
+          const l = r.annuelle(a);
+          sortie[a] = [l.posteAbandonne, l.tvaGardee, l.pointsCsg, l.eteintDeDette];
+        }
+        sortie.sans = pointsCsgRendus(paquet, 2026, 0.5, 2026, false);
+        sortie.tard = pointsCsgRendus(paquet, 2026, 0.5, 2030, true);
+        console.log(JSON.stringify(sortie));
+    """)
+    python = Restitution(PARAMETRES.racine_donnees, 0.5, 2026, True)
+    for annee in (2025, 2026, 2027, 2050):
+        l = python.annuelle(annee)
+        assert lu[str(annee)] == [l.poste_abandonne, l.tva_gardee, l.points_csg,
+                                  l.eteint_de_dette], annee
+    sans = Restitution(PARAMETRES.racine_donnees, 0.5, tva_gardee=False).annuelle(2026)
+    assert lu["sans"] == sans.points_csg
+    assert lu["tard"] == sans.points_csg

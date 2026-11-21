@@ -2644,11 +2644,19 @@ def _(m: Modele):
     from retraite_notionnelle.restitution import _restitution
 
     assert m.base.part_rendue_aux_salaires == 0.5
-    restitution = _restitution(m.base.racine_donnees, m.base.part_rendue_aux_salaires)
+    restitution = _restitution(m.base.racine_donnees, m.base.part_rendue_aux_salaires,
+                               m.base.annee_bascule, m.base.tva_des_retraites_gardee)
     ligne = restitution.annuelle(restitution.derniere_annee)
     assert ligne.poste_abandonne > 0
     assert _proche(ligne.rendu, ligne.poste_abandonne * m.base.part_rendue_aux_salaires)
     assert _proche(ligne.rendu + ligne.eteint_de_dette, ligne.poste_abandonne)
+    # La part de TVA que le coût rend à la proposition n'est pas partagée : la
+    # même, au bit près, l'année de la bascule.
+    bascule = restitution.annuelle(m.base.annee_bascule)
+    gardee = m.solde.annee(m.base.annee_bascule).tva_gardee
+    assert gardee > 0 and bascule.tva_gardee == gardee
+    assert _proche(bascule.rendu + bascule.eteint_de_dette,
+                   restitution.poste_affecte(m.base.annee_bascule) - gardee)
 
 
 @controle("deux_impots_sur_la_remuneration_supprimes")
@@ -2668,10 +2676,13 @@ def _(m: Modele):
     """Le solde de la moitié rendue passe par la CSG d'activité, en points d'assiette."""
     from retraite_notionnelle.restitution import _restitution, points_csg_rendus
 
-    restitution = _restitution(m.base.racine_donnees, m.base.part_rendue_aux_salaires)
-    annee = restitution.derniere_annee
+    restitution = _restitution(m.base.racine_donnees, m.base.part_rendue_aux_salaires,
+                               m.base.annee_bascule, m.base.tva_des_retraites_gardee)
+    # L'année que la page chiffre : la bascule, où la part de TVA est gardée.
+    annee = m.base.annee_bascule
     points = points_csg_rendus(m.base.racine_donnees, annee,
-                               m.base.part_rendue_aux_salaires)
+                               m.base.part_rendue_aux_salaires, m.base.annee_bascule,
+                               m.base.tva_des_retraites_gardee)
     assert 0.005 < points < 0.02
     assert _proche(points, restitution.annuelle(annee).points_csg)
     attendu = normaliser(f"baisse de {g.nombre(points * 100, 2)} point")

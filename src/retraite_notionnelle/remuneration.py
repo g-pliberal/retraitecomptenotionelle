@@ -2566,7 +2566,9 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
         convertit (``isoler_capitalisation`` à faux) : ils sont alors de la
         répartition, et le taux unique les remplace.
         """
-        csg = points_csg_rendus(parametres.racine_donnees, annee, rendue)
+        csg = points_csg_rendus(parametres.racine_donnees, annee, rendue,
+                                parametres.annee_bascule,
+                                parametres.tva_des_retraites_gardee)
         conservees = (tuple(c for c in actuel.composantes if c.hors_repartition)
                       if parametres.isoler_capitalisation else ())
         if sans_employeur:

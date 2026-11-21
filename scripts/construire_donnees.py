@@ -408,6 +408,20 @@ def _comptes_retraite() -> dict:
         f"{debut}-{fin}": dict(sorted(taux.items()))
         for (debut, fin), taux in sorted(decomposition.croissances.items())
     }
+    # La part de TVA que la proposition garde, en part de PIB, sur les années
+    # que le rapport publie : ce que le partage retranche du poste avant de le
+    # couper en deux (``restitution.py``). Le PIB qui la rapporte est celui
+    # que le coût projette ; le portage n'a qu'à la lire.
+    from retraite_notionnelle.restitution import Restitution
+    restitution = Restitution(DONNEES)
+    if restitution.gardee:
+        compensation = restitution.gardee._compensation
+        paquet["tva_gardee"] = {
+            str(annee): restitution.gardee.part_pib(
+                annee, restitution.pib_de_la_trajectoire)
+            for annee in range(compensation.premiere_annee,
+                               compensation.derniere_annee + 1)
+        }
     return paquet
 
 

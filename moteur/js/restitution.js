@@ -24,9 +24,16 @@
  * (L. 131-8, 3°). La baisse n'est donc pas la restitution d'un prélèvement
  * retraite : c'est une baisse d'impôt financée par une recette que la retraite
  * abandonne, et le site l'écrit comme telle.
+ *
+ * LA PART DE TVA GARDÉE N'EST PAS ABANDONNÉE : le poste du COR la compte, et
+ * le coût la rend à la proposition à compter de sa bascule. Le partage la
+ * retranche avant de couper le poste en deux — moitié, moitié, sur ce qui est
+ * vraiment abandonné (21 novembre 2026). Sa part de PIB vient du paquet, que
+ * la fabrique rapporte au PIB que le coût projette.
  */
 
 import { AssietteActivite } from "./assiette.js";
+import { PARAMETRES_DEFAUT } from "./config.js";
 import { ComptesRetraite } from "./equilibre.js";
 import { Fiabilite, SerieAnnuelle } from "./serie.js";
 
@@ -38,9 +45,15 @@ export const POSTES_REMUNERATION = [
 
 /** Le partage, année par année, des impôts que la proposition abandonne. */
 export class Restitution {
-  constructor(paquet, partRendue = 0.5) {
+  constructor(paquet, partRendue = 0.5, anneeBascule = PARAMETRES_DEFAUT.annee_bascule, tvaGardee = true) {
     const brut = paquet.comptes_retraite;
     this.partRendue = partRendue;
+    this.anneeBascule = anneeBascule;
+    this.tvaGardeeActive = tvaGardee;
+    this.gardee = brut.tva_gardee || {};
+    const anneesGardees = Object.keys(this.gardee).map(Number);
+    this.premiereGardee = Math.min(...anneesGardees);
+    this.derniereGardee = Math.max(...anneesGardees);
     this.postes = new Map(
       POSTES_REMUNERATION.map(({ code }) => [
         code,
@@ -62,9 +75,33 @@ export class Restitution {
     return somme;
   }
 
-  /** Les impôts et taxes que la proposition n'encaisse plus, en part de PIB. */
-  posteAbandonne(annee) {
+  /**
+   * Les impôts et taxes affectés à la retraite, en part de PIB : le poste du
+   * COR, part de TVA de l'Agirc-Arrco comprise.
+   */
+  posteAffecte(annee) {
     return this.comptes.ressource(annee) * this.comptes.part("impots_et_taxes", annee);
+  }
+
+  /**
+   * La part de TVA que la proposition garde, en part de PIB, à compter de sa
+   * bascule : l'année publiée la plus proche, comme `donnees/tva.py`.
+   */
+  tvaGardee(annee) {
+    if (!this.tvaGardeeActive || annee < this.anneeBascule
+        || !Number.isFinite(this.premiereGardee)) {
+      return 0;
+    }
+    const publiee = Math.min(Math.max(annee, this.premiereGardee), this.derniereGardee);
+    return Math.max(this.gardee[String(publiee)] ?? 0, 0);
+  }
+
+  /**
+   * Les impôts et taxes que la proposition n'encaisse plus, en part de PIB :
+   * le poste, moins la part de TVA qu'elle garde.
+   */
+  posteAbandonne(annee) {
+    return this.posteAffecte(annee) - this.tvaGardee(annee);
   }
 
   /**
@@ -75,7 +112,7 @@ export class Restitution {
    */
   partDuPoste(annee) {
     const reference = Math.min(annee, this.derniereAnnee);
-    const poste = this.posteAbandonne(reference) * this.assiette.pib.valeur(reference);
+    const poste = this.posteAffecte(reference) * this.assiette.pib.valeur(reference);
     if (poste <= 0) {
       return 0;
     }
@@ -84,9 +121,12 @@ export class Restitution {
 
   /** Le partage d'une année. */
   annuelle(annee) {
-    const poste = this.posteAbandonne(annee);
+    const gardee = this.tvaGardee(annee);
+    const poste = this.posteAffecte(annee) - gardee;
     const rendu = this.partRendue * poste;
-    const supprime = Math.min(this.partDuPoste(annee) * poste, rendu);
+    // Les deux impôts supprimés sont une part du poste du COR, non de ce qui
+    // reste une fois la TVA gardée.
+    const supprime = Math.min(this.partDuPoste(annee) * this.posteAffecte(annee), rendu);
     const reference = this.assiette.anneeDeReference(annee);
     const partAssiette = this.assiette.partPib(reference);
     const reste = Math.max(0, rendu - supprime);
@@ -103,6 +143,7 @@ export class Restitution {
       // Celle des deux séries d'impôts qui vaut le moins, l'année où la part
       // est mesurée. Les parts de PIB valent ce que vaut le compte du COR.
       fiabilite: niveaux.length ? Math.min(...niveaux) : Fiabilite.ESTIMEE,
+      tvaGardee: gardee,
     };
   }
 }
@@ -115,10 +156,13 @@ const MEMOIRE = new Map();
  * des trois séries est mémorisée : la fiche de paie d'une carrière la demande
  * une fois par année cotisée.
  */
-export function pointsCsgRendus(paquet, annee, partRendue = 0.5) {
+export function pointsCsgRendus(paquet, annee, partRendue = 0.5,
+                                anneeBascule = PARAMETRES_DEFAUT.annee_bascule, tvaGardee = true) {
   let restitution = MEMOIRE.get(paquet);
-  if (!restitution || restitution.partRendue !== partRendue) {
-    restitution = new Restitution(paquet, partRendue);
+  if (!restitution || restitution.partRendue !== partRendue
+      || restitution.anneeBascule !== anneeBascule
+      || restitution.tvaGardeeActive !== tvaGardee) {
+    restitution = new Restitution(paquet, partRendue, anneeBascule, tvaGardee);
     MEMOIRE.set(paquet, restitution);
   }
   return restitution.annuelle(annee).pointsCsg;
