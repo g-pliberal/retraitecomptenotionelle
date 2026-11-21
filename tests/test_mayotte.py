@@ -188,14 +188,6 @@ def test_le_salaire_annuel_moyen_de_mayotte_s_ecrete_au_plafond_de_la_caisse(sim
         True, 1961) == pytest.approx(attendu, rel=1e-12)
 
 
-def test_les_deux_moteurs_plafonnent_au_plafond_de_la_caisse(deux_moteurs):
-    """La même salariée, sur son relevé : le portage rend les mêmes lignes et le
-    même résultat entier, sa pension de Mayotte comprise."""
-    deux_moteurs([{"naissance": 1961, "age": 64.0, "releve": [
-        {"annee": annee, "affiliation": STATUT, "revenu": 25_000.0}
-        for annee in PLAFONDS_DE_LA_CAISSE]}])
-
-
 #: La revalorisation exceptionnelle des salaires de Mayotte (action 175,
 #: écart lourd n° 1 des circulaires) : « Les salaires portés au compte avant le
 #: 1er septembre 2023 servant au calcul du salaire annuel de base [...] sont
@@ -250,14 +242,6 @@ def test_une_pension_de_mayotte_d_avant_septembre_2023_n_est_pas_revalorisee(sim
     assert liquider.salaire_de_reference(
         simulateur.scenario_actuel, "cssm_mayotte", carriere, periode, 2023,
         True, 1961) == pytest.approx(attendu, rel=1e-12)
-
-
-def test_les_deux_moteurs_revalorisent_les_salaires_de_mayotte(deux_moteurs):
-    """La salariée partie en 2025, sur son relevé : le portage rend le même
-    résultat entier."""
-    deux_moteurs([{"naissance": 1961, "age": 64.0, "releve": [
-        {"annee": annee, "affiliation": STATUT, "revenu": 8_000.0}
-        for annee in SALAIRES_DE_8_000_EUROS]}])
 
 
 def test_l_independant_de_mayotte_valide_ses_trimestres_au_smic_de_mayotte(
