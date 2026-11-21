@@ -12686,17 +12686,16 @@ function coutNoteRestitution(contexte, annee, pib, anneePib) {
   const affecte = part.posteAbandonne + part.tvaGardee;
   // La part de TVA gardée n'est pas abandonnée : le partage ne la compte pas.
   const horsTvaGardee = part.tvaGardee > 0
-    ? ` La proposition en garde la part de TVA qui va déjà aux retraites,
-${milliards(part.tvaGardee * pib, 1)} : ce qu'elle cesse d'encaisser se
-ramène donc à ${milliards(part.posteAbandonne * pib, 1)}.`
+    ? ` Elle en garde la part de TVA des retraites,
+${milliards(part.tvaGardee * pib, 1)}, et n'abandonne donc que
+${milliards(part.posteAbandonne * pib, 1)}.`
     : "";
   return `
 <div class="note"><strong>Ce que la proposition n'encaisse plus, elle ne le
 garde pas.</strong> Les impôts et taxes affectés valent
 ${g.pourcentage(affecte, false, 2)} du PIB en ${annee}, soit
 ${milliards(affecte * pib, 0)} au point de PIB de ${anneePib}.${horsTvaGardee}
-Ne rien dire de cette recette reviendrait à la laisser au budget, c'est-à-dire
-à la consacrer tout entière au déficit. La proposition la partage en deux :
+Laissée au budget, cette recette irait tout entière au déficit. La proposition la partage en deux :
 <strong>${milliards(part.rendu * pib, part.tvaGardee > 0 ? 1 : 0)} sont rendus aux salaires</strong>,
 autant <strong>éteint de la dette</strong>, à commencer par celle que le
 système de retraite porte. Ce qui est rendu l'est dans l'ordre que le droit
