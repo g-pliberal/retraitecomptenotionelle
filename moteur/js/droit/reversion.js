@@ -42,7 +42,7 @@ import {
   REGIMES_ALIGNES, REGIMES_ALIGNES_TETE, luraApplicable, regimesDe, teteDeSuccession,
 } from "./coordonner.js";
 import { ageLegalDuConjointSurvivant } from "./commun.js";
-import { maximumDesPensions } from "./liquider.js";
+import { maximumDesPensions, valeurDuPoint } from "./liquider.js";
 
 /** La version du schéma que `Reversion.donnees` suit. */
 export const SCHEMA_VERSION = 1;
@@ -1638,6 +1638,53 @@ function enfantsDeMoinsDe(carriere, deces, ans) {
 }
 
 /**
+ * L'allocation du défunt que les régimes de la fiche `fiche` lui servent
+ * ensemble, par an, majoration pour enfants comprise : depuis 2019, les
+ * droits de l'Arrco et de l'Agirc en font une (accord du 17 novembre 2017).
+ * Ceux qu'il a reçus en capital n'en sont pas.
+ */
+function allocationDuDefunt(table, fiche, servies, enCapital, majorations) {
+  let montant = 0.0;
+  for (const [regime, base] of servies) {
+    if (table.ficheDuRegime(regime)?.id === fiche.id && !enCapital.has(regime)) {
+      montant += base + ((majorations ?? {})[regime] ?? 0.0);
+    }
+  }
+  return montant;
+}
+
+/**
+ * Le premier jour de la période qui suit celle du décès `deces`, selon que
+ * l'allocation `montant` du défunt, en euros de l'année `annee`, lui était
+ * versée au mois, au trimestre ou à l'année (accord du 17 novembre 2017,
+ * articles 106, 107 et 116) : à l'année, plus de 100 et moins de 200 points
+ * au point de l'année ; au trimestre, hors de France et des États que
+ * `mensuelle_dans` nomme à la date du décès, la banque du défunt présumée
+ * dans l'État où il réside (présomption `paye_dans_l_etat_de_residence`) ;
+ * au mois, sinon.
+ */
+function periodeSuivante(moteur, periodicite, carriere, deces, annee, montant) {
+  const anneeDuDeces = Number(deces.slice(0, 4));
+  const valeur = valeurDuPoint(moteur, periodicite.point, annee);
+  const points = valeur === null ? null : montant / valeur[0];
+  if (points !== null && points > Number(periodicite.annuelle_au_dela_de_points)
+      && points < Number(periodicite.annuelle_sous_points)) {
+    return `${anneeDuDeces + 1}-01-01`;
+  }
+  const residence = carriere.residence;
+  if (residence !== null) {
+    const listes = periodicite.mensuelle_dans.filter((liste) => liste.depuis <= deces);
+    const mensuels = listes.length > 0 ? listes[listes.length - 1].etats : [];
+    if (!mensuels.includes(residence)) {
+      const trimestre = Math.floor((Number(deces.slice(5, 7)) - 1) / 3);
+      return trimestre === 3 ? `${anneeDuDeces + 1}-01-01`
+        : `${anneeDuDeces}-${String(3 * trimestre + 4).padStart(2, "0")}-01`;
+    }
+  }
+  return moisSuivant(deces);
+}
+
+/**
  * La réversion que le décès de la personne de `carriere` ouvre à son
  * conjoint, régime par régime ; `null` sans décès ou sans conjoint.
  * `pensions` sont les pensions du défunt à l'année `annee`, où les montants se
@@ -1804,14 +1851,20 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
         .avec({ part }), parametres, conjoint));
       continue;
     }
-    let dateEffet = aLAge(conjoint.naissance, lendemain,
+    // Le défunt payé au trimestre ou à l'année garde son allocation jusqu'au
+    // terme de la période : la réversion part à la suivante (article 116).
+    const debut = parametres.periodicite && !avantLeDepart
+      ? periodeSuivante(moteur, parametres.periodicite, carriere, deces, annee,
+        allocationDuDefunt(table, fiche, servies, enCapital, majorations))
+      : lendemain;
+    let dateEffet = aLAge(conjoint.naissance, debut,
       ageAgircArrco(parametres, regime, conjoint.sexe));
     if (conjoint.invalidite !== null && conjoint.invalidite !== undefined
         && parametres.invalidite_sans_age) {
       // L'invalidité du survivant, au décès ou plus tard, lève l'âge : la
       // réversion part au premier jour du mois qui la suit.
       const levee = moisSuivant(conjoint.invalidite);
-      const plusTot = levee > lendemain ? levee : lendemain;
+      const plusTot = levee > debut ? levee : debut;
       if (plusTot < dateEffet) {
         dateEffet = plusTot;
       }
@@ -1821,8 +1874,9 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
         && enfantsDeMoinsDe(carriere, deces, Math.trunc(Number(enfantsACharge))) >= 2) {
       // Deux enfants à charge du survivant au décès lèvent l'âge (article
       // 110), et la réversion reste servie quand ils cessent de l'être
-      // (article 111) : elle part au mois qui suit le décès.
-      dateEffet = lendemain;
+      // (article 111) : elle part au mois qui suit le décès, ou au terme de
+      // la période du défunt.
+      dateEffet = debut;
     }
     // La majoration pour enfants du défunt « réversible au taux de 100 % »
     // (article 109) : en plus des 60 %, qui ne la comptent pas ; « sans tenir

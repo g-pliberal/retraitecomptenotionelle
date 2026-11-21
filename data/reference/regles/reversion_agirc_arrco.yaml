@@ -145,6 +145,10 @@ versions:
   statut: lue
   textes:
   - {reference: "accord national interprofessionnel du 17 novembre 2017, étendu par l'arrêté du 24 avril 2018 (JORFTEXT000036847920)", en_vigueur: 2019-01-01}
+  - {id: KALIARTI000036731860, article: "accord national interprofessionnel du 17 novembre 2017, article 106", en_vigueur: 2019-01-01, lu_le: 2026-11-21}
+  - {id: KALIARTI000047205218, article: "accord national interprofessionnel du 17 novembre 2017, article 106", en_vigueur: 2021-01-01, lu_le: 2026-11-21}
+  - {id: KALIARTI000036731861, article: "accord national interprofessionnel du 17 novembre 2017, article 107", en_vigueur: 2019-01-01, lu_le: 2026-11-21}
+  - {id: KALIARTI000036731971, article: "accord national interprofessionnel du 17 novembre 2017, article 116", en_vigueur: 2019-01-01, lu_le: 2026-11-21}
   - reference: >-
       accord national interprofessionnel du 17 novembre 2017, « applicable au 1er
       janvier 2019 », annexé à la circulaire Agirc-Arrco 2018-09-DC (hors JORF)
@@ -171,7 +175,7 @@ versions:
       fiche 6, « Droits de réversion », son préambule (page 1 de la fiche, 74e du
       fichier) et I.1.2.2, « Majorations pour enfants », 1. (page 6, 79e du fichier) ;
       fiche 4, II.2.2, « Plafond de la majoration pour enfants nés ou élevés » (page 6,
-      55e du fichier)
+      55e du fichier) ; fiche 5, III, « Paiement de l'allocation »
     citation: >-
       « Les dispositions de l'Accord national interprofessionnel (ANI) du 17 novembre
       2017 au titre du régime Agirc-Arrco s'appliquent pour les décès survenus à compter
@@ -185,8 +189,14 @@ versions:
       directs et les droits de réversion servis à un même allocataire. » ; « les
       majorations pour enfants nés ou élevés ne sont pas plafonnées lorsqu'elles sont
       calculées sur les réversions attribuées aux ayants droit de ces participants [nés
-      avant le 2 août 1951] à effet du 1er janvier 2012 ou postérieurement »
-    lu_le: 2026-11-03
+      avant le 2 août 1951] à effet du 1er janvier 2012 ou postérieurement » ; fiche 5,
+      III.1.2 : « Les allocations sont versées trimestriellement dans les autres pays » ;
+      « Un allocataire percevant trimestriellement son allocation, du fait de sa
+      domiciliation bancaire, peut demander à percevoir son allocation mensuellement » ;
+      III.2 : les seuils de l'article 107 « doivent être appréciés au regard du montant
+      brut des droits directs ou des droits de réversion, y compris les montants des
+      différentes majorations ou coefficients applicables »
+    lu_le: 2026-11-21
     empreinte: sha256:524779881a0e4e377382f4b3d8ab9cf0ebd4aa21fe2eca841dd523491f4806ae
   bornes:
     conjoint.deces: [2019-01-01, null]
@@ -197,6 +207,15 @@ versions:
       retraite ; « Le versement unique au profit des bénéficiaires de droits directs
       supprime tous droits à réversion » (article 107)
     beneficiaire: le conjoint et l'ex-conjoint marié, non remarié
+    date_effet: >-
+      « au premier jour du mois ou du trimestre civil suivant le décès selon que les
+      allocations de droits directs ont été respectivement versées mensuellement ou
+      trimestriellement » (article 116), ou au 1er janvier qui suit le décès pour
+      l'allocation versée annuellement (fédération, exemple de Simone) ; l'allocation est
+      versée « mensuellement en France » et dans trente-deux États, trente-cinq depuis le
+      1er janvier 2021, « trimestriellement dans les autres pays » (article 106), et
+      « annuellement » au-dessus de 100 points et sous 200 (article 107) ; au mois qui
+      suit le décès pour un défunt qui n'était pas encore allocataire (article 116)
     conditions: >-
       cinquante-cinq ans, ou aucun âge avec deux enfants à charge ou en invalidité ;
       entre conjoint et ex-conjoints, un partage au prorata de la durée des mariages,
@@ -220,6 +239,17 @@ versions:
       majoration_reversible: 1.0
       majoration_sans_anticipation: true
       rien_apres_un_capital: true
+      periodicite:
+        annuelle_au_dela_de_points: 100
+        annuelle_sous_points: 200
+        point: agirc_arrco
+        mensuelle_dans:
+        - depuis: "2019-01-01"
+          etats: [DE, AT, BE, BG, CY, DK, ES, EE, FI, GR, HU, IE, IS, IT, LV, LI, LT, LU,
+            MT, MC, "NO", NL, PL, PT, CZ, RO, GB, SM, SI, SK, SE, CH]
+        - depuis: "2021-01-01"
+          etats: [DE, AD, AT, BE, BG, CY, HR, DK, ES, EE, VA, FI, GR, HU, IE, IS, IT, LV,
+            LI, LT, LU, MT, MC, "NO", NL, PL, PT, CZ, RO, GB, SM, SK, SI, SE, CH]
       fiabilite: haute
   exemples: [aa_reversion_leila, aa_reversion_kim, aa_reversion_annie, aa_reversion_eric,
              aa_reversion_francois, aa_reversion_david, aa_reversion_simone,
@@ -253,12 +283,26 @@ approximations:
     le veuf attend soixante-cinq ans à l'Agirc comme à l'Arrco, où chaque caisse le
     disait, et ses droits acquis depuis 1990 ne s'ouvrent pas à cinquante ans
   effet: non mesuré
-- ecart: >-
-    la retraite du défunt est servie au mois : versée par trimestre ou par an, elle
-    court jusqu'au terme de sa période, et la réversion ne commence qu'à la suivante
+- version: [avant_1990, veufs_1990, agirc_1994, arrco_1996]
+  ecart: >-
+    pour un décès d'avant 2019, la retraite du défunt est servie au mois, et la
+    réversion part au mois qui suit le décès : les règlements de l'Arrco et de l'Agirc,
+    qui payaient par trimestre avant leur mensualisation, et à l'année les petites
+    allocations, ne sont pas lus
   effet: >-
-    la réversion commence un à dix mois trop tôt pour le survivant d'une petite
-    retraite ; trois exemples de la fédération le montrent, en écart connu
+    la réversion d'un décès d'avant 2019 peut commencer jusqu'à deux mois trop tôt, et
+    jusqu'à onze pour le survivant d'une petite allocation ; non mesuré
+- version: [accord_2017]
+  ecart: >-
+    la banque du défunt est présumée dans l'État où il réside, et le défunt payé au
+    trimestre ne pas avoir demandé à l'être au mois (article 106), ce qu'il peut faire ;
+    le seuil des 200 points se compare à l'allocation de l'année du décès, au point de
+    la fin de cette année, quand la caisse fixe la périodicité à la liquidation et ne
+    la change qu'à la révision ; l'allocation de 100 points au plus encore servie
+    (liquidée avant 2004, ou révisée à la baisse) est présumée servie au mois
+  effet: >-
+    non mesuré ; seul le défunt payé hors de France, ou dont l'allocation frôle les 200
+    points, peut voir sa réversion datée d'une autre période que celle de la caisse
 - ecart: >-
     les enfants à charge du survivant sont ceux du défunt que la chronologie porte, et
     seuls comptent ceux de moins de dix-huit ans au décès : ni l'étudiant, l'apprenti
@@ -326,6 +370,10 @@ approximations:
     2 071,58 € mené à 2 092,32 €, où sa majoration de l'Agirc et celle de l'Arrco,
     267,22 €, tiennent (tests/test_reversion.py ; note du 3 novembre 2026)
 presomptions:
+  paye_dans_l_etat_de_residence: >-
+    la périodicité du paiement du défunt, depuis 2019 : sa banque dans l'État où il
+    réside après son départ, la France quand la saisie n'en dit pas, et sans l'option
+    du paiement mensuel que l'article 106 ouvre au paiement trimestriel
   conjoint_de_l_autre_sexe: >-
     l'âge du veuf ou de la veuve, avant 1994, quand le sexe du conjoint n'est pas dit
   reversion_demandee_dans_l_annee: >-
@@ -335,7 +383,7 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-11-03
+  lu_le: 2026-11-21
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -352,12 +400,26 @@ sources:
   - >-
     Les exemples datés du site sont aux exemples officiels depuis la troisième étape du
     domaine : Leïla, Kim, Annie et Eric concordent ; François, David et Simone, dont
-    le défunt était payé par trimestre ou par an, sont en écart connu ; Claude, devenu
+    le défunt était payé par trimestre ou par an, concordent depuis le 21 novembre
+    2026, le témoin prêtant au défunt une résidence aux États-Unis ou une allocation
+    de 180 points ; Claude, devenu
     invalide, l'était aussi, et concorde depuis le 1er octobre 2026 (domaine de
     l'invalidité et de l'inaptitude) ; Max, qui a deux enfants à charge, concorde
     depuis le 5 octobre 2026. Léo, qui demande sa réversion dix-huit mois après le
     décès, n'y est pas : le modèle ne date pas la demande.
   lectures:
+  - type: autre
+    reference: >-
+      index KALI de la DILA (à jour au 13 novembre 2026), accord national
+      interprofessionnel du 17 novembre 2017 (KALITEXT000036731682) : article 106 dans
+      ses deux rédactions (KALIARTI000036731860, du 1er janvier 2019 ;
+      KALIARTI000047205218, du 1er janvier 2021, qui ajoute Andorre, la Croatie et
+      l'État de la Cité du Vatican aux États payés au mois), article 107
+      (KALIARTI000036731861) et article 116 (KALIARTI000036731971), seules rédactions de
+      l'index ; et la circulaire 2020-02-DRJ, fiche 5, III, « Paiement de
+      l'allocation », relue
+    date: 2026-11-21
+    url: https://www.legifrance.gouv.fr/conv_coll/id/KALITEXT000036731682
   - type: autre
     reference: >-
       circulaire Agirc-Arrco 2020-02-DRJ du 20 janvier 2020, sha256
@@ -415,14 +477,15 @@ sources:
 code:
   javascript: >-
     moteur/js/droit/reversion.js : reversion, ageAgircArrco, aLAge, partDuSurvivant,
-    admisAilleurs, entiereAuConjoint, jusquAuRemariage ; moteur/js/regimes.js :
+    admisAilleurs, entiereAuConjoint, jusquAuRemariage, periodeSuivante,
+    allocationDuDefunt ; moteur/js/regimes.js :
     Reversions ; moteur/js/echeancier.js : Echeancier._pensionsAuDeces
   parametres: >-
     contenu.parametres de chaque version : taux, ex_conjoints, entiere_au_conjoint,
     age_minimum_veuve, age_minimum_veuf, age_minimum_minore, perte_au_remariage,
     invalidite_sans_age, deux_enfants_a_charge_moins_de_ans, fiabilite,
     age_minimum_arrco, age_minimum_agirc, age_minimum, majoration_reversible,
-    rien_apres_un_capital, majoration_sans_anticipation
+    rien_apres_un_capital, majoration_sans_anticipation, periodicite
   tests: tests/test_reversion.py ; les témoins reversion_* des simulations
   moteur: >-
     La majoration de chaque régime du défunt, que la réversion lit, lui vient de
@@ -458,6 +521,11 @@ historique:
   sous le plafond qui bornait la sienne ; elle le gardait pour une allocation de l'Agirc
   de 2012 à 2018 et pour toute allocation d'avant 2012. Note
   docs/feuille_de_route/175/2026-11-03-corrections-de-la-relecture-r-m3b.md.
+- >-
+  2026-11-21 — pour un décès depuis 2019, la réversion attend le terme de la période
+  du défunt payé au trimestre — hors de France et des États de l'article 106 — ou à
+  l'année — plus de 100 et moins de 200 points, article 107 — (article 116 ;
+  `periodicite`) : les exemples de François, David et Simone concordent.
 effet: >-
   Tout conjoint, ou ex-conjoint marié, d'un salarié ou ancien salarié du privé qui
   décède. Le modèle la calcule pour le conjoint que la saisie déclare, sur la

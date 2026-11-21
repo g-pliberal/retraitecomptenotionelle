@@ -48,7 +48,8 @@ def _carriere(simulateur, naissance: int, depart: float, conjoint: str, deces: s
               union_depuis: str | None = None, union_fin: str | None = None,
               fin_d_activite: str | None = None,
               variations: tuple[tuple[str, float], ...] = (),
-              variations_de_l_apport: tuple[tuple[str, float], ...] = ()) -> Carriere:
+              variations_de_l_apport: tuple[tuple[str, float], ...] = (),
+              residence: str | None = None) -> Carriere:
     """Un salarié né en janvier ``naissance``, parti à ``depart`` ans, ses
     enfants nés aux dates ``naissances`` quand elles sont dites, et son
     conjoint, invalide depuis ``invalidite`` s'il est dit, ses ressources et ce
@@ -58,10 +59,13 @@ def _carriere(simulateur, naissance: int, depart: float, conjoint: str, deces: s
     jusqu'à ``union_fin`` s'ils sont dits, l'``apport`` de son nouveau conjoint
     et ses variations, et sa propre ``retraite``, datée ; le décès ouvre la
     réversion. Les pensions, elles, sont données à :func:`reversion` : seule
-    la règle est en cause ici."""
+    la règle est en cause ici. ``residence`` est l'État où le défunt réside
+    après son départ, hors de France."""
+    etranger = ({} if residence is None
+                else {"etranger": {"periodes": [], "pensions": [], "residence": residence}})
     return Carriere.depuis_profil(
         naissance, sexe, "salarie_prive_non_cadre", 21.0, depart, simulateur.macro,
-        nombre_enfants=enfants, naissances_enfants=naissances,
+        nombre_enfants=enfants, naissances_enfants=naissances, **etranger,
         conjoint={"naissance": conjoint, "sexe": sexe_conjoint, "mariage": mariage,
                   "ressources": ressources, "invalidite": invalidite,
                   "revenus_d_activite": activite, "fin_d_activite": fin_d_activite,
@@ -1035,6 +1039,87 @@ def test_deux_enfants_a_charge_levent_l_age_de_l_agirc_arrco(simulateur, naissan
                          enfants=2, naissances=naissances)
     ligne, = _lignes(simulateur, carriere, [("agirc_arrco", 5000.0)], 2024)
     assert ligne[5] == attendu
+
+
+# Le défunt meurt le 15 mai 2024 ; son conjoint a soixante-sept ans, et l'âge
+# ne retarde rien. Les pensions de 2024 se comptent au point de la fin de
+# l'année, 1,4386 € depuis le 1er novembre 2024 : 200 points font 287,72 €.
+@pytest.mark.parametrize("residence, attendu", [
+    (None, "2024-06-01"),
+    ("DE", "2024-06-01"),
+    ("CH", "2024-06-01"),
+    ("US", "2024-07-01"),
+    ("MA", "2024-07-01"),
+    ("autre", "2024-07-01"),
+])
+def test_paye_au_trimestre_hors_d_europe_le_defunt_laisse_la_reversion_au_trimestre_suivant(
+        simulateur, residence, attendu):
+    """Accord du 17 novembre 2017, article 106 : « Les allocations sont
+    versées d'avance (terme à échoir) : a) mensuellement en France ainsi que
+    dans les pays suivants : Allemagne [...] Suisse [...] b) trimestriellement
+    dans les autres pays » ; article 116 : la réversion d'un allocataire prend
+    effet « au premier jour du mois ou du trimestre civil suivant le décès
+    selon que les allocations de droits directs ont été respectivement versées
+    mensuellement ou trimestriellement ». Payé aux États-Unis ou au Maroc, le
+    défunt mort en mai laisse la réversion au 1er juillet ; en Allemagne ou en
+    Suisse, au 1er juin."""
+    carriere = _carriere(simulateur, 1955, 62.0, "1957-03-10", "2024-05-15",
+                         residence=residence)
+    ligne, = _lignes(simulateur, carriere, [("agirc_arrco", 5000.0)], 2024)
+    assert ligne[5] == attendu
+
+
+@pytest.mark.parametrize("pensions, majoration, attendu", [
+    ([("agirc_arrco", 280.0)], 0.0, "2025-01-01"),
+    ([("agirc_arrco", 290.0)], 0.0, "2024-06-01"),
+    # La majoration pour enfants compte au seuil.
+    ([("agirc_arrco", 250.0)], 40.0, "2024-06-01"),
+    # Depuis 2019, les droits de l'Arrco et de l'Agirc font une allocation.
+    ([("arrco", 150.0), ("agirc", 140.0)], 0.0, "2024-06-01"),
+])
+def test_paye_a_l_annee_sous_deux_cents_points_le_defunt_laisse_la_reversion_a_l_an_suivant(
+        simulateur, pensions, majoration, attendu):
+    """Article 107 : le montant des droits directs « supérieur à une somme
+    équivalant à 100 points du régime et inférieur à une somme équivalant à 200
+    points », « l'allocation est versée annuellement » ; ces seuils
+    s'apprécient « au regard du montant brut des droits directs [...], y compris
+    les montants des différentes majorations ou coefficients applicables »
+    (circulaire 2020-02-DRJ, fiche 5, III.2). 280 € font 194,63 points : la
+    réversion attend le 1er janvier 2025, comme celle de l'ex-conjoint de
+    Simone (fédération Agirc-Arrco, « La pension de réversion ») ; 290 € en
+    font 201,58 : elle part au 1er juin 2024. Au point de mai, 1,4159 €, les
+    deux restent du même côté des 200 points."""
+    carriere = _carriere(simulateur, 1955, 62.0, "1957-03-10", "2024-05-15")
+    servie = reversion(simulateur.scenario_actuel,
+                       [(regime, base, HAUTE) for regime, base in pensions], carriere, 2024,
+                       majorations={pensions[0][0]: majoration})
+    assert {ligne.date_effet for ligne in servie.regimes} == {attendu}
+
+
+@pytest.mark.parametrize("deces, attendu", [
+    ("2020-05-15", "2020-07-01"),
+    ("2021-05-15", "2021-06-01"),
+])
+def test_la_croatie_est_payee_au_mois_depuis_2021(simulateur, deces, attendu):
+    """L'article 106 récrit à effet du 1er janvier 2021 ajoute à la liste des
+    pays payés au mois Andorre, la Croatie et l'État de la Cité du Vatican."""
+    carriere = _carriere(simulateur, 1955, 62.0, "1957-03-10", deces, residence="HR")
+    ligne, = _lignes(simulateur, carriere, [("agirc_arrco", 5000.0)], int(deces[:4]))
+    assert ligne[5] == attendu
+
+
+def test_la_periodicite_ne_date_ni_un_deces_d_avant_2019_ni_celui_d_un_actif(simulateur):
+    """Avant 2019, les règlements de l'Arrco et de l'Agirc ne sont pas lus : la
+    réversion part au mois qui suit le décès, ce que la fiche déclare. Mort
+    avant son départ, l'assuré n'était pas allocataire : sa réversion prend
+    effet « au premier jour du mois civil suivant le décès » (article 116)."""
+    avant = _carriere(simulateur, 1945, 62.0, "1947-03-10", "2015-05-15", residence="US")
+    ligne, = _lignes(simulateur, avant, [("arrco", 280.0)], 2015)
+    assert ligne[5] == "2015-06-01"
+    actif = _carriere(simulateur, 1960, 67.0, "1957-03-10", "2024-05-15", residence="US")
+    ligne, = reversion(simulateur.scenario_actuel, [("agirc_arrco", 280.0, HAUTE)], actif,
+                       2024, avant_le_depart=True).regimes
+    assert ligne.date_effet == "2024-06-01"
 
 
 def test_la_majoration_pour_enfants_du_defunt_est_reversee_en_entier(simulateur):

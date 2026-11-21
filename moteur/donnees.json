@@ -41001,6 +41001,7 @@ null
 "pas_de_pension_etrangere":{"dit":"l'assuré qui ne déclare pas de pension étrangère n'en touche aucune à la date d'effet de sa pension française","valeur":"aucune"},
 "pas_de_periode_assimilee":{"dit":"l'assuré qui n'en déclare pas n'a eu ni stage de la formation professionnelle ou d'insertion, ni inscription sur la liste des sportifs de haut niveau, ni congé supplémentaire de naissance, et aucun de ses emplois n'était un contrat d'apprentissage","valeur":"aucune"},
 "pas_de_reversion_agricole":{"dit":"l'assuré qui ne déclare pas de réversion du régime des non-salariés agricoles n'en reçoit aucune et ne peut y prétendre","valeur":"aucune"},
+"paye_dans_l_etat_de_residence":{"dit":"le défunt était payé par l'Agirc-Arrco dans l'État où il résidait après son départ, et payé au trimestre hors de France et des États que l'accord nomme, sans avoir demandé à l'être au mois","valeur":"la résidence que la saisie dit, la France sinon"},
 "pension_d_invalidite_de_la_periode":{"dit":"l'assuré dont la carrière finit par une période d'invalidité touche une pension d'invalidité depuis le début de cette période, qui court jusqu'à l'âge où la pension de vieillesse la remplace","valeur":"depuis le 1er janvier de la première année de la période d'invalidité finale"},
 "radiation_au_1er_janvier_suivant":{"dit":"l'agent public est radié des cadres le 1er janvier qui suit sa dernière année de services","valeur":"le 1er janvier qui suit la dernière année de services, ou le départ s'il part en fonctions"},
 "residence_en_france":{"dit":"l'assuré qui ne déclare pas de résidence hors de France réside en France après son départ, toute l'année quand il ne dit pas les mois qu'il y passe","valeur":"en France"},
@@ -234696,6 +234697,15 @@ null
 "invalidite_sans_age":true,
 "majoration_reversible":1.0,
 "majoration_sans_anticipation":true,
+"periodicite":{
+"annuelle_au_dela_de_points":100,
+"annuelle_sous_points":200,
+"mensuelle_dans":[
+{"depuis":"2019-01-01","etats":["DE","AT","BE","BG","CY","DK","ES","EE","FI","GR","HU","IE","IS","IT","LV","LI","LT","LU","MT","MC","NO","NL","PL","PT","CZ","RO","GB","SM","SI","SK","SE","CH"]},
+{"depuis":"2021-01-01","etats":["DE","AD","AT","BE","BG","CY","HR","DK","ES","EE","VA","FI","GR","HU","IE","IS","IT","LV","LI","LT","LU","MT","MC","NO","NL","PL","PT","CZ","RO","GB","SM","SK","SI","SE","CH"]}
+],
+"point":"agirc_arrco"
+},
 "perte_au_remariage":["mariage"],
 "rien_apres_un_capital":true,
 "taux":0.6

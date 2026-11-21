@@ -526,6 +526,25 @@ listes:
           décès quand la demande vient dans l'année (R. 353-7), et le premier
           jour du mois qui suit la demande sinon ; le formulaire ne demande pas
           la date de la demande
+      paye_dans_l_etat_de_residence:
+        dit: >-
+          le défunt était payé par l'Agirc-Arrco dans l'État où il résidait après
+          son départ, et payé au trimestre hors de France et des États que
+          l'accord nomme, sans avoir demandé à l'être au mois
+        valeur: la résidence que la saisie dit, la France sinon
+        appliquee_par: >-
+          la date d'effet de la réversion de l'Agirc-Arrco
+          (moteur/js/droit/reversion.js, periodeSuivante), au premier jour du
+          trimestre civil qui suit le décès d'un défunt payé au trimestre
+        entrera_a: liquider_chaque_regime
+        raison: >-
+          l'allocation est versée au mois en France et dans les États que
+          l'article 106 de l'accord du 17 novembre 2017 nomme, au trimestre
+          « dans les autres pays », « du fait de sa domiciliation bancaire »
+          (circulaire 2020-02-DRJ, fiche 5, III.1.2), et la réversion prend effet
+          au premier jour du mois ou du trimestre civil qui suit le décès
+          (article 116) ; le formulaire ne demande ni la banque du défunt ni
+          l'option du paiement mensuel
       reversion_demandee_le_mois_avant_sa_date_d_effet:
         dit: >-
           le survivant demande sa réversion le mois qui précède sa date

@@ -1856,9 +1856,13 @@ exemples:
   # de dix survivants. Le défunt n'y a pas de carrière : le témoin lui en
   # prête une, liquidée avant son décès, dont seule la date du décès compte ;
   # un ex-conjoint y est déclaré conjoint, la date n'en dépendant pas. Quatre
-  # exemples tiennent au paiement trimestriel ou annuel de la retraite du
-  # défunt, ou à l'invalidité du survivant, que le modèle ne porte pas : ils
-  # entrent en écart connu. L'âge de Max, qui a deux enfants à charge, n'est
+  # défunts étaient payés par trimestre ou par an : la réversion attend le
+  # terme de leur période (accord du 17 novembre 2017, articles 106, 107 et
+  # 116). Le trimestre est le paiement hors de France et des États que
+  # l'article 106 nomme : le témoin prête à Perla, Kevin et David une
+  # résidence aux États-Unis ; l'année, celui d'une allocation de plus de 100
+  # et de moins de 200 points : à Simone, une carrière de seize mois, qui en
+  # fait 180. L'âge de Max, qui a deux enfants à charge, n'est
   # pas dit : le témoin lui en prête un sous cinquante-cinq ans, où ce sont
   # les enfants qui datent sa réversion. Léo n'entre pas : il demande sa
   # réversion dix-huit mois après le décès, quand le modèle présume une
@@ -1907,9 +1911,9 @@ exemples:
       Perla est décédée le 9 novembre 2023. Elle percevait une retraite
       Agirc-Arrco trimestrielle. Eric, son ex-conjoint, a eu 55 ans le 3 mai
       2024. La pension de réversion d'Eric a pris effet à compter du 1er juin
-      2024. L'âge d'Eric vient après le terme du trimestre : le paiement
-      trimestriel, que le modèle ne porte pas, n'y change rien.
-    carriere: {naissance: "1958-01", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2020-02", age_debut: 22, conjoint: "1969-05-03", conjoint_sexe: H, deces: "2023-11-09"}
+      2024. L'âge d'Eric vient après le terme du trimestre, le 31 décembre
+      2023 : il date la réversion.
+    carriere: {naissance: "1958-01", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2020-02", age_debut: 22, residence: US, conjoint: "1969-05-03", conjoint_sexe: H, deces: "2023-11-09"}
     attendu: {dates_d_effet_de_la_reversion: {arrco: "2024-06-01"}}
 
   - id: aa_reversion_francois
@@ -1919,18 +1923,8 @@ exemples:
       Agirc-Arrco trimestrielle. François, son conjoint, a eu 55 ans le 10
       novembre 2024. La pension de réversion de François prend effet à compter
       du 1er janvier 2025.
-    carriere: {naissance: "1952-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2014-02", age_debut: 20, conjoint: "1969-11-10", conjoint_sexe: H, deces: "2024-10-06"}
+    carriere: {naissance: "1952-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2014-02", age_debut: 20, residence: US, conjoint: "1969-11-10", conjoint_sexe: H, deces: "2024-10-06"}
     attendu: {dates_d_effet_de_la_reversion: {arrco: "2025-01-01"}}
-    ecart_connu:
-      modele: {dates_d_effet_de_la_reversion: {arrco: "2024-12-01"}}
-      explication: >-
-        Le modèle sert toute retraite au mois. Versée par trimestre, celle de
-        Kevin court jusqu'au terme du trimestre de son décès, et la réversion
-        ne commence qu'au trimestre qui suit, ou au mois qui suit l'âge de
-        François s'il vient après. Il faudrait la périodicité du paiement, que
-        le modèle ne connaît pas.
-      fiche: reversion_agirc_arrco
-      depuis: "2026-09-28"
 
   - id: aa_reversion_david
     source: {editeur: "Agirc-Arrco", reference: "« La pension de réversion », exemple de David", verifie_le: "2026-09-28"}
@@ -1939,17 +1933,8 @@ exemples:
       Agirc-Arrco trimestrielle. La pension de réversion de sa veuve prend
       effet à compter du 1er octobre 2024. L'âge de la veuve n'est pas dit :
       le témoin la fait naître en 1950.
-    carriere: {naissance: "1948-05", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2010-06", age_debut: 20, conjoint: "1950-01", deces: "2024-07-16"}
+    carriere: {naissance: "1948-05", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2010-06", age_debut: 20, residence: US, conjoint: "1950-01", deces: "2024-07-16"}
     attendu: {dates_d_effet_de_la_reversion: {arrco: "2024-10-01"}}
-    ecart_connu:
-      modele: {dates_d_effet_de_la_reversion: {arrco: "2024-08-01"}}
-      explication: >-
-        Le modèle sert toute retraite au mois, et la réversion au mois qui suit
-        le décès. Versée par trimestre, la retraite de David court jusqu'au
-        terme du trimestre de son décès. Il faudrait la périodicité du
-        paiement, que le modèle ne connaît pas.
-      fiche: reversion_agirc_arrco
-      depuis: "2026-09-28"
 
   - id: aa_reversion_simone
     source: {editeur: "Agirc-Arrco", reference: "« La pension de réversion », exemple de Simone", verifie_le: "2026-09-28"}
@@ -1958,17 +1943,8 @@ exemples:
       Agirc-Arrco annuelle. La pension de réversion de son ex-conjoint prend
       effet à compter du 1er janvier 2025. L'âge de l'ex-conjoint n'est pas
       dit : le témoin le fait naître en 1948.
-    carriere: {naissance: "1950-01", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2012-02", age_debut: 20, conjoint: "1948-01", conjoint_sexe: H, deces: "2024-02-06"}
+    carriere: {naissance: "1950-01", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2012-02", age_debut: 60.75, conjoint: "1948-01", conjoint_sexe: H, deces: "2024-02-06"}
     attendu: {dates_d_effet_de_la_reversion: {arrco: "2025-01-01"}}
-    ecart_connu:
-      modele: {dates_d_effet_de_la_reversion: {arrco: "2024-03-01"}}
-      explication: >-
-        Le modèle sert toute retraite au mois, et la réversion au mois qui suit
-        le décès. Versée par an, la retraite de Simone court jusqu'au terme de
-        l'année de son décès. Il faudrait la périodicité du paiement, que le
-        modèle ne connaît pas.
-      fiche: reversion_agirc_arrco
-      depuis: "2026-09-28"
 
   - id: aa_reversion_claude
     source: {editeur: "Agirc-Arrco", reference: "« La pension de réversion », exemple de Dominique et Claude", verifie_le: "2026-09-28"}

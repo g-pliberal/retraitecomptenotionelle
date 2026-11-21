@@ -1993,15 +1993,16 @@ def _carriere_exemple(exemple: dict, decalage_mois: int = 0, sans_enfants: bool 
         mois de naissance."""
         return (_mois(texte).rang - naissance.rang) / 12.0
 
-    if "etranger" in c:
+    if "etranger" in c or "residence" in c:
         # La carrière hors de France, comme la saisie la déclare : chaque
         # période datée comme un début d'activité, salariée quand l'exemple
-        # ne dit pas son activité.
+        # ne dit pas son activité ; la résidence après le départ, seule
+        # quand l'exemple ne dit qu'elle.
         communs["etranger"] = {
             "periodes": [{"pays": periode["pays"], "debut": age_du_mois(periode["debut"]),
                           "fin": age_du_mois(periode["fin"]),
                           "activite": periode.get("activite", "salariee")}
-                         for periode in c["etranger"]],
+                         for periode in c.get("etranger") or ()],
             "pensions": [], "residence": c.get("residence")}
     if any(cle in c for cle in ("inaptitude", "pension_d_invalidite", "radiation_invalidite",
                                 "handicap")):
