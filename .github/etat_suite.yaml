@@ -1,15 +1,17 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: 6c0da90c0c461249db7dfa187d6020a901567338
-date: 2026-11-21T13:04:44Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44905478551
+etat: rouge
+sources: 3b85d384167ecb97454cfbdc93d96160d10baafb
+date: 2026-11-21T13:46:54Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44908857305
+echecs:
+  - "FAILED tests/test_cout_age_depart.py::test_les_scenarios_notionnels_ne_bougent_pas - AssertionError: notionnel_retroactif_employeur : -0.28 point"
 presomptions: vert
 durees:
-  fabrique: 549
-  suite: 535
-  tranche_1: 455
-  tranche_2: 432
-  tranche_3: 535
-  tranche_4: 504
-  garde: 201
+  fabrique: 575
+  suite: 584
+  tranche_1: 506
+  tranche_2: 440
+  tranche_3: 373
+  tranche_4: 584
+  garde: 178

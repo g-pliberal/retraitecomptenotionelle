@@ -229,9 +229,9 @@ septembre 2022, départ en janvier 2064 à 64 ans :
 
 | Système | Pension nette par mois | Écart |
 |---|---|---|
-| 1. Actuel | <!--chiffre:mesure(simulateur?systeme=1&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->2 359<!--/--> € | référence |
-| 3. Ce qui a été cotisé, deux parts | <!--chiffre:mesure(simulateur?systeme=3&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->1 553<!--/--> € | <!--chiffre:mesure(simulateur?systeme=3&quoi=ecart&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->-34,2<!--/--> % |
-| 4. La proposition | <!--chiffre:mesure(simulateur?systeme=4&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->1 914<!--/--> € | <!--chiffre:mesure(simulateur?systeme=4&quoi=ecart&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->-18,9<!--/--> % |
+| 1. Actuel | <!--chiffre:mesure(simulateur?systeme=1&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->2 485<!--/--> € | référence |
+| 3. Ce qui a été cotisé, deux parts | <!--chiffre:mesure(simulateur?systeme=3&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->1 553<!--/--> € | <!--chiffre:mesure(simulateur?systeme=3&quoi=ecart&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->-37,5<!--/--> % |
+| 4. La proposition | <!--chiffre:mesure(simulateur?systeme=4&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->1 914<!--/--> € | <!--chiffre:mesure(simulateur?systeme=4&quoi=ecart&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->-23,0<!--/--> % |
 
 C'est la carrière qui cotise presque entièrement après la bascule : la
 rente capitalisée y pèse le plus, et l'écart entre 3 et 4 est le plus large
