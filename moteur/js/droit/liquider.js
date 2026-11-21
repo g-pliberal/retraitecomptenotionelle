@@ -2700,7 +2700,10 @@ const SURCOTE_REGIMES_SPECIAUX_DEPUIS = new DateMois(2008, 7);
  * Les trimestres de surcote des régimes spéciaux réformés en 2008 — portage de
  * `trimestres_de_surcote_regimes_speciaux` : rien sous cent soixante
  * trimestres, et seuls ceux « cotisés et effectués après le 1er juillet
- * 2008, au-delà de l'âge » et en sus de la durée requise, au mois près.
+ * 2008, au-delà de l'âge » et en sus de la durée requise. Les services se
+ * comptent « pour leur durée » (le III de chaque article), au mois, et seuls
+ * les « trimestres entiers » du total comptent (`trimestresCotisesAuMois`) :
+ * l'année du départ n'est pas réduite à ses trimestres civils entiers.
  */
 export function trimestresDeSurcoteRegimesSpeciaux(carriere, trimestres, requis, ageSurcote) {
   if (trimestres < 160) {
@@ -2711,14 +2714,7 @@ export function trimestresDeSurcoteRegimesSpeciaux(carriere, trimestres, requis,
     debut = SURCOTE_REGIMES_SPECIAUX_DEPUIS;
   }
   const fin = carriere.dateLiquidation;
-  let apres = 0.0;
-  if (debut.rang < fin.rang) {
-    for (const ligne of carriere.lignes) {
-      if (ligne.cotise) {
-        apres += trimestresDeLaLigneEntre(carriere, ligne, debut, fin);
-      }
-    }
-  }
+  const apres = debut.rang < fin.rang ? trimestresCotisesAuMois(carriere, debut, fin) : 0.0;
   return Math.min(Math.max(0, trimestres - requis), Math.floor(apres + 1e-9));
 }
 
@@ -2744,14 +2740,7 @@ export function coefficientSurcoteRegimesSpeciaux(moteur, periode, carriere, tri
     debut = SURCOTE_AU_TAUX_DE_2009_DEPUIS;
   }
   const fin = carriere.dateLiquidation;
-  let apres = 0.0;
-  if (debut.rang < fin.rang) {
-    for (const ligne of carriere.lignes) {
-      if (ligne.cotise) {
-        apres += trimestresDeLaLigneEntre(carriere, ligne, debut, fin);
-      }
-    }
-  }
+  const apres = debut.rang < fin.rang ? trimestresCotisesAuMois(carriere, debut, fin) : 0.0;
   const maximum = periode.surcote_trimestres_maximum ?? null;
   const depuis2009 = Math.min(comptes, Math.floor(apres + 1e-9));
   const auTauxDe2009 = maximum === null ? depuis2009 : Math.min(depuis2009, maximum);

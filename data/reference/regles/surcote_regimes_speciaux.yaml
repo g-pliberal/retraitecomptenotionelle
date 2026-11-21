@@ -22,10 +22,27 @@ effet: >-
   servait 0,75 % à tout trimestre de 2009 à 2017, les cinq autres 1,25 % aux deux trimestres de
   2008, et aucune la limite de vingt trimestres, qui ne joue sur aucun témoin hors de l'Opéra :
   à la SNCF et à la RATP, la limite d'âge de soixante-cinq ans arrête la surcote à vingt.
+  Le 21 novembre 2026, les services d'après l'âge comptés pour leur durée : le moteur
+  comptait les trimestres de chaque année civile, puis les étalait sur ses mois, et l'année
+  du départ ne gardait que ses trimestres civils entiers ; un agent perdait un trimestre
+  selon son mois de naissance. Né le 1er février 1954 aux IEG, parti à soixante-trois ans et
+  neuf mois : quarante-cinq mois de services depuis ses soixante ans, quinze trimestres, et
+  non quatorze. Huit témoins sur 937 montent, de 0,33 % à 1,19 %, 1,05 % en médiane. Cinq
+  régimes sur six sont réparés ; pas l'Opéra, dont la surcote reste bornée par la durée
+  d'assurance totale, encore comptée par trimestres civils : il garde un trimestre d'écart
+  selon le mois de naissance.
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-03-31
   a_relire:
+  - >-
+    La durée d'assurance totale des six régimes se compte encore par trimestres civils de
+    l'année d'entrée et de l'année du départ, et non pour la durée des services : à l'Opéra,
+    elle borne la surcote, qui varie d'un trimestre selon le mois de naissance. La compter
+    au mois, avec la proratisation qu'elle touche aussi.
+  - >-
+    Le temps partiel : les six articles réduisent le nombre de trimestres de surcote d'un
+    agent à temps partiel ; le moteur ne le fait pas.
   - >-
     L'âge au-delà duquel la surcote se compte est, à la CRPCEN, « l'âge mentionné au premier
     alinéa du 1° du I de l'article 84 » dans les rédactions de 2011 et après : soixante-deux
@@ -123,7 +140,9 @@ code:
     décote est celui des régimes spéciaux (`bareme_decote`, fiche `decote_regimes_speciaux`) :
     rien sous cent soixante trimestres ; sinon le plus petit des trimestres au-delà de la
     durée requise et des trimestres cotisés depuis l'âge de la surcote (`ouvrir.age_surcote`)
-    et depuis le 1er juillet 2008, au mois près, jusqu'à la date d'effet de la pension.
+    et depuis le 1er juillet 2008 jusqu'à la date d'effet de la pension, les services comptés
+    « pour leur durée », au mois, l'année du départ comprise, et les seuls « trimestres
+    entiers » du total retenus (`trimestresCotisesAuMois`, comme à la Banque de France).
     `liquider.coefficient_surcote_regimes_speciaux` : ceux de 2009 et après au taux de la
     période (`surcote_par_trimestre`), ceux de 2008 au taux que le barème `fonction_publique`
     de `legislation/surcote_baremes.csv` donne à leur date, 0,75 % ; au plus
@@ -139,7 +158,8 @@ code:
     moteur/js/droit/liquider.js : liquiderChaqueRegime,
     trimestresDeSurcoteRegimesSpeciaux, coefficientSurcoteRegimesSpeciaux,
     SURCOTE_REGIMES_SPECIAUX_DEPUIS, SURCOTE_AU_TAUX_DE_2009_DEPUIS,
-    BAREMES_REGIMES_SPECIAUX ; moteur/js/droit/compter.js : trimestresDeLaLigneEntre ;
+    BAREMES_REGIMES_SPECIAUX, trimestresCotisesAuMois ; moteur/js/droit/compter.js :
+    trimestresDeLaLigneEntre ;
     moteur/js/droit/ouvrir.js : ageSurcote, ageOuvertureCommun ; moteur/js/regimes.js :
     AgesSurcoteRegimesSpeciaux
   parametres: >-

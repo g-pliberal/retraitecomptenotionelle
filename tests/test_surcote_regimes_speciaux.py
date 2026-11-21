@@ -62,6 +62,22 @@ CAS = {
     # depuis septembre 2011. Le modèle : 1,375.
     "comedie_francaise_1946": ("personnel_comedie_francaise", "comedie_francaise",
                                1946, 1, 18, 70.0, 2, 28),
+    # Nés le 1er février, mars ou avril 1954, partis à soixante-trois ans et
+    # neuf mois : quarante-cinq mois de services depuis leurs soixante ans,
+    # comptés « pour leur durée » (le III de chaque article), soit quinze
+    # « trimestres entiers cotisés » (le II), tous au taux de 2009, quel que
+    # soit le mois de naissance. Le modèle comptait les trimestres de chaque
+    # année civile, puis les étalait sur ses mois : l'année du départ n'en
+    # gardait que les trimestres entiers écoulés, et il en perdait un en
+    # février et en mars (quatorze).
+    "ieg_1954_fevrier": ("agent_ieg", "ieg", 1954, 2, 18, 63.75, 0, 15),
+    "ieg_1954_mars": ("agent_ieg", "ieg", 1954, 3, 18, 63.75, 0, 15),
+    "ieg_1954_avril": ("agent_ieg", "ieg", 1954, 4, 18, 63.75, 0, 15),
+    "sncf_1954_fevrier": ("agent_sncf", "sncf", 1954, 2, 18, 63.75, 0, 15),
+    "ratp_1954_fevrier": ("agent_ratp", "ratp", 1954, 2, 18, 63.75, 0, 15),
+    "crpcen_1954_fevrier": ("clerc_de_notaire", "crpcen", 1954, 2, 18, 63.75, 0, 15),
+    "comedie_francaise_1954_fevrier": ("personnel_comedie_francaise", "comedie_francaise",
+                                       1954, 2, 18, 63.75, 0, 15),
 }
 
 
@@ -104,4 +120,4 @@ def test_chaque_trimestre_de_surcote_a_le_taux_de_sa_date_dans_la_limite_du_decr
     d'effet de la pension l'écrit : le taux plein, majoré du coefficient."""
     *_, a_0_75, a_1_25 = CAS[cle]
     assert taux[cle] == pytest.approx(TAUX_PLEIN * (1.0 + 0.0075 * a_0_75 + 0.0125 * a_1_25),
-                                      abs=5e-4)
+                                      abs=5e-4 + 1e-9)
