@@ -666,3 +666,12 @@ elle dit qu'un texte a changé, non que la fiche l'a bien lu : une déclaration
 fiche et ne change aucune règle. Les 83 rédactions sans un mot se lisent
 ensuite, dans une session à elles, les plus récentes et les régimes les plus
 peuplés d'abord : chaque réponse est une lecture du droit, sur Fable 5.2.
+
+## Rectificatif du 21 novembre 2026 : le modèle des étapes
+
+Le 21 novembre, le propriétaire a décidé : « On travaille sous Opus 5.5 et on
+fait relire par Fable ». Là où la note dit qu'une étape de l'action 191, ou
+la lecture des rédactions sans un mot, se mène « sur Fable 5.2 », il faut
+lire depuis cette date : sur Opus 5.5, et relue sur Fable 5.2 avant d'être
+publiée (`CLAUDE.md`, « Le scénario 1 est le droit applicable »). Le reste de
+la note ne change pas.

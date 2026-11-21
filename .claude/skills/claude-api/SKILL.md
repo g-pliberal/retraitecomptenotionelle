@@ -47,9 +47,10 @@ session ou un agent, et ce qu'il coûte.
   11 novembre 2026, et l'effort : `high` pour
   Opus, Sonnet et Fable 5.2, par `modelSettings` et non par
   `CLAUDE_CODE_EFFORT_LEVEL`, qui passerait devant celui que déclarent les
-  agents) ; Fable 5.2 pour une étape qui écrit une règle du scénario 1
-  (`CLAUDE.md`), depuis le 9 novembre 2026, à la place d'Opus 5.5, qui
-  l'avait emporté sur Fable 5.1. Le détail est dans les notes
+  agents) ; Opus 5.5 pour une étape qui écrit une règle du scénario 1, et
+  Fable 5.2 pour la relire avant publication (`CLAUDE.md`), depuis le
+  21 novembre 2026 ; du 9 au 21 novembre, Fable 5.2 l'écrivait. Le détail
+  est dans la note `2026-11-21-opus-ecrit-fable-relit.md` et les notes
   `2026-10-17-trois-modeles.md`, `2026-11-09-fable-5-2.md`,
   `2026-11-09-effort-selon-le-billet.md` et `2026-11-11-plateforme-claude.md`
   de `docs/feuille_de_route/135/` ; ce

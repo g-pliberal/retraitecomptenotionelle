@@ -8324,7 +8324,7 @@ propriétaire a décidé que l'étape 2 du domaine `cumul` se mène en parallèl
 de cet ordre : `seconde_pension` et `droits_apres_la_premiere_pension`, lues
 par `version_aux_dates`. Ce bloc ne se récrit plus : chaque étape inachevée
 tient le sien, sous le titre de sa note. Une étape par session, sur
-Fable 5.2, une fois la suite verte. La correction approuvée de la surcote de
+Opus 5.5 et relue sur Fable 5.2, une fois la suite verte. La correction approuvée de la surcote de
 2004 à 2006 passe avant son étape. Au propriétaire : l'écart déclaré des
 bornes du fonctionnaire de 2014 à 2023. Détail :
 `191/2026-11-16-note-de-decision-0009.md`.
