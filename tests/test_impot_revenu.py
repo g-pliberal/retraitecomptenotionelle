@@ -11,7 +11,10 @@ Il se confronte, dans l'ordre de la preuve (``docs/architecture.md``, § 3.3) :
 2. aux exemples chiffrés du BOFiP, de la brochure et du Bulletin officiel des
    impôts, de 2000 à 2025, en francs et en euros, avant et après 2006
    (``tests/temoins/exemples_impot_revenu.yaml``) ;
-3. à OpenFisca-France, exécuté à part, de 2002 à 2025
+3. au calcul officiel de la DGFiP, son code M publié exécuté par Mlang, sur
+   47 foyers des revenus de 2019 à 2025
+   (``tests/temoins/impot_revenu_dgfip_m.json``) : à l'euro, sans tolérance ;
+4. à OpenFisca-France, exécuté à part, de 2002 à 2018
    (``tests/temoins/impot_revenu_openfisca.json``) : une seconde
    implémentation, dont chaque désaccord est tranché par le texte, et déclaré
    ici.
@@ -24,6 +27,7 @@ moyen, et les valeurs que le script a lues dans l'index LEGI y sont toujours.
 from __future__ import annotations
 
 import json
+import shutil
 import sqlite3
 import sys
 from pathlib import Path
@@ -33,6 +37,7 @@ import yaml
 
 from retraite_notionnelle.donnees.impot_revenu import (
     FRANC, arrondi_a_l_euro, charger_baremes_impot_revenu, croissance_macro, monnaie_de)
+from retraite_notionnelle import pont
 from retraite_notionnelle.donnees.macro import DonneesMacro
 from retraite_notionnelle.impot_revenu import (
     Declarant, Foyer, decote, impot_aux_parametres, impot_d_un_revenu_imposable, impot_du_foyer,
@@ -155,7 +160,73 @@ def test_les_exemples_couvrent_francs_et_euros_avant_et_apres_2006():
     assert len([annee for annee in annees if annee >= 2006]) >= 10
 
 
-# -- 3. OpenFisca-France ---------------------------------------------------------
+# -- 3. Le calcul officiel de la DGFiP ---------------------------------------------
+
+#: Ce que le témoin de la calculette relève, et ce que le module en rend.
+GRANDEURS_DGFIP = {
+    "RNG": "revenu_net_global", "ABVIE": "abattement_age_invalidite",
+    "RNI": "revenu_net_imposable", "REVKIRE": "revenu_fiscal_de_reference",
+    "IDRS3": "impot_brut", "IDEC": "decote", "IINET": "impot",
+}
+
+#: Les désaccords avec la calculette, que seul le texte trancherait : aucun.
+DESACCORDS_DGFIP: tuple = ()
+
+
+def _temoin_dgfip() -> dict:
+    return json.loads((TEMOINS / "impot_revenu_dgfip_m.json").read_text(encoding="utf-8"))
+
+
+def _foyer_du_temoin(description: dict) -> dict:
+    return {"declarants": [{"salaires": d.get("salaire", 0), "pensions": d.get("pension", 0),
+                            "age": d.get("age", 40)} for d in description["declarants"]],
+            "enfants": description.get("enfants", 0),
+            "veuf": description.get("statut") == "veuf",
+            "vit_seul": bool(description.get("case_t"))}
+
+
+def test_le_calcul_officiel_de_la_dgfip_confirme_le_calcul(baremes):
+    """Quarante-sept foyers, des revenus de 2019 à ceux de 2025, calculés par
+    la calculette de la DGFiP, son code M publié exécuté par Mlang
+    (``scripts/fetch/dgfip_m_impot_revenu.py``, qui dit comment le refaire
+    chaque année) : le revenu net global, l'abattement des personnes âgées, le
+    revenu imposable, le revenu fiscal de référence, l'impôt après quotient, la
+    décote et l'impôt sont ceux du module, à l'euro, sans aucune tolérance."""
+    temoin = _temoin_dgfip()
+    grandeurs = temoin["grandeurs"]
+    ecarts, comparees = [], 0
+    for code, contenu in temoin["foyers"].items():
+        foyer = _foyer(_foyer_du_temoin(contenu["foyer"]))
+        for annee, valeurs in contenu["annees"].items():
+            nous = impot_du_foyer(foyer, int(annee), baremes)
+            for grandeur, officiel in zip(grandeurs, valeurs):
+                comparees += 1
+                valeur = getattr(nous, GRANDEURS_DGFIP[grandeur])
+                if abs(valeur - officiel) > 1e-9:
+                    ecarts.append((code, annee, grandeur, valeur, officiel))
+    assert comparees == 47 * 7 * 7
+    assert not ecarts, f"{len(ecarts)} écarts au calcul officiel : {ecarts[:10]}"
+
+
+def test_le_portage_rend_l_impot_du_calcul_officiel():
+    """Le site calcule l'impôt en JavaScript (note de décision 0007) : ses 329
+    impôts sont ceux de la calculette de la DGFiP, à l'euro."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage ne se vérifie pas ici")
+    temoin = _temoin_dgfip()
+    rang = temoin["grandeurs"].index("IINET")
+    appels, attendus = [], []
+    for code, contenu in temoin["foyers"].items():
+        for annee, valeurs in contenu["annees"].items():
+            appels.append((int(annee), _foyer_du_temoin(contenu["foyer"])))
+            attendus.append((code, annee, valeurs[rang]))
+    rendus = pont.impot(appels)
+    ecarts = [(code, annee, r.impot, officiel)
+              for (code, annee, officiel), r in zip(attendus, rendus) if r.impot != officiel]
+    assert not ecarts, f"{len(ecarts)} écarts au calcul officiel : {ecarts[:10]}"
+
+
+# -- 4. OpenFisca-France ---------------------------------------------------------
 
 #: Les désaccords avec OpenFisca-France, chacun tranché par le texte : le foyer,
 #: les années, les grandeurs qu'il touche, et pourquoi.
@@ -189,7 +260,8 @@ def _desaccord(code: str, annee: int, grandeur: str) -> bool:
 
 
 def test_openfisca_france_confirme_le_calcul(baremes):
-    """Quinze foyers, de 2002 à 2025. Concordent : les parts, le revenu net
+    """Quinze foyers, de 2002 à 2018 : depuis les revenus de 2019, le calcul
+    officiel de la DGFiP fait foi (§ 3). Concordent : les parts, le revenu net
     global et imposable, l'abattement des personnes âgées, le revenu fiscal de
     référence, l'impôt après plafonnement, la décote, l'impôt après décote et
     réductions, la prime pour l'emploi. Trois conventions d'OpenFisca, qui ne
@@ -205,6 +277,14 @@ def test_openfisca_france_confirme_le_calcul(baremes):
     - de 2010 à 2015, il diminue la prime pour l'emploi du RSA activité auquel
       le foyer a droit (art. 200 sexies), que le module ne calcule pas
       (``HORS_CHAMP``) : la prime ne se compare que jusqu'en 2009.
+
+    Un défaut d'OpenFisca qu'aucun de ces foyers ne touche, relevé contre le
+    calcul officiel le 21 novembre 2026 (version 177.0.3) : il lit l'âge en
+    janvier de l'année des revenus (``abat_spe``, ``period.first_month``), et
+    refuse l'abattement des personnes âgées à qui atteint 65 ans dans l'année,
+    que la calculette de la DGFiP accorde (chap-7.m : ``AGV = ANNEEREV -
+    V_0DA``, l'abattement dès 65) ; pour 20 000 € de pension en 2022, 322 €
+    d'impôt au lieu de 111 €.
     """
     temoin = json.loads((TEMOINS / "impot_revenu_openfisca.json").read_text(encoding="utf-8"))
     grandeurs = temoin["grandeurs"]
@@ -242,7 +322,7 @@ def test_openfisca_france_confirme_le_calcul(baremes):
                 comparees += 1
                 if abs(valeur - eux[grandeur]) > tolerance + 1e-9:
                     ecarts.append((code, annee, grandeur, valeur, eux[grandeur]))
-    assert comparees > 2500
+    assert comparees > 2000
     assert not ecarts, f"{len(ecarts)} désaccords non déclarés : {ecarts[:10]}"
 
 

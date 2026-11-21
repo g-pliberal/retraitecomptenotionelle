@@ -6213,6 +6213,33 @@ institutions:
           charge avant 2008, quand l'article 194 en donne 2,5 ; l'abattement de
           20 % appliqué, jusqu'en 2005, aux pensions avant le plafond de leur
           abattement de 10 %, quand l'article 158, 5, a l'applique après.
+          Réduit aux revenus de 2002 à 2018 le 21 novembre 2026 : au-delà, le
+          calcul officiel de la DGFiP fait foi (`dgfip_m_impot_revenu_oracle`),
+          contre lequel OpenFisca 177.0.3 refusait l'abattement des personnes
+          âgées l'année des 65 ans, et arrondissait à un euro près.
+
+      - id: dgfip_m_impot_revenu_oracle
+        titre: Calculette de l'impôt sur le revenu de la DGFiP (code M), exécutée par Mlang
+        url: https://gitlab.adullact.net/dgfip/ir-calcul
+        acces: api
+        statut_integration: automatise
+        cible: tests/temoins/impot_revenu_dgfip_m.json
+        recuperation: scripts/fetch/dgfip_m_impot_revenu.py
+        note: >-
+          Le calcul OFFICIEL de l'impôt sur le revenu : le code M que la DGFiP
+          publie sous CeCILL 2.1, un dossier par année de revenus de 2010 à
+          2025, exécuté à part le 21 novembre 2026 par Mlang (Inria et DGFiP,
+          https://github.com/MLanguage/mlang), qui ne sait le faire que pour
+          les revenus de 2019 et suivants. Quarante-sept foyers ciblés sur ce
+          que le simulateur demande à l'impôt — retraités autour de la décote
+          et de l'abattement des personnes âgées, l'année des 65 ans, couples,
+          veufs, parents isolés, plafonnement du quotient familial —, sept
+          années : 329 impôts, que le module et le portage rendent à l'euro
+          (`tests/test_impot_revenu.py`). Elle a trouvé un écart chez nous,
+          corrigé : l'abattement de 10 % des pensions d'un couple, plafonné
+          pour le foyer, dépassait le plafond d'un euro quand les deux parts
+          tombaient sur un demi-euro (revenus de 2022, 45 000 € et 25 000 € :
+          6 950 € d'impôt au lieu de 6 951 €).
 
       - id: openfisca_fonction_publique_oracle
         titre: Moteur de calcul de la pension civile — contre-expertise du scénario 1

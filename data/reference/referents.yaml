@@ -1298,6 +1298,20 @@ referents:
           (celibataire_bas_salaire, couple_un_salaire, 2005),
           version 176.1.2
       - constat: >-
+          Il refuse l'abattement des personnes âgées de l'impôt sur
+          le revenu à qui atteint 65 ans dans l'année des revenus :
+          il lit l'âge en janvier (`abat_spe`,
+          `period.first_month`). Pour 20 000 € de pension, revenus
+          de 2022 : 322 € d'impôt au lieu de 111 €.
+        tranche: >-
+          CGI, art. 157 bis, et la calculette de la DGFiP, qui
+          l'accorde dès 65 ans atteints dans l'année (code M,
+          chap-7.m : AGV = ANNEEREV - V_0DA) ; l'écart est le sien
+        preuve: >-
+          `prelevements_obligatoires/impot_revenu/ir.py:3631`,
+          version 177.0.3 ; tests/temoins/impot_revenu_dgfip_m.json
+          (retraite_seul_20000_age_65)
+      - constat: >-
           Quand la cotisation n'atteint pas le seuil de mise en
           recouvrement, il ne restitue des crédits d'impôt que
           ce qui dépasse l'impôt, et non la prime pour l'emploi
@@ -8837,6 +8851,46 @@ referents:
       `dgfip/impots-nationaux-revenu-patrimoine-particuliers/ir-catala` :
       l'ancienne adresse y renvoie (HTTP 301), et `git ls-remote` y lit, le
       1er octobre 2026, le commit `7f5fe83`.
+
+  - id: calculette_ir_dgfip
+    nom: Calculette de l'impôt sur le revenu (code M)
+    auteur: DGFiP
+    nature: calculateur
+    publication: ouvert
+    code: https://gitlab.adullact.net/dgfip/ir-calcul
+    documentation:
+      - https://github.com/MLanguage/mlang
+    licence: CeCILL 2.1
+    usage: executer_a_part
+    confronte: [scenario_1]
+    couvre: >-
+      Le calcul officiel de l'impôt sur le revenu, celui de la taxation des
+      foyers : un dossier de code M par année de revenus, de 2010 à 2025.
+      Mlang (Inria et DGFiP) l'exécute pour les revenus de 2019 et suivants.
+      Il ne calcule pas la CSG des pensions.
+    version: "ir-calcul adc9c5a, Mlang 66f6b37"
+    confrontation: >-
+      Le 21 novembre 2026, 47 foyers, revenus de 2019 à 2025 : revenu net
+      global, abattement des personnes âgées, revenu imposable, revenu
+      fiscal de référence, impôt après quotient, décote et impôt sont ceux
+      du module et du portage, à l'euro
+      (`tests/temoins/impot_revenu_dgfip_m.json`,
+      `tests/test_impot_revenu.py`), après la correction de l'abattement des
+      pensions d'un couple, qui dépassait son plafond d'un euro.
+    bilan: >-
+      La référence de l'impôt sur le revenu des revenus de 2019 et suivants :
+      il ne fait rien de mieux que le module sur ce que le simulateur
+      demande, il en garantit le calcul. OpenFisca n'y sert plus qu'avant.
+    lu_le: 2026-11-21
+    lu_dans:
+      - https://gitlab.adullact.net/dgfip/ir-calcul
+      - https://github.com/MLanguage/mlang
+    note: >-
+      Mlang n'apporte pas de garantie juridique, mais passe les tests privés
+      de la DGFiP pour les revenus de 2018 à 2021. Le code des revenus de
+      2010 à 2018 demande des attributs que Mlang n'accepte plus : il
+      faudrait une ancienne version de Mlang. Comment refaire le témoin
+      chaque année : `scripts/fetch/dgfip_m_impot_revenu.py`.
 
   # ---- La recherche ------------------------------------------------------------
 

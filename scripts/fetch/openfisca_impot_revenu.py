@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""L'impôt sur le revenu de quelques foyers, de 2002 à 2025, par OpenFisca-France.
+"""L'impôt sur le revenu de quelques foyers, de 2002 à 2018, par OpenFisca-France.
 
     pip install OpenFisca-France          # à part : AGPL, ses sorties seules entrent
     python scripts/fetch/openfisca_impot_revenu.py
@@ -12,6 +12,14 @@ d'autres, qui couvre chaque année depuis 2002 : un désaccord ne désigne pas
 d'office le coupable, il se tranche par le texte. Le registre des modèles
 (``data/reference/referents.yaml``, ``openfisca_france``) le range en
 ``executer_a_part`` : sa licence ne permet que d'en faire entrer les sorties.
+
+Depuis le 21 novembre 2026, il s'arrête aux revenus de 2018 : pour ceux de
+2019 et suivants, le calcul officiel de la DGFiP fait foi
+(``scripts/fetch/dgfip_m_impot_revenu.py``), contre lequel OpenFisca 177.0.3
+avait deux défauts, l'un de droit, l'autre d'arrondi : il refuse
+l'abattement des personnes âgées l'année des 65 ans (il lit l'âge en
+janvier), et garde les centimes de l'impôt du barème avant la décote, à un
+euro près de l'officiel.
 
 Le fichier produit, ``tests/temoins/impot_revenu_openfisca.json``, est
 VERSIONNÉ : ``tests/test_impot_revenu.py`` rejoue la confrontation sans
@@ -38,7 +46,7 @@ from pathlib import Path
 
 SORTIE = Path(__file__).resolve().parents[2] / "tests" / "temoins" / "impot_revenu_openfisca.json"
 
-ANNEES = tuple(range(2002, 2026))
+ANNEES = tuple(range(2002, 2019))
 
 #: Les foyers : chaque déclarant (salaire, pension, âge au 31 décembre,
 #: invalide), les enfants à charge, la situation, et la case T du parent isolé.
