@@ -1,0 +1,27 @@
+date: "2026-11-21"
+session: "action 134, point 5 : les trimestres de l'année d'entrée, dits par le salaire"
+consulte: >-
+  L'index LEGI du dépôt, à jour au 16 novembre 2026 : R. 351-9 CSS, ses trois
+  rédactions (LEGIARTI000006749353, LEGIARTI000028751530, LEGIARTI000053335598) ;
+  R. 351-1 (LEGIARTI000006749339) ; R. 742-21 et L. 742-3 du code rural ;
+  D. 634-1 CSS (LEGIARTI000006737960, LEGIARTI000026139975, LEGIARTI000049917702,
+  LEGIARTI000053356087) et décret n° 73-937, article 2 (LEGIARTI000006765813) ;
+  D. 643-3 CSS (LEGIARTI000006738142, LEGIARTI000028751534, LEGIARTI000039123745) ;
+  L. 634-2-1 et D. 643-9-3, pour leurs bornes en durée ; R. 643-1.
+trouve: >-
+  Au régime général, aux salariés agricoles depuis 1946, aux artisans et
+  commerçants depuis 1973, le revenu de l'année dit ses trimestres, au plus
+  quatre, sans condition de mois d'activité ; seule l'année de la date d'effet
+  s'arrête au trimestre civil qui la précède (R. 351-1). Le moteur bornait toute
+  année aux trimestres civils de ses mois : corrigé, par la fiche datée
+  `trimestres_au_revenu`. Les libéraux valident au revenu depuis 2004 (D. 643-3),
+  mais leur affiliation ne court qu'au trimestre civil suivant le début de
+  l'activité (R. 643-1) : laissés aux mois. Relu par une session sur Fable 5.2.
+  Détail : docs/feuille_de_route/134/2026-11-21-annee-d-entree-au-salaire.md.
+reste: >-
+  Les périodes assimilées, un trimestre par 50 jours de chômage ou 60 de maladie
+  (R. 351-12), que le moteur compte aux trimestres civils de leurs mois. L'année
+  du décès d'un assuré qui n'a pas liquidé : aucun texte trouvé qui la borne, le
+  chapitre III (R. 353) non lu article par article. La seconde pension (activité
+  après le premier départ), laissée aux mois. L'assiette de début
+  d'activité des artisans et des commerçants (D. 633-*), non lue.

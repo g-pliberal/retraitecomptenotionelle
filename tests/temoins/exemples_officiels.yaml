@@ -314,7 +314,10 @@ exemples:
       sexe: H
       affiliation: salarie_prive_non_cadre
       liquidation: "2026-11"
-      age_debut: 20.25
+      # Entré en août 1984 : l'année vaut 3 trimestres au salaire qu'elle
+      # porte (R. 351-9), et non à ses mois ; entré en avril (20,25 ans), elle
+      # en vaudrait 4, et la carrière 171.
+      debut: "1984-08"
       niveau_salaire: 0.45
       profil_carriere: plat
       interruptions: {2000: chomage_indemnise, 2001: chomage_indemnise, 2002: chomage_indemnise, 2003: chomage_indemnise, 2004: chomage_indemnise, 2005: chomage_indemnise, 2006: chomage_indemnise, 2007: chomage_indemnise, 2026: chomage_indemnise}
@@ -339,7 +342,10 @@ exemples:
       sexe: H
       affiliation: salarie_prive_non_cadre
       liquidation: "2005-10"
-      age_debut: 19.5
+      # Entré en octobre 1965 : l'année vaut 3 trimestres au salaire qu'elle
+      # porte (R. 351-9), et non à ses mois ; entré en mars (19,5 ans), elle
+      # en vaudrait 4, et la carrière 163.
+      debut: "1965-10"
       niveau_salaire: 0.3
       profil_carriere: plat
       interruptions: {1990: chomage_indemnise}
@@ -366,7 +372,10 @@ exemples:
       sexe: H
       affiliation: salarie_prive_non_cadre
       liquidation: "2020-04"
-      age_debut: 19.5
+      # Entré en octobre 1977 : l'année vaut ses trimestres au salaire qu'elle
+      # porte (R. 351-9), et non à ses mois ; entré en septembre (19,5 ans),
+      # la carrière en aurait 171 et 147 cotisés.
+      debut: "1977-10"
       niveau_salaire: 0.3
       profil_carriere: plat
       interruptions: {2000: chomage_indemnise, 2001: chomage_indemnise, 2002: chomage_indemnise, 2003: chomage_indemnise, 2004: chomage_indemnise, 2005: chomage_indemnise}
@@ -786,7 +795,11 @@ exemples:
     enonce: >-
       Nés de 1966 à 1969, début avant 20 ans : deux ans et six mois avant
       l'âge légal — 61 ans pour 1967 —, 172 trimestres cotisés.
-    carriere: {naissance: "1967-03-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2028-03", age_debut: 17.75}
+    # Entré au 1er janvier 1985 : 4 trimestres avant la fin de l'année de ses
+    # 18 ans, et non 5, qui ouvriraient la borne d'un début avant 18 ans. Entré
+    # en décembre 1984 (17,75 ans), le salaire de ce mois valide déjà un
+    # trimestre (R. 351-9), et le départ s'ouvre plus tôt.
+    carriere: {naissance: "1967-03-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2028-03", debut: "1985-01"}
     attendu: {trimestres_requis: 172, motif_ouverture: carriere_longue, non_ouverte_un_trimestre_plus_tot: true}
 
   - id: cnav_2026_29_racl_1970
@@ -794,7 +807,9 @@ exemples:
     enonce: >-
       Nés en 1970, début avant 20 ans : 61 ans et 9 mois, 172 trimestres
       cotisés.
-    carriere: {naissance: "1970-03-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2031-12", age_debut: 17.75}
+    # Entré au 1er janvier 1988 : 4 trimestres avant la fin de l'année de ses
+    # 18 ans, et non 5 (voir cnav_2026_29_racl_1967).
+    carriere: {naissance: "1970-03-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2031-12", debut: "1988-01"}
     attendu: {trimestres_requis: 172, motif_ouverture: carriere_longue, non_ouverte_un_trimestre_plus_tot: true}
 
   - id: cnav_2026_29_racl_1971
@@ -802,7 +817,9 @@ exemples:
     enonce: >-
       Nés à compter de 1971, début avant 20 ans : 62 ans, durée du taux
       plein cotisée.
-    carriere: {naissance: "1971-03-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2033-03", age_debut: 17.75}
+    # Entré au 1er janvier 1989 : 4 trimestres avant la fin de l'année de ses
+    # 18 ans, et non 5 (voir cnav_2026_29_racl_1967).
+    carriere: {naissance: "1971-03-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2033-03", debut: "1989-01"}
     attendu: {trimestres_requis: 172, motif_ouverture: carriere_longue, non_ouverte_un_trimestre_plus_tot: true}
 
   # ---- Cnav, circulaire 2018-04 du 1er février 2018 (surcote) ------------
@@ -1067,7 +1084,10 @@ exemples:
       Même règle sur une carrière incomplète : la majoration est de 10 % de la
       retraite telle qu'elle est servie, donc de la retraite MINORÉE. Ici 155
       trimestres pour 169 requis, taux 41,25 %.
-    carriere: {naissance: "1962-05", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2025-05", age_debut: 30, nombre_enfants: 3}
+    # Les 155 trimestres publiés, majoration pour enfants comprise : la
+    # recherche les atteint. Entrée à 30 ans (mai 1992), l'année d'entrée
+    # vaut 4 trimestres au salaire qu'elle porte (R. 351-9), et la carrière 157.
+    carriere: {naissance: "1962-05", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2025-05", trimestres_valides: 155, nombre_enfants: 3}
     attendu: {taux_liquidation: 0.4125, majoration_enfants_sur_pensions: 0.10}
 
   # ---- Service des retraites de l'État -----------------------------------
@@ -2635,7 +2655,10 @@ exemples:
       décembre, l'assuré part au 1er septembre 2026, premier mois du décret du
       7 mai 2026. Le modèle le renvoyait au 1er octobre : il lisait la date
       d'effet sans l'arrondi de la table, et comparait 60,666… à 60,67.
-    carriere: {naissance: "1965-12-15", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2026-09", debut: "1983-10"}
+    # Entré en décembre 1983 : le salaire du mois valide 1 trimestre en 1983
+    # (R. 351-9), 171 en tout ; entré en octobre, l'année en vaudrait 4, assez
+    # pour la borne d'un début avant 18 ans (4 trimestres, né en décembre).
+    carriere: {naissance: "1965-12-15", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2026-09", debut: "1983-12"}
     attendu: {date_effet_au_plus_tot: "2026-09", trimestres_requis: 171, motif_ouverture: carriere_longue, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
 
   - id: ur_reversion_prive_63_ans

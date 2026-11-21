@@ -106,9 +106,13 @@ def test_sans_ressources_dites_rien(saisies):
 
 def test_les_ressources_du_conjoint_s_en_retranchent_et_la_duree_la_proratise(saisies):
     """Parti en 2008 avec 130 trimestres au régime général, qui en proratise
-    154 : 609,80 × 130/154, moins les 100 € que le conjoint déclare."""
-    _, comparaison = _simuler(saisies, naissance="1945-03-15", debut="1975-09",
-                              liquidation="2008-04", conjoint="1943",
+    154 : 609,80 × 130/154, moins les 100 € que le conjoint déclare. Entré en
+    décembre 1975 à 0,9 fois le salaire moyen, il gagne cette année-là 373 €,
+    qui valent un trimestre de 200 heures au SMIC du 1er janvier 1975,
+    1,029031 € (R. 351-9 CSS : 373 / 205,81 = 1,8) ; puis 128 de 1976 à 2007,
+    et un en 2008."""
+    _, comparaison = _simuler(saisies, naissance="1945-03-15", debut="1975-12",
+                              salaire="0.9", liquidation="2008-04", conjoint="1943",
                               ressources_conjoint="100")
     assert "× 130/154" in _general(comparaison).detail
     assert _majoration(comparaison).montant == pytest.approx(609.80 * 130 / 154 - 100)

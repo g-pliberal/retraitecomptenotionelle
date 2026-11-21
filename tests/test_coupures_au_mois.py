@@ -150,11 +150,15 @@ def test_le_racl_rejoint_l_ircec_le_16_mai_2025(simulateur):
     """Parti à soixante-deux ans et neuf mois, sans sa durée : la pension du 1er
     mai 2025 perd encore 5 % par année entamée jusqu'à soixante-sept ans, 25 % ;
     celle du 1er juin prend les coefficients du régime de base, plus favorables,
-    trois trimestres à 1,25 %."""
-    effet, _, pensions = _calculer(simulateur, "auteur_lyrique", 1962, 7, 62.75, 21.0)
+    trois trimestres à 1,25 %. Né en août 1962 et entré à vingt et un ans et
+    quatre mois, en décembre 1983, il gagne cette année-là 917 €, qui valent un
+    trimestre de 200 heures au SMIC du 1er janvier 1983, 3,093191 € (R. 351-9
+    CSS : 917 / 618,64 = 1,5) ; puis 164 de 1984 à 2024 et un en 2025 : 166
+    des 169 de sa génération."""
+    effet, _, pensions = _calculer(simulateur, "auteur_lyrique", 1962, 7, 62.75, 21 + 4 / 12)
     assert effet == "2025-05-01"
     assert _coefficient(pensions["ircec_racl"].detail) == pytest.approx(0.75)
-    effet, _, pensions = _calculer(simulateur, "auteur_lyrique", 1962, 8, 62.75, 21.0)
+    effet, _, pensions = _calculer(simulateur, "auteur_lyrique", 1962, 8, 62.75, 21 + 4 / 12)
     assert effet == "2025-06-01"
     assert _coefficient(pensions["ircec_racl"].detail) == pytest.approx(0.9625)
 

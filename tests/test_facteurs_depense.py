@@ -516,13 +516,19 @@ def test_lue_sur_la_duree_validee_l_entree_recule_plus_chez_les_hommes():
     assert decalage_par_la_duree(durees, "H", 2000, 1960) == 2.25
 
 
-def test_entre_selon_sa_duree_validee_le_salarie_de_1966_part_trois_mois_plus_tard():
+def test_entre_selon_sa_duree_validee_le_salarie_de_1966_part_un_an_plus_tard():
     """Né en 1966, un homme avait validé à 51 ans 5,2 trimestres de moins que
     celui de 1960 (111,5 et 116,7) : entré un an et quart plus tard, et non un
     an comme son premier trimestre cotisé le dit, le salarié au salaire moyen
-    part quinze mois après la date de la grille, et non douze, la grille
-    comptant ses trimestres depuis le mois de son entrée (172 trimestres,
-    L. 161-17-3). Le militaire, qui part après ses services, garde sa date."""
+    part pourtant douze mois après la date de la grille, comme entré un an
+    plus tard : entré en octobre, ses trois mois de salaire valident les
+    quatre trimestres de l'année (R. 351-9 CSS, « avec un maximum de quatre
+    trimestres par année civile », sans condition de mois), et le trimestre de
+    plus ne lui en coûte aucun (172 trimestres, L. 161-17-3). Les deux
+    lectures se séparent encore à la génération 1965 (décalage 0) : entré un
+    an plus tard selon sa durée, il part douze mois après la grille ; trois
+    trimestres plus tard selon son premier trimestre, en octobre, à sa date.
+    Le militaire, qui part après ses services, garde sa date."""
     from retraite_notionnelle import Parametres
     from retraite_notionnelle.castypes import GRILLE_DU_COUT
     from retraite_notionnelle.facteurs_depense import dates_des_departs, durees_validees
@@ -533,7 +539,11 @@ def test_entre_selon_sa_duree_validee_le_salarie_de_1966_part_trois_mois_plus_ta
     grille = dates_des_departs(parametres, cas_types=cas, generations=(1965,))
     duree = dates_des_departs(parametres, entree_depuis=1960, cas_types=cas,
                               generations=(1965,), durees=durees)
-    assert duree[("salaire_moyen", 1965, 1)].rang - grille[("salaire_moyen", 1965, 1)].rang == 15
+    premier = dates_des_departs(parametres, entree_depuis=1960, cas_types=cas,
+                                generations=(1965,))
+    assert duree[("salaire_moyen", 1965, 0)].rang - grille[("salaire_moyen", 1965, 0)].rang == 12
+    assert premier[("salaire_moyen", 1965, 0)] == grille[("salaire_moyen", 1965, 0)]
+    assert duree[("salaire_moyen", 1965, 1)].rang - grille[("salaire_moyen", 1965, 1)].rang == 12
     assert all(duree[("militaire", 1965, decalage)] == grille[("militaire", 1965, decalage)]
                for decalage in range(-2, 3))
 

@@ -369,6 +369,14 @@ sources:
       et « cette activité ne lui ouvre pas de droit au régime général » (circulaire Cnav
       2016/15 du 18 février 2016)
     date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      R. 351-9 CSS, ses trois rédactions, de 1985, 2014 et 2026, lues dans l'index LEGI : «
+      autant de trimestres que le salaire annuel [...] représente de fois » le SMIC de
+      200 heures, de 150 depuis 2014, « avec un maximum de quatre trimestres par année
+      civile », sans condition de mois d'activité. Les régimes où le revenu dit ainsi
+      les trimestres, et leurs textes, sont à la fiche `trimestres_au_revenu`
+    date: 2026-11-21
 textes_a_rattacher:
 - reference: R. 351-9 CSS
 - reference: R. 351-5 CSS
@@ -520,14 +528,17 @@ code:
     `coordonner.regimes_de` lit).
     `DonneesMacro.trimestres_valides` valide les trimestres d'une ligne sur son revenu,
     un par seuil de deux cents heures de SMIC depuis 1972, de cent cinquante depuis 2014
-    (`DonneesMacro.seuil_d_un_trimestre`), quatre au plus ;
-    `Carriere.trimestres_ecoules` les borne aux trimestres civils des mois que la ligne
-    couvre avant le départ. `Carriere.trimestres_par_annee` borne la durée tous régimes
-    à quatre trimestres par année civile, ceux de l'activité qui en couvre le plus
-    (`Carriere._plafonds_trimestres`), et `Carriere.trimestres_cumules` en fait la
-    somme.
+    (`DonneesMacro.seuil_d_un_trimestre`), quatre au plus, sans regarder les mois de
+    l'année dans les régimes où le revenu les dit (fiche `trimestres_au_revenu`,
+    `plafondDeLAnneeDEmploi` : R. 351-9, D. 634-1) ; ailleurs, et l'année du
+    départ partout (R. 351-1), `Carriere.trimestres_ecoules` les borne aux trimestres
+    civils des mois que la ligne couvre avant le départ. `Carriere.trimestres_par_annee`
+    borne la durée tous régimes à quatre trimestres par année civile, l'année du départ
+    à ceux de l'activité qui en couvre le plus (`Carriere._plafonds_trimestres`), et
+    `Carriere.trimestres_cumules` en fait la somme.
   javascript: >-
-    moteur/js/carriere.js : lignesDuParcours, Carriere.trimestresParAnnee,
+    moteur/js/carriere.js : lignesDuParcours, plafondDeLAnneeDEmploi,
+    FICHE_DES_TRIMESTRES_AU_REVENU, Carriere.trimestresParAnnee,
     Carriere.trimestresCumules, Carriere.trimestresEcoules ; moteur/js/macro.js :
     DonneesMacro.trimestresValides, DonneesMacro.seuilDUnTrimestre ;
     moteur/js/droit/coordonner.js : ecarterLesAccessoires, regimesDe

@@ -442,7 +442,7 @@ def _pension(actuel, regime):
 
 
 #: Né en mars 1962, entré dans la vie active en France en septembre 1990,
-#: parti à soixante-quatre ans : 142 trimestres en France, 169 requis.
+#: parti à soixante-quatre ans : 145 trimestres en France, 169 requis.
 NE_EN_1962 = {"naissance": "1962-03-15", "debut": "1990-09", "liquidation": "2026-04"}
 #: Dix ans et demi au Maroc avant d'arriver en France.
 AU_MAROC = {"etranger1_pays": "MA", "etranger1_debut": "1980-01", "etranger1_fin": "1990-09"}
@@ -450,16 +450,18 @@ AU_MAROC = {"etranger1_pays": "MA", "etranger1_debut": "1980-01", "etranger1_fin
 
 def test_les_periodes_d_un_accord_comptent_pour_le_taux_et_non_pour_la_duree(saisies):
     """La convention franco-marocaine de 2007 fait compter les dix ans et
-    demi du Maroc : 43 trimestres, qui portent la durée tous régimes de 142 à
-    185, au-delà des 169 requis — le taux plein, la surcote des six trimestres
-    travaillés en France après l'âge légal, et l'Agirc-Arrco sans coefficient.
-    La pension reste proratisée sur les 142 trimestres français."""
+    demi du Maroc : 40 trimestres, de 1980 à 1989, qui portent la durée tous
+    régimes de 145 à 185, au-delà des 169 requis — le taux plein, la surcote
+    des six trimestres travaillés en France après l'âge légal, et l'Agirc-Arrco
+    sans coefficient. Les quatre mois de salaire français de 1990 en valident
+    déjà quatre (R. 351-9), que le Maroc ne dépasse pas (R. 351-5). La pension
+    reste proratisée sur les 145 trimestres français."""
     francais = _actuel(saisies, **NE_EN_1962)
     totalisee = _actuel(saisies, **NE_EN_1962, **AU_MAROC)
-    assert (francais.trimestres_valides, francais.trimestres_etrangers) == (142, 0)
-    assert (totalisee.trimestres_valides, totalisee.trimestres_etrangers) == (185, 43)
-    assert "taux 42.500% × 142/169" in _pension(francais, "regime_general").detail
-    assert "taux 53.750% × 142/169" in _pension(totalisee, "regime_general").detail
+    assert (francais.trimestres_valides, francais.trimestres_etrangers) == (145, 0)
+    assert (totalisee.trimestres_valides, totalisee.trimestres_etrangers) == (185, 40)
+    assert "taux 42.500% × 145/169" in _pension(francais, "regime_general").detail
+    assert "taux 53.750% × 145/169" in _pension(totalisee, "regime_general").detail
     assert "coefficient d'anticipation" in _pension(francais, "agirc_arrco").detail
     assert "coefficient" not in _pension(totalisee, "agirc_arrco").detail
 
@@ -474,7 +476,8 @@ def test_une_convention_qui_ne_vise_que_les_salaries(saisies):
     salariee = _actuel(saisies, **NE_EN_1962, **algerie)
     non_salariee = _actuel(saisies, **NE_EN_1962, **algerie, etranger1_activite="non_salariee")
     autre = _actuel(saisies, **NE_EN_1962, **{**algerie, "etranger1_pays": "autre"})
-    assert salariee.trimestres_etrangers == 43
+    # 40 : les quatre mois de salaire français de 1990 en valident déjà quatre.
+    assert salariee.trimestres_etrangers == 40
     assert non_salariee.trimestres_etrangers == autre.trimestres_etrangers == 13
 
 
@@ -507,14 +510,15 @@ def _trimestres_etrangers(simulateur, carriere) -> dict[str, dict[int, tuple[int
 
 def test_l_annee_ne_depasse_pas_quatre_trimestres(saisies, simulateur):
     """Les périodes étrangères complètent celles de la carrière française sans
-    s'y superposer (R. 351-5) : huit mois au Maroc en 1990, l'année où la
-    carrière française commence en septembre, n'en apportent que trois ; le
-    trimestre de l'année du départ, au plus les trimestres civils écoulés."""
+    s'y superposer (R. 351-5) : onze mois au Maroc en 1990, l'année où la
+    carrière française commence en décembre et valide un trimestre par son
+    salaire (R. 351-9), n'en apportent que trois ; le trimestre de l'année du
+    départ, au plus les trimestres civils écoulés."""
     carriere = Carriere.depuis_parcours(
         annee_naissance=1962, sexe="H", mois_naissance=3,
-        metiers=[Metier("salarie_prive_non_cadre", 28.5)], age_liquidation=64.0,
+        metiers=[Metier("salarie_prive_non_cadre", 28.75)], age_liquidation=64.0,
         macro=simulateur.macro,
-        etranger={"periodes": [{"pays": "MA", "debut": 18.0, "fin": 28.5,
+        etranger={"periodes": [{"pays": "MA", "debut": 18.0, "fin": 28.75,
                                 "activite": "salariee"}],
                   "pensions": [], "residence": None})
     trimestres = _trimestres_etrangers(simulateur, carriere)
@@ -590,12 +594,14 @@ def test_les_etapes_disent_ce_que_la_coordination_fait_des_periodes(simulateur):
         erreurs = [c for c in contrats.Validateur(etape, contrats.ETAPES).valider(valeur, objet)
                    if c.genre == "erreur"]
         assert erreurs == [], erreurs
-    # Les 43 trimestres du Maroc et de l'Allemagne s'ajoutent à la durée du
-    # taux de la famille des régimes de la carrière, le régime général.
+    # Les trimestres du Maroc et de l'Allemagne s'ajoutent à la durée du taux
+    # de la famille des régimes de la carrière, le régime général : 40, de
+    # 1980 à 1989, les quatre mois de salaire français de 1990 en validant
+    # déjà quatre (R. 351-9), que l'Allemagne ne dépasse pas (R. 351-5).
     etranger = durees.donnees()["etranger"]
     assert etranger["famille"] == "regime_general"
     assert sum(ligne["trimestres"] for ligne in etranger["trimestres"]
-               if ligne["famille"] == "regime_general") == 43
+               if ligne["famille"] == "regime_general") == 40
 
 
 # -- le moteur : la pension proratisée, la pension nationale, et leur minimum ------
@@ -902,8 +908,9 @@ def test_la_caisse_ne_totalise_qu_un_accord_a_la_fois(saisies):
     seule, celle qui lui en apporte le plus (CLEISS) — 33 trimestres, les
     mois de 1979 et de 1987 arrondis au trimestre supérieur. Les mêmes années
     en Espagne et en Tunisie s'additionnent, l'année 1987 ramenée à quatre
-    trimestres : l'accord franco-tunisien fait compter l'Espagne, liée aux
-    deux États."""
+    trimestres, et 1990, que les quatre mois de salaire français remplissent
+    (R. 351-9), à aucun : l'accord franco-tunisien fait compter l'Espagne,
+    liée aux deux États."""
     deux = {**NE_EN_1962, "etranger1_pays": "DZ", "etranger1_debut": "1979-09",
             "etranger1_fin": "1987-09", "etranger2_pays": "MC", "etranger2_debut": "1987-09",
             "etranger2_fin": "1990-09"}
@@ -912,7 +919,7 @@ def test_la_caisse_ne_totalise_qu_un_accord_a_la_fois(saisies):
     assert _actuel(saisies, **deux).trimestres_etrangers == algerie.trimestres_etrangers == 33
     espagne_tunisie = _actuel(saisies, **{**deux, "etranger1_pays": "ES",
                                            "etranger2_pays": "TN"})
-    assert espagne_tunisie.trimestres_etrangers == 33 + 13 - 1
+    assert espagne_tunisie.trimestres_etrangers == 33 + 10 - 1
 
 
 #: Né en janvier 1949, parti en juillet 2009 : dix-huit ans et demi en Allemagne,

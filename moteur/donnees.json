@@ -28935,6 +28935,15 @@ null
 {"bornes":{"liquidation.date_effet":["1983-04-01",null]},"exception_de":null,"id":"sans_objet_depuis_1983","parametres":{"existe":false},"texte":"LEGIARTI000006742632"}
 ]
 },
+"trimestres_au_revenu":{
+"dates_qui_decident":["revenu.annee"],
+"id":"trimestres_au_revenu",
+"versions":[
+{"bornes":{"revenu.annee":[null,"1946-01-01"]},"exception_de":null,"id":"avant_1946","parametres":{"regimes":[]},"texte":"LEGIARTI000006749353"},
+{"bornes":{"revenu.annee":["1946-01-01",null]},"exception_de":null,"id":"salaries_1946","parametres":{"regimes":["regime_general","msa_salaries"]},"texte":"LEGIARTI000006749353"},
+{"bornes":{"revenu.annee":["1973-01-01",null]},"exception_de":"salaries_1946","id":"artisans_et_commercants_1973","parametres":{"regimes":["regime_general","msa_salaries","cancava","organic","rsi"]},"texte":"LEGIARTI000006737960"}
+]
+},
 "versement_forfaitaire_unique":{
 "dates_qui_decident":["liquidation.date_effet"],
 "id":"versement_forfaitaire_unique",

@@ -74,8 +74,12 @@ def test_soixante_trimestres_ouvrent_le_minimum_entier(simulateur, affiliation, 
 
 
 def test_sous_soixante_trimestres_le_minimum_se_reduit_en_soixantiemes(simulateur):
-    """Vingt-huit trimestres en avril 1981 : 28/60 des 8 500 F."""
-    effet, _, pensions, minimum = _calculer(simulateur, 1916, 65.0, 58.0, 0.5)
+    """Vingt-huit trimestres en avril 1981 : 28/60 des 8 500 F. Entré en
+    octobre 1974 au demi-salaire moyen, il gagne cette année-là 604 €, qui
+    valent trois trimestres de 200 heures au SMIC du 1er janvier 1974,
+    0,827798 € (R. 351-9 CSS : 604 / 165,56 = 3,6) ; puis 24 de 1975 à 1980,
+    et un en 1981."""
+    effet, _, pensions, minimum = _calculer(simulateur, 1916, 65.0, 58 + 7 / 12, 0.5)
     assert effet == "1981-04-01"
     assert pensions["regime_general"].montant == pytest.approx(
         AVTS_JANVIER_1981 * 28 / 60, abs=0.01)
@@ -100,8 +104,12 @@ def test_l_artisan_et_le_commercant_au_titre_de_leurs_periodes_d_apres_1972(
         simulateur, affiliation, regime):
     """Vingt-huit trimestres, tous d'après 1972, liquidés en avril 1981 : le
     minimum de base en soixantièmes, comme au régime général (décret
-    n° 73-937, article 7)."""
-    effet, _, pensions, minimum = _calculer(simulateur, 1916, 65.0, 58.0, 0.3, affiliation)
+    n° 73-937, article 7). Entré en août 1974 à 0,3 fois le salaire moyen, il
+    a cette année-là 604 € de revenu, qui valent trois trimestres de 200
+    heures au SMIC du 1er janvier 1974, 0,827798 € (décret n° 73-937,
+    article 2 : 604 / 165,56 = 3,6) ; puis 24 de 1975 à 1980, et un en 1981."""
+    effet, _, pensions, minimum = _calculer(simulateur, 1916, 65.0, 58 + 5 / 12, 0.3,
+                                            affiliation)
     assert effet == "1981-04-01"
     assert pensions[regime].montant == pytest.approx(AVTS_JANVIER_1981 * 28 / 60, abs=0.01)
     assert minimum is not None and minimum.par_regime[0][0] == regime

@@ -16,6 +16,7 @@
 
 import * as chrono from "./chronologie.js";
 import { preparer } from "./droit/preparer.js";
+import { FichesDatees } from "./regimes.js";
 import { ANNEE_AVPF_DES_HOMMES, DEPARTEMENTS_D_OUTRE_MER } from "./macro.js";
 import {
   MOIS_PAR_AN,
@@ -649,6 +650,54 @@ export function forfaitMicro(macro, micro, annee) {
   return [entree.regimes, entree.taux[String(Math.min(annee, Math.max(...annees)))]];
 }
 
+/**
+ * La fiche des régimes de base où le REVENU de l'année, et lui seul, dit ses
+ * trimestres : « autant de trimestres que le salaire annuel [...] représente
+ * de fois » son seuil, « avec un maximum de quatre trimestres par année
+ * civile », sans regarder les mois d'activité (R. 351-9 ; R. 742-21 du code
+ * rural ; D. 634-1 ; D. 643-3). Sa version de l'année de la ligne en nomme
+ * les régimes ; ailleurs, les mois de l'année bornent ses trimestres civils.
+ */
+export const FICHE_DES_TRIMESTRES_AU_REVENU = "trimestres_au_revenu";
+
+const fichesParPaquet = new WeakMap();
+
+/**
+ * Les trimestres qu'une année d'emploi sous `affiliation` peut valider, qui
+ * a travaillé `mois` mois de l'année et part en `depart` : quatre, au régime
+ * général et dans ceux qui le suivent (`FICHE_DES_TRIMESTRES_AU_REVENU`), et, l'année du
+ * départ, les trimestres civils écoulés avant la date d'effet (R. 351-1 : les
+ * cotisations « arrêtées au dernier jour du trimestre civil précédant » la
+ * date d'effet) ; les trimestres civils de ses mois ailleurs.
+ */
+export function plafondDeLAnneeDEmploi(paquet, affiliation, annee, mois, depart) {
+  if (!valideAuSalaire(paquet, affiliation, annee)) {
+    return trimestresCivils(mois);
+  }
+  return annee < depart.annee ? 4 : trimestresCivils(depart.mois - 1);
+}
+
+function valideAuSalaire(paquet, affiliation, annee) {
+  const profil = propre(paquet.affiliations ?? {}, affiliation);
+  const periodes = (profil?.periodes ?? []).filter(
+    (p) => p.debut <= annee && (p.fin === null || p.fin === undefined || annee <= p.fin));
+  // Un statut dont le régime de l'année dépend de l'entrée (la Banque de
+  // France, la RATP, les IEG en 2023) garde ses mois s'il en est un qui ne
+  // valide pas au salaire.
+  if (!fichesParPaquet.has(paquet)) {
+    fichesParPaquet.set(paquet, new FichesDatees(paquet));
+  }
+  const version = fichesParPaquet.get(paquet).versionAuxDates(
+    FICHE_DES_TRIMESTRES_AU_REVENU, { "revenu.annee": `${annee}-01-01` });
+  if (version === null) {
+    throw new Error(`${FICHE_DES_TRIMESTRES_AU_REVENU} : la fiche manque au paquet `
+      + `(fiches_datees), ou n'a pas de version pour ${annee}`);
+  }
+  const auRevenu = new Set(version.parametres.regimes);
+  return periodes.length > 0 && periodes.every(
+    (p) => (p.regimes ?? []).some((r) => auRevenu.has(r)));
+}
+
 function ligneAnnuelle({
   annee,
   revenu,
@@ -753,9 +802,10 @@ function ligneAnnuelle({
     // Un trimestre s'acquiert par un montant cotisé — 150 fois le SMIC horaire
     // depuis 2014, 200 avant. Les périodes assimilées en valident quatre sans
     // condition de montant : c'est tout leur objet.
-    // Le montant commande le nombre de trimestres, les mois en commandent le
-    // plafond : on ne valide pas quatre trimestres en sept mois, si gros que
-    // soit le salaire.
+    // Le montant commande le nombre de trimestres, au plus quatre (R. 351-9) ;
+    // l'année du départ, les trimestres civils écoulés avant la date d'effet
+    // (R. 351-1) ; hors des régimes au revenu, ceux des mois de l'année
+    // (`plafondDeLAnneeDEmploi`).
     trimestres_valides: Math.min(trimestresMaximum, trimestres),
     assiette_minimale_base: minimale,
     dispense_assiette_minimale: dispenseRetenue,
@@ -1904,9 +1954,10 @@ export class Carriere {
   }
 
   /**
-   * Trimestres civils que cette année peut valider, toutes activités
-   * confondues : ceux de l'activité qui en couvre le plus. Quatre pour une
-   * année pleine.
+   * Trimestres que cette année peut valider, toutes activités confondues :
+   * quatre avant l'année du départ, chaque ligne portant déjà sa borne
+   * (`plafondDeLAnneeDEmploi`) ; l'année du départ, les trimestres civils de
+   * l'activité qui en couvre le plus.
    */
   plafondTrimestres(annee) {
     if (this._plafonds === null) {
@@ -1915,7 +1966,7 @@ export class Carriere {
         const part = this.partRetenueLigne(ligne);
         this._plafonds.set(ligne.annee, Math.max(
           this._plafonds.get(ligne.annee) ?? 0,
-          this.anneeEntiereAgricole(ligne) ? 4
+          this.anneeEntiereAgricole(ligne) || (part > 0 && this.avantLeDepart(ligne)) ? 4
             : part > 0 ? trimestresCivils(Math.round(part * 12)) : 0,
         ));
       }
@@ -2156,8 +2207,20 @@ export class Carriere {
     if (part <= 0 || this.statutPrisApresLe1erJanvier(ligne)) {
       return 0;
     }
+    // Avant l'année du départ, la ligne porte déjà sa borne : quatre au
+    // régime général, que son revenu remplit (R. 351-9), les trimestres
+    // civils de ses mois ailleurs (`plafondDeLAnneeDEmploi`).
+    if (this.avantLeDepart(ligne)) {
+      return ligne.trimestres_valides;
+    }
     return Math.min(ligne.trimestres_valides,
                     trimestresCivils(Math.round(part * 12)));
+  }
+
+  /** La ligne est-elle d'une année antérieure à celle du départ ? */
+  avantLeDepart(ligne) {
+    return this.age_liquidation !== null && this.age_liquidation !== undefined
+      && ligne.annee < this.anneeLiquidation;
   }
 
   /**
@@ -2629,7 +2692,7 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
   const lignes = [];
   for (const annee of annees) {
     const part = fractionAnnee(annee, debut, fin);
-    const trimestresMaximum = trimestresCivils(moisTravailles(annee, debut, fin));
+    const moisDeLAnnee = moisTravailles(annee, debut, fin);
     // Le profil se lit MÉTIER PAR MÉTIER : l'affiliation peut changer en
     // cours de carrière, et c'est elle qui le choisit.
     const ageAnnee = annee - anneeNaissance;
@@ -2671,7 +2734,10 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
       macro,
       part,
       part_primes: principal.part_primes,
-      trimestresMaximum,
+      // Une année d'emploi vaut ce que son salaire vaut, au plus quatre
+      // trimestres (R. 351-9) ; une interruption, ses trimestres civils.
+      trimestresMaximum: plages.has(annee) ? trimestresCivils(moisDeLAnnee)
+        : plafondDeLAnneeDEmploi(macro.paquet, principal.affiliation, annee, moisDeLAnnee, fin),
       quotite,
       micro: principal.micro ?? "",
       maladieHorsRsi: principal.maladie_hors_rsi ?? false,
@@ -2708,7 +2774,8 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
         macro,
         part: fractionAnnee(annee, ouverture, cloture),
         part_primes: metier.part_primes,
-        trimestresMaximum: trimestresCivils(mois),
+        trimestresMaximum: plafondDeLAnneeDEmploi(macro.paquet, metier.affiliation, annee,
+          mois, fin),
         micro: metier.micro ?? "",
         maladieHorsRsi: metier.maladie_hors_rsi ?? false,
         dispense: metier.dispense_assiette_minimale ?? "",

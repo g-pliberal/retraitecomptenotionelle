@@ -82,11 +82,14 @@ def test_l_exemple_2_de_la_circulaire_part_a_soixante_ans(simulateur):
     […] A sa demande, elle peut obtenir une RACL à effet du 1/11/2023, à
     60 ans. La retraite sera calculée au taux plein. La durée de proratisation
     sera égale à 170/170. » La rédaction de 2023 lui demande soixante ans et
-    trois mois, et 170 trimestres cotisés."""
+    trois mois, et 170 trimestres cotisés. Entrée en novembre 1981 à 0,6 fois
+    le salaire moyen, elle gagne cette année-là 1 074 €, qui valent deux
+    trimestres de 200 heures au SMIC du 1er janvier 1981, 2,254721 € (R. 351-9
+    CSS : 1 074 / 450,94 = 2,4) ; puis quatre par an de 1982 à 2022."""
     carriere, resultat = _liquide(
-        simulateur, sexe="F", enfants="1", naissance="1963-10-13", debut="1981-07",
-        liquidation="2023-11")
-    # 168 au 30 juin 2023, et le troisième trimestre civil de 2023.
+        simulateur, sexe="F", enfants="1", salaire="0.6", naissance="1963-10-13",
+        debut="1981-11", liquidation="2023-11")
+    # 2 + 164 + 2 = 168 au 30 juin 2023, et le troisième trimestre civil de 2023.
     assert facade.trimestres_actuels(carriere) == 169
     assert resultat.motif_ouverture == "carriere_longue"
     assert resultat.age_ouverture_opposable == 60.0
@@ -114,9 +117,12 @@ def test_la_clause_ne_garde_rien_a_qui_est_ne_apres_1963(simulateur):
     née le 15 janvier 1964, elle a en août 2023 les 169 trimestres que la
     rédaction d'avant demandait à sa génération pour partir à soixante ans.
     Celle de 2023 lui en demande 171, à soixante ans et six mois : en février
-    2024, à soixante ans, son droit n'est pas ouvert."""
+    2024, à soixante ans, son droit n'est pas ouvert. Entrée en décembre 1980
+    à 0,6 fois le salaire moyen, elle gagne cette année-là 473 €, qui valent
+    un trimestre de 200 heures au SMIC du 1er janvier 1980, 1,971166 €
+    (R. 351-9 CSS : 473 / 394,23 = 1,2) ; puis quatre par an de 1981 à 2022."""
     carriere, resultat = _liquide(
-        simulateur, sexe="F", naissance="1964-01-15", debut="1980-10",
+        simulateur, sexe="F", salaire="0.6", naissance="1964-01-15", debut="1980-12",
         liquidation="2024-02", interruptions="2023:2023:sans_activite")
     assert facade.trimestres_actuels(carriere) == 169
     assert resultat.motif_ouverture == "non_ouverte"
@@ -146,12 +152,16 @@ def test_le_regime_qui_attend_ne_garde_la_date_d_avant_qu_aux_generations_de_la_
     âge légal : soixante-deux ans et neuf mois pour une pension prenant effet
     à compter du 1er septembre 2026 (L. 161-17-2, loi n° 2025-1403), atteints
     le 15 octobre 2026, soit le 1er novembre 2026 — et non le 1er février
-    2024, ses soixante ans de la rédaction d'avant."""
+    2024, ses soixante ans de la rédaction d'avant. Entrée en novembre 1981
+    au salaire moyen, elle gagne cette année-là 1 791 €, qui valent trois
+    trimestres de 200 heures au SMIC du 1er janvier 1981, 2,254721 €
+    (R. 351-9 CSS : 1 791 / 450,94 = 3,97) ; puis 164 de 1982 à 2022, et deux
+    en 2023 avant la date d'effet."""
     carriere = Saisies().carriere({
         "sexe": "F", "enfants": "0", "salaire": "1", "unite_revenu": "moyen",
         "profil": "plat", "statut": "salarie_prive_non_cadre",
         "metier2_statut": "fonctionnaire_territorial_hospitalier_actif",
-        "metier2_debut": "1995-01", "naissance": "1964-01-15", "debut": "1981-04",
+        "metier2_debut": "1995-01", "naissance": "1964-01-15", "debut": "1981-11",
         "liquidation": "2023-08"})
     assert facade.trimestres_actuels(carriere) == 169
     lus = [(depart.date, sorted(depart.regimes))

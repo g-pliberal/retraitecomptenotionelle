@@ -768,7 +768,9 @@ class FichesDatees:
     pension, et la carrière longue, que ``CarriereLongue`` du portage lit à la
     date d'effet de la pension, ses portes et ses renvois à l'âge légal, et
     la surcote du régime général, que ``SurcoteBaremes`` du portage lit à la
-    date d'effet de la pension, chaque trimestre au taux de sa date.
+    date d'effet de la pension, chaque trimestre au taux de sa date, et les
+    régimes où le revenu de l'année dit ses trimestres, que
+    ``plafondDeLAnneeDEmploi`` du portage lit à l'année de la ligne.
     """
 
     NOMS = ("salaire_annuel_moyen", "sam_indemnites_de_maternite",
@@ -810,7 +812,7 @@ class FichesDatees:
             "age_legal_par_generation", "carriere_longue_sauvegarde_de_2023",
             "taux_plein_carriere_longue", "points_agricoles_au_revenu_cadastral",
             "age_annulation_decote", "duree_requise_par_generation", "carriere_longue",
-            "surcote_regime_general")
+            "surcote_regime_general", "trimestres_au_revenu")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

@@ -212,7 +212,7 @@ EXCEPTIONS = {
     ("test_facteurs_depense.py",
      "test_lue_sur_la_duree_validee_l_entree_recule_plus_chez_les_hommes"): "rapide",
     ("test_facteurs_depense.py",
-     "test_entre_selon_sa_duree_validee_le_salarie_de_1966_part_trois_mois_plus_tard"): "rapide",
+     "test_entre_selon_sa_duree_validee_le_salarie_de_1966_part_un_an_plus_tard"): "rapide",
     ("test_facteurs_depense.py",
      "test_la_generation_1953_est_partie_decotee_des_l_age_legal_a_9_4_pour_cent"): "rapide",
     ("test_facteurs_depense.py",

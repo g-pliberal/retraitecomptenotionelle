@@ -2186,12 +2186,14 @@ def test_la_carriere_prolongee_se_demande_au_portage(simulateur):
 
 def test_ce_que_la_carriere_compte_se_demande_au_portage(simulateur):
     """Né le 15 mars 1962, entré à vingt et un ans, en mars 1983, parti à
-    soixante-deux en avril 2024 : les trois trimestres que sa première année
-    valide (dix mois), quarante années pleines de 1984 à 2023, et un seul
-    trimestre civil écoulé en 2024, avant la date d'effet. L'exploitant
-    agricole compte les quatre de l'année où il cesse (L. 731-10-1 du code
-    rural), le salarié non. Chaque lecture est celle de la carrière du
-    portage."""
+    soixante-deux en avril 2024 : les quatre trimestres que sa première année
+    valide au salaire (dix mois au salaire moyen passent 4 × 200 heures de
+    SMIC, R. 351-9 CSS, sans condition de mois), quarante années pleines de
+    1984 à 2023, et un seul trimestre civil écoulé en 2024, avant la date
+    d'effet (R. 351-1). L'exploitant agricole, qui ne valide pas au revenu,
+    garde les trois trimestres civils de ses dix mois de 1983, mais compte
+    les quatre de l'année où il cesse (L. 731-10-1 du code rural), le
+    salarié non. Chaque lecture est celle de la carrière du portage."""
     def de(affiliation):
         return simulateur.carriere_simple(
             annee_naissance=1962, mois_naissance=3, jour_naissance=15, sexe="H",
@@ -2201,11 +2203,12 @@ def test_ce_que_la_carriere_compte_se_demande_au_portage(simulateur):
     assert str(salarie.date_liquidation) == "avril 2024"
     retenus = facade.trimestres_retenus(salarie)
     assert [l.annee for l in salarie.lignes] == list(range(1983, 2025))
-    assert retenus == [3] + [4] * 40 + [1]
+    assert retenus == [4] + [4] * 40 + [1]
+    assert facade.trimestres_retenus(exploitant)[0] == 3
     assert facade.trimestres_retenus(exploitant)[-1] == 4
-    assert facade.trimestres_cumules(salarie, salarie.lignes) == 164
-    assert facade.trimestres_cumules(salarie, salarie.lignes[:10]) == 39
-    assert facade.trimestres_actuels(salarie) == 164
+    assert facade.trimestres_cumules(salarie, salarie.lignes) == 165
+    assert facade.trimestres_cumules(salarie, salarie.lignes[:10]) == 40
+    assert facade.trimestres_actuels(salarie) == 165
     assert facade.trimestres_actuels(exploitant) == 167
     assert facade.annee_de_cessation_agricole(salarie) is None
     assert facade.annee_de_cessation_agricole(exploitant) == 2024

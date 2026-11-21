@@ -329,8 +329,9 @@ def test_les_ages_sont_ceux_que_le_droit_oppose(saisies):
 
 def test_une_carriere_qui_ne_valide_plus_n_a_le_taux_plein_qu_a_l_age_d_annulation():
     """Née le 15 janvier 1966 et sans activité de 2026 à 2045, une carrière
-    entrée en juillet 1983 a 42 × 4 + 2 = 170 trimestres — deux trimestres
-    civils en 1983 —, 169 entrée en octobre, des 172 de sa génération, qui
+    entrée en novembre 1983 a 42 × 4 + 2 = 170 trimestres — ses deux mois de
+    1983 au salaire moyen valent plus de 400 heures de SMIC, non 600
+    (R. 351-9) —, 169 entrée en décembre, des 172 de sa génération, qui
     ouvre son droit à 63 ans et 3 mois (L. 161-17-2 et L. 161-17-3, après la
     suspension de la loi n° 2025-1403, article 105), et n'en gagne plus : elle
     n'a le taux plein qu'à l'âge d'annulation de la décote, 67 ans pour les
@@ -340,7 +341,7 @@ def test_une_carriere_qui_ne_valide_plus_n_a_le_taux_plein_qu_a_l_age_d_annulati
     (``PASSES_LIQUIDATION``) : il la disait au taux plein, décotée, à 65 ans
     et 3 mois, et à 66 ans et 3 mois (action 138, étape 14)."""
     requetes = [{"naissance": "1966-01-15", "debut": debut,
-                 "interruptions": "2026:2045:sans_activite"} for debut in ("1983-07", "1983-10")]
+                 "interruptions": "2026:2045:sans_activite"} for debut in ("1983-11", "1983-12")]
     for departs, trimestres in zip(_departs_du_portage(requetes), (170, 169)):
         assert [(depart.quoi, depart.age, depart.trimestres, depart.trimestres_requis)
                 for depart in departs] == [
@@ -369,7 +370,7 @@ def test_une_carriere_qui_ne_valide_plus_part_a_l_age_ou_la_carriere_longue_l_ou
     âge passé 2024, elle la disait atteinte à cet âge même, et la descente du
     pilote, partie des 64 ans que la saisie demande, s'arrêtait à l'âge légal.
     Sous le droit au 31 août 2023, qui ne leur en requiert que 169, les deux
-    carrières entrées en 1983 du test précédent ont de même leur durée cotisée
+    carrières entrées à la fin de 1983 du test précédent ont de même leur durée cotisée
     à 60 ans, que leur début avant vingt ans leur ouvre (D. 351-1-1, rédaction
     du décret du 2 juillet 2012) : la descente s'arrêtait à 61 ans et 3 mois,
     au bout de ses passes, et à 62 ans, l'âge légal (action 138, étape 14)."""
@@ -379,7 +380,7 @@ def test_une_carriere_qui_ne_valide_plus_part_a_l_age_ou_la_carriere_longue_l_ou
         (("legal", "taux_plein"), pytest.approx(60.0), 172, 172, "carriere_longue"),
         (("automatique",), pytest.approx(67.0), 172, 172, "age_legal")]]
     requetes = [{"naissance": "1966-01-15", "debut": debut,
-                 "interruptions": "2026:2045:sans_activite"} for debut in ("1983-07", "1983-10")]
+                 "interruptions": "2026:2045:sans_activite"} for debut in ("1983-11", "1983-12")]
     assert _departs_dits(requetes, "au_31_aout_2023") == [[
         (("legal", "taux_plein"), pytest.approx(60.0), trimestres, 169, "carriere_longue"),
         (("automatique",), pytest.approx(67.0), trimestres, 169, "age_legal")]
@@ -387,9 +388,10 @@ def test_une_carriere_qui_ne_valide_plus_part_a_l_age_ou_la_carriere_longue_l_ou
 
 
 def test_une_carriere_longue_arretee_avec_un_trimestre_de_trop_y_descend_aussi():
-    """Née le 15 janvier 1968, entrée en octobre 1983, à quinze ans et neuf
+    """Née le 15 janvier 1968, entrée en décembre 1983, à quinze ans et onze
     mois, et sans activité depuis 2027, une salariée a validé cinq trimestres
-    avant la fin de l'année de ses seize ans, un en 1983 et quatre en 1984 : la
+    avant la fin de l'année de ses seize ans, un en 1983 — son mois de salaire
+    vaut plus de 200 heures de SMIC, non 400 (R. 351-9) — et quatre en 1984 : la
     carrière longue lui ouvre son départ à 58 ans (D. 351-1-1, version du
     1er septembre 2023) dès qu'elle a les 172 trimestres cotisés de sa
     génération, à la fin de septembre 2026, avant ses 59 ans. Elle en a 173
@@ -399,7 +401,7 @@ def test_une_carriere_longue_arretee_avec_un_trimestre_de_trop_y_descend_aussi()
     liquidée à 61 ans s'ouvre à 60 ans et 9 mois, non à 61 ans (action 138,
     étape 14)."""
     [[(quoi, age, trimestres, requis, motif), _]] = _departs_dits([{
-        "naissance": "1968-01-15", "debut": "1983-10",
+        "naissance": "1968-01-15", "debut": "1983-12",
         "interruptions": "2027:2045:sans_activite"}])
     assert (quoi, trimestres, requis, motif) == (
         ("legal", "taux_plein"), 172, 172, "carriere_longue")

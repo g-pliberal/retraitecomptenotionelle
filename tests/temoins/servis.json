@@ -30,7 +30,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 20595.05724720077,
+    "pension_annuelle": 20728.954700280527,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -46,15 +46,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 31,178.98 € × taux 35.000% × 137/163",
-      "montant": 9171.975535963189,
+      "detail": "SR 31,178.98 € × taux 35.000% × 139/163",
+      "montant": 9305.872989042942,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.35,
     "trimestres_requis": 163,
-    "trimestres_valides": 137
+    "trimestres_valides": 139
    },
    "annee_liquidation": 2011,
    "coefficient_euros_constants": 1.2725330924883567,
@@ -535,7 +535,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 24214.294704792792,
+    "pension_annuelle": 24292.29110208195,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -551,15 +551,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 34,526.41 € × taux 37.500% × 143/166",
-      "montant": 11153.484812349401,
+      "detail": "SR 34,526.41 € × taux 37.500% × 144/166",
+      "montant": 11231.481209638558,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.375,
     "trimestres_requis": 166,
-    "trimestres_valides": 143
+    "trimestres_valides": 144
    },
    "annee_liquidation": 2017,
    "coefficient_euros_constants": 1.2158379841309352,
@@ -1619,7 +1619,7 @@
     "departs": [],
     "liquidation_ouverte": false,
     "motif_ouverture": "non_ouverte",
-    "pension_annuelle": 22672.334249102198,
+    "pension_annuelle": 22748.195426465834,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -1635,15 +1635,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 33,378.92 € × taux 37.500% × 140/165",
-      "montant": 10620.56483090909,
+      "detail": "SR 33,378.92 € × taux 37.500% × 141/165",
+      "montant": 10696.426008272727,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.375,
     "trimestres_requis": 165,
-    "trimestres_valides": 140
+    "trimestres_valides": 141
    },
    "annee_liquidation": 2014,
    "coefficient_euros_constants": 1.2311618753375435,
@@ -2026,7 +2026,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 21776.55929064667,
+    "pension_annuelle": 21847.730551140572,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -2042,15 +2042,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 32,198.86 € × taux 36.250% × 138/164",
-      "montant": 9821.633948158538,
+      "detail": "SR 32,198.86 € × taux 36.250% × 139/164",
+      "montant": 9892.80520865244,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.3625,
     "trimestres_requis": 164,
-    "trimestres_valides": 138
+    "trimestres_valides": 139
    },
    "annee_liquidation": 2012,
    "coefficient_euros_constants": 1.248144351853146,
@@ -2278,7 +2278,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 34331.915110530215,
+    "pension_annuelle": 34541.51867838298,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -2294,15 +2294,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 34,165.38 € × taux 50.000% × 157/163",
-      "montant": 16453.880076441714,
+      "detail": "SR 34,165.38 € × taux 50.000% × 159/163",
+      "montant": 16663.483644294476,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.5,
     "trimestres_requis": 163,
-    "trimestres_valides": 157
+    "trimestres_valides": 159
    },
    "annee_liquidation": 2016,
    "coefficient_euros_constants": 1.2284583824062147,
@@ -2993,7 +2993,7 @@
     ],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 57437.02218661194,
+    "pension_annuelle": 57519.22733934602,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -3027,15 +3027,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 41,906.17 € × taux 39.375% × 131/170 ; servie à partir du 1er décembre 2026, 12,715.13 € de 2026, soit 10,768.88 € de 2019",
-      "montant": 10768.875008164094,
+      "detail": "SR 41,906.17 € × taux 39.375% × 132/170 ; servie à partir du 1er décembre 2026, 12,812.19 € de 2026, soit 10,851.08 € de 2019",
+      "montant": 10851.080160898171,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.555,
     "trimestres_requis": 120,
-    "trimestres_valides": 131
+    "trimestres_valides": 132
    },
    "annee_liquidation": 2019,
    "coefficient_euros_constants": 1.1807298347455704,
@@ -3437,7 +3437,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 2252.939409407436,
+      "montant": 2252.939409407438,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -3445,7 +3445,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 1321.7096531951056,
+      "montant": 1331.0969007343035,
       "par_regime": [
        [
         "agirc_arrco",
@@ -3461,7 +3461,7 @@
        ],
        [
         "regime_general",
-        1051.3717243901374
+        1060.7589719293353
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -3479,7 +3479,7 @@
        ],
        [
         "regime_general",
-        1051.3717243901374
+        1060.7589719293353
        ]
       ]
      }
@@ -3487,7 +3487,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 15268.683913379984,
+    "pension_annuelle": 15371.943636311158,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -3509,15 +3509,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 31,165.66 € × taux 50.000% × 112/166",
-      "montant": 10513.717243901374,
+      "detail": "SR 31,165.66 € × taux 50.000% × 113/166",
+      "montant": 10607.589719293352,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.5,
     "trimestres_requis": 166,
-    "trimestres_valides": 112
+    "trimestres_valides": 113
    },
    "annee_liquidation": 2020,
    "coefficient_euros_constants": 1.175089405598697,
@@ -3764,7 +3764,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 2423.4107098814275,
+      "montant": 2423.410709881413,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -3772,7 +3772,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 2481.241900566578,
+      "montant": 2491.3394451910835,
       "par_regime": [
        [
         "agirc",
@@ -3784,7 +3784,7 @@
        ],
        [
         "regime_general",
-        1171.315176442688
+        1181.4127210671938
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -3798,7 +3798,7 @@
        ],
        [
         "regime_general",
-        1171.315176442688
+        1181.4127210671938
        ]
       ]
      }
@@ -3806,7 +3806,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 73426.51546439178,
+    "pension_annuelle": 73537.58845526134,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -3822,15 +3822,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 33,321.90 € × taux 50.000% × 116/165",
-      "montant": 11713.151764426879,
+      "detail": "SR 33,321.90 € × taux 50.000% × 117/165",
+      "montant": 11814.127210671939,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.5,
     "trimestres_requis": 165,
-    "trimestres_valides": 116
+    "trimestres_valides": 117
    },
    "annee_liquidation": 2018,
    "coefficient_euros_constants": 1.1937887067178565,
@@ -3926,7 +3926,7 @@
     "departs": [],
     "liquidation_ouverte": false,
     "motif_ouverture": "non_ouverte",
-    "pension_annuelle": 23885.708683146953,
+    "pension_annuelle": 23963.70508043611,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -3942,15 +3942,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 34,526.41 € × taux 37.500% × 143/166",
-      "montant": 11153.484812349401,
+      "detail": "SR 34,526.41 € × taux 37.500% × 144/166",
+      "montant": 11231.481209638558,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.375,
     "trimestres_requis": 166,
-    "trimestres_valides": 143
+    "trimestres_valides": 144
    },
    "annee_liquidation": 2017,
    "coefficient_euros_constants": 1.2158379841309352,
@@ -5429,7 +5429,7 @@
     ],
     "taux_liquidation": 0.5,
     "trimestres_requis": 150,
-    "trimestres_valides": 171
+    "trimestres_valides": 173
    },
    "annee_liquidation": 1994,
    "coefficient_euros_constants": 1.6653270208041737,
@@ -6481,7 +6481,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 36238.705255438574,
+    "pension_annuelle": 36347.84901434766,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -6503,15 +6503,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 36,017.44 € × taux 50.000% × 160/165",
-      "montant": 17463.00142545455,
+      "detail": "SR 36,017.44 € × taux 50.000% × 161/165",
+      "montant": 17572.14518436364,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.5,
     "trimestres_requis": 165,
-    "trimestres_valides": 160
+    "trimestres_valides": 161
    },
    "annee_liquidation": 2019,
    "coefficient_euros_constants": 1.1807298347455704,
@@ -7123,7 +7123,7 @@
     ],
     "taux_liquidation": 0.5,
     "trimestres_requis": 150,
-    "trimestres_valides": 172
+    "trimestres_valides": 173
    },
    "annee_liquidation": 1997,
    "coefficient_euros_constants": 1.5838880196043754,
@@ -8653,7 +8653,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 22985.43302129199,
+    "pension_annuelle": 23061.294198655625,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -8669,15 +8669,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 33,378.92 € × taux 37.500% × 140/165",
-      "montant": 10620.56483090909,
+      "detail": "SR 33,378.92 € × taux 37.500% × 141/165",
+      "montant": 10696.426008272727,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.375,
     "trimestres_requis": 165,
-    "trimestres_valides": 140
+    "trimestres_valides": 141
    },
    "annee_liquidation": 2014,
    "coefficient_euros_constants": 1.2311618753375435,
@@ -9931,7 +9931,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "16 trimestres pour 2 enfants, au titre du régime « regime_general »",
-      "montant": 1359.0721495655707,
+      "montant": 1359.0721495655725,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      }
@@ -9939,7 +9939,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 12504.463838533758,
+    "pension_annuelle": 12589.405847881608,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -9955,15 +9955,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 29,899.59 € × taux 46.875% × 108/165",
-      "montant": 9173.737009567614,
+      "detail": "SR 29,899.59 € × taux 46.875% × 109/165",
+      "montant": 9258.679018915464,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.46875,
     "trimestres_requis": 165,
-    "trimestres_valides": 108
+    "trimestres_valides": 109
    },
    "annee_liquidation": 2018,
    "coefficient_euros_constants": 1.1937887067178565,
@@ -10004,7 +10004,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 2174.5154393049143,
+      "montant": 2174.515439304916,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -10012,7 +10012,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 1306.7678830883112,
+      "montant": 1315.8283640854152,
       "par_regime": [
        [
         "arrco",
@@ -10024,7 +10024,7 @@
        ],
        [
         "regime_general",
-        1051.0157956640428
+        1060.0762766611467
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -10038,7 +10038,7 @@
        ],
        [
         "regime_general",
-        1051.0157956640428
+        1060.0762766611467
        ]
       ]
      }
@@ -10046,7 +10046,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 15322.954080745732,
+    "pension_annuelle": 15422.619371713876,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -10062,15 +10062,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 29,899.59 € × taux 50.000% × 116/165",
-      "montant": 10510.157956640427,
+      "detail": "SR 29,899.59 € × taux 50.000% × 117/165",
+      "montant": 10600.762766611466,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.5,
     "trimestres_requis": 165,
-    "trimestres_valides": 116
+    "trimestres_valides": 117
    },
    "annee_liquidation": 2018,
    "coefficient_euros_constants": 1.1937887067178565,
@@ -10528,7 +10528,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 38639.50220811424,
+    "pension_annuelle": 38753.72148618652,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -10550,15 +10550,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 37,920.80 € × taux 50.000% × 163/166",
-      "montant": 18617.742325783132,
+      "detail": "SR 37,920.80 € × taux 50.000% × 164/166",
+      "montant": 18731.961603855423,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.5,
     "trimestres_requis": 166,
-    "trimestres_valides": 163
+    "trimestres_valides": 164
    },
    "annee_liquidation": 2022,
    "coefficient_euros_constants": 1.0987199972772002,
@@ -13165,7 +13165,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 37401.92486986099,
+    "pension_annuelle": 37513.1620808913,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -13187,15 +13187,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 36,708.28 € × taux 50.000% × 162/165",
-      "montant": 18020.428186909096,
+      "detail": "SR 36,708.28 € × taux 50.000% × 163/165",
+      "montant": 18131.6653979394,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.5,
     "trimestres_requis": 165,
-    "trimestres_valides": 162
+    "trimestres_valides": 163
    },
    "annee_liquidation": 2020,
    "coefficient_euros_constants": 1.175089405598697,
@@ -13566,17 +13566,17 @@
     ],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 44955.85906742042,
+    "pension_annuelle": 45643.059026344345,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "SR 57,888.03 € × taux 49.256% × 111/120",
-      "montant": 26374.963089916102,
+      "detail": "SR 57,888.03 € × taux 49.950% × 112/120",
+      "montant": 26987.400375216785,
       "regime": "crpnpac",
       "type_calcul": "annuites"
      },
      {
-      "detail": "SR 0.00 € × taux 37.275% × 111/120",
+      "detail": "SR 0.00 € × taux 37.800% × 112/120",
       "montant": 0.0,
       "regime": "crpnpac_tranche_2",
       "type_calcul": "annuites"
@@ -13594,15 +13594,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 39,740.04 € × taux 39.375% × 111/170 ; servie à partir du 1er décembre 2026, 10,216.99 € de 2026, soit 8,298.66 € de 2014",
-      "montant": 8298.656772179496,
+      "detail": "SR 39,740.04 € × taux 39.375% × 112/170 ; servie à partir du 1er décembre 2026, 10,309.03 € de 2026, soit 8,373.42 € de 2014",
+      "montant": 8373.419445802736,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
-    "taux_liquidation": 0.4925625,
+    "taux_liquidation": 0.49950000000000006,
     "trimestres_requis": 120,
-    "trimestres_valides": 111
+    "trimestres_valides": 112
    },
    "annee_liquidation": 2014,
    "coefficient_euros_constants": 1.2311618753375435,
@@ -14565,7 +14565,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 11282.651187863636,
+    "pension_annuelle": 11361.89028886354,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -14581,15 +14581,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 29,463.55 € × taux 44.375% × 104/165",
-      "montant": 8240.866503990073,
+      "detail": "SR 29,463.55 € × taux 44.375% × 105/165",
+      "montant": 8320.105604989978,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.44375,
     "trimestres_requis": 165,
-    "trimestres_valides": 104
+    "trimestres_valides": 105
    },
    "annee_liquidation": 2017,
    "coefficient_euros_constants": 1.2158379841309352,
@@ -15315,7 +15315,7 @@
     "departs": [],
     "liquidation_ouverte": false,
     "motif_ouverture": "non_ouverte",
-    "pension_annuelle": 21473.43381114908,
+    "pension_annuelle": 21544.60507164298,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -15331,15 +15331,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 32,198.86 € × taux 36.250% × 138/164",
-      "montant": 9821.633948158538,
+      "detail": "SR 32,198.86 € × taux 36.250% × 139/164",
+      "montant": 9892.80520865244,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.3625,
     "trimestres_requis": 164,
-    "trimestres_valides": 138
+    "trimestres_valides": 139
    },
    "annee_liquidation": 2012,
    "coefficient_euros_constants": 1.248144351853146,
@@ -17135,7 +17135,7 @@
     ],
     "taux_liquidation": 0.5,
     "trimestres_requis": 150,
-    "trimestres_valides": 172
+    "trimestres_valides": 173
    },
    "annee_liquidation": 1996,
    "coefficient_euros_constants": 1.6024511871941383,
@@ -18436,7 +18436,7 @@
     "departs": [],
     "liquidation_ouverte": false,
     "motif_ouverture": "non_ouverte",
-    "pension_annuelle": 20304.326734973612,
+    "pension_annuelle": 20438.224188053366,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -18452,15 +18452,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 31,178.98 € × taux 35.000% × 137/163",
-      "montant": 9171.975535963189,
+      "detail": "SR 31,178.98 € × taux 35.000% × 139/163",
+      "montant": 9305.872989042942,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.35,
     "trimestres_requis": 163,
-    "trimestres_valides": 137
+    "trimestres_valides": 139
    },
    "annee_liquidation": 2011,
    "coefficient_euros_constants": 1.2725330924883567,
@@ -18842,7 +18842,7 @@
       "a_charge": [],
       "code": "majoration_duree_assurance",
       "detail": "24 trimestres pour 3 enfants, au titre du régime « regime_general »",
-      "montant": 2035.6636651243098,
+      "montant": 2035.663665124308,
       "par_regime": [],
       "par_regime_sans_anticipation": []
      },
@@ -18850,7 +18850,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 1189.3876935534988,
+      "montant": 1197.8696254915167,
       "par_regime": [
        [
         "arrco",
@@ -18862,7 +18862,7 @@
        ],
        [
         "regime_general",
-        949.9763770580108
+        958.4583089960287
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -18876,7 +18876,7 @@
        ],
        [
         "regime_general",
-        949.9763770580108
+        958.4583089960287
        ]
       ]
      }
@@ -18884,7 +18884,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 13730.93614800717,
+    "pension_annuelle": 13824.237399325364,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -18900,15 +18900,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 29,463.55 € × taux 47.500% × 112/165",
-      "montant": 9499.763770580108,
+      "detail": "SR 29,463.55 € × taux 47.500% × 113/165",
+      "montant": 9584.583089960286,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.475,
     "trimestres_requis": 165,
-    "trimestres_valides": 112
+    "trimestres_valides": 113
    },
    "annee_liquidation": 2017,
    "coefficient_euros_constants": 1.2158379841309352,
@@ -20105,7 +20105,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 34991.49705898946,
+    "pension_annuelle": 35097.564125452875,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -20121,15 +20121,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 34,790.00 € × taux 50.000% × 158/164",
-      "montant": 16758.596501219512,
+      "detail": "SR 34,790.00 € × taux 50.000% × 159/164",
+      "montant": 16864.663567682925,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.5,
     "trimestres_requis": 164,
-    "trimestres_valides": 158
+    "trimestres_valides": 159
    },
    "annee_liquidation": 2017,
    "coefficient_euros_constants": 1.2158379841309352,
@@ -21367,7 +21367,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 23618.96557527496,
+    "pension_annuelle": 23695.753171911325,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -21383,15 +21383,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 33,786.54 € × taux 37.500% × 142/165",
-      "montant": 10903.838722363636,
+      "detail": "SR 33,786.54 € × taux 37.500% × 143/165",
+      "montant": 10980.626319,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.375,
     "trimestres_requis": 165,
-    "trimestres_valides": 142
+    "trimestres_valides": 143
    },
    "annee_liquidation": 2015,
    "coefficient_euros_constants": 1.2306696074945456,
@@ -21596,24 +21596,24 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 83646.109516759,
+    "pension_annuelle": 84283.6452905027,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
-      "detail": "24,263.72 points × valeur de service 0.507324 € × coefficient d'anticipation 0.9300",
-      "montant": 11447.887518378539,
+      "detail": "24,263.72 points × valeur de service 0.507324 € × coefficient d'anticipation 0.9400",
+      "montant": 11570.983083092286,
       "regime": "agirc",
       "type_calcul": "points"
      },
      {
-      "detail": "3,712.18 points × valeur de service 1.4587 € × coefficient d'anticipation 0.9300",
-      "montant": 5035.9075859873155,
+      "detail": "3,712.18 points × valeur de service 1.4587 € × coefficient d'anticipation 0.9400",
+      "montant": 5090.057129922663,
       "regime": "agirc_arrco",
       "type_calcul": "points"
      },
      {
-      "detail": "4,348.01 points × valeur de service 1.4587 € × coefficient d'anticipation 0.9300",
-      "montant": 5898.4739223803035,
+      "detail": "4,348.01 points × valeur de service 1.4587 € × coefficient d'anticipation 0.9400",
+      "montant": 5961.898373158586,
       "regime": "arrco",
       "type_calcul": "points"
      },
@@ -21630,15 +21630,15 @@
       "type_calcul": "annuites"
      },
      {
-      "detail": "SR 45,547.51 € × taux 45.625% × 163/170",
-      "montant": 19925.363224261324,
+      "detail": "SR 45,547.51 € × taux 46.250% × 164/170",
+      "montant": 20322.22943857765,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.555,
     "trimestres_requis": 170,
-    "trimestres_valides": 163
+    "trimestres_valides": 164
    },
    "annee_liquidation": 2027,
    "coefficient_euros_constants": 0.9828009828009827,
@@ -22548,7 +22548,7 @@
     ],
     "taux_liquidation": 0.5,
     "trimestres_requis": 150,
-    "trimestres_valides": 172
+    "trimestres_valides": 175
    },
    "annee_liquidation": 1994,
    "coefficient_euros_constants": 1.6653270208041737,
@@ -22903,7 +22903,7 @@
       "a_charge": [],
       "code": "majoration_enfants",
       "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
-      "montant": 1369.6310975535898,
+      "montant": 1396.967034116431,
       "par_regime": [
        [
         "agirc_arrco",
@@ -22919,7 +22919,7 @@
        ],
        [
         "regime_general",
-        1093.4374625136377
+        1120.7733990764789
        ]
       ],
       "par_regime_sans_anticipation": [
@@ -22937,7 +22937,7 @@
        ],
        [
         "regime_general",
-        1093.4374625136377
+        1120.7733990764789
        ]
       ]
      }
@@ -22945,7 +22945,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 16020.134571527513,
+    "pension_annuelle": 16320.829873718763,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -22967,15 +22967,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 30,069.53 € × taux 50.000% × 120/165",
-      "montant": 10934.374625136377,
+      "detail": "SR 30,069.53 € × taux 50.000% × 123/165",
+      "montant": 11207.733990764787,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.5,
     "trimestres_requis": 165,
-    "trimestres_valides": 120
+    "trimestres_valides": 123
    },
    "annee_liquidation": 2019,
    "coefficient_euros_constants": 1.1807298347455704,
@@ -23143,7 +23143,7 @@
     "departs": [],
     "liquidation_ouverte": false,
     "motif_ouverture": "non_ouverte",
-    "pension_annuelle": 23211.319901171224,
+    "pension_annuelle": 23288.042212171225,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -23159,15 +23159,15 @@
       "type_calcul": "points"
      },
      {
-      "detail": "SR 33,757.82 € × taux 37.500% × 141/165",
-      "montant": 10817.845850999998,
+      "detail": "SR 33,757.82 € × taux 37.500% × 142/165",
+      "montant": 10894.568161999998,
       "regime": "regime_general",
       "type_calcul": "annuites"
      }
     ],
     "taux_liquidation": 0.375,
     "trimestres_requis": 165,
-    "trimestres_valides": 141
+    "trimestres_valides": 142
    },
    "annee_liquidation": 2015,
    "coefficient_euros_constants": 1.2306696074945456,
@@ -24584,7 +24584,7 @@
     ],
     "taux_liquidation": 0.5,
     "trimestres_requis": 150,
-    "trimestres_valides": 172
+    "trimestres_valides": 173
    },
    "annee_liquidation": 1995,
    "coefficient_euros_constants": 1.6343720148430447,

@@ -216,7 +216,9 @@ aux cas types, qui naissent en janvier.
    trimestre deux mois de naissance sur trois. Chercher la circulaire qui
    l'applique ; aucun texte lu ne la découpe.
 5. Le plafond aux trimestres civils écoulés que le moteur oppose à l'année
-   d'entrée, que R. 351-9 n'écrit pas.
+   d'entrée, que R. 351-9 n'écrit pas. Réglé le 21 novembre 2026 pour les
+   régimes où le revenu dit les trimestres
+   (`134/2026-11-21-annee-d-entree-au-salaire.md`).
 
 **Ce que le propriétaire tranche** : s'il faut les corriger une à une, ou
 faire naître les cas types un autre jour que le 15 de janvier. Rien n'est

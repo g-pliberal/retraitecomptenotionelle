@@ -24,7 +24,7 @@ import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 
 import { DateMois, enMois, formaterAge, origineDesAges } from "../../moteur/js/calendrier.js";
-import { AnneeCarriere, Carriere } from "../../moteur/js/carriere.js";
+import { AnneeCarriere, Carriere, PROFIL_SMIC } from "../../moteur/js/carriere.js";
 import * as chrono from "../../moteur/js/chronologie.js";
 import { PARAMETRES_DEFAUT } from "../../moteur/js/config.js";
 import { DonneesMacro } from "../../moteur/js/macro.js";
@@ -135,13 +135,36 @@ test("l'année de liquidation est portée au compte au prorata", () => {
 });
 
 test("les trimestres de l'année du départ sont bornés aux trimestres civils", () => {
-  // On ne valide pas quatre trimestres en sept mois (R. 351-9).
+  // On ne valide pas quatre trimestres en sept mois : R. 351-1 arrête les
+  // cotisations au dernier jour du trimestre civil précédant la date d'effet.
   const attendus = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3];
   attendus.forEach((attendu, mois) => {
     const carriere = depuisProfil(64 + mois / 12, { niveau_salaire: 3.0 });
     const ligne = carriere.ligne(carriere.anneeLiquidation);
     assert.equal(ligne === null ? 0 : carriere.trimestresRetenus(ligne), attendu, `${mois} mois`);
   });
+});
+
+test("l'année d'entrée valide ce que son salaire vaut, au plus quatre (R. 351-9)", () => {
+  // R. 351-9 (LEGIARTI000028751530, du 21 mars 2014) : « autant de
+  // trimestres que le salaire annuel [...] représente de fois le montant du
+  // salaire minimum de croissance en vigueur au 1er janvier de l'année
+  // considérée calculé sur la base de 150 heures, avec un maximum de quatre
+  // trimestres par année civile » — aucun plafond par mois d'activité. Entré
+  // au SMIC à temps plein le 1er octobre 2015 : 3 × 151,67 h × 9,61 € =
+  // 4 372,6 €, sous un seuil de 150 × 9,61 = 1 441,50 € : trois trimestres,
+  // et non le seul trimestre civil de ses trois mois.
+  const carriere = Carriere.depuisParcours({
+    annee_naissance: 1995, sexe: "H", jour_naissance: 1, macro,
+    metiers: [{ affiliation: "salarie_prive_non_cadre", age_debut: 20.75, niveau_salaire: 1.0 }],
+    profil_carriere: PROFIL_SMIC, age_liquidation: 64,
+  });
+  const ligne = carriere.ligne(2015);
+  proche(ligne.fraction_annee, 3 / 12, 1e-12, "trois mois");
+  proche(ligne.revenu, 4372.6, 1, "le salaire de 2015");
+  assert.equal(ligne.trimestres_valides, 3);
+  assert.equal(carriere.trimestresRetenus(ligne), 3);
+  assert.equal(carriere.plafondTrimestres(2015), 4);
 });
 
 test("un relevé déclarant douze mois est tronqué au point de départ", () => {

@@ -107,8 +107,11 @@ _SOIGNANTE = {"sexe": "F", "enfants": "0", "salaire": "1", "unite_revenu": "moye
     # prenant effet à compter du 1er septembre 2026. Née le 15 juin 1965, elle
     # a 171 trimestres cotisés en août 2026 : L. 161-17-3 lui en demandait 172,
     # il lui en demande 171 à compter de septembre, et elle a passé l'âge de
-    # sa porte (soixante ans et neuf mois, en mars 2026).
-    ("1965-06-15", "1983-10", "2026-08", 171, DateMois(2026, 9)),
+    # sa porte (soixante ans et neuf mois, en mars 2026). Entrée en décembre
+    # 1983 au salaire moyen, ses 1 102 € de l'année valent un trimestre de
+    # 200 heures au SMIC du 1er janvier 1983, 3,093191 € (R. 351-9 CSS :
+    # 1 102 / 618,64 = 1,8) ; puis 168 de 1984 à 2025, et deux en 2026.
+    ("1965-06-15", "1983-12", "2026-08", 171, DateMois(2026, 9)),
 ])
 def test_la_carriere_longue_s_ouvre_a_la_premiere_date_dont_le_texte_l_ouvre(
         simulateur, naissance, debut, declare, cotises, attendue):
@@ -135,10 +138,13 @@ def test_la_clause_de_sauvegarde_de_2023_garde_l_age_de_la_redaction_d_avant(sim
     née le 13 octobre 1963, 168 trimestres cotisés au 30 juin 2023, elle
     « peut obtenir une RACL à effet du 1/11/2023, à 60 ans », quand la
     rédaction de 2023 lui demande soixante ans et trois mois, et 170
-    trimestres."""
+    trimestres. Entrée en novembre 1981 à 0,6 fois le salaire moyen, elle
+    gagne cette année-là 1 074 €, qui valent deux trimestres de 200 heures au
+    SMIC du 1er janvier 1981, 2,254721 € (R. 351-9 CSS : 1 074 / 450,94 =
+    2,4) ; puis 164 de 1982 à 2022, et deux en 2023."""
     moteur = simulateur.scenario_actuel
-    carriere = Saisies().carriere({**_SOIGNANTE, "naissance": "1963-10-13",
-                                   "debut": "1981-07", "liquidation": "2023-07"})
+    carriere = Saisies().carriere({**_SOIGNANTE, "salaire": "0.6", "naissance": "1963-10-13",
+                                   "debut": "1981-11", "liquidation": "2023-07"})
     assert facade.trimestres_actuels(carriere) == 168
     assert _resume(departs.departs(moteur, carriere))[1] == (
         DateMois(2023, 11), ["arrco", "arrco_tranche_2", "regime_general"],

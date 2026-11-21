@@ -1,0 +1,253 @@
+schema_version: 1
+id: trimestres_au_revenu
+intitule: >-
+  Les régimes où le revenu de l'année, et lui seul, dit ses trimestres : « autant de
+  trimestres que le salaire annuel [...] représente de fois » le seuil de l'année, « avec
+  un maximum de quatre trimestres par année civile », sans regarder les mois d'activité ;
+  ailleurs, et avant 1946, les mois de l'année bornent ses trimestres civils. L'année de
+  la date d'effet de la pension s'arrête partout au trimestre civil qui la précède
+  (R. 351-1, fiche `taux_plein_et_proratisation`).
+domaine: duree
+regimes: [regime_general, msa_salaries, cancava, organic, rsi]
+etape: compter_les_durees
+face: droit
+etat: approchee
+lit:
+- l'année de la ligne d'emploi, qui choisit la version
+- les régimes de base de son statut cette année-là (`affiliations` du paquet)
+- les mois travaillés de l'année et la date d'effet de la pension
+ecrit:
+- >-
+  la borne des trimestres validés de la ligne d'emploi (`trimestres_valides`) : quatre
+  dans un régime de la version, les trimestres civils écoulés avant la date d'effet
+  l'année du départ, les trimestres civils de ses mois ailleurs
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: avant_1946
+  statut: lue
+  textes:
+  - id: LEGIARTI000006749353
+    article: code de la sécurité sociale, R. 351-9, rédaction du 21 décembre 1985
+    en_vigueur: 1985-12-21
+    citation: >-
+      « Les périodes d'assurance accomplies du 1er juillet 1930 au 31 décembre 1935
+      comptent pour autant de trimestres d'assurance que, durant ce délai, l'intéressé a
+      versé de fois soixante cotisations journalières [...]. Pour la période comprise
+      entre le 1er janvier 1936 et le 31 décembre 1941, ne comptent comme trimestres
+      d'assurance que ceux au cours desquels l'assuré a subi sur son salaire une retenue
+      au moins égale à 0,15 F. »
+  - id: LEGIARTI000006597801
+    article: code rural, R. 742-21, rédaction du 22 avril 2005
+    en_vigueur: 2005-04-22
+    citation: >-
+      « 2° Pour la période comprise entre le 1er juillet 1930 et le 31 décembre 1945, il
+      est décompté un trimestre pour tout versement correspondant à cinquante jours de
+      travail »
+  bornes:
+    revenu.annee: [null, 1946-01-01]
+  contenu:
+    parametres:
+      regimes: []
+    droit: >-
+      les assurances sociales comptent les trimestres au cours desquels une retenue a été
+      subie, ou par cinquante jours de travail aux salariés agricoles : les mois de
+      l'année bornent ses trimestres
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne publie à la fois un début
+    d'activité en cours d'année et les trimestres de cette année ; les circulaires
+    Cnav lues par la recherche de la base de la Cnav ne donnent pas d'exemple chiffré
+    de l'année d'entrée
+- id: salaries_1946
+  statut: lue
+  textes:
+  - id: LEGIARTI000006749353
+    article: code de la sécurité sociale, R. 351-9, rédaction du 21 décembre 1985
+    en_vigueur: 1985-12-21
+    citation: >-
+      « Pour la période comprise entre le 1er janvier 1946 et le 31 décembre 1948, il y
+      a lieu de retenir autant de trimestres que le salaire annuel correspondant aux
+      retenues subies par l'assuré sur sa rémunération représente de fois 18 F avec un
+      maximum de quatre trimestres par année civile. »
+  - id: LEGIARTI000028751530
+    article: code de la sécurité sociale, R. 351-9, rédaction du 21 mars 2014
+    en_vigueur: 2014-03-21
+    citation: >-
+      « Pour la période postérieure au 31 décembre 2013, il y a lieu de retenir autant de
+      trimestres que le salaire annuel correspondant aux retenues subies par l'assuré sur
+      sa rémunération représente de fois le montant du salaire minimum de croissance en
+      vigueur au 1er janvier de l'année considérée calculé sur la base de 150 heures, avec
+      un maximum de quatre trimestres par année civile. »
+  - id: LEGIARTI000053335598
+    article: code de la sécurité sociale, R. 351-9, rédaction du 1er janvier 2026
+    en_vigueur: 2026-01-01
+    citation: >-
+      « Pour la période postérieure au 31 décembre 2013, il y a lieu de retenir autant de
+      trimestres que le salaire annuel correspondant aux retenues subies par l'assuré sur
+      sa rémunération représente de fois le montant du salaire minimum de croissance en
+      vigueur au 1er janvier de l'année considérée calculé sur la base de 150 heures, avec
+      un maximum de quatre trimestres par année civile. »
+  - id: LEGIARTI000006749339
+    article: code de la sécurité sociale, R. 351-1, rédaction du 21 décembre 1985
+    en_vigueur: 1985-12-21
+    citation: >-
+      « Les droits à l'assurance vieillesse sont déterminés en tenant compte : 1°) des
+      cotisations versées au titre de la législation sur les assurances sociales et
+      arrêtées au dernier jour du trimestre civil précédant la date prévue pour l'entrée
+      en jouissance de la pension »
+  - id: LEGIARTI000006597801
+    article: code rural, R. 742-21, rédaction du 22 avril 2005
+    en_vigueur: 2005-04-22
+    citation: >-
+      « Pour l'application de l'article R. 351-9 du code de la sécurité sociale aux
+      salariés agricoles [...] 1° Quelle que soit la période considérée, il ne peut être
+      retenu plus de quatre trimestres par année civile »
+  bornes:
+    revenu.annee: [1946-01-01, null]
+  contenu:
+    parametres:
+      regimes: [regime_general, msa_salaries]
+    droit: >-
+      au régime général et aux salariés agricoles, autant de trimestres que le salaire de
+      l'année vaut de fois le seuil, au plus quatre, sans condition de mois
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne publie à la fois un début
+    d'activité en cours d'année et les trimestres de cette année ; les circulaires
+    Cnav lues par la recherche de la base de la Cnav ne donnent pas d'exemple chiffré
+    de l'année d'entrée
+- id: artisans_et_commercants_1973
+  statut: lue
+  exception_de: salaries_1946
+  nee_de: LEGIARTI000006737960
+  textes:
+  - id: LEGIARTI000006765813
+    article: décret n° 73-937 du 2 octobre 1973, article 2, rédaction du 24 février 1984
+    en_vigueur: 1984-02-24
+    citation: >-
+      « Pour la période postérieure au 31 décembre 1972, il y a lieu de retenir autant de
+      trimestres que le revenu annuel ayant donné lieu au versement des cotisations
+      représente de fois ... »
+  - id: LEGIARTI000006737960
+    article: code de la sécurité sociale, D. 634-1, rédaction du 1er janvier 1990
+    en_vigueur: 1990-01-01
+    citation: >-
+      « Sont applicables aux régimes d'assurance vieillesse des professions artisanales,
+      industrielles et commerciales, pour la période postérieure au 31 décembre 1972, [...]
+      les dispositions du livre III, titre V, chapitres 1er à 5, à l'exception des articles
+      [...] R. 351-9, 1er au 5e alinéa »
+  - id: LEGIARTI000053356087
+    article: code de la sécurité sociale, D. 634-1, rédaction du 1er janvier 2026
+    en_vigueur: 2026-01-01
+    citation: >-
+      « Sont applicables, en matière d'assurance vieillesse, aux travailleurs
+      indépendants mentionnés à l'article L. 631-1, et ce pour les périodes postérieures
+      au 31 décembre 1972, les dispositions règlementaires des chapitres 1er à 5 et 8 du
+      titre V du livre III, à l'exception des articles R. 351-11, R. 351-37-1 à
+      R. 351-37-11. »
+  bornes:
+    revenu.annee: [1973-01-01, null]
+  contenu:
+    parametres:
+      regimes: [regime_general, msa_salaries, cancava, organic, rsi]
+    droit: >-
+      les artisans et les commerçants valident aussi au revenu depuis 1973, au plus quatre
+      trimestres par année civile, comme le régime général
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne publie à la fois un début
+    d'activité en cours d'année et les trimestres de cette année ; les circulaires
+    Cnav lues par la recherche de la base de la Cnav ne donnent pas d'exemple chiffré
+    de l'année d'entrée
+approximations:
+- version: [avant_1946]
+  textes: code de la sécurité sociale, R. 351-9, rédaction du 21 décembre 1985, troisième alinéa
+  ecart: >-
+    De 1942 à 1945, R. 351-9 compte au régime général « autant de trimestres que la
+    retenue subie par l'assuré sur son salaire annuel représente de fois 0,15 F avec un
+    maximum de quatre trimestres par année civile », sans condition de mois ; le modèle
+    garde à ces quatre années la borne des mois, comme de 1930 à 1941.
+  effet: non mesuré ; la seule année d'entrée, de 1942 à 1945
+- version: [artisans_et_commercants_1973]
+  textes: >-
+    code de la sécurité sociale, D. 643-3 (LEGIARTI000006738142, LEGIARTI000039123745) et
+    R. 643-1 (LEGIARTI000006751822)
+  ecart: >-
+    Les professions libérales valident aussi au revenu depuis 2004 : « autant de
+    trimestres que les revenus professionnels ayant servi d'assiette au calcul des
+    cotisations représentent de fois » le seuil, « avec un maximum de quatre trimestres
+    par année civile d'affiliation » (D. 643-3). Mais leur affiliation ne prend effet
+    qu'au « premier jour du trimestre civil suivant le début » de l'activité (R. 643-1),
+    et l'assiette de la première année est provisionnelle : le modèle, qui ne date pas
+    l'affiliation, leur garde la borne des trimestres civils de leurs mois, plus proche
+    de cette règle que le revenu seul.
+  effet: non mesuré ; la seule année d'entrée d'un libéral
+textes_sans_effet:
+- id: LEGIARTI000006765814
+  reference: décret n° 73-937 du 2 octobre 1973, article 2, rédaction du 1er janvier 1990
+  motif: >-
+    l'article ne porte plus la règle des trimestres : « Pour l'ouverture du droit aux
+    prestations mentionnées à l'article L. 634-3 du Code de la sécurité sociale, sont
+    supprimées » des conditions d'années d'activité ; D. 634-1, en vigueur le même jour,
+    applique R. 351-9 aux artisans et aux commerçants (version
+    artisans_et_commercants_1973)
+- id: LEGIARTI000039123745
+  reference: code de la sécurité sociale, D. 643-3, rédaction du 1er novembre 2019
+  motif: >-
+    les libéraux restent aux trimestres civils de leurs mois (approximation de la
+    version artisans_et_commercants_1973) ; la rédaction ne change que les renvois à
+    D. 643-2 (« 2°, 3° et 6° » au lieu de « 2° et 3° »)
+- id: LEGIARTI000047265883
+  reference: code de la sécurité sociale, R. 643-1, rédaction du 5 mars 2023
+  motif: >-
+    la fiche laisse les libéraux aux mois ; la phrase ajoutée exclut de l'article « les
+    travailleurs indépendants libéraux affiliés à la section professionnelle mentionnée
+    au 11° de l'article R. 641-1 », sans toucher au compte des trimestres
+reformes: []
+effet: >-
+  L'année d'entrée, ou de retour, d'un salarié, d'un artisan ou d'un commerçant. Le modèle bornait toute année d'emploi aux trimestres civils de ses mois :
+  entré au SMIC à temps plein le 1er octobre 2015, 4 372,60 € sous un seuil de
+  1 441,50 €, il validait un trimestre au lieu de trois. Corrigé le 21 novembre 2026
+  (action 134, point 5) : 58 témoins de simulation sur 937 bougent au scénario 1,
+  +1,53 % en médiane.
+sources:
+  lu_le: 2026-11-21
+  prochaine_relecture: 2027-11-30
+  a_relire:
+  - >-
+    La pratique des sections libérales sur « l'année civile d'affiliation » de D. 643-3
+    et l'affiliation au trimestre civil suivant de R. 643-1, et celle des caisses sur
+    l'année d'entrée : aucune circulaire lue. L'assiette de début d'activité des artisans
+    et des commerçants (D. 633-*) n'est pas lue.
+  lectures:
+  - type: legifrance
+    reference: >-
+      code de la sécurité sociale, R. 351-9, ses trois rédactions (LEGIARTI000006749353,
+      LEGIARTI000028751530, LEGIARTI000053335598) ; R. 351-1 (LEGIARTI000006749339) ;
+      code rural, R. 742-21 (LEGIARTI000006597801) ; D. 634-1 (LEGIARTI000006737960,
+      LEGIARTI000026139975, LEGIARTI000049917702, LEGIARTI000053356087) ; décret n° 73-937,
+      article 2 (LEGIARTI000006765813), seule rédaction que l'index porte ; D. 643-3
+      (LEGIARTI000006738142, LEGIARTI000028751534, LEGIARTI000039123745) et R. 643-1
+      (LEGIARTI000006751822) pour les libéraux, laissés aux mois. Lus dans l'index LEGI du
+      dépôt, à jour au 16 novembre 2026
+    date: 2026-11-21
+code:
+  javascript: >-
+    moteur/js/carriere.js : plafondDeLAnneeDEmploi, FICHE_DES_TRIMESTRES_AU_REVENU,
+    lignesDuParcours, Carriere.trimestresEcoules, Carriere.plafondTrimestres ;
+    moteur/js/regimes.js : FichesDatees
+  moteur: >-
+    `plafondDeLAnneeDEmploi` lit la version de l'année de la ligne : si tous les régimes
+    de base du statut cette année-là sont de ses `regimes`, la ligne d'emploi vaut au plus
+    quatre trimestres, et l'année du départ les trimestres civils écoulés avant la date
+    d'effet ; sinon, les trimestres civils de ses mois. `trimestresEcoules` et
+    `plafondTrimestres` ne rognent plus une année antérieure au départ.
+  parametres: "contenu.parametres de chaque version : regimes"
+  tests:
+  - >-
+    tests/js/mois.test.js, « l'année d'entrée valide ce que son salaire vaut, au plus
+    quatre (R. 351-9) » : entré au SMIC le 1er octobre 2015, trois trimestres

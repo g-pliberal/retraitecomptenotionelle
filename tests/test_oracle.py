@@ -2067,6 +2067,41 @@ def _carriere_exemple(exemple: dict, decalage_mois: int = 0, sans_enfants: bool 
                 return pont.carriere_des_donnees(_rendu(
                     droit, "simulateur.carriere_simple", pont.SIMULATEUR,
                     dict(communs, age_debut=debut))), liquidees[str(debut)]
+    # Aucun mois d'entrée ne rend le total : R. 351-9 valide l'année d'emploi
+    # au salaire qu'elle porte, non à ses mois, et au salaire de l'exemple un
+    # mois d'entrée ne rend que certains comptes (0, 2 ou 4 trimestres la
+    # première année, souvent ; 4 seulement à un haut salaire). L'entrée se
+    # fait alors au 1er janvier, la première année à temps partiel, à la
+    # quotité qui rend le total, cherchée par dichotomie : le nombre de
+    # trimestres de l'année croît avec son salaire. L'année d'entrée part de
+    # celle que la durée publiée désigne, et recule ou avance des trimestres
+    # qui manquent ou qui passent (une majoration pour enfants, une période
+    # assimilée les déplacent). L'exemple ne publie que le total ; cette
+    # première année, la moins payée de la carrière, n'entre pas au salaire
+    # annuel moyen ni dans rien de ce qu'il éprouve.
+    annee, essayees = naissance.annee + int(base), set()
+    while not communs["temps_partiel"] and annee not in essayees and len(essayees) < 8:
+        essayees.add(annee)
+        debut = round(age_du_mois(f"{annee}-01"), 6)
+        if debut < 14:
+            break
+        bas, haut, quotite = 0.0, 1.0, 1.0
+        for _ in range(17):
+            options = dict(communs, age_debut=debut, temps_partiel={annee: quotite})
+            liquidee = _rendu(droit, "scenario_actuel.calculer", pont.MOTEUR,
+                              pont.CarriereSimple(options))
+            ecart = liquidee["trimestres_valides"] - cible
+            if ecart == 0:
+                return pont.carriere_des_donnees(_rendu(
+                    droit, "simulateur.carriere_simple", pont.SIMULATEUR,
+                    options)), liquidee
+            if ecart < 0 and quotite == 1.0:
+                break
+            bas, haut = (quotite, haut) if ecart < 0 else (bas, quotite)
+            quotite = round((bas + haut) / 2, 5)
+        # L'année pleine ne suffit pas : entrer plus tôt ; la quotité la plus
+        # basse donne encore trop : entrer plus tard.
+        annee += (-1 if ecart < 0 else 1) * max(1, -(-abs(ecart) // 4))
     raise AssertionError(f"{exemple['id']} : aucune carrière ne donne {cible} trimestres")
 
 

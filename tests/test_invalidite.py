@@ -355,8 +355,12 @@ def test_l_inapte_part_a_soixante_deux_ans_au_taux_plein(saisies):
     """Né en 1965, l'âge légal de sa génération ne lui ouvre pas sa pension
     à soixante-deux ans ; reconnu inapte, il part à cet âge au taux plein,
     huit trimestres manquants et sans coefficient d'anticipation à
-    l'Agirc-Arrco (L. 351-1-5, L. 351-8, 2° ; accord de 2017, article 84, 3)."""
-    champs = {"naissance": "1965-06-15", "debut": "1986-09", "liquidation": "2027-07"}
+    l'Agirc-Arrco (L. 351-1-5, L. 351-8, 2° ; accord de 2017, article 84, 3).
+    Entré en décembre 1986 au salaire moyen, il gagne cette année-là 1 070 €,
+    qui valent un trimestre de 200 heures au SMIC du 1er janvier 1986,
+    3,969772 € (R. 351-9 CSS : 1 070 / 793,95 = 1,3) ; puis 160 de 1987 à
+    2026 et deux en 2027 : 163 des 171 de sa génération."""
+    champs = {"naissance": "1965-06-15", "debut": "1986-12", "liquidation": "2027-07"}
     inapte = _actuel(saisies, **champs, inaptitude="oui")
     assert inapte.liquidation_ouverte and inapte.motif_ouverture == "inaptitude"
     assert inapte.age_ouverture_opposable == 62.0
@@ -937,7 +941,10 @@ def test_la_saisie_lit_l_incapacite_meme_avant_la_carriere():
 #: part à cinquante-cinq ans en juin 2028 : entré en avril 2000, il a cotisé
 #: 3 + 27 × 4 + 1 = 112 trimestres, la durée requise de sa génération, 172,
 #: moins 60 (D. 351-1-5 du 1er septembre 2026).
-NE_EN_1973 = {"naissance": "1973-06-01", "debut": "2000-04", "liquidation": "2028-06",
+#: Entrée en octobre 2000 au salaire moyen : 4 798 € valent trois trimestres
+#: de 200 heures au SMIC du 1er janvier 2000, 6,207724 € (R. 351-9 CSS :
+#: 4 798 / 1 241,54 = 3,9) ; puis 108 de 2001 à 2027, et un en 2028.
+NE_EN_1973 = {"naissance": "1973-06-01", "debut": "2000-10", "liquidation": "2028-06",
               "handicap": "1995-01"}
 
 
@@ -947,7 +954,9 @@ def test_le_handicap_ouvre_le_depart_des_cinquante_cinq_ans_au_taux_plein(saisie
     (L. 351-8, 4° bis), la pension majorée du tiers du rapport de la durée
     cotisée en situation de handicap à la durée d'assurance, 112/112/3 = 0,33
     (D. 351-1-5, II), l'Agirc-Arrco sans coefficient (accord du 17 novembre
-    2017, article 84, 3). Un trimestre de moins, et rien ne s'ouvre."""
+    2017, article 84, 3). Un trimestre de moins, et rien ne s'ouvre : entrée
+    en novembre 2000, ses 3 199 € n'en valent que deux (3 199 / 1 241,54 =
+    2,6)."""
     actuel = _actuel(saisies, **NE_EN_1973)
     assert actuel.liquidation_ouverte and actuel.motif_ouverture == "handicap"
     assert actuel.age_ouverture_opposable == 55.0
@@ -956,7 +965,7 @@ def test_le_handicap_ouvre_le_depart_des_cinquante_cinq_ans_au_taux_plein(saisie
     assert "taux 50.000%" in detail and "majoration des assurés handicapés 0.33" in detail
     assert "écrêtée" not in detail
     assert "coefficient" not in _pension(actuel, "arrco").detail
-    un_de_moins = _actuel(saisies, **{**NE_EN_1973, "debut": "2000-07"})
+    un_de_moins = _actuel(saisies, **{**NE_EN_1973, "debut": "2000-11"})
     assert un_de_moins.trimestres_valides == 111
     assert un_de_moins.motif_ouverture == "non_ouverte"
     assert "majoration des assurés handicapés" not in _pension(

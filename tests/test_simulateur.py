@@ -3344,8 +3344,11 @@ def test_la_surcote_parentale_ne_compte_que_les_trimestres_au_dela_de_la_duree(
     il compte les trimestres cotisés de cette année-là qui la DÉPASSENT. Le
     module servait tout ou rien — quatre trimestres si la durée était atteinte
     à 63 ans, aucun sinon. Une mère de deux enfants née le 1er janvier 1969,
-    entrée à vingt-quatre ans et demi, a 170 trimestres à l'ouverture de la
-    fenêtre pour 172 requis : les deux derniers de l'année sont au-delà.
+    entrée le 1er novembre 1993, dont les deux mois de salaire moyen,
+    2 764 €, valent deux fois deux cents heures de SMIC (5,19 € de l'heure au
+    1er janvier 1993, 1 038,48 € : 2,66 fois),
+    et non trois (R. 351-9), a 170 trimestres à l'ouverture de la fenêtre
+    pour 172 requis : les deux derniers de l'année sont au-delà.
     """
     def surcote(age_debut):
         resultat = simulateur.scenario_actuel.calculer(simulateur.carriere_simple(
@@ -3356,7 +3359,7 @@ def test_la_surcote_parentale_ne_compte_que_les_trimestres_au_dela_de_la_duree(
                      if a.code == "surcote_parentale"), None)
 
     assert "4 trimestres" in surcote(24)
-    assert "2 trimestres" in surcote(24.5)
+    assert "2 trimestres" in surcote(24 + 10 / 12)
     assert surcote(25) is None
 
 
@@ -4802,13 +4805,15 @@ def test_apres_l_age_du_taux_plein_la_duree_est_majoree(simulateur):
     1er du mois qui suit l'anniversaire — de l'anniversaire même pour qui est
     né un 1er — à la date d'effet (circulaire Cnav n° 8/89, point 12), la
     durée majorée arrondie au trimestre supérieur. Depuis 2011, l'âge est
-    celui du taux plein de la génération : né en mai 1960 et parti à
-    soixante-neuf ans avec 123 trimestres, un assuré en a huit d'ajournement
-    après soixante-sept ans, 123 × 1,2 = 147,6, soit 148 — qu'il soit né le
-    1er ou le 15. Le modèle lui en comptait sept jusqu'au 28 septembre 2026 :
+    celui du taux plein de la génération : né en mai 1960, entré en mai 1998,
+    dont le salaire valide les quatre trimestres de l'année (R. 351-9), et
+    parti à soixante-neuf ans, en juin 2029, avec 125 trimestres (de 1998 à
+    2028, et le premier de 2029), un assuré en a huit d'ajournement après
+    soixante-sept ans, 125 × 1,2 = 150 — qu'il soit né le 1er ou le 15. Le modèle lui en comptait sept jusqu'au 28 septembre 2026 :
     il retranchait le mois de l'anniversaire à qui est né un 1er. Né en
-    1950, parti à soixante-dix ans avec 119 trimestres, il en aurait 179,
-    que la durée de proratisation borne à 162.
+    1950, entré en mai 1990 et parti à soixante-dix ans avec 121 trimestres,
+    vingt d'ajournement après soixante-cinq ans, il en aurait 121 × 1,5 =
+    181,5, soit 182, que la durée de proratisation borne à 162.
     """
     scenario = simulateur.scenario_actuel
 
@@ -4822,18 +4827,22 @@ def test_apres_l_age_du_taux_plein_la_duree_est_majoree(simulateur):
         return next(p.detail for p in resultat.pensions_par_regime
                     if p.type_calcul == "annuites")
 
-    majoree = "× 148/167, 123 trimestres majorés après l'âge du taux plein"
+    majoree = "× 150/167, 125 trimestres majorés après l'âge du taux plein"
     assert detail(1960, 69, 38).endswith(majoree)
     assert detail(1960, 69, 38, jour=1).endswith(majoree)
     assert detail(1960, 69, 38, "salarie_agricole").endswith(majoree)
-    assert "× 162/162, 119 trimestres majorés" in detail(1950, 70, 40)
+    assert "× 162/162, 121 trimestres majorés" in detail(1950, 70, 40)
     # À l'âge du taux plein, rien encore.
     assert "majorés" not in detail(1960, 67, 38)
     # Les artisans et commerçants liquidés à part des salariés, depuis 1990
-    # (D. 634-5) : quatre trimestres d'ajournement en 2004, 123 × 1,1.
+    # (D. 634-5) : entré en mai 1973, quatre trimestres l'année même, par son
+    # revenu (D. 634-1), 125 jusqu'au premier de 2004, et quatre trimestres
+    # d'ajournement : 125 × 1,1 = 137,5, soit 138.
     assert detail(1938, 66, 35, "artisan").endswith(
-        "× 136/150, 123 trimestres majorés après l'âge du taux plein")
-    assert "× 150/150, 131 trimestres majorés" in detail(1940, 68, 35, "commercant")
+        "× 138/150, 125 trimestres majorés après l'âge du taux plein")
+    # Entré en mai 1975 : 133 trimestres, de 1975 à 2007 et le premier de
+    # 2008 ; douze d'ajournement, 133 × 1,3, que la proratisation borne à 150.
+    assert "× 150/150, 133 trimestres majorés" in detail(1940, 68, 35, "commercant")
 
 
 def test_depuis_2004_la_duree_majoree_regarde_tous_les_regimes(simulateur):
@@ -5336,9 +5345,10 @@ def test_la_duree_qui_proratise_s_arrete_au_trimestre_civil_qui_precede_l_effet(
     (:func:`_stagiaire_de_2016`), sans ligne de carrière en 2016, voit sa
     pension proratisée sur 117/164, et non 118/164. Et la durée que
     R. 173-4-3 compare est celle-là, année partielle comprise : née en 1995,
-    en stage de janvier à septembre 2015, salariée depuis octobre, l'assurée
-    compte quatre trimestres en 2015 (R. 351-12) dans l'une et l'autre, et
-    non un seul dans la seconde. Dans les deux moteurs."""
+    en stage de janvier à septembre 2015, salariée depuis décembre, dont le
+    mois de salaire ne valide qu'un trimestre (R. 351-9), l'assurée compte
+    quatre trimestres en 2015 (R. 351-12) dans l'une et l'autre, et non un
+    seul dans la seconde. Dans les deux moteurs."""
     import json
     import shutil
     import subprocess
@@ -5347,7 +5357,7 @@ def test_la_duree_qui_proratise_s_arrete_au_trimestre_civil_qui_precede_l_effet(
     partielle = chronologie.completer(chronologie.avec_periodes_assimilees(
         chronologie.du_parcours(
             annee_naissance=1995, sexe="F", age_liquidation=64.0, jour_naissance=15,
-            metiers=[Metier("salarie_prive_non_cadre", 20.75, 1.0)]),
+            metiers=[Metier("salarie_prive_non_cadre", 20 + 11 / 12, 1.0)]),
         [{"motif": "stage_de_formation_professionnelle", "debut": "2015-01-01",
           "fin": "2015-09-30"}]))
     construites = [_stagiaire_de_2016(), partielle]
@@ -7443,9 +7453,14 @@ def test_les_generations_coupees_en_cours_d_annee_sont_lues_au_mois(simulateur):
     """
     from facade import Carriere
 
+    # Entré à vingt-deux ans, l'assuré n'a aucune porte de carrière longue :
+    # entré à vingt ans, en octobre 1981, le né d'octobre 1961 validerait par
+    # son salaire les quatre trimestres de 1981 (R. 351-9), qu'il suffit au né
+    # du dernier trimestre d'avoir à la fin de l'année de ses vingt ans
+    # (D. 351-1-3), et partirait à soixante ans.
     def opposables(naissance, mois):
         carriere = Carriere.depuis_profil(
-            naissance, "H", "salarie_prive_non_cadre", 20, 62.0,
+            naissance, "H", "salarie_prive_non_cadre", 22, 62.0,
             simulateur.macro, mois_naissance=mois,
         )
         resultat = simulateur.scenario_actuel.calculer(carriere)
@@ -7566,7 +7581,9 @@ def test_la_surcote_ircantec_compte_sa_fenetre_au_mois(simulateur):
         jour_naissance=1,
     )
     resultat = scenario.calculer(carriere)
-    assert resultat.trimestres_valides - resultat.trimestres_requis == 20
+    # Entré en juillet 1975, il en valide les quatre trimestres par son
+    # salaire (R. 351-9) : 47 années pleines, de 1975 à 2021, pour 166 requis.
+    assert resultat.trimestres_valides - resultat.trimestres_requis == 22
     periode = simulateur.catalogue["ircantec"].periode(carriere.annee_liquidation)
     assert liquider.abattement_points(
         scenario, periode, carriere, resultat.trimestres_valides,
@@ -8580,9 +8597,11 @@ def test_le_debut_d_activite_compte_les_periodes_assimilees(simulateur):
     périodes assimilées à des périodes d'assurance », de sa première
     circulaire (n° 2003-46 du 18 novembre 2003, point 113) à la dernière
     (n° 2026-29 du 4 septembre 2026, point 1.1.4). Le modèle n'y comptait que
-    les trimestres cotisés. L'assuré né en février 1965, entré en septembre
+    les trimestres cotisés. L'assuré né en février 1965, entré en décembre
     1984 et sous les drapeaux toute l'année 1985, celle de ses vingt ans : un
-    trimestre cotisé à la fin de 1985, cinq avec les quatre du service
+    mois de salaire moyen, plus de deux cents heures de SMIC et moins de
+    quatre cents, lui valide un trimestre en 1984 (R. 351-9) ; un trimestre
+    cotisé à la fin de 1985, cinq avec les quatre du service
     national, et la porte des vingt ans s'ouvre ; à soixante-deux ans et demi,
     il a 167 trimestres cotisés, 171 avec le service national réputé cotisé,
     pour 170 requis. Sans le service, l'année d'inactivité ne valide rien, et
@@ -8592,7 +8611,7 @@ def test_le_debut_d_activite_compte_les_periodes_assimilees(simulateur):
     def construite(motif_1985):
         return chronologie.completer(chronologie.du_parcours(
             annee_naissance=1965, sexe="H", mois_naissance=2, age_liquidation=62.5,
-            metiers=[Metier("salarie_prive_non_cadre", 19 + 7 / 12, 1.0)],
+            metiers=[Metier("salarie_prive_non_cadre", 19 + 10 / 12, 1.0)],
             interruptions={1985: motif_1985}))
 
     service = Carriere.depuis_chronologie(construite("service_militaire"), simulateur.macro)
@@ -8727,15 +8746,16 @@ def test_le_non_salarie_agricole_debute_avec_quatre_trimestres_a_son_regime(simu
       d'assurance : la porte des dix-sept ans, à cinquante-neuf ans, sous la
       rédaction de 2005.
 
-    Le salarié du même parcours, quatre trimestres à la fin de l'année de la
-    borne et né avant octobre, n'a pas la porte (D. 351-1-3). Dans les deux
-    moteurs."""
+    Le salarié entré au 1er janvier de l'année de la borne, quatre trimestres à
+    sa fin et né avant octobre, n'a pas la porte (D. 351-1-3). Entré le
+    15 décembre comme l'aide familial, son salaire de décembre lui validerait
+    déjà un trimestre de plus (R. 351-9). Dans les deux moteurs."""
     from retraite_notionnelle import chronologie
 
     def construite(annee_naissance, mois_naissance, age_debut, age, agricole=True):
         metiers = ([Metier("collaborateur_agricole", age_debut, 1.0),
                     Metier("exploitant_agricole", age_debut + 4.0, 1.0)] if agricole
-                   else [Metier("salarie_prive_non_cadre", age_debut, 1.0)])
+                   else [Metier("salarie_prive_non_cadre", age_debut + 1 / 12, 1.0)])
         return chronologie.completer(chronologie.du_parcours(
             annee_naissance=annee_naissance, sexe="H", mois_naissance=mois_naissance,
             jour_naissance=15, age_liquidation=age, metiers=metiers))
@@ -8811,7 +8831,10 @@ def test_les_portes_de_2012_ne_valent_que_pour_les_generations_que_le_texte_nomm
         carriere = Carriere.depuis_chronologie(construite, simulateur.macro)
         cotises.append((_trimestres_cotises(carriere),
                         actuel.calculer(carriere).trimestres_requis))
-    assert cotises == [(175, 166), (176, 166), (174, 165), (173, 166), (171, 166), (167, 167)]
+    # Le né de juin 1953, entré en juin 1969, en valide les quatre trimestres
+    # par son salaire (R. 351-9) : 44 années pleines, de 1969 à 2012, à son
+    # départ du 1er mars 2013.
+    assert cotises == [(175, 166), (176, 166), (176, 165), (173, 166), (171, 166), (167, 167)]
     assert _motifs_d_ouverture_en_deux_moteurs(simulateur, [c for c, _ in cas]) == [
         motif for _, motif in cas]
     # L'âge que le droit propose : soixante ans, l'âge de la porte du I.
@@ -8831,13 +8854,16 @@ def test_avant_novembre_2012_la_duree_d_assurance_passait_de_huit_trimestres_la_
     trimestres », avant la durée cotisée que chaque porte demande ; la Cnav y
     compte « tous les trimestres retenus pour déterminer le taux de la
     pension » (circulaire n° 2003-46, point 111). Le moteur ne lisait que la
-    durée cotisée. Le né en mars 1950 entré à seize ans, deux années sans
-    rien valider, a 164 trimestres cotisés à cinquante-neuf ans, en avril
-    2009 : assez pour la porte des débuts avant dix-sept ans, qui ne demande
-    que les 162 requis ; mais il n'a que 164 trimestres d'assurance quand il
-    lui en faut 170, et il attend soixante ans. Les deux années au chômage
-    indemnisé, que la rédaction de 2003 ne répute pas cotisées, lui donnent
-    172 trimestres d'assurance : la porte s'ouvre. Dans les deux moteurs."""
+    durée cotisée. Le né en mars 1950 entré à seize ans, en mars 1966, dont
+    le salaire lui valide les quatre trimestres de l'année (R. 351-9), deux
+    années sans rien valider, a 165 trimestres cotisés à cinquante-neuf ans,
+    en avril 2009 (41 années pleines de 1966 à 2008, et le premier trimestre
+    de 2009) : assez pour la porte des débuts avant dix-sept ans, qui ne
+    demande que les 162 requis ; mais il n'a que 165 trimestres d'assurance
+    quand il lui en faut 170, et il attend soixante ans. Les deux années au
+    chômage indemnisé, que la rédaction de 2003 ne répute pas cotisées, lui
+    donnent 173 trimestres d'assurance : la porte s'ouvre. Dans les deux
+    moteurs."""
     sans_rien = _entre_tot(1950, 3, 16.0, 59.0, (1980, 1981))
     au_chomage = _entre_tot(1950, 3, 16.0, 59.0, (1980, 1981), "chomage_indemnise")
     actuel = simulateur.scenario_actuel
@@ -8848,7 +8874,7 @@ def test_avant_novembre_2012_la_duree_d_assurance_passait_de_huit_trimestres_la_
         durees.append((_trimestres_cotises(carriere),
                        actuel.calculer(carriere).trimestres_requis,
                        actuel.calculer(carriere).trimestres_valides))
-    assert durees == [(164, 162, 164), (164, 162, 172)]
+    assert durees == [(165, 162, 165), (165, 162, 173)]
     assert _motifs_d_ouverture_en_deux_moteurs(simulateur, [sans_rien, au_chomage]) == [
         "non_ouverte", "carriere_longue"]
     carriere = Carriere.depuis_chronologie(sans_rien, simulateur.macro)
@@ -9071,13 +9097,16 @@ def test_les_periodes_reputees_cotisees_sont_celles_de_la_redaction_a_la_date_d_
 
 def test_avant_novembre_2012_le_chomage_ne_rouvrait_pas_la_carriere_longue(simulateur):
     """Ce que la date change pour l'assuré. Né en 1950, entré à seize ans et
-    demi, trois années de chômage indemnisé : 158 trimestres cotisés à
-    cinquante-neuf ans, en février 2009, quand la rédaction de 2003 ne répute
-    pas le chômage cotisé. La porte reste fermée jusqu'à l'âge légal. Trois
-    années de maladie à la place, réputées cotisées dans leur limite de quatre
-    trimestres, la lui ouvrent. Le modèle comptait au chômeur les quatre
-    trimestres de la rédaction de 2026, et le faisait partir à cinquante-neuf
-    ans."""
+    demi, en juillet 1966, dont le salaire lui valide les quatre trimestres de
+    l'année (R. 351-9), trois années de chômage indemnisé : 160 trimestres
+    cotisés à cinquante-neuf ans, en février 2009 (43 années de 1966 à 2008,
+    moins trois), quand la rédaction de 2003 ne répute pas le chômage cotisé.
+    La porte reste fermée : il lui faut cotiser les deux trimestres qui lui
+    manquent pour les 162 requis, et le droit ne lui propose que cinquante-neuf
+    ans et demi. Trois années de maladie à la place, réputées cotisées dans
+    leur limite de quatre trimestres, lui ouvrent cinquante-neuf ans. Le
+    modèle comptait au chômeur les quatre trimestres de la rédaction de 2026,
+    et le faisait partir à cinquante-neuf ans."""
     actuel = simulateur.scenario_actuel
     chomeur, malade = (
         _carriere_hachee(simulateur, {annee: motif for annee in range(1980, 1983)},
@@ -9085,7 +9114,9 @@ def test_avant_novembre_2012_le_chomage_ne_rouvrait_pas_la_carriere_longue(simul
         for motif in ("chomage_indemnise", "maladie"))
     assert actuel.calculer(malade).motif_ouverture == "carriere_longue"
     assert actuel.calculer(chomeur).motif_ouverture == "non_ouverte"
-    assert ouvrir.age_ouverture_droit(actuel, chomeur) == pytest.approx(60.0)
+    assert _trimestres_cotises(chomeur) == 160
+    # Deux trimestres manquent, une année de cotisation en rend quatre.
+    assert ouvrir.age_ouverture_droit(actuel, chomeur) == pytest.approx(59.5)
 
 
 def test_le_portage_lit_la_redaction_a_la_date_d_effet(simulateur):
