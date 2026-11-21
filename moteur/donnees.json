@@ -28770,7 +28770,7 @@ null
 "dates_qui_decident":["liquidation.date_effet"],
 "id":"surcote_regime_general",
 "versions":[
-{"bornes":{"liquidation.date_effet":[null,"2004-01-01"]},"exception_de":null,"fiabilite":2,"id":"sans_surcote","parametres":{"age_majore":null,"lignes":[]},"texte":"LEGIARTI000006742670"},
+{"bornes":{"liquidation.date_effet":[null,"2004-01-01"]},"exception_de":null,"fiabilite":2,"id":"sans_surcote","parametres":{"age_majore":null,"lignes":[]},"texte":null},
 {"bornes":{"liquidation.date_effet":["2004-01-01","2007-01-01"]},"exception_de":null,"fiabilite":2,"id":"loi_de_2003","parametres":{"age_majore":null,"lignes":[{"apres_l_age_majore":false,"avant":null,"depuis":"2004-01-01","rang_minimum":1,"taux":0.0075}]},"texte":"LEGIARTI000006736524"},
 {
 "bornes":{"liquidation.date_effet":["2007-01-01","2009-01-01"]},
