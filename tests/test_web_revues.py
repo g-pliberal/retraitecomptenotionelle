@@ -879,9 +879,10 @@ CHAPEAUX_DES_PAGES = {
                    "système actuel verse bien davantage, sous des noms connus : "
                    "minimum contributif, trimestres gratuits, départ anticipé, "
                    "réversion.",
-                   "En clair. Le système actuel compte … dispositifs qui "
+                   "En clair. Nous recensons … dispositifs en vigueur qui "
                    "ajoutent à une pension sans qu'aucune cotisation les ait "
-                   "payés. En …, il n'y en avait qu'un. Nous en chiffrons …, "
+                   "payés, et la liste n'est pas close. En …, il n'y en avait "
+                   "qu'un. Nous en chiffrons …, "
                    "réversion comprise, et à part les pensions versées avant "
                    "l'âge légal. Ces montants sont des minimums : le coût réel "
                    "est plus élevé."),
@@ -2740,6 +2741,26 @@ def test_droits_non_cotises_comptent_ce_que_leurs_phrases_disent(page, contexte)
     compte = trouve.group(1)
     assert (int(compte) if compte.isdigit() else EN_LETTRES.get(compte)) == len(eteints)
     assert "redescend" not in texte
+
+
+def test_droits_non_cotises_disent_ce_que_le_moteur_sert(page, contexte):
+    """La page disait la réversion « déclarée, non servie » et sa majoration
+    « absente », quand le moteur les sert au conjoint déclaré ; et elle taisait
+    quatre dispositifs que le moteur sert sans qu'aucun retrait les mesure
+    encore (lecture du 21 novembre 2026)."""
+    texte = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", page("/avantages"))))
+    for libelle in ("Pension de réversion", "Majoration de la pension de réversion",
+                    "Majoration forfaitaire de réversion pour enfant à charge"):
+        assert re.search(re.escape(libelle) + r" [^|]{0,120}? en vigueur servi en partie",
+                         texte), f"{libelle} : la page ne dit pas qu'il est servi en partie"
+    assert re.search(r"Coefficient de solidarité de l'Agirc-Arrco .{0,160}? déclaré, non servi",
+                     texte)
+    non_mesures = [a for a in contexte.inventaire_avantages().avantages
+                   if a.etat_modele == "integre" and a.mesurable_par == "aucune"]
+    assert len(non_mesures) == 4
+    assert "ne sont pas encore mesurés" in texte
+    for avantage in non_mesures:
+        assert avantage.libelle in texte
 
 
 def _depliant(corps: str, titre: str) -> str:

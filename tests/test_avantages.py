@@ -163,6 +163,76 @@ def test_les_renvois_a_la_carte_existent(inventaire):
         )
 
 
+#: Les domaines de la carte où toute fiche que le moteur applique sert un
+#: avantage non contributif, et les préfixes de nom qui en disent autant hors
+#: de ces domaines. L'inventaire répondait aux fiches de RÉGIME et à la
+#: cascade, pas aux fiches de règles : l'ASV des soignants conventionnés, le
+#: départ immédiat des fonctionnaires parents de trois enfants, la majoration
+#: des hospitaliers actifs et les taux pleins sans condition de durée étaient
+#: servis par le moteur sans paraître sur la page (lecture du 21 novembre 2026).
+DOMAINES_D_AVANTAGES = {"enfants", "minima", "periodes_assimilees", "depart_anticipe",
+                        "reversion"}
+PREFIXES_D_AVANTAGES = ("taux_plein_", "asv_", "carmf_asv_", "majoration_duree_",
+                        "bonification_", "majoration_enfants_")
+#: Une fiche que le moteur n'applique pas encore ne sert rien : son absence de
+#: l'inventaire est un écart au droit, que `docs/limites` porte, pas un oubli
+#: de la page.
+FICHES_NON_APPLIQUEES = {"pas_encore_modelisee", "manquante"}
+
+
+def _fiches_qui_servent_un_avantage() -> dict[str, dict]:
+    from retraite_notionnelle.noyau import carte
+
+    return {nom: fiche for nom, fiche in carte.fiches().items()
+            if fiche.get("etat") not in FICHES_NON_APPLIQUEES
+            and (fiche.get("domaine") in DOMAINES_D_AVANTAGES
+                 or nom.startswith(PREFIXES_D_AVANTAGES))}
+
+
+def test_toute_fiche_qui_sert_un_avantage_a_sa_ligne_d_inventaire(inventaire):
+    """Le moteur sert, l'inventaire répond — ou dit pourquoi il ne répond pas.
+
+    Une fiche de règles appliquée dans un domaine d'avantages renvoie à une
+    ligne (champ ``fiches``), ou figure sous ``hors_inventaire`` avec la raison
+    qui la sort de la liste. Sans ce test, le moteur peut servir un droit gratuit
+    que la page des droits non cotisés ne nomme pas.
+    """
+    renvoyees = {f for a in inventaire["avantages"] for f in a.get("fiches") or ()}
+    hors = inventaire.get("hors_inventaire") or {}
+    manquantes = sorted(set(_fiches_qui_servent_un_avantage()) - renvoyees - set(hors))
+    assert manquantes == [], (
+        "fiches appliquées qui servent un avantage sans ligne d'inventaire : "
+        + ", ".join(manquantes)
+    )
+
+
+def test_une_fiche_hors_inventaire_existe_et_dit_pourquoi(inventaire):
+    from retraite_notionnelle.noyau import carte
+
+    connues = set(carte.fiches())
+    renvoyees = {f for a in inventaire["avantages"] for f in a.get("fiches") or ()}
+    for nom, raison in (inventaire.get("hors_inventaire") or {}).items():
+        assert nom in connues, f"hors_inventaire : fiche inconnue — {nom}"
+        assert nom not in renvoyees, f"{nom} : à la fois hors de l'inventaire et dedans"
+        assert str(raison or "").strip(), f"{nom} : hors de l'inventaire sans raison"
+
+
+def test_un_avantage_servi_en_partie_le_dit_et_dit_pourquoi(inventaire):
+    """« déclaré, non servi » était faux pour la réversion, que le moteur sert
+    au conjoint déclaré dans les régimes dont une fiche la porte. Une ligne qui
+    n'est servie qu'en partie le dit par ``servi_en_partie``, qui écrit en quoi,
+    et ne le dit que si une fiche de la carte la sert."""
+    for avantage in inventaire["avantages"]:
+        partiel = avantage.get("servi_en_partie")
+        if partiel is None:
+            continue
+        assert str(partiel).strip(), f"{avantage['code']} : servi en partie, sans dire en quoi"
+        assert avantage.get("fiches"), f"{avantage['code']} : servi en partie, par aucune fiche"
+    servis = {a["code"] for a in inventaire["avantages"] if a.get("servi_en_partie")}
+    assert {"reversion", "majoration_reversion",
+            "majoration_forfaitaire_reversion_enfants"} <= servis
+
+
 def test_les_renvois_au_manifeste_des_sources_existent(inventaire):
     with (RACINE_DONNEES / "sources.yaml").open(encoding="utf-8") as flux:
         connues = _ids(yaml.safe_load(flux))
@@ -419,6 +489,15 @@ def test_toute_ligne_integree_est_mesuree_ou_dit_pourquoi_elle_ne_l_est_pas(inve
             assert avantage["cout"]["mesurable_par"] == "serie_publiee", (
                 f"{avantage['code']} : lu dans un poste publié, mais sans sa série"
             )
+            continue
+        # Un dispositif que le moteur sert sans qu'aucun retrait ni aucun poste
+        # ne le mesure encore le dit, et ne se compte pas parmi les écarts
+        # structurels.
+        if avantage["cout"]["mesurable_par"] == "aucune":
+            assert "PAS ENCORE MESURÉ" in avantage["cout"]["note"], (
+                f"{avantage['code']} : intégré, sans mesure, et sans le dire"
+            )
+            assert avantage["famille"] != "ecarts_structurels"
             continue
         # Les autres ne sont pas des dispositifs : elles se chiffrent ailleurs,
         # et la note doit dire où.

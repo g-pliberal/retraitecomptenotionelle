@@ -1,8 +1,9 @@
 # Les avantages non contributifs du scénario 1
 
 Le scénario 1 est le droit en vigueur. Un compte notionnel ne sert que ce qui a
-été cotisé. **Tout ce qui sépare les deux est ici** :
-<!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages)-->49<!--/--> dispositifs,
+été cotisé. **Ce qui sépare les deux, tel que le dépôt l'a recensé, est ici**, et
+la liste n'est pas close :
+<!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages)-->53<!--/--> dispositifs,
 sous un code, avec leur base légale, les régimes qui les servent, l'état du
 modèle à leur égard et le moyen d'en chiffrer le coût.
 
@@ -48,9 +49,9 @@ code employé par l'une des trois ait sa ligne, sous son code ou sous un alias.
 | État | Combien | Ce que ça veut dire |
 |---|---|---|
 | **chiffré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=chiffre)-->15<!--/--> | Le scénario 1 le sert, et la cascade en isole le montant en euros. La somme des lignes chiffrées vaut *exactement* `pension_annuelle − total_contributif` : c'est vérifié à chaque simulation. |
-| **intégré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=integre)-->16<!--/--> | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. **Onze le sont désormais**, par retrait : voir les §4 bis et 4 ter ; le dernier venu, le complément de l'apprentissage, ne pèse sur aucun cas type : aucun n'est apprenti. Trois autres ne sont pas des dispositifs ; les deux derniers, le taux plein par inaptitude ou invalidité, servi depuis le 30 septembre 2026 à qui les déclare, et la majoration de pension des assurés handicapés, ont leur dépense lue dans les comptes de la protection sociale. |
-| **déclaré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=declare)-->3<!--/--> | Une fiche de régime le déclare, et le scénario 1 ne le sert pas à l'assuré. La réversion, qui est de ceux-là, est la pension d'un autre : le modèle la liquide, depuis le 28 septembre 2026, pour le conjoint qu'on lui déclare, mais pas pour tous les ménages, et son coût est LU dans les séries de la DREES : voir le §4 quater. |
-| **absent** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=absent)-->15<!--/--> | Ni déclaré ni servi. C'est un écart au droit positif — que les comptes de la protection sociale comblent pour dix d'entre eux, qu'ils publient poste par poste : voir les §4 quinquies et 4 sexies. |
+| **intégré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=integre)-->20<!--/--> | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. **Onze le sont désormais**, par retrait : voir les §4 bis et 4 ter ; le dernier venu, le complément de l'apprentissage, ne pèse sur aucun cas type : aucun n'est apprenti. Trois autres ne sont pas des dispositifs ; les deux derniers, le taux plein par inaptitude ou invalidité, servi depuis le 30 septembre 2026 à qui les déclare, et la majoration de pension des assurés handicapés, ont leur dépense lue dans les comptes de la protection sociale. Quatre, inscrits le 21 novembre 2026 parce que le moteur les servait sans que la liste les nomme, ne sont pas encore mesurés : l'ASV des soignants conventionnés, le départ immédiat des fonctionnaires parents de trois enfants, la majoration des hospitaliers actifs et le taux plein sans la durée requise. |
+| **déclaré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=declare)-->4<!--/--> | Une fiche de régime le déclare, et le scénario 1 ne le sert pas à l'assuré. La réversion, qui est de ceux-là, est la pension d'un autre : le modèle la liquide, depuis le 28 septembre 2026, pour le conjoint qu'on lui déclare, mais pas pour tous les ménages, et son coût est LU dans les séries de la DREES : voir le §4 quater. La page dit de la réversion et de ses deux majorations qu'elles sont « servies en partie » (champ `servi_en_partie`) ; la majoration de réversion, que la fiche `reversion` sert depuis 2010, était marquée « absent » jusqu'au 21 novembre 2026. |
+| **absent** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=absent)-->14<!--/--> | Ni déclaré ni servi. C'est un écart au droit positif — que les comptes de la protection sociale comblent pour dix d'entre eux, qu'ils publient poste par poste : voir les §4 quinquies et 4 sexies. |
 
 Et trois façons d'en mesurer le coût : par le **modèle** (la cascade, ou un
 recalcul de même nature), par une **série publiée**, ou par **rien** — ce

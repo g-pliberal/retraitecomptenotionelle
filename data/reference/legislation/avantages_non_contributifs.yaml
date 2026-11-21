@@ -5,7 +5,8 @@
 # CE QUE CE FICHIER EST
 # ---------------------
 # Le scénario 1 est le droit en vigueur. Un compte notionnel ne sert que ce
-# qui a été cotisé. Tout ce qui sépare les deux est ici, sous un code, avec sa
+# qui a été cotisé. Ce qui sépare les deux, tel que le dépôt l'a recensé, est
+# ici — la liste n'est pas close —, sous un code, avec sa
 # base légale, les régimes qui le servent, l'état du modèle à son égard et le
 # moyen d'en chiffrer le coût.
 #
@@ -152,7 +153,10 @@ avantages:
       Ils ne sont pas cotisés : ils effacent de la décote et relèvent le
       prorata, sans rien ajouter au salaire de référence.
     base_legale: [L. 351-4 CSS, L. 351-5 CSS]
-    fiches: [majoration_duree_assurance_enfants]
+    fiches:
+      - majoration_duree_assurance_enfants
+      - cnavpl_majoration_duree_assurance
+      - priorite_majorations_enfants
     creation: 1972
     fin: null
     regimes: régime général, régimes alignés, non-salariés
@@ -231,8 +235,17 @@ avantages:
       revenu : c'est le seul avantage familial dont le montant augmente avec
       le salaire.
     base_legale: [L. 351-12 CSS, L. 18 CPCMR, accord national interprofessionnel Agirc-Arrco]
-    fiches: [majoration_dix_pour_cent, majoration_enfants_plafond_fonction_publique,
-             majoration_enfants_a_charge_agirc_arrco]
+    fiches:
+      - majoration_dix_pour_cent
+      - majoration_enfants_plafond_fonction_publique
+      - majoration_enfants_a_charge_agirc_arrco
+      - majoration_enfants_agirc_arrco
+      - ircantec_majoration_enfants
+      - majoration_enfants_ircec
+      - majoration_enfants_liberaux_avocats
+      - majoration_enfants_regimes_speciaux
+      - sections_liberales_majoration_enfants
+      - marins_bonification_enfants
     creation: 1945
     fin: null
     regimes: tous les régimes de base, Agirc-Arrco, Ircantec
@@ -402,7 +415,11 @@ avantages:
       par la durée COTISÉE. Le tout est écrêté par l'article L. 173-2 quand
       l'ensemble des pensions personnelles dépasse un plafond.
     base_legale: [L. 351-10 CSS, D. 351-2-1 CSS, L. 173-2 CSS]
-    fiches: [minimum_contributif]
+    fiches:
+      - minimum_contributif
+      - minimum_contributif_international
+      - majoration_exceptionnelle_2023
+      - cultes_fractions_de_pension
     creation: 1983
     fin: null
     regimes: régime général, régimes alignés, non-salariés
@@ -473,7 +490,7 @@ avantages:
       pension : c'est un minimum social versé aux vieux, et il est ici parce
       qu'il entre dans le revenu des retraités que la comparaison mesure.
     base_legale: [L. 815-1 CSS et suivants, L. 816-2 CSS, L. 161-25 CSS]
-    fiches: [minimum_vieillesse]
+    fiches: [minimum_vieillesse, residence_et_minimum_vieillesse]
     creation: 1956
     fin: null
     regimes: hors régime — servi par le FSV
@@ -523,7 +540,7 @@ avantages:
       nets agricoles d'une carrière complète, à 85 % depuis novembre 2021, au
       prorata de sa durée, sans dépasser ce montant tous régimes confondus.
     base_legale: [L. 732-63 code rural, D. 732-166-1 à D. 732-166-6 code rural]
-    fiches: [complement_differentiel_rco]
+    fiches: [complement_differentiel_rco, relevement_des_exploitants_2023]
     creation: 2015
     fin: null
     regimes: retraite complémentaire des non-salariés agricoles (MSA)
@@ -573,7 +590,12 @@ avantages:
       d'assurance — donc contre la décote et pour le prorata — et jamais pour
       le salaire annuel moyen.
     base_legale: [L. 351-3 CSS, R. 351-12 CSS]
-    fiches: [stages_formation_professionnelle, sportifs_haut_niveau, conge_supplementaire_naissance]
+    fiches:
+      - stages_formation_professionnelle
+      - sportifs_haut_niveau
+      - conge_supplementaire_naissance
+      - accident_du_travail_periodes_assimilees
+      - fin_indemnisation_chomage
     creation: 1945
     fin: null
     regimes: régime général, régimes alignés, non-salariés
@@ -615,7 +637,7 @@ avantages:
       ouvrent des points d'Agirc-Arrco et d'Ircantec que le salarié n'a pas
       payés ; l'Unédic verse la contrepartie pour le chômage.
     base_legale: [accords nationaux interprofessionnels Agirc-Arrco, décret Ircantec]
-    fiches: []
+    fiches: [services_passes_outre_mer]
     creation: 1962
     fin: null
     regimes: Agirc-Arrco, Ircantec
@@ -781,11 +803,24 @@ avantages:
       ressources — versée au conjoint survivant. C'est, de très loin, la
       première dépense non contributive du système.
     base_legale: [L. 353-1 CSS, L. 38 CPCMR]
-    fiches: [reversion, reversion_fonction_publique, reversion_agirc_arrco]
+    fiches:
+      - reversion
+      - reversion_fonction_publique
+      - reversion_agirc_arrco
+      - reversion_carcdsf
+      - reversion_cavamac
+      - reversion_crpcen
+      - reversion_ieg
+      - reversion_ircantec
+      - reversion_rafp
+      - reversion_rci
+      - reversion_sncf
     creation: 1945
     fin: null
     regimes: tous — déclaré dans 756 périodes du catalogue, soit la quasi-totalité
     etat_modele: declare
+    servi_en_partie: >-
+      au conjoint que la saisie déclare, dans les régimes dont une fiche la porte ; ni à tous les ménages, ni dans les régimes qu'aucune fiche ne porte encore
     ligne_cascade: null
     pourquoi_pas_chiffre: >-
       La réversion n'est pas dans la pension de l'assuré, que la cascade
@@ -833,9 +868,15 @@ avantages:
     creation: 2010
     fin: null
     regimes: régime général, régimes alignés
-    etat_modele: absent
+    etat_modele: declare
+    servi_en_partie: >-
+      avec la réversion du régime général, au conjoint que la saisie déclare ; pas à tous les ménages
     ligne_cascade: null
-    pourquoi_pas_chiffre: "Même raison que la réversion : le modèle n'a pas de ménage."
+    pourquoi_pas_chiffre: >-
+      Même raison que la réversion : la fiche `reversion` la sert, de 11,1 %
+      depuis 2010, au conjoint que la saisie déclare, mais le modèle n'a pas
+      tous les ménages. Elle était marquée « absent » jusqu'au 21 novembre
+      2026, quand le moteur la servait déjà.
     cout:
       mesurable_par: serie_publiee
       source_id: drees_panorama_retraites
@@ -855,6 +896,8 @@ avantages:
     fin: null
     regimes: régime général, régimes alignés
     etat_modele: declare
+    servi_en_partie: >-
+      avec la réversion, au survivant que la saisie déclare ; pas à tous les ménages
     ligne_cascade: null
     pourquoi_pas_chiffre: >-
       Même raison que la réversion : depuis le 9 octobre 2026, le scénario 1 la
@@ -971,7 +1014,12 @@ avantages:
       chômage, maladie, et depuis 2025 les trimestres d'enfants — sont
       « réputées cotisées » pour ouvrir ce droit.
     base_legale: [L. 351-1-1 CSS, D. 351-1-1 CSS, L. 351-1-1 3° CSS]
-    fiches: [carriere_longue, carriere_longue_enfants_reputes_cotises, carriere_longue_reputes_cotises_autres]
+    fiches:
+      - carriere_longue
+      - carriere_longue_enfants_reputes_cotises
+      - carriere_longue_reputes_cotises_autres
+      - carriere_longue_sauvegarde_de_2023
+      - taux_plein_carriere_longue
     creation: 2003
     fin: null
     regimes: régime général, régimes alignés, non-salariés
@@ -996,6 +1044,38 @@ avantages:
         en 2024, contre rien avant 2010. La série ne commence qu'alors,
         mécaniquement, à mesure que l'âge légal monte au-dessus de l'âge auquel
         une carrière commencée tôt réunit sa durée.
+
+  - code: depart_anticipe_parents_trois_enfants
+    libelle: Départ immédiat des fonctionnaires parents de trois enfants
+    famille: age_et_bonifications
+    quoi: >-
+      Le fonctionnaire parent de trois enfants qui réunit quinze ans de
+      services liquide sa pension à tout âge, à la durée requise et à la décote
+      de l'année où il réunit ces conditions. Fermé par la loi du 9 novembre
+      2010 à qui ne les réunit pas avant le 1er janvier 2012, il reste servi à
+      ceux qui les réunissaient : des pensions versées des années avant l'âge
+      d'ouverture des droits, sans cotisation qui le paie.
+    base_legale: [L. 24 I 3° CPCMR, loi n° 2010-1330 article 44]
+    fiches: [depart_anticipe_parents_trois_enfants]
+    creation: 1965
+    fin: 2011
+    regimes: fonction publique de l'État, CNRACL, ouvriers de l'État
+    etat_modele: integre
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Un âge, pas un montant, comme la carrière longue : le moteur le sert par
+      la fiche `depart_anticipe_parents_trois_enfants`, et aucun retrait ne le
+      mesure encore. Il manquait à l'inventaire, que `frontiere_contributive.yaml`
+      signalait (code `depart_trois_enfants_ferme`), jusqu'au 21 novembre 2026.
+    sans_chiffre: >-
+      servi, pas encore mesuré : un âge, pas un montant
+    cout:
+      mesurable_par: aucune
+      note: >-
+        PAS ENCORE MESURÉ. Le retrait se ferait comme celui de la carrière
+        longue, en vidant la fiche ; le jaune budgétaire des pensions de la
+        fonction publique dénombre les départs de ce motif, qui donneraient la
+        population à laquelle l'appliquer.
 
   - code: age_jouissance_militaire
     chiffre_par: scripts/cout_avantages.py
@@ -1130,6 +1210,35 @@ avantages:
         l'État en paiement en 2025 pour 19,1 trimestres, la plus longue de
         toutes (jaune budgétaire, tableau A-7), et 301 € de gain mensuel par
         tête sur le flux de 2025 (tableau 50).
+
+  - code: majoration_duree_hospitaliers_actifs
+    libelle: Majoration de durée des hospitaliers de catégorie active
+    famille: age_et_bonifications
+    quoi: >-
+      Quatre trimestres par période de dix années de services effectifs, au
+      prorata, aux fonctionnaires hospitaliers de catégorie active —
+      infirmiers et aides-soignants classés —, pour les pensions prenant effet
+      depuis 2008. Ils ne comptent que pour la décote : ils l'effacent sans
+      qu'aucune cotisation les ait payés.
+    base_legale: [loi n° 2003-775 article 78, décret n° 2003-1306 article 21, loi n° 2023-270 article 10 XVIII]
+    fiches: [majoration_duree_hospitaliers_actifs]
+    creation: 2008
+    fin: null
+    regimes: CNRACL
+    etat_modele: integre
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Un trimestre qui n'efface que de la décote, comme les bonifications du
+      cinquième : le moteur le sert par la fiche
+      `majoration_duree_hospitaliers_actifs` depuis le 7 octobre 2026, et aucun
+      retrait ne le mesure encore.
+    sans_chiffre: >-
+      servi, pas encore mesuré
+    cout:
+      mesurable_par: aucune
+      note: >-
+        PAS ENCORE MESURÉ. Le retrait se ferait en vidant la fiche, comme pour
+        les bonifications du cinquième.
 
   - code: bonifications_regimes_speciaux
     libelle: Bonifications de services de la SNCF et de la RATP
@@ -1381,6 +1490,40 @@ avantages:
         postes « pensions d'inaptitude » et « pensions d'invalidité » des
         comptes de la protection sociale, que la page Coût lit.
 
+  - code: taux_plein_sans_la_duree
+    libelle: Taux plein sans la durée requise pour certains assurés
+    famille: age_et_bonifications
+    quoi: >-
+      Le taux plein, sans la durée d'assurance de la génération, avant l'âge
+      où il s'acquiert pour tous : aux anciens déportés et internés depuis
+      1965, aux anciens combattants et prisonniers de guerre depuis 1974, aux
+      mères de famille ouvrières depuis 1976 ; aux travailleurs manuels de
+      1976 à 1983 ; depuis 2011, dès soixante-cinq ans, à l'aidant familial,
+      au parent d'un enfant handicapé et à certains parents de trois enfants.
+      La décote disparaît sans qu'aucune cotisation l'ait rachetée.
+    base_legale: [L. 351-8 CSS, D. 351-2 CSS, R. 351-23 CSS, loi n° 2010-1330 articles 20 et 118]
+    fiches:
+      - taux_plein_anciens_deportes_internes
+      - taux_plein_anciens_combattants_prisonniers
+      - taux_plein_meres_de_famille_ouvrieres
+      - taux_plein_travailleurs_manuels
+      - taux_plein_a_soixante_cinq_ans
+    creation: 1965
+    fin: null
+    regimes: régime général, régimes alignés, salariés agricoles ; fonction publique pour le taux plein à soixante-cinq ans
+    etat_modele: integre
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      La suppression d'une décote, comme l'inaptitude : le moteur la sert par
+      ses cinq fiches `taux_plein_*`, et aucun retrait ne la mesure encore.
+    sans_chiffre: >-
+      servi, pas encore mesuré
+    cout:
+      mesurable_par: aucune
+      note: >-
+        PAS ENCORE MESURÉ. Le retrait se ferait en vidant les cinq fiches ; les
+        populations, elles, ne sont publiées par aucun poste des comptes.
+
   - code: incapacite_permanente_penibilite
     libelle: Départ anticipé pour incapacité permanente et compte pénibilité
     famille: age_et_bonifications
@@ -1531,6 +1674,41 @@ avantages:
         Poste « Majorations sur pensions de base - assurés handicapés » des
         comptes de la protection sociale.
 
+  - code: asv_soignants_conventionnes
+    libelle: Avantage social vieillesse des soignants conventionnés (ASV)
+    famille: autres_avantages
+    quoi: >-
+      Le médecin, l'auxiliaire médical, le chirurgien-dentiste, la sage-femme
+      et le directeur de laboratoire conventionnés acquièrent des points dans
+      un régime dont l'Assurance maladie paie une part de la cotisation —
+      les deux tiers de la cotisation forfaitaire des médecins. Les points
+      qu'elle a payés sont une pension que le soignant n'a pas cotisée.
+    base_legale: [D. 645-2 CSS, décret n° 72-968, décrets n° 75-891, 78-283, 81-1046 et 84-254]
+    fiches:
+      - asv_medecins_points
+      - asv_medecins_ajustement
+      - asv_autres_professions_de_sante
+      - asv_auxiliaires_medicaux_coefficients_d_age
+      - carmf_asv_minoration_enfants
+    creation: 1972
+    fin: null
+    regimes: CARMF, CARPIMKO, CARCDSF, CARSAF, CAVP (directeurs de laboratoire)
+    etat_modele: integre
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Une cotisation payée par un tiers, comme l'AVPF : le moteur sert la
+      pension entière par les fiches `asv_*`, et ne sépare pas encore les
+      points que l'Assurance maladie a payés de ceux du soignant.
+    sans_chiffre: >-
+      servi, pas encore mesuré : la part de l'Assurance maladie n'est pas séparée
+    cout:
+      mesurable_par: aucune
+      note: >-
+        PAS ENCORE MESURÉ. La part se lirait dans la participation de
+        l'Assurance maladie aux cotisations des praticiens conventionnés, que
+        le manifeste des sources ne porte pas encore, ou se calculerait en
+        retirant au compte de points la part que les caisses ont payée.
+
   - code: majoration_tierce_personne
     libelle: Majoration pour assistance d'une tierce personne
     famille: autres_avantages
@@ -1623,7 +1801,12 @@ avantages:
       l'année de plus rapporte. Partir tôt est donc subventionné par ceux qui
       partent tard, et cette subvention n'a aucun nom dans le droit.
     base_legale: [R. 351-27 CSS, L. 14 CPCMR, L. 351-1-2 CSS, D. 351-1-4 CSS]
-    fiches: [decote_regime_general, decote_fonction_publique, surcote_regime_general, surcote_fonction_publique]
+    fiches:
+      - decote_regime_general
+      - decote_fonction_publique
+      - surcote_regime_general
+      - surcote_fonction_publique
+      - majoration_duree_apres_65_ans
     creation: 1983
     fin: null
     regimes: tous
@@ -1742,3 +1925,20 @@ avantages:
         des prestations, sous l'AVPF et la majoration pour enfants. Le noyau
         indiscutable est donc la contribution d'équilibre et les subventions,
         13,5 % des ressources.
+
+# HORS DE L'INVENTAIRE — les fiches qu'un domaine d'avantages range, et qui
+# n'en servent pas. `tests/test_avantages.py` exige que toute fiche appliquée
+# des domaines enfants, minima, périodes assimilées, départ anticipé et
+# réversion — et de noms `taux_plein_*`, `asv_*`, `majoration_duree_*`,
+# `bonification_*`, `majoration_enfants_*` — renvoie à une ligne ou figure
+# ici, avec sa raison (lecture du 21 novembre 2026).
+hors_inventaire:
+  taux_plein_et_proratisation: >-
+    La règle commune du taux plein et du prorata : elle dit ce que la durée
+    cotisée achète, et rien de ce qu'elle n'achète pas.
+  recul_limite_age_enfants: >-
+    Un recul de la limite d'âge permet de travailler plus longtemps, en
+    cotisant : la pension n'en reçoit rien qu'une cotisation n'ait payé.
+  versement_forfaitaire_unique: >-
+    Une petite pension acquise par cotisation, versée en capital au lieu
+    d'une rente : rien n'y est ajouté.

@@ -4472,7 +4472,14 @@ BUDGETS_DEPLIES: dict[str, int] = {
     # 173, étape 9), dont 4 948 dans ses vingt et un tableaux, que l'étape
     # laisse : c'est l'inventaire. Ses dépliants annonçaient « trois choses »
     # qui étaient cinq, et renvoyaient au tableau que la carte venait de nommer.
-    "/avantages": 7470,
+    # Desserrée le 21 novembre 2026, de 7 470 à 7 650, pour quatre dispositifs
+    # que le moteur servait sans que la page les nomme — l'ASV des soignants
+    # conventionnés, le départ immédiat des fonctionnaires parents de trois
+    # enfants, la majoration des hospitaliers actifs, le taux plein sans la
+    # durée — : chacun coûte une ligne dans deux tableaux et son nom dans la
+    # phrase des lignes pas encore mesurées. Comme la borne repliée, celle-ci
+    # suit l'inventaire, pas la prose.
+    "/avantages": 7650,
     # Méthode et sources tout déplié, hors ses deux bases : 5 944 mots le
     # 24 octobre 2026 (action 173, étape 10). Ses dépliants redisaient trois
     # fois que le choix des maturités ne change rien sous les taux à terme,

@@ -902,12 +902,10 @@ bascules:
       l'autre parent. L'expression « trois enfants » quitte l'article à cette
       date et n'y est jamais revenue. C'est la seule EXTINCTION franche de tout
       ce fichier : non une restriction, une disparition.
-      L'inventaire des avantages non contributifs ne porte aucune ligne pour ce
-      dispositif. Il a vécu trente ans et compté parmi les plus connus de la
-      fonction publique ; il n'est ni dans les quarante-deux, ni dans les
-      raisons écrites. C'est un manque, et il est signalé ici faute de pouvoir
-      le combler sans le chiffrer.
-    dispositifs: []
+      L'inventaire des avantages non contributifs n'en portait aucune ligne
+      jusqu'au 21 novembre 2026, quand le moteur le servait déjà ; il la porte
+      depuis, servie et pas encore mesurée.
+    dispositifs: [depart_anticipe_parents_trois_enfants]
     article: L. 24 CPCMR
     version: LEGIARTI000023033603
     version_precedente: LEGIARTI000006362730

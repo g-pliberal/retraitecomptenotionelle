@@ -1,7 +1,7 @@
 """Les avantages non contributifs du scénario 1 : lesquels, depuis quand, combien.
 
 Le scénario 1 est le droit en vigueur. Un compte notionnel ne sert que ce qui a
-été cotisé. Tout ce qui sépare les deux est inventorié dans
+été cotisé. Ce qui sépare les deux, tel que le dépôt l'a recensé, est inventorié dans
 ``data/reference/legislation/avantages_non_contributifs.yaml`` ; ce module lit
 cet inventaire et en tire deux grandeurs que la page « Avantages » montre.
 
@@ -195,6 +195,10 @@ class Avantage:
     #: restée vide du tableau : un blanc sans raison est une dette, une raison
     #: écrite est une limite.
     sans_chiffre: str = ""
+    #: En quoi le scénario 1 ne sert cet avantage qu'en partie — la réversion,
+    #: au seul conjoint que la saisie déclare. Vide quand l'état du modèle dit
+    #: tout. La page affiche alors « servi en partie » au lieu de l'état.
+    servi_en_partie: str = ""
 
     @property
     def chiffre(self) -> bool:
@@ -224,6 +228,7 @@ class Avantage:
             "ligne_cascade": self.ligne_cascade,
             "mesurable_par": self.mesurable_par,
             "sans_chiffre": self.sans_chiffre,
+            "servi_en_partie": self.servi_en_partie,
         }
 
 
@@ -318,6 +323,7 @@ def charger_avantages(racine: Path) -> Inventaire:
             ligne_cascade=fiche["ligne_cascade"],
             mesurable_par=mesure,
             sans_chiffre=" ".join((fiche.get("sans_chiffre") or "").split()),
+            servi_en_partie=" ".join((fiche.get("servi_en_partie") or "").split()),
         ))
     return Inventaire(familles=familles, avantages=tuple(avantages))
 

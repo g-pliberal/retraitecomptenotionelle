@@ -10475,9 +10475,9 @@ le droit de l'époque disait à l'heure.`,
   return `
 ${tete}
 
-<div class="note resume"><strong>En clair.</strong> Le système actuel compte
-${enVigueur} dispositifs qui ajoutent à une pension sans qu'aucune cotisation
-les ait payés. En ${premiereFrise}, il n'y en avait qu'un. Nous en chiffrons
+<div class="note resume"><strong>En clair.</strong> Nous recensons
+${enVigueur} dispositifs en vigueur qui ajoutent à une pension sans qu'aucune
+cotisation les ait payés, et la liste n'est pas close. En ${premiereFrise}, il n'y en avait qu'un. Nous en chiffrons
 ${chiffres}, réversion comprise, et à part les pensions versées avant l'âge
 légal. Ces montants sont des minimums : le coût réel est plus élevé.</div>
 
@@ -10703,7 +10703,7 @@ function avantagesDetailListe(contexte) {
       avantage.base_legale.join("; ") || "—",
       String(avantage.creation),
       avantage.fin === null ? "en vigueur" : String(avantage.fin),
-      LIBELLES_ETATS[avantage.etat_modele],
+      avantage.servi_en_partie ? "servi en partie" : LIBELLES_ETATS[avantage.etat_modele],
     ]);
     if (lignes.length === 0) continue;
     blocs.push(
@@ -10730,6 +10730,15 @@ function avantagesDetailEtats(contexte) {
   const neutralisees = new Set(c.neutralisations);
   const integreesLues = inventaire.avantages.filter((a) => a.etat_modele === "integre"
     && !neutralisees.has(a.code) && c.lignesLues.includes(a.code));
+  // Les lignes intégrées que le moteur sert sans qu'aucun retrait ni aucun
+  // poste ne les mesure encore : elles se nomment, et ne se comptent pas
+  // parmi les écarts structurels.
+  const nonMesurees = inventaire.avantages.filter((a) => a.etat_modele === "integre"
+    && !neutralisees.has(a.code) && !c.lignesLues.includes(a.code)
+    && a.mesurable_par === "aucune");
+  const pasEncore = nonMesurees.length === 0 ? ""
+    : `${nonMesurees.length === 1 ? "Un n'est pas encore mesuré" : `${nonMesurees.length} ne sont pas encore mesurés`} : `
+      + nonMesurees.map((a) => echapper(a.libelle)).join(", ") + ". ";
   const lues = integreesLues.length === 0 ? ""
     : `${integreesLues.length === 1 ? "Un est lu" : `${integreesLues.length} sont lus`} `
       + "dans les comptes de la protection sociale : "
@@ -10753,12 +10762,13 @@ function avantagesDetailEtats(contexte) {
     ["servi, chiffré à part", String(inventaire.compte("integre")),
       "Le scénario 1 les sert, mais l'effet passe par un trimestre, un âge "
       + `ou une assiette. ${c.neutralisations.length} sont mesurés par retrait : on `
-      + `refait la pension sans l'avantage, et l'écart est le chiffre. ${lues}Les `
-      + `${inventaire.compte("integre") - c.neutralisations.length - integreesLues.length} `
+      + `refait la pension sans l'avantage, et l'écart est le chiffre. ${lues}${pasEncore}Les `
+      + `${inventaire.compte("integre") - c.neutralisations.length - integreesLues.length
+        - nonMesurees.length} `
       + "derniers ne sont pas des dispositifs, et se lisent ailleurs."],
     ["déclaré, non servi", String(inventaire.compte("declare")),
       "Une fiche de régime les déclare, et le scénario 1 ne les sert pas à "
-      + `l'assuré. La réversion est de ceux-là : ${declarations} périodes du catalogue `
+      + `tous. La réversion est de ceux-là : ${declarations} périodes du catalogue `
       + "l'annoncent, et le modèle ne la liquide que pour le conjoint qu'on lui "
       + "déclare, pas pour tous les ménages. Son coût est donc LU dans "
       + "l'enquête de la DREES auprès des caisses, et c'est le chiffre le plus "
