@@ -30,7 +30,13 @@
 # `scripts/verifier_donnees.py` la recalcule à chaque exécution depuis la table
 # certifiée — si une réforme déplaçait l'âge d'ouverture sans que celui-ci
 # suive, l'écart se verrait là plutôt que dans une pension.
+# Les assurés nés avant 1930 : soixante-cinq ans, comme les autres
+# (R. 351-27, « l'âge prévu au 1° de l'article L. 351-8 est fixé à soixante-cinq
+# ans », LEGIARTI000006749434). Jusqu'au 21 novembre 2026 la table commençait en
+# 1930, et un régime qui renvoie à la règle commune répondait par la valeur de
+# sa période : 67 ans à la Carpimko de 1987.
 generation,age,fiabilite
+1900,65.00,haute
 1930,65.00,haute
 1950,65.00,haute
 1951,65.00,haute
