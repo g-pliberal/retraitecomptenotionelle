@@ -1,16 +1,16 @@
 {
- "dernier_passage_le": "2026-11-20",
+ "dernier_passage_le": "2026-11-21",
  "series": {
-  "age_annulation_decote_openfisca": {
+  "age_annulation_decote": {
    "ajoutees": 0,
    "colonne": "age",
    "corrigees": 0,
-   "empreinte": "f44dd24f01ee5d98",
-   "identiques": 8,
+   "empreinte": "57d74b3f1712324d",
+   "identiques": 77,
    "niveau": "haute",
-   "source": "OpenFisca-France-Pension, aad.yaml du régime général",
-   "valeurs": 8,
-   "verifiee_le": "2026-09-14"
+   "source": "DILA, base LEGI, code de la sécurité sociale L. 351-8, 1°, et R. 351-27, par les versions de la fiche age_annulation_decote",
+   "valeurs": 77,
+   "verifiee_le": "2026-11-21"
   },
   "age_conjoncturel_depart": {
    "ajoutees": 0,
@@ -65,7 +65,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code de la sécurité sociale L. 161-17-2 et D. 161-2-1-9, par les versions de la fiche age_legal_par_generation",
    "valeurs": 79,
-   "verifiee_le": "2026-11-20"
+   "verifiee_le": "2026-11-21"
   },
   "allocation_supplementaire_cnav": {
    "ajoutees": 0,
@@ -626,7 +626,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France-Pension, trimtp.yaml du régime général",
    "valeurs": 11,
-   "verifiee_le": "2026-09-14"
+   "verifiee_le": "2026-11-21"
   },
   "duree_proratisation": {
    "ajoutees": 0,
@@ -648,7 +648,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France-Pension, trimtp.yaml de la pension civile, colonne de 2003",
    "valeurs": 5,
-   "verifiee_le": "2026-09-14"
+   "verifiee_le": "2026-11-21"
   },
   "durees_echelon_duree": {
    "ajoutees": 0,
@@ -912,7 +912,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-11-20"
+   "verifiee_le": "2026-11-21"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -2221,7 +2221,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-11-20"
+   "verifiee_le": "2026-11-21"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -2463,7 +2463,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
    "valeurs": 29,
-   "verifiee_le": "2026-11-20"
+   "verifiee_le": "2026-11-21"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -2496,7 +2496,7 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-11-20"
+   "verifiee_le": "2026-11-21"
   },
   "valeurs_point_msa": {
    "ajoutees": 1,

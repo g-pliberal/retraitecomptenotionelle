@@ -616,6 +616,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "duree_assurance_requise_openfisca":
             "legislation/duree_assurance_requise.csv",
         "age_annulation_decote_openfisca": "legislation/age_annulation_decote.csv",
+        # La vue des versions de la fiche de l'âge du taux plein (note de
+        # décision 0009, étape 3).
+        "age_annulation_decote": "legislation/age_annulation_decote.csv",
         "duree_requise_fonction_publique_openfisca":
             "legislation/duree_requise_fonction_publique.csv",
         "coefficient_minoration": "legislation/coefficient_minoration.csv",
@@ -906,6 +909,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
                # De même de la pension moyenne quand le tableau 2.1-a porte
                # 2023 et 2024.
                "pensions_brutes_nettes_panorama",
+               # La vue des versions de l'âge du taux plein écrit toutes les
+               # générations : OpenFisca n'a plus rien à combler (note de
+               # décision 0009, étape 3).
+               "age_annulation_decote_openfisca",
                # Aucun tableau des militaires ne laisse sa colonne présumée
                # (action 158, étape des militaires).
                "grilles_militaires_rang_presume", "grilles_militaires_indice_presume"}

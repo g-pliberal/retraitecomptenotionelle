@@ -4520,18 +4520,21 @@ def source_duree_requise_openfisca() -> dict[tuple, float]:
 def source_age_annulation_openfisca() -> dict[tuple, float]:
     """Âge d'annulation de la décote, par génération, chez OpenFisca.
 
-    La table du dépôt est calculée — l'âge d'ouverture majoré de cinq ans — et
-    recontrôlée à chaque exécution par ``controle_vraisemblance_age_annulation``.
-    OpenFisca la porte transcrite : c'est un second chemin, indépendant du
-    premier, et il la verse au niveau ``haute`` où elle était déjà.
+    Source d'appoint, sur les seules lignes que la vue des versions de la
+    fiche ``age_annulation_decote`` ne couvre pas (note de décision 0009,
+    étape 3) : depuis que cette vue les écrit toutes, elle n'a plus rien à
+    verser, et sa trace se retire du journal. La table reste recontrôlée par
+    ``controle_vraisemblance_age_annulation``.
     """
     table = _tables_generation_openfisca()["age_annulation_decote"]
+    couvertes = set(source_age_annulation_decote())
     return {
         cle: valeur
         for cle in sorted(_cles_non_certifiees(
             REFERENCE / "legislation" / "age_annulation_decote.csv", ("generation",)),
             key=lambda c: float(c[0]))
-        if (valeur := _en_escalier(table, float(cle[0]))) is not None
+        if cle not in couvertes
+        and (valeur := _en_escalier(table, float(cle[0]))) is not None
     }
 
 
