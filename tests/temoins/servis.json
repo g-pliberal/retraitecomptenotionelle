@@ -16678,7 +16678,7 @@
     "departs": [],
     "liquidation_ouverte": true,
     "motif_ouverture": "age_legal",
-    "pension_annuelle": 6780.377554233501,
+    "pension_annuelle": 6786.199787193411,
     "pension_hors_repartition": 0.0,
     "pensions_par_regime": [
      {
@@ -16688,8 +16688,8 @@
       "type_calcul": "points"
      },
      {
-      "detail": "cotisations revalorisées 3,556 € × rendement 13.10% × coefficient d'anticipation 0.9875",
-      "montant": 459.9564038328751,
+      "detail": "cotisations revalorisées 3,556 € × rendement 13.10%",
+      "montant": 465.7786367927849,
       "regime": "carpimko_complementaire",
       "type_calcul": "points"
      },
