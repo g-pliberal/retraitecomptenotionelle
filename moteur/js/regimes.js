@@ -597,6 +597,15 @@ export class AgesTauxPleinDUneVersion {
     this.version = version === null ? null : version.id;
   }
 
+  /**
+   * La version porte-t-elle une règle commune ? Non avant le 1er avril 1983 :
+   * chaque régime y a son droit.
+   */
+  regleCommune() {
+    return this._version !== null && !(Object.hasOwn(this._version.parametres, "age")
+      && this._version.parametres.age === null);
+  }
+
   /** @returns {[number, number] | null} âge et fiabilité. */
   age(generation) {
     const version = this._version;

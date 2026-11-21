@@ -155,3 +155,32 @@ test("la personne née le 1er du mois compte ses âges de ce mois-là", () => {
   const origine = new DateMois(1951, 7);
   assert.equal(enMoisLu(ages.age(1951.5, origine)), mois(65, 4));
 });
+
+// --- Avant le 1er avril 1983, le régime garde sa valeur ---------------------
+
+import { Contexte } from "../../moteur/js/contexte.js";
+import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
+
+/**
+ * Avant l'ordonnance n° 82-270 (« entreront en vigueur le 1er avril 1983 »,
+ * article 9), il n'y a pas de règle commune : la version de la fiche ne dit
+ * rien, et le régime qui renvoie garde la valeur de sa période (note de
+ * décision 0009, « Le fichier de régime garde son droit propre »), 67 ans à la
+ * CARMF de 1980. Depuis, l'âge de l'assuré est celui de la version sous
+ * laquelle il l'atteint : soixante-cinq ans pour un né en 1915, parti en 1984.
+ */
+test("une pension d'avant le 1er avril 1983 garde la valeur de la période du régime", () => {
+  const contexte = new Contexte(paquet);
+  const simulateur = contexte.simulateur();
+  const scenario = simulateur.scenarioActuel;
+  const carriere = (age) => simulateur.carriereSimple({
+    sexe: "H", niveau_salaire: 1.0, annee_naissance: 1915, mois_naissance: 3,
+    jour_naissance: 10, affiliation: "salarie_prive_non_cadre", age_debut: 25,
+    age_liquidation: age,
+  });
+  const carmf = scenario.catalogue.obtenir("carmf_complementaire");
+  const avant = carmf.periode(1980);
+  assert.ok(avant.age_taux_plein_par_generation);
+  assert.equal(ouvrir.ageTauxPlein(scenario, avant, carriere(65)), avant.age_taux_plein);
+  assert.equal(ouvrir.ageTauxPlein(scenario, carmf.periode(1984), carriere(69)), 65);
+});

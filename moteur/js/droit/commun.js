@@ -89,6 +89,29 @@ export function ageDuTauxPleinDeLAssure(moteur, carriere) {
 }
 
 /**
+ * L'âge du taux plein que le droit oppose à la PENSION de cette carrière. Sa
+ * date d'effet choisit la version de la fiche (`AgesAnnulationDecote.aLEffet`) :
+ * avant le 1er avril 1983, il n'y a pas de règle commune, et `null` laisse au
+ * régime la valeur de sa période. Depuis, c'est l'âge de l'assuré, celui de la
+ * version sous laquelle il l'atteint ({@link ageDuTauxPleinDeLAssure}) : pour
+ * toute pension dont la décote en dépend, c'est celui de la version à la date
+ * d'effet. Les deux ne divergent que pour l'assuré né avant 1955 dont la
+ * pension prend effet après le 1er septembre 2023, à 68 ans passés : il garde
+ * l'âge qu'il a atteint, que les statuts de 2017 de la CARCDSF écrivent aussi
+ * génération par génération, quand la rédaction de 2023 dirait 67 ans (question
+ * au propriétaire, note de l'étape 3 du 21 novembre 2026).
+ *
+ * @returns {[number, number] | null} âge et fiabilité.
+ */
+export function ageDuTauxPleinDeLaPension(moteur, carriere) {
+  const date = dateDEffet(carriere);
+  if (date !== null && !moteur.agesAnnulationDecote.aLEffet(date).regleCommune()) {
+    return null;
+  }
+  return ageDuTauxPleinDeLAssure(moteur, carriere);
+}
+
+/**
  * La date d'effet d'une demande (AAAA-MM-JJ) : le premier jour du mois de la
  * liquidation, ou `null` pour une carrière sans départ.
  */

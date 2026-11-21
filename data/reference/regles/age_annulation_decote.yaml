@@ -285,13 +285,18 @@ code:
   moteur: >-
     `age_taux_plein_par_generation` : l'âge du taux plein est lu dans les versions de
     cette fiche, que le paquet porte (`fiches_datees`), et la valeur de la période
-    (`age_taux_plein`) ne sert que de repli, avant le 1er avril 1983. La date d'effet
-    de la pension choisit la version (`AgesAnnulationDecote.aLEffet`) ; une version
+    (`age_taux_plein`) ne sert que pour une pension prenant effet avant le 1er avril
+    1983, où la version ne porte pas de règle commune (`ageDuTauxPleinDeLaPension`).
+    La date d'effet d'une pension choisit la version (`AgesAnnulationDecote.aLEffet`) ; une version
     qui renvoie lit la valeur nommée dans la version de l'âge légal à la même date,
     et un renvoi sans cible arrête le calcul. L'âge du taux plein d'une PERSONNE, sans
     pension datée (l'invalide, le conjoint survivant, l'activité après la pension),
     est celui de la version sous laquelle elle l'atteint
-    (`AgesAnnulationDecote.age`), comme l'âge légal. Le minimum avec l'âge du parent
+    (`AgesAnnulationDecote.age`), comme l'âge légal ; c'est aussi celui que la
+    pension lit depuis 1983 : il ne diffère de la version à la date d'effet que pour
+    l'assuré né avant 1955 dont la pension prend effet après le 1er septembre 2023,
+    qui garde l'âge atteint (les statuts de 2017 de la CARCDSF l'écrivent aussi),
+    quand la rédaction de 2023 dirait 67 ans : question au propriétaire. Le minimum avec l'âge du parent
     de trois enfants (`taux_plein_a_soixante_cinq_ans`) reste une relation écrite
     dans le code (`ouvrir.ageTauxPlein`). Sous un droit contrefactuel, le moteur lit
     la fiche que la pile de couches a résolue (`FichesDatees.sousLeDroit`). Les âges
@@ -300,8 +305,8 @@ code:
     130).
   javascript: >-
     moteur/js/droit/ouvrir.js : ageTauxPlein ; moteur/js/droit/commun.js :
-    ageDuTauxPleinDeLAssure ; moteur/js/regimes.js : AgesAnnulationDecote,
-    valeurDuRenvoi
+    ageDuTauxPleinDeLaPension, ageDuTauxPleinDeLAssure ; moteur/js/regimes.js :
+    AgesAnnulationDecote, valeurDuRenvoi
   parametres: >-
     contenu.parametres de chaque version : age ;
     legislation/age_annulation_decote.csv : generation, age ;
