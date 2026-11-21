@@ -204,19 +204,20 @@ l'Utilisateur », interdisent « toute rediffusion » de ses contenus et
 demandent de « ne pas communiquer de fausses informations ». Jusqu'à ce que
 le propriétaire tranche, aucune saisie nouvelle ne se fait sur les quatre
 simulateurs d'info-retraite, et rien n'entre dans le dépôt de leurs pages
-que les cas saisis et les nombres obtenus.
+que les cas saisis et les nombres obtenus. Dans la saisie décrite
+ci-dessous, ce plafond tient lieu de l'approbation de chaque lot : un lot
+qui y entre n'attend pas l'accord du propriétaire, et aucune saisie ne va
+au-delà.
 
 **La saisie.** Une personne tape les entrées et colle chaque réponse, telle
 quelle, dans la feuille. Claude peut le faire à sa place, à cinq conditions :
 le simulateur est anonyme et sans captcha ; le lot — le simulateur et ses
 entrées — est présenté au propriétaire, qui l'approuve avant la première
-saisie, ou, depuis le 21 novembre 2026, entre dans le plafond mensuel
-ci-dessus ; Claude saisit dans le navigateur intégré, qui ne cache pas ce qu'il
+saisie ; Claude saisit dans le navigateur intégré, qui ne cache pas ce qu'il
 est, par ses outils de page, une entrée à la fois, au rythme d'une personne ;
 il refuse les cookies qui ne sont pas nécessaires ; il s'arrête au premier
 captcha, à la première connexion demandée, au premier écran qu'il
-n'attendait pas. Jamais de script, jamais hors du lot ni au-delà du
-plafond.
+n'attendait pas. Jamais de script, jamais hors du lot.
 
 **La transcription.** `python scripts/simulateurs.py transcrire <feuille>`
 fait de chaque réponse un exemple officiel : la source nomme le simulateur et
