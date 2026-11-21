@@ -13,6 +13,8 @@
 #
 # Usage : bash scripts/pousser.sh   — silencieux s'il n'y a rien à publier,
 # une ligne s'il a poussé, un message sur stderr et un code non nul s'il bloque.
+#         bash scripts/pousser.sh --retenir "<raison>"   — ne plus rien publier ;
+#         bash scripts/pousser.sh --lever                — publier, et ôter la retenue.
 
 set -uo pipefail
 
@@ -20,6 +22,48 @@ ici=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 racine=$(git rev-parse --show-toplevel 2>/dev/null) || {
     echo "pousser: pas dans un dépôt git" >&2; exit 1; }
 cd "$racine" || exit 1
+
+# La retenue (21 novembre 2026) : enregistrer sans publier. Le hook `Stop`
+# publie à chaque fin de tour tout ce qui est commité, sur quelque branche que
+# ce soit ; un chantier qui attend son tour n'avait donc que le non-commité ou
+# le patch hors du dépôt. `--retenir "<raison>"` pose un fichier dans le
+# dossier interne de git — jamais commité, jamais envoyé, aucune branche sur
+# GitHub — et tant qu'il est là, le script ne publie rien et le dit en une
+# ligne. `--lever` publie, avec toutes les vérifications qui suivent, et
+# n'ôte la retenue qu'une fois l'envoi fait : refusé, le travail reste retenu,
+# et le tour suivant ne le publie pas en douce. Le geste reste explicite.
+# Dans le dossier COMMUN de git : un worktree, où un agent isolé part du même
+# `HEAD`, voit la retenue du dépôt, et ne publie pas ce qu'elle garde.
+retenue="$(git rev-parse --path-format=absolute --git-common-dir)/retenue"
+mode=""
+case "${1:-}" in
+    "") ;;
+    --retenir)
+        raison="${2:-}"
+        if [ -z "${raison//[[:space:]]/}" ]; then
+            echo "pousser: --retenir veut sa raison : bash scripts/pousser.sh --retenir \"<raison>\"" >&2
+            exit 2
+        fi
+        printf '%s\n' "$raison" > "$retenue"
+        echo "retenu : $raison — rien ne part sur main avant bash scripts/pousser.sh --lever"
+        exit 0
+        ;;
+    --lever)
+        if [ $# -gt 1 ]; then
+            echo "pousser: --lever ne prend rien après lui" >&2
+            exit 2
+        fi
+        mode=lever ;;
+    *)
+        echo "pousser: option inconnue « $1 » (seules --retenir \"<raison>\" et --lever existent)" >&2
+        exit 2
+        ;;
+esac
+if [ -f "$retenue" ] && [ "$mode" != lever ]; then
+    en_attente=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo "?")
+    echo "retenu : $(head -n 1 "$retenue") — $en_attente commit(s) en attente, publiés par bash scripts/pousser.sh --lever"
+    exit 0
+fi
 
 # Une tête détachée publie comme une autre : c'est `HEAD` qui part sur main,
 # pas une branche. Une session créée par une autre session part ainsi, et le
@@ -395,6 +439,8 @@ if [ "$avance" -gt 0 ]; then
     avec_reprises git push --quiet origin HEAD:main || {
         echo "pousser: push vers main impossible après 5 essais" >&2; exit 1; }
 fi
+# Levée, la retenue ne tombe qu'ici : tout ce qui pouvait refuser a passé.
+[ "$mode" = lever ] && rm -f "$retenue"
 
 # Faire suivre la référence de la branche de session, pour que le compteur de
 # commits non poussés lise zéro. Jamais de création. `ls-remote` distingue les

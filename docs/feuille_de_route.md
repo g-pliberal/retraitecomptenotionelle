@@ -5881,12 +5881,13 @@ d'envoi rejoue juste avant les tests des fichiers que tous les chantiers
 écrivent. Depuis le 21 novembre, deux chantiers qui déplacent des cas
 témoins différents, ou abaissent le même compteur, ne s'attendent plus : le
 rebasage fusionne les témoins cas par cas, additionne les baisses, et refait
-le paquet de données. Par quoi commencer : relever sur une semaine d'envois
+le paquet de données ; un chantier qui attend commite sans
+publier (`pousser.sh --retenir`). Par quoi commencer : relever sur une semaine d'envois
 combien de refus le rebasage évite et lesquels restent. Restent aussi :
 répartir sur les cœurs les calculs du paquet, relever la durée des
 corrections. Le propriétaire veut voir ce résultat avant d'assouplir sa règle
 d'un seul chantier à la fois. Notes : `reprise.py 135` les liste ; la
-dernière, `2026-11-21-fichiers-communs-en-parallele.md`.
+dernière, `2026-11-21-retenue.md`.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus

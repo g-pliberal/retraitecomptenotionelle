@@ -34,12 +34,12 @@ commit qui touche une garde — les workflows de GitHub, les hooks, leurs
 réglages, `pousser.sh`, `publier_fabrique.sh`, `publier_inscription.sh` — sans
 ligne `Garde-modifiée: <raison>`, qu'une session n'écrit qu'avec l'accord du
 propriétaire, demandé avant (action 163). En avance sur `main`, il pousse
-tout ce qui est commité, même si d'autres modifications attendent :
-ne commiter qu'une fois ses tests passés, puisque le hook publie à chaque fin
-de tour. À la main, la recette reste
-`git fetch origin`, `git merge --ff-only origin/main`,
-`git push origin HEAD:main` ; si l'avance rapide est refusée, la session a
-divergé, et il faut comprendre pourquoi avant d'insister.
+tout ce qui est commité, à chaque fin de tour : ne commiter qu'au vert. Qui
+attend son tour retient d'abord (`pousser.sh --retenir "<raison>"`), commite,
+puis publie par `--lever` ; une retenue meurt avec le conteneur : finir sans
+lever, c'est déposer son patch dans les fichiers du projet. À la main, hors
+retenue : `git fetch origin`, `git merge --ff-only origin/main`, `git push
+origin HEAD:main` ; avance rapide refusée : comprendre la divergence d'abord.
 
 - **Ne jamais faire `git checkout main`, ni se fier au `main` local** : il
   date du clone. Ne comptent que `origin/main` et `HEAD`.

@@ -31,9 +31,9 @@ def git(depot: Path, *arguments: str) -> str:
     return acheve.stdout.strip()
 
 
-def pousser(depot: Path) -> subprocess.CompletedProcess:
+def pousser(depot: Path, *options: str) -> subprocess.CompletedProcess:
     return subprocess.run(
-        ["bash", str(SCRIPT)], cwd=depot, capture_output=True, text=True,
+        ["bash", str(SCRIPT), *options], cwd=depot, capture_output=True, text=True,
         encoding="utf-8",
     )
 
@@ -480,6 +480,117 @@ def test_une_tete_detachee_refuse_une_adresse_nominative(atelier):
     assert acheve.returncode != 0
     assert "adresse nominative" in acheve.stderr
     assert tete_distante(distant, "main") == avant, "rien poussé"
+
+
+# -- la retenue : enregistrer sans publier ------------------------------------
+
+
+def references_distantes(distant: Path) -> str:
+    return git(distant, "for-each-ref", "--format=%(refname) %(objectname)")
+
+
+def test_un_travail_retenu_ne_part_pas_a_la_fin_du_tour(atelier):
+    """Le cas dangereux : un chantier qui attend son tour commite et retient ;
+    le hook `Stop` relance le script nu à chaque fin de tour, et rien ne doit
+    partir, ni sur `main` ni sur aucune référence de GitHub. Le travail reste
+    dans le dépôt local, la retenue hors de tout commit."""
+    distant, session = atelier
+    avant = tete_distante(distant, "main")
+    refs = references_distantes(distant)
+    tete = commiter(session, "travail.txt")
+
+    retenir = pousser(session, "--retenir", "attend la relecture")
+    assert retenir.returncode == 0, retenir.stderr
+    for _ in range(2):
+        tour = pousser(session)
+        assert tour.returncode == 0, tour.stderr
+        assert "retenu" in tour.stdout and "attend la relecture" in tour.stdout
+        assert "1 commit" in tour.stdout
+    assert tete_distante(distant, "main") == avant, "rien publié"
+    assert references_distantes(distant) == refs, "aucune branche ni référence créée"
+    assert git(session, "rev-parse", "HEAD") == tete, "le travail est toujours là"
+    assert git(session, "status", "--porcelain") == "", "la retenue n'est pas un fichier suivi"
+
+
+def test_lever_la_retenue_publie_sur_main(atelier):
+    distant, session = atelier
+    tete = commiter(session, "travail.txt")
+    assert pousser(session, "--retenir", "attend son tour").returncode == 0
+
+    lever = pousser(session, "--lever")
+    assert lever.returncode == 0, lever.stderr
+    assert "main ←" in lever.stdout
+    assert tete_distante(distant, "main") == tete
+    assert pousser(session).stdout.strip() == "", "la retenue est levée pour de bon"
+
+
+def test_lever_garde_les_refus_et_la_retenue(atelier):
+    """Lever passe par toutes les vérifications ; refusé, rien ne part, et la
+    retenue tient : le tour suivant ne publie pas en douce la version réparée."""
+    distant, session = atelier
+    avant = tete_distante(distant, "main")
+    git(session, "config", "user.email", "prenom.nom@exemple.fr")
+    commiter(session, "travail.txt")
+    assert pousser(session, "--retenir", "attend son tour").returncode == 0
+
+    lever = pousser(session, "--lever")
+    assert lever.returncode != 0
+    assert "adresse nominative" in lever.stderr
+    assert tete_distante(distant, "main") == avant
+    git(session, "config", "user.email", "noreply@anthropic.com")
+    git(session, "commit", "--quiet", "--amend", "--no-edit", "--reset-author")
+    assert "retenu" in pousser(session).stdout
+    assert tete_distante(distant, "main") == avant, "toujours retenu"
+
+
+def test_une_retenue_dit_sa_raison(atelier):
+    """Une option mal écrite ne publie rien et ne retient rien : elle refuse."""
+    distant, session = atelier
+    avant = tete_distante(distant, "main")
+    commiter(session, "travail.txt")
+    for options in (["--retenir"], ["--retenir", "  "], ["--inconnue"],
+                    ["--lever", "--retenir", "x"]):
+        acheve = pousser(session, *options)
+        assert acheve.returncode != 0, options
+        assert tete_distante(distant, "main") == avant, options
+    assert "raison" in pousser(session, "--retenir").stderr
+    assert not (session / ".git" / "retenue").exists()
+
+
+def test_un_worktree_voit_la_retenue_du_depot(atelier, tmp_path):
+    """Un agent isolé dans un worktree part du `HEAD` retenu : la retenue vaut
+    pour tout le dépôt, pas pour le seul répertoire où elle a été posée."""
+    distant, session = atelier
+    avant = tete_distante(distant, "main")
+    commiter(session, "travail.txt")
+    assert pousser(session, "--retenir", "attend son tour").returncode == 0
+    arbre = tmp_path / "arbre"
+    git(session, "worktree", "add", "--quiet", "-b", "agent", str(arbre))
+
+    acheve = pousser(arbre)
+    assert acheve.returncode == 0, acheve.stderr
+    assert "retenu" in acheve.stdout
+    assert tete_distante(distant, "main") == avant
+
+
+def test_lever_sans_rien_a_publier_ote_la_retenue(atelier):
+    _, session = atelier
+    assert pousser(session, "--retenir", "rien encore").returncode == 0
+    lever = pousser(session, "--lever")
+    assert lever.returncode == 0, lever.stderr
+    assert pousser(session).stdout.strip() == ""
+
+
+def test_une_tete_detachee_se_retient_aussi(atelier):
+    distant, session = atelier
+    avant = tete_distante(distant, "main")
+    git(session, "checkout", "--quiet", "--detach")
+    commiter(session, "travail.txt")
+    assert pousser(session, "--retenir", "attend son tour").returncode == 0
+    assert "retenu" in pousser(session).stdout
+    assert tete_distante(distant, "main") == avant
+    assert pousser(session, "--lever").returncode == 0
+    assert tete_distante(distant, "main") == git(session, "rev-parse", "HEAD")
 
 
 # -- le compteur de commits « non poussés » -----------------------------------
