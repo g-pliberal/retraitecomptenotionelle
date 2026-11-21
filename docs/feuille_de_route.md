@@ -8447,7 +8447,8 @@ encore, avec ses textes liés à Légifrance. Un test refuse la page qu'un régi
 du modèle manquerait, et de même pour « Droits non cotisés ». Restent, par quoi
 commencer : les curseurs de la maquette, qui chiffrent sa pension à chaque
 lecteur ; puis ce que chaque caisse verse par an. Notes :
-`193/2026-11-17-etape-1-la-page.md`, `193/2026-11-21-pages-depuis-les-fiches.md`.
+`193/2026-11-17-etape-1-la-page.md`, `193/2026-11-21-pages-depuis-les-fiches.md`,
+`193/2026-11-21-droits-non-cotises-recenses.md`.
 
 **D'où elle vient.** Le 17 novembre 2026, le propriétaire : « J'aimerais que
 le site présente les grands ensembles de la retraite en France », puis, sur
@@ -8471,14 +8472,15 @@ Il a validé la maquette des caisses et choisi de l'intégrer au site.
 Vingt-deux parties sont prouvées, par des grilles posées depuis le seul texte
 par des sessions qui n'ont pas lu le code. Les deux filets sont faits : 3 052
 anomalies à expliquer, 192 parties qu'aucun témoin ne garde. Trois pistes du
-balayage sont expliquées. Trois écarts au droit sont corrigés : la surcote des
-régimes spéciaux compte la durée des services, sauf à l'Opéra ; une pension
-de points servie ne baisse plus ; l'Ircantec se sert au départ, avant le
-régime général. Un contrôle par Z3 cherche sur GitHub, sans bloquer, les
+balayage sont expliquées. Des écarts au droit sont corrigés : la durée des
+régimes spéciaux et des fonctionnaires se compte au jour, comme leurs textes ;
+une pension de points servie ne baisse plus ; l'Ircantec se sert au départ ;
+les points du RAFP s'arrondissent comme la caisse ; le salaire net retire la
+mutuelle. Un contrôle par Z3 cherche sur GitHub, sans bloquer, les
 propriétés fausses des fiches. Le propriétaire décide de la suite de la
 carte. Lire `194/2026-11-21-etape-b-les-filets.md`,
 `194/2026-11-21-pistes-du-balayage.md`, `194/2026-11-21-controle-z3.md`,
-`194/2026-11-21-surcote-des-regimes-speciaux-au-mois.md`,
+`194/2026-11-21-durees-des-regimes-speciaux-au-jour.md`,
 `194/2026-11-21-pension-de-points-servie.md` et
 `194/2026-11-21-ircantec-sans-la-base.md`.
 
