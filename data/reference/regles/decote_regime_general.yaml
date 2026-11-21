@@ -1,46 +1,266 @@
 schema_version: 1
 id: decote_regime_general
 intitule: >-
-  1,25 % du taux plein par trimestre manquant, le plus petit des deux décomptes
-  (durée, âge), arrondi au trimestre supérieur, vingt trimestres au plus.
+  Le taux plein minoré par trimestre manquant, le plus petit des deux décomptes
+  (durée, âge), arrondi au trimestre supérieur : 2,5 % de 1983 à 2003, selon la
+  génération de 2004 à 2025, 1,25 % depuis 2026.
+domaine: decote_surcote
 regimes: [cancava, cancava_avant_1973, cavimac, cps_saint_pierre_et_miquelon,
   msa_salaries, nric, organic, organic_avant_1973, rci, rco_artisans, regime_general,
   rsi]
 etat: conforme
 etape: liquider_chaque_regime
+lit:
+- liquidation.date_effet
+- l'année de naissance de l'assuré
+- >-
+  la durée d'assurance de l'assuré, tous régimes de base, sa durée requise et l'âge
+  d'annulation de la décote, dans les versions de `duree_requise_par_generation` et
+  de `age_annulation_decote` en vigueur à la date d'effet de sa pension
+ecrit:
+- >-
+  le coefficient de minoration et les trimestres de décote de la pension, dans les
+  régimes dont la période porte `decote_par_generation`
+dates_qui_decident:
+- liquidation.date_effet
 effet: >-
-  Toute liquidation avant le taux plein. Le coefficient par génération de la table
-  (2,5 % à 1,375 % pour les nés avant 1953) ne concerne plus personne : ces générations
-  ont passé l'âge du taux plein d'office, et le droit ne l'écrit plus.
+  Toute liquidation avant le taux plein, depuis le 1er avril 1983. Le moteur lit le
+  coefficient dans `legislation/coefficient_minoration.csv` à l'année de naissance, sur
+  toutes les périodes depuis 1983 : 2,5 % jusqu'à la génération 1943, ce que valent
+  aussi les pensions d'avant 2004, qu'aucun assuré né après 1943 n'a pu prendre à
+  soixante ans ; 1,25 % dès la génération 1953, le seul coefficient que le droit
+  applique depuis 2026, les générations antérieures ayant toutes passé l'âge
+  d'annulation. Les versions de la fiche, découpées le 21 novembre 2026 (action 194),
+  disent ce que chaque rédaction de R. 351-27 écrit ; aucun résultat n'en a bougé.
 sources:
-  lu_le: 2026-09-17
+  lu_le: 2026-11-21
   prochaine_relecture: 2027-06-30
   lectures:
   - type: legifrance
     reference: >-
-      R. 351-27 CSS, LEGIARTI000054589995, version du 1er août 2026 ; décret n°
-      2025-1409, JORFTEXT000053227462, article 2, 29° e
-    date: 2026-09-17
+      R. 351-27 CSS, ses neuf rédactions (LEGIARTI000006749434 à LEGIARTI000054589995),
+      lues dans l'index LEGI de la DILA à jour au 16 novembre 2026 ; décret n°
+      2025-1409, article 2, I, 29° et II (JORFARTI000053227542) ; décret n° 2026-699,
+      article 1er, 3°, et article 6 (JORFARTI000054569111, JORFARTI000054569121)
+    date: 2026-11-21
   - type: circulaire_cnav
     reference: 2026-07 du 5 mars 2026, point 4.1.1
     date: 2026-03-05
   - type: service_public
     reference: fiche F19666
     date: 2026-01-01
+versions:
+- id: avant_l_ordonnance_de_1982
+  statut: supposee
+  hypothese: >-
+    aucune décote : avant le 1er avril 1983, le taux du régime général et des salariés
+    agricoles croissait avec l'âge seul, ce que la fiche `decote_avant_1983` décrit ;
+    la présente fiche ne dit rien de ces pensions
+  fiabilite: haute
+  bornes:
+    liquidation.date_effet: [null, 1983-04-01]
+  contenu:
+    droit: >-
+      pas de décote par trimestre manquant : le taux est celui de l'âge (fiche
+      `decote_avant_1983`)
+    parametres:
+      coefficient: null
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne prend effet avant 1983
+- id: ordonnance_de_1982
+  statut: lue
+  nee_de: LEGIARTI000006749434
+  textes:
+  - id: LEGIARTI000006749434
+    article: R. 351-27 du code de la sécurité sociale, rédaction du 21 décembre 1985
+    en_vigueur: 1985-12-21
+    citation: >-
+      « 2°) pour les assurés qui ne relèvent pas des dispositions du 1° ci-dessus, le
+      taux applicable à leur salaire annuel de base est déterminé à partir du " taux
+      plein " auquel est appliqué un coefficient de minoration qui est fonction soit du
+      nombre de trimestres correspondant à la durée séparant l'âge auquel leur pension
+      prend effet de leur soixante-cinquième anniversaire, soit du nombre de trimestres
+      supplémentaires qui leur serait nécessaire, à la date d'effet de leur pension,
+      pour relever de la première phrase du 1° ci-dessus ; le nombre de trimestres
+      correspondant est éventuellement arrondi au chiffre immédiatement supérieur. Le
+      plus petit de ces deux nombres est pris en considération. Pour chaque trimestre
+      ainsi retenu, le coefficient de minoration à appliquer au " taux plein " est 2,5
+      p. 100. »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000006749435
+    article: R. 351-27 du code de la sécurité sociale, rédaction du 28 août 1993
+    en_vigueur: 1993-08-28
+    citation: >-
+      le même 2°, mot pour mot, « sous réserve des dispositions de l'article R.
+      351-45 », la durée du 1° passant de 150 à 160 trimestres
+    lu_le: 2026-11-21
+  hypothese: >-
+    avant la codification du 21 décembre 1985, la même règle, que l'ordonnance n°
+    82-270 et son décret d'application ont fixée au 1er avril 1983 et que l'index LEGI
+    ne porte pas
+  fiabilite: haute
+  bornes:
+    liquidation.date_effet: [1983-04-01, 2004-01-01]
+  contenu:
+    droit: >-
+      2,5 % du taux plein par trimestre, quelle que soit la génération ; le plus petit
+      de deux décomptes, arrondis au trimestre supérieur : les trimestres qui séparent
+      la date d'effet du soixante-cinquième anniversaire, et ceux qui manquent, tous
+      régimes de base, à la durée requise (`duree_requise_par_generation`)
+    conditions: >-
+      aucun plafond de trimestres n'est écrit ; une pension prise à soixante ans en a au
+      plus vingt par l'âge. Avant le 1er avril 1983, le taux croissait avec l'âge seul
+      (fiche `decote_avant_1983`). Aucun assuré né après 1943 n'a pu prendre sa pension
+      avant 2004 à soixante ans : le coefficient de la génération que le moteur lit, 2,5
+      % jusqu'à 1943, est celui de la version
+    parametres:
+      coefficient: 0.025
+      age_du_decompte: 65
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne prend effet de 1983 à 2003
+- id: loi_de_2003
+  statut: lue
+  nee_de: LEGIARTI000006749436
+  textes:
+  - id: LEGIARTI000006749436
+    article: R. 351-27 du code de la sécurité sociale, rédaction du décret n° 2004-144
+    en_vigueur: 2004-02-15
+    citation: >-
+      « II. - En ce qui concerne les pensions prenant effet postérieurement au 31
+      décembre 2003, le coefficient de minoration à appliquer au "taux plein" est fixé
+      à : 2,5 % pour l'assuré né avant le 1er janvier 1944 ; 2,375 % pour l'assuré né
+      en 1944 ; 2,25 % pour l'assuré né en 1945 ; 2,125 % pour l'assuré né en 1946 ; 2
+      % pour l'assuré né en 1947 ; 1,875 % pour l'assuré né en 1948 ; 1,75 % pour
+      l'assuré né en 1949 ; 1,625 % pour l'assuré né en 1950 ; 1,5 % pour l'assuré né
+      en 1951 ; 1,375 % pour l'assuré né en 1952 ; 1,25 % pour l'assuré né après 1952.
+      »
+    lu_le: 2026-11-21
+  - id: LEGIARTI000024113020
+    article: R. 351-27 du code de la sécurité sociale, rédaction du 3 juin 2011
+    en_vigueur: 2011-06-03
+    citation: >-
+      « la durée séparant l'âge auquel leur pension prend effet de leur
+      soixante-cinquième anniversaire, s'ils remplissent les conditions prévues au 1°
+      bis ou 1° ter de l'article L. 351-8 […] ou, dans le cas contraire, de l'âge prévu
+      au 1° de l'article L. 351-8 » ; le II, mot pour mot
+    lu_le: 2026-11-21
+  - id: LEGIARTI000047633296
+    article: R. 351-27 du code de la sécurité sociale, rédaction du 1er septembre 2023
+    en_vigueur: 2023-09-01
+    citation: >-
+      le même décompte, « 1° bis ou 2° » au lieu de « 1° bis ou 1° ter » ; le II, mot
+      pour mot
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2026-01-01]
+  contenu:
+    droit: >-
+      le coefficient de la génération : 2,5 % jusqu'à 1943, un huitième de point de
+      moins par génération, 1,375 % pour 1952, 1,25 % dès 1953 ; le même décompte,
+      jusqu'à soixante-cinq ans, puis, depuis le 3 juin 2011, jusqu'à l'âge du 1° de L.
+      351-8 (`age_annulation_decote`)
+    conditions: >-
+      le II vaut pour les pensions « prenant effet postérieurement au 31 décembre 2003
+      », dès le 1er janvier 2004 et non au 15 février, date de la rédaction ; le
+      décompte par l'âge suit l'âge d'annulation que la fiche `age_annulation_decote`
+      lit à la date d'effet
+    parametres:
+      coefficient: null
+    table:
+      fichier: legislation/coefficient_minoration.csv
+      cle: generation
+      valeur: coefficient
+  exemples:
+  - cnav_2026_07_decote_1961
+- id: decret_de_2025
+  statut: lue
+  nee_de: LEGIARTI000053335645
+  textes:
+  - id: LEGIARTI000053335645
+    article: R. 351-27 du code de la sécurité sociale, rédaction du 1er janvier 2026
+    en_vigueur: 2026-01-01
+    citation: >-
+      « Pour chaque trimestre ainsi retenu, le coefficient de minoration à appliquer au
+      " taux plein " est 2,5 % pour les pensions ayant pris effet avant le 1er janvier
+      2004. » ; le II, abrogé
+    lu_le: 2026-11-21
+  - id: JORFARTI000053227542
+    article: décret n° 2025-1409 du 30 décembre 2025, article 2
+    en_vigueur: 2026-01-01
+    publie_le: 2025-12-31
+    citation: >-
+      « 29° A l'article R. 351-27 : […] e) Le II est abrogé » ; « II.-Les 3° à 5°, 9° à
+      12°, 14° à 26°, 28° à 30° […] du I du présent article s'appliquent aux pensions
+      prenant effet à compter du 1 er janvier 2026. »
+    lu_le: 2026-11-21
+  hypothese: >-
+    le texte ne donne plus de coefficient aux pensions prenant effet après 2003 ; la
+    caisse applique 1,25 % (circulaire Cnav 2026-07 du 5 mars 2026, point 4.1.1,
+    exemple 1 : « minoration 9 × 0,625 »), ce que la rédaction du 1er août 2026
+    écrira. Sans autre lecture possible : toute génération qu'une décote atteint
+    encore en 2026, née après 1952, avait 1,25 % sous le II abrogé
+  fiabilite: haute
+  bornes:
+    liquidation.date_effet: [2026-01-01, 2026-08-01]
+  contenu:
+    droit: >-
+      1,25 % par trimestre, quelle que soit la génération, comme la caisse
+      l'applique ; le même décompte, jusqu'à l'âge du 1° de L. 351-8
+    conditions: >-
+      les générations nées avant 1953, à qui le II donnait plus, ont toutes passé l'âge
+      d'annulation : le coefficient par génération que le moteur lit ne diffère de 1,25
+      % pour aucune pension de la version
+    parametres:
+      coefficient: 0.0125
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 21 novembre 2026, dans les exemples officiels du dépôt
+    (tests/temoins/exemples_officiels.yaml) : aucun ne prend effet de janvier à
+    juillet 2026 ; l'exemple 1 de la circulaire 2026-07 prend effet en 2024
+- id: decret_de_2026
+  statut: lue
+  nee_de: LEGIARTI000054589995
+  textes:
+  - id: LEGIARTI000054589995
+    article: R. 351-27 du code de la sécurité sociale, rédaction du 1er août 2026
+    en_vigueur: 2026-08-01
+    citation: >-
+      « Pour chaque trimestre ainsi retenu, le coefficient de minoration à appliquer au
+      " taux plein " est 1,25 %. »
+    lu_le: 2026-11-21
+  - id: JORFARTI000054569111
+    article: décret n° 2026-699 du 29 juillet 2026, article 1er, 3°
+    en_vigueur: 2026-08-01
+    publie_le: 2026-07-31
+    citation: >-
+      « 3° Au dernier alinéa de l'article R. 351-27, les mots : « 2,5 % pour les
+      pensions ayant pris effet avant le 1 er janvier 2004 » sont remplacés par le taux
+      : « 1,25 % ». » ; l'article 6, qui diffère au 1er septembre 2026 d'autres
+      dispositions, ne nomme pas ce 3°
+    lu_le: 2026-11-21
+  bornes:
+    liquidation.date_effet: [2026-08-01, null]
+  contenu:
+    droit: >-
+      1,25 % par trimestre, quelle que soit la génération ; le même décompte, jusqu'à
+      l'âge du 1° de L. 351-8
+    parametres:
+      coefficient: 0.0125
+  exemples:
+  - sp_f19666_decote
+  - sp_f21552_65_ans_158
 textes_a_rattacher:
-- reference: >-
-    R. 351-27 CSS (II par génération abrogé au 1er janvier 2026 par le décret n°
-    2025-1409, article 2, 29° : 1,25 % pour tous)
-- reference: L. 351-1 CSS
-exemples:
-- sp_f19666_decote
-- cnav_2026_07_decote_1961
-- sp_f21552_65_ans_158
+- reference: L. 351-1 CSS, deuxième alinéa, dont R. 351-27 est l'application
 code:
   interrupteurs:
     decote_par_generation: true
   moteur: >-
-    `decote_par_generation` : le coefficient de minoration est lu dans `legislation/coefficient_minoration.csv`
+    Le moteur ne lit pas les paramètres des versions, que tests/test_decote_versions.py
+    confronte à la table. `decote_par_generation` : le coefficient de minoration est lu dans `legislation/coefficient_minoration.csv`
     à l'ANNÉE DE NAISSANCE. La table de l'article R. 351-27 vaut aussi bien pour l'ancien
     droit (2,5 % par trimestre) que pour la montée en charge de la loi Fillon (jusqu'à
     1,25 % à partir de la génération 1953) : elle se branche donc sur toutes les périodes
@@ -55,6 +275,7 @@ code:
     regimes/nric.yaml, regimes/organic.yaml, regimes/organic_avant_1973.yaml,
     regimes/rci.yaml, regimes/rco_artisans.yaml, regimes/regime_general.yaml,
     regimes/rsi.yaml : decote_par_trimestre, taux_plein, age_taux_plein,
-    duree_requise_trimestres ; legislation/coefficient_minoration.csv : coefficient
-  tests: [tests/test_simulateur.py, tests/test_oracle.py, tests/js/moteur.test.js,
+    duree_requise_trimestres ; legislation/coefficient_minoration.csv : coefficient ;
+    contenu.parametres de chaque version : coefficient, age_du_decompte
+  tests: [tests/test_decote_versions.py, tests/test_simulateur.py, tests/test_oracle.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]
