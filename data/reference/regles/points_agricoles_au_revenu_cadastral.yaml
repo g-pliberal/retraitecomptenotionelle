@@ -1,0 +1,236 @@
+schema_version: 1
+id: points_agricoles_au_revenu_cadastral
+intitule: >-
+  Retraite proportionnelle des non-salariés agricoles, années 1981 à 1989 : le chef
+  d'exploitation acquiert chaque année 15, 30, 45 ou 60 points selon le revenu cadastral
+  servant de base à ses cotisations — au plus 1 180 F, de 1 180 F à 5 571 F, de 5 571 F à
+  9 830 F, au-delà.
+domaine: points
+regimes: [msa_non_salaries]
+etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- >-
+  l'année de la cotisation, qui dit si le barème du décret n° 80-808 vaut
+- >-
+  le revenu de l'année du chef d'exploitation, dont le moteur déduit le revenu cadastral
+  par convention, faute de le connaître
+ecrit:
+- >-
+  les points de retraite proportionnelle de l'année, que le scénario 1 porte au compte du
+  chef à la place du rendement de sa cotisation (`acquerir`)
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: avant_1981
+  statut: lue
+  textes:
+  - id: LEGIARTI000006769209
+    article: décret n° 80-808 du 14 octobre 1980, article 8
+    en_vigueur: 1981-01-01
+    citation: >-
+      « Pour les années antérieures à l'entrée en vigueur du présent décret, le nombre de
+      points résulte des dispositions des décrets du 30 avril 1965, du 21 janvier 1967, du
+      26 juin 1968, du 15 mai 1974 et du 10 février 1975 susvisés. »
+  bornes:
+    revenu.annee: [null, 1981-01-01]
+  contenu:
+    parametres:
+      existe: false
+    droit: hors de cette fiche
+    raison: >-
+      les barèmes de ces années sont dans cinq décrets que l'index de la DILA n'a pas en
+      texte ; non lus, ils ne sont pas écrits, et ces années restent au rendement de
+      leurs cotisations
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 20 novembre 2026, aucun exemple chiffré de points d'avant 1990 n'a été trouvé
+    dans les exemples officiels du dépôt (tests/temoins/exemples_officiels.yaml) ni au
+    guide de la MSA cité par la fiche retraite_proportionnelle_msa
+- id: bareme_de_1981
+  statut: lue
+  textes:
+  - id: LEGIARTI000006769209
+    article: décret n° 80-808 du 14 octobre 1980, article 8
+    en_vigueur: 1981-01-01
+    citation: >-
+      « Pour le calcul de la retraite proportionnelle, le nombre de points acquis chaque
+      année par les intéressés en fonction des cotisations versées en application du 1°,
+      b, de l'article 1123 du Code rural est déterminé suivant le barème annexé au présent
+      décret. »
+  - id: LEGIARTI000006769235
+    article: décret n° 80-808 du 14 octobre 1980, annexe
+    en_vigueur: 1981-01-01
+    citation: >-
+      « REVENU CADASTRAL servant de base aux cotisations [...] NOMBRE DE POINTS [...] Au
+      plus égal à 1180 F : 15 [...] De 1180 F à 5571 F : 30 [...] De 5571 F à 9830 F : 45
+      [...] Supérieur à 9830 F : 60 »
+  - id: LEGIARTI000006597478
+    article: code rural et de la pêche maritime, R. 732-69, rédaction du 22 avril 2005
+    en_vigueur: 2005-04-22
+    citation: >-
+      « est déterminé selon le barème suivant pour les années 1981 et suivantes : REVENU
+      CADASTRAL NOMBRE DE POINTS Au plus égal à 1 180 F (179,89 €). 15 De 1 180 F (179,80
+      €) à 5 571 F (849,29 €). 30 De 5 571 F (849,29 €) à 9 830 F (1 498,57 €). 45
+      Supérieur à 9 830 F (1 498,57 €). 60 »
+  - id: LEGIARTI000035918355
+    article: code rural et de la pêche maritime, R. 732-69, rédaction du 28 octobre 2017
+    en_vigueur: 2017-10-28
+    citation: >-
+      « est déterminé selon le barème suivant pour les années 1981 et suivantes : REVENU
+      CADASTRAL NOMBRE DE POINTS Au plus égal à 1 180 F (179,89 €). 15 »
+  - id: LEGIARTI000006776481
+    article: décret n° 92-793 du 14 août 1992, article 20
+    en_vigueur: 1992-08-15
+    citation: >-
+      « Le taux de la cotisation prévue au VI de l'article 1003-7-1 du code rural est égal
+      à 14 p. 100 des revenus professionnels ou d'une assiette forfaitaire constituée sur
+      la base de 5,54 F de revenu professionnel pour 1 F de revenu cadastral. »
+  nee_de: LEGIARTI000006769209
+  bornes:
+    revenu.annee: [1981-01-01, 1990-01-01]
+  contenu:
+    parametres:
+      existe: true
+      seuils_en_francs: [1180.0, 5571.0, 9830.0]
+      points: [15.0, 30.0, 45.0, 60.0]
+      revenu_professionnel_pour_un_franc_cadastral: 5.54
+    droit: >-
+      15 points pour un revenu cadastral au plus égal à 1 180 F, 30 de 1 180 F à 5 571 F,
+      45 de 5 571 F à 9 830 F, 60 au-delà ; chaque seuil est rangé dans la tranche du bas,
+      comme la première et la dernière ligne l'écrivent
+    convention: >-
+      le revenu cadastral est déduit du revenu de l'année, à 5,54 F de revenu
+      professionnel pour 1 F de revenu cadastral : le décret n° 92-793 l'écrit pour la
+      cotisation de solidarité de 1992, et non pour les points de 1981 à 1989 ; décision
+      du propriétaire, le 20 novembre 2026
+    conditions: >-
+      les cotisations « du 1°, b, de l'article 1123 », celles du chef d'exploitation
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 20 novembre 2026, aucun exemple chiffré de points d'avant 1990 n'a été trouvé
+    dans les exemples officiels du dépôt (tests/temoins/exemples_officiels.yaml) ni au
+    guide de la MSA cité par la fiche retraite_proportionnelle_msa
+- id: depuis_1990
+  statut: lue
+  textes:
+  - id: LEGIARTI000006597479
+    article: code rural et de la pêche maritime, R. 732-70, rédaction du 22 avril 2005
+    en_vigueur: 2005-04-22
+    citation: >-
+      « A compter du 1er janvier 1990, le versement de la cotisation prévue au a) du 2° de
+      l'article L. 731-42 [...] donnent droit, pour l'année au titre de laquelle elles
+      sont dues, à un nombre de points qui est fonction du montant des revenus
+      professionnels »
+  bornes:
+    revenu.annee: [1990-01-01, null]
+  contenu:
+    parametres:
+      existe: false
+    droit: hors de cette fiche
+    raison: >-
+      depuis 1990, les points suivent le revenu professionnel : fiche
+      retraite_proportionnelle_msa
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    sans objet ici : les exemples des points d'après 1990 sont à la fiche
+    retraite_proportionnelle_msa
+effet: >-
+  Jusqu'au 20 novembre 2026, le moteur ne donnait aucun point aux années d'avant 1990 :
+  il les servait par le rendement de leurs cotisations, 6 % de 8,5 % du revenu. Depuis,
+  les années 1981 à 1989 ont les points du barème du décret n° 80-808, que R. 732-69
+  reprend. Le simulateur n'a pas le revenu cadastral : il le déduit du revenu de l'année,
+  à 5,54 F de revenu professionnel pour 1 F de revenu cadastral, et c'est une
+  CONVENTION, que le propriétaire a retenue le 20 novembre 2026 — le texte qui porte ce
+  rapport l'écrit pour une autre cotisation, et pour 1992. En euros, les seuils de revenu
+  sont 997 €, 4 705 € et 8 302 € par an. Les points sont portés à seize pour une pension
+  de 1994 à 2025 (R. 732-73, qui vise R. 732-69). Les années d'avant 1981 restent au
+  rendement : leurs décrets ne sont pas lus. Tenu par
+  tests/test_points_agricoles_de_1981.py et tests/js/points-agricoles-de-1981.test.js.
+sources:
+  lu_le: 2026-11-20
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Le revenu cadastral se déduit du revenu par une convention. Un champ de saisie
+    facultatif, où l'assuré porterait les points de son relevé, qui primeraient, reste à
+    écrire (zone du site).
+  - >-
+    Les seuils sont en francs courants et aucune rédaction ne les relève de 1981 à 1989,
+    alors que les décrets annuels de financement relèvent les tranches de la cotisation
+    du a de l'article 1123. Aucun décret annuel lu à l'index ne renvoie au barème de
+    1980 pour l'adapter ; la pratique de la caisse sur ce point n'est pas vérifiée, et
+    aucun exemple chiffré publié n'a été trouvé.
+  - >-
+    Les années d'avant 1981 : l'article 8 renvoie aux « décrets du 30 avril 1965, du 21
+    janvier 1967, du 26 juin 1968, du 15 mai 1974 et du 10 février 1975 », dont l'index
+    de la DILA n'a que des notices. À lire au fac-similé du Journal officiel avant
+    d'écrire leurs barèmes.
+  - >-
+    Le barème vise les cotisations « du 1°, b, de l'article 1123 », celles du chef
+    d'exploitation : le moteur ne le sert qu'à la ligne d'exploitant. Le conjoint et
+    l'aide familial de ces années, que le modèle ne distingue pas avant 2004, restent au
+    rendement des cotisations de leur revenu saisi, alors que le conjoint participant aux
+    travaux n'avait que la retraite forfaitaire (fiche retraite_proportionnelle_msa).
+  - >-
+    La valeur du point de 1981 à 1989, en francs, n'est pas lue : une pension prise dans
+    ces années sert ses points à la valeur de la fiche du régime, 4,589 € de 2025
+    ramenés aux prix de l'année.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 80-808 du 14 octobre 1980, article 8 (LEGIARTI000006769209, du 1er
+      janvier 1981 au 21 septembre 1990) : « Pour le calcul de la retraite
+      proportionnelle, le nombre de points acquis chaque année par les intéressés en
+      fonction des cotisations versées en application du 1°, b, de l'article 1123 du Code
+      rural est déterminé suivant le barème annexé au présent décret. Pour les années
+      antérieures à l'entrée en vigueur du présent décret, le nombre de points résulte
+      des dispositions des décrets du 30 avril 1965, du 21 janvier 1967, du 26 juin 1968,
+      du 15 mai 1974 et du 10 février 1975 susvisés. » Annexe (LEGIARTI000006769235, du
+      1er janvier 1981 au 22 avril 2005) : « REVENU CADASTRAL servant de base aux
+      cotisations [...] Au plus égal à 1180 F : 15 [...] De 1180 F à 5571 F : 30 [...] De
+      5571 F à 9830 F : 45 [...] Supérieur à 9830 F : 60 ». Lu dans l'index LEGI du dépôt
+    date: 2026-11-20
+  - type: legifrance
+    reference: >-
+      code rural et de la pêche maritime, R. 732-69 (LEGIARTI000006597478, du 22 avril
+      2005 au 28 octobre 2017 ; LEGIARTI000035918355, du 28 octobre 2017 au 1er janvier
+      2026) : le même barème, « pour les années 1981 et suivantes » ; cité mot pour mot à
+      la fiche retraite_proportionnelle_msa. Lu dans l'index LEGI du dépôt
+    date: 2026-11-20
+  - type: legifrance
+    reference: >-
+      décret n° 92-793 du 14 août 1992, article 20 (LEGIARTI000006776481) : « Le taux de
+      la cotisation prévue au VI de l'article 1003-7-1 du code rural est égal à 14 p. 100
+      des revenus professionnels ou d'une assiette forfaitaire constituée sur la base de
+      5,54 F de revenu professionnel pour 1 F de revenu cadastral. » Lu dans l'index LEGI
+      du dépôt
+    date: 2026-11-20
+textes_sans_effet:
+- id: LEGIARTI000053337682
+  motif: >-
+    R. 732-69 dans sa rédaction du 1er janvier 2026 (décret n° 2025-1409) : le numéro
+    porte un autre article, sur l'inaptitude au travail — « Le troisième alinéa de
+    l'article R. 351-34 du code de la sécurité sociale n'est pas applicable aux demandes
+    de liquidation des pensions du régime des non-salariés des professions agricoles.
+    Pour l'application de l'article R. 351-37 du code de la sécurité sociale [...] » —,
+    sans rapport avec les points. Le barème au revenu cadastral reste celui des points
+    d'avant 2016, que R. 732-66 prend « en application des articles R. 732-69 à R.
+    732-77 [...] dans leur rédaction antérieure au décret n° 2025-1409 »
+code:
+  interrupteurs:
+    bareme_points: msa_revenu_cadastral
+  moteur: >-
+    `bareme_points: msa_revenu_cadastral` : de 1981 à 1989, 15, 30, 45 ou 60 points par
+    an selon le revenu cadastral (décret n° 80-808, annexe), que le moteur déduit du
+    revenu de l'année à 5,54 F de revenu pour 1 F cadastral ; seize points au moins pour
+    une pension de 1994 à 2025 (R. 732-73).
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir, pointsAuRevenuCadastral,
+    revenuCadastralDeduit, FICHE_DES_POINTS_AU_REVENU_CADASTRAL, pointsMsaRetenus
+  parametres: >-
+    contenu.parametres de chaque version : existe, seuils_en_francs, points,
+    revenu_professionnel_pour_un_franc_cadastral ; regimes/msa_non_salaries.yaml :
+    bareme_points, valeur_point_euros, valeur_point_annee
+  tests: [tests/test_points_agricoles_de_1981.py, tests/js/points-agricoles-de-1981.test.js]

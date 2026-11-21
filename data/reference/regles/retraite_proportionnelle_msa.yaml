@@ -56,7 +56,7 @@ effet: >-
   2026 (action 131), les points de chef de 1952 à 1972 des pensions prises du 1er juillet
   1986 au 31 décembre 2025 se majorent : 5 % de 15 à 19,51 points annuels moyens,
   3,19 P - 57,23 % jusqu'à 27,34, 1,93 P - 22,74 % au-delà, 45 % au plus, rien sous
-  quinze ; le moteur, qui n'a pas le barème d'avant 1990, compte ces points par le
+  quinze ; le moteur, qui n'a pas le barème d'avant 1981, compte ces points par le
   rendement de leurs cotisations, à la valeur de service de la fiche, comme pour les
   pensions prises depuis 2026, et majore du taux la pension qu'elles valent. Les trois
   témoins de chef nés en 1925, 1935 et 1945, partis en 1989, 1999 et 2009, y gagnent
@@ -92,9 +92,11 @@ sources:
     La moyenne P de D. 732-77, « le nombre annuel moyen de points acquis par l'assuré
     au cours de la période » : le texte ne dit pas sur combien d'années la compter. Le
     moteur la compte sur les années de chef de la période qui ont des points, comme pour
-    les pensions prises depuis 2026, et, faute du barème d'avant 1990 (R. 732-69 dans sa
-    rédaction de 2005 : en revenu cadastral, que le modèle n'a pas, « pour les années 1981
-    et suivantes » ; pour les « années antérieures à 1981 », les décrets n° 65-346,
+    les pensions prises depuis 2026, et, faute du barème d'avant 1981 (R. 732-69 dans sa
+    rédaction de 2005 : en revenu cadastral « pour les années 1981 et suivantes », que le
+    moteur applique depuis le 20 novembre 2026, fiche
+    points_agricoles_au_revenu_cadastral ; pour les « années antérieures à 1981 », les
+    décrets n° 65-346,
     67-570, 74-443 et 75-97, dont l'index de la DILA n'a que les notices des n° 67-570 et
     74-443), donne à chaque année les
     points que vaut le rendement estimé de sa cotisation à la valeur de service de la

@@ -207,6 +207,7 @@ sans_date:
   "moteur/js/cycle-de-vie.js : TAUX_EXONERE_PAR_ENFANT_AU_DELA": {classe: hors, raison: impot}
   "moteur/js/cycle-de-vie.js : TAUX_EXONERE_TROIS_ENFANTS": {classe: hors, raison: impot}
   "moteur/js/droit/acquerir.js : POINTS_MSA_MINIMUM": {classe: droit, fiches: [retraite_proportionnelle_msa]}
+  "moteur/js/droit/acquerir.js : FRANCS_PAR_EURO": {classe: hors, raison: technique}
   "moteur/js/droit/acquerir.js : SCHEMA_VERSION": {classe: hors, raison: technique}
   "moteur/js/droit/completer.js : ANNEES_DE_CHEF_DU_MINIMUM": {classe: droit, fiches: []}
   "moteur/js/droit/completer.js : ANNEES_DU_MINIMUM_AU_PLUS": {classe: droit, fiches: []}

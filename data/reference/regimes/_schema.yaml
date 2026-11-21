@@ -1177,7 +1177,7 @@ champs_periode:
       ne s'écrit pas en colonnes ; la fiche à laquelle la période renvoie la
       décrit. `null` : le régime n'a pas de barème nommé.
     renvoi: true
-    valeurs: ["msa_proportionnelle"]
+    valeurs: ["msa_proportionnelle", "msa_revenu_cadastral"]
     defaut: null
 
   meilleures_annees_non_salaries:

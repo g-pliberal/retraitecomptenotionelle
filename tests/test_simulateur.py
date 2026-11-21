@@ -2195,10 +2195,13 @@ def test_un_regime_sans_valeur_de_point_garde_le_rendement(simulateur):
     que rien ne casse. Le régime de base des libéraux tenait ce rôle jusqu'à ce
     que ses deux façons d'acquérir des points soient toutes deux paramétrées —
     cent points par trimestre validé avant 2004, un barème en points depuis —
-    et il ne passe donc plus par le rendement.
+    et il ne passe donc plus par le rendement. Depuis le 20 novembre 2026, les
+    années 1981 à 1989 ont les points du barème au revenu cadastral (décret
+    n° 80-808) : le rendement ne sert plus que les années d'avant 1981, que
+    l'exploitante née en 1950 a de 1975 à 1980.
     """
     carriere = simulateur.carriere_simple(
-        annee_naissance=1960, sexe="F", affiliation="exploitant_agricole",
+        annee_naissance=1950, sexe="F", affiliation="exploitant_agricole",
         age_debut=25, age_liquidation=64,
     )
     pensions = {p.regime: p for p in simulateur.simuler(carriere).actuel.pensions_par_regime}

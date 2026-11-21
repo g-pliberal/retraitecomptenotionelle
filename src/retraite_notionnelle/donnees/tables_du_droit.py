@@ -844,7 +844,7 @@ class FichesDatees:
             "droits_apres_la_premiere_pension", "seconde_pension",
             "surcote_banque_de_france", "age_ouverture_banque_de_france_actifs",
             "age_legal_par_generation", "carriere_longue_sauvegarde_de_2023",
-            "taux_plein_carriere_longue")
+            "taux_plein_carriere_longue", "points_agricoles_au_revenu_cadastral")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

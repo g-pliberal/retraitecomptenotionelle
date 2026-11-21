@@ -24,9 +24,10 @@ effet: >-
   exploitant de 1994 à 2026 retiennent six, treize et six années, et les treize
   meilleures des vingt-deux années d'avant 2016 donnent « 403 pts / 13 ans = 31 pts » et
   « 31 pts x 22 ans = 682 pts » ; le salarié agricole n'a plus que ses six meilleures
-  années sur dix, depuis le 28 septembre 2026 aussi. Restent approchés : les années d'avant 1990, dont le
+  années sur dix, depuis le 28 septembre 2026 aussi. Restent approchés : les années d'avant 1981, dont le
   barème de points n'est pas lu, qui entrent dans la moyenne par les points que vaut
-  leur rendement ; les rachats, qu'il ne connaît pas ; le revenu du collaborateur et de
+  leur rendement, et celles de 1981 à 1989, au barème lu sur un revenu cadastral déduit
+  du revenu par convention (fiche points_agricoles_au_revenu_cadastral) ; les rachats, qu'il ne connaît pas ; le revenu du collaborateur et de
   l'aide familial depuis 2016, que le moteur prend, depuis le 16 octobre 2026, de leur
   assiette forfaitaire (400 SMIC jusqu'en 2025, 600 depuis), quand L. 732-24 le tirerait
   de leurs cotisations jusqu'en 2025 si leur AVI, assise sur les revenus du chef que la
@@ -88,15 +89,18 @@ sources:
   - >-
     Le barème des points d'avant 1990. De 1981 à 1989, il est lu (R. 732-69 ; décret
     n° 80-808, article 8 et annexe) : quinze à soixante points par an selon le revenu
-    cadastral « servant de base aux cotisations », que la saisie ne connaît pas — un
-    champ de saisie, ou une convention, à décider par le propriétaire. Avant 1981, « le
+    cadastral « servant de base aux cotisations », que la saisie ne connaît pas — le
+    moteur l'applique depuis le 20 novembre 2026 au chef d'exploitation, sur un revenu
+    cadastral déduit du revenu à 5,54 F pour 1 F, convention retenue par le propriétaire
+    (fiche points_agricoles_au_revenu_cadastral) ; le champ de saisie des points du
+    relevé reste à écrire. Avant 1981, « le
     nombre de points résulte des dispositions des décrets n° 65-346 du 30 avril 1965,
     n° 67-570 du 21 juin 1967, n° 74-443 du 15 mai 1974 et n° 75-97 du 10 février
     1975 » (R. 732-69), et du décret du 26 juin 1968 (n° 68-571) selon le décret
     n° 80-808, qui date le second du « 21 janvier 1967 » : l'index JORF n'a que les
     notices de 67-570, 68-571 et 74-443, rien de 65-346 ni de 75-97 ; leur texte n'est
     qu'au fac-similé du Journal officiel, à lire par le propriétaire. D'ici là, les
-    années d'avant 1990 entrent dans la moyenne, et dans celle de 1952 à 1972 qui fixe
+    années d'avant 1981 entrent dans la moyenne, et dans celle de 1952 à 1972 qui fixe
     leur majoration (R. 732-67), par l'équivalent en points de leur rendement.
   - >-
     D. 732-76 et D. 732-77 dans leur rédaction de 2005 à 2025, auxquels R. 732-67
@@ -421,7 +425,8 @@ textes_a_rattacher:
 - id: LEGIARTI000006597478
   reference: >-
     code rural et de la pêche maritime, R. 732-69, rédaction du 22 avril 2005 : le barème
-    des points de 1981 à 1989 au revenu cadastral, que le moteur n'applique pas
+    des points de 1981 à 1989 au revenu cadastral, que le moteur applique depuis le 20
+    novembre 2026 (fiche points_agricoles_au_revenu_cadastral)
 - id: LEGIARTI000035918355
   reference: >-
     code rural et de la pêche maritime, R. 732-69, rédaction du 28 octobre 2017 : le

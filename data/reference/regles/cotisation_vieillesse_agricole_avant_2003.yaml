@@ -22,7 +22,7 @@ lit:
 ecrit:
 - >-
   la cotisation de l'année au régime des non-salariés agricoles, que le scénario 1 change
-  en points par le rendement avant 1990, et que le compte des scénarios 2 à 6 reçoit
+  en points par le rendement avant 1981, et que le compte des scénarios 2 à 6 reçoit
 dates_qui_decident:
 - revenu.annee
 versions:
@@ -1688,8 +1688,10 @@ historique:
   « aucune source » veut dire. Aucun taux du modèle n'est changé.
 effet: >-
   Les chefs d'exploitation et les membres de leur famille qui ont cotisé avant 2003. Au
-  scénario 1, avant 1990, le rendement tire leurs points d'une cotisation que le modèle
-  porte à 8,5 % du revenu borné au plafond, sans texte : non mesuré. Depuis 1990, le
+  scénario 1, avant 1981, le rendement tire leurs points d'une cotisation que le modèle
+  porte à 8,5 % du revenu borné au plafond, sans texte : non mesuré. De 1981 à 1989, les
+  points du chef viennent du barème au revenu cadastral, que le taux ne touche pas (fiche
+  points_agricoles_au_revenu_cadastral). Depuis 1990, le
   barème de R. 732-71 les tire de l'assiette : rien. Aux scénarios 2 à 6, le compte reçoit
   ces 8,5 %, quand les textes de 1993 à 2002 prélèvent 12,935 % du revenu sous le plafond
   en 1996 aux trois cotisations nationales, 15,715 % avec la complémentaire au taux moyen

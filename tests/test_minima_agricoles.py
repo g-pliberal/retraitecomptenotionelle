@@ -13,6 +13,7 @@ gratuits et le complément aux pensions prises avant sans la durée requise
 
 from __future__ import annotations
 
+import dataclasses
 import importlib.util
 import json
 import math
@@ -48,10 +49,33 @@ def _chef(simulateur: Simulateur, naissance: int, liquidation: float, niveau: fl
     (R. 351-37), en décembre plutôt qu'en janvier, ou le 1er janvier, sans
     l'année du départ, que L. 731-10-1 compte entière dès qu'il y travaille."""
     kwargs.setdefault("jour_naissance", 15)
-    return Carriere.depuis_parcours(
+    petite_jusqu = kwargs.pop("petite_jusqu", 1989)
+    carriere = Carriere.depuis_parcours(
         annee_naissance=naissance, sexe=kwargs.pop("sexe", "H"),
         metiers=metiers or [Metier("exploitant_agricole", debut, niveau_salaire=niveau)],
         age_liquidation=liquidation, macro=simulateur.macro, **kwargs)
+    return _petite_exploitation(carriere, petite_jusqu)
+
+
+#: Le revenu, en euros, des années 1981 à 1989 d'une petite exploitation :
+#: 6 000 F, soit 1 083 F de revenu cadastral à 5,54 F pour 1 F, sous les
+#: 1 180 F de la première tranche du barème du décret n° 80-808.
+REVENU_D_UNE_PETITE_EXPLOITATION = 6_000.0 / 6.55957
+
+
+def _petite_exploitation(carriere: Carriere, jusqu: int = 1989) -> Carriere:
+    """La même carrière, sur une petite exploitation de 1981 à 1989 : quinze
+    points par an au barème au revenu cadastral (décret n° 80-808, annexe ;
+    fiche ``points_agricoles_au_revenu_cadastral``), seize pour une pension de
+    1994 à 2025 (R. 732-73). Ces tests veulent des chefs sous le minimum.
+    ``jusqu`` prolonge ce revenu au-delà de 1989 : sous 400 SMIC horaires,
+    quinze points encore (R. 732-71). Le revenu d'une année incomplète est
+    celui de ses mois."""
+    return dataclasses.replace(carriere, lignes=[
+        dataclasses.replace(
+            ligne, revenu=REVENU_D_UNE_PETITE_EXPLOITATION * ligne.fraction_annee)
+        if 1981 <= ligne.annee <= jusqu and ligne.affiliation == "exploitant_agricole"
+        else ligne for ligne in carriere.lignes])
 
 
 def _resultat(simulateur: Simulateur, carriere: Carriere):
@@ -337,7 +361,7 @@ def test_les_points_de_1997_ne_sont_servis_qu_au_tiers(simulateur):
     for naissance, mois, age, minimum, part in (
             (1935, 1, 62, 26.933, 1 / 3), (1937, 1, 61, 26.933, 2 / 3),
             (1939, 1, 60, 26.933, 1.0), (1940, 12, 60, 29.23, 1.0)):
-        majoration, _ = _majoration(simulateur, _chef(simulateur, naissance, age,
+        majoration, _ = _majoration(simulateur, _chef(simulateur, naissance, age, niveau=0.2,
                                                       mois_naissance=mois))
         assert majoration is not None, naissance
         assert f"({minimum:.3f} - " in majoration.detail
@@ -544,7 +568,7 @@ def test_la_revision_veut_trente_deux_ans_et_demi_puis_vingt_deux_et_demi(simula
     demi, les points minorés de 5,5 % par année manquante sous trente-sept et
     demie, de 4 % en 2008 (décret n° 2006-1638, article 2 ; D. 732-115,
     D. 732-117). Le taux plein n'est pas demandé."""
-    carriere = _chef(simulateur, 1930, 65, debut=40.0)
+    carriere = _chef(simulateur, 1930, 65, debut=40.0, niveau=0.2)
     resultat, _, _ = _resultat(simulateur, carriere)
     agricole = resultat.exploitant_agricole.eligible.duree / 4.0
     duree = _points_au_compte(simulateur, resultat) / 16.0
@@ -633,13 +657,14 @@ def test_la_pmr_de_2009_s_ouvre_aux_pensions_prises_avant(simulateur):
 
 
 def test_sous_dix_sept_ans_et_demi_reconstitues_la_pmr_de_2009_ne_sert_que_pmr2(simulateur):
-    """Vingt-huit ans et trois quarts de chef partis en 1995 à faible revenu :
-    leurs points au compte ne reconstituent pas treize ans de chef, sous les
+    """Vingt-huit ans de chef partis en 1993 à faible revenu, avant le plancher
+    de seize points de R. 732-73, quinze points par an depuis 1981 : leurs
+    points au compte ne reconstituent pas dix-sept ans et demi de chef, sous les
     dix-sept ans et demi qu'exige le 1° de D. 732-110, II, dans sa rédaction
     de 2009 ; en 2009 et 2010, toute la durée est servie à PMR2 (D. 732-110,
     II, 4°, et III). Depuis 2011, la condition tombée, PMR1 sur la durée
     reconstituée, PMR2 sur le reste ; depuis 2022, la PMR unique."""
-    carriere = _chef(simulateur, 1930, 65, niveau=0.1)
+    carriere = _chef(simulateur, 1928, 65, niveau=0.1, petite_jusqu=1993)
     resultat, _, _ = _resultat(simulateur, carriere)
     chef = _points_au_compte(simulateur, resultat) / 16.0
     agricole = resultat.exploitant_agricole.eligible.duree / 4.0
@@ -656,18 +681,21 @@ def test_sous_dix_sept_ans_et_demi_reconstitues_la_pmr_de_2009_ne_sert_que_pmr2(
 
 def test_la_duree_reconstituee_perd_quinze_points_par_annee_secondaire(simulateur):
     """Salarié, chef à titre secondaire de 1982 à 1986, sans le forfait
-    (L. 732-28), puis chef à titre principal, parti en 1996 : la durée de chef
+    (L. 732-28), puis chef à titre principal d'une petite exploitation, quinze
+    points par an, parti en 1993, avant le plancher de seize points de
+    R. 732-73 — avec lui, chaque année secondaire garderait un point, et la
+    durée reconstituée passerait la durée agricole : la durée de chef
     se reconstitue des points au compte moins quinze par année secondaire sans
     forfait, divisés par seize (D. 732-110, III) — sans la minoration, elle
     dépasserait la durée agricole et y serait ramenée. Servie depuis février
     2014, quand la PMR ne demande plus de durée minimale (D. 732-109)."""
 
     metiers = [Metier("salarie_prive_non_cadre", 20.0, niveau_salaire=0.3),
-               Metier("exploitant_agricole", 51.0, niveau_salaire=0.1, cumul=True,
-                      age_fin=56.0),
-               Metier("exploitant_agricole", 56.0, niveau_salaire=0.1)]
-    carriere = _chef(simulateur, 1931, 65, metiers=metiers)
-    assert carriere.annee_liquidation == 1996
+               Metier("exploitant_agricole", 54.0, niveau_salaire=0.3, cumul=True,
+                      age_fin=59.0),
+               Metier("exploitant_agricole", 59.0, niveau_salaire=0.3)]
+    carriere = _chef(simulateur, 1928, 65, metiers=metiers, petite_jusqu=1993)
+    assert carriere.annee_liquidation == 1993
     par_annee = releve.construire(simulateur.scenario_actuel, carriere).durees.par_annee[
         "assurance"]["msa_non_salaries"]
     qualites = facade.qualites_agricoles(carriere, par_annee)
@@ -1028,7 +1056,7 @@ def test_la_majoration_pour_enfants_ne_porte_pas_sur_la_pmr(simulateur):
     """Une mère de trois enfants : les 10 % de D. 732-38 portent sur la
     pension calculée, non sur la majoration de L. 732-54-1 ; la PMR, elle,
     compte la majoration pour enfants dans les ressources qu'elle écrête."""
-    carriere = _chef(simulateur, 1958, 66, sexe="F", nombre_enfants=3)
+    carriere = _chef(simulateur, 1958, 66, sexe="F", nombre_enfants=3, niveau=0.2)
     _, avantages, pensions = _resultat(simulateur, carriere)
     pmr = avantages["pension_majoree_reference"].montant
     part = dict(avantages["majoration_enfants"].par_regime)["msa_non_salaries"]
@@ -1339,13 +1367,24 @@ _REVISIONS = [
     ({**_COLLABORATRICE, "annee_naissance": 1960, "age_liquidation": 62,
       "reversion_agricole": {"debut": "2023-03", "mensuel": 150.0}}, 2030),
     # La PMR de 2009 des pensions prises avant 1997, sur la durée de chef que
-    # leurs points reconstituent (D. 732-110, III) : trente ans sur quarante-
-    # quatre ; moins de dix-sept ans et demi, à PMR2 en 2010 ; le chef à titre
-    # secondaire de 1982 à 1986, quinze points de moins par année.
+    # leurs points reconstituent (D. 732-110, III) : vingt-quatre ans sur
+    # trente-trois et demi ; moins de dix-sept ans et demi, à PMR2 en 2010,
+    # pour le chef parti en 1993, avant le plancher de seize points. Ces
+    # chefs ont une petite exploitation depuis 1981, au vingtième du salaire
+    # moyen : quinze points par an au barème au revenu cadastral (décret
+    # n° 80-808). Le chef à titre secondaire de 1982 à 1986 reste confronté,
+    # sans révision : ses années à peu de trimestres portent quinze ou seize
+    # points, sa pension passe la PMR de sa durée ; ses quinze points de
+    # moins par année sont tenus par
+    # `test_la_duree_reconstituee_perd_quinze_points_par_annee_secondaire`.
     ({**_CHEF_D_AVANT_1997, "metiers": [
-        {"affiliation": "exploitant_agricole", "age_debut": 20, "niveau_salaire": 0.3}]}, 2009),
-    ({**_CHEF_D_AVANT_1997, "metiers": [
-        {"affiliation": "exploitant_agricole", "age_debut": 20, "niveau_salaire": 0.1}]}, 2010),
+        {"affiliation": "exploitant_agricole", "age_debut": 20, "niveau_salaire": 0.2,
+         "age_fin": 51},
+        {"affiliation": "exploitant_agricole", "age_debut": 51, "niveau_salaire": 0.05}]}, 2009),
+    ({**_CHEF_D_AVANT_1997, "annee_naissance": 1928, "metiers": [
+        {"affiliation": "exploitant_agricole", "age_debut": 20, "niveau_salaire": 0.1,
+         "age_fin": 53},
+        {"affiliation": "exploitant_agricole", "age_debut": 53, "niveau_salaire": 0.05}]}, 2010),
     ({**_CHEF_D_AVANT_1997, "annee_naissance": 1931, "metiers": [
         {"affiliation": "salarie_prive_non_cadre", "age_debut": 20, "niveau_salaire": 0.3},
         {"affiliation": "exploitant_agricole", "age_debut": 51, "niveau_salaire": 0.1,
@@ -1409,7 +1448,7 @@ def test_les_deux_moteurs_revisent_la_meme_majoration(simulateur):
             "exploitant": None if vivante.exploitant is None else asdict(vivante.exploitant)}))
         revisees += attendu["exploitant"] is not None
         _ecarts(obtenu, attendu, f"révision {rang}", ecarts)
-    assert revisees == 14
+    assert revisees == 13
     assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
 
 

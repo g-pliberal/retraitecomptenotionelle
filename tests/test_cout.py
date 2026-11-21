@@ -867,6 +867,12 @@ def test_la_projection_refait_le_passe(avenir, depenses):
     pour 1,9 et 1,6 % à sa caisse —, et une part qui reculait de 2009 à 2024
     freinait d'autant la croissance des têtes du modèle : en 2009, leur écart
     passe de -5,0 à -5,5 %, celui de la pension par tête reste à -5,8 %.
+
+    *Le 20 novembre 2026*, l'action 131 le ramène à -10,2 % en 2009 : les
+    années 1981 à 1989 des chefs d'exploitation ont les points du barème au
+    revenu cadastral (décret n° 80-808), et non plus le rendement de leurs
+    cotisations ; les pensions des exploitants des générations anciennes
+    remontent, et la masse du passé avec elles.
     """
     reconstitution = avenir.reconstitution()
     # L'année d'ancrage est refaite par construction : sinon, la formule de

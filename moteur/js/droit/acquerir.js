@@ -212,6 +212,46 @@ export function pointsMsa(moteur, periode, annee, revenu) {
   return Math.floor(points + 0.5 + 1e-9);
 }
 
+/**
+ * La fiche des points de retraite proportionnelle de 1981 à 1989, au revenu
+ * cadastral : ses versions portent le barème du décret n° 80-808 (article 8
+ * et annexe, repris par R. 732-69 du code rural « pour les années 1981 et
+ * suivantes ») et le rapport qui déduit le revenu cadastral du revenu.
+ */
+export const FICHE_DES_POINTS_AU_REVENU_CADASTRAL = "points_agricoles_au_revenu_cadastral";
+
+/** Les francs d'un euro : le barème de 1981 est écrit en francs. */
+const FRANCS_PAR_EURO = 6.55957;
+
+/**
+ * Le revenu cadastral, en francs, déduit d'un revenu annuel en euros : « 5,54 F
+ * de revenu professionnel pour 1 F de revenu cadastral » (décret n° 92-793,
+ * article 20), que la version de la fiche porte. Le texte l'écrit pour la
+ * cotisation de solidarité de 1992 ; le lire en arrière est une CONVENTION,
+ * que le propriétaire a retenue le 20 novembre 2026 : le simulateur ne
+ * connaît que des revenus.
+ */
+export function revenuCadastralDeduit(parametres, revenu) {
+  return Math.max(0.0, revenu) * FRANCS_PAR_EURO
+    / parametres.revenu_professionnel_pour_un_franc_cadastral;
+}
+
+/**
+ * Les points de retraite proportionnelle d'une année, selon le « revenu
+ * cadastral servant de base aux cotisations », en francs. « Au plus égal à »
+ * le premier seuil et « supérieur » au dernier rangent chaque seuil dans la
+ * tranche du bas ; le seuil que deux lignes nomment se lit de même.
+ */
+export function pointsAuRevenuCadastral(parametres, revenuCadastral) {
+  const seuils = parametres.seuils_en_francs;
+  for (let i = 0; i < seuils.length; i += 1) {
+    if (revenuCadastral <= seuils[i]) {
+      return parametres.points[i];
+    }
+  }
+  return parametres.points[seuils.length];
+}
+
 /** Le plancher de R. 732-73, seize points par an, pour les retraites
  * proportionnelles qui prennent effet de 1994 à 2025. Voir acquerir.py. */
 export const POINTS_MSA_MINIMUM = 16.0;
@@ -820,6 +860,33 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           fiabilitePoints.set(code, Math.min(
             fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, regime.fiabilite,
             fiabiliteEchelleMsa,
+          ));
+          continue;
+        }
+        // BARÈME NOMMÉ, de 1981 à 1989 : `pointsAuRevenuCadastral`, pour le
+        // seul chef d'exploitation, dont il compte les cotisations (« du 1°,
+        // b, de l'article 1123 ») ; le conjoint et l'aide familial restent au
+        // rendement des leurs, plus bas. Le revenu cadastral est celui de
+        // l'exploitation, sans plafond : il se déduit du revenu entier de
+        // l'année, porté à douze mois, et les points suivent la part de
+        // l'année.
+        const cadastral = periode.bareme_points === "msa_revenu_cadastral"
+            && ligne.affiliation === "exploitant_agricole"
+          ? moteur.fichesDatees.versionAuxDates(FICHE_DES_POINTS_AU_REVENU_CADASTRAL,
+            { "revenu.annee": `${ligne.annee}-01-01` })
+          : null;
+        if (cadastral !== null && cadastral.parametres.existe) {
+          const [echelleCadastrale, fiabiliteEchelleCadastrale] = moteur.conversionsPoints
+            .echelle(bareme, ligne.annee, anneeLiquidation);
+          const revenuCadastral = revenuCadastralDeduit(
+            cadastral.parametres, part > 0 ? base / part : 0.0);
+          crediter(code, ligne.annee,
+            pointsMsaRetenus(pointsAuRevenuCadastral(cadastral.parametres, revenuCadastral),
+              anneeLiquidation) * part * echelleCadastrale,
+            Boolean(periode.points_abattus_a_l_age));
+          fiabilitePoints.set(code, Math.min(
+            fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, regime.fiabilite,
+            fiabiliteEchelleCadastrale,
           ));
           continue;
         }

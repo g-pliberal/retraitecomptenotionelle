@@ -5233,16 +5233,15 @@ R. 111-2 ; la condition de L. 816-1 ; le tableau de 2008 des régimes
 
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
-**Reprise, au 6 novembre 2026.** Faits, des coupures au mois à la cotisation de 1952, à moitié (note
-K), relue (R-K), corrigée (K-bis), relue (R-K-bis), retouchée (K-ter, 4 et 5 novembre) ; les notes de
-`msa_non_salaries.yaml` récrites (K-notes, `notes-de-msa-non-salaries`) : le 17,37 % n'a de texte ni
-de 2003 à 2025 ni depuis 2026 (décret n° 2025-1417, L. 731-42 : 17,15 % et 0,72 %), et ne sert plus
-au compte depuis 2026. Au propriétaire : le taux du compte d'avant 2003, et le 17,37 % de 2003 à 2025
-; 1952 dans la moyenne P, une année ou une demie (la MSA) ; des classes, l'acte vétérinaire, dix
-décrets et la loi n° 52-799 au fac-similé, la grille de 2008 ; l'ASF de 1983 à 2003 ; l'ajournement
-et les « soixante et un ans » (`decote_avant_1983`) ; la durée du minimum de D. 634-14 ; le barème
-des points d'avant 1990 ; les 17 % de D. 732-76 ; les années au prorata de l'exploitant et l'assiette
-minimale au compte ; l'AVI du collaborateur et son champ. Détail : les notes.
+**Reprise, au 20 novembre 2026.** Faits, des coupures au mois à la cotisation de 1952 et aux notes
+de `msa_non_salaries.yaml`. Le 20 novembre, les années 1981 à 1989 du chef d'exploitation reçoivent
+les points du barème au revenu cadastral, déduit du revenu par convention (note
+`points-agricoles-de-1981-a-1989`). Restent : les décrets d'avant 1981 de ce barème, au fac-similé,
+et le champ de saisie des points du relevé. Au propriétaire : le taux du compte d'avant 2003, et le
+17,37 % de 2003 à 2025 ; 1952 dans la moyenne P ; des classes, l'acte vétérinaire, dix décrets et la
+loi n° 52-799 au fac-similé, la grille de 2008 ; l'ASF de 1983 à 2003 ; l'ajournement
+(`decote_avant_1983`) ; la durée du minimum de D. 634-14 ; les 17 % de D. 732-76 ; les années au
+prorata de l'exploitant ; l'AVI du collaborateur. Détail : les notes.
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
 session, à la demande du propriétaire, après avoir vérifié qu'elle ne lui

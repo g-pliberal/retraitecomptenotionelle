@@ -524,10 +524,12 @@ ne retient que la part des années que la répartition leur laisse. Le modèle
 rend l'exemple de la MSA : six, treize et six années, et une moyenne de trente et un
 points multipliée par vingt-deux années.
 
-Ce qui reste approché, et dans quel sens. Les années d'avant 1990, dont le
-barème de points n'est pas appliqué — R. 732-69 compte en revenu cadastral,
-que le modèle n'a pas, celles de 1981 à 1989, et renvoie pour les précédentes
-à quatre décrets que l'index de la DILA n'a pas en texte —, entrent dans la
+Ce qui reste approché, et dans quel sens. Les années de 1981 à 1989 ont les
+points du barème de R. 732-69, lu sur un revenu cadastral que le modèle n'a
+pas et déduit du revenu, par convention, au rapport d'un décret de 1992 (fiche
+`points_agricoles_au_revenu_cadastral`). Les années d'avant 1981, dont le
+barème de points n'est pas appliqué — R. 732-69 renvoie pour elles à quatre
+décrets que l'index de la DILA n'a pas en texte —, entrent dans la
 moyenne par l'équivalent en points de leur rendement, qui les laisse sous les
 années du barème et hors des meilleures. Les années de chef de 1952 à 1972 y
 entrent majorées, chacune du taux que fixe leur moyenne (R. 732-67), mais sur
