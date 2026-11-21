@@ -2072,6 +2072,12 @@ def _mesurer(exemple: dict, carriere, resultat, cle: str, droit=droit_et_fige):
         return _rendu(droit, "ouvrir.age_ouverture_droit", pont.MOTEUR, carriere)
     if cle == "age_legal_a_l_effet":
         return _rendu(droit, "ouvrir.age_legal_a_l_effet", pont.MOTEUR, carriere)
+    if cle == "duree_requise_a_l_effet":
+        # La durée du régime général à la date d'effet, que l'assuré puisse
+        # ou non partir ce jour-là (fiche duree_requise_par_generation).
+        return _rendu(droit, "ouvrir.duree_requise", pont.MOTEUR,
+                      pont.Periode("regime_general", carriere.annee_liquidation),
+                      carriere)[0]
     if cle == "date_age_legal":
         atteint = carriere.date_naissance.plus_mois(_rendu(
             droit, "calendrier.en_mois",
@@ -2786,3 +2792,20 @@ def test_l_age_legal_se_mesure_a_la_date_d_effet_de_la_pension():
     assert not _confronter(cas("2011-12", 60 + 8 / 12))
     assert not _confronter(cas("2012-01", 60 + 9 / 12))
     assert _confronter(cas("2011-12", 60 + 9 / 12))
+
+
+def test_la_duree_requise_se_mesure_a_la_date_d_effet_de_la_pension():
+    """``duree_requise_a_l_effet`` : la durée que le droit en vigueur à la date
+    d'effet oppose à une pension du régime général, que l'assuré puisse ou non
+    partir ce jour-là. R. 351-45 (rédaction du 28 août 1993) : né en janvier
+    1940, 157 trimestres pour un effet au 1er novembre 2002 (II), 160 au 1er
+    février 2003 (I) ; né en décembre 1942, 159 au 1er janvier 2003 (III)."""
+    def cas(naissance, liquidation, trimestres):
+        return {"id": "essai", "attendu": {"duree_requise_a_l_effet": trimestres},
+                "carriere": {"naissance": naissance, "sexe": "H",
+                             "affiliation": "salarie_prive_non_cadre",
+                             "liquidation": liquidation, "age_debut": 22}}
+    assert not _confronter(cas("1940-01-15", "2002-11", 157))
+    assert not _confronter(cas("1940-01-15", "2003-02", 160))
+    assert not _confronter(cas("1942-12-01", "2003-01", 159))
+    assert _confronter(cas("1940-01-15", "2003-02", 157))
