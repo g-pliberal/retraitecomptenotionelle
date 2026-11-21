@@ -56,3 +56,12 @@ en versions : la carte n'en fait qu'une partie chacune, qu'aucune grille ne
 prouve. Les découper, puis faire leur grille de la même façon. Le salaire
 annuel moyen et le minimum contributif sont découpés mais se disent approchés :
 lever ou situer l'approximation d'abord.
+
+## La suite rouge du 21 novembre, réparée
+
+La première publication (d4a9b7a) a fait tomber la suite complète : GitHub
+refait le témoin du droit à neuf en relançant les seuls fichiers qui nomment
+`droit_et_fige`, et `tests/test_justesse.py`, qui rejoue ses preuves par
+`_confronter` de `tests/test_oracle.py`, n'en était pas. Les demandes des
+grilles sortaient du témoin. `fichiers_qui_appellent_le_droit` relance
+désormais aussi les fichiers qui importent de `test_oracle`, et un test le tient.

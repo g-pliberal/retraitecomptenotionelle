@@ -337,12 +337,14 @@ def fichiers_qui_appellent_le_droit() -> list[str]:
     """Les fichiers de tests qui appellent :func:`droit_et_fige`, nommés sous
     ``tests/`` : ceux que ``construire_temoins.py --droit`` relance. Ceux qui
     chargent ``scripts/simulateurs.py`` l'appellent aussi, par les fonctions
-    de ``tests/test_oracle.py``."""
+    de ``tests/test_oracle.py``, comme ceux qui les importent : la carte de
+    justesse rejoue ses preuves par ``_confronter``."""
     racine = Path(__file__).resolve().parent
     return sorted(chemin.name for chemin in racine.glob("test_*.py")
                   if chemin.name != "test_droit_fige.py"
                   and any(marque in chemin.read_text(encoding="utf-8")
-                          for marque in ("droit_et_fige", '"simulateurs.py"')))
+                          for marque in ("droit_et_fige", '"simulateurs.py"',
+                                         "from test_oracle import")))
 
 
 @functools.cache

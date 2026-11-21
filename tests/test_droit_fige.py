@@ -203,3 +203,11 @@ def test_le_temoin_se_refait_aussi_des_tests_qui_passent_par_l_oracle():
     fichiers = outils_pont.fichiers_qui_appellent_le_droit()
     assert {"test_oracle.py", "test_simulateurs.py"} <= set(fichiers)
     assert "test_droit_fige.py" not in fichiers
+
+
+def test_le_temoin_se_refait_aussi_des_preuves_de_la_carte_de_justesse():
+    """``tests/test_justesse.py`` rejoue les cas des preuves par
+    ``_confronter`` de ``tests/test_oracle.py``, sans nommer ``droit_et_fige`` :
+    le témoin refait à neuf le relance aussi, sans quoi les demandes des
+    grilles de l'âge légal en sortent et la suite tombe (21 novembre 2026)."""
+    assert "test_justesse.py" in outils_pont.fichiers_qui_appellent_le_droit()
