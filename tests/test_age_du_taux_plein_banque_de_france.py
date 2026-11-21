@@ -90,10 +90,12 @@ def test_la_fin_du_chomage_garde_l_age_du_code_du_travail(simulateur):
     """L. 5421-4, 1° du code du travail : l'âge du 1° de L. 351-8 du code de la
     sécurité sociale, 65 ans et 4 mois pour un assuré né en juillet 1951
     (loi n° 2010-1330, article 20, et LFSS pour 2012, article 88), atteint en
-    novembre 2016 ; né après le premier du mois (le jour que la chronologie
-    présume), il ne l'a au premier jour d'un mois qu'en décembre 2016, le
-    premier mois que la règle coupe. Le règlement de la Banque de France n'y
+    novembre 2016 ; né le 15 juillet, il ne l'a au premier jour d'un mois
+    qu'en décembre 2016, le premier mois que la règle coupe. Le jour est
+    déclaré : celui que la chronologie présume ne décide pas du test. Le règlement de la Banque de France n'y
     change rien."""
-    carriere = _agent(simulateur, 1951, 7, 60)
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1951, mois_naissance=7, jour_naissance=15, sexe="H",
+        affiliation="agent_banque_de_france", age_debut=28, age_liquidation=60)
     fin = ouvrir.fin_indemnisation(simulateur.scenario_actuel, carriere)
     assert (fin.annee, fin.mois) == (2016, 12)
