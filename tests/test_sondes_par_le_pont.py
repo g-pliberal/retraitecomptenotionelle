@@ -182,8 +182,8 @@ def test_le_pont_rend_la_simulation_d_une_carriere_d_un_seul_statut():
     assert lus["a"]["diviseurs"]["notionnel_retroactif"] == resultat["conversion"]["diviseur"]
     droit_en_vigueur = remuneration["droit_en_vigueur"]
     # 25,5 % jusqu'au 21 novembre 2026, quand la baisse de CSG comptait la
-    # part de TVA gardée parmi les impôts partagés (``restitution.py``).
-    assert round(remuneration["gain_net"] / droit_en_vigueur["net"] * 100, 1) == 24.9
+    # part de TVA gardée et la CTA parmi les impôts partagés (``restitution.py``).
+    assert round(remuneration["gain_net"] / droit_en_vigueur["net"] * 100, 1) == 24.7
     assert remuneration["gain_net"] == remuneration["proposition"]["net"] - droit_en_vigueur["net"]
     assert droit_en_vigueur["retraite_salarie"] > 0 and droit_en_vigueur["retraite_employeur"] > 0
     assert droit_en_vigueur["net"] < droit_en_vigueur["brut"]

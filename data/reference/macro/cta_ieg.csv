@@ -1,0 +1,29 @@
+# La contribution tarifaire d'acheminement (CTA) que la CNIEG recouvre
+# source_id: cnieg_comptes_cta
+# unite: millions d'euros courants de l'année
+# fiabilite:
+#   haute (2024-2025) : comptes de l'exercice 2025 de la CNIEG, section
+#           comptable « Contribution tarifaire », compte de résultat,
+#           p. 46, ligne « CTA recouvrée - ex. courant ». Saisi à la main,
+#           lu sur le document le 21 novembre 2026.
+#
+# CE QUI N'EST PAS DANS LA SÉRIE
+# -------------------------------
+# La délibération 2026-14 de la CRE baisse les taux au 1er février 2026, et
+# retire 555 M€ par an aux recettes. Le compte du COR n'en tient pas compte :
+# il garde en 2026 la part de PIB de 2025 du poste des impôts et taxes
+# affectés. Le partage retranche donc la CTA que ce poste compte, celle de
+# 2025 reconduite en part de PIB, sans quoi les 555 M€ qui n'existent plus
+# seraient partagés.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# La CTA, prélevée sur toute facture d'électricité et de gaz, finance les
+# droits des IEG acquis avant 2005 ; la CNIEG l'enregistre en « impôts et
+# taxes affectés », et le poste du même nom du compte du COR la compte. La
+# proposition la SUPPRIME (décision 88 du programme) : elle revient aux
+# ménages par leurs factures, et le partage des impôts que la retraite
+# abandonne (restitution.py) ne la compte donc pas une seconde fois.
+annee,poste,montant_meur,nature,fiabilite,page
+2024,cta_recouvree,1911.256576,constate,haute,46
+2025,cta_recouvree,2161.807459,constate,haute,46

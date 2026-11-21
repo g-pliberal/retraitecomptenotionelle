@@ -157,7 +157,8 @@ def test_la_part_de_tva_gardee_n_est_pas_partagee(restitution):
     pib_2026 = restitution.pib_de_la_trajectoire(2026)
     assert part.tva_gardee * pib_2026 == pytest.approx(COMPENSATION_2026_MEUR, rel=1e-12)
     assert part.poste_abandonne == pytest.approx(
-        restitution.poste_affecte(2026) - part.tva_gardee, rel=1e-12)
+        restitution.poste_affecte(2026) - part.tva_gardee - part.cta_supprimee,
+        rel=1e-12)
     assert part.rendu + part.eteint_de_dette == pytest.approx(
         part.poste_abandonne, rel=1e-12)
 
@@ -183,22 +184,8 @@ def test_sans_la_part_gardee_tout_le_poste_est_partage():
     sans = Restitution(PARAMETRES.racine_donnees, 0.5, tva_gardee=False).annuelle(2026)
     assert sans.tva_gardee == 0.0
     assert sans.poste_abandonne == pytest.approx(
-        Restitution(PARAMETRES.racine_donnees, 0.5).poste_affecte(2026))
-
-
-def test_la_baisse_de_csg_de_2026_est_calculee_sur_ce_qui_est_abandonne(restitution):
-    """Le solde de la moitié de ce qui est vraiment abandonné, en points.
-
-    Un calcul posé à la main sur les trois séries : la moitié du poste moins
-    la part gardée, moins les deux impôts supprimés, sur l'assiette.
-    """
-    poste = restitution.poste_affecte(2026)
-    gardee = COMPENSATION_2026_MEUR / restitution.pib_de_la_trajectoire(2026)
-    supprime = restitution.part_du_poste(2026) * poste
-    assiette = restitution.assiette.part_pib(restitution.assiette.annee_de_reference(2026))
-    attendu = (0.5 * (poste - gardee) - supprime) / assiette
-    assert restitution.annuelle(2026).points_csg == pytest.approx(attendu, rel=1e-12)
-    assert 0.0065 < attendu < 0.0070
+        Restitution(PARAMETRES.racine_donnees, 0.5).poste_affecte(2026)
+        - sans.cta_supprimee)
 
 
 def test_le_raccourci_suit_la_bascule_et_le_reglage():
@@ -207,6 +194,8 @@ def test_le_raccourci_suit_la_bascule_et_le_reglage():
     assert points_csg_rendus(racine, 2026, 0.5, 2026, True) == pytest.approx(
         Restitution(racine, 0.5, 2026, True).annuelle(2026).points_csg)
     assert points_csg_rendus(racine, 2026, 0.5, 2030, True) == pytest.approx(
+        Restitution(racine, 0.5, 2030, True).annuelle(2026).points_csg)
+    assert points_csg_rendus(racine, 2026, 0.5, 2026, False) == pytest.approx(
         Restitution(racine, 0.5, tva_gardee=False).annuelle(2026).points_csg)
 
 
@@ -242,7 +231,8 @@ def test_le_portage_retranche_la_meme_part_de_tva():
         const sortie = {};
         for (const a of [2025, 2026, 2027, 2050]) {
           const l = r.annuelle(a);
-          sortie[a] = [l.posteAbandonne, l.tvaGardee, l.pointsCsg, l.eteintDeDette];
+          sortie[a] = [l.posteAbandonne, l.tvaGardee, l.ctaSupprimee, l.pointsCsg,
+                       l.eteintDeDette];
         }
         sortie.sans = pointsCsgRendus(paquet, 2026, 0.5, 2026, false);
         sortie.tard = pointsCsgRendus(paquet, 2026, 0.5, 2030, true);
@@ -251,8 +241,62 @@ def test_le_portage_retranche_la_meme_part_de_tva():
     python = Restitution(PARAMETRES.racine_donnees, 0.5, 2026, True)
     for annee in (2025, 2026, 2027, 2050):
         l = python.annuelle(annee)
-        assert lu[str(annee)] == [l.poste_abandonne, l.tva_gardee, l.points_csg,
-                                  l.eteint_de_dette], annee
+        assert lu[str(annee)] == [l.poste_abandonne, l.tva_gardee, l.cta_supprimee,
+                                  l.points_csg, l.eteint_de_dette], annee
     sans = Restitution(PARAMETRES.racine_donnees, 0.5, tva_gardee=False).annuelle(2026)
     assert lu["sans"] == sans.points_csg
-    assert lu["tard"] == sans.points_csg
+    assert lu["tard"] == Restitution(PARAMETRES.racine_donnees, 0.5, 2030).annuelle(
+        2026).points_csg
+
+
+# .. la CTA, supprimée ..........................................................
+#
+# Le poste du COR compte aussi la contribution tarifaire d'acheminement, que
+# la CNIEG enregistre en « impôts et taxes affectés ». La proposition la
+# SUPPRIME (décision 88) : elle revient aux ménages par leurs factures
+# d'énergie, et la partager encore la promettrait deux fois. Le propriétaire
+# l'a tranché le 21 novembre 2026.
+
+#: La CTA recouvrée en 2025, exercice courant, en millions d'euros : comptes
+#: de l'exercice 2025 de la CNIEG, section comptable « Contribution
+#: tarifaire », p. 46 (2 161 807 459,00 €).
+CTA_2025_MEUR = 2161.80745900
+
+#: Le compte du COR tient le poste à sa part de PIB de 2025 en 2026 : il y
+#: compte donc la CTA d'avant la baisse de taux de la CRE du 1er février 2026
+#: (délibération 2026-14, 555 M€ par an). Le partage retranche la CTA que le
+#: poste compte, baisse comprise, sans quoi ces 555 M€, qui n'existent plus,
+#: seraient partagés : la part de PIB de 2025, reconduite.
+
+
+def test_la_cta_supprimee_n_est_pas_partagee(restitution):
+    """Rendu et dette somment au poste moins la TVA gardée et la CTA."""
+    part = restitution.annuelle(2026)
+    pib_2026 = restitution.pib_de_la_trajectoire(2026)
+    assert part.cta_supprimee == pytest.approx(
+        CTA_2025_MEUR / restitution.pib_de_la_trajectoire(2025), rel=1e-12)
+    assert part.poste_abandonne == pytest.approx(
+        restitution.poste_affecte(2026) - part.tva_gardee - part.cta_supprimee,
+        rel=1e-12)
+    assert part.rendu + part.eteint_de_dette == pytest.approx(
+        part.poste_abandonne, rel=1e-12)
+
+
+def test_la_cta_de_2025_est_celle_des_comptes_de_la_cnieg(restitution):
+    """Avant la bascule rien n'est retranché ; la série porte l'observé."""
+    assert restitution.cta.montant(2025) == pytest.approx(CTA_2025_MEUR, rel=1e-12)
+    assert restitution.annuelle(2025).cta_supprimee == 0.0
+
+
+def test_la_baisse_de_csg_de_2026_hors_tva_et_cta(restitution):
+    """Un calcul posé à la main : la moitié de ce qui reste, moins les deux
+    impôts supprimés, sur l'assiette."""
+    poste = restitution.poste_affecte(2026)
+    pib = restitution.pib_de_la_trajectoire(2026)
+    reste = (poste - COMPENSATION_2026_MEUR / pib
+             - CTA_2025_MEUR / restitution.assiette.pib(2025))
+    supprime = restitution.part_du_poste(2026) * poste
+    assiette = restitution.assiette.part_pib(restitution.assiette.annee_de_reference(2026))
+    attendu = (0.5 * reste - supprime) / assiette
+    assert restitution.annuelle(2026).points_csg == pytest.approx(attendu, rel=1e-12)
+    assert 0.0058 < attendu < 0.0062

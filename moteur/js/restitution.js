@@ -30,6 +30,9 @@
  * retranche avant de couper le poste en deux — moitié, moitié, sur ce qui est
  * vraiment abandonné (21 novembre 2026). Sa part de PIB vient du paquet, que
  * la fabrique rapporte au PIB que le coût projette.
+ *
+ * LA CTA NON PLUS : la proposition la supprime (décision 88), elle revient aux
+ * factures d'énergie, et le partage la retranche de même (21 novembre 2026).
  */
 
 import { AssietteActivite } from "./assiette.js";
@@ -54,6 +57,10 @@ export class Restitution {
     const anneesGardees = Object.keys(this.gardee).map(Number);
     this.premiereGardee = Math.min(...anneesGardees);
     this.derniereGardee = Math.max(...anneesGardees);
+    this.cta = brut.cta_supprimee || {};
+    const anneesCta = Object.keys(this.cta).map(Number);
+    this.premiereCta = Math.min(...anneesCta);
+    this.derniereCta = Math.max(...anneesCta);
     this.postes = new Map(
       POSTES_REMUNERATION.map(({ code }) => [
         code,
@@ -97,11 +104,23 @@ export class Restitution {
   }
 
   /**
-   * Les impôts et taxes que la proposition n'encaisse plus, en part de PIB :
-   * le poste, moins la part de TVA qu'elle garde.
+   * La CTA que la proposition supprime, en part de PIB, à compter de sa
+   * bascule : l'année de la série la plus proche.
+   */
+  ctaSupprimee(annee) {
+    if (annee < this.anneeBascule || !Number.isFinite(this.premiereCta)) {
+      return 0;
+    }
+    const publiee = Math.min(Math.max(annee, this.premiereCta), this.derniereCta);
+    return Math.max(this.cta[String(publiee)] ?? 0, 0);
+  }
+
+  /**
+   * Les impôts et taxes que la proposition partage, en part de PIB : le
+   * poste, moins la part de TVA qu'elle garde et la CTA qu'elle supprime.
    */
   posteAbandonne(annee) {
-    return this.posteAffecte(annee) - this.tvaGardee(annee);
+    return this.posteAffecte(annee) - this.tvaGardee(annee) - this.ctaSupprimee(annee);
   }
 
   /**
@@ -122,7 +141,8 @@ export class Restitution {
   /** Le partage d'une année. */
   annuelle(annee) {
     const gardee = this.tvaGardee(annee);
-    const poste = this.posteAffecte(annee) - gardee;
+    const cta = this.ctaSupprimee(annee);
+    const poste = this.posteAffecte(annee) - gardee - cta;
     const rendu = this.partRendue * poste;
     // Les deux impôts supprimés sont une part du poste du COR, non de ce qui
     // reste une fois la TVA gardée.
@@ -144,6 +164,7 @@ export class Restitution {
       // est mesurée. Les parts de PIB valent ce que vaut le compte du COR.
       fiabilite: niveaux.length ? Math.min(...niveaux) : Fiabilite.ESTIMEE,
       tvaGardee: gardee,
+      ctaSupprimee: cta,
     };
   }
 }

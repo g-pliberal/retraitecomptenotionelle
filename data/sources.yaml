@@ -2932,6 +2932,24 @@ institutions:
           décision 79 du programme garde aux retraites. Lu sur le document le
           9 novembre 2026 (action 186, chantier 4, note
           `docs/feuille_de_route/186/2026-11-09-recettes-au-modele.md`).
+      - id: cnieg_comptes_cta
+        titre: >-
+          CNIEG, comptes de l'exercice 2025 — la section comptable
+          « Contribution tarifaire » : la CTA recouvrée, par prestation
+        url: https://www.cnieg.fr/files/live/sites/portail/files/documents/Institutionnel/I_RCF_2025.pdf
+        acces: document
+        statut_integration: saisi
+        millesime: 2024-2025
+        cible: data/reference/macro/cta_ieg.csv
+        note: >-
+          Compte de résultat de la section, p. 46 : « CTA recouvrée - ex.
+          courant », 2 161 807 459,00 € en 2025, 1 911 256 576,00 € en 2024.
+          La CNIEG l'enregistre en « impôts et taxes affectés », et le poste
+          du même nom du compte du COR la compte. La proposition la supprime
+          (décision 88 du programme) : le partage des impôts abandonnés ne la
+          compte donc pas (`restitution.py`), à sa part de PIB de 2025 que le
+          COR reconduit en 2026, avant la baisse de taux de la CRE. Lu sur le document le 21 novembre 2026 (action 186, note
+          `docs/feuille_de_route/186/2026-11-21-cta-hors-du-partage.md`).
       - id: dss_ccss_impots_retraite
         titre: >-
           Rapports à la Commission des comptes de la Sécurité sociale — les

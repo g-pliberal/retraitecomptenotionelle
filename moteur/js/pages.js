@@ -12686,11 +12686,15 @@ function coutNoteRestitution(contexte, annee, pib, anneePib) {
   if (part.posteAbandonne <= 0) {
     return "";
   }
-  const affecte = part.posteAbandonne + part.tvaGardee;
-  // La part de TVA gardée n'est pas abandonnée : le partage ne la compte pas.
-  const horsTvaGardee = part.tvaGardee > 0
+  const affecte = part.posteAbandonne + part.tvaGardee + part.ctaSupprimee;
+  // La part de TVA gardée n'est pas abandonnée, la CTA revient aux factures
+  // d'énergie : le partage ne compte ni l'une ni l'autre.
+  const cta = part.ctaSupprimee > 0
+    ? `, rend la CTA aux factures d'énergie, ${milliards(part.ctaSupprimee * pib, 1)},`
+    : "";
+  const horsTvaGardee = part.tvaGardee + part.ctaSupprimee > 0
     ? ` Elle en garde la part de TVA des retraites,
-${milliards(part.tvaGardee * pib, 1)}, et n'abandonne donc que
+${milliards(part.tvaGardee * pib, 1)}${cta} et n'en partage donc que
 ${milliards(part.posteAbandonne * pib, 1)}.`
     : "";
   return `
@@ -12699,9 +12703,8 @@ garde pas.</strong> Les impôts et taxes affectés valent
 ${g.pourcentage(affecte, false, 2)} du PIB en ${annee}, soit
 ${milliards(affecte * pib, 0)} au point de PIB de ${anneePib}.${horsTvaGardee}
 Laissée au budget, cette recette irait tout entière au déficit. La proposition la partage en deux :
-<strong>${milliards(part.rendu * pib, part.tvaGardee > 0 ? 1 : 0)} sont rendus aux salaires</strong>,
-autant <strong>éteint de la dette</strong>, à commencer par celle que le
-système de retraite porte. Ce qui est rendu l'est dans l'ordre que le droit
+<strong>${milliards(part.rendu * pib, part.tvaGardee + part.ctaSupprimee > 0 ? 1 : 0)} sont rendus aux salaires</strong>,
+autant <strong>éteint de la dette</strong>. Ce qui est rendu l'est dans l'ordre que le droit
 impose : on supprime d'abord les deux impôts du poste qui sortent d'une
 rémunération — la taxe sur les salaires, dont l'article L. 131-8, 1° du code de
 la sécurité sociale verse ${g.pourcentage(0.5835, false, 2)} à la branche
@@ -17576,9 +17579,10 @@ function programmeRestitution(contexte) {
   // dernière année publiée sinon.
   const pib = pibDeConversion(comptes, annee);
   const poids = comptes.part("impots_et_taxes", annee);
-  // Une fois la part de TVA mise à part, le reste n'est plus un nombre rond :
-  // la décimale garde les deux moitiés égales à leur somme (53,1 = 26,6 + 26,6).
-  const precision = part.tvaGardee > 0 ? 1 : 0;
+  // Une fois la TVA gardée et la CTA mises à part, le reste n'est plus un
+  // nombre rond : la décimale garde les deux moitiés égales à leur somme.
+  const horsPartage = part.tvaGardee + part.ctaSupprimee;
+  const precision = horsPartage > 0 ? 1 : 0;
   // La TVA à taux unique prend leur place dans le financement de la retraite :
   // la phrase se tait quand elle n'est pas réformée.
   const tvaALeurPlace = base.taux_tva_liberal > 0.0
@@ -17598,13 +17602,16 @@ function programmeRestitution(contexte) {
 <h3>Les impôts que nous supprimons : ${milliards(part.rendu * pib, precision)} rendus aux
 salaires</h3>
 <p>La retraite est financée à ${g.pourcentage(poids, false, 0)} par des
-<strong>impôts</strong> (${milliards((part.posteAbandonne + part.tvaGardee) * pib, 0)} en
+<strong>impôts</strong> (${milliards((part.posteAbandonne + horsPartage) * pib, 0)} en
 ${annee}) qui n'ouvrent de droit à personne : un compte notionnel, qui ne rend
 que ce qui a été cotisé, ne sait les porter au crédit de personne.
 <strong>Nous cessons donc de les affecter à la retraite.</strong>${tvaALeurPlace}${horsDuTravail}</p>
 <p><strong>Et nous ne les gardons pas.</strong> Laissée au budget, cette
-recette${part.tvaGardee > 0
-    ? `, ${milliards(part.posteAbandonne * pib, 1)} une fois la part de TVA mise à part,`
+recette${horsPartage > 0
+    ? `, ${milliards(part.posteAbandonne * pib, 1)} une fois `
+      + (part.ctaSupprimee > 0
+        ? "mises à part la TVA gardée et la CTA, rendue sur les factures d'énergie,"
+        : "mise à part la TVA gardée,")
     : ""} irait tout entière au déficit. Nous la partageons en deux :
 <strong>${milliards(part.rendu * pib, precision)} rendus aux salaires</strong>, autant
 pour <strong>éteindre de la dette</strong>.</p>

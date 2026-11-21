@@ -2655,8 +2655,11 @@ def _(m: Modele):
     bascule = restitution.annuelle(m.base.annee_bascule)
     gardee = m.solde.annee(m.base.annee_bascule).tva_gardee
     assert gardee > 0 and bascule.tva_gardee == gardee
+    # La CTA, supprimée (décision 88), revient aux factures, non au partage.
+    assert bascule.cta_supprimee > 0
     assert _proche(bascule.rendu + bascule.eteint_de_dette,
-                   restitution.poste_affecte(m.base.annee_bascule) - gardee)
+                   restitution.poste_affecte(m.base.annee_bascule) - gardee
+                   - bascule.cta_supprimee)
 
 
 @controle("deux_impots_sur_la_remuneration_supprimes")

@@ -75,6 +75,16 @@ une recette que la retraite encaisse encore — 64 Md€ partagés en 2026, quan
 elle n'en perd que 53. Moitié, moitié, sur ce qui est vraiment abandonné :
 le propriétaire l'a tranché le 21 novembre 2026. La part gardée se rapporte au
 PIB comme le coût le fait, publié puis projeté par sa variation nominale.
+
+LA CTA, SUPPRIMÉE, NON PLUS
+---------------------------
+Le poste compte aussi la contribution tarifaire d'acheminement, que la CNIEG
+enregistre en impôts et taxes affectés. La proposition la supprime (décision
+88) : elle revient aux ménages par leurs factures d'énergie, et la partager
+la promettrait deux fois. Elle sort du partage comme la TVA gardée, à compter
+de la bascule (21 novembre 2026), lue dans ``cta_ieg.csv`` : celle de 2025,
+en part de PIB, que le COR reconduit dans le poste sans la baisse de taux de
+la CRE du 1er février 2026.
 """
 
 from __future__ import annotations
@@ -126,6 +136,40 @@ class RestitutionAnnuelle:
     #: La part de TVA que la proposition garde, et qui n'est donc pas
     #: partagée, en part de PIB ; zéro avant la bascule.
     tva_gardee: float = 0.0
+    #: La CTA, que la proposition supprime et qui n'est donc pas partagée, en
+    #: part de PIB ; zéro avant la bascule.
+    cta_supprimee: float = 0.0
+
+
+class CtaSupprimee:
+    """La contribution tarifaire d'acheminement, en millions d'euros courants.
+
+    Sur les années que ``cta_ieg.csv`` porte ; au-delà, l'année la plus
+    proche, que ``part_pib`` rapporte au PIB de cette année-là : la convention
+    de :class:`.tva.TvaGardee`.
+    """
+
+    def __init__(self, racine: Path) -> None:
+        chemin = racine / "reference" / "macro" / "cta_ieg.csv"
+        self.serie = (charger_serie_annuelle(chemin, "montant_meur", nom="cta_ieg",
+                                             filtre={"poste": "cta_recouvree"})
+                      if chemin.exists() else None)
+
+    def __bool__(self) -> bool:
+        return self.serie is not None
+
+    def _publiee(self, annee: int) -> int:
+        return min(max(annee, self.serie.premiere_annee), self.serie.derniere_annee)
+
+    def montant(self, annee: int) -> float:
+        return self.serie(self._publiee(annee)) if self else 0.0
+
+    def part_pib(self, annee: int, pib) -> float:
+        if not self:
+            return 0.0
+        publiee = self._publiee(annee)
+        produit = pib(publiee)
+        return self.serie(publiee) / produit if produit else 0.0
 
 
 class Restitution:
@@ -142,6 +186,7 @@ class Restitution:
         macro = racine / "reference" / "macro"
         self.annee_bascule = annee_bascule
         self.gardee = TvaGardee(racine) if tva_gardee else None
+        self.cta = CtaSupprimee(racine)
         self.macro = DonneesMacro(racine)
         chemin = macro / "impots_retraite_remuneration.csv"
         self.part_rendue = part_rendue
@@ -191,10 +236,19 @@ class Restitution:
             return 0.0
         return max(self.gardee.part_pib(annee, self.pib_de_la_trajectoire), 0.0)
 
+    def cta_supprimee(self, annee: int) -> float:
+        """La CTA que la proposition supprime, en part de PIB, à compter de
+        sa bascule : elle revient aux factures, non au partage."""
+        if annee < self.annee_bascule:
+            return 0.0
+        return max(self.cta.part_pib(annee, self.pib_de_la_trajectoire), 0.0)
+
     def poste_abandonne(self, annee: int) -> float:
-        """Les impôts et taxes que la proposition n'encaisse plus, en part de
-        PIB : le poste, moins la part de TVA qu'elle garde."""
-        return self.poste_affecte(annee) - self.tva_gardee(annee)
+        """Les impôts et taxes que la proposition partage, en part de PIB :
+        le poste, moins la part de TVA qu'elle garde et la CTA qu'elle
+        supprime."""
+        return (self.poste_affecte(annee) - self.tva_gardee(annee)
+                - self.cta_supprimee(annee))
 
     def part_du_poste(self, annee: int) -> float:
         """La part du poste qui est assise sur une rémunération.
@@ -216,7 +270,8 @@ class Restitution:
     def annuelle(self, annee: int) -> RestitutionAnnuelle:
         """Le partage d'une année."""
         gardee = self.tva_gardee(annee)
-        poste = self.poste_affecte(annee) - gardee
+        cta = self.cta_supprimee(annee)
+        poste = self.poste_affecte(annee) - gardee - cta
         part = self.part_du_poste(annee)
         rendu = self.part_rendue * poste
         # Les deux impôts supprimés sont une part du poste du COR, non de ce
@@ -238,6 +293,7 @@ class Restitution:
                 default=Fiabilite.ESTIMEE,
             ),
             tva_gardee=gardee,
+            cta_supprimee=cta,
         )
 
 

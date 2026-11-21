@@ -422,6 +422,14 @@ def _comptes_retraite() -> dict:
             for annee in range(compensation.premiere_annee,
                                compensation.derniere_annee + 1)
         }
+    # La CTA, que la proposition supprime (décision 88), en part de PIB, sur
+    # les années que sa série porte : le partage la retranche aussi.
+    if restitution.cta:
+        serie = restitution.cta.serie
+        paquet["cta_supprimee"] = {
+            str(annee): restitution.cta.part_pib(annee, restitution.pib_de_la_trajectoire)
+            for annee in range(serie.premiere_annee, serie.derniere_annee + 1)
+        }
     return paquet
 
 
