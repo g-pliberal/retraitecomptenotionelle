@@ -1,11 +1,11 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: rouge
-sources: 08ef77d48933db53da8c318492855794e065d9ea
-date: 2026-11-21T18:45:27Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44936538533
+sources: e52f3c1e76c93e63b57ca5066e808de0df1b1ead
+date: 2026-11-21T18:53:55Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44937449212
 echecs:
   - "scripts/regenerer.py a échoué"
 presomptions: non_jouee
 durees:
-  fabrique: 385
+  fabrique: 342
