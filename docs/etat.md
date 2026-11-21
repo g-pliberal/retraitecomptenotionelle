@@ -105,8 +105,8 @@ Une partie compte dans chaque famille de ses régimes, et une fois dans le total
 
 | Présomption | Valeur | Fiches qui la lisent | Où elle s'applique |
 |---|---|---|---|
-| `jour_de_naissance` | 15 du mois | `date_effet_mois_suivant` | posée par la chronologie |
-| `naissance_des_enfants` | 30 ans | `depart_anticipe_parents_trois_enfants`, `enfants_crpcen`, `enfants_fonction_publique`, `enfants_ieg`, `enfants_ratp`, `enfants_sncf`, `majoration_duree_assurance_enfants`, `priorite_majorations_enfants`, `reversion_ircantec` | posée par la chronologie |
+| `jour_de_naissance` | 15 du mois | `date_effet_mois_suivant`, `sam_indemnites_de_maternite` | posée par la chronologie |
+| `naissance_des_enfants` | 30 ans | `depart_anticipe_parents_trois_enfants`, `enfants_crpcen`, `enfants_fonction_publique`, `enfants_ieg`, `enfants_ratp`, `enfants_sncf`, `majoration_duree_assurance_enfants`, `priorite_majorations_enfants`, `reversion_ircantec`, `sam_indemnites_de_maternite` | posée par la chronologie |
 | `radiation_au_1er_janvier_suivant` | le 1er janvier qui suit la dernière année de services, ou le départ s'il part en fonctions | `enfants_fonction_publique`, `pension_differee_fonction_publique`, `priorite_majorations_enfants`, `retablissement_fonction_publique` | droit_a_pension (droit/coordonner.py), et la revalorisation de la pension différée (droit/liquider.py) ; leurs jumeaux JavaScript ; son fait entrera à l'étape `coordonner_les_affiliations` |
 | `agent_en_activite` | en activité, avec services effectifs | `services_et_duree_fonction_publique` | _ligne_annuelle, qui fait de toute année d'emploi une année de services (carriere.py, carriere.js) ; son fait entrera à l'étape `compter_les_durees` |
 | `pas_d_accord_des_parents` | aucun accord ; le défaut légal les donne à la mère | `majoration_duree_assurance_enfants` | le paramètre beneficiaire des versions de la fiche majoration_duree_assurance_enfants, lu par MajorationsPourEnfants.par_enfant ; son fait entrera à l'étape `compter_les_durees` |
