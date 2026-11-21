@@ -1514,9 +1514,20 @@ def donnees_d_ailleurs(tmp_path):
     version en vigueur de l'âge légal, que le moteur lit, et non sur la table
     fusionnée, qui n'en est qu'une vue fabriquée."""
     copie = tmp_path / "data"
-    shutil.copytree(RACINE_DONNEES, copie)
+    shutil.copytree(RACINE_DONNEES, copie, ignore=lambda dossier, noms: (
+        ["brut"] if dossier == str(RACINE_DONNEES) else []))
     _recrire_l_age_legal(copie, "63.75", "66.00")
     return copie
+
+
+def test_les_donnees_d_ailleurs_laissent_data_brut(donnees_d_ailleurs):
+    """La copie laisse ``data/brut/``, que git ignore et que le paquet ne lit
+    pas : l'index de la DILA et les fichiers de la DREES qu'une session ou la
+    suite de GitHub y récupère pèsent près de cinq gigaoctets, que chaque test
+    de ces données recopiait (le 21 novembre 2026, vingt gigaoctets sous une
+    suite rapide, et le disque plein)."""
+    assert (donnees_d_ailleurs / "reference").is_dir()
+    assert not (donnees_d_ailleurs / "brut").exists()
 
 
 def _recrire_l_age_legal(copie, avant: str, apres: str) -> None:

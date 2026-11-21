@@ -198,6 +198,25 @@ jobs:
           fi
           touch "$RUNNER_TEMP/reprise"
 
+      # Soixante-dix tests relisent nos valeurs dans les textes officiels, par
+      # l'index LEGI et JORF de la DILA, ou dans les fichiers de la DREES, que
+      # `pdftotext` lit : faute d'eux, ils se sautaient ici (tri des tests du
+      # 21 novembre 2026, accord du propriétaire). Ce qui manque ne fait pas
+      # tomber la tranche : ses tests se sautent comme avant, et un
+      # avertissement le dit. Pas de cache : près de quatre gigaoctets en
+      # chasseraient la mémoire des calculs. `tests/test_outillage.py` le tient.
+      - name: Les textes officiels et les fichiers de la DREES
+        run: |
+          { sudo apt-get update -q \
+              && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends poppler-utils; } \
+            || echo "::warning::pdftotext n'est pas installé : les tests des PDF se sautent"
+          python scripts/fetch/dila_index.py legi --recuperer \
+            || echo "::warning::l'index LEGI n'est pas récupéré : ses tests se sautent"
+          python scripts/fetch/dila_index.py jorf --recuperer \
+            || echo "::warning::l'index JORF n'est pas récupéré : ses tests se sautent"
+          python scripts/fetch/source_locale.py --recuperer \
+            || echo "::warning::des fichiers de data/brut manquent : leurs tests se sautent"
+
       # `shell: bash` lance l'étape sous `bash -eo pipefail` : sans lui, GitHub
       # prend `bash -e`, l'issue du tube est celle de `tee`, toujours réussie,
       # et le verdict dit vert sur une suite rouge (le 7 octobre 2026, onze

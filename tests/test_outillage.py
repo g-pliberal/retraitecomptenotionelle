@@ -730,6 +730,28 @@ def test_chaque_travail_de_la_course_joue_l_arbre_de_la_fabrique():
                              "steps.course.outputs.garde != 'success'")
 
 
+def test_chaque_tranche_recupere_les_textes_et_les_fichiers_de_la_drees():
+    """Soixante-dix tests relisent nos valeurs dans les textes officiels, par
+    l'index LEGI et JORF de la DILA, ou dans les fichiers de la DREES, que
+    ``pdftotext`` lit, et se sautaient ici faute d'eux : seules les sessions
+    qui les avaient récupérés les jouaient (tri des tests du 21 novembre 2026,
+    accord du propriétaire). Chaque tranche les récupère avant la suite, des
+    releases publiques du dépôt. Ce qui manque ne fait pas tomber la course :
+    ses tests se sautent alors comme avant, et un avertissement le dit. Pas de
+    cache : près de quatre gigaoctets en chasseraient la mémoire des calculs."""
+    etapes = _flux_des_tests()["jobs"]["suite"]["steps"]
+    rang = next(i for i, e in enumerate(etapes) if e.get("id") == "suite")
+    (recuperer,) = [e for e in etapes[:rang] if "--recuperer" in e.get("run", "")]
+    for commande in ("apt-get install -y -q --no-install-recommends poppler-utils",
+                     "scripts/fetch/dila_index.py legi --recuperer",
+                     "scripts/fetch/dila_index.py jorf --recuperer",
+                     "scripts/fetch/source_locale.py --recuperer"):
+        assert commande in recuperer["run"], commande
+    assert recuperer["run"].count("|| echo \"::warning::") == 4
+    assert not any("data/brut" in str(e.get("with", {}).get("path", ""))
+                   for e in etapes if e.get("uses", "").startswith("actions/cache"))
+
+
 def test_la_fabrique_passe_son_arbre_et_ses_calculs_aux_travaux_suivants(tmp_path):
     """Les étapes qui passent la main se jouent ici sous le shell que GitHub
     leur donne. La fabrique laisse ce qu'elle a refait — un fichier changé, un
