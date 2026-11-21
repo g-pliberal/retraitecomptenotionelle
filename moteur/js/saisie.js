@@ -600,6 +600,9 @@ export const ANNEE_MAXIMALE = 2070;
  */
 export const ENFANTS_MAXIMUM = 12;
 
+/** La part salariale de complémentaire santé la plus haute que la saisie accepte, en euros par mois. */
+export const MUTUELLE_MAXIMUM = 500;
+
 /**
  * Bornes de l'année de naissance et des deux âges saisis. Elles étaient écrites
  * deux fois — une fois dans `verifier`, une fois sur le champ du formulaire —,
@@ -891,6 +894,10 @@ export const DEFAUTS = Object.freeze({
   // taux de CSG de sa pension (action 138, étape 2). `null` : la présomption
   // `aucun_autre_revenu_que_ses_pensions`.
   revenu_fiscal: null,
+  // La part salariale de la complémentaire santé, en euros par mois, si le
+  // lecteur la dit : sa fiche de paie la retire de son net (L. 911-7). `null` :
+  // le forfait de l'Urssaf, 20 € en 2026 (décision du 21 novembre 2026).
+  mutuelle: null,
   interruptions: "",
   // Les années travaillées à temps partiel et leur quotité, en pour cent :
   // « 2005:2014:80 » (fiche `temps_partiel_fonction_publique`). Les revenus
@@ -1068,6 +1075,8 @@ export class Saisie {
       ex_conjoints: exConjointsSaisis(parametres, tolerante),
       revenu_fiscal: [undefined, null, ""].includes(parametres.revenu_fiscal)
         ? null : reel(parametres, "revenu_fiscal", 0.0),
+      mutuelle: [undefined, null, ""].includes(parametres.mutuelle)
+        ? null : reel(parametres, "mutuelle", 0.0),
       conjoint_invalidite: (parametres.conjoint_invalidite || "").trim(),
       conjoint_retraite: (parametres.conjoint_retraite || "").trim(),
       deces: (parametres.deces || "").trim(),
@@ -1231,6 +1240,10 @@ export class Saisie {
     }
     if (this.revenu_fiscal !== null && this.revenu_fiscal < 0) {
       throw new ErreurSaisie("Revenu fiscal de référence : un montant annuel positif.");
+    }
+    if (this.mutuelle !== null && !(this.mutuelle >= 0 && this.mutuelle <= MUTUELLE_MAXIMUM)) {
+      throw new ErreurSaisie(
+        `Mutuelle : votre part, en euros par mois, de 0 à ${MUTUELLE_MAXIMUM}.`);
     }
     this.tempsPartielAnalyse();
     this.dispensesAnalysees();
@@ -1844,6 +1857,7 @@ export class Saisie {
       part_reprise_garantie: this.reprise === null ? null : this.reprise / 100,
       annee_bascule: this.bascule,
       annee_euros_constants: this.euros,
+      mutuelle_mensuelle: this.mutuelle,
     });
     return sousRegimeTaux(sousRegimeFrais(regle, this.frais), this.taux);
   }
@@ -3538,6 +3552,7 @@ export class Saisie {
       ...(this.mois_en_france !== null ? { mois_en_france: this.mois_en_france } : {}),
       ...(this.apprentissage !== null ? { apprentissage: this.apprentissage } : {}),
       ...(this.revenu_fiscal !== null ? { revenu_fiscal: nombreBrut(this.revenu_fiscal) } : {}),
+      ...(this.mutuelle !== null ? { mutuelle: nombreBrut(this.mutuelle) } : {}),
       ...(this.temps_partiel ? { temps_partiel: this.temps_partiel } : {}),
       ...(this.dispenses ? { dispenses: this.dispenses } : {}),
       ...(this.outre_mer ? { outre_mer: this.outre_mer } : {}),

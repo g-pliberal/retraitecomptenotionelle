@@ -23,11 +23,10 @@ connexion de la session. L'arrondi du coefficient à quatre décimales est celui
 du BOSS (fiche Sage) et du simulateur de l'Urssaf ; D. 752-7 ne le dit pas.
 
 Le modèle refait T des fiches de régime, comme le coefficient maximal de la
-réduction générale (``test_remuneration.py``) : 0,32412 et non 0,3241, la part
-patronale de l'Agirc-Arrco y valant 60 % de 7,87 %, 4,722 %, quand le BOSS
-compte 4,72 %. Ce qui suit T se compare donc à un dix-millième près ; les
-coefficients arrondis sont pris loin d'un demi dix-millième, où l'écart ne
-change pas l'arrondi.
+réduction générale (``test_remuneration.py``), la part patronale de
+l'Agirc-Arrco y valant 4,72 %, comme au BOSS. Ce qui suit T se compare à un
+dix-millième près ; les coefficients arrondis sont pris loin d'un demi
+dix-millième, où l'écart ne change pas l'arrondi.
 """
 
 from __future__ import annotations
@@ -67,6 +66,9 @@ SEUIL_FAMILLE = 3.5 * 11.52 * 1820
 #: du travail au-delà des 0,49 point que L. 241-13 y fait entrer, l'AGS et le
 #: financement du dialogue social.
 HORS_PERIMETRE = 0.0300 - 0.0049 + 0.0025 + 0.00016
+#: Et, hors du périmètre aussi, sa part de la complémentaire santé (L. 911-7) :
+#: le forfait de 20 € par mois en 2026, 240 € l'an.
+SANTE_EMPLOYEUR = 240.0
 
 
 @pytest.fixture(scope="module")
@@ -121,7 +123,8 @@ def test_sous_son_seuil_l_exoneration_efface_tout_le_perimetre(pieces, bareme, m
     fiche = _fiche(pieces, brut, bareme)
     assert fiche.lodeom == bareme
     assert fiche.reduction_generale == pytest.approx(T * brut, rel=1e-4)
-    assert fiche.cotisations_patronales == pytest.approx(HORS_PERIMETRE * brut, abs=1e-6)
+    assert fiche.cotisations_patronales == pytest.approx(
+        HORS_PERIMETRE * brut + SANTE_EMPLOYEUR, abs=1e-6)
     assert _employeur(fiche, "maladie") == pytest.approx(0.07 * brut, abs=1e-6)
     assert _employeur(fiche, "famille") == pytest.approx(0.0345 * brut, abs=1e-6)
     assert fiche.part_retraite_dans_la_reduction == pytest.approx(0.1667 / T, rel=1e-4)

@@ -305,6 +305,31 @@ export class PrelevementsHistoriques {
       (jour) => this.horsRetraite(famille, jour, brut, plafond, retraiteSalarie));
   }
 
+  // -- la part patronale assujettie ------------------------------------------
+
+  /**
+   * La CSG et la CRDS du `jour` sur la part patronale de la complémentaire
+   * santé et de la prévoyance, en part de cette part : elle entre entière dans
+   * l'assiette, sans l'abattement pour frais (L. 136-1-1) ; rien avant la CSG.
+   */
+  tauxPartPatronale(jour) {
+    return this.salaires.csg.valeur(jour) + this.salaires.crds.valeur(jour);
+  }
+
+  tauxPartPatronaleAnnuel(annee) {
+    return moyenneAnnuelle(annee, (jour) => this.tauxPartPatronale(jour));
+  }
+
+  /** Ce que le revenu imposable n'en déduit pas : la CSG non déductible et la CRDS. */
+  nonDeductiblePartPatronale(jour) {
+    const csg = this.salaires.csg.enVigueur(jour);
+    return (csg.taux ?? 0.0) - (csg.deductible ?? 0.0) + this.salaires.crds.valeur(jour);
+  }
+
+  nonDeductiblePartPatronaleAnnuel(annee) {
+    return moyenneAnnuelle(annee, (jour) => this.nonDeductiblePartPatronale(jour));
+  }
+
   // -- le net imposable ------------------------------------------------------
 
   /**

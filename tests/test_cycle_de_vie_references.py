@@ -691,7 +691,8 @@ def test_le_remplacement_net_de_trajectoire_se_retrouve_aux_prelevements_de_l_an
     mêmes prélèvements (l'histoire que l'IPP retrace,
     ``prelevements_historiques.yaml``), rapportée au revenu net que le dépôt
     tire de la même carrière (``remplacementNet`` du portage), retrouve son
-    taux à 1,5 % près sur 65 des 75 cas du témoin ; le policier et
+    taux à 1,5 % près sur 65 des 75 cas du témoin, le revenu net sans la
+    complémentaire santé obligatoire, que TRAJECTOiRE ne retire pas ; le policier et
     l'aide-soignante sont déclarés, dont TRAJECTOiRE prélève autrement les
     retenues de l'indemnité et de la prime. Jusqu'au 9 octobre 2026, les deux
     nets étaient aux taux de 2026, et les départs d'avant 2018 s'écartaient de
@@ -856,7 +857,8 @@ def test_le_taux_net_de_l_ocde_se_retrouve_de_sa_pension_brute(ocde, ocde_au_por
     salaire moyen, ni la pension ni le salaire ne paient d'impôt, et le dépôt
     est 1,2 point sous l'OCDE : la pension y perd la CSG au taux plein, quand
     le revenu fiscal d'un tel retraité ouvrirait un taux moindre ou nul
-    (action 138, étape 2)."""
+    (action 138, étape 2). Le salaire net s'y prend sans la complémentaire
+    santé obligatoire, que l'OCDE ne retire pas."""
     bruts, nets = (ocde[cle]["hommes"] for cle in ("taux_remplacement_brut",
                                                     "taux_remplacement_net"))
     for multiple in ("0.5", "1", "2"):

@@ -610,6 +610,13 @@ export function revenusDActivite(carriere) {
 export const POSTES_EQUILIBRE = Object.freeze(["equilibre_general", "equilibre_technique"]);
 
 /**
+ * Les postes de la fiche que l'employeur paie et que le revenu imposable du
+ * salarié compte : la complémentaire santé (CGI, art. 83, 1° quater, dernier
+ * alinéa), quand la prévoyance des cadres en reste dehors.
+ */
+export const POSTES_PATRONAUX_IMPOSABLES = Object.freeze(["complementaire_sante"]);
+
+/**
  * Les postes de la fiche d'un indépendant que l'histoire refait à l'année : la
  * maladie et l'indemnité journalière, les allocations familiales, la CSG et la
  * CRDS. Les autres — la retraite, l'invalidité-décès — entrent, avant 2025,
@@ -673,9 +680,39 @@ function netAnnualise(simulateur, carriere, ligne, indemnite = 0.0, imposable = 
   let equilibre = 0.0;
   for (const l of fiche.lignes) if (POSTES_EQUILIBRE.includes(l.code)) equilibre += l.salarie;
   if (equilibre > 0.0) equilibre -= partSalarialeAnnualisee(simulateur, carriere, ligne);
-  const nonDeductibles = imposable
+  // La CSG et la CRDS sur la part patronale de la santé et de la prévoyance :
+  // la fiche les prend au taux de l'année courante, l'histoire à celui de
+  // l'année, rien avant 1991.
+  const [assujettie, patronaleImposable] = partPatronale(simulateur, profil, fiche);
+  const bareme = simulateur.baremePrelevements.profil(profil);
+  const csgPatronale = assujettie
+    * (bareme.csg + bareme.crds - historique.tauxPartPatronaleAnnuel(ligne.annee));
+  let nonDeductibles = imposable
     ? historique.nonDeductiblesAnnuel(famille, ligne.annee, annualise, plafond, retraite) : 0.0;
-  return [fiche.net + horsRetraite + equilibre, nonDeductibles];
+  if (imposable) {
+    nonDeductibles += assujettie * historique.nonDeductiblePartPatronaleAnnuel(ligne.annee)
+      + patronaleImposable;
+  }
+  return [fiche.net + horsRetraite + equilibre + csgPatronale, nonDeductibles];
+}
+
+/**
+ * La part patronale de la fiche qui entre dans l'assiette de la CSG et de la
+ * CRDS (la complémentaire santé et la prévoyance, L. 136-1-1), et celle que le
+ * revenu imposable du salarié compte : la complémentaire santé (CGI, art. 83,
+ * 1° quater, dernier alinéa ; `POSTES_PATRONAUX_IMPOSABLES`).
+ */
+function partPatronale(simulateur, codeProfil, fiche) {
+  const profil = simulateur.baremePrelevements.profil(codeProfil);
+  const assujettis = new Set(profil.postes.filter((p) => p.dans_l_assiette_csg)
+    .map((p) => p.code));
+  let assiette = 0.0;
+  let imposable = 0.0;
+  for (const l of fiche.lignes) {
+    if (assujettis.has(l.code)) assiette += l.employeur;
+    if (POSTES_PATRONAUX_IMPOSABLES.includes(l.code)) imposable += l.employeur;
+  }
+  return [assiette, imposable];
 }
 
 /**

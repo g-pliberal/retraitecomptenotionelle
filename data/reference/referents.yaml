@@ -5806,12 +5806,14 @@ referents:
       - quoi: >-
           Il partage les cotisations de l'Agirc-Arrco comme la caisse les
           publie, au centième : 3,15 et 4,72 % sur la tranche 1, 8,64 et
-          12,95 % sur la tranche 2. Le dépôt en prend 40 et 60 % exacts
+          12,95 % sur la tranche 2. Le dépôt en prenait 40 et 60 % exacts
           (`regimes/agirc_arrco.yaml`, `part_salariale: 0.40`), 3,148 et
-          4,722 %, 8,636 et 12,954 % : le salarié retient 0,002 point de
+          4,722 %, 8,636 et 12,954 % : le salarié retenait 0,002 point de
           trop peu sur la tranche 1 et 0,004 sur la tranche 2, et
-          l'employeur verse autant de trop, 14,42 € par an à huit plafonds
-          en 2026. Le total, les points et la pension n'en bougent pas.
+          l'employeur versait autant de trop, 14,42 € par an à huit plafonds
+          en 2026. Le total, les points et la pension n'en bougeaient pas.
+          Corrigé le 21 novembre 2026 : la fiche porte les parts au
+          centième (`tests/test_agirc_arrco_part_salariale.py`).
         preuve: >-
           feuille « Barème » au commit 95ef983, de 2019 à 2025 : 4,01 % =
           3,15 + 0,86 et 9,72 % = 8,64 + 1,08 pour le salarié (2025, lignes

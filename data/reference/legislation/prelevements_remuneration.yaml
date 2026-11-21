@@ -498,6 +498,53 @@ postes_regime_general: &postes_regime_general
     textes:
       - "Convention nationale du 12 juillet 2011 relative à l'Apec"
 
+  - code: complementaire_sante
+    libelle: "Complémentaire santé obligatoire"
+    # Ni une cotisation de sécurité sociale ni un prélèvement retraite : la
+    # couverture collective que tout employeur privé doit à ses salariés
+    # depuis le 1er janvier 2016, et dont il finance au moins la moitié. Le
+    # « net à payer » d'une fiche de paie l'a déjà perdue : sans elle, un net
+    # saisi remontait à un brut trop bas, de 1,1 % à 2 500 € brut, de 1,7 % au
+    # SMIC (décision du propriétaire du 21 novembre 2026).
+    retraite: false
+    dans_la_reduction_generale: false
+    depuis: 2016
+    # Le MONTANT n'est pas dans la loi : celui que mon-entreprise retient,
+    # 40 € par mois partagés par moitié en 2026, soit 20 € = 240 / 48 060 du
+    # plafond annuel de 2026 de chaque côté, qui suit le plafond comme les
+    # contrats exprimés en part du plafond mensuel. La saisie en dit un autre
+    # (`mutuelle`), que l'employeur finance alors autant.
+    forfait_en_plafonds: {salarie: 0.004993757802746567, employeur: 0.004993757802746567}
+    reglable_par_la_saisie: true
+    # Sa part patronale est un revenu d'activité pour la CSG et la CRDS, que
+    # l'exclusion du III de L. 136-1-1 ne nomme pas, et l'abattement pour frais
+    # professionnels, réservé aux salaires, ne la touche pas.
+    dans_l_assiette_csg: true
+    note: >-
+      Le salarié peut s'en dispenser dans les cas que fixe le décret (L. 911-7,
+      III ; D. 911-2) : le modèle retient le cas général, qui en paie une.
+    textes:
+      - "Article L. 911-7 du code de la sécurité sociale, I et III (LEGIARTI000031686110, en vigueur au 1er janvier 2016 ; loi n° 2013-504 du 14 juin 2013, art. 1er, IX)"
+      - "Article L. 136-1-1 du code de la sécurité sociale (assiette de la CSG)"
+      - "Simulateur mon-entreprise de l'Urssaf, règle « salarié . cotisations . prévoyances . santé », 2026"
+
+  - code: prevoyance_cadres
+    libelle: "Prévoyance des cadres (1,50 % de la tranche 1)"
+    # À la charge exclusive de l'employeur, qui la verse depuis 1947 (article 7
+    # de la convention du 14 mars 1947), que l'accord de 2017 a reprise.
+    retraite: false
+    dans_la_reduction_generale: false
+    cadres_seulement: true
+    employeur:
+      - {jusqu_en_plafonds: 1, taux: 0.015}
+      - {jusqu_en_plafonds: null, taux: 0.0000}
+    dans_l_assiette_csg: true
+    note: >-
+      Elle ne retire rien au brut du cadre, mais la CSG et la CRDS sur elle,
+      5,83 € par mois au-delà du plafond, sortent de son net.
+    textes:
+      - "Accord national interprofessionnel du 17 novembre 2017 relatif à la prévoyance des cadres, article 1er"
+
 # Les cinq postes ci-dessus qui ne dépendent ni de l'Agirc-Arrco ni du statut de
 # cadre valent tels quels pour un agent non titulaire de la fonction publique :
 # il relève du régime général pour la base, et de l'Ircantec — que sa fiche de

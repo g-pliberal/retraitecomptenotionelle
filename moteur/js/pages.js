@@ -84,7 +84,7 @@ import {
   CODES_SANS_EMPLOI, CONTRIBUTIONS_ETAT, CONVERSIONS_ACQUIS, CUMUL, DEFAUTS,
   EMPLOYEURS_APRES_DEPART, PREFIXE_DEMANDE,
   ACTIVITES_A_L_ETRANGER, AUTRE_ETAT, ENFANTS_MAXIMUM, ETRANGER_MAXIMUM, ErreurSaisie,
-  ASSIMILEES_MAXIMUM, DISPOSITIFS_D_INSERTION, MOTIFS_D_ASSIMILATION,
+  MUTUELLE_MAXIMUM, ASSIMILEES_MAXIMUM, DISPOSITIFS_D_INSERTION, MOTIFS_D_ASSIMILATION,
   INDEXATIONS, LISSAGE_MAXIMUM, METIERS_MAXIMUM,
   MODES_MONTANT, NAISSANCE_MAXIMALE, NAISSANCE_MINIMALE, OUI, PARTS_COTISATION,
   HYPOTHESES_ESPERANCE_VIE, POPULATIONS, PROFILS, PROJECTIONS, RATTACHEMENTS, REGIMES_FRAIS, REGIMES_TAUX,
@@ -1058,6 +1058,18 @@ export function formulaire(saisie, contexte, comparaison = null) {
     g.liste("lodeom", "Lodeom de l'employeur", BAREMES_LODEOM, saisie.lodeom,
       "salarié du privé outre-mer : son exonération", {},
       aideDeLaLodeom(lodeomDuPaquet(contexte.paquet))),
+    // LA MUTUELLE (L. 911-7 ; décision du 21 novembre 2026) : facultative. Le
+    // net à payer d'une fiche de paie l'a déjà perdue ; sans elle, le
+    // simulateur retient le forfait de l'Urssaf, 20 € par mois en 2026.
+    g.champ("mutuelle", "Votre part de mutuelle d'entreprise",
+      saisie.mutuelle === null ? "" : nombreBrut(saisie.mutuelle),
+      "facultatif : en euros par mois, sur votre fiche de paie", "number",
+      { min: "0", max: String(MUTUELLE_MAXIMUM), step: "0.01" },
+      "Salarié du privé : la complémentaire santé que votre employeur doit "
+      + "depuis 2016, et dont il paie au moins la moitié, sort de votre net à "
+      + "payer. Sans ce montant, le simulateur retient 20 € par mois pour vous, "
+      + "autant pour votre employeur, comme le simulateur de l'Urssaf. Il ne "
+      + "joue que sur le passage du net au brut."),
     // LE REVENU FISCAL DU FOYER (action 138, étapes 2 et 13) : facultatif. Il
     // fixe la tranche de CSG de la pension ; sans lui, le net présume un foyer
     // sans autre revenu que ses pensions.
@@ -6287,7 +6299,10 @@ votre revenu de chaque année, de dix ans avant le départ à dix ans après.${g
     + "cotisation maladie de l'année du départ au dernier revenu net de ses "
     + "cotisations ; le taux après impôt, celui de l'OCDE (<i>Pensions at a "
     + "Glance</i>), la pension après l'impôt d'une année entière d'elle seule au "
-    + "dernier revenu après le sien. L'impôt est celui d'une personne seule, sans "
+    + "dernier revenu après le sien. Le revenu net d'un salarié du privé retire "
+    + "aussi sa complémentaire santé d'entreprise et la CSG sur la part que "
+    + "l'employeur en paie, que l'OCDE ne retire pas. L'impôt est celui d'une "
+    + "personne seule, sans "
     + "enfant à charge, qui ne déclare que ses revenus d'activité et ses pensions, "
     + "au barème de chaque année, que la page fait suivre les prix au-delà de la "
     + "dernière loi de finances. Le second tableau suit le système 1, et ramène "
@@ -8081,12 +8096,22 @@ cotisation maladie salariale a disparu en 2018 comme dans le privé, un titulair
 n'est pas assuré contre le chômage, et la contribution exceptionnelle de
 solidarité de 1 % a été supprimée la même année.${additionnelle}${compensation}</p>`;
   }
+  // La complémentaire santé du privé (L. 911-7), que la fiche porte depuis le
+  // 21 novembre 2026 ; un contractuel public n'en a pas sur sa fiche.
+  const prive = remuneration.profil === "salarie_prive";
+  const sante = prive
+    ? ` La mutuelle d'entreprise, obligatoire depuis 2016, y est : 20 € par mois
+pour le salarié et autant pour l'employeur, comme le simulateur de l'Urssaf, ou
+le montant que vous dites.`
+    : "";
   return `<p><strong>Ce que la fiche ne porte pas</strong> : la taxe
 d'apprentissage, la formation professionnelle, la participation à la
-construction, le versement mobilité, la prévoyance et la mutuelle d'entreprise.
-Aucune ne bouge d'un système à l'autre, et plusieurs dépendent de la commune ou
-de la taille de l'entreprise. Le coût du travail affiché est donc un plancher.
-L'employeur type est une entreprise de cinquante salariés et plus.</p>`;
+construction, le versement mobilité, le forfait social, ${prive
+    ? "la prévoyance au-delà de celle des cadres"
+    : "la prévoyance et la mutuelle d'entreprise"}. Aucune ne bouge d'un système à
+l'autre, et plusieurs dépendent de la commune ou de la taille de l'entreprise.
+Le coût du travail affiché est donc un plancher. L'employeur type est une
+entreprise de cinquante salariés et plus.${sante}</p>`;
 }
 
 /**

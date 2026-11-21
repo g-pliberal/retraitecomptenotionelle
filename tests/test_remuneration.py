@@ -148,17 +148,20 @@ def test_la_reduction_s_eteint_a_trois_smic(pieces):
 # -- le calcul fait ce qu'il dit ---------------------------------------------
 
 
-def test_le_net_d_un_salarie_du_prive_vaut_bien_environ_79_pour_cent_du_brut(pieces):
-    """Le chiffre que porte n'importe quelle fiche de paie non cadre.
+def test_le_net_d_un_salarie_du_prive_vaut_bien_environ_78_pour_cent_du_brut(pieces):
+    """Le chiffre que porte n'importe quelle fiche de paie non cadre au SMIC.
 
     11,31 points de retraite (6,90 + 0,40 + 3,15 + 0,86), 9,04 de CSG-CRDS après
-    abattement : il reste 79,2 %. Une fourchette large suffit à attraper une
-    erreur de barème ; elle n'est pas là pour valider un centime.
+    abattement : il reste 79,2 %. La complémentaire santé obligatoire depuis
+    2016, 20 € par mois et la CSG sur les 20 € de l'employeur, en retire 1,2
+    point au SMIC : 78,0 %, les 1 421,17 € de l'Urssaf pour 1 823,03 €. Une
+    fourchette large suffit à attraper une erreur de barème ; elle n'est pas
+    là pour valider un centime.
     """
     actuel, _ = _blocs(pieces)
     fiche = ConstructeurFiche(pieces["bareme"]).fiche(
         ANNEE, pieces["smic"], pieces["plafond"], pieces["smic"], actuel)
-    assert 0.78 < fiche.net / fiche.brut < 0.80
+    assert 0.775 < fiche.net / fiche.brut < 0.785
 
 
 def test_le_brut_retrouve_a_cout_donne_epuise_ce_cout(pieces):
@@ -268,12 +271,10 @@ def test_le_partage_retenu_laisse_la_part_patronale_ou_elle_est(pieces):
     promise. Le test lit les deux blocs plutôt que de croire le paramètre —
     c'est le rapprochement qui compte, pas le nombre.
 
-    **Deux millièmes de point d'écart subsistent, et ils sont voulus.** La part
-    patronale d'aujourd'hui vaut exactement 16,6720 points — 10,66 au régime
-    général, 4,7220 à l'Agirc-Arrco, 1,29 de contribution d'équilibre général —
-    quand le paramètre est écrit sur les 16,67 qu'une proposition politique
-    énonce. L'employeur verse donc 0,002 point de moins, soit cinq centimes par
-    mois à un salaire et demi le SMIC. Le test borne cet écart plutôt que de
+    La part patronale d'aujourd'hui vaut 16,67 points — 10,66 au régime
+    général, 4,72 à l'Agirc-Arrco (le barème que le régime publie, arrondi au
+    centième de point), 1,29 de contribution d'équilibre général —, les 16,67
+    sur lesquels le paramètre est écrit. Le test borne l'écart plutôt que de
     l'ignorer : s'il grossissait, c'est qu'un taux de régime aurait bougé sans
     que le partage suive.
     """
@@ -289,7 +290,7 @@ def test_le_partage_retenu_laisse_la_part_patronale_ou_elle_est(pieces):
     # Toute la baisse est passée côté salarié : 11,31 points deviennent 6,33.
     assert avant.retraite_salarie / brut == pytest.approx(0.1131, abs=5e-5)
     assert apres.retraite_salarie / brut == pytest.approx(0.0633, abs=5e-5)
-    assert avant.retraite_employeur / brut == pytest.approx(0.16672, abs=5e-6)
+    assert avant.retraite_employeur / brut == pytest.approx(0.1667, abs=5e-6)
 
 
 def test_sans_le_pilier_capitalise_le_gain_est_positif_partout(pieces):

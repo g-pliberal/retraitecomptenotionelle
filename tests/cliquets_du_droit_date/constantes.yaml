@@ -327,6 +327,7 @@ sans_date:
   "moteur/js/saisie.js : EX_CONJOINTS_MAXIMUM": {classe: hors, raison: saisie}
   "moteur/js/saisie.js : HEURES_SMIC_PAR_MOIS": {classe: hors, raison: saisie}
   "moteur/js/saisie.js : LISSAGE_MAXIMUM": {classe: hors, raison: saisie}
+  "moteur/js/saisie.js : MUTUELLE_MAXIMUM": {classe: hors, raison: saisie}
   "moteur/js/saisie.js : METIERS_MAXIMUM": {classe: hors, raison: saisie}
   "moteur/js/saisie.js : MOIS_DE_GUERRE_MAXIMUM": {classe: hors, raison: saisie}
   "moteur/js/saisie.js : NIVEAU_MAXIMAL": {classe: hors, raison: saisie}

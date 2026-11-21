@@ -1,0 +1,28 @@
+date: "2026-11-21"
+session: "la complémentaire santé obligatoire dans le salaire net (décision du propriétaire du 21 novembre 2026)"
+consulte: >-
+  L'index LEGI de la DILA, à jour au 16 novembre 2026 : L. 911-7 du code de la sécurité
+  sociale (LEGIARTI000031686110, en vigueur au 1er janvier 2016 par la loi n° 2013-504 du
+  14 juin 2013, art. 1er, IX), et L. 136-1-1 dans sa rédaction du 22 octobre 2026
+  (LEGIARTI000055004433), dont le III n'exclut de l'assiette de la CSG que les cotisations
+  des régimes obligatoires, de la retraite complémentaire et du chômage. L'API publique de
+  mon-entreprise (https://mon-entreprise.urssaf.fr/api/v1/evaluate), au 1er juillet 2026 :
+  seize salaires bruts, cadres et non-cadres (tests/temoins/brut_net_mon_entreprise.json).
+  veille_droit.py lancé en ouvrant.
+trouve: >-
+  Le net de la fiche de paie était plus haut que celui de l'Urssaf de 22 à 28 € par mois :
+  ni la complémentaire santé que tout employeur privé doit depuis 2016 et dont il finance au
+  moins la moitié (L. 911-7, I et III), ni la CSG sur sa part patronale, ni, pour un cadre,
+  la CSG sur la prévoyance de 1,50 % de la tranche 1 (ANI du 17 novembre 2017). Un net saisi
+  remontait à un brut trop bas, de 1,1 % à 2 500 € brut et de 1,7 % au SMIC. La loi ne fixe
+  pas le montant de la complémentaire : le forfait de mon-entreprise, 20 € par mois de
+  chaque côté en 2026, est retenu, la saisie pouvant en dire un autre. Corrigé, les seize
+  cas tombent au centime, l'Agirc-Arrco corrigée à part.
+  Relu, le même jour : la CSG et la CRDS sur ces parts patronales se prennent, dans les
+  revenus nets des années passées, au taux de chaque année
+  (legislation/prelevements_historiques.yaml) : rien avant février 1991, 8,0 % en 2016 et
+  2017, 9,7 % depuis 2018, et non 9,7 % partout.
+reste: >-
+  Ni le forfait social sur la prévoyance, ni la mutuelle des contractuels publics et des
+  fonctionnaires (protection sociale complémentaire de 2025-2026). La part salariale de
+  l'Agirc-Arrco, au centième, est corrigée à part (2026-11-21-agirc-arrco-part-salariale).

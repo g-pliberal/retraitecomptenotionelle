@@ -6227,6 +6227,9 @@ def test_la_page_montre_la_pension_par_etage_en_part_du_dernier_revenu(page):
                           ("Taux de remplacement après impôt", pension.remplacement_apres_impot)):
             assert taux is not None and lignes[nom][colonne] == _texte_lu(g.pourcentage(taux))
     assert "une personne seule, sans enfant à charge" in bloc
+    # Le revenu net retire la complémentaire santé obligatoire (L. 911-7) et la
+    # CSG sur sa part patronale, que celui de l'OCDE ne retire pas.
+    assert "complémentaire santé" in bloc and "que l'OCDE ne retire pas" in bloc
     assert _AUTOUR_DU_DEPART not in page("/simuler", situation="retraite", pension="1500")
 
 

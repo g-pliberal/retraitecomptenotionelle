@@ -2334,7 +2334,7 @@ def test_la_bascule_net_brut_decrit_la_meme_carriere():
     assert lien, "la page ne porte pas de branche « brut »"
     vers_brut = dict(parse_qsl(html.unescape(lien.group(1))))
     assert vers_brut["montants"] == "brut"
-    # Un net de 2 500 € vaut un brut d'environ 3 160 € pour un salarié du privé.
+    # Un net de 2 500 € vaut un brut d'environ 3 190 € pour un salarié du privé.
     assert 3000 < float(vers_brut["salaire"]) < 3300
 
     retour = rendre("/simuler", vers_brut)[1]
@@ -2367,12 +2367,12 @@ def test_les_deux_modes_decrivent_la_meme_pension_a_neuf_points_pres():
               "liquidation": "2049-03-01", "unite_revenu": "euros_mois"}
     # Le même salaire, dit une fois en brut et une fois en net : la bascule
     # donne la correspondance, et on la reprend ici pour ne pas la deviner.
-    en_brut = pension({**commun, "salaire": "3158", "montants": "brut"})
+    en_brut = pension({**commun, "salaire": "3186", "montants": "brut"})
     en_net = pension({**commun, "salaire": "2500", "montants": "net"})
     # Le taux de la personne, que le modèle tire de sa pension du scénario 1 :
     # 9,1 %, et 1 % de sa part complémentaire (action 138, étape 2) ; les
     # montants du portage, que la page applique.
-    taux = montants_du_portage({**commun, "salaire": "3158", "montants": "brut"}).taux_pension
+    taux = montants_du_portage({**commun, "salaire": "3186", "montants": "brut"}).taux_pension
     assert 0.0 < taux <= 0.101
     assert en_net == pytest.approx(en_brut * (1 - taux), rel=2e-3)
 
@@ -2462,7 +2462,7 @@ def test_le_taux_de_remplacement_parle_la_langue_du_mode():
             lus.append(float(trouve.group(1).replace(",", ".")))
         return lus
 
-    en_brut = taux({**commun, "salaire": "3158", "montants": "brut"})
+    en_brut = taux({**commun, "salaire": "3186", "montants": "brut"})
     en_net = taux({**commun, "salaire": "2500", "montants": "net"})
     assert len(en_brut) == 4
     for rang, (brut, net) in enumerate(zip(en_brut, en_net)):

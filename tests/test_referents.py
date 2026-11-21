@@ -953,9 +953,9 @@ def test_le_droit_au_31_aout_2023_garde_les_trimestres_d_enfant_reputes_cotises(
 # `calculVect_PrelevementsSociaux_salaires` (`R/2b calc_PrelevementsSociaux.R`) sur
 # `data/baremes.RData`, de 2019, le bas de son curseur, à 2026. Sa retraite
 # complémentaire est celle du dépôt — l'Arrco et l'AGFF jusqu'en 2018, les tranches
-# 1 et 2, la CEG et la CET depuis —, à deux choses près : il partage les cotisations
-# comme la caisse, au centième, quand le dépôt prend 40 et 60 % exacts (le point
-# coupé de sa ligne du registre) ; et ses erreurs, que sa ligne déclare.
+# 1 et 2, la CEG et la CET depuis —, parts au centième comprises (le dépôt prenait
+# 40 et 60 % exacts jusqu'au 21 novembre 2026, le point coupé de sa ligne du
+# registre), à ses erreurs près, que sa ligne déclare.
 
 #: Ses taux de retraite complémentaire, en % : le salarié, puis l'employeur, sous
 #: le plafond, au-dessus — jusqu'à trois plafonds avant 2019, huit depuis —, et la
@@ -1021,9 +1021,9 @@ def _agirc_arrco_au_depot(simulateur, annee: int, brut: float) -> tuple[float, f
 
 def _ce_qui_l_ecarte_du_depot(version: str, annee: int, brut: float,
                               plafond: float) -> tuple[float, float]:
-    """Son écart au dépôt, posé à la main, salarié puis employeur. Depuis 2019, le
-    partage de la caisse, 3,15 et 8,64 % au salarié, contre 40 % exacts de 7,87 et
-    de 21,59 % (accord du 17 novembre 2017, articles 36 et 38). Au commit
+    """Son écart au dépôt, posé à la main, salarié puis employeur. Le partage de
+    la caisse, 3,15 et 8,64 % au salarié, est celui du dépôt depuis le
+    21 novembre 2026, qui prenait 40 % exacts de 7,87 et de 21,59 %. Au commit
     `95ef983`, la CET (0,14 et 0,21 %, article 37, 2°) prélevée une seconde fois
     sur la tranche 2, pour l'employeur depuis 2021, pour le salarié en 2025. À sa
     tête, la CEG du salarié sur la tranche 2 à 1,02 % au lieu de 1,08 % — 40 % de
@@ -1031,10 +1031,8 @@ def _ce_qui_l_ecarte_du_depot(version: str, annee: int, brut: float,
     « excéder », et assise au-delà de huit plafonds, hors des tranches 1 et 2."""
     if annee < 2019:
         return 0.0, 0.0
-    tranche_1 = min(brut, plafond) / 100
     tranche_2 = max(0.0, min(brut, 8 * plafond) - plafond) / 100
-    salarie = (3.15 - 0.4 * 7.87) * tranche_1 + (8.64 - 0.4 * 21.59) * tranche_2
-    employeur = -salarie
+    salarie = employeur = 0.0
     if version == "95ef983" and brut > plafond:
         employeur += 0.21 * tranche_2 * (annee >= 2021)
         salarie += 0.14 * tranche_2 * (annee >= 2025)
@@ -1049,8 +1047,8 @@ def _ce_qui_l_ecarte_du_depot(version: str, annee: int, brut: float,
 @pytest.mark.parametrize("cas", sorted(TAUX_AGIRC_ARRCO_EDIFIS))
 def test_les_taux_agirc_arrco_d_edifis_sont_ceux_du_depot_au_centieme(simulateur, cas):
     """Ses taux, tranche par tranche, sont ceux que le dépôt prélève, chaque part
-    au centième — le dépôt prend 40 % exacts, 4,008 % sous le plafond, quand la
-    caisse publie 3,15 + 0,86 = 4,01 % —, sauf, à sa tête, la CEG du salarié sur la
+    au centième — 3,15 + 0,86 = 4,01 % sous le plafond, comme la caisse les
+    publie —, sauf, à sa tête, la CEG du salarié sur la
     tranche 2, 1,02 % au lieu de 1,08. Lus au plafond, à deux et à trois plafonds,
     où la CET, due dès qu'il est dépassé, l'est sur tout le salaire."""
     version, annee = cas

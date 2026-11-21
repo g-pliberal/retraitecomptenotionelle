@@ -217,6 +217,7 @@ function lireTrajectoire({ cas, taux_moyens_arrco: moyens, regimes_arrco: arrco,
   const simulateur = contexte.simulateur();
   const salariale = simulateur.constructeurDe(simulateur.calculs.notionnel_retroactif);
   const tauxMoyens = parAnnee(moyens);
+  const sansMutuelle = contexte.simulateur({ ...PARAMETRES_DEFAUT, mutuelle_mensuelle: 0 });
   const [regimesArrco, regimesEtat] = [new Set(arrco), new Set(etat)];
   return parCle(cas, ({ requete, duree_relative: dureeRelative, pension,
     pension_nette: pensionNette }) => {
@@ -231,8 +232,12 @@ function lireTrajectoire({ cas, taux_moyens_arrco: moyens, regimes_arrco: arrco,
     const rapport = pension / flux.niveaux.get(flux.annee_liquidation);
     const bornes = [carriere, carriere.anneeLiquidation, carriere.premiereAnnee];
     const entieres = simulateur.constructeurEmployeur.construire(...bornes).cotisations;
-    const remplacement = remplacementNet(simulateur, carriere, revenusNets(simulateur, carriere),
-      pensionNette);
+    // TRAJECTOiRE ne retire pas du salaire net la complémentaire santé
+    // obligatoire (L. 911-7), que le dépôt retire depuis le 21 novembre 2026 :
+    // le revenu net s'y compare sans elle, comme celui d'un lecteur qui dit une
+    // mutuelle nulle.
+    const remplacement = remplacementNet(simulateur, carriere,
+      revenusNets(sansMutuelle, carriere), pensionNette);
     return {
       age: flux.age,
       duree_carriere: flux.duree_carriere,
@@ -253,7 +258,12 @@ function lireTrajectoire({ cas, taux_moyens_arrco: moyens, regimes_arrco: arrco,
 }
 
 function lireOcde({ projection, indexation, cas }) {
-  const simulateur = contexte.simulateur({ ...PARAMETRES_DEFAUT, scenario_projection: projection });
+  // Le salaire net de l'OCDE ne retire que l'impôt et les cotisations sociales
+  // du salarié, pas la complémentaire santé obligatoire (L. 911-7) que le dépôt
+  // retire depuis le 21 novembre 2026 : il s'y compare sans elle.
+  const simulateur = contexte.simulateur({
+    ...PARAMETRES_DEFAUT, scenario_projection: projection, mutuelle_mensuelle: 0,
+  });
   const baremes = chargerBaremesImpotRevenu(contexte.paquet);
   const croissance = croissanceMacro(simulateur.macro, indexation);
   return parCle(cas, ({ options, taux_brut: tauxBrut }) => {

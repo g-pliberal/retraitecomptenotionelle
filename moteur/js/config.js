@@ -433,6 +433,10 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   // Part de l'avance d'un bénéficiaire que sa succession couvre : null la
   // fait calculer sur le patrimoine des ménages retraités selon leur revenu.
   part_reprise_garantie: null,
+  // La part salariale de la complémentaire santé que le lecteur dit, en euros
+  // par mois de `annee_courante` ; l'employeur en paie autant. null : le
+  // forfait du paquet, 20 € en 2026. Voir `config.py` et `BaremePrelevements`.
+  mutuelle_mensuelle: null,
   // Les trois règles de la reprise (action 47), qui ne jouent que sur la
   // couverture calculée : voir `Parametres` dans `config.py` pour les sources
   // et les hypothèses, et `_recouvrement` dans `cout.py`, que seul le

@@ -133,7 +133,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 47
+VERSION = 48
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -2285,6 +2285,14 @@ def _prelevements_remuneration() -> dict:
                     # Les familles d'indépendants qui le doivent, quand il
                     # n'est pas celui de tous : l'indemnité journalière.
                     "familles": None if poste.familles is None else sorted(poste.familles),
+                    # La complémentaire santé (L. 911-7) : son année, son
+                    # forfait en part du plafond, que la saisie peut régler,
+                    # et sa part patronale dans l'assiette de la CSG.
+                    "depuis": poste.depuis,
+                    "forfait_salarie": poste.forfait_salarie,
+                    "forfait_employeur": poste.forfait_employeur,
+                    "reglable_par_la_saisie": poste.reglable_par_la_saisie,
+                    "dans_l_assiette_csg": poste.dans_l_assiette_csg,
                 }
                 for poste in fiche.postes
             ],

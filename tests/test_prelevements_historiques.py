@@ -542,7 +542,11 @@ def test_le_salaire_net_de_l_annee_courante_est_celui_de_la_fiche(
                               simulateur.catalogue, simulateur.affiliations,
                               "salarie_prive_non_cadre", courante, bruts[courante])
     assert nets[courante] == pytest.approx(fiche.net, rel=1e-12)
-    assert nets[1995] / bruts[1995] < nets[courante] / bruts[courante]
+    # La complémentaire santé, que la fiche porte depuis 2016 (L. 911-7), et
+    # la CSG sur sa part patronale mises à part : 1995 retirait plus.
+    sante = next(l for l in fiche.lignes if l.code == "complementaire_sante")
+    sans_sante = nets[courante] + sante.salarie + sante.employeur * 0.097
+    assert nets[1995] / bruts[1995] < sans_sante / bruts[courante]
 
 
 #: Les postes de la fiche d'un indépendant que l'histoire refait.
@@ -1005,7 +1009,10 @@ def test_les_parts_deductibles_se_lisent_dans_legi():
 def test_le_salaire_imposable_de_l_annee_courante_est_celui_de_la_fiche(
         simulateur, courants, portage, simulateur_du_portage):
     """L'année courante, le salaire imposable est le brut de la fiche de paie
-    moins ses cotisations et sa CSG déductible, sur le brut abattu de 1,75 %."""
+    moins ses cotisations et sa CSG déductible, sur le brut abattu de 1,75 %
+    et sur la part patronale de la complémentaire santé ; cette part patronale
+    s'y ajoute (CGI, art. 83, 1° quater, dernier alinéa) : la salariale, que
+    la fiche compte dans les cotisations, s'en déduit."""
     carriere = _au_portage(
         simulateur_du_portage, annee_naissance=1970, sexe="H",
         affiliation="salarie_prive_non_cadre", age_debut=21, age_liquidation=67,
@@ -1018,9 +1025,10 @@ def test_le_salaire_imposable_de_l_annee_courante_est_celui_de_la_fiche(
                               "salarie_prive_non_cadre", courante, bruts[courante])
     profil = courants.profil("salarie_prive")
     cotisations = sum(l.salarie for l in fiche.lignes if l.code != "csg_crds")
-    assiette = fiche.brut * (1.0 - profil.abattement_frais[0].taux)
+    sante = next(l for l in fiche.lignes if l.code == "complementaire_sante").employeur
+    assiette = fiche.brut * (1.0 - profil.abattement_frais[0].taux) + sante
     assert imposables[courante] == pytest.approx(
-        fiche.brut - cotisations - profil.csg_deductible * assiette, rel=1e-9)
+        fiche.brut - cotisations - profil.csg_deductible * assiette + sante, rel=1e-9)
     assert set(imposables) == set(portage.revenus_nets(simulateur_du_portage, carriere))
 
 

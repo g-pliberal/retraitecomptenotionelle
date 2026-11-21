@@ -372,6 +372,14 @@ def _montant_de_la_classe(classes: tuple[Classe, ...], revenu: float) -> float:
     return classes[-1].montant if classes else 0.0
 
 
+def _forfait(part: float, brut: float, plafond_annuel: float) -> float:
+    """Un forfait en part du plafond annuel : la complémentaire santé. Rien
+    sur un revenu nul, qui n'est pas un emploi."""
+    if part == 0.0 or brut <= 0:
+        return 0.0
+    return part * plafond_annuel
+
+
 def _tranches(lignes) -> tuple[Segment, ...]:
     """Convertit la forme CUMULATIVE des données — commode à écrire — en segments.
 
@@ -480,11 +488,26 @@ class Poste:
     #: tous (``famille_de_la_fiche`` : l'artisan, le commerçant, le libéral,
     #: l'avocat) : l'indemnité journalière de chacun. ``None`` = toutes.
     familles: frozenset[str] | None = None
+    #: La première année où il est dû : la complémentaire santé, depuis le
+    #: 1er janvier 2016 (L. 911-7). ``None`` = toujours.
+    depuis: int | None = None
+    #: Un montant fixe, en part du plafond ANNUEL, salarié et employeur, au
+    #: lieu de taux : la complémentaire santé. Il s'ajoute aux segments.
+    forfait_salarie: float = 0.0
+    forfait_employeur: float = 0.0
+    #: La saisie peut-elle en dire le montant (``Parametres.mutuelle_mensuelle``) ?
+    reglable_par_la_saisie: bool = False
+    #: Sa part patronale entre-t-elle dans l'assiette de la CSG et de la CRDS,
+    #: sans abattement (L. 136-1-1) ? La complémentaire santé, la prévoyance.
+    dans_l_assiette_csg: bool = False
 
     def du(self, brut: float, plafond_annuel: float, cadre: bool,
-           famille: str | None = None) -> bool:
+           famille: str | None = None, annee: int | None = None) -> bool:
         """Le poste est-il dû ? ``famille`` : celle de la fiche, celle que
-        ses régimes ne rangent ailleurs à défaut (``FAMILLE_PAR_DEFAUT``)."""
+        ses régimes ne rangent ailleurs à défaut (``FAMILLE_PAR_DEFAUT``) ;
+        ``annee`` : celle de la fiche, que ``depuis`` borne."""
+        if self.depuis is not None and annee is not None and annee < self.depuis:
+            return False
         if (self.familles is not None
                 and (famille or FAMILLE_PAR_DEFAUT) not in self.familles):
             return False
@@ -975,6 +998,12 @@ def _poste(contenu) -> Poste:
         note=contenu.get("note", ""),
         familles=(None if contenu.get("familles") is None
                   else frozenset(contenu["familles"])),
+        depuis=None if contenu.get("depuis") is None else int(contenu["depuis"]),
+        forfait_salarie=float((contenu.get("forfait_en_plafonds") or {}).get("salarie", 0.0)),
+        forfait_employeur=float(
+            (contenu.get("forfait_en_plafonds") or {}).get("employeur", 0.0)),
+        reglable_par_la_saisie=bool(contenu.get("reglable_par_la_saisie", False)),
+        dans_l_assiette_csg=bool(contenu.get("dans_l_assiette_csg", False)),
     )
 
 
@@ -1372,12 +1401,19 @@ class ConstructeurFiche:
     # -- pièces --------------------------------------------------------------
 
     def _employeur(self, poste: Poste, brut: float, plafond: float) -> float:
-        """La part patronale d'un poste, à son taux réduit sous la Lodeom."""
+        """La part patronale d'un poste, à son taux réduit sous la Lodeom ;
+        son forfait, que la saisie peut régler (``mutuelle``)."""
         if self.bareme_lodeom is not None:
             taux = self.profil.lodeom.taux_reduit(poste.code, brut)
             if taux is not None:
                 return brut * taux
-        return _montant(poste.employeur, brut, plafond)
+        return _montant(poste.employeur, brut, plafond) + _forfait(
+            poste.forfait_employeur, brut, plafond)
+
+    def _salarie(self, poste: Poste, brut: float, plafond: float) -> float:
+        """La part salariale d'un poste, son forfait compris."""
+        return poste.montant_salarie(brut, plafond) + _forfait(
+            poste.forfait_salarie, brut, plafond)
 
     def _maximal(self, taux_retraite: float) -> float | None:
         """Le coefficient maximal de l'allègement de l'employeur — T sous la
@@ -1390,30 +1426,36 @@ class ConstructeurFiche:
         return None
 
     def _lignes(self, bloc: BlocRetraite, brut: float, plafond: float,
-                cadre: bool) -> tuple[Ligne, ...]:
+                cadre: bool, annee: int | None = None) -> tuple[Ligne, ...]:
         lignes = [
             Ligne(code=composante.code, libelle=composante.libelle, retraite=True,
                   salarie=composante.salarial(brut, plafond),
                   employeur=composante.patronal(brut, plafond))
             for composante in bloc.composantes
         ]
+        patronale = 0.0
         for poste in self.profil.postes:
             if poste.retraite and bloc.remplace_les_contributions_d_equilibre:
                 continue
-            if not poste.du(brut, plafond, cadre, self.famille):
+            if not poste.du(brut, plafond, cadre, self.famille, annee):
                 continue
+            employeur = self._employeur(poste, brut, plafond)
             lignes.append(Ligne(
                 code=poste.code, libelle=poste.libelle, retraite=poste.retraite,
-                salarie=poste.montant_salarie(brut, plafond),
-                employeur=self._employeur(poste, brut, plafond),
+                salarie=self._salarie(poste, brut, plafond),
+                employeur=employeur,
             ))
-        contributions = self._csg_crds(bloc, brut, plafond)
+            # La part patronale de la complémentaire santé et de la prévoyance
+            # entre dans l'assiette de la CSG et de la CRDS, sans abattement.
+            if poste.dans_l_assiette_csg:
+                patronale += employeur
+        contributions = self._csg_crds(bloc, brut, plafond, patronale)
         if contributions:
             lignes.append(contributions)
         return tuple(lignes)
 
     def _csg_crds(self, bloc: BlocRetraite, brut: float,
-                  plafond: float) -> Ligne | None:
+                  plafond: float, patronale: float = 0.0) -> Ligne | None:
         """La CSG et la CRDS, diminuées des points que le système rend.
 
         Le taux ne peut pas devenir négatif : un système qui rendrait plus que
@@ -1428,7 +1470,7 @@ class ConstructeurFiche:
         abattement = _montant(self.profil.abattement_frais, brut, plafond)
         libelle = "CSG et CRDS allégées" if bloc.csg_rendue > 0 else "CSG et CRDS"
         return Ligne(code="csg_crds", libelle=libelle, retraite=False,
-                     salarie=(brut - abattement) * taux, employeur=0.0)
+                     salarie=(brut - abattement + patronale) * taux, employeur=0.0)
 
     def _perimetre_reduction(self, bloc: BlocRetraite, brut: float,
                              plafond: float, cadre: bool) -> float:
@@ -1477,7 +1519,7 @@ class ConstructeurFiche:
               smic_annuel: float, bloc: BlocRetraite,
               cadre: bool = False) -> FicheDePaie:
         """La fiche de paie d'une année, à revenu brut donné."""
-        lignes = self._lignes(bloc, brut, plafond_annuel, cadre)
+        lignes = self._lignes(bloc, brut, plafond_annuel, cadre, annee)
         reduction = self._reduction(bloc, brut, plafond_annuel, smic_annuel, cadre)
         salariales = somme_ordonnee(ligne.salarie for ligne in lignes)
         patronales = somme_ordonnee(ligne.employeur for ligne in lignes)
@@ -1500,7 +1542,7 @@ class ConstructeurFiche:
 
     def brut_a_cout_donne(self, cout: float, plafond_annuel: float,
                           smic_annuel: float, bloc: BlocRetraite,
-                          cadre: bool = False) -> float:
+                          cadre: bool = False, annee: int | None = None) -> float:
         """Le revenu brut qui épuise un coût du travail donné.
 
         C'est l'incidence intégrale : l'employeur a budgété ``cout`` pour ce
@@ -1514,7 +1556,7 @@ class ConstructeurFiche:
         bas, haut = 0.0, cout
         for _ in range(80):
             milieu = (bas + haut) / 2
-            fiche = self.fiche(0, milieu, plafond_annuel, smic_annuel, bloc, cadre)
+            fiche = self.fiche(annee, milieu, plafond_annuel, smic_annuel, bloc, cadre)
             if fiche.cout_du_travail < cout:
                 bas = milieu
             else:
@@ -1523,7 +1565,7 @@ class ConstructeurFiche:
 
     def brut_a_net_donne(self, net: float, plafond_annuel: float,
                          smic_annuel: float, bloc: BlocRetraite,
-                         cadre: bool = False) -> float:
+                         cadre: bool = False, annee: int | None = None) -> float:
         """Le revenu brut dont il reste ``net`` une fois tout retiré.
 
         L'inverse de la fiche de paie, et il sert à la SAISIE : le lecteur qui
@@ -1543,12 +1585,12 @@ class ConstructeurFiche:
             return 0.0
         bas, haut = net, net * 3.0
         for _ in range(60):
-            if self.fiche(0, haut, plafond_annuel, smic_annuel, bloc, cadre).net >= net:
+            if self.fiche(annee, haut, plafond_annuel, smic_annuel, bloc, cadre).net >= net:
                 break
             bas, haut = haut, haut * 2.0
         for _ in range(80):
             milieu = (bas + haut) / 2
-            fiche = self.fiche(0, milieu, plafond_annuel, smic_annuel, bloc, cadre)
+            fiche = self.fiche(annee, milieu, plafond_annuel, smic_annuel, bloc, cadre)
             if fiche.net < net:
                 bas = milieu
             else:
@@ -1603,14 +1645,14 @@ class ConstructeurFiche:
         equilibre = traitement * bloc.contribution_equilibre_actuelle
         depense_actuelle = actuelle.cout_du_travail + equilibre
         a_traitement_inchange = self.fiche(
-            0, actuelle.brut, plafond_annuel, smic_annuel, bloc, cadre
+            actuelle.annee, actuelle.brut, plafond_annuel, smic_annuel, bloc, cadre
         ).cout_du_travail
         libere = max(0.0, depense_actuelle - a_traitement_inchange)
         garde = min(libere, traitement * bloc.departs_anticipes)
         retenue = (depense_actuelle - garde
                    - (1.0 - bloc.part_rendue_aux_salaires) * (libere - garde))
         return self.brut_a_cout_donne(
-            retenue, plafond_annuel, smic_annuel, bloc, cadre)
+            retenue, plafond_annuel, smic_annuel, bloc, cadre, actuelle.annee)
 
     def brut_sous_la_proposition(self, actuelle: FicheDePaie, plafond_annuel: float,
                                  smic_annuel: float, bloc: BlocRetraite,
@@ -1628,7 +1670,8 @@ class ConstructeurFiche:
         if self.profil.incidence is Incidence.ASSIETTE:
             return actuelle.brut
         return self.brut_a_cout_donne(
-            actuelle.cout_du_travail, plafond_annuel, smic_annuel, bloc, cadre)
+            actuelle.cout_du_travail, plafond_annuel, smic_annuel, bloc, cadre,
+            actuelle.annee)
 
 
 # -- les blocs retraite des scénarios ---------------------------------------
@@ -2694,7 +2737,7 @@ def salaire_brut_depuis_net(racine_donnees, macro, catalogue, affiliations,
             net_annuel, plafond, smic,
             bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, part_primes, macro,
                                   annee_entree),
-            cadre,
+            cadre, annee,
         )
     # La même dichotomie que `brut_a_net_donne`, sur le traitement et les
     # primes : le net croît avec eux, l'indemnité aussi.

@@ -1,0 +1,24 @@
+date: "2026-11-21"
+session: "la part salariale de l'Agirc-Arrco, au centième de point publié par le régime"
+consulte: >-
+  L'API publique de mon-entreprise (https://mon-entreprise.urssaf.fr/api/v1/evaluate), au
+  1er juillet 2026 : les lignes Agirc-Arrco de seize fiches de paie, cadres et non-cadres,
+  de 1 823,03 à 17 000 € brut, qui appliquent 3,15 % sur la tranche 1 et 8,64 % sur la
+  tranche 2 à la charge du salarié. La fiche du régime (data/reference/regimes/agirc_arrco.yaml)
+  et l'ANI du 17 novembre 2017 qu'elle cite, hors JORF, qui répartit la cotisation à 40 et 60 %.
+trouve: >-
+  La fiche prenait la part salariale à 40 % du taux appelé, soit 3,148 % et 8,636 %, quand le
+  régime arrondit la répartition au centième de point (3,15 % et 4,72 % ; 8,64 % et 12,95 %),
+  ce que toute fiche de paie applique. La ligne du salarié manquait de 0,05 € par mois à
+  2 500 € brut et de 0,24 € à 8 000 €. Corrigé pour les périodes de 2019 et de 2024, aux deux
+  tranches, et à l'Arrco des cultes (2019 et 2024), dont la circulaire de la CAVIMAC
+  n° 2026/03 met 4,01 % à la charge de l'assuré, 3,15 + 0,86. Les points ne bougent pas :
+  ils se comptent au taux de calcul. Le registre des référents (EDIFIS) et son test
+  déclaraient l'écart : ils le disent corrigé.
+reste: >-
+  La même approximation se retrouve dans d'autres fiches, sans être corrigée ici : Arrco de
+  1991 (40 % de 4,92 %), Ircantec, régime général et MSA (6,89997 % au lieu de 6,90 % depuis
+  2023), Mayotte, Saint-Pierre-et-Miquelon, Polynésie, CRPNPAC, Cavimac, Cavamac,
+  Wallis-et-Futuna, fonctionnaires du Pacifique, Agirc d'avant 2019. Chacune est à vérifier
+  contre son barème publié avant d'y toucher : pour certaines, la fraction peut être celle
+  du texte.

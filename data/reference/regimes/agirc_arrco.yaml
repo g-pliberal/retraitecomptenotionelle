@@ -49,7 +49,7 @@ periodes:
     assiette: tranche_1
     taux_cotisation_retraite: 0.0787
     taux_calcul_points: 0.062   # accord du 17 novembre 2017 : 6,20 %, appelé à 127 %
-    part_salariale: 0.40   # ANI du 17 novembre 2017, article 38
+    part_salariale: 0.4002541296060991   # 3,15 % sur 7,87 % : barème du régime, ANI du 17 novembre 2017
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion, coefficient_solidarite]
@@ -96,7 +96,7 @@ periodes:
     assiette: tranche_1
     taux_cotisation_retraite: 0.0787
     taux_calcul_points: 0.062   # accord du 17 novembre 2017 : 6,20 %, appelé à 127 %
-    part_salariale: 0.40   # ANI du 17 novembre 2017, article 38
+    part_salariale: 0.4002541296060991   # 3,15 % sur 7,87 % : barème du régime, ANI du 17 novembre 2017
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]
@@ -127,7 +127,7 @@ periodes:
     assiette: tranche_2
     taux_cotisation_retraite: 0.2159
     taux_calcul_points: 0.17    # 17 %, appelé à 127 %
-    part_salariale: 0.40   # ANI du 17 novembre 2017, article 38
+    part_salariale: 0.4001852709587772   # 8,64 % sur 21,59 % : barème du régime, ANI du 17 novembre 2017
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion, coefficient_solidarite]
@@ -155,7 +155,7 @@ periodes:
     assiette: tranche_2
     taux_cotisation_retraite: 0.2159
     taux_calcul_points: 0.17    # 17 %, appelé à 127 %
-    part_salariale: 0.40   # ANI du 17 novembre 2017, article 38
+    part_salariale: 0.4001852709587772   # 8,64 % sur 21,59 % : barème du régime, ANI du 17 novembre 2017
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, reversion]

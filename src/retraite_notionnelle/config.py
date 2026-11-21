@@ -1064,6 +1064,15 @@ class Parametres:
     #: remboursée. Ne joue que sur la page Coût, à partir de la bascule.
     part_reprise_garantie: float | None = None
 
+    #: La part salariale de la complémentaire santé que le lecteur dit, en
+    #: euros par mois de ``annee_courante`` ; l'employeur en paie autant. La
+    #: fiche de paie la retire du net, et la part patronale entre dans
+    #: l'assiette de la CSG (L. 911-7 ; L. 136-1-1). ``None``, le défaut : le
+    #: forfait de ``prelevements_remuneration.yaml``, 20 € en 2026, que le
+    #: simulateur de l'Urssaf retient. Seul le portage la lit
+    #: (``BaremePrelevements``, ``moteur/js/remuneration.js``).
+    mutuelle_mensuelle: float | None = None
+
     # --- Les trois règles de la reprise (action 47) --------------------------
     #: Elles ne jouent que sur la couverture CALCULÉE (``part_reprise_garantie``
     #: à ``None``) ; voir ``cout._recouvrement``, qui dit comment chacune entre

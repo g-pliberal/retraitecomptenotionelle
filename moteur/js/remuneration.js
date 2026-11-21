@@ -181,6 +181,15 @@ function montantSalarie(poste, assiette, plafondAnnuel) {
 }
 
 /**
+ * Un forfait en part du plafond annuel : la complémentaire santé (L. 911-7).
+ * Rien sur un revenu nul, qui n'est pas un emploi. Jumeau de `_forfait`.
+ */
+function forfait(part, brut, plafondAnnuel) {
+  if (!part || brut <= 0) return 0;
+  return part * plafondAnnuel;
+}
+
+/**
  * Le dix-millième le plus proche de `valeur`, comme le décret arrondit le
  * coefficient (D. 241-7, I) et comme `round(valeur, 4)` du Python. Jamais
  * `Math.round(valeur * 1e4) / 1e4` : la multiplication arrondit déjà, et une
@@ -388,8 +397,15 @@ export class ProfilRemuneration {
     return assiette / (1.0 - regle.taux);
   }
 
-  /** Ce poste est-il dû à ce revenu, pour cet assuré ? */
-  static du(poste, brut, plafondAnnuel, cadre, famille = null) {
+  /**
+   * Ce poste est-il dû à ce revenu, pour cet assuré ? `annee`, celle de la
+   * fiche, que `depuis` borne : la complémentaire santé, depuis 2016.
+   */
+  static du(poste, brut, plafondAnnuel, cadre, famille = null, annee = null) {
+    if (poste.depuis !== null && poste.depuis !== undefined && annee !== null
+        && annee < poste.depuis) {
+      return false;
+    }
     // Un poste qui n'est pas celui de tous les indépendants — l'indemnité
     // journalière — ne vaut que pour ses familles, celle que leurs régimes ne
     // rangent ailleurs à défaut.
@@ -585,12 +601,26 @@ export function assietteMaladie(regimes, actuel, aujourdhui = null) {
 
 /** Les quatre profils, tels que le paquet de données les porte, et les pensions. */
 export class BaremePrelevements {
-  constructor(paquet) {
+  /**
+   * `mutuelleMensuelle` : la part salariale de sa complémentaire santé que le
+   * lecteur dit, en euros par mois de l'année de `plafondAnnuel` ; elle
+   * remplace le forfait du poste que la saisie règle, des deux côtés —
+   * l'employeur en finance au moins la moitié (L. 911-7, III), et le modèle
+   * la moitié —, et suit le plafond comme lui. `null` : le forfait.
+   */
+  constructor(paquet, mutuelleMensuelle = null, plafondAnnuel = null) {
     this.annee = paquet.annee;
     this.fiabilite = paquet.fiabilite;
+    const part = mutuelleMensuelle !== null && plafondAnnuel > 0
+      ? mutuelleMensuelle * 12 / plafondAnnuel : null;
+    const regle = (fiche) => (part === null ? fiche : {
+      ...fiche,
+      postes: fiche.postes.map((poste) => (poste.reglable_par_la_saisie
+        ? { ...poste, forfait_salarie: part, forfait_employeur: part } : poste)),
+    });
     this.profils = new Map(
       Object.entries(paquet.profils).map(
-        ([code, fiche]) => [code, new ProfilRemuneration(fiche)],
+        ([code, fiche]) => [code, new ProfilRemuneration(regle(fiche))],
       ),
     );
     this.pensions = new PrelevementsPension(paquet.pensions);
@@ -774,7 +804,8 @@ export class ConstructeurFiche {
         return brut * taux;
       }
     }
-    return montant(poste.employeur, brut, plafond);
+    return montant(poste.employeur, brut, plafond)
+      + forfait(poste.forfait_employeur, brut, plafond);
   }
 
   /**
@@ -791,7 +822,7 @@ export class ConstructeurFiche {
     return null;
   }
 
-  _lignes(bloc, brut, plafond, cadre) {
+  _lignes(bloc, brut, plafond, cadre, annee = null) {
     const lignes = bloc.composantes.map((composante) => ({
       code: composante.code,
       libelle: composante.libelle,
@@ -799,20 +830,26 @@ export class ConstructeurFiche {
       salarie: composante.salarial(brut, plafond),
       employeur: composante.patronal(brut, plafond),
     }));
+    // La part patronale de la complémentaire santé et de la prévoyance, que
+    // l'assiette de la CSG et de la CRDS prend sans abattement (L. 136-1-1).
+    let patronale = 0;
     for (const poste of this.profil.postes) {
       if (poste.retraite && bloc.remplaceLesContributionsDEquilibre) {
         continue;
       }
-      if (!ProfilRemuneration.du(poste, brut, plafond, cadre, this.famille)) {
+      if (!ProfilRemuneration.du(poste, brut, plafond, cadre, this.famille, annee)) {
         continue;
       }
+      const employeur = this._employeur(poste, brut, plafond);
       lignes.push({
         code: poste.code,
         libelle: poste.libelle,
         retraite: poste.retraite,
-        salarie: montantSalarie(poste, brut, plafond),
-        employeur: this._employeur(poste, brut, plafond),
+        salarie: montantSalarie(poste, brut, plafond)
+          + forfait(poste.forfait_salarie, brut, plafond),
+        employeur,
       });
+      if (poste.dans_l_assiette_csg) patronale += employeur;
     }
     // Le taux ne peut pas devenir négatif : un système qui rendrait plus que
     // la CSG ne prélève rien, il ne verse pas. Le libellé dit que la ligne a
@@ -825,7 +862,7 @@ export class ConstructeurFiche {
         code: "csg_crds",
         libelle: bloc.csgRendue > 0 ? "CSG et CRDS allégées" : "CSG et CRDS",
         retraite: false,
-        salarie: (brut - abattement) * taux, employeur: 0,
+        salarie: (brut - abattement + patronale) * taux, employeur: 0,
       });
     }
     return lignes;
@@ -882,7 +919,7 @@ export class ConstructeurFiche {
   }
 
   fiche(annee, brut, plafondAnnuel, smicAnnuel, bloc, cadre = false) {
-    const lignes = this._lignes(bloc, brut, plafondAnnuel, cadre);
+    const lignes = this._lignes(bloc, brut, plafondAnnuel, cadre, annee);
     const reduction = this._reduction(bloc, brut, plafondAnnuel, smicAnnuel, cadre);
     const salariales = lignes.reduce((total, l) => total + l.salarie, 0);
     const patronales = lignes.reduce((total, l) => total + l.employeur, 0);
@@ -910,7 +947,7 @@ export class ConstructeurFiche {
    * intégrale. Le coût croît strictement avec le brut, si bien qu'une
    * dichotomie converge sans hypothèse supplémentaire.
    */
-  brutACoutDonne(cout, plafondAnnuel, smicAnnuel, bloc, cadre = false) {
+  brutACoutDonne(cout, plafondAnnuel, smicAnnuel, bloc, cadre = false, annee = null) {
     if (cout <= 0) {
       return 0;
     }
@@ -918,7 +955,7 @@ export class ConstructeurFiche {
     let haut = cout;
     for (let pas = 0; pas < 80; pas += 1) {
       const milieu = (bas + haut) / 2;
-      const fiche = this.fiche(0, milieu, plafondAnnuel, smicAnnuel, bloc, cadre);
+      const fiche = this.fiche(annee, milieu, plafondAnnuel, smicAnnuel, bloc, cadre);
       if (fiche.coutDuTravail < cout) {
         bas = milieu;
       } else {
@@ -936,7 +973,7 @@ export class ConstructeurFiche {
    * la borne haute part de trois fois le net, aucun profil ne prélevant deux
    * tiers d'un revenu.
    */
-  brutANetDonne(net, plafondAnnuel, smicAnnuel, bloc, cadre = false) {
+  brutANetDonne(net, plafondAnnuel, smicAnnuel, bloc, cadre = false, annee = null) {
     if (net <= 0) {
       return 0;
     }
@@ -947,7 +984,7 @@ export class ConstructeurFiche {
     // classe fait reculer le net d'un saut à son seuil, où la dichotomie
     // s'arrête alors.
     for (let pas = 0; pas < 60; pas += 1) {
-      if (this.fiche(0, haut, plafondAnnuel, smicAnnuel, bloc, cadre).net >= net) {
+      if (this.fiche(annee, haut, plafondAnnuel, smicAnnuel, bloc, cadre).net >= net) {
         break;
       }
       bas = haut;
@@ -955,7 +992,7 @@ export class ConstructeurFiche {
     }
     for (let pas = 0; pas < 80; pas += 1) {
       const milieu = (bas + haut) / 2;
-      const fiche = this.fiche(0, milieu, plafondAnnuel, smicAnnuel, bloc, cadre);
+      const fiche = this.fiche(annee, milieu, plafondAnnuel, smicAnnuel, bloc, cadre);
       if (fiche.net < net) {
         bas = milieu;
       } else {
@@ -997,13 +1034,14 @@ export class ConstructeurFiche {
     const equilibre = traitement * bloc.contributionEquilibreActuelle;
     const depenseActuelle = actuelle.coutDuTravail + equilibre;
     const aTraitementInchange = this.fiche(
-      0, actuelle.brut, plafondAnnuel, smicAnnuel, bloc, cadre,
+      actuelle.annee, actuelle.brut, plafondAnnuel, smicAnnuel, bloc, cadre,
     ).coutDuTravail;
     const libere = Math.max(0, depenseActuelle - aTraitementInchange);
     const garde = Math.min(libere, traitement * bloc.departsAnticipes);
     const retenue = depenseActuelle - garde
       - (1 - bloc.partRendueAuxSalaires) * (libere - garde);
-    return this.brutACoutDonne(retenue, plafondAnnuel, smicAnnuel, bloc, cadre);
+    return this.brutACoutDonne(retenue, plafondAnnuel, smicAnnuel, bloc, cadre,
+      actuelle.annee);
   }
 
   /**
@@ -1020,7 +1058,7 @@ export class ConstructeurFiche {
       return actuelle.brut;
     }
     return this.brutACoutDonne(
-      actuelle.coutDuTravail, plafondAnnuel, smicAnnuel, bloc, cadre,
+      actuelle.coutDuTravail, plafondAnnuel, smicAnnuel, bloc, cadre, actuelle.annee,
     );
   }
 }
@@ -2006,7 +2044,7 @@ export function salaireBrutDepuisNet(bareme, macro, catalogue, affiliations,
       netAnnuel, plafond, smic,
       blocDroitEnVigueur(catalogue, affiliations, statut, annee, partPrimes, macro,
         anneeEntree),
-      cadre,
+      cadre, annee,
     );
   }
   // La même dichotomie que `brutANetDonne`, sur le traitement et les primes.

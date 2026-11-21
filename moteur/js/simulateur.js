@@ -601,7 +601,10 @@ export class Simulateur {
     // Les prélèvements hors retraite : ils n'entrent dans AUCUNE pension. Ils
     // ne servent qu'à la fiche de paie, qui dit ce qu'un actif touche pendant
     // qu'il cotise.
-    this.baremePrelevements = new BaremePrelevements(paquet.prelevements_remuneration);
+    // La complémentaire santé que la saisie dit, au plafond de l'année courante.
+    this.baremePrelevements = new BaremePrelevements(paquet.prelevements_remuneration,
+      parametres.mutuelle_mensuelle ?? null,
+      this.macro.plafond_securite_sociale.valeur(parametres.annee_courante));
 
     this.indexation = new Indexation(this.macro, parametres);
     // Ce que le droit a servi aux pensions liquidées, date d'effet par date
