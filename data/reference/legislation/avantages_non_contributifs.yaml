@@ -807,8 +807,11 @@ avantages:
       - reversion
       - reversion_fonction_publique
       - reversion_agirc_arrco
+      - reversion_asv_medecins
       - reversion_carcdsf
+      - reversion_carmf
       - reversion_cavamac
+      - reversion_cnavpl
       - reversion_crpcen
       - reversion_fspoeie
       - reversion_ieg
