@@ -43,7 +43,25 @@ de l'Agirc-Arrco et du RAFP, les périodes assimilées, la revalorisation, les
 majorations pour enfants, et la réversion des régimes spéciaux et des
 libéraux, qu'aucune référence officielle ne confirme encore.
 
-**Suite**, après validation : rejouer les sources à confronter, une famille à
-la fois, en grilles ou en témoins (une partie passe alors d'« à confronter »
-à « officielle ») ; comparer les barèmes datés à OpenFisca et à l'IPP ; trier
-les écarts du registre.
+**La décision du propriétaire**, le 22 novembre 2026 au soir : finir et
+ranger avant d'ajouter. Le dépôt a sa hiérarchie des preuves (architecture,
+§ 3.1) et sa règle d'un seul endroit par information (principe 2), mais des
+migrations arrêtées à mi-chemin laissent l'ancien et le nouveau côte à côte.
+La confrontation aux simulateurs est donc suspendue. Viennent d'abord, dans
+l'ordre : finir la note de décision 0009, le droit dans les versions de fiche
+(action 191) ; puis calculer l'état de chaque règle en appliquant la
+hiérarchie aux preuves attachées à sa fiche, et retirer l'état écrit à la
+main (« conforme », « transcrite », « à vérifier ») et le compte des fiches
+« confrontées à au moins un exemple officiel » du tableau de bord, que la
+référence calculée ici remplace ; puis ramener dans les fiches les écarts
+éparpillés, ou les clore. Une règle de conduite l'accompagne, que le premier
+chantier publié écrira au `CLAUDE.md` : rien de nouveau n'entre sans retirer
+ce qu'il remplace.
+
+**Cette étape n'est pas publiée.** Elle attend le chantier de l'état calculé,
+dont elle est une pièce, et part avec lui.
+
+**Suite**, après ce rangement : rejouer les sources à confronter, une famille
+à la fois, en grilles ou en témoins, chaque réponse attachée à la version de
+la règle qu'elle vérifie ; comparer les barèmes datés à OpenFisca et à
+l'IPP ; trier les écarts du registre.

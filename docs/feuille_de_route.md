@@ -6306,14 +6306,13 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 ### 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation — `en cours`
 
 **Reprise, au 22 novembre 2026.** Fait : le registre (71 modèles) ;
-TRAJECTOiRE 3.3.2 confronté chaque lundi dans GitHub ; et, le 22 novembre,
-la carte de justesse dit de chaque règle à quoi elle se confronte : une
-référence officielle, un autre modèle, une source à rejouer, ou rien. Un test
-refuse une règle qui ne dit rien. Le propriétaire valide avant la suite :
-rejouer les sources à confronter, une famille à la fois ; comparer les
-barèmes datés à OpenFisca et à l'IPP. Restent aussi les écarts nouveaux de
-TRAJECTOiRE à lire au texte, et le registre à passer à sa version 3.3.2.
-Lire `2026-11-22-references-de-la-carte.md`, puis
+TRAJECTOiRE 3.3.2 confronté chaque lundi dans GitHub. La confrontation
+permanente aux simulateurs est suspendue : le 22 novembre, le propriétaire a
+choisi de finir et ranger avant d'ajouter. Sa première étape, la référence
+de chaque règle calculée par la carte de justesse, attend le chantier qui
+rendra calculé l'état de chaque règle, dont elle est une pièce. Restent aussi
+les écarts nouveaux de TRAJECTOiRE à lire au texte, et le registre à passer à
+sa version 3.3.2. Lire `2026-11-22-references-de-la-carte.md`, puis
 `2026-11-20-trajectoire-3-dans-github.md`.
 
 **Demande**, le 1er octobre 2026 : « Quels sont les autres modèles publics
