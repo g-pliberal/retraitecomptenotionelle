@@ -54,7 +54,7 @@
   "valeur": "4bca9a963f319de5"
  },
  "test_flux_fonction_publique.py::journal de la liquidation des statutaires": {
-  "valeur": "ecdf1afde900daae"
+  "valeur": "19e76ff2fee3ea95"
  },
  "test_flux_fonction_publique.py::mesures de l'étude": {
   "valeur": "3dd44e6c1af39a69"
@@ -162,13 +162,13 @@
   "valeur": "2d78dc8a08d2992a"
  },
  "test_pont.py::coût des avantages": {
-  "valeur": "9ad1b4023f585d30"
+  "valeur": "7a6d35f6cfcdf794"
  },
  "test_pont.py::dates des départs des facteurs de la dépense": {
   "valeur": "3f02fbdd62b702eb"
  },
  "test_pont.py::décomposition des avantages": {
-  "valeur": "171bfc40ee6f1111"
+  "valeur": "e0824380069d4dce"
  },
  "test_pont.py::grille d'essai du coût": {
   "valeur": "32a0213d3c00f092"
@@ -216,10 +216,10 @@
   "valeur": "ba2a9aa693f6f807"
  },
  "test_solde_fusion.py::grille sous l'hypothèse B": {
-  "valeur": "825f8fcc5aec482a"
+  "valeur": "d1bddc2317450b38"
  },
  "test_solde_fusion.py::grille sous l'hypothèse C": {
-  "valeur": "c7cbbb3ad4cec9f9"
+  "valeur": "27f7b174cb140631"
  },
  "test_stock_age_legal.py::pensions des cas sous droit_commun": {
   "valeur": "cce68b194d743c0f"
