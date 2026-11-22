@@ -1,17 +1,17 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: rouge
-sources: 0c23411c860ebb444e0c08bd636909d326eb8bb6
-date: 2026-11-22T18:20:54Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/45052631593
+sources: 70af67a8272e7346fa121ef0b563dfe6e3d0a599
+date: 2026-11-22T18:41:13Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/45054073151
 echecs:
-  - "FAILED tests/test_avantages.py::test_toute_fiche_qui_sert_un_avantage_a_sa_ligne_d_inventaire - AssertionError: fiches appliquées qui servent un avantage sans ligne d'inventaire : reversion_cnavpl"
+  - "FAILED tests/test_avantages.py::test_toute_fiche_qui_sert_un_avantage_a_sa_ligne_d_inventaire - AssertionError: fiches appliquées qui servent un avantage sans ligne d'inventaire : reversion_asv_medecins, reversion_carmf, reversion_cnavpl"
 presomptions: vert
 durees:
-  fabrique: 497
-  suite: 443
-  tranche_1: 267
-  tranche_2: 358
-  tranche_3: 355
-  tranche_4: 443
-  garde: 153
+  fabrique: 606
+  suite: 497
+  tranche_1: 436
+  tranche_2: 389
+  tranche_3: 432
+  tranche_4: 497
+  garde: 146
