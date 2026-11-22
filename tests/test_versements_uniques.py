@@ -251,10 +251,28 @@ def test_l_agirc_arrco_compare_l_allocation_a_cent_points(simulateur):
 
 def test_l_ircantec_verse_les_points_au_salaire_de_reference_d_avant(simulateur):
     """En 2022, 116,41 points, moins de 300 : les points par 5,028 €, le salaire de
-    référence de 2021."""
+    référence de 2021, après le coefficient d'anticipation qui frappe la pension
+    qu'il remplace, 0,88 à 64 ans pour la génération 1958 : l'article 16 de
+    l'arrêté du 30 décembre 1970 affecte de son coefficient « le total des points
+    de retraite », que l'article 25 multiplie par le salaire de référence, et la
+    caisse fait de même (M@rel, 22 novembre 2026)."""
     ircantec = _pensions(simulateur, 1958, 64, [(1978, "contractuel_public", 3000.0)])["ircantec"]
-    assert ircantec.capital == pytest.approx(116.41 * 5.028, rel=1e-4)
+    assert ircantec.capital == pytest.approx(116.41 * 0.88 * 5.028, rel=1e-4)
     assert "salaire de référence de 2021" in ircantec.detail
+
+
+def test_le_capital_de_l_ircantec_porte_la_majoration_pour_enfants(simulateur):
+    """La même, mère de trois enfants : l'article 15 majore de 10 % « le total des
+    points de retraite », que l'article 25 paie ; la caisse compte la majoration
+    avant le seuil (M@rel, 22 novembre 2026)."""
+    carriere = simulateur.carriere_releve(
+        annee_naissance=1958, sexe="F", age_liquidation=64, jour_naissance=15,
+        nombre_enfants=3, naissances_enfants=["1980-01-01", "1982-01-01", "1984-01-01"],
+        releve=[LigneRelevee(annee=1978, affiliation="contractuel_public", revenu=3000.0)])
+    ircantec = {p.regime: p for p in
+                simulateur.scenario_actuel.calculer(carriere).pensions_par_regime}["ircantec"]
+    assert ircantec.capital == pytest.approx(116.41 * 0.88 * 1.10 * 5.028, rel=1e-4)
+    assert "majoration pour enfants 1.10" in ircantec.detail
 
 
 def test_le_rci_de_moins_de_quarante_points_est_verse_en_une_fois(simulateur):

@@ -2304,7 +2304,8 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
   // LES VERSEMENTS UNIQUES, en dernier : ils lisent la pension complétée,
   // minimum, majorations et compléments compris.
   const fiabiliteVersee = verserEnCapital(moteur, carriere, pensions, avantages,
-    pointsAcquis, nature, premiereRetraite);
+    pointsAcquis, nature, premiereRetraite,
+    new Map([...(liquidees.anticipations ?? []), ...(liquidees.surcotesDesPoints ?? [])]));
   if (fiabiliteVersee !== null) {
     fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteVersee);
   }
@@ -2411,7 +2412,7 @@ export function groupesDuVersement(pensions, retenues, totalises) {
 }
 
 export function verserEnCapital(moteur, carriere, pensions, avantages, pointsAcquis,
-  nature = "definitive", premiereRetraite = null) {
+  nature = "definitive", premiereRetraite = null, coefficients = new Map()) {
   const dateEffet = dateDEffet(carriere);
   if (dateEffet === null || nature === "provisoire") {
     return null;
@@ -2587,6 +2588,10 @@ export function verserEnCapital(moteur, carriere, pensions, avantages, pointsAcq
   }
 
   // L'IRCANTEC : les points, par le salaire de référence de l'année d'avant.
+  // « Le total des points de retraite » que l'article 25 compte et paie est
+  // celui que l'article 16 affecte du coefficient d'anticipation ou de
+  // surcote, et que l'article 15 majore pour enfants : la caisse compare au
+  // seuil, et paie, les points ainsi affectés (M@rel, 22 novembre 2026).
   regle = moteur.fichesDatees.regle(FICHE_DU_VERSEMENT_IRCANTEC, dateEffet);
   if (regle !== null && regle.existe) {
     const annee = carriere.anneeLiquidation - 1;
@@ -2595,7 +2600,10 @@ export function verserEnCapital(moteur, carriere, pensions, avantages, pointsAcq
           || !sansCapital(pension)) {
         return;
       }
-      const points = pointsAcquis.get(pension.regime) ?? 0.0;
+      const acquis = pointsAcquis.get(pension.regime) ?? 0.0;
+      const coefficient = coefficients.get(pension.regime) ?? 1.0;
+      const majoration = annuelle(pension) / pension.montant;
+      const points = acquis * coefficient * majoration;
       if (!(points > 0.0 && points < Number(regle.seuil_points))) {
         return;
       }
@@ -2603,8 +2611,15 @@ export function verserEnCapital(moteur, carriere, pensions, avantages, pointsAcq
       if (reference === null) {
         return;
       }
+      let affectes = "";
+      if (coefficient !== 1.0 || majoration !== 1.0) {
+        affectes = ` (${formatFixe(acquis, 2, true)} acquis`
+          + (coefficient !== 1.0 ? ` × coefficient ${formatFixe(coefficient, 4)}` : "")
+          + (majoration !== 1.0 ? ` × majoration pour enfants ${formatFixe(majoration, 2)}` : "")
+          + ")";
+      }
       remplacer(indice, points * reference[0],
-        ` ; ${formatFixe(points, 2, true)} points, moins de `
+        ` ; ${formatFixe(points, 2, true)} points${affectes}, moins de `
         + `${formatFixe(Number(regle.seuil_points), 0, true)} : versée en capital, `
         + `${formatFixe(points * reference[0], 2, true)} € (${formatFixe(points, 2, true)} points `
         + `× salaire de référence de ${annee}, ${formatFixe(reference[0], 4)} €)`);

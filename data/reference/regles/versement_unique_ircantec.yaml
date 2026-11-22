@@ -3,8 +3,9 @@ id: versement_unique_ircantec
 intitule: >-
   L'Ircantec ne sert pas d'allocation à qui a moins de 300 points — moins de 500 de 1971 à
   1975, moins de 100 de 1976 à septembre 2008 — : l'intéressé reçoit à la liquidation un
-  versement unique égal à ses points multipliés par le salaire de référence de l'année
-  qui la précède (arrêté du 30 décembre 1970, article 25). Versé à l'agent, il supprime
+  versement unique égal à ses points, affectés du coefficient d'anticipation ou de surcote
+  et de la majoration pour enfants, multipliés par le salaire de référence de l'année qui
+  la précède (arrêté du 30 décembre 1970, articles 15, 16 et 25). Versé à l'agent, il supprime
   tout droit du conjoint et des orphelins.
 domaine: points
 regimes:
@@ -15,6 +16,8 @@ etat: approchee
 lit:
 - les points de l'Ircantec (Droits.points_acquis) et sa pension à l'étape qui complète
 - le salaire de référence de l'année qui précède la liquidation (regimes/valeurs_point.csv)
+- le coefficient d'anticipation ou de surcote de la liquidation, et la majoration pour
+  enfants de l'Ircantec
 - la nature de la demande
 - liquidation.date_effet
 ecrit:
@@ -25,8 +28,10 @@ dates_qui_decident:
 # Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
 # moteur (droit/completer.py, `verser_en_capital`, et son jumeau) lit : `existe` ;
 # `regimes` ; `seuil_points`, sous lequel l'allocation n'est pas servie ;
-# `fiabilite`. Le versement vaut les points par le salaire de référence de l'année
-# qui précède la date d'effet.
+# `fiabilite`. Le versement vaut les points, affectés du coefficient de la
+# liquidation (anticipation ou surcote) et de la majoration pour enfants, par le
+# salaire de référence de l'année qui précède la date d'effet ; le seuil se
+# compare aux mêmes points.
 versions:
 - id: avant_l_arrete_de_1970
   statut: supposee
@@ -152,6 +157,14 @@ sources:
       l'allocation de retraite »
     url: https://www.ircantec.retraites.fr/deces/pension-reversion
     date: 2026-10-13
+  - type: autre
+    reference: >-
+      simulateur M@rel (Info Retraite), cas fictifs du 22 novembre 2026 : « Le nombre de
+      points déterminé après application de la décote et de la majoration pour enfants
+      élevés étant inférieur à 300 points » ; quatre points, trois trimestres manquants,
+      liquidation en 2026 : 4 × 0,97 × 5,735 = 22,25 €, et non 22,94 €
+    url: https://simulateur.info-retraite.fr
+    date: 2026-11-22
 code:
   javascript: >-
     moteur/js/droit/completer.js : verserEnCapital, salaireDeReferencePoints,
@@ -161,7 +174,9 @@ code:
   tests: [tests/test_versements_uniques.py]
   moteur: >-
     verser_en_capital prend le salaire de référence de l'année, prix d'achat du point
-    (salaire_de_reference_points). Le paquet du site porte ses versions.
+    (salaire_de_reference_points), et les coefficients de la liquidation
+    (anticipations, surcotesDesPoints) ; la majoration pour enfants, il la lit au
+    rapport de l'allocation majorée à l'allocation. Le paquet du site porte ses versions.
 referents:
   trajectoire:
     equivalent: >-
@@ -172,6 +187,10 @@ historique:
 - >-
   2026-10-08 — écrite à l'étape 17 de l'action 138, sur le point de TRAJECTOiRE au
   registre (chantier 138.17).
+- >-
+  2026-11-22 — le seuil et le capital lisent les points affectés du coefficient et de
+  la majoration pour enfants, et non plus les points bruts : écart relevé au simulateur
+  M@rel, tranché par les articles 16 et 25.
 effet: >-
   Le contractuel de la fonction publique qui a moins de 300 points de l'Ircantec reçoit
   ses points au salaire de référence de l'année précédente, 5,735 € en 2026 : dix fois
