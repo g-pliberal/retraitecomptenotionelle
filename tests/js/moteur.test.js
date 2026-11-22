@@ -1698,13 +1698,55 @@ test("le salaire annuel moyen suit la version de sa date d'effet", () => {
   assert.equal(moyenneSelonLaRegle(regle(), valeurs, trimestres, validantes, 2, 9999), 3500);
   proche(moyenneSelonLaRegle(regle({ calcul: "trimestriel" }), valeurs, trimestres,
     validantes, 10, 9999), 8500 * 4 / 12);
-  const avant1948 = regle({
+  const sansLesAssimilees = regle({
     selection: "dernieres", calcul: "trimestriel", trimestres_comptes: "cotises",
     annees_assimilees_exclues: true,
   });
-  proche(moyenneSelonLaRegle(avant1948, valeurs, trimestres, validantes, 2, 1963), 2000);
-  proche(moyenneSelonLaRegle({ ...avant1948, avant_la_liquidation: true }, valeurs,
+  proche(moyenneSelonLaRegle(sansLesAssimilees, valeurs, trimestres, validantes, 2, 1963),
+    2000);
+  proche(moyenneSelonLaRegle({ ...sansLesAssimilees, avant_la_liquidation: true }, valeurs,
     trimestres, validantes, 2, 1963), 3500);
+});
+
+/**
+ * Le portage de `test_avant_juillet_1948_les_trimestres_d_apres_soixante_ans_completent_les_dix_annees`
+ * et de `test_avant_juillet_1948_les_annees_de_periodes_assimilees_entrent_en_compte`
+ * (tests/test_salaire_annuel_moyen.py) : le décret n° 45-0179, article 74,
+ * §§ 3 et 4, rédaction d'origine.
+ */
+test("avant juillet 1948, les années d'après soixante ans complètent la moyenne", () => {
+  const proche = (obtenu, attendu) => assert.ok(Math.abs(obtenu - attendu) < 1e-9,
+    `${obtenu} contre ${attendu}`);
+  const regle = {
+    selection: "dernieres", avant_la_liquidation: false, calcul: "trimestriel",
+    trimestres_comptes: "cotises", annees_assimilees_exclues: false,
+    annees_sans_trimestre: "retenues", apres_soixante_ans_a_defaut: true,
+  };
+  const valeurs = [[1937, 2000.0], [1938, 3000.0], [1940, 1000.0], [1941, 4000.0],
+    [1942, 5000.0], [1943, 9000.0]];
+  const pleines = new Map(valeurs.map(([annee]) => [annee, [4, 0]]));
+  const toutes = new Set(valeurs.map(([annee]) => annee));
+  proche(moyenneSelonLaRegle(regle, valeurs, pleines, toutes, 5, 1940), 15000 * 4 / 20);
+  proche(moyenneSelonLaRegle(regle, valeurs, pleines, toutes, 2, 1940), 5000 * 4 / 8);
+  const quatre = [[1960, 1000.0], [1961, 4000.0], [1962, 3000.0], [1963, 500.0]];
+  const trimestres = new Map([[1960, [4, 0]], [1961, [2, 2]], [1962, [4, 0]], [1963, [0, 0]]]);
+  const validantes = new Set([1960, 1961, 1962]);
+  proche(moyenneSelonLaRegle(regle, quatre, trimestres, validantes, 2, 1963), 7000 * 4 / 6);
+  proche(moyenneSelonLaRegle({ ...regle, annees_assimilees_exclues: true,
+    apres_soixante_ans_a_defaut: false }, quatre, trimestres, validantes, 2, 1963),
+  4000 * 4 / 8);
+  // Le portage de `test_avant_juillet_1948_le_complement_se_mesure_aux_trimestres_d_avant_soixante_ans`.
+  const cinq = [[1938, 3000.0], [1940, 500.0], [1941, 4000.0], [1942, 5000.0], [1943, 9000.0]];
+  const parAnnee = new Map([[1938, [4, 0]], [1940, [0, 0]], [1941, [4, 0]], [1942, [4, 0]],
+    [1943, [4, 0]]]);
+  const valides = new Set([1938, 1941, 1942, 1943]);
+  proche(moyenneSelonLaRegle(regle, cinq, parAnnee, valides, 10, 1940, 40), 3000);
+  proche(moyenneSelonLaRegle(regle, cinq, parAnnee, valides, 10, 1940, 32), 12000 * 4 / 12);
+  const moities = Array.from({ length: 10 }, (_, rang) => [1930 + rang, 1000.0]);
+  const deux = new Map([...moities.map(([annee]) => [annee, [2, 0]]),
+    [1941, [4, 0]], [1942, [4, 0]], [1943, [4, 0]]]);
+  proche(moyenneSelonLaRegle(regle, [...moities, ...cinq.slice(2)], deux,
+    new Set(deux.keys()), 10, 1940), 28000 * 4 / 32);
 });
 
 /**

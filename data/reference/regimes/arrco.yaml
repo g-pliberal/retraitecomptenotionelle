@@ -28,7 +28,7 @@ inventaire:
             salarie_saint_pierre_et_miquelon, salarie_nouvelle_caledonie,
             salarie_regime_professionnel_integre]
   textes:
-    - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
+    - {reference: "accord national interprofessionnel du 8 décembre 1961, agréé par arrêté du 27 mars 1962 (Journal officiel du 31 mars 1962)", id: null}
     - {reference: "loi n° 72-1223 du 29 décembre 1972 portant généralisation de la retraite complémentaire", id: null}
     - {reference: "code de la sécurité sociale, L. 921-1", id: LEGIARTI000006745499}
   manque: >-
@@ -58,19 +58,25 @@ periodes:
       Taux contractuel 2,5 % appelé à 100 % : 2,5 % prélevés sur
       l'assiette, dont 40 % à la charge du salarié (OpenFisca-France,
       valeurs au 1er janvier 1961, inchangées jusqu'en 1966). ACCORD
-      NATIONAL INTERPROFESSIONNEL DU 8 DÉCEMBRE 1961 (arrêté d'agrément du
-      27 mars 1962) : taux contractuel minimal de 2,5 % sur la totalité du
-      salaire jusqu'à trois plafonds, appelé à 100 %. OpenFisca-France
-      date sa série du 1er janvier 1962 ; 1961 porte la même valeur. Sur
-      la tranche 1, le taux est celui de tous les salariés ; sur la
-      tranche 2 il n'est dû que par les non-cadres (fiche
-      `arrco_tranche_2`). MÉTHODE DE LA TRANCHE B3. L'accord de 1961 et
-      ses avenants sont hors JORF ; seuls L. 921-1 et L. 921-4 encadrent
-      le régime. La série est celle d'OpenFisca-France (niveau `haute`),
-      barème des ENTREPRISES ADHÉRENTES AVANT 1997 ; le taux porté est le
-      taux effectif, contractuel × appel, et le moteur retire l'appel pour
-      convertir en points. Une période par changement de l'un ou de
-      l'autre.
+      NATIONAL INTERPROFESSIONNEL DU 8 DÉCEMBRE 1961 (arrêté d'agrément
+      du 27 mars 1962) : taux contractuel minimal de 2,5 % sur la
+      totalité du salaire jusqu'à trois plafonds, appelé à 100 %.
+      OpenFisca-France date sa série du 1er janvier 1962 ; 1961 porte la
+      même valeur. Sur la tranche 1, le taux est celui de tous les
+      salariés ; sur la tranche 2 il n'est dû que par les non-cadres
+      (fiche `arrco_tranche_2`). MÉTHODE DE LA TRANCHE B3. L'accord de
+      1961 est publié au Journal officiel du 31 mars 1962, p. 3421-3423,
+      avec son arrêté d'agrément du 27 mars 1962
+      (data/reference/textes/apportes/accord_1961_12_08_arrco.md) : son
+      annexe I, art. 1er, veut une cotisation dont le montant « doit
+      être au moins égal à 2,50 p. 100 de la masse des salaires » dans
+      la limite de trois plafonds, et il ne porte aucun barème de
+      prestations. Ses avenants ne sont pas lus ; la loi n'encadre le
+      régime que par L. 921-1 et L. 921-4. La série est celle
+      d'OpenFisca-France (niveau `haute`), barème des ENTREPRISES
+      ADHÉRENTES AVANT 1997 ; le taux porté est le taux effectif,
+      contractuel × appel, et le moteur retire l'appel pour convertir en
+      points. Une période par changement de l'un ou de l'autre.
 
   - debut: 1967
     fin: 1970

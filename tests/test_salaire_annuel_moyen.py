@@ -44,14 +44,15 @@ def _regle(**parametres) -> dict:
 #: droit les lui passe.
 _MOYENNE_DU_PORTAGE = """
 import { moyenneSelonLaRegle } from "./moteur/js/droit/liquider.js";
-const [regle, valeurs, trimestres, validantes, nombre, soixante] = JSON.parse(process.argv[1]);
+const [regle, valeurs, trimestres, validantes, nombre, soixante, avant] = JSON.parse(process.argv[1]);
 process.stdout.write(JSON.stringify(moyenneSelonLaRegle(regle, valeurs,
-  new Map(trimestres), new Set(validantes), nombre, soixante)));
+  new Map(trimestres), new Set(validantes), nombre, soixante, avant)));
 """
 
 
 def _moyenne_du_portage(regle: dict, valeurs, trimestres: dict, validantes: set,
-                        nombre: int, annee_soixante_ans: int) -> float:
+                        nombre: int, annee_soixante_ans: int,
+                        trimestres_avant_soixante_ans: int | None = None) -> float:
     import json
     import shutil
     import subprocess
@@ -59,7 +60,7 @@ def _moyenne_du_portage(regle: dict, valeurs, trimestres: dict, validantes: set,
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne se vérifie pas ici")
     entree = [regle, valeurs, sorted(trimestres.items()), sorted(validantes), nombre,
-              annee_soixante_ans]
+              annee_soixante_ans, trimestres_avant_soixante_ans]
     execution = subprocess.run(
         ["node", "--input-type=module", "-e", _MOYENNE_DU_PORTAGE, json.dumps(entree)],
         cwd=RACINE_PROJET, capture_output=True, text=True, encoding="utf-8", check=False)
@@ -90,15 +91,15 @@ def test_la_moyenne_suit_la_version_de_la_date_d_effet():
     trimestriel = _regle(calcul="trimestriel")
     assert moyenne(trimestriel, VALEURS, TRIMESTRES, VALIDANTES, 10, 9999) \
         == pytest.approx(8500.0 * 4 / 12)
-    avant_1948 = _regle(selection="dernieres", calcul="trimestriel",
-                        trimestres_comptes="cotises", annees_assimilees_exclues=True)
+    sans_les_assimilees = _regle(selection="dernieres", calcul="trimestriel",
+                                 trimestres_comptes="cotises", annees_assimilees_exclues=True)
     # Les deux dernières années d'avant 1963, l'année des soixante ans, sans
     # 1961 et ses deux trimestres assimilés : 1960 et 1962.
-    assert moyenne(avant_1948, VALEURS, TRIMESTRES, VALIDANTES, 2, 1963) \
+    assert moyenne(sans_les_assimilees, VALEURS, TRIMESTRES, VALIDANTES, 2, 1963) \
         == pytest.approx(4000.0 * 4 / 8)
     # Depuis juillet 1948, les deux dernières d'avant l'effet, 1962 et 1963,
     # valent mieux : 3 500 € sur quatre trimestres.
-    depuis_1948 = dict(avant_1948, avant_la_liquidation=True)
+    depuis_1948 = dict(sans_les_assimilees, avant_la_liquidation=True)
     assert moyenne(depuis_1948, VALEURS, TRIMESTRES, VALIDANTES, 2, 1963) \
         == pytest.approx(3500.0 * 4 / 4)
 
@@ -555,3 +556,152 @@ def test_les_annees_d_avant_1948_ne_sont_prises_qu_a_defaut():
     # à la meilleure, 1946.
     assert _moyenne_du_portage(a_defaut, valeurs, trimestres, validantes, 4, 1990) \
         == pytest.approx((1000.0 + 2000.0 + 3000.0 + 8000.0) / 4)
+
+
+#: La version des liquidations d'avant le 1er juillet 1948, telle que la fiche
+#: la porte depuis la lecture du décret n° 45-0179 (lot 1 des fac-similés).
+AVANT_JUILLET_1948 = _regle(selection="dernieres", calcul="trimestriel",
+                            trimestres_comptes="cotises", annees_assimilees_exclues=False,
+                            apres_soixante_ans_a_defaut=True)
+
+
+def test_avant_juillet_1948_les_trimestres_d_apres_soixante_ans_completent_les_dix_annees():
+    """Décret n° 45-0179 du 29 décembre 1945, article 74, § 4, rédaction
+    d'origine (JO du 30 décembre 1945, p. 8713) : « A défaut de justification
+    de quarante trimestres d'assurance avant l'âge de soixante ans, seront pris
+    en considération, pour le calcul du salaire annuel moyen, jusqu'à
+    concurrence de ce nombre et dans leur ordre chronologique, les trimestres
+    d'assurance accomplis postérieurement au soixantième anniversaire » ; la
+    circulaire n° 151 du 5 août 1946 le reprend. Le modèle compte en années
+    civiles : l'année des soixante ans est la première d'après.
+
+    Posé à la main, cinq années retenues, soixante ans en 1940 : avant, 1937
+    et 1938 ; il en manque trois, prises dans l'ordre chronologique, 1940,
+    1941 et 1942, et non 1943, la meilleure et la dernière. 2 000 + 3 000 +
+    1 000 + 4 000 + 5 000 = 15 000 € sur vingt trimestres : 3 000 € l'an."""
+    valeurs = [(1937, 2000.0), (1938, 3000.0), (1940, 1000.0), (1941, 4000.0),
+               (1942, 5000.0), (1943, 9000.0)]
+    trimestres = {annee: [4, 0] for annee, _ in valeurs}
+    validantes = {annee for annee, _ in valeurs}
+    assert _moyenne_du_portage(AVANT_JUILLET_1948, valeurs, trimestres, validantes, 5, 1940) \
+        == pytest.approx(15000.0 * 4 / 20)
+    # Avec assez d'années avant soixante ans, aucune d'après n'entre : les deux
+    # dernières d'avant 1940, 1937 et 1938.
+    assert _moyenne_du_portage(AVANT_JUILLET_1948, valeurs, trimestres, validantes, 2, 1940) \
+        == pytest.approx(5000.0 * 4 / 8)
+
+
+def test_avant_juillet_1948_le_complement_se_mesure_aux_trimestres_d_avant_soixante_ans():
+    """Le § 4 ne joue qu'« à défaut de justification de quarante trimestres
+    d'assurance avant l'âge de soixante ans », et ne prend que des
+    « trimestres d'assurance accomplis » : il se mesure aux trimestres, ceux
+    des assurances sociales de 1930 à 1944 compris, que le salaire moyen du
+    modèle ne voit pas, et une année sans trimestre ne complète rien.
+
+    Posé à la main, dix années retenues, soixante ans en 1940 : avec quarante
+    trimestres avant soixante ans, aucune année d'après n'entre, même si une
+    seule de ces années est au compte (1938) ; avec trente-deux, il en manque
+    huit : 1940, dont le salaire ne valide aucun trimestre, est sautée, puis
+    1941 et 1942, quatre chacune, et non 1943."""
+    valeurs = [(1938, 3000.0), (1940, 500.0), (1941, 4000.0), (1942, 5000.0),
+               (1943, 9000.0)]
+    trimestres = {1938: [4, 0], 1940: [0, 0], 1941: [4, 0], 1942: [4, 0], 1943: [4, 0]}
+    validantes = {1938, 1941, 1942, 1943}
+    assert _moyenne_du_portage(AVANT_JUILLET_1948, valeurs, trimestres, validantes, 10, 1940,
+                               40) == pytest.approx(3000.0)
+    assert _moyenne_du_portage(AVANT_JUILLET_1948, valeurs, trimestres, validantes, 10, 1940,
+                               32) == pytest.approx(12000.0 * 4 / 12)
+    # Dix années de deux trimestres avant soixante ans : vingt trimestres, il
+    # en manque vingt, que 1941, 1942 et 1943 ne suffisent pas à donner.
+    moities = [(annee, 1000.0) for annee in range(1930, 1940)]
+    deux = {annee: [2, 0] for annee, _ in moities}
+    assert _moyenne_du_portage(AVANT_JUILLET_1948, moities + valeurs[2:], {
+        **deux, 1941: [4, 0], 1942: [4, 0], 1943: [4, 0]}, set(deux) | {1941, 1942, 1943}, 10,
+        1940) == pytest.approx((10_000.0 + 18_000.0) * 4 / 32)
+
+
+def test_avant_juillet_1948_les_annees_de_periodes_assimilees_entrent_en_compte():
+    """Décret n° 45-0179, article 74, § 3, rédaction d'origine : « Pour la
+    détermination du salaire annuel moyen [...], les périodes visées à
+    l'article 70 de ladite ordonnance entrent en compte. » L'exclusion des
+    années de deux trimestres assimilés ou plus est le § 7 de la rédaction du
+    décret n° 49-328 du 7 mars 1949 (JO du 12 mars 1949), que la circulaire
+    n° 143 SS du 29 juin 1949 applique aux pensions dont l'entrée en
+    jouissance est fixée « au 1er juillet 1948 ou à une date postérieure ».
+    Avant, la circulaire n° 246 du 25 août 1947 calcule la pension « sur la
+    base des salaires réels », les périodes sans cotisation « neutralisées » :
+    l'année compte son salaire réel sur ses trimestres cotisés.
+
+    Sur les quatre années à la main, deux retenues, soixante ans en 1963 :
+    avant juillet 1948, 1961, deux trimestres cotisés et deux assimilés, et
+    1962 ; 7 000 € sur six trimestres cotisés. Depuis juillet 1948, 1961 sort,
+    et ce sont 1960 et 1962 : 4 000 € sur huit trimestres."""
+    assert _moyenne_du_portage(AVANT_JUILLET_1948, VALEURS, TRIMESTRES, VALIDANTES, 2, 1963) \
+        == pytest.approx(7000.0 * 4 / 6)
+    depuis_juillet_1948 = dict(AVANT_JUILLET_1948, annees_assimilees_exclues=True,
+                               apres_soixante_ans_a_defaut=False)
+    assert _moyenne_du_portage(depuis_juillet_1948, VALEURS, TRIMESTRES, VALIDANTES, 2,
+                               1963) == pytest.approx(4000.0 * 4 / 8)
+
+
+def test_la_fiche_d_avant_juillet_1948_suit_l_article_74_d_origine():
+    """La version `dix_dernieres_annees_avant_soixante_ans` porte les deux
+    règles du décret n° 45-0179 d'origine ; celle de juillet 1948 garde
+    l'exclusion des années assimilées, que le décret n° 49-328 a écrite."""
+    import yaml
+
+    fiche = yaml.safe_load((RACINE_PROJET / "data/reference/regles/salaire_annuel_moyen.yaml")
+                           .read_text(encoding="utf-8"))
+    versions = {version["id"]: version["contenu"]["parametres"]
+                for version in fiche["versions"]}
+    avant = versions["dix_dernieres_annees_avant_soixante_ans"]
+    assert avant["annees_assimilees_exclues"] is False
+    assert avant["apres_soixante_ans_a_defaut"] is True
+    assert versions["dix_dernieres_annees_1948"]["annees_assimilees_exclues"] is True
+
+
+def test_une_pension_du_debut_de_1948_complete_ses_annees_par_celles_d_apres_soixante_ans(
+        simulateur):
+    """Un assuré né en 1886, soixante ans en 1946, liquidé à soixante-deux ans
+    au début de 1948 : une année au régime général avant soixante ans, 1945,
+    puis 1946 et 1947 ; dix années retenues, il n'en a que trois, et toutes
+    entrent dans son salaire annuel moyen (article 74, § 4, du décret
+    n° 45-0179) ; le modèle n'en prenait qu'une, 1945. Chaque salaire, sous le
+    plafond d'assujettissement, valide quatre trimestres."""
+    actuel = simulateur.scenario_actuel
+    macro = simulateur.macro
+    code = "regime_general"
+    lignes = [(1945, 600.0 / 6.55957, 4), (1946, 900.0 / 6.55957, 4),
+              (1947, 1_200.0 / 6.55957, 4)]
+    carriere = _carriere(1886, 62, lignes)
+    assert carriere.mois_liquidation < 7
+    periode = simulateur.catalogue[code].periode(1948)
+    revalorise = [min(revenu, macro.plafond_securite_sociale(annee))
+                  * macro.coefficient_revalorisation_portee_au_compte(
+                      annee, 1948, carriere.mois_liquidation)
+                  for annee, revenu, _ in lignes]
+    sam = liquider.salaire_de_reference(actuel, code, carriere, periode, 1948, True, 1886)
+    assert sam == pytest.approx(sum(revalorise) * 4 / 12)
+
+
+def test_les_trimestres_des_assurances_sociales_ecartent_le_complement(simulateur):
+    """Un assuré né en 1886, soixante ans en 1946, liquidé à soixante-deux ans
+    au début de 1948 : neuf années aux assurances sociales, 1936 à 1944, et
+    1945 au régime général, quarante trimestres avant soixante ans ; 1946 et
+    1947 n'entrent pas (article 74, § 4, du décret n° 45-0179). Le salaire des
+    années 1936 à 1944 n'entre pas dans le salaire moyen du modèle (écart dit
+    par la note du 20 novembre 2026 sur les assurances sociales) : reste 1945."""
+    actuel = simulateur.scenario_actuel
+    macro = simulateur.macro
+    code = "regime_general"
+    lignes = ([(annee, 140.0 / 6.55957, 4) for annee in range(1936, 1945)]
+              + [(1945, 600.0 / 6.55957, 4), (1946, 900.0 / 6.55957, 4),
+                 (1947, 1_200.0 / 6.55957, 4)])
+    carriere = _carriere(1886, 62, lignes)
+    periode = simulateur.catalogue[code].periode(1948)
+    revenu_1945 = 600.0 / 6.55957
+    attendu = (min(revenu_1945, macro.plafond_securite_sociale(1945))
+               * macro.coefficient_revalorisation_portee_au_compte(
+                   1945, 1948, carriere.mois_liquidation))
+    sam = liquider.salaire_de_reference(actuel, code, carriere, periode, 1948, True, 1886)
+    assert sam == pytest.approx(attendu)

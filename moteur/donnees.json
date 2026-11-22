@@ -28693,7 +28693,7 @@ null
 "bornes":{"liquidation.date_effet":[null,"1948-07-01"]},
 "exception_de":null,
 "id":"dix_dernieres_annees_avant_soixante_ans",
-"parametres":{"annees_assimilees_exclues":true,"annees_sans_trimestre":"retenues","avant_la_liquidation":false,"calcul":"trimestriel","selection":"dernieres","trimestres_comptes":"cotises"},
+"parametres":{"annees_assimilees_exclues":false,"annees_sans_trimestre":"retenues","apres_soixante_ans_a_defaut":true,"avant_la_liquidation":false,"calcul":"trimestriel","selection":"dernieres","trimestres_comptes":"cotises"},
 "texte":"ordonnance n° 45-2454 du 19 octobre 1945, article 71, § 1er, telle que la base de législation de la Cnav la donne (ORD_452454_19101945) : « le salaire annuel moyen correspondant aux cotisations versées au cours des dix dernières années d'assurance accomplies avant l'âge de soixante ans »"
 },
 {
@@ -30561,7 +30561,11 @@ null
 "salarie_regime_professionnel_integre"
 ],
 "succede_a":["unirs"],
-"textes":[{"id":null,"reference":"accord national interprofessionnel du 8 décembre 1961 (hors JORF)"},{"id":null,"reference":"loi n° 72-1223 du 29 décembre 1972 portant généralisation de la retraite complémentaire"},{"id":"LEGIARTI000006745499","reference":"code de la sécurité sociale, L. 921-1"}]
+"textes":[
+{"id":null,"reference":"accord national interprofessionnel du 8 décembre 1961, agréé par arrêté du 27 mars 1962 (Journal officiel du 31 mars 1962)"},
+{"id":null,"reference":"loi n° 72-1223 du 29 décembre 1972 portant généralisation de la retraite complémentaire"},
+{"id":"LEGIARTI000006745499","reference":"code de la sécurité sociale, L. 921-1"}
+]
 },
 {
 "code":"arrco_tranche_2",
@@ -30578,7 +30582,7 @@ null
 "raison_hors_champ":"",
 "statuts":["salarie_prive_non_cadre","salarie_agricole","mineur","agent_seita","agent_chemins_fer_secondaires","maitre_enseignement_prive","salarie_saint_pierre_et_miquelon","salarie_nouvelle_caledonie","salarie_regime_professionnel_integre"],
 "succede_a":[],
-"textes":[{"id":null,"reference":"accord national interprofessionnel du 8 décembre 1961 (hors JORF)"},{"id":null,"reference":"accord du 25 avril 1996, article 26 (hors JORF)"}]
+"textes":[{"id":null,"reference":"accord national interprofessionnel du 8 décembre 1961, agréé par arrêté du 27 mars 1962 (Journal officiel du 31 mars 1962)"},{"id":null,"reference":"accord du 25 avril 1996, article 26 (hors JORF)"}]
 },
 {
 "code":"arrco_cultes",
@@ -155113,7 +155117,7 @@ null
 "duree_requise_trimestres":null,
 "ecretement_salaire_reference":null,
 "fin":1966,
-"notes":"Taux contractuel 2,5 % appelé à 100 % : 2,5 % prélevés sur l'assiette, dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er janvier 1961, inchangées jusqu'en 1966). ACCORD NATIONAL INTERPROFESSIONNEL DU 8 DÉCEMBRE 1961 (arrêté d'agrément du 27 mars 1962) : taux contractuel minimal de 2,5 % sur la totalité du salaire jusqu'à trois plafonds, appelé à 100 %. OpenFisca-France date sa série du 1er janvier 1962 ; 1961 porte la même valeur. Sur la tranche 1, le taux est celui de tous les salariés ; sur la tranche 2 il n'est dû que par les non-cadres (fiche `arrco_tranche_2`). MÉTHODE DE LA TRANCHE B3. L'accord de 1961 et ses avenants sont hors JORF ; seuls L. 921-1 et L. 921-4 encadrent le régime. La série est celle d'OpenFisca-France (niveau `haute`), barème des ENTREPRISES ADHÉRENTES AVANT 1997 ; le taux porté est le taux effectif, contractuel × appel, et le moteur retire l'appel pour convertir en points. Une période par changement de l'un ou de l'autre.",
+"notes":"Taux contractuel 2,5 % appelé à 100 % : 2,5 % prélevés sur l'assiette, dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er janvier 1961, inchangées jusqu'en 1966). ACCORD NATIONAL INTERPROFESSIONNEL DU 8 DÉCEMBRE 1961 (arrêté d'agrément du 27 mars 1962) : taux contractuel minimal de 2,5 % sur la totalité du salaire jusqu'à trois plafonds, appelé à 100 %. OpenFisca-France date sa série du 1er janvier 1962 ; 1961 porte la même valeur. Sur la tranche 1, le taux est celui de tous les salariés ; sur la tranche 2 il n'est dû que par les non-cadres (fiche `arrco_tranche_2`). MÉTHODE DE LA TRANCHE B3. L'accord de 1961 est publié au Journal officiel du 31 mars 1962, p. 3421-3423, avec son arrêté d'agrément du 27 mars 1962 (data/reference/textes/apportes/accord_1961_12_08_arrco.md) : son annexe I, art. 1er, veut une cotisation dont le montant « doit être au moins égal à 2,50 p. 100 de la masse des salaires » dans la limite de trois plafonds, et il ne porte aucun barème de prestations. Ses avenants ne sont pas lus ; la loi n'encadre le régime que par L. 921-1 et L. 921-4. La série est celle d'OpenFisca-France (niveau `haute`), barème des ENTREPRISES ADHÉRENTES AVANT 1997 ; le taux porté est le taux effectif, contractuel × appel, et le moteur retire l'appel pour convertir en points. Une période par changement de l'un ou de l'autre.",
 "part_au_dela_du_plafond":null,
 "part_salariale":0.4,
 "part_salariale_deplafonnee":0.0,
@@ -156607,7 +156611,7 @@ null
 "duree_requise_trimestres":null,
 "ecretement_salaire_reference":null,
 "fin":1966,
-"notes":"Taux contractuel 2,5 % appelé à 100 % : 2,5 % prélevés sur l'assiette, dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er janvier 1961, inchangées jusqu'en 1966). ACCORD NATIONAL INTERPROFESSIONNEL DU 8 DÉCEMBRE 1961 (arrêté d'agrément du 27 mars 1962) : taux contractuel minimal de 2,5 % sur la totalité du salaire jusqu'à trois plafonds, appelé à 100 %. OpenFisca-France date sa série du 1er janvier 1962 ; 1961 porte la même valeur. Sur la tranche 1, le taux est celui de tous les salariés ; sur la tranche 2 il n'est dû que par les non-cadres (fiche `arrco_tranche_2`). TRANCHE 2 DE L'ARRCO, ET ELLE N'EST PAS DUE PAR TOUT LE MONDE : seuls les non-cadres cotisent sur la part de salaire comprise entre un et TROIS plafonds ; un cadre cotise l'Agirc sur cette part. Elle figurait auparavant dans la fiche `arrco`, que l'affiliation donne aussi aux cadres, qui acquéraient donc deux fois des droits sur la même part. Les points restent des POINTS ARRCO (`points_de: arrco`), achetés au salaire de référence de l'Arrco et servis à la valeur de son point ; seule l'assiette, et donc l'affiliation, diffère. LA TRANCHE EXISTE DEPUIS L'ORIGINE : l'accord de 1961 assied la cotisation sur la totalité du salaire jusqu'à trois plafonds, au même taux que la tranche 1, et c'est ce que porte le barème des entreprises adhérentes avant 1997 d'OpenFisca-France. La fiche affirmait qu'« avant 1997, l'Arrco ne cotisait pas au-dessus du plafond » : ce n'est vrai que des entreprises créées à compter de cette date, dont le barème commence à 14 %. MÉTHODE DE LA TRANCHE B3. L'accord de 1961 et ses avenants sont hors JORF ; seuls L. 921-1 et L. 921-4 encadrent le régime. La série est celle d'OpenFisca-France (niveau `haute`), barème des ENTREPRISES ADHÉRENTES AVANT 1997 ; le taux porté est le taux effectif, contractuel × appel, et le moteur retire l'appel pour convertir en points. Une période par changement de l'un ou de l'autre.",
+"notes":"Taux contractuel 2,5 % appelé à 100 % : 2,5 % prélevés sur l'assiette, dont 40 % à la charge du salarié (OpenFisca-France, valeurs au 1er janvier 1961, inchangées jusqu'en 1966). ACCORD NATIONAL INTERPROFESSIONNEL DU 8 DÉCEMBRE 1961 (arrêté d'agrément du 27 mars 1962) : taux contractuel minimal de 2,5 % sur la totalité du salaire jusqu'à trois plafonds, appelé à 100 %. OpenFisca-France date sa série du 1er janvier 1962 ; 1961 porte la même valeur. Sur la tranche 1, le taux est celui de tous les salariés ; sur la tranche 2 il n'est dû que par les non-cadres (fiche `arrco_tranche_2`). TRANCHE 2 DE L'ARRCO, ET ELLE N'EST PAS DUE PAR TOUT LE MONDE : seuls les non-cadres cotisent sur la part de salaire comprise entre un et TROIS plafonds ; un cadre cotise l'Agirc sur cette part. Elle figurait auparavant dans la fiche `arrco`, que l'affiliation donne aussi aux cadres, qui acquéraient donc deux fois des droits sur la même part. Les points restent des POINTS ARRCO (`points_de: arrco`), achetés au salaire de référence de l'Arrco et servis à la valeur de son point ; seule l'assiette, et donc l'affiliation, diffère. LA TRANCHE EXISTE DEPUIS L'ORIGINE : l'accord de 1961 assied la cotisation sur la totalité du salaire jusqu'à trois plafonds, au même taux que la tranche 1, et c'est ce que porte le barème des entreprises adhérentes avant 1997 d'OpenFisca-France. La fiche affirmait qu'« avant 1997, l'Arrco ne cotisait pas au-dessus du plafond » : ce n'est vrai que des entreprises créées à compter de cette date, dont le barème commence à 14 %. MÉTHODE DE LA TRANCHE B3. L'accord de 1961 est publié au Journal officiel du 31 mars 1962, p. 3421-3423, avec son arrêté d'agrément du 27 mars 1962 (data/reference/textes/apportes/accord_1961_12_08_arrco.md) : son annexe I, art. 1er, veut une cotisation dont le montant « doit être au moins égal à 2,50 p. 100 de la masse des salaires » dans la limite de trois plafonds, et il ne porte aucun barème de prestations. Ses avenants ne sont pas lus ; la loi n'encadre le régime que par L. 921-1 et L. 921-4. La série est celle d'OpenFisca-France (niveau `haute`), barème des ENTREPRISES ADHÉRENTES AVANT 1997 ; le taux porté est le taux effectif, contractuel × appel, et le moteur retire l'appel pour convertir en points. Une période par changement de l'un ou de l'autre.",
 "part_au_dela_du_plafond":null,
 "part_salariale":0.4,
 "part_salariale_deplafonnee":0.0,

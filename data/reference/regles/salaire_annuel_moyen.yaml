@@ -41,25 +41,48 @@ versions:
       compte seulement des cotisations des dix dernières années d'assurance avant 60 ans »
     lu_le: 2026-10-05
   - reference: >-
-      circulaire ministérielle n° 143 SS du 29 juin 1949 (CR_MIN_143SS_29061949), 3° :
-      pas de salaire des années « qui comportent deux trimestres ou plus de périodes
-      assimilées » (article 74, § 7, du décret du 29 décembre 1945) ; avec un seul, « le
-      salaire perçu pendant trois trimestres est retenu comme salaire annuel » ; « le
-      dénominateur de la formule [...] peut se trouver ramené à un nombre inférieur à 40 »
-    lu_le: 2026-10-05
+      décret n° 45-0179 du 29 décembre 1945, article 74, rédaction d'origine (Journal
+      officiel du 30 décembre 1945, p. 8713, transcrit dans
+      data/reference/textes/apportes/decret_1945_12_29_assurances_sociales.md), § 3 : « Pour la détermination du
+      salaire annuel moyen prévu à l'article 71 de l'ordonnance du 19 octobre 1945, les
+      périodes visées à l'article 70 de ladite ordonnance entrent en compte » ; § 4 :
+      « A défaut de justification de quarante trimestres d'assurance avant l'âge de
+      soixante ans, seront pris en considération, pour le calcul du salaire annuel moyen,
+      jusqu'à concurrence de ce nombre et dans leur ordre chronologique, les trimestres
+      d'assurance accomplis postérieurement au soixantième anniversaire »
+    publie_le: 1945-12-30
+    lu_le: 2026-11-22
+  - reference: >-
+      circulaire ministérielle n° 151 du 5 août 1946 (CR_MIN_151_05081946), b), 1° : les
+      quarante trimestres valables avant soixante ans, « y compris celui du soixantième
+      anniversaire », complétés « conformément à l'article 74 § 4 » par ceux d'après,
+      « dans leur ordre chronologique » ; le « salaire fictif fixé en application des
+      articles 70 et 77 de l'ordonnance [...] dans les conditions prévues à l'arrêté du
+      14 mai 1946 » entre dans la moyenne
+    lu_le: 2026-11-22
+  - reference: >-
+      circulaire ministérielle n° 246 du 25 août 1947 (CR_MIN_246_25081947), § 1er, 3°,
+      B : les périodes de l'article 70 comptent pour le droit, mais « le montant de la
+      pension ne doit cependant être calculé[...] que sur la base des salaires réels, les
+      périodes prises en compte pour l'ouverture du droit, mais n'ayant pas donné lieu à
+      cotisations, étant neutralisées » ; « une modification du texte est envisagée »
+    lu_le: 2026-11-22
   bornes:
     liquidation.date_effet: [null, 1948-07-01]
   contenu:
     droit: >-
       la moyenne des salaires des quarante trimestres d'assurance valables qui précèdent
-      les soixante ans, rapportée à ces trimestres ; sans les années qui comptent deux
-      trimestres assimilés ou plus
+      les soixante ans, rapportée à ces trimestres, les périodes assimilées comprises,
+      avec un salaire fictif, puis neutralisées depuis la circulaire du 25 août 1947 ; à
+      défaut de quarante, complétés par les trimestres d'après soixante ans, dans leur
+      ordre chronologique
     parametres:
       selection: dernieres
       avant_la_liquidation: false
+      apres_soixante_ans_a_defaut: true
       calcul: trimestriel
       trimestres_comptes: cotises
-      annees_assimilees_exclues: true
+      annees_assimilees_exclues: false
       annees_sans_trimestre: retenues
   exemples: aucun trouvé
 - id: dix_dernieres_annees_1948
@@ -79,6 +102,19 @@ versions:
       point 13, et n° 20 SS du 6 février 1961 (CR_MIN_20SS_06021961) : « la moyenne des
       dix dernières années avant la liquidation »
     lu_le: 2026-10-05
+  - reference: >-
+      circulaire ministérielle n° 143 SS du 29 juin 1949 (CR_MIN_143SS_29061949), III, A,
+      3° : « Selon les dispositions du paragraphe 7 de l'article 74 du R.A.P. modifié » —
+      le décret n° 45-0179 dans la rédaction du décret n° 49-328 du 7 mars 1949 (Journal
+      officiel du 12 mars 1949, JORFTEXT000000848692, notice seule à l'index), pour les
+      pensions dont l'entrée en jouissance est fixée « au 1er juillet 1948 ou à une date
+      postérieure » —, pas de salaire des années « qui comportent deux trimestres ou plus
+      de périodes assimilées » ; avec un seul, « le salaire perçu pendant trois trimestres
+      est retenu comme salaire annuel » ; « le dénominateur de la formule [...] peut se
+      trouver ramené à un nombre inférieur à 40 ». La règle déroge, dit-elle, à la
+      circulaire n° 246 du 25 août 1947, qui calculait la pension « sur la base des
+      salaires réels »
+    lu_le: 2026-11-22
   bornes:
     liquidation.date_effet: [1948-07-01, 1973-01-01]
   contenu:
@@ -243,8 +279,34 @@ approximations:
   ecart: >-
     des années civiles, et non les quarante trimestres qui précèdent les soixante ans ou
     l'entrée en jouissance : les dix dernières années de salaire d'avant l'année des
-    soixante ans, et d'avant l'année de l'effet ; une année d'un seul trimestre assimilé
-    compte ses trimestres cotisés, sans reconstituer le salaire de trois trimestres
+    soixante ans, et d'avant l'année de l'effet
+  effet: non mesuré
+- version: dix_dernieres_annees_1948
+  ecart: >-
+    une année d'un seul trimestre assimilé compte ses trimestres cotisés, sans
+    reconstituer le salaire de trois trimestres. Les trimestres d'après soixante ans ne
+    complètent pas la période d'avant soixante ans : la circulaire n° 143 SS garde les
+    instructions de la circulaire n° 151, qui le font, mais la rédaction de l'article 74
+    du décret n° 49-328 n'est pas lue ; la période d'avant l'entrée en jouissance les
+    prend, les dernières et non les premières
+  effet: non mesuré
+- version: dix_dernieres_annees_avant_soixante_ans
+  ecart: >-
+    une année en partie assimilée compte son salaire réel rapporté à ses trimestres
+    cotisés, ses trimestres assimilés neutralisés, comme le veut la circulaire n° 246 à
+    compter du 25 août 1947 ; une année toute assimilée, sans salaire, n'est pas retenue.
+    Avant, la circulaire n° 151 donnait aux périodes assimilées le salaire fictif de
+    l'arrêté du 14 mai 1946, que le dépôt n'a pas lu, et la neutralisation du modèle ne
+    rallonge pas la période pour retrouver quarante trimestres cotisés. Le dénominateur de la
+    circulaire n° 151, « toujours 10 » années, n'est pas suivi : la somme se rapporte aux
+    trimestres retenus, ce qui ne change rien à qui réunit quarante trimestres. Le
+    complément d'après soixante ans se prend par années civiles entières, l'année des
+    soixante ans d'abord, jusqu'à couvrir les trimestres qui manquent aux quarante ;
+    ceux d'avant soixante ans se comptent jusqu'à la fin de l'année qui précède celle des
+    soixante ans, assurances sociales de 1930 à 1944 comprises, mais seules les dix
+    dernières années au compte du régime entrent dans la moyenne. L'arrêté du
+    9 septembre 1946 et la circulaire n° 171 du 30 mai 1947 (salaire fictif des périodes
+    de guerre de l'article 77) ne sont pas lus
   effet: non mesuré
 - version: [dix_dernieres_annees_avant_soixante_ans, dix_dernieres_annees_1948,
             dix_meilleures_annees_1973]
@@ -254,9 +316,16 @@ approximations:
     année travaillée avant, et au plus ce que les mois de la ligne permettent
   effet: non mesuré
 sources:
-  lu_le: 2026-11-12
+  lu_le: 2026-11-22
   prochaine_relecture: 2027-01-31
   a_relire:
+  - >-
+    Lire au Journal officiel l'arrêté du 14 mai 1946, qui fixe le salaire fictif des
+    périodes assimilées et les coefficients de revalorisation d'avant 1949, l'arrêté du
+    9 septembre 1946 (périodes de guerre de l'article 77) et le décret n° 49-328 du
+    7 mars 1949 (JO du 12 mars 1949), dont l'article 74 dit si les trimestres d'après
+    soixante ans complètent encore la période d'avant soixante ans ; dans la base de la
+    Cnav, la circulaire n° 171 du 30 mai 1947.
   - >-
     Relire la colonne de revalorisation à chaque 1er janvier (cnav_revalorisation_salaires.py).
   lectures:
@@ -340,12 +409,13 @@ code:
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
   javascript: >-
     moteur/js/regimes.js : FichesDatees ; moteur/js/droit/liquider.js :
-    salaireDeReference, moyenneSelonLaRegle, nombreDAnneesRetenues,
+    salaireDeReference, moyenneSelonLaRegle, trimestresAvantSoixanteAns,
+    nombreDAnneesRetenues,
     anneesDesRegimesAlignes, anneesAuProrata ; moteur/js/macro.js :
     colonneDeRevalorisationEnVigueur
   parametres: >-
     contenu.parametres de chaque version : selection, derniere_annee_a_defaut,
-    avant_la_liquidation, calcul,
+    avant_la_liquidation, apres_soixante_ans_a_defaut, calcul,
     trimestres_comptes, annees_assimilees_exclues, annees_sans_trimestre ;
     legislation/annees_salaire_reference.csv
   tests: >-

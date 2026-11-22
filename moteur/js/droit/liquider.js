@@ -2382,6 +2382,8 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
       anneesRetenues !== null ? anneesRetenues : nombreDAnneesRetenues(
         moteur, periode, carriere, generation, enfantsMajores),
       carriere.annee_naissance + AGE_DES_DIX_DERNIERES_ANNEES,
+      regle.apres_soixante_ans_a_defaut
+        ? trimestresAvantSoixanteAns(moteur, carriere, codesAdmis) : null,
     );
   }
   let retenus;
@@ -2535,18 +2537,42 @@ export function materniteAuCompte(moteur, code, carriere, periode, anneeLiquidat
   return auCompte;
 }
 
+/**
+ * Les trimestres que le salarié justifie avant l'année de ses soixante ans,
+ * au régime et dans ceux dont il reprend la durée — les assurances sociales
+ * de 1930 à 1944 —, dont le salaire n'entre pas dans la moyenne : ce qui
+ * décide le complément d'avant juillet 1948 (`moyenneSelonLaRegle`).
+ */
+export function trimestresAvantSoixanteAns(moteur, carriere, codesAdmis) {
+  const soixante = carriere.annee_naissance + AGE_DES_DIX_DERNIERES_ANNEES;
+  const compte = (c) => codesAdmis.has(c) || (moteur.catalogue.contient(c)
+    && (moteur.catalogue.obtenir(c).duree_reprise_par ?? []).some((r) => codesAdmis.has(r)));
+  let total = 0;
+  for (const ligne of carriere.lignes) {
+    if (ligne.annee < soixante && coordonner.regimesDe(moteur,
+      ligne, ligne.annee, moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee),
+      ligne.cotise ? ligne.revenu : ligne.revenu_reference,
+      moteur.macro.plafond_securite_sociale.valeur(ligne.annee),
+    ).some(compte)) {
+      total += ligne.trimestres_valides;
+    }
+  }
+  return total;
+}
+
 /** Les dix dernières années d'avant 1973 se comptent avant soixante ans. */
 export const AGE_DES_DIX_DERNIERES_ANNEES = 60;
 
 /**
  * Le salaire annuel moyen que la version de la date d'effet forme : les années
- * sans trimestre écartées depuis 2004, celles de deux trimestres assimilés
- * avant 1973 ; les dix dernières avant 1973, les meilleures ensuite ; la somme
+ * sans trimestre écartées depuis 2004, celles de deux trimestres assimilés de
+ * juillet 1948 à 1972 ; les dix dernières avant 1973, complétées avant juillet
+ * 1948 par celles d'après soixante ans, les meilleures ensuite ; la somme
  * rapportée aux trimestres jusqu'en juin 1995, au nombre d'années ensuite.
- * Les sommes se font dans l'ordre du Python. Voir `moyenne_selon_la_regle`.
+ * Les sommes se font dans l'ordre de l'ancien jumeau Python.
  */
 export function moyenneSelonLaRegle(regle, valeurs, trimestres, validantes, nombre,
-  anneeSoixanteAns) {
+  anneeSoixanteAns, trimestresAvantSoixanteAns = null) {
   let candidates = valeurs;
   if (regle.annees_sans_trimestre === "exclues") {
     candidates = candidates.filter(([annee]) => validantes.has(annee));
@@ -2573,7 +2599,31 @@ export function moyenneSelonLaRegle(regle, valeurs, trimestres, validantes, nomb
   };
   if (regle.selection === "dernieres") {
     const avantSoixante = candidates.filter(([annee]) => annee < anneeSoixanteAns);
-    const choix = [avantSoixante.slice(Math.max(0, avantSoixante.length - nombre))];
+    let retenues = avantSoixante.slice(Math.max(0, avantSoixante.length - nombre));
+    // « A DÉFAUT DE JUSTIFICATION DE QUARANTE TRIMESTRES D'ASSURANCE AVANT
+    // L'ÂGE DE SOIXANTE ANS », les trimestres d'après les complètent
+    // « jusqu'à concurrence de ce nombre et dans leur ordre chronologique »
+    // (décret n° 45-0179, article 74, § 4, rédaction d'origine) : les
+    // premières années, non les meilleures, l'année des soixante ans d'abord,
+    // le modèle comptant en années civiles ; une année sans trimestre
+    // n'apporte rien. Le défaut se mesure aux trimestres d'avant soixante ans
+    // que le salarié justifie, ceux des assurances sociales compris, que
+    // l'appelant compte ; à défaut, à ceux des années candidates.
+    if (regle.apres_soixante_ans_a_defaut) {
+      const dans = (annee) => trimestres.get(annee).reduce((total, n) => total + n, 0);
+      let manquants = 4 * nombre - (trimestresAvantSoixanteAns
+        ?? avantSoixante.reduce((total, [annee]) => total + dans(annee), 0));
+      for (const candidate of candidates) {
+        if (manquants <= 0) {
+          break;
+        }
+        if (candidate[0] >= anneeSoixanteAns && dans(candidate[0]) > 0) {
+          retenues = [...retenues, candidate];
+          manquants -= dans(candidate[0]);
+        }
+      }
+    }
+    const choix = [retenues];
     if (regle.avant_la_liquidation) {
       choix.push(candidates.slice(Math.max(0, candidates.length - nombre)));
     }
