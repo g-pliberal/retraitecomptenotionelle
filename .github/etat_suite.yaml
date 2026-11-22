@@ -1,15 +1,20 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: 6e08687e64d506967337a6f491cc67a547082a45
-date: 2026-11-22T04:34:16Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44984628776
+etat: rouge
+sources: 53dfaacf6c95d1e4e8a9aa2c6360cb1964251c93
+date: 2026-11-22T05:20:38Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44987525231
+echecs:
+  - "FAILED tests/test_donnees.py::test_les_statuts_sans_employeur_sont_marques - AssertionError: assert {'artisan', '...e_femme', ...} == {'artisan', '...gricole', ...}"
+  - "FAILED tests/test_donnees.py::test_les_statuts_de_l_inventaire_routent_bien_vers_le_regime - AssertionError: regime_general : inventaire ['agent_banque_de_france', 'agent_chemins_fer_secondaires', 'agent_ieg', 'agent_ratp', 'agent_seita', 'agent_sncf', 'artisan', 'artiste_auteur', 'auteur_dramatique', 'auteur_lyrique', 'clerc_de_notaire', 'commercant', 'conjoint_collaborateur_artisan', 'conjoint_collaborateur_commercant', 'contractuel_public', 'elu_local', 'gerant_debit_tabac', 'liberal_non_reglemente', 'maitre_enseignement_prive', 'membre_cese', 'micro_entrepreneur', 'mineur', 'personnel_navigant', 'salarie_prive_cadre', 'salarie_prive_cadre_entreprise_recente', 'salarie_prive_non_cadre', 'salarie_prive_non_cadre_entreprise_recente', 'salarie_regime_professionnel_integre'], routage ['agent_banque_de_france', 'agent_chemins_fer_secondaires', 'agent_ieg', 'agent_ratp', 'agent_seita', 'agent_sncf', 'artisan', 'artiste_auteur', 'assure_volontaire_expatrie', 'auteur_dramatique', 'auteur_lyrique', 'clerc_de_notaire', 'commercant', 'conjoint_collaborateur_artisan', 'conjoint_collaborateur_commercant', 'contractuel_public', 'elu_local', 'gerant_debit_tabac', 'liberal_non_reglemente', 'maitre_enseignement_prive', 'membre_cese', 'micro_entrepreneur', 'mineur', 'personnel_navigant', 'salarie_prive_cadre', 'salarie_prive_cadre_entreprise_recente', 'salarie_prive_non_cadre', 'salarie_prive_non_cadre_entreprise_recente', 'salarie_regime_professionnel_integre']"
+  - "FAILED tests/test_web.py::test_aucune_page_ne_montre_de_balise_echappee[/caisses] - AssertionError: /caisses : balises affichées en clair, ['&lt;n']"
+  - "FAILED tests/test_web.py::test_le_balayage_des_temoins_couvre_tous_les_statuts - AssertionError: statuts sans témoin, donc sans comparaison Python/JavaScript : assure_volontaire_expatrie"
 presomptions: vert
 durees:
-  fabrique: 287
-  suite: 421
-  tranche_1: 229
-  tranche_2: 421
-  tranche_3: 302
-  tranche_4: 349
-  garde: 185
+  fabrique: 576
+  suite: 506
+  tranche_1: 363
+  tranche_2: 506
+  tranche_3: 293
+  tranche_4: 405
+  garde: 209

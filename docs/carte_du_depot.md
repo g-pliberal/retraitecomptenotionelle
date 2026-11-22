@@ -68,16 +68,16 @@ flowchart LR
 
 Le modèle Python lit les données et fabrique le paquet que charge le site,
 `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->6 185<!--/--> Ko, par
+(<!--chiffre:poids(moteur/donnees.json)-->6 187<!--/--> Ko, par
 `scripts/construire_donnees.py`). Les témoins, dans `tests/temoins/`, le
 moteur JavaScript les simule, par le pont (`scripts/construire_temoins.py`).
 Le moteur d'une carrière n'a plus qu'un exemplaire, en JavaScript : ses
 jumeaux Python sont partis (action 161). Les témoins le tiennent :
-<!--chiffre:entrees(tests/temoins/simulations.json:)-->933<!--/--> simulations
+<!--chiffre:entrees(tests/temoins/simulations.json:)-->935<!--/--> simulations
 complètes, que le portage refait à l'octet (`tests/test_pont.py`), et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->86<!--/--> pages figées, que
 `node --test` rejoue ;
-<!--chiffre:portage(valeurs)-->175 593<!--/--> nombres comparés, dont
+<!--chiffre:portage(valeurs)-->175 943<!--/--> nombres comparés, dont
 <!--chiffre:portage(identiques)-->100,0<!--/--> % identiques au bit près.
 
 Une exception, voulue : le coût pour toute la population ne se calcule qu'en
@@ -297,8 +297,8 @@ L'inventaire compte
 régimes : <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise)-->36<!--/-->
 modélisés, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->44<!--/-->
 partiels, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=a_modeliser)-->9<!--/-->
-à modéliser, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=hors_champ)-->23<!--/-->
-hors champ et <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=routage)-->2<!--/-->
+à modéliser, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=hors_champ)-->22<!--/-->
+hors champ et <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=routage)-->3<!--/-->
 routages. Les autres comptes, ceux des fiches de règles et de leurs exemples
 officiels, sont dans la partie 1 du tableau de bord.
 

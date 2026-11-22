@@ -21,8 +21,8 @@ seconde est l'étape suivante, esquissée en fin de page.
 
 <!-- compte:debut -->
 L'inventaire compte **114 lignes** : 36 régimes modélisés,
-44 calculés mais incomplets, 2 affiliations portées par un statut,
-23 hors champ — 9 à modéliser.
+44 calculés mais incomplets, 3 affiliations portées par un statut,
+22 hors champ — 9 à modéliser.
 <!-- compte:fin -->
 
 | Couverture | Ce que cela veut dire |
@@ -190,7 +190,7 @@ repris par un autre.
 | Prestations complémentaires de vieillesse des directeurs de laboratoire non médecins conventionnés (PCV, ex-ASV) (`asv_directeurs_laboratoire`) | libéral | depuis 1981 | ◐ partiel | `biologiste_liberal` | Les points d'avant 2008, que l'index ne chiffre pas : la fiche présume la règle de 2008, 262 points par an sans ajustement, et le forfait de 2008. Les valeurs de service propres aux points acquis avant 2006, par tranche d'années, de 0,35 à 1,40 € en 2008, plus hautes que celle des points d'après, qui sert à tous. La revalorisation du forfait sur le coefficient de L. 161-25 majoré de deux points depuis 2023, et celle de la valeur de service minorée d'un demi-point depuis 2022 : les prix en tiennent lieu. Le coefficient d'anticipation, présumé. L'arrondi au dixième supérieur des points d'ajustement, et l'assiette de l'avant-dernière année. Le partage avec l'assurance maladie, lu pour 2025, est présumé à toutes les années. |
 | Caisse nationale des barreaux français, régime de base (`cnbf`) | libéral | depuis 1948 | ◐ partiel | `avocat` | La progression de la cotisation forfaitaire sur les cinq premières années et la contribution équivalente aux droits de plaidoirie ne sont pas portées, ni la majoration de durée d'assurance pour enfants, ni la surcote parentale. La retraite forfaitaire et la cotisation de croisière sont celles de chaque barème depuis 2016 ; avant, celles de 2016 ramenées par les prix. |
 | Complémentaire des avocats (CNBF) (`cnbf_complementaire`) | libéral | depuis 1979 | ✅ modélisé | `avocat` |  |
-| Caisse des Français de l'étranger et assurance volontaire vieillesse | base, privé | depuis 1984 | ⊘ hors champ | — | Adhésion facultative qui ouvre des droits au régime général : ce n'est pas un régime distinct, et le modèle ne décrit que des affiliations obligatoires. |
+| Caisse des Français de l'étranger et assurance volontaire vieillesse | base, privé | depuis 1984 | ↪ portée par un statut | `assure_volontaire_expatrie` | Le statut `assure_volontaire_expatrie`, que la saisie pose sur une période hors de France par sa catégorie (`etranger<n>_avv`), route le régime général sur le salaire forfaitaire de la classe (R. 742-4 : le plafond, ses trois quarts, sa moitié, son quart avant le trimestre des vingt-deux ans), par trimestre civil entier, depuis juillet 1966 ; les trimestres se décomptent comme ceux de l'assurance obligatoire (R. 742-8, R. 351-9). Non portés : l'assurance volontaire des non-salariés (L. 742-6), du parent chargé de famille, de la tierce personne, le rachat de L. 742-2, la superposition aux périodes que la coordination fait compter, et la retraite complémentaire individuelle que la CFE propose par contrat. |
 
 ## Non-salariés agricoles
 

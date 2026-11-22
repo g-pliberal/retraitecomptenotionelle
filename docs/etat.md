@@ -4,7 +4,7 @@
 
 ## 1. Où en est-on
 
-**Les régimes.** L'inventaire en compte 114 : 36 modélisés, 44 partiels, 23 hors champ, 2 routages.
+**Les régimes.** L'inventaire en compte 114 : 36 modélisés, 44 partiels, 22 hors champ, 3 routages.
 
 Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, où un polypensionné compte dans chacune de ses caisses) :
 
@@ -186,7 +186,7 @@ Non gardées : `complement_differentiel_rco / avant_le_complement`, `complement_
 | `compter_les_durees` | `droit/compter.js` | les trimestres de chaque compte, par régime et par année ; ceux des enfants | `accident_du_travail_periodes_assimilees`, `apprentissage`, `bonification_cinquieme_militaires`, `bonification_cinquieme_police_penitentiaire`, `bonification_cinquieme_sapeurs_pompiers`, `cnavpl_majoration_duree_assurance`, `conge_supplementaire_naissance`, `enfants_crpcen`, `enfants_fonction_publique`, `enfants_ieg`, `enfants_ratp`, `enfants_sncf`, `fin_indemnisation_chomage`, `majoration_duree_assurance_enfants`, `majoration_duree_elus_locaux`, `majoration_duree_hospitaliers_actifs`, `majoration_duree_sapeurs_pompiers_volontaires`, `priorite_majorations_enfants`, `service_civique`, `services_et_duree_fonction_publique`, `sportifs_haut_niveau`, `stages_formation_professionnelle`, `trimestres_au_revenu`, `volontariat_civil_et_international` |
 | `acquerir_les_droits` | `droit/acquerir.js` | les points et les cotisations, la durée plafonnée, les points gratuits | `agirc_arrco_valeur_achat`, `assiette_minimale_agricole`, `assiette_minimale_independants`, `assiette_rco_independants`, `asv_autres_professions_de_sante`, `asv_medecins_ajustement`, `asv_medecins_points`, `carpimko_assiette_2026`, `cavom_assiette_2016`, `chomage_retraite_complementaire`, `cipav_seconde_tranche`, `cotisation_agricole_de_1952`, `cotisation_par_classes_liberales`, `cotisation_rco_agricole_2026`, `cotisation_vieillesse_agricole_avant_2003`, `cultes_retraite_complementaire`, `cultes_retraite_complementaire_taux_specifiques`, `cultes_salaire_annuel_moyen`, `droits_apres_la_premiere_pension`, `exoneration_independants_outre_mer`, `financement_chomage_complementaire`, `garantie_minimale_points_agirc`, `igrante_points`, `ipacte_points`, `ircantec_valeurs_point`, `micro_social_abattement`, `organic_conjoints_de_commercants`, `points_agricoles_au_revenu_cadastral`, `points_au_prorata_des_cotisations`, `points_invalidite_independants`, `rafp_assiette_plafond`, `rafp_compte_epargne_temps`, `rafp_cotisation_volontaire_outre_mer`, `rafp_gipa_hors_plafond`, `ravgdt_allocation_viagere`, `rci_seuil_premiere_tranche`, `rco_points_gratuits`, `rco_points_gratuits_66`, `retraite_proportionnelle_msa`, `services_passes_outre_mer` |
 
-**La liquidation** (§ 7.3, 7.4 et 7.7) : `liquider(demande, état, contexte)`, une fonction pure (`moteur/js/droit/liquidation.js`), enchaîne l'acquisition et trois étapes, et mesure par des liquidations d'essai ce qu'apporte chaque avantage. L'échéancier (`moteur/js/echeancier.js`) l'appelle au départ, applique à l'échéance les deux étapes qui ne liquident rien, et inscrit tout à son journal (`journal.js`) ; le pilote (`pilote.js`) date les départs des cas types sans rien liquider. Les 933 témoins font chacun de 1 à 12 appels de `liquider`, liquidations d'essai comprises, et au plus 6 par départ ; aucun ne dépasse les 6 par départ que le nombre déclaré accorde (§ 7.8).
+**La liquidation** (§ 7.3, 7.4 et 7.7) : `liquider(demande, état, contexte)`, une fonction pure (`moteur/js/droit/liquidation.js`), enchaîne l'acquisition et trois étapes, et mesure par des liquidations d'essai ce qu'apporte chaque avantage. L'échéancier (`moteur/js/echeancier.js`) l'appelle au départ, applique à l'échéance les deux étapes qui ne liquident rien, et inscrit tout à son journal (`journal.js`) ; le pilote (`pilote.js`) date les départs des cas types sans rien liquider. Les 935 témoins font chacun de 1 à 12 appels de `liquider`, liquidations d'essai comprises, et au plus 6 par départ ; aucun ne dépasse les 6 par départ que le nombre déclaré accorde (§ 7.8).
 
 | Étape | Module | Ce qu'elle écrit | Fiches qui disent l'appliquer |
 |---|---|---|---|
@@ -536,7 +536,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 - **Les textes** : 627 rédactions à rattacher à une version de la fiche qui les cite, 6 005 à examiner, et 9 165 sans statut, que le cliquet tient à 9 165 au plus. Les textes qui en ont le plus : `css` 4 717, `decret_46_2769` 938, `rural` 834, `cpcmr` 561, `decret_90_1215` 319 (`python scripts/textes.py`).
 - **La loi modifiée** (note de décision 0009, sixième cliquet) : aucune rédaction inscrite depuis la pose n'attend la réponse d'une fiche ; et, d'avant la pose, 0 dont la fiche ne dit rien et 429 qu'elle cite sans y répondre, que le cliquet tient à 0 et 429 au plus (`python scripts/textes.py --sans-reponse`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`agirc_arrco_valeur_achat`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
-- **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
+- **Les régimes hors champ** : 22, chacun avec sa raison dans l'inventaire.
 
 ## 4. Ce que ce tableau ne sait pas encore dire
 
