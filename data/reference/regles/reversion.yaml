@@ -99,27 +99,47 @@ versions:
     juin 1949) ; les ressources s'apprécient à la date du décès seule, dans les
     conditions du décret n° 64-300 — les trois mois civils qui le précèdent, ou les
     douze —, sous 2 080 fois le SMIC horaire du 1er janvier de son année, depuis le
-    1er mars 1971 (décret n° 71-123, article 2), ce que le modèle prête aux décès
-    d'avant, quand le conjoint devait être à charge, sous le plafond de l'AVTS
-    diminué de la majoration pour conjoint (circulaire Cnav n° 31/75, § 2352)
+    1er mars 1971 (décret n° 71-123, article 2) ; un décès d'avant le 1er mars 1971
+    voit ses ressources appréciées « à la date de la demande », sous le plafond « en
+    vigueur au 1er janvier de l'année où cette demande à été formulée » (même décret,
+    article 5, lu le 21 novembre 2026 dans la base de législation de la Cnav ;
+    circulaire Cnav n° 4/73), quand la réversion part depuis cette date ; la
+    réversion partie avant, quand le conjoint devait être à charge, sous le plafond
+    de l'AVTS diminué de la majoration pour conjoint (circulaire Cnav n° 31/75, §
+    2352), reste non lue, et le modèle lui prête la règle du décès ; la condition de
+    mariage est celle de l'ordonnance n° 45-2454, article 76, jusqu'au 30 avril
+    1971, puis celle du décret n° 71-280, l'ancienne restant au décès d'avant le
+    1er mai 1971 qu'elle favorise (circulaire Cnav n° 23/71) ; le décès de
+    l'assuré avant soixante ans, que l'article L. 351-1 réglait autrement avant
+    1963, n'est pas lu
   fiabilite: moyenne
   textes:
   - {id: LEGIARTI000006761979, article: "décret n° 72-1098, article 1er", en_vigueur: 1973-01-01}
   - {reference: "décret n° 71-123 du 11 février 1971, article 2 (base de législation de la Cnav)", en_vigueur: 1971-03-01, change: "les ressources du survivant, appréciées à la date du décès, sous le SMIC annuel du 1er janvier de son année"}
+  - {reference: "décret n° 71-123 du 11 février 1971, article 5 (base de législation de la Cnav, lu le 21 novembre 2026)", en_vigueur: 1971-03-01, change: "pour un décès d'avant le 1er mars 1971, les ressources appréciées à la date de la demande, sous le plafond du 1er janvier de son année"}
+  - {reference: "ordonnance n° 45-2454 du 19 octobre 1945, article 76 (base de législation de la Cnav, lu le 21 novembre 2026)", change: "le mariage contracté avant les soixante ans de l'assuré et, s'il a liquidé avant soixante-cinq ans, de deux ans à l'attribution de sa pension"}
+  - {reference: "décret n° 71-280 du 7 avril 1971 (base de législation de la Cnav, lu le 21 novembre 2026), et circulaire Cnav n° 23/71", en_vigueur: 1971-05-01, change: "le mariage contracté deux ans avant l'entrée en jouissance de la pension de l'assuré, ou de quatre ans au décès"}
   bornes:
     liquidation.date_effet: [null, 1973-01-01]
   contenu:
     droit: 50 % de la pension principale, que la retraite personnelle du survivant réduit
     beneficiaire: le conjoint survivant, et le conjoint divorcé non remarié
     conditions: >-
-      soixante-cinq ans, soixante en cas d'inaptitude au travail ; deux ans de mariage
-      à la date du décès, sauf enfant issu du mariage ; des ressources personnelles qui
+      soixante-cinq ans, soixante en cas d'inaptitude au travail ; un mariage contracté
+      avant les soixante ans de l'assuré et, s'il a liquidé avant soixante-cinq ans,
+      de deux ans à l'attribution de sa pension, jusqu'au 30 avril 1971 ; depuis,
+      contracté deux ans avant l'entrée en jouissance de sa pension, ou de quatre ans
+      au décès, l'ancienne règle restant au décès d'avant mai 1971 qu'elle favorise ;
+      des ressources personnelles qui
       ne dépassent pas 2 080 fois le SMIC horaire, ses retraites exceptées, appréciées
       au décès, sur les trois mois civils qui le précèdent, ou les douze
     parametres:
       taux: 0.50
       age_minimum: 65
       mariage_minimum_annees: 2
+      mariage_de_l_ordonnance_de_1945_jusqu_au: "1971-05-01"
+      mariage_d_avant_l_ordonnance_de_1945: "1945-10-20"
+      enfant_leve_la_duree_du_mariage_depuis: "1980-07-19"
       ex_conjoints: non_remaries
       ressources: condition
       plafond_smic_heures: 2080
@@ -143,6 +163,7 @@ versions:
       retraites_entieres_a_la_revision: null
       periodes_de_reference: [3, 12]
       ressources_examinees: [deces]
+      ressources_a_la_demande_pour_les_deces_avant: "1971-03-01"
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: avant_juillet_1974
@@ -151,25 +172,35 @@ versions:
     l'âge de cinquante-cinq ans est celui du décret n° 72-1098 ; le reste, comme la
     version avant_1973 : le cumul avec une retraite personnelle n'est ouvert qu'au 1er
     juillet 1974 (loi n° 75-3, article 21), et les ressources ne s'apprécient qu'au
-    décès (décret n° 71-123, article 2)
+    décès (décret n° 71-123, article 2), à la demande pour un décès d'avant le 1er
+    mars 1971 (article 5 ; circulaire Cnav n° 4/73, qui le rappelle en 1973) ; la
+    condition de mariage est celle du décret n° 71-280, l'ordonnance de 1945
+    restant au décès d'avant le 1er mai 1971 qu'elle favorise (circulaire Cnav n°
+    23/71), et la durée de deux ans au décès n'arrive qu'au 1er juillet 1974
+    (circulaire Cnav n° 31/75, § 232)
   fiabilite: moyenne
   textes:
   - {id: LEGIARTI000006761979, article: "décret n° 72-1098, article 1er", en_vigueur: 1973-01-01}
   - {reference: "décret n° 71-123 du 11 février 1971, article 2 (base de législation de la Cnav)", en_vigueur: 1971-03-01, change: "les ressources du survivant, appréciées à la date du décès, sous le SMIC annuel du 1er janvier de son année"}
+  - {reference: "décret n° 71-280 du 7 avril 1971 (base de législation de la Cnav, lu le 21 novembre 2026), et circulaire Cnav n° 23/71", en_vigueur: 1971-05-01, change: "le mariage contracté deux ans avant l'entrée en jouissance de la pension de l'assuré, ou de quatre ans au décès"}
   bornes:
     liquidation.date_effet: [1973-01-01, 1974-07-01]
   contenu:
     droit: 50 % de la pension principale, que la retraite personnelle du survivant réduit
     beneficiaire: le conjoint survivant, et le conjoint divorcé non remarié
     conditions: >-
-      cinquante-cinq ans ; deux ans de mariage à la date du décès, sauf enfant issu du
-      mariage ; des ressources personnelles qui ne dépassent pas 2 080 fois le SMIC
+      cinquante-cinq ans ; un mariage contracté deux ans avant l'entrée en jouissance
+      de la pension de l'assuré, ou de quatre ans au décès, l'ordonnance de 1945
+      restant au décès d'avant mai 1971 qu'elle favorise ; des ressources personnelles qui ne dépassent pas 2 080 fois le SMIC
       horaire, ses retraites exceptées, appréciées au décès, sur les trois mois civils
       qui le précèdent, ou les douze
     parametres:
       taux: 0.50
       age_minimum: 55
       mariage_minimum_annees: 2
+      mariage_de_l_ordonnance_de_1945_jusqu_au: "1971-05-01"
+      mariage_d_avant_l_ordonnance_de_1945: "1945-10-20"
+      enfant_leve_la_duree_du_mariage_depuis: "1980-07-19"
       ex_conjoints: non_remaries
       ressources: condition
       plafond_smic_heures: 2080
@@ -193,6 +224,7 @@ versions:
       retraites_entieres_a_la_revision: null
       periodes_de_reference: [3, 12]
       ressources_examinees: [deces]
+      ressources_a_la_demande_pour_les_deces_avant: "1971-03-01"
       pension_eue_aux_regles_de_la_date_d_effet: "1974-01-01"
       fiabilite: moyenne
   exemples: aucun trouvé
@@ -225,13 +257,15 @@ versions:
     beneficiaire: le conjoint survivant, et le conjoint divorcé non remarié
     conditions: >-
       cinquante-cinq ans ; deux ans de mariage à la date du décès, sauf enfant issu
-      du mariage ; des ressources personnelles qui ne dépassent pas 2 080 fois le SMIC
+      du mariage pour la réversion partie après le 18 juillet 1980 ; des ressources
+      personnelles qui ne dépassent pas 2 080 fois le SMIC
       horaire, ses retraites exceptées, appréciées à la demande et, à défaut, au
       décès, sur les trois mois civils qui précèdent chacun, ou les douze
     parametres:
       taux: 0.50
       age_minimum: 55
       mariage_minimum_annees: 2
+      enfant_leve_la_duree_du_mariage_depuis: "1980-07-19"
       ex_conjoints: non_remaries
       ressources: condition
       plafond_smic_heures: 2080
@@ -1065,7 +1099,8 @@ approximations:
   ecart: >-
     les limites de cumul de la réversion avec la retraite personnelle du survivant
     (D. 355-1) ne sont pas appliquées ; l'enfant issu du mariage, qui lève la
-    condition de durée, est tout enfant déclaré
+    condition de durée depuis le 19 juillet 1980 (circulaire Cnav n° 88/80), est
+    tout enfant déclaré
   effet: non mesuré
 - ecart: >-
     le ménage du survivant est celui qu'il déclare, depuis le jour qu'il dit ou dès
@@ -2281,7 +2316,9 @@ code:
     majoration_enfants_minimum, age_inaptitude, cumul, cumul_taux, droits_d_avant_1973,
     minimum_avec_les_droits_d_avant_1973, majorations_forfaitaires,
     retraites_entieres_a_la_revision, periodes_de_reference, ressources_examinees,
-    pension_eue_aux_regles_de_la_date_d_effet, fiabilite ;
+    pension_eue_aux_regles_de_la_date_d_effet, ressources_a_la_demande_pour_les_deces_avant,
+    enfant_leve_la_duree_du_mariage_depuis, mariage_de_l_ordonnance_de_1945_jusqu_au,
+    mariage_d_avant_l_ordonnance_de_1945, fiabilite ;
     macro/smic_horaire.csv ; legislation/minimum_reversion.csv,
     legislation/plafond_majoration_reversion.csv, legislation/limite_cumul_reversion.csv
     ; legislation/age_annulation_decote.csv ; macro/plafond_securite_sociale.csv

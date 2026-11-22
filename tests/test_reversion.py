@@ -4139,3 +4139,93 @@ def test_la_page_dit_le_menage_du_conjoint():
     _, menage = rendre("/simuler", {**requete, "nouvelle_union": "pacs",
                                     "ressources_nouveau_conjoint": "30000"})
     assert "réduite : avec les ressources du ménage, elle dépasserait le plafond" in menage
+
+
+def test_avant_1973_le_deces_d_avant_mars_1971_retient_les_ressources_de_la_demande(simulateur):
+    """« Lorsque le décès est antérieur à la date prévue au premier alinéa
+    [le 1er mars 1971], les ressources du conjoint survivant sont appréciées à
+    la date de la demande de pension de réversion en négligeant les avantages
+    de réversion acquis du chef du conjoint décédé ; le plafond de ressources
+    applicables est celui en vigueur au 1er janvier de l'année où cette
+    demande à été formulée » (décret n° 71-123 du 11 février 1971, article 5,
+    texte de la base de législation de la Cnav) ; « pour les décès antérieurs
+    au 1er mars 1971, la condition de ressources [...] doit toujours être
+    appréciée à la date de la demande » (circulaire Cnav n° 4/73). Le mari
+    meurt le 10 juin 1970 ; sa veuve, née le 15 janvier 1907, gagne alors
+    3 000 € par an, au-dessus du plafond de 1970, 2 080 fois le SMIC horaire,
+    et cesse son activité le 30 juin 1971. Sa réversion part le 1er février
+    1972, à soixante-cinq ans ; sa demande, présumée en janvier, ne porte plus
+    de salaire : elle la reçoit, à 50 %. Le décès de mars 1971 ou d'après
+    garde la règle de l'article 2, les ressources du décès."""
+    carriere = _carriere(simulateur, 1905, 60.0, "1907-01-15", "1970-06-10",
+                         mariage="1930-05-01", ressources=3000.0, activite=3000.0,
+                         fin_d_activite="1971-06-30")
+    ligne = _servies(simulateur, carriere, [("regime_general", 4000.0)],
+                     1970)["regime_general"]
+    assert 3000.0 > _plafond(simulateur, 1970)
+    assert (ligne.version, ligne.date_effet) == ("avant_1973", "1972-02-01")
+    assert ligne.moments_examines == ("demande",)
+    assert ligne.ressources_examinees_au == "demande"
+    assert ligne.ressources_retenues == 0.0
+    assert ligne.motif != "ressources" and ligne.montant > 0.0
+    # Le même décès un an plus tard, en juin 1971 : la règle de l'article 2.
+    apres = _carriere(simulateur, 1905, 60.0, "1907-01-15", "1971-06-10",
+                      mariage="1930-05-01", ressources=3000.0, activite=3000.0,
+                      fin_d_activite="1971-06-30")
+    ligne = _servies(simulateur, apres, [("regime_general", 4000.0)],
+                     1971)["regime_general"]
+    assert ligne.moments_examines == ("deces",)
+    assert ligne.motif == "ressources"
+
+
+@pytest.mark.parametrize("deces, refusee", [("1978-05-10", True), ("1981-05-10", False)])
+def test_l_enfant_issu_du_mariage_ne_leve_la_duree_qu_apres_le_18_juillet_1980(
+        simulateur, deces, refusee):
+    """« Aucune condition de durée de mariage n'est désormais exigée lorsqu'un
+    enfant au moins est issu du mariage » ; « La disposition susvisée
+    s'applique aux pensions de réversion ou aux secours viagers prenant effet
+    postérieurement au 18 juillet 1980, quelle que soit la date du décès de
+    l'assuré » (circulaire Cnav n° 88/80 du 19 septembre 1980, qui applique
+    l'article 10 de la loi n° 80-546). Avant, depuis le 1er juillet 1974, « il
+    suffit maintenant que le mariage ait duré au moins deux ans, cette durée
+    étant appréciée à la date du décès » (circulaire Cnav n° 31/75, § 232), sans
+    exception. La veuve, née en 1920, épouse l'assuré un an avant sa mort ; un
+    enfant est né du mariage : la réversion de 1978 lui est refusée, celle de
+    1981 servie."""
+    mariage = f"{int(deces[:4]) - 1}{deces[4:]}"
+    carriere = _carriere(simulateur, 1915, 60.0, "1920-03-15", deces, mariage=mariage,
+                         enfants=1, naissances=(f"{int(deces[:4]) - 1}-12-01",))
+    ligne = _servies(simulateur, carriere, [("regime_general", 1000.0)],
+                     int(deces[:4]))["regime_general"]
+    assert (ligne.motif == "mariage", ligne.montant == 0.0) == (refusee, refusee)
+
+
+@pytest.mark.parametrize("naissance, depart, mariage, deces, refusee", [
+    # L'ordonnance de 1945 : le mariage d'après les soixante ans de l'assuré.
+    (1900, 65.0, "1962-06-01", "1968-03-10", True),
+    (1900, 65.0, "1958-06-01", "1968-03-10", False),
+    # Le décret de 1971 : moins de deux ans avant sa pension, moins de quatre au décès.
+    (1905, 65.0, "1969-06-01", "1972-03-10", True),
+    (1905, 65.0, "1967-06-01", "1972-03-10", False),
+])
+def test_avant_1974_la_condition_de_mariage_de_l_ordonnance_puis_du_decret_de_1971(
+        simulateur, naissance, depart, mariage, deces, refusee):
+    """L'ordonnance n° 45-2454, article 76 (base de législation de la Cnav) :
+    la réversion « à la condition que le mariage ait été contracté avant que
+    celui-ci ait atteint l'âge de soixante ans et que, dans le cas où
+    l'intéressé a demandé la liquidation de ses droits avant l'âge de
+    soixante-cinq ans, il ait duré au moins deux ans avant l'attribution de la
+    pension ou rente ». Le décret n° 71-280 du 7 avril 1971 la remplace, au 1er
+    mai 1971, par « la condition que le mariage ait été contracté deux ans au
+    moins avant l'entrée en jouissance de la pension ou de la rente attribuée à
+    l'assuré décédé ou qu'il ait duré au moins quatre ans à la date du décès »
+    (circulaire Cnav n° 23/71). La veuve a soixante-cinq ans au décès : le
+    mariage de 1962, l'assuré de 1900 ayant soixante-deux ans, ne l'ouvre pas en
+    1968, celui de 1958 l'ouvre ; en 1972, le mariage de juin 1969, six mois
+    avant la pension de l'assuré et moins de quatre ans avant sa mort, ne
+    l'ouvre pas, celui de 1967 l'ouvre."""
+    carriere = _carriere(simulateur, naissance, depart, f"{int(deces[:4]) - 65}-01-15", deces,
+                         mariage=mariage)
+    ligne = _servies(simulateur, carriere, [("regime_general", 1000.0)],
+                     int(deces[:4]))["regime_general"]
+    assert (ligne.motif == "mariage", ligne.montant == 0.0) == (refusee, refusee)

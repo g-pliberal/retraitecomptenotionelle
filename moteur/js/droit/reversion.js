@@ -488,8 +488,40 @@ function ageAgircArrco(parametres, regime, sexe) {
  * `annees` de mariage au décès, sauf enfant issu du mariage — que le modèle
  * tient pour tout enfant déclaré.
  */
-function mariageDure(conjoint, deces, enfants, annees) {
-  return !annees || enfants > 0 || chrono.anneesRevolues(conjoint.mariage, deces) >= annees;
+function mariageDure(conjoint, deces, enfants, annees, enfantsLevent = true) {
+  return !annees || (enfantsLevent && enfants > 0)
+    || chrono.anneesRevolues(conjoint.mariage, deces) >= annees;
+}
+
+/**
+ * La condition de mariage du régime général d'avant juillet 1974, pour les
+ * versions qui disent jusqu'à quelle date l'ordonnance de 1945 la tient
+ * (`jusqu`). L'ordonnance n° 45-2454, article 76 : le mariage « contracté avant
+ * que celui-ci ait atteint l'âge de soixante ans » — ou avant l'ordonnance
+ * (`ordonnance1945`) — et,
+ * si l'assuré a demandé sa liquidation avant soixante-cinq ans, « duré au moins
+ * deux ans avant l'attribution de la pension ». Le décret n° 71-280, depuis le
+ * 1er mai 1971 : le mariage « contracté deux ans au moins avant l'entrée en
+ * jouissance de la pension » de l'assuré, « ou qu'il ait duré au moins quatre
+ * ans à la date du décès » ; la circulaire Cnav n° 23/71 garde au décès
+ * d'avant le 1er mai 1971 l'ancienne règle, si elle lui est plus favorable.
+ */
+function mariageDAvant1974(carriere, conjoint, deces, depart, dateEffet, jusqu,
+  ordonnance1945) {
+  const mariage = conjoint.mariage;
+  const naissance = `${String(carriere.annee_naissance).padStart(4, "0")}-`
+    + `${String(carriere.mois_naissance ?? 1).padStart(2, "0")}-`
+    + `${String(carriere.jour_naissance ?? 1).padStart(2, "0")}`;
+  const ordonnance = (mariage < ordonnance1945
+      || chrono.anneesRevolues(naissance, mariage) < 60)
+    && (chrono.anneesRevolues(naissance, depart) >= 65
+      || chrono.anneesRevolues(mariage, depart) >= 2);
+  if (dateEffet < jusqu) {
+    return ordonnance;
+  }
+  return chrono.anneesRevolues(mariage, depart) >= 2
+    || chrono.anneesRevolues(mariage, deces) >= 4
+    || (deces < jusqu && ordonnance);
 }
 
 /**
@@ -1051,7 +1083,10 @@ function moisDeLaDemande(dateEffet) {
  * juillet 2004, ces mois précèdent les moments que la version dit, l'un après
  * l'autre (`ressources_examinees`) : la demande, le mois qui précède la date
  * d'effet, puis le décès, sous les paramètres `auDeces` de la version du
- * décès ; quand aucun ne remplit la condition, ceux du dernier. La version qui
+ * décès ; quand aucun ne remplit la condition, ceux du dernier. Le décès
+ * d'avant la date `ressources_a_la_demande_pour_les_deces_avant`, quand la
+ * réversion part depuis, ne retient que la demande (décret n° 71-123,
+ * article 5 : avant le 1er mars 1971). La version qui
  * ne dit pas de mois compare sur l'année ses `ressources` de ce jour : 0 mois.
  * Voir `_ressources_a_la_date_d_effet` du Python.
  */
@@ -1065,8 +1100,10 @@ function ressourcesALaDateDEffet(parametres, conjoint, ressources, retraites, da
   }
   let examinees = null;
   const examines = [];
-  const moments = (parametres.ressources_examinees ?? []).length > 0
-    ? parametres.ressources_examinees : ["date_d_effet"];
+  const avant = parametres.ressources_a_la_demande_pour_les_deces_avant ?? null;
+  const moments = avant !== null && deces < avant && dateEffet >= avant ? ["demande"]
+    : (parametres.ressources_examinees ?? []).length > 0
+      ? parametres.ressources_examinees : ["date_d_effet"];
   for (const moment of moments) {
     examines.push(String(moment));
     const regles = moment === "deces" ? (auDeces ?? parametres) : parametres;
@@ -2038,7 +2075,16 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     const reversions = ecretable ? autresBases : 0.0;
     const disponible = plafondAnnuel - personnelles - reversions;
     const retenues = personnelles + reversions;
-    if (!mariageDure(conjoint, deces, enfants, parametres.mariage_minimum_annees)) {
+    // L'enfant issu du mariage ne lève la durée que pour les réversions qui
+    // prennent effet depuis la date que la version dit (circulaire Cnav
+    // n° 88/80 : « postérieurement au 18 juillet 1980 »).
+    const depuis = parametres.enfant_leve_la_duree_du_mariage_depuis ?? null;
+    const jusqu = parametres.mariage_de_l_ordonnance_de_1945_jusqu_au ?? null;
+    if (jusqu !== null
+      ? !mariageDAvant1974(carriere, conjoint, deces, depart, dateEffet, jusqu,
+        parametres.mariage_d_avant_l_ordonnance_de_1945)
+      : !mariageDure(conjoint, deces, enfants, parametres.mariage_minimum_annees,
+        depuis === null || dateEffet >= depuis)) {
       montant = 0.0;
       motif = "mariage";
     } else if (parametres.ressources === "ecretement") {
