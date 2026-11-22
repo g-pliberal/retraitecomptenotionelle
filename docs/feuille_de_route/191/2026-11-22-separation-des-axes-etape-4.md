@@ -106,5 +106,9 @@ désormais, un test posé à la main le dit.
 (`commun.periode_de_liquidation`, la marque `periode` de la façade et
 l'argument `Periode` du droit, `scenario_actuel.catalogue.periodes`), et la
 fusion lit `periodesActives` (`fusion.taux_total.tranche_1`, `pont.mjs`) : il
-passera les lectures à la date et à l'année. Viennent ensuite les tests, les
+passera les lectures à la date et à l'année. Une piste relevée en finissant :
+la façade des tests (`tests/facade.py`, `_periode_du_catalogue`) peut
+transmettre des paramètres assemblés par les rangs de leurs quatre lignes :
+les blocs du chargeur ont, dans les 80 régimes, les mêmes lignes, aux mêmes
+bornes, que ceux du paquet ; un test le gardera. Viennent ensuite les tests, les
 cliquets et la page Avantages, comme au premier lot.
