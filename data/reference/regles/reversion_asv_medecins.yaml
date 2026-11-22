@@ -1,0 +1,209 @@
+schema_version: 1
+id: reversion_asv_medecins
+intitule: >-
+  Réversion des prestations complémentaires de vieillesse (ASV) des médecins
+  conventionnés (règlement de 2026, articles 6 à 8) : 50 % des prestations du médecin,
+  au conjoint survivant de 62 ans marié depuis deux ans au moins, aux conditions de la
+  réversion du régime complémentaire de la CARMF (fiche `reversion_carmf`) pour le
+  reste. Sans condition de ressources.
+domaine: reversion
+regimes:
+- asv_conventionnes
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- conjoint.deces
+- union.debut, d'un mariage, et union.fin, pour l'ex-conjoint divorcé ; les précédents
+  conjoints du médecin, leur mariage, leur divorce et leur remariage, que le partage au
+  prorata des mariages lit
+- la naissance du survivant, qui dit son âge, et l'union nouvelle qu'il forme
+- les enfants du médecin, que le modèle tient pour nés de l'union
+- les prestations complémentaires de vieillesse du médecin décédé, et leur majoration
+  pour trois enfants
+ecrit:
+- la réversion du survivant aux prestations complémentaires de vieillesse des médecins
+dates_qui_decident:
+- conjoint.deces
+# Les versions forment un partage de la date du décès (§ 4.1), comme celles de
+# la réversion de la CARMF. Les statuts d'avant le règlement de 2026 ne sont
+# au Journal officiel que par leurs modifications, qui ne disent ni le taux ni
+# l'âge du conjoint : le moteur ne sert pas la réversion d'un décès d'avant le
+# 18 juillet 2026 (`portee: false`), en attendant que le propriétaire dise s'il
+# faut la servir sur le guide de la caisse de juin 2026.
+versions:
+- id: avant_le_reglement_de_2026
+  statut: supposee
+  hypothese: >-
+    les statuts des prestations supplémentaires de vieillesse d'avant le règlement de
+    2026 ne sont à l'index du Journal officiel que par les arrêtés qui les modifient :
+    celui du 1er décembre 2016 (JORFARTI000033538061) dit le taux « identique à celui
+    retenu à l'article 15 », sans le citer ; le guide de la caisse de juin 2026 dit
+    62 ans, 50 %, deux ans de mariage. Le
+    moteur ne sert pas la réversion d'un décès d'avant le 18 juillet 2026, et sa ligne
+    le dit ; la question est soumise au propriétaire le 22 novembre 2026
+  fiabilite: estimee
+  bornes:
+    conjoint.deces: [null, 2026-07-18]
+  contenu:
+    droit: la réversion des statuts d'avant 2026, que nul texte lu ne dit en entier
+    parametres:
+      portee: false
+      fiabilite: estimee
+  exemples: aucun trouvé
+- id: reglement_de_2026
+  statut: lue
+  textes:
+  - id: JORFARTI000054435859
+    article: >-
+      règlement du régime de prestations complémentaires de vieillesse de la section
+      professionnelle des médecins, III de l'annexe de l'arrêté du 10 juillet 2026,
+      articles 6 à 8
+    en_vigueur: 2026-07-18
+    publie_le: 2026-07-17
+    citation: >-
+      « Les prestations complémentaires auxquelles le médecin avait droit sont
+      réversibles à raison de 50 % sur la tête du conjoint survivant s'il remplit les
+      conditions suivantes : - être âgé de soixante-deux ans au moins ; - avoir été marié
+      pendant deux ans au moins, sous réserve des dérogations prévues dans le régime
+      complémentaire vieillesse. » (article 6) ; « Les dispositions du règlement du
+      régime d'assurance vieillesse complémentaire relatives aux conjoints survivants
+      et/ou divorcés ainsi qu'aux conjoints de médecins disparus sont applicables au
+      présent régime […]. Le taux de réversion est identique à celui retenu à l'article
+      6 pour le conjoint survivant. » (article 7) ; « Le montant des prestations
+      complémentaires liquidées avec une date d'effet postérieure au 31 décembre 1980 est
+      majoré de 10 % au profit des allocataires ayant eu au moins trois enfants. »
+      (article 8)
+  nee_de: JORFARTI000054435859
+  bornes:
+    conjoint.deces: [2026-07-18, null]
+  contenu:
+    droit: >-
+      50 % des prestations complémentaires du médecin ; la majoration de 10 % pour
+      trois enfants s'y applique
+    beneficiaire: >-
+      ceux de la réversion du régime complémentaire (fiche `reversion_carmf`, articles
+      11 à 13) : le conjoint survivant et le précédent conjoint divorcé non remarié, au
+      prorata de la durée de chaque mariage
+    conditions: >-
+      62 ans ; deux ans de mariage, sauf les dérogations du régime complémentaire (un
+      enfant né de l'union) ; perdue au remariage ; aucune condition de ressources
+    parametres:
+      taux: 0.50
+      age_minimum: 62
+      mariage_minimum_annees: 2
+      ex_conjoints: non_remaries
+      perte_au_remariage: [mariage]
+      majoration_reversible: 0.50
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations:
+- version: [avant_le_reglement_de_2026]
+  ecart: >-
+    la réversion d'un décès d'avant le 18 juillet 2026 n'est pas servie : sa ligne le dit
+    (`non_portee`), quand la caisse la sert, d'après son guide de juin 2026, à 50 % dès
+    62 ans
+  effet: >-
+    toute la réversion de l'ASV des veufs de médecins morts avant le 18 juillet 2026 :
+    2 400 € par an pour 4 800 € d'ASV
+- ecart: >-
+    la version se choisit à la date du décès, non à celle où la réversion prend effet
+  effet: non mesuré
+- ecart: >-
+    la réversion du médecin mort avant sa retraite prend effet au premier jour du mois
+    qui suit le décès, quand l'article 25 la fait partir « au lendemain du décès du
+    médecin cotisant » ; et l'article 24, commun aux allocations du médecin et du
+    conjoint, fait partir l'allocation « au premier jour du trimestre civil qui suit la
+    réalisation de toutes les conditions », que le modèle ne lit pas pour le survivant
+    qui atteint 62 ans après le décès : il suit le guide de la caisse, au mois
+  effet: un mois de réversion au plus pour le cotisant ; non mesuré
+- ecart: >-
+    le modèle reverse 50 % de la prestation servie au médecin ; le texte ne minore pas
+    la réversion du coefficient de la retraite anticipée liquidée avant 2017, et porte à
+    15 % le coefficient de majoration inférieur du médecin parti depuis 2017 (article 6)
+  effet: non mesuré
+- ecart: >-
+    tout enfant déclaré lève la condition de deux ans de mariage, quand le texte demande
+    un enfant « né de l'union » ; le décès par fait subit ou imprévisible, que le
+    conseil d'administration apprécie, n'est pas lu
+  effet: non mesuré
+- ecart: >-
+    le partage lit les précédents conjoints non remariés que la saisie déclare, quand
+    l'article 11 retire le droit du divorcé si le médecin s'est remarié, ce que
+    l'article 12, qui partage avec le conjoint survivant, contredit : le modèle suit
+    l'article 12 ; le droit recouvré par le remarié sans autre réversion (article 13),
+    celui du conjoint d'un médecin disparu (article 14) et de l'enfant infirme (article
+    21) ne sont pas servis
+  effet: non mesuré
+- ecart: >-
+    le simulateur d'info-retraite écarte l'ASV avec la complémentaire, au survivant de
+    56 ans, à « l'âge requis (60 ans) » ; le règlement et le guide de la caisse disent
+    62 ans : le modèle suit le texte
+  effet: aucun sur le montant ; deux ans de réversion selon que l'on suit l'un ou l'autre
+presomptions:
+  reversion_demandee_dans_l_annee: >-
+    la date d'effet, au premier jour du mois qui suit le décès (article 25 du règlement
+    du régime complémentaire), ou qui suit les 62 ans du survivant, que l'article 25 ne
+    dit pas et que le guide de la caisse de juin 2026 dit : la rente temporaire est
+    servie « jusqu'au 1er jour du mois qui suit son 62e anniversaire, âge à partir duquel
+    les droits à la pension de réversion sont établis automatiquement dans les régimes
+    complémentaire et ASV »
+  deces_apres_le_depart: >-
+    la réversion que la page montre sans décès déclaré, pour un décès supposé juste
+    après le départ, ou cette année pour qui est déjà parti
+sources:
+  lu_le: 2026-11-22
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Ouverte le 22 novembre 2026, sur la confrontation au simulateur de réversion
+    d'info-retraite : jusque-là, le modèle ne servait aucune réversion de la CARMF.
+  - >-
+    Les statuts d'avant 2026, pour les décès d'avant le 18 juillet 2026 : le passage de
+    60 à 62 ans, le taux de l'article 15 d'avant 2026, que la caisse publie et que le
+    Journal officiel ne porte pas.
+  lectures:
+  - type: jorf
+    reference: >-
+      index JORF du dépôt, à jour au 16 novembre 2026 : arrêté du 10 juillet 2026,
+      annexe, III, articles 6 à 8, et I, articles 10 à 25 (JORFARTI000054435859) ; arrêtés du 9 août 2010
+      (JORFARTI000022758875), du 28 septembre 2011 (JORFARTI000024612007), du 7 octobre
+      2014 (JORFARTI000029623661), du 1er décembre 2016 (JORFARTI000033538061) et du
+      5 octobre 2020 (JORFARTI000042410139), qui ne touchent pas l'âge ni le taux du
+      conjoint
+    date: 2026-11-22
+  - type: autre
+    reference: >-
+      CARMF, « Guide des droits et formalités au décès du médecin ou du conjoint
+      collaborateur », juin 2026, p. 11 : complémentaire et ASV, âge 62 ans, deux ans de
+      mariage « (sauf dérogations statutaires) », taux 50 % à l'ASV, majoration de 10 %
+      pour trois enfants, cumul « Oui (sans limite) », partage au prorata, « Perte du droit à la
+      pension de réversion » au remariage
+    date: 2026-11-22
+    url: https://www.carmf.fr/doc/documents/guides/guide-demarches-deces-reversion.pdf
+  - type: autre
+    reference: >-
+      simulateur de réversion d'info-retraite, réponses copiées le 22 novembre 2026
+      (fichiers du projet, comparaisons/2026-11-22-simulateurs-des-caisses/, R4 et R15) :
+      veuve d'un médecin née le 15 mars 1960, 1 000 € de base, 800 € de complémentaire
+      et 400 € d'ASV par mois, « 1220 € » dont « retraite complémentaire A.S.V. (CARMF) :
+      200 € » ; née en 1970, l'ASV écartée avec la complémentaire
+    date: 2026-11-22
+code:
+  javascript: >-
+    moteur/js/droit/reversion.js : reversion, mariageDure, partDuSurvivant,
+    admisAilleurs ; moteur/js/regimes.js : Reversions
+  parametres: >-
+    contenu.parametres de chaque version : portee, fiabilite, taux, age_minimum,
+    mariage_minimum_annees, ex_conjoints, perte_au_remariage, majoration_reversible
+  tests: tests/test_reversion.py
+historique:
+- >-
+  2026-11-22 — née de la confrontation au simulateur de réversion d'info-retraite : le
+  modèle ne servait aucune réversion de l'ASV des médecins, motif `non_portee` ; il en
+  sert depuis 50 % à 62 ans pour les décès depuis le 18 juillet 2026, dans les deux
+  moteurs.
+effet: >-
+  Tout conjoint, ou conjoint divorcé non remarié, d'un médecin qui décède depuis le
+  18 juillet 2026. Veuve née le 15 mars 1960, médecin mort le 15 novembre 2026 avec
+  4 800 € par an d'ASV : 2 400 € par an au lieu de rien.

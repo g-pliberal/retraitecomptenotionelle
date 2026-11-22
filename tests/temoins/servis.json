@@ -20634,6 +20634,76 @@
    }
   }
  },
+ "d70969d30138f399": {
+  "cas": {
+   "requete": {
+    "conjoint": "1952",
+    "debut": "30",
+    "deces": "2026-08",
+    "liquidation": "67",
+    "mariage": "1975",
+    "naissance": "1950-06-01",
+    "statut": "medecin_liberal"
+   }
+  },
+  "cle": "seule",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 37965.27913549688,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "1,056.74 points × valeur de service 11.31 € × coefficient de majoration 1.2025",
+      "montant": 14371.890252335696,
+      "regime": "asv_conventionnes",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "177.7750 points × valeur de service 68.3 € × coefficient de majoration 1.2025",
+      "montant": 14600.796958976385,
+      "regime": "carmf_complementaire",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "15,854.36 points × valeur de service 0.5672 €",
+      "montant": 8992.5919241848,
+      "regime": "cnavpl",
+      "type_calcul": "points"
+     }
+    ],
+    "taux_liquidation": 0.0,
+    "trimestres_requis": 0,
+    "trimestres_valides": 147
+   },
+   "annee_liquidation": 2017,
+   "coefficient_euros_constants": 1.2158379841309352,
+   "mois_liquidation": 6,
+   "reversion": {
+    "annee": 2026,
+    "regimes": [
+     {
+      "date_effet": "2026-09-01",
+      "montant": 8419.677707244695,
+      "regime": "asv_conventionnes"
+     },
+     {
+      "date_effet": "2026-09-01",
+      "montant": 9894.338015362562,
+      "regime": "carmf_complementaire"
+     },
+     {
+      "date_effet": "2026-09-01",
+      "montant": 5649.637097700207,
+      "regime": "cnavpl"
+     }
+    ]
+   }
+  }
+ },
  "d7754ff2c76b567e": {
   "cas": {
    "prolonger": false,
@@ -22681,6 +22751,76 @@
    "coefficient_euros_constants": 1.2158379841309352,
    "mois_liquidation": 1,
    "reversion": null
+  }
+ },
+ "eab2ba33ee79a6ef": {
+  "cas": {
+   "requete": {
+    "conjoint": "1952",
+    "debut": "30",
+    "deces": "2026-08",
+    "liquidation": "67",
+    "mariage": "2025",
+    "naissance": "1950-06-01",
+    "statut": "medecin_liberal"
+   }
+  },
+  "cle": "mariee_en_2025",
+  "servi": {
+   "actuel": {
+    "avantages_appliques": [],
+    "departs": [],
+    "liquidation_ouverte": true,
+    "motif_ouverture": "age_legal",
+    "pension_annuelle": 37965.27913549688,
+    "pension_hors_repartition": 0.0,
+    "pensions_par_regime": [
+     {
+      "detail": "1,056.74 points × valeur de service 11.31 € × coefficient de majoration 1.2025",
+      "montant": 14371.890252335696,
+      "regime": "asv_conventionnes",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "177.7750 points × valeur de service 68.3 € × coefficient de majoration 1.2025",
+      "montant": 14600.796958976385,
+      "regime": "carmf_complementaire",
+      "type_calcul": "points"
+     },
+     {
+      "detail": "15,854.36 points × valeur de service 0.5672 €",
+      "montant": 8992.5919241848,
+      "regime": "cnavpl",
+      "type_calcul": "points"
+     }
+    ],
+    "taux_liquidation": 0.0,
+    "trimestres_requis": 0,
+    "trimestres_valides": 147
+   },
+   "annee_liquidation": 2017,
+   "coefficient_euros_constants": 1.2158379841309352,
+   "mois_liquidation": 6,
+   "reversion": {
+    "annee": 2026,
+    "regimes": [
+     {
+      "date_effet": "2026-09-01",
+      "montant": 0.0,
+      "regime": "asv_conventionnes"
+     },
+     {
+      "date_effet": "2026-09-01",
+      "montant": 0.0,
+      "regime": "carmf_complementaire"
+     },
+     {
+      "date_effet": "2026-09-01",
+      "montant": 6276.74681554493,
+      "regime": "cnavpl"
+     }
+    ]
+   }
   }
  },
  "eae05ed7d56d499c": {

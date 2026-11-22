@@ -3404,15 +3404,14 @@ fabriqués.
 
 **Reprise, au 22 novembre 2026.** La file des trente corrections du 13 novembre est
 close (note `130/2026-11-13-corrections-decidees.md`). Le 22 novembre, la réversion de
-la base des libéraux est servie, par renvoi à la fiche du régime général (L. 643-7) ;
-ses versions d'avant 2004 sont lues, non servies. Reste la réversion des
-complémentaires des libéraux, de leurs ASV et PCV, puis des régimes spéciaux et
-agricoles que le simulateur d'info-retraite sert et le modèle non ; celle des agents
-généraux, servie trop bas après une minoration ; les navigants avant cinquante ans ;
-la fiche du décret n° 2026-418 ; les points que la note de la file énumère. La
-pension de base des libéraux reste servie au mois (action 192, étape 3). Par quoi
-commencer : la complémentaire de la CARMF, au texte de ses statuts.
-À lire d'abord : `130/2026-11-22-reversion-de-la-base-des-liberaux.md`.
+la base des libéraux est servie, par renvoi au régime général (L. 643-7), puis celle de
+la complémentaire et de l'ASV de la CARMF, au règlement de 2026, pour les décès depuis
+le 18 juillet 2026 ; avant, non servie, en attendant la décision du propriétaire sur le
+guide de la caisse. Reste la réversion des autres complémentaires des libéraux, de
+leurs ASV et PCV, puis des régimes spéciaux et agricoles ; celle des agents généraux,
+servie trop bas après une minoration ; les navigants avant cinquante ans ; la fiche du
+décret n° 2026-418. Par quoi commencer : la CARPIMKO, au même règlement de 2026.
+À lire d'abord : `130/2026-11-22-reversion-de-la-carmf.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

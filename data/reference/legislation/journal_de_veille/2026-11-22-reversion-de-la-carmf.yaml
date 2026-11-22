@@ -1,0 +1,18 @@
+date: "2026-11-22"
+session: "action 130 : la réversion de la complémentaire et de l'ASV de la CARMF servie"
+consulte: >-
+  L'index JORF récupéré par `dila_index.py --recuperer`, à jour au 16 novembre 2026 :
+  l'arrêté du 10 juillet 2026 portant approbation des règlements de la CARMF
+  (JORFARTI000054435859) ; les arrêtés de modification des statuts de 2005, 2006, 2010,
+  2011, 2014, 2016, 2020 et 2025 ; le décret n° 2026-418, article 3. Le guide de la
+  CARMF sur le décès et la réversion, juin 2026. Le simulateur de réversion
+  d'info-retraite, saisi le 22 novembre 2026.
+trouve: >-
+  Depuis le 18 juillet 2026, 60 % de la complémentaire et 50 % de l'ASV, à 62 ans, deux
+  ans de mariage sauf enfant, perdues au remariage. Le modèle n'en servait rien : corrigé
+  par les fiches `reversion_carmf` et `reversion_asv_medecins`. Veuve d'un médecin
+  (1 000, 800 et 400 € par mois) : 1 220 € par mois, comme le simulateur, au lieu de 540.
+reste: >-
+  Les décès d'avant le 18 juillet 2026, dont les statuts ne sont pas au Journal officiel :
+  question posée au propriétaire, non servis en attendant. L'âge de 60 ans du simulateur,
+  contre 62 au règlement et au guide.

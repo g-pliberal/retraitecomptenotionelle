@@ -1879,6 +1879,167 @@ def test_les_deux_moteurs_servent_la_reversion_de_l_agent_general(saisies):
         0.0, "mariage")
 
 
+# -- la complémentaire et l'ASV des médecins (CARMF) ----------------------------------
+
+@pytest.mark.parametrize("regime, base, taux, attendu", [
+    # L'exemple du simulateur de réversion d'info-retraite (22 novembre 2026) :
+    # 800 € par mois de complémentaire, 480 € reversés ; 400 € d'ASV, 200 €.
+    ("carmf_complementaire", 9600.0, 0.60, 5760.0),
+    ("asv_conventionnes", 4800.0, 0.50, 2400.0),
+])
+def test_la_carmf_reverse_soixante_et_cinquante_pour_cent_a_soixante_deux_ans(
+        simulateur, regime, base, taux, attendu):
+    """Règlements de la CARMF, annexe de l'arrêté du 10 juillet 2026
+    (JORFARTI000054435859) : le conjoint survivant « bénéficie de la retraite
+    complémentaire » s'il est « âgé d'au moins soixante-deux ans » et « marié
+    depuis deux ans au moins », « égale à 60 % de la retraite complémentaire
+    versée au médecin » (articles 10 et 16) ; les prestations complémentaires
+    « sont réversibles à raison de 50 % » aux mêmes âge et mariage (article 6
+    du règlement des prestations complémentaires de vieillesse). La veuve née
+    le 15 mars 1960 d'un médecin mort le 15 novembre 2026 est servie le
+    1er décembre. Jusqu'au 22 novembre 2026, le modèle n'en servait rien, motif
+    « non_portee »."""
+    carriere = _carriere(simulateur, 1955, 67.0, "1960-03-15", "2026-11-15",
+                         mariage="1985-06")
+    ligne, = _lignes(simulateur, carriere, [(regime, base)], 2026)
+    assert ligne == (regime, taux, attendu, "servie", "reglement_de_2026", "2026-12-01")
+
+
+@pytest.mark.parametrize("regime, base, taux, attendu", [
+    ("carmf_complementaire", 9600.0, 0.60, 5760.0),
+    ("asv_conventionnes", 4800.0, 0.50, 2400.0),
+])
+def test_la_reversion_de_la_carmf_attend_les_soixante_deux_ans_du_survivant(
+        simulateur, regime, base, taux, attendu):
+    """La survivante née le 20 janvier 1970, qui a 56 ans au décès, est
+    servie au premier jour du mois qui suit ses soixante-deux ans, le
+    1er février 2032 : le guide de la caisse de juin 2026 sert la rente
+    temporaire « jusqu'au 1er jour du mois qui suit son 62e anniversaire, âge
+    à partir duquel les droits à la pension de réversion sont établis
+    automatiquement dans les régimes complémentaire et ASV » (le simulateur la
+    refuse, « l'âge requis »)."""
+    carriere = _carriere(simulateur, 1960, 64.0, "1970-01-20", "2026-11-15",
+                         mariage="1995-06")
+    ligne, = _lignes(simulateur, carriere, [(regime, base)], 2026)
+    assert ligne == (regime, taux, attendu, "servie", "reglement_de_2026", "2032-02-01")
+
+
+@pytest.mark.parametrize("regime", ["carmf_complementaire", "asv_conventionnes"])
+def test_avant_le_reglement_de_2026_la_reversion_de_la_carmf_n_est_pas_portee(simulateur,
+                                                                             regime):
+    """Les statuts d'avant le règlement de 2026, en vigueur le 18 juillet, ne
+    sont au Journal officiel que par leurs modifications : la réversion d'un
+    décès antérieur n'est pas servie, et sa ligne le dit, en attendant la
+    décision du propriétaire sur le guide de la caisse de juin 2026."""
+    carriere = _carriere(simulateur, 1950, 65.0, "1952", "2026-07-17", mariage="1975-06")
+    assert _lignes(simulateur, carriere, [(regime, 9600.0)], 2026) == [
+        (regime, 0.0, 0.0, "non_portee", None, None)]
+
+
+@pytest.mark.parametrize("mariage, enfants, servie", [
+    ("2024-10", 0, True),
+    ("2025-01", 0, False),
+    ("2025-01", 1, True),
+])
+def test_la_carmf_demande_deux_ans_de_mariage_sauf_enfant(simulateur, mariage, enfants,
+                                                          servie):
+    """Article 10 : « Etre marié depuis deux ans au moins au moment du décès du
+    médecin » ; « La clause de délai de mariage ne joue pas s'il y a au moins
+    un enfant né de l'union avec le médecin. » Mort le 15 novembre 2026 :
+    marié en octobre 2024, tout ; en janvier 2025, rien ; avec un enfant,
+    tout. L'ASV suit (article 6)."""
+    carriere = _carriere(simulateur, 1955, 67.0, "1960-03-15", "2026-11-15",
+                         mariage=mariage, enfants=enfants)
+    lignes = _lignes(simulateur, carriere, [("carmf_complementaire", 9600.0),
+                                            ("asv_conventionnes", 4800.0)], 2026)
+    assert [ligne[2:4] for ligne in lignes] == (
+        [(5760.0, "servie"), (2400.0, "servie")] if servie
+        else [(0.0, "mariage"), (0.0, "mariage")])
+
+
+@pytest.mark.parametrize("union, motif", [("mariage", "remariage"), ("pacs", "servie")])
+def test_la_reversion_de_la_carmf_se_perd_au_remariage(simulateur, union, motif):
+    """Article 13 : « Le remariage du conjoint survivant, ou de l'ex-conjoint
+    divorcé, entraîne la perte du droit à la pension de réversion. » La
+    survivante née en mars 1970, remariée en mai 2027, n'a rien à ses
+    soixante-deux ans ; un pacte civil ne lui retire rien. L'ASV suit
+    (article 7)."""
+    carriere = _carriere(simulateur, 1960, 64.0, "1970-03-15", "2026-11-15",
+                         mariage="1985-06", nouvelle_union=union, union_depuis="2027-05-10")
+    lignes = _lignes(simulateur, carriere, [("carmf_complementaire", 9600.0),
+                                            ("asv_conventionnes", 4800.0)], 2026)
+    assert [ligne[3] for ligne in lignes] == [motif, motif]
+
+
+@pytest.mark.parametrize("remariage, part", [(None, 240 / 360), ("1992-01", 1.0)])
+def test_la_reversion_de_la_carmf_se_partage_avec_l_ex_conjoint_non_remarie(
+        simulateur, remariage, part):
+    """Article 12 : avec « un ou plusieurs précédents conjoints divorcés non
+    remariés », la pension « est partagée entre eux, la part de chacun étant
+    calculée au prorata de la durée respective de chaque mariage ». 240 mois
+    avec la survivante, 120 avec la précédente : les deux tiers ; tout, quand
+    la précédente s'est remariée."""
+    carriere = _carriere(simulateur, 1955, 67.0, "1960-03-15", "2026-11-10",
+                         mariage="2006-11",
+                         ex_conjoints=({"naissance": "1956", "mariage": "1980-06",
+                                        "divorce": "1990-06", "remariage": remariage},))
+    ligne, = reversion(simulateur.scenario_actuel,
+                       [("carmf_complementaire", 9600.0, HAUTE)], carriere, 2026).regimes
+    assert ligne.part == pytest.approx(part)
+    assert ligne.montant == pytest.approx(0.60 * 9600.0 * part)
+
+
+@pytest.mark.parametrize("regime, taux", [("carmf_complementaire", 0.60),
+                                          ("asv_conventionnes", 0.50)])
+def test_la_majoration_pour_trois_enfants_suit_la_reversion_de_la_carmf(simulateur, regime,
+                                                                       taux):
+    """Article 23 : « Le montant total de la pension est majoré de 10 % au
+    profit des allocataires ayant eu au moins trois enfants », au titre des
+    dispositions communes au médecin et au conjoint survivant ; article 8 du
+    règlement des prestations complémentaires, de même. La pension de
+    9 600 euros, majorée de 960 : 60 % × 10 560 = 6 336 euros ; l'ASV de
+    4 800, majorée de 480 : 50 % × 5 280 = 2 640 euros."""
+    base = 9600.0 if regime == "carmf_complementaire" else 4800.0
+    carriere = _carriere(simulateur, 1955, 67.0, "1960-03-15", "2026-11-15",
+                         mariage="1985-06", enfants=3)
+    ligne, = reversion(simulateur.scenario_actuel, [(regime, base, HAUTE)], carriere, 2026,
+                       majorations={regime: base * 0.10}).regimes
+    assert round(ligne.montant, 2) == round(taux * base * 1.10, 2)
+
+
+#: Un médecin né le 1er juin 1950, installé à trente ans, parti à soixante-sept
+#: ans, mort en août 2026 ; son épouse, née en 1952, mariée en 1975.
+MEDECIN = {"statut": "medecin_liberal", "naissance": "1950-06-01", "debut": "30",
+           "liquidation": "67", "deces": "2026-08", "conjoint": "1952", "mariage": "1975"}
+
+
+def test_les_deux_moteurs_servent_la_reversion_du_medecin(saisies):
+    """La veuve de soixante-quatorze ans du médecin reçoit, au premier jour du mois
+    qui suit le décès, 60 % de sa retraite complémentaire et 50 % de son ASV,
+    et rien quand le mariage a moins de deux ans : le portage le sert, et le
+    témoin des servis le fige."""
+    from outils_pont import servi_et_fige
+
+    requetes = {"seule": MEDECIN, "mariee_en_2025": {**MEDECIN, "mariage": "2025"}}
+    servis, refus = servi_et_fige(
+        [{"cle": cle, "requete": requete} for cle, requete in requetes.items()])
+    assert refus == {}, refus
+
+    for regime, taux in (("carmf_complementaire", 0.60), ("asv_conventionnes", 0.50)):
+        def ligne(sortie):
+            return next(l for l in sortie["regimes"] if l["regime"] == regime)
+
+        entieres = {cle: ligne(_sortie(saisies, requete)) for cle, requete in requetes.items()}
+        for cle, entiere in entieres.items():
+            assert ligne(servis[cle]["reversion"])["montant"] == entiere["montant"], cle
+        seule = entieres["seule"]
+        assert (seule["taux"], seule["motif"], seule["date_effet"]) == (
+            taux, "servie", "2026-09-01")
+        assert seule["base"] > 0 and seule["montant"] == pytest.approx(taux * seule["base"])
+        assert (entieres["mariee_en_2025"]["montant"],
+                entieres["mariee_en_2025"]["motif"]) == (0.0, "mariage")
+
+
 # -- l'âge d'avant 1973, le cumul d'avant 2004, les majorations forfaitaires -------------
 
 @pytest.mark.parametrize("conjoint, invalidite, version, date_effet", [
