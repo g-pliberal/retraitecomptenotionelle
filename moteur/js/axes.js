@@ -15,9 +15,11 @@
  * en vigueur à sa date d'effet (`aLaDate`) ; une année d'acquisition lit ses
  * lignes de cotisation (`deLAnnee`).
  *
- * PENDANT LE GEL (étapes 3 et 4 de l'amendement), le paquet porte encore les
- * périodes de la vue ancienne : `axesDesPeriodes` en refait les blocs, au
- * chargement. Elle part quand le paquet portera les blocs eux-mêmes.
+ * Le paquet porte les quatre blocs (étape 4 de l'amendement). PENDANT LE GEL,
+ * le pont et les tests lisent encore des périodes : `periodesDesAxes` en
+ * refait la vue, et `axesDesPeriodes` les blocs des périodes que le taux moyen
+ * de l'Agirc-Arrco redate et que `sansDeclaration` retouche. L'une et l'autre
+ * partent avec la vue ancienne, à l'étape 5.
  */
 
 /** Ce qui décrit le régime. */
@@ -152,6 +154,31 @@ export function axesDesPeriodes(periodes) {
     cotisation: periodes.map((p) => Object.freeze({
       du: p.debut, au: p.fin, ...champsDe(p, "cotisation") })),
   };
+}
+
+/**
+ * La vue des périodes, refaite des blocs que porte le paquet : une période par
+ * ligne de cotisation, dans leur ordre, ses années celles de la ligne, avec la
+ * liquidation, la structure et le servi en vigueur au premier jour de sa date
+ * d'effet. `datesDEffet` donne, au rang de sa ligne, la date d'effet qu'une
+ * période déclarait. C'est la réciproque d'`axesDesPeriodes` ; elle part à
+ * l'étape 5, avec la vue.
+ */
+export function periodesDesAxes(axes, datesDEffet = {}) {
+  return axes.cotisation.map((cotisation, rang) => {
+    const periode = { debut: cotisation.du, fin: cotisation.au };
+    const dateEffet = datesDEffet[String(rang)];
+    if (dateEffet !== undefined) periode.date_effet = dateEffet;
+    const jour = dateEffet !== undefined ? dateEffet[0] : jan(cotisation.du);
+    for (const ligne of [enVigueurAuJour(axes.liquidation, jour),
+      enVigueurAuJour(axes.structure, jour), enVigueurAuJour(axes.servi, jour), cotisation]) {
+      if (ligne === null) continue;
+      for (const [champ, valeur] of Object.entries(ligne)) {
+        if (champ !== "du" && champ !== "au") periode[champ] = valeur;
+      }
+    }
+    return periode;
+  });
 }
 
 /** La ligne au jour en vigueur ce jour-là (AAAA-MM-JJ), ou `null`. */

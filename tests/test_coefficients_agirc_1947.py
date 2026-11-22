@@ -107,14 +107,17 @@ def test_la_pension_d_un_cadre_de_1882_parti_a_67_ans_est_majoree(simulateur):
 
 
 def test_le_paquet_porte_la_table_aux_seules_periodes_de_1947_a_1954():
-    """Le moteur JavaScript lit la table et l'ajournement dans le paquet."""
+    """Le moteur JavaScript lit la table et l'ajournement dans le paquet, sur
+    les lignes de liquidation des pensions prenant effet avant 1955."""
     chemin = RACINE / "scripts" / "construire_donnees.py"
     specification = importlib.util.spec_from_file_location("construire_donnees", chemin)
     module = importlib.util.module_from_spec(specification)
     specification.loader.exec_module(module)
     agirc = next(r for r in module._regimes() if r["code"] == "agirc")
-    for periode in agirc["periodes"]:
-        if periode["debut"] < 1955:
+    assert agirc["liquidation"]
+    for periode in agirc["liquidation"]:
+        assert periode["au"] is None or periode["au"] <= "1955-01-01" or periode["du"] >= "1955-01-01"
+        if periode["du"] < "1955-01-01":
             assert periode["bareme_anticipation"] == "convention_1947"
             assert (periode["surcote_points"], periode["surcote_par_trimestre"],
                     periode["surcote_pas_trimestres"], periode["surcote_age_maximum"]) == (

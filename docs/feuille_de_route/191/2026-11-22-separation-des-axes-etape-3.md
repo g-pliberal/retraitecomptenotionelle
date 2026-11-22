@@ -1,17 +1,5 @@
 # Le moteur lit les paramètres d'un régime par axe : la liquidation à sa date, la cotisation à son année
 
-**Reprise, au 22 novembre 2026.** L'étape 3 est finie : le moteur
-JavaScript ne lit plus les périodes d'un régime pour calculer. Une
-liquidation lit les paramètres en vigueur à sa date (`Regime.aLaDate`), une
-année d'acquisition ses lignes de cotisation (`Regime.deLAnnee`). Aucun
-résultat n'a bougé. Le paquet porte encore des périodes, dont
-`moteur/js/axes.js` refait les blocs au chargement. Reste l'étape 4, en une
-session : le chargeur Python, le paquet, le pont, les tests, les cliquets
-recomptés à valeur égale et la page Avantages. Par quoi commencer : faire
-porter au paquet les quatre blocs au lieu des périodes. Les données restent
-gelées. L'oracle de référence est sous
-`architecture/separation-des-axes/oracle/`, dans les fichiers du projet.
-
 **La demande.** Le propriétaire a choisi, le 22 novembre 2026, de séparer
 complètement les deux axes des fichiers de régime. L'étape 2 a fait des
 quatre blocs la source, et des périodes une vue que le chargeur refait.

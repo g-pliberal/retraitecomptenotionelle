@@ -1,15 +1,15 @@
 /**
- * Les axes du régime, refaits des périodes du paquet pendant le gel (note de
- * décision 0009, amendement du 22 novembre 2026, étape 3) : ce que le moteur
- * lit par axe est ce que les périodes lui donnaient.
+ * Les axes du régime et la vue des périodes pendant le gel (note de décision
+ * 0009, amendement du 22 novembre 2026, étapes 3 et 4) : le paquet porte les
+ * quatre blocs, le moteur en refait la vue des périodes que lisent encore le
+ * pont et les tests, et ce qu'il lit par axe est ce que ces périodes donnent.
  *
  * À toute date d'effet, `aLaDate` rend la liquidation, la structure et le
  * servi de la première période qui liquide ce jour-là, et ce que la
  * liquidation lit de la cotisation ; à toute année, `deLAnnee` rend, tranche
  * par tranche et dans leur ordre, les périodes qui la couvrent, sauf la
  * liquidation des treize années où son 1er janvier n'est pas celui de la
- * période. Ce test part avec les périodes du paquet, quand
- * le paquet portera les blocs eux-mêmes.
+ * période. Ce test part avec la vue des périodes, à l'étape 5.
  *
  *     node --test tests/js/axes.test.js
  */
@@ -20,7 +20,7 @@ import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
-import { famille } from "../../moteur/js/axes.js";
+import { axesDesPeriodes, famille } from "../../moteur/js/axes.js";
 import { CatalogueRegimes } from "../../moteur/js/regimes.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -99,3 +99,24 @@ for (const tauxMoyens of [false, true]) {
     assert.deepEqual([...autres].sort(), [...PREMIER_JANVIER_AUTRE].sort());
   });
 }
+
+/**
+ * Le paquet porte les quatre blocs, et non plus les périodes (étape 4) ; la vue
+ * des périodes que le moteur en refait pour le pont et les tests, jusqu'à son
+ * retrait (étape 5), redonne les mêmes blocs.
+ */
+test("le paquet porte les quatre blocs, et la vue des périodes les redonne", () => {
+  const catalogue = new CatalogueRegimes(paquet);
+  for (const fiche of paquet.regimes) {
+    assert.equal(fiche.periodes, undefined, `${fiche.code} porte encore des périodes`);
+    for (const bloc of ["structure", "liquidation", "cotisation", "servi"]) {
+      assert.ok(Array.isArray(fiche[bloc]), `${fiche.code} sans bloc ${bloc}`);
+    }
+    const regime = catalogue.obtenir(fiche.code);
+    const refaits = axesDesPeriodes(regime.periodes);
+    for (const bloc of ["structure", "liquidation", "cotisation", "servi"]) {
+      assert.deepEqual(refaits[bloc], regime[bloc], `${fiche.code}, ${bloc}`);
+      assert.deepEqual(regime[bloc], fiche[bloc], `${fiche.code}, ${bloc} lu tel quel`);
+    }
+  }
+});

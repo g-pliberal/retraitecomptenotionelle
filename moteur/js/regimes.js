@@ -2,7 +2,9 @@ import { DateMois, MOIS_PAR_AN, premierMoisDepuis } from "./calendrier.js";
 import { anneesRevolues } from "./chronologie.js";
 import { Fiabilite, fiabiliteDepuisTexte } from "./serie.js";
 import { applicable } from "./versions.js";
-import { axesDesPeriodes, enVigueurAuJour, premierJanvier, tranchesDeLAnnee } from "./axes.js";
+import {
+  axesDesPeriodes, enVigueurAuJour, periodesDesAxes, premierJanvier, tranchesDeLAnnee,
+} from "./axes.js";
 
 /**
  * Durée d'assurance requise pour le taux plein, PAR GÉNÉRATION.
@@ -3076,25 +3078,36 @@ export class PeriodeRegime {
 }
 
 export class Regime {
+  /**
+   * Le régime d'une fiche du paquet, qui porte les quatre blocs ; ou, PENDANT
+   * LE GEL, d'une fiche en périodes — celles que le taux moyen redate, que
+   * `sansDeclaration` retouche, que les tests écrivent —, dont `axes.js`
+   * refait les blocs.
+   */
   constructor(fiche) {
-    Object.assign(this, fiche);
+    const { periodes, structure, liquidation, cotisation, servi, dates_d_effet: dates,
+      ...reste } = fiche;
+    Object.assign(this, reste);
+    const vue = periodes ?? periodesDesAxes(
+      { structure, liquidation, cotisation, servi }, dates ?? {});
     // Le code du régime est ESTAMPILLÉ sur chaque période, comme le fait le
     // chargeur Python, plutôt que porté par le paquet : une période circule
     // seule dans le moteur — `ageOuverture(periode, carriere)` ne reçoit
     // qu'elle — et certaines règles ont besoin de savoir de quel régime elle
     // vient. Le répéter dans le paquet coûtait cent trente kilo-octets.
-    this.periodes = fiche.periodes.map(
-      (p) => new PeriodeRegime({ ...p, regime: fiche.code }),
-    );
-    this._poserLesAxes();
+    this.periodes = vue.map((p) => new PeriodeRegime({ ...p, regime: fiche.code }));
+    this._poserLesAxes(periodes === undefined
+      ? { structure, liquidation, cotisation, servi } : null);
   }
 
   /**
-   * Les quatre blocs du régime (`axes.js`), refaits des périodes que le paquet
-   * porte encore, et la mémoire des paramètres qu'on en assemble.
+   * Les quatre blocs du régime (`axes.js`) : ceux du paquet, lignes gelées,
+   * ou, à défaut, ceux que la vue des périodes redonne ; et la mémoire des
+   * paramètres qu'on en assemble.
    */
-  _poserLesAxes() {
-    const axes = axesDesPeriodes(this.periodes);
+  _poserLesAxes(blocs = null) {
+    const axes = blocs === null ? axesDesPeriodes(this.periodes) : Object.fromEntries(
+      Object.entries(blocs).map(([bloc, lignes]) => [bloc, lignes.map((l) => Object.freeze(l))]));
     this.structure = axes.structure;
     this.liquidation = axes.liquidation;
     this.servi = axes.servi;
@@ -3311,7 +3324,8 @@ export class CatalogueRegimes {
     this._regimes = new Map();
     for (const fiche of paquet.regimes) {
       this._regimes.set(fiche.code, new Regime(redates.has(fiche.code)
-        ? { ...fiche, periodes: daterLesTauxMoyens(fiche.code, fiche.periodes, moyens, appels) }
+        ? { ...fiche, periodes: daterLesTauxMoyens(fiche.code, fiche.periodes
+          ?? periodesDesAxes(fiche, fiche.dates_d_effet ?? {}), moyens, appels) }
         : fiche));
     }
     if (this._regimes.size === 0) {

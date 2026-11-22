@@ -58,6 +58,9 @@ COTISATION = frozenset({
     "points_ajustement_par_forfait", "points_ajustement_maximum",
     "points_ajustement_au_plafond", "points_invalidite", "bareme_points",
     "points_abattus_a_l_age", "duree_requise_des_annuites",
+    # Les taux propres du non-salarié, que le chargeur date année par année
+    # depuis `taux_cotisation_annuels.csv` : aucun fichier ne les écrit.
+    "taux_cotisation_non_salarie", "taux_cotisation_deplafonnee_non_salarie",
 })
 
 #: Ce qu'une ligne porte en plus de ses champs.

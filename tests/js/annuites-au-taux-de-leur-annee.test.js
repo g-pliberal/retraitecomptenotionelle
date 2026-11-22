@@ -37,10 +37,11 @@ function relevé(de, a) {
   };
 }
 
-function catalogue(retouche = (p) => p) {
+/** Le catalogue du paquet, chaque ligne du bloc `bloc` de la caisse retouchée. */
+function catalogue(bloc = "cotisation", retouche = (l) => l) {
   const copie = structuredClone(paquet);
   const cese = copie.regimes.find((r) => r.code === "cese_membres");
-  cese.periodes = cese.periodes.map(retouche);
+  cese[bloc] = cese[bloc].map(retouche);
   return { catalogue: new CatalogueRegimes(copie) };
 }
 
@@ -68,14 +69,14 @@ test("vingt ans de mandat pèsent 15 annuités sur 142 trimestres et 5 sur 149",
 test("le poids se lit sur la cotisation de l'année, non sur la liquidation", () => {
   // La durée requise de la liquidation retouchée ne change rien au poids des
   // annuités, qui tient à l'année du mandat.
-  const moteur = catalogue((p) => ({ ...p, duree_requise_trimestres: 999 }));
+  const moteur = catalogue("liquidation", (l) => ({ ...l, duree_requise_trimestres: 999 }));
   const trimestres = annuitesAuTauxDeLeurAnnee(
     moteur, "cese_membres", null, relevé(1990, 2009), ["cese_membres"], 165, 80);
   assert.equal(trimestres, Math.round((60 * 165 / 142 + 20 * 165 / 149) * 100) / 100);
 });
 
 test("une ligne de cotisation sans le poids de ses annuités est refusée", () => {
-  const moteur = catalogue(({ duree_requise_des_annuites: _, ...p }) => p);
+  const moteur = catalogue("cotisation", ({ duree_requise_des_annuites: _, ...l }) => l);
   assert.throws(() => annuitesAuTauxDeLeurAnnee(
     moteur, "cese_membres", null, relevé(1990, 2009), ["cese_membres"], 165, 80),
   /duree_requise_des_annuites/);

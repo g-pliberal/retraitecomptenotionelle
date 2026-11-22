@@ -133,7 +133,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 48
+VERSION = 49
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -755,6 +755,66 @@ def _populations() -> dict:
     }
 
 
+def _blocs_du_paquet(periodes: list[dict]) -> dict:
+    """Les quatre blocs d'un régime, que le paquet porte au moteur à la place
+    des périodes (note 0009, amendement du 22 novembre 2026, étape 4).
+
+    PENDANT LE GEL, le chargeur lit encore les périodes de la vue ancienne :
+    les blocs s'en refont ici, comme le moteur les refaisait au chargement
+    (`axesDesPeriodes`, `moteur/js/axes.js`). La cotisation garde une ligne
+    par période, dans leur ordre, bornée à ses années (``au`` inclus) ; la
+    liquidation, la structure et le servi, des lignes au jour ``[du, au)``,
+    chaque intervalle prenant la première période qui le liquide, deux
+    intervalles contigus aux mêmes champs fondus. ``dates_d_effet`` garde, au
+    rang de sa ligne de cotisation, la date d'effet qu'une période déclarait :
+    le moteur en refait la vue des périodes du pont et des tests, qui part à
+    l'étape 5 avec elle."""
+    from retraite_notionnelle.donnees.axes import famille
+
+    hors = {"debut", "fin", "date_effet", "notes"}
+
+    def effet(p):
+        if p.get("date_effet") is not None:
+            return tuple(p["date_effet"])
+        return (f"{p['debut']:04d}-01-01",
+                None if p["fin"] is None else f"{p['fin'] + 1:04d}-01-01")
+
+    def champs(p, bloc):
+        return {c: v for c, v in p.items() if c not in hors and famille(c) == bloc}
+
+    def au_jour(bloc):
+        bornes = sorted({b for p in periodes for b in effet(p) if b is not None})
+        lignes: list[dict] = []
+        precedente = None
+        for rang, du in enumerate(bornes):
+            au = bornes[rang + 1] if rang + 1 < len(bornes) else None
+            periode = next((p for p in periodes
+                            if effet(p)[0] <= du and (effet(p)[1] is None or du < effet(p)[1])),
+                           None)
+            if periode is None:
+                precedente = None
+                continue
+            siens = champs(periode, bloc)
+            cle = json.dumps(sorted(siens.items()))
+            if precedente is not None and precedente[0] == cle and precedente[1]["au"] == du:
+                precedente[1]["au"] = au
+                continue
+            ligne = {"du": du, "au": au, **siens}
+            lignes.append(ligne)
+            precedente = (cle, ligne)
+        return lignes
+
+    return {
+        "structure": au_jour("structure"),
+        "liquidation": au_jour("liquidation"),
+        "servi": au_jour("servi"),
+        "cotisation": [{"du": p["debut"], "au": p["fin"], **champs(p, "cotisation")}
+                       for p in periodes],
+        "dates_d_effet": {str(rang): list(p["date_effet"]) for rang, p in enumerate(periodes)
+                          if p.get("date_effet") is not None},
+    }
+
+
 def _regimes() -> list[dict]:
     catalogue = CatalogueRegimes(DONNEES)
     fiches = []
@@ -777,7 +837,7 @@ def _regimes() -> list[dict]:
             "population": regime.population,
             "hors_repartition": regime.hors_repartition,
             "duree_reprise_par": list(regime.duree_reprise_par) or None,
-            "periodes": [
+            **_blocs_du_paquet([
                 {
                     "debut": p.debut,
                     "fin": p.fin,
@@ -938,7 +998,7 @@ def _regimes() -> list[dict]:
                     **_assurance_maladie(p),
                 }
                 for p in regime.periodes
-            ],
+            ]),
         })
     return fiches
 

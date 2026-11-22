@@ -274,15 +274,15 @@ def test_les_deux_criteres_d_age_tirent_en_sens_contraire(mesure, simulateur):
 
 
 def _paquet_au_plafond(plafond: int | None) -> bytes:
-    """Le paquet du portage, chaque période qui plafonne la décote plafonnée à
-    ``plafond`` trimestres — ``None`` : sans plafond. La variante s'écrit en
-    données, que le portage lit (note de décision 0006)."""
+    """Le paquet du portage, chaque ligne de liquidation qui plafonne la décote
+    plafonnée à ``plafond`` trimestres — ``None`` : sans plafond. La variante
+    s'écrit en données, que le portage lit (note de décision 0006)."""
     donnees = json.loads((Path(__file__).resolve().parents[1] / "moteur" / "donnees.json")
                          .read_bytes())
     for regime in donnees["regimes"]:
-        for periode in regime["periodes"]:
-            if periode.get("decote_trimestres_maximum") is not None:
-                periode["decote_trimestres_maximum"] = plafond
+        for ligne in regime["liquidation"]:
+            if ligne.get("decote_trimestres_maximum") is not None:
+                ligne["decote_trimestres_maximum"] = plafond
     return json.dumps(donnees).encode("utf-8")
 
 
