@@ -56,9 +56,9 @@ librement.
   gallica.bnf.fr / BnF », mais rendent payante l'utilisation de ses documents
   et de son OCR « dans le cadre d'un projet en Intelligence artificielle »,
   hors recherche académique. Le propriétaire a choisi, le même jour, de ne
-  plus transcrire depuis Gallica. Les deux textes qui en viennent (1936, 1954
-  RATP-SNCF) restent, avec la clause citée dans leur `rediffusion`, et ne
-  prennent de Gallica que l'ark et la vue.
+  plus transcrire depuis Gallica. Les deux textes qui en venaient (1936,
+  1954 RATP-SNCF) ont été repris le 22 novembre 2026 sur les fac-similés de
+  la DILA, et ne doivent plus rien à Gallica.
 - **N'entrent pas** :
   - les circulaires et documents de la base de législation de la Cnav, dont
     les mentions légales (lues le 21 novembre 2026) interdisent toute
@@ -91,6 +91,10 @@ propriétaire (dossier Téléchargements).
 | `JORF_19451230_309.pdf` | décret n° 45-0179 | `d67ed7aa33c0e490cd748d7a487320e4caf8a43d547db77e6d402f0c008e250f` |
 | `JORF_19620331_78.pdf` | arrêté du 27 mars 1962, accord Arrco du 8 décembre 1961 | `22dd8648f9947558f9b908be28160c2a5d787d63af868994c6243cc84bc0ea73` |
 | `JORF_19621225_303.pdf` | loi n° 62-1529 | `73a611dac28852ec889deab93166cdb10ddfeab96b40f671837fdf5fba33d1c8` |
+| `JORF_19360820_194.pdf` | loi du 18 août 1936 | `54633d4e803930664adb2df5ac4b28f26185a4172e15d4da0232075d115d6edb` |
+| `JORF_19480921_224.pdf` | loi n° 48-1450 | `9c2c8534d502f062536390950fa6b190983896a5070c63a42f9b1e340769324a` |
+| `JORF_19540110_7.pdf` | décrets n° 54-23 et 54-24 | `027aa868d76244826f7fdcb8c17dd29557f0f8f9a9dbb754ecc1debd7806c1ee` |
+| `JORF_19700807_182.pdf` | décret n° 70-717 | `15fe4f105914cc52927f3ed6dc1d6f9fc760a70dd05a0c115f446b9b3d4ba2c5` |
 
 Le fac-similé d'un numéro se rouvre depuis la page du texte sur Légifrance
 (`adresse`), bouton « Télécharger le Journal officiel… (version papier
@@ -100,10 +104,9 @@ numérisée) », après le captcha.
 
 - Des longues lois, seuls les articles qu'une version cite sont transcrits ;
   `articles` dit lesquels, et le corps marque les coupures entre crochets.
-- La fin de la loi du 18 août 1936 et son tableau (vue 4 du JO du 20 août
-  1936), et le titre et les premiers visas du décret n° 54-23 (vue 52 du JO du
-  10 janvier 1954), à reprendre sur les fac-similés de Légifrance.
-- Le code des pensions de 1948 (loi n° 48-1450, JO du 21 septembre 1948), qui
-  manque à Gallica, à chercher de même.
-- Les trente-trois autres numéros téléchargés le 22 novembre 2026, lot par lot ;
+- Du code des pensions de 1948 (loi n° 48-1450), les retenues (art. 4 et 5),
+  les articles des militaires, des ayants cause, des cumuls et des pensions
+  concédées sous la loi du 14 avril 1924 (9, 10, 12 à 15, 19 à 23, 28 à 63,
+  66 à 70).
+- Les vingt-neuf autres numéros téléchargés le 22 novembre 2026, lot par lot ;
   leur liste et ce que chacun sert sont dans les fichiers du projet, pas dans le dépôt.
