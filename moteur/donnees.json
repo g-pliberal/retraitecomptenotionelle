@@ -30262,6 +30262,7 @@ null
 "statuts":[
 "salarie_prive_non_cadre",
 "salarie_prive_cadre",
+"assure_volontaire_expatrie",
 "contractuel_public",
 "artisan",
 "commercant",
@@ -32513,7 +32514,7 @@ null
 "fermeture":null,
 "gestionnaires":["cfe"],
 "integre_dans":null,
-"manque":"Le statut `assure_volontaire_expatrie`, que la saisie pose sur une période hors de France par sa catégorie (`etranger<n>_avv`), route le régime général sur le salaire forfaitaire de la classe (R. 742-4 : le plafond, ses trois quarts, sa moitié, son quart avant le trimestre des vingt-deux ans), par trimestre civil entier, depuis juillet 1966 ; les trimestres se décomptent comme ceux de l'assurance obligatoire (R. 742-8, R. 351-9). Non portés : l'assurance volontaire des non-salariés (L. 742-6), du parent chargé de famille, de la tierce personne, le rachat de L. 742-2, la superposition aux périodes que la coordination fait compter, et la retraite complémentaire individuelle que la CFE propose par contrat.",
+"manque":"Le statut `assure_volontaire_expatrie`, que la saisie pose sur une période hors de France par sa catégorie (`etranger1_avv` et ses suivants), route le régime général sur le salaire forfaitaire de la classe (R. 742-4 : le plafond, ses trois quarts, sa moitié, son quart avant le trimestre des vingt-deux ans), par trimestre civil entier, depuis juillet 1966 ; les trimestres se décomptent comme ceux de l'assurance obligatoire (R. 742-8, R. 351-9). Non portés : l'assurance volontaire des non-salariés (L. 742-6), du parent chargé de famille, de la tierce personne, le rachat de L. 742-2, la superposition aux périodes que la coordination fait compter, et la retraite complémentaire individuelle que la CFE propose par contrat.",
 "nom":"Caisse des Français de l'étranger et assurance volontaire vieillesse",
 "population":"Français expatriés, sur adhésion",
 "raison_hors_champ":"",

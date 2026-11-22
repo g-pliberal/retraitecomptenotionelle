@@ -704,7 +704,15 @@ def test_le_balayage_des_temoins_couvre_tous_les_statuts():
     module = importlib.util.module_from_spec(specification)
     specification.loader.exec_module(module)
 
-    manquants = codes - set(module.STATUTS)
+    # Un statut hors du menu des métiers ne se balaie pas en métier, que la
+    # saisie refuse : l'assurance volontaire des expatriés a ses témoins à
+    # elle, sur une période hors de France (action 177, étape 10).
+    affiliations = Simulateur().affiliations
+    hors_menu = {code for code in codes if not affiliations.au_menu(code)}
+    assert hors_menu <= {"assure_volontaire_expatrie"}, hors_menu
+    assert any("etranger1_avv" in cas["requete"] for cas in module._cas()), (
+        "aucun témoin de l'assurance volontaire des expatriés")
+    manquants = codes - hors_menu - set(module.STATUTS)
     assert not manquants, (
         "statuts sans témoin, donc sans comparaison Python/JavaScript : "
         + ", ".join(sorted(manquants))

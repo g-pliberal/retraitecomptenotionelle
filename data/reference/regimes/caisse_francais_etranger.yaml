@@ -18,7 +18,7 @@ inventaire:
     - {reference: "code de la sécurité sociale, L. 742-1 (assurance volontaire vieillesse des salariés hors de France)", id: LEGIARTI000047453412}
   manque: >-
     Le statut `assure_volontaire_expatrie`, que la saisie pose sur une période
-    hors de France par sa catégorie (`etranger<n>_avv`), route le régime
+    hors de France par sa catégorie (`etranger1_avv` et ses suivants), route le régime
     général sur le salaire forfaitaire de la classe (R. 742-4 : le plafond,
     ses trois quarts, sa moitié, son quart avant le trimestre des vingt-deux
     ans), par trimestre civil entier, depuis juillet 1966 ; les trimestres se

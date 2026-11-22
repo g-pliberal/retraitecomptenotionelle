@@ -155,8 +155,8 @@ inventaire:
     integre_dans: null
     gestionnaire: cnav
     couverture: modelise
-    statuts: [salarie_prive_non_cadre, salarie_prive_cadre, contractuel_public, artisan,
-      commercant, conjoint_collaborateur_artisan, conjoint_collaborateur_commercant,
+    statuts: [salarie_prive_non_cadre, salarie_prive_cadre, assure_volontaire_expatrie,
+      contractuel_public, artisan, commercant, conjoint_collaborateur_artisan, conjoint_collaborateur_commercant,
       artiste_auteur, personnel_navigant, agent_sncf, agent_ratp, agent_ieg, mineur,
       clerc_de_notaire, agent_banque_de_france, agent_seita, agent_chemins_fer_secondaires,
       salarie_prive_cadre_entreprise_recente, salarie_prive_non_cadre_entreprise_recente,
@@ -3235,14 +3235,14 @@ inventaire:
         \ des salariés hors de France)", id: LEGIARTI000047453412}
     manque: >-
       Le statut `assure_volontaire_expatrie`, que la saisie pose sur une période hors
-      de France par sa catégorie (`etranger<n>_avv`), route le régime général sur le
-      salaire forfaitaire de la classe (R. 742-4 : le plafond, ses trois quarts, sa
-      moitié, son quart avant le trimestre des vingt-deux ans), par trimestre civil
-      entier, depuis juillet 1966 ; les trimestres se décomptent comme ceux de l'assurance
-      obligatoire (R. 742-8, R. 351-9). Non portés : l'assurance volontaire des non-salariés
-      (L. 742-6), du parent chargé de famille, de la tierce personne, le rachat de L.
-      742-2, la superposition aux périodes que la coordination fait compter, et la retraite
-      complémentaire individuelle que la CFE propose par contrat.
+      de France par sa catégorie (`etranger1_avv` et ses suivants), route le régime
+      général sur le salaire forfaitaire de la classe (R. 742-4 : le plafond, ses trois
+      quarts, sa moitié, son quart avant le trimestre des vingt-deux ans), par trimestre
+      civil entier, depuis juillet 1966 ; les trimestres se décomptent comme ceux de
+      l'assurance obligatoire (R. 742-8, R. 351-9). Non portés : l'assurance volontaire
+      des non-salariés (L. 742-6), du parent chargé de famille, de la tierce personne,
+      le rachat de L. 742-2, la superposition aux périodes que la coordination fait
+      compter, et la retraite complémentaire individuelle que la CFE propose par contrat.
 
   # ---------------------------------------------------------------------
   # Non-salariés agricoles
