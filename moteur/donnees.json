@@ -32699,7 +32699,7 @@ null
 "existe":false,
 "fiabilite":"estimee",
 "majoration":"aucune",
-"pension_minimum":{"alignes_en_1973":["cancava","organic"],"entier_a_l_ex_invalide":true,"regimes":["regime_general","msa_salaries","cancava","organic"],"trimestres_du_minimum_entier":60},
+"pension_minimum":{"alignes_en_1973":["cancava","organic"],"en_dessous":"rien","entier_a_l_ex_invalide":true,"regimes":["regime_general","msa_salaries","cancava","organic"],"seuils_transitoires":[[1947,40],[1949,44],[1951,48],[1953,52],[1955,56]],"trimestres_du_minimum_entier":60},
 "plafond_avpf":0,
 "seuil_trimestres_cotises":null
 },

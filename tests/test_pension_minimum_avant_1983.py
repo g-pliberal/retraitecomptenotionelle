@@ -86,6 +86,34 @@ def test_sous_soixante_trimestres_le_minimum_se_reduit_en_soixantiemes(simulateu
     assert minimum is not None
 
 
+def test_avant_1976_sous_quinze_ans_d_assurance_aucun_minimum(simulateur):
+    """Loi n° 48-1306 du 23 août 1948, nouvel article 119 de l'ordonnance du 19
+    octobre 1945, lu au Journal officiel du 24 août 1948 : seules les pensions
+    des articles 63 et 65 — trente ans, ou de quinze à trente — sont portées
+    au minimum à soixante-cinq ans ; de cinq à quinze ans, l'article 66 ne
+    sert qu'une rente. Les soixantièmes ne naissent qu'au 12 mai 1976. Dix ans
+    et un trimestre en avril 1975 : aucun minimum, et non 41/60 de l'AVTS ;
+    seize ans : le minimum entier."""
+    effet, _, pensions, minimum = _calculer(simulateur, 1910, 65.0, 55.0, 0.5)
+    assert effet == "1975-04-01"
+    assert minimum is None
+    assert "minimum" not in pensions["regime_general"].detail
+    _, _, _, seize = _calculer(simulateur, 1910, 65.0, 49.0, 0.5)
+    assert seize is not None
+
+
+def test_de_1945_a_1954_le_seuil_de_quinze_ans_est_abaisse(simulateur):
+    """Article 118 de l'ordonnance du 19 octobre 1945, rédaction de la loi
+    n° 48-1306 : les quinze ans sont réduits à dix ans avant 1947, onze en 1947
+    et 1948, douze en 1949 et 1950, treize en 1951 et 1952, quatorze en 1953
+    et 1954. Parti en avril 1950 : treize ans ouvrent le minimum, onze non."""
+    effet, _, _, treize = _calculer(simulateur, 1885, 65.0, 52.0, 0.5)
+    assert effet == "1950-04-01"
+    assert treize is not None
+    _, _, _, onze = _calculer(simulateur, 1885, 65.0, 54.0, 0.5)
+    assert onze is None
+
+
 def test_la_pension_abattue_avant_soixante_cinq_ans_n_y_a_pas_droit(simulateur):
     """Cent trente-trois trimestres à soixante ans en 1978 : 25 %, le taux qui
     croît avec l'âge, et aucun minimum, quelle que soit la durée."""

@@ -44,23 +44,30 @@ versions:
 - id: pension_minimum_de_1945
   statut: supposee
   hypothese: >-
-    l'ordonnance n° 45-170 du 2 février 1945 (article 13), le code de 1956 (L. 345) et le
-    décret n° 45-0179 avant sa rédaction du 12 mai 1976 n'ont pas d'article lisible dans
-    les index JORF et LEGI ; les décrets « fixant le montant de divers avantages de
-    vieillesse » de 1981 et 1982 renvoient encore à l'article 13 de l'ordonnance pour la
-    pension minimum de vieillesse, qu'ils fixent au montant de l'AVTS. La règle de 1976
-    est présumée valoir depuis 1945 — le minimum entier à soixante trimestres, en
-    soixantièmes en dessous —, quand, avant le 1er juillet 1974, les petites carrières
-    recevaient une rente que le modèle ne distingue pas de la pension
-    (versement_forfaitaire_unique)
+    l'ordonnance n° 45-2454 du 19 octobre 1945, articles 63 à 66, 118 et 119, dans la
+    rédaction de la loi n° 48-1306 du 23 août 1948, lue au Journal officiel du 24 août
+    1948 sur Gallica le 21 novembre 2026 : « Les pensions prévues aux articles 63 et 65
+    sont, lorsque les titulaires desdites pensions atteignent l'âge de soixante-cinq ans,
+    ou entre soixante et soixante-cinq ans lorsqu'ils sont reconnus inaptes au travail,
+    portées à un taux égal à celui de la pension prévue à l'article 13 de l'ordonnance n°
+    45-170 du 2 février 1945 si elles sont d'un montant inférieur à cette pension »
+    (article 119) ; l'article 65 sert les pensions de quinze à trente ans d'assurance, et
+    l'article 66, de cinq à quinze ans, une rente, que le minimum ne relève pas : le
+    minimum est entier à soixante trimestres, et rien en dessous. Présumé : que le code
+    de 1956 (L. 345) et le décret n° 45-0179 d'avant le 12 mai 1976, non lus, n'y
+    changent rien. L'article 118 abaisse les quinze ans à dix ans pour une entrée en
+    jouissance avant le 1er janvier 1947, onze en 1947 et 1948, douze en 1949 et 1950,
+    treize en 1951 et 1952, quatorze en 1953 et 1954 (seuils_transitoires, par l'année
+    de la date d'effet)
   fiabilite: faible
   bornes:
     liquidation.date_effet: [null, 1976-05-12]
   contenu:
     droit: >-
-      pas de minimum contributif : la pension au taux de soixante-cinq ans est portée à la
-      pension minimum de vieillesse, au montant de l'allocation aux vieux travailleurs
-      salariés, comme de 1976 à 1983 ; présumé
+      pas de minimum contributif : la pension au taux de soixante-cinq ans de quinze ans
+      d'assurance au moins est portée à la pension minimum de vieillesse, au montant de
+      l'allocation aux vieux travailleurs salariés ; en dessous, aucun minimum. De 1945 à
+      1954, le seuil est de dix à quatorze ans (article 118)
     parametres:
       existe: false
       majoration: aucune
@@ -71,6 +78,8 @@ versions:
       duree_tous_regimes: false
       pension_minimum:
         trimestres_du_minimum_entier: 60
+        en_dessous: rien
+        seuils_transitoires: [[1947, 40], [1949, 44], [1951, 48], [1953, 52], [1955, 56]]
         entier_a_l_ex_invalide: true
         regimes: [regime_general, msa_salaries, cancava, organic]
         alignes_en_1973: [cancava, organic]
@@ -832,6 +841,11 @@ historique:
   base, avant comparaison au minimum » (exposé de la Cnav, « Montant de la retraite
   personnelle ») ; la pension la garde tant que la pension des cotisations, majorée, reste
   sous elle (fiche majorations_forfaitaires_1972_1982).
+- >-
+  2026-11-21 — avant le 12 mai 1976, aucun minimum sous quinze ans d'assurance : lu à
+  l'article 119 de l'ordonnance n° 45-2454, dans la rédaction de la loi n° 48-1306 du 23
+  août 1948 ; le seuil abaissé à dix, puis onze à quatorze ans de 1945 à 1954 (article
+  118) ; le modèle portait les petites carrières au minimum en soixantièmes.
 exemples:
 - cnav_2005_30_minimum_majore_monopensionne
 - sp_a15703_minimum_contributif_2026
@@ -842,7 +856,10 @@ effet: >-
   polypensionné au-delà de la durée requise recevait son minimum au prorata de la durée
   de proratisation et non de sa durée tous régimes ; l'AVPF n'entrait pas dans la
   majoration depuis septembre 2023 ; l'artisan ou le commerçant qui a des années d'avant
-  1973 recevait, depuis 1983, son minimum en plus de sa pension en points.
+  1973 recevait, depuis 1983, son minimum en plus de sa pension en points. Avant le 12
+  mai 1976, la pension de moins de quinze ans d'assurance était portée au minimum en
+  soixantièmes, que la loi ne sert pas (né en 1910, 41 trimestres, parti en 1975 :
+  364,61 € au lieu de 301,55 €).
 referents:
   trajectoire:
     equivalent: >-

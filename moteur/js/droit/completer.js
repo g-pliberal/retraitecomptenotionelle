@@ -1107,9 +1107,22 @@ export function plancherDuRegime(eligible, montantBase, montantMajore, majoratio
  * soixantièmes en dessous (décret n° 45-0179, article 70-5). Voir
  * `plancher_d_avant_1983` du Python.
  */
-export function plancherDAvant1983(eligible, montant, regle, exInvalide) {
+export function plancherDAvant1983(eligible, montant, regle, exInvalide, anneeEffet = null) {
   if (exInvalide && regle.entier_a_l_ex_invalide) {
     return montant;
+  }
+  // AVANT LE 12 MAI 1976, rien en dessous du seuil : seules les pensions de
+  // quinze ans d'assurance au moins sont portées au minimum, de cinq à quinze
+  // ans l'assuré n'a qu'une rente (ordonnance du 19 octobre 1945, articles 66
+  // et 119, rédaction de la loi n° 48-1306).
+  // De 1945 à 1954, le seuil est abaissé par périodes (article 118) : la
+  // première [année de fin exclue, trimestres] que la date d'effet précède.
+  if (regle.en_dessous === "rien") {
+    const transitoire = (regle.seuils_transitoires ?? [])
+      .find(([fin]) => anneeEffet !== null && anneeEffet < Number(fin));
+    const seuil = transitoire === undefined
+      ? regle.trimestres_du_minimum_entier : Number(transitoire[1]);
+    return eligible.dureeRegime >= seuil ? montant : 0.0;
   }
   return montant * Math.min(1.0, eligible.dureeRegime / regle.trimestres_du_minimum_entier);
 }
@@ -1135,7 +1148,7 @@ export function complementDesAlignes(pension, eligible, montant, regle, exInvali
     return 0.0;
   }
   const plancher = plancherDAvant1983({ ...eligible, dureeRegime: depuis1973 },
-    montant, regle, exInvalide);
+    montant, { ...regle, en_dessous: undefined }, exInvalide);
   let complement = Math.max(0.0, plancher - pension * depuis1973 / eligible.dureeRegime);
   if (depuis1973 < eligible.dureeRegime || avant1973 > 0.0) {
     complement = Math.min(complement, Math.max(0.0, montant - pension - avant1973));
@@ -1422,7 +1435,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
           (somme, code) => somme + durees.cumulPlafonne("cotises", [code]), 0),
         montantBase, montantMajore, majoration, regle, avpf));
     const plancherNational = (eligible, majoration) => (pensionMinimum !== null
-      ? plancherDAvant1983(eligible, montantBase, pensionMinimum, exInvalide)
+      ? plancherDAvant1983(eligible, montantBase, pensionMinimum, exInvalide, anneeLiquidation)
       : borne(eligible, plancherDuRegime(selonLaRegle(eligible, regle, avpf), montantBase,
         montantMajore, majoration, regle.duree_tous_regimes), majoration));
     // LA PENSION PRORATISÉE ET LA PENSION NATIONALE : quand un accord les
