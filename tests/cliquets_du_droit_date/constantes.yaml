@@ -27,6 +27,8 @@ constantes:
   "moteur/js/carriere.js : COTISATIONS_AU_1ER_JANVIER_DEPUIS": {classe: droit, fiches: []}
   "moteur/js/carriere.js : COTISATIONS_AU_PRORATA_DU_DECES_DEPUIS": {classe: droit, fiches: [taux_plein_et_proratisation]}
   "moteur/js/config.js : PARAMETRES_DEFAUT": {classe: hors, raison: reglage}
+  "moteur/js/cycle-de-vie.js : CONVENTIONS_FISCALES_DES_PENSIONS": {classe: hors, raison: impot}
+  "moteur/js/cycle-de-vie.js : PREMIERE_ANNEE_DE_L_ARTICLE_197_A_LU": {classe: hors, raison: impot}
   "moteur/js/cycle-de-vie.js : PREMIERE_ANNEE_MAJORATION_IMPOSABLE": {classe: hors, raison: impot}
   "moteur/js/droit/acquerir.js : 1994": {classe: droit, fiches: [], lignes: 1}
   "moteur/js/droit/acquerir.js : 2004": {classe: droit, fiches: [], lignes: 1}

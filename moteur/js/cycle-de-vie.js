@@ -110,7 +110,9 @@
  * de l'année précédente —, la pension moins la CSG déductible et la cotisation
  * maladie de l'année où elle est servie (`partsImposablesParAnnee`), et,
  * jusqu'aux revenus de 2012, moins sa majoration pour enfants, qu'aucune de ses
- * parts n'atteint (`partsExonerees`). L'année du départ, il déclare les deux, et
+ * parts n'atteint (`partsExonerees`). Qui réside hors de France ne déclare
+ * pas ce que la convention fiscale de son État réserve à cet État, dont le
+ * modèle ne calcule pas l'impôt : l'impôt est l'impôt français seul. L'année du départ, il déclare les deux, et
  * leur impôt se partage au prorata (`impotsParAnnee`). Le taux de remplacement
  * après impôt au départ (`remplacementApresImpot`) est le taux net de l'OCDE.
  * Les cotisations restent brutes : l'impôt ne les atteint pas.
@@ -217,7 +219,7 @@ import {
 } from "./remuneration.js";
 import {
   chargerBaremesImpotRevenu, croissanceMacro, Declarant, Foyer, impotAuxParametres, INDEXATIONS,
-  taxeComplementaireDesRevenus,
+  ParametresImpot, taxeComplementaireDesRevenus,
 } from "./impot-revenu.js";
 import { agesDeLEstimation } from "./pilote.js";
 import { faireVivre, RevalorisationServie } from "./revalorisation.js";
@@ -380,8 +382,10 @@ export class ImpotDeLAnnee {
  *   { impot })`), l'indexation de son barème, et l'impôt sur le revenu de
  *   chaque année (`impotsParAnnee`), un `ImpotDeLAnnee` par année ;
  * - `exoneree` : sous un impôt aussi, la part du niveau de chaque année que
- *   l'impôt exonère, la majoration pour enfants jusqu'aux revenus de 2012
- *   (`partsExonerees`) ; aucune les autres années ;
+ *   l'impôt exonère, la majoration pour enfants jusqu'aux revenus de 2012,
+ *   et ce que la convention fiscale de l'État où réside le retraité réserve
+ *   à cet État (`partsExonerees`, `CONVENTIONS_FISCALES_DES_PENSIONS`) ;
+ *   aucune les autres années ;
  * - `revenus_apres_impot` et `dernier_revenu_apres_impot` : les revenus nets
  *   que l'impôt laisse, et le dernier revenu net d'une année entière d'impôt
  *   (`dernierRevenuApresImpot`) ; `null` quand un statut n'a pas de fiche de
@@ -1447,10 +1451,12 @@ export function partsExonerees(simulateur, comparaison) {
   }
   const bascule = simulateur.parametres.annee_bascule;
   const parts = { actuel: actuelle };
+  const gardees = new Set();
   for (const scenario of SCENARIOS.slice(1)) {
     parts[scenario] = new Map();
     if (!(simulateur.calculs[scenario].prospectif
       && comparaison.carriereDe(scenario).anneeLiquidation <= bascule)) continue;
+    gardees.add(scenario);
     for (const [annee, part] of actuelle) {
       if (annee <= bascule) parts[scenario].set(annee, part);
     }
@@ -1460,7 +1466,102 @@ export function partsExonerees(simulateur, comparaison) {
       }
     }
   }
+  const convention = CONVENTIONS_FISCALES_DES_PENSIONS[carriere.residence ?? ""];
+  if (convention === undefined) return parts;
+  // Ce que la convention réserve à l'État de résidence s'ajoute à ce que
+  // l'impôt exonère déjà : la part qui reste imposable en France, `1 - part`,
+  // perd la part que la convention lui retire.
+  const publique = partPubliqueDuDepart(simulateur, resultat);
+  for (const scenario of SCENARIOS) {
+    const garde = scenario === "actuel" || gardees.has(scenario);
+    const retiree = partRetireeParLaConvention(convention, garde ? publique : 0.0);
+    if (retiree <= 0.0) continue;
+    for (const annee of anneesDesPensions(comparaison)) {
+      if (annee < convention.depuis) continue;
+      const part = parts[scenario].get(annee) ?? 0.0;
+      parts[scenario].set(annee, 1.0 - (1.0 - part) * (1.0 - retiree));
+    }
+  }
   return parts;
+}
+
+/**
+ * Qui, de la France ou de l'État où réside le retraité, impose sa pension
+ * française, selon la convention fiscale de cet État : `privees` pour les
+ * pensions servies « au titre d'un emploi antérieur » — le régime général,
+ * les complémentaires, les régimes des indépendants et les régimes spéciaux
+ * —, `publiques` pour celles qu'un État ou ses personnes morales de droit
+ * public paient au titre de services rendus, les pensions des fonctionnaires.
+ * `"residence"` : seul l'État de résidence les impose ; `"france"` : la
+ * France les impose encore. `depuis` est la première année de revenus que la
+ * convention lue régit entière ; avant elle, le modèle impose comme en
+ * France. Le modèle ne connaissant pas la nationalité, le retraité est tenu
+ * pour Français : la pension publique d'un ressortissant de l'autre État,
+ * que la plupart des conventions lui réservent, reste imposée en France.
+ * Textes lus le 21 novembre 2026 sur impots.gouv.fr, « Conventions
+ * internationales », versions consolidées par la convention multilatérale.
+ * Un État absent de la table, ou l'Italie, dont la convention laisse à la
+ * France les pensions « payées en application de la législation sur la
+ * sécurité sociale » (article 18, 2), garde l'impôt français. Que
+ * l'Agirc-Arrco en soit, et la France l'impose encore, est un point de
+ * doctrine à vérifier dans le BOFiP (série BOI-INT-CVB-ITA).
+ */
+export const CONVENTIONS_FISCALES_DES_PENSIONS = Object.freeze({
+  // Convention du 10 mars 1964, en vigueur le 17 juin 1965 : articles 12 et 10.
+  BE: Object.freeze({ depuis: 1966, privees: "residence", publiques: "france" }),
+  // Convention du 17 octobre 1999, en vigueur le 1er décembre 2002 : articles 18 et 19.
+  DZ: Object.freeze({ depuis: 2003, privees: "residence", publiques: "france" }),
+  // Convention du 10 octobre 1995, en vigueur le 1er juillet 1997, appliquée
+  // aux revenus de l'année suivante : articles 18 et 19, 2.
+  ES: Object.freeze({ depuis: 1998, privees: "residence", publiques: "france" }),
+  // Convention du 29 mai 1970, en vigueur le 1er décembre 1971 : article 17,
+  // toutes les pensions ; l'article 18 bis en exclut les pensions publiques.
+  MA: Object.freeze({ depuis: 1972, privees: "residence", publiques: "residence" }),
+  // Convention du 14 janvier 1971, en vigueur le 18 novembre 1972, appliquée
+  // aux revenus de l'année suivante : articles 19 et 20, 2.
+  PT: Object.freeze({ depuis: 1973, privees: "residence", publiques: "france" }),
+  // Convention du 28 mai 1973, en vigueur le 1er avril 1975 : article 25. La
+  // pension publique relève de l'article 26, qui la renvoie à l'article 22,
+  // celui des salaires : imposable où les services ont été rendus, en France.
+  TN: Object.freeze({ depuis: 1976, privees: "residence", publiques: "france" }),
+});
+
+/**
+ * Les régimes hors de la famille `fonction_publique` qui servent pourtant une
+ * pension publique : le RAFP, que sert l'Établissement de retraite
+ * additionnelle de la fonction publique, établissement public, au titre de
+ * services rendus à l'État.
+ */
+const REGIMES_PUBLICS = Object.freeze(new Set(["rafp"]));
+
+/**
+ * La part de la répartition du scénario 1 au départ (`auDepart`) que servent
+ * les régimes des fonctionnaires — la famille `fonction_publique` du
+ * catalogue, et `REGIMES_PUBLICS` —, majoration pour enfants mise à part ;
+ * zéro sans pension.
+ */
+export function partPubliqueDuDepart(simulateur, resultat) {
+  let publique = 0.0;
+  let total = 0.0;
+  for (const p of resultat.pensions_par_regime) {
+    if (horsRepartition(simulateur, p.regime)) continue;
+    total += p.montant;
+    if (REGIMES_PUBLICS.has(p.regime)
+      || simulateur.catalogue.obtenir(p.regime).famille === "fonction_publique") {
+      publique += p.montant;
+    }
+  }
+  return total > 0.0 ? publique / total : 0.0;
+}
+
+/**
+ * La part de la pension que `convention` retire à l'impôt français, quand
+ * `publique` en est la part publique. La pension d'un système réformé, que
+ * sert un régime unique de sécurité sociale, est tout entière privée.
+ */
+function partRetireeParLaConvention(convention, publique) {
+  return (convention.privees === "residence" ? 1.0 - publique : 0.0)
+    + (convention.publiques === "residence" ? publique : 0.0);
 }
 
 // -- l'impôt sur le revenu ---------------------------------------------------
@@ -1642,7 +1743,8 @@ export function impotsParAnnee(simulateur, flux, carriere, parts, salaires,
       foyerDeLAnnee(carriere, annee - 1, 0.0, 0.0, precedent, categoriePrecedente,
         artisanPrecedent), annee - 1, taxes) : 0.0;
     const foyer = impotAuxParametres(foyerDeLAnnee(carriere, annee, salaire, pension, benefice,
-      categorie, artisan, payee), parametres);
+      categorie, artisan, payee), annee > carriere.anneeLiquidation
+      ? parametresDuResidentDe(carriere, parametres) : parametres);
     impots.set(annee, new ImpotDeLAnnee({
       annee, salaire, pension, foyer,
       sur_la_pension: (foyer.impot - foyer.taxe_complementaire) * partDeLaPension(foyer),
@@ -1650,6 +1752,35 @@ export function impotsParAnnee(simulateur, flux, carriere, parts, salaires,
     }));
   }
   return impots;
+}
+
+/**
+ * Les revenus perçus depuis le 1er janvier 2018 par qui n'a pas son domicile
+ * fiscal en France s'imposent par « les règles du 1 et du 2 du I de l'article
+ * 197 » (CGI, art. 197 A, a ; loi n° 2018-1317, article 13, II, A) : le
+ * barème et le quotient familial, sans la réduction de 20 % du 3, des revenus
+ * de 2017 à 2019, ni la décote du 4. La retenue à la source
+ * de l'article 182 A « s'impute sur le montant de l'impôt sur le revenu établi
+ * dans les conditions prévues à l'article 197 A » (V) : elle avance l'impôt
+ * sans le changer. Le taux minimum de 197 A n'est pas appliqué : le modèle
+ * tient que le retraité opte pour le taux moyen de ses revenus mondiaux, sa
+ * pension française seule.
+ */
+export const PREMIERE_ANNEE_DE_L_ARTICLE_197_A_LU = 2018;
+
+/**
+ * Les paramètres de l'impôt de l'année que `carriere` déclare résidente hors
+ * de France : ceux de l'année, sans la réduction sous condition de revenus
+ * ni la décote, depuis
+ * `PREMIERE_ANNEE_DE_L_ARTICLE_197_A_LU` ; ceux de l'année sinon.
+ */
+function parametresDuResidentDe(carriere, parametres) {
+  if (!carriere.residence || parametres.annee < PREMIERE_ANNEE_DE_L_ARTICLE_197_A_LU) {
+    return parametres;
+  }
+  return new ParametresImpot({ ...parametres, series: {
+    ...parametres.series, decote: {}, reduction_sous_condition_de_revenus: {},
+  } });
 }
 
 /**
@@ -1784,9 +1915,10 @@ function pensionApresImpotDe(simulateur, comparaison, scenario, flux, convention
   const parametres = baremesDeLImpot(simulateur, flux.indexation_impot,
     Math.max(...flux.niveaux.keys())).get(annee);
   const imposable = brute * (1.0 - (flux.exoneree.get(annee) ?? 0.0)) * parts.get(annee);
+  const carriere = comparaison.carriereDe(scenario);
   const impot = parametres === undefined ? 0.0 : impotAuxParametres(
-    foyerDeLAnnee(comparaison.carriereDe(scenario), annee, 0.0, imposable),
-    parametres).impot;
+    foyerDeLAnnee(carriere, annee, 0.0, imposable),
+    parametresDuResidentDe(carriere, parametres)).impot;
   return brute * convention.retenu(annee) - impot;
 }
 

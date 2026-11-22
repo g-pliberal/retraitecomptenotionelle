@@ -95,6 +95,33 @@ l'en sépare pas. Ne sont lus ni les conventions bilatérales qui rendraient la
 France seule compétente hors de l'Union, ni ce que les autres régimes
 prélèvent sur sa pension.
 
+**L'impôt de qui réside hors de France est l'impôt français seul.** La
+convention fiscale de son État dit qui impose sa pension
+(`CONVENTIONS_FISCALES_DES_PENSIONS`, dans `moteur/js/cycle-de-vie.js`). Le
+modèle en lit six, celles des États où vivent le plus de retraités : en
+Algérie, en Belgique, en Espagne, au Portugal et en Tunisie, seul l'État de
+résidence impose la pension privée, et la France la pension publique — celle
+du fonctionnaire, et le RAFP — ; au Maroc, l'État de résidence impose toutes
+les pensions. Ce que la convention réserve à l'autre État sort de l'impôt
+français, dès la première année entière de revenus qu'elle régit ; l'impôt de
+cet État n'est pas calculé. Ce que la France impose, depuis les revenus de
+2018, l'est comme l'article 197 A du code général des impôts le dit du
+non-résident : au barème et au quotient familial, sans la réduction sous
+condition de revenus ni la décote ; la retenue à la source de l'article 182 A
+s'impute sur cet impôt sans le changer. Restent approchés : la nationalité,
+que le modèle ne connaît pas — le retraité est tenu pour Français, quand la
+plupart des conventions réservent à l'État de résidence la pension publique
+de son ressortissant — ; la part publique, celle du départ, appliquée à chaque
+année et à la majoration pour enfants ; l'Italie, dont la convention laisse à
+la France la pension de sécurité sociale : la France y impose encore
+l'Agirc-Arrco, point de doctrine à vérifier dans le BOFiP ; les années d'avant
+la convention lue, et les autres États, imposés comme en France ; avant 2018,
+le non-résident imposé comme le résident ; le taux minimum de l'article 197 A,
+que le modèle tient écarté par l'option pour le taux moyen des revenus
+mondiaux, sa pension française seule ; l'abattement des personnes âgées, que
+le modèle lui accorde encore ; la CSG déductible, que le non-résident ne paie
+pas.
+
 **Le régime d'une pension suit l'entrée dans le statut.** Un statut fermé aux
 nouveaux entrants — la SNCF, la RATP, la Banque de France, les IEG, la CRPCEN,
 les mines — garde son régime, et la retenue de sa fiche de paie, à qui y est
