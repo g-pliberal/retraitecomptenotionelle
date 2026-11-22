@@ -95,6 +95,19 @@ propriétaire (dossier Téléchargements).
 | `JORF_19480921_224.pdf` | loi n° 48-1450 | `9c2c8534d502f062536390950fa6b190983896a5070c63a42f9b1e340769324a` |
 | `JORF_19540110_7.pdf` | décrets n° 54-23 et 54-24 | `027aa868d76244826f7fdcb8c17dd29557f0f8f9a9dbb754ecc1debd7806c1ee` |
 | `JORF_19700807_182.pdf` | décret n° 70-717 | `15fe4f105914cc52927f3ed6dc1d6f9fc760a70dd05a0c115f446b9b3d4ba2c5` |
+| `JORF_19480118_16.pdf` | loi n° 48-101 | `f399e021689fc7c3e332a22d0e74dbfd9352e043b13bb60ec56ba140d601f4b5` |
+| `JORF_19490402_80.pdf` | décret n° 49-456 | `8c1f1d3d2eaab6e8dc128cb2b7092639a547c75a86651c61e45097308f75a0d8` |
+| `JORF_19620415_91.pdf` | décret n° 62-439 | `cfc77a0f920defa90314565e7c3ae72e54ffee7e9f95730732dd0062da79dfa9` |
+| `JORF_19790511_109.pdf` | décret n° 79-372 | `13db19ade00fadbdbb206d44414bc277627ac08993a2fec216a4727763c89c03` |
+| `JORF_19800611_135.pdf` | décret n° 80-404 | `04666eb1e410db493fc4573d17a9fcc07e68d8e86ec603258a350c680f5eef3e` |
+| `JORF_19800621_144.pdf` | décret n° 80-439 | `36f856afc458696063bccdc4821c9b30b384d91ad954efd960daf4dcc7981a54` |
+| `JORF_19810908_210.pdf` | décret n° 81-828 | `ba63a8138b6dba480899200b6d1d7a4c564a16fb254c81d1481162202eef17b3` |
+| `JORF_19810909_211.pdf` | décret n° 81-831 | `2981dbea597b7821990268f6bd225b23874c93bae7bb9a1f345cc64bf9558248` |
+| `JORF_19820804_179.pdf` | décrets n° 82-674 et 82-678 | `9fbfe5a4efe30ed4c1443057ff106b72d3101cc42ae700a02357a3c3d89d7306` |
+| `JORF_19830710_159.pdf` | décret n° 83-619 | `3c2831232b82727a255bebd3a1a735ee902a8bbd37c48932aadaeeb92dfd4f10` |
+| `JORF_19830717_164.pdf` | décret n° 83-651 | `7155377d2bb1dddc679f4a027c1e8e23a040a3cab840cf5fee74318e6224e08e` |
+| `JORF_19830727_172.pdf` | décret n° 83-677 | `98f87650d6c0dd28219c887762a6eef76c6e915459648c75d759da3a84db5b9f` |
+| `JORF_19890517_113.pdf` | décret n° 89-313 | `898e7a288eb180bb4d9621e6b42ea4d8061a3bd551169d10121883ba42fa636f` |
 
 Le fac-similé d'un numéro se rouvre depuis la page du texte sur Légifrance
 (`adresse`), bouton « Télécharger le Journal officiel… (version papier
@@ -108,5 +121,11 @@ numérisée) », après le captcha.
   les articles des militaires, des ayants cause, des cumuls et des pensions
   concédées sous la loi du 14 avril 1924 (9, 10, 12 à 15, 19 à 23, 28 à 63,
   66 à 70).
-- Les vingt-neuf autres numéros téléchargés le 22 novembre 2026, lot par lot ;
-  leur liste et ce que chacun sert sont dans les fichiers du projet, pas dans le dépôt.
+- Les seize autres numéros téléchargés le 22 novembre 2026 (exploitants
+  agricoles, artisans et commerçants, taux maladie, majorations, fonction
+  publique), lot par lot ; leur liste et ce que chacun sert sont dans les
+  fichiers du projet, pas dans le dépôt. Les treize textes des professions
+  libérales (régime d'allocation de 1948 à 1983, cotisations de la Cipav et
+  de la CAVEC de 1979 à 1989) sont transcrits.
+- Aucun numéro de mai 1946 n'a été téléchargé : l'arrêté du 14 mai 1946
+  reste à prendre sur Légifrance.
