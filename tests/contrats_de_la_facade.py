@@ -272,6 +272,7 @@ class _Regles_liquider:
             durees=None,
             carriere_longue=False,
             code=None,
+            provisoire=False,
     ) -> float: ...
     @staticmethod
     def abattre_au_dela_du_plafond(salaire, plafond, part) -> float: ...

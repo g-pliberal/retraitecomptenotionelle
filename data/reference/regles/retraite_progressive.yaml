@@ -346,10 +346,15 @@ approximations:
   effet: aucun
 - ecart: >-
     les complémentaires qui suivent un régime liquidé servent la même fraction et
-    liquident leur pension complète au départ par leurs propres règles ; le coefficient
-    temporaire et les conditions propres de l'Agirc-Arrco (accord du 17 novembre 2017,
-    article 88) et de l'Ircantec ne sont pas relus ; celles des libéraux attendent
-    2023, comme leur régime de base ; le RAFP attend l'âge légal
+    liquident leur pension complète au départ par leurs propres règles. La pension
+    provisoire de l'Agirc-Arrco prend, « le cas échéant », un « coefficient
+    d'anticipation spécifique temporaire, tenant compte de la durée d'assurance »
+    (accord du 17 novembre 2017, articles 85, 2, et 88), dont le modèle ne porte pas le
+    barème : il lui sert, à tout âge, la table des trimestres manquants de la
+    liquidation ordinaire, et aucun coefficient au taux plein. L'Ircantec ne fait
+    qu'une « liquidation provisoire » (arrêté du 30 décembre 1970, article 16, III),
+    sous les coefficients de son I et de son II : l'âge seul avant l'âge légal. Celles
+    des libéraux attendent 2023, comme leur régime de base ; le RAFP attend l'âge légal
   effet: non mesuré
 - ecart: >-
     avant 2023, les régimes spéciaux ne liquident rien avec la retraite progressive, et

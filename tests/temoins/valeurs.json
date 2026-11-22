@@ -6,13 +6,13 @@
   "valeur": "dab6c9a3438a4ab0"
  },
  "test_avantages.py::par_carriere::1960": {
-  "valeur": "2f3e88c416f73559"
+  "valeur": "084444068cacb1ee"
  },
  "test_cout.py::grille du coût bâtie": {
   "valeur": "8320b50a8e185a69"
  },
  "test_cumul_activites.py::cumuls_tires_au_hasard": {
-  "valeur": "8265d4ccb93c6b1f"
+  "valeur": "f26854e1d77390d4"
  },
  "test_cycle_de_vie_portage.py::contributions agent_chemins_fer_secondaires-1930": {
   "valeur": "713dde7075f725b1"
@@ -162,13 +162,13 @@
   "valeur": "2d78dc8a08d2992a"
  },
  "test_pont.py::coût des avantages": {
-  "valeur": "44efda93143bbc14"
+  "valeur": "83c642914eb9cc33"
  },
  "test_pont.py::dates des départs des facteurs de la dépense": {
   "valeur": "3f02fbdd62b702eb"
  },
  "test_pont.py::décomposition des avantages": {
-  "valeur": "ee91ed9b23b74d55"
+  "valeur": "85fd2f0be7d8c442"
  },
  "test_pont.py::grille d'essai du coût": {
   "valeur": "32a0213d3c00f092"
@@ -228,6 +228,6 @@
   "valeur": "b2ab98b567a93888"
  },
  "test_web.py::carrières tirées au hasard": {
-  "valeur": "995f3e28826fbcb8"
+  "valeur": "18366ab66f5ddb0e"
  }
 }

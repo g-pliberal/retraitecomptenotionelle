@@ -3033,8 +3033,8 @@
       "type_calcul": "annuites"
      }
     ],
-    "taux_liquidation": 0.555,
-    "trimestres_requis": 120,
+    "taux_liquidation": 0.39375,
+    "trimestres_requis": 170,
     "trimestres_valides": 132
    },
    "annee_liquidation": 2019,
@@ -13600,8 +13600,8 @@
       "type_calcul": "annuites"
      }
     ],
-    "taux_liquidation": 0.49950000000000006,
-    "trimestres_requis": 120,
+    "taux_liquidation": 0.39375,
+    "trimestres_requis": 170,
     "trimestres_valides": 112
    },
    "annee_liquidation": 2014,

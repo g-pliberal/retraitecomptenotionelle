@@ -55,7 +55,18 @@ effet: >-
   génération, le parent de trois enfants né de juillet 1951 à 1955 au taux plein du
   régime général dès soixante-cinq ans, que l'Agirc et l'Arrco servent sans abattement
   depuis le 1er juillet 2011, sauf la tranche C d'avant 2016 : 5,26 % à 8,70 % de sa
-  complémentaire (3 novembre 2026 ; fiche taux_plein_a_soixante_cinq_ans).
+  complémentaire (3 novembre 2026 ; fiche taux_plein_a_soixante_cinq_ans). Il prenait
+  la table des trimestres manquants, et l'exonération par la durée, à tout âge ; du
+  1er avril 1983 au 15 mars 2023, les textes ne les ouvrent qu'à l'âge légal,
+  soixante ans jusqu'en juin 2011 (accord du 23 décembre 1996, article 2 ; accord du
+  13 novembre 2003, article 1er ; annexes E et V de 2011, articles 2 et 4 ; accord de
+  2017, articles 84, 3, et 85, 3, jusqu'à l'avenant n° 15), et le moteur aussi depuis
+  le 22 novembre 2026 : né en janvier 1950, parti à cinquante-huit ans en 2008, un
+  départ que la base n'ouvre pas, l'assuré a ses points de l'Arrco à 0,64, et non plus
+  sans coefficient ; et le coût de la carrière longue compte désormais le coefficient
+  de l'âge qu'elle épargne à la complémentaire des départs de ces années (page des
+  avantages). La pension provisoire de la retraite progressive garde la table des
+  trimestres (fiche retraite_progressive).
 lit:
 - >-
   l'âge de l'assuré à la date d'effet de sa pension, et l'âge de la retraite de sa
@@ -65,7 +76,9 @@ lit:
 - >-
   depuis le 1er avril 1983, la durée d'assurance de l'assuré, tous régimes de base, et
   celle du taux plein de sa génération au régime général, qui l'exonère ou lui ouvre la
-  table des trimestres manquants
+  table des trimestres manquants ; jusqu'au 15 mars 2023, à l'âge légal seulement,
+  soixante ans jusqu'en juin 2011, hors la pension provisoire de la retraite
+  progressive
 - >-
   ce qui l'exonère encore : l'inaptitude reconnue, une catégorie au taux plein du régime
   général (L. 351-8), le départ anticipé des assurés handicapés ; à l'Arrco, de juillet
@@ -86,18 +99,21 @@ ecrit:
 dates_qui_decident:
 - liquidation.date_effet
 # Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
-# moteur (droit/liquider.py, `abattement_points`, et son jumeau) y lit ce qui
-# exonère des coefficients : `exoneration_au_taux_plein`, l'abattement levé pour
-# qui a la durée du taux plein, et la table des trimestres manquants avec lui ;
+# moteur (moteur/js/droit/liquider.js, `abattementPoints`) y lit ce qui exonère
+# des coefficients : `exoneration_au_taux_plein`, l'abattement levé pour qui a
+# la durée du taux plein, et la table des trimestres manquants avec lui ;
 # `exonerations`, chacune des `motifs` — l'inaptitude, la fiche d'un taux plein
 # par catégorie de L. 351-8, ou celle du taux plein à soixante-cinq ans du parent de
-# trois enfants (`liquider.parent_au_taux_plein_du_regime_general`) — que les
-# `regimes` nommés servent sans coefficient,
-# tous quand ils ne sont pas nommés. Les tables sont celles des périodes
-# (`bareme_anticipation`). Elles se coupent aux jours où un texte change la
-# règle (tests/test_agirc_arrco_au_droit.py) ; depuis le 1er avril 1983, toutes
-# portent les mêmes paramètres, et ce que le droit fait autrement, les
-# approximations le disent.
+# trois enfants (`parentAuTauxPleinDuRegimeGeneral`) — que les `regimes` nommés
+# servent sans coefficient, tous quand ils ne sont pas nommés ;
+# `trimestres_manquants_des_l_age_legal`, du 1er avril 1983 au 15 mars 2023, la
+# table des trimestres manquants et l'exonération par la durée fermées avant
+# l'âge légal, soixante ans jusqu'en juin 2011, où l'âge seul fixe le
+# coefficient, hors la pension provisoire de la retraite progressive, qui a sa
+# règle (accord de 2017, articles 85, 2, et 88). Les tables sont celles des
+# périodes (`bareme_anticipation`). Elles se coupent aux jours où un texte
+# change la règle (tests/test_agirc_arrco_au_droit.py) ; ce que le droit fait
+# autrement, les approximations le disent.
 versions:
 - id: l_age_seul
   statut: supposee
@@ -198,6 +214,7 @@ versions:
       manquants, ni l'exonération de l'inapte et des catégories de L. 351-8, que le
       modèle sert comme ensuite
     parametres:
+      trimestres_manquants_des_l_age_legal: true
       exoneration_au_taux_plein: true
       exonerations:
       - motifs: [inaptitude, taux_plein_anciens_deportes_internes,
@@ -238,6 +255,7 @@ versions:
       que les commissions paritaires y assimilent, les mineurs et les anciens combattants
       d'Afrique du Nord ; les autres prennent le coefficient de l'âge
     parametres:
+      trimestres_manquants_des_l_age_legal: true
       exoneration_au_taux_plein: true
       exonerations:
       - motifs: [inaptitude, taux_plein_anciens_deportes_internes,
@@ -312,6 +330,7 @@ versions:
       plus tôt, après douze ans, pour finir sa carrière dans une activité non salariée
       hors de la CANCAVA
     parametres:
+      trimestres_manquants_des_l_age_legal: true
       exoneration_au_taux_plein: true
       exonerations:
       - motifs: [inaptitude, taux_plein_anciens_deportes_internes,
@@ -393,6 +412,7 @@ versions:
       l'Arrco pour certaines catégories. Les accords de 2008, 2009 et 2010 prorogent ces
       conditions jusqu'au 30 juin 2011
     parametres:
+      trimestres_manquants_des_l_age_legal: true
       exoneration_au_taux_plein: true
       exonerations:
       - motifs: [inaptitude, taux_plein_anciens_deportes_internes,
@@ -519,6 +539,7 @@ versions:
       ses trimestres manquants quand il vaut mieux que celui de l'âge. Les points de la
       tranche C prennent le coefficient de l'âge, même au taux plein
     parametres:
+      trimestres_manquants_des_l_age_legal: true
       exoneration_au_taux_plein: true
       exonerations:
       - motifs: [inaptitude, taux_plein_anciens_deportes_internes,
@@ -567,6 +588,7 @@ versions:
       2016 exonérés comme ceux des tranches A et B ; ceux d'avant gardent le coefficient
       de l'âge
     parametres:
+      trimestres_manquants_des_l_age_legal: true
       exoneration_au_taux_plein: true
       exonerations:
       - motifs: [inaptitude, taux_plein_anciens_deportes_internes,
@@ -653,6 +675,7 @@ versions:
       s'il vaut mieux. Les points de la tranche C d'avant 2016 prennent le coefficient de
       l'âge, ou leur report sans abattement
     parametres:
+      trimestres_manquants_des_l_age_legal: true
       exoneration_au_taux_plein: true
       exonerations:
       - motifs: [inaptitude, taux_plein_anciens_deportes_internes,
@@ -708,6 +731,7 @@ versions:
       l'applique à tous les dossiers en cours d'instruction le 5 avril 2023, quelle que
       soit leur date d'effet
     parametres:
+      trimestres_manquants_des_l_age_legal: false
       exoneration_au_taux_plein: true
       exonerations:
       - motifs: [inaptitude, taux_plein_anciens_deportes_internes,
@@ -785,19 +809,6 @@ approximations:
     non mesuré : le modèle sert ces seuls points sous le coefficient de l'âge, 22 % de
     moins à 62 ans ; le report les sert entiers, plus tard, ce qui vaut mieux pour qui
     vit assez longtemps
-- version: [accord_du_18_mars_2011, accord_du_30_octobre_2015, regime_unifie]
-  textes: >-
-    annexes E et V de 2011, article 4 ; accord du 17 novembre 2017, article 85, 3 ;
-    avenant n° 15 du 16 mars 2023
-  ecart: >-
-    Le modèle prend la table des trimestres manquants à tout âge. Jusqu'au 16 mars 2023,
-    les textes ne l'ouvrent qu'entre l'âge légal de L. 161-17-2 et celui du 1° de L.
-    351-8 : avant l'âge légal, l'assuré n'avait que la table des âges.
-  effet: >-
-    non mesuré, sans doute nul : le modèle ne liquide la complémentaire qu'avec la
-    pension de base, et celle-ci avant l'âge légal qu'au taux plein (carrière longue,
-    handicap, incapacité permanente) ; dans le droit, il touchait qui partait avant
-    l'âge légal sous une décote, depuis 2015 par le compte de prévention
 - version: [regime_unique_arrco_1999, accord_du_13_novembre_2003, accord_du_18_mars_2011,
     accord_du_30_octobre_2015, regime_unifie, avenant_15]
   textes: >-
@@ -1432,7 +1443,11 @@ code:
     qui lisent `categories.age_du_parent_de_trois_enfants`), hors l'Arrco des cultes,
     que les autres motifs exonèrent sur ce que le moteur lit au régime des salariés :
     une asymétrie, déclarée à la fiche taux_plein_a_soixante_cinq_ans ;
-    tests/test_taux_plein_a_soixante_cinq_ans.py.
+    tests/test_taux_plein_a_soixante_cinq_ans.py. Du 1er avril 1983 au 15 mars 2023
+    (`trimestres_manquants_des_l_age_legal`), le coefficient est celui de l'âge seul
+    avant l'âge légal, hors carrière longue et hors la pension provisoire de la
+    retraite progressive (`provisoire`) ; tests/test_simulateur.py,
+    tests/test_retraite_progressive.py.
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints,
     coefficientPourAge, coefficientAnticipation, PALIERS_ANTICIPATION,
@@ -1441,7 +1456,8 @@ code:
     moteur/js/droit/categories.js : ageDuParentDeTroisEnfants ; moteur/js/droit/acquerir.js : acquerir,
     Droits ; moteur/js/droit/ouvrir.js : ageTauxPlein
   parametres: >-
-    contenu.parametres de chaque version : exoneration_au_taux_plein, exonerations ;
+    contenu.parametres de chaque version : exoneration_au_taux_plein, exonerations,
+    trimestres_manquants_des_l_age_legal ;
     regimes/agirc.yaml, regimes/agirc_arrco.yaml,
     regimes/agirc_entreprises_nouvelles.yaml, regimes/arrco.yaml,
     regimes/arrco_cultes.yaml, regimes/arrco_tranche_2.yaml,
@@ -1450,4 +1466,5 @@ code:
     duree_requise_par_generation
   tests: [tests/test_simulateur.py, tests/test_exonerations_agirc_arrco.py,
     tests/test_agirc_arrco_au_droit.py, tests/test_taux_plein_a_soixante_cinq_ans.py,
-    tests/test_oracle.py, tests/js/moteur.test.js, tests/temoins/simulations.json]
+    tests/test_retraite_progressive.py, tests/test_oracle.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

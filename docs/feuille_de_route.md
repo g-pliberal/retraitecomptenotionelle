@@ -8466,22 +8466,21 @@ Il a validé la maquette des caisses et choisi de l'intégrer au site.
 
 ### 194. La carte de justesse : l'état de chaque partie du simulateur calculé depuis ses preuves, puis prouvé régime par régime — `en cours`
 
-**Reprise, au 21 novembre 2026.** Le tableau de bord (`docs/etat.md`, section
+**Reprise, au 22 novembre 2026.** Le tableau de bord (`docs/etat.md`, section
 1) porte la carte de justesse, que le script calcule depuis les preuves.
-Vingt-deux parties sont prouvées, par des grilles posées depuis le seul texte
-par des sessions qui n'ont pas lu le code. Les deux filets sont faits : 3 052
-anomalies à expliquer, 192 parties qu'aucun témoin ne garde. Trois pistes du
-balayage sont expliquées. Des écarts au droit sont corrigés : la durée des
-régimes spéciaux et des fonctionnaires se compte au jour, comme leurs textes ;
-une pension de points servie ne baisse plus ; l'Ircantec se sert au départ ;
-les points du RAFP s'arrondissent comme la caisse ; le salaire net retire la
-mutuelle. Un contrôle par Z3 cherche sur GitHub, sans bloquer, les
-propriétés fausses des fiches. Le propriétaire décide de la suite de la
-carte. Lire `194/2026-11-21-etape-b-les-filets.md`,
+Vingt-deux parties sont prouvées depuis le seul texte. Les deux filets sont
+faits : 3 052 anomalies à expliquer, 192 parties qu'aucun témoin ne garde. Des
+écarts au droit sont corrigés : la durée des régimes spéciaux se compte au
+jour ; une pension de points servie ne baisse plus ; l'Ircantec se sert au
+départ ; les points du RAFP s'arrondissent ; le salaire net retire la
+mutuelle ; l'Agirc-Arrco liquidée avant l'âge légal, d'avril 1983 à mars
+2023, ne prend que la table des âges. Un contrôle par Z3 cherche sur GitHub les
+propriétés fausses des fiches. Le propriétaire décide si l'Agirc-Arrco se
+présume demandée avant le régime général, et de la suite de la carte. Lire
+`194/2026-11-21-etape-b-les-filets.md`,
 `194/2026-11-21-pistes-du-balayage.md`, `194/2026-11-21-controle-z3.md`,
-`194/2026-11-21-durees-des-regimes-speciaux-au-jour.md`,
-`194/2026-11-21-pension-de-points-servie.md` et
-`194/2026-11-21-ircantec-sans-la-base.md`.
+`194/2026-11-21-ircantec-sans-la-base.md` et
+`194/2026-11-22-agirc-arrco-avant-l-age-legal.md`.
 
 **D'où elle vient.** Le 20 novembre 2026, le propriétaire : « j'ai
 l'impression qu'on tourne en rond en découvrant des problèmes par hasard »,

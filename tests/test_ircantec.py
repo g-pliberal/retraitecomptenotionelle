@@ -675,3 +675,23 @@ def test_l_ircantec_se_demande_sans_la_base_dix_ans_avant_l_age_normal():
     requetes = [{**REQUETE, **retouche} for retouche, _ in SANS_LA_BASE]
     portage = [_departs_servis(sortie) for sortie in lancer("comparer-liquidation.mjs", requetes)]
     assert portage == [attendu for _, attendu in SANS_LA_BASE]
+
+
+def test_le_resume_du_depart_est_celui_de_la_base():
+    """Partie seule au départ déclaré, l'Ircantec n'ouvre pas le droit : le
+    résumé du départ — l'âge et le motif de l'ouverture, que la page oppose au
+    départ déclaré — est celui du départ du régime général, qui la suit, et
+    non celui d'une pension qui n'a ni âge ni durée à elle."""
+    import shutil
+
+    from outils_sorties import lancer
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    requetes = [{**REQUETE, **retouche} for retouche, attendu in SANS_LA_BASE if len(attendu) > 1]
+    resumes = [sortie["scenarios"]["actuel"] for sortie in lancer("simuler.mjs", requetes)]
+    bases = [sortie["liquidations"][-1]["ouverture"]
+             for sortie in lancer("comparer-liquidation.mjs", requetes)]
+    assert all(base["age"] is not None for base in bases)
+    assert [(resume["age_ouverture_opposable"], resume["motif_ouverture"]) for resume in resumes] \
+        == [(base["age"], base["motif"]) for base in bases]

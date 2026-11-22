@@ -14,6 +14,7 @@ se lit à temps plein.
 from __future__ import annotations
 
 import json
+import re
 
 import pytest
 
@@ -468,6 +469,49 @@ def test_l_echeancier_inscrit_la_fraction_puis_la_pension_complete(simulateur):
     assert servie["montant"]["annuel"] == pytest.approx(0.4 * entiere["montant"]["annuel"])
     assert entrees["pension_regime_general"].remplace == "progressive_pension_regime_general"
     assert entrees["depart_assure"].contenu.sorte == "pension_definitive"
+
+
+#: La pension provisoire de l'Agirc-Arrco que la retraite progressive sert avec
+#: celle du régime général, de l'âge légal diminué de deux ans à l'âge du 1° de
+#: L. 351-8, a sa règle à elle : « une partie de leur allocation affectée, le
+#: cas échéant, d'un coefficient d'anticipation spécifique temporaire, tenant
+#: compte de la durée d'assurance » (accord du 17 novembre 2017, articles 85,
+#: 2, et 88 ; annexes E et V, article 3, de 2011 à 2018). La borne d'âge de la
+#: liquidation ordinaire (article 85, 3) ne la touche pas : au taux plein,
+#: aucun coefficient. Sous ce taux, la caisse sert le barème temporaire de sa
+#: circulaire, que le modèle ne porte pas : la table des trimestres manquants
+#: en tient lieu (fiche retraite_progressive, approximations). La salariée, née
+#: le 15 janvier et entrée à vingt ans, demande sa retraite progressive à
+#: soixante ans et trois mois : l'année de sa naissance, ses enfants, la date
+#: d'effet de sa pension provisoire, et le coefficient de ses points.
+PROVISOIRES_DE_L_AGIRC_ARRCO = [
+    # Deux enfants : 166 trimestres sur 166 en mai 2016, le taux plein du
+    # régime général, et ses points entiers.
+    (1956, 2, "2016-05-01", 1.0),
+    # De même, 167 sur 167 en mai 2020.
+    (1960, 2, "2020-05-01", 1.0),
+    # Sans enfant, 161 sur 167 : six trimestres manquants, 0,94 par la table.
+    (1960, 0, "2020-05-01", 0.94),
+]
+
+
+@pytest.mark.parametrize("naissance, enfants, date, attendu", PROVISOIRES_DE_L_AGIRC_ARRCO)
+def test_la_pension_provisoire_de_l_agirc_arrco_a_sa_regle(
+        simulateur, naissance, enfants, date, attendu):
+    """Servie avec la retraite progressive avant l'âge légal, la pension
+    provisoire de l'Agirc-Arrco ne prend pas le coefficient de l'âge seul de
+    la liquidation ordinaire : au taux plein, ses points sont entiers."""
+    from retraite_notionnelle.noyau import carte
+
+    de_la_fiche = set(carte.fiches()["coefficients_anticipation_agirc_arrco"]["regimes"])
+    carriere = _salariee(simulateur, age=60.25, naissance=naissance, nombre_enfants=enfants)
+    entrees = {e.id: e for e in simulateur.echeancier(carriere).journal}
+    provisoire = entrees["liquidation_retraite_progressive_assure"].contenu.donnees()
+    lire = re.compile(r"coefficient d'anticipation ([0-9.]+)")
+    servis = {(c["debut"], float(lu.group(1)) if (lu := lire.search(c["detail"])) else 1.0)
+              for c in provisoire["composantes"]
+              if c["regime"] in de_la_fiche and c["montant"]["annuel"] > 0}
+    assert servis == {(date, attendu)}
 
 
 # -- la saisie ----------------------------------------------------------------------

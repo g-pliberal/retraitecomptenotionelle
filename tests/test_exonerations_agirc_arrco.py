@@ -77,6 +77,14 @@ def test_les_versions_datent_le_protocole_et_la_structure_financiere(simulateur)
     assert asf["exoneration_au_taux_plein"] is True
     assert asf["exonerations"] == [{"motifs": ["inaptitude", *categories.FICHES_DES_CATEGORIES],
                                     "regimes": None}]
+    # La table des trimestres manquants et l'exonération par la durée, à l'âge
+    # légal seulement : aux participants « âgés de 60 à 65 ans » (accord du
+    # 23 décembre 1996, article 2 ; accord du 13 novembre 2003, article 1er),
+    # puis d'un âge compris entre celui de L. 161-17-2 et celui du 1° de
+    # L. 351-8 (annexes E et V de 2011, articles 2 et 4 ; accord de 2017,
+    # article 85, 3, et article 84, 3, qui suit la pension de base obtenue au
+    # taux plein), jusqu'à l'avenant n° 15 du 16 mars 2023.
+    assert asf["trimestres_manquants_des_l_age_legal"] is True
     assert regle(FICHE, "2011-06-01") == asf
     # Dès le 1er juillet 2011, le parent de trois enfants au taux plein du
     # régime général à soixante-cinq ans (accord du 18 mars 2011, article 1er ;
@@ -94,7 +102,8 @@ def test_les_versions_datent_le_protocole_et_la_structure_financiere(simulateur)
     # (L. 351-8, 4° ter), que le régime général sert aux pensions prenant
     # effet à compter du 1er septembre 2023 : la complémentaire le suit
     # (article 84, 3, de l'accord de 2017).
-    assert regle(FICHE, "2026-10-01") == {**parents, "exonerations": [
+    assert regle(FICHE, "2026-10-01") == {**parents, "trimestres_manquants_des_l_age_legal": False,
+                                          "exonerations": [
         {"motifs": ["inaptitude", *categories.FICHES_DES_CATEGORIES,
                     categories.FICHE_DE_LA_CARRIERE_LONGUE], "regimes": None},
         parents["exonerations"][1]]}

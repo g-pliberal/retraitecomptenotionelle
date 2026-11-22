@@ -487,11 +487,22 @@ def test_la_coupe_ne_change_pas_ce_que_le_moteur_lit():
     financière portait : la coupe est une lecture, aucun chiffre du modèle ne
     bouge ; dès le 1er juillet 2011, plus le parent de trois enfants au taux
     plein du régime général à soixante-cinq ans (accord du 18 mars 2011,
-    article 1er ; tests/test_taux_plein_a_soixante_cinq_ans.py)."""
+    article 1er ; tests/test_taux_plein_a_soixante_cinq_ans.py). Du 1er avril
+    1983 au 15 mars 2023, la table des trimestres manquants et l'exonération
+    par la durée ne valent qu'à l'âge légal : pour les participants « âgés de
+    60 à 65 ans » jusqu'au 30 juin 2011 (arrêté du 21 mars 1983, son résumé ;
+    accord du 23 décembre 1996, article 2 ; accord du 13 novembre 2003,
+    article 1er), puis d'un âge « compris entre celui fixé par l'article L.
+    161-17-2 [...] et celui visé au 1° de l'article L. 351-8 » (annexes E et V
+    de 2011, articles 2 et 4 ; accord de 2017, article 85, 3, et article 84,
+    3, avec la pension de base obtenue au taux plein) ; depuis l'avenant
+    n° 15, la table à tout âge (tests/test_simulateur.py)."""
     versions = [v for v in _versions(ANTICIPATION)
                 if (_bornes(v, "liquidation.date_effet")[0] or date.min) >= date(1983, 4, 1)]
     assert len(versions) == len(COUPES_DE_L_ANTICIPATION) - 1
-    asf = _version(ANTICIPATION, "structure_financiere")["contenu"]["parametres"]
+    asf = {cle: valeur for cle, valeur
+           in _version(ANTICIPATION, "structure_financiere")["contenu"]["parametres"].items()
+           if cle != "trimestres_manquants_des_l_age_legal"}
     parents = {**asf, "exonerations": [
         *asf["exonerations"],
         {"motifs": ["taux_plein_a_soixante_cinq_ans"],
@@ -505,12 +516,17 @@ def test_la_coupe_ne_change_pas_ce_que_le_moteur_lit():
         {**parents["exonerations"][0],
          "motifs": [*parents["exonerations"][0]["motifs"], "taux_plein_carriere_longue"]},
         *parents["exonerations"][1:]]}
+    assert not any("trimestres_manquants_des_l_age_legal" in v["contenu"]["parametres"]
+                   for v in _versions(ANTICIPATION) if v not in versions)
     lus = {}
     for v in versions:
         debut = _bornes(v, "liquidation.date_effet")[0]
         quand = ("asf" if debut < date(2011, 7, 1)
                  else "parents" if debut < date(2023, 3, 16) else "en_vigueur")
-        lus.setdefault(quand, set()).add(json.dumps(v["contenu"]["parametres"], sort_keys=True))
+        parametres = dict(v["contenu"]["parametres"])
+        assert parametres.pop("trimestres_manquants_des_l_age_legal", None) == (
+            debut < date(2023, 3, 16)), v["id"]
+        lus.setdefault(quand, set()).add(json.dumps(parametres, sort_keys=True))
     assert lus == {"asf": {json.dumps(asf, sort_keys=True)},
                    "parents": {json.dumps(parents, sort_keys=True)},
                    "en_vigueur": {json.dumps(en_vigueur, sort_keys=True)}}

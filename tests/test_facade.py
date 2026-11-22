@@ -700,8 +700,8 @@ def test_une_regle_du_droit_se_demande_par_son_module_et_son_nom(simulateur):
     2014, article 2), l'ouverture à soixante-deux ans (L. 161-17-2, loi du
     9 novembre 2010) et le taux plein à soixante-sept (L. 351-8). À
     l'Agirc-Arrco, partir à cinquante-sept ans sans la durée abat la pension au
-    coefficient 0,43 de l'accord, et rien au taux plein. Ce que la règle rend
-    revient sous le type que son jumeau annonce."""
+    coefficient 0,43 de l'accord, et rien au taux plein de la carrière longue. Ce
+    que la règle rend revient sous le type que son jumeau annonce."""
     moteur = simulateur.scenario_actuel
     carriere = simulateur.carriere_simple(**NE_EN_1955)
     periode = simulateur.catalogue["regime_general"].periode(2017)
@@ -716,7 +716,8 @@ def test_une_regle_du_droit_se_demande_par_son_module_et_son_nom(simulateur):
     assert liquider.abattement_points(
         moteur, complementaire, parti_tot, 100, 172, 57.0, 2022) == pytest.approx(0.43)
     assert liquider.abattement_points(
-        moteur, complementaire, parti_tot, 172, 172, 57.0, 2022) == 1.0
+        moteur, complementaire, parti_tot, 172, 172, 57.0, 2022, 0, False, None, None,
+        True) == 1.0
 
 
 def test_une_regle_recoit_la_carriere_nue_comme_celle_des_regles(simulateur):

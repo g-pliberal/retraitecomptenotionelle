@@ -198,10 +198,12 @@ export class Pensions {
  * que le calcul neutralise : la décote et la surcote pour valoriser des droits
  * acquis, l'AVPF pour en mesurer l'apport. `regimes` sont ceux que la demande
  * vise, quand ils ne liquident pas tous au même départ (`departs.js`) ;
- * `null` : tous. Voir le Python.
+ * `null` : tous. `provisoire` : la liquidation provisoire de la retraite
+ * progressive (`progressive.liquider`), dont l'Agirc-Arrco a sa règle
+ * (`abattementPoints`). Voir le Python.
  */
 export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
-  regimes = null, nationale = false) {
+  regimes = null, nationale = false, provisoire = false) {
   const carriere = releve.carriere;
   const { durees, droits } = releve;
   const anneeLiquidation = carriere.anneeLiquidation;
@@ -492,7 +494,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         abattement = abattementPoints(
           moteur, periode, carriere, trimestres, requisReference, ageLiquidation,
           anneeLiquidation, trimestresParRegime.get(code) ?? 0, parLeHandicap,
-          parCategorie, durees, parLaCarriereLongue, code,
+          parCategorie, durees, parLaCarriereLongue, code, provisoire,
         );
         // LA TRANCHE C D'AVANT 2016 GARDE LE COEFFICIENT POUR ÂGE, même au
         // taux plein : voir le Python. Le coefficient affiché est celui de la
@@ -3650,7 +3652,7 @@ export function coefficientConvention1947(ageLiquidation) {
 
 export function abattementPoints(moteur, periode, carriere, trimestres, requis, ageLiquidation,
   anneeLiquidation, trimestresRegime = 0, handicap = false, categorie = null, durees = null,
-  carriereLongue = false, code = null) {
+  carriereLongue = false, code = null, provisoire = false) {
   // L'Ircantec a le même barème que l'Agirc-Arrco, et son texte l'écrit :
   // article 16 de l'arrêté du 30 décembre 1970, mêmes marches et mêmes deux
   // lectures. Voir le docstring du modèle Python. `trimestresRegime` est la
@@ -3663,7 +3665,8 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
   // `carriereLongue` : la liquidation ouverte par la carrière longue, que la
   // CAVP minore de sa première pente seule (`abattementRegimeDeBase`).
   // `code` : le régime liquidé, dont la CARCDSF ne majore que les trimestres
-  // civils d'exercice (`trimestresCivilsDExercice`).
+  // civils d'exercice (`trimestresCivilsDExercice`). `provisoire` : la
+  // pension provisoire de la retraite progressive (`liquiderChaqueRegime`).
   if (carriere.au_deces) {
     // La pension que l'assuré eût obtenue à son décès : la réversion d'une
     // complémentaire porte sur les points acquis, sans coefficient. Voir
@@ -3697,8 +3700,27 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
     // d'un âge « compris entre l'âge prévu à l'article L. 161-17-2 [...] et
     // l'âge prévu au 1° de l'article L. 351-8 » (article 16, II), et le taux
     // plein n'exonère que « dès lors qu'elles ont atteint l'âge légal » (I, 2°).
-    // La carrière longue l'exonère avant (I, 1°, a), que la liquidation lit.
-    if (bareme !== null && !carriereLongue) {
+    // L'Agirc-Arrco de même, quand la version de la date d'effet n'ouvre sa
+    // table des trimestres manquants, et l'exonération par la durée, qu'à
+    // l'âge légal (`trimestres_manquants_des_l_age_legal`) : aux participants
+    // « âgés de 60 à 65 ans » du 1er avril 1983 au 30 juin 2011 (accord du
+    // 23 décembre 1996, article 2 ; accord du 13 novembre 2003, article 1er) ;
+    // puis d'un âge « compris entre celui fixé par l'article L. 161-17-2
+    // [...] et celui visé au 1° de l'article L. 351-8 » (annexes E et V de
+    // 2011, articles 2 et 4 ; accord du 17 novembre 2017, article 85, 3,
+    // jusqu'à l'avenant n° 15 du 16 mars 2023), l'exonération suivant alors la
+    // pension du régime général « obtenue » au taux plein (article 84, 3), que
+    // la durée ne donne pas avant l'âge légal. La carrière longue les exonère
+    // avant (I, 1°, a ; article 84, 3), que la liquidation lit. La pension
+    // provisoire de la retraite progressive a sa règle, un « coefficient
+    // d'anticipation spécifique temporaire, tenant compte de la durée
+    // d'assurance » (articles 85, 2, et 88 ; annexes E et V de 2011, article
+    // 3) : elle garde la table des trimestres, qui en tient lieu (fiche
+    // retraite_progressive). Celle de l'Ircantec n'est qu'une « liquidation
+    // provisoire » (article 16, III), sous le I et le II.
+    const ageSeulAvantLAgeLegal = bareme !== null
+      || (regle !== null && regle.trimestres_manquants_des_l_age_legal === true && !provisoire);
+    if (ageSeulAvantLAgeLegal && !carriereLongue) {
       const legal = ageLegalDeLAssure(moteur, carriere);
       if (legal !== null && ageLiquidation + 1e-9 < legal[0]) {
         parAgeSeul = true;

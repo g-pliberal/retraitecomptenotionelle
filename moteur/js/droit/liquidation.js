@@ -263,14 +263,16 @@ export function liquider(demande, etat, contexte) {
   }
 
   const ouverture = ouvrir(moteur, releve, cible);
-  const liquidees = liquiderChaqueRegime(moteur, releve, ouverture, contexte, cible);
+  const provisoire = demande.nature === "provisoire";
+  const liquidees = liquiderChaqueRegime(
+    moteur, releve, ouverture, contexte, cible, false, provisoire);
   // LA PENSION NATIONALE, quand un accord la compare à la pension proratisée :
   // la même liquidation, sans les trimestres des périodes qu'il compare.
   // « Compléter tous régimes » sert la plus élevée des deux, chacune portée à
   // son minimum. Voir le Python.
   const etranger = releve.durees.etranger;
   const nationales = etranger !== null && etranger.compare(GENERALE)
-    ? liquiderChaqueRegime(moteur, releve, ouverture, contexte, cible, true) : null;
+    ? liquiderChaqueRegime(moteur, releve, ouverture, contexte, cible, true, provisoire) : null;
   const pensions = liquidees.regimes;
 
   const total = pensions.reduce((somme, p) => somme + p.montant, 0.0);

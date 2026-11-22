@@ -3083,9 +3083,47 @@ def test_l_abattement_de_la_complementaire_n_est_pas_celui_de_la_base(simulateur
         periode, carriere, 100, requis, 57.0, 2022)
     assert abattement == pytest.approx(0.43)
 
-    # Au taux plein, aucun abattement, quel que soit l'âge.
+    # Avec la durée, aucun abattement dès l'âge légal. Avant lui, en 2022, la
+    # durée n'exonère pas : l'exonération suit la pension du régime général
+    # obtenue au taux plein (accord du 17 novembre 2017, article 84, 3), qui
+    # ne s'obtient avant cet âge que par la carrière longue, le handicap ou
+    # l'incapacité, et la table des trimestres manquants ne s'ouvre qu'à l'âge
+    # légal (article 85, 3, jusqu'à l'avenant n° 15 du 16 mars 2023). Seule la
+    # carrière longue lève ici le coefficient de l'âge.
     assert liquider.abattement_points(scenario,
-        periode, carriere, requis, requis, 57.0, 2022) == pytest.approx(1.0)
+        periode, carriere, requis, requis, 57.0, 2022) == pytest.approx(0.43)
+    assert liquider.abattement_points(scenario, periode, carriere, requis, requis, 57.0,
+                                      2022, 0, False, None, None, True) == pytest.approx(1.0)
+
+
+def test_avant_juillet_2011_la_duree_n_exonere_la_complementaire_qu_a_soixante_ans(simulateur):
+    """Jusqu'au 30 juin 2011, la complémentaire ne se sert sans coefficient
+    avec la durée du taux plein qu'aux participants « âgés de 60 à 65 ans »
+    (arrêté du 21 mars 1983, son résumé ; accord du 23 décembre 1996, article
+    2 ; accord du 13 novembre 2003, article 1er, prorogé jusqu'au 30 juin 2011),
+    et avant soixante ans à la seule carrière longue (même article). Né en
+    janvier 1950, parti à cinquante-huit ans en 2008, l'assuré n'a que la table
+    des âges, avec la durée comme sans elle : 0,43 à cinquante-cinq ans, majoré
+    de 0,0175 par trimestre, 0,64 (accord Arrco du 25 avril 1996, article 10).
+    À soixante ans et six mois, en 2010, la durée l'exonère."""
+    scenario = simulateur.scenario_actuel
+    requis = scenario.durees_requises.trimestres(1950)[0]
+    parti_tot = simulateur.carriere_simple(
+        annee_naissance=1950, sexe="H", affiliation="salarie_prive_non_cadre",
+        age_debut=20, age_liquidation=58)
+    periode = simulateur.catalogue["arrco"].periode(2008)
+    assert liquider.abattement_points(
+        scenario, periode, parti_tot, requis, requis, 58.0, 2008) == pytest.approx(0.64)
+    assert liquider.abattement_points(
+        scenario, periode, parti_tot, requis - 10, requis, 58.0, 2008) == pytest.approx(0.64)
+    assert liquider.abattement_points(scenario, periode, parti_tot, requis, requis, 58.0,
+                                      2008, 0, False, None, None, True) == pytest.approx(1.0)
+    a_soixante_ans = simulateur.carriere_simple(
+        annee_naissance=1950, sexe="H", affiliation="salarie_prive_non_cadre",
+        age_debut=20, age_liquidation=60.5)
+    assert liquider.abattement_points(
+        scenario, simulateur.catalogue["arrco"].periode(2010), a_soixante_ans, requis, requis,
+        60.5, 2010) == pytest.approx(1.0)
 
 
 def test_la_majoration_pour_enfants_de_la_complementaire_est_plafonnee(simulateur):

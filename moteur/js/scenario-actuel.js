@@ -500,7 +500,18 @@ function departServi(depart, resultat, servi) {
  */
 export function resultatDesDeparts(moteur, carriere, departs, liquidations, contexte) {
   const declare = carriere.dateLiquidation;
-  const rangPrincipal = departs.findIndex((depart) => depart.date.rang === declare.rang);
+  // Le départ que le résumé décrit — la durée requise, le taux, l'âge et le
+  // motif de l'ouverture : celui du départ déclaré, sauf quand il ne sert
+  // qu'une complémentaire qui devance sa base (l'Ircantec :
+  // `ouvrir.ageAuPlusTotSansLaBase`), sans âge ni durée à elle ; c'est alors
+  // le premier qui suit et sert un régime de base. Le dernier sinon.
+  const deBase = (rang) => liquidations[rang].regimes.some((pension) =>
+    lesDeparts.ETAGES_DES_UNITES.has(moteur.catalogue.obtenir(pension.regime).etage));
+  let rangPrincipal = departs.findIndex((depart) => depart.date.rang === declare.rang);
+  if (rangPrincipal >= 0 && !deBase(rangPrincipal)) {
+    const premier = rangPrincipal;
+    rangPrincipal = departs.findIndex((_, rang) => rang > premier && deBase(rang));
+  }
   const principale = liquidations[rangPrincipal >= 0 ? rangPrincipal : liquidations.length - 1];
   const isoler = moteur.parametres.isoler_capitalisation;
   const pensions = [];
