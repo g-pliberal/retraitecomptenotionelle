@@ -6305,17 +6305,16 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 
 ### 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation — `en cours`
 
-**Reprise, au 20 novembre 2026.** Fait : le registre (70 modèles) ; Destinie
-2, TRAJECTOiRE, Ines et EUROMOD exécutés à part ; les treize modèles « jamais
-confrontés », tous confrontés. TRAJECTOiRE est passé à la version 3.3.2 : la
-confrontation tourne désormais chaque lundi dans GitHub, sans poste, et ouvre
-un ticket quand une quantité qui concordait s'écarte. Sa référence est
-`tests/temoins/trajectoire_3/ecarts.json` : 85 cas, dont le médecin libéral et
-l'exploitant agricole du COR. Reste : lire au texte les écarts nouveaux —
-l'ASV, la base des libéraux, l'exploitant agricole, la carrière longue de la
-génération 1964 partie avant septembre 2026 ; mettre à jour le registre et le
-témoin d'octobre, qui disent encore la version 1.1.2 ; la campagne 2025 de
-l'EACR, au printemps 2027. Commencer par la note du 20 novembre,
+**Reprise, au 22 novembre 2026.** Fait : le registre (71 modèles) ;
+TRAJECTOiRE 3.3.2 confronté chaque lundi dans GitHub ; et, le 22 novembre,
+la table des références : pour chaque élément du calcul et chaque famille de
+régimes, la source qui le confirme, ou l'absence dite. Un test la tient à jour.
+Elle attend la validation du propriétaire. Ensuite : comparer les barèmes
+datés à OpenFisca et à l'IPP ; rejouer les simulateurs des caisses ; trier
+les écarts du registre. Restent aussi les écarts nouveaux de TRAJECTOiRE à
+lire au texte, le registre et le témoin d'octobre à passer de la version
+1.1.2 à la 3.3.2, et la campagne 2025 de l'EACR, au printemps 2027.
+Lire `2026-11-22-table-des-references.md`, puis
 `2026-11-20-trajectoire-3-dans-github.md`.
 
 **Demande**, le 1er octobre 2026 : « Quels sont les autres modèles publics
