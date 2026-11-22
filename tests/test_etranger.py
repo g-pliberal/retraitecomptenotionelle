@@ -902,6 +902,51 @@ process.stdout.write(JSON.stringify(cas.map(([duree, cotisee, ouverte]) =>
     assert json.loads(execution.stdout) == pytest.approx([c[3] for c in cas])
 
 
+#: Les exemples des circulaires Cnav n° 2004/8 du 12 février 2004 (point 42,
+#: exemple 4241) et n° 2005/36 du 29 juillet 2005 (points 331, 3331 et 3332) :
+#: la durée totale qui n'excède pas la « limite de déclenchement » (la durée
+#: requise de L. 351-1, 160 trimestres alors) proratise le minimum sur cette
+#: durée « éventuellement ramenée à la " durée de proratisation " » ; au-delà,
+#: « la répartition s'effectue sur l'ensemble des périodes ». (durée de
+#: proratisation, durée totale, durée totale cotisée, durée du régime général,
+#: durée cotisée au régime général, majoration ouverte, attendu.)
+EXEMPLES_DES_CIRCULAIRES_2004_ET_2005 = [
+    # 2004/8, 4241 : né en 1944, 140 au régime général, 15 en Allemagne.
+    (152, 155, 155, 140, 140, False, 9000 * 140 / 152),
+    # 2005/36, 3331 : né en 1945, 40 au régime général dont 30 cotisés, 60 en
+    # Allemagne dont 50 cotisés.
+    (154, 100, 80, 40, 30, True, 9000 * 100 / 154 * 40 / 100 + 2000 * 80 / 154 * 40 / 100),
+    # 2005/36, 3332 : 135 au régime général dont 134 cotisés, 22 cotisés en Allemagne.
+    (154, 157, 156, 135, 134, True, 9000 * 135 / 154 + 2000 * 134 / 154),
+    # 2005/36, 331 : 36 au régime général, 176 en tout, 154 cotisés.
+    (154, 176, 154, 36, 30, True, 9000 * 36 / 176 + 2000 * 36 / 176),
+]
+
+
+def test_le_minimum_international_se_proratise_sur_la_duree_de_proratisation_jusqu_a_160():
+    import json
+    import shutil
+    import subprocess
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { plancherInternational } from "./moteur/js/droit/completer.js";
+const cas = JSON.parse(process.argv[1]);
+process.stdout.write(JSON.stringify(cas.map(([dp, duree, cotisee, regime, cotRegime, ouverte]) =>
+  plancherInternational({ proratisation: dp, requis: 160, dureeRegime: regime,
+    cotiseeRegime: cotRegime }, 9000, 11000, duree, cotisee, ouverte))));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script,
+         json.dumps(EXEMPLES_DES_CIRCULAIRES_2004_ET_2005)],
+        cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr
+    assert json.loads(execution.stdout) == pytest.approx(
+        [c[-1] for c in EXEMPLES_DES_CIRCULAIRES_2004_ET_2005])
+
+
 def test_la_caisse_ne_totalise_qu_un_accord_a_la_fois(saisies):
     """Huit ans en Algérie, puis trois à Monaco : les deux conventions ne
     font compter aucun État tiers, et la caisse retient les périodes d'une

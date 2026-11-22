@@ -254,10 +254,14 @@
 #       (LEGIARTI000049915788) : trois mois de plus par génération de 1962 à
 #       1968, soixante-quatre ans à compter de 1969, celui de L. 161-17-2 que
 #       l'article 6 de l'ordonnance n° 2002-411 renvoie à ces générations. Le
-#       taux plein reste à l'âge d'ouverture augmenté de cinq ans jusqu'au 31
-#       décembre 2025 : soixante-huit ans et neuf mois pour 1968. Celui de 1969,
-#       soixante-neuf ans, que l'article 2 n'écrit pas, ne sert à personne :
-#       cette génération n'a pas soixante ans avant 2026.
+#       taux plein reste, jusqu'au 31 décembre 2025, à « l'âge prévu à l'article
+#       2 augmenté de cinq années » (article 10), que la caisse lit au 7° de
+#       l'article 2, que le décret n° 2024-766 a gardé : « Soixante-deux ans pour
+#       les assurés nés à compter du 1er janvier 1961 ». D'où soixante-sept ans
+#       pour toutes les générations depuis 1961 (circulaire Cnav n° 2026/30 du
+#       22 septembre 2026), et non l'âge d'ouverture augmenté de cinq ans, que
+#       la table portait jusqu'au 22 novembre 2026 (soixante-huit ans et neuf
+#       mois pour 1968).
 #   `mayotte_2026_01` — pensions prenant effet du 1er janvier au 31 août 2026 :
 #       les âges de `mayotte_2023` ; le taux plein à « l'âge prévu au 1° de
 #       l'article L. 351-8 », soixante-sept ans (article 10 dans la rédaction du
@@ -458,14 +462,14 @@ mayotte_2023,1958,61,66,haute,
 mayotte_2023,1959,61.333333,66.333333,haute,
 mayotte_2023,1960,61.666667,66.666667,haute,
 mayotte_2023,1961,62,67,haute,
-mayotte_2023,1962,62.25,67.25,haute,
-mayotte_2023,1963,62.5,67.5,haute,
-mayotte_2023,1964,62.75,67.75,haute,
-mayotte_2023,1965,63,68,haute,
-mayotte_2023,1966,63.25,68.25,haute,
-mayotte_2023,1967,63.5,68.5,haute,
-mayotte_2023,1968,63.75,68.75,haute,
-mayotte_2023,1969,64,69,moyenne,
+mayotte_2023,1962,62.25,67,haute,
+mayotte_2023,1963,62.5,67,haute,
+mayotte_2023,1964,62.75,67,haute,
+mayotte_2023,1965,63,67,haute,
+mayotte_2023,1966,63.25,67,haute,
+mayotte_2023,1967,63.5,67,haute,
+mayotte_2023,1968,63.75,67,haute,
+mayotte_2023,1969,64,67,haute,
 mayotte_2026_01,1900,60,67,haute,0.025
 mayotte_2026_01,1956,60.333333,67,haute,0.025
 mayotte_2026_01,1957,60.666667,67,haute,0.025

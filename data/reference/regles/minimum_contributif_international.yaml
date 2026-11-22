@@ -4,7 +4,8 @@ intitule: >-
   Le minimum contributif d'une pension proratisée se calcule en deux temps : un minimum
   théorique, réduit à la durée de toute la carrière, française et étrangère, quand elle
   n'atteint pas la durée maximum, puis proratisé à la part française de cette durée,
-  non limitée ; la majoration pour périodes cotisées de même, les périodes étrangères
+  ramenée à la durée maximum quand elle ne dépasse pas la durée requise, non limitée
+  au-delà ; la majoration pour périodes cotisées de même, les périodes étrangères
   comptées comme cotisées. Depuis 2012, il n'est servi qu'à qui a demandé toutes ses
   pensions, françaises et étrangères, et son écrêtement compte les pensions
   étrangères, hors celles des règlements européens et de six conventions.
@@ -66,7 +67,14 @@ versions:
       durée d'assurance maximum au régime général » ; « Le minimum théorique est réduit
       compte tenu de la durée d'assurance au régime général par rapport à la durée
       totale d'assurance. La durée totale d'assurance n'est pas limitée à la durée
-      d'assurance maximum » (exposé « Minimum de la retraite communautaire »)
+      d'assurance maximum » (exposé « Minimum de la retraite communautaire ») ; sauf
+      quand la durée totale n'excède pas la « limite de déclenchement », la durée
+      requise de L. 351-1 : le minimum est alors proratisé « par rapport à la durée
+      totale d'assurance éventuellement ramenée à la " durée de proratisation " »
+      (circulaire Cnav n° 2005/36, point 333 ; de même la 2004/8, point 42, 423 et
+      exemple 4241 : 140 au régime général et 15 en Allemagne, né en 1944, le minimum × 140/152).
+      La distinction ne joue que pour les générations dont la durée de proratisation
+      est inférieure à la durée requise de 160 trimestres, celles nées avant 1948
     majoration: >-
       la majoration théorique est entière si la durée totale cotisée atteint la durée
       maximum, réduite sinon à son rapport à elle ; proratisée, elle l'est par la durée
@@ -143,6 +151,15 @@ versions:
   exemples: aucun trouvé
 approximations:
 - ecart: >-
+    la durée totale ramenée à la durée de proratisation, jusqu'à la durée requise,
+    vaut pour toute pension proratisée, règlements européens et accords ; la circulaire
+    Cnav n° 2005/36 (point 4422) ne la prescrit, pour un accord, que s'il « prévoi[t]
+    la proratisation en fonction de la durée maximale », et le modèle ne dit pas
+    lesquels
+  effet: >-
+    le minimum proratisé des générations nées avant 1948, au titre d'un accord qui ne
+    le prévoit pas, trop élevé (152/155 au plus) ; non mesuré
+- ecart: >-
     la durée totale d'assurance et la durée totale cotisée sont celles du taux : les
     trimestres de toute la carrière française, majorations comprises, et ceux que chaque
     accord fait compter, les périodes d'une organisation internationale et l'activité
@@ -186,9 +203,7 @@ sources:
     euros d'aujourd'hui, ramené sur les prix au mois où elle commence —, entre dans la
     chronologie comme une liquidation observée (§ 5.5).
   - >-
-    À lire : la circulaire Cnav n° 2004/8, point 42, qui garde en 2004 le calcul
-    d'avant quand la durée de la retraite théorique ne dépasse pas 160 trimestres ; la
-    raison qui écarte de l'écrêtement les pensions des règlements européens et des six
+    À lire : la raison qui écarte de l'écrêtement les pensions des règlements européens et des six
     conventions — l'article 54 du règlement 883/2004, qui écarte les clauses anticumul
     d'une prestation au prorata, en est la piste ; ce que devient l'écrêtement d'une
     pension de l'accord de commerce et de coopération avec le Royaume-Uni, que la Cnav
@@ -239,6 +254,12 @@ historique:
 - >-
   2026-10-01 — après la clôture du domaine, à la demande du propriétaire : une pension
   étrangère qui commence après le départ révise le minimum à chaque échéance (R. 173-8).
+- >-
+  2026-11-22 — circulaires Cnav n° 2004/8 (point 42) et n° 2005/36 (point 333), lues :
+  le minimum proratisé de la durée totale qui ne dépasse pas la durée requise se
+  rapporte à cette durée ramenée à la durée de proratisation. Né en 1944, 140
+  trimestres au régime général et 15 en Allemagne : 140/152 du minimum, non plus
+  140/155 (+2 %).
 effet: >-
   Les petites pensions françaises des carrières internationales, au taux plein par la
   totalisation : le minimum de la pension proratisée se réduit à la part française de

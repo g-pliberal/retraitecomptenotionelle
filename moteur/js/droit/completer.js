@@ -1268,7 +1268,13 @@ export function plancherInternational(eligible, montantBase, montantMajore, dure
   const maximum = eligible.proratisation;
   const dureeRegime = Math.min(eligible.dureeRegime, maximum);
   const theorique = montantBase * Math.min(1.0, dureeTotale / maximum);
-  let plancher = theorique * dureeRegime / dureeTotale;
+  // Jusqu'à la « limite de déclenchement » (la durée requise), la durée
+  // totale est « éventuellement ramenée à la " durée de proratisation " » ;
+  // au-delà, « la répartition s'effectue sur l'ensemble des périodes »
+  // (circulaires Cnav n° 2004/8, point 42, et n° 2005/36, points 331 et 333).
+  const repartition = dureeTotale > eligible.requis ? dureeTotale
+    : Math.min(dureeTotale, maximum);
+  let plancher = theorique * dureeRegime / repartition;
   if (majorationOuverte) {
     const majoration = montantMajore - montantBase;
     if (dureeTotale > eligible.requis) {

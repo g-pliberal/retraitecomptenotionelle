@@ -179,8 +179,11 @@ versions:
       septembre 2026, soixante-deux ans et trois mois pour 1962, soixante-deux ans et
       six mois du 1er janvier 1963 au 30 juin 1965, trois mois de plus par génération
       jusqu'à soixante-trois ans et neuf mois pour 1969, l'âge de L. 161-17-2 ensuite
-      (décret, article 2 ; ordonnance, article 6) ; taux plein à l'âge du 1° de L. 351-8,
-      à l'inaptitude, ou à soixante-cinq ans pour l'assuré handicapé (article 10)
+      (décret, article 2 ; ordonnance, article 6) ; taux plein, jusqu'au 31 décembre
+      2025, à « l'âge prévu à l'article 2 augmenté de cinq années », soixante-sept ans
+      pour tous les nés depuis 1961, le 7° de l'article 2 que le décret n° 2024-766 a
+      gardé (circulaire Cnav n° 2026/30), puis à l'âge du 1° de L. 351-8 ; à
+      l'inaptitude, ou à soixante-cinq ans pour l'assuré handicapé (article 10)
     calcul: >-
       vingt-cinq meilleures années pour la génération 1965, et, « Pour les pensions
       prenant effet après le 31 décembre 2017 et avant le 1er janvier 2028 [...] 16
@@ -362,6 +365,17 @@ sources:
     Mayotte à sa prochaine version : celle du 23 décembre 2025 porte pour 2026 le taux de
     la métropole.
   lectures:
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2026/30 du 22 septembre 2026, l'âge légal à Mayotte depuis le
+      1er septembre 2023 : taux plein à soixante-sept ans pour les nés depuis 1961, « Les
+      LFSS pour 2024 et pour 2026 n'apportent pas de modifications sur l'âge d'obtention
+      de la retraite au taux maximum » ; le calendrier de la suspension pour les
+      pensions prenant effet depuis le 1er septembre 2026 ; avec l'article 10 du décret
+      n° 2003-589 (LEGIARTI000026514415) et son article 2 (LEGIARTI000049915788), lus
+      dans l'index LEGI à jour au 16 novembre 2026
+    url: https://legislation.lassuranceretraite.fr/
+    date: 2026-09-22
   - type: legifrance
     reference: >-
       action 184, étape 6, les rédactions en vigueur ou à venir que la fiche n'avait pas
@@ -475,6 +489,11 @@ historique:
   et, depuis 2019, leur assiette minimale de 450 heures du Smic de Mayotte (décret
   n° 2011-2085, article 4-2), dans les deux moteurs. Huit témoins naissent, aucun ne
   bouge. Leurs taux, trouvés, ne sont pas encore dans la série.
+- >-
+  2026-11-22 — circulaire Cnav n° 2026/30 : de septembre 2023 à décembre 2025, le taux
+  plein est à soixante-sept ans pour tous les nés depuis 1961, non à l'âge d'ouverture
+  augmenté de cinq ans (67 ans et 3 mois pour 1962 … 68 ans et 9 mois pour 1968) ; la
+  table `mayotte_2023` de `ages_regimes.csv` le porte.
 effet: >-
   Les salariés de Mayotte : leur pension est simulée au droit depuis 2003, à leur
   salaire moyen près pour les nés avant 1965, et à leurs trimestres d'avant 2002 et à

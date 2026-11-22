@@ -42,7 +42,9 @@ import pytest
 
 from retraite_notionnelle.types_du_pont.carriere import AnneeCarriere, LigneRelevee
 
-from facade import Carriere, liquider, Simulateur
+from retraite_notionnelle.calendrier import DateMois
+
+from facade import Carriere, commun, liquider, Simulateur
 
 RACINE = Path(__file__).resolve().parents[1]
 STATUT = "salarie_mayotte"
@@ -652,3 +654,42 @@ def test_une_redaction_de_l_article_4_2_illisible_arrete_le_recuperateur():
             "LEGIARTI000000000000", "2030-01-01",
             "I.-La cotisation est assise sur la totalité du revenu. Année Cotisation "
             "2030 18,00 % II.-Rien.")
+
+
+# -- l'âge du taux plein de 2023 à 2025, et la bascule de septembre 2026 -------
+#: Circulaire Cnav n° 2026/30 du 22 septembre 2026, sur l'âge légal à Mayotte
+#: depuis le 1er septembre 2023 : taux plein à 65 ans avant 1956, 65 ans et
+#: 4 mois pour 1956 … 66 ans et 8 mois pour 1960, puis 67 ans pour tous les
+#: assurés nés depuis 1961, « Les LFSS pour 2024 et pour 2026 n'apportent pas de
+#: modifications sur l'âge d'obtention de la retraite au taux maximum ». Le
+#: texte s'y prête : l'article 10 du décret n° 2003-589 (LEGIARTI000026514415,
+#: du 21 octobre 2012 au 1er janvier 2026) met le taux plein à « l'âge prévu à
+#: l'article 2 augmenté de cinq années », et l'article 2 dans la rédaction du
+#: décret n° 2024-766 (LEGIARTI000049915788) garde son 7° : « Soixante-deux ans
+#: pour les assurés nés à compter du 1er janvier 1961 ». Le nouveau calendrier
+#: d'ouverture vaut, lui, pour les pensions prenant effet depuis le 1er
+#: septembre 2026 (même circulaire ; décret n° 2026-345, LEGIARTI000054059636).
+TAUX_PLEIN_DE_LA_CAISSE = {1955: 65.0, 1956: 65 + 4 / 12, 1960: 66 + 8 / 12,
+                           1961: 67.0, 1962: 67.0, 1963: 67.0, 1965: 67.0, 1968: 67.0}
+
+
+@pytest.mark.parametrize("effet", [DateMois(2023, 9), DateMois(2024, 7), DateMois(2025, 12)])
+def test_de_2023_a_2025_le_taux_plein_de_mayotte_est_a_67_ans_des_1961(simulateur, effet):
+    regime = simulateur.catalogue["cssm_mayotte"]
+    periode = commun.periode_de_liquidation(regime, effet)
+    ages = simulateur.scenario_actuel.ages_regimes
+    lus = {generation: ages.ages(periode.age_table, generation)[1]
+           for generation in TAUX_PLEIN_DE_LA_CAISSE}
+    assert lus == pytest.approx(TAUX_PLEIN_DE_LA_CAISSE, abs=1e-6)
+
+
+@pytest.mark.parametrize("effet, ouverture_1964", [
+    (DateMois(2026, 8), 62.75), (DateMois(2026, 9), 62.5), (DateMois(2026, 12), 62.5)])
+def test_le_calendrier_de_la_suspension_vaut_a_mayotte_des_septembre_2026(
+        simulateur, effet, ouverture_1964):
+    """Né en février 1964 : 62 ans et 9 mois sous le calendrier de 2023, 62 ans
+    et 6 mois sous celui de la suspension, dès une pension d'octobre 2026."""
+    regime = simulateur.catalogue["cssm_mayotte"]
+    periode = commun.periode_de_liquidation(regime, effet)
+    ages = simulateur.scenario_actuel.ages_regimes
+    assert ages.ages(periode.age_table, 1964 + 1 / 12)[0] == pytest.approx(ouverture_1964)

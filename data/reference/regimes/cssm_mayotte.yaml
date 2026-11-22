@@ -689,7 +689,7 @@ periodes:
     date_effet: [2023-09-01, 2026-01-01]
     type_calcul: annuites
     age_ouverture: 64
-    age_taux_plein: 69
+    age_taux_plein: 67
     duree_requise_trimestres: 172
     age_table: mayotte_2023
     duree_requise_table: [mayotte_2018]
@@ -727,8 +727,11 @@ periodes:
       62 ans et 3 mois pour 1962, trois mois de plus par génération
       jusqu'à 63 ans et 9 mois pour 1968, et à compter de 1969 l'âge de
       L. 161-17-2, 64 ans, que l'article 6 de l'ordonnance n° 2002-411
-      leur renvoie ; le taux plein reste à l'âge d'ouverture augmenté de
-      cinq ans (art. 10) jusqu'au 31 décembre 2025. La période liquide à
+      leur renvoie ; le taux plein reste jusqu'au 31 décembre 2025 à
+      « l'âge prévu à l'article 2 augmenté de cinq années » (art. 10),
+      soixante-sept ans pour tous les nés depuis 1961, l'âge du 7° de
+      l'article 2 que le décret de 2024 a gardé (circulaire Cnav n° 2026/30
+      du 22 septembre 2026). La période liquide à
       compter du 1er septembre 2023, la précédente jusqu'au 31 août
       (`date_effet`). DURÉE À LA GÉNÉRATION pour les pensions prenant
       effet à compter du 1er janvier 2018 (art. 9 dans la rédaction du
