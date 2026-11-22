@@ -118,5 +118,5 @@ Reste :
   sous-estime peut-être les départs d'après ;
 - le barème temporaire de la pension provisoire de la retraite progressive,
   et la pratique de l'Ircantec en retraite progressive ;
-- la relecture de la règle sur Opus, Fable manquant de quota, à la demande du
-  propriétaire.
+- rien de la relecture : sur Opus, Fable manquant de quota, à la demande du
+  propriétaire, la seconde l'a acceptée, et la règle est publiée.
