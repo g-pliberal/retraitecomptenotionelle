@@ -20,22 +20,66 @@ ecrit:
 dates_qui_decident:
 - age_atteint
 versions:
-- id: avant_2010
+- id: avant_1954
   statut: supposee
   hypothese: >-
-    aucune limite opposée à l'agent avant le décret du 28 janvier 2010 : les décrets n°
-    54-24 et n° 54-23 du 9 janvier 1954, qu'il abroge, et les règlements de retraite des
-    deux entreprises ne sont pas lus
+    aucune limite opposée à l'agent avant les décrets n° 54-24 et n° 54-23 du 9 janvier
+    1954, qui la créent en appliquant aux deux entreprises l'article 5 du décret n° 53-711 ;
+    les règlements de retraite d'avant, que l'index ne porte pas, ne sont pas lus
   fiabilite: faible
   textes: []
   bornes:
-    age_atteint: [null, 2010-01-31]
+    age_atteint: [null, 1954-01-11]
   contenu:
     parametres:
       exceptions: []
     droit: >-
       aucune limite au modèle
   exemples: aucun trouvé
+- id: decrets_de_1954
+  statut: lue
+  textes:
+  - id: JORFTEXT000000325381
+    article: décret n° 54-24 du 9 janvier 1954 (SNCF), article 3
+    en_vigueur: 1954-01-11
+    citation: >-
+      « L'admission à la retraite est prononcée obligatoirement d'office quand l'intéressé
+      atteint l'âge de soixante ans en ce qui concerne les agents visés à l'article 1er du
+      présent décret dont l'âge d'ouverture du droit à pension d'ancienneté est fixé à
+      cinquante ans et au plus tard quand l'intéressé atteint l'âge de soixante-cinq ans en
+      ce qui concerne les agents dont l'âge d'ouverture du droit à pension d'ancienneté est
+      fixé à cinquante-cinq ans par la réglementation en vigueur à la date du 31 juillet 1953
+      ou qui sont, en matière de retraite, tributaires de la loi locale du 31 mars 1873. »
+  - id: JORFTEXT000000325380
+    article: décret n° 54-23 du 9 janvier 1954 (RATP), article 3
+    en_vigueur: 1954-01-11
+    citation: >-
+      « Sous réserve de l'application de l'article 8 du règlement des retraites, l'admission
+      à la retraite est prononcée obligatoirement d'office : 1° A l'âge de soixante ans pour
+      les agents qui occupent un emploi classé dans les services actifs du tableau annexe B
+      du règlement ; 2° A l'âge de soixante-cinq ans pour les agents qui occupent un emploi
+      classé dans les services actifs du tableau annexe A ou dans les services sédentaires. »
+  bornes:
+    age_atteint: [1954-01-11, 2010-01-31]
+  contenu:
+    parametres:
+      limites: {active: 60, sedentaire: 65}
+      exceptions: []
+    droit: >-
+      l'admission à la retraite « obligatoirement d'office » à soixante ans pour le roulant
+      de la SNCF, dont la pension s'ouvre à cinquante ans, et pour l'actif du tableau B de la
+      RATP ; à soixante-cinq ans pour les autres (décrets n° 54-24 et n° 54-23, article 3,
+      lus au Journal officiel du 10 janvier 1954, p. 421) ; le modèle, qui ne saisit pas le
+      roulant, présume l'agent sédentaire
+    conditions: >-
+      l'article 8 du règlement des retraites de la RATP, que réserve le décret n° 54-23, n'est
+      pas lu ; l'admission d'office est réputée prononcée à la limite
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    au Journal officiel du 10 janvier 1954 sur Gallica, le 21 novembre 2026 : les deux
+    décrets n'ont pas d'exemple ; l'arrêt de la Cour de cassation du 16 février 2011
+    (n° 10-10.465), lu le 18 octobre 2026, porte sur une mise à la retraite à cinquante-cinq
+    ans par l'article 2, non sur la limite de l'article 3
 - id: decret_de_2010
   statut: lue
   textes:
@@ -127,20 +171,27 @@ presomptions:
     le maintien jusqu'à soixante-dix ans, présumé autorisé autant que le départ saisi le
     demande, l'agent étant présumé sédentaire
 approximations:
-- version: [avant_2010]
+- version: [avant_1954]
   ecart: >-
-    aucune limite n'est opposée avant le décret du 28 janvier 2010 : les décrets n° 54-24 et
-    n° 54-23 du 9 janvier 1954, qu'il abroge, et les règlements de retraite des deux
-    entreprises ne sont pas lus
+    aucune limite n'est opposée avant les décrets n° 54-24 et n° 54-23 du 9 janvier 1954 :
+    les règlements de retraite d'avant ne sont pas lus
+  effet: non mesuré
+- version: [decrets_de_1954]
+  ecart: >-
+    l'admission d'office est réputée prononcée à la limite, sans le maintien que l'article 8
+    du règlement des retraites de la RATP, réservé par le décret n° 54-23, permet peut-être,
+    et sans la faculté de l'employeur de mettre d'office à la retraite dès l'âge d'ouverture
+    (article 2 des deux décrets)
   effet: non mesuré
 - version: [decret_de_2011, reforme_2023]
   ecart: >-
     la marche des générations 1957 à 1961 est supposée : quatre mois de plus par génération,
     comme l'âge d'ouverture des mêmes régimes
   effet: non mesuré
-- version: [decret_de_2010, decret_de_2011, reforme_2023]
+- version: [decrets_de_1954, decret_de_2010, decret_de_2011, reforme_2023]
   ecart: >-
-    le roulant n'est pas distingué : l'agent est présumé sédentaire
+    le roulant n'est pas distingué : l'agent est présumé sédentaire, à soixante-cinq ans de
+    1954 à 2010 quand le roulant était admis d'office à soixante
   effet: non mesuré
 sources:
   lu_le: 2026-10-16
@@ -151,10 +202,10 @@ sources:
     n° 2016-1005, que l'index LEGI ne porte pas : la marche des générations 1957 à 1961
     est supposée, quatre mois par génération.
   - >-
-    La limite d'avant le 31 janvier 2010 : les décrets n° 54-24 et n° 54-23 du 9 janvier
-    1954 et les règlements de retraite des deux entreprises, non lus. Le modèle n'y oppose
-    aucune limite, et radie le 31 janvier 2010 l'agent qui avait alors passé soixante-cinq
-    ans. Lu le 18 octobre 2026 dans un arrêt, pour la SNCF, ce que les juges en disent :
+    L'article 3 des décrets n° 54-24 et n° 54-23 du 9 janvier 1954 est lu depuis le
+    21 novembre 2026 au Journal officiel du 10 janvier 1954 (version `decrets_de_1954`) ;
+    restent à lire l'article 8 du règlement des retraites de la RATP, que le décret n°
+    54-23 réserve, et les règlements de retraite d'avant 1954. Lu le 18 octobre 2026 dans un arrêt, pour la SNCF, ce que les juges en disent :
     « le réglement des retraites de la SNCF fixe à 60 ans l'âge limite de maintien en
     service » ; l'article 2 du décret n° 54-24 permet « à la SNCF de prononcer d'office
     l'admission à la retraite des agents remplissant la double condition d'âge et
@@ -200,6 +251,12 @@ sources:
       et un sommaire (JORFTEXT000000325381, JORFTEXT000000325380) ; Légifrance et Gallica,
       qui portent le Journal officiel du 10 janvier 1954, refusent le réseau de la session
     date: 2026-10-18
+  - type: jorf
+    reference: >-
+      décrets n° 54-23 et n° 54-24 du 9 janvier 1954, articles 1er à 4, lus au fac-similé du
+      Journal officiel du 10 janvier 1954, p. 421, sur Gallica (ark:/12148/bpt6k1565422j,
+      vue 53, texte reconnu), depuis un poste du propriétaire
+    date: 2026-11-21
   - type: autre
     reference: >-
       Cour de cassation, chambre sociale, 16 février 2011, n° 10-10.465, et les moyens
@@ -223,10 +280,15 @@ historique:
   dont le départ saisi passe sa limite est admis à la retraite à la limite, et sa pension
   du régime spécial en part, comme la décision du propriétaire du 14 octobre 2026 le dit
   du fonctionnaire.
+- >-
+  2026-11-21 — la version `avant_2010` coupée au 11 janvier 1954 : les décrets n° 54-24 et
+  n° 54-23, lus au Journal officiel, admettent l'agent d'office à soixante ou soixante-cinq
+  ans (version `decrets_de_1954`).
 effet: >-
   Tout agent de la SNCF ou de la RATP, affilié au régime spécial, dont le départ saisi
   passe soixante-cinq ans depuis 2010 — soixante-sept pour les nés depuis 1962, et
   soixante-dix depuis le 1er septembre 2023 par le maintien présumé — est admis à la
-  retraite à cette limite, et sa pension du régime spécial en part. Approchée : la marche
-  des générations 1957 à 1961 est supposée, le roulant n'est pas distingué, et aucune
-  limite n'est opposée avant 2010.
+  retraite à cette limite, et sa pension du régime spécial en part ; de 1954 à 2010, à
+  soixante-cinq ans (décrets n° 54-24 et n° 54-23). Approchée : la marche des générations
+  1957 à 1961 est supposée, le roulant n'est pas distingué, et aucune limite n'est opposée
+  avant 1954.

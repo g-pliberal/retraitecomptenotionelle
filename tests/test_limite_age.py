@@ -301,6 +301,23 @@ def test_le_cheminot_recrute_avant_2020_a_la_limite_de_sa_generation(simulateur)
     assert [d.motif for d in departs.departs(moteur, carriere)] == [departs.MOTIF_LIMITE]
 
 
+def test_de_1954_a_2010_le_cheminot_et_l_agent_de_la_ratp_sont_admis_d_office_a_65_ans(
+        simulateur):
+    """Décrets n° 54-24 et n° 54-23 du 9 janvier 1954, article 3, lus au Journal
+    officiel du 10 janvier 1954, p. 421 : l'admission à la retraite est
+    prononcée « obligatoirement d'office » à soixante ans pour le roulant de la
+    SNCF et l'actif du tableau B de la RATP, à soixante-cinq ans pour les
+    autres, que le modèle présume. Né en 1930, l'agent a soixante-cinq ans en
+    1995 ; né en 1940, en 2005 : il n'attend plus le 31 janvier 2010."""
+    moteur = simulateur.scenario_actuel
+    for statut, naissance, regime in (("agent_sncf", 1930, "sncf"), ("agent_ratp", 1940, "ratp")):
+        radiation = limite_age.radiation(moteur, _simple(simulateur, statut, naissance, 72))
+        assert (radiation.fiche, radiation.limite, radiation.age, radiation.version,
+                sorted(radiation.regimes)) \
+            == (limite_age.FICHE_SNCF_RATP, 65.0, 65.0, "decrets_de_1954", [regime]), statut
+        assert radiation.date == DateMois(naissance + 65, 2), statut
+
+
 
 # --- Action 151, étape 6 : les industries électriques et gazières, l'Opéra
 # national de Paris et la SEITA (fiches ``limite_age_ieg``,

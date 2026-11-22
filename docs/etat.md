@@ -31,12 +31,12 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 - Citées dans le code par leur identifiant : **133 sur 279**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **54 sur 279**, par 2 581 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **209 sur 279**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
-- Découpées en versions : **216 sur 279**, soit 902 versions, dont 165 supposées ; le partage des versions se contrôle sur chacune.
+- Découpées en versions : **216 sur 279**, soit 903 versions, dont 165 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 126, dont 10 déclarées non appliquées.
 
 **La carte de justesse** (`src/retraite_notionnelle/noyau/justesse.py`, action 194). L'état de la carte des règles, ci-dessus, est un mot que la fiche déclare ; celui-ci se calcule depuis les preuves, et personne ne l'écrit. Une partie est une règle sur une période : une version de fiche, ou la fiche entière tant qu'elle n'est pas découpée. Elle est prouvée quand son texte est lu avec sa trace et qu'une grille indépendante — des valeurs attendues posées depuis le seul texte, sans lire le code, sur chaque seuil de la règle — est verte ; un exemple officiel, un autre moteur ou le simulateur d'une caisse en sont des témoins, qui ne prouvent pas seuls.
 
-**22 parties prouvées sur 965**, dont 10 avec témoin et 12 au texte seul. 13 fausses (section 2), 645 approchées, 218 non vérifiées, 67 hors champ. Un cliquet tient les parties prouvées (`tests/cliquets_de_justesse/prouvees.yaml`) : aucune ne recule sans le dire.
+**22 parties prouvées sur 966**, dont 10 avec témoin et 12 au texte seul. 13 fausses (section 2), 646 approchées, 218 non vérifiées, 67 hors champ. Un cliquet tient les parties prouvées (`tests/cliquets_de_justesse/prouvees.yaml`) : aucune ne recule sans le dire.
 
 | Famille de régimes | Parties | Prouvées | Fausses | Approchées | Non vérifiées | Hors champ | Texte tracé | Témoignées par un exemple officiel |
 |---|---|---|---|---|---|---|---|---|
@@ -46,12 +46,12 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | artisans, commerçants et autres non-salariés | 235 | 20 | 4 | 151 | 56 | 4 | 85 | 46 |
 | régimes agricoles | 284 | 22 | 6 | 174 | 69 | 13 | 117 | 49 |
 | libéraux et avocats | 231 | 13 | 0 | 174 | 41 | 3 | 91 | 27 |
-| régimes spéciaux | 264 | 22 | 2 | 159 | 59 | 22 | 61 | 33 |
+| régimes spéciaux | 265 | 22 | 2 | 160 | 59 | 22 | 62 | 33 |
 | retraite additionnelle, en capitalisation | 40 | 5 | 3 | 11 | 10 | 11 | 9 | 13 |
 | sans famille | 1 | 0 | 0 | 1 | 0 | 0 | 0 | 0 |
-| toute la carte | 965 | 22 | 13 | 645 | 218 | 67 | 284 | 91 |
+| toute la carte | 966 | 22 | 13 | 646 | 218 | 67 | 285 | 91 |
 
-Une partie compte dans chaque famille de ses régimes, et une fois dans le total. Parmi les 965 parties, 165 sont des versions supposées, qu'aucune grille ne peut prouver tant que leur texte n'est pas retrouvé ; 55 ont un exemple officiel que leur fiche cite sans dire pour quelle version, et qui ne témoigne donc pour aucune. Les confrontations aux autres moteurs que 43 fiches racontent en prose ne valent pas témoin : rien n'y dit, cas par cas, ce qui concorde. La carte ne connaît encore que les règles : les barèmes, les régimes de bout en bout, les cas types et les totaux n'y ont pas leurs preuves (section 4).
+Une partie compte dans chaque famille de ses régimes, et une fois dans le total. Parmi les 966 parties, 165 sont des versions supposées, qu'aucune grille ne peut prouver tant que leur texte n'est pas retrouvé ; 55 ont un exemple officiel que leur fiche cite sans dire pour quelle version, et qui ne témoigne donc pour aucune. Les confrontations aux autres moteurs que 43 fiches racontent en prose ne valent pas témoin : rien n'y dit, cas par cas, ce qui concorde. La carte ne connaît encore que les règles : les barèmes, les régimes de bout en bout, les cas types et les totaux n'y ont pas leurs preuves (section 4).
 
 **Un autre moteur, quantité par quantité.** TRAJECTOiRE (3.3.2) rejoue 85 carrières (`tests/temoins/trajectoire_3/ecarts.json`, `scripts/confronter_trajectoire.py`) : **541 quantités sur 818** concordent. Un écart n'est pas une erreur du dépôt, seul le texte tranche ; il dit où relire. Chaque cas est une carrière entière, que rien ne rattache encore à une règle : ce tableau ne change l'état d'aucune partie.
 

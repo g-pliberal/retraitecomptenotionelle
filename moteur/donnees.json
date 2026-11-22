@@ -27632,7 +27632,8 @@ null
 "dates_qui_decident":["age_atteint"],
 "id":"limite_age_sncf_ratp",
 "versions":[
-{"bornes":{"age_atteint":[null,"2010-01-31"]},"exception_de":null,"id":"avant_2010","parametres":{"exceptions":[]},"texte":null},
+{"bornes":{"age_atteint":[null,"1954-01-11"]},"exception_de":null,"id":"avant_1954","parametres":{"exceptions":[]},"texte":null},
+{"bornes":{"age_atteint":["1954-01-11","2010-01-31"]},"exception_de":null,"id":"decrets_de_1954","parametres":{"exceptions":[],"limites":{"active":60,"sedentaire":65}},"texte":"JORFTEXT000000325381"},
 {"bornes":{"age_atteint":["2010-01-31","2011-03-21"]},"exception_de":null,"id":"decret_de_2010","parametres":{"exceptions":[],"limites":{"sedentaire":65}},"texte":"LEGIARTI000021764893"},
 {
 "bornes":{"age_atteint":["2011-03-21","2023-09-01"]},
