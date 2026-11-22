@@ -4755,14 +4755,35 @@ de ${annee}, en plus de votre salaire à temps partiel. ${complete}</div>`;
 }
 
 /**
+ * La phrase qui dit, à qui réside en France, ce que la CSG, la CRDS et la CASA
+ * de sa tranche prennent à ses pensions étrangères, au mois de la pension
+ * affichée, en euros de l'année de référence ; `""` sans elles.
+ */
+function prelevementsDeLaPensionEtrangere(montants) {
+  if (montants === null || montants.etrangeres <= 0 || montants.nonResident) return "";
+  const taux = montants.tauxPensionEtrangere;
+  if (taux <= 0) {
+    return ` Résidant en France, vous ne payez sur elle ni CSG, ni CRDS, ni CASA : la
+tranche de votre foyer, qui la compte dans son revenu fiscal, vous en exonère.`;
+  }
+  return ` Résidant en France, à la charge de son assurance maladie, vous payez sur
+elle la CSG, la CRDS et la CASA de votre tranche, comme sur votre pension française :
+${g.nombre(taux * 100, 1)} %, soit ${g.euros(taux * montants.etrangeres / 12)} par mois.
+Elle entre aussi à votre revenu fiscal, qui fixe cette tranche, et à votre impôt, dont
+votre pension française supporte sa part.`;
+}
+
+/**
  * Ce que le système 1 fait d'une carrière passée aussi hors de France
  * (`droit/etranger.js`) : les trimestres que les accords font compter pour le
  * taux, jamais pour la durée qui proratise ; la pension nationale qu'un accord
  * compare à la pension proratisée, dont le détail du calcul dit les deux
- * montants ; l'ASPA, qui ne se sert qu'en France (`droit/foyer.js`). Rend
- * `""` à qui ne déclare ni période ni résidence hors de France.
+ * montants ; l'ASPA, qui ne se sert qu'en France (`droit/foyer.js`) ; ce que
+ * la CSG, la CRDS et la CASA prennent à la pension étrangère de qui réside en
+ * France (`Montants.tauxPensionEtrangere`). Rend `""` à qui ne déclare ni
+ * période ni résidence hors de France.
  */
-function carriereHorsDeFrance(comparaison) {
+function carriereHorsDeFrance(comparaison, montants = null) {
   const carriere = comparaison.carriere;
   const actuel = comparaison.actuel;
   const notes = [];
@@ -4799,7 +4820,7 @@ vous déclarez. Elle compte pourtant dans vos ressources : l'ASPA, et dans la
 proposition la garantie vieillesse, ne complètent que ce qu'elle laisse sous leur
 barème ; depuis 2012, le minimum contributif ne porte vos pensions qu'au plafond de
 toutes vos retraites, elle comprise, hors celles des règlements européens et de six
-conventions.`);
+conventions.${prelevementsDeLaPensionEtrangere(montants)}`);
   }
   if (carriere.residence !== null) {
     notes.push(`<strong>Le minimum vieillesse ne se sert qu'en France.</strong> Vous
@@ -6103,7 +6124,7 @@ function resultats(contexte, saisie, comparaison = contexte.simuler(saisie)) {
     + demandesNonSuivies(contexte, comparaison);
   const progressive = retraiteProgressive(comparaison);
   const cumulApresDepart = cumulEmploiRetraite(contexte, comparaison);
-  const horsDeFrance = carriereHorsDeFrance(comparaison);
+  const horsDeFrance = carriereHorsDeFrance(comparaison, montants);
 
   const fiabilite = '<p class="discret" style="margin-top:1.5rem">Fiabilité du '
     + 'résultat : <span class="etiquette-fiabilite">'

@@ -223,6 +223,7 @@ import {
 } from "./impot-revenu.js";
 import { agesDeLEstimation } from "./pilote.js";
 import { faireVivre, RevalorisationServie } from "./revalorisation.js";
+import { pensionEtrangereAnnuelle, pensionsEtrangeresServies } from "./droit/etranger.js";
 import { exp, log, pow } from "./libm.js";
 
 /**
@@ -337,11 +338,21 @@ export class Convention {
  * - `sur_la_pension` : la part de l'impôt que supporte la pension : au prorata
  *   des revenus après leurs abattements (`partDeLaPension`) ;
  * - `benefice` : le bénéfice imposable de l'année, en euros courants, que le
- *   foyer déclare en plus de son salaire (`beneficesParAnnee`).
+ *   foyer déclare en plus de son salaire (`beneficesParAnnee`) ;
+ * - `pension_etrangere` et `sur_la_pension_etrangere` : la pension étrangère
+ *   imposable que le foyer résidant en France déclare en plus
+ *   (`pensionsEtrangeresImposables`), et la part de l'impôt du foyer qui lui
+ *   revient : la France la prélève, ou l'efface par le crédit d'impôt égal à
+ *   l'impôt français que la convention fiscale accorde ; aucune des deux ne
+ *   pèse sur la pension française ni sur le salaire.
  */
 export class ImpotDeLAnnee {
-  constructor({ annee, salaire, pension, foyer, sur_la_pension, benefice = 0.0 }) {
-    Object.assign(this, { annee, salaire, pension, foyer, sur_la_pension, benefice });
+  constructor({ annee, salaire, pension, foyer, sur_la_pension, benefice = 0.0,
+    pension_etrangere = 0.0, sur_la_pension_etrangere = 0.0 }) {
+    Object.assign(this, {
+      annee, salaire, pension, foyer, sur_la_pension, benefice, pension_etrangere,
+      sur_la_pension_etrangere,
+    });
     Object.freeze(this);
   }
 
@@ -352,7 +363,7 @@ export class ImpotDeLAnnee {
 
   /** Ce que supporte le revenu d'activité, salaire ou bénéfice. */
   get sur_le_salaire() {
-    return this.foyer.impot - this.sur_la_pension;
+    return this.foyer.impot - this.sur_la_pension - this.sur_la_pension_etrangere;
   }
 }
 
@@ -1676,6 +1687,40 @@ function partageDesImposables(simulateur, carriere, imposables) {
 }
 
 /**
+ * Les pensions étrangères que déclare chaque année `annees` le foyer de
+ * `carriere` qui réside en France, en euros courants, en une `Map` : ce que
+ * chacune sert dans l'année (`pensionEtrangereAnnuelle`), depuis son premier
+ * mois, moins la CSG déductible de l'année au taux plein (CGI,
+ * art. 154 quinquies ; notice 2041 GG : 5,90 % de la pension depuis les
+ * revenus de 2018), la seule cotisation de sécurité sociale française qu'elle
+ * paie. Elle entre au revenu du foyer que la convention fiscale réserve ou
+ * non sa pension à l'État qui la sert : imposée en France, ou exonérée par un
+ * crédit d'impôt égal à l'impôt français qui lui correspond, elle porte au
+ * même taux la pension française et le salaire, qu'elle soit imposée en
+ * France ou non. Le foyer de qui réside hors de France ne la déclare pas.
+ */
+export function pensionsEtrangeresImposables(simulateur, carriere, annees) {
+  const imposables = new Map();
+  if (carriere.residence || carriere.pensionsEtrangeres.length === 0) return imposables;
+  const historique = historiqueDe(simulateur);
+  for (const annee of annees) {
+    let servie = 0.0;
+    for (const pension of carriere.pensionsEtrangeres) {
+      const mois = pension.debut.annee < annee ? 12
+        : pension.debut.annee === annee ? 13 - pension.debut.mois : 0;
+      if (mois > 0) {
+        servie += pensionEtrangereAnnuelle(simulateur.macro, pension, annee) * mois / 12;
+      }
+    }
+    if (servie > 0.0) {
+      imposables.set(annee,
+        servie * (1.0 - historique.tauxDeductiblePensionAnnuel(annee, new Map())));
+    }
+  }
+  return imposables;
+}
+
+/**
  * La part de l'impôt d'un foyer que supporte sa pension : au prorata des
  * revenus après leurs abattements de 10 %, le bénéfice tel que l'impôt le
  * retient, un déficit ne comptant pour rien.
@@ -1704,7 +1749,10 @@ function partDeLaPension(impot) {
  * d'indépendant, son bénéfice imposable, sa catégorie et s'il est d'un artisan
  * (`partageDesImposables`) ; la taxe complémentaire des bénéfices de l'année
  * précédente, celle des revenus de 1959 comprise, se déduit du revenu global de
- * l'année où le foyer la paie.
+ * l'année où le foyer la paie. `etrangeres` donne la pension étrangère que le
+ * foyer déclare en plus (`pensionsEtrangeresImposables`) : l'impôt des
+ * pensions se partage entre elle et la pension française au prorata de leurs
+ * montants imposables.
  *
  * Chaque année de retraite se compte vécue en entier : l'impôt plus faible de
  * l'année que le décès interrompt n'est pas calculé. L'année du départ, le
@@ -1715,7 +1763,7 @@ function partDeLaPension(impot) {
  * pas d'impôt.
  */
 export function impotsParAnnee(simulateur, flux, carriere, parts, salaires,
-  indexation = "prix", derniere = null, benefices = new Map()) {
+  indexation = "prix", derniere = null, benefices = new Map(), etrangeres = new Map()) {
   const pensions = new Map();
   for (const [annee, niveau] of flux.niveaux) {
     const servieDansLAnnee = niveau * flux.servi(annee);
@@ -1736,19 +1784,23 @@ export function impotsParAnnee(simulateur, flux, carriere, parts, salaires,
     if (parametres === undefined) continue;
     const salaire = salaires.get(annee) ?? 0.0;
     const pension = pensions.get(annee) ?? 0.0;
+    const etrangere = etrangeres.get(annee) ?? 0.0;
     const [benefice, categorie, artisan] = benefices.get(annee) ?? [0.0, "bic", false];
     const [precedent, categoriePrecedente, artisanPrecedent] = benefices.get(annee - 1)
       ?? [0.0, "bic", false];
     const payee = precedent > 0.0 ? taxeComplementaireDesRevenus(
       foyerDeLAnnee(carriere, annee - 1, 0.0, 0.0, precedent, categoriePrecedente,
         artisanPrecedent), annee - 1, taxes) : 0.0;
-    const foyer = impotAuxParametres(foyerDeLAnnee(carriere, annee, salaire, pension, benefice,
-      categorie, artisan, payee), annee > carriere.anneeLiquidation
+    const foyer = impotAuxParametres(foyerDeLAnnee(carriere, annee, salaire,
+      pension + etrangere, benefice, categorie, artisan, payee), annee > carriere.anneeLiquidation
       ? parametresDuResidentDe(carriere, parametres) : parametres);
+    const surLesPensions = (foyer.impot - foyer.taxe_complementaire) * partDeLaPension(foyer);
+    const francaise = pension + etrangere > 0.0 ? pension / (pension + etrangere) : 0.0;
     impots.set(annee, new ImpotDeLAnnee({
       annee, salaire, pension, foyer,
-      sur_la_pension: (foyer.impot - foyer.taxe_complementaire) * partDeLaPension(foyer),
-      benefice,
+      sur_la_pension: surLesPensions * francaise,
+      benefice, pension_etrangere: etrangere,
+      sur_la_pension_etrangere: surLesPensions * (1.0 - francaise),
     }));
   }
   return impots;
@@ -1797,8 +1849,9 @@ export function avecLImpot(simulateur, flux, carriere, parts, imposables,
   indexation = "prix", derniere = null) {
   const [salaires, benefices] = imposables === null ? [new Map(), new Map()]
     : partageDesImposables(simulateur, carriere, imposables);
+  const annees = new Set([...salaires.keys(), ...benefices.keys(), ...flux.niveaux.keys()]);
   const impots = impotsParAnnee(simulateur, flux, carriere, parts, salaires, indexation,
-    derniere, benefices);
+    derniere, benefices, pensionsEtrangeresImposables(simulateur, carriere, annees));
   let apres = null;
   let dernier = null;
   if (flux.revenus_nets !== null && imposables !== null) {
@@ -1907,7 +1960,9 @@ function remplacementApresImpotDe(simulateur, comparaison, scenario, flux, conve
 /**
  * La pension du premier mois servi, annualisée (`pensionAuDepart`), nette des
  * prélèvements de son année et de l'impôt d'une année entière de cette pension,
- * déclarée seule au barème de l'année du départ.
+ * déclarée seule au barème de l'année du départ — avec, pour qui réside en
+ * France, les pensions étrangères servies ce mois, moins leur CSG déductible,
+ * dont elle ne supporte que l'impôt de sa part (`pensionsEtrangeresImposables`).
  */
 function pensionApresImpotDe(simulateur, comparaison, scenario, flux, convention, parts) {
   const annee = flux.annee_liquidation;
@@ -1916,10 +1971,14 @@ function pensionApresImpotDe(simulateur, comparaison, scenario, flux, convention
     Math.max(...flux.niveaux.keys())).get(annee);
   const imposable = brute * (1.0 - (flux.exoneree.get(annee) ?? 0.0)) * parts.get(annee);
   const carriere = comparaison.carriereDe(scenario);
+  const etrangere = carriere.residence ? 0.0
+    : pensionsEtrangeresServies(simulateur.macro, carriere, carriere.dateLiquidation, annee)
+      * (1.0 - historiqueDe(simulateur).tauxDeductiblePensionAnnuel(annee, new Map()));
   const impot = parametres === undefined ? 0.0 : impotAuxParametres(
-    foyerDeLAnnee(carriere, annee, 0.0, imposable),
+    foyerDeLAnnee(carriere, annee, 0.0, imposable + etrangere),
     parametresDuResidentDe(carriere, parametres)).impot;
-  return brute * convention.retenu(annee) - impot;
+  const part = imposable + etrangere > 0.0 ? imposable / (imposable + etrangere) : 0.0;
+  return brute * convention.retenu(annee) - impot * part;
 }
 
 // -- les indicateurs ---------------------------------------------------------

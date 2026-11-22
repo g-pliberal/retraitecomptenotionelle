@@ -117,6 +117,21 @@ def test_le_depliant_de_chaque_systeme_dit_de_quel_systeme_il_parle():
             sommaire
 
 
+def test_la_pension_etrangere_de_qui_reside_en_france_dit_ses_prelevements(page):
+    """La pension suisse d'un résident de France paie la CSG, la CRDS et la
+    CASA de la tranche de son foyer (CSS, L. 136-1 et L. 137-41 ;
+    BOI-RES-RSA-000219) : au taux plein, 8,3 + 0,5 + 0,3 = 9,1 %, soit
+    136,50 € par mois sur 1 500 €. Au Portugal, rien de cela."""
+    requete = dict(naissance="1958-03-15", statut="salarie_prive_non_cadre",
+                   debut="1980-01", liquidation="2022-04", pension_etrangere1_pays="CH",
+                   pension_etrangere1="1500", pension_etrangere1_debut="2022-04")
+    texte = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", page("/simuler", **requete))))
+    assert "la CSG, la CRDS et la CASA" in texte
+    assert "9,1 %" in texte and re.search(r"13[67] € par mois", texte), texte[:0]
+    dehors = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", page("/simuler", **requete, residence="PT")))
+    assert "la CSG, la CRDS et la CASA" not in dehors
+
+
 def test_la_saisie_est_reinjectee_dans_le_formulaire(page):
     """L'adresse porte les paramètres : la page doit être rechargeable telle quelle.
 

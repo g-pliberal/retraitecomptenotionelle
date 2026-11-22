@@ -25,6 +25,7 @@ import { Restitution } from "./restitution.js";
 import { assietteMaladie, salaireBrutDepuisNet, salaireNetDepuisBrut } from "./remuneration.js";
 import { Simulateur, niveauPourPension } from "./simulateur.js";
 import { REGIMES_CODE_DES_PENSIONS } from "./droit/coordonner.js";
+import { pensionsEtrangeresServies } from "./droit/etranger.js";
 import { euros } from "./format.js";
 import { agesDeLEstimation } from "./pilote.js";
 import { agesBalayes, depart as departDuCycle } from "./cycle-de-vie.js";
@@ -1084,11 +1085,14 @@ function partsDuFoyer(saisie) {
 }
 
 /**
- * Les pensions du foyer, une par pensionné : la sienne, et les ressources que
- * la saisie prête au conjoint déclaré.
+ * Les pensions du foyer, une par pensionné : la sienne, ses pensions
+ * étrangères comprises (`etrangeres`), et les ressources que la saisie prête au
+ * conjoint déclaré. Le revenu fiscal de référence compte les revenus qu'une
+ * convention fiscale exonère (CGI, art. 1417, IV, 1°, c) : la pension
+ * étrangère y entre, que la France l'impose ou non.
  */
-function foyer(saisie, pension) {
-  const pensions = [pension];
+function foyer(saisie, pension, etrangeres = 0) {
+  const pensions = [pension + etrangeres];
   if (saisie.conjoint && saisie.ressources_conjoint) pensions.push(saisie.ressources_conjoint);
   return pensions;
 }
@@ -1101,13 +1105,13 @@ function foyer(saisie, pension) {
  * petit. La cotisation maladie, qui dépend de la part complémentaire, n'y
  * entre pas.
  */
-function pensionSaisieBrute(saisie, pensions) {
+function pensionSaisieBrute(saisie, pensions, etrangeres = 0) {
   const annuelle = saisie.pension * MOIS_PAR_AN;
   if (!saisie.enNet) return annuelle;
   const parts = partsDuFoyer(saisie);
   for (const tranche of pensions.bareme_csg) {
     const brute = annuelle / (1 - pensions.tauxDeLaTranche(tranche));
-    const revenu = pensions.revenuFiscalPresume(foyer(saisie, brute));
+    const revenu = pensions.revenuFiscalPresume(foyer(saisie, brute, etrangeres));
     if (pensions.tranche(revenu, parts) === tranche) return brute;
   }
   return annuelle
@@ -1120,18 +1124,21 @@ function pensionSaisieBrute(saisie, pensions) {
  * Le revenu que la saisie dit l'emporte. Sinon, la présomption
  * `aucun_autre_revenu_que_ses_pensions` : la pension du système 1 — celle que
  * la personne saisit quand elle saisit sa pension, sinon `pension`, celle que
- * la simulation lui sert, annuelle, en euros de l'année de référence —, et les
- * ressources du conjoint, abattues de 10 %. `null` quand il n'y a encore ni
- * l'une ni l'autre.
+ * la simulation lui sert, annuelle, en euros de l'année de référence —, ses
+ * pensions étrangères (`etrangeres`, dans les mêmes euros), et les ressources
+ * du conjoint, abattues de 10 %. `null` quand il n'y a encore ni l'une ni
+ * l'autre.
  */
-function revenuFiscalDuFoyer(saisie, pensions, pension) {
+function revenuFiscalDuFoyer(saisie, pensions, pension, etrangeres = 0) {
   if (saisie.revenu_fiscal !== null && saisie.revenu_fiscal !== undefined) {
     return [saisie.revenu_fiscal, false];
   }
   let annuelle = pension;
-  if (saisie.saisie_par === "pension") annuelle = pensionSaisieBrute(saisie, pensions);
+  if (saisie.saisie_par === "pension") {
+    annuelle = pensionSaisieBrute(saisie, pensions, etrangeres);
+  }
   if (annuelle === null) return [null, false];
-  return [pensions.revenuFiscalPresume(foyer(saisie, annuelle)), true];
+  return [pensions.revenuFiscalPresume(foyer(saisie, annuelle, etrangeres)), true];
 }
 
 /**
@@ -1253,6 +1260,16 @@ export class Montants {
     this.parts = maladie?.parts ?? 1;
     this.bareme = maladie?.bareme ?? null;
     this.saisie = maladie?.saisie ?? null;
+    // Les pensions étrangères de qui réside en France, annuelles, en euros de
+    // l'année de référence : elles entrent à son revenu fiscal présumé.
+    this.etrangeres = maladie?.etrangeres ?? 0;
+    // Ce que la CSG, la CRDS et la CASA de sa tranche prennent à ces pensions :
+    // dues sur toute pension, quelle que soit sa source, par qui est domicilié
+    // en France et à la charge d'un régime français d'assurance maladie (CSS,
+    // L. 136-1 et L. 137-41 ; ordonnance n° 96-50, art. 14 ; BOI-RES-RSA-000219),
+    // ce que la pension française rend certain (règlement (CE) n° 883/2004,
+    // art. 23) ; aucune cotisation maladie. Zéro hors de France.
+    this.tauxPensionEtrangere = maladie?.tauxPensionEtrangere ?? 0;
     // Qui réside hors de France : la cotisation maladie sur la pension de base
     // du régime général, et la part de celle-ci dans la pension ; si la France
     // prend en charge ses soins, et pourquoi (`couvertureFrancaise`).
@@ -1297,11 +1314,23 @@ export class Montants {
     const actuel = comparaison ? (comparaison.actuel ?? null) : null;
     let servie = null;
     let coefficient = 1;
+    let etrangeres = 0;
     if (actuel !== null) {
       const aujourdhui = comparaison.aujourd_hui ?? null;
       servie = aujourdhui === null ? null : aujourdhui.actuel;
       coefficient = servie !== null ? comparaison.coefficient_euros_aujourd_hui
         : comparaison.coefficient_euros_constants;
+      // Les pensions étrangères servies au même mois — le départ, ou janvier
+      // de l'année courante pour qui est déjà parti —, en euros de l'année de
+      // référence.
+      const carriere = comparaison.carriere ?? null;
+      if (carriere && carriere.pensionsEtrangeres.length > 0) {
+        const { annee_courante: courante, annee_euros_constants: euros } = simulateur.parametres;
+        const depart = carriere.dateLiquidation;
+        const mois = servie !== null && depart.annee < courante
+          ? new DateMois(courante, 1) : depart;
+        etrangeres = pensionsEtrangeresServies(simulateur.macro, carriere, mois, euros);
+      }
     }
     // QUI RÉSIDE HORS DE FRANCE : l'accord que le tableau donne à son État
     // aujourd'hui dit si les règlements européens décident de ses soins.
@@ -1309,7 +1338,7 @@ export class Montants {
       simulateur.macro.paquet.accords_internationaux ?? {}, saisie.residence,
       `${String(simulateur.parametres.annee_courante).padStart(4, "0")}-01-01`);
     return Montants.duFoyer(saisie, pensions, actuel, servie, coefficient,
-      rapport, rapportProposition, europeen);
+      rapport, rapportProposition, europeen, etrangeres);
   }
 
   /**
@@ -1317,7 +1346,9 @@ export class Montants {
    * CASA de SA tranche de L. 136-8, et la cotisation maladie de la part
    * complémentaire de sa pension du scénario 1 — `actuel` au départ,
    * `aujourdhui` pour qui est déjà parti, que `coefficient` mène en euros de
-   * l'année de référence. Un allocataire de l'ASPA est exonéré de tout
+   * l'année de référence. Le revenu fiscal présumé compte aussi ses pensions
+   * étrangères servies au même mois (`etrangeres`), qu'une convention fiscale
+   * exonère ou non (CGI, art. 1417, IV, 1°, c). Un allocataire de l'ASPA est exonéré de tout
    * (L. 136-1-2, II 1° ; D. 242-9, 2°). Sans pension, ni saisie qui en dise
    * une, ni revenu fiscal dit : le taux plein, comme avant toute simulation.
    * Les cinq autres scénarios gardent ce taux : la réforme, par hypothèse, ne
@@ -1335,7 +1366,7 @@ export class Montants {
    * `partRegimesSpeciaux` est ce qu'elle prend à la pension, au taux plein.
    */
   static duFoyer(saisie, pensions, actuel = null, aujourdhui = null, coefficient = 1,
-    rapport = 0, rapportProposition = 0, europeen = false) {
+    rapport = 0, rapportProposition = 0, europeen = false, etrangeres = 0) {
     let part = 0;
     let minimum = 0;
     let pension = null;
@@ -1373,7 +1404,7 @@ export class Montants {
           bareme: pensions, saisie,
         });
     }
-    const [revenu, presume] = revenuFiscalDuFoyer(saisie, pensions, pension);
+    const [revenu, presume] = revenuFiscalDuFoyer(saisie, pensions, pension, etrangeres);
     const parts = partsDuFoyer(saisie);
     let tranche;
     if (minimum > 0) {
@@ -1393,6 +1424,7 @@ export class Montants {
       partRegimesSpeciaux: speciaux, tauxRegimesSpeciaux: regimesSpeciaux,
       tranche: tranche.libelle, tauxCsg: tranche.taux, revenuFiscal: revenu,
       revenuPresume: presume, aspa: minimum > 0, parts, bareme: pensions, saisie,
+      etrangeres, tauxPensionEtrangere: actuel !== null ? taux : 0,
     });
   }
 
@@ -1493,7 +1525,7 @@ export class Montants {
       tranche = bareme.bareme_csg[0];
     } else {
       const revenu = !this.revenuPresume && this.revenuFiscal !== null
-        ? this.revenuFiscal : bareme.revenuFiscalPresume(foyer(this.saisie, total));
+        ? this.revenuFiscal : bareme.revenuFiscalPresume(foyer(this.saisie, total, this.etrangeres));
       tranche = bareme.tranche(revenu, this.parts);
     }
     const speciaux = tranche.maladie ? this.partRegimesSpeciaux : 0;

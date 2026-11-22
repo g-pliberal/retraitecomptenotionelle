@@ -9,8 +9,10 @@ foyer, perçu l'avant-dernière année, et en tire quatre cas pour une part de
 quotient familial (montants 2026, revalorisés chaque année sur les prix) :
 exonéré jusqu'à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=exonéré.revenu_fiscal_maximum)-->13 048<!--/--> €, <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux réduit.taux*100)-->3,80<!--/--> % jusqu'à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux réduit.revenu_fiscal_maximum)-->17 057<!--/--> €, <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux médian.taux*100)-->6,60<!--/--> % sous <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux médian.revenu_fiscal_maximum)-->26 472<!--/--> €,
 <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux plein.taux*100)-->8,30<!--/--> % dès ce seuil. Le simulateur lit ce revenu dans un champ facultatif ; sans lui,
-il le présume fait des seules pensions du foyer — celle du système 1 et les
-ressources du conjoint déclaré —, abattues de <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.abattement_pensions.taux*100)-->10<!--/--> %. Le foyer compte une part,
+il le présume fait des seules pensions du foyer — celle du système 1, les
+pensions étrangères de qui réside en France, que le revenu fiscal compte même
+quand une convention les exonère (code général des impôts, article 1417, IV,
+1°, c), et les ressources du conjoint déclaré —, abattues de <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.abattement_pensions.taux*100)-->10<!--/--> %. Le foyer compte une part,
 deux avec un conjoint. Au taux plein, la CSG fait <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.csg_taux_plein*100)-->8,30<!--/--> %, la CRDS
 <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.crds*100)-->0,50<!--/--> % et la CASA <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.casa*100)-->0,30<!--/--> %, soit **<!--chiffre:mesure(prelevement_pension)-->9,10<!--/--> %** ;
 la CRDS suit la CSG hors de l'exonération, la CASA et la cotisation maladie
@@ -26,6 +28,29 @@ arrondit à l'euro (instruction de la DSS du 11 décembre 2025) et le dépôt
 non, d'où un euro de revenu fiscal au seuil du taux réduit. Les cinq
 systèmes notionnels gardent le taux de la
 personne au système 1, et la page le dit sous la clé de lecture.
+
+**La pension étrangère de qui réside en France pèse sur l'impôt de sa
+pension française.** Le foyer la déclare, chaque année où elle est servie,
+moins la CSG déductible au taux plein (notice 2041 GG) : imposée en France,
+ou réservée par la convention fiscale à l'État qui la sert, qui accorde alors
+un crédit égal à l'impôt français qui lui correspond, elle porte au même taux
+moyen la pension française, qui ne supporte que sa part de l'impôt du foyer ;
+la pension du départ après impôt, celle du taux de remplacement, aussi. Elle
+paie elle-même la CSG, la CRDS et la CASA de la tranche du foyer, que la page
+dit sous la note des pensions étrangères : le code de la sécurité sociale les
+assoit sur toute pension, quelle que soit sa source, de qui est domicilié en
+France et à la charge d'un régime français d'assurance maladie (L. 136-1,
+L. 137-41), ce que sa pension française rend certain (règlement (CE)
+n° 883/2004, art. 23). La doctrine les écarte quand la convention fiscale
+exclut l'imposition de la pension par la France (BOI-RES-RSA-000219, du
+11 août 2025) : le modèle ne lit pas les conventions État par État et les
+prélève toujours, ce qui est juste pour les pensions légales allemandes
+depuis 2016, que l'avenant du 31 mars 2015 réserve à la France, mais trop pour
+une pension que sa convention réserve à l'État qui la paie, souvent celle
+d'un ancien fonctionnaire de cet État. Ni l'impôt de l'État qui la sert, ni ses
+cotisations sociales ne sont calculés ; la CSG déductible se retire l'année
+même, et non l'année suivante où elle est payée ; une convention qui
+l'exonérerait sans taux effectif n'est pas lue.
 
 **2. La cotisation maladie des pensions est comptée au système 1, et les cinq
 autres gardent le taux qui en résulte.** Trois ont survécu, réduites, à la
