@@ -76,3 +76,6 @@ code:
     legislation/duree_requise_regimes_speciaux.csv : crpn_2022, retranche_decote,
     age_minimum
   tests: [tests/test_simulateur.py]
+a_confronter:
+- source: crpn_comprendre_retraite
+  quoi: la décote

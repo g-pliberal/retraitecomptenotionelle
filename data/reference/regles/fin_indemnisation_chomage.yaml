@@ -245,3 +245,6 @@ effet: >-
   Les carrières qui finissent au chômage après le taux plein : jusqu'au 3 octobre 2026, le
   modèle servait l'allocation jusqu'au départ, si tard qu'il vînt, et avec elle des points
   complémentaires et des versements au compte que le droit ne donne pas.
+a_confronter:
+- source: sp_f31249_chomage
+  quoi: les trimestres du chômage, indemnisé ou non

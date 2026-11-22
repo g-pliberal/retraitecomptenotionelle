@@ -243,3 +243,6 @@ effet: >-
   sécurité sociale : la dentiste partie avant 2015 perd sa complémentaire avec sa base ; le
   médecin, l'officier ministériel, le vétérinaire perdent sur elle tout ou partie du
   dépassement ; le notaire libéral n'y a pas droit, même sous le seuil.
+a_confronter:
+- source: carmf_simulateur_cumul
+  quoi: le cumul des médecins et sa cotisation sans droits

@@ -262,3 +262,6 @@ code:
     fonctionnaire_indice_majore_et_primes, releve_fonction_publique,
     departs_super_actif_rafp_a_l_age_legal, progressive_fonctionnaire_2024,
     invalidite_radiation_puis_prive et les trois réversions d'un fonctionnaire
+a_confronter:
+- source: rafp_calculette_points
+  quoi: les points d'une cotisation donnée

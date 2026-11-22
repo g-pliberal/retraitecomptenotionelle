@@ -1530,3 +1530,6 @@ effet: >-
   proportionnelle : le moteur ne servait que le calcul contributif — un chef de
   quarante ans à faible revenu parti en 2002 touchait 4 485 € par an, quand le plan lui
   garantissait le minimum vieillesse, 6 833 €.
+a_confronter:
+- source: msa_non_salaries
+  quoi: le complément des exploitants

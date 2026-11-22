@@ -270,3 +270,6 @@ code:
     legislation/decote_regimes_speciaux.csv : annee, trimestres_avant_limite
   tests: [tests/test_ieg.py, tests/test_simulateur.py, tests/test_oracle.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]
+a_confronter:
+- source: cnieg_age_annulation_decote
+  quoi: l'âge d'annulation de la décote

@@ -219,3 +219,6 @@ effet: >-
   maintenu de droit de 67 à 68 ans, puis par le maintien présumé jusqu'à 70. Approchée :
   l'enfant invalide, qui permet de cumuler les deux reculs, l'enfant ouvrant droit à
   l'allocation aux adultes handicapés et l'enfant mort pour la France ne sont pas saisis.
+a_confronter:
+- source: sre_majoration_enfants
+  quoi: le recul de la limite d'âge

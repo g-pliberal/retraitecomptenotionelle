@@ -411,3 +411,6 @@ textes_a_rattacher:
     loi du 15 février 1946 relative aux effectifs, au recrutement et aux limites d'âge des
     fonctionnaires, article 10 ; loi du 8 août 1947, article 21 ; décret n° 48-1907 du 18
     décembre 1948 relatif aux limites d'âge des personnels civils de l'État
+a_confronter:
+- source: sre_retraite_anticipee
+  quoi: la limite d'âge

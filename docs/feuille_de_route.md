@@ -6307,14 +6307,13 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 
 **Reprise, au 22 novembre 2026.** Fait : le registre (71 modèles) ;
 TRAJECTOiRE 3.3.2 confronté chaque lundi dans GitHub ; et, le 22 novembre,
-la table des références : pour chaque élément du calcul et chaque famille de
-régimes, la source qui le confirme, ou l'absence dite. Un test la tient à jour.
-Elle attend la validation du propriétaire. Ensuite : comparer les barèmes
-datés à OpenFisca et à l'IPP ; rejouer les simulateurs des caisses ; trier
-les écarts du registre. Restent aussi les écarts nouveaux de TRAJECTOiRE à
-lire au texte, le registre et le témoin d'octobre à passer de la version
-1.1.2 à la 3.3.2, et la campagne 2025 de l'EACR, au printemps 2027.
-Lire `2026-11-22-table-des-references.md`, puis
+la carte de justesse dit de chaque règle à quoi elle se confronte : une
+référence officielle, un autre modèle, une source à rejouer, ou rien. Un test
+refuse une règle qui ne dit rien. Le propriétaire valide avant la suite :
+rejouer les sources à confronter, une famille à la fois ; comparer les
+barèmes datés à OpenFisca et à l'IPP. Restent aussi les écarts nouveaux de
+TRAJECTOiRE à lire au texte, et le registre à passer à sa version 3.3.2.
+Lire `2026-11-22-references-de-la-carte.md`, puis
 `2026-11-20-trajectoire-3-dans-github.md`.
 
 **Demande**, le 1er octobre 2026 : « Quels sont les autres modèles publics

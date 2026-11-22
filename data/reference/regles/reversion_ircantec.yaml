@@ -363,3 +363,8 @@ effet: >-
   des hôpitaux, ou d'un élu local, qui décède. Le modèle la calcule pour le conjoint
   que la saisie déclare, sur la retraite servie, partagée avec les précédents
   conjoints qu'elle déclare.
+a_confronter:
+- source: union_retraite_reversion
+  quoi: la réversion de ce régime, cas par cas, au simulateur anonyme d'Union Retraite
+- source: ircantec_reversion
+  quoi: les conditions et le taux de la réversion

@@ -278,3 +278,6 @@ effet: >-
   Les agents non titulaires de l'État et des collectivités de 1960 à 1970, et ceux qui
   ont validé des services antérieurs : leurs points IGRANTE, que l'Ircantec sert,
   majorés de 3,5 % par le droit et non par le modèle.
+a_confronter:
+- source: ircantec_points_mode_de_calcul
+  quoi: les points

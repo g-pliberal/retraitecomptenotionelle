@@ -55,3 +55,6 @@ code:
     legislation/surcote_baremes.csv : cnbf
   tests: [tests/test_sections_juridiques.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]
+a_confronter:
+- source: cnbf_fiches_pratiques
+  quoi: la surcote des avocats

@@ -321,3 +321,6 @@ effet: >-
   liquidé à 65 ans, mort en juin 2020, conjointe née en 1952 : 60 % de 6 912,27 €,
   4 147,36 € par an, au lieu de rien ; né le 1er juin 1960, mort en juin 2030,
   conjointe de 1958 : 60 % de 9 423,69 €, 5 654,21 €.
+a_confronter:
+- source: union_retraite_reversion
+  quoi: la réversion de ce régime, cas par cas, au simulateur anonyme d'Union Retraite

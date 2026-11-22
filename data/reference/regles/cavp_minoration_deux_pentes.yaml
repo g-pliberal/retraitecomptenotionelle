@@ -703,3 +703,6 @@ code:
     date_effet, effet_au_trimestre_civil, avantages_non_contributifs ;
     legislation/ages_regimes.csv : cavp
   tests: [tests/test_sections_sante.py, tests/test_sections_liberales.py, tests/js/moteur.test.js]
+a_confronter:
+- source: cavp_calcul
+  quoi: la minoration par l'âge

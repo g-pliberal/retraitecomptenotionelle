@@ -262,3 +262,6 @@ code:
     legislation/age_surcote_regimes_speciaux.csv : age
   tests: [tests/test_sncf_ratp.py, tests/test_simulateur.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]
+a_confronter:
+- source: crpratp_ouverture_du_droit
+  quoi: l'âge de la surcote

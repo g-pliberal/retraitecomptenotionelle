@@ -213,7 +213,7 @@ def du_modele(chemin: str) -> bool:
 CHAMPS_DOCUMENTAIRES = (
     "intitule", "etat", "effet", "sources", "approximations", "exemples",
     "referents", "historique", "textes_a_rattacher", "textes_sans_effet",
-    "textes_a_relire",
+    "textes_a_relire", "a_confronter", "sans_reference",
 )
 _CHAMPS_DOCUMENTAIRES = frozenset(champ.encode() for champ in CHAMPS_DOCUMENTAIRES)
 

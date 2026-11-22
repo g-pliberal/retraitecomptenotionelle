@@ -659,3 +659,6 @@ code:
     decote_par_trimestre, surcote_par_trimestre, surcote_age_maximum,
     avantages_non_contributifs ; legislation/ages_regimes.csv : cprn_2014
   tests: [tests/test_sections_juridiques.py, tests/test_sections_liberales.py]
+a_confronter:
+- source: cprn_age_depart
+  quoi: les âges et la décote

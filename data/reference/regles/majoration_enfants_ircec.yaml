@@ -61,3 +61,6 @@ code:
   - >-
     tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
     auteur_dramatique_carriere_courte, seul témoin qui change sans elle
+a_confronter:
+- source: ircec_guide_retraite
+  quoi: la majoration pour enfants

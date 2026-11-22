@@ -309,3 +309,6 @@ code:
     statut_auxiliaire_medical, ses générations 1965 et 1968, et
     dispense_liberale_pensionnee, que tests/test_pont.py rejoue à l'octet ; aucun cas
     posé à la main ne tient le rendement
+a_confronter:
+- source: carpimko_simulateur
+  quoi: les cotisations par revenu

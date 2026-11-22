@@ -263,3 +263,6 @@ effet: >-
   L'artisane partie en 2022 qui déclare 60 % du salaire moyen d'août 2022 à janvier 2025
   perd, depuis juillet 2024, le dépassement sur sa complémentaire aussi : 112,85 € par mois
   en 2024, sur 428,12 €, en plus des 112,85 € de sa base (témoin cumul_artisan_2024).
+a_confronter:
+- source: cnav_independants_complementaire
+  quoi: le cumul des indépendants

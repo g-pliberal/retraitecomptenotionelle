@@ -77,3 +77,8 @@ code:
     notaire parti à l'âge légal en 2022 (cumul_notaire_cprn_2022), les départs non
     ouverts à cinquante-deux et cinquante-sept ans (liquidation_52, liquidation_57) et,
     dans son seul détail, etranger_portugal_carriere_longue
+a_confronter:
+- source: sre_decote
+  quoi: le plafond des trimestres de décote
+- source: juris_cnracl_decote
+  quoi: la décote à la CNRACL

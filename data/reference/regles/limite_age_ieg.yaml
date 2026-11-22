@@ -323,3 +323,6 @@ textes_sans_effet:
     d'affiliation à ce régime prévues au I de l'article 16 de la loi du 9 août 2004 » ;
     le reste, mot pour mot ; la fiche n'en lit que l'article 3 de 1946, l'âge et les
     services de la pension d'ancienneté
+a_confronter:
+- source: cnieg_age_retraite
+  quoi: la limite d'âge

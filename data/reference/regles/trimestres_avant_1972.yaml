@@ -382,3 +382,6 @@ code:
     `test_la_retenue_se_lit_selon_le_statut_et_l_annee`, sur le portage ;
     tests/test_outre_mer.py, le département dans la carrière ; les
     contrôles du récupérateur (tests/test_verification.py).
+sans_reference: 'Au relevé du 22 novembre 2026, ni exemple officiel, ni grille posée sans le
+  code, ni autre modèle du droit réel cité par la fiche, et aucune source du vivier ne lui est
+  rattachée : seul le texte la tient.'

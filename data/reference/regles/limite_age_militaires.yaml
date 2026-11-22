@@ -199,3 +199,6 @@ effet: >-
   2026. Approchée : la limite de son grade, souvent plus basse, et la limite de durée de
   services du militaire sous contrat ne sont pas saisies, et le maintien de L. 4139-17 pour
   les besoins des forces n'est pas présumé.
+a_confronter:
+- source: sre_militaires
+  quoi: la limite d'âge

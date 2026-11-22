@@ -159,3 +159,6 @@ code:
     duree_requise_trimestres ; legislation/decote_regimes_speciaux.csv :
     trimestres_avant_limite, coefficient
   tests: [tests/test_simulateur.py]
+sans_reference: 'Au relevé du 22 novembre 2026, ni exemple officiel, ni grille posée sans le
+  code, ni autre modèle du droit réel cité par la fiche, et aucune source du vivier ne lui est
+  rattachée : seul le texte la tient.'

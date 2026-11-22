@@ -145,3 +145,6 @@ textes_sans_effet:
     novembre 2026 (décret n° 2026-354 du 7 mai 2026, article 3 ; loi n° 2025-199,
     article 90) ; le reste, mot pour mot, dont le c du 2°, le trimestre du congé
     supplémentaire de naissance
+a_confronter:
+- source: sp_f21552_enfants_salarie
+  quoi: les trimestres liés aux enfants

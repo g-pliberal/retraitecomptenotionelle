@@ -555,3 +555,6 @@ code:
     `test_les_points_de_chef_de_1952_a_1972_se_majorent_annee_par_annee` et
     `test_la_pension_agricole_de_2026_majore_les_points_de_chef_de_1952_a_1972`
     rejouent, posés à la main, dans les deux moteurs.
+sans_reference: 'Au relevé du 22 novembre 2026, ni exemple officiel, ni grille posée sans le
+  code, ni autre modèle du droit réel cité par la fiche, et aucune source du vivier ne lui est
+  rattachée : seul le texte la tient.'

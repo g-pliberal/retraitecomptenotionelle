@@ -516,3 +516,6 @@ code:
     qui confronte à chaque cas les lectures du texte au taux servi, et lie chacun des
     deux écarts (la Cipav avant 2000 et sa forme supposée depuis) à l'approximation qui
     le déclare
+a_confronter:
+- source: cavec_calcul_retraite
+  quoi: la majoration pour enfants

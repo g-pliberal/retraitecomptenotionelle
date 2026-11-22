@@ -275,3 +275,6 @@ code:
     témoins changent sans les valeurs d'avant 2021 — les générations 1925 à 1955 des
     quatorze statuts libéraux, cumul_medecin_carmf_2017,
     cumul_medecin_seulement_liberal_2017 et progressive_liberale_puis_salariee_2016
+a_confronter:
+- source: cipav_calcul_retraite
+  quoi: la valeur du point de la base des libéraux

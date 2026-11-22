@@ -251,3 +251,6 @@ code:
   - >-
     tests/js/mois.test.js, « l'année d'entrée valide ce que son salaire vaut, au plus
     quatre (R. 351-9) » : entré au SMIC le 1er octobre 2015, trois trimestres
+sans_reference: 'Au relevé du 22 novembre 2026, ni exemple officiel, ni grille posée sans le
+  code, ni autre modèle du droit réel cité par la fiche, et aucune source du vivier ne lui est
+  rattachée : seul le texte la tient.'

@@ -275,3 +275,6 @@ effet: >-
   Tout conjoint, ou ex-conjoint, d'un artisan, d'un commerçant ou d'un industriel qui
   décède depuis 2013. Le modèle la calcule pour le conjoint que la saisie déclare,
   partagée avec les précédents conjoints qu'elle déclare.
+a_confronter:
+- source: union_retraite_reversion
+  quoi: la réversion de ce régime, cas par cas, au simulateur anonyme d'Union Retraite

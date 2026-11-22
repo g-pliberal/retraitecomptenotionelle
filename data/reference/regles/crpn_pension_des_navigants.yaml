@@ -466,3 +466,6 @@ effet: >-
   la majoration temporaire de cinquante-cinq ans à l'âge légal, ni celle des enfants,
   ni le minimum, et sur la carrière entière plutôt que les vingt-cinq meilleures
   annuités.
+a_confronter:
+- source: crpn_comprendre_retraite
+  quoi: le calcul de la pension

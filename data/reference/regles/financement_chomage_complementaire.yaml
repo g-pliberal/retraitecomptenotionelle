@@ -341,3 +341,6 @@ effet: >-
   ce que l'Unédic ou l'État versait : treize témoins sur 694 baissent, de 0,84 % en médiane
   au scénario 4 et jusqu'à 5,41 % pour `invalidite_demandeur_d_emploi`, treize ans au
   chômage ; le scénario 1 et les comptes prospectifs des scénarios 3 et 5 ne bougent pas.
+a_confronter:
+- source: agirc_arrco_circulaires
+  quoi: le financement des points du chômage

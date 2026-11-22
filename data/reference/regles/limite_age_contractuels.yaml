@@ -247,3 +247,6 @@ effet: >-
   2023, et ses pensions en partent. Approchée : la durée d'assurance tous régimes se
   compte par les années cotisées, et la limite de chaque administration, avant 2011, est
   présumée la plus haute que la loi permette.
+a_confronter:
+- source: ircantec_prolongation_activite
+  quoi: la limite d'âge des contractuels

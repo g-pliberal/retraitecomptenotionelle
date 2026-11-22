@@ -46,6 +46,8 @@ objets:
       textes_a_relire: {porte: "celles dont l'effet reste à lire", type: liste, de: {objet: texte}, defaut: []}
       code: {porte: "les fonctions du moteur JavaScript, les paramètres, les tests", type: libre, defaut: {}, obligatoire_sauf: {etat: [pas_encore_modelisee]}}
       referents: {porte: "la correspondance avec chaque autre modèle, et les écarts justifiés", type: libre, defaut: {}}
+      a_confronter: {porte: "les sources repérées qu'il reste à rejouer contre elle, et ce qu'on y lira", type: liste, de: libre, defaut: [], additif: "la carte de justesse dit à quoi chaque règle se confronte (action 137)"}
+      sans_reference: {porte: "pourquoi rien ne la confronte, quand rien ne le fait", type: texte, defaut: null, additif: "la carte de justesse dit à quoi chaque règle se confronte (action 137)"}
       historique: {porte: "les récits qui la concernent, repris des registres", type: liste, de: texte, defaut: []}
       exemples: {porte: "les exemples officiels de la fiche tant que ses versions ne sont pas découpées", type: liste, de: identifiant, defaut: [], additif: "une fiche tirée d'un registre n'a pas encore de versions où les rattacher"}
       reformes: {porte: "les entrées de reformes.yaml qu'elle couvre", type: liste, de: identifiant, defaut: [], additif: "le registre de veille les rattachait à la règle"}

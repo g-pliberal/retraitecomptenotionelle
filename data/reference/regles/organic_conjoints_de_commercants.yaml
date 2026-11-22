@@ -234,3 +234,6 @@ effet: >-
   Les industriels et commerçants qui ont cotisé de 1973 à 2003, et leurs conjoints : la
   cotisation additionnelle est portée, mais pas les points que le NRCO puis le RCI en
   ont tirés pour l'assuré lui-même.
+a_confronter:
+- source: mon_entreprise_independant
+  quoi: les cotisations du conjoint

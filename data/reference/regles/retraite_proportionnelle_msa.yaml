@@ -654,3 +654,6 @@ code:
   tests: [tests/test_simulateur.py, tests/test_pension_minimum_avant_1983.py,
     tests/test_minima_agricoles.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]
+a_confronter:
+- source: msa_non_salaries
+  quoi: la retraite forfaitaire et proportionnelle

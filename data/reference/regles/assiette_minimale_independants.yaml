@@ -244,3 +244,6 @@ code:
     dispense_saisonniere_cumulee et seconde_pension_artisane_au_minimum_2026 —, trois
     sans les dispenses, les deux premiers et dispense_rsa_releve_artisane ;
     tests/test_pont.py rejoue le premier à l'octet
+a_confronter:
+- source: mon_entreprise_independant
+  quoi: l'assiette minimale

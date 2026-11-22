@@ -90,3 +90,6 @@ code:
     tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
     huit témoins changent sans les barèmes de l'année, les sept de l'avocat et
     metiers_maximum
+a_confronter:
+- source: cnbf_simulateur_cotisations
+  quoi: les cotisations par ancienneté et revenu

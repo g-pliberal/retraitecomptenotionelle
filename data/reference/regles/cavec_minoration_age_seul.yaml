@@ -394,3 +394,6 @@ code:
     decote_par_trimestre ; regimes/cavec_complementaire.yaml : age_ouverture,
     age_taux_plein, decote_par_trimestre
   tests: [tests/test_sections_liberales.py]
+a_confronter:
+- source: cavec_calcul_retraite
+  quoi: la minoration par l'âge

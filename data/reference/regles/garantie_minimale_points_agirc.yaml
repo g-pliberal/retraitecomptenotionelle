@@ -986,3 +986,6 @@ effet: >-
   `garantie_minimale_cadre_sous_le_plafond`, une cadre née en 1975 au chômage en 2005,
   y gagne 120,27 points Agirc, et sa pension 0,34 % au scénario 1, de 0,29 à 0,44 % aux
   scénarios 2 à 5 ; le scénario 6, à la garantie vieillesse, ne bouge pas.
+a_confronter:
+- source: agirc_arrco_textes_de_reference
+  quoi: la garantie minimale de points

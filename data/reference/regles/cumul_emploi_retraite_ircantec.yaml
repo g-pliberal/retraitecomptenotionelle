@@ -206,3 +206,6 @@ effet: >-
   suspendue au-delà du plafond, réduite du dépassement depuis avril 2017 pour la première
   pension de 2015 ; depuis 2021, elle est servie entière ; pour la première pension de 2027,
   elle perd ce que ses pensions de base n'absorbent pas.
+a_confronter:
+- source: ircantec_cumul_emploi_retraite
+  quoi: les règles du cumul

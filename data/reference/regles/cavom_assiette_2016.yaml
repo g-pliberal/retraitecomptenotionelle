@@ -446,3 +446,6 @@ code:
     tests/test_sections_juridiques.py, test_le_plafond_de_la_cavom_monte_par_marches,
     qui lit les bornes et le minimum de chaque année ; aucun témoin ne change sans eux,
     et aucun test ne tient ce qu'ils font à une cotisation ou à une pension de la CAVOM
+a_confronter:
+- source: cavom_cotisations
+  quoi: le barème de la caisse

@@ -345,3 +345,6 @@ effet: >-
   donnent, au rendement de 7,63 %, ce qu'achèterait un salaire de référence revalorisé
   comme les pensions, la règle du plan quadriennal. La lecture du 4 octobre 2026 ne
   déplace aucun chiffre.
+a_confronter:
+- source: ircantec_valeur_point
+  quoi: la valeur du point

@@ -308,3 +308,6 @@ effet: >-
   collectivités qui décède. Le modèle la calcule pour le conjoint que la saisie
   déclare, partagée avec les précédents conjoints qu'elle déclare, sans le complément
   ni la part de la rente d'invalidité.
+a_confronter:
+- source: union_retraite_reversion
+  quoi: la réversion de ce régime, cas par cas, au simulateur anonyme d'Union Retraite

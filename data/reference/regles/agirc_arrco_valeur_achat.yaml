@@ -457,3 +457,6 @@ effet: >-
   % pour une salariée non cadre née en 1975, de 7,6 % pour 1990 et de 14,6 % pour 2005 —
   de 3,2 %, 8,6 % et 16,0 % pour une cadre —, la pension totale de 0,4 % à 4,1 % ; rien ne
   bouge pour qui a liquidé avant 2027.
+a_confronter:
+- source: agirc_arrco_points_obtenus
+  quoi: les points d'une année de salaire

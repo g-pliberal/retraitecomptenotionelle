@@ -173,3 +173,6 @@ effet: >-
   service, présumé, jusqu'à son départ : aucune pension ne bouge. Approchée : le mineur est
   traité en agent de la seule caisse autonome nationale, et l'abaissement par les années au
   fond n'avance pas sa limite.
+a_confronter:
+- source: cdc_mines_droits_directs
+  quoi: la limite d'âge

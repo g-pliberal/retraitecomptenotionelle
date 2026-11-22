@@ -195,3 +195,6 @@ effet: >-
   Tout conjoint d'un clerc ou employé de notaire : la moitié de sa pension, sans âge ni
   ressources, dès que le mariage remplit la condition de L. 39, partagée avec les
   précédents conjoints non remariés.
+a_confronter:
+- source: union_retraite_reversion
+  quoi: la réversion de ce régime, cas par cas, au simulateur anonyme d'Union Retraite

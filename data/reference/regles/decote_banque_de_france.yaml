@@ -345,3 +345,6 @@ code:
     regimes/banque_de_france.yaml : bareme_decote
   tests: [tests/test_decote_banque_de_france.py, tests/test_categorie_active_banque_de_france.py,
     tests/test_direction_banque_de_france.py, tests/test_age_du_taux_plein_banque_de_france.py]
+sans_reference: 'Au relevé du 22 novembre 2026, ni exemple officiel, ni grille posée sans le
+  code, ni autre modèle du droit réel cité par la fiche, et aucune source du vivier ne lui est
+  rattachée : seul le texte la tient.'

@@ -254,6 +254,44 @@ def loi_modifiee(sans_reponse: dict[str, list[dict]], cliquet: dict) -> str:
             "(`python scripts/textes.py --sans-reponse`).")
 
 
+def references_de_la_carte(vue: dict) -> list[str]:
+    """À quoi chaque partie de la carte se confronte (action 137), domaine
+    par domaine et famille par famille : les parties qu'une référence
+    officielle confirme, sur celles que le simulateur calcule."""
+    comptes = {r: 0 for r in justesse.REFERENCES}
+    for par_famille in vue.values():
+        for compte in par_famille.values():
+            for r, n in compte.items():
+                comptes[r] += n
+    familles = [f for f in FAMILLES if any(f in v for v in vue.values())]
+    familles += sorted({f for v in vue.values() for f in v} - set(familles))
+    L = [
+        "**À quoi la carte se confronte** (action 137). Chaque partie dans le champ a sa "
+        "référence, la meilleure qu'elle ait : officielle (un exemple publié, une grille posée "
+        "sans le code, un simulateur de caisse) ; un autre modèle qui lit le droit réel, que sa "
+        "fiche cite ; une source repérée à rejouer (`a_confronter`) ; ou l'absence, que la fiche "
+        "dit (`sans_reference`). Le texte reste l'arbitre. Comptées famille par famille, une "
+        "partie dans chacune des siennes : "
+        f"{comptes['officielle']} officielles, {comptes['modele']} par un modèle seul, "
+        f"{comptes['a_confronter']} à confronter, {comptes['aucune']} sans référence"
+        + (f", {comptes['a_declarer']} qui ne disent rien" if comptes["a_declarer"] else "")
+        + ". Chaque case donne les parties confirmées par une référence officielle, sur "
+        "celles du domaine et de la famille.",
+        "",
+        "| Domaine | " + " | ".join(FAMILLES.get(f, f) for f in familles) + " |",
+        "|---|" + "---|" * len(familles),
+    ]
+    for domaine in sorted(vue, key=lambda d: (d == justesse.SANS_DOMAINE, d)):
+        cases = []
+        for f in familles:
+            compte = vue[domaine].get(f)
+            cases.append(f"{compte.get('officielle', 0)} sur {somme_ordonnee(compte.values())}"
+                         if compte else "—")
+        L.append(f"| {domaine} | " + " | ".join(cases) + " |")
+    L.append("")
+    return L
+
+
 def carte_de_justesse(calcules: dict, lignes: list[dict]) -> list[str]:
     """La carte de justesse (action 194) : ce que les preuves établissent,
     famille de régimes par famille, avec ses dénominateurs."""
@@ -628,6 +666,7 @@ def page() -> str:
       "non appliquées.")
     w("")
     L.extend(carte_de_justesse(justes, familles_justes))
+    L.extend(references_de_la_carte(justesse.references_par_domaine(justes)))
     L.extend(filets_de_la_carte())
     w(f"**La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : "
       f"{milliers(len(redactions))} rédactions d'articles, de {len(textes_par_cle)} textes, "

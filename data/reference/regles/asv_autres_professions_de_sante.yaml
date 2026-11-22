@@ -362,3 +362,6 @@ effet: >-
   dentiste, 17 à 21 % de celui du médecin. Depuis la troisième partie, la sage-femme
   reçoit ses dix-huit points par an, et non plus les PCV du dentiste ; le biologiste,
   ses 262 points ; le médecin de secteur 2, au compte, toute sa cotisation.
+a_confronter:
+- source: carpimko_calcul_retraite
+  quoi: les points de l'ASV des auxiliaires médicaux

@@ -620,3 +620,6 @@ code:
     neuf témoins changent sans le forfait à la liquidation — statut_marin et ses
     générations 1925 à 1968, marin_avant_cinquante_cinq et metiers_maximum — ; un
     dixième, marin_au_dela_du_plafond, sans l'abattement
+a_confronter:
+- source: enim_salaires_forfaitaires
+  quoi: les salaires forfaitaires par catégorie

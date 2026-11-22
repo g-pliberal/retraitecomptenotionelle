@@ -315,3 +315,6 @@ code:
     tests/test_ages_au_mois.py, tests/test_simulateur.py, tests/test_donnees.py,
     tests/test_droits_contrefactuels.py, tests/test_oracle.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]
+a_confronter:
+- source: union_retraite_age_depart
+  quoi: l'âge du taux plein par génération

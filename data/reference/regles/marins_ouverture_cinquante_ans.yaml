@@ -264,3 +264,6 @@ code:
     vingt-cinq annuités, marin_avant_cinquante_cinq, et statut_marin dans son seul
     compte notionnel prospectif ; aucun sans sa levée à cinquante-deux ans et demi,
     que seul tests/test_simulateur.py tient
+a_confronter:
+- source: enim_conditions_attribution
+  quoi: l'âge d'ouverture

@@ -1468,3 +1468,6 @@ code:
     tests/test_agirc_arrco_au_droit.py, tests/test_taux_plein_a_soixante_cinq_ans.py,
     tests/test_retraite_progressive.py, tests/test_oracle.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]
+a_confronter:
+- source: agirc_arrco_calcru
+  quoi: les coefficients d'anticipation, au calculateur de la caisse

@@ -658,3 +658,6 @@ effet: >-
   Partie avec la durée, elle cumule entièrement et ne perd rien. L'artisane partie en
   2008 dont le revenu de 2010 dépasse de 4 700 € la moitié du plafond voit sa pension de
   1 000 € par mois suspendue cinq mois, et non les douze de son activité.
+a_confronter:
+- source: union_retraite_progressive
+  quoi: les conditions de la retraite progressive

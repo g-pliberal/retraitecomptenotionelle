@@ -149,3 +149,6 @@ code:
   - >-
     tests/test_cnav_baremes.py, où l'assiette minimale moitié moindre des tables des
     DOM, de 2009 à 2016, est celle de la cotisation appelée
+a_confronter:
+- source: mon_entreprise_independant
+  quoi: les cotisations outre-mer

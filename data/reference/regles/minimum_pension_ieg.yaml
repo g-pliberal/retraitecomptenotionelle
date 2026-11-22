@@ -109,3 +109,6 @@ historique:
 - >-
   2026-10-19 — action 130 : la fiche dit les fonctions où la règle manque, dans les deux
   moteurs ; elle reste manquante.
+a_confronter:
+- source: cnieg_minimum_retraite
+  quoi: le minimum de pension

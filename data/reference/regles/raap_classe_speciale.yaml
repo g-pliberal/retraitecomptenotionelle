@@ -86,3 +86,6 @@ code:
     cotisation
   tests: [tests/test_ircec_auteurs.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]
+a_confronter:
+- source: ircec_reglement_raap
+  quoi: la classe spéciale

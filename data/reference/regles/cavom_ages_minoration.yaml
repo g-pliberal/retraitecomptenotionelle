@@ -589,3 +589,6 @@ code:
     effet_au_trimestre_civil ;
     legislation/ages_regimes.csv : cavom
   tests: [tests/test_sections_juridiques.py, tests/test_sections_liberales.py]
+a_confronter:
+- source: cavom_retraite
+  quoi: les âges et la minoration

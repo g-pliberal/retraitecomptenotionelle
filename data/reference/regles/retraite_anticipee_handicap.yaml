@@ -458,3 +458,6 @@ effet: >-
   Les assurés qui ont cotisé en situation de handicap, depuis 2015 : le modèle leur
   ouvre ce départ à leur âge, au taux plein, leur pension majorée, et sert le
   fonctionnaire handicapé sans coefficient de minoration ; leur nombre n'est pas lu.
+a_confronter:
+- source: union_retraite_handicap
+  quoi: l'âge de la retraite anticipée des travailleurs handicapés

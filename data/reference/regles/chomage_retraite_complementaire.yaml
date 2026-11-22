@@ -416,3 +416,6 @@ effet: >-
   689 témoins d'avant le 3 octobre 2026 ne bouge ; cinq témoins nouveaux portent ces
   règles, et trois de plus la préretraite du FNE et le salarié agricole, que le modèle
   distingue depuis le même jour.
+a_confronter:
+- source: agirc_arrco_points_obtenus
+  quoi: les points du chômage indemnisé

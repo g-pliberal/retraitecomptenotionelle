@@ -270,3 +270,6 @@ code:
     contenu.parametres de chaque version : taux, trimestres_maximum ;
     regimes/banque_de_france.yaml : surcote_bareme
   tests: [tests/test_surcote_banque_de_france.py]
+sans_reference: 'Au relevé du 22 novembre 2026, ni exemple officiel, ni grille posée sans le
+  code, ni autre modèle du droit réel cité par la fiche, et aucune source du vivier ne lui est
+  rattachée : seul le texte la tient.'

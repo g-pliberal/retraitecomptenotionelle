@@ -277,3 +277,6 @@ code:
   - tests/test_oracle.py
   - tests/js/moteur.test.js
   - tests/temoins/simulations.json
+a_confronter:
+- source: baseircantec_age_taux_plein
+  quoi: l'âge du taux plein et la surcote

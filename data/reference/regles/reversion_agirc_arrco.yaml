@@ -549,3 +549,8 @@ effet: >-
   3 novembre 2026, la majoration pour enfants reversée d'un défunt parti avec un
   coefficient d'anticipation ne le garde plus : 295,21 € au lieu de 259,78 € en 2020
   pour la cadre née en 1950 partie à soixante-deux ans en 2012 (0,88).
+a_confronter:
+- source: union_retraite_reversion
+  quoi: la réversion de ce régime, cas par cas, au simulateur anonyme d'Union Retraite
+- source: agirc_arrco_reversion
+  quoi: les conditions et le taux de la réversion

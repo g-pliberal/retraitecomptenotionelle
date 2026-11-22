@@ -273,3 +273,6 @@ effet: >-
   2020, conjointe née en 1952 : 60 % de 14 984,97 €, 8 990,98 € par an, au lieu de
   rien ; parti prorogé de 10 % avec 26 068,01 €, mort en juin 2030, conjointe de 1958 :
   15 640,81 €.
+a_confronter:
+- source: union_retraite_reversion
+  quoi: la réversion de ce régime, cas par cas, au simulateur anonyme d'Union Retraite

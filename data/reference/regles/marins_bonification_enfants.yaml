@@ -182,3 +182,6 @@ code:
   - >-
     tests/temoins/exemples_officiels.yaml, que tests/test_oracle.py rejoue :
     enim_bonification_deux_enfants
+a_confronter:
+- source: enim_mode_de_calcul
+  quoi: la bonification pour enfants

@@ -346,3 +346,6 @@ code:
     onze témoins changent sans les points d'ajustement — les huit du médecin libéral de
     secteur 1 et de secteur 2 nés depuis 1955, cumul_medecin_carmf_2017,
     cumul_medecin_seulement_liberal_2017 et cumul_salarie_et_liberal
+a_confronter:
+- source: carmf_calcul_retraite
+  quoi: la valeur de service de l'ASV

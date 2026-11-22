@@ -234,3 +234,6 @@ code:
     revenu_professionnel_pour_un_franc_cadastral ; regimes/msa_non_salaries.yaml :
     bareme_points, valeur_point_euros, valeur_point_annee
   tests: [tests/test_points_agricoles_de_1981.py, tests/js/points-agricoles-de-1981.test.js]
+a_confronter:
+- source: msa_non_salaries
+  quoi: les points des exploitants

@@ -143,3 +143,6 @@ code:
     tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
     117 témoins changent sans elle, des générations 1964 à 1968, tous au scénario 1,
     trois dans leur compte notionnel et trois dans leur pension d'aujourd'hui
+a_confronter:
+- source: union_retraite_age_depart
+  quoi: l'âge et la durée par génération après la suspension

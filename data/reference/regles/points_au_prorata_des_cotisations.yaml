@@ -321,3 +321,6 @@ code:
     assiette, points_par_trimestre_valide, points_au_prorata_des_cotisations
   tests: [tests/test_sections_liberales.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]
+a_confronter:
+- source: cipav_calcul_retraite
+  quoi: les points de la base des libéraux

@@ -172,3 +172,6 @@ effet: >-
   est servie au taux plein : 50 % au lieu de 49,375 % pour un trimestre manquant, et sa
   complémentaire sans coefficient d'anticipation. Les autres carrières longues ont déjà
   la durée requise.
+a_confronter:
+- source: union_retraite_carriere_longue
+  quoi: le taux plein du départ anticipé

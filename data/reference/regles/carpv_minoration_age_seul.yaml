@@ -403,3 +403,6 @@ code:
     decote_par_trimestre ; regimes/carpv_complementaire.yaml : age_ouverture,
     age_taux_plein, decote_par_trimestre, avantages_non_contributifs
   tests: [tests/test_sections_sante.py, tests/test_sections_liberales.py, tests/js/moteur.test.js]
+sans_reference: 'Au relevé du 22 novembre 2026, ni exemple officiel, ni grille posée sans le
+  code, ni autre modèle du droit réel cité par la fiche, et aucune source du vivier ne lui est
+  rattachée : seul le texte la tient.'

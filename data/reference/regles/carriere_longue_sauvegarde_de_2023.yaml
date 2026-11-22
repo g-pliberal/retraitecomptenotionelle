@@ -162,3 +162,6 @@ effet: >-
   longue, au taux plein, sur 168/169. Le régime qui attend après un départ d'avant
   septembre 2023 ne garde plus l'âge de la rédaction d'avant qu'aux générations de la
   clause.
+a_confronter:
+- source: union_retraite_carriere_longue
+  quoi: l'âge du départ anticipé et la durée exigée

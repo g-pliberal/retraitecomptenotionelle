@@ -312,3 +312,6 @@ code:
     ieg_actif_2011, ieg_actif_2023 ; legislation/age_surcote_regimes_speciaux.csv : age
   tests: [tests/test_ieg.py, tests/test_simulateur.py, tests/test_limite_age.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]
+a_confronter:
+- source: cnieg_age_retraite
+  quoi: l'âge d'ouverture des actifs

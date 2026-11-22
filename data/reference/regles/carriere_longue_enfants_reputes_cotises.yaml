@@ -53,3 +53,6 @@ code:
     `CarriereLongue`, dans les deux moteurs
   tests:
   - tests/test_referents.py
+a_confronter:
+- source: union_retraite_carriere_longue
+  quoi: l'âge du départ anticipé et la durée exigée

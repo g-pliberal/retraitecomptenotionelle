@@ -1627,3 +1627,6 @@ historique:
   L. 382-25 ; l'effet chiffré du point non tranché, 289,73 € au modèle contre 507,73 € au
   texte de D. 721-6, distingue ce que le modèle servirait de ce que le texte donnerait.
   Aucune valeur, aucune règle ne change.
+a_confronter:
+- source: sre_decote
+  quoi: l'âge d'annulation de la décote

@@ -281,3 +281,6 @@ historique:
 - >-
   2026-11-12 — l'écart de date d'effet déclaré pour la pension en points (R. 643-6),
   avec ses lectures ; la règle, écrite, reste hors du moteur (action 192, étape 3).
+a_confronter:
+- source: cnavpl_guides
+  quoi: l'allocation d'avant 2004

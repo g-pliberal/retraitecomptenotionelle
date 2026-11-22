@@ -223,3 +223,6 @@ code:
   - >-
     tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
     enfants_liberale, seul témoin qui change sans elles
+a_confronter:
+- source: cnavpl_guides
+  quoi: les trimestres pour enfants

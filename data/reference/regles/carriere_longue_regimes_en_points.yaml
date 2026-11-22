@@ -63,3 +63,6 @@ code:
     tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
     aucun témoin ne change sans elle, ni aucun cas posé à la main : le chef
     d'exploitation parti à soixante-trois ans que la fiche cite n'a pas de test
+a_confronter:
+- source: union_retraite_carriere_longue
+  quoi: l'âge du départ anticipé et la durée exigée

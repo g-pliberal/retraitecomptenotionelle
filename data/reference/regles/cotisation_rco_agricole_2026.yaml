@@ -250,3 +250,6 @@ code:
     cinq revenus posés à la main, un par pente du taux, la cotisation au compte et les
     points au scénario 1, dans les deux moteurs ;
     test_la_seconde_part_de_rco_ne_touche_ni_les_annees_d_avant_ni_le_collaborateur
+a_confronter:
+- source: msa_non_salaries
+  quoi: la cotisation de la complémentaire

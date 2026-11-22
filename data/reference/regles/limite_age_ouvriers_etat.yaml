@@ -268,3 +268,6 @@ effet: >-
   qui n'est pas insalubre, et sa pension du FSPOEIE en part. Approchée : la limite d'avant
   2004 est supposée, et l'ouvrier dont la limite était déjà de soixante-cinq ans en 2004
   n'est pas distingué.
+a_confronter:
+- source: cdc_fspoeie_future_retraite
+  quoi: la limite d'âge

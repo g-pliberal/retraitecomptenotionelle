@@ -346,3 +346,6 @@ effet: >-
   Les fonctionnaires radiés des cadres pour invalidité, à tout âge. Le modèle les fait
   partir à leur radiation, sans décote, à leurs planchers et avec leur rente ; il les
   faisait partir à l'âge légal, décotés, sans le minimum garanti de l'invalidité.
+a_confronter:
+- source: sre_retraite_anticipee
+  quoi: la retraite pour invalidité

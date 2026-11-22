@@ -598,3 +598,6 @@ effet: >-
   soixante-quatre ans, sa pension complète est de 31 114,77 €, contre 32 221,46 € si
   elle avait travaillé à temps plein. Jusqu'au 29 septembre 2026, le modèle n'en
   calculait aucune.
+a_confronter:
+- source: union_retraite_progressive
+  quoi: les conditions de la retraite progressive

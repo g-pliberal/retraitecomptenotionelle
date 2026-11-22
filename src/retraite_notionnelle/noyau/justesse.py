@@ -53,6 +53,19 @@ ce module les lit là. Un exemple d'accord ne témoigne que pour la version qui
 le cite ; un exemple en écart que seule la fiche cite marque toutes ses
 versions, le doute profitant au faux.
 
+À quoi chaque partie se confronte
+---------------------------------
+
+Chaque partie dit aussi sa ``reference``, la meilleure qu'elle ait (action
+137) : ``officielle`` — un témoin, une grille, un exemple même en écart ;
+``modele`` — un autre modèle qui lit le droit réel, que sa fiche cite sous
+``referents`` ; ``a_confronter`` — une source repérée qu'il reste à rejouer,
+que la fiche nomme (un simulateur ou une page du vivier, un modèle du
+registre) ; ``aucune`` — l'absence, que la fiche dit sous ``sans_reference``.
+``tests/test_justesse_references.py`` refuse une partie dans le champ qui ne
+dit rien (``a_declarer``), et :func:`references_par_domaine` en tire la vue
+que le tableau de bord publie.
+
 Ce que ce module ne fait pas
 ----------------------------
 
@@ -85,6 +98,9 @@ INVENTAIRE = RACINE_DONNEES / "reference" / "regimes" / "inventaire.yaml"
 #: La confrontation à TRAJECTOiRE, cas par cas et quantité par quantité, que
 #: ``scripts/confronter_trajectoire.py`` écrit (action 137).
 TRAJECTOIRE = RACINE / "tests" / "temoins" / "trajectoire_3" / "ecarts.json"
+#: Le registre des autres modèles, et le vivier des sources repérées.
+REFERENTS = RACINE_DONNEES / "reference" / "referents.yaml"
+VIVIER = RACINE_DONNEES / "sources_a_explorer.yaml"
 
 #: Les six états d'une partie, du plus sûr au moins sûr.
 ETATS = ("prouvee_avec_temoin", "prouvee_au_texte_seul", "fausse", "approchee",
@@ -95,6 +111,13 @@ GRILLE = "grille_independante"
 TEMOINS = ("exemple_officiel", "moteur_exterieur", "simulateur_de_caisse",
            "notification_de_pension")
 SORTES = (GRILLE, *TEMOINS)
+#: À quoi une partie se confronte, de la meilleure réponse à la pire
+#: (action 137) : un témoin ou une grille ; un autre modèle du droit réel que
+#: sa fiche cite ; une source repérée à rejouer (`a_confronter`) ; l'absence
+#: dite (`sans_reference`) ; rien, ce qu'un test refuse.
+REFERENCES = ("officielle", "modele", "a_confronter", "aucune", "a_declarer")
+#: Le domaine des fiches qui n'en déclarent pas.
+SANS_DOMAINE = "sans domaine"
 #: Les étages de la carte ; seul le premier a ses preuves à l'étape A.
 ETAGES = ("regle",)
 #: La famille des fiches dont aucun régime n'est à l'inventaire.
@@ -292,10 +315,59 @@ def etats(fiches: dict[str, dict] | None = None, officiels: list[dict] | None = 
                 partie["grilles"].append(preuve["id"])
             else:
                 partie["temoins"].append(preuve["id"])
+    du_droit = modeles_du_droit_reel()
     for partie in sortie.values():
         partie["actions"] = sorted(set(partie["actions"]))
         partie["etat"] = _etat(partie)
+        fiche = fiches[partie["fiche"]]
+        referents = fiche.get("referents") if isinstance(fiche.get("referents"), dict) else {}
+        partie["modeles"] = sorted(m for m in referents if m in du_droit)
+        partie["reference"] = _reference(partie, fiche)
     return sortie
+
+
+def modeles_du_droit_reel(chemin: Path = REFERENTS) -> set[str]:
+    """Les modèles du registre qui confrontent le droit réel : ceux du coût ou
+    de la proposition ne vérifient aucune règle."""
+    return {m["id"] for m in charger_yaml(chemin)["referents"]
+            if "scenario_1" in (m.get("confronte") or [])}
+
+
+def vivier(chemin: Path = VIVIER) -> dict[str, dict]:
+    """Les sources repérées, par leur identifiant."""
+    return {s["id"]: s for s in charger_yaml(chemin)["sources"]}
+
+
+def _reference(partie: dict, fiche: dict) -> str:
+    if partie["grilles"] or partie["temoins"] or partie["ecarts"] or partie["temoins_a_situer"]:
+        return "officielle"
+    if partie["modeles"]:
+        return "modele"
+    if fiche.get("a_confronter"):
+        return "a_confronter"
+    if fiche.get("sans_reference"):
+        return "aucune"
+    return "a_declarer"
+
+
+def references_par_domaine(calcules: dict | None = None, fiches: dict[str, dict] | None = None,
+                           de_regime: dict[str, str] | None = None) -> dict[str, dict]:
+    """La référence des parties dans le champ, domaine par domaine et famille
+    par famille : ``{domaine: {famille: {reference: nombre}}}``. Une partie
+    compte dans chacune des familles de ses régimes."""
+    fiches = carte.fiches() if fiches is None else fiches
+    calcules = etats(fiches) if calcules is None else calcules
+    de_regime = familles() if de_regime is None else de_regime
+    vue: dict[str, dict] = {}
+    for partie in calcules.values():
+        if partie["etat"] == "hors_champ":
+            continue
+        domaine = fiches[partie["fiche"]].get("domaine") or SANS_DOMAINE
+        siennes = sorted({de_regime[r] for r in partie["regimes"] if r in de_regime})
+        for famille in siennes or [SANS_FAMILLE]:
+            compte = vue.setdefault(domaine, {}).setdefault(famille, {})
+            compte[partie["reference"]] = compte.get(partie["reference"], 0) + 1
+    return vue
 
 
 def _etat(partie: dict) -> str:

@@ -427,3 +427,6 @@ historique:
 effet: >-
   Le survivant d'un assuré du régime général ou d'un régime aligné qui élève encore ses
   enfants, sans retraite personnelle : 1 363,08 euros par an et par enfant en 2026.
+a_confronter:
+- source: union_retraite_reversion
+  quoi: la réversion de ce régime, cas par cas, au simulateur anonyme d'Union Retraite

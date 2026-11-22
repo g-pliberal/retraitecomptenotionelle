@@ -119,3 +119,6 @@ effet: >-
   L'exploitant qui reprend une activité agricole non salariée : sa complémentaire, comme sa
   base, est servie entière, le résultat disant que leur règle n'est pas lue ; pour la
   première pension de 2027, elle perd ce que ses pensions de base n'absorbent pas.
+a_confronter:
+- source: msa_non_salaries
+  quoi: le cumul des exploitants

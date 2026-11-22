@@ -951,3 +951,6 @@ code:
   - >-
     tests/test_simulateur.py ; aucun témoin ne change sans la table, et aucun test ne
     confronte le portage à une carrière qu'elle change
+a_confronter:
+- source: carpimko_age
+  quoi: les âges et la minoration

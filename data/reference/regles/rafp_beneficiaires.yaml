@@ -167,3 +167,6 @@ code:
     sept témoins changent sans elle, d'une ligne du RAFP à zéro —
     statut_ouvrier_etat et ses générations 1955, 1965 et 1968,
     statut_ouvrier_etat_actif et ses générations 1965 et 1968
+a_confronter:
+- source: rafp_retraite
+  quoi: qui touche la prestation

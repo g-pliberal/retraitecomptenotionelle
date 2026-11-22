@@ -109,3 +109,6 @@ code:
     metiers_etat_prive_hospitalier, metiers_ouvrier_etat_puis_etat et
     enfants_etat_et_territorial_un_an_chacun ; metiers_militaire_puis_territorial,
     que L. 77 laisse hors de la réunion, ne bouge pas
+a_confronter:
+- source: juris_cnracl_coordination
+  quoi: la coordination des services

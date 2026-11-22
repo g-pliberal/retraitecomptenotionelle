@@ -535,3 +535,6 @@ code:
     points sur les parts du forfait. Le portage lit les tables du paquet :
     validation_micro, cotisation_micro, compensation_micro, seuils_micro et
     seuils_micro_hors_maladie_rsi.
+a_confronter:
+- source: mon_entreprise_auto_entrepreneur
+  quoi: la part du micro-social qui ouvre des droits

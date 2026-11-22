@@ -92,3 +92,6 @@ code:
     age_taux_plein ; legislation/coefficient_minoration.csv : generation, coefficient
   tests: [tests/test_simulateur.py, tests/test_sections_liberales.py,
     tests/js/moteur.test.js, tests/temoins/simulations.json]
+sans_reference: 'Au relevé du 22 novembre 2026, ni exemple officiel, ni grille posée sans le
+  code, ni autre modèle du droit réel cité par la fiche, et aucune source du vivier ne lui est
+  rattachée : seul le texte la tient.'

@@ -162,3 +162,6 @@ effet: >-
   Toute mère agente de la SNCF : deux trimestres de durée par enfant né après son
   recrutement, et plus aucun trimestre de services ; sa pension perd le prorata que
   la bonification de la fonction publique lui prêtait pour ses enfants nés avant 2004.
+a_confronter:
+- source: cprpf_enfants
+  quoi: les droits liés aux enfants

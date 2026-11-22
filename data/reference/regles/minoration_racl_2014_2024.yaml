@@ -135,3 +135,6 @@ code:
   parametres: >-
     regimes/ircec_racl.yaml : age_taux_plein, date_effet
   tests: [tests/test_simulateur.py, tests/test_coupures_au_mois.py]
+a_confronter:
+- source: ircec_reglement_racl
+  quoi: la minoration du RACL

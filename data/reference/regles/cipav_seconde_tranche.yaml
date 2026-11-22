@@ -497,3 +497,8 @@ code:
     statut_profession_liberale, leurs générations 1965 et 1968, et enfants_liberale —,
     aucun sans ses bornes de trois et demi et de quatre plafonds, qu'aucun test
     n'atteint
+a_confronter:
+- source: mon_entreprise_cipav
+  quoi: les cotisations par tranche
+- source: cipav_cotiser
+  quoi: le barème de la caisse

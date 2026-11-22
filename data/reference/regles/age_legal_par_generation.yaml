@@ -418,3 +418,6 @@ code:
   tests: [tests/test_tables_de_version.py, tests/js/age-legal.test.js,
     tests/test_simulateur.py, tests/test_donnees.py, tests/test_droits_contrefactuels.py, tests/test_oracle.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]
+a_confronter:
+- source: union_retraite_age_depart
+  quoi: l'âge légal par génération, que les caisses appliquent

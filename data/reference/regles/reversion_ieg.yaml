@@ -168,3 +168,6 @@ historique:
 effet: >-
   Tout conjoint d'un agent des IEG : la moitié de sa pension, majoration pour enfants
   comprise, sans âge ni ressources, partagée avec les ex-conjoints non remariés.
+a_confronter:
+- source: union_retraite_reversion
+  quoi: la réversion de ce régime, cas par cas, au simulateur anonyme d'Union Retraite

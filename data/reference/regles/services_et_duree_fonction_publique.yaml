@@ -84,3 +84,8 @@ code:
     les deux moteurs, tests/test_etranger.py ; cinq des 193 témoins des fonctionnaires,
     fonctionnaire_interrompu parmi eux (tests/temoins/simulations.json), que le portage
     rejoue (tests/js/moteur.test.js)
+a_confronter:
+- source: sre_services_valables
+  quoi: les services retenus
+- source: sp_f13736_duree_fonctionnaire
+  quoi: la durée d'un fonctionnaire

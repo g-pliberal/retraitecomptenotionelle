@@ -246,3 +246,6 @@ effet: >-
   avant le 1er juillet 2006 ; pour les enfants nés depuis, deux trimestres de durée pour
   le premier de la fratrie et quatre pour chacun des suivants, s'ils sont nés pendant
   l'affiliation.
+a_confronter:
+- source: crpcen_montant_pension
+  quoi: les droits liés aux enfants

@@ -80,3 +80,6 @@ code:
     tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
     neuf témoins changent sans elle — les quatre de l'auteur dramatique et les quatre de
     l'auteur lyrique nés depuis 1955, et auteur_dramatique_carriere_courte
+a_confronter:
+- source: ircec_raap_calcul_taux
+  quoi: le taux aménagé

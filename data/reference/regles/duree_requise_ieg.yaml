@@ -318,3 +318,6 @@ code:
     trimestres à l'agent né en janvier 1968 ; le cas type des IEG dans les deux moteurs,
     tests/test_cycle_de_vie_script.py ; six des seize témoins des IEG
     (tests/temoins/simulations.json), que le portage rejoue (tests/js/moteur.test.js)
+a_confronter:
+- source: cnieg_tableau_duree_assurance
+  quoi: la durée requise par génération

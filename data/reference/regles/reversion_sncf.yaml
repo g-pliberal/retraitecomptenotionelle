@@ -342,3 +342,6 @@ effet: >-
   partagée avec les précédents conjoints non remariés ; 54 % du minimum de pension au
   moins quand la pension de l'agent l'atteint, ce qui relève la réversion des
   pensions qui le dépassent de moins de 8 %, sous 1 428 € par mois en 2023.
+a_confronter:
+- source: union_retraite_reversion
+  quoi: la réversion de ce régime, cas par cas, au simulateur anonyme d'Union Retraite

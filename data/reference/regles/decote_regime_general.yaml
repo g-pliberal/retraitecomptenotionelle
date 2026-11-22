@@ -279,3 +279,6 @@ code:
     contenu.parametres de chaque version : coefficient, age_du_decompte
   tests: [tests/test_decote_versions.py, tests/test_simulateur.py, tests/test_oracle.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]
+a_confronter:
+- source: sp_f19666_decote
+  quoi: la décote du salarié

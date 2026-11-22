@@ -1494,3 +1494,8 @@ code:
     carpv_complementaire.bornes, regles
   tests: [tests/test_sections_liberales.py, tests/test_fiche_des_liberaux.py,
     tests/test_univers.py, tests/js/moteur.test.js, tests/temoins/simulations.json]
+a_confronter:
+- source: cavec_simulateur
+  quoi: les cotisations par classe
+- source: carpv_cotisations
+  quoi: le barème de la caisse

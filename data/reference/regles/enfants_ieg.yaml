@@ -246,3 +246,6 @@ effet: >-
   juillet 2008, et non avant 2004, huit pour le second de deux ; pour les enfants nés
   depuis, deux trimestres de durée pour le premier de la fratrie, quatre pour chacun
   des suivants.
+a_confronter:
+- source: cnieg_majoration_enfants
+  quoi: la majoration pour enfants

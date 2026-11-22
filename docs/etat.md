@@ -91,6 +91,26 @@ Une partie compte dans chaque famille de ses régimes, et une fois dans le total
 | valeur_point_agirc_arrco | 20 | 20 | 0 |
 | valeur_point_arrco | 11 | 11 | 0 |
 
+**À quoi la carte se confronte** (action 137). Chaque partie dans le champ a sa référence, la meilleure qu'elle ait : officielle (un exemple publié, une grille posée sans le code, un simulateur de caisse) ; un autre modèle qui lit le droit réel, que sa fiche cite ; une source repérée à rejouer (`a_confronter`) ; ou l'absence, que la fiche dit (`sans_reference`). Le texte reste l'arbitre. Comptées famille par famille, une partie dans chacune des siennes : 430 officielles, 310 par un modèle seul, 611 à confronter, 310 sans référence. Chaque case donne les parties confirmées par une référence officielle, sur celles du domaine et de la famille.
+
+| Domaine | salariés du privé, régimes de base | salariés du privé, complémentaires | fonction publique | artisans, commerçants et autres non-salariés | régimes agricoles | libéraux et avocats | régimes spéciaux | retraite additionnelle, en capitalisation | sans famille |
+|---|---|---|---|---|---|---|---|---|---|
+| age | 11 sur 37 | 6 sur 17 | 10 sur 49 | 11 sur 31 | 11 sur 31 | 6 sur 11 | 8 sur 46 | 5 sur 8 | — |
+| coordination | 4 sur 10 | 1 sur 1 | 4 sur 12 | 4 sur 10 | 4 sur 10 | 2 sur 5 | 1 sur 4 | 1 sur 3 | — |
+| cotisations | 0 sur 16 | 0 sur 13 | 0 sur 2 | 0 sur 29 | 0 sur 11 | 1 sur 28 | 0 sur 4 | 0 sur 4 | — |
+| cumul | 5 sur 24 | 4 sur 25 | 5 sur 21 | 5 sur 28 | 5 sur 26 | 5 sur 26 | 4 sur 21 | 3 sur 5 | — |
+| decote_surcote | 9 sur 31 | 2 sur 27 | 1 sur 5 | 9 sur 23 | 9 sur 31 | 38 sur 77 | 9 sur 29 | — | — |
+| depart_anticipe | 4 sur 13 | — | 4 sur 12 | 4 sur 8 | 4 sur 8 | 3 sur 6 | — | — | — |
+| duree | 8 sur 11 | 8 sur 8 | 9 sur 31 | 8 sur 11 | 8 sur 11 | 8 sur 8 | 10 sur 31 | — | — |
+| enfants | 1 sur 13 | 1 sur 19 | 2 sur 23 | 1 sur 13 | 1 sur 13 | 1 sur 22 | 3 sur 32 | — | — |
+| minima | 10 sur 26 | — | — | 10 sur 21 | 10 sur 43 | — | 10 sur 20 | — | — |
+| periodes_assimilees | 0 sur 14 | 0 sur 5 | — | — | 0 sur 6 | — | — | — | — |
+| points | 0 sur 3 | 4 sur 41 | — | 0 sur 9 | 0 sur 3 | 0 sur 18 | 0 sur 6 | 4 sur 6 | — |
+| revalorisation | 0 sur 5 | — | — | — | 0 sur 5 | — | — | — | — |
+| reversion | 5 sur 22 | 2 sur 10 | 1 sur 7 | 6 sur 25 | 5 sur 22 | 0 sur 7 | 0 sur 9 | 1 sur 1 | — |
+| salaire_de_reference | 7 sur 28 | — | 0 sur 11 | 0 sur 3 | 7 sur 15 | — | 3 sur 19 | — | — |
+| sans domaine | 11 sur 35 | 3 sur 7 | 7 sur 24 | 10 sur 20 | 11 sur 36 | 3 sur 20 | 8 sur 22 | 1 sur 2 | 0 sur 1 |
+
 **Les filets de la carte** (`src/retraite_notionnelle/noyau/filets.py`, `scripts/filets.py`, action 194, étape B). Ils ne prouvent rien, et leur section ne change l'état d'aucune partie : ils disent où regarder d'abord.
 
 *Le balayage de cohérence* (2026-11-21) : 528 615 calculs des treize cas types, écrits en part du salaire moyen de chaque année, générations 1940 à 1990, départs par trimestre jusqu'à 70 ans. Cotiser plus ne baisse jamais la pension, sauf baisse qu'une liste rattache à un texte (`tests/cliquets_de_justesse/baisses_legales.yaml`) ; et aucun saut du taux de remplacement entre deux générations voisines au-delà de 1 %, hors des bornes que les tables et les versions du paquet posent, ou d'un trimestre validé de plus. **3052 anomalies à expliquer** : 1974 sauts ; baisses, 691 sous un salaire plus haut une année, 208 sous une année d'activité de plus, 179 sous un départ plus tard. Chacune est une piste, non une erreur établie ; le cliquet (`tests/cliquets_de_justesse/filets.yaml`) n'en laisse pas monter le nombre.

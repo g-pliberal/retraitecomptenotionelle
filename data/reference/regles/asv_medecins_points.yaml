@@ -745,3 +745,6 @@ effet: >-
   Les médecins libéraux conventionnés : près du tiers de la pension d'un médecin de
   secteur 1 ; le modèle en rend les points annuels à moins de 1 % de la calculette de la
   CARMF (fiche asv_medecins_ajustement), sans les points d'avant 1972.
+a_confronter:
+- source: carmf_calcul_retraite
+  quoi: les points de l'ASV

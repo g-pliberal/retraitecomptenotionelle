@@ -325,3 +325,6 @@ historique:
   2026-10-19 — datée (action 138, étape 14) : les limites passent de la table des
   motifs aux versions de la fiche, une par rédaction qui les change, lues à la date
   d'effet ; la table ne garde que la nature de chaque motif.
+a_confronter:
+- source: union_retraite_carriere_longue
+  quoi: l'âge du départ anticipé et la durée exigée

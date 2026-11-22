@@ -917,3 +917,6 @@ code:
   - tests/test_invalidite.py
   - tests/js/moteur.test.js
   - tests/temoins/simulations.json
+a_confronter:
+- source: ircantec_conditions_depart
+  quoi: les coefficients d'anticipation

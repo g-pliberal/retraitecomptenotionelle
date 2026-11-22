@@ -624,3 +624,6 @@ code:
   - tests/test_cultes.py
   - tests/js/moteur.test.js
   - tests/temoins/simulations.json
+a_confronter:
+- source: cavimac_guide
+  quoi: le calcul de la pension

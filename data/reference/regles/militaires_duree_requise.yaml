@@ -150,3 +150,6 @@ code:
     à l'autre (tests/test_pont.py), et les cas types statutaires la confrontent aux
     départs de 2025 (tests/test_flux_fonction_publique.py) ; aucun test ne la pose à la
     main
+a_confronter:
+- source: sre_militaires
+  quoi: la durée des militaires

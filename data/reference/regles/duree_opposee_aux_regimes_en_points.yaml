@@ -82,3 +82,6 @@ code:
     tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
     aucun témoin ne change sans elle, ni aucun cas posé à la main : le libéral né en
     1955 que la fiche cite n'a pas de test
+sans_reference: 'Au relevé du 22 novembre 2026, ni exemple officiel, ni grille posée sans le
+  code, ni autre modèle du droit réel cité par la fiche, et aucune source du vivier ne lui est
+  rattachée : seul le texte la tient.'

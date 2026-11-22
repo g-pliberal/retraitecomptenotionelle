@@ -368,3 +368,6 @@ code:
     tables de 2014 (140 trimestres sur 168, et non sur 169 ou 171) ;
     enfants_ratp_trois_enfants et statut_agent_ratp sans la durée par année de la RATP
     (170 trimestres, et non 172)
+a_confronter:
+- source: cprpf_comprendre_droits
+  quoi: la durée requise

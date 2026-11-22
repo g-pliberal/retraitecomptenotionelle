@@ -330,3 +330,8 @@ effet: >-
   le modèle reproduit. La sous-officière partie à quarante-cinq ans en février 2027 et
   salariée du privé d'août 2027 à janvier 2030 garde sa pension entière, quand le
   modèle la lui retirait toute, 60 730 € en trente mois.
+a_confronter:
+- source: cnracl_cumul_emploi_retraite
+  quoi: le plafond du cumul et son écrêtement
+- source: sre_cumul_emploi_retraite
+  quoi: les règles du cumul à l'État

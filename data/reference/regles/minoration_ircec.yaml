@@ -80,3 +80,6 @@ code:
     regimes/ircec_racd.yaml, regimes/ircec_racl.yaml : age_taux_plein,
     duree_requise_trimestres, decote_par_trimestre, date_effet
   tests: [tests/test_simulateur.py, tests/test_coupures_au_mois.py]
+a_confronter:
+- source: ircec_guide_retraite
+  quoi: la minoration avant le taux plein

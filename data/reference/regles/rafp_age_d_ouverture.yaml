@@ -101,3 +101,6 @@ effet: >-
   active et super-active, carrière longue, militaires — et qui a des points au RAFP :
   sa retraite additionnelle, servie à part (hors répartition), commence à l'âge légal
   et non à son départ.
+a_confronter:
+- source: rafp_simulateur_prestation
+  quoi: la prestation selon l'âge, rente ou capital

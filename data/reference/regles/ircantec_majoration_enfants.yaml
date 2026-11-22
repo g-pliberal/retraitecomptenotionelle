@@ -112,3 +112,6 @@ effet: >-
   l'Ircantec était majorée de 10 % au lieu de 15 à 30 %. La contractuelle des témoins,
   12 668 € d'Ircantec par an, y gagne 633 € avec quatre enfants (+ 1,3 % de sa pension)
   et 2 534 € avec sept (+ 5,3 %). Aucun témoin d'avant n'avait plus de trois enfants.
+a_confronter:
+- source: ircantec_enfants
+  quoi: la majoration pour enfants
