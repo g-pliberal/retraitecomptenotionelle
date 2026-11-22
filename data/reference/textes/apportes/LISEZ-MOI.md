@@ -108,6 +108,14 @@ propriétaire (dossier Téléchargements).
 | `JORF_19830717_164.pdf` | décret n° 83-651 | `7155377d2bb1dddc679f4a027c1e8e23a040a3cab840cf5fee74318e6224e08e` |
 | `JORF_19830727_172.pdf` | décret n° 83-677 | `98f87650d6c0dd28219c887762a6eef76c6e915459648c75d759da3a84db5b9f` |
 | `JORF_19890517_113.pdf` | décret n° 89-313 | `898e7a288eb180bb4d9621e6b42ea4d8061a3bd551169d10121883ba42fa636f` |
+| `JORF_19680630_153.pdf` | décret n° 68-579 | `4d41c2c99eb54087839d965ceafd906c46f80001eeb14658386447ce8e710e7e` |
+| `JORF_19760804_180.pdf` | décret n° 76-727 | `4ba375f9772337bb77c937d6f0313b9f079bf59808fff4f48611ee937c2e8f61` |
+| `JORF_19770630_150.pdf` | décret n° 77-677 | `9ba522c1ea11b74d374c29db7d98b0b7ab84e1d7ce1c67156a6c0f09cbc34205` |
+| `JORF_19770826_197.pdf` | décret n° 77-966 | `d7db0227416ee1a4321d704e974094f5daa0ee4913a39dc0c7d859574e74ac9b` |
+| `JORF_19811114_267.pdf` | décret n° 81-1015 | `e1b8e49f403f35fd57f196300fa4d2e409348c7baa4d55906049405917cacd3d` |
+| `JORF_19960208_33.pdf` | décret n° 96-101 | `9a82d0b459d78a8b8e0f666b3da86b1b16c495bedca05f1297eab2d4faf8ec3e` |
+| `JORF_19980912_211.pdf` | décret n° 98-809 | `62a2ad1461bb949d08c73b462406719a33d689eabb863457fba9906e9be05836` |
+| `JORF_19981009_234.pdf` | décret n° 98-896 | `9b50f7e2825245ce60594702c99e8babd582f636189baab219639456f95ee5fc` |
 
 Le fac-similé d'un numéro se rouvre depuis la page du texte sur Légifrance
 (`adresse`), bouton « Télécharger le Journal officiel… (version papier
@@ -121,11 +129,14 @@ numérisée) », après le captcha.
   les articles des militaires, des ayants cause, des cumuls et des pensions
   concédées sous la loi du 14 avril 1924 (9, 10, 12 à 15, 19 à 23, 28 à 63,
   66 à 70).
-- Les seize autres numéros téléchargés le 22 novembre 2026 (exploitants
-  agricoles, artisans et commerçants, taux maladie, majorations, fonction
-  publique), lot par lot ; leur liste et ce que chacun sert sont dans les
-  fichiers du projet, pas dans le dépôt. Les treize textes des professions
-  libérales (régime d'allocation de 1948 à 1983, cotisations de la Cipav et
-  de la CAVEC de 1979 à 1989) sont transcrits.
+- Les huit autres numéros téléchargés le 22 novembre 2026 (exploitants
+  agricoles, artisans et commerçants), lot par lot ; leur liste et ce que
+  chacun sert sont dans les fichiers du projet, pas dans le dépôt. Les
+  treize textes des professions libérales (régime d'allocation de 1948 à
+  1983, cotisations de la Cipav et de la CAVEC de 1979 à 1989) sont
+  transcrits, et les huit du taux maladie (n° 68-579, 77-677, 81-1015), des
+  majorations des salariés agricoles (n° 76-727, 77-966) et des tableaux de
+  reclassement de la fonction publique (n° 96-101, 98-809, 98-896).
+- Du décret n° 96-101, les visas et les articles 1er, 2 et 4 à 36.
 - Aucun numéro de mai 1946 n'a été téléchargé : l'arrêté du 14 mai 1946
   reste à prendre sur Légifrance.
