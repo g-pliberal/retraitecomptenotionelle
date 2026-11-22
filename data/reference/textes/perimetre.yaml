@@ -117,7 +117,7 @@ accords:
 
 cliquet:
   # Les rédactions sans aucun statut. Il ne peut que décroître.
-  redactions_sans_statut: 9165
+  redactions_sans_statut: 9164
   # Le sixième cliquet de la note de décision 0009, l'alarme « loi modifiée »
   # (src/retraite_notionnelle/noyau/textes.py, `alarme`). Toute rédaction en
   # vigueur ou à venir d'un article qu'une fiche cite a sa réponse dans cette

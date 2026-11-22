@@ -589,7 +589,8 @@ def test_le_chomage_non_indemnise_ne_valide_que_dans_les_limites_de_r_351_12(
     """Quatre trimestres par an sans limite : c'est ce que le modèle validait.
 
     L'article R. 351-12, 4°, d, ne retient que « des périodes postérieures au
-    31 décembre 1979 ». La première période, « qu'elle soit continue ou non »,
+    31 décembre 1979 » ; celles d'avant relèvent du b, sans limite que les
+    quatre trimestres de l'année. La première période, « qu'elle soit continue ou non »,
     vaut un an et demi et six trimestres au plus — un an pour les périodes
     d'avant 2011, le décret n° 2011-934 ne visant que celles « postérieures au
     31 décembre 2010 ». Chaque période ultérieure ne compte que si elle suit
@@ -607,9 +608,13 @@ def test_le_chomage_non_indemnise_ne_valide_que_dans_les_limites_de_r_351_12(
     def non_indemnise(debut, fin):
         return {annee: "chomage_non_indemnise" for annee in range(debut, fin + 1)}
 
-    # Rien avant 1980 ; la première période prend ensuite sa limite d'avant 2011.
+    # Avant 1980, le b : « des périodes antérieures au 1er janvier 1980 durant
+    # lesquelles l'assuré était en situation de chômage involontaire
+    # constaté », un trimestre par cinquante jours, quatre par an, sans les
+    # limites du d, qui ne visent que les périodes postérieures ; la première
+    # période du d prend ensuite sa limite d'avant 2011.
     assert valides(1955, non_indemnise(1977, 1981)) == {
-        1977: 0, 1978: 0, 1979: 0, 1980: 4, 1981: 0}
+        1977: 4, 1978: 4, 1979: 4, 1980: 4, 1981: 0}
     # Six trimestres depuis 2011, quatre avant — l'année de la PÉRIODE choisit.
     assert sum(valides(1975, non_indemnise(2012, 2015)).values()) == 6
     assert sum(valides(1975, non_indemnise(2003, 2005)).values()) == 4

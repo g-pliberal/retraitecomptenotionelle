@@ -548,8 +548,9 @@ export function montantAssietteMinimale(regle, pass, smicHoraire, part) {
 }
 
 /**
- * Article R. 351-12, 4°, d : le chômage NON indemnisé ne valide rien avant
- * 1980, et dans des limites ensuite ; la limite de la première période est
+ * Article R. 351-12, 4° : avant 1980, le b valide le « chômage involontaire
+ * constaté », un trimestre par cinquante jours, sans autre limite que les
+ * quatre trimestres de l'année ; depuis, le d le borne ; la limite de la première période est
  * choisie par l'année de la PÉRIODE (décret n° 2011-934, article 2). Portage
  * de `CHOMAGE_NON_INDEMNISE_PREMIERE` et `CHOMAGE_NON_INDEMNISE_ULTERIEURE`
  * de `carriere.py`, qui citent le texte.
@@ -563,7 +564,8 @@ const CHOMAGE_NON_INDEMNISE_ULTERIEURE = {
 
 /**
  * Les trimestres que le chômage non indemnisé valide VRAIMENT — portage de
- * `limiter_chomage_non_indemnise` : rien avant 1980, la première période
+ * `limiter_chomage_non_indemnise` : avant 1980, l'année telle quelle (le b),
+ * puis la première période
  * prend l'enveloppe de la première période (quatre trimestres pour une année
  * d'avant 2011, six depuis), une série qui suit un chômage indemnisé en prend
  * quatre (vingt pour le senior qui ne retravaille pas), les années dont un
@@ -609,7 +611,9 @@ export function limiterChomageNonIndemnise(lignes, anneeNaissance,
     }
     let accordes;
     if (ligne.annee < premiere.valideDepuis) {
-      accordes = 0;
+      // Le b : « chômage involontaire constaté » d'avant 1980, un trimestre
+      // par cinquante jours, quatre par an, hors des limites du d.
+      accordes = ligne.trimestres_valides;
     } else if (seriePremiere) {
       premiereVue = true;
       const plafond = ligne.annee >= premiere.periodesDepuis

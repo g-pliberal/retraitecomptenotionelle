@@ -627,7 +627,8 @@ test("le minimum se calcule comme les circulaires de 2005 et 2009", () => {
 /**
  * Les limites de R. 351-12 au chômage non indemnisé, sur les cas du test
  * Python `test_le_chomage_non_indemnise_ne_valide_que_dans_les_limites_de_r_351_12` :
- * rien avant 1980, la première période à quatre trimestres avant 2011 et six
+ * avant 1980, quatre trimestres par an (le b : chômage involontaire
+ * constaté), puis la première période à quatre trimestres avant 2011 et six
  * depuis, une période ultérieure à un an après un chômage indemnisé, cinq ans
  * pour le senior qui ne retravaille pas. Le témoin `fin_activite_chomage_non_indemnise`
  * n'atteint que la première période.
@@ -652,7 +653,7 @@ test("le chômage non indemnisé ne valide que dans les limites de R. 351-12", (
   const somme = (valides) => Object.values(valides).reduce((a, b) => a + b, 0);
 
   assert.deepEqual(carriere(1955, 1975, 2018, nonIndemnise(1977, 1981)),
-    { 1977: 0, 1978: 0, 1979: 0, 1980: 4, 1981: 0 });
+    { 1977: 4, 1978: 4, 1979: 4, 1980: 4, 1981: 0 });
   assert.equal(somme(carriere(1975, 1995, 2039, nonIndemnise(2012, 2015))), 6);
   assert.equal(somme(carriere(1975, 1995, 2039, nonIndemnise(2003, 2005))), 4);
   assert.deepEqual(carriere(1975, 1995, 2039, nonIndemnise(2009, 2012)),
