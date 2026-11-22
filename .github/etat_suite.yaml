@@ -1,19 +1,15 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: rouge
-sources: 59840a54ac13f5b983e7f6ee4212279984cc1010
-date: 2026-11-22T00:07:48Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44962963571
-echecs:
-  - "FAILED tests/test_sources_a_explorer.py::test_un_simulateur_saisi_tient_son_budget - AssertionError: rafp_calculette_points : saisi sans budget au registre"
-  - "FAILED tests/test_trajectoire.py::test_le_scenario_1_concorde_avec_trajectoire_ou_son_ecart_est_explique - AssertionError: cor_10_1955, points_rafp : -0.0785 hors de [-0.0809, -0.0789] — le RAFP des primes variables : la requête ne dit qu'une part de primes pour toute la carrière, celle de la dernière anné…"
-  - "FAILED tests/test_bonifications_jaune.py::test_chaque_chiffre_cite_du_jaune_est_une_valeur_certifiee_de_ses_lignes - AssertionError: depart_anticipe_parents_trois_enfants cite le jaune sans champ denombrement"
+etat: vert
+sources: f4b8e6df60e040128aa30c65ec4c85e85e22681e
+date: 2026-11-22T00:31:43Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/44965560109
 presomptions: vert
 durees:
-  fabrique: 592
-  suite: 564
-  tranche_1: 564
-  tranche_2: 381
-  tranche_3: 552
-  tranche_4: 370
-  garde: 254
+  fabrique: 484
+  suite: 494
+  tranche_1: 494
+  tranche_2: 317
+  tranche_3: 301
+  tranche_4: 470
+  garde: 147
