@@ -606,31 +606,31 @@ ECARTS.update(_ecarts(PRORATA_80, "fonction_publique", {"fp_mere_deux_enfants": 
 ECARTS.update(_ecarts(RAFP_CAPITAL, "rafp_en_capital", {c: 1.0 for c in (
     "cor_8_1955", "cor_8_1960", "cor_9_1955", "cor_9_1960", "cor_10_1955")}, 1e-6))
 _RAFP_POINTS = {
-    "cor_5_1955": -0.0710, "cor_5_1960": 0.0130, "cor_5_1963": -0.0276,
-    "cor_5_primes_constantes_1955": -0.0710, "cor_5_primes_constantes_1960": 0.0130,
-    "cor_5_primes_constantes_1963": -0.0276, "cor_6_1955": -0.0190, "cor_6_1960": -0.1350,
-    "cor_7_1955": -0.0065, "cor_9_1955": -0.1749, "cor_10_1955": -0.0799, "cor_10_1960": -0.0673,
-    "cor_10_1963": 0.0083, "cor_11_1955": 0.0185, "cor_11_1960": 0.0423, "cor_11_1963": 0.0145,
+    "cor_5_1955": -0.0699, "cor_5_1960": 0.0139, "cor_5_1963": -0.0265,
+    "cor_5_primes_constantes_1955": -0.0699, "cor_5_primes_constantes_1960": 0.0139,
+    "cor_5_primes_constantes_1963": -0.0265, "cor_6_1955": -0.0184, "cor_6_1960": -0.1342,
+    "cor_7_1955": -0.0057, "cor_9_1955": -0.1729, "cor_10_1955": -0.0785, "cor_10_1960": -0.0659,
+    "cor_10_1963": 0.0097, "cor_11_1955": 0.0192, "cor_11_1960": 0.0432, "cor_11_1963": 0.0154,
 }
 ECARTS.update(_ecarts(RAFP_PRIMES, "points_rafp", _RAFP_POINTS, 0.001))
 ECARTS.update(_ecarts(RAFP_PRIMES + " ; et " + RAFP_PLAFOND, "points_rafp", {
-    "cor_8_1955": -0.4656, "cor_8_1960": -0.2847, "cor_8_1963": -0.2129,
-    "cor_8_1964": -0.2133, "cor_9_1960": -0.1386, "cor_9_1963": -0.1130,
-    "cor_9_1964": -0.1087}, 0.001))
+    "cor_8_1955": -0.4650, "cor_8_1960": -0.2841, "cor_8_1963": -0.2123,
+    "cor_8_1964": -0.2125, "cor_9_1960": -0.1377, "cor_9_1963": -0.1116,
+    "cor_9_1964": -0.1076}, 0.001))
 ECARTS.update(_ecarts(RAFP_PRIMES + " ; " + RAFP_COEFFICIENT, "rafp", {
-    "cor_5_1955": -0.0806, "cor_5_1960": -0.0179, "cor_5_1963": 0.0539,
-    "cor_5_primes_constantes_1955": -0.0806, "cor_5_primes_constantes_1960": -0.0179,
-    "cor_5_primes_constantes_1963": 0.0539, "cor_6_1960": -0.1035, "cor_7_1960": 0.0314,
-    "cor_9_1955": -0.2279, "cor_10_1955": -0.0909, "cor_10_1960": -0.1545, "cor_10_1963": 0.0543,
-    "cor_10_1964": 0.0329, "cor_11_1955": 0.0219, "cor_11_1960": 0.0106,
-    "cor_11_1963": 0.0923}, 0.002))
+    "cor_5_1955": -0.0795, "cor_5_1960": -0.0169, "cor_5_1963": 0.0551,
+    "cor_5_primes_constantes_1955": -0.0795, "cor_5_primes_constantes_1960": -0.0169,
+    "cor_5_primes_constantes_1963": 0.0551, "cor_6_1960": -0.1027, "cor_7_1960": 0.0320,
+    "cor_9_1955": -0.2261, "cor_10_1955": -0.0896, "cor_10_1960": -0.1532, "cor_10_1963": 0.0558,
+    "cor_10_1964": 0.0345, "cor_11_1955": 0.0226, "cor_11_1960": 0.0114,
+    "cor_11_1963": 0.0932}, 0.002))
 ECARTS.update(_ecarts(RAFP_PRIMES + " ; " + RAFP_COEFFICIENT + " ; et " + RAFP_PLAFOND, "rafp", {
-    "cor_8_1955": -0.5213, "cor_8_1960": -0.3895, "cor_8_1963": -0.2908,
-    "cor_8_1964": -0.2967, "cor_9_1960": -0.2452, "cor_9_1963": -0.1731,
-    "cor_9_1964": -0.1863}, 0.002))
+    "cor_8_1955": -0.5209, "cor_8_1960": -0.3890, "cor_8_1963": -0.2903,
+    "cor_8_1964": -0.2961, "cor_9_1960": -0.2445, "cor_9_1963": -0.1718,
+    "cor_9_1964": -0.1853}, 0.002))
 ECARTS.update(_ecarts(VALEURS_PROJETEES + " (0,05215 € au lieu de 0,05378 €) ; "
                       + RAFP_COEFFICIENT + " ; les points du RAFP concordent", "rafp",
-                      {"loi_2023_fp_etat": 0.0511}, 0.002))
+                      {"loi_2023_fp_etat": 0.0524}, 0.002))
 ECARTS.update(_ecarts(VALEURS_PROJETEES, "valeur_point_agirc_arrco", {
     "cor_1_1963": -0.0036, "cor_3_1963": -0.0036, "cor_4_1963": -0.0036,
     "cor_10_1964": -0.0036, "cor_2_1964": -0.0191, "cor_2bis_1964": -0.0191}, 0.0003))

@@ -1074,9 +1074,9 @@ avantages:
       mesurable_par: aucune
       note: >-
         PAS ENCORE MESURÉ. Le retrait se ferait comme celui de la carrière
-        longue, en vidant la fiche ; le jaune budgétaire des pensions de la
-        fonction publique dénombre les départs de ce motif, qui donneraient la
-        population à laquelle l'appliquer.
+        longue, en vidant la fiche ; le rapport sur les pensions de la fonction
+        publique annexé au projet de loi de finances dénombre les départs de ce
+        motif, qui donneraient la population à laquelle l'appliquer.
 
   - code: age_jouissance_militaire
     chiffre_par: scripts/cout_avantages.py

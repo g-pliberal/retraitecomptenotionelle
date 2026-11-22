@@ -1001,9 +1001,15 @@ sources:
       Les points acquis pour une cotisation donnée, mois par mois et année par
       année depuis 2005 : de quoi recouper les valeurs d'acquisition de
       `valeurs_point.csv` et l'arrondi des points au point supérieur.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-11-21"
+    budget: 10
     note: >-
-      Ouverte le 23 septembre 2026, pas lancée. Elle part de la cotisation déjà
+      Ouverte le 23 septembre 2026. Une saisie le 21 novembre 2026, par Claude,
+      sous la règle d'ensemble du propriétaire (docs/architecture.md, § 3.5) :
+      15 € par mois de cotisation de l'agent en 2026, 246,64 points, que la
+      calculette arrondit à 247 (exemple `erafp_calculette_points_2026`) ; le
+      budget est celui de l'autre simulateur de l'ERAFP. Elle part de la cotisation déjà
       versée, part de l'agent, qu'elle double pour l'employeur, et non des
       primes : elle ne voit pas le plafond de 20 % du traitement, qui se joue en
       amont, dans l'assiette. La ligne disait le contraire. Relue le 5 octobre
@@ -1013,8 +1019,8 @@ sources:
       La règle qu'elle applique est écrite ailleurs : le rapport de la cotisation
       totale à la valeur d'acquisition de l'année (décret n° 2004-569, art. 5),
       « arrondi au point supérieur » selon la page des cotisations (350 € en 2026,
-      239,79 points, 240), un arrondi que le décret ne dit pas et que le modèle ne
-      fait pas, moins d'un point par an.
+      239,79 points, 240), un arrondi que le décret ne dit pas, moins d'un point
+      par an, et que le modèle fait depuis le 21 novembre 2026 (action 194).
 
   - id: rafp_cotisations_points
     url: https://www.rafp.fr/actif/activite/calculer-vos-cotisations-et-vos-points-rafp
