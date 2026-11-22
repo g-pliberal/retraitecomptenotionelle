@@ -35,20 +35,51 @@ dates_qui_decident:
 # plafond mord. Un plafond ou une surcote que le moteur ne connaît pas
 # l'arrête.
 versions:
-- id: avant_le_code_de_1964
+- id: avant_le_code_de_1948
   statut: supposee
   hypothese: >-
-    le code des pensions de la loi du 20 septembre 1948 n'est ni dans l'index LEGI ni
-    dans celui du JORF ; on ne lui prête aucun plafond, et la majoration reste entière,
-    comme le modèle la servait avant cette fiche
+    la loi du 14 avril 1924, qui régit les droits ouverts avant la promulgation du code
+    de 1948 (loi n° 48-1450, article 64), n'est pas dans le dépôt ; on ne lui prête
+    aucun plafond, et la majoration reste entière, comme le modèle la servait avant
+    cette fiche
   fiabilite: faible
   bornes:
-    liquidation.date_effet: [null, 1964-01-01]
+    liquidation.date_effet: [null, 1948-09-21]
   contenu:
     droit: aucun plafond lu
     parametres:
       existe: false
   exemples: aucun trouvé
+- id: loi_du_20_septembre_1948
+  statut: lue
+  textes:
+  - {id: JORFTEXT000000684723, article: 18, en_vigueur: 1948-09-21, lu_le: 2026-11-22}
+  nee_de: JORFTEXT000000684723
+  bornes:
+    liquidation.date_effet: [1948-09-21, 1964-12-01]
+  contenu:
+    droit: >-
+      « La pension d'ancienneté est majorée, en ce qui concerne les titulaires ayant
+      élevé au moins trois enfants jusqu'à l'âge de seize ans, de 10 p. 100 de son
+      montant pour les trois premiers enfants et de 5 p. 100 par enfant au delà du
+      troisième, sans que le total de la pension majorée puisse excéder le montant des
+      émoluments de base déterminés à l'article 17 » (loi n° 48-1450, art. 18, V). La
+      pension proportionnelle n'est pas majorée : le texte ne nomme que la pension
+      d'ancienneté, et la fiche decompte_des_services_fonction_publique dit laquelle
+      est servie.
+    beneficiaire: le titulaire d'une pension d'ancienneté qui a élevé au moins trois enfants
+    parametres:
+      existe: true
+      regimes: [fonction_publique_etat]
+      plafond: traitement
+      surcote: dans_le_plafond
+      fiabilite: haute
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 22 novembre 2026, dans la loi n° 48-1450 transcrite du fac-similé du Journal
+    officiel (data/reference/textes/apportes/), qui ne chiffre aucun cas ; les circulaires
+    d'application de 1948 et 1949 et les barèmes du Service des pensions ne sont pas dans
+    le dépôt
 - id: code_de_1964
   statut: supposee
   hypothese: >-
@@ -56,14 +87,14 @@ versions:
     loi n° 64-1339 du 26 décembre 1964 dans celui du JORF au-delà de son sommaire ; on
     lui prête la rédaction de 1982, que le décret n° 65-773 portait pour la CNRACL dès
     1965 et le décret n° 65-836 pour le FSPOEIE, lu depuis 1978 ; la version part du 1er
-    janvier 1964, comme la période du code de 1964 dans les fiches des régimes
+    décembre 1964, où le code de 1964 remplace celui de 1948
   fiabilite: faible
   textes:
   - {id: LEGIARTI000006368224, article: 19, en_vigueur: 1965-09-12}
   - {id: LEGIARTI000006368225, article: 19, en_vigueur: 1977-12-31}
   - {id: LEGIARTI000006766757, article: 11, en_vigueur: 1978-03-19}
   bornes:
-    liquidation.date_effet: [1964-01-01, 1982-07-14]
+    liquidation.date_effet: [1964-12-01, 1982-07-14]
   contenu:
     droit: >-
       « Le taux de la majoration de la pension est fixé à 10 p. 100 de son montant pour
@@ -297,7 +328,7 @@ code:
     majorationSousLeTraitement, completer ; moteur/js/regimes.js : FichesDatees
   parametres: >-
     contenu.parametres de chaque version : existe, regimes, plafond, surcote, fiabilite
-  tests: [tests/test_plafond_majoration_enfants.py]
+  tests: [tests/test_plafond_majoration_enfants.py, tests/test_pensions_de_l_etat_de_1948.py]
   moteur: >-
     Pensions en garde les plafonds (plafonds). Le paquet du site porte ses versions.
 referents:

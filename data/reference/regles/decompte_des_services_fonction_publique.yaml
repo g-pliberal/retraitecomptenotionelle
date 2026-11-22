@@ -43,23 +43,88 @@ dates_qui_decident:
 # la décote écartée quand l'arrondi atteint le pourcentage maximum ;
 # `minimum_garanti`, ce que le minimum compte : `services_effectifs`, arrondis
 # au décompte final, sans bonification, ou `liquidation`, le décompte de la
-# pension, bonifications comprises ; `fiabilite`. Une valeur que le moteur ne
-# connaît pas l'arrête.
+# pension, bonifications comprises ; `fiabilite` ; sous le code de 1948,
+# `services_reduits`, la part des services comptés aux cinq sixièmes, les durées
+# de la pension d'ancienneté selon la catégorie, et la part de ces durées que
+# les bonifications peuvent remplacer, et `pension_proportionnelle`, son
+# maximum de trimestres. Une valeur que le moteur ne connaît pas l'arrête.
 versions:
-- id: avant_le_code_de_1964
+- id: avant_le_code_de_1948
   statut: supposee
   hypothese: >-
-    le code des pensions de la loi du 20 septembre 1948 n'est ni dans l'index LEGI ni
-    dans celui du JORF ; on ne lui prête aucun décompte au jour, et le modèle garde son
-    décompte année par année, en trimestres entiers
+    la loi du 14 avril 1924, qui régit les droits ouverts avant la promulgation du code
+    de 1948 (loi n° 48-1450, article 64), n'est pas dans le dépôt ; on ne lui prête
+    aucun décompte au jour, et le modèle garde son décompte année par année, en
+    trimestres entiers
   fiabilite: faible
   bornes:
-    liquidation.date_effet: [null, 1964-12-01]
+    liquidation.date_effet: [null, 1948-09-21]
   contenu:
     droit: aucun décompte lu
     parametres:
       existe: false
   exemples: aucun trouvé
+- id: loi_du_20_septembre_1948
+  statut: lue
+  textes:
+  - {id: JORFTEXT000000684723, article: 6, en_vigueur: 1948-09-21, lu_le: 2026-11-22}
+  - {id: JORFTEXT000000684723, article: 8, en_vigueur: 1948-09-21, lu_le: 2026-11-22}
+  - {id: JORFTEXT000000684723, article: 16, en_vigueur: 1948-09-21, lu_le: 2026-11-22}
+  - {id: JORFTEXT000000684723, article: 64, en_vigueur: 1948-09-21, lu_le: 2026-11-22}
+  nee_de: JORFTEXT000000684723
+  bornes:
+    liquidation.date_effet: [1948-09-21, 1964-12-01]
+  contenu:
+    droit: >-
+      « Le droit à la pension d'ancienneté est acquis lorsque se trouve remplie, à la
+      cessation de l'activité, la double condition de soixante ans d'âge et de trente
+      années accomplies de services effectifs. Il suffit de cinquante-cinq ans d'âge et
+      de vingt-cinq années de services pour les fonctionnaires qui ont effectivement
+      accompli quinze années au moins dans un emploi de la partie active ou de la
+      catégorie B » (art. 6, I) ; sinon, à la limite d'âge ou à soixante ans, la pension
+      est proportionnelle (art. 6, III, 3°). Les bonifications « ne peu[vent] avoir pour
+      effet de réduire de plus d'un cinquième la durée des services normalement exigée
+      pour prétendre à une pension d'ancienneté » (art. 8, III). Sont comptés « pour
+      leur durée effective » les services actifs ou de la catégorie B, et les services
+      sédentaires « lorsqu'ils complètent les vingt-cinq premières années de service »
+      de qui a droit après vingt-cinq ans ; « pour les cinq sixièmes seulement de leur
+      durée effective », les autres services sédentaires, et les services actifs
+      « lorsqu'ils constituent ou complètent les trente premières années de services »
+      de qui a droit après trente ans, les bonifications de l'article 8, III, suivant
+      les services qu'elles bonifient (art. 16, I). « Dans le décompte final des
+      annuités liquidables, la fraction de semestre égale ou supérieure à trois mois
+      est comptée pour six mois. La fraction de semestre inférieure à trois mois est
+      négligée » (art. 16, II). Trente-sept annuités et demie au plus dans la pension
+      d'ancienneté (art. 16, III), vingt-cinq dans la pension proportionnelle
+      (art. 16, IV). Le texte vaut pour l'État seul : la caisse des collectivités
+      locales et les ouvriers de l'État ont leurs règlements.
+    parametres:
+      existe: true
+      regimes: [fonction_publique_etat]
+      unite_jours: 180
+      seuil_jours: 90
+      duree_au_jour: false
+      minimum_garanti: liquidation
+      fiabilite: estimee
+      # Trois lectures du modèle, d'où l'estimation : l'agent de la catégorie
+      # B est celui dont la carrière ouvre la dérogation de l'âge
+      # (`derogationActive`) ; « compléter » les premières années se lit en
+      # durée, les services de l'autre sorte comptés d'abord, non dans l'ordre
+      # des années ; la bonification pour enfants, qui ne se rapporte à aucun
+      # service, suit la catégorie de l'agent.
+      services_reduits:
+        part: [5, 6]
+        anciennete_active_annees: 25
+        anciennete_sedentaire_annees: 30
+        reduction_par_les_bonifications: [1, 5]
+      pension_proportionnelle:
+        maximum_trimestres: 100
+  exemples: aucun trouvé
+  exemples_cherches: >-
+    le 22 novembre 2026, dans la loi n° 48-1450 transcrite du fac-similé du Journal
+    officiel (data/reference/textes/apportes/), qui ne chiffre aucun cas ; les circulaires
+    d'application de 1948 et 1949 et les barèmes du Service des pensions ne sont pas dans
+    le dépôt
 - id: code_de_1964
   statut: lue
   textes:
@@ -237,13 +302,15 @@ textes_a_rattacher:
   change: la date à laquelle la CNRACL compte ses annuités au semestre
 code:
   javascript: >-
-    moteur/js/droit/compter.js : compter, joursDeLaLigne, arrondirLesServices, Durees ;
+    moteur/js/droit/compter.js : compter, joursDeLaLigne, arrondirLesServices, Durees,
+    servicesDuCodeDe1948 ;
     moteur/js/droit/liquider.js : liquiderChaqueRegime, trimestresDeDecote ;
     moteur/js/carriere.js : AnneeCarriere ; moteur/js/saisie.js : releveAnalyse
   parametres: >-
     contenu.parametres de chaque version : existe, regimes, unite_jours, seuil_jours,
-    duree_au_jour, minimum_garanti, fiabilite
-  tests: [tests/test_decompte_des_services.py, tests/test_trajectoire.py]
+    duree_au_jour, minimum_garanti, fiabilite, services_reduits, pension_proportionnelle
+  tests: [tests/test_decompte_des_services.py, tests/test_trajectoire.py,
+    tests/test_pensions_de_l_etat_de_1948.py]
   moteur: >-
     Durees en porte le décompte (jours, decompte, ecart_au_jour, services_liquidables,
     services_effectifs), AnneeCarriere les jours de services de chaque année

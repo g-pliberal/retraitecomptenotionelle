@@ -86,3 +86,4 @@ objets:
     champs:
       traitement: {porte: "le traitement ou la solde de L. 15 qui a liquidé la pension, en euros par an à la date d'effet", type: nombre, obligatoire: true}
       surcote: {porte: "ce que la surcote ajoute au montant, en euros, que le plafond laisse hors de la pension qu'il compare au traitement depuis le 29 décembre 2020", type: nombre, obligatoire: true}
+      proportionnelle: {porte: "la pension est-elle la pension proportionnelle du code de 1948, que son article 18, V, ne majore pas pour enfants", type: booleen, defaut: false}

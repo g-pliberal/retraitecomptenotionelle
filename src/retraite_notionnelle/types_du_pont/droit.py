@@ -617,6 +617,9 @@ class EligiblePlafondEnfants:
     #: depuis la décision du Conseil d'État du 29 décembre 2020, la pension se
     #: compare au traitement sans elle.
     surcote: float
+    #: La pension proportionnelle du code de 1948, que son article 18, V, ne
+    #: majore pas pour enfants (fiche ``decompte_des_services_fonction_publique``).
+    proportionnelle: bool = False
 
 
 #: Ce qui ouvre la demande, ou ce qui la ferme.

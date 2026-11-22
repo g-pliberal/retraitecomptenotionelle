@@ -15,8 +15,8 @@ vues:
 articles:
 - 1er à 3, 6 à 8, 11, 16 à 18, 24 à 27, 64 (premier alinéa) et 65, dans leur rédaction d'origine
 versions:
-- decompte_des_services_fonction_publique#avant_le_code_de_1964
-- majoration_enfants_plafond_fonction_publique#avant_le_code_de_1964
+- decompte_des_services_fonction_publique#loi_du_20_septembre_1948
+- majoration_enfants_plafond_fonction_publique#loi_du_20_septembre_1948
 - retraite_pour_invalidite_fonction_publique#avant_1964
 - enfants_fonction_publique#l12b_avant_1964
 lu_le: 2026-11-22

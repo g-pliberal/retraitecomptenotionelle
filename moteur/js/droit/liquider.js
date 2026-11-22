@@ -25,7 +25,7 @@ import {
   FICHE_DES_COEFFICIENTS_IRCANTEC, ageLegalDeLAssure, dateDEffet, derniereAnnee,
   periodeDeLiquidation,
 } from "./commun.js";
-import { trimestresDeLaLigneEntre } from "./compter.js";
+import { servicesDuCodeDe1948, trimestresDeLaLigneEntre } from "./compter.js";
 import * as coordonner from "./coordonner.js";
 import { REGIMES_CODE_DES_PENSIONS } from "./coordonner.js";
 import * as cultes from "./cultes.js";
@@ -176,6 +176,7 @@ export class Pensions {
       regimes[eligible.indice].plafond_enfants = {
         traitement: eligible.traitement,
         surcote: eligible.surcote,
+        ...(eligible.proportionnelle ? { proportionnelle: true } : {}),
       };
     }
     for (const eligible of this.supplements) {
@@ -245,6 +246,9 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
   const eligiblesMinimumDePension = [];
   // Les pensions du code des pensions, que le plafond de L. 18 borne.
   const eligiblesPlafond = [];
+  // Les pensions proportionnelles du code de 1948, que l'article 18, V, ne
+  // majore pas pour enfants.
+  const proportionnelles = [];
   // Les suppléments de pension des primes soumises à retenue.
   const eligiblesSupplement = [];
   // Le coefficient d'anticipation des régimes en points qu'il réduit.
@@ -696,10 +700,21 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     // Les régimes éteints dont ce régime compte les trimestres à sa durée :
     // les assurances sociales de 1930 à 1944 (`regimesRepris`).
     const membresDeLaDuree = [...membres, ...regimesRepris(moteur, membres, droits.codes, durees)];
+    // LE CODE DE 1948 : la pension d'ancienneté ou proportionnelle, et ses
+    // services aux cinq sixièmes (loi n° 48-1450, art. 6 et 16 ;
+    // `servicesDuCodeDe1948`).
+    const code1948 = auJour && dureesCultes === null
+      ? servicesDuCodeDe1948(moteur, durees, membres,
+        () => ouvrir.derogationActive(moteur, periode, carriere) !== null)
+      : null;
+    if (code1948 !== null && code1948.proportionnelle) {
+      proportionnelles.push(indicePension);
+    }
     let numerateur = dureesCultes !== null
       ? dureesCultes.depuis1998
-      : (auJour ? durees.servicesLiquidables(membres)
-        : cumulPlafonne(acquisParRegime, membresDeLaDuree));
+      : (code1948 !== null ? code1948.trimestres
+        : (auJour ? durees.servicesLiquidables(membres)
+          : cumulPlafonne(acquisParRegime, membresDeLaDuree)));
     // La durée d'assurance que sa décote lit, au jour, sans arrondi (L. 14, I).
     const ecartAuJour = auJour && durees.dureeAuJour(membres)
       ? durees.ecartAuJourDe(membres) : 0.0;
@@ -1123,6 +1138,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       eligiblesPlafond.push({
         indice: indicePension, traitement: salaireReference,
         surcote: Math.min(surcoteDuMontant, montant),
+        proportionnelle: proportionnelles.includes(indicePension),
       });
     }
     if (primeDeLaPension !== null && primeDeLaPension.nature === "supplement") {
@@ -1153,6 +1169,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           : "")
         + (dureeNonMajoree === null ? ""
           : `, ${dureeNonMajoree} trimestres majorés après l'âge du taux plein`)
+        + (code1948 !== null && code1948.proportionnelle
+          ? ", pension proportionnelle (loi du 20 septembre 1948, art. 6, III, et 16, IV)" : "")
         + detailHandicap
         + (anneesAlignees === null ? ""
           : `, ${anneesAlignees[0]} années au plus au salaire annuel moyen (${anneesAlignees[1]})`)

@@ -1930,6 +1930,9 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     const plafondL18 = plafondDeLArticleL18(moteur, carriere);
     const traitements = new Map(
       (liquidees.plafonds ?? []).map((eligible) => [eligible.indice, eligible.traitement]));
+    // La pension proportionnelle du code de 1948 n'est pas majorée (art. 18, V).
+    const proportionnelles = new Set((liquidees.plafonds ?? [])
+      .filter((eligible) => eligible.proportionnelle).map((eligible) => eligible.indice));
     let borneeAuTraitement = false;
     // SANS LE COEFFICIENT D'ANTICIPATION, là où la caisse la calcule ainsi :
     // la majoration se pose sur l'allocation que le coefficient n'a pas
@@ -1948,7 +1951,7 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     // date -> [[régime, ce que la part sert au-delà de celle de 1997], …].
     const auDelaDuService = new Map();
     for (const [indice, pension] of pensions.entries()) {
-      if (pension.montant <= 0.0) {
+      if (pension.montant <= 0.0 || proportionnelles.has(indice)) {
         continue;
       }
       const regime = moteur.catalogue.obtenir(pension.regime);

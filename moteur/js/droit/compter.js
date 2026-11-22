@@ -1122,6 +1122,16 @@ export function decompteDesServices(moteur, carriere, anneeLiquidation,
     throw new Error(`${fiche}.${version.id} : minimum garanti inconnu, `
       + `${parametres.minimum_garanti}`);
   }
+  const reduits = parametres.services_reduits;
+  if (reduits !== undefined && reduits !== null && !(
+    Array.isArray(reduits.part) && reduits.part.length === 2
+    && Array.isArray(reduits.reduction_par_les_bonifications)
+    && reduits.reduction_par_les_bonifications.length === 2
+    && reduits.anciennete_active_annees > 0 && reduits.anciennete_sedentaire_annees > 0
+    && parametres.pension_proportionnelle?.maximum_trimestres > 0)) {
+    throw new Error(`${fiche}.${version.id} : services réduits illisibles, `
+      + `${JSON.stringify(reduits)}`);
+  }
   return { id: version.id, parametres };
 }
 
@@ -1157,6 +1167,87 @@ export function arrondirLesServices(jours, parametres) {
     entieres += 1;
   }
   return Math.floor(entieres * unite / JOURS_PAR_TRIMESTRE);
+}
+
+/**
+ * Les annuités du code de 1948, en trimestres : la pension d'ancienneté ou
+ * proportionnelle (loi n° 48-1450, art. 6, I et III), et ses services
+ * liquidables, les uns comptés entiers, les autres aux cinq sixièmes, puis
+ * arrondis au semestre (art. 16, I et II) ; null quand la version du décompte
+ * ne réduit aucun service (`services_reduits`).
+ *
+ * L'agent de la catégorie B — `categorieB()`, que la carrière ouvre par la
+ * dérogation de l'âge, n'est demandé qu'ici — a droit à pension d'ancienneté
+ * après vingt-cinq ans : ses services actifs comptent entiers, et ses services
+ * sédentaires aussi quand ils « complètent les vingt-cinq premières années »,
+ * les autres aux cinq sixièmes. L'autre a droit après trente ans : ses services
+ * sédentaires comptent aux cinq sixièmes, et ses services actifs aussi quand ils
+ * « constituent ou complètent les trente premières années », les autres
+ * entiers. « Compléter » se lit en durée, non dans l'ordre des années : les
+ * services de l'autre sorte d'abord, puis ceux-ci jusqu'au seuil. Les
+ * bonifications suivent la catégorie de l'agent : entières en B, aux cinq
+ * sixièmes sinon ; elles entrent à la durée de la pension d'ancienneté sans la
+ * réduire de plus d'un cinquième (art. 8, III).
+ */
+export function servicesDuCodeDe1948(moteur, durees, membres, categorieB) {
+  const decompte = durees.decompteDe(membres);
+  const reduits = decompte === null ? null : (decompte.parametres.services_reduits ?? null);
+  if (reduits === null) {
+    return null;
+  }
+  const b = categorieB();
+  const [numerateur, denominateur] = reduits.part;
+  const part = numerateur / denominateur;
+  const requises = (b ? reduits.anciennete_active_annees
+    : reduits.anciennete_sedentaire_annees) * JOURS_PAR_AN;
+  const [reductionN, reductionD] = reduits.reduction_par_les_bonifications;
+  const classements = moteur.affiliations.classementsActifs;
+  const totaux = new Map();
+  for (const membre of membres) {
+    for (const [annee, jours] of durees.joursDe(membres).services.get(membre) ?? []) {
+      totaux.set(annee, (totaux.get(annee) ?? 0.0) + jours);
+    }
+  }
+  const actifsParAnnee = new Map();
+  for (const ligne of durees.carriere.lignes) {
+    if (ligne.services_fonction_publique && classements[ligne.affiliation] !== undefined
+        && totaux.has(ligne.annee)
+        && membres.some((m) => coordonner.regimesRoutes(moteur, [ligne.affiliation]).has(m))) {
+      const jours = joursDeLaLigne(durees.carriere, ligne);
+      actifsParAnnee.set(ligne.annee, (actifsParAnnee.get(ligne.annee) ?? 0.0)
+        + (ligne.quotite >= 1.0 ? jours : jours * ligne.quotite));
+    }
+  }
+  let effectifs = 0.0;
+  let actifs = 0.0;
+  for (const [annee, jours] of totaux) {
+    const total = Math.min(JOURS_PAR_AN, jours);
+    effectifs += total;
+    actifs += Math.min(total, actifsParAnnee.get(annee) ?? 0.0);
+  }
+  const sedentaires = effectifs - actifs;
+  let liquidables;
+  if (b) {
+    const entiers = Math.min(sedentaires, Math.max(0.0, requises - actifs));
+    liquidables = actifs + entiers + (sedentaires - entiers) * part;
+  } else {
+    const reduitsActifs = Math.min(actifs, Math.max(0.0, requises - sedentaires));
+    liquidables = (sedentaires + reduitsActifs) * part + (actifs - reduitsActifs);
+  }
+  let bonifications = 0;
+  for (const membre of membres) {
+    bonifications += durees.horsAnnee.services.get(membre) ?? 0;
+  }
+  const joursBonifies = bonifications * JOURS_PAR_TRIMESTRE;
+  const anciennete = effectifs + Math.min(joursBonifies, requises * reductionN / reductionD)
+    + EPSILON_JOURS >= requises;
+  const trimestres = arrondirLesServices(
+    liquidables + joursBonifies * (b ? 1.0 : part), decompte.parametres);
+  const maximum = decompte.parametres.pension_proportionnelle.maximum_trimestres;
+  return {
+    trimestres: anciennete ? trimestres : Math.min(trimestres, maximum),
+    proportionnelle: !anciennete,
+  };
 }
 
 /**

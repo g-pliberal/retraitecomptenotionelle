@@ -1,0 +1,17 @@
+date: "2026-11-22"
+session: "action 191 : les pensions de l'État de 1948 à 1964 au code de 1948"
+consulte: >-
+  La loi n° 48-1450 du 20 septembre 1948 (JO du 21 septembre 1948, p. 9298-9307),
+  articles 6, 7, 8, 16, 18 et 64, dans la transcription du fac-similé
+  (data/reference/textes/apportes/loi_1948_09_20_pensions_civiles_et_militaires.md) ;
+  python scripts/veille_droit.py, rien de neuf pour ces pensions.
+trouve: >-
+  Services sédentaires aux cinq sixièmes, décompte au semestre, pension
+  proportionnelle sans trente ans de services (vingt-cinq en catégorie B),
+  plafonnée à vingt-cinq annuités et non majorée, pension majorée bornée au
+  traitement. Corrigé, avec ses tests. Détail :
+  docs/feuille_de_route/191/2026-11-22-code-des-pensions-de-1948.md.
+reste: >-
+  L'âge des mères (art. 7, 3°), la pension des mères à quinze ans (art. 6, III,
+  4°), le minimum vital (art. 17 et 18), l'invalidité (art. 25 à 27), les
+  services d'avant 1930.

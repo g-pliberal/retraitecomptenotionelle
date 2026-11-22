@@ -176,18 +176,21 @@ def test_le_minimum_garanti_efface_la_surcote():
 
 
 @pytest.mark.parametrize(("date_effet", "version"), [
-    ("1963-12-01", "avant_le_code_de_1964"), ("1964-01-01", "code_de_1964"),
+    ("1948-09-01", "avant_le_code_de_1948"), ("1963-12-01", "loi_du_20_septembre_1948"),
+    ("1964-12-01", "code_de_1964"),
     ("1982-08-01", "code_de_1982"), ("2012-01-01", "loi_de_finances_pour_2012"),
     ("2020-12-01", "loi_de_finances_pour_2012"),
     ("2021-01-01", "conseil_d_etat_du_29_decembre_2020")])
 def test_les_versions_se_lisent_a_la_date_d_effet(simulateur, date_effet, version):
-    """Avant le code de 1964, non lu, aucun plafond ; la surcote hors du plafond
+    """Avant le code de 1948, non lu, aucun plafond ; depuis, la pension
+    majorée ne dépasse pas les émoluments de base (loi n° 48-1450, art. 18,
+    V) ; la surcote hors du plafond
     pour les pensions qui prennent effet depuis la décision."""
     lue = simulateur.scenario_actuel.fiches_datees.version(completer.FICHE_DU_PLAFOND_L18,
                                                           date_effet)
     assert lue["id"] == version
     parametres = lue["parametres"]
-    assert parametres["existe"] is (version != "avant_le_code_de_1964")
+    assert parametres["existe"] is (version != "avant_le_code_de_1948")
     if parametres["existe"]:
         assert parametres["surcote"] == ("hors_du_plafond" if date_effet >= "2021"
                                          else "dans_le_plafond")

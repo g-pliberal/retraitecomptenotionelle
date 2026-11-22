@@ -218,7 +218,10 @@ def test_les_deux_moteurs_comptent_au_jour_a_l_identique():
 def test_la_fiche_dit_le_semestre_puis_le_trimestre(saisies):
     simulateur = saisies.simulateur(CONSEIL_D_ETAT)
     fiches = simulateur.scenario_actuel.fiches_datees
-    assert fiches.regle("decompte_des_services_fonction_publique", "1960-01-01")["existe"] is False
+    assert fiches.regle("decompte_des_services_fonction_publique", "1948-01-01")["existe"] is False
+    # Le code de 1948 compte au semestre (loi n° 48-1450, art. 16, II).
+    code_de_1948 = fiches.regle("decompte_des_services_fonction_publique", "1960-01-01")
+    assert (code_de_1948["unite_jours"], code_de_1948["seuil_jours"]) == (180, 90)
     ancien = fiches.regle("decompte_des_services_fonction_publique", "1990-06-01")
     assert (ancien["unite_jours"], ancien["seuil_jours"], ancien["duree_au_jour"]) == (180, 90, False)
     nouveau = fiches.regle("decompte_des_services_fonction_publique", "2026-10-01")
