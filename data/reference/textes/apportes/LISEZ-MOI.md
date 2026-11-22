@@ -88,6 +88,9 @@ propriétaire (dossier Téléchargements).
 | `JORF_19480824_200.pdf` | loi n° 48-1306 | `9e62c8719db3ebd67d6d8a399bd5a1cd0f54c0579268cdae6dd5ef32c575aa8c` |
 | `JORF_19480923_226.pdf` | loi n° 48-1469 | `3155df3d506654a348004c2a27d7a06b2b840954f4360b9827e08ba442d216ce` |
 | `JORF_19540117_13.pdf` | décrets n° 54-50 et 54-51 | `5b782849e4b163a65171d7e2ec046b6ec2ecc692ac2086e20b8473784b3f863e` |
+| `JORF_19451230_309.pdf` | décret n° 45-0179 | `d67ed7aa33c0e490cd748d7a487320e4caf8a43d547db77e6d402f0c008e250f` |
+| `JORF_19620331_78.pdf` | arrêté du 27 mars 1962, accord Arrco du 8 décembre 1961 | `22dd8648f9947558f9b908be28160c2a5d787d63af868994c6243cc84bc0ea73` |
+| `JORF_19621225_303.pdf` | loi n° 62-1529 | `73a611dac28852ec889deab93166cdb10ddfeab96b40f671837fdf5fba33d1c8` |
 
 Le fac-similé d'un numéro se rouvre depuis la page du texte sur Légifrance
 (`adresse`), bouton « Télécharger le Journal officiel… (version papier
@@ -102,3 +105,5 @@ numérisée) », après le captcha.
   10 janvier 1954), à reprendre sur les fac-similés de Légifrance.
 - Le code des pensions de 1948 (loi n° 48-1450, JO du 21 septembre 1948), qui
   manque à Gallica, à chercher de même.
+- Les trente-trois autres numéros téléchargés le 22 novembre 2026, lot par lot ;
+  leur liste et ce que chacun sert sont dans les fichiers du projet, pas dans le dépôt.
