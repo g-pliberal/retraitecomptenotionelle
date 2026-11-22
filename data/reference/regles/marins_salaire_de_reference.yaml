@@ -33,13 +33,26 @@ versions:
 - id: loi_du_12_avril_1941
   statut: supposee
   hypothese: >-
-    les pensions qui prennent effet avant le 31 mars 1968 relèvent de la loi du 12 avril
-    1941, que le décret n° 68-292 du 21 mars 1968 abroge en la codifiant, et que les index
-    du dépôt ne portent pas ; la loi n° 48-1469 du 22 septembre 1948 renvoie déjà au
-    « salaire forfaitaire correspondant, en application des articles 12 et 55 modifiés de
-    la loi du 12 avril 1941, aux fonctions occupées par l'intéressé avant la cessation de
-    ses services » (article 13) : la fiche présume la règle que le code de 1968 reprend
-  fiabilite: moyenne, le forfait des fonctions étant lu dans la loi de 1948, la catégorie moyenne, l'abattement et le semestre non
+    lu au Journal officiel sur Gallica le 21 novembre 2026. Du 23 septembre 1948 au 31 mars
+    1968, la loi n° 48-1469 du 22 septembre 1948 (JO du 23 septembre 1948, p. 9366-9367),
+    qui remplace les articles 12 à 15 de la loi du 12 avril 1941 : « La pension
+    d'ancienneté, proportionnelle ou exceptionnelle, est calculée en fonction du salaire
+    annuel forfaitaire correspondant, en application de l'article 55 ci-après, à la
+    catégorie dans laquelle l'intéressé s'est trouvé classé en dernier lieu avant la
+    liquidation de la pension » (nouvel article 12) — la catégorie de la dernière année,
+    celle du modèle ; la catégorie immédiatement inférieure à qui a cotisé moins d'un an à
+    la dernière (1°), celle de fonctions supérieures tenues cinq ans (2°), et, au-delà de
+    « six fois le minimum vital calculé comme en matière de pensions civiles et
+    militaires », la portion comptée pour moitié (3°) ; la fraction de semestre de trois
+    mois au moins comptée six mois (nouvel article 13). Du 6 mai 1941 au 22 septembre
+    1948, la loi du 12 avril 1941 (JO du 6 mai 1941) dans sa rédaction d'origine : « La
+    pension d'ancienneté comprend une pension de base et, éventuellement, un supplément »
+    (article 12) — un tarif fixe par catégorie, de 5 000 F à 10 000 F par an, et un
+    supplément sur le salaire moyen des dix dernières années (articles 13 et 14), que le
+    modèle ne sert pas : il liquide, dès 1930, le forfait de la dernière année comme
+    après 1948. Présumé : l'ordonnance du 8 septembre 1945, qui avait déjà modifié ces
+    articles, non lue
+  fiabilite: faible, la règle de 1948 à 1968 étant lue dans la loi n° 48-1469, le tarif de 1941 non servi
   textes:
   - {id: LEGIARTI000006757996, article: "loi n° 48-1469 du 22 septembre 1948, article 13, qui porte l'allocation minima des agents du service général à 0,75 % du salaire forfaitaire de leurs fonctions par annuité", en_vigueur: 1948-01-01}
   - {id: JORFTEXT000000335854, article: "décret n° 68-292 du 21 mars 1968 portant codification des textes législatifs et réglementaires déterminant le régime des pensions de retraite des marins : « création d'un code des pensions de retraite des marins, abroge la loi du 12-04-1941 » (analyse du Journal officiel)", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
@@ -54,7 +67,10 @@ versions:
       plafond_en_traitements_de_l_indice_100: 8
       part_au_dela_du_plafond: 0.5
       mois_du_decompte_des_services: 6
-    droit: celui de la version code_de_1968, présumé
+    droit: >-
+      de 1948 à 1968, le forfait de la dernière catégorie, abattu de moitié au-delà de six
+      fois le minimum vital, abattement que le modèle n'applique pas avant le 5 novembre
+      1985 ; avant 1948, le tarif de 1941, non servi
   exemples: aucun trouvé
 - id: code_de_1968
   statut: lue
@@ -272,6 +288,21 @@ approximations:
     le modèle compte les services au trimestre ; le décompte final les arrondit au
     semestre, la fraction de trois mois ou plus comptant pour six mois, l'autre négligée
   effet: un trimestre de moins que le droit au plus, quand la fraction de semestre fait trois à cinq mois ; non mesuré
+- version: [loi_du_12_avril_1941]
+  textes: loi du 12 avril 1941, articles 12 à 14, rédaction d'origine ; loi n° 48-1469 du 22 septembre 1948, article 12, 1° et 3°
+  ecart: >-
+    avant le 23 septembre 1948, la pension est un tarif fixe par catégorie et un supplément
+    sur le salaire moyen des dix dernières années (moitié jusqu'à 18 000 F, deux
+    cinquièmes jusqu'à 30 000 F, un tiers au-delà), lus au JO du 6 mai 1941 : le modèle sert
+    le forfait de la dernière catégorie, comme après 1948. De 1948 à 1968, la catégorie
+    inférieure de qui a cotisé moins d'un an à la dernière n'est pas servie, et aucun
+    abattement n'est appliqué, quand le droit compte pour moitié la portion au-delà de six
+    fois le minimum vital des pensions civiles et militaires, que le dépôt ne porte pas. Les servir demande la série du minimum vital de 1948 à 1968 et la catégorie
+    suivie au mois
+  effet: >-
+    non mesuré : le tarif de 1941 et la série du minimum vital ne sont pas au dépôt ; les
+    pensions de marins liquidées avant 1968 sont peu nombreuses dans les carrières que le
+    site simule
 - version: [contrats_simultanes]
   textes: R. 31
   ecart: >-
@@ -534,6 +565,11 @@ historique:
   série, leur moyenne, qu'aucun alinéa n'écrit, déclaré en convention du modèle, avec son
   effet au plus, 88,65 € sur le plafond et 44,33 € sur le salaire de référence. Aucune
   règle de calcul ne change.
+- >-
+  2026-11-21 — la loi n° 48-1469 du 22 septembre 1948 et la loi du 12 avril 1941 lues au
+  Journal officiel sur Gallica : de 1948 à 1968, la catégorie de la dernière année, celle
+  du modèle, mais l'abattement au-delà de six fois le minimum vital ; avant 1948, un tarif
+  par catégorie et un supplément. Déclarés, sans changer de règle de calcul.
 code:
   moteur: >-
     La période des marins liquide le dernier salaire (`salaire_reference`) :
