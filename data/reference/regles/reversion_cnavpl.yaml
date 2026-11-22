@@ -1,0 +1,257 @@
+schema_version: 1
+id: reversion_cnavpl
+intitule: >-
+  Pension de réversion du régime de base des professions libérales (L. 643-7) : depuis
+  le 1er janvier 2004, celle du régime général, « dans les conditions prévues aux
+  articles L. 353-1, L. 353-2, L. 353-3 » et, depuis 2010, L. 353-6 — 54 % de la
+  pension, à 55 ans, sous le plafond de ressources ; avant, l'allocation de réversion
+  de D. 643-5, la moitié de l'allocation à 65 ans, que le modèle ne sert pas encore.
+domaine: reversion
+regimes:
+- cnavpl
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- conjoint.deces
+- union.debut, d'un mariage, et union.fin, pour l'ex-conjoint divorcé ; les précédents
+  conjoints de l'affilié, que le partage au prorata des mariages lit
+- la naissance du survivant, qui dit son âge, ses ressources et celles de son ménage
+- la pension de base de l'affilié décédé, et les réversions des autres régimes de base
+ecrit:
+- la pension de réversion du survivant au régime de base des professions libérales
+# Les versions forment un partage de la date d'effet de la réversion, comme
+# celles du régime général. Depuis 2004, L. 643-7 renvoie aux articles du
+# régime général : la version `regime_general_depuis_2004` le dit par
+# `renvoi`, et le moteur lit alors la version de la fiche `reversion` en
+# vigueur aux mêmes dates — le taux, l'âge, le plafond, le minimum, la
+# majoration de 11,1 % (L. 353-6), qui n'y entre qu'en 2010 comme au régime
+# général.
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: avant_1985
+  statut: supposee
+  hypothese: >-
+    l'allocation de réversion d'avant la codification de 1985 (loi du 17 janvier 1948,
+    décret n° 49-1086) n'est pas lue : le moteur ne la sert pas, et sa ligne le dit
+  fiabilite: estimee
+  bornes:
+    liquidation.date_effet: [null, 1985-12-21]
+  contenu:
+    droit: l'allocation de réversion d'avant le code de 1985, que nul texte lu ne dit
+    parametres:
+      portee: false
+      fiabilite: estimee
+  exemples: aucun trouvé
+- id: allocation_differentielle_1985
+  statut: lue
+  textes:
+  - id: LEGIARTI000006738367
+    article: D. 643-5 du code de la sécurité sociale, rédaction de 1985
+    en_vigueur: 1985-12-21
+    citation: >-
+      « Le conjoint survivant d'un ressortissant de l'une des sections professionnelles
+      bénéficie, sur sa demande, d'une allocation de réversion égale à la moitié de
+      celle dont jouissait l'assuré décédé ou dont celui-ci aurait été susceptible de
+      jouir s'il avait été âgé de soixante-cinq ans lors de son décès, à condition :
+      1°) d'être âgé de soixante-cinq ans ou de soixante ans en cas d'inaptitude au
+      travail dûment constaté […] ; 2°) de n'exercer ou n'avoir exercé aucune activité
+      professionnelle lui donnant droit à un avantage personnel d'un montant au moins
+      égal, au titre d'un régime d'assurance vieillesse de sécurité sociale ; si cet
+      avantage personnel est d'un montant inférieur à celui de l'allocation de
+      réversion mentionnée ci-dessus, il est versé une allocation différentielle ;
+      3°) d'être marié depuis deux ans au moins lors du décès de son conjoint ;
+      toutefois, lorsqu'au moins un enfant est issu du mariage, aucune condition de
+      durée de mariage n'est exigée. »
+  - id: LEGIARTI000006743960
+    article: L. 643-9 du code de la sécurité sociale, rédaction de 1985
+    en_vigueur: 1985-12-21
+  bornes:
+    liquidation.date_effet: [1985-12-21, 1988-01-28]
+  contenu:
+    droit: >-
+      la moitié de l'allocation de l'assuré, au moins l'allocation aux vieux
+      travailleurs salariés pour soixante trimestres, en soixantièmes en deçà ;
+      différentielle de l'avantage personnel du survivant
+    conditions: >-
+      65 ans, 60 en cas d'inaptitude ; deux ans de mariage, sauf enfant issu du mariage ;
+      perdue au remariage (D. 643-11)
+    parametres:
+      portee: false
+      taux: 0.5
+      age_minimum: 65
+      age_inaptitude: 60
+      mariage_minimum_annees: 2
+      cumul: aucun
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: limite_de_cumul_1988
+  statut: lue
+  textes:
+  - id: LEGIARTI000006738368
+    article: D. 643-5 du code de la sécurité sociale, rédaction de 1988
+    en_vigueur: 1988-01-28
+    citation: >-
+      « […] le conjoint survivant ou le conjoint divorcé cumule l'allocation de
+      réversion avec ses avantages personnels de vieillesse ou d'invalidité dans la
+      limite de 50 p. 100 du total de ces avantages et de la pension principale dont
+      bénéficiait ou eût bénéficié l'assuré et qui a servi de base au calcul de
+      l'avantage de réversion. Toutefois, la limite prévue à l'alinéa précédent ne peut
+      être inférieure à 70 p. 100 du montant maximum de la pension de vieillesse du
+      régime général liquidée à soixante-cinq ans. »
+  - id: LEGIARTI000006743961
+    article: L. 643-9 du code de la sécurité sociale, rédaction de 1987
+    en_vigueur: 1987-07-31
+  - id: LEGIARTI000006738147
+    article: D. 643-5-1 du code de la sécurité sociale
+    en_vigueur: 1988-01-28
+  - id: LEGIARTI000006738151
+    article: D. 643-7 du code de la sécurité sociale, le conjoint divorcé
+    en_vigueur: 1985-12-21
+  - id: LEGIARTI000006738160
+    article: D. 643-11 du code de la sécurité sociale, le remariage
+    en_vigueur: 1985-12-21
+  bornes:
+    liquidation.date_effet: [1988-01-28, 2004-01-01]
+  contenu:
+    droit: >-
+      la moitié de l'allocation de l'assuré, cumulée avec les avantages personnels du
+      survivant dans la limite de la moitié de leur total et de l'allocation de
+      l'assuré, sans descendre sous 70 % du maximum des pensions du régime général ; au
+      moins l'allocation aux vieux travailleurs salariés pour soixante trimestres
+    conditions: >-
+      65 ans, 60 en cas d'inaptitude ; deux ans de mariage, sauf enfant issu du mariage ;
+      le divorcé non remarié au prorata des mariages (D. 643-7) ; perdue au remariage
+      (D. 643-11) ; aucune condition de ressources
+    parametres:
+      portee: false
+      taux: 0.5
+      age_minimum: 65
+      age_inaptitude: 60
+      mariage_minimum_annees: 2
+      ex_conjoints: non_remaries
+      cumul: limite
+      cumul_taux: 0.5
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: regime_general_depuis_2004
+  statut: lue
+  textes:
+  - id: LEGIARTI000006743799
+    article: L. 643-7 du code de la sécurité sociale, rédaction de la loi n° 2003-775
+    en_vigueur: 2004-01-01
+    citation: >-
+      « En cas de décès de l'assuré, son conjoint survivant a droit à une pension de
+      réversion dans les conditions prévues aux articles L. 353-1, L. 353-2 et
+      L. 353-3. » ; la loi, article 96, III, que la rédaction reproduit : « Les
+      dispositions de l'article 91 […] ne sont pas applicables aux pensions de
+      réversion liquidées antérieurement au 1er janvier 2004 » — la version se choisit
+      donc à la date d'effet, quelle que soit celle du décès
+  - id: LEGIARTI000019959385
+    article: L. 643-7 du code de la sécurité sociale, rédaction de la loi n° 2008-1330
+    en_vigueur: 2010-01-01
+    citation: >-
+      « En cas de décès de l'assuré, son conjoint survivant a droit à une pension de
+      réversion dans les conditions prévues aux articles L. 353-1, L. 353-2, L. 353-3
+      et L353-6. »
+  bornes:
+    liquidation.date_effet: [2004-01-01, null]
+  contenu:
+    droit: >-
+      la pension de réversion du régime général, version pour version : celle de la
+      fiche `reversion` en vigueur à la date d'effet et au décès
+    parametres:
+      renvoi: reversion
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations:
+- version: [avant_1985, allocation_differentielle_1985, limite_de_cumul_1988]
+  ecart: >-
+    la réversion qui prend effet avant le 1er janvier 2004 n'est pas servie : sa ligne
+    le dit (`non_portee`). Les deux rédactions de D. 643-5 sont lues et leurs paramètres
+    écrits ; restent à porter la limite forfaitaire de 70 % du maximum des pensions,
+    quand celle du régime général est de 73 %, et l'absence de condition de ressources
+  effet: non mesuré ; les survivants d'un libéral servis avant 2004
+- ecart: >-
+    du 1er janvier au 30 juin 2004, le renvoi lit la version du régime général de cette
+    date, celle d'avant la réforme, qui ne prend effet qu'au 1er juillet 2004 avec le
+    décret n° 2004-857 ; la caisse a pu servir autrement ces six mois
+  effet: non mesuré
+- ecart: >-
+    la ligne de la réversion porte l'identifiant de la version du régime général que le
+    renvoi lit (`minimum_2026`…), non `regime_general_depuis_2004`
+  effet: aucun sur le montant
+- ecart: >-
+    la pension du défunt recalculée aux règles de la date d'effet, que le régime
+    général lit pour ses réversions d'avant 2004 (`pension_eue_aux_regles_de_la_date_d_effet`),
+    n'est pas reprise : L. 643-7 ne renvoie pas à R. 353-3, et le renvoi n'y touche
+    qu'au premier semestre 2004
+  effet: non mesuré ; les réversions de janvier à juin 2004
+textes_sans_effet:
+- id: LEGIARTI000021640273
+  article: D. 643-5 du code de la sécurité sociale
+  en_vigueur: 2010-01-01
+  motif: >-
+    depuis 2004, le numéro porte une autre règle, le versement pour la retraite de
+    L. 643-2 (« Le versement prévu à l'article L. 643-2 peut être pris en compte… ») :
+    plus rien de la réversion
+- id: LEGIARTI000023395852
+  article: D. 643-7 du code de la sécurité sociale
+  en_vigueur: 2011-01-01
+  motif: >-
+    depuis 2004, le numéro porte l'âge de référence du versement pour la retraite, et
+    non plus la réversion du conjoint divorcé, que L. 353-3 règle désormais
+- id: LEGIARTI000006738161
+  article: D. 643-11 du code de la sécurité sociale
+  en_vigueur: 2007-04-21
+  motif: >-
+    le numéro porte depuis 2007 les cotisations des conjoints collaborateurs (« Le
+    versement des cotisations annuelles des conjoints collaborateurs… ») : plus rien du
+    remariage
+presomptions:
+  reversion_demandee_dans_l_annee: >-
+    la date d'effet, au premier jour du mois qui suit le décès, ou qui suit les 55 ans
+    du survivant, comme au régime général
+sources:
+  lu_le: 2026-11-22
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Ouverte le 22 novembre 2026 : le simulateur de réversion d'info-retraite sert 54 %
+    dans les dix sections, le modèle ne servait rien.
+  - >-
+    Porter les versions d'avant 2004 ; lire la réversion d'avant la codification de 1985.
+  lectures:
+  - type: legifrance
+    reference: >-
+      index LEGI du dépôt, à jour au 16 novembre 2026 : L. 643-7 (LEGIARTI000006743798,
+      LEGIARTI000006743799, LEGIARTI000019959385) ; L. 643-9 (LEGIARTI000006743960,
+      LEGIARTI000006743961) ; D. 643-5 (LEGIARTI000006738367, LEGIARTI000006738368),
+      D. 643-5-1, D. 643-7 et D. 643-11 jusqu'en 2004
+    date: 2026-11-22
+  - type: autre
+    reference: >-
+      simulateur de réversion d'info-retraite, saisi le 22 novembre 2026 : pour les dix
+      sections, « retraite de base (…) : 540 € » pour 1 000 € ; à 52 ans, « l'âge requis
+      (55 ans) » ; au-dessus de 25 001,60 € de ressources sur douze mois, « en raison de
+      vos ressources » (comparaisons/2026-11-22-simulateurs-des-caisses)
+    date: 2026-11-22
+    url: https://les-simulateurs.info-retraite.fr/reversion
+code:
+  javascript: >-
+    moteur/js/droit/reversion.js : reversion, SUR_LE_REGIME_GENERAL,
+    surLeRegimeGeneral, versionsSuivies ; moteur/js/regimes.js : Reversions
+  parametres: >-
+    contenu.parametres de chaque version : portee, renvoi, fiabilite, taux,
+    age_minimum, age_inaptitude, mariage_minimum_annees, ex_conjoints, cumul, cumul_taux
+  tests: tests/test_reversion.py
+historique:
+- >-
+  2026-11-22 — née de la confrontation au simulateur de réversion d'info-retraite : le
+  modèle ne servait aucune réversion de la base des libéraux, motif `non_portee` ; il
+  sert depuis celle du régime général, à laquelle L. 643-7 renvoie.
+effet: >-
+  Tout conjoint survivant d'un libéral dont la réversion prend effet depuis 2004. La
+  veuve d'un médecin qui touchait 1 000 € de base par mois, seule, sous le plafond,
+  reçoit 540 € par mois au lieu de rien.

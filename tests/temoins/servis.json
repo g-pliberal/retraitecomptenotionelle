@@ -5300,8 +5300,8 @@
       "regime": "carcdsf_complementaire"
      },
      {
-      "date_effet": null,
-      "montant": 0.0,
+      "date_effet": "2020-07-01",
+      "montant": 5742.899524843388,
       "regime": "cnavpl"
      }
     ]
@@ -7824,8 +7824,8 @@
       "regime": "carcdsf_complementaire"
      },
      {
-      "date_effet": null,
-      "montant": 0.0,
+      "date_effet": "2020-07-01",
+      "montant": 5686.039133508304,
       "regime": "cnavpl"
      }
     ]
@@ -12078,8 +12078,8 @@
       "regime": "carcdsf_complementaire"
      },
      {
-      "date_effet": null,
-      "montant": 0.0,
+      "date_effet": "2020-07-01",
+      "montant": 5169.1264850075495,
       "regime": "cnavpl"
      }
     ]
@@ -14516,8 +14516,8 @@
       "regime": "cavamac_complementaire"
      },
      {
-      "date_effet": null,
-      "montant": 0.0,
+      "date_effet": "2020-07-01",
+      "montant": 5680.573741843483,
       "regime": "cnavpl"
      }
     ]
@@ -16117,8 +16117,8 @@
       "regime": "cavamac_complementaire"
      },
      {
-      "date_effet": null,
-      "montant": 0.0,
+      "date_effet": "2020-07-01",
+      "montant": 6311.117427188109,
       "regime": "cnavpl"
      }
     ]
@@ -17578,8 +17578,8 @@
       "regime": "cavamac_complementaire"
      },
      {
-      "date_effet": null,
-      "montant": 0.0,
+      "date_effet": "2020-07-01",
+      "montant": 6248.631116027831,
       "regime": "cnavpl"
      }
     ]

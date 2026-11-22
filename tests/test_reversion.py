@@ -1504,6 +1504,104 @@ def test_la_rci_compte_le_menage_sous_le_meme_plafond(simulateur):
     assert ligne.plafond_du_menage is True
 
 
+# -- la base des professions libérales -------------------------------------------------
+
+# L. 643-7, depuis le 1er janvier 2004 (loi n° 2003-775, article 91 ;
+# LEGIARTI000006743799, puis LEGIARTI000019959385 au 1er janvier 2010) : « En
+# cas de décès de l'assuré, son conjoint survivant a droit à une pension de
+# réversion dans les conditions prévues aux articles L. 353-1, L. 353-2,
+# L. 353-3 » et, depuis 2010, « L. 353-6 ». Le simulateur d'info-retraite
+# (22 novembre 2026, R3 à R24, R49 à R51) le dit pour les dix sections : 54 %,
+# à 55 ans, sous le plafond de 25 001,60 €.
+
+def test_la_base_des_liberaux_reverse_comme_le_regime_general(simulateur):
+    """R4 : le médecin touchait 1 000 € de base par mois ; sa veuve, née le
+    15 mars 1960, seule, sous le plafond, reçoit 540 € par mois, 54 % ; 6 480 €
+    par an. Ses ressources, 15 000 €, la laissent sous le plafond de 2026 et
+    au-dessus de celui de la majoration de 11,1 %. Jusqu'au 22 novembre 2026,
+    le modèle n'en servait rien, motif « non_portee »."""
+    carriere = _carriere(simulateur, 1955, 67.0, "1960-03-15", "2026-03-10",
+                         mariage="1985-06", ressources=15000.0)
+    ligne, = _lignes(simulateur, carriere, [("cnavpl", 12000.0)], 2026)
+    assert ligne == ("cnavpl", 0.54, 6480.0, "servie", "minimum_2026", "2026-04-01")
+
+
+def test_la_base_des_liberaux_attend_cinquante_cinq_ans(simulateur):
+    """R49 : la survivante de 52 ans « n'a pas encore atteint l'âge requis
+    (55 ans) » ; la réversion prend effet au premier jour du mois qui suit son
+    anniversaire (R. 353-7)."""
+    carriere = _carriere(simulateur, 1968, 58.0, "1974-03-15", "2026-03-10",
+                         mariage="2000-06", ressources=15000.0)
+    ligne, = _lignes(simulateur, carriere, [("cnavpl", 12000.0)], 2026)
+    assert (ligne[0], ligne[3], ligne[5]) == ("cnavpl", "servie", "2029-04-01")
+
+
+def test_la_base_des_liberaux_s_arrete_au_plafond_de_ressources(simulateur):
+    """R51 : au-dessus de 25 001,60 € de ressources, « vous ne pouvez pas
+    bénéficier d'une réversion, en raison de vos ressources » ; sous le plafond,
+    la réversion est réduite du dépassement (L. 353-1)."""
+    carriere = _carriere(simulateur, 1955, 67.0, "1960-03-15", "2026-03-10",
+                         mariage="1985-06", ressources=26000.0)
+    ligne, = _lignes(simulateur, carriere, [("cnavpl", 12000.0)], 2026)
+    assert (ligne[0], ligne[2], ligne[3]) == ("cnavpl", 0.0, "ecretee")
+    carriere = _carriere(simulateur, 1955, 67.0, "1960-03-15", "2026-03-10",
+                         mariage="1985-06", ressources=20000.0)
+    ligne, = _lignes(simulateur, carriere, [("cnavpl", 12000.0)], 2026)
+    assert (ligne[2], ligne[3]) == (5001.60, "ecretee")
+    carriere = _carriere(simulateur, 1955, 67.0, "1960-03-15", "2026-03-10",
+                         mariage="1985-06", ressources=25000.0)
+    ligne, = _lignes(simulateur, carriere, [("cnavpl", 12000.0)], 2026)
+    assert (ligne[2], ligne[3]) == (1.60, "ecretee")
+
+
+def test_le_survivant_d_un_deces_d_avant_2009_garde_cinquante_et_un_ans(simulateur):
+    """Le renvoi suit le régime général jusqu'à l'âge : décédé en 2008, le libéral
+    laisse la réversion à sa veuve de 52 ans dès le mois qui suit (décret
+    n° 2008-1509, article 2, II), à 54 %, sans la majoration de 11,1 %, qui
+    n'existe pas avant 2010. Ses 5 000 € de ressources la laissent sous le plafond
+    de 2008, 2 080 fois 8,71 €, 18 116,80 €."""
+    carriere = _carriere(simulateur, 1950, 58.0, "1956-03-15", "2008-06-10",
+                         mariage="1980-06", ressources=5000.0)
+    ligne, = _lignes(simulateur, carriere, [("cnavpl", 12000.0)], 2008)
+    assert ligne == ("cnavpl", 0.54, 6480.0, "servie", "age_51", "2008-07-01")
+
+
+def test_la_base_des_liberaux_non_portee_ne_divise_pas_le_cumul_du_regime_general(
+        simulateur):
+    """Avant 2004, la limite forfaitaire de D. 355-1 se divise par le nombre des
+    réversions de base servies : la ligne non portée de la base des libéraux
+    n'en est pas une, et la réversion du régime général reste celle qu'il sert
+    seul."""
+    carriere = _carriere(simulateur, 1925, 65.0, "1935", "1999-03-10",
+                         mariage="1955-06", ressources=6000.0)
+    seul, = _lignes(simulateur, carriere, [("regime_general", 10000.0)], 1999)
+    lignes = _lignes(simulateur, carriere,
+                     [("regime_general", 10000.0), ("cnavpl", 8000.0)], 1999)
+    assert [l for l in lignes if l[0] == "regime_general"] == [seul]
+
+
+def test_les_reversions_de_la_base_des_liberaux_et_du_regime_general_se_cumulent_au_plafond(
+        simulateur):
+    """La réversion de chaque régime de base compte aux ressources de l'autre
+    (R. 353-1, 2°) : 54 % de 8 000 € et de 10 000 €, 9 720 € ensemble, sous un
+    plafond qui en laisse 10 001,60 € avec 15 000 € de ressources."""
+    carriere = _carriere(simulateur, 1955, 67.0, "1960-03-15", "2026-03-10",
+                         mariage="1985-06", ressources=15000.0)
+    lignes = _lignes(simulateur, carriere,
+                     [("regime_general", 10000.0), ("cnavpl", 8000.0)], 2026)
+    assert sorted((l[0], l[2], l[3]) for l in lignes) == [
+        ("cnavpl", 4320.0, "servie"), ("regime_general", 5400.0, "servie")]
+
+
+def test_avant_2004_la_base_des_liberaux_n_est_pas_encore_portee(simulateur):
+    """Avant le 1er janvier 2004, l'allocation de réversion de D. 643-5 (la moitié,
+    à 65 ans, deux ans de mariage, une limite de cumul) n'est pas servie : la
+    ligne le dit."""
+    carriere = _carriere(simulateur, 1925, 65.0, "1928", "1995-03-10", mariage="1950-06")
+    ligne, = _lignes(simulateur, carriere, [("cnavpl", 12000.0)], 1995)
+    assert (ligne[0], ligne[2], ligne[3]) == ("cnavpl", 0.0, "non_portee")
+
+
 # -- la complémentaire des chirurgiens-dentistes et des sages-femmes ----------------------
 
 @pytest.mark.parametrize("deces, conjoint, base, attendu, version, effet", [
@@ -3462,8 +3560,8 @@ def test_les_deux_moteurs_relevent_le_maximum_de_la_reversion():
 
 def test_un_regime_sans_fiche_le_dit_et_un_regime_vide_ne_reverse_rien(simulateur):
     carriere = _carriere(simulateur, 1957, 62.0, "1965", "2022-03-10")
-    lignes = _lignes(simulateur, carriere, [("cnavpl", 500.0), ("ircantec", 0.0)], 2022)
-    assert lignes == [("cnavpl", 0.0, 0.0, "non_portee", None, None)]
+    lignes = _lignes(simulateur, carriere, [("cps_polynesie", 500.0), ("ircantec", 0.0)], 2022)
+    assert lignes == [("cps_polynesie", 0.0, 0.0, "non_portee", None, None)]
 
 
 def test_avant_2013_la_reversion_de_la_rci_n_est_pas_portee(simulateur):

@@ -65,7 +65,18 @@ export const MOTIFS = Object.freeze({
  * des autres régimes de base comptent à leurs ressources : le régime général et
  * les régimes alignés, puis la complémentaire des indépendants.
  */
-export const APRES_LES_BASES = Object.freeze(["reversion", "reversion_rci"]);
+export const APRES_LES_BASES = Object.freeze(["reversion", "reversion_cnavpl", "reversion_rci"]);
+
+/**
+ * Les fiches que la réversion du régime général sert : la sienne et celle de la
+ * base des libéraux, qui y renvoie depuis 2004 (L. 643-7).
+ */
+export const SUR_LE_REGIME_GENERAL = Object.freeze(["reversion", "reversion_cnavpl"]);
+
+/** La fiche `fiche` est-elle servie comme celle du régime général ? */
+export function surLeRegimeGeneral(fiche) {
+  return fiche !== null && fiche !== undefined && SUR_LE_REGIME_GENERAL.includes(fiche.id);
+}
 
 /**
  * Les fiches qui servent la moitié de la pension sans âge ni ressources, sous la
@@ -641,13 +652,46 @@ function dateDEffetDuRegimeGeneral(parametres, conjoint, lendemain) {
 }
 
 /**
+ * Les versions de `fiche`, celles d'une version qui renvoie à une autre fiche
+ * remplacées par les versions de cette fiche, bornées à ses dates d'effet
+ * (L. 643-7, qui renvoie au régime général depuis 2004).
+ */
+function versionsSuivies(table, fiche) {
+  const suivies = [];
+  for (const version of fiche.versions) {
+    const renvoi = version.parametres?.renvoi ?? null;
+    if (renvoi === null) {
+      suivies.push(version);
+      continue;
+    }
+    const [debut, fin] = version.bornes["liquidation.date_effet"] ?? [null, null];
+    const cible = table.fiche(renvoi);
+    if (cible === null) {
+      throw new Error(`${fiche.id} : renvoi à la fiche ${renvoi}, que le paquet ne porte pas`);
+    }
+    for (const autre of versionsSuivies(table, cible)) {
+      const [debutAutre, finAutre] = autre.bornes["liquidation.date_effet"] ?? [null, null];
+      const de = debut === null ? debutAutre
+        : debutAutre === null || debutAutre < debut ? debut : debutAutre;
+      const a = fin === null ? finAutre : finAutre === null || finAutre > fin ? fin : finAutre;
+      if (de !== null && a !== null && de >= a) {
+        continue;
+      }
+      suivies.push({ ...autre,
+        bornes: { ...autre.bornes, "liquidation.date_effet": [de, a] } });
+    }
+  }
+  return suivies;
+}
+
+/**
  * La première date d'effet de la réversion du régime général : la plus proche
  * des dates que chaque version permet, au plus tôt à son début et à l'âge
  * qu'elle requiert, avant sa fin. Voir le Python.
  */
 function premiereDateDEffet(table, fiche, conjoint, lendemain, deces) {
   let premiere = null;
-  for (const version of fiche.versions) {
+  for (const version of versionsSuivies(table, fiche)) {
     const [debut, fin] = version.bornes["liquidation.date_effet"] ?? [null, null];
     let jour = debut !== null && debut > lendemain ? debut : lendemain;
     jour = dateDEffetDuRegimeGeneral(version.parametres, conjoint, jour);
@@ -1972,8 +2016,16 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
   const revues = new Map();
   // Les réversions de base du survivant, qui divisent ses retraites et la
   // limite forfaitaire du cumul d'avant 2004.
-  let reversionsDeBase = servies.filter(
-    ([regime]) => table.ficheDuRegime(regime)?.id === "reversion").length;
+  // Une ligne non portée n'en est pas une : sa réversion n'est pas servie.
+  const portee = (fiche) => {
+    const version = table.version(fiche,
+      premiereDateDEffet(table, fiche, conjoint, lendemain, deces), deces);
+    return (version?.parametres?.portee ?? true) !== false;
+  };
+  let reversionsDeBase = servies.filter(([regime]) => {
+    const fiche = table.ficheDuRegime(regime);
+    return surLeRegimeGeneral(fiche) && portee(fiche);
+  }).length;
   for (const ligneDejaFaite of lignes.values()) {
     if (ligneDejaFaite.montant > 0 && AUTRES_BASES.includes(ligneDejaFaite.fiche)) {
       reversionsDeBase += 1;
@@ -1993,12 +2045,19 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
   };
   for (const [regime, base, fiabiliteDuRegime] of servies) {
     const fiche = table.ficheDuRegime(regime);
-    if (fiche === null || fiche.id !== "reversion") {
+    if (!surLeRegimeGeneral(fiche)) {
       continue;
     }
     const dateEffet = premiereDateDEffet(table, fiche, conjoint, lendemain, deces);
     const version = table.version(fiche, dateEffet, deces);
     const parametres = version.parametres;
+    if ((parametres.portee ?? true) === false) {
+      // Une version dont le texte n'est pas encore porté : la ligne le dit.
+      lignes.set(regime, new ReversionRegime({
+        regime, base, montant: 0.0, motif: "non_portee",
+      }));
+      continue;
+    }
     const taux = Number(parametres.taux);
     // Ses retraites personnelles, servies dès la date d'effet, ou seulement
     // quand sa propre retraite, qu'il date après elle, commence.
@@ -2027,7 +2086,7 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     const groupes = groupesDuMinimum(moteur, parametres, lura, anneeDeLiquidation);
     const membres = servies.filter(([autre]) => groupes.has(regime)
       && groupes.get(autre) === groupes.get(regime)
-      && table.ficheDuRegime(autre)?.id === "reversion");
+      && surLeRegimeGeneral(table.ficheDuRegime(autre)));
     const tete = membres.find(([autre]) => !(autre in avant1973))?.[0]
       ?? (membres.length > 0 ? membres[0][0] : regime);
     let autres = 0.0;

@@ -1992,7 +1992,17 @@ export class Reversions {
     for (const nom of fiche.dates_qui_decident) {
       dates[nom] = situation[nom];
     }
-    return applicable(fiche, dates);
+    const choisie = applicable(fiche, dates);
+    // Une version qui renvoie à une autre fiche (L. 643-7, au régime général)
+    // est celle de cette fiche aux mêmes dates.
+    const renvoi = choisie?.parametres?.renvoi ?? null;
+    if (renvoi === null) {
+      return choisie;
+    }
+    if (!this._fiches.has(renvoi)) {
+      throw new Error(`${fiche.id} : renvoi à la fiche ${renvoi}, que le paquet ne porte pas`);
+    }
+    return this.version(this._fiches.get(renvoi), dateEffet, deces);
   }
 }
 
@@ -2001,7 +2011,7 @@ Reversions.FICHES = Object.freeze([
   "reversion", "reversion_fonction_publique", "reversion_agirc_arrco",
   "reversion_rafp", "reversion_ircantec", "reversion_rci", "reversion_crpcen",
   "reversion_ieg", "reversion_sncf", "reversion_carcdsf", "reversion_cavamac",
-  "reversion_fspoeie",
+  "reversion_fspoeie", "reversion_cnavpl",
   "majoration_forfaitaire_reversion",
 ]);
 

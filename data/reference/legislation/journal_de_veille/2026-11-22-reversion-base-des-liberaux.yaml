@@ -1,0 +1,16 @@
+date: "2026-11-22"
+session: "action 130 : la réversion de la base des libéraux servie, celle du régime général"
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index LEGI récupéré par `dila_index.py --recuperer`,
+  à jour au 16 novembre 2026 : L. 643-7 (trois rédactions), L. 643-9 (deux), D. 643-5 (cinq),
+  D. 643-5-1, D. 643-7, D. 643-11, R. 643-12. Le simulateur de réversion d'info-retraite,
+  saisi le 22 novembre 2026 pour les dix sections.
+trouve: >-
+  Depuis le 1er janvier 2004, L. 643-7 renvoie aux articles L. 353-1 à L. 353-3 du régime
+  général, et à L. 353-6 depuis 2010 : 54 %, 55 ans, le plafond de ressources. Le modèle n'en
+  servait rien : corrigé par la fiche `reversion_cnavpl`, qui renvoie à la fiche `reversion`.
+  Veuve d'un médecin, 1 000 € de base par mois : 540 € de réversion au lieu de rien.
+reste: >-
+  Les versions d'avant 2004 (D. 643-5 de 1985 et de 1988), lues et écrites, non servies ;
+  la réversion d'avant la codification de 1985, non lue. Les complémentaires des libéraux,
+  leurs ASV et PCV, et les autres régimes que le simulateur sert et le modèle non.

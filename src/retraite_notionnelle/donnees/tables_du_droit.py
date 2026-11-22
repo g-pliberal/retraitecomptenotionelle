@@ -1010,7 +1010,8 @@ class Reversions:
               "reversion_rafp", "reversion_ircantec", "reversion_rci",
               "reversion_crpcen", "reversion_ieg", "reversion_sncf",
               "reversion_carcdsf", "reversion_cavamac",
-              "reversion_fspoeie", "majoration_forfaitaire_reversion")
+              "reversion_fspoeie", "reversion_cnavpl",
+              "majoration_forfaitaire_reversion")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}
