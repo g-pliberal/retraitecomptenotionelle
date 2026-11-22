@@ -73,11 +73,11 @@ Le modèle Python lit les données et fabrique le paquet que charge le site,
 moteur JavaScript les simule, par le pont (`scripts/construire_temoins.py`).
 Le moteur d'une carrière n'a plus qu'un exemplaire, en JavaScript : ses
 jumeaux Python sont partis (action 161). Les témoins le tiennent :
-<!--chiffre:entrees(tests/temoins/simulations.json:)-->937<!--/--> simulations
+<!--chiffre:entrees(tests/temoins/simulations.json:)-->933<!--/--> simulations
 complètes, que le portage refait à l'octet (`tests/test_pont.py`), et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->86<!--/--> pages figées, que
 `node --test` rejoue ;
-<!--chiffre:portage(valeurs)-->176 293<!--/--> nombres comparés, dont
+<!--chiffre:portage(valeurs)-->175 593<!--/--> nombres comparés, dont
 <!--chiffre:portage(identiques)-->100,0<!--/--> % identiques au bit près.
 
 Une exception, voulue : le coût pour toute la population ne se calcule qu'en
