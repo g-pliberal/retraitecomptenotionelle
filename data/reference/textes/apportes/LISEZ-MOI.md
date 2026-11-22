@@ -40,17 +40,25 @@ Le dépôt est public : n'entre ici qu'un texte que l'on peut rediffuser
 librement.
 
 - **Entrent** les lois, ordonnances, décrets et arrêtés publiés au JO, que le
-  droit d'auteur ne protège pas, dans notre propre transcription. Pour
-  Gallica, on n'archive ni l'image ni le fichier texte de la BnF, qui réserve
-  leur réutilisation commerciale ; on donne l'ark et la vue. Les fac-similés
-  de Légifrance (DILA) peuvent aller sur la release, sous la Licence Ouverte,
-  avec leur mention.
-- **Reste à lire** : les conditions d'utilisation de Gallica. Le statut
-  `libre` repose sur la notice de chaque numéro (« Public domain », « Source :
-  DILA ») et sur le fait que seule notre transcription est archivée. Ces
-  conditions se liront et se dateront à la prochaine session sur le poste de
-  Gilles, puisque Gallica refuse le conteneur ; on reportera alors leur
-  clause dans `rediffusion.texte`.
+  droit d'auteur ne protège pas, dans notre propre transcription, article par
+  article.
+- **Les fac-similés de la DILA, sur Légifrance**, sont la source depuis le
+  22 novembre 2026. Chaque numéro ancien n'y est qu'en PDF, derrière un
+  captcha que le propriétaire passe, et ce PDF **ne se republie pas** :
+  Légifrance avertit qu'il contient des « informations nominatives »
+  (nominations, naturalisations), dont la réutilisation est encadrée par
+  l'article L. 322-2 du code des relations entre le public et
+  l'administration. Le PDF reste sur le poste du propriétaire ; son empreinte
+  est dans le tableau plus bas. Le champ `pdf` n'est donc pas employé pour ces
+  numéros.
+- **Gallica** : ses conditions d'utilisation (lues le 22 novembre 2026)
+  laissent libre la réutilisation non commerciale, avec la mention « Source
+  gallica.bnf.fr / BnF », mais rendent payante l'utilisation de ses documents
+  et de son OCR « dans le cadre d'un projet en Intelligence artificielle »,
+  hors recherche académique. Le propriétaire a choisi, le même jour, de ne
+  plus transcrire depuis Gallica. Les deux textes qui en viennent (1936, 1954
+  RATP-SNCF) restent, avec la clause citée dans leur `rediffusion`, et ne
+  prennent de Gallica que l'ark et la vue.
 - **N'entrent pas** :
   - les circulaires et documents de la base de législation de la Cnav, dont
     les mentions légales (lues le 21 novembre 2026) interdisent toute
@@ -67,27 +75,30 @@ librement.
   - Légifrance consolidé, qui n'a pas à être archivé : le dépôt le lit déjà
     dans les fichiers de la DILA.
 
+## Les fac-similés lus
+
+Téléchargés le 22 novembre 2026 depuis Légifrance, gardés sur le poste du
+propriétaire (dossier Téléchargements).
+
+| Fichier | Texte | sha256 |
+|---|---|---|
+| `JODEF_19410506_125.pdf` | loi du 12 avril 1941 (marins) | `a26c276a662efc6d7e14b71097b465d92f0eba60261f001c9d1c238549f00838` |
+| `JORF_19450203_29.pdf` | ordonnance n° 45-170 | `405e5ac008a023dc09c8142d83578016d11d66fcee8e793d507f40f4ca57f55a` |
+| `JORF_19451020_247.pdf` | ordonnance n° 45-2454 | `0cb9760e3c210e7ceb0bd537cb19670979e8aae94f2b86bba83e13f265975a31` |
+| `JORF_19480824_200.pdf` | loi n° 48-1306 | `9e62c8719db3ebd67d6d8a399bd5a1cd0f54c0579268cdae6dd5ef32c575aa8c` |
+| `JORF_19480923_226.pdf` | loi n° 48-1469 | `3155df3d506654a348004c2a27d7a06b2b840954f4360b9827e08ba442d216ce` |
+| `JORF_19540117_13.pdf` | décrets n° 54-50 et 54-51 | `5b782849e4b163a65171d7e2ec046b6ec2ecc692ac2086e20b8473784b3f863e` |
+
+Le fac-similé d'un numéro se rouvre depuis la page du texte sur Légifrance
+(`adresse`), bouton « Télécharger le Journal officiel… (version papier
+numérisée) », après le captcha.
+
 ## Ce qui reste à transcrire
 
-Ces six numéros ont été lus le 21 novembre 2026 au soir, mais pas encore
-transcrits ici : la session de Gilles a pris fin. Les citations sont dans les
-notes de lecture du fil « Lire les textes anciens au Journal officiel ».
-Chacun se reprend depuis le poste, en passant par le mode texte
-(`.../f<vue>.texteBrut`), une vue toutes les vingt secondes au moins. Gallica
-présente une vérification Cloudflare à presque chaque page, et c'est au
-propriétaire de la passer.
-
-| Texte | JO | ark Gallica | vues |
-|---|---|---|---|
-| Décrets n° 54-50 (EDF-GDF) et 54-51 (mines) du 16 janvier 1954 | 17 janvier 1954, p. 662 | `bpt6k1565427m` | 6 |
-| Loi du 12 avril 1941, retraites des marins | 6 mai 1941 | `bpt6k9617210s` | 3 à 5 |
-| Ordonnance n° 45-170 du 2 février 1945 (AVTS) | 3 février 1945 | `bpt6k96955305` | 6 et 7 |
-| Ordonnance n° 45-2454 du 19 octobre 1945 | 20 octobre 1945, p. 6721 et s. | `bpt6k2033716d` | 34, 35 et 38 |
-| Loi n° 48-1306 du 23 août 1948 (assurance vieillesse) | 24 août 1948, p. 8306 et s. | `bpt6k1576644d` | 4 à 6 |
-| Loi n° 48-1469 du 22 septembre 1948 (marins) | 23 septembre 1948, p. 9366-9367 | `bpt6k15690262` | 6 et 7 |
-
-Restent aussi à prendre : la vue 4 du JO du 20 août 1936, la fin de la loi du
-18 août 1936 et son tableau, et la vue 52 du JO du 10 janvier 1954, le titre et
-les premiers visas du décret n° 54-23. Le JO du 21 septembre 1948, qui porte le
-code des pensions de 1948, manque à Gallica : on le cherchera parmi les
-fac-similés de Légifrance, après le captcha.
+- Des longues lois, seuls les articles qu'une version cite sont transcrits ;
+  `articles` dit lesquels, et le corps marque les coupures entre crochets.
+- La fin de la loi du 18 août 1936 et son tableau (vue 4 du JO du 20 août
+  1936), et le titre et les premiers visas du décret n° 54-23 (vue 52 du JO du
+  10 janvier 1954), à reprendre sur les fac-similés de Légifrance.
+- Le code des pensions de 1948 (loi n° 48-1450, JO du 21 septembre 1948), qui
+  manque à Gallica, à chercher de même.

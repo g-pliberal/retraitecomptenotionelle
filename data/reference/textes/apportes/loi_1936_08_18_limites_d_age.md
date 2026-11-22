@@ -12,20 +12,25 @@ articles:
 versions:
 - limite_age_fonction_publique#loi_de_1936
 lu_le: 2026-11-21
-etabli: Transcription faite par une session Claude Code depuis le mode texte de Gallica (OCR
-  de la BnF, taux annoncé 99 %), coquilles corrigées à la lecture. Les passages entre crochets
-  sont des notes du dépôt, pas le texte.
+etabli: Transcription faite par une session Claude Code depuis le mode texte de Gallica (OCR de la BnF,
+  taux annoncé 99 %), coquilles corrigées à la lecture. Les passages entre crochets sont des notes du
+  dépôt, pas le texte.
 confrontee_a_l_image: false
 sha256: 5181dd66cb0e447c8df10e1a777b2a9209f921d35004cc3d8cf1ff8315a55d5a
 rediffusion:
   statut: libre
-  texte: 'Actes officiels publiés au Journal officiel, que le droit d''auteur ne protège pas.
-    La notice Gallica du numéro porte « Droits : Public domain » et « Source : DILA ». Le
-    dépôt n''archive que sa propre transcription des articles, ni l''image ni le fichier texte
-    de la BnF, dont les conditions d''utilisation (non relues ce jour) réservent la réutilisation
-    commerciale.'
-  lu_dans: notice de chaque numéro sur Gallica, en tête de son mode texte
-  lu_le: 2026-11-21
+  texte: 'Conditions d''utilisation de Gallica, lues le 22 novembre 2026 : « La réutilisation non commerciale
+    de ces contenus est libre et gratuite [...] mention de source [...] « Source gallica.bnf.fr / BnF
+    » » ; « La réutilisation commerciale de ces contenus est payante » ; l''utilisation des documents
+    et de l''OCR de Gallica « dans le cadre d''un projet en Intelligence artificielle (IA) » de fouille
+    de données ou d''IA générative est gratuite pour la recherche académique non lucrative, payante sinon.
+    Le dépôt, non commercial, n''archive que sa transcription d''actes officiels, que le droit d''auteur
+    ne protège pas, ni l''image ni l''OCR de la BnF ; la notice du numéro porte « Droits : Public domain
+    », « Source : DILA ». Après lecture de la clause IA, le propriétaire a choisi le 22 novembre 2026
+    de ne plus transcrire depuis Gallica, mais depuis les fac-similés de la DILA sur Légifrance.'
+  lu_dans: https://gallica.bnf.fr/accueil/fr/html/conditions-dutilisation-de-gallica, et la notice du
+    numéro
+  lu_le: 2026-11-22
   mention: Journal officiel de la République française ; consulté sur gallica.bnf.fr / BnF
 ---
 LOI concernant les mises à la retraite par ancienneté.
