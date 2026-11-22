@@ -83,7 +83,8 @@ export function montantDeLaContribution(contribution, annee, assiette, plafond, 
 /** Le forfait d'un régime à assiette forfaitaire, proratisé ; `null` sans forfait. */
 function forfait(catalogue, regimes, annee, macro, part) {
   for (const code of [...regimes].sort()) {
-    const periode = catalogue.contient(code) ? catalogue.obtenir(code).periode(annee) : null;
+    const periode = catalogue.contient(code)
+      ? (catalogue.obtenir(code).deLAnnee(annee)[0] ?? null) : null;
     if (periode !== null && periode.assiette_forfaitaire) {
       return periode.repereAssiette(macro.plafond_securite_sociale.valeur(annee),
         macro.smicHoraireDuForfait(annee, periode.smic_du_mois)) * part;

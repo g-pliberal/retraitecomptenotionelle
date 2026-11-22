@@ -13,6 +13,7 @@
  * sans rien liquider.
  */
 
+import { premierJanvier } from "../axes.js";
 import { DateMois, MOIS_PAR_AN, enMois, trimestresCivils } from "../calendrier.js";
 import { AnneeCarriere, chomageComplementaires } from "../carriere.js";
 import { DUREES_AVANT_LE_DECRET } from "../regimes.js";
@@ -357,9 +358,9 @@ export function dureeRequise(moteur, periode, carriere) {
     // « Jusqu'en 2003 ; 150 » (loi du 21 août 2003, article 66, II) : le droit
     // ouvert avant la table garde la durée de la période où il s'est ouvert.
     if (moteur.dureesRequisesFonctionPublique.avantLaTable(ouverture)) {
-      const ouverte = moteur.catalogue.obtenir(periode.regime).periode(ouverture);
-      if (ouverte !== null && ouverte !== undefined && ouverte.debut !== periode.debut
-          && ouverte.duree_requise_trimestres) {
+      const ouverte = moteur.catalogue.obtenir(periode.regime)
+        .aLaDate(premierJanvier(ouverture));
+      if (ouverte !== null && ouverte.duree_requise_trimestres) {
         return [ouverte.duree_requise_trimestres, null];
       }
     }
@@ -497,8 +498,8 @@ export function dureeDeLAnnee(moteur, periode, annee) {
   if (parAnnee !== null) {
     return parAnnee;
   }
-  const enVigueur = moteur.catalogue.obtenir(periode.regime).periode(annee);
-  if (enVigueur === null || enVigueur === undefined
+  const enVigueur = moteur.catalogue.obtenir(periode.regime).aLaDate(premierJanvier(annee));
+  if (enVigueur === null
       || enVigueur.duree_requise_trimestres === null
       || enVigueur.duree_requise_trimestres === undefined) {
     return null;
@@ -1580,8 +1581,8 @@ export function ageTauxPlein(moteur, periodeLiquidation, carriere) {
   let periode = periodeLiquidation;
   if (periode.age_taux_plein_a_l_ouverture) {
     const ouverture = DateMois.depuisRang(moisOuvertureDesDroits(moteur, periode, carriere));
-    const enVigueur = moteur.catalogue.obtenir(periode.regime).periode(ouverture.annee);
-    if (enVigueur !== null && enVigueur !== undefined) {
+    const enVigueur = moteur.catalogue.obtenir(periode.regime).aLaDate(premierJanvier(ouverture.annee));
+    if (enVigueur !== null) {
       periode = enVigueur;
     }
   }

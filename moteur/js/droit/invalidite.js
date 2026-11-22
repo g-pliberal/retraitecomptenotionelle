@@ -16,6 +16,7 @@
  * handicapé n'a pas de coefficient de minoration. Voir le Python.
  */
 
+import { premierJanvier } from "../axes.js";
 import { DateMois, enMois } from "../calendrier.js";
 import { formatFixe } from "../format.js";
 import { Fiabilite } from "../serie.js";
@@ -346,8 +347,8 @@ export function regimeDeLaPensionDInvalidite(moteur, carriere) {
  */
 export function pensionDInvaliditeServie(moteur, carriere, regime, taux, annees, effet) {
   const debut = carriere.pensionDInvalidite.debut;
-  const periode = moteur.catalogue.obtenir(regime).periode(debut.annee);
-  if (periode === null || periode === undefined) {
+  const periode = moteur.catalogue.obtenir(regime).aLaDate(premierJanvier(debut.annee));
+  if (periode === null) {
     return [0.0, Fiabilite.CERTIFIEE];
   }
   const [depuisLe, premiere] = SALAIRE_MOYEN_DEPUIS;

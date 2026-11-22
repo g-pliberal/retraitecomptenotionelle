@@ -424,7 +424,7 @@ function secondeRetraiteComplementaire(moteur, salaires, periode, dateEffet) {
   let points = 0.0;
   for (const [annee, salaire] of salaires) {
     const plafond = macro.plafond_securite_sociale.valeur(annee);
-    const tranche1 = moteur.catalogue.obtenir(AGIRC_ARRCO).periodesActives(annee)
+    const tranche1 = moteur.catalogue.obtenir(AGIRC_ARRCO).deLAnnee(annee)
       .find((p) => p.bornesAssietteEnEuros(plafond, annee)[0] === 0);
     const prix = prixDuPoint(moteur, annee);
     if (tranche1 === undefined || prix === null) continue;
@@ -470,7 +470,7 @@ function secondeRetraiteRci(moteur, lignes, activite, periode, dateEffet, anneeD
       const plafond = macro.plafond_securite_sociale.valeur(annee);
       const fraction = periode.get(annee) / 12.0;
       const revenu = ligne.revenu * part;
-      for (const tranche of moteur.catalogue.obtenir(RCI).periodesActives(annee)) {
+      for (const tranche of moteur.catalogue.obtenir(RCI).deLAnnee(annee)) {
         const [basse, haute] = tranche.bornesAssietteEnEuros(plafond, annee);
         const plafonne = haute === null ? revenu : Math.min(revenu, haute * fraction);
         cotisation += Math.max(0.0, plafonne - basse * fraction)

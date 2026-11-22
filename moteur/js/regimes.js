@@ -2,6 +2,7 @@ import { DateMois, MOIS_PAR_AN, premierMoisDepuis } from "./calendrier.js";
 import { anneesRevolues } from "./chronologie.js";
 import { Fiabilite, fiabiliteDepuisTexte } from "./serie.js";
 import { applicable } from "./versions.js";
+import { axesDesPeriodes, enVigueurAuJour, premierJanvier, tranchesDeLAnnee } from "./axes.js";
 
 /**
  * Durée d'assurance requise pour le taux plein, PAR GÉNÉRATION.
@@ -2979,7 +2980,7 @@ export class PeriodeRegime {
     let enEurosHaute = borneHaute === null ? null : borneHaute * pass;
     if (this.borne_basse_par_annee || this.borne_haute_par_annee) {
       if (annee === null || annee === undefined) {
-        throw new Error(`${this.regime} ${this.debut} : les bornes de l'assiette `
+        throw new Error(`${this.regime} : les bornes de l'assiette `
           + "se fixent année par année, et l'année n'est pas donnée");
       }
       const [basseDeLAnnee, hauteDeLAnnee] = this.bornesDeLAnnee(annee);
@@ -3085,6 +3086,76 @@ export class Regime {
     this.periodes = fiche.periodes.map(
       (p) => new PeriodeRegime({ ...p, regime: fiche.code }),
     );
+    this._poserLesAxes();
+  }
+
+  /**
+   * Les quatre blocs du régime (`axes.js`), refaits des périodes que le paquet
+   * porte encore, et la mémoire des paramètres qu'on en assemble.
+   */
+  _poserLesAxes() {
+    const axes = axesDesPeriodes(this.periodes);
+    this.structure = axes.structure;
+    this.liquidation = axes.liquidation;
+    this.servi = axes.servi;
+    this.cotisation = axes.cotisation;
+    this._assembles = new Map();
+  }
+
+  /**
+   * Les paramètres assemblés d'une ligne de liquidation, de la structure,
+   * d'une ligne servie et d'une ligne de cotisation : une même combinaison
+   * rend le même objet.
+   */
+  _assembler(liquidation, structure, servi, cotisation) {
+    const cle = [liquidation, structure, servi, cotisation];
+    const rangs = [this.liquidation.indexOf(liquidation), this.structure.indexOf(structure),
+      this.servi.indexOf(servi), this.cotisation.indexOf(cotisation)].join("|");
+    let assemble = this._assembles.get(rangs);
+    if (assemble === undefined) {
+      const champs = { regime: this.code };
+      for (const ligne of cle) {
+        if (ligne === null) continue;
+        for (const [champ, valeur] of Object.entries(ligne)) {
+          if (champ !== "du" && champ !== "au") champs[champ] = valeur;
+        }
+      }
+      assemble = new PeriodeRegime(champs);
+      Object.defineProperty(assemble, "lignes", { value: Object.freeze(cle) });
+      this._assembles.set(rangs, assemble);
+    }
+    return assemble;
+  }
+
+  /**
+   * Les paramètres qui liquident une pension prenant effet ce jour
+   * (AAAA-MM-JJ) : la ligne de liquidation, la structure et la ligne servie en
+   * vigueur ce jour-là, et la première tranche de la cotisation de son année,
+   * que la liquidation lit pour le salaire de référence. `null` quand aucune
+   * ligne de liquidation ne le couvre.
+   */
+  aLaDate(jour) {
+    const liquidation = enVigueurAuJour(this.liquidation, jour);
+    if (liquidation === null) {
+      return null;
+    }
+    const annee = Number(jour.slice(0, 4));
+    return this._assembler(liquidation, enVigueurAuJour(this.structure, jour),
+      enVigueurAuJour(this.servi, jour), tranchesDeLAnnee(this.cotisation, annee)[0] ?? null);
+  }
+
+  /**
+   * Les paramètres d'une année d'acquisition, un par tranche, dans l'ordre :
+   * chaque ligne de cotisation qui couvre l'année, avec la liquidation, la
+   * structure et la ligne servie en vigueur au jour `jour` de l'année
+   * (AAAA-MM-JJ, son 1er janvier par défaut).
+   */
+  deLAnnee(annee, jour = premierJanvier(annee)) {
+    const liquidation = enVigueurAuJour(this.liquidation, jour);
+    const structure = enVigueurAuJour(this.structure, jour);
+    const servi = enVigueurAuJour(this.servi, jour);
+    return tranchesDeLAnnee(this.cotisation, annee)
+      .map((cotisation) => this._assembler(liquidation, structure, servi, cotisation));
   }
 
   /**
@@ -3271,8 +3342,8 @@ export class CatalogueRegimes {
    */
   sansDeclaration(code) {
     const copie = Object.assign(Object.create(CatalogueRegimes.prototype), this);
-    copie._regimes = new Map([...this._regimes].map(([nom, regime]) => [nom,
-      Object.assign(Object.create(Regime.prototype), regime, {
+    copie._regimes = new Map([...this._regimes].map(([nom, regime]) => {
+      const sans = Object.assign(Object.create(Regime.prototype), regime, {
         periodes: regime.periodes.map((periode) => (
           periode.avantages_non_contributifs.includes(code)
             ? new PeriodeRegime({
@@ -3281,7 +3352,10 @@ export class CatalogueRegimes {
                 .filter((declare) => declare !== code),
             })
             : periode)),
-      })]));
+      });
+      sans._poserLesAxes();
+      return [nom, sans];
+    }));
     return copie;
   }
 

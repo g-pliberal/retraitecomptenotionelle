@@ -137,8 +137,8 @@ export class ScenarioActuel {
     // base dont les années les ouvrent : voir `pointsGratuits`.
     this.pointsGratuitsParBase = new Map();
     for (const regime of catalogue) {
-      for (const periode of regime.periodes) {
-        const regle = periode.points_gratuits;
+      for (const ligne of regime.liquidation) {
+        const regle = ligne.points_gratuits;
         if (regle === null || regle === undefined) {
           continue;
         }

@@ -25,28 +25,38 @@ export const SANS_LEUR_BASE = new Set(["carpv_complementaire", "cavec_complement
 /** La fiche des coefficients d'anticipation de l'Ircantec (article 16). */
 export const FICHE_DES_COEFFICIENTS_IRCANTEC = "coefficient_anticipation_ircantec";
 
-/** Dernière année pour laquelle le régime a des paramètres. */
+/**
+ * Dernière année pour laquelle le régime a des paramètres : celle où finit sa
+ * dernière ligne de cotisation, 2100 au plus.
+ */
 export function derniereAnnee(regime) {
-  if (regime.periodes.length === 0) {
+  if (regime.cotisation.length === 0) {
     return 2100;
   }
-  const annees = regime.periodes.map((p) => (p.fin === null ? 9999 : p.fin));
+  const annees = regime.cotisation.map((ligne) => (ligne.au === null ? 9999 : ligne.au));
   return Math.min(Math.max(...annees), 2100);
 }
 
 /**
- * La période de `regime` qui liquide une pension prenant effet le 1er du mois
- * `date` : celle dont les dates d'effet le comprennent, au jour quand un texte
- * coupe l'année, et sinon celle de l'année ; après la dernière année du
- * régime, celle de cette dernière année. `null` quand aucune ne la couvre.
+ * Les paramètres de `regime` qui liquident une pension prenant effet le 1er
+ * du mois `date` : la ligne de liquidation en vigueur ce jour-là, au jour
+ * quand un texte coupe l'année (`Regime.aLaDate`) ; après la dernière année du
+ * régime, celle qui l'est au dernier mois de cette année. `null` quand aucune
+ * ne la couvre.
  */
 export function periodeDeLiquidation(regime, date) {
+  return regime.aLaDate(jourDeLiquidation(regime, date));
+}
+
+/**
+ * Le jour (AAAA-MM-JJ) dont `regime` lit les paramètres d'une pension prenant
+ * effet le 1er du mois `date` : ce jour-là, et après la dernière année du
+ * régime, le 1er décembre de cette année.
+ */
+export function jourDeLiquidation(regime, date) {
   const derniere = derniereAnnee(regime);
-  if (date.annee > derniere) {
-    return regime.periode(derniere);
-  }
-  return regime.periodeALEffet(
-    `${String(date.annee).padStart(4, "0")}-${String(date.mois).padStart(2, "0")}-01`);
+  const [annee, mois] = date.annee > derniere ? [derniere, 12] : [date.annee, date.mois];
+  return `${String(annee).padStart(4, "0")}-${String(mois).padStart(2, "0")}-01`;
 }
 
 /**

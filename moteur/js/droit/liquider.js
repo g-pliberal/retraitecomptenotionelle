@@ -12,6 +12,7 @@
  * `data/reference/etapes/liquider_chaque_regime.yaml`.
  */
 
+import { premierDuMois } from "../axes.js";
 import { DateMois, MOIS_PAR_AN, moisTravailles } from "../calendrier.js";
 import { revenuCotise, salaireMoyenAnnuel } from "../carriere.js";
 import * as chrono from "../chronologie.js";
@@ -2049,7 +2050,7 @@ export function assietteDeReference(moteur, periode, ligne) {
     // salaire annuel moyen du régime des cultes est fait du forfait de
     // l'année, « une base SMIC pour tous les assurés cultuels » (CAVIMAC).
     // Voir `_assiette_de_reference` dans le Python.
-    const annuelle = moteur.catalogue.obtenir(periode.regime).periode(ligne.annee) ?? periode;
+    const annuelle = moteur.catalogue.obtenir(periode.regime).deLAnnee(ligne.annee)[0] ?? periode;
     if (annuelle.assiette_repere_smic !== null && annuelle.assiette_repere_smic !== undefined) {
       // Au SMIC de chaque mois (`smic_du_mois`) : la base « est égale, par
       // mois, à la valeur horaire du salaire minimum de croissance en
@@ -3160,8 +3161,10 @@ export function tauxAcquisAu31Mars1983(moteur, periode, carriere) {
   if (carriere.dateLiquidation.rang < ORDONNANCE_DU_26_MARS_1982.rang || mois < 12 * 60) {
     return null;
   }
+  // La règle en vigueur au dernier mois d'avant l'ordonnance, celui de mars 1983.
   const annee = ORDONNANCE_DU_26_MARS_1982.annee - 1;
-  const ancienne = moteur.catalogue.obtenir(periode.regime).periode(annee);
+  const ancienne = moteur.catalogue.obtenir(periode.regime)
+    .aLaDate(premierDuMois(ORDONNANCE_DU_26_MARS_1982.plusMois(-1)));
   if (!ancienne || !ancienne.majoration_d_ajournement) {
     return null;
   }

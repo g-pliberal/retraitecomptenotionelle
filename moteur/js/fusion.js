@@ -103,7 +103,7 @@ export function fusionner(catalogue, annee, regle = REGLE_FUSION_DEFAUT) {
     if (!regime.vivant(annee)) {
       continue;
     }
-    for (const periode of regime.periodesActives(annee)) {
+    for (const periode of regime.deLAnnee(annee)) {
       candidats.push([regime, periode]);
     }
   }
@@ -158,7 +158,7 @@ export function fusionner(catalogue, annee, regle = REGLE_FUSION_DEFAUT) {
       if (!catalogue.contient(code)) {
         continue;
       }
-      const actives = catalogue.obtenir(code).periodesActives(annee);
+      const actives = catalogue.obtenir(code).deLAnnee(annee);
       if (actives.length === 0) {
         continue;
       }

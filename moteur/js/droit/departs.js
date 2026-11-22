@@ -115,12 +115,21 @@ export class DemandeExaminee {
   }
 }
 
-function periodeDe(moteur, code, annee) {
+/** La cotisation de l'année au régime, sa première tranche, bornée à sa dernière année. */
+function cotisationDe(moteur, code, annee) {
   if (!moteur.catalogue.contient(code)) {
     return null;
   }
   const regime = moteur.catalogue.obtenir(code);
-  return regime.periode(Math.min(annee, derniereAnnee(regime)));
+  return regime.deLAnnee(Math.min(annee, derniereAnnee(regime)))[0] ?? null;
+}
+
+/** Les paramètres du régime qui liquident la pension de la carrière à sa date d'effet. */
+function liquidationDe(moteur, code, carriere) {
+  if (!moteur.catalogue.contient(code)) {
+    return null;
+  }
+  return periodeDeLiquidation(moteur.catalogue.obtenir(code), carriere.dateLiquidation);
 }
 
 /**
@@ -157,7 +166,7 @@ function acquiert(moteur, code, routes) {
       }
       continue;
     }
-    const periode = periodeDe(moteur, code, ligne.annee);
+    const periode = cotisationDe(moteur, code, ligne.annee);
     if (periode === null || periode.partDuRevenu(ligne.revenu, ligne.part_primes) > 0) {
       return true;
     }
@@ -336,6 +345,14 @@ function droitDeLaDate(moteur, vue, periodes) {
 }
 
 /**
+ * Les mêmes règles d'un mois à l'autre : les mêmes lignes de liquidation, de
+ * structure et de servi. La cotisation qu'elles portent n'y entre pas.
+ */
+function memesRegles(periode, autre) {
+  return periode.lignes.slice(0, 3).every((ligne, i) => ligne === autre.lignes[i]);
+}
+
+/**
  * Le premier mois où l'unité peut servir sa pension à cet assuré. L'âge se lit
  * dans les règles du départ déclaré quand elles l'ouvrent déjà ; sinon dans
  * celles de chaque mois qui le suit, jusqu'au premier où l'assuré a l'âge que
@@ -365,7 +382,7 @@ export function ouvertureDe(moteur, carriere, unite) {
     const vue = carriere.liquideeAu(mois);
     const duMois = droitDeLaDate(moteur, vue, periodes);
     if (duMois !== droit || periodes.length !== courantes.length
-        || periodes.some(([, periode], i) => periode !== courantes[i][1])) {
+        || periodes.some(([, periode], i) => !memesRegles(periode, courantes[i][1]))) {
       courantes = periodes;
       droit = duMois;
       const sous = premiereOuvertureSous(moteur, vue, periodes);
@@ -446,7 +463,7 @@ export function regimesDeLaCarriere(moteur, carriereSaisie) {
   const routes = routage(moteur, carriere);
   const routesVers = new Set(routes.flatMap(([, regimes]) => regimes));
   const codes = [...routesVers].sort().filter((code) =>
-    periodeDe(moteur, code, carriere.anneeLiquidation) !== null
+    liquidationDe(moteur, code, carriere) !== null
     && acquiert(moteur, code, routes));
   const bases = codes.filter(
     (code) => ETAGES_DES_UNITES.has(moteur.catalogue.obtenir(code).etage));
@@ -530,7 +547,7 @@ export function departsEtDemandes(moteur, carriereSaisie) {
   const routes = routage(moteur, carriere);
   const routesVers = new Set(routes.flatMap(([, regimes]) => regimes));
   const codes = [...routesVers].sort().filter((code) =>
-    periodeDe(moteur, code, carriere.anneeLiquidation) !== null
+    liquidationDe(moteur, code, carriere) !== null
     && acquiert(moteur, code, routes));
   const bases = codes.filter(
     (code) => ETAGES_DES_UNITES.has(moteur.catalogue.obtenir(code).etage));
@@ -630,7 +647,7 @@ export function departsEtDemandes(moteur, carriereSaisie) {
   // l'âge normal (article 16, I). Avant leur âge, elles suivent la base.
   const propres = new Map();
   for (const code of suivies.keys()) {
-    const periode = periodeDe(moteur, code, carriere.anneeLiquidation);
+    const periode = liquidationDe(moteur, code, carriere);
     if (periode !== null
         && ouvrirLeDroit.ageAuPlusTotSansLaBase(moteur, periode, carriere) !== null) {
       propres.set(code, ouvertureDe(moteur, carriere, new Set([code])));

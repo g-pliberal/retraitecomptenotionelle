@@ -1116,7 +1116,7 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
     let forfaitEmployeur = 0;
     let classes = [];
     let partDesClasses = 1;
-    for (const periode of regime.periodesActives(annee)) {
+    for (const periode of regime.deLAnnee(annee)) {
       const [basse, haute] = periode.bornesAssietteEnPass();
       // Les bornes en euros, qui priment : le plafond propre du RCI de
       // l'année, les tranches que la CNBF et la CARPIMKO fixent en euros.
@@ -1226,7 +1226,7 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
  */
 function exigeLaMacro(macro, code, periode) {
   if (macro === null || macro === undefined) {
-    throw new Error(`${code} ${periode.debut} : un forfait se ramène par les prix et `
+    throw new Error(`${code} : un forfait se ramène par les prix et `
       + "une classe par le plafond ; la fiche de ce régime exige la macro");
   }
   return macro;
@@ -1268,7 +1268,7 @@ function etageHorsRepartition(catalogue, regime, statut, annee, partPrimes,
   sansEmployeur) {
   const salarie = [];
   const employeur = [];
-  for (const periode of regime.periodesActives(annee)) {
+  for (const periode of regime.deLAnnee(annee)) {
     const soumise = periode.assiette === "primes_uniquement"
       ? primesSoumises(catalogue.paquet).parts(statut, annee, partPrimes).soumise
       : 0.0;
@@ -1503,7 +1503,7 @@ export function profilDeLaFiche(affiliations, catalogue, statut, annee, anneeEnt
     if (regime.hors_repartition) {
       continue;
     }
-    for (const periode of regime.periodesActives(annee)) {
+    for (const periode of regime.deLAnnee(annee)) {
       if (periode.perimetre_taux === "agent_seul") {
         return "agent_seul";
       }

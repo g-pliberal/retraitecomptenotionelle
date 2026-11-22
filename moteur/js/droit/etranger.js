@@ -270,8 +270,8 @@ export function familleDuRegime(moteur, code) {
     return regime !== null && regime.famille === "fonction_publique"
       ? FONCTIONNAIRES : GENERALE;
   }
-  if (regime !== null && regime.periodes.some(
-    (periode) => periode.type_calcul === "points" || periode.type_calcul === "mixte")) {
+  if (regime !== null && regime.structure.some(
+    (ligne) => ligne.type_calcul === "points" || ligne.type_calcul === "mixte")) {
     return GENERALE;
   }
   return null;

@@ -19,7 +19,8 @@ import { AFFILIATIONS_AGRICOLES } from "../carriere.js";
 import { formatFixe, formatPourcentage } from "../format.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import {
-  MAJORATION_ENFANTS, dateDEffet, ligneCotisee, majorationDuConjoint, periodeDeLiquidation,
+  MAJORATION_ENFANTS, dateDEffet, derniereAnnee, ligneCotisee, majorationDuConjoint,
+  periodeDeLiquidation,
 } from "./commun.js";
 import { pointsGratuits } from "./acquerir.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
@@ -2692,8 +2693,7 @@ export function trimestresDeSurcoteParentale(moteur, carriere, regime, trimestre
  * dernière année, celui du régime qui l'a intégré. Voir le Python.
  */
 export function regimeDuPlafond(moteur, code, periode, date) {
-  while (periode !== null && periode.fin !== null && periode.fin !== undefined
-         && date.annee > periode.fin) {
+  while (periode !== null && date.annee > derniereAnnee(moteur.catalogue.obtenir(code))) {
     const successeur = moteur.catalogue.obtenir(code).integre_dans;
     if (!successeur || !moteur.catalogue.contient(successeur)) {
       break;

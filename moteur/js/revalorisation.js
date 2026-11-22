@@ -15,6 +15,7 @@
  * l'ordre du calendrier, et c'est tout ce que le module leur demande.
  */
 
+import { premierJanvier } from "./axes.js";
 import { DateMois } from "./calendrier.js";
 import { RevalorisationStock, SituationFoyer } from "./config.js";
 import {
@@ -22,7 +23,7 @@ import {
   majorationRetraiteProportionnelle, pensionMajoree,
 } from "./droit/completer.js";
 import {
-  MAJORATION_ENFANTS, majorationDuConjoint, partsDeLaMajoration,
+  MAJORATION_ENFANTS, derniereAnnee, majorationDuConjoint, partsDeLaMajoration,
 } from "./droit/commun.js";
 import * as liquider from "./droit/liquider.js";
 import { pensionsALEcretement, pensionsEtrangeresServies } from "./droit/etranger.js";
@@ -194,12 +195,6 @@ export function derniereValeurPubliee(actuel, code) {
   return null;
 }
 
-function derniereAnneeRegime(regime) {
-  if (regime.periodes.length === 0) return 2100;
-  const annees = regime.periodes.map((p) => (p.fin === null ? 9999 : p.fin));
-  return Math.min(Math.max(...annees), 2100);
-}
-
 /** La règle de chaque régime, appliquée d'une date à une autre. */
 /**
  * La fiche des majorations forfaitaires de 1972 à 1982 des pensions prises
@@ -321,7 +316,8 @@ export class PensionServie {
     const regime = this.catalogue.obtenir(code);
     const debutAnnee = dateIso(anneeLiquidation, 1, 1);
     if (pension.type_calcul === "points" || pension.type_calcul === "mixte") {
-      const periode = regime.periode(Math.min(anneeLiquidation, derniereAnneeRegime(regime)));
+      const periode = regime.aLaDate(
+        premierJanvier(Math.min(anneeLiquidation, derniereAnnee(regime))));
       const bareme = (periode !== null ? periode.points_de : null) || code;
       const auDepart = liquider.valeurDuPoint(this.actuel, bareme, depart);
       const publiee = derniereValeurPubliee(this.actuel, bareme);

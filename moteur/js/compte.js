@@ -187,7 +187,7 @@ export class ConstructeurCompte {
       if (regime.hors_repartition) {
         continue;
       }
-      for (const periode of regime.periodesActives(annee)) {
+      for (const periode of regime.deLAnnee(annee)) {
         const [borneBasse] = periode.bornesAssietteEnPass();
         if (borneBasse > 0) {
           continue;
@@ -350,7 +350,7 @@ export class ConstructeurCompte {
       if (regime.hors_repartition) {
         continue;
       }
-      for (const periode of regime.periodesActives(annee)) {
+      for (const periode of regime.deLAnnee(annee)) {
         if (periode.perimetre_taux === "agent_seul") {
           return true;
         }
@@ -688,7 +688,7 @@ export class ConstructeurCompte {
       const enRepartition = !(
         regime.hors_repartition && this.parametres.isoler_capitalisation
       );
-      for (const periode of regime.periodesActives(annee)) {
+      for (const periode of regime.deLAnnee(annee)) {
         // LA DISPENSE DE DÉBUT D'EXERCICE : le compte porte ce qui a été
         // versé, et la cotisation dispensée ne l'est pas. Sous le taux
         // commun, le régime ne fait que délimiter l'assiette, et reste.

@@ -470,7 +470,7 @@ export function pointsDInvalidite(moteur, coordination, credits) {
         continue;
       }
       const regime = moteur.catalogue.obtenir(code);
-      const porteuse = regime.periodesActives(ligne.annee).find(
+      const porteuse = regime.deLAnnee(ligne.annee).find(
         (periode) => periode.points_invalidite !== null
           && periode.points_invalidite !== undefined);
       if (porteuse === undefined) {
@@ -705,7 +705,7 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
       derniereAnneeParRegime.set(
         code, Math.max(derniereAnneeParRegime.get(code) ?? 0, ligne.annee),
       );
-      for (const [tranche, periode] of regime.periodesActives(ligne.annee).entries()) {
+      for (const [tranche, periode] of regime.deLAnnee(ligne.annee).entries()) {
         // LA DISPENSE DE DÉBUT D'EXERCICE : ni cotisation ni points, ou la
         // seule part proportionnelle, plus bas. Voir `dispenseDeDebut`.
         const dispensee = dispenseDeDebut(

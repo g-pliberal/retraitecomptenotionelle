@@ -2106,11 +2106,14 @@ const ENTREES_DE_LA_FACADE = {
       ? null : new DateMois(liquideeLe.annee, liquideeLe.mois))),
   "carriere.avec_lignes": (carriere, porteuse) => carriereEnDonnees(
     carriere.avecLignes(porteuse.lignes)),
-  // La période qui liquide la pension, par son rang parmi celles du régime.
+  // La période qui liquide la pension, par son rang parmi celles du régime :
+  // la première qui liquide le jour dont le moteur lit les paramètres. Le
+  // Python lit encore des périodes, jusqu'au retrait de la vue ancienne.
   "commun.periode_de_liquidation": (simulateur, code, annee, mois) => {
     const regime = simulateur.catalogue.obtenir(code);
-    const periode = commun.periodeDeLiquidation(regime, new DateMois(annee, mois));
-    return periode === null ? null : regime.periodes.indexOf(periode);
+    const jour = commun.jourDeLiquidation(regime, new DateMois(annee, mois));
+    const rang = regime.periodes.findIndex((periode) => periode.liquide(jour));
+    return rang < 0 ? null : rang;
   },
   // « Faire vivre », sur le scénario 1 que le portage refait de la carrière.
   "revalorisation.faire_vivre": (simulateur, carriere, annee) => telQuel(faireVivre(

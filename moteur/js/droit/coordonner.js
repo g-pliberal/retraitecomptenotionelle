@@ -9,6 +9,7 @@
  * `data/reference/etapes/coordonner_les_affiliations.yaml`.
  */
 
+import { premierJanvier } from "../axes.js";
 import { AnneeCarriere } from "../carriere.js";
 import { nomFiabilite, Fiabilite } from "../serie.js";
 import { derniereAnnee } from "./commun.js";
@@ -477,8 +478,8 @@ export function teteDeSuccession(moteur, code, anneeLiquidation) {
       return courant;
     }
     const absorbant = moteur.catalogue.obtenir(suivant);
-    const periode = absorbant.periode(
-      Math.min(anneeLiquidation, derniereAnnee(absorbant)),
+    const periode = absorbant.aLaDate(
+      premierJanvier(Math.min(anneeLiquidation, derniereAnnee(absorbant))),
     );
     if (periode === null || periode.type_calcul !== "annuites") {
       return courant;
@@ -547,7 +548,8 @@ export function groupesDeSuccession(moteur, codes, anneeLiquidation, derniereAnn
   const interpenetres = carriere !== null ? regimesInterpenetres(moteur, carriere) : new Set();
   for (const code of codes) {
     const regime = moteur.catalogue.obtenir(code);
-    const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+    const periode = regime.aLaDate(
+      premierJanvier(Math.min(anneeLiquidation, derniereAnnee(regime))));
     if (periode === null || periode.type_calcul !== "annuites") {
       continue;
     }
