@@ -944,8 +944,12 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
             .echelle(bareme, ligne.annee, anneeLiquidation);
           let points = periode.points_par_trimestre_valide
             * carriere.trimestresRetenus(ligne);
-          if (periode.trimestres_maximum !== null
-              && periode.trimestres_maximum !== undefined) {
+          // Le plafond de la durée est une règle de liquidation : il se lit
+          // sur la ligne de la date d'effet, comme son application plus bas
+          // (note de décision 0009, amendement du 22 novembre 2026).
+          const plafonnee = periodeDeLiquidation(regime, carriere.dateLiquidation);
+          if (plafonnee !== null && plafonnee.trimestres_maximum !== null
+              && plafonnee.trimestres_maximum !== undefined) {
             // Le plafond se lit sur toute la durée : on note ici les
             // trimestres de la ligne, et ceux d'entre eux qui précèdent l'âge
             // qui le lève. Ils courent « jusqu'à ce que cet âge soit
@@ -957,11 +961,11 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
             }
             const suivi = trimestresPlafonnables.get(code);
             suivi[0] += carriere.trimestresRetenus(ligne);
-            if (periode.trimestres_maximum_leve_avant_age !== null
-                && periode.trimestres_maximum_leve_avant_age !== undefined) {
+            if (plafonnee.trimestres_maximum_leve_avant_age !== null
+                && plafonnee.trimestres_maximum_leve_avant_age !== undefined) {
               suivi[1] += compter.trimestresDeLaLigneEntre(
                 carriere, ligne, new DateMois(carriere.annee_naissance, 1),
-                carriere.moisDeLAnniversaire(periode.trimestres_maximum_leve_avant_age),
+                carriere.moisDeLAnniversaire(plafonnee.trimestres_maximum_leve_avant_age),
               );
             }
           }

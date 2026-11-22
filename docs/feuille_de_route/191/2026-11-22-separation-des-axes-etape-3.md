@@ -1,16 +1,15 @@
 # Le moteur lit les paramètres d'un régime par axe : la liquidation à sa date, la cotisation à son année
 
-**Reprise, au 22 novembre 2026.** Le moteur JavaScript lit les
-paramètres d'un régime par axe : la liquidation, la structure et le servi en
-vigueur à une date (`Regime.aLaDate`), la cotisation d'une année, tranche par
-tranche (`Regime.deLAnnee`). Le paquet porte encore des périodes, dont
-`moteur/js/axes.js` refait les blocs au chargement. Aucun résultat n'a bougé.
-Reste au moteur, en une session : la caisse des membres du CESE, qui pèse
-chaque annuité par la durée requise de la période qui l'a acquise et lit donc
-encore les périodes (`annuitesAuTauxDeLeurAnnee`) ; ce poids devient un champ
-de cotisation propre à la caisse. Viennent ensuite le Python, le paquet, le
-pont et les tests, puis le retrait des périodes. Les données restent gelées.
-Par quoi commencer : la caisse du CESE. L'oracle est sous
+**Reprise, au 22 novembre 2026.** L'étape 3 est finie : le moteur
+JavaScript ne lit plus les périodes d'un régime pour calculer. Une
+liquidation lit les paramètres en vigueur à sa date (`Regime.aLaDate`), une
+année d'acquisition ses lignes de cotisation (`Regime.deLAnnee`). Aucun
+résultat n'a bougé. Le paquet porte encore des périodes, dont
+`moteur/js/axes.js` refait les blocs au chargement. Reste l'étape 4, en une
+session : le chargeur Python, le paquet, le pont, les tests, les cliquets
+recomptés à valeur égale et la page Avantages. Par quoi commencer : faire
+porter au paquet les quatre blocs au lieu des périodes. Les données restent
+gelées. L'oracle de référence est sous
 `architecture/separation-des-axes/oracle/`, dans les fichiers du projet.
 
 **La demande.** Le propriétaire a choisi, le 22 novembre 2026, de séparer
@@ -85,3 +84,30 @@ trimestres des mines se lit sur la liquidation du 1er janvier de l'année, non
 sur celle de la pension comme l'amendement le veut ; les valeurs sont les
 mêmes. Les objets assemblés n'ont ni `debut` ni `fin` : deux messages
 d'erreur ont perdu l'année.
+
+**Deuxième session, le 22 novembre 2026.** Sur Opus 5.5, relue sur Opus
+dans un contexte neuf. La caisse des membres du CESE pèse chaque annuité par
+la durée requise de son mandat : ce poids est désormais un champ de
+cotisation, `duree_requise_des_annuites`, sur chaque ligne de cotisation de
+`cese_membres.yaml` (142 trimestres jusqu'en 2004, 149 de 2005 à 2010, 154,
+158, 162, puis 165 dès 2014), rangé en cotisation des deux côtés
+(`donnees/axes.py`, `moteur/js/axes.js`) et porté au paquet sur les seules
+périodes de la caisse. `annuitesAuTauxDeLeurAnnee` parcourt les lignes de
+cotisation dans leur ordre, celui des périodes, et lit ce champ au lieu
+d'appeler `dureeRequise` sur chaque période : aucune branche de celle-ci ne
+s'applique à la caisse, qui rendait la durée de la période. Le plafond de
+trimestres des mines se lit, dans la boucle annuelle d'`acquerir.js`, sur la
+ligne de liquidation de la date d'effet, comme son application : 120
+trimestres et 55 ans sur toute la plage, rien ne bouge. `exigeLaMacro`
+retrouve l'année dans son message ; celui des bornes de l'assiette n'en a
+pas, l'année y manquant par définition.
+
+Vérifié : les 935 témoins de simulation et les 86 rendus de page,
+identiques ; l'oracle, identique à celui du gel hors le champ neuf, qui ne
+prend de valeur qu'à la caisse du CESE, égale année par année à la durée
+requise de sa liquidation. `tests/js/annuites-au-taux-de-leur-annee.test.js`
+dit le poids par année et vérifie qu'une durée de liquidation retouchée ne
+change pas celui des annuités. Restent, pour l'étape 4 ou le retrait des
+périodes : la page Avantages, qui compte les périodes déclarant la
+réversion ; `Regime.periode`, `periodesActives` et `periodeALEffet`, qui ne
+servent plus qu'au pont et aux tests.

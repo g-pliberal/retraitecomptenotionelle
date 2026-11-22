@@ -57,7 +57,7 @@ COTISATION = frozenset({
     "points_minimum_annuels", "points_par_trimestre_valide",
     "points_ajustement_par_forfait", "points_ajustement_maximum",
     "points_ajustement_au_plafond", "points_invalidite", "bareme_points",
-    "points_abattus_a_l_age",
+    "points_abattus_a_l_age", "duree_requise_des_annuites",
 })
 
 #: Ce qu'une ligne porte en plus de ses champs.

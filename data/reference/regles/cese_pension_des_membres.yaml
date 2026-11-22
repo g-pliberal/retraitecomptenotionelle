@@ -348,9 +348,9 @@ code:
   interrupteurs:
     annuites_au_taux_de_leur_annee: true
   moteur: >-
-    `annuites_au_taux_de_leur_annee` : sur les périodes de la caisse du CESE, les
-    trimestres de chaque période pèsent la durée de la liquidation sur la durée requise
-    de leur période (`annuites_au_taux_de_leur_annee`, dans droit/liquider.py et
+    `annuites_au_taux_de_leur_annee` : à la caisse du CESE, les trimestres de chaque
+    ligne de cotisation pèsent la durée de la liquidation sur la durée requise de leurs
+    annuités, un paramètre de cotisation (`duree_requise_des_annuites`, dans
     droit/liquider.js) : une annuité de 2000 liquidée en 2030 vaut 165/142 trimestres,
     soit 2,11 % de l'assiette au lieu de 1,82 %, et le maximum de trois quarts borne la
     somme. Ses données : des périodes en annuités par année civile, au taux plein de 75
@@ -364,7 +364,7 @@ code:
     liquiderChaqueRegime, annuitesAuTauxDeLeurAnnee
   parametres: >-
     regimes/cese_membres.yaml : taux_plein, duree_requise_trimestres,
-    taux_cotisation_retraite ; legislation/affiliations.yaml : affiliations.membre_cese
+    duree_requise_des_annuites, taux_cotisation_retraite ; legislation/affiliations.yaml : affiliations.membre_cese
   tests: >-
     tests/temoins/simulations.json, les carrières du statut membre_cese, que le portage
     rejoue
@@ -381,6 +381,12 @@ historique:
   de son année (interrupteur `annuites_au_taux_de_leur_annee`, Python et JavaScript),
   et non plus à celui de l'année de liquidation ; restent les coupures à l'année civile
   et l'allocation viagère des mandats courts.
+- >-
+  2026-11-22 — action 191, séparation des axes, étape 3 : le poids de chaque annuité,
+  la durée requise de son mandat, devient un champ de cotisation propre à la caisse
+  (`duree_requise_des_annuites`, 142 trimestres jusqu'en 2004, 149, 154, 158, 162, puis
+  165), au lieu de la durée requise de la liquidation lue à l'année. Aucun chiffre ne
+  change.
 effet: >-
   Les anciens membres du CESE désignés avant le 1er septembre 2023 : leurs annuités
   d'avant 2014 se liquident désormais à leur pourcentage, aux coupures de l'année

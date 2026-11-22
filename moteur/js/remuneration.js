@@ -1125,7 +1125,7 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
       // sous celui de la Sécurité sociale (ordonnance n° 96-1122, art. 28-2 ;
       // décret n° 2011-2085, art. 4-2), comme le compte le lui porte.
       if (sansEmployeur && code === REGIME_DE_MAYOTTE) {
-        const plafond = exigeLaMacro(macro, code, periode).plafondDeCotisations(annee, true);
+        const plafond = exigeLaMacro(macro, code, annee).plafondDeCotisations(annee, true);
         basEuros ??= basse * plafond;
         hautEuros ??= haute === null ? null : haute * plafond;
       }
@@ -1137,7 +1137,7 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
       // n'y ont alors de rôle, c'est la grille qui décide.
       if (periode.cotisation_par_classes) {
         const grille = classesDeLAnnee(catalogue, code, annee,
-          exigeLaMacro(macro, code, periode), facteur);
+          exigeLaMacro(macro, code, annee), facteur);
         if (grille.length) {
           if (classes.length) {
             throw new Error(`${code} ${annee} : deux grilles de classes la même année, `
@@ -1153,7 +1153,7 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
       // et des PCV, ramenées par les prix.
       if (periode.cotisation_forfaitaire_euros) {
         let forfait = periode.cotisation_forfaitaire_euros
-          * exigeLaMacro(macro, code, periode).coefficientPrix(
+          * exigeLaMacro(macro, code, annee).coefficientPrix(
             periode.cotisation_forfaitaire_annee || annee, annee);
         if (paieSeul) {
           forfait += periode.priseEnCharge(forfait, 0);
@@ -1224,9 +1224,9 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
  * La macro, qu'un forfait exige pour ses prix et une classe pour ses plafonds :
  * sans elle, la fiche ne les tairait pas, elle refuse.
  */
-function exigeLaMacro(macro, code, periode) {
+function exigeLaMacro(macro, code, annee) {
   if (macro === null || macro === undefined) {
-    throw new Error(`${code} : un forfait se ramène par les prix et `
+    throw new Error(`${code} ${annee} : un forfait se ramène par les prix et `
       + "une classe par le plafond ; la fiche de ce régime exige la macro");
   }
   return macro;

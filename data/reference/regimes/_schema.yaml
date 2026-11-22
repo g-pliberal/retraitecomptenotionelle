@@ -272,6 +272,11 @@ champs_periode:
     renvoi: true
     valeurs: [true]
     defaut: false
+  duree_requise_des_annuites: >-
+    durée requise, en trimestres, qui pèse les annuités acquises l'année quand
+    chacune se liquide au taux de son année (`annuites_au_taux_de_leur_annee`) :
+    un paramètre de cotisation, celui du mandat à la caisse du CESE, 142
+    trimestres jusqu'en 2004, puis 149, … (article 17 de son règlement)
 
   age_table:
     description: >-

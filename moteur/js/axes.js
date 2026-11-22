@@ -51,7 +51,7 @@ export const COTISATION = new Set([
   "points_minimum_annuels", "points_par_trimestre_valide",
   "points_ajustement_par_forfait", "points_ajustement_maximum",
   "points_ajustement_au_plafond", "points_invalidite", "bareme_points",
-  "points_abattus_a_l_age",
+  "points_abattus_a_l_age", "duree_requise_des_annuites",
   "taux_cotisation_non_salarie", "taux_cotisation_deplafonnee_non_salarie",
 ]);
 

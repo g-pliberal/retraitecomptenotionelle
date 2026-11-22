@@ -1345,19 +1345,25 @@ export function trimestresHorsForfait(carriere, durees, code, anneeLiquidation) 
  */
 /**
  * Les trimestres du régime, quand chaque annuité se liquide au taux de l'année
- * qui l'a acquise (`annuites_au_taux_de_leur_annee`) : ceux de chaque période
- * pèsent la durée de la liquidation sur la durée requise de la période.
- * Arrondis au centième comme le Python.
+ * qui l'a acquise (`annuites_au_taux_de_leur_annee`) : ceux de chaque ligne de
+ * cotisation pèsent la durée de la liquidation sur la durée requise de leurs
+ * annuités (`duree_requise_des_annuites`, un paramètre de cotisation : note de
+ * décision 0009, amendement du 22 novembre 2026). Arrondis au centième.
  */
 export function annuitesAuTauxDeLeurAnnee(moteur, code, carriere, durees, membres,
   proratisation, numerateur) {
   const regime = moteur.catalogue.obtenir(code);
   const table = regime.famille === "fonction_publique" ? "services" : "assurance";
   let ajout = 0.0;
-  for (const periode of regime.periodes) {
-    const acquis = durees.cumulPlafonne(table, membres, (annee) => periode.couvre(annee));
+  for (const ligne of regime.cotisation) {
+    const acquis = durees.cumulPlafonne(table, membres,
+      (annee) => ligne.du <= annee && (ligne.au === null || annee <= ligne.au));
     if (acquis) {
-      const requis = ouvrir.dureeRequise(moteur, periode, carriere)[0];
+      const requis = ligne.duree_requise_des_annuites;
+      if (!requis) {
+        throw new Error(`${code} : la cotisation de ${ligne.du} ne dit pas `
+          + "la durée requise de ses annuités (duree_requise_des_annuites)");
+      }
       ajout += acquis * proratisation / requis - acquis;
     }
   }

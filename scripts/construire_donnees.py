@@ -876,6 +876,9 @@ def _regimes() -> list[dict]:
                     # la période de liquidation.
                     **({"annuites_au_taux_de_leur_annee": True}
                        if p.annuites_au_taux_de_leur_annee else {}),
+                    # Ce qui pèse leurs annuités, sur les mêmes périodes.
+                    **({"duree_requise_des_annuites": p.duree_requise_des_annuites}
+                       if p.duree_requise_des_annuites is not None else {}),
                     # Six périodes le posent, de 1972 à 1974 au régime
                     # général et aux salariés agricoles : absent, le moteur
                     # JavaScript le lit nul.

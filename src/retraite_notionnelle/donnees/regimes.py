@@ -339,6 +339,11 @@ class PeriodeRegime:
     #: des membres du CESE, dont le règlement fixe le pourcentage par annuité
     #: selon la date du mandat (article 17).
     annuites_au_taux_de_leur_annee: bool
+    #: La durée requise qui pèse les annuités acquises l'année, quand chacune
+    #: se liquide au taux de son année (``annuites_au_taux_de_leur_annee``) :
+    #: un paramètre de cotisation, celui du mandat à la caisse du CESE,
+    #: 142 trimestres jusqu'en 2004, puis 149, … (article 17).
+    duree_requise_des_annuites: int | None
     #: Table d'âges PROPRE au régime, lue à la génération dans
     #: ``legislation/ages_regimes.csv`` : l'âge d'ouverture et l'âge du taux
     #: plein que le règlement d'une section écrit lui-même, et qui ne sont pas
@@ -2276,6 +2281,9 @@ class CatalogueRegimes:
                 ),
                 annuites_au_taux_de_leur_annee=bool(
                     p.get("annuites_au_taux_de_leur_annee", False)),
+                duree_requise_des_annuites=(
+                    None if p.get("duree_requise_des_annuites") is None
+                    else int(p["duree_requise_des_annuites"])),
                 age_taux_plein_a_l_ouverture=bool(
                     p.get("age_taux_plein_a_l_ouverture", False)
                 ),

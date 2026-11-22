@@ -266,36 +266,43 @@ liquidation:
 cotisation:
   - du: 1957-01-01
     au: 2005-01-01
+    duree_requise_des_annuites: 142
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1303
     part_salariale: 1.00
   - du: 2005-01-01
     au: 2011-01-01
+    duree_requise_des_annuites: 149
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1303
     part_salariale: 1.00
   - du: 2011-01-01
     au: 2012-01-01
+    duree_requise_des_annuites: 154
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1368
     part_salariale: 1.00
   - du: 2012-01-01
     au: 2013-01-01
+    duree_requise_des_annuites: 158
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1415
     part_salariale: 1.00
   - du: 2013-01-01
     au: 2014-01-01
+    duree_requise_des_annuites: 162
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1461
     part_salariale: 1.00
   - du: 2014-01-01
     au: 2015-01-01
+    duree_requise_des_annuites: 165
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1507
     part_salariale: 1.00
   - du: 2015-01-01
     au: 2016-01-01
+    duree_requise_des_annuites: 165
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1554
     part_salariale: 1.00
@@ -326,6 +333,7 @@ cotisation:
       2015).
   - du: 2016-01-01
     au: 2017-01-01
+    duree_requise_des_annuites: 165
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1594
     part_salariale: 1.00
@@ -356,6 +364,7 @@ cotisation:
       2016).
   - du: 2017-01-01
     au: 2018-01-01
+    duree_requise_des_annuites: 165
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1650
     part_salariale: 1.00
@@ -386,6 +395,7 @@ cotisation:
       2017).
   - du: 2018-01-01
     au: 2019-01-01
+    duree_requise_des_annuites: 165
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1708
     part_salariale: 1.00
@@ -416,6 +426,7 @@ cotisation:
       2018).
   - du: 2019-01-01
     au: 2020-01-01
+    duree_requise_des_annuites: 165
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1753
     part_salariale: 1.00
@@ -446,6 +457,7 @@ cotisation:
       2019).
   - du: 2020-01-01
     au: 2021-01-01
+    duree_requise_des_annuites: 165
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1798
     part_salariale: 1.00
@@ -476,6 +488,7 @@ cotisation:
       2020).
   - du: 2021-01-01
     au: 2023-01-01
+    duree_requise_des_annuites: 165
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1843
     part_salariale: 1.00
@@ -505,6 +518,7 @@ cotisation:
       41,2 annuités pour le maximum ; retenue 3,42 × 11.10 % (taux L61 de
       2021)..
   - du: 2023-01-01
+    duree_requise_des_annuites: 165
     assiette: deplafonnee
     taux_cotisation_retraite: 0.1843
     part_salariale: 1.00
